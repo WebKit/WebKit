@@ -604,7 +604,12 @@ WebInspector.ElementsTreeElement.prototype = {
             if (!object)
                 return;
 
-            object.evaluate("return '[' + this.offsetWidth + ',' + this.offsetHeight + ',' + this.naturalWidth + ',' + this.naturalHeight + ']'", setTooltip.bind(this));
+            function dimensions()
+            {
+                return "[" + this.offsetWidth + "," + this.offsetHeight + "," + this.naturalWidth + "," + this.naturalHeight + "]";
+            }
+
+            object.callFunction(dimensions, setTooltip.bind(this));
             object.release();
         }
         WebInspector.RemoteObject.resolveNode(node, "", resolvedNode.bind(this));

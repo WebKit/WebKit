@@ -50,7 +50,18 @@ WebInspector.PropertiesSidebarPane.prototype = {
         {
             if (!object)
                 return;
-            object.evaluate("var proto = this; result = {}; var counter = 1; while (proto) { result[counter++] = proto; proto = proto.__proto__ }; return result;", nodePrototypesReady.bind(this));
+            function protoList()
+            {
+                var proto = this;
+                var result = {};
+                var counter = 1;
+                while (proto) {
+                    result[counter++] = proto;
+                    proto = proto.__proto__;
+                }
+                return result;
+            }
+            object.callFunction(protoList, nodePrototypesReady.bind(this));
             object.release();
         }
 

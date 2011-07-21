@@ -252,18 +252,37 @@ InjectedScript.prototype = {
         return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI);
     },
 
-    evaluateOn: function(objectId, expression)
+    callFunctionOn: function(objectId, expression)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
         if (!object)
             return "Could not find object with given id";
+
+        var resolvedArgs = [];
+        for (var i = 2; i < arguments.length; ++i) {
+            var parsedArgId = this._parseObjectId(arguments[i]);
+            if (!parsedArgId || parsedArgId.injectedScriptId !== injectedScriptId)
+                return "Arguments should belong to the same JavaScript world as the target object.";
+            
+            var resolvedArg = this._objectForId(parsedArgId);
+            if (!resolvedArg)
+                return "Could not find object with given id";
+
+            resolvedArgs.push(resolvedArg);
+        }
+
         try {
-            inspectedWindow.console._objectToEvaluateOn = object;
-            var objectGroupName = this._idToObjectGroupName[parsedObjectId.id];
-            return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, "(function() {" + expression + "}).call(window.console._objectToEvaluateOn)", objectGroupName, false, false);
-        } finally {
-            delete inspectedWindow.console._objectToEvaluateOn;
+            var objectGroup = this._idToObjectGroupName[parsedObjectId.id];
+            var func = InjectedScriptHost.evaluate("(" + expression + ")");
+            if (typeof func !== "function")
+                return "Given expression does not evaluate to a function";
+
+            return { wasThrown: false,
+                     result: this._wrapObject(func.apply(object, resolvedArgs), objectGroup) };
+        } catch (e) {
+            return { wasThrown: true,
+                     result: this._wrapObject(e, objectGroup) };
         }
     },
 

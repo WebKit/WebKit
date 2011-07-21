@@ -257,16 +257,17 @@
                 "description": "Evaluate expression on global object."
             },
             {
-                "name": "evaluateOn",
+                "name": "callFunctionOn",
                 "parameters": [
-                    { "name": "objectId", "type": "string", "description": "Identifier of the object to evaluate expression on." },
-                    { "name": "expression", "type": "string", "description": "Expression to evaluate." }
+                    { "name": "objectId", "type": "string", "description": "Identifier of the object to call function on." },
+                    { "name": "functionDeclaration", "type": "string", "description": "Declaration of the function to call." },
+                    { "name": "arguments", "type": "array", "items": { "type": "objectId", "description": "Identifier of the argument." }, "optional": true, "description": "Call arguments. All call arguments must belong to the same JavaScript world as the target object." }
                 ],
                 "returns": [
-                    { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." },
+                    { "name": "result", "$ref": "RemoteObject", "description": "Call result." },
                     { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
                 ],
-                "description": "Evaluate expression on given object using it as <code>this</code>."
+                "description": "Call function with given declaration on the given object."
             },
             {
                 "name": "getProperties",
@@ -515,7 +516,7 @@
                     { "name": "cacheDisabled", "type": "boolean", "description": "Cache disabled state." }
                 ],
                 "description": "Toggles ignoring cache for each request. If <code>true</code>, cache will not be used." 
-            },
+            }
         ],
         "events": [
             {
@@ -1016,7 +1017,7 @@
                 "name": "resolveNode",
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "Id of the node to resolve." },
-                    { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
+                    { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
                 ],
                 "returns": [
                     { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given node." }

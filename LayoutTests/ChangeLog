@@ -1,3 +1,15 @@
+2011-07-21  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: RuntimeAgent.evaluateOn should not require "return X;" syntax.
+        https://bugs.webkit.org/show_bug.cgi?id=64691
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/protocol/runtime-agent.html:
+        * inspector/runtime/runtime-callFunctionOn-expected.txt: Added.
+        * inspector/runtime/runtime-callFunctionOn.html: Added.
+
 2011-07-21  John Knottenbelt  <jknotten@chromium.org>
 
         [Chromium] Mark fast/frames/meta-refresh-user-gesture.html as crashy.

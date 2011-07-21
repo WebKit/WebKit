@@ -54,7 +54,7 @@ public:
 
     // Part of the protocol.
     void evaluate(ErrorString*, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, RefPtr<InspectorObject>* result, bool* wasThrown);
-    void evaluateOn(ErrorString*, const String& objectId, const String& expression, RefPtr<InspectorObject>* result, bool* wasThrown);
+    void callFunctionOn(ErrorString*, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, RefPtr<InspectorObject>* result, bool* wasThrown);
     void releaseObject(ErrorString*, const String& objectId);
     void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result);
     void setPropertyValue(ErrorString*, const String& objectId, const String& propertyName, const String& expression);

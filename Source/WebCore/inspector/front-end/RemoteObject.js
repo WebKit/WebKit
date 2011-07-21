@@ -148,9 +148,9 @@ WebInspector.RemoteObject.prototype = {
             callback(0);
     },
 
-    evaluate: function(expression, callback)
+    callFunction: function(functionDeclaration, callback)
     {
-        RuntimeAgent.evaluateOn(this._objectId, expression, callback);
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), undefined, callback);
     },
 
     release: function()

@@ -56,14 +56,14 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.evaluateOn(<string>,"this.assignedByEvaluateOn = \"evaluateOn function works fine\";")
+RuntimeAgent.callFunctionOn(<string>,"function() { this.assignedByCallFunctionOn = \"callFunctionOn function works fine\"; return this.assignedByCallFunctionOn; }")
 
 request:
 {
-    method : "Runtime.evaluateOn"
+    method : "Runtime.callFunctionOn"
     params : {
         objectId : <string>
-        expression : "this.assignedByEvaluateOn = "evaluateOn function works fine";"
+        functionDeclaration : "function() { this.assignedByCallFunctionOn = "callFunctionOn function works fine"; return this.assignedByCallFunctionOn; }"
     }
     id : <number>
 }
@@ -72,8 +72,8 @@ response:
 {
     result : {
         result : {
-            type : "undefined"
-            description : "undefined"
+            type : "string"
+            description : "callFunctionOn function works fine"
         }
     }
     id : <number>
@@ -139,10 +139,10 @@ response:
     result : {
         result : [
             {
-                name : "assignedByEvaluateOn"
+                name : "assignedByCallFunctionOn"
                 value : {
                     type : "string"
-                    description : "evaluateOn function works fine"
+                    description : "callFunctionOn function works fine"
                 }
             }
             {
@@ -209,7 +209,7 @@ response:
 Coverage for RuntimeAgent
 {
     evaluate : "checked"
-    evaluateOn : "checked"
+    callFunctionOn : "checked"
     getProperties : "checked"
     setPropertyValue : "checked"
     releaseObject : "checked"
