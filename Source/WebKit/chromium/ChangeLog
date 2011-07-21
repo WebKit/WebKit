@@ -1,3 +1,14 @@
+2011-07-20  Cris Neckar  <cdn@chromium.org>
+
+        Hook v8 up to cryptographicallyRandomValues as an entropy source.
+        https://bugs.webkit.org/show_bug.cgi?id=64887
+
+        Reviewed by Adam Barth.
+
+        * src/WebKit.cpp:
+        (WebKit::generateEntropy):
+        (WebKit::initialize):
+
 2011-07-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         [Chromium DevTools] Remove unused method setAgentIdentifierPrefix from WebDevToolAgent.
