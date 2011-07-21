@@ -1,3 +1,27 @@
+2011-07-21  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt][WK2] Code cleanup for drag-and-drop
+        https://bugs.webkit.org/show_bug.cgi?id=64916
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::startDrag):
+        Allow receiving a NULL bitmap from the web process.
+        
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::handleEvent):
+        Fix typo introduced in http://trac.webkit.org/changeset/90458.
+        All DnD related events should be GraphicsScene events.
+        
+        * WebProcess/WebCoreSupport/qt/WebDragClientQt.cpp:
+        (WebKit::convertQPixmapToShareableBitmap):
+        Remove hack that creates a 1x1 bitmap.
+        It is no longer needed after http://trac.webkit.org/changeset/91016.
+        
+        (WebKit::WebDragClient::startDrag):
+        Allow sending a NULL bitmap to the UI process.
+
 2011-07-20  Tim Horton  <timothy_horton@apple.com>
 
         Scrollbar color heuristic needs to be hooked up in WebKit1

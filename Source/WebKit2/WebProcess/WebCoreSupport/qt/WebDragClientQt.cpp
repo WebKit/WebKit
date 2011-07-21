@@ -40,15 +40,13 @@ namespace WebKit {
 
 static PassRefPtr<ShareableBitmap> convertQPixmapToShareableBitmap(QPixmap* pixmap)
 {
-    // FIXME: We need this hack until https://bugs.webkit.org/show_bug.cgi?id=60621 is fixed.
-    // We cannot pass a null handle so create a pixmap size 1x1 and send that instead.
-    QPixmap p(QSize(1, 1));
-    if (pixmap)
-        p = *pixmap;
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(p.size()), ShareableBitmap::SupportsAlpha);
+    if (!pixmap)
+        return 0;
+
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(IntSize(pixmap->size()), ShareableBitmap::SupportsAlpha);
     OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
 
-    graphicsContext->platformContext()->drawPixmap(0, 0, p);
+    graphicsContext->platformContext()->drawPixmap(0, 0, *pixmap);
     return bitmap.release();
 }
 
@@ -61,7 +59,7 @@ void WebDragClient::startDrag(DragImageRef dragImage, const IntPoint& clientPosi
 
     RefPtr<ShareableBitmap> bitmap = convertQPixmapToShareableBitmap(dragImage);
     ShareableBitmap::Handle handle;
-    if (!bitmap->createHandle(handle))
+    if (bitmap && !bitmap->createHandle(handle))
         return;
 
     m_page->send(Messages::WebPageProxy::StartDrag(dragData, handle));

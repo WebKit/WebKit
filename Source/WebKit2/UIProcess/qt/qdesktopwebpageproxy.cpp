@@ -93,13 +93,13 @@ bool QDesktopWebPageProxy::handleEvent(QEvent* ev)
         return handleWheelEvent(reinterpret_cast<QGraphicsSceneWheelEvent*>(ev));
     case QEvent::GraphicsSceneHoverMove:
         return handleHoverMoveEvent(reinterpret_cast<QGraphicsSceneHoverEvent*>(ev));
-    case QEvent::DragEnter:
+    case QEvent::GraphicsSceneDragEnter:
         return handleDragEnterEvent(reinterpret_cast<QGraphicsSceneDragDropEvent*>(ev));
-    case QEvent::DragLeave:
+    case QEvent::GraphicsSceneDragLeave:
         return handleDragLeaveEvent(reinterpret_cast<QGraphicsSceneDragDropEvent*>(ev));
-    case QEvent::DragMove:
+    case QEvent::GraphicsSceneDragMove:
         return handleDragMoveEvent(reinterpret_cast<QGraphicsSceneDragDropEvent*>(ev));
-    case QEvent::Drop:
+    case QEvent::GraphicsSceneDrop:
         return handleDropEvent(reinterpret_cast<QGraphicsSceneDragDropEvent*>(ev));
     }
     return QtWebPageProxy::handleEvent(ev);

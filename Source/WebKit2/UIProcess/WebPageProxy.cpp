@@ -892,9 +892,12 @@ void WebPageProxy::startDragDrop(const IntPoint& imageOrigin, const IntPoint& dr
 #if PLATFORM(QT)
 void WebPageProxy::startDrag(const DragData& dragData, const ShareableBitmap::Handle& dragImageHandle)
 {
-    RefPtr<ShareableBitmap> dragImage = ShareableBitmap::create(dragImageHandle);
-    if (!dragImage)
-        return;
+    RefPtr<ShareableBitmap> dragImage = 0;
+    if (!dragImageHandle.isNull()) {
+        dragImage = ShareableBitmap::create(dragImageHandle);
+        if (!dragImage)
+            return;
+    }
 
     m_pageClient->startDrag(dragData, dragImage.release());
 }
