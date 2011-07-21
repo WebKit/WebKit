@@ -93,7 +93,8 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, int beforeBorderPadding,
     // we're positioned, floating, a table cell.
     m_canCollapseWithChildren = !block->isRenderView() && !block->isRoot() && !block->isPositioned()
         && !block->isFloating() && !block->isTableCell() && !block->hasOverflowClip() && !block->isInlineBlockOrInlineTable()
-        && !block->isWritingModeRoot();
+        && !block->isWritingModeRoot() && block->style()->hasAutoColumnCount() && block->style()->hasAutoColumnWidth()
+        && !block->style()->columnSpan();
 
     m_canCollapseMarginBeforeWithChildren = m_canCollapseWithChildren && (beforeBorderPadding == 0) && block->style()->marginBeforeCollapse() != MSEPARATE;
 

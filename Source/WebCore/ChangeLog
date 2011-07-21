@@ -1,3 +1,17 @@
+2011-07-21  Dave Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64975
+        Elements that have columns (e.g., column-width or column-count non-auto) and elements that have
+        column-spans establish block formatting contexts, and therefore they should not be allowing
+        child margins to collapse with their own margins.
+
+        Reviewed by Beth Dakin.
+
+        Covered by existing tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+
 2011-07-19  Matthew Delaney  <mdelaney@apple.com>
 
         Add fast path for ImageBuffer::draw
