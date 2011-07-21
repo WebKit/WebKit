@@ -1,3 +1,16 @@
+2011-07-21  Ojan Vafai  <ojan@chromium.org>
+
+        cleanup jsonresults.py style in preparation for making some changes
+        https://bugs.webkit.org/show_bug.cgi?id=64968
+
+        Reviewed by Adam Barth.
+
+        No code changes. Unittest still passes. Mostly just removing
+        useless comments and 80 character wrapping.
+
+        * TestResultServer/model/jsonresults.py:
+        * TestResultServer/model/jsonresults_unittest.py:
+
 2011-07-21  Adam Barth  <abarth@webkit.org>
 
         Add missing column header.

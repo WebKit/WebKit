@@ -141,9 +141,7 @@ class JsonResultsTest(unittest.TestCase):
     def _test_merge(self, aggregated_data, incremental_data, expected_data, max_builds=jsonresults.JSON_RESULTS_MAX_BUILDS):
         aggregated_results = self._make_test_json(aggregated_data)
         incremental_results = self._make_test_json(incremental_data)
-        merged_results = JsonResults.merge(self._builder,
-            aggregated_results, incremental_results, max_builds,
-            sort_keys=True)
+        merged_results = JsonResults.merge(self._builder, aggregated_results, incremental_results, max_builds, sort_keys=True)
 
         if expected_data:
             expected_results = self._make_test_json(expected_data)
@@ -158,10 +156,9 @@ class JsonResultsTest(unittest.TestCase):
         for test in expected_data:
             json_tests.append("\"" + test + "\":{}")
 
-        expected_results = JSON_RESULTS_PREFIX + \
-            JSON_RESULTS_TEST_LIST_TEMPLATE.replace(
-                "[TESTDATA_TESTS]", ",".join(json_tests)) + \
-            JSON_RESULTS_SUFFIX
+        expected_results = (JSON_RESULTS_PREFIX +
+            JSON_RESULTS_TEST_LIST_TEMPLATE.replace("[TESTDATA_TESTS]", ",".join(json_tests)) +
+            JSON_RESULTS_SUFFIX)
 
         actual_results = JsonResults.get_test_list(self._builder, input_results)
         self.assertEquals(actual_results, expected_results)
