@@ -49,7 +49,7 @@ public:
     void selectionChanged(bool userTriggered);
 
     VisiblePosition visiblePositionForIndex(int index) const;
-    int indexForVisiblePosition(const VisiblePosition&) const;
+    static int indexForVisiblePosition(HTMLElement*, const VisiblePosition&);
 
     void updatePlaceholderVisibility(bool, bool);
 
@@ -104,7 +104,7 @@ private:
 
     bool hasVisibleTextArea() const;
     friend void setSelectionRange(Node*, int start, int end);
-    bool isSelectableElement(Node*) const;
+    static bool isSelectableElement(HTMLElement*, Node*);
     
     virtual int textBlockInsetLeft() const = 0;
     virtual int textBlockInsetRight() const = 0;

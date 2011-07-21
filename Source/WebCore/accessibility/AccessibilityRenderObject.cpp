@@ -2477,7 +2477,7 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
 int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& pos) const
 {
     if (isNativeTextControl())
-        return toRenderTextControl(m_renderer)->indexForVisiblePosition(pos);
+        return RenderTextControl::indexForVisiblePosition(toRenderTextControl(m_renderer)->innerTextElement(), pos);
     
     if (!isTextControl())
         return 0;
