@@ -1,3 +1,9 @@
+2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium test expectations update after rolling out r91285 and r91332.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-21  Rob Buis  <rbuis@rim.com>
 
         Fix SVG Font resources link in W3C SVG 1.1SE tests
