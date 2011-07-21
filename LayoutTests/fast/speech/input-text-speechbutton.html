@@ -13,10 +13,17 @@ description('Tests for speech button click with &lt;input type="text" speech>.')
 function startSpeechInput(id) {
     // Clicking the speech button should fill in mock speech-recognized text.
     var input = document.getElementById(id);
-    var x = input.offsetLeft + input.offsetWidth - 4;
+    var isRTL = input.dir == 'rtl';
+    var x = 0;
+    if (isRTL)
+        x = input.offsetLeft + 4;
+    else
+        x = input.offsetLeft + input.offsetWidth - 4;
     var y = input.offsetTop + input.offsetHeight / 2;
-    if (input.style.paddingRight.length)
+    if (!isRTL && input.style.paddingRight.length)
         x -= parseInt(input.style.paddingRight.substr(0, input.style.paddingRight.length - 2));
+    else if (isRTL && input.style.paddingLeft.length)
+        x += parseInt(input.style.paddingLeft.substr(0, input.style.paddingLeft.length - 2));
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseDown();
     eventSender.mouseUp();

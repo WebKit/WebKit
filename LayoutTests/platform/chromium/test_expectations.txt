@@ -3775,8 +3775,6 @@ BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 
 BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = TIMEOUT
 
-BUGCR89717 : fast/speech/input-text-speechbutton.html = TIMEOUT
-
 BUGWK64844 DEBUG : svg/custom/crash-textPath-attributes.html = CRASH
 
 BUGWK64874 MAC DEBUG : css3/images/optimize-contrast-canvas.html = CRASH
@@ -3784,3 +3782,5 @@ BUGRNIWA LEOPARD DEBUG : animations/dynamic-stylesheet-loading.html = PASS TEXT
 BUGRNIWA DEBUG : jquery/css.html = PASS TIMEOUT
 
 BUGWK64920 WIN DEBUG : fast/canvas/webgl/renderbuffer-initialization.html = CRASH PASS
+
+BUGWK64857 LINUX : fast/speech/input-text-speechbutton.html = TEXT

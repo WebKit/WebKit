@@ -1,3 +1,13 @@
+2011-07-21  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Fix fast/speech/input-text-speechbutton.html after r91249 .
+        https://bugs.webkit.org/show_bug.cgi?id=64857
+
+        Reviewed by Kent Tamura.
+
+        * fast/speech/input-text-speechbutton.html: Correct mouse coordinates now that the microphone icon can be on the left in RTL..
+        * platform/chromium/test_expectations.txt: Test no longer times out.
+
 2011-07-21  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed gardening for Qt.
