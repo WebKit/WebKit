@@ -53,9 +53,10 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
           '<td class="when"></td>' +
           '<td class="how-many"></td>' +
         '</tr>');
-    $('.test-name', block).text(testName).attr('href', ui.urlForTest(testName)).addClass(unexpectedResults.join(' '));
+    var failureTypes = unexpectedResults.join(' ');
+    $('.test-name', block).text(testName).attr('href', ui.urlForTest(testName)).addClass(failureTypes);
     block.attr(config.kTestNameAttr, testName);
-    block.attr(config.kFailureTypesAttr, unexpectedResults);
+    block.attr(config.kFailureTypesAttr, failureTypes);
 
     var where = $('.where', block);
     $.each(resultNodesByBuilder, function(builderName, resultNode) {

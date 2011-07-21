@@ -115,7 +115,7 @@ function possibleSuffixListFor(failureTypeList)
         }
     });
 
-    return suffixList;
+    return base.uniquifyArray(suffixList);
 }
 
 results.failureTypeToExtensionList = function(failureType)

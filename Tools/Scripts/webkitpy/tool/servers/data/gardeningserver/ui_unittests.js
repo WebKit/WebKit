@@ -30,6 +30,18 @@ test("summarizeTest", 3, function() {
     ok(summaryHTML.indexOf('Mock Builder') != -1);
 });
 
+test("summarizeTest (data attributes)", 2, function() {
+    var testName = 'userscripts/taco.html';
+    var summary = ui.summarizeTest(testName, {
+        "Mock Builder": {
+            "expected": "PASS",
+            "actual": "TEXT IMAGE+TEXT"
+        }
+    });
+    equal(summary.attr(config.kTestNameAttr), "userscripts/taco.html");
+    equal(summary.attr(config.kFailureTypesAttr), "TEXT IMAGE+TEXT");
+});
+
 test("summarizeRegressionRange", 3, function() {
     var summaryWithMultipleRevisions = ui.summarizeRegressionRange(0, 0);
     summaryWithMultipleRevisions.wrap('<wrapper></wrapper>');

@@ -123,6 +123,7 @@ NetworkSimulator.prototype.runTest = function(testCase)
     window.base = {};
     base.endsWith = realBase.endsWith;
     base.trimExtension = realBase.trimExtension;
+    base.uniquifyArray = realBase.uniquifyArray;
     if (self.probeHook)
         base.probe = self.probeHook;
     if (self.jsonpHook)
@@ -343,7 +344,7 @@ test("canRebaseline", 6, function() {
     ok(!results.canRebaseline([]));
 });
 
-test("fetchResultsURLs", 4, function() {
+test("fetchResultsURLs", 5, function() {
     var simulator = new NetworkSimulator();
 
     var probedURLs = [];
@@ -352,6 +353,8 @@ test("fetchResultsURLs", 4, function() {
         simulator.scheduleCallback(function() {
             probedURLs.push(url);
             if (base.endsWith(url, '.txt'))
+                options.success.call();
+            else if (/taco.+png$/.test(url))
                 options.success.call();
             else
                 options.error.call();
@@ -367,13 +370,25 @@ test("fetchResultsURLs", 4, function() {
         results.fetchResultsURLs("Mock Builder", "userscripts/another-test.html", ['TIMEOUT'], function(resultURLs) {
             deepEqual(resultURLs, []);
         });
+        results.fetchResultsURLs("Mock Builder", "userscripts/taco.html", ['IMAGE', 'IMAGE+TEXT'], function(resultURLs) {
+            deepEqual(resultURLs, [
+                "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-expected.png",
+                "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-actual.png",
+                "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-diff.png",
+                "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-diff.txt"
+            ]);
+        });
     });
 
     deepEqual(probedURLs, [
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-expected.png",
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-actual.png",
         "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-diff.png",
-        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-crash-log.txt"
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-crash-log.txt",
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-expected.png",
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-actual.png",
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-diff.png",
+        "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-diff.txt"
     ]);
 });
 
