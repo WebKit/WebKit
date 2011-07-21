@@ -121,12 +121,11 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState* exec)
             asArguments(array)->fillArgList(exec, applyArgs);
         else if (isJSArray(&exec->globalData(), array))
             asArray(array)->fillArgList(exec, applyArgs);
-        else if (asObject(array)->inherits(&JSArray::s_info)) {
-            unsigned length = asArray(array)->get(exec, exec->propertyNames().length).toUInt32(exec);
+        else {
+            unsigned length = asObject(array)->get(exec, exec->propertyNames().length).toUInt32(exec);
             for (unsigned i = 0; i < length; ++i)
                 applyArgs.append(asArray(array)->get(exec, i));
-        } else
-            return throwVMTypeError(exec);
+        }
     }
 
     return JSValue::encode(call(exec, thisValue, callType, callData, exec->argument(0), applyArgs));

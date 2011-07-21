@@ -1,4 +1,4 @@
-Tests to ensure that Function.apply works correctly for Arrays and arguments.
+Tests to ensure that Function.apply works correctly for Arrays, arguments and array-like objects.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -36,6 +36,7 @@ PASS var a = []; a.length = 0x10000; [].constructor.apply('', a).length is 0x100
 PASS var a = []; a.length = 0x10001; [].constructor.apply('', a).length is 0x10000
 PASS var a = []; a.length = 0xFFFFFFFE; [].constructor.apply('', a).length is 0x10000
 PASS var a = []; a.length = 0xFFFFFFFF; [].constructor.apply('', a).length is 0x10000
+PASS (function(a,b,c,d){ return d ? -1 : (a+b+c); }).apply(undefined, {length:3, 0:100, 1:20, 2:3}) is 123
 PASS successfullyParsed is true
 
 TEST COMPLETE

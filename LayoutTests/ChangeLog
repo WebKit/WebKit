@@ -1,3 +1,17 @@
+2011-07-21  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64900
+        Function.prototype.apply should accept an array-like object as its second argument
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/function-apply-expected.txt:
+        * fast/js/script-tests/function-apply.js:
+            - Add a test for array-like objects.
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.3_Function.prototype.apply/S15.3.4.3_A6_T1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.3_Function/15.3.4/15.3.4.3_Function.prototype.apply/S15.3.4.3_A6_T4-expected.txt:
+            - These tests are incorrect & assert ES3 behaviour.
+
 2011-07-21  Enrica Casucci  <enrica@apple.com>
 
         Cannot click to position the caret to the right of an image with display:block style.

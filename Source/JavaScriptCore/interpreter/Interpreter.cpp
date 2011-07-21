@@ -4313,7 +4313,7 @@ skip_id_custom_self:
                     goto vm_throw;
                 }
                 array->copyToRegisters(callFrame, callFrame->registers() + argsOffset, argCount);
-            } else if (asObject(arguments)->inherits(&JSArray::s_info)) {
+            } else {
                 JSObject* argObject = asObject(arguments);
                 argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
                 argCount = min<uint32_t>(argCount, Arguments::MaxArguments);
@@ -4328,9 +4328,6 @@ skip_id_custom_self:
                     argsBuffer[i] = asObject(arguments)->get(callFrame, i);
                     CHECK_FOR_EXCEPTION();
                 }
-            } else {
-                exceptionValue = createInvalidParamError(callFrame, "Function.prototype.apply", arguments);
-                goto vm_throw;
             }
         }
         CHECK_FOR_EXCEPTION();
