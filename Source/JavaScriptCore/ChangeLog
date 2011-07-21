@@ -1,3 +1,16 @@
+2011-07-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG non-speculative JIT does not use() the aliased GetByVal,
+        resulting in bloated use counts.
+        https://bugs.webkit.org/show_bug.cgi?id=64911
+
+        Reviewed by Gavin Barraclough.
+        
+        Inserted a call to use() for the aliased GetByVal.
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+
 2011-07-20  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64909

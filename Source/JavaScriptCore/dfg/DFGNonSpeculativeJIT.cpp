@@ -707,6 +707,9 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         break;
 
     case GetByVal: {
+        if (node.child3() != NoNode)
+            use(node.child3());
+        
         JSValueOperand base(this, node.child1());
         JSValueOperand property(this, node.child2());
 
