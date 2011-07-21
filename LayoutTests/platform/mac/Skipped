@@ -85,6 +85,9 @@ media/media-can-play-ogg.html
 # These tests require touch support
 fast/events/touch
 
+# No button tracked
+fast/events/mouseover-button.html
+
 # Skipped until https://bugs.webkit.org/show_bug.cgi?id=33923 is resolved.
 platform/mac/accessibility/change-notification-on-scroll.html
 

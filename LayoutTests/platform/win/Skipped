@@ -143,6 +143,9 @@ fast/events/keydown-1.html
 # No support for key event location in EventSender.
 fast/events/keydown-numpad-keys.html
 
+# No button tracked
+fast/events/mouseover-button.html
+
 # The eqqivalent of option-tab doesn not exist in Boomer <rdar://problem/5137230>
 fast/events/frame-tab-focus.html
 fast/events/option-tab.html

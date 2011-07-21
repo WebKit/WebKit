@@ -1,3 +1,13 @@
+2011-07-21  Scott Graham  <scottmg@chromium.org>
+
+        Disable failing new test on mac/win ports
+        https://bugs.webkit.org/show_bug.cgi?id=64882
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/mac/Skipped:
+        * platform/win/Skipped:
+
 2011-07-21  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64900
