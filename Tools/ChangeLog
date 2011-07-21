@@ -1,5 +1,22 @@
 2011-07-21  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should be able to rebaseline many tests at once
+        https://bugs.webkit.org/show_bug.cgi?id=64963
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch contains some UI for rebaselining tests in bulk.  I don't
+        expect this UI to be the final UI, but the underlying infrastructure
+        will be useful.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/checkout.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+
+2011-07-21  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic has trouble when the same test fails in different ways on diffrent bots
         https://bugs.webkit.org/show_bug.cgi?id=64830
 

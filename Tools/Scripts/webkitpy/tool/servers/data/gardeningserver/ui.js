@@ -48,6 +48,7 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
     var unexpectedResults = results.collectUnexpectedResults(resultNodesByBuilder);
     var block = $(
         '<tr class="test">' +
+          '<td><input type="checkbox"></td>' +
           '<td class="what"><a class="test-name"></a></td>' +
           '<td class="where"><ul></ul></td>' +
           '<td class="when"></td>' +
@@ -61,7 +62,7 @@ ui.summarizeTest = function(testName, resultNodesByBuilder)
     var where = $('.where', block);
     $.each(resultNodesByBuilder, function(builderName, resultNode) {
         var listElement = $('<li class="builder-name"></li>');
-        listElement.attr(config.kBuilderNameAttr, builderName).text(displayNameForBuilder(builderName));
+        listElement.attr(config.kBuilderNameAttr, builderName).attr(config.kFailureTypesAttr, results.unexpectedResults(resultNode)).text(displayNameForBuilder(builderName));
         where.append(listElement);
     });
 

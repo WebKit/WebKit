@@ -246,6 +246,31 @@ function triageFailures()
     g_resultsDetailsIterator.callNext();
 }
 
+function rebaselineSelected()
+{
+    var rebaselineTasks = [];
+
+    $('.results .test input:checkbox').each(function() {
+        if (!this.checked)
+            return;
+        var testSummary = $(this).parents('.test');
+        var testName = testSummary.attr(config.kTestNameAttr);
+        $('.builder-name', testSummary).each(function() {
+            var builderName = $(this).attr(config.kBuilderNameAttr);
+            var failureTypes = $(this).attr(config.kFailureTypesAttr);
+            var failureTypeList = failureTypes.split(' ');
+            rebaselineTasks.push({
+                'builderName': builderName,
+                'testName': testName,
+                'failureTypeList': failureTypeList,
+            });
+        });
+    });
+
+    displayOnButterbar('Rebaselining...');
+    checkout.rebaselineAll(rebaselineTasks, dismissButterbar);
+}
+
 function rebaselineResults()
 {
     var failureDetails = $('.failure-details', $(this).parents('.results-detail'));
@@ -278,6 +303,7 @@ function update()
 }
 
 $('.results .toolbar .triage').live('click', triageFailures);
+$('.results .toolbar .rebaseline-selected').live('click', rebaselineSelected);
 $('.results-detail .actions .next').live('click', nextResultsDetail);
 $('.results-detail .actions .previous').live('click', previousResultsDetail);
 $('.results-detail .actions .rebaseline').live('click', rebaselineResults);

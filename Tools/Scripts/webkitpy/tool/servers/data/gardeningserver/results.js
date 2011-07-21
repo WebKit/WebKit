@@ -203,7 +203,7 @@ function addImpliedExpectations(resultsList)
     return resultsList.concat(kFailingResults);
 }
 
-function unexpectedResults(resultNode)
+results.unexpectedResults = function(resultNode)
 {
     var actualResults = resultNode.actual.split(' ');
     var expectedResults = addImpliedExpectations(resultNode.expected.split(' '))
@@ -211,7 +211,7 @@ function unexpectedResults(resultNode)
     return $.grep(actualResults, function(result) {
         return expectedResults.indexOf(result) == -1;
     });
-}
+};
 
 function isUnexpectedFailure(resultNode)
 {
@@ -219,7 +219,7 @@ function isUnexpectedFailure(resultNode)
         return false;
     if (anyIsSuccess(resultNode.actual.split(' ')))
         return false;
-    return anyIsFailure(unexpectedResults(resultNode));
+    return anyIsFailure(results.unexpectedResults(resultNode));
 }
 
 function isResultNode(node)
@@ -253,12 +253,11 @@ results.unexpectedFailuresByTest = function(resultsByBuilder)
 
 results.collectUnexpectedResults = function(dictionaryOfResultNodes)
 {
-    var collectedResults = {};
-    var results = [];
+    var collectedResults = [];
     $.each(dictionaryOfResultNodes, function(key, resultNode) {
-        results = results.concat(unexpectedResults(resultNode));
+        collectedResults = collectedResults.concat(results.unexpectedResults(resultNode));
     });
-    return base.uniquifyArray(results);
+    return base.uniquifyArray(collectedResults);
 };
 
 function walkHistory(builderName, testName, callback)
