@@ -36,11 +36,10 @@
 
 #include "Threading.h"
 
-#include <limits.h>
-
 namespace WTF {
 
-pthread_key_t ThreadIdentifierData::m_key = PTHREAD_KEYS_MAX;
+pthread_key_t ThreadIdentifierData::m_key;
+static pthread_once_t onceControl = PTHREAD_ONCE_INIT;
 
 void clearPthreadHandleForIdentifier(ThreadIdentifier);
 
@@ -49,15 +48,9 @@ ThreadIdentifierData::~ThreadIdentifierData()
     clearPthreadHandleForIdentifier(m_identifier);
 }
 
-void ThreadIdentifierData::initializeOnce()
-{
-    if (pthread_key_create(&m_key, destruct))
-        CRASH();
-}
-
 ThreadIdentifier ThreadIdentifierData::identifier()
 {
-    ASSERT(m_key != PTHREAD_KEYS_MAX);
+    initializeKeyOnce();
     ThreadIdentifierData* threadIdentifierData = static_cast<ThreadIdentifierData*>(pthread_getspecific(m_key));
 
     return threadIdentifierData ? threadIdentifierData->m_identifier : 0;
@@ -66,6 +59,8 @@ ThreadIdentifier ThreadIdentifierData::identifier()
 void ThreadIdentifierData::initialize(ThreadIdentifier id)
 {
     ASSERT(!identifier());
+
+    initializeKeyOnce();
     pthread_setspecific(m_key, new ThreadIdentifierData(id));
 }
 
@@ -82,6 +77,18 @@ void ThreadIdentifierData::destruct(void* data)
     threadIdentifierData->m_isDestroyedOnce = true;
     // Re-setting the value for key causes another destruct() call after all other thread-specific destructors were called.
     pthread_setspecific(m_key, threadIdentifierData);
+}
+
+void ThreadIdentifierData::initializeKeyOnceHelper()
+{
+    if (pthread_key_create(&m_key, destruct))
+        CRASH();
+}
+
+void ThreadIdentifierData::initializeKeyOnce()
+{
+    if (pthread_once(&onceControl, initializeKeyOnceHelper))
+        CRASH();
 }
 
 } // namespace WTF
