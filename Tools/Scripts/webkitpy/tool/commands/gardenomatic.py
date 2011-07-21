@@ -31,6 +31,7 @@ class GardenOMatic(AbstractLocalServerCommand):
     help_text = "Experimental command for gardening the WebKit tree."
 
     server = GardeningHTTPServer
+    launch_path = "/garden-o-matic.html"
 
     def _prepare_config(self, options, args, tool):
         return {

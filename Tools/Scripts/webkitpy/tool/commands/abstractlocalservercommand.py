@@ -30,6 +30,7 @@ from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
 class AbstractLocalServerCommand(AbstractDeclarativeCommand):
     server = None
+    launch_path = "/"
 
     def __init__(self):
         options = [
@@ -43,7 +44,7 @@ class AbstractLocalServerCommand(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         config = self._prepare_config(options, args, tool)
 
-        server_url = "http://localhost:%d/" % options.httpd_port
+        server_url = "http://localhost:%d%s" % (options.httpd_port, self.launch_path)
         print "Starting server at %s" % server_url
         print "Use the 'Exit' link in the UI, %squitquitquit or Ctrl-C to stop" % server_url
 

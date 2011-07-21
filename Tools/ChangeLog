@@ -1,3 +1,47 @@
+2011-07-21  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Adam Roben.
+
+        Move garden-o-matic files into the same directory as TestFailures to
+        make it easier to integrate the codebases.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/base.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base_unittests.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/base_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/checkout.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout_unittests.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/checkout_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/config.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/favicon-green.png: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/favicon-green.png.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/favicon-red.png: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/favicon-red.png.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/index.html.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/main.css.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/main.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/partytime.gif: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/partytime.gif.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/results.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results_unittests.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-more-unittests.html: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/run-unittests.html.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui_unittests.js: Copied from Tools/Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js.
+        * Scripts/webkitpy/tool/commands/abstractlocalservercommand.py:
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        * Scripts/webkitpy/tool/servers/data/gardeningserver: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/base.js: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/base_unittests.js: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/checkout.js: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/checkout_unittests.js: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/config.js: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/favicon-green.png: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/favicon-red.png: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/index.html: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.css: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/main.js: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/partytime.gif: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results.js: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/results_unittests.js: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/run-unittests.html: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js: Removed.
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui_unittests.js: Removed.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
 2011-07-19  Ojan Vafai  <ojan@chromium.org>
 
         fix links on the flakiness dashboard

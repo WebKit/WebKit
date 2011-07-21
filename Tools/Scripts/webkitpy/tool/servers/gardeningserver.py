@@ -42,7 +42,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         "config.js",
         "favicon-green.png",
         "favicon-red.png",
-        "index.html",
+        "garden-o-matic.html",
         "main.css",
         "main.js",
         "partytime.gif",
@@ -50,7 +50,16 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         "ui.js",
     ])
 
-    STATIC_FILE_DIRECTORY = os.path.join(os.path.dirname(__file__), "data", "gardeningserver")
+    STATIC_FILE_DIRECTORY = os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "..",
+        "..",
+        "..",
+        "BuildSlaveSupport",
+        "build.webkit.org-config",
+        "public_html",
+        "TestFailures")
 
     def _run_webkit_patch(self, args):
         return self.server.tool.executive.run_command([self.server.tool.path()] + args, cwd=self.server.tool.scm().checkout_root)
