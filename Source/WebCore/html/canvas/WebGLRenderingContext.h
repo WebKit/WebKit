@@ -363,6 +363,7 @@ public:
         WebGLRenderingContext* m_context;
     };
 
+    bool m_restoreAllowed;
     WebGLRenderingContextRestoreTimer m_restoreTimer;
 
     bool m_needsUpdate;

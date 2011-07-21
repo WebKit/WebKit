@@ -377,6 +377,7 @@ WebGLRenderingContext::WebGLRenderingContext(HTMLCanvasElement* passedCanvas, Pa
                                              GraphicsContext3D::Attributes attributes)
     : CanvasRenderingContext(passedCanvas)
     , m_context(context)
+    , m_restoreAllowed(false)
     , m_restoreTimer(this)
     , m_videoCache(4)
     , m_contextLost(false)
@@ -4768,7 +4769,9 @@ void WebGLRenderingContext::loseContext()
     }
     m_context->synthesizeGLError(GraphicsContext3D::CONTEXT_LOST_WEBGL);
 
-    canvas()->dispatchEvent(WebGLContextEvent::create(eventNames().webglcontextlostEvent, false, true, ""));
+    RefPtr<WebGLContextEvent> event = WebGLContextEvent::create(eventNames().webglcontextlostEvent, false, true, "");
+    canvas()->dispatchEvent(event);
+    m_restoreAllowed = event->defaultPrevented();
 }
 
 void WebGLRenderingContext::maybeRestoreContext(WebGLRenderingContext::LostContextMode mode)
@@ -4779,10 +4782,9 @@ void WebGLRenderingContext::maybeRestoreContext(WebGLRenderingContext::LostConte
         return;
     }
 
-    // The rendering context is not restored if there is no handler for the
-    // context restored event. (FIXME: this is not spec compliant. A follow-on
-    // patch will bring this to spec compliance.)
-    if (!canvas()->hasEventListeners(eventNames().webglcontextrestoredEvent)) {
+    // The rendering context is not restored unless the default
+    // behavior of the webglcontextlost event was prevented earlier.
+    if (!m_restoreAllowed) {
         if (mode == SyntheticLostContext)
             m_context->synthesizeGLError(GraphicsContext3D::INVALID_OPERATION);
         return;

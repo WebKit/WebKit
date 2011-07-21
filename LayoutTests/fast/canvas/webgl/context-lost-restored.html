@@ -15,6 +15,7 @@ var bufferObjects;
 var program;
 var texture;
 var texColor = [255, 10, 20, 255];
+var allowRestore;
 
 function init()
 {
@@ -58,10 +59,11 @@ function testLosingContext()
     debug("Test losing a context and inability to restore it.");
 
     canvas.addEventListener("webglcontextlost", testLostContext);
+    canvas.addEventListener("webglcontextrestored", testShouldNotRestoreContext);
+    allowRestore = false;
 
     testOriginalContext();
     extension.loseContext();
-    // FIXME: this isn't yet spec compliant.
     shouldGenerateGLError(gl, gl.INVALID_OPERATION, "extension.restoreContext()");
     debug("");
 }
@@ -75,10 +77,11 @@ function testLosingAndRestoringContext()
 
     canvas.addEventListener("webglcontextlost", testLostContext);
     canvas.addEventListener("webglcontextrestored", testRestoredContext);
+    allowRestore = true;
 
     testOriginalContext();
     extension.loseContext();
-    extension.restoreContext();
+    shouldGenerateGLError(gl, gl.NO_ERROR, "extension.restoreContext()");
     debug("");
 }
 
@@ -110,12 +113,20 @@ function testOriginalContext()
     debug("");
 }
 
-function testLostContext()
+function testLostContext(e)
 {
     debug("Test lost context");
     shouldBeTrue("gl.isContextLost()");
     shouldBe("gl.getError()", "gl.CONTEXT_LOST_WEBGL");
     shouldBe("gl.getError()", "gl.NO_ERROR");
+    debug("");
+    if (allowRestore)
+        e.preventDefault();
+}
+
+function testShouldNotRestoreContext(e)
+{
+    testFailed("Should not restore the context unless preventDefault is called on the context lost event");
     debug("");
 }
 

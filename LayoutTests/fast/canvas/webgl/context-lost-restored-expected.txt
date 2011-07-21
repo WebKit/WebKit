@@ -40,6 +40,7 @@ PASS gl.bindTexture(gl.TEXTURE_2D, texture) was expected value: NO_ERROR.
 PASS gl.useProgram(program) was expected value: NO_ERROR.
 PASS gl.bindBuffer(gl.ARRAY_BUFFER, bufferObjects[0]) was expected value: NO_ERROR.
 
+PASS extension.restoreContext() was expected value: NO_ERROR.
 
 PASS successfullyParsed is true
 
