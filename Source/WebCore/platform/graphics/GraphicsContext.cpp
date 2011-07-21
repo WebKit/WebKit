@@ -351,26 +351,6 @@ bool GraphicsContext::paintingDisabled() const
     return m_state.paintingDisabled;
 }
 
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op)
-{
-    drawImage(image, styleColorSpace, p, IntRect(0, 0, -1, -1), op);
-}
-
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, bool useLowQualityScale)
-{
-    drawImage(image, styleColorSpace, r, IntRect(0, 0, -1, -1), op, useLowQualityScale);
-}
-
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op)
-{
-    drawImage(image, styleColorSpace, IntRect(dest, srcRect.size()), srcRect, op);
-}
-
-void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, CompositeOperator op, bool useLowQualityScale)
-{
-    drawImage(image, styleColorSpace, FloatRect(dest), srcRect, op, useLowQualityScale);
-}
-
 #if !OS(WINCE) || (PLATFORM(QT) && !HAVE(QRAWFONT))
 void GraphicsContext::drawText(const Font& font, const TextRun& run, const FloatPoint& point, int from, int to)
 {
@@ -431,6 +411,26 @@ void GraphicsContext::drawHighlightForText(const Font& font, const TextRun& run,
         return;
 
     fillRect(font.selectionRectForText(run, point, h, from, to), backgroundColor, colorSpace);
+}
+
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op)
+{
+    drawImage(image, styleColorSpace, p, IntRect(0, 0, -1, -1), op);
+}
+
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& r, CompositeOperator op, bool useLowQualityScale)
+{
+    drawImage(image, styleColorSpace, r, IntRect(0, 0, -1, -1), op, useLowQualityScale);
+}
+
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntPoint& dest, const IntRect& srcRect, CompositeOperator op)
+{
+    drawImage(image, styleColorSpace, IntRect(dest, srcRect.size()), srcRect, op);
+}
+
+void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect, CompositeOperator op, bool useLowQualityScale)
+{
+    drawImage(image, styleColorSpace, FloatRect(dest), srcRect, op, useLowQualityScale);
 }
 
 void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const FloatRect& dest, const FloatRect& src, CompositeOperator op, bool useLowQualityScale)

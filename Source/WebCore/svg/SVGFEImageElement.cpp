@@ -178,7 +178,7 @@ PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* fil
         SVGImageBufferTools::renderSubtreeToImageBuffer(m_targetImage.get(), renderer, contentTransformation);
     }
 
-    return FEImage::create(filter, m_targetImage ? m_targetImage->copyImage() : m_cachedImage->image(), preserveAspectRatio());
+    return FEImage::create(filter, m_targetImage ? m_targetImage->copyImage(CopyBackingStore) : m_cachedImage->image(), preserveAspectRatio());
 }
 
 void SVGFEImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
