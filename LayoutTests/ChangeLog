@@ -1,3 +1,12 @@
+2011-07-21  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed gardening for Qt.
+        Revert http://trac.webkit.org/changeset/91451 and skip the tests
+        via the Skipped list because the test_expectations way don't work.
+
+        * platform/qt/Skipped:
+        * platform/qt/test_expectations.txt:
+
 2011-07-21  Jeremy Moskovich  <jeremy@chromium.org>
 
         Fix fast/speech/input-text-speechbutton.html after r91249 .
