@@ -1,5 +1,14 @@
 2011-07-21  John Knottenbelt  <jknotten@chromium.org>
 
+        [Chromium] Mark fast/dom/DeviceOrientation/no-synchronous-events.html as crashy.
+        https://bugs.webkit.org/show_bug.cgi?id=64947
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-21  John Knottenbelt  <jknotten@chromium.org>
+
         [Chromium] Remove test expectation for fast/speech/input-text-speechbutton.html.
         https://bugs.webkit.org/show_bug.cgi?id=64945
 

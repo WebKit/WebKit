@@ -3789,3 +3789,5 @@ BUGWK64920 WIN DEBUG : fast/canvas/webgl/renderbuffer-initialization.html = CRAS
 BUGWK64940 MAC WIN DEBUG : svg/W3C-SVG-1.1/animate-elem-78-t.svg = CRASH PASS
 
 BUGWK64943 MAC : fast/flexbox/010.html = CRASH PASS
+
+BUGWK64946 WIN DEBUG : [Chromium] fast/dom/DeviceOrientation/no-synchronous-events.html = CRASH PASS
