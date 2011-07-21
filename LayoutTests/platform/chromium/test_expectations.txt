@@ -3636,16 +3636,6 @@ BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hixie76/client-close.html = PASS TEXT
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hybi/client-close.html = PASS TEXT
 
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html = TIMEOUT IMAGE+TEXT CRASH
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html = TIMEOUT CRASH
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
-
 BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = CRASH PASS
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = IMAGE PASS
 
