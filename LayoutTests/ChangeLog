@@ -1,3 +1,9 @@
+2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium test expectation update for svg/W3C-SVG-1.1-SE/color-prop-05-t.svg.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-21  Jessie Berlin  <jberlin@apple.com>
 
         Implement spinbutton support in RenderThemeSafari.

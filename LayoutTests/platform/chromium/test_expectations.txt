@@ -3788,4 +3788,4 @@ BUGWK64948 WIN DEBUG : fast/forms/input-file-label.html = CRASH PASS
 
 BUGWK64951 : fast/frames/meta-refresh-user-gesture.html = CRASH TIMEOUT PASS
 
-BUGWK64976 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE+TEXT
+BUGWK64976 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE
