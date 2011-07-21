@@ -1,3 +1,16 @@
+2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        More Chromium rebaselines for r91474.
+
+        * platform/chromium-linux/fast/multicol/float-multicol-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/float-multicol-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/float-multicol-expected.png: Added.
+        * platform/chromium-win-xp/fast/events: Added.
+        * platform/chromium-win-xp/fast/events/offsetX-offsetY-expected.txt: Added.
+        * platform/chromium-win/fast/events/offsetX-offsetY-expected.txt:
+        * platform/chromium-win/fast/multicol/float-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/float-multicol-expected.txt:
+
 2011-07-21  Scott Graham  <scottmg@chromium.org>
 
         Disable failing new test on mac/win ports
