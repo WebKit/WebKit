@@ -80,7 +80,7 @@ int screenDepthPerComponent(Widget* w)
     case 32:
         return 8;
     default:
-        return qRound(depth / 3);
+        return depth / 3;
     }
 }
 

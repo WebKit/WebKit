@@ -1,3 +1,21 @@
+2011-07-21  Rohan McGovern  <rohan@mcgovern.id.au>
+
+        Reviewed by Noam Rosenthal.
+
+        [Qt] Qt5 Build Fix: remove useless use of qRound(int)
+        https://bugs.webkit.org/show_bug.cgi?id=64907
+
+        Rounding an integer doesn't make sense.
+        Since 2dcd3939a8bd5ff743e4c87f87b2d81b1a101467 in qtbase, this is not
+        permitted to compile.
+
+        No new tests needed.
+
+        * platform/graphics/qt/FontPlatformDataQt.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Eliminate qRound(int).
+        * platform/qt/PlatformScreenQt.cpp:
+        (WebCore::screenDepthPerComponent): Ditto.
+
 2011-07-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix a Valgrind failure caused by r91435.
