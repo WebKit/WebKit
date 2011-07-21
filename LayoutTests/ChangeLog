@@ -1,3 +1,15 @@
+2011-07-21  Gavin Peters  <gavinp@chromium.org>
+
+        Extend the protector of a CSS style sheet.  Because checkLoaded() can recursively delete
+        parent style elements, the protector should be extended to include the parent call.
+
+        https://bugs.webkit.org/show_bug.cgi?id=64736
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/css-imports-2-expected.txt: Added.
+        * fast/css/css-imports-2.html: Added.
+
 2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Temporarily add failing test expectation for multi column tests after r91497.
