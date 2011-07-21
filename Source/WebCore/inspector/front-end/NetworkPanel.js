@@ -770,14 +770,8 @@ WebInspector.NetworkLogView.prototype = {
 
         var loaderId = event.data.loaderId;
         // Main frame committed load.
-        if (this._preserveLogToggle.toggled) {
-            for (var i = 0; i < this._resources.length; ++i) {
-                var resource = this._resources[i];
-                if (resource.loaderId !== loaderId)
-                    resource.networkDataRemoved = true;
-            }
+        if (this._preserveLogToggle.toggled)
             return;
-        }
 
         // Preserve provisional load resources.
         var resourcesToPreserve = [];

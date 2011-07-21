@@ -57,7 +57,7 @@ WebInspector.NetworkManager.prototype = {
         }
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource) 
         // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
-        if (resource.identifier && !resource.networkDataRemoved)
+        if (resource.identifier)
             NetworkAgent.getResourceContent(resource.identifier, callbackWrapper);
         else
             PageAgent.getResourceContent(resource.frameId, resource.url, callbackWrapper);
@@ -284,7 +284,6 @@ WebInspector.NetworkDispatcher.prototype = {
         var previousRedirects = originalResource.redirects || [];
         originalResource.identifier = "redirected:" + identifier + "." + previousRedirects.length;
         delete originalResource.redirects;
-        originalResource.networkDataRemoved = true;
         this._finishResource(originalResource, time);
         var newResource = this._createResource(identifier, originalResource.frameId, originalResource.loaderId,
              redirectURL, originalResource.documentURL, originalResource.stackTrace);
