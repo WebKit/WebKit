@@ -416,20 +416,16 @@ unsigned RenderReplaced::caretMaxRenderedOffset() const
 
 VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point)
 {
-    InlineBox* box = inlineBoxWrapper();
-    if (!box)
-        return createVisiblePosition(0, DOWNSTREAM);
-
     // FIXME: This code is buggy if the replaced element is relative positioned.
-
-    RootInlineBox* root = box->root();
-
-    LayoutUnit top = root->selectionTop();
-    LayoutUnit bottom = root->selectionBottom();
-
-    LayoutUnit blockDirectionPosition = box->isHorizontal() ? point.y() + y() : point.x() + x();
-    LayoutUnit lineDirectionPosition = box->isHorizontal() ? point.x() + x() : point.y() + y();
-
+    InlineBox* box = inlineBoxWrapper();
+    RootInlineBox* rootBox = box ? box->root() : 0;
+    
+    LayoutUnit top = rootBox ? rootBox->selectionTop() : logicalTop();
+    LayoutUnit bottom = rootBox ? rootBox->selectionBottom() : logicalBottom();
+    
+    LayoutUnit blockDirectionPosition = isHorizontalWritingMode() ? point.y() + y() : point.x() + x();
+    LayoutUnit lineDirectionPosition = isHorizontalWritingMode() ? point.x() + x() : point.y() + y();
+    
     if (blockDirectionPosition < top)
         return createVisiblePosition(caretMinOffset(), DOWNSTREAM); // coordinates are above
     
@@ -437,7 +433,7 @@ VisiblePosition RenderReplaced::positionForPoint(const LayoutPoint& point)
         return createVisiblePosition(caretMaxOffset(), DOWNSTREAM); // coordinates are below
     
     if (node()) {
-        if (lineDirectionPosition <= box->logicalLeft() + (box->logicalWidth() / 2))
+        if (lineDirectionPosition <= logicalLeft() + (logicalWidth() / 2))
             return createVisiblePosition(0, DOWNSTREAM);
         return createVisiblePosition(1, DOWNSTREAM);
     }

@@ -1,3 +1,22 @@
+2011-07-21  Enrica Casucci  <enrica@apple.com>
+
+        Cannot click to position the caret to the right of an image with display:block style.
+        https://bugs.webkit.org/show_bug.cgi?id=64962
+        <rdar://problem/9446343>
+
+        Reviewed by David Hyatt.
+
+        Test: editing/selection/click-on-block-image.html
+
+        The current implementation of positionForPoint always returns the visible
+        position to the left of the image, if the image has a block style.
+        This patch changes the behavior for block styled images to match the behavior
+        for inline images.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::positionForPoint): Modified to avoid relying entirely
+        on InlineBox to calculate the position.
+
 2011-07-21  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: one liner typo fix in Inspector.json.
