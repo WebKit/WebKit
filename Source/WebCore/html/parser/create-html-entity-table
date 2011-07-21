@@ -111,12 +111,12 @@ namespace {
 """)
 
 for entry in entries:
-    output_file.write("const UChar %sEntityName[] = %s;" % (
+    output_file.write("static const UChar %s[] = %s;\n" % (
         convert_entity_to_cpp_name(entry[ENTITY]),
         convert_entity_to_uchar_array(entry[ENTITY])))
 
 output_file.write("""
-HTMLEntityTableEntry staticEntityTable[%s] = {""" % entity_count)
+static const HTMLEntityTableEntry staticEntityTable[%s] = {\n""" % entity_count)
 
 index = {}
 offset = 0
@@ -124,25 +124,26 @@ for entry in entries:
     letter = entry[ENTITY][0]
     if not index.get(letter):
         index[letter] = offset
-    output_file.write('    { %sEntityName, %s, %s },' % (
+    output_file.write('    { %s, %s, %s },\n' % (
         convert_entity_to_cpp_name(entry[ENTITY]),
         len(entry[ENTITY]),
         convert_value_to_int(entry[VALUE])))
     offset += 1
 
 output_file.write("""};
+
 """)
 
-output_file.write("const HTMLEntityTableEntry* uppercaseOffset[] = {")
+output_file.write("static const HTMLEntityTableEntry* uppercaseOffset[] = {\n")
 for letter in string.ascii_uppercase:
-    output_file.write(offset_table_entry(index[letter]))
-output_file.write(offset_table_entry(index['a']))
+    output_file.write("%s\n" % offset_table_entry(index[letter]))
+output_file.write("%s\n" % offset_table_entry(index['a']))
 output_file.write("""};
 
-const HTMLEntityTableEntry* lowercaseOffset[] = {""")
+static const HTMLEntityTableEntry* lowercaseOffset[] = {\n""")
 for letter in string.ascii_lowercase:
-    output_file.write(offset_table_entry(index[letter]))
-output_file.write(offset_table_entry(entity_count))
+    output_file.write("%s\n" % offset_table_entry(index[letter]))
+output_file.write("%s\n" % offset_table_entry(entity_count))
 output_file.write("""};
 
 }

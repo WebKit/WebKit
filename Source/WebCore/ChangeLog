@@ -1,3 +1,18 @@
+2011-07-21  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/64972> Clean up generated HTMLEntityTable.cpp output
+
+        Reviewed by Eric Seidel.
+
+        * html/parser/create-html-entity-table:
+        - Fix duplicate "EntityName" suffix on local variables (changes
+          fooSemicolonEntityNameEntityName to fooSemicolonEntityName)
+          for all 2138 symbols.
+        - Add newlines to make source file human-readable (as originally
+          intended).
+        - Add static (const) keywords to local variables that are never
+          referenced externally.
+
 2011-07-21  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from FileAPI
