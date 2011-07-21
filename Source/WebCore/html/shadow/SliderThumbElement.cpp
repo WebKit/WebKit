@@ -116,8 +116,10 @@ void RenderSliderThumb::layout()
     double fraction = sliderPosition(input) * 100;
     if (isVertical)
         style()->setTop(Length(100 - fraction, Percent));
-    else
+    else if (style()->isLeftToRightDirection())
         style()->setLeft(Length(fraction, Percent));
+    else
+        style()->setRight(Length(fraction, Percent));
 
     RenderBlock::layout();
 }
@@ -238,7 +240,7 @@ void SliderThumbElement::setPositionFromPoint(const IntPoint& point)
 
     StepRange range(input);
     double fraction = static_cast<double>(position) / trackSize;
-    if (isVertical)
+    if (isVertical || !renderBox()->style()->isLeftToRightDirection())
         fraction = 1 - fraction;
     double value = range.clampValue(range.valueFromProportion(fraction));
 

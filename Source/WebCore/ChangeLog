@@ -1,3 +1,18 @@
+2011-07-21  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r88757): input[type=range] renders incorrectly in RTL context.
+        https://bugs.webkit.org/show_bug.cgi?id=64904
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests: fast/forms/input-appearance-range-rtl.html
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::layout):
+        The thumb should be positioned based on 'right' CSS property instead of 'left.'
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        The fraction should be flipped in RTL.
+
 2011-07-18  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove networkDataRemoved field from resource.

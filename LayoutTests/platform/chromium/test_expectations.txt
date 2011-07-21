@@ -3775,6 +3775,8 @@ BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 
 BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = TIMEOUT
 
+BUGWK64904 : fast/forms/input-appearance-range-rtl.html = IMAGE
+
 BUGWK64844 DEBUG : svg/custom/crash-textPath-attributes.html = CRASH
 
 BUGWK64874 MAC DEBUG : css3/images/optimize-contrast-canvas.html = CRASH
