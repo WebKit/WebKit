@@ -1,3 +1,17 @@
+2011-07-21  Jon Lee  <jonlee@apple.com>
+
+        Create a new survey page that showcases form and interactive elements for quick reference and comparison.
+        <rdar://problem/9782965>
+
+        Rubber-stamped by Maciej Stachowiak.
+
+        * projects/forms/image-usemap.png: Added.
+        * projects/forms/image1.png: Added.
+        * projects/forms/image10.png: Added.
+        * projects/forms/image16.png: Added.
+        * projects/forms/index.html: Update links
+        * projects/forms/survey.html: Added.
+
 2011-07-20  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         SVG feature status is not up-to-date
