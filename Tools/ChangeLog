@@ -1,3 +1,9 @@
+2011-07-21  Adam Barth  <abarth@webkit.org>
+
+        Add missing column header.
+
+        * Scripts/webkitpy/tool/servers/data/gardeningserver/ui.js:
+
 2011-07-21  Eric Seidel  <eric@webkit.org>
 
         Unreviewed.  Just fixing (and unittesting) a previous typo.

@@ -37,7 +37,7 @@ ui.regressionsContainer = function()
         '<table class="results-summary">' +
             '<thead>' +
                 '<tr>' +
-                    '<th>Test</th><th>Bot</th><th>Regression Range</th><th>Frequency</th>' +
+                    '<th></th><th>Test</th><th>Bot</th><th>Regression Range</th><th>Frequency</th>' +
             '</thead>' +
             '<tbody></tbody>' +
         '</table>');
