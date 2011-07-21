@@ -439,6 +439,21 @@ void StyledElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
         style->addSubresourceStyleURLs(urls);
 }
 
+void StyledElement::insertedIntoDocument()
+{
+    Element::insertedIntoDocument();
+
+    if (m_inlineStyleDecl)
+        m_inlineStyleDecl->setParent(document()->elementSheet());
+}
+
+void StyledElement::removedFromDocument()
+{
+    if (m_inlineStyleDecl)
+        m_inlineStyleDecl->setParent(0);
+
+    Element::removedFromDocument();
+}
 
 void StyledElement::didMoveToNewOwnerDocument()
 {
