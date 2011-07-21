@@ -753,7 +753,15 @@ private:
     void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild, Vector<FloatWithRect>&);
 
     // Pagination routines.
-    int nextPageLogicalTop(int logicalOffset) const; // Returns the top of the next page following logicalOffset.
+    
+    // Returns the logicalOffset at the top of the next page. If the offset passed in is already at the top of the current page,
+    // then nextPageLogicalTopExcludingBoundaryPoint will still move to the top of the next page. nextPageLogicalTopIncludingBoundaryPoint
+    // will not.
+    //
+    // For a page height of 800px, the first function will return 800 if the value passed in is 0. The second function will simply return 0.
+    int nextPageLogicalTopExcludingBoundaryPoint(int logicalOffset) const;
+    int nextPageLogicalTopIncludingBoundaryPoint(int logicalOffset) const;
+
     int applyBeforeBreak(RenderBox* child, int logicalOffset); // If the child has a before break, then return a new yPos that shifts to the top of the next page/column.
     int applyAfterBreak(RenderBox* child, int logicalOffset, MarginInfo& marginInfo); // If the child has an after break, then return a new offset that shifts to the top of the next page/column.
     int adjustForUnsplittableChild(RenderBox* child, int logicalOffset, bool includeMargins = false); // If the child is unsplittable and can't fit on the current page, return the top of the next page/column.

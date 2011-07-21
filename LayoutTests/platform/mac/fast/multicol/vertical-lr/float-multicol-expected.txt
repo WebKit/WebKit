@@ -57,32 +57,32 @@ layer at (19,8) size 340x1500
           text run at (198,0) width 141: "most serious, and how"
           text run at (216,0) width 101: "often people are"
           text run at (234,0) width 121: "encountering them."
-      RenderBlock (floating) {DIV} at (0,395) size 306x83 [bgcolor=#FF00FF]
-        RenderBlock {P} at (0,0) size 18x83
+      RenderBlock (floating) {DIV} at (0,395) size 322x83 [bgcolor=#FF00FF]
+        RenderBlock {P} at (16,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 1"
-        RenderBlock {P} at (34,0) size 18x83
+        RenderBlock {P} at (50,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 2"
-        RenderBlock {P} at (68,0) size 18x83
+        RenderBlock {P} at (84,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 3"
-        RenderBlock {P} at (102,0) size 18x83
+        RenderBlock {P} at (118,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 4"
-        RenderBlock {P} at (136,0) size 18x83
+        RenderBlock {P} at (152,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 5"
-        RenderBlock {P} at (170,0) size 18x83
+        RenderBlock {P} at (186,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 6"
-        RenderBlock {P} at (204,0) size 18x83
+        RenderBlock {P} at (220,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 7"
-        RenderBlock {P} at (238,0) size 18x83
+        RenderBlock {P} at (254,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 8"
-        RenderBlock {P} at (272,0) size 18x83
+        RenderBlock {P} at (288,0) size 18x83
           RenderText {#text} at (0,0) size 18x83
             text run at (0,0) width 83: "Hello Kitty 9"
       RenderBlock {H2} at (0,0) size 56x478
@@ -133,7 +133,7 @@ layer at (19,8) size 340x1500
           RenderText {#text} at (0,289) size 321x146
             text run at (0,289) width 46: "You've"
             text run at (18,289) width 46: "already"
-            text run at (179,289) width 129: "downloaded a build."
+            text run at (195,289) width 129: "downloaded a build."
             text run at (213,289) width 132: "All you have to do is"
             text run at (231,289) width 37: "use it "
             text run at (231,326) width 17: "as "

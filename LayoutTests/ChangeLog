@@ -1,3 +1,29 @@
+2011-07-21  Sam Weinig  <sam@webkit.org>
+
+        CSS top margin collapses when paginating
+        <rdar://problem/9434990>
+        https://bugs.webkit.org/show_bug.cgi?id=64906
+
+        Reviewed by David Hyatt.
+
+        * fast/multicol/client-rects-expected.txt:
+        * platform/mac/fast/multicol/float-avoidance-expected.txt:
+        * platform/mac/fast/multicol/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/span/anonymous-before-child-parent-crash-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-inline-block-child-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/float-multicol-expected.txt:
+        Update results now that we take margins into account.
+
 2011-07-21  John Knottenbelt  <jknotten@chromium.org>
 
         [Chromium] Mark fast/js/function-apply-many-args.html as timing out.
