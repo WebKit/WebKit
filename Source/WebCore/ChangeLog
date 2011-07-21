@@ -1,5 +1,12 @@
 2011-07-20  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium build fix after r91440.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+
+2011-07-20  Ryosuke Niwa  <rniwa@webkit.org>
+
         Build fix after r91435.
 
         * platform/mac/ScrollViewMac.mm:
