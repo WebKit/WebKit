@@ -1,3 +1,39 @@
+2011-07-21  Andrew Wason  <rectalogic@rectalogic.com>
+
+        [Qt] Adopt existing GraphicsContext3D members (part 1)
+        https://bugs.webkit.org/show_bug.cgi?id=64877
+
+        Reviewed by Noam Rosenthal.
+
+        Existing WebGL layout tests should test this.
+
+        Remove GraphicsContext3DInternal members and use the existing
+        corresponding members from GraphicsContext3D instead.
+        Move most of the GraphicsContext3DInternal constructor, destructor
+        and the reshape() method into GraphicsContext3D.
+        The GraphicsContext3D members will be needed when we adopt
+        GraphicsContext3DOpenGL.cpp.
+
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::~GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::paintToTextureMapper):
+        (WebCore::GraphicsContext3DInternal::boundingRect):
+        (WebCore::GraphicsContext3DInternal::paint):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+        (WebCore::GraphicsContext3D::platformTexture):
+        (WebCore::GraphicsContext3D::reshape):
+        (WebCore::GraphicsContext3D::bindFramebuffer):
+        (WebCore::GraphicsContext3D::getContextAttributes):
+        (WebCore::GraphicsContext3D::getError):
+        (WebCore::GraphicsContext3D::synthesizeGLError):
+        (WebCore::GraphicsContext3D::markLayerComposited):
+        (WebCore::GraphicsContext3D::markContextChanged):
+        (WebCore::GraphicsContext3D::layerComposited):
+        (WebCore::GraphicsContext3D::getExtensions):
+
 2011-07-21  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [protocol] extend setBreakpointByUrl request to accept incomplete URL (predicates)

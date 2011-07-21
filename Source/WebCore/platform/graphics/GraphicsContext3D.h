@@ -90,6 +90,8 @@ class DrawingBuffer;
 class Extensions3D;
 #if PLATFORM(MAC) || PLATFORM(GTK)
 class Extensions3DOpenGL;
+#elif PLATFORM(QT)
+class Extensions3DQt;
 #endif
 class HostWindow;
 class Image;
@@ -907,7 +909,7 @@ public:
     RetainPtr<WebGLLayer> m_webGLLayer;
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(GTK)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT)
     typedef struct {
         String source;
         String log;
@@ -915,10 +917,15 @@ public:
     } ShaderSourceEntry;
     HashMap<Platform3DObject, ShaderSourceEntry> m_shaderSourceMap;
 
+#if PLATFORM(QT)
+    friend class Extensions3DQt;
+    OwnPtr<Extensions3DQt> m_extensions;
+#else
     friend class Extensions3DOpenGL;
     ANGLEWebKitBridge m_compiler;
 
     OwnPtr<Extensions3DOpenGL> m_extensions;
+#endif
 
     Attributes m_attrs;
     Vector<Vector<float> > m_vertexArray;
