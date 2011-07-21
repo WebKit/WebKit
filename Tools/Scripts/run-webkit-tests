@@ -65,6 +65,13 @@ sub usingWebKit2()
     return grep(/(-2|--webkit-test-runner)/, @ARGV);
 }
 
+sub usingLeaks()
+{
+    # NRWT doesn't support --leaks yet.
+    # https://bugs.webkit.org/show_bug.cgi?id=63832
+    return grep(/--leaks/, @ARGV);
+}
+
 sub useNewRunWebKitTests()
 {
     # Change this check to control which platforms use new-run-webkit-tests by default.
@@ -82,7 +89,7 @@ sub useNewRunWebKitTests()
         return (!usingWebKit2() and !isDarwin() and !isARM() and (getQtVersion() ne "4.8"));
     }
 
-    return ((isLeopard() or isSnowLeopard() or isGtk()) and !usingWebKit2());
+    return ((isLeopard() or isSnowLeopard() or isGtk()) and !usingWebKit2() and !usingLeaks());
 }
 
 my $harnessName = "old-run-webkit-tests";

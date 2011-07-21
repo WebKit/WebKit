@@ -1,3 +1,14 @@
+2011-07-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Reenable ORWT for the --leaks bot.
+        Something is still wrong with the leaks summarizing
+        but I'm about to head out on vacation for 2 weeks,
+        so it's best to just revert back to ORWT until I'm back.
+
+        * Scripts/run-webkit-tests:
+        (usingLeaks):
+        (useNewRunWebKitTests):
+
 2011-07-21  Ojan Vafai  <ojan@chromium.org>
 
         cleanup jsonresults.py style in preparation for making some changes
