@@ -424,6 +424,9 @@ static bool isPositionInRange(const VisiblePosition& position, Range* range)
 
 static bool shouldUseSelection(const VisiblePosition& position, const VisibleSelection& selection)
 {
+    if (!selection.isRange())
+        return false;
+
     RefPtr<Range> selectedRange = selection.toNormalizedRange();
     if (!selectedRange)
         return false;
