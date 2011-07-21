@@ -347,7 +347,11 @@ void InsertParagraphSeparatorCommand::doApply()
         if (insertionPosition.containerNode() == startBlock)
             n = insertionPosition.computeNodeAfterPosition();
         else {
-            splitTreeToNode(insertionPosition.containerNode(), startBlock);
+            Node* splitTo = insertionPosition.containerNode();
+            if (splitTo->isTextNode() && insertionPosition.offsetInContainerNode() >= caretMaxOffset(splitTo))
+              splitTo = splitTo->traverseNextNode(startBlock);
+            ASSERT(splitTo);
+            splitTreeToNode(splitTo, startBlock);
 
             for (n = startBlock->firstChild(); n; n = n->nextSibling()) {
                 if (comparePositions(VisiblePosition(insertionPosition), positionBeforeNode(n)) <= 0)
