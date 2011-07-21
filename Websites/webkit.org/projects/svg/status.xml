@@ -6,7 +6,7 @@
     This is a seldom-updated summary document showing the current implementation status of SVG in WebKit.
     </p>
     <p>
-    Last update: Jan 5th, 2010.
+    Last update: Jul 21st, 2011.
     </p>
     <p>
     Note: this is not a full list of all SVG bugs, please see the <a href="https://bugs.webkit.org/buglist.cgi?query_format=advanced&amp;product=WebKit&amp;component=SVG&amp;bug_status=UNCONFIRMED&amp;bug_status=NEW&amp;bug_status=ASSIGNED&amp;bug_status=REOPENED">SVG bug list</a>.
@@ -174,22 +174,25 @@
             <element>
                 <name>altGlyph</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#AltGlyphElement</url>
-                <status>Partial</status>
+                <status>Implemented</status>
             </element>
             <element>
-                <name>altGlpyhDef</name>
+                <name>altGlyphDef</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#AltGlyphDefElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
-                <name>altGlpyhItem</name>
+                <name>altGlyphItem</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#AltGlyphItemElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
             </element>
             <element>
                 <name>glyphRef</name>
                 <url>http://www.w3.org/TR/SVG11/text.html#GlyphRefElement</url>
-                <status>Unimplemented</status>
+                <status>Implemented</status>
+                <issues>
+                    <issue>x, y, dx, dy, format and glyphRef attributes are not supported <bug>64787</bug></issue>
+                </issues>
             </element>
         </elements>
     </module>

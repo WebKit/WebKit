@@ -1,3 +1,14 @@
+2011-07-20  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        SVG feature status is not up-to-date
+        https://bugs.webkit.org/show_bug.cgi?id=64856
+
+        Reviewed by Dirk Schulze.
+
+        Update SVG feature status after r91331.
+
+        * projects/svg/status.xml:
+
 2011-06-29  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Darin Adler.
