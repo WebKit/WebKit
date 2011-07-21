@@ -1,5 +1,16 @@
 2011-07-21  John Knottenbelt  <jknotten@chromium.org>
 
+        [Chromium] Remove test expectation for fast/speech/input-text-speechbutton.html.
+        https://bugs.webkit.org/show_bug.cgi?id=64945
+
+        The test was fixed in https://bugs.webkit.org/show_bug.cgi?id=64857.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-21  John Knottenbelt  <jknotten@chromium.org>
+
         [Chromium] Mark test fast/flexbox/010.html as flaky (crashy).
         https://bugs.webkit.org/show_bug.cgi?id=64944
 
