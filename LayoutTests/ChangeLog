@@ -1,3 +1,53 @@
+2011-07-21  Rob Buis  <rbuis@rim.com>
+
+        Fix SVG Font resources link in W3C SVG 1.1SE tests
+        https://bugs.webkit.org/show_bug.cgi?id=64953
+
+        Reviewed by Dirk schulze.
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/color-prop-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt:
+        * svg/W3C-SVG-1.1-SE/color-prop-05-t.svg:
+        * svg/W3C-SVG-1.1-SE/filters-felem-01-b.svg:
+        * svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg:
+        * svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg:
+        * svg/W3C-SVG-1.1-SE/painting-control-04-f.svg:
+        * svg/W3C-SVG-1.1-SE/painting-marker-07-f.svg:
+        * svg/W3C-SVG-1.1-SE/struct-use-14-f.svg:
+        * svg/W3C-SVG-1.1-SE/styling-css-04-f.svg:
+        * svg/W3C-SVG-1.1-SE/svgdom-over-01-f.svg:
+        * svg/W3C-SVG-1.1-SE/text-intro-02-b.svg:
+        * svg/W3C-SVG-1.1-SE/text-intro-05-t.svg:
+        * svg/W3C-SVG-1.1-SE/text-intro-09-b.svg:
+        * svg/W3C-SVG-1.1-SE/text-tref-03-b.svg:
+        * svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg:
+
 2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         More Chromium rebaselines for r91474.
