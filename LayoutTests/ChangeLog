@@ -1,5 +1,70 @@
 2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium rebaselines after r91493.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png:
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png: Added.
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Added.
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1-SE: Added.
+        * platform/chromium-win-xp/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium test expectations update after rolling out r91285 and r91332.
 
         * platform/chromium/test_expectations.txt:

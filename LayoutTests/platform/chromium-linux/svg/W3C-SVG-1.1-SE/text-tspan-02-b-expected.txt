@@ -43,7 +43,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 7 at (104.17,180.00) startOffset 6 endOffset 7 width 19.46: "a"
             chunk 1 text run 8 at (122.90,180.00) startOffset 7 endOffset 8 width 17.50: "v"
             chunk 1 text run 9 at (139.66,180.00) startOffset 8 endOffset 9 width 19.46: "e"
-            chunk 1 text run 10 at (159.13,180.00) startOffset 9 endOffset 10 width 9.73: " "
+            chunk 1 text run 10 at (159.12,180.00) startOffset 9 endOffset 10 width 9.73: " "
             chunk 1 text run 11 at (168.85,180.00) startOffset 10 endOffset 11 width 19.46: "a"
             chunk 1 text run 12 at (188.32,180.00) startOffset 11 endOffset 12 width 9.73: " "
             chunk 1 text run 13 at (198.04,180.00) startOffset 12 endOffset 13 width 17.50: "s"

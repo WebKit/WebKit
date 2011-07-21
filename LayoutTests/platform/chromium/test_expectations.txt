@@ -2816,8 +2816,6 @@ BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = CRASH
 
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
-BUGCR74519 WIN LINUX : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE+TEXT
-
 BUGWK55560 : editing/input/setting-input-value-cancel-ime-composition.html = TEXT
 
 BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = TEXT PASS
@@ -3034,7 +3032,6 @@ BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg = IMAGE+TE
 BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/W3C-I18N/tspan-direction-rtl.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/text/bidi-tspans.svg = IMAGE+TEXT
@@ -3137,7 +3134,6 @@ BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = 
 BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
 BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
 BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-SVG-1.1-SE/text-intro-05-t.svg = IMAGE
 BUGWK58193 VISTA : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
 BUGWK58193 VISTA : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
 BUGWK58193 VISTA : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
@@ -3791,3 +3787,5 @@ BUGWK64946 WIN DEBUG : fast/dom/DeviceOrientation/no-synchronous-events.html = C
 BUGWK64948 WIN DEBUG : fast/forms/input-file-label.html = CRASH PASS
 
 BUGWK64951 : fast/frames/meta-refresh-user-gesture.html = CRASH TIMEOUT PASS
+
+BUGWK64976 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE+TEXT
