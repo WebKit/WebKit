@@ -1,3 +1,11 @@
+2011-07-21  Sam Weinig  <sam@webkit.org>
+
+        fast/events/offsetX-offsetY.html is failing on the bots.
+
+        * fast/events/offsetX-offsetY-expected.txt:
+        * fast/events/offsetX-offsetY.html:
+        Update test and result in response to changes to margins in columns.
+
 2011-07-21  John Knottenbelt  <jknotten@chromium.org>
 
         [Chromium] Mark http/tests/inspector/console-websocket-error.html as timing out.
