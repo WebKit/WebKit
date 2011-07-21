@@ -4945,24 +4945,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setTransform(operations);
         return;
     }
-    case CSSPropertyWebkitTransformOrigin:
-        HANDLE_INHERIT_AND_INITIAL(transformOriginX, TransformOriginX)
-        HANDLE_INHERIT_AND_INITIAL(transformOriginY, TransformOriginY)
-        HANDLE_INHERIT_AND_INITIAL(transformOriginZ, TransformOriginZ)
-        return;
-    case CSSPropertyWebkitTransformOriginZ: {
-        HANDLE_INHERIT_AND_INITIAL(transformOriginZ, TransformOriginZ)
-        if (!primitiveValue)
-            return;
-        float f;
-        int type = primitiveValue->primitiveType();
-        if (CSSPrimitiveValue::isUnitTypeLength(type))
-            f = static_cast<float>(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle));
-        else
-            return;
-        m_style->setTransformOriginZ(f);
-        break;
-    }
     case CSSPropertyWebkitTransformStyle:
         HANDLE_INHERIT_AND_INITIAL(transformStyle3D, TransformStyle3D)
         if (primitiveValue)
@@ -5341,6 +5323,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyMinHeight:
     case CSSPropertyWebkitTransformOriginX:
     case CSSPropertyWebkitTransformOriginY:
+    case CSSPropertyWebkitTransformOriginZ:
+    case CSSPropertyWebkitTransformOrigin:
     case CSSPropertyWebkitPerspectiveOriginX:
     case CSSPropertyWebkitPerspectiveOriginY:
     case CSSPropertyWebkitPerspectiveOrigin:

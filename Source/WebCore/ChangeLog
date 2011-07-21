@@ -1,3 +1,23 @@
+2011-07-20  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSSPropertyWebkitTransformOriginZ and Origin in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=64785
+        Note that this changes a cast from
+          computed length double -> 28 bit int -> float
+        to
+          computed length double -> float
+        I couldn't see any reason in the code that this was strictly necessary,
+        however it may have been so that X,Y,Z all have the same behavior, even though Z itself is not stored in a Length.
+
+        Reviewed by Simon Fraser.
+
+        No new tests / refactoring.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-07-20  Tony Chang  <tony@chromium.org>
 
         Remove stray reference to StyleFlexibleBoxData.h that was accidentally
