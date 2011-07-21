@@ -1,5 +1,14 @@
 2011-07-21  Adam Barth  <abarth@webkit.org>
 
+        ORWT fails to consume some NRWT arguments
+        https://bugs.webkit.org/show_bug.cgi?id=64988
+
+        Reviewed by Adam Roben.
+
+        * Scripts/old-run-webkit-tests:
+
+2011-07-21  Adam Barth  <abarth@webkit.org>
+
         Merge TestFailures and garden-o-matic unit tests harness
         https://bugs.webkit.org/show_bug.cgi?id=64984
 

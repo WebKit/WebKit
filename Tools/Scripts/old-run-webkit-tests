@@ -378,10 +378,10 @@ my $getOptionsResult = GetOptions(
     'verbose|v' => \$verbose,
     'webkit-test-runner|2' => \$useWebKitTestRunner,
     # These arguments are ignored (but are used by new-run-webkit-tests).
-    'builder-name' => \$builderName,
-    'build-number' => \$buildNumber,
-    'master-name' => \$masterName,
-    'test-results-server' => \$testResultsServer,
+    'builder-name=s' => \$builderName,
+    'build-number=s' => \$buildNumber,
+    'master-name=s' => \$masterName,
+    'test-results-server=s' => \$testResultsServer,
 );
 
 if (!$getOptionsResult || $showHelp) {
