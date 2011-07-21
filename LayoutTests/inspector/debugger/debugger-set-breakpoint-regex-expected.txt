@@ -1,0 +1,10 @@
+Tests Debugger.setBreakpointByUrl with isRegex set to true.
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+Call stack:
+    0) testFunction (debugger-set-breakpoint-regex.html:9)
+Script execution resumed.
+Debugger was disabled.
+

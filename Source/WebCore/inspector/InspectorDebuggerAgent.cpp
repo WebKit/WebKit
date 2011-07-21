@@ -37,6 +37,7 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
+#include "RegularExpression.h"
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"
 #include <wtf/text/WTFString.h>
@@ -160,31 +161,42 @@ void InspectorDebuggerAgent::inspectedURLChanged(const String&)
     m_breakpointIdToDebugServerBreakpointIds.clear();
 }
 
-static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition)
+static PassRefPtr<InspectorObject> buildObjectForBreakpointCookie(const String& url, int lineNumber, int columnNumber, const String& condition, bool isRegex)
 {
     RefPtr<InspectorObject> breakpointObject = InspectorObject::create();
     breakpointObject->setString("url", url);
     breakpointObject->setNumber("lineNumber", lineNumber);
     breakpointObject->setNumber("columnNumber", columnNumber);
     breakpointObject->setString("condition", condition);
+    breakpointObject->setBoolean("isRegex", isRegex);
     return breakpointObject;
 }
 
-void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, String* outBreakpointId, RefPtr<InspectorArray>* locations)
+static bool matches(const String& url, const String& pattern, bool isRegex)
+{
+    if (isRegex) {
+        RegularExpression regex(pattern, TextCaseSensitive);
+        return regex.match(url) != -1;
+    }
+    return url == pattern;
+}
+
+void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url, int lineNumber, const int* const optionalColumnNumber, const String* const optionalCondition, const bool* const optionalIsRegex, String* outBreakpointId, RefPtr<InspectorArray>* locations)
 {
     int columnNumber = optionalColumnNumber ? *optionalColumnNumber : 0;
     String condition = optionalCondition ? *optionalCondition : "";
+    bool isRegex = optionalIsRegex ? *optionalIsRegex : false;
 
-    String breakpointId = url + ':' + String::number(lineNumber) + ':' + String::number(columnNumber);
+    String breakpointId = (isRegex ? "/" + url + "/" : url) + ':' + String::number(lineNumber) + ':' + String::number(columnNumber);
     RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
     if (breakpointsCookie->find(breakpointId) != breakpointsCookie->end())
         return;
-    breakpointsCookie->setObject(breakpointId, buildObjectForBreakpointCookie(url, lineNumber, columnNumber, condition));
+    breakpointsCookie->setObject(breakpointId, buildObjectForBreakpointCookie(url, lineNumber, columnNumber, condition, isRegex));
     m_inspectorState->setObject(DebuggerAgentState::javaScriptBreakpoints, breakpointsCookie);
 
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition);
     for (ScriptsMap::iterator it = m_scripts.begin(); it != m_scripts.end(); ++it) {
-        if (it->second.url != url)
+        if (!matches(it->second.url, url, isRegex))
             continue;
         RefPtr<InspectorObject> location = resolveBreakpoint(breakpointId, it->first, breakpoint);
         if (location)
@@ -414,9 +426,11 @@ void InspectorDebuggerAgent::didParseSource(const String& sourceId, const Script
     RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
     for (InspectorObject::iterator it = breakpointsCookie->begin(); it != breakpointsCookie->end(); ++it) {
         RefPtr<InspectorObject> breakpointObject = it->second->asObject();
-        String breakpointURL;
-        breakpointObject->getString("url", &breakpointURL);
-        if (breakpointURL != script.url)
+        bool isRegex;
+        breakpointObject->getBoolean("isRegex", &isRegex);
+        String url;
+        breakpointObject->getString("url", &url);
+        if (!matches(script.url, url, isRegex))
             continue;
         ScriptBreakpoint breakpoint;
         breakpointObject->getNumber("lineNumber", &breakpoint.lineNumber);

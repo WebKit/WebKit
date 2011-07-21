@@ -1,3 +1,13 @@
+2011-07-21  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [protocol] extend setBreakpointByUrl request to accept incomplete URL (predicates)
+        https://bugs.webkit.org/show_bug.cgi?id=60762
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/debugger-set-breakpoint-regex-expected.txt: Added.
+        * inspector/debugger/debugger-set-breakpoint-regex.html: Added.
+
 2011-07-21  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r88757): input[type=range] renders incorrectly in RTL context.

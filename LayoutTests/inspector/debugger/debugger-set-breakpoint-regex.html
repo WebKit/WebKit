@@ -1,0 +1,48 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+function testFunction()
+{
+    foo();
+}
+
+function foo()
+{
+}
+
+function test()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        var columnNumber = undefined;
+        var condition = undefined;
+        var isRegex = true;
+        DebuggerAgent.setBreakpointByUrl("debugger-set-breakpoint.*", 8, columnNumber, condition, isRegex, step2);
+    }
+
+    function step2()
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
+    }
+
+    function step3(callFrames)
+    {
+        InspectorTest.captureStackTrace(callFrames);
+        InspectorTest.completeDebuggerTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests Debugger.setBreakpointByUrl with isRegex set to true.
+</p>
+</body>
+</html>
