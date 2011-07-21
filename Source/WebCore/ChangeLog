@@ -1,5 +1,25 @@
 2011-07-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 89165.
+
+    2011-06-17  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dave Hyatt.
+
+        When we lose ability to propagate floats, need to find topmost
+        parent with that overhanging float, and then iterate over its
+        sibling blocks to remove the float.
+        https://bugs.webkit.org/show_bug.cgi?id=62875
+
+        Test: fast/block/float/float-not-removed-from-next-sibling5.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::hasOverhangingFloat):
+        * rendering/RenderBlock.h:
+
+2011-07-21  Lucas Forschler  <lforschler@apple.com>
+
     Merged 89067.
 
     2011-06-16  Abhishek Arya  <inferno@chromium.org>
