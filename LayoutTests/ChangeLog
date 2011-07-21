@@ -1,5 +1,18 @@
 2011-07-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 89769.
+
+    2011-06-26  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        With word-break: break-all, words do not break correctly before a surrogate pair
+        https://bugs.webkit.org/show_bug.cgi?id=63401
+
+        * fast/text/midword-break-before-surrogate-pair.html: Added.
+
+2011-07-21  Lucas Forschler  <lforschler@apple.com>
+
     Merged 89614.
 
     2011-06-23  Gavin Barraclough  <barraclough@apple.com>
