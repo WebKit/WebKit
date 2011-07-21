@@ -115,9 +115,10 @@ class LeakDetector(object):
             _log.warn("Failed to parse leaks output: %s" % e.message_with_output())
             return
 
+        # total: 5,888 bytes (0 bytes excluded).
         unique_leak_count = len(re.findall(r'^(\d*)\scalls', parse_malloc_history_output))
-        total_bytes = int(re.search(r'^total\:\s(.*)\s\(', parse_malloc_history_output).group(1))
-        return (total_bytes, unique_leak_count)
+        total_bytes_string = re.search(r'^total\:\s(.+)\s\(', parse_malloc_history_output, re.MULTILINE).group(1)
+        return (total_bytes_string, unique_leak_count)
 
     def check_for_leaks(self, process_name, process_pid):
         _log.debug("Checking for leaks in %s" % process_name)
@@ -130,6 +131,7 @@ class LeakDetector(object):
             _log.warn("Failed to run leaks tool: %s" % e.message_with_output())
             return
 
+        # FIXME: We should consider moving leaks parsing to the end when summarizing is done.
         count, excluded, bytes = self._parse_leaks_output(leaks_output, process_pid)
         adjusted_count = count - excluded
         if not adjusted_count:
@@ -253,11 +255,16 @@ class MacPort(WebKitPort):
             return
         # We're in the manager process, so the leak detector will not have a valid list of leak files.
         # FIXME: This is a hack, but we don't have a better way to get this information from the workers yet.
+        # FIXME: This will include too many leaks in subsequent runs until the results directory is cleared!
         leaks_files = self._leak_detector.leaks_files_in_directory(self.results_directory())
         if not leaks_files:
             return
-        total_bytes, unique_leaks = self._leak_detector.parse_leak_files(leaks_files)
-        _log.info("%s total leaks found for a total of %s!" % (self._total_leaks, total_bytes))
+        total_bytes_string, unique_leaks = self._leak_detector.parse_leak_files(leaks_files)
+        # old-run-webkit-tests used to print the "total leaks" count, but that would
+        # require re-parsing each of the leaks files (which we could do at some later point if that would be useful.)
+        # Tools/BuildSlaveSupport/build.webkit.org-config/master.cfg greps for "leaks found".
+        # master.cfg will need an update if these strings change.
+        _log.info("leaks found for a total of %s!" % total_bytes_string)
         _log.info("%s unique leaks found!" % unique_leaks)
 
     def _check_port_build(self):

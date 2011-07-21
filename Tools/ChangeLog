@@ -1,3 +1,13 @@
+2011-07-21  Eric Seidel  <eric@webkit.org>
+
+        Unreviewed.  Just fixing (and unittesting) a previous typo.
+
+        Fix typo in print_leaks_summary regexp which was causing
+        leaks summarizing to fail on the --leaks bot.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+
 2011-07-21  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should be able to rebaseline many tests at once

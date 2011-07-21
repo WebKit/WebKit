@@ -99,13 +99,15 @@ Leak: 0x25102fe0  size=176  zone: DefaultMallocZone_0x1d94000   string 'NSExcept
 
         def mock_run_script(name, args, include_configuration_arguments=False):
             print "MOCK _run_script: %s %s" % (name, args)
-            return "total: 12345 ("
+            return """1 calls for 16 bytes: -[NSURLRequest mutableCopyWithZone:] | +[NSObject(NSObject) allocWithZone:] | _internal_class_createInstanceFromZone | calloc | malloc_zone_calloc
+
+total: 5,888 bytes (0 bytes excluded)."""
         detector._port._run_script = mock_run_script
 
         leak_files = ['/mock-results/leaks-DumpRenderTree-1234.txt', '/mock-results/leaks-DumpRenderTree-1235.txt']
         expected_stdout = "MOCK _run_script: parse-malloc-history ['--merge-depth', 5, '/mock-results/leaks-DumpRenderTree-1234.txt', '/mock-results/leaks-DumpRenderTree-1235.txt']\n"
         results_tuple = OutputCapture().assert_outputs(self, detector.parse_leak_files, [leak_files], expected_stdout=expected_stdout)
-        self.assertEquals(results_tuple, (12345, 0))
+        self.assertEquals(results_tuple, ("5,888 bytes", 1))
 
 
 class MacTest(port_testcase.PortTestCase):
