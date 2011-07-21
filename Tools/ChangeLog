@@ -1,5 +1,19 @@
 2011-07-20  Eric Seidel  <eric@webkit.org>
 
+        new-run-webkit-tests --leaks does not restart DumpRenderTree often enough
+        https://bugs.webkit.org/show_bug.cgi?id=64912
+
+        Reviewed by Adam Barth.
+
+        The bug was that set_default_option only works if the option's value
+        is "None".  So I fixed --batch-size to default to None instead of 0
+        (which kinda makes sense).
+
+        * Scripts/webkitpy/layout_tests/controllers/worker.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2011-07-20  Eric Seidel  <eric@webkit.org>
+
         Make kill-old-processes kill httpd on mac
         https://bugs.webkit.org/show_bug.cgi?id=64898
 

@@ -365,7 +365,7 @@ def parse_args(args=None):
         #   Restart DumpRenderTree every n tests (default: 1000)
         optparse.make_option("--batch-size",
             help=("Run a the tests in batches (n), after every n tests, "
-                  "DumpRenderTree is relaunched."), type="int", default=0),
+                  "DumpRenderTree is relaunched."), type="int", default=None),
         # old-run-webkit-tests calls --run-singly: -1|--singly
         # Isolate each test case run (implies --nthly 1 --verbose)
         optparse.make_option("--run-singly", action="store_true",

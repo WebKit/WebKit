@@ -48,8 +48,8 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._done = False
         self._canceled = False
         self._port = None
-        self._batch_size = 0
-        self._batch_count = 0
+        self._batch_size = None
+        self._batch_count = None
         self._filesystem = None
         self._driver = None
         self._tests_run_file = None
@@ -67,7 +67,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         self._port = port
         self._filesystem = port.filesystem
         self._batch_count = 0
-        self._batch_size = self._options.batch_size
+        self._batch_size = self._options.batch_size or 0
         tests_run_filename = self._filesystem.join(port.results_directory(), "tests_run%d.txt" % self._worker_number)
         self._tests_run_file = self._filesystem.open_text_file_for_writing(tests_run_filename)
 
@@ -155,6 +155,7 @@ class Worker(manager_worker_broker.AbstractWorker):
 
     def kill_driver(self):
         if self._driver:
+            _log.debug("%s killing driver" % self._name)
             self._driver.stop()
             self._driver = None
 
@@ -185,7 +186,6 @@ class Worker(manager_worker_broker.AbstractWorker):
             _log.debug("%s %s passed" % (self._name, test_name))
 
         if self._batch_size > 0 and self._batch_count >= self._batch_size:
-            # Bounce the shell and reset count.
             self.kill_driver()
             self._batch_count = 0
 
