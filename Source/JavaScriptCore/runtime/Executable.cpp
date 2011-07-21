@@ -189,7 +189,9 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
 
 #if ENABLE(JIT)
     if (exec->globalData().canUseJIT()) {
-        m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_evalCodeBlock.get());
+        bool dfgCompiled = tryDFGCompile(exec, m_evalCodeBlock.get(), m_jitCodeForCall);
+        if (!dfgCompiled)
+            m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_evalCodeBlock.get());
 #if !ENABLE(OPCODE_SAMPLING)
         if (!BytecodeGenerator::dumpsGeneratedCode())
             m_evalCodeBlock->discardBytecode();

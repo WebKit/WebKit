@@ -482,32 +482,34 @@ static void* handleHostCall(ExecState* execCallee, JSValue callee, CodeSpecializ
         }
     
         ASSERT(callType == CallTypeNone);
-    } else {
-        ASSERT(kind == CodeForConstruct);
-        
-        ConstructData constructData;
-        ConstructType constructType = getConstructData(callee, constructData);
-        
-        ASSERT(constructType != ConstructTypeJS);
-        
-        if (constructType == ConstructTypeHost) {
-            if (!globalData->interpreter->registerFile().grow(execCallee->registers())) {
-                globalData->exception = createStackOverflowError(exec);
-                return 0;
-            }
-            
-            execCallee->setScopeChain(exec->scopeChain());
-            
-            globalData->hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
-            
-            if (globalData->exception)
-                return 0;
-            return reinterpret_cast<void*>(getHostCallReturnValue);
+        exec->globalData().exception = createNotAFunctionError(exec, callee);
+        return 0;
+    }
+
+    ASSERT(kind == CodeForConstruct);
+    
+    ConstructData constructData;
+    ConstructType constructType = getConstructData(callee, constructData);
+    
+    ASSERT(constructType != ConstructTypeJS);
+    
+    if (constructType == ConstructTypeHost) {
+        if (!globalData->interpreter->registerFile().grow(execCallee->registers())) {
+            globalData->exception = createStackOverflowError(exec);
+            return 0;
         }
         
-        ASSERT(constructType == ConstructTypeNone);
+        execCallee->setScopeChain(exec->scopeChain());
+        
+        globalData->hostCallReturnValue = JSValue::decode(constructData.native.function(execCallee));
+        
+        if (globalData->exception)
+            return 0;
+        return reinterpret_cast<void*>(getHostCallReturnValue);
     }
-    exec->globalData().exception = createNotAFunctionError(exec, callee);
+    
+    ASSERT(constructType == ConstructTypeNone);
+    exec->globalData().exception = createNotAConstructorError(exec, callee);
     return 0;
 }
 

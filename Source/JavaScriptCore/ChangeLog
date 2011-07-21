@@ -1,3 +1,21 @@
+2011-07-21  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64964
+        DFG JIT - Enable support for eval code
+
+        Reviewed by Sam Weinig.
+
+        This is basically the same as program code, to the JIT!
+
+        * bytecode/Opcode.cpp:
+        * bytecode/Opcode.h:
+            - Enable opcodeNames in !NDEBUG builds.
+        * dfg/DFGOperations.cpp:
+            - Fix a bug exposed by eval support, throw correct type error for new.
+        * runtime/Executable.cpp:
+        (JSC::EvalExecutable::compileInternal):
+            - Enable DFG JIT for eval code.
+
 2011-07-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91380.
