@@ -81,8 +81,6 @@ public:
     virtual void evaluateInWebInspector(long callId, const WebString& script);
     virtual void setJavaScriptProfilingEnabled(bool);
     virtual void setRuntimeProperty(const WebString& name, const WebString& value);
-    // FIXME: remove once renamed to setProcessId downstream.
-    virtual void setAgentIdentifierPrefix(const WebString&);
     virtual void setProcessId(long);
 
     // InspectorClient implementation.

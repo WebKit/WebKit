@@ -322,11 +322,6 @@ void WebDevToolsAgentImpl::setCacheDisabled(bool cacheDisabled)
     memoryCache()->setDisabled(cacheDisabled);
 }
 
-// FIXME: remove once renamed to setProcessId downstream.
-void WebDevToolsAgentImpl::setAgentIdentifierPrefix(const WebString& prefix)
-{
-}
-
 void WebDevToolsAgentImpl::setProcessId(long processId)
 {
     inspectorController()->setProcessId(processId);

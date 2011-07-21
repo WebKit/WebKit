@@ -59,8 +59,6 @@ public:
 
     virtual void inspectElementAt(const WebPoint&) = 0;
     virtual void setRuntimeProperty(const WebString& name, const WebString& value) = 0;
-    // FIXME: remove once renamed to setProcessId downstream.
-    virtual void setAgentIdentifierPrefix(const WebString&) = 0;
     virtual void setProcessId(long) = 0;
 
     // Exposed for LayoutTestController.
