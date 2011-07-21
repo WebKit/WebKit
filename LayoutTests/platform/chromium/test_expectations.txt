@@ -3359,7 +3359,6 @@ BUGWK60126 : fast/transforms/selection-bounds-in-transformed-view.html = TEXT
 // more failures for triaging, fails on deps bots at least?
 BUGWK60123 DEBUG LINUX : editing/pasteboard/merge-end-2.html = CRASH PASS
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = TEXT PASS
-BUGDPRANKE : fast/frames/meta-refresh-user-gesture.html = TIMEOUT PASS
 BUGDPRANKE : http/tests/navigation/redirect-on-back-updates-history-item.html = TIMEOUT PASS
 BUGWK60125 : fast/files/create-blob-url-crash.html = CRASH PASS
 
@@ -3793,3 +3792,6 @@ BUGWK64943 MAC : fast/flexbox/010.html = CRASH PASS
 BUGWK64946 WIN DEBUG : fast/dom/DeviceOrientation/no-synchronous-events.html = CRASH PASS
 
 BUGWK64948 WIN DEBUG : fast/forms/input-file-label.html = CRASH PASS
+
+BUGWK64951 : fast/frames/meta-refresh-user-gesture.html = CRASH TIMEOUT PASS
+
