@@ -1,3 +1,16 @@
+2011-07-19  Ojan Vafai  <ojan@chromium.org>
+
+        fix links on the flakiness dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=64832
+
+        Reviewed by Tony Chang.
+
+        Make them actual anchor tags and linkify the test name instead of
+        adding an extra link. Also simplify the update view since we now
+        show the linkified test name.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
 2011-07-21  Adam Barth  <abarth@webkit.org>
 
         webkit.org builders should upload results to test-results AppEngine instance

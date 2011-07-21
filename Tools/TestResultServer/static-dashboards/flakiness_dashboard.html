@@ -1197,7 +1197,7 @@ function htmlForBugs(bugs)
 
 function linkHTMLToOpenWindow(url, text)
 {
-    return '<div class=link onclick="window.open(\'' + url + '\')">' + text + '</div>';
+    return '<a href="' + url + '" target="_blank">' + text + '</a>';
 }
 
 // FIXME: replaced with chromiumRevisionLink/webKitRevisionLink
@@ -1298,12 +1298,6 @@ function showPopupForBuild(e, builder, index, opt_testName)
 
     html += '</ul>';
     showPopup(e, html);
-}
-
-function showPopupForTest(e, test)
-{
-    showPopup(e, htmlForIndividulTestOnAllBuilders(test));
-    appendExpectations();
 }
 
 function htmlForTestResults(test)
@@ -1726,9 +1720,13 @@ function generatePageForExpectationsUpdate()
 function showUpdateInfoForTest(testsNeedingUpdate, keys)
 {
     var test = keys[g_currentState.updateIndex];
-    document.body.innerHTML = '<b>' + test + '</b>' +
-        '<div style="float:right">' + (g_currentState.updateIndex + 1) + ' of ' +
-        + keys.length + ' tests</div><br><br>';
+    document.body.innerHTML = '';
+
+    // FIXME: Make this DOM creation less verbose.
+    var index = document.createElement('div');
+    index.style.cssFloat = 'right';
+    index.textContent = (g_currentState.updateIndex + 1) + ' of ' + keys.length + ' tests';
+    document.body.appendChild(index);
 
     var buttonRegion = document.createElement('div');
     var includeBtn = document.createElement('input');
@@ -1854,12 +1852,14 @@ function htmlForIndividulTestOnAllBuilders(test)
     var testResults = g_testToResultsMap[test];
     var master;
     var html = '';
+    if (isLayoutTestResults()) {
+        var tracURL = TEST_URL_BASE_PATH_TRAC + test
+        html += '<h2>' + linkHTMLToOpenWindow(tracURL, test) + '</h2>';
+    } else
+        html += '<h2>' + test + '</h2>';
+
     if (testResults && testResults.length) {
         master = builderMaster(testResults[0].builder);
-        if (isLayoutTestResults()) {
-            var tracURL = TEST_URL_BASE_PATH_TRAC + test
-            html += linkHTMLToOpenWindow(tracURL, tracURL);
-        }
 
         html +='<div><b>If a builder is not listed, that means the builder ' +
             'does not run that test (e.g. it is skipped) or all runs of the ' +
@@ -2364,7 +2364,7 @@ function htmlForIndividualTests(tests)
 {
     var testsHTML = [];
     for (var i = 0; i < tests.length; i++)
-        testsHTML.push('<h2 onclick="selectContents(this)">' + tests[i] + '</h2>' + htmlForIndividulTestOnAllBuilders(tests[i]));
+        testsHTML.push(htmlForIndividulTestOnAllBuilders(tests[i]));
     return testsHTML.join('<hr>');
 }
 
