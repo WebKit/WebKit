@@ -3773,7 +3773,8 @@ BUGCR75424 LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMA
 
 BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 
-BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = TIMEOUT
+// The test is flaky, due to the WebSocket issue.
+BUGWK64788 : http/tests/websocket/tests/hybi/reserved-opcodes.html = PASS TIMEOUT
 
 BUGWK64904 : fast/forms/input-appearance-range-rtl.html = IMAGE
 
