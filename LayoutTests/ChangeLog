@@ -1,3 +1,65 @@
+2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline for r91474.
+
+        * platform/chromium-linux/fast/multicol/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-columns-child-expected.txt: Removed.
+        * platform/chromium-linux/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/chromium-linux/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/float-avoidance-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-child-property-removal-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/multicol/span/span-as-nested-columns-child-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/float-avoidance-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/span/span-as-nested-columns-child-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/vertical-lr/float-avoidance-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/vertical-lr/float-multicol-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/vertical-rl/float-avoidance-expected.png: Added.
+        * platform/chromium-mac/fast/multicol/vertical-rl/float-multicol-expected.png: Added.
+        * platform/chromium-win/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-win/fast/multicol/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/float-avoidance-expected.txt:
+        * platform/chromium-win/fast/multicol/scrolling-overflow-expected.txt:
+        * platform/chromium-win/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/chromium-win/fast/multicol/span/anonymous-before-child-parent-crash-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/chromium-win/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/chromium-win/fast/multicol/vertical-rl/float-multicol-expected.txt:
+
 2011-07-21  Sam Weinig  <sam@webkit.org>
 
         fast/events/offsetX-offsetY.html is failing on the bots.
