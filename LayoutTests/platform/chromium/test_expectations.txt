@@ -3501,16 +3501,6 @@ BUGWK60931 DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-u
 // Flaky since added by r86478
 BUGCR82881 MAC LINUX XP VISTA : http/tests/appcache/interrupted-update.html = PASS TEXT
 
-// Temporary failures because of "Details" localization.
-BUGWK63700 : fast/html/details-no-summary1.html = FAIL
-BUGWK63700 : fast/html/details-no-summary2.html = FAIL
-BUGWK63700 : fast/html/details-no-summary3.html = FAIL
-BUGWK63700 : fast/html/details-no-summary4.html = FAIL
-BUGWK63700 : fast/html/details-remove-summary-1-and-click.html = FAIL
-BUGWK63700 : fast/html/details-remove-summary-1.html = FAIL
-BUGWK63700 : fast/html/details-remove-summary-4-and-click.html = FAIL
-BUGWK63700 : fast/html/details-remove-summary-4.html = FAIL
-
 // Flaky on Linux
 BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT IMAGE+TEXT PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = FAIL PASS
