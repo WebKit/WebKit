@@ -2636,8 +2636,8 @@ BUGCR70686 MAC : fast/text/international/cjk-segmentation.html = TEXT
 // Added by http://trac.webkit.org/changeset/76674
 BUGCR70882 WIN : fast/text/offsetForPosition-complex-fallback.html = TEXT
 
-BUGCR70942 WIN : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
-BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
+BUGWK65019 WIN : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
+BUGWK65019 SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
 // Started failing at http://trac.webkit.org/changeset/76743
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
