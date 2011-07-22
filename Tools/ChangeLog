@@ -1,3 +1,11 @@
+2011-07-22  Alexey Proskuryakov  <ap@apple.com>
+
+        Adding Tim Horton to contributor list for Bugzilla auto-completion. He is CC'ed quite frequently.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-07-22  Michal Pakula vel Rutka  <m.pakula@samsung.com>
 
         [EFL] ewk_frame_hit_test_new enchancement
