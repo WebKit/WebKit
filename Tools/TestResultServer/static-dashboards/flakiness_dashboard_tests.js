@@ -302,6 +302,18 @@ function testGetExpectations()
     assertEquals(JSON.stringify(expectations), '{"modifiers":"MAC LINUX XP VISTA","expectations":"FAIL"}');
 }
 
+function testSubstringList()
+{
+    g_currentState.testType = 'gtest';
+    g_currentState.tests = 'test.FLAKY_foo test.FAILS_foo1 test.DISABLED_foo2 test.MAYBE_foo3 test.foo4';
+    assertEquals(substringList().toString(), 'test.foo,test.foo1,test.foo2,test.foo3,test.foo4');
+
+    g_currentState.testType = 'layout-tests';
+    g_currentState.tests = 'foo/bar.FLAKY_foo.html';
+    assertEquals(substringList().toString(), 'foo/bar.FLAKY_foo.html');
+
+}
+
 function runTests()
 {
     document.body.innerHTML = '<pre id=unittest-results></pre>';

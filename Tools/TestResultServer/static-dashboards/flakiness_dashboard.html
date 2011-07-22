@@ -314,8 +314,7 @@ pre.expectation {
 var ALL = 'ALL';
 var FORWARD = 'forward';
 var BACKWARD = 'backward';
-var GTEST_FLAKY_MARKER = '\.FLAKY_';
-var GTEST_FAILS_MARKER = '\.FAILS_';
+var GTEST_MODIFIERS = ['FLAKY', 'FAILS', 'MAYBE', 'DISABLED'];
 var TEST_URL_BASE_PATH_TRAC = 'http://trac.webkit.org/browser/trunk/LayoutTests/';
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/LayoutTests/";
 var TEST_RESULTS_BASE_PATH = 'http://build.chromium.org/f/chromium/layout_test_results/';
@@ -611,28 +610,29 @@ function individualTests()
     return individualTestsForSubstringList();
 }
 
-function individualTestsForSubstringList()
+function substringList()
 {
     // Convert windows slashes to unix slashes.
     var tests = g_currentState.tests.replace(/\\/g, '/');
     var separator = stringContains(tests, ' ') ? ' ' : ',';
     var testList = tests.split(separator);
 
-    if (!isLayoutTestResults()) {
-        testList.forEach(function(element) {
-            // Make sure to search for the flaky/fails and non-flaky/non-fails
-            // names for a test.
-            // e.g. for test Foo.Bar, also search for Foo.FLAKY_Bar.
-            if (stringContains(element, GTEST_FLAKY_MARKER))
-                testList.push(element.replace(GTEST_FLAKY_MARKER, '.'));
-            else if (stringContains(element, GTEST_FAILS_MARKER))
-                testList.push(element.replace(GTEST_FAILS_MARKER, '.'));
-            else {
-                testList.push(element.replace('.', GTEST_FLAKY_MARKER));
-                testList.push(element.replace('.', GTEST_FAILS_MARKER));
-            }
+    if (isLayoutTestResults())
+        return testList;
+
+    var testListWithoutModifiers = [];
+    testList.forEach(function(path) {
+        GTEST_MODIFIERS.forEach(function(modifier) {
+            path = path.replace('.' + modifier + '_', '.');
         });
-    }
+        testListWithoutModifiers.push(path);
+    });
+    return testListWithoutModifiers;
+}
+
+function individualTestsForSubstringList()
+{
+    var testList = substringList();
 
     // Put the tests into an object first and then move them into an array
     // as a way of deduping.
@@ -1161,12 +1161,6 @@ function processMissingAndExtraExpectations(resultsForTest)
                 extraExpectations.push('PASS');
         }
 
-    } else {
-        var isMarkedFlaky = stringContains(resultsForTest.test, GTEST_FLAKY_MARKER);
-        if (resultsForTest.isFlaky && !isMarkedFlaky)
-            missingExpectations.push('FLAKY');
-        else if (!resultsForTest.isFlaky && isMarkedFlaky)
-            extraExpectations.push('FLAKY');
     }
 
     resultsForTest.meetsExpectations = !missingExpectations.length && !extraExpectations.length;
@@ -1552,19 +1546,6 @@ function alphanumericCompare(column, reverse)
         // Put null entries at the bottom
         var a = a[column] ? String(a[column]) : 'z';
         var b = b[column] ? String(b[column]) : 'z';
-
-        // For gtest tests, we make them as flaky/failing by prefixing the
-        // test name with FLAKY_ or FAILS_, resulting in three possible entries
-        // for the test.
-        // Place flaky/fails tests next to their non-flaky counterparts.
-        // FIXME: Merge the non-flaky/non-fails test with the flaky/fails
-        // one so there's only a single entry per test.
-        if (!isLayoutTestResults()) {
-            a = a.replace(GTEST_FLAKY_MARKER, '.');
-            b = b.replace(GTEST_FLAKY_MARKER, '.');
-            a = a.replace(GTEST_FAILS_MARKER, '.');
-            b = b.replace(GTEST_FAILS_MARKER, '.');
-        }
 
         if (a < b)
             return -1;
@@ -2181,6 +2162,8 @@ function loadNonWebKitResultsForBuilder(builder, test, expectationsContainer)
     container.innerHTML = '<div><b>' + builder + '</b></div>';
     expectationsContainer.appendChild(container);
     for (var i = 0; i < failures.length; i++) {
+        // FIXME: This doesn't seem to work anymore. Did the paths change?
+        // Once that's resolved, see if we need to try each GTEST_MODIFIERS prefix as well.
         var pathToLog = builderMaster(builder).getLogPath(builder, failures[i]) + pathToFailureLog(test);
         appendNonWebKitResults(container, pathToLog);
     }

@@ -1,3 +1,23 @@
+2011-07-21  Ojan Vafai  <ojan@chromium.org>
+
+        simplify gtest display now that we strip modifiers from the JSON
+        https://bugs.webkit.org/show_bug.cgi?id=64990
+
+        Reviewed by Adam Barth.
+
+        Now that names are normalized, we can remove all the code that
+        handles gtest name changes (e.g. for adding modifiers like DISABLED_).
+        Instead, if you try to list a test with a modifier in it, we need
+        to strip the modifier so we get the normalized value.
+
+        We also get rid of the concept of extra/missing expectations for gtests.
+        In a patch soon, we'll stop showing extra/missing expectations from the UI
+        entirely and only leave it for the special updating test_expectations.txt
+        view of the dashboard, which doesn't apply to gtests.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
 2011-07-21  Adam Barth  <abarth@webkit.org>
 
         Refactor Trac.js for use in garden-o-matic
