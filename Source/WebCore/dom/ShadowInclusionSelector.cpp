@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "ShadowContentSelector.h"
+#include "ShadowInclusionSelector.h"
 
 #include "ShadowContentElement.h"
 #include "ShadowRoot.h"
@@ -98,21 +98,21 @@ void ShadowInclusionList::append(PassRefPtr<ShadowInclusion> child)
     m_last = m_last->next();
 }
 
-ShadowContentSelector::ShadowContentSelector()
+ShadowInclusionSelector::ShadowInclusionSelector()
 {
 }
 
-ShadowContentSelector::~ShadowContentSelector()
+ShadowInclusionSelector::~ShadowInclusionSelector()
 {
-    ASSERT(m_children.isEmpty());
+    ASSERT(m_candidates.isEmpty());
 }
 
-void ShadowContentSelector::selectInclusion(ShadowContentElement* contentElement, ShadowInclusionList* inclusions)
+void ShadowInclusionSelector::select(ShadowContentElement* contentElement, ShadowInclusionList* inclusions)
 {
     ASSERT(inclusions->isEmpty());
 
-    for (size_t i = 0; i < m_children.size(); ++i) {
-        Node* child = m_children[i].get();
+    for (size_t i = 0; i < m_candidates.size(); ++i) {
+        Node* child = m_candidates[i].get();
         if (!child)
             continue;
         if (!contentElement->shouldInclude(child))
@@ -121,33 +121,33 @@ void ShadowContentSelector::selectInclusion(ShadowContentElement* contentElement
         RefPtr<ShadowInclusion> inclusion = ShadowInclusion::create(contentElement, child);
         inclusions->append(inclusion);
         m_inclusionSet.add(inclusion.get());
-        m_children[i] = 0;
+        m_candidates[i] = 0;
     }
 }
 
-void ShadowContentSelector::unselectInclusion(ShadowInclusionList* list)
+void ShadowInclusionSelector::unselect(ShadowInclusionList* list)
 {
     for (ShadowInclusion* inclusion = list->first(); inclusion; inclusion = inclusion->next())
         m_inclusionSet.remove(inclusion);
     list->clear();
 }
 
-ShadowInclusion* ShadowContentSelector::findInclusionFor(Node* key) const
+ShadowInclusion* ShadowInclusionSelector::findFor(Node* key) const
 {
     return m_inclusionSet.find(key);
 }
 
-void ShadowContentSelector::didSelectInclusion()
+void ShadowInclusionSelector::didSelect()
 {
-    m_children.clear();
+    m_candidates.clear();
 }
 
-void ShadowContentSelector::willSelectInclusionOver(ShadowRoot* scope)
+void ShadowInclusionSelector::willSelectOver(ShadowRoot* scope)
 {
-    if (!m_children.isEmpty())
+    if (!m_candidates.isEmpty())
         return;
     for (Node* node = scope->shadowHost()->firstChild(); node; node = node->nextSibling())
-        m_children.append(node);
+        m_candidates.append(node);
 }
 
 }

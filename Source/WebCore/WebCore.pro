@@ -538,7 +538,7 @@ SOURCES += \
     dom/SelectElement.cpp \
     dom/SelectorNodeList.cpp \
     dom/ShadowContentElement.cpp \
-    dom/ShadowContentSelector.cpp \
+    dom/ShadowInclusionSelector.cpp \
     dom/ShadowRoot.cpp \
     dom/SpaceSplitString.cpp \
     dom/StaticNodeList.cpp \
@@ -1521,7 +1521,7 @@ HEADERS += \
     dom/SelectElement.h \
     dom/SelectorNodeList.h \
     dom/ShadowContentElement.h \
-    dom/ShadowContentSelector.h \
+    dom/ShadowInclusionSelector.h \
     dom/ShadowRoot.h \
     dom/SpaceSplitString.h \
     dom/StaticNodeList.h \

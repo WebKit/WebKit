@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ShadowContentSelector_h
-#define ShadowContentSelector_h
+#ifndef ShadowInclusionSelector_h
+#define ShadowInclusionSelector_h
 
 #include <wtf/Forward.h>
 #include <wtf/HashSet.h>
@@ -123,26 +123,26 @@ inline ShadowInclusion* ShadowInclusionSet::find(Node* key) const
     return found != m_set.end() ? *found : 0;
 }
 
-class ShadowContentSelector {
-    WTF_MAKE_NONCOPYABLE(ShadowContentSelector);
+class ShadowInclusionSelector {
+    WTF_MAKE_NONCOPYABLE(ShadowInclusionSelector);
 public:
-    ShadowContentSelector();
-    ~ShadowContentSelector();
+    ShadowInclusionSelector();
+    ~ShadowInclusionSelector();
 
-    void selectInclusion(ShadowContentElement*, ShadowInclusionList*);
-    void unselectInclusion(ShadowInclusionList*);
-    ShadowInclusion* findInclusionFor(Node* key) const;
+    void select(ShadowContentElement*, ShadowInclusionList*);
+    void unselect(ShadowInclusionList*);
+    ShadowInclusion* findFor(Node* key) const;
 
-    void willSelectInclusionOver(ShadowRoot*);
-    void didSelectInclusion();
-    bool hasChildren() const { return !m_children.isEmpty(); }
+    void willSelectOver(ShadowRoot*);
+    void didSelect();
+    bool hasCandidates() const { return !m_candidates.isEmpty(); }
 
 
 private:
     void removeFromSet(ShadowInclusionList*);
     void addToSet(ShadowInclusionList*);
 
-    Vector<RefPtr<Node> > m_children;
+    Vector<RefPtr<Node> > m_candidates;
     ShadowInclusionSet m_inclusionSet;
 };
 

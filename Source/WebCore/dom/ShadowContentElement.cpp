@@ -28,7 +28,7 @@
 #include "ShadowContentElement.h"
 
 #include "HTMLNames.h"
-#include "ShadowContentSelector.h"
+#include "ShadowInclusionSelector.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -55,9 +55,9 @@ void ShadowContentElement::attach()
     StyledElement::attach();
 
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        ShadowContentSelector* selector = root->ensureInclusions();
-        selector->unselectInclusion(m_inclusions.get());
-        selector->selectInclusion(this, m_inclusions.get());
+        ShadowInclusionSelector* selector = root->ensureInclusions();
+        selector->unselect(m_inclusions.get());
+        selector->select(this, m_inclusions.get());
         for (ShadowInclusion* inclusion = m_inclusions->first(); inclusion; inclusion = inclusion->next())
             inclusion->content()->detach();
         for (ShadowInclusion* inclusion = m_inclusions->first(); inclusion; inclusion = inclusion->next())
@@ -68,8 +68,8 @@ void ShadowContentElement::attach()
 void ShadowContentElement::detach()
 {
     if (ShadowRoot* root = toShadowRoot(shadowTreeRootNode())) {
-        if (ShadowContentSelector* selector = root->inclusions())
-            selector->unselectInclusion(m_inclusions.get());
+        if (ShadowInclusionSelector* selector = root->inclusions())
+            selector->unselect(m_inclusions.get());
     }
 
     ASSERT(m_inclusions->isEmpty());

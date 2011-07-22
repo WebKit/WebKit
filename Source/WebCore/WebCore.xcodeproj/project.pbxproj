@@ -3330,8 +3330,8 @@
 		A715E653134BBBEC00D8E713 /* ProgressShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A715E651134BBBEC00D8E713 /* ProgressShadowElement.h */; };
 		A718760E0B2A120100A16ECE /* DragActions.h in Headers */ = {isa = PBXBuildFile; fileRef = A718760D0B2A120100A16ECE /* DragActions.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A71878900B2D04AC00A16ECE /* DragControllerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */; };
-		A71C30B81381265E00DBC351 /* ShadowContentSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71C30B61381265E00DBC351 /* ShadowContentSelector.cpp */; };
-		A71C30B91381265E00DBC351 /* ShadowContentSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = A71C30B71381265E00DBC351 /* ShadowContentSelector.h */; };
+		A71C30B81381265E00DBC351 /* ShadowInclusionSelector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A71C30B61381265E00DBC351 /* ShadowInclusionSelector.cpp */; };
+		A71C30B91381265E00DBC351 /* ShadowInclusionSelector.h in Headers */ = {isa = PBXBuildFile; fileRef = A71C30B71381265E00DBC351 /* ShadowInclusionSelector.h */; };
 		A73F95FE12C97BFE0031AAF9 /* RoundedRect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */; };
 		A73F95FF12C97BFE0031AAF9 /* RoundedRect.h in Headers */ = {isa = PBXBuildFile; fileRef = A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A74BB76B13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h in Headers */ = {isa = PBXBuildFile; fileRef = A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9899,8 +9899,8 @@
 		A718760D0B2A120100A16ECE /* DragActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DragActions.h; sourceTree = "<group>"; };
 		A718788F0B2D04AC00A16ECE /* DragControllerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DragControllerMac.mm; sourceTree = "<group>"; };
 		A71A70C911AFB02000989D6D /* HTMLMeterElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HTMLMeterElement.idl; sourceTree = "<group>"; };
-		A71C30B61381265E00DBC351 /* ShadowContentSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowContentSelector.cpp; sourceTree = "<group>"; };
-		A71C30B71381265E00DBC351 /* ShadowContentSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowContentSelector.h; sourceTree = "<group>"; };
+		A71C30B61381265E00DBC351 /* ShadowInclusionSelector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShadowInclusionSelector.cpp; sourceTree = "<group>"; };
+		A71C30B71381265E00DBC351 /* ShadowInclusionSelector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShadowInclusionSelector.h; sourceTree = "<group>"; };
 		A73F95FC12C97BFE0031AAF9 /* RoundedRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RoundedRect.cpp; sourceTree = "<group>"; };
 		A73F95FD12C97BFE0031AAF9 /* RoundedRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoundedRect.h; sourceTree = "<group>"; };
 		A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExceptionCodePlaceholder.h; sourceTree = "<group>"; };
@@ -19882,8 +19882,8 @@
 				BC7FA67F0D1F167900DB22A9 /* SelectorNodeList.h */,
 				A766CF8B13810E0C0011A0B3 /* ShadowContentElement.cpp */,
 				A74C2D3B13811E0D00F83572 /* ShadowContentElement.h */,
-				A71C30B61381265E00DBC351 /* ShadowContentSelector.cpp */,
-				A71C30B71381265E00DBC351 /* ShadowContentSelector.h */,
+				A71C30B61381265E00DBC351 /* ShadowInclusionSelector.cpp */,
+				A71C30B71381265E00DBC351 /* ShadowInclusionSelector.h */,
 				A6D169611346B49B000EB770 /* ShadowRoot.cpp */,
 				A6D169631346B4C1000EB770 /* ShadowRoot.h */,
 				D01A27AB10C9BFD800026A42 /* SpaceSplitString.cpp */,
@@ -22652,7 +22652,7 @@
 				498770E91242C535002226BA /* Shader.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				A74C2D3C13811E0D00F83572 /* ShadowContentElement.h in Headers */,
-				A71C30B91381265E00DBC351 /* ShadowContentSelector.h in Headers */,
+				A71C30B91381265E00DBC351 /* ShadowInclusionSelector.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
 				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
@@ -25562,7 +25562,7 @@
 				498770E81242C535002226BA /* Shader.cpp in Sources */,
 				0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */,
 				A766CF8C13810E0C0011A0B3 /* ShadowContentElement.cpp in Sources */,
-				A71C30B81381265E00DBC351 /* ShadowContentSelector.cpp in Sources */,
+				A71C30B81381265E00DBC351 /* ShadowInclusionSelector.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
 				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,
 				A80E6CF40A1989CA007FB8C5 /* ShadowValue.cpp in Sources */,

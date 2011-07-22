@@ -1273,8 +1273,8 @@ webcore_sources += \
 	Source/WebCore/dom/SelectorNodeList.h \
 	Source/WebCore/dom/ShadowContentElement.cpp \
 	Source/WebCore/dom/ShadowContentElement.h \
-	Source/WebCore/dom/ShadowContentSelector.cpp \
-	Source/WebCore/dom/ShadowContentSelector.h \
+	Source/WebCore/dom/ShadowInclusionSelector.cpp \
+	Source/WebCore/dom/ShadowInclusionSelector.h \
 	Source/WebCore/dom/ShadowRoot.cpp \
 	Source/WebCore/dom/ShadowRoot.h \
 	Source/WebCore/dom/SpaceSplitString.cpp \

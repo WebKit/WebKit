@@ -48150,7 +48150,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\dom\ShadowContentSelector.cpp"
+				RelativePath="..\dom\ShadowInclusionSelector.cpp"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
@@ -48202,7 +48202,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\dom\ShadowContentSelector.h"
+				RelativePath="..\dom\ShadowInclusionSelector.h"
 				>
 			</File>
 			<File

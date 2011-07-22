@@ -576,7 +576,7 @@ SET(WebCore_SOURCES
     dom/SelectElement.cpp
     dom/SelectorNodeList.cpp
     dom/ShadowContentElement.cpp
-    dom/ShadowContentSelector.cpp
+    dom/ShadowInclusionSelector.cpp
     dom/ShadowRoot.cpp
     dom/SpaceSplitString.cpp
     dom/StaticHashSetNodeList.cpp

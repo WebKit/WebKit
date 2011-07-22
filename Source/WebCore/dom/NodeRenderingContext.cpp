@@ -31,7 +31,7 @@
 #include "RenderFullScreen.h"
 #include "RenderObject.h"
 #include "ShadowContentElement.h"
-#include "ShadowContentSelector.h"
+#include "ShadowInclusionSelector.h"
 #include "ShadowRoot.h"
 
 namespace WebCore {

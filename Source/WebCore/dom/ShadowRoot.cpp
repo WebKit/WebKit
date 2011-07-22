@@ -31,7 +31,7 @@
 #include "Document.h"
 #include "NodeRareData.h"
 #include "ShadowContentElement.h"
-#include "ShadowContentSelector.h"
+#include "ShadowInclusionSelector.h"
 
 namespace WebCore {
 
@@ -100,7 +100,7 @@ ShadowContentElement* ShadowRoot::includerFor(Node* node) const
 {
     if (!m_inclusions)
         return 0;
-    ShadowInclusion* found = m_inclusions->findInclusionFor(node);
+    ShadowInclusion* found = m_inclusions->findFor(node);
     if (!found)
         return 0;
     return found->includer();
@@ -139,22 +139,22 @@ void ShadowRoot::attach()
     // Children of m_inclusions is populated lazily in
     // ensureInclusions(), and here we just ensure that
     // it is in clean state.
-    ASSERT(!m_inclusions || !m_inclusions->hasChildren());
+    ASSERT(!m_inclusions || !m_inclusions->hasCandidates());
     TreeScope::attach();
     if (m_inclusions)
-        m_inclusions->didSelectInclusion();
+        m_inclusions->didSelect();
 }
 
-ShadowContentSelector* ShadowRoot::inclusions() const
+ShadowInclusionSelector* ShadowRoot::inclusions() const
 {
     return m_inclusions.get();
 }
 
-ShadowContentSelector* ShadowRoot::ensureInclusions()
+ShadowInclusionSelector* ShadowRoot::ensureInclusions()
 {
     if (!m_inclusions)
-        m_inclusions = adoptPtr(new ShadowContentSelector());
-    m_inclusions->willSelectInclusionOver(this);
+        m_inclusions = adoptPtr(new ShadowInclusionSelector());
+    m_inclusions->willSelectOver(this);
     return m_inclusions.get();
 }
 
