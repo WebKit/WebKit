@@ -1059,13 +1059,6 @@ void WebViewImpl::layout()
         // layout to be invalidated, so layout needs to be called last.
 
         webframe->layout();
-
-#if USE(ACCELERATED_COMPOSITING)
-        // Call updateLayers here instead of during doComposite so that we don't
-        // trigger another redundant frame during doComposite.
-        if (isAcceleratedCompositingActive())
-            syncCompositingLayers();
-#endif
     }
 }
 
@@ -1148,16 +1141,6 @@ void WebViewImpl::animateAndLayout(double frameBeginTime)
 {
     animate(frameBeginTime);
     layout();
-}
-
-void WebViewImpl::syncCompositingLayers()
-{
-    TRACE_EVENT("WebViewImpl::syncCompositingLayers", this, 0);
-    // Update the compositing requirements for all frame in the tree before doing any painting
-    // as the compositing requirements for a RenderLayer within a subframe might change.
-    for (Frame* frame = page()->mainFrame(); frame; frame = frame->tree()->traverseNext())
-        frame->view()->updateCompositingLayers();
-    page()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
 }
 
 void WebViewImpl::composite(bool finish)

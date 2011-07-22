@@ -431,7 +431,6 @@ private:
     void reallocateRenderer();
     void updateLayerRendererSettings();
     void updateLayerRendererViewport();
-    void syncCompositingLayers();
 #endif
 
     WebViewClient* m_client;

@@ -1,3 +1,21 @@
+2011-07-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove code that attempted to explicitly sync compositing state before compositing
+        https://bugs.webkit.org/show_bug.cgi?id=65055
+
+        Reviewed by Kenneth Russell.
+
+        There was some logic in WebViewImpl to try to synchronously calculate compositing requirements and sync
+        compositing state on all frames before painting in an attempt to flush out all pending updates before entering
+        the composite routines. The idea behind this code was that it would allow us to not worry about compositing
+        turning off in the middle of a composite operation due to things like RenderLayer overlap being lazily
+        calculated.  In practice, we still need to be defensive to compositing requirements updating during the
+        composite anyway and this code is quite expensive on some pages (10ms+ on the HTML specification on my box).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::layout):
+        * src/WebViewImpl.h:
+
 2011-07-22  Cris Neckar  <cdn@chromium.org>
 
         Hook v8 up to cryptographicallyRandomValues as an entropy source.
