@@ -1,3 +1,20 @@
+2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another Chromium rebaselines after r91493.
+
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/interact-pointer-03-t-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/svgdom-over-01-f-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-tref-03-b-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.png: Removed.
+
 2011-07-21  Kent Tamura  <tkent@chromium.org>
 
         A trivial fix for r91550.
