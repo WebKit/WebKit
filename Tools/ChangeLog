@@ -1,3 +1,9 @@
+2011-07-21  Adam Roben  <aroben@apple.com>
+
+        Fix typo in TestFailures
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+
 2011-07-21  Ojan Vafai  <ojan@chromium.org>
 
         simplify gtest display now that we strip modifiers from the JSON

@@ -204,7 +204,7 @@ ViewController.prototype = {
 
         // FIXME: Maybe some of this code should go in LayoutTestHistoryAnalyzer, or some other class?
         var self = this;
-        trac.getCommitDataForRevisionRange('trunk', firstSuspectRevision, lastSuspectRevision, function(commits) {
+        trac.commitDataForRevisionRange('trunk', firstSuspectRevision, lastSuspectRevision, function(commits) {
             var failingTestNamesWithoutExtensions = failingTestNames.map(removePathExtension);
             var suspectCommits = commits.filter(function(commit) {
                 return failingTestNamesWithoutExtensions.some(function(testName) {
