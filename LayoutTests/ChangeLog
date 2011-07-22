@@ -1,3 +1,14 @@
+2011-07-21  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64875
+        Use of `yield` keyword is broken
+
+        Reviewed by Sam Weinig.
+
+        * fast/js/reserved-words-as-property-expected.txt:
+        * fast/js/script-tests/reserved-words-as-property.js:
+            - Make this test more comprehensive, to cover future-reserved & non-reserved words.
+
 2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a failing expectation for fast/forms/placeholder-in-invisible-elements.html
