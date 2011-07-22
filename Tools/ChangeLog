@@ -1,5 +1,11 @@
 2011-07-22  Ojan Vafai  <ojan@chromium.org>
 
+        Fix bug when switching from layout-tests to another test-type if
+        ToT webkit.org is the selected group.
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
+2011-07-22  Ojan Vafai  <ojan@chromium.org>
+
         Add back in line accidentally deleted in http://trac.webkit.org/changeset/91612.
         * TestResultServer/static-dashboards/flakiness_dashboard.html:
 
