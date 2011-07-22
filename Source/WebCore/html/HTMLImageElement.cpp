@@ -98,6 +98,17 @@ bool HTMLImageElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
     return HTMLElement::mapToEntry(attrName, result);
 }
 
+static unsigned int parseBorderWidthAttribute(Attribute* attr)
+{
+    ASSERT(attr && attr->name() == borderAttr);
+
+    unsigned int borderWidth = 0;
+    if (!attr->value().isEmpty() && !attr->value().isNull())
+        parseHTMLNonNegativeInteger(attr->value(), borderWidth);
+
+    return borderWidth;
+}
+
 void HTMLImageElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
@@ -112,7 +123,7 @@ void HTMLImageElement::parseMappedAttribute(Attribute* attr)
         addCSSLength(attr, CSSPropertyHeight, attr->value());
     else if (attrName == borderAttr) {
         // border="noborder" -> border="0"
-        addCSSLength(attr, CSSPropertyBorderWidth, attr->value().toInt() ? attr->value() : "0");
+        addCSSLength(attr, CSSPropertyBorderWidth, String::number(parseBorderWidthAttribute(attr)));
         addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
         addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
         addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);

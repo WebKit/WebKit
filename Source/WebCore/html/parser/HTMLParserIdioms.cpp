@@ -220,4 +220,50 @@ bool parseHTMLInteger(const String& input, int& value)
     return true;
 }
 
+// http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
+bool parseHTMLNonNegativeInteger(const String& input, unsigned int& value)
+{
+    // Step 1
+    // Step 2
+    const UChar* position = input.characters();
+    const UChar* end = position + input.length();
+
+    // Step 3
+    while (position < end) {
+        if (!isHTMLSpace(*position))
+            break;
+        ++position;
+    }
+
+    // Step 4
+    if (position == end)
+        return false;
+    ASSERT(position < end);
+
+    // Step 5
+    if (*position == '+')
+        ++position;
+
+    // Step 6
+    if (position == end)
+        return false;
+    ASSERT(position < end);
+
+    // Step 7
+    if (!isASCIIDigit(*position))
+        return false;
+
+    // Step 8
+    Vector<UChar, 16> digits;
+    while (position < end) {
+        if (!isASCIIDigit(*position))
+            break;
+        digits.append(*position++);
+    }
+
+    // Step 9
+    value = charactersToUIntStrict(digits.data(), digits.size());
+    return true;
+}
+
 }

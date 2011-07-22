@@ -50,6 +50,9 @@ bool parseToDoubleForNumberTypeWithDecimalPlaces(const String&, double*, unsigne
 // http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-integers
 bool parseHTMLInteger(const String&, int&);
 
+// http://www.whatwg.org/specs/web-apps/current-work/#rules-for-parsing-non-negative-integers
+bool parseHTMLNonNegativeInteger(const String&, unsigned int&);
+
 // Inline implementations of some of the functions declared above.
 
 inline bool isHTMLSpace(UChar character)
