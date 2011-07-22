@@ -1657,6 +1657,10 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
     if (scaledSize.height() < 1)
         scaledSize.setHeight(1);
 
+    float area = 4.0f * scaledSize.width() * scaledSize.height();
+    if (area > static_cast<float>(std::numeric_limits<int>::max()))
+        return 0;
+
     return createEmptyImageData(scaledSize);
 }
 
@@ -1693,7 +1697,12 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(float sx, float sy,
     ImageBuffer* buffer = canvas()->buffer();
     if (!buffer)
         return createEmptyImageData(scaledRect.size());
-    return ImageData::create(scaledRect.size(), buffer->getUnmultipliedImageData(scaledRect));
+
+    RefPtr<ByteArray> byteArray = buffer->getUnmultipliedImageData(scaledRect);
+    if (!byteArray)
+        return 0;
+
+    return ImageData::create(scaledRect.size(), byteArray.release());
 }
 
 void CanvasRenderingContext2D::putImageData(ImageData* data, float dx, float dy, ExceptionCode& ec)

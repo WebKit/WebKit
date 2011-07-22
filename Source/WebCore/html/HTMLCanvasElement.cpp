@@ -373,17 +373,21 @@ PassRefPtr<ImageData> HTMLCanvasElement::getImageData()
 
 IntRect HTMLCanvasElement::convertLogicalToDevice(const FloatRect& logicalRect) const
 {
-    float left = floorf(logicalRect.x() * m_pageScaleFactor);
-    float top = floorf(logicalRect.y() * m_pageScaleFactor);
-    float right = ceilf(logicalRect.maxX() * m_pageScaleFactor);
-    float bottom = ceilf(logicalRect.maxY() * m_pageScaleFactor);
-    
+    // Prevent under/overflow by ensuring the rect's bounds stay within integer-expressible range
+    int left = clampToInteger(floorf(logicalRect.x() * m_pageScaleFactor));
+    int top = clampToInteger(floorf(logicalRect.y() * m_pageScaleFactor));
+    int right = clampToInteger(ceilf(logicalRect.maxX() * m_pageScaleFactor));
+    int bottom = clampToInteger(ceilf(logicalRect.maxY() * m_pageScaleFactor));
+
     return IntRect(IntPoint(left, top), convertToValidDeviceSize(right - left, bottom - top));
 }
 
 IntSize HTMLCanvasElement::convertLogicalToDevice(const FloatSize& logicalSize) const
 {
-    return convertToValidDeviceSize(logicalSize.width() * m_pageScaleFactor, logicalSize.height() * m_pageScaleFactor);
+    // Prevent overflow by ensuring the rect's bounds stay within integer-expressible range
+    float width = clampToInteger(ceilf(logicalSize.width() * m_pageScaleFactor));
+    float height = clampToInteger(ceilf(logicalSize.height() * m_pageScaleFactor));
+    return convertToValidDeviceSize(width, height);
 }
 
 IntSize HTMLCanvasElement::convertToValidDeviceSize(float width, float height) const
