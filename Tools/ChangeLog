@@ -1,5 +1,11 @@
 2011-07-22  Adam Barth  <abarth@webkit.org>
 
+        Fix typo so the tool works on a case-sensitive file system.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+
+2011-07-22  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should know what patches are landing
         https://bugs.webkit.org/show_bug.cgi?id=64978
 
