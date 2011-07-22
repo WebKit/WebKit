@@ -220,17 +220,27 @@ inline int clampToPositiveInteger(double d)
     return static_cast<int>(std::max<double>(std::min(d, maxIntAsDouble), 0));
 }
 
-inline int clampToInteger(float d)
+inline int clampToInteger(float x)
 {
-    const float minIntAsFloat = static_cast<float>(std::numeric_limits<int>::min());
-    const float maxIntAsFloat = static_cast<float>(std::numeric_limits<int>::max());
-    return static_cast<int>(std::max(std::min(d, maxIntAsFloat), minIntAsFloat));
+    static const int s_intMax = std::numeric_limits<int>::max();
+    static const int s_intMin = std::numeric_limits<int>::min();
+    
+    if (x >= static_cast<float>(s_intMax))
+        return s_intMax;
+    if (x < static_cast<float>(s_intMin))
+        return s_intMin;
+    return static_cast<int>(x);
 }
 
-inline int clampToPositiveInteger(float d)
+inline int clampToPositiveInteger(float x)
 {
-    const float maxIntAsFloat = static_cast<float>(std::numeric_limits<int>::max());
-    return static_cast<int>(std::max<float>(std::min(d, maxIntAsFloat), 0));
+    static const int s_intMax = std::numeric_limits<int>::max();
+    
+    if (x >= static_cast<float>(s_intMax))
+        return s_intMax;
+    if (x < 0)
+        return 0;
+    return static_cast<int>(x);
 }
 
 inline int clampToInteger(unsigned value)
