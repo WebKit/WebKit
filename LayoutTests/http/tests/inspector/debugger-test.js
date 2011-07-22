@@ -109,11 +109,15 @@ InspectorTest.captureStackTrace = function(callFrames)
         var frame = callFrames[i];
         var script = WebInspector.debuggerModel.scriptForSourceID(frame.location.sourceId);
         var url;
-        if (script)
+        var lineNumber;
+        if (script) {
             url = WebInspector.displayNameForURL(script.sourceURL);
-        else
-            url = "(internal script)"
-        var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + (frame.location.lineNumber + 1) + ")";
+            lineNumber = frame.location.lineNumber + 1;
+        } else {
+            url = "(internal script)";
+            lineNumber = "(line number)";
+        }
+        var s = "    " + i + ") " + frame.functionName + " (" + url + ":" + lineNumber + ")";
         InspectorTest.addResult(s);
     }
 };

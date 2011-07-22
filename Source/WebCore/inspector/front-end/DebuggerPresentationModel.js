@@ -781,7 +781,10 @@ WebInspector.PresenationCallFrame.prototype = {
     sourceLine: function(callback)
     {
         var location = this._callFrame.location;
-        this._model._scriptLocationToUILocation(null, location.sourceId, location.lineNumber, location.columnNumber, callback);
+        if (!this.isInternalScript)
+            this._model._scriptLocationToUILocation(null, location.sourceId, location.lineNumber, location.columnNumber, callback);
+        else
+            callback(undefined, location.lineNumber);
     }
 }
 

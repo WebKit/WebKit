@@ -1,3 +1,15 @@
+2011-07-22  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: fix exception when paused in internal script.
+        https://bugs.webkit.org/show_bug.cgi?id=64995
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/debugger/pause-in-internal-script.html
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.PresenationCallFrame.prototype.sourceLine):
+
 2011-07-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: sometimes ReceiveResponse event is attached to wrong parent.
