@@ -1,3 +1,16 @@
+2011-07-22  David Grogan  <dgrogan@chromium.org>
+
+        Fix crash in IDBRequest::abort
+        https://bugs.webkit.org/show_bug.cgi?id=64740
+
+        Reviewed by Nate Chapin.
+
+        Tested manually with the testcase in the bug.
+
+        * storage/IDBRequest.cpp:
+        (WebCore::IDBRequest::~IDBRequest):
+        (WebCore::IDBRequest::abort):
+
 2011-07-22  Patrick Gansterer  <paroga@webkit.org>
 
         Replace preprocessor statements in IDL files with Conditional attribute

@@ -66,7 +66,7 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
 
 IDBRequest::~IDBRequest()
 {
-    ASSERT(m_readyState == DONE || m_readyState == EarlyDeath);
+    ASSERT(m_readyState == DONE || m_readyState == EarlyDeath || !scriptExecutionContext());
     if (m_transaction)
         m_transaction->unregisterRequest(this);
 }
@@ -149,8 +149,11 @@ void IDBRequest::abort()
         ASSERT(m_readyState == DONE);
         return;
     }
+    // FIXME: Remove isDocument check when
+    // https://bugs.webkit.org/show_bug.cgi?id=57789 is resolved.
+    if (!scriptExecutionContext() || !scriptExecutionContext()->isDocument())
+        return;
 
-    ASSERT(scriptExecutionContext()->isDocument());
     EventQueue* eventQueue = static_cast<Document*>(scriptExecutionContext())->eventQueue();
     for (size_t i = 0; i < m_enqueuedEvents.size(); ++i) {
         bool removed = eventQueue->cancelEvent(m_enqueuedEvents[i].get());
