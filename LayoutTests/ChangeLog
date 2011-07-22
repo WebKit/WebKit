@@ -1,3 +1,15 @@
+2011-07-21  Adrienne Walker  <enne@google.com>
+
+        Fix repainting of composited fixed position elements in iframes
+        https://bugs.webkit.org/show_bug.cgi?id=64010
+
+        Reviewed by Simon Fraser.
+
+        * compositing/iframes/fixed-position-iframe-expected.png: Added.
+        * compositing/iframes/fixed-position-iframe-expected.txt: Added.
+        * compositing/iframes/fixed-position-iframe.html: Added.
+        * compositing/iframes/resources/fixed-position-subframe.html: Added.
+
 2011-07-22  Sam Weinig  <sam@webkit.org>
 
         Update results after change to make columns and column-span establish

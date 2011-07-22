@@ -1352,6 +1352,14 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
 {
 #if USE(ACCELERATED_COMPOSITING)
+    RenderView* root = m_frame->contentRenderer();
+    if (root && root->layer()->isComposited()) {
+        GraphicsLayer* layer = root->layer()->backing()->graphicsLayer();
+        if (layer && layer->drawsContent()) {
+            root->layer()->setBackingNeedsRepaintInRect(visibleContentRect());
+            return;
+        }
+    }
     if (RenderPart* frameRenderer = m_frame->ownerRenderer()) {
         if (frameRenderer->containerForRepaint()) {
             IntRect rect(frameRenderer->borderLeft() + frameRenderer->paddingLeft(),

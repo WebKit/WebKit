@@ -1,3 +1,18 @@
+2011-07-21  Adrienne Walker  <enne@google.com>
+
+        Fix repainting of composited fixed position elements in iframes
+        https://bugs.webkit.org/show_bug.cgi?id=64010
+
+        Reviewed by Simon Fraser.
+
+        In cases where an iframe's contents have their own graphics layer, the
+        invalidation during scrolling was being sent to the wrong render
+        layer. Fixed by checking if such a layer exists and routing scrolling
+        invalidations there first.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollContentsSlowPath):
+
 2011-07-22  Viet-Trung Luu  <viettrungluu@chromium.org>
 
         Improve (i.e., speed up) .gyp(i) files for Chromium
