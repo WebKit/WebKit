@@ -236,6 +236,7 @@ namespace JSC {
         JSValue(HashTableDeletedValueTag);
 
         inline const JSValue asValue() const { return *this; }
+        double toNumberSlowCase(ExecState*) const;
         JSObject* toObjectSlowCase(ExecState*, JSGlobalObject*) const;
         JSObject* toThisObjectSlowCase(ExecState*) const;
 

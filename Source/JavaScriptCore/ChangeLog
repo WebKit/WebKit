@@ -1,5 +1,24 @@
 2011-07-21  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=19271
+        eliminate PIC branches by changing NaN handling in JSValue::toNumber
+
+        Reviewed by Sam Weinig.
+
+        Moving the non-numeric cases out of line seems to be a consistent
+        win on SunSpider for me, to the order of about 0.5%.
+
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSValue::toNumber):
+            - Changed to only handle values that are already numbers, moce non-numeric cases out of line.
+        * runtime/JSValue.cpp:
+        (JSC::JSValue::toNumberSlowCase):
+            - Added toNumberSlowCase, handling non-numeric cases.
+        * runtime/JSValue.h:
+            - Add declaration of toNumberSlowCase.
+
+2011-07-21  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=64875
         Use of `yield` keyword is broken
 
