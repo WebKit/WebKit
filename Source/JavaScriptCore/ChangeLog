@@ -1,5 +1,17 @@
 2011-07-22  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=65051
+        DFG JIT - Enable by default for mac platform on x86-64.
+
+        Rubber Stamped by Geoff Garen.
+
+        This is now a performance progression.
+
+        * wtf/Platform.h:
+            - Removed definition of ENABLE_DFG_JIT_RESTRICTIONS.
+
+2011-07-22  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=65047
         DFG JIT - Add support for op_resolve/op_resolve_base
 
