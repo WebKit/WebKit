@@ -1,5 +1,11 @@
 2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
+2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Revert r91510 due to Chromium debug test failures.
 
         * src/WebKit.cpp:
