@@ -1,3 +1,15 @@
+2011-07-22  Cris Neckar  <cdn@chromium.org>
+
+        Hook v8 up to cryptographicallyRandomValues as an entropy source.
+        https://bugs.webkit.org/show_bug.cgi?id=64887
+
+        Reviewed by Adam Barth.
+
+        * public/WebKitClient.h:
+        * src/WebKit.cpp:
+        (WebKit::generateEntropy):
+        (WebKit::initialize):
+
 2011-07-22  Andrew Scherkus  <scherkus@chromium.org>
 
         Remove surfaceType() and texture() methods from Chromium video frame classes.

@@ -274,11 +274,8 @@ public:
     // it is recommended that the fixed point be no further in the past than the epoch.
     virtual double monotonicallyIncreasingTime() { return 0; }
 
-    virtual void cryptographicallyRandomValues(unsigned char* buffer, size_t length)
-    {
-        // WebKit clients must implement this funcion if they use cryptographic randomness.
-        WEBKIT_ASSERT_NOT_REACHED();
-    }
+    // WebKit clients must implement this funcion if they use cryptographic randomness.
+    virtual void cryptographicallyRandomValues(unsigned char* buffer, size_t length) = 0;
 
     // Delayed work is driven by a shared timer.
     typedef void (*SharedTimerFunction)();
