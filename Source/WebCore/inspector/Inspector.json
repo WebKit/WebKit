@@ -1393,6 +1393,9 @@
         "commands": [
             {
                 "name": "start",
+                "parameters": [
+                    { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." },
+                ],
                 "description": "Starts capturing instrumentation events."
             },
             {

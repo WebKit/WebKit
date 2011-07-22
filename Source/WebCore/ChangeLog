@@ -1,3 +1,34 @@
+2011-07-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: the max depth of the Timeline events' stack trace should be customizable.
+        https://bugs.webkit.org/show_bug.cgi?id=65023
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::startTimelineProfiler):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::pushGCEventRecords):
+        (WebCore::InspectorTimelineAgent::restore):
+        (WebCore::InspectorTimelineAgent::start):
+        (WebCore::InspectorTimelineAgent::didInstallTimer):
+        (WebCore::InspectorTimelineAgent::didRemoveTimer):
+        (WebCore::InspectorTimelineAgent::didScheduleResourceRequest):
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        (WebCore::InspectorTimelineAgent::didTimeStamp):
+        (WebCore::InspectorTimelineAgent::didMarkDOMContentEvent):
+        (WebCore::InspectorTimelineAgent::didMarkLoadEvent):
+        (WebCore::InspectorTimelineAgent::InspectorTimelineAgent):
+        (WebCore::InspectorTimelineAgent::pushCurrentRecord):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createGenericRecord):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/TimelineManager.js:
+        (WebInspector.TimelineManager.prototype.start):
+
 2011-07-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91024.

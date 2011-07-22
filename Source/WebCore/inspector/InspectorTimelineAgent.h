@@ -65,8 +65,8 @@ public:
     void clearFrontend();
     void restore();
 
-    void start(ErrorString* error);
-    void stop(ErrorString* error);
+    void start(ErrorString*, int* maxCallStackDepth);
+    void stop(ErrorString*);
     bool started() const;
 
     int id() const { return m_id; }
@@ -163,6 +163,7 @@ private:
     };
     typedef Vector<GCEvent> GCEvents;
     GCEvents m_gcEvents;
+    int m_maxCallStackDepth;
 };
 
 } // namespace WebCore

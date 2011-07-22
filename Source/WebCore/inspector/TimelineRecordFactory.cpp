@@ -43,12 +43,12 @@
 
 namespace WebCore {
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createGenericRecord(double startTime)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createGenericRecord(double startTime, int maxCallStackDepth)
 {
     RefPtr<InspectorObject> record = InspectorObject::create();
     record->setNumber("startTime", startTime);
 
-    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(5, true);
+    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(maxCallStackDepth, true);
     if (stackTrace && stackTrace->size())
         record->setArray("stackTrace", stackTrace->buildInspectorArray());
     return record.release();

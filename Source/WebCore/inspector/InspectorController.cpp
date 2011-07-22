@@ -179,7 +179,7 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
 void InspectorController::startTimelineProfiler()
 {
     ErrorString error;
-    m_timelineAgent->start(&error);
+    m_timelineAgent->start(&error, 0);
 }
 
 void InspectorController::stopTimelineProfiler()

@@ -42,11 +42,11 @@ WebInspector.TimelineManager.EventTypes = {
 }
 
 WebInspector.TimelineManager.prototype = {
-    start: function()
+    start: function(maxCallStackDepth)
     {
         this._enablementCount++;
         if (this._enablementCount === 1)
-            TimelineAgent.start();
+            TimelineAgent.start(maxCallStackDepth);
     },
 
     stop: function()
