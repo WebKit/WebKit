@@ -43,7 +43,6 @@
 @end
 
 @interface NSURLAuthenticationChallenge (Details)
--(CFURLAuthChallengeRef)_createCFAuthChallenge;
 +(NSURLAuthenticationChallenge *)_authenticationChallengeForCFAuthChallenge:(CFURLAuthChallengeRef)cfChallenge sender:(id <NSURLAuthenticationChallengeSender>)sender;
 @end
 
@@ -59,6 +58,9 @@ using namespace WebCore;
 @interface WebCoreAuthenticationClientAsChallengeSender : NSObject <NSURLAuthenticationChallengeSender>
 {
     AuthenticationClient* m_client;
+#if USE(CFNETWORK)
+    CFURLAuthChallengeRef m_cfChallenge;
+#endif
 }
 - (id)initWithAuthenticationClient:(AuthenticationClient*)client;
 - (AuthenticationClient*)client;
@@ -104,6 +106,18 @@ using namespace WebCore;
         m_client->receivedCancellation(core(challenge));
 }
 
+#if USE(CFNETWORK)
+- (void)setCFChallenge:(CFURLAuthChallengeRef)challenge
+{
+    m_cfChallenge = challenge;
+}
+
+- (CFURLAuthChallengeRef)cfChallenge
+{
+    return m_cfChallenge;
+}
+#endif
+
 @end
 
 namespace WebCore {
@@ -113,8 +127,7 @@ namespace WebCore {
 AuthenticationChallenge core(NSURLAuthenticationChallenge *macChallenge)
 {
     WebCoreAuthenticationClientAsChallengeSender *challengeSender = (WebCoreAuthenticationClientAsChallengeSender*) [macChallenge sender];
-    AuthenticationClient* authClient = [challengeSender client];
-    return AuthenticationChallenge([macChallenge _createCFAuthChallenge], authClient);
+    return AuthenticationChallenge([challengeSender cfChallenge], [challengeSender client]);
 }
 
 Credential core(NSURLCredential *macCredential)
@@ -137,7 +150,10 @@ NSURLAuthenticationChallenge *mac(const AuthenticationChallenge& coreChallenge)
 {
     AuthenticationClient* authClient = coreChallenge.authenticationClient();
     RetainPtr<WebCoreAuthenticationClientAsChallengeSender> challengeSender(AdoptNS, [[WebCoreAuthenticationClientAsChallengeSender alloc] initWithAuthenticationClient:authClient]);
-    RetainPtr<CFURLAuthChallengeRef> authChallenge(AdoptCF, createCF(coreChallenge));
+    RetainPtr<CFURLAuthChallengeRef> authChallenge = coreChallenge.cfURLAuthChallengeRef();
+    if (!authChallenge)
+        authChallenge.adoptCF(createCF(coreChallenge));
+    [challengeSender.get() setCFChallenge:authChallenge.get()];
     return [[NSURLAuthenticationChallenge _authenticationChallengeForCFAuthChallenge:authChallenge.get() sender:challengeSender.get()] autorelease];
 }
 

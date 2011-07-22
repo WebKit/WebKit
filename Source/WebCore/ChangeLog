@@ -1,3 +1,21 @@
+2011-07-21  Pratik Solanki  <psolanki@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65002
+        Get authentication to work with USE(CFNETWORK) on Mac
+
+        Reviewed by David Kilzer.
+
+        Instead of creating a new CFURLAuthChallengeRef, we save and reuse the same object as the
+        one given to us by CFNetwork.
+
+        * platform/network/mac/AuthenticationMac.mm:
+        (-[WebCoreAuthenticationClientAsChallengeSender setCFChallenge:]): Accessor methods for the
+        new CFURLAuthChallengeRef ivar.
+        (-[WebCoreAuthenticationClientAsChallengeSender cfChallenge]):
+        (WebCore::core): Create AuthenticationChallenge using the saved CFURLAuthChallengeRef.
+        (WebCore::mac): Use the CFURLAuthChallengeRef object in AuthenticationChallenge instead of
+        creating a new one.
+
 2011-07-21  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r90971): Placeholder and search cancel button are visible even in elements with visibility:hidden.
