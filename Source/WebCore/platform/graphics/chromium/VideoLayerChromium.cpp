@@ -123,17 +123,6 @@ void VideoLayerChromium::updateCompositorResources()
         return;
     }
 
-    // If the incoming frame is backed by a texture (i.e. decoded in hardware),
-    // then we do not need to allocate a texture via the layer renderer. Instead
-    // we save the texture data then exit.
-    if (frame->surfaceType() == VideoFrameChromium::TypeTexture) {
-        releaseCurrentFrame();
-        saveCurrentFrame(frame);
-        m_dirtyRect.setSize(FloatSize());
-        m_contentsDirty = false;
-        return;
-    }
-
     // Allocate textures for planes if they are not allocated already, or
     // reallocate textures that are the wrong size for the frame.
     GraphicsContext3D* context = layerRendererContext();
@@ -279,20 +268,6 @@ void VideoLayerChromium::resetFrameParameters()
         m_textures[plane].visibleSize = IntSize();
         m_textures[plane].ownedByLayerRenderer = false;
         m_textures[plane].isEmpty = true;
-    }
-}
-
-void VideoLayerChromium::saveCurrentFrame(VideoFrameChromium* frame)
-{
-    ASSERT(!m_currentFrame);
-    deleteTexturesInUse();
-    m_currentFrame = frame;
-    for (unsigned plane = 0; plane < frame->planes(); plane++) {
-        m_textures[plane].id = frame->texture(plane);
-        m_textures[plane].size = frame->requiredTextureSize(plane);
-        m_textures[plane].visibleSize = computeVisibleSize(frame, plane);
-        m_textures[plane].ownedByLayerRenderer = false;
-        m_textures[plane].isEmpty = false;
     }
 }
 

@@ -356,9 +356,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatYV16, VideoFrameChromium::YV16
 COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatNV12, VideoFrameChromium::NV12);
 COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatEmpty, VideoFrameChromium::Empty);
 COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::FormatASCII, VideoFrameChromium::ASCII);
-
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeSystemMemory, VideoFrameChromium::TypeSystemMemory);
-COMPILE_ASSERT_MATCHING_ENUM(WebVideoFrame::SurfaceTypeTexture, VideoFrameChromium::TypeTexture);
 #endif
 
 #if ENABLE(NOTIFICATIONS)

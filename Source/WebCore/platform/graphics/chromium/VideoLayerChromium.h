@@ -82,7 +82,6 @@ private:
     void updateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat, const void* data) const;
 
     void resetFrameParameters();
-    void saveCurrentFrame(VideoFrameChromium*);
 
     bool m_skipsDraw;
     VideoFrameChromium::Format m_frameFormat;

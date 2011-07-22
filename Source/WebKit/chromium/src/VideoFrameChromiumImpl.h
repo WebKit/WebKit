@@ -47,7 +47,6 @@ public:
     // The VideoFrameChromiumImpl does not take ownership of the WebVideoFrame
     // and should not free the frame's memory.
     VideoFrameChromiumImpl(WebVideoFrame*);
-    virtual SurfaceType surfaceType() const;
     virtual Format format() const;
     virtual unsigned width() const;
     virtual unsigned width(unsigned plane) const;
@@ -56,7 +55,6 @@ public:
     virtual unsigned planes() const;
     virtual int stride(unsigned plane) const;
     virtual const void* data(unsigned plane) const;
-    virtual unsigned texture(unsigned plane) const;
     virtual const WebCore::IntSize requiredTextureSize(unsigned plane) const;
     virtual bool hasPaddingBytes(unsigned plane) const;
 

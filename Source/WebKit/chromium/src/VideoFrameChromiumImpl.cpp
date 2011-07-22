@@ -51,13 +51,6 @@ VideoFrameChromiumImpl::VideoFrameChromiumImpl(WebVideoFrame* webVideoFrame)
 {
 }
 
-VideoFrameChromium::SurfaceType VideoFrameChromiumImpl::surfaceType() const
-{
-    if (m_webVideoFrame)
-        return static_cast<VideoFrameChromium::SurfaceType>(m_webVideoFrame->surfaceType());
-    return TypeSystemMemory;
-}
-
 VideoFrameChromium::Format VideoFrameChromiumImpl::format() const
 {
     if (m_webVideoFrame)
@@ -113,13 +106,6 @@ const void* VideoFrameChromiumImpl::data(unsigned plane) const
 {
     if (m_webVideoFrame)
         return m_webVideoFrame->data(plane);
-    return 0;
-}
-
-unsigned VideoFrameChromiumImpl::texture(unsigned plane) const
-{
-    if (m_webVideoFrame)
-        return m_webVideoFrame->texture(plane);
     return 0;
 }
 

@@ -1,3 +1,15 @@
+2011-07-22  Andrew Scherkus  <scherkus@chromium.org>
+
+        Remove surfaceType() and texture() methods from Chromium video frame classes.
+        https://bugs.webkit.org/show_bug.cgi?id=64818
+
+        Reviewed by Kenneth Russell.
+
+        * public/WebVideoFrame.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/VideoFrameChromiumImpl.cpp:
+        * src/VideoFrameChromiumImpl.h:
+
 2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed.  Rolled DEPS.
