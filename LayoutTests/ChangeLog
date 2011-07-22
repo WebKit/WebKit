@@ -1,3 +1,27 @@
+2011-07-22  Sam Weinig  <sam@webkit.org>
+
+        Update results after change to make columns and column-span establish
+        formatting contexts in r91497
+
+        * fast/multicol/single-line-expected.txt:
+        * platform/mac/fast/multicol/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/scrolling-overflow-expected.txt:
+        * platform/mac/fast/multicol/span/anonymous-before-child-parent-crash-expected.txt:
+        * platform/mac/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/mac/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/mac/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/mac/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/mac/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/mac/fast/multicol/vertical-rl/float-multicol-expected.txt:
+
 2011-07-22  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=64895.
