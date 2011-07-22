@@ -1,3 +1,24 @@
+2011-07-22  Kent Tamura  <tkent@chromium.org>
+
+        Validation message bubble is incorrectly positioned in a relative body.
+        https://bugs.webkit.org/show_bug.cgi?id=65018
+
+        Reviewed by Dimitri Glazkov.
+
+        We use position:aboslute for validation message bubbles, and the
+        origin of the absolute position can be not only the page, but also
+        an ancestor block with non-static position.
+
+        Test: fast/forms/validation-message-in-relative-body.html
+
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition):
+        Subtract the containing block position from the host position.
+        (WebCore::ValidationMessage::buildBubbleTree):
+        Change the order of appendChild() and adjustBubblePosition() in
+        order to use RenderObject::containingBlock() in
+        adjustbubbleposition().
+
 2011-07-22  David Grogan  <dgrogan@chromium.org>
 
         Fix crash in IDBRequest::abort

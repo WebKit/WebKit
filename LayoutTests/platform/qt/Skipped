@@ -2033,6 +2033,7 @@ http/tests/xmlhttprequest/remember-bad-password.html
 # Need to call Settings::setValidationMessageTimerMagnification(-1) in DRT.
 fast/forms/validation-message-appearance.html
 fast/forms/validation-message-clone.html
+fast/forms/validation-message-in-relative-body.html
 fast/forms/validation-message-on-checkbox.html
 fast/forms/validation-message-on-listbox.html
 fast/forms/validation-message-on-menulist.html

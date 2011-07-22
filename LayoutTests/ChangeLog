@@ -1,3 +1,16 @@
+2011-07-22  Kent Tamura  <tkent@chromium.org>
+
+        Validation message bubble is incorrectly positioned in a relative body.
+        https://bugs.webkit.org/show_bug.cgi?id=65018
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/forms/validation-message-in-relative-body-expected.txt: Added.
+        * fast/forms/validation-message-in-relative-body.html: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-07-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] add webInspector.resources.onContentEdited
