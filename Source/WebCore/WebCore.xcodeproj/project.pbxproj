@@ -1472,6 +1472,8 @@
 		5317612313C516690026E454 /* StyleFlexibleBoxData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5317612113C516690026E454 /* StyleFlexibleBoxData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5325E4D713A6C88B00404A36 /* CSSFlexValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5325E4D513A6C88B00404A36 /* CSSFlexValue.cpp */; };
 		5325E4D813A6C88B00404A36 /* CSSFlexValue.h in Headers */ = {isa = PBXBuildFile; fileRef = 5325E4D613A6C88B00404A36 /* CSSFlexValue.h */; };
+		53C8298D13D8D92700DE2DEB /* RenderFlexibleBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */; };
+		53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */ = {isa = PBXBuildFile; fileRef = 53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */; };
 		550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 550A0BC7085F6039007353D6 /* QualifiedName.cpp */; };
 		550A0BCA085F6039007353D6 /* QualifiedName.h in Headers */ = {isa = PBXBuildFile; fileRef = 550A0BC8085F6039007353D6 /* QualifiedName.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */; };
@@ -8057,6 +8059,8 @@
 		5317612113C516690026E454 /* StyleFlexibleBoxData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StyleFlexibleBoxData.h; path = style/StyleFlexibleBoxData.h; sourceTree = "<group>"; };
 		5325E4D513A6C88B00404A36 /* CSSFlexValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSFlexValue.cpp; sourceTree = "<group>"; };
 		5325E4D613A6C88B00404A36 /* CSSFlexValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSFlexValue.h; sourceTree = "<group>"; };
+		53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlexibleBox.cpp; sourceTree = "<group>"; };
+		53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlexibleBox.h; sourceTree = "<group>"; };
 		550A0BC7085F6039007353D6 /* QualifiedName.cpp */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.cpp.cpp; path = QualifiedName.cpp; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		550A0BC8085F6039007353D6 /* QualifiedName.h */ = {isa = PBXFileReference; fileEncoding = 30; indentWidth = 4; lastKnownFileType = sourcecode.c.h; path = QualifiedName.h; sourceTree = "<group>"; tabWidth = 8; usesTabs = 0; };
 		5905ADBD1302F3CE00F116DF /* XMLTreeViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTreeViewer.cpp; sourceTree = "<group>"; };
@@ -19477,6 +19481,8 @@
 				A8EA73B00A1900E300A8EF5F /* RenderFieldset.h */,
 				066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */,
 				066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */,
+				53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */,
+				53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */,
 				A871DECC0A1530C700B12A68 /* RenderFrame.cpp */,
 				A871DECB0A1530C700B12A68 /* RenderFrame.h */,
 				0FD3080C117CF7E700A791F7 /* RenderFrameBase.cpp */,
@@ -22457,6 +22463,7 @@
 				0F5B7A5510F65D7A00376302 /* RenderEmbeddedObject.h in Headers */,
 				A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */,
 				066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */,
+				53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */,
 				A871DED30A1530C700B12A68 /* RenderFrame.h in Headers */,
 				0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */,
 				A871DED10A1530C700B12A68 /* RenderFrameSet.h in Headers */,
@@ -25406,6 +25413,7 @@
 				0F5B7A5410F65D7A00376302 /* RenderEmbeddedObject.cpp in Sources */,
 				A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */,
 				066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */,
+				53C8298D13D8D92700DE2DEB /* RenderFlexibleBox.cpp in Sources */,
 				A871DED40A1530C700B12A68 /* RenderFrame.cpp in Sources */,
 				0FD3080E117CF7E700A791F7 /* RenderFrameBase.cpp in Sources */,
 				A871DED20A1530C700B12A68 /* RenderFrameSet.cpp in Sources */,

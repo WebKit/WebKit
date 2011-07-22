@@ -2947,6 +2947,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderFieldset.h \
 	Source/WebCore/rendering/RenderFileUploadControl.cpp \
 	Source/WebCore/rendering/RenderFileUploadControl.h \
+	Source/WebCore/rendering/RenderFlexibleBox.cpp \
+	Source/WebCore/rendering/RenderFlexibleBox.h \
 	Source/WebCore/rendering/RenderFrameBase.cpp \
 	Source/WebCore/rendering/RenderFrameBase.h \
 	Source/WebCore/rendering/RenderFrame.cpp \

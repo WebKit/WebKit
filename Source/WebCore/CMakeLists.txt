@@ -1209,6 +1209,7 @@ SET(WebCore_SOURCES
     rendering/RenderEmbeddedObject.cpp
     rendering/RenderFieldset.cpp
     rendering/RenderFileUploadControl.cpp
+    rendering/RenderFlexibleBox.cpp
     rendering/RenderFrame.cpp
     rendering/RenderFrameBase.cpp
     rendering/RenderFrameSet.cpp

@@ -5264,6 +5264,8 @@
             'rendering/RenderFieldset.h',
             'rendering/RenderFileUploadControl.cpp',
             'rendering/RenderFileUploadControl.h',
+            'rendering/RenderFlexibleBox.cpp',
+            'rendering/RenderFlexibleBox.h',
             'rendering/RenderFrame.cpp',
             'rendering/RenderFrame.h',
             'rendering/RenderFrameBase.cpp',

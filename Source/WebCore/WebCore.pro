@@ -1117,6 +1117,7 @@ SOURCES += \
     rendering/RenderEmbeddedObject.cpp \
     rendering/RenderFieldset.cpp \
     rendering/RenderFileUploadControl.cpp \
+    rendering/RenderFlexibleBox.cpp \
     rendering/RenderFrame.cpp \
     rendering/RenderFrameBase.cpp \
     rendering/RenderFrameSet.cpp \
@@ -2162,6 +2163,7 @@ HEADERS += \
     rendering/RenderEmbeddedObject.h \
     rendering/RenderFieldset.h \
     rendering/RenderFileUploadControl.h \
+    rendering/RenderFlexibleBox.h \
     rendering/RenderFrame.h \
     rendering/RenderFrameBase.h \
     rendering/RenderFrameSet.h \

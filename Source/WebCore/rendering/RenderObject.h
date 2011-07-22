@@ -740,10 +740,15 @@ public:
 
     virtual void destroy();
 
-    // Virtual function helpers for the deprecated Flexible Box Layout (display: -webkit-box)
+    // Virtual function helpers for the deprecated Flexible Box Layout (display: -webkit-box).
     virtual bool isDeprecatedFlexibleBox() const { return false; }
     virtual bool isFlexingChildren() const { return false; }
     virtual bool isStretchingChildren() const { return false; }
+
+#if ENABLE(CSS3_FLEXBOX)
+    // Virtual function helper for the new FlexibleBox Layout (display: -webkit-flexbox).
+    virtual bool isFlexibleBox() const { return false; }
+#endif
 
     virtual bool isCombineText() const { return false; }
 

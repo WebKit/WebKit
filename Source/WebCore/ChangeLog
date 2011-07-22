@@ -1,3 +1,29 @@
+2011-07-22  Tony Chang  <tony@chromium.org>
+
+        add placeholder RenderFlexibleBox.cpp files
+        https://bugs.webkit.org/show_bug.cgi?id=64982
+
+        Reviewed by Ojan Vafai.
+
+        No new tests, just adding new files and making sure it compiles.
+        Also adding the isFlexibleBox identifier to RenderObject.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderFlexibleBox.cpp: Added.
+        (WebCore::RenderFlexibleBox::RenderFlexibleBox): Inherit from RenderBlock like the old flexbox.
+        (WebCore::RenderFlexibleBox::~RenderFlexibleBox):
+        (WebCore::RenderFlexibleBox::renderName):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        * rendering/RenderFlexibleBox.h: Added.
+        (WebCore::RenderFlexibleBox::isFlexibleBox):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isFlexibleBox):
+
 2011-07-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] Force slow scrolling path for non-composited frames in a composited page
