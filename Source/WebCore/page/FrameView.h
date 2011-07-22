@@ -110,7 +110,7 @@ public:
 
 #if USE(ACCELERATED_COMPOSITING)
     void updateCompositingLayers();
-    bool syncCompositingStateForThisFrame();
+    bool syncCompositingStateForThisFrame(Frame* rootFrameForSync);
 
     void clearBackingStores();
     void restoreBackingStores();

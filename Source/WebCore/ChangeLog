@@ -1,3 +1,31 @@
+2011-07-21  Simon Fraser  <simon.fraser@apple.com>
+
+        GraphicsLayers in subframes can get sync'd multiple times
+        https://bugs.webkit.org/show_bug.cgi?id=52489
+
+        Reviewed by James Robinson.
+        
+        Avoid doing a 'syncCompositingState' pass on the GraphicsLayers
+        for subframes, when those GraphicsLayers are rooted in the
+        parent document.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::syncCompositingStateForThisFrame): Add a parameter
+        that contains the rootmost frame on which sync was called. This is used
+        to indicate to the compositor whether it's the root of the sync.
+        (WebCore::FrameView::syncCompositingStateIncludingSubframes): Pass the current
+        Frame in.
+        (WebCore::FrameView::paintContents): The sync is for this frame, so pass m_frame.
+        * page/FrameView.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::flushPendingLayerChanges): New parameter
+        to specify whether this compositor is in the rootmost Frame being flushed.
+        We can avoid doing work if we know that flushing some ancestor frame would
+        have also traversed our GraphicsLayers.
+        * rendering/RenderLayerCompositor.h:
+        (WebCore::RenderLayerCompositor::isFlushingLayers): Make this private, since
+        callers are probably most intersted in enclosingCompositorFlushingLayers().
+
 2011-07-21  Rafael Brandao  <rafael.lobo@openbossa.org>
 
         Local files cannot load icons.

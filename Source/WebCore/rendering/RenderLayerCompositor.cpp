@@ -191,15 +191,18 @@ void RenderLayerCompositor::scheduleLayerFlush()
     page->chrome()->client()->scheduleCompositingLayerSync();
 }
 
-void RenderLayerCompositor::flushPendingLayerChanges()
+void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
 {
+    // FrameView::syncCompositingStateIncludingSubframes() flushes each subframe,
+    // but GraphicsLayer::syncCompositingState() will cross frame boundaries
+    // if the GraphicsLayers are connected (the RootLayerAttachedViaEnclosingFrame case).
+    // As long as we're not the root of the flush, we can bail.
+    if (!isFlushRoot && rootLayerAttachment() == RootLayerAttachedViaEnclosingFrame)
+        return;
+    
     ASSERT(!m_flushingLayers);
     m_flushingLayers = true;
 
-    // FIXME: FrameView::syncCompositingStateRecursive() calls this for each
-    // frame, so when compositing layers are connected between frames, we'll
-    // end up syncing subframe's layers multiple times.
-    // https://bugs.webkit.org/show_bug.cgi?id=52489
     if (GraphicsLayer* rootLayer = rootGraphicsLayer())
         rootLayer->syncCompositingState();
 

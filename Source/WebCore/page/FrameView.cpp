@@ -684,7 +684,7 @@ GraphicsLayer* FrameView::layerForScrollCorner() const
     return view->compositor()->layerForScrollCorner();
 }
 
-bool FrameView::syncCompositingStateForThisFrame()
+bool FrameView::syncCompositingStateForThisFrame(Frame* rootFrameForSync)
 {
     ASSERT(m_frame->view() == this);
     RenderView* view = m_frame->contentRenderer();
@@ -696,7 +696,7 @@ bool FrameView::syncCompositingStateForThisFrame()
     if (needsLayout())
         return false;
 
-    view->compositor()->flushPendingLayerChanges();
+    view->compositor()->flushPendingLayerChanges(rootFrameForSync == m_frame);
 
 #if ENABLE(FULLSCREEN_API)
     // The fullScreenRenderer's graphicsLayer  has been re-parented, and the above recursive syncCompositingState
@@ -789,10 +789,10 @@ bool FrameView::isEnclosedInCompositingLayer() const
 bool FrameView::syncCompositingStateIncludingSubframes()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    bool allFramesSynced = syncCompositingStateForThisFrame();
+    bool allFramesSynced = syncCompositingStateForThisFrame(m_frame.get());
     
     for (Frame* child = m_frame->tree()->firstChild(); child; child = child->tree()->traverseNext(m_frame.get())) {
-        bool synced = child->view()->syncCompositingStateForThisFrame();
+        bool synced = child->view()->syncCompositingStateForThisFrame(m_frame.get());
         allFramesSynced &= synced;
     }
     return allFramesSynced;
@@ -2523,7 +2523,7 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!p->paintingDisabled())
-        syncCompositingStateForThisFrame();
+        syncCompositingStateForThisFrame(m_frame.get());
 #endif
 
     PaintBehavior oldPaintBehavior = m_paintBehavior;

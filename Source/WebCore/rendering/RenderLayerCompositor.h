@@ -87,8 +87,7 @@ public:
     // GraphicsLayers buffer state, which gets pushed to the underlying platform layers
     // at specific times.
     void scheduleLayerFlush();
-    void flushPendingLayerChanges();
-    bool isFlushingLayers() const { return m_flushingLayers; }
+    void flushPendingLayerChanges(bool isFlushRoot = true);
     
     // flushPendingLayerChanges() flushes the entire GraphicsLayer tree, which can cross frame boundaries.
     // This call returns the rootmost compositor that is being flushed (including self).
@@ -259,6 +258,8 @@ private:
     void updateOverflowControlsLayers();
 
     void notifyIFramesOfCompositingChange();
+
+    bool isFlushingLayers() const { return m_flushingLayers; }
 
     // Whether a running transition or animation enforces the need for a compositing layer.
     bool requiresCompositingForAnimation(RenderObject*) const;
