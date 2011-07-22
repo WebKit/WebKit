@@ -1,3 +1,11 @@
+2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium test expectation update after r91533.
+        fast/css/absolute-child-with-percent-height-inside-relative-parent.html is missing a pixel result.
+        A patch to add the pixel result has been uploaded to the bug 64046.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-21  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Test to cover absolutely positioned child with percentage height
