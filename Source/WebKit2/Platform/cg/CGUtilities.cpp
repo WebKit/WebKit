@@ -30,28 +30,28 @@
 
 namespace WebKit {
 
-void paintImage(CGContextRef context, CGImageRef image, CGPoint destination, CGRect source)
+void paintImage(CGContextRef context, CGImageRef image, CGFloat scaleFactor, CGPoint destination, CGRect source)
 {
     CGContextSaveGState(context);
 
     CGContextClipToRect(context, CGRectMake(destination.x, destination.y, source.size.width, source.size.height));
     CGContextScaleCTM(context, 1, -1);
 
-    size_t imageHeight = CGImageGetHeight(image);
-    size_t imageWidth = CGImageGetWidth(image);
+    CGFloat imageHeight = CGImageGetHeight(image) / scaleFactor;
+    CGFloat imageWidth = CGImageGetWidth(image) / scaleFactor;
 
     CGFloat destX = destination.x - source.origin.x;
-    CGFloat destY = -static_cast<CGFloat>(imageHeight) - destination.y + source.origin.y;
+    CGFloat destY = -imageHeight - destination.y + source.origin.y;
 
     CGContextDrawImage(context, CGRectMake(destX, destY, imageWidth, imageHeight), image);
+
     CGContextRestoreGState(context);
 }
 
 void paintBitmapContext(CGContextRef context, CGContextRef bitmapContext, CGPoint destination, CGRect source)
 {
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(bitmapContext));
-    paintImage(context, image.get(), destination, source);
+    paintImage(context, image.get(), 1, destination, source);
 }
 
 } // namespace WebKit
-

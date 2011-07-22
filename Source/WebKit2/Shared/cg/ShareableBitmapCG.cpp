@@ -62,9 +62,14 @@ PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
     return adoptPtr(new GraphicsContext(bitmapContext.get()));
 }
 
-void ShareableBitmap::paint(WebCore::GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
+void ShareableBitmap::paint(WebCore::GraphicsContext& context, const IntPoint& destination, const IntRect& source)
 {
-    paintImage(context.platformContext(), makeCGImageCopy().get(), dstPoint, srcRect);
+    paintImage(context.platformContext(), makeCGImageCopy().get(), 1, destination, source);
+}
+
+void ShareableBitmap::paint(WebCore::GraphicsContext& context, float scaleFactor, const IntPoint& destination, const IntRect& source)
+{
+    paintImage(context.platformContext(), makeCGImageCopy().get(), scaleFactor, destination, source);
 }
 
 #if !PLATFORM(WIN)

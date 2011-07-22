@@ -373,6 +373,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
 
     if (m_isPaintingSuspended || (m_layerTreeHost && !m_layerTreeHost->participatesInDisplay())) {
         updateInfo.viewSize = m_webPage->size();
+        updateInfo.scaleFactor = m_webPage->userSpaceScaleFactor();
 
         if (m_layerTreeHost) {
             layerTreeContext = m_layerTreeHost->layerTreeContext();
@@ -482,9 +483,10 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     }
 
     UpdateInfo updateInfo;
-    if (m_isPaintingSuspended)
+    if (m_isPaintingSuspended) {
         updateInfo.viewSize = m_webPage->size();
-    else
+        updateInfo.scaleFactor = m_webPage->userSpaceScaleFactor();
+    } else
         display(updateInfo);
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -648,6 +650,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         return;
 
     updateInfo.viewSize = m_webPage->size();
+    updateInfo.scaleFactor = m_webPage->userSpaceScaleFactor();
 
     if (m_layerTreeHost)
         m_layerTreeHost->display(updateInfo);
@@ -655,9 +658,11 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         IntRect bounds = m_dirtyRegion.bounds();
         ASSERT(m_webPage->bounds().contains(bounds));
 
-        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bounds.size(), ShareableBitmap::SupportsAlpha);
-        if (!bitmap)
-            return;
+    IntSize bitmapSize = bounds.size();
+    bitmapSize.scale(m_webPage->userSpaceScaleFactor());
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bitmapSize, ShareableBitmap::SupportsAlpha);
+    if (!bitmap)
+        return;
 
         if (!bitmap->createHandle(updateInfo.bitmapHandle))
             return;
@@ -679,6 +684,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext(bitmap.get());
         
         updateInfo.updateRectBounds = bounds;
+    graphicsContext->scale(FloatSize(m_webPage->userSpaceScaleFactor(), m_webPage->userSpaceScaleFactor()));
 
         graphicsContext->translate(-bounds.x(), -bounds.y());
 
