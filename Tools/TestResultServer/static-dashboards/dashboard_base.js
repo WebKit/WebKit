@@ -466,7 +466,7 @@ initBuilders(g_currentState);
 
 // Append JSON script elements.
 var g_resultsByBuilder = {};
-var g_expectationsByTest = {};
+var g_expectations = {};
 function ADD_RESULTS(builds)
 {
     for (var builderName in builds) {
@@ -484,16 +484,22 @@ function pathToBuilderResultsFile(builderName)
             '&testtype=' + g_currentState.testType + '&name=';
 }
 
-// Only webkit tests have a sense of test expectations.
-var g_waitingOnExpectations = isLayoutTestResults() && !isTreeMap();
-if (g_waitingOnExpectations) {
-    function ADD_EXPECTATIONS(expectations)
-    {
+// FIXME: Make the dashboard understand different ports' expectations files.
+var CHROMIUM_EXPECTATIONS_URL = 'http://svn.webkit.org/repository/webkit/trunk/LayoutTests/platform/chromium/test_expectations.txt';
+
+function requestExpectationsFile()
+{
+    request(CHROMIUM_EXPECTATIONS_URL, function(xhr) {
         g_waitingOnExpectations = false;
-        g_expectationsByTest = expectations;
+        g_expectations = xhr.responseText;
         handleResourceLoad();
-    }
+    },
+    function() {
+        console.error('Could not load expectations file from ' + CHROMIUM_EXPECTATIONS_URL);
+    });
 }
+
+var g_waitingOnExpectations = isLayoutTestResults() && !isTreeMap();
 
 function isTreeMap()
 {
@@ -532,10 +538,8 @@ function appendJSONScriptElements()
     for (var builderName in g_builders)
         appendJSONScriptElementFor(builderName);
 
-    // Grab expectations file from the fastest builder, which is Linux release
-    // right now.    Could be changed to any other builder if needed.
     if (g_waitingOnExpectations)
-        appendScript(pathToBuilderResultsFile(g_expectationsBuilder) + 'expectations.json');
+        requestExpectationsFile();
 }
 
 var g_hasDoneInitialPageGeneration = false;

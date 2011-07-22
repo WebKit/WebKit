@@ -1,3 +1,18 @@
+2011-07-22  Ojan Vafai  <ojan@chromium.org>
+
+        pull test expectations into the dashboard from wvn.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=65054
+
+        Reviewed by Adam Barth.
+
+        Now that svn.webkit.org supports cors headers, we can just grab the txt
+        file from there instead of generating a JSON file that we upload
+        to appengine. We'll stop generating the JSON file in a followup patch.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
 2011-07-22  Adam Barth  <abarth@webkit.org>
 
         Fix typo so the tool works on a case-sensitive file system.

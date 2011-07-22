@@ -42,7 +42,7 @@ function setupExpectationsTest()
 {
     allExpectations = null;
     allTests = null;
-    g_expectationsByTest = {};
+    g_expectations = '';
     g_resultsByBuilder = {};
     g_builders = {};
     g_allExpectations = null;
@@ -98,7 +98,7 @@ function testReleaseFail()
     var expectationsArray = [
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'}
     ];
-    g_expectationsByTest[test] = expectationsArray;
+    g_expectations = 'RELEASE : ' + test + ' = FAIL';
     runExpectationsTest(builder, test, 'FAIL', 'RELEASE');
 }
 
@@ -110,7 +110,8 @@ function testReleaseFailDebugCrashReleaseBuilder()
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
         {'modifiers': 'DEBUG', 'expectations': 'CRASH'}
     ];
-    g_expectationsByTest[test] = expectationsArray;
+    g_expectations = 'RELEASE : ' + test + ' = FAIL\n' +
+        'DEBUG : ' + test + ' = CRASH';
     runExpectationsTest(builder, test, 'FAIL', 'RELEASE');
 }
 
@@ -122,20 +123,18 @@ function testReleaseFailDebugCrashDebugBuilder()
         {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
         {'modifiers': 'DEBUG', 'expectations': 'CRASH'}
     ];
-    g_expectationsByTest[test] = expectationsArray;
+    g_expectations = 'RELEASE : ' + test + ' = FAIL\n' +
+        'DEBUG : ' + test + ' = CRASH';
     runExpectationsTest(builder, test, 'CRASH', 'DEBUG');
 }
 
 function testOverrideJustBuildType()
 {
     var test = 'bar/1.html';
-    g_expectationsByTest['bar'] = [
-        {'modifiers': 'WONTFIX', 'expectations': 'FAIL PASS TIMEOUT'}
-    ];
-    g_expectationsByTest[test] = [
-        {'modifiers': 'WONTFIX MAC', 'expectations': 'FAIL'},
-        {'modifiers': 'LINUX DEBUG', 'expectations': 'CRASH'},
-    ];
+    g_expectations = 'WONTFIX : bar = FAIL PASS TIMEOUT\n' +
+        'WONTFIX MAC : ' + test + ' = FAIL\n' +
+        'LINUX DEBUG : ' + test + ' = CRASH';
+    
     runExpectationsTest('Webkit Win', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
     runExpectationsTest('Webkit Win (dbg)(3)', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
     runExpectationsTest('Webkit Linux', test, 'FAIL PASS TIMEOUT', 'WONTFIX');
@@ -272,27 +271,15 @@ function testGetExpectations()
         }
     }
 
-    g_expectationsByTest = {
-        'foo': [
-            {'modifiers': '', 'expectations': 'FAIL PASS CRASH'}
-        ], 
-        'foo/test1.html': [
-            {'modifiers': 'RELEASE BUGFOO', 'expectations': 'FAIL'},
-            {'modifiers': 'DEBUG', 'expectations': 'CRASH'}
-        ],
-        'foo/test2.html': [
-            {'modifiers': '', 'expectations': 'FAIL'},
-            {'modifiers': 'LINUX DEBUG', 'expectations': 'CRASH'}
-        ],
-        'test1.html': [
-            {'modifiers': 'RELEASE', 'expectations': 'FAIL'},
-            {'modifiers': 'DEBUG', 'expectations': 'CRASH'}
-        ],
-        'http/tests/appcache/interrupted-update.html': [
-            {'modifiers': 'WIN7', 'expectations': 'TIMEOUT'},
-            {'modifiers': 'MAC LINUX XP VISTA', 'expectations': 'FAIL'}
-        ]
-    }
+    g_expectations = 'BUG123 : foo = FAIL PASS CRASH\n' +
+        'RELEASE BUGFOO : foo/test1.html = FAIL\n' +
+        'DEBUG : foo/test1.html = CRASH\n' +
+        'BUG456 : foo/test2.html = FAIL\n' +
+        'LINUX DEBUG : foo/test2.html = CRASH\n' +
+        'RELEASE : test1.html = FAIL\n' +
+        'DEBUG : test1.html = CRASH\n' +
+        'WIN7 : http/tests/appcache/interrupted-update.html = TIMEOUT\n' +
+        'MAC LINUX XP VISTA : http/tests/appcache/interrupted-update.html = FAIL\n';
 
     processExpectations();
     
@@ -303,16 +290,16 @@ function testGetExpectations()
     assertEquals(JSON.stringify(expectations), '{"modifiers":"RELEASE BUGFOO","expectations":"FAIL"}');
 
     var expectations = getExpectations('foo/test2.html', 'LUCID', 'RELEASE');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"","expectations":"FAIL"}');
+    assertEquals(JSON.stringify(expectations), '{"modifiers":"BUG456","expectations":"FAIL"}');
 
     var expectations = getExpectations('foo/test2.html', 'LEOPARD', 'DEBUG');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"","expectations":"FAIL"}');
+    assertEquals(JSON.stringify(expectations), '{"modifiers":"BUG456","expectations":"FAIL"}');
 
     var expectations = getExpectations('foo/test2.html', 'LUCID', 'DEBUG');
     assertEquals(JSON.stringify(expectations), '{"modifiers":"LINUX DEBUG","expectations":"CRASH"}');
 
     var expectations = getExpectations('foo/test3.html', 'LUCID', 'DEBUG');
-    assertEquals(JSON.stringify(expectations), '{"modifiers":"","expectations":"FAIL PASS CRASH"}');
+    assertEquals(JSON.stringify(expectations), '{"modifiers":"BUG123","expectations":"FAIL PASS CRASH"}');
 
     var expectations = getExpectations('test1.html', 'XP', 'DEBUG');
     assertEquals(JSON.stringify(expectations), '{"modifiers":"DEBUG","expectations":"CRASH"}');

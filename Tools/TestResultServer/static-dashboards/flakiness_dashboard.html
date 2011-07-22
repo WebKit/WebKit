@@ -180,10 +180,6 @@ input {
     border: 1px solid lightgray;
     height: 0px;
 }
-.different-platform {
-    color: gray;
-    font-size: 10px;
-}
 #passing-tests {
     -webkit-column-count: 3;
     -webkit-column-gap: 25px;
@@ -788,48 +784,45 @@ function populateExpectationsData(resultsObject)
     resultsObject.isWontFixSkip = stringContains(expectations.modifiers, 'WONTFIX') || stringContains(expectations.modifiers, 'SKIP'); 
 }
 
-function addTestToAllExpectations(test, expectations)
+function addTestToAllExpectations(test, expectations, modifiers)
 {
     if (!g_allExpectations[test])
         g_allExpectations[test] = {};
 
-    for (var j = 0; j < expectations.length; j++) {
-        var modifiers = expectations[j].modifiers.split(' ');
-        var allPlatforms = [];
-        var allBuildTypes = [];
-        modifiers.forEach(function(modifier) {
-            if (modifier in BUILD_TYPES) {
-                allBuildTypes.push(modifier);
-                return;
-            }
-            
-            if (PLATFORMS.indexOf(modifier) != -1) {
-                allPlatforms.push(modifier);
-                return;
-            }
-            
-            if (modifier in PLATFORM_UNIONS) {
-                PLATFORM_UNIONS[modifier].forEach(function(platform) {
-                    allPlatforms.push(platform);
-                });
-            }
-        })
+    var allPlatforms = [];
+    var allBuildTypes = [];
+    modifiers.split(' ').forEach(function(modifier) {
+        if (modifier in BUILD_TYPES) {
+            allBuildTypes.push(modifier);
+            return;
+        }
         
-        if (!allPlatforms.length)
-            allPlatforms = PLATFORMS;
-            
-        if (!allBuildTypes.length)
-            allBuildTypes = Object.keys(BUILD_TYPES);
+        if (PLATFORMS.indexOf(modifier) != -1) {
+            allPlatforms.push(modifier);
+            return;
+        }
         
-        allPlatforms.forEach(function(platform) {
-            if (!g_allExpectations[test][platform])
-                g_allExpectations[test][platform] = {};
+        if (modifier in PLATFORM_UNIONS) {
+            PLATFORM_UNIONS[modifier].forEach(function(platform) {
+                allPlatforms.push(platform);
+            });
+        }
+    })
+    
+    if (!allPlatforms.length)
+        allPlatforms = PLATFORMS;
+        
+    if (!allBuildTypes.length)
+        allBuildTypes = Object.keys(BUILD_TYPES);
+    
+    allPlatforms.forEach(function(platform) {
+        if (!g_allExpectations[test][platform])
+            g_allExpectations[test][platform] = {};
 
-            allBuildTypes.forEach(function(buildType) {
-                g_allExpectations[test][platform][buildType] = expectations[j];
-            }); 
-        });
-    }
+        allBuildTypes.forEach(function(buildType) {
+            g_allExpectations[test][platform][buildType] = {modifiers: modifiers, expectations: expectations};
+        }); 
+    });
 }
 
 // Data structure to hold the processed expectations.
@@ -843,6 +836,33 @@ function addTestToAllExpectations(test, expectations)
 // buildType, then ALL.
 var g_allExpectations;
 
+function parsedExpectations()
+{
+    var expectations = [];
+    var lines = g_expectations.split('\n');
+    lines.forEach(function(line) {
+        line = trimString(line);
+        if (!line || startsWith(line, '//'))
+            return;
+
+        // FIXME: Make this robust against not having modifiers and/or expectations.
+        // Right now, run-webkit-tests doesn't allow such lines, but it may in the future.
+        var match = line.match(/([^:]+)*:([^=]+)=(.*)/);
+        if (!match) {
+            console.error('Line could not be parsed: ' + line);
+            return;
+        }
+
+        // FIXME: Should we include line number and comment lines here?
+        expectations.push({
+            modifiers: trimString(match[1]),
+            path: trimString(match[2]),
+            expectations: trimString(match[3])
+        });
+    });
+    return expectations;
+}
+
 function processExpectations()
 {
     if (g_allExpectations)
@@ -850,9 +870,7 @@ function processExpectations()
 
     g_allExpectations = {};
 
-    var expectationsArray = [];
-    for (var path in g_expectationsByTest)
-        expectationsArray.push({path: path, expectations: g_expectationsByTest[path]});
+    var expectationsArray = parsedExpectations();
 
     // Sort the array to hit more specific paths last. More specific
     // paths (e.g. foo/bar/baz.html) override entries for less-specific ones (e.g. foo/bar).
@@ -861,23 +879,24 @@ function processExpectations()
     var allTests = getAllTests();
     for (var i = 0; i < expectationsArray.length; i++) {
         var path = expectationsArray[i].path;
+        var modifiers = expectationsArray[i].modifiers;
         var expectations = expectationsArray[i].expectations;
 
         var pathMatchesAnyTest = false;
         if (allTests[path]) {
             pathMatchesAnyTest = true;
-            addTestToAllExpectations(path, expectations);
+            addTestToAllExpectations(path, expectations, modifiers);
         } else {
             for (var test in allTests) {
                 if (startsWith(test, path)) {
                     pathMatchesAnyTest = true;
-                    addTestToAllExpectations(test, expectations);
+                    addTestToAllExpectations(test, expectations, modifiers);
                 }
             }
         }
 
         if (!pathMatchesAnyTest)
-            addTestToAllExpectations(path, expectations);
+            addTestToAllExpectations(path, expectations, modifiers);
     }
 }
 
@@ -1810,12 +1829,6 @@ function htmlForIndividulTestOnAllBuilders(test)
             html += htmlForSingleTestRow(testResults[j]);
         html = htmlForTestTable(html);
     } else {
-        if (g_expectationsByTest[test]) {
-            for (var i = 0; i < g_expectationsByTest[test].length; i++) {
-              html += '<div>' + g_expectationsByTest[test][i].modifiers + ' | ' +
-                  g_expectationsByTest[test][i].expectations + '</div>';
-            }
-        }
         html += '<div class="not-found">Test not found. Either it does ' +
             'not exist, is skipped or passes on all platforms.</div>';
     }
