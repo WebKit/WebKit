@@ -42,6 +42,8 @@ public:
     ScrollbarTheme() { }
     virtual ~ScrollbarTheme() {};
 
+    virtual void updateEnabledState(Scrollbar*) { };
+
     virtual bool paint(Scrollbar*, GraphicsContext*, const IntRect& /*damageRect*/) { return false; }
     virtual ScrollbarPart hitTest(Scrollbar*, const PlatformMouseEvent&) { return NoPart; }
     

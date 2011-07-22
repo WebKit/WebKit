@@ -39,6 +39,8 @@ public:
     ScrollbarThemeMac();
     virtual ~ScrollbarThemeMac();
 
+    virtual void updateEnabledState(Scrollbar*);
+
     virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);

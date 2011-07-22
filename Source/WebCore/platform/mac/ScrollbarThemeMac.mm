@@ -160,6 +160,7 @@ void ScrollbarThemeMac::registerScrollbar(Scrollbar* scrollbar)
     bool isHorizontal = scrollbar->orientation() == HorizontalScrollbar;
     WKScrollbarPainterRef scrollbarPainter = wkMakeScrollbarPainter(scrollbar->controlSize(), isHorizontal);
     scrollbarMap()->add(scrollbar, scrollbarPainter);
+    updateEnabledState(scrollbar);
 #else
     scrollbarMap()->add(scrollbar);
 #endif
@@ -174,6 +175,7 @@ void ScrollbarThemeMac::unregisterScrollbar(Scrollbar* scrollbar)
 void ScrollbarThemeMac::setNewPainterForScrollbar(Scrollbar* scrollbar, WKScrollbarPainterRef newPainter)
 {
     scrollbarMap()->set(scrollbar, newPainter);
+    updateEnabledState(scrollbar);
 }
 
 WKScrollbarPainterRef ScrollbarThemeMac::painterForScrollbar(Scrollbar* scrollbar)
@@ -443,6 +445,13 @@ static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlaySt
     }
 }
 #endif
+
+void ScrollbarThemeMac::updateEnabledState(Scrollbar* scrollbar)
+{
+#if USE(WK_SCROLLBAR_PAINTER)
+    wkScrollbarPainterSetEnabled(scrollbarMap()->get(scrollbar).get(), scrollbar->enabled());
+#endif
+}
 
 bool ScrollbarThemeMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {

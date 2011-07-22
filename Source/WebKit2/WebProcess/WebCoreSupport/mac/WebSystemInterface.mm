@@ -113,6 +113,7 @@ void InitWebCoreSystemInterface(void)
         INIT(CreateCTTypesetterWithUniCharProviderAndOptions);
         INIT(MakeScrollbarPainter);
         INIT(ScrollbarPainterSetDelegate);
+        INIT(ScrollbarPainterSetEnabled);
         INIT(ScrollbarPainterPaint);
         INIT(ScrollbarPainterForceFlashScrollers);
         INIT(ScrollbarThickness);

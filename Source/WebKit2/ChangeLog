@@ -1,5 +1,25 @@
 2011-07-22  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 91146.
+
+    2011-07-15  Tim Horton  <timothy_horton@apple.com>
+
+        Overlay scrollbars in overflow areas no longer pulse when revealed
+        https://bugs.webkit.org/show_bug.cgi?id=64606
+        <rdar://problem/9390674>
+
+        Reviewed by Simon Fraser.
+
+        Ensure that the state of the scrollbar implementation is kept in sync
+        with WebCore's internal representation. Previously, we synchronized them
+        at paint time, causing pulsing to be skipped due to the scrollbars being
+        disabled.
+
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
+2011-07-22  Lucas Forschler  <lforschler@apple.com>
+
     Merged 90851.
 
     2011-06-22  Jer Noble  <jer.noble@apple.com>
