@@ -1,3 +1,9 @@
+2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix after r91555.
+
+        * JavaScriptCore.exp:
+
 2011-07-21  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=19271
