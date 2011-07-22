@@ -1,3 +1,21 @@
+2011-07-21  Robin Qiu  <robin.qiu.dev@gmail.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=60737
+
+        ThumbPosition() in ScrollbarTheme should be ceiled before returned.
+        Otherwise, some topest/leftest content can not be shown by dragging
+        scrollbar thumb.
+
+
+        Reviewed by Antonio Gomes.
+
+        Test: scrollbars/scrollbar-drag-thumb-with-large-content.html
+
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::thumbPosition):
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::thumbPosition):
+
 2011-07-21  Simon Fraser  <simon.fraser@apple.com>
 
         GraphicsLayers in subframes can get sync'd multiple times

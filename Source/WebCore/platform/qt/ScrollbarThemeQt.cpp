@@ -213,8 +213,10 @@ int ScrollbarThemeQt::scrollbarThickness(ScrollbarControlSize controlSize)
 
 int ScrollbarThemeQt::thumbPosition(Scrollbar* scrollbar)
 {
-    if (scrollbar->enabled())
-        return (int)((float)scrollbar->currentPos() * (trackLength(scrollbar) - thumbLength(scrollbar)) / scrollbar->maximum());
+    if (scrollbar->enabled()) {
+        float pos = (float)scrollbar->currentPos() * (trackLength(scrollbar) - thumbLength(scrollbar)) / scrollbar->maximum();
+        return (pos < 1 && pos > 0) ? 1 : pos;
+    }
     return 0;
 }
 

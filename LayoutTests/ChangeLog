@@ -1,3 +1,16 @@
+2011-07-21  Robin Qiu  <robin.qiu.dev@gmail.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=60737
+
+        ThumbPosition() in ScrollbarTheme should be ceiled before returned.
+        Otherwise, some topest/leftest content can not be shown by dragging
+        scrollbar thumb.
+
+        Reviewed by Antonio Gomes.
+
+        * scrollbars/scrollbar-drag-thumb-with-large-content-expected.txt: Added.
+        * scrollbars/scrollbar-drag-thumb-with-large-content.html: Added.
+
 2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium test expectation update after r91533.
