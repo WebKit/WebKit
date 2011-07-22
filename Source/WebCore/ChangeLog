@@ -1,3 +1,24 @@
+2011-07-22  Alok Priyadarshi  <alokp@chromium.org>
+
+        Use software rendering for small canvas
+        https://bugs.webkit.org/show_bug.cgi?id=64958
+
+        Reviewed by Stephen White.
+
+        No new tests. Does not affect rendering output, just canvas backing.
+        If there is a regression, they should be caught by existing canvas tests.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::shouldAccelerateCanvas):
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::reset):
+        (WebCore::CanvasRenderingContext2D::platformLayer):
+        (WebCore::CanvasRenderingContext2D::clearAcceleration):
+        (WebCore::CanvasRenderingContext2D::resetAcceleration):
+        * html/canvas/CanvasRenderingContext2D.h:
+
 2011-07-21  Adrienne Walker  <enne@google.com>
 
         Fix repainting of composited fixed position elements in iframes

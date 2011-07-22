@@ -97,6 +97,33 @@ static bool isOriginClean(CachedImage* cachedImage, SecurityOrigin* securityOrig
     return !securityOrigin->taintsCanvas(cachedImage->response().url());
 }
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+// Number of pixels in a canvas below which we use software
+// rendering. This is obviously an arbitrary number. A more precise
+// number would depend on machine architecture and canvas contents.
+static const int numPixelsThreshold = 128 * 128;
+
+static bool shouldAccelerateCanvas(const HTMLCanvasElement* canvas)
+{
+    const Page* page = canvas->document()->page();
+    if (!page)
+        return false;
+
+    const Settings* settings = page->settings();
+    if (!settings->accelerated2dCanvasEnabled())
+        return false;
+
+    // Do not use acceleration for small canvas.
+    // For every accelerated canvas there is an extra back-buffer and a texture copy.
+    // Small canvases are also widely used for stylized fonts. Anti-aliasing
+    // text in hardware at that scale is generally slower.
+    if (canvas->width() * canvas->height() < numPixelsThreshold)
+        return false;
+
+    return true;
+}
+#endif
+
 class CanvasStrokeStyleApplier : public StrokeStyleApplier {
 public:
     CanvasStrokeStyleApplier(CanvasRenderingContext2D* canvasContext)
@@ -136,22 +163,7 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
     setLineWidth(lineWidth());
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    Page* p = canvas->document()->page();
-    if (!p)
-        return;
-    if (!(p->settings()->accelerated2dCanvasEnabled() || p->settings()->legacyAccelerated2dCanvasEnabled()))
-        return;
-    if (GraphicsContext* c = drawingContext()) {
-        m_context3D = p->sharedGraphicsContext3D();
-        if (m_context3D) {
-            m_drawingBuffer = m_context3D->createDrawingBuffer(IntSize(canvas->width(), canvas->height()));
-            if (!m_drawingBuffer) {
-                c->setGraphicsContext3D(0, 0, IntSize());
-                m_context3D.clear();
-            } else
-                c->setGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas->width(), canvas->height()));
-        }
-    }
+    resetAcceleration();
 #endif
 }
 
@@ -203,22 +215,12 @@ void CanvasRenderingContext2D::reset()
     m_stateStack.first() = State();
     m_path.clear();
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    if (GraphicsContext* c = drawingContext()) {
-        if (m_context3D && m_drawingBuffer) {
-            if (m_drawingBuffer->reset(IntSize(canvas()->width(), canvas()->height()))) {
-                c->setGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), IntSize(canvas()->width(), canvas()->height()));
-            } else {
-                c->setGraphicsContext3D(0, 0, IntSize());
-                m_drawingBuffer.clear();
-                m_context3D.clear();
-            }
+    resetAcceleration();
 #if USE(ACCELERATED_COMPOSITING)
-            RenderBox* renderBox = canvas()->renderBox();
-            if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
-                renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
+    RenderBox* renderBox = canvas()->renderBox();
+    if (renderBox && renderBox->hasLayer() && renderBox->layer()->hasAcceleratedCompositing())
+        renderBox->layer()->contentChanged(RenderLayer::CanvasChanged);
 #endif
-        }
-    }
 #endif
 }
 
@@ -2023,10 +2025,60 @@ const Font& CanvasRenderingContext2D::accessFont()
     return state().m_font;
 }
 
-#if ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING)
+#if ENABLE(ACCELERATED_2D_CANVAS)
+#if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* CanvasRenderingContext2D::platformLayer() const
 {
     return m_drawingBuffer ? m_drawingBuffer->platformLayer() : 0;
+}
+#endif
+
+void CanvasRenderingContext2D::clearAcceleration()
+{
+    if (GraphicsContext* ctx = drawingContext())
+        ctx->setGraphicsContext3D(0, 0, IntSize());
+
+    m_drawingBuffer.clear();
+    m_context3D.clear();
+}
+
+void CanvasRenderingContext2D::resetAcceleration()
+{
+    if (!shouldAccelerateCanvas(canvas())) {
+        clearAcceleration();
+        return;
+    }
+
+    // Try to accelerate.
+    GraphicsContext* ctx = drawingContext();
+    if (!ctx) {
+        clearAcceleration();
+        return;
+    }
+
+    if (!m_context3D) {
+        Page* page = canvas()->document()->page();
+        m_context3D = page->sharedGraphicsContext3D();
+        if (!m_context3D) {
+            clearAcceleration();
+            return;
+        }
+    }
+
+    if (m_drawingBuffer) {
+        if (!m_drawingBuffer->reset(canvas()->size())) {
+            clearAcceleration();
+            return;
+        }
+    } else {
+        m_drawingBuffer = m_context3D->createDrawingBuffer(canvas()->size());
+        if (!m_drawingBuffer) {
+            clearAcceleration();
+            return;
+        }
+    }
+
+    ctx->setGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), canvas()->size());
 }
 #endif
 

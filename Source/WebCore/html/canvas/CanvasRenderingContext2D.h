@@ -295,6 +295,11 @@ private:
 
     void prepareGradientForDashboard(CanvasGradient* gradient) const;
 
+#if ENABLE(ACCELERATED_2D_CANVAS)
+    void clearAcceleration();
+    void resetAcceleration();
+#endif
+
     Vector<State, 1> m_stateStack;
     bool m_usesCSSCompatibilityParseMode;
 #if ENABLE(DASHBOARD_SUPPORT)

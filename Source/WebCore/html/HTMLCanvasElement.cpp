@@ -245,8 +245,18 @@ void HTMLCanvasElement::reset()
         static_cast<WebGLRenderingContext*>(m_context.get())->reshape(width(), height());
 #endif
 
-    if (m_context && m_context->is2d())
-        static_cast<CanvasRenderingContext2D*>(m_context.get())->reset();
+    if (m_context && m_context->is2d()) {
+        CanvasRenderingContext2D* context2D = static_cast<CanvasRenderingContext2D*>(m_context.get());
+        bool wasAccelerated = context2D->isAccelerated();
+        context2D->reset();
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || (ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING))
+        // Recalculate compositing requirements if acceleration state changed.
+        if (context2D->isAccelerated() != wasAccelerated)
+            setNeedsStyleRecalc(SyntheticStyleChange);
+#else
+        UNUSED_PARAM(wasAccelerated);
+#endif
+    }
 
     if (RenderObject* renderer = this->renderer()) {
         if (m_rendererIsCanvas) {
