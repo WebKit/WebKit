@@ -1,3 +1,14 @@
+2011-07-22  Jia Pu  <jpu@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [Mac] Need to make sure autocorrection panel is dismissed in Document::setFocusNode().
+        https://bugs.webkit.org/show_bug.cgi?id=64824
+        <rdar://problem/9624232>
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::textFieldDidEndEditing): Dismiss autocorrection panel when current node losing focus.
+
 2011-07-21  Kent Tamura  <tkent@chromium.org>
 
         A trivial fix for r91550.
