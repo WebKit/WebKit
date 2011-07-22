@@ -1,3 +1,19 @@
+2011-07-22  Viet-Trung Luu  <viettrungluu@chromium.org>
+
+        Improve (i.e., speed up) .gyp(i) files for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=65032
+
+        Reviewed by Adam Barth.
+
+        Begin splitting off webcore_(privateheader_)files into separate lists
+        (dom/html/svg in this patch), to avoid the very slow pattern of
+        excluding all files and then filtering to include selected files.
+
+        Test by building (in all supported configurations).
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-07-22  Tony Chang  <tony@chromium.org>
 
         add placeholder RenderFlexibleBox.cpp files
