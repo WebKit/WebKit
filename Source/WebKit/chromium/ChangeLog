@@ -1,3 +1,10 @@
+2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert r91510 due to Chromium debug test failures.
+
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+
 2011-07-20  Cris Neckar  <cdn@chromium.org>
 
         Hook v8 up to cryptographicallyRandomValues as an entropy source.

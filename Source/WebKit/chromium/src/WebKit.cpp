@@ -37,7 +37,6 @@
 #include "Settings.h"
 #include "TextEncoding.h"
 #include "V8Binding.h"
-#include "WebKitClient.h"
 #include "WebMediaPlayerClientImpl.h"
 #include "WebSocket.h"
 #include "WorkerContextExecutionProxy.h"
@@ -55,15 +54,6 @@ static bool s_webKitInitialized = false;
 
 static WebKitClient* s_webKitClient = 0;
 static bool s_layoutTestMode = false;
-
-static bool generateEntropy(unsigned char* buffer, size_t length)
-{
-    if (s_webKitClient) {
-        s_webKitClient->cryptographicallyRandomValues(buffer, length);
-        return true;
-    }
-    return false;
-}
 
 void initialize(WebKitClient* webKitClient)
 {
@@ -87,7 +77,6 @@ void initialize(WebKitClient* webKitClient)
     // this, initializing this lazily probably doesn't buy us much.
     WebCore::UTF8Encoding();
 
-    v8::V8::SetEntropySource(&generateEntropy);
     v8::V8::Initialize();
     WebCore::V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
 }
