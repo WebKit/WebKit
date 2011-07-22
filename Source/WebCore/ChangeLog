@@ -42,47 +42,6 @@
         * rendering/RenderBlock.cpp:
         (WebCore::RenderBlock::MarginInfo::MarginInfo):
 
-2011-07-19  Matthew Delaney  <mdelaney@apple.com>
-
-        Add fast path for ImageBuffer::draw
-        https://bugs.webkit.org/show_bug.cgi?id=64535
-
-        Reviewed by Simon Fraser.
-
-        No new tests. This patch doesn't change behavior; current tests are sufficient.
-
-        * platform/graphics/GraphicsContext.cpp:
-        (WebCore::GraphicsContext::drawImage): Moved the main method version next to wrapper versions.
-
-        * platform/graphics/ImageBuffer.h:
-        1) Added BackingStoreCopy enum for choosing to copy backing store or not in copyImage().
-        2) Added copyNativeImage() behind USE(CG) - same as copyImage() but gives NativeImagePtr.
-        * platform/graphics/cg/ImageBufferCG.cpp: Added new methods described above.
-
-        * platform/graphics/GraphicsContext.h: Adding drawNativeImage() for fast draw path.
-        * platform/graphics/cg/GraphicsContextCG.cpp:
-        (WebCore::GraphicsContext::drawNativeImage): Added. Draws a nativeImagePtr into context.
-
-        * platform/graphics/Image.h: Added imageWithColorSpace behind CG platform ifdef
-        * platform/graphics/cg/ImageCG.cpp:
-        (WebCore::BitmapImage::draw): Refactored out actual image drawing code into GraphicsContext,
-        so that it can be used by more than just BitmapImage without having to copy code.
-        (WebCore::Image::imageWithColorSpace): Made into an Image class function.
-
-        Updated copyImage() to for BackingStoreCopy:
-        * platform/graphics/qt/ImageBufferQt.cpp
-        * platform/graphics/filters/FETile.cpp
-        * platform/graphics/cairo/ImageBufferCairo.cpp
-        * platform/graphics/skia/ImageBufferSkia.cpp
-        * platform/graphics/wx/ImageBufferWx.cpp
-        * platform/graphics/wince/ImageBufferWinCE.cpp
-        * svg/SVGFEImageElement.cpp
-        * svg/graphics/SVGImage.cpp
-        * html/HTMLCanvasElement.cpp
-        * html/canvas/WebGLRenderingContext.cpp
-        * rendering/svg/RenderSVGResourcePattern.cpp
-
-<<<<<<< .mine
 2011-07-21  Matthew Delaney  <mdelaney@apple.com>
 
         Add fast path for ImageBuffer::draw, Take 2.
@@ -110,7 +69,7 @@
         so that it can be used by more than just BitmapImage without having to copy code.
         (WebCore::Image::imageWithColorSpace): Made into an Image class function.
 
-        Updated copyImage() to for BackingStoreCopy:
+        Updated copyImage() to use BackingStoreCopy:
         * platform/graphics/qt/ImageBufferQt.cpp
         * platform/graphics/filters/FETile.cpp
         * platform/graphics/cairo/ImageBufferCairo.cpp
@@ -123,7 +82,6 @@
         * html/canvas/WebGLRenderingContext.cpp
         * rendering/svg/RenderSVGResourcePattern.cpp
 
-=======
 2011-07-21  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/64972> Clean up generated HTMLEntityTable.cpp output
