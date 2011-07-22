@@ -29,6 +29,8 @@ config.kBuildersThatOnlyCompile = [
     'Mac Clang Builder (dbg)',
 ];
 
+config.kTracURL = 'http://trac.webkit.org';
+
 config.kTestNameAttr = 'data-test-name';
 config.kBuilderNameAttr = 'data-builder-name';
 config.kFailureCountAttr = 'data-failure-count';

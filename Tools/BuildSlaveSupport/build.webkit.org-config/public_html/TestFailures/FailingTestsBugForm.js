@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function FailingTestsBugForm(bugzilla, trac, tester, failingBuildName, passingBuildName, failingTests) {
+function FailingTestsBugForm(bugzilla, tester, failingBuildName, passingBuildName, failingTests) {
     TestRelatedBugForm.call(this, bugzilla, tester);
 
-    this._trac = trac;
     this._failingBuildName = failingBuildName;
     this._passingBuildName = passingBuildName;
     this._failingTests = failingTests;
@@ -48,11 +47,11 @@ FailingTestsBugForm.prototype = {
         if (this._passingBuildName) {
             endOfFirstSentence = 'started failing on ' + this._tester.name;
             if (firstSuspectRevision === lastSuspectRevision)
-                endOfFirstSentence += ' in r' + firstSuspectRevision + ' <' + this._trac.changesetURL(firstSuspectRevision) + '>';
+                endOfFirstSentence += ' in r' + firstSuspectRevision + ' <' + trac.changesetURL(firstSuspectRevision) + '>';
             else
                 endOfFirstSentence += ' between r' + firstSuspectRevision + ' and r' + lastSuspectRevision + ' (inclusive)';
         } else
-            endOfFirstSentence = (this._failingTests.length === 1 ? 'has' : 'have') + ' been failing on ' + this._tester.name + ' since at least r' + firstSuspectRevision + ' <' + this._trac.changesetURL(firstSuspectRevision) + '>';
+            endOfFirstSentence = (this._failingTests.length === 1 ? 'has' : 'have') + ' been failing on ' + this._tester.name + ' since at least r' + firstSuspectRevision + ' <' + trac.changesetURL(firstSuspectRevision) + '>';
         var description;
         if (this._failingTests.length === 1)
             description = this._failingTests[0] + ' ' + endOfFirstSentence + '.\n\n';
@@ -64,7 +63,7 @@ FailingTestsBugForm.prototype = {
                 + '\n\n';
         }
         if (firstSuspectRevision !== lastSuspectRevision)
-            description += this._trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision) + '\n\n';
+            description += trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision) + '\n\n';
         if (this._passingBuildName)
             description += this._tester.resultsPageURL(this._passingBuildName) + ' passed\n';
         description += this._failingResultsHTMLURL() + ' failed\n';

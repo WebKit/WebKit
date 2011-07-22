@@ -146,4 +146,40 @@ base.CallbackIterator.prototype.callPrevious = function()
     this._callback.apply(null, args);
 };
 
+base.AsynchronousCache = function(fetch)
+{
+    this._fetch = fetch;
+    this._dataCache = {};
+    this._callbackCache = {};
+};
+
+base.AsynchronousCache.prototype.get = function(key, callback)
+{
+    var self = this;
+
+    if (self._dataCache[key]) {
+        // FIXME: Consider always calling callback asynchronously.
+        callback(self._dataCache[key]);
+        return;
+    }
+
+    if (key in self._callbackCache) {
+        self._callbackCache[key].push(callback);
+        return;
+    }
+
+    self._callbackCache[key] = [callback];
+
+    self._fetch.call(null, key, function(data) {
+        self._dataCache[key] = data;
+
+        var callbackList = self._callbackCache[key];
+        delete self._callbackCache[key];
+
+        callbackList.forEach(function(cachedCallback) {
+            cachedCallback(data);
+        });
+    });
+};
+
 })();

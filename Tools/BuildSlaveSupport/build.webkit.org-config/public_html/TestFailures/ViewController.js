@@ -23,10 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function ViewController(buildbot, bugzilla, trac) {
+function ViewController(buildbot, bugzilla) {
     this._buildbot = buildbot;
     this._bugzilla = bugzilla;
-    this._trac = trac;
     this._navigationID = 0;
 
     var self = this;
@@ -104,7 +103,7 @@ ViewController.prototype = {
                 item.appendChild(self._domForRegressionRange(builder, buildName, passingBuildName, failingTestNames));
 
                 if (passingBuildName || !stillFetchingData) {
-                    var bugForm = new FailingTestsBugForm(self._bugzilla, self._trac, builder, buildName, passingBuildName, failingTestNames);
+                    var bugForm = new FailingTestsBugForm(self._bugzilla, builder, buildName, passingBuildName, failingTestNames);
                     item.appendChild(self._domForNewAndExistingBugs(builder, failingTestNames, bugForm))
                 }
             });
@@ -198,14 +197,14 @@ ViewController.prototype = {
         var link = document.createElement('a');
         result.appendChild(link);
 
-        link.href = this._trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision, true);
+        link.href = trac.logURL('trunk', firstSuspectRevision, lastSuspectRevision, true);
         link.appendChild(document.createTextNode('View regression range in Trac'));
 
         suspectsContainer.appendChild(document.createTextNode('Searching for suspect revisions\u2026'));
 
         // FIXME: Maybe some of this code should go in LayoutTestHistoryAnalyzer, or some other class?
         var self = this;
-        self._trac.getCommitDataForRevisionRange('trunk', firstSuspectRevision, lastSuspectRevision, function(commits) {
+        trac.getCommitDataForRevisionRange('trunk', firstSuspectRevision, lastSuspectRevision, function(commits) {
             var failingTestNamesWithoutExtensions = failingTestNames.map(removePathExtension);
             var suspectCommits = commits.filter(function(commit) {
                 return failingTestNamesWithoutExtensions.some(function(testName) {
@@ -234,7 +233,7 @@ ViewController.prototype = {
                 var link = document.createElement('a');
                 item.appendChild(link);
 
-                link.href = self._trac.changesetURL(commit.revision);
+                link.href = trac.changesetURL(commit.revision);
                 link.appendChild(document.createTextNode(commit.title))
 
                 return item;

@@ -1,3 +1,30 @@
+2011-07-21  Adam Barth  <abarth@webkit.org>
+
+        Refactor Trac.js for use in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=64998
+
+        Reviewed by Adam Roben.
+
+        This patch refactors Trac.js to match the architecture and style of
+        garden-o-matic.  I've also factored AsynchronousCache out of Trac (and
+        moved it to base) because it was redundant with some other code we
+        already had.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm.js:
+        (FailingTestsBugForm):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder.start):
+        (ViewController.prototype._displayBuilder):
+        (ViewController.prototype._domForRegressionRange.trac.getCommitDataForRevisionRange):
+        (ViewController.prototype._domForRegressionRange):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+
 2011-07-21  Ojan Vafai  <ojan@chromium.org>
 
         Fix issue throwing a 500 to the bots. We were modifying

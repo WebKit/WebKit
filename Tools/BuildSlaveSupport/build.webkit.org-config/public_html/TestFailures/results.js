@@ -157,34 +157,9 @@ function directoryOfResultsSummaryURL(builderName, testName)
     return kTestResultsQuery + $.param(parameters);
 }
 
-function ResultsCache()
-{
-    this._cache = {};
-}
-
-ResultsCache.prototype._fetch = function(key, callback)
-{
-    var self = this;
-
-    var url = kTestResultsServer + 'testfile?key=' + key;
-    base.jsonp(url, function (resultsTree) {
-        self._cache[key] = resultsTree;
-        callback(resultsTree);
-    });
-};
-
-// Warning! This function can call callback either synchronously or asynchronously.
-// FIXME: Consider using setTimeout to make this method always asynchronous.
-ResultsCache.prototype.get = function(key, callback)
-{
-    if (this._cache[key]) {
-        callback(this._cache[key]);
-        return;
-    }
-    this._fetch(key, callback);
-};
-
-var g_resultsCache = new ResultsCache();
+var g_resultsCache = new base.AsynchronousCache(function(key, callback) {
+    base.jsonp(kTestResultsServer + 'testfile?key=' + key, callback);
+});
 
 function anyIsFailure(resultsList)
 {
