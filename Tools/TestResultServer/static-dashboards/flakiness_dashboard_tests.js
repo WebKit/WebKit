@@ -248,6 +248,17 @@ function testAllTestsWithSamePlatformAndBuildType()
     }
 }
 
+function testFilterBugs()
+{
+    var filtered = filterBugs('SKIP BUG123 BUGCR123 BUGWK123 SLOW BUG_TONY')
+    assertEquals(filtered.modifiers, 'SKIP SLOW');
+    assertEquals(filtered.bugs, 'BUG123 BUGCR123 BUGWK123 BUG_TONY');
+
+    filtered = filterBugs('SKIP SLOW')
+    assertEquals(filtered.modifiers, 'SKIP SLOW');
+    assertEquals(filtered.bugs, '');
+}
+
 function testGetExpectations()
 {
     g_builders['WebKit Win'] = true;

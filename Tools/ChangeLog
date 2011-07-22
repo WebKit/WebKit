@@ -1,3 +1,20 @@
+2011-07-22  Ojan Vafai  <ojan@chromium.org>
+
+        simplify the flakiness dashboard to only show modifiers/expectations for the current builder
+        https://bugs.webkit.org/show_bug.cgi?id=65049
+
+        Reviewed by Tony Chang.
+
+        This communicates less information, but probably makes the dashboard more usable.
+        Also make it show that bug lines that don't point to bug numbers still
+        show up in the bugs column (e.g. BUG_TONY) and stop showing the extra/missing
+        columns in any view. The data is still used, but only in the view that updates
+        the test_expectations.txt file.
+
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
 2011-07-21  Ojan Vafai  <ojan@chromium.org>
 
         hook in the rest of the bots to the dashboard now they run NRWT

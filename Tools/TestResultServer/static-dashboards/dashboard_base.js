@@ -229,6 +229,11 @@ function trimString(str)
     return str.replace(/^\s+|\s+$/g, '');
 }
 
+function collapseWhitespace(str)
+{
+    return str.replace(/\s+/g, ' ');
+}
+
 function request(url, success, error, opt_isBinaryData)
 {
     console.log('XMLHttpRequest: ' + url);

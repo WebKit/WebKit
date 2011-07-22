@@ -504,12 +504,8 @@ function createResultsObjectForTest(test, builder)
         missing: '',
         // String of extra expectations (i.e. expectations that never occur).
         extra: '',
-        // HTML for bug IDs for this test for all platforms
-        bugsHTML: '',
-        // HTML for expectations for this test for all platforms
-        expectationsHTML: '',
-        // HTML for modifiers for this test for all platforms
-        modifiersHTML: '',
+        modifiers: '',
+        expectations : '',
         rawResults: '',
         percentFailed: 0,
         // List of all the results the test actually has.
@@ -756,22 +752,6 @@ function allTestsWithSamePlatformAndBuildType(platform, buildType)
     return g_allTestsByPlatformAndBuildType[platform][buildType];
 }
 
-function addHTMLToIndividualOptionsArray(array, html, isCurrentPlatform)
-{
-    if (html) {
-        array.push('<div class="option' +
-            (isCurrentPlatform ? '' : ' different-platform') + '">' + html +
-            '</div>');
-    }
-}
-
-function addHtmlToOptionsArrays(htmlArrays, expectations, modifiers, bugs, isCurrentPlatform)
-{
-    addHTMLToIndividualOptionsArray(htmlArrays.expectations, expectations, isCurrentPlatform);
-    addHTMLToIndividualOptionsArray(htmlArrays.modifiers, modifiers, isCurrentPlatform);
-    addHTMLToIndividualOptionsArray(htmlArrays.bugs, htmlForBugs(bugs), isCurrentPlatform);
-}
-
 function getExpectations(test, platform, buildType)
 {
     var testObject = g_allExpectations[test];
@@ -785,66 +765,26 @@ function getExpectations(test, platform, buildType)
     return platformObject[buildType];
 }
 
+function filterBugs(modifiers)
+{
+    var bugs = modifiers.match(/BUG[^\s]*/g);
+    if (!bugs)
+        return {bugs: '', modifiers: modifiers};
+    
+    for (var j = 0; j < bugs.length; j++)
+        modifiers = modifiers.replace(bugs[j], '');
+    return {bugs: bugs.join(' '), modifiers: collapseWhitespace(trimString(modifiers))};
+}
+
 function populateExpectationsData(resultsObject)
 {
-    var test = resultsObject.test;
-
     var buildInfo = platformAndBuildType(resultsObject.builder);
-    var platform = buildInfo.platform;
-    var buildType = buildInfo.buildType;
+    var expectations = getExpectations(resultsObject.test, buildInfo.platform, buildInfo.buildType);
+    if (!expectations)
+        return;
 
-    var thisPlatformExpectations = getExpectations(test, platform, buildType);
-
-    var htmlArrays = {};
-    htmlArrays.expectations = [];
-    htmlArrays.modifiers = [];
-    htmlArrays.bugs = [];
-
-    var tests = g_resultsByBuilder[resultsObject.builder].tests;
-
-    var testObject = g_allExpectations[test];
-    var usedExpectations = {};
-
-    for (var platform in g_allExpectations[test]) {
-        var platformObject = testObject[platform];
-        for (var buildType in platformObject) {
-            var thisExpectations = platformObject[buildType];
-            var modifiers = thisExpectations.modifiers;
-
-            // A set of modifiers/expectations can apply to multiple platforms.
-            // Only add HTML for each entry once.
-            if (usedExpectations[modifiers])
-                continue;
-
-            usedExpectations[modifiers] = true;
-
-            var bugs = modifiers.match(/BUG(WK|CR)?\d+/g);
-            if (bugs) {
-                for (var j = 0; j < bugs.length; j++)
-                    modifiers = modifiers.replace(bugs[j], '');
-
-                modifiers = trimString(modifiers);
-                bugs = bugs.join(' ');
-            } else
-              bugs = '';
-
-            var expectations = thisExpectations.expectations;
-            if (thisExpectations == thisPlatformExpectations) {
-                resultsObject.bugs = bugs;
-                resultsObject.expectations = expectations;
-                resultsObject.modifiers = modifiers;
-                resultsObject.isWontFixSkip = stringContains(modifiers, 'WONTFIX') || stringContains(modifiers, 'SKIP');
-            } else
-                addHtmlToOptionsArrays(htmlArrays, expectations, modifiers, bugs, false);
-        }
-    }
-
-    if (resultsObject.expectations)
-      addHtmlToOptionsArrays(htmlArrays, resultsObject.expectations, resultsObject.modifiers, resultsObject.bugs, true);
-
-    resultsObject.bugsHTML += htmlArrays.bugs.join('<div class=separator></div>');
-    resultsObject.expectationsHTML += htmlArrays.expectations.join('<div class=separator></div>');
-    resultsObject.modifiersHTML += htmlArrays.modifiers.join('<div class=separator></div>');
+    resultsObject.expectations = expectations.expectations;
+    resultsObject.modifiers = expectations.modifiers;
 }
 
 function addTestToAllExpectations(test, expectations)
@@ -1461,9 +1401,6 @@ function tableHeaders(opt_getAll)
             headers.push('modifiers', 'expectations');
     }
 
-    if (g_currentState.showRunsOnBuilderPage || opt_getAll || isCrossBuilderView())
-        headers.push('missing', 'extra');
-
     headers.push('slowest run', '% fail');
 
     var FLAKINESS_HEADER = 'flakiness (numbers are runtimes in seconds)';
@@ -1492,6 +1429,8 @@ function htmlForSingleTestRow(test)
     var html = '';
     for (var i = 0; i < headers.length; i++) {
         var header = headers[i];
+        var filteredModifiers = filterBugs(test.modifiers);
+        
         if (startsWith(header, 'test') || startsWith(header, 'builder')) {
             // If isCrossBuilderView() is true, we're just viewing a single test
             // with results for many builders, so the first column is builder names
@@ -1501,15 +1440,11 @@ function htmlForSingleTestRow(test)
 
             html += '<tr class="' + (test.meetsExpectations ? '' : 'wrong-expectations') + '"><td class="' + testCellClassName + '">' + testCellHTML;
         } else if (startsWith(header, 'bugs'))
-            html += '<td class=options-container>' + (test.bugsHTML ? test.bugsHTML : createBugHTML(test));
+            html += '<td class=options-container>' + (filteredModifiers.bugs ? htmlForBugs(filteredModifiers.bugs) : createBugHTML(test));
         else if (startsWith(header, 'modifiers'))
-            html += '<td class=options-container>' + test.modifiersHTML;
+            html += '<td class=options-container>' + filteredModifiers.modifiers;
         else if (startsWith(header, 'expectations'))
-            html += '<td class=options-container>' + test.expectationsHTML;
-        else if (startsWith(header, 'missing'))
-            html += '<td>' + test.missing;
-        else if (startsWith(header, 'extra'))
-            html += '<td>' + test.extra;
+            html += '<td class=options-container>' + test.expectations;
         else if (startsWith(header, 'slowest'))
             html += '<td>' + (test.slowestTime ? test.slowestTime + 's' : '');
         else if (startsWith(header, '% fail'))
