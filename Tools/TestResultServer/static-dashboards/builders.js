@@ -123,7 +123,14 @@ associateBuildersWithMaster(CHROMIUM_TOT_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTE
 var WEBKIT_TOT_BUILDERS = [
     ['Chromium Win Release (Tests)', BuilderGroup.DEFAULT_BUILDER],
     ['Chromium Linux Release (Tests)', BuilderGroup.EXPECTATIONS_BUILDER],
-    ['Chromium Mac Release (Tests)']
+    ['Chromium Mac Release (Tests)'],
+    ['Leopard Intel Debug (Tests)'],
+    ['SnowLeopard Intel Release (Tests)'],
+    ['SnowLeopard Intel Debug (Tests)'],
+    ['GTK Linux 32-bit Release'],
+    ['GTK Linux 32-bit Debug'],
+    ['GTK Linux 64-bit Debug'],
+    ['Qt Linux Release']
 ];
 associateBuildersWithMaster(WEBKIT_TOT_BUILDERS, WEBKIT_BUILDER_MASTER);
 

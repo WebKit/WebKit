@@ -319,7 +319,9 @@ var TEST_URL_BASE_PATH_TRAC = 'http://trac.webkit.org/browser/trunk/LayoutTests/
 var TEST_URL_BASE_PATH = "http://svn.webkit.org/repository/webkit/trunk/LayoutTests/";
 var TEST_RESULTS_BASE_PATH = 'http://build.chromium.org/f/chromium/layout_test_results/';
 
-var PLATFORMS = ['SNOWLEOPARD', 'LEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID'];
+// FIXME: These platform names should probably be changed to match the directories in LayoutTests/platform
+// instead of matching the values we use in the test_expectations.txt file.
+var PLATFORMS = ['SNOWLEOPARD', 'LEOPARD', 'XP', 'VISTA', 'WIN7', 'LUCID', 'APPLE_LEOPARD', 'APPLE_SNOWLEOPARD', 'APPLE_XP', 'APPLE_WIN7', 'GTK_LINUX', 'QT_LINUX'];
 var PLATFORM_UNIONS = {
     'MAC': ['LEOPARD', 'SNOWLEOPARD'],
     'WIN': ['XP', 'VISTA', 'WIN7'],
@@ -523,33 +525,55 @@ function matchingElement(stringToMatch, elementsMap)
     }
 }
 
+function nonChromiumPlatform(builderNameUpperCase)
+{
+    if (stringContains(builderNameUpperCase, 'SNOWLEOPARD'))
+        return 'APPLE_SNOWLEOPARD';
+    if (stringContains(builderNameUpperCase, 'LEOPARD'))
+        return 'APPLE_LEOPARD';
+    if (stringContains(builderNameUpperCase, 'WINDOWS 7'))
+        return 'APPLE_WIN7';
+    if (stringContains(builderNameUpperCase, 'WINDOWS XP'))
+        return 'APPLE_XP';
+    if (stringContains(builderNameUpperCase, 'GTK LINUX'))
+        return 'GTK_LINUX';
+    if (stringContains(builderNameUpperCase, 'QT LINUX'))
+        return 'QT_LINUX';
+}
+
+function chromiumPlatform(builderNameUpperCase)
+{
+    if (stringContains(builderNameUpperCase, 'MAC')) {
+        if (stringContains(builderNameUpperCase, '10.5'))
+            return 'LEOPARD';
+        return 'SNOWLEOPARD';
+    }
+    if (stringContains(builderNameUpperCase, 'WIN7'))
+        return 'WIN7';
+    if (stringContains(builderNameUpperCase, 'VISTA'))
+        return 'VISTA';
+    if (stringContains(builderNameUpperCase, 'WIN') || stringContains(builderNameUpperCase, 'XP'))
+        return 'XP';
+    if (stringContains(builderNameUpperCase, 'LINUX'))
+        return 'LUCID';
+}
+
+
 function platformAndBuildType(builderName)
 {
     if (!g_perBuilderPlatformAndBuildType[builderName]) {
-        // If the build name does not contain a platform
-        // or build type, assume Windows Release.
-        var currentBuildUppercase = builderName.toUpperCase();
+        var builderNameUpperCase = builderName.toUpperCase();
         
-        var platform;
-        if (stringContains(currentBuildUppercase, 'MAC')) {
-            if (stringContains(currentBuildUppercase, '10.5'))
-                platform = 'LEOPARD';
-            else
-                platform = 'SNOWLEOPARD';
-        } else if (stringContains(currentBuildUppercase, 'WIN7'))
-            platform = 'WIN7';
-        else if (stringContains(currentBuildUppercase, 'VISTA'))
-            platform = 'VISTA';
-        else if (stringContains(currentBuildUppercase, 'WIN') || stringContains(currentBuildUppercase, 'XP'))
-            platform = 'XP';
-        else if (stringContains(currentBuildUppercase, 'LINUX'))
-            platform = 'LUCID';
-        else {
-            platform = '';
-            console.log('Could not resolve platform for builder: ' + builderName);
-        }
+        var platform = '';
+        if (g_currentState.group == '@ToT - webkit.org' && !stringContains(builderNameUpperCase, 'CHROMIUM'))
+            platform = nonChromiumPlatform(builderNameUpperCase);
+        else
+            platform = chromiumPlatform(builderNameUpperCase);
         
-        var buildType = stringContains(currentBuildUppercase, 'DBG') ? 'DEBUG' : 'RELEASE';
+        if (!platform)
+            console.error('Could not resolve platform for builder: ' + builderName);
+
+        var buildType = stringContains(builderNameUpperCase, 'DBG') || stringContains(builderNameUpperCase, 'DEBUG') ? 'DEBUG' : 'RELEASE';
         g_perBuilderPlatformAndBuildType[builderName] = {platform: platform, buildType: buildType};
     }
     return g_perBuilderPlatformAndBuildType[builderName];

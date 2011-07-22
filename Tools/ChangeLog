@@ -1,3 +1,12 @@
+2011-07-21  Ojan Vafai  <ojan@chromium.org>
+
+        hook in the rest of the bots to the dashboard now they run NRWT
+        https://bugs.webkit.org/show_bug.cgi?id=64985
+
+        Reviewed by Adam Barth.
+
+        * TestResultServer/static-dashboards/builders.js:
+
 2011-07-22  Alexey Proskuryakov  <ap@apple.com>
 
         Adding Tim Horton to contributor list for Bugzilla auto-completion. He is CC'ed quite frequently.
