@@ -1,3 +1,19 @@
+2011-07-22  Patrick Gansterer  <paroga@webkit.org>
+
+        Replace preprocessor statements in IDL files with Conditional attribute
+        https://bugs.webkit.org/show_bug.cgi?id=64961
+
+        Reviewed by Darin Adler.
+
+        Replaced ENABLE_DATALIST, ENABLE_DIRECTORY_UPLOAD, ENABLE_INPUT_SPEECH, ENABLE_MEDIA_STATISTICS
+        and ENABLE_ORIENTATION_EVENTS with the corresponding Conditional attribute.
+
+        * html/HTMLBodyElement.idl:
+        * html/HTMLFrameSetElement.idl:
+        * html/HTMLInputElement.idl:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLVideoElement.idl:
+
 2011-07-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] add webInspector.resources.onContentEdited

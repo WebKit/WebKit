@@ -85,10 +85,8 @@ module html {
     readonly attribute boolean webkitHasClosedCaptions;
     attribute boolean webkitClosedCaptionsVisible;
 
-#if defined(ENABLE_MEDIA_STATISTICS) && ENABLE_MEDIA_STATISTICS
     // The number of bytes consumed by the media decoder.
-    readonly attribute unsigned long webkitAudioDecodedByteCount;
-    readonly attribute unsigned long webkitVideoDecodedByteCount;
-#endif
+    readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitAudioDecodedByteCount;
+    readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitVideoDecodedByteCount;
 };
 }

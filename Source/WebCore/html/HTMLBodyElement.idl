@@ -40,9 +40,7 @@ module html {
         attribute [DontEnum, WindowEventListener] EventListener onstorage;
         attribute [DontEnum, WindowEventListener] EventListener onunload;
 
-#if defined(ENABLE_ORIENTATION_EVENTS) && ENABLE_ORIENTATION_EVENTS
-        attribute [DontEnum, WindowEventListener] EventListener onorientationchange;
-#endif
+        attribute [Conditional=ORIENTATION_EVENTS, DontEnum, WindowEventListener] EventListener onorientationchange;
 
         // Overrides of Element attributes (with different implementation in bindings).
         attribute [DontEnum, WindowEventListener] EventListener onblur;

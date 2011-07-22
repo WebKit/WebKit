@@ -40,16 +40,12 @@ module html {
         attribute [Reflect] boolean disabled;
         attribute [Reflect] boolean autofocus;
         attribute [Reflect] DOMString autocomplete;
-#if defined(ENABLE_DATALIST) && ENABLE_DATALIST
-        readonly attribute HTMLElement     list;
-#endif
+        readonly attribute [Conditional=DATALIST] HTMLElement list;
         attribute [Reflect] DOMString max;
         attribute long maxLength setter raises(DOMException);
         attribute [Reflect] DOMString min;
         attribute [Reflect] boolean multiple;
-#if defined(ENABLE_DIRECTORY_UPLOAD) && ENABLE_DIRECTORY_UPLOAD
-        attribute [Reflect] boolean webkitdirectory;
-#endif
+        attribute [Conditional=DIRECTORY_UPLOAD, Reflect] boolean webkitdirectory;
         attribute [Reflect] DOMString name;
         attribute [Reflect] DOMString pattern;
         attribute [Reflect] DOMString placeholder;
@@ -70,9 +66,7 @@ module html {
         attribute Date valueAsDate setter raises(DOMException);
 #endif
         attribute double valueAsNumber setter raises(DOMException);
-#if defined(ENABLE_DATALIST) && ENABLE_DATALIST
-        readonly attribute HTMLOptionElement selectedOption;
-#endif
+        readonly attribute [Conditional=DATALIST] HTMLOptionElement selectedOption;
         attribute [Reflect] boolean incremental;
 
         void stepUp(in [Optional] long n) raises(DOMException);
@@ -105,11 +99,9 @@ module html {
         readonly attribute FileList files;
         readonly attribute NodeList labels;
 
-#if defined(ENABLE_INPUT_SPEECH) && ENABLE_INPUT_SPEECH
-        attribute [Reflect, EnabledAtRuntime] boolean webkitSpeech;
-        attribute [Reflect, EnabledAtRuntime] boolean webkitGrammar;
-        attribute [DontEnum] EventListener onwebkitspeechchange;
-#endif
+        attribute [Conditional=INPUT_SPEECH, Reflect, EnabledAtRuntime] boolean webkitSpeech;
+        attribute [Conditional=INPUT_SPEECH, Reflect, EnabledAtRuntime] boolean webkitGrammar;
+        attribute [Conditional=INPUT_SPEECH, DontEnum] EventListener onwebkitspeechchange;
     };
 
 }
