@@ -97,8 +97,18 @@ void RenderSlider::computePreferredLogicalWidths()
 
 void RenderSlider::layout()
 {
-    RenderBlock::layout();
+    // FIXME: Find a way to cascade appearance.
+    // http://webkit.org/b/62535
     RenderBox* thumbBox = sliderThumbElementOf(node())->renderBox();
+    if (thumbBox && thumbBox->isSliderThumb())
+        static_cast<RenderSliderThumb*>(thumbBox)->updateAppearance(style());
+    if (RenderObject* limiterRenderer = trackLimiterElementOf(node())->renderer()) {
+        if (limiterRenderer->isSliderThumb())
+          static_cast<RenderSliderThumb*>(limiterRenderer)->updateAppearance(style());
+    }
+
+    RenderBlock::layout();
+
     if (!thumbBox)
         return;
     LayoutUnit heightDiff = thumbBox->height() - contentHeight();

@@ -1,3 +1,14 @@
+2011-07-22  Kent Tamura  <tkent@google.com>
+
+        REGRESSION(r88757): The thumb of a vertical range slider is offset to the right on non-Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=65011
+
+        Reviewed by Dimitri Glazkov.
+
+        * platform/chromium-linux/fast/forms/input-appearance-range-expected.png:
+        * platform/chromium-linux/fast/forms/input-appearance-range-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-22  Kent Tamura  <tkent@chromium.org>
 
         Validation message bubble is incorrectly positioned in a relative body.

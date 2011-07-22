@@ -35,6 +35,7 @@
 #include "FloatPoint.h"
 #include "HTMLDivElement.h"
 #include "HTMLNames.h"
+#include "RenderBlock.h"
 #include "RenderStyleConstants.h"
 #include <wtf/Forward.h>
 
@@ -99,6 +100,18 @@ SliderThumbElement* sliderThumbElementOf(Node*);
 
 // --------------------------------
 
+class RenderSliderThumb : public RenderBlock {
+public:
+    RenderSliderThumb(Node*);
+    void updateAppearance(RenderStyle* parentStyle);
+
+private:
+    virtual bool isSliderThumb() const;
+    virtual void layout();
+};
+
+// --------------------------------
+
 class TrackLimiterElement : public HTMLDivElement {
 public:
     static PassRefPtr<TrackLimiterElement> create(Document*);
@@ -108,6 +121,10 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual const AtomicString& shadowPseudoId() const;
 };
+
+// This always return a valid pointer.
+// An assertion fails if the specified node is not a range input.
+TrackLimiterElement* trackLimiterElementOf(Node*);
 
 // --------------------------------
 

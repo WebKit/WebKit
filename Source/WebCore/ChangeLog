@@ -1,3 +1,29 @@
+2011-07-22  Kent Tamura  <tkent@google.com>
+
+        REGRESSION(r88757): The thumb of a vertical range slider is offset to the right on non-Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=65011
+
+        Reviewed by Dimitri Glazkov.
+
+        We need to update the apeearance of thumbs before the layout of RenderSlider.
+
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderThumb::updateAppearance):
+        Added. This function adjsuts the apparance of a thumb for the appearance of an <input>.
+        (WebCore::RenderSliderThumb::isSliderThumb):
+        Added.  Returns true.
+        (WebCore::RenderSliderThumb::layout):
+        Remove the appearance adjustment code. It is unnecessary because it is
+        done in RenderSlider::layout().
+        (WebCore::trackLimiterElementOf): Added.
+        * html/shadow/SliderThumbElement.h: Move RenderSliderThumb from SliderThumbElement.cpp.
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isSliderThumb): Added. Returns false.
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout):
+        If the renderers for the thumb element and the limiter element is
+        RenderSliderThumb, updates its appearance.
+
 2011-07-22  Kent Tamura  <tkent@chromium.org>
 
         Validation message bubble is incorrectly positioned in a relative body.

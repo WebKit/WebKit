@@ -296,6 +296,7 @@ public:
     virtual bool isRubyText() const { return false; }
 
     virtual bool isSlider() const { return false; }
+    virtual bool isSliderThumb() const { return false; }
 #if ENABLE(DETAILS)
     virtual bool isSummary() const { return false; }
 #endif

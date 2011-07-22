@@ -75,19 +75,28 @@ SliderThumbElement* sliderThumbElementOf(Node* node)
 
 // --------------------------------
 
-// FIXME: Find a way to cascade appearance (see the layout method) and get rid of this class.
-// http://webkit.org/b/62535
-class RenderSliderThumb : public RenderBlock {
-public:
-    RenderSliderThumb(Node*);
-
-private:
-    virtual void layout();
-};
-
 RenderSliderThumb::RenderSliderThumb(Node* node)
     : RenderBlock(node)
 {
+}
+
+void RenderSliderThumb::updateAppearance(RenderStyle* parentStyle)
+{
+    if (parentStyle->appearance() == SliderVerticalPart)
+        style()->setAppearance(SliderThumbVerticalPart);
+    else if (parentStyle->appearance() == SliderHorizontalPart)
+        style()->setAppearance(SliderThumbHorizontalPart);
+    else if (parentStyle->appearance() == MediaSliderPart)
+        style()->setAppearance(MediaSliderThumbPart);
+    else if (parentStyle->appearance() == MediaVolumeSliderPart)
+        style()->setAppearance(MediaVolumeSliderThumbPart);
+    if (style()->hasAppearance())
+        theme()->adjustSliderThumbSize(style());
+}
+
+bool RenderSliderThumb::isSliderThumb() const
+{
+    return true;
 }
 
 void RenderSliderThumb::layout()
@@ -95,23 +104,7 @@ void RenderSliderThumb::layout()
     // Do not cast node() to SliderThumbElement. This renderer is used for
     // TrackLimitElement too.
     HTMLInputElement* input = node()->shadowAncestorNode()->toInputElement();
-    // FIXME: Hard-coding this cascade of appearance is bad, because it's something
-    // that CSS usually does. We need to find a way to express this in CSS.
-    RenderStyle* parentStyle = input->renderer()->style();
-    bool isVertical = false;
-    if (parentStyle->appearance() == SliderVerticalPart) {
-        style()->setAppearance(SliderThumbVerticalPart);
-        isVertical = true;
-    } else if (parentStyle->appearance() == SliderHorizontalPart)
-        style()->setAppearance(SliderThumbHorizontalPart);
-    else if (parentStyle->appearance() == MediaSliderPart)
-        style()->setAppearance(MediaSliderThumbPart);
-    else if (parentStyle->appearance() == MediaVolumeSliderPart) {
-        style()->setAppearance(MediaVolumeSliderThumbPart);
-        isVertical = true;
-    }
-    if (style()->hasAppearance())
-        theme()->adjustSliderThumbSize(style());
+    bool isVertical = style()->appearance() == SliderThumbVerticalPart || style()->appearance() == MediaVolumeSliderThumbPart;
 
     double fraction = sliderPosition(input) * 100;
     if (isVertical)
@@ -345,6 +338,16 @@ const AtomicString& TrackLimiterElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, sliderThumb, ("-webkit-slider-thumb"));
     return sliderThumb;
+}
+
+TrackLimiterElement* trackLimiterElementOf(Node* node)
+{
+    ASSERT(node);
+    ShadowRoot* shadow = node->toInputElement()->shadowRoot();
+    ASSERT(shadow);
+    Node* limiter = shadow->firstChild()->lastChild();
+    ASSERT(limiter);
+    return static_cast<TrackLimiterElement*>(limiter);
 }
 
 // --------------------------------
