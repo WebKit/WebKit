@@ -20,17 +20,15 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] UIEvent : Event {
+    interface UIEvent : Event {
         readonly attribute DOMWindow            view;
         readonly attribute long                 detail;
         
-        [OldStyleObjC] void initUIEvent(in DOMString type, 
-                                        in boolean canBubble, 
-                                        in boolean cancelable, 
-                                        in DOMWindow view, 
-                                        in long detail);
+        [OldStyleObjC] void initUIEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+                                        in [Optional=CallWithDefaultValue] boolean canBubble, 
+                                        in [Optional=CallWithDefaultValue] boolean cancelable, 
+                                        in [Optional=CallWithDefaultValue] DOMWindow view, 
+                                        in [Optional=CallWithDefaultValue] long detail);
 
         // extensions
         readonly attribute long                 keyCode;

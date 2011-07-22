@@ -1,3 +1,58 @@
+2011-07-22  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Add [Optional=CallWithDefaultValues] flag and use it in initXXXEvent declarations
+        https://bugs.webkit.org/show_bug.cgi?id=64973
+
+        Reviewed by Adam Barth.
+
+        We are doing away with the interface-level LegacyDefaultOptionalArguments
+        flag. To handle some cases of the old behavior, we need to define a new
+        (argument-level) flag so that functions can define optional arguments
+        but not have to declare every single combination of arguments in C++.
+        The old code generator handled this by calling a single C++ function
+        with all arguments, but with default values for the "optional" arguments.
+        Thus, this patch invents a new argument-level flag called
+        [Optional=CallWithDefaultValue] that emulates the old behavior.
+
+        This patch also fixes all the initXXXEvent declarations to remove the
+        LegacyDefaultOptionalArguments flag and use the new
+        [Optional=CallWithDefaultValue] flag only on the specific arguments that
+        require it for backward compatibility.
+
+        No new tests, all existing tests pass.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateImplementation):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (GenerateFunctionCallback):
+        * dom/BeforeLoadEvent.idl:
+        * dom/BeforeProcessEvent.idl:
+        * dom/CompositionEvent.idl:
+        * dom/CustomEvent.idl:
+        * dom/DeviceMotionEvent.idl:
+        * dom/DeviceOrientationEvent.idl:
+        * dom/ErrorEvent.idl:
+        * dom/Event.idl:
+        * dom/HashChangeEvent.idl:
+        * dom/KeyboardEvent.idl:
+        * dom/MessageEvent.idl:
+        * dom/MouseEvent.idl:
+        * dom/MutationEvent.idl:
+        * dom/OverflowEvent.idl:
+        * dom/PageTransitionEvent.idl:
+        * dom/PopStateEvent.idl:
+        * dom/ProgressEvent.idl:
+        * dom/StreamEvent.idl:
+        * dom/TextEvent.idl:
+        * dom/TouchEvent.idl:
+        * dom/UIEvent.idl:
+        * dom/WebKitAnimationEvent.idl:
+        * dom/WebKitTransitionEvent.idl:
+        * dom/WheelEvent.idl:
+        * html/canvas/WebGLContextEvent.idl:
+        * storage/StorageEvent.idl:
+        * websockets/CloseEvent.idl:
+
 2011-07-22  Jessie Berlin  <jberlin@apple.com>
 
         [WebKit2] Changing the cookie accept policy in Private Browsing doesn’t work

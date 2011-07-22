@@ -21,9 +21,7 @@
 module events {
 
     // Based off of proposed IDL interface for WheelEvent:
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] WheelEvent : UIEvent {
+    interface WheelEvent : UIEvent {
         readonly attribute long    screenX;
         readonly attribute long    screenY;
         readonly attribute long    clientX;
@@ -47,31 +45,31 @@ module events {
 #endif /* defined(LANGUAGE_OBJECTIVE_C) */
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
-        void initWheelEvent(in long wheelDeltaX,
-                            in long wheelDeltaY, 
-                            in DOMWindow view, 
-                            in long screenX,
-                            in long screenY,
-                            in long clientX,
-                            in long clientY,
-                            in boolean ctrlKey,
-                            in boolean altKey,
-                            in boolean shiftKey,
-                            in boolean metaKey);
+        void initWheelEvent(in [Optional=CallWithDefaultValue] long wheelDeltaX,
+                            in [Optional=CallWithDefaultValue] long wheelDeltaY, 
+                            in [Optional=CallWithDefaultValue] DOMWindow view, 
+                            in [Optional=CallWithDefaultValue] long screenX,
+                            in [Optional=CallWithDefaultValue] long screenY,
+                            in [Optional=CallWithDefaultValue] long clientX,
+                            in [Optional=CallWithDefaultValue] long clientY,
+                            in [Optional=CallWithDefaultValue] boolean ctrlKey,
+                            in [Optional=CallWithDefaultValue] boolean altKey,
+                            in [Optional=CallWithDefaultValue] boolean shiftKey,
+                            in [Optional=CallWithDefaultValue] boolean metaKey);
 #endif /* !defined(LANGUAGE_JAVASCRIPT) */
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        void initWebKitWheelEvent(in long wheelDeltaX,
-                                  in long wheelDeltaY, 
-                                  in DOMWindow view, 
-                                  in long screenX,
-                                  in long screenY,
-                                  in long clientX,
-                                  in long clientY,
-                                  in boolean ctrlKey,
-                                  in boolean altKey,
-                                  in boolean shiftKey,
-                                  in boolean metaKey);
+        void initWebKitWheelEvent(in [Optional=CallWithDefaultValue] long wheelDeltaX,
+                                  in [Optional=CallWithDefaultValue] long wheelDeltaY, 
+                                  in [Optional=CallWithDefaultValue] DOMWindow view, 
+                                  in [Optional=CallWithDefaultValue] long screenX,
+                                  in [Optional=CallWithDefaultValue] long screenY,
+                                  in [Optional=CallWithDefaultValue] long clientX,
+                                  in [Optional=CallWithDefaultValue] long clientY,
+                                  in [Optional=CallWithDefaultValue] boolean ctrlKey,
+                                  in [Optional=CallWithDefaultValue] boolean altKey,
+                                  in [Optional=CallWithDefaultValue] boolean shiftKey,
+                                  in [Optional=CallWithDefaultValue] boolean metaKey);
 #endif /* defined(LANGUAGE_JAVASCRIPT) */
     };
 }

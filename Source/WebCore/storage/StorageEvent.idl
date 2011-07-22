@@ -26,7 +26,6 @@
 module storage {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=DOM_STORAGE
     ] StorageEvent : Event {
         readonly attribute [ConvertNullStringTo=Null] DOMString key;
@@ -34,7 +33,14 @@ module storage {
         readonly attribute [ConvertNullStringTo=Null] DOMString newValue;
         readonly attribute DOMString url;
         readonly attribute Storage storageArea;
-        void initStorageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in [ConvertNullToNullString] DOMString oldValueArg, in [ConvertNullToNullString] DOMString newValueArg, in DOMString urlArg, in Storage storageAreaArg);
+        void initStorageEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
+                              in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
+                              in [Optional=CallWithDefaultValue] boolean cancelableArg, 
+                              in [Optional=CallWithDefaultValue] DOMString keyArg, 
+                              in [Optional=CallWithDefaultValue,ConvertNullToNullString] DOMString oldValueArg, 
+                              in [Optional=CallWithDefaultValue,ConvertNullToNullString] DOMString newValueArg, 
+                              in [Optional=CallWithDefaultValue] DOMString urlArg, 
+                              in [Optional=CallWithDefaultValue] Storage storageAreaArg);
 
         // Needed once we support init<blank>EventNS
         // void initStorageEventNS(in DOMString namespaceURI, in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString keyArg, in DOMString oldValueArg, in DOMString newValueArg, in DOMString urlArg, in Storage storageAreaArg);

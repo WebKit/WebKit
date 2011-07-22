@@ -26,17 +26,15 @@
 module events {
 
     // Introduced in DOM Level 3:
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] TextEvent : UIEvent {
+    interface TextEvent : UIEvent {
 
         readonly attribute DOMString data;
 
-        void initTextEvent(in DOMString typeArg, 
-                           in boolean canBubbleArg, 
-                           in boolean cancelableArg, 
-                           in DOMWindow viewArg, 
-                           in DOMString dataArg);
+        void initTextEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
+                           in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
+                           in [Optional=CallWithDefaultValue] boolean cancelableArg, 
+                           in [Optional=CallWithDefaultValue] DOMWindow viewArg, 
+                           in [Optional=CallWithDefaultValue] DOMString dataArg);
 
     };
 

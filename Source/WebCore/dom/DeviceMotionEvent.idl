@@ -27,13 +27,18 @@ module core {
 
     interface [
         Conditional=DEVICE_ORIENTATION,
-        LegacyDefaultOptionalArguments,
     ] DeviceMotionEvent : Event {
         readonly attribute [Custom] Acceleration acceleration;
         readonly attribute [Custom] Acceleration accelerationIncludingGravity;
         readonly attribute [Custom] RotationRate rotationRate;
         readonly attribute [Custom] double interval;
-        [Custom] void initDeviceMotionEvent(in DOMString type, in boolean bubbles, in boolean cancelable, in Acceleration acceleration, in Acceleration accelerationIncludingGravity, in RotationRate rotationRate, in double interval);
+        [Custom] void initDeviceMotionEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+                                            in [Optional=CallWithDefaultValue] boolean bubbles, 
+                                            in [Optional=CallWithDefaultValue] boolean cancelable, 
+                                            in [Optional=CallWithDefaultValue] Acceleration acceleration, 
+                                            in [Optional=CallWithDefaultValue] Acceleration accelerationIncludingGravity, 
+                                            in [Optional=CallWithDefaultValue] RotationRate rotationRate, 
+                                            in [Optional=CallWithDefaultValue] double interval);
     };
 
 }

@@ -32,7 +32,6 @@ module events {
 
     interface [
         Conditional=WORKERS,
-        LegacyDefaultOptionalArguments,
         NoStaticTables
     ] ErrorEvent : Event {
 
@@ -40,7 +39,12 @@ module events {
         readonly attribute DOMString filename;
         readonly attribute unsigned long lineno;
 
-        void initErrorEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in DOMString messageArg, in DOMString filenameArg, in unsigned long linenoArg);
+        void initErrorEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
+                            in [Optional=CallWithDefaultValue] boolean canBubbleArg,
+                            in [Optional=CallWithDefaultValue] boolean cancelableArg, 
+                            in [Optional=CallWithDefaultValue] DOMString messageArg, 
+                            in [Optional=CallWithDefaultValue] DOMString filenameArg, 
+                            in [Optional=CallWithDefaultValue] unsigned long linenoArg);
     };
 
 }

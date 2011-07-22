@@ -22,7 +22,6 @@ module events {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         CustomToJS,
         NoStaticTables,
         Polymorphic
@@ -63,9 +62,9 @@ module events {
 
         void               stopPropagation();
         void               preventDefault();
-        [OldStyleObjC] void initEvent(in DOMString eventTypeArg, 
-                                      in boolean canBubbleArg, 
-                                      in boolean cancelableArg);
+        [OldStyleObjC] void initEvent(in [Optional=CallWithDefaultValue] DOMString eventTypeArg, 
+                                      in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
+                                      in [Optional=CallWithDefaultValue] boolean cancelableArg);
 
         // DOM Level 3 Additions.
         readonly attribute boolean defaultPrevented;

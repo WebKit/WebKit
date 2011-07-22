@@ -20,9 +20,7 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] MutationEvent : Event {
+    interface MutationEvent : Event {
 
         // attrChangeType
         const unsigned short MODIFICATION = 1;
@@ -35,14 +33,14 @@ module events {
         readonly attribute DOMString      attrName;
         readonly attribute unsigned short attrChange;
 
-        [OldStyleObjC] void initMutationEvent(in DOMString type, 
-                                              in boolean canBubble, 
-                                              in boolean cancelable, 
-                                              in Node relatedNode, 
-                                              in DOMString prevValue, 
-                                              in DOMString newValue, 
-                                              in DOMString attrName, 
-                                              in unsigned short attrChange);
+        [OldStyleObjC] void initMutationEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+                                              in [Optional=CallWithDefaultValue] boolean canBubble, 
+                                              in [Optional=CallWithDefaultValue] boolean cancelable, 
+                                              in [Optional=CallWithDefaultValue] Node relatedNode, 
+                                              in [Optional=CallWithDefaultValue] DOMString prevValue, 
+                                              in [Optional=CallWithDefaultValue] DOMString newValue, 
+                                              in [Optional=CallWithDefaultValue] DOMString attrName, 
+                                              in [Optional=CallWithDefaultValue] unsigned short attrChange);
 
     };
 

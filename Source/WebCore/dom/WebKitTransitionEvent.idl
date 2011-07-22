@@ -25,16 +25,14 @@
 
 module events {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] WebKitTransitionEvent : Event {
+    interface WebKitTransitionEvent : Event {
      readonly attribute DOMString          propertyName;
      readonly attribute double             elapsedTime;
-     void               initWebKitTransitionEvent(in DOMString typeArg,
-                                           in boolean canBubbleArg,
-                                           in boolean cancelableArg,
-                                           in DOMString propertyNameArg,
-                                           in double elapsedTimeArg);
+     void               initWebKitTransitionEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
+                                           in [Optional=CallWithDefaultValue] boolean canBubbleArg,
+                                           in [Optional=CallWithDefaultValue] boolean cancelableArg,
+                                           in [Optional=CallWithDefaultValue] DOMString propertyNameArg,
+                                           in [Optional=CallWithDefaultValue] double elapsedTimeArg);
 };
 
 }

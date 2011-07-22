@@ -26,13 +26,11 @@
 
 module events {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] BeforeLoadEvent : Event {
-        void initBeforeLoadEvent(in DOMString type,
-                                 in boolean canBubble, 
-                                 in boolean cancelable,
-                                 in DOMString url);
+    interface BeforeLoadEvent : Event {
+        void initBeforeLoadEvent(in [Optional=CallWithDefaultValue] DOMString type,
+                                 in [Optional=CallWithDefaultValue] boolean canBubble, 
+                                 in [Optional=CallWithDefaultValue] boolean cancelable,
+                                 in [Optional=CallWithDefaultValue] DOMString url);
         readonly attribute DOMString url;
     };
 

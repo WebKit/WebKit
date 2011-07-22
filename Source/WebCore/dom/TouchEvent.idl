@@ -26,7 +26,6 @@
 module events {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=TOUCH_EVENTS
     ] TouchEvent : UIEvent {
         readonly attribute TouchList touches;
@@ -37,18 +36,18 @@ module events {
         readonly attribute boolean altKey;
         readonly attribute boolean metaKey;
 
-        void initTouchEvent(in TouchList touches,
-                            in TouchList targetTouches,
-                            in TouchList changedTouches,
-                            in DOMString type,
-                            in DOMWindow view,
-                            in long screenX, 
-                            in long screenY, 
-                            in long clientX, 
-                            in long clientY,
-                            in boolean ctrlKey,
-                            in boolean altKey,
-                            in boolean shiftKey,
-                            in boolean metaKey);
+        void initTouchEvent(in [Optional=CallWithDefaultValue] TouchList touches,
+                            in [Optional=CallWithDefaultValue] TouchList targetTouches,
+                            in [Optional=CallWithDefaultValue] TouchList changedTouches,
+                            in [Optional=CallWithDefaultValue] DOMString type,
+                            in [Optional=CallWithDefaultValue] DOMWindow view,
+                            in [Optional=CallWithDefaultValue] long screenX, 
+                            in [Optional=CallWithDefaultValue] long screenY, 
+                            in [Optional=CallWithDefaultValue] long clientX, 
+                            in [Optional=CallWithDefaultValue] long clientY,
+                            in [Optional=CallWithDefaultValue] boolean ctrlKey,
+                            in [Optional=CallWithDefaultValue] boolean altKey,
+                            in [Optional=CallWithDefaultValue] boolean shiftKey,
+                            in [Optional=CallWithDefaultValue] boolean metaKey);
     };
 }

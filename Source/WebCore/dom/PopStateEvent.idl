@@ -27,13 +27,11 @@
 module events {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] PopStateEvent : Event {
-        void initPopStateEvent(in DOMString typeArg, 
-                               in boolean canBubbleArg, 
-                               in boolean cancelableArg, 
-                               in SerializedScriptValue stateArg);
+    interface PopStateEvent : Event {
+        void initPopStateEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
+                               in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
+                               in [Optional=CallWithDefaultValue] boolean cancelableArg, 
+                               in [Optional=CallWithDefaultValue] SerializedScriptValue stateArg);
 
         readonly attribute [V8CustomGetter] any state;
     };

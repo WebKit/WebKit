@@ -21,14 +21,13 @@ module events {
 
     // Introduced in http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-hashchange
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateConstructor
     ] HashChangeEvent : Event {
-        void initHashChangeEvent(in DOMString type, 
-                                 in boolean canBubble, 
-                                 in boolean cancelable, 
-                                 in DOMString oldURL, 
-                                 in DOMString newURL); 
+        void initHashChangeEvent(in [Optional=CallWithDefaultValue] DOMString type, 
+                                 in [Optional=CallWithDefaultValue] boolean canBubble, 
+                                 in [Optional=CallWithDefaultValue] boolean cancelable, 
+                                 in [Optional=CallWithDefaultValue] DOMString oldURL, 
+                                 in [Optional=CallWithDefaultValue] DOMString newURL); 
         readonly attribute DOMString oldURL;
         readonly attribute DOMString newURL;
     };

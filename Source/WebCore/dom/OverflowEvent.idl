@@ -23,9 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 module events {
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] OverflowEvent : Event {
+    interface OverflowEvent : Event {
         const unsigned short HORIZONTAL = 0;
         const unsigned short VERTICAL   = 1;
         const unsigned short BOTH       = 2;
@@ -34,9 +32,9 @@ module events {
         readonly attribute boolean horizontalOverflow;
         readonly attribute boolean verticalOverflow;        
 
-        void initOverflowEvent(in unsigned short orient,
-                               in boolean horizontalOverflow,
-                               in boolean verticalOverflow);
+        void initOverflowEvent(in [Optional=CallWithDefaultValue] unsigned short orient,
+                               in [Optional=CallWithDefaultValue] boolean horizontalOverflow,
+                               in [Optional=CallWithDefaultValue] boolean verticalOverflow);
     };
 
 }

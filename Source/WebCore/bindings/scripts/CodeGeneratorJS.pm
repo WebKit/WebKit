@@ -2026,7 +2026,9 @@ sub GenerateImplementation
                     foreach my $parameter (@{$function->parameters}) {
                         # Optional callbacks should be treated differently, because they always have a default value (0),
                         # and we can reduce the number of overloaded functions that take a different number of parameters.
-                        if ($parameter->extendedAttributes->{"Optional"} && !$parameter->extendedAttributes->{"Callback"}) {
+                        # Optional arguments with default values [Optional=CallWithDefaultValue] should not generate an early call.
+                        my $optional = $parameter->extendedAttributes->{"Optional"};        
+                        if ($optional && $optional ne "CallWithDefaultValue" && !$parameter->extendedAttributes->{"Callback"}) {
                             # Generate early call if there are enough parameters.
                             if (!$hasOptionalArguments) {
                                 push(@implContent, "\n    size_t argsCount = exec->argumentCount();\n");

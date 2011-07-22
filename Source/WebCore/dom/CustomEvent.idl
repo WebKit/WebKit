@@ -27,16 +27,14 @@ module events {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     // Introduced in DOM Level 3:
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] CustomEvent : Event {
+    interface CustomEvent : Event {
 
        readonly attribute DOMObject detail;
 
-       void initCustomEvent(in DOMString typeArg, 
-                            in boolean canBubbleArg, 
-                            in boolean cancelableArg, 
-                            in DOMObject detailArg);
+       void initCustomEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
+                            in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
+                            in [Optional=CallWithDefaultValue] boolean cancelableArg, 
+                            in [Optional=CallWithDefaultValue] DOMObject detailArg);
     };
 #endif
 

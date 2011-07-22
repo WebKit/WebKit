@@ -26,10 +26,10 @@
 
 module events {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] BeforeProcessEvent : Event {
-        void initBeforeProcessEvent(in DOMString type, in boolean canBubble, in boolean cancelable);
+    interface BeforeProcessEvent : Event {
+        void initBeforeProcessEvent(in [Optional=CallWithDefaultValue] DOMString type,
+                                    in [Optional=CallWithDefaultValue] boolean canBubble,
+                                    in [Optional=CallWithDefaultValue] boolean cancelable);
         attribute DOMString text;
     };
 

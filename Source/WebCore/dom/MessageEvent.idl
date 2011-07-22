@@ -27,7 +27,6 @@
 module events {
 
     interface [
-        LegacyDefaultOptionalArguments,
         NoStaticTables
     ] MessageEvent : Event {
         readonly attribute [CachedAttribute] SerializedScriptValue data;
@@ -38,12 +37,26 @@ module events {
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         readonly attribute [CustomGetter] Array ports;
 
-        [Custom] void initMessageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in SerializedScriptValue dataArg, in DOMString originArg, in DOMString lastEventIdArg, in DOMWindow sourceArg, in Array messagePorts);
+        [Custom] void initMessageEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
+                                       in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
+                                       in [Optional=CallWithDefaultValue] boolean cancelableArg, 
+                                       in [Optional=CallWithDefaultValue] SerializedScriptValue dataArg, 
+                                       in [Optional=CallWithDefaultValue] DOMString originArg, 
+                                       in [Optional=CallWithDefaultValue] DOMString lastEventIdArg, 
+                                       in [Optional=CallWithDefaultValue] DOMWindow sourceArg, 
+                                       in [Optional=CallWithDefaultValue] Array messagePorts);
 #else
         // There's no good way to expose an array via the ObjC bindings, so for now just expose a single port.
         readonly attribute MessagePort messagePort;
 
-        void initMessageEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in SerializedScriptValue dataArg, in DOMString originArg, in DOMString lastEventIdArg, in DOMWindow sourceArg, in MessagePort messagePort);
+        void initMessageEvent(in [Optional=CallWithDefaultValue] DOMString typeArg, 
+                              in [Optional=CallWithDefaultValue] boolean canBubbleArg, 
+                              in [Optional=CallWithDefaultValue] boolean cancelableArg, 
+                              in [Optional=CallWithDefaultValue] SerializedScriptValue dataArg, 
+                              in [Optional=CallWithDefaultValue] DOMString originArg, 
+                              in [Optional=CallWithDefaultValue] DOMString lastEventIdArg, 
+                              in [Optional=CallWithDefaultValue] DOMWindow sourceArg, 
+                              in [Optional=CallWithDefaultValue] MessagePort messagePort);
 #endif
 
     };

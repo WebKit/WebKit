@@ -25,13 +25,14 @@
 
 module events {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] PageTransitionEvent : Event {
+    interface PageTransitionEvent : Event {
 
         readonly attribute boolean persisted;
 
-        void initPageTransitionEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in boolean persisted);
+        void initPageTransitionEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
+                                     in [Optional=CallWithDefaultValue] boolean canBubbleArg,
+                                     in [Optional=CallWithDefaultValue] boolean cancelableArg,
+                                     in [Optional=CallWithDefaultValue] boolean persisted);
     };
 
 }
