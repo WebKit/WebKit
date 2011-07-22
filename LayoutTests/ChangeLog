@@ -1,3 +1,11 @@
+2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium test expectation update; also rebaseline a test after r91574.
+
+        * platform/chromium-mac/media/video-volume-slider-expected.txt:
+        * platform/chromium-win/media/video-volume-slider-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
         BORDER attribute with the IMG tag, using percentage values not working.

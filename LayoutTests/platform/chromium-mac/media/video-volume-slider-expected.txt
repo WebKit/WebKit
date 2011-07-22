@@ -41,7 +41,7 @@ layer at (294,170) size 34x100
 layer at (306,180) size 10x80
   RenderSlider {INPUT} at (12,10) size 10x80
     RenderDeprecatedFlexibleBox {DIV} at (0,0) size 10x80
-      RenderBlock {DIV} at (0,0) size 15x73
+      RenderBlock {DIV} at (0,0) size 14x73
       RenderBlock {DIV} at (0,73) size 14x7
 layer at (306,201) size 14x7
   RenderBlock (relative positioned) {DIV} at (0,0) size 14x7
