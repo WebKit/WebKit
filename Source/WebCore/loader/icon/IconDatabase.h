@@ -136,6 +136,7 @@ private:
 public:
     virtual bool isOpen() const;
     virtual String databasePath() const;
+    virtual bool documentCanHaveIcon(const String& documentURL) const;
     static String defaultDatabaseFilename();
 
 private:

@@ -99,9 +99,9 @@ static IconDatabaseClient* defaultClient()
     return defaultClient;
 }
 
-static inline bool pageCanHaveIcon(const String& pageURL)
+bool IconDatabase::documentCanHaveIcon(const String& documentURL) const
 {
-    return protocolIsInHTTPFamily(pageURL);
+    return !documentURL.isEmpty() && !protocolIs(documentURL, "about");
 }
 
 // ************************
@@ -223,7 +223,7 @@ Image* IconDatabase::synchronousIconForPageURL(const String& pageURLOriginal, co
     // pageURLOriginal cannot be stored without being deep copied first.  
     // We should go our of our way to only copy it if we have to store it
     
-    if (!isOpen() || !pageCanHaveIcon(pageURLOriginal))
+    if (!isOpen() || !documentCanHaveIcon(pageURLOriginal))
         return 0;
 
     MutexLocker locker(m_urlAndIconLock);
@@ -310,7 +310,7 @@ String IconDatabase::synchronousIconURLForPageURL(const String& pageURLOriginal)
     // Cannot do anything with pageURLOriginal that would end up storing it without deep copying first
     // Also, in the case we have a real answer for the caller, we must deep copy that as well
     
-    if (!isOpen() || !pageCanHaveIcon(pageURLOriginal))
+    if (!isOpen() || !documentCanHaveIcon(pageURLOriginal))
         return String();
         
     MutexLocker locker(m_urlAndIconLock);
@@ -400,7 +400,7 @@ void IconDatabase::retainIconForPageURL(const String& pageURLOriginal)
     
     // Cannot do anything with pageURLOriginal that would end up storing it without deep copying first
     
-    if (!isEnabled() || !pageCanHaveIcon(pageURLOriginal))
+    if (!isEnabled() || !documentCanHaveIcon(pageURLOriginal))
         return;
        
     MutexLocker locker(m_urlAndIconLock);
@@ -444,7 +444,7 @@ void IconDatabase::releaseIconForPageURL(const String& pageURLOriginal)
         
     // Cannot do anything with pageURLOriginal that would end up storing it without deep copying first
     
-    if (!isEnabled() || !pageCanHaveIcon(pageURLOriginal))
+    if (!isEnabled() || !documentCanHaveIcon(pageURLOriginal))
         return;
     
     MutexLocker locker(m_urlAndIconLock);
@@ -579,7 +579,7 @@ void IconDatabase::setIconURLForPageURL(const String& iconURLOriginal, const Str
     
     ASSERT(!iconURLOriginal.isEmpty());
         
-    if (!isOpen() || !pageCanHaveIcon(pageURLOriginal))
+    if (!isOpen() || !documentCanHaveIcon(pageURLOriginal))
         return;
     
     String iconURL, pageURL;
@@ -889,7 +889,7 @@ PageURLRecord* IconDatabase::getOrCreatePageURLRecord(const String& pageURL)
     // Clients of getOrCreatePageURLRecord() are required to acquire the m_urlAndIconLock before calling this method
     ASSERT(!m_urlAndIconLock.tryLock());
 
-    if (!pageCanHaveIcon(pageURL))
+    if (!documentCanHaveIcon(pageURL))
         return 0;
 
     PageURLRecord* pageRecord = m_pageURLToRecordMap.get(pageURL);
@@ -927,7 +927,7 @@ void IconDatabase::importIconURLForPageURL(const String& iconURL, const String& 
     // This function is only for setting actual existing url mappings so assert that neither of these URLs are empty
     ASSERT(!iconURL.isEmpty());
     ASSERT(!pageURL.isEmpty());
-    ASSERT(pageCanHaveIcon(pageURL));
+    ASSERT(documentCanHaveIcon(pageURL));
     
     setIconURLForPageURLInSQLDatabase(iconURL, pageURL);    
 }
@@ -1234,7 +1234,7 @@ void IconDatabase::performURLImport()
             // so go ahead and actually create a pageURLRecord for this url even though it's not retained.
             // If database cleanup *is* allowed, we don't want to bother pulling in a page url from disk that noone is actually interested
             // in - we'll prune it later instead!
-            if (!pageRecord && databaseCleanupCounter && pageCanHaveIcon(pageURL)) {
+            if (!pageRecord && databaseCleanupCounter && documentCanHaveIcon(pageURL)) {
                 pageRecord = new PageURLRecord(pageURL);
                 m_pageURLToRecordMap.set(pageURL, pageRecord);
             }

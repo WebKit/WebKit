@@ -165,6 +165,7 @@ public:
 
     // Used internally by WebCore
     virtual bool isEnabled() const { return false; }
+    virtual bool documentCanHaveIcon(const String&) const { return false; }
         
     virtual void retainIconForPageURL(const String&) { }
     virtual void releaseIconForPageURL(const String&) { }

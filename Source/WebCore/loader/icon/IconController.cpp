@@ -113,6 +113,10 @@ void IconController::startLoader()
     if (!iconDatabase().isEnabled())
         return;
 
+    ASSERT(!m_frame->tree()->parent());
+    if (!iconDatabase().documentCanHaveIcon(m_frame->document()->url()))
+        return;
+
     KURL iconURL(url());
     String urlString(iconURL.string());
     if (urlString.isEmpty())

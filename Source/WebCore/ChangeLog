@@ -1,3 +1,41 @@
+2011-07-21  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        Local files cannot load icons.
+        https://bugs.webkit.org/show_bug.cgi?id=62459
+        
+        Previous policy only allowed favicons for pages whose protocol was part of HTTP family.
+        Changed that to allow to any url that's not empty and whose protocol is not "about".
+        Also added this check where it attempts to start loading the favicon, so it can avoid
+        wasting time downloading a resource that won't be stored and won't be used.
+
+        Reviewed by Adam Barth.
+
+        Test: manual-tests/resources/favicon-loads-for-local-files.html
+
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::startLoader): Added check to avoid to request a favicon
+        when there's no way to store it.
+        
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::documentCanHaveIcon): Renamed function "pageCanHaveIcon"
+        to reflect better which url we're handling.
+        
+        (WebCore::IconDatabase::synchronousIconForPageURL): Ditto.
+        (WebCore::IconDatabase::synchronousIconURLForPageURL): Ditto.
+        (WebCore::IconDatabase::retainIconForPageURL): Ditto.
+        (WebCore::IconDatabase::releaseIconForPageURL): Ditto.
+        (WebCore::IconDatabase::setIconURLForPageURL): Ditto.
+        (WebCore::IconDatabase::getOrCreatePageURLRecord): Ditto.
+        (WebCore::IconDatabase::importIconURLForPageURL): Ditto.
+        (WebCore::IconDatabase::performURLImport): Ditto.
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseBase.h:
+        (WebCore::IconDatabaseBase::documentCanHaveIcon): Added it as virtual to replace its
+        default behavior of not allowing favicons when we have IconDatabase enabled.
+        
+        * manual-tests/resources/favicon-loads-for-local-files.html: Added.
+        * manual-tests/resources/favicon.png: Added.
+
 2011-07-21  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Fix for bug 64046 - Wrong image height in absolutely positioned div in
