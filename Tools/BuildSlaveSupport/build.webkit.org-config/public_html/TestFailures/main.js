@@ -1,9 +1,12 @@
 (function() {
 
+var kFastLoadingDEBUG = false;
+
 var g_updateTimerId = 0;
 var g_resultsDetailsIterator = null;
 
 var kBuildFailedAlertType = 'build-failed';
+var kCommitLogLength = 20;
 
 function dismissButterbar()
 {
@@ -99,14 +102,16 @@ function prepareTestSummary(testName, resultNodesByBuilder, callback)
     var testSummary = ui.summarizeTest(testName, resultNodesByBuilder);
     var builderNameList = base.keys(resultNodesByBuilder);
 
-    results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
-        $('.when', testSummary).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
-    });
+    if (!kFastLoadingDEBUG) {
+        results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
+            $('.when', testSummary).append(ui.summarizeRegressionRange(oldestFailingRevision, newestPassingRevision));
+        });
 
-    results.countFailureOccurances(builderNameList, testName, function(failureCount) {
-        $(testSummary).attr(config.kFailureCountAttr, failureCount);
-        $('.how-many', testSummary).text(ui.failureCount(failureCount));
-    });
+        results.countFailureOccurances(builderNameList, testName, function(failureCount) {
+            $(testSummary).attr(config.kFailureCountAttr, failureCount);
+            $('.how-many', testSummary).text(ui.failureCount(failureCount));
+        });
+    }
 
     callback(testSummary);
 }
@@ -284,6 +289,15 @@ function rebaselineResults()
     checkout.rebaseline(builderName, testName, failureTypeList, dismissButterbar);
 }
 
+function updateRecentCommits()
+{
+    trac.recentCommitData('trunk', kCommitLogLength, function(commitDataList) {
+        var recentHistory  = $('.recent-history');
+        recentHistory.empty();
+        recentHistory.append(ui.commitLog(commitDataList));
+    });
+}
+
 function checkBuilderStatuses()
 {
     results.fetchBuildersWithCompileErrors(function(builderNameList) {
@@ -299,6 +313,7 @@ function update()
 {
     displayOnButterbar('Loading...');
     updateResultsSummary(dismissButterbar);
+    updateRecentCommits();
     checkBuilderStatuses();
 }
 

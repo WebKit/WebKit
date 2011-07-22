@@ -31,6 +31,7 @@ config.kBuildersThatOnlyCompile = [
 
 config.kTracURL = 'http://trac.webkit.org';
 
+config.kRevisionAttr = 'data-revision';
 config.kTestNameAttr = 'data-test-name';
 config.kBuilderNameAttr = 'data-builder-name';
 config.kFailureCountAttr = 'data-failure-count';

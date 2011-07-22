@@ -134,6 +134,25 @@ button.default:hover {
     margin: 0px 5px;
 }
 
+/*** recent-history ***/
+
+.recent-history {
+    width: 300px;
+    float: left;
+}
+
+.changelog .entry {
+    margin: 10px 5px;
+}
+
+.changelog .details, .changelog .details a {
+    color: #555;
+}
+
+.changelog .author {
+    font-style: italic;
+}
+
 /*** results-summary ***/
 
 .results .toolbar {
@@ -144,7 +163,7 @@ button.default:hover {
 table.results-summary {
     width: auto;
     table-layout: auto;
-    margin: 5px auto;
+    margin: 5px;
     border: 1px solid #c6c6c6;
 }
 

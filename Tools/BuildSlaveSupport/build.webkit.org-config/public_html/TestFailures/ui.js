@@ -144,4 +144,24 @@ ui.failureDetails = function(resultsURLs)
     return block;
 };
 
+ui.commitLog = function(commitDataList)
+{
+    var block = $('<div class="changelog"></div>');
+
+    $.each(commitDataList, function(index, commitData) {
+        var entry = $('<div class="entry"><div class="summary"></div><div class="details"><a target="_blank" class="revision"></a> <span class="author"></span> <span class="reviewer-container">(Reviewer: <span class="reviewer"></span>)</span></div></div>');
+        entry.attr(config.kRevisionAttr, commitData.revision);
+        $('.summary', entry).text(commitData.summary);
+        $('.revision', entry).attr('href', trac.changesetURL(commitData.revision)).text(displayNameForRevision(commitData.revision));
+        $('.author', entry).text(commitData.author);
+        if (commitData.reviewer)
+            $('.reviewer', entry).text(commitData.reviewer);
+        else
+            $('.reviewer-container', entry).detach();
+        block.append(entry);
+    });
+
+    return block;
+};
+
 })();

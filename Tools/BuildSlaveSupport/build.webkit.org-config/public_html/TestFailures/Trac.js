@@ -27,21 +27,67 @@ var trac = trac || {};
 
 (function() {
 
+function findUsingRegExp(string, regexp)
+{
+    var match = regexp.exec(string);
+    if (match)
+        return match[1];
+    return null;
+}
+
+function findReviewer(message)
+{
+    var regexp = /Reviewed by ([^.]+)/;
+    return findUsingRegExp(message, regexp);
+}
+
+function findBugID(message)
+{
+    var regexp = /\/show_bug.cgi\?id=(\d+)/;
+    return parseInt(findUsingRegExp(message, regexp), 10);
+}
+
+function findRevision(title)
+{
+    var regexp = /^Revision (\d+):/;
+    return parseInt(findUsingRegExp(title, regexp), 10);
+}
+
+function findSummary(message)
+{
+    var lines = message.split('\n');
+    for (var i = 0; i < lines.length; ++i) {
+        var line = lines[i]
+        if (findBugID(line))
+            continue;
+        if (findReviewer(line))
+            continue;
+        if (line.length > 0)
+            return line;
+    }
+}
+
+// FIXME: Consider exposing this method for unit testing.
 function parseCommitData(responseXML)
 {
     var commits = Array.prototype.map.call(responseXML.getElementsByTagName('item'), function(item) {
         var title = item.getElementsByTagName('title')[0].textContent;
-        var revision = parseInt(/^Revision (\d+):/.exec(title)[1], 10);
+        var author = item.getElementsByTagName('author')[0].textContent;
 
+        // FIXME: This isn't a very high-fidelity reproduction of the commit message,
+        // but it's good enough for our purposes.
         var container = document.createElement('div');
         container.innerHTML = item.getElementsByTagName('description')[0].textContent;
+        var message = container.innerText;
 
         return {
-            revision: revision,
-            title: title,
-            // FIXME: This isn't a very high-fidelity reproduction of the commit message,
-            // but it's good enough for our purposes.
-            message: container.innerText,
+            'revision': findRevision(title),
+            'title': title,
+            'summary': findSummary(message),
+            'author': author,
+            'reviewer': findReviewer(message),
+            'bugID': findBugID(message),
+            'message': message,
         };
     });
 
@@ -80,6 +126,19 @@ trac.logURL = function(path, startRevision, endRevision, showFullCommitLogs, for
         queryParameters.format = 'rss';
 
     return config.kTracURL + '/log/' + path + '?' + $.param(queryParameters);
+};
+
+trac.recentCommitData = function(path, limit, callback)
+{
+    var url = config.kTracURL + '/log/' + path + '?' + $.param({
+        'verbose': 'on',
+        'format': 'rss',
+        'limit': limit,
+    });
+
+    $.get(url, function(commitData) {
+        callback(parseCommitData(commitData));
+    });
 };
 
 trac.commitDataForRevisionRange = function(path, startRevision, endRevision, callback)

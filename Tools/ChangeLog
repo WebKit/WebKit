@@ -1,3 +1,27 @@
+2011-07-22  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should know what patches are landing
+        https://bugs.webkit.org/show_bug.cgi?id=64978
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch adds a display of the recently committed patches to
+        garden-o-matic.  The UI needs iteration, but this patch establishes the
+        plumbing.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+            - Teach trac how to extract more information from the commit log.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js:
+            - Add a data attribute for storing the revision.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+            - Add a container for the recent commit history.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css:
+            - CSS for displaying non-ugly commit history.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+            - Wire up trac to the UI container.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js:
+            - A basic, compact display for a list of commits.
+
 2011-07-22  Ojan Vafai  <ojan@chromium.org>
 
         Fix bug when switching from layout-tests to another test-type if
