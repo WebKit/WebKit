@@ -1,5 +1,25 @@
 2011-07-21  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 90130.
+
+    2011-06-29  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Crash when calling DOMSubtreeModified event when extracting range
+        contents.
+        https://bugs.webkit.org/show_bug.cgi?id=63650
+
+        * fast/dom/Range/range-extract-contents-event-fire-crash-expected.txt: Added.
+        * fast/dom/Range/range-extract-contents-event-fire-crash.html: Added.
+        * fast/dom/Range/range-extract-contents-event-fire-crash2-expected.txt: Added.
+        * fast/dom/Range/range-extract-contents-event-fire-crash2.html: Added.
+        * fast/dom/Range/range-extractContents.html: remove the appending of fragment
+        in this crasher test since we now refptr the nodes and leftContents will be visible.
+        This crasher test does not need to show the extractContents fragment.
+
+2011-07-21  Lucas Forschler  <lforschler@apple.com>
+
     Merged 90068.
 
     2011-06-23  Abhishek Arya  <inferno@chromium.org>
