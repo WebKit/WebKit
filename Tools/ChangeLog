@@ -1,5 +1,13 @@
 2011-07-22  Ojan Vafai  <ojan@chromium.org>
 
+        Fix issue loading gtests since there's no g_expectations.
+        Also, make filing a bug file a webkit.org bug, not a crbug since
+        the link is only shown for layout tests.
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
+2011-07-22  Ojan Vafai  <ojan@chromium.org>
+
         pull test expectations into the dashboard from wvn.webkit.org
         https://bugs.webkit.org/show_bug.cgi?id=65054
 

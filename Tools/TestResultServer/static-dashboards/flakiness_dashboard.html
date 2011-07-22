@@ -838,6 +838,9 @@ var g_allExpectations;
 
 function parsedExpectations()
 {
+    if (!g_expectations)
+        return [];
+    
     var expectations = [];
     var lines = g_expectations.split('\n');
     lines.forEach(function(line) {
@@ -1391,14 +1394,14 @@ function selectContents(element)
 function createBugHTML(test)
 {
     var symptom = test.isFlaky ? 'flaky' : 'failing';
-    var title = 'Layout Test ' + test.test + ' is ' + symptom;
-    var description = 'The following layout test is ' + symptom + ' on ' +
+    var title = encodeURIComponent('Layout Test ' + test.test + ' is ' + symptom);
+    var description = encodeURIComponent('The following layout test is ' + symptom + ' on ' +
         '[insert platform]\n\n' + test.test + '\n\nProbable cause:\n\n' +
-        '[insert probable cause]';
-    return BUG_URL_PREFIX + 'code.google.com/p/chromium/issues/entry?' +
-        'template=Layout%20Test%20Failure&summary=' +
-        encodeURIComponent(title) + '&comment=' +
-        encodeURIComponent(description) + '" class="file-bug">FILE BUG</a>';
+        '[insert probable cause]');
+    
+    var component = encodeURIComponent('Tools / Tests');
+    url = 'https://bugs.webkit.org/enter_bug.cgi?assigned_to=webkit-unassigned%40lists.webkit.org&product=WebKit&form_name=enter_bug&component=' + component + '&short_desc=' + title + '&comment=' + description;
+    return '<a href="' + url + '" class="file-bug">FILE BUG</a>';
 }
 
 function isCrossBuilderView()

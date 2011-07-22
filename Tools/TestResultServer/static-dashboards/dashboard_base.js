@@ -466,7 +466,7 @@ initBuilders(g_currentState);
 
 // Append JSON script elements.
 var g_resultsByBuilder = {};
-var g_expectations = {};
+var g_expectations;
 function ADD_RESULTS(builds)
 {
     for (var builderName in builds) {
