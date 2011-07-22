@@ -802,7 +802,8 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
     HistoryItem* parentItem = history()->currentItem();
     // If we're moving in the back/forward list, we might want to replace the content
     // of this child frame with whatever was there at that point.
-    if (parentItem && parentItem->children().size() && isBackForwardLoadType(loadType())) {
+    if (parentItem && parentItem->children().size() && isBackForwardLoadType(loadType()) 
+        && !m_frame->document()->loadEventFinished()) {
         HistoryItem* childItem = parentItem->childItemWithTarget(childFrame->tree()->uniqueName());
         if (childItem) {
             childFrame->loader()->loadDifferentDocumentItem(childItem, loadType());

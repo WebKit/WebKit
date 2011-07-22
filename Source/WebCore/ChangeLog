@@ -1,3 +1,19 @@
+2011-07-22  Nate Chapin  <japhet@chromium.org>
+
+        Don't treat child frame loads as back-forward navigations
+        after the load event fires. This can lead to loading
+        the wrong url in the child frame.
+        https://bugs.webkit.org/show_bug.cgi?id=64895
+
+        Reviewed by Mihai Parparita.
+
+        Test: fast/loader/child-frame-add-after-back-forward.html
+
+        * dom/Document.h: Drive-by FIXME.
+        * loader/DocumentLoader.h: Drive-by FIXME.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadURLIntoChildFrame):
+
 2011-07-22  Kent Tamura  <tkent@google.com>
 
         REGRESSION(r88757): The thumb of a vertical range slider is offset to the right on non-Mac.

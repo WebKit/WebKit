@@ -302,6 +302,9 @@ namespace WebCore {
         bool m_gotFirstByte;
         bool m_primaryLoadComplete;
         bool m_isClientRedirect;
+
+        // FIXME: Document::m_processingLoadEvent and DocumentLoader::m_wasOnloadHandled are roughly the same
+        // and should be merged.
         bool m_wasOnloadHandled;
 
         StringWithDirection m_pageTitle;
