@@ -75,30 +75,6 @@ void SVGTextPositioningElement::parseMappedAttribute(Attribute* attr)
         SVGTextContentElement::parseMappedAttribute(attr);
 }
 
-static inline void updatePositioningValuesInRenderer(RenderObject* renderer)
-{
-    RenderSVGText* textRenderer = 0;
-
-    if (renderer->isSVGText())
-        textRenderer = toRenderSVGText(renderer);
-    else {
-        // Locate RenderSVGText parent renderer.
-        RenderObject* parent = renderer->parent();
-        while (parent && !parent->isSVGText())
-            parent = parent->parent();
-
-        if (parent) {
-            ASSERT(parent->isSVGText());
-            textRenderer = toRenderSVGText(parent);
-        }
-    }
-
-    if (!textRenderer)
-        return;
-
-    textRenderer->setNeedsPositioningValuesUpdate();
-}
-
 void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrName)
 {
     SVGTextContentElement::svgAttributeChanged(attrName);
@@ -116,21 +92,11 @@ void SVGTextPositioningElement::svgAttributeChanged(const QualifiedName& attrNam
         return;
 
     if (updateRelativeLengths || attrName == SVGNames::rotateAttr) {
-        updatePositioningValuesInRenderer(renderer);
+        if (RenderSVGText* textRenderer = RenderSVGText::locateRenderSVGTextAncestor(renderer))
+            textRenderer->setNeedsPositioningValuesUpdate();
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
         return;
     }
-}
-
-void SVGTextPositioningElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)
-{
-    SVGTextContentElement::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-
-    if (changedByParser)
-        return;
-
-    if (RenderObject* object = renderer())
-        updatePositioningValuesInRenderer(object);
 }
 
 void SVGTextPositioningElement::synchronizeProperty(const QualifiedName& attrName)
