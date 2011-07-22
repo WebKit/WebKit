@@ -3846,4 +3846,3 @@ BUGRNIWA WIN : http/tests/inspector/resource-tree/resource-tree-non-unique-url.h
 BUGRNIWA : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = MISSING
 
 BUGWK65009 MAC : scrollbars/scrollbar-drag-thumb-with-large-content.html = TEXT
-BUGWK65010 : fast/forms/placeholder-in-invisible-elements.html = IMAGE

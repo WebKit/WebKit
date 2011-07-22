@@ -1,3 +1,10 @@
+2011-07-21  Kent Tamura  <tkent@chromium.org>
+
+        A trivial fix for r91550.
+        https://bugs.webkit.org/show_bug.cgi?id=65001
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-21  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64875

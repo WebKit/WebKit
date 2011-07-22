@@ -1,3 +1,15 @@
+2011-07-21  Kent Tamura  <tkent@chromium.org>
+
+        A trivial fix for r91550.
+        https://bugs.webkit.org/show_bug.cgi?id=65001
+
+        Need to update placeholder visibility when the owner elemnent style is changed.
+
+        * html/HTMLTextFormControlElement.h: Make updatePlaceholderVisibility() public.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::styleDidChange):
+        Call updatePlaceholderVisibility().
+
 2011-07-21  Pratik Solanki  <psolanki@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65002

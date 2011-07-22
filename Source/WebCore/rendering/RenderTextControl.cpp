@@ -102,6 +102,7 @@ void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* 
         innerTextRenderer->setStyle(createInnerTextStyle(style()));
         innerText->setNeedsStyleRecalc();
     }
+    textFormControlElement()->updatePlaceholderVisibility(false);
 }
 
 static inline bool updateUserModifyProperty(Node* node, RenderStyle* style)
