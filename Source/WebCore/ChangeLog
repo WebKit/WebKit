@@ -1,3 +1,16 @@
+2011-07-21  Shinya Kawanaka  <shinyak@google.com>
+
+        The input[type="number"] with step="any" should not suffer from step mismatch.
+        https://bugs.webkit.org/show_bug.cgi?id=64858
+
+        Reviewed by Kent Tamura.
+
+        Added check step="any" not to suffer from step mismatch.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::applyStep): Added check step="any".
+        (WebCore::HTMLInputElement::alignValueForStep): Added.
+
 2011-07-21  MORITA Hajime  <morrita@google.com>
 
         [Refactoring] ShadowContentSelector should be ShadowInclusionSelector

@@ -321,6 +321,7 @@ private:
 
     // Helper for stepUp()/stepDown().  Adds step value * count to the current value.
     void applyStep(double count, AnyStepHandling, ExceptionCode&);
+    double alignValueForStep(double value, double step, unsigned currentDecimalPlaces, unsigned stepDecimalPlaces);
 
 #if ENABLE(DATALIST)
     HTMLDataListElement* dataList() const;

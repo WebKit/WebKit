@@ -415,6 +415,7 @@ void HTMLInputElement::applyStep(double count, AnyStepHandling anyStepHandling, 
         ec = INVALID_STATE_ERR;
         return;
     }
+
     double acceptableError = m_inputType->acceptableError(step);
     if (newValue - m_inputType->minimum() < -acceptableError) {
         ec = INVALID_STATE_ERR;
@@ -422,28 +423,41 @@ void HTMLInputElement::applyStep(double count, AnyStepHandling anyStepHandling, 
     }
     if (newValue < m_inputType->minimum())
         newValue = m_inputType->minimum();
-    unsigned baseDecimalPlaces;
-    double base = m_inputType->stepBaseWithDecimalPlaces(&baseDecimalPlaces);
-    baseDecimalPlaces = min(baseDecimalPlaces, 16u);
-    if (newValue < pow(10.0, 21.0)) {
-      if (stepMismatch(value())) {
-            double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, currentDecimalPlaces)));
-            newValue = round(newValue * scale) / scale;
-        } else {
-            double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
-            newValue = round((base + round((newValue - base) / step) * step) * scale) / scale;
-        }
-    }
+
+    const AtomicString& stepString = fastGetAttribute(stepAttr);
+    if (!equalIgnoringCase(stepString, "any"))
+        newValue = alignValueForStep(newValue, step, currentDecimalPlaces, stepDecimalPlaces);
+
     if (newValue - m_inputType->maximum() > acceptableError) {
         ec = INVALID_STATE_ERR;
         return;
     }
     if (newValue > m_inputType->maximum())
         newValue = m_inputType->maximum();
+
     setValueAsNumber(newValue, ec);
 
     if (AXObjectCache::accessibilityEnabled())
          document()->axObjectCache()->postNotification(renderer(), AXObjectCache::AXValueChanged, true);
+}
+
+double HTMLInputElement::alignValueForStep(double newValue, double step, unsigned currentDecimalPlaces, unsigned stepDecimalPlaces)
+{
+    if (newValue >= pow(10.0, 21.0))
+        return newValue;
+
+    unsigned baseDecimalPlaces;
+    double base = m_inputType->stepBaseWithDecimalPlaces(&baseDecimalPlaces);
+    baseDecimalPlaces = min(baseDecimalPlaces, 16u);
+    if (stepMismatch(value())) {
+        double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, currentDecimalPlaces)));
+        newValue = round(newValue * scale) / scale;
+    } else {
+        double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));
+        newValue = round((base + round((newValue - base) / step) * step) * scale) / scale;
+    }
+
+    return newValue;
 }
 
 void HTMLInputElement::stepUp(int n, ExceptionCode& ec)

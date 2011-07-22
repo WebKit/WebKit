@@ -116,6 +116,9 @@ PASS stepUp("2", "-1", null) is "3"
 Step=any
 PASS stepUp("0", "any", null) is "1"
 PASS stepDown("0", "any", null) is "-1"
+Step=any corner case
+PASS stepUpExplicitBounds("0", "100", "any", "1.5", "1") is "2.5"
+PASS stepDownExplicitBounds("0", "100", "any", "1.5", "1") is "0.5"
 Overflow/underflow
 PASS stepDown("1", "1", "0") is "0"
 PASS stepDown("0", "1", "0") is "0"
