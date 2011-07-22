@@ -1,5 +1,12 @@
 2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add a failing expectation for fast/forms/placeholder-in-invisible-elements.html
+        added by r91550 on Chromium. The failure is tracked by the bug 65010.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove wrong test expectation added in r91490.
 
         Also add failing test expectation for scrollbar-drag-thumb-with-large-content.html, tracked by the bug 65009.
