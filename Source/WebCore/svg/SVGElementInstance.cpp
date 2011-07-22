@@ -70,6 +70,11 @@ SVGElementInstance::~SVGElementInstance()
     // Deregister as instance for passed element.
     m_element->removeInstanceMapping(this);
 
+    clearChildren();
+}
+
+void SVGElementInstance::clearChildren()
+{
     removeAllChildrenInContainer<SVGElementInstance, SVGElementInstance>(this);
 }
 
@@ -105,8 +110,10 @@ void SVGElementInstance::invalidateAllInstancesOfElement(SVGElement* element)
     const HashSet<SVGElementInstance*>::const_iterator end = set.end();
     for (HashSet<SVGElementInstance*>::const_iterator it = set.begin(); it != end; ++it) {
         ASSERT((*it)->correspondingElement() == element);
-        if (SVGUseElement* element = (*it)->correspondingUseElement())
+        if (SVGUseElement* element = (*it)->correspondingUseElement()) {
+            ASSERT(element->inDocument());
             element->invalidateShadowTree();
+        }
     }
 
     // Be sure to rebuild use trees, if needed
