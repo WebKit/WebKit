@@ -104,6 +104,16 @@ struct _Ewk_Frame_Resource_Request {
     const unsigned long identifier; /**< identifier of resource, can not be changed */
 };
 
+/// Enum containing hit test data types
+typedef enum {
+    EWK_HIT_TEST_RESULT_CONTEXT_DOCUMENT = 1 << 1,
+    EWK_HIT_TEST_RESULT_CONTEXT_LINK = 1 << 2,
+    EWK_HIT_TEST_RESULT_CONTEXT_IMAGE = 1 << 3,
+    EWK_HIT_TEST_RESULT_CONTEXT_MEDIA = 1 << 4,
+    EWK_HIT_TEST_RESULT_CONTEXT_SELECTION = 1 << 5,
+    EWK_HIT_TEST_RESULT_CONTEXT_EDITABLE = 1 << 6
+} Ewk_Hit_Test_Result_Context;
+
 /// Creates a type name for _Ewk_Hit_Test.
 typedef struct _Ewk_Hit_Test Ewk_Hit_Test;
 /// Structure used to report hit test result.
@@ -122,10 +132,10 @@ struct _Ewk_Hit_Test {
         const char *title; /**< the title of link */
         Evas_Object *target_frame;
     } link;
-    struct {
-        Eina_Bool editable:1; /**< @c EINA_TRUE if element is editable, @c EINA_FALSE if not */
-        Eina_Bool selected:1; /**< @c EINA_TRUE if element is selected, @c EINA_FALSE if not */
-    } flags;
+    const char *image_uri;
+    const char *media_uri;
+
+    Ewk_Hit_Test_Result_Context context;
 };
 
 /// Represents actions of touch events.

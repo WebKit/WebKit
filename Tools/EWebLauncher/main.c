@@ -554,10 +554,12 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
                    "    title='%s'\n"
                    "    target frame=%p (%s)\n"
                    "  }\n"
-                   "  flags {\n"
-                   "    editable=%hhu\n"
-                   "    selected=%hhu\n"
-                   "  }\n",
+                   "context:\n"
+                   "%s"
+                   "%s"
+                   "%s"
+                   "%s"
+                   "%s\n",
                    x, y,
                    ht->x, ht->y,
                    ht->bounding_box.x, ht->bounding_box.y, ht->bounding_box.w, ht->bounding_box.h,
@@ -568,8 +570,11 @@ on_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
                    ht->link.url,
                    ht->link.title,
                    ht->link.target_frame, evas_object_name_get(ht->link.target_frame),
-                   ht->flags.editable,
-                   ht->flags.selected);
+                   ht->context & EWK_HIT_TEST_RESULT_CONTEXT_LINK ? "  LINK\n" : "",
+                   ht->context & EWK_HIT_TEST_RESULT_CONTEXT_IMAGE ? "  IMAGE\n" : "",
+                   ht->context & EWK_HIT_TEST_RESULT_CONTEXT_MEDIA ? "   MEDIA\n" : "",
+                   ht->context & EWK_HIT_TEST_RESULT_CONTEXT_SELECTION ? "  SELECTION\n" : "",
+                   ht->context & EWK_HIT_TEST_RESULT_CONTEXT_EDITABLE ? "  EDITABLE" : "");
             ewk_frame_hit_test_free(ht);
         }
 

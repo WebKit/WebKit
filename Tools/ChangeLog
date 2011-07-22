@@ -1,3 +1,17 @@
+2011-07-22  Michal Pakula vel Rutka  <m.pakula@samsung.com>
+
+        [EFL] ewk_frame_hit_test_new enchancement
+        https://bugs.webkit.org/show_bug.cgi?id=64260
+
+        Apply changes done in ewk_frame_hit_test_new in EWebLauncher:
+        Replacing Ewk_Hit_Test_Result_Context structure 'flags'
+        in hit test output to by enum 'context'.
+
+        Reviewed by Antonio Gomes.
+
+        * EWebLauncher/main.c:
+        (on_key_down):
+
 2011-07-21  Adam Roben  <aroben@apple.com>
 
         Fix typo in TestFailures

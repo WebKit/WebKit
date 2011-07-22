@@ -982,6 +982,8 @@ void ewk_frame_hit_test_free(Ewk_Hit_Test* hit_test)
     eina_stringshare_del(hit_test->link.text);
     eina_stringshare_del(hit_test->link.url);
     eina_stringshare_del(hit_test->link.title);
+    eina_stringshare_del(hit_test->image_uri);
+    eina_stringshare_del(hit_test->media_uri);
     free(hit_test);
 }
 
@@ -1047,8 +1049,23 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* o, int x, int y)
     hit_test->link.title = eina_stringshare_add(result.titleDisplayString().utf8().data());
     hit_test->link.target_frame = kit(result.targetFrame());
 
-    hit_test->flags.editable = result.isContentEditable();
-    hit_test->flags.selected = result.isSelected();
+    hit_test->image_uri = eina_stringshare_add(result.absoluteImageURL().string().utf8().data());
+    hit_test->media_uri = eina_stringshare_add(result.absoluteMediaURL().string().utf8().data());
+
+    int context = EWK_HIT_TEST_RESULT_CONTEXT_DOCUMENT;
+
+    if (!result.absoluteLinkURL().isEmpty())
+        context |= EWK_HIT_TEST_RESULT_CONTEXT_LINK;
+    if (!result.absoluteImageURL().isEmpty())
+        context |= EWK_HIT_TEST_RESULT_CONTEXT_IMAGE;
+    if (!result.absoluteMediaURL().isEmpty())
+        context |= EWK_HIT_TEST_RESULT_CONTEXT_MEDIA;
+    if (result.isSelected())
+        context |= EWK_HIT_TEST_RESULT_CONTEXT_SELECTION;
+    if (result.isContentEditable())
+        context |= EWK_HIT_TEST_RESULT_CONTEXT_EDITABLE;
+
+    hit_test->context = static_cast<Ewk_Hit_Test_Result_Context>(context);
 
     return hit_test;
 }
