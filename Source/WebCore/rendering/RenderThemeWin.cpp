@@ -1029,6 +1029,13 @@ String RenderThemeWin::extraMediaControlsStyleSheet()
     return String(mediaControlsQuickTimeUserAgentStyleSheet, sizeof(mediaControlsQuickTimeUserAgentStyleSheet));
 }
 
+#if ENABLE(FULLSCREEN_API)
+String RenderThemeWin::extraFullScreenStyleSheet()
+{
+    return String(fullscreenQuickTimeUserAgentStyleSheet, sizeof(fullscreenQuickTimeUserAgentStyleSheet));
+}
+#endif
+
 bool RenderThemeWin::supportsClosedCaptioning() const
 {
         // We rely on QuickTime to render captions so only enable the button for a video element.
