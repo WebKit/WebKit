@@ -1,5 +1,38 @@
 2011-07-22  Gavin Barraclough  <barraclough@apple.com>
 
+        https://bugs.webkit.org/show_bug.cgi?id=65047
+        DFG JIT - Add support for op_resolve/op_resolve_base
+
+        Reviewed by Sam Weinig.
+
+        These are necessary for any significant eval code coverage
+        (and as such increase LayoutTest coverage).
+
+        * dfg/DFGAliasTracker.h:
+        (JSC::DFG::AliasTracker::recordResolve):
+            - Conservatively blow aliasing optimizations for now.
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+            - Add support for op_resolve/op_resolve_base.
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::callOperation):
+            - Add call with exec, identifer aguments.
+        * dfg/DFGNode.h:
+            - Add new node types.
+        (JSC::DFG::Node::hasIdentifier):
+            - Resolve nodes have identifiers, too!
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+            - Add generation for new Nodes.
+        * dfg/DFGOperations.cpp:
+        * dfg/DFGOperations.h:
+            - Added new operations.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Add generation for new Nodes.
+
+2011-07-22  Gavin Barraclough  <barraclough@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=65036
         Messing with the register allocation within flow control = badness.
 

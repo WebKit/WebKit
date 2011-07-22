@@ -623,15 +623,42 @@ EncodedJSValue operationInstanceOf(ExecState* exec, EncodedJSValue encodedValue,
     return JSValue::encode(jsBoolean(asObject(base)->hasInstance(exec, value, prototype)));
 }
 
+EncodedJSValue operationResolve(ExecState* exec, Identifier* propertyName)
+{
+    ScopeChainNode* scopeChain = exec->scopeChain();
+    ScopeChainIterator iter = scopeChain->begin();
+    ScopeChainIterator end = scopeChain->end();
+    ASSERT(iter != end);
+
+    do {
+        JSObject* record = iter->get();
+        PropertySlot slot(record);
+        if (record->getPropertySlot(exec, *propertyName, slot))
+            return JSValue::encode(slot.getValue(exec, *propertyName));
+    } while (++iter != end);
+
+    return throwVMError(exec, createUndefinedVariableError(exec, *propertyName));
+}
+
+EncodedJSValue operationResolveBase(ExecState* exec, Identifier* propertyName)
+{
+    return JSValue::encode(resolveBase(exec, *propertyName, exec->scopeChain(), false));
+}
+
+EncodedJSValue operationResolveBaseStrictPut(ExecState* exec, Identifier* propertyName)
+{
+    JSValue base = resolveBase(exec, *propertyName, exec->scopeChain(), true);
+    if (!base)
+        throwError(exec, createErrorForInvalidGlobalAssignment(exec, propertyName->ustring()));
+    return JSValue::encode(base);
+}
+
 void operationThrowHasInstanceError(ExecState* exec, EncodedJSValue encodedBase)
 {
     JSValue base = JSValue::decode(encodedBase);
 
-#ifndef NDEBUG
     // We should only call this function if base is not an object, or if it does not implement 'HasInstance'.
-    TypeInfo typeInfo(UnspecifiedType);
-    ASSERT(!base.isObject() || !(typeInfo = asObject(base)->structure()->typeInfo()).implementsHasInstance());
-#endif
+    ASSERT(!base.isObject() || !asObject(base)->structure()->typeInfo().implementsHasInstance());
 
     throwError(exec, createInvalidParamError(exec, "instanceof", base));
 }

@@ -1131,8 +1131,29 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NEXT_OPCODE(op_construct);
         }
             
-        case op_call_put_result: {
+        case op_call_put_result:
             NEXT_OPCODE(op_call_put_result);
+
+        case op_resolve: {
+            PROPERTY_ACCESS_OP();
+            unsigned identifier = currentInstruction[2].u.operand;
+
+            NodeIndex resolve = addToGraph(Resolve, OpInfo(identifier));
+            set(currentInstruction[1].u.operand, resolve);
+            aliases.recordResolve(resolve);
+
+            NEXT_OPCODE(op_resolve);
+        }
+
+        case op_resolve_base: {
+            PROPERTY_ACCESS_OP();
+            unsigned identifier = currentInstruction[2].u.operand;
+
+            NodeIndex resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(identifier));
+            set(currentInstruction[1].u.operand, resolve);
+            aliases.recordResolve(resolve);
+
+            NEXT_OPCODE(op_resolve_base);
         }
 
         default:

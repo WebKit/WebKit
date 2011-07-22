@@ -113,6 +113,14 @@ public:
         m_candidateAliasGetByVal = NoNode;
     }
 
+    void recordResolve(NodeIndex resolve)
+    {
+        ASSERT_UNUSED(resolve, m_graph[resolve].op == Resolve
+            || m_graph[resolve].op == ResolveBase
+            || m_graph[resolve].op == ResolveBaseStrictPut);
+        m_candidateAliasGetByVal = NoNode;
+    }
+
 private:
     // This method returns true for arguments:
     //   - (X, X)

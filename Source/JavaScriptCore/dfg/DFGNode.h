@@ -144,6 +144,11 @@ typedef uint32_t ExceptionInfo;
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
     \
+    /* Resolve nodes. */\
+    macro(Resolve, NodeResultJS | NodeMustGenerate) \
+    macro(ResolveBase, NodeResultJS | NodeMustGenerate) \
+    macro(ResolveBaseStrictPut, NodeResultJS | NodeMustGenerate) \
+    \
     /* Nodes for misc operations. */\
     macro(Breakpoint, NodeMustGenerate) \
     macro(CheckHasInstance, NodeMustGenerate) \
@@ -266,10 +271,15 @@ struct Node {
         return (VirtualRegister)m_opInfo;
     }
 
+#if !ASSERT_DISABLED
+    // If we want to use this in production code, should make it faster -
+    // e.g. make hasIdentifier a flag in the bitfield.
     bool hasIdentifier()
     {
-        return op == GetById || op == PutById || op == PutByIdDirect || op == GetMethod;
+        return op == GetById || op == PutById || op == PutByIdDirect || op == GetMethod
+            || op == Resolve || op == ResolveBase || op == ResolveBaseStrictPut;
     }
+#endif
 
     unsigned identifierNumber()
     {

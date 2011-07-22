@@ -42,6 +42,8 @@ typedef EncodedJSValue (*J_DFGOperation_EJJ)(ExecState*, EncodedJSValue, Encoded
 typedef EncodedJSValue (*J_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef EncodedJSValue (*J_DFGOperation_EJP)(ExecState*, EncodedJSValue, void*);
 typedef EncodedJSValue (*J_DFGOperation_EJI)(ExecState*, EncodedJSValue, Identifier*);
+typedef EncodedJSValue (*J_DFGOperation_EP)(ExecState*, void*);
+typedef EncodedJSValue (*J_DFGOperation_EI)(ExecState*, Identifier*);
 typedef bool (*Z_DFGOperation_EJ)(ExecState*, EncodedJSValue);
 typedef bool (*Z_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef void (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
@@ -65,6 +67,9 @@ EncodedJSValue operationGetByIdProtoBuildList(ExecState*, EncodedJSValue encoded
 EncodedJSValue operationGetByIdOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);
 EncodedJSValue operationGetMethodOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);
 EncodedJSValue operationInstanceOf(ExecState*, EncodedJSValue value, EncodedJSValue base, EncodedJSValue prototype);
+EncodedJSValue operationResolve(ExecState*, Identifier*);
+EncodedJSValue operationResolveBase(ExecState*, Identifier*);
+EncodedJSValue operationResolveBaseStrictPut(ExecState*, Identifier*);
 void operationThrowHasInstanceError(ExecState*, EncodedJSValue base);
 void operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);

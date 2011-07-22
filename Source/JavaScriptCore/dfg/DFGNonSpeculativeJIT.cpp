@@ -1041,6 +1041,30 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     case Construct:
         emitCall(node);
         break;
+
+    case Resolve: {
+        flushRegisters();
+        GPRResult result(this);
+        callOperation(operationResolve, result.gpr(), identifier(node.identifierNumber()));
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case ResolveBase: {
+        flushRegisters();
+        GPRResult result(this);
+        callOperation(operationResolveBase, result.gpr(), identifier(node.identifierNumber()));
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
+
+    case ResolveBaseStrictPut: {
+        flushRegisters();
+        GPRResult result(this);
+        callOperation(operationResolveBaseStrictPut, result.gpr(), identifier(node.identifierNumber()));
+        jsValueResult(result.gpr(), m_compileIndex);
+        break;
+    }
     }
 
     if (node.hasResult() && node.mustGenerate())
