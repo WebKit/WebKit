@@ -113,6 +113,7 @@ function Resources()
     }
     this.onFinished = new EventSink("resource-finished", resourceDispatch);
     this.onNavigated = new EventSink("inspectedURLChanged");
+    this.onContentEdited = new EventSink("resource-content-edited");
 }
 
 Resources.prototype = {

@@ -117,6 +117,11 @@ WebInspector.ExtensionServer.prototype = {
         delete this._clientObjects[auditRun.id];
     },
 
+    notifyResourceContentEdited: function(url, content)
+    {
+        this._postNotification("resource-content-edited", url, content);
+    },
+
     _notifyResourceFinished: function(event)
     {
         var resource = event.data;

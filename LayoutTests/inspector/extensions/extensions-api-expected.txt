@@ -38,6 +38,10 @@ RUNNING TEST: extension_testAPI
             addListener : <function>
             removeListener : <function>
         }
+        onContentEdited : {
+            addListener : <function>
+            removeListener : <function>
+        }
         getHAR : <function>
         addRequestHeaders : <function>
     }
