@@ -1,3 +1,17 @@
+2011-07-22  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Perform the JavaScript navigation check on a complete URL
+        https://bugs.webkit.org/show_bug.cgi?id=65038
+
+        Reviewed by Adam Barth.
+
+        Test: http/tests/security/xss-DENIED-document-baseURI-javascript.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::setLocation):
+        (WebCore::DOMWindow::createWindow):
+        (WebCore::DOMWindow::open):
+
 2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert r91595 for it broke Chromium Windows build.

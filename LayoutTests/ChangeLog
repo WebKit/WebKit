@@ -1,3 +1,13 @@
+2011-07-22  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Perform the JavaScript navigation check on a complete URL
+        https://bugs.webkit.org/show_bug.cgi?id=65038
+
+        Reviewed by Adam Barth.
+
+        * http/tests/security/xss-DENIED-document-baseURI-javascript-expected.txt: Added.
+        * http/tests/security/xss-DENIED-document-baseURI-javascript.html: Added.
+
 2011-07-22  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderLayer fixed position logic needs more basic testing

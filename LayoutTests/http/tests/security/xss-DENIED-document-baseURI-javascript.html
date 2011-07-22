@@ -1,0 +1,34 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+
+window.onload = function()
+{
+    document.documentURI = "javascript://hostname.com/%0D%0Aalert('FAIL')";
+
+    frame = document.body.appendChild(document.createElement("iframe"));
+    frame.src = "http://localhost:8080/security/resources/innocent-victim.html";
+    
+    frame.onload = function()
+    {
+        frame.contentWindow.location = "";
+        setTimeout(finishTest, 0);
+    }
+}
+
+function finishTest()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+</script>
+</head>
+<body>
+This test passes if there is no alert dialog
+</body>
+</html>
