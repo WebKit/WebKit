@@ -233,18 +233,12 @@ void InspectorTimelineAgent::didWriteHTML(unsigned int endLine)
 
 void InspectorTimelineAgent::didInstallTimer(int timerId, int timeout, bool singleShot)
 {
-    pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    record->setObject("data", TimelineRecordFactory::createTimerInstallData(timerId, timeout, singleShot));
-    addRecordToTimeline(record.release(), TimelineRecordType::TimerInstall);
+    appendRecord(TimelineRecordFactory::createTimerInstallData(timerId, timeout, singleShot), TimelineRecordType::TimerInstall);
 }
 
 void InspectorTimelineAgent::didRemoveTimer(int timerId)
 {
-    pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    record->setObject("data", TimelineRecordFactory::createGenericTimerData(timerId));
-    addRecordToTimeline(record.release(), TimelineRecordType::TimerRemove);
+    appendRecord(TimelineRecordFactory::createGenericTimerData(timerId), TimelineRecordType::TimerRemove);
 }
 
 void InspectorTimelineAgent::willFireTimer(int timerId)
@@ -289,11 +283,7 @@ void InspectorTimelineAgent::didEvaluateScript()
 
 void InspectorTimelineAgent::didScheduleResourceRequest(const String& url)
 {
-    pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    record->setObject("data", TimelineRecordFactory::createScheduleResourceRequestData(url));
-    record->setString("type", TimelineRecordType::ScheduleResourceRequest);
-    addRecordToTimeline(record.release(), TimelineRecordType::ScheduleResourceRequest);
+    appendRecord(TimelineRecordFactory::createScheduleResourceRequestData(url), TimelineRecordType::ScheduleResourceRequest);
 }
 
 void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, const ResourceRequest& request)
@@ -331,36 +321,22 @@ void InspectorTimelineAgent::didReceiveResourceResponse()
 
 void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail, double finishTime)
 {
-    pushGCEventRecords();
-    // Sometimes network stack can provide for us exact finish loading time. In the other case we will use currentTime.
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    String resourceId = IdentifiersFactory::resourceId(identifier);
-    record->setObject("data", TimelineRecordFactory::createResourceFinishData(resourceId, didFail, finishTime * 1000));
-    record->setString("type", TimelineRecordType::ResourceFinish);
-    setHeapSizeStatistic(record.get());
-    m_frontend->eventRecorded(record.release());
+    appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::resourceId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish);
 }
 
 void InspectorTimelineAgent::didTimeStamp(const String& message)
 {
-    pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    record->setObject("data", TimelineRecordFactory::createTimeStampData(message));
-    addRecordToTimeline(record.release(), TimelineRecordType::TimeStamp);
+    appendRecord(TimelineRecordFactory::createTimeStampData(message), TimelineRecordType::TimeStamp);
 }
 
 void InspectorTimelineAgent::didMarkDOMContentEvent()
 {
-    pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    addRecordToTimeline(record.release(), TimelineRecordType::MarkDOMContent);
+    appendRecord(InspectorObject::create(), TimelineRecordType::TimeStamp);
 }
 
 void InspectorTimelineAgent::didMarkLoadEvent()
 {
-    pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    addRecordToTimeline(record.release(), TimelineRecordType::MarkLoad);
+    appendRecord(InspectorObject::create(), TimelineRecordType::MarkLoad);
 }
 
 void InspectorTimelineAgent::didCommitLoad()
@@ -414,6 +390,15 @@ InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentin
     , m_id(1)
     , m_maxCallStackDepth(5)
 {
+}
+
+void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, const String& type)
+{
+    pushGCEventRecords();
+    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
+    record->setObject("data", data);
+    record->setString("type", type);
+    addRecordToTimeline(record.release(), type);
 }
 
 void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type)

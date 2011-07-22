@@ -404,7 +404,10 @@ WebInspector.TimelinePanel.prototype = {
         var recordTypes = WebInspector.TimelineAgent.RecordType;
         if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad)
             parentRecord = null; // No bar entry for load events.
-        else if (parentRecord === this._rootRecord) {
+        else if (parentRecord === this._rootRecord ||
+                 record.type === recordTypes.ResourceReceiveResponse ||
+                 record.type === recordTypes.ResourceFinish ||
+                 record.type === recordTypes.ResourceReceivedData) {
             var newParentRecord = this._findParentRecord(record);
             if (newParentRecord) {
                 parentRecord = newParentRecord;

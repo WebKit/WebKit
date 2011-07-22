@@ -1,3 +1,18 @@
+2011-07-22  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: sometimes ReceiveResponse event is attached to wrong parent.
+        https://bugs.webkit.org/show_bug.cgi?id=65016
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.dump):
+        * inspector/timeline/resources/anImage.png: Added.
+        * inspector/timeline/resources/anotherImage.png: Added.
+        * inspector/timeline/timeline-receive-response-event-expected.txt: Added.
+        * inspector/timeline/timeline-receive-response-event.html: Added.
+        * platform/chromium/inspector/timeline/timeline-receive-response-event-expected.txt: Added.
+
 2011-07-22  Kentaro Hara  <haraken@google.com>
 
         REGRESSION(r89535): Form reset does not repaint a file upload control.

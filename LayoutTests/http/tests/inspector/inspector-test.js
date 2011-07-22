@@ -158,6 +158,10 @@ InspectorTest.addArray = function(array, nondeterministicProps, prefix, firstLin
 InspectorTest.dump = function(value, nondeterministicProps, prefix, prefixWithName)
 {
     prefixWithName = prefixWithName || prefix;
+    if (prefixWithName && prefixWithName.length > 80) {
+        InspectorTest.addResult(prefixWithName + "was skipped due to prefix length limit");
+        return;
+    }
     if (value === null)
         InspectorTest.addResult(prefixWithName + "null");
     else if (value instanceof Array)

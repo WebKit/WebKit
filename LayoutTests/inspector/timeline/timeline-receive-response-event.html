@@ -1,0 +1,69 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    var image = new Image();
+    image.onload = bar;
+    image.src = "resources/anImage.png";
+
+    function bar() {
+        var image = new Image();
+        image.onload = function() { layoutTestController.evaluateInWebInspector(0, "window.step2()"); }
+        image.src = "resources/anotherImage.png";
+    }
+}
+
+function test()
+{
+    WebInspector.showPanel("timeline");
+    WebInspector.panels.timeline.toggleTimelineButton.toggled = true;
+    TimelineAgent.start(step1);
+
+    function step1()
+    {
+        InspectorTest.evaluateInPage("performActions()");
+    }
+
+    window.step2 = function()
+    {
+        TimelineAgent.stop(step3);
+    }
+
+    function step3()
+    {
+        function dumpFormattedRecord(record, prefix)
+        {
+             prefix = prefix || "";
+             InspectorTest.addResult(prefix + record.type);
+             if (record._children) {
+                 var childPrefix = prefix + "    ";
+                 for (var i = 0; i < record._children.length; ++i)
+                     dumpFormattedRecord(record._children[i], childPrefix);
+             }
+        }
+        WebInspector.panels.timeline.toggleTimelineButton.toggled = false;
+
+        var records = WebInspector.panels.timeline._rootRecord.children;
+        for (var i = 0; i < records.length; ++i)
+            dumpFormattedRecord(records[i]);
+        InspectorTest.completeTest();
+    }
+}
+
+if (!window.layoutTestController)
+    setTimeout(performActions, 3000);
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline API instrumentation of a SendRequest, ReceiveResponse etc.
+</p>
+
+</body>
+</html>

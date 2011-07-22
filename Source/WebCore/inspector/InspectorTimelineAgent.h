@@ -139,6 +139,7 @@ private:
     void setHeapSizeStatistic(InspectorObject* record);
         
     void didCompleteCurrentRecord(const String& type);
+    void appendRecord(PassRefPtr<InspectorObject> data, const String& type);
 
     void addRecordToTimeline(PassRefPtr<InspectorObject>, const String& type);
 
