@@ -1,3 +1,10 @@
+2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Revert r91595 for it broke Chromium Windows build.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-07-22  Mihnea Ovidenie  <mihnea@adobe.com>
 
         BORDER attribute with the IMG tag, using percentage values not working.
