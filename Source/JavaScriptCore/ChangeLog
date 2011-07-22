@@ -1,3 +1,14 @@
+2011-07-22  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65036
+        Messing with the register allocation within flow control = badness.
+
+        Reviewed by Sam Weinig.
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+            - Fix register allocation.
+
 2011-07-22  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Date.prototype.toISOString doesn't handle negative years or years > 9999 correctly.

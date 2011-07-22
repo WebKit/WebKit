@@ -550,6 +550,13 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         op1.use();
         op2.use();
     
+        GPRReg temp2 = InvalidGPRReg;
+        if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
+            temp2 = allocate();
+            m_jit.move(op2GPR, temp2);
+            op2GPR = temp2;
+        }
+    
         JITCompiler::Jump firstOpNotInt;
         JITCompiler::Jump secondOpNotInt;
         JITCompiler::JumpList done;
@@ -562,19 +569,9 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
     
         modByZero = m_jit.branchTest32(MacroAssembler::Zero, op2GPR);
     
-        GPRReg temp2 = InvalidGPRReg;
-        if (op2GPR == X86Registers::eax || op2GPR == X86Registers::edx) {
-            temp2 = allocate();
-            m_jit.move(op2GPR, temp2);
-            op2GPR = temp2;
-        }
-    
         m_jit.move(op1GPR, eax.gpr());
         m_jit.assembler().cdq();
         m_jit.assembler().idivl_r(op2GPR);
-    
-        if (temp2 != InvalidGPRReg)
-            unlock(temp2);
     
         m_jit.orPtr(GPRInfo::tagTypeNumberRegister, X86Registers::edx);
     
@@ -634,6 +631,9 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         }
         
         done.link(&m_jit);
+    
+        if (temp2 != InvalidGPRReg)
+            unlock(temp2);
     
         jsValueResult(X86Registers::edx, m_compileIndex, UseChildrenCalledExplicitly);
         break;
