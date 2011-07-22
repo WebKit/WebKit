@@ -1,3 +1,10 @@
+2011-07-22  Nate Chapin  <japhet@chromium.org>
+
+        Unreviewed, chromium expectations update.
+        media/adopt-node-crash.html hasn't been flaky recently.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-21  Adrienne Walker  <enne@google.com>
 
         Fix repainting of composited fixed position elements in iframes

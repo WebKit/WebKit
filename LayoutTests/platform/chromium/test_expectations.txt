@@ -3729,7 +3729,6 @@ BUGWK64000 SNOWLEOPARD DEBUG : fast/events/click-focus-anchor.html = PASS TEXT
 BUGWK64003 MAC DEBUG : media/video-delay-load-event.html = PASS TEXT
 
 BUGCR88588 : fast/lists/inlineBoxWrapperNullCheck.html = PASS TEXT
-BUGWK64028 WIN LINUX : media/adopt-node-crash.html = CRASH PASS
 
 BUGWK61326 WIN7 : fast/storage/storage-detached-iframe.html = CRASH TIMEOUT
 
