@@ -1,3 +1,12 @@
+2011-07-21  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove wrong test expectation added in r91490.
+
+        Also add failing test expectation for scrollbar-drag-thumb-with-large-content.html, tracked by the bug 65009.
+
+        * platform/chromium-win-xp/fast/events/offsetX-offsetY-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt
+
 2011-07-21  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r90971): Placeholder and search cancel button are visible even in elements with visibility:hidden.

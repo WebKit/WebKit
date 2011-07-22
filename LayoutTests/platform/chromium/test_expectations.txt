@@ -3844,3 +3844,5 @@ BUGRNIWA WIN : fast/multicol/vertical-rl/float-multicol.html = IMAGE+TEXT
 BUGRNIWA WIN : http/tests/inspector/resource-tree/resource-tree-non-unique-url.html = TEXT
 
 BUGRNIWA : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = MISSING
+
+BUGWK65009 MAC : scrollbars/scrollbar-drag-thumb-with-large-content.html = TEXT
