@@ -39,7 +39,11 @@ void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree(RenderS
 {
     ASSERT(textRoot);
 
-    // Build list of x/y/dx/dy/rotate values for each subtree element that may define these values (tspan/textPath etc).
+    // We always clear our current attribute as we don't want to keep any stale ones that could survive DOM modification.
+    Vector<SVGTextLayoutAttributes>& allAttributes = textRoot->layoutAttributes();
+    allAttributes.clear();
+
+     // Build list of x/y/dx/dy/rotate values for each subtree element that may define these values (tspan/textPath etc).
     unsigned atCharacter = 0;
     UChar lastCharacter = '\0';
     collectTextPositioningElements(textRoot, atCharacter, lastCharacter);
@@ -51,8 +55,6 @@ void SVGTextLayoutAttributesBuilder::buildLayoutAttributesForTextSubtree(RenderS
     buildLayoutAttributesForAllCharacters(textRoot, atCharacter);
 
     // Propagate layout attributes to each RenderSVGInlineText object, and the whole list to the RenderSVGText root.
-    Vector<SVGTextLayoutAttributes>& allAttributes = textRoot->layoutAttributes();
-    allAttributes.clear();
     atCharacter = 0;
     lastCharacter = '\0';
     propagateLayoutAttributes(textRoot, allAttributes, atCharacter, lastCharacter);
