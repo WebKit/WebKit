@@ -1,0 +1,24 @@
+html {
+    overflow: hidden;
+}
+
+div, td {
+    width: 100px;
+    height: 100px;
+}
+
+.fixed {
+    position: fixed;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.red {
+    background-color: red;
+}
+
+.green {
+    background-color: green;
+}

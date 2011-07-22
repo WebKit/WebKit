@@ -1,3 +1,53 @@
+2011-07-22  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderLayer fixed position logic needs more basic testing
+        https://bugs.webkit.org/show_bug.cgi?id=64650
+
+        Reviewed by James Robinson.
+
+        Those test checks that basic repainting with position: fixed and
+        scrolling works correctly. The tests are mostly platform-agnostic as they
+        don't use any text or native controls.
+
+        * fast/repaint/resources/default.css: Added.
+        Default style sheet for the following tests. This style sheet sets the default size to
+        avoid complicated calculation and adds some neat classes.
+
+        * fast/repaint/fixed-scroll-simple.html: Added.
+        Filed https://bugs.webkit.org/show_bug.cgi?id=64639 about this test as we repaint too much.
+
+        * fast/repaint/fixed-after-scroll-expected.txt: Added.
+        * fast/repaint/fixed-after-scroll.html: Added.
+        * fast/repaint/fixed-scale.html: Added.
+        * fast/repaint/fixed-table-cell.html: Added.
+        * fast/repaint/fixed-table-overflow-zindex.html: Added.
+        * fast/repaint/fixed-table-overflow.html: Added.
+        Added those new repaint dumpAsText(true) tests.
+
+        * fast/repaint/fixed-scale-expected.txt: Added.
+        * fast/repaint/fixed-scroll-simple-expected.txt: Added.
+        * fast/repaint/fixed-table-cell-expected.txt: Added.
+        * fast/repaint/fixed-table-overflow-expected.txt: Added.
+        * fast/repaint/fixed-table-overflow-zindex-expected.txt: Added.
+        * platform/chromium/fast/repaint/fixed-after-scroll-expected.png: Added.
+        * platform/chromium/fast/repaint/fixed-scale-expected.png: Added.
+        * platform/chromium/fast/repaint/fixed-scroll-simple-expected.png: Added.
+        * platform/chromium/fast/repaint/fixed-table-cell-expected.png: Added.
+        * platform/chromium/fast/repaint/fixed-table-overflow-expected.png: Added.
+        * platform/chromium/fast/repaint/fixed-table-overflow-zindex-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-after-scroll-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-scale-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-scroll-simple-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-table-cell-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-table-overflow-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-table-overflow-zindex-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-after-scroll-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-scale-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-scroll-simple-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-table-cell-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-table-overflow-expected.png: Added.
+        * platform/qt/fast/repaint/fixed-table-overflow-zindex-expected.png: Added.
+
 2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium test expectation update; also rebaseline a test after r91574.
