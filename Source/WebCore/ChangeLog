@@ -1,3 +1,19 @@
+2011-07-21  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r90971): Placeholder and search cancel button are visible even in elements with visibility:hidden.
+        https://bugs.webkit.org/show_bug.cgi?id=65001
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests: fast/forms/placeholder-in-invisible-elements.html
+               fast/forms/search-cancel-in-invisible-elements.html
+
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::placeholderShouldBeVisible):
+        Don't show the placeholder if the 'visibility' property of the owner element is 'hidden.'
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::visibilityForCancelButton): ditto.
+
 2011-07-21  Shinya Kawanaka  <shinyak@google.com>
 
         The input[type="number"] with step="any" should not suffer from step mismatch.

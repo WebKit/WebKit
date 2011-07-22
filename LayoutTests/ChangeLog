@@ -1,3 +1,15 @@
+2011-07-21  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r90971): Placeholder and search cancel button are visible even in elements with visibility:hidden.
+        https://bugs.webkit.org/show_bug.cgi?id=65001
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/forms/placeholder-in-invisible-elements-expected.html: Added.
+        * fast/forms/placeholder-in-invisible-elements.html: Added.
+        * fast/forms/search-cancel-in-invisible-elements-expected.html: Added.
+        * fast/forms/search-cancel-in-invisible-elements.html: Added.
+
 2011-07-21  Shinya Kawanaka  <shinyak@google.com>
 
         The input[type="number"] with step="any" should not suffer from step mismatch.

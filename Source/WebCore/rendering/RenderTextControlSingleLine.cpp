@@ -539,7 +539,7 @@ void RenderTextControlSingleLine::updateCancelButtonVisibility() const
 
 EVisibility RenderTextControlSingleLine::visibilityForCancelButton() const
 {
-    return inputElement()->value().isEmpty() ? HIDDEN : VISIBLE;
+    return (style()->visibility() == HIDDEN || inputElement()->value().isEmpty()) ? HIDDEN : VISIBLE;
 }
 
 const AtomicString& RenderTextControlSingleLine::autosaveName() const
