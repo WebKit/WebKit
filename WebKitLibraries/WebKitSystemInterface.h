@@ -229,6 +229,7 @@ void WKSetRequestStorageSession(CFURLStorageSessionRef, CFMutableURLRequestRef);
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 CFHTTPCookieStorageRef WKCopyHTTPCookieStorage(CFURLStorageSessionRef);
 unsigned WKGetHTTPCookieAcceptPolicy(CFHTTPCookieStorageRef);
+void WKSetHTTPCookieAcceptPolicy(CFHTTPCookieStorageRef, unsigned policy);
 NSArray *WKHTTPCookiesForURL(CFHTTPCookieStorageRef, NSURL *);
 void WKSetHTTPCookiesForURL(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
 void WKDeleteHTTPCookie(CFHTTPCookieStorageRef, NSHTTPCookie *);

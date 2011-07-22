@@ -25,6 +25,8 @@
 
 #import "config.h"
 #import "WebCookieManager.h"
+#import <WebCore/ResourceHandle.h>
+#import <WebKitSystemInterface.h>
 
 namespace WebKit {
 
@@ -33,7 +35,10 @@ void WebCookieManager::platformSetHTTPCookieAcceptPolicy(HTTPCookieAcceptPolicy 
     [[NSHTTPCookieStorage sharedHTTPCookieStorage] setCookieAcceptPolicy:policy];
 
 #if USE(CFURLSTORAGESESSIONS)
-    // FIXME: Also update the Private Browsing Storage Session's cookie storage.
+    if (CFURLStorageSessionRef privateBrowsingStorageSession = WebCore::ResourceHandle::privateBrowsingStorageSession()) {
+        RetainPtr<CFHTTPCookieStorageRef> cookieStorage(AdoptCF, WKCopyHTTPCookieStorage(privateBrowsingStorageSession));
+        WKSetHTTPCookieAcceptPolicy(cookieStorage.get(), policy);
+    }
 #endif
 }
 

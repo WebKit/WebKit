@@ -1,3 +1,14 @@
+2011-07-22  Jessie Berlin  <jberlin@apple.com>
+
+        [WebKit2] Changing the cookie accept policy in Private Browsing doesn’t work
+        https://bugs.webkit.org/show_bug.cgi?id=64997
+
+        Reviewed by Ada Chan.
+
+        * WebCore.exp.in:
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-07-22  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Perform the JavaScript navigation check on a complete URL

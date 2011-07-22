@@ -1,3 +1,18 @@
+2011-07-22  Jessie Berlin  <jberlin@apple.com>
+
+        [WebKit2] Changing the cookie accept policy in Private Browsing doesn’t work.
+        https://bugs.webkit.org/show_bug.cgi?id=64997
+
+        Reviewed by Ada Chan.
+
+        Add a wrapper around the setter for the CF HTTP cookie accept policy (since it is not
+        declared in the public headers on Snow Leopard). This wrapper is not necessary for Windows.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-07-15  Pratik Solanki  <psolanki@apple.com>
 
         Part of https://bugs.webkit.org/show_bug.cgi?id=63674

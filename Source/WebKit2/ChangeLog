@@ -1,3 +1,16 @@
+2011-07-22  Jessie Berlin  <jberlin@apple.com>
+
+        [WebKit2] Changing the cookie accept policy in Private Browsing doesn’t work.
+        https://bugs.webkit.org/show_bug.cgi?id=64997
+
+        Reviewed by Ada Chan.
+
+        * WebProcess/Cookies/mac/WebCookieManagerMac.mm:
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        Set the policy on the Cookie Storage used by the Private Browsing Storage Session as well.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-07-21  Yael Aharon  <yael.aharon@nokia.com>
 
         [Qt][WK2] Code cleanup for drag-and-drop
