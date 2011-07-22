@@ -1,5 +1,10 @@
 2011-07-22  Ojan Vafai  <ojan@chromium.org>
 
+        Add back in line accidentally deleted in http://trac.webkit.org/changeset/91612.
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
+2011-07-22  Ojan Vafai  <ojan@chromium.org>
+
         simplify the flakiness dashboard to only show modifiers/expectations for the current builder
         https://bugs.webkit.org/show_bug.cgi?id=65049
 

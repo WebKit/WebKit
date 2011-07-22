@@ -785,6 +785,7 @@ function populateExpectationsData(resultsObject)
 
     resultsObject.expectations = expectations.expectations;
     resultsObject.modifiers = expectations.modifiers;
+    resultsObject.isWontFixSkip = stringContains(expectations.modifiers, 'WONTFIX') || stringContains(expectations.modifiers, 'SKIP'); 
 }
 
 function addTestToAllExpectations(test, expectations)
