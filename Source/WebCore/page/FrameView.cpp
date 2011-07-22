@@ -1148,6 +1148,13 @@ bool FrameView::useSlowRepaints() const
     if (m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || m_isOverlapped || !m_contentIsOpaque)
         return true;
 
+#if PLATFORM(CHROMIUM)
+    // The chromium compositor does not support scrolling a non-composited frame within a composited page through
+    // the fast scrolling path, so force slow scrolling in that case.
+    if (!isEnclosedInCompositingLayer() && m_frame->page() && m_frame->page()->mainFrame()->view()->hasCompositedContent())
+        return true;
+#endif
+
     if (FrameView* parentView = parentFrameView())
         return parentView->useSlowRepaints();
 

@@ -1,3 +1,16 @@
+2011-07-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Force slow scrolling path for non-composited frames in a composited page
+        https://bugs.webkit.org/show_bug.cgi?id=64991
+
+        Reviewed by Darin Fisher.
+
+        The chromium compositor does not properly handle fast path scrolls for non-composited iframe in a composited
+        page.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::useSlowRepaints):
+
 2011-07-22  Andrew Scherkus  <scherkus@chromium.org>
 
         Remove surfaceType() and texture() methods from Chromium video frame classes.
