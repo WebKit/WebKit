@@ -1,3 +1,16 @@
+2011-07-22  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Date.prototype.toISOString doesn't handle negative years or years > 9999 correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=63986
+
+        Reviewed by Geoffrey Garen.
+
+        Changed the implementation of Date.prototype.toISOString() to use the extended year
+        format (+/-yyyyyy) for years outside of [0,9999] to be in compliance with ES 15.9.1.15.1.
+
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncToISOString):
+
 2011-07-21  Gavin Barraclough  <barraclough@apple.com>
 
         Windows build fix

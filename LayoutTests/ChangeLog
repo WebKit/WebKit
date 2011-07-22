@@ -1,3 +1,18 @@
+2011-07-22  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Date.prototype.toISOString doesn't handle negative years or years > 9999 correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=63986
+
+        Reviewed by Geoffrey Garen.
+
+        Changed the implementation of Date.prototype.toISOString() to use the extended year
+        format (+/-yyyyyy) for years outside of [0,9999] to be in compliance with ES 15.9.1.15.1.
+        Altered one test that tested for incorrect behavior on years > 9999, and added another test for 
+        years < 0 (i.e. BCE).
+
+        * fast/js/date-toisostring-expected.txt:
+        * fast/js/script-tests/date-toisostring.js:
+
 2011-07-22  Kent Tamura  <tkent@google.com>
 
         REGRESSION(r88757): The thumb of a vertical range slider is offset to the right on non-Mac.
