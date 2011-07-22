@@ -1,3 +1,16 @@
+2011-07-21  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        Fix for bug 64046 - Wrong image height in absolutely positioned div in
+        relatively positioned parent with bottom padding.
+        https://bugs.webkit.org/show_bug.cgi?id=64046
+
+        Reviewed by David Hyatt.
+
+        Test: fast/css/absolute-child-with-percent-height-inside-relative-parent.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::availableLogicalHeightUsing):
+
 2011-07-21  Gavin Peters  <gavinp@chromium.org>
 
         Extend the protector of a CSS style sheet.  Because checkLoaded() can recursively delete
