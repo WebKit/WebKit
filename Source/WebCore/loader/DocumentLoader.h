@@ -230,6 +230,12 @@ namespace WebCore {
         
         void didTellClientAboutLoad(const String& url)
         { 
+#if !PLATFORM(MAC)
+            // Don't include data urls here, as if a lot of data is loaded
+            // that way, we hold on to the (large) url string for too long.
+            if (protocolIs(url, "data"))
+                return;
+#endif
             if (!url.isEmpty())
                 m_resourcesClientKnowsAbout.add(url);
         }

@@ -1,3 +1,24 @@
+2011-07-22  Scott Graham  <scottmg@chromium.org>
+
+        DocumentLoader keeps a reference to all URL strings ever loaded in m_resourcesClientKnowsAbout leading to lots of memory waste
+        https://bugs.webkit.org/show_bug.cgi?id=61894
+
+        Reviewed by James Robinson.
+
+        DocumentLoader::m_resourcesClientKnowsAbout is a set of all the URLs
+        that have passed through FrameLoader::dispatchWillSendRequest() and is
+        used by FrameLoader::loadedResourceFromMemoryCached to decide whether
+        to inform the FrameLoader's m_client about this load.  Unfortunately,
+        this set holds a reference to the URL string for every resource
+        loaded, so on pages that use data URLs to "load" large amounts of data
+        this leaks lots of memory. The cache improves performance going through
+        FrameLoader::loadResourceFromMemoryCache, so rather than removing it,
+        simply exclude 'data:' urls from the cache to save the majority of
+        memory that is held for too long.
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::didTellClientAboutLoad):
+
 2011-07-22  Alok Priyadarshi  <alokp@chromium.org>
 
         Use software rendering for small canvas
