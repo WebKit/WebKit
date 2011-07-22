@@ -1,3 +1,18 @@
+2011-07-22  Kentaro Hara  <haraken@google.com>
+
+        REGRESSION(r89535): Form reset does not repaint a file upload control.
+        https://bugs.webkit.org/show_bug.cgi?id=65008
+
+        Reviewed by Kent Tamura.
+
+        This patch fixes the code so that the file upload control is repainted
+        in updateFromElement() if no files are selected.
+
+        Tests: fast/forms/file-input-reset.html
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::updateFromElement): Calls repaint() if no files are selected.
+
 2011-07-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: the max depth of the Timeline events' stack trace should be customizable.

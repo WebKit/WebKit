@@ -60,8 +60,18 @@ RenderFileUploadControl::~RenderFileUploadControl()
 
 void RenderFileUploadControl::updateFromElement()
 {
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+    ASSERT(input->isFileUpload());
+
     if (HTMLInputElement* button = uploadButton())
         button->setDisabled(!theme()->isEnabled(this));
+
+    // This only supports clearing out the files, but that's OK because for
+    // security reasons that's the only change the DOM is allowed to make.
+    FileList* files = input->files();
+    ASSERT(files);
+    if (files && files->isEmpty())
+        repaint();
 }
 
 static int nodeWidth(Node* node)

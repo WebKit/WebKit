@@ -1,3 +1,18 @@
+2011-07-22  Kentaro Hara  <haraken@google.com>
+
+        REGRESSION(r89535): Form reset does not repaint a file upload control.
+        https://bugs.webkit.org/show_bug.cgi?id=65008
+
+        Reviewed by Kent Tamura.
+
+        This patch fixes the code so that the file upload control is repainted
+        in updateFromElement() if no files are selected. The added test checks
+        if the label next to the file chooser button becomes "No file chosen"
+        when we press the reset button.
+
+        * fast/forms/file-input-reset-expected.html: Added.
+        * fast/forms/file-input-reset.html: Added.
+
 2011-07-22  John Knottenbelt  <jknotten@chromium.org>
 
         [Chromium] Adjust test expectations.
