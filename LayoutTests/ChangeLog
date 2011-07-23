@@ -1,3 +1,10 @@
+2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add crash expectation for http/tests/media/video-error-abort.html on Chromium Mac and Chromium Windows,
+        tracked by the bug 65062.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-22  Kenneth Russell  <kbr@google.com>
 
         HTMLImageElement::crossOrigin is hard to use because of caching
