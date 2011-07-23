@@ -763,10 +763,9 @@ function getExpectations(test, platform, buildType)
 
 function filterBugs(modifiers)
 {
-    var bugs = modifiers.match(/BUG[^\s]*/g);
+    var bugs = modifiers.match(/\bBUG\S*/g);
     if (!bugs)
         return {bugs: '', modifiers: modifiers};
-    
     for (var j = 0; j < bugs.length; j++)
         modifiers = modifiers.replace(bugs[j], '');
     return {bugs: bugs.join(' '), modifiers: collapseWhitespace(trimString(modifiers))};

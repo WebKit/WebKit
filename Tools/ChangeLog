@@ -1,5 +1,11 @@
 2011-07-22  Ojan Vafai  <ojan@chromium.org>
 
+        Don't match 'DEBUG' when trying to filter BUG modifiers.
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
+2011-07-22  Ojan Vafai  <ojan@chromium.org>
+
         Fix issue loading gtests since there's no g_expectations.
         Also, make filing a bug file a webkit.org bug, not a crbug since
         the link is only shown for layout tests.
