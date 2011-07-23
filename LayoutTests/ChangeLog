@@ -1,5 +1,12 @@
 2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add crashing and failing expectations for canvas and css tests after r91628.
+        The failures are tracked by the bug 65063.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add crash expectation for http/tests/media/video-error-abort.html on Chromium Mac and Chromium Windows,
         tracked by the bug 65062.
 
