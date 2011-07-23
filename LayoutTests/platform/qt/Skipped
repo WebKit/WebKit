@@ -1549,8 +1549,8 @@ fast/borders/borderRadiusDashed03.html
 fast/borders/borderRadiusDotted01.html
 fast/borders/borderRadiusDotted02.html
 fast/borders/borderRadiusDotted03.html
-fast/borders/svg-as-border-image-2.html
-fast/borders/svg-as-border-image.html
+svg/as-border-image/svg-as-border-image-2.html
+svg/as-border-image/svg-as-border-image.html
 fast/compact/001.html
 fast/compact/002.html
 fast/css/apple-prefix.html

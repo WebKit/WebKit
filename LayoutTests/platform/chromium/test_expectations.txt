@@ -941,7 +941,7 @@ BUGCR3244 WIN LINUX : fast/backgrounds/repeat/mask-negative-offset-repeat.html =
 // or might be expected and that we should either go with the buildbot output
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
-BUGCR3244 WIN LINUX LEOPARD : fast/backgrounds/svg-as-background-6.html = FAIL
+BUGCR3244 WIN LINUX LEOPARD : svg/as-background-image/svg-as-background-6.html = FAIL
 
 // Our gradients are wrong here.
 BUGCR19559 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
@@ -1815,8 +1815,8 @@ BUGCR41292 : fast/url/anchor.html = TEXT
 BUGWK33812 SKIP : fast/dom/icon-url-property.html = FAIL
 
 // Diffs are kind of close; may just need rebaseline?
-BUGCR41817 WIN LINUX : fast/backgrounds/svg-as-background-1.html = IMAGE
-BUGCR41817 WIN LINUX : fast/backgrounds/svg-as-background-3.html = IMAGE
+BUGCR41817 WIN LINUX : svg/as-background-image/svg-as-background-1.html = IMAGE
+BUGCR41817 WIN LINUX : svg/as-background-image/svg-as-background-3.html = IMAGE
 
 BUGCR42044 WIN : http/tests/security/xss-DENIED-mime-type-execute-as-html.html = PASS TIMEOUT
 
@@ -2738,8 +2738,8 @@ BUGWK54051 MAC : plugins/windowless_plugin_paint_test.html = TIMEOUT
 // Snow Leopard-only failures (generally just need updated pixel results)
 BUGWK54322 SNOWLEOPARD : css1/text_properties/text_transform.html = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : css2.1/t1605-c545-txttrans-00-b-ag.html = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : fast/backgrounds/svg-as-background-5.html = IMAGE
-BUGWK54322 SNOWLEOPARD : fast/backgrounds/svg-as-background-6.html = IMAGE
+BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-5.html = IMAGE
+BUGWK54322 SNOWLEOPARD : svg/as-background-image/svg-as-background-6.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/canvas/arc360.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/canvas/set-colors.html = TEXT
 BUGWK54322 SNOWLEOPARD : fast/css/transform-default-parameter.html = IMAGE
@@ -3530,8 +3530,8 @@ BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = CRASH
 
 // Appears to be a configuration error in the Mac 10.6 deps
 // Has been going on for at least a few weeks (as of 20/5/2011)
-BUGCR83426 MAC : fast/borders/svg-as-border-image-2.html = IMAGE PASS
-BUGCR83426 MAC : fast/borders/svg-as-border-image.html = IMAGE PASS
+BUGCR83426 MAC : svg/as-border-image/svg-as-border-image-2.html = IMAGE PASS
+BUGCR83426 MAC : svg/as-border-image/svg-as-border-image.html = IMAGE PASS
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE PASS
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-specular-01-f.svg = IMAGE PASS
 BUGCR83426 MAC : svg/W3C-SVG-1.1/filters-turb-01-f.svg = IMAGE PASS
