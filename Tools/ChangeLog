@@ -1,3 +1,14 @@
+2011-07-23  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Extract TestConfiguration from base and write a few unit tests to capture current behavior.
+        https://bugs.webkit.org/show_bug.cgi?id=65066
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py: Added.
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/port/base.py: Moved code to test_configuration.py
+
 2011-07-23  Alok Priyadarshi  <alokp@chromium.org>
 
         Switching off acceleration for small canvas broke gpu tests

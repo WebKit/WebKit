@@ -54,6 +54,7 @@ from webkitpy.common.system import path
 from webkitpy.common.system.executive import Executive, ScriptError
 from webkitpy.common.system.user import User
 from webkitpy.layout_tests import read_checksum_from_png
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import config as port_config
 from webkitpy.layout_tests.port import http_lock
 from webkitpy.layout_tests.port import test_files
@@ -945,58 +946,3 @@ class Port(object):
         """Return the  full path to the top of the baseline tree for a
         given platform."""
         return self._filesystem.join(self.layout_tests_dir(), 'platform', platform)
-
-
-class TestConfiguration(object):
-    def __init__(self, port=None, version=None, architecture=None, build_type=None, graphics_type=None):
-        self.version = version or port.version()
-        self.architecture = architecture or port.architecture()
-        self.build_type = build_type or port.options.configuration.lower()
-        self.graphics_type = graphics_type or port.graphics_type()
-
-    def items(self):
-        return self.__dict__.items()
-
-    def keys(self):
-        return self.__dict__.keys()
-
-    def __str__(self):
-        return ("<%(version)s, %(architecture)s, %(build_type)s, %(graphics_type)s>" %
-                self.__dict__)
-
-    def __repr__(self):
-        return "TestConfig(version='%(version)s', architecture='%(architecture)s', build_type='%(build_type)s', graphics_type='%(graphics_type)s')" % self.__dict__
-
-    def values(self):
-        """Returns the configuration values of this instance as a tuple."""
-        return self.__dict__.values()
-
-    def all_test_configurations(self):
-        """Returns a sequence of the TestConfigurations the port supports."""
-        # By default, we assume we want to test every graphics type in
-        # every configuration on every system.
-        test_configurations = []
-        for version, architecture in self.all_systems():
-            for build_type in self.all_build_types():
-                for graphics_type in self.all_graphics_types():
-                    test_configurations.append(TestConfiguration(
-                        version=version,
-                        architecture=architecture,
-                        build_type=build_type,
-                        graphics_type=graphics_type))
-        return test_configurations
-
-    def all_systems(self):
-        return (('leopard', 'x86'),
-                ('snowleopard', 'x86'),
-                ('xp', 'x86'),
-                ('vista', 'x86'),
-                ('win7', 'x86'),
-                ('lucid', 'x86'),
-                ('lucid', 'x86_64'))
-
-    def all_build_types(self):
-        return ('debug', 'release')
-
-    def all_graphics_types(self):
-        return ('cpu', 'gpu')
