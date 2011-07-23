@@ -82,7 +82,7 @@ FloatRect RenderSurfaceChromium::drawableContentRect() const
 bool RenderSurfaceChromium::prepareContentsTexture()
 {
     IntSize requiredSize(m_contentRect.size());
-    TextureManager* textureManager = layerRenderer()->textureManager();
+    TextureManager* textureManager = layerRenderer()->renderSurfaceTextureManager();
 
     if (!m_contentsTexture)
         m_contentsTexture = LayerTexture::create(layerRenderer()->context(), textureManager);

@@ -115,7 +115,7 @@ LayerTilerChromium::Tile* LayerTilerChromium::createTile(int i, int j)
         ASSERT(tile->refCount() == 1);
     } else {
         GraphicsContext3D* context = layerRendererContext();
-        TextureManager* manager = layerRenderer()->textureManager();
+        TextureManager* manager = layerRenderer()->contentsTextureManager();
         tile = adoptRef(new Tile(LayerTexture::create(context, manager)));
     }
     m_tiles.add(make_pair(i, j), tile);

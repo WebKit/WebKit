@@ -38,13 +38,20 @@ static size_t memoryUseBytes(IntSize size, unsigned textureFormat)
     return size.width() * size.height() * 4;
 }
 
-TextureManager::TextureManager(GraphicsContext3D* context, const TextureMemoryLimits& memoryLimits, int maxTextureSize)
+TextureManager::TextureManager(GraphicsContext3D* context, size_t memoryLimitBytes, int maxTextureSize)
     : m_context(context)
-    , m_memoryLimits(memoryLimits)
+    , m_memoryLimitBytes(memoryLimitBytes)
     , m_memoryUseBytes(0)
     , m_maxTextureSize(maxTextureSize)
     , m_nextToken(1)
 {
+}
+
+void TextureManager::setMemoryLimitBytes(size_t memoryLimitBytes)
+{
+    reduceMemoryToLimit(memoryLimitBytes);
+    ASSERT(currentMemoryUseBytes() < memoryLimitBytes);
+    m_memoryLimitBytes = memoryLimitBytes;
 }
 
 TextureToken TextureManager::getToken()
@@ -148,10 +155,11 @@ unsigned TextureManager::requestTexture(TextureToken token, IntSize size, unsign
     }
 
     size_t memoryRequiredBytes = memoryUseBytes(size, format);
+    if (memoryRequiredBytes > m_memoryLimitBytes)
+        return 0;
 
-    // Reclaim existing unreserved textures to try to stay below the reclaim limit.
-    reduceMemoryToLimit(std::max(m_memoryLimits.reclaimLimit - memoryRequiredBytes, static_cast<size_t>(0)));
-    if (m_memoryUseBytes + memoryRequiredBytes > m_memoryLimits.upperLimit)
+    reduceMemoryToLimit(m_memoryLimitBytes - memoryRequiredBytes);
+    if (m_memoryUseBytes + memoryRequiredBytes > m_memoryLimitBytes)
         return 0;
 
     unsigned textureId;

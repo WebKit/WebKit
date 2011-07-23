@@ -1,3 +1,47 @@
+2011-07-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Seperate texture management for contents textures vs render surface textures
+        https://bugs.webkit.org/show_bug.cgi?id=64771
+
+        Reviewed by Kenneth Russell.
+
+        Splits the chromium texture management across two TextureManagers, one for contents textures and one for render
+        surfaces.  The lifetimes and relative evicition costs for these types of textures are significantly different.
+        Content textures need to be managed from paint time through draw time and evicting them is generally expensive,
+        since replacing the texture requires doing a software repaint into a buffer, creating a new texture, and
+        uploading the contents into the texture.  Render surface textures are only used while drawing and never contain
+        useful contents between frames.  The only reason to preserve a render surface texture between frames is to avoid
+        having to create the texture on the next frame, they never contain useful contents across frames.
+
+        The contents texture limits remain the same.  Render surfaces are allocated the difference between the high
+        memory bound and the contents texture memory use during a frame and the difference between the low memory bound
+        and the contents texture memory use between frames.
+
+        Covered by existing compositing tests.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::releaseTextures):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::contentsTextureManager):
+        (WebCore::LayerRendererChromium::renderSurfaceTextureManager):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::createTile):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::prepareContentsTexture):
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::TextureManager):
+        (WebCore::TextureManager::setMemoryLimitBytes):
+        (WebCore::TextureManager::requestTexture):
+        * platform/graphics/chromium/TextureManager.h:
+        (WebCore::TextureManager::create):
+        (WebCore::TextureManager::currentMemoryUseBytes):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+
 2011-07-22  Simon Fraser  <simon.fraser@apple.com>
 
         Avoiding painting backgrounds if they are fully obscures by an object's foreground

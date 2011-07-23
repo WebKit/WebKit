@@ -83,7 +83,7 @@ void CCHeadsUpDisplay::draw()
 {
     GraphicsContext3D* context = m_layerRenderer->context();
     if (!m_hudTexture)
-        m_hudTexture = LayerTexture::create(context, m_layerRenderer->textureManager());
+        m_hudTexture = LayerTexture::create(context, m_layerRenderer->renderSurfaceTextureManager());
 
     // Use a fullscreen texture only if we need to...
     IntSize hudSize;

@@ -212,8 +212,11 @@ void LayerRendererChromium::releaseTextures()
     // Reduces texture memory usage to textureMemoryLowLimitBytes by deleting non root layer
     // textures.
     m_rootLayerContentTiler->protectTileTextures(m_viewportVisibleRect);
-    m_textureManager->reduceMemoryToLimit(textureMemoryLowLimitBytes);
-    m_textureManager->unprotectAllTextures();
+    m_contentsTextureManager->reduceMemoryToLimit(textureMemoryLowLimitBytes);
+    m_contentsTextureManager->unprotectAllTextures();
+    // Evict all RenderSurface textures.
+    m_renderSurfaceTextureManager->unprotectAllTextures();
+    m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
 }
 
 void LayerRendererChromium::updateRootLayerContents()
@@ -303,9 +306,16 @@ void LayerRendererChromium::drawLayers()
         }
     }
 
+    m_renderSurfaceTextureManager->setMemoryLimitBytes(textureMemoryHighLimitBytes - m_contentsTextureManager->currentMemoryUseBytes());
     drawLayers(*m_computedRenderSurfaceLayerList);
 
-    m_textureManager->unprotectAllTextures();
+    m_contentsTextureManager->unprotectAllTextures();
+    m_contentsTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes);
+
+    if (textureMemoryReclaimLimitBytes > m_contentsTextureManager->currentMemoryUseBytes())
+        m_renderSurfaceTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes - m_contentsTextureManager->currentMemoryUseBytes());
+    else
+        m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
 
     // After drawLayers:
     if (hardwareCompositing() && m_contextSupportsLatch) {
@@ -369,6 +379,7 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
         m_rootLayerContentTiler->updateRect(m_rootLayerTextureUpdater.get());
     }
 
+    m_contentsTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes);
     updateCompositorResources(renderSurfaceLayerList);
 }
 
@@ -1167,10 +1178,8 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     GLC(m_context.get(), m_context->flush());
 
-    TextureManager::TextureMemoryLimits limits;
-    limits.upperLimit = textureMemoryHighLimitBytes;
-    limits.reclaimLimit = textureMemoryReclaimLimitBytes;
-    m_textureManager = TextureManager::create(m_context.get(), limits, m_maxTextureSize);
+    m_contentsTextureManager = TextureManager::create(m_context.get(), textureMemoryHighLimitBytes, m_maxTextureSize);
+    m_renderSurfaceTextureManager = TextureManager::create(m_context.get(), textureMemoryHighLimitBytes, m_maxTextureSize);
     return true;
 }
 
@@ -1304,7 +1313,8 @@ void LayerRendererChromium::cleanupSharedObjects()
     // Clear tilers before the texture manager, as they have references to textures.
     m_rootLayerContentTiler.clear();
 
-    m_textureManager.clear();
+    m_contentsTextureManager.clear();
+    m_renderSurfaceTextureManager.clear();
 }
 
 String LayerRendererChromium::layerTreeAsText() const

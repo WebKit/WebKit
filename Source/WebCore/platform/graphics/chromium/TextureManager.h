@@ -40,17 +40,12 @@ typedef int TextureToken;
 class TextureManager {
     WTF_MAKE_NONCOPYABLE(TextureManager);
 public:
-    struct TextureMemoryLimits {
-        // Maximum texture allocation size.
-        size_t upperLimit;
-        // Limit over which existing unreserved textures will be reclaimed.
-        size_t reclaimLimit;
-    };
-
-    static PassOwnPtr<TextureManager> create(GraphicsContext3D* context, const TextureMemoryLimits& memoryLimits, int maxTextureSize)
+    static PassOwnPtr<TextureManager> create(GraphicsContext3D* context, size_t memoryLimitBytes, int maxTextureSize)
     {
-        return adoptPtr(new TextureManager(context, memoryLimits, maxTextureSize));
+        return adoptPtr(new TextureManager(context, memoryLimitBytes, maxTextureSize));
     }
+
+    void setMemoryLimitBytes(size_t);
 
     TextureToken getToken();
     void releaseToken(TextureToken);
@@ -64,9 +59,10 @@ public:
     bool isProtected(TextureToken);
 
     void reduceMemoryToLimit(size_t);
+    size_t currentMemoryUseBytes() const { return m_memoryUseBytes; }
 
 private:
-    TextureManager(GraphicsContext3D*, const TextureMemoryLimits&, int maxTextureSize);
+    TextureManager(GraphicsContext3D*, size_t memoryLimitBytes, int maxTextureSize);
 
     struct TextureInfo {
         IntSize size;
@@ -84,7 +80,7 @@ private:
     TextureMap m_textures;
     ListHashSet<TextureToken> m_textureLRUSet;
 
-    TextureMemoryLimits m_memoryLimits;
+    size_t m_memoryLimitBytes;
     size_t m_memoryUseBytes;
     int m_maxTextureSize;
     TextureToken m_nextToken;

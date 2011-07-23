@@ -142,7 +142,8 @@ public:
 
     void getFramebufferPixels(void *pixels, const IntRect& rect);
 
-    TextureManager* textureManager() const { return m_textureManager.get(); }
+    TextureManager* contentsTextureManager() const { return m_contentsTextureManager.get(); }
+    TextureManager* renderSurfaceTextureManager() const { return m_renderSurfaceTextureManager.get(); }
 
     CCHeadsUpDisplay* headsUpDisplay() { return m_headsUpDisplay.get(); }
 
@@ -243,7 +244,8 @@ private:
     OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
     OwnPtr<CCPluginLayerImpl::Program> m_pluginLayerProgram;
 
-    OwnPtr<TextureManager> m_textureManager;
+    OwnPtr<TextureManager> m_contentsTextureManager;
+    OwnPtr<TextureManager> m_renderSurfaceTextureManager;
 
     OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 
