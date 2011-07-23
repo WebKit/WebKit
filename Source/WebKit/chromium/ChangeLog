@@ -1,3 +1,17 @@
+2011-07-23  Yuta Kitamura  <yutak@chromium.org>
+
+        [Chromium] Turn on new WebSocket protocol in worker shadow page
+        https://bugs.webkit.org/show_bug.cgi?id=64852
+
+        Reviewed by Dmitry Titov.
+
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::initializeLoader):
+        Initialize the value of WebCore::Settings::useHixie76WebSocketProtocol()
+        for a new shadow page. The default value of this flag is overridden through
+        WebPreferences (located in webkit/glue in Chromium source tree) but a shadow
+        page does not receive the preference values from it.
+
 2011-07-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove code that attempted to explicitly sync compositing state before compositing
