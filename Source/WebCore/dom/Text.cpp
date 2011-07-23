@@ -259,7 +259,7 @@ void Text::attach()
 
 void Text::recalcStyle(StyleChange change)
 {
-    if (change != NoChange && parentNode()) {
+    if (change != NoChange && parentNode() && parentNode()->renderer()) {
         if (renderer())
             renderer()->setStyle(parentNode()->renderer()->style());
     }

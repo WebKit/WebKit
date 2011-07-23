@@ -28,7 +28,9 @@
 #include "EventNames.h"
 #include "MutationEvent.h"
 #include "RenderSVGInline.h"
+#include "RenderSVGInlineText.h"
 #include "RenderSVGResource.h"
+#include "ShadowRoot.h"
 #include "SVGDocument.h"
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
@@ -105,6 +107,35 @@ void SubtreeModificationEventListener::handleEvent(ScriptExecutionContext*, Even
         m_trefElement->updateReferencedText();
 }
 
+class SVGShadowText : public Text {
+public:
+    static PassRefPtr<SVGShadowText> create(Document* document, const String& data)
+    {
+        return adoptRef(new SVGShadowText(document, data));
+    }
+private:
+    SVGShadowText(Document* document, const String& data)
+        : Text(document, data)
+    {
+    }
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual void recalcStyle(StyleChange);
+};
+
+RenderObject* SVGShadowText::createRenderer(RenderArena* arena, RenderStyle*)
+{
+    return new (arena) RenderSVGInlineText(this, dataImpl());
+}
+
+void SVGShadowText::recalcStyle(StyleChange change)
+{
+    if (change != NoChange && parentNode()->shadowHost()) {
+        if (renderer())
+            renderer()->setStyle(parentNode()->shadowHost()->renderer()->style());
+    }
+    Text::recalcStyle(change);
+}
+
 void SVGTRefElement::updateReferencedText()
 {
     Element* target = treeScope()->getElementById(SVGURIReference::getTarget(href()));
@@ -113,7 +144,10 @@ void SVGTRefElement::updateReferencedText()
     if (target->parentNode())
         textContent = target->textContent();
     ExceptionCode ignore = 0;
-    setTextContent(textContent, ignore);
+    if (!ensureShadowRoot()->firstChild())
+        shadowRoot()->appendChild(SVGShadowText::create(document(), textContent), ignore);
+    else
+        shadowRoot()->firstChild()->setTextContent(textContent, ignore);
 }
 
 bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)
@@ -177,10 +211,7 @@ RenderObject* SVGTRefElement::createRenderer(RenderArena* arena, RenderStyle*)
 
 bool SVGTRefElement::childShouldCreateRenderer(Node* child) const
 {
-    if (child->isTextNode())
-        return true;
-
-    return false;
+    return child->isInShadowTree();
 }
 
 bool SVGTRefElement::rendererIsNeeded(const NodeRenderingContext& context)

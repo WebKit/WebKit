@@ -1,5 +1,4 @@
 Test dynamically adding 'tref' element.
 Flattened
-Flattened
 $Revision: 1.4 $
 

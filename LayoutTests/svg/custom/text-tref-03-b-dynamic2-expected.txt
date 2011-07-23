@@ -1,5 +1,4 @@
 Test dynamically adding text content that 'tref' references.
 Flattened
-Flattened
 $Revision: 1.4 $
 

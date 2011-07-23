@@ -9,12 +9,6 @@ layer at (0,0) size 800x600
         RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGInline {tref} at (0,0) size 0x0
-        RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGInlineText {#text} at (0,0) size 0x0
-        RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGInlineText {#text} at (0,0) size 0x0
       RenderSVGTextPath {textPath} at (0,0) size 0x0
         RenderSVGInlineText {#text} at (0,0) size 0x0

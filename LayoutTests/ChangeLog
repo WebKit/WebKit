@@ -1,3 +1,24 @@
+2011-07-23  Rob Buis  <rbuis@rim.com>
+
+        Freed SVGTRefElement used in SVGStyledElement::buildPendingResourcesIfNeeded
+        https://bugs.webkit.org/show_bug.cgi?id=64758
+
+        Reviewed by Nikolas Zimmermann.
+
+        Test that removing <tref> children does not crash. Changed results are improvements.
+
+        * platform/mac/svg/custom/text-linking-expected.txt:
+        * platform/mac/svg/custom/tref-own-content-removal-expected.png: Added.
+        * platform/mac/svg/custom/tref-own-content-removal-expected.txt: Added.
+        * platform/mac/svg/dynamic-updates/SVGTRefElement-dom-href-attr-expected.png:
+        * svg/custom/invalid-text-content-expected.txt:
+        * svg/custom/text-tref-03-b-dynamic-expected.txt:
+        * svg/custom/text-tref-03-b-dynamic2-expected.txt:
+        * svg/custom/tref-own-content-removal.svg: Added.
+        * svg/dynamic-updates/SVGTRefElement-dom-href-attr-expected.txt:
+        * svg/dynamic-updates/script-tests/SVGTRefElement-dom-href-attr.js:
+        (executeTest):
+
 2011-07-23  Shinya Kawanaka  <shinyak@google.com>
 
         Marked fast/speech/input-appearance-numberandspeech.html flaky on Mac and Windows.
