@@ -182,6 +182,7 @@ void LauncherApplication::handleUserOptions()
              << "[-webgl]"
 #endif
              << QString("[-viewport-update-mode %1]").arg(formatKeys(updateModes)).toLatin1().data()
+             << "[-disk-cache]"
              << "[-cache-webview]"
              << "[-maximize]"
              << "[-show-fps]"
@@ -216,6 +217,9 @@ void LauncherApplication::handleUserOptions()
         requiresGraphicsView("-show-fps");
         windowOptions.showFrameRate = true;
     }
+
+    if (args.contains("-disk-cache"))
+        windowOptions.useDiskCache = true;
 
     if (args.contains("-cache-webview") || defaultForAnimations) {
         requiresGraphicsView("-cache-webview");

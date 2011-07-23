@@ -80,7 +80,8 @@ class QPropertyAnimation;
 class WindowOptions {
 public:
     WindowOptions()
-        : useGraphicsView(false)
+        : useDiskCache(false)
+        , useGraphicsView(false)
         , useCompositing(true)
         , useTiledBackingStore(false)
         , useWebGL(false)
@@ -112,6 +113,7 @@ public:
     {
     }
 
+    bool useDiskCache;
     bool useGraphicsView;
     bool useCompositing;
     bool useTiledBackingStore;
@@ -173,6 +175,7 @@ protected slots:
 
     void loadURLListFromFile();
 
+    void setDiskCache(bool enable);
     void setTouchMocking(bool on);
     void toggleWebView(bool graphicsBased);
     void toggleAcceleratedCompositing(bool toggle);
