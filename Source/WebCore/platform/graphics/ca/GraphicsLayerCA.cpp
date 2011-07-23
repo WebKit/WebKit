@@ -2091,6 +2091,7 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
     updateBackfaceVisibility();
     updateLayerBackgroundColor();
     updateContentsScale(pageScaleFactor, positionRelativeToBase);
+    updateAcceleratesDrawing();
     updateOpacityOnLayer();
     
 #ifndef NDEBUG

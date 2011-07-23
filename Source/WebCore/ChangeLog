@@ -1,3 +1,16 @@
+2011-07-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Need to update the acceleratesDrawing status on a layer when switching to/from tiled layers
+        https://bugs.webkit.org/show_bug.cgi?id=65057
+
+        Reviewed by Joseph Pecoraro.
+
+        When switching to or from tiled layers, we need to update the new layer's
+        acceleratesDrawing status.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+
 2011-07-22  Mark Pilgrim  <pilgrim@chromium.org>
 
         Add [Optional=CallWithDefaultValues] flag and use it in initXXXEvent declarations
