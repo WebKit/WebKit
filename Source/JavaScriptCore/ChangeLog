@@ -1,3 +1,24 @@
+2011-07-22  Sommer Panage  <panage@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        export JSContextCreateBacktrace as SPI in JSContextRefPrivate.h
+        https://bugs.webkit.org/show_bug.cgi?id=64981
+
+        UIAutomation for iOS would like to support a Javascript backtrace in our error logs.
+        Currently, the C API does not provide the tools to do this. However, the private API
+        does expose the necessary functionality to get a backtrace
+        (via Interpreter::retrieveLastCaller). We recognize this information may result in
+        failure in the cases of programs run by 'eval', stack frames beneath host function
+        call frames, and in programs run from other programs. Thus, we propose exporting our
+        JSContextCreateBacktrace in JSContextRefPrivate.h. This will provide us with the tools
+        we need while not advertising an API that isn't really ready for full use.
+
+        * API/JSContextRef.cpp:
+        * API/JSContextRefPrivate.h:
+        * JavaScriptCore.exp:
+
+
 2011-07-22  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65051

@@ -8,6 +8,7 @@ _JSContextGetGroup
 _JSContextGroupCreate
 _JSContextGroupRelease
 _JSContextGroupRetain
+_JSContextCreateBacktrace
 _JSEndProfiling
 _JSEvaluateScript
 _JSGarbageCollect
