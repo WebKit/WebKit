@@ -419,7 +419,7 @@ String int32ToWebCoreStringFast(int value)
 {
     // Caching of small strings below is not thread safe: newly constructed AtomicString
     // are not safely published.
-    ASSERT(WTF::isMainThread());
+    ASSERT(isMainThread());
 
     // Most numbers used are <= 100. Even if they aren't used there's very little cost in using the space.
     const int kLowNumbers = 100;
@@ -440,7 +440,7 @@ String int32ToWebCoreStringFast(int value)
 String int32ToWebCoreString(int value)
 {
     // If we are on the main thread (this should always true for non-workers), call the faster one.
-    if (WTF::isMainThread())
+    if (isMainThread())
         return int32ToWebCoreStringFast(value);
     return String::number(value);
 }

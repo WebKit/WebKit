@@ -96,7 +96,7 @@ void History::go(ScriptExecutionContext* context, int distance)
     if (!m_frame)
         return;
 
-    ASSERT(WTF::isMainThread());
+    ASSERT(isMainThread());
     Frame* activeFrame = static_cast<Document*>(context)->frame();
     if (!activeFrame)
         return;

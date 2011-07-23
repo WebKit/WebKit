@@ -141,7 +141,7 @@ void DOMDataStore::weakActiveDOMObjectCallback(v8::Persistent<v8::Value> v8Objec
 
 void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> value, void* domObject)
 {
-    ASSERT(WTF::isMainThread());
+    ASSERT(isMainThread());
 
     Node* node = static_cast<Node*>(domObject);
     // Node wrappers must be JS objects.

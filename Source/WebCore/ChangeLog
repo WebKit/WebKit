@@ -1,3 +1,21 @@
+2011-07-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove WTF namespace from isMainThread() calls
+        https://bugs.webkit.org/show_bug.cgi?id=65068
+
+        Reviewed by Sam Weinig.
+
+        Because of the using WTF::isMainThread in the header there is no
+        reason to include the namespace name when calling this function.
+
+        * bindings/js/JSMainThreadExecState.h:
+        * bindings/v8/DOMDataStore.cpp:
+        * bindings/v8/V8Binding.cpp:
+        * bindings/v8/V8DOMMap.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        * page/DOMWindow.cpp:
+        * page/History.cpp:
+
 2011-07-23  Alok Priyadarshi  <alokp@chromium.org>
 
         Switching off acceleration for small canvas broke gpu tests

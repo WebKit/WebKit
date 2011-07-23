@@ -127,7 +127,7 @@ namespace WebCore {
 
         static v8::Handle<v8::Object> getWrapper(Node* node)
         {
-            ASSERT(WTF::isMainThread());
+            ASSERT(isMainThread());
             if (LIKELY(!IsolatedWorld::count())) {
                 v8::Persistent<v8::Object>* wrapper = node->wrapper();
                 if (wrapper)

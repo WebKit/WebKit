@@ -919,7 +919,7 @@ void DOMWindow::close(ScriptExecutionContext* context)
         return;
 
     if (context) {
-        ASSERT(WTF::isMainThread());
+        ASSERT(isMainThread());
         Frame* activeFrame = static_cast<Document*>(context)->frame();
         if (!activeFrame)
             return;

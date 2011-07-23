@@ -38,7 +38,7 @@ class JSMainThreadExecState {
 public:
     static JSC::ExecState* currentState()
     { 
-        ASSERT(WTF::isMainThread());
+        ASSERT(isMainThread());
         return s_mainThreadState;
     };
     
@@ -61,13 +61,13 @@ protected:
     explicit JSMainThreadExecState(JSC::ExecState* exec)
         : m_previousState(s_mainThreadState)
     {
-        ASSERT(WTF::isMainThread());
+        ASSERT(isMainThread());
         s_mainThreadState = exec;
     };
     
     ~JSMainThreadExecState()
     {
-        ASSERT(WTF::isMainThread());
+        ASSERT(isMainThread());
         s_mainThreadState = m_previousState;
     }
 

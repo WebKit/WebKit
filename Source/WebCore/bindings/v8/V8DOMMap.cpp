@@ -86,7 +86,7 @@ void removeAllDOMObjects()
     v8::HandleScope scope;
 
     // The DOM objects with the following types only exist on the main thread.
-    if (WTF::isMainThread()) {
+    if (isMainThread()) {
         // Remove all DOM nodes.
         DOMData::removeObjectsFromWrapperMap<Node>(&store, store.domNodeMap());
 
