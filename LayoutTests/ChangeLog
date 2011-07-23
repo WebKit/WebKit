@@ -1,3 +1,11 @@
+2011-07-23  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update expectations for r91574.
+
+        * platform/chromium-win/fast/forms/input-appearance-range-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-range-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-22  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add crashing and failing expectations for canvas and css tests after r91628.
