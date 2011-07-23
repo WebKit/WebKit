@@ -111,6 +111,7 @@ Settings::Settings(Page* page)
     , m_defaultFontSize(0)
     , m_defaultFixedFontSize(0)
     , m_validationMessageTimerMagnification(50)
+    , m_minimumAccelerated2dCanvasSize(128 * 128)
     , m_maximumDecodedImageSize(numeric_limits<size_t>::max())
 #if ENABLE(DOM_STORAGE)
     , m_sessionStorageQuota(StorageMap::noQuota)
@@ -771,6 +772,11 @@ void Settings::setAccelerated2dCanvasEnabled(bool enabled)
 void Settings::setLegacyAccelerated2dCanvasEnabled(bool enabled)
 {
     m_legacyAcceleratedCanvas2dEnabled = enabled;
+}
+
+void Settings::setMinimumAccelerated2dCanvasSize(int numPixels)
+{
+    m_minimumAccelerated2dCanvasSize = numPixels;
 }
 
 void Settings::setLoadDeferringEnabled(bool enabled)

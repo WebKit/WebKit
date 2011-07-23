@@ -51,6 +51,7 @@ struct WebPreferences {
     int defaultFixedFontSize;
     int minimumFontSize;
     int minimumLogicalFontSize;
+    int minimumAccelerated2dCanvasSize;
 
     bool DOMPasteAllowed;
     bool XSSAuditorEnabled;

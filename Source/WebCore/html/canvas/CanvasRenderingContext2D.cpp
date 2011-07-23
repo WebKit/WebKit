@@ -98,11 +98,6 @@ static bool isOriginClean(CachedImage* cachedImage, SecurityOrigin* securityOrig
 }
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
-// Number of pixels in a canvas below which we use software
-// rendering. This is obviously an arbitrary number. A more precise
-// number would depend on machine architecture and canvas contents.
-static const int numPixelsThreshold = 128 * 128;
-
 static bool shouldAccelerateCanvas(const HTMLCanvasElement* canvas)
 {
     const Page* page = canvas->document()->page();
@@ -114,10 +109,7 @@ static bool shouldAccelerateCanvas(const HTMLCanvasElement* canvas)
         return false;
 
     // Do not use acceleration for small canvas.
-    // For every accelerated canvas there is an extra back-buffer and a texture copy.
-    // Small canvases are also widely used for stylized fonts. Anti-aliasing
-    // text in hardware at that scale is generally slower.
-    if (canvas->width() * canvas->height() < numPixelsThreshold)
+    if (canvas->width() * canvas->height() < settings->minimumAccelerated2dCanvasSize())
         return false;
 
     return true;

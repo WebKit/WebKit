@@ -359,6 +359,17 @@ namespace WebCore {
         void setLegacyAccelerated2dCanvasEnabled(bool);
         bool legacyAccelerated2dCanvasEnabled() const { return m_legacyAcceleratedCanvas2dEnabled; }
 
+        // Number of pixels below which 2D canvas is rendered in software
+        // even if hardware acceleration is enabled.
+        // Hardware acceleration is useful for large canvases where it can avoid the
+        // pixel bandwidth between the CPU and GPU. But GPU acceleration comes at
+        // a price - extra back-buffer and texture copy. Small canvases are also
+        // widely used for stylized fonts. Anti-aliasing text in hardware at that
+        // scale is generally slower. So below a certain size it is better to
+        // draw canvas in software.
+        void setMinimumAccelerated2dCanvasSize(int);
+        int minimumAccelerated2dCanvasSize() const { return m_minimumAccelerated2dCanvasSize; }
+
         void setLoadDeferringEnabled(bool);
         bool loadDeferringEnabled() const { return m_loadDeferringEnabled; }
         
@@ -458,6 +469,7 @@ namespace WebCore {
         int m_defaultFontSize;
         int m_defaultFixedFontSize;
         int m_validationMessageTimerMagnification;
+        int m_minimumAccelerated2dCanvasSize;
         size_t m_maximumDecodedImageSize;
 #if ENABLE(DOM_STORAGE)
         unsigned m_sessionStorageQuota;

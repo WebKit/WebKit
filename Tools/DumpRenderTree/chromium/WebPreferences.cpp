@@ -67,6 +67,9 @@ void WebPreferences::reset()
     defaultFixedFontSize = 13;
     minimumFontSize = 0;
     minimumLogicalFontSize = 9;
+    // Do not disable acceleration for 2d canvas based on size.
+    // This makes having test expectations consistent.
+    minimumAccelerated2dCanvasSize = 0;
 
     DOMPasteAllowed = true;
     XSSAuditorEnabled = false;
@@ -127,6 +130,7 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setDefaultFixedFontSize(defaultFixedFontSize);
     settings->setMinimumFontSize(minimumFontSize);
     settings->setMinimumLogicalFontSize(minimumLogicalFontSize);
+    settings->setMinimumAccelerated2dCanvasSize(minimumAccelerated2dCanvasSize);
 
     settings->setDOMPasteAllowed(DOMPasteAllowed);
     settings->setXSSAuditorEnabled(XSSAuditorEnabled);

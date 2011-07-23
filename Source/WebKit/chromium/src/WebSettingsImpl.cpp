@@ -363,6 +363,11 @@ void WebSettingsImpl::setLegacyAccelerated2dCanvasEnabled(bool enabled)
     m_settings->setLegacyAccelerated2dCanvasEnabled(enabled);
 }
 
+void WebSettingsImpl::setMinimumAccelerated2dCanvasSize(int numPixels)
+{
+    m_settings->setMinimumAccelerated2dCanvasSize(numPixels);
+}
+
 void WebSettingsImpl::setMemoryInfoEnabled(bool enabled)
 {
     m_settings->setMemoryInfoEnabled(enabled);

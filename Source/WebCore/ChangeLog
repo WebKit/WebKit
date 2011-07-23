@@ -1,3 +1,21 @@
+2011-07-23  Alok Priyadarshi  <alokp@chromium.org>
+
+        Switching off acceleration for small canvas broke gpu tests
+        https://bugs.webkit.org/show_bug.cgi?id=65053
+
+        Reviewed by Stephen White.
+
+        No new tests. These are supposed to fix existing canvas tests on gpu.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::shouldAccelerateCanvas):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        (WebCore::Settings::setLegacyAccelerated2dCanvasEnabled):
+        (WebCore::Settings::setMinimumAccelerated2dCanvasSize):
+        * page/Settings.h:
+        (WebCore::Settings::minimumAccelerated2dCanvasSize):
+
 2011-07-23  Rob Buis  <rbuis@rim.com>
 
         Freed SVGTRefElement used in SVGStyledElement::buildPendingResourcesIfNeeded

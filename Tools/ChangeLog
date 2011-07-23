@@ -1,3 +1,15 @@
+2011-07-23  Alok Priyadarshi  <alokp@chromium.org>
+
+        Switching off acceleration for small canvas broke gpu tests
+        https://bugs.webkit.org/show_bug.cgi?id=65053
+
+        Reviewed by Stephen White.
+
+        * DumpRenderTree/chromium/WebPreferences.cpp:
+        (WebPreferences::reset):
+        (WebPreferences::applyTo):
+        * DumpRenderTree/chromium/WebPreferences.h:
+
 2011-07-23  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         [Qt] Add option to turn on disk caching in QtTestBrowser
