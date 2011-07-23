@@ -1,3 +1,19 @@
+2011-07-22  Kenneth Russell  <kbr@google.com>
+
+        HTMLImageElement::crossOrigin is hard to use because of caching
+        https://bugs.webkit.org/show_bug.cgi?id=64813
+
+        Reviewed by Adam Barth.
+
+        Reload the resource if the allowCredentials flag doesn't match that in the request.
+
+        Test: http/tests/security/canvas-remote-read-remote-image-blocked-then-allowed.html
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestResource):
+        (WebCore::CachedResourceLoader::determineRevalidationPolicy):
+        * loader/cache/CachedResourceLoader.h:
+
 2011-07-22  Simon Fraser  <simon.fraser@apple.com>
 
         Need to update the acceleratesDrawing status on a layer when switching to/from tiled layers

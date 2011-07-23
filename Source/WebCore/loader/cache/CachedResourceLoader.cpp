@@ -340,7 +340,7 @@ CachedResource* CachedResourceLoader::requestResource(CachedResource::Type type,
     if (request.url() != url)
         request.setURL(url);
 
-    switch (determineRevalidationPolicy(type, forPreload, resource)) {
+    switch (determineRevalidationPolicy(type, request, forPreload, resource)) {
     case Load:
         resource = loadResource(type, request, charset, priority);
         break;
@@ -430,7 +430,7 @@ CachedResource* CachedResourceLoader::loadResource(CachedResource::Type type, Re
     return resource;
 }
 
-CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, bool forPreload, CachedResource* existingResource) const
+CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalidationPolicy(CachedResource::Type type, ResourceRequest& request, bool forPreload, CachedResource* existingResource) const
 {
     if (!existingResource)
         return Load;
@@ -460,6 +460,17 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
     // Don't reuse resources with Cache-control: no-store.
     if (existingResource->response().cacheControlContainsNoStore()) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to Cache-control: no-store.");
+        return Reload;
+    }
+
+    // If credentials were sent with the previous request and won't be
+    // with this one, or vice versa, re-fetch the resource.
+    //
+    // This helps with the case where the server sends back
+    // "Access-Control-Allow-Origin: *" all the time, but some of the
+    // client's requests are made without CORS and some with.
+    if (existingResource->resourceRequest().allowCookies() != request.allowCookies()) {
+        LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to difference in credentials settings.");
         return Reload;
     }
 
