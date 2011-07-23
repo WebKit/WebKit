@@ -3500,7 +3500,6 @@ BUGCR82881 MAC LINUX XP VISTA : http/tests/appcache/interrupted-update.html = PA
 BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT IMAGE+TEXT PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = FAIL PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = TEXT IMAGE+TEXT PASS
-BUGWK65064 WIN MAC : fast/speech/input-appearance-numberandspeech.html = FAIL PASS
 
 // Fails on windows - added in r86693
 BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT

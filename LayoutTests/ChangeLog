@@ -1,3 +1,16 @@
+2011-07-23  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Update expectations for r91636.
+
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-linux/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-win/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-23  Rob Buis  <rbuis@rim.com>
 
         Freed SVGTRefElement used in SVGStyledElement::buildPendingResourcesIfNeeded
