@@ -1095,6 +1095,16 @@ public:
 
         return true;
     }
+    bool obscuresBackground() const
+    {
+        if (!isPresent || isTransparent || color.hasAlpha() || style == BHIDDEN)
+            return false;
+
+        if (style == DOTTED || style == DASHED || style == DOUBLE)
+            return false;
+
+        return true;
+    }
 
     int usedWidth() const { return isPresent ? width : 0; }
     
@@ -2139,6 +2149,27 @@ bool RenderBoxModelObject::borderObscuresBackgroundEdge(const FloatSize& context
         // FIXME: for vertical text
         float axisScale = (i == BSTop || i == BSBottom) ? contextScale.height() : contextScale.width();
         if (!currEdge.obscuresBackgroundEdge(axisScale))
+            return false;
+    }
+
+    return true;
+}
+
+bool RenderBoxModelObject::borderObscuresBackground() const
+{
+    if (!style()->hasBorder())
+        return false;
+
+    // Bail if we have any border-image for now. We could look at the image alpha to improve this.
+    if (style()->borderImage().image())
+        return false;
+
+    BorderEdge edges[4];
+    getBorderEdgeInfo(edges);
+
+    for (int i = BSTop; i <= BSLeft; ++i) {
+        const BorderEdge& currEdge = edges[i];
+        if (!currEdge.obscuresBackground())
             return false;
     }
 

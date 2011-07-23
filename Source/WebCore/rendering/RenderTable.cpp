@@ -558,14 +558,7 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
     subtractCaptionRect(rect);
 
     paintBoxShadow(paintInfo.context, rect, style(), Normal);
-    
-    if (isRoot())
-        paintRootBoxFillLayers(paintInfo);
-    else if (!isBody() || document()->documentElement()->renderer()->hasBackground())
-        // The <body> only paints its background if the root element has defined a background
-        // independent of the body.
-        paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), rect);
-
+    paintBackground(paintInfo, rect);
     paintBoxShadow(paintInfo.context, rect, style(), Inset);
 
     if (style()->hasBorder() && !collapseBorders())

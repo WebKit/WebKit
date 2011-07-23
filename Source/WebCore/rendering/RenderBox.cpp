@@ -862,13 +862,8 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
     // The theme will tell us whether or not we should also paint the CSS background.
     bool themePainted = style()->hasAppearance() && !theme()->paint(this, paintInfo, paintRect);
     if (!themePainted) {
-        if (isRoot())
-            paintRootBoxFillLayers(paintInfo);
-        else if (!isBody() || document()->documentElement()->renderer()->hasBackground()) {
-            // The <body> only paints its background if the root element has defined a background
-            // independent of the body.
-            paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect, bleedAvoidance);
-        }
+        paintBackground(paintInfo, paintRect, bleedAvoidance);
+
         if (style()->hasAppearance())
             theme()->paintDecorations(this, paintInfo, paintRect);
     }
@@ -880,6 +875,18 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& pai
 
     if (bleedAvoidance == BackgroundBleedUseTransparencyLayer)
         paintInfo.context->endTransparencyLayer();
+}
+
+void RenderBox::paintBackground(const PaintInfo& paintInfo, const LayoutRect& paintRect, BackgroundBleedAvoidance bleedAvoidance)
+{
+    if (isRoot())
+        paintRootBoxFillLayers(paintInfo);
+    else if (!isBody() || document()->documentElement()->renderer()->hasBackground()) {
+        // The <body> only paints its background if the root element has defined a background
+        // independent of the body.
+        if (!backgroundIsObscured())
+            paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect, bleedAvoidance);
+    }
 }
 
 void RenderBox::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

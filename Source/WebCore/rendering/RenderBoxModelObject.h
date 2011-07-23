@@ -183,6 +183,7 @@ protected:
     void calculateBackgroundImageGeometry(const FillLayer*, const IntRect& paintRect, BackgroundImageGeometry&);
     void getBorderEdgeInfo(class BorderEdge[], bool includeLogicalLeftEdge = true, bool includeLogicalRightEdge = true) const;
     bool borderObscuresBackgroundEdge(const FloatSize& contextScale) const;
+    bool borderObscuresBackground() const;
 
     bool shouldPaintAtLowQuality(GraphicsContext*, Image*, const void*, const IntSize&);
 

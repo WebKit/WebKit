@@ -78,6 +78,8 @@ private:
 
     virtual void paintReplaced(PaintInfo&, const IntPoint&);
 
+    virtual bool backgroundIsObscured() const;
+
     virtual int minimumReplacedHeight() const;
 
     virtual void notifyFinished(CachedResource*);

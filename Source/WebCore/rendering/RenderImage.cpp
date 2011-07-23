@@ -27,6 +27,7 @@
 #include "config.h"
 #include "RenderImage.h"
 
+#include "BitmapImage.h"
 #include "FontCache.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -385,6 +386,36 @@ void RenderImage::paintIntoRect(GraphicsContext* context, const IntRect& rect)
     Image* image = m_imageResource->image().get();
     bool useLowQualityScaling = shouldPaintAtLowQuality(context, image, image, rect.size());
     context->drawImage(m_imageResource->image(rect.width(), rect.height()).get(), style()->colorSpace(), rect, compositeOperator, useLowQualityScaling);
+}
+
+bool RenderImage::backgroundIsObscured() const
+{
+    if (!m_imageResource->hasImage() || m_imageResource->errorOccurred())
+        return false;
+
+    if (m_imageResource->cachedImage() && !m_imageResource->cachedImage()->isLoaded())
+        return false;
+
+    EFillBox backgroundClip = style()->backgroundClip();
+
+    // Background paints under borders.
+    if (backgroundClip == BorderFillBox && style()->hasBorder() && !borderObscuresBackground())
+        return false;
+
+    // Background shows in padding area.
+    if ((backgroundClip == BorderFillBox || backgroundClip == PaddingFillBox) && style()->hasPadding())
+        return false;
+
+    // Check for bitmap image with alpha.
+    Image* image = m_imageResource->image().get();
+    if (!image || !image->isBitmapImage())
+        return false;
+        
+    BitmapImage* bitmapImage = static_cast<BitmapImage*>(image);
+    if (bitmapImage->currentFrameHasAlpha())
+        return false;
+
+    return true;
 }
 
 int RenderImage::minimumReplacedHeight() const

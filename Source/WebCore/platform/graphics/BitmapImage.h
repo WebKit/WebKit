@@ -158,7 +158,8 @@ public:
 #endif
 
     virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
-    bool frameHasAlphaAtIndex(size_t); 
+    bool frameHasAlphaAtIndex(size_t);
+    bool currentFrameHasAlpha() { return frameHasAlphaAtIndex(currentFrame()); }
 
 #if !ASSERT_DISABLED
     bool notSolidColor()

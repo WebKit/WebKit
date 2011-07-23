@@ -1,3 +1,42 @@
+2011-07-22  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoiding painting backgrounds if they are fully obscures by an object's foreground
+        https://bugs.webkit.org/show_bug.cgi?id=65030
+
+        Reviewed by Dan Bernstein.
+
+        Some pages use animated loading GIFs as the background of <img>,
+        but WebKit keeps animating these after the <img> has loaded.
+        
+        Thwart this by avoiding the painting of such backgrounds, if we can
+        determine that they are completely obscured by the border and content
+        of the element.
+
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::currentFrameHasAlpha): Utility method, since currentFrame()
+        is protected.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations): Call paintBackground().
+        (WebCore::RenderBox::paintBackground): New wrapper for the paintFillLayers() which
+        paints the background layers, plus some code we call in a couple of places. This
+        checks the new backgroundIsObscured() method before doing any painting.
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::backgroundIsObscured): New virtual method that determines
+        whether any of the background is visible.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::BorderEdge::obscuresBackground): Returns true if this edge will
+        entirely hide the background under it.
+        (WebCore::RenderBoxModelObject::borderObscuresBackground): Determine whether
+        the border hides the background.
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::backgroundIsObscured): Override the RenderBox method
+        and return true if the image is a loaded, opaque bitmap image, and the background
+        won't show in the border or padding areas.
+        * rendering/RenderImage.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations): Use paintBackground().
+
 2011-07-22  Kenneth Russell  <kbr@google.com>
 
         HTMLImageElement::crossOrigin is hard to use because of caching
