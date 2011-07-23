@@ -1,3 +1,13 @@
+2011-07-23  Shinya Kawanaka  <shinyak@google.com>
+
+        Marked fast/speech/input-appearance-numberandspeech.html flaky on Mac and Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=65064
+
+        Reviewed by Kent Tamura.
+
+        * platform/chromium/test_expectations.txt:
+          Mark fast/speech/input-appearance-numberandspeech.html flaky on Mac and Windows.
+
 2011-07-23  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Move several SVG specific tests out of fast/(backgrounds|borders) into svg/(as-background-image|as-border-image) as

@@ -13,18 +13,15 @@
 <div id="console"></div>
 
 <p>Output test: The following text field should have a localized representation for "-1234.5678".
-e.g. "-1,234.5678" for en_US locale, "-1.234,5678" for fr_FR locale.</p>
+e.g. "-1234.5678" for en_US locale, "-1234,5678" for fr_FR locale. The thousand separator is
+currently off.</p>
 <div><input type=number value="-1234.5678" step=any></div>
 
-<p>Input test: Type a localized representation of a number into the following text field.
+<p>Input test: Type a localized representation of a number (e.g. -1,234.5678 for en_US locale,
+-1.234,5678 for fr_FR locale) into the following text field.
 You'll see an equivalent number in the standard format on the bottom of the text field.</p>
 <div><input type=number id=target step=any oninput="handleInput()"></div>
 <div>Standard format: <output id=output></output></div>
-
-<p>Input test: Type the number text "1234" into the the followin number field.
-The number string will be "1,234" and the cursor position must be the last position.
-</p>
-<div><input type="number" onkeyup="this.value=this.value" /></div>
 
 <script>
 function handleInput() {

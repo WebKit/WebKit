@@ -48,10 +48,24 @@ static RetainPtr<NSNumberFormatter> createFormatterForCurrentLocale()
     return formatter;
 }
 
-static NSNumberFormatter *numberFormatter()
+static RetainPtr<NSNumberFormatter> createFormatterForCurrentLocaleForDisplay()
+{
+    RetainPtr<NSNumberFormatter> formatter = createFormatterForCurrentLocale();
+    [formatter.get() setHasThousandSeparators:NO];
+    return formatter;
+}
+
+static NSNumberFormatter *numberFormatterForParsing()
 {
     ASSERT(isMainThread());
     static NSNumberFormatter *formatter = createFormatterForCurrentLocale().leakRef();
+    return formatter;    
+}
+
+static NSNumberFormatter *numberFormatterForDisplay()
+{
+    ASSERT(isMainThread());
+    static NSNumberFormatter *formatter = createFormatterForCurrentLocaleForDisplay().leakRef();
     return formatter;
 }
 
@@ -59,7 +73,7 @@ double parseLocalizedNumber(const String& numberString)
 {
     if (numberString.isEmpty())
         return numeric_limits<double>::quiet_NaN();
-    NSNumber *number = [numberFormatter() numberFromString:numberString];
+    NSNumber *number = [numberFormatterForParsing() numberFromString:numberString];
     if (!number)
         return numeric_limits<double>::quiet_NaN();
     return [number doubleValue];
@@ -68,7 +82,7 @@ double parseLocalizedNumber(const String& numberString)
 String formatLocalizedNumber(double inputNumber, unsigned fractionDigits)
 {
     RetainPtr<NSNumber> number(AdoptNS, [[NSNumber alloc] initWithDouble:inputNumber]);
-    RetainPtr<NSNumberFormatter> formatter = numberFormatter();
+    RetainPtr<NSNumberFormatter> formatter = numberFormatterForDisplay();
     [formatter.get() setMaximumFractionDigits:fractionDigits];
     return String([formatter.get() stringFromNumber:number.get()]);
 }

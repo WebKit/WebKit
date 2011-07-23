@@ -1,3 +1,33 @@
+2011-07-23  Shinya Kawanaka  <shinyak@google.com>
+
+        Display number field without using a thousand separator.
+        https://bugs.webkit.org/show_bug.cgi?id=65064
+
+        Reviewed by Kent Tamura.
+
+        Separated formatters for parsing and displaying.
+        Removed a test for thousand separator.
+
+        * manual-tests/input-number-localization.html:
+        Removed a test for thousand separator.
+        Made the test description more specific.
+        * platform/text/LocalizedNumberICU.cpp:
+        (WebCore::createFormatterForCurrentLocaleToDisplay):
+        Added to introduce a formatter for display.
+        (WebCore::numberFormatterForParsing):
+        Changed the name to be clear.
+        (WebCore::numberFormatterForDisplay): Added.
+        (WebCore::parseLocalizedNumber): Used numberFormatterForParsing.
+        (WebCore::formatLocalizedNumber): Used numberFormatterForDisplay.
+        * platform/text/mac/LocalizedNumberMac.mm:
+        (WebCore::createFormatterForCurrentLocaleForDisplay):
+        Added to introduce a formatter for display.
+        (WebCore::numberFormatterForParsing):
+        Changed the name to be clear.
+        (WebCore::numberFormatterForDisplay): Added.
+        (WebCore::parseLocalizedNumber): Used numberFormatterForParsing.
+        (WebCore::formatLocalizedNumber): Used numberFormatterForDisplay.
+
 2011-07-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] Seperate texture management for contents textures vs render surface textures

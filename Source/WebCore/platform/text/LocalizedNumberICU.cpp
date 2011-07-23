@@ -49,11 +49,29 @@ static PassOwnPtr<NumberFormat> createFormatterForCurrentLocale()
     return U_SUCCESS(status) ? formatter.release() : nullptr;
 }
 
+static PassOwnPtr<NumberFormat> createFormatterForCurrentLocaleToDisplay()
+{
+    OwnPtr<NumberFormat> formatter(createFormatterForCurrentLocale());
+    if (!formatter)
+        return nullptr;
+
+    formatter->setGroupingUsed(FALSE);
+    return formatter.release();
+}
+
 // This might return 0.
-static NumberFormat* numberFormatter()
+static NumberFormat* numberFormatterForParsing()
 {
     ASSERT(isMainThread());
     static NumberFormat* formatter = createFormatterForCurrentLocale().leakPtr();
+    return formatter;
+}
+
+// This might return 0.
+static NumberFormat* numberFormatterForDisplay()
+{
+    ASSERT(isMainThread());
+    static NumberFormat* formatter = createFormatterForCurrentLocaleToDisplay().leakPtr();
     return formatter;
 }
 
@@ -61,7 +79,7 @@ double parseLocalizedNumber(const String& numberString)
 {
     if (numberString.isEmpty())
         return numeric_limits<double>::quiet_NaN();
-    NumberFormat* formatter = numberFormatter();
+    NumberFormat* formatter = numberFormatterForParsing();
     if (!formatter)
         return numeric_limits<double>::quiet_NaN();
     UnicodeString numberUnicodeString(numberString.characters(), numberString.length());
@@ -77,7 +95,7 @@ double parseLocalizedNumber(const String& numberString)
 
 String formatLocalizedNumber(double number, unsigned fractionDigits)
 {
-    NumberFormat* formatter = numberFormatter();
+    NumberFormat* formatter = numberFormatterForDisplay();
     if (!formatter)
         return String();
     UnicodeString result;
