@@ -1,3 +1,12 @@
+2011-07-24  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Lot of RenderTree mismatches in fast/multicol
+        https://bugs.webkit.org/show_bug.cgi?id=65077
+
+        Unreviewed gardening for Qt.
+
+        * platform/qt/test_expectations.txt: Add expected TEXT failures.
+
 2011-07-24  Rob Buis  <rbuis@rim.com>
 
         SVG <use> element is not repositioned when moved to x=0 y=0 through script 
