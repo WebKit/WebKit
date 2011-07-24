@@ -1,5 +1,13 @@
 2011-07-24  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Yet another unreviewed Qt fixery for the weekend.
+
+        Don't use test_expectations until all of the Qt platforms switched to NRWT.
+        * platform/qt/Skipped:
+        * platform/qt/test_expectations.txt:
+
+2011-07-24  Balazs Kelemen  <kbalazs@webkit.org>
+
         Unreviewed gardening for Qt.
 
         * platform/qt/svg/custom/tref-own-content-removal-expected.txt: Added.

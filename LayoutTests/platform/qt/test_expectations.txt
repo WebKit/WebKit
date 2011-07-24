@@ -20,31 +20,6 @@ BUGWK64002 : fast/selectors/unqualified-hover-strict.html = TEXT PASS
 BUGWK62662 : inspector/cookie-parser.html = CRASH PASS
 BUGWK64526 DEBUG: svg/animations/svgtransform-animation-1.html = CRASH PASS
 
-BUGWK65077 : fast/multicol/client-rects.html = TEXT
-BUGWK65077 : fast/multicol/float-avoidance.html = TEXT
-BUGWK65077 : fast/multicol/float-multicol.html = TEXT
-BUGWK65077 : fast/multicol/scrolling-overflow.html = TEXT
-BUGWK65077 : fast/multicol/span/anonymous-before-child-parent-crash.html = TEXT
-BUGWK65077 : fast/multicol/span/anonymous-split-block-crash.html = TEXT
-BUGWK65077 : fast/multicol/span/anonymous-style-inheritance.html = TEXT
-BUGWK65077 : fast/multicol/span/span-as-immediate-child-complex-splitting.html = TEXT
-BUGWK65077 : fast/multicol/span/span-as-immediate-child-generated-content.html = TEXT
-BUGWK65077 : fast/multicol/span/span-as-immediate-child-property-removal.html = TEXT
-BUGWK65077 : fast/multicol/span/clone-anonymous-block-non-inline-child-crash.html = TEXT
-BUGWK65077 : fast/multicol/span/span-as-immediate-columns-child-dynamic.html = TEXT
-BUGWK65077 : fast/multicol/span/span-as-immediate-columns-child-removal.html = TEXT
-BUGWK65077 : fast/multicol/span/span-as-immediate-columns-child.html = TEXT
-BUGWK65077 : fast/multicol/span/span-as-nested-columns-child-dynamic.html = TEXT
-BUGWK65077 : fast/multicol/span/span-as-nested-columns-child.html = TEXT
-BUGWK65077 : fast/multicol/span/span-as-nested-inline-block-child.html = TEXT
-BUGWK65077 : fast/multicol/span/span-margin-collapsing.html = TEXT
-BUGWK65077 : fast/multicol/vertical-lr/float-avoidance.html = TEXT
-BUGWK65077 : fast/multicol/vertical-lr/float-multicol.html = TEXT
-BUGWK65077 : fast/multicol/vertical-rl/float-avoidance.html = TEXT
-BUGWK65077 : fast/multicol/vertical-rl/float-multicol.html = TEXT
-
-BUGWK65078 : inspector/debugger/pause-in-internal-script.html = TEXT
-
 // Slow tests
 SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS
 SLOW DEBUG: editing/selection/dump-as-markup.html = PASS

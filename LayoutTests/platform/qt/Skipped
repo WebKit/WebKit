@@ -2547,3 +2547,30 @@ inspector/styles/css-live-edit.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=64928
 inspector/styles/get-set-stylesheet-text.html
+
+#https://bugs.webkit.org/show_bug.cgi?id=65077
+fast/multicol/client-rects.html
+fast/multicol/float-avoidance.html
+fast/multicol/float-multicol.html
+fast/multicol/scrolling-overflow.html
+fast/multicol/span/anonymous-before-child-parent-crash.html
+fast/multicol/span/anonymous-split-block-crash.html
+fast/multicol/span/anonymous-style-inheritance.html
+fast/multicol/span/span-as-immediate-child-complex-splitting.html
+fast/multicol/span/span-as-immediate-child-generated-content.html
+fast/multicol/span/span-as-immediate-child-property-removal.html
+fast/multicol/span/clone-anonymous-block-non-inline-child-crash.html
+fast/multicol/span/span-as-immediate-columns-child-dynamic.html
+fast/multicol/span/span-as-immediate-columns-child-removal.html
+fast/multicol/span/span-as-immediate-columns-child.html
+fast/multicol/span/span-as-nested-columns-child-dynamic.html
+fast/multicol/span/span-as-nested-columns-child.html
+fast/multicol/span/span-as-nested-inline-block-child.html
+fast/multicol/span/span-margin-collapsing.html
+fast/multicol/vertical-lr/float-avoidance.html
+fast/multicol/vertical-lr/float-multicol.html
+fast/multicol/vertical-rl/float-avoidance.html
+fast/multicol/vertical-rl/float-multicol.html
+
+#https://bugs.webkit.org/show_bug.cgi?id=65078
+inspector/debugger/pause-in-internal-script.html
