@@ -1,5 +1,11 @@
 2011-07-24  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Unreviewed gardening for Qt.
+
+        * platform/qt/svg/custom/tref-own-content-removal-expected.txt: Added.
+
+2011-07-24  Balazs Kelemen  <kbalazs@webkit.org>
+
         [Qt] inspector/debugger/pause-in-internal-script.html fails
         https://bugs.webkit.org/show_bug.cgi?id=65078
 
