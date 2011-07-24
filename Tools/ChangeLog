@@ -1,3 +1,20 @@
+2011-07-24  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r91635.
+        http://trac.webkit.org/changeset/91635
+        https://bugs.webkit.org/show_bug.cgi?id=65083
+
+        It broke the minimal build (Requested by Ossy___OFFLINE on
+        #webkit).
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::initializeView):
+        (LauncherWindow::createChrome):
+        * QtTestBrowser/launcherwindow.h:
+        (WindowOptions::WindowOptions):
+        * QtTestBrowser/main.cpp:
+        (LauncherApplication::handleUserOptions):
+
 2011-07-24  Adam Barth  <abarth@webkit.org>
 
         Rename garden-o-matic "alert" to "infobar" and increase the width to 100%.
