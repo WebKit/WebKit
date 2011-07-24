@@ -56,6 +56,8 @@
 		00B9318913BA8DBC0035A948 /* XMLDocumentParserLibxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00B9318313BA867F0035A948 /* XMLDocumentParserLibxml2.cpp */; };
 		00B9318B13BA8DC90035A948 /* XMLDocumentParserScope.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00B9318513BA867F0035A948 /* XMLDocumentParserScope.cpp */; };
 		00B9318C13BA8DCC0035A948 /* XMLDocumentParserScope.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */; };
+		00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h */; };
+		00C60E4213D797AE0092A275 /* MarkupTokenizerBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 00C60E4113D797AE0092A275 /* MarkupTokenizerBase.h */; };
 		00CA93B213C6691600F7FE95 /* NewXMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00CA93B113C6691600F7FE95 /* NewXMLDocumentParser.h */; };
 		00CA93B513C6697C00F7FE95 /* NewXMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */; };
 		00D0464A13C4D14500326FCC /* XMLCharacterReferenceParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */; };
@@ -6464,6 +6466,8 @@
 		00B9318313BA867F0035A948 /* XMLDocumentParserLibxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserLibxml2.cpp; sourceTree = "<group>"; };
 		00B9318513BA867F0035A948 /* XMLDocumentParserScope.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserScope.cpp; sourceTree = "<group>"; };
 		00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParserScope.h; sourceTree = "<group>"; };
+		00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupTokenizerInlineMethods.h; sourceTree = "<group>"; };
+		00C60E4113D797AE0092A275 /* MarkupTokenizerBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkupTokenizerBase.h; sourceTree = "<group>"; };
 		00CA93B113C6691600F7FE95 /* NewXMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewXMLDocumentParser.h; sourceTree = "<group>"; };
 		00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NewXMLDocumentParser.cpp; sourceTree = "<group>"; };
 		00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLCharacterReferenceParser.cpp; sourceTree = "<group>"; };
@@ -12794,6 +12798,8 @@
 			children = (
 				00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */,
 				00A629C013D0BEC70050AC52 /* MarkupTokenBase.h */,
+				00C60E4113D797AE0092A275 /* MarkupTokenizerBase.h */,
+				00C60E3E13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h */,
 				00CA93B413C6697C00F7FE95 /* NewXMLDocumentParser.cpp */,
 				00CA93B113C6691600F7FE95 /* NewXMLDocumentParser.h */,
 				00D0464813C4D14500326FCC /* XMLCharacterReferenceParser.cpp */,
@@ -22233,6 +22239,8 @@
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */,
 				00A629C113D0BEC70050AC52 /* MarkupTokenBase.h in Headers */,
+				00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h in Headers */,
+				00C60E4213D797AE0092A275 /* MarkupTokenizerBase.h in Headers */,
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,
 				44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */,
 				FABE72F71059C1EB00D999DD /* MathMLInlineContainerElement.h in Headers */,

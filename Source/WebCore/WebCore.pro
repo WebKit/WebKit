@@ -2501,6 +2501,8 @@ HEADERS += \
     workers/WorkerScriptLoader.h \
     workers/WorkerThread.h \
     xml/parser/MarkupTokenBase.h \
+    xml/parser/MarkupTokenizerBase.h \
+    xml/parser/MarkupTokenizerInlineMethods.h \
     xml/parser/XMLDocumentParser.h \
     xml/DOMParser.h \
     xml/NativeXPathNSResolver.h \

@@ -6124,6 +6124,8 @@
             'workers/WorkerScriptLoaderClient.h',
             'workers/WorkerThread.cpp',
             'xml/parser/MarkupTokenBase.h',
+            'xml/parser/MarkupTokenizerBase.h',
+            'xml/parser/MarkupTokenizerInlineMethods.h',
             'xml/parser/XMLDocumentParser.cpp',
             'xml/parser/XMLDocumentParser.h',
             'xml/parser/XMLDocumentParserLibxml2.cpp',

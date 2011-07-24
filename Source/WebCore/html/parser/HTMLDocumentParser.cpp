@@ -49,27 +49,27 @@ namespace {
 
 // This is a direct transcription of step 4 from:
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#fragment-case
-HTMLTokenizer::State tokenizerStateForContextElement(Element* contextElement, bool reportErrors)
+HTMLTokenizerState::State tokenizerStateForContextElement(Element* contextElement, bool reportErrors)
 {
     if (!contextElement)
-        return HTMLTokenizer::DataState;
+        return HTMLTokenizerState::DataState;
 
     const QualifiedName& contextTag = contextElement->tagQName();
 
     if (contextTag.matches(titleTag) || contextTag.matches(textareaTag))
-        return HTMLTokenizer::RCDATAState;
+        return HTMLTokenizerState::RCDATAState;
     if (contextTag.matches(styleTag)
         || contextTag.matches(xmpTag)
         || contextTag.matches(iframeTag)
         || (contextTag.matches(noembedTag) && HTMLTreeBuilder::pluginsEnabled(contextElement->document()->frame()))
         || (contextTag.matches(noscriptTag) && HTMLTreeBuilder::scriptEnabled(contextElement->document()->frame()))
         || contextTag.matches(noframesTag))
-        return reportErrors ? HTMLTokenizer::RAWTEXTState : HTMLTokenizer::PLAINTEXTState;
+        return reportErrors ? HTMLTokenizerState::RAWTEXTState : HTMLTokenizerState::PLAINTEXTState;
     if (contextTag.matches(scriptTag))
-        return reportErrors ? HTMLTokenizer::ScriptDataState : HTMLTokenizer::PLAINTEXTState;
+        return reportErrors ? HTMLTokenizerState::ScriptDataState : HTMLTokenizerState::PLAINTEXTState;
     if (contextTag.matches(plaintextTag))
-        return HTMLTokenizer::PLAINTEXTState;
-    return HTMLTokenizer::DataState;
+        return HTMLTokenizerState::PLAINTEXTState;
+    return HTMLTokenizerState::DataState;
 }
 
 } // namespace
@@ -288,7 +288,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
         m_parserScheduler->scheduleForResume();
 
     if (isWaitingForScripts()) {
-        ASSERT(m_tokenizer->state() == HTMLTokenizer::DataState);
+        ASSERT(m_tokenizer->state() == HTMLTokenizerState::DataState);
         if (!m_preloadScanner) {
             m_preloadScanner = adoptPtr(new HTMLPreloadScanner(document()));
             m_preloadScanner->appendToEnd(m_input.current());

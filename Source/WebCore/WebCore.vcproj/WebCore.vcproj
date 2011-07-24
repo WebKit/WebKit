@@ -42677,6 +42677,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\xml\parser\MarkupTokenizerBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\xml\parser\MarkupTokenizerInlineMethods.h"
+					>
+				</File>
+				<File
 					RelativePath="..\xml\parser\XMLDocumentParser.h"
 					>
 				</File>

@@ -33,7 +33,7 @@ namespace WebCore {
 TextViewSourceParser::TextViewSourceParser(HTMLViewSourceDocument* document)
     : HTMLViewSourceParser(document)
 {
-    tokenizer()->setState(HTMLTokenizer::PLAINTEXTState);
+    tokenizer()->setState(HTMLTokenizerState::PLAINTEXTState);
 }
 
 TextViewSourceParser::~TextViewSourceParser()

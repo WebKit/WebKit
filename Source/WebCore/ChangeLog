@@ -1,3 +1,67 @@
+2011-07-24  Jeffrey Pfau  <jpfau@apple.com>
+
+        Refactor HTML tokenizer code in preparation for a new XML tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=65000
+
+        Reviewed by Adam Barth.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLNames::tokenizerStateForContextElement):
+        (WebCore::HTMLDocumentParser::pumpTokenizer):
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::HTMLNames::isEndTagBufferingState):
+        (WebCore::HTMLTokenizer::HTMLTokenizer):
+        (WebCore::::shouldSkipNullCharacters):
+        (WebCore::HTMLTokenizer::reset):
+        (WebCore::HTMLTokenizer::flushEmitAndResumeIn):
+        (WebCore::HTMLTokenizer::nextToken):
+        (WebCore::HTMLTokenizer::updateStateFor):
+        * html/parser/HTMLTokenizer.h:
+        (WebCore::HTMLTokenizer::emitAndResumeIn):
+        (WebCore::HTMLTokenizer::emitAndReconsumeIn):
+        (WebCore::HTMLTokenizer::saveEndTagNameIfNeeded):
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processStartTagForInBody):
+        (WebCore::HTMLTreeBuilder::processEndTag):
+        (WebCore::HTMLTreeBuilder::processGenericRCDATAStartTag):
+        (WebCore::HTMLTreeBuilder::processGenericRawTextStartTag):
+        (WebCore::HTMLTreeBuilder::processScriptStartTag):
+        * html/parser/TextDocumentParser.cpp:
+        (WebCore::TextDocumentParser::TextDocumentParser):
+        * html/parser/TextViewSourceParser.cpp:
+        (WebCore::TextViewSourceParser::TextViewSourceParser):
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::MarkupTokenBase::type):
+        * xml/parser/MarkupTokenizerBase.h: Added.
+        (WebCore::MarkupTokenizerBase::~MarkupTokenizerBase):
+        (WebCore::MarkupTokenizerBase::lineNumber):
+        (WebCore::MarkupTokenizerBase::columnNumber):
+        (WebCore::MarkupTokenizerBase::state):
+        (WebCore::MarkupTokenizerBase::setState):
+        (WebCore::MarkupTokenizerBase::forceNullCharacterReplacement):
+        (WebCore::MarkupTokenizerBase::setForceNullCharacterReplacement):
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::InputStreamPreprocessor):
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::nextInputCharacter):
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::peek):
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::advance):
+        (WebCore::MarkupTokenizerBase::InputStreamPreprocessor::shouldTreatNullAsEndOfFileMarker):
+        (WebCore::MarkupTokenizerBase::MarkupTokenizerBase):
+        (WebCore::MarkupTokenizerBase::bufferCharacter):
+        (WebCore::MarkupTokenizerBase::emitAndResumeIn):
+        (WebCore::MarkupTokenizerBase::emitAndReconsumeIn):
+        (WebCore::MarkupTokenizerBase::emitEndOfFile):
+        (WebCore::MarkupTokenizerBase::reset):
+        (WebCore::MarkupTokenizerBase::haveBufferedCharacterToken):
+        * xml/parser/MarkupTokenizerInlineMethods.h: Added.
+        (WebCore::isTokenizerWhitespace):
+        (WebCore::advanceStringAndASSERTIgnoringCase):
+        (WebCore::advanceStringAndASSERT):
+
 2011-07-23  Patrick Gansterer  <paroga@webkit.org>
 
         Remove WTF namespace from isMainThread() calls

@@ -38,7 +38,7 @@ TextDocumentParser::TextDocumentParser(HTMLDocument* document)
     : HTMLDocumentParser(document, false)
     , m_haveInsertedFakePreElement(false)
 {
-    tokenizer()->setState(HTMLTokenizer::PLAINTEXTState);
+    tokenizer()->setState(HTMLTokenizerState::PLAINTEXTState);
 }
 
 TextDocumentParser::~TextDocumentParser()

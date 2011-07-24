@@ -57,7 +57,7 @@ class MarkupTokenBase {
     WTF_MAKE_NONCOPYABLE(MarkupTokenBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    typedef typename TypeSet::Type Type;
+    typedef TypeSet Type;
 
     class Range {
     public:
@@ -239,7 +239,7 @@ public:
         m_attributes[i].m_value.append(value.characters(), value.length());
     }
 
-    Type type() const { return m_type; }
+    typename Type::Type type() const { return m_type; }
 
     bool selfClosing() const
     {
@@ -366,7 +366,7 @@ protected:
     // want to end up with a cleaner interface between the two classes.
     friend class AtomicHTMLToken;
 
-    Type m_type;
+    typename Type::Type m_type;
     Range m_range; // Always starts at zero.
     int m_baseOffset;
     DataVector m_data;
