@@ -49,8 +49,9 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
     if (!element->hasTagName(SVGNames::gTag) || !static_cast<SVGGElement*>(element)->isShadowTreeContainerElement())
         return needsUpdate;
 
-    FloatSize translation = static_cast<SVGShadowTreeContainerElement*>(element)->containerTranslation();
-    if (!translation.width() && !translation.height())
+    SVGShadowTreeContainerElement* shadowElement = static_cast<SVGShadowTreeContainerElement*>(element);
+    FloatSize translation = shadowElement->containerTranslation();
+    if (!shadowElement->containerOffsetChanged() && !translation.width() && !translation.height())
         return needsUpdate;
 
     // FIXME: Could optimize this case for use to avoid refetching the animatedLocalTransform() here, if only the containerTranslation() changed.
@@ -58,6 +59,7 @@ bool RenderSVGTransformableContainer::calculateLocalTransform()
         m_localTransform = element->animatedLocalTransform();
 
     m_localTransform.translate(translation.width(), translation.height());
+    shadowElement->setContainerOffsetChanged(false);
     return true;
 }
 

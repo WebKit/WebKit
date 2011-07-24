@@ -1,3 +1,23 @@
+2011-07-24  Rob Buis  <rbuis@rim.com>
+
+        SVG <use> element is not repositioned when moved to x=0 y=0 through script 
+        https://bugs.webkit.org/show_bug.cgi?id=53767
+
+        Reviewed by Nikolas Zimmermann.
+
+        Only bail out on zero offset if it is not explicitly set.
+
+        Test: svg/custom/use-move-to-offset.svg
+
+        * rendering/svg/RenderSVGTransformableContainer.cpp:
+        (WebCore::RenderSVGTransformableContainer::calculateLocalTransform):
+        * rendering/svg/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeContainerElement::SVGShadowTreeContainerElement):
+        (WebCore::SVGShadowTreeContainerElement::setContainerOffset):
+        * rendering/svg/SVGShadowTreeElements.h:
+        (WebCore::SVGShadowTreeContainerElement::containerOffsetChanged):
+        (WebCore::SVGShadowTreeContainerElement::setContainerOffsetChanged):
+
 2011-07-24  Jeffrey Pfau  <jpfau@apple.com>
 
         Refactor HTML tokenizer code in preparation for a new XML tokenizer

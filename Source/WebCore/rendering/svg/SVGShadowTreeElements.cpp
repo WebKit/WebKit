@@ -34,12 +34,20 @@ namespace WebCore {
 
 SVGShadowTreeContainerElement::SVGShadowTreeContainerElement(Document* document)
     : SVGGElement(SVGNames::gTag, document)
+    , m_containerOffsetChanged(false)
 {
 }
 
 PassRefPtr<SVGShadowTreeContainerElement> SVGShadowTreeContainerElement::create(Document* document)
 {
     return adoptRef(new SVGShadowTreeContainerElement(document));
+}
+
+void SVGShadowTreeContainerElement::setContainerOffset(const SVGLength& x, const SVGLength& y)
+{
+    m_containerOffsetChanged = true;
+    m_xOffset = x;
+    m_yOffset = y;
 }
 
 FloatSize SVGShadowTreeContainerElement::containerTranslation() const

@@ -34,11 +34,10 @@ public:
     static PassRefPtr<SVGShadowTreeContainerElement> create(Document*);
 
     FloatSize containerTranslation() const;
-    void setContainerOffset(const SVGLength& x, const SVGLength& y)
-    {
-        m_xOffset = x;
-        m_yOffset = y;
-    }
+    void setContainerOffset(const SVGLength& x, const SVGLength& y);
+
+    bool containerOffsetChanged() const { return m_containerOffsetChanged; }
+    void setContainerOffsetChanged(bool containerOffsetChanged) { m_containerOffsetChanged = containerOffsetChanged; }
 
 protected:
     SVGShadowTreeContainerElement(Document*);
@@ -49,6 +48,7 @@ private:
 
     SVGLength m_xOffset;
     SVGLength m_yOffset;
+    bool m_containerOffsetChanged;
 };
 
 class SVGShadowTreeRootElement : public SVGShadowTreeContainerElement {
