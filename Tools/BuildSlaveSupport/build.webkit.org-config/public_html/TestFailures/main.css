@@ -104,24 +104,24 @@ button.default:hover {
     margin-left: 20px;
 }
 
-/*** alert ***/
+/*** infobar ***/
 
-.alert {
+.infobar {
     display: none;
     background-color: Cornsilk;
     border: 5px solid Tomato;
     padding: 10px;
     margin: 5px auto;
     font-size: 15px;
-    width: 75%;
+    width: 100%;
     text-align: center;
 }
 
-.alert .status a {
+.infobar .status a {
     font-weight: normal;
 }
 
-.alert .status ul {
+.infobar .status ul {
     margin: 0;
     padding: 0;
     list-style: none;
@@ -129,7 +129,7 @@ button.default:hover {
     padding: 0 0 0 10px;
 }
 
-.alert .status li {
+.infobar .status li {
     display: inline-block;
     margin: 0px 5px;
 }

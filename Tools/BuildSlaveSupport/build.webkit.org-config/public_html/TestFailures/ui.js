@@ -86,7 +86,7 @@ ui.summarizeRegressionRange = function(oldestFailingRevision, newestPassingRevis
     return block;
 };
 
-ui.alertMessageForCompileErrors = function(builderNameList)
+ui.infobarMessageForCompileErrors = function(builderNameList)
 {
     var block = $('<div class="compile-errors">Build Failed:<ul></ul></div>');
 

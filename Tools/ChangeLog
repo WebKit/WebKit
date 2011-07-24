@@ -1,3 +1,14 @@
+2011-07-24  Adam Barth  <abarth@webkit.org>
+
+        Rename garden-o-matic "alert" to "infobar" and increase the width to 100%.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui_unittests.js:
+
 2011-07-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         TestConfiguration should be hashable and comparable for equality.

@@ -5,7 +5,7 @@ var kFastLoadingDEBUG = false;
 var g_updateTimerId = 0;
 var g_resultsDetailsIterator = null;
 
-var kBuildFailedAlertType = 'build-failed';
+var kBuildFailedInfobarType = 'build-failed';
 var kCommitLogLength = 20;
 
 function dismissButterbar()
@@ -19,27 +19,27 @@ function displayOnButterbar(message)
     $('.butterbar').fadeIn('fast');
 }
 
-function hideAlert()
+function hideInfobar()
 {
-    $('.alert').animate({
+    $('.infobar').animate({
         opacity: 'toggle',
         height: 'toggle',
     });
 }
 
-function hideAlertIfOfType(type)
+function hideInfobarIfOfType(type)
 {
-    if (!$('.alert .status').is(':visible'))
+    if (!$('.infobar .status').is(':visible'))
         return;
-    if ($('.alert .status').attr(config.kAlertTypeAttr) != type)
+    if ($('.infobar .status').attr(config.kInfobarTypeAttr) != type)
         return;
-    hideAlert();
+    hideInfobar();
 }
 
-function displayAlert(message, type)
+function displayInfobar(message, type)
 {
-    $('.alert .status').empty().attr(config.kAlertTypeAttr, type).append(message);
-    $('.alert').animate({
+    $('.infobar .status').empty().attr(config.kInfobarTypeAttr, type).append(message);
+    $('.infobar').animate({
         opacity: 'toggle',
         height: 'toggle',
     });
@@ -302,10 +302,10 @@ function checkBuilderStatuses()
 {
     results.fetchBuildersWithCompileErrors(function(builderNameList) {
         if (!builderNameList.length) {
-            hideAlertIfOfType(kBuildFailedAlertType);
+            hideInfobarIfOfType(kBuildFailedInfobarType);
             return;
         }
-        displayAlert(ui.alertMessageForCompileErrors(builderNameList), kBuildFailedAlertType);
+        displayInfobar(ui.infobarMessageForCompileErrors(builderNameList), kBuildFailedInfobarType);
     });
 }
 

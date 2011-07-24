@@ -36,7 +36,7 @@ config.kTestNameAttr = 'data-test-name';
 config.kBuilderNameAttr = 'data-builder-name';
 config.kFailureCountAttr = 'data-failure-count';
 config.kFailureTypesAttr = 'data-failure-types';
-config.kAlertTypeAttr = 'data-alert-type';
+config.kInfobarTypeAttr = 'data-infobar-type';
 
 var kTenMinutesInMilliseconds = 10 * 60 * 1000;
 config.kUpdateFrequency = kTenMinutesInMilliseconds;

@@ -63,8 +63,8 @@ test("failureCount", 4, function() {
     equal(ui.failureCount(3), 'Seen 3 times.');
 });
 
-test("alertMessageForCompileErrors", 1, function() {
-    var message = ui.alertMessageForCompileErrors(['Mock Builder', 'Another Builder']);
+test("infobarMessageForCompileErrors", 1, function() {
+    var message = ui.infobarMessageForCompileErrors(['Mock Builder', 'Another Builder']);
     message.wrap('<wrapper></wrapper>');
     equal(message.parent().html(),
         '<div class="compile-errors">Build Failed:<ul>' +
