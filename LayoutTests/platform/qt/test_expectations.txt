@@ -43,6 +43,8 @@ BUGWK65077 : fast/multicol/vertical-lr/float-multicol.html = TEXT
 BUGWK65077 : fast/multicol/vertical-rl/float-avoidance.html = TEXT
 BUGWK65077 : fast/multicol/vertical-rl/float-multicol.html = TEXT
 
+BUGWK65078 : inspector/debugger/pause-in-internal-script.html = TEXT
+
 // Slow tests
 SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS
 SLOW DEBUG: editing/selection/dump-as-markup.html = PASS
