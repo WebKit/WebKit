@@ -55,6 +55,30 @@ class TestConfigurationTest(unittest.TestCase):
         config = TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')
         self.assertEquals("TestConfig(version='xp', architecture='x86', build_type='release', graphics_type='cpu')", repr(config))
 
+    def test_hash(self):
+        config_dict = {}
+        config_dict[TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')] = True
+        self.assertTrue(TestConfiguration(None, 'xp', 'x86', 'release', 'cpu') in config_dict)
+        self.assertTrue(config_dict[TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')])
+        config_dict[TestConfiguration(None, 'xp', 'x86', 'release', 'gpu')] = False
+        self.assertFalse(config_dict[TestConfiguration(None, 'xp', 'x86', 'release', 'gpu')])
+
+        def query_unknown_key():
+            config_dict[TestConfiguration(None, 'xp', 'x86', 'debug', 'gpu')]
+
+        self.assertRaises(KeyError, query_unknown_key)
+        self.assertTrue(TestConfiguration(None, 'xp', 'x86', 'release', 'gpu') in config_dict)
+        self.assertFalse(TestConfiguration(None, 'xp', 'x86', 'debug', 'gpu') in config_dict)
+        configs_list = [TestConfiguration(None, 'xp', 'x86', 'release', 'gpu'), TestConfiguration(None, 'xp', 'x86', 'debug', 'gpu'), TestConfiguration(None, 'xp', 'x86', 'debug', 'gpu')]
+        self.assertEquals(len(configs_list), 3)
+        self.assertEquals(len(set(configs_list)), 2)
+
+    def test_eq(self):
+        self.assertEquals(TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'))
+        self.assertEquals(TestConfiguration(port.get('test-win-xp', None)), TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'))
+        self.assertNotEquals(TestConfiguration(None, 'xp', 'x86', 'release', 'gpu'), TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'))
+        self.assertNotEquals(TestConfiguration(None, 'xp', 'x86', 'debug', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'))
+
     def test_values(self):
         config = TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')
         result_config_values = []

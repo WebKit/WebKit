@@ -48,6 +48,12 @@ class TestConfiguration(object):
     def __repr__(self):
         return "TestConfig(version='%(version)s', architecture='%(architecture)s', build_type='%(build_type)s', graphics_type='%(graphics_type)s')" % self.__dict__
 
+    def __hash__(self):
+        return hash(self.version + self.architecture + self.build_type + self.graphics_type)
+
+    def __eq__(self, other):
+        return self.__hash__() == other.__hash__()
+
     def values(self):
         """Returns the configuration values of this instance as a tuple."""
         return self.__dict__.values()
