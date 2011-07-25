@@ -1,3 +1,15 @@
+2011-07-25  Chris Rogers  <crogers@google.com>
+
+        Disable web audio layout tests on all platforms except chromium - as initial tests are added
+        https://bugs.webkit.org/show_bug.cgi?id=65142
+
+        Unreviewed.
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-06-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

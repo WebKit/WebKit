@@ -393,3 +393,6 @@ compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html
 compositing/rtl/rtl-iframe-fixed-overflow.html
 compositing/rtl/rtl-iframe-fixed.html
 compositing/rtl/rtl-iframe-relative.html
+
+# For now, Web Audio API is disabled
+webaudio/

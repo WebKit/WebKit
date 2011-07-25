@@ -1557,3 +1557,6 @@ inspector/
 
 # Skipped until new WebSocket protocol is implemented. http://webkit.org/b/50099
 http/tests/websocket/tests/hybi/
+
+# For now, Web Audio API is disabled
+webaudio/

@@ -1359,3 +1359,6 @@ plugins/form-value.html
 
 # Needs generated results
 css3/selectors3
+
+# For now, Web Audio API is disabled
+webaudio/
