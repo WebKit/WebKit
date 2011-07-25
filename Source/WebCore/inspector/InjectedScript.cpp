@@ -63,19 +63,12 @@ void InjectedScript::evaluate(ErrorString* errorString, const String& expression
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, PassRefPtr<InspectorArray> arguments, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const String& arguments, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "callFunctionOn");
     function.appendArgument(objectId);
     function.appendArgument(expression);
-    for (unsigned i = 0; i < arguments->length(); ++i) {
-        String argumentId;
-        if (!arguments->get(i)->asString(&argumentId)) {
-            *errorString = "Call argument should be an object id";
-            return;
-        }
-        function.appendArgument(argumentId);
-    }
+    function.appendArgument(arguments);
     makeEvalCall(errorString, function, result, wasThrown);
 }
 

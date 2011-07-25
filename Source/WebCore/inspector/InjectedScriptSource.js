@@ -277,24 +277,33 @@ InjectedScript.prototype = {
         return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI);
     },
 
-    callFunctionOn: function(objectId, expression)
+    callFunctionOn: function(objectId, expression, args)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
         if (!object)
             return "Could not find object with given id";
 
-        var resolvedArgs = [];
-        for (var i = 2; i < arguments.length; ++i) {
-            var parsedArgId = this._parseObjectId(arguments[i]);
-            if (!parsedArgId || parsedArgId.injectedScriptId !== injectedScriptId)
-                return "Arguments should belong to the same JavaScript world as the target object.";
-            
-            var resolvedArg = this._objectForId(parsedArgId);
-            if (!resolvedArg)
-                return "Could not find object with given id";
+        if (args) {
+            var resolvedArgs = [];
+            args = InjectedScriptHost.evaluate(args);
+            for (var i = 0; i < args.length; ++i) {
+                var objectId = args[i].objectId;
+                if (objectId) {
+                    var parsedArgId = this._parseObjectId(objectId);
+                    if (!parsedArgId || parsedArgId.injectedScriptId !== injectedScriptId)
+                        return "Arguments should belong to the same JavaScript world as the target object.";
 
-            resolvedArgs.push(resolvedArg);
+                    var resolvedArg = this._objectForId(parsedArgId);
+                    if (!resolvedArg)
+                        return "Could not find object with given id";
+
+                    resolvedArgs.push(resolvedArg);
+                } else if (args[i].value)
+                    resolvedArgs.push(args[i].value);
+                else
+                    resolvedArgs.push(undefined);
+            }
         }
 
         try {
