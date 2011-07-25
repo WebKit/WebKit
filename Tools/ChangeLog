@@ -1,3 +1,15 @@
+2011-07-25  Holger Hans Peter Freyther  <zecke@selfish.org>
+
+        [buildbot] Add Qt Linux MIPSEL Configuration
+        https://bugs.webkit.org/show_bug.cgi?id=65116
+
+        Reviewed by Adam Roben.
+
+        Introduce a Qt Linux MIPS EL build slave. The configuration
+        is a build only configuration.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add MIPS buildbot.
+
 2011-07-25  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt][WK2] Add multi-point touch mocking to MiniBrowser

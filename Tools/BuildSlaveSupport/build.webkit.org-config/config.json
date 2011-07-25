@@ -67,7 +67,9 @@
                     
                     { "name": "efl-linux-slave-1", "platform": "efl" },
 
-                    { "name": "adobe-mac-slave1", "platform": "mac-snowleopard" }
+                    { "name": "adobe-mac-slave1", "platform": "mac-snowleopard" },
+
+                    { "name": "hfreyther-mipsel-linux1", "platform": "qt"}
                   ],
 
     "builders":   [ { "name": "Leopard Intel Release (Build)", "type": "Build", "builddir": "leopard-intel-release",
@@ -186,6 +188,11 @@
                       "slavenames": ["szeged-windows-2"]
                     },
                     {
+                      "name": "Qt Linux MIPS Release", "type": "Build", "builddir": "qt-linux-mips-release",
+                      "platform": "qt", "configuration": "release", "architectures": ["mipsel"],
+                      "slavenames": ["hfreyther-mipsel-linux1"]
+                    },
+                    {
                       "name": "Chromium Win Release", "type": "Build", "builddir": "chromium-win-release",
                       "platform": "chromium-win", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["google-windows-1"]
@@ -244,7 +251,7 @@
     "schedulers": [ { "type": "AnyBranchScheduler", "name": "trunk", "change_filter": "trunk_filter", "treeStableTimer": 45.0,
                       "builderNames": ["GTK Linux 32-bit Release", "GTK Linux 32-bit Debug", "GTK Linux 64-bit Debug",
                                        "Qt Linux Release", "Qt Linux Release minimal", "Qt Linux ARMv7 Release",
-                                       "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug",
+                                       "Qt Windows 32-bit Release", "Qt Windows 32-bit Debug", "Qt Linux MIPS Release",
                                        "Chromium Win Release", "Chromium Win Release (Tests)", "Chromium Mac Release", "Chromium Mac Release (Tests)",
                                        "Chromium Linux Release", "Chromium Linux Release (Tests)", "Chromium Linux Release (Flexbox)",
                                        "WinCairo Debug (Build)", "WinCE Release (Build)", "EFL Linux Release (Build)"]
