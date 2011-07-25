@@ -115,8 +115,8 @@ static void adjustBubblePosition(const IntRect& hostRect, HTMLElement* bubble)
     double hostY = hostRect.y();
     if (RenderBox* container = bubble->renderer()->containingBlock()) {
         FloatPoint containerLocation = container->localToAbsolute();
-        hostX -= containerLocation.x() + container->borderLeft() + container->paddingLeft();
-        hostY -= containerLocation.y() + container->borderTop() + container->paddingTop();
+        hostX -= containerLocation.x() + container->borderLeft();
+        hostY -= containerLocation.y() + container->borderTop();
     }
     bubble->getInlineStyleDecl()->setProperty(CSSPropertyTop, hostY + hostRect.height(), CSSPrimitiveValue::CSS_PX);
     // The 'left' value of ::-webkit-validation-bubble-arrow.

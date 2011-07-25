@@ -1,3 +1,15 @@
+2011-07-24  Kent Tamura  <tkent@chromium.org>
+
+        Validation message bubble position is incorrect if the containing block has paddings.
+        https://bugs.webkit.org/show_bug.cgi?id=65091
+
+        Reviewed by Hajime Morita.
+
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition):
+        We don't need to subtract paddings because the origin of
+        position:aboslute is inside borders and outside of the padding.
+
 2011-07-24  Rob Buis  <rbuis@rim.com>
 
         Crash in SVGUseElement::updateContainerOffsets on <use> with no parent
