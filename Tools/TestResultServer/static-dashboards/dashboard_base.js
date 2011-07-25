@@ -108,6 +108,7 @@ var WEBKIT_REVISIONS_KEY = 'webkitRevision';
 var TIMESTAMPS_KEY = 'secondsSinceEpoch';
 var BUILD_NUMBERS_KEY = 'buildNumbers';
 var TESTS_KEY = 'tests';
+var TWO_WEEKS_SECONDS = 60 * 60 * 24 * 14;
 
 // These should match the testtype uploaded to test-results.appspot.com.
 // See http://test-results.appspot.com/testfile.
@@ -470,8 +471,18 @@ var g_expectations;
 function ADD_RESULTS(builds)
 {
     for (var builderName in builds) {
-        if (builderName != 'version')
-            g_resultsByBuilder[builderName] = builds[builderName];
+        if (builderName == 'version')
+            continue;
+
+        // If a test suite stops being run on a given builder, we don't want to show it.
+        // Assume any builder without a run in two weeks for a given test suite isn't
+        // running that suite anymore.
+        // FIXME: Grab which bots run which tests directly from the buildbot JSON instead.
+        var lastRunSeconds = builds[builderName].secondsSinceEpoch[0];
+        if ((Date.now() / 1000) - lastRunSeconds > TWO_WEEKS_SECONDS)
+            continue;
+
+        g_resultsByBuilder[builderName] = builds[builderName];
     }
 
     handleResourceLoad();
