@@ -897,8 +897,8 @@ WebInspector.SourceFrame.prototype = {
             this._textViewer.readOnly = false;
 
             if (error) {
-                if (error.data && error.data[0]) {
-                    WebInspector.log(error.data[0], WebInspector.ConsoleMessage.MessageLevel.Error);
+                if (error.message) {
+                    WebInspector.log(error.message, WebInspector.ConsoleMessage.MessageLevel.Error);
                     WebInspector.showConsole();
                 }
                 return;
