@@ -107,7 +107,7 @@ public:
     virtual bool canSetValueAttribute() const;
     virtual bool canSetExpandedAttribute() const;
 
-    virtual void setAccessibleName(String&);
+    virtual void setAccessibleName(const AtomicString&);
     
     // Provides common logic used by all elements when determining isIgnored.
     AccessibilityObjectInclusion accessibilityIsIgnoredBase() const;

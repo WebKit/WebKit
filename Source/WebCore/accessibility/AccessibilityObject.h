@@ -342,7 +342,7 @@ public:
     virtual bool canSetExpandedAttribute() const { return false; }
     
     // A programmatic way to set a name on an AccessibleObject.
-    virtual void setAccessibleName(String&) { }
+    virtual void setAccessibleName(const AtomicString&) { }
     
     virtual Node* node() const { return 0; }
     virtual RenderObject* renderer() const { return 0; }

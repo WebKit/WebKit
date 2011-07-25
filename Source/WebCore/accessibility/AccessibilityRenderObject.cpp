@@ -1233,7 +1233,7 @@ void AccessibilityRenderObject::elementsFromAttribute(Vector<Element*>& elements
     
     unsigned size = idVector.size();
     for (unsigned i = 0; i < size; ++i) {
-        String idName = idVector[i];
+        AtomicString idName(idVector[i]);
         Element* idElement = scope->getElementById(idName);
         if (idElement)
             elements.append(idElement);
@@ -1341,7 +1341,7 @@ String AccessibilityRenderObject::ariaDescribedByAttribute() const
     
 String AccessibilityRenderObject::ariaAccessibilityDescription() const
 {
-    const AtomicString& ariaLabeledBy = ariaLabeledByAttribute();
+    String ariaLabeledBy = ariaLabeledByAttribute();
     if (!ariaLabeledBy.isEmpty())
         return ariaLabeledBy;
 
@@ -3615,7 +3615,7 @@ const String& AccessibilityRenderObject::actionVerb() const
     }
 }
     
-void AccessibilityRenderObject::setAccessibleName(String& name)
+void AccessibilityRenderObject::setAccessibleName(const AtomicString& name)
 {
     // Setting the accessible name can store the value in the DOM
     if (!m_renderer)
