@@ -1,5 +1,18 @@
 2011-07-25  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
+        [EFL] Move macro checking inside ewk_view_context_menu_forward_event
+        https://bugs.webkit.org/show_bug.cgi?id=64682
+
+        When CONTEXT_MENUS macro is disabled method ewk_view_context_menu_forward_event just
+        returns EINA_FALSE and it avoid undefined reference during building.
+
+        Reviewed by Kent Tamura.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_context_menu_forward_event):
+
+2011-07-25  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
         [EFL] Method ewk_context_menu_destroy returns EINA_FALSE if CONTEXT_MENUS macro is disabled
         https://bugs.webkit.org/show_bug.cgi?id=64683
 
