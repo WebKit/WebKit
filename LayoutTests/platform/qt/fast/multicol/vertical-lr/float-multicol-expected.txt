@@ -1,11 +1,11 @@
 layer at (0,0) size 784x1508
   RenderView at (0,0) size 784x600
-layer at (0,0) size 425x600
-  RenderBlock {HTML} at (0,0) size 425x600
-layer at (19,8) size 390x1500
-  RenderBody {BODY} at (19,8) size 390x1500
-    RenderBlock {DIV} at (0,0) size 66x478 [bgcolor=#00FFFF]
-      RenderBlock (floating) {DIV} at (4,4) size 614x239 [bgcolor=#FFFF00]
+layer at (0,0) size 409x600
+  RenderBlock {HTML} at (0,0) size 409x600
+layer at (8,8) size 393x1500
+  RenderBody {BODY} at (8,8) size 393x1500
+    RenderBlock {DIV} at (19,0) size 66x478 [bgcolor=#00FFFF]
+      RenderBlock (floating) {DIV} at (4,4) size 598x239 [bgcolor=#FFFF00]
         RenderImage {IMG} at (0,0) size 133x70
         RenderText {#text} at (0,70) size 198x238
           text run at (0,70) width 103: "You've already"
@@ -17,7 +17,7 @@ layer at (19,8) size 390x1500
           text run at (132,70) width 168: "downloaded a build with"
           text run at (154,0) width 236: "Talkback, please turn it on when it"
           text run at (176,0) width 37: "asks. "
-        RenderBlock (floating) {DIV} at (176,154) size 438x85 [bgcolor=#FF0000]
+        RenderBlock (floating) {DIV} at (176,154) size 422x85 [bgcolor=#FF0000]
           RenderBlock {P} at (16,0) size 22x85
             RenderText {#text} at (0,0) size 22x77
               text run at (0,0) width 77: "Hola hola 1"
@@ -33,22 +33,22 @@ layer at (19,8) size 390x1500
           RenderBlock {P} at (168,0) size 22x85
             RenderText {#text} at (0,0) size 22x77
               text run at (0,0) width 77: "Hola hola 5"
-          RenderBlock {P} at (210,0) size 22x85
+          RenderBlock {P} at (194,0) size 22x85
             RenderText {#text} at (0,0) size 22x77
               text run at (0,0) width 77: "Hola hola 6"
-          RenderBlock {P} at (248,0) size 22x85
+          RenderBlock {P} at (232,0) size 22x85
             RenderText {#text} at (0,0) size 22x77
               text run at (0,0) width 77: "Hola hola 7"
-          RenderBlock {P} at (286,0) size 22x85
+          RenderBlock {P} at (270,0) size 22x85
             RenderText {#text} at (0,0) size 22x77
               text run at (0,0) width 77: "Hola hola 8"
-          RenderBlock {P} at (324,0) size 22x85
+          RenderBlock {P} at (308,0) size 22x85
             RenderText {#text} at (0,0) size 22x77
               text run at (0,0) width 77: "Hola hola 9"
-          RenderBlock {P} at (362,0) size 22x85
+          RenderBlock {P} at (346,0) size 22x85
             RenderText {#text} at (0,0) size 22x85
               text run at (0,0) width 85: "Hola hola 10"
-          RenderBlock {P} at (400,0) size 22x85
+          RenderBlock {P} at (384,0) size 22x85
             RenderText {#text} at (0,0) size 22x85
               text run at (0,0) width 85: "Hola hola 11"
         RenderText {#text} at (176,37) size 154x150
@@ -59,39 +59,39 @@ layer at (19,8) size 390x1500
           text run at (264,0) width 150: "most serious, and how"
           text run at (286,0) width 108: "often people are"
           text run at (308,0) width 131: "encountering them."
-      RenderBlock (floating) {DIV} at (0,393) size 342x85 [bgcolor=#FF00FF]
-        RenderBlock {P} at (0,0) size 22x85
+      RenderBlock (floating) {DIV} at (0,393) size 358x85 [bgcolor=#FF00FF]
+        RenderBlock {P} at (16,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hello Kitty 1"
-        RenderBlock {P} at (38,0) size 22x85
+        RenderBlock {P} at (54,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hello Kitty 2"
-        RenderBlock {P} at (76,0) size 22x85
+        RenderBlock {P} at (92,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hello Kitty 3"
-        RenderBlock {P} at (114,0) size 22x85
+        RenderBlock {P} at (130,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hello Kitty 4"
-        RenderBlock {P} at (152,0) size 22x85
+        RenderBlock {P} at (168,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hello Kitty 5"
-        RenderBlock {P} at (190,0) size 22x85
+        RenderBlock {P} at (206,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hello Kitty 6"
-        RenderBlock {P} at (228,0) size 22x85
+        RenderBlock {P} at (244,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hello Kitty 7"
-        RenderBlock {P} at (266,0) size 22x85
+        RenderBlock {P} at (282,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hello Kitty 8"
-        RenderBlock {P} at (304,0) size 22x85
+        RenderBlock {P} at (320,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hello Kitty 9"
       RenderBlock {H2} at (0,0) size 66x478
         RenderText {#text} at (0,247) size 66x132
           text run at (0,247) width 124: "What Needs"
           text run at (33,247) width 132: "To Be Done?"
-    RenderBlock (floating) {DIV} at (85,247) size 419x85 [bgcolor=#808080]
+    RenderBlock (floating) {DIV} at (104,247) size 441x85 [bgcolor=#808080]
       RenderBlock {P} at (16,0) size 22x85
         RenderText {#text} at (0,0) size 22x77
           text run at (0,0) width 77: "Hola hola 1"
@@ -113,104 +113,105 @@ layer at (19,8) size 390x1500
       RenderBlock {P} at (244,0) size 22x85
         RenderText {#text} at (0,0) size 22x77
           text run at (0,0) width 77: "Hola hola 7"
-      RenderBlock {P} at (282,0) size 22x85
+      RenderBlock {P} at (289,0) size 22x85
         RenderText {#text} at (0,0) size 22x77
           text run at (0,0) width 77: "Hola hola 8"
-      RenderBlock {P} at (305,0) size 22x85
+      RenderBlock {P} at (327,0) size 22x85
         RenderText {#text} at (0,0) size 22x77
           text run at (0,0) width 77: "Hola hola 9"
-      RenderBlock {P} at (343,0) size 22x85
+      RenderBlock {P} at (365,0) size 22x85
         RenderText {#text} at (0,0) size 22x85
           text run at (0,0) width 85: "Hola hola 10"
-      RenderBlock {P} at (381,0) size 22x85
+      RenderBlock {P} at (403,0) size 22x85
         RenderText {#text} at (0,0) size 22x85
           text run at (0,0) width 85: "Hola hola 11"
-    RenderBlock {DL} at (85,0) size 849x478
+    RenderBlock {DL} at (104,0) size 836x478
       RenderBlock {DT} at (0,0) size 44x478
         RenderText {#text} at (0,332) size 44x48
           text run at (0,332) width 48: "Report"
           text run at (22,332) width 34: "Bugs"
-      RenderBlock {DD} at (60,40) size 575x438
-        RenderBlock {P} at (0,0) size 575x438
-          RenderText {#text} at (0,292) size 377x138
+      RenderBlock {DD} at (60,40) size 559x438
+        RenderBlock {P} at (0,0) size 559x438
+          RenderText {#text} at (0,292) size 405x223
             text run at (0,292) width 48: "You've"
             text run at (22,292) width 51: "already"
-            text run at (197,292) width 138: "downloaded a build."
-            text run at (219,292) width 137: "All you have to do is"
-            text run at (245,292) width 39: "use it "
-            text run at (245,331) width 18: "as "
-            text run at (245,349) width 32: "your"
-            text run at (267,292) width 122: "everyday browser"
-            text run at (289,292) width 97: "and mail/news"
-            text run at (311,292) width 93: "reader. If you"
-            text run at (333,292) width 134: "downloaded a build"
-            text run at (355,292) width 34: "with "
-            text run at (355,326) width 69: "Talkback,"
+            text run at (229,292) width 138: "downloaded a build."
+            text run at (251,292) width 137: "All you have to do is"
+            text run at (273,292) width 39: "use it "
+            text run at (273,331) width 18: "as "
+            text run at (273,349) width 32: "your"
+            text run at (295,292) width 122: "everyday browser"
+            text run at (317,292) width 97: "and mail/news"
+            text run at (339,292) width 93: "reader. If you"
+            text run at (361,292) width 134: "downloaded a build"
+            text run at (383,207) width 34: "with "
+            text run at (383,241) width 73: "Talkback, "
           RenderInline {EM} at (0,0) size 22x105
-            RenderText {#text} at (377,207) size 22x105
-              text run at (377,207) width 44: "please "
-              text run at (377,251) width 61: "turn it on"
-          RenderText {#text} at (377,312) size 154x418
-            text run at (377,312) width 91: " when it asks."
-            text run at (399,207) width 153: "Talkback reports give "
-            text run at (399,360) width 57: "us really"
-            text run at (421,207) width 95: "valuable data "
-            text run at (421,302) width 116: "on which crashes"
-            text run at (443,207) width 201: "are the most serious, and how"
-            text run at (465,207) width 201: "often people are encountering"
-            text run at (487,0) width 298: "them. And all you have to do is click \"OK\". "
-            text run at (487,298) width 71: "If you find"
-            text run at (509,0) width 399: "something you think is a bug, check to see if it's not already"
+            RenderText {#text} at (383,314) size 22x105
+              text run at (383,314) width 44: "please "
+              text run at (383,358) width 61: "turn it on"
+          RenderText {#text} at (405,207) size 132x429
+            text run at (405,207) width 209: "when it asks. Talkback reports"
+            text run at (427,207) width 31: "give "
+            text run at (427,238) width 156: "us really valuable data "
+            text run at (427,394) width 17: "on"
+            text run at (449,207) width 182: "which crashes are the most"
+            text run at (471,0) width 118: "serious, and how "
+            text run at (471,118) width 205: "often people are encountering "
+            text run at (471,323) width 92: "them. And all"
+            text run at (493,0) width 202: "you have to do is click \"OK\". "
+            text run at (493,202) width 227: "If you find something you think is"
+            text run at (515,0) width 247: "a bug, check to see if it's not already "
           RenderInline {A} at (0,0) size 22x90 [color=#0000EE]
-            RenderText {#text} at (531,0) size 22x90
-              text run at (531,0) width 90: "known about"
-          RenderText {#text} at (531,90) size 22x187
-            text run at (531,90) width 117: ", and then please "
-            text run at (531,207) width 70: "follow the "
-          RenderInline {A} at (0,0) size 44x381 [color=#0000EE]
-            RenderText {#text} at (531,277) size 44x381
-              text run at (531,277) width 104: "bug submission"
-              text run at (553,0) width 70: "procedure"
-          RenderText {#text} at (553,70) size 22x4
-            text run at (553,70) width 4: "."
-      RenderBlock (floating) {DIV} at (651,0) size 424x85 [bgcolor=#008000]
+            RenderText {#text} at (515,247) size 22x90
+              text run at (515,247) width 90: "known about"
+          RenderText {#text} at (515,337) size 44x405
+            text run at (515,337) width 68: ", and then"
+            text run at (537,0) width 45: "please "
+            text run at (537,45) width 70: "follow the "
+          RenderInline {A} at (0,0) size 22x178 [color=#0000EE]
+            RenderText {#text} at (537,115) size 22x178
+              text run at (537,115) width 178: "bug submission procedure"
+          RenderText {#text} at (537,293) size 22x4
+            text run at (537,293) width 4: "."
+      RenderBlock (floating) {DIV} at (635,0) size 427x85 [bgcolor=#008000]
         RenderBlock {P} at (16,0) size 22x85
           RenderText {#text} at (0,0) size 22x77
             text run at (0,0) width 77: "Hola hola 1"
-        RenderBlock {P} at (44,0) size 22x85
+        RenderBlock {P} at (47,0) size 22x85
           RenderText {#text} at (0,0) size 22x77
             text run at (0,0) width 77: "Hola hola 2"
-        RenderBlock {P} at (82,0) size 22x85
+        RenderBlock {P} at (85,0) size 22x85
           RenderText {#text} at (0,0) size 22x77
             text run at (0,0) width 77: "Hola hola 3"
-        RenderBlock {P} at (120,0) size 22x85
+        RenderBlock {P} at (123,0) size 22x85
           RenderText {#text} at (0,0) size 22x77
             text run at (0,0) width 77: "Hola hola 4"
-        RenderBlock {P} at (158,0) size 22x85
+        RenderBlock {P} at (161,0) size 22x85
           RenderText {#text} at (0,0) size 22x77
             text run at (0,0) width 77: "Hola hola 5"
-        RenderBlock {P} at (196,0) size 22x85
+        RenderBlock {P} at (199,0) size 22x85
           RenderText {#text} at (0,0) size 22x77
             text run at (0,0) width 77: "Hola hola 6"
-        RenderBlock {P} at (234,0) size 22x85
+        RenderBlock {P} at (237,0) size 22x85
           RenderText {#text} at (0,0) size 22x77
             text run at (0,0) width 77: "Hola hola 7"
-        RenderBlock {P} at (272,0) size 22x85
+        RenderBlock {P} at (275,0) size 22x85
           RenderText {#text} at (0,0) size 22x77
             text run at (0,0) width 77: "Hola hola 8"
-        RenderBlock {P} at (310,0) size 22x85
+        RenderBlock {P} at (313,0) size 22x85
           RenderText {#text} at (0,0) size 22x77
             text run at (0,0) width 77: "Hola hola 9"
-        RenderBlock {P} at (348,0) size 22x85
+        RenderBlock {P} at (351,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hola hola 10"
-        RenderBlock {P} at (386,0) size 22x85
+        RenderBlock {P} at (389,0) size 22x85
           RenderText {#text} at (0,0) size 22x85
             text run at (0,0) width 85: "Hola hola 11"
-      RenderBlock {DT} at (651,0) size 22x478
+      RenderBlock {DT} at (635,0) size 22x478
         RenderText {#text} at (0,85) size 22x125
           text run at (0,85) width 125: "Quality Assurance"
-      RenderBlock {DD} at (695,40) size 154x438
+      RenderBlock {DD} at (682,40) size 154x438
         RenderBlock {P} at (0,0) size 154x438
           RenderInline {A} at (0,0) size 22x78 [color=#0000EE]
             RenderText {#text} at (0,45) size 22x78

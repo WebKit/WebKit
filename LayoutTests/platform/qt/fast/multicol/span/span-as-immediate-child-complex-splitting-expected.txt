@@ -1,16 +1,16 @@
-layer at (0,0) size 784x1812
+layer at (0,0) size 784x1844
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x1812
-  RenderBlock {HTML} at (0,0) size 784x1812
-    RenderBody {BODY} at (8,16) size 768x1780
+layer at (0,0) size 784x1844
+  RenderBlock {HTML} at (0,0) size 784x1844
+    RenderBody {BODY} at (8,16) size 768x1812
 layer at (8,16) size 760x592
   RenderBlock {DIV} at (0,0) size 760x592 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,288) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,269) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 193x33
           text run at (0,0) width 193: "This is a first span."
-    RenderBlock (anonymous multi-column span) at (5,381) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,362) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 219x33
           text run at (0,0) width 219: "This is a second span."
 layer at (13,21) size 750x264
@@ -63,19 +63,19 @@ layer at (13,449) size 750x154
       text run at (188,242) width 150: "Lorem ipsum dolor sit"
       text run at (0,264) width 349: "amet, consectetuer adipiscing elit. Nulla varius enim"
       text run at (0,286) width 40: "ac mi."
-layer at (8,624) size 760x586
-  RenderBlock {DIV} at (0,608) size 760x586 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,172) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+layer at (8,624) size 760x602
+  RenderBlock {DIV} at (0,608) size 760x602 [border: (5px solid #800000)]
+    RenderBlock (anonymous multi-column span) at (5,153) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 193x33
           text run at (0,0) width 193: "This is a first span."
-    RenderBlock (anonymous multi-column span) at (5,375) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,372) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 219x33
           text run at (0,0) width 219: "This is a second span."
-layer at (13,645) size 750x132
-  RenderBlock (anonymous multi-column) at (5,21) size 750x132
-    RenderBlock {P} at (0,0) size 367x264
+layer at (13,629) size 750x148
+  RenderBlock (anonymous multi-column) at (5,5) size 750x148
+    RenderBlock {P} at (0,16) size 367x264
       RenderText {#text} at (0,0) size 367x264
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -89,9 +89,9 @@ layer at (13,645) size 750x132
         text run at (0,198) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
         text run at (0,220) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
         text run at (0,242) width 184: "consectetuer adipiscing elit."
-layer at (13,848) size 750x132
-  RenderBlock (anonymous multi-column) at (5,224) size 750x132
-    RenderBlock {P} at (0,0) size 367x264
+layer at (13,848) size 750x148
+  RenderBlock (anonymous multi-column) at (5,224) size 750x148
+    RenderBlock {P} at (0,16) size 367x264
       RenderText {#text} at (0,0) size 367x264
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -105,8 +105,8 @@ layer at (13,848) size 750x132
         text run at (0,198) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
         text run at (0,220) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
         text run at (0,242) width 184: "consectetuer adipiscing elit."
-layer at (13,1051) size 750x154
-  RenderBlock (anonymous multi-column) at (5,427) size 750x154
+layer at (13,1067) size 750x154
+  RenderBlock (anonymous multi-column) at (5,443) size 750x154
     RenderText {#text} at (0,0) size 367x308
       text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
       text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -123,17 +123,17 @@ layer at (13,1051) size 750x154
       text run at (188,242) width 150: "Lorem ipsum dolor sit"
       text run at (0,264) width 349: "amet, consectetuer adipiscing elit. Nulla varius enim"
       text run at (0,286) width 40: "ac mi."
-layer at (8,1226) size 760x570
-  RenderBlock {DIV} at (0,1210) size 760x570 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,156) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+layer at (8,1242) size 760x586
+  RenderBlock {DIV} at (0,1226) size 760x586 [border: (5px solid #800000)]
+    RenderBlock (anonymous multi-column span) at (5,137) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 193x33
           text run at (0,0) width 193: "This is a first span."
-    RenderBlock (anonymous multi-column span) at (5,359) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,356) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 219x33
           text run at (0,0) width 219: "This is a second span."
-layer at (13,1231) size 750x132
+layer at (13,1247) size 750x132
   RenderBlock (anonymous multi-column) at (5,5) size 750x132
     RenderBlock (anonymous) at (0,0) size 367x0
       RenderInline {SPAN} at (0,0) size 0x0
@@ -156,9 +156,9 @@ layer at (13,1231) size 750x132
     RenderBlock (anonymous) at (0,264) size 367x0
       RenderInline {SPAN} at (0,0) size 0x0
       RenderText {#text} at (0,0) size 0x0
-layer at (13,1434) size 750x132
-  RenderBlock (anonymous multi-column) at (5,208) size 750x132
-    RenderBlock {P} at (0,0) size 367x264
+layer at (13,1450) size 750x148
+  RenderBlock (anonymous multi-column) at (5,208) size 750x148
+    RenderBlock {P} at (0,16) size 367x264
       RenderText {#text} at (0,0) size 367x264
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -172,8 +172,8 @@ layer at (13,1434) size 750x132
         text run at (0,198) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
         text run at (0,220) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
         text run at (0,242) width 184: "consectetuer adipiscing elit."
-layer at (13,1637) size 750x154
-  RenderBlock (anonymous multi-column) at (5,411) size 750x154
+layer at (13,1669) size 750x154
+  RenderBlock (anonymous multi-column) at (5,427) size 750x154
     RenderText {#text} at (0,0) size 367x308
       text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
       text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"

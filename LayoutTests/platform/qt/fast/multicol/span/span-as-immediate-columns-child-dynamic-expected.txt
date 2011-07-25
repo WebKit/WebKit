@@ -1,12 +1,12 @@
-layer at (0,0) size 784x3230
+layer at (0,0) size 784x3224
   RenderView at (0,0) size 784x600
-layer at (0,0) size 784x3230
-  RenderBlock {HTML} at (0,0) size 784x3230
-    RenderBody {BODY} at (8,16) size 768x3198
+layer at (0,0) size 784x3224
+  RenderBlock {HTML} at (0,0) size 784x3224
+    RenderBody {BODY} at (8,16) size 768x3192
 layer at (8,16) size 760x499
   RenderBlock {DIV} at (0,0) size 760x499 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,24) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,5) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 276x33
           text run at (0,0) width 276: "This is a spanning element."
 layer at (13,92) size 750x418
@@ -53,8 +53,8 @@ layer at (13,92) size 750x418
       text run at (0,792) width 40: "ac mi."
 layer at (8,531) size 760x499
   RenderBlock {DIV} at (0,515) size 760x499 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,442) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,423) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 276x33
           text run at (0,0) width 276: "This is a spanning element."
 layer at (13,536) size 750x418
@@ -101,13 +101,13 @@ layer at (13,536) size 750x418
       text run at (0,792) width 40: "ac mi."
 layer at (8,1046) size 760x531
   RenderBlock {DIV} at (0,1030) size 760x531 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,194) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,175) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 276x33
           text run at (0,0) width 276: "This is a spanning element."
-layer at (13,1067) size 750x154
-  RenderBlock (anonymous multi-column) at (5,21) size 750x154
-    RenderBlock {P} at (0,0) size 367x308
+layer at (13,1051) size 750x170
+  RenderBlock (anonymous multi-column) at (5,5) size 750x170
+    RenderBlock {P} at (0,16) size 367x308
       RenderText {#text} at (0,0) size 367x308
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -124,9 +124,9 @@ layer at (13,1067) size 750x154
         text run at (188,242) width 150: "Lorem ipsum dolor sit"
         text run at (0,264) width 349: "amet, consectetuer adipiscing elit. Nulla varius enim"
         text run at (0,286) width 40: "ac mi."
-layer at (13,1292) size 750x264
-  RenderBlock (anonymous multi-column) at (5,246) size 750x264
-    RenderBlock {P} at (0,0) size 367x506
+layer at (13,1292) size 750x280
+  RenderBlock (anonymous multi-column) at (5,246) size 750x280
+    RenderBlock {P} at (0,16) size 367x506
       RenderText {#text} at (0,0) size 367x506
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -154,8 +154,8 @@ layer at (13,1292) size 750x264
         text run at (0,484) width 329: "ipsum dolor sit amet, consectetuer adipiscing elit."
 layer at (8,1593) size 760x515
   RenderBlock {DIV} at (0,1577) size 760x515 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,178) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,159) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 276x33
           text run at (0,0) width 276: "This is a spanning element."
 layer at (13,1598) size 750x154
@@ -177,8 +177,8 @@ layer at (13,1598) size 750x154
         text run at (188,242) width 150: "Lorem ipsum dolor sit"
         text run at (0,264) width 349: "amet, consectetuer adipiscing elit. Nulla varius enim"
         text run at (0,286) width 40: "ac mi."
-layer at (13,1823) size 750x264
-  RenderBlock (anonymous multi-column) at (5,230) size 750x264
+layer at (13,1823) size 750x280
+  RenderBlock (anonymous multi-column) at (5,230) size 750x280
     RenderBlock (anonymous) at (0,0) size 367x264
       RenderInline {SPAN} at (0,0) size 46x22
         RenderText {#text} at (0,0) size 46x22
@@ -196,7 +196,7 @@ layer at (13,1823) size 750x264
         text run at (0,198) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
         text run at (0,220) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
         text run at (0,242) width 184: "consectetuer adipiscing elit."
-    RenderBlock {P} at (0,264) size 367x264
+    RenderBlock {P} at (0,280) size 367x264
       RenderText {#text} at (0,0) size 367x264
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -212,8 +212,8 @@ layer at (13,1823) size 750x264
         text run at (0,242) width 184: "consectetuer adipiscing elit."
 layer at (8,2124) size 760x515
   RenderBlock {DIV} at (0,2108) size 760x515 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,310) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,291) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 276x33
           text run at (0,0) width 276: "This is a spanning element."
 layer at (13,2129) size 750x286
@@ -255,9 +255,9 @@ layer at (13,2129) size 750x286
         text run at (0,198) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
         text run at (0,220) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
         text run at (0,242) width 184: "consectetuer adipiscing elit."
-layer at (13,2486) size 750x132
-  RenderBlock (anonymous multi-column) at (5,362) size 750x132
-    RenderBlock {P} at (0,0) size 367x264
+layer at (13,2486) size 750x148
+  RenderBlock (anonymous multi-column) at (5,362) size 750x148
+    RenderBlock {P} at (0,16) size 367x264
       RenderText {#text} at (0,0) size 367x264
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -271,15 +271,15 @@ layer at (13,2486) size 750x132
         text run at (0,198) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
         text run at (0,220) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
         text run at (0,242) width 184: "consectetuer adipiscing elit."
-layer at (8,2655) size 760x559
-  RenderBlock {DIV} at (0,2639) size 760x559 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,348) size 750x33
-      RenderBlock {H2} at (0,0) size 750x33 [bgcolor=#EEEEEE]
+layer at (8,2655) size 760x553
+  RenderBlock {DIV} at (0,2639) size 760x553 [border: (5px solid #800000)]
+    RenderBlock (anonymous multi-column span) at (5,323) size 750x71
+      RenderBlock {H2} at (0,19) size 750x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 276x33
           text run at (0,0) width 276: "This is a spanning element."
-layer at (13,2676) size 750x308
-  RenderBlock (anonymous multi-column) at (5,21) size 750x308
-    RenderBlock {P} at (0,0) size 367x264
+layer at (13,2660) size 750x318
+  RenderBlock (anonymous multi-column) at (5,5) size 750x318
+    RenderBlock {P} at (0,16) size 367x264
       RenderText {#text} at (0,0) size 367x264
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -293,11 +293,11 @@ layer at (13,2676) size 750x308
         text run at (0,198) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
         text run at (0,220) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
         text run at (0,242) width 184: "consectetuer adipiscing elit."
-    RenderBlock {P} at (0,280) size 367x50
-      RenderText {#text} at (0,0) size 351x50
+    RenderBlock {P} at (0,296) size 367x44
+      RenderText {#text} at (0,0) size 351x44
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
-        text run at (0,28) width 192: "elit. Nulla varius enim ac mi."
-    RenderBlock {P} at (0,346) size 367x264
+        text run at (0,22) width 192: "elit. Nulla varius enim ac mi."
+    RenderBlock {P} at (0,356) size 367x264
       RenderText {#text} at (0,0) size 367x264
         text run at (0,0) width 351: "Lorem ipsum dolor sit amet, consectetuer adipiscing"
         text run at (0,22) width 343: "elit. Nulla varius enim ac mi. Curabitur sollicitudin"
@@ -311,8 +311,8 @@ layer at (13,2676) size 750x308
         text run at (0,198) width 364: "vestibulum. Suspendisse hendrerit quam nec felis. Sed"
         text run at (0,220) width 357: "varius turpis vitae pede. Lorem ipsum dolor sit amet,"
         text run at (0,242) width 184: "consectetuer adipiscing elit."
-layer at (13,3055) size 750x154
-  RenderBlock (anonymous multi-column) at (5,400) size 750x154
+layer at (13,3049) size 750x154
+  RenderBlock (anonymous multi-column) at (5,394) size 750x154
     RenderBlock (anonymous) at (0,0) size 367x44
       RenderInline {SPAN} at (0,0) size 351x44
         RenderText {#text} at (0,0) size 351x44

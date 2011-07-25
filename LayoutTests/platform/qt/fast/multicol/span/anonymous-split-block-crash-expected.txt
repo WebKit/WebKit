@@ -5,8 +5,8 @@ layer at (0,0) size 800x600
     RenderBody {BODY} at (8,16) size 784x568
 layer at (8,16) size 784x213
   RenderBlock {DIV} at (0,0) size 784x213 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,156) size 774x33
-      RenderBlock {H2} at (0,0) size 774x33 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,137) size 774x71
+      RenderBlock {H2} at (0,19) size 774x33 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 58x33
           text run at (0,0) width 58: "PASS"
 layer at (13,21) size 774x132

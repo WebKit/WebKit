@@ -5,8 +5,8 @@ layer at (0,0) size 784x621
     RenderBody {BODY} at (8,17) size 768x587
 layer at (8,17) size 835x587
   RenderBlock {DIV} at (0,0) size 835x587 [border: (5px solid #800000)]
-    RenderBlock (anonymous multi-column span) at (5,26) size 825x34
-      RenderBlock {H2} at (0,0) size 825x34 [bgcolor=#EEEEEE]
+    RenderBlock (anonymous multi-column span) at (5,5) size 825x76
+      RenderBlock {H2} at (0,21) size 825x34 [bgcolor=#EEEEEE]
         RenderText {#text} at (0,0) size 723x34
           text run at (0,0) width 723: "This is a spanning element at the beginning of the columns block."
 layer at (13,98) size 825x501

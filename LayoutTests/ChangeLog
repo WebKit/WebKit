@@ -1,3 +1,55 @@
+2011-07-25  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Lot of RenderTree mismatches in fast/multicol
+        https://bugs.webkit.org/show_bug.cgi?id=65077
+
+        Unreviewed gardening. Add Qt specific expected results after r91474.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/multicol/client-rects-expected.txt:
+        * platform/qt/fast/multicol/float-avoidance-expected.png: Added.
+        * platform/qt/fast/multicol/float-avoidance-expected.txt:
+        * platform/qt/fast/multicol/float-multicol-expected.png: Added.
+        * platform/qt/fast/multicol/float-multicol-expected.txt:
+        * platform/qt/fast/multicol/scrolling-overflow-expected.png:
+        * platform/qt/fast/multicol/scrolling-overflow-expected.txt:
+        * platform/qt/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/qt/fast/multicol/span/anonymous-before-child-parent-crash-expected.txt:
+        * platform/qt/fast/multicol/span/anonymous-split-block-crash-expected.png:
+        * platform/qt/fast/multicol/span/anonymous-split-block-crash-expected.txt:
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.png:
+        * platform/qt/fast/multicol/span/anonymous-style-inheritance-expected.txt:
+        * platform/qt/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.png:
+        * platform/qt/fast/multicol/span/clone-anonymous-block-non-inline-child-crash-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-generated-content-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-child-property-removal-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-dynamic-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/qt/fast/multicol/span/span-as-immediate-columns-child-removal-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/qt/fast/multicol/span/span-as-nested-columns-child-expected.txt:
+        * platform/qt/fast/multicol/span/span-as-nested-inline-block-child-expected.png:
+        * platform/qt/fast/multicol/span/span-as-nested-inline-block-child-expected.txt:
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/qt/fast/multicol/span/span-margin-collapsing-expected.txt:
+        * platform/qt/fast/multicol/vertical-lr/float-avoidance-expected.png:
+        * platform/qt/fast/multicol/vertical-lr/float-avoidance-expected.txt:
+        * platform/qt/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/qt/fast/multicol/vertical-lr/float-multicol-expected.txt:
+        * platform/qt/fast/multicol/vertical-rl/float-avoidance-expected.png:
+        * platform/qt/fast/multicol/vertical-rl/float-avoidance-expected.txt:
+        * platform/qt/fast/multicol/vertical-rl/float-multicol-expected.png:
+        * platform/qt/fast/multicol/vertical-rl/float-multicol-expected.txt:
+
 2011-07-24  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Leftover of r91633 (SVG test move)
