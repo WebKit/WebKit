@@ -124,7 +124,6 @@ String VertexShaderPos::getShaderString() const
 VertexShaderPosTexTransform::VertexShaderPosTexTransform()
     : m_matrixLocation(-1)
     , m_texTransformLocation(-1)
-    , m_pointLocation(-1)
 {
 }
 
@@ -132,11 +131,41 @@ void VertexShaderPosTexTransform::init(GraphicsContext3D* context, unsigned prog
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_texTransformLocation = context->getUniformLocation(program, "texTransform");
+    ASSERT(m_matrixLocation != -1 && m_texTransformLocation != -1);
+}
+
+String VertexShaderPosTexTransform::getShaderString() const
+{
+    return SHADER(
+        attribute vec4 a_position;
+        attribute vec2 a_texCoord;
+        uniform mat4 matrix;
+        uniform vec4 texTransform;
+        varying vec2 v_texCoord;
+        void main()
+        {
+            gl_Position = matrix * a_position;
+            v_texCoord = a_texCoord * texTransform.zw + texTransform.xy;
+        }
+    );
+}
+
+VertexShaderQuad::VertexShaderQuad()
+    : m_matrixLocation(-1)
+    , m_texTransformLocation(-1)
+    , m_pointLocation(-1)
+{
+}
+
+void VertexShaderQuad::init(GraphicsContext3D* context, unsigned program)
+{
+    m_matrixLocation = context->getUniformLocation(program, "matrix");
+    m_texTransformLocation = context->getUniformLocation(program, "texTransform");
     m_pointLocation = context->getUniformLocation(program, "point");
     ASSERT(m_matrixLocation != -1 && m_texTransformLocation != -1 && m_pointLocation != -1);
 }
 
-String VertexShaderPosTexTransform::getShaderString() const
+String VertexShaderQuad::getShaderString() const
 {
     return SHADER(
         attribute vec4 a_position;

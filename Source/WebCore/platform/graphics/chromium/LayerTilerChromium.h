@@ -75,10 +75,10 @@ public:
     // recycled by the texture manager.
     void protectTileTextures(const IntRect& contentRect);
 
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexAlpha> Program;
+    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlpha> Program;
     // Shader program that swaps red and blue components of texture.
     // Used when texture format does not match native color format.
-    typedef ProgramBinding<VertexShaderPosTexTransform, FragmentShaderRGBATexSwizzleAlpha> ProgramSwizzle;
+    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexSwizzleAlpha> ProgramSwizzle;
 
     // If this tiler has exactly one tile, return its texture. Otherwise, null.
     LayerTexture* getSingleTexture();

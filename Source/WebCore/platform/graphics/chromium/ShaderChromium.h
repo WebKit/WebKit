@@ -90,6 +90,21 @@ public:
 
     int matrixLocation() const { return m_matrixLocation; }
     int texTransformLocation() const { return m_texTransformLocation; }
+
+private:
+    int m_matrixLocation;
+    int m_texTransformLocation;
+};
+
+class VertexShaderQuad {
+public:
+    VertexShaderQuad();
+
+    void init(GraphicsContext3D*, unsigned program);
+    String getShaderString() const;
+
+    int matrixLocation() const { return m_matrixLocation; }
+    int texTransformLocation() const { return m_texTransformLocation; }
     int pointLocation() const { return m_pointLocation; }
 
 private:

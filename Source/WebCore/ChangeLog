@@ -1,3 +1,25 @@
+2011-07-25  David Reveman  <reveman@chromium.org>
+
+        [Chromium] Use correct vertex shader when rendering video layer.
+        https://bugs.webkit.org/show_bug.cgi?id=65131
+
+        Reviewed by James Robinson.
+
+        Add new VertexShaderQuad program that is used by LayerTilerChromium.
+        Change VertexShaderPosTexTransform so it works with CCVideoLayerImpl.
+
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::VertexShaderPosTexTransform::VertexShaderPosTexTransform):
+        (WebCore::VertexShaderPosTexTransform::init):
+        (WebCore::VertexShaderPosTexTransform::getShaderString):
+        (WebCore::VertexShaderQuad::VertexShaderQuad):
+        (WebCore::VertexShaderQuad::init):
+        (WebCore::VertexShaderQuad::getShaderString):
+        * platform/graphics/chromium/ShaderChromium.h:
+        (WebCore::VertexShaderQuad::matrixLocation):
+        (WebCore::VertexShaderQuad::texTransformLocation):
+
 2011-07-25  Patrick Gansterer  <paroga@webkit.org>
 
         Fix AtomicString vs. String usage in accessibility code
