@@ -1,3 +1,17 @@
+2011-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Implement EFL-specific current time and monotonicallyIncreasingTime.
+        https://bugs.webkit.org/show_bug.cgi?id=64354
+
+        Use ecore_time_unix_get which returns unix time as double type for currentTime
+        and ecore_time_get which uses monotonic clock for monotonicallyIncreasingTime.
+
+        Reviewed by Kent Tamura.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::currentTime):
+        (WTF::monotonicallyIncreasingTime):
+
 2011-07-22  Sommer Panage  <panage@apple.com>
 
         Reviewed by Oliver Hunt.

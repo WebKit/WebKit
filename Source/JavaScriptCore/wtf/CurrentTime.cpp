@@ -62,6 +62,8 @@ extern "C" time_t mktime(struct tm *t);
 #include <wx/datetime.h>
 #elif PLATFORM(BREWMP)
 #include <AEEStdLib.h>
+#elif PLATFORM(EFL)
+#include <Ecore.h>
 #else
 #include <sys/time.h>
 #endif
@@ -286,6 +288,13 @@ double currentTime()
     return static_cast<double>(diffSeconds + GETUTCSECONDS() + ((GETTIMEMS() % 1000) / msPerSecond));
 }
 
+#elif PLATFORM(EFL)
+
+double currentTime()
+{
+    return ecore_time_unix_get();
+}
+
 #else
 
 double currentTime()
@@ -308,6 +317,13 @@ double monotonicallyIncreasingTime()
         ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
     }
     return (mach_absolute_time() * timebaseInfo.numer) / (1.0e9 * timebaseInfo.denom);
+}
+
+#elif PLATFORM(EFL)
+
+double monotonicallyIncreasingTime()
+{
+    return ecore_time_get();
 }
 
 #else
