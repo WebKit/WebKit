@@ -1,3 +1,22 @@
+2011-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        X86-64 assembler emits three instructions instead of two for certain
+        loads and stores.
+        https://bugs.webkit.org/show_bug.cgi?id=65095
+
+        Reviewed by Gavin Barraclough.
+        
+        Simply made these four methods in the assembler use the scratch register,
+        which they were previously avoiding.  It still optimizes for the case where
+        an absolute address memory accesses is using EAX.  This results in a slight
+        performance improvement.
+
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::load32):
+        (JSC::MacroAssemblerX86_64::store32):
+        (JSC::MacroAssemblerX86_64::loadPtr):
+        (JSC::MacroAssemblerX86_64::storePtr):
+
 2011-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Implement EFL-specific current time and monotonicallyIncreasingTime.

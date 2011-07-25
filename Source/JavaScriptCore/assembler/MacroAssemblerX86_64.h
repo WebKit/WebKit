@@ -81,9 +81,8 @@ public:
         if (dest == X86Registers::eax)
             m_assembler.movl_mEAX(address);
         else {
-            move(X86Registers::eax, dest);
-            m_assembler.movl_mEAX(address);
-            swap(X86Registers::eax, dest);
+            move(TrustedImmPtr(address), dest);
+            load32(dest, dest);
         }
     }
 
@@ -107,10 +106,8 @@ public:
 
     void store32(TrustedImm32 imm, void* address)
     {
-        move(X86Registers::eax, scratchRegister);
-        move(imm, X86Registers::eax);
-        m_assembler.movl_EAXm(address);
-        move(scratchRegister, X86Registers::eax);
+        move(TrustedImmPtr(address), scratchRegister);
+        store32(imm, scratchRegister);
     }
 
     Call call()
@@ -257,9 +254,8 @@ public:
         if (dest == X86Registers::eax)
             m_assembler.movq_mEAX(address);
         else {
-            move(X86Registers::eax, dest);
-            m_assembler.movq_mEAX(address);
-            swap(X86Registers::eax, dest);
+            move(TrustedImmPtr(address), dest);
+            loadPtr(dest, dest);
         }
     }
 
@@ -290,9 +286,8 @@ public:
         if (src == X86Registers::eax)
             m_assembler.movq_EAXm(address);
         else {
-            swap(X86Registers::eax, src);
-            m_assembler.movq_EAXm(address);
-            swap(X86Registers::eax, src);
+            move(TrustedImmPtr(address), scratchRegister);
+            storePtr(src, scratchRegister);
         }
     }
 
