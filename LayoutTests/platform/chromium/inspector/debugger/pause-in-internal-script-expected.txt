@@ -8,7 +8,8 @@ Set timer for test function.
 Script execution paused.
 Call stack:
     0)  (pause-in-internal-script.html:14)
-    1) testFunction (pause-in-internal-script.html:12)
+    1) forEach ((internal script):(line number))
+    2) testFunction (pause-in-internal-script.html:12)
 Script execution resumed.
 Script execution paused.
 Debugger was disabled.
