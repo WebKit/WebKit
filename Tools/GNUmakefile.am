@@ -172,6 +172,8 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/gtk/PixelDumpSupportGtk.cpp \
 	Tools/DumpRenderTree/gtk/PlainTextController.cpp \
 	Tools/DumpRenderTree/gtk/PlainTextController.h \
+	Tools/DumpRenderTree/gtk/SelfScrollingWebKitWebView.cpp \
+	Tools/DumpRenderTree/gtk/SelfScrollingWebKitWebView.h \
 	Tools/DumpRenderTree/gtk/TextInputController.h \
 	Tools/DumpRenderTree/gtk/TextInputController.cpp \
 	Tools/DumpRenderTree/gtk/WorkQueueItemGtk.cpp \

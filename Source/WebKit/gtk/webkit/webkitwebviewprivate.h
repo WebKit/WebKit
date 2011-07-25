@@ -102,6 +102,8 @@ struct _WebKitWebViewPrivate {
     WebCore::GtkClickCounter clickCounter;
     HashMap<GdkDragContext*, RefPtr<WebCore::DataObjectGtk> > draggingDataObjects;
     HashMap<GdkDragContext*, WebKit::DroppingContext*> droppingContexts;
+
+    bool selfScrolling;
 };
 
 void webkit_web_view_notify_ready(WebKitWebView*);

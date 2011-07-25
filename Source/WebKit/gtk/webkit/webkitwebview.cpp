@@ -230,14 +230,18 @@ enum {
     PROP_ICON_URI,
     PROP_IM_CONTEXT,
 #ifdef GTK_API_VERSION_2
-    PROP_VIEW_MODE
+    PROP_VIEW_MODE,
 #else
     PROP_VIEW_MODE,
     PROP_HADJUSTMENT,
     PROP_VADJUSTMENT,
     PROP_HSCROLL_POLICY,
-    PROP_VSCROLL_POLICY
+    PROP_VSCROLL_POLICY,
 #endif
+
+    // Undocumented. Leave these properties at the end of the list
+    // so that we can remove them without breaking ABI compatibility.
+    PROP_SELF_SCROLLING
 };
 
 static guint webkit_web_view_signals[LAST_SIGNAL] = { 0, };
@@ -556,6 +560,9 @@ static void webkit_web_view_get_property(GObject* object, guint prop_id, GValue*
         g_value_set_enum(value, getVerticalScrollPolicy(webView));
         break;
 #endif
+    case PROP_SELF_SCROLLING:
+        g_value_set_boolean(value, webView->priv->selfScrolling);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
     }
@@ -604,6 +611,9 @@ static void webkit_web_view_set_property(GObject* object, guint prop_id, const G
         setVerticalScrollPolicy(webView, static_cast<GtkScrollablePolicy>(g_value_get_enum(value)));
         break;
 #endif
+    case PROP_SELF_SCROLLING:
+        webView->priv->selfScrolling = g_value_get_boolean(value);
+        break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
     }
@@ -3173,6 +3183,13 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                       WEBKIT_WEB_VIEW_VIEW_MODE_WINDOWED,
                                                       WEBKIT_PARAM_READWRITE));
 
+    // This property should be undocumented for now. It's only used by DRT.
+    g_object_class_install_property(objectClass, PROP_SELF_SCROLLING,
+                                    g_param_spec_boolean("self-scrolling", "Self-scrolling",
+                                                         "Whether or not this WebView draws its own scrollbars.",
+                                                         FALSE,
+                                                         static_cast<GParamFlags>(G_PARAM_CONSTRUCT_ONLY | WEBKIT_PARAM_READWRITE)));
+
     g_type_class_add_private(webViewClass, sizeof(WebKitWebViewPrivate));
 }
 
@@ -3424,6 +3441,8 @@ static void webkit_web_view_init(WebKitWebView* webView)
 
     gtk_drag_dest_set(GTK_WIDGET(webView), static_cast<GtkDestDefaults>(0), 0, 0, static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
     gtk_drag_dest_set_target_list(GTK_WIDGET(webView), PasteboardHelper::defaultPasteboardHelper()->targetList());
+
+    priv->selfScrolling = false;
 }
 
 GtkWidget* webkit_web_view_new(void)

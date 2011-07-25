@@ -40,21 +40,27 @@ using namespace std;
 
 namespace WebCore {
 
+static bool shouldCreateMainFrameScrollbar(const ScrollView* scrollView)
+{
+    // Interior frame ScrollViews never have MainFrameScrollbars.
+    if (scrollView->parent())
+        return false;
+
+    // If we don't have a host window or a containing widget (ala WebKit2).
+    HostWindow* hostWindow = scrollView->hostWindow();
+    if (!hostWindow || !hostWindow->platformPageClient())
+        return false;
+
+    gboolean selfScrolling = FALSE;
+    g_object_get(hostWindow->platformPageClient(), "self-scrolling", &selfScrolling, NULL);
+    return !selfScrolling;
+}
+
 PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientation)
 {
-    // If this is an interior frame scrollbar, we want to create a totally fake
-    // scrollbar with no GtkAdjustment backing it.
-    if (parent() || (hostWindow() && !hostWindow()->platformPageClient()))
-        return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
-
-    // If this is the main frame, we want to create a Scrollbar that does no  painting
-    // and defers to our GtkAdjustment for all of its state. Note that the GtkAdjustment
-    // may be null here.
-    if (orientation == HorizontalScrollbar)
+    if (shouldCreateMainFrameScrollbar(this))
         return MainFrameScrollbarGtk::create(this, orientation);
-
-    // VerticalScrollbar
-    return MainFrameScrollbarGtk::create(this, orientation);
+    return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
 }
 
 IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
@@ -62,7 +68,7 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
     // If we are an interior frame scrollbar or are in some sort of transition
     // state, just calculate our size based on what the GTK+ theme says the
     // scrollbar width should be.
-    if (parent() || !hostWindow() || !hostWindow()->platformPageClient()) {
+    if (!shouldCreateMainFrameScrollbar(this)) {
         return IntRect(IntPoint(m_scrollOffset.width(), m_scrollOffset.height()),
                        IntSize(max(0, m_boundsSize.width() - (verticalScrollbar() && !includeScrollbars ? verticalScrollbar()->width() : 0)),
                                max(0, m_boundsSize.height() - (horizontalScrollbar() && !includeScrollbars ? horizontalScrollbar()->height() : 0))));

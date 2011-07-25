@@ -1,3 +1,28 @@
+2011-06-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Use WebCore scrollbars for the DRT instead of GtkScrolledWindow
+        https://bugs.webkit.org/show_bug.cgi?id=62252
+
+        Add a new subclass of WebKitWebView that overrides the size request to
+        return 1 pixel by 1 pixel. This ensure that it operates properly when
+        not packed into a GtkScrolledWindow. Also construct the WebKitWebView
+        with self-scrolling set to true.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webInspectorInspectWebView): Use the new SelfScrollingWebKitWebview class here.
+        (createWebView): Ditto.
+        (main): Pack the widget into a GtkBox instead of a GtkScrolledWindow.
+        * DumpRenderTree/gtk/SelfScrollingWebKitWebView.cpp: Added.
+        (self_scrolling_webkit_web_view_class_init):
+        (self_scrolling_webkit_web_view_init):
+        (self_scrolling_webkit_web_view_new):
+        (sizeRequestMethod):
+        (getPreferredSizeMethod):
+        * DumpRenderTree/gtk/SelfScrollingWebKitWebView.h: Added.
+        * GNUmakefile.am: Added SelfScrollingWebKitWebView files to the source list.
+
 2011-07-25  Ojan Vafai  <ojan@chromium.org>
 
         by default hide tests that have passes for all recorded runs

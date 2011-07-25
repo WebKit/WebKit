@@ -40,6 +40,7 @@
 #include "LayoutTestController.h"
 #include "PixelDumpSupport.h"
 #include "PlainTextController.h"
+#include "SelfScrollingWebKitWebView.h"
 #include "TextInputController.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
 #include "WebCoreTestSupport.h"
@@ -1014,7 +1015,7 @@ static WebKitWebView* webInspectorInspectWebView(WebKitWebInspector*, gpointer d
 {
     webInspectorWindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-    GtkWidget* webView = webkit_web_view_new();
+    GtkWidget* webView = self_scrolling_webkit_web_view_new();
     gtk_container_add(GTK_CONTAINER(webInspectorWindow),
                       webView);
 
@@ -1082,7 +1083,7 @@ static void willSendRequestCallback(WebKitWebView* webView, WebKitWebFrame*, Web
 
 static WebKitWebView* createWebView()
 {
-    WebKitWebView* view = WEBKIT_WEB_VIEW(webkit_web_view_new());
+    WebKitWebView* view = WEBKIT_WEB_VIEW(self_scrolling_webkit_web_view_new());
 
     DumpRenderTreeSupportGtk::setDumpRenderTreeModeEnabled(true);
 
@@ -1166,13 +1167,12 @@ int main(int argc, char* argv[])
     initializeFonts();
 
     window = gtk_window_new(GTK_WINDOW_POPUP);
-    container = GTK_WIDGET(gtk_scrolled_window_new(NULL, NULL));
-    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(container), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+    container = gtk_hbox_new(TRUE, 0);
     gtk_container_add(GTK_CONTAINER(window), container);
     gtk_widget_show_all(window);
 
     webView = createWebView();
-    gtk_container_add(GTK_CONTAINER(container), GTK_WIDGET(webView));
+    gtk_box_pack_start(GTK_BOX(container), GTK_WIDGET(webView), TRUE, TRUE, 0);
     gtk_widget_realize(GTK_WIDGET(webView));
     gtk_widget_show_all(container);
     mainFrame = webkit_web_view_get_main_frame(webView);

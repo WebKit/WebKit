@@ -1,3 +1,18 @@
+2011-06-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Use WebCore scrollbars for the DRT instead of GtkScrolledWindow
+        https://bugs.webkit.org/show_bug.cgi?id=62252
+
+        Properly handle the situation where the GtkWidget wants WebCore to draw its
+        own main frame scrollbars.
+
+        * platform/gtk/ScrollViewGtk.cpp:
+        (WebCore::shouldCreateMainFrameScrollbar): Abstract this logic into a helper function.
+        (WebCore::ScrollView::createScrollbar): Use the new helper.
+        (WebCore::ScrollView::visibleContentRect): Use the new helper.
+
 2011-07-25  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65125

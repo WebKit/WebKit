@@ -1,3 +1,49 @@
+2011-06-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Use WebCore scrollbars for the DRT instead of GtkScrolledWindow
+        https://bugs.webkit.org/show_bug.cgi?id=62252
+
+        Unskip tests which are now passing and update results for tests which
+        previously had incorrect results.
+
+        * platform/gtk/Skipped: Unskip now-passing tests.
+        * platform/gtk/fast/css/MarqueeLayoutTest-expected.png:
+        * platform/gtk/fast/css/MarqueeLayoutTest-expected.txt:
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/gtk/fast/dom/vertical-scrollbar-in-rtl-expected.txt:
+        * platform/gtk/fast/dynamic/window-resize-scrollbars-test-expected.png:
+        * platform/gtk/fast/dynamic/window-resize-scrollbars-test-expected.txt:
+        * platform/gtk/fast/flexbox/flex-hang-expected.png:
+        * platform/gtk/fast/flexbox/flex-hang-expected.txt:
+        * platform/gtk/fast/forms/search-vertical-alignment-expected.png:
+        * platform/gtk/fast/forms/search-vertical-alignment-expected.txt:
+        * platform/gtk/fast/forms/searchfield-heights-expected.png:
+        * platform/gtk/fast/forms/searchfield-heights-expected.txt:
+        * platform/gtk/fast/forms/textfield-overflow-expected.png:
+        * platform/gtk/fast/forms/textfield-overflow-expected.txt:
+        * platform/gtk/fast/frames/flattening/frameset-flattening-advanced-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/frameset-flattening-advanced-expected.txt:
+        * platform/gtk/fast/frames/flattening/frameset-flattening-simple-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/frameset-flattening-simple-expected.txt:
+        * platform/gtk/fast/frames/flattening/frameset-flattening-subframesets-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/frameset-flattening-subframesets-expected.txt:
+        * platform/gtk/fast/frames/inline-object-inside-frameset-expected.png: Added.
+        * platform/gtk/fast/frames/inline-object-inside-frameset-expected.txt:
+        * platform/gtk/fast/lists/001-vertical-expected.png: Added.
+        * platform/gtk/fast/lists/001-vertical-expected.txt:
+        * platform/gtk/fast/multicol/float-multicol-expected.png: Added.
+        * platform/gtk/fast/multicol/float-multicol-expected.txt:
+        * platform/gtk/fast/multicol/table-vertical-align-expected.png: Added.
+        * platform/gtk/fast/multicol/table-vertical-align-expected.txt:
+        * platform/gtk/fast/table/border-collapsing/004-vertical-expected.png:
+        * platform/gtk/fast/table/border-collapsing/004-vertical-expected.txt:
+        * platform/gtk/scrollbars/custom-scrollbar-with-incomplete-style-expected.png: Added.
+        * platform/gtk/scrollbars/custom-scrollbar-with-incomplete-style-expected.txt:
+        * platform/gtk/tables/mozilla/bugs/bug145572-expected.png:
+        * platform/gtk/tables/mozilla/bugs/bug145572-expected.txt:
+
 2011-07-25  Adrienne Walker  <enne@google.com>
 
         [chromium] media-controls-clone started flaky crashing on mac.

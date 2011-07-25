@@ -48,7 +48,7 @@ layer at (0,0) size 784x900
           RenderText {#text} at (0,0) size 113x19
             text run at (0,0) width 113: "This is 100px tall."
         RenderText {#text} at (0,0) size 0x0
-layer at (8,199) size 768x16 scrollX -784 scrollWidth 1692 scrollHeight 19
+layer at (8,199) size 768x16 scrollX -768 scrollWidth 1692 scrollHeight 19
   RenderBlock {MARQUEE} at (0,0) size 768x16 [bgcolor=#00FFFF]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19
@@ -56,7 +56,7 @@ layer at (8,199) size 768x16 scrollX -784 scrollWidth 1692 scrollHeight 19
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,215) size 768x16 scrollX -784 scrollWidth 1692 scrollHeight 19
+layer at (8,215) size 768x16 scrollX -768 scrollWidth 1692 scrollHeight 19
   RenderBlock {MARQUEE} at (0,16) size 768x16 [bgcolor=#FFFF00]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19
@@ -64,7 +64,7 @@ layer at (8,215) size 768x16 scrollX -784 scrollWidth 1692 scrollHeight 19
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,231) size 768x19 scrollX -784 scrollWidth 1692
+layer at (8,231) size 768x19 scrollX -768 scrollWidth 1692
   RenderBlock {MARQUEE} at (0,32) size 768x19 [bgcolor=#FFA500]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19
@@ -72,7 +72,7 @@ layer at (8,231) size 768x19 scrollX -784 scrollWidth 1692
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,250) size 768x19 scrollX -784 scrollWidth 1692
+layer at (8,250) size 768x19 scrollX -768 scrollWidth 1692
   RenderBlock {MARQUEE} at (0,51) size 768x19 [bgcolor=#A52A2A]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19
@@ -80,7 +80,7 @@ layer at (8,250) size 768x19 scrollX -784 scrollWidth 1692
         text run at (724,0) width 116: "Paul O' Connell, "
         text run at (840,0) width 852: "Donncha O' Callaghan, Simon Easterby and Geordan Murphy all start with Ronan O' Gara and Shane Horgan on the bench."
     RenderText {#text} at (0,0) size 0x0
-layer at (8,269) size 768x100 scrollX -784 scrollWidth 1692
+layer at (8,269) size 768x100 scrollX -768 scrollWidth 1692
   RenderBlock {MARQUEE} at (0,70) size 768x100 [bgcolor=#FFC0CB]
     RenderInline {B} at (0,0) size 1692x19
       RenderText {#text} at (0,0) size 1692x19

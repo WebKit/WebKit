@@ -1,3 +1,17 @@
+2011-06-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Use WebCore scrollbars for the DRT instead of GtkScrolledWindow
+        https://bugs.webkit.org/show_bug.cgi?id=62252
+
+        Added an undocumented self-scrolling property to WebKitWebView which
+        communicates to WebCore whether or not this widget is expected to draw
+        its own main frame scrollbars or not.
+
+        * webkit/webkitwebview.cpp: Add the self-scrolling property.
+        * webkit/webkitwebviewprivate.h: Add the selfScrolling private member.
+
 2011-07-11  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] Google Calendar thinks we're mobile

@@ -9,8 +9,8 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,2) size 460x21 [r=0 c=0 rs=1 cs=1]
               RenderText {#text} at (1,1) size 21x19
                 text run at (1,1) width 21: "foo"
-layer at (120,200) size 480x31
-  RenderTable {TABLE} at (120,200) size 480x31 [border: (3px solid #0000FF)]
+layer at (114,200) size 480x31
+  RenderTable {TABLE} at (114,200) size 480x31 [border: (3px solid #0000FF)]
     RenderTableSection {TBODY} at (3,3) size 474x25
       RenderTableRow {TR} at (0,2) size 474x21
         RenderTableCell {TD} at (2,2) size 470x21 [r=0 c=0 rs=1 cs=1]

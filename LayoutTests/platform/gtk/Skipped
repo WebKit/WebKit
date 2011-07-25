@@ -532,14 +532,6 @@ fast/css/acid2-pixel.html
 # https://bugs.webkit.org/show_bug.cgi?id=53955 
 fast/dynamic/paused-event-dispatch.html
 
-# Scrollbar issues.
-# document.body.clientWidth includes vertical scrollbar size.
-scrollbars/scrollbar-click-does-not-blur-content.html
-# More issues where clientWith is incorrect, perhaps because of asynchronous 
-# main frame scrollbar behavior.
-fast/dom/client-width-height-quirks.html
-fast/dom/client-width-height.html
-fast/overflow/scrollbar-restored.html
 # The test below is not scrolled to the proper position. Perhaps because of
 # asynchronous scrollbar behavior.
 fast/css/font-weight-1.html
@@ -1415,9 +1407,6 @@ http/tests/inspector/console-websocket-error.html
 http/tests/xmlhttprequest/basic-auth-nouser.html
 http/tests/xmlhttprequest/basic-auth-nopassword.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=52297
-editing/input/page-up-down-scrolls.html
-
 # DRT does not obey layoutTestController.addURLToRedirect()
 http/tests/loading/cross-origin-XHR-willLoadRequest.html
 
@@ -1472,10 +1461,6 @@ http/tests/inspector/network/network-disable-cache-xhrs.html
 http/tests/inspector/network/network-clear-after-disabled.html
 http/tests/inspector/network/network-close-load-open.html
 http/tests/inspector/network/network-open-load-reopen.html
-
-# https://bugs.webkit.org/show_bug.cgi?id=56966
-# window.clientWidth and window.clientHeight do not include scrollbar allocation
-fast/overflow/horizontal-scroll-after-back.html
 
 # textInputController.hasGrammarMarker() is not implemented.
 editing/spelling/grammar.html
