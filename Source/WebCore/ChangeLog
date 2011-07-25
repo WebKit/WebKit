@@ -1,3 +1,18 @@
+2011-07-25  Scott Graham  <scottmg@chromium.org>
+
+        REGRESSION (r39725?): Resources removed from document can not be freed until the document is deleted
+        https://bugs.webkit.org/show_bug.cgi?id=61006
+
+        Reviewed by Nate Chapin.
+
+        Rollback previous patch. Occasional crashes seen caused by
+        CachedResource being deleted twice.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::CachedResourceLoader):
+        (WebCore::CachedResourceLoader::loadDone):
+        * loader/cache/CachedResourceLoader.h:
+
 2011-07-25  Chris Rogers  <crogers@google.com>
 
         Deprecate AudioBufferSourceNode .looping attribute and implement .loop

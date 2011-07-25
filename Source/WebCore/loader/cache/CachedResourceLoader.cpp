@@ -86,7 +86,6 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
 CachedResourceLoader::CachedResourceLoader(Document* document)
     : m_document(document)
     , m_requestCount(0)
-    , m_garbageCollectDocumentResourcesTimer(this, &CachedResourceLoader::garbageCollectDocumentResourcesTimerFired)
     , m_autoLoadImages(true)
     , m_loadFinishing(false)
     , m_allowStaleResources(false)
@@ -573,30 +572,6 @@ void CachedResourceLoader::loadDone()
     if (frame())
         frame()->loader()->loadDone();
     performPostLoadActions();
-
-    if (!m_garbageCollectDocumentResourcesTimer.isActive())
-        m_garbageCollectDocumentResourcesTimer.startOneShot(0);
-}
-
-// Garbage collecting m_documentResources is a workaround for the
-// CachedResourceHandles on the RHS being strong references. Ideally this
-// would be a weak map, however CachedResourceHandles perform additional
-// bookkeeping on CachedResources, so instead pseudo-GC them -- when the
-// reference count reaches 1, m_documentResources is the only reference, so
-// remove it from the map.
-void CachedResourceLoader::garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>* timer)
-{
-    ASSERT_UNUSED(timer, timer == &m_garbageCollectDocumentResourcesTimer);
-
-    Vector<String, 10> toDelete;
-
-    for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != m_documentResources.end(); ++it) {
-        if (it->second->hasOneHandle())
-            toDelete.append(it->first);
-    }
-
-    for (Vector<String, 10>::const_iterator idel = toDelete.begin(); idel != toDelete.end(); ++idel)
-        m_documentResources.remove(*idel);
 }
 
 void CachedResourceLoader::performPostLoadActions()

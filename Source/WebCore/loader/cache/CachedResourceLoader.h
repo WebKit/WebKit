@@ -30,7 +30,6 @@
 #include "CachedResourceHandle.h"
 #include "CachePolicy.h"
 #include "ResourceLoadPriority.h"
-#include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -118,7 +117,6 @@ private:
     void notifyLoadedFromMemoryCache(CachedResource*);
     bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);
 
-    void garbageCollectDocumentResourcesTimerFired(Timer<CachedResourceLoader>*);
     void performPostLoadActions();
     
     HashSet<String> m_validatedURLs;
@@ -135,8 +133,6 @@ private:
     };
     Deque<PendingPreload> m_pendingPreloads;
 
-    Timer<CachedResourceLoader> m_garbageCollectDocumentResourcesTimer;
-    
     //29 bits left
     bool m_autoLoadImages : 1;
     bool m_loadFinishing : 1;
