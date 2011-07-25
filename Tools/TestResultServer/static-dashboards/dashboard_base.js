@@ -798,7 +798,7 @@ function checkboxHTML(queryParameter, label, isChecked, opt_extraJavaScript)
     return '<label style="padding-left: 2em">' +
         '<input type="checkbox" onchange="toggleQueryParameter(\'' + queryParameter + '\');' + js + '" ' +
             (isChecked ? 'checked' : '') + '>' + label +
-        '</label>';
+        '</label> ';
 }
 
 function selectHTML(label, queryParameter, options)
@@ -812,7 +812,7 @@ function selectHTML(label, queryParameter, options)
             (g_currentState[queryParameter] == value ? 'selected' : '') +
             '>' + value + '</option>'
     }
-    html += '</select><label>';
+    html += '</select></label> ';
     return html;
 }
 

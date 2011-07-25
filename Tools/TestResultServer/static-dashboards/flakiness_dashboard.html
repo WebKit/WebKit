@@ -49,6 +49,7 @@ input {
 }
 label {
     padding-left: 2em;
+    white-space: nowrap;
 }
 .forms {
     display: -webkit-box;
@@ -2323,7 +2324,7 @@ function htmlForNavBar()
 function checkBoxToToggleState(key, text)
 {
     var stateEnabled = g_currentState[key];
-    return '<label><input type=checkbox ' + (stateEnabled ? 'checked ' : '') + 'onclick="setQueryParameter(\'' + key + '\', ' + !stateEnabled + ')">' + text + '</label>';
+    return '<label><input type=checkbox ' + (stateEnabled ? 'checked ' : '') + 'onclick="setQueryParameter(\'' + key + '\', ' + !stateEnabled + ')">' + text + '</label> ';
 }
 
 function linkHTMLToToggleState(key, linkText)
