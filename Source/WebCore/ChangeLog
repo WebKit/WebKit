@@ -1,3 +1,21 @@
+2011-07-25  Andrew Wason  <rectalogic@rectalogic.com>
+
+        [Qt] Adopt GraphicsContext3DOpenGL.cpp and ANGLE (part 2)
+        https://bugs.webkit.org/show_bug.cgi?id=64878
+
+        Reviewed by Noam Rosenthal.
+
+        Existing WebGL layout tests should test this.
+
+        Adopt GraphicsContext3DOpenGL.cpp and ANGLE compiler for Qt.
+
+        * WebCore.pro: Build ANGLE compiler and GraphicsContext3DOpenGL.cpp.
+        * platform/graphics/ANGLEWebKitBridge.h:
+        * platform/graphics/GraphicsContext3D.h: Expose exising ANGLEWebKitBridge compiler member for Qt.
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D): Initialize ANGLE resources.
+
 2011-07-25  Daniel Bates  <dbates@rim.com>
 
         REGRESSION (r85964): Improper relayout of some nested positioned elements

@@ -29,7 +29,9 @@
 #include "PlatformString.h"
 #include <wtf/text/CString.h>
 
-#if !PLATFORM(GTK)
+#if PLATFORM(QT)
+#include "ANGLE/include/GLSLANG/ShaderLang.h"
+#elif !PLATFORM(GTK)
 #include "ANGLE/ShaderLang.h"
 #else
 #include "ShaderLang.h"

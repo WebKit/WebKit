@@ -3592,6 +3592,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLUniformLocation.h \
         html/canvas/WebGLVertexArrayObjectOES.h \
         html/canvas/WebKitLoseContext.h \
+        platform/graphics/ANGLEWebKitBridge.h \
         platform/graphics/Extensions3D.h \
         platform/graphics/GraphicsContext3D.h \
         platform/graphics/gpu/DrawingBuffer.h \
@@ -3601,6 +3602,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         SOURCES += \
             bindings/js/JSWebGLRenderingContextCustom.cpp
     }
+
     SOURCES += \
         html/canvas/CanvasContextAttributes.cpp \
         html/canvas/WebGLObject.cpp \
@@ -3621,6 +3623,7 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         html/canvas/WebGLUniformLocation.cpp \
         html/canvas/WebGLVertexArrayObjectOES.cpp \
         html/canvas/WebKitLoseContext.cpp \
+        platform/graphics/ANGLEWebKitBridge.cpp \
         platform/graphics/GraphicsContext3D.cpp \
         platform/graphics/gpu/DrawingBuffer.cpp \
         platform/graphics/gpu/qt/DrawingBufferQt.cpp \
@@ -3628,6 +3631,129 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         platform/graphics/qt/GraphicsContext3DQt.cpp
 
     INCLUDEPATH += $$PWD/platform/graphics/gpu
+
+    !contains(QT_CONFIG, opengles2) {
+        SOURCES += \
+            platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+
+        ANGLE_DIR = $$replace(PWD, "WebCore", "ThirdParty/ANGLE")
+
+        INCLUDEPATH += $$ANGLE_DIR/src $$ANGLE_DIR/include
+
+        ANGLE_HEADERS += \
+            $$ANGLE_DIR/src/compiler/BaseTypes.h \
+            $$ANGLE_DIR/src/compiler/Common.h \
+            $$ANGLE_DIR/src/compiler/ConstantUnion.h \
+            $$ANGLE_DIR/src/compiler/debug.h \
+            $$ANGLE_DIR/src/compiler/ExtensionBehavior.h \
+            $$ANGLE_DIR/src/compiler/ForLoopUnroll.h \
+            $$ANGLE_DIR/src/compiler/glslang.h \
+            $$ANGLE_DIR/src/compiler/glslang_tab.h \
+            $$ANGLE_DIR/src/compiler/InfoSink.h \
+            $$ANGLE_DIR/src/compiler/InitializeDll.h \
+            $$ANGLE_DIR/src/compiler/InitializeGlobals.h \
+            $$ANGLE_DIR/src/compiler/Initialize.h \
+            $$ANGLE_DIR/src/compiler/InitializeParseContext.h \
+            $$ANGLE_DIR/src/compiler/intermediate.h \
+            $$ANGLE_DIR/src/compiler/localintermediate.h \
+            $$ANGLE_DIR/src/compiler/MMap.h \
+            $$ANGLE_DIR/src/compiler/MapLongVariableNames.h \
+            $$ANGLE_DIR/src/compiler/osinclude.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/atom.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/compile.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/cpp.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/memory.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/parser.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/preprocess.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/scanner.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/slglobals.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/symbols.h \
+            $$ANGLE_DIR/src/compiler/preprocessor/tokens.h \
+            $$ANGLE_DIR/src/compiler/OutputESSL.h \
+            $$ANGLE_DIR/src/compiler/OutputGLSL.h \
+            $$ANGLE_DIR/src/compiler/OutputGLSLBase.h \
+            $$ANGLE_DIR/src/compiler/OutputHLSL.h \
+            $$ANGLE_DIR/src/compiler/ParseHelper.h \
+            $$ANGLE_DIR/src/compiler/PoolAlloc.h \
+            $$ANGLE_DIR/src/compiler/QualifierAlive.h \
+            $$ANGLE_DIR/src/compiler/RemoveTree.h \
+            $$ANGLE_DIR/src/compiler/SearchSymbol.h \
+            $$ANGLE_DIR/src/compiler/ShHandle.h \
+            $$ANGLE_DIR/src/compiler/SymbolTable.h \
+            $$ANGLE_DIR/src/compiler/TranslatorESSL.h \
+            $$ANGLE_DIR/src/compiler/TranslatorGLSL.h \
+            $$ANGLE_DIR/src/compiler/TranslatorHLSL.h \
+            $$ANGLE_DIR/src/compiler/Types.h \
+            $$ANGLE_DIR/src/compiler/UnfoldSelect.h \
+            $$ANGLE_DIR/src/compiler/util.h \
+            $$ANGLE_DIR/src/compiler/ValidateLimitations.h \
+            $$ANGLE_DIR/src/compiler/VariableInfo.h \
+            $$ANGLE_DIR/src/compiler/VersionGLSL.h
+
+        HEADERS += $$ANGLE_HEADERS
+
+        ANGLE_SOURCES += \
+            $$ANGLE_DIR/src/compiler/CodeGenGLSL.cpp \
+            $$ANGLE_DIR/src/compiler/CodeGenHLSL.cpp \
+            $$ANGLE_DIR/src/compiler/Compiler.cpp \
+            $$ANGLE_DIR/src/compiler/debug.cpp \
+            $$ANGLE_DIR/src/compiler/ForLoopUnroll.cpp \
+            $$ANGLE_DIR/src/compiler/glslang_lex.cpp \
+            $$ANGLE_DIR/src/compiler/glslang_tab.cpp \
+            $$ANGLE_DIR/src/compiler/InfoSink.cpp \
+            $$ANGLE_DIR/src/compiler/Initialize.cpp \
+            $$ANGLE_DIR/src/compiler/InitializeDll.cpp \
+            $$ANGLE_DIR/src/compiler/Intermediate.cpp \
+            $$ANGLE_DIR/src/compiler/intermOut.cpp \
+            $$ANGLE_DIR/src/compiler/IntermTraverse.cpp \
+            $$ANGLE_DIR/src/compiler/MapLongVariableNames.cpp \
+            $$ANGLE_DIR/src/compiler/ossource_posix.cpp \
+            $$ANGLE_DIR/src/compiler/OutputESSL.cpp \
+            $$ANGLE_DIR/src/compiler/OutputGLSL.cpp \
+            $$ANGLE_DIR/src/compiler/OutputGLSLBase.cpp \
+            $$ANGLE_DIR/src/compiler/OutputHLSL.cpp \
+            $$ANGLE_DIR/src/compiler/parseConst.cpp \
+            $$ANGLE_DIR/src/compiler/ParseHelper.cpp \
+            $$ANGLE_DIR/src/compiler/PoolAlloc.cpp \
+            $$ANGLE_DIR/src/compiler/QualifierAlive.cpp \
+            $$ANGLE_DIR/src/compiler/RemoveTree.cpp \
+            $$ANGLE_DIR/src/compiler/SearchSymbol.cpp \
+            $$ANGLE_DIR/src/compiler/ShaderLang.cpp \
+            $$ANGLE_DIR/src/compiler/SymbolTable.cpp \
+            $$ANGLE_DIR/src/compiler/TranslatorESSL.cpp \
+            $$ANGLE_DIR/src/compiler/TranslatorGLSL.cpp \
+            $$ANGLE_DIR/src/compiler/TranslatorHLSL.cpp \
+            $$ANGLE_DIR/src/compiler/UnfoldSelect.cpp \
+            $$ANGLE_DIR/src/compiler/util.cpp \
+            $$ANGLE_DIR/src/compiler/ValidateLimitations.cpp \
+            $$ANGLE_DIR/src/compiler/VariableInfo.cpp \
+            $$ANGLE_DIR/src/compiler/VersionGLSL.cpp
+
+        SOURCES += \
+            $$ANGLE_DIR/src/compiler/preprocessor/atom.c \
+            $$ANGLE_DIR/src/compiler/preprocessor/cpp.c \
+            $$ANGLE_DIR/src/compiler/preprocessor/cppstruct.c \
+            $$ANGLE_DIR/src/compiler/preprocessor/memory.c \
+            $$ANGLE_DIR/src/compiler/preprocessor/scanner.c \
+            $$ANGLE_DIR/src/compiler/preprocessor/symbols.c \
+            $$ANGLE_DIR/src/compiler/preprocessor/tokens.c
+
+        *g++* {
+            ANGLE_CFLAGS += -Wno-unused-variable
+            ANGLE_CFLAGS += -Wno-missing-noreturn
+            ANGLE_CFLAGS += -Wno-unused-function
+            ANGLE_CFLAGS += -Wno-reorder
+
+            angle_cxx.commands = $$QMAKE_CXX -c $(CXXFLAGS) $$ANGLE_CFLAGS $(INCPATH) ${QMAKE_FILE_IN} -o ${QMAKE_FILE_OUT}
+            angle_cxx.output  = $$OBJECTS_DIR/${QMAKE_FILE_BASE}$$QMAKE_EXT_OBJ
+            anglc_cxx.dependency_type = TYPE_C
+            angle_cxx.depends = $$ANGLE_HEADERS
+            angle_cxx.input = ANGLE_SOURCES
+            QMAKE_EXTRA_COMPILERS += angle_cxx
+        } else {
+            SOURCES += $$ANGLE_SOURCES
+        }
+    }
 
     CONFIG += opengl-shims
 }

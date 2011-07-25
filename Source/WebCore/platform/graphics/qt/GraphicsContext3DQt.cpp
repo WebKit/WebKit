@@ -270,7 +270,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_layerComposited(false)
     , m_internalColorFormat(0)
     , m_boundFBO(0)
-    , m_activeTexture(0)
+    , m_activeTexture(GL_TEXTURE0)
     , m_boundTexture0(0)
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
@@ -320,6 +320,24 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     m_boundFBO = m_fbo;
     glBindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     glClearColor(0.0, 0.0, 0.0, 0.0);
+
+#if !defined(QT_OPENGL_ES_2)
+    // ANGLE initialization.
+    ShBuiltInResources ANGLEResources;
+    ShInitBuiltInResources(&ANGLEResources);
+
+    getIntegerv(GraphicsContext3D::MAX_VERTEX_ATTRIBS, &ANGLEResources.MaxVertexAttribs);
+    getIntegerv(GraphicsContext3D::MAX_VERTEX_UNIFORM_VECTORS, &ANGLEResources.MaxVertexUniformVectors);
+    getIntegerv(GraphicsContext3D::MAX_VARYING_VECTORS, &ANGLEResources.MaxVaryingVectors);
+    getIntegerv(GraphicsContext3D::MAX_VERTEX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxVertexTextureImageUnits);
+    getIntegerv(GraphicsContext3D::MAX_COMBINED_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxCombinedTextureImageUnits); 
+    getIntegerv(GraphicsContext3D::MAX_TEXTURE_IMAGE_UNITS, &ANGLEResources.MaxTextureImageUnits);
+    getIntegerv(GraphicsContext3D::MAX_FRAGMENT_UNIFORM_VECTORS, &ANGLEResources.MaxFragmentUniformVectors);
+
+    // Always set to 1 for OpenGL ES.
+    ANGLEResources.MaxDrawBuffers = 1;
+    m_compiler.setResources(ANGLEResources);
+#endif
 }
 
 GraphicsContext3D::~GraphicsContext3D()
@@ -363,6 +381,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
     m_internal->paint(painter, 0, 0);
 }
 
+#if defined(QT_OPENGL_ES_2)
 PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
 {
     // FIXME: This needs to be implemented for proper non-premultiplied-alpha
@@ -1476,6 +1495,7 @@ bool GraphicsContext3D::layerComposited() const
 {
     return m_layerComposited;
 }
+#endif
 
 Extensions3D* GraphicsContext3D::getExtensions()
 {

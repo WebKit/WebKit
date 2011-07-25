@@ -25,6 +25,10 @@
 
 #include "config.h"
 
+#if PLATFORM(QT)
+#include <QtGlobal>
+#endif
+
 #if ENABLE(WEBGL)
 
 #include "GraphicsContext3D.h"
@@ -50,6 +54,8 @@
 #include <OpenGL/gl.h>
 #elif PLATFORM(GTK)
 #include "OpenGLShims.h"
+#elif PLATFORM(QT)
+#include <cairo/OpenGLShims.h>
 #endif
 
 namespace WebCore {
@@ -116,6 +122,7 @@ void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSi
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 }
 
+#if !PLATFORM(QT)
 void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
 {
     HTMLCanvasElement* canvas = context->canvas();
@@ -142,6 +149,7 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
     paintToCanvas(pixels.get(), m_currentWidth, m_currentHeight,
                   canvas->width(), canvas->height(), imageBuffer->context()->platformContext());
 }
+#endif
 
 PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
 {
@@ -1515,12 +1523,14 @@ bool GraphicsContext3D::layerComposited() const
     return m_layerComposited;
 }
 
+#if !PLATFORM(QT)
 Extensions3D* GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
         m_extensions = adoptPtr(new Extensions3DOpenGL(this));
     return m_extensions.get();
 }
+#endif
 
 }
 

@@ -43,7 +43,7 @@
 #undef VERSION
 #endif
 
-#if PLATFORM(MAC) || PLATFORM(GTK)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT)
 #include "ANGLEWebKitBridge.h"
 #endif
 
@@ -501,7 +501,7 @@ public:
 
     PassRefPtr<DrawingBuffer> createDrawingBuffer(const IntSize& = IntSize());
     
-#if PLATFORM(MAC) || PLATFORM(CHROMIUM) || PLATFORM(GTK)
+#if PLATFORM(MAC) || PLATFORM(CHROMIUM) || PLATFORM(GTK) || PLATFORM(QT)
     // With multisampling on, blit from multisampleFBO to regular FBO.
     void prepareTexture();
 #endif
@@ -889,7 +889,7 @@ public:
                     AlphaOp alphaOp,
                     void* destinationData);
 
-#if PLATFORM(MAC) || PLATFORM(GTK)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT)
     // Take into account the user's requested context creation attributes,
     // in particular stencil and antialias, and determine which could or
     // could not be honored based on the capabilities of the OpenGL
@@ -917,13 +917,12 @@ public:
     } ShaderSourceEntry;
     HashMap<Platform3DObject, ShaderSourceEntry> m_shaderSourceMap;
 
+    ANGLEWebKitBridge m_compiler;
 #if PLATFORM(QT)
     friend class Extensions3DQt;
     OwnPtr<Extensions3DQt> m_extensions;
 #else
     friend class Extensions3DOpenGL;
-    ANGLEWebKitBridge m_compiler;
-
     OwnPtr<Extensions3DOpenGL> m_extensions;
 #endif
 
