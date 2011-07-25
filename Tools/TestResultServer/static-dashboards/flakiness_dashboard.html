@@ -289,21 +289,6 @@ pre.expectation {
 <script src="builders.js"></script>
 <script src="dashboard_base.js"></script>
 <script>
-// @fileoverview Creates a dashboard for multiple runs of a given set of tests
-// on the buildbots. Pulls in JSONP-ish files with the results for running
-// tests on a given builder (i.e. ADD_RESULTS(json_here)) and the expectations
-// for all tests on all builders (i.e. ADD_EXPECTATIONS(json_here)).
-//
-// This shows flakiness of the tests as well as runtimes for slow tests.
-//
-// Also, each column in the dashboard is sortable.
-//
-// Currently, only webkit tests are supported, but adding other test types
-// should just require the following steps:
-//   -generate results.json and expectations.json for these tests
-//   -copy them to the appropriate location
-//   -add the builder name to the list of builders below.
-
 //////////////////////////////////////////////////////////////////////////////
 // CONSTANTS
 //////////////////////////////////////////////////////////////////////////////

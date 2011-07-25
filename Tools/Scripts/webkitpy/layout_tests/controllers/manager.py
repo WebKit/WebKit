@@ -1040,11 +1040,6 @@ class Manager(object):
         """Writes the results of the test run as JSON files into the results
         dir and upload the files to the appengine server.
 
-        There are two different files written into the results dir:
-          expectations.json: This is used by the flakiness dashboard.
-          results.json: A full list of the results - used by the flakiness
-            dashboard and the aggregate results dashboard.
-
         Args:
           unexpected_results: dict of unexpected results
           summarized_results: dict of results
@@ -1061,14 +1056,6 @@ class Manager(object):
         full_results_path = self._fs.join(self._results_directory, "full_results.json")
         json_results_generator.write_json(self._fs, summarized_results, full_results_path)
 
-        # Write a json file of the test_expectations.txt file for the layout
-        # tests dashboard.
-        expectations_path = self._fs.join(self._results_directory, "expectations.json")
-        expectations_json = \
-            self._expectations.get_expectations_json_for_all_platforms()
-        self._fs.write_text_file(expectations_path,
-                                 u"ADD_EXPECTATIONS(%s);" % expectations_json)
-
         generator = json_layout_results_generator.JSONLayoutResultsGenerator(
             self._port, self._options.builder_name, self._options.build_name,
             self._options.build_number, self._results_directory,
@@ -1080,7 +1067,7 @@ class Manager(object):
 
         _log.debug("Finished writing JSON files.")
 
-        json_files = ["expectations.json", "incremental_results.json", "full_results.json", "times_ms.json"]
+        json_files = ["incremental_results.json", "full_results.json", "times_ms.json"]
 
         generator.upload_json_files(json_files)
 
@@ -1088,7 +1075,6 @@ class Manager(object):
 
         # Remove these files from the results directory so they don't take up too much space on the buildbot.
         # The tools use the version we uploaded to the results server anyway.
-        self._fs.remove(expectations_path)
         self._fs.remove(times_json_path)
         self._fs.remove(incremental_results_path)
 

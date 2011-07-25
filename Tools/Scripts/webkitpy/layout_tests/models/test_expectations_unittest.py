@@ -156,12 +156,6 @@ BUGX WONTFIX : failures/expected = IMAGE
         self.assertEqual(self._exp.get_modifiers(
                          self.get_test('passes/text.html')), [])
 
-    def test_expectations_json_for_all_platforms(self):
-        self.parse_exp(self.get_basic_expectations())
-        json_str = self._exp.get_expectations_json_for_all_platforms()
-        # FIXME: test actual content?
-        self.assertTrue(json_str)
-
     def test_get_expectations_string(self):
         self.parse_exp(self.get_basic_expectations())
         self.assertEquals(self._exp.get_expectations_string(

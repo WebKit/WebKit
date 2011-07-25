@@ -121,27 +121,6 @@ class ParseError(Exception):
         return 'ParseError(fatal=%s, errors=%s)' % (self.fatal, self.errors)
 
 
-class ModifiersAndExpectations:
-    """A holder for modifiers and expectations on a test that serializes to
-    JSON."""
-
-    def __init__(self, modifiers, expectations):
-        self.modifiers = modifiers
-        self.expectations = expectations
-
-
-class ExpectationsJsonEncoder(json.JSONEncoder):
-    """JSON encoder that can handle ModifiersAndExpectations objects."""
-    def default(self, obj):
-        # A ModifiersAndExpectations object has two fields, each of which
-        # is a dict. Since JSONEncoders handle all the builtin types directly,
-        # the only time this routine should be called is on the top level
-        # object (i.e., the encoder shouldn't recurse).
-        assert isinstance(obj, ModifiersAndExpectations)
-        return {"modifiers": obj.modifiers,
-                "expectations": obj.expectations}
-
-
 class TestExpectationSerializer:
     """Provides means of serializing TestExpectationLine instances."""
     @classmethod
@@ -663,13 +642,6 @@ class TestExpectations:
         self._model = TestExpectationsModel()
         self._parser = TestExpectationParser(port, test_config, tests, is_lint_mode)
 
-        # Maps relative test paths as listed in the expectations file to a
-        # list of maps containing modifiers and expectations for each time
-        # the test is listed in the expectations file. We use this to
-        # keep a representation of the entire list of expectations, even
-        # invalid ones.
-        self._all_expectations = {}
-
         self._expectations = TestExpectationParser.tokenize_list(expectations)
         self._add_expectations(self._expectations, overrides_allowed=False)
 
@@ -776,11 +748,6 @@ class TestExpectations:
                 if not self._model.has_test(test):
                     self._model.add_expectation_line(TestExpectationLine.create_passing_expectation(test), overrides_allowed=False)
 
-    def get_expectations_json_for_all_platforms(self):
-        # Specify separators in order to get compact encoding.
-        return ExpectationsJsonEncoder(separators=(',', ':')).encode(
-            self._all_expectations)
-
     def has_warnings(self):
         return self._has_warnings
 
@@ -791,20 +758,10 @@ class TestExpectations:
 
         return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
 
-    def _add_to_all_expectations(self, test, modifiers, expectations):
-        if not test in self._all_expectations:
-            self._all_expectations[test] = []
-        self._all_expectations[test].append(
-            ModifiersAndExpectations(modifiers, expectations))
-
     def _add_expectations(self, expectation_list, overrides_allowed):
         for expectation_line in expectation_list:
             if not expectation_line.expectations:
                 continue
-
-            self._add_to_all_expectations(expectation_line.name,
-                                            " ".join(expectation_line.modifiers).upper(),
-                                            " ".join(expectation_line.expectations).upper())
 
             self._parser.parse(expectation_line)
             self._model.add_expectation_line(expectation_line, overrides_allowed)

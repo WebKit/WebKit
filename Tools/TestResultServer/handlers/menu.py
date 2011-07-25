@@ -40,7 +40,6 @@ dashboards = [
 menu = [
     ["List of test files", "/testfile"],
     ["List of results.json files", "/testfile?name=results.json"],
-    ["List of expectations.json files", "/testfile?name=expectations.json"],
     ["Upload test file", "/testfile/uploadform"],
 ]
 

@@ -446,8 +446,7 @@ var g_defaultBuilderName, g_builders, g_expectationsBuilder;
 function initBuilders(state)
 {
     if (state.buildDir) {
-        // If buildDir is set, point to the results.json and expectations.json in the
-        // local tree. Useful for debugging changes to the python JSON generator.
+        // If buildDir is set, point to the results.json in the local tree. Useful for debugging changes to the python JSON generator.
         g_defaultBuilderName = 'DUMMY_BUILDER_NAME';
         g_builders = {'DUMMY_BUILDER_NAME': ''};
         var loc = document.location.toString();
