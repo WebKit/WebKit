@@ -51,4 +51,4 @@ class PrepareChangeLogTest(ChangeLogTest):
         expected_message = "Example title\n        http://example.com/1234"
         expected_contents = changelog_contents.replace("Need a short description and bug URL (OOPS!)", expected_message)
         os.remove(changelog_path)
-        self.assertEquals(actual_contents, expected_contents)
+        self.assertEquals(actual_contents.splitlines(), expected_contents.splitlines())

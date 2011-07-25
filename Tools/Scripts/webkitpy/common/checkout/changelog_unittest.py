@@ -201,7 +201,7 @@ class ChangeLogTest(unittest.TestCase):
         actual_contents = self._read_file_contents(changelog_path, "utf-8")
         expected_contents = changelog_contents.replace('NOBODY (OOPS!)', reviewer_name)
         os.remove(changelog_path)
-        self.assertEquals(actual_contents, expected_contents)
+        self.assertEquals(actual_contents.splitlines(), expected_contents.splitlines())
 
     def test_set_short_description_and_bug_url(self):
         changelog_contents = u"%s\n%s" % (self._new_entry_boilerplate, self._example_changelog)
@@ -213,4 +213,4 @@ class ChangeLogTest(unittest.TestCase):
         expected_message = "%s\n        %s" % (short_description, bug_url)
         expected_contents = changelog_contents.replace("Need a short description and bug URL (OOPS!)", expected_message)
         os.remove(changelog_path)
-        self.assertEquals(actual_contents, expected_contents)
+        self.assertEquals(actual_contents.splitlines(), expected_contents.splitlines())
