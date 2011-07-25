@@ -450,6 +450,8 @@ void ScrollbarThemeMac::updateEnabledState(Scrollbar* scrollbar)
 {
 #if USE(WK_SCROLLBAR_PAINTER)
     wkScrollbarPainterSetEnabled(scrollbarMap()->get(scrollbar).get(), scrollbar->enabled());
+#else
+    UNUSED_PARAM(scrollbar);
 #endif
 }
 

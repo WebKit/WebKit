@@ -1,3 +1,14 @@
+2011-07-25  Lucas Forschler  <lforschler@apple.com>
+
+    Merged 91147.
+
+    2011-07-22  Lucas Forschler  <lforschler@apple.com>
+
+        Fix the build.
+
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::updateEnabledState):
+
 2011-07-22  Lucas Forschler  <lforschler@apple.com>
 
     Merged 87171.
