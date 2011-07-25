@@ -1,3 +1,38 @@
+2011-07-25  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: refactor remote object structure to contain value for primitive values.
+        https://bugs.webkit.org/show_bug.cgi?id=65103
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._format):
+        (WebInspector.ConsoleView.prototype._formatAsArrayEntry):
+        (WebInspector.ConsoleMessage.prototype._format):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode.setTooltip):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.nodePrototypesReady):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPrimitiveValue):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.get subtype):
+        (WebInspector.RemoteObject.prototype.callFunction):
+        (WebInspector.LocalJSONObject.prototype.get type):
+        (WebInspector.LocalJSONObject.prototype.get subtype):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._showPopup.showObjectPopup):
+        (WebInspector.SourceFrame.prototype._showPopup):
+        * inspector/front-end/inspector.js:
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+        (WebInspector.inspect):
+
 2011-07-25  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Fix mixing of retaining path in heap profiler.

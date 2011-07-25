@@ -18,9 +18,8 @@ response:
 {
     result : {
         result : {
-            objectId : <string>
-            hasChildren : true
             type : "object"
+            objectId : <string>
             className : <string>
             description : "TestObject"
         }
@@ -45,9 +44,8 @@ response:
 {
     result : {
         result : {
-            objectId : <string>
-            hasChildren : true
             type : "object"
+            objectId : <string>
             className : <string>
             description : "TestObject"
         }
@@ -73,7 +71,7 @@ response:
     result : {
         result : {
             type : "string"
-            description : "callFunctionOn function works fine"
+            value : "callFunctionOn function works fine"
         }
     }
     id : <number>
@@ -142,22 +140,21 @@ response:
                 name : "assignedByCallFunctionOn"
                 value : {
                     type : "string"
-                    description : "callFunctionOn function works fine"
+                    value : "callFunctionOn function works fine"
                 }
             }
             {
                 name : "assignedBySetPropertyValue"
                 value : {
                     type : "boolean"
-                    description : "true"
+                    value : true
                 }
             }
             {
                 name : "__proto__"
                 value : {
-                    objectId : <string>
-                    hasChildren : true
                     type : "object"
+                    objectId : <string>
                     className : <string>
                     description : "TestObject"
                 }

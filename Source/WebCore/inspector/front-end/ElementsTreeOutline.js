@@ -579,9 +579,9 @@ WebInspector.ElementsTreeElement.prototype = {
         if (!node.nodeName() || node.nodeName().toLowerCase() !== "img")
             return;
 
-        function setTooltip(error, result, wasThrown)
+        function setTooltip(result)
         {
-            if (error || wasThrown || result.type !== "string")
+            if (!result || result.type !== "string")
                 return;
 
             try {

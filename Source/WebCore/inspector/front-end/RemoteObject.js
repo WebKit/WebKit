@@ -28,17 +28,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.RemoteObject = function(objectId, type, description, hasChildren)
+WebInspector.RemoteObject = function(objectId, type, subtype, value, description)
 {
-    this._objectId = objectId;
     this._type = type;
-    this._description = description;
-    this._hasChildren = hasChildren;
+    if (objectId) {
+        // handle
+        this._objectId = objectId;
+        this._subtype = subtype;
+        this._description = description;
+        this._hasChildren = true;
+    } else {
+        // Primitive
+        this._description = value + "";
+        this._hasChildren = false;
+    }
 }
 
 WebInspector.RemoteObject.fromPrimitiveValue = function(value)
 {
-    return new WebInspector.RemoteObject(null, typeof value, value);
+    return new WebInspector.RemoteObject(null, typeof value, null, value);
 }
 
 WebInspector.RemoteObject.fromLocalObject = function(value)
@@ -63,10 +71,9 @@ WebInspector.RemoteObject.resolveNode = function(node, objectGroup, callback)
 
 WebInspector.RemoteObject.fromPayload = function(payload)
 {
-    if (typeof payload === "object")
-        return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.description, payload.hasChildren);
-    // FIXME: make sure we only get here with real payloads in the new DebuggerAgent.js.
-    return payload;
+    console.assert(typeof payload === "object", "Remote object payload should only be an object");
+
+    return new WebInspector.RemoteObject(payload.objectId, payload.type, payload.subtype, payload.value, payload.description);
 }
 
 WebInspector.RemoteObject.type = function(remoteObject)
@@ -90,6 +97,11 @@ WebInspector.RemoteObject.prototype = {
     get type()
     {
         return this._type;
+    },
+
+    get subtype()
+    {
+        return this._subtype;
     },
 
     get description()
@@ -150,7 +162,12 @@ WebInspector.RemoteObject.prototype = {
 
     callFunction: function(functionDeclaration, callback)
     {
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), undefined, callback);
+        function mycallback(error, result, wasThrown)
+        {
+            callback((error || wasThrown) ? null : WebInspector.RemoteObject.fromPayload(result));
+        }
+
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), undefined, mycallback);
     },
 
     release: function()
@@ -232,11 +249,18 @@ WebInspector.LocalJSONObject.prototype = {
 
     get type()
     {
+        return typeof this._value;
+    },
+
+    get subtype()
+    {
         if (this._value === null)
             return "null";
+
         if (this._value instanceof Array)
             return "array";
-        return typeof this._value;
+
+        return undefined;
     },
 
     get hasChildren()

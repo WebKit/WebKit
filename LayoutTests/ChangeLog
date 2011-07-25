@@ -1,3 +1,14 @@
+2011-07-25  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: refactor remote object structure to contain value for primitive values.
+        https://bugs.webkit.org/show_bug.cgi?id=65103
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/runtime/runtime-callFunctionOn.html:
+
 2011-07-25  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Lot of RenderTree mismatches in fast/multicol
