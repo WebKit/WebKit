@@ -1,0 +1,3 @@
+This tests that we don't cause an assertion failure on relayout of nested positioned elements. This test PASSED if we don't cause an assertion failure.
+
+PASS 

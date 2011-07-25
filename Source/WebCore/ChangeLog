@@ -1,3 +1,24 @@
+2011-07-25  Daniel Bates  <dbates@rim.com>
+
+        REGRESSION (r85964): Improper relayout of some nested positioned elements
+        https://bugs.webkit.org/show_bug.cgi?id=64286
+
+        Reviewed by David Hyatt.
+
+        Fixes an issue when traversing up the containing block hierarchy after skipping
+        relatively positioned inlines.
+
+        When processing a positioned element we skip any intermediate inlines to get to
+        to enclosing block B, but don't use the containing block for B (call this P_B) to
+        properly continue traversing up the containing block hierarchy. So, B may be
+        considered again instead of looking at P_B. Hence, we don't set the correct dirty
+        bits for P_B and may not schedule a relayout with respect to the correct layout node.
+
+        Test: fast/block/positioning/relayout-nested-positioned-elements-crash.html
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::markContainingBlocksForLayout):
+
 2011-07-25  Arno Renevier  <arno@renevier.net>
 
         removes last ENABLE(DRAG_SUPPORT) gtk check
