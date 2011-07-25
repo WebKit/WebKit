@@ -236,11 +236,14 @@ template <LiteralParser::ParserMode mode> LiteralParser::TokenType LiteralParser
             return TokIdentifier;
         }
         if (*m_ptr == '\'') {
-            if (mode == StrictJSON)
+            if (mode == StrictJSON) {
+                m_lexErrorMessage = "Single quotes (\') are not allowed in JSON";
                 return TokError;
+            }
             return lexString<mode, '\''>(token);
         }
     }
+    m_lexErrorMessage = String::format("Unrecognized token '%c'", *m_ptr).impl();
     return TokError;
 }
 
@@ -274,8 +277,10 @@ template <LiteralParser::ParserMode mode, UChar terminator> inline LiteralParser
             if (builder.isEmpty() && runStart < m_ptr)
                 builder.append(runStart, m_ptr - runStart);
             ++m_ptr;
-            if (m_ptr >= m_end)
+            if (m_ptr >= m_end) {
+                m_lexErrorMessage = "Unterminated string";
                 return TokError;
+            }
             switch (*m_ptr) {
                 case '"':
                     builder.append('"');
@@ -311,11 +316,15 @@ template <LiteralParser::ParserMode mode, UChar terminator> inline LiteralParser
                     break;
 
                 case 'u':
-                    if ((m_end - m_ptr) < 5) // uNNNN == 5 characters
+                    if ((m_end - m_ptr) < 5) { 
+                        m_lexErrorMessage = "\\u must be followed by 4 hex digits";
                         return TokError;
+                    } // uNNNN == 5 characters
                     for (int i = 1; i < 5; i++) {
-                        if (!isASCIIHexDigit(m_ptr[i]))
+                        if (!isASCIIHexDigit(m_ptr[i])) {
+                            m_lexErrorMessage = String::format("\"\\%s\" is not a valid unicode escape", UString(m_ptr, 5).ascii().data()).impl();
                             return TokError;
+                        }
                     }
                     builder.append(JSC::Lexer::convertUnicode(m_ptr[1], m_ptr[2], m_ptr[3], m_ptr[4]));
                     m_ptr += 5;
@@ -327,13 +336,16 @@ template <LiteralParser::ParserMode mode, UChar terminator> inline LiteralParser
                         m_ptr++;
                         break;
                     }
+                    m_lexErrorMessage = String::format("Invalid escape character %c", *m_ptr).impl();
                     return TokError;
             }
         }
     } while ((mode != NonStrictJSON) && m_ptr != runStart && (m_ptr < m_end) && *m_ptr != terminator);
 
-    if (m_ptr >= m_end || *m_ptr != terminator)
+    if (m_ptr >= m_end || *m_ptr != terminator) {
+        m_lexErrorMessage = "Unterminated string";
         return TokError;
+    }
 
     if (builder.isEmpty()) {
         token.stringBuffer = UString();
@@ -376,15 +388,19 @@ LiteralParser::TokenType LiteralParser::Lexer::lexNumber(LiteralParserToken& tok
         // [0-9]*
         while (m_ptr < m_end && isASCIIDigit(*m_ptr))
             ++m_ptr;
-    } else
+    } else {
+        m_lexErrorMessage = "Invalid number";
         return TokError;
+    }
 
     // ('.' [0-9]+)?
     if (m_ptr < m_end && *m_ptr == '.') {
         ++m_ptr;
         // [0-9]+
-        if (m_ptr >= m_end || !isASCIIDigit(*m_ptr))
+        if (m_ptr >= m_end || !isASCIIDigit(*m_ptr)) {
+            m_lexErrorMessage = "Invalid digits after decimal point";
             return TokError;
+        }
 
         ++m_ptr;
         while (m_ptr < m_end && isASCIIDigit(*m_ptr))
@@ -416,8 +432,10 @@ LiteralParser::TokenType LiteralParser::Lexer::lexNumber(LiteralParserToken& tok
             ++m_ptr;
 
         // [0-9]+
-        if (m_ptr >= m_end || !isASCIIDigit(*m_ptr))
+        if (m_ptr >= m_end || !isASCIIDigit(*m_ptr)) {
+            m_lexErrorMessage = "Exponent symbols should be followed by an optional '+' or '-' and then by at least one number";
             return TokError;
+        }
         
         ++m_ptr;
         while (m_ptr < m_end && isASCIIDigit(*m_ptr))
@@ -458,8 +476,10 @@ JSValue LiteralParser::parse(ParserState initialState)
             case DoParseArrayStartExpression: {
                 TokenType lastToken = m_lexer.currentToken().type;
                 if (m_lexer.next() == TokRBracket) {
-                    if (lastToken == TokComma)
+                    if (lastToken == TokComma) {
+                        m_parseErrorMessage = "Unexpected comma at the end of array expression";
                         return JSValue();
+                    }
                     m_lexer.next();
                     lastValue = objectStack.last();
                     objectStack.removeLast();
@@ -475,8 +495,10 @@ JSValue LiteralParser::parse(ParserState initialState)
                 if (m_lexer.currentToken().type == TokComma)
                     goto doParseArrayStartExpression;
 
-                if (m_lexer.currentToken().type != TokRBracket)
+                if (m_lexer.currentToken().type != TokRBracket) {
+                    m_parseErrorMessage = "Expected ']'";
                     return JSValue();
+                }
                 
                 m_lexer.next();
                 lastValue = objectStack.last();
@@ -493,16 +515,20 @@ JSValue LiteralParser::parse(ParserState initialState)
                     Lexer::LiteralParserToken identifierToken = m_lexer.currentToken();
 
                     // Check for colon
-                    if (m_lexer.next() != TokColon)
+                    if (m_lexer.next() != TokColon) {
+                        m_parseErrorMessage = "Expected ':' before value in object property definition";
                         return JSValue();
+                    }
                     
                     m_lexer.next();
                     identifierStack.append(makeIdentifier(identifierToken.stringToken, identifierToken.stringLength));
                     stateStack.append(DoParseObjectEndExpression);
                     goto startParseExpression;
                 }
-                if (type != TokRBrace) 
+                if (type != TokRBrace)  {
+                    m_parseErrorMessage = "Expected '}'";
                     return JSValue();
+                }
                 m_lexer.next();
                 lastValue = objectStack.last();
                 objectStack.removeLast();
@@ -511,13 +537,17 @@ JSValue LiteralParser::parse(ParserState initialState)
             doParseObjectStartExpression:
             case DoParseObjectStartExpression: {
                 TokenType type = m_lexer.next();
-                if (type != TokString && (m_mode == StrictJSON || type != TokIdentifier))
+                if (type != TokString && (m_mode == StrictJSON || type != TokIdentifier)) {
+                    m_parseErrorMessage = "Property name must be a string literal";
                     return JSValue();
+                }
                 Lexer::LiteralParserToken identifierToken = m_lexer.currentToken();
 
                 // Check for colon
-                if (m_lexer.next() != TokColon)
+                if (m_lexer.next() != TokColon) {
+                    m_parseErrorMessage = "Expected ':'";
                     return JSValue();
+                }
 
                 m_lexer.next();
                 identifierStack.append(makeIdentifier(identifierToken.stringToken, identifierToken.stringLength));
@@ -530,8 +560,10 @@ JSValue LiteralParser::parse(ParserState initialState)
                 identifierStack.removeLast();
                 if (m_lexer.currentToken().type == TokComma)
                     goto doParseObjectStartExpression;
-                if (m_lexer.currentToken().type != TokRBrace)
+                if (m_lexer.currentToken().type != TokRBrace) {
+                    m_parseErrorMessage = "Expected '}'";
                     return JSValue();
+                }
                 m_lexer.next();
                 lastValue = objectStack.last();
                 objectStack.removeLast();
@@ -570,9 +602,43 @@ JSValue LiteralParser::parse(ParserState initialState)
                         m_lexer.next();
                         lastValue = jsBoolean(false);
                         break;
-
+                    case TokRBracket:
+                        m_parseErrorMessage = "Unexpected token ']'";
+                        return JSValue();
+                    case TokRBrace:
+                        m_parseErrorMessage = "Unexpected token '}'";
+                        return JSValue();
+                    case TokIdentifier:
+                        m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", UString(m_lexer.currentToken().stringToken).ascii().data()).impl();
+                        return JSValue();
+                    case TokColon:
+                        m_parseErrorMessage = "Unexpected token ':'";
+                        return JSValue();
+                    case TokLParen:
+                        m_parseErrorMessage = "Unexpected token '('";
+                        return JSValue();
+                    case TokRParen:
+                        m_parseErrorMessage = "Unexpected token ')'";
+                        return JSValue();
+                    case TokComma:
+                        m_parseErrorMessage = "Unexpected token ','";
+                        return JSValue();
+                    case TokDot:
+                        m_parseErrorMessage = "Unexpected token '.'";
+                        return JSValue();
+                    case TokAssign:
+                        m_parseErrorMessage = "Unexpected token '='";
+                        return JSValue();
+                    case TokSemi:
+                        m_parseErrorMessage = "Unexpected token ';'";
+                        return JSValue();
+                    case TokEnd:
+                        m_parseErrorMessage = "Unexpected EOF";
+                        return JSValue();
+                    case TokError:
                     default:
                         // Error
+                        m_parseErrorMessage = "Could not parse value expression";
                         return JSValue();
                 }
                 break;
@@ -589,7 +655,51 @@ JSValue LiteralParser::parse(ParserState initialState)
                         stateStack.append(StartParseStatementEndStatement);
                         goto startParseExpression;
                     }
+                    case TokRBracket:
+                        m_parseErrorMessage = "Unexpected token ']'";
+                        return JSValue();
+                    case TokLBrace:
+                        m_parseErrorMessage = "Unexpected token '{'";
+                        return JSValue();
+                    case TokRBrace:
+                        m_parseErrorMessage = "Unexpected token '}'";
+                        return JSValue();
+                    case TokIdentifier:
+                        m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", UString(m_lexer.currentToken().stringToken).ascii().data()).impl();
+                        return JSValue();
+                    case TokColon:
+                        m_parseErrorMessage = "Unexpected token ':'";
+                        return JSValue();
+                    case TokRParen:
+                        m_parseErrorMessage = "Unexpected token ')'";
+                        return JSValue();
+                    case TokComma:
+                        m_parseErrorMessage = "Unexpected token ','";
+                        return JSValue();
+                    case TokTrue:
+                        m_parseErrorMessage = "Unexpected token 'true'";
+                        return JSValue();
+                    case TokFalse:
+                        m_parseErrorMessage = "Unexpected token 'false'";
+                        return JSValue();
+                    case TokNull:
+                        m_parseErrorMessage = "Unexpected token 'null'";
+                        return JSValue();
+                    case TokEnd:
+                        m_parseErrorMessage = "Unexpected EOF";
+                        return JSValue();
+                    case TokDot:
+                        m_parseErrorMessage = "Unexpected token '.'";
+                        return JSValue();
+                    case TokAssign:
+                        m_parseErrorMessage = "Unexpected token '='";
+                        return JSValue();
+                    case TokSemi:
+                        m_parseErrorMessage = "Unexpected token ';'";
+                        return JSValue();
+                    case TokError:
                     default:
+                        m_parseErrorMessage = "Could not parse statement";
                         return JSValue();
                 }
             }
@@ -599,6 +709,7 @@ JSValue LiteralParser::parse(ParserState initialState)
                     return JSValue();
                 if (m_lexer.next() == TokEnd)
                     return lastValue;
+                m_parseErrorMessage = "Unexpected content at end of JSON literal";
                 return JSValue();
             }
             default:
