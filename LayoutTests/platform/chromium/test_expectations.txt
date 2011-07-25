@@ -3898,6 +3898,7 @@ BUGWK65063 LINUX GPU : fast/canvas/webgl/draw-arrays-out-of-bounds.html = CRASH 
 BUGWK65063 LINUX : fast/canvas/webgl/drawingbuffer-test.html = CRASH PASS
 BUGWK65063 LINUX : fast/canvas/canvas-bg-multiple-removal.html = CRASH PASS
 BUGWK65063 LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = CRASH PASS
+BUGWK65063 LINUX DEBUG : fast/canvas/webgl/data-view-test.html = CRASH PASS
 BUGWK65063 MAC : css2.1/t0905-c414-flt-01-d-g.html = IMAGE
 
 BUGWK65124 : fast/repaint/japanese-rl-selection-clear.html = FAIL
