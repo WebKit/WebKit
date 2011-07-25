@@ -93,6 +93,9 @@ LevelDBDatabase::LevelDBDatabase()
 
 LevelDBDatabase::~LevelDBDatabase()
 {
+    // m_db's destructor uses m_comparatorAdapter; order of deletion is important.
+    m_db.clear();
+    m_comparatorAdapter.clear();
 }
 
 PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const LevelDBComparator* comparator)

@@ -126,6 +126,10 @@ IDBLevelDBBackingStore::IDBLevelDBBackingStore(const String& identifier, IDBFact
 IDBLevelDBBackingStore::~IDBLevelDBBackingStore()
 {
     m_factory->removeIDBBackingStore(m_identifier);
+
+    // m_db's destructor uses m_comparator. The order of destruction is important.
+    m_db.clear();
+    m_comparator.clear();
 }
 
 PassRefPtr<IDBBackingStore> IDBLevelDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, int64_t maximumSize, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
