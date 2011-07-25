@@ -1,3 +1,15 @@
+2011-07-24  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix AtomicString vs. String usage in JSC binding
+        https://bugs.webkit.org/show_bug.cgi?id=65085
+
+        Reviewed by Darin Adler.
+
+        Use ustringToAtomicString instead of ustringToString where appropriate.
+
+        * bindings/js/JSHTMLAllCollectionCustom.cpp:
+        * bindings/js/JSHTMLCollectionCustom.cpp:
+
 2011-07-24  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSSPropertyOutlineOffset in CSSStyleApplyProperty.

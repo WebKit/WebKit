@@ -87,7 +87,7 @@ static EncodedJSValue JSC_HOST_CALL callHTMLAllCollection(ExecState* exec)
     UString string = exec->argument(0).toString(exec);
     unsigned index = Identifier::toUInt32(exec->argument(1).toString(exec), ok);
     if (ok) {
-        String pstr = ustringToString(string);
+        AtomicString pstr = ustringToAtomicString(string);
         Node* node = collection->namedItem(pstr);
         while (node) {
             if (!index)
