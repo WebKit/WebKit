@@ -1,5 +1,13 @@
 2011-07-25  Adrienne Walker  <enne@google.com>
 
+        [chromium] media-controls-clone started flaky crashing on mac.
+
+        * platform/chromium/test_expectations.txt:
+
+        Unreviewed gardening.
+
+2011-07-25  Adrienne Walker  <enne@google.com>
+
         [chromium] More WebGL flaky crashers on Linux.
 
         * platform/chromium/test_expectations.txt:
