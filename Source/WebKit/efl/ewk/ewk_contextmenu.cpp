@@ -102,14 +102,14 @@ void ewk_context_menu_unref(Ewk_Context_Menu* menu)
  */
 Eina_Bool ewk_context_menu_destroy(Ewk_Context_Menu* menu)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, EINA_FALSE);
 #if ENABLE(CONTEXT_MENUS)
+    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(menu->controller, EINA_FALSE);
-
     menu->controller->clearContextMenu();
-#endif
-
     return EINA_TRUE;
+#else 
+    return EINA_FALSE;
+#endif
 }
 
 /**
