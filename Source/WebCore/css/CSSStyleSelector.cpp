@@ -5189,15 +5189,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     
 #if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrapShape:
-        if (isInitial) {
-            HANDLE_INITIAL_COND(CSSPropertyWebkitWrapShape, WrapShape)
+        HANDLE_INHERIT_AND_INITIAL(wrapShape, WrapShape);
+        if (!primitiveValue)
             return;
-        }
         
-        if (primitiveValue && primitiveValue->getIdent() == CSSValueAuto)
+        if (primitiveValue->getIdent() == CSSValueAuto)
             m_style->setWrapShape(0);
-        
-        if (primitiveValue && primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_SHAPE)
+        else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_SHAPE)
             m_style->setWrapShape(primitiveValue->getShapeValue());
 
         return;

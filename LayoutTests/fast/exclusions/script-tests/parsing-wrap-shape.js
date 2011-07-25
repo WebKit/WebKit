@@ -69,7 +69,10 @@ test("polygon(nonzero, 10px, 20px 30px, 40px 40px, 50px)", "polygon(nonzero, 10p
 
 shouldBeEqualToString('testNotInherited("auto", "rect(10px, 20px, 30px, 40px)")', "parent: auto, child: rect(10px, 20px, 30px, 40px)");
 shouldBeEqualToString('testNotInherited("rect(10px, 20px, 30px, 40px)", "initial")', "parent: rect(10px, 20px, 30px, 40px), child: auto");
-shouldBeEqualToString('testNotInherited("rect(10px, 20px, 30px, 40px)", "inherit")', "parent: rect(10px, 20px, 30px, 40px), child: auto");
+shouldBeEqualToString('testNotInherited("rect(10px, 20px, 30px, 40px)", "")', "parent: rect(10px, 20px, 30px, 40px), child: auto");
+shouldBeEqualToString('testNotInherited("rect(10px, 20px, 30px, 40px)", "inherit")', "parent: rect(10px, 20px, 30px, 40px), child: rect(10px, 20px, 30px, 40px)");
+shouldBeEqualToString('testNotInherited("", "inherit")', "parent: auto, child: auto");
+shouldBeEqualToString('testNotInherited("auto", "inherit")', "parent: auto, child: auto");
 
 // negative tests
 
