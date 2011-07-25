@@ -38,6 +38,7 @@
 
 namespace WebKit {
 
+class WebArrayBufferView;
 class WebDragData;
 class WebElement;
 class WebNode;
@@ -133,6 +134,10 @@ public:
     // Return true (success) if the given npobj is a range object.
     // If so, return that range as a WebRange object.
     WEBKIT_API static bool getRange(NPObject* range, WebRange*);
+
+    // Return true (success) if the given npobj is an ArrayBufferView object.
+    // If so, return it as a WebArrayBufferView object.
+    WEBKIT_API static bool getArrayBufferView(NPObject* arrayBufferView, WebArrayBufferView*);
 
     // Return true (success) if the given npobj is an element.
     // If so, return that element as a WebElement object.

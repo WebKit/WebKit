@@ -35,8 +35,10 @@
 #include "npruntime_priv.h"
 
 #if USE(V8)
+#include "ArrayBufferView.h"
 #include "NPV8Object.h"  // for PrivateIdentifier
 #include "Range.h"
+#include "V8ArrayBufferView.h"
 #include "V8BindingState.h"
 #include "V8DOMWrapper.h"
 #include "V8Element.h"
@@ -46,6 +48,7 @@
 #elif USE(JSC)
 #include "bridge/c/c_utility.h"
 #endif
+#include "WebArrayBufferView.h"
 #include "WebElement.h"
 #include "WebRange.h"
 
@@ -234,6 +237,21 @@ static bool getElementImpl(NPObject* object, WebElement* webElement)
     return true;
 }
 
+static bool getArrayBufferViewImpl(NPObject* object, WebArrayBufferView* arrayBufferView)
+{
+    if (!object || (object->_class != npScriptObjectClass))
+        return false;
+
+    V8NPObject* v8NPObject = reinterpret_cast<V8NPObject*>(object);
+    v8::Handle<v8::Object> v8Object(v8NPObject->v8Object);
+    ArrayBufferView* native = V8ArrayBufferView::HasInstance(v8Object) ? V8ArrayBufferView::toNative(v8Object) : 0;
+    if (!native)
+        return false;
+
+    *arrayBufferView = WebArrayBufferView(native);
+    return true;
+}
+
 static NPObject* makeIntArrayImpl(const WebVector<int>& data)
 {
     v8::HandleScope handleScope;
@@ -262,6 +280,16 @@ bool WebBindings::getRange(NPObject* range, WebRange* webRange)
 {
 #if USE(V8)
     return getRangeImpl(range, webRange);
+#else
+    // Not supported on other ports (JSC, etc).
+    return false;
+#endif
+}
+
+bool WebBindings::getArrayBufferView(NPObject* arrayBufferView, WebArrayBufferView* webArrayBufferView)
+{
+#if USE(V8)
+    return getArrayBufferViewImpl(arrayBufferView, webArrayBufferView);
 #else
     // Not supported on other ports (JSC, etc).
     return false;

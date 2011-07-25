@@ -34,6 +34,7 @@
 #include "DRTDevToolsAgent.h"
 #include "DRTDevToolsClient.h"
 #include "LayoutTestController.h"
+#include "WebArrayBufferView.h"
 #include "WebDataSource.h"
 #include "WebDocument.h"
 #include "WebElement.h"
@@ -477,13 +478,17 @@ void TestShell::dump()
 
     if (shouldDumpAsAudio) {
         m_printer->handleAudioHeader();
-
-        const string& encodedAudioData = m_layoutTestController->encodedAudioData();
-        if (fwrite(encodedAudioData.c_str(), 1, encodedAudioData.size(), stdout) != encodedAudioData.size())
+        
+        const WebKit::WebArrayBufferView& webArrayBufferView = m_layoutTestController->audioData();
+        printf("Content-Length: %d\n", webArrayBufferView.byteLength());
+        
+        if (fwrite(webArrayBufferView.baseAddress(), 1, webArrayBufferView.byteLength(), stdout) != webArrayBufferView.byteLength())
             FATAL("Short write to stdout, disk full?\n");
         printf("\n");
-
+        printf("#EOF\n");
+        
         m_printer->handleTestFooter(true);
+
         fflush(stdout);
         fflush(stderr);
         return;

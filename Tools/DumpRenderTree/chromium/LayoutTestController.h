@@ -43,6 +43,7 @@
 
 #include "CppBoundClass.h"
 #include "Task.h"
+#include "WebArrayBufferView.h"
 #include "WebString.h"
 #include "WebTextDirection.h"
 #include "WebURL.h"
@@ -249,9 +250,9 @@ public:
     void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
     void setEditingBehavior(const CppArgumentList&, CppVariant*);
 
-    // Deals with Web Audio base64 encoded WAVE file data.
-    void setEncodedAudioData(const CppArgumentList&, CppVariant*);
-    const std::string& encodedAudioData() const { return m_encodedAudioData; } 
+    // Deals with Web Audio WAV file data.
+    void setAudioData(const CppArgumentList&, CppVariant*);
+    const WebKit::WebArrayBufferView& audioData() const { return m_audioData; } 
 
     // The following are only stubs.
     // FIXME: Implement any of these that are needed to pass the layout tests.
@@ -619,8 +620,8 @@ private:
 
     OwnPtr<WebKit::WebSpeechInputControllerMock> m_speechInputControllerMock;
 
-    // base64 encoded WAV audio data is stored here.
-    std::string m_encodedAudioData;
+    // WAV audio data is stored here.
+    WebKit::WebArrayBufferView m_audioData;
 };
 
 #endif // LayoutTestController_h
