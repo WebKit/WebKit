@@ -204,7 +204,7 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             this.valueElement.addStyleClass("error");
         if (this.property.value.type)
             this.valueElement.addStyleClass("console-formatted-" + this.property.value.type);
-        if (this.property.value.subtype === "node")
+        if (this.property.value.type === "node")
             this.valueElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);
 
         this.listItemElement.removeChildren();

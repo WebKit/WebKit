@@ -615,16 +615,11 @@ WebInspector.ConsoleView.prototype = {
 
     _format: function(output, forceObjectFormat)
     {
-        var type;
-        if (forceObjectFormat)
-            type = "object";
-        else if (output instanceof WebInspector.RemoteObject)
-            type = output.subtype || output.type;
-        else
-            type = typeof output;
+        var isProxy = (output != null && typeof output === "object");
+        var type = (forceObjectFormat ? "object" : WebInspector.RemoteObject.type(output));
 
         var formatter = this._customFormatters[type];
-        if (!formatter) {
+        if (!formatter || !isProxy) {
             formatter = this._formatvalue;
             output = output.description;
         }
@@ -712,7 +707,7 @@ WebInspector.ConsoleView.prototype = {
     _formatAsArrayEntry: function(output)
     {
         // Prevent infinite expansion of cross-referencing arrays.
-        return this._format(output, output.subtype && output.subtype === "array");
+        return this._format(output, WebInspector.RemoteObject.type(output) === "array");
     }
 }
 
@@ -849,10 +844,6 @@ WebInspector.ConsoleMessage.prototype = {
         // Formatting code below assumes that parameters are all wrappers whereas frontend console
         // API allows passing arbitrary values as messages (strings, numbers, etc.). Wrap them here.
         for (var i = 0; i < parameters.length; ++i) {
-            // FIXME: Only pass runtime wrappers here.
-            if (parameters[i] instanceof WebInspector.RemoteObject)
-                continue;
-
             if (typeof parameters[i] === "object")
                 parameters[i] = WebInspector.RemoteObject.fromPayload(parameters[i]);
             else

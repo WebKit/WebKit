@@ -1128,7 +1128,7 @@ WebInspector.log = function(message, messageLevel)
         WebInspector.log.repeatCount = repeatCount;
 
         // ConsoleMessage expects a proxy object
-        message = WebInspector.RemoteObject.fromPrimitiveValue(message);
+        message = new WebInspector.RemoteObject.fromPrimitiveValue(message);
 
         // post the message
         var msg = new WebInspector.ConsoleMessage(
@@ -1168,7 +1168,7 @@ WebInspector.log = function(message, messageLevel)
 WebInspector.inspect = function(payload, hints)
 {
     var object = WebInspector.RemoteObject.fromPayload(payload);
-    if (object.subtype === "node") {
+    if (object.type === "node") {
         // Request node from backend and focus it.
         object.pushNodeToFrontend(WebInspector.updateFocusedNode.bind(WebInspector), object.release.bind(object));
         return;

@@ -26,7 +26,7 @@ function test()
 
             function step2(error, result, wasThrown)
             {
-                InspectorTest.addResult(result.value);
+                InspectorTest.addResult(result.description);
                 next();
             }
         },
@@ -48,7 +48,7 @@ function test()
 
             function step2(error, result, wasThrown)
             {
-                InspectorTest.addResult(result.value);
+                InspectorTest.addResult(result.description);
                 next();
             }
         }

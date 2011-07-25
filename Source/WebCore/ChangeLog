@@ -1,5 +1,42 @@
 2011-07-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r91665.
+        http://trac.webkit.org/changeset/91665
+        https://bugs.webkit.org/show_bug.cgi?id=65118
+
+        Breaks inspector tests on JSC (Requested by pfeldman on
+        #webkit).
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+        ():
+        * inspector/Inspector.json:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._format):
+        (WebInspector.ConsoleView.prototype._formatAsArrayEntry):
+        (WebInspector.ConsoleMessage.prototype._format):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode.setTooltip):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.nodePrototypesReady):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPrimitiveValue):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.callFunction):
+        (WebInspector.LocalJSONObject.prototype.get type):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._showPopup.showObjectPopup):
+        (WebInspector.SourceFrame.prototype._showPopup):
+        * inspector/front-end/inspector.js:
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+        (WebInspector.inspect):
+
+2011-07-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r91668.
         http://trac.webkit.org/changeset/91668
         https://bugs.webkit.org/show_bug.cgi?id=65117

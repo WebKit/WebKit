@@ -50,31 +50,14 @@ var InjectedScript = function()
     this._objectGroups = {};
 }
 
-InjectedScript.primitiveTypes = {
-    undefined: true,
-    boolean: true,
-    number: true,
-    string: true
-}
-
 InjectedScript.prototype = {
-    isPrimitiveValue: function(object)
-    {
-        // FIXME(33716): typeof document.all is always 'undefined'.
-        return InjectedScript.primitiveTypes[typeof object] && !this._isHTMLAllCollection(object);
-    },
-
     wrapObject: function(object, groupName, canAccessInspectedWindow)
     {
         if (canAccessInspectedWindow)
             return this._wrapObject(object, groupName);
-
         var result = {};
         result.type = typeof object;
-        if (this._isPrimitiveValue(object))
-            result.value = object;
-        else
-            result.description = this._toString(object);
+        result.description = this._toString(object);
         return result;
     },
 
@@ -111,32 +94,24 @@ InjectedScript.prototype = {
     _wrapObject: function(object, objectGroupName)
     {
         try {
-            return new InjectedScript.RemoteObject(object, objectGroupName);
+            if (typeof object === "object" || typeof object === "function" || this._isHTMLAllCollection(object)) {
+                var id = this._lastBoundObjectId++;
+                this._idToWrappedObject[id] = object;
+                var objectId = "{\"injectedScriptId\":" + injectedScriptId + ",\"id\":" + id + "}";
+                if (objectGroupName) {
+                    var group = this._objectGroups[objectGroupName];
+                    if (!group) {
+                        group = [];
+                        this._objectGroups[objectGroupName] = group;
+                    }
+                    group.push(id);
+                    this._idToObjectGroupName[id] = objectGroupName;
+                }
+            }
+            return InjectedScript.RemoteObject.fromObject(object, objectId);
         } catch (e) {
-            try {
-                var description = injectedScript._describe(e);
-            } catch (ex) {
-                var description = "<failed to convert exception to string>";
-            }
-            return new InjectedScript.RemoteObject(description);
+            return InjectedScript.RemoteObject.fromException(e);
         }
-    },
-
-    _bind: function(object, objectGroupName)
-    {
-        var id = this._lastBoundObjectId++;
-        this._idToWrappedObject[id] = object;
-        var objectId = "{\"injectedScriptId\":" + injectedScriptId + ",\"id\":" + id + "}";
-        if (objectGroupName) {
-            var group = this._objectGroups[objectGroupName];
-            if (!group) {
-                group = [];
-                this._objectGroups[objectGroupName] = group;
-            }
-            group.push(id);
-            this._idToObjectGroupName[id] = objectGroupName;
-        }
-        return objectId;
     },
 
     _parseObjectId: function(objectId)
@@ -381,7 +356,7 @@ InjectedScript.prototype = {
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
-        if (!object || this._subtype(object) !== "node")
+        if (!object || this._type(object) !== "node")
             return null;
         return object;
     },
@@ -397,17 +372,18 @@ InjectedScript.prototype = {
         return (typeof object === "undefined") && InjectedScriptHost.isHTMLAllCollection(object);
     },
 
-    _subtype: function(obj)
+    _type: function(obj)
     {
         if (obj === null)
             return "null";
 
         var type = typeof obj;
-        if (this.isPrimitiveValue(obj))
-            return null;
-
-        if (this._isHTMLAllCollection(obj))
-            return "array";
+        if (type !== "object" && type !== "function") {
+            // FIXME(33716): typeof document.all is always 'undefined'.
+            if (this._isHTMLAllCollection(obj))
+                return "array";
+            return type;
+        }
 
         var preciseType = InjectedScriptHost.type(obj);
         if (preciseType)
@@ -423,39 +399,39 @@ InjectedScript.prototype = {
         }
 
         // If owning frame has navigated to somewhere else window properties will be undefined.
-        return null;
+        // In this case just return result of the typeof.
+        return type;
     },
 
     _describe: function(obj)
     {
-        if (this.isPrimitiveValue(obj))
-            return null;
+        var type = this._type(obj);
 
-        var type = typeof obj;
-        if (type === "function")
-            return this._toString(obj);
-
-        // Type is object, get subtype.
-        var subtype = this._subtype(obj);
-
-        if (subtype === "regexp")
-            return this._toString(obj);
-
-        var className = InjectedScriptHost.internalConstructorName(obj);
-        if (subtype === "array") {
+        switch (type) {
+        case "object":
+            // Fall through.
+        case "node":
+            var result = InjectedScriptHost.internalConstructorName(obj);
+            if (result === "Object") {
+                // In Chromium DOM wrapper prototypes will have Object as their constructor name,
+                // get the real DOM wrapper name from the constructor property.
+                var constructorName = obj.constructor && obj.constructor.name;
+                if (constructorName)
+                    return constructorName;
+            }
+            return result;
+        case "array":
+            var className = InjectedScriptHost.internalConstructorName(obj);
             if (typeof obj.length === "number")
                 className += "[" + obj.length + "]";
             return className;
+        case "string":
+            return obj;
+        case "function":
+            // Fall through.
+        default:
+            return this._toString(obj);
         }
-
-        if (className === "Object") {
-            // In Chromium DOM wrapper prototypes will have Object as their constructor name,
-            // get the real DOM wrapper name from the constructor property.
-            var constructorName = obj.constructor && obj.constructor.name;
-            if (constructorName)
-                return constructorName;
-        }
-        return className;
     },
 
     _toString: function(obj)
@@ -467,24 +443,40 @@ InjectedScript.prototype = {
 
 var injectedScript = new InjectedScript();
 
-InjectedScript.RemoteObject = function(object, objectGroupName)
+InjectedScript.RemoteObject = function(objectId, type, className, description, hasChildren)
 {
-    this.type = typeof object;
-    if (injectedScript.isPrimitiveValue(object) || object === null) {
-        // We don't send undefined values over JSON.
-        if (typeof object !== "undefined")
-            this.value = object;
-        if (object === null)
-            this.subtype = "null";
-        return;
+    if (objectId) {
+        this.objectId = objectId;
+        this.hasChildren = hasChildren;
     }
+    this.type = type;
+    if (className)
+        this.className = className;
+    this.description = description;
+}
 
-    this.objectId = injectedScript._bind(object, objectGroupName);
-    var subtype = injectedScript._subtype(object)
-    if (subtype)
-        this.subtype = subtype;
-    this.className = InjectedScriptHost.internalConstructorName(object);
-    this.description = injectedScript._describe(object);
+InjectedScript.RemoteObject.fromException = function(e)
+{
+    try {
+        var description = injectedScript._describe(e);
+    } catch (ex) {
+        var description = "<failed to convert exception to string>";
+    }
+    return new InjectedScript.RemoteObject(null, "string", null, "[ Exception: " + description + " ]");
+}
+
+// This method may throw
+InjectedScript.RemoteObject.fromObject = function(object, objectId)
+{
+    var type = injectedScript._type(object);
+    var rawType = typeof object;
+    var hasChildren = (rawType === "object" && object !== null && (!!Object.getOwnPropertyNames(object).length || !!object.__proto__)) || rawType === "function";
+    var className;
+    // Avoid explicit assignment to undefined as its value can be overriden (see crbug.com/88414).
+    if (typeof object === "object" || typeof object === "function")
+        className = InjectedScriptHost.internalConstructorName(object);
+    var description = injectedScript._describe(object);
+    return new InjectedScript.RemoteObject(objectId, type, className, description, hasChildren);
 }
 
 InjectedScript.CallFrameProxy = function(ordinal, callFrame)
@@ -653,7 +645,7 @@ CommandLineAPIImpl.prototype = {
 
     copy: function(object)
     {
-        if (injectedScript._subtype(object) === "node")
+        if (injectedScript._type(object) === "node")
             object = object.outerHTML;
         InjectedScriptHost.copyText(object);
     },

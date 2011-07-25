@@ -1,5 +1,18 @@
 2011-07-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r91665.
+        http://trac.webkit.org/changeset/91665
+        https://bugs.webkit.org/show_bug.cgi?id=65118
+
+        Breaks inspector tests on JSC (Requested by pfeldman on
+        #webkit).
+
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/runtime/runtime-callFunctionOn.html:
+
+2011-07-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r91668.
         http://trac.webkit.org/changeset/91668
         https://bugs.webkit.org/show_bug.cgi?id=65117
