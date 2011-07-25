@@ -1,3 +1,11 @@
+2011-07-25  Adrienne Walker  <enne@google.com>
+
+        [chromium] Mark some media tests as being crashers on Linux.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-25  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSS Exclusions] Use HANDLE_INHERIT_AND_INITIAL when parsing -webkit-wrap-shape

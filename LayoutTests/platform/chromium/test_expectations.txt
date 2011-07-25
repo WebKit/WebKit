@@ -3888,7 +3888,8 @@ BUGRNIWA : fast/css/absolute-child-with-percent-height-inside-relative-parent.ht
 
 BUGWK65009 MAC : scrollbars/scrollbar-drag-thumb-with-large-content.html = TEXT
 
-BUGWK65062 WIN MAC : http/tests/media/video-error-abort.html = CRASH
+BUGWK65062 : http/tests/media/video-error-abort.html = CRASH
+BUGWK65062 LINUX : media/video-display-toggle.html = CRASH PASS
 
 BUGWK65063 LINUX GPU: fast/canvas/webgl/gl-enable-enum-test.html = CRASH PASS
 BUGWK65063 LINUX : fast/canvas/webgl/drawingbuffer-test.html = CRASH PASS
