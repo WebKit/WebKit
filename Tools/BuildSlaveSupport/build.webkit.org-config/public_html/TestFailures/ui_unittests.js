@@ -21,48 +21,6 @@ var kExampleResultsByTest = {
     }
 }
 
-test("summarizeTest", 3, function() {
-    var testName = 'userscripts/another-test.html';
-    var summary = ui.summarizeTest(testName, kExampleResultsByTest[testName]);
-    var summaryHTML = summary.html();
-    ok(summaryHTML.indexOf('scrollbars/custom-scrollbar-with-incomplete-style.html') == -1);
-    ok(summaryHTML.indexOf('userscripts/another-test.html') != -1);
-    ok(summaryHTML.indexOf('Mock Builder') != -1);
-});
-
-test("summarizeTest (data attributes)", 2, function() {
-    var testName = 'userscripts/taco.html';
-    var summary = ui.summarizeTest(testName, {
-        "Mock Builder": {
-            "expected": "PASS",
-            "actual": "TEXT IMAGE+TEXT"
-        }
-    });
-    equal(summary.attr(config.kTestNameAttr), "userscripts/taco.html");
-    equal(summary.attr(config.kFailureTypesAttr), "TEXT IMAGE+TEXT");
-});
-
-test("summarizeRegressionRange", 3, function() {
-    var summaryWithMultipleRevisions = ui.summarizeRegressionRange(0, 0);
-    summaryWithMultipleRevisions.wrap('<wrapper></wrapper>');
-    equal(summaryWithMultipleRevisions.parent().html(), '<div class="regression-range">Unknown</div>');
-
-    var summaryWithMultipleRevisions = ui.summarizeRegressionRange(90424, 90426);
-    summaryWithMultipleRevisions.wrap('<wrapper></wrapper>');
-    equal(summaryWithMultipleRevisions.parent().html(), '<div class="regression-range"><a target="_blank" href="http://trac.webkit.org/log/trunk/?rev=90424&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90424</a></div>');
-
-    var summaryWithOneRevision = ui.summarizeRegressionRange(90425, 90426);
-    summaryWithOneRevision.wrap('<wrapper></wrapper>');
-    equal(summaryWithOneRevision.parent().html(), '<div class="regression-range"><a target="_blank" href="http://trac.webkit.org/log/trunk/?rev=90425&amp;stop_rev=90427&amp;limit=100&amp;verbose=on">r90427-r90425</a></div>');
-});
-
-test("failureCount", 4, function() {
-    equal(ui.failureCount(0), '');
-    equal(ui.failureCount(1), 'Seen once.');
-    equal(ui.failureCount(2), 'Seen 2 times.');
-    equal(ui.failureCount(3), 'Seen 3 times.');
-});
-
 test("infobarMessageForCompileErrors", 1, function() {
     var message = ui.infobarMessageForCompileErrors(['Mock Builder', 'Another Builder']);
     message.wrap('<wrapper></wrapper>');

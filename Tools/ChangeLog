@@ -1,3 +1,30 @@
+2011-07-25  Adam Barth  <abarth@webkit.org>
+
+        Overhaul garden-o-matic frontend to integrate revision history and failures
+        https://bugs.webkit.org/show_bug.cgi?id=65089
+
+        Reviewed by Dimitri Glazkov.
+
+        This is a major overhaul of the garden-o-matic frontend.  The new UI
+        integrates the revision history information with failures.  Failures
+        appear in context adjacent to the revisions that caused them (which are
+        highlighted).  Each buildbot receives a collumn to the left, which
+        indicates which revisions that bot has tested and whether that bot
+        showed the indicated failures.
+
+        Failures are selectable with checkboxes, and can then either be
+        examined or rebaselined.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui_unittests.js:
+
 2011-07-25  Holger Hans Peter Freyther  <zecke@selfish.org>
 
         [buildbot] Add Qt Linux MIPSEL Configuration

@@ -24,68 +24,6 @@ ui.urlForTest = function(testName)
     return 'http://trac.webkit.org/browser/trunk/LayoutTests/' + testName;
 }
 
-ui.urlForRevisionRange = function(firstRevision, lastRevision)
-{
-    if (firstRevision != lastRevision)
-        return 'http://trac.webkit.org/log/trunk/?rev=' + lastRevision + '&stop_rev=' + firstRevision + '&limit=100&verbose=on';
-    return 'http://trac.webkit.org/changeset/' + firstRevision;
-};
-
-ui.regressionsContainer = function()
-{
-    return $(
-        '<table class="results-summary">' +
-            '<thead>' +
-                '<tr>' +
-                    '<th></th><th>Test</th><th>Bot</th><th>Regression Range</th><th>Frequency</th>' +
-            '</thead>' +
-            '<tbody></tbody>' +
-        '</table>');
-};
-
-ui.summarizeTest = function(testName, resultNodesByBuilder)
-{
-    var unexpectedResults = results.collectUnexpectedResults(resultNodesByBuilder);
-    var block = $(
-        '<tr class="test">' +
-          '<td><input type="checkbox"></td>' +
-          '<td class="what"><a class="test-name"></a></td>' +
-          '<td class="where"><ul></ul></td>' +
-          '<td class="when"></td>' +
-          '<td class="how-many"></td>' +
-        '</tr>');
-    var failureTypes = unexpectedResults.join(' ');
-    $('.test-name', block).text(testName).attr('href', ui.urlForTest(testName)).addClass(failureTypes);
-    block.attr(config.kTestNameAttr, testName);
-    block.attr(config.kFailureTypesAttr, failureTypes);
-
-    var where = $('.where', block);
-    $.each(resultNodesByBuilder, function(builderName, resultNode) {
-        var listElement = $('<li class="builder-name"></li>');
-        listElement.attr(config.kBuilderNameAttr, builderName).attr(config.kFailureTypesAttr, results.unexpectedResults(resultNode)).text(displayNameForBuilder(builderName));
-        where.append(listElement);
-    });
-
-    return block;
-};
-
-ui.summarizeRegressionRange = function(oldestFailingRevision, newestPassingRevision)
-{
-    if (!oldestFailingRevision || !newestPassingRevision)
-        return $('<div class="regression-range">Unknown</div>');
-
-    var impliedFirstFailingRevision = newestPassingRevision + 1;
-
-    var href = ui.urlForRevisionRange(impliedFirstFailingRevision, oldestFailingRevision);
-    var text = impliedFirstFailingRevision == oldestFailingRevision ?
-        displayNameForRevision(impliedFirstFailingRevision) :
-        displayNameForRevision(impliedFirstFailingRevision) + '-' + displayNameForRevision(oldestFailingRevision);
-
-    var block = $('<div class="regression-range"><a target="_blank"></a></div>');
-    $('a', block).attr('href', href).text(text)
-    return block;
-};
-
 ui.infobarMessageForCompileErrors = function(builderNameList)
 {
     var block = $('<div class="compile-errors">Build Failed:<ul></ul></div>');
@@ -98,15 +36,6 @@ ui.infobarMessageForCompileErrors = function(builderNameList)
     });
 
     return block;
-};
-
-ui.failureCount = function(failureCount)
-{
-    if (failureCount < 1)
-        return '';
-    if (failureCount == 1)
-        return 'Seen once.';
-    return 'Seen ' + failureCount + ' times.';
 };
 
 ui.failureDetailsStatus = function(testName, selectedBuilderName, failureTypes, builderNameList)
@@ -144,21 +73,73 @@ ui.failureDetails = function(resultsURLs)
     return block;
 };
 
-ui.commitLog = function(commitDataList)
+function builderTableDataCells(resultNodesByBuilder)
 {
-    var block = $('<div class="changelog"></div>');
+    if (!resultNodesByBuilder)
+        resultNodesByBuilder = {};
+
+    var list = [];
+
+    $.each(config.kBuilders, function(index, builderName) {
+        var block = $('<td class="builder"></td>');
+        block.attr('title', displayNameForBuilder(builderName));
+        block.attr(config.kBuilderNameAttr, builderName);
+
+        if (builderName in resultNodesByBuilder) {
+            var unexpectedFailures = results.unexpectedResults(resultNodesByBuilder[builderName]);
+            var failureTypes = unexpectedFailures.join(' ');
+            block.attr(config.kFailureTypesAttr, failureTypes);
+        }
+
+        list.push(block[0])
+    });
+
+    return $(list);
+}
+
+ui.summarizeFailure = function(failureAnalysis)
+{
+    var block = $('<tr class="result"></tr>');
+    block.append(builderTableDataCells(failureAnalysis.resultNodesByBuilder));
+    block.append(
+        '<td class="test">' +
+          '<div class="what"><input type="checkbox"> <a class="test-name"></a></div>' +
+        '</td></tr>');
+    block.attr(config.kTestNameAttr, failureAnalysis.testName);
+
+    var unexpectedResults = results.collectUnexpectedResults(failureAnalysis.resultNodesByBuilder);
+    var failureTypes = unexpectedResults.join(' ');
+    $('.test-name', block).text(failureAnalysis.testName).attr('href', ui.urlForTest(failureAnalysis.testName)).addClass(failureTypes);
+
+    return block;
+};
+
+ui.commitEntry = function(commitData)
+{
+    var entry = $('<td class="entry"></td>');
+
+    entry.append('<div class="summary"></div><div class="details"><a target="_blank" class="revision"></a> <span class="author"></span> <span class="reviewer-container">(Reviewer: <span class="reviewer"></span>)</span></div><div class="regressions"></div>');
+    $('.summary', entry).text(commitData.summary);
+    $('.revision', entry).attr('href', trac.changesetURL(commitData.revision)).text(displayNameForRevision(commitData.revision));
+    $('.author', entry).text(commitData.author);
+    if (commitData.reviewer)
+        $('.reviewer', entry).text(commitData.reviewer);
+    else
+        $('.reviewer-container', entry).detach();
+
+    return entry;
+}
+
+ui.changelog = function(commitDataList)
+{
+    var block = $('<table class="changelog"><tbody></tbody></table>');
 
     $.each(commitDataList, function(index, commitData) {
-        var entry = $('<div class="entry"><div class="summary"></div><div class="details"><a target="_blank" class="revision"></a> <span class="author"></span> <span class="reviewer-container">(Reviewer: <span class="reviewer"></span>)</span></div></div>');
-        entry.attr(config.kRevisionAttr, commitData.revision);
-        $('.summary', entry).text(commitData.summary);
-        $('.revision', entry).attr('href', trac.changesetURL(commitData.revision)).text(displayNameForRevision(commitData.revision));
-        $('.author', entry).text(commitData.author);
-        if (commitData.reviewer)
-            $('.reviewer', entry).text(commitData.reviewer);
-        else
-            $('.reviewer-container', entry).detach();
-        block.append(entry);
+        var row = $('<tr class="revision"></tr>');
+        row.append(builderTableDataCells());
+        row.attr(config.kRevisionAttr, commitData.revision);
+        row.append(ui.commitEntry(commitData));
+        $('tbody', block).append(row);
     });
 
     return block;

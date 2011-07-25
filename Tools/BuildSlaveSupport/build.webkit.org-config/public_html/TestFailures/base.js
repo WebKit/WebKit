@@ -2,12 +2,24 @@ var base = base || {};
 
 (function(){
 
+base.asInteger = function(stringOrInteger)
+{
+    if (typeof stringOrInteger == 'string')
+        return parseInt(stringOrInteger);
+    return stringOrInteger;
+};
+
 base.endsWith = function(string, suffix)
 {
     if (suffix.length > string.length)
         return false;
     var expectedIndex = string.length - suffix.length;
     return string.lastIndexOf(suffix) == expectedIndex;
+};
+
+base.repeatString = function(string, count)
+{
+    return new Array(count + 1).join(string);
 };
 
 base.joinPath = function(parent, child)
@@ -109,6 +121,32 @@ base.RequestTracker.prototype.requestComplete = function()
     --this._requestsInFlight;
     if (!this._requestsInFlight)
         this._callback.apply(null, this._args);
+};
+
+base.callInParallel = function(functionList, callback)
+{
+    var requestTracker = new base.RequestTracker(functionList.length, callback);
+
+    $.each(functionList, function(index, func) {
+        func(function() {
+            requestTracker.requestComplete();
+        });
+    });
+};
+
+base.callInSequence = function(functionList, callback)
+{
+    var nextIndex = 0;
+
+    function callNext()
+    {
+        if (nextIndex >= functionList.length)
+            callback();
+
+        functionList[nextIndex].call(null, callNext);
+    }
+
+    callNext();
 };
 
 base.CallbackIterator = function(callback, listOfArgumentArrays)

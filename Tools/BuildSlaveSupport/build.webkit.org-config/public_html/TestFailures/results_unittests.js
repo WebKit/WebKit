@@ -39,9 +39,8 @@ var kExampleResultsJSON = {
     "revision": "90430"
 };
 
-test("BuilderResults.unexpectedFailures", 1, function() {
-    var builderResults = new results.BuilderResults(kExampleResultsJSON);
-    var unexpectedFailures = builderResults.unexpectedFailures();
+test("unexpectedFailures", 1, function() {
+    var unexpectedFailures = results.unexpectedFailures(kExampleResultsJSON);
     deepEqual(unexpectedFailures, {
         "userscripts/another-test.html": {
             "expected": "PASS",
@@ -51,9 +50,8 @@ test("BuilderResults.unexpectedFailures", 1, function() {
 });
 
 test("unexpectedFailuresByTest", 1, function() {
-    var builderResults = new results.BuilderResults(kExampleResultsJSON);
     var unexpectedFailuresByTest = results.unexpectedFailuresByTest({
-        "Mock Builder": builderResults
+        "Mock Builder": kExampleResultsJSON
     });
     deepEqual(unexpectedFailuresByTest, {
         "userscripts/another-test.html": {

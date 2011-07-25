@@ -202,22 +202,17 @@ function isResultNode(node)
     return !!node.actual;
 }
 
-results.BuilderResults = function(resultsJSON)
+results.unexpectedFailures = function(resultsTree)
 {
-    this._resultsJSON = resultsJSON;
-};
-
-results.BuilderResults.prototype.unexpectedFailures = function()
-{
-    return base.filterTree(this._resultsJSON.tests, isResultNode, isUnexpectedFailure);
+    return base.filterTree(resultsTree.tests, isResultNode, isUnexpectedFailure);
 };
 
 results.unexpectedFailuresByTest = function(resultsByBuilder)
 {
     var unexpectedFailures = {};
 
-    $.each(resultsByBuilder, function(builderName, builderResults) {
-        $.each(builderResults.unexpectedFailures(), function(testName, resultNode) {
+    $.each(resultsByBuilder, function(builderName, resultsTree) {
+        $.each(results.unexpectedFailures(resultsTree), function(testName, resultNode) {
             unexpectedFailures[testName] = unexpectedFailures[testName] || {};
             unexpectedFailures[testName][builderName] = resultNode;
         });
@@ -483,7 +478,7 @@ results.fetchBuildersWithCompileErrors = function(callback) {
 results.fetchResultsForBuilder = function(builderName, callback)
 {
     base.jsonp(resultsSummaryURL(builderName, kResultsName), function(resultsTree) {
-        callback(new results.BuilderResults(resultsTree));
+        callback(resultsTree);
     });
 };
 

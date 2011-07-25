@@ -18,15 +18,15 @@ table {
 td, th {
     overflow: hidden;
     vertical-align: top;
-    border-right: 1px solid #c6c6c6;
+    /* border-right: 1px solid #c6c6c6; */
 }
 
 td:last-of-type, th:last-of-type {
-    border-right: 0px;
+    /* border-right: 0px; */
 }
 
 th {
-    border-bottom: 1px solid #c6c6c6;
+    /* border-bottom: 1px solid #c6c6c6; */
 }
 
 button {
@@ -137,12 +137,37 @@ button.default:hover {
 /*** recent-history ***/
 
 .recent-history {
-    width: 300px;
-    float: left;
+}
+
+.recent-history .builder {
+    width: 5px;
+    border-right: 1px solid #f5f5f5;
+}
+
+.recent-history .built {
+    background-color: #c6c6c6;
+}
+
+.recent-history td[data-failure-types] {
+    background-color: Black;
+}
+
+.changelog .result {
+    padding: 3px 0px;
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+}
+
+.changelog .test {
+    padding-left: 3px;
 }
 
 .changelog .entry {
-    margin: 10px 5px;
+    padding: 5px 0px 5px 3px;
+}
+
+.changelog .possible-regression {
+    background-color: PapayaWhip;
 }
 
 .changelog .details, .changelog .details a {
@@ -153,53 +178,10 @@ button.default:hover {
     font-style: italic;
 }
 
-/*** results-summary ***/
-
-.results .toolbar {
-    text-align: center;
-    display: none;
-}
-
-table.results-summary {
-    width: auto;
-    table-layout: auto;
-    margin: 5px;
-    border: 1px solid #c6c6c6;
-}
-
-.results-summary td, .results-summary th {
-    padding: 4px;
-}
-
-.results-summary tbody tr {
-    display: none;
-}
-
-.results-summary ul {
-    margin: 0px;
-    padding: 0px;
-    list-style: none;
-    display: inline-block;
-}
-
-.results-summary li {
-    display: inline-block;
-    margin: 0px 5px;
-}
-
-.results-summary a {
-    font-weight: normal;
-}
-
-.results-summary .what a {
-    text-decoration: none;
-    padding: 1px 2px;
-    color: black;
-}
-
 .test-name.IMAGE\+TEXT::after {
     content: 'IMAGE+TEXT';
     font-weight: normal;
+    text-decoration: none;
     color: white;
     background-color: Indigo;
     font-size: 10px;
@@ -211,6 +193,7 @@ table.results-summary {
 .test-name.IMAGE::after {
     content: 'IMAGE';
     font-weight: normal;
+    text-decoration: none;
     color: white;
     background-color: MidnightBlue;
     font-size: 10px;
@@ -222,6 +205,7 @@ table.results-summary {
 .test-name.TIMEOUT::after {
     content: 'TIMEOUT';
     font-weight: normal;
+    text-decoration: none;
     color: white;
     background-color: DarkGoldenRod;
     font-size: 10px;
@@ -233,6 +217,7 @@ table.results-summary {
 .test-name.TEXT::after {
     content: 'TEXT';
     font-weight: normal;
+    text-decoration: none;
     color: white;
     background-color: DodgerBlue;
     font-size: 10px;
@@ -244,18 +229,13 @@ table.results-summary {
 .test-name.CRASH::after {
     content: 'CRASH';
     font-weight: normal;
+    text-decoration: none;
     color: white;
     background-color: Tomato;
     font-size: 10px;
     padding: 1px 2px;
     margin: 0 0 0 3px;
     border-radius: 4px;
-}
-
-/* If we've only seen a given test failure once, we dim it so as not to distract the gardener. */
-.results-summary .test[data-failure-count="1"] {
-    -webkit-transition: 1s opacity;
-    opacity: 0.5;
 }
 
 /*** results-detail ***/

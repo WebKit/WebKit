@@ -62,6 +62,9 @@ function findSummary(message)
             continue;
         if (findReviewer(line))
             continue;
+        // Old-style commit message.
+        if (/^\d\d\d\d-\d\d-\d\d/.exec(line))
+            continue;
         if (line.length > 0)
             return line;
     }
