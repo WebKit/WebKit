@@ -1,3 +1,18 @@
+2011-07-24  Rob Buis  <rbuis@rim.com>
+
+        Crash in SVGUseElement::updateContainerOffsets on <use> with no parent
+        https://bugs.webkit.org/show_bug.cgi?id=63646
+
+        Reviewed by Darin Adler.
+
+        Prevent using invalid targetElementInstance->shadowTreeElement after shadow render tree recreation. This situation can
+        only occur when there was a valid shadowTreeElement before setting xlink:href to empty/invalid.
+
+        Test: svg/custom/use-shadow-root-parent-removal.svg
+
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::svgAttributeChanged):
+
 2011-07-24  Patrick Gansterer  <paroga@webkit.org>
 
         Fix AtomicString vs. String usage in JSC binding

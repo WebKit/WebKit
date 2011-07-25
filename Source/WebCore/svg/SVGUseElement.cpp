@@ -227,6 +227,7 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
             setHasPendingResources(false);
         }
 
+        m_targetElementInstance = 0;
         invalidateShadowTree();
         return;
     }
