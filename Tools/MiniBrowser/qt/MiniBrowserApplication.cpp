@@ -90,35 +90,54 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
     }
     if (isMouseEvent(event)) {
         const QMouseEvent* const mouseEvent = static_cast<QMouseEvent*>(event);
-        if (mouseEvent->button() != Qt::LeftButton && mouseEvent->buttons() != Qt::LeftButton)
-            return QApplication::notify(target, event);
 
         QTouchEvent::TouchPoint touchPoint;
         touchPoint.setScreenPos(mouseEvent->globalPos());
         touchPoint.setPos(mouseEvent->pos());
-        touchPoint.setId(0);
 
         switch (mouseEvent->type()) {
         case QEvent::MouseButtonPress:
         case QEvent::MouseButtonDblClick:
-            touchPoint.setState(Qt::TouchPointPressed);
+            touchPoint.setId(mouseEvent->button());
+            if (m_touchPoints.contains(touchPoint.id()))
+                touchPoint.setState(Qt::TouchPointMoved);
+            else
+                touchPoint.setState(Qt::TouchPointPressed);
             break;
         case QEvent::MouseMove:
+            if (!mouseEvent->buttons() || !m_touchPoints.contains(mouseEvent->buttons()))
+                return QApplication::notify(target, event);
             touchPoint.setState(Qt::TouchPointMoved);
+            touchPoint.setId(mouseEvent->buttons());
             break;
         case QEvent::MouseButtonRelease:
+            if (mouseEvent->modifiers().testFlag(Qt::ControlModifier))
+                return QApplication::notify(target, event);
             touchPoint.setState(Qt::TouchPointReleased);
+            touchPoint.setId(mouseEvent->button());
             break;
         default:
-            Q_ASSERT(false);
-            break;
+            Q_ASSERT_X(false, "multi-touch mocking", "unhandled event type");
         }
 
-        QList<QTouchEvent::TouchPoint> touchPoints;
-        touchPoints.append(touchPoint);
+        // Update current touch-point
+        m_touchPoints.insert(touchPoint.id(), touchPoint);
+
+        // Update states for all other touch-points
+        for (QHash<int, QTouchEvent::TouchPoint>::iterator it = m_touchPoints.begin(); it != m_touchPoints.end(); ++it) {
+            if (it.value().id() != touchPoint.id())
+                it.value().setState(Qt::TouchPointStationary);
+        }
+
         m_sendingFakeTouchEvent = true;
-        qt_translateRawTouchEvent(0, QTouchEvent::TouchScreen, touchPoints);
+        qt_translateRawTouchEvent(0, QTouchEvent::TouchScreen, m_touchPoints.values());
         m_sendingFakeTouchEvent = false;
+
+        // Get rid of touch-points that are no longer valid
+        foreach (const QTouchEvent::TouchPoint& touchPoint, m_touchPoints) {
+            if (touchPoint.state() ==  Qt::TouchPointReleased)
+                m_touchPoints.remove(touchPoint.id());
+        }
     }
 
     return QApplication::notify(target, event);

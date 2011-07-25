@@ -29,7 +29,9 @@
 #ifndef MiniBrowserApplication_h
 #define MiniBrowserApplication_h
 
+#include <QHash>
 #include <QStringList>
+#include <QTouchEvent>
 #include <QtGui>
 
 struct WindowOptions {
@@ -75,6 +77,8 @@ private:
     int m_robotTimeoutSeconds;
     int m_robotExtraTimeSeconds;
     QStringList m_urls;
+
+    QHash<int, QTouchEvent::TouchPoint> m_touchPoints;
 };
 
 #endif
