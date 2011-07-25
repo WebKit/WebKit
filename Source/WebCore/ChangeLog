@@ -1,3 +1,17 @@
+2011-07-24  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSSPropertyOutlineOffset in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=64773
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests / refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-07-24  Rob Buis  <rbuis@rim.com>
 
         SVG <use> element is not repositioned when moved to x=0 y=0 through script 

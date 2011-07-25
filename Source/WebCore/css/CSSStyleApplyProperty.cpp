@@ -755,6 +755,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
 
     setPropertyHandler(CSSPropertyOutlineStyle, new ApplyPropertyExpanding<ExpandValue>(new ApplyPropertyDefault<OutlineIsAuto>(&RenderStyle::outlineStyleIsAuto, &RenderStyle::setOutlineStyleIsAuto, &RenderStyle::initialOutlineStyleIsAuto), new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::outlineStyle, &RenderStyle::setOutlineStyle, &RenderStyle::initialBorderStyle)));
     setPropertyHandler(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
+    setPropertyHandler(CSSPropertyOutlineOffset, new ApplyPropertyComputeLength<int>(&RenderStyle::outlineOffset, &RenderStyle::setOutlineOffset, &RenderStyle::initialOutlineOffset));
 
     setPropertyHandler(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
     setPropertyHandler(CSSPropertyOverflowY, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowY, &RenderStyle::setOverflowY, &RenderStyle::initialOverflowY));

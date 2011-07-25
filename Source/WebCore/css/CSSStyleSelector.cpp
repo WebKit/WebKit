@@ -4448,10 +4448,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setMaskBoxImage(image);
         return;
     }
-    case CSSPropertyOutlineOffset:
-        HANDLE_INHERIT_AND_INITIAL(outlineOffset, OutlineOffset)
-        m_style->setOutlineOffset(primitiveValue->computeLength<int>(style(), m_rootElementStyle, zoomFactor));
-        return;
     case CSSPropertyImageRendering:
         if (!primitiveValue)
             return;
@@ -5279,6 +5275,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyFontWeight:
     case CSSPropertyOutlineStyle:
     case CSSPropertyOutlineWidth:
+    case CSSPropertyOutlineOffset:
     case CSSPropertyWebkitColumnRuleWidth:
     case CSSPropertyOutlineColor:
     case CSSPropertyWebkitColumnRuleColor:
