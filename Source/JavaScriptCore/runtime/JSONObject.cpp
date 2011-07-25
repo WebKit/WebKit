@@ -819,7 +819,7 @@ EncodedJSValue JSC_HOST_CALL JSONProtoFuncParse(ExecState* exec)
     LiteralParser jsonParser(exec, source.characters(), source.length(), LiteralParser::StrictJSON);
     JSValue unfiltered = jsonParser.tryLiteralParse();
     if (!unfiltered)
-        return throwVMError(exec, createSyntaxError(exec, jsonParser.getErrorMessage()));
+        return throwVMError(exec, createSyntaxError(exec, "Unable to parse JSON string"));
     
     if (exec->argumentCount() < 2)
         return JSValue::encode(unfiltered);
