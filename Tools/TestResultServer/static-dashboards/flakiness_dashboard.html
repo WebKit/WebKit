@@ -74,9 +74,6 @@ label {
 #result-input {
     width: 7em;
 }
-.test-link {
-    white-space: normal;
-}
 .test-link.builder-name {
     white-space: nowrap;
 }
@@ -86,6 +83,10 @@ label {
 .test-table {
     white-space: nowrap;
     border-spacing: 1px;
+}
+/* Let the bugs column wrap. */
+.test-table tr > td:nth-child(2) {
+    white-space: normal;
 }
 .test-table {
     width: 100%;

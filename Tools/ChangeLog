@@ -1,5 +1,10 @@
 2011-07-25  Ojan Vafai  <ojan@chromium.org>
 
+        Tweak whitespace wrapping to improve readability.
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
+2011-07-25  Ojan Vafai  <ojan@chromium.org>
+
         Minor tweak to wrap label elements as atomic units.
 
         * TestResultServer/static-dashboards/dashboard_base.js:
