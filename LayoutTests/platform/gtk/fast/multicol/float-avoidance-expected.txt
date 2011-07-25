@@ -4,9 +4,9 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock (floating) {DIV} at (0,0) size 200x100 [bgcolor=#00FF00]
-layer at (208,8) size 435x131
-  RenderBlock {DIV} at (200,0) size 435x131 [border: (10px solid #000000)]
-    RenderBlock {P} at (10,10) size 415x95
+layer at (208,8) size 435x147
+  RenderBlock {DIV} at (200,0) size 435x147 [border: (10px solid #000000)]
+    RenderBlock {P} at (10,26) size 415x95
       RenderText {#text} at (0,0) size 415x95
         text run at (0,0) width 415: "This technology preview of our award winning next generation"
         text run at (0,19) width 56: "browser "
