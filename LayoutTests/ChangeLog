@@ -1,5 +1,13 @@
 2011-07-25  Adrienne Walker  <enne@google.com>
 
+        [chromium] More WebGL flaky crashers on Linux.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-25  Adrienne Walker  <enne@google.com>
+
         [chromium] Mark some media tests as being crashers on Linux.
 
         Unreviewed gardening.
