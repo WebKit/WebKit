@@ -47,6 +47,9 @@ h3 {
 input {
     margin-right: 15px;
 }
+label {
+    padding-left: 2em;
+}
 .forms {
     display: -webkit-box;
 }
@@ -2338,11 +2341,26 @@ function htmlForNavBar()
     return html;
 }
 
+function checkBoxToToggleState(key, text)
+{
+    var stateEnabled = g_currentState[key];
+    return '<label><input type=checkbox ' + (stateEnabled ? 'checked ' : '') + 'onclick="setQueryParameter(\'' + key + '\', ' + !stateEnabled + ')">' + text + '</label>';
+}
+
 function linkHTMLToToggleState(key, linkText)
 {
-    var isTrue = g_currentState[key];
-    return '<span class=link onclick="setQueryParameter(\'' + key + '\', ' +
-        !isTrue + ')">' + (isTrue ? 'Hide' : 'Show') + ' ' + linkText + '</span>';
+    var stateEnabled = g_currentState[key];
+    return '<span class=link onclick="setQueryParameter(\'' + key + '\', ' + !stateEnabled + ')">' + (stateEnabled ? 'Hide' : 'Show') + ' ' + linkText + '</span>';
+}
+
+function headerForTestTableHtml()
+{
+    return '<h2 style="display:inline-block">Failing tests</h2>' +
+        checkBoxToToggleState('showWontFixSkip', 'WONTFIX/SKIP') +
+        checkBoxToToggleState('showCorrectExpectations', 'tests with correct expectations') +
+        checkBoxToToggleState('showWrongExpectations', 'tests with wrong expectations') +
+        checkBoxToToggleState('showFlaky', 'flaky') +
+        checkBoxToToggleState('showSlow', 'slow');
 }
 
 function generatePageForBuilder(builderName)
@@ -2368,17 +2386,10 @@ function generatePageForBuilder(builderName)
 
     var html = htmlForNavBar();
 
-    if (isLayoutTestResults()) {
-        html += htmlForTestsWithExpectationsButNoFailures(builderName) +
-            '<h2>Failing tests</h2>' +
-            linkHTMLToToggleState('showWontFixSkip', 'WONTFIX/SKIP') + ' | ' +
-            linkHTMLToToggleState('showCorrectExpectations', 'tests with correct expectations') + ' | ' +
-            linkHTMLToToggleState('showWrongExpectations', 'tests with wrong expectations') + ' | ' +
-            linkHTMLToToggleState('showFlaky', 'flaky') + ' | ' +
-            linkHTMLToToggleState('showSlow', 'slow');
-    }
+    if (isLayoutTestResults())
+        html += htmlForTestsWithExpectationsButNoFailures(builderName) + headerForTestTableHtml();
 
-    html += ' | All columns are sortable. | Flakiness reader order is newer --> older runs.<br>' + testsHTML;
+    html += '<br>' + testsHTML;
     appendHTML(html);
 
     var ths = document.getElementsByTagName('th');

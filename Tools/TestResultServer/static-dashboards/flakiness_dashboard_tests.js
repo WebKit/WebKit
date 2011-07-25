@@ -355,6 +355,12 @@ function testHtmlForTestsWithExpectationsButNoFailures()
     assertEquals(container.querySelectorAll('#skipped-tests > div').length, 0);
 }
 
+function testHeaderForTestTableHtml()
+{
+    var container = document.createElement('div');
+    container.innerHTML = headerForTestTableHtml();
+    assertEquals(container.querySelectorAll('input').length, 5);
+}
 
 function runTests()
 {
