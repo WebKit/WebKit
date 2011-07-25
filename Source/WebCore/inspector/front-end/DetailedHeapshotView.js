@@ -341,6 +341,61 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
 MixInSnapshotNodeFunctions(WebInspector.HeapSnapshotDominatorObjectNode.prototype, WebInspector.HeapSnapshotDominatorsDataGrid.prototype);
 WebInspector.HeapSnapshotDominatorsDataGrid.prototype.__proto__ = WebInspector.HeapSnapshotSortableDataGrid.prototype;
 
+WebInspector.HeapSnapshotPathFinderState = function(snapshot, nodeIndex, rootFilter)
+{
+    this._pathFinder = snapshot.createPathFinder(nodeIndex, !WebInspector.DetailedHeapshotView.prototype.showHiddenData);
+    this._pathFinder.updateRoots(rootFilter);
+    this._foundCount = 0;
+    this._foundCountMax = null;
+    this._totalFoundCount = 0;
+    this._cancelled = false;
+}
+
+WebInspector.HeapSnapshotPathFinderState.prototype = {
+    batchDone: function(status)
+    {
+    },
+
+    pathFound: function(path)
+    {
+    },
+
+    cancel: function()
+    {
+        this._cancelled = true;
+        this._pathFinder.dispose();
+    },
+
+    startBatch: function(count)
+    {
+        if (this._cancelled)
+            return;
+        this._foundCount = 0;
+        this._foundCountMax = count;
+        this._pathFinder.findNext(this._pathFound.bind(this));
+    },
+
+    _pathFound: function(result)
+    {
+        if (this._cancelled)
+            return;
+        if (result === null) {
+            if (!this._totalFoundCount)
+                this.batchDone("no-paths-at-all");
+        } else if (result !== false) {
+            this.pathFound(result);
+            ++this._foundCount;
+            ++this._totalFoundCount;
+            if (this._foundCount < this._foundCountMax)
+                this._pathFinder.findNext(this._pathFound.bind(this));
+            else
+                this.batchDone("have-more-paths");
+        } else {
+            this.batchDone("no-more-paths");
+        }
+    }
+};
+
 WebInspector.HeapSnapshotRetainingPathsList = function()
 {
     var columns = {
@@ -349,13 +404,16 @@ WebInspector.HeapSnapshotRetainingPathsList = function()
     };
     WebInspector.HeapSnapshotSortableDataGrid.call(this, columns);
     this._defaultPopulateCount = 100;
+    this._nodeIndex = null;
+    this._state = null;
+    this._prefix = null;
 }
 
 WebInspector.HeapSnapshotRetainingPathsList.prototype = {
     dispose: function()
     {
-        if (this.pathFinder)
-            this.pathFinder.dispose();
+        if (this._state)
+            this._state.cancel();
     }, 
 
     _sortFields: function(sortColumn, sortAscending)
@@ -368,95 +426,74 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
 
     _resetPaths: function()
     {
-        this._setRootChildrenForFinder();
+        var rootFilter = this.snapshotView.isTracingToWindowObjects ?
+            "function (node) { return node.name.substr(0, 9) === \"DOMWindow\"; }" : null;
+        if (this._state)
+            this._state.cancel();
+        this._state = new WebInspector.HeapSnapshotPathFinderState(this._snapshot, this._nodeIndex, rootFilter);
+        this._state.batchDone = this._batchDone.bind(this);
+        this._state.pathFound = this._pathFound.bind(this);
         this.removeChildren();
         this.resetSortingCache();
-        this._counter = 0;
         this.showNext(this._defaultPopulateCount);
     },
 
     setDataSource: function(snapshotView, snapshot, nodeIndex, prefix)
     {
+        if (this._nodeIndex === nodeIndex)
+            return;
         this.snapshotView = snapshotView;
+        this._snapshot = snapshot;
+        this._nodeIndex = nodeIndex;
         this._prefix = prefix;
-
-        if (this.pathFinder) {
-            this.searchCancelled();
-            this.pathFinder.dispose();
-        }
-        this.pathFinder = snapshot.createPathFinder(nodeIndex, !WebInspector.DetailedHeapshotView.prototype.showHiddenData);
         this._resetPaths();
     },
 
     refresh: function()
     {
-        delete this._cancel;
         this._resetPaths();
     },
 
     reset: function()
     {
-        delete this._cancel;
+        if (this._state)
+            this._state.cancel();
         this.removeChildren();
         this.resetSortingCache();
-        this._counter = 0;
         this.appendChild(new WebInspector.DataGridNode({path:WebInspector.UIString("Click on an object to show retaining paths"), len:""}, false));
+    },
+
+    _batchDone: function(state)
+    {
+        switch (state) {
+        case "no-paths-at-all":
+            this.appendChild(new WebInspector.DataGridNode({path:WebInspector.UIString("Can't find any paths."), len:""}, false));
+            break;
+        case "have-more-paths":
+            this.appendChild(new WebInspector.ShowMoreDataGridNode(this.showNext.bind(this), this._defaultPopulateCount));
+            this.resetSortingCache();
+            this.sortingChanged();
+            break;
+        case "no-more-paths":
+            // Nothing to do.
+            break;
+        }
+    },
+
+    _pathFound: function(result)
+    {
+        if (WebInspector.HeapSnapshotGenericObjectNode.prototype.isDOMWindow(result.path))
+            result.path = WebInspector.HeapSnapshotGenericObjectNode.prototype.shortenWindowURL(result.path, true);
+        if (this._prefix)
+            result.path = this._prefix + result.path;
+        var node = new WebInspector.DataGridNode(result, false);
+        node.route = result.route;
+        this.appendChild(node);
     },
 
     showNext: function(pathsCount)
     {
-        function pathFound(result)
-        {
-            if (result === null) {
-                if (!this.children.length)
-                    this.appendChild(new WebInspector.DataGridNode({path:WebInspector.UIString("Can't find any paths."), len:""}, false));
-                return;
-            } else if (result !== false) {
-                if (WebInspector.HeapSnapshotGenericObjectNode.prototype.isDOMWindow(result.path))
-                    result.path = WebInspector.HeapSnapshotGenericObjectNode.prototype.shortenWindowURL(result.path, true);
-                if (this._prefix)
-                    result.path = this._prefix + result.path;
-                var node = new WebInspector.DataGridNode(result, false);
-                node.route = result.route;
-                this.appendChild(node);
-                ++this._counter;
-            }
-            setTimeout(startSearching.bind(this), 0);
-        }
-
-        function startSearching()
-        {
-            if (this._cancel === this.pathFinder)
-                return;
-            delete this._cancel;
-            if (this._counter < pathsCount)
-                this.pathFinder.findNext(pathFound.bind(this));
-            else {
-                this.searchCancelled.call(this, pathsCount);
-                delete this._cancel;
-            }
-        }
-        startSearching.call(this);
-    },
-
-    searchCancelled: function(pathsCount)
-    {
-        this._counter = 0;
-        this._cancel = this.pathFinder;
-        if (pathsCount) {
-            this.appendChild(new WebInspector.ShowMoreDataGridNode(this.showNext.bind(this), pathsCount));
-            this.resetSortingCache();
-            this.sortingChanged();
-        }
-    },
-
-    _setRootChildrenForFinder: function()
-    {
-        if (this.snapshotView.isTracingToWindowObjects)
-            this.pathFinder.updateRoots(
-                "function (node) { return node.name.substr(0, 9) === \"DOMWindow\"; }");
-        else
-            this.pathFinder.updateRoots();
+        this._state.startBatch(pathsCount);
     },
 
     _performSorting: function(sortFunction)
