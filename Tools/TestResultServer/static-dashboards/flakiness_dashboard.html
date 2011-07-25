@@ -180,7 +180,8 @@ input {
     border: 1px solid lightgray;
     height: 0px;
 }
-#passing-tests {
+#passing-tests,
+#skipped-tests {
     -webkit-column-count: 3;
     -webkit-column-gap: 25px;
     -webkit-column-rule: 1px dashed black;
@@ -419,6 +420,7 @@ function handleValidHashParameter(key, value)
     case 'legacyExpectationsSemantics':
     case 'showSkipped':
     case 'showSlow':
+    case 'showUnexpectedPasses':
     case 'showWontFixSkip':
     case 'expectationsUpdate':
     case 'showRunsOnBuilderPage':
@@ -442,6 +444,7 @@ g_defaultStateValues = {
     showWontFixSkip: !isLayoutTestResults(),
     showSlow: !isLayoutTestResults(),
     showSkipped: !isLayoutTestResults(),
+    showUnexpectedPasses: !isLayoutTestResults(),
     expectationsUpdate: false,
     showRunsOnBuilderPage: false,
     updateIndex: 0,
@@ -1334,19 +1337,21 @@ function htmlForTestsWithExpectationsButNoFailures(builder)
     var open = '<div onclick="selectContents(this)">';
 
     if (tests.length) {
-        html +=  '<h3>Have not failed in last ' + g_resultsByBuilder[builder].buildNumbers.length + ' runs.</h3><div id="passing-tests">';
-
-        for (var i = 0; i < tests.length; i++)
-            html += open + tests[i].test + '</div>';
-
-        html += '</div>';
+        html +=  '<h3>' + linkHTMLToToggleState('showUnexpectedPasses', 'tests that have not failed in last ' + g_resultsByBuilder[builder].buildNumbers.length + ' runs.') + '</h3>';
+        
+        if (g_currentState.showUnexpectedPasses) {
+            html += '<div id="passing-tests">';
+            for (var i = 0; i < tests.length; i++)
+                html += open + tests[i].test + '</div>';
+            html += '</div>';
+        }
     }
 
     if (skippedPaths.length) {
-        html += '<h3>' + linkHTMLToToggleState('showSkipped', 'Skipped tests in test_expectations.txt') + '</h3>';
+        html += '<h3>' + linkHTMLToToggleState('showSkipped', 'skipped tests in test_expectations.txt') + '</h3>';
 
         if (g_currentState.showSkipped)
-            html += '<div id="passing-tests">' + open + skippedPaths.join('</div>' + open) + '</div></div>';
+            html += '<div id="skipped-tests">' + open + skippedPaths.join('</div>' + open) + '</div></div>';
     }
     return html;
 }

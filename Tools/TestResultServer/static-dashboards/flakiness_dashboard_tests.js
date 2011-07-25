@@ -329,8 +329,32 @@ function testSubstringList()
     g_currentState.testType = 'layout-tests';
     g_currentState.tests = 'foo/bar.FLAKY_foo.html';
     assertEquals(substringList().toString(), 'foo/bar.FLAKY_foo.html');
-
 }
+
+function testHtmlForTestsWithExpectationsButNoFailures()
+{
+    var builder = 'WebKit Win';
+    g_perBuilderWithExpectationsButNoFailures[builder] = ['passing-test1.html', 'passing-test2.html'];
+    g_perBuilderSkippedPaths[builder] = ['skipped-test1.html'];
+    g_resultsByBuilder[builder] = { buildNumbers: [5, 4, 3, 1] };
+
+    g_currentState.showUnexpectedPasses = true;
+    g_currentState.showSkipped = true;
+    
+    var container = document.createElement('div');
+    container.innerHTML = htmlForTestsWithExpectationsButNoFailures(builder);
+    assertEquals(container.querySelectorAll('#passing-tests > div').length, 2);
+    assertEquals(container.querySelectorAll('#skipped-tests > div').length, 1);
+    
+    g_currentState.showUnexpectedPasses = false;
+    g_currentState.showSkipped = false;
+    
+    var container = document.createElement('div');
+    container.innerHTML = htmlForTestsWithExpectationsButNoFailures(builder);
+    assertEquals(container.querySelectorAll('#passing-tests > div').length, 0);
+    assertEquals(container.querySelectorAll('#skipped-tests > div').length, 0);
+}
+
 
 function runTests()
 {

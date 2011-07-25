@@ -1,5 +1,18 @@
 2011-07-25  Ojan Vafai  <ojan@chromium.org>
 
+        by default hide tests that have passes for all recorded runs
+        https://bugs.webkit.org/show_bug.cgi?id=65127
+
+        Reviewed by Adam Barth.
+
+        This is part of simplifying the default views of the dashboard to
+        make it show less information for the common use cases.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
+2011-07-25  Ojan Vafai  <ojan@chromium.org>
+
         stop generating expectations.json now that it's unused
         https://bugs.webkit.org/show_bug.cgi?id=65130
 
