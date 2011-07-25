@@ -1,5 +1,16 @@
 2011-07-24  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Leftover of r91633 (SVG test move)
+
+        * platform/chromium-linux/fast/borders/svg-as-border-image-expected.png: Removed.
+        * platform/chromium-linux/svg/as-border-image/svg-as-border-image-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/borders/svg-as-border-image-expected.png.
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.png: Removed.
+        * platform/chromium-win/fast/borders/svg-as-border-image-expected.txt: Removed.
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.png: Copied from LayoutTests/platform/chromium-win/fast/borders/svg-as-border-image-expected.png.
+        * platform/chromium-win/svg/as-border-image/svg-as-border-image-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/borders/svg-as-border-image-expected.txt.
+
+2011-07-24  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Update expectations for r91637.
 
         * platform/chromium-linux/svg/custom/text-linking-expected.png:
