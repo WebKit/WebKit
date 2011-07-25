@@ -333,7 +333,7 @@ void GraphicsContext3D::prepareTexture()
         ::glBlitFramebufferEXT(0, 0, m_currentWidth, m_currentHeight, 0, 0, m_currentWidth, m_currentHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
     }
     ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
-    ::glActiveTexture(0);
+    ::glActiveTexture(GL_TEXTURE0);
     ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
     ::glCopyTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, 0, 0, m_currentWidth, m_currentHeight, 0);
     ::glBindTexture(GL_TEXTURE_2D, m_boundTexture0);
