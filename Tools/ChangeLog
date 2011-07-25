@@ -1,3 +1,13 @@
+2011-07-25  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Use NRWT for Qt-WK2
+        https://bugs.webkit.org/show_bug.cgi?id=65097
+
+        Reviewed by Andreas Kling.
+
+        * Scripts/run-webkit-tests:
+        (useNewRunWebKitTests):
+
 2011-07-24  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91635.
