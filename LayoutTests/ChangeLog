@@ -1,3 +1,11 @@
+2011-07-25  Adrienne Walker  <enne@google.com>
+
+        [chromium] Mark gl-enum-enable-test as a flaky crasher.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91665.

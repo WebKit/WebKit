@@ -3846,6 +3846,7 @@ BUGWK65009 MAC : scrollbars/scrollbar-drag-thumb-with-large-content.html = TEXT
 
 BUGWK65062 WIN MAC : http/tests/media/video-error-abort.html = CRASH
 
+BUGWK65063 LINUX GPU: fast/canvas/webgl/gl-enable-enum-test.html = CRASH PASS
 BUGWK65063 LINUX : fast/canvas/webgl/drawingbuffer-test.html = CRASH PASS
 BUGWK65063 LINUX : fast/canvas/canvas-bg-multiple-removal.html = CRASH PASS
 BUGWK65063 LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = CRASH PASS
