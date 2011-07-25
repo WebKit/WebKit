@@ -142,6 +142,7 @@ void CCHeadsUpDisplay::draw()
                                     matrix, hudSize.width(), hudSize.height(),
                                     1.0f, program->vertexShader().matrixLocation(),
                                     program->fragmentShader().alphaLocation());
+    m_hudTexture->unreserve();
 }
 
 void CCHeadsUpDisplay::drawHudContents(GraphicsContext* ctx, const IntSize& hudSize)
