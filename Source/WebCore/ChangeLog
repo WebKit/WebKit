@@ -1,3 +1,24 @@
+2011-07-24  Luke Macpherson   <macpherson@chromium.org>
+
+        Small cleanup of m_fontDirty tracking in CSSStyleSelector
+        https://bugs.webkit.org/show_bug.cgi?id=65090
+
+        Reviewed by Darin Adler.
+
+        1) Use existing setFontDescription helper where appropriate.
+        2) Move always used m_fontDirty check into updateFont()
+
+        No new tests / cleanup only.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement):
+        (WebCore::CSSStyleSelector::styleForKeyframe):
+        (WebCore::CSSStyleSelector::pseudoStyleForElement):
+        (WebCore::CSSStyleSelector::styleForPage):
+        (WebCore::CSSStyleSelector::updateFontIfDirty):
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSStyleSelector.h:
+
 2011-07-24  Kent Tamura  <tkent@chromium.org>
 
         Validation message bubble position is incorrect if the containing block has paddings.

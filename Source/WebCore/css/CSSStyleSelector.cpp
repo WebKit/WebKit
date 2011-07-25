@@ -1501,8 +1501,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     applyDeclarations<true>(true, firstUARule, lastUARule);
     
     // If our font got dirtied, go ahead and update it now.
-    if (m_fontDirty)
-        updateFont();
+    updateFont();
 
     // Line-height is set when we are sure we decided on the font-size
     if (m_lineHeightValue)
@@ -1525,9 +1524,8 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
     ASSERT(!m_fontDirty);
     // If our font got dirtied by one of the non-essential font props, 
     // go ahead and update it a second time.
-    if (m_fontDirty)
-        updateFont();
-    
+    updateFont();
+
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), m_parentStyle, e);
 
@@ -1568,8 +1566,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
         applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
 
     // If our font got dirtied, go ahead and update it now.
-    if (m_fontDirty)
-        updateFont();
+    updateFont();
 
     // Line-height is set when we are sure we decided on the font-size
     if (m_lineHeightValue)
@@ -1581,8 +1578,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForKeyframe(const RenderStyle* el
 
     // If our font got dirtied by one of the non-essential font props,
     // go ahead and update it a second time.
-    if (m_fontDirty)
-        updateFont();
+    updateFont();
 
     // Start loading images referenced by this style.
     loadPendingImages();
@@ -1711,8 +1707,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     applyDeclarations<true>(true, firstUARule, lastUARule);
     
     // If our font got dirtied, go ahead and update it now.
-    if (m_fontDirty)
-        updateFont();
+    updateFont();
 
     // Line-height is set when we are sure we decided on the font-size
     if (m_lineHeightValue)
@@ -1731,8 +1726,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::pseudoStyleForElement(PseudoId pseudo,
     
     // If our font got dirtied by one of the non-essential font props, 
     // go ahead and update it a second time.
-    if (m_fontDirty)
-        updateFont();
+    updateFont();
 
     // Clean up our style object's display and text decorations (among other fixups).
     adjustRenderStyle(style(), parentStyle, 0);
@@ -1765,8 +1759,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForPage(int pageIndex)
     applyDeclarations<true>(false, 0, m_matchedDecls.size() - 1);
 
     // If our font got dirtied, go ahead and update it now.
-    if (m_fontDirty)
-        updateFont();
+    updateFont();
 
     // Line-height is set when we are sure we decided on the font-size
     if (m_lineHeightValue)
@@ -2003,6 +1996,9 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
 
 void CSSStyleSelector::updateFont()
 {
+    if (!m_fontDirty)
+        return;
+
     checkForTextSizeAdjust();
     checkForGenericFamilyChange(style(), m_parentStyle);
     checkForZoomChange(style(), m_parentStyle);
@@ -3901,8 +3897,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
 
         setFontSize(fontDescription, size);
-        if (m_style->setFontDescription(fontDescription))
-            m_fontDirty = true;
+        setFontDescription(fontDescription);
         return;
     }
 
@@ -4155,8 +4150,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             fontDescription.setGenericFamily(parentFontDescription.genericFamily());
             fontDescription.setFamily(parentFontDescription.firstFamily());
             fontDescription.setIsSpecifiedFont(parentFontDescription.isSpecifiedFont());
-            if (m_style->setFontDescription(fontDescription))
-                m_fontDirty = true;
+            setFontDescription(fontDescription);
             return;
         } else if (isInitial) {
             FontDescription initialDesc = FontDescription();
@@ -4168,8 +4162,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             fontDescription.setGenericFamily(initialDesc.genericFamily());
             if (!initialDesc.firstFamily().familyIsEmpty())
                 fontDescription.setFamily(initialDesc.firstFamily());
-            if (m_style->setFontDescription(fontDescription))
-                m_fontDirty = true;
+            setFontDescription(fontDescription);
             return;
         }
         
@@ -4245,8 +4238,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (fontDescription.keywordSize() && fontDescription.useFixedDefaultSize() != oldFamilyUsedFixedDefaultSize)
                 setFontSize(fontDescription, fontSizeForKeyword(m_checker.m_document, CSSValueXxSmall + fontDescription.keywordSize() - 1, !oldFamilyUsedFixedDefaultSize));
 
-            if (m_style->setFontDescription(fontDescription))
-                m_fontDirty = true;
+            setFontDescription(fontDescription);
         }
         return;
     }
@@ -4341,8 +4333,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             FontDescription fontDescription = m_parentStyle->fontDescription();
             m_style->setLineHeight(m_parentStyle->lineHeight());
             m_lineHeightValue = 0;
-            if (m_style->setFontDescription(fontDescription))
-                m_fontDirty = true;
+            setFontDescription(fontDescription);
         } else if (isInitial) {
             Settings* settings = m_checker.m_document->settings();
             ASSERT(settings); // If we're doing style resolution, this document should always be in a frame and thus have settings
@@ -4361,8 +4352,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             setFontSize(fontDescription, fontSizeForKeyword(m_checker.m_document, CSSValueMedium, false));
             m_style->setLineHeight(RenderStyle::initialLineHeight());
             m_lineHeightValue = 0;
-            if (m_style->setFontDescription(fontDescription))
-                m_fontDirty = true;
+            setFontDescription(fontDescription);
         } else if (primitiveValue) {
             m_style->setLineHeight(RenderStyle::initialLineHeight());
             m_lineHeightValue = 0;
@@ -4382,8 +4372,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
            
                 // Handle the zoom factor.
                 fontDescription.setComputedSize(getComputedSizeFromSpecifiedSize(m_checker.m_document, m_style.get(), fontDescription.isAbsoluteSize(), fontDescription.specifiedSize(), useSVGZoomRules()));
-                if (m_style->setFontDescription(fontDescription))
-                    m_fontDirty = true;
+                setFontDescription(fontDescription);
             }
         } else if (value->isFontValue()) {
             FontValue *font = static_cast<FontValue*>(value);
@@ -5123,8 +5112,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_element->document()->setWritingModeSetOnDocumentElement(true);
         FontDescription fontDescription = m_style->fontDescription();
         fontDescription.setOrientation(m_style->isHorizontalWritingMode() ? Horizontal : Vertical);
-        if (m_style->setFontDescription(fontDescription))
-            m_fontDirty = true;
+        setFontDescription(fontDescription);
         return;
     }
 
