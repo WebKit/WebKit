@@ -89,9 +89,11 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
         *errorString = "Inspected frame has gone";
         return;
     }
-    String arguments;
-    if (optionalArguments)
-        arguments = (*optionalArguments)->toJSONString();
+    RefPtr<InspectorArray> arguments = InspectorArray::create();
+    if (optionalArguments) {
+        for (unsigned i = 0; i < (*optionalArguments)->length(); ++i)
+            arguments->pushValue((*optionalArguments)->get(i));
+    }
     injectedScript.callFunctionOn(errorString, objectId, expression, arguments, result, wasThrown);
 }
 
