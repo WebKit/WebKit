@@ -1,5 +1,18 @@
 2011-07-25  Ojan Vafai  <ojan@chromium.org>
 
+        always show flakiness details on the builder page
+        https://bugs.webkit.org/show_bug.cgi?id=65139
+
+        Reviewed by Tony Chang.
+
+        In order to simplify the UI, we hide the flakiness details by default,
+        but there's no actual use-case for this page without the flakiness details.
+        So get rid of that option and always show the flakiness details.
+
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
+2011-07-25  Ojan Vafai  <ojan@chromium.org>
+
         simplify the UI of the header above the test list table
         https://bugs.webkit.org/show_bug.cgi?id=65136
 

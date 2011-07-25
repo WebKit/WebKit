@@ -426,7 +426,6 @@ function handleValidHashParameter(key, value)
     case 'showUnexpectedPasses':
     case 'showWontFixSkip':
     case 'expectationsUpdate':
-    case 'showRunsOnBuilderPage':
         g_currentState[key] = value == 'true';
         return true;
 
@@ -449,7 +448,6 @@ g_defaultStateValues = {
     showSkipped: !isLayoutTestResults(),
     showUnexpectedPasses: !isLayoutTestResults(),
     expectationsUpdate: false,
-    showRunsOnBuilderPage: false,
     updateIndex: 0,
     builder: g_defaultBuilderName,
     resultsHeight: 300,
@@ -1273,9 +1271,6 @@ function showPopupForBuild(e, builder, index, opt_testName)
 
 function htmlForTestResults(test)
 {
-    if (!g_currentState.showRunsOnBuilderPage && !isCrossBuilderView())
-        return '<td>' + test.flips;
-
     var html = '';
     var results = test.rawResults.concat();
     var times = test.rawTimes.concat();
@@ -1410,23 +1405,10 @@ function tableHeaders(opt_getAll)
     if (!isCrossBuilderView() || opt_getAll)
         headers.push('test');
 
-    if (isLayoutTestResults() || opt_getAll) {
-        headers.push('bugs');
-        if (isCrossBuilderView() || g_currentState.showRunsOnBuilderPage || opt_getAll)
-            headers.push('modifiers', 'expectations');
-    }
+    if (isLayoutTestResults() || opt_getAll)
+        headers.push('bugs', 'modifiers', 'expectations');
 
-    headers.push('slowest run', '% fail');
-
-    var FLAKINESS_HEADER = 'flakiness (numbers are runtimes in seconds)';
-    var FLIPS_HEADER = 'flakiness (number of flips)';
-
-    if (g_currentState.showRunsOnBuilderPage || opt_getAll)
-        headers.push(FLAKINESS_HEADER);
-
-    if (!g_currentState.showRunsOnBuilderPage || opt_getAll)
-        headers.push(FLIPS_HEADER);
-
+    headers.push('slowest run', '% fail', 'flakiness (numbers are runtimes in seconds)');
     return headers;
 }
 
@@ -2322,9 +2304,6 @@ function htmlForIndividualTests(tests)
 function htmlForNavBar()
 {
     var extraHTML = '';
-    if (!isCrossBuilderView())
-        extraHTML += checkboxHTML('showRunsOnBuilderPage', 'Show flakiness details', g_currentState.showRunsOnBuilderPage);
-
     var html = htmlForTestTypeSwitcher(false, extraHTML, isCrossBuilderView());
     html += '<div class=forms><form id=result-form ' +
         'onsubmit="setQueryParameter(\'result\', result.value);' +
