@@ -659,6 +659,7 @@ private slots:
     void setUrlSameUrl();
     void setUrlThenLoads_data();
     void setUrlThenLoads();
+    void loadFinishedAfterNotFoundError();
 
 private:
     QString  evalJS(const QString&s) {
@@ -2302,6 +2303,8 @@ class FakeReply : public QNetworkReply {
     Q_OBJECT
 
 public:
+    static const QUrl urlFor404ErrorWithoutContents;
+
     FakeReply(const QNetworkRequest& request, QObject* parent = 0)
         : QNetworkReply(parent)
     {
@@ -2320,6 +2323,10 @@ public:
 #endif
         else if (request.url().host() == QLatin1String("abcdef.abcdef")) {
             setError(QNetworkReply::HostNotFoundError, tr("Invalid URL"));
+            QTimer::singleShot(0, this, SLOT(continueError()));
+        } else if (request.url() == FakeReply::urlFor404ErrorWithoutContents) {
+            setError(QNetworkReply::ContentNotFoundError, "Not found");
+            setAttribute(QNetworkRequest::HttpStatusCodeAttribute, 404);
             QTimer::singleShot(0, this, SLOT(continueError()));
         }
 
@@ -2352,6 +2359,8 @@ private slots:
     }
 };
 
+const QUrl FakeReply::urlFor404ErrorWithoutContents = QUrl("http://this.will/return-http-404-error-without-contents.html");
+
 class FakeNetworkManager : public QNetworkAccessManager {
     Q_OBJECT
 
@@ -2363,17 +2372,17 @@ protected:
     {
         QString url = request.url().toString();
         if (op == QNetworkAccessManager::GetOperation) {
-            if (url == "qrc:/test1.html" ||  url == "http://abcdef.abcdef/")
-                return new FakeReply(request, this);
 #ifndef QT_NO_OPENSSL
-            else if (url == "qrc:/fake-ssl-error.html") {
+            if (url == "qrc:/fake-ssl-error.html") {
                 FakeReply* reply = new FakeReply(request, this);
                 QList<QSslError> errors;
                 emit sslErrors(reply, errors << QSslError(QSslError::UnspecifiedError));
                 return reply;
             }
 #endif
-       }
+            if (url == "qrc:/test1.html" || url == "http://abcdef.abcdef/" || request.url() == FakeReply::urlFor404ErrorWithoutContents)
+                return new FakeReply(request, this);
+        }
 
         return QNetworkAccessManager::createRequest(op, request, outgoingData);
     }
@@ -3677,6 +3686,21 @@ void tst_QWebFrame::setUrlThenLoads()
     QCOMPARE(frame->url(), urlToLoad2);
     QCOMPARE(frame->requestedUrl(), urlToLoad2);
     QCOMPARE(frame->baseUrl(), extractBaseUrl(urlToLoad2));
+}
+
+void tst_QWebFrame::loadFinishedAfterNotFoundError()
+{
+    QWebPage page;
+    QWebFrame* frame = page.mainFrame();
+
+    QSignalSpy spy(&page, SIGNAL(loadFinished(bool)));
+    FakeNetworkManager* networkManager = new FakeNetworkManager(&page);
+    page.setNetworkAccessManager(networkManager);
+
+    frame->setUrl(FakeReply::urlFor404ErrorWithoutContents);
+    QTRY_COMPARE(spy.count(), 1);
+    const bool wasLoadOk = spy.at(0).at(0).toBool();
+    QVERIFY(!wasLoadOk);
 }
 
 QTEST_MAIN(tst_QWebFrame)

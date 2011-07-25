@@ -1,3 +1,21 @@
+2011-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] Add more tests to cover the behavior of loadFinished() signal
+        https://bugs.webkit.org/show_bug.cgi?id=63490
+
+        Reviewed by Benjamin Poulain.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (FakeReply::FakeReply):
+        (FakeNetworkManager::createRequest): Add a fake reply that gives 404 error code.
+
+        (tst_QWebFrame::loadFinishedAfterNotFoundError): Verify that we get loadFinished(false)
+        after a 404 error without contents.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::errorPageExtensionLoadFinished): Verify if the argument of loadFinished()
+        is true when we use error page extension to produce our own error pages.
+
 2011-07-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Improve documentation of QWebView::setPage()

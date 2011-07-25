@@ -134,6 +134,7 @@ private slots:
     void errorPageExtension();
     void errorPageExtensionInIFrames();
     void errorPageExtensionInFrameset();
+    void errorPageExtensionLoadFinished();
     void userAgentApplicationName();
 
     void viewModes();
@@ -2572,6 +2573,35 @@ void tst_QWebPage::errorPageExtensionInFrameset()
     QTRY_COMPARE(spyLoadFinished.count(), 1);
     QCOMPARE(page.mainFrame()->childFrames().count(), 2);
     QCOMPARE(page.mainFrame()->childFrames()[1]->toPlainText(), QString("error"));
+
+    m_view->setPage(0);
+}
+
+void tst_QWebPage::errorPageExtensionLoadFinished()
+{
+    ErrorPage page;
+    m_view->setPage(&page);
+
+    QSignalSpy spyLoadFinished(m_view, SIGNAL(loadFinished(bool)));
+    QSignalSpy spyFrameLoadFinished(m_view->page()->mainFrame(), SIGNAL(loadFinished(bool)));
+
+    m_view->setUrl(QUrl("data:text/html,foo"));
+    QTRY_COMPARE(spyLoadFinished.count(), 1);
+    QTRY_COMPARE(spyFrameLoadFinished.count(), 1);
+
+    const bool loadSucceded = spyLoadFinished.at(0).at(0).toBool();
+    QVERIFY(loadSucceded);
+    const bool frameLoadSucceded = spyFrameLoadFinished.at(0).at(0).toBool();
+    QVERIFY(frameLoadSucceded);
+
+    m_view->page()->mainFrame()->setUrl(QUrl("http://non.existent/url"));
+    QTRY_COMPARE(spyLoadFinished.count(), 2);
+    QTRY_COMPARE(spyFrameLoadFinished.count(), 2);
+
+    const bool nonExistantLoadSucceded = spyLoadFinished.at(1).at(0).toBool();
+    QVERIFY(nonExistantLoadSucceded);
+    const bool nonExistantFrameLoadSucceded = spyFrameLoadFinished.at(1).at(0).toBool();
+    QVERIFY(nonExistantFrameLoadSucceded);
 
     m_view->setPage(0);
 }
