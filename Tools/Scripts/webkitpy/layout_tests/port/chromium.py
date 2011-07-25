@@ -524,6 +524,8 @@ class ChromiumDriver(Driver):
                 has_audio = True
             elif line.startswith("Content-Transfer-Encoding: base64"):
                 has_base64 = True
+            elif line.startswith("Content-Length:"):
+                pass
             elif actual_uri:
                 output.append(line)
             else:
@@ -540,7 +542,7 @@ class ChromiumDriver(Driver):
             if has_base64:
                 audio_bytes = base64.b64decode(''.join(output))
             else:
-                audio_bytes = ''.join(output)
+                audio_bytes = ''.join(output).rstrip()
         else:
             text = ''.join(output)
             if not text:
