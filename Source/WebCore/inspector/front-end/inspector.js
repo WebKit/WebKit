@@ -1028,8 +1028,12 @@ WebInspector.showConsole = function()
 
 WebInspector.showPanel = function(panel)
 {
-    if (!(panel in this.panels))
-        panel = "elements";
+    if (!(panel in this.panels)) {
+        if (WebInspector.WorkerManager.isWorkerFrontend())
+            panel = "scripts";
+        else
+            panel = "elements";
+    }
     this.currentPanel = this.panels[panel];
 }
 
