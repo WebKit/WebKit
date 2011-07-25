@@ -2893,7 +2893,7 @@ BUGWK56072 VISTA : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
 //BUGWK56072 VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
 BUGWK56072 VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
 //BUGWK56072 VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGWK56072 VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+//BUGWK56072 VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
 BUGWK56072 VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK56072 VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
@@ -3098,7 +3098,7 @@ BUGWK58193 WIN7 : fast/css/line-height-determined-by-primary-font.html = IMAGE
 //BUGWK58193 WIN7 : fast/dom/34176.html = IMAGE
 BUGWK58193 WIN7 : fast/dynamic/text-combine.html = IMAGE
 //BUGWK58193 WIN7 : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-BUGWK58193 WIN7 : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
+//BUGWK58193 WIN7 : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
 BUGWK58193 WIN7 : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK58193 WIN7 : fast/ruby/base-shorter-than-text.html = IMAGE
 BUGWK58193 WIN7 : fast/ruby/nested-ruby.html = IMAGE
@@ -3901,3 +3901,4 @@ BUGWK65063 LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = CRASH 
 BUGWK65063 MAC : css2.1/t0905-c414-flt-01-d-g.html = IMAGE
 
 BUGWK65124 : fast/repaint/japanese-rl-selection-clear.html = FAIL
+BUGWK65124 : fast/repaint/japanese-rl-selection-repaint.html = FAIL
