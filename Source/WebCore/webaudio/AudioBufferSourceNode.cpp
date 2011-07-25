@@ -30,6 +30,8 @@
 
 #include "AudioContext.h"
 #include "AudioNodeOutput.h"
+#include "Document.h"
+#include "ScriptCallStack.h"
 #include <algorithm>
 #include <wtf/MathExtras.h>
 
@@ -247,7 +249,7 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         // For linear interpolation we need the next sample-frame too.
         unsigned readIndex2 = readIndex + 1;
         if (readIndex2 >= endFrame) {
-            if (looping()) {
+            if (loop()) {
                 // Make sure to wrap around at the end of the buffer.
                 readIndex2 -= deltaFrames;
             } else
@@ -278,7 +280,7 @@ void AudioBufferSourceNode::renderFromBuffer(AudioBus* bus, unsigned destination
         if (virtualReadIndex >= endFrame) {
             virtualReadIndex -= deltaFrames;
 
-            if (!looping()) {
+            if (!loop()) {
                 // If we're not looping, then stop playing when we get to the end.
                 m_isPlaying = false;
 
@@ -424,8 +426,30 @@ double AudioBufferSourceNode::totalPitchRate()
     ASSERT(isTotalRateValid);
     if (!isTotalRateValid)
         totalRate = 1.0;
-    
+
     return totalRate;
+}
+
+bool AudioBufferSourceNode::looping()
+{
+    static bool firstTime = true;
+    if (firstTime && context() && context()->document()) {
+        context()->document()->addMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "AudioBufferSourceNode 'looping' attribute is deprecated.  Use 'loop' instead.", 1, String(), 0);
+        firstTime = false;
+    }
+
+    return m_isLooping;
+}
+
+void AudioBufferSourceNode::setLooping(bool looping)
+{
+    static bool firstTime = true;
+    if (firstTime && context() && context()->document()) {
+        context()->document()->addMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "AudioBufferSourceNode 'looping' attribute is deprecated.  Use 'loop' instead.", 1, String(), 0);
+        firstTime = false;
+    }
+
+    m_isLooping = looping;
 }
 
 } // namespace WebCore

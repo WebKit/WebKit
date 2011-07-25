@@ -65,8 +65,15 @@ public:
     void noteGrainOn(double when, double grainOffset, double grainDuration);
     void noteOff(double when);
 
-    bool looping() const { return m_isLooping; }
-    void setLooping(bool looping) { m_isLooping = looping; }
+    // Note: the attribute was originally exposed as .looping, but to be more consistent in naming with <audio>
+    // and with how it's described in the specification, the proper attribute name is .loop
+    // The old attribute is kept for backwards compatibility.
+    bool loop() const { return m_isLooping; }
+    void setLoop(bool looping) { m_isLooping = looping; }
+
+    // Deprecated.
+    bool looping();
+    void setLooping(bool);
     
     AudioGain* gain() { return m_gain.get(); }                                        
     AudioParam* playbackRate() { return m_playbackRate.get(); }
