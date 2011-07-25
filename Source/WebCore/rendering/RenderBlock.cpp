@@ -3156,7 +3156,7 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 
     // Create the special object entry & append it to the list
 
-    FloatingObject* newObj = new FloatingObject(o->style()->floating() == FLEFT ? FloatingObject::FloatLeft : FloatingObject::FloatRight);
+    FloatingObject* newObj = new FloatingObject(o->style()->floating() == LeftFloat ? FloatingObject::FloatLeft : FloatingObject::FloatRight);
     
     // Our location is irrelevant if we're unsplittable or no pagination is in effect.
     // Just go ahead and lay out the float.
@@ -3297,7 +3297,7 @@ bool RenderBlock::positionNewFloats()
             logicalTop = max(lowestFloatLogicalBottom(FloatingObject::FloatRight), logicalTop);
 
         int floatLogicalLeft;
-        if (childBox->style()->floating() == FLEFT) {
+        if (childBox->style()->floating() == LeftFloat) {
             int heightRemainingLeft = 1;
             int heightRemainingRight = 1;
             floatLogicalLeft = logicalLeftOffsetForLine(logicalTop, leftOffset, false, &heightRemainingLeft);
@@ -4869,8 +4869,8 @@ void RenderBlock::computeInlinePreferredLogicalWidths()
                 bool clearPreviousFloat;
                 if (child->isFloating()) {
                     clearPreviousFloat = (prevFloat
-                        && ((prevFloat->style()->floating() == FLEFT && (child->style()->clear() & CLEFT))
-                            || (prevFloat->style()->floating() == FRIGHT && (child->style()->clear() & CRIGHT))));
+                        && ((prevFloat->style()->floating() == LeftFloat && (child->style()->clear() & CLEFT))
+                            || (prevFloat->style()->floating() == RightFloat && (child->style()->clear() & CRIGHT))));
                     prevFloat = child;
                 } else
                     clearPreviousFloat = false;
@@ -5097,7 +5097,7 @@ void RenderBlock::computeBlockPreferredLogicalWidths()
         }
         
         if (child->isFloating()) {
-            if (style()->floating() == FLEFT)
+            if (style()->floating() == LeftFloat)
                 floatLeftWidth += w;
             else
                 floatRightWidth += w;

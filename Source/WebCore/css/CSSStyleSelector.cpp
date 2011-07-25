@@ -1818,7 +1818,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
         if (!m_checker.m_strictParsing && e) {
             if (e->hasTagName(tdTag)) {
                 style->setDisplay(TABLE_CELL);
-                style->setFloating(FNONE);
+                style->setFloating(NoFloat);
             }
             else if (e->hasTagName(tableTag))
                 style->setDisplay(style->isDisplayInlineType() ? INLINE_TABLE : TABLE);
@@ -1859,7 +1859,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
         // may be needed for positioned elements that have to compute their static normal flow
         // positions.  We also force inline-level roots to be block-level.
         if (style->display() != BLOCK && style->display() != TABLE && style->display() != BOX &&
-            (style->position() == AbsolutePosition || style->position() == FixedPosition || style->floating() != FNONE ||
+            (style->position() == AbsolutePosition || style->position() == FixedPosition || style->isFloating() ||
              (e && e->document()->documentElement() == e))) {
             if (style->display() == INLINE_TABLE)
                 style->setDisplay(TABLE);
@@ -1868,7 +1868,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parent
             else if (style->display() == LIST_ITEM) {
                 // It is a WinIE bug that floated list items lose their bullets, so we'll emulate the quirk,
                 // but only in quirks mode.
-                if (!m_checker.m_strictParsing && style->floating() != FNONE)
+                if (!m_checker.m_strictParsing && style->isFloating())
                     style->setDisplay(BLOCK);
             }
             else

@@ -934,14 +934,17 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFloat e)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
-        case FNONE:
+        case NoFloat:
             m_value.ident = CSSValueNone;
             break;
-        case FLEFT:
+        case LeftFloat:
             m_value.ident = CSSValueLeft;
             break;
-        case FRIGHT:
+        case RightFloat:
             m_value.ident = CSSValueRight;
+            break;
+        case PositionedFloat:
+            m_value.ident = CSSValueWebkitPositioned;
             break;
     }
 }
@@ -950,15 +953,17 @@ template<> inline CSSPrimitiveValue::operator EFloat() const
 {
     switch (m_value.ident) {
         case CSSValueLeft:
-            return FLEFT;
+            return LeftFloat;
         case CSSValueRight:
-            return FRIGHT;
+            return RightFloat;
         case CSSValueNone:
         case CSSValueCenter:  // Non-standard CSS value
-            return FNONE;
+            return NoFloat;
+        case CSSValueWebkitPositioned:
+            return PositionedFloat;
         default:
             ASSERT_NOT_REACHED();
-            return FNONE;
+            return NoFloat;
     }
 }
 

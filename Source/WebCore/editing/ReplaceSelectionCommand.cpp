@@ -490,7 +490,7 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline()
             // in quirks mode (which Mail.app is always in). We should look for an alternative.
             if (isBlock(e))
                 e->getInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueInline);
-            if (e->renderer() && e->renderer()->style()->floating() != FNONE)
+            if (e->renderer() && e->renderer()->style()->isFloating())
                 e->getInlineStyleDecl()->setProperty(CSSPropertyFloat, CSSValueNone);
         } else if (node->isStyledElement()) {
             StyledElement* element = static_cast<StyledElement*>(node.get());

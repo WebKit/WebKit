@@ -341,7 +341,7 @@ public:
 
     bool operator==(const RenderStyle& other) const;
     bool operator!=(const RenderStyle& other) const { return !(*this == other); }
-    bool isFloating() const { return !(noninherited_flags._floating == FNONE); }
+    bool isFloating() const { return noninherited_flags._floating != NoFloat; }
     bool hasMargin() const { return surround->margin.nonZero(); }
     bool hasBorder() const { return surround->border.hasBorder(); }
     bool hasPadding() const { return surround->padding.nonZero(); }
@@ -1264,7 +1264,7 @@ public:
     static TextOrientation initialTextOrientation() { return TextOrientationVerticalRight; }
     static EDisplay initialDisplay() { return INLINE; }
     static EEmptyCell initialEmptyCells() { return SHOW; }
-    static EFloat initialFloating() { return FNONE; }
+    static EFloat initialFloating() { return NoFloat; }
     static EListStylePosition initialListStylePosition() { return OUTSIDE; }
     static EListStyleType initialListStyleType() { return Disc; }
     static EOverflow initialOverflowX() { return OVISIBLE; }

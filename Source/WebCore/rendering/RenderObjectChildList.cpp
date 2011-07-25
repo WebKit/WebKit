@@ -369,7 +369,7 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
     if (!newContentWanted)
         return;
 
-    if (owner->isRenderInline() && !pseudoElementStyle->isDisplayInlineType() && pseudoElementStyle->floating() == FNONE &&
+    if (owner->isRenderInline() && !pseudoElementStyle->isDisplayInlineType() && !pseudoElementStyle->isFloating() &&
         !(pseudoElementStyle->position() == AbsolutePosition || pseudoElementStyle->position() == FixedPosition))
         // According to the CSS2 spec (the end of section 12.1), the only allowed
         // display values for the pseudo style are NONE and INLINE for inline flows.

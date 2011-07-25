@@ -1,3 +1,35 @@
+2011-07-25  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65125
+        
+        (1) Add the new CSS3 positioned value for floats.
+        (2) Rename FLEFT, FRIGHT and FNONE to our more modern convention: NoFloat, LeftFloat, RightFloat.
+        (3) Replace uses of == FNONE and != FNONE with isFloating and !isFloating.
+
+        Reviewed by Dan Bernstein.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EFloat):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::adjustRenderStyle):
+        * css/CSSValueKeywords.in:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::computeInlinePreferredLogicalWidths):
+        (WebCore::RenderBlock::computeBlockPreferredLogicalWidths):
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::isFloating):
+        (WebCore::InheritedFlags::initialFloating):
+        * rendering/style/RenderStyleConstants.h:
+
 2011-07-25  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9835028> Font loading during layout can cause layout code to be re-entered via resource load delegate

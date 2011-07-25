@@ -811,6 +811,9 @@ replaced
 optimizeQuality
 -webkit-optimize-contrast
 
+// Positioned Floats
+-webkit-positioned
+
 #if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
 // -webkit-wrap-shape
 nonzero
