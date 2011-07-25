@@ -1749,6 +1749,8 @@ void CodeBlock::unlinkCalls()
 {
     if (!(m_callLinkInfos.size() || m_methodCallLinkInfos.size()))
         return;
+    if (!m_globalData->canUseJIT())
+        return;
     RepatchBuffer repatchBuffer(this);
     for (size_t i = 0; i < m_callLinkInfos.size(); i++) {
         if (!m_callLinkInfos[i].isLinked())

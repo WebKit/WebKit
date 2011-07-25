@@ -378,7 +378,7 @@ namespace JSC {
         size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
         CallLinkInfo& callLinkInfo(int index) { return m_callLinkInfos[index]; }
 
-        void addMethodCallLinkInfos(unsigned n) { m_methodCallLinkInfos.grow(n); }
+        void addMethodCallLinkInfos(unsigned n) { ASSERT(m_globalData->canUseJIT()); m_methodCallLinkInfos.grow(n); }
         MethodCallLinkInfo& methodCallLinkInfo(int index) { return m_methodCallLinkInfos[index]; }
 #endif
         unsigned globalResolveInfoCount() const

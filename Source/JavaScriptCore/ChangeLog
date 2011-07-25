@@ -1,3 +1,18 @@
+2011-07-25  Jon Lee  <jonlee@apple.com>
+
+        Assertion called in ExecutableBase::generatedJITCodeForCall() when JIT is not available
+        https://bugs.webkit.org/show_bug.cgi?id=65132
+        <rdar://problem/9836297>
+        
+        Reviewed by Oliver Hunt.
+        
+        Make sure the JIT is available to use before running the following calls:
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::unlinkCalls): Added check, return early if JIT is not available.
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addMethodCallLinkInfos): Added assertion.
+
 2011-07-25  Juan C. Montemayor  <jmont@apple.com>
 
         JSON errors should be informative
