@@ -11,4 +11,11 @@
     <div style="font-size: 54px; font-family: myanmar3;">
         အပြည်ပြည်ဆိုင်ရာလှုပ်ရှားမှု၊
     </div>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            document.body.offsetTop;
+            setTimeout(function() { layoutTestController.notifyDone(); }, 100);
+        }
+    </script>
 </body>

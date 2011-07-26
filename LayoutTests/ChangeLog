@@ -1,5 +1,13 @@
 2011-07-25  Dan Bernstein  <mitz@apple.com>
 
+        Updated three more tests that relied on fonts loading synchronously.
+
+        * fast/blockflow/japanese-rl-text-with-broken-font.html:
+        * platform/mac/fast/text/myanmar-shaping.html:
+        * platform/mac/fast/text/thai-combining-mark-positioning.html:
+
+2011-07-25  Dan Bernstein  <mitz@apple.com>
+
         <rdar://problem/9835028> Font loading during layout can cause layout code to be re-entered via resource load delegate
         https://bugs.webkit.org/show_bug.cgi?id=65123
 

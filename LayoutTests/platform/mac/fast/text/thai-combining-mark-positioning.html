@@ -11,4 +11,11 @@
     <div style="font-size: 54px; font-family: garuda;">
         ให้มีขึ้น การทําให้
     </div>
+    <script>
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            document.body.offsetTop;
+            setTimeout(function() { layoutTestController.notifyDone(); }, 100);
+        }
+    </script>
 </body>
