@@ -232,6 +232,7 @@ public:
     void incrementVisuallyNonEmptyCharacterCount(unsigned);
     void incrementVisuallyNonEmptyPixelCount(const IntSize&);
     void setIsVisuallyNonEmpty() { m_isVisuallyNonEmpty = true; }
+    bool isVisuallyNonEmpty() const { return m_isVisuallyNonEmpty; }
 
     void forceLayout(bool allowSubtree = false);
     void forceLayoutForPagination(const FloatSize& pageSize, float maximumShrinkFactor, AdjustViewSizeOrNot);

@@ -74,6 +74,7 @@ typedef enum {
 - (NSColor *)_bodyBackgroundColor;
 - (BOOL)_isFrameSet;
 - (BOOL)_firstLayoutDone;
+- (BOOL)_isVisuallyNonEmpty;
 - (WebFrameLoadType)_loadType;
 
 // These methods take and return NSRanges based on the root editable element as the positional base.

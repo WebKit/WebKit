@@ -913,6 +913,13 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     return _private->coreFrame->loader()->stateMachine()->firstLayoutDone();
 }
 
+- (BOOL)_isVisuallyNonEmpty
+{
+    if (FrameView* view = _private->coreFrame->view())
+        return view->isVisuallyNonEmpty();
+    return NO;
+}
+
 - (WebFrameLoadType)_loadType
 {
     return (WebFrameLoadType)_private->coreFrame->loader()->loadType();
