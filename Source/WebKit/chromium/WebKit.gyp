@@ -612,7 +612,7 @@
                                 '<(chromium_src_dir)/testing/gtest.gyp:gtest',
                                 '<(chromium_src_dir)/testing/gmock.gyp:gmock',
                                 '<(chromium_src_dir)/third_party/icu/icu.gyp:*',
-                                '<(chromium_src_dir)/third_party/libjpeg/libjpeg.gyp:libjpeg',
+                                '<(chromium_src_dir)/third_party/libjpeg_turbo/libjpeg.gyp:libjpeg',
                                 '<(chromium_src_dir)/third_party/libpng/libpng.gyp:libpng',
                                 '<(chromium_src_dir)/third_party/libxml/libxml.gyp:libxml',
                                 '<(chromium_src_dir)/third_party/libxslt/libxslt.gyp:libxslt',
