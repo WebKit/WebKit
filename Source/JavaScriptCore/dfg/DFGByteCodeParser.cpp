@@ -1172,7 +1172,6 @@ void ByteCodeParser::processPhiStack()
         PhiStackEntry entry = phiStack.last();
         phiStack.removeLast();
         
-        Node& phiNode = m_graph[entry.m_phi];
         PredecessorList& predecessors = entry.m_block->m_predecessors;
         unsigned varNo = entry.m_varNo;
 
@@ -1190,34 +1189,37 @@ void ByteCodeParser::processPhiStack()
                 valueInPredecessor = m_graph[valueInPredecessor].child1();
             ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi);
 
-            if (phiNode.refCount())
+            Node* phiNode = &m_graph[entry.m_phi];
+            if (phiNode->refCount())
                 m_graph.ref(valueInPredecessor);
 
-            if (phiNode.child1() == NoNode) {
-                phiNode.children.fixed.child1 = valueInPredecessor;
+            if (phiNode->child1() == NoNode) {
+                phiNode->children.fixed.child1 = valueInPredecessor;
                 continue;
             }
-            if (phiNode.child2() == NoNode) {
-                phiNode.children.fixed.child2 = valueInPredecessor;
+            if (phiNode->child2() == NoNode) {
+                phiNode->children.fixed.child2 = valueInPredecessor;
                 continue;
             }
-            if (phiNode.child3() == NoNode) {
-                phiNode.children.fixed.child3 = valueInPredecessor;
+            if (phiNode->child3() == NoNode) {
+                phiNode->children.fixed.child3 = valueInPredecessor;
                 continue;
             }
 
             NodeIndex newPhi = addToGraph(Phi);
+            
+            phiNode = &m_graph[entry.m_phi]; // reload after vector resize
             Node& newPhiNode = m_graph[newPhi];
-            if (phiNode.refCount())
+            if (phiNode->refCount())
                 m_graph.ref(newPhi);
 
-            newPhiNode.children.fixed.child1 = phiNode.child1();
-            newPhiNode.children.fixed.child2 = phiNode.child2();
-            newPhiNode.children.fixed.child3 = phiNode.child3();
+            newPhiNode.children.fixed.child1 = phiNode->child1();
+            newPhiNode.children.fixed.child2 = phiNode->child2();
+            newPhiNode.children.fixed.child3 = phiNode->child3();
 
-            phiNode.children.fixed.child1 = newPhi;
-            phiNode.children.fixed.child1 = valueInPredecessor;
-            phiNode.children.fixed.child3 = NoNode;
+            phiNode->children.fixed.child1 = newPhi;
+            phiNode->children.fixed.child1 = valueInPredecessor;
+            phiNode->children.fixed.child3 = NoNode;
         }
     }
 }

@@ -1,3 +1,21 @@
+2011-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT bytecode parser misuses pointers into objects allocated as part of a
+        WTF::Vector.
+        https://bugs.webkit.org/show_bug.cgi?id=65128
+
+        Reviewed by Gavin Barraclough.
+        
+        The bytecode parser code seems to be right to have a DFGNode& phiNode reference
+        into the graph, since this makes the code greatly more readable.  This patch
+        thus makes the minimal change necessary to make the code right: it uses a
+        pointer (to disambiguate between reloading the pointer and performing a
+        copy from one location of the vector to another) and reloads it after the
+        calls to addToGraph().
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::processPhiStack):
+
 2011-07-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91686.
