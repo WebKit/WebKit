@@ -1,3 +1,18 @@
+2011-07-25  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG non-speculative JIT emits inefficient code for arithmetic
+        involving two registers
+        https://bugs.webkit.org/show_bug.cgi?id=65160
+
+        Reviewed by Gavin Barraclough.
+        
+        The non-speculative JIT now emits inline code for double arithmetic, but
+        still attempts integer arithmetic first.  This is a speed-up on SunSpider
+        (albeit a small one), and a large speed-up on Kraken.
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::basicArithOp):
+
 2011-07-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break with --debug after r89153.
