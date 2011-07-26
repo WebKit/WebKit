@@ -1,3 +1,17 @@
+2011-07-26  Adrienne Walker  <enne@google.com>
+
+        [chromium] Check in expectations for font-family-pictograph.
+        https://bugs.webkit.org/show_bug.cgi?id=65197
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux/fast/css/font-family-pictograph-expected.png: Added.
+        * platform/chromium-linux/fast/css/font-family-pictograph-expected.txt: Added.
+        * platform/chromium-mac/fast/css/font-family-pictograph-expected.png: Added.
+        * platform/chromium-mac/fast/css/font-family-pictograph-expected.txt: Added.
+        * platform/chromium-win/fast/css/font-family-pictograph-expected.png: Added.
+        * platform/chromium-win/fast/css/font-family-pictograph-expected.txt: Added.
+
 2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Add support for download='filename' attribute in anchors.
