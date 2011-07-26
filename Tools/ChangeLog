@@ -1,3 +1,16 @@
+2011-07-26  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Regions build bot should build with "--css-regions" and "--css-exclusion" flags
+        https://bugs.webkit.org/show_bug.cgi?id=65171
+
+        Added "features" parameter in config.json for "builder" objects. The parameter is optional and must be an array. All the items
+        of the array will be passed to the build-webkit script. The items will automatically be prefixed with "--".
+
+        Reviewed by Adam Roben.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-07-26  Chris Rogers  <crogers@google.com>
 
         Avoid outputting #EOF twice for web audio tests in chromium DRT

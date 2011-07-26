@@ -243,7 +243,7 @@
                       "slavenames": ["efl-linux-slave-1"]
                     },
                     { "name": "CSSRegions SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "cssregions-snowleopard-intel-release",
-                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
+                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"], "features": ["css-regions", "css-exclusions"],
                       "slavenames": ["adobe-mac-slave1"]
                     }
                   ],
