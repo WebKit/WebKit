@@ -3915,3 +3915,12 @@ BUGWK65152 : fast/js/cyclic-proto.html = CRASH PASS
 BUGWK65152 : fast/js/cyclic-prototypes.html = CRASH PASS
 
 BUGWK65155 : fast/selectors/001.html = CRASH PASS
+
+// Needs new baseline -- visual appearance of file upload control has changed.
+BUGWK64692 WIN : fast/forms/input-file-re-render.html = IMAGE
+BUGWK64692 WIN : fast/forms/form-element-geometry.html = IMAGE
+BUGWK64692 WIN : fast/forms/file-input-direction.html = IMAGE
+BUGWK64692 WIN : fast/forms/input-appearance-height.html = IMAGE
+BUGWK64692 WIN : fast/forms/input-value.html = IMAGE
+BUGWK64692 WIN : fast/forms/box-shadow-override.html = IMAGE
+BUGWK64692 WIN : fast/forms/file-input-disabled.html = IMAGE

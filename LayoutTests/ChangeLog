@@ -1,3 +1,23 @@
+2011-07-26  Patrick Dubroy  <dubroy@chromium.org>
+
+        In file upload controls, filename text was misaligned with button text.
+        Update chromium-linux with the new baseline images, and add temporary
+        exceptions for chromium-win and gtk until they can be rebaselined.
+
+        https://bugs.webkit.org/show_bug.cgi?id=64692
+
+        Reviewed by Dimitri Glazkov.
+
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-linux/fast/forms/file-input-direction-expected.png:
+        * platform/chromium-linux/fast/forms/file-input-disabled-expected.png:
+        * platform/chromium-linux/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-linux/fast/forms/input-file-re-render-expected.png:
+        * platform/chromium-linux/fast/forms/input-value-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+
 2011-07-26  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: inspector test rebaselines.

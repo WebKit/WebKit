@@ -1,3 +1,18 @@
+2011-07-26  Patrick Dubroy  <dubroy@chromium.org>
+
+        Filename text in file upload controls is not aligned with button text on
+        chromium-linux, chromium-win, and gtk.
+
+        https://bugs.webkit.org/show_bug.cgi?id=64692
+
+        The fix is to not include the margin, border, and padding in the calculation,
+        because those are already accounted for by RenderBlock::baselinePosition().
+
+        Reviewed by Dimitri Glazkov.
+
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+
 2011-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91746.

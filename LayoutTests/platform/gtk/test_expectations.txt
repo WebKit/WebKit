@@ -20,3 +20,12 @@ BUGWK64253 : fast/forms/textarea-placeholder-wrapping.html = FAIL
 
 // New test. Need platform-dependent baseline files.
 BUGWK59703 : fast/forms/input-appearance-number-rtl.html = FAIL
+
+// Needs new baseline -- visual appearance of file upload control has changed.d
+BUGWK64692 : fast/forms/input-file-re-render.html = IMAGE
+BUGWK64692 : fast/forms/form-element-geometry.html = IMAGE
+BUGWK64692 : fast/forms/file-input-direction.html = IMAGE
+BUGWK64692 : fast/forms/input-appearance-height.html = IMAGE
+BUGWK64692 : fast/forms/input-value.html = IMAGE
+BUGWK64692 : fast/forms/box-shadow-override.html = IMAGE
+BUGWK64692 : fast/forms/file-input-disabled.html = IMAGE
