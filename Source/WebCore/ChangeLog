@@ -1,3 +1,17 @@
+2011-07-26  Viet-Trung Luu  <viettrungluu@chromium.org>
+
+        Improve (i.e., speed up) .gyp(i) files for Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=65032
+
+        Reviewed by Adam Barth.
+
+        This re-applies r91595 with the source exclusion fixed.
+
+        Test by building (in all supported configurations).
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+
 2011-07-26  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Disable video support on linux if the dependencies are not found.

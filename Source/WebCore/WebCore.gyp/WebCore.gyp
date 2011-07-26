@@ -1259,21 +1259,19 @@
         'webcore_prerequisites',
       ],
       'sources': [
-        '<@(webcore_privateheader_files)',
-        '<@(webcore_files)',
+        '<@(webcore_dom_privateheader_files)',
+        '<@(webcore_dom_files)',
+      ],
+      'sources!': [
+        '../dom/default/PlatformMessagePortChannel.cpp',
+        '../dom/default/PlatformMessagePortChannel.h',
       ],
       'sources/': [
-        # Start by excluding everything then include dom files only.
-        ['exclude', '.*'],
-        ['include', 'dom/'],
-
         # FIXME: Figure out how to store these patterns in a variable.
         ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|haiku|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
 
         ['exclude', 'AllInOne\\.cpp$'],
-        ['exclude', 'dom/StaticStringList\\.cpp$'],
-        ['exclude', 'dom/default/PlatformMessagePortChannel\\.(cpp|h)$'],
       ],
     },
     {
@@ -1283,14 +1281,10 @@
         'webcore_prerequisites',
       ],
       'sources': [
-        '<@(webcore_privateheader_files)',
-        '<@(webcore_files)',
+        '<@(webcore_html_privateheader_files)',
+        '<@(webcore_html_files)',
       ],
       'sources/': [
-        # Start by excluding everything then include html files only.
-        ['exclude', '.*'],
-        ['include', 'html/'],
-
         ['exclude', 'AllInOne\\.cpp$'],
       ],
     },
@@ -1301,20 +1295,10 @@
         'webcore_prerequisites',
       ],
       'sources': [
-        '<@(webcore_privateheader_files)',
-        '<@(webcore_files)',
+        '<@(webcore_svg_privateheader_files)',
+        '<@(webcore_svg_files)',
       ],
       'sources/': [
-        # Start by excluding everything then include svg files only. Note that
-        # css/SVG* and bindings/v8/custom/V8SVG* are still built in
-        # webcore_remaining.
-        ['exclude', '.*'],
-        ['include', 'svg/'],
-        ['include', 'css/svg/'],
-        ['include', 'rendering/style/SVG'],
-        ['include', 'rendering/RenderSVG'],
-        ['include', 'rendering/SVG'],
-
         ['exclude', 'AllInOne\\.cpp$'],
       ],
     },
@@ -1585,11 +1569,6 @@
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
 
         ['exclude', 'AllInOne\\.cpp$'],
-
-        # Exclude most of SVG except css and javascript bindings.
-        ['exclude', 'rendering/style/SVG[^/]+.(cpp|h)$'],
-        ['exclude', 'rendering/RenderSVG[^/]+.(cpp|h)$'],
-        ['exclude', 'rendering/SVG[^/]+.(cpp|h)$'],
       ],
       'conditions': [
         ['OS=="win"', {
@@ -1638,8 +1617,6 @@
         '<@(webcore_files)',
       ],
       'sources/': [
-        ['exclude', 'dom/'],
-        ['exclude', 'html/'],
         ['exclude', 'platform/'],
         ['exclude', 'rendering/'],
 
