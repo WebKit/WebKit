@@ -1,3 +1,30 @@
+2011-07-25  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9835028> Font loading during layout can cause layout code to be re-entered via resource load delegate
+        https://bugs.webkit.org/show_bug.cgi?id=65123
+
+        Reviewed by Darin Adler.
+
+        Updated tests that depended on fonts loading synchronously during layout.
+        Unfortunately, font loading does not fire any DOM events, so in most cases
+        a constant timeout had to be introduced.
+
+        * fast/blockflow/broken-ideograph-small-caps.html:
+        * fast/css/color-leakage.html:
+        * fast/css/custom-font-xheight.html:
+        * fast/css/font-face-multiple-faces.html:
+        * fast/css/font-face-multiple-remote-sources.html:
+        * fast/css/font-face-remote.html:
+        * fast/css/font-face-woff.html:
+        * svg/W3C-SVG-1.1-SE/text-intro-09-b.svg:
+        * svg/W3C-SVG-1.1/fonts-elem-07-b.svg:
+        * svg/custom/svg-fonts-fallback.xhtml:
+        * svg/custom/svg-fonts-in-html.html:
+        * svg/custom/svg-fonts-segmented.xhtml:
+        * svg/custom/svg-fonts-with-no-element-reference.html:
+        * svg/custom/svg-fonts-without-missing-glyph.xhtml:
+        * svg/text/text-overflow-ellipsis-svgfont.html:
+
 2011-07-25  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark fast/cyclic-prototypes.html as a flaky crasher.

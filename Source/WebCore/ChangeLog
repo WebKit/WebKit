@@ -1,3 +1,21 @@
+2011-07-25  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9835028> Font loading during layout can cause layout code to be re-entered via resource load delegate
+        https://bugs.webkit.org/show_bug.cgi?id=65123
+
+        Reviewed by Anders Carlsson and Darin Adler.
+
+        Since CSSFontFaceSource::getFontData() can get called during layout, avoid calling out to loader
+        code from under it, and instead defer that work using a zero-delay timer.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::~CSSFontFaceSource):
+        (WebCore::CSSFontFaceSource::getFontData): Rather than starting the font load here, schedule
+        a zero-delay timer to do it.
+        (WebCore::CSSFontFaceSource::startLoadingTimerFired): Added. Starts loading the font if needed.
+        * css/CSSFontFaceSource.h:
+
 2011-07-25  Al Patrick  <apatrick@chromium.org>
 
         Removed support for the GL_latch_CHROMIUM extension which Chromium no longer supports.

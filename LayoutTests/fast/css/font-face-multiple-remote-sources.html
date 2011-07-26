@@ -15,6 +15,10 @@
         _fail
     </div>
     <script>
-        document.body.offsetTop;
+        if (window.layoutTestController) {
+            layoutTestController.waitUntilDone();
+            document.body.offsetTop;
+            setTimeout(function() { layoutTestController.notifyDone(); }, 100);
+        }
     </script>
 </body>
