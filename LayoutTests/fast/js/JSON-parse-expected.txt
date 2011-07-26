@@ -17,7 +17,7 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('Infinity');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected identifier "Infinity?".
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected identifier "Infinity".
 function (jsonObject) {
         return jsonObject.parse('NaN');
     }

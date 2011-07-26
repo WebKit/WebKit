@@ -609,7 +609,7 @@ JSValue LiteralParser::parse(ParserState initialState)
                         m_parseErrorMessage = "Unexpected token '}'";
                         return JSValue();
                     case TokIdentifier:
-                        m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", UString(m_lexer.currentToken().stringToken).ascii().data()).impl();
+                        m_parseErrorMessage = String::format("Unexpected identifier \"%s\"", UString(m_lexer.currentToken().stringToken, m_lexer.currentToken().stringLength).ascii().data()).impl();
                         return JSValue();
                     case TokColon:
                         m_parseErrorMessage = "Unexpected token ':'";

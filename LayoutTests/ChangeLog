@@ -1,3 +1,14 @@
+2011-07-26  Oliver Hunt  <oliver@apple.com>
+
+        Buffer overflow creating error messages for JSON.parse
+        https://bugs.webkit.org/show_bug.cgi?id=65211
+
+        Reviewed by Darin Adler.
+
+        Update testcase to reflect actual expected output.
+
+        * fast/js/JSON-parse-expected.txt:
+
 2011-07-26  Xiaomei Ji  <xji@chromium.org>
 
         --webkit-visual-word does not work in multi-line

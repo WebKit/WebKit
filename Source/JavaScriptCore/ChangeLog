@@ -1,3 +1,15 @@
+2011-07-26  Oliver Hunt  <oliver@apple.com>
+
+        Buffer overflow creating error messages for JSON.parse
+        https://bugs.webkit.org/show_bug.cgi?id=65211
+
+        Reviewed by Darin Adler.
+
+        Parse string length to the UString constructor.
+
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::parse):
+
 2011-07-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Refactor automatically generated JS DOM bindings to replace operator new with static create methods
