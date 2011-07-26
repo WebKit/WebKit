@@ -2405,7 +2405,7 @@ BUGCR62138 : animations/stop-animation-on-suspend.html = TEXT PASS CRASH
 // test_shell and DRT do not have LayoutTestController.pageSizeAndMarginsInPixels
 BUGCR62515 : printing/page-format-data-display-none.html = TEXT
 
-BUGCR60393 MAC : fast/selectors/001.html = PASS TIMEOUT
+//BUGCR60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
 BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT PASS
 
@@ -3912,3 +3912,5 @@ BUGWK65129 MAC : media/media-controls-clone.html = CRASH PASS
 BUGWK65149 LINUX : userscripts/user-script-image-document.html = CRASH PASS
 
 BUGWK65152 : fast/js/cyclic-proto.html = CRASH PASS
+
+BUGWK65155 : fast/selectors/001.html = CRASH PASS
