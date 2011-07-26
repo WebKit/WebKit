@@ -420,8 +420,6 @@ SET(WebCore_SOURCES
     bindings/generic/ActiveDOMCallback.cpp
     bindings/generic/RuntimeEnabledFeatures.cpp
 
-    bindings/js/CallbackFunction.cpp
-
     css/CSSBorderImageValue.cpp
     css/CSSCanvasValue.cpp
     css/CSSCharsetRule.cpp
@@ -1521,9 +1519,6 @@ IF (ENABLE_NETSCAPE_PLUGIN_API)
 ENDIF ()
 
 IF (ENABLE_NOTIFICATIONS)
-    LIST(APPEND WebCore_SOURCES
-        bindings/js/JSDesktopNotificationsCustom.cpp
-    )
     LIST(APPEND WebCore_IDL_FILES
         notifications/Notification.idl
         notifications/NotificationCenter.idl
@@ -1532,10 +1527,6 @@ ENDIF ()
 
 if (ENABLE_FILE_SYSTEM)
     LIST(APPEND WebCore_SOURCES
-        bindings/js/JSDirectoryEntryCustom.cpp
-        bindings/js/JSDirectoryEntrySyncCustom.cpp
-        bindings/js/JSEntryCustom.cpp
-        bindings/js/JSEntrySyncCustom.cpp
         fileapi/DirectoryEntry.cpp
         fileapi/DirectoryEntrySync.cpp
         fileapi/DirectoryReader.cpp
@@ -1596,9 +1587,6 @@ ENDIF ()
 
 IF (ENABLE_SVG)
     LIST(APPEND WebCore_SOURCES
-        bindings/js/JSSVGElementInstanceCustom.cpp
-        bindings/js/JSSVGLengthCustom.cpp
-        bindings/js/JSSVGPathSegCustom.cpp
         css/SVGCSSComputedStyleDeclaration.cpp
         css/SVGCSSParser.cpp
         css/SVGCSSStyleSelector.cpp
@@ -1972,7 +1960,6 @@ ENDIF()
 
 IF (ENABLE_VIDEO)
     LIST(APPEND WebCore_SOURCES
-        bindings/js/JSAudioConstructor.cpp
         html/HTMLAudioElement.cpp
         html/HTMLMediaElement.cpp
         html/HTMLSourceElement.cpp
@@ -2014,7 +2001,6 @@ ENDIF ()
 
 IF (ENABLE_MEDIA_STREAM)
     LIST(APPEND WebCore_SOURCES
-        bindings/js/JSNavigatorCustom.cpp
         dom/LocalMediaStream.cpp
         dom/MediaStream.cpp
         dom/MediaStreamList.cpp
@@ -2091,8 +2077,6 @@ IF (ENABLE_WEBGL)
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/util.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/ValidateLimitations.cpp
         ${THIRDPARTY_DIR}/ANGLE/src/compiler/VariableInfo.cpp
-
-        bindings/js/JSWebGLRenderingContextCustom.cpp
 
         html/canvas/WebGLBuffer.cpp
         html/canvas/WebGLContextAttributes.cpp

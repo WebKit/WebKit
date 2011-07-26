@@ -8,6 +8,7 @@ LIST(APPEND WebCore_IDL_INCLUDES
 )
 
 LIST(APPEND WebCore_SOURCES
+    bindings/js/CallbackFunction.cpp
     bindings/js/DOMObjectHashTableMap.cpp
     bindings/js/DOMWrapperWorld.cpp
     bindings/js/GCController.cpp
@@ -162,7 +163,6 @@ LIST(APPEND WebCore_SOURCES
     bridge/jsc/BridgeJSC.cpp
 )
 
-
 IF (ENABLE_BLOB)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSFileReaderCustom.cpp
@@ -211,6 +211,47 @@ IF (ENABLE_XPATH)
     )
 ENDIF ()
 
+
+IF (ENABLE_NOTIFICATIONS)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSDesktopNotificationsCustom.cpp
+    )
+ENDIF ()
+
+if (ENABLE_FILE_SYSTEM)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSDirectoryEntryCustom.cpp
+        bindings/js/JSDirectoryEntrySyncCustom.cpp
+        bindings/js/JSEntryCustom.cpp
+        bindings/js/JSEntrySyncCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_SVG)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSSVGElementInstanceCustom.cpp
+        bindings/js/JSSVGLengthCustom.cpp
+        bindings/js/JSSVGPathSegCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_VIDEO)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSAudioConstructor.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_MEDIA_STREAM)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSNavigatorCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_WEBGL)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSWebGLRenderingContextCustom.cpp
+    )
+ENDIF ()
 
 LIST(APPEND SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/CodeGenerator.pm
