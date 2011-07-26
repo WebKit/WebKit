@@ -865,7 +865,8 @@ void RenderThemeEfl::adjustSliderThumbSize(RenderStyle* style) const
 
 bool RenderThemeEfl::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    return paintSliderTrack(object, info, rect);
+    // We've already painted it in paintSliderTrack(), no need to do anything here.
+    return false;
 }
 
 void RenderThemeEfl::adjustCheckboxStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const

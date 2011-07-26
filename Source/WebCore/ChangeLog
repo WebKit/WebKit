@@ -1,3 +1,24 @@
+2011-07-26  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Do not crash on the isSlider() assert.
+        https://bugs.webkit.org/show_bug.cgi?id=65191
+
+        Reviewed by Antonio Gomes.
+
+        RenderThemeEfl's paintSliderThumb() just forwarded the call to
+        paintSliderTrack(), which, on its turn, called code that assumed that
+        object->isSlider() was true. That does not seem to be the case for
+        slidethumbs, so any page with an <input type="range"> tag would crash
+        WebKit.
+
+        We now do what RenderThemeQt does, and assume everything was properly
+        done in the call to paintSliderTrack().
+
+        No new tests, as this has been uncovered by an existing test.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintSliderThumb):
+
 2011-07-26  Brian Salomon  <bsalomon@google.com>
 
         [SKIA] Make the skia GL context current when drawing text to gpu backed platform context.
