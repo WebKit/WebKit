@@ -1,3 +1,16 @@
+2011-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove header webkitwebviewcommon.h
+        https://bugs.webkit.org/show_bug.cgi?id=65177
+
+        Reviewed by Martin Robinson.
+
+        Move webkitwebviewcommon.h contents back to webkitwebview.h.
+
+        * GNUmakefile.am: Remove webkitwebviewcommon.h
+        * webkit/webkitwebview.h:
+        * webkit/webkitwebviewcommon.h: Removed.
+
 2011-06-07  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

@@ -32,7 +32,6 @@
 #include <webkit/webkitwebframe.h>
 #include <webkit/webkitwebhistoryitem.h>
 #include <webkit/webkitwebsettings.h>
-#include <webkit/webkitwebviewcommon.h>
 
 G_BEGIN_DECLS
 
@@ -154,6 +153,16 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved2) (void);
 };
 
+WEBKIT_API GType
+webkit_web_view_get_type (void);
+
+WEBKIT_API GtkWidget *
+webkit_web_view_new (void);
+
+WEBKIT_API const gchar *
+webkit_web_view_get_title                       (WebKitWebView        *webView);
+
+
 WEBKIT_API const gchar *
 webkit_web_view_get_uri                         (WebKitWebView        *webView);
 
@@ -174,13 +183,17 @@ webkit_web_view_can_go_back                     (WebKitWebView        *webView);
 WEBKIT_API gboolean
 webkit_web_view_can_go_back_or_forward          (WebKitWebView        *webView,
                                                  gint                  steps);
-
 WEBKIT_API gboolean
 webkit_web_view_can_go_forward                  (WebKitWebView        *webView);
 
 WEBKIT_API void
+webkit_web_view_go_back                         (WebKitWebView        *webView);
+
+WEBKIT_API void
 webkit_web_view_go_back_or_forward              (WebKitWebView        *webView,
                                                  gint                  steps);
+WEBKIT_API void
+webkit_web_view_go_forward                      (WebKitWebView        *webView);
 
 WEBKIT_API void
 webkit_web_view_stop_loading                    (WebKitWebView        *webView);
@@ -195,6 +208,9 @@ webkit_web_view_reload                          (WebKitWebView        *webView);
 WEBKIT_API void
 webkit_web_view_reload_bypass_cache             (WebKitWebView        *webView);
 
+WEBKIT_API void
+webkit_web_view_load_uri                        (WebKitWebView        *webView,
+                                                 const gchar          *uri);
 WEBKIT_API void
 webkit_web_view_load_string                     (WebKitWebView        *webView,
                                                  const gchar          *content,

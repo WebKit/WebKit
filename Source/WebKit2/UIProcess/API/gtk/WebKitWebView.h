@@ -24,8 +24,6 @@
 #define WebKitWebView_h
 
 #include <WebKit2/WebKitWebViewBase.h>
-#include <webkit/webkitdefines.h>
-#include <webkit/webkitwebviewcommon.h>
 
 G_BEGIN_DECLS
 
@@ -36,6 +34,8 @@ G_BEGIN_DECLS
 #define WEBKIT_IS_WEB_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),  WEBKIT_TYPE_WEB_VIEW))
 #define WEBKIT_WEB_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS((obj),  WEBKIT_TYPE_WEB_VIEW, WebKitWebViewClass))
 
+typedef struct _WebKitWebView        WebKitWebView;
+typedef struct _WebKitWebViewClass   WebKitWebViewClass;
 typedef struct _WebKitWebViewPrivate WebKitWebViewPrivate;
 
 struct _WebKitWebView {
@@ -58,6 +58,22 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved6) (void);
     void (*_webkit_reserved7) (void);
 };
+
+WK_EXPORT GType
+webkit_web_view_get_type   (void);
+
+WK_EXPORT GtkWidget *
+webkit_web_view_new        (void);
+
+WK_EXPORT void
+webkit_web_view_load_uri   (WebKitWebView *webView,
+                            const gchar   *uri);
+
+WK_EXPORT void
+webkit_web_view_go_back    (WebKitWebView *webView);
+
+WK_EXPORT void
+webkit_web_view_go_forward (WebKitWebView *webView);
 
 G_END_DECLS
 
