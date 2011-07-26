@@ -1,3 +1,15 @@
+2011-07-26  Brian Salomon  <bsalomon@google.com>
+
+        [SKIA] Make the skia GL context current when drawing text to gpu backed platform context.
+        https://bugs.webkit.org/show_bug.cgi?id=65182
+
+        Reviewed by Stephen White.
+
+        No new tests. Not sure how to test wrong-ctx bugs in layout tests.
+
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::paintSkiaText):
+
 2011-07-26  Emil A Eklund  <eae@chromium.org>
 
         RenderText::absoluteRectsForRange() and absoluteQuadsForRange() have nearly duplicate code
