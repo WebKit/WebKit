@@ -1,3 +1,13 @@
+2011-07-26  Shinya Kawanaka  <shinyak@google.com>
+
+        Added a test to normalize option.text.
+        https://bugs.webkit.org/show_bug.cgi?id=57746
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/option-strip-unicode-spaces-expected.txt: Added.
+        * fast/forms/option-strip-unicode-spaces.html: Added.
+
 2011-07-26  Noel Gordon  <noel.gordon@gmail.com>
 
         Add regression test for :empty { display: none }
