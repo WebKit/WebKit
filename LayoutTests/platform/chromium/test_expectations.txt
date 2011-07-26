@@ -1551,7 +1551,7 @@ BUGCR22554 SKIP : mathml = FAIL
 
 // WebKit update 48796:48820
 // Test #9 throws an exception.
-BUGCR23956 WIN LINUX : fast/dom/Range/getClientRects.html = FAIL
+BUGCR23956 : fast/dom/Range/getClientRects.html = FAIL
 BUGCR24126 : fast/dom/HTMLInputElement/size-attribute.html = FAIL
 
 // Started failing for no apparent reason at r28124, and IMAGE+TEXT diffs started at r51875
