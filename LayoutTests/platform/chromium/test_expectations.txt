@@ -3927,3 +3927,5 @@ BUGWK64692 WIN : fast/forms/box-shadow-override.html = IMAGE
 BUGWK64692 WIN : fast/forms/file-input-disabled.html = IMAGE
 
 BUGWK65199 MAC : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
+
+BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
