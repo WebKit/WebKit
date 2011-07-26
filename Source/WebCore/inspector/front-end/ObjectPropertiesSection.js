@@ -198,8 +198,6 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         } else
             this.valueElement.textContent = description;
 
-        if (this.property.isGetter)
-            this.valueElement.addStyleClass("dimmed");
         if (this.property.wasThrown)
             this.valueElement.addStyleClass("error");
         if (this.property.value.subtype)

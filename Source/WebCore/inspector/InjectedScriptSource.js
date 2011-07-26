@@ -183,23 +183,34 @@ InjectedScript.prototype = {
         for (var i = 0; i < propertyNames.length; ++i) {
             var propertyName = propertyNames[i];
 
-            var property = {};
-            property.name = propertyName + "";
-            var isGetter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
-            if (!isGetter) {
+            var getter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
+            var setter = object["__lookupSetter__"] && object.__lookupSetter__(propertyName);
+            if (getter || setter) {
+                if (getter) {
+                    var property = {};
+                    property.name = "get " + propertyName;
+                    property.value = this._wrapObject(getter, objectGroupName);
+                    properties.push(property);
+                }
+                if (setter) {
+                    var property = {};
+                    property.name = "set " + propertyName;
+                    property.value = this._wrapObject(setter, objectGroupName);
+                    properties.push(property);
+                }
+            } else {
+                var property = {};
+                property.name = propertyName;
+                var value;
                 try {
-                    var value = object[propertyName];
+                    value = object[propertyName];
                 } catch(e) {
                     var value = e;
                     property.wasThrown = true;
                 }
                 property.value = this._wrapObject(value, objectGroupName);
-            } else {
-                // FIXME: this should show something like "getter" (bug 16734).
-                property.value = new InjectedScript.RemoteObject("\u2014"); // em dash
-                property.isGetter = true;
+                properties.push(property);
             }
-            properties.push(property);
         }
         return properties;
     },

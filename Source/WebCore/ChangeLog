@@ -1,3 +1,18 @@
+2011-07-26  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Better represent custom getters in the properties pane
+        https://bugs.webkit.org/show_bug.cgi?id=16734
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/runtime/runtime-getProperties.html
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+
 2011-07-26  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

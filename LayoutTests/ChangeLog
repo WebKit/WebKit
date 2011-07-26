@@ -1,3 +1,13 @@
+2011-07-26  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Better represent custom getters in the properties pane
+        https://bugs.webkit.org/show_bug.cgi?id=16734
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/runtime/runtime-getProperties-expected.txt: Added.
+        * inspector/runtime/runtime-getProperties.html: Added.
+
 2011-07-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening.

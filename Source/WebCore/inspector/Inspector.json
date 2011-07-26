@@ -242,8 +242,7 @@
                 "properties": [
                     { "name": "name", "type": "string", "description": "Property name." },
                     { "name": "value", "$ref": "RemoteObject", "description": "Property value." },
-                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if exception was thrown on attempt to get the property value, in that case the value propery will contain thrown value." },
-                    { "name": "isGetter", "type": "boolean", "optional": true, "description": "True if this property is getter." }
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if exception was thrown on attempt to get the property value, in that case the value propery will contain thrown value." }
                 ]
             },
             {

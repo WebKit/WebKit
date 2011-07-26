@@ -31,7 +31,7 @@ function test()
             function step1(error, result, wasThrown)
             {
                 obj1 = WebInspector.RemoteObject.fromPayload(result);
-                RuntimeAgent.evaluate("object1", step2);
+                RuntimeAgent.evaluate("object2", step2);
             }
 
             function step2(error, result, wasThrown)
