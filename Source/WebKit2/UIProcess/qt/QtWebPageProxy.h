@@ -62,20 +62,10 @@ public:
     enum WebAction {
         NoWebAction = - 1,
 
-        OpenLink,
-        OpenLinkInNewWindow,
-        CopyLinkToClipboard,
-        OpenImageInNewWindow,
-
         Back,
         Forward,
         Stop,
         Reload,
-
-        Cut,
-        Copy,
-        Paste,
-        SelectAll,
 
         Undo,
         Redo,
@@ -143,8 +133,6 @@ public:
     void didChangeUrl(const QUrl&);
     void didChangeTitle(const QString&);
     void didChangeStatusText(const QString&);
-    void showContextMenu(QSharedPointer<QMenu>);
-    void hideContextMenu();
 
     void loadDidBegin();
     void loadDidSucceed();

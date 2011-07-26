@@ -35,49 +35,36 @@
 
 using namespace WebCore;
 
+Q_DECLARE_METATYPE(WebKit::WebContextMenuItemData);
+
 namespace WebKit {
 
-static QtWebPageProxy::WebAction webActionForContextMenuAction(WebCore::ContextMenuAction action)
+WebContextMenuProxyQt::WebContextMenuProxyQt(WebPageProxy* pageProxy, ViewInterface* viewInterface)
+    : m_webPageProxy(pageProxy)
+    , m_viewInterface(viewInterface)
 {
-    switch (action) {
-    case WebCore::ContextMenuItemTagOpenLink:
-        return QtWebPageProxy::OpenLink;
-    case WebCore::ContextMenuItemTagOpenLinkInNewWindow:
-        return QtWebPageProxy::OpenLinkInNewWindow;
-    case WebCore::ContextMenuItemTagCopyLinkToClipboard:
-        return QtWebPageProxy::CopyLinkToClipboard;
-    case WebCore::ContextMenuItemTagOpenImageInNewWindow:
-        return QtWebPageProxy::OpenImageInNewWindow;
-    case WebCore::ContextMenuItemTagGoBack:
-        return QtWebPageProxy::Back;
-    case WebCore::ContextMenuItemTagGoForward:
-        return QtWebPageProxy::Forward;
-    case WebCore::ContextMenuItemTagStop:
-        return QtWebPageProxy::Stop;
-    case WebCore::ContextMenuItemTagReload:
-        return QtWebPageProxy::Reload;
-    case WebCore::ContextMenuItemTagCut:
-        return QtWebPageProxy::Cut;
-    case WebCore::ContextMenuItemTagCopy:
-        return QtWebPageProxy::Copy;
-    case WebCore::ContextMenuItemTagPaste:
-        return QtWebPageProxy::Paste;
-    case WebCore::ContextMenuItemTagSelectAll:
-        return QtWebPageProxy::SelectAll;
-    default:
-        break;
+}
+
+PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(WebPageProxy* pageProxy, ViewInterface* viewInterface)
+{
+    return adoptRef(new WebContextMenuProxyQt(pageProxy, viewInterface));
+}
+
+void WebContextMenuProxyQt::actionTriggered(bool)
+{
+    QAction* qtAction = qobject_cast<QAction*>(sender());
+    if (!qtAction) {
+        ASSERT_NOT_REACHED();
+        return;
     }
-    return QtWebPageProxy::NoWebAction;
-}
 
-WebContextMenuProxyQt::WebContextMenuProxyQt(QtWebPageProxy* page)
-    : m_page(page)
-{
-}
+    QVariant data = qtAction->data();
+    if (!data.canConvert<WebContextMenuItemData>()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
 
-PassRefPtr<WebContextMenuProxyQt> WebContextMenuProxyQt::create(QtWebPageProxy* page)
-{
-    return adoptRef(new WebContextMenuProxyQt(page));
+    m_webPageProxy->contextMenuItemSelected(qtAction->data().value<WebContextMenuItemData>());
 }
 
 void WebContextMenuProxyQt::showContextMenu(const IntPoint& position, const Vector<WebContextMenuItemData>& items)
@@ -93,12 +80,12 @@ void WebContextMenuProxyQt::showContextMenu(const IntPoint& position, const Vect
         menu = adoptPtr(new QMenu);
 
     menu->move(position);
-    m_page->showContextMenu(QSharedPointer<QMenu>(menu.leakPtr()));
+    m_viewInterface->showContextMenu(QSharedPointer<QMenu>(menu.leakPtr()));
 }
 
 void WebContextMenuProxyQt::hideContextMenu()
 {
-    m_page->hideContextMenu();
+    m_viewInterface->hideContextMenu();
 }
 
 PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebContextMenuItemData>& items) const
@@ -109,15 +96,15 @@ PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebConte
         switch (item.type()) {
         case WebCore::CheckableActionType: /* fall through */
         case WebCore::ActionType: {
-            QtWebPageProxy::WebAction action = webActionForContextMenuAction(item.action());
-            QAction* qtAction = m_page->action(action);
-            if (qtAction) {
-                qtAction->setEnabled(item.enabled());
-                qtAction->setChecked(item.checked());
-                qtAction->setCheckable(item.type() == WebCore::CheckableActionType);
+            QAction* qtAction = new QAction(menu.get());
+            qtAction->setData(QVariant::fromValue(item));
+            qtAction->setText(item.title());
+            qtAction->setEnabled(item.enabled());
+            qtAction->setChecked(item.checked());
+            qtAction->setCheckable(item.type() == WebCore::CheckableActionType);
+            connect(qtAction, SIGNAL(triggered(bool)), this, SLOT(actionTriggered(bool)), Qt::DirectConnection);
 
-                menu->addAction(qtAction);
-            }
+            menu->addAction(qtAction);
             break;
         }
         case WebCore::SeparatorType:
@@ -125,12 +112,11 @@ PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebConte
             break;
         case WebCore::SubmenuType:
             if (OwnPtr<QMenu> subMenu = createContextMenu(item.submenu())) {
-                subMenu->setParent(menu.get());
-                QMenu* const subMenuPtr = subMenu.leakPtr();
+                static_cast<QObject*>(subMenu.get())->setParent(menu.get());
                 subMenu->setTitle(item.title());
+                QMenu* const subMenuPtr = subMenu.leakPtr();
                 menu->addMenu(subMenuPtr);
             }
-
             break;
         }
     }
@@ -150,5 +136,7 @@ PassOwnPtr<QMenu> WebContextMenuProxyQt::createContextMenu(const Vector<WebConte
 
     return menu.release();
 }
+
+#include "moc_WebContextMenuProxyQt.cpp"
 
 } // namespace WebKit

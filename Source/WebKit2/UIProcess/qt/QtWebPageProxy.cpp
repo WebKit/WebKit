@@ -66,32 +66,6 @@ QWKContext* defaultWKContext()
     return defaultContext;
 }
 
-static WebCore::ContextMenuAction contextMenuActionForWebAction(QtWebPageProxy::WebAction action)
-{
-    switch (action) {
-    case QtWebPageProxy::OpenLink:
-        return WebCore::ContextMenuItemTagOpenLink;
-    case QtWebPageProxy::OpenLinkInNewWindow:
-        return WebCore::ContextMenuItemTagOpenLinkInNewWindow;
-    case QtWebPageProxy::CopyLinkToClipboard:
-        return WebCore::ContextMenuItemTagCopyLinkToClipboard;
-    case QtWebPageProxy::OpenImageInNewWindow:
-        return WebCore::ContextMenuItemTagOpenImageInNewWindow;
-    case QtWebPageProxy::Cut:
-        return WebCore::ContextMenuItemTagCut;
-    case QtWebPageProxy::Copy:
-        return WebCore::ContextMenuItemTagCopy;
-    case QtWebPageProxy::Paste:
-        return WebCore::ContextMenuItemTagPaste;
-    case QtWebPageProxy::SelectAll:
-        return WebCore::ContextMenuItemTagSelectAll;
-    default:
-        ASSERT(false);
-        break;
-    }
-    return WebCore::ContextMenuItemTagNoAction;
-}
-
 static inline Qt::DropActions dragOperationToDropActions(unsigned dragOperations)
 {
     Qt::DropActions result = Qt::IgnoreAction;
@@ -401,7 +375,7 @@ PassRefPtr<WebPopupMenuProxy> QtWebPageProxy::createPopupMenuProxy(WebPageProxy*
 
 PassRefPtr<WebContextMenuProxy> QtWebPageProxy::createContextMenuProxy(WebPageProxy*)
 {
-    return WebContextMenuProxyQt::create(this);
+    return WebContextMenuProxyQt::create(m_webPageProxy.get(), m_viewInterface);
 }
 
 void QtWebPageProxy::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
@@ -439,16 +413,6 @@ void QtWebPageProxy::didChangeTitle(const QString& newTitle)
 void QtWebPageProxy::didChangeStatusText(const QString& text)
 {
     m_viewInterface->didChangeStatusText(text);
-}
-
-void QtWebPageProxy::showContextMenu(QSharedPointer<QMenu> menu)
-{
-    m_viewInterface->showContextMenu(menu);
-}
-
-void QtWebPageProxy::hideContextMenu()
-{
-    m_viewInterface->hideContextMenu();
 }
 
 void QtWebPageProxy::loadDidBegin()
@@ -640,12 +604,8 @@ void QtWebPageProxy::triggerAction(WebAction webAction, bool)
         m_webPageProxy->reload(/* reloadFromOrigin */ true);
         return;
     default:
-        break;
+        ASSERT_NOT_REACHED();
     }
-
-    QAction* qtAction = action(webAction);
-    WebKit::WebContextMenuItemData menuItemData(ActionType, contextMenuActionForWebAction(webAction), qtAction->text(), qtAction->isEnabled(), qtAction->isChecked());
-    m_webPageProxy->contextMenuItemSelected(menuItemData);
 }
 
 QAction* QtWebPageProxy::navigationAction(QtWebKit::NavigationAction which) const
@@ -679,18 +639,6 @@ QAction* QtWebPageProxy::action(WebAction action) const
     QtWebPageProxy* mutableSelf = const_cast<QtWebPageProxy*>(this);
 
     switch (action) {
-    case OpenLink:
-        text = contextMenuItemTagOpenLink();
-        break;
-    case OpenLinkInNewWindow:
-        text = contextMenuItemTagOpenLinkInNewWindow();
-        break;
-    case CopyLinkToClipboard:
-        text = contextMenuItemTagCopyLinkToClipboard();
-        break;
-    case OpenImageInNewWindow:
-        text = contextMenuItemTagOpenImageInNewWindow();
-        break;
     case Back:
         text = contextMenuItemTagGoBack();
         icon = style->standardIcon(QStyle::SP_ArrowBack);
@@ -707,18 +655,6 @@ QAction* QtWebPageProxy::action(WebAction action) const
         text = contextMenuItemTagReload();
         icon = style->standardIcon(QStyle::SP_BrowserReload);
         break;
-    case Cut:
-        text = contextMenuItemTagCut();
-        break;
-    case Copy:
-        text = contextMenuItemTagCopy();
-        break;
-    case Paste:
-        text = contextMenuItemTagPaste();
-        break;
-    case SelectAll:
-        text = contextMenuItemTagSelectAll();
-        break;
     case Undo: {
         QAction* undoAction = m_undoStack->createUndoAction(mutableSelf);
         m_actions[action] = undoAction;
@@ -730,7 +666,7 @@ QAction* QtWebPageProxy::action(WebAction action) const
         return redoAction;
     }
     default:
-        return 0;
+        ASSERT_NOT_REACHED();
         break;
     }
 
