@@ -70,8 +70,8 @@ static void sizeRequestMethod(GtkWidget*, GtkRequisition* requisition)
 #else
 static void getPreferredSizeMethod(GtkWidget*, gint* minimum, gint* natural)
 {
-    minimum = 1;
-    natural = 1;
+    *minimum = 1;
+    *natural = 1;
 }
 #endif
 

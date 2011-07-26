@@ -1,3 +1,10 @@
+2011-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKitGtk build with GTK+ 3.x after r91707.
+
+        * DumpRenderTree/gtk/SelfScrollingWebKitWebView.cpp:
+        (getPreferredSizeMethod):
+
 2011-07-26  MORITA Hajime  <morrita@google.com>
 
         [Chromium][DRT] MockSpellCheck.cpp should be clang clean
