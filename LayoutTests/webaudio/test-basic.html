@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<!--
+This is a very basic test to make sure layoutTestController.setAudioData() works correctly.
+It generates a 2 seconds long stereo result @44.1KHz
+The left channel will be a 880Hz tone, while the right will be 440Hz.
+-->
+
+<html>
+<head>
+
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+
+</head>
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests basic audio test infrastructure: specifically layoutTestController.setAudioData()");
+
+var sampleRate = 44100.0;
+var lengthInSeconds = 2;
+
+function generateSinWave(audioBuffer) {
+    var n = audioBuffer.length;
+    var channelL = audioBuffer.getChannelData(0);
+    var channelR = audioBuffer.getChannelData(1);
+    var sampleRate = audioBuffer.sampleRate;
+    
+    for (var i = 0; i < n; ++i) {
+        channelL[i] = Math.sin(880.0 * 2.0*Math.PI * i / sampleRate);
+        channelR[i] = Math.sin(440.0 * 2.0*Math.PI * i / sampleRate);
+    }
+}
+
+function runTest() {
+    if (!window.layoutTestController)
+        return;
+    
+    var context = new webkitAudioContext();
+    var audioBuffer = context.createBuffer(2, lengthInSeconds * sampleRate, sampleRate);
+    
+    generateSinWave(audioBuffer);
+
+    var audioData = createAudioData(audioBuffer);
+    layoutTestController.setAudioData(audioData);
+
+    layoutTestController.notifyDone();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+
+<body>
+</body>
+</html>
