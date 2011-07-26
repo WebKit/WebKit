@@ -56,7 +56,7 @@ for my $in (@ARGV) {
         $text =~ s|^#.*?$||mg;
     } else {
         require preprocessor;
-        $text = join('', applyPreprocessor($in, $defines, $preprocessor, 1));
+        $text = join('', applyPreprocessor($in, $defines, $preprocessor));
     }
 
     # Remove comments in a simple-minded way that will work fine for our files.

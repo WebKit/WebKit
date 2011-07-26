@@ -1,3 +1,20 @@
+2011-07-26  Evan Martin  <evan@chromium.org>
+
+        regression: generating CSSValueKeywords should not print by default
+        https://bugs.webkit.org/show_bug.cgi?id=65195
+
+        Reviewed by Tony Chang.
+
+        Some refactoring made some callers no longer pass the final 'beQuiet'
+        parameter to applyPreprocessor.  This flag was only used to print the
+        input filename anyway, so remove the flag and just make the caller
+        print the filename if it wants this.
+
+        * bindings/scripts/IDLParser.pm:
+        (Parse): print before calling applyPreprocessor, if necessary.
+        * bindings/scripts/preprocessor.pm:
+        (applyPreprocessor): remove the beQuiet flag; just always be quiet.
+
 2011-07-26  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Do not crash on the isSlider() assert.

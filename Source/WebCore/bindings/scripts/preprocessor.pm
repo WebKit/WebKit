@@ -39,7 +39,6 @@ sub applyPreprocessor
     my $fileName = shift;
     my $defines = shift;
     my $preprocessor = shift;
-    my $beQuiet = shift;
 
     if (!$preprocessor) {
         require Config;
@@ -57,8 +56,6 @@ sub applyPreprocessor
     if (!$defines) {
         $defines = "";
     }
-
-    print " | *** Starting to parse $fileName...\n |\n" unless $beQuiet;
 
     my $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName);
     close PP_IN;

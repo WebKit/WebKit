@@ -66,7 +66,8 @@ sub Parse
     my $preprocessor = shift;
     $parentsOnly = shift;
 
-    my @documentContent = applyPreprocessor($fileName, $defines, $preprocessor, $beQuiet);
+    print " | *** Starting to parse $fileName...\n |\n" unless $beQuiet;
+    my @documentContent = applyPreprocessor($fileName, $defines, $preprocessor);
 
     my $dataAvailable = 0;
 
