@@ -144,8 +144,15 @@ const char* NetscapePlugin::userAgent()
 #endif
 
     if (m_userAgent.isNull()) {
-        m_userAgent = controller()->userAgent().utf8();
-        ASSERT(!m_userAgent.isNull());
+        String userAgent = controller()->userAgent();
+        ASSERT(!userAgent.isNull());
+
+#if PLUGIN_ARCHITECTURE(MAC)
+        if (quirks().contains(PluginQuirks::AppendVersion3UserAgent))
+            userAgent += " Version/3.2.1";
+#endif
+
+        m_userAgent = userAgent.utf8();
     }
     return m_userAgent.data();
 }

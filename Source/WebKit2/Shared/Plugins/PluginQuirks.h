@@ -69,6 +69,11 @@ public:
         // embeds its plug-in. 
         WantsLowercaseParameterNames,
 
+        // Whether to append Version/3.2.1 to the user-agent passed to the plugin
+        // This is necessary to disable Silverlight's workaround for a Safari 2 leak
+        // which is enabled if it doesn't find Version/3 in the user-agent.
+        AppendVersion3UserAgent,
+
 #ifndef NP_NO_QUICKDRAW
         // Allow the plug-in to use the QuickDraw drawing model, since we know that the plug-in
         // will never paint or receive events. Used by the AppleConnect plug-in.

@@ -472,6 +472,11 @@ void NetscapePluginModule::determineQuirks()
         // there's a 'background' attribute.
         m_pluginQuirks.add(PluginQuirks::MakeTransparentIfBackgroundAttributeExists);
 
+        // Silverlight has a workaround for a leak in Safari 2. This workaround is
+        // applied when the user agent does not contain "Version/3" so we append it
+        // at the end of the user agent.
+        m_pluginQuirks.add(PluginQuirks::AppendVersion3UserAgent);
+
         PluginVersion pluginVersion = PluginVersion::parse(plugin.versionString);
         if (pluginVersion.isValid()) {
             if (pluginVersion.isLessThan(4)) {
