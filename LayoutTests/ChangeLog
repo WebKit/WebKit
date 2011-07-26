@@ -1,3 +1,17 @@
+2011-07-26  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] Collect flowed elements in different render element
+        https://bugs.webkit.org/show_bug.cgi?id=64516
+
+        Reviewed by Simon Fraser.
+
+        * fast/regions/webkit-flow-renderer-expected.txt: Added.
+        * fast/regions/webkit-flow-renderer-layer-expected.txt: Added.
+        * fast/regions/webkit-flow-renderer-layer.html: Added.
+        * fast/regions/webkit-flow-renderer-nested-expected.txt: Added.
+        * fast/regions/webkit-flow-renderer-nested.html: Added.
+        * fast/regions/webkit-flow-renderer.html: Added.
+
 2011-07-26  Patrick Dubroy  <dubroy@chromium.org>
 
         In file upload controls, filename text was misaligned with button text.

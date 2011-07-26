@@ -31,6 +31,10 @@ namespace WebCore {
 
 class RenderWidget;
 
+#if ENABLE(CSS_REGIONS)
+class RenderFlowThread;
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
 class RenderLayerCompositor;
 #endif
@@ -162,6 +166,10 @@ public:
 #endif
 
     IntRect documentRect() const;
+
+#if ENABLE(CSS_REGIONS)
+    RenderFlowThread* renderFlowThreadWithName(const AtomicString& flowThread);
+#endif
 
 protected:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&) const;

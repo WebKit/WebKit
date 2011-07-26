@@ -34874,6 +34874,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderFlowThread.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderFlowThread.h"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\svg\RenderForeignObject.cpp"
 				>
 				<FileConfiguration

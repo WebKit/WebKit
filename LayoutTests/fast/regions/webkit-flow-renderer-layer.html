@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+
+<style>
+    #DIV1 {
+        -webkit-flow: 'flowA';
+        /* force a RenderLayer */
+        position: absolute;
+    }
+    #DIV2 {
+        -webkit-flow: 'flowB';
+        /* Force a composited RenderLayer. */
+        -webkit-transform: scale3d(1, 1, 1);
+    }
+    
+    #DIV3 { -webkit-flow: 'flowC'; }
+    
+    #DIV5 {
+        position: absolute;
+        z-index: -1;
+    }
+</style>
+
+<div id="DIV1">DIV1 - flowA</div>
+<div id="DIV2">DIV2 - flowB</div>
+
+<div id="DIV3">
+    DIV3 - flowC
+    <div id="DIV4">DIV5 - flowC</div>
+    <div id="DIV5">DIV4 - flowC</div>
+</div>
+

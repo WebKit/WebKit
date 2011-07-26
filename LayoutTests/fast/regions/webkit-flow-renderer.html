@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+
+<style>
+#DIV1 { -webkit-flow:'flowA'; }
+#SPAN2 { -webkit-flow: 'flowB'; }
+#DIV3 { -webkit-flow: 'flowC'; }
+</style>
+
+<div id="DIV1">DIV1 - flowA</div>
+<span id="SPAN2">SPAN2 - flowB</span>
+<div id="DIV3">DIV3 - flowC</div>
+
+<script>
+function test(name, flow, before) {
+    var el = document.createElement("div");
+    el.id = name;
+    el.setAttribute("style", "-webkit-flow:'"+ flow +"'");
+    el.innerHTML = name + " - " + flow;
+    if (before)
+        document.body.insertBefore(el, document.getElementById(before));
+    else
+        document.body.appendChild(el);
+}
+
+// Insert a new element in flowA, before DIV1 (same flow-thread).
+test("DIV4", "flowA", "DIV1");
+
+// Insert a new element in flowB, before DIV1 (different flow-thread).
+test("DIV5", "flowB", "DIV1");
+
+// Insert a new element in flowB, before DIV3 (different flow-thread).
+test("DIV6", "flowB", "DIV3");
+
+// Insert a new element in flowB, before SPAN2 (same flow-thread, span inside anonymous block).
+test("DIV7", "flowB", "SPAN2");
+
+// Append a new element in flowC.
+test("DIV8", "flowC");
+</script>

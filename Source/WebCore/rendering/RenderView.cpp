@@ -29,6 +29,7 @@
 #include "GraphicsContext.h"
 #include "HTMLFrameOwnerElement.h"
 #include "HitTestResult.h"
+#include "RenderFlowThread.h"
 #include "RenderLayer.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
@@ -781,5 +782,23 @@ void RenderView::willMoveOffscreen()
         m_compositor->willMoveOffscreen();
 #endif
 }
+
+#if ENABLE(CSS_REGIONS)
+RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowThread)
+{
+    for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
+        if (renderer->isRenderFlowThread()) {
+            RenderFlowThread* flowRenderer = toRenderFlowThread(renderer);
+            if (flowRenderer->flowThread() == flowThread)
+                return flowRenderer;
+        }
+    }
+
+    RenderFlowThread* flowRenderer = new (renderArena()) RenderFlowThread(document(), flowThread);
+    addChild(flowRenderer);
+    
+    return flowRenderer;
+}
+#endif
 
 } // namespace WebCore

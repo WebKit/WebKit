@@ -1,3 +1,58 @@
+2011-07-26  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] Collect flowed elements in different render element
+        https://bugs.webkit.org/show_bug.cgi?id=64516
+
+        All the RenderObjects that have a specified "flow" name are moved out of the
+        normal flow. A RenderFlowThread will collect all such RenderObjects. There is
+        a RenderFlowThread for each flow name. The new RenderFlowThread is an anonymous
+        RenderBlock that is positioned absolute and will not render directly. In a
+        different bug/patch we will add RenderRegion that will take care of rendering the
+        RenderFlowThread on screen.
+
+        Reviewed by Simon Fraser.
+
+        Tests: fast/regions/webkit-flow-renderer-layer.html
+               fast/regions/webkit-flow-renderer-nested.html
+               fast/regions/webkit-flow-renderer.html
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::setStyle):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::parentRenderer):
+        (WebCore::NodeRenderingContext::moveToFlowThreadIfNeeded):
+        (WebCore::NodeRendererFactory::createRendererIfNeeded):
+        * dom/NodeRenderingContext.h:
+        (WebCore::NodeRenderingContext::hasFlowThreadParent):
+        (WebCore::NodeRenderingContext::parentFlowRenderer):
+        * rendering/RenderFlowThread.cpp: Added.
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::createFlowThreadStyle):
+        (WebCore::RenderFlowThread::nextRendererForNode):
+        (WebCore::RenderFlowThread::previousRendererForNode):
+        (WebCore::RenderFlowThread::addChild):
+        (WebCore::RenderFlowThread::removeChild):
+        * rendering/RenderFlowThread.h: Added.
+        (WebCore::toRenderFlowThread):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectLayers):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderFlowThread):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::RenderTreeAsText::writeRenderObject):
+        (WebCore::writeLayers):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::renderFlowThreadWithName):
+        * rendering/RenderView.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+
 2011-07-26  Patrick Dubroy  <dubroy@chromium.org>
 
         Filename text in file upload controls is not aligned with button text on

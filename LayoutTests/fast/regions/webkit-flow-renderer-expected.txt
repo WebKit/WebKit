@@ -1,0 +1,40 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+Flow Threads
+  Thread with flow-name 'flowA'
+    layer at (0,0) size 800x600
+      RenderFlowThread at (0,0) size 800x600
+        RenderBlock {DIV} at (0,0) size 800x18
+          RenderText {#text} at (0,0) size 91x18
+            text run at (0,0) width 91: "DIV4 - flowA"
+        RenderBlock {DIV} at (0,18) size 800x18
+          RenderText {#text} at (0,0) size 91x18
+            text run at (0,0) width 91: "DIV1 - flowA"
+  Thread with flow-name 'flowB'
+    layer at (0,0) size 800x600
+      RenderFlowThread at (0,0) size 800x600
+        RenderBlock {DIV} at (0,0) size 800x18
+          RenderText {#text} at (0,0) size 90x18
+            text run at (0,0) width 90: "DIV5 - flowB"
+        RenderBlock {DIV} at (0,18) size 800x18
+          RenderText {#text} at (0,0) size 90x18
+            text run at (0,0) width 90: "DIV7 - flowB"
+        RenderBlock (anonymous) at (0,36) size 800x18
+          RenderInline {SPAN} at (0,0) size 103x18
+            RenderText {#text} at (0,0) size 103x18
+              text run at (0,0) width 103: "SPAN2 - flowB"
+        RenderBlock {DIV} at (0,54) size 800x18
+          RenderText {#text} at (0,0) size 90x18
+            text run at (0,0) width 90: "DIV6 - flowB"
+  Thread with flow-name 'flowC'
+    layer at (0,0) size 800x600
+      RenderFlowThread at (0,0) size 800x600
+        RenderBlock {DIV} at (0,0) size 800x18
+          RenderText {#text} at (0,0) size 90x18
+            text run at (0,0) width 90: "DIV3 - flowC"
+        RenderBlock {DIV} at (0,18) size 800x18
+          RenderText {#text} at (0,0) size 90x18
+            text run at (0,0) width 90: "DIV8 - flowC"

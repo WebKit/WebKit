@@ -28,6 +28,7 @@
 
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
+#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 
@@ -38,6 +39,10 @@ class RenderObject;
 class RenderStyle;
 class ShadowContentElement;
 class ShadowRoot;
+
+#if ENABLE(CSS_REGIONS)
+class RenderFlowThread;
+#endif
 
 class NodeRenderingContext {
 public:
@@ -60,6 +65,11 @@ public:
 
     void hostChildrenChanged();
 
+#if ENABLE(CSS_REGIONS)
+    bool hasFlowThreadParent() const { return m_parentFlowRenderer; }
+    RenderFlowThread* parentFlowRenderer() const { return m_parentFlowRenderer; }
+    void moveToFlowThreadIfNeeded();
+#endif
 private:
 
     enum TreeLocation {
@@ -82,6 +92,10 @@ private:
     ShadowRoot* m_visualParentShadowRoot;
     ShadowContentElement* m_includer;
     RefPtr<RenderStyle> m_style;
+#if ENABLE(CSS_REGIONS)
+    RenderFlowThread* m_parentFlowRenderer;
+    AtomicString m_flowThread;
+#endif
 };
 
 inline Node* NodeRenderingContext::node() const

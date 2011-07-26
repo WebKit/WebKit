@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x8
+  RenderBlock {HTML} at (0,0) size 800x8
+    RenderBody {BODY} at (8,8) size 784x0
+Flow Threads
+  Thread with flow-name 'flowA'
+    layer at (0,0) size 800x600
+      RenderFlowThread at (0,0) size 800x600
+    layer at (0,0) size 91x18
+      RenderBlock (positioned) {DIV} at (0,0) size 91x18
+        RenderText {#text} at (0,0) size 91x18
+          text run at (0,0) width 91: "DIV1 - flowA"
+  Thread with flow-name 'flowB'
+    layer at (0,0) size 800x600
+      RenderFlowThread at (0,0) size 800x600
+    layer at (0,0) size 800x18
+      RenderBlock {DIV} at (0,0) size 800x18
+        RenderText {#text} at (0,0) size 90x18
+          text run at (0,0) width 90: "DIV2 - flowB"
+  Thread with flow-name 'flowC'
+    layer at (0,0) size 800x600 layerType: background only
+    layer at (0,36) size 90x18
+      RenderBlock (positioned) zI: -1 {DIV} at (0,36) size 90x18
+        RenderText zI: -1 {#text} at (0,0) size 90x18
+          text run at (0,0) width 90: "DIV4 - flowC"
+    layer at (0,0) size 800x600 layerType: foreground only
+      RenderFlowThread at (0,0) size 800x600
+        RenderBlock {DIV} at (0,0) size 800x36
+          RenderBlock (anonymous) at (0,0) size 800x18
+            RenderText {#text} at (0,0) size 90x18
+              text run at (0,0) width 90: "DIV3 - flowC"
+          RenderBlock {DIV} at (0,18) size 800x18
+            RenderText {#text} at (0,0) size 90x18
+              text run at (0,0) width 90: "DIV5 - flowC"

@@ -38,6 +38,7 @@
 #include "RenderBR.h"
 #include "RenderDetailsMarker.h"
 #include "RenderFileUploadControl.h"
+#include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
@@ -243,7 +244,7 @@ void RenderTreeAsText::writeRenderObject(TextStream& ts, const RenderObject& o, 
                 ts << " *empty or unstyled AppleStyleSpan*";
         }
     }
-
+    
     bool adjustForTableCells = o.containingBlock()->isTableCell();
 
     IntRect r;
@@ -705,6 +706,26 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
         for (unsigned i = 0; i != posList->size(); ++i)
             writeLayers(ts, rootLayer, posList->at(i), paintDirtyRect, currIndent, behavior);
     }
+    
+#if ENABLE(CSS_REGIONS)
+    // Altough the RenderFlowThread requires a layer, it is not collected by its parent,
+    // so we have to treat it as a special case.
+    bool firstRenderFlowThread = true;
+    for (RenderObject* child = l->renderer()->firstChild(); child; child = child->nextSibling()) {
+        if (child->isRenderFlowThread()) {
+            if (firstRenderFlowThread) {
+                firstRenderFlowThread = false;
+                writeIndent(ts, indent);
+                ts << "Flow Threads\n";
+            }
+            const RenderFlowThread* renderFlowThread = toRenderFlowThread(child);
+            writeIndent(ts, indent + 1);
+            ts << "Thread with flow-name '" << renderFlowThread->flowThread() << "'\n";
+            RenderLayer* layer = renderFlowThread->layer();
+            writeLayers(ts, rootLayer, layer, paintDirtyRect, indent + 2, behavior);
+        }
+    }
+#endif
 }
 
 static String nodePosition(Node* node)

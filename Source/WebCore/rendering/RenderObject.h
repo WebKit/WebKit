@@ -316,6 +316,10 @@ public:
     virtual bool isRenderFullScreenPlaceholder() const { return false; }
 #endif
 
+#if ENABLE(CSS_REGIONS)
+    virtual bool isRenderFlowThread() const { return false; }
+#endif
+
     bool isRoot() const { return document()->documentElement() == m_node; }
     bool isBody() const;
     bool isHR() const;
