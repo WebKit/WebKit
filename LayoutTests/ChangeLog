@@ -1,5 +1,13 @@
 2011-07-26  Adrienne Walker  <enne@google.com>
 
+        [chromium] Fix accidental duplicate expectation from r91772.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-26  Adrienne Walker  <enne@google.com>
+
         [chromium] Mark test as flaky after r91738.
         https://bugs.webkit.org/show_bug.cgi?id=65199
 
