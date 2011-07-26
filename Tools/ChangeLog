@@ -1,3 +1,17 @@
+2011-07-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Introduce a way to convert between specifier lists and TestConfiguration sets.
+        https://bugs.webkit.org/show_bug.cgi?id=65094
+
+        Add TestConfigurationConverter, a facility to convert:
+        1) a set of specifiers into a set of TestConfiguration instances;
+        2) a set of TestConfiguration instances into a list of sets of specifiers.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py: Added TestConfigurationConverter.
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py: Added tests for it.
+
 2011-07-26  Alexandru Chiculita  <achicu@adobe.com>
 
         CSS Regions build bot should build with "--css-regions" and "--css-exclusion" flags

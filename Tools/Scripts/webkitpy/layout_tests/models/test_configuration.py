@@ -35,6 +35,11 @@ class TestConfiguration(object):
         self.build_type = build_type or port.options.configuration.lower()
         self.graphics_type = graphics_type or port.graphics_type()
 
+    @classmethod
+    def category_order(cls):
+        """The most common human-readable order in which the configuration properties are listed."""
+        return ['version', 'architecture', 'build_type', 'graphics_type']
+
     def items(self):
         return self.__dict__.items()
 
@@ -87,3 +92,148 @@ class TestConfiguration(object):
 
     def all_graphics_types(self):
         return ('cpu', 'gpu')
+
+
+class TestConfigurationConverter:
+    def __init__(self, all_test_configurations, configuration_macros=None):
+        self._all_test_configurations = all_test_configurations
+        self._configuration_macros = configuration_macros or {}
+        self._specifier_to_configuration_set = {}
+        self._specifier_to_category = {}
+        self._collapsing_sets_by_size = {}
+        self._junk_specifier_combinations = {}
+        collapsing_sets_by_category = {}
+        matching_sets_by_category = {}
+        for configuration in all_test_configurations:
+            for category, specifier in configuration.items():
+                self._specifier_to_configuration_set.setdefault(specifier, set()).add(configuration)
+                self._specifier_to_category[specifier] = category
+                collapsing_sets_by_category.setdefault(category, set()).add(specifier)
+                # FIXME: This seems extra-awful.
+                for cat2, spec2 in configuration.items():
+                    if category == cat2:
+                        continue
+                    matching_sets_by_category.setdefault(specifier, {}).setdefault(cat2, set()).add(spec2)
+        for collapsing_set in collapsing_sets_by_category.values():
+            self._collapsing_sets_by_size.setdefault(len(collapsing_set), set()).add(frozenset(collapsing_set))
+
+        def category_priority(category):
+            return TestConfiguration.category_order().index(category)
+
+        def specifier_priority(specifier):
+            return category_priority(self._specifier_to_category[specifier])
+
+        for specifier, sets_by_category in matching_sets_by_category.items():
+            for category, set_by_category in sets_by_category.items():
+                if len(set_by_category) == 1 and category_priority(category) > specifier_priority(specifier):
+                    self._junk_specifier_combinations[specifier] = set_by_category
+
+    def to_config_set(self, specifier_set):
+        """Convert a list of specifiers into a set of TestConfiguration instances."""
+        if len(specifier_set) == 0:
+            return self._all_test_configurations
+
+        matching_sets = {}
+
+        def update_matching_set(specifier):
+            configurations = self._specifier_to_configuration_set[specifier]
+            category = self._specifier_to_category[specifier]
+            matching_sets.setdefault(category, set()).update(configurations)
+
+        for specifier in specifier_set:
+            expanded_specifiers = self._configuration_macros.get(specifier)
+            if expanded_specifiers:
+                for expanded_specifier in expanded_specifiers:
+                    update_matching_set(expanded_specifier)
+            else:
+                update_matching_set(specifier)
+
+        return set.intersection(*matching_sets.values())
+
+    def to_specifiers_list(self, test_configuration_set):
+        """Convert a set of TestConfiguration instances into one or more list of specifiers."""
+
+        # Easy out: if the set is all configurations, the modifier is empty.
+        if len(test_configuration_set) == len(self._all_test_configurations):
+            return []
+
+        # 1) Build a list of specifier sets, discarding specifiers that don't add value.
+        specifiers_list = []
+        for config in test_configuration_set:
+            values = set(config.values())
+            for specifier, junk_specifier_set in self._junk_specifier_combinations.items():
+                if specifier in values:
+                    values -= junk_specifier_set
+            specifiers_list.append(frozenset(values))
+
+        # FIXME: Replace with iteritools.combinations when we obsolete Python 2.5.
+        def combinations(iterable, r):
+            """This function is borrowed verbatim from http://docs.python.org/library/itertools.html#itertools.combinations."""
+            pool = tuple(iterable)
+            n = len(pool)
+            if r > n:
+                return
+            indices = range(r)
+            yield tuple(pool[i] for i in indices)
+            while True:
+                for i in reversed(range(r)):
+                    if indices[i] != i + n - r:
+                        break
+                else:
+                    return
+                indices[i] += 1
+                for j in range(i + 1, r):
+                    indices[j] = indices[j - 1] + 1
+                yield tuple(pool[i] for i in indices)
+
+        def intersect_combination(combination):
+            return set.intersection(*[set(specifiers) for specifiers in combination])
+
+        def symmetric_difference(iterable):
+            return reduce(lambda x, y: x ^ y, iterable)
+
+        def try_collapsing(size, collapsing_sets):
+            if len(specifiers_list) < size:
+                return False
+            for combination in combinations(specifiers_list, size):
+                if symmetric_difference(combination) in collapsing_sets:
+                    for item in combination:
+                        specifiers_list.remove(item)
+                    specifiers_list.append(frozenset(intersect_combination(combination)))
+                    return True
+            return False
+
+        # 2) Collapse specifier sets with common specifiers:
+        #   (xp, release, gpu), (xp, release, cpu) --> (xp, x86, release)
+        for size, collapsing_sets in self._collapsing_sets_by_size.items():
+            while try_collapsing(size, collapsing_sets):
+                pass
+
+        def try_abbreviating():
+            if len(specifiers_list) < 2:
+                return False
+            for combination in combinations(specifiers_list, 2):
+                for collapsing_set in collapsing_sets:
+                    diff = symmetric_difference(combination)
+                    if diff <= collapsing_set:
+                        common = intersect_combination(combination)
+                        for item in combination:
+                            specifiers_list.remove(item)
+                        specifiers_list.append(frozenset(common | diff))
+                        return True
+            return False
+
+        # 3) Abbreviate specifier sets by combining specifiers across categories.
+        #   (xp, release), (win7, release) --> (xp, win7, release)
+        while try_abbreviating():
+            pass
+
+        # 4) Substitute specifier subsets that match macros witin each set:
+        #   (xp, vista, win7, release) -> (win, release)
+        for i in range(len(specifiers_list)):
+            for macro_specifier, macro in self._configuration_macros.items():
+                diff = set(specifiers_list[i]) - set(macro)
+                if specifiers_list[i] != diff:
+                    specifiers_list[i] = frozenset(diff | set([macro_specifier]))
+
+        return specifiers_list
