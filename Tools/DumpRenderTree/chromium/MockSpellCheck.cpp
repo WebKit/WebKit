@@ -75,7 +75,7 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
     if (wordOffset == -1)
         return true;
     int wordEnd = stringText.find(isNotASCIIAlpha, wordOffset);
-    int wordLength = wordEnd == -1 ? stringText.length() - wordOffset : wordEnd - wordOffset;
+    int wordLength = wordEnd == -1 ? static_cast<int>(stringText.length()) - wordOffset : wordEnd - wordOffset;
 
     // Look up our misspelled-word table to check if the extracted word is a
     // known misspelled word, and return the offset and the length of the
