@@ -42,9 +42,11 @@ SOURCES += \
     wtf/unicode/UTF8.cpp
 
 linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
-    DEFINES += ENABLE_GLIB_SUPPORT=1
-    PKGCONFIG += glib-2.0 gio-2.0
-    CONFIG += link_pkgconfig
+    system(pkg-config --exists glib-2.0 gio-2.0 gstreamer-0.10): {
+        DEFINES += ENABLE_GLIB_SUPPORT=1
+        PKGCONFIG += glib-2.0 gio-2.0
+        CONFIG += link_pkgconfig
+    }
 }
 
 unix:!symbian: SOURCES += wtf/OSAllocatorPosix.cpp
