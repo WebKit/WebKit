@@ -4,42 +4,48 @@ CONSOLE MESSAGE: line 14: Object %o
 CONSOLE MESSAGE: line 20: test,test2,,,test4
 CONSOLE MESSAGE: line 21: %o
 CONSOLE MESSAGE: line 22: %O
-CONSOLE MESSAGE: line 53: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
 CONSOLE MESSAGE: line 54: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
-CONSOLE MESSAGE: line 53: /foo\\bar\sbaz/i
+CONSOLE MESSAGE: line 55: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
 CONSOLE MESSAGE: line 54: /foo\\bar\sbaz/i
-CONSOLE MESSAGE: line 53: test
+CONSOLE MESSAGE: line 55: /foo\\bar\sbaz/i
 CONSOLE MESSAGE: line 54: test
-CONSOLE MESSAGE: line 53: test named "test"
+CONSOLE MESSAGE: line 55: test
 CONSOLE MESSAGE: line 54: test named "test"
-CONSOLE MESSAGE: line 53: Error: 
+CONSOLE MESSAGE: line 55: test named "test"
 CONSOLE MESSAGE: line 54: Error: 
-CONSOLE MESSAGE: line 53: [object HTMLBodyElement]
+CONSOLE MESSAGE: line 55: Error: 
 CONSOLE MESSAGE: line 54: [object HTMLBodyElement]
-CONSOLE MESSAGE: line 53: function () { return 1; }
+CONSOLE MESSAGE: line 55: [object HTMLBodyElement]
 CONSOLE MESSAGE: line 54: function () { return 1; }
-CONSOLE MESSAGE: line 53: function () {
-        return 2;
-    }
+CONSOLE MESSAGE: line 55: function () { return 1; }
 CONSOLE MESSAGE: line 54: function () {
         return 2;
     }
-CONSOLE MESSAGE: line 53: 0.12
+CONSOLE MESSAGE: line 55: function () {
+        return 2;
+    }
 CONSOLE MESSAGE: line 54: 0.12
-CONSOLE MESSAGE: line 53: http://webkit.org/
+CONSOLE MESSAGE: line 55: 0.12
 CONSOLE MESSAGE: line 54: http://webkit.org/
-CONSOLE MESSAGE: line 53: null
-CONSOLE MESSAGE: line 54: 
-CONSOLE MESSAGE: line 53: undefined
-CONSOLE MESSAGE: line 54: 
-CONSOLE MESSAGE: line 53: [object Attr]
+CONSOLE MESSAGE: line 55: http://webkit.org/
+CONSOLE MESSAGE: line 54: null
+CONSOLE MESSAGE: line 55: 
+CONSOLE MESSAGE: line 54: undefined
+CONSOLE MESSAGE: line 55: 
 CONSOLE MESSAGE: line 54: [object Attr]
-CONSOLE MESSAGE: line 53: [object Attr]
+CONSOLE MESSAGE: line 55: [object Attr]
 CONSOLE MESSAGE: line 54: [object Attr]
-CONSOLE MESSAGE: line 53: [object Attr]
+CONSOLE MESSAGE: line 55: [object Attr]
 CONSOLE MESSAGE: line 54: [object Attr]
-CONSOLE MESSAGE: line 53: [object Object]
+CONSOLE MESSAGE: line 55: [object Attr]
 CONSOLE MESSAGE: line 54: [object Object]
+CONSOLE MESSAGE: line 55: [object Object]
+CONSOLE MESSAGE: line 54: NaN
+CONSOLE MESSAGE: line 55: NaN
+CONSOLE MESSAGE: line 54: Infinity
+CONSOLE MESSAGE: line 55: Infinity
+CONSOLE MESSAGE: line 54: -Infinity
+CONSOLE MESSAGE: line 55: -Infinity
 Tests that console logging dumps proper messages.
 
 console-format.html:12Message format number 1, 2 and 3.5

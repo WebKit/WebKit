@@ -1,3 +1,51 @@
+2011-07-26  Pavel Feldman  <pfeldman@google.com>
+
+        Re-applying r91665 and r91668 with JSC issues fixed.
+
+        Web Inspector: use dedicated type for object id in the protocol.
+        Web Inspector: refactor remote object structure to contain value for primitive values.
+
+        https://bugs.webkit.org/show_bug.cgi?id=65103
+        https://bugs.webkit.org/show_bug.cgi?id=65110
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::callFunctionOn):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::callFunctionOn):
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorBasicValue::writeJSON):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._format):
+        (WebInspector.ConsoleView.prototype._formatAsArrayEntry):
+        (WebInspector.ConsoleMessage.prototype._format):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._createTooltipForNode.setTooltip):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/PropertiesSidebarPane.js:
+        (WebInspector.PropertiesSidebarPane.prototype.update.nodePrototypesReady):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.fromPrimitiveValue):
+        (WebInspector.RemoteObject.fromPayload):
+        (WebInspector.RemoteObject.prototype.get subtype):
+        (WebInspector.RemoteObject.prototype.callFunction):
+        (WebInspector.LocalJSONObject.prototype.get description):
+        (WebInspector.LocalJSONObject.prototype.get type):
+        (WebInspector.LocalJSONObject.prototype.get subtype):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype._showPopup.showObjectPopup):
+        (WebInspector.SourceFrame.prototype._showPopup):
+        * inspector/front-end/inspector.js:
+        (WebInspector.log.logMessage):
+        (WebInspector.log):
+        (WebInspector.inspect):
+
 2011-07-26  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Prepare animVal support - phase 2

@@ -218,15 +218,21 @@
         "description": "Runtime domain exposes JavaScript runtime by means of remote evaluation and mirror objects. Evaluation results are returned as mirror object that expose type, string representation and unique identifier that can be used for further object interaction. Original objects are maintained in memory unless they are either explicitly released or are released along with the other objects in their object group.",
         "types": [
             {
+                "id": "RemoteObjectId",
+                "type": "string",
+                "description": "Unique object identifier."
+            },
+            {
                 "id": "RemoteObject",
                 "type": "object",
                 "description": "Mirror object referencing original JavaScript object.",
                 "properties": [
-                    { "name": "description", "type": "string", "description": "String representation of the object." },
-                    { "name": "hasChildren", "type": "boolean", "optional": true, "description": "True when this object can be queried for children." },
-                    { "name": "objectId", "type": "string", "optional": true, "description": "Unique object identifier (for non-primitive values)." },
-                    { "name": "type", "type": "string", "enum": ["object", "array", "function", "null", "node", "undefined", "string", "number", "boolean", "regexp", "date"], "description": "Object type." },
-                    { "name": "className", "type": "string", "optional": true, "description": "Object class name." }
+                    { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean"], "description": "Object type." },
+                    { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
+                    { "name": "className", "type": "string", "optional": true, "description": "Object class (constructor) name. Specified for <code>object</code> type values only." },
+                    { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values)." },
+                    { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
+                    { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." }
                 ]
             },
             {
@@ -238,6 +244,15 @@
                     { "name": "value", "$ref": "RemoteObject", "description": "Property value." },
                     { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True if exception was thrown on attempt to get the property value, in that case the value propery will contain thrown value." },
                     { "name": "isGetter", "type": "boolean", "optional": true, "description": "True if this property is getter." }
+                ]
+            },
+            {
+                "id": "CallArgument",
+                "type": "object",
+                "description": "Represents function call argument. Either remote object id <code>objectId</code> or primitive <code>value</code> or neither of (for undefined) them should be specified.",
+                "properties": [
+                    { "name": "value", "type": "any", "optional": true, "description": "Primitive value." },
+                    { "name": "objectId", "$ref": "RemoteObject", "optional": true, "description": "Remote object handle." }
                 ]
             }
         ],
@@ -254,25 +269,25 @@
                     { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." },
                     { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
                 ],
-                "description": "Evaluate expression on global object."
+                "description": "Evaluates expression on global object."
             },
             {
                 "name": "callFunctionOn",
                 "parameters": [
-                    { "name": "objectId", "type": "string", "description": "Identifier of the object to call function on." },
+                    { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to call function on." },
                     { "name": "functionDeclaration", "type": "string", "description": "Declaration of the function to call." },
-                    { "name": "arguments", "type": "array", "items": { "type": "string", "description": "Identifier of the argument." }, "optional": true, "description": "Call arguments. All call arguments must belong to the same JavaScript world as the target object." }
+                    { "name": "arguments", "type": "array", "items": { "$ref": "CallArgument", "description": "Call argument." }, "optional": true, "description": "Call arguments. All call arguments must belong to the same JavaScript world as the target object." }
                 ],
                 "returns": [
                     { "name": "result", "$ref": "RemoteObject", "description": "Call result." },
                     { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
                 ],
-                "description": "Call function with given declaration on the given object."
+                "description": "Calls function with given declaration on the given object."
             },
             {
                 "name": "getProperties",
                 "parameters": [
-                    { "name": "objectId", "type": "string", "description": "Identifier of the object to return properties for." },
+                    { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to return properties for." },
                     { "name": "ignoreHasOwnProperty", "type": "boolean", "description": "If true, returns properties belonging to any element of the prototype chain." }
                 ],
                 "returns": [
@@ -283,7 +298,7 @@
             {
                 "name": "setPropertyValue",
                 "parameters": [
-                    { "name": "objectId", "type": "string", "description": "Identifier of the object to set property on." },
+                    { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to set property on." },
                     { "name": "propertyName", "type": "string", "description": "Property name to set value for." },
                     { "name": "expression", "type": "string", "description": "Expression to evaluate." }
                 ],
@@ -292,7 +307,7 @@
             {
                 "name": "releaseObject",
                 "parameters": [
-                    { "name": "objectId", "type": "string", "description": "Identifier of the object to release." }
+                    { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to release." }
                 ],
                 "description": "Releases remote object with given id."
             },
@@ -966,7 +981,7 @@
             {
                 "name": "pushNodeToFrontend",
                 "parameters": [
-                    { "name": "objectId", "type": "string", "description": "JavaScript object id to convert into node." }
+                    { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "JavaScript object id to convert into node." }
                 ],
                 "returns": [
                     { "name": "nodeId", "type": "integer", "description": "Node id for given object." }
@@ -1394,7 +1409,7 @@
             {
                 "name": "start",
                 "parameters": [
-                    { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." },
+                    { "name": "maxCallStackDepth", "optional": true, "type": "integer", "description": "Samples JavaScript stack traces up to <code>maxCallStackDepth</code>, defaults to 5." }
                 ],
                 "description": "Starts capturing instrumentation events."
             },

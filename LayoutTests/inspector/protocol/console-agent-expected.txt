@@ -64,7 +64,7 @@ event ConsoleAgent.messageAdded
             parameters : [
                 {
                     type : "string"
-                    description : "test"
+                    value : "test"
                 }
             ]
             stackTrace : <object>
@@ -85,7 +85,6 @@ response:
     result : {
         result : {
             type : "undefined"
-            description : "undefined"
         }
     }
     id : <number>

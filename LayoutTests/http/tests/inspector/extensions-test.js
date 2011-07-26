@@ -45,7 +45,7 @@ InspectorTest.runExtensionTests = function()
     RuntimeAgent.evaluate("location.href", "console", false, function(error, result) {
         if (error)
             return;
-        var pageURL = result.description;
+        var pageURL = result.value;
         var extensionURL = (/^https?:/.test(pageURL) ?
             pageURL.replace(/^(https?:\/\/[^/]*\/).*$/,"$1") :
             pageURL.replace(/\/inspector\/extensions\/[^/]*$/, "/http/tests")) +

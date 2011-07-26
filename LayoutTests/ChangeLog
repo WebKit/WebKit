@@ -1,3 +1,25 @@
+2011-07-26  Pavel Feldman  <pfeldman@google.com>
+
+        Re-applying r91665 and r91668 with JSC issues fixed.
+
+        Web Inspector: use dedicated type for object id in the protocol.
+        Web Inspector: refactor remote object structure to contain value for primitive values.
+
+        https://bugs.webkit.org/show_bug.cgi?id=65103
+        https://bugs.webkit.org/show_bug.cgi?id=65110
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/extensions-test.js:
+        (initialize_ExtensionsTest.InspectorTest.runExtensionTests):
+        (initialize_ExtensionsTest):
+        * inspector/console/console-format-expected.txt:
+        * inspector/console/console-format.html:
+        * inspector/protocol/console-agent-expected.txt:
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/runtime/runtime-callFunctionOn-expected.txt:
+        * inspector/runtime/runtime-callFunctionOn.html:
+
 2011-07-26  Hans Wennborg  <hans@chromium.org>
 
         Update another test that relied on fonts loading synchronously.
