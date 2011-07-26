@@ -234,9 +234,7 @@ public:
     WTF_EXPORT_PRIVATE String upper() const;
 
     WTF_EXPORT_PRIVATE String stripWhiteSpace() const;
-    WTF_EXPORT_PRIVATE String stripWhiteSpace(IsWhiteSpaceFunctionPtr) const;
     WTF_EXPORT_PRIVATE String simplifyWhiteSpace() const;
-    WTF_EXPORT_PRIVATE String simplifyWhiteSpace(IsWhiteSpaceFunctionPtr) const;
 
     WTF_EXPORT_PRIVATE String removeCharacters(CharacterMatchFunctionPtr) const;
     template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;

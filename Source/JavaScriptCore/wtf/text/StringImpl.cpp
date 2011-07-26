@@ -315,11 +315,6 @@ PassRefPtr<StringImpl> StringImpl::foldCase()
 
 PassRefPtr<StringImpl> StringImpl::stripWhiteSpace()
 {
-    return stripWhiteSpace(isSpaceOrNewline);
-}
-
-PassRefPtr<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace)
-{
     if (!m_length)
         return empty();
 
@@ -327,7 +322,7 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhi
     unsigned end = m_length - 1;
     
     // skip white space from start
-    while (start <= end && isWhiteSpace(m_data[start]))
+    while (start <= end && isSpaceOrNewline(m_data[start]))
         start++;
     
     // only white space
@@ -335,7 +330,7 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhi
         return empty();
 
     // skip white space from end
-    while (end && isWhiteSpace(m_data[end]))
+    while (end && isSpaceOrNewline(m_data[end]))
         end--;
 
     if (!start && end == m_length - 1)
@@ -377,11 +372,6 @@ PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr fi
 
 PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace()
 {
-    return StringImpl::simplifyWhiteSpace(isSpaceOrNewline);
-}
-
-PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace)
-{
     StringBuffer data(m_length);
 
     const UChar* from = m_data;
@@ -392,12 +382,12 @@ PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr is
     UChar* to = data.characters();
     
     while (true) {
-        while (from != fromend && isWhiteSpace(*from)) {
+        while (from != fromend && isSpaceOrNewline(*from)) {
             if (*from != ' ')
                 changedToSpace = true;
             from++;
         }
-        while (from != fromend && !isWhiteSpace(*from))
+        while (from != fromend && !isSpaceOrNewline(*from))
             to[outc++] = *from++;
         if (from != fromend)
             to[outc++] = ' ';
