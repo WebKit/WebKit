@@ -1,3 +1,22 @@
+2011-07-26  Xiaomei Ji  <xji@chromium.org>
+
+        --webkit-visual-word does not work in multi-line
+        https://bugs.webkit.org/show_bug.cgi?id=61344
+
+        Reviewed by Ryosuke Niwa.
+
+        Add test for multiple-line.
+
+        * editing/selection/move-by-word-visually-null-box.html:
+        * editing/selection/move-by-word-visually-others-expected.txt:
+        * editing/selection/move-by-word-visually-others.html: Add tests for multi-line. Shorten
+        test id.
+        * editing/selection/move-by-word-visually-single-space-sigle-line.html: Shorten test id.
+        * editing/selection/resources/move-by-word-visually.js:
+        (moveByWordForEveryPosition):
+        (setWidth):
+        (runMoveLeftRight):
+
 2011-07-26  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=60778

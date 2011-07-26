@@ -226,14 +226,26 @@ function moveByWordForEveryPosition(sel, test, dir)
     moveByWordOnEveryChar(sel, test, direction, dir);
 
     sel.modify("move", "forward", "lineBoundary");
+    var position = { node: sel.anchorNode, offset: sel.anchorOffset };
+
     // Check ctrl-left-arrow works for every position.
     if (dir == "ltr")
         direction = "left";
     else
         direction = "right";    
     moveByWord(sel, test, direction, dir);    
-    sel.modify("move", "forward", "lineBoundary");
+
+    sel.setPosition(position.node, position.offset);
     moveByWordOnEveryChar(sel, test, direction, dir);
+}
+
+function setWidth(test)
+{
+    if (test.className.search("fix_width") != -1) {
+        var span = document.getElementById("span_size");
+        var length = span.offsetWidth;
+        test.style.width = length + "px";
+    }
 }
 
 function runMoveLeftRight(tests, unit)
@@ -242,6 +254,8 @@ function runMoveLeftRight(tests, unit)
     for (var i = 0; i < tests.length; ++i) {
         var positionsMovingRight;
         var positionsMovingLeft;
+
+        setWidth(tests[i]);
 
         if (tests[i].getAttribute("dir") == 'ltr')
         {

@@ -1,3 +1,39 @@
+2011-07-26  Xiaomei Ji  <xji@chromium.org>
+
+        --webkit-visual-word does not work in multi-line
+        https://bugs.webkit.org/show_bug.cgi?id=61344
+
+        Reviewed by Ryosuke Niwa.
+
+        Replace Position(node, offset, PositionIsOffsetInAnchor) with 
+        createPositionAvoidingIgnoredNode(node, offset) which takes care of creating position 
+        before/after <br/> etc. editingIgnoresContent node. 
+
+        When iterate InlineBox, replace prevLeafChild and nextLeafChild (which only returns 
+        InlineBox within the same line) with leftInlineBox and rightInlineBox (which returns 
+        InlineBox across multiple lines).
+
+        * editing/htmlediting.cpp:
+        (WebCore::createPositionAvoidingIgnoredNode):
+        * editing/htmlediting.h:
+        * editing/visible_units.cpp:
+        (WebCore::previousWordBreakInBoxInsideBlockWithSameDirectionality): Replace Position() with
+        createPositionAvoidingIgnoredNode().
+        (WebCore::leftmostPositionInRTLBoxInLTRBlock): Ditto.
+        (WebCore::rightmostPositionInLTRBoxInRTLBlock): Ditto.
+        (WebCore::nextWordBreakInBoxInsideBlockWithDifferentDirectionality): Ditto.
+        (WebCore::blockWithPreviousLineBox): Added.
+        (WebCore::previousRootInlineBox): Added.
+        (WebCore::blockWithNextLineBox): Added.
+        (WebCore::nextRootInlineBox): Added.
+        (WebCore::leftInlineBox): Added.
+        (WebCore::rightInlineBox): Added.
+        (WebCore::leftWordBoundary): Replace prevLeafChild/nextLeafChild with leftInlineBox()
+        and rightInlineBox().
+        (WebCore::rightWordBoundary): Ditto.
+        (WebCore::leftWordPositionAcrossBoundary): Ditto.
+        (WebCore::rightWordPositionAcrossBoundary): Ditto.
+
 2011-07-26  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=60778

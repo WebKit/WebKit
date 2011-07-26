@@ -1198,7 +1198,8 @@ static VisiblePosition previousWordBreakInBoxInsideBlockWithSameDirectionality(c
     if (hasSeenWordBreakInThisBox)
         wordBreak = previousWordBreak;
     else {
-        wordBreak = Position(box->renderer()->node(), box->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+        wordBreak = createPositionAvoidingIgnoredNode(box->renderer()->node(), box->caretMaxOffset());
+
         // Return the rightmost word boundary of LTR box or leftmost word boundary of RTL box if
         // it is not in the previously visited boxes. For example, given a logical text 
         // "abc def     hij opq", there are 2 boxes: the "abc def " (starts at 0 and length is 8) 
@@ -1210,7 +1211,7 @@ static VisiblePosition previousWordBreakInBoxInsideBlockWithSameDirectionality(c
 
         if ((box->isLeftToRightDirection() && box->nextLeafChild())
             || (!box->isLeftToRightDirection() && box->prevLeafChild())) {
-    
+
             VisiblePosition positionAfterWord = nextBoundary(wordBreak, nextWordPositionBoundary);
             if (positionAfterWord.isNotNull()) {
                 VisiblePosition positionBeforeWord = previousBoundary(positionAfterWord, previousWordPositionBoundary);
@@ -1236,21 +1237,21 @@ static VisiblePosition leftmostPositionInRTLBoxInLTRBlock(const InlineBox* box)
     InlineBox* nextLeaf = box->nextLeafChild();   
     
     if (previousLeaf && !previousLeaf->isLeftToRightDirection())
-        return Position(node, box->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+        return createPositionAvoidingIgnoredNode(node, box->caretMaxOffset());
 
     if (nextLeaf && !nextLeaf->isLeftToRightDirection()) {
         if (previousLeaf)
-            return Position(previousLeaf->renderer()->node(), previousLeaf->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+            return createPositionAvoidingIgnoredNode(previousLeaf->renderer()->node(), previousLeaf->caretMaxOffset());
 
         InlineBox* lastRTLLeaf;
         do {
             lastRTLLeaf = nextLeaf;
             nextLeaf = nextLeaf->nextLeafChild();
         } while (nextLeaf && !nextLeaf->isLeftToRightDirection());
-        return Position(lastRTLLeaf->renderer()->node(), lastRTLLeaf->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+        return createPositionAvoidingIgnoredNode(lastRTLLeaf->renderer()->node(), lastRTLLeaf->caretMinOffset());
     }
 
-    return Position(node, box->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+    return createPositionAvoidingIgnoredNode(node, box->caretMinOffset());
 }
 
 static VisiblePosition rightmostPositionInLTRBoxInRTLBlock(const InlineBox* box)
@@ -1261,21 +1262,21 @@ static VisiblePosition rightmostPositionInLTRBoxInRTLBlock(const InlineBox* box)
     InlineBox* nextLeaf = box->nextLeafChild();   
     
     if (nextLeaf && nextLeaf->isLeftToRightDirection())    
-        return Position(node, box->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+        return createPositionAvoidingIgnoredNode(node, box->caretMaxOffset());
 
     if (previousLeaf && previousLeaf->isLeftToRightDirection()) {
         if (nextLeaf)
-            return Position(nextLeaf->renderer()->node(), nextLeaf->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+            return createPositionAvoidingIgnoredNode(nextLeaf->renderer()->node(), nextLeaf->caretMaxOffset());
 
         InlineBox* firstLTRLeaf;
         do {
             firstLTRLeaf = previousLeaf;
             previousLeaf = previousLeaf->prevLeafChild();
         } while (previousLeaf && previousLeaf->isLeftToRightDirection());
-        return Position(firstLTRLeaf->renderer()->node(), firstLTRLeaf->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+        return createPositionAvoidingIgnoredNode(firstLTRLeaf->renderer()->node(), firstLTRLeaf->caretMinOffset());
     }
 
-    return Position(node, box->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+    return createPositionAvoidingIgnoredNode(node, box->caretMinOffset());
 }
     
 static VisiblePosition lastWordBreakInBox(const InlineBox* box, int& offsetOfWordBreak)
@@ -1320,7 +1321,9 @@ static VisiblePosition nextWordBreakInBoxInsideBlockWithDifferentDirectionality(
     // The same applies to LTR text, in which words are traversed within the inline boxes from left to right.
     
     bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
-    VisiblePosition wordBreak = hasSeenWordBreakInThisBox ? previousWordBreak : Position(box->renderer()->node(), box->caretMinOffset(), Position::PositionIsOffsetInAnchor);
+    VisiblePosition wordBreak = hasSeenWordBreakInThisBox ? previousWordBreak : 
+        createPositionAvoidingIgnoredNode(box->renderer()->node(), box->caretMinOffset());
+
     wordBreak = nextBoundary(wordBreak, nextWordPositionBoundary);
   
     // Given RTL box "ABC DEF" either follows a LTR box or is the first visual box in an LTR block as an example,
@@ -1475,10 +1478,92 @@ static int smallestOffsetAbove(int offset, bool boxAndBlockAreInSameDirection, c
     return invalidOffset;
 }
 
+static const RenderBlock* blockWithPreviousLineBox(const RenderBlock* startingBlock)
+{
+    for (const RenderBlock* block = startingBlock; block; block = toRenderBlock(block->previousSibling())) {
+        if (block->childrenInline()) {
+            if (block->firstRootBox())
+                return block;
+        } else if (const RenderBlock* renderBlock = blockWithPreviousLineBox(toRenderBlock(block->lastChild())))
+            return renderBlock;
+    }
+    return 0;
+}
+
+static const RootInlineBox* previousRootInlineBox(const InlineBox* box)
+{
+    Node* node = box->renderer()->node();
+
+    for (RenderObject* renderer = node->renderer(); renderer; renderer = renderer->parent()) {
+        if (renderer->isRenderBlock()) {
+            if (const RenderBlock* blockWithLineBoxes = blockWithPreviousLineBox(toRenderBlock(renderer->previousSibling())))
+                return blockWithLineBoxes->lastRootBox();
+        }
+    }
+
+    return 0;
+}
+
+static const RenderBlock* blockWithNextLineBox(const RenderBlock* startingBlock)
+{
+    for (const RenderBlock* block = startingBlock; block; block = toRenderBlock(block->nextSibling())) {
+        if (block->childrenInline()) {
+            if (block->firstRootBox())
+                return block;
+        } else if (const RenderBlock* renderBlock = blockWithNextLineBox(toRenderBlock(block->firstChild())))
+            return renderBlock;
+    }
+    return 0;
+}
+
+static const RootInlineBox* nextRootInlineBox(const InlineBox* box)
+{
+    Node* node = box->renderer()->node();
+
+    for (RenderObject* renderer = node->renderer(); renderer; renderer = renderer->parent()) {
+        if (renderer->isRenderBlock()) {
+            if (const RenderBlock* blockWithLineBoxes = blockWithNextLineBox(toRenderBlock(renderer->nextSibling())))
+                return blockWithLineBoxes->firstRootBox();
+        }
+    }
+
+    return 0;
+}
+
+static const InlineBox* leftInlineBox(const InlineBox* box, TextDirection blockDirection)
+{
+    if (box->prevLeafChild())
+        return box->prevLeafChild();
+    
+    const RootInlineBox* rootBox = box->root();
+    const bool isBlockLTR = blockDirection == LTR;
+    const InlineFlowBox* leftLineBox = isBlockLTR ? rootBox->prevLineBox() : rootBox->nextLineBox();
+    if (leftLineBox)
+        return leftLineBox->lastLeafChild();
+
+    const RootInlineBox* leftRootInlineBox = isBlockLTR ? previousRootInlineBox(box) : nextRootInlineBox(box);
+    return leftRootInlineBox ? leftRootInlineBox->lastLeafChild() : 0;
+}
+
+static const InlineBox* rightInlineBox(const InlineBox* box, TextDirection blockDirection)
+{
+    if (box->nextLeafChild())
+        return box->nextLeafChild();
+    
+    const RootInlineBox* rootBox = box->root();
+    const bool isBlockLTR = blockDirection == LTR;
+    const InlineFlowBox* rightLineBox = isBlockLTR ? rootBox->nextLineBox() : rootBox->prevLineBox();
+    if (rightLineBox)
+        return rightLineBox->firstLeafChild();
+
+    const RootInlineBox* rightRootInlineBox = isBlockLTR ? nextRootInlineBox(box) : previousRootInlineBox(box);
+    return rightRootInlineBox ? rightRootInlineBox->firstLeafChild() : 0;
+}
+
 static VisiblePosition leftWordBoundary(const InlineBox* box, int offset, TextDirection blockDirection)
 {
     VisiblePosition wordBreak;
-    for  (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = adjacentBox->prevLeafChild()) {
+    for  (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = leftInlineBox(adjacentBox, blockDirection)) {
         if (blockDirection == LTR) {
             if (adjacentBox->isLeftToRightDirection()) 
                 wordBreak = previousWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);
@@ -1496,7 +1581,7 @@ static VisiblePosition rightWordBoundary(const InlineBox* box, int offset, TextD
 {
     
     VisiblePosition wordBreak;
-    for (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = adjacentBox->nextLeafChild()) {
+    for (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = rightInlineBox(adjacentBox, blockDirection)) {
         if (blockDirection == RTL) {
             if (adjacentBox->isLeftToRightDirection())
                 wordBreak = nextWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);
@@ -1527,12 +1612,12 @@ static VisiblePosition leftWordPositionAcrossBoundary(const VisiblePosition& vis
         return VisiblePosition();
 
     TextDirection blockDirection = directionOfEnclosingBlock(visiblePosition.deepEquivalent());
-    
+
     // FIXME: If the box's directionality is the same as that of the enclosing block, when the offset is at the box boundary
     // and the direction is towards inside the box, do I still need to make it a special case? For example, a LTR box inside a LTR block,
     // when offset is at box's caretMinOffset and the direction is DirectionRight, should it be taken care as a general case?
     if (offset == box->caretLeftmostOffset())
-        return leftWordBoundary(box->prevLeafChild(), invalidOffset, blockDirection);
+        return leftWordBoundary(leftInlineBox(box, blockDirection), invalidOffset, blockDirection);
     if (offset == box->caretRightmostOffset())
         return leftWordBoundary(box, offset, blockDirection);
     
@@ -1555,7 +1640,7 @@ static VisiblePosition leftWordPositionAcrossBoundary(const VisiblePosition& vis
     if (index != invalidOffset)
         return orderedWordBoundaries[index].visiblePosition;
     
-    return leftWordBoundary(box->prevLeafChild(), invalidOffset, blockDirection);
+    return leftWordBoundary(leftInlineBox(box, blockDirection), invalidOffset, blockDirection);
 }
 
 static VisiblePosition rightWordPositionAcrossBoundary(const VisiblePosition& visiblePosition)
@@ -1572,7 +1657,7 @@ static VisiblePosition rightWordPositionAcrossBoundary(const VisiblePosition& vi
     if (offset == box->caretLeftmostOffset())
         return rightWordBoundary(box, offset, blockDirection);
     if (offset == box->caretRightmostOffset())
-        return rightWordBoundary(box->nextLeafChild(), invalidOffset, blockDirection);
+        return rightWordBoundary(rightInlineBox(box, blockDirection), invalidOffset, blockDirection);
  
     VisiblePosition wordBreak;
     if (blockDirection == RTL) {
@@ -1592,7 +1677,7 @@ static VisiblePosition rightWordPositionAcrossBoundary(const VisiblePosition& vi
     if (index != invalidOffset)
         return orderedWordBoundaries[index].visiblePosition;
     
-    return rightWordBoundary(box->nextLeafChild(), invalidOffset, blockDirection);
+    return rightWordBoundary(rightInlineBox(box, blockDirection), invalidOffset, blockDirection);
 }
 
 VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)

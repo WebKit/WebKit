@@ -1137,4 +1137,21 @@ VisibleSelection avoidIntersectionWithNode(const VisibleSelection& selection, No
     return updatedSelection;
 }
 
+Position createPositionAvoidingIgnoredNode(Node* node, int offset)
+{
+    if (!node)
+        return Position();
+    if (!node->isTextNode()) {
+        // FIXME: the pass-in offset is the caretMinOffset() or caretMaxOffset() of box.
+        // caretMaxOffset could be 1 for replacedElement, br, and hr. 
+        // We should get rid of this offset checking code after we get rid of legacy editing
+        // position in rendering code.
+        if (!offset)
+            return positionBeforeNode(node);
+        ASSERT(offset == 1);
+        return positionAfterNode(node);
+    }
+    return Position(static_cast<Text*>(node), offset);
+}
+
 } // namespace WebCore
