@@ -24,18 +24,21 @@
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
 #include "JSDOMBinding.h"
+#include "TestInterface.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObjectWithGlobalObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
 
-class TestInterface;
-
 class JSTestInterface : public JSDOMWrapper {
     typedef JSDOMWrapper Base;
 public:
-    JSTestInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestInterface>);
+    static JSTestInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestInterface> impl)
+    {
+        return new (JSC::allocateCell<JSTestInterface>(globalObject->globalData().heap)) JSTestInterface(structure, globalObject, impl);
+    }
+
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
@@ -52,6 +55,7 @@ public:
 private:
     RefPtr<TestInterface> m_impl;
 protected:
+    JSTestInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestInterface>);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
@@ -62,11 +66,18 @@ class JSTestInterfacePrototype : public JSC::JSObjectWithGlobalObject {
     typedef JSC::JSObjectWithGlobalObject Base;
 public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
+    static JSTestInterfacePrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    {
+        return new (JSC::allocateCell<JSTestInterfacePrototype>(globalData.heap)) JSTestInterfacePrototype(globalData, globalObject, structure);
+    }
+
     static const JSC::ClassInfo s_info;
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
         return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
+
+private:
     JSTestInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, globalObject, structure) { }
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;

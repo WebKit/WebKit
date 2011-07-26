@@ -65,8 +65,14 @@ static const HashTableValue JSTestSerializedScriptValueInterfaceConstructorTable
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestSerializedScriptValueInterfaceConstructorTable = { 1, 0, JSTestSerializedScriptValueInterfaceConstructorTableValues, 0 };
 class JSTestSerializedScriptValueInterfaceConstructor : public DOMConstructorObject {
-public:
+private:
     JSTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+
+public:
+    static JSTestSerializedScriptValueInterfaceConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    {
+        return new (JSC::allocateCell<JSTestSerializedScriptValueInterfaceConstructor>(*exec->heap())) JSTestSerializedScriptValueInterfaceConstructor(exec, structure, globalObject);
+    }
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
@@ -130,7 +136,7 @@ JSTestSerializedScriptValueInterface::JSTestSerializedScriptValueInterface(Struc
 
 JSObject* JSTestSerializedScriptValueInterface::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return new (exec) JSTestSerializedScriptValueInterfacePrototype(exec->globalData(), globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
+    return JSTestSerializedScriptValueInterfacePrototype::create(exec->globalData(), globalObject, JSTestSerializedScriptValueInterfacePrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
 }
 
 bool JSTestSerializedScriptValueInterface::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

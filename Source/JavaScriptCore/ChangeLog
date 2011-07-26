@@ -1,3 +1,19 @@
+2011-07-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Refactor automatically generated JS DOM bindings to replace operator new with static create methods
+        https://bugs.webkit.org/show_bug.cgi?id=64732
+
+        Reviewed by Oliver Hunt.
+
+        Replacing the public constructors in the automatically generated JS DOM bindings with static 
+        create methods.  JSByteArray is used by several of these bindings in WebCore.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::create):
+        * runtime/JSByteArray.h:
+
 2011-07-26  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Qt/Linux.

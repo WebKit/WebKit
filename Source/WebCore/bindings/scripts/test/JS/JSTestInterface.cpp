@@ -63,8 +63,14 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[] =
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestInterfaceConstructorTable = { 1, 0, JSTestInterfaceConstructorTableValues, 0 };
 class JSTestInterfaceConstructor : public DOMConstructorObject {
-public:
+private:
     JSTestInterfaceConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+
+public:
+    static JSTestInterfaceConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    {
+        return new (JSC::allocateCell<JSTestInterfaceConstructor>(*exec->heap())) JSTestInterfaceConstructor(exec, structure, globalObject);
+    }
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
@@ -144,7 +150,7 @@ JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* global
 
 JSObject* JSTestInterface::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return new (exec) JSTestInterfacePrototype(exec->globalData(), globalObject, JSTestInterfacePrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
+    return JSTestInterfacePrototype::create(exec->globalData(), globalObject, JSTestInterfacePrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
 }
 
 bool JSTestInterface::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

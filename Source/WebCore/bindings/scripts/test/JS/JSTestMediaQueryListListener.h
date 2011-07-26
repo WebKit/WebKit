@@ -22,18 +22,21 @@
 #define JSTestMediaQueryListListener_h
 
 #include "JSDOMBinding.h"
+#include "TestMediaQueryListListener.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObjectWithGlobalObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
 
-class TestMediaQueryListListener;
-
 class JSTestMediaQueryListListener : public JSDOMWrapper {
     typedef JSDOMWrapper Base;
 public:
-    JSTestMediaQueryListListener(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestMediaQueryListListener>);
+    static JSTestMediaQueryListListener* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestMediaQueryListListener> impl)
+    {
+        return new (JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->globalData().heap)) JSTestMediaQueryListListener(structure, globalObject, impl);
+    }
+
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
@@ -50,6 +53,7 @@ public:
 private:
     RefPtr<TestMediaQueryListListener> m_impl;
 protected:
+    JSTestMediaQueryListListener(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestMediaQueryListListener>);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
@@ -60,6 +64,11 @@ class JSTestMediaQueryListListenerPrototype : public JSC::JSObjectWithGlobalObje
     typedef JSC::JSObjectWithGlobalObject Base;
 public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
+    static JSTestMediaQueryListListenerPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    {
+        return new (JSC::allocateCell<JSTestMediaQueryListListenerPrototype>(globalData.heap)) JSTestMediaQueryListListenerPrototype(globalData, globalObject, structure);
+    }
+
     static const JSC::ClassInfo s_info;
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
@@ -67,6 +76,8 @@ public:
     {
         return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
+
+private:
     JSTestMediaQueryListListenerPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, globalObject, structure) { }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;

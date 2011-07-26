@@ -143,8 +143,14 @@ COMPILE_ASSERT(0X20 == TestObj::CONST_VALUE_13, TestObjEnumCONST_VALUE_13IsWrong
 COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWrongUseDontCheckEnums);
 
 class JSTestObjConstructor : public DOMConstructorObject {
-public:
+private:
     JSTestObjConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+
+public:
+    static JSTestObjConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    {
+        return new (JSC::allocateCell<JSTestObjConstructor>(*exec->heap())) JSTestObjConstructor(exec, structure, globalObject);
+    }
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
@@ -265,7 +271,7 @@ JSTestObj::JSTestObj(Structure* structure, JSDOMGlobalObject* globalObject, Pass
 
 JSObject* JSTestObj::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return new (exec) JSTestObjPrototype(exec->globalData(), globalObject, JSTestObjPrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
+    return JSTestObjPrototype::create(exec->globalData(), globalObject, JSTestObjPrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
 }
 
 bool JSTestObj::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

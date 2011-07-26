@@ -24,18 +24,21 @@
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
 #include "JSDOMBinding.h"
+#include "TestSerializedScriptValueInterface.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObjectWithGlobalObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
 
-class TestSerializedScriptValueInterface;
-
 class JSTestSerializedScriptValueInterface : public JSDOMWrapper {
     typedef JSDOMWrapper Base;
 public:
-    JSTestSerializedScriptValueInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestSerializedScriptValueInterface>);
+    static JSTestSerializedScriptValueInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestSerializedScriptValueInterface> impl)
+    {
+        return new (JSC::allocateCell<JSTestSerializedScriptValueInterface>(globalObject->globalData().heap)) JSTestSerializedScriptValueInterface(structure, globalObject, impl);
+    }
+
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
@@ -52,6 +55,7 @@ public:
 private:
     RefPtr<TestSerializedScriptValueInterface> m_impl;
 protected:
+    JSTestSerializedScriptValueInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestSerializedScriptValueInterface>);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
@@ -62,11 +66,18 @@ class JSTestSerializedScriptValueInterfacePrototype : public JSC::JSObjectWithGl
     typedef JSC::JSObjectWithGlobalObject Base;
 public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
+    static JSTestSerializedScriptValueInterfacePrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    {
+        return new (JSC::allocateCell<JSTestSerializedScriptValueInterfacePrototype>(globalData.heap)) JSTestSerializedScriptValueInterfacePrototype(globalData, globalObject, structure);
+    }
+
     static const JSC::ClassInfo s_info;
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
         return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
+
+private:
     JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, globalObject, structure) { }
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;

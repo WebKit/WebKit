@@ -27,7 +27,10 @@ namespace WebCore {
 
     class JSImageConstructor : public DOMConstructorWithDocument {
     public:
-        JSImageConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+        static JSImageConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+        {
+            return new (JSC::allocateCell<JSImageConstructor>(*exec->heap())) JSImageConstructor(exec, structure, globalObject);
+        }
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
@@ -37,6 +40,7 @@ namespace WebCore {
         static const JSC::ClassInfo s_info;
 
     private:
+        JSImageConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
     };
 

@@ -28,7 +28,10 @@ namespace WebCore {
 
     class JSOptionConstructor : public DOMConstructorWithDocument {
     public:
-        JSOptionConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+        static JSOptionConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+        {
+            return new (JSC::allocateCell<JSOptionConstructor>(*exec->heap())) JSOptionConstructor(exec, structure, globalObject);
+        }
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {
@@ -38,6 +41,7 @@ namespace WebCore {
         static const JSC::ClassInfo s_info;
 
     private:
+        JSOptionConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
         virtual JSC::ConstructType getConstructData(JSC::ConstructData&);
     };
 

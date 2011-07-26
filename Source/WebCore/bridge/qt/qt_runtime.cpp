@@ -915,7 +915,7 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         QByteArray qtByteArray = variant.value<QByteArray>();
         WTF::RefPtr<WTF::ByteArray> wtfByteArray = WTF::ByteArray::create(qtByteArray.length());
         memcpy(wtfByteArray->data(), qtByteArray.constData(), qtByteArray.length());
-        return new (exec) JSC::JSByteArray(exec, JSC::JSByteArray::createStructure(exec->globalData(), jsNull()), wtfByteArray.get());
+        return JSC::JSByteArray::create(exec, JSC::JSByteArray::createStructure(exec->globalData(), jsNull()), wtfByteArray.get());
     }
 
     if (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar) {
@@ -973,16 +973,16 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
     if (type == QMetaType::QVariantList) {
         QVariantList vl = variant.toList();
         qConvDebug() << "got a " << vl.count() << " length list:" << vl;
-        return new (exec) RuntimeArray(exec, new QtArray<QVariant>(vl, QMetaType::Void, root));
+        return RuntimeArray::create(exec, new QtArray<QVariant>(vl, QMetaType::Void, root));
     } else if (type == QMetaType::QStringList) {
         QStringList sl = variant.value<QStringList>();
-        return new (exec) RuntimeArray(exec, new QtArray<QString>(sl, QMetaType::QString, root));
+        return RuntimeArray::create(exec, new QtArray<QString>(sl, QMetaType::QString, root));
     } else if (type == (QMetaType::Type) qMetaTypeId<QObjectList>()) {
         QObjectList ol= variant.value<QObjectList>();
-        return new (exec) RuntimeArray(exec, new QtArray<QObject*>(ol, QMetaType::QObjectStar, root));
+        return RuntimeArray::create(exec, new QtArray<QObject*>(ol, QMetaType::QObjectStar, root));
     } else if (type == (QMetaType::Type)qMetaTypeId<QList<int> >()) {
         QList<int> il= variant.value<QList<int> >();
-        return new (exec) RuntimeArray(exec, new QtArray<int>(il, QMetaType::Int, root));
+        return RuntimeArray::create(exec, new QtArray<int>(il, QMetaType::Int, root));
     }
 
     if (type == (QMetaType::Type)qMetaTypeId<QVariant>()) {

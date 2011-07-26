@@ -41,6 +41,11 @@ JSByteArray::JSByteArray(ExecState* exec, Structure* structure, ByteArray* stora
 {
     putDirect(exec->globalData(), exec->globalData().propertyNames->length, jsNumber(m_storage->length()), ReadOnly | DontDelete);
 }
+        
+JSByteArray* JSByteArray::create(ExecState* exec, Structure* structure, ByteArray* storage)
+{
+    return new (allocateCell<JSByteArray>(*exec->heap())) JSByteArray(exec, structure, storage);
+}
 
 #if !ASSERT_DISABLED
 JSByteArray::~JSByteArray()

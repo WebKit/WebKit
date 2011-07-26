@@ -64,8 +64,14 @@ static const HashTableValue JSTestMediaQueryListListenerConstructorTableValues[]
 #undef THUNK_GENERATOR
 static JSC_CONST_HASHTABLE HashTable JSTestMediaQueryListListenerConstructorTable = { 1, 0, JSTestMediaQueryListListenerConstructorTableValues, 0 };
 class JSTestMediaQueryListListenerConstructor : public DOMConstructorObject {
-public:
+private:
     JSTestMediaQueryListListenerConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
+
+public:
+    static JSTestMediaQueryListListenerConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
+    {
+        return new (JSC::allocateCell<JSTestMediaQueryListListenerConstructor>(*exec->heap())) JSTestMediaQueryListListenerConstructor(exec, structure, globalObject);
+    }
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
@@ -140,7 +146,7 @@ JSTestMediaQueryListListener::JSTestMediaQueryListListener(Structure* structure,
 
 JSObject* JSTestMediaQueryListListener::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return new (exec) JSTestMediaQueryListListenerPrototype(exec->globalData(), globalObject, JSTestMediaQueryListListenerPrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
+    return JSTestMediaQueryListListenerPrototype::create(exec->globalData(), globalObject, JSTestMediaQueryListListenerPrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
 }
 
 bool JSTestMediaQueryListListener::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

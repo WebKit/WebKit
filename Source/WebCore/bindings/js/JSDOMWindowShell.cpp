@@ -61,10 +61,10 @@ void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
     // when we allocate the global object. (Once the global object is fully
     // constructed, it can mark its own prototype.)
     Structure* prototypeStructure = JSDOMWindowPrototype::createStructure(*JSDOMWindow::commonJSGlobalData(), jsNull());
-    Strong<JSDOMWindowPrototype> prototype(*JSDOMWindow::commonJSGlobalData(), new JSDOMWindowPrototype(*JSDOMWindow::commonJSGlobalData(), 0, prototypeStructure));
+    Strong<JSDOMWindowPrototype> prototype(*JSDOMWindow::commonJSGlobalData(), JSDOMWindowPrototype::create(*JSDOMWindow::commonJSGlobalData(), 0, prototypeStructure));
 
     Structure* structure = JSDOMWindow::createStructure(*JSDOMWindow::commonJSGlobalData(), prototype.get());
-    JSDOMWindow* jsDOMWindow = new (JSDOMWindow::commonJSGlobalData()) JSDOMWindow(*JSDOMWindow::commonJSGlobalData(), structure, domWindow, this);
+    JSDOMWindow* jsDOMWindow = JSDOMWindow::create(*JSDOMWindow::commonJSGlobalData(), structure, domWindow, this);
     prototype->putAnonymousValue(*JSDOMWindow::commonJSGlobalData(), 0, jsDOMWindow);
     setWindow(*JSDOMWindow::commonJSGlobalData(), jsDOMWindow);
 }

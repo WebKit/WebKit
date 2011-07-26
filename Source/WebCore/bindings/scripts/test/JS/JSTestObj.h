@@ -22,18 +22,21 @@
 #define JSTestObj_h
 
 #include "JSDOMBinding.h"
+#include "TestObj.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObjectWithGlobalObject.h>
 #include <runtime/ObjectPrototype.h>
 
 namespace WebCore {
 
-class TestObj;
-
 class JSTestObj : public JSDOMWrapper {
     typedef JSDOMWrapper Base;
 public:
-    JSTestObj(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestObj>);
+    static JSTestObj* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestObj> impl)
+    {
+        return new (JSC::allocateCell<JSTestObj>(globalObject->globalData().heap)) JSTestObj(structure, globalObject, impl);
+    }
+
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
@@ -59,6 +62,7 @@ public:
 private:
     RefPtr<TestObj> m_impl;
 protected:
+    JSTestObj(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestObj>);
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;
 };
 
@@ -69,6 +73,11 @@ class JSTestObjPrototype : public JSC::JSObjectWithGlobalObject {
     typedef JSC::JSObjectWithGlobalObject Base;
 public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
+    static JSTestObjPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
+    {
+        return new (JSC::allocateCell<JSTestObjPrototype>(globalData.heap)) JSTestObjPrototype(globalData, globalObject, structure);
+    }
+
     static const JSC::ClassInfo s_info;
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
@@ -76,6 +85,8 @@ public:
     {
         return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
+
+private:
     JSTestObjPrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, globalObject, structure) { }
 protected:
     static const unsigned StructureFlags = JSC::OverridesGetOwnPropertySlot | Base::StructureFlags;

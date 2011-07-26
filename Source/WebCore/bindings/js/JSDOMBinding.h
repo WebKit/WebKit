@@ -139,7 +139,7 @@ namespace WebCore {
     {
         ASSERT(node);
         ASSERT(!getCachedWrapper(currentWorld(exec), node));
-        WrapperClass* wrapper = new (exec) WrapperClass(getDOMStructure<WrapperClass>(exec, globalObject), globalObject, node);
+        WrapperClass* wrapper = WrapperClass::create(getDOMStructure<WrapperClass>(exec, globalObject), globalObject, node);
         // FIXME: The entire function can be removed, once we fix caching.
         // This function is a one-off hack to make Nodes cache in the right global object.
         cacheWrapper(currentWorld(exec), node, wrapper);

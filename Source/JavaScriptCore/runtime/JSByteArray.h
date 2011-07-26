@@ -75,7 +75,12 @@ namespace JSC {
                 setIndex(i, byteValue);
         }
 
-        JSByteArray(ExecState*, Structure*, WTF::ByteArray* storage);
+    private:
+        JSByteArray(ExecState*, Structure*, ByteArray* storage);
+        
+    public:
+        static JSByteArray* create(ExecState*, Structure*, ByteArray*);
+
         static Structure* createStructure(JSGlobalData&, JSValue prototype, const JSC::ClassInfo* = &s_defaultInfo);
 
         virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);

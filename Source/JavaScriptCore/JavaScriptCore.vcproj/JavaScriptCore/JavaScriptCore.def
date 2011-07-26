@@ -10,7 +10,6 @@ EXPORTS
     ??0InternalFunction@JSC@@IAE@PAVJSGlobalData@1@PAVJSGlobalObject@1@PAVStructure@1@ABVIdentifier@1@@Z
     ??0JSArray@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
     ??0JSArray@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@ABVArgList@1@@Z
-    ??0JSByteArray@JSC@@QAE@PAVExecState@1@PAVStructure@1@PAVByteArray@WTF@@@Z
     ??0JSFunction@JSC@@AAE@PAVExecState@1@PAVJSGlobalObject@1@PAVStructure@1@HABVIdentifier@1@P6I_J0@Z@Z
     ??0JSLock@JSC@@QAE@PAVExecState@1@@Z
     ??0JSObjectWithGlobalObject@JSC@@IAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@PAVStructure@1@@Z
@@ -96,6 +95,7 @@ EXPORTS
     ?convertUTF16ToUTF8@Unicode@WTF@@YA?AW4ConversionResult@12@PAPB_WPB_WPAPADPAD_N@Z
     ?convertUTF8ToUTF16@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBDPBDPAPA_WPA_W_N@Z
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
+    ?create@JSByteArray@JSC@@SAPAV12@PAVExecState@2@PAVStructure@2@PAVByteArray@WTF@@@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
     ?create@RegExp@JSC@@SAPAV12@AAVJSGlobalData@2@ABVUString@2@W4RegExpFlags@2@@Z
