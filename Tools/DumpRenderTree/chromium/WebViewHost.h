@@ -174,6 +174,7 @@ class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewCl
      virtual bool allowPlugins(WebKit::WebFrame*, bool enabledPerSettings);
     virtual bool allowImages(WebKit::WebFrame*, bool enabledPerSettings);
     virtual void loadURLExternally(WebKit::WebFrame*, const WebKit::WebURLRequest&, WebKit::WebNavigationPolicy);
+    virtual void loadURLExternally(WebKit::WebFrame*, const WebKit::WebURLRequest&, WebKit::WebNavigationPolicy, const WebKit::WebString& downloadName);
     virtual WebKit::WebNavigationPolicy decidePolicyForNavigation(
         WebKit::WebFrame*, const WebKit::WebURLRequest&,
         WebKit::WebNavigationType, const WebKit::WebNode&,

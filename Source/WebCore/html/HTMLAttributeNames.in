@@ -91,6 +91,7 @@ defer
 dir
 direction
 disabled
+download
 draggable
 webkitdropzone
 enctype

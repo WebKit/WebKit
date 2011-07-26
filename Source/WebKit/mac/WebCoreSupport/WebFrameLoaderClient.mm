@@ -870,7 +870,7 @@ void WebFrameLoaderClient::setMainFrameDocumentReady(bool ready)
     [getWebView(m_webFrame.get()) setMainFrameDocumentReady:ready];
 }
 
-void WebFrameLoaderClient::startDownload(const ResourceRequest& request)
+void WebFrameLoaderClient::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
 {
     // FIXME: Should download full request.
     WebDownload *download = [getWebView(m_webFrame.get()) _downloadURL:request.url()];

@@ -1221,7 +1221,7 @@ void FrameLoaderClient::setMainDocumentError(WebCore::DocumentLoader*, const Res
     }
 }
 
-void FrameLoaderClient::startDownload(const ResourceRequest& request)
+void FrameLoaderClient::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
 {
     GRefPtr<WebKitNetworkRequest> networkRequest(adoptGRef(kitNew(request)));
     WebKitWebView* view = getViewFromFrame(m_frame);

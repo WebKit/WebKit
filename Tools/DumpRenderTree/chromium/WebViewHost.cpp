@@ -799,7 +799,12 @@ bool WebViewHost::allowImages(WebFrame* frame, bool enabledPerSettings)
     return enabledPerSettings;
 }
 
-void WebViewHost::loadURLExternally(WebFrame*, const WebURLRequest& request, WebNavigationPolicy policy)
+void WebViewHost::loadURLExternally(WebFrame* frame, const WebURLRequest& request, WebNavigationPolicy policy)
+{
+    loadURLExternally(frame, request, policy, WebString());
+}
+
+void WebViewHost::loadURLExternally(WebFrame*, const WebURLRequest& request, WebNavigationPolicy policy, const WebString& downloadName)
 {
     ASSERT(policy !=  WebKit::WebNavigationPolicyCurrentTab);
     WebViewHost* another = m_shell->createNewWindow(request.url());

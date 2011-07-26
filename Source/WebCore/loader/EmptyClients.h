@@ -310,7 +310,7 @@ public:
 
     virtual void setMainFrameDocumentReady(bool) { }
 
-    virtual void startDownload(const ResourceRequest&) { }
+    virtual void startDownload(const ResourceRequest&, const String& suggestedName = String()) { UNUSED_PARAM(suggestedName); }
 
     virtual void willChangeTitle(DocumentLoader*) { }
     virtual void didChangeTitle(DocumentLoader*) { }

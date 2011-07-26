@@ -26,6 +26,7 @@ module html {
         attribute [Reflect] DOMString accessKey;
         attribute [Reflect] DOMString charset;
         attribute [Reflect] DOMString coords;
+        attribute [Conditional=DOWNLOAD_ATTRIBUTE, Reflect] DOMString download;
         attribute [Reflect, URL] DOMString href;
         attribute [Reflect] DOMString hreflang;
         attribute [Reflect] DOMString name;

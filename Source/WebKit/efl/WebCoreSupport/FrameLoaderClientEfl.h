@@ -153,7 +153,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
 
     virtual void setMainFrameDocumentReady(bool);
 
-    virtual void startDownload(const ResourceRequest&);
+    virtual void startDownload(const ResourceRequest&, const String& suggestedName = String());
 
     virtual void willChangeTitle(DocumentLoader*);
     virtual void didChangeTitle(DocumentLoader*);

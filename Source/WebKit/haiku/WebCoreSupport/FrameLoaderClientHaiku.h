@@ -219,7 +219,7 @@ namespace WebCore {
                                                              PassRefPtr<FormState>);
         virtual void dispatchUnableToImplementPolicy(const ResourceError&);
 
-        virtual void startDownload(const ResourceRequest&);
+        virtual void startDownload(const ResourceRequest&, const String& suggestedName = String());
 
         // FIXME: This should probably not be here, but it's needed for the tests currently.
         virtual void partClearedInBegin();

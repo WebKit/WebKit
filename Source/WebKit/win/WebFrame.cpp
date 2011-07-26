@@ -1907,7 +1907,7 @@ void WebFrame::dispatchDidFailLoad(const ResourceError& error)
     }
 }
 
-void WebFrame::startDownload(const ResourceRequest& request)
+void WebFrame::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
 {
     d->webView->downloadURL(request.url());
 }

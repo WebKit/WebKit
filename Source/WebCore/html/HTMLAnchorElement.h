@@ -115,6 +115,8 @@ private:
 
     void sendPings(const KURL& destinationURL);
 
+    void handleClick(Event*);
+
     enum EventType {
         MouseEventWithoutShiftKey,
         MouseEventWithShiftKey,

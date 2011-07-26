@@ -1,3 +1,19 @@
+2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Add support for download='filename' attribute in anchors.
+        https://bugs.webkit.org/show_bug.cgi?id=64580
+
+        Reviewed by Adam Barth.
+
+        * fast/dom/HTMLAnchorElement/anchor-download-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-download.html: Added.
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-nodownload.html: Added.
+        * fast/dom/HTMLAnchorElement/anchor-download-unset-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-download-unset.html: Added.
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set-expected.txt: Added.
+        * fast/dom/HTMLAnchorElement/anchor-nodownload-set.html: Added.
+
 2011-07-26  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark webaudio/test-basic as crashing on Windows.

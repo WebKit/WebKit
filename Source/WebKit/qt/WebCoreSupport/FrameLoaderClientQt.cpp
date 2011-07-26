@@ -1296,7 +1296,7 @@ void FrameLoaderClientQt::dispatchUnableToImplementPolicy(const WebCore::Resourc
     notImplemented();
 }
 
-void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest& request)
+void FrameLoaderClientQt::startDownload(const WebCore::ResourceRequest& request, const String& /* suggestedName */)
 {
     if (!m_webFrame)
         return;

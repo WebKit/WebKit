@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type='text/javascript'>
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+  layoutTestController.waitUntilDone();
+}
+</script>
+</head>
+<body>
+<a id="blob-url" download>Blob URL</a>
+<script>
+function click(elmt)
+{
+    if (!window.eventSender) {
+        alert('Click the link to run the test.');
+        return;
+    }
+    eventSender.mouseMoveTo(elmt.offsetLeft + 5, elmt.offsetTop + 5);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+function runTest()
+{
+    var bb = new WebKitBlobBuilder();
+    bb.append("<!doctype html><html><head><title>Title</title><script>if (window.layoutTestController) layoutTestController.dumpAsText(); </" + "script></head><body>PASS</body><script>if (window.layoutTestController) layoutTestController.notifyDone();</scr" + "ipt></html>");
+    var blob = bb.getBlob("text/html", "inline");
+    var link = document.getElementById("blob-url");
+    link.href = window.webkitURL.createObjectURL(blob);
+    link.removeAttribute('download');
+    click(link);
+}
+runTest();
+</script>
+</body>
+</html>

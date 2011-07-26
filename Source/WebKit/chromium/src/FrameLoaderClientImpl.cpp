@@ -944,7 +944,7 @@ void FrameLoaderClientImpl::dispatchDecidePolicyForNavigationAction(
     PolicyAction policyAction = PolicyIgnore;
 
     // It is valid for this function to be invoked in code paths where the
-    // the webview is closed.
+    // webview is closed.
     // The null check here is to fix a crash that seems strange
     // (see - https://bugs.webkit.org/show_bug.cgi?id=23554).
     if (m_webFrame->client() && !request.url().isNull()) {
@@ -1073,7 +1073,7 @@ void FrameLoaderClientImpl::setMainFrameDocumentReady(bool ready)
 
 // Creates a new connection and begins downloading from that (contrast this
 // with |download|).
-void FrameLoaderClientImpl::startDownload(const ResourceRequest& request)
+void FrameLoaderClientImpl::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
 {
     if (m_webFrame->client()) {
         WrappedResourceRequest webreq(request);

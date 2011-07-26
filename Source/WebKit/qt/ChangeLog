@@ -1,3 +1,14 @@
+2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Add support for download='filename' attribute in anchors.
+        https://bugs.webkit.org/show_bug.cgi?id=64580
+
+        Reviewed by Adam Barth.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::startDownload):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
 2011-07-26  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

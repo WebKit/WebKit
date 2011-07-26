@@ -1,3 +1,18 @@
+2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Add support for download='filename' attribute in anchors.
+        https://bugs.webkit.org/show_bug.cgi?id=64580
+
+        Reviewed by Adam Barth.
+
+        * features.gypi:
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::loadURLExternally):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDecidePolicyForNavigationAction):
+        (WebKit::FrameLoaderClientImpl::startDownload):
+        * src/FrameLoaderClientImpl.h:
+
 2011-07-26  Brett Wilson  <brettw@chromium.org>
 
         Cancel the load when an associated URL loader goes out of scope.

@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "EventNames.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "HTMLImageElement.h"
 #include "HTMLNames.h"
@@ -147,10 +148,7 @@ void HTMLAnchorElement::defaultEventHandler(Event* event)
         }
 
         if (isLinkClick(event) && treatLinkAsLiveForEventType(eventType(event))) {
-            String url = stripLeadingAndTrailingHTMLSpaces(getAttribute(hrefAttr));
-            appendServerMapMousePosition(url, event);
-            handleLinkClick(event, document(), url, getAttribute(targetAttr), hasRel(RelationNoReferrer));
-            sendPings(document()->completeURL(url));
+            handleClick(event);
             return;
         }
 
@@ -490,6 +488,37 @@ void HTMLAnchorElement::sendPings(const KURL& destinationURL)
     SpaceSplitString pingURLs(getAttribute(pingAttr), true);
     for (unsigned i = 0; i < pingURLs.size(); i++)
         PingLoader::sendPing(document()->frame(), document()->completeURL(pingURLs[i]), destinationURL);
+}
+
+void HTMLAnchorElement::handleClick(Event* event)
+{
+    event->setDefaultHandled();
+
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    String url = stripLeadingAndTrailingHTMLSpaces(fastGetAttribute(hrefAttr));
+    appendServerMapMousePosition(url, event);
+    KURL kurl = document()->completeURL(url);
+
+#if ENABLE(DOWNLOAD_ATTRIBUTE)
+    if (hasAttribute(downloadAttr)) {
+        ResourceRequest request(kurl);
+
+        if (!hasRel(RelationNoReferrer)) {
+            String referrer = frame->loader()->outgoingReferrer();
+            if (!referrer.isEmpty() && !SecurityOrigin::shouldHideReferrer(kurl, referrer))
+                request.setHTTPReferrer(referrer);
+            frame->loader()->addExtraFieldsToMainResourceRequest(request);
+        }
+
+        frame->loader()->client()->startDownload(request, fastGetAttribute(downloadAttr));
+    } else
+#endif
+        frame->loader()->urlSelected(kurl, target(), event, false, false, hasRel(RelationNoReferrer) ? NoReferrer : SendReferrer);
+
+    sendPings(kurl);
 }
 
 HTMLAnchorElement::EventType HTMLAnchorElement::eventType(Event* event)

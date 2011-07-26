@@ -597,7 +597,7 @@ void FrameLoaderClientWinCE::setMainDocumentError(DocumentLoader*, const Resourc
     m_hasSentResponseToPlugin = false;
 }
 
-void FrameLoaderClientWinCE::startDownload(const WebCore::ResourceRequest&)
+void FrameLoaderClientWinCE::startDownload(const WebCore::ResourceRequest&, const String& /* suggestedName */)
 {
     notImplemented();
 }

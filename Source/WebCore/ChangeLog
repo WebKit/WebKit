@@ -1,3 +1,39 @@
+2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Add support for download='filename' attribute in anchors.
+        https://bugs.webkit.org/show_bug.cgi?id=64580
+
+        Reviewed by Adam Barth.
+
+        The download attribute allows the author of the hyperlink to cause the
+        browser to download the linked URL.  The author can also supply a
+        suggested file name in the attribute value.  This feature is a recent
+        addition to HTML to better support offline applications that use blob
+        URLs.  Traditionally, web sites use the HTTP Content-Disposition header
+        to trigger downloads, but that option isn't available when working
+        offline.
+
+        There is some question about whether we should initiate a download when
+        we receive a DOM-created click event.  This patch does initiate the
+        download, but we might revise that decision in the future as part of a
+        larger change in how WebKit treats the interaction between default
+        event handlers and DOM-created events.
+
+        Tests: fast/dom/HTMLAnchorElement/anchor-download.html
+               fast/dom/HTMLAnchorElement/anchor-nodownload.html
+               fast/dom/HTMLAnchorElement/anchor-download-unset.html
+               fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
+
+        * html/HTMLAnchorElement.cpp:
+        (WebCore::HTMLAnchorElement::defaultEventHandler):
+        (WebCore::HTMLAnchorElement::handleClick):
+        * html/HTMLAnchorElement.h:
+        * html/HTMLAnchorElement.idl:
+        * html/HTMLAttributeNames.in:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::startDownload):
+        * loader/FrameLoaderClient.h:
+
 2011-07-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Refactor automatically generated JS DOM bindings to replace operator new with static create methods

@@ -789,7 +789,7 @@ void WebFrameLoaderClient::setMainFrameDocumentReady(bool)
     notImplemented();
 }
 
-void WebFrameLoaderClient::startDownload(const ResourceRequest& request)
+void WebFrameLoaderClient::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
 {
     m_frame->startDownload(request);
 }

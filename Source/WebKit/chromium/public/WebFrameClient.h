@@ -116,6 +116,8 @@ public:
     // The client should handle the navigation externally.
     virtual void loadURLExternally(
         WebFrame*, const WebURLRequest&, WebNavigationPolicy) { }
+    virtual void loadURLExternally(
+        WebFrame*, const WebURLRequest&, WebNavigationPolicy, const WebString& downloadName) { }
 
 
     // Navigational queries ------------------------------------------------

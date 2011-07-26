@@ -709,7 +709,7 @@ void FrameLoaderClientHaiku::dispatchUnableToImplementPolicy(const ResourceError
     notImplemented();
 }
 
-void FrameLoaderClientHaiku::startDownload(const ResourceRequest&)
+void FrameLoaderClientHaiku::startDownload(const ResourceRequest&, const String& /* suggestedName */)
 {
     notImplemented();
 }

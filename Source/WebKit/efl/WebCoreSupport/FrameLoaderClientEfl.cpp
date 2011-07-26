@@ -871,7 +871,7 @@ void FrameLoaderClientEfl::setMainDocumentError(DocumentLoader* loader, const Re
     m_hasSentResponseToPlugin = false;
 }
 
-void FrameLoaderClientEfl::startDownload(const ResourceRequest& request)
+void FrameLoaderClientEfl::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
 {
     if (!m_view)
         return;

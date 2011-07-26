@@ -122,7 +122,7 @@ private:
     
     virtual void setMainFrameDocumentReady(bool);
     
-    virtual void startDownload(const WebCore::ResourceRequest&);
+    virtual void startDownload(const WebCore::ResourceRequest&, const String& suggestedName = String());
     
     virtual void willChangeTitle(WebCore::DocumentLoader*);
     virtual void didChangeTitle(WebCore::DocumentLoader*);

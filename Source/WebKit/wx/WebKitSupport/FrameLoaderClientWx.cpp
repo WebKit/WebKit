@@ -840,7 +840,7 @@ void FrameLoaderClientWx::dispatchUnableToImplementPolicy(const ResourceError&)
     notImplemented();
 }
 
-void FrameLoaderClientWx::startDownload(const ResourceRequest&)
+void FrameLoaderClientWx::startDownload(const ResourceRequest&, const String& /* suggestedName */)
 {
     notImplemented();
 }

@@ -179,7 +179,7 @@ namespace WebCore {
         
         virtual void setMainFrameDocumentReady(bool) = 0;
 
-        virtual void startDownload(const ResourceRequest&) = 0;
+        virtual void startDownload(const ResourceRequest&, const String& suggestedName = String()) = 0;
 
         virtual void willChangeTitle(DocumentLoader*) = 0;
         virtual void didChangeTitle(DocumentLoader*) = 0;
