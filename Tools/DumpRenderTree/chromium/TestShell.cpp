@@ -485,7 +485,6 @@ void TestShell::dump()
         if (fwrite(webArrayBufferView.baseAddress(), 1, webArrayBufferView.byteLength(), stdout) != webArrayBufferView.byteLength())
             FATAL("Short write to stdout, disk full?\n");
         printf("\n");
-        printf("#EOF\n");
         
         m_printer->handleTestFooter(true);
 

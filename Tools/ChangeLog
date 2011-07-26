@@ -1,3 +1,13 @@
+2011-07-26  Chris Rogers  <crogers@google.com>
+
+        Avoid outputting #EOF twice for web audio tests in chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=65201
+
+        Reviewed by Dirk Pranke.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::dump):
+
 2011-07-26  Adam Barth  <abarth@webkit.org>
 
         Windows bots on build.chromium.org can't figure out the head_svn_revision
