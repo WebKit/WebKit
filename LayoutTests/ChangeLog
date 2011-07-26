@@ -1,3 +1,12 @@
+2011-07-26  Hans Wennborg  <hans@chromium.org>
+
+        Update another test that relied on fonts loading synchronously.
+        https://bugs.webkit.org/show_bug.cgi?id=65169
+
+        Not Reviewed, tests fix.
+
+        * platform/chromium-linux/fast/text/international/arabic-vertical-offset.html:
+
 2011-07-26  Shinya Kawanaka  <shinyak@google.com>
 
         Added a test to normalize option.text.
