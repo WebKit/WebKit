@@ -1,3 +1,27 @@
+2011-07-26  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=60778
+
+        Use after free because of line box culling optimization regression.
+
+        In the case of a child with no line box being removed (typically
+        a <br> in quirks mode), if there is no previous sibling with a line
+        box, then we have a potential problem with the culling optimization.
+
+        The culled inline may still have other leaf line box children, but
+        they may follow the removed <br>. In this case we can't rely on
+        them, since we need a line box that comes before the <br>.
+
+        The fix is to simply recur up to the parent if we are a culled inline
+        and could not find a previous line box.
+
+        Reviewed by Dan Bernstein.
+
+        Added editing/execCommand/crash-line-break-after-outdent.html
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::dirtyLinesFromChangedChild):
+
 2011-07-26  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9842889> Add a generic pictograph font family
