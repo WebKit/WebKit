@@ -1,3 +1,11 @@
+2011-07-26  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: inspector test rebaselines.
+
+        * inspector/console/console-format-expected.txt:
+        * inspector/runtime/runtime-getProperties-expected.txt:
+        * platform/chromium/inspector/runtime/runtime-getProperties-expected.txt: Copied from LayoutTests/inspector/runtime/runtime-getProperties-expected.txt.
+
 2011-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91746.
