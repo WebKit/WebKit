@@ -91,9 +91,9 @@ class SVN(SCM, SVNRepository):
 
     @classmethod
     def value_from_svn_info(cls, path, field_name):
-        svn_info_args = ['svn', 'info', path]
+        svn_info_args = ['svn', 'info']
         # FIXME: This method should use a passed in executive or be made an instance method and use self._executive.
-        info_output = Executive().run_command(svn_info_args).rstrip()
+        info_output = Executive().run_command(svn_info_args, cwd=path).rstrip()
         match = re.search("^%s: (?P<value>.+)$" % field_name, info_output, re.MULTILINE)
         if not match:
             raise ScriptError(script_args=svn_info_args, message='svn info did not contain a %s.' % field_name)

@@ -1,3 +1,16 @@
+2011-07-26  Adam Barth  <abarth@webkit.org>
+
+        Windows bots on build.chromium.org can't figure out the head_svn_revision
+        https://bugs.webkit.org/show_bug.cgi?id=65156
+
+        Reviewed by Tony Chang.
+
+        This patch is a bit of a guess as to the issue based on the
+        investigation in https://bugs.webkit.org/show_bug.cgi?id=65148.  I'm
+        not sure whether it will fix the issue, but it seems worth a try.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+
 2011-07-26  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKitGtk build with GTK+ 3.x after r91707.
