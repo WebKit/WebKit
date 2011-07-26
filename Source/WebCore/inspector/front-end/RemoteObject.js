@@ -31,10 +31,10 @@
 WebInspector.RemoteObject = function(objectId, type, subtype, value, description)
 {
     this._type = type;
+    this._subtype = subtype;
     if (objectId) {
         // handle
         this._objectId = objectId;
-        this._subtype = subtype;
         this._description = description;
         this._hasChildren = true;
     } else {
@@ -146,10 +146,37 @@ WebInspector.RemoteObject.prototype = {
     setPropertyValue: function(name, value, callback)
     {
         if (!this._objectId) {
-            callback("Can't get a property of non-object.");
+            callback("Can't set a property of non-object.");
             return;
         }
-        RuntimeAgent.setPropertyValue(this._objectId, name, value, callback);
+
+        RuntimeAgent.evaluate(value, undefined, false, true, evaluatedCallback.bind(this));
+
+        function evaluatedCallback(error, result, wasThrown)
+        {
+            if (error || wasThrown) {
+                callback(error || result);
+                return;
+            }
+
+            function setPropertyValue(propertyName, propertyValue)
+            {
+                this[propertyName] = propertyValue;
+            }
+
+            delete result.description; // Optimize on traffic.
+            RuntimeAgent.callFunctionOn(this._objectId, setPropertyValue.toString(), [{ value:name }, result], propertySetCallback.bind(this));
+            if (result._objectId)
+                RuntimeAgent.releaseObject(result._objectId);
+        }
+
+        function propertySetCallback(error, result, wasThrown) {
+            if (error || wasThrown) {
+                callback(error || result);
+                return;
+            }
+            callback();
+        }
     },
 
     pushNodeToFrontend: function(callback)

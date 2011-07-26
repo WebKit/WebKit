@@ -1,0 +1,37 @@
+CONSOLE MESSAGE: line 11: ===== Initial =====
+CONSOLE MESSAGE: line 12: {"foo":1}
+CONSOLE MESSAGE: line 13: {"bar":2}
+CONSOLE MESSAGE: line 14: 
+CONSOLE MESSAGE: line 11: ===== Set primitive =====
+CONSOLE MESSAGE: line 12: {"foo":2}
+CONSOLE MESSAGE: line 13: {"bar":2}
+CONSOLE MESSAGE: line 14: 
+CONSOLE MESSAGE: line 11: ===== Set handle =====
+CONSOLE MESSAGE: line 12: {"foo":{"bar":2}}
+CONSOLE MESSAGE: line 13: {"bar":2}
+CONSOLE MESSAGE: line 14: 
+CONSOLE MESSAGE: line 11: ===== Set undefined =====
+CONSOLE MESSAGE: line 12: {}
+CONSOLE MESSAGE: line 13: {"bar":2}
+CONSOLE MESSAGE: line 14: 
+CONSOLE MESSAGE: line 11: ===== Set exception =====
+CONSOLE MESSAGE: line 12: {}
+CONSOLE MESSAGE: line 13: {"bar":2}
+CONSOLE MESSAGE: line 14: 
+Tests WebInspector.RemoveObject.setPropertyValue implementation.
+
+
+Running: testSetUp
+
+Running: testSetPrimitive
+
+Running: testSetHandle
+
+Running: testSetUndefined
+
+Running: testSetException
+{
+    type : "string"
+    value : "exception"
+}
+

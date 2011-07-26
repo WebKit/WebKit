@@ -202,7 +202,9 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
             this.valueElement.addStyleClass("dimmed");
         if (this.property.wasThrown)
             this.valueElement.addStyleClass("error");
-        if (this.property.value.type)
+        if (this.property.value.subtype)
+            this.valueElement.addStyleClass("console-formatted-" + this.property.value.subtype);
+        else if (this.property.value.type)
             this.valueElement.addStyleClass("console-formatted-" + this.property.value.type);
         if (this.property.value.subtype === "node")
             this.valueElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);

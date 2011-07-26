@@ -78,48 +78,6 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.setPropertyValue(<string>,"assignedBySetPropertyValue","true")
-
-request:
-{
-    method : "Runtime.setPropertyValue"
-    params : {
-        objectId : <string>
-        propertyName : "assignedBySetPropertyValue"
-        expression : "true"
-    }
-    id : <number>
-}
-
-response:
-{
-    result : {
-    }
-    id : <number>
-}
-
------------------------------------------------------------
-RuntimeAgent.setPropertyValue(<string>,"removedBySetPropertyValue","")
-
-request:
-{
-    method : "Runtime.setPropertyValue"
-    params : {
-        objectId : <string>
-        propertyName : "removedBySetPropertyValue"
-        expression : ""
-    }
-    id : <number>
-}
-
-response:
-{
-    result : {
-    }
-    id : <number>
-}
-
------------------------------------------------------------
 RuntimeAgent.getProperties(<string>,false)
 
 request:
@@ -141,13 +99,6 @@ response:
                 value : {
                     type : "string"
                     value : "callFunctionOn function works fine"
-                }
-            }
-            {
-                name : "assignedBySetPropertyValue"
-                value : {
-                    type : "boolean"
-                    value : true
                 }
             }
             {
@@ -208,7 +159,6 @@ Coverage for RuntimeAgent
     evaluate : "checked"
     callFunctionOn : "checked"
     getProperties : "checked"
-    setPropertyValue : "checked"
     releaseObject : "checked"
     releaseObjectGroup : "checked"
 }

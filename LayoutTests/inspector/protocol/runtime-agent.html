@@ -6,7 +6,6 @@
 
 function TestObject()
 {
-    this.removedBySetPropertyValue = "doesn't work";
 }
 
 testObject = new TestObject();
@@ -21,8 +20,6 @@ function test()
             ["RuntimeAgent", "evaluate", 'testObject', 'test', false],
             ["RuntimeAgent", "evaluate", 'testObject', 'test'],
             ["RuntimeAgent", "callFunctionOn", result.objectId, 'function() { this.assignedByCallFunctionOn = "callFunctionOn function works fine"; return this.assignedByCallFunctionOn; }'],
-            ["RuntimeAgent", "setPropertyValue", result.objectId, 'assignedBySetPropertyValue', 'true'],
-            ["RuntimeAgent", "setPropertyValue", result.objectId, 'removedBySetPropertyValue', ''],
             ["RuntimeAgent", "getProperties", result.objectId, false],
             ["RuntimeAgent", "releaseObject", result.objectId],
             ["RuntimeAgent", "releaseObjectGroup", 'test']];

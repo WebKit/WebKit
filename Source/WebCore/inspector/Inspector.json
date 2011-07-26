@@ -296,15 +296,6 @@
                 "description": "Returns properties of a given object."
             },
             {
-                "name": "setPropertyValue",
-                "parameters": [
-                    { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to set property on." },
-                    { "name": "propertyName", "type": "string", "description": "Property name to set value for." },
-                    { "name": "expression", "type": "string", "description": "Expression to evaluate." }
-                ],
-                "description": "Makes property with given name equal to the expression evaluation result."
-            },
-            {
                 "name": "releaseObject",
                 "parameters": [
                     { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to release." }

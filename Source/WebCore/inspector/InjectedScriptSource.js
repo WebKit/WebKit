@@ -196,49 +196,12 @@ InjectedScript.prototype = {
                 property.value = this._wrapObject(value, objectGroupName);
             } else {
                 // FIXME: this should show something like "getter" (bug 16734).
-                property.value = InjectedScript.RemoteObject.fromObject("\u2014"); // em dash
+                property.value = new InjectedScript.RemoteObject("\u2014"); // em dash
                 property.isGetter = true;
             }
             properties.push(property);
         }
         return properties;
-    },
-
-    setPropertyValue: function(objectId, propertyName, expression)
-    {
-        var parsedObjectId = this._parseObjectId(objectId);
-        var object = this._objectForId(parsedObjectId);
-        if (!this._isDefined(object))
-            return "Object with given id not found";
-
-        var expressionLength = expression.length;
-        if (!expressionLength) {
-            delete object[propertyName];
-            // Avoid explicit assignment to undefined as its value can be overriden (see crbug.com/88414).
-            var result;
-            if (propertyName in object)
-                result = "Cound not delete property.";
-            return result;
-        }
-
-        try {
-            // Surround the expression in parenthesis so the result of the eval is the result
-            // of the whole expression not the last potential sub-expression.
-
-            // There is a regression introduced here: eval is now happening against global object,
-            // not call frame while on a breakpoint.
-            // TODO: bring evaluation against call frame back.
-            var result = InjectedScriptHost.evaluate("(" + expression + ")");
-            // Store the result in the property.
-            object[propertyName] = result;
-        } catch(e) {
-            try {
-                var result = InjectedScriptHost.evaluate("\"" + expression.replace(/"/g, "\\\"") + "\"");
-                object[propertyName] = result;
-            } catch(e) {
-                return e.toString();
-            }
-        }
     },
 
     releaseObject: function(objectId)

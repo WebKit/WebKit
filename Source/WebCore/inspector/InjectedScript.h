@@ -60,7 +60,6 @@ public:
     void evaluateOnCallFrame(ErrorString*, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown);
     void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result);
     Node* nodeForObjectId(const String& objectId);
-    void setPropertyValue(ErrorString*, const String& objectId, const String& propertyName, const String& expression);
     void releaseObject(const String& objectId);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

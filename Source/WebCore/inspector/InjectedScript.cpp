@@ -113,17 +113,6 @@ Node* InjectedScript::nodeForObjectId(const String& objectId)
     return InjectedScriptHost::scriptValueAsNode(resultValue);
 }
 
-void InjectedScript::setPropertyValue(ErrorString* errorString, const String& objectId, const String& propertyName, const String& expression)
-{
-    ScriptFunctionCall function(m_injectedScriptObject, "setPropertyValue");
-    function.appendArgument(objectId);
-    function.appendArgument(propertyName);
-    function.appendArgument(expression);
-    RefPtr<InspectorValue> result;
-    makeCall(function, &result);
-    result->asString(errorString);
-}
-
 void InjectedScript::releaseObject(const String& objectId)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "releaseObject");

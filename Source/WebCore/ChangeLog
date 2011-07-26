@@ -1,5 +1,27 @@
 2011-07-26  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: Implement setPropertyValue using evaluate and callFunctionOn
+        https://bugs.webkit.org/show_bug.cgi?id=65112
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/runtime/runtime-setPropertyValue.html
+
+        * inspector/InjectedScript.cpp:
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.setPropertyValue.evaluatedCallback.setPropertyValue):
+        (WebInspector.RemoteObject.prototype.setPropertyValue.evaluatedCallback):
+        (WebInspector.RemoteObject.prototype.setPropertyValue.propertySetCallback):
+        (WebInspector.RemoteObject.prototype.setPropertyValue):
+
+2011-07-26  Pavel Feldman  <pfeldman@google.com>
+
         Re-applying r91665 and r91668 with JSC issues fixed.
 
         Web Inspector: use dedicated type for object id in the protocol.

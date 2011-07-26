@@ -1,0 +1,96 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+var object1 = { foo: 1 };
+var object2 = { bar: 2 };
+
+function dumpObjects(label)
+{
+    console.log("===== " + label + " =====");
+    console.log(JSON.stringify(object1));
+    console.log(JSON.stringify(object2));
+    console.log("");
+}
+
+function test()
+{
+    var obj1, obj2;
+
+    InspectorTest.runTestSuite([
+        function testSetUp(next)
+        {
+            InspectorTest.evaluateInPage("dumpObjects('Initial')", step0);
+
+            function step0()
+            {
+                RuntimeAgent.evaluate("object1", step1);
+            }
+
+            function step1(error, result, wasThrown)
+            {
+                obj1 = WebInspector.RemoteObject.fromPayload(result);
+                RuntimeAgent.evaluate("object1", step2);
+            }
+
+            function step2(error, result, wasThrown)
+            {
+                obj2 = WebInspector.RemoteObject.fromPayload(result);
+                next();
+            }
+        },
+
+        function testSetPrimitive(next)
+        {
+            obj1.setPropertyValue("foo", "2", step1);
+
+            function step1()
+            {
+                InspectorTest.evaluateInPage("dumpObjects('Set primitive')", next);
+            }
+        },
+
+        function testSetHandle(next)
+        {
+            obj1.setPropertyValue("foo", "object2", step1);
+
+            function step1()
+            {
+                InspectorTest.evaluateInPage("dumpObjects('Set handle')", next);
+            }
+        },
+
+        function testSetUndefined(next)
+        {
+            obj1.setPropertyValue("foo", "undefined", step1);
+
+            function step1()
+            {
+                InspectorTest.evaluateInPage("dumpObjects('Set undefined')", next);
+            }
+        },
+
+        function testSetException(next)
+        {
+            obj1.setPropertyValue("foo", "throw 'exception'", step1);
+
+            function step1(error)
+            {
+                InspectorTest.dump(error);
+                InspectorTest.evaluateInPage("dumpObjects('Set exception')", next);
+            }
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests WebInspector.RemoveObject.setPropertyValue implementation.
+</p>
+
+</body>
+</html>
