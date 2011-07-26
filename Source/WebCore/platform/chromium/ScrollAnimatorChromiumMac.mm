@@ -354,6 +354,7 @@ static NSSize abs(NSSize size)
     return aRect;
 }
 
+#if !PLATFORM(CHROMIUM)
 - (CALayer *)layer
 {
     if (!_animator)
@@ -365,6 +366,7 @@ static NSSize abs(NSSize size)
     static CALayer *dummyLayer = [[CALayer alloc] init];
     return dummyLayer;
 }
+#endif
 
 - (void)setUpAnimation:(RetainPtr<ScrollbarPartAnimation>&)scrollbarPartAnimation scrollerPainter:(WKScrollbarPainterRef)scrollerPainter part:(WebCore::ScrollbarPart)part animateAlphaTo:(CGFloat)newAlpha duration:(NSTimeInterval)duration
 {
