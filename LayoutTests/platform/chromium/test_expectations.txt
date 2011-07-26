@@ -3894,7 +3894,7 @@ BUGWK65062 LINUX : media/remove-from-document.html = CRASH PASS
 
 BUGWK65063 LINUX GPU : fast/canvas/webgl/gl-enable-enum-test.html = CRASH PASS
 BUGWK65063 LINUX GPU : fast/canvas/webgl/gl-bind-attrib-location-test.html = CRASH PASS
-BUGWK65063 LINUX GPU : fast/canvas/webgl/draw-arrays-out-of-bounds.html = CRASH PASS
+BUGWK65063 LINUX : fast/canvas/webgl/draw-arrays-out-of-bounds.html = CRASH PASS
 BUGWK65063 LINUX : fast/canvas/webgl/drawingbuffer-test.html = CRASH PASS
 BUGWK65063 LINUX : fast/canvas/canvas-bg-multiple-removal.html = CRASH PASS
 BUGWK65063 LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = CRASH PASS
