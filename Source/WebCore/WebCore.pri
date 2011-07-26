@@ -254,26 +254,22 @@ contains(DEFINES, WTF_USE_QT_BEARER=1) {
 }
 
 contains(DEFINES, ENABLE_VIDEO=1) {
-    contains(DEFINES, USE_QTKIT=1) {
-        DEFINES += WTF_USE_QTKIT=1
-
+    contains(DEFINES, WTF_USE_QTKIT=1) {
         INCLUDEPATH += $$PWD/platform/graphics/mac
 
         LIBS += -framework AppKit -framework AudioUnit \
                 -framework AudioToolbox -framework CoreAudio \
                 -framework QuartzCore -framework QTKit
 
-    } else:contains(DEFINES, USE_GSTREAMER=1) {
-        DEFINES += WTF_USE_GSTREAMER=1
+    } else:contains(DEFINES, WTF_USE_GSTREAMER=1) {
         DEFINES += ENABLE_GLIB_SUPPORT=1
 
         INCLUDEPATH += $$PWD/platform/graphics/gstreamer
 
         PKGCONFIG += glib-2.0 gio-2.0 gstreamer-0.10 gstreamer-app-0.10 gstreamer-base-0.10 gstreamer-interfaces-0.10 gstreamer-pbutils-0.10 gstreamer-plugins-base-0.10 gstreamer-video-0.10
-    } else:contains(MOBILITY_CONFIG, multimedia) {
+    } else:contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
         CONFIG   *= mobility
         MOBILITY *= multimedia
-        DEFINES  += WTF_USE_QT_MULTIMEDIA=1
     }
 }
 

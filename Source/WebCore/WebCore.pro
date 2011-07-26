@@ -3047,7 +3047,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
 
         DEFINES+=NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 
-    } else: contains(DEFINES, USE_GSTREAMER=1) {
+    } else: contains(DEFINES, WTF_USE_GSTREAMER=1) {
         HEADERS += \
             platform/graphics/gstreamer/GOwnPtrGStreamer.h \
             platform/graphics/gstreamer/GRefPtrGStreamer.h \
@@ -3068,7 +3068,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             platform/graphics/gstreamer/PlatformVideoWindowQt.cpp \
             platform/graphics/gstreamer/ImageGStreamerQt.cpp
 
-    } else:contains(MOBILITY_CONFIG, multimedia) {
+    } else:contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
         HEADERS += \ 
             platform/graphics/qt/MediaPlayerPrivateQt.h
 

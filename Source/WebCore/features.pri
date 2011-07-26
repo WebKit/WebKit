@@ -184,17 +184,17 @@ symbian|maemo5|maemo6 {
     DEFINES -= ENABLE_VIDEO=1
     DEFINES += ENABLE_VIDEO=0
 
-    contains(DEFINES, USE_QTKIT=1) {
+    mac:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
-        DEFINES -= WTF_USE_QT_MULTIMEDIA=1
-        DEFINES += WTF_USE_QT_MULTIMEDIA=0
-    } else: contains(DEFINES, USE_GSTREAMER=1) {
+        DEFINES += WTF_USE_QTKIT=1
+        DEFINES -= WTF_USE_QTKIT=0
+    } else: linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
-        DEFINES -= WTF_USE_QT_MULTIMEDIA=1
-        DEFINES += WTF_USE_QT_MULTIMEDIA=0
-    } else:contains(MOBILITY_CONFIG, multimedia) {
+        DEFINES += WTF_USE_GSTREAMER=1
+        DEFINES -= WTF_USE_GSTREAMER=0
+    } else: contains(MOBILITY_CONFIG, multimedia) {
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1
         DEFINES -= WTF_USE_QT_MULTIMEDIA=0

@@ -1,3 +1,15 @@
+2011-07-26  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Change default backend to use GStreamer on Linux and QuickTime on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=63472
+
+        Use the flag WTF_USE_QTKIT=1 rather than USE_QTKIT=1 because that flag doesn't
+        exist anymore, it's the default. Ditto for GStreamer.
+
+        * QtWebKit.pro:
+
 2011-07-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Add more tests to cover the behavior of loadFinished() signal

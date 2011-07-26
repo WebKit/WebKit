@@ -225,17 +225,17 @@ contains(DEFINES, ENABLE_NETSCAPE_PLUGIN_API=1) {
 }
 
 contains(DEFINES, ENABLE_VIDEO=1) {
-    !contains(DEFINES, USE_QTKIT=1):!contains(DEFINES, USE_GSTREAMER=1):contains(MOBILITY_CONFIG, multimedia) {
+    !contains(DEFINES, WTF_USE_QTKIT=1):!contains(DEFINES, WTF_USE_GSTREAMER=1):contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
         HEADERS += $$PWD/WebCoreSupport/FullScreenVideoWidget.h
         SOURCES += $$PWD/WebCoreSupport/FullScreenVideoWidget.cpp
     }
 
-    contains(DEFINES, USE_QTKIT=1) | contains(DEFINES, USE_GSTREAMER=1) | contains(MOBILITY_CONFIG, multimedia) {
+    contains(DEFINES, WTF_USE_QTKIT=1) | contains(DEFINES, WTF_USE_GSTREAMER=1) | contains(DEFINES, WTF_USE_QT_MULTIMEDIA=1) {
         HEADERS += $$PWD/WebCoreSupport/FullScreenVideoQt.h
         SOURCES += $$PWD/WebCoreSupport/FullScreenVideoQt.cpp
     }
 
-    contains(DEFINES, USE_QTKIT=1) {
+    contains(DEFINES, WTF_USE_QTKIT=1) {
         INCLUDEPATH += $$SOURCE_DIR/WebCore/platform/qt/ \
                        $$SOURCE_DIR/WebCore/platform/mac/ \
                        $$SOURCE_DIR/../WebKitLibraries/

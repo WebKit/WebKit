@@ -1,3 +1,21 @@
+2011-07-26  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Change default backend to use GStreamer on Linux and QuickTime on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=63472
+
+        Enable the GStreamer backend and the QuickTime backend as default media players
+        for the Qt port on Mac and Linux. QtMultimedia is now a fallback option that you
+        can enable by passing DEFINES+=USE_QT_MULTIMEDIA=1 to enforce its usage.
+
+        No new tests. The media layout tests are disabled on the Qt port but hopefully with this
+        switch we can enable them again.
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * features.pri:
+
 2011-07-26  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Implement setPropertyValue using evaluate and callFunctionOn
