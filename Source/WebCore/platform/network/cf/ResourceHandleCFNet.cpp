@@ -103,6 +103,9 @@ private:
     virtual void didReceiveData(ResourceHandle*, const char*, int, int /*encodedDataLength*/);
     virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/);
     virtual void didFail(ResourceHandle*, const ResourceError&);
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    virtual bool canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&);
+#endif
 
     bool m_allowStoredCredentials;
     ResourceResponse& m_response;
@@ -348,6 +351,21 @@ static void didReceiveChallenge(CFURLConnectionRef conn, CFURLAuthChallengeRef c
     handle->didReceiveAuthenticationChallenge(AuthenticationChallenge(challenge, handle));
 }
 
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+static Boolean canRespondToProtectionSpace(CFURLConnectionRef conn, CFURLProtectionSpaceRef protectionSpace, const void* clientInfo)
+{
+#if LOG_DISABLED
+    UNUSED_PARAM(conn);
+#endif
+    ResourceHandle* handle = static_cast<ResourceHandle*>(const_cast<void*>(clientInfo));
+    ASSERT(handle);
+
+    LOG(Network, "CFNet - canRespondToProtectionSpace(conn=%p, handle=%p (%s)", conn, handle, handle->firstRequest().url().string().utf8().data());
+
+    return handle->canAuthenticateAgainstProtectionSpace(core(protectionSpace));
+}
+#endif
+
 ResourceHandleInternal::~ResourceHandleInternal()
 {
     if (m_connection) {
@@ -458,8 +476,8 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
 
     RetainPtr<CFURLRequestRef> request(AdoptCF, makeFinalRequest(firstRequest(), shouldContentSniff));
 
-#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)
-    CFURLConnectionClient_V6 client = { 6, this, 0, 0, 0, WebCore::willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0, 0, 0, didReceiveDataArray};
+#if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK) && USE(PROTECTION_SPACE_AUTH_CALLBACK)
+    CFURLConnectionClient_V6 client = { 6, this, 0, 0, 0, WebCore::willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0, canRespondToProtectionSpace, 0, didReceiveDataArray};
 #else
     CFURLConnectionClient_V3 client = { 3, this, 0, 0, 0, WebCore::willSendRequest, didReceiveResponse, didReceiveData, 0, didFinishLoading, didFail, willCacheResponse, didReceiveChallenge, didSendBodyData, shouldUseCredentialStorageCallback, 0};
 #endif
@@ -595,6 +613,16 @@ void ResourceHandle::didReceiveAuthenticationChallenge(const AuthenticationChall
     if (client())
         client()->didReceiveAuthenticationChallenge(this, d->m_currentWebChallenge);
 }
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+bool ResourceHandle::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
+{
+    if (client())
+        return client()->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
+
+    return false;
+}
+#endif
 
 void ResourceHandle::receivedCredential(const AuthenticationChallenge& challenge, const Credential& credential)
 {
@@ -886,6 +914,14 @@ bool WebCoreSynchronousLoaderClient::shouldUseCredentialStorage(ResourceHandle*)
     // FIXME: We should ask FrameLoaderClient whether using credential storage is globally forbidden.
     return m_allowStoredCredentials;
 }
+
+#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
+bool WebCoreSynchronousLoaderClient::canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&)
+{
+    // FIXME: We should ask FrameLoaderClient. <http://webkit.org/b/65196>
+    return true;
+}
+#endif
 
 #endif // USE(CFNETWORK)
 

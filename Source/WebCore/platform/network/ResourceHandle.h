@@ -122,18 +122,18 @@ public:
     virtual void receivedCancellation(const AuthenticationChallenge&);
 #endif
 
-#if PLATFORM(MAC) && !USE(CFNETWORK)
-    void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
+#if PLATFORM(MAC)
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
     bool canAuthenticateAgainstProtectionSpace(const ProtectionSpace&);
 #endif
+#if !USE(CFNETWORK)
+    void didCancelAuthenticationChallenge(const AuthenticationChallenge&);
     NSURLConnection *connection() const;
     WebCoreResourceHandleAsDelegate *delegate();
     void releaseDelegate();
     id releaseProxy();
 #endif
 
-#if PLATFORM(MAC)
     void schedule(SchedulePair*);
     void unschedule(SchedulePair*);
 #endif

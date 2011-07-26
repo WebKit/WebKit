@@ -765,13 +765,17 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 }
 
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-- (BOOL)connection:(NSURLConnection *)unusedConnection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
+- (BOOL)connection:(NSURLConnection *)connection canAuthenticateAgainstProtectionSpace:(NSURLProtectionSpace *)protectionSpace
 {
-    UNUSED_PARAM(unusedConnection);
-    
+#if LOG_DISABLED
+    UNUSED_PARAM(connection);
+#endif
+
+    LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%p", m_handle, connection);
+
     if (!m_handle)
         return NO;
-        
+
     return m_handle->canAuthenticateAgainstProtectionSpace(core(protectionSpace));
 }
 #endif
@@ -951,7 +955,7 @@ bool WebCoreSynchronousLoaderClient::shouldUseCredentialStorage(ResourceHandle*)
 #if USE(PROTECTION_SPACE_AUTH_CALLBACK)
 bool WebCoreSynchronousLoaderClient::canAuthenticateAgainstProtectionSpace(ResourceHandle*, const ProtectionSpace&)
 {
-    // FIXME: We should ask FrameLoaderClient.
+    // FIXME: We should ask FrameLoaderClient. <http://webkit.org/b/65196>
     return true;
 }
 #endif
