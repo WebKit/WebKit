@@ -190,10 +190,16 @@ symbian|maemo5|maemo6 {
         DEFINES += WTF_USE_QTKIT=1
         DEFINES -= WTF_USE_QTKIT=0
     } else: linux-*:!contains(DEFINES, USE_QTMULTIMEDIA=1) {
-        DEFINES -= ENABLE_VIDEO=0
-        DEFINES += ENABLE_VIDEO=1
-        DEFINES += WTF_USE_GSTREAMER=1
-        DEFINES -= WTF_USE_GSTREAMER=0
+        system(pkg-config --exists glib-2.0 gio-2.0 gstreamer-0.10): {
+            DEFINES -= ENABLE_VIDEO=0
+            DEFINES += ENABLE_VIDEO=1
+            DEFINES += WTF_USE_GSTREAMER=1
+            DEFINES -= WTF_USE_GSTREAMER=0
+        } else {
+            message("Disabling video due the lack of GLib/Gio/GStreamer.")
+            DEFINES -= ENABLE_VIDEO=1
+            DEFINES += ENABLE_VIDEO=0
+        }
     } else: contains(MOBILITY_CONFIG, multimedia) {
         DEFINES -= ENABLE_VIDEO=0
         DEFINES += ENABLE_VIDEO=1

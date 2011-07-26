@@ -1,3 +1,16 @@
+2011-07-26  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Disable video support on linux if the dependencies are not found.
+
+        If we can't find the necessary dependencies to build the GStreamer media player
+        we disable the video support. This is related to http://trac.webkit.org/changeset/91752.
+
+        Reviewed by Holger Freyther.
+
+        No new tests, it's a build fix.
+
+        * features.pri:
+
 2011-07-26  Evan Martin  <evan@chromium.org>
 
         regression: generating CSSValueKeywords should not print by default
