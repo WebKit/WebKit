@@ -1,3 +1,12 @@
+2011-07-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/fast/css/font-face-opentype-expected.png: Added.
+        * platform/qt/fast/css/font-face-opentype-expected.txt: Updated after r91738.
+        * platform/qt/svg/custom/image-with-transform-clip-filter-expected.png: Updated after r91748.
+        * platform/qt/svg/custom/image-with-transform-clip-filter-expected.txt: Updated after r91748.
+
 2011-07-26  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Implement setPropertyValue using evaluate and callFunctionOn
