@@ -3907,7 +3907,7 @@ BUGWK65124 : fast/blockflow/japanese-lr-text.html = FAIL
 BUGWK65124 : fast/blockflow/japanese-rl-text-with-broken-font.html = FAIL
 BUGWK65124 : fast/blockflow/japanese-rl-text.html = FAIL
 
-BUGWK65129 MAC : media/media-controls-clone.html = CRASH PASS
+BUGWK65129 : media/media-controls-clone.html = CRASH PASS
 
 BUGWK65149 LINUX : userscripts/user-script-image-document.html = CRASH PASS
 

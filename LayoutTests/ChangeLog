@@ -1,3 +1,12 @@
+2011-07-26  Adrienne Walker  <enne@google.com>
+
+        [chromium] Mark media-controls-clone as flaky crashing on other platforms.
+        https://bugs.webkit.org/show_bug.cgi?id=65129
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-26  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSSRegions] Collect flowed elements in different render element
