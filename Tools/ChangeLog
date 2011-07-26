@@ -1,3 +1,25 @@
+2011-07-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Replace SpecificityCalculator with TestConfiguration-driven logic.
+        https://bugs.webkit.org/show_bug.cgi?id=65206
+
+        Use our newly-acquired ability to expand modifiers into a set of
+        matching TestConfiguration instances to calculate specificity and
+        determine whether expectation applies to a given test configuration.
+
+        Also, store bug modifier on TestExpectationsLine.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py: Added a way to report unknown modifier errors.
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py: Added a test for reporting errors.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Replaced the logic of calculating specificity with
+            test configuration matching, removed a bunch of code.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Removed a bunch of tests that aren't useful anymore.
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py: Fixed an error where an invalid TestConfiguration instance
+            was created. 'default' is not a valid build type.
+        * Scripts/webkitpy/layout_tests/port/test.py: Ditto. '' is not a valid version.
+
 2011-07-26  Adam Barth  <abarth@webkit.org>
 
         Increase the information density in garden-o-matic
