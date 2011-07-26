@@ -516,7 +516,6 @@ struct _Ewk_Tile_Unused_Cache {
     } locked;
     int references;
     unsigned int frozen;
-    Eina_Bool dirty:1;
 };
 
 static const size_t TILE_UNUSED_CACHE_ALLOCATE_INITIAL = 128;
@@ -612,7 +611,6 @@ void ewk_tile_unused_cache_clear(Ewk_Tile_Unused_Cache *tuc)
 
     tuc->memory.used = 0;
     tuc->entries.count = 0;
-    tuc->dirty = EINA_FALSE;
 }
 
 /**
@@ -707,9 +705,6 @@ size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache *tuc, size_t bytes)
      * Don't need to sort any more.
      */
 
-    if (tuc->dirty)
-        tuc->dirty = EINA_FALSE;
-
     done = 0;
     count = 0;
     EINA_LIST_FOREACH_SAFE(tuc->entries.list, l, l_next, itr) {
@@ -757,20 +752,6 @@ void ewk_tile_unused_cache_auto_flush(Ewk_Tile_Unused_Cache *tuc)
     if (tuc->memory.used > tuc->memory.max)
         CRITICAL("Cache still using too much memory: %zd KB; max: %zd KB",
                  tuc->memory.used, tuc->memory.max);
-}
-
-/**
- * Flag cache as dirty.
- *
- * If cache is dirty then next flush operations will have to recompute
- * weight and sort again to find the best tiles to expire.
- *
- * One must call this function when tile properties that may change
- * likeness of tile to be flushed change, like Tile::stats.
- */
-void ewk_tile_unused_cache_dirty(Ewk_Tile_Unused_Cache *tuc)
-{
-    tuc->dirty = EINA_TRUE;
 }
 
 /**
@@ -837,9 +818,6 @@ Eina_Bool ewk_tile_unused_cache_tile_get(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t
     tuc->memory.used -= sizeof(Ewk_Tile) + t->bytes;
     tuc->entries.list = eina_list_remove_list(tuc->entries.list, e);
     free(entry);
-    // TODO assume dirty for now, but may it's not,
-    // if the item was at the beginning of the queue
-    tuc->dirty = EINA_TRUE;
 
     return EINA_TRUE;
 }
@@ -889,7 +867,6 @@ Eina_Bool ewk_tile_unused_cache_tile_put(Ewk_Tile_Unused_Cache *tuc, Ewk_Tile *t
 
     tuc->entries.count++;
     tuc->memory.used += sizeof(Ewk_Tile) + t->bytes;
-    tuc->dirty = EINA_TRUE;
 
     return EINA_TRUE;
 }
