@@ -1,3 +1,30 @@
+2011-07-26  Emil A Eklund  <eae@chromium.org>
+
+        RenderText::absoluteRectsForRange() and absoluteQuadsForRange() have nearly duplicate code
+        https://bugs.webkit.org/show_bug.cgi?id=62478
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/dom/Range/getClientRects.html
+
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::isZero):
+        Add izZero method, unlike isEmpty this checks if both the width and the
+        height are zero.
+
+        * rendering/RenderText.cpp:
+        (WebCore::absoluteQuadForTextBox):
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        Break duplicate code out of absoluteRectsForRange and
+        absoluteQuadsForRange into shared static function.
+        
+        Fix what I presume to be a bug in the absoluteQuadsForRange where the
+        logicalHeight was always used to set the size in absoluteQuadForTextBox
+        as oppsued to the absoluteRectsForRange implementation that uses the
+        logicalWidth or the logicalHeight depending on whether it's horizontal or
+        vertical.
+
 2011-07-26  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSSRegions] Collect flowed elements in different render element

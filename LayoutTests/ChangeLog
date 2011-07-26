@@ -1,3 +1,14 @@
+2011-07-26  Emil A Eklund  <eae@chromium.org>
+
+        RenderText::absoluteRectsForRange() and absoluteQuadsForRange() have nearly duplicate code
+        https://bugs.webkit.org/show_bug.cgi?id=62478
+
+        Reviewed by Simon Fraser.
+
+        * fast/dom/Range/getClientRects-expected.txt:
+        * fast/dom/Range/getClientRects.html:
+        Add test for vertical text.
+
 2011-07-26  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark media-controls-clone as flaky crashing on other platforms.

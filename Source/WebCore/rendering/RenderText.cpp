@@ -272,6 +272,27 @@ void RenderText::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& acc
         rects.append(enclosingLayoutRect(FloatRect(accumulatedOffset + box->topLeft(), box->size())));
 }
 
+static FloatRect absoluteQuadForTextBox(InlineTextBox* box, unsigned start, unsigned end, bool useSelectionHeight)
+{
+    unsigned realEnd = min(box->end() + 1, end);
+    IntRect r = box->selectionRect(start, realEnd);
+    if (r.height()) {
+        if (!useSelectionHeight) {
+            // Change the height and y position (or width and x for vertical text)
+            // because selectionRect uses selection-specific values.
+            if (box->isHorizontal()) {
+                r.setHeight(box->logicalHeight());
+                r.setY(box->y());
+            } else {
+                r.setWidth(box->logicalWidth());
+                r.setX(box->x());
+            }
+        }
+        return FloatRect(r);
+    }
+    return FloatRect();
+}
+
 void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight)
 {
     // Work around signed/unsigned issues. This function takes unsigneds, and is often passed UINT_MAX
@@ -300,21 +321,9 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
             }
             rects.append(localToAbsoluteQuad(FloatQuad(r)).enclosingBoundingBox());
         } else {
-            unsigned realEnd = min(box->end() + 1, end);
-            IntRect r = box->selectionRect(start, realEnd);
-            if (!r.isEmpty()) {
-                if (!useSelectionHeight) {
-                    // change the height and y position because selectionRect uses selection-specific values
-                    if (box->isHorizontal()) {
-                        r.setHeight(box->logicalHeight());
-                        r.setY(box->y());
-                    } else {
-                        r.setWidth(box->logicalWidth());
-                        r.setX(box->x());
-                    }
-                }
-                rects.append(localToAbsoluteQuad(FloatQuad(r)).enclosingBoundingBox());
-            }
+            FloatRect rect = absoluteQuadForTextBox(box, start, end, useSelectionHeight);
+            if (!rect.isZero())
+                rects.append(localToAbsoluteQuad(rect).enclosingBoundingBox());
         }
     }
 }
@@ -393,21 +402,9 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
             }
             quads.append(localToAbsoluteQuad(FloatRect(r)));
         } else {
-            unsigned realEnd = min(box->end() + 1, end);
-            IntRect r = box->selectionRect(start, realEnd);
-            if (r.height()) {
-                if (!useSelectionHeight) {
-                    // change the height and y position because selectionRect uses selection-specific values
-                    if (box->isHorizontal()) {
-                        r.setHeight(box->logicalHeight());
-                        r.setY(box->y());
-                    } else {
-                        r.setWidth(box->logicalHeight());
-                        r.setX(box->x());
-                    }
-                }
-                quads.append(localToAbsoluteQuad(FloatRect(r)));
-            }
+            FloatRect rect = absoluteQuadForTextBox(box, start, end, useSelectionHeight);
+            if (!rect.isZero())
+                quads.append(localToAbsoluteQuad(rect));
         }
     }
 }
