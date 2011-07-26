@@ -126,8 +126,12 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
 {
     JSValueOperand regArg(this, regChild);
     GPRReg regArgGPR = regArg.gpr();
-    GPRTemporary result(this, regArg);
+    GPRTemporary result(this);
     GPRReg resultGPR = result.gpr();
+    FPRTemporary tmp1(this);
+    FPRTemporary tmp2(this);
+    FPRReg tmp1FPR = tmp1.fpr();
+    FPRReg tmp2FPR = tmp2.fpr();
     
     regArg.use();
     use(immChild);
@@ -143,15 +147,13 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
     
     switch (op) {
     case ValueAdd:
-    case ArithAdd: {
+    case ArithAdd:
         overflow = m_jit.branchAdd32(MacroAssembler::Overflow, regArgGPR, Imm32(imm), resultGPR);
         break;
-    }
         
-    case ArithSub: {
+    case ArithSub:
         overflow = m_jit.branchSub32(MacroAssembler::Overflow, regArgGPR, Imm32(imm), resultGPR);
         break;
-    }
         
     default:
         ASSERT_NOT_REACHED();
@@ -163,31 +165,13 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
     
     overflow.link(&m_jit);
     
-    if (regArgGPR == resultGPR) {
-        switch (op) {
-        case ValueAdd:
-        case ArithAdd: {
-            m_jit.sub32(Imm32(imm), regArgGPR);
-            break;
-        }
-            
-        case ArithSub: {
-            m_jit.add32(Imm32(imm), regArgGPR);
-            break;
-        }
-            
-        default:
-            ASSERT_NOT_REACHED();
-        }
-        m_jit.orPtr(GPRInfo::tagTypeNumberRegister, regArgGPR);
-    }
-    
-    if (!isKnownInteger(regChild))
-        notInt.link(&m_jit);
-    
-    silentSpillAllRegisters(resultGPR);
     switch (op) {
     case ValueAdd:
+        // overflow and not-int are the same
+        if (!isKnownInteger(regChild))
+            notInt.link(&m_jit);
+        
+        silentSpillAllRegisters(resultGPR);
         if (commute) {
             m_jit.move(regArgGPR, GPRInfo::argumentGPR2);
             m_jit.move(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm)))), GPRInfo::argumentGPR1);
@@ -197,31 +181,41 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
         }
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         appendCallWithExceptionCheck(operationValueAdd);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
         break;
-        
+
     case ArithAdd:
-        if (commute) {
-            m_jit.move(regArgGPR, GPRInfo::argumentGPR1);
-            m_jit.move(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm)))), GPRInfo::argumentGPR0);
-        } else {
-            m_jit.move(regArgGPR, GPRInfo::argumentGPR0);
-            m_jit.move(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm)))), GPRInfo::argumentGPR1);
-        }
-        m_jit.appendCall(operationArithAdd);
-        break;
-        
     case ArithSub:
-        ASSERT(!commute);
-        m_jit.move(regArgGPR, GPRInfo::argumentGPR0);
-        m_jit.move(MacroAssembler::ImmPtr(static_cast<const void*>(JSValue::encode(jsNumber(imm)))), GPRInfo::argumentGPR1);
-        m_jit.appendCall(operationArithSub);
+        // first deal with overflow case
+        m_jit.convertInt32ToDouble(regArgGPR, tmp2FPR);
+        
+        // now deal with not-int case, if applicable
+        if (!isKnownInteger(regChild)) {
+            JITCompiler::Jump haveValue = m_jit.jump();
+            
+            notInt.link(&m_jit);
+            
+            m_jit.move(regArgGPR, resultGPR);
+            m_jit.addPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
+            m_jit.movePtrToDouble(resultGPR, tmp2FPR);
+            
+            haveValue.link(&m_jit);
+        }
+        
+        m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(immChild)))), resultGPR);
+        m_jit.movePtrToDouble(resultGPR, tmp1FPR);
+        if (op == ArithAdd)
+            m_jit.addDouble(tmp1FPR, tmp2FPR);
+        else
+            m_jit.subDouble(tmp1FPR, tmp2FPR);
+        m_jit.moveDoubleToPtr(tmp2FPR, resultGPR);
+        m_jit.subPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
         break;
         
     default:
         ASSERT_NOT_REACHED();
     }
-    m_jit.move(GPRInfo::returnValueGPR, resultGPR);
-    silentFillAllRegisters(resultGPR);
     
     done.link(&m_jit);
         
