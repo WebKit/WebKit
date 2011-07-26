@@ -78,7 +78,7 @@ private:
     CSSFontFace* m_face; // Our owning font face.
     HashMap<unsigned, SimpleFontData*> m_fontDataTable; // The hash key is composed of size synthetic styles.
 
-    Timer<CSSFontFaceSource> m_startLoadingTimer;
+    Timer<CSSFontFaceSource> m_loadStartTimer;
     RefPtr<CSSFontSelector> m_fontSelector;
 
 #if ENABLE(SVG_FONTS)
