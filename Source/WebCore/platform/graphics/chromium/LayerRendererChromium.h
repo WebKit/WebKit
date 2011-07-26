@@ -256,7 +256,6 @@ private:
 
     ChildContextMap m_childContexts;
 
-    bool m_contextSupportsLatch;
     bool m_contextSupportsMapSub;
     bool m_contextSupportsTextureFormatBGRA;
     bool m_contextSupportsReadFormatBGRA;

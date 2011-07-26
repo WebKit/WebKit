@@ -1,3 +1,15 @@
+2011-07-25  Al Patrick  <apatrick@chromium.org>
+
+        Removed support for the GL_latch_CHROMIUM extension which Chromium no longer supports.
+        https://bugs.webkit.org/show_bug.cgi?id=65043
+
+        Reviewed by James Robinson.
+
+        * public/WebGraphicsContext3D.h:
+        * src/Extensions3DChromium.cpp:
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DInternal.h:
+
 2011-07-25  Nico Weber  <thakis@chromium.org>
 
         [chromium] Don't link in both libjpeg and libjpeg_turbo in the components build

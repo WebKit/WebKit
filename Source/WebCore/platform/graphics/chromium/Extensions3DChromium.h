@@ -41,7 +41,6 @@ public:
     //   GL_CHROMIUM_strict_attribs : indicating a GL error is generated for out-of-bounds buffer accesses.
     //   GL_CHROMIUM_map_sub
     //   GL_CHROMIUM_copy_texture_to_parent_texture
-    //   GL_CHROMIUM_latch
     //   GL_CHROMIUM_swapbuffers_complete_callback
     //   GL_CHROMIUM_rate_limit_offscreen_context
 
@@ -71,12 +70,6 @@ public:
 
     // GL_CHROMIUM_copy_texture_to_parent_texture
     void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
-
-    // GL_CHROMIUM_latch
-    void getParentToChildLatchCHROMIUM(GC3Duint* latchId);
-    void getChildToParentLatchCHROMIUM(GC3Duint* latchId);
-    void waitLatchCHROMIUM(GC3Duint latchId);
-    void setLatchCHROMIUM(GC3Duint latchId);
 
     // GL_CHROMIUM_swapbuffers_complete_callback
     class SwapBuffersCompleteCallbackCHROMIUM {

@@ -840,10 +840,6 @@ void GraphicsContext3DInternal::copyTextureToParentTextureCHROMIUM(Platform3DObj
 
 DELEGATE_TO_IMPL_10(blitFramebufferCHROMIUM, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dint, GC3Dbitfield, GC3Denum)
 DELEGATE_TO_IMPL_5(renderbufferStorageMultisampleCHROMIUM, GC3Denum, GC3Dsizei, GC3Denum, GC3Dsizei, GC3Dsizei)
-DELEGATE_TO_IMPL_1(getParentToChildLatchCHROMIUM, GC3Duint*)
-DELEGATE_TO_IMPL_1(getChildToParentLatchCHROMIUM, GC3Duint*)
-DELEGATE_TO_IMPL_1(waitLatchCHROMIUM, GC3Duint)
-DELEGATE_TO_IMPL_1(setLatchCHROMIUM, GC3Duint)
 
 DELEGATE_TO_IMPL(rateLimitOffscreenContextCHROMIUM)
 DELEGATE_TO_IMPL_R(getGraphicsResetStatusARB, GC3Denum)

@@ -178,12 +178,6 @@ public:
     virtual void blitFramebufferCHROMIUM(WGC3Dint srcX0, WGC3Dint srcY0, WGC3Dint srcX1, WGC3Dint srcY1, WGC3Dint dstX0, WGC3Dint dstY0, WGC3Dint dstX1, WGC3Dint dstY1, WGC3Dbitfield mask, WGC3Denum filter) = 0;
     virtual void renderbufferStorageMultisampleCHROMIUM(WGC3Denum target, WGC3Dsizei samples, WGC3Denum internalformat, WGC3Dsizei width, WGC3Dsizei height) = 0;
 
-    // GL_CHROMIUM_latch
-    virtual void getParentToChildLatchCHROMIUM(WGC3Duint* latchId) = 0;
-    virtual void getChildToParentLatchCHROMIUM(WGC3Duint* latchId) = 0;
-    virtual void waitLatchCHROMIUM(WGC3Duint latchId) = 0;
-    virtual void setLatchCHROMIUM(WGC3Duint latchId) = 0;
-
     // GL_CHROMIUM_swapbuffers_complete_callback
     virtual void setSwapBuffersCompleteCallbackCHROMIUM(WebGraphicsSwapBuffersCompleteCallbackCHROMIUM* callback) { }
 

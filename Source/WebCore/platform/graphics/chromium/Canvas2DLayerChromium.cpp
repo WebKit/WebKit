@@ -88,12 +88,10 @@ void Canvas2DLayerChromium::updateCompositorResources()
         context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
         context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
         m_textureChanged = false;
-        // FIXME: The finish() here is required because we have to make sure that the texture created in this
+        // The flush() here is required because we have to make sure that the texture created in this
         // context (the compositor context) is actually created by the service side before the child context
-        // attempts to use it (in publishToPlatformLayer).  finish() is currently the only call with strong
-        // enough semantics to promise this, but is actually much stronger.  Ideally we'd do something like
-        // inserting a fence here and waiting for it before trying to publish.
-        context->finish();
+        // attempts to use it (in publishToPlatformLayer).
+        context->flush();
     }
     // Update the contents of the texture used by the compositor.
     if (m_contentsDirty) {

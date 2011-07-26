@@ -102,26 +102,6 @@ void Extensions3DChromium::copyTextureToParentTextureCHROMIUM(unsigned texture, 
     m_internal->copyTextureToParentTextureCHROMIUM(texture, parentTexture);
 }
 
-void Extensions3DChromium::getParentToChildLatchCHROMIUM(GC3Duint* latchId)
-{
-    m_internal->getParentToChildLatchCHROMIUM(latchId);
-}
-
-void Extensions3DChromium::getChildToParentLatchCHROMIUM(GC3Duint* latchId)
-{
-    m_internal->getChildToParentLatchCHROMIUM(latchId);
-}
-
-void Extensions3DChromium::waitLatchCHROMIUM(GC3Duint latchId)
-{
-    m_internal->waitLatchCHROMIUM(latchId);
-}
-
-void Extensions3DChromium::setLatchCHROMIUM(GC3Duint latchId)
-{
-    m_internal->setLatchCHROMIUM(latchId);
-}
-
 Platform3DObject Extensions3DChromium::createVertexArrayOES()
 {
     return 0;

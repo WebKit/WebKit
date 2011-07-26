@@ -132,14 +132,12 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostClient* client,
     , m_offscreenFramebufferId(0)
     , m_compositeOffscreen(false)
     , m_context(context)
-    , m_contextSupportsLatch(false)
     , m_contextSupportsTextureFormatBGRA(false)
     , m_contextSupportsReadFormatBGRA(false)
     , m_animating(false)
     , m_defaultRenderSurface(0)
 {
     WebCore::Extensions3D* extensions = m_context->getExtensions();
-    m_contextSupportsLatch = extensions->supports("GL_CHROMIUM_latch");
     m_contextSupportsMapSub = extensions->supports("GL_CHROMIUM_map_sub");
     if (m_contextSupportsMapSub)
         extensions->ensureEnabled("GL_CHROMIUM_map_sub");
@@ -285,24 +283,15 @@ void LayerRendererChromium::drawLayers()
     ASSERT(m_hardwareCompositing);
     ASSERT(m_computedRenderSurfaceLayerList);
     // Before drawLayers:
-    if (hardwareCompositing() && m_contextSupportsLatch) {
+    if (hardwareCompositing()) {
         // FIXME: The multithreaded compositor case will not work as long as
         // copyTexImage2D resolves to the parent texture, because the main
         // thread can execute WebGL calls on the child context at any time,
         // potentially clobbering the parent texture that is being renderered
         // by the compositor thread.
-        Extensions3DChromium* parentExt = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-        // For each child context:
-        //   glWaitLatch(Offscreen->Compositor);
         ChildContextMap::iterator i = m_childContexts.begin();
         for (; i != m_childContexts.end(); ++i) {
-            Extensions3DChromium* childExt = static_cast<Extensions3DChromium*>(i->first->getExtensions());
-            if (childExt->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR) {
-                GC3Duint childToParentLatchId;
-                childExt->getChildToParentLatchCHROMIUM(&childToParentLatchId);
-                childExt->setLatchCHROMIUM(childToParentLatchId);
-                parentExt->waitLatchCHROMIUM(childToParentLatchId);
-            }
+            i->first->flush();
         }
     }
 
@@ -316,23 +305,6 @@ void LayerRendererChromium::drawLayers()
         m_renderSurfaceTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes - m_contentsTextureManager->currentMemoryUseBytes());
     else
         m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
-
-    // After drawLayers:
-    if (hardwareCompositing() && m_contextSupportsLatch) {
-        Extensions3DChromium* parentExt = static_cast<Extensions3DChromium*>(m_context->getExtensions());
-        // For each child context:
-        //   glSetLatch(Compositor->Offscreen);
-        ChildContextMap::iterator i = m_childContexts.begin();
-        for (; i != m_childContexts.end(); ++i) {
-            Extensions3DChromium* childExt = static_cast<Extensions3DChromium*>(i->first->getExtensions());
-            if (childExt->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR) {
-                GC3Duint parentToChildLatchId;
-                childExt->getParentToChildLatchCHROMIUM(&parentToChildLatchId);
-                parentExt->setLatchCHROMIUM(parentToChildLatchId);
-                childExt->waitLatchCHROMIUM(parentToChildLatchId);
-            }
-        }
-    }
 
     if (isCompositingOffscreen())
         copyOffscreenTextureToDisplay();
@@ -1330,9 +1302,6 @@ String LayerRendererChromium::layerTreeAsText() const
 
 void LayerRendererChromium::addChildContext(GraphicsContext3D* ctx)
 {
-    if (!ctx->getExtensions()->supports("GL_CHROMIUM_latch"))
-        return;
-
     // This is a ref-counting map, because some contexts are shared by multiple
     // layers (specifically, Canvas2DLayerChromium).
 
@@ -1355,9 +1324,6 @@ void LayerRendererChromium::addChildContext(GraphicsContext3D* ctx)
 
 void LayerRendererChromium::removeChildContext(GraphicsContext3D* ctx)
 {
-    if (!ctx->getExtensions()->supports("GL_CHROMIUM_latch"))
-        return;
-
     ChildContextMap::iterator i = m_childContexts.find(ctx);
     if (i != m_childContexts.end()) {
         if (--i->second <= 0) {

@@ -114,7 +114,7 @@ void DrawingBuffer::publishToPlatformLayer()
 {
     if (!m_context)
         return;
-        
+
     if (m_callback)
         m_callback->willPublish();
     if (multisample())
@@ -122,8 +122,7 @@ void DrawingBuffer::publishToPlatformLayer()
     unsigned parentTexture = m_platformLayer->textureId();
     // We do the copy in the canvas' (child) context so that it executes in the correct order relative to
     // other commands in the child context. This ensures that the parent texture always contains a complete
-    // frame and not some intermediate result. LayerRendererChromium uses glSetLatch to make sure the child
-    // context completes before the parent context consumes the texture.
+    // frame and not some intermediate result.
     m_context->makeContextCurrent();
 #if USE(SKIA)
     if (m_grContext)
