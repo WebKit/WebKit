@@ -2513,7 +2513,7 @@ BUGCR66085 WIN LINUX : dom/html/level1/core/documentgetdoctypenodtd.html = PASS 
 BUGCR66085 LINUX : editing/selection/3690703-2.html = PASS TIMEOUT
 BUGCR66085 LINUX : fast/dom/Geolocation/disconnected-frame-permission-denied.html = PASS TIMEOUT
 BUGCR66085 WIN LINUX : fast/events/5056619.html = PASS TIMEOUT
-BUGCR66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
+//BUGCR66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
 BUGCR66085 WIN LINUX : fast/replaced/css-content-and-webkit-mask-box-image-crash.html = PASS TIMEOUT
 BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 
@@ -3910,3 +3910,5 @@ BUGWK65124 : fast/blockflow/japanese-rl-text.html = FAIL
 BUGWK65129 MAC : media/media-controls-clone.html = CRASH PASS
 
 BUGWK65149 LINUX : userscripts/user-script-image-document.html = CRASH PASS
+
+BUGWK65152 : fast/js/cyclic-proto.html = CRASH PASS
