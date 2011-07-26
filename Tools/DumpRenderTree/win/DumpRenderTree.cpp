@@ -821,12 +821,14 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
     static BSTR sansSerifFamily = SysAllocString(TEXT("Helvetica"));
     static BSTR cursiveFamily = SysAllocString(TEXT("Apple Chancery"));
     static BSTR fantasyFamily = SysAllocString(TEXT("Papyrus"));
+    static BSTR pictographFamily = SysAllocString(TEXT("Apple Color Emoji"));
 #else
     static BSTR standardFamily = SysAllocString(TEXT("Times New Roman"));
     static BSTR fixedFamily = SysAllocString(TEXT("Courier New"));
     static BSTR sansSerifFamily = SysAllocString(TEXT("Arial"));
     static BSTR cursiveFamily = SysAllocString(TEXT("Comic Sans MS")); // Not actually cursive, but it's what IE and Firefox use.
     static BSTR fantasyFamily = SysAllocString(TEXT("Times New Roman"));
+    static BSTR pictographFamily = SysAllocString(TEXT("Times New Roman"));
 #endif
 
     preferences->setStandardFontFamily(standardFamily);
@@ -835,6 +837,7 @@ static void resetDefaultsToConsistentValues(IWebPreferences* preferences)
     preferences->setSansSerifFontFamily(sansSerifFamily);
     preferences->setCursiveFontFamily(cursiveFamily);
     preferences->setFantasyFontFamily(fantasyFamily);
+    preferences->setPictographFontFamily(pictographFamily);
 
     preferences->setAutosaves(FALSE);
     preferences->setDefaultFontSize(16);

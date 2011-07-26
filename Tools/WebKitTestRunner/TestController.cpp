@@ -390,6 +390,7 @@ bool TestController::resetStateToConsistentValues()
     static WKStringRef cursiveFontFamily = WKStringCreateWithUTF8CString("Apple Chancery");
     static WKStringRef fantasyFontFamily = WKStringCreateWithUTF8CString("Papyrus");
     static WKStringRef fixedFontFamily = WKStringCreateWithUTF8CString("Courier");
+    static WKStringRef pictographFontFamily = WKStringCreateWithUTF8CString("Apple Color Emoji");
     static WKStringRef sansSerifFontFamily = WKStringCreateWithUTF8CString("Helvetica");
     static WKStringRef serifFontFamily = WKStringCreateWithUTF8CString("Times");
 
@@ -397,6 +398,7 @@ bool TestController::resetStateToConsistentValues()
     WKPreferencesSetCursiveFontFamily(preferences, cursiveFontFamily);
     WKPreferencesSetFantasyFontFamily(preferences, fantasyFontFamily);
     WKPreferencesSetFixedFontFamily(preferences, fixedFontFamily);
+    WKPreferencesSetPictographFontFamily(preferences, pictographFontFamily);
     WKPreferencesSetSansSerifFontFamily(preferences, sansSerifFontFamily);
     WKPreferencesSetSerifFontFamily(preferences, serifFontFamily);
 #endif

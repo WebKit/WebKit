@@ -434,6 +434,7 @@ static void resetDefaultsToConsistentValues()
     [preferences setSansSerifFontFamily:@"Helvetica"];
     [preferences setCursiveFontFamily:@"Apple Chancery"];
     [preferences setFantasyFontFamily:@"Papyrus"];
+    [preferences setPictographFontFamily:@"Apple Color Emoji"];
     [preferences setDefaultFontSize:16];
     [preferences setDefaultFixedFontSize:13];
     [preferences setMinimumFontSize:0];

@@ -52,6 +52,7 @@ TEST(WebKit2, WKPreferencesDefaults)
     static const char* expectedSansSerifFontFamily = "Arial";
     static const char* expectedCursiveFontFamily = "Comic Sans MS";
     static const char* expectedFantasyFontFamily = "Comic Sans MS";
+    static const char* expectedPictographFontFamily = "Times New Roman";
 #elif PLATFORM(MAC)
     static const char* expectedStandardFontFamily = "Times";
     static const char* expectedFixedFontFamily = "Courier";
@@ -59,6 +60,7 @@ TEST(WebKit2, WKPreferencesDefaults)
     static const char* expectedSansSerifFontFamily = "Helvetica";
     static const char* expectedCursiveFontFamily = "Apple Chancery";
     static const char* expectedFantasyFontFamily = "Papyrus";
+    static const char* expectedPictographFontFamily = "Apple Color Emoji";
 #endif
 
     WKPreferencesRef preference = WKPreferencesCreate();
@@ -79,6 +81,7 @@ TEST(WebKit2, WKPreferencesDefaults)
     EXPECT_WK_STREQ(expectedSansSerifFontFamily, adoptWK(WKPreferencesCopySansSerifFontFamily(preference)));
     EXPECT_WK_STREQ(expectedCursiveFontFamily, adoptWK(WKPreferencesCopyCursiveFontFamily(preference)));
     EXPECT_WK_STREQ(expectedFantasyFontFamily, adoptWK(WKPreferencesCopyFantasyFontFamily(preference)));
+    EXPECT_WK_STREQ(expectedPictographFontFamily, adoptWK(WKPreferencesCopyPictographFontFamily(preference)));
     EXPECT_EQ(0u, WKPreferencesGetMinimumFontSize(preference));
     EXPECT_FALSE(WKPreferencesGetPrivateBrowsingEnabled(preference));
     EXPECT_FALSE(WKPreferencesGetDeveloperExtrasEnabled(preference));

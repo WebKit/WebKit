@@ -1,3 +1,18 @@
+2011-07-26  Dan Bernstein  <mitz@apple.com>
+
+        Rubber-stamped by Anders Carlsson.
+
+        Update DumpRenderTree and API tests for the pictograph font family preference.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        (TestWebKitAPI::TEST):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2011-07-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Replace SpecificityCalculator with TestConfiguration-driven logic.
