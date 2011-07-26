@@ -148,7 +148,9 @@ public:
     // Note that this only returns scrollable areas that can actually be scrolled.
     virtual ScrollableArea* enclosingScrollableArea() const = 0;
 
-    bool isPinnedInDirection(const IntSize&) const;
+    bool isPinnedInBothDirections(const IntSize&) const;
+    bool isPinnedHorizontallyInDirection(int horizontalScrollDelta) const;
+    bool isPinnedVerticallyInDirection(int verticalScrollDelta) const;
 
     virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
 

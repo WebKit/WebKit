@@ -227,18 +227,26 @@ void ScrollableArea::setScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle
     }
 }
 
-bool ScrollableArea::isPinnedInDirection(const IntSize& scrollDelta) const
+bool ScrollableArea::isPinnedInBothDirections(const IntSize& scrollDelta) const
 {
-    if (scrollDelta.width() < 0 && isHorizontalScrollerPinnedToMinimumPosition())
-        return true;
-    if (scrollDelta.width() > 0 && isHorizontalScrollerPinnedToMaximumPosition())
-        return true;
+    return isPinnedHorizontallyInDirection(scrollDelta.width()) && isPinnedVerticallyInDirection(scrollDelta.height());
+}
 
-    if (scrollDelta.height() < 0 && isVerticalScrollerPinnedToMinimumPosition())
+bool ScrollableArea::isPinnedHorizontallyInDirection(int horizontalScrollDelta) const
+{
+    if (horizontalScrollDelta < 0 && isHorizontalScrollerPinnedToMinimumPosition())
         return true;
-    if (scrollDelta.height() > 0 && isVerticalScrollerPinnedToMaximumPosition())
+    if (horizontalScrollDelta > 0 && isHorizontalScrollerPinnedToMaximumPosition())
         return true;
+    return false;
+}
 
+bool ScrollableArea::isPinnedVerticallyInDirection(int verticalScrollDelta) const
+{
+    if (verticalScrollDelta < 0 && isVerticalScrollerPinnedToMinimumPosition())
+        return true;
+    if (verticalScrollDelta > 0 && isVerticalScrollerPinnedToMaximumPosition())
+        return true;
     return false;
 }
 
