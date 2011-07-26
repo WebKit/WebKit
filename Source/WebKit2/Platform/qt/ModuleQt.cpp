@@ -44,7 +44,7 @@ void Module::unload()
 void* Module::platformFunctionPointer(const char* functionName) const
 {
     // Unfortunately QLibrary::resolve is not const.
-    return const_cast<QLibrary*>(&m_lib)->resolve(functionName);
+    return reinterpret_cast<void*>(const_cast<QLibrary*>(&m_lib)->resolve(functionName));
 }
 
 }

@@ -8,7 +8,14 @@ include(WebKit.pri)
     exists($$PWD/JavaScriptCore/jsc.pro): SUBDIRS += JavaScriptCore/jsc.pro
 }
 
-webkit2:exists($$PWD/WebKit2/WebKit2.pro): SUBDIRS += WebKit2/WebKit2.pro
+webkit2 {
+    lessThan(QT_MAJOR_VERSION, 5) {
+        message("Building WebKit2 with Qt versions older than 5.0 is no longer supported.")
+        message("Read http://www.mail-archive.com/webkit-qt@lists.webkit.org/msg01674.html for more information.")
+        error("Aborting build.")
+    }
+    exists($$PWD/WebKit2/WebKit2.pro): SUBDIRS += WebKit2/WebKit2.pro
+}
 
 SUBDIRS += WebCore
 SUBDIRS += WebKit/qt/QtWebKit.pro
