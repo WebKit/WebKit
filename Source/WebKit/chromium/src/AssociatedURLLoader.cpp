@@ -215,8 +215,7 @@ AssociatedURLLoader::AssociatedURLLoader(PassRefPtr<WebFrameImpl> frameImpl, con
 
 AssociatedURLLoader::~AssociatedURLLoader()
 {
-    if (m_clientAdapter)
-        m_clientAdapter->clearClient();
+    cancel();
 }
 
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \
@@ -255,10 +254,10 @@ void AssociatedURLLoader::loadAsynchronously(const WebURLRequest& request, WebUR
 
 void AssociatedURLLoader::cancel()
 {
-    if (m_loader) {
+    if (m_clientAdapter)
         m_clientAdapter->clearClient();
+    if (m_loader)
         m_loader->cancel();
-    }
 }
 
 void AssociatedURLLoader::setDefersLoading(bool defersLoading)
