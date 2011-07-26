@@ -3915,6 +3915,7 @@ BUGWK65152 : fast/js/cyclic-proto.html = CRASH PASS
 BUGWK65152 : fast/js/cyclic-prototypes.html = CRASH PASS
 
 BUGWK65155 : fast/selectors/001.html = CRASH PASS
+BUGWK65155 : media/audio-only-video-intrinsic-size.html = CRASH PASS
 
 // Needs new baseline -- visual appearance of file upload control has changed.
 BUGWK64692 WIN : fast/forms/input-file-re-render.html = IMAGE
