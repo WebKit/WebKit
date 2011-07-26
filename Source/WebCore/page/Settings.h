@@ -88,6 +88,9 @@ namespace WebCore {
         void setFantasyFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
         const AtomicString& fantasyFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
+        void setPictographFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
+        const AtomicString& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
+
         void setMinimumFontSize(int);
         int minimumFontSize() const { return m_minimumFontSize; }
 
@@ -462,6 +465,7 @@ namespace WebCore {
         ScriptFontFamilyMap m_sansSerifFontFamilyMap;
         ScriptFontFamilyMap m_cursiveFontFamilyMap;
         ScriptFontFamilyMap m_fantasyFontFamilyMap;
+        ScriptFontFamilyMap m_pictographFontFamilyMap;
         EditableLinkBehavior m_editableLinkBehavior;
         TextDirectionSubmenuInclusionBehavior m_textDirectionSubmenuInclusionBehavior;
         int m_minimumFontSize;

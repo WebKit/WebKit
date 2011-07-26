@@ -1,3 +1,31 @@
+2011-07-26  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9842889> Add a generic pictograph font family Add a generic pictograph font family
+        https://bugs.webkit.org/show_bug.cgi?id=65197
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/css/font-family-pictograph.html
+
+        * WebCore.exp.in: Export Settings::setPictographFontFamily().
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::identifierForFamily): Added -webkit-pictograph.
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule): Ditto.
+        (WebCore::fontDataForGenericFamily): Ditto.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty): Ditto.
+        * css/CSSValueKeywords.in:
+        * inspector/front-end/CSSKeywordCompletions.js: Ditto.
+        * inspector/front-end/SourceCSSTokenizer.js: Ditto.
+        (WebInspector.SourceCSSTokenizer):
+        * inspector/front-end/SourceCSSTokenizer.re2js: Ditto.
+        * page/Settings.cpp:
+        (WebCore::Settings::pictographFontFamily): Added this getter.
+        (WebCore::Settings::setPictographFontFamily): Added this setter.
+        * page/Settings.h:
+        * platform/graphics/FontDescription.h: Added PictographFamily to the GenericFamilyType enum.
+
 2011-07-26  Viet-Trung Luu  <viettrungluu@chromium.org>
 
         Improve (i.e., speed up) .gyp(i) files for Chromium

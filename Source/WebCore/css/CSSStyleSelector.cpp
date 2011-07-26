@@ -4213,6 +4213,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                         face = "-webkit-monospace";
                         fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
                         break;
+                    case CSSValueWebkitPictograph:
+                        face = "-webkit-pictograph";
+                        fontDescription.setGenericFamily(FontDescription::PictographFamily);
+                        break;
                 }
             }
 

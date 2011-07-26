@@ -4577,6 +4577,12 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     settings->setFixedFontFamily(AtomicString(str, SysStringLen(str)));
     SysFreeString(str);
 
+    hr = preferences->pictographFontFamily(&str);
+    if (FAILED(hr))
+        return hr;
+    settings->setPictographFontFamily(AtomicString(str, SysStringLen(str)));
+    SysFreeString(str);
+
     hr = preferences->isJavaEnabled(&enabled);
     if (FAILED(hr))
         return hr;

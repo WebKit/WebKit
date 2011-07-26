@@ -306,6 +306,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         @"Helvetica",                   WebKitSansSerifFontPreferenceKey,
         @"Apple Chancery",              WebKitCursiveFontPreferenceKey,
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
+        @"Apple Color Emoji",           WebKitPictographFontPreferenceKey,
         @"0",                           WebKitMinimumFontSizePreferenceKey,
         @"9",                           WebKitMinimumLogicalFontSizePreferenceKey, 
         @"16",                          WebKitDefaultFontSizePreferenceKey,
@@ -1506,6 +1507,17 @@ static NSString *classIBCreatorID = nil;
 {
     [self _setBoolValue:flag forKey:WebKitMediaPlaybackAllowsInlinePreferenceKey];
 }
+
+- (NSString *)pictographFontFamily
+{
+    return [self _stringValueForKey: WebKitPictographFontPreferenceKey];
+}
+
+- (void)setPictographFontFamily:(NSString *)family
+{
+    [self _setStringValue: family forKey: WebKitPictographFontPreferenceKey];
+}
+
 @end
 
 @implementation WebPreferences (WebInternal)

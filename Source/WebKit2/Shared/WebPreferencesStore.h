@@ -109,6 +109,7 @@ namespace WebKit {
     macro(FixedFontFamily, fixedFontFamily, String, String, "Courier New") \
     macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Arial") \
     macro(SerifFontFamily, serifFontFamily, String, String, "Times New Roman") \
+    macro(PictographFontFamily, pictographFontFamily, String, String, "Times New Roman") \
     \
 
 #elif PLATFORM(MAC)
@@ -120,6 +121,7 @@ namespace WebKit {
     macro(FixedFontFamily, fixedFontFamily, String, String, "Courier") \
     macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Helvetica") \
     macro(SerifFontFamily, serifFontFamily, String, String, "Times") \
+    macro(PictographFontFamily, pictographFontFamily, String, String, "Apple Color Emoji") \
     \
 
 #elif PLATFORM(QT) || PLATFORM(GTK)

@@ -216,6 +216,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (void)setMediaPlaybackAllowsInline:(BOOL)flag;
 - (BOOL)mediaPlaybackAllowsInline;
 
+- (NSString *)pictographFontFamily;
+- (void)setPictographFontFamily:(NSString *)family;
+
 // Other private methods
 - (void)_postPreferencesChangedNotification;
 - (void)_postPreferencesChangedAPINotification;

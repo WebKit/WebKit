@@ -98,6 +98,9 @@ interface IWebPreferences : IUnknown
     HRESULT fantasyFontFamily([out, retval] BSTR* family);
     HRESULT setFantasyFontFamily([in] BSTR family);
 
+    HRESULT pictographFontFamily([out, retval] BSTR* family);
+    HRESULT setPictographFontFamily([in] BSTR family);
+
     HRESULT defaultFontSize([out, retval] int* fontSize);
     HRESULT setDefaultFontSize([in] int fontSize);
 

@@ -1,3 +1,16 @@
+2011-07-26  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9842889> Add a generic pictograph font family
+        https://bugs.webkit.org/show_bug.cgi?id=65197
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetPictographFontFamily): Added.
+        (WKPreferencesCopyPictographFontFamily): Added.
+        * UIProcess/API/C/WKPreferences.h:
+
 2011-07-26  Andras Becsi  <abecsi@webkit.org>
 
         [Qt] [WK2] Disable the build with Qt versions older than 5.0 

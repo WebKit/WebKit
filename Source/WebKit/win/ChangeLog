@@ -1,3 +1,23 @@
+2011-07-26  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9842889> Add a generic pictograph font family
+        https://bugs.webkit.org/show_bug.cgi?id=65197
+
+        Reviewed by Anders Carlsson.
+
+        * Interfaces/IWebPreferences.idl: Added pictographFontFamily() and
+        setPictographFontFamily().
+        * WebPreferenceKeysPrivate.h: Added WebKitPictographFontPreferenceKey.
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Initialize the pictograph font
+        preference to "Times New Roman".
+        (WebPreferences::pictographFontFamily): Added this getter.
+        (WebPreferences::setPictographFontFamily): Added this setter.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Pass the preference value through to
+        WebCore.
+
 2011-07-18  Dean Jackson  <dino@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64742

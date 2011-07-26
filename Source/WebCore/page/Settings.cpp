@@ -275,6 +275,16 @@ void Settings::setFantasyFontFamily(const AtomicString& family, UScriptCode scri
     setGenericFontFamilyMap(m_fantasyFontFamilyMap, family, script, m_page);
 }
 
+const AtomicString& Settings::pictographFontFamily(UScriptCode script) const
+{
+    return getGenericFontFamilyForScript(m_pictographFontFamilyMap, script);
+}
+
+void Settings::setPictographFontFamily(const AtomicString& family, UScriptCode script)
+{
+    setGenericFontFamilyMap(m_pictographFontFamilyMap, family, script, m_page);
+}
+
 void Settings::setMinimumFontSize(int minimumFontSize)
 {
     if (m_minimumFontSize == minimumFontSize)

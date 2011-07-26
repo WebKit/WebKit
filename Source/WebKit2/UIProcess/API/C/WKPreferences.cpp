@@ -232,6 +232,16 @@ WKStringRef WKPreferencesCopyFantasyFontFamily(WKPreferencesRef preferencesRef)
     return toCopiedAPI(toImpl(preferencesRef)->fantasyFontFamily());
 }
 
+void WKPreferencesSetPictographFontFamily(WKPreferencesRef preferencesRef, WKStringRef family)
+{
+    toImpl(preferencesRef)->setPictographFontFamily(toWTFString(family));
+}
+
+WKStringRef WKPreferencesCopyPictographFontFamily(WKPreferencesRef preferencesRef)
+{
+    return toCopiedAPI(toImpl(preferencesRef)->pictographFontFamily());
+}
+
 void WKPreferencesSetDefaultFontSize(WKPreferencesRef preferencesRef, uint32_t size)
 {
     toImpl(preferencesRef)->setDefaultFontSize(size);

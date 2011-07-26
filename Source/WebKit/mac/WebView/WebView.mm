@@ -1509,6 +1509,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setJavaScriptCanOpenWindowsAutomatically([preferences javaScriptCanOpenWindowsAutomatically]);
     settings->setMinimumFontSize([preferences minimumFontSize]);
     settings->setMinimumLogicalFontSize([preferences minimumLogicalFontSize]);
+    settings->setPictographFontFamily([preferences pictographFontFamily]);
     settings->setPluginsEnabled([preferences arePlugInsEnabled]);
 #if ENABLE(DATABASE)
     AbstractDatabase::setIsAvailable([preferences databasesEnabled]);
