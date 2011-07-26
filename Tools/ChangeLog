@@ -1,5 +1,16 @@
 2011-07-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        TestConfigurationConverter should not barf on invalid specifiers.
+        https://bugs.webkit.org/show_bug.cgi?id=65194
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py: Refactored TestConfigurationConverter.to_config_set a bit,
+            made it return empty set whenever an invalid specifier is encountered.
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py: Added corresponding tests.
+
+2011-07-26  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Introduce a way to convert between specifier lists and TestConfiguration sets.
         https://bugs.webkit.org/show_bug.cgi?id=65094
 

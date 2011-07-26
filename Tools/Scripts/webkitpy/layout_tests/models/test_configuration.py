@@ -128,6 +128,10 @@ class TestConfigurationConverter:
                 if len(set_by_category) == 1 and category_priority(category) > specifier_priority(specifier):
                     self._junk_specifier_combinations[specifier] = set_by_category
 
+    def _expand_macros(self, specifier):
+        expanded_specifiers = self._configuration_macros.get(specifier)
+        return expanded_specifiers or [specifier]
+
     def to_config_set(self, specifier_set):
         """Convert a list of specifiers into a set of TestConfiguration instances."""
         if len(specifier_set) == 0:
@@ -135,18 +139,13 @@ class TestConfigurationConverter:
 
         matching_sets = {}
 
-        def update_matching_set(specifier):
-            configurations = self._specifier_to_configuration_set[specifier]
-            category = self._specifier_to_category[specifier]
-            matching_sets.setdefault(category, set()).update(configurations)
-
         for specifier in specifier_set:
-            expanded_specifiers = self._configuration_macros.get(specifier)
-            if expanded_specifiers:
-                for expanded_specifier in expanded_specifiers:
-                    update_matching_set(expanded_specifier)
-            else:
-                update_matching_set(specifier)
+            for expanded_specifier in self._expand_macros(specifier):
+                configurations = self._specifier_to_configuration_set.get(expanded_specifier)
+                if not configurations:
+                    return set()
+                category = self._specifier_to_category[expanded_specifier]
+                matching_sets.setdefault(category, set()).update(configurations)
 
         return set.intersection(*matching_sets.values())
 

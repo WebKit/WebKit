@@ -115,6 +115,10 @@ class TestConfigurationConverterTest(unittest.TestCase):
 
         self.assertEquals(converter.to_config_set(set()), self._all_test_configurations)
 
+        self.assertEquals(converter.to_config_set(set(['foo'])), set())
+
+        self.assertEquals(converter.to_config_set(set(['xp', 'foo'])), set())
+
         configs_to_match = set([
             TestConfiguration(None, 'xp', 'x86', 'release', 'gpu'),
             TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'),
