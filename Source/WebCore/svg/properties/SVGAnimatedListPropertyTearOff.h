@@ -82,6 +82,10 @@ public:
     PropertyType& values() { return m_values; }
     ListWrapperCache& wrappers() { return m_wrappers; }
 
+    // FIXME: animVal support.
+    bool isAnimating() const { return false; }
+    PropertyType& currentAnimatedValue() { return m_values; }
+
     static PassRefPtr<SVGAnimatedListPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& values)
     {
         ASSERT(contextElement);

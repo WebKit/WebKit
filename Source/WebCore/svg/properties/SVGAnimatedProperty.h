@@ -43,6 +43,7 @@ public:
     }
 
     virtual bool isAnimatedListTearOff() const { return false; }
+    virtual void updateAnimVal(void*) { ASSERT_NOT_REACHED(); }
 
     // Caching facilities.
     typedef HashMap<SVGAnimatedPropertyDescription, RefPtr<SVGAnimatedProperty>, SVGAnimatedPropertyDescriptionHash, SVGAnimatedPropertyDescriptionHashTraits> Cache;
@@ -60,11 +61,12 @@ public:
         }
     }
 
+    // lookupOrCreateWrapper & helper methods.
     template<typename TearOffType, typename PropertyType, bool isDerivedFromSVGElement>
-    struct Helper;
+    struct LookupOrCreateHelper;
 
     template<typename TearOffType, typename PropertyType>
-    struct Helper<TearOffType, PropertyType, false> {
+    struct LookupOrCreateHelper<TearOffType, PropertyType, false> {
         static PassRefPtr<TearOffType> lookupOrCreateWrapper(void*, const SVGPropertyInfo*, PropertyType&)
         {
             ASSERT_NOT_REACHED();
@@ -73,7 +75,7 @@ public:
     };
 
     template<typename TearOffType, typename PropertyType>
-    struct Helper<TearOffType, PropertyType, true> {
+    struct LookupOrCreateHelper<TearOffType, PropertyType, true> {
         static PassRefPtr<TearOffType> lookupOrCreateWrapper(SVGElement* element, const SVGPropertyInfo* info, PropertyType& property)
         {
             ASSERT(info);
@@ -90,15 +92,35 @@ public:
     template<typename OwnerType, typename TearOffType, typename PropertyType, bool isDerivedFromSVGElement>
     static PassRefPtr<TearOffType> lookupOrCreateWrapper(OwnerType* element, const SVGPropertyInfo* info, PropertyType& property)
     {
-        return Helper<TearOffType, PropertyType, isDerivedFromSVGElement>::lookupOrCreateWrapper(element, info, property);
+        return LookupOrCreateHelper<TearOffType, PropertyType, isDerivedFromSVGElement>::lookupOrCreateWrapper(element, info, property);
     }
 
+    // lookupWrapper & helper methods.
+    template<typename TearOffType, bool isDerivedFromSVGElement>
+    struct LookupHelper;
+
     template<typename TearOffType>
-    static TearOffType* lookupWrapper(SVGElement* element, const SVGPropertyInfo* info)
+    struct LookupHelper<TearOffType, false> {
+        static TearOffType* lookupWrapper(const void*, const SVGPropertyInfo*)
+        {
+            return 0;
+        }
+    };
+
+    template<typename TearOffType>
+    struct LookupHelper<TearOffType, true> {
+        static TearOffType* lookupWrapper(const SVGElement* element, const SVGPropertyInfo* info)
+        {
+            ASSERT(info);
+            SVGAnimatedPropertyDescription key(const_cast<SVGElement*>(element), info->propertyIdentifier);
+            return static_pointer_cast<TearOffType>(animatedPropertyCache()->get(key)).get();
+        }
+    };
+
+    template<typename OwnerType, typename TearOffType, bool isDerivedFromSVGElement>
+    static TearOffType* lookupWrapper(const OwnerType* element, const SVGPropertyInfo* info)
     {
-        ASSERT(info);
-        SVGAnimatedPropertyDescription key(element, info->propertyIdentifier);
-        return static_pointer_cast<TearOffType>(animatedPropertyCache()->get(key)).get();
+        return LookupHelper<TearOffType, isDerivedFromSVGElement>::lookupWrapper(element, info);
     }
 
 protected:

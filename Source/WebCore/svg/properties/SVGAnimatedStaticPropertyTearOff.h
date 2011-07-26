@@ -46,7 +46,8 @@ public:
     }
 
     // FIXME: No animVal support.
-    void setAnimVal(const PropertyType&) { }
+    bool isAnimating() const { return false; }
+    PropertyType& currentAnimatedValue() { return m_property; }
 
     static PassRefPtr<SVGAnimatedStaticPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
     {

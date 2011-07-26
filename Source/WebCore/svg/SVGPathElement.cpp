@@ -261,7 +261,7 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
     RenderSVGPath* renderer = static_cast<RenderSVGPath*>(this->renderer());
 
     if (attrName == SVGNames::dAttr) {
-        if (SVGAnimatedProperty::lookupWrapper<SVGAnimatedPathSegListPropertyTearOff>(this, dPropertyInfo())) {
+        if (SVGAnimatedProperty::lookupWrapper<SVGPathElement, SVGAnimatedPathSegListPropertyTearOff, true>(this, dPropertyInfo())) {
             SVGPathSegList newList(PathSegUnalteredRole);
             SVGPathParserFactory* factory = SVGPathParserFactory::self();
             factory->buildSVGPathSegListFromByteStream(m_pathByteStream.get(), this, newList, UnalteredParsing);

@@ -93,6 +93,13 @@ public:
 
     virtual SVGPropertyRole role() const { return m_role; }
 
+    void updateAnimVal(PropertyType* value)
+    {
+        ASSERT(!m_valueIsCopy);
+        ASSERT(m_role == AnimValRole);
+        m_value = value;
+    }
+
 protected:
     SVGPropertyTearOff(SVGAnimatedProperty* animatedProperty, SVGPropertyRole role, PropertyType& value)
         : m_animatedProperty(animatedProperty)

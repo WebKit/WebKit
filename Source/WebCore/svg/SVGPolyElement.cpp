@@ -90,7 +90,7 @@ void SVGPolyElement::parseMappedAttribute(Attribute* attr)
         if (!pointsListFromSVGData(newList, value))
             document()->accessSVGExtensions()->reportError("Problem parsing points=\"" + value + "\"");
 
-        if (SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<SVGAnimatedListPropertyTearOff<SVGPointList> >(this, pointsPropertyInfo()))
+        if (SVGAnimatedProperty* wrapper = SVGAnimatedProperty::lookupWrapper<SVGPolyElement, SVGAnimatedListPropertyTearOff<SVGPointList>, true>(this, pointsPropertyInfo()))
             static_cast<SVGAnimatedListPropertyTearOff<SVGPointList>*>(wrapper)->detachListWrappers(newList.size());
 
         m_points.value = newList;

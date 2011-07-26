@@ -46,6 +46,8 @@ public:
         return adoptRef(new SVGAnimatedEnumerationPropertyTearOff<EnumType>(contextElement, attributeName, reinterpret_cast<int&>(property)));
     }
 
+    EnumType& currentAnimatedValue() { return reinterpret_cast<EnumType&>(SVGAnimatedStaticPropertyTearOff<int>::currentAnimatedValue()); }
+
 private:
     SVGAnimatedEnumerationPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, int& property)
         : SVGAnimatedStaticPropertyTearOff<int>(contextElement, attributeName, property)

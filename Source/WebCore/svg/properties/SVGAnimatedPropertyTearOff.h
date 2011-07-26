@@ -49,15 +49,37 @@ public:
         return adoptRef(new SVGAnimatedPropertyTearOff<PropertyType>(contextElement, attributeName, property));
     }
 
+    bool isAnimating() const { return m_isAnimating; }
+
+    PropertyType& currentAnimatedValue()
+    {
+        ASSERT(m_animVal);
+        ASSERT(m_isAnimating);
+        return static_cast<SVGPropertyTearOff<PropertyType>*>(m_animVal.get())->propertyReference();
+    }
+
+    virtual void updateAnimVal(void* value)
+    {
+        if (value) {
+            static_cast<SVGPropertyTearOff<PropertyType>*>(animVal())->updateAnimVal(reinterpret_cast<PropertyType*>(value));
+            m_isAnimating = true;
+            return;
+        }
+
+        static_cast<SVGPropertyTearOff<PropertyType>*>(animVal())->updateAnimVal(&m_property);
+        m_isAnimating = false;
+    }
+
 private:
     SVGAnimatedPropertyTearOff(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
         : SVGAnimatedProperty(contextElement, attributeName)
         , m_property(property)
+        , m_isAnimating(false)
     {
     }
 
     PropertyType& m_property;
-
+    bool m_isAnimating;
     RefPtr<SVGProperty> m_baseVal;
     RefPtr<SVGProperty> m_animVal;
 };

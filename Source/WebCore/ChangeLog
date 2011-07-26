@@ -1,3 +1,42 @@
+2011-07-26  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Prepare animVal support - phase 2
+        https://bugs.webkit.org/show_bug.cgi?id=65167
+
+        Reviewed by Dirk Schulze.
+
+        Next patch preparing animVal support. Modify the SVGAnimatedProperty* classes & macros to assure that calling someElement->someProperty()
+        will return the animVal, when the property is being animated. Not yet hooked into SVGAnimateElement, this is just a preparation.
+
+        Doesn't affect any tests, yet.
+
+        * svg/SVGPathElement.cpp: Adapt to SVGAnimatedProperty::lookupWrapper changes (new template parameters have been added).
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        * svg/SVGPathSegWithContext.h: Ditto.
+        (WebCore::SVGPathSegWithContext::animatedProperty):
+        * svg/SVGPolyElement.cpp: Ditto.
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h: Implement currentAnimatedValue, an abstract way to retrieve the underlying animated value for any animated type.
+        (WebCore::SVGAnimatedEnumerationPropertyTearOff::currentAnimatedValue): Forward call to SVGAnimatedStaticPropertyTearOff<int>, our base.
+        * svg/properties/SVGAnimatedListPropertyTearOff.h:
+        (WebCore::SVGAnimatedListPropertyTearOff::isAnimating): Returns whether this property is being animated or not.
+        (WebCore::SVGAnimatedListPropertyTearOff::currentAnimatedValue):
+        * svg/properties/SVGAnimatedProperty.h:
+        (WebCore::SVGAnimatedProperty::updateAnimVal): Will be used from SVGAnim*Element to update the current animVal, exposed to JS.
+        (WebCore::SVGAnimatedProperty::lookupOrCreateWrapper): Share more code with lookupWrapper.
+        (WebCore::SVGAnimatedProperty::lookupWrapper): Cleanup code, avoid doing any work for non-SVGElement derived objects, like SVGViewSpec.
+        * svg/properties/SVGAnimatedPropertyMacros.h: Make all lowerProperty() calls (eg. myRectElement->x()) return the animVal, if the property is being animated.
+        * svg/properties/SVGAnimatedPropertyTearOff.h: Main logic for the new animVal stuff.
+        (WebCore::SVGAnimatedPropertyTearOff::isAnimating):
+        (WebCore::SVGAnimatedPropertyTearOff::currentAnimatedValue):
+        (WebCore::SVGAnimatedPropertyTearOff::updateAnimVal):
+        (WebCore::SVGAnimatedPropertyTearOff::SVGAnimatedPropertyTearOff):
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        (WebCore::SVGAnimatedStaticPropertyTearOff::isAnimating):
+        (WebCore::SVGAnimatedStaticPropertyTearOff::currentAnimatedValue):
+        * svg/properties/SVGPropertyTearOff.h:
+        (WebCore::SVGPropertyTearOff::updateAnimVal):
+
 2011-07-26  Shinya Kawanaka  <shinyak@google.com>
 
         Uses isHTMLSpace to normalize white spaces.
