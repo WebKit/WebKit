@@ -43,6 +43,15 @@ namespace JSC {
         {
         }
         
+        UString getErrorMessage() 
+        { 
+            if (!m_lexer.getErrorMessage().isEmpty())
+                return String::format("JSON Parse error: %s", m_lexer.getErrorMessage().ascii().data()).impl();
+            if (!m_parseErrorMessage.isEmpty())
+                return String::format("JSON Parse error: %s", m_parseErrorMessage.ascii().data()).impl();
+            return "JSON Parse error: Unable to parse JSON string";
+        }
+        
         JSValue tryLiteralParse()
         {
             m_lexer.next();
@@ -112,7 +121,10 @@ namespace JSC {
                 return m_currentToken;
             }
             
+            UString getErrorMessage() { return m_lexErrorMessage; }
+            
         private:
+            UString m_lexErrorMessage;
             template <ParserMode mode> TokenType lex(LiteralParserToken&);
             template <ParserMode mode, UChar terminator> ALWAYS_INLINE TokenType lexString(LiteralParserToken&);
             ALWAYS_INLINE TokenType lexNumber(LiteralParserToken&);
@@ -129,6 +141,7 @@ namespace JSC {
         ExecState* m_exec;
         LiteralParser::Lexer m_lexer;
         ParserMode m_mode;
+        UString m_parseErrorMessage;
         static unsigned const MaximumCachableCharacter = 128;
         FixedArray<Identifier, MaximumCachableCharacter> m_shortIdentifiers;
         FixedArray<Identifier, MaximumCachableCharacter> m_recentIdentifiers;

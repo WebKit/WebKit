@@ -1,3 +1,24 @@
+2011-07-26  Juan C. Montemayor  <jmont@apple.com>
+
+        JSON errors should be informative
+        https://bugs.webkit.org/show_bug.cgi?id=63339
+
+        Added error messages to the JSON Parser.
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::Lexer::lex):
+        (JSC::LiteralParser::Lexer::lexString):
+        (JSC::LiteralParser::Lexer::lexNumber):
+        (JSC::LiteralParser::parse):
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::getErrorMessage):
+        (JSC::LiteralParser::Lexer::sawError):
+        (JSC::LiteralParser::Lexer::getErrorMessage):
+
 2011-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91746.

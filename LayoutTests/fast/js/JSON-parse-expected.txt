@@ -5,7 +5,7 @@ PASS tests[i](nativeJSON) threw exception Error: JSON.parse requires at least on
 function (jsonObject) {
         return jsonObject.parse('');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected EOF.
 function (jsonObject) {
         return jsonObject.parse('1');
     }
@@ -17,11 +17,11 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('Infinity');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected identifier "Infinity?".
 function (jsonObject) {
         return jsonObject.parse('NaN');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected identifier "NaN".
 function (jsonObject) {
         return jsonObject.parse('null');
     }
@@ -29,7 +29,7 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('undefined');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected identifier "undefined".
 function (jsonObject) {
         return jsonObject.parse('{}');
     }
@@ -37,31 +37,31 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('({})');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected token '('.
 function (jsonObject) {
         return jsonObject.parse('{a}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Expected '}'.
 function (jsonObject) {
         return jsonObject.parse('{a:}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Expected '}'.
 function (jsonObject) {
         return jsonObject.parse('{a:5}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Expected '}'.
 function (jsonObject) {
         return jsonObject.parse('{a:5,}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Expected '}'.
 function (jsonObject) {
         return jsonObject.parse('{"a"}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Expected ':' before value in object property definition.
 function (jsonObject) {
         return jsonObject.parse('{"a":}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected token '}'.
 function (jsonObject) {
         return jsonObject.parse('{"a":5}');
     }
@@ -73,20 +73,20 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('{"a":5,}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Property name must be a string literal.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('{"a":5,,}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Property name must be a string literal.
 function (jsonObject) {
         return jsonObject.parse('{"a":5,"a",}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Expected ':'.
 function (jsonObject) {
         return jsonObject.parse('{"a":(5,"a"),}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected token '('.
 function (jsonObject) {
         return jsonObject.parse('[]');
     }
@@ -98,7 +98,7 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('[1,]');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected comma at the end of array expression.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('[1,2]');
@@ -107,12 +107,12 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('[1,2,,]');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected token ','.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('[1,2,,4]');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unexpected token ','.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('""');
@@ -129,15 +129,15 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\\"');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unterminated string.
 function (jsonObject) {
         return jsonObject.parse('"a\\z"');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Invalid escape character z.
 function (jsonObject) {
         return jsonObject.parse('"a\\\z"');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Invalid escape character z.
 function (jsonObject) {
         return jsonObject.parse('"a\\\\z"');
     }
@@ -153,7 +153,7 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\nz"');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unterminated string.
 function (jsonObject) {
         return jsonObject.parse('"a\\nz"');
     }
@@ -161,7 +161,7 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\rz"');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unterminated string.
 function (jsonObject) {
         return jsonObject.parse('"a\\rz"');
     }
@@ -177,7 +177,7 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\bz"');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unterminated string.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('"a\\bz"');
@@ -186,7 +186,7 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\rz"');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unterminated string.
 function (jsonObject) {
         return jsonObject.parse('"a\\rz"');
     }
@@ -194,19 +194,19 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\\uz"     ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\uz"  " is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\u0z"    ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\u0z" " is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\u00z"   ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\u00z"" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\u000z"  ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\u000z" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\u0000z" ');
     }
@@ -222,11 +222,11 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\\u000Gz" ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\u000G" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\u000gz" ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\u000g" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\u00A0z" ');
     }
@@ -238,11 +238,11 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\\u00G0z" ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\u00G0" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\u00g0z" ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\u00g0" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\u0A00z" ');
     }
@@ -254,11 +254,11 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\\u0G00z" ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\u0G00" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\u0g00z" ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\u0g00" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\uA000z" ');
     }
@@ -270,71 +270,71 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject) {
         return jsonObject.parse('"a\\uG000z" ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\uG000" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('"a\\ug000z" ');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: "\ug000" is not a valid unicode escape.
 function (jsonObject) {
         return jsonObject.parse('00');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unable to parse JSON string.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('01');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unable to parse JSON string.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('0.a');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Invalid digits after decimal point.
 function (jsonObject) {
         return jsonObject.parse('0x0');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unable to parse JSON string.
 function (jsonObject) {
         return jsonObject.parse('2e1.3');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unable to parse JSON string.
 function (jsonObject) {
         return jsonObject.parse('2e-+10');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Exponent symbols should be followed by an optional '+' or '-' and then by at least one number.
 function (jsonObject) {
         return jsonObject.parse('2e+-10');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Exponent symbols should be followed by an optional '+' or '-' and then by at least one number.
 function (jsonObject) {
         return jsonObject.parse('2e3e4');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unable to parse JSON string.
 function (jsonObject) {
         return jsonObject.parse('-01.0');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unable to parse JSON string.
 function (jsonObject) {
         return jsonObject.parse('-01');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unable to parse JSON string.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('-01.a');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Invalid digits after decimal point.
 function (jsonObject) {
         return jsonObject.parse('1.e1');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Invalid digits after decimal point.
 json2.js did not throw for a test we expect to throw.
 function (jsonObject) {
         return jsonObject.parse('{/* block comments are not allowed */}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unrecognized token '/'.
 function (jsonObject) {
         return jsonObject.parse('{// line comments are not allowed \n}');
     }
-PASS tests[i](nativeJSON) threw exception SyntaxError: Unable to parse JSON string.
+PASS tests[i](nativeJSON) threw exception SyntaxError: JSON Parse error: Unrecognized token '/'.
 function (jsonObject) {
         return jsonObject.parse('true');
     }
