@@ -1,3 +1,17 @@
+2011-07-26  Adam Barth  <abarth@webkit.org>
+
+        Increase the information density in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=65141
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch changes lets us show each revision on a single line,
+        allowing use to show an entire day's worth of commits at once.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js:
+
 2011-07-26  Dimitri Glazkov  <dglazkov@chromium.org>
 
         TestConfigurationConverter should not barf on invalid specifiers.

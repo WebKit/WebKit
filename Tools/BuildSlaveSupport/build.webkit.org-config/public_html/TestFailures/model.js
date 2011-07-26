@@ -2,7 +2,7 @@ var model = model || {};
 
 (function () {
 
-var kCommitLogLength = 20;
+var kCommitLogLength = 50;
 
 model.state = {};
 

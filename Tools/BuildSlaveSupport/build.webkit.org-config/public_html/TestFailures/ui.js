@@ -118,7 +118,7 @@ ui.commitEntry = function(commitData)
 {
     var entry = $('<td class="entry"></td>');
 
-    entry.append('<div class="summary"></div><div class="details"><a target="_blank" class="revision"></a> <span class="author"></span> <span class="reviewer-container">(Reviewer: <span class="reviewer"></span>)</span></div><div class="regressions"></div>');
+    entry.append('<div class="details"><a target="_blank" class="revision"></a> <span class="summary"></span> <span class="author"></span> <span class="reviewer-container">(Reviewer: <span class="reviewer"></span>)</span></div><div class="regressions"></div>');
     $('.summary', entry).text(commitData.summary);
     $('.revision', entry).attr('href', trac.changesetURL(commitData.revision)).text(displayNameForRevision(commitData.revision));
     $('.author', entry).text(commitData.author);

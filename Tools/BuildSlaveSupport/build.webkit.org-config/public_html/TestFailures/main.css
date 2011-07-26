@@ -153,7 +153,7 @@ button.default:hover {
 }
 
 .changelog .result {
-    padding: 3px 0px;
+    padding: 4px 0px;
     border-top: 2px solid white;
     border-bottom: 2px solid white;
 }
@@ -163,7 +163,7 @@ button.default:hover {
 }
 
 .changelog .entry {
-    padding: 5px 0px 5px 3px;
+    padding: 4px 0px 4px 3px;
 }
 
 .changelog .possible-regression {
@@ -172,6 +172,10 @@ button.default:hover {
 
 .changelog .details, .changelog .details a {
     color: #555;
+}
+
+.changelog .summary {
+    color: Black;
 }
 
 .changelog .author {
