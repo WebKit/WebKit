@@ -1,5 +1,13 @@
 2011-07-27  Adrienne Walker  <enne@google.com>
 
+        [chromium] Mark another webgl flaky test.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-27  Adrienne Walker  <enne@google.com>
+
         [chromium] Rebaseline absolute-child-with-percent-etc-etc-etc.
 
         Unreviewed gardening.
