@@ -57,6 +57,7 @@ private:
 
     virtual const char* layerTypeAsString() const { return "ContentLayer"; }
 
+    virtual void cleanupResources();
     virtual bool drawsContent() const;
     virtual void createTextureUpdaterIfNeeded();
     virtual LayerTextureUpdater* textureUpdater() const { return m_textureUpdater.get(); }

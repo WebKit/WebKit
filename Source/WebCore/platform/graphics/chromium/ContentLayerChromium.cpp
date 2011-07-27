@@ -85,6 +85,12 @@ ContentLayerChromium::~ContentLayerChromium()
     cleanupResources();
 }
 
+void ContentLayerChromium::cleanupResources()
+{
+    m_textureUpdater.clear();
+    TiledLayerChromium::cleanupResources();
+}
+
 void ContentLayerChromium::paintContentsIfDirty()
 {
     ASSERT(drawsContent());
