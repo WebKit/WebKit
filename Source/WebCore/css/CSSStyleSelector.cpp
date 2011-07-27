@@ -3901,22 +3901,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSSPropertyZIndex: {
-        if (isInherit) {
-            if (m_parentStyle->hasAutoZIndex())
-                m_style->setHasAutoZIndex();
-            else
-                m_style->setZIndex(m_parentStyle->zIndex());
-            return;
-        } else if (isInitial || primitiveValue->getIdent() == CSSValueAuto) {
-            m_style->setHasAutoZIndex();
-            return;
-        }
-        
-        // FIXME: Should clamp all sorts of other integer properties too.
-        m_style->setZIndex(clampToInteger(primitiveValue->getDoubleValue()));
-        return;
-    }
     case CSSPropertyWidows:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(widows, Widows)
         return;
@@ -4575,51 +4559,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         else
             m_style->setBoxSizing(BORDER_BOX);
         return;
-    case CSSPropertyWebkitColumnCount: {
-        if (isInherit) {
-            if (m_parentStyle->hasAutoColumnCount())
-                m_style->setHasAutoColumnCount();
-            else
-                m_style->setColumnCount(m_parentStyle->columnCount());
-            return;
-        } else if (isInitial || primitiveValue->getIdent() == CSSValueAuto) {
-            m_style->setHasAutoColumnCount();
-            return;
-        }
-        m_style->setColumnCount(static_cast<unsigned short>(primitiveValue->getDoubleValue()));
-        return;
-    }
-    case CSSPropertyWebkitColumnGap: {
-        if (isInherit) {
-            if (m_parentStyle->hasNormalColumnGap())
-                m_style->setHasNormalColumnGap();
-            else
-                m_style->setColumnGap(m_parentStyle->columnGap());
-            return;
-        } else if (isInitial || primitiveValue->getIdent() == CSSValueNormal) {
-            m_style->setHasNormalColumnGap();
-            return;
-        }
-        m_style->setColumnGap(primitiveValue->computeLength<float>(style(), m_rootElementStyle, zoomFactor));
-        return;
-    }
     case CSSPropertyWebkitColumnSpan: {
         HANDLE_INHERIT_AND_INITIAL(columnSpan, ColumnSpan)
         m_style->setColumnSpan(primitiveValue->getIdent() == CSSValueAll);
-        return;
-    }
-    case CSSPropertyWebkitColumnWidth: {
-        if (isInherit) {
-            if (m_parentStyle->hasAutoColumnWidth())
-                m_style->setHasAutoColumnWidth();
-            else
-                m_style->setColumnWidth(m_parentStyle->columnWidth());
-            return;
-        } else if (isInitial || primitiveValue->getIdent() == CSSValueAuto) {
-            m_style->setHasAutoColumnWidth();
-            return;
-        }
-        m_style->setColumnWidth(primitiveValue->computeLength<float>(style(), m_rootElementStyle, zoomFactor));
         return;
     }
     case CSSPropertyWebkitColumnRuleStyle:
@@ -5316,6 +5258,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitPerspectiveOriginY:
     case CSSPropertyWebkitPerspectiveOrigin:
     case CSSPropertyCursor:
+    case CSSPropertyWebkitColumnCount:
+    case CSSPropertyWebkitColumnGap:
+    case CSSPropertyWebkitColumnWidth:
+    case CSSPropertyZIndex:
         ASSERT_NOT_REACHED();
         return;
 #if ENABLE(SVG)

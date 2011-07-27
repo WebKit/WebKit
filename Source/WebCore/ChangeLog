@@ -1,3 +1,32 @@
+2011-07-26  Luke Macpherson   <macpherson@chromium.org>
+
+        Handle CSS Properties that can be either auto or a primitive value in CSSStyleApplyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=65164
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests / refactoring only.
+
+        * css/CSSPrimitiveValueMappings.h:
+        Add casts to/from various numeric types.
+        (WebCore::CSSPrimitiveValue::operator short):
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator unsigned short):
+        (WebCore::CSSPrimitiveValue::operator int):
+        (WebCore::CSSPrimitiveValue::operator float):
+        * css/CSSStyleApplyProperty.cpp:
+        Add class to handle properties that set an "auto" boolean on RenderStyle.
+        (WebCore::ApplyPropertyAuto::ApplyPropertyAuto):
+        (WebCore::ApplyPropertyAuto::applyInheritValue):
+        (WebCore::ApplyPropertyAuto::applyInitialValue):
+        (WebCore::ApplyPropertyAuto::applyValue):
+        (WebCore::ApplyPropertyAuto::hasAuto):
+        (WebCore::ApplyPropertyAuto::setAuto):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        Remove existing implementations.
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-07-26  Pratik Solanki  <psolanki@apple.com>
 
         Add protection space authentication callback code to CFNetwork loader on Mac

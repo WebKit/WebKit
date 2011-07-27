@@ -142,6 +142,62 @@ protected:
     }
 };
 
+enum AutoValueType {Number = 0, ComputeLength};
+template <typename T, AutoValueType valueType = Number, int autoIdentity = CSSValueAuto>
+class ApplyPropertyAuto : public ApplyPropertyDefaultBase<T> {
+public:
+    typedef bool (RenderStyle::*HasAutoFunction)() const;
+    typedef void (RenderStyle::*SetAutoFunction)();
+
+    ApplyPropertyAuto(typename ApplyPropertyDefaultBase<T>::GetterFunction getter, typename ApplyPropertyDefaultBase<T>::SetterFunction setter, HasAutoFunction hasAuto, SetAutoFunction setAuto)
+        : ApplyPropertyDefaultBase<T>(getter, setter, 0)
+        , m_hasAuto(hasAuto)
+        , m_setAuto(setAuto)
+    {
+    }
+
+protected:
+    virtual void applyInheritValue(CSSStyleSelector* selector) const
+    {
+        if (hasAuto(selector->parentStyle()))
+            setAuto(selector->style());
+        else
+            ApplyPropertyDefaultBase<T>::setValue(selector->style(), ApplyPropertyDefaultBase<T>::value(selector->parentStyle()));
+    }
+
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
+    {
+        setAuto(selector->style());
+    }
+
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if (primitiveValue->getIdent() == autoIdentity)
+            setAuto(selector->style());
+        else if (valueType == Number)
+            ApplyPropertyDefaultBase<T>::setValue(selector->style(), *primitiveValue);
+        else if (valueType == ComputeLength)
+            ApplyPropertyDefaultBase<T>::setValue(selector->style(), primitiveValue->computeLength<T>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()));
+    }
+
+    bool hasAuto(RenderStyle* style) const
+    {
+        return (style->*m_hasAuto)();
+    }
+
+    void setAuto(RenderStyle* style) const
+    {
+        (style->*m_setAuto)();
+    }
+
+    HasAutoFunction m_hasAuto;
+    SetAutoFunction m_setAuto;
+};
+
 enum ColorInherit {NoInheritFromParent = 0, InheritFromParent};
 template <ColorInherit inheritColorFromParent>
 class ApplyPropertyColor : public ApplyPropertyBase {
@@ -806,6 +862,11 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitTransformOriginY, new ApplyPropertyLength<>(&RenderStyle::transformOriginY, &RenderStyle::setTransformOriginY, &RenderStyle::initialTransformOriginY));
     setPropertyHandler(CSSPropertyWebkitTransformOriginZ, new ApplyPropertyComputeLength<float>(&RenderStyle::transformOriginZ, &RenderStyle::setTransformOriginZ, &RenderStyle::initialTransformOriginZ));
     setPropertyHandler(CSSPropertyWebkitTransformOrigin, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyWebkitTransformOriginX), propertyHandler(CSSPropertyWebkitTransformOriginY), propertyHandler(CSSPropertyWebkitTransformOriginZ)));
+
+    setPropertyHandler(CSSPropertyWebkitColumnCount, new ApplyPropertyAuto<unsigned short>(&RenderStyle::columnCount, &RenderStyle::setColumnCount, &RenderStyle::hasAutoColumnCount, &RenderStyle::setHasAutoColumnCount));
+    setPropertyHandler(CSSPropertyWebkitColumnGap, new ApplyPropertyAuto<float, ComputeLength, CSSValueNormal>(&RenderStyle::columnGap, &RenderStyle::setColumnGap, &RenderStyle::hasNormalColumnGap, &RenderStyle::setHasNormalColumnGap));
+    setPropertyHandler(CSSPropertyWebkitColumnWidth, new ApplyPropertyAuto<float, ComputeLength>(&RenderStyle::columnWidth, &RenderStyle::setColumnWidth, &RenderStyle::hasAutoColumnWidth, &RenderStyle::setHasAutoColumnWidth));
+    setPropertyHandler(CSSPropertyZIndex, new ApplyPropertyAuto<int>(&RenderStyle::zIndex, &RenderStyle::setZIndex, &RenderStyle::hasAutoZIndex, &RenderStyle::setHasAutoZIndex));
 }
 
 

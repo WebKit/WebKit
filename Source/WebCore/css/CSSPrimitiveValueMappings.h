@@ -45,6 +45,8 @@
 #include "ThemeTypes.h"
 #include "UnicodeBidi.h"
 
+#include <wtf/MathExtras.h>
+
 namespace WebCore {
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(short i)
@@ -57,10 +59,58 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(short i)
 template<> inline CSSPrimitiveValue::operator short() const
 {
     if (m_type == CSS_NUMBER)
-        return static_cast<short>(m_value.num);
+        return clampTo<short>(m_value.num);
 
     ASSERT_NOT_REACHED();
     return 0;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(unsigned short i)
+    : m_type(CSS_NUMBER)
+    , m_hasCachedCSSText(false)
+{
+    m_value.num = static_cast<double>(i);
+}
+
+template<> inline CSSPrimitiveValue::operator unsigned short() const
+{
+    if (m_type == CSS_NUMBER)
+        return clampTo<unsigned short>(m_value.num);
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(int i)
+    : m_type(CSS_NUMBER)
+    , m_hasCachedCSSText(false)
+{
+    m_value.num = static_cast<double>(i);
+}
+
+template<> inline CSSPrimitiveValue::operator int() const
+{
+    if (m_type == CSS_NUMBER)
+        return clampTo<int>(m_value.num);
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(float i)
+    : m_type(CSS_NUMBER)
+    , m_hasCachedCSSText(false)
+{
+    m_value.num = static_cast<double>(i);
+}
+
+template<> inline CSSPrimitiveValue::operator float() const
+{
+    if (m_type == CSS_NUMBER)
+        return clampTo<float>(m_value.num);
+
+    ASSERT_NOT_REACHED();
+    return 0.0f;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderStyle e)
