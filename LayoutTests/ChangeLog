@@ -1,5 +1,14 @@
 2011-07-27  Stephen White  <senorblanco@chromium.org>
 
+        Rebaseline one Chromium GPU test on Linux after
+        http://code.google.com/p/skia/source/detail?r=1924.
+
+        Unreviewed.
+
+        * platform/chromium-gpu-linux/compositing/shadows/shadow-drawing-expected.png:
+
+2011-07-27  Stephen White  <senorblanco@chromium.org>
+
         New chromium-linux baselines after skia change
         http://code.google.com/p/skia/source/detail?r=1924.
 
