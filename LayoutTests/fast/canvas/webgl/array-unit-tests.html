@@ -480,7 +480,11 @@ function testConstructionWithOutOfRangeValues(type, name) {
     shouldThrowIndexSizeErr(function() {
         var buffer = new ArrayBuffer(4);
         var array = new type(buffer, 4, 0x3FFFFFFF);
-    }, "Construction of " + name + " with out-of-range values");
+    }, "Construction of " + name + " with out-of-range number of elements");
+    shouldThrowIndexSizeErr(function() {
+        var buffer = new ArrayBuffer(4);
+        var array = new type(buffer, 8);
+    }, "Construction of " + name + " with out-of-range offset");
 }
 
 function testConstructionWithNegativeOutOfRangeValues(type, name) {
@@ -542,6 +546,21 @@ function testConstructionWithBothArrayBufferAndLength(type, name, elementSizeInB
         testPassed("Array lengths matched with explicit and implicit creation of ArrayBuffer");
     } else {
         testFailed("Array lengths DID NOT MATCH with explicit and implicit creation of ArrayBuffer");
+    }
+}
+
+function testConstructionWithSubPortionOfArrayBuffer(type, name, elementSizeInBytes) {
+    if (elementSizeInBytes > 1) {
+        // Test construction with a valid sub-portion of an array buffer
+        // (whose size is not an integral multiple of the element size).
+        var size = 4 * elementSizeInBytes + (elementSizeInBytes / 2);
+        var buf = new ArrayBuffer(size);
+        try {
+            var array = new type(buf, 0, 2);
+            testPassed("new " + name + "(new ArrayBuffer(" + size + "), 0, 2) succeeded");
+        } catch (e) {
+            testFailed("new " + name + "(new ArrayBuffer(" + size + "), 0, 2) failed: " + e);
+        }
     }
 }
 
@@ -849,6 +868,7 @@ function runTests() {
     testConstructionWithUnalignedLength(type, name, testCase.elementSizeInBytes);
     testConstructionOfHugeArray(type, name, testCase.elementSizeInBytes);
     testConstructionWithBothArrayBufferAndLength(type, name, testCase.elementSizeInBytes);
+    testConstructionWithSubPortionOfArrayBuffer(type, name, testCase.elementSizeInBytes);
     testSubarrayWithOutOfRangeValues(type, name, testCase.elementSizeInBytes);
     testSubarrayWithDefaultValues(type, name, testCase.elementSizeInBytes);
     testSettingFromArrayWithOutOfRangeOffset(type, name);

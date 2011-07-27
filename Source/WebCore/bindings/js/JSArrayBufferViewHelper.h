@@ -93,11 +93,16 @@ PassRefPtr<C> constructArrayBufferViewWithArrayBufferArgument(JSC::ExecState* ex
         return 0;
 
     unsigned offset = (exec->argumentCount() > 1) ? exec->argument(1).toUInt32(exec) : 0;
-    if ((buffer->byteLength() - offset) % sizeof(T))
-        throwError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size."));
-    unsigned int length = (buffer->byteLength() - offset) / sizeof(T);
+    unsigned int length = 0;
     if (exec->argumentCount() > 2)
         length = exec->argument(2).toUInt32(exec);
+    else {
+        if ((buffer->byteLength() - offset) % sizeof(T)) {
+            throwError(exec, createRangeError(exec, "ArrayBuffer length minus the byteOffset is not a multiple of the element size."));
+            return 0;
+        }
+        length = (buffer->byteLength() - offset) / sizeof(T);
+    }
     RefPtr<C> array = C::create(buffer, offset, length);
     if (!array)
         setDOMException(exec, INDEX_SIZE_ERR);

@@ -1,3 +1,13 @@
+2011-07-26  Kenneth Russell  <kbr@google.com>
+
+        Float32Array(ArrayBuffer, index, length) constructor working incorrectly.
+        https://bugs.webkit.org/show_bug.cgi?id=57042
+
+        Reviewed by James Robinson.
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+
 2011-07-26  Adrienne Walker  <enne@google.com>
 
         [chromium] Check in expectations for font-family-pictograph.

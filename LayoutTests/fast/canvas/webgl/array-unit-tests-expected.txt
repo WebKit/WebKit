@@ -21,7 +21,8 @@ PASS test Float32Array ConstructionBoundaryConditions
 PASS Construction of Float32Array with null buffer threw exception
 PASS Construction of Float32Array with (null buffer, 0) threw exception
 PASS Construction of Float32Array with (null buffer, 0, 0) threw exception
-PASS Construction of Float32Array with out-of-range values threw an exception
+PASS Construction of Float32Array with out-of-range number of elements threw an exception
+PASS Construction of Float32Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Float32Array with negative size threw exception
 PASS Construction of Float32Array with negative out-of-range values threw an exception
@@ -29,6 +30,7 @@ PASS Construction of Float32Array with unaligned offset threw an exception
 PASS Construction of Float32Array with unaligned length threw an exception
 PASS Construction of huge Float32Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
+PASS new Float32Array(new ArrayBuffer(18), 0, 2) succeeded
 Testing subarray of Float32Array
 PASS array.length is 32 / typeSize
 PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -65,7 +67,8 @@ PASS test Float64Array ConstructionBoundaryConditions
 PASS Construction of Float64Array with null buffer threw exception
 PASS Construction of Float64Array with (null buffer, 0) threw exception
 PASS Construction of Float64Array with (null buffer, 0, 0) threw exception
-PASS Construction of Float64Array with out-of-range values threw an exception
+PASS Construction of Float64Array with out-of-range number of elements threw an exception
+PASS Construction of Float64Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Float64Array with negative size threw exception
 PASS Construction of Float64Array with negative out-of-range values threw an exception
@@ -73,6 +76,7 @@ PASS Construction of Float64Array with unaligned offset threw an exception
 PASS Construction of Float64Array with unaligned length threw an exception
 PASS Construction of huge Float64Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
+PASS new Float64Array(new ArrayBuffer(36), 0, 2) succeeded
 Testing subarray of Float64Array
 PASS array.length is 32 / typeSize
 PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -110,7 +114,8 @@ PASS test Int8Array ConstructionBoundaryConditions
 PASS Construction of Int8Array with null buffer threw exception
 PASS Construction of Int8Array with (null buffer, 0) threw exception
 PASS Construction of Int8Array with (null buffer, 0, 0) threw exception
-PASS Construction of Int8Array with out-of-range values threw an exception
+PASS Construction of Int8Array with out-of-range number of elements threw an exception
+PASS Construction of Int8Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Int8Array with negative size threw exception
 PASS Construction of Int8Array with negative out-of-range values threw an exception
@@ -151,7 +156,8 @@ PASS test Int16Array ConstructionBoundaryConditions
 PASS Construction of Int16Array with null buffer threw exception
 PASS Construction of Int16Array with (null buffer, 0) threw exception
 PASS Construction of Int16Array with (null buffer, 0, 0) threw exception
-PASS Construction of Int16Array with out-of-range values threw an exception
+PASS Construction of Int16Array with out-of-range number of elements threw an exception
+PASS Construction of Int16Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Int16Array with negative size threw exception
 PASS Construction of Int16Array with negative out-of-range values threw an exception
@@ -159,6 +165,7 @@ PASS Construction of Int16Array with unaligned offset threw an exception
 PASS Construction of Int16Array with unaligned length threw an exception
 PASS Construction of huge Int16Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
+PASS new Int16Array(new ArrayBuffer(9), 0, 2) succeeded
 Testing subarray of Int16Array
 PASS array.length is 32 / typeSize
 PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -196,7 +203,8 @@ PASS test Int32Array ConstructionBoundaryConditions
 PASS Construction of Int32Array with null buffer threw exception
 PASS Construction of Int32Array with (null buffer, 0) threw exception
 PASS Construction of Int32Array with (null buffer, 0, 0) threw exception
-PASS Construction of Int32Array with out-of-range values threw an exception
+PASS Construction of Int32Array with out-of-range number of elements threw an exception
+PASS Construction of Int32Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Int32Array with negative size threw exception
 PASS Construction of Int32Array with negative out-of-range values threw an exception
@@ -204,6 +212,7 @@ PASS Construction of Int32Array with unaligned offset threw an exception
 PASS Construction of Int32Array with unaligned length threw an exception
 PASS Construction of huge Int32Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
+PASS new Int32Array(new ArrayBuffer(18), 0, 2) succeeded
 Testing subarray of Int32Array
 PASS array.length is 32 / typeSize
 PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -241,7 +250,8 @@ PASS test Uint8Array ConstructionBoundaryConditions
 PASS Construction of Uint8Array with null buffer threw exception
 PASS Construction of Uint8Array with (null buffer, 0) threw exception
 PASS Construction of Uint8Array with (null buffer, 0, 0) threw exception
-PASS Construction of Uint8Array with out-of-range values threw an exception
+PASS Construction of Uint8Array with out-of-range number of elements threw an exception
+PASS Construction of Uint8Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Uint8Array with negative size threw exception
 PASS Construction of Uint8Array with negative out-of-range values threw an exception
@@ -282,7 +292,8 @@ PASS test Uint16Array ConstructionBoundaryConditions
 PASS Construction of Uint16Array with null buffer threw exception
 PASS Construction of Uint16Array with (null buffer, 0) threw exception
 PASS Construction of Uint16Array with (null buffer, 0, 0) threw exception
-PASS Construction of Uint16Array with out-of-range values threw an exception
+PASS Construction of Uint16Array with out-of-range number of elements threw an exception
+PASS Construction of Uint16Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Uint16Array with negative size threw exception
 PASS Construction of Uint16Array with negative out-of-range values threw an exception
@@ -290,6 +301,7 @@ PASS Construction of Uint16Array with unaligned offset threw an exception
 PASS Construction of Uint16Array with unaligned length threw an exception
 PASS Construction of huge Uint16Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
+PASS new Uint16Array(new ArrayBuffer(9), 0, 2) succeeded
 Testing subarray of Uint16Array
 PASS array.length is 32 / typeSize
 PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
@@ -327,7 +339,8 @@ PASS test Uint32Array ConstructionBoundaryConditions
 PASS Construction of Uint32Array with null buffer threw exception
 PASS Construction of Uint32Array with (null buffer, 0) threw exception
 PASS Construction of Uint32Array with (null buffer, 0, 0) threw exception
-PASS Construction of Uint32Array with out-of-range values threw an exception
+PASS Construction of Uint32Array with out-of-range number of elements threw an exception
+PASS Construction of Uint32Array with out-of-range offset threw an exception
 PASS Construction of ArrayBuffer with negative size threw exception
 PASS Construction of Uint32Array with negative size threw exception
 PASS Construction of Uint32Array with negative out-of-range values threw an exception
@@ -335,6 +348,7 @@ PASS Construction of Uint32Array with unaligned offset threw an exception
 PASS Construction of Uint32Array with unaligned length threw an exception
 PASS Construction of huge Uint32Array threw exception
 PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
+PASS new Uint32Array(new ArrayBuffer(18), 0, 2) succeeded
 Testing subarray of Uint32Array
 PASS array.length is 32 / typeSize
 PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
