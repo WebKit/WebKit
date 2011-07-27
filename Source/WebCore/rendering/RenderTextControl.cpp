@@ -123,8 +123,9 @@ static inline bool updateUserModifyProperty(Node* node, RenderStyle* style)
 void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, RenderStyle* textBlockStyle) const
 {
     // The inner block, if present, always has its direction set to LTR,
-    // so we need to inherit the direction from the element.
+    // so we need to inherit the direction and unicode-bidi style from the element.
     textBlockStyle->setDirection(style()->direction());
+    textBlockStyle->setUnicodeBidi(style()->unicodeBidi());
 
     bool disabled = updateUserModifyProperty(node(), textBlockStyle);
     if (disabled)

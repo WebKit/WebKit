@@ -1,3 +1,16 @@
+2011-07-27  Levi Weintraub  <leviw@chromium.org>
+
+        unicode-bidi:-webkit-plaintext does not work on <textarea>
+        https://bugs.webkit.org/show_bug.cgi?id=65074
+
+        Reviewed by Ryosuke Niwa.
+
+        Fixing unicode-bidi propagation into text controls.
+
+        * fast/text/international/unicode-bidi-plaintext-in-textarea.html: Added.
+        * platform/mac/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Added.
+        * platform/mac/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt: Added.
+
 2011-07-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark another webgl flaky test.
