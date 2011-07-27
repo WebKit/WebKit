@@ -182,6 +182,9 @@ void LauncherApplication::handleUserOptions()
              << "[-webgl]"
 #endif
              << QString("[-viewport-update-mode %1]").arg(formatKeys(updateModes)).toLatin1().data()
+#if !defined(QT_NO_NETWORKDISKCACHE) && !defined(QT_NO_DESKTOPSERVICES)
+             << "[-disk-cache]"
+#endif
              << "[-cache-webview]"
              << "[-maximize]"
              << "[-show-fps]"
@@ -215,6 +218,14 @@ void LauncherApplication::handleUserOptions()
     if (args.contains("-show-fps")) {
         requiresGraphicsView("-show-fps");
         windowOptions.showFrameRate = true;
+    }
+
+    if (args.contains("-disk-cache")) {
+#if !defined(QT_NO_NETWORKDISKCACHE) && !defined(QT_NO_DESKTOPSERVICES)
+        windowOptions.useDiskCache = true;
+#else
+    appQuit(1, "-disk-cache only works if QNetworkDiskCache and QDesktopServices is enabled in your Qt build.");
+#endif
     }
 
     if (args.contains("-cache-webview") || defaultForAnimations) {

@@ -81,6 +81,7 @@ class WindowOptions {
 public:
     WindowOptions()
         : useGraphicsView(false)
+        , useDiskCache(false)
         , useCompositing(true)
         , useTiledBackingStore(false)
         , useWebGL(false)
@@ -113,6 +114,7 @@ public:
     }
 
     bool useGraphicsView;
+    bool useDiskCache;
     bool useCompositing;
     bool useTiledBackingStore;
     bool useWebGL;
@@ -173,6 +175,7 @@ protected slots:
 
     void loadURLListFromFile();
 
+    void setDiskCache(bool enable);
     void setTouchMocking(bool on);
     void toggleWebView(bool graphicsBased);
     void toggleAcceleratedCompositing(bool toggle);

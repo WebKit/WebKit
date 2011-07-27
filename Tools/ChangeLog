@@ -1,3 +1,23 @@
+2011-07-26  Keith Kyzivat  <keith.kyzivat@nokia.com>
+
+        [Qt] Add option to turn on disk caching in QtTestBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=65007
+
+        Reviewed by Noam Rosenthal.
+
+        Add menu item and command line option to turn on disk caching in
+        QtTestBrowser. Simple QNetworkDiskCache added to the page's
+        QNetworkAccssManager.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::initializeView):
+        (LauncherWindow::createChrome):
+        (LauncherWindow::setDiskCache):
+        * QtTestBrowser/launcherwindow.h:
+        (WindowOptions::WindowOptions):
+        * QtTestBrowser/main.cpp:
+        (LauncherApplication::handleUserOptions):
+
 2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Add support for download='filename' attribute in anchors.
