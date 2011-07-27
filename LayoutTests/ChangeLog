@@ -1,5 +1,16 @@
 2011-07-27  Adrienne Walker  <enne@google.com>
 
+        [chromium] Add baselines for struct-dom-11-f.svg.
+
+        Unreviewed gardening.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.txt: Added.
+
+2011-07-27  Adrienne Walker  <enne@google.com>
+
         [Chromium] Mark more tests as being flaky.
 
         Unreviewed gardening.
