@@ -156,7 +156,7 @@ private:
             || (info.spillFormat() | DataFormatJS) == DataFormatJSInteger;
     }
 
-    bool isDataFormatDouble(NodeIndex nodeIndex)
+    bool isRegisterDataFormatDouble(NodeIndex nodeIndex)
     {
         Node& node = m_jit.graph()[nodeIndex];
         VirtualRegister virtualRegister = node.virtualRegister();
@@ -164,14 +164,17 @@ private:
 
         return (info.registerFormat() | DataFormatJS) == DataFormatJSDouble;
     }
-
+    
     bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)
     {
-        return !(isDataFormatDouble(op1) || isDataFormatDouble(op2)) && (isInteger(op1) || isInteger(op2));
+        return !(isRegisterDataFormatDouble(op1) || isRegisterDataFormatDouble(op2)) && (isInteger(op1) || isInteger(op2));
     }
 
-    bool compare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ);
+    bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
     void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
+    void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition, Z_DFGOperation_EJJ);
+    
+    JITCompiler::Jump convertToDouble(GPRReg value, FPRReg result, GPRReg tmp);
 
     // Add a speculation check without additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail)

@@ -383,8 +383,107 @@ void SpeculativeJIT::compilePeepHoleIntegerBranch(Node& node, NodeIndex branchNo
         addBranch(m_jit.jump(), notTaken);
 }
 
+JITCompiler::Jump SpeculativeJIT::convertToDouble(GPRReg value, FPRReg result, GPRReg tmp)
+{
+    JITCompiler::Jump isInteger = m_jit.branchPtr(MacroAssembler::AboveOrEqual, value, GPRInfo::tagTypeNumberRegister);
+    
+    JITCompiler::Jump notNumber = m_jit.branchTestPtr(MacroAssembler::Zero, value, GPRInfo::tagTypeNumberRegister);
+    
+    m_jit.move(value, tmp);
+    m_jit.addPtr(GPRInfo::tagTypeNumberRegister, tmp);
+    m_jit.movePtrToDouble(tmp, result);
+    
+    JITCompiler::Jump done = m_jit.jump();
+    
+    isInteger.link(&m_jit);
+    
+    m_jit.convertInt32ToDouble(value, result);
+    
+    done.link(&m_jit);
+
+    return notNumber;
+}
+
+void SpeculativeJIT::compilePeepHoleDoubleBranch(Node& node, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition condition, Z_DFGOperation_EJJ operation)
+{
+    Node& branchNode = m_jit.graph()[branchNodeIndex];
+    BlockIndex taken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.takenBytecodeOffset());
+    BlockIndex notTaken = m_jit.graph().blockIndexForBytecodeOffset(branchNode.notTakenBytecodeOffset());
+    
+    bool op1Numeric = isKnownNumeric(node.child1());
+    bool op2Numeric = isKnownNumeric(node.child2());
+    
+    if (op1Numeric && op2Numeric) {
+        SpeculateDoubleOperand op1(this, node.child1());
+        SpeculateDoubleOperand op2(this, node.child2());
+        
+        addBranch(m_jit.branchDouble(condition, op1.fpr(), op2.fpr()), taken);
+    } else if (op1Numeric) {
+        SpeculateDoubleOperand op1(this, node.child1());
+        JSValueOperand op2(this, node.child2());
+        
+        FPRTemporary fprTmp(this);
+        GPRTemporary gprTmp(this);
+        
+        FPRReg op1FPR = op1.fpr();
+        GPRReg op2GPR = op2.gpr();
+        FPRReg op2FPR = fprTmp.fpr();
+        GPRReg gpr = gprTmp.gpr();
+        
+        JITCompiler::Jump slowPath = convertToDouble(op2GPR, op2FPR, gpr);
+        
+        addBranch(m_jit.branchDouble(condition, op1FPR, op2FPR), taken);
+        addBranch(m_jit.jump(), notTaken);
+        
+        slowPath.link(&m_jit);
+        
+        boxDouble(op1FPR, gpr);
+        
+        silentSpillAllRegisters(gpr);
+        setupStubArguments(gpr, op2GPR);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(GPRInfo::returnValueGPR, gpr);
+        silentFillAllRegisters(gpr);
+        
+        addBranch(m_jit.branchTest8(JITCompiler::NonZero, gpr), taken);
+    } else {
+        JSValueOperand op1(this, node.child1());
+        SpeculateDoubleOperand op2(this, node.child2());
+        
+        FPRTemporary fprTmp(this);
+        GPRTemporary gprTmp(this);
+        
+        FPRReg op2FPR = op2.fpr();
+        GPRReg op1GPR = op1.gpr();
+        FPRReg op1FPR = fprTmp.fpr();
+        GPRReg gpr = gprTmp.gpr();
+        
+        JITCompiler::Jump slowPath = convertToDouble(op1GPR, op1FPR, gpr);
+        
+        addBranch(m_jit.branchDouble(condition, op1FPR, op2FPR), taken);
+        addBranch(m_jit.jump(), notTaken);
+        
+        slowPath.link(&m_jit);
+        
+        boxDouble(op2FPR, gpr);
+        
+        silentSpillAllRegisters(gpr);
+        setupStubArguments(op1GPR, gpr);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(GPRInfo::returnValueGPR, gpr);
+        silentFillAllRegisters(gpr);
+        
+        addBranch(m_jit.branchTest8(JITCompiler::NonZero, gpr), taken);
+    }
+    
+    if (notTaken != (m_block + 1))
+        addBranch(m_jit.jump(), notTaken);
+}
+
 // Returns true if the compare is fused with a subsequent branch.
-bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, Z_DFGOperation_EJJ operation)
+bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition condition, MacroAssembler::DoubleCondition doubleCondition, Z_DFGOperation_EJJ operation)
 {
     // Fused compare & branch.
     NodeIndex branchNodeIndex = detectPeepHoleBranch();
@@ -395,6 +494,10 @@ bool SpeculativeJIT::compare(Node& node, MacroAssembler::RelationalCondition con
 
         if (shouldSpeculateInteger(node.child1(), node.child2())) {
             compilePeepHoleIntegerBranch(node, branchNodeIndex, condition);
+            use(node.child1());
+            use(node.child2());
+        } else if (isKnownNumeric(node.child1()) || isKnownNumeric(node.child2())) {
+            compilePeepHoleDoubleBranch(node, branchNodeIndex, doubleCondition, operation);
             use(node.child1());
             use(node.child2());
         } else
@@ -750,22 +853,22 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case CompareLess:
-        if (compare(node, JITCompiler::LessThan, operationCompareLess))
+        if (compare(node, JITCompiler::LessThan, JITCompiler::DoubleLessThan, operationCompareLess))
             return;
         break;
 
     case CompareLessEq:
-        if (compare(node, JITCompiler::LessThanOrEqual, operationCompareLessEq))
+        if (compare(node, JITCompiler::LessThanOrEqual, JITCompiler::DoubleLessThanOrEqual, operationCompareLessEq))
             return;
         break;
 
     case CompareGreater:
-        if (compare(node, JITCompiler::GreaterThan, operationCompareGreater))
+        if (compare(node, JITCompiler::GreaterThan, JITCompiler::DoubleGreaterThan, operationCompareGreater))
             return;
         break;
 
     case CompareGreaterEq:
-        if (compare(node, JITCompiler::GreaterThanOrEqual, operationCompareGreaterEq))
+        if (compare(node, JITCompiler::GreaterThanOrEqual, JITCompiler::DoubleGreaterThanOrEqual, operationCompareGreaterEq))
             return;
         break;
 
@@ -780,7 +883,7 @@ void SpeculativeJIT::compile(Node& node)
                 return;
             break;
         }
-        if (compare(node, JITCompiler::Equal, operationCompareEq))
+        if (compare(node, JITCompiler::Equal, JITCompiler::DoubleEqual, operationCompareEq))
             return;
         break;
 

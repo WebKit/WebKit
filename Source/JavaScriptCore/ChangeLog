@@ -1,5 +1,29 @@
 2011-07-26  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG speculative JIT never emits inline double comparisons, even when it
+        would be obvious more efficient to do so.
+        https://bugs.webkit.org/show_bug.cgi?id=65212
+
+        Reviewed by Gavin Barraclough.
+        
+        This handles the obvious case of inlining double comparisons: it only addresses
+        the speculative JIT, and only for fused compare/branch sequences.  But it does
+        handle the case where both operands are double (and there is no slow path),
+        or where one operand is double and the other is unknown type (in which case it
+        attempts to unbox the double, otherwise taking slow path).  This is an 0.8%
+        speed-up on SunSpider.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::convertToDouble):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleDoubleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isRegisterDataFormatDouble):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateInteger):
+
+2011-07-26  Filip Pizlo  <fpizlo@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=64969
         DFG JIT generates inefficient code for speculation failures.
 
