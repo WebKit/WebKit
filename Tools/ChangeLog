@@ -1,3 +1,9 @@
+2011-07-26  Adam Barth  <abarth@webkit.org>
+
+        Switch to an older idiom that works on Python 2.5.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+
 2011-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Add an exception to coding style check for EFL port.

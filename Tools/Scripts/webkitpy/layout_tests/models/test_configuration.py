@@ -149,7 +149,7 @@ class TestConfigurationConverter:
                 category = self._specifier_to_category[expanded_specifier]
                 matching_sets.setdefault(category, set()).update(configurations)
 
-        return set.intersection(*matching_sets.values())
+        return reduce(set.intersection, matching_sets.values())
 
     def to_specifiers_list(self, test_configuration_set):
         """Convert a set of TestConfiguration instances into one or more list of specifiers."""
@@ -188,7 +188,7 @@ class TestConfigurationConverter:
                 yield tuple(pool[i] for i in indices)
 
         def intersect_combination(combination):
-            return set.intersection(*[set(specifiers) for specifiers in combination])
+            return reduce(set.intersection, [set(specifiers) for specifiers in combination])
 
         def symmetric_difference(iterable):
             return reduce(lambda x, y: x ^ y, iterable)
