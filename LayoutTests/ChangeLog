@@ -1,3 +1,20 @@
+2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac pixel rebaselines after r91497.
+
+        * platform/mac/fast/multicol/float-multicol-expected.png:
+        * platform/mac/fast/multicol/scrolling-overflow-expected.png:
+        * platform/mac/fast/multicol/span/anonymous-before-child-parent-crash-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-complex-splitting-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-generated-content-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-child-property-removal-expected.png:
+        * platform/mac/fast/multicol/span/span-as-immediate-columns-child-removal-expected.png:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-dynamic-expected.png:
+        * platform/mac/fast/multicol/span/span-as-nested-columns-child-expected.png:
+        * platform/mac/fast/multicol/span/span-margin-collapsing-expected.png:
+        * platform/mac/fast/multicol/vertical-lr/float-multicol-expected.png:
+        * platform/mac/fast/multicol/vertical-rl/float-multicol-expected.png:
+
 2011-07-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Mark data-view-test.html as flaky in non-debug configs too.
