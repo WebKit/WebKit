@@ -731,6 +731,7 @@ http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
 fast/events/mouseover-button.html
 svg/W3C-SVG-1.1-SE/painting-control-04-f.svg
 svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg
+svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg
 svg/W3C-SVG-1.1-SE/text-tref-03-b.svg
 svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg
 

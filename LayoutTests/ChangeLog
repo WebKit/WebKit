@@ -1,3 +1,11 @@
+2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Update Qt 4.8 specific expected files.
+
+        * platform/qt-4.8/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.png: Added.
+        * platform/qt-4.8/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.txt: Added.
+        * platform/qt-wk2/Skipped: Skip failing test.
+
 2011-07-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Add baselines for struct-dom-11-f.svg.
