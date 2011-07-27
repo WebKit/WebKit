@@ -2359,7 +2359,7 @@ BUGCR65877 MAC LINUX WIN : fast/blockflow/japanese-rl-selection.html = IMAGE+TEX
 BUGCR65877 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
 BUGCR65877 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
 BUGCR65877 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
-BUGCR65877 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
+//BUGCR65877 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
 BUGCR65877 LINUX WIN : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
 BUGWK53451 LINUX : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
@@ -3876,6 +3876,7 @@ BUGWK65152 : fast/js/cyclic-prototypes.html = CRASH PASS
 
 BUGWK65155 : fast/selectors/001.html = CRASH PASS
 BUGWK65155 : media/audio-only-video-intrinsic-size.html = CRASH PASS
+BUGWK65155 : fast/dom/beforeload/script-before-load-dynamic.html = CRASH PASS
 
 // Needs new baseline -- visual appearance of file upload control has changed.
 BUGWK64692 WIN : fast/forms/input-file-re-render.html = IMAGE
@@ -3886,7 +3887,7 @@ BUGWK64692 WIN : fast/forms/input-value.html = IMAGE
 BUGWK64692 WIN : fast/forms/box-shadow-override.html = IMAGE
 BUGWK64692 WIN : fast/forms/file-input-disabled.html = IMAGE
 
-BUGWK65199 MAC : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
+BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
 

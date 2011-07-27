@@ -1,3 +1,11 @@
+2011-07-27  Adrienne Walker  <enne@google.com>
+
+        [Chromium] Mark more tests as being flaky.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg fails
