@@ -28,6 +28,7 @@
 #include "qweberror_p.h"
 #include <qwkcontext.h>
 #include <QtWebPageProxy.h>
+#include <ViewInterface.h>
 #include <WKFrame.h>
 #include <WKType.h>
 
@@ -45,6 +46,12 @@ static QtWebPageProxy* toQtWebPageProxy(const void* clientInfo)
     if (clientInfo)
         return reinterpret_cast<QtWebPageProxy*>(const_cast<void*>(clientInfo));
     return 0;
+}
+
+static inline ViewInterface* toViewInterface(const void* clientInfo)
+{
+    ASSERT(clientInfo);
+    return reinterpret_cast<ViewInterface*>(const_cast<void*>(clientInfo));
 }
 
 static void dispatchLoadSucceeded(WKFrameRef frame, const void* clientInfo)
@@ -153,43 +160,10 @@ void qt_wk_didBecomeResponsive(WKPageRef page, const void* clientInfo)
 {
 }
 
-WKPageRef qt_wk_createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void* clientInfo)
-{
-    QtWebPageProxy* wkPage = toQtWebPageProxy(clientInfo);
-    QtWebPageProxy::CreateNewPageFn createNewPageFn = wkPage->createNewPageFunction();
-
-    if (!createNewPageFn)
-        return 0;
-
-    if (QtWebPageProxy* newPage = createNewPageFn(wkPage)) {
-        WKRetain(newPage->pageRef());
-        return newPage->pageRef();
-    }
-
-    return 0;
-}
-
-void qt_wk_showPage(WKPageRef page, const void* clientInfo)
-{
-}
-
-void qt_wk_close(WKPageRef page, const void* clientInfo)
-{
-    emit toQtWebPageProxy(clientInfo)->windowCloseRequested();
-}
-
-void qt_wk_takeFocus(WKPageRef page, WKFocusDirection direction, const void *clientInfo)
-{
-}
-
-void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
-{
-}
-
 void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
 {
     QString qText = WKStringCopyQString(text);
-    toQtWebPageProxy(clientInfo)->didChangeStatusText(qText);
+    toViewInterface(clientInfo)->didChangeStatusText(qText);
 }
 
 void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void* clientInfo)

@@ -56,9 +56,6 @@ class QtWebPageProxy : public QObject, WebKit::PageClient {
     Q_OBJECT
 
 public:
-    // FIXME: Add a nice API for view creation.
-    typedef QtWebPageProxy* (*CreateNewPageFn)(QtWebPageProxy*);
-
     enum WebAction {
         NoWebAction = - 1,
 
@@ -132,7 +129,6 @@ public:
 
     void didChangeUrl(const QUrl&);
     void didChangeTitle(const QString&);
-    void didChangeStatusText(const QString&);
 
     void loadDidBegin();
     void loadDidSucceed();
@@ -150,8 +146,6 @@ public:
     void load(const QUrl& url);
     QUrl url() const;
 
-    CreateNewPageFn createNewPageFunction() const { return m_createNewPageFn; }
-
     void setDrawingAreaSize(const QSize&);
 
     QWKPreferences* preferences() const;
@@ -162,7 +156,6 @@ public:
 
     QAction* action(WebAction action) const;
     void triggerAction(WebAction action, bool checked = false);
-    void setCreateNewPageFunction(CreateNewPageFn function);
 
     void setCustomUserAgent(const QString&);
     QString customUserAgent() const;
@@ -182,7 +175,6 @@ public Q_SLOTS:
 
 public:
     Q_SIGNAL void scrollRequested(int dx, int dy);
-    Q_SIGNAL void windowCloseRequested();
     Q_SIGNAL void zoomableAreaFound(const QRect&);
 
 protected:
@@ -203,8 +195,6 @@ private:
 
     mutable QAction* m_actions[QtWebPageProxy::WebActionCount];
     mutable QWKPreferences* m_preferences;
-
-    CreateNewPageFn m_createNewPageFn;
 
     OwnPtr<QUndoStack> m_undoStack;
 };

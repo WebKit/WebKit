@@ -46,11 +46,6 @@ void qt_wk_didBecomeResponsive(WKPageRef, const void* clientInfo);
 void qt_wk_didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType, WKTypeRef, const void* clientInfo);
 
 // ui client
-WKPageRef qt_wk_createNewPage(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
-void qt_wk_showPage(WKPageRef page, const void *clientInfo);
-void qt_wk_close(WKPageRef page, const void *clientInfo);
-void qt_wk_takeFocus(WKPageRef page, WKFocusDirection direction, const void *clientInfo);
-void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo);
 void qt_wk_setStatusText(WKPageRef page, WKStringRef text, const void *clientInfo);
 
 // IconDatabase client.

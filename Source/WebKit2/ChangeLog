@@ -1,3 +1,26 @@
+2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt][WK2] Simplify the PageUIClient
+        https://bugs.webkit.org/show_bug.cgi?id=65198
+
+        Reviewed by Andreas Kling.
+
+        The only function of WKPageLoaderClient with a complete implementation
+        is qt_wk_setStatusText(). The other functions were what is left from
+        before the refactoring of QWKPage.
+
+        This patch removes the unused functions to simplify the client. Since the dependency
+        on QtWebPageProxy is removed from that client, it now calls the ViewInterface directly.
+
+        * UIProcess/qt/ClientImpl.cpp:
+        (toViewInterface):
+        (qt_wk_setStatusText):
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::init):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-07-26  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         Add support for download='filename' attribute in anchors.

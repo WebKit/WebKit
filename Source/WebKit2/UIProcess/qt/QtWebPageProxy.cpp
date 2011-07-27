@@ -98,7 +98,6 @@ QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, QWKContext* c, WKPa
     : m_viewInterface(viewInterface)
     , m_context(c)
     , m_preferences(0)
-    , m_createNewPageFn(0)
     , m_undoStack(adoptPtr(new QUndoStack(this)))
 {
     ASSERT(viewInterface);
@@ -143,14 +142,14 @@ void QtWebPageProxy::init()
 
     WKPageUIClient uiClient = {
         0,      /* version */
-        this,   /* clientInfo */
-        qt_wk_createNewPage,
-        qt_wk_showPage,
-        qt_wk_close,
-        qt_wk_takeFocus,
+        m_viewInterface,   /* clientInfo */
+        0,  /* createNewPage */
+        0,  /* showPage */
+        0,  /* close */
+        0,  /* takeFocus */
         0,  /* focus */
         0,  /* unfocus */
-        qt_wk_runJavaScriptAlert,
+        0,  /* runJavaScriptAlert */
         0,  /* runJavaScriptConfirm */
         0,  /* runJavaScriptPrompt */
         qt_wk_setStatusText,
@@ -410,11 +409,6 @@ void QtWebPageProxy::didChangeTitle(const QString& newTitle)
     m_viewInterface->didChangeTitle(newTitle);
 }
 
-void QtWebPageProxy::didChangeStatusText(const QString& text)
-{
-    m_viewInterface->didChangeStatusText(text);
-}
-
 void QtWebPageProxy::loadDidBegin()
 {
     m_viewInterface->loadDidBegin();
@@ -514,11 +508,6 @@ QWKPreferences* QtWebPageProxy::preferences() const
     }
 
     return m_preferences;
-}
-
-void QtWebPageProxy::setCreateNewPageFunction(CreateNewPageFn function)
-{
-    m_createNewPageFn = function;
 }
 
 void QtWebPageProxy::setCustomUserAgent(const QString& userAgent)
