@@ -3703,8 +3703,6 @@ BUGCR89282 SNOWLEOPARD : fast/forms/input-appearance-range.html = IMAGE
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
-BUGRNIWA : editing/selection/extend-inside-transforms-backward.html = FAIL PASS
-BUGRNIWA : editing/selection/extend-inside-transforms-forward.html = FAIL PASS
 
 // This test ASSERTs in skia since it was added.
 BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = TEXT CRASH
@@ -3790,59 +3788,6 @@ BUGWK64948 WIN DEBUG : fast/forms/input-file-label.html = CRASH PASS
 BUGWK64951 : fast/frames/meta-refresh-user-gesture.html = CRASH TIMEOUT PASS
 
 BUGWK64976 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE
-
-BUGRNIWA LINUX : fast/multicol/scrolling-overflow.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/single-line.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/span/anonymous-before-child-parent-crash.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/span/anonymous-split-block-crash.html = TEXT
-BUGRNIWA LINUX : fast/multicol/span/anonymous-style-inheritance.html = TEXT
-BUGRNIWA LINUX : fast/multicol/span/span-as-immediate-child-complex-splitting.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/span/span-as-immediate-child-generated-content.html = TEXT
-BUGRNIWA LINUX : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/span/span-as-immediate-columns-child-dynamic.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/span/span-as-immediate-columns-child.html = TEXT
-BUGRNIWA LINUX : fast/multicol/span/span-as-nested-columns-child-dynamic.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/span/span-as-nested-columns-child.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/span/span-margin-collapsing.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/vertical-lr/float-multicol.html = IMAGE+TEXT
-BUGRNIWA LINUX : fast/multicol/vertical-rl/float-multicol.html = IMAGE+TEXT
-
-BUGRNIWA MAC : fast/multicol/vertical-rl/float-multicol.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/vertical-lr/float-multicol.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/span-margin-collapsing.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/span-as-nested-columns-child.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/span-as-nested-columns-child-dynamic.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/span-as-immediate-columns-child.html = TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/span-as-immediate-columns-child-dynamic.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/span-as-immediate-child-generated-content.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/span-as-immediate-child-complex-splitting.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/anonymous-style-inheritance.html = TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/anonymous-split-block-crash.html = TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/span/anonymous-before-child-parent-crash.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/single-line.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/scrolling-overflow.html = IMAGE+TEXT IMAGE
-BUGRNIWA MAC : fast/multicol/float-multicol.html = IMAGE+TEXT IMAGE
-
-BUGRNIWA WIN : fast/multicol/scrolling-overflow.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/single-line.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/span/anonymous-before-child-parent-crash.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/span/anonymous-split-block-crash.html = TEXT
-BUGRNIWA WIN : fast/multicol/span/anonymous-style-inheritance.html = TEXT
-BUGRNIWA WIN : fast/multicol/span/span-as-immediate-child-complex-splitting.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/span/span-as-immediate-child-generated-content.html = TEXT
-BUGRNIWA WIN : fast/multicol/span/span-as-immediate-child-property-removal.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/span/span-as-immediate-columns-child-dynamic.html = TEXT
-BUGRNIWA WIN : fast/multicol/span/span-as-immediate-columns-child-removal.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/span/span-as-immediate-columns-child.html = TEXT
-BUGRNIWA WIN : fast/multicol/span/span-as-nested-columns-child-dynamic.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/span/span-as-nested-columns-child.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/span/span-margin-collapsing.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/vertical-lr/float-multicol.html = IMAGE+TEXT
-BUGRNIWA WIN : fast/multicol/vertical-rl/float-multicol.html = IMAGE+TEXT
-BUGRNIWA WIN : http/tests/inspector/resource-tree/resource-tree-non-unique-url.html = TEXT
 
 BUGRNIWA : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = MISSING
 

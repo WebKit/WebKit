@@ -33,9 +33,9 @@ layer at (8,173) size 784x34
       text run at (88,12) width 30: " text."
 layer at (8,223) size 784x19
   RenderBlock {DIV} at (0,207) size 784x19 [bgcolor=#EEEEEE]
-    RenderBlock {P} at (0,0) size 184x20
-      RenderText {#text} at (0,0) size 86x19
-        text run at (0,0) width 86: "Nested block."
+    RenderBlock {P} at (0,16) size 184x23
+      RenderText {#text} at (0,3) size 86x19
+        text run at (0,3) width 86: "Nested block."
 layer at (8,258) size 784x19
   RenderBlock {P} at (0,0) size 784x19 [bgcolor=#EEEEEE]
     RenderText {#text} at (0,0) size 106x19
