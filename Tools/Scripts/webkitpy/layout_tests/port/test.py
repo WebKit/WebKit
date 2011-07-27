@@ -283,7 +283,7 @@ class TestPort(Port):
             'test-win-vista': 'vista',
             'test-mac-leopard': 'leopard',
             'test-mac-snowleopard': 'snowleopard',
-            'test-linux-x86_64': '',
+            'test-linux-x86_64': 'lucid',
         }
         self._version = version_map[port_name]
 

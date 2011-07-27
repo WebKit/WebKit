@@ -178,6 +178,7 @@ class ChromiumPortTest(port_testcase.PortTestCase):
 
     def test_skipped_layout_tests(self):
         mock_options = mocktool.MockOptions()
+        mock_options.configuration = 'release'
         port = ChromiumPortTest.TestLinuxPort(options=mock_options)
 
         fake_test = 'fast/js/not-good.js'
