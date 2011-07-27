@@ -382,7 +382,7 @@ class SpecificityCalculatorTests(unittest.TestCase):
     def setUp(self):
         port_obj = port.get('test-win-xp', None)
         self.config = port_obj.test_configuration()
-        self.calculator = SpecificityCalculator(self.config)
+        self.calculator = SpecificityCalculator(self.config, port_obj.all_test_configurations())
 
     def assert_specificity(self, modifiers, expected_specificity=-1, num_errors=0):
         expectation = TestExpectationLine()

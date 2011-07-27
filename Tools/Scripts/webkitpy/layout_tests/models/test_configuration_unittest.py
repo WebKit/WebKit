@@ -90,11 +90,6 @@ class TestConfigurationTest(unittest.TestCase):
         config = TestConfiguration(port.get('test-win-xp', None))
         self.assertEquals('<xp, x86, release, cpu>', str(config))
 
-    def test_all_test_configurations(self):
-        all_configs = TestConfiguration(None, 'xp', 'x86', 'release', 'cpu').all_test_configurations()
-        for config in all_configs:
-            self.assertTrue(isinstance(config, TestConfiguration))
-
 
 class TestConfigurationConverterTest(unittest.TestCase):
     def __init__(self, testFunc):

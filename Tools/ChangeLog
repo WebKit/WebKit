@@ -1,3 +1,30 @@
+2011-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Teach all ports about their test configurations.
+        https://bugs.webkit.org/show_bug.cgi?id=65278
+
+        Each Port object should return a valid set of all TestConfiguration instances,
+        available for this port.
+
+        Reviewed by Philippe Normand.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py: Removed TestConfiguration.all_test_configurations,
+            since it is different for each port.
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py: Removed related test.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Changed SpecificityCalculator to take a list of
+            all test configurations as a param.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Adjusted arguments accordingly.
+        * Scripts/webkitpy/layout_tests/port/base.py: Forced all ports to override generation of all test configurations.
+        * Scripts/webkitpy/layout_tests/port/chromium.py: Implemented _generate_all_test_configurations for the port.
+        * Scripts/webkitpy/layout_tests/port/gtk.py: Ditto.
+        * Scripts/webkitpy/layout_tests/port/mac.py: Ditto.
+        * Scripts/webkitpy/layout_tests/port/qt.py: Ditto.
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py: Added an extra test to ensure we're generating a good set.
+        * Scripts/webkitpy/layout_tests/port/test.py: Implemented a fixed-in-time all_test_configurations for testing.
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py: Added a mock all_test_configurations implementation.
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py: Added a unit test for the port.
+
 2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
 
         [WK2][Qt] Move from QGraphicsView to Qt Scene Graph

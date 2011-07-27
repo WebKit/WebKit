@@ -87,6 +87,8 @@ class Port(object):
     # Test names resemble unix relative paths, and use '/' as a directory separator.
     TEST_PATH_SEPARATOR = '/'
 
+    ALL_BUILD_TYPES = ('debug', 'release')
+
     def __init__(self, port_name=None, options=None,
                  executive=None,
                  user=None,
@@ -747,8 +749,12 @@ class Port(object):
             self._test_configuration = TestConfiguration(self)
         return self._test_configuration
 
+    # FIXME: Belongs on a Platform object.
+    @memoized
     def all_test_configurations(self):
-        return self.test_configuration().all_test_configurations()
+        """Returns a list of TestConfiguration instances, representing all available
+        test configurations for this port."""
+        return self._generate_all_test_configurations()
 
     def all_baseline_variants(self):
         """Returns a list of platform names sufficient to cover all the baselines.
@@ -946,3 +952,9 @@ class Port(object):
         """Return the  full path to the top of the baseline tree for a
         given platform."""
         return self._filesystem.join(self.layout_tests_dir(), 'platform', platform)
+
+    # FIXME: Belongs on a Platform object.
+    def _generate_all_test_configurations(self):
+        """Generates a list of TestConfiguration instances, representing configurations
+        for a platform across all OSes, architectures, build and graphics types."""
+        raise NotImplementedError('Port._generate_test_configurations')

@@ -35,6 +35,7 @@ import time
 
 from webkitpy.common.system import filesystem_mock
 from webkitpy.layout_tests.port import Port, Driver, DriverOutput
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.tool import mocktool
 
 
@@ -363,6 +364,36 @@ class TestPort(Port):
 
     def path_to_test_expectations_file(self):
         return self._expectations_path
+
+    def all_test_configurations(self):
+        """Returns a sequence of the TestConfigurations the port supports."""
+        # By default, we assume we want to test every graphics type in
+        # every configuration on every system.
+        test_configurations = []
+        for version, architecture in self._all_systems():
+            for build_type in self._all_build_types():
+                for graphics_type in self._all_graphics_types():
+                    test_configurations.append(TestConfiguration(
+                        version=version,
+                        architecture=architecture,
+                        build_type=build_type,
+                        graphics_type=graphics_type))
+        return test_configurations
+
+    def _all_systems(self):
+        return (('leopard', 'x86'),
+                ('snowleopard', 'x86'),
+                ('xp', 'x86'),
+                ('vista', 'x86'),
+                ('win7', 'x86'),
+                ('lucid', 'x86'),
+                ('lucid', 'x86_64'))
+
+    def _all_build_types(self):
+        return ('debug', 'release')
+
+    def _all_graphics_types(self):
+        return ('cpu', 'gpu')
 
     def all_baseline_variants(self):
         return self.ALL_BASELINE_VARIANTS

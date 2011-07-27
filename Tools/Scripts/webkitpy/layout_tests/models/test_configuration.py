@@ -63,36 +63,6 @@ class TestConfiguration(object):
         """Returns the configuration values of this instance as a tuple."""
         return self.__dict__.values()
 
-    def all_test_configurations(self):
-        """Returns a sequence of the TestConfigurations the port supports."""
-        # By default, we assume we want to test every graphics type in
-        # every configuration on every system.
-        test_configurations = []
-        for version, architecture in self.all_systems():
-            for build_type in self.all_build_types():
-                for graphics_type in self.all_graphics_types():
-                    test_configurations.append(TestConfiguration(
-                        version=version,
-                        architecture=architecture,
-                        build_type=build_type,
-                        graphics_type=graphics_type))
-        return test_configurations
-
-    def all_systems(self):
-        return (('leopard', 'x86'),
-                ('snowleopard', 'x86'),
-                ('xp', 'x86'),
-                ('vista', 'x86'),
-                ('win7', 'x86'),
-                ('lucid', 'x86'),
-                ('lucid', 'x86_64'))
-
-    def all_build_types(self):
-        return ('debug', 'release')
-
-    def all_graphics_types(self):
-        return ('cpu', 'gpu')
-
 
 class TestConfigurationConverter:
     def __init__(self, all_test_configurations, configuration_macros=None):

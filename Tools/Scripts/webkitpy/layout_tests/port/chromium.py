@@ -45,6 +45,7 @@ from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
 from webkitpy.common.system.zipfileset import ZipFileSet
 from webkitpy.layout_tests.models import test_expectations
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port
 from webkitpy.layout_tests.port.driver import Driver, DriverOutput
 from webkitpy.layout_tests.port import builders
@@ -60,6 +61,17 @@ class ChromiumPort(Port):
 
     port_name = "chromium"
 
+    ALL_SYSTEMS = (
+        ('leopard', 'x86'),
+        ('snowleopard', 'x86'),
+        ('xp', 'x86'),
+        ('vista', 'x86'),
+        ('win7', 'x86'),
+        ('lucid', 'x86'),
+        ('lucid', 'x86_64'))
+
+    ALL_GRAPHICS_TYPES = ('cpu', 'gpu')
+
     ALL_BASELINE_VARIANTS = [
         'chromium-mac-snowleopard', 'chromium-mac-leopard',
         'chromium-win-win7', 'chromium-win-vista', 'chromium-win-xp',
@@ -69,6 +81,8 @@ class ChromiumPort(Port):
 
     def __init__(self, **kwargs):
         Port.__init__(self, **kwargs)
+        # All sub-classes override this, but we need an initial value for testing.
+        self._version = 'xp'
         self._chromium_base_dir = None
 
     def _check_file_exists(self, path_to_file, file_description,
@@ -262,6 +276,21 @@ class ChromiumPort(Port):
         test_expectations file. See test_expectations.py for more details."""
         expectations_path = self.path_to_test_expectations_file()
         return self._filesystem.read_text_file(expectations_path)
+
+    def _generate_all_test_configurations(self):
+        """Returns a sequence of the TestConfigurations the port supports."""
+        # By default, we assume we want to test every graphics type in
+        # every configuration on every system.
+        test_configurations = []
+        for version, architecture in self.ALL_SYSTEMS:
+            for build_type in self.ALL_BUILD_TYPES:
+                for graphics_type in self.ALL_GRAPHICS_TYPES:
+                    test_configurations.append(TestConfiguration(
+                        version=version,
+                        architecture=architecture,
+                        build_type=build_type,
+                        graphics_type=graphics_type))
+        return test_configurations
 
     def test_expectations_overrides(self):
         # FIXME: It seems bad that run_webkit_tests.py uses a hardcoded dummy

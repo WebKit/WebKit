@@ -33,6 +33,7 @@ import os
 import signal
 import subprocess
 
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port import base, builders, server_process, webkit
 
 
@@ -61,6 +62,10 @@ class GtkDriver(webkit.WebKitDriver):
 class GtkPort(webkit.WebKitPort):
     port_name = "gtk"
 
+    def __init__(self, **kwargs):
+        webkit.WebKitPort.__init__(self, **kwargs)
+        self._version = self.port_name
+
     def _port_flag_for_scripts(self):
         return "--gtk"
 
@@ -73,6 +78,12 @@ class GtkPort(webkit.WebKitPort):
         environment['LIBOVERLAY_SCROLLBAR'] = '0'
         environment['WEBKIT_INSPECTOR_PATH'] = self._build_path('Programs/resources/inspector')
         return environment
+
+    def _generate_all_test_configurations(self):
+        configurations = []
+        for build_type in self.ALL_BUILD_TYPES:
+            configurations.append(TestConfiguration(version=self._version, architecture='x86', build_type=build_type, graphics_type='cpu'))
+        return configurations
 
     def _path_to_driver(self):
         return self._build_path('Programs', self.driver_name())

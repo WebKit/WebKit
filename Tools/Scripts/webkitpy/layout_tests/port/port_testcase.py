@@ -343,6 +343,7 @@ class PortTestCase(unittest.TestCase):
         if not port:
             return
         self.assertTrue(len(port.all_test_configurations()) > 0)
+        self.assertTrue(port.test_configuration() in port.all_test_configurations())
 
     def integration_test_http_server__loop(self):
         port = self.make_port()

@@ -30,6 +30,7 @@ import unittest
 from webkitpy.common.system.filesystem_mock import MockFileSystem
 from webkitpy.common.system.outputcapture import OutputCapture
 
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.webkit import WebKitPort
 from webkitpy.layout_tests.port import port_testcase
 
@@ -49,6 +50,9 @@ class TestWebKitPort(WebKitPort):
         filesystem = filesystem or MockFileSystem()
         user = user or MockUser()
         WebKitPort.__init__(self, executive=executive, filesystem=filesystem, user=MockUser(), **kwargs)
+
+    def all_test_configurations(self):
+        return [TestConfiguration(self)]
 
     def _runtime_feature_list(self):
         return self.feature_list
@@ -80,7 +84,7 @@ class WebKitPortUnitTests(unittest.TestCase):
 
 class WebKitPortTest(port_testcase.PortTestCase):
     def port_maker(self, platform):
-        return WebKitPort
+        return TestWebKitPort
 
     def test_check_build(self):
         pass

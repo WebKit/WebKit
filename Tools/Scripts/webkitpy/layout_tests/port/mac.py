@@ -33,6 +33,7 @@ import platform
 import re
 
 from webkitpy.common.system.executive import ScriptError
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
 
@@ -235,6 +236,13 @@ class MacPort(WebKitPort):
     # Belongs on a Platform object.
     def is_crash_reporter(self, process_name):
         return re.search(r'ReportCrash', process_name)
+
+    def _generate_all_test_configurations(self):
+        configurations = []
+        for version in self.SUPPORTED_VERSIONS:
+            for build_type in ('release', 'debug'):
+                configurations.append(TestConfiguration(version=version, architecture='x86', build_type=build_type, graphics_type='cpu'))
+        return configurations
 
     def _build_java_test_support(self):
         java_tests_path = self._filesystem.join(self.layout_tests_dir(), "java")

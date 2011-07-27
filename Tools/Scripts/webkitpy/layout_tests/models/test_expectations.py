@@ -159,7 +159,7 @@ class TestExpectationParser:
 
     def __init__(self, port, test_config, full_test_list, allow_rebaseline_modifier):
         self._port = port
-        self._specificity_calculator = SpecificityCalculator(test_config)
+        self._specificity_calculator = SpecificityCalculator(test_config, port.all_test_configurations())
         self._full_test_list = full_test_list
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
@@ -837,11 +837,11 @@ class SpecificityCalculator(object):
     # 'MAC XP'. See SpecificityCalculatorTest.test_invalid_combinations() in the
     # _unittest.py file.
 
-    def __init__(self, test_config):
+    def __init__(self, test_config, all_test_configurations):
         """Initialize a SpecificityCalculator argument with the TestConfiguration it
         should be matched against."""
         self.test_config = test_config
-        self.allowed_configurations = test_config.all_test_configurations()
+        self.allowed_configurations = all_test_configurations
         self.macros = self.MACROS
 
         self.regexes_to_ignore = {}

@@ -33,6 +33,7 @@ import sys
 
 import webkit
 
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
 
@@ -40,6 +41,7 @@ _log = logging.getLogger(__name__)
 
 
 class QtPort(WebKitPort):
+    ALL_VERSIONS = ['linux', 'win', 'mac']
     port_name = "qt"
 
     def _port_flag_for_scripts(self):
@@ -58,6 +60,7 @@ class QtPort(WebKitPort):
     def __init__(self, sys_platform=None, **kwargs):
         WebKitPort.__init__(self, **kwargs)
         self._operating_system = self._operating_system_for_platform(sys_platform or sys.platform)
+        self._version = self._operating_system
 
         # FIXME: This will allow WebKitPort.baseline_search_path and WebKitPort._skipped_file_search_paths
         # to do the right thing, but doesn't include support for qt-4.8 or qt-arm (seen in LayoutTests/platform) yet.
@@ -65,6 +68,13 @@ class QtPort(WebKitPort):
         if self._operating_system:
             name_components.append(self._operating_system)
         self._name = "-".join(name_components)
+
+    def _generate_all_test_configurations(self):
+        configurations = []
+        for version in self.ALL_VERSIONS:
+            for build_type in self.ALL_BUILD_TYPES:
+                configurations.append(TestConfiguration(version=version, architecture='x86', build_type=build_type, graphics_type='cpu'))
+        return configurations
 
     def _build_driver(self):
         # The Qt port builds DRT as part of the main build step

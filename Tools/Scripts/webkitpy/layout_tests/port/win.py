@@ -30,6 +30,7 @@
 
 import logging
 
+from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
 
@@ -56,6 +57,12 @@ class WinPort(WebKitPort):
         # Based on code from old-run-webkit-tests expectedDirectoryForTest()
         # FIXME: This does not work for WebKit2.
         return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
+
+    def _generate_all_test_configurations(self):
+        configurations = []
+        for build_type in self.ALL_BUILD_TYPES:
+            configurations.append(TestConfiguration(version=self._version, architecture='x86', build_type=build_type, graphics_type='cpu'))
+        return configurations
 
     # FIXME: webkitperl/httpd.pm installs /usr/lib/apache/libphp4.dll on cycwin automatically
     # as part of running old-run-webkit-tests.  That's bad design, but we may need some similar hack.
