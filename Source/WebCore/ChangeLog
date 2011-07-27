@@ -1,5 +1,17 @@
 2011-07-26  Chris Rogers  <crogers@google.com>
 
+        V8 custom bindings for AudioNode must do proper object checking and throw exception in case of error
+        https://bugs.webkit.org/show_bug.cgi?id=65222
+
+        Reviewed by James Robinson.
+
+        No new tests - this fixes upcoming audionode.html layout test
+
+        * bindings/v8/custom/V8AudioNodeCustom.cpp:
+        (WebCore::V8AudioNode::connectCallback):
+
+2011-07-26  Chris Rogers  <crogers@google.com>
+
         AudioContext is not correctly accounting for hardware resources
         https://bugs.webkit.org/show_bug.cgi?id=65217
 

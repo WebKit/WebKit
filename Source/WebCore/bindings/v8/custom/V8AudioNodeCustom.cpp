@@ -41,7 +41,10 @@ v8::Handle<v8::Value> V8AudioNode::connectCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwError("Not enough arguments", V8Proxy::SyntaxError);
 
-    AudioNode* destinationNode = toNative(args[0]->ToObject());
+    AudioNode* destinationNode = 0;
+    if (V8AudioNode::HasInstance(args[0]))
+        destinationNode = toNative(args[0]->ToObject());
+        
     if (!destinationNode)
         return throwError("Invalid destination node", V8Proxy::SyntaxError);
     
