@@ -3891,5 +3891,3 @@ BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
 
-BUGWK65241 DEBUG : editing/selection/move-by-word-visually-others.html = TIMEOUT PASS
-BUGWK65241 DEBUG : editing/selection/move-by-word-visually-single-space-sigle-line.html = TIMEOUT PASS

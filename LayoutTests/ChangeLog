@@ -1,3 +1,26 @@
+2011-07-27  Xiaomei Ji  <xji@chromium.org>
+
+        editing/selection/move-by-word-visually* tests timing out
+        https://bugs.webkit.org/show_bug.cgi?id=65241
+
+        Split the 2 tests into 4 tests. But need to find a way to improve
+        performance eventually.
+
+        * editing/selection/move-by-word-visually-multi-line-expected.txt: Copied from LayoutTests/editing/selection/move-by-word-visually-others-expected.txt.
+        * editing/selection/move-by-word-visually-multi-line.html: Copied from LayoutTests/editing/selection/move-by-word-visually-others.html.
+        * editing/selection/move-by-word-visually-multi-space-expected.txt: Copied from LayoutTests/editing/selection/move-by-word-visually-others-expected.txt.
+        * editing/selection/move-by-word-visually-multi-space.html: Copied from LayoutTests/editing/selection/move-by-word-visually-others.html.
+        * editing/selection/move-by-word-visually-others-expected.txt: Removed.
+        * editing/selection/move-by-word-visually-others.html: Removed.
+        * editing/selection/move-by-word-visually-single-space-inline-element-expected.txt: Copied from LayoutTests/editing/selection/move-by-word-visually-single-space-sigle-line-expected.txt.
+        * editing/selection/move-by-word-visually-single-space-inline-element.html: Copied from LayoutTests/editing/selection/move-by-word-visually-single-space-sigle-line.html.
+        * editing/selection/move-by-word-visually-single-space-one-element-expected.txt: Copied from LayoutTests/editing/selection/move-by-word-visually-single-space-sigle-line-expected.txt.
+        * editing/selection/move-by-word-visually-single-space-one-element.html: Copied from LayoutTests/editing/selection/move-by-word-visually-single-space-sigle-line.html.
+        * editing/selection/move-by-word-visually-single-space-sigle-line-expected.txt: Removed.
+        * editing/selection/move-by-word-visually-single-space-sigle-line.html: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/qt/Skipped:
+
 2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Wrong image height in absolutely positioned div in relatively positioned parent with bottom padding
