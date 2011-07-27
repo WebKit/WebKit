@@ -1,5 +1,11 @@
 var initialize_ConsoleTest = function() {
 
+InspectorTest.showConsolePanel = function()
+{
+    WebInspector.showPanel("console");
+    WebInspector.drawer.immediatelyFinishAnimation();
+}
+
 InspectorTest.dumpConsoleMessages = function()
 {
     var result = [];

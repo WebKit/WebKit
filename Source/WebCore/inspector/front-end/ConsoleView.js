@@ -40,6 +40,10 @@ WebInspector.ConsoleView = function(drawer)
     this.clearButton.title = WebInspector.UIString("Clear console log.");
     this.clearButton.addEventListener("click", this._clearButtonClicked.bind(this), false);
 
+    this._contextSelectElement = document.getElementById("console-context");
+    if (WebInspector.WorkerManager.isWorkerFrontend())
+        this._contextSelectElement.addStyleClass("hidden");
+
     this.messagesElement = document.getElementById("console-messages");
     this.messagesElement.addEventListener("selectstart", this._messagesSelectStart.bind(this), false);
     this.messagesElement.addEventListener("click", this._messagesClicked.bind(this), true);
@@ -162,6 +166,37 @@ WebInspector.ConsoleView.prototype = {
             var message = String.sprintf(WebInspector.UIString("%d console messages are not shown."), count);
             this.addMessage(WebInspector.ConsoleMessage.createTextMessage(message, WebInspector.ConsoleMessage.MessageLevel.Warning));
         }
+    },
+
+    addContext: function(context)
+    {
+        var option = document.createElement("option");
+        option.text = context.displayName;
+        option.title = context.url;
+        option._context = context;
+        context._consoleOption = option;
+        this._contextSelectElement.appendChild(option);
+        context.addEventListener(WebInspector.FrameEvaluationContext.EventTypes.Updated, this._contextUpdated, this);
+    },
+
+    removeContext: function(context)
+    {
+        this._contextSelectElement.removeChild(context._consoleOption);
+    },
+
+    _contextUpdated: function(event)
+    {
+        var context = event.data;
+        var option= context._consoleOption;
+        option.text = context.displayName;
+        option.title = context.url;
+    },
+
+    _currentEvaluationContextId: function()
+    {
+        if (this._contextSelectElement.selectedIndex === -1)
+            return undefined;
+        return this._contextSelectElement[this._contextSelectElement.selectedIndex]._context.frameId;
     },
 
     _updateFilter: function(e)
@@ -577,7 +612,7 @@ WebInspector.ConsoleView.prototype = {
             if (!error)
                 callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
-        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, evalCallback);
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, this._currentEvaluationContextId(), evalCallback);
     },
 
     _enterKeyPressed: function(event)

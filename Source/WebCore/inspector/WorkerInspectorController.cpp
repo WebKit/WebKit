@@ -61,6 +61,11 @@ public:
     virtual ~WorkerRuntimeAgent() { }
 
 private:
+    virtual ScriptState* scriptStateForFrameId(ErrorString*, const String&)
+    {
+        return 0;
+    }
+
     virtual ScriptState* getDefaultInspectedState()
     {
         return scriptStateFromWorkerContext(m_workerContext);

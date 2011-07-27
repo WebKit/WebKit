@@ -16,6 +16,7 @@
     <file>Color.js</file>
     <file>ConsolePanel.js</file>
     <file>ConsoleView.js</file>
+    <file>JavaScriptContextManager.js</file>
     <file>ContextMenu.js</file>
     <file>CookieItemsView.js</file>
     <file>CookieParser.js</file>

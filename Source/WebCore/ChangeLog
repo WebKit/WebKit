@@ -1,3 +1,46 @@
+2011-07-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Inspector should support cd(window) in the command line
+        https://bugs.webkit.org/show_bug.cgi?id=19872
+
+        Added dropdown list with all iframes to allow selecting current evaluation context for console expressions.
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/console-cd.html
+
+        * WebCore.gypi:
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::InspectorRuntimeAgent):
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.addContext):
+        (WebInspector.ConsoleView.prototype.removeContext):
+        (WebInspector.ConsoleView.prototype._contextUpdated):
+        (WebInspector.ConsoleView.prototype.get _currentEvaluationContextId):
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        * inspector/front-end/ContextManager.js: Added.
+        (WebInspector.ContextManager):
+        (WebInspector.ContextManager.prototype._frameAdded):
+        (WebInspector.ContextManager.prototype._frameNavigated):
+        (WebInspector.ContextManager.prototype._frameDetached):
+        (WebInspector.FrameEvaluationContext):
+        (WebInspector.FrameEvaluationContext.prototype._frameNavigated):
+        (WebInspector.FrameEvaluationContext.prototype.get id):
+        (WebInspector.FrameEvaluationContext.prototype.get url):
+        (WebInspector.FrameEvaluationContext.prototype.get displayName):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._cleanupFramesAfterNavigation):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+
 2011-07-27  Shinya Kawanaka  <shinyak@google.com>
 
         Uses isHTMLSpace to normalize white spaces.

@@ -6321,6 +6321,7 @@
             'inspector/front-end/Color.js',
             'inspector/front-end/ConsolePanel.js',
             'inspector/front-end/ConsoleView.js',
+            'inspector/front-end/JavaScriptContextManager.js',
             'inspector/front-end/ContextMenu.js',
             'inspector/front-end/CookieItemsView.js',
             'inspector/front-end/CookieParser.js',

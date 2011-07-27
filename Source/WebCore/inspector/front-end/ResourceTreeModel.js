@@ -152,10 +152,9 @@ WebInspector.ResourceTreeModel.prototype = {
 
     _cleanupFramesAfterNavigation: function(newMainFrame)
     {
-        for (var frameId in this._frameIds) {
-            if (frameId !== newMainFrame.id)
-                this._frameDetached(frameId);
-        }
+        if (this._currentMainFrameId)
+            this._frameDetached(this._currentMainFrameId);
+        this._currentMainFrameId = newMainFrame.id;
     },
 
     _frameDetached: function(frameId)
@@ -323,8 +322,10 @@ WebInspector.ResourceTreeModel.prototype = {
         frameResource.type = WebInspector.Resource.Type.Document;
         frameResource.finished = true;
 
-        if (!framePayload.parentId)
+        if (!framePayload.parentId) {
             WebInspector.mainResource = frameResource;
+            this._currentMainFrameId = framePayload.id;
+        }
         this._addFrame(framePayload);
         this._addResourceToFrame(frameResource);
 

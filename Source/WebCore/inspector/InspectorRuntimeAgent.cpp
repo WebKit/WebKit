@@ -57,9 +57,14 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, const String* const frameId, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
-    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(getDefaultInspectedState());
+    ScriptState* scriptState = 0;
+    if (frameId)
+        scriptState = scriptStateForFrameId(errorString, *frameId);
+    else
+        scriptState = getDefaultInspectedState();
+    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
     if (injectedScript.hasNoValue()) {
         *errorString = "Inspected frame has gone";
         return;

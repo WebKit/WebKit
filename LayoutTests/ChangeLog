@@ -1,3 +1,16 @@
+2011-07-27  Yury Semikhatsky  <yurys@chromium.org>
+
+        Inspector should support cd(window) in the command line
+        https://bugs.webkit.org/show_bug.cgi?id=19872
+
+        Added a test for console evaluation in an iframe.
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/console-cd-expected.txt: Added.
+        * http/tests/inspector/console-cd.html: Added.
+        * http/tests/inspector/resources/console-cd-iframe.html: Added.
+
 2011-07-27  Shinya Kawanaka  <shinyak@google.com>
 
         Added a test to normalize option.text.

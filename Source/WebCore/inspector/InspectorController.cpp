@@ -72,14 +72,25 @@ namespace {
 
 class PageRuntimeAgent : public InspectorRuntimeAgent {
 public:
-    PageRuntimeAgent(InjectedScriptManager* injectedScriptManager, Page* page)
+    PageRuntimeAgent(InjectedScriptManager* injectedScriptManager, Page* page, InspectorPageAgent* pageAgent)
         : InspectorRuntimeAgent(injectedScriptManager)
-        , m_inspectedPage(page) { }
+        , m_inspectedPage(page)
+        , m_pageAgent(pageAgent) { }
     virtual ~PageRuntimeAgent() { }
 
 private:
+    virtual ScriptState* scriptStateForFrameId(ErrorString* errorString, const String& frameId)
+    {
+        Frame* frame = m_pageAgent->frameForId(frameId);
+        if (!frame) {
+            *errorString = "Frame not found";
+            return 0;
+        }
+        return mainWorldScriptState(frame);
+    }
     virtual ScriptState* getDefaultInspectedState() { return mainWorldScriptState(m_inspectedPage->mainFrame()); }
     Page* m_inspectedPage;
+    InspectorPageAgent* m_pageAgent;
 };
 
 }
@@ -103,7 +114,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_applicationCacheAgent(adoptPtr(new InspectorApplicationCacheAgent(m_instrumentingAgents.get(), page)))
 #endif
     , m_resourceAgent(InspectorResourceAgent::create(m_instrumentingAgents.get(), m_pageAgent.get(), inspectorClient, m_state.get()))
-    , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_injectedScriptManager.get(), page)))
+    , m_runtimeAgent(adoptPtr(new PageRuntimeAgent(m_injectedScriptManager.get(), page, m_pageAgent.get())))
     , m_consoleAgent(adoptPtr(new InspectorConsoleAgent(m_instrumentingAgents.get(), m_inspectorAgent.get(), m_state.get(), m_injectedScriptManager.get(), m_domAgent.get())))
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     , m_debuggerAgent(PageDebuggerAgent::create(m_instrumentingAgents.get(), m_state.get(), page, m_injectedScriptManager.get()))
