@@ -1,3 +1,12 @@
+2011-07-27  Tony Gentilcore  <tonyg@chromium.org>
+
+        editing/selection/move-by-word-visually* tests timing out
+        https://bugs.webkit.org/show_bug.cgi?id=65241
+
+        Unreviewed build fix.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  Shinya Kawanaka  <shinyak@google.com>
 
         Knob of a disabled or readonly range control should not be draggable.
