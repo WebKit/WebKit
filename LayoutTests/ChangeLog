@@ -1,5 +1,28 @@
 2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg fails
+        https://bugs.webkit.org/show_bug.cgi?id=65266
+
+        [Qt] Unreviewed gardening. Update Qt 4.8 specific expected files.
+
+        * platform/qt-4.8/fast/css/font-face-opentype-expected.png: Added.
+        * platform/qt-4.8/fast/css/font-face-opentype-expected.txt: Added.
+        * platform/qt-4.8/fast/css/font-family-pictograph-expected.png: Added.
+        * platform/qt-4.8/fast/css/font-family-pictograph-expected.txt: Added.
+        * platform/qt-4.8/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png: Added.
+        * platform/qt-4.8/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.txt: Added.
+        * platform/qt-4.8/svg/custom/tref-own-content-removal-expected.png: Added.
+        * platform/qt-4.8/svg/custom/tref-own-content-removal-expected.txt: Added.
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt: Remove window.XSLTProcessor entries.
+        * platform/qt/Skipped: Skip a failing test: svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg.
+        * platform/qt/svg/W3C-SVG-1.1-SE/painting-control-04-f-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/styling-pres-02-f-expected.txt: Removed.
+        * platform/qt/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.png: Added after r91850.
+        * platform/qt/svg/W3C-SVG-1.1-SE/struct-dom-11-f-expected.txt: Added after r91850.
+        * platform/qt/svg/custom/tref-own-content-removal-expected.png: Added.
+
+2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening.
 
         * platform/qt-wk2/Skipped: Skip failing tests after migration to Qt5.

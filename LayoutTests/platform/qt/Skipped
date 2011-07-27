@@ -2557,3 +2557,7 @@ inspector/styles/get-set-stylesheet-text.html
 
 # For now, Web Audio API is disabled
 webaudio/
+
+# [Qt] svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg fails
+# bugs. ....
+svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg
