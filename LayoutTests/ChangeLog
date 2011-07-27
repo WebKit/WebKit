@@ -1,3 +1,10 @@
+2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Add Qt specific expected result for a new test introduced in r91777.
+
+        * platform/qt/fast/css/font-family-pictograph-expected.png: Added.
+        * platform/qt/fast/css/font-family-pictograph-expected.txt: Added.
+
 2011-07-27  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, forgotten GTK pixel test results for
