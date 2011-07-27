@@ -97,9 +97,6 @@ namespace JSC {
 
         void reset();
 
-        bool shouldUnlinkCalls() const { return m_shouldUnlinkCalls; }
-        void setShouldUnlinkCalls(bool shouldUnlinkCalls) { m_shouldUnlinkCalls = shouldUnlinkCalls; }
-
     protected:
 #if ENABLE(GC_VALIDATION)
         static void validateSet(JSValue*, size_t);
@@ -123,9 +120,6 @@ namespace JSC {
         bool m_isCheckingForDefaultMarkViolation;
         bool m_isDraining;
 #endif
-
-    private:
-        bool m_shouldUnlinkCalls;
     };
 
     inline MarkStack::MarkStack(void* jsArrayVPtr)
@@ -134,7 +128,6 @@ namespace JSC {
         , m_isCheckingForDefaultMarkViolation(false)
         , m_isDraining(false)
 #endif
-        , m_shouldUnlinkCalls(false)
     {
     }
 

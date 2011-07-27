@@ -83,8 +83,7 @@ namespace JSC {
             ParseError,
             JITCode,
             ByteCode,
-            NotCompiled,
-            Compiling
+            NotCompiled
         } m_state;
 
         void compile(JSGlobalData*);

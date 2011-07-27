@@ -1546,8 +1546,6 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         visitor.append(&m_functionDecls[i]);
 #if ENABLE(JIT)
-    if (visitor.shouldUnlinkCalls())
-        unlinkCalls();
     for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i)
         if (callLinkInfo(i).isLinked())
             visitor.append(&callLinkInfo(i).callee);

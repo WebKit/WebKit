@@ -1,3 +1,23 @@
+2011-07-27  Stephanie Lewis  <slewis@apple.com>
+
+        Revert http://trac.webkit.org/changeset/90415.
+        Caused a 5% sunspider regression in-browser.
+
+        Unreviewed rollout.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+        * heap/Heap.cpp:
+        (JSC::Heap::collectAllGarbage):
+        * heap/MarkStack.h:
+        (JSC::MarkStack::MarkStack):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::releaseExecutableMemory):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::compile):
+        (JSC::RegExp::invalidateCode):
+        * runtime/RegExp.h:
+
 2011-07-27  Shinya Kawanaka  <shinyak@google.com>
 
         Added an interface to take IsWhiteSpaceFunctionPtr.

@@ -539,9 +539,10 @@ void Heap::collectAllGarbage()
 {
     if (!m_isSafeToCollect)
         return;
-    m_slotVisitor.setShouldUnlinkCalls(true);
+    if (!m_globalData->dynamicGlobalObject)
+        m_globalData->recompileAllJSFunctions();
+
     collect(DoSweep);
-    m_slotVisitor.setShouldUnlinkCalls(false);
 }
 
 void Heap::collect(SweepToggle sweepToggle)
