@@ -23,7 +23,13 @@
 
 #include <QtCore/QBasicTimer>
 #include <QtCore/QUrl>
+
+#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
+#include <QtQuick1/QDeclarativeItem>
+#else
 #include <QtDeclarative/QDeclarativeItem>
+#endif
+
 #include <QtGui/QAction>
 #include <QtNetwork/QNetworkAccessManager>
 #include "qgraphicswebview.h"

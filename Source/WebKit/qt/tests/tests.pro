@@ -8,7 +8,13 @@ linux-* {
     SUBDIRS += MIMESniffing
 }
 
-contains(QT_CONFIG, declarative): SUBDIRS += qdeclarativewebview
+lessThan(QT_MAJOR_VERSION, 5) {
+    contains(QT_CONFIG, declarative): SUBDIRS += qdeclarativewebview
+} else {
+    contains(QT_CONFIG, qtquick1): SUBDIRS += qdeclarativewebview
+}
+
+
 SUBDIRS += benchmarks/painting benchmarks/loading
 contains(DEFINES, ENABLE_WEBGL=1) {
     SUBDIRS += benchmarks/webgl

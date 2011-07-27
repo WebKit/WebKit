@@ -25,8 +25,12 @@ webkit2 {
     exists($$PWD/WebKit2/UIProcess/API/qt/tests): SUBDIRS += WebKit2/UIProcess/API/qt/tests
 }
 
-contains(QT_CONFIG, declarative) {
-    exists($$PWD/WebKit/qt/declarative): SUBDIRS += WebKit/qt/declarative
+exists($$PWD/WebKit/qt/declarative) {
+    lessThan(QT_MAJOR_VERSION, 5) {
+        contains(QT_CONFIG, declarative): SUBDIRS += WebKit/qt/declarative
+    } else {
+        contains(QT_CONFIG, qtquick1): SUBDIRS += WebKit/qt/declarative
+    }
 }
 
 exists($$PWD/WebKit/qt/tests): SUBDIRS += WebKit/qt/tests

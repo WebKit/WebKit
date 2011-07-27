@@ -21,7 +21,12 @@ INCLUDEPATH += \
 
 include(../../../WebKit.pri)
 QT += testlib network
-contains(QT_CONFIG, declarative): QT += declarative
+
+lessThan(QT_MAJOR_VERSION, 5) {
+    contains(QT_CONFIG, declarative): QT += declarative
+} else {
+    contains(QT_CONFIG, qtquick1): QT += declarative qtquick1
+}
 
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 
