@@ -1,5 +1,13 @@
 2011-07-27  Adrienne Walker  <enne@google.com>
 
+        [chromium] Marking leviw's new unicode-bidi-plaintext test as failing
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-27  Adrienne Walker  <enne@google.com>
+
         [chromium] Mark another flaky crasher.
         https://bugs.webkit.org/show_bug.cgi?id=65155
 
