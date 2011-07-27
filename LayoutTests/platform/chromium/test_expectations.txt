@@ -3501,7 +3501,7 @@ BUGWK60931 DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-u
 BUGCR82881 MAC LINUX XP VISTA : http/tests/appcache/interrupted-update.html = PASS TEXT
 
 // Flaky on Linux
-BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT IMAGE+TEXT PASS
+//BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT IMAGE+TEXT PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = FAIL PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = TEXT IMAGE+TEXT PASS
 
@@ -3821,6 +3821,7 @@ BUGWK65152 : fast/js/cyclic-prototypes.html = CRASH PASS
 BUGWK65155 : fast/selectors/001.html = CRASH PASS
 BUGWK65155 : media/audio-only-video-intrinsic-size.html = CRASH PASS
 BUGWK65155 : fast/dom/beforeload/script-before-load-dynamic.html = CRASH PASS
+BUGWK65155 : fast/speech/input-appearance-numberandspeech.html = CRASH PASS FAIL
 
 // Needs new baseline -- visual appearance of file upload control has changed.
 BUGWK64692 WIN : fast/forms/input-file-re-render.html = IMAGE
