@@ -429,7 +429,7 @@ static CSSMutableStyleDeclaration* rightToLeftDeclaration()
 }
 
 CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleSheets, CSSStyleSheet* mappedElementSheet,
-                                   CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets,
+                                   CSSStyleSheet* pageUserSheet, const Vector<RefPtr<CSSStyleSheet> >* pageGroupUserSheets, const Vector<RefPtr<CSSStyleSheet> >* documentUserSheets,
                                    bool strictParsing, bool matchAuthorAndUserStyles)
     : m_backgroundData(BackgroundFillLayer)
     , m_checker(document, strictParsing)
@@ -484,6 +484,15 @@ CSSStyleSelector::CSSStyleSelector(Document* document, StyleSheetList* styleShee
                 tempUserStyle->addRulesFromSheet(pageGroupUserSheets->at(i).get(), *m_medium, this);
             else
                 m_authorStyle->addRulesFromSheet(pageGroupUserSheets->at(i).get(), *m_medium, this);
+        }
+    }
+    if (documentUserSheets) {
+        unsigned length = documentUserSheets->size();
+        for (unsigned i = 0; i < length; i++) {
+            if (documentUserSheets->at(i)->isUserStyleSheet())
+                tempUserStyle->addRulesFromSheet(documentUserSheets->at(i).get(), *m_medium, this);
+            else
+                m_authorStyle->addRulesFromSheet(documentUserSheets->at(i).get(), *m_medium, this);
         }
     }
 

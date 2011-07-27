@@ -32,6 +32,7 @@
 #include "WebDocument.h"
 
 #include "AXObjectCache.h"
+#include "CSSStyleSheet.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "DocumentType.h"
@@ -205,6 +206,16 @@ bool WebDocument::insertStyleText(const WebString& styleText, const WebString& e
     bool success = documentElement->insertBefore(stylesheet, documentElement->firstChild(), err);
     ASSERT(success);
     return success;
+}
+
+void WebDocument::insertUserStyleSheet(const WebString& sourceCode, UserStyleLevel level)
+{
+    RefPtr<Document> document = unwrap<Document>();
+
+    RefPtr<CSSStyleSheet> parsedSheet = CSSStyleSheet::create(document.get());
+    parsedSheet->setIsUserStyleSheet(level == UserStyleUserLevel);
+    parsedSheet->parseString(sourceCode, !document->inQuirksMode());
+    document->addUserSheet(parsedSheet.release());
 }
 
 WebDocument::WebDocument(const PassRefPtr<Document>& elem)

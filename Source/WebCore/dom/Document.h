@@ -615,6 +615,8 @@ public:
     void clearPageGroupUserSheets();
     void updatePageGroupUserSheets();
 
+    void addUserSheet(PassRefPtr<CSSStyleSheet> userSheet);
+
     CSSStyleSheet* elementSheet();
     CSSStyleSheet* mappedElementSheet();
     
@@ -1199,6 +1201,7 @@ private:
     RefPtr<CSSStyleSheet> m_mappedElementSheet;
     RefPtr<CSSStyleSheet> m_pageUserSheet;
     mutable OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_pageGroupUserSheets;
+    OwnPtr<Vector<RefPtr<CSSStyleSheet> > > m_userSheets;
     mutable bool m_pageGroupUserSheetCacheValid;
 
     bool m_printing;

@@ -545,6 +545,10 @@ Document::~Document()
         for (size_t i = 0; i < m_pageGroupUserSheets->size(); ++i)
             (*m_pageGroupUserSheets)[i]->clearOwnerNode();
     }
+    if (m_userSheets) {
+        for (size_t i = 0; i < m_userSheets->size(); ++i)
+            (*m_userSheets)[i]->clearOwnerNode();
+    }
 
     m_weakReference->clear();
 
@@ -1729,7 +1733,7 @@ void Document::createStyleSelector()
     bool matchAuthorAndUserStyles = true;
     if (Settings* docSettings = settings())
         matchAuthorAndUserStyles = docSettings->authorAndUserStylesEnabled();
-    m_styleSelector = adoptPtr(new CSSStyleSelector(this, m_styleSheets.get(), m_mappedElementSheet.get(), pageUserSheet(), pageGroupUserSheets(), 
+    m_styleSelector = adoptPtr(new CSSStyleSelector(this, m_styleSheets.get(), m_mappedElementSheet.get(), pageUserSheet(), pageGroupUserSheets(), m_userSheets.get(),
                                                     !inQuirksMode(), matchAuthorAndUserStyles));
     // Delay resetting the flags until after next style recalc since unapplying the style may not work without these set (this is true at least with before/after).
     m_usesSiblingRules = m_usesSiblingRules || m_styleSelector->usesSiblingRules();
@@ -2464,6 +2468,14 @@ void Document::updatePageGroupUserSheets()
     clearPageGroupUserSheets();
     if (pageGroupUserSheets() && pageGroupUserSheets()->size())
         styleSelectorChanged(RecalcStyleImmediately);
+}
+
+void Document::addUserSheet(PassRefPtr<CSSStyleSheet> userSheet)
+{
+    if (!m_userSheets)
+        m_userSheets = adoptPtr(new Vector<RefPtr<CSSStyleSheet> >);
+    m_userSheets->append(userSheet);
+    styleSelectorChanged(RecalcStyleImmediately);
 }
 
 CSSStyleSheet* Document::elementSheet()

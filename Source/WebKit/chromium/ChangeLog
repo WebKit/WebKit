@@ -1,3 +1,19 @@
+2011-07-25  Mihai Parparita  <mihaip@chromium.org>
+
+        [Chromium] Add better WebKit API for chrome.tabs.insertCSS extension API
+        https://bugs.webkit.org/show_bug.cgi?id=65158
+
+        Reviewed by David Hyatt.
+
+        Add WebDocument::insertUserStyleSheet which inserts a user stylesheet,
+        instead of forcing extensions to use insertStyleText which manipulates
+        the DOM of the page and results in compatibility issues (see
+        http://crbug.com/82220).
+
+        * public/WebDocument.h:
+        * src/WebDocument.cpp:
+        (WebKit::WebDocument::insertUserStyleSheet):
+
 2011-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Disable cache option should only clear memory cache, not disable it.

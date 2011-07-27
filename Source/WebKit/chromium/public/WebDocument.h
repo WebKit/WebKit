@@ -56,6 +56,11 @@ class WebURL;
 // Provides readonly access to some properties of a DOM document.
 class WebDocument : public WebNode {
 public:
+    enum UserStyleLevel {
+        UserStyleUserLevel,
+        UserStyleAuthorLevel
+    };
+
     WebDocument() { }
     WebDocument(const WebDocument& e) : WebNode(e) { }
 
@@ -98,8 +103,16 @@ public:
     // document. |elementId| can be empty, but if specified then it is used
     // as the id for the newly inserted element (replacing an existing one
     // with the same id, if any).
+    // FIXME: Remove this once Chromium callers have been updated to call
+    // insertUserStyleSheet instead.
     WEBKIT_API bool insertStyleText(const WebString& styleText,
                                     const WebString& elementId);
+
+    // Inserts the given CSS source code as a user stylesheet in the document.
+    // Meant for programatic/one-off injection, as opposed to
+    // WebView::addUserStyleSheet which inserts styles for the lifetime of the
+    // WebView.
+    WEBKIT_API void insertUserStyleSheet(const WebString& sourceCode, UserStyleLevel);
 
 #if WEBKIT_IMPLEMENTATION
     WebDocument(const WTF::PassRefPtr<WebCore::Document>&);
