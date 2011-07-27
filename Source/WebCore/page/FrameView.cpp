@@ -656,8 +656,7 @@ void FrameView::restoreBackingStores()
 
     RenderLayerCompositor* compositor = root->compositor();
     compositor->enableCompositingMode(true);
-    compositor->setCompositingLayersNeedRebuild();
-    compositor->scheduleCompositingLayerUpdate();
+    compositor->updateCompositingLayers();
 }
 
 GraphicsLayer* FrameView::layerForHorizontalScrollbar() const

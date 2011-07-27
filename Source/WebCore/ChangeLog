@@ -1,3 +1,19 @@
+2011-07-26  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Restore Composited Layers Faster from PageCache
+        https://bugs.webkit.org/show_bug.cgi?id=65216
+
+        Reviewed by Simon Fraser.
+
+        Restore the layer tree hierarchy a little sooner, when
+        restoring from the page cache. This more closely matches
+        original restore behavior.
+
+        Existing test showed no change.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::restoreBackingStores):
+
 2011-07-26  Mike Reed  <reed@google.com>
 
         [skia] never draw with GDI, so that all text can be gpu-accelerated
