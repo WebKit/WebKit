@@ -1073,12 +1073,12 @@ void FrameLoaderClientImpl::setMainFrameDocumentReady(bool ready)
 
 // Creates a new connection and begins downloading from that (contrast this
 // with |download|).
-void FrameLoaderClientImpl::startDownload(const ResourceRequest& request, const String& /* suggestedName */)
+void FrameLoaderClientImpl::startDownload(const ResourceRequest& request, const String& suggestedName)
 {
     if (m_webFrame->client()) {
         WrappedResourceRequest webreq(request);
         m_webFrame->client()->loadURLExternally(
-            m_webFrame, webreq, WebNavigationPolicyDownload);
+            m_webFrame, webreq, WebNavigationPolicyDownload, suggestedName);
     }
 }
 
