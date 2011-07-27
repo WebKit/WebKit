@@ -270,6 +270,14 @@ void SliderThumbElement::defaultEventHandler(Event* event)
         return;
     }
 
+    // FIXME: Should handle this readonly/disabled check in more general way.
+    // Missing this kind of check is likely to occur elsewhere if adding it in each shadow element.
+    HTMLInputElement* input = hostInput();
+    if (!input || input->isReadOnlyFormControl() || !input->isEnabledFormControl()) {
+        HTMLDivElement::defaultEventHandler(event);
+        return;
+    }
+
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
     bool isLeftButton = mouseEvent->button() == LeftButton;
     const AtomicString& eventType = event->type();
@@ -374,4 +382,3 @@ const AtomicString& SliderContainerElement::shadowPseudoId() const
 }
 
 }
-

@@ -1,3 +1,15 @@
+2011-07-27  Shinya Kawanaka  <shinyak@google.com>
+
+        Knob of a disabled or readonly range control should not be draggable.
+        https://bugs.webkit.org/show_bug.cgi?id=54820
+
+        Reviewed by Kent Tamura.
+
+        Added tests to confirm disabled or readonly range control is undraggable.
+
+        * fast/forms/range-drag-expected.txt: Added.
+        * fast/forms/range-drag.html: Added.
+
 2011-07-27  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: CloseEvent attribute is not available on WebWorkers in JSC

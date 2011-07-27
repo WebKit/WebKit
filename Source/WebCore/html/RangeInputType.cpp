@@ -153,6 +153,9 @@ double RangeInputType::stepScaleFactor() const
 
 void RangeInputType::handleMouseDownEvent(MouseEvent* event)
 {
+    if (element()->disabled() || element()->readOnly())
+        return;
+
     Node* targetNode = event->target()->toNode();
     if (event->button() != LeftButton || !targetNode || (targetNode != element() && !targetNode->isDescendantOf(element()->shadowRoot())))
         return;
@@ -166,6 +169,7 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 {
     if (element()->disabled() || element()->readOnly())
         return;
+
     const String& key = event->keyIdentifier();
 
     double current = parseToDouble(element()->value(), numeric_limits<double>::quiet_NaN());

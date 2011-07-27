@@ -1,3 +1,20 @@
+2011-07-27  Shinya Kawanaka  <shinyak@google.com>
+
+        Knob of a disabled or readonly range control should not be draggable.
+        https://bugs.webkit.org/show_bug.cgi?id=54820
+
+        Reviewed by Kent Tamura.
+
+        Made disabled or readonly range control undraggable.
+
+        Test: fast/forms/range-drag.html
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+          Added check that the element is readonly or disabled.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::defaultEventHandler): ditto.
+
 2011-07-27  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: CloseEvent attribute is not available on WebWorkers in JSC
