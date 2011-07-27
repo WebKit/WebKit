@@ -244,15 +244,15 @@ public:
         
         jit.swap(gpr(), other.gpr());
         
-        if (UNLIKELY(needDataFormatConversion(myDataFormat, myNewDataFormat))) {
-            if (myDataFormat == DataFormatInteger)
+        if (UNLIKELY(needDataFormatConversion(otherDataFormat, myNewDataFormat))) {
+            if (otherDataFormat == DataFormatInteger)
                 jit.orPtr(GPRInfo::tagTypeNumberRegister, gpr());
             else if (myNewDataFormat == DataFormatInteger)
                 jit.zeroExtend32ToPtr(gpr(), gpr());
         }
         
-        if (UNLIKELY(needDataFormatConversion(otherDataFormat, myNewDataFormat))) {
-            if (otherDataFormat == DataFormatInteger)
+        if (UNLIKELY(needDataFormatConversion(myDataFormat, otherNewDataFormat))) {
+            if (myDataFormat == DataFormatInteger)
                 jit.orPtr(GPRInfo::tagTypeNumberRegister, other.gpr());
             else if (otherNewDataFormat == DataFormatInteger)
                 jit.zeroExtend32ToPtr(other.gpr(), other.gpr());

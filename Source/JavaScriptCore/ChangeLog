@@ -1,3 +1,14 @@
+2011-07-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT speculation failure code performs incorrect conversions in
+        the case where two registers need to be swapped.
+        https://bugs.webkit.org/show_bug.cgi?id=65233
+
+        Reviewed by Gavin Barraclough.
+        
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::GeneralizedRegister::swapWith):
+
 2011-07-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         reduce and reduceRight bind callback's this to null rather than undefined
