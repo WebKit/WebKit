@@ -83,7 +83,7 @@ WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerCo
     : m_workerContext(workerContext)
     , m_recursion(0)
 {
-    initV8IfNeeded();
+    initV8();
 }
 
 WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
@@ -108,13 +108,8 @@ void WorkerContextExecutionProxy::dispose()
     }
 }
 
-void WorkerContextExecutionProxy::initV8IfNeeded()
+void WorkerContextExecutionProxy::initV8()
 {
-    static bool v8Initialized = false;
-
-    if (v8Initialized)
-        return;
-
     // Tell V8 not to call the default OOM handler, binding code will handle it.
     v8::V8::IgnoreOutOfMemoryException();
     v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
@@ -125,8 +120,6 @@ void WorkerContextExecutionProxy::initV8IfNeeded()
     v8::SetResourceConstraints(&resource_constraints);
 
     V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
-
-    v8Initialized = true;
 }
 
 bool WorkerContextExecutionProxy::initContextIfNeeded()

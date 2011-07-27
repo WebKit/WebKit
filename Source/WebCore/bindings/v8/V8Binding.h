@@ -109,11 +109,23 @@ namespace WebCore {
         v8::Persistent<v8::FunctionTemplate>& toStringTemplate() { return m_toStringTemplate; }
         StringCache* stringCache() { return &m_stringCache; }
 
-        DOMDataList& allStores() { return m_DOMDataList; }
+        DOMDataList& allStores() { return m_domDataList; }
 
-        DOMDataStore* domDataStore() { return m_DOMDataStore; }
+        void registerDOMDataStore(DOMDataStore* domDataStore) 
+        {
+            m_domDataList.append(domDataStore);
+        }
+
+        void unregisterDOMDataStore(DOMDataStore* domDataStore)
+        {
+            ASSERT(m_domDataList.find(domDataStore));
+            m_domDataList.remove(m_domDataList.find(domDataStore));
+        }
+
+
+        DOMDataStore* domDataStore() { return m_domDataStore; }
         // DOMDataStore is owned outside V8BindingPerIsolateData.
-        void setDOMDataStore(DOMDataStore* store) { m_DOMDataStore = store; }
+        void setDOMDataStore(DOMDataStore* store) { m_domDataStore = store; }
 
     private:
         explicit V8BindingPerIsolateData(v8::Isolate*);
@@ -125,8 +137,8 @@ namespace WebCore {
         v8::Persistent<v8::FunctionTemplate> m_toStringTemplate;
         StringCache m_stringCache;
 
-        DOMDataList m_DOMDataList;
-        DOMDataStore* m_DOMDataStore;
+        DOMDataList m_domDataList;
+        DOMDataStore* m_domDataStore;
     };
 
 

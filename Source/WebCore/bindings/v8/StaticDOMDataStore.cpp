@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "StaticDOMDataStore.h"
+#include "V8Binding.h"
 
 namespace WebCore {
 
@@ -48,6 +49,12 @@ StaticDOMDataStore::StaticDOMDataStore()
 #if ENABLE(SVG)
     m_domSvgElementInstanceMap = &m_staticDomSvgElementInstanceMap;
 #endif
+    V8BindingPerIsolateData::current()->registerDOMDataStore(this);
+}
+
+StaticDOMDataStore::~StaticDOMDataStore()
+{
+    V8BindingPerIsolateData::current()->unregisterDOMDataStore(this);
 }
 
 } // namespace WebCore

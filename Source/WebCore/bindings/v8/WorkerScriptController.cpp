@@ -51,14 +51,23 @@ namespace WebCore {
 
 WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
     : m_workerContext(workerContext)
-    , m_proxy(adoptPtr(new WorkerContextExecutionProxy(workerContext)))
+    , m_isolate(v8::Isolate::New())
     , m_executionForbidden(false)
 {
+    V8BindingPerIsolateData* data = V8BindingPerIsolateData::create(m_isolate);
+    data->allStores().append(&m_DOMDataStore);
+    data->setDOMDataStore(&m_DOMDataStore);
+    m_isolate->Enter();
+    m_proxy = adoptPtr(new WorkerContextExecutionProxy(workerContext));
 }
 
 WorkerScriptController::~WorkerScriptController()
 {
     removeAllDOMObjects();
+    m_proxy.clear();
+    m_isolate->Exit();
+    V8BindingPerIsolateData::dispose(m_isolate);
+    m_isolate->Dispose();
 }
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)

@@ -1,3 +1,35 @@
+2011-07-26  Dmitry Lomov  <dslomov@google.com>
+
+        [V8][Chromium] Run workers in a separate v8::Isolate 
+        https://bugs.webkit.org/show_bug.cgi?id=65004
+        This patch allocates a new v8::Isolate for every worker and enters it on worker thread.
+
+        Reviewed by David Levin.
+
+        Covered by existing chromium tests.
+
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::~DOMDataStore):
+        * bindings/v8/StaticDOMDataStore.cpp:
+        (WebCore::StaticDOMDataStore::StaticDOMDataStore):
+        (WebCore::StaticDOMDataStore::~StaticDOMDataStore):
+        * bindings/v8/StaticDOMDataStore.h:
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8BindingPerIsolateData::registerDOMDataStore):
+        (WebCore::V8BindingPerIsolateData::unregisterDOMDataStore):
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::DOMDataStoreHandle::DOMDataStoreHandle):
+        (WebCore::DOMDataStoreHandle::~DOMDataStoreHandle):
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::WorkerContextExecutionProxy):
+        (WebCore::WorkerContextExecutionProxy::initV8):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::WorkerScriptController):
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+        * bindings/v8/WorkerScriptController.h:
+
 2011-07-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Avoid clearing the framebuffer when compositing in release builds

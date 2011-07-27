@@ -91,12 +91,10 @@ DOMDataStore::DOMDataStore()
     , m_domSvgElementInstanceMap(0)
 #endif
 {
-    DOMDataStore::allStores().append(this);
 }
 
 DOMDataStore::~DOMDataStore()
 {
-    DOMDataStore::allStores().remove(DOMDataStore::allStores().find(this));
 }
 
 DOMDataList& DOMDataStore::allStores()

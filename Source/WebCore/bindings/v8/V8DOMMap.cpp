@@ -34,16 +34,19 @@
 #include "DOMData.h"
 #include "DOMDataStore.h"
 #include "ScopedDOMDataStore.h"
+#include "V8Binding.h"
 
 namespace WebCore {
 
 DOMDataStoreHandle::DOMDataStoreHandle()
     : m_store(adoptPtr(new ScopedDOMDataStore()))
 {
+    V8BindingPerIsolateData::current()->registerDOMDataStore(m_store.get());
 }
 
 DOMDataStoreHandle::~DOMDataStoreHandle()
 {
+    V8BindingPerIsolateData::current()->unregisterDOMDataStore(m_store.get());
 }
 
 static inline DOMDataStore& getDOMDataStore()
