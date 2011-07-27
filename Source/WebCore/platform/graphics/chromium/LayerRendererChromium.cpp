@@ -495,10 +495,12 @@ void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
 
     useRenderSurface(m_defaultRenderSurface);
 
+#ifndef NDEBUG
     // Clear to blue to make it easier to spot unrendered regions.
     m_context->clearColor(0, 0, 1, 1);
     m_context->colorMask(true, true, true, true);
     m_context->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
+#endif
     // Mask out writes to alpha channel: subpixel antialiasing via Skia results in invalid
     // zero alpha values on text glyphs. The root layer is always opaque.
     m_context->colorMask(true, true, true, false);
