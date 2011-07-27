@@ -41,7 +41,6 @@ except ImportError:
     # python 2.5 compatibility
     import webkitpy.thirdparty.simplejson as json
 
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration, TestConfigurationConverter
 
 _log = logging.getLogger(__name__)
 
@@ -158,46 +157,29 @@ class TestExpectationParser:
 
     TIMEOUT_EXPECTATION = 'timeout'
 
-    def __init__(self, port, all_test_configurations, full_test_list, allow_rebaseline_modifier):
+    def __init__(self, port, test_config, full_test_list, allow_rebaseline_modifier):
         self._port = port
-        self._test_configuration_converter = TestConfigurationConverter(all_test_configurations, TestExpectations.MACROS)
+        self._specificity_calculator = SpecificityCalculator(test_config)
         self._full_test_list = full_test_list
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
     def parse(self, expectation_line):
+        self._specificity_calculator.calculate(expectation_line)
+        self._check_semantics(expectation_line)
+
+        if expectation_line.specificity == SpecificityCalculator.INVALID:
+            return
+
         self._check_modifiers_against_expectations(expectation_line)
+
         if self._check_path_does_not_exist(expectation_line):
             return
 
         expectation_line.path = self._port.normalize_test_name(expectation_line.name)
         self._collect_matching_tests(expectation_line)
 
-        self._parse_modifiers(expectation_line)
+        expectation_line.parsed_modifiers = [modifier for modifier in expectation_line.modifiers if modifier in TestExpectations.MODIFIERS]
         self._parse_expectations(expectation_line)
-
-    def _parse_modifiers(self, expectation_line):
-        has_wontfix = False
-        parsed_specifiers = set()
-        for modifier in expectation_line.modifiers:
-            if modifier in TestExpectations.MODIFIERS:
-                expectation_line.parsed_modifiers.append(modifier)
-                if modifier == self.WONTFIX_MODIFIER:
-                    has_wontfix = True
-            elif modifier.startswith(self.BUG_MODIFIER_PREFIX):
-                if re.match(self.BUG_MODIFIER_REGEX, modifier):
-                    expectation_line.errors.append('BUG\d+ is not allowed, must be one of BUGCR\d+, BUGWK\d+, BUGV8_\d+, or a non-numeric bug identifier.')
-                else:
-                    expectation_line.parsed_bug_modifier = modifier
-            else:
-                parsed_specifiers.add(modifier)
-
-        if not expectation_line.parsed_bug_modifier and not has_wontfix:
-            expectation_line.warnings.append('Test lacks BUG modifier.')
-
-        if self._allow_rebaseline_modifier and self.REBASELINE_MODIFIER in expectation_line.modifiers:
-            expectation_line.errors.append('REBASELINE should only be used for running rebaseline.py. Cannot be checked in.')
-
-        expectation_line.matching_configurations = self._test_configuration_converter.to_config_set(parsed_specifiers, expectation_line.errors)
 
     def _parse_expectations(self, expectation_line):
         result = set()
@@ -208,6 +190,21 @@ class TestExpectationParser:
                 continue
             result.add(expectation)
         expectation_line.parsed_expectations = result
+
+    def _check_semantics(self, expectation_line):
+        has_wontfix = self.WONTFIX_MODIFIER in expectation_line.modifiers
+        has_bug = False
+        for modifier in expectation_line.modifiers:
+            if modifier.startswith(self.BUG_MODIFIER_PREFIX):
+                has_bug = True
+                if re.match(self.BUG_MODIFIER_REGEX, modifier):
+                    expectation_line.errors.append('BUG\d+ is not allowed, must be one of BUGCR\d+, BUGWK\d+, BUGV8_\d+, or a non-numeric bug identifier.')
+
+        if not has_bug and not has_wontfix:
+            expectation_line.warnings.append('Test lacks BUG modifier.')
+
+        if self._allow_rebaseline_modifier and self.REBASELINE_MODIFIER in expectation_line.modifiers:
+            expectation_line.errors.append('REBASELINE should only be used for running rebaseline.py. Cannot be checked in.')
 
     def _check_modifiers_against_expectations(self, expectation_line):
         if self.SLOW_MODIFIER in expectation_line.modifiers and self.TIMEOUT_EXPECTATION in expectation_line.expectations:
@@ -316,11 +313,10 @@ class TestExpectationLine:
         self.path = None
         self.modifiers = []
         self.parsed_modifiers = []
-        self.parsed_bug_modifier = None
-        self.matching_configurations = set()
         self.expectations = []
         self.parsed_expectations = set()
         self.comment = None
+        self.specificity = SpecificityCalculator.INVALID
         self.matching_tests = []
         self.errors = []
         self.warnings = []
@@ -519,18 +515,18 @@ class TestExpectationsModel:
 
         # FIXME: This code was originally designed to allow lines that matched
         # more modifiers to override lines that matched fewer modifiers.
-        # However, we currently view these as errors.
+        # However, we currently view these as errors. If we decide to make
+        # this policy permanent, we can probably simplify this code
+        # and the SpecificityCalculator code a fair amount.
         #
         # To use the "more modifiers wins" policy, change the errors for overrides
         # to be warnings and return False".
 
-        prev_specificity = len(prev_expectation_line.matching_configurations)
-        specificity = len(expectation_line.matching_configurations)
-        if prev_specificity == specificity:
+        if prev_expectation_line.specificity == expectation_line.specificity:
             expectation_line.errors.append('Duplicate or ambiguous %s.' % expectation_source)
             return True
 
-        if prev_specificity < specificity:
+        if prev_expectation_line.specificity < expectation_line.specificity:
             expectation_line.errors.append('More specific entry on line %d overrides line %d' % (expectation_line.line_number, prev_expectation_line.line_number))
             # FIXME: return False if we want more specific to win.
             return True
@@ -618,12 +614,6 @@ class TestExpectations:
                     'fail': FAIL,
                     'flaky': FLAKY}
 
-    MACROS = {
-        'mac': ['leopard', 'snowleopard'],
-        'win': ['xp', 'vista', 'win7'],
-        'linux': ['lucid'],
-    }
-
     @classmethod
     def expectation_from_string(cls, string):
         assert(' ' not in string)  # This only handles one expectation at a time.
@@ -650,7 +640,7 @@ class TestExpectations:
         self._test_config = test_config
         self._is_lint_mode = is_lint_mode
         self._model = TestExpectationsModel()
-        self._parser = TestExpectationParser(port, port.all_test_configurations(), tests, is_lint_mode)
+        self._parser = TestExpectationParser(port, test_config, tests, is_lint_mode)
 
         self._expectations = TestExpectationParser.tokenize_list(expectations)
         self._add_expectations(self._expectations, overrides_allowed=False)
@@ -774,5 +764,184 @@ class TestExpectations:
                 continue
 
             self._parser.parse(expectation_line)
-            if self._test_config in expectation_line.matching_configurations:
-                self._model.add_expectation_line(expectation_line, overrides_allowed)
+            self._model.add_expectation_line(expectation_line, overrides_allowed)
+
+
+class SpecificityCalculation(object):
+    def __init__(self, modifiers):
+        self.specificity = SpecificityCalculator.INVALID
+        self._modifiers = modifiers
+        self._matched_modifiers = []
+        self._matched_regexes = set()
+        self._matched_macros = set()
+
+
+class SpecificityCalculator(object):
+
+    """
+    This class determines how specific are the modifiers for a given
+    TestExpectationLine. Some modifiers describe a test configuration for which this
+    test expectation is applicable. There is a degree of specificity for these modifiers.
+
+    For example, 'XP RELEASE CPU' is very specific, because it limits applicable test configuration to
+    Windows XP system in Release mode, with CPU-backed graphics.
+
+    On the other hand, '' (empty modifier) makes the test applicable to any test configuration.
+
+    This class finds such modifiers, interprets their meaning and determines specificity of
+    a given test expectation.
+
+    The specificity is determined as a count of modifiers that match. A line with no modifiers matches
+    everything and has a score of zero. A line with one modifier matches only
+    ports that have that modifier and gets a score of 1, and so one. Ports
+    that don't match at all get a score of -1.
+
+    Given two lines in a file that apply to the same test, if both expectations
+    match the current config, then the expectation is considered ambiguous,
+    even if one expectation matches more of the config than the other. For
+    example, in:
+
+    BUG1 RELEASE : foo.html = FAIL
+    BUG1 WIN RELEASE : foo.html = PASS
+    BUG2 WIN : bar.html = FAIL
+    BUG2 DEBUG : bar.html = PASS
+
+    lines 1 and 2 would produce an error on a Win XP Release bot (the scores
+    would be 1 and 2, respectively), and lines three and four would produce
+    a duplicate expectation on a Win Debug bot since both the 'win' and the
+    'debug' expectations would apply (both had scores of 1).
+
+    In addition to the definitions of all of the modifiers, the class
+    supports "macros" that are expanded prior to interpretation, and "ignore
+    regexes" that can be used to skip over modifiers like the BUG* modifiers.
+
+    This class also detects errors in this test expectation, like unknown modifiers,
+    invalid modifier combinations, and duplicate modifiers.
+    """
+    MACROS = {
+        'mac': ['leopard', 'snowleopard'],
+        'win': ['xp', 'vista', 'win7'],
+        'linux': ['lucid'],
+    }
+
+    # We don't include the "none" modifier because it isn't actually legal.
+    REGEXES_TO_IGNORE = (['bug\w+'] +
+                         TestExpectations.MODIFIERS.keys()[:-1])
+    DUPLICATE_REGEXES_ALLOWED = ['bug\w+']
+
+    # Magic value returned when the modifiers don't match the configuration at all.
+    INVALID = -1
+
+    # FIXME: The code currently doesn't detect combinations of modifiers
+    # that are syntactically valid but semantically invalid, like
+    # 'MAC XP'. See SpecificityCalculatorTest.test_invalid_combinations() in the
+    # _unittest.py file.
+
+    def __init__(self, test_config):
+        """Initialize a SpecificityCalculator argument with the TestConfiguration it
+        should be matched against."""
+        self.test_config = test_config
+        self.allowed_configurations = test_config.all_test_configurations()
+        self.macros = self.MACROS
+
+        self.regexes_to_ignore = {}
+        for regex_str in self.REGEXES_TO_IGNORE:
+            self.regexes_to_ignore[regex_str] = re.compile(regex_str)
+
+        # Keep a set of all of the legal modifiers for quick checking.
+        self._all_modifiers = set()
+
+        # Keep a dict mapping values back to their categories.
+        self._categories_for_modifiers = {}
+        for config in self.allowed_configurations:
+            for category, modifier in config.items():
+                self._categories_for_modifiers[modifier] = category
+                self._all_modifiers.add(modifier)
+
+    def calculate(self, expectation_line):
+        """Checks a expectation.modifiers against the config set in the constructor.
+        Options may be either actual modifier strings, "macro" strings
+        that get expanded to a list of modifiers, or strings that are allowed
+        to be ignored. All of the modifiers must be passed in in lower case.
+
+        Returns specificity relative to the test configuration, or INVALID (-1) if it
+        doesn't match or there were errors found. Matches are prioritized
+        by the number of matching categories, because the more specific
+        the modifier list, the more categories will match.
+        """
+        old_error_count = len(expectation_line.errors)
+        result = SpecificityCalculation(expectation_line.modifiers)
+        self._parse(expectation_line, result)
+        if old_error_count == len(expectation_line.errors):
+            self._count_matches(result)
+        expectation_line.specificity = result.specificity
+
+    def _parse(self, expectation_line, result):
+        # FIXME: Should we warn about lines having every value in a category?
+        for modifier in result._modifiers:
+            self._parse_one(expectation_line, modifier, result)
+
+    def _parse_one(self, expectation_line, modifier, result):
+        if modifier in self._all_modifiers:
+            self._add_modifier(expectation_line, modifier, result)
+        elif modifier in self.macros:
+            self._expand_macro(expectation_line, modifier, result)
+        elif not self._matches_any_regex(expectation_line, modifier, result):
+            expectation_line.errors.append("Unrecognized modifier '%s'" % modifier)
+
+    def _add_modifier(self, expectation_line, modifier, result):
+        if modifier in result._matched_modifiers:
+            expectation_line.errors.append("More than one '%s'" % modifier)
+        else:
+            result._matched_modifiers.append(modifier)
+
+    def _expand_macro(self, expectation_line, macro, result):
+        if macro in result._matched_macros:
+            expectation_line.errors.append("More than one '%s'" % macro)
+            return
+
+        mods = []
+        for modifier in self.macros[macro]:
+            if modifier in result._modifiers:
+                expectation_line.errors.append("Can't specify both modifier '%s' and macro '%s'" % (modifier, macro))
+            else:
+                mods.append(modifier)
+        result._matched_macros.add(macro)
+        result._matched_modifiers.extend(mods)
+
+    def _matches_any_regex(self, expectation_line, modifier, result):
+        for regex_str, pattern in self.regexes_to_ignore.iteritems():
+            if pattern.match(modifier):
+                self._handle_regex_match(expectation_line, regex_str, result)
+                return True
+        return False
+
+    def _handle_regex_match(self, expectation_line, regex_str, result):
+        if (regex_str in result._matched_regexes and
+            regex_str not in self.DUPLICATE_REGEXES_ALLOWED):
+            expectation_line.errors.append("More than one modifier matching '%s'" %
+                                 regex_str)
+        else:
+            result._matched_regexes.add(regex_str)
+
+    def _count_matches(self, result):
+        """Returns the number of modifiers that match the test config."""
+        categorized_modifiers = self._group_by_category(result._matched_modifiers)
+        result.specificity = 0
+        for category, modifier in self.test_config.items():
+            if category in categorized_modifiers:
+                if modifier in categorized_modifiers[category]:
+                    result.specificity += 1
+                else:
+                    result.specificity = self.INVALID
+                    return
+
+    def _group_by_category(self, modifiers):
+        # Returns a dict of category name -> list of modifiers.
+        modifiers_by_category = {}
+        for m in modifiers:
+            modifiers_by_category.setdefault(self._category(m), []).append(m)
+        return modifiers_by_category
+
+    def _category(self, modifier):
+        return self._categories_for_modifiers[modifier]

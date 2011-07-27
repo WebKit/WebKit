@@ -119,10 +119,6 @@ class TestConfigurationConverterTest(unittest.TestCase):
 
         self.assertEquals(converter.to_config_set(set(['xp', 'foo'])), set())
 
-        errors = []
-        self.assertEquals(converter.to_config_set(set(['xp', 'foo']), errors), set())
-        self.assertEquals(errors, ["Unrecognized modifier 'foo'"])
-
         configs_to_match = set([
             TestConfiguration(None, 'xp', 'x86', 'release', 'gpu'),
             TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'),

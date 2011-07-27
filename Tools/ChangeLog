@@ -1,3 +1,19 @@
+2011-07-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r91792.
+        http://trac.webkit.org/changeset/91792
+        https://bugs.webkit.org/show_bug.cgi?id=65242
+
+        It broke NRWT on Qt and GTK (Requested by Ossy_night on
+        #webkit).
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py:
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/test.py:
+
 2011-07-26  Adam Barth  <abarth@webkit.org>
 
         Switch to an older idiom that works on Python 2.5.
