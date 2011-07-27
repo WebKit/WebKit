@@ -1,3 +1,18 @@
+2011-07-26  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        reduce and reduceRight bind callback's this to null rather than undefined
+        https://bugs.webkit.org/show_bug.cgi?id=62264
+
+        Reviewed by Oliver Hunt.
+
+        Fixed Array.prototype.reduce and Array.prototype.reduceRight so that they behave correctly
+        when calling the callback function without an argument for this, which means it should 
+        be undefined according to ES 15.4.4.21 and 15.4.4.22.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncReduce):
+        (JSC::arrayProtoFuncReduceRight):
+
 2011-07-26  Filip Pizlo  <fpizlo@apple.com>
 
         JSC command-line tool does not come with any facility for

@@ -981,7 +981,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec)
     if (callType == CallTypeJS && array) {
         CachedCall cachedCall(exec, asFunction(function), 4);
         for (; i < length && !exec->hadException(); ++i) {
-            cachedCall.setThis(jsNull());
+            cachedCall.setThis(jsUndefined());
             cachedCall.setArgument(0, rv);
             JSValue v;
             if (LIKELY(array->canGetIndex(i)))
@@ -1010,7 +1010,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduce(ExecState* exec)
         eachArguments.append(jsNumber(i));
         eachArguments.append(thisObj);
         
-        rv = call(exec, function, callType, callData, jsNull(), eachArguments);
+        rv = call(exec, function, callType, callData, jsUndefined(), eachArguments);
     }
     return JSValue::encode(rv);
 }
@@ -1057,7 +1057,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState* exec)
         CachedCall cachedCall(exec, asFunction(function), 4);
         for (; i < length && !exec->hadException(); ++i) {
             unsigned idx = length - i - 1;
-            cachedCall.setThis(jsNull());
+            cachedCall.setThis(jsUndefined());
             cachedCall.setArgument(0, rv);
             if (UNLIKELY(!array->canGetIndex(idx)))
                 break; // length has been made unsafe while we enumerate fallback to slow path
@@ -1084,7 +1084,7 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncReduceRight(ExecState* exec)
         eachArguments.append(jsNumber(idx));
         eachArguments.append(thisObj);
         
-        rv = call(exec, function, callType, callData, jsNull(), eachArguments);
+        rv = call(exec, function, callType, callData, jsUndefined(), eachArguments);
     }
     return JSValue::encode(rv);        
 }

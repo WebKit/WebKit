@@ -33,6 +33,7 @@ PASS toObject([0,1,2,3,4,5]).reduce(function(a,b,i) {return a.concat([i,b]);}, [
 PASS toUnorderedObject([[0,1], [2,3], [4,5]]).reduce(function(a,b) {return a.concat(b);}, []) is [0,1,2,3,4,5]
 PASS toUnorderedObject([0,1,2,3,4,5]).reduce(function(a,b,i) {return a.concat([i,b]);}, []) is [0,0,1,1,2,2,3,3,4,4,5,5]
 PASS [0,1,2,3,4,5].reduce(function(a,b,i) {return a.concat([i,b]);}, []) is [0,0,1,1,2,2,3,3,4,4,5,5]
+PASS [2,3].reduce(function() {'use strict'; return this;}) is undefined
 PASS successfullyParsed is true
 
 TEST COMPLETE

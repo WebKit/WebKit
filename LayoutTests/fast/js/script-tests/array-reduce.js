@@ -65,4 +65,5 @@ shouldBe("toObject([0,1,2,3,4,5]).reduce(function(a,b,i) {return a.concat([i,b])
 shouldBe("toUnorderedObject([[0,1], [2,3], [4,5]]).reduce(function(a,b) {return a.concat(b);}, [])", "[0,1,2,3,4,5]");
 shouldBe("toUnorderedObject([0,1,2,3,4,5]).reduce(function(a,b,i) {return a.concat([i,b]);}, [])", "[0,0,1,1,2,2,3,3,4,4,5,5]");
 shouldBe("[0,1,2,3,4,5].reduce(function(a,b,i) {return a.concat([i,b]);}, [])", "[0,0,1,1,2,2,3,3,4,4,5,5]");
+shouldBe("[2,3].reduce(function() {'use strict'; return this;})", "undefined");
 successfullyParsed = true;
