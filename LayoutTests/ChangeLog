@@ -1,6 +1,6 @@
 2011-07-26  Adam Barth  <abarth@webkit.org>
 
-        enne tells me that she already rebaselined this test.  The 10.5 bot is
+        enne tells me that they already rebaselined this test.  The 10.5 bot is
         just behind because dglazkov broke NRWT on Python 2.5.
 
         * platform/chromium/test_expectations.txt:
