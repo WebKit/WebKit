@@ -1,3 +1,15 @@
+2011-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Add an exception to coding style check for EFL port.
+        https://bugs.webkit.org/show_bug.cgi?id=65162
+
+        Add an exception of whitespace/declaration for EFL port. Because,
+        '*' operator is next to variable in EFL coding style.
+
+        Reviewed by Kent Tamura.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2011-07-26  Keith Kyzivat  <keith.kyzivat@nokia.com>
 
         [Qt] Add option to turn on disk caching in QtTestBrowser

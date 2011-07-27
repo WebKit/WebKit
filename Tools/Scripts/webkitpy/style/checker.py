@@ -176,7 +176,8 @@ _PATH_RULES_SPECIFIER = [
       "Tools/EWebLauncher/",
       "Tools/MiniBrowser/efl/"],
      ["-readability/naming",
-      "-readability/parameter_name"]),
+      "-readability/parameter_name",
+      "-whitespace/declaration"]),
 
     # WebKit2 rules:
     # WebKit2 and certain directories have idiosyncracies.
