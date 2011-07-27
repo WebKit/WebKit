@@ -52,8 +52,6 @@ public:
 };
 
 class XMLToken : public MarkupTokenBase<XMLTokenTypes> {
-    WTF_MAKE_NONCOPYABLE(XMLToken);
-    WTF_MAKE_FAST_ALLOCATED;
 public:
     virtual void clear()
     {
@@ -304,7 +302,7 @@ public:
 #endif // NDEBUG
 
 private:
-    typedef BaseDoctypeData DoctypeData;
+    typedef DoctypeDataBase DoctypeData;
 
     class XMLDeclarationData {
         WTF_MAKE_NONCOPYABLE(XMLDeclarationData);

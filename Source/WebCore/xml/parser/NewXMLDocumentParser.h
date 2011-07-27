@@ -28,6 +28,9 @@
 
 #include "CachedResourceClient.h"
 #include "ScriptableDocumentParser.h"
+#include "XMLToken.h"
+#include "XMLTokenizer.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -64,6 +67,9 @@ private:
     virtual bool isWaitingForScripts() const;
     virtual bool isExecutingScript() const;
     virtual void executeScriptsWaitingForStylesheets();
+
+    OwnPtr<XMLTokenizer> m_tokenizer;
+    XMLToken m_token;
 };
 
 }

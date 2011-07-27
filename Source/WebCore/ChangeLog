@@ -1,3 +1,33 @@
+2011-07-26  Jeffrey Pfau  <jpfau@apple.com>
+
+        New XML tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=64566
+
+        Reviewed by Adam Barth.
+
+        Add tokenizer for XML and tests in NewXMLDocumentParser for printing results of tokenization.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * xml/parser/NewXMLDocumentParser.cpp:
+        (WebCore::NewXMLDocumentParser::NewXMLDocumentParser):
+        (WebCore::NewXMLDocumentParser::append):
+        * xml/parser/NewXMLDocumentParser.h:
+        * xml/parser/XMLToken.h:
+        * xml/parser/XMLTokenizer.cpp: Added.
+        (WebCore::XMLTokenizer::XMLTokenizer):
+        (WebCore::::shouldSkipNullCharacters):
+        (WebCore::XMLTokenizer::nextToken):
+        (WebCore::XMLTokenizer::bufferCharacter):
+        (WebCore::XMLTokenizer::parseError):
+        * xml/parser/XMLTokenizer.h: Added.
+        (WebCore::XMLTokenizer::create):
+        (WebCore::XMLTokenizer::gotError):
+        (WebCore::XMLTokenizer::shouldSkipNullCharacters):
+
 2011-07-26  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Layering violations in gesture recognizer

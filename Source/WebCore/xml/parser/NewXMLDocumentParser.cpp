@@ -26,10 +26,13 @@
 #include "config.h"
 #include "NewXMLDocumentParser.h"
 
+#include "SegmentedString.h"
+
 namespace WebCore {
 
 NewXMLDocumentParser::NewXMLDocumentParser(Document* document)
     : ScriptableDocumentParser(document)
+    , m_tokenizer(XMLTokenizer::create())
 {
 }
 
@@ -49,8 +52,23 @@ void NewXMLDocumentParser::insert(const SegmentedString&)
     ASSERT_NOT_REACHED();
 }
 
-void NewXMLDocumentParser::append(const SegmentedString&)
+void NewXMLDocumentParser::append(const SegmentedString& string)
 {
+    SegmentedString input = string;
+    while (!input.isEmpty()) {
+        if (!m_tokenizer->nextToken(input, m_token))
+            continue;
+
+#ifndef NDEBUG
+        m_token.print();
+#endif
+
+        if (m_token.type() == XMLTokenTypes::EndOfFile)
+            break;
+
+        m_token.clear();
+        ASSERT(m_token.isUninitialized());
+    }
 }
 
 void NewXMLDocumentParser::finish()

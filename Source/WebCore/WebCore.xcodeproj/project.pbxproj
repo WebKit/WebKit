@@ -47,6 +47,8 @@
 /* Begin PBXBuildFile section */
 		00022E6913CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */; };
 		0002EC5813C3F67D00040D47 /* XMLToken.h in Headers */ = {isa = PBXBuildFile; fileRef = 0002EC5513C3F67D00040D47 /* XMLToken.h */; };
+		0002EC5913C3F67D00040D47 /* XMLTokenizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0002EC5613C3F67D00040D47 /* XMLTokenizer.cpp */; };
+		0002EC5A13C3F67D00040D47 /* XMLTokenizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0002EC5713C3F67D00040D47 /* XMLTokenizer.h */; };
 		0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */; };
 		0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 00146289103CD1DE000B20DB /* OriginAccessEntry.h */; };
 		003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 003F1FE911E6AB43008258D9 /* UserContentTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6459,6 +6461,8 @@
 /* Begin PBXFileReference section */
 		00022E6813CE1BBA00282D5B /* CharacterReferenceParserInlineMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterReferenceParserInlineMethods.h; sourceTree = "<group>"; };
 		0002EC5513C3F67D00040D47 /* XMLToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLToken.h; sourceTree = "<group>"; };
+		0002EC5613C3F67D00040D47 /* XMLTokenizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLTokenizer.cpp; sourceTree = "<group>"; };
+		0002EC5713C3F67D00040D47 /* XMLTokenizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLTokenizer.h; sourceTree = "<group>"; };
 		00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginAccessEntry.cpp; sourceTree = "<group>"; };
 		00146289103CD1DE000B20DB /* OriginAccessEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginAccessEntry.h; sourceTree = "<group>"; };
 		003F1FE911E6AB43008258D9 /* UserContentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentTypes.h; sourceTree = "<group>"; };
@@ -12814,6 +12818,8 @@
 				00B9318513BA867F0035A948 /* XMLDocumentParserScope.cpp */,
 				00B9318613BA867F0035A948 /* XMLDocumentParserScope.h */,
 				0002EC5513C3F67D00040D47 /* XMLToken.h */,
+				0002EC5613C3F67D00040D47 /* XMLTokenizer.cpp */,
+				0002EC5713C3F67D00040D47 /* XMLTokenizer.h */,
 			);
 			path = parser;
 			sourceTree = "<group>";
@@ -23233,6 +23239,7 @@
 				E15A36D71104572000B7B639 /* XMLNSNames.h in Headers */,
 				1ACE53EB0A8D18E70022947D /* XMLSerializer.h in Headers */,
 				0002EC5813C3F67D00040D47 /* XMLToken.h in Headers */,
+				0002EC5A13C3F67D00040D47 /* XMLTokenizer.h in Headers */,
 				5905ADC01302F3CE00F116DF /* XMLTreeViewer.h in Headers */,
 				1AB7FC690A8B92EC00D9D37B /* XPathEvaluator.h in Headers */,
 				BC60DA5B0D2A31F700B9918F /* XPathException.h in Headers */,
@@ -26020,6 +26027,7 @@
 				A833C80C0A2CF25600D57664 /* XMLNames.cpp in Sources */,
 				E15A36D91104572700B7B639 /* XMLNSNames.cpp in Sources */,
 				1ACE53EA0A8D18E70022947D /* XMLSerializer.cpp in Sources */,
+				0002EC5913C3F67D00040D47 /* XMLTokenizer.cpp in Sources */,
 				5905ADBF1302F3CE00F116DF /* XMLTreeViewer.cpp in Sources */,
 				1AB7FC680A8B92EC00D9D37B /* XPathEvaluator.cpp in Sources */,
 				1AB7FC6B0A8B92EC00D9D37B /* XPathExpression.cpp in Sources */,

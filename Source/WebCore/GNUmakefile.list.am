@@ -3808,16 +3808,22 @@ webcore_sources += \
 	Source/WebCore/workers/WorkerScriptLoader.h \
 	Source/WebCore/workers/WorkerThread.cpp \
 	Source/WebCore/workers/WorkerThread.h \
+	Source/WebCore/xml/parser/CharacterReferenceParserInlineMethods.h \
 	Source/WebCore/xml/parser/MarkupTokenBase.h \
 	Source/WebCore/xml/parser/MarkupTokenizerBase.h \
 	Source/WebCore/xml/parser/MarkupTokenizerInlineMethods.h \
 	Source/WebCore/xml/parser/NewXMLDocumentParser.cpp \
 	Source/WebCore/xml/parser/NewXMLDocumentParser.h \
+	Source/WebCore/xml/parser/XMLCharacterReferenceParser.cpp \
+	Source/WebCore/xml/parser/XMLCharacterReferenceParser.h \
 	Source/WebCore/xml/parser/XMLDocumentParser.cpp \
 	Source/WebCore/xml/parser/XMLDocumentParser.h \
 	Source/WebCore/xml/parser/XMLDocumentParserLibxml2.cpp \
 	Source/WebCore/xml/parser/XMLDocumentParserScope.cpp \
 	Source/WebCore/xml/parser/XMLDocumentParserScope.h \
+	Source/WebCore/xml/parser/XMLTokenizer.cpp \
+	Source/WebCore/xml/parser/XMLTokenizer.h \
+	Source/WebCore/xml/parser/XMLToken.h \
 	Source/WebCore/xml/DOMParser.cpp \
 	Source/WebCore/xml/DOMParser.h \
 	Source/WebCore/xml/NativeXPathNSResolver.cpp \

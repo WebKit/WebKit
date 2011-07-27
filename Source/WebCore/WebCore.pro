@@ -1199,7 +1199,10 @@ SOURCES += \
     xml/XMLHttpRequestUpload.cpp \
     xml/XMLErrors.cpp \
     xml/XMLSerializer.cpp \
-    xml/parser/XMLDocumentParser.cpp 
+    xml/parser/NewXMLDocumentParser.cpp \
+    xml/parser/XMLCharacterReferenceParser.cpp \
+    xml/parser/XMLDocumentParser.cpp \
+    xml/parser/XMLTokenizer.cpp
 
 HEADERS += \
     accessibility/AccessibilityARIAGridCell.h \
@@ -2500,10 +2503,15 @@ HEADERS += \
     workers/WorkerRunLoop.h \
     workers/WorkerScriptLoader.h \
     workers/WorkerThread.h \
+    xml/parser/CharacterReferenceParserInlineMethods.h \
     xml/parser/MarkupTokenBase.h \
     xml/parser/MarkupTokenizerBase.h \
     xml/parser/MarkupTokenizerInlineMethods.h \
+    xml/parser/NewXMLDocumentParser.h \
+    xml/parser/XMLCharacterReferenceParser.h \
     xml/parser/XMLDocumentParser.h \
+    xml/parser/XMLTokenizer.h \
+    xml/parser/XMLToken.h \
     xml/DOMParser.h \
     xml/NativeXPathNSResolver.h \
     xml/XMLHttpRequest.h \

@@ -42681,6 +42681,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\xml\parser\CharacterReferenceInlineMethods.h"
+					>
+				</File>
+				<File
 					RelativePath="..\xml\parser\MarkupTokenBase.h"
 					>
 				</File>
@@ -42754,6 +42758,14 @@
 				</File>
 				<File
 					RelativePath="..\xml\parser\XMLDocumentParserScope.h"
+					>
+				</File>
+				<File
+					RelativePath="..\xml\parser\XMLTokenizer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\xml\parser\XMLToken.h"
 					>
 				</File>
 			</Filter>
