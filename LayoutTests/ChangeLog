@@ -1,3 +1,11 @@
+2011-07-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Mark data-view-test.html as flaky in non-debug configs too.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Disable cache option should only clear memory cache, not disable it.
