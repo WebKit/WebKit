@@ -1,3 +1,13 @@
+2011-07-27  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: [Chromium] REGRESSION: Uncaught TypeError: Cannot read property 'isTracingToWindowObjects' of undefined
+        https://bugs.webkit.org/show_bug.cgi?id=65213
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotRetainingPathsList.prototype.refresh):
+
 2011-07-27  Shinya Kawanaka  <shinyak@google.com>
 
         Knob of a disabled or readonly range control should not be draggable.

@@ -451,7 +451,8 @@ WebInspector.HeapSnapshotRetainingPathsList.prototype = {
 
     refresh: function()
     {
-        this._resetPaths();
+        if (this.snapshotView)
+            this._resetPaths();
     },
 
     reset: function()
