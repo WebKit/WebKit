@@ -1,3 +1,14 @@
+2011-07-27  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Unreviewed build fix for mac.
+
+        QtKit is now our default media player, the define is WTF_USE_QTKIT and it's not part
+        of the options passed to build-webkit, therefore DerivedSources should now generate the
+        includes when it's mac.
+
+        * DerivedSources.pro:
+        * WebCore.pro:
+
 2011-07-27  Yury Semikhatsky  <yurys@chromium.org>
 
         Inspector should support cd(window) in the command line

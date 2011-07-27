@@ -27,7 +27,7 @@ defineTest(addExtraCompiler) {
     return(true)
 }
 
-contains(DEFINES, USE_QTKIT=1) {
+mac {
     SRC_ROOT_DIR = $$replace(PWD, /Source/WebCore, "")
     fwheader_generator.commands = perl $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl $${SRC_ROOT_DIR}/Source/WebKit2 ../include mac
     fwheader_generator.depends  = $${SRC_ROOT_DIR}/Source/WebKit2/Scripts/generate-forwarding-headers.pl

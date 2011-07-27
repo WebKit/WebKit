@@ -3019,7 +3019,7 @@ contains(DEFINES, ENABLE_VIDEO=1) {
             bindings/js/JSAudioConstructor.cpp
     }
 
-    contains(DEFINES, USE_QTKIT=1) {
+    contains(DEFINES, WTF_USE_QTKIT=1) {
         INCLUDEPATH += \
             $$SOURCE_DIR/../WebKitLibraries/
 
