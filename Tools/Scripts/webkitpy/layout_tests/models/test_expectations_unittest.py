@@ -378,5 +378,157 @@ class RebaseliningTest(Base):
         self.assertEqual(len(self._exp.get_rebaselining_failures()), 0)
 
 
+class TestExpectationParserTests(unittest.TestCase):
+    def test_tokenize_blank(self):
+        expectation = TestExpectationParser.tokenize('')
+        self.assertEqual(expectation.is_malformed(), False)
+        self.assertEqual(expectation.comment, None)
+        self.assertEqual(len(expectation.errors), 0)
+
+    def test_tokenize_missing_colon(self):
+        expectation = TestExpectationParser.tokenize('Qux.')
+        self.assertEqual(expectation.is_malformed(), True)
+        self.assertEqual(expectation.comment, 'Qux.')
+        self.assertEqual(str(expectation.errors), '["Missing a \':\'"]')
+
+    def test_tokenize_extra_colon(self):
+        expectation = TestExpectationParser.tokenize('FOO : : bar')
+        self.assertEqual(expectation.is_malformed(), True)
+        self.assertEqual(expectation.comment, 'FOO : : bar')
+        self.assertEqual(str(expectation.errors), '["Extraneous \':\'"]')
+
+    def test_tokenize_empty_comment(self):
+        expectation = TestExpectationParser.tokenize('//')
+        self.assertEqual(expectation.is_malformed(), False)
+        self.assertEqual(expectation.comment, '')
+        self.assertEqual(len(expectation.errors), 0)
+
+    def test_tokenize_comment(self):
+        expectation = TestExpectationParser.tokenize('//Qux.')
+        self.assertEqual(expectation.is_malformed(), False)
+        self.assertEqual(expectation.comment, 'Qux.')
+        self.assertEqual(len(expectation.errors), 0)
+
+    def test_tokenize_missing_equal(self):
+        expectation = TestExpectationParser.tokenize('FOO : bar')
+        self.assertEqual(expectation.is_malformed(), True)
+        self.assertEqual(expectation.comment, 'FOO : bar')
+        self.assertEqual(str(expectation.errors), "['Missing expectations\']")
+
+    def test_tokenize_extra_equal(self):
+        expectation = TestExpectationParser.tokenize('FOO : bar = BAZ = Qux.')
+        self.assertEqual(expectation.is_malformed(), True)
+        self.assertEqual(expectation.comment, 'FOO : bar = BAZ = Qux.')
+        self.assertEqual(str(expectation.errors), '["Extraneous \'=\'"]')
+
+    def test_tokenize_valid(self):
+        expectation = TestExpectationParser.tokenize('FOO : bar = BAZ')
+        self.assertEqual(expectation.is_malformed(), False)
+        self.assertEqual(expectation.comment, None)
+        self.assertEqual(len(expectation.errors), 0)
+
+    def test_tokenize_valid_with_comment(self):
+        expectation = TestExpectationParser.tokenize('FOO : bar = BAZ //Qux.')
+        self.assertEqual(expectation.is_malformed(), False)
+        self.assertEqual(expectation.comment, 'Qux.')
+        self.assertEqual(str(expectation.modifiers), '[\'foo\']')
+        self.assertEqual(str(expectation.expectations), '[\'baz\']')
+        self.assertEqual(len(expectation.errors), 0)
+
+    def test_tokenize_valid_with_multiple_modifiers(self):
+        expectation = TestExpectationParser.tokenize('FOO1 FOO2 : bar = BAZ //Qux.')
+        self.assertEqual(expectation.is_malformed(), False)
+        self.assertEqual(expectation.comment, 'Qux.')
+        self.assertEqual(str(expectation.modifiers), '[\'foo1\', \'foo2\']')
+        self.assertEqual(str(expectation.expectations), '[\'baz\']')
+        self.assertEqual(len(expectation.errors), 0)
+
+    def test_parse_empty_string(self):
+        test_port = port.get('test-win-xp', None)
+        test_port.test_exists = lambda test: True
+        test_config = test_port.test_configuration()
+        full_test_list = []
+        expectation_line = TestExpectationParser.tokenize('')
+        parser = TestExpectationParser(test_port, full_test_list, allow_rebaseline_modifier=False)
+        parser.parse(expectation_line)
+        self.assertFalse(expectation_line.is_invalid())
+
+
+class TestExpectationSerializerTests(unittest.TestCase):
+    def assert_round_trip(self, in_string, expected_string=None):
+        expectation = TestExpectationParser.tokenize(in_string)
+        if expected_string is None:
+            expected_string = in_string
+        self.assertEqual(expected_string, TestExpectationSerializer.to_string(expectation))
+
+    def assert_list_round_trip(self, in_string, expected_string=None):
+        expectations = TestExpectationParser.tokenize_list(in_string)
+        if expected_string is None:
+            expected_string = in_string
+        self.assertEqual(expected_string, TestExpectationSerializer.list_to_string(expectations))
+
+    def assert_to_string(self, expectation, expected_string):
+        self.assertEqual(TestExpectationSerializer.to_string(expectation), expected_string)
+
+    def test_string_serializer(self):
+        expectation = TestExpectationLine()
+        self.assert_to_string(expectation, '')
+        expectation.comment = 'Qux.'
+        self.assert_to_string(expectation, '//Qux.')
+        expectation.name = 'bar'
+        self.assert_to_string(expectation, ' : bar =  //Qux.')
+        expectation.modifiers = ['foo']
+        self.assert_to_string(expectation, 'FOO : bar =  //Qux.')
+        expectation.expectations = ['bAz']
+        self.assert_to_string(expectation, 'FOO : bar = BAZ //Qux.')
+        expectation.expectations = ['bAz1', 'baZ2']
+        self.assert_to_string(expectation, 'FOO : bar = BAZ1 BAZ2 //Qux.')
+        expectation.modifiers = ['foo1', 'foO2']
+        self.assert_to_string(expectation, 'FOO1 FOO2 : bar = BAZ1 BAZ2 //Qux.')
+        expectation.errors.append('Oh the horror.')
+        self.assert_to_string(expectation, 'Qux.')
+
+    def test_string_roundtrip(self):
+        self.assert_round_trip('')
+        self.assert_round_trip('FOO')
+        self.assert_round_trip(':')
+        self.assert_round_trip('FOO :')
+        self.assert_round_trip('FOO : bar')
+        self.assert_round_trip('  FOO :')
+        self.assert_round_trip('    FOO : bar')
+        self.assert_round_trip('FOO : bar = BAZ')
+        self.assert_round_trip('FOO : bar = BAZ //Qux.')
+        self.assert_round_trip('FOO : bar = BAZ // Qux.')
+        self.assert_round_trip('FOO : bar = BAZ // Qux.     ')
+        self.assert_round_trip('FOO : bar = BAZ //        Qux.     ')
+        self.assert_round_trip('FOO : : bar = BAZ')
+        self.assert_round_trip('FOO : : bar = BAZ')
+        self.assert_round_trip('FOO : : bar ==== BAZ')
+        self.assert_round_trip('=')
+        self.assert_round_trip('//')
+        self.assert_round_trip('// ')
+        self.assert_round_trip('// Foo')
+        self.assert_round_trip('// Foo')
+        self.assert_round_trip('// Foo :')
+        self.assert_round_trip('// Foo : =')
+
+    def test_list_roundtrip(self):
+        self.assert_list_round_trip('')
+        self.assert_list_round_trip('\n')
+        self.assert_list_round_trip('\n\n')
+        self.assert_list_round_trip('bar')
+        self.assert_list_round_trip('bar\n//Qux.')
+        self.assert_list_round_trip('bar\n//Qux.\n')
+
+    def test_string_whitespace_stripping(self):
+        self.assert_round_trip('\n', '')
+        self.assert_round_trip('  FOO : bar = BAZ', 'FOO : bar = BAZ')
+        self.assert_round_trip('FOO    : bar = BAZ', 'FOO : bar = BAZ')
+        self.assert_round_trip('FOO : bar = BAZ       // Qux.', 'FOO : bar = BAZ // Qux.')
+        self.assert_round_trip('FOO : bar =        BAZ // Qux.', 'FOO : bar = BAZ // Qux.')
+        self.assert_round_trip('FOO :       bar =    BAZ // Qux.', 'FOO : bar = BAZ // Qux.')
+        self.assert_round_trip('FOO :       bar     =    BAZ // Qux.', 'FOO : bar = BAZ // Qux.')
+
+
 if __name__ == '__main__':
     unittest.main()

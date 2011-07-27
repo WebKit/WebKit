@@ -1,5 +1,11 @@
 2011-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Re-add unit tests I accidentally zapped in r91878.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Re-added unit tests.
+
+2011-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Replace SpecificityCalculator with TestConfiguration-driven logic.
         https://bugs.webkit.org/show_bug.cgi?id=65206
 

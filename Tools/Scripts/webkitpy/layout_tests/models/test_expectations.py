@@ -165,6 +165,9 @@ class TestExpectationParser:
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
     def parse(self, expectation_line):
+        if not expectation_line.name:
+            return
+
         self._check_modifiers_against_expectations(expectation_line)
         if self._check_path_does_not_exist(expectation_line):
             return
