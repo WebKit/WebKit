@@ -405,12 +405,12 @@ namespace JSC {
             return *m_codeBlockForConstruct;
         }
 
-        JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
+        JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec = 0)
         {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForCall)
-                error = compileForCallInternal(exec, scopeChainNode);
+                error = compileForCallInternal(exec, scopeChainNode, calleeArgsExec);
             ASSERT(!error == !!m_codeBlockForCall);
             return error;
         }
@@ -449,8 +449,14 @@ namespace JSC {
         
         JSObject* compileFor(ExecState* exec, ScopeChainNode* scopeChainNode, CodeSpecializationKind kind)
         {
+            // compileFor should only be called with a callframe set up to call this function,
+            // since we will make speculative optimizations based on the arguments.
+            ASSERT(exec->callee());
+            ASSERT(exec->callee()->inherits(&JSFunction::s_info));
+            ASSERT(asFunction(exec->callee())->jsExecutable() == this);
+
             if (kind == CodeForCall)
-                return compileForCall(exec, scopeChainNode);
+                return compileForCall(exec, scopeChainNode, exec);
             ASSERT(kind == CodeForConstruct);
             return compileForConstruct(exec, scopeChainNode);
         }
@@ -491,7 +497,7 @@ namespace JSC {
         FunctionExecutable(JSGlobalData&, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
         FunctionExecutable(ExecState*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
 
-        JSObject* compileForCallInternal(ExecState*, ScopeChainNode*);
+        JSObject* compileForCallInternal(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec);
         JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*);
         
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;

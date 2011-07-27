@@ -57,14 +57,12 @@ static bool tryDFGCompile(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCod
     if (!parse(dfg, globalData, codeBlock))
         return false;
 
-    dfg.predictArgumentTypes(exec);
-
     DFG::JITCompiler dataFlowJIT(globalData, dfg, codeBlock);
     dataFlowJIT.compile(jitCode);
     return true;
 }
 
-static bool tryDFGCompileFunction(ExecState* exec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
+static bool tryDFGCompileFunction(ExecState* exec, ExecState* calleeArgsExec, CodeBlock* codeBlock, JITCode& jitCode, MacroAssemblerCodePtr& jitCodeWithArityCheck)
 {
 #if ENABLE(DFG_JIT_RESTRICTIONS)
     // FIXME: No flow control yet supported, don't bother scanning the bytecode if there are any jump targets.
@@ -77,7 +75,8 @@ static bool tryDFGCompileFunction(ExecState* exec, CodeBlock* codeBlock, JITCode
     if (!parse(dfg, globalData, codeBlock))
         return false;
 
-    dfg.predictArgumentTypes(exec);
+    if (calleeArgsExec)
+        dfg.predictArgumentTypes(calleeArgsExec);
 
     DFG::JITCompiler dataFlowJIT(globalData, dfg, codeBlock);
     dataFlowJIT.compileFunction(jitCode, jitCodeWithArityCheck);
@@ -85,7 +84,7 @@ static bool tryDFGCompileFunction(ExecState* exec, CodeBlock* codeBlock, JITCode
 }
 #else
 static bool tryDFGCompile(ExecState*, CodeBlock*, JITCode&) { return false; }
-static bool tryDFGCompileFunction(ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr&) { return false; }
+static bool tryDFGCompileFunction(ExecState*, ExecState*, CodeBlock*, JITCode&, MacroAssemblerCodePtr&) { return false; }
 #endif
 
 class ExecutableFinalizer : public WeakHandleOwner {
@@ -317,7 +316,7 @@ void ProgramExecutable::visitChildren(SlotVisitor& visitor)
         m_programCodeBlock->visitAggregate(visitor);
 }
 
-JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode)
+JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec)
 {
     JSObject* exception = 0;
     JSGlobalData* globalData = scopeChainNode->globalData;
@@ -351,7 +350,7 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
 
 #if ENABLE(JIT)
     if (exec->globalData().canUseJIT()) {
-        bool dfgCompiled = tryDFGCompileFunction(exec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
+        bool dfgCompiled = tryDFGCompileFunction(exec, calleeArgsExec, m_codeBlockForCall.get(), m_jitCodeForCall, m_jitCodeForCallWithArityCheck);
         if (!dfgCompiled)
             m_jitCodeForCall = JIT::compile(scopeChainNode->globalData, m_codeBlockForCall.get(), &m_jitCodeForCallWithArityCheck);
 

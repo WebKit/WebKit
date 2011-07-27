@@ -529,8 +529,9 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
     if (executable->isHostFunction())
         codePtr = executable->generatedJITCodeFor(kind).addressForCall();
     else {
+        execCallee->setScopeChain(callee->scope());
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->compileFor(exec, callee->scope(), kind);
+        JSObject* error = functionExecutable->compileFor(execCallee, callee->scope(), kind);
         if (error) {
             globalData->exception = createStackOverflowError(exec);
             return 0;
@@ -540,7 +541,6 @@ inline void* linkFor(ExecState* execCallee, ReturnAddressPtr returnAddress, Code
             codePtr = functionExecutable->generatedJITCodeFor(kind).addressForCall();
         else
             codePtr = functionExecutable->generatedJITCodeWithArityCheckFor(kind);
-        execCallee->setScopeChain(callee->scope());
     }
     CallLinkInfo& callLinkInfo = exec->codeBlock()->getCallLinkInfo(returnAddress);
     if (!callLinkInfo.seenOnce())
@@ -574,16 +574,16 @@ inline void* virtualFor(ExecState* execCallee, CodeSpecializationKind kind)
         return handleHostCall(execCallee, calleeAsValue, kind);
     
     JSFunction* function = asFunction(calleeAsFunctionCell);
+    execCallee->setScopeChain(function->scopeUnchecked());
     ExecutableBase* executable = function->executable();
     if (UNLIKELY(!executable->hasJITCodeFor(kind))) {
         FunctionExecutable* functionExecutable = static_cast<FunctionExecutable*>(executable);
-        JSObject* error = functionExecutable->compileFor(exec, function->scope(), kind);
+        JSObject* error = functionExecutable->compileFor(execCallee, function->scope(), kind);
         if (error) {
             exec->globalData().exception = error;
             return 0;
         }
     }
-    execCallee->setScopeChain(function->scopeUnchecked());
     return executable->generatedJITCodeWithArityCheckFor(kind).executableAddress();
 }
 

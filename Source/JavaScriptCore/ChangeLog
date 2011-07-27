@@ -1,3 +1,31 @@
+2011-07-27  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65294
+        DFG JIT - may speculate based on wrong arguments.
+
+        Reviewed by Oliver Hunt
+
+        In the case of a DFG compiled function calling to and compiling a second function that
+        also compiles through the DFG JIT (i.e. compilation triggered with DFGOperations.cpp),
+        we call compileFor passing the caller functions exec state, rather than the callee's.
+        This may lead to mis-optimization, since the DFG compiler will example the exec state's
+        arguments on the assumption that these will be passed to the callee - it is wanting the
+        callee exec state, not the caller's exec state.
+
+        Fixing this for all cases of compilation is tricksy, due to the way the numeric sort
+        function is compiled, & the structure of the calls in the Interpreter::execute methods.
+        Only fix for compilation from the JIT, in other calls don't speculate based on arguments
+        for now.
+
+        * dfg/DFGOperations.cpp:
+        * runtime/Executable.cpp:
+        (JSC::tryDFGCompile):
+        (JSC::tryDFGCompileFunction):
+        (JSC::FunctionExecutable::compileForCallInternal):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::compileForCall):
+        (JSC::FunctionExecutable::compileFor):
+
 2011-07-27  Oliver Hunt  <oliver@apple.com>
 
         Handle callback oriented JSONP
