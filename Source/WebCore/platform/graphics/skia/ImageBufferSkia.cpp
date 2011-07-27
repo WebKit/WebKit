@@ -112,8 +112,12 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op, bool useLowQualityScale)
 {
+    m_context->platformContext()->makeGrContextCurrent();
+    SkDevice* srcDevice = m_context->platformContext()->canvas()->getDevice();
+    SkBitmap bitmap = srcDevice->accessBitmap(false);
+    SkAutoLockPixels bitmapLock(bitmap);
     context->platformContext()->makeGrContextCurrent();
-    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
+    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(bitmap, context == m_context);
     context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
 }
 

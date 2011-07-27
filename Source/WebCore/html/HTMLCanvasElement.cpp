@@ -281,7 +281,7 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r, bool u
         return;
     
     if (m_context) {
-        if (!m_context->paintsIntoCanvasBuffer())
+        if (!m_context->paintsIntoCanvasBuffer() && !document()->printing())
             return;
         m_context->paintRenderingResultsToCanvas();
     }
