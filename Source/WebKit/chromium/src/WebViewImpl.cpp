@@ -129,6 +129,14 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
 
+#if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureEvent.h"
+#endif
+
+#if ENABLE(GESTURE_RECOGNIZER)
+#include "PlatformGestureRecognizer.h"
+#endif
+
 #if USE(CG)
 #include <CoreGraphics/CGBitmapContext.h>
 #include <CoreGraphics/CGContext.h>
@@ -340,6 +348,9 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
 #endif
     , m_deviceOrientationClientProxy(adoptPtr(new DeviceOrientationClientProxy(client ? client->deviceOrientationClient() : 0)))
     , m_geolocationClientProxy(adoptPtr(new GeolocationClientProxy(client ? client->geolocationClient() : 0)))
+#if ENABLE(GESTURE_RECOGNIZER)
+    , m_gestureRecognizer(WebCore::PlatformGestureRecognizer::create())
+#endif
 {
     // WebKit/win/WebView.cpp does the same thing, except they call the
     // KJS specific wrapper around this method. We need to have threading
@@ -757,7 +768,15 @@ bool WebViewImpl::touchEvent(const WebTouchEvent& event)
         return false;
 
     PlatformTouchEventBuilder touchEventBuilder(mainFrameImpl()->frameView(), event);
-    return mainFrameImpl()->frame()->eventHandler()->handleTouchEvent(touchEventBuilder);
+    bool defaultPrevented = mainFrameImpl()->frame()->eventHandler()->handleTouchEvent(touchEventBuilder);
+
+#if ENABLE(GESTURE_RECOGNIZER)
+    OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureEvents(m_gestureRecognizer->processTouchEventForGestures(touchEventBuilder, defaultPrevented));
+    for (unsigned int  i = 0; i < gestureEvents->size(); i++)
+        mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(gestureEvents->at(i));
+#endif
+
+    return defaultPrevented;
 }
 #endif
 
@@ -2657,5 +2676,13 @@ void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
         m_layerRenderer->releaseTextures();
 #endif
 }
+
+#if ENABLE(GESTURE_RECOGNIZER)
+void WebViewImpl::resetGestureRecognizer()
+{
+    m_gestureRecognizer->reset();
+}
+#endif
+
 
 } // namespace WebKit

@@ -36,8 +36,14 @@
 namespace WebCore {
 
     class FramelessScrollViewClient;
+#if ENABLE(GESTURE_RECOGNIZER)
+    class PlatformGestureEvent;
+#endif
     class PlatformKeyboardEvent;
     class PlatformMouseEvent;
+#if ENABLE(TOUCH_EVENTS)
+    class PlatformTouchEvent;
+#endif
     class PlatformWheelEvent;
 
     // A FramelessScrollView is a ScrollView that can be used to render custom
@@ -60,6 +66,12 @@ namespace WebCore {
         virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&) = 0;
         virtual bool handleWheelEvent(const PlatformWheelEvent&) = 0;
         virtual bool handleKeyEvent(const PlatformKeyboardEvent&) = 0;
+#if ENABLE(TOUCH_EVENTS)
+        virtual bool handleTouchEvent(const PlatformTouchEvent&) = 0;
+#endif
+#if ENABLE(GESTURE_RECOGNIZER)
+        virtual bool handleGestureEvent(const PlatformGestureEvent&) = 0;
+#endif
 
         // ScrollableArea public methods:
         virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
