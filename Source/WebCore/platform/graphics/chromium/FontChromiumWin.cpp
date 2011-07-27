@@ -62,14 +62,8 @@ bool canvasHasMultipleLayers(const SkCanvas* canvas)
 class TransparencyAwareFontPainter {
 public:
     TransparencyAwareFontPainter(GraphicsContext*, const FloatPoint&);
-    ~TransparencyAwareFontPainter();
 
 protected:
-    // Called by our subclass' constructor to initialize GDI if necessary. This
-    // is a separate function so it can be called after the subclass finishes
-    // construction (it calls virtual functions).
-    void init();
-
     virtual IntRect estimateTextBounds() = 0;
 
     // Use the context from the transparency helper when drawing with GDI. It
@@ -78,20 +72,6 @@ protected:
     PlatformGraphicsContext* m_platformContext;
 
     FloatPoint m_point;
-
-    // Set when Windows can handle the type of drawing we're doing.
-    bool m_useGDI;
-
-    // These members are valid only when m_useGDI is set.
-    HDC m_hdc;
-    TransparencyWin m_transparency;
-
-private:
-    // Call when we're using GDI mode to initialize the TransparencyWin to help
-    // us draw GDI text.
-    void initializeForGDI();
-
-    bool m_createdTransparencyLayer;  // We created a layer to give the font some alpha.
 };
 
 TransparencyAwareFontPainter::TransparencyAwareFontPainter(GraphicsContext* context,
@@ -99,88 +79,7 @@ TransparencyAwareFontPainter::TransparencyAwareFontPainter(GraphicsContext* cont
     : m_graphicsContext(context)
     , m_platformContext(context->platformContext())
     , m_point(point)
-    , m_useGDI(windowsCanHandleTextDrawing(context))
-    , m_hdc(0)
-    , m_createdTransparencyLayer(false)
 {
-}
-
-void TransparencyAwareFontPainter::init()
-{
-    if (m_useGDI)
-        initializeForGDI();
-}
-
-void TransparencyAwareFontPainter::initializeForGDI()
-{
-    m_graphicsContext->save();
-    SkColor color = m_platformContext->effectiveFillColor();
-    // Used only when m_createdTransparencyLayer is true.
-    float layerAlpha = 0.0f;
-    if (SkColorGetA(color) != 0xFF) {
-        // When the font has some transparency, apply it by creating a new
-        // transparency layer with that opacity applied. We'll actually create
-        // a new transparency layer after we calculate the bounding box.
-        m_createdTransparencyLayer = true;
-        layerAlpha = SkColorGetA(color) / 255.0f;
-        // The color should be opaque now.
-        color = SkColorSetRGB(SkColorGetR(color), SkColorGetG(color), SkColorGetB(color));
-    }
-
-    TransparencyWin::LayerMode layerMode;
-    IntRect layerRect;
-    if (m_platformContext->isDrawingToImageBuffer()) {
-        // Assume if we're drawing to an image buffer that the background
-        // is not opaque and we have to undo ClearType. We may want to
-        // enhance this to actually check, since it will often be opaque
-        // and we could do ClearType in that case.
-        layerMode = TransparencyWin::TextComposite;
-        layerRect = estimateTextBounds();
-        m_graphicsContext->clip(layerRect);
-        if (m_createdTransparencyLayer)
-            m_graphicsContext->beginTransparencyLayer(layerAlpha);
-
-        // The transparency helper requires that we draw text in black in
-        // this mode and it will apply the color.
-        m_transparency.setTextCompositeColor(color);
-        color = SkColorSetRGB(0, 0, 0);
-    } else if (m_createdTransparencyLayer || canvasHasMultipleLayers(m_platformContext->canvas())) {
-        // When we're drawing a web page, we know the background is opaque,
-        // but if we're drawing to a layer, we still need extra work.
-        layerMode = TransparencyWin::OpaqueCompositeLayer;
-        layerRect = estimateTextBounds();
-        m_graphicsContext->clip(layerRect);
-        if (m_createdTransparencyLayer)
-            m_graphicsContext->beginTransparencyLayer(layerAlpha);
-    } else {
-        // Common case of drawing onto the bottom layer of a web page: we
-        // know everything is opaque so don't need to do anything special.
-        layerMode = TransparencyWin::NoLayer;
-    }
-
-    // Bug 26088 - init() might fail if layerRect is invalid. Given this, we
-    // need to be careful to check for null pointers everywhere after this call
-    m_transparency.init(m_graphicsContext, layerMode, 
-                        TransparencyWin::KeepTransform, layerRect);
-
-    // Set up the DC, using the one from the transparency helper.
-    if (m_transparency.platformContext()) {
-        m_hdc = skia::BeginPlatformPaint(m_transparency.platformContext()->canvas());
-        SetTextColor(m_hdc, skia::SkColorToCOLORREF(color));
-        SetBkMode(m_hdc, TRANSPARENT);
-    }
-}
-
-TransparencyAwareFontPainter::~TransparencyAwareFontPainter()
-{
-    if (!m_useGDI || !m_graphicsContext || !m_platformContext)
-        return;  // Nothing to do.
-    m_transparency.composite();
-    if (m_createdTransparencyLayer)
-        m_graphicsContext->endTransparencyLayer();
-    m_graphicsContext->restore();
-    if (m_transparency.platformContext())
-        skia::EndPlatformPaint(m_transparency.platformContext()->canvas());
 }
 
 // Specialization for simple GlyphBuffer painting.
@@ -191,13 +90,10 @@ class TransparencyAwareGlyphPainter : public TransparencyAwareFontPainter {
                                   const GlyphBuffer&,
                                   int from, int numGlyphs,
                                   const FloatPoint&);
-    ~TransparencyAwareGlyphPainter();
 
     // Draws the partial string of glyphs, starting at |startAdvance| to the
-    // left of m_point. We express it this way so that if we're using the Skia
-    // drawing path we can use floating-point positioning, even though we have
-    // to use integer positioning in the GDI path.
-    bool drawGlyphs(int numGlyphs, const WORD* glyphs, const int* advances, float startAdvance) const;
+    // left of m_point.
+    void drawGlyphs(int numGlyphs, const WORD* glyphs, const int* advances, float startAdvance) const;
 
  private:
     virtual IntRect estimateTextBounds();
@@ -206,10 +102,6 @@ class TransparencyAwareGlyphPainter : public TransparencyAwareFontPainter {
     const GlyphBuffer& m_glyphBuffer;
     int m_from;
     int m_numGlyphs;
-
-    // When m_useGdi is set, this stores the previous HFONT selected into the
-    // m_hdc so we can restore it.
-    HGDIOBJ m_oldFont;  // For restoring the DC to its original state.
 };
 
 TransparencyAwareGlyphPainter::TransparencyAwareGlyphPainter(
@@ -223,20 +115,8 @@ TransparencyAwareGlyphPainter::TransparencyAwareGlyphPainter(
     , m_glyphBuffer(glyphBuffer)
     , m_from(from)
     , m_numGlyphs(numGlyphs)
-    , m_oldFont(0)
 {
-    init();
-
-    if (m_hdc)
-        m_oldFont = ::SelectObject(m_hdc, m_font->platformData().hfont());
 }
-
-TransparencyAwareGlyphPainter::~TransparencyAwareGlyphPainter()
-{
-    if (m_useGDI && m_hdc)
-        ::SelectObject(m_hdc, m_oldFont);
-}
-
 
 // Estimates the bounding box of the given text. This is copied from
 // FontCGWin.cpp, it is possible, but a lot more work, to get the precide
@@ -254,47 +134,15 @@ IntRect TransparencyAwareGlyphPainter::estimateTextBounds()
                    fontMetrics.lineSpacing()); 
 }
 
-bool TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
+void TransparencyAwareGlyphPainter::drawGlyphs(int numGlyphs,
                                                const WORD* glyphs,
                                                const int* advances,
                                                float startAdvance) const
 {
-    if (!m_useGDI) {
-        SkPoint origin = m_point;
-        origin.fX += SkFloatToScalar(startAdvance);
-        paintSkiaText(m_graphicsContext, m_font->platformData().hfont(),
-                      numGlyphs, glyphs, advances, 0, &origin);
-        return true;
-    }
-
-    if (!m_graphicsContext || !m_hdc)
-        return true;
-
-    // Windows' origin is the top-left of the bounding box, so we have
-    // to subtract off the font ascent to get it.
-    int x = lroundf(m_point.x() + startAdvance);
-    int y = lroundf(m_point.y() - m_font->fontMetrics().ascent());
-
-    // If there is a non-blur shadow and both the fill color and shadow color 
-    // are opaque, handle without skia. 
-    FloatSize shadowOffset;
-    float shadowBlur;
-    Color shadowColor;
-    ColorSpace shadowColorSpace;
-    if (m_graphicsContext->getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace)) {
-        // If there is a shadow and this code is reached, windowsCanHandleDrawTextShadow()
-        // will have already returned true during the ctor initiatization of m_useGDI
-        ASSERT(shadowColor.alpha() == 255);
-        ASSERT(m_graphicsContext->fillColor().alpha() == 255);
-        ASSERT(shadowBlur == 0);
-        COLORREF textColor = skia::SkColorToCOLORREF(SkColorSetARGB(255, shadowColor.red(), shadowColor.green(), shadowColor.blue()));
-        COLORREF savedTextColor = GetTextColor(m_hdc);
-        SetTextColor(m_hdc, textColor);
-        ExtTextOut(m_hdc, x + shadowOffset.width(), y + shadowOffset.height(), ETO_GLYPH_INDEX, 0, reinterpret_cast<const wchar_t*>(&glyphs[0]), numGlyphs, &advances[0]);
-        SetTextColor(m_hdc, savedTextColor);
-    }
-    
-    return !!ExtTextOut(m_hdc, x, y, ETO_GLYPH_INDEX, 0, reinterpret_cast<const wchar_t*>(&glyphs[0]), numGlyphs, &advances[0]);
+    SkPoint origin = m_point;
+    origin.fX += SkFloatToScalar(startAdvance);
+    paintSkiaText(m_graphicsContext, m_font->platformData().hfont(),
+                  numGlyphs, glyphs, advances, 0, &origin);
 }
 
 class TransparencyAwareUniscribePainter : public TransparencyAwareFontPainter {
@@ -304,10 +152,6 @@ class TransparencyAwareUniscribePainter : public TransparencyAwareFontPainter {
                                       const TextRun&,
                                       int from, int to,
                                       const FloatPoint&);
-    ~TransparencyAwareUniscribePainter();
-
-    // Uniscibe will draw directly into our buffer, so we need to expose our DC.
-    HDC hdc() const { return m_hdc; }
 
  private:
     virtual IntRect estimateTextBounds();
@@ -329,11 +173,6 @@ TransparencyAwareUniscribePainter::TransparencyAwareUniscribePainter(
     , m_run(run)
     , m_from(from)
     , m_to(to)
-{
-    init();
-}
-
-TransparencyAwareUniscribePainter::~TransparencyAwareUniscribePainter()
 {
 }
 
@@ -425,20 +264,7 @@ static void drawGlyphsWin(GraphicsContext* graphicsContext,
                 advances[i] = 0;
         }
 
-        // Actually draw the glyphs (with retry on failure).
-        bool success = false;
-        for (int executions = 0; executions < 2; ++executions) {
-            success = painter.drawGlyphs(curLen, &glyphs[0], &advances[0], horizontalOffset - point.x() - currentWidth);
-            if (!success && executions == 0) {
-                // Ask the browser to load the font for us and retry.
-                PlatformBridge::ensureFontLoaded(font->platformData().hfont());
-                continue;
-            }
-            break;
-        }
-
-        if (!success)
-            LOG_ERROR("Unable to draw the glyphs after second attempt");
+        painter.drawGlyphs(curLen, &glyphs[0], &advances[0], horizontalOffset - point.x() - currentWidth);
     }
 }
 
@@ -492,37 +318,9 @@ void Font::drawComplexText(GraphicsContext* graphicsContext,
     if (!alpha && graphicsContext->platformContext()->getStrokeStyle() == NoStroke)
         return;
 
-    TransparencyAwareUniscribePainter painter(graphicsContext, this, run, from, to, point);
-
-    HDC hdc = painter.hdc();
-    if (windowsCanHandleTextDrawing(graphicsContext) && !hdc)
-        return;
-
-    // TODO(maruel): http://b/700464 SetTextColor doesn't support transparency.
-    // Enforce non-transparent color.
-    color = SkColorSetRGB(SkColorGetR(color), SkColorGetG(color), SkColorGetB(color));
-    if (hdc) {
-        SetTextColor(hdc, skia::SkColorToCOLORREF(color));
-        SetBkMode(hdc, TRANSPARENT);
-    }
-
-    // If there is a non-blur shadow and both the fill color and shadow color 
-    // are opaque, handle without skia. 
-    FloatSize shadowOffset;
-    float shadowBlur;
-    Color shadowColor;
-    ColorSpace shadowColorSpace;
-    if (graphicsContext->getShadow(shadowOffset, shadowBlur, shadowColor, shadowColorSpace) && windowsCanHandleDrawTextShadow(graphicsContext)) {
-        COLORREF textColor = skia::SkColorToCOLORREF(SkColorSetARGB(255, shadowColor.red(), shadowColor.green(), shadowColor.blue()));
-        COLORREF savedTextColor = GetTextColor(hdc);
-        SetTextColor(hdc, textColor);
-        state.draw(graphicsContext, hdc, static_cast<int>(point.x()) + shadowOffset.width(),
-                   static_cast<int>(point.y() - fontMetrics().ascent()) + shadowOffset.height(), from, to);
-        SetTextColor(hdc, savedTextColor); 
-    }
-
     // Uniscribe counts the coordinates from the upper left, while WebKit uses
     // the baseline, so we have to subtract off the ascent.
+    HDC hdc = 0;
     state.draw(graphicsContext, hdc, lroundf(point.x()), lroundf(point.y() - fontMetrics().ascent()), from, to);
 }
 
