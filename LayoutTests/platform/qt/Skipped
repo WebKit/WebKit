@@ -2321,6 +2321,7 @@ svg/custom/circular-marker-reference-3.svg
 svg/custom/circular-marker-reference-4.svg
 svg/custom/embedding-external-svgs.xhtml
 svg/custom/empty-merge.svg
+svg/custom/image-with-transform-clip-filter.svg
 svg/custom/non-circular-marker-reference.svg
 svg/custom/non-scaling-stroke-markers.svg
 svg/custom/object-sizing-explicit-width-height.xhtml
