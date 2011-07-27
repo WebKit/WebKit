@@ -93,8 +93,6 @@ PassRefPtr<AudioContext> AudioContext::create(Document* document)
     ASSERT(isMainThread());
     if (s_hardwareContextCount >= MaxHardwareContexts)
         return 0;
-
-    ++s_hardwareContextCount;
         
     return adoptRef(new AudioContext(document));
 }
@@ -135,10 +133,6 @@ AudioContext::AudioContext(Document* document)
     // It's not that useful to have a callback function for this since the audio thread automatically starts rendering on the graph
     // when this has finished (see AudioDestinationNode).
     m_hrtfDatabaseLoader = HRTFDatabaseLoader::createAndLoadAsynchronouslyIfNecessary(sampleRate());
-
-    // FIXME: for now default AudioContext does not need an explicit startRendering() call.
-    // We may want to consider requiring it for symmetry with OfflineAudioContext
-    m_destinationNode->startRendering();
 }
 
 // Constructor for offline (non-realtime) rendering.
@@ -194,9 +188,17 @@ void AudioContext::lazyInitialize()
         ASSERT(!m_isAudioThreadFinished);
         if (!m_isAudioThreadFinished) {
             if (m_destinationNode.get()) {
-                // This starts the audio thread.  The destination node's provideInput() method will now be called repeatedly to render audio.
-                // Each time provideInput() is called, a portion of the audio stream is rendered.  Let's call this time period a "render quantum".
                 m_destinationNode->initialize();
+
+                if (!isOfflineContext()) {
+                    // This starts the audio thread. The destination node's provideInput() method will now be called repeatedly to render audio.
+                    // Each time provideInput() is called, a portion of the audio stream is rendered. Let's call this time period a "render quantum".
+                    // NOTE: for now default AudioContext does not need an explicit startRendering() call from JavaScript.
+                    // We may want to consider requiring it for symmetry with OfflineAudioContext.
+                    m_destinationNode->startRendering();                    
+                    ++s_hardwareContextCount;
+                }
+
             }
             m_isInitialized = true;
         }

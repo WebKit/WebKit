@@ -1,3 +1,17 @@
+2011-07-26  Chris Rogers  <crogers@google.com>
+
+        AudioContext is not correctly accounting for hardware resources
+        https://bugs.webkit.org/show_bug.cgi?id=65217
+
+        Reviewed by Kenneth Russell.
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::create):
+        (WebCore::AudioContext::AudioContext):
+        (WebCore::AudioContext::lazyInitialize):
+
 2011-07-26  Luke Macpherson   <macpherson@chromium.org>
 
         Handle CSS Properties that can be either auto or a primitive value in CSSStyleApplyProperty
