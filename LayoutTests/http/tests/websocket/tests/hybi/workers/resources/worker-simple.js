@@ -26,8 +26,12 @@ function runTests()
         ws.onmessage = function(evt) {
             postMessage("PASS: worker: Received: '" + evt.data + "'");
         };
-        ws.onclose = function() {
+        ws.onclose = function(closeEvent) {
             postMessage("PASS: worker: Closed.");
+            if (closeEvent.wasClean === true)
+                postMessage("PASS: worker: closeEvent.wasClean is true.");
+            else
+                postMessage("FAIL: worker: closeEvent.wasClean should be true but was \"" + closeEvent.wasClean + "\".");
             postMessage("DONE");
         };
     } catch (e) {

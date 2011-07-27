@@ -8,6 +8,7 @@ PASS: worker: successfullyParsed:[object WebSocket]
 PASS: worker: Connected.
 PASS: worker: Received: 'Hello from Simple WSH.'
 PASS: worker: Closed.
+PASS: worker: closeEvent.wasClean is true.
 DONE
 TEST COMPLETE
 

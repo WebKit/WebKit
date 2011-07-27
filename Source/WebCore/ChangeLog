@@ -1,3 +1,22 @@
+2011-07-27  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: CloseEvent attribute is not available on WebWorkers in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=65232
+
+        Reviewed by Kent Tamura.
+
+        Add [NoStaticTables] attribute to CloseEvent interface definition. This attribute
+        makes the code generator obtain the attributes table used for building ClassInfo
+        through JSGlobalData, instead of directly using a statically-allocated table.
+
+        Generally speaking, NoStaticTables needs to be specified in interfaces which
+        may be accessed from workers.
+
+        Tests: http/tests/websocket/tests/hybi/workers/shared-worker-simple.html (updated)
+               http/tests/websocket/tests/hybi/workers/worker-simple.html (updated)
+
+        * websockets/CloseEvent.idl: Fixed the formatting, too.
+
 2011-07-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] REGRESSION(90963): Content layers are not redrawn after losing the compositor context

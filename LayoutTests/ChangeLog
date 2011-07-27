@@ -1,3 +1,15 @@
+2011-07-27  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: CloseEvent attribute is not available on WebWorkers in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=65232
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hybi/workers/resources/worker-simple.js:
+        (runTests): Check the value of closeEvent.wasClean.
+        * http/tests/websocket/tests/hybi/workers/shared-worker-simple-expected.txt:
+        * http/tests/websocket/tests/hybi/workers/worker-simple-expected.txt:
+
 2011-07-26  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         reduce and reduceRight bind callback's this to null rather than undefined
