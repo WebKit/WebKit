@@ -1,3 +1,14 @@
+2011-07-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Rebaseline absolute-child-with-percent-etc-etc-etc.
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac-leopard/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png: Added.
+        * platform/chromium-mac/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png: Added.
+        * platform/chromium-win/fast/css/absolute-child-with-percent-height-inside-relative-parent-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  Eric Carlson  <eric.carlson@apple.com>
 
         Load delegate not consulted before loading some poster images

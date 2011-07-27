@@ -3789,8 +3789,6 @@ BUGWK64951 : fast/frames/meta-refresh-user-gesture.html = CRASH TIMEOUT PASS
 
 BUGWK64976 : svg/W3C-SVG-1.1-SE/color-prop-05-t.svg = IMAGE
 
-BUGRNIWA : fast/css/absolute-child-with-percent-height-inside-relative-parent.html = MISSING
-
 BUGWK65009 MAC : scrollbars/scrollbar-drag-thumb-with-large-content.html = TEXT
 
 BUGWK65062 : http/tests/media/video-error-abort.html = CRASH
@@ -3835,4 +3833,3 @@ BUGWK64692 WIN : fast/forms/file-input-disabled.html = IMAGE
 BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
-
