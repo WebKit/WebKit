@@ -67,11 +67,10 @@ class FrameLoaderClientQt : public QObject, public FrameLoaderClient {
 
     friend class ::QWebFrame;
     void callPolicyFunction(FramePolicyFunction function, PolicyAction action);
-    void callErrorPageExtension(const ResourceError&);
+    bool callErrorPageExtension(const ResourceError&);
+
 signals:
-    void loadStarted();
     void loadProgress(int d);
-    void loadFinished(bool);
     void titleChanged(const QString& title);
     void unsupportedContent(QNetworkReply*);
 
@@ -265,6 +264,9 @@ private slots:
     void onIconLoadedForPageURL(const QString&);
 
 private:
+    void emitLoadStarted();
+    void emitLoadFinished(bool ok);
+
     Frame *m_frame;
     QWebFrame *m_webFrame;
     ResourceResponse m_response;
@@ -279,7 +281,7 @@ private:
     bool m_hasRepresentation;
 
     KURL m_lastRequestedUrl;
-    ResourceError m_loadError;
+    bool m_isOriginatingLoad;
 };
 
 }

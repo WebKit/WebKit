@@ -802,8 +802,10 @@ QMultiMap<QString, QString> QWebFrame::metaData() const
 
 static inline void clearCoreFrame(WebCore::Frame* frame)
 {
-    frame->loader()->activeDocumentLoader()->writer()->begin();
-    frame->loader()->activeDocumentLoader()->writer()->end();
+    WebCore::DocumentLoader* documentLoader = frame->loader()->activeDocumentLoader();
+    Q_ASSERT(documentLoader);
+    documentLoader->writer()->begin();
+    documentLoader->writer()->end();
 }
 
 static inline bool isCoreFrameClear(WebCore::Frame* frame)

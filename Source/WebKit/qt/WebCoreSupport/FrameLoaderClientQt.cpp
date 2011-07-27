@@ -210,7 +210,7 @@ FrameLoaderClientQt::FrameLoaderClientQt()
     , m_pluginView(0)
     , m_hasSentResponseToPlugin(false)
     , m_hasRepresentation(false)
-    , m_loadError(ResourceError())
+    , m_isOriginatingLoad(false)
 {
 }
 
@@ -229,22 +229,14 @@ void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
         return;
     }
 
-    connect(this, SIGNAL(loadStarted()),
-            m_webFrame->page(), SIGNAL(loadStarted()));
-    connect(this, SIGNAL(loadStarted()),
-            m_webFrame, SIGNAL(loadStarted()));
     connect(this, SIGNAL(loadProgress(int)),
             m_webFrame->page(), SIGNAL(loadProgress(int)));
-    connect(this, SIGNAL(loadFinished(bool)),
-            m_webFrame->page(), SIGNAL(loadFinished(bool)));
 
     // FIXME: The queued connection here is needed because of a problem with QNetworkAccessManager.
     //        See http://bugreports.qt.nokia.com/browse/QTBUG-18718
     connect(this, SIGNAL(unsupportedContent(QNetworkReply*)),
             m_webFrame->page(), SIGNAL(unsupportedContent(QNetworkReply*)), Qt::QueuedConnection);
 
-    connect(this, SIGNAL(loadFinished(bool)),
-            m_webFrame, SIGNAL(loadFinished(bool)));
     connect(this, SIGNAL(titleChanged(QString)),
             m_webFrame, SIGNAL(titleChanged(QString)));
 }
@@ -454,8 +446,11 @@ void FrameLoaderClientQt::dispatchDidStartProvisionalLoad()
 
     m_lastRequestedUrl = m_frame->loader()->activeDocumentLoader()->requestURL();
 
-    if (m_webFrame)
-        emit m_webFrame->provisionalLoad();
+    if (!m_webFrame)
+        return;
+    emitLoadStarted();
+    postProgressEstimateChangedNotification();
+    emit m_webFrame->provisionalLoad();
 }
 
 
@@ -532,12 +527,11 @@ void FrameLoaderClientQt::dispatchDidFinishLoad()
     if (dumpFrameLoaderCallbacks)
         printf("%s - didFinishLoadForFrame\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    // Clears the previous error.
-    m_loadError = ResourceError();
-
     if (!m_webFrame)
         return;
+
     m_webFrame->page()->d->updateNavigationActions();
+    emitLoadFinished(true);
 }
 
 
@@ -585,12 +579,8 @@ void FrameLoaderClientQt::revertToProvisionalState(DocumentLoader*)
 
 void FrameLoaderClientQt::postProgressStartedNotification()
 {
-    if (m_webFrame && m_frame->page()) {
-        // As a new load have started, clear the previous error.
-        m_loadError = ResourceError();
-        emit loadStarted();
-        postProgressEstimateChangedNotification();
-    }
+    if (m_webFrame && m_frame->page())
+        m_isOriginatingLoad = true;
     if (m_frame->tree()->parent() || !m_webFrame)
         return;
     m_webFrame->page()->d->updateNavigationActions();
@@ -617,9 +607,6 @@ void FrameLoaderClientQt::postProgressFinishedNotification()
             }
         }
     }
-
-    if (m_webFrame && m_frame->page())
-        emit loadFinished(m_loadError.isNull());
 }
 
 void FrameLoaderClientQt::setMainFrameDocumentReady(bool)
@@ -1138,38 +1125,39 @@ bool FrameLoaderClientQt::dispatchDidLoadResourceFromMemoryCache(WebCore::Docume
     return false;
 }
 
-void FrameLoaderClientQt::callErrorPageExtension(const WebCore::ResourceError& error)
+bool FrameLoaderClientQt::callErrorPageExtension(const WebCore::ResourceError& error)
 {
     QWebPage* page = m_webFrame->page();
-    if (page->supportsExtension(QWebPage::ErrorPageExtension)) {
-        QWebPage::ErrorPageExtensionOption option;
+    if (!page->supportsExtension(QWebPage::ErrorPageExtension))
+        return false;
 
-        if (error.domain() == "QtNetwork")
-            option.domain = QWebPage::QtNetwork;
-        else if (error.domain() == "HTTP")
-            option.domain = QWebPage::Http;
-        else if (error.domain() == "WebKit")
-            option.domain = QWebPage::WebKit;
-        else
-            return;
+    QWebPage::ErrorPageExtensionOption option;
+    if (error.domain() == "QtNetwork")
+        option.domain = QWebPage::QtNetwork;
+    else if (error.domain() == "HTTP")
+        option.domain = QWebPage::Http;
+    else if (error.domain() == "WebKit")
+        option.domain = QWebPage::WebKit;
+    else
+        return false;
 
-        option.url = QUrl(error.failingURL());
-        option.frame = m_webFrame;
-        option.error = error.errorCode();
-        option.errorString = error.localizedDescription();
+    option.url = QUrl(error.failingURL());
+    option.frame = m_webFrame;
+    option.error = error.errorCode();
+    option.errorString = error.localizedDescription();
 
-        QWebPage::ErrorPageExtensionReturn output;
-        if (!page->extension(QWebPage::ErrorPageExtension, &option, &output))
-            return;
+    QWebPage::ErrorPageExtensionReturn output;
+    if (!page->extension(QWebPage::ErrorPageExtension, &option, &output))
+        return false;
 
-        KURL baseUrl(output.baseUrl);
-        KURL failingUrl(option.url);
+    KURL baseUrl(output.baseUrl);
+    KURL failingUrl(option.url);
 
-        WebCore::ResourceRequest request(baseUrl);
-        WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(output.content.constData(), output.content.length());
-        WebCore::SubstituteData substituteData(buffer, output.contentType, output.encoding, failingUrl);
-        m_frame->loader()->load(request, substituteData, false);
-    }
+    WebCore::ResourceRequest request(baseUrl);
+    WTF::RefPtr<WebCore::SharedBuffer> buffer = WebCore::SharedBuffer::create(output.content.constData(), output.content.length());
+    WebCore::SubstituteData substituteData(buffer, output.contentType, output.encoding, failingUrl);
+    m_frame->loader()->load(request, substituteData, false);
+    return true;
 }
 
 void FrameLoaderClientQt::dispatchDidFailProvisionalLoad(const WebCore::ResourceError& error)
@@ -1177,9 +1165,13 @@ void FrameLoaderClientQt::dispatchDidFailProvisionalLoad(const WebCore::Resource
     if (dumpFrameLoaderCallbacks)
         printf("%s - didFailProvisionalLoadWithError\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    m_loadError = error;
-    if (!error.isNull() && !error.isCancellation())
-        callErrorPageExtension(error);
+    if (!error.isNull() && !error.isCancellation()) {
+        if (callErrorPageExtension(error))
+            return;
+    }
+
+    if (m_webFrame)
+        emitLoadFinished(false);
 }
 
 void FrameLoaderClientQt::dispatchDidFailLoad(const WebCore::ResourceError& error)
@@ -1187,9 +1179,13 @@ void FrameLoaderClientQt::dispatchDidFailLoad(const WebCore::ResourceError& erro
     if (dumpFrameLoaderCallbacks)
         printf("%s - didFailLoadWithError\n", qPrintable(drtDescriptionSuitableForTestResult(m_frame)));
 
-    m_loadError = error;
-    if (!error.isNull() && !error.isCancellation())
-        callErrorPageExtension(error);
+    if (!error.isNull() && !error.isCancellation()) {
+        if (callErrorPageExtension(error))
+            return;
+    }
+
+    if (m_webFrame)
+        emitLoadFinished(false);
 }
 
 WebCore::Frame* FrameLoaderClientQt::dispatchCreatePage(const WebCore::NavigationAction&)
@@ -1686,6 +1682,26 @@ PassRefPtr<FrameNetworkingContext> FrameLoaderClientQt::createNetworkingContext(
     bool MIMESniffingDisabled = value.isValid() && value.toBool();
 
     return FrameNetworkingContextQt::create(m_frame, m_webFrame, !MIMESniffingDisabled, m_webFrame->page()->networkAccessManager());
+}
+
+void FrameLoaderClientQt::emitLoadStarted()
+{
+    QWebPage* webPage = m_webFrame->page();
+    if (m_isOriginatingLoad && webPage)
+        emit webPage->loadStarted();
+    emit m_webFrame->loadStarted();
+}
+
+void FrameLoaderClientQt::emitLoadFinished(bool ok)
+{
+    // Signal handlers can lead to a new load, that will use the member again.
+    const bool wasOriginatingLoad = m_isOriginatingLoad;
+    m_isOriginatingLoad = false;
+
+    QWebPage* webPage = m_webFrame->page();
+    if (wasOriginatingLoad && webPage)
+        emit webPage->loadFinished(ok);
+    emit m_webFrame->loadFinished(ok);
 }
 
 }

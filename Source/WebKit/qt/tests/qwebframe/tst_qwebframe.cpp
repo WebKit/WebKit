@@ -660,6 +660,8 @@ private slots:
     void setUrlThenLoads_data();
     void setUrlThenLoads();
     void loadFinishedAfterNotFoundError();
+    void loadInSignalHandlers_data();
+    void loadInSignalHandlers();
 
 private:
     QString  evalJS(const QString&s) {
@@ -3701,6 +3703,99 @@ void tst_QWebFrame::loadFinishedAfterNotFoundError()
     QTRY_COMPARE(spy.count(), 1);
     const bool wasLoadOk = spy.at(0).at(0).toBool();
     QVERIFY(!wasLoadOk);
+}
+
+class URLSetter : public QObject {
+    Q_OBJECT
+
+public:
+    enum Signal {
+        LoadStarted,
+        LoadFinished,
+        ProvisionalLoad
+    };
+
+    enum Type {
+        UseLoad,
+        UseSetUrl
+    };
+
+    URLSetter(QWebFrame*, Signal, Type, const QUrl&);
+
+public slots:
+    void execute();
+
+signals:
+    void finished();
+
+private:
+    QWebFrame* m_frame;
+    QUrl m_url;
+    Type m_type;
+};
+
+Q_DECLARE_METATYPE(URLSetter::Signal)
+Q_DECLARE_METATYPE(URLSetter::Type)
+
+URLSetter::URLSetter(QWebFrame* frame, Signal signal, URLSetter::Type type, const QUrl& url)
+    : m_frame(frame), m_url(url), m_type(type)
+{
+    if (signal == LoadStarted)
+        connect(m_frame, SIGNAL(loadStarted()), SLOT(execute()));
+    else if (signal == LoadFinished)
+        connect(m_frame, SIGNAL(loadFinished(bool)), SLOT(execute()));
+    else
+        connect(m_frame, SIGNAL(provisionalLoad()), SLOT(execute()));
+}
+
+void URLSetter::execute()
+{
+    // We track only the first emission.
+    m_frame->disconnect(this);
+    if (m_type == URLSetter::UseLoad)
+        m_frame->load(m_url);
+    else
+        m_frame->setUrl(m_url);
+    connect(m_frame, SIGNAL(loadFinished(bool)), SIGNAL(finished()));
+}
+
+void tst_QWebFrame::loadInSignalHandlers_data()
+{
+    QTest::addColumn<URLSetter::Type>("type");
+    QTest::addColumn<URLSetter::Signal>("signal");
+    QTest::addColumn<QUrl>("url");
+
+    const QUrl validUrl("qrc:/test2.html");
+    const QUrl invalidUrl("qrc:/invalid");
+
+    QTest::newRow("call load() in loadStarted() after valid url") << URLSetter::UseLoad << URLSetter::LoadStarted << validUrl;
+    QTest::newRow("call load() in loadStarted() after invalid url") << URLSetter::UseLoad << URLSetter::LoadStarted << invalidUrl;
+    QTest::newRow("call load() in loadFinished() after valid url") << URLSetter::UseLoad << URLSetter::LoadFinished << validUrl;
+    QTest::newRow("call load() in loadFinished() after invalid url") << URLSetter::UseLoad << URLSetter::LoadFinished << invalidUrl;
+    QTest::newRow("call load() in provisionalLoad() after valid url") << URLSetter::UseLoad << URLSetter::ProvisionalLoad << validUrl;
+    QTest::newRow("call load() in provisionalLoad() after invalid url") << URLSetter::UseLoad << URLSetter::ProvisionalLoad << invalidUrl;
+
+    QTest::newRow("call setUrl() in loadStarted() after valid url") << URLSetter::UseSetUrl << URLSetter::LoadStarted << validUrl;
+    QTest::newRow("call setUrl() in loadStarted() after invalid url") << URLSetter::UseSetUrl << URLSetter::LoadStarted << invalidUrl;
+    QTest::newRow("call setUrl() in loadFinished() after valid url") << URLSetter::UseSetUrl << URLSetter::LoadFinished << validUrl;
+    QTest::newRow("call setUrl() in loadFinished() after invalid url") << URLSetter::UseSetUrl << URLSetter::LoadFinished << invalidUrl;
+    QTest::newRow("call setUrl() in provisionalLoad() after valid url") << URLSetter::UseSetUrl << URLSetter::ProvisionalLoad << validUrl;
+    QTest::newRow("call setUrl() in provisionalLoad() after invalid url") << URLSetter::UseSetUrl << URLSetter::ProvisionalLoad << invalidUrl;
+}
+
+void tst_QWebFrame::loadInSignalHandlers()
+{
+    QFETCH(URLSetter::Type, type);
+    QFETCH(URLSetter::Signal, signal);
+    QFETCH(QUrl, url);
+
+    QWebFrame* frame = m_page->mainFrame();
+    const QUrl urlForSetter("qrc:/test1.html");
+    URLSetter setter(frame, signal, type, urlForSetter);
+
+    frame->load(url);
+    waitForSignal(&setter, SIGNAL(finished()), 200);
+    QCOMPARE(frame->url(), urlForSetter);
 }
 
 QTEST_MAIN(tst_QWebFrame)

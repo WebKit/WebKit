@@ -1,5 +1,82 @@
 2011-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
+        [Qt] QtWebkit never finishes loading sites when they are loaded after an initial QUrl fails to load.
+        https://bugs.webkit.org/show_bug.cgi?id=61328
+
+        Reviewed by Andreas Kling.
+
+        Change the hooks in FrameLoaderClient we use for emitting signals. Instead of
+        emitting signals in the progress notification functions, we use the
+        dispatchDid{Start,Finish,Fail}* functions. The main reason behind this change is
+        that loading code is prepared to handle load() when inside those functions.
+
+        The crash was being caused by setUrl() (and load()) being called when
+        loadFinished(false) was emitted. The problem here is that when
+        postProgressFinishedNotification the FrameLoader wasn't ready for taking a load()
+        call again, because it was still the ProvisionalLoadState but with the
+        provisionalDocumentLoader already removed.
+
+        To emulate the same behavior that QtWebKit had when using
+        postProgressFinishedNotification, we now keep track of the frame originating the
+        load, and emit the signals when this frame's client is called.
+
+        The patch keeps the existing semantics for QWebPage signals, but we now emit the
+        QWebFrame signals everytime, not only when they are the originating frame for
+        loading.
+
+        * Api/qwebframe.cpp:
+        (clearCoreFrame): Document our assumption that activeDocumentLoader will exist.
+
+        * WebCoreSupport/FrameLoaderClientQt.h: Remove m_loadError, add a boolean to keep
+        track whether the frame is originating the load. Remove the signals from
+        FrameLoaderClientQt since we will emit QWebFrame and QWebPage signals directly.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::FrameLoaderClientQt): Initialize m_isOriginatingLoad.
+
+        (WebCore::FrameLoaderClientQt::setFrame): Do not connect QWebFrame and QWebPage
+        signals to our signals for load/finished, signal emission will be done manually.
+
+        (WebCore::FrameLoaderClientQt::dispatchDidStartProvisionalLoad): Emit
+        loadStarted() signal and make the first notification of estimation change, that
+        Qt API tests expect to exist and notify 10%.
+
+        (WebCore::FrameLoaderClientQt::dispatchDidFinishLoad): Remove reference to
+        m_loadError and emit loadFinished() signal.
+
+        (WebCore::FrameLoaderClientQt::postProgressStartedNotification): Remove signal
+        emission and mark the originating load as true, since only the originating frame
+        gets this call in its client.
+
+        (WebCore::FrameLoaderClientQt::postProgressFinishedNotification): Remove signal
+        emission.
+
+        (WebCore::FrameLoaderClientQt::callErrorPageExtension): Return whether the call
+        was successful or not. This wasn't necessary before because a successful call for
+        error page would lead to a load(), that cleared the m_loadError.
+        (WebCore::FrameLoaderClientQt::dispatchDidFailProvisionalLoad): Remove reference
+        to m_loadError and emit finished signal indicating error if ErrorPage extension
+        doesn't handle it.
+        (WebCore::FrameLoaderClientQt::dispatchDidFailLoad): Ditto.
+
+        (WebCore::FrameLoaderClientQt::emitLoadStarted): Emit the loadStarted() signal
+        for the QWebFrame, and if the originating load also do for the QWebPage.
+
+        (WebCore::FrameLoaderClientQt::emitLoadFinished): Same as before but for
+        loadFinished(). Take care to reset the originating load flag before the signals
+        are emitted, since they might want to set it back again.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (URLSetter::URLSetter): Object that sets the url using either load() or setUrl()
+        when a certain signal is emitted in the frame.
+
+        (URLSetter::execute):
+        (tst_QWebFrame::loadInSignalHandlers_data):
+        (tst_QWebFrame::loadInSignalHandlers): New test inspired by the bug test case. This test
+        crashes without this patch applied.
+
+2011-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
         [Qt] Fix build in Qt 5 of QDeclarativeWebView
         https://bugs.webkit.org/show_bug.cgi?id=65258
 
