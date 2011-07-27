@@ -159,7 +159,7 @@ class TestExpectationParser:
 
     def __init__(self, port, test_config, full_test_list, allow_rebaseline_modifier):
         self._port = port
-        self._specificity_calculator = SpecificityCalculator(test_config, port.all_test_configurations())
+        self._specificity_calculator = SpecificityCalculator(test_config, port)
         self._full_test_list = full_test_list
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
@@ -818,11 +818,6 @@ class SpecificityCalculator(object):
     This class also detects errors in this test expectation, like unknown modifiers,
     invalid modifier combinations, and duplicate modifiers.
     """
-    MACROS = {
-        'mac': ['leopard', 'snowleopard'],
-        'win': ['xp', 'vista', 'win7'],
-        'linux': ['lucid'],
-    }
 
     # We don't include the "none" modifier because it isn't actually legal.
     REGEXES_TO_IGNORE = (['bug\w+'] +
@@ -837,12 +832,12 @@ class SpecificityCalculator(object):
     # 'MAC XP'. See SpecificityCalculatorTest.test_invalid_combinations() in the
     # _unittest.py file.
 
-    def __init__(self, test_config, all_test_configurations):
+    def __init__(self, test_config, port):
         """Initialize a SpecificityCalculator argument with the TestConfiguration it
         should be matched against."""
         self.test_config = test_config
-        self.allowed_configurations = all_test_configurations
-        self.macros = self.MACROS
+        self.allowed_configurations = port.all_test_configurations()
+        self.macros = port.configuration_specifier_macros()
 
         self.regexes_to_ignore = {}
         for regex_str in self.REGEXES_TO_IGNORE:

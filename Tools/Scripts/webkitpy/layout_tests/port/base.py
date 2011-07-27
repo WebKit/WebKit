@@ -756,6 +756,18 @@ class Port(object):
         test configurations for this port."""
         return self._generate_all_test_configurations()
 
+    # FIXME: Belongs on a Platform object.
+    def configuration_specifier_macros(self):
+        """Ports may provide a way to abbreviate configuration specifiers to conveniently
+        refer to them as one term or alias specific values to more generic ones. For example:
+
+        (xp, vista, win7) -> win # Abbreviate all Windows versions into one namesake.
+        (lucid) -> linux  # Change specific name of the Linux distro to a more generic term.
+
+        Returns a dictionary, each key representing a macro term ('win', for example),
+        and value being a list of valid configuration specifiers (such as ['xp', 'vista', 'win7'])."""
+        return {}
+
     def all_baseline_variants(self):
         """Returns a list of platform names sufficient to cover all the baselines.
 

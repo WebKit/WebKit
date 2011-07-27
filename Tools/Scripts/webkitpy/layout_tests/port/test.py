@@ -395,6 +395,10 @@ class TestPort(Port):
     def _all_graphics_types(self):
         return ('cpu', 'gpu')
 
+    def configuration_specifier_macros(self):
+        """To avoid surprises when introducing new macros, these are intentionally fixed in time."""
+        return {'mac': ['leopard', 'snowleopard'], 'win': ['xp', 'vista', 'win7'], 'linux': ['lucid']}
+
     def all_baseline_variants(self):
         return self.ALL_BASELINE_VARIANTS
 

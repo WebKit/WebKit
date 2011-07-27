@@ -1,5 +1,18 @@
 2011-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Allow ports to specify their own test expectation specifier macros.
+        https://bugs.webkit.org/show_bug.cgi?id=65291
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Changed SpecificityCalculator to use port macros.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Ditto.
+        * Scripts/webkitpy/layout_tests/port/base.py: Added configuration_specifier_macros to retrieve the macros.
+        * Scripts/webkitpy/layout_tests/port/chromium.py: Overrode it to return Chromium's macros.
+        * Scripts/webkitpy/layout_tests/port/test.py: Added test macros.
+
+2011-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Allow TestConfigurationConverter report conversion errors.
         https://bugs.webkit.org/show_bug.cgi?id=65287
 

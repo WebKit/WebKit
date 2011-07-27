@@ -79,6 +79,12 @@ class ChromiumPort(Port):
         'chromium-gpu-mac-snowleopard', 'chromium-gpu-win-win7', 'chromium-gpu-linux-x86_64',
     ]
 
+    CONFIGURATION_SPECIFIER_MACROS = {
+        'mac': ['leopard', 'snowleopard'],
+        'win': ['xp', 'vista', 'win7'],
+        'linux': ['lucid'],
+    }
+
     def __init__(self, **kwargs):
         Port.__init__(self, **kwargs)
         # All sub-classes override this, but we need an initial value for testing.
@@ -265,6 +271,9 @@ class ChromiumPort(Port):
             self._helper.stdin.write("x\n")
             self._helper.stdin.close()
             self._helper.wait()
+
+    def configuration_specifier_macros(self):
+        return self.CONFIGURATION_SPECIFIER_MACROS
 
     def all_baseline_variants(self):
         return self.ALL_BASELINE_VARIANTS
