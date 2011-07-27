@@ -1,5 +1,12 @@
 2011-07-27  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, forgotten GTK pixel test results for
+        fast/forms/input-file-re-render.html after r91833.
+
+        * platform/gtk/fast/forms/input-file-re-render-expected.png: Added.
+
+2011-07-27  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK pixel tests rebaseline after r91759.
 
         * platform/gtk/fast/forms/box-shadow-override-expected.png:
@@ -10,7 +17,7 @@
         * platform/gtk/fast/forms/input-value-expected.png:
         * platform/gtk/test_expectations.txt:
 
-2011-07-27  Tony Gentilcore  <tonyg@chromium.org> ""
+2011-07-27  Tony Gentilcore  <tonyg@chromium.org>
 
         editing/selection/move-by-word-visually* tests timing out
         https://bugs.webkit.org/show_bug.cgi?id=65241
