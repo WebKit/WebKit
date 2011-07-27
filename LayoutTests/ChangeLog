@@ -1,5 +1,12 @@
 2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-wk2/Skipped: Skip failing tests after migration to Qt5.
+        * platform/qt/test_expectations.txt: Mark fast/js/array-sort-modifying-tostring.html as TIMEOUT PASS flakey test in debug mode.
+
+2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
+
         [WK2] Unreviewed gardening.
 
         * platform/qt-wk2/Skipped: Skip new failing tests.
