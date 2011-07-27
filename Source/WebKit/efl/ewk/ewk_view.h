@@ -235,7 +235,7 @@ struct _Ewk_Menu_Item {
  */
 typedef struct _Ewk_Menu Ewk_Menu;
 struct _Ewk_Menu {
-        Eina_List* items;
+        Eina_List *items;
         int x;
         int y;
         int width;
@@ -247,7 +247,7 @@ struct _Ewk_Menu {
  */
 typedef struct _Ewk_Download Ewk_Download;
 struct _Ewk_Download {
-    const char* url;
+    const char *url;
     /* to be extended */
 };
 
@@ -495,22 +495,22 @@ EAPI Eina_Bool    ewk_view_setting_font_serif_set(Evas_Object *o, const char *fa
 EAPI const char  *ewk_view_setting_font_sans_serif_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_font_sans_serif_set(Evas_Object *o, const char *family);
 
-EAPI Eina_Bool    ewk_view_setting_spatial_navigation_get(Evas_Object* o);
-EAPI Eina_Bool    ewk_view_setting_spatial_navigation_set(Evas_Object* o, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_spatial_navigation_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_spatial_navigation_set(Evas_Object *o, Eina_Bool enable);
 
-EAPI Eina_Bool    ewk_view_setting_local_storage_get(Evas_Object* o);
-EAPI Eina_Bool    ewk_view_setting_local_storage_set(Evas_Object* o, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_local_storage_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_local_storage_set(Evas_Object *o, Eina_Bool enable);
 EAPI const char  *ewk_view_setting_local_storage_database_path_get(const Evas_Object *o);
 EAPI Eina_Bool    ewk_view_setting_local_storage_database_path_set(Evas_Object *o, const char *path);
 
-EAPI Eina_Bool    ewk_view_setting_page_cache_get(Evas_Object* o);
-EAPI Eina_Bool    ewk_view_setting_page_cache_set(Evas_Object* o, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_page_cache_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_page_cache_set(Evas_Object *o, Eina_Bool enable);
 
-EAPI Eina_Bool    ewk_view_setting_encoding_detector_get(Evas_Object* o);
-EAPI Eina_Bool    ewk_view_setting_encoding_detector_set(Evas_Object* o, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_encoding_detector_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_encoding_detector_set(Evas_Object *o, Eina_Bool enable);
 
-EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_get(Evas_Object* o);
-EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_set(Evas_Object* o, Eina_Bool enable);
+EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_get(Evas_Object *o);
+EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_set(Evas_Object *o, Eina_Bool enable);
 
 /* to be used by subclass implementations */
 EAPI Ewk_View_Smart_Data *ewk_view_smart_data_get(const Evas_Object *o);
@@ -539,16 +539,16 @@ EAPI void ewk_view_paint_context_translate(Ewk_View_Paint_Context *ctxt, float x
 EAPI Eina_Bool ewk_view_paint(Ewk_View_Private_Data *priv, cairo_t *cr, const Eina_Rectangle *area);
 EAPI Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data *priv, cairo_t *cr, const Eina_Rectangle *area);
 
-EAPI void ewk_view_viewport_attributes_get(Evas_Object *o, float* w, float* h, float* init_scale, float* max_scale, float* min_scale, float* device_pixel_ratio , Eina_Bool* user_scalable);
-EAPI Eina_Bool ewk_view_zoom_range_set(Evas_Object* o, float min_scale, float max_scale);
-EAPI float ewk_view_zoom_range_min_get(Evas_Object* o);
-EAPI float ewk_view_zoom_range_max_get(Evas_Object* o);
-EAPI void ewk_view_user_scalable_set(Evas_Object* o, Eina_Bool user_scalable);
-EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object* o);
-EAPI float ewk_view_device_pixel_ratio_get(Evas_Object* o);
+EAPI void ewk_view_viewport_attributes_get(Evas_Object *o, float *w, float *h, float *init_scale, float *max_scale, float *min_scale, float *device_pixel_ratio , Eina_Bool *user_scalable);
+EAPI Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float max_scale);
+EAPI float ewk_view_zoom_range_min_get(Evas_Object *o);
+EAPI float ewk_view_zoom_range_max_get(Evas_Object *o);
+EAPI void ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable);
+EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object *o);
+EAPI float ewk_view_device_pixel_ratio_get(Evas_Object *o);
 
-EAPI Eina_Bool ewk_view_mode_set(Evas_Object* o, Ewk_View_Mode view_mode);
-EAPI Ewk_View_Mode ewk_view_mode_get(Evas_Object* o);
+EAPI Eina_Bool ewk_view_mode_set(Evas_Object *o, Ewk_View_Mode view_mode);
+EAPI Ewk_View_Mode ewk_view_mode_get(Evas_Object *o);
 #ifdef __cplusplus
 }
 #endif
