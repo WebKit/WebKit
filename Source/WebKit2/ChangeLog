@@ -1,3 +1,14 @@
+2011-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Fix Qt (and possibly Gtk) WebKit2 build after addition of -webkit-pictograph
+        https://bugs.webkit.org/show_bug.cgi?id=65253
+
+        Reviewed by Andreas Kling.
+
+        The -webkit-pictograph generic family was added by bug 65197.
+
+        * Shared/WebPreferencesStore.h:
+
 2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt][WK2] Simplify the PageUIClient

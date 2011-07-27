@@ -133,6 +133,7 @@ namespace WebKit {
     macro(FixedFontFamily, fixedFontFamily, String, String, "Courier New") \
     macro(SansSerifFontFamily, sansSerifFontFamily, String, String, "Helvetica") \
     macro(SerifFontFamily, serifFontFamily, String, String, "Times") \
+    macro(PictographFontFamily, pictographFontFamily, String, String, "Times") \
     \
 
 #endif
