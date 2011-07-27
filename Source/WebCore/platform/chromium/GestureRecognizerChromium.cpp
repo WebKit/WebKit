@@ -31,17 +31,17 @@
 #include "config.h"
 #include "GestureRecognizerChromium.h"
 
+#include "EventHandler.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 
 namespace WebCore {
 
-// FIXME: Convert to methods.
-static bool click(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
-static bool isClickOrScroll(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
-static bool inScroll(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
-static bool noGesture(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
-static bool touchDown(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
+static bool click(InnerGestureRecognizer*, const PlatformTouchPoint&);
+static bool isClickOrScroll(InnerGestureRecognizer*, const PlatformTouchPoint&);
+static bool inScroll(InnerGestureRecognizer*, const PlatformTouchPoint&);
+static bool noGesture(InnerGestureRecognizer*, const PlatformTouchPoint&);
+static bool touchDown(InnerGestureRecognizer*, const PlatformTouchPoint&);
 
 // FIXME: Make these configurable programmatically.
 static const double maximumTouchDownDurationInSecondsForClick = 0.8;
@@ -52,6 +52,7 @@ InnerGestureRecognizer::InnerGestureRecognizer()
     : m_firstTouchTime(0.0)
     , m_state(InnerGestureRecognizer::NoGesture)
     , m_lastTouchTime(0.0)
+    , m_eventHandler(0)
     , m_ctrlKey(false)
     , m_altKey(false)
     , m_shiftKey(false)
@@ -79,6 +80,7 @@ void InnerGestureRecognizer::reset()
     m_firstTouchTime = 0.0;
     m_state = InnerGestureRecognizer::NoGesture;
     m_lastTouchTime = 0.0;
+    m_eventHandler = 0;
 }
 
 InnerGestureRecognizer::~InnerGestureRecognizer()
@@ -102,36 +104,44 @@ bool InnerGestureRecognizer::isInsideManhattanSquare(const PlatformTouchPoint& p
     return manhattanDistance < maximumTouchMoveInPixelsForClick;
 }
 
-void InnerGestureRecognizer::appendClickGestureEvent(const PlatformTouchPoint& touchPoint, InnerGestureRecognizer::Gestures gestures)
+void InnerGestureRecognizer::dispatchSyntheticClick(const PlatformTouchPoint& point)
 {
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::TapType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, 0.0f, 0.0f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    PlatformMouseEvent fakeMouseMove(point.pos(), point.screenPos(), NoButton, MouseEventMoved, /* clickCount */ 1, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey, m_lastTouchTime);
+    PlatformMouseEvent fakeMouseDown(point.pos(), point.screenPos(), LeftButton, MouseEventPressed, /* clickCount */ 1, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey, m_lastTouchTime);
+    PlatformMouseEvent fakeMouseUp(point.pos(), point.screenPos(), LeftButton, MouseEventReleased, /* clickCount */ 1, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey, m_lastTouchTime);
+
+    m_eventHandler->mouseMoved(fakeMouseMove);
+    m_eventHandler->handleMousePressEvent(fakeMouseDown);
+    m_eventHandler->handleMouseReleaseEvent(fakeMouseUp);
 }
 
-PlatformGestureRecognizer::PassGestures InnerGestureRecognizer::processTouchEventForGestures(const PlatformTouchEvent& event, bool defaultPrevented)
+bool InnerGestureRecognizer::processTouchEventForGesture(const PlatformTouchEvent& event, EventHandler* eventHandler, bool handled)
 {
+    m_eventHandler = eventHandler;
     m_ctrlKey = event.ctrlKey();
     m_altKey = event.altKey();
     m_shiftKey = event.shiftKey();
     m_metaKey = event.metaKey();
 
-    OwnPtr<Vector<PlatformGestureEvent> > gestures = adoptPtr(new Vector<PlatformGestureEvent>());
     const Vector<PlatformTouchPoint>& points = event.touchPoints();
     for (unsigned i = 0; i < points.size(); i++) {
         const PlatformTouchPoint& p = points[i];
         updateValues(event.timestamp(), p);
 
-        if (GestureTransitionFunction ef = m_edgeFunctions.get(signature(m_state, p.id(), p.state(), defaultPrevented)))
-            (*ef)(this, p, gestures.get());
+        if (GestureTransitionFunction ef = m_edgeFunctions.get(signature(m_state, p.id(), p.state(), handled)))
+            handled = (*ef)(this, p);
     }
-    return gestures.release();
+    return handled;
 }
 
-void InnerGestureRecognizer::appendScrollGesture(const PlatformTouchPoint& touchPoint, Gestures gestures)
+void InnerGestureRecognizer::scrollViaTouchMotion(const PlatformTouchPoint& touchPoint)
 {
     float deltaX(touchPoint.pos().x() - m_firstTouchPosition.x());
     float deltaY(touchPoint.pos().y() - m_firstTouchPosition.y());
 
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollUpdateType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, deltaX, deltaY, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    // FIXME: Convert to gesture events when they handle subframes.
+    PlatformWheelEvent syntheticWheelEvent(touchPoint.pos(), touchPoint.screenPos(), deltaX, deltaY, deltaX / static_cast<float>(120), deltaY / static_cast<float>(120), ScrollByPixelWheelEvent, /* isAccepted */ false, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey);
+    m_eventHandler->handleWheelEvent(syntheticWheelEvent);
     m_firstTouchPosition = touchPoint.pos();
 }
 
@@ -156,29 +166,29 @@ unsigned int InnerGestureRecognizer::signature(State gestureState, unsigned id, 
     return 1 + ((touchType & 0x7) << 1 | (handled ? 1 << 4 : 0) | ((id & 0xfff) << 5 ) | (gestureState << 17));
 }
 
-static bool touchDown(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures gestures)
+static bool touchDown(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint&)
 {
     gestureRecognizer->setState(InnerGestureRecognizer::PendingSyntheticClick);
     return false;
 }
 
-static bool noGesture(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures gestures)
+bool noGesture(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint&)
 {
     gestureRecognizer->reset();
     return false;
 }
 
-static bool click(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point, InnerGestureRecognizer::Gestures gestures)
+static bool click(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point)
 {
     if (gestureRecognizer->isInClickTimeWindow() && gestureRecognizer->isInsideManhattanSquare(point)) {
         gestureRecognizer->setState(InnerGestureRecognizer::NoGesture);
-        gestureRecognizer->appendClickGestureEvent(point, gestures);
+        gestureRecognizer->dispatchSyntheticClick(point);
         return true;
     }
-    return noGesture(gestureRecognizer, point, gestures);
+    return noGesture(gestureRecognizer, point);
 }
 
-static bool isClickOrScroll(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point, InnerGestureRecognizer::Gestures gestures)
+static bool isClickOrScroll(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point)
 {
     if (gestureRecognizer->isInClickTimeWindow() && gestureRecognizer->isInsideManhattanSquare(point)) {
         gestureRecognizer->setState(InnerGestureRecognizer::PendingSyntheticClick);
@@ -186,16 +196,16 @@ static bool isClickOrScroll(InnerGestureRecognizer* gestureRecognizer, const Pla
     }
 
     if (point.state() == PlatformTouchPoint::TouchMoved && !gestureRecognizer->isInsideManhattanSquare(point)) {
-        gestureRecognizer->appendScrollGesture(point, gestures);
+        gestureRecognizer->scrollViaTouchMotion(point);
         gestureRecognizer->setState(InnerGestureRecognizer::Scroll);
         return true;
     }
     return false;
 }
 
-static bool inScroll(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point, InnerGestureRecognizer::Gestures gestures)
+static bool inScroll(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point)
 {
-    gestureRecognizer->appendScrollGesture(point, gestures);
+    gestureRecognizer->scrollViaTouchMotion(point);
     return true;
 }
 
@@ -220,16 +230,6 @@ GestureRecognizerChromium::GestureRecognizerChromium()
 
 GestureRecognizerChromium::~GestureRecognizerChromium()
 {
-}
-
-PlatformGestureRecognizer::PassGestures GestureRecognizerChromium::processTouchEventForGestures(const PlatformTouchEvent& touchEvent, bool defaultPrevented)
-{
-    return m_innerGestureRecognizer.processTouchEventForGestures(touchEvent, defaultPrevented);
-}
-
-void GestureRecognizerChromium::reset()
-{
-    m_innerGestureRecognizer.reset();
 }
 
 } // namespace WebCore

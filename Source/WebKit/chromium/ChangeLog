@@ -1,3 +1,24 @@
+2011-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r91809.
+        http://trac.webkit.org/changeset/91809
+        https://bugs.webkit.org/show_bug.cgi?id=65225
+
+        Does not build on Chromium Windows (Requested by abarth on
+        #webkit).
+
+        * features.gypi:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFrameView):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::WebPopupMenuImpl):
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::touchEvent):
+        * src/WebViewImpl.h:
+
 2011-07-26  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Layering violations in gesture recognizer

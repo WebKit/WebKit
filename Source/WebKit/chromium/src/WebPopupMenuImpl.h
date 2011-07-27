@@ -35,7 +35,6 @@
 #include "WebPoint.h"
 #include "WebPopupMenu.h"
 #include "WebSize.h"
-#include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -43,9 +42,6 @@ class Frame;
 class FramelessScrollView;
 class KeyboardEvent;
 class Page;
-#if ENABLE(GESTURE_RECOGNIZER)
-class PlatformGestureRecognizer;
-#endif
 class PlatformKeyboardEvent;
 class Range;
 class Widget;
@@ -57,7 +53,6 @@ class WebMouseEvent;
 class WebMouseWheelEvent;
 class WebRange;
 struct WebRect;
-class WebTouchEvent;
 
 class WebPopupMenuImpl : public WebPopupMenu,
                          public WebCore::FramelessScrollViewClient,
@@ -104,7 +99,6 @@ public:
     void MouseUp(const WebMouseEvent&);
     void MouseDoubleClick(const WebMouseEvent&);
     void MouseWheel(const WebMouseWheelEvent&);
-    bool TouchEvent(const WebTouchEvent&);
     bool KeyEvent(const WebKeyboardEvent&);
 
    protected:
@@ -142,10 +136,6 @@ public:
     // This is a non-owning ref.  The popup will notify us via popupClosed()
     // before it is destroyed.
     WebCore::FramelessScrollView* m_widget;
-
-#if ENABLE(GESTURE_RECOGNIZER)
-    OwnPtr<WebCore::PlatformGestureRecognizer> m_gestureRecognizer;
-#endif
 };
 
 } // namespace WebKit

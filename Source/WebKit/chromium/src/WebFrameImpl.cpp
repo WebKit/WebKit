@@ -1994,10 +1994,6 @@ void WebFrameImpl::createFrameView()
 
     if (isMainFrame)
         view->setParentVisible(true);
-
-#if ENABLE(GESTURE_RECOGNIZER)
-    webView->resetGestureRecognizer();
-#endif
 }
 
 WebFrameImpl* WebFrameImpl::fromFrame(Frame* frame)

@@ -1,3 +1,46 @@
+2011-07-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r91809.
+        http://trac.webkit.org/changeset/91809
+        https://bugs.webkit.org/show_bug.cgi?id=65225
+
+        Does not build on Chromium Windows (Requested by abarth on
+        #webkit).
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        * dom/WheelEvent.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::handleGestureEvent):
+        (WebCore::EventHandler::handleTouchEvent):
+        (WebCore::EventHandler::resetGestureRecognizer):
+        * page/EventHandler.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        * platform/PlatformGestureEvent.h:
+        * platform/PlatformGestureRecognizer.h:
+        * platform/chromium/FramelessScrollView.h:
+        * platform/chromium/GestureRecognizerChromium.cpp:
+        (WebCore::InnerGestureRecognizer::InnerGestureRecognizer):
+        (WebCore::InnerGestureRecognizer::reset):
+        (WebCore::InnerGestureRecognizer::dispatchSyntheticClick):
+        (WebCore::InnerGestureRecognizer::processTouchEventForGesture):
+        (WebCore::InnerGestureRecognizer::scrollViaTouchMotion):
+        (WebCore::touchDown):
+        (WebCore::noGesture):
+        (WebCore::click):
+        (WebCore::isClickOrScroll):
+        (WebCore::inScroll):
+        * platform/chromium/GestureRecognizerChromium.h:
+        (WebCore::GestureRecognizerChromium::reset):
+        (WebCore::GestureRecognizerChromium::processTouchEventForGesture):
+        * platform/chromium/PopupMenuChromium.cpp:
+        * platform/chromium/PopupMenuChromium.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleGestureEvent):
+
 2011-07-26  Dmitry Lomov  <dslomov@google.com>
 
         [V8][Chromium] Run workers in a separate v8::Isolate 

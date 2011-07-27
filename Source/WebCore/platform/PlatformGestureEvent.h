@@ -37,27 +37,11 @@ public:
     enum Type {
         ScrollBeginType,
         ScrollEndType,
-        ScrollUpdateType,
-        TapType
     };
 
     PlatformGestureEvent()
         : m_type(ScrollBeginType)
         , m_timestamp(0)
-    {
-    }
-
-    PlatformGestureEvent(Type type, const IntPoint& position, const IntPoint& globalPosition, const double timestamp, const float deltaX, const float deltaY, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
-        : m_type(type)
-        , m_position(position)
-        , m_globalPosition(globalPosition)
-        , m_timestamp(timestamp)
-        , m_deltaX(deltaX)
-        , m_deltaY(deltaY)
-        , m_shiftKey(shiftKey)
-        , m_ctrlKey(ctrlKey)
-        , m_altKey(altKey)
-        , m_metaKey(metaKey)
     {
     }
 
@@ -68,24 +52,11 @@ public:
 
     double timestamp() const { return m_timestamp; }
 
-    float deltaX() const { return m_deltaX; }
-    float deltaY() const { return m_deltaY; }
-    bool shiftKey() const { return m_shiftKey; }
-    bool ctrlKey() const { return m_ctrlKey; }
-    bool altKey() const { return m_altKey; }
-    bool metaKey() const { return m_metaKey; }
-
 protected:
     Type m_type;
     IntPoint m_position;
     IntPoint m_globalPosition;
     double m_timestamp;
-    float m_deltaX;
-    float m_deltaY;
-    bool m_shiftKey;
-    bool m_ctrlKey;
-    bool m_altKey;
-    bool m_metaKey;
 };
 
 } // namespace WebCore
