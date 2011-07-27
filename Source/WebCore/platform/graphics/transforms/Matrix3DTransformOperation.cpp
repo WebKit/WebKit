@@ -38,7 +38,7 @@ PassRefPtr<TransformOperation> Matrix3DTransformOperation::blend(const Transform
         return this;
 
     // Convert the TransformOperations into matrices
-    IntSize size;
+    FloatSize size;
     TransformationMatrix fromT;
     TransformationMatrix toT;
     if (from)

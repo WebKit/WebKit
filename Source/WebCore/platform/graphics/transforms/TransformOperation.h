@@ -25,8 +25,8 @@
 #ifndef TransformOperation_h
 #define TransformOperation_h
 
+#include "FloatSize.h"
 #include "TransformationMatrix.h"
-#include "IntSize.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -59,7 +59,7 @@ public:
     virtual bool isIdentity() const = 0;
 
     // Return true if the borderBoxSize was used in the computation, false otherwise.
-    virtual bool apply(TransformationMatrix&, const IntSize& borderBoxSize) const = 0;
+    virtual bool apply(TransformationMatrix&, const FloatSize& borderBoxSize) const = 0;
 
     virtual PassRefPtr<TransformOperation> blend(const TransformOperation* from, double progress, bool blendToIdentity = false) = 0;
 

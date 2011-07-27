@@ -1,5 +1,41 @@
 2011-07-27  Levi Weintraub  <leviw@chromium.org>
 
+        Switch transform operations to FloatSize
+        https://bugs.webkit.org/show_bug.cgi?id=64301
+
+        Reviewed by Simon Fraser.
+
+        Changing TransformOperation and its progeny to operate on FloatSizes instead of IntSizes.
+
+        * platform/graphics/transforms/IdentityTransformOperation.h:
+        (WebCore::IdentityTransformOperation::apply):
+        * platform/graphics/transforms/Matrix3DTransformOperation.cpp:
+        (WebCore::Matrix3DTransformOperation::blend):
+        * platform/graphics/transforms/Matrix3DTransformOperation.h:
+        (WebCore::Matrix3DTransformOperation::apply):
+        * platform/graphics/transforms/MatrixTransformOperation.cpp:
+        (WebCore::MatrixTransformOperation::blend):
+        * platform/graphics/transforms/MatrixTransformOperation.h:
+        (WebCore::MatrixTransformOperation::apply):
+        * platform/graphics/transforms/PerspectiveTransformOperation.h:
+        (WebCore::PerspectiveTransformOperation::apply):
+        * platform/graphics/transforms/RotateTransformOperation.h:
+        (WebCore::RotateTransformOperation::apply):
+        * platform/graphics/transforms/ScaleTransformOperation.h:
+        (WebCore::ScaleTransformOperation::apply):
+        * platform/graphics/transforms/SkewTransformOperation.h:
+        (WebCore::SkewTransformOperation::apply):
+        * platform/graphics/transforms/TransformOperation.h:
+        * platform/graphics/transforms/TransformOperations.h:
+        (WebCore::TransformOperations::apply):
+        * platform/graphics/transforms/TranslateTransformOperation.h:
+        (WebCore::TranslateTransformOperation::x):
+        (WebCore::TranslateTransformOperation::y):
+        (WebCore::TranslateTransformOperation::z):
+        (WebCore::TranslateTransformOperation::apply):
+
+2011-07-27  Levi Weintraub  <leviw@chromium.org>
+
         unicode-bidi:-webkit-plaintext does not work on <textarea>
         https://bugs.webkit.org/show_bug.cgi?id=65074
 

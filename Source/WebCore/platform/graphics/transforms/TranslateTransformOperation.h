@@ -42,9 +42,9 @@ public:
         return adoptRef(new TranslateTransformOperation(tx, ty, tz, type));
     }
 
-    double x(const IntSize& borderBoxSize) const { return m_x.calcFloatValue(borderBoxSize.width()); }
-    double y(const IntSize& borderBoxSize) const { return m_y.calcFloatValue(borderBoxSize.height()); }
-    double z(const IntSize&) const { return m_z.calcFloatValue(1); }
+    double x(const FloatSize& borderBoxSize) const { return m_x.calcFloatValue(borderBoxSize.width()); }
+    double y(const FloatSize& borderBoxSize) const { return m_y.calcFloatValue(borderBoxSize.height()); }
+    double z(const FloatSize&) const { return m_z.calcFloatValue(1); }
 
     Length x() const { return m_x; }
     Length y() const { return m_y; }
@@ -64,7 +64,7 @@ private:
         return m_x == t->m_x && m_y == t->m_y && m_z == t->m_z;
     }
 
-    virtual bool apply(TransformationMatrix& transform, const IntSize& borderBoxSize) const
+    virtual bool apply(TransformationMatrix& transform, const FloatSize& borderBoxSize) const
     {
         transform.translate3d(x(borderBoxSize), y(borderBoxSize), z(borderBoxSize));
         return m_x.type() == Percent || m_y.type() == Percent;

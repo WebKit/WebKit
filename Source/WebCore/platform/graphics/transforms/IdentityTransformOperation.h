@@ -46,7 +46,7 @@ private:
         return isSameType(o);
     }
 
-    virtual bool apply(TransformationMatrix&, const IntSize&) const
+    virtual bool apply(TransformationMatrix&, const FloatSize&) const
     {
         return false;
     }

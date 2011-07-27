@@ -60,7 +60,7 @@ private:
         return m_x == r->m_x && m_y == r->m_y && m_z == r->m_z && m_angle == r->m_angle;
     }
 
-    virtual bool apply(TransformationMatrix& transform, const IntSize& /*borderBoxSize*/) const
+    virtual bool apply(TransformationMatrix& transform, const FloatSize& /*borderBoxSize*/) const
     {
         transform.rotate3d(m_x, m_y, m_z, m_angle);
         return false;

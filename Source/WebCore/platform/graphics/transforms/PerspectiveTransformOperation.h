@@ -53,7 +53,7 @@ private:
         return m_p == p->m_p;
     }
 
-    virtual bool apply(TransformationMatrix& transform, const IntSize&) const
+    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const
     {
         transform.applyPerspective(m_p.calcFloatValue(1));
         return false;

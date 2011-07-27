@@ -53,7 +53,7 @@ private:
         return m_matrix == m->m_matrix;
     }
 
-    virtual bool apply(TransformationMatrix& transform, const IntSize&) const
+    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const
     {
         transform.multiply(TransformationMatrix(m_matrix));
         return false;

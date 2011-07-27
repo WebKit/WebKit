@@ -52,7 +52,7 @@ private:
         return m_angleX == s->m_angleX && m_angleY == s->m_angleY;
     }
 
-    virtual bool apply(TransformationMatrix& transform, const IntSize&) const
+    virtual bool apply(TransformationMatrix& transform, const FloatSize&) const
     {
         transform.skew(m_angleX, m_angleY);
         return false;
