@@ -103,10 +103,10 @@ public:
     void unsuspendRedrawAll();
     void forceRedraw();
 
-    NodeList* getIntersectionList(const FloatRect&, SVGElement* referenceElement);
-    NodeList* getEnclosureList(const FloatRect&, SVGElement* referenceElement);
-    bool checkIntersection(SVGElement*, const FloatRect&);
-    bool checkEnclosure(SVGElement*, const FloatRect&);
+    PassRefPtr<NodeList> getIntersectionList(const FloatRect&, SVGElement* referenceElement) const;
+    PassRefPtr<NodeList> getEnclosureList(const FloatRect&, SVGElement* referenceElement) const;
+    bool checkIntersection(SVGElement*, const FloatRect&) const;
+    bool checkEnclosure(SVGElement*, const FloatRect&) const;
     void deselectAll();
 
     static float createSVGNumber();
@@ -149,6 +149,13 @@ private:
     virtual bool selfHasRelativeLengths() const;
 
     void inheritViewAttributes(SVGViewElement*);
+
+    enum CollectIntersectionOrEnclosure {
+        CollectIntersectionList,
+        CollectEnclosureList
+    };
+
+    PassRefPtr<NodeList> collectIntersectionOrEnclosureList(const FloatRect&, SVGElement*, CollectIntersectionOrEnclosure) const;
 
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGSVGElement)
         DECLARE_ANIMATED_LENGTH(X, x)

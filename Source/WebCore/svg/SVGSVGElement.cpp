@@ -34,11 +34,12 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Frame.h"
-#include "FrameTree.h"
 #include "FrameSelection.h"
+#include "FrameTree.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
 #include "RenderSVGResource.h"
+#include "RenderSVGModelObject.h"
 #include "RenderSVGRoot.h"
 #include "RenderSVGViewportContainer.h"
 #include "SMILTimeContainer.h"
@@ -52,6 +53,7 @@
 #include "SVGViewSpec.h"
 #include "SVGZoomEvent.h"
 #include "ScriptEventListener.h"
+#include "StaticNodeList.h"
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -389,32 +391,44 @@ void SVGSVGElement::forceRedraw()
     // FIXME: Implement me (see bug 11275)
 }
 
-NodeList* SVGSVGElement::getIntersectionList(const FloatRect&, SVGElement*)
+PassRefPtr<NodeList> SVGSVGElement::collectIntersectionOrEnclosureList(const FloatRect& rect, SVGElement* referenceElement, CollectIntersectionOrEnclosure collect) const
 {
-    // FIXME: Implement me (see bug 11274)
-    return 0;
+    Vector<RefPtr<Node> > nodes;
+    Node* node = traverseNextNode(referenceElement ? referenceElement : this);
+    while (node) {
+        if (node->isSVGElement()) { 
+            if (collect == CollectIntersectionList) {
+                if (checkIntersection(static_cast<SVGElement*>(node), rect))
+                    nodes.append(node);
+            } else {
+                if (checkEnclosure(static_cast<SVGElement*>(node), rect))
+                    nodes.append(node);
+            }
+        }
+
+        node = node->traverseNextNode(referenceElement ? referenceElement : this);
+    }
+    return StaticNodeList::adopt(nodes);
 }
 
-NodeList* SVGSVGElement::getEnclosureList(const FloatRect&, SVGElement*)
+PassRefPtr<NodeList> SVGSVGElement::getIntersectionList(const FloatRect& rect, SVGElement* referenceElement) const
 {
-    // FIXME: Implement me (see bug 11274)
-    return 0;
+    return collectIntersectionOrEnclosureList(rect, referenceElement, CollectIntersectionList);
 }
 
-bool SVGSVGElement::checkIntersection(SVGElement*, const FloatRect& rect)
+PassRefPtr<NodeList> SVGSVGElement::getEnclosureList(const FloatRect& rect, SVGElement* referenceElement) const
 {
-    // TODO : take into account pointer-events?
-    // FIXME: Why is element ignored??
-    // FIXME: Implement me (see bug 11274)
-    return rect.intersects(getBBox());
+    return collectIntersectionOrEnclosureList(rect, referenceElement, CollectEnclosureList);
 }
 
-bool SVGSVGElement::checkEnclosure(SVGElement*, const FloatRect& rect)
+bool SVGSVGElement::checkIntersection(SVGElement* element, const FloatRect& rect) const
 {
-    // TODO : take into account pointer-events?
-    // FIXME: Why is element ignored??
-    // FIXME: Implement me (see bug 11274)
-    return rect.contains(getBBox());
+    return RenderSVGModelObject::checkIntersection(element->renderer(), rect);
+}
+
+bool SVGSVGElement::checkEnclosure(SVGElement* element, const FloatRect& rect) const
+{
+    return RenderSVGModelObject::checkEnclosure(element->renderer(), rect);
 }
 
 void SVGSVGElement::deselectAll()

@@ -112,6 +112,72 @@ bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, co
     return false;
 }
 
+static void getElementCTM(SVGElement* element, AffineTransform& transform)
+{
+    ASSERT(element);
+    element->document()->updateLayoutIgnorePendingStylesheets();
+
+    SVGElement* stopAtElement = SVGLocatable::nearestViewportElement(element);
+    ASSERT(stopAtElement);
+
+    Node* current = element;
+    while (current && current->isSVGElement()) {
+        SVGElement* currentElement = static_cast<SVGElement*>(current);
+        if (currentElement->isStyled())
+            transform = const_cast<AffineTransform&>(currentElement->renderer()->localToParentTransform()).multiply(transform);
+
+        // For getCTM() computation, stop at the nearest viewport element
+        if (currentElement == stopAtElement)
+            break;
+
+        current = current->parentOrHostNode();
+    }
+}
+
+// FloatRect::intersects does not consider horizontal or vertical lines (because of isEmpty()).
+// So special-case handling of such lines.
+static bool intersectsAllowingEmpty(const FloatRect& r, const FloatRect& other)
+{
+    if (r.isEmpty() && other.isEmpty())
+        return false;
+    if (r.isEmpty() && !other.isEmpty()) {
+        return (other.contains(r.x(), r.y()) && !other.contains(r.maxX(), r.maxY()))
+               || (!other.contains(r.x(), r.y()) && other.contains(r.maxX(), r.maxY()));
+    }
+    if (other.isEmpty() && !r.isEmpty())
+        return intersectsAllowingEmpty(other, r);
+    return r.intersects(other);
+}
+
+// One of the element types that can cause graphics to be drawn onto the target canvas. Specifically: circle, ellipse,
+// image, line, path, polygon, polyline, rect, text and use.
+static bool isGraphicsElement(RenderObject* renderer)
+{
+    return renderer->isSVGPath() || renderer->isSVGText() || renderer->isSVGImage() || renderer->isSVGShadowTreeRootContainer();
+}
+
+bool RenderSVGModelObject::checkIntersection(RenderObject* renderer, const FloatRect& rect)
+{
+    if (!renderer || renderer->style()->pointerEvents() == PE_NONE)
+        return false;
+    if (!isGraphicsElement(renderer))
+        return false;
+    AffineTransform ctm;
+    getElementCTM(static_cast<SVGElement*>(renderer->node()), ctm);
+    return intersectsAllowingEmpty(rect, ctm.mapRect(renderer->repaintRectInLocalCoordinates()));
+}
+
+bool RenderSVGModelObject::checkEnclosure(RenderObject* renderer, const FloatRect& rect)
+{
+    if (!renderer || renderer->style()->pointerEvents() == PE_NONE)
+        return false;
+    if (!isGraphicsElement(renderer))
+        return false;
+    AffineTransform ctm;
+    getElementCTM(static_cast<SVGElement*>(renderer->node()), ctm);
+    return rect.contains(ctm.mapRect(renderer->repaintRectInLocalCoordinates()));
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SVG)

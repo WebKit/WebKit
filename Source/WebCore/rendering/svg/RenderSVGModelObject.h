@@ -63,6 +63,9 @@ public:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     virtual void updateFromElement();
 
+    static bool checkIntersection(RenderObject*, const FloatRect&);
+    static bool checkEnclosure(RenderObject*, const FloatRect&);
+
 protected:
     virtual void willBeDestroyed();
 

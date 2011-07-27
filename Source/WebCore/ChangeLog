@@ -1,3 +1,29 @@
+2011-07-27  Rob Buis  <rbuis@rim.com>
+
+        Implement getIntersectionList(), getEnclosureList(), checkIntersection() and checkEnclosure() in SVGSVGElement
+        https://bugs.webkit.org/show_bug.cgi?id=11274
+
+        Reviewed by Nikolas Zimmermann.
+
+        Implement checkIntersection/checkEnclosure and use it to implement getIntersectionList and getEnclosureList as well.
+        The referenceElement is used to provide a DOM subtree to find matches in. Also we do not allow elements that specify
+        pointer-events=none in the list.
+
+        Tests: svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg
+               svg/custom/intersection-list-clipping.svg
+               svg/custom/intersection-list-nested-svg.svg
+
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::getElementCTM):
+        (WebCore::intersectsAllowingEmpty):
+        (WebCore::isGraphicsElement):
+        (WebCore::RenderSVGModelObject::checkIntersection):
+        (WebCore::RenderSVGModelObject::checkEnclosure):
+        * rendering/svg/RenderSVGModelObject.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::checkIntersection):
+        (WebCore::SVGSVGElement::checkEnclosure):
+
 2011-07-27  Becsi Andras  <abecsi@webkit.org>
 
         [Qt][V8] Fix the build.
