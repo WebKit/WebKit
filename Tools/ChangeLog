@@ -1,5 +1,23 @@
 2011-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Replace SpecificityCalculator with TestConfiguration-driven logic.
+        https://bugs.webkit.org/show_bug.cgi?id=65206
+
+        Use our newly-acquired ability to expand modifiers into a set of
+        matching TestConfiguration instances to calculate specificity and
+        determine whether expectation applies to a given test configuration.
+
+        Also, store bug modifier on TestExpectationsLine.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Replaced the logic of calculating specificity with
+            test configuration matching, removed a bunch of code.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Removed a bunch of tests that aren't useful anymore.
+
+
+2011-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Allow ports to specify their own test expectation specifier macros.
         https://bugs.webkit.org/show_bug.cgi?id=65291
 
