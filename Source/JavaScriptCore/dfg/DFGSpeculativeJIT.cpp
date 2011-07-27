@@ -150,6 +150,7 @@ SpeculationCheck::SpeculationCheck(MacroAssembler::Jump check, SpeculativeJIT* j
             GenerationInfo& info =  jit->m_generationInfo[iter.name()];
             m_gprInfo[iter.index()].nodeIndex = info.nodeIndex();
             m_gprInfo[iter.index()].format = info.registerFormat();
+            m_gprInfo[iter.index()].isSpilled = info.spillFormat() != DataFormatNone;
         } else
             m_gprInfo[iter.index()].nodeIndex = NoNode;
     }
@@ -157,9 +158,11 @@ SpeculationCheck::SpeculationCheck(MacroAssembler::Jump check, SpeculativeJIT* j
         if (iter.name() != InvalidVirtualRegister) {
             GenerationInfo& info =  jit->m_generationInfo[iter.name()];
             ASSERT(info.registerFormat() == DataFormatDouble);
-            m_fprInfo[iter.index()] = info.nodeIndex();
+            m_fprInfo[iter.index()].nodeIndex = info.nodeIndex();
+            m_fprInfo[iter.index()].format = DataFormatDouble;
+            m_fprInfo[iter.index()].isSpilled = info.spillFormat() != DataFormatNone;
         } else
-            m_fprInfo[iter.index()] = NoNode;
+            m_fprInfo[iter.index()].nodeIndex = NoNode;
     }
 }
 

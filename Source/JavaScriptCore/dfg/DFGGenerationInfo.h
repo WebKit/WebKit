@@ -49,6 +49,38 @@ enum DataFormat {
     DataFormatJSCell = DataFormatJS | DataFormatCell,
 };
 
+inline bool needDataFormatConversion(DataFormat from, DataFormat to)
+{
+    ASSERT(from != DataFormatNone);
+    ASSERT(to != DataFormatNone);
+    switch (from) {
+    case DataFormatInteger:
+    case DataFormatDouble:
+        return to != from;
+    case DataFormatCell:
+    case DataFormatJS:
+    case DataFormatJSInteger:
+    case DataFormatJSDouble:
+    case DataFormatJSCell:
+        switch (to) {
+        case DataFormatInteger:
+        case DataFormatDouble:
+            return true;
+        case DataFormatCell:
+        case DataFormatJS:
+        case DataFormatJSInteger:
+        case DataFormatJSDouble:
+        case DataFormatJSCell:
+            return false;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    return true;
+}
+
 // === GenerationInfo ===
 //
 // This class is used to track the current status of a live values during code generation.

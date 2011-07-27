@@ -46,6 +46,7 @@ class JSGlobalData;
 namespace DFG {
 
 class JITCodeGenerator;
+class NodeToRegisterMap;
 class NonSpeculativeJIT;
 class SpeculativeJIT;
 class SpeculationRecovery;
@@ -290,7 +291,7 @@ private:
     void fillNumericToDouble(NodeIndex, FPRReg, GPRReg temporary);
     void fillInt32ToInteger(NodeIndex, GPRReg);
     void fillToJS(NodeIndex, GPRReg);
-    void jumpFromSpeculativeToNonSpeculative(const SpeculationCheck&, const EntryLocation&, SpeculationRecovery*);
+    void jumpFromSpeculativeToNonSpeculative(const SpeculationCheck&, const EntryLocation&, SpeculationRecovery*, NodeToRegisterMap& checkNodeToRegisterMap, NodeToRegisterMap& entryNodeToRegisterMap);
     void linkSpeculationChecks(SpeculativeJIT&, NonSpeculativeJIT&);
 
     // The globalData, used to access constants such as the vPtrs.

@@ -52,9 +52,10 @@ struct EntryLocation {
     struct RegisterInfo {
         NodeIndex nodeIndex;
         DataFormat format;
+        bool isSpilled;
     };
     RegisterInfo m_gprInfo[GPRInfo::numberOfRegisters];
-    NodeIndex m_fprInfo[FPRInfo::numberOfRegisters];
+    RegisterInfo m_fprInfo[FPRInfo::numberOfRegisters];
 };
 
 // === NonSpeculativeJIT ===

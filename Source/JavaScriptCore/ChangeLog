@@ -1,3 +1,68 @@
+2011-07-26  Filip Pizlo  <fpizlo@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64969
+        DFG JIT generates inefficient code for speculation failures.
+
+        Reviewed by Gavin Barraclough.
+        
+        This implements a speculation failure strategy where (1) values spilled on
+        non-speculative but not spilled on speculative are spilled, (2) values that
+        are in registers on both paths are rearranged without ever touching memory,
+        and (3) values spilled on speculative but not spilled on non-speculative are
+        filled.
+        
+        The register shuffling is the most interesting part of this patch.  It
+        constructs a permutation graph for registers.  Each node represents a
+        register, and each directed edge corresponds to the register's value having
+        to be moved to a different register as part of the shuffling.  This is a
+        directed graph where each node may only have 0 or 1 incoming edges, and
+        0 or 1 outgoing edges.  The algorithm then first finds maximal non-cyclic
+        subgraphs where all nodes in the subgraph are reachable from a start node.
+        Such subgraphs always resemble linked lists, and correspond to simply
+        moving the value in the second-to-last register into the last register, and
+        then moving the value in the third-to-last register into the second-to-last
+        register, and so on.  Once these subgraphs are taken care of, the remaining
+        subgraphs are cycles, and are handled using either (a) conversion or no-op
+        if the cycle involves one node, (b) swap if it involves two nodes, or (c)
+        a cyclic shuffle involving a scratch register if there are three or more
+        nodes.
+        
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::needDataFormatConversion):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::GeneralizedRegister::GeneralizedRegister):
+        (JSC::DFG::GeneralizedRegister::createGPR):
+        (JSC::DFG::GeneralizedRegister::createFPR):
+        (JSC::DFG::GeneralizedRegister::dump):
+        (JSC::DFG::GeneralizedRegister::findInSpeculationCheck):
+        (JSC::DFG::GeneralizedRegister::findInEntryLocation):
+        (JSC::DFG::GeneralizedRegister::previousDataFormat):
+        (JSC::DFG::GeneralizedRegister::nextDataFormat):
+        (JSC::DFG::GeneralizedRegister::convert):
+        (JSC::DFG::GeneralizedRegister::moveTo):
+        (JSC::DFG::GeneralizedRegister::swapWith):
+        (JSC::DFG::ShuffledRegister::ShuffledRegister):
+        (JSC::DFG::ShuffledRegister::isEndOfNonCyclingPermutation):
+        (JSC::DFG::ShuffledRegister::handleNonCyclingPermutation):
+        (JSC::DFG::ShuffledRegister::handleCyclingPermutation):
+        (JSC::DFG::ShuffledRegister::lookup):
+        (JSC::DFG::lookupForRegister):
+        (JSC::DFG::NodeToRegisterMap::Tuple::Tuple):
+        (JSC::DFG::NodeToRegisterMap::NodeToRegisterMap):
+        (JSC::DFG::NodeToRegisterMap::set):
+        (JSC::DFG::NodeToRegisterMap::end):
+        (JSC::DFG::NodeToRegisterMap::find):
+        (JSC::DFG::NodeToRegisterMap::clear):
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+        (JSC::DFG::JITCompiler::linkSpeculationChecks):
+        * dfg/DFGJITCompiler.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::EntryLocation::EntryLocation):
+        * dfg/DFGNonSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculationCheck::SpeculationCheck):
+        * dfg/DFGSpeculativeJIT.h:
+
 2011-07-26  Oliver Hunt  <oliver@apple.com>
 
         Buffer overflow creating error messages for JSON.parse
