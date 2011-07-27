@@ -31,7 +31,7 @@ unix:!mac:!symbian:!embedded {
     PKGCONFIG += fontconfig
 }
 
-QT = core gui network
+QT = core gui network declarative
 
 HEADERS = \
     $$BASEDIR/PlatformWebView.h \

@@ -15,6 +15,8 @@ CONFIG += staticlib
 TARGET = $$WEBKIT2_TARGET
 DESTDIR = $$WEBKIT2_DESTDIR
 
+QT += declarative
+
 # Build both debug and release configurations
 mac: CONFIG += build_all
 
@@ -476,7 +478,6 @@ SOURCES += \
     UIProcess/qt/qwkcontext.cpp \
     UIProcess/qt/qwkhistory.cpp \
     UIProcess/qt/qwkpreferences.cpp \
-    UIProcess/qt/ViewInterface.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
     UIProcess/qt/TiledDrawingAreaTileQt.cpp \
     UIProcess/qt/TextCheckerQt.cpp \

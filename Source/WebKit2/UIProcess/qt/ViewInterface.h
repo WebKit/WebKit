@@ -69,10 +69,6 @@ public:
 
     virtual void processDidCrash() = 0;
     virtual void didRelaunchProcess() = 0;
-
-protected:
-    /* Utility functions for the implementations. */
-    static QWidget* ownerWidget(const QGraphicsWidget*);
 };
 
 }

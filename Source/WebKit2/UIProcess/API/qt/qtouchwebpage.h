@@ -24,7 +24,7 @@
 #include "qwebkitglobal.h"
 #include "qwebkittypes.h"
 
-#include <QGraphicsWidget>
+#include <QtDeclarative/qsgpainteditem.h>
 #include <QSharedPointer>
 
 class QTouchWebPagePrivate;
@@ -35,13 +35,13 @@ namespace WebKit {
     class TouchViewInterface;
 }
 
-class QWEBKIT_EXPORT QTouchWebPage : public QGraphicsWidget {
+class QWEBKIT_EXPORT QTouchWebPage : public QSGPaintedItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
 
 public:
-    QTouchWebPage(QGraphicsItem* parent = 0);
+    QTouchWebPage(QSGItem* parent = 0);
 
     virtual ~QTouchWebPage();
 
@@ -52,7 +52,7 @@ public:
 
     QAction* navigationAction(QtWebKit::NavigationAction which);
 
-    virtual void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+    virtual void paint(QPainter*);
     virtual bool event(QEvent*);
 
 Q_SIGNALS:
@@ -64,7 +64,14 @@ Q_SIGNALS:
     void loadProgress(int progress);
 
 protected:
-    virtual void resizeEvent(QGraphicsSceneResizeEvent*);
+    virtual void keyPressEvent(QKeyEvent*);
+    virtual void keyReleaseEvent(QKeyEvent*);
+    virtual void inputMethodEvent(QInputMethodEvent*);
+    virtual void focusInEvent(QFocusEvent*);
+    virtual void focusOutEvent(QFocusEvent*);
+    virtual void touchEvent(QTouchEvent*);
+
+    virtual void geometryChanged(const QRectF&, const QRectF&);
 
 private:
     QTouchWebPagePrivate* d;

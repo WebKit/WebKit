@@ -8,6 +8,8 @@ CONFIG(standalone_package) {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = ../../../../Source/WebCore/generated
 }
 
+QT += declarative
+
 GENERATED_SOURCES_DIR = ../../generated
 
 SOURCES += \

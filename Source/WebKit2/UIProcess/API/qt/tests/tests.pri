@@ -10,7 +10,7 @@ SOURCES += $${TARGET}.cpp
 INCLUDEPATH += $$PWD
 
 include(../../../../../WebKit.pri)
-QT += testlib
+QT += testlib declarative
 
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 DEFINES += TESTS_SOURCE_DIR=\\\"$$PWD\\\"

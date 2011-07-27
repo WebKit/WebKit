@@ -29,13 +29,14 @@
 #ifndef BrowserView_h
 #define BrowserView_h
 
-#include <QGraphicsView>
+#include <QtDeclarative/qsgcanvas.h>
 #include <qwebkittypes.h>
 
 class QDesktopWebView;
+class QSGItem;
 class QTouchWebView;
 
-class BrowserView : public QGraphicsView {
+class BrowserView : public QSGCanvas {
     Q_OBJECT
 
 public:
@@ -43,7 +44,7 @@ public:
     virtual ~BrowserView();
 
     void load(const QString&);
-    QGraphicsWidget* view() const;
+    QSGItem* view() const;
 
     QAction* navigationAction(QtWebKit::NavigationAction which) const;
 
@@ -54,7 +55,7 @@ protected:
     virtual void resizeEvent(QResizeEvent*);
 
 private:
-    QGraphicsWidget* m_item;
+    QSGItem* m_item;
 };
 
 #endif

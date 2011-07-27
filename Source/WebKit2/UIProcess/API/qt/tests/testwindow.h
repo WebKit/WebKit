@@ -20,39 +20,35 @@
 #ifndef testwindow_h
 #define testwindow_h
 
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QGraphicsWidget>
 #include <QResizeEvent>
 #include <QScopedPointer>
+#include <QtDeclarative/qsgcanvas.h>
+#include <QtDeclarative/qsgitem.h>
 
 // TestWindow: Utility class to ignore QGraphicsView details.
-class TestWindow : public QGraphicsView {
+class TestWindow : public QSGCanvas {
 public:
-    inline TestWindow(QGraphicsWidget* webView);
-    QScopedPointer<QGraphicsWidget >webView;
+    inline TestWindow(QSGItem* webView);
+    QScopedPointer<QSGItem> webView;
 
 protected:
     inline void resizeEvent(QResizeEvent*);
 };
 
-inline TestWindow::TestWindow(QGraphicsWidget* webView)
+inline TestWindow::TestWindow(QSGItem* webView)
     : webView(webView)
 {
     Q_ASSERT(webView);
-    setFrameStyle(QFrame::NoFrame | QFrame::Plain);
-
-    QGraphicsScene* const scene = new QGraphicsScene(this);
-    setScene(scene);
-    scene->addItem(webView);
+    webView->setParentItem(rootItem());
 }
 
 inline void TestWindow::resizeEvent(QResizeEvent* event)
 {
-    QGraphicsView::resizeEvent(event);
-    QRectF rect(QPoint(0, 0), event->size());
-    webView->setGeometry(rect);
-    scene()->setSceneRect(rect);
+    QSGCanvas::resizeEvent(event);
+    webView->setX(0);
+    webView->setY(0);
+    webView->setWidth(event->size().width());
+    webView->setHeight(event->size().height());
 }
 
 #endif /* testwindow_h */

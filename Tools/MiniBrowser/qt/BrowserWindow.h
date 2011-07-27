@@ -70,8 +70,6 @@ protected slots:
 
     void printURL(const QUrl&);
 
-    void toggleGLViewport(bool);
-
 private:
     void updateUserAgentList();
 

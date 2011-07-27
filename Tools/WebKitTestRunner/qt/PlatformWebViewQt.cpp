@@ -28,11 +28,12 @@
 
 #include "PlatformWebView.h"
 #include "qdesktopwebview.h"
+#include <QtDeclarative/qsgcanvas.h>
 #include <QtGui>
 
 namespace WTR {
 
-class WebView : public QGraphicsView {
+class WebView : public QSGCanvas {
 public:
     WebView(WKContextRef, WKPageGroupRef);
 
@@ -46,12 +47,10 @@ private:
 };
 
 WebView::WebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
-    : QGraphicsView()
-    , m_item(new QDesktopWebView(contextRef, pageGroupRef))
+    : m_item(new QDesktopWebView(contextRef, pageGroupRef, rootItem()))
 {
-    m_item->setPreferredSize(800, 600);
-    setScene(new QGraphicsScene(this));
-    scene()->addItem(m_item);
+    m_item->setWidth(800);
+    m_item->setHeight(600);
 }
 
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef)
@@ -63,7 +62,7 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     m_window->setGeometry(0, 0, 800, 600);
 
     QFocusEvent ev(QEvent::WindowActivate);
-    QApplication::sendEvent(m_view->scene(), &ev);
+    QApplication::sendEvent(m_view, &ev);
     m_view->wkView()->setFocus(Qt::OtherFocusReason);
 }
 

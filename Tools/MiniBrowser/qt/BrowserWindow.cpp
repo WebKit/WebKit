@@ -33,10 +33,6 @@
 #include "qtouchwebview.h"
 #include "qtouchwebpage.h"
 
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-#include <QGLWidget>
-#endif
-
 #if 0
 // FIXME
 static QWKPage* newPageFunction(QWKPage* page)
@@ -58,11 +54,6 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     }
 
     m_browser = new BrowserView(m_windowOptions.useTouchWebView);
-
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-    if (m_windowOptions.useQGLWidgetViewport)
-        m_browser->setViewport(new QGLWidget());
-#endif
 
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -113,12 +104,6 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
     connect(this, SIGNAL(enteredFullScreenMode(bool)), this, SLOT(toggleFullScreenMode(bool)));
 
     QMenu* toolsMenu = menuBar()->addMenu("&Develop");
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-    QAction* toggleGLViewport = toolsMenu->addAction("Toggle GL Viewport", this, SLOT(toggleGLViewport(bool)));
-    toggleGLViewport->setCheckable(true);
-    toggleGLViewport->setChecked(m_windowOptions.useQGLWidgetViewport);
-#endif
-    toolsMenu->addSeparator();
     toolsMenu->addAction("Change User Agent", this, SLOT(showUserAgentDialog()));
     toolsMenu->addSeparator();
     toolsMenu->addAction("Load URLs from file", this, SLOT(loadURLListFromFile()));
@@ -201,7 +186,7 @@ void BrowserWindow::urlChanged(const QUrl& url)
 {
     m_addressBar->setText(url.toString());
     m_browser->setFocus();
-    m_browser->view()->setFocus();
+    m_browser->view()->setFocus(true);
 }
 
 void BrowserWindow::openFile()
@@ -329,11 +314,4 @@ BrowserWindow::~BrowserWindow()
     delete m_urlLoader;
     delete m_addressBar;
     delete m_browser;
-}
-
-void BrowserWindow::toggleGLViewport(bool useQGLWidgetViewport)
-{
-#if defined(QT_CONFIGURED_WITH_OPENGL)
-    m_browser->setViewport(useQGLWidgetViewport ? new QGLWidget() : 0);
-#endif
 }

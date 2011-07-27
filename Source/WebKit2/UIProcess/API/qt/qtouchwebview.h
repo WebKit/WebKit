@@ -23,7 +23,7 @@
 
 #include "qwebkitglobal.h"
 
-#include <QGraphicsWidget>
+#include <QtDeclarative/qsgitem.h>
 
 class QTouchWebPage;
 class QTouchWebViewPrivate;
@@ -32,19 +32,19 @@ namespace WebKit {
 class TouchViewInterface;
 }
 
-class QWEBKIT_EXPORT QTouchWebView : public QGraphicsWidget
+class QWEBKIT_EXPORT QTouchWebView : public QSGItem
 {
     Q_OBJECT
     Q_PROPERTY(QTouchWebPage* page READ page)
 
 public:
-    QTouchWebView();
+    QTouchWebView(QSGItem* parent = 0);
     ~QTouchWebView();
 
     QTouchWebPage *page();
 
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent*);
+    virtual void geometryChanged(const QRectF&, const QRectF&);
 
 private:
     friend class WebKit::TouchViewInterface;

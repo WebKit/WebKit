@@ -25,19 +25,14 @@
 
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
-#include <QGraphicsView>
 #include <QPainter>
-#include <QScrollBar>
-#include <QStyleOptionGraphicsItem>
 #include <QUrl>
 #include <QtDebug>
 
-QTouchWebPage::QTouchWebPage(QGraphicsItem* parent)
-    : QGraphicsWidget(parent)
+QTouchWebPage::QTouchWebPage(QSGItem* parent)
+    : QSGPaintedItem(parent)
     , d(new QTouchWebPagePrivate(this))
 {
-    setFocusPolicy(Qt::TabFocus);
-    setAcceptTouchEvents(true);
 }
 
 QTouchWebPage::~QTouchWebPage()
@@ -45,9 +40,9 @@ QTouchWebPage::~QTouchWebPage()
     delete d;
 }
 
-void QTouchWebPage::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget*)
+void QTouchWebPage::paint(QPainter* painter)
 {
-    d->page->paint(painter, option->exposedRect.toAlignedRect());
+    d->page->paint(painter, boundingRect().toAlignedRect());
 }
 
 void QTouchWebPage::load(const QUrl& url)
@@ -82,13 +77,44 @@ bool QTouchWebPage::event(QEvent* ev)
 
     if (d->page->handleEvent(ev))
         return true;
-    return QGraphicsWidget::event(ev);
+    return QSGPaintedItem::event(ev);
 }
 
-void QTouchWebPage::resizeEvent(QGraphicsSceneResizeEvent* ev)
+void QTouchWebPage::keyPressEvent(QKeyEvent* event)
 {
-    d->page->setDrawingAreaSize(ev->newSize().toSize());
-    QGraphicsWidget::resizeEvent(ev);
+    this->event(event);
+}
+
+void QTouchWebPage::keyReleaseEvent(QKeyEvent* event)
+{
+    this->event(event);
+}
+
+void QTouchWebPage::inputMethodEvent(QInputMethodEvent* event)
+{
+    this->event(event);
+}
+
+void QTouchWebPage::focusInEvent(QFocusEvent* event)
+{
+    this->event(event);
+}
+
+void QTouchWebPage::focusOutEvent(QFocusEvent* event)
+{
+    this->event(event);
+}
+
+void QTouchWebPage::touchEvent(QTouchEvent* event)
+{
+    this->event(event);
+}
+
+void QTouchWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
+{
+    QSGPaintedItem::geometryChanged(newGeometry, oldGeometry);
+    if (newGeometry.size() != oldGeometry.size())
+        d->page->setDrawingAreaSize(newGeometry.size().toSize());
 }
 
 QAction* QTouchWebPage::navigationAction(QtWebKit::NavigationAction which)

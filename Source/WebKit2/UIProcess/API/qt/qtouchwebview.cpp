@@ -39,7 +39,8 @@ QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
 
 void QTouchWebViewPrivate::scroll(qreal deltaX, qreal deltaY)
 {
-    pageView->moveBy(deltaX, deltaY);
+    pageView->setX(pageView->x() + deltaX);
+    pageView->setY(pageView->y() + deltaY);
     viewportRectUpdated();
 }
 
@@ -50,10 +51,11 @@ void QTouchWebViewPrivate::viewportRectUpdated()
     pageViewPrivate->setViewportRect(viewportRectInPageViewCoordinate);
 }
 
-QTouchWebView::QTouchWebView()
-    : d(new QTouchWebViewPrivate(this))
+QTouchWebView::QTouchWebView(QSGItem* parent)
+    : QSGItem(parent)
+    , d(new QTouchWebViewPrivate(this))
 {
-    setFlags(QGraphicsItem::ItemClipsChildrenToShape);
+    setFlags(QSGItem::ItemClipsChildrenToShape);
 }
 
 QTouchWebView::~QTouchWebView()
@@ -66,8 +68,11 @@ QTouchWebPage* QTouchWebView::page()
     return d->pageView.data();
 }
 
-void QTouchWebView::resizeEvent(QGraphicsSceneResizeEvent* event)
+void QTouchWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
-    QGraphicsWidget::resizeEvent(event);
-    d->viewportRectUpdated();
+    QSGItem::geometryChanged(newGeometry, oldGeometry);
+    if (newGeometry.size() != oldGeometry.size())
+        d->viewportRectUpdated();
 }
+
+#include "moc_qtouchwebview.cpp"

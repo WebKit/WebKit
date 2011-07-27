@@ -23,19 +23,31 @@
 
 #include "qwebkitglobal.h"
 #include "qwebkittypes.h"
-#include <WebKit2/WKBase.h>
-
-#include <QGraphicsWidget>
 #include <QUrl>
+#include <QtDeclarative/qsgpainteditem.h>
+#include <WebKit2/WKBase.h>
 
 class QDesktopWebViewPrivate;
 class QWebError;
+
+QT_BEGIN_NAMESPACE
+class QFocusEvent;
+class QGraphicsSceneMouseEvent;
+class QHoverEvent;
+class QInputMethodEvent;
+class QKeyEvent;
+class QPainter;
+class QRectF;
+class QSGDragEvent;
+class QTouchEvent;
+class QWheelEvent;
+QT_END_NAMESPACE
 
 namespace WTR {
     class WebView;
 }
 
-class QWEBKIT_EXPORT QDesktopWebView : public QGraphicsWidget {
+class QWEBKIT_EXPORT QDesktopWebView : public QSGPaintedItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
@@ -43,7 +55,7 @@ class QWEBKIT_EXPORT QDesktopWebView : public QGraphicsWidget {
     Q_ENUMS(NavigationAction)
 
 public:
-    QDesktopWebView();
+    QDesktopWebView(QSGItem* parent = 0);
     virtual ~QDesktopWebView();
 
     QUrl url() const;
@@ -64,13 +76,31 @@ Q_SIGNALS:
     void urlChanged(const QUrl&);
 
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent*);
-    void paint(QPainter*, const QStyleOptionGraphicsItem*, QWidget*);
+    virtual void keyPressEvent(QKeyEvent*);
+    virtual void keyReleaseEvent(QKeyEvent*);
+    virtual void inputMethodEvent(QInputMethodEvent*);
+    virtual void focusInEvent(QFocusEvent*);
+    virtual void focusOutEvent(QFocusEvent*);
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent*);
+    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent*);
+    virtual void mouseReleaseEvent(QGraphicsSceneMouseEvent*);
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent*);
+    virtual void wheelEvent(QWheelEvent*);
+    virtual void touchEvent(QTouchEvent*);
+    virtual void hoverEnterEvent(QHoverEvent*);
+    virtual void hoverMoveEvent(QHoverEvent*);
+    virtual void hoverLeaveEvent(QHoverEvent*);
+    virtual void dragMoveEvent(QSGDragEvent*);
+    virtual void dragEnterEvent(QSGDragEvent*);
+    virtual void dragExitEvent(QSGDragEvent*);
+    virtual void dragDropEvent(QSGDragEvent*);
 
+    virtual void geometryChanged(const QRectF&, const QRectF&);
+    void paint(QPainter*);
     virtual bool event(QEvent*);
 
 private:
-    QDesktopWebView(WKContextRef, WKPageGroupRef);
+    QDesktopWebView(WKContextRef, WKPageGroupRef, QSGItem* parent = 0);
     WKPageRef pageRef() const;
 
     void init();

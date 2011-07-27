@@ -46,7 +46,8 @@ void TouchViewInterface::panGestureStarted()
 void TouchViewInterface::panGestureRequestScroll(qreal deltaX, qreal deltaY)
 {
     // Translate the delta from page to viewport coordinates.
-    QPointF destInViewportCoords = m_viewportView->mapFromItem(m_pageView, m_pageView->mapFromParent(m_pageView->pos()) + QPointF(deltaX, deltaY));
+    QPointF itemPositionInItemCoords = m_pageView->mapFromItem(m_pageView->parentItem(), m_pageView->pos());
+    QPointF destInViewportCoords = m_viewportView->mapFromItem(m_pageView, itemPositionInItemCoords + QPointF(deltaX, deltaY));
     QPointF offsetInViewportCoords = destInViewportCoords - m_viewportView->mapFromItem(m_pageView->parentItem(), m_pageView->pos());
     m_viewportView->d->scroll(offsetInViewportCoords.x(), offsetInViewportCoords.y());
 }
@@ -70,12 +71,15 @@ void TouchViewInterface::pinchGestureStarted()
 
 void TouchViewInterface::pinchGestureRequestUpdate(const QPointF& pinchCenterInPageViewCoordinate, qreal totalScaleFactor)
 {
-    // FIXME: it is a bit more complicated than that, changes of the center position should move the page even
-    // if the zoom factor does not change. Both the zoom and the panning should be handled through the physics
-    // engine.
+    // FIXME: it is a more complicated than that:
+    // -the scale should be done centered on the pinch center.
+    // -changes of the center position should move the page even if the zoom factor
+    //  does not change. Both the zoom and the panning should be handled through the physics engine.
     const qreal scale = m_pinchStartScale * totalScaleFactor;
-    m_pageView->setTransformOriginPoint(pinchCenterInPageViewCoordinate);
+    QPointF oldPinchCenterOnParent = m_pageView->mapToItem(m_pageView->parentItem(), pinchCenterInPageViewCoordinate);
     m_pageView->setScale(scale);
+    QPointF newPinchCenterOnParent = m_pageView->mapToItem(m_pageView->parentItem(), pinchCenterInPageViewCoordinate);
+    m_pageView->setPos(m_pageView->pos() - (newPinchCenterOnParent - oldPinchCenterOnParent));
 }
 
 void TouchViewInterface::pinchGestureEnded()
@@ -94,7 +98,7 @@ void TouchViewInterface::setViewNeedsDisplay(const QRect& invalidatedRect)
 
 QSize TouchViewInterface::drawingAreaSize()
 {
-    return m_pageView->size().toSize();
+    return QSize(m_pageView->width(), m_pageView->height());
 }
 
 void TouchViewInterface::contentSizeChanged(const QSize& newSize)
@@ -104,13 +108,15 @@ void TouchViewInterface::contentSizeChanged(const QSize& newSize)
     // -change the zoom level if needed
     // -move the page back in viewport boundaries if needed
     // -update the viewport rect
-    m_pageView->resize(newSize);
+    m_pageView->setWidth(newSize.width());
+    m_pageView->setHeight(newSize.height());
     m_viewportView->d->viewportRectUpdated();
 }
 
 bool TouchViewInterface::isActive()
 {
-    return m_pageView->isActive();
+    // FIXME: The scene graph does not have the concept of being active or not when this was written.
+    return true;
 }
 
 bool TouchViewInterface::hasFocus()

@@ -7,6 +7,8 @@ TEMPLATE = lib
 
 DEFINES += BUILDING_WEBKIT
 
+webkit2: QT += declarative
+
 RESOURCES += \
     $$PWD/../../WebCore/WebCore.qrc
 

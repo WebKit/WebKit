@@ -1,3 +1,38 @@
+2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        [WK2][Qt] Move from QGraphicsView to Qt Scene Graph
+        https://bugs.webkit.org/show_bug.cgi?id=62969
+
+        Reviewed by Andreas Kling.
+
+        Co-authored with Simon Hausmann  <simon.hausmann@nokia.com>
+
+        With the scene graph, the interface to have a window on screen is
+        QSGCanvas. QGraphicsView is not used, and openGL is an enforced
+        dependency.
+
+        Both the BrowserView and the WebKitTest runner are changed from
+        QGraphicsView to QSGCanvas.
+
+        * MiniBrowser/qt/BrowserView.cpp:
+        (BrowserView::BrowserView):
+        (BrowserView::resizeEvent):
+        (BrowserView::view):
+        * MiniBrowser/qt/BrowserView.h:
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::urlChanged):
+        (BrowserWindow::~BrowserWindow):
+        * MiniBrowser/qt/BrowserWindow.h:
+        * MiniBrowser/qt/MiniBrowser.pro:
+        * MiniBrowser/qt/main.cpp:
+        (main):
+        * WebKitTestRunner/InjectedBundle/qt/InjectedBundle.pro:
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::WebView::WebView):
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/qt/WebKitTestRunner.pro:
+
 2011-07-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r91792.

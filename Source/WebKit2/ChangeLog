@@ -1,5 +1,101 @@
 2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
 
+        [WK2][Qt] Move from QGraphicsView to Qt Scene Graph
+        https://bugs.webkit.org/show_bug.cgi?id=62969
+
+        Reviewed by Andreas Kling.
+
+        Co-authored with Simon Hausmann  <simon.hausmann@nokia.com>
+
+        This patch change the base of WebKit2 from QGraphicsWidget
+        to scenegraph based items.
+
+        QTouchWebView becomes a QSGItem with the only role of clipping
+        child items.
+        QTouchWebPage becomes a QSGPaintedItem in order to render the content
+        of the flattened page. This is a temporary work around to get
+        something running without deep changes on the drawing area proxy.
+
+        QDesktopWebView become a QSGPaintedItem and behave as before
+        regarding rendering. The drawing area proxy is used to render
+        the full item.
+
+        The event delivery had to be adapted because the scenegraph does not
+        follow regular delivery of QEvents. Instead, each event type is
+        delivered directly to a specific virtual function.
+        In this patch, the events are forwarded to the classic QObject::event().
+
+        For the features that cannot be implemented on scenegraph (tooltip, menus, etc),
+        a temporary workaround was added: the parent canvas is used as the widget for
+        providing the feature. This assumes the web views alone in the canvas and
+        take its full size. This will have to be fixed in the scenegraph for us to
+        implement those features.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::drawingAreaSize):
+        (QDesktopWebViewPrivate::isActive):
+        (QDesktopWebViewPrivate::startDrag):
+        (QDesktopWebViewPrivate::didChangeToolTip):
+        (QDesktopWebViewPrivate::didChangeCursor):
+        (QDesktopWebViewPrivate::showContextMenu):
+        (QDesktopWebView::QDesktopWebView):
+        (QDesktopWebView::init):
+        (paintCrashedPage):
+        (QDesktopWebView::keyPressEvent):
+        (QDesktopWebView::keyReleaseEvent):
+        (QDesktopWebView::inputMethodEvent):
+        (QDesktopWebView::focusInEvent):
+        (QDesktopWebView::focusOutEvent):
+        (QDesktopWebView::mousePressEvent):
+        (QDesktopWebView::mouseMoveEvent):
+        (QDesktopWebView::mouseReleaseEvent):
+        (QDesktopWebView::mouseDoubleClickEvent):
+        (QDesktopWebView::wheelEvent):
+        (QDesktopWebView::touchEvent):
+        (QDesktopWebView::hoverEnterEvent):
+        (QDesktopWebView::hoverMoveEvent):
+        (QDesktopWebView::hoverLeaveEvent):
+        (QDesktopWebView::dragMoveEvent):
+        (QDesktopWebView::dragEnterEvent):
+        (QDesktopWebView::dragExitEvent):
+        (QDesktopWebView::dragDropEvent):
+        (QDesktopWebView::geometryChanged):
+        (QDesktopWebView::paint):
+        (QDesktopWebView::event):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::QTouchWebPage):
+        (QTouchWebPage::paint):
+        (QTouchWebPage::event):
+        (QTouchWebPage::keyPressEvent):
+        (QTouchWebPage::keyReleaseEvent):
+        (QTouchWebPage::inputMethodEvent):
+        (QTouchWebPage::focusInEvent):
+        (QTouchWebPage::focusOutEvent):
+        (QTouchWebPage::touchEvent):
+        (QTouchWebPage::geometryChanged):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::scroll):
+        (QTouchWebView::QTouchWebView):
+        (QTouchWebView::geometryChanged):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/API/qt/tests/testwindow.h:
+        (TestWindow::TestWindow):
+        (TestWindow::resizeEvent):
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::panGestureRequestScroll):
+        (WebKit::TouchViewInterface::pinchGestureRequestUpdate):
+        (WebKit::TouchViewInterface::drawingAreaSize):
+        (WebKit::TouchViewInterface::contentSizeChanged):
+        (WebKit::TouchViewInterface::isActive):
+        * UIProcess/qt/ViewInterface.cpp: Removed.
+        * UIProcess/qt/ViewInterface.h:
+        * WebKit2.pro:
+
+2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
+
         [Qt][WK2] Clean WKPageLoaderClient
         https://bugs.webkit.org/show_bug.cgi?id=65246
 

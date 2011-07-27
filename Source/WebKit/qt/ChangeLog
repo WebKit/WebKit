@@ -1,3 +1,16 @@
+2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        [WK2][Qt] Move from QGraphicsView to Qt Scene Graph
+        https://bugs.webkit.org/show_bug.cgi?id=62969
+
+        Reviewed by Andreas Kling.
+
+        Co-authored with Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Add the declarative dependency to link WebKit.
+
+        * QtWebKit.pro:
+
 2011-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] QtWebkit never finishes loading sites when they are loaded after an initial QUrl fails to load.
