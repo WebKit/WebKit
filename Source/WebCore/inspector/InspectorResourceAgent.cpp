@@ -51,6 +51,7 @@
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "KURL.h"
+#include "MemoryCache.h"
 #include "NetworkResourcesData.h"
 #include "Page.h"
 #include "ProgressTracker.h"
@@ -442,15 +443,12 @@ void InspectorResourceAgent::enable()
         return;
     m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, true);
     m_instrumentingAgents->setInspectorResourceAgent(this);
-
-    m_client->setCacheDisabled(m_state->getBoolean(ResourceAgentState::cacheDisabled));
 }
 
 void InspectorResourceAgent::disable(ErrorString*)
 {
     m_state->setBoolean(ResourceAgentState::resourceAgentEnabled, false);
     m_instrumentingAgents->setInspectorResourceAgent(0);
-    m_client->setCacheDisabled(false);
 }
 
 void InspectorResourceAgent::setUserAgentOverride(ErrorString*, const String& userAgent)
@@ -511,12 +509,14 @@ void InspectorResourceAgent::clearBrowserCookies(ErrorString*)
 
 void InspectorResourceAgent::setCacheDisabled(ErrorString*, bool cacheDisabled)
 {
-    m_client->setCacheDisabled(cacheDisabled);
     m_state->setBoolean(ResourceAgentState::cacheDisabled, cacheDisabled);
 }
 
 void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)
 {
+    if (m_state->getBoolean(ResourceAgentState::cacheDisabled))
+        memoryCache()->evictResources();
+
     m_resourcesData->clear(m_pageAgent->loaderId(loader));
 }
 

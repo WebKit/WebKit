@@ -1,3 +1,14 @@
+2011-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Disable cache option should only clear memory cache, not disable it.
+        https://bugs.webkit.org/show_bug.cgi?id=65184
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network/network-disable-cache-memory-expected.txt:
+        * http/tests/inspector/network/network-disable-cache-memory.html:
+        * http/tests/inspector/network/resources/random-script.php: Added.
+
 2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Update Qt 4.8 specific expected files.

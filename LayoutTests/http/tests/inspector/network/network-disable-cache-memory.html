@@ -3,83 +3,82 @@
 <script src="../inspector-test.js"></script>
 <script src="../network-test.js"></script>
 <script>
-function loadImage(callback)
-{
-    var image = new Image();
-    image.onload = callback;
-    image.src = "resources/resource.php?type=image&random=1&cached=1";
-    document.body.appendChild(image);
+function scheduleScriptLoad() {
+    window.setTimeout(loadScript, 0);
 }
 
-function loadData()
-{
-    loadImage(imageLoaded1);
-}
-
-function imageLoaded1()
-{
-    loadImage(imageLoaded2);
-}
-
-function imageLoaded2()
-{
-    console.log("First two images loaded.");
-}
-
-function cacheDisabled()
-{
-    loadImage(allImagesLoaded);
-}
-
-function allImagesLoaded()
-{
-    console.log("Done.");
+function loadScript() {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "resources/random-script.php";
+    document.head.appendChild(script);
 }
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
-    InspectorTest.evaluateInPage("loadData()");
+    var content1;
+    var content2;
+    var content3;
+
+    function loadScriptAndGetContent(callback)
+    {
+        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", scriptLoaded);
+        InspectorTest.evaluateInPage("scheduleScriptLoad()");
+
+        function scriptLoaded()
+        {
+            var resourcesCount = WebInspector.panels.network.resources.length;
+            var resource = WebInspector.panels.network.resources[resourcesCount - 1];
+            resource.requestContent(contentLoaded);
+        }
+
+        function contentLoaded()
+        {
+            var resourcesCount = WebInspector.panels.network.resources.length;
+            var resource = WebInspector.panels.network.resources[resourcesCount - 1];
+            callback(resource.content);
+        }
+    }
+
+    loadScriptAndGetContent(step1);
+
+    function step1(content)
+    {
+        content1 = content;
+        InspectorTest.reloadPage(step2);
+    }
 
     function step2(msg)
     {
-        NetworkAgent.setCacheDisabled(true, step3);
+        loadScriptAndGetContent(step3);
     }
 
-    function step3(msg)
+    function step3(content)
     {
-        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step4);
-        InspectorTest.evaluateInPage("cacheDisabled()");
+        content2 = content;
+        NetworkAgent.setCacheDisabled(true, step4);
     }
 
     function step4(msg)
     {
-        // inspector-test.js appears in network panel occasionally in Safari on
-        // Mac, so checking two last resources.
-        var resourcesCount = WebInspector.panels.network.resources.length;
-        var resource1 = WebInspector.panels.network.resources[resourcesCount - 2];
-        var resource2 = WebInspector.panels.network.resources[resourcesCount - 1];
-        resource1.requestContent(contentLoaded);
-        resource2.requestContent(contentLoaded);
-    }
-
-    var contentLoadedCount = 0;
-    function contentLoaded()
-    {
-        if (++contentLoadedCount !== 2)
-            return;
-
-        var resourcesCount = WebInspector.panels.network.resources.length;
-        var resource1 = WebInspector.panels.network.resources[resourcesCount - 2];
-        var resource2 = WebInspector.panels.network.resources[resourcesCount - 1];
-
-        InspectorTest.addResult(resource1.url);
-        InspectorTest.addResult(resource2.url);
-        InspectorTest.assertTrue(resource1.content !== resource2.content, "Second and third resources differ");
-        NetworkAgent.setCacheDisabled(false, step5);
+        InspectorTest.reloadPage(step5);
     }
 
     function step5(msg)
+    {
+        loadScriptAndGetContent(step6);
+    }
+
+    function step6(content)
+    {
+        content3 = content;
+
+        InspectorTest.assertTrue(content1 === content2, "First and second scripts should be equal.");
+        InspectorTest.assertTrue(content2 !== content3, "Second and third scripts should differ.");
+        NetworkAgent.setCacheDisabled(false, step7);
+    }
+
+    function step7(msg)
     {
         InspectorTest.completeTest();
     }

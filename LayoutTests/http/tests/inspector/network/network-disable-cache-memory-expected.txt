@@ -1,8 +1,8 @@
-CONSOLE MESSAGE: line 26: First two images loaded.
-CONSOLE MESSAGE: line 36: Done.
+CONSOLE MESSAGE: line 1: Done.
+CONSOLE MESSAGE: line 1: Done.
+CONSOLE MESSAGE: line 1: Done.
 Tests disabling cache from inspector.
 
-
-http://127.0.0.1:8000/inspector/network/resources/resource.php?type=image&random=1&cached=1
-http://127.0.0.1:8000/inspector/network/resources/resource.php?type=image&random=1&cached=1
+Page reloaded.
+Page reloaded.
 

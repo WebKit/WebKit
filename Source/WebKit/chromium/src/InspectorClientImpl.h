@@ -59,7 +59,6 @@ public:
 
     virtual void clearBrowserCache();
     virtual void clearBrowserCookies();
-    virtual void setCacheDisabled(bool);
 private:
     WebDevToolsAgentImpl* devToolsAgent();
 

@@ -317,11 +317,6 @@ void WebDevToolsAgentImpl::clearBrowserCookies()
     m_client->clearBrowserCookies();
 }
 
-void WebDevToolsAgentImpl::setCacheDisabled(bool cacheDisabled)
-{
-    memoryCache()->setDisabled(cacheDisabled);
-}
-
 void WebDevToolsAgentImpl::setProcessId(long processId)
 {
     inspectorController()->setProcessId(processId);

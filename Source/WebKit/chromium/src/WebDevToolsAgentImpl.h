@@ -93,7 +93,6 @@ public:
 
     virtual void clearBrowserCache();
     virtual void clearBrowserCookies();
-    virtual void setCacheDisabled(bool);
 
     int hostId() { return m_hostId; }
 

@@ -106,12 +106,6 @@ void InspectorClientImpl::clearBrowserCookies()
         agent->clearBrowserCookies();
 }
 
-void InspectorClientImpl::setCacheDisabled(bool cacheDisabled)
-{
-    if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->setCacheDisabled(cacheDisabled);
-}
-
 WebDevToolsAgentImpl* InspectorClientImpl::devToolsAgent()
 {
     return static_cast<WebDevToolsAgentImpl*>(m_inspectedWebView->devToolsAgent());
