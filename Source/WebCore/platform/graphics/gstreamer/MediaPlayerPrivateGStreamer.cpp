@@ -50,6 +50,7 @@
 #include <gst/video/video.h>
 #include <limits>
 #include <math.h>
+#include <wtf/text/CString.h>
 
 // GstPlayFlags flags from playbin2. It is the policy of GStreamer to
 // not publicly expose element-specific enums. That's why this

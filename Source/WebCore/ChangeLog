@@ -1,3 +1,13 @@
+2011-07-27  Becsi Andras  <abecsi@webkit.org>
+
+        [Qt][V8] Fix the build.
+
+        Unreviewed build fix.
+
+        No new tests needed.
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp: Add missing CString.h include.
+
 2011-07-27  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Unreviewed build fix for mac.
