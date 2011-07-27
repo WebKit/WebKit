@@ -614,9 +614,9 @@ layer at (0,0) size 785x5752
             RenderText {#text} at (0,180) size 20x20
               text run at (0,180) width 20: "))))"
             RenderBR {BR} at (20,197) size 0x0
-            RenderText {#text} at (0,200) size 20x20
-              text run at (0,200) width 20: "****"
-            RenderBR {BR} at (20,217) size 0x0
+            RenderText {#text} at (0,200) size 16x20
+              text run at (0,200) width 16: "****"
+            RenderBR {BR} at (16,217) size 0x0
             RenderText {#text} at (0,220) size 36x20
               text run at (0,220) width 36: "++++"
             RenderBR {BR} at (36,237) size 0x0
@@ -683,9 +683,9 @@ layer at (0,0) size 785x5752
             RenderText {#text} at (0,640) size 48x20
               text run at (0,640) width 48: "@@@@"
             RenderBR {BR} at (48,657) size 0x0
-            RenderText {#text} at (0,660) size 28x20
-              text run at (0,660) width 28: "AAAA"
-            RenderBR {BR} at (28,677) size 0x0
+            RenderText {#text} at (0,660) size 32x20
+              text run at (0,660) width 32: "AAAA"
+            RenderBR {BR} at (32,677) size 0x0
             RenderText {#text} at (0,680) size 36x20
               text run at (0,680) width 36: "BBBB"
             RenderBR {BR} at (36,697) size 0x0
@@ -746,15 +746,15 @@ layer at (0,0) size 785x5752
             RenderText {#text} at (0,1060) size 36x20
               text run at (0,1060) width 36: "UUUU"
             RenderBR {BR} at (36,1077) size 0x0
-            RenderText {#text} at (0,1080) size 28x20
-              text run at (0,1080) width 28: "VVVV"
-            RenderBR {BR} at (28,1097) size 0x0
+            RenderText {#text} at (0,1080) size 32x20
+              text run at (0,1080) width 32: "VVVV"
+            RenderBR {BR} at (32,1097) size 0x0
             RenderText {#text} at (0,1100) size 52x20
               text run at (0,1100) width 52: "WWWW"
             RenderBR {BR} at (52,1117) size 0x0
-            RenderText {#text} at (0,1120) size 28x20
-              text run at (0,1120) width 28: "XXXX"
-            RenderBR {BR} at (28,1137) size 0x0
+            RenderText {#text} at (0,1120) size 32x20
+              text run at (0,1120) width 32: "XXXX"
+            RenderBR {BR} at (32,1137) size 0x0
             RenderText {#text} at (0,1140) size 32x20
               text run at (0,1140) width 32: "YYYY"
             RenderBR {BR} at (32,1157) size 0x0
@@ -842,15 +842,15 @@ layer at (0,0) size 785x5752
             RenderText {#text} at (0,1700) size 32x20
               text run at (0,1700) width 32: "uuuu"
             RenderBR {BR} at (32,1717) size 0x0
-            RenderText {#text} at (0,1720) size 32x20
-              text run at (0,1720) width 32: "vvvv"
-            RenderBR {BR} at (32,1737) size 0x0
-            RenderText {#text} at (0,1740) size 40x20
-              text run at (0,1740) width 40: "wwww"
-            RenderBR {BR} at (40,1757) size 0x0
-            RenderText {#text} at (0,1760) size 24x20
-              text run at (0,1760) width 24: "xxxx"
-            RenderBR {BR} at (24,1777) size 0x0
+            RenderText {#text} at (0,1720) size 28x20
+              text run at (0,1720) width 28: "vvvv"
+            RenderBR {BR} at (28,1737) size 0x0
+            RenderText {#text} at (0,1740) size 44x20
+              text run at (0,1740) width 44: "wwww"
+            RenderBR {BR} at (44,1757) size 0x0
+            RenderText {#text} at (0,1760) size 28x20
+              text run at (0,1760) width 28: "xxxx"
+            RenderBR {BR} at (28,1777) size 0x0
             RenderText {#text} at (0,1780) size 28x20
               text run at (0,1780) width 28: "yyyy"
             RenderBR {BR} at (28,1797) size 0x0

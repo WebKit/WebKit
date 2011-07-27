@@ -1,3 +1,52 @@
+2011-07-27  Stephen White  <senorblanco@chromium.org>
+
+        New chromium-linux baselines after skia change
+        http://code.google.com/p/skia/source/detail?r=1924.
+
+        Unreviewed.
+
+        * platform/chromium-linux/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-linux/fast/forms/placeholder-position-expected.png:
+        * platform/chromium-linux/fast/transforms/transform-on-inline-expected.png:
+        * platform/chromium-linux/fast/transforms/transform-table-row-expected.png:
+        * platform/chromium-linux/fast/transforms/transformed-document-element-expected.png:
+        * platform/chromium-linux/fonts/cursive-expected.txt: Added.
+        * platform/chromium-linux/fonts/fantasy-expected.txt:
+        * platform/chromium-linux/media/audio-repaint-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-path-01-b-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-07-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/types-basicDOM-01-b-expected.png:
+        * platform/chromium-linux/svg/batik/text/textGlyphOrientationHorizontal-expected.png:
+        * platform/chromium-linux/svg/batik/text/textLayout2-expected.png:
+        * platform/chromium-linux/svg/batik/text/textOnPath2-expected.png:
+        * platform/chromium-linux/svg/batik/text/textOnPath3-expected.png:
+        * platform/chromium-linux/svg/batik/text/textOnPathSpaces-expected.png:
+        * platform/chromium-linux/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-linux/svg/batik/text/verticalTextOnPath-expected.png:
+        * platform/chromium-linux/svg/custom/focus-ring-expected.png:
+        * platform/chromium-linux/svg/custom/foreign-object-skew-expected.png:
+        * platform/chromium-linux/svg/custom/linking-a-03-b-all-expected.png:
+        * platform/chromium-linux/svg/custom/linking-a-03-b-viewBox-transform-expected.png:
+        * platform/chromium-linux/svg/custom/text-dom-01-f-expected.png:
+        * platform/chromium-linux/svg/custom/text-linking-expected.png:
+        * platform/chromium-linux/svg/custom/text-rotated-gradient-expected.png:
+        * platform/chromium-linux/svg/custom/text-rotation-expected.png:
+        * platform/chromium-linux/svg/custom/use-on-disallowed-foreign-object-1-expected.png:
+        * platform/chromium-linux/svg/custom/use-on-disallowed-foreign-object-2-expected.png:
+        * platform/chromium-linux/svg/custom/use-on-disallowed-foreign-object-4-expected.png:
+        * platform/chromium-linux/svg/custom/use-on-disallowed-foreign-object-5-expected.png:
+        * platform/chromium-linux/svg/custom/use-on-disallowed-foreign-object-6-expected.png:
+        * platform/chromium-linux/svg/custom/use-on-non-svg-namespaced-element-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-rotate-attr-expected.png:
+        * platform/chromium-linux/svg/text/text-path-01-b-expected.png:
+        * platform/chromium-linux/svg/text/text-path-middle-align-expected.png:
+        * platform/chromium-linux/svg/text/text-text-07-t-expected.png:
+        * platform/chromium-linux/svg/wicd/test-scalable-background-image2-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/chromium-linux/svg/zoom/text/zoom-foreignObject-expected.png:
+        * platform/chromium-linux/transforms/2d/compound-transforms-vs-containers-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Couple of tests have different results on 64 bit and/or in debug mode compared to 32 bit and/or release mode

@@ -2666,49 +2666,9 @@ BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
 //   (WebCore::ScrollView::calculateOverhangAreasForPainting):
 BUGCR71783 : scrollbars/custom-scrollbar-with-incomplete-style.html = IMAGE
 
-// To improve quality, skia now disables freetype hinting when we're transformed
-// so these tests will need to be rebaselined.
-BUGCR90391 LINUX : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUGCR90391 LINUX : fast/forms/placeholder-position.html = IMAGE
-BUGCR90391 LINUX : fast/transforms/transform-on-inline.html = IMAGE
-BUGCR90391 LINUX : fast/transforms/transform-table-row.html = IMAGE
-BUGCR90391 LINUX : fast/transforms/transformed-document-element.html = IMAGE
-BUGCR90391 LINUX : media/audio-repaint.html = IMAGE
-BUGCR90391 LINUX : svg/W3C-SVG-1.1/text-path-01-b.svg = IMAGE
-BUGCR90391 LINUX : svg/W3C-SVG-1.1/text-text-07-t.svg = IMAGE
-BUGCR90391 LINUX : svg/W3C-SVG-1.1/types-basicDOM-01-b.svg = IMAGE
-BUGCR90391 LINUX : svg/as-background-image/svg-as-background-5.html = IMAGE
-BUGCR90391 LINUX : svg/batik/text/textGlyphOrientationHorizontal.svg = IMAGE
-BUGCR90391 LINUX : svg/batik/text/textLayout2.svg = IMAGE
-BUGCR90391 LINUX : svg/batik/text/textOnPath2.svg = IMAGE
-BUGCR90391 LINUX : svg/batik/text/textOnPath3.svg = IMAGE
-BUGCR90391 LINUX : svg/batik/text/textOnPathSpaces.svg = IMAGE
-BUGCR90391 LINUX : svg/batik/text/verticalText.svg = IMAGE
-BUGCR90391 LINUX : svg/batik/text/verticalTextOnPath.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/focus-ring.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/foreign-object-skew.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/linking-a-03-b-all.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/linking-a-03-b-viewBox-transform.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/text-dom-01-f.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/text-linking.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/text-rotated-gradient.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/text-rotation.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/use-on-disallowed-foreign-object-1.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/use-on-disallowed-foreign-object-2.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/use-on-disallowed-foreign-object-4.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/use-on-disallowed-foreign-object-5.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/use-on-disallowed-foreign-object-6.svg = IMAGE
-BUGCR90391 LINUX : svg/custom/use-on-non-svg-namespaced-element.svg = IMAGE
-BUGCR90391 LINUX : svg/dynamic-updates/SVGTextElement-dom-rotate-attr.html = IMAGE
-BUGCR90391 LINUX : svg/text/text-path-01-b.svg = IMAGE
-BUGCR90391 LINUX : svg/text/text-path-middle-align.svg = IMAGE
-BUGCR90391 LINUX : svg/text/text-text-07-t.svg = IMAGE
-BUGCR90391 LINUX : svg/wicd/test-scalable-background-image2.xhtml = IMAGE
-BUGCR90391 LINUX : svg/zoom/page/zoom-foreignObject.svg = IMAGE
-BUGCR90391 LINUX : svg/zoom/text/zoom-foreignObject.svg = IMAGE
-BUGCR90391 LINUX : transforms/2d/compound-transforms-vs-containers.html = IMAGE
-BUGCR90391 LINUX : fonts/cursive.html = TEXT
-BUGCR90391 LINUX : fonts/fantasy.html = TEXT
+// Most results looked better after skia r1924, but this one looks a little
+// fuzzier.
+BUGCR90669 LINUX : svg/as-background-image/svg-as-background-5.html = IMAGE
 
 //
 // GPU
