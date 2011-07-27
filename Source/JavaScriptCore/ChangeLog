@@ -1,3 +1,20 @@
+2011-07-27  Shinya Kawanaka  <shinyak@google.com>
+
+        Added an interface to take IsWhiteSpaceFunctionPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=57746
+
+        Reviewed by Kent Tamura.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::stripWhiteSpace):
+          Added an interface to take IsWhiteSpaceFunctionPtr.
+        (WTF::StringImpl::simplifyWhiteSpace): ditto.
+        * wtf/text/StringImpl.h:
+        * wtf/text/WTFString.cpp:
+        (WTF::String::stripWhiteSpace): ditto.
+        (WTF::String::simplifyWhiteSpace): ditto.
+        * wtf/text/WTFString.h:
+
 2011-07-27  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT speculation failure code performs incorrect conversions in

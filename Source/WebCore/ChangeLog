@@ -1,3 +1,16 @@
+2011-07-27  Shinya Kawanaka  <shinyak@google.com>
+
+        Uses isHTMLSpace to normalize white spaces.
+        https://bugs.webkit.org/show_bug.cgi?id=57746
+
+        Reviewed by Kent Tamura.
+
+        Test: fast/forms/option-strip-unicode-spaces.html
+
+        * dom/OptionElement.cpp:
+        (WebCore::OptionElement::normalizeText):
+          Uses isHTMLSpace to trim and replace white spaces.
+
 2011-05-15  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
 
         [chromium] Remove include of skia/ext/platform_canvas.h
