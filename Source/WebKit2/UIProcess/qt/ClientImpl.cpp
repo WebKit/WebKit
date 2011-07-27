@@ -81,10 +81,6 @@ void qt_wk_didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKT
     toQtWebPageProxy(clientInfo)->loadDidBegin();
 }
 
-void qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-}
-
 void qt_wk_didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
     dispatchLoadFailed(frame, clientInfo, error);
@@ -101,11 +97,6 @@ void qt_wk_didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef use
     toQtWebPageProxy(clientInfo)->didChangeUrl(qUrl);
 }
 
-void qt_wk_didFinishDocumentLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-    // FIXME: Implement (bug #44934)
-}
-
 void qt_wk_didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     dispatchLoadSucceeded(frame, clientInfo);
@@ -116,25 +107,21 @@ void qt_wk_didFailLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErro
     dispatchLoadFailed(frame, clientInfo, error);
 }
 
+void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void* clientInfo)
+{
+    WebFrameProxy* wkframe = toImpl(frame);
+    QString urlStr(wkframe->url());
+    QUrl qUrl = urlStr;
+    toQtWebPageProxy(clientInfo)->updateNavigationActions();
+    toQtWebPageProxy(clientInfo)->didChangeUrl(qUrl);
+}
+
 void qt_wk_didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     if (!WKFrameIsMainFrame(frame))
         return;
     QString qTitle = WKStringCopyQString(title);
     toQtWebPageProxy(clientInfo)->didChangeTitle(qTitle);
-}
-
-void qt_wk_didFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-}
-
-void qt_wk_didRemoveFrameFromHierarchy(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
-    // FIXME: Implement (bug #46432)
-}
-
-void qt_wk_didFirstVisuallyNonEmptyLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
-{
 }
 
 void qt_wk_didStartProgress(WKPageRef page, const void* clientInfo)
@@ -152,27 +139,10 @@ void qt_wk_didFinishProgress(WKPageRef page, const void* clientInfo)
     toQtWebPageProxy(clientInfo)->didChangeLoadProgress(100);
 }
 
-void qt_wk_didBecomeUnresponsive(WKPageRef page, const void* clientInfo)
-{
-}
-
-void qt_wk_didBecomeResponsive(WKPageRef page, const void* clientInfo)
-{
-}
-
 void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
 {
     QString qText = WKStringCopyQString(text);
     toViewInterface(clientInfo)->didChangeStatusText(qText);
-}
-
-void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef userData, const void* clientInfo)
-{
-    WebFrameProxy* wkframe = toImpl(frame);
-    QString urlStr(wkframe->url());
-    QUrl qUrl = urlStr;
-    toQtWebPageProxy(clientInfo)->updateNavigationActions();
-    toQtWebPageProxy(clientInfo)->didChangeUrl(qUrl);
 }
 
 void qt_wk_didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo)

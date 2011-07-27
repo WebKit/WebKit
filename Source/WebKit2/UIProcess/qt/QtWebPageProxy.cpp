@@ -113,17 +113,17 @@ void QtWebPageProxy::init()
         0,      /* version */
         this,   /* clientInfo */
         qt_wk_didStartProvisionalLoadForFrame,
-        qt_wk_didReceiveServerRedirectForProvisionalLoadForFrame,
+        0, /* didReceiveServerRedirectForProvisionalLoadForFrame */
         qt_wk_didFailProvisionalLoadWithErrorForFrame,
         qt_wk_didCommitLoadForFrame,
-        qt_wk_didFinishDocumentLoadForFrame,
+        0, /* didFinishDocumentLoadForFrame */
         qt_wk_didFinishLoadForFrame,
         qt_wk_didFailLoadWithErrorForFrame,
         qt_wk_didSameDocumentNavigationForFrame,
         qt_wk_didReceiveTitleForFrame,
-        qt_wk_didFirstLayoutForFrame,
-        qt_wk_didFirstVisuallyNonEmptyLayoutForFrame,
-        qt_wk_didRemoveFrameFromHierarchy,
+        0, /* didFirstLayoutForFrame */
+        0, /* didFirstVisuallyNonEmptyLayoutForFrame */
+        0, /* didRemoveFrameFromHierarchy */
         0, /* didDisplayInsecureContentForFrame */
         0, /* didRunInsecureContentForFrame */
         0, /* canAuthenticateAgainstProtectionSpaceInFrame */
@@ -131,8 +131,8 @@ void QtWebPageProxy::init()
         qt_wk_didStartProgress,
         qt_wk_didChangeProgress,
         qt_wk_didFinishProgress,
-        qt_wk_didBecomeUnresponsive,
-        qt_wk_didBecomeResponsive,
+        0,  /* processDidBecomeUnresponsive */
+        0,  /* processDidBecomeResponsive */
         0,  /* processDidCrash */
         0,  /* didChangeBackForwardList */
         0,  /* shouldGoToBackForwardListItem */

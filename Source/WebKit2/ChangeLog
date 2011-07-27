@@ -1,3 +1,19 @@
+2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt][WK2] Clean WKPageLoaderClient
+        https://bugs.webkit.org/show_bug.cgi?id=65246
+
+        Reviewed by Andreas Kling.
+
+        Remove the empty functions from Qt's WKPageLoaderClient.
+
+        * UIProcess/qt/ClientImpl.cpp:
+        (qt_wk_didSameDocumentNavigationForFrame): Move the function to
+        have all the implementations in the same order as the definitions.
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::init):
+
 2011-07-27  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Fix Qt (and possibly Gtk) WebKit2 build after addition of -webkit-pictograph
