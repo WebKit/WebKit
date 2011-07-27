@@ -82,6 +82,7 @@ static EncodedJSValue JSC_HOST_CALL functionRun(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionLoad(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionCheckSyntax(ExecState*);
 static EncodedJSValue JSC_HOST_CALL functionReadline(ExecState*);
+static EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*);
 static NO_RETURN_WITH_VALUE EncodedJSValue JSC_HOST_CALL functionQuit(ExecState*);
 
 #if ENABLE(SAMPLING_FLAGS)
@@ -171,6 +172,7 @@ GlobalObject::GlobalObject(JSGlobalData& globalData, Structure* structure, const
     putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "load"), functionLoad));
     putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "checkSyntax"), functionCheckSyntax));
     putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "readline"), functionReadline));
+    putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 0, Identifier(globalExec(), "preciseTime"), functionPreciseTime));
 
 #if ENABLE(SAMPLING_FLAGS)
     putDirectFunction(globalExec(), JSFunction::create(globalExec(), this, functionStructure(), 1, Identifier(globalExec(), "setSamplingFlags"), functionSetSamplingFlags));
@@ -310,6 +312,11 @@ EncodedJSValue JSC_HOST_CALL functionReadline(ExecState* exec)
     }
     line.append('\0');
     return JSValue::encode(jsString(exec, line.data()));
+}
+
+EncodedJSValue JSC_HOST_CALL functionPreciseTime(ExecState*)
+{
+    return JSValue::encode(jsNumber(currentTime()));
 }
 
 EncodedJSValue JSC_HOST_CALL functionQuit(ExecState* exec)
