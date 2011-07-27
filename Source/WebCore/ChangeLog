@@ -1,3 +1,18 @@
+2011-05-15  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        [chromium] Remove include of skia/ext/platform_canvas.h
+        https://bugs.webkit.org/show_bug.cgi?id=60852
+
+        Reviewed by Hajime Morita.
+
+        In https://bugs.webkit.org/show_bug.cgi?id=57563 the usage of the
+        skia::PlatformCanvas was eliminated in favor of directly using
+        SkCanvas directly. The include of platform_canvas.h was not removed
+        leaving the dependency on Chromium in the header files. Remove
+        that dependency now.
+
+        * platform/graphics/skia/PlatformContextSkia.h: Remove platform_canvas.h
+
 2011-07-27  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] REGRESSION: Uncaught TypeError: Cannot read property 'isTracingToWindowObjects' of undefined

@@ -34,11 +34,11 @@
 #include "GraphicsContext.h"
 #include "Noncopyable.h"
 
+#include "SkCanvas.h"
 #include "SkDashPathEffect.h"
 #include "SkDrawLooper.h"
 #include "SkPaint.h"
 #include "SkPath.h"
-#include "skia/ext/platform_canvas.h"
 
 #include <wtf/Vector.h>
 
