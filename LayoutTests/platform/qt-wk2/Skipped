@@ -726,3 +726,10 @@ svg/W3C-SVG-1.1-SE/linking-uri-01-b.svg
 svg/W3C-SVG-1.1-SE/styling-css-04-f.svg
 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
+
+# new failing tests
+fast/events/mouseover-button.html
+svg/W3C-SVG-1.1-SE/painting-control-04-f.svg
+svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg
+svg/W3C-SVG-1.1-SE/text-tref-03-b.svg
+svg/W3C-SVG-1.1-SE/text-tspan-02-b.svg

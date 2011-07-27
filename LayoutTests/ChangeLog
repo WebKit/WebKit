@@ -1,3 +1,11 @@
+2011-07-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Unreviewed gardening.
+
+        * platform/qt-wk2/Skipped: Skip new failing tests.
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt: Update after r91300.
+        * platform/wk2/Skipped: Skip tests because of missing layoutTestController implementation.
+
 2011-07-27  Rob Buis  <rbuis@rim.com>
 
         Implement getIntersectionList(), getEnclosureList(), checkIntersection() and checkEnclosure() in SVGSVGElement
