@@ -42,6 +42,8 @@
 #include "WebRect.h"
 #include "WebTextRun.h"
 
+#include <skia/ext/platform_canvas.h>
+
 using namespace WebCore;
 
 namespace WebKit {
