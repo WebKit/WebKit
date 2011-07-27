@@ -1,5 +1,13 @@
 2011-07-27  Stephen White  <senorblanco@chromium.org>
 
+        Tighten up some chromium test expectations to green up the bots.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-27  Stephen White  <senorblanco@chromium.org>
+
         Rebaseline one Chromium GPU test on Linux after
         http://code.google.com/p/skia/source/detail?r=1924.
 

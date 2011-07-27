@@ -3861,11 +3861,11 @@ BUGWK65063 LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = CRASH 
 BUGWK65063 LINUX DEBUG : fast/canvas/webgl/data-view-test.html = CRASH PASS
 BUGWK65063 MAC : css2.1/t0905-c414-flt-01-d-g.html = IMAGE
 
-BUGWK65124 : fast/repaint/japanese-rl-selection-clear.html = FAIL
-BUGWK65124 : fast/repaint/japanese-rl-selection-repaint.html = FAIL
-BUGWK65124 : fast/blockflow/japanese-lr-text.html = FAIL
+BUGWK65124 : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
+BUGWK65124 WIN : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
+BUGWK65124 WIN : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT
 BUGWK65124 : fast/blockflow/japanese-rl-text-with-broken-font.html = FAIL
-BUGWK65124 : fast/blockflow/japanese-rl-text.html = FAIL
+BUGWK65124 WIN : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT
 
 BUGWK65129 : media/media-controls-clone.html = CRASH PASS
 
