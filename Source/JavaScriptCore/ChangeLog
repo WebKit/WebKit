@@ -1,3 +1,20 @@
+2011-07-27  Oliver Hunt  <oliver@apple.com>
+
+        Handle callback oriented JSONP
+        https://bugs.webkit.org/show_bug.cgi?id=65271
+
+        Reviewed by Gavin Barraclough.
+
+        Handle the callback oriented versions of JSONP.  The Literal parser
+        now handles <Identifier> (. <Identifier>)* (jsonData).
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::tryJSONPParse):
+        (JSC::LiteralParser::Lexer::lex):
+        * runtime/LiteralParser.h:
+
 2011-07-27  Stephanie Lewis  <slewis@apple.com>
 
         Revert http://trac.webkit.org/changeset/90415.

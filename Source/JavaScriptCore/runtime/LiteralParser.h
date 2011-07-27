@@ -66,7 +66,8 @@ namespace JSC {
         enum JSONPPathEntryType {
             JSONPPathEntryTypeDeclare, // var pathEntryName = JSON
             JSONPPathEntryTypeDot, // <prior entries>.pathEntryName = JSON
-            JSONPPathEntryTypeLookup // <prior entries>[pathIndex] = JSON
+            JSONPPathEntryTypeLookup, // <prior entries>[pathIndex] = JSON
+            JSONPPathEntryTypeCall // <prior entries>(JSON)
         };
 
         struct JSONPPathEntry {
@@ -80,7 +81,7 @@ namespace JSC {
             Strong<Unknown> m_value;
         };
 
-        bool tryJSONPParse(Vector<JSONPData>&);
+        bool tryJSONPParse(Vector<JSONPData>&, bool needsFullSourceInfo);
 
     private:
         enum ParserState { StartParseObject, StartParseArray, StartParseExpression, 

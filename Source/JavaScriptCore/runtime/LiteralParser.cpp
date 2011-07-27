@@ -42,7 +42,7 @@ static inline bool isJSONWhiteSpace(const UChar& c)
     return c == ' ' || c == 0x9 || c == 0xA || c == 0xD;
 }
 
-bool LiteralParser::tryJSONPParse(Vector<JSONPData>& results)
+bool LiteralParser::tryJSONPParse(Vector<JSONPData>& results, bool needsFullSourceInfo)
 {
     if (m_lexer.next() != TokIdentifier)
         return false;
@@ -87,18 +87,31 @@ bool LiteralParser::tryJSONPParse(Vector<JSONPData>& results)
                 entry.m_pathEntryName = Identifier(m_exec, m_lexer.currentToken().start, m_lexer.currentToken().end - m_lexer.currentToken().start);
                 break;
             }
+            case TokLParen: {
+                if (path.last().m_type != JSONPPathEntryTypeDot || needsFullSourceInfo)
+                    return false;
+                path.last().m_type = JSONPPathEntryTypeCall;
+                entry = path.last();
+                goto startJSON;
+            }
             default:
                 return false;
             }
             path.append(entry);
             tokenType = m_lexer.next();
         }
+    startJSON:
         m_lexer.next();
         results.append(JSONPData());
         results.last().m_value.set(m_exec->globalData(), parse(StartParseExpression));
         if (!results.last().m_value)
             return false;
         results.last().m_path.swap(path);
+        if (entry.m_type == JSONPPathEntryTypeCall) {
+            if (m_lexer.currentToken().type != TokRParen)
+                return false;
+            m_lexer.next();
+        }
         if (m_lexer.currentToken().type != TokSemi)
             break;
         m_lexer.next();
@@ -150,11 +163,11 @@ template <LiteralParser::ParserMode mode> LiteralParser::TokenType LiteralParser
         case '(':
             token.type = TokLParen;
             token.end = ++m_ptr;
-            return TokLBracket;
+            return TokLParen;
         case ')':
             token.type = TokRParen;
             token.end = ++m_ptr;
-            return TokRBracket;
+            return TokRParen;
         case '{':
             token.type = TokLBrace;
             token.end = ++m_ptr;

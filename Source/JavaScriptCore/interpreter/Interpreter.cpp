@@ -776,7 +776,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
     DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
     LiteralParser literalParser(callFrame, program->source().data(), program->source().length(), LiteralParser::JSONP);
     Vector<LiteralParser::JSONPData> JSONPData;
-    if (literalParser.tryJSONPParse(JSONPData)) {
+    if (literalParser.tryJSONPParse(JSONPData, scopeChain->globalObject->supportsRichSourceInfo())) {
         JSGlobalObject* globalObject = scopeChain->globalObject.get();
         JSValue result;
         for (unsigned entry = 0; entry < JSONPData.size(); entry++) {
@@ -825,6 +825,22 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
             }
             PutPropertySlot slot;
             switch (JSONPPath.last().m_type) {
+            case LiteralParser::JSONPPathEntryTypeCall: {
+                JSValue function = baseObject.get(callFrame, JSONPPath.last().m_pathEntryName);
+                if (callFrame->hadException())
+                    return jsUndefined();
+                CallData callData;
+                CallType callType = getCallData(function, callData);
+                if (callType == CallTypeNone)
+                    return throwError(callFrame, createNotAFunctionError(callFrame, function));
+                MarkedArgumentBuffer jsonArg;
+                jsonArg.append(JSONPValue);
+                JSValue thisValue = JSONPPath.size() == 1 ? jsUndefined(): baseObject;
+                JSC::call(callFrame, function, callType, callData, thisValue, jsonArg);
+                if (callFrame->hadException())
+                    return jsUndefined();
+                break;
+            }
             case LiteralParser::JSONPPathEntryTypeDot: {
                 baseObject.put(callFrame, JSONPPath.last().m_pathEntryName, JSONPValue, slot);
                 if (callFrame->hadException())
