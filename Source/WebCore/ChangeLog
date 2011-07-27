@@ -1,3 +1,16 @@
+2011-07-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Load delegate not consulted before loading some poster images
+        https://bugs.webkit.org/show_bug.cgi?id=65270
+
+        Reviewed by Darin Adler.
+
+        Test: media/video-poster-blocked-by-willsendrequest.html
+
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::setDisplayMode): Don't ask media engine to set poster if
+            willLoadMediaElementURL returns false.
+
 2011-07-27  Stephen White  <senorblanco@chromium.org>
 
         Fix for printing with accelerated <canvas>

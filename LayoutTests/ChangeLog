@@ -1,3 +1,13 @@
+2011-07-27  Eric Carlson  <eric.carlson@apple.com>
+
+        Load delegate not consulted before loading some poster images
+        https://bugs.webkit.org/show_bug.cgi?id=65270
+
+        Reviewed by Darin Adler.
+
+        * media/video-poster-blocked-by-willsendrequest-expected.txt: Added.
+        * media/video-poster-blocked-by-willsendrequest.html: Added.
+
 2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaselines for r89627 and r91497.

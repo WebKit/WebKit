@@ -34,6 +34,7 @@
 #include "ChromeClient.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "Frame.h"
 #include "HTMLImageLoader.h"
 #include "HTMLNames.h"
 #include "Page.h"
@@ -196,8 +197,12 @@ void HTMLVideoElement::setDisplayMode(DisplayMode mode)
 
     HTMLMediaElement::setDisplayMode(mode);
 
-    if (player() && player()->canLoadPoster())
-        player()->setPoster(poster);
+    if (player() && player()->canLoadPoster()) {
+        Frame* frame = document()->frame();
+        FrameLoader* loader = frame ? frame->loader() : 0;
+        if (loader && loader->willLoadMediaElementURL(poster))
+            player()->setPoster(poster);
+    }
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     if (renderer() && displayMode() != oldMode)
