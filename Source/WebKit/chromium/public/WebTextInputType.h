@@ -40,12 +40,14 @@ enum WebTextInputType {
     // Input caret is in a normal editable node, any input method can be used.
     WebTextInputTypeText,
 
-    // Input caret is in a password box, an input method may be used only if
-    // it's suitable for password input.
+    // Input caret is in a specific input field, and input method may be used
+    // only if it's suitable for the specific input field.
     WebTextInputTypePassword,
-
-    // FIXME: Add more text input types when necessary, eg. Number,
-    // Date, Email, URL, etc.
+    WebTextInputTypeSearch,
+    WebTextInputTypeEmail,
+    WebTextInputTypeNumber,
+    WebTextInputTypeTelephone,
+    WebTextInputTypeURL,
 };
 
 } // namespace WebKit

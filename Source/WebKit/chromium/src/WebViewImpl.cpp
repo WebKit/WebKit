@@ -66,6 +66,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
 #include "Image.h"
 #include "ImageBuffer.h"
@@ -1453,31 +1454,49 @@ bool WebViewImpl::compositionRange(size_t* location, size_t* length)
 
 WebTextInputType WebViewImpl::textInputType()
 {
-    WebTextInputType type = WebTextInputTypeNone;
-    const Frame* focused = focusedWebCoreFrame();
-    if (!focused)
-        return type;
-
-    const Editor* editor = focused->editor();
-    if (!editor || !editor->canEdit())
-        return type;
-
-    FrameSelection* selection = focused->selection();
-    if (!selection)
-        return type;
-
-    Node* node = selection->start().containerNode();
+    Node* node = focusedWebCoreNode();
     if (!node)
-        return type;
+        return WebTextInputTypeNone;
 
-    // FIXME: Support more text input types when necessary, eg. Number,
-    // Date, Email, URL, etc.
-    if (selection->isInPasswordField())
-        type = WebTextInputTypePassword;
-    else if (node->shouldUseInputMethod())
-        type = WebTextInputTypeText;
+    if (node->nodeType() == Node::ELEMENT_NODE) {
+        Element* element = static_cast<Element*>(node);
+        if (element->hasLocalName(HTMLNames::inputTag)) {
+            HTMLInputElement* input = static_cast<HTMLInputElement*>(element);
 
-    return type;
+            if (input->readOnly() || input->disabled())
+                return WebTextInputTypeNone;
+
+            if (input->isPasswordField())
+                return WebTextInputTypePassword;
+            if (input->isSearchField())
+                return WebTextInputTypeSearch;
+            if (input->isEmailField())
+                return WebTextInputTypeEmail;
+            if (input->isNumberField())
+                return WebTextInputTypeNumber;
+            if (input->isTelephoneField())
+                return WebTextInputTypeTelephone;
+            if (input->isURLField())
+                return WebTextInputTypeURL;
+            if (input->isTextField())
+                return WebTextInputTypeText;
+            return WebTextInputTypeNone;
+        }
+
+        if (element->hasLocalName(HTMLNames::textareaTag)) {
+            HTMLTextAreaElement* textarea = static_cast<HTMLTextAreaElement*>(element);
+
+            if (textarea->readOnly() || textarea->disabled())
+                return WebTextInputTypeNone;
+            return WebTextInputTypeText;
+        }
+    }
+
+    // For other situations.
+    if (node->shouldUseInputMethod())
+        return WebTextInputTypeText;
+
+    return WebTextInputTypeNone;
 }
 
 WebRect WebViewImpl::caretOrSelectionBounds()

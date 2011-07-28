@@ -1,3 +1,14 @@
+2011-07-27  Peng Huang  <penghuang@chromium.org>
+
+        Add more text input types for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=64937
+
+        Reviewed by Darin Fisher.
+
+        * public/WebTextInputType.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::textInputType):
+
 2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add sfntly library to the Chromium DEPS file.
