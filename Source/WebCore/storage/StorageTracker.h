@@ -112,7 +112,7 @@ private:
     OwnPtr<LocalStorageThread> m_thread;
     
     bool m_isActive;
-    bool m_isInitialized;
+    bool m_needsInitialization;
 };
     
 } // namespace WebCore

@@ -57,6 +57,7 @@ void StorageTracker::initializeTracker(const String& storagePath, StorageTracker
         storageTracker = new StorageTracker(storagePath);
     
     storageTracker->m_client = client;
+    storageTracker->m_needsInitialization = true;
 }
 
 void StorageTracker::internalInitialize()
@@ -72,14 +73,14 @@ void StorageTracker::internalInitialize()
     storageTracker->m_thread->start();  
     storageTracker->importOriginIdentifiers();
     
-    m_isInitialized = true;
+    m_needsInitialization = false;
 }
 
 StorageTracker& StorageTracker::tracker()
 {
     if (!storageTracker)
         storageTracker = new StorageTracker("");
-    if (!storageTracker->m_isInitialized)
+    if (storageTracker->m_needsInitialization)
         storageTracker->internalInitialize();
     
     return *storageTracker;
@@ -90,7 +91,7 @@ StorageTracker::StorageTracker(const String& storagePath)
     , m_client(0)
     , m_thread(LocalStorageThread::create())
     , m_isActive(false)
-    , m_isInitialized(false)
+    , m_needsInitialization(false)
 {
 }
 

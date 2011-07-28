@@ -1,3 +1,21 @@
+2011-07-28  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65323
+        r91931 causes NOTREACHED to be hit via StorageTracker
+
+        Change the meaning of the "has been initialized" flag to "needs initialization", and only set it to true
+        if the ::initializeTracker() method has been called.
+
+        Reviewed by Sam Weinig.
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::initializeTracker): Set m_needsInitialization to true since the calling WebKit port expects full
+          initialization instead of a dummy tracker.
+        (WebCore::StorageTracker::internalInitialize):
+        (WebCore::StorageTracker::tracker): Only initialize the tracker if it was created in the above initializeTracker().
+        (WebCore::StorageTracker::StorageTracker):
+        * storage/StorageTracker.h:
+
 2011-07-28  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/65289> Remove GeolocationPositionCache
