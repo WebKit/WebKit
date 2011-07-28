@@ -1,3 +1,9 @@
+2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix Chromium Windows test expectations after r91897.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  Ben Wells  <benwells@chromium.org>
 
         Rebaseline extra test for bug 61369 (skia drawConvexPolygon antialiasing)
