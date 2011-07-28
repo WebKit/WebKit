@@ -313,12 +313,8 @@ PassRefPtr<StringImpl> StringImpl::foldCase()
     return newImpl.release();
 }
 
-PassRefPtr<StringImpl> StringImpl::stripWhiteSpace()
-{
-    return stripWhiteSpace(isSpaceOrNewline);
-}
-
-PassRefPtr<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace)
+template <class UCharPredicate>
+inline PassRefPtr<StringImpl> StringImpl::stripMatchedCharacters(UCharPredicate predicate)
 {
     if (!m_length)
         return empty();
@@ -327,7 +323,7 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhi
     unsigned end = m_length - 1;
     
     // skip white space from start
-    while (start <= end && isWhiteSpace(m_data[start]))
+    while (start <= end && predicate(m_data[start]))
         start++;
     
     // only white space
@@ -335,12 +331,43 @@ PassRefPtr<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhi
         return empty();
 
     // skip white space from end
-    while (end && isWhiteSpace(m_data[end]))
+    while (end && predicate(m_data[end]))
         end--;
 
     if (!start && end == m_length - 1)
         return this;
     return create(m_data + start, end + 1 - start);
+}
+
+class UCharPredicate {
+public:
+    inline UCharPredicate(CharacterMatchFunctionPtr function): m_function(function) { }
+
+    inline bool operator()(UChar ch) const
+    {
+        return m_function(ch);
+    }
+
+private:
+    const CharacterMatchFunctionPtr m_function;
+};
+
+class SpaceOrNewlinePredicate {
+public:
+    inline bool operator()(UChar ch) const
+    {
+        return isSpaceOrNewline(ch);
+    }
+};
+
+PassRefPtr<StringImpl> StringImpl::stripWhiteSpace()
+{
+    return stripMatchedCharacters(SpaceOrNewlinePredicate());
+}
+
+PassRefPtr<StringImpl> StringImpl::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace)
+{
+    return stripMatchedCharacters(UCharPredicate(isWhiteSpace));
 }
 
 PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr findMatch)
@@ -375,12 +402,8 @@ PassRefPtr<StringImpl> StringImpl::removeCharacters(CharacterMatchFunctionPtr fi
     return adopt(data);
 }
 
-PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace()
-{
-    return StringImpl::simplifyWhiteSpace(isSpaceOrNewline);
-}
-
-PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace)
+template <class UCharPredicate>
+inline PassRefPtr<StringImpl> StringImpl::simplifyMatchedCharactersToSpace(UCharPredicate predicate)
 {
     StringBuffer data(m_length);
 
@@ -392,12 +415,12 @@ PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr is
     UChar* to = data.characters();
     
     while (true) {
-        while (from != fromend && isWhiteSpace(*from)) {
+        while (from != fromend && predicate(*from)) {
             if (*from != ' ')
                 changedToSpace = true;
             from++;
         }
-        while (from != fromend && !isWhiteSpace(*from))
+        while (from != fromend && !predicate(*from))
             to[outc++] = *from++;
         if (from != fromend)
             to[outc++] = ' ';
@@ -414,6 +437,16 @@ PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr is
     data.shrink(outc);
     
     return adopt(data);
+}
+
+PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace()
+{
+    return StringImpl::simplifyMatchedCharactersToSpace(SpaceOrNewlinePredicate());
+}
+
+PassRefPtr<StringImpl> StringImpl::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace)
+{
+    return StringImpl::simplifyMatchedCharactersToSpace(UCharPredicate(isWhiteSpace));
 }
 
 int StringImpl::toIntStrict(bool* ok, int base)

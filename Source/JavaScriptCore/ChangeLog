@@ -1,3 +1,29 @@
+2011-07-28  Kent Tamura  <tkent@chromium.org>
+
+        Improve StringImpl::stripWhiteSpace() and simplifyWhiteSpace().
+        https://bugs.webkit.org/show_bug.cgi?id=65300
+
+        Reviewed by Darin Adler.
+
+        r91837 had performance regression of StringImpl::stripWhiteSpace()
+        and simplifyWhiteSpace(). This changes the code so that compilers
+        generates code equivalent to r91836 or piror.
+
+        * wtf/text/StringImpl.cpp:
+        (WTF::StringImpl::stripMatchedCharacters):
+        A template member function for stripWhiteSpace(). This function takes a functor.
+        (WTF::UCharPredicate):
+        A functor for generic predicate for single UChar argument.
+        (WTF::SpaceOrNewlinePredicate):
+        A special functor for isSpaceOrNewline().
+        (WTF::StringImpl::stripWhiteSpace):
+        Use stripmatchedCharacters().
+        (WTF::StringImpl::simplifyMatchedCharactersToSpace):
+        A template member function for simplifyWhiteSpace().
+        (WTF::StringImpl::simplifyWhiteSpace):
+        Use simplifyMatchedCharactersToSpace().
+        * wtf/text/StringImpl.h:
+
 2011-07-27  Dmitry Lomov  <dslomov@google.com>
 
         [chromium] Turn on WTF_MULTIPLE_THREADS.
