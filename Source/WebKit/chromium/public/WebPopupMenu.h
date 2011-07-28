@@ -41,6 +41,9 @@ class WebWidgetClient;
 class WebPopupMenu : public WebWidget {
 public:
     WEBKIT_API static WebPopupMenu* create(WebWidgetClient*);
+
+    // Sets the minimum height of a popup listbox row.
+    WEBKIT_API static void setMinimumRowHeight(int);
 };
 
 } // namespace WebKit

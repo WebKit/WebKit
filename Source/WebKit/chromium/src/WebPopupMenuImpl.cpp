@@ -251,6 +251,11 @@ void WebPopupMenuImpl::setFocus(bool enable)
 {
 }
 
+void WebPopupMenu::setMinimumRowHeight(int minimumRowHeight)
+{
+    PopupMenuChromium::setMinimumRowHeight(minimumRowHeight);
+}
+
 bool WebPopupMenuImpl::setComposition(
     const WebString& text, const WebVector<WebCompositionUnderline>& underlines,
     int selectionStart, int selectionEnd)

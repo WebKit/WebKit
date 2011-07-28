@@ -67,6 +67,8 @@ using std::max;
 
 namespace WebCore {
 
+int PopupMenuChromium::s_minimumRowHeight = 0;
+
 typedef unsigned long long TimeStamp;
 
 static const int kMaxVisibleRows = 20;
@@ -1176,14 +1178,14 @@ void PopupListBox::setOriginalIndex(int index)
 int PopupListBox::getRowHeight(int index)
 {
     if (index < 0)
-        return 0;
+        return PopupMenuChromium::minimumRowHeight();
 
     if (m_popupClient->itemStyle(index).isDisplayNone())
-        return 0;
+        return PopupMenuChromium::minimumRowHeight();
 
     // Separator row height is the same size as itself.
     if (m_popupClient->itemIsSeparator(index))
-        return separatorHeight;
+        return max(separatorHeight, PopupMenuChromium::minimumRowHeight());
 
     String icon = m_popupClient->itemIcon(index);
     RefPtr<Image> image(Image::loadPlatformResource(icon.utf8().data()));
@@ -1192,7 +1194,8 @@ int PopupListBox::getRowHeight(int index)
     int iconHeight = (image && !image->isNull()) ? image->rect().height() : 0;
 
     int linePaddingHeight = m_popupClient->menuStyle().menuType() == PopupMenuStyle::AutofillPopup ? kLinePaddingHeight : 0;
-    return max(fontHeight, iconHeight) + linePaddingHeight * 2;
+    int calculatedRowHeight = max(fontHeight, iconHeight) + linePaddingHeight * 2;
+    return max(calculatedRowHeight, PopupMenuChromium::minimumRowHeight());
 }
 
 IntRect PopupListBox::getRowBounds(int index)

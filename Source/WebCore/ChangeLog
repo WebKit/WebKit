@@ -1,3 +1,19 @@
+2011-07-27  Fady Samuel  <fsamuel@chromium.org>
+
+        Popups on Chromium now check the minimum row height set through the Chromium WebKit API when
+        computing the height of a row in a popup listbox.
+        https://bugs.webkit.org/show_bug.cgi?id=64897
+
+        Reviewed by Darin Fisher.
+
+        No new tests.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::getRowHeight):
+        * platform/chromium/PopupMenuChromium.h:
+        (WebCore::PopupMenuChromium::minimumRowHeight):
+        (WebCore::PopupMenuChromium::setMinimumRowHeight):
+
 2011-07-27  MORITA Hajime  <morrita@google.com>
 
         Inconsistent state of TreeScope reference.

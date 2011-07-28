@@ -1,3 +1,14 @@
+2011-07-27  Fady Samuel  <fsamuel@chromium.org>
+
+        Added a Chromium WebKit API method to set the minimum row height of a popup listbox.
+        https://bugs.webkit.org/show_bug.cgi?id=64897
+
+        Reviewed by Darin Fisher.
+
+        * public/WebPopupMenu.h:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenu::setMinimumRowHeight):
+
 2011-07-27  Peng Huang  <penghuang@chromium.org>
 
         Add more text input types for chromium

@@ -175,7 +175,7 @@ public:
 private:
     friend class WTF::RefCounted<PopupContainer>;
 
-    PopupContainer(PopupMenuClient*, PopupType popupType, const PopupContainerSettings&);
+    PopupContainer(PopupMenuClient*, PopupType, const PopupContainerSettings&);
     ~PopupContainer();
 
     // Paint the border.
@@ -207,11 +207,16 @@ public:
     virtual void updateFromElement();
     virtual void disconnectClient();
 
+    static int minimumRowHeight() { return s_minimumRowHeight; }
+    static void setMinimumRowHeight(int minimumRowHeight) { s_minimumRowHeight = minimumRowHeight; }
+
 private:
     PopupMenuClient* client() const { return m_popupClient; }
 
     PopupMenuClient* m_popupClient;
     PopupMenuPrivate p;
+
+    static int s_minimumRowHeight;
 };
 
 } // namespace WebCore
