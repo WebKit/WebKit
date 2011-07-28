@@ -1,3 +1,13 @@
+2011-07-27  Pratik Solanki  <psolanki@apple.com>
+
+        Incorrect arguments passed to LOG statement
+        https://bugs.webkit.org/show_bug.cgi?id=65293
+
+        Reviewed by Oliver Hunt.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:canAuthenticateAgainstProtectionSpace:]):
+
 2011-07-27  Levi Weintraub  <leviw@chromium.org>
 
         Switch transform operations to FloatSize

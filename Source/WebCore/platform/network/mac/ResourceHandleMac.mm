@@ -771,7 +771,7 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
     UNUSED_PARAM(connection);
 #endif
 
-    LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%p", m_handle, connection);
+    LOG(Network, "Handle %p delegate connection:%p canAuthenticateAgainstProtectionSpace:%p", m_handle, connection, protectionSpace);
 
     if (!m_handle)
         return NO;
