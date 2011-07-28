@@ -1,3 +1,23 @@
+2011-07-28  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
+
+        Pass the key_press_event or key_release_event to parent widget when it is not handled by Web Process.
+        (https://bugs.webkit.org/show_bug.cgi?id=64790)
+
+        Reviewed by Martin Robinson.
+
+        * Shared/NativeWebKeyboardEvent.h:
+        (WebKit::NativeWebKeyboardEvent::nativeEvent): Return a GdkEvent* instead of const GdkEvent* (non-const).
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::doneWithKeyEvent): Implemented for GTK port. Sets flag if the keyboard event 
+        needs to be passed to the parent widget. Invoke gtk_main_do_event() if event needs to be passed to parent.
+        * UIProcess/API/gtk/PageClientImpl.h: Deleted obsolete functions didNotHandleKeyEvent & didNotHandleWheelEvent.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_init): Initialize shouldForwardNextKeyEvent flag.
+        (webkitWebViewBaseKeyPressEvent): Pass event to parent widget depending on status from doneWithKeyEvent. 
+        (webkitWebViewBaseKeyReleaseEvent): Pass event to parent widget depending on status from doneWithKeyEvent.
+        (webkitWebViewBaseForwardNextKeyEvent): API to set flag shouldForwardNextKeyEvent.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h: Added API to set shouldForwardNextKeyEvent flag.
+
 2011-07-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9589433> Displaying Japanese dictionary contents in vertical orientation takes a couple of seconds

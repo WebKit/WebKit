@@ -205,19 +205,14 @@ IntRect PageClientImpl::windowToScreen(const IntRect& rect)
     return IntRect(convertWidgetPointToScreenPoint(m_viewWidget, rect.location()), rect.size());
 }
 
-void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled)
+void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
 {
-    notImplemented();
-}
+    if (wasEventHandled)
+        return;
 
-void PageClientImpl::didNotHandleKeyEvent(const NativeWebKeyboardEvent& event)
-{
-    notImplemented();
-}
-
-void PageClientImpl::didNotHandleWheelEvent(const NativeWebWheelEvent&)
-{
-    notImplemented();
+    WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
+    webkitWebViewBaseForwardNextKeyEvent(webkitWebViewBase);
+    gtk_main_do_event(event.nativeEvent());
 }
 
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)

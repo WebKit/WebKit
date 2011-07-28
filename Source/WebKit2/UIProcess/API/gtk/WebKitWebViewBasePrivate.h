@@ -46,6 +46,8 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGrou
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 
+void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase*);
+
 G_END_DECLS
 
 #endif // WebKitWebViewBasePrivate_h

@@ -53,6 +53,7 @@ struct _WebKitWebViewBasePrivate {
     OwnPtr<PageClientImpl> pageClient;
     RefPtr<WebPageProxy> pageProxy;
     gboolean isPageActive;
+    gboolean shouldForwardNextKeyEvent;
     GtkIMContext* imContext;
     GtkClickCounter clickCounter;
     CString tooltipText;
@@ -129,6 +130,7 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
     webkitWebViewBase->priv = priv;
 
     priv->isPageActive = TRUE;
+    priv->shouldForwardNextKeyEvent = FALSE;
 
     gtk_widget_set_double_buffered(GTK_WIDGET(webkitWebViewBase), FALSE);
     gtk_widget_set_can_focus(GTK_WIDGET(webkitWebViewBase), TRUE);
@@ -200,9 +202,16 @@ static gboolean webkitWebViewBaseKeyPressEvent(GtkWidget* widget, GdkEventKey* e
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
 
+    // Since WebProcess key event handling is not synchronous, handle the event in two passes.
+    // When WebProcess processes the input event, it will call PageClientImpl::doneWithKeyEvent 
+    // with event handled status which determines whether to pass the input event to parent or not 
+    // using gtk_main_do_event().
+    if (priv->shouldForwardNextKeyEvent) {
+        priv->shouldForwardNextKeyEvent = FALSE;
+        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, event);
+    }
     priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event)));
-
-    return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_press_event(widget, event);
+    return TRUE;
 }
 
 static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey* event)
@@ -213,9 +222,12 @@ static gboolean webkitWebViewBaseKeyReleaseEvent(GtkWidget* widget, GdkEventKey*
     if (gtk_im_context_filter_keypress(priv->imContext, event))
         return TRUE;
 
+    if (priv->shouldForwardNextKeyEvent) {
+        priv->shouldForwardNextKeyEvent = FALSE;
+        return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_release_event(widget, event);
+    }
     priv->pageProxy->handleKeyboardEvent(NativeWebKeyboardEvent(reinterpret_cast<GdkEvent*>(event)));
-
-    return GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->key_release_event(widget, event);
+    return TRUE;
 }
 
 static gboolean webkitWebViewBaseButtonPressEvent(GtkWidget* widget, GdkEventButton* buttonEvent)
@@ -343,4 +355,7 @@ void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char*
     gtk_widget_trigger_tooltip_query(GTK_WIDGET(webViewBase));
 }
 
-
+void webkitWebViewBaseForwardNextKeyEvent(WebKitWebViewBase* webkitWebViewBase)
+{
+    webkitWebViewBase->priv->shouldForwardNextKeyEvent = TRUE;
+}

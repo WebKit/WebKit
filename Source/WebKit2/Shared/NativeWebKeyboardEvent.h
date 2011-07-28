@@ -67,7 +67,7 @@ public:
 #elif PLATFORM(QT)
     const QKeyEvent* nativeEvent() const { return &m_nativeEvent; }
 #elif PLATFORM(GTK)
-    const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
+    GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
 #elif PLATFORM(EFL)
     const void* nativeEvent() const { return m_nativeEvent; }
 #endif
