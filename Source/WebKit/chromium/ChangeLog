@@ -1,5 +1,11 @@
 2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add sfntly library to the Chromium DEPS file.
+
+        * DEPS:
+
+2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:
