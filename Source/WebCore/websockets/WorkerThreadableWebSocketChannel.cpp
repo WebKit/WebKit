@@ -62,6 +62,12 @@ WorkerThreadableWebSocketChannel::~WorkerThreadableWebSocketChannel()
         m_bridge->disconnect();
 }
 
+bool WorkerThreadableWebSocketChannel::useHixie76Protocol()
+{
+    ASSERT(m_workerClientWrapper);
+    return m_workerClientWrapper->useHixie76Protocol();
+}
+
 void WorkerThreadableWebSocketChannel::connect()
 {
     if (m_bridge)
@@ -128,6 +134,13 @@ WorkerThreadableWebSocketChannel::Peer::~Peer()
     ASSERT(isMainThread());
     if (m_mainWebSocketChannel)
         m_mainWebSocketChannel->disconnect();
+}
+
+bool WorkerThreadableWebSocketChannel::Peer::useHixie76Protocol()
+{
+    ASSERT(isMainThread());
+    ASSERT(m_mainWebSocketChannel);
+    return m_mainWebSocketChannel->useHixie76Protocol();
 }
 
 void WorkerThreadableWebSocketChannel::Peer::connect()
@@ -258,10 +271,11 @@ void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned long unhandledBuf
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidClose, m_workerClientWrapper, unhandledBufferedAmount, closingHandshakeCompletion), m_taskMode);
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, Peer* peer, PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
+void WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, Peer* peer, PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, bool useHixie76Protocol)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
     thisPtr->m_peer = peer;
+    workerClientWrapper->setUseHixie76Protocol(useHixie76Protocol);
     workerClientWrapper->setSyncMethodDone();
 }
 
@@ -276,7 +290,7 @@ void WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel(
     thisPtr->m_loaderProxy.postTaskForModeToWorkerContext(
         createCallbackTask(&Bridge::setWebSocketChannel,
                            AllowCrossThreadAccess(thisPtr),
-                           AllowCrossThreadAccess(peer), clientWrapper), taskMode);
+                           AllowCrossThreadAccess(peer), clientWrapper, peer->useHixie76Protocol()), taskMode);
 }
 
 WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerContext> workerContext, const String& taskMode, const KURL& url, const String& protocol)

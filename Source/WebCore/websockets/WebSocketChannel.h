@@ -54,6 +54,7 @@ namespace WebCore {
         static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol) { return adoptRef(new WebSocketChannel(context, client, url, protocol)); }
         virtual ~WebSocketChannel();
 
+        virtual bool useHixie76Protocol();
         virtual void connect();
         virtual bool send(const String& message);
         virtual unsigned long bufferedAmount() const;

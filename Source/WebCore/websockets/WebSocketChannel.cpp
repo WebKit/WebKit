@@ -116,6 +116,11 @@ WebSocketChannel::~WebSocketChannel()
     fastFree(m_buffer);
 }
 
+bool WebSocketChannel::useHixie76Protocol()
+{
+    return m_useHixie76Protocol;
+}
+
 void WebSocketChannel::connect()
 {
     LOG(Network, "WebSocketChannel %p connect", this);

@@ -1,3 +1,37 @@
+2011-07-28  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Pass the value of useHixie76Protocol flag to WebSocket object
+        https://bugs.webkit.org/show_bug.cgi?id=65250
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add useHixie76Protocol() method to WebSocketChannel and its family. To implement hybi-specific
+        attributes in WebSocket object, WebSocket class needs to be able to get the value of
+        useHixie76Protocol flag of WebSocketChannel.
+
+        If the WebSocket object is created in a worker thread, the flag value must be obtained from
+        WebSocketChannel which resides in the loader thread (through WorkerThreadableWebSocketChannel).
+        Since the value does not change after creation of WebSocketChannel, it can be cached in
+        the worker thread.
+
+        There is no change in behavior, thus no new tests.
+
+        * websockets/ThreadableWebSocketChannel.h:
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::useHixie76Protocol):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setUseHixie76Protocol):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::useHixie76Protocol):
+        * websockets/WebSocketChannel.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::useHixie76Protocol):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::useHixie76Protocol):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2011-07-28  Rob Buis  <rbuis@rim.com>
 
         REGRESSION (r91125): Google Drawings is broken

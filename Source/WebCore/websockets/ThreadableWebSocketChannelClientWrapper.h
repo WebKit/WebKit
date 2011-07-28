@@ -53,6 +53,11 @@ public:
     void setSyncMethodDone();
     bool syncMethodDone() const;
 
+    // The value of useHixie76Protocol flag is cachable; this value is saved after WebSocketChannel (on the main
+    // thread) is constructed.
+    bool useHixie76Protocol() const;
+    void setUseHixie76Protocol(bool);
+
     bool sent() const;
     void setSent(bool);
 
@@ -80,6 +85,7 @@ protected:
 
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;
+    bool m_useHixie76Protocol;
     bool m_sent;
     unsigned long m_bufferedAmount;
     bool m_suspended;

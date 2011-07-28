@@ -49,6 +49,7 @@ public:
     ThreadableWebSocketChannel() { }
     static PassRefPtr<ThreadableWebSocketChannel> create(ScriptExecutionContext*, WebSocketChannelClient*, const KURL&, const String& protocol);
 
+    virtual bool useHixie76Protocol() = 0;
     virtual void connect() = 0;
     virtual bool send(const String& message) = 0;
     virtual unsigned long bufferedAmount() const = 0;

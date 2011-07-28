@@ -43,6 +43,7 @@ namespace WebCore {
 ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper(WebSocketChannelClient* client)
     : m_client(client)
     , m_syncMethodDone(false)
+    , m_useHixie76Protocol(true)
     , m_sent(false)
     , m_bufferedAmount(0)
     , m_suspended(false)
@@ -67,6 +68,16 @@ void ThreadableWebSocketChannelClientWrapper::setSyncMethodDone()
 bool ThreadableWebSocketChannelClientWrapper::syncMethodDone() const
 {
     return m_syncMethodDone;
+}
+
+bool ThreadableWebSocketChannelClientWrapper::useHixie76Protocol() const
+{
+    return m_useHixie76Protocol;
+}
+
+void ThreadableWebSocketChannelClientWrapper::setUseHixie76Protocol(bool useHixie76Protocol)
+{
+    m_useHixie76Protocol = useHixie76Protocol;
 }
 
 bool ThreadableWebSocketChannelClientWrapper::sent() const
