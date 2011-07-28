@@ -1,3 +1,13 @@
+2011-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [REGRESSION] [Chromium] Opening link in new tab does not work properly.
+        https://bugs.webkit.org/show_bug.cgi?id=65279
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::open):
+
 2011-07-27  Adam Klein  <adamk@chromium.org>
 
         [V8] Remove unused m_isWeak member of V8AbstractEventListener

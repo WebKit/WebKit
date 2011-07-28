@@ -299,6 +299,8 @@ void InspectorPageAgent::reload(ErrorString*, const bool* const optionalIgnoreCa
 
 void InspectorPageAgent::open(ErrorString*, const String& url, const bool* const inNewWindow)
 {
+    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
+
     Frame* mainFrame = m_page->mainFrame();
     Frame* frame;
     if (inNewWindow && *inNewWindow) {
@@ -315,7 +317,6 @@ void InspectorPageAgent::open(ErrorString*, const String& url, const bool* const
     } else
         frame = mainFrame;
 
-    UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
     // FIXME: Why does one use mainFrame and the other frame?
     frame->loader()->changeLocation(mainFrame->document()->securityOrigin(), frame->document()->completeURL(url), "", false, false);
 }
