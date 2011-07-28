@@ -68,6 +68,10 @@ public:
     static void run();
     void stop();
 
+#if PLATFORM(MAC)
+    void runForDuration(double duration);
+#endif
+    
     class TimerBase {
         friend class RunLoop;
     public:

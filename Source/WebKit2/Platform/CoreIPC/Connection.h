@@ -62,6 +62,11 @@ enum MessageSendFlags {
     DispatchMessageEvenWhenWaitingForSyncReply = 1 << 0,
 };
 
+enum SyncMessageSendFlags {
+    // Will allow events to continue being handled while waiting for the synch reply.
+    SpinRunLoopWhileWaitingForReply = 1 << 0,
+};
+    
 #define MESSAGE_CHECK_BASE(assertion, connection) do \
     if (!(assertion)) { \
         ASSERT(assertion); \
@@ -148,7 +153,7 @@ public:
     static const int NoTimeout = -1;
 
     template<typename T> bool send(const T& message, uint64_t destinationID, unsigned messageSendFlags = 0);
-    template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = DefaultTimeout);
+    template<typename T> bool sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout = DefaultTimeout, unsigned syncSendFlags = 0);
     template<typename T> bool waitForAndDispatchImmediately(uint64_t destinationID, double timeout);
 
     PassOwnPtr<ArgumentEncoder> createSyncMessageArgumentEncoder(uint64_t destinationID, uint64_t& syncRequestID);
@@ -209,8 +214,8 @@ private:
     
     PassOwnPtr<ArgumentDecoder> waitForMessage(MessageID, uint64_t destinationID, double timeout);
     
-    PassOwnPtr<ArgumentDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, PassOwnPtr<ArgumentEncoder>, double timeout);
-    PassOwnPtr<ArgumentDecoder> waitForSyncReply(uint64_t syncRequestID, double timeout);
+    PassOwnPtr<ArgumentDecoder> sendSyncMessage(MessageID, uint64_t syncRequestID, PassOwnPtr<ArgumentEncoder>, double timeout, unsigned syncSendFlags = 0);
+    PassOwnPtr<ArgumentDecoder> waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags);
 
     // Called on the connection work queue.
     void processIncomingMessage(MessageID, PassOwnPtr<ArgumentDecoder>);
@@ -360,7 +365,7 @@ template<typename T> bool Connection::send(const T& message, uint64_t destinatio
     return sendMessage(MessageID(T::messageID), argumentEncoder.release(), messageSendFlags);
 }
 
-template<typename T> bool Connection::sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout)
+template<typename T> bool Connection::sendSync(const T& message, const typename T::Reply& reply, uint64_t destinationID, double timeout, unsigned syncSendFlags)
 {
     uint64_t syncRequestID = 0;
     OwnPtr<ArgumentEncoder> argumentEncoder = createSyncMessageArgumentEncoder(destinationID, syncRequestID);
@@ -369,7 +374,7 @@ template<typename T> bool Connection::sendSync(const T& message, const typename 
     argumentEncoder->encode(message);
 
     // Now send the message and wait for a reply.
-    OwnPtr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(T::messageID), syncRequestID, argumentEncoder.release(), timeout);
+    OwnPtr<ArgumentDecoder> replyDecoder = sendSyncMessage(MessageID(T::messageID), syncRequestID, argumentEncoder.release(), timeout, syncSendFlags);
     if (!replyDecoder)
         return false;
 

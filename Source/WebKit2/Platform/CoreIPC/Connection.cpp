@@ -384,7 +384,7 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
     return nullptr;
 }
 
-PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uint64_t syncRequestID, PassOwnPtr<ArgumentEncoder> encoder, double timeout)
+PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uint64_t syncRequestID, PassOwnPtr<ArgumentEncoder> encoder, double timeout, unsigned syncSendFlags)
 {
     // We only allow sending sync messages from the client run loop.
     ASSERT(RunLoop::current() == m_clientRunLoop);
@@ -411,7 +411,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
     // Then wait for a reply. Waiting for a reply could involve dispatching incoming sync messages, so
     // keep an extra reference to the connection here in case it's invalidated.
     RefPtr<Connection> protect(this);
-    OwnPtr<ArgumentDecoder> reply = waitForSyncReply(syncRequestID, timeout);
+    OwnPtr<ArgumentDecoder> reply = waitForSyncReply(syncRequestID, timeout, syncSendFlags);
 
     // Finally, pop the pending sync reply information.
     {
@@ -426,7 +426,7 @@ PassOwnPtr<ArgumentDecoder> Connection::sendSyncMessage(MessageID messageID, uin
     return reply.release();
 }
 
-PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, double timeout)
+PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID, double timeout, unsigned syncSendFlags)
 {
     if (timeout == DefaultTimeout)
         timeout = m_defaultSyncMessageTimeout;
@@ -467,8 +467,20 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForSyncReply(uint64_t syncRequestID,
 #if PLATFORM(WIN)
         timedOut = !m_syncMessageState->waitWhileDispatchingSentWin32Messages(absoluteTime, m_client->windowsToReceiveSentMessagesWhileWaitingForSyncReply());
 #else
-        timedOut = !m_syncMessageState->wait(absoluteTime);
+
+        // This allows the WebProcess to still serve clients while waiting for the message to return. 
+        // Notably, it can continue to process accessibility requests, which are on the main thread.
+        if (syncSendFlags & SpinRunLoopWhileWaitingForReply) {
+#if PLATFORM(MAC)
+            // FIXME: Although we run forever, any events incoming will cause us to drop out and exit out. This however doesn't
+            // account for a timeout value passed in. Timeout is always NoTimeout in these cases, but that could change.
+            RunLoop::current()->runForDuration(1e10);
+            timeout = currentTime() >= absoluteTime;
 #endif
+        } else
+            timedOut = !m_syncMessageState->wait(absoluteTime);
+#endif
+        
     }
 
     // We timed out.

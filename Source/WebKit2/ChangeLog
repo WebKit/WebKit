@@ -1,3 +1,27 @@
+2011-07-26  Chris Fleizach  <cfleizach@apple.com>
+
+        REGRESSION (Safari 5.1): JavaScript dialogs not usable with VoiceOver
+        https://bugs.webkit.org/show_bug.cgi?id=65214
+
+        Reviewed by Anders Carlsson.
+
+        Allow the ability to spin the run loop while WebProcess is waiting for a synchronous reply.
+        This allows it to continue to serve accessibility requests while waiting and basically
+        restores the behavior WK1 was presenting. This patch only enables this mode when accessibility is on.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::sendSyncMessage):
+        (CoreIPC::Connection::waitForSyncReply):
+        * Platform/CoreIPC/Connection.h:
+        (CoreIPC::Connection::sendSync):
+        * Platform/RunLoop.h:
+        * Platform/mac/RunLoopMac.mm:
+        (RunLoop::runForDuration):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::runJavaScriptAlert):
+        (WebKit::WebChromeClient::runJavaScriptConfirm):
+        (WebKit::WebChromeClient::runJavaScriptPrompt):
+
 2011-07-28  Ravi Phaneendra Kasibhatla  <ravi.kasibhatla@motorola.com>
 
         Pass the key_press_event or key_release_event to parent widget when it is not handled by Web Process.
