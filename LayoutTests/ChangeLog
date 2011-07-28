@@ -1,5 +1,11 @@
 2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix Chromium test expectations for http://crbug.com/88911
+
+        * platform/chromium/test_expectations.txt:
+
+2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium rebaseline after r91879.
 
         * platform/chromium-linux/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Added.

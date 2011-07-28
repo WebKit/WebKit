@@ -1241,8 +1241,8 @@ BUGCR23476 MAC : fast/text/font-initial.html = IMAGE
 // Disagreeing XML parsing error messages
 //BUGCR23475 LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE
 //BUGCR23475 LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE
-BUGCR88911 MAC : fast/parser/xhtml-alternate-entities.xml = PASS IMAGE+TEXT
-BUGCR88911 MAC : fast/xsl/xslt-extra-content-at-end.xml = PASS IMAGE+TEXT
+BUGCR88911 LEOPARD : fast/parser/xhtml-alternate-entities.xml = IMAGE+TEXT
+BUGCR88911 LEOPARD : fast/xsl/xslt-extra-content-at-end.xml = IMAGE+TEXT
 
 // Repaint tests failing on Mac.  Need to be manually triaged.
 BUGCR23473 MAC : fast/repaint/4774354.html = IMAGE
@@ -2371,7 +2371,7 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 
 // These tests started failing presumably after r70850
 //BUGWK48627 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
-BUGCR88911 LEOPARD : fast/invalid/missing-end-tag.xhtml = PASS IMAGE+TEXT
+BUGCR88911 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE+TEXT
 BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 
 // Failures after WebKit roll 70949:71000
@@ -3740,16 +3740,16 @@ BUGWK13061 : plugins/form-value.html = TEXT
 BUGCR88894 WIN SLOW : http/tests/cache/subresource-expiration-1.html = PASS
 BUGCR88894 WIN SLOW : http/tests/cache/subresource-expiration-2.html = PASS
 
-BUGCR88911 MAC : fast/css/stylesheet-candidate-nodes-crash.xhtml = PASS TEXT
-BUGCR88911 MAC : fast/dom/getElementsByClassName/011.xml = PASS TEXT
-BUGCR88911 MAC : fast/forms/input-number-unacceptable-style.html = PASS TEXT
-BUGCR88911 MAC : fast/parser/external-entities.xml = PASS TEXT
-BUGCR88911 MAC : fast/text/find-kana.html = PASS TEXT
-BUGCR88911 MAC : fast/xsl/mozilla-tests.xml = PASS TEXT
-BUGCR88911 MAC : svg/custom/use-invalid-pattern.svg = PASS TEXT
-BUGCR88911 MAC : svg/custom/use-invalid-style.svg = PASS TEXT
-BUGCR88911 MAC : fast/text/atsui-multiple-renderers.html = IMAGE
-BUGCR88911 MAC : svg/W3C-SVG-1.1/struct-image-10-t.svg = IMAGE
+BUGCR88911 LEOPARD : fast/css/stylesheet-candidate-nodes-crash.xhtml = TEXT
+BUGCR88911 LEOPARD : fast/dom/getElementsByClassName/011.xml = TEXT
+BUGCR88911 LEOPARD : fast/forms/input-number-unacceptable-style.html = TEXT
+BUGCR88911 LEOPARD : fast/parser/external-entities.xml = TEXT
+BUGCR88911 LEOPARD : fast/text/find-kana.html = TEXT
+BUGCR88911 LEOPARD : fast/xsl/mozilla-tests.xml = TEXT
+BUGCR88911 LEOPARD : svg/custom/use-invalid-pattern.svg = TEXT
+BUGCR88911 LEOPARD : svg/custom/use-invalid-style.svg = TEXT
+BUGCR88911 LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
+BUGCR88911 LEOPARD : svg/W3C-SVG-1.1/struct-image-10-t.svg = IMAGE
 
 // V8 now follows spec on toisostring, test needs to be fixed.
 BUGCR88936 : fast/js/date-toisostring.html = TEXT
