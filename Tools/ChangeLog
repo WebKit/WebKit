@@ -1,3 +1,18 @@
+2011-07-27  Adam Roben  <aroben@apple.com>
+
+        Use wacky !svn/bc URLs consistently in Leaks Viewer
+
+        This ensures that any resources loaded via relative URLs will still get pulled from the same
+        revision of Subversion.
+
+        Fixes <http://webkit.org/b/65267> Focus/exclude button glyphs don't load on Leaks Viewer
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/LeaksViewer/index.html: Use the
+        !svn/bc-style URL for inspector.css, too, just like we do for all other resources we pull
+        from Subversion.
+
 2011-07-27  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Drop WorkQueueItemEfl.h in favour of the general WorkQueueItem.h
