@@ -359,6 +359,8 @@ JSObject* FunctionExecutable::compileForCallInternal(ExecState* exec, ScopeChain
             m_codeBlockForCall->discardBytecode();
 #endif
     }
+#else
+    UNUSED_PARAM(calleeArgsExec);
 #endif
 
 #if ENABLE(JIT)

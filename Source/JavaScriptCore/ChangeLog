@@ -1,3 +1,10 @@
+2011-07-28  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::compileForCallInternal):
+
 2011-07-28  Kent Tamura  <tkent@chromium.org>
 
         Improve StringImpl::stripWhiteSpace() and simplifyWhiteSpace().
