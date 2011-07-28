@@ -1,3 +1,14 @@
+2011-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Add dummy NotificationPresenterClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=64064
+
+        Add two files to CMakeLists.txt for HTML5 Notification.
+
+        Reviewed by Antonio Gomes.
+
+        * CMakeLists.txt:
+
 2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Calling window.find immediately after mutating the document crashes WebKit.

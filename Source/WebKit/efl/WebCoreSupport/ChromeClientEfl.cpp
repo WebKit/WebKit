@@ -48,6 +48,9 @@
 #include "IntRect.h"
 #include "KURL.h"
 #include "NavigationAction.h"
+#if ENABLE(NOTIFICATIONS)
+#include "NotificationPresenterClientEfl.h"
+#endif
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "PopupMenuEfl.h"
@@ -414,6 +417,14 @@ void ChromeClientEfl::exceededDatabaseQuota(Frame* frame, const String& database
         quota = ewk_settings_web_database_default_quota_get();
 
     DatabaseTracker::tracker().setQuota(origin, quota);
+}
+#endif
+
+#if ENABLE(NOTIFICATIONS)
+NotificationPresenter* ChromeClientEfl::notificationPresenter() const
+{
+    notImplemented();
+    return 0;
 }
 #endif
 

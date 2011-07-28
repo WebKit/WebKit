@@ -48,6 +48,12 @@ IF (WTF_USE_PANGO)
   )
 ENDIF ()
 
+IF (ENABLE_NOTIFICATIONS)
+  LIST(APPEND WebKit_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/notifications"
+  )
+ENDIF ()
+
 LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/ChromeClientEfl.cpp
     efl/WebCoreSupport/DeviceOrientationClientEfl.cpp
@@ -57,6 +63,7 @@ LIST(APPEND WebKit_SOURCES
     efl/WebCoreSupport/FrameLoaderClientEfl.cpp
     efl/WebCoreSupport/FullscreenVideoControllerEfl.cpp
     efl/WebCoreSupport/InspectorClientEfl.cpp
+    efl/WebCoreSupport/NotificationPresenterClientEfl.cpp
 
     efl/ewk/ewk_contextmenu.cpp
     efl/ewk/ewk_cookies.cpp

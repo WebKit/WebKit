@@ -1519,6 +1519,11 @@ IF (ENABLE_NETSCAPE_PLUGIN_API)
 ENDIF ()
 
 IF (ENABLE_NOTIFICATIONS)
+    LIST(APPEND WebCore_SOURCES
+        notifications/NotificationCenter.cpp
+        notifications/Notification.cpp
+    )
+
     LIST(APPEND WebCore_IDL_FILES
         notifications/Notification.idl
         notifications/NotificationCenter.idl

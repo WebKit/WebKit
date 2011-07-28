@@ -1,3 +1,29 @@
+2011-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Add dummy NotificationPresenterClientEfl
+        https://bugs.webkit.org/show_bug.cgi?id=64064
+
+        Add dummy files for HTML5 Notification. And also, notificationPresenter() is added to
+        ChromeClientEfl. Without this function implemented, there would be a build break when
+        ENABLE_NOTIFICATION is enabled.
+
+        Reviewed by Antonio Gomes.
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::notificationPresenter):
+        * WebCoreSupport/ChromeClientEfl.h:
+        * WebCoreSupport/NotificationPresenterClientEfl.cpp: Added.
+        (WebCore::NotificationPresenterClientEfl::NotificationPresenterClientEfl):
+        (WebCore::NotificationPresenterClientEfl::~NotificationPresenterClientEfl):
+        (WebCore::NotificationPresenterClientEfl::show):
+        (WebCore::NotificationPresenterClientEfl::cancel):
+        (WebCore::NotificationPresenterClientEfl::notificationObjectDestroyed):
+        (WebCore::NotificationPresenterClientEfl::requestPermission):
+        (WebCore::NotificationPresenterClientEfl::checkPermission):
+        (WebCore::NotificationPresenterClientEfl::cancelRequestsForPermission):
+        * WebCoreSupport/NotificationPresenterClientEfl.h: Added.
+
 2011-07-26  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Fix pointer operator coding style in ewk_view.
