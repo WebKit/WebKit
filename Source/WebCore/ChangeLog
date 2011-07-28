@@ -1,3 +1,16 @@
+2011-07-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [REGRESSION] Inspected tab crashes if navigated with inspector open and there are watch expressions added.
+        https://bugs.webkit.org/show_bug.cgi?id=65322
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorController.cpp:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/WorkerInspectorController.cpp:
+
 2011-07-28  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Add basic RenderRegion support

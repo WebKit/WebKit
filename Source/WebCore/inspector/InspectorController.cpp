@@ -79,13 +79,11 @@ public:
     virtual ~PageRuntimeAgent() { }
 
 private:
-    virtual ScriptState* scriptStateForFrameId(ErrorString* errorString, const String& frameId)
+    virtual ScriptState* scriptStateForFrameId(const String& frameId)
     {
         Frame* frame = m_pageAgent->frameForId(frameId);
-        if (!frame) {
-            *errorString = "Frame not found";
+        if (!frame)
             return 0;
-        }
         return mainWorldScriptState(frame);
     }
     virtual ScriptState* getDefaultInspectedState() { return mainWorldScriptState(m_inspectedPage->mainFrame()); }

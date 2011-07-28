@@ -61,7 +61,7 @@ public:
     virtual ~WorkerRuntimeAgent() { }
 
 private:
-    virtual ScriptState* scriptStateForFrameId(ErrorString*, const String&)
+    virtual ScriptState* scriptStateForFrameId(const String&)
     {
         return 0;
     }

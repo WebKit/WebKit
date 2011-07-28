@@ -65,7 +65,7 @@ public:
 
 protected:
     explicit InspectorRuntimeAgent(InjectedScriptManager*);
-    virtual ScriptState* scriptStateForFrameId(ErrorString*, const String& frameId) = 0;
+    virtual ScriptState* scriptStateForFrameId(const String& frameId) = 0;
     virtual ScriptState* getDefaultInspectedState() = 0;
 
 private:
