@@ -31,9 +31,9 @@
 #ifndef WebDocument_h
 #define WebDocument_h
 
-#include "WebFormElement.h"
 #include "WebNode.h"
 #include "WebSecurityOrigin.h"
+#include "WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore {
@@ -47,6 +47,7 @@ namespace WebKit {
 class WebAccessibilityObject;
 class WebDocumentType;
 class WebElement;
+class WebFormElement;
 class WebFrame;
 class WebNodeCollection;
 class WebNodeList;
@@ -98,15 +99,6 @@ public:
     WEBKIT_API WebNode focusedNode() const;
     WEBKIT_API WebDocumentType doctype() const;
     WEBKIT_API WebAccessibilityObject accessibilityObject() const;
-
-    // Insert the given text as a STYLE element at the beginning of the
-    // document. |elementId| can be empty, but if specified then it is used
-    // as the id for the newly inserted element (replacing an existing one
-    // with the same id, if any).
-    // FIXME: Remove this once Chromium callers have been updated to call
-    // insertUserStyleSheet instead.
-    WEBKIT_API bool insertStyleText(const WebString& styleText,
-                                    const WebString& elementId);
 
     // Inserts the given CSS source code as a user stylesheet in the document.
     // Meant for programatic/one-off injection, as opposed to

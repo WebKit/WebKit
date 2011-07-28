@@ -43,12 +43,12 @@
 #include "HTMLElement.h"
 #include "HTMLFormElement.h"
 #include "HTMLHeadElement.h"
-#include "HTMLNames.h"
 #include "NodeList.h"
 
 #include "WebAccessibilityObject.h"
 #include "WebDocumentType.h"
 #include "WebElement.h"
+#include "WebFormElement.h"
 #include "WebFrameImpl.h"
 #include "WebNodeCollection.h"
 #include "WebNodeList.h"
@@ -177,35 +177,6 @@ WebAccessibilityObject WebDocument::accessibilityObject() const
     const Document* document = constUnwrap<Document>();
     return WebAccessibilityObject(
         document->axObjectCache()->getOrCreate(document->renderer()));
-}
-
-bool WebDocument::insertStyleText(const WebString& styleText, const WebString& elementId)
-{
-    RefPtr<Document> document = unwrap<Document>();
-    RefPtr<Element> documentElement = document->documentElement();
-    if (!documentElement)
-        return false;
-
-    ExceptionCode err = 0;
-
-    if (!elementId.isEmpty()) {
-        Element* oldElement = document->getElementById(elementId);
-        if (oldElement) {
-            Node* parent = oldElement->parentNode();
-            if (!parent)
-                return false;
-            parent->removeChild(oldElement, err);
-        }
-    }
-
-    RefPtr<Element> stylesheet = document->createElement(HTMLNames::styleTag, false);
-    if (!elementId.isEmpty())
-        stylesheet->setAttribute(HTMLNames::idAttr, elementId);
-    stylesheet->setTextContent(styleText, err);
-    ASSERT(!err);
-    bool success = documentElement->insertBefore(stylesheet, documentElement->firstChild(), err);
-    ASSERT(success);
-    return success;
 }
 
 void WebDocument::insertUserStyleSheet(const WebString& sourceCode, UserStyleLevel level)
