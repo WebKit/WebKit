@@ -1,3 +1,29 @@
+2011-07-27  Dmitry Lomov  <dslomov@google.com>
+
+        [chromium] Turn on WTF_MULTIPLE_THREADS.
+        https://bugs.webkit.org/show_bug.cgi?id=61017
+        The patch turns on WTF_MULTIPLE_THREADS in chromium and 
+        pushes some relevant initializations from JSC::initializeThreading
+        to WTF::initializeThreading.
+
+        Reviewed by David Levin.
+
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * wtf/FastMalloc.cpp:
+        (WTF::isForbidden):
+        (WTF::fastMallocForbid):
+        (WTF::fastMallocAllow):
+        * wtf/Platform.h:
+        * wtf/ThreadingPthreads.cpp:
+        (WTF::initializeThreading):
+        * wtf/ThreadingWin.cpp:
+        (WTF::initializeThreading):
+        * wtf/gtk/ThreadingGtk.cpp:
+        (WTF::initializeThreading):
+        * wtf/qt/ThreadingQt.cpp:
+        (WTF::initializeThreading):
+
 2011-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove operator new from JSCell

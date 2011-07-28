@@ -33,10 +33,13 @@
 #if !USE(PTHREADS)
 
 #include "CurrentTime.h"
+#include "DateMap.h"
+#include "dtoa.h"
 #include "HashMap.h"
 #include "MainThread.h"
 #include "RandomNumberSeed.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/WTFThreadData.h>
 
 #include <glib.h>
 #include <limits.h>
@@ -60,9 +63,17 @@ void initializeThreading()
     ASSERT(g_thread_supported());
 
     if (!atomicallyInitializedStaticMutex) {
+        // StringImpl::empty() does not construct its static string in a threadsafe fashion,
+        // so ensure it has been initialized from here.
+        StringImpl::empty();
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         initializeRandomNumberGenerator();
+        wtfThreadData();
+#if ENABLE(WTF_MULTIPLE_THREADS)
+        s_dtoaP5Mutex = new Mutex;
+        initializeDates();
+#endif
     }
 }
 

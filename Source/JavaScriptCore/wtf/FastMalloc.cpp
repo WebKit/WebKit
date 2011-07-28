@@ -80,7 +80,11 @@
 #include "Assertions.h"
 #include <limits>
 #if ENABLE(WTF_MULTIPLE_THREADS)
+#if OS(WINDOWS) && PLATFORM(CHROMIUM)
+#include <windows.h>
+#else
 #include <pthread.h>
+#endif // OS(WINDOWS)
 #endif
 #include <wtf/StdLibExtras.h>
 
@@ -103,6 +107,38 @@
 namespace WTF {
 
 #if ENABLE(WTF_MULTIPLE_THREADS)
+#if OS(WINDOWS) && PLATFORM(CHROMIUM)
+
+static DWORD isForibiddenTlsIndex = TLS_OUT_OF_INDEXES;
+static const LPVOID kTlsAllowValue = reinterpret_cast<LPVOID>(0); // Must be zero.
+static const LPVOID kTlsForbiddenValue = reinterpret_cast<LPVOID>(1);
+
+#if !ASSERT_DISABLED
+static bool isForbidden()
+{
+    // By default, fastMalloc is allowed so we don't allocate the
+    // tls index unless we're asked to make it forbidden. If TlsSetValue
+    // has not been called on a thread, the value returned by TlsGetValue is 0.
+    return (isForibiddenTlsIndex != TLS_OUT_OF_INDEXES) && (TlsGetValue(isForibiddenTlsIndex) == kTlsForbiddenValue);
+}
+#endif
+
+void fastMallocForbid()
+{
+    if (isForibiddenTlsIndex == TLS_OUT_OF_INDEXES)
+        isForibiddenTlsIndex = TlsAlloc(); // a little racey, but close enough for debug only
+    TlsSetValue(isForibiddenTlsIndex, kTlsForbiddenValue);
+}
+
+void fastMallocAllow()
+{
+    if (isForibiddenTlsIndex == TLS_OUT_OF_INDEXES)
+        return;
+    TlsSetValue(isForibiddenTlsIndex, kTlsAllowValue);
+}
+
+#else // !OS(WINDOWS) || !PLATFORM(CHROMIUM)
+
 static pthread_key_t isForbiddenKey;
 static pthread_once_t isForbiddenKeyOnce = PTHREAD_ONCE_INIT;
 static void initializeIsForbiddenKey()
@@ -129,7 +165,7 @@ void fastMallocAllow()
     pthread_once(&isForbiddenKeyOnce, initializeIsForbiddenKey);
     pthread_setspecific(isForbiddenKey, 0);
 }
-
+#endif // OS(WINDOWS) && PLATFORM(CHROMIUM)
 #else
 
 static bool staticIsForbidden;
