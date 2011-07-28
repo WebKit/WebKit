@@ -1,3 +1,20 @@
+2011-07-28  Marco Peereboom  <marco@peereboom.us>
+
+        [Soup] Cannot override default max-conns and max-conns-per-host Soup Session settings
+        https://bugs.webkit.org/show_bug.cgi?id=64355
+        Default max-conns and max-conns-per-host are set at "first contact" with
+        a site instead of at creation time.  This results in values being
+        overwritten if they are set prior to said "first contact"; which is the
+        most likely (or only) scenario.
+
+        Reviewed by Martin Robinson.
+
+        No new tests.  Rigged libsoup and xxxterm web browser to diagnose the
+        issue and validate the patch.
+
+        * platform/graphics/FontFallbackList.cpp:
+        (WebCore::FontFallbackList::determinePitch):
+
 2011-07-28  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65323

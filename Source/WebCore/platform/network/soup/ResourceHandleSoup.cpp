@@ -144,13 +144,6 @@ ResourceHandle::~ResourceHandle()
 
 static void ensureSessionIsInitialized(SoupSession* session)
 {
-    // Values taken from http://stevesouders.com/ua/index.php following
-    // the rule "Do What Every Other Modern Browser Is Doing". They seem
-    // to significantly improve page loading time compared to soup's
-    // default values.
-    static const int maxConnections = 60;
-    static const int maxConnectionsPerHost = 6;
-
     if (g_object_get_data(G_OBJECT(session), "webkit-init"))
         return;
 
@@ -171,11 +164,6 @@ static void ensureSessionIsInitialized(SoupSession* session)
         soup_session_add_feature(session, SOUP_SESSION_FEATURE(requester));
         g_object_unref(requester);
     }
-
-    g_object_set(session,
-                 SOUP_SESSION_MAX_CONNS, maxConnections,
-                 SOUP_SESSION_MAX_CONNS_PER_HOST, maxConnectionsPerHost,
-                 NULL);
 
     g_object_set_data(G_OBJECT(session), "webkit-init", reinterpret_cast<void*>(0xdeadbeef));
 }
@@ -849,7 +837,22 @@ static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
 
 SoupSession* ResourceHandle::defaultSession()
 {
-    static SoupSession* session = soup_session_async_new();
+    static SoupSession* session = 0;
+    // Values taken from http://stevesouders.com/ua/index.php following
+    // the rule "Do What Every Other Modern Browser Is Doing". They seem
+    // to significantly improve page loading time compared to soup's
+    // default values.
+    static const int maxConnections = 60;
+    static const int maxConnectionsPerHost = 6;
+
+    if (!session) {
+        session = soup_session_async_new();
+        g_object_set(session,
+                     SOUP_SESSION_MAX_CONNS, maxConnections,
+                     SOUP_SESSION_MAX_CONNS_PER_HOST, maxConnectionsPerHost, 
+                     NULL);
+    }
+
     return session;
 }
 
