@@ -1532,31 +1532,6 @@ BUGCR25616 WIN : fast/overflow/overflow-float-stacking.html = FAIL
 // Flaky. The width of containing RenderBlocks sometimes becomes larger
 BUGCR21958 MAC : svg/hixie/error/012.xml = FAIL
 
-// These will be rebaselined (and therefore fixed) when we roll skia 1960, which fixes
-// clipping some characters.
-BUGCR90673 WIN : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
-BUGCR90673 WIN : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE
-BUGCR90673 WIN : editing/selection/vertical-rl-ltr-extend-line-backward-br.html = IMAGE
-BUGCR90673 WIN : editing/selection/vertical-rl-ltr-extend-line-backward-p.html = IMAGE
-BUGCR90673 WIN : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html = IMAGE
-BUGCR90673 WIN : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE
-BUGCR90673 WIN : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE
-BUGCR90673 WIN : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE
-BUGCR90673 WIN : fast/blockflow/english-lr-text.html = IMAGE
-BUGCR90673 WIN : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-BUGCR90673 WIN : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-BUGCR90673 WIN : fast/repaint/shadow-multiple-horizontal.html = IMAGE
-BUGCR90673 WIN : fast/repaint/shadow-multiple-strict-horizontal.html = IMAGE
-BUGCR90673 WIN : fast/repaint/shadow-multiple-strict-vertical.html = IMAGE
-BUGCR90673 WIN : fast/repaint/shadow-multiple-vertical.html = IMAGE
-BUGCR90673 WIN : fast/text/stroking-decorations.html = IMAGE
-BUGCR90673 WIN : fast/text/stroking.html = IMAGE
-BUGCR90673 WIN : fast/transforms/shadows.html = IMAGE
-BUGCR90673 WIN : svg/batik/text/verticalText.svg = IMAGE IMAGE+TEXT CRASH PASS
-BUGCR90673 WIN : svg/css/group-with-shadow.svg = IMAGE
-BUGCR90673 WIN : svg/css/text-gradient-shadow.svg = IMAGE
-BUGCR90673 WIN : svg/css/text-shadow-multiple.xhtml = IMAGE
-
 // WebKit merge 48500:48585, newly implemented Object.defineProperty.
 BUGCR22526 WIN MAC : fast/js/Object-create.html = FAIL
 BUGCR22526 : fast/js/Object-defineProperties.html = FAIL CRASH

@@ -1,3 +1,51 @@
+2011-07-28  Stephen White  <senorblanco@chromium.org>
+
+        New chromium baselines after skia r1960.
+
+        Unreviewed.
+
+        * platform/chromium-gpu-win/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-win/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-win-vista/fast/blockflow/english-lr-text-expected.png:
+        * platform/chromium-win-vista/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-win-vista/fast/text/stroking-expected.png:
+        * platform/chromium-win-vista/svg/batik/text/verticalText-expected.png: Removed.
+        * platform/chromium-win-xp/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png:
+        * platform/chromium-win-xp/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-win-xp/fast/blockflow/japanese-ruby-vertical-lr-expected.png:
+        * platform/chromium-win-xp/fast/blockflow/japanese-ruby-vertical-rl-expected.png:
+        * platform/chromium-win-xp/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-win/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-win/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png:
+        * platform/chromium-win/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png:
+        * platform/chromium-win/fast/blockflow/english-lr-text-expected.png:
+        * platform/chromium-win/fast/blockflow/japanese-ruby-vertical-lr-expected.png:
+        * platform/chromium-win/fast/blockflow/japanese-ruby-vertical-rl-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-win/fast/repaint/shadow-multiple-vertical-expected.png:
+        * platform/chromium-win/fast/text/stroking-decorations-expected.png:
+        * platform/chromium-win/fast/text/stroking-expected.png:
+        * platform/chromium-win/fast/transforms/shadows-expected.png:
+        * platform/chromium-win/svg/batik/text/verticalText-expected.png: Added.
+        * platform/chromium-win/svg/batik/text/verticalText-expected.txt: Added.
+        * platform/chromium-win/svg/css/group-with-shadow-expected.png:
+        * platform/chromium-win/svg/css/text-gradient-shadow-expected.png:
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-28  Tony Gentilcore  <tonyg@chromium.org>
 
         [chromium] New expectations after r91924
