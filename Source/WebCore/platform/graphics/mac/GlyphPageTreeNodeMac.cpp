@@ -53,9 +53,18 @@ bool GlyphPage::fill(unsigned offset, unsigned length, UChar* buffer, unsigned b
 {
     bool haveGlyphs = false;
 
+    Vector<CGGlyph, 512> glyphs(bufferLength);
     if (!shouldUseCoreText(buffer, bufferLength, fontData)) {
-        Vector<CGGlyph, 512> glyphs(bufferLength);
         wkGetGlyphsForCharacters(fontData->platformData().cgFont(), buffer, glyphs.data(), bufferLength);
+        for (unsigned i = 0; i < length; ++i) {
+            if (!glyphs[i])
+                setGlyphDataForIndex(offset + i, 0, 0);
+            else {
+                setGlyphDataForIndex(offset + i, glyphs[i], fontData);
+                haveGlyphs = true;
+            }
+        }
+    } else if (wkGetVerticalGlyphsForCharacters(fontData->platformData().ctFont(), buffer, glyphs.data(), bufferLength)) {
         for (unsigned i = 0; i < length; ++i) {
             if (!glyphs[i])
                 setGlyphDataForIndex(offset + i, 0, 0);

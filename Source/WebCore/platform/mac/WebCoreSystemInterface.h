@@ -46,6 +46,7 @@ typedef struct __CFRunLoop * CFRunLoopRef;
 typedef struct __CFHTTPMessage *CFHTTPMessageRef;
 typedef struct _CFURLResponse *CFURLResponseRef;
 typedef const struct _CFURLRequest *CFURLRequestRef;
+typedef const struct __CTFont * CTFontRef;
 typedef const struct __CTLine * CTLineRef;
 typedef const struct __CTTypesetter * CTTypesetterRef;
 typedef const struct __AXUIElement *AXUIElementRef;
@@ -221,6 +222,7 @@ extern void (*wkSetCONNECTProxyAuthorizationForStream)(CFReadStreamRef, CFString
 extern CFHTTPMessageRef (*wkCopyCONNECTProxyResponse)(CFReadStreamRef, CFURLRef responseURL);
 
 extern void (*wkGetGlyphsForCharacters)(CGFontRef, const UniChar[], CGGlyph[], size_t);
+extern bool (*wkGetVerticalGlyphsForCharacters)(CTFontRef, const UniChar[], CGGlyph[], size_t);
 
 extern BOOL (*wkUseSharedMediaUI)();
 

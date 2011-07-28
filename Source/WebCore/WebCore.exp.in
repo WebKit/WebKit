@@ -1384,6 +1384,7 @@ _wkGetNSURLResponseLastModifiedDate
 _wkGetNSURLResponseMustRevalidate
 _wkGetPreferredExtensionForMIMEType
 _wkGetUserToBaseCTM
+_wkGetVerticalGlyphsForCharacters
 _wkGetWheelEventDeltas
 _wkHTTPCookiesForURL
 _wkHitTestMediaUIPart

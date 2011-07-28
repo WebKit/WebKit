@@ -1,3 +1,15 @@
+2011-07-28  Dan Bernstein  <mitz@apple.com>
+
+        WebKitSystemInterface support for
+        <rdar://problem/9589433> Displaying Japanese dictionary contents in vertical orientation takes a couple of seconds
+
+        Reviewed by Darin Adler.
+
+        * WebKitSystemInterface.h: Added WKGetVerticalGlyphsForCharacters().
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-07-22  Jessie Berlin  <jberlin@apple.com>
 
         [WebKit2] Changing the cookie accept policy in Private Browsing doesn’t work.

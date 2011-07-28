@@ -56,6 +56,7 @@ void InitWebCoreSystemInterface(void)
         INIT(GetFontInLanguageForRange);
         INIT(GetGlyphTransformedAdvances);
         INIT(GetGlyphsForCharacters);
+        INIT(GetVerticalGlyphsForCharacters);
         INIT(GetHTTPPipeliningPriority);
         INIT(GetMIMETypeForExtension);
         INIT(GetNSURLResponseLastModifiedDate);

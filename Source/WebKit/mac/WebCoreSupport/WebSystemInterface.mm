@@ -109,6 +109,7 @@ void InitWebCoreSystemInterface(void)
     INIT(QTClearMediaDownloadCache);
 
     INIT(GetGlyphsForCharacters);
+    INIT(GetVerticalGlyphsForCharacters);
 
 #if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
     INIT(GetHyphenationLocationBeforeIndex);

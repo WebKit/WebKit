@@ -1,3 +1,16 @@
+2011-07-28  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9589433> Displaying Japanese dictionary contents in vertical orientation takes a couple of seconds
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Exported wkGetVerticalGlyphsForCharacters.
+        * platform/graphics/mac/GlyphPageTreeNodeMac.cpp:
+        (WebCore::GlyphPage::fill): Use wkGetVerticalGlyphsForCharacters. If it returns false, proceed
+        with the existing, slower method of getting vertical glyphs.
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-07-28  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/9714337> and https://bugs.webkit.org/show_bug.cgi?id=65306
