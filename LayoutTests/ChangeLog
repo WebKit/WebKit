@@ -1,3 +1,11 @@
+2011-07-28  Stephen White  <senorblanco@chromium.org>
+
+        Uncomment some suppressions we'll need for the upcoming skia roll.
+
+        Unreviewed; chromium test_expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-28  Rob Buis  <rbuis@rim.com>
 
         Use styling test from ietestcenter fails
