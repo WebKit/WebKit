@@ -90,7 +90,7 @@ PasteboardHelper::~PasteboardHelper()
     gtk_target_list_unref(m_targetList);
 }
 
-static inline GtkWidget* widgetFromFrame(Frame* frame)
+static inline GdkDisplay* displayFromFrame(Frame* frame)
 {
     ASSERT(frame);
     Page* page = frame->page();
@@ -98,8 +98,7 @@ static inline GtkWidget* widgetFromFrame(Frame* frame)
     Chrome* chrome = page->chrome();
     ASSERT(chrome);
     PlatformPageClient client = chrome->platformPageClient();
-    ASSERT(client);
-    return client;
+    return client ? gtk_widget_get_display(client) : gdk_display_get_default();
 }
 
 GtkClipboard* PasteboardHelper::getCurrentClipboard(Frame* frame)
@@ -111,12 +110,12 @@ GtkClipboard* PasteboardHelper::getCurrentClipboard(Frame* frame)
 
 GtkClipboard* PasteboardHelper::getClipboard(Frame* frame) const
 {
-    return gtk_widget_get_clipboard(widgetFromFrame(frame), GDK_SELECTION_CLIPBOARD);
+    return gtk_clipboard_get_for_display(displayFromFrame(frame), GDK_SELECTION_CLIPBOARD);
 }
 
 GtkClipboard* PasteboardHelper::getPrimarySelectionClipboard(Frame* frame) const
 {
-    return gtk_widget_get_clipboard(widgetFromFrame(frame), GDK_SELECTION_PRIMARY);
+    return gtk_clipboard_get_for_display(displayFromFrame(frame), GDK_SELECTION_PRIMARY);
 }
 
 GtkTargetList* PasteboardHelper::targetList() const

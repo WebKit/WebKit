@@ -1,3 +1,20 @@
+2011-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Copy and paste is broken in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=65252
+
+        Reviewed by Martin Robinson.
+
+        Use gtk_clipboard_get_for_display() instead of
+        gtk_widget_get_clipboard(), using the the default display when
+        there's no page client widget, which is the case of WebKit2.
+
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::displayFromFrame): Return the display of the current
+        frame widget or the default display if there's no widget.
+        (WebCore::PasteboardHelper::getClipboard):
+        (WebCore::PasteboardHelper::getPrimarySelectionClipboard):
+
 2011-07-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add resource initiator column to network panel.
