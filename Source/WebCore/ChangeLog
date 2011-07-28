@@ -1,3 +1,53 @@
+2011-07-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [Cairo] Switch from ContextShadow to ShadowBlur
+        https://bugs.webkit.org/show_bug.cgi?id=64744
+
+        Use ShadowBlur in the Cairo backend instead of ContextShadow. This allows us
+        to share shadowing code with Qt and Mac ports and to correct some broken
+        shadow rendering.
+
+        Reviewed by Dirk Schulze.
+
+        * CMakeLists.txt: Remove ContextShadow from the build.
+        * CMakeListsEfl.txt: Ditto.
+        * GNUmakefile.list.am: Add ShadowBlur source files and remove ContextShadow
+        source files.
+        * platform/graphics/GraphicsContext.cpp:Add #ifdefs to support ShadowBlur for Cairo.
+        * platform/graphics/GraphicsContext.h: Remove Cairo ContextShadow code.
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::drawInsetShadowWithTiling): Since the ShadowBlur is a property
+        of the GraphicsContext, we cannot clear the GraphicsContext shadow until we have
+        finished using properties like m_offset. If we clear the GrahpicsContext shadow
+        before using these properties, they will be zero when we try to use them.
+        (WebCore::ShadowBlur::drawRectShadowWithTiling):Ditto.
+        (WebCore::ShadowBlur::drawLayerPieces): Ditto.
+        (WebCore::ShadowBlur::beginShadowLayer):Cairo is the first port to keep ShadowBlur
+        as a persistent property of GraphicsContext and use drawRectShadow and drawInsetShadow.
+        Thus, we must manually clear the cached tiling values so that ShadowBlur does not
+        try to reuse the scratch buffer for rectangular shadows after using beginShadowLayer
+        and endShadowLayer.
+        (WebCore::ShadowBlur::mustUseShadowBlur): Moved this method from the Qt port to
+        this cross-platform location.
+        * platform/graphics/ShadowBlur.h: Added new method declaration.
+        * platform/graphics/cairo/ContextShadowCairo.cpp: Removed.
+        * platform/graphics/cairo/FontCairo.cpp: Switched to using ShadowBlur.
+        (WebCore::drawGlyphsShadow):Ditto.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp: Switch to using ShadowBlur.
+        (WebCore::drawPathShadow): ShadowBlur has slightly different semantics than
+        ContextShadow. When filling the shadow layer, we do not need to use the fill
+        alpha. We also need to restore the Cairo path to the target context after
+        endShadowLayer as it destroys the current path.
+        * platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h: Switch to using ShadowBlur.
+        * platform/graphics/cairo/ImageCairo.cpp: Ditto.
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::drawSurfaceToContext):Ditto.
+        (WebCore::PlatformContextCairo::prepareForStroking): Add a mode ignoring alpha.
+        * platform/graphics/cairo/PlatformContextCairo.h: Ditto.
+        (WebCore::PlatformContextCairo::shadowBlur):Added.
+        * platform/graphics/gtk/FontGtk.cpp: Update to use ShadowBlur.
+        * platform/graphics/qt/GraphicsContextQt.cpp: Switch to using the new version of mustUseShadowBlur.
+
 2011-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Add dummy NotificationPresenterClientEfl

@@ -87,7 +87,6 @@ IF (WTF_USE_CAIRO)
   )
   LIST(APPEND WebCore_SOURCES
     platform/graphics/cairo/CairoUtilities.cpp
-    platform/graphics/cairo/ContextShadowCairo.cpp
     platform/graphics/cairo/FontCairo.cpp
     platform/graphics/cairo/GradientCairo.cpp
     platform/graphics/cairo/GraphicsContextCairo.cpp

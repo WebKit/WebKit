@@ -36,7 +36,6 @@
 
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
-#include "ContextShadow.h"
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Font.h"
@@ -49,6 +48,7 @@
 #include "PlatformContextCairo.h"
 #include "PlatformPathCairo.h"
 #include "RefPtrCairo.h"
+#include "ShadowBlur.h"
 #include "SimpleFontData.h"
 #include <cairo.h>
 #include <math.h>
@@ -97,9 +97,8 @@ enum PathDrawingStyle {
 
 static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle drawingStyle)
 {
-    ContextShadow* shadow = context->contextShadow();
-    ASSERT(shadow);
-    if (shadow->m_type == ContextShadow::NoShadow)
+    ShadowBlur& shadow = context->platformContext()->shadowBlur();
+    if (shadow.type() == ShadowBlur::NoShadow)
         return;
 
     // Calculate the extents of the rendered solid paths.
@@ -121,29 +120,36 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
         solidFigureExtents.unite(fillExtents);
     }
 
-    cairo_t* shadowContext = shadow->beginShadowLayer(context, solidFigureExtents);
+    GraphicsContext* shadowContext = shadow.beginShadowLayer(context, solidFigureExtents);
     if (!shadowContext)
         return;
 
+    cairo_t* cairoShadowContext = shadowContext->platformContext()->cr();
+
     // It's important to copy the context properties to the new shadow
     // context to preserve things such as the fill rule and stroke width.
-    copyContextProperties(cairoContext, shadowContext);
+    copyContextProperties(cairoContext, cairoShadowContext);
 
-    PlatformContextCairo platformShadowContext(shadowContext);
     if (drawingStyle & Fill) {
-        cairo_append_path(shadowContext, path.get());
-        platformShadowContext.prepareForFilling(context->state(), PlatformContextCairo::NoAdjustment);
-        cairo_clip_preserve(shadowContext);
-        cairo_paint_with_alpha(shadowContext, context->platformContext()->globalAlpha());
+        cairo_save(cairoShadowContext);
+        cairo_append_path(cairoShadowContext, path.get());
+        shadowContext->platformContext()->prepareForFilling(context->state(), PlatformContextCairo::NoAdjustment);
+        cairo_clip(cairoShadowContext);
+        cairo_paint(cairoShadowContext);
+        cairo_restore(cairoShadowContext);
     }
 
     if (drawingStyle & Stroke) {
-        cairo_append_path(shadowContext, path.get());
-        platformShadowContext.prepareForStroking(context->state());
-        cairo_stroke(shadowContext);
+        cairo_append_path(cairoShadowContext, path.get());
+        shadowContext->platformContext()->prepareForStroking(context->state(), PlatformContextCairo::DoNotPreserveAlpha);
+        cairo_stroke(cairoShadowContext);
     }
 
-    shadow->endShadowLayer(context);
+    shadow.endShadowLayer(context);
+
+    // ShadowBlur::endShadowLayer destroys the current path on the Cairo context. We restore it here.
+    cairo_new_path(cairoContext);
+    cairo_append_path(cairoContext, path.get());
 }
 
 static inline void shadowAndFillCurrentCairoPath(GraphicsContext* context)
@@ -204,20 +210,18 @@ void GraphicsContext::savePlatformState()
 {
     platformContext()->save();
     m_data->save();
-    m_data->shadowStack.append(m_data->shadow);
 }
 
 void GraphicsContext::restorePlatformState()
 {
-    if (m_data->shadowStack.isEmpty())
-        m_data->shadow = ContextShadow();
-    else {
-        m_data->shadow = m_data->shadowStack.last();
-        m_data->shadowStack.removeLast();
-    }
-
     platformContext()->restore();
     m_data->restore();
+
+    platformContext()->shadowBlur().setShadowValues(FloatSize(m_state.shadowBlur, m_state.shadowBlur),
+                                                    m_state.shadowOffset,
+                                                    m_state.shadowColor,
+                                                    m_state.shadowColorSpace,
+                                                    m_state.shadowsIgnoreTransforms);
 }
 
 // Draws a filled rectangle with a stroked border.
@@ -507,7 +511,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
         return;
 
     if (hasShadow())
-        m_data->shadow.drawRectShadow(this, enclosingIntRect(rect));
+        platformContext()->shadowBlur().drawRectShadow(this, rect, RoundedRect::Radii());
 
     fillRectWithColor(platformContext()->cr(), rect, color);
 }
@@ -535,6 +539,13 @@ void GraphicsContext::clipPath(const Path& path, WindRule clipRule)
     setPathOnCairoContext(cr, path.platformPath()->context());
     cairo_set_fill_rule(cr, clipRule == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
     cairo_clip(cr);
+}
+
+IntRect GraphicsContext::clipBounds() const
+{
+    double x1, x2, y1, y2;
+    cairo_clip_extents(platformContext()->cr(), &x1, &y1, &x2, &y2);
+    return enclosingIntRect(FloatRect(x1, y1, x2 - x1, y2 - y1));
 }
 
 static inline void adjustFocusRingColor(Color& color)
@@ -655,12 +666,10 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
     FloatPoint endPoint(origin + IntSize(width, 0));
     FloatRect lineExtents(origin, FloatSize(width, strokeThickness()));
 
-    ContextShadow* shadow = contextShadow();
-    ASSERT(shadow);
-    cairo_t* shadowContext = shadow->beginShadowLayer(this, lineExtents);
-    if (shadowContext) {
-        drawLineOnCairoContext(this, shadowContext, origin, endPoint);
-        shadow->endShadowLayer(this);
+    ShadowBlur& shadow = platformContext()->shadowBlur();
+    if (GraphicsContext* shadowContext = shadow.beginShadowLayer(this, lineExtents)) {
+        drawLineOnCairoContext(this, shadowContext->platformContext()->cr(), origin, endPoint);
+        shadow.endShadowLayer(this);
     }
 
     drawLineOnCairoContext(this, cairoContext, origin, endPoint);
@@ -845,26 +854,29 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
 
 void GraphicsContext::setPlatformShadow(FloatSize const& size, float blur, Color const& color, ColorSpace)
 {
-    // Cairo doesn't support shadows natively, they are drawn manually in the draw* functions
+    if (paintingDisabled())
+        return;
+
     if (m_state.shadowsIgnoreTransforms) {
         // Meaning that this graphics context is associated with a CanvasRenderingContext
         // We flip the height since CG and HTML5 Canvas have opposite Y axis
         m_state.shadowOffset = FloatSize(size.width(), -size.height());
-        m_data->shadow = ContextShadow(color, blur, FloatSize(size.width(), -size.height()));
-    } else
-        m_data->shadow = ContextShadow(color, blur, FloatSize(size.width(), size.height()));
+    }
 
-    m_data->shadow.setShadowsIgnoreTransforms(m_state.shadowsIgnoreTransforms);
-}
-
-ContextShadow* GraphicsContext::contextShadow()
-{
-    return &m_data->shadow;
+    // Cairo doesn't support shadows natively, they are drawn manually in the draw* functions using ShadowBlur.
+    platformContext()->shadowBlur().setShadowValues(FloatSize(m_state.shadowBlur, m_state.shadowBlur),
+                                                    m_state.shadowOffset,
+                                                    m_state.shadowColor,
+                                                    m_state.shadowColorSpace,
+                                                    m_state.shadowsIgnoreTransforms);
 }
 
 void GraphicsContext::clearPlatformShadow()
 {
-    m_data->shadow.clear();
+    if (paintingDisabled())
+        return;
+
+    platformContext()->shadowBlur().clear();
 }
 
 void GraphicsContext::beginTransparencyLayer(float opacity)
@@ -1069,7 +1081,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& r, const IntSize& topLeft, 
         return;
 
     if (hasShadow())
-        m_data->shadow.drawRectShadow(this, r, topLeft, topRight, bottomLeft, bottomRight);
+        platformContext()->shadowBlur().drawRectShadow(this, r, RoundedRect::Radii(topLeft, topRight, bottomLeft, bottomRight));
 
     cairo_t* cr = platformContext()->cr();
     cairo_save(cr);

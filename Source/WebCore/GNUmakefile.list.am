@@ -2394,12 +2394,9 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/Color.cpp \
 	Source/WebCore/platform/graphics/Color.h \
 	Source/WebCore/platform/graphics/ColorSpace.h \
-	Source/WebCore/platform/graphics/ContextShadow.cpp \
-	Source/WebCore/platform/graphics/ContextShadow.h \
 	Source/WebCore/platform/graphics/DashArray.h \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.cpp \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.h \
-	Source/WebCore/platform/graphics/cairo/ContextShadowCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/FloatRectCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/FontCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/FontCustomPlatformData.h \

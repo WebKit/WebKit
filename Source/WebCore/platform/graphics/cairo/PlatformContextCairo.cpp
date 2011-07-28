@@ -174,11 +174,11 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
     cairo_matrix_t matrix = { scaleX, 0, 0, scaleY, srcRect.x(), srcRect.y() };
     cairo_pattern_set_matrix(pattern.get(), &matrix);
 
-    ContextShadow* shadow = context->contextShadow();
-    if (shadow && shadow->m_type != ContextShadow::NoShadow) {
-        if (cairo_t* shadowContext = shadow->beginShadowLayer(context, destRect)) {
-            drawPatternToCairoContext(shadowContext, pattern.get(), destRect, 1);
-            shadow->endShadowLayer(context);
+    ShadowBlur& shadow = context->platformContext()->shadowBlur();
+    if (shadow.type() != ShadowBlur::NoShadow) {
+        if (GraphicsContext* shadowContext = shadow.beginShadowLayer(context, destRect)) {
+            drawPatternToCairoContext(shadowContext->platformContext()->cr(), pattern.get(), destRect, 1);
+            shadow.endShadowLayer(context);
         }
     }
 
@@ -237,13 +237,13 @@ void PlatformContextCairo::prepareForFilling(const GraphicsContextState& state, 
                               patternAdjustment == AdjustPatternForGlobalAlpha ? globalAlpha() : 1);
 }
 
-void PlatformContextCairo::prepareForStroking(const GraphicsContextState& state)
+void PlatformContextCairo::prepareForStroking(const GraphicsContextState& state, AlphaPreservation alphaPreservation)
 {
     prepareCairoContextSource(m_cr.get(),
                               state.strokePattern.get(),
                               state.strokeGradient.get(),
                               state.strokeColor,
-                              globalAlpha());
+                              alphaPreservation == PreserveAlpha ? globalAlpha() : 1);
 }
 
 } // namespace WebCore

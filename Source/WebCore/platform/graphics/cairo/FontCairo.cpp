@@ -32,13 +32,13 @@
 
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
-#include "ContextShadow.h"
 #include "GlyphBuffer.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "PlatformContextCairo.h"
 #include "ImageBuffer.h"
 #include "Pattern.h"
+#include "ShadowBlur.h"
 #include "SimpleFontData.h"
 
 namespace WebCore {
@@ -76,19 +76,21 @@ static void drawGlyphsToContext(cairo_t* context, const SimpleFontData* font, Gl
 
 static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint& point, const SimpleFontData* font, GlyphBufferGlyph* glyphs, int numGlyphs)
 {
-    ContextShadow* shadow = graphicsContext->contextShadow();
-    ASSERT(shadow);
+    ShadowBlur& shadow = graphicsContext->platformContext()->shadowBlur();
 
-    if (!(graphicsContext->textDrawingMode() & TextModeFill) || shadow->m_type == ContextShadow::NoShadow)
+    if (!(graphicsContext->textDrawingMode() & TextModeFill) || shadow.type() == ShadowBlur::NoShadow)
         return;
 
-    if (!shadow->mustUseContextShadow(graphicsContext)) {
-        // Optimize non-blurry shadows, by just drawing text without the ContextShadow.
+    if (!shadow.mustUseShadowBlur(graphicsContext)) {
+        // Optimize non-blurry shadows, by just drawing text without the ShadowBlur.
         cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);
-        cairo_translate(context, shadow->m_offset.width(), shadow->m_offset.height());
-        setSourceRGBAFromColor(context, shadow->m_color);
+
+        FloatSize shadowOffset(graphicsContext->state().shadowOffset);
+        cairo_translate(context, shadowOffset.width(), shadowOffset.height());
+        setSourceRGBAFromColor(context, graphicsContext->state().shadowColor);
         drawGlyphsToContext(context, font, glyphs, numGlyphs);
+
         cairo_restore(context);
         return;
     }
@@ -96,10 +98,9 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
     cairo_text_extents_t extents;
     cairo_scaled_font_glyph_extents(font->platformData().scaledFont(), glyphs, numGlyphs, &extents);
     FloatRect fontExtentsRect(point.x(), point.y() - extents.height, extents.width, extents.height);
-    cairo_t* shadowContext = shadow->beginShadowLayer(graphicsContext, fontExtentsRect);
-    if (shadowContext) {
-        drawGlyphsToContext(shadowContext, font, glyphs, numGlyphs);
-        shadow->endShadowLayer(graphicsContext);
+    if (GraphicsContext* shadowContext = shadow.beginShadowLayer(graphicsContext, fontExtentsRect)) {
+        drawGlyphsToContext(shadowContext->platformContext()->cr(), font, glyphs, numGlyphs);
+        shadow.endShadowLayer(graphicsContext);
     }
 }
 

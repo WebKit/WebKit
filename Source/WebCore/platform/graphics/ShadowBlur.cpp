@@ -666,9 +666,6 @@ void ShadowBlur::drawInsetShadowWithoutTiling(GraphicsContext* graphicsContext, 
 
 void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, const FloatRect& rect, const FloatRect& holeRect, const RoundedRect::Radii& radii, const IntSize& templateSize, const IntSize& edgeSize)
 {
-    GraphicsContextStateSaver stateSaver(*graphicsContext);
-    graphicsContext->clearShadow();
-
     m_layerImage = ScratchBuffer::shared().getScratchBuffer(templateSize);
     if (!m_layerImage)
         return;
@@ -715,6 +712,7 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, con
 
     {
         GraphicsContextStateSaver fillStateSaver(*graphicsContext);
+        graphicsContext->clearShadow();
         graphicsContext->setFillRule(RULE_EVENODD);
         graphicsContext->setFillColor(m_color, m_colorSpace);
         graphicsContext->fillPath(exteriorPath);
@@ -728,9 +726,6 @@ void ShadowBlur::drawInsetShadowWithTiling(GraphicsContext* graphicsContext, con
 
 void ShadowBlur::drawRectShadowWithTiling(GraphicsContext* graphicsContext, const FloatRect& shadowedRect, const RoundedRect::Radii& radii, const IntSize& templateSize, const IntSize& edgeSize)
 {
-    GraphicsContextStateSaver stateSaver(*graphicsContext);
-    graphicsContext->clearShadow();
-
     m_layerImage = ScratchBuffer::shared().getScratchBuffer(templateSize);
     if (!m_layerImage)
         return;
@@ -787,9 +782,14 @@ void ShadowBlur::drawLayerPieces(GraphicsContext* graphicsContext, const FloatRe
         if (!shadowInterior.isEmpty()) {
             GraphicsContextStateSaver stateSaver(*graphicsContext);
             graphicsContext->setFillColor(m_color, m_colorSpace);
+            graphicsContext->clearShadow();
             graphicsContext->fillRect(shadowInterior);
         }
     }
+
+    GraphicsContextStateSaver stateSaver(*graphicsContext);
+    graphicsContext->clearShadow();
+    graphicsContext->setFillColor(m_color, m_colorSpace);
 
     // Note that drawing the ImageBuffer is faster than creating a Image and drawing that,
     // because ImageBuffer::draw() knows that it doesn't have to copy the image bits.
@@ -874,11 +874,16 @@ GraphicsContext* ShadowBlur::beginShadowLayer(GraphicsContext *context, const Fl
     if (layerRect.isEmpty())
         return 0;
 
+    // We reset the scratch buffer values here, because the buffer will no longer contain
+    // data from any previous rectangle or inset shadows drawn via the tiling path.
+    ScratchBuffer::shared().setLastShadowValues(FloatSize(), Color::black, ColorSpaceDeviceRGB, IntRect(), RoundedRect::Radii());
     m_layerImage = ScratchBuffer::shared().getScratchBuffer(layerRect.size());
 
     GraphicsContext* shadowContext = m_layerImage->context();
     shadowContext->save();
-    shadowContext->clearRect(FloatRect(0, 0, m_layerSize.width(), m_layerSize.height()));
+
+    // Add a pixel to avoid later edge aliasing when rotated.
+    shadowContext->clearRect(FloatRect(0, 0, m_layerSize.width() + 1, m_layerSize.height() + 1));
 
     shadowContext->translate(m_layerContextTranslation);
     return shadowContext;
@@ -897,5 +902,23 @@ void ShadowBlur::endShadowLayer(GraphicsContext* context)
     m_layerImage = 0;
     ScratchBuffer::shared().scheduleScratchBufferPurge();
 }
+
+#if PLATFORM(QT) || USE(CAIRO)
+bool ShadowBlur::mustUseShadowBlur(GraphicsContext* context) const
+{
+    // We can't avoid ShadowBlur, since the shadow has blur.
+    if (type() == BlurShadow)
+        return true;
+    // We can avoid ShadowBlur and optimize, since we're not drawing on a
+    // canvas and box shadows are affected by the transformation matrix.
+    if (!shadowsIgnoreTransforms())
+        return false;
+    // We can avoid ShadowBlur, since there are no transformations to apply to the canvas.
+    if (context->getCTM().isIdentity())
+        return false;
+    // Otherwise, no chance avoiding ShadowBlur.
+    return true;
+}
+#endif
 
 } // namespace WebCore

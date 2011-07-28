@@ -30,7 +30,6 @@
 
 #include "GraphicsContext.h"
 
-#include "ContextShadow.h"
 #include "PlatformContextCairo.h"
 #include "RefPtrCairo.h"
 #include <cairo.h>
@@ -100,8 +99,6 @@ public:
 
     PlatformContextCairo* platformContext;
     Vector<float> layers;
-    ContextShadow shadow;
-    Vector<ContextShadow> shadowStack;
     InterpolationQuality imageInterpolationQuality;
 
 #if PLATFORM(GTK)

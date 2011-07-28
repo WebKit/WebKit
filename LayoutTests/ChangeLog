@@ -1,3 +1,31 @@
+2011-07-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [Cairo] Switch from ContextShadow to ShadowBlur
+        https://bugs.webkit.org/show_bug.cgi?id=64744
+
+        Update test results, which are now correct after switch to ShadowBlur.
+
+        Reviewed by Dirk Schulze.
+
+        * fast/box-shadow/box-shadow-radius-expected.png: Added.
+        * fast/box-shadow/box-shadow-transformed-expected.png: Added.
+        * fast/box-shadow/inset-box-shadow-radius-expected.png: Added.
+        * fast/box-shadow/inset-shadow-large-offset-expected.png:
+        * fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Added.
+        * fast/box-shadow/scaled-box-shadow-expected.png: Added.
+        * fast/box-shadow/shadow-tiling-artifact-expected.png: Added.
+        * fast/box-shadow/spread-multiple-inset-expected.png: Added.
+        * fast/box-shadow/spread-multiple-normal-expected.png: Added.
+        * platform/gtk/Skipped: Skip a test, which now has a bug revealed.
+        * platform/gtk/fast/box-shadow/basic-shadows-expected.png:
+        * platform/gtk/fast/box-shadow/border-radius-big-expected.png:
+        * platform/gtk/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/gtk/fast/box-shadow/inset-expected.png:
+        * platform/gtk/fast/box-shadow/shadow-buffer-partial-expected.png:
+        * platform/gtk/fast/box-shadow/single-pixel-shadow-expected.png:
+        * platform/gtk/fast/box-shadow/spread-expected.png:
+        * platform/gtk/fast/box-shadow/transform-fringing-expected.png:
+
 2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Chromium Windows test expectations after r91897.

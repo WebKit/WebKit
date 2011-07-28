@@ -33,7 +33,6 @@
 #include "AffineTransform.h"
 #include "CairoUtilities.h"
 #include "Color.h"
-#include "ContextShadow.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "PlatformContextCairo.h"

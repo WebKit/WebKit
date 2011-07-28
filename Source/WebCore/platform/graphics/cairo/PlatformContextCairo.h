@@ -26,9 +26,9 @@
 #ifndef PlatformContextCairo_h
 #define PlatformContextCairo_h
 
-#include "ContextShadow.h"
 #include "GraphicsContext.h"
 #include "RefPtrCairo.h"
+#include "ShadowBlur.h"
 
 namespace WebCore {
 
@@ -48,6 +48,8 @@ public:
     cairo_t* cr() { return m_cr.get(); }
     void setCr(cairo_t* cr) { m_cr = cr; }
 
+    ShadowBlur& shadowBlur() { return m_shadowBlur; }
+
     void save();
     void restore();
     void setGlobalAlpha(float);
@@ -61,7 +63,9 @@ public:
 
     enum PatternAdjustment { NoAdjustment, AdjustPatternForGlobalAlpha };
     void prepareForFilling(const GraphicsContextState&, PatternAdjustment);
-    void prepareForStroking(const GraphicsContextState&);
+
+    enum AlphaPreservation { DoNotPreserveAlpha, PreserveAlpha };
+    void prepareForStroking(const GraphicsContextState&, AlphaPreservation = PreserveAlpha);
 
 private:
     RefPtr<cairo_t> m_cr;
@@ -69,6 +73,10 @@ private:
     class State;
     State* m_state;
     WTF::Vector<State> m_stateStack;
+
+    // GraphicsContext is responsible for managing the state of the ShadowBlur,
+    // so it does not need to be on the state stack.
+    ShadowBlur m_shadowBlur;
 
     InterpolationQuality m_imageInterpolationQuality;
 };

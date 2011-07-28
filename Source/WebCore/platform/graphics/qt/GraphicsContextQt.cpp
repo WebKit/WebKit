@@ -198,22 +198,6 @@ public:
 
     ShadowBlur* shadow;
 
-    bool mustUseShadowBlur() const
-    {
-        // We can't avoid ShadowBlur, since the shadow has blur.
-        if (shadow->type() == ShadowBlur::BlurShadow)
-            return true;
-        // We can avoid ShadowBlur and optimize, since we're not drawing on a
-        // canvas and box shadows are affected by the transformation matrix.
-        if (!shadow->shadowsIgnoreTransforms())
-            return false;
-        // We can avoid ShadowBlur, since there are no transformations to apply to the canvas.
-        if (p()->combinedTransform().isIdentity())
-            return false;
-        // Otherwise, no chance avoiding ShadowBlur.
-        return true;
-    }
-
     QRectF clipBoundingRect() const
     {
 #if QT_VERSION >= QT_VERSION_CHECK(4, 8, 0)
@@ -510,7 +494,7 @@ void GraphicsContext::fillPath(const Path& path)
 
     if (hasShadow()) {
         ShadowBlur* shadow = shadowBlur();
-        if (m_data->mustUseShadowBlur() || m_state.fillPattern || m_state.fillGradient)
+        if (shadow->mustUseShadowBlur(this) || m_state.fillPattern || m_state.fillGradient)
         {
             GraphicsContext* shadowContext = shadow->beginShadowLayer(this, platformPath.controlPointRect());
             if (shadowContext) {
@@ -559,7 +543,7 @@ void GraphicsContext::strokePath(const Path& path)
 
     if (hasShadow()) {
         ShadowBlur* shadow = shadowBlur();
-        if (m_data->mustUseShadowBlur() || m_state.strokePattern || m_state.strokeGradient)
+        if (shadow->mustUseShadowBlur(this) || m_state.strokePattern || m_state.strokeGradient)
         {
             FloatRect boundingRect = platformPath.controlPointRect();
             boundingRect.inflate(pen.miterLimit() + pen.widthF());
@@ -701,7 +685,7 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         p->fillRect(normalizedRect, brush);
     } else {
         if (hasShadow()) {
-            if (m_data->mustUseShadowBlur()) {
+            if (shadow->mustUseShadowBlur(this)) {
                 GraphicsContext* shadowContext = shadow->beginShadowLayer(this, normalizedRect);
                 if (shadowContext) {
                     QPainter* shadowPainter = shadowContext->platformContext();
@@ -733,7 +717,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
 
     if (hasShadow()) {
         ShadowBlur* shadow = shadowBlur();
-        if (m_data->mustUseShadowBlur()) {
+        if (shadow->mustUseShadowBlur(this)) {
             GraphicsContext* shadowContext = shadow->beginShadowLayer(this, normalizedRect);
             if (shadowContext) {
                 QPainter* shadowPainter = shadowContext->platformContext();
@@ -761,7 +745,7 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
     QPainter* p = m_data->p();
     if (hasShadow()) {
         ShadowBlur* shadow = shadowBlur();
-        if (m_data->mustUseShadowBlur()) {
+        if (shadow->mustUseShadowBlur(this)) {
             GraphicsContext* shadowContext = shadow->beginShadowLayer(this, rect);
             if (shadowContext) {
                 QPainter* shadowPainter = shadowContext->platformContext();

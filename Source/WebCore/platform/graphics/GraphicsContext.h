@@ -41,7 +41,6 @@
 typedef struct CGContext PlatformGraphicsContext;
 #elif USE(CAIRO)
 namespace WebCore {
-class ContextShadow;
 class PlatformContextCairo;
 }
 typedef WebCore::PlatformContextCairo PlatformGraphicsContext;
@@ -489,10 +488,6 @@ namespace WebCore {
         bool inTransparencyLayer() const;
         void pushTransparencyLayerInternal(const QRect &rect, qreal opacity, QPixmap& alphaMask);
         void takeOwnershipOfPlatformContext();
-#endif
-
-#if USE(CAIRO)
-        ContextShadow* contextShadow();
 #endif
 
 #if PLATFORM(QT)

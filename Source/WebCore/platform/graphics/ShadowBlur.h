@@ -69,6 +69,11 @@ public:
     void clear();
 
     ShadowType type() const { return m_type; }
+
+#if PLATFORM(QT) || USE(CAIRO)
+    bool mustUseShadowBlur(GraphicsContext*) const;
+#endif
+
 private:
     void updateShadowBlurValues();
 

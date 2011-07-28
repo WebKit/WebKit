@@ -34,11 +34,11 @@
 #include "Font.h"
 
 #include "CairoUtilities.h"
-#include "ContextShadow.h"
 #include "GOwnPtr.h"
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
 #include "PlatformContextCairo.h"
+#include "ShadowBlur.h"
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include <cairo.h>
@@ -220,21 +220,20 @@ bool Font::canExpandAroundIdeographsInComplexText()
 
 static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint& point, PangoLayoutLine* layoutLine, PangoRegionType renderRegion)
 {
-    ContextShadow* shadow = graphicsContext->contextShadow();
-    ASSERT(shadow);
+    ShadowBlur& shadow = graphicsContext->platformContext()->shadowBlur();
 
-    if (!(graphicsContext->textDrawingMode() & TextModeFill) || shadow->m_type == ContextShadow::NoShadow)
+    if (!(graphicsContext->textDrawingMode() & TextModeFill) || shadow.type() == ShadowBlur::NoShadow)
         return;
 
-    FloatPoint totalOffset(point + shadow->m_offset);
+    FloatPoint totalOffset(point + graphicsContext->state().shadowOffset);
 
-    // Optimize non-blurry shadows, by just drawing text without the ContextShadow.
-    if (!shadow->mustUseContextShadow(graphicsContext)) {
+    // Optimize non-blurry shadows, by just drawing text without the ShadowBlur.
+    if (!shadow.mustUseShadowBlur(graphicsContext)) {
         cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);
         cairo_translate(context, totalOffset.x(), totalOffset.y());
 
-        setSourceRGBAFromColor(context, shadow->m_color);
+        setSourceRGBAFromColor(context, graphicsContext->state().shadowColor);
         gdk_cairo_region(context, renderRegion);
         cairo_clip(context);
         pango_cairo_show_layout_line(context, layoutLine);
@@ -245,14 +244,14 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
 
     FloatRect extents(getPangoRegionExtents(renderRegion));
     extents.setLocation(FloatPoint(point.x(), point.y() - extents.height()));
-    cairo_t* shadowContext = shadow->beginShadowLayer(graphicsContext, extents);
-    if (shadowContext) {
-        cairo_translate(shadowContext, point.x(), point.y());
-        pango_cairo_show_layout_line(shadowContext, layoutLine);
+    if (GraphicsContext* shadowContext = shadow.beginShadowLayer(graphicsContext, extents)) {
+        cairo_t* cairoShadowContext = shadowContext->platformContext()->cr();
+        cairo_translate(cairoShadowContext, point.x(), point.y());
+        pango_cairo_show_layout_line(cairoShadowContext, layoutLine);
 
         // We need the clipping region to be active when we blit the blurred shadow back,
         // because we don't want any bits and pieces of characters out of range to be
-        // drawn. Since ContextShadow expects a consistent transform, we have to undo the
+        // drawn. Since ShadowBlur expects a consistent transform, we have to undo the
         // translation before calling endShadowLayer as well.
         cairo_t* context = graphicsContext->platformContext()->cr();
         cairo_save(context);
@@ -261,7 +260,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
         cairo_clip(context);
         cairo_translate(context, -totalOffset.x(), -totalOffset.y());
 
-        shadow->endShadowLayer(graphicsContext);
+        shadow.endShadowLayer(graphicsContext);
         cairo_restore(context);
     }
 }
