@@ -54,7 +54,6 @@ static void weakEventListenerCallback(v8::Persistent<v8::Value>, void* parameter
 
 V8AbstractEventListener::V8AbstractEventListener(bool isAttribute, const WorldContextHandle& worldContext)
     : EventListener(JSEventListenerType)
-    , m_isWeak(true)
     , m_isAttribute(isAttribute)
     , m_worldContext(worldContext)
 {
@@ -116,8 +115,7 @@ void V8AbstractEventListener::setListenerObject(v8::Handle<v8::Object> listener)
 #ifndef NDEBUG
     V8GCController::registerGlobalHandle(EVENT_LISTENER, this, m_listener);
 #endif
-    if (m_isWeak)
-        m_listener.MakeWeak(this, &weakEventListenerCallback);
+    m_listener.MakeWeak(this, &weakEventListenerCallback);
 }
 
 void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context, Event* event, v8::Handle<v8::Value> jsEvent)

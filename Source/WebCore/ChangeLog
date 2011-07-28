@@ -1,3 +1,21 @@
+2011-07-27  Adam Klein  <adamk@chromium.org>
+
+        [V8] Remove unused m_isWeak member of V8AbstractEventListener
+        https://bugs.webkit.org/show_bug.cgi?id=65273
+
+        Reviewed by Adam Barth.
+
+        m_isWeak is set to true in the constructor and never changed,
+        so the one if statement that tests it always executes; the
+        code has been updated to make this clear.
+
+        No behavior change, thus no tests.
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::V8AbstractEventListener):
+        (WebCore::V8AbstractEventListener::setListenerObject):
+        * bindings/v8/V8AbstractEventListener.h:
+
 2011-07-27  Fady Samuel  <fsamuel@chromium.org>
 
         Popups on Chromium now check the minimum row height set through the Chromium WebKit API when
