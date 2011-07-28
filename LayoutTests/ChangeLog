@@ -1,3 +1,9 @@
+2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: One more attempt to paint Qt-Mac bot green.
+
 2011-07-28  Stephen White  <senorblanco@chromium.org>
 
         Uncomment some suppressions we'll need for the upcoming skia roll.

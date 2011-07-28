@@ -4688,6 +4688,7 @@ svg/W3C-SVG-1.1-SE/painting-control-04-f.svg
 svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg
 svg/custom/tref-own-content-removal.svg
 svg/custom/zero-path-square-cap-rendering2.svg
+fast/js/array-sort-modifying-tostring.html
 
 # new crashing tests
 ietestcenter/Javascript/15.2.3.11-1.html
@@ -4696,3 +4697,4 @@ fast/dom/attribute-namespaces.xhtml
 fast/dynamic/insertAdjacentText.html
 svg/custom/svg-parse-overflow-5.html
 fast/css/dashboard-regions-attr-crash.html
+ietestcenter/Javascript/15.2.3.11-4-18.html
