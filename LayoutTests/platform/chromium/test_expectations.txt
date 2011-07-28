@@ -1106,14 +1106,6 @@ BUGCR24227 : http/tests/plugins/local-geturl-from-remote.html = FAIL
 // This test sometimes fails indefinitely, other times it takes 1-2 seconds.
 BUGCR14009 WIN : http/tests/misc/dns-prefetch-control.html = TIMEOUT PASS
 
-// NEW FOR MERGE 37604:38097
-// This is a Safari specific test used to document the set of global
-// constructors they expose and the exact way they are printed.  Not
-// important - we might even want to ignore it.
-// New tests. We should fix these, but they doesn't need to block the current
-// release
-BUGCR10354 WIN LINUX : fast/layers/opacity-transforms.html = FAIL
-
 // MERGE 38389:38450
 // Form submit causes invalid page reload/navigation when action is a named
 // anchor

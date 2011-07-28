@@ -1,3 +1,15 @@
+2011-07-27  Ben Wells  <benwells@chromium.org>
+
+        Rebaseline extra test for bug 61369 (skia drawConvexPolygon antialiasing)
+        https://bugs.webkit.org/show_bug.cgi?id=65299
+
+        Reviewed by James Robinson.
+
+        * platform/chromium-linux/fast/layers/opacity-transforms-expected.png:
+        * platform/chromium-win/fast/layers/opacity-transforms-expected.png: Added.
+        * platform/chromium-win/fast/layers/opacity-transforms-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Calling window.find immediately after mutating the document crashes WebKit.
