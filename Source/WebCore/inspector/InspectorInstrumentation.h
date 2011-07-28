@@ -113,6 +113,7 @@ public:
     static void didPaint(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
+    static void didScheduleStyleRecalculation(Document*);
 
     static void applyUserAgentOverride(Frame*, String*);
     static void willSendRequest(Frame*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -241,6 +242,7 @@ private:
     static void didPaintImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
+    static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
 
     static void applyUserAgentOverrideImpl(InstrumentingAgents*, String*);
     static void willSendRequestImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, ResourceRequest&, const ResourceResponse& redirectResponse);
@@ -662,6 +664,15 @@ inline void InspectorInstrumentation::didRecalculateStyle(const InspectorInstrum
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (cookie.first)
         didRecalculateStyleImpl(cookie);
+#endif
+}
+
+inline void InspectorInstrumentation::didScheduleStyleRecalculation(Document* document)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        didScheduleStyleRecalculationImpl(instrumentingAgents, document);
 #endif
 }
 

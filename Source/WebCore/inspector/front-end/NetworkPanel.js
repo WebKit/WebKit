@@ -143,7 +143,7 @@ WebInspector.NetworkLogView.prototype = {
 
     _createTable: function()
     {
-        var columns = {name: {}, method: {}, status: {}, type: {}, size: {}, time: {}, timeline: {}};
+        var columns = {name: {}, method: {}, status: {}, type: {}, initiator: {}, size: {}, time: {}, timeline: {}};
         columns.name.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Name"), WebInspector.UIString("Path"));
         columns.name.sortable = true;
         columns.name.width = "20%";
@@ -161,6 +161,10 @@ WebInspector.NetworkLogView.prototype = {
         columns.type.sortable = true;
         columns.type.width = "6%";
 
+        columns.initiator.title = WebInspector.UIString("Initiator");
+        columns.initiator.sortable = true;
+        columns.initiator.width = "10%";
+
         columns.size.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Size"), WebInspector.UIString("Content"));
         columns.size.sortable = true;
         columns.size.width = "6%";
@@ -173,7 +177,7 @@ WebInspector.NetworkLogView.prototype = {
 
         columns.timeline.title = "";
         columns.timeline.sortable = false;
-        columns.timeline.width = "50%";
+        columns.timeline.width = "40%";
         columns.timeline.sort = "ascending";
 
         this._dataGrid = new WebInspector.DataGrid(columns);
@@ -251,6 +255,7 @@ WebInspector.NetworkLogView.prototype = {
         this._sortingFunctions.method = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "method", false);
         this._sortingFunctions.status = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "statusCode", false);
         this._sortingFunctions.type = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "mimeType", false);
+        this._sortingFunctions.initiator = WebInspector.NetworkDataGridNode.InitiatorComparator;
         this._sortingFunctions.size = WebInspector.NetworkDataGridNode.SizeComparator;
         this._sortingFunctions.time = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "duration", false);
         this._sortingFunctions.timeline = WebInspector.NetworkDataGridNode.ResourcePropertyComparator.bind(null, "startTime", false);
@@ -800,6 +805,7 @@ WebInspector.NetworkLogView.prototype = {
         this._dataGrid.showColumn("method");
         this._dataGrid.showColumn("status");
         this._dataGrid.showColumn("type");
+        this._dataGrid.showColumn("initiator");
         this._dataGrid.showColumn("size");
         this._dataGrid.showColumn("time");
         this._dataGrid.showColumn("timeline");
@@ -809,9 +815,10 @@ WebInspector.NetworkLogView.prototype = {
         widths.method = 6;
         widths.status = 6;
         widths.type = 6;
+        widths.initiator = 10;
         widths.size = 6;
         widths.time = 6;
-        widths.timeline = 50;
+        widths.timeline = 40;
 
         this._dataGrid.applyColumnWidthsMap(widths);
     },
@@ -823,6 +830,7 @@ WebInspector.NetworkLogView.prototype = {
         this._dataGrid.hideColumn("method");
         this._dataGrid.hideColumn("status");
         this._dataGrid.hideColumn("type");
+        this._dataGrid.hideColumn("initiator");
         this._dataGrid.hideColumn("size");
         this._dataGrid.hideColumn("time");
         this._dataGrid.hideColumn("timeline");
@@ -891,6 +899,7 @@ WebInspector.NetworkLogView.prototype = {
         this._dataGrid.showColumn("method");
         this._dataGrid.showColumn("status");
         this._dataGrid.showColumn("type");
+        this._dataGrid.showColumn("initiator");
         this._dataGrid.showColumn("size");
         this._dataGrid.showColumn("time");
 
@@ -899,9 +908,10 @@ WebInspector.NetworkLogView.prototype = {
         widths.method = 6;
         widths.status = 6;
         widths.type = 6;
+        widths.initiator = 10;
         widths.size = 6;
         widths.time = 6;
-        widths.timeline = 50;
+        widths.timeline = 40;
 
         this._dataGrid.showColumn("timeline");
         this._dataGrid.applyColumnWidthsMap(widths);
@@ -918,6 +928,7 @@ WebInspector.NetworkLogView.prototype = {
         this._dataGrid.hideColumn("method");
         this._dataGrid.hideColumn("status");
         this._dataGrid.hideColumn("type");
+        this._dataGrid.hideColumn("initiator");
         this._dataGrid.hideColumn("size");
         this._dataGrid.hideColumn("time");
         this._dataGrid.hideColumn("timeline");
@@ -1724,6 +1735,7 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._methodCell = this._createDivInTD("method");
         this._statusCell = this._createDivInTD("status");
         this._typeCell = this._createDivInTD("type");
+        this._initiatorCell = this._createDivInTD("initiator");
         this._sizeCell = this._createDivInTD("size");
         this._timeCell = this._createDivInTD("time");
         this._createTimelineCell();
@@ -1816,6 +1828,7 @@ WebInspector.NetworkDataGridNode.prototype = {
 
         this._refreshStatusCell();
         this._refreshTypeCell();
+        this._refreshInitiatorCell();
         this._refreshSizeCell();
         this._refreshTimeCell();
 
@@ -1914,6 +1927,28 @@ WebInspector.NetworkDataGridNode.prototype = {
         } else {
             this._typeCell.addStyleClass("network-dim-cell");
             this._typeCell.setTextAndTitle(WebInspector.UIString("Pending"));
+        }
+    },
+
+    _refreshInitiatorCell: function()
+    {
+        var initiator = this._resource.initiator;
+        if (!initiator || initiator.type === "other") {
+            this._initiatorCell.addStyleClass("network-dim-cell");
+            this._initiatorCell.setTextAndTitle(WebInspector.UIString("Other"));
+        } else {
+            this._initiatorCell.removeStyleClass("network-dim-cell");
+            this._initiatorCell.removeChildren();
+            if (initiator.type === "script") {
+                var topFrame = initiator.stackTrace[0];
+                this._initiatorCell.title = topFrame.url + ":" + topFrame.lineNumber;
+                this._initiatorCell.appendChild(WebInspector.linkifyResourceAsNode(topFrame.url, "scripts", topFrame.lineNumber));
+                this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Script"));
+            } else { // initiator.type === "parser"
+                this._initiatorCell.title = initiator.url + ":" + initiator.lineNumber;
+                this._initiatorCell.appendChild(WebInspector.linkifyResourceAsNode(initiator.url, "resources", initiator.lineNumber));
+                this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Parser"));
+            }
         }
     },
 
@@ -2071,6 +2106,21 @@ WebInspector.NetworkDataGridNode.SizeComparator = function(a, b)
         return 0;
 
     return a._resource.resourceSize - b._resource.resourceSize;
+}
+
+WebInspector.NetworkDataGridNode.InitiatorComparator = function(a, b)
+{
+    if (!a._resource.initiator || a._resource.initiator.type === "Other")
+        return -1;
+    if (!b._resource.initiator || b._resource.initiator.type === "Other")
+        return 1;
+
+    if (a._resource.initiator.url < b._resource.initiator.url)
+        return -1;
+    if (a._resource.initiator.url > b._resource.initiator.url)
+        return 1;
+
+    return a._resource.initiator.lineNumber - b._resource.initiator.lineNumber;
 }
 
 WebInspector.NetworkDataGridNode.ResourcePropertyComparator = function(propertyName, revert, a, b)

@@ -1457,6 +1457,8 @@ void Document::scheduleStyleRecalc()
     invalidateAccessKeyMap();
     
     m_styleRecalcTimer.startOneShot(0);
+
+    InspectorInstrumentation::didScheduleStyleRecalculation(this);
 }
 
 void Document::unscheduleStyleRecalc()

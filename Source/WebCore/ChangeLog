@@ -1,3 +1,50 @@
+2011-07-28  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Add resource initiator column to network panel.
+        https://bugs.webkit.org/show_bug.cgi?id=65105
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/network/network-initiator.html
+
+        * English.lproj/localizedStrings.js:
+        * dom/Document.cpp:
+        (WebCore::Document::scheduleStyleRecalc):
+        * inspector/Inspector.json:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willRecalculateStyleImpl):
+        (WebCore::InspectorInstrumentation::didRecalculateStyleImpl):
+        (WebCore::InspectorInstrumentation::didScheduleStyleRecalculationImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didScheduleStyleRecalculation):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::willRecalculateStyle):
+        (WebCore::InspectorResourceAgent::didRecalculateStyle):
+        (WebCore::InspectorResourceAgent::didScheduleStyleRecalculation):
+        (WebCore::InspectorResourceAgent::buildInitiatorObject):
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype.requestWillBeSent):
+        (WebInspector.NetworkDispatcher.prototype.resourceLoadedFromMemoryCache):
+        (WebInspector.NetworkDispatcher.prototype._appendRedirect):
+        (WebInspector.NetworkDispatcher.prototype._createResource):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._createTable):
+        (WebInspector.NetworkLogView.prototype._createSortingFunctions):
+        (WebInspector.NetworkLogView.prototype.switchToDetailedView):
+        (WebInspector.NetworkLogView.prototype.switchToBriefView):
+        (WebInspector.NetworkLogView.prototype._toggleGridMode):
+        (WebInspector.NetworkLogView.prototype._toggleViewingResourceMode):
+        (WebInspector.NetworkDataGridNode.prototype.createCells):
+        (WebInspector.NetworkDataGridNode.prototype.refreshResource):
+        (WebInspector.NetworkDataGridNode.prototype._refreshInitiatorCell):
+        (WebInspector.NetworkDataGridNode.InitiatorComparator):
+        * inspector/front-end/networkLogView.css:
+        (.initiator-column a):
+
 2011-07-28  Rob Buis  <rbuis@rim.com>
 
         Use styling test from ietestcenter fails

@@ -104,6 +104,13 @@ public:
 
     void applyUserAgentOverride(String* userAgent);
 
+    // FIXME: InspectorResourceAgent should now be aware of style recalculation.
+    void willRecalculateStyle();
+    void didRecalculateStyle();
+    void didScheduleStyleRecalculation(Document*);
+
+    PassRefPtr<InspectorObject> buildInitiatorObject(Document*);
+
 #if ENABLE(WEB_SOCKETS)
     void didCreateWebSocket(unsigned long identifier, const KURL& requestURL);
     void willSendWebSocketHandshakeRequest(unsigned long identifier, const WebSocketHandshakeRequest&);
@@ -147,6 +154,10 @@ private:
     String m_userAgentOverride;
     OwnPtr<NetworkResourcesData> m_resourcesData;
     bool m_loadingXHRSynchronously;
+
+    // FIXME: InspectorResourceAgent should now be aware of style recalculation.
+    RefPtr<InspectorObject> m_styleRecalculationInitiator;
+    bool m_isRecalculatingStyle;
 };
 
 } // namespace WebCore

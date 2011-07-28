@@ -329,7 +329,7 @@
                     { "name": "text", "type": "string", "description": "Message text." },
                     { "name": "networkIdentifier", "type": "integer", "optional": true, "description": "Identifier of the network request associated with the console message." },
                     { "name": "parameters", "type": "array", "items": { "$ref": "Runtime.RemoteObject" }, "description": "Message parameters in case of the formatted message." },
-                    { "name": "stackTrace", "type": "array", "optional": true, "items": { "$ref": "CallFrame" }, "description": "Call frames for assert and error messages." }
+                    { "name": "stackTrace", "$ref": "StackTrace", "description": "Stack trace for assert and error messages." },
                 ]
             },
             {
@@ -342,6 +342,12 @@
                     { "name": "lineNumber", "type": "string", "description": "JavaScript source line number." },
                     { "name": "columnNumber", "type": "string", "description": "JavaScript source column number." }
                 ]
+            },
+            {
+                "id": "StackTrace",
+                "type": "array",
+                "items": { "$ref": "CallFrame" },
+                "description": "Call frames for assert and error messages."
             }
         ],
         "commands": [
@@ -459,6 +465,17 @@
                     { "name": "response", "$ref": "ResourceResponse", "description": "Cached response data." },
                     { "name": "bodySize", "type": "number", "description": "Cached response body size." }
                 ]
+            },
+            {
+                "id": "Initiator",
+                "type": "object",
+                "description": "Information about the resource load initiator.",
+                "properties": [
+                    { "name": "type", "type": "string", "enum": ["parser", "script", "other"], "description": "Type of this initiator." },
+                    { "name": "stackTrace", "$ref": "Console.StackTrace", "description": "Initiator JavaScript stack trace, set for Script only." },
+                    { "name": "url", "type": "string", "optional": true, "description": "Initiator URL, set for Parser type only." },
+                    { "name": "lineNumber", "type": "number", "optional": true, "description": "Initiator line number, set for Parser type only." }
+                ]
             }
         ],
         "commands": [
@@ -535,7 +552,8 @@
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
                     { "name": "request", "$ref": "ResourceRequest", "description": "Request data." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
-                    { "name": "stackTrace", "type": "array", "items": { "$ref": "Console.CallFrame"}, "description": "JavaScript stack trace upon issuing this request." },
+                    { "name": "initiator", "$ref": "Initiator", "description": "Request initiator." },
+                    { "name": "stackTrace", "$ref": "Console.StackTrace", "description": "JavaScript stack trace upon issuing this request." },
                     { "name": "redirectResponse", "optional": true, "$ref": "ResourceResponse", "description": "Redirect response data." }
                 ]
             },
@@ -593,6 +611,7 @@
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
+                    { "name": "initiator", "$ref": "Initiator", "description": "Request initiator." },
                     { "name": "resource", "$ref": "CachedResource", "description": "Cached resource data." }
                 ]
             },

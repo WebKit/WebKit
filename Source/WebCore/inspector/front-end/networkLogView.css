@@ -89,6 +89,7 @@
 .network-log-grid td.method-column,
 .network-log-grid td.status-column,
 .network-log-grid td.type-column,
+.network-log-grid td.initiator-column,
 .network-log-grid td.size-column,
 .network-log-grid td.time-column {
     background-color: rgba(0, 0, 0, 0.07);
@@ -110,6 +111,10 @@
 .network-cell-subtitle {
     font-weight: normal;
     color: gray;
+}
+
+.initiator-column a {
+    color: inherit;
 }
 
 .network-log-grid tr.selected .network-cell-subtitle {

@@ -131,7 +131,7 @@ WebInspector.NetworkDispatcher.prototype = {
         return response && !response.status && !response.mimeType && !Object.keys(response.headers).length;
     },
 
-    requestWillBeSent: function(identifier, frameId, loaderId, documentURL, request, time, stackTrace, redirectResponse)
+    requestWillBeSent: function(identifier, frameId, loaderId, documentURL, request, time, initiator, stackTrace, redirectResponse)
     {
         var resource = this._inflightResourcesById[identifier];
         if (resource) {
@@ -141,7 +141,7 @@ WebInspector.NetworkDispatcher.prototype = {
             this.responseReceived(identifier, time, "Other", redirectResponse);
             resource = this._appendRedirect(identifier, time, request.url);
         } else
-            resource = this._createResource(identifier, frameId, loaderId, request.url, documentURL, stackTrace);
+            resource = this._createResource(identifier, frameId, loaderId, request.url, documentURL, initiator, stackTrace);
         resource.hasNetworkData = true;
         this._updateResourceWithRequest(resource, request);
         resource.startTime = time;
@@ -212,9 +212,9 @@ WebInspector.NetworkDispatcher.prototype = {
         this._finishResource(resource, time);
     },
 
-    resourceLoadedFromMemoryCache: function(identifier, frameId, loaderId, documentURL, time, cachedResource)
+    resourceLoadedFromMemoryCache: function(identifier, frameId, loaderId, documentURL, time, initiator, cachedResource)
     {
-        var resource = this._createResource(identifier, frameId, loaderId, cachedResource.url, documentURL);
+        var resource = this._createResource(identifier, frameId, loaderId, cachedResource.url, documentURL, initiator);
         this._updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
         resource.requestMethod = "GET";
@@ -286,7 +286,7 @@ WebInspector.NetworkDispatcher.prototype = {
         delete originalResource.redirects;
         this._finishResource(originalResource, time);
         var newResource = this._createResource(identifier, originalResource.frameId, originalResource.loaderId,
-             redirectURL, originalResource.documentURL, originalResource.stackTrace);
+             redirectURL, originalResource.documentURL, originalResource.initiator, originalResource.stackTrace);
         newResource.redirects = previousRedirects.concat(originalResource);
         return newResource;
     },
@@ -317,11 +317,12 @@ WebInspector.NetworkDispatcher.prototype = {
         this._manager.dispatchEventToListeners(eventType, resource);
     },
 
-    _createResource: function(identifier, frameId, loaderId, url, documentURL, stackTrace)
+    _createResource: function(identifier, frameId, loaderId, url, documentURL, initiator, stackTrace)
     {
         var resource = new WebInspector.Resource(identifier, url, loaderId);
         resource.documentURL = documentURL;
         resource.frameId = frameId;
+        resource.initiator = initiator;
         resource.stackTrace = stackTrace;
         return resource;
     }

@@ -388,6 +388,8 @@ InspectorInstrumentationCookie InspectorInstrumentation::willRecalculateStyleImp
         timelineAgent->willRecalculateStyle();
         timelineAgentId = timelineAgent->id();
     }
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->willRecalculateStyle();
     return InspectorInstrumentationCookie(instrumentingAgents, timelineAgentId);
 }
 
@@ -395,6 +397,17 @@ void InspectorInstrumentation::didRecalculateStyleImpl(const InspectorInstrument
 {
     if (InspectorTimelineAgent* timelineAgent = retrieveTimelineAgent(cookie))
         timelineAgent->didRecalculateStyle();
+    InstrumentingAgents* instrumentingAgents = cookie.first;
+    if (!instrumentingAgents)
+        return;
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->didRecalculateStyle();
+}
+
+void InspectorInstrumentation::didScheduleStyleRecalculationImpl(InstrumentingAgents* instrumentingAgents, Document* document)
+{
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->didScheduleStyleRecalculation(document);
 }
 
 void InspectorInstrumentation::applyUserAgentOverrideImpl(InstrumentingAgents* instrumentingAgents, String* userAgent)

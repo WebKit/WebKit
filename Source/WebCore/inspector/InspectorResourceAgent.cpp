@@ -60,6 +60,7 @@
 #include "ResourceResponse.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "ScriptableDocumentParser.h"
 #include "WebSocketHandshakeRequest.h"
 #include "WebSocketHandshakeResponse.h"
 
@@ -231,7 +232,8 @@ void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentL
         callStackValue = callStack->buildInspectorArray();
     else
         callStackValue = InspectorArray::create();
-    m_frontend->requestWillBeSent(resourceId, m_pageAgent->frameId(loader->frame()), m_pageAgent->loaderId(loader), loader->url().string(), buildObjectForResourceRequest(request), currentTime(), callStackValue, buildObjectForResourceResponse(redirectResponse));
+    RefPtr<InspectorObject> initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : 0);
+    m_frontend->requestWillBeSent(resourceId, m_pageAgent->frameId(loader->frame()), m_pageAgent->loaderId(loader), loader->url().string(), buildObjectForResourceRequest(request), currentTime(), initiatorObject, callStackValue, buildObjectForResourceResponse(redirectResponse));
 }
 
 void InspectorResourceAgent::markResourceAsCached(unsigned long identifier)
@@ -314,8 +316,9 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
     String resourceId = IdentifiersFactory::resourceId(identifier);
     m_resourcesData->resourceCreated(resourceId, loaderId);
     m_resourcesData->addCachedResource(resourceId, resource);
+    RefPtr<InspectorObject> initiatorObject = buildInitiatorObject(loader->frame() ? loader->frame()->document() : 0);
 
-    m_frontend->resourceLoadedFromMemoryCache(resourceId, frameId, loaderId, loader->url().string(), currentTime(), buildObjectForCachedResource(*resource));
+    m_frontend->resourceLoadedFromMemoryCache(resourceId, frameId, loaderId, loader->url().string(), currentTime(), initiatorObject, buildObjectForCachedResource(*resource));
 }
 
 void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, const String& sourceString)
@@ -347,6 +350,49 @@ void InspectorResourceAgent::applyUserAgentOverride(String* userAgent)
 {
     if (!m_userAgentOverride.isEmpty())
         *userAgent = m_userAgentOverride;
+}
+
+void InspectorResourceAgent::willRecalculateStyle()
+{
+    m_isRecalculatingStyle = true;
+}
+
+void InspectorResourceAgent::didRecalculateStyle()
+{
+    m_isRecalculatingStyle = false;
+    m_styleRecalculationInitiator = nullptr;
+}
+
+void InspectorResourceAgent::didScheduleStyleRecalculation(Document* document)
+{
+    if (!m_styleRecalculationInitiator)
+        m_styleRecalculationInitiator = buildInitiatorObject(document);
+}
+
+PassRefPtr<InspectorObject> InspectorResourceAgent::buildInitiatorObject(Document* document)
+{
+    RefPtr<ScriptCallStack> stackTrace = createScriptCallStack(ScriptCallStack::maxCallStackSizeToCapture, true);
+    if (stackTrace && stackTrace->size() > 0) {
+        RefPtr<InspectorObject> initiatorObject = InspectorObject::create();
+        initiatorObject->setString("type", "script");
+        initiatorObject->setArray("stackTrace", stackTrace->buildInspectorArray());
+        return initiatorObject;
+    }
+
+    if (document && document->scriptableDocumentParser()) {
+        RefPtr<InspectorObject> initiatorObject = InspectorObject::create();
+        initiatorObject->setString("type", "parser");
+        initiatorObject->setString("url", document->url().string());
+        initiatorObject->setNumber("lineNumber", document->scriptableDocumentParser()->lineNumber() + 1);
+        return initiatorObject;
+    }
+
+    if (m_isRecalculatingStyle && m_styleRecalculationInitiator)
+        return m_styleRecalculationInitiator;
+
+    RefPtr<InspectorObject> initiatorObject = InspectorObject::create();
+    initiatorObject->setString("type", "other");
+    return initiatorObject;
 }
 
 #if ENABLE(WEB_SOCKETS)
@@ -527,6 +573,7 @@ InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentin
     , m_state(state)
     , m_resourcesData(adoptPtr(new NetworkResourcesData()))
     , m_loadingXHRSynchronously(false)
+    , m_isRecalculatingStyle(false)
 {
     if (isBackgroundEventsCollectionEnabled()) {
         initializeBackgroundCollection();
