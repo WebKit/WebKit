@@ -3840,15 +3840,6 @@ BUGWK65155 : media/audio-only-video-intrinsic-size.html = CRASH PASS
 BUGWK65155 : fast/dom/beforeload/script-before-load-dynamic.html = CRASH PASS
 BUGWK65155 : fast/speech/input-appearance-numberandspeech.html = CRASH PASS FAIL
 
-// Needs new baseline -- visual appearance of file upload control has changed.
-BUGWK64692 WIN : fast/forms/input-file-re-render.html = IMAGE
-BUGWK64692 WIN : fast/forms/form-element-geometry.html = IMAGE
-BUGWK64692 WIN : fast/forms/file-input-direction.html = IMAGE
-BUGWK64692 WIN : fast/forms/input-appearance-height.html = IMAGE
-BUGWK64692 WIN : fast/forms/input-value.html = IMAGE
-BUGWK64692 WIN : fast/forms/box-shadow-override.html = IMAGE
-BUGWK64692 WIN : fast/forms/file-input-disabled.html = IMAGE
-
 BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH

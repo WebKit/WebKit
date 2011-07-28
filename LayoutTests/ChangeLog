@@ -1,3 +1,23 @@
+2011-07-28  Patrick Dubroy  <dubroy@chromium.org>
+
+        Rebaseline pixel tests for file upload controls on chromium-win.
+        https://bugs.webkit.org/show_bug.cgi?id=65245
+
+        Reviewed by Gustavo Noronha Silva.
+
+        r91759 changed the appearance of file upload controls on gtk,
+        chromium-win and chromium-linux. New baselines were already committed
+        for chromium-linux (same changeset) and gtk (r91759).
+
+        * platform/chromium-win/fast/forms/box-shadow-override-expected.png:
+        * platform/chromium-win/fast/forms/file-input-direction-expected.png:
+        * platform/chromium-win/fast/forms/file-input-disabled-expected.png:
+        * platform/chromium-win/fast/forms/form-element-geometry-expected.png:
+        * platform/chromium-win/fast/forms/input-appearance-height-expected.png:
+        * platform/chromium-win/fast/forms/input-file-re-render-expected.png:
+        * platform/chromium-win/fast/forms/input-value-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Add platform specific expected result for a new test.
