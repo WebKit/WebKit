@@ -1,8 +1,8 @@
-layer at (0,0) size 785x781
+layer at (0,0) size 785x789
   RenderView at (0,0) size 785x600
-layer at (0,0) size 785x781
-  RenderBlock {HTML} at (0,0) size 785x781
-    RenderBody {BODY} at (8,8) size 769x765
+layer at (0,0) size 785x789
+  RenderBlock {HTML} at (0,0) size 785x789
+    RenderBody {BODY} at (8,8) size 769x773
       RenderBlock {DIV} at (0,0) size 769x20
         RenderInline {SPAN} at (0,0) size 309x19
           RenderText {#text} at (0,0) size 293x19
@@ -65,20 +65,20 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x16
           RenderText {#text} at (440,1) size 8x16
             text run at (440,1) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,100) size 769x20
-        RenderInline {SPAN} at (0,0) size 311x19
-          RenderText {#text} at (0,0) size 295x19
-            text run at (0,0) width 295: "Using font \"Meiryo\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x19
-            RenderText {#text} at (295,0) size 8x19
-              text run at (295,0) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x19
-            RenderText {#text} at (303,0) size 8x19
-              text run at (303,0) width 8: "\x{A5}"
-        RenderInline {SPAN} at (0,0) size 8x19
-          RenderText {#text} at (311,0) size 8x19
-            text run at (311,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,120) size 769x20
+      RenderBlock {DIV} at (0,100) size 769x24
+        RenderInline {SPAN} at (0,0) size 408x24
+          RenderText {#text} at (0,0) size 388x24
+            text run at (0,0) width 388: "Using font \"Meiryo\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 10x24
+            RenderText {#text} at (388,0) size 10x24
+              text run at (388,0) width 10: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 10x24
+            RenderText {#text} at (398,0) size 10x24
+              text run at (398,0) width 10: "\x{A5}"
+        RenderInline {SPAN} at (0,0) size 10x24
+          RenderText {#text} at (408,0) size 10x24
+            text run at (408,0) width 10: "\x{A5}"
+      RenderBlock {DIV} at (0,124) size 769x20
         RenderInline {SPAN} at (0,0) size 399x16
           RenderText {#text} at (0,1) size 381x16
             text run at (0,1) width 381: "Using font \"\x{FF2D}\x{FF33} \x{FF30}\x{30B4}\x{30B7}\x{30C3}\x{30AF}\". expected: yen sign, actual: \x{A5}"
@@ -91,7 +91,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 9x16
           RenderText {#text} at (399,1) size 9x16
             text run at (399,1) width 9: "\x{A5}"
-      RenderBlock {DIV} at (0,140) size 769x20
+      RenderBlock {DIV} at (0,144) size 769x20
         RenderInline {SPAN} at (0,0) size 472x16
           RenderText {#text} at (0,1) size 456x16
             text run at (0,1) width 456: "Using font \"\x{FF2D}\x{FF33} \x{30B4}\x{30B7}\x{30C3}\x{30AF}\". expected: yen sign, actual: \x{A5}"
@@ -104,7 +104,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x16
           RenderText {#text} at (472,1) size 8x16
             text run at (472,1) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,160) size 769x20
+      RenderBlock {DIV} at (0,164) size 769x20
         RenderInline {SPAN} at (0,0) size 383x16
           RenderText {#text} at (0,1) size 367x16
             text run at (0,1) width 367: "Using font \"\x{FF2D}\x{FF33} \x{FF30}\x{660E}\x{671D}\". expected: yen sign, actual: \x{A5}"
@@ -117,7 +117,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x16
           RenderText {#text} at (383,1) size 8x16
             text run at (383,1) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,180) size 769x20
+      RenderBlock {DIV} at (0,184) size 769x20
         RenderInline {SPAN} at (0,0) size 440x16
           RenderText {#text} at (0,1) size 424x16
             text run at (0,1) width 424: "Using font \"\x{FF2D}\x{FF33} \x{660E}\x{671D}\". expected: yen sign, actual: \x{A5}"
@@ -130,20 +130,20 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x16
           RenderText {#text} at (440,1) size 8x16
             text run at (440,1) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,200) size 769x20
-        RenderInline {SPAN} at (0,0) size 319x19
-          RenderText {#text} at (0,0) size 303x19
-            text run at (0,0) width 303: "Using font \"\x{30E1}\x{30A4}\x{30EA}\x{30AA}\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x19
-            RenderText {#text} at (303,0) size 8x19
-              text run at (303,0) width 8: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 8x19
-            RenderText {#text} at (311,0) size 8x19
-              text run at (311,0) width 8: "\x{A5}"
-        RenderInline {SPAN} at (0,0) size 8x19
-          RenderText {#text} at (319,0) size 8x19
-            text run at (319,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,220) size 769x20
+      RenderBlock {DIV} at (0,204) size 769x24
+        RenderInline {SPAN} at (0,0) size 420x24
+          RenderText {#text} at (0,0) size 400x24
+            text run at (0,0) width 400: "Using font \"\x{30E1}\x{30A4}\x{30EA}\x{30AA}\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 10x24
+            RenderText {#text} at (400,0) size 10x24
+              text run at (400,0) width 10: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 10x24
+            RenderText {#text} at (410,0) size 10x24
+              text run at (410,0) width 10: "\x{A5}"
+        RenderInline {SPAN} at (0,0) size 10x24
+          RenderText {#text} at (420,0) size 10x24
+            text run at (420,0) width 10: "\x{A5}"
+      RenderBlock {DIV} at (0,228) size 769x20
         RenderInline {SPAN} at (0,0) size 302x19
           RenderText {#text} at (0,0) size 294x19
             text run at (0,0) width 294: "Using font \"Times\". expected: backslash, actual: \\"
@@ -156,7 +156,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 4x19
           RenderText {#text} at (302,0) size 4x19
             text run at (302,0) width 4: "\\"
-      RenderBlock {DIV} at (0,240) size 769x20
+      RenderBlock {DIV} at (0,248) size 769x20
         RenderInline {SPAN} at (0,0) size 306x19
           RenderText {#text} at (0,0) size 298x19
             text run at (0,0) width 298: "Using font \"foobar\". expected: backslash, actual: \\"
@@ -169,7 +169,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 4x19
           RenderText {#text} at (306,0) size 4x19
             text run at (306,0) width 4: "\\"
-      RenderBlock {DIV} at (0,260) size 769x20
+      RenderBlock {DIV} at (0,268) size 769x20
         RenderInline {SPAN} at (0,0) size 443x19
           RenderText {#text} at (0,0) size 427x19
             text run at (0,0) width 427: "Using font \"*INVALID FONT NAME*\". expected: yen sign, actual: \x{A5}"
@@ -182,7 +182,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x19
           RenderText {#text} at (443,0) size 8x19
             text run at (443,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,280) size 769x20
+      RenderBlock {DIV} at (0,288) size 769x20
         RenderInline {SPAN} at (0,0) size 292x19
           RenderText {#text} at (0,0) size 276x19
             text run at (0,0) width 276: "Using font \"serif\". expected: yen sign, actual: \x{A5}"
@@ -195,7 +195,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x19
           RenderText {#text} at (292,0) size 8x19
             text run at (292,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,300) size 769x20
+      RenderBlock {DIV} at (0,308) size 769x20
         RenderInline {SPAN} at (0,0) size 374x18
           RenderText {#text} at (0,0) size 356x18
             text run at (0,0) width 356: "Using font \"sans-serif\". expected: yen sign, actual: \x{A5}"
@@ -208,7 +208,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 9x18
           RenderText {#text} at (374,0) size 9x18
             text run at (374,0) width 9: "\x{A5}"
-      RenderBlock {DIV} at (0,320) size 769x23
+      RenderBlock {DIV} at (0,328) size 769x23
         RenderInline {SPAN} at (0,0) size 385x23
           RenderText {#text} at (0,0) size 365x23
             text run at (0,0) width 365: "Using font \"cursive\". expected: yen sign, actual: \x{A5}"
@@ -221,7 +221,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 10x23
           RenderText {#text} at (385,0) size 10x23
             text run at (385,0) width 10: "\x{A5}"
-      RenderBlock {DIV} at (0,343) size 769x22
+      RenderBlock {DIV} at (0,351) size 769x22
         RenderInline {SPAN} at (0,0) size 332x20
           RenderText {#text} at (0,0) size 316x20
             text run at (0,0) width 316: "Using font \"fantasy\". expected: yen sign, actual: \x{A5}"
@@ -234,7 +234,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x20
           RenderText {#text} at (332,0) size 8x20
             text run at (332,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,365) size 769x20
+      RenderBlock {DIV} at (0,373) size 769x20
         RenderInline {SPAN} at (0,0) size 440x16
           RenderText {#text} at (0,3) size 424x16
             text run at (0,3) width 424: "Using font \"monospace\". expected: yen sign, actual: \x{A5}"
@@ -247,7 +247,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x16
           RenderText {#text} at (440,3) size 8x16
             text run at (440,3) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,385) size 769x20
+      RenderBlock {DIV} at (0,393) size 769x20
         RenderInline {SPAN} at (0,0) size 350x19
           RenderText {#text} at (0,0) size 342x19
             text run at (0,0) width 342: "Using font \"-webkit-body\". expected: backslash, actual: \\"
@@ -260,7 +260,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 4x19
           RenderText {#text} at (350,0) size 4x19
             text run at (350,0) width 4: "\\"
-      RenderBlock {DIV} at (0,405) size 769x20
+      RenderBlock {DIV} at (0,413) size 769x20
         RenderInline {SPAN} at (0,0) size 357x18
           RenderText {#text} at (0,0) size 339x18
             text run at (0,0) width 339: "Using font \"caption\". expected: yen sign, actual: \x{A5}"
@@ -270,7 +270,7 @@ layer at (0,0) size 785x781
           RenderInline {SPAN} at (0,0) size 9x18
             RenderText {#text} at (348,0) size 9x18
               text run at (348,0) width 9: "\x{A5}"
-      RenderBlock {DIV} at (0,425) size 769x20
+      RenderBlock {DIV} at (0,433) size 769x20
         RenderInline {SPAN} at (0,0) size 335x18
           RenderText {#text} at (0,0) size 317x18
             text run at (0,0) width 317: "Using font \"icon\". expected: yen sign, actual: \x{A5}"
@@ -280,17 +280,17 @@ layer at (0,0) size 785x781
           RenderInline {SPAN} at (0,0) size 9x18
             RenderText {#text} at (326,0) size 9x18
               text run at (326,0) width 9: "\x{A5}"
-      RenderBlock {DIV} at (0,445) size 769x20
-        RenderInline {SPAN} at (0,0) size 246x13
-          RenderText {#text} at (0,4) size 234x13
-            text run at (0,4) width 234: "Using font \"menu\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (234,4) size 6x13
-              text run at (234,4) width 6: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (240,4) size 6x13
-              text run at (240,4) width 6: "\x{A5}"
-      RenderBlock {DIV} at (0,465) size 769x20
+      RenderBlock {DIV} at (0,453) size 769x20
+        RenderInline {SPAN} at (0,0) size 264x15
+          RenderText {#text} at (0,3) size 252x15
+            text run at (0,3) width 252: "Using font \"menu\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 6x15
+            RenderText {#text} at (252,3) size 6x15
+              text run at (252,3) width 6: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 6x15
+            RenderText {#text} at (258,3) size 6x15
+              text run at (258,3) width 6: "\x{A5}"
+      RenderBlock {DIV} at (0,473) size 769x20
         RenderInline {SPAN} at (0,0) size 401x18
           RenderText {#text} at (0,0) size 383x18
             text run at (0,0) width 383: "Using font \"message-box\". expected: yen sign, actual: \x{A5}"
@@ -300,27 +300,27 @@ layer at (0,0) size 785x781
           RenderInline {SPAN} at (0,0) size 9x18
             RenderText {#text} at (392,0) size 9x18
               text run at (392,0) width 9: "\x{A5}"
-      RenderBlock {DIV} at (0,485) size 769x20
-        RenderInline {SPAN} at (0,0) size 282x13
-          RenderText {#text} at (0,4) size 270x13
-            text run at (0,4) width 270: "Using font \"small-caption\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (270,4) size 6x13
-              text run at (270,4) width 6: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (276,4) size 6x13
-              text run at (276,4) width 6: "\x{A5}"
-      RenderBlock {DIV} at (0,505) size 769x20
-        RenderInline {SPAN} at (0,0) size 270x13
-          RenderText {#text} at (0,4) size 258x13
-            text run at (0,4) width 258: "Using font \"status-bar\". expected: yen sign, actual: \x{A5}"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (258,4) size 6x13
-              text run at (258,4) width 6: "\x{A5}"
-          RenderInline {SPAN} at (0,0) size 6x13
-            RenderText {#text} at (264,4) size 6x13
-              text run at (264,4) width 6: "\x{A5}"
-      RenderBlock {DIV} at (0,525) size 769x20
+      RenderBlock {DIV} at (0,493) size 769x20
+        RenderInline {SPAN} at (0,0) size 306x15
+          RenderText {#text} at (0,3) size 294x15
+            text run at (0,3) width 294: "Using font \"small-caption\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 6x15
+            RenderText {#text} at (294,3) size 6x15
+              text run at (294,3) width 6: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 6x15
+            RenderText {#text} at (300,3) size 6x15
+              text run at (300,3) width 6: "\x{A5}"
+      RenderBlock {DIV} at (0,513) size 769x20
+        RenderInline {SPAN} at (0,0) size 286x15
+          RenderText {#text} at (0,3) size 274x15
+            text run at (0,3) width 274: "Using font \"status-bar\". expected: yen sign, actual: \x{A5}"
+          RenderInline {SPAN} at (0,0) size 6x15
+            RenderText {#text} at (274,3) size 6x15
+              text run at (274,3) width 6: "\x{A5}"
+          RenderInline {SPAN} at (0,0) size 6x15
+            RenderText {#text} at (280,3) size 6x15
+              text run at (280,3) width 6: "\x{A5}"
+      RenderBlock {DIV} at (0,533) size 769x20
         RenderInline {SPAN} at (0,0) size 374x16
           RenderText {#text} at (0,2) size 360x16
             text run at (0,2) width 360: "Using font \"-webkit-mini-control\". expected: yen sign, actual: \x{A5}"
@@ -330,7 +330,7 @@ layer at (0,0) size 785x781
           RenderInline {SPAN} at (0,0) size 7x16
             RenderText {#text} at (367,2) size 7x16
               text run at (367,2) width 7: "\x{A5}"
-      RenderBlock {DIV} at (0,545) size 769x20
+      RenderBlock {DIV} at (0,553) size 769x20
         RenderInline {SPAN} at (0,0) size 381x16
           RenderText {#text} at (0,2) size 367x16
             text run at (0,2) width 367: "Using font \"-webkit-small-control\". expected: yen sign, actual: \x{A5}"
@@ -340,7 +340,7 @@ layer at (0,0) size 785x781
           RenderInline {SPAN} at (0,0) size 7x16
             RenderText {#text} at (374,2) size 7x16
               text run at (374,2) width 7: "\x{A5}"
-      RenderBlock {DIV} at (0,565) size 769x20
+      RenderBlock {DIV} at (0,573) size 769x20
         RenderInline {SPAN} at (0,0) size 346x16
           RenderText {#text} at (0,2) size 332x16
             text run at (0,2) width 332: "Using font \"-webkit-control\". expected: yen sign, actual: \x{A5}"
@@ -350,7 +350,7 @@ layer at (0,0) size 785x781
           RenderInline {SPAN} at (0,0) size 7x16
             RenderText {#text} at (339,2) size 7x16
               text run at (339,2) width 7: "\x{A5}"
-      RenderBlock {DIV} at (0,585) size 769x20
+      RenderBlock {DIV} at (0,593) size 769x20
         RenderInline {SPAN} at (0,0) size 496x16
           RenderText {#text} at (0,1) size 480x16
             text run at (0,1) width 480: "Using font \"MS Gothic, Times\". expected: yen sign, actual: \x{A5}"
@@ -363,7 +363,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x16
           RenderText {#text} at (496,1) size 8x16
             text run at (496,1) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,605) size 769x20
+      RenderBlock {DIV} at (0,613) size 769x20
         RenderInline {SPAN} at (0,0) size 377x19
           RenderText {#text} at (0,0) size 369x19
             text run at (0,0) width 369: "Using font \"Times, MS Gothic\". expected: backslash, actual: \\"
@@ -376,7 +376,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 4x19
           RenderText {#text} at (377,0) size 4x19
             text run at (377,0) width 4: "\\"
-      RenderBlock {DIV} at (0,625) size 769x20
+      RenderBlock {DIV} at (0,633) size 769x20
         RenderInline {SPAN} at (0,0) size 504x16
           RenderText {#text} at (0,1) size 488x16
             text run at (0,1) width 488: "Using font \"MS Gothic, foobar\". expected: yen sign, actual: \x{A5}"
@@ -389,7 +389,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x16
           RenderText {#text} at (504,1) size 8x16
             text run at (504,1) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,645) size 769x20
+      RenderBlock {DIV} at (0,653) size 769x20
         RenderInline {SPAN} at (0,0) size 512x16
           RenderText {#text} at (0,1) size 496x16
             text run at (0,1) width 496: "Using font \"foobar, MS Gothic\". expected: backslash, actual: \\"
@@ -402,7 +402,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x16
           RenderText {#text} at (512,1) size 8x16
             text run at (512,1) width 8: "\\"
-      RenderBlock {DIV} at (0,665) size 769x20
+      RenderBlock {DIV} at (0,673) size 769x20
         RenderInline {SPAN} at (0,0) size 336x19
           RenderText {#text} at (0,0) size 320x19
             text run at (0,0) width 320: "Using font \"serif, Times\". expected: yen sign, actual: \x{A5}"
@@ -415,7 +415,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x19
           RenderText {#text} at (336,0) size 8x19
             text run at (336,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,685) size 769x20
+      RenderBlock {DIV} at (0,693) size 769x20
         RenderInline {SPAN} at (0,0) size 335x19
           RenderText {#text} at (0,0) size 327x19
             text run at (0,0) width 327: "Using font \"Times, serif\". expected: backslash, actual: \\"
@@ -428,7 +428,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 4x19
           RenderText {#text} at (335,0) size 4x19
             text run at (335,0) width 4: "\\"
-      RenderBlock {DIV} at (0,705) size 769x20
+      RenderBlock {DIV} at (0,713) size 769x20
         RenderInline {SPAN} at (0,0) size 325x19
           RenderText {#text} at (0,0) size 309x19
             text run at (0,0) width 309: "Using font \"serif, serif\". expected: yen sign, actual: \x{A5}"
@@ -441,7 +441,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 8x19
           RenderText {#text} at (325,0) size 8x19
             text run at (325,0) width 8: "\x{A5}"
-      RenderBlock {DIV} at (0,725) size 769x20
+      RenderBlock {DIV} at (0,733) size 769x20
         RenderInline {SPAN} at (0,0) size 350x19
           RenderText {#text} at (0,0) size 342x19
             text run at (0,0) width 342: "Using font \"foobar, Times\". expected: backslash, actual: \\"
@@ -454,7 +454,7 @@ layer at (0,0) size 785x781
         RenderInline {SPAN} at (0,0) size 4x19
           RenderText {#text} at (350,0) size 4x19
             text run at (350,0) width 4: "\\"
-      RenderBlock {DIV} at (0,745) size 769x20
+      RenderBlock {DIV} at (0,753) size 769x20
         RenderInline {SPAN} at (0,0) size 350x19
           RenderText {#text} at (0,0) size 342x19
             text run at (0,0) width 342: "Using font \"Times, foobar\". expected: backslash, actual: \\"

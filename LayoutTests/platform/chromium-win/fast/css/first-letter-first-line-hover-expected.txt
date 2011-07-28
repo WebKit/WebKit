@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600 [color=#FF0000]
+    RenderBody {BODY} at (8,8) size 784x544
+      RenderBlock {P} at (0,0) size 784x77
+        RenderInline (generated) at (0,0) size 34x55 [color=#008000] [bgcolor=#FFC0CB]
+          RenderText {#text} at (0,1) size 34x55
+            text run at (0,1) width 34: "A"
+        RenderText {#text} at (34,1) size 190x55
+          text run at (34,1) width 190: "BCDEFG"
+        RenderBR {BR} at (224,44) size 0x0
+        RenderInline {SPAN} at (0,0) size 212x19 [color=#000000]
+          RenderText {#text} at (0,57) size 212x19
+            text run at (0,57) width 212: "Hover over \"A\". It must stay green."
+        RenderText {#text} at (0,0) size 0x0

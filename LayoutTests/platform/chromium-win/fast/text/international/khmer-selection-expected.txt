@@ -4,25 +4,25 @@ layer at (0,0) size 800x128
   RenderBlock {HTML} at (0,0) size 800x128
     RenderBody {BODY} at (8,16) size 784x96
       RenderBlock {P} at (0,0) size 784x20
-        RenderInline {NOBR} at (0,0) size 280x19
-          RenderInline {B} at (0,0) size 52x19
-            RenderText {#text} at (0,0) size 52x19
-              text run at (0,0) width 52: "\x{179C}\x{17C9}\x{17C2}\x{1794}"
-          RenderText {#text} at (52,0) size 4x19
-            text run at (52,0) width 4: " "
-          RenderInline {A} at (0,0) size 72x19 [color=#0000EE]
-            RenderText {#text} at (56,0) size 72x19
-              text run at (56,0) width 72: "\x{179A}\x{17BC}\x{1794}\x{1797}\x{17B6}\x{1796}"
-          RenderText {#text} at (128,0) size 4x19
-            text run at (128,0) width 4: " "
-          RenderInline {A} at (0,0) size 60x19 [color=#0000EE]
-            RenderText {#text} at (132,0) size 60x19
-              text run at (132,0) width 60: "\x{1780}\x{17D2}\x{179A}\x{17BB}\x{1798}"
-          RenderText {#text} at (192,0) size 4x19
-            text run at (192,0) width 4: " "
-          RenderInline {A} at (0,0) size 84x19 [color=#0000EE]
-            RenderText {#text} at (196,0) size 84x19
-              text run at (196,0) width 84: "\x{1790}\x{178F}\x{17AF}\x{1780}\x{179F}\x{17B6}\x{179A}"
+        RenderInline {NOBR} at (0,0) size 111x19
+          RenderInline {B} at (0,0) size 18x19
+            RenderText {#text} at (0,0) size 18x19
+              text run at (0,0) width 18: "\x{179C}\x{17C9}\x{17C2}\x{1794}"
+          RenderText {#text} at (18,0) size 4x19
+            text run at (18,0) width 4: " "
+          RenderInline {A} at (0,0) size 26x19 [color=#0000EE]
+            RenderText {#text} at (22,0) size 26x19
+              text run at (22,0) width 26: "\x{179A}\x{17BC}\x{1794}\x{1797}\x{17B6}\x{1796}"
+          RenderText {#text} at (48,0) size 4x19
+            text run at (48,0) width 4: " "
+          RenderInline {A} at (0,0) size 16x19 [color=#0000EE]
+            RenderText {#text} at (52,0) size 16x19
+              text run at (52,0) width 16: "\x{1780}\x{17D2}\x{179A}\x{17BB}\x{1798}"
+          RenderText {#text} at (68,0) size 4x19
+            text run at (68,0) width 4: " "
+          RenderInline {A} at (0,0) size 39x19 [color=#0000EE]
+            RenderText {#text} at (72,0) size 39x19
+              text run at (72,0) width 39: "\x{1790}\x{178F}\x{17AF}\x{1780}\x{179F}\x{17B6}\x{179A}"
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,36) size 784x60
         RenderText {#text} at (0,0) size 501x19

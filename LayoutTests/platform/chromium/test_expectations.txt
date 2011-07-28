@@ -926,7 +926,8 @@ BUGCR32444 LINUX WIN : svg/hixie/text/003.html = FAIL
 // SVG masks aren't quite working yet.
 // Might also be related to https://bugs.webkit.org/show_bug.cgi?id=21910
 // New tests. We should fix these, but they don't need to block the current release
-BUGCR3244 LINUX WIN : fast/backgrounds/svg-as-mask.html = FAIL
+BUGCR3244 WIN LINUX : fast/backgrounds/svg-as-mask.html = FAIL
+BUGCR3244 WIN LINUX : svg/batik/masking/maskRegions.svg = FAIL
 BUGCR3244 WIN DEBUG : fast/backgrounds/animated-svg-as-mask.html = FAIL
 BUGCR3244 SLOW WIN RELEASE : fast/backgrounds/animated-svg-as-mask.html = FAIL
 BUGCR3244 LINUX : fast/backgrounds/animated-svg-as-mask.html = FAIL
@@ -1583,6 +1584,9 @@ BUGWK45957 LEOPARD : fast/multicol/column-rules-stacking.html = IMAGE
 //BUGCR26291 LEOPARD : fast/text/atsui-multiple-renderers.html = IMAGE
 BUGCR26291 : transforms/2d/hindi-rotated.html = IMAGE IMAGE+TEXT
 
+// I don't think we've ever passed this test correctly.
+BUG_SENORBLANCO : fast/text/international/hindi-whitespace.html = FAIL
+
 // The following upstream patches add -Webkit-color-correction support:
 // http://trac.webkit.org/changeset/50760
 // http://trac.webkit.org/changeset/50852
@@ -1815,8 +1819,6 @@ BUGCR42696 : http/tests/xmlhttprequest/cross-origin-authorization-with-embedder.
 
 // Started failing at r58152
 BUGWK38038 WIN LINUX MAC : fast/url/file-http-base.html = TEXT
-
-// New test, may be safe to just rebaseline.
 
 // Started failing at 58212
 BUGWK38108 MAC : fast/backgrounds/size/contain-and-cover.html = IMAGE
@@ -2223,7 +2225,6 @@ BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/index-validation-with-resized-bu
 
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS TEXT
-// BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
 BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 
 BUG_AUTO DEBUG : animations/suspend-resume-animation.html = PASS TEXT
@@ -2330,7 +2331,6 @@ BUGWK48143 : svg/dom/altGlyph-dom.xhtml = CRASH PASS
 BUGWK48256 WIN LINUX : fast/multicol/float-multicol.html = IMAGE+TEXT PASS
 BUGWK48341 XP DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
 BUGWK48341 MAC LINUX DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
-BUGWK58193 WIN7 : svg/W3C-SVG-1.1/masking-intro-01-f.svg = IMAGE
 BUGWK48352 : fast/blockflow/block-level-images.html = IMAGE PASS
 
 // Vertical text needs to be implemented in platforms other than OS X.
@@ -2975,120 +2975,8 @@ BUGCR78996 DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
 // The merged test is flaky on Chromium since then.
 BUGCR78998 DEBUG : fast/frames/frame-element-name.html = TEXT PASS
 
-// Windows 7 failures that need triaging and probably mostly just need
-// new baselines.
-BUGWK58193 WIN7 : fast/css/first-letter-first-line-hover.html = IMAGE+TEXT
-BUGWK58193 WIN7 : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
-BUGWK58193 WIN7 : fast/text/backslash-to-yen-sign.html = IMAGE+TEXT
-BUGWK58193 WIN7 : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
-BUGWK58193 LINUX WIN7 : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
-BUGWK58193 WIN7 : fast/text/international/khmer-selection.html = IMAGE+TEXT
-BUGWK58193 WIN7 : fast/text/international/plane2.html = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/g-dirLTR-ubNone.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/g-dirLTR-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/g-dirRTL-ubNone.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/g-dirRTL-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/text-dirLTR-ubNone.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/text-dirLTR-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/text-dirRTL-ubNone.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/text-dirRTL-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/W3C-I18N/tspan-direction-rtl.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/text/bidi-tspans.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : svg/zoom/page/zoom-mask-with-percentages.svg = IMAGE+TEXT
-BUGWK58193 WIN7 : css2.1/t1202-counter-09-b.html = IMAGE
-BUGWK58193 WIN7 : css2.1/t1202-counters-09-b.html = IMAGE
-BUGWK58193 WIN7 : editing/pasteboard/block-wrappers-necessary.html = IMAGE
-BUGWK58193 WIN7 : fast/block/positioning/auto/vertical-lr/007.html = IMAGE
-BUGWK58193 WIN7 : fast/block/positioning/auto/vertical-rl/007.html = IMAGE
-BUGWK58193 WIN7 : fast/blockflow/fallback-orientation.html = IMAGE
-BUGWK58193 WIN7 : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
-BUGWK58193 WIN7 : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-BUGWK58193 WIN7 : fast/css/line-height-determined-by-primary-font.html = IMAGE
-BUGWK58193 WIN7 : fast/dynamic/text-combine.html = IMAGE
-BUGWK58193 WIN7 : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGWK58193 WIN7 : fast/ruby/base-shorter-than-text.html = IMAGE
-BUGWK58193 WIN7 : fast/ruby/nested-ruby.html = IMAGE
-BUGWK58193 WIN7 : fast/text/drawBidiText.html = IMAGE
-BUGWK58193 WIN7 : fast/text/international/hindi-spacing.html = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
-BUGWK58193 WIN7 : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
-BUGWK58193 WIN7 : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
-BUGWK58193 WIN7 : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
-BUGWK58193 WIN7 : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
-BUGWK58193 WIN7 : svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html = IMAGE
-BUGWK58193 WIN7 : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
-BUGWK58193 WIN7 : svg/zoom/text/zoom-foreignObject.svg = IMAGE
-BUGWK58193 WIN7 : svg/custom/circular-marker-reference-1.svg = TEXT
-BUGWK58193 WIN7 : svg/custom/circular-marker-reference-3.svg = TEXT
-BUGWK58193 WIN7 : svg/custom/circular-marker-reference-4.svg = TEXT
 BUGWK58193 WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = TIMEOUT PASS TEXT
 
-BUGWK58193 VISTA : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
-BUGWK58193 VISTA : fast/text/international/khmer-selection.html = IMAGE+TEXT
-BUGWK58193 VISTA : svg/W3C-I18N/text-dirLTR-ubOverride.svg = IMAGE+TEXT
-BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context.svg = IMAGE+TEXT
-BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg = IMAGE+TEXT
-BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg = IMAGE+TEXT
-BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg = IMAGE+TEXT
-BUGWK58193 VISTA : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
-BUGWK58193 VISTA : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
-BUGWK58193 VISTA : svg/text/bidi-text-query.svg = IMAGE+TEXT
-BUGWK58193 VISTA : css2.1/t1202-counter-09-b.html = IMAGE
-BUGWK58193 VISTA : css2.1/t1202-counters-09-b.html = IMAGE
-BUGWK58193 VISTA : editing/pasteboard/block-wrappers-necessary.html = IMAGE
-BUGWK58193 VISTA : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
-BUGWK58193 VISTA : fast/css/line-height-determined-by-primary-font.html = IMAGE
-BUGWK58193 VISTA : fast/dynamic/text-combine.html = IMAGE
-BUGWK58193 VISTA : fast/ruby/nested-ruby.html = IMAGE
-BUGWK58193 VISTA : fast/text/drawBidiText.html = IMAGE
-BUGWK58193 VISTA : fast/text/international/danda-space.html = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirNone-anchorEnd.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirNone-anchorMiddle.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirNone-anchorStart.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirRTL-anchorEnd.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirRTL-anchorStart.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-no-markup.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context.svg = IMAGE
-BUGWK58193 VISTA : svg/W3C-SVG-1.1/metadata-example-01-b.svg = IMAGE
-BUGWK58193 VISTA : svg/batik/paints/patternRegions-positioned-objects.svg = IMAGE
-BUGWK58193 VISTA : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
-BUGWK58193 VISTA : svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html = IMAGE
-BUGWK58193 VISTA : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
-BUGWK58193 VISTA : svg/custom/circular-marker-reference-1.svg = TEXT
-BUGWK58193 VISTA : svg/custom/circular-marker-reference-3.svg = TEXT
-BUGWK58193 VISTA : svg/custom/circular-marker-reference-4.svg = TEXT
-BUGWK58193 VISTA : svg/zoom/page/zoom-mask-with-percentages.svg = TEXT
 
 // Added in Webkit r83470 without expected results.
 BUGJIANLI : fast/multicol/huge-column-count.html = MISSING

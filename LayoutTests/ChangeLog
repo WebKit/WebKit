@@ -1,5 +1,130 @@
 2011-07-28  Stephen White  <senorblanco@chromium.org>
 
+        Rebaseline many chromium win7 and vista tests.  This also revealed some
+        incorrect results checked into the tree, which I've deleted.
+
+        Unreviewed.
+
+        * platform/chromium-linux/fast/text/international/hindi-whitespace-expected.png: Removed.
+        * platform/chromium-linux/fast/text/international/hindi-whitespace-expected.txt: Removed.
+        * platform/chromium-linux/svg/batik/masking/maskRegions-expected.png: Removed.
+        * platform/chromium-linux/svg/batik/masking/maskRegions-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/text/international/hindi-whitespace-expected.png: Removed.
+        * platform/chromium-win-vista/css2.1/t1202-counter-09-b-expected.png: Removed.
+        * platform/chromium-win-vista/css2.1/t1202-counters-09-b-expected.png: Removed.
+        * platform/chromium-win-vista/editing/pasteboard/block-wrappers-necessary-expected.png:
+        * platform/chromium-win-vista/fast/text/drawBidiText-expected.png:
+        * platform/chromium-win-vista/fast/text/international/danda-space-expected.png: Added.
+        * platform/chromium-win-vista/fast/text/international/hindi-whitespace-expected.png: Removed.
+        * platform/chromium-win-vista/fast/text/international/hindi-whitespace-expected.txt: Removed.
+        * platform/chromium-win-vista/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.png: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-default-context-expected.txt: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.png: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context-expected.txt: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.png: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.png: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context-expected.txt: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.png: Added.
+        * platform/chromium-win-vista/svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/js-late-pattern-and-object-creation-expected.png:
+        * platform/chromium-win-vista/svg/text/bidi-text-query-expected.png: Added.
+        * platform/chromium-win-vista/svg/text/bidi-text-query-expected.txt: Added.
+        * platform/chromium-win-xp/fast/text/international/hindi-whitespace-expected.png: Removed.
+        * platform/chromium-win-xp/fast/text/international/hindi-whitespace-expected.txt: Removed.
+        * platform/chromium-win-xp/svg/batik/masking/maskRegions-expected.png: Removed.
+        * platform/chromium-win-xp/svg/batik/masking/maskRegions-expected.txt: Removed.
+        * platform/chromium-win/css2.1/t1202-counter-09-b-expected.png: Added.
+        * platform/chromium-win/css2.1/t1202-counters-09-b-expected.png: Added.
+        * platform/chromium-win/editing/pasteboard/block-wrappers-necessary-expected.png:
+        * platform/chromium-win/fast/block/positioning/auto/vertical-lr/007-expected.png:
+        * platform/chromium-win/fast/block/positioning/auto/vertical-rl/007-expected.png:
+        * platform/chromium-win/fast/blockflow/fallback-orientation-expected.png: Added.
+        * platform/chromium-win/fast/blockflow/japanese-ruby-horizontal-bt-expected.png:
+        * platform/chromium-win/fast/blockflow/vertical-baseline-alignment-expected.png:
+        * platform/chromium-win/fast/css/first-letter-first-line-hover-expected.png: Added.
+        * platform/chromium-win/fast/css/first-letter-first-line-hover-expected.txt: Added.
+        * platform/chromium-win/fast/css/line-height-determined-by-primary-font-expected.png:
+        * platform/chromium-win/fast/dynamic/text-combine-expected.png:
+        * platform/chromium-win/fast/repaint/repaint-across-writing-mode-boundary-expected.png:
+        * platform/chromium-win/fast/ruby/base-shorter-than-text-expected.png:
+        * platform/chromium-win/fast/ruby/nested-ruby-expected.png:
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-euc-expected.png:
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-euc-expected.txt:
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-expected.png: Added.
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-expected.txt: Added.
+        * platform/chromium-win/fast/text/drawBidiText-expected.png:
+        * platform/chromium-win/fast/text/international/bidi-mirror-he-ar-expected.png: Added.
+        * platform/chromium-win/fast/text/international/bidi-mirror-he-ar-expected.txt: Added.
+        * platform/chromium-win/fast/text/international/hindi-spacing-expected.png: Added.
+        * platform/chromium-win/fast/text/international/khmer-selection-expected.png:
+        * platform/chromium-win/fast/text/international/khmer-selection-expected.txt:
+        * platform/chromium-win/fast/text/international/plane2-expected.png: Added.
+        * platform/chromium-win/fast/text/international/plane2-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-I18N/g-dirLTR-ubNone-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/g-dirLTR-ubOverride-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/g-dirRTL-ubNone-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/g-dirRTL-ubOverride-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-dirLTR-ubNone-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/text-dirLTR-ubOverride-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-dirLTR-ubOverride-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/text-dirRTL-ubNone-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/text-dirRTL-ubOverride-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt:
+        * platform/chromium-win/svg/W3C-I18N/tspan-direction-rtl-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/tspan-direction-rtl-expected.txt:
+        * platform/chromium-win/svg/W3C-SVG-1.1/masking-intro-01-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/metadata-example-01-b-expected.png:
+        * platform/chromium-win/svg/batik/paints/patternRegions-positioned-objects-expected.png:
+        * platform/chromium-win/svg/custom/circular-marker-reference-1-expected.txt: Added.
+        * platform/chromium-win/svg/custom/circular-marker-reference-3-expected.txt: Added.
+        * platform/chromium-win/svg/custom/circular-marker-reference-4-expected.txt: Added.
+        * platform/chromium-win/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.png: Added.
+        * platform/chromium-win/svg/custom/js-late-pattern-and-object-creation-expected.txt: Added.
+        * platform/chromium-win/svg/custom/nested-pattern-boundingBoxModeContent-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop-expected.png:
+        * platform/chromium-win/svg/text/bidi-tspans-expected.png:
+        * platform/chromium-win/svg/text/bidi-tspans-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-mask-with-percentages-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-mask-with-percentages-expected.txt:
+        * platform/chromium-win/svg/zoom/text/zoom-foreignObject-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-07-28  Stephen White  <senorblanco@chromium.org>
+
         Chromium test_expectations update:  remove a bunch of commented-out
         expectations.  Some of these were introduced by me, some were not.
 
