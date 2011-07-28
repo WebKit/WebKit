@@ -1,3 +1,9 @@
+2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: My last attempt to paint Qt-Mac bot green.
+
 2011-07-28  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add resource initiator column to network panel.
