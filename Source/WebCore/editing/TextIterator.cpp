@@ -2571,6 +2571,9 @@ tryAgain:
 
 PassRefPtr<Range> findPlainText(const Range* range, const String& target, FindOptions options)
 {
+    // CharacterIterator requires renderers to be up-to-date
+    range->ownerDocument()->updateLayout();
+
     // First, find the text.
     size_t matchStart;
     size_t matchLength;

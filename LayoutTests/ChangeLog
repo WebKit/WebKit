@@ -1,3 +1,15 @@
+2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Calling window.find immediately after mutating the document crashes WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=65296
+
+        Reviewed by Darin Adler.
+
+        Added a test to ensure WebKit doesn't crash when searching for string after mutating the document.
+
+        * editing/text-iterator/find-after-mutation-expected.txt: Added.
+        * editing/text-iterator/find-after-mutation.html: Added.
+
 2011-07-27  Ben Wells  <benwells@chromium.org>
 
         Remove skia special case for outline rendering code
