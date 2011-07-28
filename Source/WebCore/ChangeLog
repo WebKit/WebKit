@@ -1,3 +1,28 @@
+2011-07-28  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/9714337> and https://bugs.webkit.org/show_bug.cgi?id=65306
+        WebKitInitializeStorageIfNecessary() can take awhile performing i/o, isn't necessary for every WebView
+
+        Move the heavy lifting done in StorageTracker::initializeTracker() until when the global tracker is actually
+        accessed, therefore deferring it until a web page actually uses LocalStorage or the app uses the API.
+
+        Reviewed by Maciej Stachowiak.
+
+        No new tests. (Not possible to test this API implementation detail)
+
+        * WebCore.exp.in:
+
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::StorageAreaImpl::StorageAreaImpl): Access the global StorageTracker to indicate that a web page
+          is actually using the storage APIs.
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::initializeTracker): Moved the potentially hefty work from here...
+        (WebCore::StorageTracker::internalInitialize): ...to here.
+        (WebCore::StorageTracker::tracker): If the global tracker hasn't had internalInitialize() called, do so.
+        (WebCore::StorageTracker::StorageTracker):
+        * storage/StorageTracker.h:
+
 2011-07-28  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Copy and paste is broken in WebKit2

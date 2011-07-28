@@ -48,7 +48,7 @@ namespace WebCore {
 
 static StorageTracker* storageTracker = 0;
 
-void StorageTracker::initializeTracker(const String& storagePath)
+void StorageTracker::initializeTracker(const String& storagePath, StorageTrackerClient* client)
 {
     ASSERT(isMainThread());
     ASSERT(!storageTracker);
@@ -56,6 +56,13 @@ void StorageTracker::initializeTracker(const String& storagePath)
     if (!storageTracker)
         storageTracker = new StorageTracker(storagePath);
     
+    storageTracker->m_client = client;
+}
+
+void StorageTracker::internalInitialize()
+{
+    ASSERT(isMainThread());
+
     // Make sure text encoding maps have been built on the main thread, as the StorageTracker thread might try to do it there instead.
     // FIXME (<rdar://problem/9127819>): Is there a more explicit way of doing this besides accessing the UTF8Encoding?
     UTF8Encoding();
@@ -64,30 +71,27 @@ void StorageTracker::initializeTracker(const String& storagePath)
     storageTracker->setIsActive(true);
     storageTracker->m_thread->start();  
     storageTracker->importOriginIdentifiers();
+    
+    m_isInitialized = true;
 }
 
 StorageTracker& StorageTracker::tracker()
 {
     if (!storageTracker)
         storageTracker = new StorageTracker("");
+    if (!storageTracker->m_isInitialized)
+        storageTracker->internalInitialize();
     
     return *storageTracker;
 }
 
 StorageTracker::StorageTracker(const String& storagePath)
-    : m_client(0)
+    : m_storageDirectoryPath(storagePath.threadsafeCopy())
+    , m_client(0)
     , m_thread(LocalStorageThread::create())
     , m_isActive(false)
+    , m_isInitialized(false)
 {
-    setStorageDirectoryPath(storagePath);
-}
-
-void StorageTracker::setStorageDirectoryPath(const String& path)
-{
-    MutexLocker lockDatabase(m_databaseGuard);
-    ASSERT(!m_database.isOpen());
-    
-    m_storageDirectoryPath = path.threadsafeCopy();
 }
 
 String StorageTracker::trackerDatabasePath()

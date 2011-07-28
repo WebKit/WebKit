@@ -46,11 +46,9 @@ class StorageTracker {
     WTF_MAKE_NONCOPYABLE(StorageTracker);
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static void initializeTracker(const String& storagePath);
+    static void initializeTracker(const String& storagePath, StorageTrackerClient*);
     static StorageTracker& tracker();
-    static void scheduleTask(void*);
 
-    void importOriginIdentifiers();
     void setOriginDetails(const String& originIdentifier, const String& databaseFile);
     
     void deleteAllOrigins();
@@ -76,12 +74,15 @@ public:
 
 private:
     StorageTracker(const String& storagePath);
+    static void scheduleTask(void*);
+
+    void internalInitialize();
 
     String trackerDatabasePath();
     void openTrackerDatabase(bool createIfDoesNotExist);
 
-    void setStorageDirectoryPath(const String&);
-
+    void importOriginIdentifiers();
+    
     void deleteTrackerFiles();
     String databasePathForOrigin(const String& originIdentifier);
 
@@ -111,6 +112,7 @@ private:
     OwnPtr<LocalStorageThread> m_thread;
     
     bool m_isActive;
+    bool m_isInitialized;
 };
     
 } // namespace WebCore

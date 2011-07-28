@@ -37,6 +37,7 @@
 #include "StorageEventDispatcher.h"
 #include "StorageMap.h"
 #include "StorageSyncManager.h"
+#include "StorageTracker.h"
 
 namespace WebCore {
 
@@ -57,6 +58,10 @@ inline StorageAreaImpl::StorageAreaImpl(StorageType storageType, PassRefPtr<Secu
     ASSERT(isMainThread());
     ASSERT(m_securityOrigin);
     ASSERT(m_storageMap);
+    
+    // Accessing the shared global StorageTracker when a StorageArea is created 
+    // ensures that the tracker is properly initialized before anyone actually needs to use it.
+    StorageTracker::tracker();
 }
 
 PassRefPtr<StorageAreaImpl> StorageAreaImpl::create(StorageType storageType, PassRefPtr<SecurityOrigin> origin, PassRefPtr<StorageSyncManager> syncManager, unsigned quota)

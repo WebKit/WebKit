@@ -1,3 +1,13 @@
+2011-07-28  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/9714337> and https://bugs.webkit.org/show_bug.cgi?id=65306
+        WebKitInitializeStorageIfNecessary() can take awhile performing i/o, isn't necessary for every WebView
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess): Pass a null client pointer in the new form of initializeTracker()
+
 2011-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove operator new from JSCell

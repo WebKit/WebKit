@@ -106,10 +106,8 @@ void WebKitInitializeStorageIfNecessary()
     if (initialized)
         return;
     
-    StorageTracker::initializeTracker(storageDirectoryPath());
-    
-    StorageTracker::tracker().setClient(WebStorageTrackerClient::sharedWebStorageTrackerClient());
-    
+    StorageTracker::initializeTracker(storageDirectoryPath(), WebStorageTrackerClient::sharedWebStorageTrackerClient());
+        
     initialized = YES;
 }
 

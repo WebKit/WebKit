@@ -192,7 +192,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #endif
 
 #if ENABLE(DOM_STORAGE)
-    StorageTracker::initializeTracker(parameters.localStorageDirectory);
+    StorageTracker::initializeTracker(parameters.localStorageDirectory, 0);
     m_localStorageDirectory = parameters.localStorageDirectory;
 #endif
     
