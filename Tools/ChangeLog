@@ -1,3 +1,29 @@
+2011-07-27  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Drop WorkQueueItemEfl.h in favour of the general WorkQueueItem.h
+        https://bugs.webkit.org/show_bug.cgi?id=65269
+
+        Reviewed by Kent Tamura.
+
+        WorkQueueItemEfl.h was being included by efl's
+        LayoutTestControllerEfl.cpp, however the top-level
+        LayoutTestController still included WorkQueueItem.h, causing a lot of
+        type mismatches when running the WorkQueueItem code.
+
+        We can stick to the original WorkQueueItem header by making a few
+        changes to EFL's LayoutTestController.
+
+        This should make tests such as
+        fast/loader/non-deferred-substitute-load.html stop crashing.
+
+        * DumpRenderTree/efl/LayoutTestControllerEfl.cpp:
+        (LayoutTestController::queueLoad):
+        * DumpRenderTree/efl/WorkQueueItemEfl.cpp:
+        (LoadItem::invoke):
+        (LoadHTMLStringItem::invoke):
+        (ScriptItem::invoke):
+        * DumpRenderTree/efl/WorkQueueItemEfl.h: Removed.
+
 2011-07-27  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Re-add unit tests I accidentally zapped in r91878.

@@ -41,7 +41,7 @@
 #include "NotImplemented.h"
 #include "OwnFastMallocPtr.h"
 #include "WorkQueue.h"
-#include "WorkQueueItemEfl.h"
+#include "WorkQueueItem.h"
 #include "ewk_private.h"
 #include <EWebKit.h>
 #include <JavaScriptCore/JSRetainPtr.h>
@@ -176,9 +176,11 @@ void LayoutTestController::queueLoad(JSStringRef url, JSStringRef target)
 {
     String absoluteUrl = String::fromUTF8(ewk_frame_uri_get(mainFrame));
     absoluteUrl.append(url->characters(), url->length());
-    String targetString(target->characters(), target->length());
 
-    WorkQueue::shared()->queue(new LoadItem(absoluteUrl, targetString));
+    JSRetainPtr<JSStringRef> jsAbsoluteURL(
+        Adopt, JSStringCreateWithUTF8CString(absoluteUrl.utf8().data()));
+
+    WorkQueue::shared()->queue(new LoadItem(jsAbsoluteURL.get(), target));
 }
 
 void LayoutTestController::setAcceptsEditing(bool acceptsEditing)
