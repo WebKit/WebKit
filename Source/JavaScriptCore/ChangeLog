@@ -1,3 +1,36 @@
+2011-07-27  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG graph has no notion of double prediction.
+        https://bugs.webkit.org/show_bug.cgi?id=65234
+
+        Reviewed by Gavin Barraclough.
+        
+        Added the notion of PredictDouble, and PredictNumber, which is the least
+        upper bound of PredictInt32 and PredictDouble.  Least upper bound is
+        defined as the bitwise-or of two predictions.  Bottom is defined as 0,
+        and Top is defined as all bits being set.  Added the ability to explicitly
+        distinguish between a node having had a prediction associated with it,
+        and that prediction still being valid (i.e. no conflicting predictions
+        have also been added).  Used this to guard the speculative JIT from
+        speculating Int32 in cases where the graph knows that the value is
+        double, which currently only happens for GetLocal nodes on arguments
+        which were double at compile-time.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::predictArgumentTypes):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::isCellPrediction):
+        (JSC::DFG::isArrayPrediction):
+        (JSC::DFG::isInt32Prediction):
+        (JSC::DFG::isDoublePrediction):
+        (JSC::DFG::isNumberPrediction):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::initializeVariableTypes):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isRegisterDataFormatDouble):
+
 2011-07-27  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65294

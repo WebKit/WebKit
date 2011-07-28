@@ -44,10 +44,37 @@ namespace DFG {
 inline bool operandIsArgument(int operand) { return operand < 0; }
 
 typedef uint8_t PredictedType;
-static const PredictedType PredictNone  = 0;
-static const PredictedType PredictCell  = 0x01;
-static const PredictedType PredictArray = 0x03;
-static const PredictedType PredictInt32 = 0x04;
+static const PredictedType PredictNone   = 0;
+static const PredictedType PredictCell   = 0x01;
+static const PredictedType PredictArray  = 0x03;
+static const PredictedType PredictInt32  = 0x04;
+static const PredictedType PredictDouble = 0x08;
+static const PredictedType PredictNumber = 0x0c;
+
+inline bool isCellPrediction(PredictedType value)
+{
+    return (value & PredictCell) == PredictCell && !(value & ~PredictArray);
+}
+
+inline bool isArrayPrediction(PredictedType value)
+{
+    return value == PredictArray;
+}
+
+inline bool isInt32Prediction(PredictedType value)
+{
+    return value == PredictInt32;
+}
+
+inline bool isDoublePrediction(PredictedType value)
+{
+    return value == PredictDouble;
+}
+
+inline bool isNumberPrediction(PredictedType value)
+{
+    return !!(value & PredictNumber) && !(value & ~PredictNumber);
+}
 
 struct PredictionSlot {
 public:

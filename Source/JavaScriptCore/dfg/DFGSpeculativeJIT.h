@@ -162,7 +162,14 @@ private:
         VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
 
-        return (info.registerFormat() | DataFormatJS) == DataFormatJSDouble;
+        if ((info.registerFormat() | DataFormatJS) == DataFormatJSDouble
+            || (info.spillFormat() | DataFormatJS) == DataFormatJSDouble)
+            return true;
+        
+        if (node.op == GetLocal && isDoublePrediction(m_jit.graph().getPrediction(node.local())))
+            return true;
+        
+        return false;
     }
     
     bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)

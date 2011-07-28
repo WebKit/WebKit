@@ -537,7 +537,7 @@ void SpeculativeJIT::compile(Node& node)
     case GetLocal: {
         GPRTemporary result(this);
         PredictedType prediction = m_jit.graph().getPrediction(node.local());
-        if (prediction == PredictInt32) {
+        if (isInt32Prediction(prediction)) {
             m_jit.load32(JITCompiler::payloadFor(node.local()), result.gpr());
 
             // Like integerResult, but don't useChildren - our children are phi nodes,
@@ -552,34 +552,27 @@ void SpeculativeJIT::compile(Node& node)
             // and don't represent values within this dataflow with virtual registers.
             VirtualRegister virtualRegister = node.virtualRegister();
             m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
-            m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), result.gpr(), (prediction == PredictArray) ? DataFormatJSCell : DataFormatJS);
+            m_generationInfo[virtualRegister].initJSValue(m_compileIndex, node.refCount(), result.gpr(), isArrayPrediction(prediction) ? DataFormatJSCell : DataFormatJS);
         }
         break;
     }
 
     case SetLocal: {
-        switch (m_jit.graph().getPrediction(node.local())) {
-        case PredictInt32: {
+        PredictedType predictedType = m_jit.graph().getPrediction(node.local());
+        if (isInt32Prediction(predictedType)) {
             SpeculateIntegerOperand value(this, node.child1());
             m_jit.store32(value.gpr(), JITCompiler::payloadFor(node.local()));
             noResult(m_compileIndex);
-            break;
-        }
-        case PredictArray: {
+        } else if (isArrayPrediction(predictedType)) {
             SpeculateCellOperand cell(this, node.child1());
             GPRReg cellGPR = cell.gpr();
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(cellGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
             m_jit.storePtr(cellGPR, JITCompiler::addressFor(node.local()));
             noResult(m_compileIndex);
-            break;
-        }
-
-        default: {
+        } else {
             JSValueOperand value(this, node.child1());
             m_jit.storePtr(value.gpr(), JITCompiler::addressFor(node.local()));
             noResult(m_compileIndex);
-            break;
-        }
         }
         break;
     }
@@ -918,7 +911,7 @@ void SpeculativeJIT::compile(Node& node)
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
         // If we have predicted the base to be type array, we can skip the check.
         Node& baseNode = m_jit.graph()[node.child1()];
-        if (baseNode.op != GetLocal || m_jit.graph().getPrediction(baseNode.local()) != PredictArray)
+        if (baseNode.op != GetLocal || !isArrayPrediction(m_jit.graph().getPrediction(baseNode.local())))
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
         speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
 
@@ -953,7 +946,7 @@ void SpeculativeJIT::compile(Node& node)
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
         // If we have predicted the base to be type array, we can skip the check.
         Node& baseNode = m_jit.graph()[node.child1()];
-        if (baseNode.op != GetLocal || m_jit.graph().getPrediction(baseNode.local()) != PredictArray)
+        if (baseNode.op != GetLocal || isArrayPrediction(m_jit.graph().getPrediction(baseNode.local())))
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
 
         base.use();
@@ -1305,21 +1298,14 @@ void SpeculativeJIT::checkArgumentTypes()
     ASSERT(!m_compileIndex);
     for (int i = 0; i < m_jit.codeBlock()->m_numParameters; ++i) {
         VirtualRegister virtualRegister = (VirtualRegister)(m_jit.codeBlock()->thisRegister() + i);
-        switch (m_jit.graph().getPrediction(virtualRegister)) {
-        case PredictInt32:
+        PredictedType predictedType = m_jit.graph().getPrediction(virtualRegister);
+        if (isInt32Prediction(predictedType))
             speculationCheck(m_jit.branchPtr(MacroAssembler::Below, JITCompiler::addressFor(virtualRegister), GPRInfo::tagTypeNumberRegister));
-            break;
-
-        case PredictArray: {
+        else if (isArrayPrediction(predictedType)) {
             GPRTemporary temp(this);
             m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), temp.gpr());
             speculationCheck(m_jit.branchTestPtr(MacroAssembler::NonZero, temp.gpr(), GPRInfo::tagMaskRegister));
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(temp.gpr()), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
-            break;
-        }
-
-        default:
-            break;
         }
     }
 }
@@ -1332,7 +1318,7 @@ void SpeculativeJIT::initializeVariableTypes()
 {
     ASSERT(!m_compileIndex);
     for (int var = 0; var < m_jit.codeBlock()->m_numVars; ++var) {
-        if (m_jit.graph().getPrediction(var) == PredictInt32)
+        if (isInt32Prediction(m_jit.graph().getPrediction(var)))
             m_jit.storePtr(GPRInfo::tagTypeNumberRegister, JITCompiler::addressFor((VirtualRegister)var));
     }
 }
