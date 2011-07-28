@@ -4,6 +4,7 @@
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2003, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2009 Rob Buis (rwlbuis@gmail.com)
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,6 +54,7 @@ using namespace HTMLNames;
 inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : HTMLElement(tagName, document)
     , m_linkLoader(this)
+    , m_sizes(DOMSettableTokenList::create())
     , m_loading(false)
     , m_isEnabledViaScript(false)
     , m_createdByParser(createdByParser)
@@ -132,6 +134,9 @@ void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
         process();
     } else if (attr->name() == typeAttr) {
         m_type = attr->value();
+        process();
+    } else if (attr->name() == sizesAttr) {
+        setSizes(attr->value());
         process();
     } else if (attr->name() == mediaAttr) {
         m_media = attr->value().string().lower();
@@ -440,4 +445,14 @@ bool HTMLLinkElement::disabled() const
     return m_sheet && m_sheet->disabled();
 }
 
+DOMSettableTokenList* HTMLLinkElement::sizes() const
+{
+    return m_sizes.get();
 }
+
+void HTMLLinkElement::setSizes(const String& value)
+{
+    m_sizes->setValue(value);
+}
+
+} // namespace WebCore

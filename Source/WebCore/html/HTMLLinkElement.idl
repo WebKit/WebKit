@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2006, 2010 Apple Inc. All rights reserved.
  * Copyright (C) 2006 Samuel Weinig <sam.weinig@gmail.com>
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +29,9 @@ module html {
         attribute [Reflect] DOMString media;
         attribute [Reflect] DOMString rel;
         attribute [Reflect] DOMString rev;
+#if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
+        attribute [Custom] DOMSettableTokenList sizes;
+#endif
         attribute [Reflect] DOMString target;
         attribute [Reflect] DOMString type;
 

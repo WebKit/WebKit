@@ -184,6 +184,7 @@ v8 {
         bindings/v8/custom/V8HTMLFrameSetElementCustom.cpp \
         bindings/v8/custom/V8HTMLImageElementConstructor.cpp \
         bindings/v8/custom/V8HTMLInputElementCustom.cpp \
+        bindings/v8/custom/V8HTMLLinkElementCustom.cpp \
         bindings/v8/custom/V8HTMLOptionElementConstructor.cpp \
         bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp \
         bindings/v8/custom/V8HTMLOutputElementCustom.cpp \

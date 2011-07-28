@@ -2154,6 +2154,7 @@
             'bindings/v8/custom/V8HTMLImageElementConstructor.cpp',
             'bindings/v8/custom/V8HTMLImageElementConstructor.h',
             'bindings/v8/custom/V8HTMLInputElementCustom.cpp',
+            'bindings/v8/custom/V8HTMLLinkElementCustom.cpp',
             'bindings/v8/custom/V8HTMLOptionElementConstructor.cpp',
             'bindings/v8/custom/V8HTMLOptionElementConstructor.h',
             'bindings/v8/custom/V8HTMLOptionsCollectionCustom.cpp',

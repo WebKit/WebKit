@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,9 +28,25 @@
 #include "JSHTMLLinkElement.h"
 
 #include "HTMLLinkElement.h"
+#include "JSDOMBinding.h"
+#include "JSDOMSettableTokenList.h"
+#include <wtf/GetPtr.h>
 
 using namespace JSC;
 
 namespace WebCore {
 
+JSValue JSHTMLLinkElement::sizes(ExecState* exec) const
+{
+    HTMLLinkElement* output = static_cast<HTMLLinkElement*>(impl());
+    JSValue result = toJS(exec, globalObject(), WTF::getPtr(output->sizes()));
+    return result;
 }
+
+void JSHTMLLinkElement::setSizes(ExecState* exec, JSValue value)
+{
+    HTMLLinkElement* output = static_cast<HTMLLinkElement*>(impl());
+    output->setSizes(valueToStringWithNullCheck(exec, value));
+}
+
+} // namespace WebCore

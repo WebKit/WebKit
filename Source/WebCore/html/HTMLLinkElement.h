@@ -2,6 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  * Copyright (C) 2003, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@
 #include "CSSStyleSheet.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
+#include "DOMSettableTokenList.h"
 #include "HTMLElement.h"
 #include "IconURL.h"
 #include "LinkLoader.h"
@@ -53,11 +55,13 @@ public:
 
     StyleSheet* sheet() const;
 
-    // FIXME: This should be remaned isStyleSheetLoading as this is only used for stylesheets.
+    // FIXME: This should be renamed isStyleSheetLoading as this is only used for stylesheets.
     bool isLoading() const;
     bool isEnabledViaScript() const { return m_isEnabledViaScript; }
     bool disabled() const;
     void setDisabled(bool);
+    void setSizes(const String&);
+    DOMSettableTokenList* sizes() const;
 
 private:
     virtual void parseMappedAttribute(Attribute*);
@@ -99,6 +103,7 @@ private:
     KURL m_url;
     String m_type;
     String m_media;
+    RefPtr<DOMSettableTokenList> m_sizes;
     LinkRelAttribute m_relAttribute;
     bool m_loading;
     bool m_isEnabledViaScript;
