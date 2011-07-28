@@ -3860,3 +3860,8 @@ BUGWK64692 WIN : fast/forms/file-input-disabled.html = IMAGE
 BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
+
+// Needs new baseline for slight pixel value changes due to changes in
+// how alpha blended outlines are drawn.
+BUGWK65295 WIN LINUX : fast/box-shadow/box-shadow-radius.html = IMAGE
+BUGWK65295 WIN LINUX : fast/layers/self-painting-outline.html = IMAGE

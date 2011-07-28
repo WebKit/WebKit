@@ -1,3 +1,12 @@
+2011-07-27  Ben Wells  <benwells@chromium.org>
+
+        Remove skia special case for outline rendering code
+        https://bugs.webkit.org/show_bug.cgi?id=65295
+
+        Reviewed by James Robinson.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  Mike Reed  <reed@google.com>
 
         [skia] fix clipping of some glyphs on windows

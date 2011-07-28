@@ -1050,15 +1050,11 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
     if (adjustedPaintRec.isEmpty())
         return;
 
-// FIXME: Using a transparency layer for rgba outlines exacerbates an existing SKIA bug. The #if
-// below prevents this; it should be removed when https://bugs.webkit.org/show_bug.cgi?id=60342 is fixed.
-#if !USE(SKIA)
     bool useTransparencyLayer = outlineColor.hasAlpha();
     if (useTransparencyLayer) {
         graphicsContext->beginTransparencyLayer(static_cast<float>(outlineColor.alpha()) / 255);
         outlineColor = Color(outlineColor.red(), outlineColor.green(), outlineColor.blue());
     }
-#endif
 
     LayoutUnit leftOuter = adjustedPaintRec.x() - outlineWidth;
     LayoutUnit leftInner = adjustedPaintRec.x();
@@ -1074,12 +1070,8 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const LayoutRe
     drawLineForBoxSide(graphicsContext, rightInner, topOuter, rightOuter, bottomOuter, BSRight, outlineColor, outlineStyle, outlineWidth, outlineWidth);
     drawLineForBoxSide(graphicsContext, leftOuter, bottomInner, rightOuter, bottomOuter, BSBottom, outlineColor, outlineStyle, outlineWidth, outlineWidth);
 
-// FIXME: Using a transparency layer for rgba outlines exacerbates an existing SKIA bug. The #if
-// below prevents this; it should be removed when https://bugs.webkit.org/show_bug.cgi?id=60342 is fixed.
-#if !USE(SKIA)
     if (useTransparencyLayer)
         graphicsContext->endTransparencyLayer();
-#endif
 }
 
 IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)

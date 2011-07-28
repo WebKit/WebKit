@@ -1394,25 +1394,17 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, const LayoutPo
     rects.append(LayoutRect());
 
     Color outlineColor = styleToUse->visitedDependentColor(CSSPropertyOutlineColor);
-// FIXME: Using a transparency layer for rgba outlines exacerbates an existing SKIA bug. The #if
-// below prevents this; it should be removed when https://bugs.webkit.org/show_bug.cgi?id=60342 is fixed.
-#if !USE(SKIA)
     bool useTransparencyLayer = outlineColor.hasAlpha();
     if (useTransparencyLayer) {
         graphicsContext->beginTransparencyLayer(static_cast<float>(outlineColor.alpha()) / 255);
         outlineColor = Color(outlineColor.red(), outlineColor.green(), outlineColor.blue());
     }
-#endif
 
     for (unsigned i = 1; i < rects.size() - 1; i++)
         paintOutlineForLine(graphicsContext, paintOffset, rects.at(i - 1), rects.at(i), rects.at(i + 1), outlineColor);
 
-// FIXME: Using a transparency layer for rgba outlines exacerbates an existing SKIA bug. The #if
-// below prevents this; it should be removed when https://bugs.webkit.org/show_bug.cgi?id=60342 is fixed.
-#if !USE(SKIA)
     if (useTransparencyLayer)
         graphicsContext->endTransparencyLayer();
-#endif
 }
 
 void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const LayoutPoint& paintOffset,

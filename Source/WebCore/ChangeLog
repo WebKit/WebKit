@@ -1,3 +1,19 @@
+2011-07-27  Ben Wells  <benwells@chromium.org>
+
+        Remove skia special case for outline rendering code
+        https://bugs.webkit.org/show_bug.cgi?id=65295
+
+        Reviewed by James Robinson.
+
+        The fix for bug 58999 (outlines with alpha channels showed artifacts in the corners) was
+        excluded from skia builds until bug 61369 (skia drawConvexPoly didn't pay attention to
+        shouldAntialias) was fixed. That bug is fixed so now the #if's can be removed.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintOutline):
+
 2011-07-27  Adam Barth  <abarth@webkit.org>
 
         Crypto.idl doesn't need legacy optional arguments
