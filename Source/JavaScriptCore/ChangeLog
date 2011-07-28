@@ -1,3 +1,25 @@
+2011-07-28  Oliver Hunt  <oliver@apple.com>
+
+        *_list instructions are only used in one place, where the code is wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=65348
+
+        Reviewed by Darin Adler.
+
+        Simply remove the instructions and all users.  Speeds up the interpreter
+        slightly due to code motion, but otherwise has no effect (because none
+        of the _list instructions are ever used).
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::isPropertyAccess):
+        (JSC::CodeBlock::dump):
+        (JSC::CodeBlock::visitStructures):
+        * bytecode/Instruction.h:
+        * bytecode/Opcode.h:
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+
 2011-07-28  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65325

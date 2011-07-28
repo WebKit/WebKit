@@ -333,19 +333,13 @@ void JIT::privateCompileMainPass()
         case op_get_by_id_chain:
         case op_get_by_id_generic:
         case op_get_by_id_proto:
-        case op_get_by_id_proto_list:
         case op_get_by_id_self:
-        case op_get_by_id_self_list:
         case op_get_by_id_getter_chain:
         case op_get_by_id_getter_proto:
-        case op_get_by_id_getter_proto_list:
         case op_get_by_id_getter_self:
-        case op_get_by_id_getter_self_list:
         case op_get_by_id_custom_chain:
         case op_get_by_id_custom_proto:
-        case op_get_by_id_custom_proto_list:
         case op_get_by_id_custom_self:
-        case op_get_by_id_custom_self_list:
         case op_get_string_length:
         case op_put_by_id_generic:
         case op_put_by_id_replace:

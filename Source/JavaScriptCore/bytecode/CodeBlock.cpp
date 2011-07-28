@@ -200,8 +200,6 @@ static bool isPropertyAccess(OpcodeID opcodeID)
         case op_get_by_id_self:
         case op_get_by_id_proto:
         case op_get_by_id_chain:
-        case op_get_by_id_self_list:
-        case op_get_by_id_proto_list:
         case op_put_by_id_transition:
         case op_put_by_id_replace:
         case op_get_by_id:
@@ -813,16 +811,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(exec, location, it, "get_by_id_self");
             break;
         }
-        case op_get_by_id_self_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_self_list");
-            break;
-        }
         case op_get_by_id_proto: {
             printGetByIdOp(exec, location, it, "get_by_id_proto");
-            break;
-        }
-        case op_get_by_id_proto_list: {
-            printGetByIdOp(exec, location, it, "op_get_by_id_proto_list");
             break;
         }
         case op_get_by_id_chain: {
@@ -833,16 +823,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(exec, location, it, "get_by_id_getter_self");
             break;
         }
-        case op_get_by_id_getter_self_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_getter_self_list");
-            break;
-        }
         case op_get_by_id_getter_proto: {
             printGetByIdOp(exec, location, it, "get_by_id_getter_proto");
-            break;
-        }
-        case op_get_by_id_getter_proto_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_getter_proto_list");
             break;
         }
         case op_get_by_id_getter_chain: {
@@ -853,16 +835,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(exec, location, it, "get_by_id_custom_self");
             break;
         }
-        case op_get_by_id_custom_self_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_custom_self_list");
-            break;
-        }
         case op_get_by_id_custom_proto: {
             printGetByIdOp(exec, location, it, "get_by_id_custom_proto");
-            break;
-        }
-        case op_get_by_id_custom_proto_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_custom_proto_list");
             break;
         }
         case op_get_by_id_custom_chain: {
@@ -1504,17 +1478,6 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC) const
     if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global) || vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global_dynamic)) {
         if (vPC[3].u.structure)
             visitor.append(&vPC[3].u.structure);
-        return;
-    }
-    if ((vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_proto_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_proto_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self_list))) {
-        PolymorphicAccessStructureList* polymorphicStructures = vPC[4].u.polymorphicStructures;
-        polymorphicStructures->visitAggregate(visitor, vPC[5].u.operand);
-        delete polymorphicStructures;
         return;
     }
 

@@ -44,15 +44,13 @@ namespace JSC {
     // If the JIT is not in use we don't actually need the variable (that said, if the JIT is not in use we don't
     // curently actually use PolymorphicAccessStructureLists, which we should).  Anyway, this seems like the best
     // solution for now - will need to something smarter if/when we actually want mixed-mode operation.
-#if ENABLE(JIT)
-    typedef CodeLocationLabel PolymorphicAccessStructureListStubRoutineType;
-#else
-    typedef void* PolymorphicAccessStructureListStubRoutineType;
-#endif
 
     class JSCell;
     class Structure;
     class StructureChain;
+
+#if ENABLE(JIT)
+    typedef CodeLocationLabel PolymorphicAccessStructureListStubRoutineType;
 
     // Structure used by op_get_by_id_self_list and op_get_by_id_proto_list instruction to hold data off the main opcode stream.
     struct PolymorphicAccessStructureList {
@@ -131,6 +129,8 @@ namespace JSC {
         }
     };
 
+#endif
+
     struct Instruction {
         Instruction(Opcode opcode)
         {
@@ -165,7 +165,7 @@ namespace JSC {
             u.jsCell.clear();
             u.jsCell.set(globalData, owner, jsCell);
         }
-        Instruction(PolymorphicAccessStructureList* polymorphicStructures) { u.polymorphicStructures = polymorphicStructures; }
+
         Instruction(PropertySlot::GetValueFunc getterFunc) { u.getterFunc = getterFunc; }
 
         union {
@@ -174,7 +174,6 @@ namespace JSC {
             WriteBarrierBase<Structure> structure;
             WriteBarrierBase<StructureChain> structureChain;
             WriteBarrierBase<JSCell> jsCell;
-            PolymorphicAccessStructureList* polymorphicStructures;
             PropertySlot::GetValueFunc getterFunc;
         } u;
         

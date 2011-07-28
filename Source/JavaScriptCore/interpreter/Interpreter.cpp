@@ -2861,48 +2861,6 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
 #if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     skip_id_custom_proto:
 #endif
-    DEFINE_OPCODE(op_get_by_id_self_list) {
-        // Polymorphic self access caching currently only supported when JITting.
-        ASSERT_NOT_REACHED();
-        // This case of the switch must not be empty, else (op_get_by_id_self_list == op_get_by_id_chain)!
-        vPC += OPCODE_LENGTH(op_get_by_id_self_list);
-        NEXT_INSTRUCTION();
-    }
-    DEFINE_OPCODE(op_get_by_id_proto_list) {
-        // Polymorphic prototype access caching currently only supported when JITting.
-        ASSERT_NOT_REACHED();
-        // This case of the switch must not be empty, else (op_get_by_id_proto_list == op_get_by_id_chain)!
-        vPC += OPCODE_LENGTH(op_get_by_id_proto_list);
-        NEXT_INSTRUCTION();
-    }
-    DEFINE_OPCODE(op_get_by_id_getter_self_list) {
-        // Polymorphic self access caching currently only supported when JITting.
-        ASSERT_NOT_REACHED();
-        // This case of the switch must not be empty, else (op_get_by_id_self_list == op_get_by_id_chain)!
-        vPC += OPCODE_LENGTH(op_get_by_id_self_list);
-        NEXT_INSTRUCTION();
-    }
-    DEFINE_OPCODE(op_get_by_id_getter_proto_list) {
-        // Polymorphic prototype access caching currently only supported when JITting.
-        ASSERT_NOT_REACHED();
-        // This case of the switch must not be empty, else (op_get_by_id_proto_list == op_get_by_id_chain)!
-        vPC += OPCODE_LENGTH(op_get_by_id_proto_list);
-        NEXT_INSTRUCTION();
-    }
-    DEFINE_OPCODE(op_get_by_id_custom_self_list) {
-        // Polymorphic self access caching currently only supported when JITting.
-        ASSERT_NOT_REACHED();
-        // This case of the switch must not be empty, else (op_get_by_id_self_list == op_get_by_id_chain)!
-        vPC += OPCODE_LENGTH(op_get_by_id_custom_self_list);
-        NEXT_INSTRUCTION();
-    }
-    DEFINE_OPCODE(op_get_by_id_custom_proto_list) {
-        // Polymorphic prototype access caching currently only supported when JITting.
-        ASSERT_NOT_REACHED();
-        // This case of the switch must not be empty, else (op_get_by_id_proto_list == op_get_by_id_chain)!
-        vPC += OPCODE_LENGTH(op_get_by_id_proto_list);
-        NEXT_INSTRUCTION();
-    }
 #if USE(GCC_COMPUTED_GOTO_WORKAROUND)
     goto *(&&skip_get_by_id_chain);
 #endif

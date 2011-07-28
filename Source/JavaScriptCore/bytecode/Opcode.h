@@ -109,19 +109,13 @@ namespace JSC {
         macro(op_resolve_with_this, 4) \
         macro(op_get_by_id, 8) \
         macro(op_get_by_id_self, 8) \
-        macro(op_get_by_id_self_list, 8) \
         macro(op_get_by_id_proto, 8) \
-        macro(op_get_by_id_proto_list, 8) \
         macro(op_get_by_id_chain, 8) \
         macro(op_get_by_id_getter_self, 8) \
-        macro(op_get_by_id_getter_self_list, 8) \
         macro(op_get_by_id_getter_proto, 8) \
-        macro(op_get_by_id_getter_proto_list, 8) \
         macro(op_get_by_id_getter_chain, 8) \
         macro(op_get_by_id_custom_self, 8) \
-        macro(op_get_by_id_custom_self_list, 8) \
         macro(op_get_by_id_custom_proto, 8) \
-        macro(op_get_by_id_custom_proto_list, 8) \
         macro(op_get_by_id_custom_chain, 8) \
         macro(op_get_by_id_generic, 8) \
         macro(op_get_array_length, 8) \
