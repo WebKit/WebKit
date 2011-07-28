@@ -460,6 +460,13 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
 {
     JSValue value = exec->argument(0);
+
+    // Optimized case: If the argument is a positive number in the integer
+    // range, and the exponent is 10, then parseInt is equivalent to floor.
+    double n;
+    if (value.getNumber(n) && n >= 0 && n < INT_MAX && exec->argument(1).isUndefined())
+        return JSValue::encode(jsNumber(static_cast<int>(n)));
+
     int32_t radix = exec->argument(1).toInt32(exec);
 
     if (radix != 0 && radix != 10)
