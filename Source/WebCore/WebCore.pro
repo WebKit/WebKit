@@ -922,7 +922,6 @@ SOURCES += \
     page/FrameView.cpp \
     page/Geolocation.cpp \
     page/GeolocationController.cpp \
-    page/GeolocationPositionCache.cpp \
     page/GroupSettings.cpp \
     page/History.cpp \
     page/Location.cpp \
@@ -1893,7 +1892,6 @@ HEADERS += \
     page/FrameTree.h \
     page/FrameView.h \
     page/Geolocation.h \
-    page/GeolocationPositionCache.h \
     page/Geoposition.h \
     page/GroupSettings.h \
     page/HaltablePlugin.h \

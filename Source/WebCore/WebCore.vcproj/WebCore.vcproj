@@ -25422,14 +25422,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\page\GeolocationPositionCache.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\page\GeolocationPositionCache.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\Geoposition.h"
 				>
 			</File>

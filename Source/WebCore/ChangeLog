@@ -1,3 +1,27 @@
+2011-07-28  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/65289> Remove GeolocationPositionCache
+
+        Reviewed by Adam Barth.
+
+        * CMakeLists.txt: Remove references to GeolocationPositionCache.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.order: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+
+        * page/Geolocation.cpp: Switch from using m_positionCache to
+        m_cachedPosition.
+        (WebCore::Geolocation::makeCachedPositionCallbacks):
+        (WebCore::Geolocation::haveSuitableCachedPosition):
+        (WebCore::Geolocation::positionChangedInternal):
+        * page/Geolocation.h: Remove PositionCacheWrapper and replace
+        with RefPtr<Geoposition>.
+        * page/GeolocationPositionCache.cpp: Removed.
+        * page/GeolocationPositionCache.h: Removed.
+
 2011-07-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9589433> Displaying Japanese dictionary contents in vertical orientation takes a couple of seconds

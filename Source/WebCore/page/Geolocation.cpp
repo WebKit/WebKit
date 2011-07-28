@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Torch Mobile, Inc.
  * Copyright 2010, The Android Open Source Project
  *
@@ -372,7 +372,7 @@ void Geolocation::makeCachedPositionCallbacks()
     GeoNotifierSet::const_iterator end = m_requestsAwaitingCachedPosition.end();
     for (GeoNotifierSet::const_iterator iter = m_requestsAwaitingCachedPosition.begin(); iter != end; ++iter) {
         GeoNotifier* notifier = iter->get();
-        notifier->runSuccessCallback(m_positionCache.cachedPosition());
+        notifier->runSuccessCallback(m_cachedPosition.get());
 
         // If this is a one-shot request, stop it. Otherwise, if the watch still
         // exists, start the service to get updates.
@@ -403,14 +403,14 @@ void Geolocation::requestTimedOut(GeoNotifier* notifier)
 
 bool Geolocation::haveSuitableCachedPosition(PositionOptions* options)
 {
-    if (!m_positionCache.cachedPosition())
+    if (!m_cachedPosition)
         return false;
     if (!options->hasMaximumAge())
         return true;
     if (!options->maximumAge())
         return false;
     DOMTimeStamp currentTimeMillis = convertSecondsToDOMTimeStamp(currentTime());
-    return m_positionCache.cachedPosition()->timestamp() > currentTimeMillis - options->maximumAge();
+    return m_cachedPosition->timestamp() > currentTimeMillis - options->maximumAge();
 }
 
 void Geolocation::clearWatch(int watchId)
@@ -625,7 +625,7 @@ void Geolocation::requestPermission()
 
 void Geolocation::positionChangedInternal()
 {
-    m_positionCache.setCachedPosition(lastPosition());
+    m_cachedPosition = lastPosition();
 
     // Stop all currently running timers.
     stopTimers();

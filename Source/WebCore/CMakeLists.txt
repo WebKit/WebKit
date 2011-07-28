@@ -973,7 +973,6 @@ SET(WebCore_SOURCES
     page/FrameView.cpp
     page/Geolocation.cpp
     page/GeolocationController.cpp
-    page/GeolocationPositionCache.cpp
     page/GroupSettings.cpp
     page/History.cpp
     page/Location.cpp

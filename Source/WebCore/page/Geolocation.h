@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All Rights Reserved.
  * Copyright 2010, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,7 +27,7 @@
 #ifndef Geolocation_h
 #define Geolocation_h
 
-#include "GeolocationPositionCache.h"
+#include "Geoposition.h"
 #include "PositionCallback.h"
 #include "PositionError.h"
 #include "PositionErrorCallback.h"
@@ -45,7 +45,6 @@ class Frame;
 class GeolocationPosition;
 class GeolocationError;
 #endif
-class Geoposition;
 class Page;
 
 class Geolocation : public RefCounted<Geolocation>
@@ -131,23 +130,6 @@ private:
         NotifierToIdMap m_notifierToIdMap;
     };
 
-    class PositionCacheWrapper {
-    public:
-        PositionCacheWrapper()
-            : m_cache(GeolocationPositionCache::instance())
-        {
-            m_cache->addUser();
-        }
-        ~PositionCacheWrapper()
-        {
-            m_cache->removeUser();
-        }
-        void setCachedPosition(Geoposition* cachedPosition) { m_cache->setCachedPosition(cachedPosition); }
-        Geoposition* cachedPosition() { return m_cache->cachedPosition(); }
-    private:
-        GeolocationPositionCache* m_cache;
-    };
-
     bool hasListeners() const { return !m_oneShots.isEmpty() || !m_watchers.isEmpty(); }
 
     void sendError(GeoNotifierVector&, PositionError*);
@@ -210,7 +192,7 @@ private:
     } m_allowGeolocation;
 
 #if ENABLE(GEOLOCATION)
-    PositionCacheWrapper m_positionCache;
+    RefPtr<Geoposition> m_cachedPosition;
 #endif
     GeoNotifierSet m_requestsAwaitingCachedPosition;
 };

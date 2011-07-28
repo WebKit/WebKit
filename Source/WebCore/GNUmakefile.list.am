@@ -2253,8 +2253,6 @@ webcore_sources += \
 	Source/WebCore/page/GeolocationController.h \
 	Source/WebCore/page/GeolocationError.h \
 	Source/WebCore/page/GeolocationPosition.h \
-	Source/WebCore/page/GeolocationPositionCache.cpp \
-	Source/WebCore/page/GeolocationPositionCache.h \
 	Source/WebCore/page/Geoposition.h \
 	Source/WebCore/page/GroupSettings.cpp \
 	Source/WebCore/page/GroupSettings.h \
