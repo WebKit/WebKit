@@ -1,5 +1,12 @@
 2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/fast/forms/textfield-overflow-by-value-update-expected.txt: Added.
+        * platform/qt/test_expectations.txt:
+
+2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][Mac] Unreviewed gardening.
 
         * platform/qt-mac/Skipped: Paint the bot green with skipping all failing and crashing tests.

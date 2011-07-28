@@ -3,18 +3,13 @@
 // See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
 BUGWK64002 : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TEXT PASS
-
-SKIP BUGWK64002 : fast/forms/textfield-overflow-by-value-update.html = PASS FAIL
-
 BUGWK64002 : fast/notifications/notifications-click-event.html = TEXT PASS
-
 BUGWK64002 : fast/workers/shared-worker-lifecycle.html = TEXT PASS
 BUGWK64002 : fast/workers/shared-worker-frame-lifecycle.html = TEXT PASS
 BUGWK64002 : fast/workers/worker-close-more.html = TEXT PASS
 BUGWK64002 : fast/workers/storage/interrupt-database.html = TEXT PASS
 BUGWK64002 : fast/workers/dedicated-worker-lifecycle.html = TEXT PASS
 BUGWK64002 : fast/workers/worker-lifecycle.html = TEXT PASS
-
 BUGWK64002 : fast/selectors/unqualified-hover-strict.html = TEXT PASS
 
 BUGWK62662 : inspector/cookie-parser.html = CRASH PASS
