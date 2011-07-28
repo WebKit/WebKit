@@ -1,3 +1,19 @@
+2011-07-27  MORITA Hajime  <morrita@google.com>
+
+        Inconsistent state of TreeScope reference.
+        https://bugs.webkit.org/show_bug.cgi?id=65235
+        
+        The tree scope pointers on shadow tree nodes didn't cleared.
+        even when the tree scope (shadow root) is destroyed.
+        This change clear these poitners before detaching the shadow root.
+
+        Reviewed by Dimitri Glazkov.
+
+        Test: fast/dom/shadow/tree-scope-crash.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeShadowRoot):
+
 2011-07-27  Rachel Blum  <groby@chromium.org>
 
         Implement sizes attribute for link tag from HTML5

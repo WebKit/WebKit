@@ -1,3 +1,13 @@
+2011-07-27  MORITA Hajime  <morrita@google.com>
+
+        Inconsistent state of TreeScope reference.
+        https://bugs.webkit.org/show_bug.cgi?id=65235
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/dom/shadow/tree-scope-crash-expected.txt: Added.
+        * fast/dom/shadow/tree-scope-crash.html: Added.
+
 2011-07-27  Rachel Blum  <groby@chromium.org>
 
         Implement sizes attribute for link tag from HTML5
