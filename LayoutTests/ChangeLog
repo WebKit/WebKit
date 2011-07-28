@@ -1,5 +1,29 @@
 2011-07-28  Stephen White  <senorblanco@chromium.org>
 
+        New chromium linux text results.  These results used to match the XP
+        results, but since we now have (correct) win7 results with different
+        DOM trees, the fallback no longer works, and we need them here.
+
+        Unreviewed.
+
+        * platform/chromium-linux/svg/W3C-I18N/g-dirLTR-ubNone-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/g-dirLTR-ubOverride-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/g-dirRTL-ubNone-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/g-dirRTL-ubOverride-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/text-dirLTR-ubNone-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/text-dirRTL-ubNone-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/text-dirRTL-ubOverride-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubEmbed-in-rtl-context-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubNone-in-rtl-context-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirLTR-ubOverride-in-rtl-context-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-I18N/tspan-direction-rtl-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/circular-marker-reference-1-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/circular-marker-reference-3-expected.txt: Added.
+        * platform/chromium-linux/svg/text/bidi-tspans-expected.txt: Added.
+
+2011-07-28  Stephen White  <senorblanco@chromium.org>
+
         Rebaseline many chromium win7 and vista tests.  This also revealed some
         incorrect results checked into the tree, which I've deleted.
 
