@@ -1,3 +1,12 @@
+2011-07-27  Mike Reed  <reed@google.com>
+
+        [skia] fix clipping of some glyphs on windows
+        https://bugs.webkit.org/show_bug.cgi?id=65262
+
+        Reviewed by Stephen White.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  MORITA Hajime  <morrita@google.com>
 
         Inconsistent state of TreeScope reference.
