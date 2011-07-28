@@ -3835,6 +3835,3 @@ BUGWK64692 WIN : fast/forms/file-input-disabled.html = IMAGE
 BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
-
-// Needs baseline after being added in r91879.
-BUGLEVIW: fast/text/international/unicode-bidi-plaintext-in-textarea.html = PASS FAIL

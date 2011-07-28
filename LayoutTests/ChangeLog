@@ -1,3 +1,13 @@
+2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline after r91879.
+
+        * platform/chromium-linux/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Added.
+        * platform/chromium-win/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Added.
+        * platform/chromium-win/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-07-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Marking leviw's new unicode-bidi-plaintext test as failing
