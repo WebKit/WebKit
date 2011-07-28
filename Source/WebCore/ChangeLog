@@ -1,3 +1,14 @@
+2011-07-27  Adam Barth  <abarth@webkit.org>
+
+        Crypto.idl doesn't need legacy optional arguments
+        https://bugs.webkit.org/show_bug.cgi?id=65298
+
+        Reviewed by Darin Adler.
+
+        This API is relatively new and useless to call without its only argument.
+
+        * page/Crypto.idl:
+
 2011-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove operator new from JSCell
