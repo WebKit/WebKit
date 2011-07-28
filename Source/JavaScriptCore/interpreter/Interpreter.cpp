@@ -1222,7 +1222,7 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     bool pushedScope = false;
     if (numVariables || numFunctions) {
         if (codeBlock->isStrictMode()) {
-            variableObject = new (callFrame) StrictEvalActivation(callFrame);
+            variableObject = StrictEvalActivation::create(callFrame);
             scopeChain = scopeChain->push(variableObject);
             pushedScope = true;
         }
@@ -1327,7 +1327,7 @@ NEVER_INLINE ScopeChainNode* Interpreter::createExceptionScope(CallFrame* callFr
     CodeBlock* codeBlock = callFrame->codeBlock();
     Identifier& property = codeBlock->identifier(vPC[2].u.operand);
     JSValue value = callFrame->r(vPC[3].u.operand).jsValue();
-    JSObject* scope = new (callFrame) JSStaticScopeObject(callFrame, property, value, DontDelete);
+    JSObject* scope = JSStaticScopeObject::create(callFrame, property, value, DontDelete);
     callFrame->uncheckedR(dst) = JSValue(scope);
 
     return callFrame->scopeChain()->push(scope);
@@ -4152,7 +4152,7 @@ skip_id_custom_self:
             does not affect the scope enclosing the FunctionExpression.
          */
         if (!function->name().isNull()) {
-            JSStaticScopeObject* functionScopeObject = new (callFrame) JSStaticScopeObject(callFrame, function->name(), func, ReadOnly | DontDelete);
+            JSStaticScopeObject* functionScopeObject = JSStaticScopeObject::create(callFrame, function->name(), func, ReadOnly | DontDelete);
             func->setScope(*globalData, func->scope()->push(functionScopeObject));
         }
 

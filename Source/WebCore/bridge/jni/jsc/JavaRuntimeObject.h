@@ -35,7 +35,11 @@ class JavaInstance;
 
 class JavaRuntimeObject : public RuntimeObject {
 public:
-    JavaRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<JavaInstance>);
+    static JavaRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<JavaInstance> javaInst)
+    {
+        return new (allocateCell<JavaRuntimeObject>(*exec->heap())) JavaRuntimeObject(exec, globalObject, javaInst);
+    }
+
     virtual ~JavaRuntimeObject();
 
     JavaInstance* getInternalJavaInstance() const;
@@ -46,6 +50,9 @@ public:
     {
         return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
+
+private:
+    JavaRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<JavaInstance>);
 };
 
 }

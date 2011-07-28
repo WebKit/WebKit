@@ -94,7 +94,7 @@ CInstance::~CInstance()
 
 RuntimeObject* CInstance::newRuntimeObject(ExecState* exec)
 {
-    return new (exec) CRuntimeObject(exec, exec->lexicalGlobalObject(), this);
+    return CRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
 }
 
 Class *CInstance::getClass() const
@@ -111,12 +111,9 @@ bool CInstance::supportsInvokeDefaultMethod() const
 
 class CRuntimeMethod : public RuntimeMethod {
 public:
-    CRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-        // We need to pass in the right global object for "i".
-        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<CRuntimeMethod>(exec), name, list)
+    static CRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
-        ASSERT(inherits(&s_info));
+        return new (allocateCell<CRuntimeMethod>(*exec->heap())) CRuntimeMethod(exec, globalObject, name, list);
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -125,6 +122,16 @@ public:
     }
 
     static const ClassInfo s_info;
+
+private:
+    CRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<CRuntimeMethod>(exec), name, list)
+    {
+        ASSERT(inherits(&s_info));
+    }
+
 };
 
 const ClassInfo CRuntimeMethod::s_info = { "CRuntimeMethod", &RuntimeMethod::s_info, 0, 0 };
@@ -132,7 +139,7 @@ const ClassInfo CRuntimeMethod::s_info = { "CRuntimeMethod", &RuntimeMethod::s_i
 JSValue CInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return new (exec) CRuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
+    return CRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
 JSValue CInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)

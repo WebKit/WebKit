@@ -35,12 +35,17 @@
 
 class JSGlueGlobalObject : public JSGlobalObject {
     public:
-        JSGlueGlobalObject(JSGlobalData&, Structure*, JSFlags = kJSFlagNone);
+        static JSGlueGlobalObject* create(JSGlobalData& globalData, Structure* structure, JSFlags flags = kJSFlagNone)
+        {
+            return new (allocateCell<JSGlueGlobalObject>(globalData.heap)) JSGlueGlobalObject(globalData, structure, flags);
+        }
 
         JSFlags Flags() const { return m_flags; }
         Structure* userObjectStructure() const { return m_userObjectStructure.get(); }
 
     private:
+        JSGlueGlobalObject(JSGlobalData&, Structure*, JSFlags = kJSFlagNone);
+        
         JSFlags m_flags;
         Strong<Structure> m_userObjectStructure;
 };

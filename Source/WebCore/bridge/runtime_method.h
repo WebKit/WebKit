@@ -35,7 +35,11 @@ namespace JSC {
 
 class RuntimeMethod : public InternalFunction {
 public:
-    RuntimeMethod(ExecState*, JSGlobalObject*, Structure*, const Identifier& name, Bindings::MethodList&);
+    static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& methodList)
+    {
+        return new (allocateCell<RuntimeMethod>(*exec->heap())) RuntimeMethod(exec, globalObject, structure, name, methodList);
+    }
+
     Bindings::MethodList* methods() const { return _methodList.get(); }
 
     static const ClassInfo s_info;
@@ -51,6 +55,7 @@ public:
     }
 
 protected:
+    RuntimeMethod(ExecState*, JSGlobalObject*, Structure*, const Identifier& name, Bindings::MethodList&);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
 
 private:

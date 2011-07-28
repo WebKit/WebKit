@@ -97,7 +97,7 @@ JSGlobalContextRef JSGlobalContextCreateInGroup(JSContextGroupRef group, JSClass
 #endif
 
     if (!globalObjectClass) {
-        JSGlobalObject* globalObject = new (globalData.get()) JSGlobalObject(*globalData, JSGlobalObject::createStructure(*globalData, jsNull()));
+        JSGlobalObject* globalObject = JSGlobalObject::create(*globalData, JSGlobalObject::createStructure(*globalData, jsNull()));
         return JSGlobalContextRetain(toGlobalRef(globalObject->globalExec()));
     }
 

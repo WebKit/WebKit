@@ -32,7 +32,11 @@ namespace JSC {
 
 class StrictEvalActivation : public JSNonFinalObject {
 public:
-    StrictEvalActivation(ExecState*);
+    static StrictEvalActivation* create(ExecState* exec)
+    {
+        return new (allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);
+    }
+
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual JSObject* toThisObject(ExecState*) const;
     virtual JSValue toStrictThisObject(ExecState*) const;
@@ -44,6 +48,9 @@ public:
     
 protected:
     static const unsigned StructureFlags = IsEnvironmentRecord | JSNonFinalObject::StructureFlags;
+
+private:
+    StrictEvalActivation(ExecState*);
 };
 
 } // namespace JSC

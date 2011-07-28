@@ -1,3 +1,31 @@
+2011-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove operator new from JSCell
+        https://bugs.webkit.org/show_bug.cgi?id=64999
+
+        Reviewed by Oliver Hunt.
+
+        Removed the implementation of operator new in JSCell, so any further uses
+        will not successfully link.  Also removed any remaining uses of operator new.
+
+        * API/JSContextRef.cpp:
+        * debugger/DebuggerActivation.h:
+        (JSC::DebuggerActivation::create):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::createExceptionScope):
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::create):
+        * runtime/JSStaticScopeObject.h:
+        (JSC::JSStaticScopeObject::create):
+        (JSC::JSStaticScopeObject::JSStaticScopeObject):
+        * runtime/StrictEvalActivation.h:
+        (JSC::StrictEvalActivation::create):
+
 2011-07-27  Filip Pizlo  <fpizlo@apple.com>
 
         DFG graph has no notion of double prediction.

@@ -1,3 +1,22 @@
+2011-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove operator new from JSCell
+        https://bugs.webkit.org/show_bug.cgi?id=64999
+
+        Reviewed by Oliver Hunt.
+
+        Removed the implementation of operator new in JSCell, so any further uses
+        will not successfully link.  Also removed any remaining uses of operator new.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        (WebKit::JSNPMethod::create):
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::methodGetter):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        (WebKit::JSNPObject::create):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateJSObject):
+
 2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
 
         [WK2][Qt] Move from QGraphicsView to Qt Scene Graph

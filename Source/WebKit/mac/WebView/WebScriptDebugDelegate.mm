@@ -186,7 +186,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     for (ScopeChainIterator it = scopeChain->begin(); it != end; ++it) {
         JSObject* object = it->get();
         if (object->isActivationObject())
-            object = new (scopeChain->globalData) DebuggerActivation(*scopeChain->globalData, object);
+            object = DebuggerActivation::create(*scopeChain->globalData, object);
         [scopes addObject:[self _convertValueToObjcValue:object]];
     }
 

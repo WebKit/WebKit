@@ -32,11 +32,9 @@ namespace JSC{
     
     class JSStaticScopeObject : public JSVariableObject {
     public:
-        JSStaticScopeObject(ExecState* exec, const Identifier& ident, JSValue value, unsigned attributes)
-            : JSVariableObject(exec->globalData(), exec->globalData().staticScopeStructure.get(), &m_symbolTable, reinterpret_cast<Register*>(&m_registerStore + 1))
+        static JSStaticScopeObject* create(ExecState* exec, const Identifier& ident, JSValue value, unsigned attributes)
         {
-            m_registerStore.set(exec->globalData(), this, value);
-            symbolTable().add(ident.impl(), SymbolTableEntry(-1, attributes));
+            return new (allocateCell<JSStaticScopeObject>(*exec->heap())) JSStaticScopeObject(exec, ident, value, attributes);
         }
 
         virtual void visitChildren(SlotVisitor&);
@@ -53,6 +51,13 @@ namespace JSC{
         static const unsigned StructureFlags = IsEnvironmentRecord | OverridesGetOwnPropertySlot | OverridesVisitChildren | OverridesGetPropertyNames | JSVariableObject::StructureFlags;
 
     private:
+        JSStaticScopeObject(ExecState* exec, const Identifier& ident, JSValue value, unsigned attributes)
+            : JSVariableObject(exec->globalData(), exec->globalData().staticScopeStructure.get(), &m_symbolTable, reinterpret_cast<Register*>(&m_registerStore + 1))
+        {
+            m_registerStore.set(exec->globalData(), this, value);
+            symbolTable().add(ident.impl(), SymbolTableEntry(-1, attributes));
+        }
+        
         SymbolTable m_symbolTable;
         WriteBarrier<Unknown> m_registerStore;
     };

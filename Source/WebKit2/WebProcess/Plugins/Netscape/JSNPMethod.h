@@ -35,13 +35,18 @@ namespace WebKit {
 // A JSObject that wraps an NPMethod.
 class JSNPMethod : public JSC::InternalFunction {
 public:
-    JSNPMethod(JSC::ExecState*, JSC::JSGlobalObject*, const JSC::Identifier&, NPIdentifier);
+    static JSNPMethod* create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, const JSC::Identifier& ident, NPIdentifier npIdent)
+    {
+        return new (JSC::allocateCell<JSNPMethod>(*exec->heap())) JSNPMethod(exec, globalObject, ident, npIdent);
+    }
 
     static const JSC::ClassInfo s_info;
 
     NPIdentifier npIdentifier() const { return m_npIdentifier; }
 
 private:    
+    JSNPMethod(JSC::ExecState*, JSC::JSGlobalObject*, const JSC::Identifier&, NPIdentifier);
+
     static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
         return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);

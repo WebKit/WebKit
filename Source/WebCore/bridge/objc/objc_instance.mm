@@ -62,7 +62,7 @@ static NSMapTable *createInstanceWrapperCache()
 
 RuntimeObject* ObjcInstance::newRuntimeObject(ExecState* exec)
 {
-    return new (exec) ObjCRuntimeObject(exec, exec->lexicalGlobalObject(), this);
+    return ObjCRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
 }
 
 void ObjcInstance::setGlobalException(NSString* exception, JSGlobalObject* exceptionEnvironment)
@@ -172,12 +172,9 @@ bool ObjcInstance::supportsInvokeDefaultMethod() const
 
 class ObjCRuntimeMethod : public RuntimeMethod {
 public:
-    ObjCRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-        // We need to pass in the right global object for "i".
-        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<ObjCRuntimeMethod>(exec), name, list)
+    static ObjCRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
-        ASSERT(inherits(&s_info));
+        return new (allocateCell<ObjCRuntimeMethod>(*exec->heap())) ObjCRuntimeMethod(exec, globalObject, name, list);
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -186,6 +183,15 @@ public:
     }
 
     static const ClassInfo s_info;
+
+private:
+    ObjCRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<ObjCRuntimeMethod>(exec), name, list)
+    {
+        ASSERT(inherits(&s_info));
+    }
 };
 
 const ClassInfo ObjCRuntimeMethod::s_info = { "ObjCRuntimeMethod", &RuntimeMethod::s_info, 0, 0 };
@@ -193,7 +199,7 @@ const ClassInfo ObjCRuntimeMethod::s_info = { "ObjCRuntimeMethod", &RuntimeMetho
 JSValue ObjcInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return new (exec) ObjCRuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
+    return ObjCRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
 JSValue ObjcInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)

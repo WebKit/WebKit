@@ -1,3 +1,23 @@
+2011-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove operator new from JSCell
+        https://bugs.webkit.org/show_bug.cgi?id=64999
+
+        Reviewed by Oliver Hunt.
+
+        Removed the implementation of operator new in JSCell, so any further uses
+        will not successfully link.  Also removed any remaining uses of operator new.
+
+        * JSRun.cpp:
+        (JSRun::JSRun):
+        * JSRun.h:
+        (JSGlueGlobalObject::create):
+        * JSUtils.cpp:
+        (JSObjectKJSValue):
+        (getThreadGlobalObject):
+        * UserObjectImp.h:
+        (UserObjectImp::create):
+
 2011-07-01  Jungshik Shin  <jshin@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

@@ -43,7 +43,7 @@ JSGlueGlobalObject::JSGlueGlobalObject(JSGlobalData& globalData, Structure* stru
 JSRun::JSRun(CFStringRef source, JSFlags inFlags)
     :   JSBase(kJSRunTypeID),
         fSource(CFStringToUString(source)),
-        fGlobalObject(getThreadGlobalExecState()->globalData(), new (&getThreadGlobalExecState()->globalData()) JSGlueGlobalObject(getThreadGlobalExecState()->globalData(), JSGlueGlobalObject::createStructure(getThreadGlobalExecState()->globalData(), jsNull()), inFlags)),
+        fGlobalObject(getThreadGlobalExecState()->globalData(), JSGlueGlobalObject::create(getThreadGlobalExecState()->globalData(), JSGlueGlobalObject::createStructure(getThreadGlobalExecState()->globalData(), jsNull()), inFlags)),
         fFlags(inFlags)
 {
 }

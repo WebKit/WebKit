@@ -63,7 +63,7 @@ JavaInstance::~JavaInstance()
 
 RuntimeObject* JavaInstance::newRuntimeObject(ExecState* exec)
 {
-    return new (exec) JavaRuntimeObject(exec, exec->lexicalGlobalObject(), this);
+    return JavaRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
 }
 
 #define NUM_LOCAL_REFS 64
@@ -116,12 +116,9 @@ JSValue JavaInstance::booleanValue() const
 
 class JavaRuntimeMethod : public RuntimeMethod {
 public:
-    JavaRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-        // We need to pass in the right global object for "i".
-        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<JavaRuntimeMethod>(exec), name, list)
+    static JavaRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
-        ASSERT(inherits(&s_info));
+        return new (allocateCell<JavaRuntimeMethod>(*exec->heap())) JavaRuntimeMethod(exec, globalObject, name, list);
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -130,6 +127,16 @@ public:
     }
 
     static const ClassInfo s_info;
+
+private:
+    JavaRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<JavaRuntimeMethod>(exec), name, list)
+    {
+        ASSERT(inherits(&s_info));
+    }
+
 };
 
 const ClassInfo JavaRuntimeMethod::s_info = { "JavaRuntimeMethod", &RuntimeMethod::s_info, 0, 0 };
@@ -137,7 +144,7 @@ const ClassInfo JavaRuntimeMethod::s_info = { "JavaRuntimeMethod", &RuntimeMetho
 JSValue JavaInstance::getMethod(ExecState* exec, const Identifier& propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return new (exec) JavaRuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
+    return JavaRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
 JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod)

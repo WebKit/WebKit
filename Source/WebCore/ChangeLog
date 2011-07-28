@@ -1,3 +1,41 @@
+2011-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove operator new from JSCell
+        https://bugs.webkit.org/show_bug.cgi?id=64999
+
+        Reviewed by Oliver Hunt.
+
+        No new tests.
+
+        Removed the implementation of operator new in JSCell, so any further uses
+        will not successfully link.  Also removed any remaining uses of operator new.
+
+        * bridge/c/CRuntimeObject.h:
+        (JSC::Bindings::CRuntimeObject::create):
+        * bridge/c/c_instance.cpp:
+        (JSC::Bindings::CInstance::newRuntimeObject):
+        (JSC::Bindings::CRuntimeMethod::create):
+        (JSC::Bindings::CRuntimeMethod::CRuntimeMethod):
+        (JSC::Bindings::CInstance::getMethod):
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::newRuntimeObject):
+        (JavaRuntimeMethod::create):
+        (JavaRuntimeMethod::JavaRuntimeMethod):
+        (JavaInstance::getMethod):
+        * bridge/jni/jsc/JavaRuntimeObject.h:
+        (JSC::Bindings::JavaRuntimeObject::create):
+        * bridge/objc/ObjCRuntimeObject.h:
+        (JSC::Bindings::ObjCRuntimeObject::create):
+        * bridge/objc/objc_class.mm:
+        (JSC::Bindings::ObjcClass::fallbackObject):
+        * bridge/objc/objc_instance.mm:
+        (ObjcInstance::newRuntimeObject):
+        (ObjCRuntimeMethod::create):
+        (ObjCRuntimeMethod::ObjCRuntimeMethod):
+        (ObjcInstance::getMethod):
+        * bridge/objc/objc_runtime.h:
+        (JSC::Bindings::ObjcFallbackObjectImp::create):
+
 2011-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Network panel sidebar should have width saved in preferences when resource is selected.

@@ -122,6 +122,14 @@ namespace JSC {
         bool m_evalEnabled;
 
     public:
+        static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
+        {
+            return new (allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
+        }
+
+        static JS_EXPORTDATA const ClassInfo s_info;
+
+    protected:
         explicit JSGlobalObject(JSGlobalData& globalData, Structure* structure)
             : JSVariableObject(globalData, structure, &m_symbolTable, 0)
             , m_registerArraySize(0)
@@ -134,9 +142,6 @@ namespace JSC {
             init(this);
         }
 
-        static JS_EXPORTDATA const ClassInfo s_info;
-
-    protected:
         JSGlobalObject(JSGlobalData& globalData, Structure* structure, JSObject* thisValue)
             : JSVariableObject(globalData, structure, &m_symbolTable, 0)
             , m_registerArraySize(0)

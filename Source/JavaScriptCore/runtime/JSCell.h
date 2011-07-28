@@ -121,8 +121,6 @@ namespace JSC {
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
         // Garbage collection.
-        void* operator new(size_t, ExecState*);
-        void* operator new(size_t, JSGlobalData*);
         void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; }
 
         virtual void visitChildren(SlotVisitor&);
@@ -164,6 +162,11 @@ namespace JSC {
         // Base implementation; for non-object classes implements getPropertySlot.
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
+        
+        // Note that the first two declarations of operator new have no corresponding implementation and 
+        // will cause link errors if you use them.
+        void* operator new(size_t, ExecState*);
+        void* operator new(size_t, JSGlobalData*);
         
         WriteBarrier<Structure> m_structure;
     };
@@ -358,20 +361,6 @@ namespace JSC {
     }
 #endif
 
-    inline void* JSCell::operator new(size_t size, JSGlobalData* globalData)
-    {
-        JSCell* result = static_cast<JSCell*>(globalData->heap.allocate(size));
-        result->m_structure.clear();
-        return result;
-    }
-
-    inline void* JSCell::operator new(size_t size, ExecState* exec)
-    {
-        JSCell* result = static_cast<JSCell*>(exec->heap()->allocate(size));
-        result->m_structure.clear();
-        return result;
-    }
-    
     inline void destructor(JSCell* cell)
     {
         cell->~JSCell();

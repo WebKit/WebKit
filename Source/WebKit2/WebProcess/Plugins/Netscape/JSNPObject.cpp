@@ -454,7 +454,7 @@ JSValue JSNPObject::methodGetter(ExecState* exec, JSValue slotBase, const Identi
         return throwInvalidAccessError(exec);
 
     NPIdentifier npIdentifier = npIdentifierFromIdentifier(methodName);
-    return new (exec) JSNPMethod(exec, thisObj->globalObject(), methodName, npIdentifier);
+    return JSNPMethod::create(exec, thisObj->globalObject(), methodName, npIdentifier);
 }
 
 JSObject* JSNPObject::throwInvalidAccessError(ExecState* exec)

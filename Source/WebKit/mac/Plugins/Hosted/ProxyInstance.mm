@@ -134,7 +134,7 @@ ProxyInstance::~ProxyInstance()
     
 RuntimeObject* ProxyInstance::newRuntimeObject(ExecState* exec)
 {
-    return new (exec) ProxyRuntimeObject(exec, exec->lexicalGlobalObject(), this);
+    return ProxyRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
 }
 
 JSC::Bindings::Class* ProxyInstance::getClass() const
@@ -179,12 +179,9 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
 
 class ProxyRuntimeMethod : public RuntimeMethod {
 public:
-    ProxyRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-        // exec-globalData() is also likely wrong.
-        : RuntimeMethod(exec, globalObject, deprecatedGetDOMStructure<ProxyRuntimeMethod>(exec), name, list)
+    static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
-        ASSERT(inherits(&s_info));
+        return new (allocateCell<ProxyRuntimeMethod>(*exec->heap())) ProxyRuntimeMethod(exec, globalObject, name, list);
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -193,6 +190,15 @@ public:
     }
 
     static const ClassInfo s_info;
+
+private:
+    ProxyRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // exec-globalData() is also likely wrong.
+        : RuntimeMethod(exec, globalObject, deprecatedGetDOMStructure<ProxyRuntimeMethod>(exec), name, list)
+    {
+        ASSERT(inherits(&s_info));
+    }
 };
 
 const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMethod::s_info, 0, 0 };
@@ -200,7 +206,7 @@ const ClassInfo ProxyRuntimeMethod::s_info = { "ProxyRuntimeMethod", &RuntimeMet
 JSValue ProxyInstance::getMethod(JSC::ExecState* exec, const JSC::Identifier& propertyName)
 {
     MethodList methodList = getClass()->methodsNamed(propertyName, this);
-    return new (exec) ProxyRuntimeMethod(exec, exec->lexicalGlobalObject(), propertyName, methodList);
+    return ProxyRuntimeMethod::create(exec, exec->lexicalGlobalObject(), propertyName, methodList);
 }
 
 JSValue ProxyInstance::invokeMethod(ExecState* exec, JSC::RuntimeMethod* runtimeMethod)
