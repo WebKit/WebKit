@@ -1555,9 +1555,6 @@ BUGCR9798 WIN : http/tests/cookies/multiple-cookies.html = TIMEOUT PASS
 BUGCR24182 DEBUG SLOW : fast/forms/input-implicit-length-limit.html = PASS
 BUGCR24182 DEBUG SLOW : fast/forms/input-maxlength.html = PASS
 
-// Failing at WebKit Linux (dbg)(3) build 7795
-//BUGCR24119 LINUX DEBUG : tables/mozilla/bugs/bug1220.html = PASS FAIL
-
 // WebKit roll 49405:49413
 BUGCR28409 : http/tests/xmlhttprequest/logout.html = FAIL
 
@@ -1701,9 +1698,6 @@ BUGCR31253 : http/tests/security/xss-DENIED-assign-location-href-javascript.html
 BUGCR30826 WIN : platform/win/fast/events/panScroll-imageMap-noHref-scroll.html = TEXT
 BUGCR30826 WIN DEBUG : platform/win/fast/events/panScroll-event-fired.html = PASS TEXT TIMEOUT
 
-// Flaky
-//BUGCR30930 LINUX DEBUG : tables/mozilla/bugs/bug15933.html = IMAGE PASS
-
 // WebKit roll 52468->52535
 BUGCR31991 WIN LINUX : fast/text/international/bidi-layout-across-linebreak.html = TEXT
 BUGCR31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
@@ -1756,7 +1750,6 @@ BUGCR37896 LINUX MAC DEBUG : fast/text/firstline/001.html = PASS CRASH TIMEOUT
 // Added in http://trac.webkit.org/changeset/55587
 // Three flaky tests noticed during a sheriff rotation.
 BUGCR37962 MAC DEBUG : fast/dom/HTMLElement/bdo.html = CRASH PASS
-//BUGCR37962 LINUX DEBUG : fast/dom/HTMLElement/bdo.html = CRASH PASS
 BUGCR37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.html = CRASH PASS
 
 // WebKit roll r55853 -> 55940
@@ -2256,9 +2249,6 @@ BUGWK46693 MAC : fast/repaint/repaint-svg-after-style-change.html = TEXT
 BUGWK46951 : fast/url/segments-from-data-url.html = TEXT
 BUGWK46951 : fast/url/segments.html = TEXT
 
-// This test starts to timeout during build bots were down between 68880:68920
-//BUG_HCLAM WIN RELEASE : fast/css/acid2-pixel.html = TIMEOUT PASS
-
 // Unexpected timeout in these tests.
 BUG_HCLAM : http/tests/css/border-image-loading.html = TEXT TIMEOUT PASS
 BUG_HCLAM : http/tests/css/css-image-loading.html = TEXT TIMEOUT PASS
@@ -2314,7 +2304,6 @@ BUGWK46600 SKIP : fast/dom/nodesFromRect-inner-documents.html = TEXT
 // Many flaky SVG tests
 BUGCR59671 LINUX : svg/W3C-SVG-1.1-SE/pservers-grad-17-b.svg = IMAGE+TEXT PASS
 BUGCR59671 LINUX : svg/custom/convolution-crash.svg = PASS TEXT
-//BUGCR59671 LINUX : svg/custom/focus-ring.svg = IMAGE+TEXT PASS
 BUGCR59671 LINUX : svg/custom/repaint-on-constant-size-change.svg = IMAGE PASS
 BUGCR59671 LINUX : svg/carto.net/slider.svg = IMAGE PASS
 
@@ -2362,7 +2351,6 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
 BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 
 // These tests started failing presumably after r70850
-//BUGWK48627 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUGCR88911 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE+TEXT
 BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 
@@ -2396,8 +2384,6 @@ BUGCR62138 : animations/stop-animation-on-suspend.html = TEXT PASS CRASH
 
 // test_shell and DRT do not have LayoutTestController.pageSizeAndMarginsInPixels
 BUGCR62515 : printing/page-format-data-display-none.html = TEXT
-
-//BUGCR60393 MAC : fast/selectors/001.html = PASS TIMEOUT
 
 BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT PASS
 
@@ -2447,10 +2433,6 @@ BUG_DRT MAC : fast/backgrounds/solid-color-context-restore.html = IMAGE
 BUG_DRT MAC : fast/reflections/inline-crash.html = IMAGE
 // The background color of Apple Mac results also look wrong.
 BUG_DRT : http/tests/misc/slow-loading-image-in-pattern.html = IMAGE
-
-// Flaky since 2010-09-17?
-//BUGCR57950 XP : svg/batik/text/verticalText.svg = CRASH PASS
-//BUGWK58193 WIN7 : svg/batik/text/verticalText.svg = IMAGE+TEXT
 
 // BUGCR59415 : cannot repro the flakiness
 BUGCR59415 WIN : media/video-loop.html = TIMEOUT TEXT PASS
@@ -2511,7 +2493,6 @@ BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html 
 
 // Flaky failures
 BUGCR66087 WIN : fast/dom/Geolocation/timestamp.html = PASS TEXT
-//BUGCR66087 LINUX : http/tests/misc/iframe404.html = PASS TEXT
 BUGCR66087 WIN : http/tests/misc/no-last-modified.html = PASS TEXT
 BUGCR66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 
@@ -2639,14 +2620,10 @@ BUGCR71022 WIN LINUX : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 // Seems to have started failing at http://trac.webkit.org/changeset/80582
 BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
 
-//BUGWK53347 WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
-
 BUGCR71418 LEOPARD : fast/borders/border-radius-split-inline.html = IMAGE
 
 BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
-
-//BUGWK53459 WIN LINUX : editing/pasteboard/3976872.html = PASS TIMEOUT
 
 BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = CRASH PASS
 
@@ -2838,14 +2815,7 @@ BUGWK58587 DEBUG GPU LINUX : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
 
 // WebKit roll 80564:80631: vertical text fallout - these probably just need rebaseline:
-//BUGWK56072 VISTA : fast/blockflow/japanese-lr-text.html = IMAGE
-//BUGWK56072 VISTA : fast/blockflow/japanese-rl-text.html = IMAGE
-//BUGWK56072 VISTA : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-//BUGWK56072 VISTA : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-//BUGWK56072 VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
 BUGWK56072 VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
-//BUGWK56072 VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-//BUGWK56072 VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
 BUGWK56072 VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK56072 VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
@@ -2938,7 +2908,6 @@ BUGCR77494 WIN LINUX : fast/layers/layer-visibility.html = FAIL
 BUGCR77494 WIN LINUX : fast/repaint/layout-state-scrolloffset.html = FAIL
 BUGCR77494 WIN LINUX : fast/repaint/layout-state-scrolloffset2.html = FAIL
 BUGCR77494 WIN LINUX : fast/repaint/layout-state-scrolloffset3.html = FAIL
-//BUGCR77494 WIN LINUX : tables/mozilla/bugs/bug51140.html = TEXT
 // Not included in tests modified by 81992, but started failing at same time:
 BUGCR77494 WIN LINUX : fast/repaint/transform-replaced-shadows.html = IMAGE
 
@@ -3037,30 +3006,16 @@ BUGWK58193 WIN7 : css2.1/t1202-counters-09-b.html = IMAGE
 BUGWK58193 WIN7 : editing/pasteboard/block-wrappers-necessary.html = IMAGE
 BUGWK58193 WIN7 : fast/block/positioning/auto/vertical-lr/007.html = IMAGE
 BUGWK58193 WIN7 : fast/block/positioning/auto/vertical-rl/007.html = IMAGE
-//BUGWK58193 WIN7 : fast/blockflow/english-lr-text.html = IMAGE
 BUGWK58193 WIN7 : fast/blockflow/fallback-orientation.html = IMAGE
-//BUGWK58193 WIN7 : fast/blockflow/japanese-lr-text.html = IMAGE
-//BUGWK58193 WIN7 : fast/blockflow/japanese-rl-text.html = IMAGE
 BUGWK58193 WIN7 : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
-//BUGWK58193 WIN7 : fast/blockflow/japanese-ruby-vertical-lr.html = IMAGE
-//BUGWK58193 WIN7 : fast/blockflow/japanese-ruby-vertical-rl.html = IMAGE
-//BUGWK58193 WIN7 : fast/blockflow/vertical-align-table-baseline.html = IMAGE
 BUGWK58193 WIN7 : fast/blockflow/vertical-baseline-alignment.html = IMAGE
 BUGWK58193 WIN7 : fast/css/line-height-determined-by-primary-font.html = IMAGE
-//BUGWK58193 WIN7 : fast/dom/34176.html = IMAGE
 BUGWK58193 WIN7 : fast/dynamic/text-combine.html = IMAGE
-//BUGWK58193 WIN7 : fast/repaint/japanese-rl-selection-clear.html = IMAGE
-//BUGWK58193 WIN7 : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
 BUGWK58193 WIN7 : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK58193 WIN7 : fast/ruby/base-shorter-than-text.html = IMAGE
 BUGWK58193 WIN7 : fast/ruby/nested-ruby.html = IMAGE
-//BUGWK58193 WIN7 : fast/text/atsui-negative-spacing-features.html = IMAGE
-//BUGWK58193 WIN7 : fast/text/atsui-spacing-features.html = IMAGE
 BUGWK58193 WIN7 : fast/text/drawBidiText.html = IMAGE
-//BUGWK58193 WIN7 : fast/text/international/hebrew-vowels.html = IMAGE
 BUGWK58193 WIN7 : fast/text/international/hindi-spacing.html = IMAGE
-//BUGWK58193 WIN7 : fast/text/stroking-decorations.html = IMAGE
-//BUGWK58193 WIN7 : fast/text/stroking.html = IMAGE
 BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
 BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
 BUGWK58193 WIN7 : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
@@ -3097,7 +3052,6 @@ BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirLTR-ubOverride-in-ltr-context.svg = IMA
 BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-default-context.svg = IMAGE+TEXT
 BUGWK58193 VISTA : svg/W3C-I18N/tspan-dirNone-ubOverride-in-ltr-context.svg = IMAGE+TEXT
 BUGWK58193 VISTA : svg/batik/masking/maskRegions.svg = IMAGE+TEXT
-//BUGWK58193 VISTA : svg/batik/text/verticalText.svg = IMAGE+TEXT
 BUGWK58193 VISTA : svg/custom/js-late-pattern-and-object-creation.svg = IMAGE+TEXT
 BUGWK58193 VISTA : svg/text/bidi-text-query.svg = IMAGE+TEXT
 BUGWK58193 VISTA : css2.1/t1202-counter-09-b.html = IMAGE
@@ -3105,14 +3059,10 @@ BUGWK58193 VISTA : css2.1/t1202-counters-09-b.html = IMAGE
 BUGWK58193 VISTA : editing/pasteboard/block-wrappers-necessary.html = IMAGE
 BUGWK58193 VISTA : fast/blockflow/japanese-ruby-horizontal-bt.html = IMAGE
 BUGWK58193 VISTA : fast/css/line-height-determined-by-primary-font.html = IMAGE
-//BUGWK58193 VISTA : fast/dom/34176.html = IMAGE
 BUGWK58193 VISTA : fast/dynamic/text-combine.html = IMAGE
 BUGWK58193 VISTA : fast/ruby/nested-ruby.html = IMAGE
-//BUGWK58193 VISTA : fast/text/atsui-negative-spacing-features.html = IMAGE
-//BUGWK58193 VISTA : fast/text/atsui-spacing-features.html = IMAGE
 BUGWK58193 VISTA : fast/text/drawBidiText.html = IMAGE
 BUGWK58193 VISTA : fast/text/international/danda-space.html = IMAGE
-//BUGWK58193 VISTA : fast/text/international/hebrew-vowels.html = IMAGE
 BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg = IMAGE
 BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle.svg = IMAGE
 BUGWK58193 VISTA : svg/W3C-I18N/text-anchor-dirLTR-anchorStart.svg = IMAGE
