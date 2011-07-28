@@ -378,7 +378,7 @@ const EventContext* EventDispatcher::topEventContext()
 
 EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, Node* shadowRoot)
 {
-#if ENABLE(FULLSCREEN_API)
+#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
     // Video-only full screen is a mode where we use the shadow DOM as an implementation
     // detail that should not be detectable by the web content.
     if (Element* element = m_node->document()->webkitCurrentFullScreenElement()) {
