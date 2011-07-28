@@ -1,3 +1,8 @@
+2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Unreviewed gardening.
+
+        * platform/qt-mac/Skipped: Paint the bot green with skipping all failing and crashing tests.
 
 2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
 

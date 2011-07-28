@@ -4676,3 +4676,23 @@ svg/text/small-fonts-in-html5.html
 svg/text/small-fonts.svg
 svg/text/text-midpoint-split-bug.svg
 svg/text/text-path-middle-align.svg
+
+# new failing test
+fast/css/color-leakage.html
+fast/css/font-family-pictograph.html
+fast/forms/input-appearance-number-rtl.html
+fast/forms/textarea-placeholder-wrapping.html
+fast/table/align-right-within-left-aligned-div.html
+fast/text/international/unicode-bidi-plaintext-in-textarea.html
+svg/W3C-SVG-1.1-SE/painting-control-04-f.svg
+svg/W3C-SVG-1.1-SE/struct-dom-11-f.svg
+svg/custom/tref-own-content-removal.svg
+svg/custom/zero-path-square-cap-rendering2.svg
+
+# new crashing tests
+ietestcenter/Javascript/15.2.3.11-1.html
+fast/css/first-letter-anonymous-block-crash.html
+fast/dom/attribute-namespaces.xhtml
+fast/dynamic/insertAdjacentText.html
+svg/custom/svg-parse-overflow-5.html
+fast/css/dashboard-regions-attr-crash.html
