@@ -36,6 +36,7 @@
 #include "RenderSVGResource.h"
 #include "RenderSVGShadowTreeRootContainer.h"
 #include "SVGElementInstance.h"
+#include "SVGElementRareData.h"
 #include "SVGElementInstanceList.h"
 #include "SVGGElement.h"
 #include "SVGNames.h"
@@ -1013,6 +1014,7 @@ void SVGUseElement::associateInstancesWithShadowTreeElements(Node* target, SVGEl
 
     ASSERT(!targetInstance->shadowTreeElement());
     targetInstance->setShadowTreeElement(element);
+    element->setCorrespondingElement(originalElement);
 
     Node* node = target->firstChild();
     for (SVGElementInstance* instance = targetInstance->firstChild(); node && instance; instance = instance->nextSibling()) {

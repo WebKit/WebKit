@@ -28,6 +28,7 @@
 
 #include "Attribute.h"
 #include "CSSCursorImageValue.h"
+#include "CSSStyleSelector.h"
 #include "DOMImplementation.h"
 #include "Document.h"
 #include "Event.h"
@@ -258,6 +259,17 @@ void SVGElement::cursorImageValueRemoved()
     rareSVGData()->setCursorImageValue(0);
 }
 
+SVGElement* SVGElement::correspondingElement()
+{
+    ASSERT(!hasRareSVGData() || !rareSVGData()->correspondingElement() || shadowTreeRootNode());
+    return hasRareSVGData() ? rareSVGData()->correspondingElement() : 0;
+}
+
+void SVGElement::setCorrespondingElement(SVGElement* correspondingElement)
+{
+    ensureRareSVGData()->setCorrespondingElement(correspondingElement);
+}
+
 void SVGElement::parseMappedAttribute(Attribute* attr)
 {
     // standard events
@@ -412,6 +424,14 @@ void SVGElement::synchronizeSystemLanguage(void* contextElement)
 {
     ASSERT(contextElement);
     static_cast<SVGElement*>(contextElement)->synchronizeSystemLanguage();
+}
+
+PassRefPtr<RenderStyle> SVGElement::styleForRenderer(const NodeRenderingContext& context)
+{
+    if (correspondingElement())
+        return document()->styleSelector()->styleForElement(correspondingElement(), parentNode() ? parentNode()->renderer()->style() : 0, false/*allowSharing*/);
+
+    return StyledElement::styleForRenderer(context);
 }
 
 }

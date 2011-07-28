@@ -76,6 +76,7 @@ private:
     void setUpdatesBlocked(bool blocked) { m_updatesBlocked = blocked; }
 
     friend class RenderSVGShadowTreeRootContainer;
+    friend class SVGElement;
     void buildShadowAndInstanceTree(SVGShadowTreeRootElement*);
     void detachInstance();
 

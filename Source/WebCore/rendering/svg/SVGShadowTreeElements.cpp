@@ -22,6 +22,7 @@
 #if ENABLE(SVG)
 #include "SVGShadowTreeElements.h"
 
+#include "CSSStyleSelector.h"
 #include "Document.h"
 #include "FloatSize.h"
 #include "RenderObject.h"
@@ -95,6 +96,11 @@ void SVGShadowTreeRootElement::attachElement(PassRefPtr<RenderStyle> style, Rend
 void SVGShadowTreeRootElement::clearSVGShadowHost()
 {
     setParent(0);
+}
+
+PassRefPtr<RenderStyle> SVGShadowTreeContainerElement::styleForRenderer(const NodeRenderingContext&)
+{
+    return document()->styleSelector()->styleForElement(this, 0, true/*allowSharing*/);
 }
 
 }

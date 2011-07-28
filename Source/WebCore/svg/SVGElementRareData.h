@@ -37,6 +37,7 @@ public:
     SVGElementRareData()
         : m_cursorElement(0)
         , m_cursorImageValue(0)
+        , m_correspondingElement(0)
         , m_instancesUpdatesBlocked(false)
         , m_hasPendingResources(false)
     {
@@ -67,6 +68,9 @@ public:
     SVGCursorElement* cursorElement() const { return m_cursorElement; }
     void setCursorElement(SVGCursorElement* cursorElement) { m_cursorElement = cursorElement; }
 
+    SVGElement* correspondingElement() { return m_correspondingElement; }
+    void setCorrespondingElement(SVGElement* correspondingElement) { m_correspondingElement = correspondingElement; }
+
     CSSCursorImageValue* cursorImageValue() const { return m_cursorImageValue; }
     void setCursorImageValue(CSSCursorImageValue* cursorImageValue) { m_cursorImageValue = cursorImageValue; }
 
@@ -74,6 +78,7 @@ private:
     HashSet<SVGElementInstance*> m_elementInstances;
     SVGCursorElement* m_cursorElement;
     CSSCursorImageValue* m_cursorImageValue;
+    SVGElement* m_correspondingElement;
     bool m_instancesUpdatesBlocked : 1;
     bool m_hasPendingResources : 1;
 };

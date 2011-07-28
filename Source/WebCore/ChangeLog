@@ -1,3 +1,35 @@
+2011-07-28  Rob Buis  <rbuis@rim.com>
+
+        Use styling test from ietestcenter fails
+        https://bugs.webkit.org/show_bug.cgi?id=62147 
+
+        Reviewed by Nikolas Zimmermann.
+
+        Make sure CSS selectors are applied to the DOM tree referenced by <use>, not the internal shadow tree. In order to quickly
+        find the corresponding DOM tree element store this info in SVGElementRareData. 
+
+        Test: svg/W3C-SVG-1.1-SE/struct-use-11-f.svg
+
+        * rendering/svg/SVGShadowTreeElements.cpp:
+        (WebCore::SVGShadowTreeContainerElement::styleForRenderer):
+        * rendering/svg/SVGShadowTreeElements.h:
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::correspondingElement):
+        (WebCore::SVGElement::setCorrespondingElement):
+        (WebCore::SVGElement::styleForRenderer):
+        * svg/SVGElement.h:
+        * svg/SVGElementInstance.cpp:
+        (WebCore::SVGElementInstance::invalidateAllInstancesOfElement):
+        * svg/SVGElementRareData.h:
+        (WebCore::SVGElementRareData::SVGElementRareData):
+        (WebCore::SVGElementRareData::correspondingElement):
+        (WebCore::SVGElementRareData::setCorrespondingElement):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::removedFromDocument):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::associateInstancesWithShadowTreeElements):
+        * svg/SVGUseElement.h:
+
 2011-07-28  Denis Oliver Kropp  <dok@directfb.org>
 
         This fixes build without video enabled.

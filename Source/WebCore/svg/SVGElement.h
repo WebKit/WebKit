@@ -84,7 +84,12 @@ public:
     void setCursorImageValue(CSSCursorImageValue*);
     void cursorImageValueRemoved();
 
+    SVGElement* correspondingElement();
+    void setCorrespondingElement(SVGElement*);
+
     virtual void updateAnimatedSVGAttribute(const QualifiedName&) const;
+ 
+    virtual PassRefPtr<RenderStyle> styleForRenderer(const NodeRenderingContext&);
 
     static void synchronizeRequiredFeatures(void* contextElement);
     static void synchronizeRequiredExtensions(void* contextElement);

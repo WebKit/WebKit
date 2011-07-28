@@ -397,6 +397,7 @@ void SVGStyledElement::removedFromDocument()
 {
     updateRelativeLengthsInformation(false, this);
     SVGElement::removedFromDocument();
+    SVGElementInstance::invalidateAllInstancesOfElement(this);
 
     Document* document = this->document();
     if (!needsPendingResourceHandling() || !document)
