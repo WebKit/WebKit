@@ -74,7 +74,7 @@ WebInspector.Panel.prototype = {
 
         WebInspector.currentFocusElement = this.defaultFocusedElement;
 
-        this._restoreSidebarWidth();
+        this.restoreSidebarWidth();
         this._restoreScrollPositions();
         WebInspector.extensionServer.notifyPanelShown(this.name);
     },
@@ -366,10 +366,14 @@ WebInspector.Panel.prototype = {
         this.sidebarResizeElement.style.left = (width - 3) + "px";
     },
 
-    _restoreSidebarWidth: function()
+    preferredSidebarWidth: function()
     {
-        var sidebarWidth = WebInspector.settings[this._sidebarWidthSettingName()].get();
-        this.updateSidebarWidth(sidebarWidth);
+        return WebInspector.settings[this._sidebarWidthSettingName()].get();
+    },
+
+    restoreSidebarWidth: function()
+    {
+        this.updateSidebarWidth(this.preferredSidebarWidth());
     },
 
     saveSidebarWidth: function()

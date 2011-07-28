@@ -923,7 +923,7 @@ WebInspector.NetworkLogView.prototype = {
         this._dataGrid.hideColumn("timeline");
 
         this._viewsContainerElement.removeStyleClass("hidden");
-        this.updateSidebarWidth(200);
+        this.restoreSidebarWidth();
 
         var widths = {};
         widths.name = 100;
@@ -1257,11 +1257,15 @@ WebInspector.NetworkPanel.prototype = {
         this._networkLogView._reset();
     },
 
-    updateSidebarWidth: function(width)
+    restoreSidebarWidth: function()
     {
         if (!this._viewingResourceMode)
             return;
-        WebInspector.Panel.prototype.updateSidebarWidth.call(this, width);
+        
+        var preferredWidth = WebInspector.Panel.prototype.preferredSidebarWidth.call(this);
+        if (typeof(preferredWidth) === "undefined")
+            preferredWidth = 200;
+        WebInspector.Panel.prototype.updateSidebarWidth.call(this, preferredWidth);
     },
 
     updateMainViewWidth: function(width)
@@ -1357,7 +1361,7 @@ WebInspector.NetworkPanel.prototype = {
         view.show(this._viewsContainerElement);
         this.visibleView = view;
 
-        this.updateSidebarWidth();
+        this.restoreSidebarWidth();
     },
 
     _closeVisibleResource: function()
@@ -1369,7 +1373,7 @@ WebInspector.NetworkPanel.prototype = {
             delete this.visibleView;
         }
 
-        this.updateSidebarWidth();
+        this.restoreSidebarWidth();
     },
 
     _toggleGridMode: function()
@@ -1395,7 +1399,7 @@ WebInspector.NetworkPanel.prototype = {
 
         this.element.addStyleClass("viewing-resource");
         this._viewsContainerElement.removeStyleClass("hidden");
-        this.updateSidebarWidth(200);
+        this.restoreSidebarWidth();
         this._networkLogView.allowPopover = false;
         this._networkLogView.allowResourceSelection = true;
         this._networkLogView.switchToBriefView();

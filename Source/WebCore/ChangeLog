@@ -1,5 +1,23 @@
 2011-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Network panel sidebar should have width saved in preferences when resource is selected.
+        https://bugs.webkit.org/show_bug.cgi?id=65256
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._toggleViewingResourceMode):
+        (WebInspector.NetworkPanel.prototype.restoreSidebarWidth):
+        (WebInspector.NetworkPanel.prototype._showResource):
+        (WebInspector.NetworkPanel.prototype._closeVisibleResource):
+        (WebInspector.NetworkPanel.prototype._toggleViewingResourceMode):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.show):
+        (WebInspector.Panel.prototype.preferredSidebarWidth):
+        (WebInspector.Panel.prototype.get restoreSidebarWidth):
+
+2011-07-27  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: [REGRESSION] [Chromium] Opening link in new tab does not work properly.
         https://bugs.webkit.org/show_bug.cgi?id=65279
 
