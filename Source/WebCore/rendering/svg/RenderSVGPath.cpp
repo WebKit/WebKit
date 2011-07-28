@@ -155,7 +155,7 @@ bool RenderSVGPath::shouldStrokeZeroLengthSubpath() const
 {
     // Spec(11.4): Any zero length subpath shall not be stroked if the ‘stroke-linecap’ property has a value of butt
     // but shall be stroked if the ‘stroke-linecap’ property has a value of round or square
-    return style()->svgStyle()->capStyle() != ButtCap && !m_fillBoundingBox.width() && !m_fillBoundingBox.height();
+    return style()->svgStyle()->hasStroke() && style()->svgStyle()->capStyle() != ButtCap && !m_fillBoundingBox.width() && !m_fillBoundingBox.height();
 }
 
 FloatRect RenderSVGPath::zeroLengthSubpathRect() const

@@ -1,3 +1,17 @@
+2011-07-28  Rob Buis  <rbuis@rim.com>
+
+        REGRESSION (r91125): Google Drawings is broken
+        https://bugs.webkit.org/show_bug.cgi?id=65257
+
+        Reviewed by Darin Adler.
+
+        Only consider zero-length path rendering code path when a stroke is defined.
+
+        Test: svg/custom/zero-path-square-cap-rendering2.svg
+
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::shouldStrokeZeroLengthSubpath):
+
 2011-07-22  Martin Robinson  <mrobinson@igalia.com>
 
         [Cairo] Switch from ContextShadow to ShadowBlur
