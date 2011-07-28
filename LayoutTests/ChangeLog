@@ -1,3 +1,13 @@
+2011-07-28  Tony Gentilcore  <tonyg@chromium.org>
+
+        [chromium] New expectations for r91915
+        https://bugs.webkit.org/show_bug.cgi?id=65317
+
+        Unreviewed expections update.
+
+        * platform/chromium-win/svg/custom/zero-path-square-cap-rendering2-expected.png: Added.
+        * platform/chromium-win/svg/custom/zero-path-square-cap-rendering2-expected.txt: Added.
+
 2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Unreviewed gardening.
