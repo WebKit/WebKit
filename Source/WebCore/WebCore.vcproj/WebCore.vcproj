@@ -36366,6 +36366,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\rendering\RenderRegion.h"
+				>
+			</File>
+			<File
+				RelativePath="..\rendering\RenderRegion.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\rendering\RenderReplaced.cpp"
 				>
 				<FileConfiguration

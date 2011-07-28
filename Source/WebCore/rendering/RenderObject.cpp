@@ -49,6 +49,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListItem.h"
+#include "RenderRegion.h"
 #include "RenderRuby.h"
 #include "RenderRubyText.h"
 #include "RenderTableCell.h"
@@ -135,6 +136,11 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         case INLINE_BLOCK:
         case RUN_IN:
         case COMPACT:
+#if ENABLE(CSS_REGIONS)
+            // Only non-replaced block elements can become a region.
+            if (!style->regionThread().isEmpty())
+                return new (arena) RenderRegion(node);
+#endif
             return new (arena) RenderBlock(node);
         case LIST_ITEM:
             return new (arena) RenderListItem(node);

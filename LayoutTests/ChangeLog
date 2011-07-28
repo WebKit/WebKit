@@ -1,3 +1,20 @@
+2011-07-28  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add basic RenderRegion support
+        https://bugs.webkit.org/show_bug.cgi?id=64689
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/region-element-display-restriction-expected.txt: Added.
+        * fast/regions/region-element-display-restriction.html: Added.
+        * fast/regions/region-element-dynamic-attach-flow-expected.txt: Added.
+        * fast/regions/region-element-dynamic-attach-flow.html: Added.
+        * fast/regions/region-element-dynamic-detach-flow-expected.txt: Added.
+        * fast/regions/region-element-dynamic-detach-flow.html: Added.
+        * fast/regions/render-region-renderer-expected.txt: Added.
+        * fast/regions/render-region-renderer.html: Added.
+        * fast/regions/script-tests/region-element-display-restriction.js: Added.
+
 2011-07-28  Adrienne Walker  <enne@google.com>
 
         [chromium] chromium-win-xp test updates after r91945.

@@ -1,3 +1,39 @@
+2011-07-28  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Add basic RenderRegion support
+        https://bugs.webkit.org/show_bug.cgi?id=64689
+
+        Reviewed by David Hyatt.
+
+        This patch introduces the RenderRegion object.
+        A RenderObject that takes its content from a "named" flow will become a RenderRegion, an element that is used to display the content from a RenderFlowThread.
+        A RenderRegion that is marked to take its content from a non existing flow, will have its content disconnected from the normal flow.
+
+        Tests: fast/regions/region-element-display-restriction.html
+               fast/regions/region-element-dynamic-attach-flow.html
+               fast/regions/region-element-dynamic-detach-flow.html
+               fast/regions/render-region-renderer.html
+
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderRegion):
+        * rendering/RenderRegion.cpp: Added.
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::~RenderRegion):
+        (WebCore::RenderRegion::layout):
+        (WebCore::RenderRegion::paint):
+        * rendering/RenderRegion.h: Added.
+        (WebCore::RenderRegion::isRenderRegion):
+        (WebCore::RenderRegion::renderName):
+        (WebCore::toRenderRegion):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+
 2011-07-28  Marco Peereboom  <marco@peereboom.us>
 
         [Soup] Cannot override default max-conns and max-conns-per-host Soup Session settings

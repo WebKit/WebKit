@@ -431,6 +431,10 @@ public:
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
     bool isHorizontalWritingMode() const { return m_horizontalWritingMode; }
 
+#if ENABLE(CSS_REGIONS)
+    virtual bool isRenderRegion() const { return false; }
+#endif
+
     bool hasLayer() const { return m_hasLayer; }
     
     bool hasBoxDecorations() const { return m_paintBackground; }
