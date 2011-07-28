@@ -858,10 +858,6 @@ BUGWK53378 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-and-image-based-cl
 BUGWK53378 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg = IMAGE
 // Rebaselined in WK r65874, Linux has missing lines
 
-// May require re-baseline.
-BUGWK42370 WIN MAC : svg/custom/image-rescale-scroll.html = FAIL
-BUGWK42370 WIN MAC : svg/custom/image-rescale-clip.html = FAIL
-
 // Since r89233. May need a new baseline.
 // NOTE that this revision was rolled out, but it isn't clear whether we should remove these
 // expectations because it's likely to get checked in again soon.
@@ -928,6 +924,7 @@ BUGCR32444 LINUX WIN : svg/hixie/text/003.html = FAIL
 // New tests. We should fix these, but they don't need to block the current release
 BUGCR3244 WIN LINUX : fast/backgrounds/svg-as-mask.html = FAIL
 BUGCR3244 WIN LINUX : svg/batik/masking/maskRegions.svg = FAIL
+BUGCR3244 WIN LINUX : svg/zoom/page/zoom-mask-with-percentages.svg = FAIL
 BUGCR3244 WIN DEBUG : fast/backgrounds/animated-svg-as-mask.html = FAIL
 BUGCR3244 SLOW WIN RELEASE : fast/backgrounds/animated-svg-as-mask.html = FAIL
 BUGCR3244 LINUX : fast/backgrounds/animated-svg-as-mask.html = FAIL
