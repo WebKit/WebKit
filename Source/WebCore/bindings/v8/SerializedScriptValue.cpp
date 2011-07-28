@@ -199,6 +199,10 @@ enum SerializationTag {
     GenerateFreshObjectTag = 'o', // -> empty object allocated an object ID and pushed onto the open stack (ref)
     GenerateFreshArrayTag = 'a', // length:uint32_t -> empty array[length] allocated an object ID and pushed onto the open stack (ref)
     ReferenceCountTag = '?', // refTableSize:uint32_t -> If the reference table is not refTableSize big, fails.
+    StringObjectTag = 's', //  string:RawString -> new String(string) (ref)
+    NumberObjectTag = 'n', // value:double -> new Number(value) (ref)
+    TrueObjectTag = 'y', // new Boolean(true) (ref)
+    FalseObjectTag = 'x', // new Boolean(false) (ref)
     VersionTag = 0xFF // version:uint32_t -> Uses this as the file version.
 };
 
@@ -278,10 +282,22 @@ public:
 
     void writeFalse() { append(FalseTag); }
 
+    void writeBooleanObject(bool value)
+    {
+        append(value ? TrueObjectTag : FalseObjectTag);
+    }
+
     void writeString(const char* data, int length)
     {
         ASSERT(length >= 0);
         append(StringTag);
+        doWriteString(data, length);
+    }
+
+    void writeStringObject(const char* data, int length)
+    {
+        ASSERT(length >= 0);
+        append(StringObjectTag);
         doWriteString(data, length);
     }
 
@@ -320,6 +336,12 @@ public:
     void writeNumber(double number)
     {
         append(NumberTag);
+        doWriteNumber(number);
+    }
+
+    void writeNumberObject(double number)
+    {
+        append(NumberObjectTag);
         doWriteNumber(number);
     }
 
@@ -868,6 +890,25 @@ private:
         m_writer.writeString(*stringValue, stringValue.length());
     }
 
+    void writeStringObject(v8::Handle<v8::Value> value)
+    {
+        v8::Handle<v8::StringObject> stringObject = value.As<v8::StringObject>();
+        v8::String::Utf8Value stringValue(stringObject->StringValue());
+        m_writer.writeStringObject(*stringValue, stringValue.length());
+    }
+
+    void writeNumberObject(v8::Handle<v8::Value> value)
+    {
+        v8::Handle<v8::NumberObject> numberObject = value.As<v8::NumberObject>();
+        m_writer.writeNumberObject(numberObject->NumberValue());
+    }
+
+    void writeBooleanObject(v8::Handle<v8::Value> value)
+    {
+        v8::Handle<v8::BooleanObject> booleanObject = value.As<v8::BooleanObject>();
+        m_writer.writeBooleanObject(booleanObject->BooleanValue());
+    }
+
     void writeBlob(v8::Handle<v8::Value> value)
     {
         Blob* blob = V8Blob::toNative(value.As<v8::Object>());
@@ -1013,6 +1054,12 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         greyObject(jsObject);
         if (value->IsDate())
             m_writer.writeDate(value->NumberValue());
+        else if (value->IsStringObject())
+            writeStringObject(value);
+        else if (value->IsNumberObject())
+            writeNumberObject(value);
+        else if (value->IsBooleanObject())
+            writeBooleanObject(value);
         else if (value->IsArray()) {
             m_writer.writeGenerateFreshArray(value.As<v8::Array>()->Length());
             return push(newArrayState(value.As<v8::Array>(), next));
@@ -1029,8 +1076,7 @@ Serializer::StateBase* Serializer::doSerialize(v8::Handle<v8::Value> value, Stat
         else if (V8ArrayBuffer::HasInstance(value))
             writeArrayBuffer(value);
         else if (value->IsObject()) {
-            // FIXME: We need to check if jsObject is a 'native Error' and if so throw a DataCloneError.
-            if (isHostObject(jsObject) || jsObject->IsCallable())
+            if (isHostObject(jsObject) || jsObject->IsCallable() || value->IsNativeError())
                 return handleError(DataCloneError, next);
             m_writer.writeGenerateFreshObject();
             return push(newObjectState(jsObject, next));
@@ -1106,9 +1152,22 @@ public:
         case FalseTag:
             *value = v8::False();
             break;
+        case TrueObjectTag:
+            *value = v8::BooleanObject::New(true);
+            creator.pushObjectReference(*value);
+            break;
+        case FalseObjectTag:
+            *value = v8::BooleanObject::New(false);
+            creator.pushObjectReference(*value);
+            break;
         case StringTag:
             if (!readString(value))
                 return false;
+            break;
+        case StringObjectTag:
+            if (!readStringObject(value))
+                return false;
+            creator.pushObjectReference(*value);
             break;
         case Int32Tag:
             if (!readInt32(value))
@@ -1126,6 +1185,11 @@ public:
         case NumberTag:
             if (!readNumber(value))
                 return false;
+            break;
+        case NumberObjectTag:
+            if (!readNumberObject(value))
+                return false;
+            creator.pushObjectReference(*value);
             break;
         case BlobTag:
             if (!readBlob(value))
@@ -1287,6 +1351,15 @@ private:
         return true;
     }
 
+    bool readStringObject(v8::Handle<v8::Value>* value)
+    {
+        v8::Handle<v8::Value> stringValue;
+        if (!readString(&stringValue) || !stringValue->IsString())
+            return false;
+        *value = v8::StringObject::New(stringValue.As<v8::String>());
+        return true;
+    }
+
     bool readWebCoreString(String* string)
     {
         uint32_t length;
@@ -1332,6 +1405,15 @@ private:
         if (!doReadNumber(&number))
             return false;
         *value = v8::Number::New(number);
+        return true;
+    }
+  
+    bool readNumberObject(v8::Handle<v8::Value>* value)
+    {
+        double number;
+        if (!doReadNumber(&number))
+            return false;
+        *value = v8::NumberObject::New(number);
         return true;
     }
 
@@ -1585,7 +1667,7 @@ public:
             if (!doDeserialize())
                 return v8::Null();
         }
-        if (stackDepth() != 1 || m_objectReferenceStack.size())
+        if (stackDepth() != 1 || m_openCompositeReferenceStack.size())
             return v8::Null();
         v8::Handle<v8::Value> result = scope.Close(element(0));
         return result;
@@ -1734,16 +1816,16 @@ private:
     void openComposite(const v8::Local<v8::Value>& object)
     {
         uint32_t newObjectReference = m_objectPool.size();
-        m_objectReferenceStack.append(newObjectReference);
+        m_openCompositeReferenceStack.append(newObjectReference);
         m_objectPool.append(object);
     }
 
     bool closeComposite(v8::Handle<v8::Value>* object)
     {
-        if (!m_objectReferenceStack.size())
+        if (!m_openCompositeReferenceStack.size())
             return false;
-        uint32_t objectReference = m_objectReferenceStack[m_objectReferenceStack.size() - 1];
-        m_objectReferenceStack.shrink(m_objectReferenceStack.size() - 1);
+        uint32_t objectReference = m_openCompositeReferenceStack[m_openCompositeReferenceStack.size() - 1];
+        m_openCompositeReferenceStack.shrink(m_openCompositeReferenceStack.size() - 1);
         if (objectReference >= m_objectPool.size())
             return false;
         *object = m_objectPool[objectReference];
@@ -1753,7 +1835,7 @@ private:
     Reader& m_reader;
     Vector<v8::Local<v8::Value> > m_stack;
     Vector<v8::Handle<v8::Value> > m_objectPool;
-    Vector<uint32_t> m_objectReferenceStack;
+    Vector<uint32_t> m_openCompositeReferenceStack;
     uint32_t m_version;
 };
 

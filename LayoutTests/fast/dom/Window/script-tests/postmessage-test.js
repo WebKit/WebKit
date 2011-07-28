@@ -19,6 +19,18 @@ function equal(actual, expected)
             return (expected instanceof Date) && actual.getTime() == expected.getTime();
         return false;
     }
+    if ((actual instanceof Number) || (expected instanceof Number)) {
+        return (actual instanceof Number) && (expected instanceof Number) &&
+            (expected.valueOf() == actual.valueOf());
+    }
+    if ((actual instanceof Boolean) || (expected instanceof Boolean)) {
+        return (actual instanceof Boolean) && (expected instanceof Boolean) &&
+            (expected.valueOf() == actual.valueOf());
+    }
+    if ((actual instanceof String) || (expected instanceof String)) {
+        return (actual instanceof String) && (expected instanceof String) &&
+            (expected.valueOf() == actual.valueOf());
+    }
     if (Array.isArray(actual) || Array.isArray(expected)) {
         if (!Array.isArray(actual) || !Array.isArray(expected))
             return false;

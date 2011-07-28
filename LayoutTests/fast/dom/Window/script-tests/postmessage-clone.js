@@ -20,8 +20,13 @@ tryPostMessage('["a", "a", "b", {a:"b", b:"a"}]');
 tryPostMessage('[1,2,3]');
 tryPostMessage('[,,1]');
 tryPostMessage('(function(){})', true, null, DOMException.DATA_CLONE_ERR);
+tryPostMessage('var x = 0; try { eval("badref"); } catch(e) { x = e; } x', true, null, DOMException.DATA_CLONE_ERR);
 tryPostMessage('new Date(1234567890000)');
 tryPostMessage('new ConstructorWithPrototype("foo")', false, '({field:"foo"})');
+tryPostMessage('new Boolean(true)');
+tryPostMessage('new Boolean(false)');
+tryPostMessage('new String("gnirts")');
+tryPostMessage('new Number(42.0)');
 cyclicObject={};
 cyclicObject.self = cyclicObject;
 tryPostMessage('cyclicObject', false, "cyclicObject");
@@ -208,6 +213,61 @@ tryPostMessage(thunk(
         doPassFail(window.pcalled === true, "window.pcalled === true");
         doPassFail(window.acalled === true, "window.acalled === true");
         doPassFail(window.bcalled === undefined, "window.bcalled === undefined");
+    });
+
+// Reference equality between Boolean objects must be maintained.
+tryPostMessage(thunk(
+        'var t1 = new Boolean(true); ' +
+        'var t2 = new Boolean(true); ' +
+        'var f1 = new Boolean(false); ' +
+        'var f2 = new Boolean(false); ' +
+        'return [t1, t1, t2, f1, f1, f2];'
+    ), false, "evalThunk", function(v) {
+        doPassFail(equal(v[0], new Boolean(true)), "Boolean values correct (0)");
+        doPassFail(equal(v[3], new Boolean(false)), "Boolean values correct (3)");
+        doPassFail(equal(v[1], v[2]), "Boolean values correct (1,2)");
+        doPassFail(equal(v[4], v[5]), "Boolean values correct (4,5)");
+        doPassFail(v[0] === v[1], "References to Booleans correct (0,1)");
+        doPassFail(v[3] === v[4], "References to Booleans correct (3,4)");
+        doPassFail(v[0] !== v[2], "References to Booleans correct (0,2)");
+        doPassFail(v[3] !== v[5], "References to Booleans correct (3,5)");
+    });
+
+// Reference equality between Number objects must be maintained.
+tryPostMessage(thunk(
+        'var n1 = new Number(42.0); ' +
+        'var n2 = new Number(42.0); ' +
+        'return [n1, n1, n2];'
+    ), false, "evalThunk", function(v) {
+        doPassFail(equal(v[0], new Number(42.0)), "Number values correct (0)");
+        doPassFail(equal(v[0], v[2]), "Number values correct (0,2)");
+        doPassFail(v[0] === v[1], "References to numbers correct (0,1)");
+        doPassFail(v[0] !== v[2], "References to numbers correct (0,2)");
+    });
+
+// Reference equality between String objects must be maintained.
+tryPostMessage(thunk(
+        'var s1 = new String("gnirts"); ' +
+        'var s2 = new String("gnirts"); ' +
+        'return [s1, s1, s2];'
+    ), false, "evalThunk", function(v) {
+        doPassFail(equal(v[0], new String("gnirts")), "String values correct (0)");
+        doPassFail(equal(v[0], v[2]), "String values correct (0,2)");
+        doPassFail(v[0] === v[1], "References to strings correct (0,1)");
+        doPassFail(v[0] !== v[2], "References to strings correct (0,2)");
+    });
+
+// Properties added to String, Boolean and Number objects should not be serialized.
+tryPostMessage(thunk(
+        'var s = new String("gnirts"); ' +
+        'var n = new Number(42.0); ' +
+        'var b = new Boolean(true); ' +
+        's.foo = 1; n.foo = 2; b.foo = 3; ' +
+        'return [s, n, b];'
+    ), false, "evalThunk", function(v) {
+        doPassFail(v[0].foo == undefined, "String object properties not serialized");
+        doPassFail(v[1].foo == undefined, "Number object properties not serialized");
+        doPassFail(v[2].foo == undefined, "Boolean object properties not serialized");
     });
 
 // Reference equality between dates must be maintained.

@@ -1,3 +1,35 @@
+2011-07-28  Luke Zarko  <lukezarko@gmail.com>
+
+        V8 should correctly serialize Boolean, Number and String objects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=65286
+
+        Reviewed by David Levin.
+        
+        New APIs were exposed to allow V8 to correctly serialize Boolean, Number and String objects, as well as detect certain native errors as required by the HTML5 Structured Clone algorithm (http://www.whatwg.org/specs/web-apps/current-work/multipage/urls.html#safe-passing-of-structured-data). SerializedScriptValue should make use of these APIs.
+
+        - Checks for and serializes Boolean, Number and String objects.
+        - Checks for native errors and aborts should a script attempt to serialize them.
+        - Small name change to clear up the code: m_objectReferenceStack => m_openCompositeReferenceStack
+
+        Tests: fast/dom/Window/window-postmessage-clone.html
+               fast/loader/stateobjects/pushstate-object-types.html
+
+        * bindings/v8/SerializedScriptValue.cpp:
+        (WebCore::V8ObjectMap::Writer::writeBooleanObject):
+        (WebCore::V8ObjectMap::Writer::writeStringObject):
+        (WebCore::V8ObjectMap::Writer::writeNumberObject):
+        (WebCore::V8ObjectMap::Serializer::writeStringObject):
+        (WebCore::V8ObjectMap::Serializer::writeNumberObject):
+        (WebCore::V8ObjectMap::Serializer::writeBooleanObject):
+        (WebCore::V8ObjectMap::Serializer::doSerialize):
+        (WebCore::V8ObjectMap::Reader::read):
+        (WebCore::V8ObjectMap::Reader::readStringObject):
+        (WebCore::V8ObjectMap::Reader::readNumberObject):
+        (WebCore::V8ObjectMap::Deserializer::deserialize):
+        (WebCore::V8ObjectMap::Deserializer::openComposite):
+        (WebCore::V8ObjectMap::Deserializer::closeComposite):
+
 2011-07-28  Adam Barth  <abarth@webkit.org>
 
         Old code about empty security origins could use a bath

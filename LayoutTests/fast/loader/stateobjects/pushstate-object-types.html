@@ -27,7 +27,6 @@ function runTest()
     history.pushState(new RegExp("foo", "gi"), "RegExp entry");
     history.pushState(new Array, "Array entry");
     history.pushState(new Object, "Object entry");
-    history.pushState(new Error, "Error entry");
     history.pushState(document.createElement("canvas").getContext("2d").createImageData(10,10), "ImageData entry");
 
 /* The following are not yet well enough supported in WebKit to meaningfully test here:

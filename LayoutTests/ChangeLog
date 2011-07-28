@@ -1,3 +1,22 @@
+2011-07-28  Luke Zarko  <lukezarko@gmail.com>
+
+        V8 should correctly serialize Boolean, Number and String objects.
+
+        https://bugs.webkit.org/show_bug.cgi?id=65286
+
+        Reviewed by David Levin.
+
+        - Check that Boolean, Number and String objects are correctly serialized.
+        - Check that a native error is not serialized.
+        - Fix an expectation that a native error can be serialized.
+
+        * fast/dom/Window/script-tests/postmessage-clone.js:
+        * fast/dom/Window/script-tests/postmessage-test.js:
+        * fast/dom/Window/window-postmessage-clone-expected.txt:
+        * fast/loader/stateobjects/pushstate-object-types-expected.txt:
+        * fast/loader/stateobjects/pushstate-object-types.html:
+        * platform/chromium/fast/dom/Window/window-postmessage-clone-expected.txt:
+
 2011-07-28  Adam Barth  <abarth@webkit.org>
 
         Old code about empty security origins could use a bath

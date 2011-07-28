@@ -2,7 +2,6 @@ This test calls pushState with state objects of all the different object types s
 
 State popped - [object ImageData] (type object)
 State popped - [object Object] (type object)
-State popped - [object Object] (type object)
 State popped -  (type object)
 State popped - /foo/gi (type object)
 State popped - 0 (type object)
