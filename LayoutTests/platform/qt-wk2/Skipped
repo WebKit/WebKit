@@ -1562,3 +1562,5 @@ editing/text-iterator/thai-cursor-movement.html
 editing/undo/redo-style.html
 editing/undo/replace-text-in-node-preserving-markers-crash.html
 editing/undo/undo-indent.html
+fast/events/frame-click-focus.html
+fast/forms/input-appearance-number-rtl.html

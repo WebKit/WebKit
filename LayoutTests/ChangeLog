@@ -1,3 +1,23 @@
+
+2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed gardening.
+
+        [Qt][WK2]REGRESSION(r91863): It made 388 editing tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=65310
+
+        [Qt] svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg fails
+        https://bugs.webkit.org/show_bug.cgi?id=65266
+
+        REGRESSION (r91125): Google Drawings is broken
+        https://bugs.webkit.org/show_bug.cgi?id=65257
+
+        * platform/qt-wk2/Skipped: Skip two failing fast test.
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt: Updated.
+        * platform/qt/Skipped:
+         - Typo fix: Add missing bugzilla link - https://bugs.webkit.org/show_bug.cgi?id=65266
+         - Skip svg/custom/zero-path-square-cap-rendering2.svg until fix.
+
 2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2]REGRESSION(r91863): It made 388 editing tests fail
