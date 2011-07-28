@@ -4375,6 +4375,12 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint('typedef struct _cairo_surface cairo_surface_t;', '')
         self.assert_lint('typedef struct _cairo_scaled_font cairo_scaled_font_t;', '')
 
+        # EFL forward-declarations should not be a failure.
+        self.assert_lint('typedef struct _Ecore_Evas Ecore_Evas;', '')
+        self.assert_lint('typedef struct _Ecore_Pipe Ecore_Pipe;', '')
+        self.assert_lint('typedef struct _Eina_Rectangle Eina_Rectangle;', '')
+        self.assert_lint('typedef struct _Evas_Object Evas_Object;', '')
+
         # NPAPI functions that start with NPN_, NPP_ or NP_ are allowed.
         self.assert_lint('void NPN_Status(NPP, const char*)', '')
         self.assert_lint('NPError NPP_SetWindow(NPP instance, NPWindow *window)', '')

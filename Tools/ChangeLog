@@ -1,3 +1,15 @@
+2011-07-27  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Style bot complains about EFL-specific forward declaration naming.
+        https://bugs.webkit.org/show_bug.cgi?id=64680
+
+        Exclude EFL-specific forward declarations from indentifiers with underscores checks.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2011-07-27  Adam Roben  <aroben@apple.com>
 
         Use wacky !svn/bc URLs consistently in Leaks Viewer
