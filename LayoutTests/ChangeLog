@@ -1,3 +1,10 @@
+2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2]REGRESSION(r91863): It made 388 editing tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=65310
+
+        * platform/qt-wk2/Skipped: Skip failing editing tests.
+
 2011-07-28  Patrick Dubroy  <dubroy@chromium.org>
 
         Rebaseline pixel tests for file upload controls on chromium-win.
