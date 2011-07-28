@@ -1,3 +1,10 @@
+2011-07-28  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Add platform specific expected result for a new test.
+
+        * platform/qt/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.png: Added.
+        * platform/qt/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt: Added.
+
 2011-07-28  Rob Buis  <rbuis@rim.com>
 
         REGRESSION (r91125): Google Drawings is broken
