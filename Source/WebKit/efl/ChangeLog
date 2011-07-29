@@ -1,5 +1,18 @@
 2011-07-28  Kangil Han  <kangil.han@samsung.com>
 
+        [EFL] Removes EAPI attribute in internal headers.
+        https://bugs.webkit.org/show_bug.cgi?id=65251
+
+        Removes EAPI attribute in three header files because API in these files is internally used.
+
+        Reviewed by Anders Carlsson.
+
+        * ewk/ewk_tiled_backing_store.h:
+        * ewk/ewk_tiled_matrix.h:
+        * ewk/ewk_tiled_model.h:
+
+2011-07-28  Kangil Han  <kangil.han@samsung.com>
+
         [EFL] Defines header files will be publicly installed explicitly.
         https://bugs.webkit.org/show_bug.cgi?id=64923
 
