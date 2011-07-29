@@ -1,0 +1,81 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (0,0) size 800x600
+      RenderPartObject {IFRAME} at (0,0) size 500x600
+        layer at (0,0) size 484x740
+          RenderView at (0,0) size 484x600
+        layer at (0,0) size 484x740
+          RenderBlock {HTML} at (0,0) size 484x740
+            RenderBody {BODY} at (8,8) size 468x716
+              RenderBlock {DIV} at (0,0) size 450x50
+                RenderBlock (floating) {DIV} at (370,10) size 70x150 [bgcolor=#FFC0CB]
+              RenderBlock {P} at (0,66) size 418x650 [border: (3px solid #800000)]
+                RenderText {#text} at (6,6) size 406x132
+                  text run at (6,6) width 354: "The chief difficulty Alice found at first was in"
+                  text run at (6,28) width 100: "managing her "
+                  text run at (106,28) width 254: "flamingo: she succeeded in getting its"
+                  text run at (6,50) width 137: "body tucked away, "
+                  text run at (143,50) width 217: "comfortably enough, under her"
+                  text run at (6,72) width 229: "arm, with its legs hanging down, "
+                  text run at (235,72) width 125: "but generally, just"
+                  text run at (6,94) width 296: "as she had got its neck nicely straightened "
+                  text run at (302,94) width 58: "out, and"
+                  text run at (6,116) width 406: "was going to give the hedgehog a blow with its head, it"
+                RenderInline {I} at (0,0) size 40x22
+                  RenderText {#text} at (6,138) size 40x22
+                    text run at (6,138) width 40: "would"
+                RenderText {#text} at (46,138) size 406x88
+                  text run at (46,138) width 322: " twist itself round and look up in her face, with "
+                  text run at (368,138) width 44: "such a"
+                  text run at (6,160) width 406: "puzzled expression that she could not help bursting out"
+                  text run at (6,182) width 406: "laughing: and when she had got its head down, and was"
+                  text run at (6,204) width 61: "going to "
+                RenderBlock (floating) {SPAN} at (364,207) size 48x48 [bgcolor=#FFFFE0]
+                RenderText {#text} at (67,204) size 406x154
+                  text run at (67,204) width 294: "begin again, it was very provoking to find"
+                  text run at (6,226) width 155: "that the hedgehog had "
+                  text run at (161,226) width 200: "unrolled itself, and was in the"
+                  text run at (6,248) width 248: "act of crawling away: besides all "
+                  text run at (254,248) width 107: "this, there was"
+                  text run at (6,270) width 330: "generally a ridge or furrow in the way wherever "
+                  text run at (336,270) width 76: "she wanted"
+                  text run at (6,292) width 355: "to send the hedgehog to, and, as the doubled-up "
+                  text run at (361,292) width 51: "soldiers"
+                  text run at (6,314) width 385: "were always getting up and walking off to other parts of "
+                  text run at (391,314) width 21: "the"
+                  text run at (6,336) width 406: "ground, Alice soon came to the conclusion that it was a very"
+                RenderBlock (floating) {SPAN} at (6,361) size 48x64 [bgcolor=#ADD8E6]
+                RenderText {#text} at (57,358) size 149x22
+                  text run at (57,358) width 149: "difficult game indeed. "
+                RenderBR {BR} at (0,0) size 0x0
+                RenderText {#text} at (57,380) size 335x22
+                  text run at (57,380) width 335: "The players all played at once without waiting "
+                RenderBlock (floating) {SPAN} at (364,405) size 48x80 [bgcolor=#90EE90]
+                RenderText {#text} at (392,380) size 355x66
+                  text run at (392,380) width 20: "for"
+                  text run at (57,402) width 45: "turns, "
+                  text run at (102,402) width 259: "quarrelling all the while, and fighting"
+                  text run at (57,424) width 184: "for the hedgehogs; and in "
+                  text run at (241,424) width 120: "a very short time"
+                RenderInline {SPAN} at (0,0) size 75x22
+                  RenderText {#text} at (6,446) size 75x22
+                    text run at (6,446) width 75: "the Queen"
+                RenderText {#text} at (81,446) size 355x66
+                  text run at (81,446) width 280: " was in a furious passion, and went"
+                  text run at (6,468) width 355: "stamping about, and shouting \x{2018}Off with his head!\x{2019} or"
+                  text run at (6,490) width 65: "\x{2018}Off with "
+                  text run at (71,490) width 236: "her head!\x{2019} about once in a minute. "
+                RenderBR {BR} at (0,0) size 0x0
+                RenderText {#text} at (6,512) size 406x132
+                  text run at (6,512) width 406: "Alice began to feel very uneasy: to be sure, she had not as"
+                  text run at (6,534) width 406: "yet had any dispute with the Queen, but she knew that it"
+                  text run at (6,556) width 45: "might "
+                  text run at (51,556) width 361: "happen any minute, \x{2018}and then,\x{2019} thought she, \x{2018}what"
+                  text run at (6,578) width 118: "would become of "
+                  text run at (124,578) width 288: "me? They\x{2019}re dreadfully fond of beheading"
+                  text run at (6,600) width 159: "people here; the great "
+                  text run at (165,600) width 247: "wonder is, that there\x{2018}s any one left"
+                  text run at (6,622) width 41: "alive!\x{2019}"
+      RenderText {#text} at (0,0) size 0x0

@@ -1,37 +1,37 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x255
-  RenderBlock {HTML} at (0,0) size 800x255
-    RenderBody {BODY} at (8,14) size 784x233
-      RenderBlock {P} at (0,0) size 784x20
-        RenderInline {B} at (0,0) size 54x20
-          RenderText {#text} at (0,0) size 54x20
-            text run at (0,0) width 54: "BUG ID:"
-        RenderText {#text} at (54,0) size 4x19
-          text run at (54,0) width 4: " "
-        RenderInline {A} at (0,0) size 113x19 [color=#0000EE]
-          RenderText {#text} at (58,0) size 113x19
-            text run at (58,0) width 113: "Bugzilla bug 6388"
-        RenderText {#text} at (171,0) size 485x19
-          text run at (171,0) width 485: " REGRESSION: Incomplete repaint when dragging the map on Google maps"
-      RenderBlock {P} at (0,34) size 784x26 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 82x20
-          RenderText {#text} at (3,3) size 82x20
-            text run at (3,3) width 82: "TEST PASS:"
-        RenderText {#text} at (85,3) size 243x19
-          text run at (85,3) width 4: " "
-          text run at (89,3) width 239: "The blue square will change to green."
-      RenderBlock {P} at (0,74) size 784x26 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 77x20
-          RenderText {#text} at (3,3) size 77x20
-            text run at (3,3) width 77: "TEST FAIL:"
-        RenderText {#text} at (80,3) size 277x19
-          text run at (80,3) width 4: " "
-          text run at (84,3) width 273: "The blue square will NOT change to green."
-      RenderBlock (anonymous) at (0,214) size 784x19
-        RenderBR {BR} at (0,0) size 0x19
-layer at (8,128) size 100x100
-  RenderBlock (relative positioned) {DIV} at (0,114) size 100x100
-layer at (-92,128) size 200x100 backgroundClip at (8,128) size 100x100 clip at (8,128) size 100x100 outlineClip at (8,128) size 100x100
+layer at (0,0) size 800x272
+  RenderBlock {HTML} at (0,0) size 800x272
+    RenderBody {BODY} at (8,16) size 784x248
+      RenderBlock {P} at (0,0) size 784x22
+        RenderInline {B} at (0,0) size 62x22
+          RenderText {#text} at (0,0) size 62x22
+            text run at (0,0) width 62: "BUG ID:"
+        RenderText {#text} at (62,0) size 4x22
+          text run at (62,0) width 4: " "
+        RenderInline {A} at (0,0) size 121x22 [color=#0000EE]
+          RenderText {#text} at (66,0) size 121x22
+            text run at (66,0) width 121: "Bugzilla bug 6388"
+        RenderText {#text} at (187,0) size 524x22
+          text run at (187,0) width 524: " REGRESSION: Incomplete repaint when dragging the map on Google maps"
+      RenderBlock {P} at (0,38) size 784x28 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 91x22
+          RenderText {#text} at (3,3) size 91x22
+            text run at (3,3) width 91: "TEST PASS:"
+        RenderText {#text} at (94,3) size 257x22
+          text run at (94,3) width 4: " "
+          text run at (98,3) width 253: "The blue square will change to green."
+      RenderBlock {P} at (0,82) size 784x28 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 90x22
+          RenderText {#text} at (3,3) size 90x22
+            text run at (3,3) width 90: "TEST FAIL:"
+        RenderText {#text} at (93,3) size 296x22
+          text run at (93,3) width 4: " "
+          text run at (97,3) width 292: "The blue square will NOT change to green."
+      RenderBlock (anonymous) at (0,226) size 784x22
+        RenderBR {BR} at (0,0) size 0x22
+layer at (8,142) size 100x100
+  RenderBlock (relative positioned) {DIV} at (0,126) size 100x100
+layer at (-92,142) size 200x100 backgroundClip at (8,142) size 100x100 clip at (8,142) size 100x100 outlineClip at (8,142) size 100x100
   RenderBlock (positioned) {DIV} at (0,0) size 200x100 [bgcolor=#008000]
     RenderBlock {DIV} at (0,0) size 100x100 [bgcolor=#0000FF]

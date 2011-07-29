@@ -1,3 +1,263 @@
+2011-07-29  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        [Qt] Update platform specific expected results
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped: Unskip passing tests.
+        * platform/qt/fast/backgrounds/opacity-on-document-element-expected.png: Added.
+        * platform/qt/fast/backgrounds/opacity-on-document-element-expected.txt:
+        * platform/qt/fast/block/basic/010-expected.png: Added.
+        * platform/qt/fast/block/basic/010-expected.txt:
+        * platform/qt/fast/block/float/004-expected.png: Added.
+        * platform/qt/fast/block/float/004-expected.txt:
+        * platform/qt/fast/block/float/010-expected.png: Added.
+        * platform/qt/fast/block/float/010-expected.txt:
+        * platform/qt/fast/block/float/017-expected.png: Added.
+        * platform/qt/fast/block/float/017-expected.txt:
+        * platform/qt/fast/block/float/021-expected.png: Added.
+        * platform/qt/fast/block/float/021-expected.txt:
+        * platform/qt/fast/block/float/032-expected.png: Added.
+        * platform/qt/fast/block/float/032-expected.txt:
+        * platform/qt/fast/block/float/br-with-clear-expected.png: Added.
+        * platform/qt/fast/block/float/br-with-clear-expected.txt: Added.
+        * platform/qt/fast/block/float/float-in-float-hit-testing-expected.png: Added.
+        * platform/qt/fast/block/float/float-in-float-hit-testing-expected.txt:
+        * platform/qt/fast/block/margin-collapse/006-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/006-expected.txt:
+        * platform/qt/fast/block/margin-collapse/055-expected.png: Added.
+        * platform/qt/fast/block/margin-collapse/055-expected.txt:
+        * platform/qt/fast/block/positioning/047-expected.png: Added.
+        * platform/qt/fast/block/positioning/047-expected.txt:
+        * platform/qt/fast/block/positioning/051-expected.png: Added.
+        * platform/qt/fast/block/positioning/051-expected.txt:
+        * platform/qt/fast/block/positioning/056-expected.png: Added.
+        * platform/qt/fast/block/positioning/056-expected.txt:
+        * platform/qt/fast/block/positioning/061-expected.png: Added.
+        * platform/qt/fast/block/positioning/061-expected.txt:
+        * platform/qt/fast/block/positioning/move-with-auto-width-expected.png: Added.
+        * platform/qt/fast/block/positioning/move-with-auto-width-expected.txt: Added.
+        * platform/qt/fast/css/beforeSelectorOnCodeElement-expected.png: Added.
+        * platform/qt/fast/css/beforeSelectorOnCodeElement-expected.txt:
+        * platform/qt/fast/dynamic/containing-block-change-expected.png: Added.
+        * platform/qt/fast/dynamic/containing-block-change-expected.txt:
+        * platform/qt/fast/dynamic/floating-to-positioned-2-expected.png: Added.
+        * platform/qt/fast/dynamic/floating-to-positioned-2-expected.txt: Added.
+        * platform/qt/fast/dynamic/floating-to-positioned-expected.png: Added.
+        * platform/qt/fast/dynamic/floating-to-positioned-expected.txt: Added.
+        * platform/qt/fast/events/focusingUnloadedFrame-expected.png: Added.
+        * platform/qt/fast/flexbox/002-expected.png: Added.
+        * platform/qt/fast/flexbox/002-expected.txt:
+        * platform/qt/fast/flexbox/003-expected.png: Added.
+        * platform/qt/fast/flexbox/003-expected.txt:
+        * platform/qt/fast/forms/listbox-clip-expected.png: Added.
+        * platform/qt/fast/forms/listbox-clip-expected.txt:
+        * platform/qt/fast/forms/menulist-clip-expected.png: Added.
+        * platform/qt/fast/forms/menulist-clip-expected.txt:
+        * platform/qt/fast/forms/minWidthPercent-expected.png: Added.
+        * platform/qt/fast/forms/minWidthPercent-expected.txt:
+        * platform/qt/fast/forms/onchange-enter-submit-expected.png: Added.
+        * platform/qt/fast/gradients/background-clipped-expected.png: Added.
+        * platform/qt/fast/gradients/background-clipped-expected.txt: Added.
+        * platform/qt/fast/gradients/generated-gradients-expected.png: Added.
+        * platform/qt/fast/gradients/generated-gradients-expected.txt: Added.
+        * platform/qt/fast/gradients/simple-gradients-expected.png: Added.
+        * platform/qt/fast/gradients/simple-gradients-expected.txt: Added.
+        * platform/qt/fast/inline-block/001-expected.png: Added.
+        * platform/qt/fast/inline-block/001-expected.txt:
+        * platform/qt/fast/inline/continuation-outlines-expected.png: Added.
+        * platform/qt/fast/inline/continuation-outlines-expected.txt:
+        * platform/qt/fast/inline/continuation-outlines-with-layers-expected.png: Added.
+        * platform/qt/fast/inline/continuation-outlines-with-layers-expected.txt:
+        * platform/qt/fast/inline/drawStyledEmptyInlinesWithWS-expected.png: Added.
+        * platform/qt/fast/inline/drawStyledEmptyInlinesWithWS-expected.txt: Added.
+        * platform/qt/fast/invalid/019-expected.png: Added.
+        * platform/qt/fast/invalid/019-expected.txt:
+        * platform/qt/fast/layers/add-layer-with-nested-stacking-expected.png: Added.
+        * platform/qt/fast/layers/add-layer-with-nested-stacking-expected.txt: Added.
+        * platform/qt/fast/layers/inline-dirty-z-order-lists-expected.png: Added.
+        * platform/qt/fast/layers/inline-dirty-z-order-lists-expected.txt: Added.
+        * platform/qt/fast/layers/remove-layer-with-nested-stacking-expected.png: Added.
+        * platform/qt/fast/layers/remove-layer-with-nested-stacking-expected.txt: Added.
+        * platform/qt/fast/layers/self-painting-outline-expected.png: Added.
+        * platform/qt/fast/layers/self-painting-outline-expected.txt: Added.
+        * platform/qt/fast/lists/003-expected.png: Added.
+        * platform/qt/fast/lists/003-expected.txt:
+        * platform/qt/fast/media/mq-animation-expected.png: Added.
+        * platform/qt/fast/media/mq-animation-expected.txt: Added.
+        * platform/qt/fast/media/mq-js-media-except-01-expected.png: Added.
+        * platform/qt/fast/media/mq-js-media-except-01-expected.txt:
+        * platform/qt/fast/media/mq-js-media-except-02-expected.png: Added.
+        * platform/qt/fast/media/mq-js-media-except-02-expected.txt:
+        * platform/qt/fast/overflow/table-overflow-float-expected.png: Added.
+        * platform/qt/fast/overflow/table-overflow-float-expected.txt:
+        * platform/qt/fast/repaint/4774354-expected.png: Added.
+        * platform/qt/fast/repaint/4774354-expected.txt:
+        * platform/qt/fast/repaint/4776765-expected.png: Added.
+        * platform/qt/fast/repaint/4776765-expected.txt:
+        * platform/qt/fast/repaint/backgroundSizeRepaint-expected.png: Added.
+        * platform/qt/fast/repaint/backgroundSizeRepaint-expected.txt:
+        * platform/qt/fast/repaint/body-background-image-expected.png: Added.
+        * platform/qt/fast/repaint/body-background-image-expected.txt:
+        * platform/qt/fast/repaint/border-fit-lines-expected.png: Added.
+        * platform/qt/fast/repaint/border-fit-lines-expected.txt:
+        * platform/qt/fast/repaint/border-radius-repaint-expected.png: Added.
+        * platform/qt/fast/repaint/border-radius-repaint-expected.txt:
+        * platform/qt/fast/repaint/border-repaint-glitch-expected.png: Added.
+        * platform/qt/fast/repaint/border-repaint-glitch-expected.txt:
+        * platform/qt/fast/repaint/box-shadow-dynamic-expected.png: Added.
+        * platform/qt/fast/repaint/box-shadow-dynamic-expected.txt:
+        * platform/qt/fast/repaint/bugzilla-3509-expected.png: Added.
+        * platform/qt/fast/repaint/bugzilla-3509-expected.txt:
+        * platform/qt/fast/repaint/bugzilla-5699-expected.png: Added.
+        * platform/qt/fast/repaint/bugzilla-5699-expected.txt:
+        * platform/qt/fast/repaint/bugzilla-6278-expected.png: Added.
+        * platform/qt/fast/repaint/bugzilla-6278-expected.txt:
+        * platform/qt/fast/repaint/bugzilla-6388-expected.png: Added.
+        * platform/qt/fast/repaint/bugzilla-6388-expected.txt:
+        * platform/qt/fast/repaint/bugzilla-6473-expected.png: Added.
+        * platform/qt/fast/repaint/bugzilla-6473-expected.txt:
+        * platform/qt/fast/repaint/bugzilla-7235-expected.png: Added.
+        * platform/qt/fast/repaint/bugzilla-7235-expected.txt:
+        * platform/qt/fast/repaint/caret-outside-block-expected.png: Added.
+        * platform/qt/fast/repaint/caret-outside-block-expected.txt: Added.
+        * platform/qt/fast/repaint/change-transform-expected.png: Added.
+        * platform/qt/fast/repaint/change-transform-expected.txt: Added.
+        * platform/qt/fast/repaint/clip-with-layout-delta-expected.png: Added.
+        * platform/qt/fast/repaint/clip-with-layout-delta-expected.txt: Added.
+        * platform/qt/fast/repaint/clipped-relative-expected.png: Added.
+        * platform/qt/fast/repaint/clipped-relative-expected.txt:
+        * platform/qt/fast/repaint/containing-block-position-change-expected.png: Added.
+        * platform/qt/fast/repaint/containing-block-position-change-expected.txt:
+        * platform/qt/fast/repaint/continuation-after-outline-expected.png: Added.
+        * platform/qt/fast/repaint/continuation-after-outline-expected.txt:
+        * platform/qt/fast/repaint/create-layer-repaint-expected.png: Added.
+        * platform/qt/fast/repaint/create-layer-repaint-expected.txt: Added.
+        * platform/qt/fast/repaint/delete-into-nested-block-expected.png: Added.
+        * platform/qt/fast/repaint/delete-into-nested-block-expected.txt:
+        * platform/qt/fast/repaint/dynamic-table-vertical-alignment-change-expected.png: Added.
+        * platform/qt/fast/repaint/dynamic-table-vertical-alignment-change-expected.txt: Added.
+        * platform/qt/fast/repaint/float-move-during-layout-expected.png: Added.
+        * platform/qt/fast/repaint/float-move-during-layout-expected.txt:
+        * platform/qt/fast/repaint/float-overflow-expected.png: Added.
+        * platform/qt/fast/repaint/float-overflow-expected.txt:
+        * platform/qt/fast/repaint/float-overflow-right-expected.png: Added.
+        * platform/qt/fast/repaint/float-overflow-right-expected.txt:
+        * platform/qt/fast/repaint/focus-layers-expected.png: Added.
+        * platform/qt/fast/repaint/focus-layers-expected.txt:
+        * platform/qt/fast/repaint/inline-color-change-expected.png: Added.
+        * platform/qt/fast/repaint/inline-color-change-expected.txt: Added.
+        * platform/qt/fast/repaint/invisible-objects-expected.png: Added.
+        * platform/qt/fast/repaint/invisible-objects-expected.txt: Added.
+        * platform/qt/fast/repaint/layout-state-only-positioned-expected.png: Added.
+        * platform/qt/fast/repaint/layout-state-only-positioned-expected.txt: Added.
+        * platform/qt/fast/repaint/layout-state-relative-expected.png: Added.
+        * platform/qt/fast/repaint/layout-state-relative-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-1-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-1-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-10-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-10-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-2-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-2-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-3-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-3-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-4-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-4-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-5-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-5-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-6-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-6-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-7-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-7-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-8-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-8-expected.txt: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-9-expected.png: Added.
+        * platform/qt/fast/repaint/line-flow-with-floats-9-expected.txt: Added.
+        * platform/qt/fast/repaint/line-overflow-expected.png: Added.
+        * platform/qt/fast/repaint/line-overflow-expected.txt:
+        * platform/qt/fast/repaint/lines-with-layout-delta-expected.png: Added.
+        * platform/qt/fast/repaint/lines-with-layout-delta-expected.txt: Added.
+        * platform/qt/fast/repaint/list-marker-2-expected.png: Added.
+        * platform/qt/fast/repaint/list-marker-2-expected.txt:
+        * platform/qt/fast/repaint/make-children-non-inline-expected.png: Added.
+        * platform/qt/fast/repaint/make-children-non-inline-expected.txt: Added.
+        * platform/qt/fast/repaint/opacity-change-on-overflow-float-expected.png: Added.
+        * platform/qt/fast/repaint/opacity-change-on-overflow-float-expected.txt: Added.
+        * platform/qt/fast/repaint/outline-child-repaint-expected.png: Added.
+        * platform/qt/fast/repaint/outline-child-repaint-expected.txt: Added.
+        * platform/qt/fast/repaint/outline-inset-expected.png: Added.
+        * platform/qt/fast/repaint/outline-inset-expected.txt:
+        * platform/qt/fast/repaint/outline-repaint-glitch-expected.png: Added.
+        * platform/qt/fast/repaint/outline-repaint-glitch-expected.txt:
+        * platform/qt/fast/repaint/outline-shrinking-expected.png: Added.
+        * platform/qt/fast/repaint/outline-shrinking-expected.txt:
+        * platform/qt/fast/repaint/overflow-clip-subtree-layout-expected.png: Added.
+        * platform/qt/fast/repaint/overflow-clip-subtree-layout-expected.txt: Added.
+        * platform/qt/fast/repaint/overflow-delete-line-expected.png: Added.
+        * platform/qt/fast/repaint/overflow-delete-line-expected.txt:
+        * platform/qt/fast/repaint/overflow-scroll-body-appear-expected.png: Added.
+        * platform/qt/fast/repaint/overflow-scroll-body-appear-expected.txt: Added.
+        * platform/qt/fast/repaint/overflow-scroll-delete-expected.png: Added.
+        * platform/qt/fast/repaint/overflow-scroll-delete-expected.txt: Added.
+        * platform/qt/fast/repaint/reflection-redraw-expected.png: Added.
+        * platform/qt/fast/repaint/reflection-redraw-expected.txt: Added.
+        * platform/qt/fast/repaint/reflection-repaint-test-expected.png: Added.
+        * platform/qt/fast/repaint/reflection-repaint-test-expected.txt: Added.
+        * platform/qt/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.png: Added.
+        * platform/qt/fast/repaint/renderer-destruction-by-invalidateSelection-crash-expected.txt: Added.
+        * platform/qt/fast/repaint/repaint-resized-overflow-expected.png: Added.
+        * platform/qt/fast/repaint/repaint-resized-overflow-expected.txt:
+        * platform/qt/fast/repaint/selected-replaced-expected.png: Added.
+        * platform/qt/fast/repaint/selected-replaced-expected.txt: Added.
+        * platform/qt/fast/repaint/selection-clear-expected.png: Added.
+        * platform/qt/fast/repaint/selection-clear-expected.txt: Added.
+        * platform/qt/fast/repaint/static-to-positioned-expected.png: Added.
+        * platform/qt/fast/repaint/static-to-positioned-expected.txt:
+        * platform/qt/fast/repaint/subtree-root-clip-2-expected.png: Added.
+        * platform/qt/fast/repaint/subtree-root-clip-2-expected.txt: Added.
+        * platform/qt/fast/repaint/subtree-root-clip-3-expected.png: Added.
+        * platform/qt/fast/repaint/subtree-root-clip-3-expected.txt: Added.
+        * platform/qt/fast/repaint/subtree-root-clip-expected.png: Added.
+        * platform/qt/fast/repaint/subtree-root-clip-expected.txt: Added.
+        * platform/qt/fast/repaint/subtree-root-skipped-expected.png: Added.
+        * platform/qt/fast/repaint/subtree-root-skipped-expected.txt: Added.
+        * platform/qt/fast/repaint/table-cell-collapsed-border-expected.png: Added.
+        * platform/qt/fast/repaint/table-cell-collapsed-border-expected.txt:
+        * platform/qt/fast/repaint/table-cell-move-expected.png: Added.
+        * platform/qt/fast/repaint/table-cell-move-expected.txt:
+        * platform/qt/fast/repaint/table-collapsed-border-expected.png: Added.
+        * platform/qt/fast/repaint/table-collapsed-border-expected.txt:
+        * platform/qt/fast/repaint/table-extra-bottom-grow-expected.png: Added.
+        * platform/qt/fast/repaint/table-extra-bottom-grow-expected.txt:
+        * platform/qt/fast/repaint/table-two-pass-layout-overpaint-expected.png: Added.
+        * platform/qt/fast/repaint/table-two-pass-layout-overpaint-expected.txt: Added.
+        * platform/qt/fast/repaint/text-append-dirty-lines-expected.png: Added.
+        * platform/qt/fast/repaint/text-append-dirty-lines-expected.txt: Added.
+        * platform/qt/fast/repaint/transform-absolute-child-expected.png: Added.
+        * platform/qt/fast/repaint/transform-absolute-child-expected.txt: Added.
+        * platform/qt/fast/repaint/transform-absolute-in-positioned-container-expected.png: Added.
+        * platform/qt/fast/repaint/transform-absolute-in-positioned-container-expected.txt: Added.
+        * platform/qt/fast/repaint/transform-disable-layoutstate-expected.png: Added.
+        * platform/qt/fast/repaint/transform-disable-layoutstate-expected.txt: Added.
+        * platform/qt/fast/repaint/transform-layout-repaint-expected.png: Added.
+        * platform/qt/fast/repaint/transform-layout-repaint-expected.txt: Added.
+        * platform/qt/fast/repaint/transform-relative-position-expected.png: Added.
+        * platform/qt/fast/repaint/transform-relative-position-expected.txt: Added.
+        * platform/qt/fast/repaint/transform-repaint-descendants-expected.png: Added.
+        * platform/qt/fast/repaint/transform-repaint-descendants-expected.txt: Added.
+        * platform/qt/fast/repaint/transform-replaced-shadows-expected.png: Added.
+        * platform/qt/fast/repaint/transform-replaced-shadows-expected.txt: Added.
+        * platform/qt/fast/repaint/transform-translate-expected.png: Added.
+        * platform/qt/fast/repaint/transform-translate-expected.txt: Added.
+        * platform/qt/fast/text/apply-start-width-after-skipped-text-expected.png: Added.
+        * platform/qt/fast/text/apply-start-width-after-skipped-text-expected.txt: Added.
+        * platform/qt/fast/text/basic/generic-family-reset-expected.png: Added.
+        * platform/qt/fast/text/basic/generic-family-reset-expected.txt:
+        * platform/qt/fast/text/whitespace/002-expected.png: Added.
+        * platform/qt/fast/text/whitespace/002-expected.txt:
+        * platform/qt/fast/text/whitespace/003-expected.png: Added.
+        * platform/qt/fast/text/whitespace/003-expected.txt:
+
 2011-07-29  Tony Gentilcore  <tonyg@chromium.org>
 
         [chromium] Fail new fast/js/parseInt.html test

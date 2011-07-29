@@ -2,19 +2,23 @@ layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x578
+    RenderBody {BODY} at (8,8) size 784x579
       RenderBlock (anonymous) at (0,0) size 784x0
         RenderInline {B} at (0,0) size 0x0
           RenderInline {NOBR} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,0) size 784x20
-        RenderBlock {DIV} at (0,0) size 784x20
-          RenderText {#text} at (0,0) size 224x20
-            text run at (0,0) width 224: "This text is in a div inside a nobr"
-      RenderBlock (anonymous) at (0,20) size 784x20
-        RenderInline {B} at (0,0) size 687x20
+      RenderBlock (anonymous) at (0,0) size 784x0
+      RenderBlock (anonymous) at (0,0) size 784x0
+        RenderInline {B} at (0,0) size 0x0
           RenderInline {NOBR} at (0,0) size 0x0
-          RenderText {#text} at (0,0) size 687x20
-            text run at (0,0) width 687: "More text that should not be in the nobr, i.e., the nobr should have closed the div inside it implicitly."
-      RenderBlock {PRE} at (0,54) size 784x19
-        RenderText {#text} at (0,0) size 212x19
-          text run at (0,0) width 212: "A pre tag outside everything else."
+      RenderBlock {DIV} at (0,0) size 784x74
+        RenderBlock (anonymous) at (0,0) size 784x44
+          RenderInline {B} at (0,0) size 763x44
+            RenderInline {NOBR} at (0,0) size 219x22
+              RenderText {#text} at (0,0) size 219x22
+                text run at (0,0) width 219: "This text is in a div inside a nobr"
+            RenderText {#text} at (219,0) size 763x44
+              text run at (219,0) width 544: "More text that should not be in the nobr, i.e., the nobr should have closed the div"
+              text run at (0,22) width 122: "inside it implicitly."
+        RenderBlock {PRE} at (0,57) size 784x17
+          RenderText {#text} at (0,0) size 195x17
+            text run at (0,0) width 195: "A pre tag outside everything else."

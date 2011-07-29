@@ -1,48 +1,49 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x385
-  RenderBlock {HTML} at (0,0) size 800x385
-    RenderBody {BODY} at (8,14) size 784x363
-      RenderBlock {P} at (0,0) size 784x20
-        RenderInline {B} at (0,0) size 54x20
-          RenderText {#text} at (0,0) size 54x20
-            text run at (0,0) width 54: "BUG ID:"
-        RenderText {#text} at (54,0) size 4x19
-          text run at (54,0) width 4: " "
-        RenderInline {A} at (0,0) size 113x19 [color=#0000EE]
-          RenderText {#text} at (58,0) size 113x19
-            text run at (58,0) width 113: "Bugzilla bug 6278"
-        RenderText {#text} at (171,0) size 501x19
-          text run at (171,0) width 501: " REGRESSION: Incomplete repaint when table cell width changes during layout"
-      RenderBlock {P} at (0,34) size 784x26 [bgcolor=#98FB98]
-        RenderInline {B} at (0,0) size 82x20
-          RenderText {#text} at (3,3) size 82x20
-            text run at (3,3) width 82: "TEST PASS:"
-        RenderText {#text} at (85,3) size 608x19
-          text run at (85,3) width 4: " "
-          text run at (89,3) width 604: "The purple and green rects will resize, and there will remain separated by a blue horizontal line."
-      RenderBlock {P} at (0,74) size 784x26 [bgcolor=#FF3300]
-        RenderInline {B} at (0,0) size 77x20
-          RenderText {#text} at (3,3) size 77x20
-            text run at (3,3) width 77: "TEST FAIL:"
-        RenderText {#text} at (80,3) size 484x19
-          text run at (80,3) width 4: " "
-          text run at (84,3) width 480: "The purple and green rects will resize, but the blue separator will disappear."
-      RenderTable {TABLE} at (0,114) size 300x249
-        RenderTableSection {TBODY} at (0,0) size 300x249
-          RenderTableRow {TR} at (0,2) size 300x245
-            RenderTableCell {TD} at (2,2) size 242x245 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (0,0) size 242x190 [bgcolor=#EEEEFF]
-                RenderText {#text} at (0,0) size 237x190
-                  text run at (0,0) width 237: "Curabitur pretium, quam quis semper"
-                  text run at (0,19) width 226: "malesuada, est libero feugiat libero,"
-                  text run at (0,38) width 200: "vel fringilla orci nibh sed neque."
-                  text run at (0,57) width 217: "Quisque eu nulla non nisi molestie"
-                  text run at (0,76) width 231: "accumsan. Etiam tellus urna, laoreet"
-                  text run at (0,95) width 231: "ac, laoreet non, suscipit sed, sapien."
-                  text run at (0,114) width 224: "Phasellus vehicula, sem at posuere"
-                  text run at (0,133) width 217: "vehicula, augue nibh molestie nisl,"
-                  text run at (0,152) width 233: "nec ullamcorper lacus ante vulputate"
-                  text run at (0,171) width 36: "pede."
-              RenderBlock {DIV} at (0,195) size 242x50 [bgcolor=#EEFFEE]
-            RenderTableCell {TD} at (246,123) size 52x2 [r=0 c=1 rs=1 cs=1]
+layer at (0,0) size 800x451
+  RenderBlock {HTML} at (0,0) size 800x451
+    RenderBody {BODY} at (8,16) size 784x427
+      RenderBlock {P} at (0,0) size 784x22
+        RenderInline {B} at (0,0) size 62x22
+          RenderText {#text} at (0,0) size 62x22
+            text run at (0,0) width 62: "BUG ID:"
+        RenderText {#text} at (62,0) size 4x22
+          text run at (62,0) width 4: " "
+        RenderInline {A} at (0,0) size 121x22 [color=#0000EE]
+          RenderText {#text} at (66,0) size 121x22
+            text run at (66,0) width 121: "Bugzilla bug 6278"
+        RenderText {#text} at (187,0) size 548x22
+          text run at (187,0) width 548: " REGRESSION: Incomplete repaint when table cell width changes during layout"
+      RenderBlock {P} at (0,38) size 784x28 [bgcolor=#98FB98]
+        RenderInline {B} at (0,0) size 91x22
+          RenderText {#text} at (3,3) size 91x22
+            text run at (3,3) width 91: "TEST PASS:"
+        RenderText {#text} at (94,3) size 652x22
+          text run at (94,3) width 4: " "
+          text run at (98,3) width 648: "The purple and green rects will resize, and there will remain separated by a blue horizontal line."
+      RenderBlock {P} at (0,82) size 784x28 [bgcolor=#FF3300]
+        RenderInline {B} at (0,0) size 90x22
+          RenderText {#text} at (3,3) size 90x22
+            text run at (3,3) width 90: "TEST FAIL:"
+        RenderText {#text} at (93,3) size 519x22
+          text run at (93,3) width 4: " "
+          text run at (97,3) width 515: "The purple and green rects will resize, but the blue separator will disappear."
+      RenderTable {TABLE} at (0,126) size 300x301
+        RenderTableSection {TBODY} at (0,0) size 300x301
+          RenderTableRow {TR} at (0,2) size 300x297
+            RenderTableCell {TD} at (2,2) size 242x297 [bgcolor=#0000FF] [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (0,0) size 242x242 [bgcolor=#EEEEFF]
+                RenderText {#text} at (0,0) size 240x242
+                  text run at (0,0) width 207: "Curabitur pretium, quam quis"
+                  text run at (0,22) width 194: "semper malesuada, est libero"
+                  text run at (0,44) width 238: "feugiat libero, vel fringilla orci nibh"
+                  text run at (0,66) width 219: "sed neque. Quisque eu nulla non"
+                  text run at (0,88) width 240: "nisi molestie accumsan. Etiam tellus"
+                  text run at (0,110) width 194: "urna, laoreet ac, laoreet non,"
+                  text run at (0,132) width 198: "suscipit sed, sapien. Phasellus"
+                  text run at (0,154) width 228: "vehicula, sem at posuere vehicula,"
+                  text run at (0,176) width 192: "augue nibh molestie nisl, nec"
+                  text run at (0,198) width 222: "ullamcorper lacus ante vulputate"
+                  text run at (0,220) width 36: "pede."
+              RenderBlock {DIV} at (0,247) size 242x50 [bgcolor=#EEFFEE]
+            RenderTableCell {TD} at (246,149) size 52x2 [r=0 c=1 rs=1 cs=1]
