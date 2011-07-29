@@ -1,3 +1,17 @@
+2011-07-28  Naoki Takano  <honten@chromium.org>
+
+        [Chromium] Add form() function to access parent WebFormElement from WebFormControlElement.
+        https://bugs.webkit.org/show_bug.cgi?id=65304
+        http://code.google.com/p/chromium/issues/detail?id=63553
+
+        Reviewed by Darin Fisher.
+
+        Chromium Autofill feature needs to access the parent WebFormElement from WebFormControlElement. So added form() method.
+
+        * public/WebFormControlElement.h: Add form() function.
+        * src/WebFormControlElement.cpp:
+        (WebKit::WebFormControlElement::form): Return parent WebFormElement.
+
 2011-07-28  Nico Weber  <thakis@chromium.org>
 
         [chromium] Make WebImage::assign(CGImageRef) a WEBKIT_API

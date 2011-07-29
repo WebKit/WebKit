@@ -32,6 +32,7 @@
 #define WebFormControlElement_h
 
 #include "WebElement.h"
+#include "WebFormElement.h"
 #include "WebString.h"
 
 #if WEBKIT_IMPLEMENTATION
@@ -64,6 +65,8 @@ public:
     // storing autofill data.  This is either the field name or its id, an empty
     // string if it has no name and no id.
     WEBKIT_API WebString nameForAutofill() const;
+
+    WEBKIT_API WebFormElement form() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebFormControlElement(const WTF::PassRefPtr<WebCore::HTMLFormControlElement>&);

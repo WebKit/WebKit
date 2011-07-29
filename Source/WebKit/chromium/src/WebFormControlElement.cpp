@@ -32,6 +32,7 @@
 #include "WebFormControlElement.h"
 
 #include "HTMLFormControlElement.h"
+#include "HTMLFormElement.h"
 #include <wtf/PassRefPtr.h>
 
 using namespace WebCore;
@@ -74,6 +75,11 @@ WebString WebFormControlElement::nameForAutofill() const
     if (!trimmedName.isEmpty())
         return trimmedName;
     return String();
+}
+
+WebFormElement WebFormControlElement::form() const
+{
+    return WebFormElement(constUnwrap<HTMLFormControlElement>()->form());
 }
 
 WebFormControlElement::WebFormControlElement(const PassRefPtr<HTMLFormControlElement>& elem)
