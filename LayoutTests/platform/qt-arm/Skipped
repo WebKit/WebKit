@@ -51,3 +51,25 @@ svg/dom/SVGScriptElement/script-load-and-error-events.svg
 fast/js/nested-object-gc.html
 # https://bugs.webkit.org/show_bug.cgi?id=64452
 http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html
+
+# [Qt][ARM]REGRESSION(r91752): It made audio related tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=65369
+fast/canvas/canvas-drawImage-incomplete.html
+fast/dom/URL-attribute-reflection.html
+fast/dom/Window/custom-constructors.html
+fast/dom/Window/window-properties.html
+fast/dom/beforeload/video-before-load.html
+fast/dom/boolean-attribute-reflection.html
+fast/dom/constructed-objects-prototypes.html
+fast/dom/constructors-cached-navigate.html
+fast/dom/constructors-cached.html
+fast/dom/dom-constructors.html
+fast/dom/prototype-inheritance-2.html
+fast/dom/prototype-inheritance.html
+fast/forms/form-associated-element-crash3.html
+fast/js/custom-constructors.html
+fast/js/global-constructors.html
+fast/js/instanceof-XMLHttpRequest.html
+fast/replaced/outline-replaced-elements.html
+http/tests/security/local-video-poster-from-remote.html
+http/tests/security/local-video-src-from-remote.html
