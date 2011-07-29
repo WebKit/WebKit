@@ -222,15 +222,23 @@ INSTALL(FILES ${CMAKE_BINARY_DIR}/WebKit/efl/ewebkit.pc
 
 UNSET(LIBS_PRIVATE)
 
-FILE(GLOB EWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/*.h")
-LIST(REMOVE_ITEM EWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_private.h")
-LIST(REMOVE_ITEM EWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_tiled_private.h")
-LIST(REMOVE_ITEM EWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_tiled_backing_store.h")
-LIST(REMOVE_ITEM EWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_tiled_matrix.h")
-LIST(REMOVE_ITEM EWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_tiled_model.h")
+SET(EWebKit_HEADERS
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/EWebKit.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_auth.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_contextmenu.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_cookies.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_frame.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_history.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_logging.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_main.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_network.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_settings.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_view.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_window_features.h
+)
 
-IF (NOT WTF_USE_SOUP)
-    LIST(REMOVE_ITEM EWebKit_HEADERS "${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_auth_soup.h")
+IF (WTF_USE_SOUP)
+    LIST(APPEND EWebKit_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/efl/ewk/ewk_auth_soup.h)
 ENDIF ()
 
 INSTALL(FILES ${EWebKit_HEADERS}
