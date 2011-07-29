@@ -1,3 +1,14 @@
+2011-07-29  Emil A Eklund  <eae@chromium.org>
+
+        -webkit-marquee with anonymous node causes segmentation fault in Node::document
+        https://bugs.webkit.org/show_bug.cgi?id=64693
+
+        Reviewed by Simon Fraser.
+
+        * fast/css/webkit-marquee-anonymous-node-crash-expected.txt: Added.
+        * fast/css/webkit-marquee-anonymous-node-crash.html: Added.
+        Add test for using -webkit-marquee with an anonymous node.
+
 2011-07-29  Mike Reed  <reed@google.com>
 
         [skia] never draw with GDI, so that all text can be gpu-accelerated
