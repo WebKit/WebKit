@@ -1969,7 +1969,7 @@ float GraphicsLayerCA::clampedContentsScaleForScale(float scale) const
 {
     // Define some limits as a sanity check for the incoming scale value
     // those too small to see.
-    const float maxScale = 5.0f;
+    const float maxScale = 10.0f;
     const float minScale = 0.01f;
     
     // Avoid very slight scale changes that would be doing extra work for no benefit
