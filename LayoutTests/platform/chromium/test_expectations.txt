@@ -3658,3 +3658,5 @@ BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
 // how alpha blended outlines are drawn.
 BUGWK65295 WIN LINUX : fast/box-shadow/box-shadow-radius.html = IMAGE
 BUGWK65295 WIN LINUX : fast/layers/self-painting-outline.html = IMAGE
+
+BUGWK65366 : fast/js/parseInt.html = TEXT
