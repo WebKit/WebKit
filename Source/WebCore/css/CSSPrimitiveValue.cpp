@@ -274,16 +274,10 @@ template<> int CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle*
     return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
-// Lengths expect an int that is only 28-bits, so we have to check for a
-// different overflow.
-int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
-{
-    return roundForImpreciseConversion<int, intMaxForLength, intMinForLength>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
-}
-
 template<> Length CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
-    return Length(computeLengthIntForLength(style, rootStyle, multiplier, computingFontSize), Fixed);
+    // FIXME: Length.h no longer expects 28 bit integers, so these bounds should be INT_MAX and INT_MIN
+    return Length(roundForImpreciseConversion<int, intMaxForLength, intMinForLength>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize)), Fixed);
 }
 
 template<> short CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)

@@ -146,7 +146,6 @@ public:
      * and some tool to calibrate.
      */
     template<typename T> T computeLength(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false);
-    int computeLengthIntForLength(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false);
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }

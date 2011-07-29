@@ -91,6 +91,11 @@ public:
     LengthType type() const { return static_cast<LengthType>(m_type); }
     bool quirk() const { return m_quirk; }
 
+    void setQuirk(bool quirk)
+    {
+        m_quirk = quirk;
+    }
+
     void setValue(LengthType t, int value)
     {
         m_type = t;

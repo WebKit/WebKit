@@ -322,9 +322,11 @@ private:
             setValue(selector->style(), Length());
         else {
             int type = primitiveValue->primitiveType();
-            if (CSSPrimitiveValue::isUnitTypeLength(type))
-                setValue(selector->style(), Length(primitiveValue->computeLengthIntForLength(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()), Fixed, primitiveValue->isQuirkValue()));
-            else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+            if (CSSPrimitiveValue::isUnitTypeLength(type)) {
+                Length length = primitiveValue->computeLength<Length>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
+                length.setQuirk(primitiveValue->isQuirkValue());
+                setValue(selector->style(), length);
+            } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 setValue(selector->style(), Length(primitiveValue->getDoubleValue(), Percent));
         }
     }

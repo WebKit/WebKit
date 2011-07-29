@@ -4900,7 +4900,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         float perspectiveValue;
         int type = primitiveValue->primitiveType();
         if (CSSPrimitiveValue::isUnitTypeLength(type))
-            perspectiveValue = static_cast<float>(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor));
+            perspectiveValue = primitiveValue->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
         else if (type == CSSPrimitiveValue::CSS_NUMBER) {
             // For backward compatibility, treat valueless numbers as px.
             perspectiveValue = CSSPrimitiveValue::create(primitiveValue->getDoubleValue(), CSSPrimitiveValue::CSS_PX)->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
