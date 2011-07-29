@@ -177,7 +177,7 @@ void TouchViewInterface::loadDidFail(const QWebError& error)
 
 void TouchViewInterface::didChangeLoadProgress(int percentageLoaded)
 {
-    emit m_pageView->loadProgress(percentageLoaded);
+    emit m_pageView->loadProgressChanged(percentageLoaded);
 }
 
 void TouchViewInterface::showContextMenu(QSharedPointer<QMenu>)

@@ -39,6 +39,7 @@ public:
 
     void load(const QUrl&);
     bool url(QUrl&) const;
+    int loadProgress() const;
 
     void triggerNavigationAction(QtWebKit::NavigationAction);
 
@@ -46,6 +47,7 @@ Q_SIGNALS:
     void loadStarted();
     void loadSucceeded();
     void loadFailed(const QWebError&);
+    void loadProgressChanged(int);
 
 private Q_SLOTS:
     void touchViewLoadStarted();
@@ -54,6 +56,8 @@ private Q_SLOTS:
     void desktopViewLoadSucceeded();
     void touchViewLoadFailed(const QWebError&);
     void desktopViewLoadFailed(const QWebError&);
+    void touchViewLoadProgressChanged(int);
+    void desktopViewLoadProgressChanged(int);
 
 private:
     QTouchWebView* touchWebView() const;

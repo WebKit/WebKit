@@ -1,3 +1,39 @@
+2011-07-29  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Make QDesktopWebView/QTouchWebView loadProgress property more usable in QML.
+        https://bugs.webkit.org/show_bug.cgi?id=65315
+
+        Reviewed by Benjamin Poulain.
+
+        In order to use the loadProgress value in QML we need to make it
+        a Q_PROPERTY, therefore we need a getter to get it.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::didChangeLoadProgress):
+        (QDesktopWebView::url):
+        (QDesktopWebView::loadProgress):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::loadProgress):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp:
+        (tst_CommonViewTests::stop):
+        (tst_CommonViewTests::loadProgress):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::WebViewAbstraction):
+        (WebViewAbstraction::loadProgress):
+        (WebViewAbstraction::desktopViewLoadFailed):
+        (WebViewAbstraction::touchViewLoadProgressChanged):
+        (WebViewAbstraction::desktopViewLoadProgressChanged):
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::didChangeLoadProgress):
+        * UIProcess/qt/QtWebPageProxy.h:
+        (QtWebPageProxy::loadProgress):
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::didChangeLoadProgress):
+
 2011-07-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         TiledDrawingArea: Use tile sets to paint old content while rendering for a new scale.

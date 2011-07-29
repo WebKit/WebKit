@@ -132,7 +132,7 @@ void QDesktopWebViewPrivate::loadDidFail(const QWebError& error)
 
 void QDesktopWebViewPrivate::didChangeLoadProgress(int percentageLoaded)
 {
-    emit q->loadProgress(percentageLoaded);
+    emit q->loadProgressChanged(percentageLoaded);
 }
 
 void QDesktopWebViewPrivate::showContextMenu(QSharedPointer<QMenu> menu)
@@ -196,6 +196,11 @@ void QDesktopWebView::load(const QUrl& url)
 QUrl QDesktopWebView::url() const
 {
     return d->page.url();
+}
+
+int QDesktopWebView::loadProgress() const
+{
+    return d->page.loadProgress();
 }
 
 QString QDesktopWebView::title() const

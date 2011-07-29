@@ -39,6 +39,7 @@ class QWEBKIT_EXPORT QTouchWebPage : public QSGPaintedItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
+    Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
 
 public:
     QTouchWebPage(QSGItem* parent = 0);
@@ -49,6 +50,7 @@ public:
     Q_INVOKABLE QUrl url() const;
 
     Q_INVOKABLE QString title() const;
+    int loadProgress() const;
 
     QAction* navigationAction(QtWebKit::NavigationAction which);
 
@@ -61,7 +63,7 @@ Q_SIGNALS:
     void loadStarted();
     void loadSucceeded();
     void loadFailed(const QWebError&);
-    void loadProgress(int progress);
+    void loadProgressChanged(int progress);
 
 protected:
     virtual void keyPressEvent(QKeyEvent*);

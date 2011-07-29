@@ -60,6 +60,11 @@ QString QTouchWebPage::title() const
     return d->page->title();
 }
 
+int QTouchWebPage::loadProgress() const
+{
+    return d->page->loadProgress();
+}
+
 /*! \reimp
 */
 bool QTouchWebPage::event(QEvent* ev)

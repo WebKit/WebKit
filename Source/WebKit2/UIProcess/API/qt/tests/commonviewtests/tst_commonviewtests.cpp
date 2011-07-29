@@ -37,6 +37,7 @@ private slots:
     void backAndForward();
     void reload();
     void stop();
+    void loadProgress();
 
     void show();
 private:
@@ -148,6 +149,19 @@ void tst_CommonViewTests::stop()
 
     // FIXME: This test should be fleshed out. Right now it's just here to make sure we don't crash.
     viewAbstraction->triggerNavigationAction(QtWebKit::Stop);
+}
+
+void tst_CommonViewTests::loadProgress()
+{
+    QCOMPARE(viewAbstraction->loadProgress(), 0);
+
+    viewAbstraction->load(QUrl::fromLocalFile(QLatin1String(TESTS_SOURCE_DIR "/html/basic_page.html")));
+    QSignalSpy loadProgressChangedSpy(viewAbstraction.data(), SIGNAL(loadProgressChanged(int)));
+    QVERIFY(waitForSignal(viewAbstraction.data(), SIGNAL(loadSucceeded())));
+
+    QVERIFY(loadProgressChangedSpy.count() >= 1);
+
+    QCOMPARE(viewAbstraction->loadProgress(), 100);
 }
 
 void tst_CommonViewTests::show()

@@ -134,6 +134,7 @@ public:
     void loadDidSucceed();
     void loadDidFail(const QWebError&);
     void didChangeLoadProgress(int);
+    int loadProgress() const { return m_loadProgress; }
 
     void paint(QPainter* painter, QRect);
 
@@ -197,6 +198,7 @@ private:
     mutable QWKPreferences* m_preferences;
 
     OwnPtr<QUndoStack> m_undoStack;
+    int m_loadProgress;
 };
 
 #endif /* QtWebPageProxy_h */

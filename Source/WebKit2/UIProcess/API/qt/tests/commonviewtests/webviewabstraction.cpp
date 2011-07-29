@@ -35,6 +35,7 @@ WebViewAbstraction::WebViewAbstraction()
     connect(touchWebView()->page(), SIGNAL(loadStarted()), this, SLOT(touchViewLoadStarted()));
     connect(touchWebView()->page(), SIGNAL(loadSucceeded()), this, SLOT(touchViewLoadSucceeded()));
     connect(touchWebView()->page(), SIGNAL(loadFailed(QWebError)), this, SLOT(touchViewLoadFailed(QWebError)));
+    connect(touchWebView()->page(), SIGNAL(loadProgressChanged(int)), this, SLOT(touchViewLoadProgressChanged(int)));
 
     screenHalf.moveLeft(screenHalf.right());
     m_desktopWebViewWindow.setGeometry(screenHalf);
@@ -42,6 +43,7 @@ WebViewAbstraction::WebViewAbstraction()
     connect(desktopWebView(), SIGNAL(loadStarted()), this, SLOT(desktopViewLoadStarted()));
     connect(desktopWebView(), SIGNAL(loadSucceeded()), this, SLOT(desktopViewLoadSucceeded()));
     connect(desktopWebView(), SIGNAL(loadFailed(QWebError)), this, SLOT(desktopViewLoadFailed(QWebError)));
+    connect(desktopWebView(), SIGNAL(loadProgressChanged(int)), this, SLOT(desktopViewLoadProgressChanged(int)));
 }
 
 void WebViewAbstraction::show()
@@ -77,6 +79,21 @@ bool WebViewAbstraction::url(QUrl& url) const
 
     url = touchViewUrl;
     return true;
+}
+
+int WebViewAbstraction::loadProgress() const
+{
+    int touchViewProgress = touchWebView()->page()->loadProgress();
+    int desktopViewProgress = desktopWebView()->loadProgress();
+
+    if (touchViewProgress != desktopViewProgress) {
+        qWarning() << "WebViewAbstraction::loadProgress(): the load progress are different.";
+        qWarning() << "QTouchView's load progress = " << touchViewProgress;
+        qWarning() << "QDesktopView's load progress = " << desktopViewProgress;
+        return -1;
+    }
+
+    return touchViewProgress;
 }
 
 void WebViewAbstraction::triggerNavigationAction(QtWebKit::NavigationAction which)
@@ -127,6 +144,20 @@ void WebViewAbstraction::desktopViewLoadFailed(const QWebError& error)
     m_desktopViewSignalsCounter[SIGNAL(loadFailed(QWebError))]++;
     if (m_touchViewSignalsCounter[SIGNAL(loadFailed(QWebError))] == m_desktopViewSignalsCounter[SIGNAL(loadFailed(QWebError))])
         emit loadFailed(error);
+}
+
+void WebViewAbstraction::touchViewLoadProgressChanged(int progress)
+{
+    m_touchViewSignalsCounter[SIGNAL(loadProgressChanged(int))]++;
+    if (m_touchViewSignalsCounter[SIGNAL(loadProgressChanged(int))] == m_desktopViewSignalsCounter[SIGNAL(loadProgressChanged(int))])
+        emit loadProgressChanged(progress);
+}
+
+void WebViewAbstraction::desktopViewLoadProgressChanged(int progress)
+{
+    m_desktopViewSignalsCounter[SIGNAL(loadProgressChanged(int))]++;
+    if (m_touchViewSignalsCounter[SIGNAL(loadProgressChanged(int))] == m_desktopViewSignalsCounter[SIGNAL(loadProgressChanged(int))])
+        emit loadProgressChanged(progress);
 }
 
 QTouchWebView* WebViewAbstraction::touchWebView() const

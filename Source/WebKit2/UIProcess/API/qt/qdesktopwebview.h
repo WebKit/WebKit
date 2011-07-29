@@ -51,15 +51,18 @@ class QWEBKIT_EXPORT QDesktopWebView : public QSGPaintedItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
+    Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
 
     Q_ENUMS(NavigationAction)
 
 public:
+
     QDesktopWebView(QSGItem* parent = 0);
     virtual ~QDesktopWebView();
 
     QUrl url() const;
     QString title() const;
+    int loadProgress() const;
 
     Q_INVOKABLE QAction* navigationAction(QtWebKit::NavigationAction which) const;
 
@@ -72,7 +75,7 @@ Q_SIGNALS:
     void loadStarted();
     void loadSucceeded();
     void loadFailed(const QWebError&);
-    void loadProgress(int progress);
+    void loadProgressChanged(int progress);
     void urlChanged(const QUrl&);
 
 protected:

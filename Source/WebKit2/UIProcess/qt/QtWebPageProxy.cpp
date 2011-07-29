@@ -99,6 +99,7 @@ QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, QWKContext* c, WKPa
     , m_context(c)
     , m_preferences(0)
     , m_undoStack(adoptPtr(new QUndoStack(this)))
+    , m_loadProgress(0)
 {
     ASSERT(viewInterface);
     memset(m_actions, 0, sizeof(m_actions));
@@ -426,6 +427,7 @@ void QtWebPageProxy::loadDidFail(const QWebError& error)
 
 void QtWebPageProxy::didChangeLoadProgress(int newLoadProgress)
 {
+    m_loadProgress = newLoadProgress;
     m_viewInterface->didChangeLoadProgress(newLoadProgress);
 }
 
