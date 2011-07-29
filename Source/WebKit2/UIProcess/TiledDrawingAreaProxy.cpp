@@ -111,6 +111,10 @@ TiledDrawingAreaProxy::TiledDrawingAreaProxy(PlatformWebView* webView, WebPagePr
 
 TiledDrawingAreaProxy::~TiledDrawingAreaProxy()
 {
+    // Disable updates on tiles to detach them from the proxy and cut the circular dependency.
+    if (m_previousTileSet)
+        disableTileSetUpdates(m_previousTileSet.get());
+    disableTileSetUpdates(m_currentTileSet.get());
 }
 
 void TiledDrawingAreaProxy::sizeDidChange()
