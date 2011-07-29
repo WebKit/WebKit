@@ -1,5 +1,14 @@
 2011-07-29  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        * platform/qt-4.8/svg/W3C-SVG-1.1-SE/struct-use-11-f-expected.png: Added.
+        * platform/qt-4.8/svg/W3C-SVG-1.1-SE/struct-use-11-f-expected.txt: Added.
+        * platform/qt-mac/Skipped:
+        * platform/qt-wk2/Skipped:
+
+2011-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt]Web Inspector: REGRESSION(r91928): It made 2 tests fail
         https://bugs.webkit.org/show_bug.cgi?id=65364
 

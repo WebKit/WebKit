@@ -4702,3 +4702,6 @@ ietestcenter/Javascript/15.4.4.14-1-5.html
 fast/css/first-line-parent-style-different.html
 fast/dom/background-shorthand-csstext.html
 fast/events/anchor-empty-focus.html
+
+# Qt result was added by r91977, but it fails on Qt-Mac platform
+svg/W3C-SVG-1.1-SE/struct-use-11-f.svg
