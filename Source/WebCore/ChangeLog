@@ -1,3 +1,9 @@
+2011-07-29  Jeff Miller  <jeffm@apple.com>
+
+        Re-sort the WebCore project with Visual Studio after recent changes that I assume were done by manually editing the XML.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2011-07-29  Dan Bernstein  <mitz@apple.com>
 
         Added the regional indicator symbols to the set of codepoints that force use of the complex text code path.

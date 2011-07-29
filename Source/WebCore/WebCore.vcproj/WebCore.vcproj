@@ -29775,14 +29775,14 @@
 						RelativePath="..\platform\graphics\transforms\TransformOperations.h"
 						>
 					</File>
-			        <File
-				        RelativePath="..\platform\graphics\transforms\TransformState.cpp"
-				        >
-        			</File>
-        			<File
-        				RelativePath="..\platform\graphics\transforms\TransformState.h"
-        				>
-        			</File>
+					<File
+						RelativePath="..\platform\graphics\transforms\TransformState.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\transforms\TransformState.h"
+						>
+					</File>
 					<File
 						RelativePath="..\platform\graphics\transforms\TranslateTransformOperation.cpp"
 						>
@@ -32938,6 +32938,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\css\CSSWrapShapes.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\CSSWrapShapes.h"
+				>
+			</File>
+			<File
 				RelativePath="..\css\DashboardRegion.h"
 				>
 			</File>
@@ -33063,14 +33071,6 @@
 			</File>
 			<File
 				RelativePath="..\css\ShadowValue.h"
-				>
-			</File>
-			<File
-				RelativePath="..\css\CSSWrapShapes.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\css\CSSWrapShapes.h"
 				>
 			</File>
 			<File
@@ -36366,11 +36366,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderRegion.h"
+				RelativePath="..\rendering\RenderRegion.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\rendering\RenderRegion.cpp"
+				RelativePath="..\rendering\RenderRegion.h"
 				>
 			</File>
 			<File
@@ -42629,6 +42629,22 @@
 				Name="parser"
 				>
 				<File
+					RelativePath="..\xml\parser\CharacterReferenceInlineMethods.h"
+					>
+				</File>
+				<File
+					RelativePath="..\xml\parser\MarkupTokenBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\xml\parser\MarkupTokenizerBase.h"
+					>
+				</File>
+				<File
+					RelativePath="..\xml\parser\MarkupTokenizerInlineMethods.h"
+					>
+				</File>
+				<File
 					RelativePath="..\xml\parser\XMLDocumentParser.cpp"
 					>
 					<FileConfiguration
@@ -42679,22 +42695,6 @@
 							Name="VCCLCompilerTool"
 						/>
 					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\xml\parser\CharacterReferenceInlineMethods.h"
-					>
-				</File>
-				<File
-					RelativePath="..\xml\parser\MarkupTokenBase.h"
-					>
-				</File>
-				<File
-					RelativePath="..\xml\parser\MarkupTokenizerBase.h"
-					>
-				</File>
-				<File
-					RelativePath="..\xml\parser\MarkupTokenizerInlineMethods.h"
-					>
 				</File>
 				<File
 					RelativePath="..\xml\parser\XMLDocumentParser.h"
@@ -42761,11 +42761,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\xml\parser\XMLTokenizer.h"
+					RelativePath="..\xml\parser\XMLToken.h"
 					>
 				</File>
 				<File
-					RelativePath="..\xml\parser\XMLToken.h"
+					RelativePath="..\xml\parser\XMLTokenizer.h"
 					>
 				</File>
 			</Filter>
@@ -66190,6 +66190,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGGlyphMap.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGGlyphRefElement.cpp"
 				>
 				<FileConfiguration
@@ -66243,10 +66247,6 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGGlyphRefElement.h"
-				>
-			</File>
-			<File
-				RelativePath="..\svg\SVGGlyphMap.h"
 				>
 			</File>
 			<File
@@ -66933,14 +66933,6 @@
 				Name="properties"
 				>
 				<File
-					RelativePath="..\svg\properties\SVGAttributeToPropertyMap.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\svg\properties\SVGAttributeToPropertyMap.h"
-					>
-				</File>
-				<File
 					RelativePath="..\svg\properties\SVGAnimatedEnumerationPropertyTearOff.h"
 					>
 				</File>
@@ -66978,6 +66970,14 @@
 				</File>
 				<File
 					RelativePath="..\svg\properties\SVGAnimatedTransformListPropertyTearOff.h"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGAttributeToPropertyMap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\properties\SVGAttributeToPropertyMap.h"
 					>
 				</File>
 				<File
@@ -68002,6 +68002,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\IdentifiersFactory.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\IdentifiersFactory.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InjectedScript.cpp"
 				>
 			</File>
@@ -68191,14 +68199,6 @@
 			</File>
 			<File
 				RelativePath="..\inspector\InspectorProfilerAgent.h"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\IdentifiersFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\inspector\IdentifiersFactory.h"
 				>
 			</File>
 			<File
@@ -68453,11 +68453,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\DataGrid.js"
+					RelativePath="..\inspector\front-end\dataGrid.css"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\dataGrid.css"
+					RelativePath="..\inspector\front-end\DataGrid.js"
 					>
 				</File>
 				<File
@@ -68621,19 +68621,15 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\networkLogView.css"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
-					>
-				</File>
-				<File
 					RelativePath="..\inspector\front-end\JavaScriptContextManager.js"
 					>
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
@@ -68646,6 +68642,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\NetworkItemView.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\networkLogView.css"
 					>
 				</File>
 				<File
