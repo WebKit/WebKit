@@ -1,3 +1,15 @@
+2011-07-29  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Fix an error in macro collapsing, refactor code to be pretty.
+        https://bugs.webkit.org/show_bug.cgi?id=65387
+
+        My set math was wrong.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py: Moved collapsing into a classmethod, fixed the math to be correct.
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py: Added unit tests.
+
 2011-07-27  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Style bot complains about EFL-specific forward declaration naming.

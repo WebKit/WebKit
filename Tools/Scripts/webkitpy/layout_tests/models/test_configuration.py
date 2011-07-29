@@ -121,6 +121,15 @@ class TestConfigurationConverter:
 
         return reduce(set.intersection, matching_sets.values())
 
+    @classmethod
+    def collapse_macros(cls, macros_dict, specifiers_list):
+        for i in range(len(specifiers_list)):
+            for macro_specifier, macro in macros_dict.items():
+                specifiers_set = set(specifiers_list[i])
+                macro_set = set(macro)
+                if specifiers_set >= macro_set:
+                    specifiers_list[i] = frozenset((specifiers_set - macro_set) | set([macro_specifier]))
+
     def to_specifiers_list(self, test_configuration_set):
         """Convert a set of TestConfiguration instances into one or more list of specifiers."""
 
@@ -201,10 +210,6 @@ class TestConfigurationConverter:
 
         # 4) Substitute specifier subsets that match macros witin each set:
         #   (xp, vista, win7, release) -> (win, release)
-        for i in range(len(specifiers_list)):
-            for macro_specifier, macro in self._configuration_macros.items():
-                diff = set(specifiers_list[i]) - set(macro)
-                if specifiers_list[i] != diff:
-                    specifiers_list[i] = frozenset(diff | set([macro_specifier]))
+        self.collapse_macros(self._configuration_macros, specifiers_list)
 
         return specifiers_list

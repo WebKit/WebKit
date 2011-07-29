@@ -264,6 +264,25 @@ class TestConfigurationConverterTest(unittest.TestCase):
         self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['release', 'gpu', 'lucid', 'x86']), set(['gpu', 'win7']), set(['release', 'gpu', 'xp', 'snowleopard'])])
 
     def test_macro_collapsing(self):
+        macros = {'foo': ['bar', 'baz'], 'people': ['bob', 'alice', 'john']}
+
+        specifiers_list = [set(['john', 'godzilla', 'bob', 'alice'])]
+        TestConfigurationConverter.collapse_macros(macros, specifiers_list)
+        self.assertEquals(specifiers_list, [set(['people', 'godzilla'])])
+
+        specifiers_list = [set(['john', 'godzilla', 'alice'])]
+        TestConfigurationConverter.collapse_macros(macros, specifiers_list)
+        self.assertEquals(specifiers_list, [set(['john', 'godzilla', 'alice', 'godzilla'])])
+
+        specifiers_list = [set(['bar', 'godzilla', 'baz', 'bob', 'alice', 'john'])]
+        TestConfigurationConverter.collapse_macros(macros, specifiers_list)
+        self.assertEquals(specifiers_list, [set(['foo', 'godzilla', 'people'])])
+
+        specifiers_list = [set(['bar', 'godzilla', 'baz', 'bob']), set(['bar', 'baz']), set(['people', 'alice', 'bob', 'john'])]
+        TestConfigurationConverter.collapse_macros(macros, specifiers_list)
+        self.assertEquals(specifiers_list, [set(['bob', 'foo', 'godzilla']), set(['foo']), set(['people'])])
+
+    def test_converter_macro_collapsing(self):
         converter = TestConfigurationConverter(self._all_test_configurations, self._macros)
 
         configs_to_match = set([
