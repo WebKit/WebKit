@@ -1,0 +1,19 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x314
+  RenderBlock {html} at (0,0) size 800x314
+    RenderBody {body} at (8,16) size 784x290
+      RenderBlock {p} at (0,0) size 784x30
+        RenderTextControl {input} at (2,2) size 406x26
+      RenderBlock {p} at (0,46) size 784x22
+        RenderText {#text} at (0,0) size 495x22
+          text run at (0,0) width 495: "It should say \"PASSED\" above and there should be a green circle below."
+      RenderBlock (anonymous) at (0,84) size 784x206
+        RenderSVGRoot {svg} at (8,100) size 100x100
+          RenderSVGPath {circle} at (8,100) size 100x100 [fill={[type=SOLID] [color=#008000]}] [cx=50.00] [cy=50.00] [r=50.00]
+        RenderText {#text} at (0,0) size 0x0
+        RenderText {#text} at (0,0) size 0x0
+layer at (12,20) size 402x22
+  RenderBlock {div} at (2,2) size 402x22
+    RenderText {#text} at (1,0) size 155x22
+      text run at (1,0) width 155: "This test has PASSED."

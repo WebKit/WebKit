@@ -1,0 +1,128 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 450x500
+  RenderSVGRoot {svg} at (74,14) size 302x477
+    RenderSVGText {text} at (114,14) size 222x21 contains 1 chunk(s)
+      RenderSVGInlineText {#text} at (0,0) size 222x21
+        chunk 1 (middle anchor) text run 1 at (114.00,30.00) startOffset 0 endOffset 31 width 222.00: "text-anchor on a single <tspan>"
+    RenderSVGContainer {g} at (74,49) size 302x442
+      RenderSVGContainer {g} at (74,49) size 302x142
+        RenderSVGPath {rect} at (74,49) size 302x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=75.00] [y=50.00] [width=300.00] [height=20.00]
+        RenderSVGPath {rect} at (74,69) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=70.00] [width=300.00] [height=40.00]
+        RenderSVGPath {rect} at (74,109) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=75.00] [y=110.00] [width=300.00] [height=40.00]
+        RenderSVGPath {rect} at (74,149) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=150.00] [width=300.00] [height=40.00]
+        RenderSVGText {text} at (90,50) size 203x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 203x19
+            chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 34 width 203.00: "x attributed tspan with extra text"
+        RenderSVGContainer {g} at (149,70) size 162x120
+          RenderSVGPath {line} at (149,70) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=150.00] [y1=70.00] [x2=150.00] [y2=190.00]
+          RenderSVGPath {line} at (189,70) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=190.00] [y1=70.00] [x2=190.00] [y2=190.00]
+          RenderSVGPath {line} at (229,70) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=230.00] [y1=70.00] [x2=230.00] [y2=190.00]
+          RenderSVGPath {line} at (269,70) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=270.00] [y1=70.00] [x2=270.00] [y2=190.00]
+          RenderSVGPath {line} at (309,70) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=310.00] [y1=70.00] [x2=310.00] [y2=190.00]
+      RenderSVGContainer {g} at (74,199) size 302x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,150.00)}]
+        RenderSVGPath {rect} at (74,199) size 302x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=75.00] [y=50.00] [width=300.00] [height=20.00]
+        RenderSVGPath {rect} at (74,219) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=70.00] [width=300.00] [height=40.00]
+        RenderSVGPath {rect} at (74,259) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=75.00] [y=110.00] [width=300.00] [height=40.00]
+        RenderSVGPath {rect} at (74,299) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=150.00] [width=300.00] [height=40.00]
+        RenderSVGText {text} at (90,50) size 157x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 157x19
+            chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 26 width 157.00: "x attribute for some chars"
+        RenderSVGContainer {g} at (149,220) size 82x120
+          RenderSVGPath {line} at (149,220) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=150.00] [y1=70.00] [x2=150.00] [y2=190.00]
+          RenderSVGPath {line} at (189,220) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=190.00] [y1=70.00] [x2=190.00] [y2=190.00]
+          RenderSVGPath {line} at (229,220) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=230.00] [y1=70.00] [x2=230.00] [y2=190.00]
+      RenderSVGContainer {g} at (74,349) size 302x142 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,300.00)}]
+        RenderSVGPath {rect} at (74,349) size 302x22 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#000000]}] [x=75.00] [y=50.00] [width=300.00] [height=20.00]
+        RenderSVGPath {rect} at (74,369) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=70.00] [width=300.00] [height=40.00]
+        RenderSVGPath {rect} at (74,409) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFFFFF]}] [x=75.00] [y=110.00] [width=300.00] [height=40.00]
+        RenderSVGPath {rect} at (74,449) size 302x42 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#EEEEEE]}] [x=75.00] [y=150.00] [width=300.00] [height=40.00]
+        RenderSVGText {text} at (90,50) size 200x19 contains 1 chunk(s)
+          RenderSVGInlineText {#text} at (0,0) size 200x19
+            chunk 1 text run 1 at (90.00,64.00) startOffset 0 endOffset 33 width 200.00: "x & y attributes with inheritance"
+        RenderSVGContainer {g} at (149,370) size 122x120
+          RenderSVGPath {line} at (149,370) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=150.00] [y1=70.00] [x2=150.00] [y2=190.00]
+          RenderSVGPath {line} at (189,370) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=190.00] [y1=70.00] [x2=190.00] [y2=190.00]
+          RenderSVGPath {line} at (229,370) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=230.00] [y1=70.00] [x2=230.00] [y2=190.00]
+          RenderSVGPath {line} at (269,370) size 2x120 [stroke={[type=SOLID] [color=#B0C4DE]}] [x1=270.00] [y1=70.00] [x2=270.00] [y2=190.00]
+      RenderSVGText {text} at (0,-16) size 211x32 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 169x32
+          RenderSVGInlineText {#text} at (0,0) size 169x32
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 11.00: "B"
+            chunk 1 text run 1 at (40.00,0.00) startOffset 0 endOffset 1 width 8.00: "a"
+            chunk 1 text run 1 at (80.00,0.00) startOffset 0 endOffset 1 width 5.00: "t"
+            chunk 1 text run 1 at (120.00,0.00) startOffset 0 endOffset 1 width 4.00: "i"
+            chunk 1 text run 1 at (160.00,10.00) startOffset 0 endOffset 1 width 9.00: "k"
+        RenderSVGTSpan {tspan} at (0,0) size 42x22
+          RenderSVGInlineText {#text} at (169,10) size 42x22
+            chunk 1 text run 1 at (169.00,10.00) startOffset 0 endOffset 7 width 42.00: " rules!"
+      RenderSVGText {text} at (-6,-16) size 192x32 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 150x32
+          RenderSVGInlineText {#text} at (0,0) size 150x32
+            chunk 1 (middle anchor) text run 1 at (-5.50,0.00) startOffset 0 endOffset 1 width 11.00: "B"
+            chunk 1 (middle anchor) text run 1 at (36.00,0.00) startOffset 0 endOffset 1 width 8.00: "a"
+            chunk 1 (middle anchor) text run 1 at (77.50,0.00) startOffset 0 endOffset 1 width 5.00: "t"
+            chunk 1 (middle anchor) text run 1 at (118.00,0.00) startOffset 0 endOffset 1 width 4.00: "i"
+            chunk 1 (middle anchor) text run 1 at (134.50,10.00) startOffset 0 endOffset 1 width 9.00: "k"
+        RenderSVGTSpan {tspan} at (0,0) size 43x22
+          RenderSVGInlineText {#text} at (149,10) size 43x22
+            chunk 1 text run 1 at (143.50,10.00) startOffset 0 endOffset 7 width 42.00: " rules!"
+      RenderSVGText {text} at (-11,-16) size 171x32 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 131x32
+          RenderSVGInlineText {#text} at (0,0) size 131x32
+            chunk 1 (end anchor) text run 1 at (-11.00,0.00) startOffset 0 endOffset 1 width 11.00: "B"
+            chunk 1 (end anchor) text run 1 at (32.00,0.00) startOffset 0 endOffset 1 width 8.00: "a"
+            chunk 1 (end anchor) text run 1 at (75.00,0.00) startOffset 0 endOffset 1 width 5.00: "t"
+            chunk 1 (end anchor) text run 1 at (116.00,0.00) startOffset 0 endOffset 1 width 4.00: "i"
+            chunk 1 (end anchor) text run 1 at (109.00,10.00) startOffset 0 endOffset 1 width 9.00: "k"
+        RenderSVGTSpan {tspan} at (0,0) size 42x22
+          RenderSVGInlineText {#text} at (129,10) size 42x22
+            chunk 1 text run 1 at (118.00,10.00) startOffset 0 endOffset 7 width 42.00: " rules!"
+      RenderSVGText {text} at (0,-16) size 98x22 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 98x22
+          RenderSVGInlineText {#text} at (0,0) size 98x22
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 11.00: "B"
+            chunk 1 text run 1 at (40.00,0.00) startOffset 0 endOffset 1 width 8.00: "a"
+            chunk 1 text run 1 at (80.00,0.00) startOffset 0 endOffset 3 width 18.00: "tik"
+      RenderSVGText {text} at (-6,-16) size 95x22 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 95x22
+          RenderSVGInlineText {#text} at (0,0) size 95x22
+            chunk 1 (middle anchor) text run 1 at (-5.50,0.00) startOffset 0 endOffset 1 width 11.00: "B"
+            chunk 1 (middle anchor) text run 1 at (36.00,0.00) startOffset 0 endOffset 1 width 8.00: "a"
+            chunk 1 (middle anchor) text run 1 at (71.00,0.00) startOffset 0 endOffset 3 width 18.00: "tik"
+      RenderSVGText {text} at (-11,-16) size 91x22 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 91x22
+          RenderSVGInlineText {#text} at (0,0) size 91x22
+            chunk 1 (end anchor) text run 1 at (-11.00,0.00) startOffset 0 endOffset 1 width 11.00: "B"
+            chunk 1 (end anchor) text run 1 at (32.00,0.00) startOffset 0 endOffset 1 width 8.00: "a"
+            chunk 1 (end anchor) text run 1 at (62.00,0.00) startOffset 0 endOffset 3 width 18.00: "tik"
+      RenderSVGText {text} at (0,-16) size 175x32 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 133x32
+          RenderSVGInlineText {#text} at (0,0) size 133x32
+            chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 1 width 11.00: "B"
+            chunk 1 text run 1 at (40.00,10.00) startOffset 0 endOffset 1 width 8.00: "a"
+            chunk 1 text run 1 at (80.00,0.00) startOffset 0 endOffset 1 width 5.00: "t"
+            chunk 1 text run 1 at (120.00,10.00) startOffset 0 endOffset 2 width 13.00: "ik"
+        RenderSVGTSpan {tspan} at (0,0) size 42x22
+          RenderSVGInlineText {#text} at (133,10) size 42x22
+            chunk 1 text run 1 at (133.00,10.00) startOffset 0 endOffset 7 width 42.00: " rules!"
+      RenderSVGText {text} at (-6,-16) size 154x32 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 112x32
+          RenderSVGInlineText {#text} at (0,0) size 112x32
+            chunk 1 (middle anchor) text run 1 at (-5.50,0.00) startOffset 0 endOffset 1 width 11.00: "B"
+            chunk 1 (middle anchor) text run 1 at (36.00,10.00) startOffset 0 endOffset 1 width 8.00: "a"
+            chunk 1 (middle anchor) text run 1 at (77.50,0.00) startOffset 0 endOffset 1 width 5.00: "t"
+            chunk 1 (middle anchor) text run 1 at (92.50,10.00) startOffset 0 endOffset 2 width 13.00: "ik"
+        RenderSVGTSpan {tspan} at (0,0) size 43x22
+          RenderSVGInlineText {#text} at (111,10) size 43x22
+            chunk 1 text run 1 at (105.50,10.00) startOffset 0 endOffset 7 width 42.00: " rules!"
+      RenderSVGText {text} at (-11,-16) size 131x32 contains 1 chunk(s)
+        RenderSVGTSpan {tspan} at (0,0) size 91x32
+          RenderSVGInlineText {#text} at (0,0) size 91x32
+            chunk 1 (end anchor) text run 1 at (-11.00,0.00) startOffset 0 endOffset 1 width 11.00: "B"
+            chunk 1 (end anchor) text run 1 at (32.00,10.00) startOffset 0 endOffset 1 width 8.00: "a"
+            chunk 1 (end anchor) text run 1 at (75.00,0.00) startOffset 0 endOffset 1 width 5.00: "t"
+            chunk 1 (end anchor) text run 1 at (65.00,10.00) startOffset 0 endOffset 2 width 13.00: "ik"
+        RenderSVGTSpan {tspan} at (0,0) size 42x22
+          RenderSVGInlineText {#text} at (89,10) size 42x22
+            chunk 1 text run 1 at (78.00,10.00) startOffset 0 endOffset 7 width 42.00: " rules!"
