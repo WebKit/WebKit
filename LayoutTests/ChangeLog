@@ -1,3 +1,13 @@
+2011-07-29  Dan Bernstein  <mitz@apple.com>
+
+        Test for <rdar://problem/9864578> Regional indicator symbols do not combine into national flags
+        https://bugs.webkit.org/show_bug.cgi?id=65380
+
+        Reviewed by Anders Carlsson.
+
+        * fast/text/regional-indicator-symobls-expected.txt: Added.
+        * fast/text/regional-indicator-symobls.html: Added.
+
 2011-07-29  Anna Cavender  <annacc@chromium.org>
 
         Tests for validating a new WebVTT parser for <track>

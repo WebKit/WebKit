@@ -1,3 +1,18 @@
+2011-07-29  Dan Bernstein  <mitz@apple.com>
+
+        Added the regional indicator symbols to the set of codepoints that force use of the complex text code path.
+
+        Fixes <rdar://problem/9864578> Regional indicator symbols do not combine into national flags
+        https://bugs.webkit.org/show_bug.cgi?id=65380
+
+        Reviewed by Anders Carlsson.
+
+        Test: fast/text/regional-indicator-symobls.html
+
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::codePath): Added handling of surrogate pairs, which returns Complex for characters in
+        the range U+1F1E6..U+1F1FF.
+
 2011-07-28  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65342
