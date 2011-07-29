@@ -116,7 +116,7 @@ private:
 
 private:
     void init() { m_imageRef = 0; }
-    void assign(CGImageRef);
+    WEBKIT_API void assign(CGImageRef);
     CGImageRef m_imageRef;
 #endif
 };

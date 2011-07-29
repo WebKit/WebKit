@@ -1,3 +1,16 @@
+2011-07-28  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Make WebImage::assign(CGImageRef) a WEBKIT_API
+        https://bugs.webkit.org/show_bug.cgi?id=65265
+
+        Reviewed by James Robinson.
+
+        Required for the components build on mac. The inline function
+        operator=(CGImageRef) is used from outside webkit, and calls this
+        function.
+
+        * public/WebImage.h:
+
 2011-07-28  Mihai Parparita  <mihaip@chromium.org>
 
         [Chromium] Remove WebDocument::insertStyleText
