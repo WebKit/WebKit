@@ -1,3 +1,15 @@
+2011-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Pass the HTTP referrer header for URLs loaded by plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=65379
+        <rdar://problem/9822116>
+
+        Reviewed by Sam Weinig.
+
+        Export a symbol needed by WebKit2.
+
+        * WebCore.exp.in:
+
 2011-07-28  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Fix speech input icon rect on RTL directions.

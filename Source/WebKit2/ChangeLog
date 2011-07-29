@@ -1,3 +1,16 @@
+2011-07-29  Anders Carlsson  <andersca@apple.com>
+
+        Pass the HTTP referrer header for URLs loaded by plug-ins
+        https://bugs.webkit.org/show_bug.cgi?id=65379
+        <rdar://problem/9822116>
+
+        Reviewed by Sam Weinig.
+
+        Set the HTTP referrer if necessary.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::loadURL):
+
 2011-07-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         Fix the QTouchWebView in debug segfault on shutdown introduced in 91979.
