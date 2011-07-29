@@ -22,3 +22,6 @@ BUG_QT_SLOW SLOW DEBUG: editing/selection/dump-as-markup.html = PASS
 BUG_QT_SLOW DEBUG: fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
 BUG_QT_SLOW SLOW DEBUG: fast/overflow/lots-of-sibling-inline-boxes.html = PASS
 BUG_QT_SLOW SLOW DEBUG: inspector/cookie-resource-match.html = PASS
+
+// Tests for WebVTT parser for <track>.  Feature is not yet functional.
+BUGWK43668 SKIP : media/track/ = TIMEOUT

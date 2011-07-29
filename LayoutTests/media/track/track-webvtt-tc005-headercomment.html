@@ -1,0 +1,44 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            var numberTests = 0;
+            
+            function trackLoaded(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "2");
+                
+                testExpected("video.textTracks[" + i + "].cues[0].id","1");
+                testExpected("video.textTracks[" + i + "].cues[0].startTime","0.0");
+                testExpected("video.textTracks[" + i + "].cues[0].endTime","30.5");
+                testExpected("video.textTracks[" + i + "].cues[0].getCueAsSource()", "Bear is Coming!!!!!");
+                
+                testExpected("video.textTracks[" + i + "].cues[1].id","2");
+                testExpected("video.textTracks[" + i + "].cues[1].startTime","31.0");
+                testExpected("video.textTracks[" + i + "].cues[1].endTime","1200.5");
+                testExpected("video.textTracks[" + i + "].cues[1].getCueAsSource()", "I said Bear is coming!!!!");
+
+                allTestsEnded();
+            }
+
+            function allTestsEnded()
+            {
+                numberTests++;
+                if (numberTests >= 2)
+                    endTest();
+            }
+        </script>
+    </head>
+    <body>
+        <p>Tests that the optional comment area under the "WEBVTT" file header is properly ignored.  Also, default settings and styling are currently ignored (treated as faulty cues).</p>
+        <video>
+            <track src="captions/tc005_defaultstyles.vtt" onload="trackLoaded(0)">
+            <track src="captions/tc005_metadataarea.vtt" onload="trackLoaded(1)">
+        </video>
+    </body>
+</html>

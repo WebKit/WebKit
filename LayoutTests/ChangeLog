@@ -1,3 +1,68 @@
+2011-07-29  Anna Cavender  <annacc@chromium.org>
+
+        Tests for validating a new WebVTT parser for <track>
+        https://bugs.webkit.org/show_bug.cgi?id=64921
+
+        Reviewed by Eric Carlson.
+
+        * media/track/captions/tc000_empty.vtt: Added.
+        * media/track/captions/tc001_iso2022jp3.vtt: Added.
+        * media/track/captions/tc001_utf8.vtt: Added.
+        * media/track/captions/tc002_bom.vtt: Added.
+        * media/track/captions/tc003_newlines.vtt: Added.
+        * media/track/captions/tc003_nonewlineateof.vtt: Added.
+        * media/track/captions/tc004_nowebvtt.vtt: Added.
+        * media/track/captions/tc004_webvttfile.vtt: Added.
+        * media/track/captions/tc004_webvttrubbish.vtt: Added.
+        * media/track/captions/tc005_defaultstyles.vtt: Added.
+        * media/track/captions/tc005_metadataarea.vtt: Added.
+        * media/track/captions/tc006_cueid.vtt: Added.
+        * media/track/captions/tc006_cueiderror.vtt: Added.
+        * media/track/captions/tc007_cuenoid.vtt: Added.
+        * media/track/captions/tc007_cuenoiderror.vtt: Added.
+        * media/track/captions/tc008_timingsnohour.vtt: Added.
+        * media/track/captions/tc008_timingsnohourerrors.vtt: Added.
+        * media/track/captions/tc009_timingshour.vtt: Added.
+        * media/track/captions/tc009_timingshourerror.vtt: Added.
+        * media/track/captions/tc010_notimings.vtt: Added.
+        * media/track/captions/tc011_cues.vtt: Added.
+        * media/track/captions/tc011_cuesnosep.vtt: Added.
+        * media/track/captions/tc012_outoforder.vtt: Added.
+        * media/track/captions/tc013_settings.vtt: Added.
+        * media/track/captions/tc013_settingsbadsep.vtt: Added.
+        * media/track/track-webvtt-tc000-empty-expected.txt: Added.
+        * media/track/track-webvtt-tc000-empty.html: Added.
+        * media/track/track-webvtt-tc001-utf8-expected.txt: Added.
+        * media/track/track-webvtt-tc001-utf8.html: Added.
+        * media/track/track-webvtt-tc002-bom-expected.txt: Added.
+        * media/track/track-webvtt-tc002-bom.html: Added.
+        * media/track/track-webvtt-tc003-newlines-expected.txt: Added.
+        * media/track/track-webvtt-tc003-newlines.html: Added.
+        * media/track/track-webvtt-tc004-magicheader-expected.txt: Added.
+        * media/track/track-webvtt-tc004-magicheader.html: Added.
+        * media/track/track-webvtt-tc005-headercomment-expected.txt: Added.
+        * media/track/track-webvtt-tc005-headercomment.html: Added.
+        * media/track/track-webvtt-tc006-cueidentifiers-expected.txt: Added.
+        * media/track/track-webvtt-tc006-cueidentifiers.html: Added.
+        * media/track/track-webvtt-tc007-cuenoid-expected.txt: Added.
+        * media/track/track-webvtt-tc007-cuenoid.html: Added.
+        * media/track/track-webvtt-tc008-timingsnohours-expected.txt: Added.
+        * media/track/track-webvtt-tc008-timingsnohours.html: Added.
+        * media/track/track-webvtt-tc009-timingshour-expected.txt: Added.
+        * media/track/track-webvtt-tc009-timingshour.html: Added.
+        * media/track/track-webvtt-tc010-notimings-expected.txt: Added.
+        * media/track/track-webvtt-tc010-notimings.html: Added.
+        * media/track/track-webvtt-tc011-blanklines-expected.txt: Added.
+        * media/track/track-webvtt-tc011-blanklines.html: Added.
+        * media/track/track-webvtt-tc012-outoforder-expected.txt: Added.
+        * media/track/track-webvtt-tc012-outoforder.html: Added.
+        * media/track/track-webvtt-tc013-settings-expected.txt: Added.
+        * media/track/track-webvtt-tc013-settings.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/test_expectations.txt:
+        * platform/qt/test_expectations.txt:
+        * platform/wk2/Skipped:
+
 2011-07-29  Tony Chang  <tony@chromium.org>
 
         rename css3/flexbox/display-property.html to css3/flexbox/css-properties.html

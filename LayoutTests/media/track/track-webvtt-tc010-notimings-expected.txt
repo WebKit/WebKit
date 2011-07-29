@@ -1,0 +1,5 @@
+Tests cue without timings are ignored.
+
+EXPECTED (video.textTracks[0].cues.length == '0') OK
+END OF TEST
+

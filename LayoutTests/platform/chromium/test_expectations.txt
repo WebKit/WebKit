@@ -162,6 +162,9 @@ BUGWK60877 SKIP : loader/load-defer-resume-crash.html = FAIL
 // CSS3 Selectors3 test suite
 BUGCR89468 : css3/selectors3 = PASS FAIL
 
+// Tests for WebVTT parser for <track>.  Feature is not yet functional.
+BUGWK43668 SKIP : media/track/ = TIMEOUT
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            var numberTests = 0;
+            
+            function trackLoaded(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "4");
+                
+                testExpected("video.textTracks[" + i + "].cues[0].linePosition","100");
+                testExpected("video.textTracks[" + i + "].cues[1].textPosition","50");
+                testExpected("video.textTracks[" + i + "].cues[2].alignment","middle");
+                testExpected("video.textTracks[" + i + "].cues[2].textPosition","50");
+                testExpected("video.textTracks[" + i + "].cues[3].direction","horizontal");
+
+                allTestsEnded();
+            }
+
+            function allTestsEnded()
+            {
+                numberTests++;
+                if (numberTests >= 2)
+                    endTest();
+            }
+        </script>
+    </head>
+    <body>
+    <p>Tests WebVTT settings.</p>
+        <video>
+            <track src="captions/tc013_settings.vtt" onload="trackLoaded(0)">
+            <track src="captions/tc013_settingsbadsep.vtt" onload="trackLoaded(1)">
+        </video>
+    </body>
+</html>

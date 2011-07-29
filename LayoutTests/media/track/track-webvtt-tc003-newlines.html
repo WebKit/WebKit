@@ -1,0 +1,39 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>
+            
+            var numberTests = 0;
+
+            function trackLoaded(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "1");
+                
+                testExpected("video.textTracks[" + i + "].cues[0].id","1");
+                testExpected("video.textTracks[" + i + "].cues[0].startTime","0.0");
+                testExpected("video.textTracks[" + i + "].cues[0].endTime","30.5");
+                testExpected("video.textTracks[" + i + "].cues[0].getCueAsSource()", "Bear is Coming!!!!!");
+
+                allTestsEnded();
+            }
+            
+            function allTestsEnded()
+            {
+                numberTests++;
+                if (numberTests >= 2)
+                    endTest();
+            }
+        </script>
+    </head>
+    <body>
+        <p>Tests that line terminators \r, \n, or \r\n are properly parsed, even when there is no newline at eof.</p>
+        <video>
+            <track src="captions/tc003_newlines.vtt" onload="trackLoaded(0)">
+            <track src="captions/tc003_nonewlineateof.vtt" onload="trackLoaded(1)">
+        </video>
+    </body>
+</html>

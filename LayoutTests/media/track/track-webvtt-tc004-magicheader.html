@@ -1,0 +1,53 @@
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script>            
+
+            var numberTests = 0;
+            
+            function trackLoaded(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "2");
+                
+                testExpected("video.textTracks[" + i + "].cues[0].id","1");
+                testExpected("video.textTracks[" + i + "].cues[0].startTime","0.0");
+                testExpected("video.textTracks[" + i + "].cues[0].endTime","30.5");
+                testExpected("video.textTracks[" + i + "].cues[0].getCueAsSource()", "Bear is Coming!!!!!");
+                
+                testExpected("video.textTracks[" + i + "].cues[1].id","2");
+                testExpected("video.textTracks[" + i + "].cues[1].startTime","31.0");
+                testExpected("video.textTracks[" + i + "].cues[1].endTime","1200.5");
+                testExpected("video.textTracks[" + i + "].cues[1].getCueAsSource()", "I said Bear is coming!!!!");
+
+                allTestsEnded();
+            }
+            
+            function trackError(i)
+            {
+                findMediaElement();
+                testExpected("video.textTracks[" + i + "].cues.length", "0");
+
+                allTestsEnded();
+            }
+            
+            function allTestsEnded()
+            {
+                numberTests++;
+                if (numberTests >= 3)
+                    endTest();
+            }
+        </script>
+    </head>
+    <body>
+        <p>Tests that the magic file header "WEBVTT" leads to the file properly recognized as a WebVTT file.</p>
+        <video>
+            <track src="captions/tc004_webvttfile.vtt" onload="trackLoaded(0)">
+            <track src="captions/tc004_webvttrubbish.vtt" onload="trackLoaded(1)">
+            <track src="captions/tc004_nowebvtt.vtt" onerror="trackError(2)">
+        </video>
+    </body>
+</html>

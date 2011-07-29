@@ -20,3 +20,6 @@ BUGWK64253 : fast/forms/textarea-placeholder-wrapping.html = FAIL
 
 // New test. Need platform-dependent baseline files.
 BUGWK59703 : fast/forms/input-appearance-number-rtl.html = FAIL
+
+// Tests for WebVTT parser for <track>.  Feature is not yet functional.
+BUGWK43668 SKIP : media/track/ = TIMEOUT

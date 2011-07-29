@@ -1,0 +1,16 @@
+Tests WebVTT settings.
+
+EXPECTED (video.textTracks[0].cues.length == '4') OK
+EXPECTED (video.textTracks[0].cues[0].linePosition == '100') OK
+EXPECTED (video.textTracks[0].cues[1].textPosition == '50') OK
+EXPECTED (video.textTracks[0].cues[2].alignment == 'middle') OK
+EXPECTED (video.textTracks[0].cues[2].textPosition == '50') OK
+EXPECTED (video.textTracks[0].cues[3].direction == 'horizontal') OK
+EXPECTED (video.textTracks[1].cues.length == '4') OK
+EXPECTED (video.textTracks[1].cues[0].linePosition == '100') OK
+EXPECTED (video.textTracks[1].cues[1].textPosition == '50') OK
+EXPECTED (video.textTracks[1].cues[2].alignment == 'middle') OK
+EXPECTED (video.textTracks[1].cues[2].textPosition == '50') OK
+EXPECTED (video.textTracks[1].cues[3].direction == 'horizontal') OK
+END OF TEST
+

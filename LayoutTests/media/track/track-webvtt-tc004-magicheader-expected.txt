@@ -1,0 +1,23 @@
+Tests that the magic file header "WEBVTT" leads to the file properly recognized as a WebVTT file.
+
+EXPECTED (video.textTracks[2].cues.length == '0') OK
+EXPECTED (video.textTracks[0].cues.length == '2') OK
+EXPECTED (video.textTracks[0].cues[0].id == '1') OK
+EXPECTED (video.textTracks[0].cues[0].startTime == '0.0') OK
+EXPECTED (video.textTracks[0].cues[0].endTime == '30.5') OK
+EXPECTED (video.textTracks[0].cues[0].getCueAsSource() == 'Bear is Coming!!!!!') OK
+EXPECTED (video.textTracks[0].cues[1].id == '2') OK
+EXPECTED (video.textTracks[0].cues[1].startTime == '31.0') OK
+EXPECTED (video.textTracks[0].cues[1].endTime == '1200.5') OK
+EXPECTED (video.textTracks[0].cues[1].getCueAsSource() == 'I said Bear is coming!!!!') OK
+EXPECTED (video.textTracks[1].cues.length == '2') OK
+EXPECTED (video.textTracks[1].cues[0].id == '1') OK
+EXPECTED (video.textTracks[1].cues[0].startTime == '0.0') OK
+EXPECTED (video.textTracks[1].cues[0].endTime == '30.5') OK
+EXPECTED (video.textTracks[1].cues[0].getCueAsSource() == 'Bear is Coming!!!!!') OK
+EXPECTED (video.textTracks[1].cues[1].id == '2') OK
+EXPECTED (video.textTracks[1].cues[1].startTime == '31.0') OK
+EXPECTED (video.textTracks[1].cues[1].endTime == '1200.5') OK
+EXPECTED (video.textTracks[1].cues[1].getCueAsSource() == 'I said Bear is coming!!!!') OK
+END OF TEST
+

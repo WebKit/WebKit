@@ -1,0 +1,17 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:30.500 - L:100%
+Bear is Coming!!!!! Bad separator
+
+2
+00:00:31.000 --> 00:01:00.500 --> T:50%
+I said Bear is coming!!!! Bad separator.
+
+3
+00:01:01.000 --> 00:02:00.500 <A:middle> <T:50%>
+I said Bear is coming now!!!! Bad setting markup.
+
+4
+00:02:01.000 --> 100:20:00.500 / D:horizontal
+I said Bear is coming now!!!! Bad separators.
