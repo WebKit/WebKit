@@ -116,13 +116,6 @@ void HTMLBodyElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == vlinkAttr ||
                attr->name() == alinkAttr ||
                attr->name() == linkAttr) {
-        // This tells us that we are removed from document. If our document is later destroyed
-        // (not deleted since we hold a guardRef), our stylesheet list will be null causing a crash
-        // later in document()->styleSelector(). So, we bail out early because we shouldn't be
-        // modifying anything in that document. See webkit bug 62230.
-        if (m_linkDecl && !m_linkDecl->parent())
-            return;
-
         if (attr->isNull()) {
             if (attr->name() == linkAttr)
                 document()->resetLinkColor();
@@ -209,25 +202,6 @@ void HTMLBodyElement::insertedIntoDocument()
 
     if (document() && document()->page())
         document()->page()->updateViewportArguments();
-
-    if (m_linkDecl)
-        m_linkDecl->setParent(document()->elementSheet());
-}
-
-void HTMLBodyElement::removedFromDocument()
-{
-    if (m_linkDecl)
-        m_linkDecl->setParent(0);
-    
-    HTMLElement::removedFromDocument();
-}
-
-void HTMLBodyElement::didMoveToNewOwnerDocument()
-{
-    if (m_linkDecl)
-        m_linkDecl->setParent(document()->elementSheet());
-    
-    HTMLElement::didMoveToNewOwnerDocument();
 }
 
 bool HTMLBodyElement::isURLAttribute(Attribute *attr) const
@@ -369,6 +343,18 @@ void HTMLBodyElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
     HTMLElement::addSubresourceAttributeURLs(urls);
 
     addSubresourceURL(urls, document()->completeURL(getAttribute(backgroundAttr)));
+}
+
+void HTMLBodyElement::didMoveToNewOwnerDocument()
+{
+    // When moving body elements between documents, we should have to reset the parent sheet for any
+    // link style declarations.  If we don't we might crash later.
+    // In practice I can't reproduce this theoretical problem.
+    // webarchive/adopt-attribute-styled-body-webarchive.html tries to make sure this crash won't surface.
+    if (m_linkDecl)
+        m_linkDecl->setParent(document()->elementSheet());
+    
+    HTMLElement::didMoveToNewOwnerDocument();
 }
 
 } // namespace WebCore

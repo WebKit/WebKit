@@ -84,8 +84,6 @@ protected:
     // svgAttributeChanged (called when element.className.baseValue is set)
     void classAttributeChanged(const AtomicString& newClassString);
     
-    virtual void insertedIntoDocument();
-    virtual void removedFromDocument();
     virtual void didMoveToNewOwnerDocument();
 
 private:
