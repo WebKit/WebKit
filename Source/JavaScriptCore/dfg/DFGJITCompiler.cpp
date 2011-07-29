@@ -178,7 +178,7 @@ public:
         return;
     }
     
-    void moveTo(GeneralizedRegister& other, DataFormat myDataFormat, DataFormat otherDataFormat, JITCompiler& jit)
+    void moveTo(GeneralizedRegister& other, DataFormat myDataFormat, DataFormat otherDataFormat, JITCompiler& jit, FPRReg scratchFPR)
     {
         if (UNLIKELY(isFPR())) {
             if (UNLIKELY(other.isFPR())) {
@@ -186,8 +186,22 @@ public:
                 return;
             }
             
+            JITCompiler::Jump done;
+            
+            if (scratchFPR != InvalidFPRReg) {
+                // we have a scratch FPR, so attempt a conversion to int
+                JITCompiler::JumpList notInt;
+                jit.branchConvertDoubleToInt32(fpr(), other.gpr(), notInt, scratchFPR);
+                jit.orPtr(GPRInfo::tagTypeNumberRegister, other.gpr());
+                done = jit.jump();
+                notInt.link(&jit);
+            }
+            
             jit.moveDoubleToPtr(fpr(), other.gpr());
             jit.subPtr(GPRInfo::tagTypeNumberRegister, other.gpr());
+            
+            if (done.isSet())
+                done.link(&jit);
             return;
         }
         
@@ -229,8 +243,21 @@ public:
             
             jit.move(other.gpr(), scratchGPR);
             
+            JITCompiler::Jump done;
+            
+            if (scratchFPR != InvalidFPRReg) {
+                JITCompiler::JumpList notInt;
+                jit.branchConvertDoubleToInt32(fpr(), other.gpr(), notInt, scratchFPR);
+                jit.orPtr(GPRInfo::tagTypeNumberRegister, other.gpr());
+                done = jit.jump();
+                notInt.link(&jit);
+            }
+            
             jit.moveDoubleToPtr(fpr(), other.gpr());
             jit.subPtr(GPRInfo::tagTypeNumberRegister, other.gpr());
+            
+            if (done.isSet())
+                done.link(&jit);
             
             jit.addPtr(GPRInfo::tagTypeNumberRegister, scratchGPR);
             jit.movePtrToDouble(scratchGPR, fpr());
@@ -290,22 +317,30 @@ struct ShuffledRegister {
         return hasTo && !hasFrom;
     }
     
-    void handleNonCyclingPermutation(const SpeculationCheck& check, const EntryLocation& entry, JITCompiler& jit, FPRReg& scratchFPR)
+    void handleNonCyclingPermutation(const SpeculationCheck& check, const EntryLocation& entry, JITCompiler& jit, FPRReg& scratchFPR1, FPRReg& scratchFPR2)
     {
         ShuffledRegister* cur = this;
         while (cur->previous) {
-            cur->previous->reg.moveTo(cur->reg, cur->previous->reg.previousDataFormat(check), cur->reg.nextDataFormat(entry), jit);
+            cur->previous->reg.moveTo(cur->reg, cur->previous->reg.previousDataFormat(check), cur->reg.nextDataFormat(entry), jit, scratchFPR1);
             cur->handled = true;
-            if (cur->reg.isFPR())
-                scratchFPR = cur->reg.fpr();
+            if (cur->reg.isFPR()) {
+                if (scratchFPR1 == InvalidFPRReg)
+                    scratchFPR1 = cur->reg.fpr();
+                else
+                    scratchFPR2 = cur->reg.fpr();
+            }
             cur = cur->previous;
         }
         cur->handled = true;
-        if (cur->reg.isFPR())
-            scratchFPR = cur->reg.fpr();
+        if (cur->reg.isFPR()) {
+            if (scratchFPR1 == InvalidFPRReg)
+                scratchFPR1 = cur->reg.fpr();
+            else
+                scratchFPR2 = cur->reg.fpr();
+        }
     }
     
-    void handleCyclingPermutation(const SpeculationCheck& check, const EntryLocation& entry, JITCompiler& jit, GPRReg scratchGPR, FPRReg scratchFPR)
+    void handleCyclingPermutation(const SpeculationCheck& check, const EntryLocation& entry, JITCompiler& jit, GPRReg scratchGPR, FPRReg scratchFPR1, FPRReg scratchFPR2)
     {
         // first determine the cycle length
         
@@ -333,38 +368,38 @@ struct ShuffledRegister {
             break;
             
         case 2:
-            reg.swapWith(previous->reg, reg.previousDataFormat(check), reg.nextDataFormat(entry), previous->reg.previousDataFormat(check), previous->reg.nextDataFormat(entry), jit, scratchGPR, scratchFPR);
+            reg.swapWith(previous->reg, reg.previousDataFormat(check), reg.nextDataFormat(entry), previous->reg.previousDataFormat(check), previous->reg.nextDataFormat(entry), jit, scratchGPR, scratchFPR1);
             break;
             
         default:
             GeneralizedRegister scratch;
             if (UNLIKELY(reg.isFPR() && next->reg.isFPR())) {
-                if (scratchFPR == InvalidFPRReg) {
+                if (scratchFPR2 == InvalidFPRReg) {
                     scratch = GeneralizedRegister::createGPR(scratchGPR);
-                    reg.moveTo(scratch, DataFormatDouble, DataFormatJSDouble, jit);
+                    reg.moveTo(scratch, DataFormatDouble, DataFormatJSDouble, jit, scratchFPR1);
                 } else {
-                    scratch = GeneralizedRegister::createFPR(scratchFPR);
-                    reg.moveTo(scratch, DataFormatDouble, DataFormatDouble, jit);
+                    scratch = GeneralizedRegister::createFPR(scratchFPR2);
+                    reg.moveTo(scratch, DataFormatDouble, DataFormatDouble, jit, scratchFPR1);
                 }
             } else {
                 scratch = GeneralizedRegister::createGPR(scratchGPR);
-                reg.moveTo(scratch, reg.previousDataFormat(check), next->reg.nextDataFormat(entry), jit);
+                reg.moveTo(scratch, reg.previousDataFormat(check), next->reg.nextDataFormat(entry), jit, scratchFPR1);
             }
             
             cur = this;
             while (cur->previous != this) {
                 ASSERT(cur);
-                cur->previous->reg.moveTo(cur->reg, cur->previous->reg.previousDataFormat(check), cur->reg.nextDataFormat(entry), jit);
+                cur->previous->reg.moveTo(cur->reg, cur->previous->reg.previousDataFormat(check), cur->reg.nextDataFormat(entry), jit, scratchFPR1);
                 cur = cur->previous;
             }
             
             if (UNLIKELY(reg.isFPR() && next->reg.isFPR())) {
-                if (scratchFPR == InvalidFPRReg)
-                    scratch.moveTo(next->reg, DataFormatJSDouble, DataFormatDouble, jit);
+                if (scratchFPR2 == InvalidFPRReg)
+                    scratch.moveTo(next->reg, DataFormatJSDouble, DataFormatDouble, jit, scratchFPR1);
                 else
-                    scratch.moveTo(next->reg, DataFormatDouble, DataFormatDouble, jit);
+                    scratch.moveTo(next->reg, DataFormatDouble, DataFormatDouble, jit, scratchFPR1);
             } else
-                scratch.moveTo(next->reg, next->reg.nextDataFormat(entry), next->reg.nextDataFormat(entry), jit);
+                scratch.moveTo(next->reg, next->reg.nextDataFormat(entry), next->reg.nextDataFormat(entry), jit, scratchFPR1);
             break;
         }
     }
@@ -470,32 +505,40 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
     // that node is in.
     
     checkNodeToRegisterMap.clear();
-    
-    for (unsigned index = 0; index < GPRInfo::numberOfRegisters; ++index) {
-        NodeIndex nodeIndex = check.m_gprInfo[index].nodeIndex;
-        if (nodeIndex != NoNode)
-            checkNodeToRegisterMap.set(nodeIndex, GeneralizedRegister::createGPR(GPRInfo::toRegister(index)));
-    }
-    
-    for (unsigned index = 0; index < FPRInfo::numberOfRegisters; ++index) {
-        NodeIndex nodeIndex = check.m_fprInfo[index].nodeIndex;
-        if (nodeIndex != NoNode)
-            checkNodeToRegisterMap.set(nodeIndex, GeneralizedRegister::createFPR(FPRInfo::toRegister(index)));
-    }
-    
     entryNodeToRegisterMap.clear();
     
+    GPRReg scratchGPR = InvalidGPRReg;
+    FPRReg scratchFPR1 = InvalidFPRReg;
+    FPRReg scratchFPR2 = InvalidFPRReg;
+    bool needToRestoreTagMaskRegister = false;
+    
     for (unsigned index = 0; index < GPRInfo::numberOfRegisters; ++index) {
-        NodeIndex nodeIndex = entry.m_gprInfo[index].nodeIndex;
-        if (nodeIndex != NoNode)
-            entryNodeToRegisterMap.set(nodeIndex, GeneralizedRegister::createGPR(GPRInfo::toRegister(index)));
+        NodeIndex nodeIndexInCheck = check.m_gprInfo[index].nodeIndex;
+        if (nodeIndexInCheck != NoNode)
+            checkNodeToRegisterMap.set(nodeIndexInCheck, GeneralizedRegister::createGPR(GPRInfo::toRegister(index)));
+        NodeIndex nodeIndexInEntry = entry.m_gprInfo[index].nodeIndex;
+        if (nodeIndexInEntry != NoNode)
+            entryNodeToRegisterMap.set(nodeIndexInEntry, GeneralizedRegister::createGPR(GPRInfo::toRegister(index)));
+        else if (nodeIndexInCheck == NoNode)
+            scratchGPR = GPRInfo::toRegister(index);
     }
     
     for (unsigned index = 0; index < FPRInfo::numberOfRegisters; ++index) {
-        NodeIndex nodeIndex = entry.m_fprInfo[index].nodeIndex;
-        if (nodeIndex != NoNode)
-            entryNodeToRegisterMap.set(nodeIndex, GeneralizedRegister::createFPR(FPRInfo::toRegister(index)));
+        NodeIndex nodeIndexInCheck = check.m_fprInfo[index].nodeIndex;
+        if (nodeIndexInCheck != NoNode)
+            checkNodeToRegisterMap.set(nodeIndexInCheck, GeneralizedRegister::createFPR(FPRInfo::toRegister(index)));
+        NodeIndex nodeIndexInEntry = entry.m_fprInfo[index].nodeIndex;
+        if (nodeIndexInEntry != NoNode)
+            entryNodeToRegisterMap.set(nodeIndexInEntry, GeneralizedRegister::createFPR(FPRInfo::toRegister(index)));
+        else if (nodeIndexInCheck == NoNode) {
+            if (scratchFPR1 == InvalidFPRReg)
+                scratchFPR1 = FPRInfo::toRegister(index);
+            else
+                scratchFPR2 = FPRInfo::toRegister(index);
+        }
     }
+    
+    ASSERT((scratchFPR1 == InvalidFPRReg && scratchFPR2 == InvalidFPRReg) || (scratchFPR1 != scratchFPR2));
     
     // How this works:
     // 1) Spill any values that are not spilled on speculative, but are spilled
@@ -507,10 +550,6 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
     
     // If we find registers that can be used as scratch registers along the way,
     // save them.
-    
-    GPRReg scratchGPR = InvalidGPRReg;
-    FPRReg scratchFPR = InvalidFPRReg;
-    bool needToRestoreTagMaskRegister = false;
     
     // Part 1: spill any values that are not spilled on speculative, but are
     //         spilled on non-speculative.
@@ -582,8 +621,12 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
         moveDoubleToPtr(FPRInfo::toRegister(index), scratchGPR);
         subPtr(GPRInfo::tagTypeNumberRegister, scratchGPR);
         storePtr(scratchGPR, addressFor(virtualRegister));
-        
-        scratchFPR = FPRInfo::toRegister(index);
+
+        if (scratchFPR1 == InvalidFPRReg)
+            scratchFPR1 = FPRInfo::toRegister(index);
+        else if (scratchFPR2)
+            scratchFPR2 = FPRInfo::toRegister(index);
+        ASSERT((scratchFPR1 == InvalidFPRReg && scratchFPR2 == InvalidFPRReg) || (scratchFPR1 != scratchFPR2));
     }
     
     // Part 2: For the set of nodes that are in registers on both paths,
@@ -594,7 +637,8 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
         if (!reg.isEndOfNonCyclingPermutation() || reg.handled || (!reg.hasFrom && !reg.hasTo))
             continue;
         
-        reg.handleNonCyclingPermutation(check, entry, *this, scratchFPR);
+        reg.handleNonCyclingPermutation(check, entry, *this, scratchFPR1, scratchFPR2);
+        ASSERT((scratchFPR1 == InvalidFPRReg && scratchFPR2 == InvalidFPRReg) || (scratchFPR1 != scratchFPR2));
     }
     
     for (unsigned index = 0; index < GPRInfo::numberOfRegisters + FPRInfo::numberOfRegisters; ++index) {
@@ -602,7 +646,8 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
         if (reg.handled || (!reg.hasFrom && !reg.hasTo))
             continue;
         
-        reg.handleCyclingPermutation(check, entry, *this, scratchGPR, scratchFPR);
+        reg.handleCyclingPermutation(check, entry, *this, scratchGPR, scratchFPR1, scratchFPR2);
+        ASSERT((scratchFPR1 == InvalidFPRReg && scratchFPR2 == InvalidFPRReg) || (scratchFPR1 != scratchFPR2));
     }
 
 #if !ASSERT_DISABLED

@@ -1,5 +1,23 @@
 2011-07-29  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT does not have any way of undoing double speculation.
+        https://bugs.webkit.org/show_bug.cgi?id=65334
+
+        Reviewed by Gavin Barraclough.
+        
+        This adds code to do a branchConvertDoubleToInt on specualtion failure.
+        This is performance-neutral on most benchmarks but does result in
+        a slight improvement in Kraken.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::GeneralizedRegister::moveTo):
+        (JSC::DFG::GeneralizedRegister::swapWith):
+        (JSC::DFG::ShuffledRegister::handleNonCyclingPermutation):
+        (JSC::DFG::ShuffledRegister::handleCyclingPermutation):
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+
+2011-07-29  Filip Pizlo  <fpizlo@apple.com>
+
         Crash when opening docs.google.com
         https://bugs.webkit.org/show_bug.cgi?id=65327
 
