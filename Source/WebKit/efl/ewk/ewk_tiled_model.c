@@ -641,52 +641,24 @@ void ewk_tile_unused_cache_unref(Ewk_Tile_Unused_Cache *tuc)
         _ewk_tile_unused_cache_free(tuc);
 }
 
-/**
- * Change cache capacity, in bytes.
- *
- * This will not flush cache, use ewk_tile_unused_cache_flush() or
- * ewk_tile_unused_cache_auto_flush() to do so.
- */
 void ewk_tile_unused_cache_max_set(Ewk_Tile_Unused_Cache *tuc, size_t max)
 {
     EINA_SAFETY_ON_NULL_RETURN(tuc);
     tuc->memory.max = max;
 }
 
-/**
- * Retrieve maximum cache capacity, in bytes.
- */
 size_t ewk_tile_unused_cache_max_get(const Ewk_Tile_Unused_Cache *tuc)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(tuc, 0);
     return tuc->memory.max;
 }
 
-/**
- * Retrieve the used cache capacity, in bytes.
- */
 size_t ewk_tile_unused_cache_used_get(const Ewk_Tile_Unused_Cache *tuc)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(tuc, 0);
     return tuc->memory.used;
 }
 
-/**
- * Flush given amount of bytes from cache.
- *
- * After calling this function, near @a bytes are freed from cache. It
- * may be less if cache did not contain that amount of bytes (ie: an
- * empty cache has nothing to free!) or more if the cache just
- * contained objects that were larger than the requested amount (this
- * is usually the case).
- *
- * @param tuc cache of unused tiles.
- * @param bytes amount to free.
- *
- * @return amount really freed.
- *
- * @see ewk_tile_unused_cache_used_get()
- */
 size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache *tuc, size_t bytes)
 {
     Ewk_Tile_Unused_Cache_Entry *itr;
@@ -732,17 +704,6 @@ size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache *tuc, size_t bytes)
     return done;
 }
 
-/**
- * Flush enough bytes to make cache usage lower than maximum.
- *
- * Just like ewk_tile_unused_cache_flush(), but this will make the cache
- * free enough tiles to respect maximum cache size as defined with
- * ewk_tile_unused_cache_max_set().
- *
- * This function is usually called when system becomes idle. This way
- * we keep memory low but do not impact performance when
- * creating/deleting tiles.
- */
 void ewk_tile_unused_cache_auto_flush(Ewk_Tile_Unused_Cache *tuc)
 {
     EINA_SAFETY_ON_NULL_RETURN(tuc);

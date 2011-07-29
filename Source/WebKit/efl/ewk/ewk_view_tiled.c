@@ -225,24 +225,6 @@ static Eina_Bool _ewk_view_tiled_smart_enable_render(Ewk_View_Smart_Data *sd)
     return ewk_tiled_backing_store_enable_render(sd->backing_store);
 }
 
-/**
- * Sets the smart class api using tiled backing store, enabling view
- * to be inherited.
- *
- * @param api class definition to be set, all members with the
- *        exception of Evas_Smart_Class->data may be overridden. Must
- *        @b not be @c NULL.
- *
- * @note Evas_Smart_Class->data is used to implement type checking and
- *       is not supposed to be changed/overridden. If you need extra
- *       data for your smart class to work, just extend
- *       Ewk_View_Smart_Class instead.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
- *         version mismatch).
- *
- * @see ewk_view_base_smart_set()
- */
 Eina_Bool ewk_view_tiled_smart_set(Ewk_View_Smart_Class *api)
 {
     if (!ewk_view_base_smart_set(api))
@@ -282,33 +264,11 @@ static inline Evas_Smart *_ewk_view_tiled_smart_class_new(void)
     return smart;
 }
 
-/**
- * Creates a new EFL WebKit View object using tiled backing store.
- *
- * View objects are the recommended way to deal with EFL WebKit as it
- * abstracts the complex pieces of the process.
- *
- * This object is almost the same as the one returned by the ewk_view_add()
- * function, but it uses the tiled backing store instead of the default
- * backing store.
- *
- * @param e canvas where to create the view object.
- *
- * @return view object or @c NULL if errors.
- *
- * @see ewk_view_uri_set()
- */
 Evas_Object *ewk_view_tiled_add(Evas *e)
 {
     return evas_object_smart_add(e, _ewk_view_tiled_smart_class_new());
 }
 
-/**
- * Get the cache of unused tiles used by this view.
- *
- * @param o view object to get cache.
- * @return instance of "cache of unused tiles" or @c NULL on errors.
- */
 Ewk_Tile_Unused_Cache *ewk_view_tiled_unused_cache_get(const Evas_Object *o)
 {
     Ewk_View_Smart_Data *sd = ewk_view_smart_data_get(o);
@@ -316,16 +276,6 @@ Ewk_Tile_Unused_Cache *ewk_view_tiled_unused_cache_get(const Evas_Object *o)
     return ewk_tiled_backing_store_tile_unused_cache_get(sd->backing_store);
 }
 
-/**
- * Set the cache of unused tiles used by this view.
- *
- * @param o view object to get cache.
- * @param cache instance of "cache of unused tiles". This can be used
- *        to share a single cache amongst different views. The tiles
- *        from one view will not be used by the other! This is just to
- *        limit the group with amount of unused memory.
- *        If @c NULL is provided, then a new cache is created.
- */
 void ewk_view_tiled_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *cache)
 {
     Ewk_View_Smart_Data *sd = ewk_view_smart_data_get(o);
@@ -333,11 +283,6 @@ void ewk_view_tiled_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *cach
     ewk_tiled_backing_store_tile_unused_cache_set(sd->backing_store, cache);
 }
 
-/**
- * Set the function with the same name of the tiled backing store.
- * @param o the tiled backing store object.
- * @param flag value of the tiled backing store flag to set.
- */
 void ewk_view_tiled_process_entire_queue_set(Evas_Object *o, Eina_Bool flag)
 {
     Ewk_View_Smart_Data *sd = ewk_view_smart_data_get(o);

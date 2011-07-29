@@ -1048,25 +1048,6 @@ static Eina_Bool _ewk_view_smart_enable_render(Ewk_View_Smart_Data *sd)
     return EINA_FALSE;
 }
 
-/**
- * Sets the smart class api without any backing store, enabling view
- * to be inherited.
- *
- * @param api class definition to be set, all members with the
- *        exception of Evas_Smart_Class->data may be overridden. Must
- *        @b not be @c 0.
- *
- * @note Evas_Smart_Class->data is used to implement type checking and
- *       is not supposed to be changed/overridden. If you need extra
- *       data for your smart class to work, just extend
- *       Ewk_View_Smart_Class instead.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
- *         version mismatch).
- *
- * @see ewk_view_single_smart_set()
- * @see ewk_view_tiled_smart_set()
- */
 Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class *api)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(api, EINA_FALSE);
@@ -1118,21 +1099,6 @@ Eina_Bool ewk_view_base_smart_set(Ewk_View_Smart_Class *api)
     return EINA_TRUE;
 }
 
-/**
- * Set a fixed layout size to be used, dissociating it from viewport size.
- *
- * Setting a width different than zero enables fixed layout on that
- * size. It's automatically scaled based on zoom, but will not change
- * if viewport changes.
- *
- * Setting both @a w and @a h to zero will disable fixed layout.
- *
- * @param o view object to change fixed layout.
- * @param w fixed width to use. This size will be automatically scaled
- *        based on zoom level.
- * @param h fixed height to use. This size will be automatically scaled
- *        based on zoom level.
- */
 void ewk_view_fixed_layout_size_set(Evas_Object *o, Evas_Coord w, Evas_Coord h)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
@@ -1157,15 +1123,6 @@ void ewk_view_fixed_layout_size_set(Evas_Object *o, Evas_Coord w, Evas_Coord h)
     view->forceLayout();
 }
 
-/**
- * Get fixed layout size in use.
- *
- * @param o view object to query fixed layout size.
- * @param w where to return width. Returns 0 on error or if no fixed
- *        layout in use.
- * @param h where to return height. Returns 0 on error or if no fixed
- *        layout in use.
- */
 void ewk_view_fixed_layout_size_get(Evas_Object *o, Evas_Coord *w, Evas_Coord *h)
 {
     if (w)
@@ -1184,16 +1141,6 @@ void ewk_view_fixed_layout_size_get(Evas_Object *o, Evas_Coord *w, Evas_Coord *h
     }
 }
 
-/**
- * Set the theme path to be used by this view.
- *
- * This also sets the theme on the main frame. As frames inherit theme
- * from their parent, this will have all frames with unset theme to
- * use this one.
- *
- * @param o view object to change theme.
- * @param path theme path, may be @c 0 to reset to default.
- */
 void ewk_view_theme_set(Evas_Object *o, const char *path)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
@@ -1209,15 +1156,6 @@ void ewk_view_theme_set(Evas_Object *o, const char *path)
 
 }
 
-/**
- * Gets the theme set on this frame.
- *
- * This returns the value set by ewk_view_theme_set().
- *
- * @param o view object to get theme path.
- *
- * @return theme path, may be @c 0 if not set.
- */
 const char* ewk_view_theme_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
@@ -1225,26 +1163,12 @@ const char* ewk_view_theme_get(Evas_Object *o)
     return priv->settings.theme;
 }
 
-/**
- * Get the object that represents the main frame.
- *
- * @param o view object to get main frame.
- *
- * @return ewk_frame object or @c 0 if none yet.
- */
 Evas_Object* ewk_view_frame_main_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     return sd->main_frame;
 }
 
-/**
- * Get the currently focused frame object.
- *
- * @param o view object to get focused frame.
- *
- * @return ewk_frame object or @c 0 if none yet.
- */
 Evas_Object* ewk_view_frame_focused_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
@@ -1260,80 +1184,30 @@ Evas_Object* ewk_view_frame_focused_get(const Evas_Object *o)
     return client->webFrame();
 }
 
-/**
- * Ask main frame to load the given URI.
- *
- * @param o view object to load uri.
- * @param uri uniform resource identifier to load.
- *
- * @return @c EINA_TRUE on successful request, @c EINA_FALSE on failure.
- *         Note that it means the request was done, not that it was
- *         satisfied.
- */
 Eina_Bool ewk_view_uri_set(Evas_Object *o, const char *uri)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_uri_set(sd->main_frame, uri);
 }
 
-/**
- * Get the current uri loaded by main frame.
- *
- * @param o view object to get current uri.
- *
- * @return current uri reference or @c 0. It's internal, don't change.
- */
 const char *ewk_view_uri_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     return ewk_frame_uri_get(sd->main_frame);
 }
 
-/**
- * Get the current title of main frame.
- *
- * @param o view object to get current title.
- *
- * @return current title reference or @c 0. It's internal, don't change.
- */
 const char *ewk_view_title_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     return ewk_frame_title_get(sd->main_frame);
 }
 
-/**
- * Gets if main frame is editable.
- *
- * @param o view object to get editable state.
- *
- * @return @c EINA_TRUE if editable, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_editable_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_editable_get(sd->main_frame);
 }
 
-/**
- * Set background color and transparency
- *
- * Just as in Evas, colors are pre-multiplied, so 50% red is
- * (128, 0, 0, 128) and not (255, 0, 0, 128)!
- *
- * @warning Watch out performance issues with transparency! Object
- *          will be handled as transparent image by evas even if the
- *          webpage specifies a background color. That mean you'll pay
- *          a price even if it's not really transparent, thus
- *          scrolling/panning and zooming will be likely slower than
- *          if transparency is off.
- *
- * @param o view object to change.
- * @param r red component.
- * @param g green component.
- * @param b blue component.
- * @param a transparency.
- */
 void ewk_view_bg_color_set(Evas_Object *o, int r, int g, int b, int a)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
@@ -1384,18 +1258,6 @@ void ewk_view_bg_color_set(Evas_Object *o, int r, int g, int b, int a)
     }
 }
 
-/**
- * Query if view object background color.
- *
- * Just as in Evas, colors are pre-multiplied, so 50% red is
- * (128, 0, 0, 128) and not (255, 0, 0, 128)!
- *
- * @param o view object to query.
- * @param r where to return red color component.
- * @param g where to return green color component.
- * @param b where to return blue color component.
- * @param a where to return alpha value.
- */
 void ewk_view_bg_color_get(const Evas_Object *o, int *r, int *g, int *b, int *a)
 {
     if (r)
@@ -1417,17 +1279,6 @@ void ewk_view_bg_color_get(const Evas_Object *o, int *r, int *g, int *b, int *a)
         *a = sd->bg_color.a;
 }
 
-/**
- * Search the given text string in document.
- *
- * @param o view object where to search text.
- * @param string reference string to search.
- * @param case_sensitive if search should be case sensitive or not.
- * @param forward if search is from cursor and on or backwards.
- * @param wrap if search should wrap at end.
- *
- * @return @c EINA_TRUE if found, @c EINA_FALSE if not or failure.
- */
 Eina_Bool ewk_view_text_search(const Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1475,13 +1326,6 @@ unsigned int ewk_view_text_matches_mark(Evas_Object *o, const char *string, Eina
     return priv->page->markAllMatchesForText(String::fromUTF8(string), sensitive, highlight, limit);
 }
 
-/**
- * Reverses the effect of ewk_view_text_matches_mark()
- *
- * @param o view object where to search text.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE for failure.
- */
 Eina_Bool ewk_view_text_matches_unmark_all(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1490,54 +1334,24 @@ Eina_Bool ewk_view_text_matches_unmark_all(Evas_Object *o)
     return EINA_TRUE;
 }
 
-/**
- * Set if should highlight matches marked with ewk_view_text_matches_mark().
- *
- * @param o view object where to set if matches are highlighted or not.
- * @param highlight if @c EINA_TRUE, matches will be highlighted.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE for failure.
- */
 Eina_Bool ewk_view_text_matches_highlight_set(Evas_Object *o, Eina_Bool highlight)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_text_matches_highlight_set(sd->main_frame, highlight);
 }
 
-/**
- * Get if should highlight matches marked with ewk_view_text_matches_mark().
- *
- * @param o view object to query if matches are highlighted or not.
- *
- * @return @c EINA_TRUE if they are highlighted, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_text_matches_highlight_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_text_matches_highlight_get(sd->main_frame);
 }
 
-/**
- * Sets if main frame is editable.
- *
- * @param o view object to set editable state.
- * @param editable new state.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_editable_set(Evas_Object *o, Eina_Bool editable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_editable_set(sd->main_frame, editable);
 }
 
-/**
- * Get the copy of the selection text.
- *
- * @param o view object to get selection text.
- *
- * @return newly allocated string or @c 0 if nothing is selected or failure.
- */
 char *ewk_view_selection_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
@@ -1553,15 +1367,6 @@ static Eina_Bool _ewk_view_editor_command(Ewk_View_Private_Data *priv, const cha
     return priv->page->focusController()->focusedOrMainFrame()->editor()->command(WTF::String::fromUTF8(command)).execute(value);
 }
 
-/**
- * Executes editor command.
- *
- * @param o view object to execute command.
- * @param command editor command to be executed.
- * @param value value to be passed into command.
- *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_execute_editor_command(Evas_Object *o, const Ewk_Editor_Command command, const char *value)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1591,14 +1396,6 @@ Eina_Bool ewk_view_execute_editor_command(Evas_Object *o, const Ewk_Editor_Comma
 
 #if ENABLE(CONTEXT_MENUS)
 
-/**
- * Forwards a request of new Context Menu to WebCore.
- *
- * @param o View.
- * @param ev Event data.
- *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_context_menu_forward_event(Evas_Object *o, const Evas_Event_Mouse_Down *ev)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1633,13 +1430,6 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object *o, const Evas_Event_M
 
 #endif
 
-/**
- * Get current load progress estimate from 0.0 to 1.0.
- *
- * @param o view object to get current progress.
- *
- * @return progres value from 0.0 to 1.0 or -1.0 on error.
- */
 double ewk_view_load_progress_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
@@ -1647,150 +1437,60 @@ double ewk_view_load_progress_get(const Evas_Object *o)
     return priv->page->progress()->estimatedProgress();
 }
 
-/**
- * Ask main frame to stop loading.
- *
- * @param o view object to stop loading.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_frame_stop()
- */
 Eina_Bool ewk_view_stop(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_stop(sd->main_frame);
 }
 
-/**
- * Ask main frame to reload current document.
- *
- * @param o view object to reload.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_frame_reload()
- */
 Eina_Bool ewk_view_reload(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_reload(sd->main_frame);
 }
 
-/**
- * Ask main frame to fully reload current document, using no caches.
- *
- * @param o view object to reload.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_frame_reload_full()
- */
 Eina_Bool ewk_view_reload_full(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_reload_full(sd->main_frame);
 }
 
-/**
- * Ask main frame to navigate back in history.
- *
- * @param o view object to navigate back.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_frame_back()
- */
 Eina_Bool ewk_view_back(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_back(sd->main_frame);
 }
 
-/**
- * Ask main frame to navigate forward in history.
- *
- * @param o view object to navigate forward.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_frame_forward()
- */
 Eina_Bool ewk_view_forward(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_forward(sd->main_frame);
 }
 
-/**
- * Navigate back or forward in history.
- *
- * @param o view object to navigate.
- * @param steps if positive navigates that amount forwards, if negative
- *        does backwards.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_frame_navigate()
- */
 Eina_Bool ewk_view_navigate(Evas_Object *o, int steps)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_navigate(sd->main_frame, steps);
 }
 
-/**
- * Check if it is possible to navigate backwards one item in history.
- *
- * @param o view object to check if backward navigation is possible.
- *
- * @return @c EINA_TRUE if possible, @c EINA_FALSE otherwise.
- *
- * @see ewk_view_navigate_possible()
- */
 Eina_Bool ewk_view_back_possible(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_back_possible(sd->main_frame);
 }
 
-/**
- * Check if it is possible to navigate forwards one item in history.
- *
- * @param o view object to check if forward navigation is possible.
- *
- * @return @c EINA_TRUE if possible, @c EINA_FALSE otherwise.
- *
- * @see ewk_view_navigate_possible()
- */
 Eina_Bool ewk_view_forward_possible(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_forward_possible(sd->main_frame);
 }
 
-/**
- * Check if it is possible to navigate given @a steps in history.
- *
- * @param o view object to navigate.
- * @param steps if positive navigates that amount forwards, if negative
- *        does backwards.
- *
- * @return @c EINA_TRUE if possible, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_navigate_possible(Evas_Object *o, int steps)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_navigate_possible(sd->main_frame, steps);
 }
 
-/**
- * Check if navigation history (back-forward lists) is enabled.
- *
- * @param o view object to check if navigation history is enabled.
- *
- * @return @c EINA_TRUE if view keeps history, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_history_enable_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1798,15 +1498,6 @@ Eina_Bool ewk_view_history_enable_get(const Evas_Object *o)
     return static_cast<WebCore::BackForwardListImpl*>(priv->page->backForwardList())->enabled();
 }
 
-/**
- * Sets if navigation history (back-forward lists) is enabled.
- *
- * @param o view object to set if navigation history is enabled.
- * @param enable @c EINA_TRUE if we want to enable navigation history;
- * @c EINA_FALSE otherwise.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_history_enable_set(Evas_Object *o, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1815,22 +1506,6 @@ Eina_Bool ewk_view_history_enable_set(Evas_Object *o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-/**
- * Gets the history (back-forward list) associated with this view.
- *
- * @param o view object to get navigation history from.
- *
- * @return returns the history instance handle associated with this
- *         view or @c 0 on errors (including when history is not
- *         enabled with ewk_view_history_enable_set()). This instance
- *         is unique for this view and thus multiple calls to this
- *         function with the same view as parameter returns the same
- *         handle. This handle is alive while view is alive, thus one
- *         might want to listen for EVAS_CALLBACK_DEL on given view
- *         (@a o) to know when to stop using returned handle.
- *
- * @see ewk_view_history_enable_set()
- */
 Ewk_History* ewk_view_history_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
@@ -1842,29 +1517,12 @@ Ewk_History* ewk_view_history_get(const Evas_Object *o)
     return priv->history;
 }
 
-/**
- * Get the current zoom level of main frame.
- *
- * @param o view object to query zoom level.
- *
- * @return current zoom level in use or -1.0 on error.
- */
 float ewk_view_zoom_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
     return ewk_frame_zoom_get(sd->main_frame);
 }
 
-/**
- * Set the current zoom level of main frame.
- *
- * @param o view object to set zoom level.
- * @param zoom new level to use.
- * @param cx x of center coordinate
- * @param cy y of center coordinate
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_zoom_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas_Coord cy)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1909,32 +1567,6 @@ void ewk_view_zoom_weak_smooth_scale_set(Evas_Object *o, Eina_Bool smooth_scale)
     sd->api->zoom_weak_smooth_scale_set(sd, smooth_scale);
 }
 
-/**
- * Set the current zoom level of backing store, centered at given point.
- *
- * Unlike ewk_view_zoom_set(), this call do not ask WebKit to render
- * at new size, but scale what is already rendered, being much faster
- * but worse quality.
- *
- * Often one should use ewk_view_zoom_animated_set(), it will call the
- * same machinery internally.
- *
- * @note this will set variables used by ewk_view_zoom_animated_set()
- *       so sub-classes will not reset internal state on their
- *       "calculate" phase. To unset those and enable sub-classes to
- *       reset their internal state, call
- *       ewk_view_zoom_animated_mark_stop(). Namely, this call will
- *       set ewk_view_zoom_animated_mark_start() to actual webkit zoom
- *       level, ewk_view_zoom_animated_mark_end() and
- *       ewk_view_zoom_animated_mark_current() to given zoom level.
- *
- * @param o view object to set weak zoom level.
- * @param zoom level to scale backing store.
- * @param cx horizontal center offset, relative to object (w/2 is middle).
- * @param cy vertical center offset, relative to object (h/2 is middle).
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_zoom_weak_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas_Coord cy)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1963,24 +1595,6 @@ Eina_Bool ewk_view_zoom_weak_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas
     return sd->api->zoom_weak_set(sd, zoom, cx, cy);
 }
 
-/**
- * Mark internal zoom animation state to given zoom.
- *
- * This does not modify any actual zoom in WebKit or backing store,
- * just set the Ewk_View_Smart_Data->animated_zoom.zoom.start so
- * sub-classes will know they should not reset their internal state.
- *
- * @param o view object to change value.
- * @param zoom new start value.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_view_zoom_animated_set()
- * @see ewk_view_zoom_weak_set()
- * @see ewk_view_zoom_animated_mark_stop()
- * @see ewk_view_zoom_animated_mark_end()
- * @see ewk_view_zoom_animated_mark_current()
- */
 Eina_Bool ewk_view_zoom_animated_mark_start(Evas_Object *o, float zoom)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1988,24 +1602,6 @@ Eina_Bool ewk_view_zoom_animated_mark_start(Evas_Object *o, float zoom)
     return EINA_TRUE;
 }
 
-/**
- * Mark internal zoom animation state to given zoom.
- *
- * This does not modify any actual zoom in WebKit or backing store,
- * just set the Ewk_View_Smart_Data->animated_zoom.zoom.end so
- * sub-classes will know they should not reset their internal state.
- *
- * @param o view object to change value.
- * @param zoom new end value.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_view_zoom_animated_set()
- * @see ewk_view_zoom_weak_set()
- * @see ewk_view_zoom_animated_mark_stop()
- * @see ewk_view_zoom_animated_mark_start()
- * @see ewk_view_zoom_animated_mark_current()
- */
 Eina_Bool ewk_view_zoom_animated_mark_end(Evas_Object *o, float zoom)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2013,24 +1609,6 @@ Eina_Bool ewk_view_zoom_animated_mark_end(Evas_Object *o, float zoom)
     return EINA_TRUE;
 }
 
-/**
- * Mark internal zoom animation state to given zoom.
- *
- * This does not modify any actual zoom in WebKit or backing store,
- * just set the Ewk_View_Smart_Data->animated_zoom.zoom.current so
- * sub-classes will know they should not reset their internal state.
- *
- * @param o view object to change value.
- * @param zoom new current value.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_view_zoom_animated_set()
- * @see ewk_view_zoom_weak_set()
- * @see ewk_view_zoom_animated_mark_stop()
- * @see ewk_view_zoom_animated_mark_start()
- * @see ewk_view_zoom_animated_mark_end()
- */
 Eina_Bool ewk_view_zoom_animated_mark_current(Evas_Object *o, float zoom)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2038,18 +1616,6 @@ Eina_Bool ewk_view_zoom_animated_mark_current(Evas_Object *o, float zoom)
     return EINA_TRUE;
 }
 
-/**
- * Unmark internal zoom animation state.
- *
- * This zero all start, end and current values.
- *
- * @param o view object to mark as animated is stopped.
- *
- * @see ewk_view_zoom_animated_mark_start()
- * @see ewk_view_zoom_animated_mark_end()
- * @see ewk_view_zoom_animated_mark_current()
- * @see ewk_view_zoom_weak_set()
- */
 Eina_Bool ewk_view_zoom_animated_mark_stop(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2057,28 +1623,6 @@ Eina_Bool ewk_view_zoom_animated_mark_stop(Evas_Object *o)
     return EINA_TRUE;
 }
 
-/**
- * Set the current zoom level while animating.
- *
- * If the view was already animating to another zoom, it will start
- * from current point to the next provided zoom (@a zoom parameter)
- * and duration (@a duration parameter).
- *
- * This is the recommended way to do transitions from one level to
- * another. However, one may wish to do those from outside, in that
- * case use ewk_view_zoom_weak_set() and later control intermediate
- * states with ewk_view_zoom_animated_mark_current(),
- * ewk_view_zoom_animated_mark_end() and
- * ewk_view_zoom_animated_mark_stop().
- *
- * @param o view object to animate.
- * @param zoom final zoom level to use.
- * @param duration time in seconds the animation should take.
- * @param cx offset inside object that defines zoom center. 0 is left side.
- * @param cy offset inside object that defines zoom center. 0 is top side.
- * @return @c EINA_TRUE if animation will be started, @c EINA_FALSE if not
- *            because zoom is too small/big.
- */
 Eina_Bool ewk_view_zoom_animated_set(Evas_Object *o, float zoom, float duration, Evas_Coord cx, Evas_Coord cy)
 {
     double now;
@@ -2128,61 +1672,18 @@ Eina_Bool ewk_view_zoom_animated_set(Evas_Object *o, float zoom, float duration,
     return EINA_TRUE;
 }
 
-/**
- * Query if zoom level just applies to text and not other elements.
- *
- * @param o view to query setting.
- *
- * @return @c EINA_TRUE if just text are scaled, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_zoom_text_only_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_zoom_text_only_get(sd->main_frame);
 }
 
-/**
- * Set if zoom level just applies to text and not other elements.
- *
- * @param o view to change setting.
- * @param setting @c EINA_TRUE if zoom should just be applied to text.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_zoom_text_only_set(Evas_Object *o, Eina_Bool setting)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return ewk_frame_zoom_text_only_set(sd->main_frame, setting);
 }
 
-/**
- * Hint engine to pre-render region.
- *
- * Engines and backing store might be able to pre-render regions in
- * order to speed up zooming or scrolling to that region. Not all
- * engines might implement that and they will return @c EINA_FALSE
- * in that case.
- *
- * The given region is a hint. Engines might do bigger or smaller area
- * that covers that region. Pre-render might not be immediate, it may
- * be postponed to a thread, operated cooperatively in the main loop
- * and may be even ignored or cancelled afterwards.
- *
- * Multiple requests might be queued by engines. One can clear/forget
- * about them with ewk_view_pre_render_cancel().
- *
- * @param o view to ask pre-render of given region.
- * @param x absolute coordinate (0=left) to pre-render at zoom.
- * @param y absolute coordinate (0=top) to pre-render at zoom.
- * @param w width to pre-render starting from @a x at zoom.
- * @param h height to pre-render starting from @a y at zoom.
- * @param zoom desired zoom.
- *
- * @return @c EINA_TRUE if request was accepted, @c EINA_FALSE
- *         otherwise (errors, pre-render not supported, etc).
- *
- * @see ewk_view_pre_render_cancel()
- */
 Eina_Bool ewk_view_pre_render_region(Evas_Object *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2226,21 +1727,6 @@ Eina_Bool ewk_view_pre_render_region(Evas_Object *o, Evas_Coord x, Evas_Coord y,
     return sd->api->pre_render_region(sd, x, y, w, h, zoom);
 }
 
-/**
- * Hint engine to pre-render region, given n extra cols/rows
- *
- * This is an alternative method to ewk_view_pre_render_region(). It does not
- * make sense in all engines and therefore it might not be implemented at all.
- *
- * It's only useful if engine divide the area being rendered in smaller tiles,
- * forming a grid. Then, browser could call this function to pre-render @param n
- * rows/cols involving the current viewport.
- *
- * @param o view to ask pre-render on.
- * @param n number of cols/rows that must be part of the region pre-rendered
- *
- * @see ewk_view_pre_render_region()
- */
 Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object *o, unsigned int n)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2255,13 +1741,6 @@ Eina_Bool ewk_view_pre_render_relative_radius(Evas_Object *o, unsigned int n)
     return sd->api->pre_render_relative_radius(sd, n, cur_zoom);
 }
 
-/**
- * Get input method hints
- *
- * @param o View.
- *
- * @return input method hints
- */
 unsigned int ewk_view_imh_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
@@ -2269,11 +1748,6 @@ unsigned int ewk_view_imh_get(Evas_Object *o)
     return priv->imh;
 }
 
-/**
- * Cancel (clear) previous pre-render requests.
- *
- * @param o view to clear pre-render requests.
- */
 void ewk_view_pre_render_cancel(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd);
@@ -2281,14 +1755,6 @@ void ewk_view_pre_render_cancel(Evas_Object *o)
     sd->api->pre_render_cancel(sd);
 }
 
-/**
-  * Enable processing of update requests.
-  *
-  * @param o view to enable rendering.
-  *
-  * @return @c EINA_TRUE if render was enabled, @c EINA_FALSE
-            otherwise (errors, rendering suspension not supported).
-  */
 Eina_Bool ewk_view_enable_render(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2296,14 +1762,6 @@ Eina_Bool ewk_view_enable_render(const Evas_Object *o)
     return sd->api->enable_render(sd);
 }
 
-/**
-  * Disable processing of update requests.
-  *
-  * @param o view to disable rendering.
-  *
-  * @return @c EINA_TRUE if render was disabled, @c EINA_FALSE
-            otherwise (errors, rendering suspension not supported).
-  */
 Eina_Bool ewk_view_disable_render(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2385,14 +1843,6 @@ Eina_Bool ewk_view_setting_auto_shrink_images_set(Evas_Object *o, Eina_Bool auto
     return EINA_TRUE;
 }
 
-/**
- * Gets if view can be resized automatically.
- *
- * @param o view to check status
- *
- * @return EINA_TRUE if view can be resized, EINA_FALSE
- *         otherwise (errors, cannot be resized).
- */
 Eina_Bool ewk_view_setting_enable_auto_resize_window_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2400,16 +1850,6 @@ Eina_Bool ewk_view_setting_enable_auto_resize_window_get(const Evas_Object *o)
     return priv->settings.enable_auto_resize_window;
 }
 
-/**
- * Sets if view can be resized automatically.
- *
- * @param o View.
- * @param resizable @c EINA_TRUE if we want to resize automatically;
- * @c EINA_FALSE otherwise. It defaults to @c EINA_TRUE
- *
- * @return EINA_TRUE if auto_resize_window status set, EINA_FALSE
- *         otherwise (errors).
- */
 Eina_Bool ewk_view_setting_enable_auto_resize_window_set(Evas_Object *o, Eina_Bool resizable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2456,14 +1896,6 @@ Eina_Bool ewk_view_setting_enable_plugins_set(Evas_Object *o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-/**
- * Get status of frame flattening.
- *
- * @param o view to check status
- *
- * @return EINA_TRUE if flattening is enabled, EINA_FALSE
- *         otherwise (errors, flattening disabled).
- */
 Eina_Bool ewk_view_setting_enable_frame_flattening_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2471,14 +1903,6 @@ Eina_Bool ewk_view_setting_enable_frame_flattening_get(const Evas_Object *o)
     return priv->settings.enable_frame_flattening;
 }
 
-/**
- * Set frame flattening.
- *
- * @param o view to set flattening
- *
- * @return EINA_TRUE if flattening status set, EINA_FALSE
- *         otherwise (errors).
- */
 Eina_Bool ewk_view_setting_enable_frame_flattening_set(Evas_Object *o, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2587,14 +2011,6 @@ Eina_Bool ewk_view_setting_caret_browsing_set(Evas_Object *o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-/**
- * Get current encoding of this View.
- *
- * @param o View.
- *
- * @return A pointer to an eina_strinshare containing the current custom
- * encoding for View object @param o, or @c 0 if it's not set.
- */
 const char *ewk_view_setting_encoding_custom_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
@@ -2611,14 +2027,6 @@ const char *ewk_view_setting_encoding_custom_get(const Evas_Object *o)
     return priv->settings.encoding_custom;
 }
 
-/**
- * Set encoding of this View and reload page.
- *
- * @param o View.
- * @param encoding The new encoding or @c 0 to restore the default encoding.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_setting_encoding_custom_set(Evas_Object *o, const char *encoding)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2648,12 +2056,6 @@ Eina_Bool ewk_view_setting_encoding_default_set(Evas_Object *o, const char *enco
     return EINA_TRUE;
 }
 
-/**
- * Sets the encoding detector.
- *
- * @param o view object to set if encoding detector is enabled.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
- */
 Eina_Bool ewk_view_setting_encoding_detector_set(Evas_Object *o, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2666,12 +2068,6 @@ Eina_Bool ewk_view_setting_encoding_detector_set(Evas_Object *o, Eina_Bool enabl
     return EINA_TRUE;
 }
 
-/**
- * Gets if the encoding detector is enabled.
- *
- * @param o view object to get if encoding detector is enabled.
- * @return @c EINA_TRUE if encoding detector is enabled, @c EINA_FALSE if not or on errors.
- */
 Eina_Bool ewk_view_setting_encoding_detector_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2679,17 +2075,6 @@ Eina_Bool ewk_view_setting_encoding_detector_get(Evas_Object *o)
     return priv->settings.encoding_detector;
 }
 
-/**
- * Returns whether developer extensions are enabled for the given view.
- *
- * Currently, this is used to know whether the Web Inspector is enabled for a
- * given view.
- *
- * @param o view object to check.
- *
- * @return @c EINA_TRUE if developer extensions are enabled, @c EINA_FALSE
- *         otherwise.
- */
 Eina_Bool ewk_view_setting_enable_developer_extras_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2697,17 +2082,6 @@ Eina_Bool ewk_view_setting_enable_developer_extras_get(Evas_Object *o)
     return priv->settings.enable_developer_extras;
 }
 
-/**
- * Enables/disables developer extensions for the given view.
- *
- * This currently controls whether the Web Inspector should be enabled.
- *
- * @param o The view whose setting will be changed.
- * @param enable @c EINA_TRUE to enable developer extras, @c EINA_FALSE to
- *               disable.
- *
- * @return @c EINA_TRUE on success, @EINA_FALSE on failure.
- */
 Eina_Bool ewk_view_setting_enable_developer_extras_set(Evas_Object *o, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2888,12 +2262,6 @@ Eina_Bool ewk_view_setting_font_sans_serif_set(Evas_Object *o, const char *famil
     return EINA_TRUE;
 }
 
-/**
- * Gets if the spatial naviagtion is enabled.
- *
- * @param o view object to get spatial navigation setting.
- * @return @c EINA_TRUE if spatial navigation is enabled, @c EINA_FALSE if not or on errors.
- */
 Eina_Bool ewk_view_setting_spatial_navigation_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2901,12 +2269,6 @@ Eina_Bool ewk_view_setting_spatial_navigation_get(Evas_Object *o)
     return priv->settings.spatial_navigation;
 }
 
-/**
- * Sets the spatial navigation.
- *
- * @param o view object to set spatial navigation setting.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
- */
 Eina_Bool ewk_view_setting_spatial_navigation_set(Evas_Object *o, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2919,12 +2281,6 @@ Eina_Bool ewk_view_setting_spatial_navigation_set(Evas_Object *o, Eina_Bool enab
     return EINA_TRUE;
 }
 
-/**
- * Gets if the local storage is enabled.
- *
- * @param o view object to get if local storage is enabled.
- * @return @c EINA_TRUE if local storage is enabled, @c EINA_FALSE if not or on errors.
- */
 Eina_Bool ewk_view_setting_local_storage_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2932,12 +2288,6 @@ Eina_Bool ewk_view_setting_local_storage_get(Evas_Object *o)
     return priv->settings.local_storage;
 }
 
-/**
- * Sets the local storage of HTML5.
- *
- * @param o view object to set if local storage is enabled.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
- */
 Eina_Bool ewk_view_setting_local_storage_set(Evas_Object *o, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2950,12 +2300,6 @@ Eina_Bool ewk_view_setting_local_storage_set(Evas_Object *o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-/**
- * Gets if the page cache is enabled.
- *
- * @param o view object to set if page cache is enabled.
- * @return @c EINA_TRUE if page cache is enabled, @c EINA_FALSE if not.
- */
 Eina_Bool ewk_view_setting_page_cache_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2963,12 +2307,6 @@ Eina_Bool ewk_view_setting_page_cache_get(Evas_Object *o)
     return priv->settings.page_cache;
 }
 
-/**
- * Sets the page cache.
- *
- * @param o view object to set if page cache is enabled.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
- */
 Eina_Bool ewk_view_setting_page_cache_set(Evas_Object *o, Eina_Bool enable)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -2981,12 +2319,6 @@ Eina_Bool ewk_view_setting_page_cache_set(Evas_Object *o, Eina_Bool enable)
     return EINA_TRUE;
 }
 
-/*
- * Gets the local storage database path.
- *
- * @param o view object to get the local storage database path.
- * @return the local storage database path.
- */
 const char* ewk_view_setting_local_storage_database_path_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
@@ -2994,12 +2326,6 @@ const char* ewk_view_setting_local_storage_database_path_get(const Evas_Object *
     return priv->settings.local_storage_database_path;
 }
 
-/**
- * Sets the local storage database path.
- *
- * @param o view object to set the local storage database path.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
- */
 Eina_Bool ewk_view_setting_local_storage_database_path_set(Evas_Object *o, const char *path)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -3009,12 +2335,6 @@ Eina_Bool ewk_view_setting_local_storage_database_path_set(Evas_Object *o, const
     return EINA_TRUE;
 }
 
-/**
- * Similar to evas_object_smart_data_get(), but does type checking.
- *
- * @param o view object to query internal data.
- * @return internal data or @c 0 on errors (ie: incorrect type of @a o).
- */
 Ewk_View_Smart_Data *ewk_view_smart_data_get(const Evas_Object *o)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
@@ -3132,19 +2452,6 @@ struct _Ewk_View_Paint_Context {
     cairo_t *cr;
 };
 
-/**
- * Create a new paint context using the view as source and cairo as output.
- *
- * @param priv private handle pointer of the view to use as paint source.
- * @param cr cairo context to use as paint destination. A new
- *        reference is taken, so it's safe to call cairo_destroy()
- *        after this function returns.
- *
- * @return newly allocated instance or @c 0 on errors.
- *
- * @note this is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
 Ewk_View_Paint_Context *ewk_view_paint_context_new(Ewk_View_Private_Data *priv, cairo_t *cr)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv, 0);
@@ -3165,14 +2472,6 @@ Ewk_View_Paint_Context *ewk_view_paint_context_new(Ewk_View_Private_Data *priv, 
     return ctxt;
 }
 
-/**
- * Destroy previously created paint context.
- *
- * @param ctxt paint context to destroy. Must @b not be @c 0.
- *
- * @note this is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
 void ewk_view_paint_context_free(Ewk_View_Paint_Context *ctxt)
 {
     EINA_SAFETY_ON_NULL_RETURN(ctxt);
@@ -3181,16 +2480,6 @@ void ewk_view_paint_context_free(Ewk_View_Paint_Context *ctxt)
     free(ctxt);
 }
 
-/**
- * Save (push to stack) paint context status.
- *
- * @param ctxt paint context to save. Must @b not be @c 0.
- *
- * @see ewk_view_paint_context_restore()
- *
- * @note this is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
 void ewk_view_paint_context_save(Ewk_View_Paint_Context *ctxt)
 {
     EINA_SAFETY_ON_NULL_RETURN(ctxt);
@@ -3198,16 +2487,6 @@ void ewk_view_paint_context_save(Ewk_View_Paint_Context *ctxt)
     ctxt->gc->save();
 }
 
-/**
- * Restore (pop from stack) paint context status.
- *
- * @param ctxt paint context to restore. Must @b not be @c 0.
- *
- * @see ewk_view_paint_context_save()
- *
- * @note this is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
 void ewk_view_paint_context_restore(Ewk_View_Paint_Context *ctxt)
 {
     EINA_SAFETY_ON_NULL_RETURN(ctxt);
@@ -3215,18 +2494,6 @@ void ewk_view_paint_context_restore(Ewk_View_Paint_Context *ctxt)
     cairo_restore(ctxt->cr);
 }
 
-/**
- * Clip paint context drawings to given area.
- *
- * @param ctxt paint context to clip. Must @b not be @c 0.
- * @param area clip area to use.
- *
- * @see ewk_view_paint_context_save()
- * @see ewk_view_paint_context_restore()
- *
- * @note this is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
 void ewk_view_paint_context_clip(Ewk_View_Paint_Context *ctxt, const Eina_Rectangle *area)
 {
     EINA_SAFETY_ON_NULL_RETURN(ctxt);
@@ -3234,22 +2501,6 @@ void ewk_view_paint_context_clip(Ewk_View_Paint_Context *ctxt, const Eina_Rectan
     ctxt->gc->clip(WebCore::IntRect(area->x, area->y, area->w, area->h));
 }
 
-/**
- * Paint using context using given area.
- *
- * @param ctxt paint context to paint. Must @b not be @c 0.
- * @param area paint area to use. Coordinates are relative to current viewport,
- *        thus "scrolled".
- *
- * @note one may use cairo functions on the cairo context to
- *       translate, scale or any modification that may fit his desires.
- *
- * @see ewk_view_paint_context_clip()
- * @see ewk_view_paint_context_paint_contents()
- *
- * @note this is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
 void ewk_view_paint_context_paint(Ewk_View_Paint_Context *ctxt, const Eina_Rectangle *area)
 {
     EINA_SAFETY_ON_NULL_RETURN(ctxt);
@@ -3262,26 +2513,6 @@ void ewk_view_paint_context_paint(Ewk_View_Paint_Context *ctxt, const Eina_Recta
     ctxt->view->paint(ctxt->gc, rect);
 }
 
-/**
- * Paint just contents using context using given area.
- *
- * Unlike ewk_view_paint_context_paint(), this function paint just
- * bare contents and ignores any scrolling, scrollbars and extras. It
- * will walk the rendering tree and paint contents inside the given
- * area to the cairo context specified in @a ctxt.
- *
- * @param ctxt paint context to paint. Must @b not be @c 0.
- * @param area paint area to use. Coordinates are absolute to page.
- *
- * @note one may use cairo functions on the cairo context to
- *       translate, scale or any modification that may fit his desires.
- *
- * @see ewk_view_paint_context_clip()
- * @see ewk_view_paint_context_paint()
- *
- * @note this is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
 void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context *ctxt, const Eina_Rectangle *area)
 {
     EINA_SAFETY_ON_NULL_RETURN(ctxt);
@@ -3295,15 +2526,6 @@ void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context *ctxt, const E
     ctxt->view->paintContents(ctxt->gc, rect);
 }
 
-/**
- * Scale the contents by the given factors.
- *
- * This function applies a scaling transformation using Cairo.
- *
- * @param ctxt    paint context to paint. Must @b not be @c 0.
- * @param scale_x scale factor for the X dimension.
- * @param scale_y scale factor for the Y dimension.
- */
 void ewk_view_paint_context_scale(Ewk_View_Paint_Context *ctxt, float scale_x, float scale_y)
 {
     EINA_SAFETY_ON_NULL_RETURN(ctxt);
@@ -3311,15 +2533,6 @@ void ewk_view_paint_context_scale(Ewk_View_Paint_Context *ctxt, float scale_x, f
     ctxt->gc->scale(WebCore::FloatSize(scale_x, scale_y));
 }
 
-/**
- * Performs a translation of the origin coordinates.
- *
- * This function moves the origin coordinates by @p x and @p y pixels.
- *
- * @param ctxt paint context to paint. Must @b not be @c 0.
- * @param x    amount of pixels to translate in the X dimension.
- * @param y    amount of pixels to translate in the Y dimension.
- */
 void ewk_view_paint_context_translate(Ewk_View_Paint_Context *ctxt, float x, float y)
 {
     EINA_SAFETY_ON_NULL_RETURN(ctxt);
@@ -3327,33 +2540,6 @@ void ewk_view_paint_context_translate(Ewk_View_Paint_Context *ctxt, float x, flo
     ctxt->gc->translate(x, y);
 }
 
-/**
- * Paint using given graphics context the given area.
- *
- * This uses viewport relative area and will also handle scrollbars
- * and other extra elements. See ewk_view_paint_contents() for the
- * alternative function.
- *
- * @param priv private handle pointer of view to use as paint source.
- * @param cr cairo context to use as paint destination. Its state will
- *        be saved before operation and restored afterwards.
- * @param area viewport relative geometry to paint.
- *
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure, like
- *         incorrect parameters.
- *
- * @note this is an easy to use version, but internal structures are
- *       always created, then graphics context is clipped, then
- *       painted, restored and destroyed. This might not be optimum,
- *       so using #Ewk_View_Paint_Context may be a better solutions
- *       for large number of operations.
- *
- * @see ewk_view_paint_contents()
- * @see ewk_view_paint_context_paint()
- *
- * @note this is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
 Eina_Bool ewk_view_paint(Ewk_View_Private_Data *priv, cairo_t *cr, const Eina_Rectangle *area)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv, EINA_FALSE);
@@ -3379,33 +2565,6 @@ Eina_Bool ewk_view_paint(Ewk_View_Private_Data *priv, cairo_t *cr, const Eina_Re
     return EINA_TRUE;
 }
 
-/**
- * Paint just contents using given graphics context the given area.
- *
- * This uses absolute coordinates for area and will just handle
- * contents, no scrollbars or extras. See ewk_view_paint() for the
- * alternative solution.
- *
- * @param priv private handle pointer of view to use as paint source.
- * @param cr cairo context to use as paint destination. Its state will
- *        be saved before operation and restored afterwards.
- * @param area absolute geometry to paint.
- *
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure, like
- *         incorrect parameters.
- *
- * @note this is an easy to use version, but internal structures are
- *       always created, then graphics context is clipped, then
- *       painted, restored and destroyed. This might not be optimum,
- *       so using #Ewk_View_Paint_Context may be a better solutions
- *       for large number of operations.
- *
- * @see ewk_view_paint()
- * @see ewk_view_paint_context_paint_contents()
- *
- * @note this is not for general use but just for subclasses that want
- *       to define their own backing store.
- */
 Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data *priv, cairo_t *cr, const Eina_Rectangle *area)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(priv, EINA_FALSE);
@@ -4165,19 +3324,6 @@ void ewk_view_popup_new(Evas_Object *o, WebCore::PopupMenuClient *client, int se
     evas_object_smart_callback_call(o, "popup,create", &priv->popup.menu);
 }
 
-/**
- * Destroy a previously created menu.
- *
- * Before destroying, it informs client that menu's data is ready to be
- * destroyed by sending a "popup,willdelete" with a list of menu items. Then it
- * removes any reference to menu inside webkit. It's safe to call this
- * function either from inside webkit or from browser.
- *
- * @param o View.
- *
- * @returns EINA_TRUE in case menu was successfully destroyed or EINA_TRUE in
- * case there wasn't any menu to be destroyed.
- */
 Eina_Bool ewk_view_popup_destroy(Evas_Object *o)
 {
     INF("o=%p", o);
@@ -4201,17 +3347,6 @@ Eina_Bool ewk_view_popup_destroy(Evas_Object *o)
     return EINA_TRUE;
 }
 
-/**
- * Changes currently selected item.
- *
- * Changes the option selected in select widget. This is called by browser
- * whenever user has chosen a different item. Most likely after calling this, a
- * call to ewk_view_popup_destroy might be made in order to close the popup.
- *
- * @param o View.
- * @index Index of selected item.
- *
- */
 void ewk_view_popup_selected_set(Evas_Object *o, int index)
 {
     INF("o=%p", o);
@@ -4255,18 +3390,6 @@ void ewk_view_viewport_attributes_set(Evas_Object *o, const WebCore::ViewportArg
     evas_object_smart_callback_call(o, "viewport,changed", 0);
 }
 
-/**
- * Gets attributes of viewport meta tag.
- *
- * @param o view.
- * @param w width.
- * @param h height.
- * @param init_scale initial Scale value.
- * @param max_scale maximum Scale value.
- * @param min_scale minimum Scale value.
- * @param device_pixel_ratio value.
- * @param user_scalable user Scalable value.
- */
 void ewk_view_viewport_attributes_get(Evas_Object *o, float *w, float *h, float *init_scale, float *max_scale, float *min_scale, float *device_pixel_ratio, Eina_Bool *user_scalable)
 {
     WebCore::ViewportAttributes attributes = _ewk_view_viewport_attributes_compute(o);
@@ -4287,15 +3410,6 @@ void ewk_view_viewport_attributes_get(Evas_Object *o, float *w, float *h, float 
         *user_scalable = static_cast<bool>(attributes.userScalable);
 }
 
-/**
- * Sets the zoom range.
- *
- * @param o view.
- * @param min_scale minimum value of zoom range.
- * @param max_scale maximum value of zoom range.
- *
- * @return @c EINA_TRUE if zoom range is changed, @c EINA_FALSE if not or failure.
- */
 Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float max_scale)
 {
     EWK_VIEW_SD_GET(o, sd);
@@ -4312,13 +3426,6 @@ Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float max_sca
     return EINA_TRUE;
 }
 
-/**
- * Gets the minimum value of zoom range.
- *
- * @param o view.
- *
- * @return minimum value of zoom range.
- */
 float ewk_view_zoom_range_min_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET(o, sd);
@@ -4327,13 +3434,6 @@ float ewk_view_zoom_range_min_get(Evas_Object *o)
     return priv->settings.zoom_range.min_scale;
 }
 
-/**
- * Gets the maximum value of zoom range.
- *
- * @param o view.
- *
- * @return maximum value of zoom range.
- */
 float ewk_view_zoom_range_max_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET(o, sd);
@@ -4342,13 +3442,6 @@ float ewk_view_zoom_range_max_get(Evas_Object *o)
     return priv->settings.zoom_range.max_scale;
 }
 
-/**
- * Sets if zoom is enabled.
- *
- * @param o view.
- * @param user_scalable boolean pointer in which to enable zoom. It defaults
- * to @c EINA_TRUE.
- */
 void ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable)
 {
     EWK_VIEW_SD_GET(o, sd);
@@ -4357,14 +3450,6 @@ void ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable)
     priv->settings.zoom_range.user_scalable = user_scalable;
 }
 
-/**
- * Gets if zoom is enabled.
- *
- * @param o view.
- * @param user_scalable where to return the current user scalable value.
- *
- * @return @c EINA_TRUE if zoom is enabled, @c EINA_FALSE if not.
- */
 Eina_Bool ewk_view_user_scalable_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET(o, sd);
@@ -4373,14 +3458,6 @@ Eina_Bool ewk_view_user_scalable_get(Evas_Object *o)
     return priv->settings.zoom_range.user_scalable;
 }
 
-/**
- * Gets device pixel ratio value.
- *
- * @param o view.
- * @param user_scalable where to return the current user scalable value.
- *
- * @return @c EINA_TRUE if zoom is enabled, @c EINA_FALSE if not.
- */
 float ewk_view_device_pixel_ratio_get(Evas_Object *o)
 {
     EWK_VIEW_SD_GET(o, sd);
@@ -4498,15 +3575,6 @@ Eina_Bool ewk_view_need_touch_events_get(Evas_Object *o)
 }
 #endif
 
-/**
- * Sets view mode. The view-mode media feature describes the mode in which the
- * Web application is being shown as a running application.
- *
- * @param o view object to change view mode.
- * @param view_mode page view mode to be set
- *
- * @return @c EINA_TRUE if view mode is set as view_mode, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_view_mode_set(Evas_Object *o, Ewk_View_Mode view_mode)
 {
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -4535,14 +3603,6 @@ Eina_Bool ewk_view_mode_set(Evas_Object *o, Ewk_View_Mode view_mode)
     return EINA_TRUE;
 }
 
-/**
- * Gets view mode. The view-mode media feature describes the mode in which the
- * Web application is being shown as a running application.
- *
- * @param o view object to query view mode.
- *
- * @return enum value of Ewk_View_Mode that indicates current view mode.
- */
 Ewk_View_Mode ewk_view_mode_get(Evas_Object *o)
 {
     Ewk_View_Mode mode = EWK_VIEW_MODE_WINDOWED;

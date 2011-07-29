@@ -1,3 +1,22 @@
+2011-07-29  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Move ewk_view API documentation to the header file
+        https://bugs.webkit.org/show_bug.cgi?id=65305
+
+        There are two arguments for this:
+        1. Developers using webkit-efl from packages probably won't have the C/CPP files with them
+           and the doxygen documentation can be generated from the headers without the need
+           for the whole source files.
+        2. It will be consistent with structures descriptions.
+
+        Reviewed by Kent Tamura.
+
+        * ewk/ewk_tiled_model.c:
+        * ewk/ewk_view.cpp:
+        * ewk/ewk_view.h:
+        * ewk/ewk_view_single.c:
+        * ewk/ewk_view_tiled.c:
+
 2011-07-28  Kangil Han  <kangil.han@samsung.com>
 
         [EFL] Removes EAPI attribute in internal headers.

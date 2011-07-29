@@ -521,24 +521,6 @@ static void _ewk_view_single_smart_bg_color_set(Ewk_View_Smart_Data *sd, unsigne
     evas_object_image_alpha_set(sd->backing_store, a < 255);
 }
 
-/**
- * Sets the smart class api using single backing store, enabling view
- * to be inherited.
- *
- * @param api class definition to be set, all members with the
- *        exception of Evas_Smart_Class->data may be overridden. Must
- *        @b not be @c NULL.
- *
- * @note Evas_Smart_Class->data is used to implement type checking and
- *       is not supposed to be changed/overridden. If you need extra
- *       data for your smart class to work, just extend
- *       Ewk_View_Smart_Class instead.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
- *         version mismatch).
- *
- * @see ewk_view_base_smart_set()
- */
 Eina_Bool ewk_view_single_smart_set(Ewk_View_Smart_Class *api)
 {
     if (!ewk_view_base_smart_set(api))
@@ -573,22 +555,6 @@ static inline Evas_Smart *_ewk_view_single_smart_class_new(void)
     return smart;
 }
 
-/**
- * Creates a new EFL WebKit View object.
- *
- * View objects are the recommended way to deal with EFL WebKit as it
- * abstracts the complex pieces of the process.
- *
- * Each view is composed by a set of frames. The set has at least one
- * frame, called 'main_frame'. See ewk_view_frame_main_get() and
- * ewk_view_frame_focused_get().
- *
- * @param e canvas where to create the view object.
- *
- * @return view object or @c NULL if errors.
- *
- * @see ewk_view_uri_set()
- */
 Evas_Object *ewk_view_single_add(Evas *e)
 {
     return evas_object_smart_add(e, _ewk_view_single_smart_class_new());
