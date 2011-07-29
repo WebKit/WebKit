@@ -407,10 +407,6 @@ public:
     void unmarkAllMisspellings();
     void unmarkAllBadGrammar();
 
-#if PLATFORM(MAC)
-    void setDragSource(NSObject *);
-#endif
-
 #if PLATFORM(MAC) && !defined(BUILDING_ON_SNOW_LEOPARD)
     void handleCorrectionPanelResult(const String&);
 #endif
@@ -555,8 +551,6 @@ private:
     void didSelectItemFromActiveContextMenu(const WebContextMenuItemData&);
 #endif
 
-    void platformDragEnded();
-
     void setCanStartMediaTimerFired();
 
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
@@ -600,8 +594,6 @@ private:
     HashSet<PluginView*> m_pluginViews;
 
     RetainPtr<AccessibilityWebPageObject> m_mockAccessibilityElement;
-
-    RetainPtr<NSObject> m_dragSource;
 
     WebCore::KeyboardEvent* m_keyboardEventBeingInterpreted;
 

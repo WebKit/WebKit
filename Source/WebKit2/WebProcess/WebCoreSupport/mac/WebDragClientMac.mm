@@ -148,16 +148,14 @@ void WebDragClient::declareAndWriteDragImage(NSPasteboard *pasteboard, DOMElemen
     RetainPtr<NSMutableArray> types(AdoptNS, [[NSMutableArray alloc] initWithObjects:NSFilesPromisePboardType, nil]);
     [types.get() addObjectsFromArray:archive ? PasteboardTypes::forImagesWithArchive() : PasteboardTypes::forImages()];
 
-    RetainPtr<WKPasteboardOwner> pasteboardOwner(AdoptNS, [[WKPasteboardOwner alloc] initWithImage:image]);
+    m_pasteboardOwner.adoptNS([[WKPasteboardOwner alloc] initWithImage:image]);
+    m_filePromiseOwner.adoptNS([(WKPasteboardFilePromiseOwner *)[WKPasteboardFilePromiseOwner alloc] initWithSource:m_pasteboardOwner.get()]);
 
-    RetainPtr<WKPasteboardFilePromiseOwner> filePromiseOwner(AdoptNS, [(WKPasteboardFilePromiseOwner *)[WKPasteboardFilePromiseOwner alloc] initWithSource:pasteboardOwner.get()]);
-    m_page->setDragSource(filePromiseOwner.get());
-
-    [pasteboard declareTypes:types.get() owner:pasteboardOwner.leakRef()];    
+    [pasteboard declareTypes:types.get() owner:m_pasteboardOwner.leakRef()];    
 
     [pasteboard setPropertyList:[NSArray arrayWithObject:extension] forType:NSFilesPromisePboardType];
 
-    [filePromiseOwner.get() setTypes:[pasteboard propertyListForType:NSFilesPromisePboardType] onPasteboard:pasteboard];
+    [m_filePromiseOwner.get() setTypes:[pasteboard propertyListForType:NSFilesPromisePboardType] onPasteboard:pasteboard];
 
     [URL writeToPasteboard:pasteboard];
 
@@ -171,6 +169,16 @@ void WebDragClient::declareAndWriteDragImage(NSPasteboard *pasteboard, DOMElemen
 
     if (archive)
         [pasteboard setData:(NSData *)archive->rawDataRepresentation().get() forType:PasteboardTypes::WebArchivePboardType];
+}
+
+void WebDragClient::dragEnded()
+{
+    // The drag source we care about here is NSFilePromiseDragSource, which doesn't look at
+    // the arguments. It's OK to just pass arbitrary constant values, so we just pass all zeroes.
+    [m_filePromiseOwner.get() draggedImage:nil endedAt:NSZeroPoint operation:NSDragOperationNone];
+    
+    m_pasteboardOwner = nullptr;
+    m_filePromiseOwner = nullptr;
 }
 
 } // namespace WebKit

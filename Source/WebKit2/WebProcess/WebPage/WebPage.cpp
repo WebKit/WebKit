@@ -1720,8 +1720,7 @@ void WebPage::dragEnded(WebCore::IntPoint clientPosition, WebCore::IntPoint glob
 {
     IntPoint adjustedClientPosition(clientPosition.x() + m_page->dragController()->dragOffset().x(), clientPosition.y() + m_page->dragController()->dragOffset().y());
     IntPoint adjustedGlobalPosition(globalPosition.x() + m_page->dragController()->dragOffset().x(), globalPosition.y() + m_page->dragController()->dragOffset().y());
-    
-    platformDragEnded();
+
     m_page->dragController()->dragEnded();
     FrameView* view = m_page->mainFrame()->view();
     if (!view)
@@ -2339,12 +2338,6 @@ void WebPage::setMemoryCacheMessagesEnabled(bool memoryCacheMessagesEnabled)
 {
     m_page->setMemoryCacheClientCallsEnabled(memoryCacheMessagesEnabled);
 }
-
-#if !PLATFORM(MAC)
-void WebPage::platformDragEnded()
-{
-}
-#endif
 
 bool WebPage::canHandleRequest(const WebCore::ResourceRequest& request)
 {
