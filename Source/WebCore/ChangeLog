@@ -1,3 +1,92 @@
+2011-07-28  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65342
+
+        Add support for positioned floats being placed into a RenderBlock's FloatingObject list and for
+        correct propagation of those floating objects into descendants.
+
+        Reviewed by Sam Weinig.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        The positioned float layout algorithm is 2-pass. You lay out without the positioned objects, and then
+        once they have been placed, you lay out again and use that placement to determine the float positions.
+        layoutBlock now has an extra parameter to indicate which layout pass you are in.
+        
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        Don't add overflow from positioned floats ever, since the positioning overflow function takes care of that
+        already.
+
+        (WebCore::RenderBlock::layoutBlockChild):
+        Include positioned floats in the lowestFloatLogicalBottom we look at so that overhang is computed properly.
+
+        (WebCore::RenderBlock::simplifiedLayout):
+        If layoutPositionedObjects indicates that a positioned float moved, then we can't do simplified layout. Bail
+        instead and do a full layout.
+
+        (WebCore::RenderBlock::positionedFloatsNeedRelayout):
+        Helper for layoutBlock in order to bypass the 2-pass model if we can detect that none of the positioned objects
+        will actually need to lay out again. This allows incremental layout to not always fault back to 2-pass as normal
+        flow content streams in.
+
+        (WebCore::RenderBlock::layoutPositionedObjects):
+        Modified to return a boolean indicating whether a positioned float got a layout. If so, we will lay out again
+        once our positioned objects are placed.
+
+        (WebCore::RenderBlock::insertFloatingObject):
+        insertFloatingObject can now handle positioned objects being inserted.
+
+        (WebCore::RenderBlock::positionNewFloats):
+        positionNewFloats doesn't attempt to position this new type of float. It only handles left/right floats.
+
+        (WebCore::RenderBlock::addPositionedFloats):
+        Helper to add in the floating objects for positioned floats. This is used instead of positionNewFloats and
+        just walks the positioned objects instead.
+
+        (WebCore::RenderBlock::clearFloats):
+        clearFloats now handles adding in positioned floats if the layout pass says they should be included.
+
+        (WebCore::RenderBlock::marginLogicalLeftForChild):
+        (WebCore::RenderBlock::marginLogicalRightForChild):
+        New helpers used by addPositionedFloats.
+    
+        (WebCore::RenderBlock::FloatingObjects::clear):
+        (WebCore::RenderBlock::FloatingObjects::increaseObjectsCount):
+        (WebCore::RenderBlock::FloatingObjects::decreaseObjectsCount):
+        Make sure the object count tracking handles positioned floats as well as left/right floats.
+    
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalLeftForChild):
+        New helper used by addPositionedFloats.
+
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        Change the constructor to take the RenderStyle enum. This makes the construction simpler.
+
+        (WebCore::RenderBlock::hasPositionedFloats):
+        A bit tracks whether or not a block has positioned floats in its positioned objects list.
+
+        (WebCore::RenderBlock::hasOverhangingFloats):
+        Modified to include positioned floats.
+
+        (WebCore::RenderBlock::lowestFloatLogicalBottom):
+        This function excludes positioned floats by default, so that places that - for example - expand to
+        encompass their lowestFloatLogicalBottom won't accidentally expand to encompass positioned objects.
+
+        (WebCore::RenderBlock::lowestFloatLogicalBottomIncludingPositionedFloats):
+        A new function that includes positioned floats for callers that care.
+
+        (WebCore::RenderBlock::FloatingObjects::FloatingObjects):
+        (WebCore::RenderBlock::FloatingObjects::hasPositionedObjects):
+        The object count tracking for positioned floats within a block's FloatingObjects list.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::updateBoxModelInfoFromStyle):
+        Make sure isFloating is set even if isPositioned is also set for the positioned float case.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        Modified to do the extra layout pass if needed.
+
 2011-07-29  Scott Byer  <scottbyer@chromium.org>
 
         Scroll animation refinements.

@@ -40,7 +40,7 @@ public:
     void calcHorizontalPrefWidths();
     void calcVerticalPrefWidths();
 
-    virtual void layoutBlock(bool relayoutChildren, int pageHeight);
+    virtual void layoutBlock(bool relayoutChildren, int pageHeight = 0, BlockLayoutPass = NormalLayoutPass);
     void layoutHorizontalBox(bool relayoutChildren);
     void layoutVerticalBox(bool relayoutChildren);
 

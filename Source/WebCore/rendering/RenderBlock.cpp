@@ -118,6 +118,7 @@ RenderBlock::RenderBlock(Node* node)
       : RenderBox(node)
       , m_lineHeight(-1)
       , m_beingDestroyed(false)
+      , m_hasPositionedFloats(false)
 {
     setChildrenInline(true);
 }
@@ -1165,7 +1166,7 @@ void RenderBlock::layout()
         clearLayoutOverflow();
 }
 
-void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
+void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight, BlockLayoutPass layoutPass)
 {
     ASSERT(needsLayout());
 
@@ -1188,7 +1189,12 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
     if (oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth())
         relayoutChildren = true;
 
-    clearFloats();
+    // If nothing changed about our floating positioned objects, let's go ahead and try to place them as
+    // floats to avoid doing two passes.
+    BlockLayoutPass floatsLayoutPass = layoutPass;
+    if (floatsLayoutPass == NormalLayoutPass && !relayoutChildren && !positionedFloatsNeedRelayout())
+        floatsLayoutPass = PositionedFloatLayoutPass;
+    clearFloats(floatsLayoutPass);
 
     int previousHeight = logicalHeight();
     setLogicalHeight(0);
@@ -1282,7 +1288,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
             for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
                 if (child->isBlockFlow() && !child->isFloatingOrPositioned()) {
                     RenderBlock* block = toRenderBlock(child);
-                    if (block->lowestFloatLogicalBottom() + block->logicalTop() > newHeight)
+                    if (block->lowestFloatLogicalBottomIncludingPositionedFloats() + block->logicalTop() > newHeight)
                         addOverhangingFloats(block, -block->logicalLeft(), -block->logicalTop(), false);
                 }
             }
@@ -1292,7 +1298,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
     if (previousHeight != newHeight)
         relayoutChildren = true;
 
-    layoutPositionedObjects(relayoutChildren || isRoot());
+    bool needAnotherLayoutPass = layoutPositionedObjects(relayoutChildren || isRoot());
 
     // Add overflow from children (unless we're multi-column, since in that case all our child overflow is clipped anyway).
     computeOverflow(oldClientAfterEdge);
@@ -1350,7 +1356,12 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
                 repaintRectangle(reflectedRect(repaintRect));
         }
     }
-    setNeedsLayout(false);
+    
+    if (needAnotherLayoutPass && layoutPass == NormalLayoutPass) {
+        setChildNeedsLayout(true, false);
+        layoutBlock(false, pageLogicalHeight, PositionedFloatLayoutPass);
+    } else
+        setNeedsLayout(false);
 }
 
 void RenderBlock::addOverflowFromChildren()
@@ -1429,7 +1440,7 @@ void RenderBlock::addOverflowFromFloats()
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
-        if (r->m_isDescendant)
+        if (r->m_isDescendant && !r->m_renderer->isPositioned())
             addOverflowFromChild(r->m_renderer, IntSize(xPositionForFloatIncludingMargin(r), yPositionForFloatIncludingMargin(r)));
     }
     return;
@@ -1981,7 +1992,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
     else if (!child->avoidsFloats() || child->shrinkToAvoidFloats()) {
         // If an element might be affected by the presence of floats, then always mark it for
         // layout.
-        int fb = max(previousFloatLogicalBottom, lowestFloatLogicalBottom());
+        int fb = max(previousFloatLogicalBottom, lowestFloatLogicalBottomIncludingPositionedFloats());
         if (fb > logicalTopEstimate)
             markDescendantsWithFloats = true;
     }
@@ -1990,7 +2001,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, int
         if (markDescendantsWithFloats)
             childRenderBlock->markAllDescendantsWithFloatsForLayout();
         if (!child->isWritingModeRoot())
-            previousFloatLogicalBottom = max(previousFloatLogicalBottom, oldLogicalTop + childRenderBlock->lowestFloatLogicalBottom());
+            previousFloatLogicalBottom = max(previousFloatLogicalBottom, oldLogicalTop + childRenderBlock->lowestFloatLogicalBottomIncludingPositionedFloats());
     }
 
     if (!child->needsLayout())
@@ -2159,8 +2170,8 @@ bool RenderBlock::simplifiedLayout()
         simplifiedNormalFlowLayout();
 
     // Lay out our positioned objects if our positioned child bit is set.
-    if (posChildNeedsLayout())
-        layoutPositionedObjects(false);
+    if (posChildNeedsLayout() && layoutPositionedObjects(false))
+        return false; // If a positioned float is causing our normal flow to change, then we have to bail and do a full layout.
 
     // Recompute our overflow information.
     // FIXME: We could do better here by computing a temporary overflow object from layoutPositionedObjects and only
@@ -2180,13 +2191,40 @@ bool RenderBlock::simplifiedLayout()
     return true;
 }
 
-void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
+bool RenderBlock::positionedFloatsNeedRelayout()
+{
+    if (!hasPositionedFloats())
+        return false;
+    
+    RenderBox* positionedObject;
+    Iterator end = m_positionedObjects->end();
+    for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+        positionedObject = *it;
+        if (!positionedObject->isFloating())
+            continue;
+
+        if (positionedObject->needsLayout())
+            return true;
+
+        if (positionedObject->style()->hasStaticBlockPosition(isHorizontalWritingMode()) && positionedObject->parent() != this && positionedObject->parent()->isBlockFlow())
+            return true;
+        
+        if (view()->layoutState()->pageLogicalHeightChanged() || (view()->layoutState()->pageLogicalHeight() && view()->layoutState()->pageLogicalOffset(logicalTop()) != pageLogicalOffset()))
+            return true;
+    }
+    
+    return false;
+}
+
+bool RenderBlock::layoutPositionedObjects(bool relayoutChildren)
 {
     if (!m_positionedObjects)
-        return;
+        return false;
         
     if (hasColumns())
         view()->layoutState()->clearPaginationInformation(); // Positioned objects are not part of the column flow, so they don't paginate with the columns.
+
+    bool didFloatingBoxRelayout = false;
 
     RenderBox* r;
     Iterator end = m_positionedObjects->end();
@@ -2205,6 +2243,11 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         
         if (!r->needsLayout())
             r->markForPaginationRelayoutIfNeeded();
+        
+        // FIXME: Technically we could check the old placement and the new placement of the box and only invalidate if
+        // the margin box of the object actually changed.
+        if (r->needsLayout() && r->isFloating())
+            didFloatingBoxRelayout = true;
 
         // We don't have to do a full layout.  We just have to update our position. Try that first. If we have shrink-to-fit width
         // and we hit the available width constraint, the layoutIfNeeded() will catch it and do a full layout.
@@ -2215,6 +2258,8 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
     
     if (hasColumns())
         view()->layoutState()->m_columnInfo = columnInfo(); // FIXME: Kind of gross. We just put this back into the layout state so that pop() will work.
+        
+    return didFloatingBoxRelayout;
 }
 
 void RenderBlock::markPositionedObjectsForLayout()
@@ -3156,20 +3201,22 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 
     // Create the special object entry & append it to the list
 
-    FloatingObject* newObj = new FloatingObject(o->style()->floating() == LeftFloat ? FloatingObject::FloatLeft : FloatingObject::FloatRight);
+    FloatingObject* newObj = new FloatingObject(o->style()->floating());
     
     // Our location is irrelevant if we're unsplittable or no pagination is in effect.
     // Just go ahead and lay out the float.
-    bool isChildRenderBlock = o->isRenderBlock();
-    if (isChildRenderBlock && !o->needsLayout() && view()->layoutState()->pageLogicalHeightChanged())
-        o->setChildNeedsLayout(true, false);
-        
-    bool affectedByPagination = isChildRenderBlock && view()->layoutState()->m_pageLogicalHeight;
-    if (!affectedByPagination || isWritingModeRoot()) // We are unsplittable if we're a block flow root.
-        o->layoutIfNeeded();
-    else {
-        o->computeLogicalWidth();
-        o->computeBlockDirectionMargins(this);
+    if (!o->isPositioned()) {
+        bool isChildRenderBlock = o->isRenderBlock();
+        if (isChildRenderBlock && !o->needsLayout() && view()->layoutState()->pageLogicalHeightChanged())
+            o->setChildNeedsLayout(true, false);
+            
+        bool affectedByPagination = isChildRenderBlock && view()->layoutState()->m_pageLogicalHeight;
+        if (!affectedByPagination || isWritingModeRoot()) // We are unsplittable if we're a block flow root.
+            o->layoutIfNeeded();
+        else {
+            o->computeLogicalWidth();
+            o->computeBlockDirectionMargins(this);
+        }
     }
     setLogicalWidthForFloat(newObj, logicalWidthForChild(o) + marginStartForChild(o) + marginEndForChild(o));
 
@@ -3276,8 +3323,9 @@ bool RenderBlock::positionNewFloats()
     for (; it != end; ++it) {
          FloatingObject* floatingObject = *it;
         // The containing block is responsible for positioning floats, so if we have floats in our
-        // list that come from somewhere else, do not attempt to position them.
-        if (floatingObject->renderer()->containingBlock() != this)
+        // list that come from somewhere else, do not attempt to position them. Also don't attempt to handle
+        // positioned floats, since the positioning layout code handles those.
+        if (floatingObject->renderer()->containingBlock() != this || floatingObject->renderer()->isPositioned())
             continue;
 
         RenderBox* childBox = floatingObject->renderer();
@@ -3592,14 +3640,45 @@ void RenderBlock::markLinesDirtyInBlockRange(int logicalTop, int logicalBottom, 
     }
 }
 
-void RenderBlock::clearFloats()
+void RenderBlock::addPositionedFloats()
 {
+    if (!m_positionedObjects)
+        return;
+    
+    Iterator end = m_positionedObjects->end();
+    for (Iterator it = m_positionedObjects->begin(); it != end; ++it) {
+        RenderBox* positionedObject = *it;
+        if (!positionedObject->isFloating())
+            continue;
+
+        ASSERT(!positionedObject->needsLayout());
+
+        // If we're a positioned float, then we need to insert ourselves as a floating object also. We only do
+        // this after the positioned object has received a layout, since otherwise the dimensions and placement
+        // won't be correct.
+        FloatingObject* floatingObject = insertFloatingObject(positionedObject);
+        setLogicalLeftForFloat(floatingObject, logicalLeftForChild(positionedObject) - marginLogicalLeftForChild(positionedObject));
+        setLogicalTopForFloat(floatingObject, logicalTopForChild(positionedObject) - marginBeforeForChild(positionedObject));
+        setLogicalHeightForFloat(floatingObject, logicalHeightForChild(positionedObject) + marginBeforeForChild(positionedObject) + marginAfterForChild(positionedObject));
+        floatingObject->setIsPlaced(true);
+        
+        m_hasPositionedFloats = true;
+    }
+}
+
+void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
+{
+    // Clear our positioned floats boolean.
+    m_hasPositionedFloats = false;
+
     // Inline blocks are covered by the isReplaced() check in the avoidFloats method.
     if (avoidsFloats() || isRoot() || isRenderView() || isFloatingOrPositioned() || isTableCell()) {
         if (m_floatingObjects) {
             deleteAllValues(m_floatingObjects->set());
             m_floatingObjects->clear();
         }
+        if (layoutPass == PositionedFloatLayoutPass)
+            addPositionedFloats();
         return;
     }
 
@@ -3619,6 +3698,9 @@ void RenderBlock::clearFloats()
         m_floatingObjects->clear();
     }
 
+    if (layoutPass == PositionedFloatLayoutPass)
+        addPositionedFloats();
+
     // We should not process floats if the parent node is not a RenderBlock. Otherwise, we will add 
     // floats in an invalid context. This will cause a crash arising from a bad cast on the parent.
     // See <rdar://problem/8049753>, where float property is applied on a text node in a SVG.
@@ -3628,13 +3710,13 @@ void RenderBlock::clearFloats()
     // Attempt to locate a previous sibling with overhanging floats.  We skip any elements that are
     // out of flow (like floating/positioned elements), and we also skip over any objects that may have shifted
     // to avoid floats.
-    bool parentHasFloats = false;
     RenderBlock* parentBlock = toRenderBlock(parent());
+    bool parentHasFloats = parentBlock->hasPositionedFloats();
     RenderObject* prev = previousSibling();
     while (prev && (prev->isFloatingOrPositioned() || !prev->isBox() || !prev->isRenderBlock() || toRenderBlock(prev)->avoidsFloats())) {
         if (prev->isFloating())
             parentHasFloats = true;
-         prev = prev->previousSibling();
+        prev = prev->previousSibling();
     }
 
     // First add in floats from the parent.
@@ -3645,17 +3727,14 @@ void RenderBlock::clearFloats()
     int logicalLeftOffset = 0;
     if (prev)
         logicalTopOffset -= toRenderBox(prev)->logicalTop();
-    else {
+    else if (!parentHasFloats) {
         prev = parentBlock;
         logicalLeftOffset += parentBlock->logicalLeftOffsetForContent();
     }
 
-    // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.
-    if (!prev || !prev->isRenderBlock())
-        return;
-    
+    // Add overhanging floats from the previous RenderBlock, but only if it has a float that intrudes into our space.    
     RenderBlock* block = toRenderBlock(prev);
-    if (block->m_floatingObjects && block->lowestFloatLogicalBottom() > logicalTopOffset)
+    if (block && block->m_floatingObjects && block->lowestFloatLogicalBottomIncludingPositionedFloats() > logicalTopOffset)
         addIntrudingFloats(block, logicalLeftOffset, logicalTopOffset);
 
     if (childrenInline()) {
@@ -6182,7 +6261,21 @@ LayoutUnit RenderBlock::marginAfterForChild(RenderBoxModelObject* child) const
     ASSERT_NOT_REACHED();
     return child->marginBottom();
 }
-    
+
+LayoutUnit RenderBlock::marginLogicalLeftForChild(RenderBoxModelObject* child) const
+{
+    if (isHorizontalWritingMode())
+        return child->marginLeft();
+    return child->marginTop();
+}
+
+LayoutUnit RenderBlock::marginLogicalRightForChild(RenderBoxModelObject* child) const
+{
+    if (isHorizontalWritingMode())
+        return child->marginRight();
+    return child->marginBottom();
+}
+
 LayoutUnit RenderBlock::marginStartForChild(RenderBoxModelObject* child) const
 {
     if (isHorizontalWritingMode())
@@ -6352,22 +6445,27 @@ inline void RenderBlock::FloatingObjects::clear()
     m_set.clear();
     m_leftObjectsCount = 0;
     m_rightObjectsCount = 0;
+    m_positionedObjectsCount = 0;
 }
 
 inline void RenderBlock::FloatingObjects::increaseObjectsCount(FloatingObject::Type type)
 {    
     if (type == FloatingObject::FloatLeft)
         m_leftObjectsCount++;
-    else
+    else if (type == FloatingObject::FloatRight)
         m_rightObjectsCount++;
+    else
+        m_positionedObjectsCount++;
 }
 
 inline void RenderBlock::FloatingObjects::decreaseObjectsCount(FloatingObject::Type type)
 {
     if (type == FloatingObject::FloatLeft)
         m_leftObjectsCount--;
-    else
+    else if (type == FloatingObject::FloatRight)
         m_rightObjectsCount--;
+    else
+        m_positionedObjectsCount--;
 }
 
 TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, const UChar* characters, int length, RenderStyle* style, TextRun::ExpansionBehavior expansion, TextRunFlags flags)

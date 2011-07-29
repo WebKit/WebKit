@@ -46,7 +46,7 @@ public:
 
     virtual bool isFlexibleBox() const { return true; }
 
-    virtual void layoutBlock(bool relayoutChildren, int pageLogicalHeight);
+    virtual void layoutBlock(bool relayoutChildren, int pageLogicalHeight = 0, BlockLayoutPass = NormalLayoutPass);
 };
 
 } // namespace WebCore

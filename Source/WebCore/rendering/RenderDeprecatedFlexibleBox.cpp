@@ -198,7 +198,7 @@ void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXME: Implement */)
+void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, int pageLogicalHeight, BlockLayoutPass layoutPass)
 {
     ASSERT(needsLayout());
 
@@ -245,7 +245,7 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageH
     if (previousSize.height() != height())
         relayoutChildren = true;
 
-    layoutPositionedObjects(relayoutChildren || isRoot());
+    bool needAnotherLayoutPass = layoutPositionedObjects(relayoutChildren || isRoot());
 
     if (!isFloatingOrPositioned() && height() == 0) {
         // We are a block with no border and padding and a computed height
@@ -282,7 +282,11 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageH
     // Repaint with our new bounds if they are different from our old bounds.
     repainter.repaintAfterLayout();
 
-    setNeedsLayout(false);
+    if (needAnotherLayoutPass && layoutPass == NormalLayoutPass) {
+        setChildNeedsLayout(true, false);
+        layoutBlock(false, pageLogicalHeight);
+    } else
+        setNeedsLayout(false);
 }
 
 // The first walk over our kids is to find out if we have any flexible children.
