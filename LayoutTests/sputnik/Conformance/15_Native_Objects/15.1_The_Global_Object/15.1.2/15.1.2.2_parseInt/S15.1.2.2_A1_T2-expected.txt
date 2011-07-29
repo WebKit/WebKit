@@ -1,6 +1,6 @@
 S15.1.2.2_A1_T2
 
-FAIL SputnikError: #4: parseInt(-0) === +0. Actual: 0
+PASS 
 
 TEST COMPLETE
 

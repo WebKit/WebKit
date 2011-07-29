@@ -29,6 +29,18 @@
 
         * runtime/JSGlobalObjectFunctions.cpp:
         (JSC::globalFuncParseInt):
+            - This change may an existing optimization redundant,
+              cleanup from Darin's comments, plus fix existing bugs.
+
+2011-07-28  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65325
+        Performance tweak to parseInt
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt):
             - parseInt applied to small positive numbers = floor.
 
 2011-07-28  Dan Bernstein  <mitz@apple.com>

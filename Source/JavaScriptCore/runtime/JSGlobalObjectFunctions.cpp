@@ -460,29 +460,29 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
 {
     JSValue value = exec->argument(0);
+    JSValue radixValue = exec->argument(1);
 
-    // Optimized case: If the argument is a positive number in the integer
-    // range, and the exponent is 10, then parseInt is equivalent to floor.
+    // Optimized handling for numbers:
+    // If the argument is 0 or a number in range 10^-6 <= n < INT_MAX+1, then parseInt
+    // results in a truncation to integer. In the case of -0, this is converted to 0.
+    //
+    // This is also a truncation for values in the range INT_MAX+1 <= n < 10^21,
+    // however these values cannot be trivially truncated to int since 10^21 exceeds
+    // even the int64_t range. Negative numbers are a little trickier, the case for
+    // values in the range -10^21 < n <= -1 are similar to those for integer, but
+    // values in the range -1 < n <= -10^-6 need to truncate to -0, not 0.
+    static const double tenToTheMinus6 = 0.000001;
+    static const double intMaxPlusOne = 2147483648.0;
     double n;
-    if (value.getNumber(n) && n >= 0 && n < INT_MAX && exec->argument(1).isUndefined())
-        return JSValue::encode(jsNumber(static_cast<int>(n)));
+    if (value.getNumber(n) && ((n < intMaxPlusOne && n >= tenToTheMinus6) || !n) && radixValue.isUndefinedOrNull())
+        return JSValue::encode(jsNumber(static_cast<int32_t>(n)));
 
-    int32_t radix = exec->argument(1).toInt32(exec);
+    // If ToString throws, we shouldn't call ToInt32.
+    UString s = value.toString(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
 
-    if (radix != 0 && radix != 10)
-        return JSValue::encode(jsNumber(parseInt(value.toString(exec), radix)));
-
-    if (value.isInt32())
-        return JSValue::encode(value);
-
-    if (value.isDouble()) {
-        double d = value.asDouble();
-        if (isfinite(d))
-            return JSValue::encode(jsNumber((d > 0) ? floor(d) : ceil(d)));
-        return JSValue::encode(jsNaN());
-    }
-
-    return JSValue::encode(jsNumber(parseInt(value.toString(exec), radix)));
+    return JSValue::encode(jsNumber(parseInt(s, radixValue.toInt32(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
