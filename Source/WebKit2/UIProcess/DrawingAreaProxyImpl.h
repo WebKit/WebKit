@@ -33,16 +33,18 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-namespace WebKit {
-
+namespace WebCore {
 class Region;
+}
+
+namespace WebKit {
 
 class DrawingAreaProxyImpl : public DrawingAreaProxy {
 public:
     static PassOwnPtr<DrawingAreaProxyImpl> create(WebPageProxy*);
     virtual ~DrawingAreaProxyImpl();
 
-    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, Region& unpaintedRegion);
+    void paint(BackingStore::PlatformGraphicsContext, const WebCore::IntRect&, WebCore::Region& unpaintedRegion);
 
 private:
     explicit DrawingAreaProxyImpl(WebPageProxy*);

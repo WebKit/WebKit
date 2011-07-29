@@ -1072,6 +1072,7 @@ SET(WebCore_SOURCES
     platform/graphics/Path.cpp
     platform/graphics/PathTraversalState.cpp
     platform/graphics/Pattern.cpp
+    platform/graphics/Region.cpp
     platform/graphics/RoundedRect.cpp
     platform/graphics/SegmentedFontData.cpp
     platform/graphics/ShadowBlur.cpp

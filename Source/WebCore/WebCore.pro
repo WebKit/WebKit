@@ -999,6 +999,7 @@ SOURCES += \
     platform/graphics/Path.cpp \
     platform/graphics/PathTraversalState.cpp \
     platform/graphics/Pattern.cpp \
+    platform/graphics/Region.cpp \
     platform/graphics/RoundedRect.cpp \
     platform/graphics/SegmentedFontData.cpp \
     platform/graphics/ShadowBlur.cpp \
@@ -1995,6 +1996,7 @@ HEADERS += \
     platform/graphics/Path.h \
     platform/graphics/PathTraversalState.h \
     platform/graphics/Pattern.h \
+    platform/graphics/Region.h \
     platform/graphics/RoundedRect.h \
     platform/graphics/qt/FontCustomPlatformData.h \
     platform/graphics/qt/ImageDecoderQt.h \

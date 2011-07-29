@@ -3687,14 +3687,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\Platform\Region.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\Platform\Region.h"
-				>
-			</File>
-			<File
 				RelativePath="..\Platform\RunLoop.cpp"
 				>
 			</File>

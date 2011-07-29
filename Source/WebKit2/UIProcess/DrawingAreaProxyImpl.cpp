@@ -29,10 +29,10 @@
 #include "DrawingAreaMessages.h"
 #include "DrawingAreaProxyMessages.h"
 #include "LayerTreeContext.h"
-#include "Region.h"
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
+#include <WebCore/Region.h>
 
 using namespace WebCore;
 

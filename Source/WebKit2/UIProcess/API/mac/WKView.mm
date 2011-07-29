@@ -40,7 +40,6 @@
 #import "PDFViewController.h"
 #import "PageClientImpl.h"
 #import "PasteboardTypes.h"
-#import "Region.h"
 #import "RunLoop.h"
 #import "TextChecker.h"
 #import "TextCheckerState.h"
@@ -68,6 +67,7 @@
 #import <WebCore/KeyboardEvent.h>
 #import <WebCore/PlatformMouseEvent.h>
 #import <WebCore/PlatformScreen.h>
+#import <WebCore/Region.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/RefPtr.h>
 #import <wtf/RetainPtr.h>

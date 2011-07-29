@@ -107,7 +107,6 @@ HEADERS += \
     Platform/Logging.h \
     Platform/Module.h \
     Platform/PlatformProcessIdentifier.h \
-    Platform/Region.h \
     Platform/RunLoop.h \
     Platform/SharedMemory.h \
     Platform/WorkItem.h \
@@ -332,7 +331,6 @@ SOURCES += \
     Platform/CoreIPC/unix/ConnectionUnix.cpp \
     Platform/Logging.cpp \
     Platform/Module.cpp \
-    Platform/Region.cpp \
     Platform/RunLoop.cpp \
     Platform/WorkQueue.cpp \
     Platform/qt/ModuleQt.cpp \

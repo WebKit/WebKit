@@ -28,8 +28,8 @@
 
 #include "DrawingArea.h"
 #include "LayerTreeHost.h"
-#include "Region.h"
 #include "RunLoop.h"
+#include <WebCore/Region.h>
 
 namespace WebCore {
     class GraphicsContext;
@@ -92,7 +92,7 @@ private:
 
     uint64_t m_backingStoreStateID;
 
-    Region m_dirtyRegion;
+    WebCore::Region m_dirtyRegion;
     WebCore::IntRect m_scrollRect;
     WebCore::IntSize m_scrollOffset;
 

@@ -23,12 +23,12 @@
 #include "DrawingAreaProxyImpl.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
-#include <Region.h>
 #include <QApplication>
 #include <QEvent>
 #include <QGraphicsSceneDragDropEvent>
 #include <QGraphicsWidget>
 #include <WebCore/DragData.h>
+#include <WebCore/Region.h>
 
 using namespace WebCore;
 using namespace WebKit;

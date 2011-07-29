@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "Region.h"
+
 #include <stdio.h>
 
 // A region class based on the paper "Scanline Coherent Shape Algebra"
@@ -33,9 +34,7 @@
 // This implementation uses two vectors instead of linked list, and
 // also compresses regions when possible.
 
-using namespace WebCore;
-
-namespace WebKit {
+namespace WebCore {
 
 Region::Region()
 {
@@ -452,5 +451,4 @@ void Region::translate(const IntSize& offset)
     m_shape.translate(offset);
 }
 
-} // namespace WebKit
-
+} // namespace WebCore

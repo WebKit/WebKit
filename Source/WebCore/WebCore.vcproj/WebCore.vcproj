@@ -27813,6 +27813,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\Region.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\Region.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\RoundedRect.cpp"
 					>
 				</File>

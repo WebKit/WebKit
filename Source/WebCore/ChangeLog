@@ -1,3 +1,25 @@
+2011-07-29  Sam Weinig  <sam@webkit.org>
+
+        Move Region code from WebKit2 to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=65392
+
+        Reviewed by David Hyatt.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        Update project files.
+
+        * WebCore.exp.in:
+        Update exports.
+
+        * platform/graphics/Region.cpp: Copied from Source/WebKit2/Platform/Region.cpp.
+        * platform/graphics/Region.h: Copied from Source/WebKit2/Platform/Region.h.
+        Add files.
+
 2011-07-29  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Layering violations in gesture recognizer

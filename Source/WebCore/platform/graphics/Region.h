@@ -26,28 +26,26 @@
 #ifndef Region_h
 #define Region_h
 
-#include <WebCore/IntRect.h>
+#include "IntRect.h"
 #include <wtf/Vector.h>
 
-#include <vector>
-
-namespace WebKit {
+namespace WebCore {
 
 class Region {
 public:
     Region();
-    Region(const WebCore::IntRect&);
+    Region(const IntRect&);
 
-    WebCore::IntRect bounds() const { return m_bounds; }
+    IntRect bounds() const { return m_bounds; }
     bool isEmpty() const { return m_bounds.isEmpty(); }
 
-    Vector<WebCore::IntRect> rects() const;
+    Vector<IntRect> rects() const;
 
     void unite(const Region&);
     void intersect(const Region&);
     void subtract(const Region&);
 
-    void translate(const WebCore::IntSize&);
+    void translate(const IntSize&);
 
 #ifndef NDEBUG
     void dump() const;
@@ -67,9 +65,9 @@ private:
     class Shape {
     public:
         Shape();
-        Shape(const WebCore::IntRect&);
+        Shape(const IntRect&);
 
-        WebCore::IntRect bounds() const;
+        IntRect bounds() const;
         bool isEmpty() const { return m_spans.isEmpty(); }
 
         typedef const Span* SpanIterator;
@@ -84,7 +82,7 @@ private:
         static Shape intersectShapes(const Shape& shape1, const Shape& shape2);
         static Shape subtractShapes(const Shape& shape1, const Shape& shape2);
 
-        void translate(const WebCore::IntSize&);
+        void translate(const IntSize&);
         void swap(Shape&);
 
 #ifndef NDEBUG
@@ -111,7 +109,7 @@ private:
         Vector<Span> m_spans;        
     };
 
-    WebCore::IntRect m_bounds;
+    IntRect m_bounds;
     Shape m_shape;
 };
 
@@ -131,7 +129,7 @@ static inline Region subtract(const Region& a, const Region& b)
     return result;
 }
 
-static inline Region translate(const Region& region, const WebCore::IntSize& offset)
+static inline Region translate(const Region& region, const IntSize& offset)
 {
     Region result(region);
     result.translate(offset);
@@ -139,6 +137,6 @@ static inline Region translate(const Region& region, const WebCore::IntSize& off
     return result;
 }
 
-} // namespace WebKit
+} // namespace WebCore
 
 #endif // Region_h

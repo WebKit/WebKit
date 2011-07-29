@@ -134,8 +134,6 @@
 		1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64229812DD029200CAAE2C /* DrawingAreaMessages.h */; };
 		1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */; };
 		1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */; };
-		1A64235212DD187C00CAAE2C /* Region.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64235012DD187C00CAAE2C /* Region.cpp */; };
-		1A64235312DD187C00CAAE2C /* Region.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64235112DD187C00CAAE2C /* Region.h */; };
 		1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64245C12DE29A100CAAE2C /* UpdateInfo.h */; };
 		1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */; };
 		1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A64256612DE42EC00CAAE2C /* BackingStore.h */; };
@@ -1050,8 +1048,6 @@
 		1A6422FC12DD08FE00CAAE2C /* DrawingAreaProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DrawingAreaProxy.messages.in; sourceTree = "<group>"; };
 		1A64230612DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawingAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
 		1A64230712DD09EB00CAAE2C /* DrawingAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyMessages.h; sourceTree = "<group>"; };
-		1A64235012DD187C00CAAE2C /* Region.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Region.cpp; sourceTree = "<group>"; };
-		1A64235112DD187C00CAAE2C /* Region.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Region.h; sourceTree = "<group>"; };
 		1A64245C12DE29A100CAAE2C /* UpdateInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UpdateInfo.h; sourceTree = "<group>"; };
 		1A64245D12DE29A100CAAE2C /* UpdateInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UpdateInfo.cpp; sourceTree = "<group>"; };
 		1A64256612DE42EC00CAAE2C /* BackingStore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BackingStore.h; sourceTree = "<group>"; };
@@ -3057,8 +3053,6 @@
 				C0E3AA451209E2BA00A49D01 /* Module.cpp */,
 				C0E3AA441209E2BA00A49D01 /* Module.h */,
 				BC8780FB1161C2B800CC2768 /* PlatformProcessIdentifier.h */,
-				1A64235012DD187C00CAAE2C /* Region.cpp */,
-				1A64235112DD187C00CAAE2C /* Region.h */,
 				BC2E6E771141970C00A63B1E /* RunLoop.cpp */,
 				BC2E6E781141970C00A63B1E /* RunLoop.h */,
 				1A24BED3120894D100FBB059 /* SharedMemory.h */,
@@ -3750,7 +3744,6 @@
 				1A6421F612DCFBAB00CAAE2C /* DrawingAreaImpl.h in Headers */,
 				1A64229A12DD029200CAAE2C /* DrawingAreaMessages.h in Headers */,
 				1A64230912DD09EB00CAAE2C /* DrawingAreaProxyMessages.h in Headers */,
-				1A64235312DD187C00CAAE2C /* Region.h in Headers */,
 				1A64245E12DE29A100CAAE2C /* UpdateInfo.h in Headers */,
 				1A64256812DE42EC00CAAE2C /* BackingStore.h in Headers */,
 				C517388112DF8F4F00EE3F47 /* DragControllerAction.h in Headers */,
@@ -4403,7 +4396,6 @@
 				1A6421F712DCFBAB00CAAE2C /* DrawingAreaImpl.cpp in Sources */,
 				1A64229912DD029200CAAE2C /* DrawingAreaMessageReceiver.cpp in Sources */,
 				1A64230812DD09EB00CAAE2C /* DrawingAreaProxyMessageReceiver.cpp in Sources */,
-				1A64235212DD187C00CAAE2C /* Region.cpp in Sources */,
 				1A64245F12DE29A100CAAE2C /* UpdateInfo.cpp in Sources */,
 				1A64256912DE42EC00CAAE2C /* BackingStore.cpp in Sources */,
 				1A64292D12DE5F9800CAAE2C /* BackingStoreMac.mm in Sources */,

@@ -38,11 +38,11 @@
 #include "NotImplemented.h"
 #include "PageClientImpl.h"
 #include "RefPtrCairo.h"
-#include "Region.h"
 #include "WebContext.h"
 #include "WebEventFactory.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
+#include <WebCore/Region.h>
 #include <WebKit2/WKContext.h>
 #include <wtf/text/CString.h>
 
@@ -149,7 +149,7 @@ static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
-    WebKit::Region unpaintedRegion; // This is simply unused.
+    WebCore::Region unpaintedRegion; // This is simply unused.
     static_cast<DrawingAreaProxyImpl*>(drawingArea)->paint(cr, clipRect, unpaintedRegion);
 
     return FALSE;
