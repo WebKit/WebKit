@@ -1,3 +1,10 @@
+2011-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/svg/W3C-SVG-1.1-SE/struct-use-11-f-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/struct-use-11-f-expected.txt: Added.
+
 2011-07-28  Kent Tamura  <tkent@chromium.org>
 
         [Qt] Fix style errors of test_expectations.txt.
