@@ -1,3 +1,17 @@
+2011-07-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        Fix the QTouchWebView in debug broke in 91979.
+        https://bugs.webkit.org/show_bug.cgi?id=64728
+
+        Reviewed by Benjamin Poulain.
+
+        registerTile is called in the Tile's constructor, before adoptRef.
+        Change the pointer parameter to use the raw type instead.
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::registerTile):
+        * UIProcess/TiledDrawingAreaProxy.h:
+
 2011-07-29  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Make QDesktopWebView/QTouchWebView loadProgress property more usable in QML.

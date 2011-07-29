@@ -112,7 +112,7 @@ private:
     virtual void tileUpdated(int tileID, const UpdateInfo& updateInfo, float scale, unsigned pendingUpdateCount);
     virtual void allTileUpdatesProcessed();
 
-    void registerTile(int tileID, PassRefPtr<TiledDrawingAreaTile>);
+    void registerTile(int tileID, TiledDrawingAreaTile*);
     void unregisterTile(int tileID);
     void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect);
     void cancelTileUpdate(int tileID);

@@ -182,9 +182,9 @@ void TiledDrawingAreaProxy::allTileUpdatesProcessed()
     tileBufferUpdateComplete();
 }
 
-void TiledDrawingAreaProxy::registerTile(int tileID, PassRefPtr<TiledDrawingAreaTile> tile)
+void TiledDrawingAreaProxy::registerTile(int tileID, TiledDrawingAreaTile* tile)
 {
-    m_tilesByID.set(tileID, tile.get());
+    m_tilesByID.set(tileID, tile);
 }
 
 void TiledDrawingAreaProxy::unregisterTile(int tileID)
