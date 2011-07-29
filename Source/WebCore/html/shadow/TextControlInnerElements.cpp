@@ -437,7 +437,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
         case Idle: {
               AtomicString language = input->computeInheritedLanguage();
               String grammar = input->getAttribute(webkitgrammarAttr);
-              IntRect rect = input->renderer()->absoluteBoundingBoxRect();
+              IntRect rect = renderer()->absoluteBoundingBoxRect();
               if (speechInput()->startRecognition(m_listenerId, rect, language, grammar, document()->securityOrigin()))
                   setState(Recording);
             }

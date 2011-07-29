@@ -1,3 +1,16 @@
+2011-07-28  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Fix speech input icon rect on RTL directions.
+        https://bugs.webkit.org/show_bug.cgi?id=65333
+
+        Reviewed by Tony Gentilcore.
+
+        No new tests. This is used by platforms, not WebCore, and
+        the base functionality is not changed but only the failing cases.
+
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+
 2011-07-29  Kent Tamura  <tkent@chromium.org>
 
         Make the ExceptionCode argument of Element::setShadowPseudoId() ASSERT_NO_EXCEPTION by default
