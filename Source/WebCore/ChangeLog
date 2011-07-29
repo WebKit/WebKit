@@ -180,8 +180,9 @@
         No new tests.  Rigged libsoup and xxxterm web browser to diagnose the
         issue and validate the patch.
 
-        * platform/graphics/FontFallbackList.cpp:
-        (WebCore::FontFallbackList::determinePitch):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ensureSessionIsInitialized): No longer ininitalize connection limits.
+        (WebCore::ResourceHandle::defaultSession): Initialize connection limits here instead.
 
 2011-07-28  Brady Eidson  <beidson@apple.com>
 
