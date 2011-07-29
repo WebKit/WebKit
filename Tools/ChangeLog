@@ -1,3 +1,14 @@
+2011-07-29  Adam Barth  <abarth@webkit.org>
+
+        Chromium try servers should use downstream test_expectations
+        https://bugs.webkit.org/show_bug.cgi?id=65390
+
+        Reviewed by Dirk Pranke.
+
+        Otherwise the try servers will report bogus failures.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-07-29  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Fix an error in macro collapsing, refactor code to be pretty.

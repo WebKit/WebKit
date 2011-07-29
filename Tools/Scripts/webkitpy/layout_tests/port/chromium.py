@@ -301,16 +301,24 @@ class ChromiumPort(Port):
                         graphics_type=graphics_type))
         return test_configurations
 
+    try_builder_names = frozenset([
+        'linux_layout',
+        'mac_layout',
+        'win_layout',
+        'linux_layout_rel',
+        'mac_layout_rel',
+        'win_layout_rel',
+    ])
+
     def test_expectations_overrides(self):
         # FIXME: It seems bad that run_webkit_tests.py uses a hardcoded dummy
         # builder string instead of just using None.
         builder_name = self.get_option('builder_name', 'DUMMY_BUILDER_NAME')
-        if builder_name != 'DUMMY_BUILDER_NAME' and not '(deps)' in builder_name:
+        if builder_name != 'DUMMY_BUILDER_NAME' and not '(deps)' in builder_name and not builder_name in self.try_builder_names:
             return None
 
         try:
-            overrides_path = self.path_from_chromium_base('webkit', 'tools',
-                'layout_tests', 'test_expectations.txt')
+            overrides_path = self.path_from_chromium_base('webkit', 'tools', 'layout_tests', 'test_expectations.txt')
         except AssertionError:
             return None
         if not self._filesystem.exists(overrides_path):
