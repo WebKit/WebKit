@@ -173,6 +173,10 @@ void WebDragClient::declareAndWriteDragImage(NSPasteboard *pasteboard, DOMElemen
 
 void WebDragClient::dragEnded()
 {
+    // The draggedImage method releases its responder; we must retain the WKPasteboardFilePromiseOwner an extra time to balance the release
+    // inside of the function.
+    [m_filePromiseOwner.get() retain];
+
     // The drag source we care about here is NSFilePromiseDragSource, which doesn't look at
     // the arguments. It's OK to just pass arbitrary constant values, so we just pass all zeroes.
     [m_filePromiseOwner.get() draggedImage:nil endedAt:NSZeroPoint operation:NSDragOperationNone];
