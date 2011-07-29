@@ -308,7 +308,7 @@ void BitmapImage::startAnimation(bool catchUpIfNecessary)
         return;
 
     // If we aren't already animating, set now as the animation start time.
-    const double time = currentTime();
+    const double time = monotonicallyIncreasingTime();
     if (!m_desiredFrameStartTime)
         m_desiredFrameStartTime = time;
 

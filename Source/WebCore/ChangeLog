@@ -1,3 +1,17 @@
+2011-07-28  Devdatta Deshpande  <pwjd73@motorola.com>
+
+        Fixed gif animation dependency on system time
+        https://bugs.webkit.org/show_bug.cgi?id=64996
+
+        Reviewed by James Robinson.
+
+        Test: Load WebCore/manual-tests/animated-gif-looping.html
+        Change system time to a time in past
+
+        * platform/graphics/BitmapImage.cpp:
+        (WebCore::BitmapImage::startAnimation): Bitmap animation is now based
+        on monotonicallyIncreasingTime instead of currentTime
+
 2011-07-28  Luke Zarko  <lukezarko@gmail.com>
 
         V8 should correctly serialize Boolean, Number and String objects.
