@@ -1,3 +1,9 @@
+2011-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed typo fix.
+
+        * platform/qt/Skipped:
+
 2011-07-29  Stephen White  <senorblanco@chromium.org>
 
         [Chromium] Marking some media tests as passing and removing from
