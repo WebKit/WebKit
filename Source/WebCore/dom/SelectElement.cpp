@@ -389,7 +389,7 @@ void SelectElement::setSelectedIndex(SelectElementData& data, Element* element, 
         RenderObject* renderer = element->renderer();
         if (renderer) {
             if (data.usesMenuList())
-                toRenderMenuList(renderer)->didSetSelectedIndex();
+                toRenderMenuList(renderer)->didSetSelectedIndex(listIndex);
             else if (renderer->isListBox())
                 toRenderListBox(renderer)->selectionChanged();
         }
