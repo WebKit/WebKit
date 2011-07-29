@@ -26,6 +26,7 @@
 #define Element_h
 
 #include "Document.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FragmentScriptingPermission.h"
 #include "NamedNodeMap.h"
 #include "ScrollTypes.h"
@@ -236,7 +237,7 @@ public:
     void removeShadowRoot();
 
     virtual const AtomicString& shadowPseudoId() const;
-    void setShadowPseudoId(const AtomicString&, ExceptionCode&);
+    void setShadowPseudoId(const AtomicString&, ExceptionCode& = ASSERT_NO_EXCEPTION);
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 

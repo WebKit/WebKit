@@ -1,3 +1,25 @@
+2011-07-29  Kent Tamura  <tkent@chromium.org>
+
+        Make the ExceptionCode argument of Element::setShadowPseudoId() ASSERT_NO_EXCEPTION by default
+        https://bugs.webkit.org/show_bug.cgi?id=65363
+
+        Reviewed by Hajime Morita.
+
+        No new tests. Cleanup-only.
+
+        * dom/Element.h: Make the ExceptionCode argument ASSERT_NO_EXCEPTION by default.
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree): Remove the ExceptionCode argument and ASSERT(!ec).
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updatePlaceholderText): ditto.
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::createShadowSubtree): ditto.
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::createShadowSubtree): ditto.
+        (WebCore::TextFieldInputType::updatePlaceholderText): ditto.
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::buildBubbleTree): ditto.
+
 2011-07-28  Luke Macpherson   <macpherson@chromium.org>
 
         Remove remaining uses of CSSPrimitiveValue::computeLengthIntForLength()

@@ -232,11 +232,10 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 
 void RangeInputType::createShadowSubtree()
 {
-    ExceptionCode ec = 0;
     Document* document = element()->document();
     RefPtr<HTMLDivElement> track = HTMLDivElement::create(document);
-    track->setShadowPseudoId("-webkit-slider-runnable-track", ec);
-    ASSERT(!ec);
+    track->setShadowPseudoId("-webkit-slider-runnable-track");
+    ExceptionCode ec = 0;
     track->appendChild(SliderThumbElement::create(document), ec);
     RefPtr<HTMLElement> container = SliderContainerElement::create(document);
     container->appendChild(track.release(), ec);

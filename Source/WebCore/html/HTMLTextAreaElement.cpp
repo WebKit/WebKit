@@ -476,8 +476,7 @@ void HTMLTextAreaElement::updatePlaceholderText()
     }
     if (!m_placeholder) {
         m_placeholder = HTMLDivElement::create(document());
-        m_placeholder->setShadowPseudoId("-webkit-input-placeholder", ec);
-        ASSERT(!ec);
+        m_placeholder->setShadowPseudoId("-webkit-input-placeholder");
         shadowRoot()->insertBefore(m_placeholder, shadowRoot()->firstChild()->nextSibling(), ec);
         ASSERT(!ec);
     }

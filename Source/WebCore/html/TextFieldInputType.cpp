@@ -171,7 +171,7 @@ void TextFieldInputType::createShadowSubtree()
 
     ShadowRoot* shadowRoot = element()->ensureShadowRoot();
     m_container = HTMLDivElement::create(document);
-    m_container->setShadowPseudoId("-webkit-textfield-decoration-container", ec);
+    m_container->setShadowPseudoId("-webkit-textfield-decoration-container");
     shadowRoot->appendChild(m_container, ec);
 
     m_innerBlock = TextControlInnerElement::create(document);
@@ -350,8 +350,7 @@ void TextFieldInputType::updatePlaceholderText()
     }
     if (!m_placeholder) {
         m_placeholder = HTMLDivElement::create(element()->document());
-        m_placeholder->setShadowPseudoId("-webkit-input-placeholder", ec);
-        ASSERT(!ec);
+        m_placeholder->setShadowPseudoId("-webkit-input-placeholder");
         element()->shadowRoot()->insertBefore(m_placeholder, m_container ? m_container->nextSibling() : innerTextElement()->nextSibling(), ec);
         ASSERT(!ec);
     }
