@@ -1146,7 +1146,7 @@ bool FrameView::useSlowRepaints() const
 #if PLATFORM(CHROMIUM)
     // The chromium compositor does not support scrolling a non-composited frame within a composited page through
     // the fast scrolling path, so force slow scrolling in that case.
-    if (!isEnclosedInCompositingLayer() && m_frame->page() && m_frame->page()->mainFrame()->view()->hasCompositedContent())
+    if (m_frame->ownerElement() && !hasCompositedContent() && m_frame->page() && m_frame->page()->mainFrame()->view()->hasCompositedContent())
         return true;
 #endif
 

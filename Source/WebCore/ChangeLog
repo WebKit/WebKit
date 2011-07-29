@@ -1,3 +1,19 @@
+2011-07-29  Adrienne Walker  <enne@google.com>
+
+        [chromium] Only force slow scrolling for iframes under --force-compositing-mode
+        https://bugs.webkit.org/show_bug.cgi?id=65394
+
+        Reviewed by James Robinson.
+
+        The previous code introduced by r91591 made composited frames as well
+        as non-composited subframes go down the slow scrolling path.  Adjust
+        the check to use ownerElement to test for subframe and use
+        hasCompositedContent() which is a more correct test for compositing
+        than isEnclosedInCompositingLayer.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::useSlowRepaints):
+
 2011-07-29  Emil A Eklund  <eae@chromium.org>
 
         -webkit-marquee with anonymous node causes segmentation fault in Node::document
