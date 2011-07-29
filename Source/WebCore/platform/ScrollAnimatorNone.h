@@ -59,13 +59,14 @@ public:
 
     struct Parameters {
         Parameters();
-        Parameters(bool, double, Curve, double, Curve, double);
+        Parameters(bool isEnabled, double animationTime, double repeatMinimumSustainTime, Curve attackCurve, double attackTime, Curve releaseCurve, double releaseTime);
 
         // Note that the times can be overspecified such that releaseTime or releaseTime and attackTime are greater
         // than animationTime. animationTime takes priority over releaseTime, capping it. attackTime is capped at
         // whatever time remains, or zero if none.
         bool m_isEnabled;
         double m_animationTime;
+        double m_repeatMinimumSustainTime;
 
         Curve m_attackCurve;
         double m_attackTime;

@@ -44,6 +44,8 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/PassOwnPtr.h>
 
+using namespace std;
+
 namespace WebCore {
 
 static double kTickTime = .0166;
@@ -63,9 +65,10 @@ ScrollAnimatorNone::Parameters::Parameters()
 {
 }
 
-ScrollAnimatorNone::Parameters::Parameters(bool isEnabled, double animationTime, Curve attackCurve, double attackTime, Curve releaseCurve, double releaseTime)
+ScrollAnimatorNone::Parameters::Parameters(bool isEnabled, double animationTime, double repeatMinimumSustainTime, Curve attackCurve, double attackTime, Curve releaseCurve, double releaseTime)
     : m_isEnabled(isEnabled)
     , m_animationTime(animationTime)
+    , m_repeatMinimumSustainTime(repeatMinimumSustainTime)
     , m_attackCurve(attackCurve)
     , m_attackTime(attackTime)
     , m_releaseCurve(releaseCurve)
@@ -159,7 +162,8 @@ void ScrollAnimatorNone::PerAxisData::reset()
 
 bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(ScrollbarOrientation orientation, float step, float multiplier, float scrollableSize, double currentTime, Parameters* parameters)
 {
-    m_animationTime = parameters->m_animationTime;
+    if (parameters->m_animationTime > m_animationTime)
+        m_animationTime = parameters->m_animationTime;
     m_attackTime = parameters->m_attackTime;
     m_releaseTime = parameters->m_releaseTime;
     m_attackCurve = parameters->m_attackCurve;
@@ -174,12 +178,12 @@ bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(ScrollbarOrientat
 
     m_orientation = orientation;
 
-    if (!m_desiredPosition)
+    if (!m_startTime)
         m_desiredPosition = *m_currentPosition;
     float newPosition = m_desiredPosition + (step * multiplier);
 
     if (newPosition < 0 || newPosition > scrollableSize)
-        newPosition = std::max(std::min(newPosition, scrollableSize), 0.0f);
+        newPosition = max(min(newPosition, scrollableSize), 0.0f);
 
     if (newPosition == m_desiredPosition)
         return false;
@@ -199,14 +203,16 @@ bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(ScrollbarOrientat
     double attackAreaLeft = 0;
 
     double deltaTime = m_lastAnimationTime - m_startTime;
+    double attackTimeLeft = max(0., m_attackTime - deltaTime);
     double timeLeft = m_animationTime - deltaTime;
-    if (timeLeft < m_releaseTime) {
-        m_animationTime = deltaTime + m_releaseTime;
-        timeLeft = m_releaseTime;
+    double minTimeLeft = m_releaseTime + min(parameters->m_repeatMinimumSustainTime, m_animationTime - m_releaseTime - attackTimeLeft);
+    if (timeLeft < minTimeLeft) {
+        m_animationTime = deltaTime + minTimeLeft;
+        timeLeft = minTimeLeft;
     }
-    double releaseTimeLeft = std::min(timeLeft, m_releaseTime);
-    double attackTimeLeft = std::max(0., m_attackTime - deltaTime);
-    double sustainTimeLeft = std::max(0., timeLeft - releaseTimeLeft - attackTimeLeft);
+
+    double releaseTimeLeft = min(timeLeft, m_releaseTime);
+    double sustainTimeLeft = max(0., timeLeft - releaseTimeLeft - attackTimeLeft);
 
     if (attackTimeLeft) {
         double attackSpot = deltaTime / m_attackTime;
@@ -289,13 +295,13 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
     case ScrollByDocument:
         break;
     case ScrollByLine:
-        parameters = Parameters(true, 10 * kTickTime, Quadratic, 3 * kTickTime, Quadratic, 3 * kTickTime);
+        parameters = Parameters(true, 10 * kTickTime, 7 * kTickTime, Quadratic, 3 * kTickTime, Quadratic, 3 * kTickTime);
         break;
     case ScrollByPage:
-        parameters = Parameters(true, 15 * kTickTime, Quadratic, 5 * kTickTime, Quadratic, 5 * kTickTime);
+        parameters = Parameters(true, 15 * kTickTime, 10 * kTickTime, Quadratic, 5 * kTickTime, Quadratic, 5 * kTickTime);
         break;
     case ScrollByPixel:
-        parameters = Parameters(true, 11 * kTickTime, Quadratic, 3 * kTickTime, Quadratic, 3 * kTickTime);
+        parameters = Parameters(true, 11 * kTickTime, 2 * kTickTime, Quadratic, 3 * kTickTime, Quadratic, 3 * kTickTime);
         break;
     default:
         break;

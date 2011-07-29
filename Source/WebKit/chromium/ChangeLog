@@ -1,3 +1,23 @@
+2011-07-29  Scott Byer  <scottbyer@chromium.org>
+
+        Scroll animation refinements.
+        https://bugs.webkit.org/show_bug.cgi?id=65154
+
+        Reviewed by Adam Barth.
+
+        Fix scroll animation bugs when scrolling to the ends of a document. Smooth over slow event repeat rates
+        better. Fix tests to allow for unit testing of scrolling up and not just down.
+
+        Additional unit tests added to ScrollAnimatorNoneTest:
+        ScrollQuadraticSmoothed, ScrollLotsQuadraticSmoothed, ScrollDownToBumper, ScrollUpToBumper
+        
+        * tests/ScrollAnimatorNoneTest.cpp:
+        (ScrollAnimatorNoneTest::reset):
+        (ScrollAnimatorNoneTest::updateDataFromParameters):
+        (ScrollAnimatorNoneTest::animateScroll):
+        (ScrollAnimatorNoneTest::checkDesiredPosition):
+        (ScrollAnimatorNoneTest::checkSoftLanding):
+
 2011-07-28  Naoki Takano  <honten@chromium.org>
 
         [Chromium] Add form() function to access parent WebFormElement from WebFormControlElement.

@@ -1,3 +1,22 @@
+2011-07-29  Scott Byer  <scottbyer@chromium.org>
+
+        Scroll animation refinements.
+        https://bugs.webkit.org/show_bug.cgi?id=65154
+
+        Reviewed by Adam Barth.
+
+        Fix scroll animation bugs when scrolling to the ends of a document. Smooth over slow event repeat rates
+        better. Fix tests to allow for unit testing of scrolling up and not just down.
+
+        Additional unit tests added to ScrollAnimatorNoneTest:
+        ScrollQuadraticSmoothed, ScrollLotsQuadraticSmoothed, ScrollDownToBumper, ScrollUpToBumper
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::Parameters::Parameters):
+        (WebCore::ScrollAnimatorNone::PerAxisData::updateDataFromParameters):
+        (WebCore::ScrollAnimatorNone::scroll):
+        * platform/ScrollAnimatorNone.h:
+
 2011-07-29  Samuel White  <samuel_white@apple.com>
 
         Add the ability to search the AccessibilityObject cache
