@@ -859,7 +859,7 @@ void ScrollAnimatorMac::handleGestureEvent(const PlatformGestureEvent& gestureEv
 {
     if (gestureEvent.type() == PlatformGestureEvent::ScrollBeginType)
         beginScrollGesture();
-    else
+    else if (gestureEvent.type() == PlatformGestureEvent::ScrollEndType)
         endScrollGesture();
 }
 

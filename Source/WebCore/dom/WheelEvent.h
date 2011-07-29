@@ -32,6 +32,8 @@ namespace WebCore {
     // extension: mouse wheel event
     class WheelEvent : public MouseRelatedEvent {
     public:
+        enum { tickMultiplier = 120 };
+
         enum Granularity { Pixel, Line, Page };
 
         static PassRefPtr<WheelEvent> create()

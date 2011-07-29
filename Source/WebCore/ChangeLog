@@ -1,3 +1,74 @@
+2011-07-29  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Layering violations in gesture recognizer
+        https://bugs.webkit.org/show_bug.cgi?id=65044
+
+        Reviewed by Adam Barth.
+
+        Divided the gesture recognizer up to correct a layering
+        violation by moving gesture implementation from it to
+        EventHandler::handleGestureEvent so that the gesture recognizer
+        could simply be an engine for generating gesture events from
+        touch events.
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        * dom/WheelEvent.h:
+        Added symbolic contstant for tick multiplier.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        Removed construction of gesture recognizer.
+        (WebCore::EventHandler::handleGestureEvent):
+        Extended for new gesture events added in this patch.
+        (WebCore::EventHandler::handleTouchEvent):
+        Removed call into gesture recognizer.
+        * page/EventHandler.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        Removed code to reset gesture recognizer.
+        * platform/PlatformGestureEvent.h:
+        (WebCore::PlatformGestureEvent::PlatformGestureEvent):
+        (WebCore::PlatformGestureEvent::deltaX):
+        (WebCore::PlatformGestureEvent::deltaY):
+        (WebCore::PlatformGestureEvent::shiftKey):
+        (WebCore::PlatformGestureEvent::ctrlKey):
+        (WebCore::PlatformGestureEvent::altKey):
+        (WebCore::PlatformGestureEvent::metaKey):
+        Added additional gesture types and parameters.
+        * platform/PlatformGestureRecognizer.h:
+        * platform/ScrollAnimatorWin.cpp:
+        (WebCore::ScrollAnimatorWin::handleGestureEvent):
+        Added missing method needed to fix the build on windows.
+        * platform/chromium/FramelessScrollView.h:
+        Added support for displatching gesture and touch events.
+        * platform/chromium/GestureRecognizerChromium.cpp:
+        (WebCore::InnerGestureRecognizer::InnerGestureRecognizer):
+        (WebCore::InnerGestureRecognizer::reset):
+        (WebCore::InnerGestureRecognizer::constructClickGestureEvent):
+        (WebCore::InnerGestureRecognizer::processTouchEventForGestures):
+        Removed all depedencies on EventHandler. Instead, create gesture
+        events from touch event stream.
+        (WebCore::InnerGestureRecognizer::constructScrollGesture):
+        (WebCore::touchDown):
+        (WebCore::noGesture):
+        (WebCore::click):
+        (WebCore::isClickOrScroll):
+        (WebCore::inScroll):
+        (WebCore::GestureRecognizerChromium::processTouchEventForGestures):
+        (WebCore::GestureRecognizerChromium::reset):
+        * platform/chromium/GestureRecognizerChromium.h:
+        * platform/chromium/PopupMenuChromium.cpp:
+        Added support to handle touch events and gesture events.
+        (WebCore::PopupContainer::handleTouchEvent):
+        (WebCore::PopupContainer::handleGestureEvent):
+        (WebCore::PopupListBox::handleTouchEvent):
+        (WebCore::PopupListBox::handleGestureEvent):
+        * platform/chromium/PopupMenuChromium.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleGestureEvent):
+        Ignores the newly added gesture event types.
+
 2011-07-29  Eric Carlson  <eric.carlson@apple.com>
 
         Load delegate not consulted before loading some poster images

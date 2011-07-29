@@ -52,6 +52,11 @@
 
 #include <skia/ext/platform_canvas.h>
 
+#if ENABLE(GESTURE_RECOGNIZER)
+#include "PlatformGestureEvent.h"
+#include "PlatformGestureRecognizer.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -69,6 +74,9 @@ WebPopupMenu* WebPopupMenu::create(WebWidgetClient* client)
 WebPopupMenuImpl::WebPopupMenuImpl(WebWidgetClient* client)
     : m_client(client)
     , m_widget(0)
+#if ENABLE(GESTURE_RECOGNIZER)
+    , m_gestureRecognizer(WebCore::PlatformGestureRecognizer::create())
+#endif
 {
     // set to impossible point so we always get the first mouse pos
     m_lastMousePosition = WebPoint(-1, -1);
@@ -124,6 +132,21 @@ void WebPopupMenuImpl::MouseWheel(const WebMouseWheelEvent& event)
 {
     m_widget->handleWheelEvent(PlatformWheelEventBuilder(m_widget, event));
 }
+
+#if ENABLE(TOUCH_EVENTS)
+bool WebPopupMenuImpl::TouchEvent(const WebTouchEvent& event)
+{
+
+    PlatformTouchEventBuilder touchEventBuilder(m_widget, event);
+    bool defaultPrevented(m_widget->handleTouchEvent(touchEventBuilder));
+#if ENABLE(GESTURE_RECOGNIZER)
+    OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureEvents(m_gestureRecognizer->processTouchEventForGestures(touchEventBuilder, defaultPrevented));
+    for (unsigned int  i = 0; i < gestureEvents->size(); i++)
+        m_widget->handleGestureEvent((*gestureEvents)[i]);
+#endif
+    return defaultPrevented;
+}
+#endif
 
 bool WebPopupMenuImpl::KeyEvent(const WebKeyboardEvent& event)
 {
@@ -237,8 +260,16 @@ bool WebPopupMenuImpl::handleInputEvent(const WebInputEvent& inputEvent)
     case WebInputEvent::Char:
         return KeyEvent(*static_cast<const WebKeyboardEvent*>(&inputEvent));
 
-    default:
-        break;
+    case WebInputEvent::TouchStart:
+    case WebInputEvent::TouchMove:
+    case WebInputEvent::TouchEnd:
+    case WebInputEvent::TouchCancel:
+        return TouchEvent(*static_cast<const WebTouchEvent*>(&inputEvent));
+
+    case WebInputEvent::Undefined:
+    case WebInputEvent::MouseEnter:
+    case WebInputEvent::ContextMenu:
+        return false;
     }
     return false;
 }

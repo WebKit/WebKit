@@ -1,3 +1,33 @@
+2011-07-29  Robert Kroeger  <rjkroege@chromium.org>
+
+        [chromium] Layering violations in gesture recognizer
+        https://bugs.webkit.org/show_bug.cgi?id=65044
+
+        Reviewed by Adam Barth.
+
+        Moved gesture recognition higher up the event delivery code
+        path so that recognition of gestures is completely separated
+        from gesture handling.
+
+        * features.gypi:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFrameView):
+        Added code to reset the gesture recognizer to preserve parallel
+        layout test execution.
+        * src/WebPopupMenuImpl.cpp:
+        Support dispatching touch and gesture events to Popups.
+        (WebKit::WebPopupMenuImpl::WebPopupMenuImpl):
+        (WebKit::WebPopupMenuImpl::TouchEvent):
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        Added gesture recognition creation.
+        (WebKit::WebViewImpl::touchEvent):
+        Added recognition of gestures and dispatch of gesture events.
+        (WebKit::WebViewImpl::resetGestureRecognizer):
+        * src/WebViewImpl.h:
+
 2011-07-29  Scott Byer  <scottbyer@chromium.org>
 
         Scroll animation refinements.

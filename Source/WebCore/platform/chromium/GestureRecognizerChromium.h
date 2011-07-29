@@ -39,6 +39,8 @@
 
 namespace WebCore {
 
+class PlatformGestureEvent;
+
 class InnerGestureRecognizer {
 public:
     enum State {
@@ -47,16 +49,17 @@ public:
         Scroll
     };
 
-    typedef bool (*GestureTransitionFunction)(InnerGestureRecognizer*, const PlatformTouchPoint&);
+    typedef Vector<PlatformGestureEvent>* Gestures;
+    typedef bool (*GestureTransitionFunction)(InnerGestureRecognizer*, const PlatformTouchPoint&, Gestures);
 
     ~InnerGestureRecognizer();
 
-    void dispatchSyntheticClick(const PlatformTouchPoint&);
+    void appendClickGestureEvent(const PlatformTouchPoint&, Gestures);
     virtual void reset();
     bool isInClickTimeWindow();
     bool isInsideManhattanSquare(const PlatformTouchPoint&);
-    virtual bool processTouchEventForGesture(const PlatformTouchEvent&, EventHandler*, bool handled);
-    void scrollViaTouchMotion(const PlatformTouchPoint&);
+    virtual PlatformGestureRecognizer::PassGestures  processTouchEventForGestures(const PlatformTouchEvent&, bool defaultPrevented);
+    void appendScrollGesture(const PlatformTouchPoint&, Gestures);
     void setState(State value) { m_state = value; }
     State state() { return m_state; }
 protected:
@@ -72,7 +75,6 @@ protected:
     double m_firstTouchTime;
     State m_state;
     double m_lastTouchTime;
-    EventHandler* m_eventHandler;
 
     bool m_ctrlKey;
     bool m_altKey;
@@ -86,15 +88,9 @@ public:
     GestureRecognizerChromium();
     virtual ~GestureRecognizerChromium();
 
-    virtual void reset()
-    {
-        m_innerGestureRecognizer.reset();
-    };
+    virtual void reset();
  
-    virtual bool processTouchEventForGesture(const PlatformTouchEvent& touchEvent, EventHandler* eventHandler, bool handled)
-    {
-        return m_innerGestureRecognizer.processTouchEventForGesture(touchEvent, eventHandler, handled);
-    }
+    virtual PlatformGestureRecognizer::PassGestures  processTouchEventForGestures(const PlatformTouchEvent&, bool defaultPrevented);
 private:
     InnerGestureRecognizer m_innerGestureRecognizer;
 };

@@ -100,10 +100,6 @@
 #include "TouchList.h"
 #endif
 
-#if ENABLE(GESTURE_RECOGNIZER)
-#include "PlatformGestureRecognizer.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -209,9 +205,6 @@ EventHandler::EventHandler(Frame* frame)
 #endif
 #if ENABLE(TOUCH_EVENTS)
     , m_touchPressed(false)
-#endif
-#if ENABLE(GESTURE_RECOGNIZER)
-    , m_gestureRecognizer(PlatformGestureRecognizer::create())
 #endif
 {
 }
@@ -2227,11 +2220,33 @@ bool EventHandler::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
     // that if a frame gets a gesture begin gesture, it gets the corresponding
     // end gesture as well.
 
-    FrameView* view = m_frame->view();
-    if (!view)
-        return false;
+    switch (gestureEvent.type()) {
+    case PlatformGestureEvent::TapType: {
+        // FIXME: Refactor this code to not hit test multiple times once hit testing has been corrected as suggested above.
+        PlatformMouseEvent fakeMouseMove(gestureEvent.position(), gestureEvent.globalPosition(), NoButton, MouseEventMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+        PlatformMouseEvent fakeMouseDown(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, MouseEventPressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+        PlatformMouseEvent fakeMouseUp(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, MouseEventReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+        mouseMoved(fakeMouseMove);
+        handleMousePressEvent(fakeMouseDown);
+        handleMouseReleaseEvent(fakeMouseUp);
+        return true;
+    }
+    case PlatformGestureEvent::ScrollUpdateType: {
+        const float tickDivisor = (float)WheelEvent::tickMultiplier;
+        // FIXME: Replace this interim implementation once the above fixme has been addressed.
+        PlatformWheelEvent syntheticWheelEvent(gestureEvent.position(), gestureEvent.globalPosition(), gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / tickDivisor, gestureEvent.deltaY() / tickDivisor, ScrollByPixelWheelEvent, /* isAccepted */ false, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
+        handleWheelEvent(syntheticWheelEvent);
+        return true;
+    }
+    case PlatformGestureEvent::ScrollBeginType:
+    case PlatformGestureEvent::ScrollEndType:
+        FrameView* view = m_frame->view();
+        if (!view)
+            return false;
 
-    view->handleGestureEvent(gestureEvent);
+        view->handleGestureEvent(gestureEvent);
+        return true;
+    }
     return true;
 }
 #endif
@@ -3286,21 +3301,9 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         }
     }
 
-#if ENABLE(GESTURE_RECOGNIZER)
-    if (m_gestureRecognizer)
-        m_gestureRecognizer->processTouchEventForGesture(event, this, defaultPrevented);
-#endif
-
     return defaultPrevented;
 }
 
-#if ENABLE(GESTURE_RECOGNIZER)
-void EventHandler::resetGestureRecognizer()
-{
-    if (m_gestureRecognizer)
-        m_gestureRecognizer->reset();
-}
-#endif
 
 
 #endif

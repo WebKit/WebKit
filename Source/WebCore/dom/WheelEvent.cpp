@@ -43,7 +43,7 @@ WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
     : MouseRelatedEvent(eventNames().mousewheelEvent,
                         true, true, view, 0, screenLocation, pageLocation,
                         ctrlKey, altKey, shiftKey, metaKey)
-    , m_wheelDelta(IntPoint(static_cast<int>(wheelTicks.x() * 120), static_cast<int>(wheelTicks.y() * 120)))
+    , m_wheelDelta(IntPoint(static_cast<int>(wheelTicks.x() * tickMultiplier), static_cast<int>(wheelTicks.y() * tickMultiplier)))
     , m_rawDelta(roundedIntPoint(rawDelta))
     , m_granularity(granularity)
 {
@@ -65,7 +65,7 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<Abstrac
     m_metaKey = metaKey;
     
     // Normalize to the Windows 120 multiple
-    m_wheelDelta = IntPoint(rawDeltaX * 120, rawDeltaY * 120);
+    m_wheelDelta = IntPoint(rawDeltaX * tickMultiplier, rawDeltaY * tickMultiplier);
     
     m_rawDelta = IntPoint(rawDeltaX, rawDeltaY);
     m_granularity = Pixel;
