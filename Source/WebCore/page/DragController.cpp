@@ -158,6 +158,8 @@ void DragController::dragEnded()
     m_dragInitiator = 0;
     m_didInitiateDrag = false;
     m_page->dragCaretController()->clear();
+    
+    m_client->dragEnded();
 }
 
 DragOperation DragController::dragEntered(DragData* dragData)
