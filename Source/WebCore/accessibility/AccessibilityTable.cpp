@@ -446,7 +446,18 @@ unsigned AccessibilityTable::rowCount()
     
     return m_rows.size();
 }
+
+int AccessibilityTable::tableLevel() const
+{
+    int level = 0;
+    for (AccessibilityObject* obj = parentObject(); obj; obj = obj->parentObject()) {
+        if (obj->isAccessibilityTable())
+            ++level;
+    }
     
+    return level;
+}
+
 AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column, unsigned row)
 {
     if (!m_renderer || !m_renderer->isTable())

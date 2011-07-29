@@ -1,3 +1,54 @@
+2011-07-29  Samuel White  <samuel_white@apple.com>
+
+        Add the ability to search the AccessibilityObject cache
+        https://bugs.webkit.org/show_bug.cgi?id=64994
+        
+        To support searching the AccessibilityObject cache, we first need to
+        implement a minimal set of functions that will allow AccessibilityObjects
+        to be identified when searching using common search criteria. The additional
+        functions below complement the existing identification functionality already
+        available and together provide a basic working set to build search on top of.
+        Additionally, the blockquoteLevel function has been moved into the AccessibilityObject
+        class to make it available to all platforms.
+
+        Reviewed by Chris Fleizach.
+
+        New tests will be included in the following patch that will also implement
+        basic search functionality.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isBlockquote):
+        (WebCore::AccessibilityObject::isLandmark):
+        (WebCore::AccessibilityObject::hasMisspelling):
+        (WebCore::AccessibilityObject::blockquoteLevel):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::isUnvisited):
+        (WebCore::AccessibilityObject::hasBoldFont):
+        (WebCore::AccessibilityObject::hasItalicFont):
+        (WebCore::AccessibilityObject::hasPlainText):
+        (WebCore::AccessibilityObject::hasSameFont):
+        (WebCore::AccessibilityObject::hasSameFontColor):
+        (WebCore::AccessibilityObject::hasSameStyle):
+        (WebCore::AccessibilityObject::hasStaticText):
+        (WebCore::AccessibilityObject::hasUnderline):
+        (WebCore::AccessibilityObject::tableLevel):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isUnvisited):
+        (WebCore::AccessibilityRenderObject::hasBoldFont):
+        (WebCore::AccessibilityRenderObject::hasItalicFont):
+        (WebCore::AccessibilityRenderObject::hasPlainText):
+        (WebCore::AccessibilityRenderObject::hasSameFont):
+        (WebCore::AccessibilityRenderObject::hasSameFontColor):
+        (WebCore::AccessibilityRenderObject::hasSameStyle):
+        (WebCore::AccessibilityRenderObject::hasUnderline):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::tableLevel):
+        * accessibility/AccessibilityTable.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (AXAttributeStringSetBlockquoteLevel):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2011-07-29  Zeng Huiqing  <huiqing.zeng@intel.com>
 
         Avoid calling animation timer updates while the page is loading

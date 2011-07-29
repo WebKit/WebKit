@@ -68,6 +68,7 @@ public:
     virtual bool supportsSelectedRows() { return false; }
     unsigned columnCount();
     unsigned rowCount();
+    virtual int tableLevel() const;
     
     virtual String title() const;
     

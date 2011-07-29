@@ -49,6 +49,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
 #include "visible_units.h"
@@ -83,6 +84,76 @@ void AccessibilityObject::detach()
 #if HAVE(ACCESSIBILITY)
     setWrapper(0);
 #endif    
+}
+
+bool AccessibilityObject::isBlockquote() const
+{
+    return node() && node()->hasTagName(blockquoteTag);
+}
+
+bool AccessibilityObject::isLandmark() const
+{
+    AccessibilityRole role = roleValue();
+    
+    return role == LandmarkApplicationRole
+        || role == LandmarkBannerRole
+        || role == LandmarkComplementaryRole
+        || role == LandmarkContentInfoRole
+        || role == LandmarkMainRole
+        || role == LandmarkNavigationRole
+        || role == LandmarkSearchRole;
+}
+
+bool AccessibilityObject::hasMisspelling() const
+{
+    if (!node())
+        return false;
+    
+    Document* document = node()->document();
+    if (!document)
+        return false;
+    
+    Frame* frame = document->frame();
+    if (!frame)
+        return false;
+    
+    Editor* editor = frame->editor();
+    if (!editor)
+        return false;
+    
+    TextCheckerClient* textChecker = editor->textChecker();
+    if (!textChecker)
+        return false;
+    
+    const UChar* chars = stringValue().characters();
+    int charsLength = stringValue().length();
+    bool isMisspelled = false;
+    
+#if USE(UNIFIED_TEXT_CHECKING)
+    Vector<TextCheckingResult> results;
+    textChecker->checkTextOfParagraph(chars, charsLength, TextCheckingTypeSpelling, results);
+    if (!results.isEmpty())
+        isMisspelled = true;
+#else
+    int misspellingLength = 0;
+    int misspellingLocation = -1;
+    textChecker->checkSpellingOfString(chars, charsLength, &misspellingLocation, &misspellingLength);
+    if (misspellingLength || misspellingLocation != -1)
+        isMisspelled = true;
+#endif
+    
+    return isMisspelled;
+}
+
+int AccessibilityObject::blockquoteLevel() const
+{
+    int level = 0;
+    for (Node* elementNode = node(); elementNode; elementNode = elementNode->parentNode()) {
+        if (elementNode->hasTagName(blockquoteTag))
+            ++level;
+    }
+    
+    return level;
 }
 
 AccessibilityObject* AccessibilityObject::parentObjectUnignored() const

@@ -451,23 +451,10 @@ static void AXAttributeStringSetStyle(NSMutableAttributedString* attrString, Ren
     }
 }
 
-static int blockquoteLevel(RenderObject* renderer)
-{
-    if (!renderer)
-        return 0;
-    
-    int result = 0;
-    for (Node* node = renderer->node(); node; node = node->parentNode()) {
-        if (node->hasTagName(blockquoteTag))
-            result += 1;
-    }
-    
-    return result;
-}
-
 static void AXAttributeStringSetBlockquoteLevel(NSMutableAttributedString* attrString, RenderObject* renderer, NSRange range)
 {
-    int quoteLevel = blockquoteLevel(renderer);
+    AccessibilityObject* obj = renderer->document()->axObjectCache()->getOrCreate(renderer);
+    int quoteLevel = obj->blockquoteLevel();
     
     if (quoteLevel)
         [attrString addAttribute:NSAccessibilityBlockQuoteLevelAttribute value:[NSNumber numberWithInt:quoteLevel] range:range];
@@ -1986,7 +1973,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
             return [self textMarkerForVisiblePosition:endOfDocument(renderer->document())];
 
         if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
-            return [NSNumber numberWithInt:blockquoteLevel(renderer)];
+            return [NSNumber numberWithInt:m_object->blockquoteLevel()];
     } else {
         if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute]) {
             AccessibilityObject* parent = m_object->parentObjectUnignored();

@@ -2081,6 +2081,12 @@ KURL AccessibilityRenderObject::url() const
     return KURL();
 }
 
+bool AccessibilityRenderObject::isUnvisited() const
+{
+    // FIXME: Is it a privacy violation to expose unvisited information to accessibility APIs?
+    return m_renderer->style()->isLink() && m_renderer->style()->insideLink() == InsideUnvisitedLink;
+}
+
 bool AccessibilityRenderObject::isVisited() const
 {
     // FIXME: Is it a privacy violation to expose visited information to accessibility APIs?
@@ -3663,6 +3669,66 @@ bool AccessibilityRenderObject::isLinked() const
         return false;
 
     return !static_cast<HTMLAnchorElement*>(anchor)->href().isEmpty();
+}
+
+bool AccessibilityRenderObject::hasBoldFont() const
+{
+    if (!m_renderer)
+        return false;
+    
+    return m_renderer->style()->fontDescription().weight() >= FontWeightBold;
+}
+
+bool AccessibilityRenderObject::hasItalicFont() const
+{
+    if (!m_renderer)
+        return false;
+    
+    return m_renderer->style()->fontDescription().italic() == FontItalicOn;
+}
+
+bool AccessibilityRenderObject::hasPlainText() const
+{
+    if (!m_renderer)
+        return false;
+    
+    RenderStyle* style = m_renderer->style();
+    
+    return style->fontDescription().weight() == FontWeightNormal
+        && style->fontDescription().italic() == FontItalicOff
+        && style->textDecorationsInEffect() == TDNONE;
+}
+
+bool AccessibilityRenderObject::hasSameFont(RenderObject* renderer) const
+{
+    if (!m_renderer || !renderer)
+        return false;
+    
+    return m_renderer->style()->fontDescription().family() == renderer->style()->fontDescription().family();
+}
+
+bool AccessibilityRenderObject::hasSameFontColor(RenderObject* renderer) const
+{
+    if (!m_renderer || !renderer)
+        return false;
+    
+    return m_renderer->style()->visitedDependentColor(CSSPropertyColor) == renderer->style()->visitedDependentColor(CSSPropertyColor);
+}
+
+bool AccessibilityRenderObject::hasSameStyle(RenderObject* renderer) const
+{
+    if (!m_renderer || !renderer)
+        return false;
+    
+    return m_renderer->style() == renderer->style();
+}
+
+bool AccessibilityRenderObject::hasUnderline() const
+{
+    if (!m_renderer)
+        return false;
+    
+    return m_renderer->style()->textDecorationsInEffect() & UNDERLINE;
 }
 
 String AccessibilityRenderObject::nameForMSAA() const

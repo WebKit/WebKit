@@ -98,9 +98,17 @@ public:
     virtual bool isOffScreen() const;
     virtual bool isPressed() const;
     virtual bool isReadOnly() const;
+    virtual bool isUnvisited() const;
     virtual bool isVisited() const;        
     virtual bool isRequired() const;
     virtual bool isLinked() const;
+    virtual bool hasBoldFont() const;
+    virtual bool hasItalicFont() const;
+    virtual bool hasPlainText() const;
+    virtual bool hasSameFont(RenderObject*) const;
+    virtual bool hasSameFontColor(RenderObject*) const;
+    virtual bool hasSameStyle(RenderObject*) const;
+    virtual bool hasUnderline() const;
 
     virtual bool canSetFocusAttribute() const;
     virtual bool canSetTextRangeAttributes() const;

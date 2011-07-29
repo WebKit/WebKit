@@ -313,6 +313,8 @@ public:
     bool isListItem() const { return roleValue() == ListItemRole; }
     bool isCheckboxOrRadio() const { return isCheckbox() || isRadioButton(); }
     bool isScrollView() const { return roleValue() == ScrollAreaRole; }
+    bool isBlockquote() const;
+    bool isLandmark() const;
     
     virtual bool isChecked() const { return false; }
     virtual bool isEnabled() const { return false; }
@@ -325,6 +327,7 @@ public:
     virtual bool isOffScreen() const { return false; }
     virtual bool isPressed() const { return false; }
     virtual bool isReadOnly() const { return false; }
+    virtual bool isUnvisited() const { return false; }
     virtual bool isVisited() const { return false; }
     virtual bool isRequired() const { return false; }
     virtual bool isLinked() const { return false; }
@@ -332,6 +335,16 @@ public:
     virtual bool isVisible() const { return true; }
     virtual bool isCollapsed() const { return false; }
     virtual void setIsExpanded(bool) { }
+
+    virtual bool hasBoldFont() const { return false; }
+    virtual bool hasItalicFont() const { return false; }
+    bool hasMisspelling() const;
+    virtual bool hasPlainText() const { return false; }
+    virtual bool hasSameFont(RenderObject*) const { return false; }
+    virtual bool hasSameFontColor(RenderObject*) const { return false; }
+    virtual bool hasSameStyle(RenderObject*) const { return false; }
+    bool hasStaticText() const { return roleValue() == StaticTextRole; }
+    virtual bool hasUnderline() const { return false; }
 
     virtual bool canSetFocusAttribute() const { return false; }
     virtual bool canSetTextRangeAttributes() const { return false; }
@@ -348,7 +361,9 @@ public:
     virtual RenderObject* renderer() const { return 0; }
     virtual bool accessibilityIsIgnored() const  { return true; }
 
+    int blockquoteLevel() const;
     virtual int headingLevel() const { return 0; }
+    virtual int tableLevel() const { return 0; }
     virtual AccessibilityButtonState checkboxOrRadioValue() const;
     virtual String valueDescription() const { return String(); }
     virtual float valueForRange() const { return 0.0f; }
