@@ -1,3 +1,54 @@
+2011-07-27  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        TiledDrawingArea: Use tile sets to paint old content while rendering for a new scale.
+        https://bugs.webkit.org/show_bug.cgi?id=64728
+
+        Reviewed by Benjamin Poulain.
+
+        We currently delete all the tiles when setContentsScale is called. This shows a blank
+        background to the user while the web process render tiles for the new scale.
+
+        This patch extracts the ownership of individual tiles from TiledDrawingAreaProxy to
+        TiledDrawingAreaTileSet to allow the proxy to paint tiles with different scales.
+        We can then paint the tiles we already have on top of the tiles we are rendering for
+        the new scale until enough content is available.
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaTileSet::tiles):
+        (WebKit::TiledDrawingAreaTileSet::contentsScale):
+        (WebKit::TiledDrawingAreaTileSet::TiledDrawingAreaTileSet):
+        (WebKit::TiledDrawingAreaTileSet::mapToContents):
+        (WebKit::TiledDrawingAreaTileSet::mapFromContents):
+        (WebKit::TiledDrawingAreaProxy::TiledDrawingAreaProxy):
+        (WebKit::TiledDrawingAreaProxy::registerTile):
+        (WebKit::TiledDrawingAreaProxy::unregisterTile):
+        Added those two methods to allow the tiles to clean
+        themselves on destruction.
+        (WebKit::TiledDrawingAreaProxy::requestTileUpdate):
+        (WebKit::TiledDrawingAreaProxy::cancelTileUpdate):
+        (WebKit::TiledDrawingAreaProxy::invalidate):
+        (WebKit::TiledDrawingAreaProxy::updateTileBuffers):
+        (WebKit::TiledDrawingAreaProxy::tileBufferUpdateComplete):
+        (WebKit::TiledDrawingAreaProxy::paint):
+        (WebKit::TiledDrawingAreaProxy::coverageRatio):
+        (WebKit::TiledDrawingAreaProxy::setContentsScale):
+        (WebKit::TiledDrawingAreaProxy::createTiles):
+        (WebKit::TiledDrawingAreaProxy::resizeEdgeTiles):
+        (WebKit::TiledDrawingAreaProxy::dropTilesOutsideRect):
+        (WebKit::TiledDrawingAreaProxy::disableTileSetUpdates):
+        (WebKit::TiledDrawingAreaProxy::removeAllTiles):
+        (WebKit::TiledDrawingAreaProxy::contentsRect):
+        (WebKit::TiledDrawingAreaProxy::visibleRect):
+        (WebKit::TiledDrawingAreaProxy::hasPendingUpdates):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/TiledDrawingAreaTile.h:
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp:
+        (WebKit::TiledDrawingAreaTile::TiledDrawingAreaTile):
+        (WebKit::TiledDrawingAreaTile::~TiledDrawingAreaTile):
+        (WebKit::TiledDrawingAreaTile::incorporateUpdate):
+        (WebKit::TiledDrawingAreaTile::disableUpdates):
+        (WebKit::TiledDrawingAreaTile::updateBackBuffer):
+
 2011-07-28  Tim Horton  <timothy_horton@apple.com>
 
         REGRESSION (5.1): CJK input broken after clicking on Flash content

@@ -64,6 +64,7 @@ public:
     void resize(const WebCore::IntSize&);
 
     void incorporateUpdate(const UpdateInfo&, float scale);
+    void disableUpdates();
 
     int ID() const { return m_ID; }
 

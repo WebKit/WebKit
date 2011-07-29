@@ -45,9 +45,14 @@ class WKView;
 #endif
 #endif
 
+namespace WebCore {
+class GraphicsContext;
+}
+
 namespace WebKit {
 
 class ShareableBitmap;
+class TiledDrawingAreaTileSet;
 class WebPageProxy;
 
 #if PLATFORM(MAC)
@@ -68,15 +73,12 @@ public:
     virtual ~TiledDrawingAreaProxy();
 
     void setVisibleContentRect(const WebCore::IntRect&);
-    float contentsScale() const { return m_contentsScale; }
     void setContentsScale(float);
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachCompositingContext(uint32_t /* contextID */) { }
     virtual void detachCompositingContext() { }
 #endif
-
-    void paint(WebCore::GraphicsContext*, const WebCore::IntRect&);
 
     WebCore::IntSize tileSize() { return m_tileSize; }
     void setTileSize(const WebCore::IntSize&);
@@ -94,9 +96,6 @@ public:
 
     void tileBufferUpdateComplete();
 
-    WebCore::IntRect mapToContents(const WebCore::IntRect&) const;
-    WebCore::IntRect mapFromContents(const WebCore::IntRect&) const;
-
     bool hasPendingUpdates() const;
 
 private:
@@ -113,9 +112,10 @@ private:
     virtual void tileUpdated(int tileID, const UpdateInfo& updateInfo, float scale, unsigned pendingUpdateCount);
     virtual void allTileUpdatesProcessed();
 
+    void registerTile(int tileID, PassRefPtr<TiledDrawingAreaTile>);
+    void unregisterTile(int tileID);
     void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect);
-
-    PassRefPtr<TiledDrawingAreaTile> createTile(const TiledDrawingAreaTile::Coordinate&);
+    void cancelTileUpdate(int tileID);
 
     void startTileBufferUpdateTimer();
     void startTileCreationTimer();
@@ -129,10 +129,11 @@ private:
     bool resizeEdgeTiles();
     void dropTilesOutsideRect(const WebCore::IntRect&);
 
-    PassRefPtr<TiledDrawingAreaTile> tileAt(const TiledDrawingAreaTile::Coordinate&) const;
-    void setTile(const TiledDrawingAreaTile::Coordinate& coordinate, RefPtr<TiledDrawingAreaTile> tile);
-    void removeTile(const TiledDrawingAreaTile::Coordinate& coordinate);
+    void disableTileSetUpdates(TiledDrawingAreaTileSet*);
     void removeAllTiles();
+
+    void paint(TiledDrawingAreaTileSet*, const WebCore::IntRect&, WebCore::GraphicsContext&);
+    float coverageRatio(TiledDrawingAreaTileSet*, const WebCore::IntRect&);
 
     WebCore::IntRect contentsRect() const;
     WebCore::IntRect visibleRect() const;
@@ -153,8 +154,8 @@ private:
 
     PlatformWebView* m_webView;
 
-    typedef HashMap<TiledDrawingAreaTile::Coordinate, RefPtr<TiledDrawingAreaTile> > TileMap;
-    TileMap m_tiles;
+    OwnPtr<TiledDrawingAreaTileSet> m_currentTileSet;
+    OwnPtr<TiledDrawingAreaTileSet> m_previousTileSet;
 
     WTF::HashMap<int, TiledDrawingAreaTile*> m_tilesByID;
 
@@ -168,7 +169,6 @@ private:
     WebCore::FloatSize m_coverAreaMultiplier;
 
     WebCore::IntRect m_visibleContentRect;
-    float m_contentsScale;
 
     friend class TiledDrawingAreaTile;
 };

@@ -42,6 +42,47 @@ namespace WebKit {
 static const int defaultTileWidth = 1024;
 static const int defaultTileHeight = 1024;
 
+
+// The TileSet's responsibility is to hold a group of tiles with the same contents scale together.
+class TiledDrawingAreaTileSet {
+public:
+    typedef HashMap<TiledDrawingAreaTile::Coordinate, RefPtr<TiledDrawingAreaTile> > TileMap;
+
+    TiledDrawingAreaTileSet(float contentsScale = 1.0f);
+
+    WebCore::IntRect mapToContents(const WebCore::IntRect&) const;
+    WebCore::IntRect mapFromContents(const WebCore::IntRect&) const;
+
+    TileMap& tiles() { return m_tiles; }
+    float contentsScale() const { return m_contentsScale; }
+
+private:
+    TileMap m_tiles;
+    float m_contentsScale;
+};
+
+TiledDrawingAreaTileSet::TiledDrawingAreaTileSet(float contentsScale)
+    : m_contentsScale(contentsScale)
+{
+}
+
+IntRect TiledDrawingAreaTileSet::mapToContents(const IntRect& rect) const
+{
+    return enclosingIntRect(FloatRect(rect.x() / m_contentsScale,
+                                      rect.y() / m_contentsScale,
+                                      rect.width() / m_contentsScale,
+                                      rect.height() / m_contentsScale));
+}
+
+IntRect TiledDrawingAreaTileSet::mapFromContents(const IntRect& rect) const
+{
+    return enclosingIntRect(FloatRect(rect.x() * m_contentsScale,
+                                      rect.y() * m_contentsScale,
+                                      rect.width() * m_contentsScale,
+                                      rect.height() * m_contentsScale));
+}
+
+
 static IntPoint innerBottomRight(const IntRect& rect)
 {
     // Actually, the rect does not contain rect.maxX(). Refer to IntRect::contain.
@@ -58,13 +99,13 @@ TiledDrawingAreaProxy::TiledDrawingAreaProxy(PlatformWebView* webView, WebPagePr
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
     , m_webView(webView)
+    , m_currentTileSet(adoptPtr(new TiledDrawingAreaTileSet))
     , m_tileBufferUpdateTimer(RunLoop::main(), this, &TiledDrawingAreaProxy::tileBufferUpdateTimerFired)
     , m_tileCreationTimer(RunLoop::main(), this, &TiledDrawingAreaProxy::tileCreationTimerFired)
     , m_tileSize(defaultTileWidth, defaultTileHeight)
     , m_tileCreationDelay(0.01)
     , m_keepAreaMultiplier(2.5, 4.5)
     , m_coverAreaMultiplier(2, 3)
-    , m_contentsScale(1)
 {
 }
 
@@ -141,16 +182,26 @@ void TiledDrawingAreaProxy::allTileUpdatesProcessed()
     tileBufferUpdateComplete();
 }
 
-void TiledDrawingAreaProxy::requestTileUpdate(int tileID, const IntRect& dirtyRect)
+void TiledDrawingAreaProxy::registerTile(int tileID, PassRefPtr<TiledDrawingAreaTile> tile)
 {
-    page()->process()->connection()->send(Messages::DrawingArea::RequestTileUpdate(tileID, dirtyRect, contentsScale()), page()->pageID());
+    m_tilesByID.set(tileID, tile.get());
 }
 
-PassRefPtr<TiledDrawingAreaTile> TiledDrawingAreaProxy::createTile(const TiledDrawingAreaTile::Coordinate& coordinate)
+void TiledDrawingAreaProxy::unregisterTile(int tileID)
 {
-    RefPtr<TiledDrawingAreaTile> tile = TiledDrawingAreaTile::create(this, coordinate);
-    setTile(coordinate, tile);
-    return tile;
+    m_tilesByID.remove(tileID);
+}
+
+void TiledDrawingAreaProxy::requestTileUpdate(int tileID, const IntRect& dirtyRect)
+{
+    page()->process()->connection()->send(Messages::DrawingArea::RequestTileUpdate(tileID, dirtyRect, m_currentTileSet->contentsScale()), page()->pageID());
+}
+
+void TiledDrawingAreaProxy::cancelTileUpdate(int tileID)
+{
+    if (!page()->process()->isValid())
+        return;
+    page()->process()->send(Messages::DrawingArea::CancelTileUpdate(tileID), page()->pageID());
 }
 
 void TiledDrawingAreaProxy::setTileSize(const IntSize& size)
@@ -176,7 +227,7 @@ void TiledDrawingAreaProxy::setKeepAndCoverAreaMultipliers(const FloatSize& keep
 
 void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
 {
-    IntRect dirtyRect(mapFromContents(contentsDirtyRect));
+    IntRect dirtyRect(m_currentTileSet->mapFromContents(contentsDirtyRect));
 
     TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
     TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
@@ -187,7 +238,7 @@ void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
 
     for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
         for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
-            RefPtr<TiledDrawingAreaTile> currentTile = tileAt(TiledDrawingAreaTile::Coordinate(xCoordinate, yCoordinate));
+            RefPtr<TiledDrawingAreaTile> currentTile = m_currentTileSet->tiles().get(TiledDrawingAreaTile::Coordinate(xCoordinate, yCoordinate));
             if (!currentTile)
                 continue;
             if (!currentTile->rect().intersects(dirtyRect))
@@ -203,7 +254,7 @@ void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
 
     unsigned removeCount = tilesToRemove.size();
     for (unsigned n = 0; n < removeCount; ++n)
-        removeTile(tilesToRemove[n]);
+        m_currentTileSet->tiles().remove(tilesToRemove[n]);
 
     startTileBufferUpdateTimer();
 }
@@ -211,8 +262,8 @@ void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
 void TiledDrawingAreaProxy::updateTileBuffers()
 {
     Vector<RefPtr<TiledDrawingAreaTile> > newDirtyTiles;
-    TileMap::iterator end = m_tiles.end();
-    for (TileMap::iterator it = m_tiles.begin(); it != end; ++it) {
+    TiledDrawingAreaTileSet::TileMap::iterator end = m_currentTileSet->tiles().end();
+    for (TiledDrawingAreaTileSet::TileMap::iterator it = m_currentTileSet->tiles().begin(); it != end; ++it) {
         RefPtr<TiledDrawingAreaTile>& current = it->second;
         if (!current->isDirty())
             continue;
@@ -231,8 +282,8 @@ void TiledDrawingAreaProxy::tileBufferUpdateComplete()
 {
     // Bail out if all tile back buffers have not been updated.
     Vector<TiledDrawingAreaTile*> tilesToFlip;
-    TileMap::iterator end = m_tiles.end();
-    for (TileMap::iterator it = m_tiles.begin(); it != end; ++it) {
+    TiledDrawingAreaTileSet::TileMap::iterator end = m_currentTileSet->tiles().end();
+    for (TiledDrawingAreaTileSet::TileMap::iterator it = m_currentTileSet->tiles().begin(); it != end; ++it) {
         RefPtr<TiledDrawingAreaTile>& current = it->second;
         if (current->isReadyToPaint() && (current->isDirty() || current->hasBackBufferUpdatePending()))
             return;
@@ -246,15 +297,39 @@ void TiledDrawingAreaProxy::tileBufferUpdateComplete()
         TiledDrawingAreaTile* tile = tilesToFlip[n];
         tile->swapBackBufferToFront();
         // FIXME: should not request system repaint for the full tile.
-        paintedArea.append(mapToContents(tile->rect()));
+        paintedArea.append(m_currentTileSet->mapToContents(tile->rect()));
     }
-    if (size)
+
+    if (m_previousTileSet && (coverageRatio(m_currentTileSet.get(), visibleRect()) >= 1.0f || !hasPendingUpdates())) {
+        paintedArea.clear();
+        paintedArea.append(m_visibleContentRect);
+        m_previousTileSet.clear();
+    }
+
+    if (!paintedArea.isEmpty())
         updateWebView(paintedArea);
 
     m_tileCreationTimer.startOneShot(0);
 }
 
-bool TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext context)
+void TiledDrawingAreaProxy::paint(TiledDrawingAreaTileSet* tileSet, const IntRect& rect, WebCore::GraphicsContext& gc)
+{
+    IntRect dirtyRect = tileSet->mapFromContents(rect);
+
+    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
+
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
+            TiledDrawingAreaTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
+            RefPtr<TiledDrawingAreaTile> currentTile = tileSet->tiles().get(currentCoordinate);
+            if (currentTile && currentTile->isReadyToPaint())
+                currentTile->paint(&gc, dirtyRect);
+        }
+    }
+}
+
+bool TiledDrawingAreaProxy::paint(const WebCore::IntRect& rect, PlatformDrawingContext context)
 {
     if (m_isWaitingForDidSetFrameNotification) {
         WebPageProxy* page = this->page();
@@ -270,20 +345,16 @@ bool TiledDrawingAreaProxy::paint(const IntRect& rect, PlatformDrawingContext co
 
     // Assumes the backing store is painted with the scale transform applied.
     // Since tile content is already scaled, first revert the scaling from the painter.
-    gc.scale(FloatSize(1 / m_contentsScale, 1 / m_contentsScale));
+    gc.scale(FloatSize(1 / m_currentTileSet->contentsScale(), 1 / m_currentTileSet->contentsScale()));
+    paint(m_currentTileSet.get(), rect, gc);
 
-    IntRect dirtyRect = mapFromContents(rect);
-
-    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
-    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
-
-    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
-        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
-            TiledDrawingAreaTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
-            RefPtr<TiledDrawingAreaTile> currentTile = tileAt(currentCoordinate);
-            if (currentTile && currentTile->isReadyToPaint())
-                currentTile->paint(&gc, dirtyRect);
-        }
+    // Paint the previous scale tiles, if any, over the currently updating tiles.
+    if (m_previousTileSet) {
+        // Re-apply the reverted current tiles scaling and then
+        // revert the previous tiles scaling to get matched contents scale.
+        float currentToPreviousRevertedScale = m_currentTileSet->contentsScale() / m_previousTileSet->contentsScale();
+        gc.scale(FloatSize(currentToPreviousRevertedScale, currentToPreviousRevertedScale));
+        paint(m_previousTileSet.get(), rect, gc);
     }
 
     gc.restore();
@@ -298,22 +369,43 @@ void TiledDrawingAreaProxy::setVisibleContentRect(const WebCore::IntRect& visibl
     }
 }
 
-void TiledDrawingAreaProxy::setContentsScale(float scale)
+float TiledDrawingAreaProxy::coverageRatio(TiledDrawingAreaTileSet* tileSet, const WebCore::IntRect& rect)
 {
-    if (m_contentsScale == scale)
-        return;
-    m_contentsScale = scale;
-    removeAllTiles();
-    createTiles();
+    IntRect dirtyRect = tileSet->mapFromContents(rect);
+    float rectArea = dirtyRect.width() * dirtyRect.height();
+    float coverArea = 0.0f;
+
+    TiledDrawingAreaTile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
+    TiledDrawingAreaTile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
+
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
+            TiledDrawingAreaTile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
+            RefPtr<TiledDrawingAreaTile> currentTile = tileSet->tiles().get(TiledDrawingAreaTile::Coordinate(xCoordinate, yCoordinate));
+            if (currentTile && currentTile->isReadyToPaint()) {
+                IntRect coverRect = intersection(dirtyRect, currentTile->rect());
+                coverArea += coverRect.width() * coverRect.height();
+            }
+        }
+    }
+    return coverArea / rectArea;
 }
 
-void TiledDrawingAreaProxy::removeAllTiles()
+void TiledDrawingAreaProxy::setContentsScale(float scale)
 {
-    Vector<RefPtr<TiledDrawingAreaTile> > tilesToRemove;
-    copyValuesToVector(m_tiles, tilesToRemove);
-    unsigned removeCount = tilesToRemove.size();
-    for (unsigned n = 0; n < removeCount; ++n)
-        removeTile(tilesToRemove[n]->coordinate());
+    if (m_currentTileSet->contentsScale() == scale)
+        return;
+
+    // Keep the current tiles in m_previousTileSet while the new scale tiles are being updated.
+    // If m_currentTileSet still hasn't more paintable content for the current viewport rect
+    // than m_previousTileSet, then keep the old m_previousTileSet. This happens when
+    // setContentsScale is called twice while m_currentTileSet still contains few or no rendered tiles.
+    if (!m_previousTileSet || coverageRatio(m_previousTileSet.get(), visibleRect()) < coverageRatio(m_currentTileSet.get(), visibleRect())) {
+        m_previousTileSet = m_currentTileSet.release();
+        disableTileSetUpdates(m_previousTileSet.get());
+    }
+    m_currentTileSet = adoptPtr(new TiledDrawingAreaTileSet(scale));
+    createTiles();
 }
 
 double TiledDrawingAreaProxy::tileDistance(const IntRect& viewport, const TiledDrawingAreaTile::Coordinate& tileCoordinate)
@@ -375,7 +467,7 @@ void TiledDrawingAreaProxy::createTiles()
             // Distance is 0 for all currently visible tiles.
             double distance = tileDistance(visibleRect, currentCoordinate);
 
-            RefPtr<TiledDrawingAreaTile> tile = tileAt(currentCoordinate);
+            RefPtr<TiledDrawingAreaTile> tile = m_currentTileSet->tiles().get(currentCoordinate);
             if (!distance && (!tile || !tile->isReadyToPaint()))
                 hasVisibleCheckers = true;
             if (tile)
@@ -398,8 +490,11 @@ void TiledDrawingAreaProxy::createTiles()
 
     // Now construct the tile(s).
     unsigned tilesToCreateCount = tilesToCreate.size();
-    for (unsigned n = 0; n < tilesToCreateCount; ++n)
-        createTile(tilesToCreate[n]);
+    for (unsigned n = 0; n < tilesToCreateCount; ++n) {
+        TiledDrawingAreaTile::Coordinate coordinate = tilesToCreate[n];
+        RefPtr<TiledDrawingAreaTile> tile = TiledDrawingAreaTile::create(this, coordinate);
+        m_currentTileSet->tiles().set(coordinate, tile);
+    }
 
     requiredTileCount -= tilesToCreateCount;
 
@@ -418,8 +513,8 @@ bool TiledDrawingAreaProxy::resizeEdgeTiles()
     bool wasResized = false;
 
     Vector<TiledDrawingAreaTile::Coordinate> tilesToRemove;
-    TileMap::iterator end = m_tiles.end();
-    for (TileMap::iterator it = m_tiles.begin(); it != end; ++it) {
+    TiledDrawingAreaTileSet::TileMap::iterator end = m_currentTileSet->tiles().end();
+    for (TiledDrawingAreaTileSet::TileMap::iterator it = m_currentTileSet->tiles().begin(); it != end; ++it) {
         TiledDrawingAreaTile::Coordinate tileCoordinate = it->second->coordinate();
         IntRect tileRect = it->second->rect();
         IntRect expectedTileRect = tileRectForCoordinate(tileCoordinate);
@@ -432,7 +527,7 @@ bool TiledDrawingAreaProxy::resizeEdgeTiles()
     }
     unsigned removeCount = tilesToRemove.size();
     for (unsigned n = 0; n < removeCount; ++n)
-        removeTile(tilesToRemove[n]);
+        m_currentTileSet->tiles().remove(tilesToRemove[n]);
     return wasResized;
 }
 
@@ -441,8 +536,8 @@ void TiledDrawingAreaProxy::dropTilesOutsideRect(const IntRect& keepRect)
     FloatRect keepRectF = keepRect;
 
     Vector<TiledDrawingAreaTile::Coordinate> toRemove;
-    TileMap::iterator end = m_tiles.end();
-    for (TileMap::iterator it = m_tiles.begin(); it != end; ++it) {
+    TiledDrawingAreaTileSet::TileMap::iterator end = m_currentTileSet->tiles().end();
+    for (TiledDrawingAreaTileSet::TileMap::iterator it = m_currentTileSet->tiles().begin(); it != end; ++it) {
         TiledDrawingAreaTile::Coordinate coordinate = it->second->coordinate();
         FloatRect tileRect = it->second->rect();
         if (!tileRect.intersects(keepRectF))
@@ -450,56 +545,30 @@ void TiledDrawingAreaProxy::dropTilesOutsideRect(const IntRect& keepRect)
     }
     unsigned removeCount = toRemove.size();
     for (unsigned n = 0; n < removeCount; ++n)
-        removeTile(toRemove[n]);
+        m_currentTileSet->tiles().remove(toRemove[n]);
 }
 
-PassRefPtr<TiledDrawingAreaTile> TiledDrawingAreaProxy::tileAt(const TiledDrawingAreaTile::Coordinate& coordinate) const
+void TiledDrawingAreaProxy::disableTileSetUpdates(TiledDrawingAreaTileSet* tileSet)
 {
-    return m_tiles.get(coordinate);
+    TiledDrawingAreaTileSet::TileMap::const_iterator end = tileSet->tiles().end();
+    for (TiledDrawingAreaTileSet::TileMap::const_iterator it = tileSet->tiles().begin(); it != end; ++it)
+        it->second->disableUpdates();
 }
 
-void TiledDrawingAreaProxy::setTile(const TiledDrawingAreaTile::Coordinate& coordinate, RefPtr<TiledDrawingAreaTile> tile)
+void TiledDrawingAreaProxy::removeAllTiles()
 {
-    m_tiles.set(coordinate, tile);
-    m_tilesByID.set(tile->ID(), tile.get());
+    m_currentTileSet = adoptPtr(new TiledDrawingAreaTileSet(m_currentTileSet->contentsScale()));
 }
 
-void TiledDrawingAreaProxy::removeTile(const TiledDrawingAreaTile::Coordinate& coordinate)
-{
-    RefPtr<TiledDrawingAreaTile> tile = m_tiles.take(coordinate);
-
-    m_tilesByID.remove(tile->ID());
-
-    if (!tile->hasBackBufferUpdatePending())
-        return;
-    WebPageProxy* page = this->page();
-    page->process()->send(Messages::DrawingArea::CancelTileUpdate(tile->ID()), page->pageID());
-}
-
-IntRect TiledDrawingAreaProxy::mapToContents(const IntRect& rect) const
-{
-    return enclosingIntRect(FloatRect(rect.x() / m_contentsScale,
-                                      rect.y() / m_contentsScale,
-                                      rect.width() / m_contentsScale,
-                                      rect.height() / m_contentsScale));
-}
-
-IntRect TiledDrawingAreaProxy::mapFromContents(const IntRect& rect) const
-{
-    return enclosingIntRect(FloatRect(rect.x() * m_contentsScale,
-                                      rect.y() * m_contentsScale,
-                                      rect.width() * m_contentsScale,
-                                      rect.height() * m_contentsScale));
-}
 
 IntRect TiledDrawingAreaProxy::contentsRect() const
 {
-    return mapFromContents(IntRect(IntPoint(0, 0), m_viewSize));
+    return m_currentTileSet->mapFromContents(IntRect(IntPoint(0, 0), m_viewSize));
 }
 
 IntRect TiledDrawingAreaProxy::visibleRect() const
 {
-    return mapFromContents(m_visibleContentRect);
+    return m_currentTileSet->mapFromContents(m_visibleContentRect);
 }
 
 IntRect TiledDrawingAreaProxy::tileRectForCoordinate(const TiledDrawingAreaTile::Coordinate& coordinate) const
@@ -547,8 +616,8 @@ void TiledDrawingAreaProxy::tileCreationTimerFired()
 
 bool TiledDrawingAreaProxy::hasPendingUpdates() const
 {
-    TileMap::const_iterator end = m_tiles.end();
-    for (TileMap::const_iterator it = m_tiles.begin(); it != end; ++it) {
+    TiledDrawingAreaTileSet::TileMap::const_iterator end = m_currentTileSet->tiles().end();
+    for (TiledDrawingAreaTileSet::TileMap::const_iterator it = m_currentTileSet->tiles().begin(); it != end; ++it) {
         const RefPtr<TiledDrawingAreaTile>& current = it->second;
         if (current->hasBackBufferUpdatePending())
             return true;

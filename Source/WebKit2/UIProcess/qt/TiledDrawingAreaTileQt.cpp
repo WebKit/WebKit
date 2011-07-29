@@ -51,6 +51,7 @@ TiledDrawingAreaTile::TiledDrawingAreaTile(TiledDrawingAreaProxy* proxy, const C
 {
     static int id = 0;
     m_ID = ++id;
+    m_proxy->registerTile(m_ID, this);
 #ifdef TILE_DEBUG_LOG
     qDebug() << "deleting tile id=" << m_ID;
 #endif
@@ -61,6 +62,7 @@ TiledDrawingAreaTile::~TiledDrawingAreaTile()
 #ifdef TILE_DEBUG_LOG
     qDebug() << "deleting tile id=" << m_ID;
 #endif
+    disableUpdates();
 }
 
 bool TiledDrawingAreaTile::isDirty() const
@@ -123,6 +125,7 @@ void TiledDrawingAreaTile::paint(GraphicsContext* context, const IntRect& rect)
 
 void TiledDrawingAreaTile::incorporateUpdate(const UpdateInfo& updateInfo, float)
 {
+    ASSERT(m_proxy);
     m_isBackBufferValid = true;
     m_hasUpdatePending = false;
 
@@ -143,8 +146,25 @@ void TiledDrawingAreaTile::incorporateUpdate(const UpdateInfo& updateInfo, float
     painter.drawImage(QPoint(drawPoint.width(), drawPoint.height()), image);
 }
 
+void TiledDrawingAreaTile::disableUpdates()
+{
+    if (!m_proxy)
+        return;
+
+    if (m_hasUpdatePending) {
+        m_proxy->cancelTileUpdate(m_ID);
+        m_hasUpdatePending = false;
+    }
+
+    m_proxy->unregisterTile(m_ID);
+    m_backBuffer = QPixmap();
+    m_isBackBufferValid = false;
+    m_proxy = 0;
+}
+
 void TiledDrawingAreaTile::updateBackBuffer()
 {
+    ASSERT(m_proxy);
     if (isReadyToPaint() && !isDirty())
         return;
 
