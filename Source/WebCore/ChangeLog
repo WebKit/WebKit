@@ -1,5 +1,11 @@
 2011-07-29  Jeff Miller  <jeffm@apple.com>
 
+        Re-sort one more file in the WebCore project with Visual Studio.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
+2011-07-29  Jeff Miller  <jeffm@apple.com>
+
         Re-sort the WebCore project with Visual Studio after recent changes that I assume were done by manually editing the XML.
 
         * WebCore.vcproj/WebCore.vcproj:
