@@ -1,3 +1,17 @@
+2011-07-28  Justin Schuh  <jschuh@chromium.org>
+
+        Simplify createCanonicalUUIDString implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=65157
+
+        All ports support OS_RANDOMNESS, so better to have one implementation.
+
+        Reviewed by Adam Barth.
+
+        Change covered by existing tests.
+
+        * platform/UUID.cpp:
+        (WebCore::createCanonicalUUIDString):
+
 2011-07-28  Devdatta Deshpande  <pwjd73@motorola.com>
 
         Fixed gif animation dependency on system time
