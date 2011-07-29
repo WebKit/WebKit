@@ -1567,3 +1567,10 @@ fast/forms/input-appearance-number-rtl.html
 
 # Qt result was added by r91977, but it fails on Qt-WK2 platform
 svg/W3C-SVG-1.1-SE/struct-use-11-f.svg
+
+# Qt results were added by r91984, but these tests fail on Qt-WK2 platform
+fast/block/positioning/047.html
+fast/block/positioning/051.html
+fast/invalid/019.html
+fast/lists/003.html
+fast/text/basic/generic-family-reset.html

@@ -1,6 +1,23 @@
+2011-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r91984
+
+        * platform/qt-4.8/fast/block/positioning/047-expected.png: Added.
+        * platform/qt-4.8/fast/block/positioning/047-expected.txt: Added.
+        * platform/qt-4.8/fast/block/positioning/051-expected.png: Added.
+        * platform/qt-4.8/fast/block/positioning/051-expected.txt: Added.
+        * platform/qt-4.8/fast/invalid/019-expected.png: Added.
+        * platform/qt-4.8/fast/invalid/019-expected.txt: Added.
+        * platform/qt-4.8/fast/lists/003-expected.png: Added.
+        * platform/qt-4.8/fast/lists/003-expected.txt: Added.
+        * platform/qt-4.8/fast/text/basic/generic-family-reset-expected.png: Added.
+        * platform/qt-4.8/fast/text/basic/generic-family-reset-expected.txt: Added.
+        * platform/qt-mac/Skipped: Skip failing tests.
+        * platform/qt-wk2/Skipped: Skip failing tests.
+
 2011-07-29  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
-        [Qt] Add  platform specific expected results
+        [Qt] Add platform specific expected results
 
         Reviewed by Csaba Osztrogonác.
 
