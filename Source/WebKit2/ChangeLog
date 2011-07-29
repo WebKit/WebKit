@@ -4,6 +4,8 @@
         https://bugs.webkit.org/show_bug.cgi?id=65350
         <rdar://problem/9520670>
 
+        Reviewed by Darin Adler.
+
         * Shared/FontInfo.cpp:
         (WebKit::FontInfo::encode):
         Encode a boolean specifying whether there's a fontAttributeDictionary member variable.
