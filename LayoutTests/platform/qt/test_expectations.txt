@@ -16,8 +16,9 @@ BUGWK62662 : inspector/cookie-parser.html = CRASH PASS
 BUGWK64526 DEBUG: svg/animations/svgtransform-animation-1.html = CRASH PASS
 
 // Slow tests
-SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS
-SLOW DEBUG: editing/selection/dump-as-markup.html = PASS
-DEBUG: fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
-SLOW DEBUG: fast/overflow/lots-of-sibling-inline-boxes.html = PASS
-SLOW DEBUG: inspector/cookie-resource-match.html = PASS
+// FIXME: File bugs.
+BUG_QT_SLOW SLOW DEBUG: editing/selection/empty-cell-right-click.html = PASS
+BUG_QT_SLOW SLOW DEBUG: editing/selection/dump-as-markup.html = PASS
+BUG_QT_SLOW DEBUG: fast/js/array-sort-modifying-tostring.html = TIMEOUT PASS
+BUG_QT_SLOW SLOW DEBUG: fast/overflow/lots-of-sibling-inline-boxes.html = PASS
+BUG_QT_SLOW SLOW DEBUG: inspector/cookie-resource-match.html = PASS

@@ -1,3 +1,9 @@
+2011-07-28  Kent Tamura  <tkent@chromium.org>
+
+        [Qt] Fix style errors of test_expectations.txt.
+
+        * platform/qt/test_expectations.txt:
+
 2011-07-28  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65325
