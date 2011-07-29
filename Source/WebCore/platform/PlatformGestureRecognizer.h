@@ -31,15 +31,18 @@
 #ifndef PlatformGestureRecognizer_h
 #define PlatformGestureRecognizer_h
 
-#include "PlatformGestureEvent.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class EventHandler;
+class PlatformGestureRecognizer;
 class PlatformTouchEvent;
 
+// A GestureRecognizer detects gestures occurring in the touch event.
+// In response to a given touch event, the GestureRecognizer, updates
+// its internal state and optionally dispatches synthetic events to the
+// invoking EventHandler instance.
 class PlatformGestureRecognizer {
 protected:
     PlatformGestureRecognizer();
@@ -48,10 +51,12 @@ public:
     static PassOwnPtr<PlatformGestureRecognizer> create();
     virtual ~PlatformGestureRecognizer();
 
-    typedef PassOwnPtr<Vector<PlatformGestureEvent> > PassGestures;
-
-    // Invoked for each touch event and returns 0 or more resulting gestures.
-    virtual PassGestures processTouchEventForGestures(const PlatformTouchEvent&, bool defaultPrevented) = 0;
+    // Invoked for each touch event that could contribute to the current gesture.
+    // Takes a PlatformTouchEvent and the EventHandler that originated it and which will also
+    // be the target of any generated synthetic event. Finally, |handled|
+    // specifies if the |event| was actually handled by |source| (by the JavaScript)
+    // Returns true if the event resulted in firing a synthetic event.
+    virtual bool processTouchEventForGesture(const PlatformTouchEvent&, EventHandler*, bool handled) = 0;
 
     // Clears the GestureRecognizer to its initial state.
     virtual void reset() = 0;

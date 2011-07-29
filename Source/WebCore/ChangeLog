@@ -1,3 +1,46 @@
+2011-07-29  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rolling out r92011.
+        http://trac.webkit.org/changeset/92011
+        https://bugs.webkit.org/show_bug.cgi?id=65044
+
+        break chromium win build
+
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        * dom/WheelEvent.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::EventHandler):
+        (WebCore::EventHandler::handleGestureEvent):
+        (WebCore::EventHandler::handleTouchEvent):
+        (WebCore::EventHandler::resetGestureRecognizer):
+        * page/EventHandler.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        * platform/PlatformGestureEvent.h:
+        * platform/PlatformGestureRecognizer.h:
+        * platform/ScrollAnimatorWin.cpp:
+        * platform/chromium/FramelessScrollView.h:
+        * platform/chromium/GestureRecognizerChromium.cpp:
+        (WebCore::InnerGestureRecognizer::InnerGestureRecognizer):
+        (WebCore::InnerGestureRecognizer::reset):
+        (WebCore::InnerGestureRecognizer::dispatchSyntheticClick):
+        (WebCore::InnerGestureRecognizer::processTouchEventForGesture):
+        (WebCore::InnerGestureRecognizer::scrollViaTouchMotion):
+        (WebCore::touchDown):
+        (WebCore::noGesture):
+        (WebCore::click):
+        (WebCore::isClickOrScroll):
+        (WebCore::inScroll):
+        * platform/chromium/GestureRecognizerChromium.h:
+        (WebCore::GestureRecognizerChromium::reset):
+        (WebCore::GestureRecognizerChromium::processTouchEventForGesture):
+        * platform/chromium/PopupMenuChromium.cpp:
+        * platform/chromium/PopupMenuChromium.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::handleGestureEvent):
+
 2011-07-29  Adrienne Walker  <enne@google.com>
 
         [chromium] Only force slow scrolling for iframes under --force-compositing-mode

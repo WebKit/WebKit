@@ -305,12 +305,6 @@ void ScrollAnimatorWin::animateScroll(PerAxisData* data)
     notityPositionChanged();
 }
 
-#if ENABLE(GESTURE_EVENTS)
-void ScrollAnimatorWin::handleGestureEvent(const PlatformGestureEvent&)
-{
-}
-#endif
-
 } // namespace WebCore
 
 #endif // ENABLE(SMOOTH_SCROLLING)

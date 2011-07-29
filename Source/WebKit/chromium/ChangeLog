@@ -1,3 +1,23 @@
+2011-07-29  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rolling out r92011.
+        http://trac.webkit.org/changeset/92011
+        https://bugs.webkit.org/show_bug.cgi?id=65044
+
+        break chromium win build
+
+        * features.gypi:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFrameView):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::WebPopupMenuImpl):
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::touchEvent):
+        * src/WebViewImpl.h:
+
 2011-07-29  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Layering violations in gesture recognizer
