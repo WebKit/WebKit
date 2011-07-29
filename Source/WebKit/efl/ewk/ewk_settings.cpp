@@ -197,7 +197,7 @@ Eina_Bool ewk_settings_icon_database_path_set(const char *directory)
  *
  * @return database path or @c 0 if none is set or database is closed
  */
-const char* ewk_settings_icon_database_path_get(void)
+const char *ewk_settings_icon_database_path_get(void)
 {
     if (!WebCore::iconDatabase().isEnabled())
         return 0;
@@ -237,7 +237,7 @@ Eina_Bool ewk_settings_icon_database_clear(void)
  *
  * @return cairo surface if any, or @c 0 on failure
  */
-cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char *url)
+cairo_surface_t *ewk_settings_icon_database_icon_surface_get(const char *url)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(url, 0);
 
@@ -268,14 +268,14 @@ cairo_surface_t* ewk_settings_icon_database_icon_surface_get(const char *url)
  * @return newly allocated Evas_Object instance or @c 0 on
  *         errors. Delete the object with evas_object_del().
  */
-Evas_Object* ewk_settings_icon_database_icon_object_add(const char* url, Evas* canvas)
+Evas_Object *ewk_settings_icon_database_icon_object_add(const char *url, Evas *canvas)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(url, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
 
     WebCore::KURL kurl(WebCore::KURL(), WTF::String::fromUTF8(url));
-    WebCore::Image* icon = WebCore::iconDatabase().synchronousIconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
-    cairo_surface_t* surface;
+    WebCore::Image *icon = WebCore::iconDatabase().synchronousIconForPageURL(kurl.string(), WebCore::IntSize(16, 16));
+    cairo_surface_t *surface;
 
     if (!icon) {
         ERR("no icon for url %s", url);
@@ -359,7 +359,7 @@ void ewk_settings_repaint_throttling_set(double deferred_repaint_delay, double i
  *
  * @return a pointer to an eina_stringshare containing the user agent string
  */
-const char* ewk_settings_default_user_agent_get(void)
+const char *ewk_settings_default_user_agent_get(void)
 {
     WTF::String ua_version = makeString(String::number(WEBKIT_USER_AGENT_MAJOR_VERSION), '.', String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
     WTF::String static_ua = makeString("Mozilla/5.0 (", _ewk_settings_webkit_platform_get(), "; ", _ewk_settings_webkit_os_version_get(), ") AppleWebKit/", ua_version) + makeString(" (KHTML, like Gecko) Version/5.0 Safari/", ua_version);

@@ -58,7 +58,7 @@ void ewk_auth_soup_show_dialog_callback_set(Ewk_Auth_Show_Dialog_Callback callba
  *  @param password password
  *  @param data soup authentication data
  */
-void ewk_auth_soup_credentials_set(const char* username, const char* password, void* data);
+void ewk_auth_soup_credentials_set(const char *username, const char *password, void *data);
 
 #ifdef __cplusplus
 }

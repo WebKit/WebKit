@@ -151,25 +151,25 @@ typedef struct _Ewk_Context_Menu_Item       Ewk_Context_Menu_Item;
 
 /************************** Exported functions ***********************/
 
-EAPI void                        ewk_context_menu_ref(Ewk_Context_Menu* menu);
-EAPI void                        ewk_context_menu_unref(Ewk_Context_Menu* menu);
-EAPI Eina_Bool                   ewk_context_menu_destroy(Ewk_Context_Menu* menu);
+EAPI void                        ewk_context_menu_ref(Ewk_Context_Menu *menu);
+EAPI void                        ewk_context_menu_unref(Ewk_Context_Menu *menu);
+EAPI Eina_Bool                   ewk_context_menu_destroy(Ewk_Context_Menu *menu);
 
-EAPI const Eina_List*            ewk_context_menu_item_list_get(Ewk_Context_Menu* o);
+EAPI const Eina_List            *ewk_context_menu_item_list_get(Ewk_Context_Menu *o);
 
-EAPI Ewk_Context_Menu_Item*      ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Action action, Ewk_Context_Menu* submenu, const char* title, Eina_Bool checked, Eina_Bool enabled);
-EAPI void                        ewk_context_menu_item_free(Ewk_Context_Menu_Item* item);
-EAPI Eina_Bool                   ewk_context_menu_item_select(Ewk_Context_Menu* menu, Ewk_Context_Menu_Item* item);
-EAPI Ewk_Context_Menu_Item_Type  ewk_context_menu_item_type_get(Ewk_Context_Menu_Item* o);
-EAPI Eina_Bool                   ewk_context_menu_item_type_set(Ewk_Context_Menu_Item* o, Ewk_Context_Menu_Item_Type type);
-EAPI Ewk_Context_Menu_Action     ewk_context_menu_item_action_get(Ewk_Context_Menu_Item* o);
-EAPI Eina_Bool                   ewk_context_menu_item_action_set(Ewk_Context_Menu_Item* o, Ewk_Context_Menu_Action action);
-EAPI const char*                 ewk_context_menu_item_title_get(Ewk_Context_Menu_Item* o);
-EAPI const char*                 ewk_context_menu_item_title_set(Ewk_Context_Menu_Item* o, const char* title);
-EAPI Eina_Bool                   ewk_context_menu_item_checked_get(Ewk_Context_Menu_Item* o);
-EAPI Eina_Bool                   ewk_context_menu_item_checked_set(Ewk_Context_Menu_Item* o, Eina_Bool checked);
-EAPI Eina_Bool                   ewk_context_menu_item_enabled_get(Ewk_Context_Menu_Item* o);
-EAPI Eina_Bool                   ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item* o, Eina_Bool enabled);
+EAPI Ewk_Context_Menu_Item      *ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type, Ewk_Context_Menu_Action action, Ewk_Context_Menu *submenu, const char *title, Eina_Bool checked, Eina_Bool enabled);
+EAPI void                        ewk_context_menu_item_free(Ewk_Context_Menu_Item *item);
+EAPI Eina_Bool                   ewk_context_menu_item_select(Ewk_Context_Menu *menu, Ewk_Context_Menu_Item *item);
+EAPI Ewk_Context_Menu_Item_Type  ewk_context_menu_item_type_get(Ewk_Context_Menu_Item *o);
+EAPI Eina_Bool                   ewk_context_menu_item_type_set(Ewk_Context_Menu_Item *o, Ewk_Context_Menu_Item_Type type);
+EAPI Ewk_Context_Menu_Action     ewk_context_menu_item_action_get(Ewk_Context_Menu_Item *o);
+EAPI Eina_Bool                   ewk_context_menu_item_action_set(Ewk_Context_Menu_Item *o, Ewk_Context_Menu_Action action);
+EAPI const char                 *ewk_context_menu_item_title_get(Ewk_Context_Menu_Item *o);
+EAPI const char                 *ewk_context_menu_item_title_set(Ewk_Context_Menu_Item *o, const char *title);
+EAPI Eina_Bool                   ewk_context_menu_item_checked_get(Ewk_Context_Menu_Item *o);
+EAPI Eina_Bool                   ewk_context_menu_item_checked_set(Ewk_Context_Menu_Item *o, Eina_Bool checked);
+EAPI Eina_Bool                   ewk_context_menu_item_enabled_get(Ewk_Context_Menu_Item *o);
+EAPI Eina_Bool                   ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item *o, Eina_Bool enabled);
 
 #ifdef __cplusplus
 }

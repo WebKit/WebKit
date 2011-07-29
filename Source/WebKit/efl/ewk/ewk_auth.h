@@ -38,7 +38,7 @@ extern "C" {
  * @param uri uri
  * @param data points to WebKitAuthData
  */
-typedef void (*Ewk_Auth_Show_Dialog_Callback)(const char* realm, const char* uri, void* data);
+typedef void (*Ewk_Auth_Show_Dialog_Callback)(const char *realm, const char *uri, void *data);
 
 /**
  * Sets callback to be called when authentication is required
@@ -52,7 +52,7 @@ EAPI void ewk_auth_show_dialog_callback_set(Ewk_Auth_Show_Dialog_Callback);
  * @param password user password
  * @param data soup authentication data
  */
-EAPI void ewk_auth_credentials_set(char* username, char* password, void* data);
+EAPI void ewk_auth_credentials_set(char *username, char *password, void *data);
 
 #ifdef __cplusplus
 }

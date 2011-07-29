@@ -31,8 +31,8 @@
 extern "C" {
 #endif
 
-EAPI void             ewk_network_proxy_uri_set(const char* proxy);
-EAPI const char*      ewk_network_proxy_uri_get(void);
+EAPI void             ewk_network_proxy_uri_set(const char *proxy);
+EAPI const char      *ewk_network_proxy_uri_get(void);
 
 EAPI void             ewk_network_state_notifier_online_set(Eina_Bool online);
 

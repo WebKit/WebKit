@@ -1,5 +1,117 @@
 2011-07-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        [EFL] Fix coding style of pointer type in ewk files.
+        https://bugs.webkit.org/show_bug.cgi?id=65358
+
+        Move '*' operator to variable side according to efl coding style.
+        Because, '*' operator is next to variable in EFL coding style.
+
+        Reviewed by Kent Tamura.
+
+        * ewk/ewk_auth.cpp:
+        (ewk_auth_credentials_set):
+        * ewk/ewk_auth.h:
+        * ewk/ewk_auth_soup.cpp:
+        (_Ewk_Auth_Data::ewk_auth_soup_dialog_class_init):
+        (_Ewk_Auth_Data::ewk_auth_soup_dialog_init):
+        (_Ewk_Auth_Data::ewk_auth_soup_credentials_set):
+        (_Ewk_Auth_Data::session_authenticate):
+        (_Ewk_Auth_Data::free_auth_data):
+        (_Ewk_Auth_Data::attach):
+        (_Ewk_Auth_Data::detach):
+        * ewk/ewk_auth_soup.h:
+        * ewk/ewk_contextmenu.cpp:
+        (ewk_context_menu_ref):
+        (ewk_context_menu_unref):
+        (ewk_context_menu_destroy):
+        (ewk_context_menu_item_list_get):
+        (ewk_context_menu_item_new):
+        (ewk_context_menu_item_select):
+        (ewk_context_menu_item_free):
+        (ewk_context_menu_item_type_get):
+        (ewk_context_menu_item_type_set):
+        (ewk_context_menu_item_action_get):
+        (ewk_context_menu_item_action_set):
+        (ewk_context_menu_item_title_get):
+        (ewk_context_menu_item_title_set):
+        (ewk_context_menu_item_checked_get):
+        (ewk_context_menu_item_checked_set):
+        (ewk_context_menu_item_enabled_get):
+        (ewk_context_menu_new):
+        (ewk_context_menu_free):
+        (ewk_context_menu_item_append):
+        (ewk_context_menu_custom_get):
+        (ewk_context_menu_show):
+        * ewk/ewk_contextmenu.h:
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_clear):
+        (ewk_cookies_get_all):
+        (ewk_cookies_cookie_del):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_history.cpp:
+        (_ewk_history_item_new):
+        (_ewk_history_item_list_get):
+        (ewk_history_forward):
+        (ewk_history_back):
+        (ewk_history_history_item_add):
+        (ewk_history_history_item_set):
+        (ewk_history_history_item_back_get):
+        (ewk_history_history_item_current_get):
+        (ewk_history_history_item_forward_get):
+        (ewk_history_history_item_nth_get):
+        (ewk_history_history_item_contains):
+        (ewk_history_forward_list_get):
+        (ewk_history_forward_list_get_with_limit):
+        (ewk_history_forward_list_length):
+        (ewk_history_back_list_get):
+        (ewk_history_back_list_get_with_limit):
+        (ewk_history_back_list_length):
+        (ewk_history_limit_get):
+        (ewk_history_limit_set):
+        (ewk_history_item_new):
+        (_ewk_history_item_free):
+        (ewk_history_item_free):
+        (ewk_history_item_list_free):
+        (ewk_history_item_title_get):
+        (ewk_history_item_title_alternate_get):
+        (ewk_history_item_title_alternate_set):
+        (ewk_history_item_uri_get):
+        (ewk_history_item_uri_original_get):
+        (ewk_history_item_time_last_visited_get):
+        (ewk_history_item_icon_surface_get):
+        (ewk_history_item_icon_object_add):
+        (ewk_history_item_page_cache_exists):
+        (ewk_history_item_visit_count):
+        (ewk_history_item_visit_last_failed):
+        (ewk_history_new):
+        (ewk_history_free):
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+        * ewk/ewk_network.cpp:
+        (ewk_network_proxy_uri_set):
+        (ewk_network_proxy_uri_get):
+        * ewk/ewk_network.h:
+        * ewk/ewk_private.h:
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_icon_database_path_get):
+        (ewk_settings_icon_database_icon_surface_get):
+        (ewk_settings_icon_database_icon_object_add):
+        (ewk_settings_default_user_agent_get):
+        * ewk/ewk_util.cpp:
+        (ewk_util_image_from_cairo_surface_add):
+        * ewk/ewk_util.h:
+        * ewk/ewk_window_features.cpp:
+        (ewk_window_features_unref):
+        (ewk_window_features_ref):
+        (ewk_window_features_bool_property_get):
+        (ewk_window_features_int_property_get):
+        (ewk_window_features_new_from_core):
+        * ewk/ewk_window_features.h:
+
+2011-07-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         [EFL] Fix pointer operator coding style in ewk_frame.
         https://bugs.webkit.org/show_bug.cgi?id=65357
 

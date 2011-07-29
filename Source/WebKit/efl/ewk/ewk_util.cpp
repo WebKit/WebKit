@@ -35,15 +35,15 @@
  * @param surface cairo representation of an image
  * @return converted cairo_surface object to the Evas_Object
  */
-Evas_Object* ewk_util_image_from_cairo_surface_add(Evas* canvas, cairo_surface_t* surface)
+Evas_Object *ewk_util_image_from_cairo_surface_add(Evas *canvas, cairo_surface_t *surface)
 {
     cairo_status_t status;
     cairo_surface_type_t type;
     cairo_format_t format;
     int w, h, stride;
-    Evas_Object* image;
-    const void* src;
-    void* dst;
+    Evas_Object *image;
+    const void *src;
+    void *dst;
 
     EINA_SAFETY_ON_NULL_RETURN_VAL(canvas, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(surface, 0);

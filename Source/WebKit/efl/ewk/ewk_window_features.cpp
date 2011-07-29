@@ -32,7 +32,7 @@
  */
 struct _Ewk_Window_Features {
     unsigned int __ref;
-    WebCore::WindowFeatures* core;
+    WebCore::WindowFeatures *core;
 };
 
 /**
@@ -42,7 +42,7 @@ struct _Ewk_Window_Features {
  *
  * @param window_features the object to decrease reference count
  */
-void ewk_window_features_unref(Ewk_Window_Features* window_features)
+void ewk_window_features_unref(Ewk_Window_Features *window_features)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     EINA_SAFETY_ON_FALSE_RETURN(window_features->__ref > 0);
@@ -60,7 +60,7 @@ void ewk_window_features_unref(Ewk_Window_Features* window_features)
  *
  * @param window_features the object to increase reference count
  */
-void ewk_window_features_ref(Ewk_Window_Features* window_features)
+void ewk_window_features_ref(Ewk_Window_Features *window_features)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     window_features->__ref++;
@@ -82,7 +82,7 @@ void ewk_window_features_ref(Ewk_Window_Features* window_features)
  *
  * @see ewk_window_features_int_property_get
  */
-void ewk_window_features_bool_property_get(Ewk_Window_Features* window_features, Eina_Bool* toolbar_visible, Eina_Bool* statusbar_visible, Eina_Bool* scrollbars_visible, Eina_Bool* menubar_visible, Eina_Bool* locationbar_visible, Eina_Bool* fullscreen)
+void ewk_window_features_bool_property_get(Ewk_Window_Features *window_features, Eina_Bool *toolbar_visible, Eina_Bool *statusbar_visible, Eina_Bool *scrollbars_visible, Eina_Bool *menubar_visible, Eina_Bool *locationbar_visible, Eina_Bool *fullscreen)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     EINA_SAFETY_ON_NULL_RETURN(window_features->core);
@@ -123,7 +123,7 @@ void ewk_window_features_bool_property_get(Ewk_Window_Features* window_features,
  *
  * @see ewk_window_features_bool_property_get
  */
-void ewk_window_features_int_property_get(Ewk_Window_Features* window_features, int* x, int* y, int* w, int* h)
+void ewk_window_features_int_property_get(Ewk_Window_Features *window_features, int *x, int *y, int *w, int *h)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     EINA_SAFETY_ON_NULL_RETURN(window_features->core);
@@ -152,9 +152,9 @@ void ewk_window_features_int_property_get(Ewk_Window_Features* window_features, 
  * it is embedded inside the Ewk_Window_Features whose ref count is initialized, if core is @c 0 a new one is created with the default features.
  * @returns a new allocated the Ewk_Window_Features object
  */
-Ewk_Window_Features* ewk_window_features_new_from_core(const WebCore::WindowFeatures* core)
+Ewk_Window_Features *ewk_window_features_new_from_core(const WebCore::WindowFeatures *core)
 {
-    Ewk_Window_Features* window_features = static_cast<Ewk_Window_Features*>(malloc(sizeof(*window_features)));
+    Ewk_Window_Features *window_features = static_cast<Ewk_Window_Features*>(malloc(sizeof(*window_features)));
 
     if (core)
         window_features->core = new WebCore::WindowFeatures(*core);

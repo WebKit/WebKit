@@ -29,6 +29,6 @@
 #include <Evas.h>
 #include <cairo.h>
 
-Evas_Object* ewk_util_image_from_cairo_surface_add(Evas* canvas, cairo_surface_t* surface);
+Evas_Object *ewk_util_image_from_cairo_surface_add(Evas *canvas, cairo_surface_t *surface);
 
 #endif // ewk_util_h
