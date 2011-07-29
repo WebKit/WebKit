@@ -1,5 +1,17 @@
 2011-07-29  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 90295.
+
+    2011-07-01  Darin Adler  <darin@apple.com>
+
+        Add change accidentally left out of last commit.
+
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateContentsScale): Multiply in the
+        backing scale.
+
+2011-07-29  Lucas Forschler  <lforschler@apple.com>
+
     Merged 90293.
 
     2011-07-01  Darin Adler  <darin@apple.com>
