@@ -2,6 +2,12 @@
 
         [Qt] Unreviewed gardening after r91986
 
+        * platform/qt-arm/Skipped: Skip failing tests.
+
+2011-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r91986
+
         * platform/qt-mac/Skipped: Skip one more failing test.
 
 2011-07-29  Csaba Osztrogonác  <ossy@webkit.org>

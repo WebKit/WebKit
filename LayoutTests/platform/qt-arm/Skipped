@@ -73,3 +73,8 @@ fast/js/instanceof-XMLHttpRequest.html
 fast/replaced/outline-replaced-elements.html
 http/tests/security/local-video-poster-from-remote.html
 http/tests/security/local-video-src-from-remote.html
+
+# Qt results were added by r91986, but these tests fail on Qt-ARM platform
+svg/batik/filters/filterRegions.svg
+svg/batik/text/longTextOnPath.svg
+svg/carto.net/scrollbar.svg
