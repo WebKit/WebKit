@@ -286,6 +286,9 @@ PluginView::~PluginView()
         m_isBeingDestroyed = true;
         m_plugin->destroyPlugin();
         m_isBeingDestroyed = false;
+#if PLATFORM(MAC)
+        setComplexTextInputEnabled(false);
+#endif
     }
 
     // Invalidate the object map.
