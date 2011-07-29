@@ -175,12 +175,16 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     Vector<FloatRect> textRects;
     selectedFrame->selection()->getClippedVisibleTextRectangles(textRects);
 
+    IntSize backingStoreSize = selectionRect.size();
+    backingStoreSize.scale(m_webPage->userSpaceScaleFactor());
+
     // Create a backing store and paint the find indicator text into it.
-    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(selectionRect.size(), ShareableBitmap::SupportsAlpha);
+    RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
     if (!findIndicatorTextBackingStore)
         return false;
     
     OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
+    graphicsContext->scale(FloatSize(m_webPage->userSpaceScaleFactor(), m_webPage->userSpaceScaleFactor()));
 
     IntRect paintRect = selectionRect;
     paintRect.move(selectedFrame->view()->frameRect().x(), selectedFrame->view()->frameRect().y());
@@ -207,7 +211,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
         textRectsInSelectionRectCoordinates.append(textRectInSelectionRectCoordinates);
     }            
     
-    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, handle, !isShowingOverlay));
+    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, m_webPage->userSpaceScaleFactor(), handle, !isShowingOverlay));
     m_isShowingFindIndicator = true;
 
     return true;
@@ -219,7 +223,7 @@ void FindController::hideFindIndicator()
         return;
 
     ShareableBitmap::Handle handle;
-    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), handle, false));
+    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), m_webPage->userSpaceScaleFactor(), handle, false));
     m_isShowingFindIndicator = false;
 }
 
