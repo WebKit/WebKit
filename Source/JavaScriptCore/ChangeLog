@@ -1,3 +1,16 @@
+2011-07-29  Filip Pizlo  <fpizlo@apple.com>
+
+        Crash when opening docs.google.com
+        https://bugs.webkit.org/show_bug.cgi?id=65327
+
+        Reviewed by Gavin Barraclough.
+        
+        The speculative JIT was only checking whether a value is an array when
+        we had already checked that it was, rather then when we hadn't.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-07-28  Oliver Hunt  <oliver@apple.com>
 
         *_list instructions are only used in one place, where the code is wrong.
