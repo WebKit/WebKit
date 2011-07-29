@@ -237,11 +237,11 @@ EAPI Eina_Bool    ewk_frame_feed_mouse_wheel(Evas_Object *o, const Evas_Event_Mo
 EAPI Eina_Bool    ewk_frame_feed_mouse_down(Evas_Object *o, const Evas_Event_Mouse_Down *ev);
 EAPI Eina_Bool    ewk_frame_feed_mouse_up(Evas_Object *o, const Evas_Event_Mouse_Up *ev);
 EAPI Eina_Bool    ewk_frame_feed_mouse_move(Evas_Object *o, const Evas_Event_Mouse_Move *ev);
-EAPI Eina_Bool    ewk_frame_feed_touch_event(Evas_Object* o, Ewk_Touch_Event_Type action, Eina_List* points, int metaState);
+EAPI Eina_Bool    ewk_frame_feed_touch_event(Evas_Object *o, Ewk_Touch_Event_Type action, Eina_List *points, int metaState);
 EAPI Eina_Bool    ewk_frame_feed_key_down(Evas_Object *o, const Evas_Event_Key_Down *ev);
 EAPI Eina_Bool    ewk_frame_feed_key_up(Evas_Object *o, const Evas_Event_Key_Up *ev);
 
-EAPI Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(Evas_Object* o);
+EAPI Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(Evas_Object *o);
 
 
 #ifdef __cplusplus

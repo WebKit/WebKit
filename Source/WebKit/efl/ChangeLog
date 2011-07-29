@@ -1,3 +1,99 @@
+2011-07-28  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Fix pointer operator coding style in ewk_frame.
+        https://bugs.webkit.org/show_bug.cgi?id=65357
+
+        Move '*' operator to variable according to efl coding style.
+        Because, '*' operator is next to variable in EFL coding style.
+
+        Reviewed by Kent Tamura.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_debug):
+        (_ewk_frame_loader_efl_get):
+        (kit):
+        (_ewk_frame_children_iterator_next):
+        (_ewk_frame_children_iterator_get_container):
+        (_ewk_frame_smart_add):
+        (_ewk_frame_smart_del):
+        (_ewk_frame_smart_resize):
+        (_ewk_frame_smart_set):
+        (_ewk_frame_smart_class_new):
+        (ewk_frame_view_get):
+        (ewk_frame_children_iterator_new):
+        (ewk_frame_child_find):
+        (ewk_frame_uri_set):
+        (ewk_frame_uri_get):
+        (ewk_frame_title_get):
+        (ewk_frame_name_get):
+        (ewk_frame_contents_size_get):
+        (_ewk_frame_contents_set_internal):
+        (ewk_frame_contents_set):
+        (ewk_frame_contents_alternate_set):
+        (ewk_frame_script_execute):
+        (ewk_frame_editable_get):
+        (ewk_frame_editable_set):
+        (ewk_frame_selection_get):
+        (ewk_frame_text_search):
+        (ewk_frame_text_matches_mark):
+        (ewk_frame_text_matches_unmark_all):
+        (ewk_frame_text_matches_highlight_set):
+        (ewk_frame_text_matches_highlight_get):
+        (_ewk_frame_rect_cmp_less_than):
+        (_ewk_frame_rect_is_negative_value):
+        (ewk_frame_text_matches_nth_pos_get):
+        (ewk_frame_stop):
+        (ewk_frame_reload):
+        (ewk_frame_reload_full):
+        (ewk_frame_back):
+        (ewk_frame_forward):
+        (ewk_frame_navigate):
+        (ewk_frame_back_possible):
+        (ewk_frame_forward_possible):
+        (ewk_frame_navigate_possible):
+        (ewk_frame_zoom_get):
+        (ewk_frame_zoom_set):
+        (ewk_frame_zoom_text_only_get):
+        (ewk_frame_zoom_text_only_set):
+        (ewk_frame_hit_test_free):
+        (ewk_frame_hit_test_new):
+        (ewk_frame_scroll_add):
+        (ewk_frame_scroll_set):
+        (ewk_frame_scroll_size_get):
+        (ewk_frame_scroll_pos_get):
+        (ewk_frame_visible_content_geometry_get):
+        (ewk_frame_paint_full_get):
+        (ewk_frame_paint_full_set):
+        (ewk_frame_feed_focus_in):
+        (ewk_frame_feed_focus_out):
+        (ewk_frame_feed_mouse_wheel):
+        (ewk_frame_feed_mouse_down):
+        (ewk_frame_feed_mouse_up):
+        (ewk_frame_feed_mouse_move):
+        (ewk_frame_feed_touch_event):
+        (_ewk_frame_handle_key_scrolling):
+        (ewk_frame_feed_key_down):
+        (ewk_frame_feed_key_up):
+        (ewk_frame_text_selection_type_get):
+        (ewk_frame_add):
+        (ewk_frame_init):
+        (ewk_frame_child_add):
+        (ewk_frame_core_gone):
+        (ewk_frame_core_get):
+        (ewk_frame_load_started):
+        (ewk_frame_load_provisional):
+        (ewk_frame_load_finished):
+        (ewk_frame_load_error):
+        (ewk_frame_load_progress_changed):
+        (ewk_frame_contents_size_changed):
+        (ewk_frame_title_set):
+        (ewk_frame_view_create_for_view):
+        (ewk_frame_uri_changed):
+        (ewk_frame_force_layout):
+        (ewk_frame_plugin_create):
+        (ewk_frame_editor_client_selection_changed):
+        * ewk/ewk_frame.h:
+
 2011-07-27  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Add dummy NotificationPresenterClientEfl
