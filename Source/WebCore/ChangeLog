@@ -1,3 +1,15 @@
+2011-07-29  Zeng Huiqing  <huiqing.zeng@intel.com>
+
+        Avoid calling animation timer updates while the page is loading
+        https://bugs.webkit.org/show_bug.cgi?id=64851
+
+        Reviewed by Simon Fraser.
+
+        There is no need to update the animation timer for a RenderObject that has not yet been inserted into the render tree, or that doesn't have animations. Our tests show that this improves page loading by up to 3x on pages with a large number of transitionable objects.
+
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationController::updateAnimations):
+
 2011-07-29  Anders Carlsson  <andersca@apple.com>
 
         Pass the HTTP referrer header for URLs loaded by plug-ins

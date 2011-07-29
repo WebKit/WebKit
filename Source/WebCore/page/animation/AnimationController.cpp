@@ -500,7 +500,8 @@ PassRefPtr<RenderStyle> AnimationController::updateAnimations(RenderObject* rend
     RefPtr<CompositeAnimation> rendererAnimations = m_data->accessCompositeAnimation(renderer);
     RefPtr<RenderStyle> blendedStyle = rendererAnimations->animate(renderer, oldStyle, newStyle);
 
-    m_data->updateAnimationTimer();
+    if (renderer->parent() || newStyle->animations() || (oldStyle && oldStyle->animations()))
+        m_data->updateAnimationTimer();
 
     if (blendedStyle != newStyle) {
         // If the animations/transitions change opacity or transform, we need to update
