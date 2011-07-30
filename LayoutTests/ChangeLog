@@ -1,3 +1,30 @@
+2011-07-30  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update platform specific expected files after r92047.
+
+        * platform/qt-4.8/svg/batik/filters/filterRegions-expected.txt:
+        * platform/qt-4.8/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/qt-4.8/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/qt-4.8/svg/batik/paints/patternRegions-expected.txt:
+        * platform/qt-4.8/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/qt-4.8/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/qt-4.8/svg/batik/text/smallFonts-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textAnchor-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textDecoration-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textEffect-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textEffect2-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textEffect3-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textFeatures-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textLayout2-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textLength-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textOnPath-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textPosition-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textPosition2-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textProperties-expected.txt:
+        * platform/qt-4.8/svg/batik/text/textProperties2-expected.txt:
+        * platform/qt-4.8/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/qt-mac/Skipped: Skip failing tests.
+
 2011-07-29  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update platform specific expected files after r92047.

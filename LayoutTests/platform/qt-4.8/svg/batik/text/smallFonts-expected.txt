@@ -170,3 +170,4 @@ layer at (0,0) size 450x500
                   chunk 1 text run 6 at (2.61,0.31) startOffset 5 endOffset 6 width 0.12: "t"
             RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGContainer {use} at (0,0) size 0x0 [transform={m=((0.02,0.00)(0.00,0.02)) t=(0.00,0.00)}]
+      RenderSVGContainer {g} at (0,0) size 0x0
