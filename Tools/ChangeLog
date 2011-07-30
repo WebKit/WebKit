@@ -1,5 +1,12 @@
 2011-07-29  Adam Barth  <abarth@webkit.org>
 
+        More debug logging.  Maybe we're running the git version of this
+        function somehow?  (That would explain why it doesn't work!)
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+
+2011-07-29  Adam Barth  <abarth@webkit.org>
+
         Add some temporary debug logging messages to try to understand why the
         windows bots can't figure out their current SVN revision.
 
