@@ -166,6 +166,10 @@ button.default:hover {
     padding: 4px 0px 4px 3px;
 }
 
+.changelog .reverted {
+    text-decoration: line-through;
+}
+
 .changelog .possible-regression {
     background-color: PapayaWhip;
 }

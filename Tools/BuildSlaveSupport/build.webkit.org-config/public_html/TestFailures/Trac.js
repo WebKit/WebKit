@@ -70,6 +70,15 @@ function findSummary(message)
     }
 }
 
+function findRevert(message)
+{
+    var regexp = /rolling out r(\d+)\./;
+    var revision = findUsingRegExp(message, regexp);
+    if (!revision)
+        return undefined;
+    return parseInt(revision, 10);
+}
+
 // FIXME: Consider exposing this method for unit testing.
 function parseCommitData(responseXML)
 {
@@ -91,6 +100,7 @@ function parseCommitData(responseXML)
             'reviewer': findReviewer(message),
             'bugID': findBugID(message),
             'message': message,
+            'revertedRevision': findRevert(message),
         };
     });
 

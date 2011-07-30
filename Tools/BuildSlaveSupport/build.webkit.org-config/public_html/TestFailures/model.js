@@ -6,10 +6,24 @@ var kCommitLogLength = 50;
 
 model.state = {};
 
+function findAndMarkRevertedRevisions(commitDataList)
+{
+    var revertedRevisions = {};
+    $.each(commitDataList, function(index, commitData) {
+        if (commitData.revertedRevision)
+            revertedRevisions[commitData.revertedRevision] = true;
+    });
+    $.each(commitDataList, function(index, commitData) {
+        if (commitData.revision in revertedRevisions)
+            commitData.wasReverted = true;
+    });
+}
+
 model.updateRecentCommits = function(callback)
 {
     trac.recentCommitData('trunk', kCommitLogLength, function(commitDataList) {
         model.state.recentCommits = commitDataList;
+        findAndMarkRevertedRevisions(model.state.recentCommits);
         callback();
     });
 };

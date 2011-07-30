@@ -126,6 +126,8 @@ ui.commitEntry = function(commitData)
         $('.reviewer', entry).text(commitData.reviewer);
     else
         $('.reviewer-container', entry).detach();
+    if (commitData.wasReverted)
+        entry.addClass('reverted');
 
     return entry;
 }
