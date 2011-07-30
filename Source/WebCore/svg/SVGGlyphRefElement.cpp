@@ -58,8 +58,7 @@ bool SVGGlyphRefElement::hasValidGlyphElement(String& glyphName) const
 {
     // FIXME: We only support xlink:href so far.
     // https://bugs.webkit.org/show_bug.cgi?id=64787
-    glyphName = getTarget(fastGetAttribute(XLinkNames::hrefAttr));
-    Element* element = treeScope()->getElementById(glyphName);
+    Element* element = targetElementFromIRIString(fastGetAttribute(XLinkNames::hrefAttr), document(), &glyphName);
     if (!element || !element->hasTagName(SVGNames::glyphTag))
         return false;
     return true;

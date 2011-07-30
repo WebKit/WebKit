@@ -138,7 +138,7 @@ void SVGShadowText::recalcStyle(StyleChange change)
 
 void SVGTRefElement::updateReferencedText()
 {
-    Element* target = treeScope()->getElementById(SVGURIReference::getTarget(href()));
+    Element* target = SVGURIReference::targetElementFromIRIString(href(), document());
     ASSERT(target);
     String textContent;
     if (target->parentNode())
@@ -186,8 +186,8 @@ void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
             m_eventListener->removeFromTarget();
             m_eventListener = 0;
         }
-        String id = SVGURIReference::getTarget(href());
-        Element* target = treeScope()->getElementById(id);
+        String id;
+        Element* target = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
         if (!target) {
             document()->accessSVGExtensions()->addPendingResource(id, this);
             return;
@@ -232,10 +232,9 @@ bool SVGTRefElement::rendererIsNeeded(const NodeRenderingContext& context)
 void SVGTRefElement::buildPendingResource()
 {
     updateReferencedText();
-    String id = SVGURIReference::getTarget(href());
-    if (Element* target = treeScope()->getElementById(id)) {
+    if (Element* target = SVGURIReference::targetElementFromIRIString(href(), document())) {
         ASSERT(!m_eventListener);
-        m_eventListener = SubtreeModificationEventListener::create(this, id);
+        m_eventListener = SubtreeModificationEventListener::create(this, target->getIdAttribute());
         ASSERT(target->parentNode());
         target->parentNode()->addEventListener(eventNames().DOMSubtreeModifiedEvent, m_eventListener.get(), false);
     }

@@ -77,3 +77,4 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 120x19
             chunk 1 (middle anchor) text run 1 at (15.50,150.00) startOffset 0 endOffset 16 width 119.00: "<radialGradient>"
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

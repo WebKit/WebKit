@@ -76,7 +76,7 @@ void SVGFEImageElement::requestImageResource()
         m_cachedImage = 0;
     }
 
-    Element* hrefElement = treeScope()->getElementById(SVGURIReference::getTarget(href()));
+    Element* hrefElement = SVGURIReference::targetElementFromIRIString(href(), document());
     if (hrefElement && hrefElement->isSVGElement() && hrefElement->renderer())
         return;
 
@@ -163,7 +163,7 @@ void SVGFEImageElement::notifyFinished(CachedResource*)
 PassRefPtr<FilterEffect> SVGFEImageElement::build(SVGFilterBuilder*, Filter* filter)
 {
     if (!m_cachedImage && !m_targetImage) {
-        Element* hrefElement = treeScope()->getElementById(SVGURIReference::getTarget(href()));
+        Element* hrefElement = SVGURIReference::targetElementFromIRIString(href(), document());
         if (!hrefElement || !hrefElement->isSVGElement())
             return 0;
 

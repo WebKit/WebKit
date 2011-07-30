@@ -28,6 +28,8 @@
 namespace WebCore {
 
 class Attribute;
+class Document;
+class Element;
 
 class SVGURIReference {
 public:
@@ -37,7 +39,8 @@ public:
     bool isKnownAttribute(const QualifiedName&);
     void addSupportedAttributes(HashSet<QualifiedName>&);
 
-    static String getTarget(const String& url);
+    static String fragmentIdentifierFromIRIString(const String&, Document*);
+    static Element* targetElementFromIRIString(const String&, Document*, String* = 0);
 
 protected:
     virtual void setHrefBaseValue(const String&) = 0;

@@ -181,7 +181,7 @@ bool SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
         processedGradients.add(current);
 
         // Respect xlink:href, take attributes from referenced element
-        Node* refNode = treeScope()->getElementById(SVGURIReference::getTarget(current->href()));
+        Node* refNode = SVGURIReference::targetElementFromIRIString(current->href(), document());
         if (refNode && (refNode->hasTagName(SVGNames::linearGradientTag) || refNode->hasTagName(SVGNames::radialGradientTag))) {
             current = static_cast<SVGGradientElement*>(refNode);
 

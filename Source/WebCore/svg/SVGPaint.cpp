@@ -165,7 +165,7 @@ bool SVGPaint::matchesTargetURI(const String& referenceId)
     case SVG_PAINTTYPE_URI_RGBCOLOR:
     case SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR:
     case SVG_PAINTTYPE_URI:
-        return referenceId == SVGURIReference::getTarget(m_uri);
+        return referenceId == SVGURIReference::fragmentIdentifierFromIRIString(m_uri, node() ? node()->document() : 0);
     }
 
     ASSERT_NOT_REACHED();

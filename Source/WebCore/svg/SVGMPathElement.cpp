@@ -76,7 +76,7 @@ void SVGMPathElement::parseMappedAttribute(Attribute* attr)
 
 SVGPathElement* SVGMPathElement::pathElement()
 {
-    Element* target = treeScope()->getElementById(getTarget(href()));
+    Element* target = targetElementFromIRIString(href(), document());
     if (target && target->hasTagName(SVGNames::pathTag))
         return static_cast<SVGPathElement*>(target);
     return 0;

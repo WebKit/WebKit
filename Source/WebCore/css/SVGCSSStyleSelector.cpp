@@ -361,7 +361,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             else
                 return;
 
-            svgstyle->setMarkerStartResource(SVGURIReference::getTarget(s));
+            svgstyle->setMarkerStartResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
         }
         case CSSPropertyMarkerMid:
@@ -377,7 +377,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             else
                 return;
 
-            svgstyle->setMarkerMidResource(SVGURIReference::getTarget(s));
+            svgstyle->setMarkerMidResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
         }
         case CSSPropertyMarkerEnd:
@@ -393,7 +393,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             else
                 return;
 
-            svgstyle->setMarkerEndResource(SVGURIReference::getTarget(s));
+            svgstyle->setMarkerEndResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
         }
         case CSSPropertyStrokeLinecap:
@@ -432,7 +432,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             else
                 return;
 
-            svgstyle->setFilterResource(SVGURIReference::getTarget(s));
+            svgstyle->setFilterResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
         }
         case CSSPropertyMask:
@@ -448,7 +448,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             else
                 return;
             
-            svgstyle->setMaskerResource(SVGURIReference::getTarget(s));
+            svgstyle->setMaskerResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
         }
         case CSSPropertyClipPath:
@@ -464,7 +464,7 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             else
                 return;
 
-            svgstyle->setClipperResource(SVGURIReference::getTarget(s));
+            svgstyle->setClipperResource(SVGURIReference::fragmentIdentifierFromIRIString(s, m_element->document()));
             break;
         }
         case CSSPropertyTextAnchor:

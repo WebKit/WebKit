@@ -495,7 +495,7 @@ SVGElement* SVGSMILElement::targetElement()
         return m_targetElement;
 
     String href = xlinkHref();
-    ContainerNode* target = href.isEmpty() ? parentNode() : treeScope()->getElementById(SVGURIReference::getTarget(href));
+    ContainerNode* target = href.isEmpty() ? parentNode() : SVGURIReference::targetElementFromIRIString(href, document());
     if (!target || !target->isSVGElement())
         return 0;
     

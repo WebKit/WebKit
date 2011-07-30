@@ -71,3 +71,4 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 52x19
             chunk 1 (middle anchor) text run 1 at (24.50,-3.00) startOffset 0 endOffset 6 width 51.00: "Mask 4"
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

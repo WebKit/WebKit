@@ -476,8 +476,8 @@ void SVGUseElement::buildPendingResource()
     // If we're called the first time (during shadow tree root creation from RenderSVGShadowTreeRootContainer)
     // we either determine that our target is available or not - then we add ourselves to the pending resource list
     // Once the pending resource appears, it will call buildPendingResource(), so we're called a second time.
-    String id = SVGURIReference::getTarget(href());
-    Element* targetElement = treeScope()->getElementById(id);
+    String id;
+    Element* targetElement = SVGURIReference::targetElementFromIRIString(href(), document(), &id);
     ASSERT(!m_targetElementInstance);
 
     if (!targetElement) {
@@ -521,8 +521,7 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGShadowTreeRootElement* shadowR
     // Solution: block any updates to the shadow tree while we're building it.
     ShadowTreeUpdateBlocker blocker(this);
 
-    String id = SVGURIReference::getTarget(href());
-    Element* targetElement = treeScope()->getElementById(id);
+    Element* targetElement = SVGURIReference::targetElementFromIRIString(href(), document());
     if (!targetElement) {
         // The only time we should get here is when the use element has not been
         // given a resource to target.
@@ -773,8 +772,7 @@ void SVGUseElement::buildInstanceTree(SVGElement* target, SVGElementInstance* ta
 
 bool SVGUseElement::hasCycleUseReferencing(SVGUseElement* use, SVGElementInstance* targetInstance, SVGElement*& newTarget)
 {
-    String id = SVGURIReference::getTarget(use->href());
-    Element* targetElement = treeScope()->getElementById(id); 
+    Element* targetElement = SVGURIReference::targetElementFromIRIString(use->href(), document());
     newTarget = 0;
     if (targetElement && targetElement->isSVGElement())
         newTarget = static_cast<SVGElement*>(targetElement);
@@ -791,7 +789,7 @@ bool SVGUseElement::hasCycleUseReferencing(SVGUseElement* use, SVGElementInstanc
         SVGElement* element = instance->correspondingElement();
 
         // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
-        if (element->hasID() && element->idForStyleResolution() == id)
+        if (element->hasID() && element->idForStyleResolution() == newTarget->getIdAttribute())
             return true;
     
         instance = instance->parentNode();
@@ -854,8 +852,7 @@ void SVGUseElement::expandUseElementsInShadowTree(Node* element)
     if (element->hasTagName(SVGNames::useTag)) {
         SVGUseElement* use = static_cast<SVGUseElement*>(element);
 
-        String id = SVGURIReference::getTarget(use->href());
-        Element* targetElement = treeScope()->getElementById(id); 
+        Element* targetElement = SVGURIReference::targetElementFromIRIString(use->href(), document());
         SVGElement* target = 0;
         if (targetElement && targetElement->isSVGElement())
             target = static_cast<SVGElement*>(targetElement);

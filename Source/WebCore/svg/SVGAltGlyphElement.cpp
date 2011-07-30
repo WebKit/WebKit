@@ -89,8 +89,8 @@ RenderObject* SVGAltGlyphElement::createRenderer(RenderArena* arena, RenderStyle
 
 bool SVGAltGlyphElement::hasValidGlyphElements(Vector<String>& glyphNames) const
 {
-    String target = getTarget(fastGetAttribute(XLinkNames::hrefAttr));
-    Element* element = treeScope()->getElementById(target);
+    String target;
+    Element* element = targetElementFromIRIString(fastGetAttribute(XLinkNames::hrefAttr), document(), &target);
     if (!element)
         return false;
 

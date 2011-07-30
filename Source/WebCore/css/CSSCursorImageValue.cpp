@@ -43,9 +43,9 @@ static inline bool isSVGCursorIdentifier(const String& url)
     return kurl.hasFragmentIdentifier();
 }
 
-static inline SVGCursorElement* resourceReferencedByCursorElement(const String& fragmentId, TreeScope* scope)
+static inline SVGCursorElement* resourceReferencedByCursorElement(const String& url, Document* document)
 {
-    Element* element = scope->getElementById(SVGURIReference::getTarget(fragmentId));
+    Element* element = SVGURIReference::targetElementFromIRIString(url, document);
     if (element && element->hasTagName(SVGNames::cursorTag))
         return static_cast<SVGCursorElement*>(element);
 
@@ -72,7 +72,7 @@ CSSCursorImageValue::~CSSCursorImageValue()
     for (; it != end; ++it) {
         SVGElement* referencedElement = *it;
         referencedElement->cursorImageValueRemoved();
-        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->treeScope()))
+        if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, referencedElement->document()))
             cursorElement->removeClient(referencedElement);
     }
 #endif
@@ -90,7 +90,7 @@ bool CSSCursorImageValue::updateIfSVGCursorIsUsed(Element* element)
     if (!isSVGCursorIdentifier(url))
         return false;
 
-    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->treeScope())) {
+    if (SVGCursorElement* cursorElement = resourceReferencedByCursorElement(url, element->document())) {
         // FIXME: This will override hot spot specified in CSS, which is probably incorrect.
         float x = roundf(cursorElement->x().value(0));
         m_hotSpot.setX(static_cast<int>(x));

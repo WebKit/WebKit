@@ -24,6 +24,9 @@
 #include "SVGURIReference.h"
 
 #include "Attribute.h"
+#include "Document.h"
+#include "Element.h"
+#include "KURL.h"
 
 namespace WebCore {
 
@@ -42,20 +45,30 @@ bool SVGURIReference::isKnownAttribute(const QualifiedName& attrName)
     return attrName.matches(XLinkNames::hrefAttr);
 }
 
-String SVGURIReference::getTarget(const String& url)
+String SVGURIReference::fragmentIdentifierFromIRIString(const String& url, Document* document)
 {
-    if (url.startsWith("url(")) { // URI References, ie. fill:url(#target)
-        size_t start = url.find('#') + 1;
-        size_t end = url.reverseFind(')');
-        return url.substring(start, end - start);
-    }
-    if (url.find('#') != notFound) { // format is #target
-        size_t start = url.find('#') + 1;
-        return url.substring(start, url.length() - start);
-    }
+    ASSERT(document);
+    size_t start = url.find('#');
+    if (start == notFound)
+        return emptyString();
 
-    // The url doesn't have any target.
-    return String();
+    KURL base = start ? KURL(document->baseURI(), url.substring(0, start)) : document->baseURI();
+    String fragmentIdentifier = url.substring(start);
+    KURL kurl(base, fragmentIdentifier);
+    if (equalIgnoringFragmentIdentifier(kurl, document->url()))
+        return fragmentIdentifier.substring(1);
+
+    // The url doesn't have any fragment identifier.
+    return emptyString();
+}
+
+Element* SVGURIReference::targetElementFromIRIString(const String& iri, Document* document, String* fragmentIdentifier)
+{
+    String id = fragmentIdentifierFromIRIString(iri, document);
+    if (fragmentIdentifier)
+        *fragmentIdentifier = id;
+    // FIXME: Handle external references (Bug 65344).
+    return document->getElementById(id);
 }
 
 void SVGURIReference::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)

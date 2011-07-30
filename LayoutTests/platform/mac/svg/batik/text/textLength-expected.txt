@@ -172,3 +172,4 @@ layer at (0,0) size 450x500
             RenderSVGInlineText {#text} at (0,28) size 76x15
               chunk 1 text run 1 at (160.00,68.80) startOffset 0 endOffset 15 width 76.00: "font-size=\"100\""
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

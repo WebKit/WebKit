@@ -1,3 +1,69 @@
+2011-07-29  Rob Buis  <rbuis@rim.com>
+
+        URL references are completely broken in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=63283
+
+        Reviewed by Nikolas Zimmermann.
+
+        Change SVGURIElement::getTarget to be more strict about iri resolving and make it serve as a central
+        place to resolve a iri to a SVGElement. The iri can be same-document or external, for now we only handle
+        the former, the latter will be handled in bug 65344.
+        Accept as same-document if the iri combined with the base uri equals the document url (ignoring
+        the fragment identifier). For convenience a method is added to lookup the element, if found.
+
+        Tests: svg/custom/external-paintserver-reference.svg
+               svg/custom/linking-base-external-reference.xhtml
+               svg/custom/uri-reference-handling.svg
+
+        * css/CSSCursorImageValue.cpp:
+        (WebCore::resourceReferencedByCursorElement):
+        (WebCore::CSSCursorImageValue::~CSSCursorImageValue):
+        (WebCore::CSSCursorImageValue::updateIfSVGCursorIsUsed):
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * css/CSSFontSelector.h:
+        (WebCore::CSSFontSelector::document):
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * rendering/svg/RenderSVGTextPath.cpp:
+        (WebCore::RenderSVGTextPath::layoutPath):
+        * rendering/svg/SVGResources.cpp:
+        (WebCore::targetReferenceFromResource):
+        (WebCore::paintingResourceFromSVGPaint):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::hasValidGlyphElements):
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::requestImageResource):
+        (WebCore::SVGFEImageElement::build):
+        * svg/SVGGlyphRefElement.cpp:
+        (WebCore::SVGGlyphRefElement::hasValidGlyphElement):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes):
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::pathElement):
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::matchesTargetURI):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::collectPatternAttributes):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes):
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::updateReferencedText):
+        (WebCore::SVGTRefElement::svgAttributeChanged):
+        (WebCore::SVGTRefElement::buildPendingResource):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::insertedIntoDocument):
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::fragmentIdentifierFromIRIString):
+        (WebCore::SVGURIReference::targetElementFromIRIString):
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::buildPendingResource):
+        (WebCore::SVGUseElement::hasCycleUseReferencing):
+        (WebCore::SVGUseElement::expandUseElementsInShadowTree):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::targetElement):
+
 2011-07-29  James Simonsen  <simonjam@chromium.org>
 
         Remove zipcar.com site specific hack added in r87361

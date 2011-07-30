@@ -180,3 +180,4 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 322x36
             chunk 1 (middle anchor) text run 1 at (-160.50,15.00) startOffset 0 endOffset 25 width 321.00: "AvantGarde (line-through)"
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

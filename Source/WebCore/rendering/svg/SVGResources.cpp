@@ -150,7 +150,7 @@ static inline String targetReferenceFromResource(SVGElement* element)
     else
         ASSERT_NOT_REACHED();
 
-    return SVGURIReference::getTarget(target);
+    return SVGURIReference::fragmentIdentifierFromIRIString(target, element->document());
 }
 
 static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document* document, const SVGPaint::SVGPaintType& paintType, const String& paintUri, AtomicString& id, bool& hasPendingResource)
@@ -158,7 +158,7 @@ static inline RenderSVGResourceContainer* paintingResourceFromSVGPaint(Document*
     if (paintType != SVGPaint::SVG_PAINTTYPE_URI && paintType != SVGPaint::SVG_PAINTTYPE_URI_RGBCOLOR)
         return 0;
 
-    id = SVGURIReference::getTarget(paintUri);
+    id = SVGURIReference::fragmentIdentifierFromIRIString(paintUri, document);
     RenderSVGResourceContainer* container = getRenderSVGResourceContainerById(document, id);
     if (!container) {
         hasPendingResource = true;
