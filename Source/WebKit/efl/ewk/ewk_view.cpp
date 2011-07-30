@@ -3646,3 +3646,16 @@ void ewk_view_editor_client_selection_changed(Evas_Object *o)
 {
     evas_object_smart_callback_call(o, "editorclient,selection,changed", 0);
 }
+
+/**
+ * @internal
+ * Reports to the view that editor client's contents were changed.
+ *
+ * @param o View.
+ *
+ * Emits signal: "editorclient,contents,changed" with no parameters.
+ */
+void ewk_view_editor_client_contents_changed(Evas_Object *o)
+{
+    evas_object_smart_callback_call(o, "editorclient,contents,changed", 0);
+}

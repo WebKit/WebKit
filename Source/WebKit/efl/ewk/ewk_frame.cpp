@@ -2032,3 +2032,18 @@ void ewk_frame_editor_client_selection_changed(Evas_Object *o)
     EWK_FRAME_SD_GET_OR_RETURN(o, sd);
     ewk_view_editor_client_selection_changed(sd->view);
 }
+
+/**
+ * @internal
+ * Reports that editor client's contents were changed.
+ *
+ * @param o Frame
+ *
+ * Emits signal: "editorclient,contents,changed" with no parameters.
+ */
+void ewk_frame_editor_client_contents_changed(Evas_Object *o)
+{
+    evas_object_smart_callback_call(o, "editorclient,contents,changed", 0);
+    EWK_FRAME_SD_GET_OR_RETURN(o, sd);
+    ewk_view_editor_client_contents_changed(sd->view);
+}

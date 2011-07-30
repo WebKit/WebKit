@@ -90,6 +90,8 @@ extern "C" {
  *  - "restore", Evas_Object *: reports that view should be restored to default conditions
  *    and it gives a frame that originated restore as an argument.
  *  - "tooltip,text,set", const char*: sets tooltip text and displays if it is currently hidden.
+ *  - "editorclient,contents,changed", void: reports to the view that editor
+ *    client's contents were changed
  */
 
 typedef struct _Ewk_View_Smart_Data Ewk_View_Smart_Data;

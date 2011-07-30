@@ -122,7 +122,15 @@ void EditorClientEfl::didBeginEditing()
 
 void EditorClientEfl::respondToChangedContents()
 {
-    notImplemented();
+    Evas_Object* frame = ewk_view_frame_focused_get(m_view);
+
+    if (!frame)
+        frame = ewk_view_frame_main_get(m_view);
+
+    if (!frame)
+        return;
+
+    ewk_frame_editor_client_contents_changed(frame);
 }
 
 void EditorClientEfl::respondToChangedSelection()

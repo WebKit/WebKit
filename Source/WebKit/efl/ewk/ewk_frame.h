@@ -58,6 +58,8 @@
  *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: a resource will
  *    be requested.
  *  - "state,save", void: frame's state will be saved as a history item.
+ *  - "editorclient,contents,changed", void: reports that editor client's
+ *    contents were changed
  */
 
 #ifndef ewk_frame_h

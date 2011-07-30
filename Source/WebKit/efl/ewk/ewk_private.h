@@ -111,6 +111,7 @@ void ewk_view_viewport_attributes_set(Evas_Object *o, const WebCore::ViewportArg
 
 void ewk_view_download_request(Evas_Object *o, Ewk_Download *download);
 
+void ewk_view_editor_client_contents_changed(Evas_Object *o);
 void ewk_view_editor_client_selection_changed(Evas_Object *o);
 
 int ewk_util_dpi_get(void);
@@ -179,6 +180,7 @@ WebCore::FloatRect ewk_view_page_rect_get(Evas_Object *o);
 
 const char* ewk_settings_default_user_agent_get(void);
 
+void ewk_frame_editor_client_contents_changed(Evas_Object *o);
 void ewk_frame_editor_client_selection_changed(Evas_Object *o);
 
 #ifdef __cplusplus
