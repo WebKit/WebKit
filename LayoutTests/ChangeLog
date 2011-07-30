@@ -1,3 +1,21 @@
+2011-07-29  Filip Pizlo  <fpizlo@apple.com>
+
+        LayoutTests does not have a test for array speculation pathologies in the JavaScriptCore DFG JIT.
+        https://bugs.webkit.org/show_bug.cgi?id=65397
+
+        Reviewed by Darin Adler.
+        
+        This test reproduces the crash seen in https://bugs.webkit.org/show_bug.cgi?id=65327, and is
+        designed to guard itself against possible variants of array speculation failure.  It will
+        test both the case where a speculate-array value is actually a non-array object, and the
+        case where it is a number.  Particular care is taken to increase the likelihood that the
+        test remains relevant if the JIT performs speculation based on actual argument types and
+        values at the time of compilation.
+
+        * fast/js/array-type-speculation-expected.txt: Added.
+        * fast/js/array-type-speculation.html: Added.
+        * fast/js/script-tests/array-type-speculation.js: Added.
+
 2011-07-29  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update, gardener stuff.
