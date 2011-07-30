@@ -629,7 +629,7 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
     setDelayCallbacks(false);
 }
 
-void MediaPlayerPrivateAVFoundation::setDelayCallbacks(bool delay)
+void MediaPlayerPrivateAVFoundation::setDelayCallbacks(bool delay) const
 {
     MutexLocker lock(m_queueMutex);
     if (delay)

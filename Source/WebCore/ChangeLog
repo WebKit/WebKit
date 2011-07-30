@@ -1,3 +1,20 @@
+2011-07-29  Jeff Miller  <jeffm@apple.com>
+
+        Work-in-progress on Adopt AVCF media back end on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=65400
+        <rdar://problem/9083559>
+        
+        Make MediaPlayerPrivateAVFoundation::setDelayCallbacks() const and make the ivars
+        it references mutable so other const member functions can call it.
+
+        Reviewed by Darin Adler.
+
+        No changes to functionality so no new tests.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setDelayCallbacks):
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+
 2011-07-29  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rolling out r92011.

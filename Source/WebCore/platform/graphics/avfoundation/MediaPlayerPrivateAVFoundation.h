@@ -215,7 +215,7 @@ protected:
     void setHasVideo(bool);
     void setHasAudio(bool);
     void setHasClosedCaptions(bool);
-    void setDelayCallbacks(bool);
+    void setDelayCallbacks(bool) const;
     void setIgnoreLoadStateChanges(bool delay) { m_ignoreLoadStateChanges = delay; }
     void setNaturalSize(IntSize);
     bool isLiveStream() const { return isinf(duration()); }
@@ -242,7 +242,7 @@ private:
     MediaPlayer* m_player;
 
     Vector<Notification> m_queuedNotifications;
-    Mutex m_queueMutex;
+    mutable Mutex m_queueMutex;
 
     mutable RefPtr<TimeRanges> m_cachedLoadedTimeRanges;
 
@@ -261,7 +261,7 @@ private:
 
     float m_seekTo;
     float m_requestedRate;
-    int m_delayCallbacks;
+    mutable int m_delayCallbacks;
     bool m_mainThreadCallPending;
     bool m_assetIsPlayable;
     bool m_visible;
