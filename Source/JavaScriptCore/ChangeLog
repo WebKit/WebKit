@@ -1,3 +1,17 @@
+2011-07-30  Balazs Kelemen  <kbalazs@webkit.org>
+
+        MessageQueue::waitForMessageFilteredWithTimeout can triggers an assertion
+        https://bugs.webkit.org/show_bug.cgi?id=65263
+
+        Reviewed by Dmitry Titov.
+
+        * wtf/Deque.h:
+        (WTF::::operator): Don't check the validity of an iterator
+        that will be reassigned right now.
+        * wtf/MessageQueue.h:
+        (WTF::::removeIf): Revert r51198 as I beleave this is the better
+        solution for the problem that was solved by that.
+
 2011-07-29  Filip Pizlo  <fpizlo@apple.com>
 
         JSC GC zombie support no longer works, and is likely no longer needed.

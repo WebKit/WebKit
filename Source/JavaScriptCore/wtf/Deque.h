@@ -613,7 +613,6 @@ namespace WTF {
     template<typename T, size_t inlineCapacity>
     inline DequeIteratorBase<T, inlineCapacity>& DequeIteratorBase<T, inlineCapacity>::operator=(const Base& other)
     {
-        checkValidity();
         other.checkValidity();
         removeFromIteratorsList();
 
