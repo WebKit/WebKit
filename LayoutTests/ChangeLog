@@ -1,3 +1,38 @@
+2011-07-29  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline, gardener stuff.
+
+        * platform/chromium-win-vista/fast/text/backslash-to-yen-sign-expected.png: Removed.
+        * platform/chromium-win-vista/fast/text/international/hindi-spacing-expected.png:
+        * platform/chromium-win-vista/fast/text/international/khmer-selection-expected.png: Added.
+        * platform/chromium-win-xp/fast/text/backslash-to-yen-sign-euc-expected.png:
+        * platform/chromium-win-xp/fast/text/backslash-to-yen-sign-expected.png:
+        * platform/chromium-win-xp/fast/text/international/hindi-spacing-expected.png:
+        * platform/chromium-win-xp/fast/text/international/khmer-selection-expected.png:
+        * platform/chromium-win-xp/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-euc-expected.png:
+        * platform/chromium-win/fast/text/backslash-to-yen-sign-expected.png:
+        * platform/chromium-win/fast/text/international/hindi-spacing-expected.png:
+        * platform/chromium-win/fast/text/international/khmer-selection-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.png:
+        * platform/chromium-win/svg/W3C-I18N/text-anchor-no-markup-expected.png:
+        * platform/chromium-win/svg/batik/text/verticalText-expected.png:
+        * platform/chromium-win/svg/css/text-shadow-multiple-expected.png:
+
 2011-07-29  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Add more testing to RenderLayer [ct'd]
