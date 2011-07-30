@@ -1,3 +1,29 @@
+2011-07-30  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION: culledInlineAbsoluteRects needs to translate a 0,0 point to absolute
+        coordinates so that the top left position is accurate.
+        https://bugs.webkit.org/show_bug.cgi?id=65419
+        <rdar://problem/9408862>
+
+        This patch fixes a regression introduced in r83075.
+        Make sure that culledInlineAbsoluteRects still does
+        a translation of a 0,0 point to absolute coordinates so that the top left position is
+        accurate.
+        This code path could not be tested via JavaScript. The patch
+        extends the Internals object to be able to test this case.
+
+        Reviewed by Dan Bernstein.
+
+        Test: fast/inline/skipped-whitespace-boundingBox.html
+
+        * WebCore.exp.in: Added some exports.
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::culledInlineAbsoluteRects):
+        * testing/Internals.cpp:
+        (WebCore::Internals::boundingBox):
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-07-26  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: move location conversion functions to SourceFile.

@@ -1,3 +1,15 @@
+2011-07-30  Enrica Casucci  <enrica@apple.com>
+
+        REGRESSION: culledInlineAbsoluteRects needs to translate a 0,0 point to absolute
+        coordinates so that the top left position is accurate.
+        https://bugs.webkit.org/show_bug.cgi?id=65419
+        <rdar://problem/9408862>
+
+        Reviewed by Dan Bernstein.
+
+        * fast/inline/skipped-whitespace-boundingBox-expected.txt: Added.
+        * fast/inline/skipped-whitespace-boundingBox.html: Added.
+
 2011-07-26  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: move location conversion functions to SourceFile.

@@ -34,6 +34,7 @@
 
 namespace WebCore {
 
+class ClientRect;
 class Document;
 class Element;
 class Node;
@@ -59,6 +60,8 @@ public:
 #else
     void setInspectorResourcesDataSizeLimits(Document*, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&) { }
 #endif
+
+    PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
 
 private:
     Internals();

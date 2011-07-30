@@ -486,6 +486,11 @@ void RenderInline::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& a
 
 void RenderInline::culledInlineAbsoluteRects(const RenderInline* container, Vector<IntRect>& rects, const IntSize& offset)
 {
+    if (!culledInlineFirstLineBox()) {
+        rects.append(IntRect(offset.width(), offset.height(), 0, 0));
+        return;
+    }
+
     bool isHorizontal = style()->isHorizontalWritingMode();
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (curr->isFloatingOrPositioned())

@@ -27,12 +27,14 @@
 #include "Internals.h"
 
 #include "CachedResourceLoader.h"
+#include "ClientRect.h"
 #include "Document.h"
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "InspectorController.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
+#include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #include "ShadowContentElement.h"
 #include "ShadowRoot.h"
@@ -146,5 +148,19 @@ void Internals::setInspectorResourcesDataSizeLimits(Document* document, int maxi
     document->page()->inspectorController()->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
 }
 #endif
+
+PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return ClientRect::create();
+    }
+
+    element->document()->updateLayoutIgnorePendingStylesheets();
+    RenderObject* renderer = element->renderer();
+    if (!renderer)
+        return ClientRect::create();
+    return ClientRect::create(renderer->absoluteBoundingBoxRect());
+}
 
 }
