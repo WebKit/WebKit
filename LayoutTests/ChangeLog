@@ -1,3 +1,39 @@
+2011-07-29  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update platform specific expected files after r92047.
+
+        * platform/qt/svg/W3C-SVG-1.1/struct-use-05-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+        * platform/qt/svg/batik/filters/filterRegions-expected.txt:
+        * platform/qt/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/qt/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/qt/svg/batik/paints/patternRegions-expected.txt:
+        * platform/qt/svg/batik/paints/patternRegions-positioned-objects-expected.png:
+        * platform/qt/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/qt/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/qt/svg/batik/text/smallFonts-expected.txt:
+        * platform/qt/svg/batik/text/textAnchor-expected.txt:
+        * platform/qt/svg/batik/text/textDecoration-expected.png:
+        * platform/qt/svg/batik/text/textDecoration-expected.txt:
+        * platform/qt/svg/batik/text/textEffect-expected.txt:
+        * platform/qt/svg/batik/text/textEffect2-expected.txt:
+        * platform/qt/svg/batik/text/textEffect3-expected.txt:
+        * platform/qt/svg/batik/text/textFeatures-expected.txt:
+        * platform/qt/svg/batik/text/textLayout2-expected.txt:
+        * platform/qt/svg/batik/text/textLength-expected.txt:
+        * platform/qt/svg/batik/text/textOnPath-expected.txt:
+        * platform/qt/svg/batik/text/textPosition-expected.txt:
+        * platform/qt/svg/batik/text/textPosition2-expected.txt:
+        * platform/qt/svg/batik/text/textProperties-expected.txt:
+        * platform/qt/svg/batik/text/textProperties2-expected.txt:
+        * platform/qt/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/qt/svg/hixie/error/014-expected.txt:
+        * platform/qt/svg/hixie/use/002-expected.txt:
+        * svg/custom/external-paintserver-reference-expected.png:
+        * svg/custom/external-paintserver-reference-expected.txt:
+        * svg/custom/linking-base-external-reference-expected.png:
+        * svg/custom/linking-base-external-reference-expected.txt:
+
 2011-07-29  Rob Buis  <rbuis@rim.com>
 
         URL references are completely broken in SVG

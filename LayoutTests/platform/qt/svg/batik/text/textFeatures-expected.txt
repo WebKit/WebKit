@@ -154,3 +154,4 @@ layer at (0,0) size 450x500
             RenderSVGInlineText {#text} at (0,0) size 144x51
               chunk 1 text run 1 at (0.00,0.00) startOffset 0 endOffset 6 width 144.00: "Shadow"
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0
