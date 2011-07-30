@@ -1,5 +1,16 @@
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should look for the "patch by" line in revisions ostensibly authored by the commit-queue
+        https://bugs.webkit.org/show_bug.cgi?id=65231
+
+        Reviewed by Dimitri Glazkov.
+
+        The human readable name is easier to understand, especially when the patch is landed by the commit-queue.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should strikeout revisions that have been rolled out
         https://bugs.webkit.org/show_bug.cgi?id=65227
 

@@ -41,6 +41,12 @@ function findReviewer(message)
     return findUsingRegExp(message, regexp);
 }
 
+function findAuthor(message)
+{
+    var regexp = /Patch by ([^<]+) </;
+    return findUsingRegExp(message, regexp);
+}
+
 function findBugID(message)
 {
     var regexp = /\/show_bug.cgi\?id=(\d+)/;
@@ -96,7 +102,7 @@ function parseCommitData(responseXML)
             'revision': findRevision(title),
             'title': title,
             'summary': findSummary(message),
-            'author': author,
+            'author': findAuthor(message) || author,
             'reviewer': findReviewer(message),
             'bugID': findBugID(message),
             'message': message,
