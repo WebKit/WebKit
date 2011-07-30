@@ -7,6 +7,11 @@ div, td {
     height: 100px;
 }
 
+iframe {
+    width: 500px;
+    height: 500px;
+}
+
 .fixed {
     position: fixed;
 }
@@ -15,10 +20,22 @@ div, td {
     position: absolute;
 }
 
+.relative {
+    position: relative;
+}
+
 .red {
     background-color: red;
 }
 
+.blue {
+    background-color: blue;
+}
+
 .green {
     background-color: green;
+}
+
+.yellow {
+    background-color: yellow;
 }

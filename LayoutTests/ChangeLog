@@ -1,3 +1,61 @@
+2011-07-29  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Add more testing to RenderLayer [ct'd]
+        https://bugs.webkit.org/show_bug.cgi?id=65059
+
+        Reviewed by James Robinson.
+
+        This change adds testing with <iframe>, position: absolute elements and scrolling.
+
+        * fast/repaint/absolute-position-change-containing-block.html: Added.
+        * fast/repaint/absolute-position-changed.html: Added.
+        * fast/repaint/absolute-position-moved.html: Added.
+        * fast/repaint/fixed-and-absolute-position-scrolled.html: Added.
+        * fast/repaint/fixed-position-transparency-with-overflow.html: Added.
+        * fast/repaint/fixed-to-relative-position-with-absolute-child.html: Added.
+        * fast/repaint/nested-iframe-scroll-inner.html: Added.
+        * fast/repaint/nested-iframe-scroll-outer.html: Added.
+        * fast/repaint/overflow-hide.html: Added.
+        * fast/repaint/overflow-show.html: Added.
+        New test cases.
+
+        * fast/repaint/resources/iframe-inner.html: Added.
+        * fast/repaint/resources/iframe-outer.html: Added.
+
+        * fast/repaint/resources/default.css:
+        Added more shared code here.
+
+        * fast/repaint/absolute-position-change-containing-block-expected.png: Added.
+        * fast/repaint/absolute-position-change-containing-block-expected.txt: Added.
+        * fast/repaint/absolute-position-changed-expected.txt: Added.
+        * fast/repaint/absolute-position-moved-expected.png: Added.
+        * fast/repaint/absolute-position-moved-expected.txt: Added.
+        * fast/repaint/fixed-and-absolute-position-scrolled-expected.txt: Added.
+        * fast/repaint/fixed-position-transparency-with-overflow-expected.txt: Added.
+        * fast/repaint/fixed-to-relative-position-with-absolute-child-expected.png: Added.
+        * fast/repaint/fixed-to-relative-position-with-absolute-child-expected.txt: Added.
+        * fast/repaint/nested-iframe-scroll-inner-expected.txt: Added.
+        * fast/repaint/nested-iframe-scroll-outer-expected.txt: Added.
+        * fast/repaint/overflow-hide-expected.txt: Added.
+        * fast/repaint/overflow-show-expected.txt: Added.
+
+        * platform/chromium/fast/repaint/absolute-position-changed-expected.png: Added.
+        * platform/chromium/fast/repaint/fixed-and-absolute-position-scrolled-expected.png: Added.
+        * platform/chromium/fast/repaint/fixed-position-transparency-with-overflow-expected.png: Added.
+        * platform/chromium/fast/repaint/nested-iframe-scroll-inner-expected.png: Added.
+        * platform/chromium/fast/repaint/nested-iframe-scroll-outer-expected.png: Added.
+        * platform/chromium/fast/repaint/overflow-hide-expected.png: Added.
+        * platform/chromium/fast/repaint/overflow-show-expected.png: Added.
+        * platform/mac/fast/repaint/absolute-position-changed-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-and-absolute-position-scrolled-expected.png: Added.
+        * platform/mac/fast/repaint/fixed-position-transparency-with-overflow-expected.png: Added.
+        * platform/mac/fast/repaint/nested-iframe-scroll-inner-expected.png: Added.
+        * platform/mac/fast/repaint/nested-iframe-scroll-outer-expected.png: Added.
+
+        * platform/mac/fast/repaint/overflow-hide-expected.png: Added.
+        * platform/mac/fast/repaint/overflow-show-expected.png: Added.
+        Those 2 results are strange and a bug will be opened about them.
+
 2011-07-29  Filip Pizlo  <fpizlo@apple.com>
 
         LayoutTests does not have a test for array speculation pathologies in the JavaScriptCore DFG JIT.
