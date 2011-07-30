@@ -1,3 +1,20 @@
+2011-07-29  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Reorder functions in LayerRendererChromium.cpp to make bug 58840 easier to review
+        https://bugs.webkit.org/show_bug.cgi?id=65354
+
+        Reviewed by Kenneth Russell.
+
+        This moves a few function definitions in LayerRendererChromium around to make the patch on bug 58840 easier to
+        review.  In that patch, updatePropertiesAndRenderSurfaces() becomes a templated free function instead of a
+        member function, so it has to be near the top of the .cpp.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::calculateVisibleRect):
+        (WebCore::isScaleOrTranslation):
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::updateLayers):
+
 2011-07-29  Jeff Miller  <jeffm@apple.com>
 
         Work-in-progress on Adopt AVCF media back end on Windows
