@@ -130,8 +130,6 @@ void JSGlobalObject::init(JSObject* thisValue)
 
     m_debugger = 0;
 
-    m_profileGroup = 0;
-
     reset(prototype());
 }
 
@@ -427,7 +425,7 @@ bool JSGlobalObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier&
 void JSGlobalObject::WeakMapsFinalizer::finalize(Handle<Unknown> handle, void*)
 {
     JSGlobalObject* globalObject = asGlobalObject(handle.get());
-    globalObject->m_weakMaps.clear();
+    globalObject->m_rareData.clear();
 }
 
 JSGlobalObject::WeakMapsFinalizer* JSGlobalObject::weakMapsFinalizer()

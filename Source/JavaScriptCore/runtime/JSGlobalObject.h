@@ -54,8 +54,26 @@ namespace JSC {
     typedef Vector<ExecState*, 16> ExecStateStack;
     
     class JSGlobalObject : public JSVariableObject {
-    protected:
+    private:
         typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
+
+        class WeakMapsFinalizer : public WeakHandleOwner {
+        public:
+            virtual void finalize(Handle<Unknown>, void* context);
+        };
+
+        struct JSGlobalObjectRareData {
+            JSGlobalObjectRareData()
+                : profileGroup(0)
+            {
+            }
+
+            WeakMapSet weakMaps;
+            unsigned profileGroup;
+            Weak<JSGlobalObject> weakMapsFinalizer;
+        };
+
+    protected:
 
         RefPtr<JSGlobalData> m_globalData;
 
@@ -104,15 +122,9 @@ namespace JSC {
         WriteBarrier<Structure> m_stringObjectStructure;
         WriteBarrier<Structure> m_internalFunctionStructure;
 
-        unsigned m_profileGroup;
         Debugger* m_debugger;
 
-        WeakMapSet m_weakMaps;
-        Weak<JSGlobalObject> m_weakMapsFinalizer;
-        class WeakMapsFinalizer : public WeakHandleOwner {
-        public:
-            virtual void finalize(Handle<Unknown>, void* context);
-        };
+        OwnPtr<JSGlobalObjectRareData> m_rareData;
         static WeakMapsFinalizer* weakMapsFinalizer();
 
         WeakRandom m_weakRandom;
@@ -121,6 +133,12 @@ namespace JSC {
 
         bool m_evalEnabled;
 
+        void createRareDataIfNeeded()
+        {
+            if (!m_rareData)
+                m_rareData = adoptPtr(new JSGlobalObjectRareData);
+        }
+        
     public:
         static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
         {
@@ -217,8 +235,13 @@ namespace JSC {
         Structure* regExpStructure() const { return m_regExpStructure.get(); }
         Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
 
-        void setProfileGroup(unsigned value) { m_profileGroup = value; }
-        unsigned profileGroup() const { return m_profileGroup; }
+        void setProfileGroup(unsigned value) { createRareDataIfNeeded(); m_rareData->profileGroup = value; }
+        unsigned profileGroup() const
+        { 
+            if (!m_rareData)
+                return 0;
+            return m_rareData->profileGroup;
+        }
 
         Debugger* debugger() const { return m_debugger; }
         void setDebugger(Debugger* debugger) { m_debugger = debugger; }
@@ -254,14 +277,16 @@ namespace JSC {
 
         void registerWeakMap(OpaqueJSWeakObjectMap* map)
         {
-            if (!m_weakMapsFinalizer)
-                m_weakMapsFinalizer.set(globalData(), this, weakMapsFinalizer());
-            m_weakMaps.add(map);
+            createRareDataIfNeeded();
+            if (!m_rareData->weakMapsFinalizer)
+                m_rareData->weakMapsFinalizer.set(globalData(), this, weakMapsFinalizer());
+            m_rareData->weakMaps.add(map);
         }
 
         void deregisterWeakMap(OpaqueJSWeakObjectMap* map)
         {
-            m_weakMaps.remove(map);
+            if (m_rareData)
+                m_rareData->weakMaps.remove(map);
         }
 
         double weakRandomNumber() { return m_weakRandom.get(); }

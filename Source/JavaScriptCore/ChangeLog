@@ -1,3 +1,24 @@
+2011-07-30  Oliver Hunt  <oliver@apple.com>
+
+        Reduce the size of JSGlobalObject slightly
+        https://bugs.webkit.org/show_bug.cgi?id=65417
+
+        Reviewed by Dan Bernstein.
+
+        Push a few members that either aren't commonly used,
+        or aren't frequently accessed into a separate struct.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::init):
+        (JSC::JSGlobalObject::WeakMapsFinalizer::finalize):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObjectRareData::JSGlobalObjectRareData):
+        (JSC::JSGlobalObject::createRareDataIfNeeded):
+        (JSC::JSGlobalObject::setProfileGroup):
+        (JSC::JSGlobalObject::profileGroup):
+        (JSC::JSGlobalObject::registerWeakMap):
+        (JSC::JSGlobalObject::deregisterWeakMap):
+
 2011-07-30  Balazs Kelemen  <kbalazs@webkit.org>
 
         MessageQueue::waitForMessageFilteredWithTimeout can triggers an assertion
