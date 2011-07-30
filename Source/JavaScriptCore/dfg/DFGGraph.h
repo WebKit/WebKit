@@ -76,6 +76,26 @@ inline bool isNumberPrediction(PredictedType value)
     return !!(value & PredictNumber) && !(value & ~PredictNumber);
 }
 
+#ifndef NDEBUG
+inline const char* predictionToString(PredictedType value)
+{
+    switch (value) {
+    case PredictNone:
+        return "p-bottom";
+    case PredictCell:
+        return "p-cell";
+    case PredictArray:
+        return "p-array";
+    case PredictInt32:
+        return "p-int32";
+    case PredictNumber:
+        return "p-number";
+    default:
+        return "p-top";
+    }
+}
+#endif
+
 struct PredictionSlot {
 public:
     PredictionSlot()

@@ -1,5 +1,23 @@
 2011-07-29  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT verbose mode provides no details about predictions
+        https://bugs.webkit.org/show_bug.cgi?id=65389
+
+        Reviewed by Darin Adler.
+        
+        Added a print-out of the predictions to the IR dump, with names as follows:
+        "p-bottom" = the parser made no predictions
+        "p-int32" = the parser predicted int32
+        ... (same for array, cell, double, number)
+        "p-top" = the parser made conflicting predictions which will be ignored.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::predictionToString):
+
+2011-07-29  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT does not have any way of undoing double speculation.
         https://bugs.webkit.org/show_bug.cgi?id=65334
 

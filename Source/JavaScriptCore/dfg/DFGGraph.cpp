@@ -132,7 +132,12 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         hasPrinted = true;
     }
 
-    printf(")\n");
+    printf(")");
+    
+    if (node.hasLocal())
+        printf("  predicting %s", predictionToString(getPrediction(node.local())));
+    
+    printf("\n");
 }
 
 void Graph::dump(CodeBlock* codeBlock)
