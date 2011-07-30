@@ -52,6 +52,36 @@ WebInspector.SourceFile.prototype = {
         this._scripts.push(script);
     },
 
+    rawLocationToUILocation: function(rawLocation)
+    {
+        var uiLocation = this._mapping ? this._mapping.originalToFormatted(rawLocation) : rawLocation;
+        uiLocation.sourceFile = this;
+        return uiLocation;
+    },
+
+    uiLocationToRawLocation: function(lineNumber, columnNumber)
+    {
+        var rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
+        if (this._mapping)
+            rawLocation = this._mapping.formattedToOriginal(rawLocation);
+        rawLocation.sourceId = this._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).sourceId;
+        return rawLocation;
+    },
+
+    _scriptForRawLocation: function(lineNumber, columnNumber)
+    {
+        var closestScript = this._scripts[0];
+        for (var i = 1; i < this._scripts.length; ++i) {
+            script = this._scripts[i];
+            if (script.lineOffset > lineNumber || (script.lineOffset === lineNumber && script.columnOffset > columnNumber))
+                continue;
+            if (script.lineOffset > closestScript.lineOffset ||
+                (script.lineOffset === closestScript.lineOffset && script.columnOffset > closestScript.columnOffset))
+                closestScript = script;
+        }
+        return closestScript;
+    },
+
     requestContent: function(callback)
     {
         if (this._contentLoaded) {
@@ -74,11 +104,10 @@ WebInspector.SourceFile.prototype = {
         this._content = content;
     },
 
-    requestSourceMapping: function(callback)
+    createSourceMappingIfNeeded: function(callback)
     {
-        if (!this._mapping)
-            this._mapping = new WebInspector.SourceMapping(this._scripts);
-        callback(this._mapping);
+        // Plain source without mapping.
+        callback();
     },
 
     forceLoadContent: function(script)
@@ -236,12 +265,13 @@ WebInspector.FormattedSourceFile = function(sourceFileId, script, contentChanged
 }
 
 WebInspector.FormattedSourceFile.prototype = {
-    requestSourceMapping: function(callback)
+    createSourceMappingIfNeeded: function(callback)
     {
         function didRequestContent()
         {
-            callback(this._mapping);
+            callback();
         }
+        // Force content formatting to obtain the mapping.
         this.requestContent(didRequestContent.bind(this));
     },
 
@@ -249,7 +279,7 @@ WebInspector.FormattedSourceFile.prototype = {
     {
         function didFormatContent(formattedText, mapping)
         {
-            this._mapping = new WebInspector.SourceMappingForFormattedSourceFile(this._scripts, mapping);
+            this._mapping = mapping;
             WebInspector.SourceFile.prototype._didRequestContent.call(this, mimeType, formattedText);
         }
         this._formatter.formatContent(mimeType, text, didFormatContent.bind(this));
@@ -257,54 +287,3 @@ WebInspector.FormattedSourceFile.prototype = {
 }
 
 WebInspector.FormattedSourceFile.prototype.__proto__ = WebInspector.SourceFile.prototype;
-
-WebInspector.SourceMapping = function(scripts)
-{
-    this._sortedScripts = scripts.slice();
-    this._sortedScripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
-}
-
-WebInspector.SourceMapping.prototype = {
-    scriptLocationToSourceLine: function(location)
-    {
-        return location.lineNumber;
-    },
-
-    sourceLineToScriptLocation: function(lineNumber)
-    {
-        return this._sourceLocationToScriptLocation(lineNumber, 0);
-    },
-
-    _sourceLocationToScriptLocation: function(lineNumber, columnNumber)
-    {
-        var closestScript = this._sortedScripts[0];
-        for (var i = 1; i < this._sortedScripts.length; ++i) {
-            script = this._sortedScripts[i];
-            if (script.lineOffset > lineNumber || (script.lineOffset === lineNumber && script.columnOffset > columnNumber))
-                break;
-            closestScript = script;
-        }
-        return { sourceId: closestScript.sourceId, lineNumber: lineNumber, columnNumber: columnNumber };
-    }
-}
-
-WebInspector.SourceMappingForFormattedSourceFile = function(scripts, mapping)
-{
-    WebInspector.SourceMapping.call(this, scripts);
-    this._mapping = mapping;
-}
-
-WebInspector.SourceMappingForFormattedSourceFile.prototype = {
-    scriptLocationToSourceLine: function(location)
-    {
-        return this._mapping.originalToFormatted(location).lineNumber;
-    },
-
-    sourceLineToScriptLocation: function(lineNumber)
-    {
-        var originalLocation = this._mapping.formattedToOriginal({ lineNumber: lineNumber, columnNumber: 0 });
-        return WebInspector.SourceMapping.prototype._sourceLocationToScriptLocation.call(this, originalLocation.lineNumber, originalLocation.columnNumber);
-    }
-}
-
-WebInspector.SourceMappingForFormattedSourceFile.prototype.__proto__ = WebInspector.SourceMapping.prototype;

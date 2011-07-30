@@ -87,23 +87,29 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _scriptLocationToUILocation: function(sourceURL, sourceId, lineNumber, columnNumber, callback)
     {
         var sourceFile = this._sourceFileForScript(sourceURL, sourceId);
-        var scriptLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
 
-        function didRequestSourceMapping(mapping)
+        function didCreateSourceMapping()
         {
-            var lineNumber = mapping.scriptLocationToSourceLine(scriptLocation);
-            callback(sourceFile.id, lineNumber);
+            var uiLocation = sourceFile.rawLocationToUILocation({ lineNumber: lineNumber, columnNumber: columnNumber });
+            callback(uiLocation.sourceFile.id, uiLocation.lineNumber);
         }
-        sourceFile.requestSourceMapping(didRequestSourceMapping);
+        // FIXME: force source formatting if needed. This will go away once formatting
+        // is fully encapsulated in SourceFile.
+        sourceFile.createSourceMappingIfNeeded(didCreateSourceMapping);
     },
 
     _uiLocationToScriptLocation: function(sourceFileId, lineNumber, callback)
     {
-        function didRequestSourceMapping(mapping)
+        var sourceFile = this._sourceFiles[sourceFileId];
+
+        function didCreateSourceMapping()
         {
-            callback(mapping.sourceLineToScriptLocation(lineNumber));
+            var rawLocation = sourceFile.uiLocationToRawLocation(lineNumber, 0);
+            callback(rawLocation);
         }
-        this._sourceFiles[sourceFileId].requestSourceMapping(didRequestSourceMapping.bind(this));
+        // FIXME: force source formatting if needed. This will go away once formatting
+        // is fully encapsulated in SourceFile.
+        sourceFile.createSourceMappingIfNeeded(didCreateSourceMapping);
     },
 
     requestSourceFileContent: function(sourceFileId, callback)

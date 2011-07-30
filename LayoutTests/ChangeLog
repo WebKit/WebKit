@@ -1,3 +1,13 @@
+2011-07-26  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: move location conversion functions to SourceFile.
+        https://bugs.webkit.org/show_bug.cgi?id=65185
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/source-file-expected.txt: Added.
+        * inspector/debugger/source-file.html: Added.
+
 2011-07-30  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update platform specific expected files after r92047.

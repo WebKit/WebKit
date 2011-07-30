@@ -1,3 +1,25 @@
+2011-07-26  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: move location conversion functions to SourceFile.
+        https://bugs.webkit.org/show_bug.cgi?id=65185
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/source-file.html
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._scriptLocationToUILocation.didCreateSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptLocationToUILocation):
+        (WebInspector.DebuggerPresentationModel.prototype._uiLocationToScriptLocation.didCreateSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._uiLocationToScriptLocation):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile.prototype.rawLocationToUILocation):
+        (WebInspector.SourceFile.prototype.uiLocationToRawLocation):
+        (WebInspector.SourceFile.prototype._scriptForRawLocation):
+        (WebInspector.SourceFile.prototype.createSourceMappingIfNeeded):
+        (WebInspector.FormattedSourceFile.prototype.createSourceMappingIfNeeded):
+        (WebInspector.FormattedSourceFile.prototype._didRequestContent):
+
 2011-07-29  Rob Buis  <rbuis@rim.com>
 
         URL references are completely broken in SVG
