@@ -4,6 +4,23 @@
         https://bugs.webkit.org/show_bug.cgi?id=65400
         <rdar://problem/9083559>
         
+        Prepare WebCore.vcproj to support AVCF media back end on Windows.
+
+        Reviewed by Darin Adler.
+
+        No changes to functionality so no new tests.
+
+        * WebCore.vcproj/WebCore.vcproj: Added MediaPlayerPrivateAVFoundation and MediaPlayerPrivateAVFoundationCF sources.
+        * WebCore.vcproj/WebCoreMediaQT.vsprops: Added additional include directories and dleay load DLLs for AVCF.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.cpp: Added, just a stub for now.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.h: Added, just a stub for now.
+
+2011-07-29  Jeff Miller  <jeffm@apple.com>
+
+        Work-in-progress on Adopt AVCF media back end on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=65400
+        <rdar://problem/9083559>
+        
         Make MediaPlayerPrivateAVFoundation::setDelayCallbacks() const and make the ivars
         it references mutable so other const member functions can call it.
 

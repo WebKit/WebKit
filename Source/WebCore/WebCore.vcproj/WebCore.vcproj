@@ -30168,6 +30168,26 @@
 						</File>
 					</Filter>
 				</Filter>
+				<Filter
+					Name="avfoundation"
+					>
+					<File
+						RelativePath="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundation.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundation.h"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundationCF.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\platform\graphics\avfoundation\MediaPlayerPrivateAVFoundationCF.h"
+						>
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="network"
