@@ -61,7 +61,7 @@ PassOwnPtr<DrawingAreaProxy> QDesktopWebPageProxy::createDrawingAreaProxy()
 void QDesktopWebPageProxy::paintContent(QPainter* painter, const QRect& area)
 {
     // FIXME: Do something with the unpainted region?
-    WebKit::Region unpaintedRegion;
+    WebCore::Region unpaintedRegion;
     static_cast<DrawingAreaProxyImpl*>(m_webPageProxy->drawingArea())->paint(painter, area, unpaintedRegion);
 }
 

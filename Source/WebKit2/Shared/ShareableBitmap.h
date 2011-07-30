@@ -43,6 +43,11 @@
 
 #if PLATFORM(QT)
 #include <QImage>
+#ifdef Q_WS_X11
+// Avoid ambiguity caused by the Region typedef from qwindowdefs.h.
+namespace WebCore { class Region; }
+namespace WebKit { using WebCore::Region; }
+#endif
 #endif
 
 namespace WebCore {
