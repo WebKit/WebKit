@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import logging
 import os
 import re
 
@@ -38,6 +39,9 @@ from webkitpy.common.system import ospath
 from .commitmessage import CommitMessage
 from .scm import AuthenticationError, SCM, commit_error_handler
 from .svn import SVN, SVNRepository
+
+
+_log = logging.getLogger(__name__)
 
 
 def run_command(*args, **kwargs):
