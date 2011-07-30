@@ -1,3 +1,9 @@
+2011-07-29  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test expectations update, gardener stuff.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-07-29  Emil A Eklund  <eae@chromium.org>
 
         -webkit-marquee with anonymous node causes segmentation fault in Node::document
