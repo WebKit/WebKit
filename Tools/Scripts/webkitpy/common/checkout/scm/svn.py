@@ -218,6 +218,9 @@ class SVN(SCM, SVNRepository):
         return "svn"
 
     def head_svn_revision(self):
+        _log.debug('Temporary logging to debug bot...')
+        _log.debug(self.checkout_root)
+        _log.debug(os.getcwd())
         return self.value_from_svn_info(self.checkout_root, 'Revision')
 
     # FIXME: This method should be on Checkout.
