@@ -55,7 +55,7 @@ class BuilderToPort(object):
         r"Chromium Win": "chromium-win",
 
         # These builders are on build.chromium.org.
-        r"Webkit Win": "chromium-win-xp",
+        r"Webkit Win$": "chromium-win-xp",
         r"Webkit Vista": "chromium-win-vista",
         r"Webkit Win7": "chromium-win-win7",
         r"Webkit Win (dbg)(1)": "chromium-win-win7",  # FIXME: Is this correct?

@@ -1,5 +1,12 @@
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
+        Add support for Win7 to garden-o-matic.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic regression ranges expand after fast bots start passing
         https://bugs.webkit.org/show_bug.cgi?id=65406
 

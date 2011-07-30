@@ -5,7 +5,7 @@ var config = config || {};
 config.kBuilders = [
     'Webkit Win',
     'Webkit Vista',
-    // 'Webkit Win7',
+    'Webkit Win7',
     'Webkit Win (dbg)(1)',
     'Webkit Win (dbg)(2)',
     'Webkit Linux',
