@@ -1,3 +1,13 @@
+2011-07-29  James Simonsen  <simonjam@chromium.org>
+
+        Remove zipcar.com site specific hack added in r87361
+        https://bugs.webkit.org/show_bug.cgi?id=65405
+
+        Reviewed by Adam Barth.
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+
 2011-07-29  James Robinson  <jamesr@chromium.org>
 
         [chromium] Reorder functions in LayerRendererChromium.cpp to make bug 58840 easier to review

@@ -29,7 +29,6 @@
 #include "EventNames.h"
 #include "HTMLNames.h"
 #include "ScriptEventListener.h"
-#include "Settings.h"
 #include "Text.h"
 
 namespace WebCore {
@@ -82,33 +81,8 @@ void HTMLScriptElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-static bool needsOldRequirejsQuirk(HTMLScriptElement* element)
-{
-    if (element->fastGetAttribute(typeAttr) != "script/cache")
-        return false;
-
-    Document* document = element->document();
-
-    const KURL& url = document->url();
-    if (!equalIgnoringCase(url.host(), "www.zipcar.com"))
-        return false;
-
-    Settings* settings = document->settings();
-    if (!settings)
-        return false;
-    if (!settings->needsSiteSpecificQuirks())
-        return false;
-
-    return true;
-}
-
 void HTMLScriptElement::insertedIntoDocument()
 {
-    if (needsOldRequirejsQuirk(this)) {
-        if (!asyncAttributeValue())
-            handleAsyncAttribute(); // Clear forceAsync, so this script loads in parallel, but executes in order.
-        setAttribute(typeAttr, "text/javascript");
-    }
     HTMLElement::insertedIntoDocument();
     ScriptElement::insertedIntoDocument();
 }
