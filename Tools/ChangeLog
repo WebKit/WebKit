@@ -1,5 +1,24 @@
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic regression ranges expand after fast bots start passing
+        https://bugs.webkit.org/show_bug.cgi?id=65406
+
+        Reviewed by Dimitri Glazkov.
+
+        Once the gardener has fixed a problem, the fast bots pick up the fix,
+        which means we end up using the slow bots to compute the regression
+        range.  Unfortunately, the slow bots give us large regression ranges,
+        leading to this strange effect where the regression range quality
+        degrades as fixes roll in.
+
+        This patch causes us to remember the previous regression ranges we've
+        seen and to use that information in the future, as long as it's
+        consistent with the new information we receive.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model.js:
+
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should have a Refresh button to update its display
         https://bugs.webkit.org/show_bug.cgi?id=65403
 

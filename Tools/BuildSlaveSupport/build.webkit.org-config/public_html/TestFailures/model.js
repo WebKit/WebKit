@@ -5,6 +5,7 @@ var model = model || {};
 var kCommitLogLength = 50;
 
 model.state = {};
+model.state.failureAnalysisByTest = {};
 
 function findAndMarkRevertedRevisions(commitDataList)
 {
@@ -39,6 +40,12 @@ model.updateResultsByBuilder = function(callback)
 model.analyzeUnexpectedFailures = function(callback)
 {
     var unexpectedFailures = results.unexpectedFailuresByTest(model.state.resultsByBuilder);
+
+    $.each(model.state.failureAnalysisByTest, function(testName, failureAnalysis) {
+        if (!(testName in unexpectedFailures))
+            delete model.state.failureAnalysisByTest[testName];
+    });
+
     $.each(unexpectedFailures, function(testName, resultNodesByBuilder) {
         var builderNameList = base.keys(resultNodesByBuilder);
         results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
@@ -48,6 +55,16 @@ model.analyzeUnexpectedFailures = function(callback)
                 'oldestFailingRevision': oldestFailingRevision,
                 'newestPassingRevision': newestPassingRevision,
             };
+
+            var previousFailureAnalysis = model.state.failureAnalysisByTest[testName];
+            if (previousFailureAnalysis
+                && previousFailureAnalysis.oldestFailingRevision <= failureAnalysis.oldestFailingRevision
+                && previousFailureAnalysis.newestPassingRevision >= failureAnalysis.newestPassingRevision) {
+                failureAnalysis.oldestFailingRevision = previousFailureAnalysis.oldestFailingRevision;
+                failureAnalysis.newestPassingRevision = previousFailureAnalysis.newestPassingRevision;
+            }
+
+            model.state.failureAnalysisByTest[testName] = failureAnalysis;
             callback(failureAnalysis);
         });
     });
