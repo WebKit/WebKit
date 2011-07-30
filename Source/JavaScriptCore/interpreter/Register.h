@@ -96,17 +96,11 @@ namespace JSC {
 
     ALWAYS_INLINE Register::Register(const JSValue& v)
     {
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!v.isZombie());
-#endif
         u.value = JSValue::encode(v);
     }
 
     ALWAYS_INLINE Register& Register::operator=(const JSValue& v)
     {
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!v.isZombie());
-#endif
         u.value = JSValue::encode(v);
         return *this;
     }

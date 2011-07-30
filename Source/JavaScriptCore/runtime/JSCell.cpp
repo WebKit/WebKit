@@ -167,12 +167,8 @@ JSObject* JSCell::toObject(ExecState*, JSGlobalObject*) const
 
 bool isZombie(const JSCell* cell)
 {
-#if ENABLE(JSC_ZOMBIES)
-    return cell && cell->isZombie();
-#else
     UNUSED_PARAM(cell);
     return false;
-#endif
 }
 
 void slowValidateCell(JSCell* cell)

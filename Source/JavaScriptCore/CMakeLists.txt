@@ -133,7 +133,6 @@ SET(JavaScriptCore_SOURCES
     runtime/JSValue.cpp
     runtime/JSVariableObject.cpp
     runtime/JSWrapperObject.cpp
-    runtime/JSZombie.cpp
     runtime/LiteralParser.cpp
     runtime/Lookup.cpp
     runtime/MathObject.cpp

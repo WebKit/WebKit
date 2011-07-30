@@ -177,10 +177,6 @@ namespace JSC {
         Strong<Structure> regExpStructure;
         Strong<Structure> structureChainStructure;
 
-#if ENABLE(JSC_ZOMBIES)
-        Strong<Structure> zombieStructure;
-#endif
-
         static void storeVPtrs();
         static JS_EXPORTDATA void* jsFinalObjectVPtr;
         static JS_EXPORTDATA void* jsArrayVPtr;

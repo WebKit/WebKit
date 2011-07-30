@@ -28,7 +28,6 @@
 
 #include "JSCell.h"
 #include "JSObject.h"
-#include "JSZombie.h"
 #include "ScopeChain.h"
 
 namespace JSC {
@@ -66,17 +65,8 @@ void MarkedBlock::sweep()
             continue;
 
         JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
-#if ENABLE(JSC_ZOMBIES)
-        if (cell->structure() && cell->structure() != dummyMarkableCellStructure && !cell->isZombie()) {
-            const ClassInfo* info = cell->classInfo();
-            cell->~JSCell();
-            new (cell) JSZombie(*m_heap->globalData(), info, m_heap->globalData()->zombieStructure.get());
-            m_marks.set(i);
-        }
-#else
         cell->~JSCell();
         new (cell) JSCell(*m_heap->globalData(), dummyMarkableCellStructure);
-#endif
     }
 }
 
@@ -143,20 +133,5 @@ void MarkedBlock::canonicalizeBlock(FreeCell* firstFreeCell)
         current = next;
     }
 }
-
-#if ENABLE(JSC_ZOMBIES)
-void MarkedBlock::clearMarks()
-{
-    /* Keep our precious zombies! */
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
-        if (m_marks.get(i))
-            continue;
-
-        JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
-        if (!cell->isZombie())
-            m_marks.clear(i);
-    }
-}
-#endif
 
 } // namespace JSC

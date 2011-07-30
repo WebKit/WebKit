@@ -1,5 +1,53 @@
 2011-07-29  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC GC zombie support no longer works, and is likely no longer needed.
+        https://bugs.webkit.org/show_bug.cgi?id=65404
+
+        Reviewed by Darin Adler.
+        
+        This removes zombies, because they no longer work, are not tested, are
+        probably not needed, and are getting in the way of GC optimization
+        work.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Handle.h:
+        (JSC::HandleConverter::operator->):
+        (JSC::HandleConverter::operator*):
+        * heap/HandleHeap.cpp:
+        (JSC::HandleHeap::isValidWeakNode):
+        * heap/Heap.cpp:
+        (JSC::Heap::destroy):
+        (JSC::Heap::collect):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::sweep):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::clearMarks):
+        * interpreter/Register.h:
+        (JSC::Register::Register):
+        (JSC::Register::operator=):
+        * runtime/ArgList.h:
+        (JSC::MarkedArgumentBuffer::append):
+        (JSC::ArgList::ArgList):
+        * runtime/JSCell.cpp:
+        (JSC::isZombie):
+        * runtime/JSCell.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::clearBuiltinStructures):
+        * runtime/JSGlobalData.h:
+        * runtime/JSValue.h:
+        * runtime/JSValueInlineMethods.h:
+        (JSC::JSValue::JSValue):
+        * runtime/JSZombie.cpp: Removed.
+        * runtime/JSZombie.h: Removed.
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::setEarlyValue):
+        (JSC::WriteBarrierBase::operator*):
+        (JSC::WriteBarrierBase::setWithoutWriteBarrier):
+        * wtf/Platform.h:
+
+2011-07-29  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT verbose mode provides no details about predictions
         https://bugs.webkit.org/show_bug.cgi?id=65389
 

@@ -277,10 +277,8 @@ void Heap::destroy()
     m_handleHeap.finalizeWeakHandles();
     m_globalData->smallStrings.finalizeSmallStrings();
 
-#if !ENABLE(JSC_ZOMBIES)
     shrink();
     ASSERT(!size());
-#endif
 
     m_globalData = 0;
 }
@@ -560,10 +558,6 @@ void Heap::collect(SweepToggle sweepToggle)
     JAVASCRIPTCORE_GC_MARKED();
     
     resetAllocator();
-
-#if ENABLE(JSC_ZOMBIES)
-    sweepToggle = DoSweep;
-#endif
 
     if (sweepToggle == DoSweep) {
         sweep();

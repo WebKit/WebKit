@@ -163,11 +163,6 @@ bool HandleHeap::isValidWeakNode(Node* node)
     if (!cell || !cell->structure())
         return false;
 
-#if ENABLE(JSC_ZOMBIES)
-    if (cell->isZombie())
-        return false;
-#endif
-
     return true;
 }
 #endif

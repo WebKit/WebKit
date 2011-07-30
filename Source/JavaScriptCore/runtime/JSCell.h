@@ -64,7 +64,6 @@ namespace JSC {
         friend class JSString;
         friend class JSValue;
         friend class JSAPIValueWrapper;
-        friend class JSZombie;
         friend class JSGlobalData;
         friend class NewSpace;
         friend class MarkedBlock;
@@ -124,9 +123,6 @@ namespace JSC {
         void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; }
 
         virtual void visitChildren(SlotVisitor&);
-#if ENABLE(JSC_ZOMBIES)
-        virtual bool isZombie() const { return false; }
-#endif
 
         // Object operations, with the toObject operation included.
         const ClassInfo* classInfo() const;
@@ -353,13 +349,6 @@ namespace JSC {
     {
         return isCell() ? asCell()->toThisObject(exec) : toThisObjectSlowCase(exec);
     }
-
-#if ENABLE(JSC_ZOMBIES)
-    inline bool JSValue::isZombie() const
-    {
-        return isCell() && asCell()->isZombie();
-    }
-#endif
 
     inline void destructor(JSCell* cell)
     {

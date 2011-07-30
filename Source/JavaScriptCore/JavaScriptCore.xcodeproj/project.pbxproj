@@ -427,8 +427,6 @@
 		A7F993600FD7325100A0B2D0 /* JSONObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7F9935E0FD7325100A0B2D0 /* JSONObject.cpp */; };
 		A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */; };
 		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		BC01D4F111A8F1FF00A54B2A /* JSZombie.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC01D4EF11A8F1FF00A54B2A /* JSZombie.cpp */; };
-		BC01D4F211A8F1FF00A54B2A /* JSZombie.h in Headers */ = {isa = PBXBuildFile; fileRef = BC01D4F011A8F1FF00A54B2A /* JSZombie.h */; };
 		BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9050E1839DB000F9297 /* ErrorConstructor.h */; };
 		BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9070E1839DB000F9297 /* ErrorPrototype.h */; };
 		BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */; };
@@ -1155,8 +1153,6 @@
 		A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyDescriptor.cpp; sourceTree = "<group>"; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
-		BC01D4EF11A8F1FF00A54B2A /* JSZombie.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSZombie.cpp; sourceTree = "<group>"; };
-		BC01D4F011A8F1FF00A54B2A /* JSZombie.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSZombie.h; sourceTree = "<group>"; };
 		BC021BF1136900C300FC5467 /* CompilerVersion.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = CompilerVersion.xcconfig; sourceTree = "<group>"; };
 		BC021BF2136900C300FC5467 /* TestAPI.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = TestAPI.xcconfig; sourceTree = "<group>"; };
 		BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorConstructor.cpp; sourceTree = "<group>"; };
@@ -1938,8 +1934,6 @@
 				14F252560D08DD8D004ECFFF /* JSVariableObject.h */,
 				65C7A1710A8EAACB00FA37EA /* JSWrapperObject.cpp */,
 				65C7A1720A8EAACB00FA37EA /* JSWrapperObject.h */,
-				BC01D4EF11A8F1FF00A54B2A /* JSZombie.cpp */,
-				BC01D4F011A8F1FF00A54B2A /* JSZombie.h */,
 				A7E2EA6A0FB460CF00601F06 /* LiteralParser.cpp */,
 				A7E2EA690FB460CF00601F06 /* LiteralParser.h */,
 				F692A8680255597D01FF60F7 /* Lookup.cpp */,
@@ -2381,7 +2375,6 @@
 				A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */,
 				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,
 				BC18C42E0E16F5CD00B34460 /* JSWrapperObject.h in Headers */,
-				BC01D4F211A8F1FF00A54B2A /* JSZombie.h in Headers */,
 				BCFD8C930EEB2EE700283848 /* JumpTable.h in Headers */,
 				969A072A0ED1CE6900F1F681 /* Label.h in Headers */,
 				960097A60EBABB58007A7297 /* LabelScope.h in Headers */,
@@ -2941,7 +2934,6 @@
 				147F39D7107EC37600427A48 /* JSVariableObject.cpp in Sources */,
 				A7482B9411671147003B0712 /* JSWeakObjectMapRefPrivate.cpp in Sources */,
 				14280870107EC1340013E7B2 /* JSWrapperObject.cpp in Sources */,
-				BC01D4F111A8F1FF00A54B2A /* JSZombie.cpp in Sources */,
 				BCFD8C920EEB2EE700283848 /* JumpTable.cpp in Sources */,
 				148F21B0107EC5410042EC2C /* Lexer.cpp in Sources */,
 				A7E2EA6C0FB460CF00601F06 /* LiteralParser.cpp in Sources */,

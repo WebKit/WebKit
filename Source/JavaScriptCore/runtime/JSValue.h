@@ -190,10 +190,6 @@ namespace JSC {
         int32_t toInt32(ExecState*) const;
         uint32_t toUInt32(ExecState*) const;
 
-#if ENABLE(JSC_ZOMBIES)
-        bool isZombie() const;
-#endif
-
         // Floating point conversions (this is a convenience method for webcore;
         // signle precision float is not a representation used in JS or JSC).
         float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }

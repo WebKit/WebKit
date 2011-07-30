@@ -46,7 +46,6 @@
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
 #include "JSStaticScopeObject.h"
-#include "JSZombie.h"
 #include "Lexer.h"
 #include "Lookup.h"
 #include "Nodes.h"
@@ -232,10 +231,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     regExpStructure.set(*this, RegExp::createStructure(*this, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, jsNull()));
 
-#if ENABLE(JSC_ZOMBIES)
-    zombieStructure.set(*this, JSZombie::createStructure(*this, jsNull()));
-#endif
-
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 
 #if PLATFORM(MAC)
@@ -294,10 +289,6 @@ void JSGlobalData::clearBuiltinStructures()
     dummyMarkableCellStructure.clear();
     regExpStructure.clear();
     structureChainStructure.clear();
-
-#if ENABLE(JSC_ZOMBIES)
-    zombieStructure.clear();
-#endif
 }
 
 JSGlobalData::~JSGlobalData()

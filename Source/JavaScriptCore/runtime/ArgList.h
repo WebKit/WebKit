@@ -107,10 +107,6 @@ namespace JSC {
         {
             ASSERT(!m_isReadOnly);
 
-#if ENABLE(JSC_ZOMBIES)
-            ASSERT(!v.isZombie());
-#endif
-
             if (m_isUsingInlineBuffer && m_size < inlineCapacity) {
                 m_vector.uncheckedAppend(v);
                 ++m_size;
@@ -199,10 +195,6 @@ namespace JSC {
             : m_args(args)
             , m_argCount(argCount)
         {
-#if ENABLE(JSC_ZOMBIES)
-            for (size_t i = 0; i < argCount; i++)
-                ASSERT(!m_args[i].isZombie());
-#endif
         }
         
         ArgList(Register* args, int argCount)
