@@ -1,5 +1,17 @@
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should have a Refresh button to update its display
+        https://bugs.webkit.org/show_bug.cgi?id=65403
+
+        Reviewed by Dimitri Glazkov.
+
+        The refresh button should be faster and less disruptive than the browser's reload button.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should look for the "patch by" line in revisions ostensibly authored by the commit-queue
         https://bugs.webkit.org/show_bug.cgi?id=65231
 

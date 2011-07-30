@@ -225,6 +225,7 @@ function showUnexpectedFailure(failureAnalysis)
 
 function update()
 {
+    displayOnButterbar('Loading...');
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
         showRecentCommits();
         showBuilderProgress();
@@ -235,6 +236,7 @@ function update()
 
 $('.show-selected-failures').live('click', showSelectedFailures);
 $('.rebaseline-selected').live('click', rebaselineSelected);
+$('.refresh').live('click', update);
 
 $('.results-detail .actions .next').live('click', nextResultsDetail);
 $('.results-detail .actions .previous').live('click', previousResultsDetail);
