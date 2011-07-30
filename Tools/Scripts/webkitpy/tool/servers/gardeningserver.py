@@ -45,8 +45,10 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         "garden-o-matic.html",
         "main.css",
         "main.js",
+        "model.js",
         "partytime.gif",
         "results.js",
+        "Trac.js",
         "ui.js",
     ])
 

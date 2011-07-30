@@ -1,3 +1,9 @@
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
+        Add missing files to the server.
+
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
 2011-07-29  Adam Barth  <abarth@webkit.org>
 
         Actually import the logging module!
