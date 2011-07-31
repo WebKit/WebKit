@@ -50,7 +50,12 @@ module html {
         // WinIE & FireFox extension:
         attribute long selectionStart;
         attribute long selectionEnd;
+        attribute DOMString selectionDirection;
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         void setSelectionRange(in long start, in long end);
+#else
+        void setSelectionRange(in long start, in long end, in [Optional] DOMString direction);
+#endif
         readonly attribute NodeList labels;
     };
 

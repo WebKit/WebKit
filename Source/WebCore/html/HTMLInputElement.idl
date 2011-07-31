@@ -88,7 +88,13 @@ module html {
 
         attribute [Custom] long selectionStart;
         attribute [Custom] long selectionEnd;
+        attribute [Custom] DOMString selectionDirection;
+
+#if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         [Custom] void setSelectionRange(in long start, in long end);
+#else
+        [Custom] void setSelectionRange(in long start, in long end, in [Optional] DOMString direction);
+#endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)
         // Objective-C extension:

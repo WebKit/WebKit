@@ -49,6 +49,7 @@ HTMLTextFormControlElement::HTMLTextFormControlElement(const QualifiedName& tagN
     : HTMLFormControlElementWithState(tagName, doc, form)
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)
+    , m_cachedSelectionDirection(SelectionHasNoDirection)
 {
 }
 
@@ -163,17 +164,22 @@ RenderTextControl* HTMLTextFormControlElement::textRendererAfterUpdateLayout()
 
 void HTMLTextFormControlElement::setSelectionStart(int start)
 {
-    setSelectionRange(start, max(start, selectionEnd()));
+    setSelectionRange(start, max(start, selectionEnd()), selectionDirection());
 }
 
 void HTMLTextFormControlElement::setSelectionEnd(int end)
 {
-    setSelectionRange(min(end, selectionStart()), end);
+    setSelectionRange(min(end, selectionStart()), end, selectionDirection());
+}
+
+void HTMLTextFormControlElement::setSelectionDirection(const String& direction)
+{
+    setSelectionRange(selectionStart(), selectionEnd(), direction);
 }
 
 void HTMLTextFormControlElement::select()
 {
-    setSelectionRange(0, numeric_limits<int>::max());
+    setSelectionRange(0, numeric_limits<int>::max(), SelectionHasNoDirection);
 }
 
 String HTMLTextFormControlElement::selectedText() const
@@ -201,7 +207,18 @@ static inline bool hasVisibleTextArea(RenderTextControl* textControl, HTMLElemen
     return textControl->style()->visibility() != HIDDEN && innerText && innerText->renderer() && innerText->renderBox()->height();
 }
 
-void HTMLTextFormControlElement::setSelectionRange(int start, int end)
+void HTMLTextFormControlElement::setSelectionRange(int start, int end, const String& directionString)
+{
+    TextFieldSelectionDirection direction = SelectionHasNoDirection;
+    if (directionString == "forward")
+        direction = SelectionHasForwardDirection;
+    else if (directionString == "backward")
+        direction = SelectionHasBackwardDirection;
+
+    return setSelectionRange(start, end, direction);
+}
+
+void HTMLTextFormControlElement::setSelectionRange(int start, int end, TextFieldSelectionDirection direction)
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
@@ -213,7 +230,7 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end)
 
     RenderTextControl* control = toRenderTextControl(renderer());
     if (!hasVisibleTextArea(control, innerTextElement())) {
-        cacheSelection(start, end);
+        cacheSelection(start, end, direction);
         return;
     }
     VisiblePosition startPosition = control->visiblePositionForIndex(start);
@@ -229,7 +246,12 @@ void HTMLTextFormControlElement::setSelectionRange(int start, int end)
         ASSERT(startPosition.deepEquivalent().deprecatedNode()->shadowAncestorNode() == this
             && endPosition.deepEquivalent().deprecatedNode()->shadowAncestorNode() == this);
     }
-    VisibleSelection newSelection = VisibleSelection(startPosition, endPosition);
+    VisibleSelection newSelection;
+    if (direction == SelectionHasBackwardDirection)
+        newSelection = VisibleSelection(endPosition, startPosition);
+    else
+        newSelection = VisibleSelection(startPosition, endPosition);
+    newSelection.setIsDirectional(direction != SelectionHasNoDirection);
 
     if (Frame* frame = document()->frame())
         frame->selection()->setSelection(newSelection);
@@ -253,7 +275,7 @@ int HTMLTextFormControlElement::selectionStart() const
 {
     if (!isTextFormControl())
         return 0;
-    if (document()->focusedNode() != this && hasCachedSelectionStart())
+    if (document()->focusedNode() != this && hasCachedSelection())
         return m_cachedSelectionStart;
 
     return computeSelectionStart();
@@ -261,6 +283,7 @@ int HTMLTextFormControlElement::selectionStart() const
 
 int HTMLTextFormControlElement::computeSelectionStart() const
 {
+    ASSERT(isTextFormControl());
     Frame* frame = document()->frame();
     if (!frame)
         return 0;
@@ -272,18 +295,59 @@ int HTMLTextFormControlElement::selectionEnd() const
 {
     if (!isTextFormControl())
         return 0;
-    if (document()->focusedNode() != this && hasCachedSelectionEnd())
+    if (document()->focusedNode() != this && hasCachedSelection())
         return m_cachedSelectionEnd;
     return computeSelectionEnd();
 }
 
 int HTMLTextFormControlElement::computeSelectionEnd() const
 {
+    ASSERT(isTextFormControl());
     Frame* frame = document()->frame();
     if (!frame)
         return 0;
 
     return indexForVisiblePosition(frame->selection()->end());
+}
+
+static const AtomicString& directionString(TextFieldSelectionDirection direction)
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, none, ("none"));
+    DEFINE_STATIC_LOCAL(const AtomicString, forward, ("forward"));
+    DEFINE_STATIC_LOCAL(const AtomicString, backward, ("backward"));
+
+    switch (direction) {
+    case SelectionHasNoDirection:
+        return none;
+    case SelectionHasForwardDirection:
+        return forward;
+    case SelectionHasBackwardDirection:
+        return backward;
+    }
+
+    ASSERT_NOT_REACHED();
+    return none;
+}
+
+const AtomicString& HTMLTextFormControlElement::selectionDirection() const
+{
+    if (!isTextFormControl())
+        return directionString(SelectionHasNoDirection);
+    if (document()->focusedNode() != this && hasCachedSelection())
+        return directionString(m_cachedSelectionDirection);
+
+    return directionString(computeSelectionDirection());
+}
+
+TextFieldSelectionDirection HTMLTextFormControlElement::computeSelectionDirection() const
+{
+    ASSERT(isTextFormControl());
+    Frame* frame = document()->frame();
+    if (!frame)
+        return SelectionHasNoDirection;
+
+    const VisibleSelection& selection = frame->selection()->selection();
+    return selection.isDirectional() ? (selection.isBaseFirst() ? SelectionHasForwardDirection : SelectionHasBackwardDirection) : SelectionHasNoDirection;
 }
 
 static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& containerNode, int& offsetInContainer)
@@ -299,7 +363,7 @@ static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& 
 
 PassRefPtr<Range> HTMLTextFormControlElement::selection() const
 {
-    if (!renderer() || !isTextFormControl() || !hasCachedSelectionStart() || !hasCachedSelectionEnd())
+    if (!renderer() || !isTextFormControl() || !hasCachedSelection())
         return 0;
 
     int start = m_cachedSelectionStart;
@@ -340,7 +404,7 @@ PassRefPtr<Range> HTMLTextFormControlElement::selection() const
 
 void HTMLTextFormControlElement::restoreCachedSelection()
 {
-    setSelectionRange(m_cachedSelectionStart, m_cachedSelectionEnd);
+    setSelectionRange(m_cachedSelectionStart, m_cachedSelectionEnd, m_cachedSelectionDirection);
 }
 
 void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
@@ -349,7 +413,7 @@ void HTMLTextFormControlElement::selectionChanged(bool userTriggered)
         return;
 
     // selectionStart() or selectionEnd() will return cached selection when this node doesn't have focus
-    cacheSelection(computeSelectionStart(), computeSelectionEnd());
+    cacheSelection(computeSelectionStart(), computeSelectionEnd(), computeSelectionDirection());
 
     if (Frame* frame = document()->frame()) {
         if (frame->selection()->isRange() && userTriggered)

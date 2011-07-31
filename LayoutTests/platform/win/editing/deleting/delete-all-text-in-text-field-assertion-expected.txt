@@ -1,0 +1,13 @@
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root toDOMRange:range from 0 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of DIV > #shadow-root to 0 of DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+Bug 9358: REGRESSION: Assertion failure in HTMLInputElement::setValueFromRenderer (value == constrainValue(value)) when deleting all text
+https://bugs.webkit.org/show_bug.cgi?id=9358
+
+Assertion fails when all characters are deleted: 
+SUCCESS if the test didn't crash and you see this message.

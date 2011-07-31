@@ -3,6 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
  * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +33,8 @@ class Position;
 class RenderTextControl;
 class VisiblePosition;
 
+enum TextFieldSelectionDirection { SelectionHasNoDirection, SelectionHasForwardDirection, SelectionHasBackwardDirection };
+
 class HTMLTextFormControlElement : public HTMLFormControlElementWithState {
 public:
     // Common flag for HTMLInputElement::tooLong() and HTMLTextAreaElement::tooLong().
@@ -53,10 +56,13 @@ public:
     int indexForVisiblePosition(const VisiblePosition&) const;
     int selectionStart() const;
     int selectionEnd() const;
+    const AtomicString& selectionDirection() const;
     void setSelectionStart(int);
     void setSelectionEnd(int);
+    void setSelectionDirection(const String&);
     void select();
-    void setSelectionRange(int start, int end);
+    void setSelectionRange(int start, int end, const String& direction);
+    void setSelectionRange(int start, int end, TextFieldSelectionDirection = SelectionHasNoDirection);
     PassRefPtr<Range> selection() const;
     String selectedText() const;
 
@@ -67,12 +73,6 @@ public:
 
     virtual HTMLElement* innerTextElement() const = 0;
 
-    void cacheSelection(int start, int end)
-    {
-        m_cachedSelectionStart = start;
-        m_cachedSelectionEnd = end;
-    }
-
     void selectionChanged(bool userTriggered);
 
 protected:
@@ -82,10 +82,16 @@ protected:
     virtual void parseMappedAttribute(Attribute*);
 
     void setTextAsOfLastFormControlChangeEvent(const String& text) { m_textAsOfLastFormControlChangeEvent = text; }
+    
+    void cacheSelection(int start, int end, TextFieldSelectionDirection direction)
+    {
+        m_cachedSelectionStart = start;
+        m_cachedSelectionEnd = end;
+        m_cachedSelectionDirection = direction;
+    }
 
     void restoreCachedSelection();
-    bool hasCachedSelectionStart() const { return m_cachedSelectionStart >= 0; }
-    bool hasCachedSelectionEnd() const { return m_cachedSelectionEnd >= 0; }
+    bool hasCachedSelection() const { return m_cachedSelectionStart >= 0; }
 
     virtual void defaultEventHandler(Event*);
     virtual void subtreeHasChanged();
@@ -93,6 +99,7 @@ protected:
 private:
     int computeSelectionStart() const;
     int computeSelectionEnd() const;
+    TextFieldSelectionDirection computeSelectionDirection() const;
 
     virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
@@ -114,6 +121,7 @@ private:
     
     int m_cachedSelectionStart;
     int m_cachedSelectionEnd;
+    TextFieldSelectionDirection m_cachedSelectionDirection;
 };
 
 // This function returns 0 when node is an input element and not a text field.

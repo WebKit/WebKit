@@ -91,6 +91,32 @@ void V8HTMLInputElement::selectionEndAccessorSetter(v8::Local<v8::String> name, 
     imp->setSelectionEnd(value->Int32Value());
 }
 
+v8::Handle<v8::Value> V8HTMLInputElement::selectionDirectionAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.HTMLInputElement.selectionDirection._get");
+    v8::Handle<v8::Object> holder = info.Holder();
+    HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
+
+    if (!imp->canHaveSelection())
+        return throwError("Accessing selectionDirection on an input element that cannot have a selection.");
+
+    return v8String(imp->selectionDirection());
+}
+
+void V8HTMLInputElement::selectionDirectionAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    INC_STATS("DOM.HTMLInputElement.selectionDirection._set");
+    v8::Handle<v8::Object> holder = info.Holder();
+    HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);
+
+    if (!imp->canHaveSelection()) {
+        throwError("Accessing selectionDirection on an input element that cannot have a selection.");
+        return;
+    }
+
+    imp->setSelectionDirection(toWebCoreString(value));
+}
+
 v8::Handle<v8::Value> V8HTMLInputElement::setSelectionRangeCallback(const v8::Arguments& args)
 {
     INC_STATS("DOM.HTMLInputElement.setSelectionRange");
@@ -102,8 +128,9 @@ v8::Handle<v8::Value> V8HTMLInputElement::setSelectionRangeCallback(const v8::Ar
 
     int start = args[0]->Int32Value();
     int end = args[1]->Int32Value();
+    String direction = toWebCoreString(args[2]);
 
-    imp->setSelectionRange(start, end);
+    imp->setSelectionRange(start, end, direction);
     return v8::Undefined();
 }
 

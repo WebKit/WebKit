@@ -1,3 +1,24 @@
+2011-07-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [HTML5] Implement the selectionDirection property on input and textarea
+        https://bugs.webkit.org/show_bug.cgi?id=60403
+
+        Reviewed by Darin Adler.
+
+        Added a test to ensure WebKit sets and gets selectionDirection property.
+
+        Also added a test to ensure WebKit throws exceptions when retrieving or assigning values to selectionStart,
+        selectionEnd, and selectionDirection property of the input element when the element isn't a text field.
+
+        * fast/forms/selection-direction-expected.txt: Added.
+        * fast/forms/selection-direction.html: Added.
+        * fast/forms/selection-wrongtype-expected.txt: Added.
+        * fast/forms/selection-wrongtype.html: Added.
+        * platform/mac/editing/deleting/delete-all-text-in-text-field-assertion-expected.txt: Copied from
+        editing/deleting/delete-all-text-in-text-field-assertion-expected.txt; editing delegate change.
+        * platform/win/editing/deleting/delete-all-text-in-text-field-assertion-expected.txt: Copied from
+        editing/deleting/delete-all-text-in-text-field-assertion-expected.txt since Windows port fallbacks to Mac.
+
 2011-07-31  Dan Bernstein  <mitz@apple.com>
 
         Add expected results for Snow Leopard and earlier for fast/css/font-family-pictograph.html

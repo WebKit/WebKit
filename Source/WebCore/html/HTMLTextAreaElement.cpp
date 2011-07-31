@@ -213,7 +213,7 @@ void HTMLTextAreaElement::updateFocusAppearance(bool restorePreviousSelection)
     ASSERT(renderer());
     ASSERT(!document()->childNeedsAndNotInStyleRecalc());
 
-    if (!restorePreviousSelection || !hasCachedSelectionStart()) {
+    if (!restorePreviousSelection || !hasCachedSelection()) {
 #if ENABLE(ON_FIRST_TEXTAREA_FOCUS_SELECT_ALL)
         // Devices with trackballs or d-pads may focus on a textarea in route
         // to another focusable node. By selecting all text, the next movement

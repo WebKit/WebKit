@@ -1,3 +1,62 @@
+2011-07-29  Ryosuke Niwa  <rniwa@webkit.org>
+
+        [HTML5] Implement the selectionDirection property on input and textarea
+        https://bugs.webkit.org/show_bug.cgi?id=60403
+
+        Reviewed by Darin Adler.
+
+        Implements selectionDirection property as specified in HTML5 section 4.10.20:
+        http://www.whatwg.org/specs/web-apps/current-work/#textFieldSelection
+
+        selectionDirection is a property on input and textarea elements, which, on getting returns either "none",
+        "forward", or "backward" corresponding to the current selection direction, and on setting, modifies
+        the direction of the current selection. When selection doesn't exist or direction is unknown, "none"
+        is returned on getting. Setting the property value to neither of above values will result in setting "none".
+
+        This patch also adds the optional third argument, direction, to setSelectionRange.
+
+        Test: fast/forms/selection-direction.html
+              fast/forms/selection-wrongtype.html
+
+        * bindings/js/JSHTMLInputElementCustom.cpp:
+        (WebCore::JSHTMLInputElement::selectionDirection): Added.
+        (WebCore::JSHTMLInputElement::setSelectionDirection): Added.
+        (WebCore::JSHTMLInputElement::setSelectionRange): Processes the third argument.
+        * bindings/v8/custom/V8HTMLInputElementCustom.cpp:
+        (WebCore::V8HTMLInputElement::selectionDirectionAccessorGetter): Added.
+        (WebCore::V8HTMLInputElement::selectionDirectionAccessorSetter): Added.
+        (WebCore::V8HTMLInputElement::setSelectionRangeCallback): Processes the third argument.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::updateFocusAppearance): Calls hasCachedSelection.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::updateFocusAppearance): Ditto.
+        (WebCore::HTMLInputElement::setValue): Calls cacheSelection with SelectionHasNoDirection.
+        * html/HTMLTextAreaElement.idl: Added selectionDirection and the third argument to setSelectionRange.
+        * html/HTMLInputElement.idl: Ditto.
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::HTMLTextFormControlElement): Initializes
+        m_cachedSelectionDirection.
+        (WebCore::HTMLTextFormControlElement::setSelectionStart): Calls setSelectionRange.
+        (WebCore::HTMLTextFormControlElement::setSelectionEnd): Ditto.
+        (WebCore::HTMLTextFormControlElement::setSelectionDirection): Added.
+        (WebCore::HTMLTextFormControlElement::select): Calls setSelectionRange with SelectionHasNoDirection.
+        (WebCore::HTMLTextFormControlElement::setSelectionRange): Added the version that takes direction
+        string as the third argument, which calls the version that takes two ints and TextFieldSelectionDirection.
+        (WebCore::HTMLTextFormControlElement::selectionStart): Calls hasCachedSelection.
+        (WebCore::HTMLTextFormControlElement::selectionEnd): Ditto.
+        (WebCore::directionString): Added.
+        (WebCore::HTMLTextFormControlElement::selectionDirection): Added.
+        (WebCore::HTMLTextFormControlElement::computeSelectionDirection): Added.
+        (WebCore::HTMLTextFormControlElement::selection): Calls hasCachedSelection.
+        (WebCore::HTMLTextFormControlElement::restoreCachedSelection): Calls setSelectionRange.
+        (WebCore::HTMLTextFormControlElement::selectionChanged): Calls cacheSelection.
+        * html/HTMLTextFormControlElement.h:
+        (WebCore::HTMLTextFormControlElement::cacheSelection): Takes TextFieldSelectionDirection.
+        (WebCore::HTMLTextFormControlElement::hasCachedSelection): Extracted from hasCachedSelectionStart;
+        cacheSelection is the only function that modifies m_cacheSelectionStart and m_cacheSelectionEnd
+        and none of its callers ever set one of them be -1 so they are always both -1 or both non-negative.
+        Thus, having two separate functions for m_cacheSelectionStart and m_cacheSelectionEnd was redundant.
+
 2011-07-31  Daniel Bates  <dbates@webkit.org>
 
         [GTK] Remove unused variable coreChild in WebCore::getChildForTable()

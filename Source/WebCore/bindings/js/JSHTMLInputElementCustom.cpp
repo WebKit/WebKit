@@ -69,6 +69,26 @@ void JSHTMLInputElement::setSelectionEnd(ExecState* exec, JSValue value)
     input->setSelectionEnd(value.toInt32(exec));
 }
 
+JSValue JSHTMLInputElement::selectionDirection(ExecState* exec) const
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    if (!input->canHaveSelection())
+        return throwTypeError(exec);
+
+    return jsString(exec, input->selectionDirection());
+}
+
+void JSHTMLInputElement::setSelectionDirection(ExecState* exec, JSValue value)
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
+    if (!input->canHaveSelection()) {
+        throwTypeError(exec);
+        return;
+    }
+
+    input->setSelectionDirection(ustringToString(value.toString(exec)));
+}
+
 JSValue JSHTMLInputElement::setSelectionRange(ExecState* exec)
 {
     HTMLInputElement* input = static_cast<HTMLInputElement*>(impl());
@@ -77,8 +97,9 @@ JSValue JSHTMLInputElement::setSelectionRange(ExecState* exec)
 
     int start = exec->argument(0).toInt32(exec);
     int end = exec->argument(1).toInt32(exec);
+    String direction = ustringToString(exec->argument(2).toString(exec));
 
-    input->setSelectionRange(start, end);
+    input->setSelectionRange(start, end, direction);
     return jsUndefined();
 }
 

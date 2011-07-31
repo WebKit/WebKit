@@ -487,7 +487,7 @@ bool HTMLInputElement::isMouseFocusable() const
 void HTMLInputElement::updateFocusAppearance(bool restorePreviousSelection)
 {
     if (isTextField()) {
-        if (!restorePreviousSelection || !hasCachedSelectionStart())
+        if (!restorePreviousSelection || !hasCachedSelection())
             select();
         else
             restoreCachedSelection();
@@ -1082,7 +1082,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
         if (document()->focusedNode() == this)
             setSelectionRange(max, max);
         else
-            cacheSelection(max, max);
+            cacheSelection(max, max, SelectionHasNoDirection);
         m_suggestedValue = String();
     }
 
