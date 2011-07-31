@@ -103,6 +103,7 @@ libWebCoreInternals_la_CPPFLAGS = \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
 	$(CAIRO_CFLAGS) \
+	$(LIBSOUP_CFLAGS) \
 	-I$(top_builddir)/DerivedSources \
 	-I$(top_builddir)/DerivedSources/WebCore
 
@@ -112,8 +113,7 @@ libWebCoreInternals_la_CXXFLAGS = \
 
 libWebCoreInternals_la_CFLAGS = \
 	-fno-strict-aliasing \
-	$(javascriptcore_cflags) \
-        $(LIBSOUP_CFLAGS)
+	$(javascriptcore_cflags)
 
 # DumpRenderTree
 Programs_DumpRenderTree_CPPFLAGS = \

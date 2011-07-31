@@ -1,3 +1,9 @@
+2011-07-31  Xan Lopez  <xlopez@igalia.com>
+
+        Group dependencies CFLAGS together.
+
+        * GNUmakefile.am: ditto.
+
 2011-07-31  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the GTK build after <http://trac.webkit.org/changeset/92059>
