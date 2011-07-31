@@ -32,6 +32,7 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include <wtf/Atomics.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

@@ -33,6 +33,7 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "Reverb.h"
+#include <wtf/MainThread.h>
 
 // Note about empirical tuning:
 // The maximum FFT size affects reverb performance and accuracy.

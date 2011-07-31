@@ -36,7 +36,7 @@
 #include <gtk/gtk.h>
 #include <runtime/InitializeThreading.h>
 #include <unistd.h>
-#include <wtf/Threading.h>
+#include <wtf/MainThread.h>
 
 namespace WebKit {
 

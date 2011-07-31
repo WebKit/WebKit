@@ -35,6 +35,7 @@
 #include "KURL.h"
 #include "OriginAccessEntry.h"
 #include "SchemeRegistry.h"
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {

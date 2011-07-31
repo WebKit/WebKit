@@ -30,7 +30,6 @@
 #include "config.h"
 #include "CryptographicallyRandomNumber.h"
 
-#include "MainThread.h"
 #include "OSRandomSource.h"
 #include "StdLibExtras.h"
 #include "ThreadingPrimitives.h"

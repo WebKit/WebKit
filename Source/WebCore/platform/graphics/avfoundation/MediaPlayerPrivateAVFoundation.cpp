@@ -39,6 +39,7 @@
 #include "SoftLinking.h"
 #include "TimeRanges.h"
 #include <CoreMedia/CoreMedia.h>
+#include <wtf/MainThread.h>
 #include <wtf/UnusedParam.h>
 
 using namespace std;

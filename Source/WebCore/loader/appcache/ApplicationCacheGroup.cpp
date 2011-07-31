@@ -49,6 +49,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include <wtf/HashMap.h>
+#include <wtf/MainThread.h>
 #include <wtf/UnusedParam.h>
 
 #if ENABLE(INSPECTOR)

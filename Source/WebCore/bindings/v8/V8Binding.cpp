@@ -40,6 +40,7 @@
 #include "Threading.h"
 #include "V8Element.h"
 #include "V8Proxy.h"
+#include <wtf/MainThread.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>

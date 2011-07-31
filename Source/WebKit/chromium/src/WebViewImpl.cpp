@@ -128,6 +128,7 @@
 #include "cc/CCHeadsUpDisplay.h"
 #include <wtf/ByteArray.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
 #include <wtf/RefPtr.h>
 
 #if USE(CG)

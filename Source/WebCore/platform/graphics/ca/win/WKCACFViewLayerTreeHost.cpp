@@ -31,7 +31,7 @@
 #include "PlatformCALayer.h"
 #include "SoftLinking.h"
 #include <wtf/CurrentTime.h>
-#include <wtf/Threading.h>
+#include <wtf/MainThread.h>
 
 typedef struct _CACFLayer* CACFLayerRef;
 

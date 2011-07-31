@@ -61,6 +61,7 @@
 #include <CoreGraphics/CGBitmapContext.h>
 #endif
 #include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

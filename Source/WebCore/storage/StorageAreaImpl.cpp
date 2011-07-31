@@ -38,6 +38,7 @@
 #include "StorageMap.h"
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

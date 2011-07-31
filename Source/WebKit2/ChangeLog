@@ -1,3 +1,28 @@
+2011-07-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove inclusion of MainThread.h from Threading.h
+        https://bugs.webkit.org/show_bug.cgi?id=65081
+
+        Reviewed by Darin Adler.
+
+        Add missing include statements for MainThread.
+
+        * PluginProcess/gtk/PluginProcessMainGtk.cpp:
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        * PluginProcess/qt/PluginProcessMainQt.cpp:
+        * UIProcess/API/mac/WKPrintingView.mm:
+        * UIProcess/Launcher/mac/ThreadLauncherMac.mm:
+        * UIProcess/Launcher/qt/ThreadLauncherQt.cpp:
+        * UIProcess/Launcher/win/ThreadLauncherWin.cpp:
+        * UIProcess/WebContext.cpp:
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        * WebProcess/gtk/WebProcessMainGtk.cpp:
+        * WebProcess/mac/KeychainItemShimMethods.mm:
+        * WebProcess/mac/WebProcessMainMac.mm:
+        * WebProcess/qt/WebProcessMainQt.cpp:
+        * WebProcess/win/WebProcessMainWin.cpp:
+
 2011-07-30  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt][WK2] Fix the build afer r92014

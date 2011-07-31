@@ -67,8 +67,8 @@
 #import <WebCore/UserTypingGestureIndicator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
+#import <wtf/MainThread.h>
 #import <wtf/PassRefPtr.h>
-#import <wtf/Threading.h>
 
 using namespace WebCore;
 

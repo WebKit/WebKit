@@ -33,6 +33,7 @@
 #include "EventTarget.h"
 #include "HRTFDatabaseLoader.h"
 #include <wtf/HashSet.h>
+#include <wtf/MainThread.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

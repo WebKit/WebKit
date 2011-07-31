@@ -59,7 +59,7 @@
 #include "WebWorkersPrivate.h"
 #include <JavaScriptCore/InitializeThreading.h>
 #include <WebCore/SoftLinking.h>
-#include <wtf/Threading.h>
+#include <wtf/MainThread.h>
 
 // WebKitClassFactory ---------------------------------------------------------
 #if USE(SAFARI_THEME)

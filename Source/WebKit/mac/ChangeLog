@@ -1,3 +1,32 @@
+2011-07-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove inclusion of MainThread.h from Threading.h
+        https://bugs.webkit.org/show_bug.cgi?id=65081
+
+        Reviewed by Darin Adler.
+
+        Add missing include statements for MainThread.
+
+        * Carbon/CarbonWindowAdapter.mm:
+        * History/WebBackForwardList.mm:
+        * History/WebHistoryItem.mm:
+        * Misc/WebElementDictionary.mm:
+        * Misc/WebIconDatabase.mm:
+        * Misc/WebLocalizableStrings.mm:
+        * Plugins/Hosted/WebHostedNetscapePluginView.mm:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        * Plugins/WebBasePluginPackage.mm:
+        * Plugins/WebNetscapePluginView.mm:
+        * WebCoreSupport/WebEditorClient.mm:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        * WebView/WebArchive.mm:
+        * WebView/WebDataSource.mm:
+        * WebView/WebHTMLView.mm:
+        * WebView/WebResource.mm:
+        * WebView/WebTextIterator.mm:
+        * WebView/WebView.mm:
+        * WebView/WebViewData.mm:
+
 2011-07-28  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9589433> Displaying Japanese dictionary contents in vertical orientation takes a couple of seconds

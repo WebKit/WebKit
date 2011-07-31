@@ -30,6 +30,7 @@
 #import "PrintInfo.h"
 #import "WebData.h"
 #import "WebPageProxy.h"
+#import <wtf/MainThread.h>
 
 using namespace WebKit;
 using namespace WebCore;

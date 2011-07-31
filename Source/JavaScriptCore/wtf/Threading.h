@@ -65,7 +65,6 @@
 #include <wtf/Assertions.h>
 #include <wtf/Atomics.h>
 #include <wtf/Locker.h>
-#include <wtf/MainThread.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/ThreadingPrimitives.h>

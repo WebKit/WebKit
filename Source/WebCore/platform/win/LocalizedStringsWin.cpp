@@ -28,8 +28,8 @@
 
 #include "WebCoreInstanceHandle.h"
 #include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Threading.h>
 #include <wtf/text/WTFString.h>
 
 #if USE(CF)

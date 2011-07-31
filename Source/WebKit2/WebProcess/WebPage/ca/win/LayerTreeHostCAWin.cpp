@@ -40,7 +40,7 @@
 #include <WebKitQuartzCoreAdditions/WKCACFImage.h>
 #include <WebKitQuartzCoreAdditions/WKCACFView.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/Threading.h>
+#include <wtf/MainThread.h>
 
 #ifdef DEBUG_ALL
 #pragma comment(lib, "WebKitQuartzCoreAdditions_debug")

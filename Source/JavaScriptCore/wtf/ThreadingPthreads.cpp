@@ -36,7 +36,6 @@
 #include "DateMath.h"
 #include "dtoa.h"
 #include "HashMap.h"
-#include "MainThread.h"
 #include "RandomNumberSeed.h"
 #include "StdLibExtras.h"
 #include "ThreadIdentifierDataPthreads.h"

@@ -60,7 +60,7 @@
 #import <WebKit/DOMPrivate.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 
 using namespace WebCore;
 

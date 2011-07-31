@@ -31,6 +31,7 @@
 #include "cc/CCThreadTask.h"
 #include <gtest/gtest.h>
 #include <webkit/support/webkit_support.h>
+#include <wtf/MainThread.h>
 
 using namespace WebCore;
 

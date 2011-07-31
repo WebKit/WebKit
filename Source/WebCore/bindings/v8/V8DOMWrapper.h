@@ -43,6 +43,7 @@
 #include "WrapperTypeInfo.h"
 #include "XPathNSResolver.h"
 #include <v8.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

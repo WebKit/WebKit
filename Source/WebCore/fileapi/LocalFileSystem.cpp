@@ -46,6 +46,7 @@
 #include "FileSystemCallbacks.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {

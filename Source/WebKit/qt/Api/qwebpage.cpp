@@ -114,8 +114,8 @@
 #endif
 #include "WindowFeatures.h"
 #include "WorkerThread.h"
-#include "runtime/InitializeThreading.h"
-#include "wtf/Threading.h"
+#include <runtime/InitializeThreading.h>
+#include <wtf/MainThread.h>
 
 #include <QApplication>
 #include <QBasicTimer>

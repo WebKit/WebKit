@@ -56,6 +56,7 @@
 #include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
 
 #ifndef NDEBUG
 #include <wtf/RefCountedLeakCounter.h>

@@ -41,7 +41,7 @@
 #import <sysexits.h>
 #import <unistd.h>
 #import <wtf/RetainPtr.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/StringBuilder.h>
 

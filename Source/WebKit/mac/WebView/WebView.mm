@@ -176,10 +176,10 @@
 #import <runtime/JSValue.h>
 #import <wtf/Assertions.h>
 #import <wtf/HashTraits.h>
+#import <wtf/MainThread.h>
 #import <wtf/RefCountedLeakCounter.h>
 #import <wtf/RefPtr.h>
 #import <wtf/StdLibExtras.h>
-#import <wtf/Threading.h>
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #import <WebKit/WebDashboardRegion.h>

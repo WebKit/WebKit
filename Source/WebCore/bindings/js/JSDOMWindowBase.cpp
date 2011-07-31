@@ -35,7 +35,7 @@
 #include "SecurityOrigin.h"
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
-#include <wtf/Threading.h>
+#include <wtf/MainThread.h>
 
 using namespace JSC;
 

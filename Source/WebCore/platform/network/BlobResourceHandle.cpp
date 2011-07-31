@@ -44,6 +44,7 @@
 #include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

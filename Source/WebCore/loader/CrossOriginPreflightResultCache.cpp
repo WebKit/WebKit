@@ -30,8 +30,8 @@
 #include "CrossOriginAccessControl.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 

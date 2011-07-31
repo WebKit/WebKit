@@ -35,6 +35,7 @@
 #import "WebProcessProxyMessages.h"
 #import "WebProcessShim.h"
 #import <dlfcn.h>
+#import <wtf/MainThread.h>
 
 namespace WebKit {
 

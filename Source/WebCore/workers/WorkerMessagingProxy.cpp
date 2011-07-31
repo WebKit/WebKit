@@ -42,6 +42,7 @@
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
 #include "Worker.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

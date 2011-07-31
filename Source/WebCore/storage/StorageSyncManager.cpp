@@ -37,8 +37,9 @@
 #include "Page.h"
 #include "PageGroup.h"
 #include "StorageAreaSync.h"
-#include <wtf/text/CString.h>
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

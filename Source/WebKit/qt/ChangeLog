@@ -1,3 +1,14 @@
+2011-07-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove inclusion of MainThread.h from Threading.h
+        https://bugs.webkit.org/show_bug.cgi?id=65081
+
+        Reviewed by Darin Adler.
+
+        Add missing include statements for MainThread.
+
+        * Api/qwebpage.cpp:
+
 2011-07-27  Benjamin Poulain  <benjamin@webkit.org>
 
         [WK2][Qt] Move from QGraphicsView to Qt Scene Graph

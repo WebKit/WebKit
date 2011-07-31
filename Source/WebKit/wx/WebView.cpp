@@ -74,6 +74,7 @@
 #include <runtime/InitializeThreading.h>
 #include <runtime/JSValue.h>
 #include <runtime/UString.h>
+#include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
 #if ENABLE(DATABASE)

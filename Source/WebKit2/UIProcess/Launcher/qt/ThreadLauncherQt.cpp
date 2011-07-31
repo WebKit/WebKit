@@ -30,6 +30,7 @@
 #include "RunLoop.h"
 #include "WebProcess.h"
 #include <runtime/InitializeThreading.h>
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
 #include <QApplication>

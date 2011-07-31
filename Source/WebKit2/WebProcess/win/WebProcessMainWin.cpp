@@ -31,7 +31,7 @@
 #include "WebProcess.h"
 #include <WebCore/SoftLinking.h>
 #include <runtime/InitializeThreading.h>
-#include <wtf/Threading.h>
+#include <wtf/MainThread.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 

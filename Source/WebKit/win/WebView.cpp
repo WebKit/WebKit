@@ -135,7 +135,7 @@
 #include <WebCore/TypingCommand.h>
 #include <WebCore/WindowMessageBroadcaster.h>
 #include <WebCore/WindowsTouch.h>
-#include <wtf/Threading.h>
+#include <wtf/MainThread.h>
 
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
 #include <WebCore/GeolocationController.h>

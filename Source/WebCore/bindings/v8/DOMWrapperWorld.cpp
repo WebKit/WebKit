@@ -31,8 +31,8 @@
 #include "config.h"
 #include "DOMWrapperWorld.h"
 
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
-#include <wtf/Threading.h>
 
 namespace WebCore {
 

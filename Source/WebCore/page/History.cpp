@@ -36,6 +36,7 @@
 #include "Page.h"
 #include "SecurityOrigin.h"
 #include "SerializedScriptValue.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

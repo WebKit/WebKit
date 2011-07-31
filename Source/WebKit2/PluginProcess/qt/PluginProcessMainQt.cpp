@@ -33,6 +33,7 @@
 #include "RunLoop.h"
 #include <WebCore/NotImplemented.h>
 #include <runtime/InitializeThreading.h>
+#include <wtf/MainThread.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>

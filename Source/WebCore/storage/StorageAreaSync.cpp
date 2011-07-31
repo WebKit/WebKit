@@ -39,6 +39,7 @@
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
 #include "SuddenTermination.h"
+#include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {

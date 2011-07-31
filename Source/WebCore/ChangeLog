@@ -1,3 +1,71 @@
+2011-07-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Remove inclusion of MainThread.h from Threading.h
+        https://bugs.webkit.org/show_bug.cgi?id=65081
+
+        Reviewed by Darin Adler.
+
+        Add missing include statements for MainThread.
+
+        * bindings/js/DOMWrapperWorld.cpp:
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateCallbackImplementation):
+        * bindings/v8/DOMDataStore.cpp:
+        * bindings/v8/DOMWrapperWorld.cpp:
+        * bindings/v8/V8Binding.cpp:
+        * bindings/v8/V8DOMMap.cpp:
+        * bindings/v8/V8DOMWrapper.h:
+        * dom/EventTarget.cpp:
+        * fileapi/LocalFileSystem.cpp:
+        * loader/CrossOriginPreflightResultCache.cpp:
+        * loader/ResourceLoadScheduler.cpp:
+        * loader/WorkerThreadableLoader.cpp:
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        * page/DOMWindow.cpp:
+        * page/History.cpp:
+        * page/SecurityOrigin.cpp:
+        * page/mac/EventHandlerMac.mm:
+        * platform/MIMETypeRegistry.cpp:
+        * platform/ThreadGlobalData.cpp:
+        * platform/ThreadTimers.cpp:
+        * platform/TreeShared.h:
+        * platform/audio/HRTFDatabaseLoader.cpp:
+        * platform/graphics/Font.cpp:
+        * platform/graphics/FontFallbackList.h:
+        * platform/graphics/FontFastPath.cpp:
+        * platform/graphics/Image.cpp:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/ca/win/WKCACFViewLayerTreeHost.cpp:
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.cpp:
+        * platform/mac/LocalizedStringsMac.mm:
+        * platform/mac/SharedBufferMac.mm:
+        * platform/network/BlobResourceHandle.cpp:
+        * platform/network/cf/DNSCFNet.cpp:
+        * platform/network/cf/LoaderRunLoopCF.cpp:
+        * platform/text/LocalizedNumberICU.cpp:
+        * platform/text/TextEncodingRegistry.cpp:
+        * platform/text/mac/LocalizedNumberMac.mm:
+        * platform/win/LocalizedStringsWin.cpp:
+        * storage/LocalStorageThread.cpp:
+        * storage/StorageAreaImpl.cpp:
+        * storage/StorageAreaSync.cpp:
+        * storage/StorageNamespaceImpl.cpp:
+        * storage/StorageSyncManager.cpp:
+        * webaudio/AsyncAudioDecoder.cpp:
+        * webaudio/AudioBufferSourceNode.cpp:
+        * webaudio/AudioContext.h
+        * webaudio/AudioContext.cpp:
+        * webaudio/AudioNode.cpp:
+        * webaudio/ConvolverNode.cpp:
+        * webaudio/OfflineAudioDestinationNode.cpp:
+        * webaudio/RealtimeAnalyser.cpp:
+        * webaudio/WaveShaperNode.cpp:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        * workers/WorkerMessagingProxy.cpp:
+
 2011-07-30  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION: culledInlineAbsoluteRects needs to translate a 0,0 point to absolute

@@ -49,7 +49,7 @@
 #import <WebCore/runtime_root.h>
 #import <runtime/InitializeThreading.h>
 #import <wtf/Assertions.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 
 using namespace WebCore;
 using namespace WebKit;

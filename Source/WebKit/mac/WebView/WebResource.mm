@@ -43,7 +43,7 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 
 using namespace WebCore;
 

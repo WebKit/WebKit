@@ -80,7 +80,7 @@
 #import <runtime/InitializeThreading.h>
 #import <runtime/JSLock.h>
 #import <wtf/Assertions.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 #import <wtf/text/CString.h>
 
 #define LoginWindowDidSwitchFromUserNotification    @"WebLoginWindowDidSwitchFromUserNotification"

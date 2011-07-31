@@ -30,7 +30,7 @@
 #include "cc/CCLayerTreeHost.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCThreadTask.h"
-
+#include <wtf/MainThread.h>
 
 using namespace WTF;
 

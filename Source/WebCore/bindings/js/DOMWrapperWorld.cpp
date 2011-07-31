@@ -24,6 +24,7 @@
 #include "JSDOMWindow.h"
 #include "ScriptController.h"
 #include "WebCoreJSClientData.h"
+#include <wtf/MainThread.h>
 
 using namespace JSC;
 

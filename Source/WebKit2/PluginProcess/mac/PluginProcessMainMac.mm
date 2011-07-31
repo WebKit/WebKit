@@ -36,6 +36,7 @@
 #import <WebKitSystemInterface.h>
 #import <runtime/InitializeThreading.h>
 #import <servers/bootstrap.h>
+#import <wtf/MainThread.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>

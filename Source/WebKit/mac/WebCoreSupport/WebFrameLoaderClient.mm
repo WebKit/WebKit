@@ -120,8 +120,8 @@
 #import <WebKit/DOMHTMLFormElement.h>
 #import <WebKitSystemInterface.h>
 #import <runtime/InitializeThreading.h>
+#import <wtf/MainThread.h>
 #import <wtf/PassRefPtr.h>
-#import <wtf/Threading.h>
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 #import <WebCore/HTMLMediaElement.h>

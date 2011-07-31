@@ -29,7 +29,7 @@
 #import <WebKit/WebLocalizableStrings.h>
 
 #import <wtf/Assertions.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 
 WebLocalizableStringsBundle WebKitLocalizableStringsBundle = { "com.apple.WebKit", 0 };
 

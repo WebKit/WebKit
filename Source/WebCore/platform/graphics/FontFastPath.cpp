@@ -31,6 +31,7 @@
 #include "SimpleFontData.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/unicode/CharacterNames.h>
 #include <wtf/unicode/Unicode.h>

@@ -123,7 +123,7 @@
 #import <dlfcn.h>
 #import <limits>
 #import <runtime/InitializeThreading.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #import <QuartzCore/QuartzCore.h>

@@ -33,6 +33,7 @@
 
 #include "DOMData.h"
 #include "V8Binding.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

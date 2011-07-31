@@ -50,7 +50,7 @@
 #include <libintl.h>
 #include <runtime/InitializeThreading.h>
 #include <stdlib.h>
-#include <wtf/Threading.h>
+#include <wtf/MainThread.h>
 
 static WebKitCacheModel cacheModel = WEBKIT_CACHE_MODEL_DEFAULT;
 

@@ -31,6 +31,7 @@
 #include "AutodrainedPool.h"
 #include <CoreFoundation/CoreFoundation.h>
 #include <limits>
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {

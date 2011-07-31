@@ -34,6 +34,7 @@
 #include <limits>
 #include <unicode/numfmt.h>
 #include <unicode/parsepos.h>
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
 

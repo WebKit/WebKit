@@ -24,6 +24,7 @@
 #include "FontSelector.h"
 #include "SimpleFontData.h"
 #include <wtf/Forward.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

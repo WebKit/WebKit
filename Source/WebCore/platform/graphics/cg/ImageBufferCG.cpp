@@ -35,13 +35,13 @@
 #include "ImageData.h"
 #include "MIMETypeRegistry.h"
 #include <ApplicationServices/ApplicationServices.h>
+#include <math.h>
 #include <wtf/Assertions.h>
-#include <wtf/text/WTFString.h>
+#include <wtf/MainThread.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
-#include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
-#include <math.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
 #include "WebCoreSystemInterface.h"

@@ -2401,7 +2401,6 @@ sub GenerateCallbackImplementation
 
     $implIncludes{"ScriptExecutionContext.h"} = 1;
     $implIncludes{"<runtime/JSLock.h>"} = 1;
-    $implIncludes{"<wtf/MainThread.h>"} = 1;
 
     @implContent = ();
 

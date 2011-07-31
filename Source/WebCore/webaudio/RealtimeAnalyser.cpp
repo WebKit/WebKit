@@ -37,8 +37,8 @@
 #include <algorithm>
 #include <limits.h>
 #include <wtf/Complex.h>
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
-#include <wtf/Threading.h>
 
 using namespace std;
 

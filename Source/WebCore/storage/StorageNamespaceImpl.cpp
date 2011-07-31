@@ -33,6 +33,7 @@
 #include "StorageMap.h"
 #include "StorageSyncManager.h"
 #include "StorageTracker.h"
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 

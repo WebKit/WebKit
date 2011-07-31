@@ -30,6 +30,7 @@
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
 #import <runtime/InitializeThreading.h>
+#import <wtf/MainThread.h>
 #import <wtf/Threading.h>
 
 namespace WebKit {

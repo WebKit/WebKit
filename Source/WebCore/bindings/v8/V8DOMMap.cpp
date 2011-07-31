@@ -35,6 +35,7 @@
 #include "DOMDataStore.h"
 #include "ScopedDOMDataStore.h"
 #include "V8Binding.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

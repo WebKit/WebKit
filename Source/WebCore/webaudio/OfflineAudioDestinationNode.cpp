@@ -32,7 +32,7 @@
 #include "AudioContext.h"
 #include "HRTFDatabaseLoader.h"
 #include <algorithm>
-#include <wtf/Threading.h>
+#include <wtf/MainThread.h>
 
 using namespace std;
  

@@ -49,6 +49,7 @@
 #include "Settings.h"
 #include "WebCoreSystemInterface.h"
 #include <objc/objc-runtime.h>
+#include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
 #if !(defined(OBJC_API_VERSION) && OBJC_API_VERSION > 0)

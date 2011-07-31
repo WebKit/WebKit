@@ -94,6 +94,7 @@
 #include "WindowFeatures.h"
 #include <algorithm>
 #include <wtf/CurrentTime.h>
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/WTFString.h>
 

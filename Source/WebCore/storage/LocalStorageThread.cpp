@@ -30,6 +30,7 @@
 
 #include "LocalStorageTask.h"
 #include "StorageAreaSync.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

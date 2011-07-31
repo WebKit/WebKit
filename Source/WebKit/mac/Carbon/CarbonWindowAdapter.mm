@@ -74,7 +74,7 @@
 
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 
 #import "WebKitLogging.h"
 #import "WebNSObjectExtras.h"

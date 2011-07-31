@@ -43,7 +43,7 @@
 #import <WebKit/DOMCore.h>
 #import <WebKit/DOMExtensions.h>
 #import <runtime/InitializeThreading.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 
 using namespace WebCore;
 

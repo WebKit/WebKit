@@ -28,13 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LocalizedNumber.h"
+#import "config.h"
+#import "LocalizedNumber.h"
 
-#include <limits>
 #import <Foundation/NSNumberFormatter.h>
-#include <wtf/RetainPtr.h>
-#include <wtf/text/CString.h>
+#import <limits>
+#import <wtf/MainThread.h>
+#import <wtf/RetainPtr.h>
+#import <wtf/text/CString.h>
 
 using namespace std;
 

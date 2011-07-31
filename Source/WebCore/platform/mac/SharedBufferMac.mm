@@ -29,6 +29,7 @@
 #include "WebCoreObjCExtras.h"
 #include <runtime/InitializeThreading.h>
 #include <string.h>
+#include <wtf/MainThread.h>
 #include <wtf/PassRefPtr.h>
 
 

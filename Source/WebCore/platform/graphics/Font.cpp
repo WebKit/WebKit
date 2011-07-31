@@ -34,6 +34,7 @@
 #include "GlyphBuffer.h"
 #include "TextRun.h"
 #include "WidthIterator.h"
+#include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
 #include <wtf/UnusedParam.h>
 

@@ -32,7 +32,7 @@
 #import <WebCore/TextIterator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <runtime/InitializeThreading.h>
-#import <wtf/Threading.h>
+#import <wtf/MainThread.h>
 
 using namespace JSC;
 using namespace WebCore;

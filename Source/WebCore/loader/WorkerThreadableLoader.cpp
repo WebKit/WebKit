@@ -44,8 +44,8 @@
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
+#include <wtf/MainThread.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 using namespace std;

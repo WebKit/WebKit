@@ -31,6 +31,7 @@
 
 #include "AtomicString.h"
 #include "DynamicAnnotations.h"
+#include "MainThread.h"
 #include "StaticConstructors.h"
 #include "StringImpl.h"
 

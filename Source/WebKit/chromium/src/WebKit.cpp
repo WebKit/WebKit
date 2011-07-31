@@ -44,6 +44,7 @@
 #include "v8.h"
 
 #include <wtf/Assertions.h>
+#include <wtf/MainThread.h>
 #include <wtf/Threading.h>
 #include <wtf/text/AtomicString.h>
 
