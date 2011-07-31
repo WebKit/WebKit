@@ -819,19 +819,62 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
     case PutByVal:
     case PutByValAlias: {
-        JSValueOperand arg1(this, node.child1());
-        JSValueOperand arg2(this, node.child2());
-        JSValueOperand arg3(this, node.child3());
-        GPRReg arg1GPR = arg1.gpr();
-        GPRReg arg2GPR = arg2.gpr();
-        GPRReg arg3GPR = arg3.gpr();
+        JSValueOperand base(this, node.child1());
+        JSValueOperand property(this, node.child2());
+        JSValueOperand value(this, node.child3());
+        GPRTemporary storage(this);
+        GPRTemporary cleanIndex(this);
+        GPRReg baseGPR = base.gpr();
+        GPRReg propertyGPR = property.gpr();
+        GPRReg valueGPR = value.gpr();
+        GPRReg storageGPR = storage.gpr();
+        GPRReg cleanIndexGPR = cleanIndex.gpr();
         
-        arg1.use();
-        arg2.use();
-        arg3.use();
-        flushRegisters();
+        base.use();
+        property.use();
+        value.use();
+        
+        writeBarrier(m_jit, baseGPR, storageGPR);
+        
+        JITCompiler::Jump baseNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
 
-        callOperation(m_jit.codeBlock()->isStrictMode() ? operationPutByValStrict : operationPutByValNonStrict, arg1GPR, arg2GPR, arg3GPR);
+        JITCompiler::Jump propertyNotInt = m_jit.branchPtr(MacroAssembler::Below, propertyGPR, GPRInfo::tagTypeNumberRegister);
+
+        m_jit.loadPtr(MacroAssembler::Address(baseGPR, JSArray::storageOffset()), storageGPR);
+
+        JITCompiler::Jump baseNotArray = m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseGPR), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr));
+
+        m_jit.zeroExtend32ToPtr(propertyGPR, cleanIndexGPR);
+
+        JITCompiler::Jump outOfBounds = m_jit.branch32(MacroAssembler::AboveOrEqual, cleanIndexGPR, MacroAssembler::Address(baseGPR, JSArray::vectorLengthOffset()));
+        
+        JITCompiler::Jump notHoleValue = m_jit.branchTestPtr(MacroAssembler::NonZero, MacroAssembler::BaseIndex(storageGPR, cleanIndexGPR, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+        
+        JITCompiler::Jump lengthDoesNotNeedUpdate = m_jit.branch32(MacroAssembler::Below, cleanIndexGPR, MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+        
+        m_jit.add32(TrustedImm32(1), cleanIndexGPR);
+        m_jit.store32(cleanIndexGPR, MacroAssembler::Address(storageGPR, OBJECT_OFFSETOF(ArrayStorage, m_length)));
+        m_jit.zeroExtend32ToPtr(propertyGPR, cleanIndexGPR);
+        
+        lengthDoesNotNeedUpdate.link(&m_jit);
+        notHoleValue.link(&m_jit);
+        
+        m_jit.storePtr(valueGPR, MacroAssembler::BaseIndex(storageGPR, cleanIndexGPR, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+        
+        JITCompiler::Jump done = m_jit.jump();
+        
+        baseNotCell.link(&m_jit);
+        propertyNotInt.link(&m_jit);
+        baseNotArray.link(&m_jit);
+        outOfBounds.link(&m_jit);
+        
+        silentSpillAllRegisters(InvalidGPRReg);
+        setupStubArguments(baseGPR, propertyGPR, valueGPR);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        JITCompiler::Call functionCall = appendCallWithExceptionCheck(m_jit.codeBlock()->isStrictMode() ? operationPutByValStrict : operationPutByValNonStrict);
+        silentFillAllRegisters(InvalidGPRReg);
+        
+        done.link(&m_jit);
 
         noResult(m_compileIndex, UseChildrenCalledExplicitly);
         break;

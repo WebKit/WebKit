@@ -1,5 +1,17 @@
 2011-07-31  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG non-speculative JIT does not optimize PutByVal
+        https://bugs.webkit.org/show_bug.cgi?id=65424
+
+        Reviewed by Gavin Barraclough.
+        
+        Added code to emit PutByVal inline fast path.
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+
+2011-07-31  Filip Pizlo  <fpizlo@apple.com>
+
         The JSC garbage collector returns memory to the operating system too
         eagerly.
         https://bugs.webkit.org/show_bug.cgi?id=65382
