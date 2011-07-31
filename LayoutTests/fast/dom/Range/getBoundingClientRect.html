@@ -145,9 +145,6 @@ body {
     range4.selectNodeContents(document.getElementById('test4'));
     range4.collapse(true);
     show(range4);
-    
-    var blah = range4.getClientRects();
-    debug(blah);
 
     rect = range4.getBoundingClientRect()
     testClientRect(rect, expectedResults[4 - 1]);

@@ -1,5 +1,11 @@
 2011-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix fast/dom/Range/getBoundingClientRect.html after r92089.
+
+        * fast/dom/Range/getBoundingClientRect.html:
+
+2011-07-31  Ryosuke Niwa  <rniwa@webkit.org>
+
         [Chromium] editing/execCommand/4786404-1.html,editing/execCommand/break-out-of-empty-list-item.html are slow/timeout
         https://bugs.webkit.org/show_bug.cgi?id=65019
 
