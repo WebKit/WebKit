@@ -47,7 +47,6 @@ class WebFrameImpl;
 class AssociatedURLLoader : public WebURLLoader {
     WTF_MAKE_NONCOPYABLE(AssociatedURLLoader);
 public:
-    AssociatedURLLoader(PassRefPtr<WebFrameImpl>);
     AssociatedURLLoader(PassRefPtr<WebFrameImpl>, const WebURLLoaderOptions&);
     ~AssociatedURLLoader();
 

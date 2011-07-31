@@ -134,8 +134,6 @@ public:
     virtual bool isViewSourceModeEnabled() const;
     virtual void setReferrerForRequest(WebURLRequest&, const WebURL& referrer);
     virtual void dispatchWillSendRequest(WebURLRequest&);
-    // FIXME: Remove this overload when clients have been changed to pass options.
-    virtual WebURLLoader* createAssociatedURLLoader();
     virtual WebURLLoader* createAssociatedURLLoader(const WebURLLoaderOptions&);
     virtual void commitDocumentData(const char* data, size_t length);
     virtual unsigned unloadListenerCount() const;

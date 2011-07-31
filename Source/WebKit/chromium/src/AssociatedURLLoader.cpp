@@ -193,18 +193,6 @@ void AssociatedURLLoader::ClientAdapter::notifyError(Timer<ClientAdapter>* timer
     m_client->didFail(m_loader, m_error);
 }
 
-AssociatedURLLoader::AssociatedURLLoader(PassRefPtr<WebFrameImpl> frameImpl)
-    : m_frameImpl(frameImpl)
-    , m_client(0)
-{
-    ASSERT(m_frameImpl);
-
-    m_options.sniffContent = false;
-    m_options.allowCredentials = true;
-    m_options.forcePreflight = false;
-    m_options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyAllow; // FIXME We should deny by default, but this would break some tests.
-}
-
 AssociatedURLLoader::AssociatedURLLoader(PassRefPtr<WebFrameImpl> frameImpl, const WebURLLoaderOptions& options)
     : m_frameImpl(frameImpl)
     , m_options(options)
