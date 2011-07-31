@@ -269,3 +269,4 @@ layer at (0,0) size 450x500
               chunk 1 (vertical) text run 25 at (320.50,9.23) startOffset 24 endOffset 25 height 15.00: "\x{50CF}"
           RenderSVGInlineText {#text} at (0,0) size 0x0
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

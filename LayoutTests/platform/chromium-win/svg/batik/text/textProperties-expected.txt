@@ -165,3 +165,4 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 140x19
           chunk 1 (middle anchor) text run 1 at (230.00,465.00) startOffset 0 endOffset 22 width 140.00: "stroke-linecap=\"round\""
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

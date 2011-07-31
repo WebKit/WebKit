@@ -113,3 +113,4 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (33,11) size 160x13
             chunk 1 text run 1 at (273.00,351.00) startOffset 0 endOffset 34 width 160.00: "y=\"320\" style=\"letter-spacing:10\">"
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0
