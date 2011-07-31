@@ -29,7 +29,6 @@
 #include "JSDOMStringList.h"
 #include "ScriptExecutionContext.h"
 #include <runtime/JSLock.h>
-#include <wtf/MainThread.h>
 
 using namespace JSC;
 

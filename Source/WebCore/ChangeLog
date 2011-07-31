@@ -1,3 +1,10 @@
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
+        Update run-bindings-tests results after
+        http://trac.webkit.org/changeset/92068
+
+        * bindings/scripts/test/JS/JSTestCallback.cpp:
+
 2011-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Remove inclusion of MainThread.h from Threading.h
