@@ -51,7 +51,7 @@ const char* RenderFlexibleBox::renderName() const
     return "RenderFlexibleBox";
 }
 
-void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
+void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int pageLogicalHeight, BlockLayoutPass layoutPass)
 {
     notImplemented();
 }

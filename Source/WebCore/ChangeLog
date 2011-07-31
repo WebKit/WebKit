@@ -1,3 +1,12 @@
+2011-07-30  Daniel Bates  <dbates@webkit.com>
+
+        Fix the Chromium Linux Release Flexbot build after <http://trac.webkit.org/changeset/92004>
+        (https://bugs.webkit.org/show_bug.cgi?id=65342)
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutBlock): Update the definition of RenderFlexibleBox::layoutBlock()
+        to be consistent with its declaration in RenderFlexibleBox.h; Add argument layoutPass of type BlockLayoutPass.
+
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
         Update run-bindings-tests results after
