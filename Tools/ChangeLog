@@ -1,3 +1,15 @@
+2011-07-30  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix ports_unittest.py on native windows
+        https://bugs.webkit.org/show_bug.cgi?id=64959
+
+        Reviewed by Adam Barth.
+
+        Replace WebKitPort.script_path with WebKitPort.script_shell_command.
+        The latter includes the interpreter executable required on native windows.
+
+        * Scripts/webkitpy/common/config/ports_unittest.py:
+
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
         Properly escape regular expressions.  (Maybe these shouldn't be regular
