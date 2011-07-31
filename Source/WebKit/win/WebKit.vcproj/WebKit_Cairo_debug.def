@@ -107,6 +107,9 @@ EXPORTS
         JSValueToObject
         JSValueToStringCopy
         JSValueUnprotect
+        ??0ClientRect@WebCore@@AAE@ABVIntRect@1@@Z
+        ??0ClientRect@WebCore@@AAE@XZ
+        ?absoluteBoundingBoxRect@RenderObject@WebCore@@QAE?AVIntRect@2@_N@Z
         ?fastMalloc@WTF@@YAPAXI@Z
         ?fastZeroedMalloc@WTF@@YAPAXI@Z
         ?fastFree@WTF@@YAXPAX@Z
@@ -129,9 +132,11 @@ EXPORTS
         ?timedWait@ThreadCondition@WTF@@QAE_NAAVMutex@2@N@Z
         ?tlsKeyCount@WTF@@YAAAJXZ
         ?tlsKeys@WTF@@YAPAKXZ
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
         ?tryLock@Mutex@WTF@@QAE_NXZ
         ?unlock@Mutex@WTF@@QAEXXZ
         ?unlockAtomicallyInitializedStaticMutex@WTF@@YAXXZ
+        ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
         ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0@Z

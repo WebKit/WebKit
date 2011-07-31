@@ -1,3 +1,10 @@
+2011-07-31  Daniel Bates  <dbates@webkit.org>
+
+        Attempt to fix the WinCairo Debug build after r92059 (https://bugs.webkit.org/show_bug.cgi?id=65419).
+
+        * WebKit.vcproj/WebKit_Cairo.def: Export some symbols.
+        * WebKit.vcproj/WebKit_Cairo_debug.def: Ditto.
+
 2011-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Remove inclusion of MainThread.h from Threading.h
