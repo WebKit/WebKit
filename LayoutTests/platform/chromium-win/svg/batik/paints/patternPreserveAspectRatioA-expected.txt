@@ -951,3 +951,4 @@ layer at (0,0) size 450x500
             RenderSVGContainer {g} at (294,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(200.00,0.00)}] [start marker=startEndMarker] [end marker=startEndMarker]
               RenderSVGPath {rect} at (294,444) size 92x32 [transform={m=((1.00,0.00)(0.00,1.00)) t=(45.00,5.00)}] [stroke={[type=SOLID] [color=#000000]}] [fill={[type=PATTERN] [id="noneNone"]}] [start marker=startEndMarker] [end marker=startEndMarker] [x=0.00] [y=0.00] [width=90.00] [height=30.00]
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

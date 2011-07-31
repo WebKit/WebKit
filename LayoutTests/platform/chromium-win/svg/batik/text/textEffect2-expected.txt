@@ -33,3 +33,4 @@ layer at (0,0) size 450x500
         RenderSVGInlineText {#text} at (0,0) size 54x15
           chunk 1 text run 1 at (300.00,300.00) startOffset 0 endOffset 10 width 54.00: "(SVG font)"
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

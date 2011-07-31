@@ -1,5 +1,27 @@
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
+        Update more baselines.  This completes the cleanup after
+        http://trac.webkit.org/changeset/92047.
+
+        * platform/chromium-win-xp/svg/batik/paints/patternRegions-positioned-objects-expected.png: Removed.
+        * platform/chromium-win/svg/batik/filters/feTile-expected.png:
+        * platform/chromium-win/svg/batik/filters/feTile-expected.txt:
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.png:
+        * platform/chromium-win/svg/batik/filters/filterRegions-expected.txt:
+        * platform/chromium-win/svg/batik/paints/gradientLimit-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternRegions-expected.txt:
+        * platform/chromium-win/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/chromium-win/svg/batik/text/textEffect2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.png:
+        * platform/chromium-win/svg/batik/text/textFeatures-expected.txt:
+        * platform/chromium-win/svg/batik/text/textLayout-expected.png:
+        * platform/chromium-win/svg/batik/text/textLayout-expected.txt:
+        * platform/chromium-win/svg/batik/text/verticalTextOnPath-expected.txt:
+
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
         More baseline updates.  (I'm going slowly because I'm using a new
         toolchain to do the rebaselining.)
 
