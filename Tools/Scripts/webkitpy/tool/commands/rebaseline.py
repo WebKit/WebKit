@@ -58,17 +58,17 @@ class BuilderToPort(object):
         r"Webkit Win$": "chromium-win-xp",
         r"Webkit Vista": "chromium-win-vista",
         r"Webkit Win7": "chromium-win-win7",
-        r"Webkit Win (dbg)(1)": "chromium-win-win7",  # FIXME: Is this correct?
-        r"Webkit Win (dbg)(2)": "chromium-win-win7",  # FIXME: Is this correct?
+        r"Webkit Win \(dbg\)\(1\)": "chromium-win-win7",  # FIXME: Is this correct?
+        r"Webkit Win \(dbg\)\(2\)": "chromium-win-win7",  # FIXME: Is this correct?
         r"Webkit Linux": "chromium-linux-x86_64",
         r"Webkit Linux 32": "chromium-linux-x86",
-        r"Webkit Linux (dbg)(1)": "chromium-linux-x86_64",
-        r"Webkit Linux (dbg)(2)": "chromium-linux-x86_64",
+        r"Webkit Linux \(dbg\)\(1\)": "chromium-linux-x86_64",
+        r"Webkit Linux \(dbg\)\(2\)": "chromium-linux-x86_64",
         r"Webkit Mac10\.5": "chromium-mac-leopard",
-        r"Webkit Mac10\.5 (dbg)(1)": "chromium-mac-leopard",
-        r"Webkit Mac10\.5 (dbg)(2)": "chromium-mac-leopard",
+        r"Webkit Mac10\.5 \(dbg\)\(1\)": "chromium-mac-leopard",
+        r"Webkit Mac10\.5 \(dbg\)\(2\)": "chromium-mac-leopard",
         r"Webkit Mac10\.6": "chromium-mac-snowleopard",
-        r"Webkit Mac10\.6 (dbg)": "chromium-mac-snowleopard",
+        r"Webkit Mac10\.6 \(dbg\)": "chromium-mac-snowleopard",
     }
 
     def _port_name_for_builder_name(self, builder_name):

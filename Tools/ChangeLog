@@ -1,5 +1,12 @@
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
+        Properly escape regular expressions.  (Maybe these shouldn't be regular
+        expressions?)
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
         Add support for Win7 to garden-o-matic.
 
         * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js:
