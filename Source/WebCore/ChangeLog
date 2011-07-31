@@ -1,4 +1,4 @@
-2011-07-30  Daniel Bates  <dbates@webkit.com>
+2011-07-30  Daniel Bates  <dbates@webkit.org>
 
         Fix the Chromium Linux Release Flexbot build after <http://trac.webkit.org/changeset/92004>
         (https://bugs.webkit.org/show_bug.cgi?id=65342)
