@@ -151,6 +151,32 @@ class TestExpectationsTestCase(unittest.TestCase):
              "BUGWK1 : passes/text.html = TIMEOUT"],
             "Duplicate or ambiguous expectation. %s  [test/expectations] [5]" % self._test_file)
 
+        self.assert_lines_lint(
+            ["BUGWK1 LEOPARD : passes/text.html = PASS",
+             "BUGWK1 MAC : passes/text.html = TIMEOUT"],
+            "More specific entry on line 1 overrides line 2 passes/text.html  [test/expectations] [5]")
+
+        self.assert_lines_lint(
+            ["BUGWK1 LEOPARD : passes/text.html = PASS",
+             "BUGWK1 LEOPARD RELEASE : passes/text.html = TIMEOUT"],
+            "More specific entry on line 2 overrides line 1 passes/text.html  [test/expectations] [5]")
+
+        self.assert_lines_lint(
+            ["BUGWK1 RELEASE : passes/text.html = PASS",
+             "BUGWK1 CPU : passes/text.html = TIMEOUT"],
+            "Entries on line 1 and line 2 match overlapping sets of configurations passes/text.html  [test/expectations] [5]")
+
+        self.assert_lines_lint(
+            ["BUGWK1 WIN : passes/text.html = PASS",
+             "BUGWK1 MAC : passes/text.html = TIMEOUT"],
+            "")
+
+        self.assert_lines_lint(
+            ["BUGWK1 LEOPARD DEBUG : passes/text.html = PASS",
+             "BUGWK1 LEOPARD RELEASE : passes/text.html = TIMEOUT"],
+            "")
+
+
     def test_tab(self):
         self.assert_lines_lint(
             ["\tBUGWK1 : passes/text.html = PASS"],

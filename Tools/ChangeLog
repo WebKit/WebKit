@@ -1,3 +1,15 @@
+2011-07-31  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Use set comparison to find duplicate or overlapping specifiers in test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=65430
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Changed to use set comparisons, because length
+            of a set is wrong.
+        * Scripts/webkitpy/style/checkers/test_expectations_unittest.py: Added some unit tests to actually catch
+            regressions.
+
 2011-07-31  Xan Lopez  <xlopez@igalia.com>
 
         Group dependencies CFLAGS together.

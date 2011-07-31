@@ -527,19 +527,25 @@ class TestExpectationsModel:
         # To use the "more modifiers wins" policy, change the errors for overrides
         # to be warnings and return False".
 
-        prev_specificity = len(prev_expectation_line.matching_configurations)
-        specificity = len(prev_expectation_line.matching_configurations)
-        if prev_specificity == specificity:
+        if prev_expectation_line.matching_configurations == expectation_line.matching_configurations:
             expectation_line.errors.append('Duplicate or ambiguous %s.' % expectation_source)
             return True
 
-        if prev_specificity < specificity:
+        if prev_expectation_line.matching_configurations >= expectation_line.matching_configurations:
             expectation_line.errors.append('More specific entry on line %d overrides line %d' % (expectation_line.line_number, prev_expectation_line.line_number))
             # FIXME: return False if we want more specific to win.
             return True
 
-        expectation_line.errors.append('More specific entry on line %d overrides line %d' % (prev_expectation_line.line_number, expectation_line.line_number))
-        return True
+        if prev_expectation_line.matching_configurations <= expectation_line.matching_configurations:
+            expectation_line.errors.append('More specific entry on line %d overrides line %d' % (prev_expectation_line.line_number, expectation_line.line_number))
+            return True
+
+        if prev_expectation_line.matching_configurations & expectation_line.matching_configurations:
+            expectation_line.errors.append('Entries on line %d and line %d match overlapping sets of configurations' % (prev_expectation_line.line_number, expectation_line.line_number))
+            return True
+
+        # Configuration sets are disjoint, then.
+        return False
 
 
 class TestExpectations:
