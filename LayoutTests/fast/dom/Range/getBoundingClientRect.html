@@ -27,7 +27,7 @@ body {
     outline: 2px solid blue;
 }
 
-#test4 {
+#test5 {
     -webkit-transform: translate(50px, 100px) rotate(50deg);
 }
 
@@ -56,6 +56,10 @@ body {
 <br><br>
 
 <div class="box" id="test4">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
+
+<br><br>
+
+<div class="box" id="test5">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</div>
 
 </div>
 <script>
@@ -105,9 +109,12 @@ body {
         /*1*/  { left: 8, top: 8, width: 400, height: 400 },
         /*2*/  { left: 8, top: 452, width: 400, height: 376 },
         /*3*/  { left: 8, top: 1044, width: 400, height: 96 },
-        /*4*/  { left: -14.574, top: 1329.947, width: 504.009, height: 535.849 },
+        /*4*/  { left: 0, top: 0, width: 0, height: 0 },
+        /*5*/  { left: -14.574, top: 1761.947, width: 504.009, height: 535.849 },
+        /*6*/  { left: 0, top: 0, width: 0, height: 0 },
     ];
 
+    // Range over entire element.
     debug("Test 1")
     var range1 = document.createRange();
     range1.selectNode(document.getElementById('test1'));
@@ -115,6 +122,7 @@ body {
     rect = range1.getBoundingClientRect();
     testClientRect(rect, expectedResults[1 - 1]);
 
+    // Range over entire element's contents.
     debug("Test 2")
     var range2 = document.createRange();
     range2.selectNodeContents(document.getElementById('test2'));
@@ -122,6 +130,7 @@ body {
     rect = range2.getBoundingClientRect();
     testClientRect(rect, expectedResults[2 - 1]);
 
+    // Range over subset of element's contents.
     debug("Test 3")
     var range3 = document.createRange();
     range3.setStart(document.getElementById('test3').firstChild, 100);
@@ -130,12 +139,32 @@ body {
     rect = range3.getBoundingClientRect()
     testClientRect(rect, expectedResults[3 - 1]);
 
+    // Collapsed range.
     debug("Test 4")
     var range4 = document.createRange();
     range4.selectNodeContents(document.getElementById('test4'));
+    range4.collapse(true);
     show(range4);
+    
+    var blah = range4.getClientRects();
+    debug(blah);
+
     rect = range4.getBoundingClientRect()
     testClientRect(rect, expectedResults[4 - 1]);
+
+    // Range over transformed elements.
+    debug("Test 5")
+    var range5 = document.createRange();
+    range5.selectNodeContents(document.getElementById('test5'));
+    show(range5);
+    rect = range5.getBoundingClientRect()
+    testClientRect(rect, expectedResults[5 - 1]);
+
+    // Empty range.
+    debug("Test 6")
+    var range6 = document.createRange();
+    rect = range6.getBoundingClientRect()
+    testClientRect(rect, expectedResults[6 - 1]);
 
     if (window.layoutTestController) {
         var area = document.getElementById('testArea');

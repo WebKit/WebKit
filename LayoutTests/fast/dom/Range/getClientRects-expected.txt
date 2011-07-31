@@ -216,6 +216,8 @@ PASS rects[3].left is 139
 PASS rects[3].top is 2088
 PASS rects[3].width is 18
 PASS rects[3].height is 360
+Test 11
+PASS rects.length is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -399,6 +399,11 @@
     shouldBe("rects[3].width", "18");
     shouldBe("rects[3].height", "360");
 
+    debug("Test 11");
+    var range11 = document.createRange();
+    rects = range11.getClientRects();
+    shouldBe("rects.length", "0");
+
     if (window.layoutTestController) {
         var area = document.getElementById('testArea');
         area.parentNode.removeChild(area);

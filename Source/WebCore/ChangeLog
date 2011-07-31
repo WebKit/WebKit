@@ -1,3 +1,19 @@
+2011-07-31  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION: getBoundingClientRect() method of Range incorrectly returns null for collapsed Range
+        https://bugs.webkit.org/show_bug.cgi?id=65324
+
+        Reviewed by Ryosuke Niwa.
+
+        Update to more closely match the spec.
+
+        * dom/Range.cpp:
+        (WebCore::Range::getClientRects):
+        Return an empty ClientRectList instead of null when the range is empty.
+
+        (WebCore::Range::getBoundingClientRect):
+        Always return a ClientRect, even for an empty bounding rect.
+
 2011-07-29  Ryosuke Niwa  <rniwa@webkit.org>
 
         [HTML5] Implement the selectionDirection property on input and textarea

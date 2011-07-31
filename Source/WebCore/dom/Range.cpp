@@ -1910,7 +1910,7 @@ void Range::expand(const String& unit, ExceptionCode& ec)
 PassRefPtr<ClientRectList> Range::getClientRects() const
 {
     if (!m_start.container())
-        return 0;
+        return ClientRectList::create();
 
     m_ownerDocument->updateLayoutIgnorePendingStylesheets();
 
@@ -1922,8 +1922,7 @@ PassRefPtr<ClientRectList> Range::getClientRects() const
 
 PassRefPtr<ClientRect> Range::getBoundingClientRect() const
 {
-    FloatRect rect = boundingRect();
-    return rect.isEmpty() ? 0 : ClientRect::create(rect);
+    return ClientRect::create(boundingRect());
 }
 
 static void adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale(Vector<FloatQuad>& quads, Document* document, RenderObject* renderer)
