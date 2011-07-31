@@ -138,8 +138,11 @@ EXPORTS
         ??0NodeRenderingContext@WebCore@@QAE@PAVNode@1@@Z
         ??1NodeRenderingContext@WebCore@@QAE@XZ
         ?toNode@WebCore@@YAPAVNode@1@VJSValue@JSC@@@Z
+        ??0ClientRect@WebCore@@AAE@ABVIntRect@1@@Z
+        ??0ClientRect@WebCore@@AAE@XZ
         ??0String@WTF@@QAE@PBD@Z
         ??0String@WTF@@QAE@PB_W@Z
+        ?absoluteBoundingBoxRect@RenderObject@WebCore@@QAE?AVIntRect@2@_N@Z
         ?add@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PBD@Z
         ?addSlowCase@AtomicString@WTF@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@2@PAVStringImpl@2@@Z
         ?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z
@@ -157,5 +160,7 @@ EXPORTS
         ?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
+        ?updateLayoutIgnorePendingStylesheets@Document@WebCore@@QAEXXZ
         ?virtualFunctionToPreventWeakVtable@JSDOMWrapper@WebCore@@MAEXXZ

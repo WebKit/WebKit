@@ -1,3 +1,9 @@
+2011-07-30  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Windows build after r92059.
+
+        * win/WebKit2.def: Export symbols needed by Internals.
+
 2011-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Remove inclusion of MainThread.h from Threading.h
