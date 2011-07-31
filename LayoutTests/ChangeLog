@@ -1,5 +1,15 @@
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
+        More baseline updates.  (I'm going slowly because I'm using a new
+        toolchain to do the rebaselining.)
+
+        * platform/chromium-linux/svg/batik/text/textPosition-expected.txt:
+        * platform/chromium-win/svg/batik/text/textLayout2-expected.txt:
+        * platform/chromium-win/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/chromium-win/svg/batik/text/textPosition-expected.txt:
+
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
         Update baseline.
 
         * platform/chromium-win/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
