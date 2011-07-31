@@ -1,3 +1,9 @@
+2011-07-30  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2011-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Remove inclusion of MainThread.h from Threading.h
