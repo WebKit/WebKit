@@ -1,3 +1,9 @@
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
+        Update baseline.
+
+        * platform/chromium-win/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+
 2011-07-30  Enrica Casucci  <enrica@apple.com>
 
         REGRESSION: culledInlineAbsoluteRects needs to translate a 0,0 point to absolute
