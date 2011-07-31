@@ -1,3 +1,16 @@
+2011-07-31  Daniel Bates  <dbates@webkit.org>
+
+        [GTK] Remove unused variable coreChild in WebCore::getChildForTable()
+        https://bugs.webkit.org/show_bug.cgi?id=65427
+
+        This variable was unused when it was initially added in <http://trac.webkit.org/changeset/89660> (bug #62718)
+        and it is unused today. We should remove it. This will also resolve a compiler warning.
+
+        Reviewed by Xan Lopez.
+
+        * accessibility/gtk/AccessibilityObjectWrapperAtk.cpp:
+        (getChildForTable):
+
 2011-07-30  Daniel Bates  <dbates@webkit.org>
 
         Fix the WinCairo Debug build after <http://trac.webkit.org/changeset/91914>

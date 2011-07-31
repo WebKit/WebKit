@@ -348,7 +348,6 @@ static AccessibilityObject* getChildForTable(AccessibilityObject* coreObject, gi
     AccessibilityObject::AccessibilityChildrenVector tableChildren = coreObject->children();
     size_t tableChildrenCount = tableChildren.size();
     size_t cellsCount = 0;
-    AccessibilityObject* coreChild = 0;
 
     // Look for the actual index of the cell inside the table.
     size_t current = static_cast<size_t>(index);
