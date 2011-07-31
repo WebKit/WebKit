@@ -42,7 +42,9 @@ namespace JSC {
     class MarkedBlock : public DoublyLinkedListNode<MarkedBlock> {
         friend class WTF::DoublyLinkedListNode<MarkedBlock>;
     public:
-        static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
+        // Ensure natural alignment for native types whilst recognizing that the smallest
+        // object the heap will commonly allocate is four words.
+        static const size_t atomSize = 4 * sizeof(void*);
         static const size_t blockSize = 16 * KB;
 
         static const size_t atomsPerBlock = blockSize / atomSize; // ~1.5% overhead

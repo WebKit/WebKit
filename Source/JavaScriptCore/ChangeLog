@@ -1,5 +1,19 @@
 2011-07-31  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC GC lays out size classes under wrong assumptions about expected
+        object size.
+        https://bugs.webkit.org/show_bug.cgi?id=65437
+
+        Reviewed by Oliver Hunt.
+        
+        Changed the atom size - which is both the smallest allocation size and
+        the smallest possible stepping unit for size class spacing - from
+        8 bytes to 4 pointer-size words.  This is a 1% win on SunSpider.
+
+        * heap/MarkedBlock.h:
+
+2011-07-31  Filip Pizlo  <fpizlo@apple.com>
+
         DFG non-speculative JIT does not optimize PutByVal
         https://bugs.webkit.org/show_bug.cgi?id=65424
 
