@@ -566,11 +566,15 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
 
     for (unsigned index = 0; index < GPRInfo::numberOfRegisters; ++index) {
         NodeIndex nodeIndex = check.m_gprInfo[index].nodeIndex;
-        if (nodeIndex == NoNode || check.m_gprInfo[index].isSpilled) {
+        
+        // Bail out if this register isn't assigned to anything.
+        if (nodeIndex == NoNode) {
             scratchGPR = GPRInfo::toRegister(index);
             continue;
         }
         
+        // If the non-speculative path also has a register for the nodeIndex that this
+        // register stores, link them together.
         NodeToRegisterMap::iterator mapIterator = entryNodeToRegisterMap.find(nodeIndex);
         if (mapIterator != entryNodeToRegisterMap.end()) {
             gprs[index].hasFrom = true;
@@ -579,13 +583,20 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
             next->previous = gprs + index;
             next->hasTo = true;
             
+            // If the non-speculative path has not spilled this register, then skip the spillin
+            // part below regardless of whether or not the speculative path has spilled it.
             if (!mapIterator->second.findInEntryLocation(entry).isSpilled)
                 continue;
         }
         
+        // If the speculative path has already spilled the register then there is no need to
+        // spill it.
+        if (check.m_gprInfo[index].isSpilled)
+            continue;
+        
         DataFormat dataFormat = check.m_gprInfo[index].format;
         VirtualRegister virtualRegister = graph()[nodeIndex].virtualRegister();
-
+        
         ASSERT(dataFormat == DataFormatInteger || DataFormatCell || dataFormat & DataFormatJS);
         if (dataFormat == DataFormatInteger)
             orPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::toRegister(index));
@@ -601,7 +612,7 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
 
     for (unsigned index = 0; index < FPRInfo::numberOfRegisters; ++index) {
         NodeIndex nodeIndex = check.m_fprInfo[index].nodeIndex;
-        if (nodeIndex == NoNode || check.m_fprInfo[index].isSpilled)
+        if (nodeIndex == NoNode)
             continue;
 
         NodeToRegisterMap::iterator mapIterator = entryNodeToRegisterMap.find(nodeIndex);
@@ -615,6 +626,9 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
             if (!mapIterator->second.findInEntryLocation(entry).isSpilled)
                 continue;
         }
+        
+        if (check.m_fprInfo[index].isSpilled)
+            continue;
 
         VirtualRegister virtualRegister = graph()[nodeIndex].virtualRegister();
 

@@ -1,3 +1,17 @@
+2011-07-30  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT speculation failure pass sometimes forgets to emit code to
+        move certain registers.
+        https://bugs.webkit.org/show_bug.cgi?id=65421
+
+        Reviewed by Oliver Hunt.
+        
+        Restructured the offending loops (for gprs and fprs).  It's once again
+        possible to use spreadsheets on docs.google.com.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+
 2011-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Remove inclusion of MainThread.h from Threading.h
