@@ -1,5 +1,34 @@
 2011-07-30  Adam Barth  <abarth@webkit.org>
 
+        Update baselines.  This patch cleans up after http://trac.webkit.org/changeset/92042.
+
+        * platform/chromium-mac/fast/repaint/absolute-position-change-containing-block-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/absolute-position-changed-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/absolute-position-moved-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-and-absolute-position-scrolled-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-position-transparency-with-overflow-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/fixed-to-relative-position-with-absolute-child-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/nested-iframe-scroll-inner-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/nested-iframe-scroll-outer-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/overflow-hide-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/overflow-show-expected.png: Added.
+        * platform/chromium-win/fast/repaint/absolute-position-changed-expected.png: Added.
+        * platform/chromium-win/fast/repaint/fixed-and-absolute-position-scrolled-expected.png: Added.
+        * platform/chromium-win/fast/repaint/fixed-position-transparency-with-overflow-expected.png: Added.
+        * platform/chromium-win/fast/repaint/nested-iframe-scroll-inner-expected.png: Added.
+        * platform/chromium-win/fast/repaint/nested-iframe-scroll-outer-expected.png: Added.
+        * platform/chromium-win/fast/repaint/overflow-hide-expected.png: Added.
+        * platform/chromium-win/fast/repaint/overflow-show-expected.png: Added.
+        * platform/chromium/fast/repaint/absolute-position-changed-expected.png: Removed.
+        * platform/chromium/fast/repaint/fixed-and-absolute-position-scrolled-expected.png: Removed.
+        * platform/chromium/fast/repaint/fixed-position-transparency-with-overflow-expected.png: Removed.
+        * platform/chromium/fast/repaint/nested-iframe-scroll-inner-expected.png: Removed.
+        * platform/chromium/fast/repaint/nested-iframe-scroll-outer-expected.png: Removed.
+        * platform/chromium/fast/repaint/overflow-hide-expected.png: Removed.
+        * platform/chromium/fast/repaint/overflow-show-expected.png: Removed.
+
+2011-07-30  Adam Barth  <abarth@webkit.org>
+
         Update more baselines.  This completes the cleanup after
         http://trac.webkit.org/changeset/92047.
 
