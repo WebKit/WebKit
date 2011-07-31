@@ -1,3 +1,37 @@
+2011-07-31  Filip Pizlo  <fpizlo@apple.com>
+
+        The JSC garbage collector returns memory to the operating system too
+        eagerly.
+        https://bugs.webkit.org/show_bug.cgi?id=65382
+
+        Reviewed by Oliver Hunt.
+        
+        This introduces a memory reuse model similar to the one in FastMalloc.
+        A periodic scavenger thread runs in the background and returns half the
+        free memory to the OS on each timer fire.  New block allocations first
+        attempt to get the memory from the collector's internal pool, reverting
+        to OS allocation only when this pool is empty.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::~Heap):
+        (JSC::Heap::destroy):
+        (JSC::Heap::waitForRelativeTimeWhileHoldingLock):
+        (JSC::Heap::waitForRelativeTime):
+        (JSC::Heap::blockFreeingThreadStartFunc):
+        (JSC::Heap::blockFreeingThreadMain):
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlocks):
+        (JSC::Heap::releaseFreeBlocks):
+        * heap/Heap.h:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::destroy):
+        (JSC::MarkedBlock::MarkedBlock):
+        (JSC::MarkedBlock::initForCellSize):
+        (JSC::MarkedBlock::reset):
+        * heap/MarkedBlock.h:
+        * wtf/Platform.h:
+
 2011-07-30  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT speculation failure pass sometimes forgets to emit code to

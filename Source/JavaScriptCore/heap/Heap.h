@@ -52,7 +52,7 @@ namespace JSC {
     typedef HashCountedSet<const char*> TypeCountSet;
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
-
+    
     class Heap {
         WTF_MAKE_NONCOPYABLE(Heap);
     public:
@@ -144,15 +144,33 @@ namespace JSC {
         enum SweepToggle { DoNotSweep, DoSweep };
         void collect(SweepToggle);
         void shrink();
+        void releaseFreeBlocks();
         void sweep();
 
         RegisterFile& registerFile();
 
         static void writeBarrierSlowCase(const JSCell*, JSCell*);
+        
+#if ENABLE(LAZY_BLOCK_FREEING)
+        void waitForRelativeTimeWhileHoldingLock(double relative);
+        void waitForRelativeTime(double relative);
+        void blockFreeingThreadMain();
+        static void* blockFreeingThreadStartFunc(void* heap);
+#endif
 
         OperationInProgress m_operationInProgress;
         NewSpace m_newSpace;
         MarkedBlockSet m_blocks;
+
+#if ENABLE(LAZY_BLOCK_FREEING)
+        DoublyLinkedList<MarkedBlock> m_freeBlocks;
+        size_t m_numberOfFreeBlocks;
+        
+        ThreadIdentifier m_blockFreeingThread;
+        Mutex m_freeBlockLock;
+        ThreadCondition m_freeBlockCondition;
+        bool m_blockFreeingThreadShouldQuit;
+#endif
 
         size_t m_extraCost;
 

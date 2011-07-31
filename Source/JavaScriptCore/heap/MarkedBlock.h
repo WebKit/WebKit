@@ -94,11 +94,15 @@ namespace JSC {
         // them, and returns a linked list of those cells.
         FreeCell* lazySweep();
         
+        void initForCellSize(size_t cellSize);
+        
         // These should be called immediately after a block is created.
         // Blessing for fast path creates a linked list, while blessing for
         // slow path creates dummy cells.
         FreeCell* blessNewBlockForFastPath();
         void blessNewBlockForSlowPath();
+        
+        void reset();
         
         // This unmarks all cells on the free list, and allocates dummy JSCells
         // in their place.

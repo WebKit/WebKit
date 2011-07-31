@@ -42,8 +42,6 @@ MarkedBlock* MarkedBlock::create(Heap* heap, size_t cellSize)
 
 void MarkedBlock::destroy(MarkedBlock* block)
 {
-    for (size_t i = block->firstAtom(); i < block->m_endAtom; i += block->m_atomsPerCell)
-        reinterpret_cast<JSCell*>(&block->atoms()[i])->~JSCell();
     block->m_allocation.deallocate();
 }
 
@@ -52,8 +50,19 @@ MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, si
     , m_allocation(allocation)
     , m_heap(heap)
 {
+    initForCellSize(cellSize);
+}
+
+void MarkedBlock::initForCellSize(size_t cellSize)
+{
     m_atomsPerCell = (cellSize + atomSize - 1) / atomSize;
     m_endAtom = atomsPerBlock - m_atomsPerCell + 1;
+}
+
+void MarkedBlock::reset()
+{
+    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
+        reinterpret_cast<JSCell*>(&atoms()[i])->~JSCell();
 }
 
 void MarkedBlock::sweep()
