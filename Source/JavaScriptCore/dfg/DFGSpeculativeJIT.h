@@ -186,11 +186,15 @@ private:
     // Add a speculation check without additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail)
     {
+        if (!m_compileOkay)
+            return;
         m_speculationChecks.append(SpeculationCheck(jumpToFail, this));
     }
     // Add a speculation check with additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
+        if (!m_compileOkay)
+            return;
         m_speculationRecoveryList.append(recovery);
         m_speculationChecks.append(SpeculationCheck(jumpToFail, this, m_speculationRecoveryList.size()));
     }

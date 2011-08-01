@@ -43,6 +43,7 @@ EntryLocation::EntryLocation(MacroAssembler::Label entry, NonSpeculativeJIT* jit
             GenerationInfo& info =  jit->m_generationInfo[iter.name()];
             m_gprInfo[iter.index()].nodeIndex = info.nodeIndex();
             m_gprInfo[iter.index()].format = info.registerFormat();
+            ASSERT(m_gprInfo[iter.index()].format != DataFormatNone);
             m_gprInfo[iter.index()].isSpilled = info.spillFormat() != DataFormatNone;
         } else
             m_gprInfo[iter.index()].nodeIndex = NoNode;

@@ -1,5 +1,29 @@
 2011-08-01  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT sometimes creates speculation check data structures that have
+        invalid information about the format of a register
+        https://bugs.webkit.org/show_bug.cgi?id=65490
+
+        Reviewed by Gavin Barraclough.
+        
+        The code now makes sure to (1) always have correct and up-to-date
+        information about register format at the time that a speculation
+        check is emitted, (2) assert that speculation data is correct
+        inside the speculation check implementation, and (3) avoid creating
+        speculation data altogether if compilation has already failed, since
+        at that point the format data is almost guaranteed to be bogus.
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::EntryLocation::EntryLocation):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculationCheck::SpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+
+2011-08-01  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION(r92092): Build fails on 64 bit
         https://bugs.webkit.org/show_bug.cgi?id=65458
 

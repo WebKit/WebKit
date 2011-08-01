@@ -150,6 +150,7 @@ SpeculationCheck::SpeculationCheck(MacroAssembler::Jump check, SpeculativeJIT* j
             GenerationInfo& info =  jit->m_generationInfo[iter.name()];
             m_gprInfo[iter.index()].nodeIndex = info.nodeIndex();
             m_gprInfo[iter.index()].format = info.registerFormat();
+            ASSERT(m_gprInfo[iter.index()].format != DataFormatNone);
             m_gprInfo[iter.index()].isSpilled = info.spillFormat() != DataFormatNone;
         } else
             m_gprInfo[iter.index()].nodeIndex = NoNode;
@@ -315,6 +316,7 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
         m_gprs.retain(gpr, virtualRegister, SpillOrderSpilled);
         m_jit.loadPtr(JITCompiler::addressFor(virtualRegister), gpr);
 
+        info.fillJSValue(gpr, DataFormatJS);
         if (info.spillFormat() != DataFormatJSCell)
             speculationCheck(m_jit.branchTestPtr(MacroAssembler::NonZero, gpr, GPRInfo::tagMaskRegister));
         info.fillJSValue(gpr, DataFormatJSCell);
@@ -684,7 +686,7 @@ void SpeculativeJIT::compile(Node& node)
                 SpeculateIntegerOperand op1(this, node.child1());
                 int32_t imm2 = valueOfInt32Constant(node.child2());
                 GPRTemporary result(this);
-
+                
                 speculationCheck(m_jit.branchAdd32(MacroAssembler::Overflow, op1.gpr(), Imm32(imm2), result.gpr()));
 
                 integerResult(result.gpr(), m_compileIndex);
@@ -903,6 +905,9 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg baseReg = base.gpr();
         GPRReg propertyReg = property.gpr();
         GPRReg storageReg = storage.gpr();
+        
+        if (!m_compileOkay)
+            return;
 
         // Get the array storage. We haven't yet checked this is a JSArray, so this is only safe if
         // an access with offset JSArray::storageOffset() is valid for all JSCells!
@@ -940,7 +945,7 @@ void SpeculativeJIT::compile(Node& node)
         
         if (!m_compileOkay)
             return;
-
+        
         writeBarrier(m_jit, baseReg, scratchReg);
 
         // Check that base is an array, and that property is contained within m_vector (< m_vectorLength).
