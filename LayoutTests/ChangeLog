@@ -1,3 +1,9 @@
+2011-08-01  Anders Carlsson  <andersca@apple.com>
+
+        Add fast/forms/selection-direction.html to the Skipped list.
+
+        * platform/wk2/Skipped:
+
 2011-08-01  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         [Qt] Update expected results and unskip now passing tests.
