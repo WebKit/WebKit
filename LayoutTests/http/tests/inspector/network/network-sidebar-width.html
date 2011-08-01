@@ -1,0 +1,52 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+function loadData()
+{
+    doXHR("GET", "resources/resource.php", true, resourceLoaded);
+}
+
+function resourceLoaded()
+{
+    console.log("Done.");
+}
+
+function test()
+{
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+    InspectorTest.evaluateInPage("loadData()");
+
+    var oldSetting;
+    function step2()
+    {
+        var panel = WebInspector.panels.network;
+        var setting = WebInspector.settings[panel._sidebarWidthSettingName()];
+        var resource = WebInspector.panels.network.resources[WebInspector.panels.network.resources.length - 1];
+
+        oldSetting = setting.get();
+        panel.show();
+
+        setting.set(undefined);
+        panel._showResource(resource);
+        InspectorTest.addResult("Sidebar width: " + panel.sidebarElement.offsetWidth);
+        panel._closeVisibleResource(resource);
+
+        setting.set(242);
+        panel._showResource(resource);
+        InspectorTest.addResult("Sidebar width: " + panel.sidebarElement.offsetWidth);
+        panel._closeVisibleResource(resource);
+
+        setting.set(oldSetting);
+
+        InspectorTest.completeTest();
+    }
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests network panel sidebar width with and without preference set.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=65256">Bug 65256</a>
+</body>
+</html>
