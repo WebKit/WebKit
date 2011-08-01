@@ -31,6 +31,7 @@ import unittest
 
 from webkitpy.layout_tests import port
 from webkitpy.layout_tests.port import base
+from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.layout_tests.models.test_expectations import *
 
 class FunctionsTest(unittest.TestCase):
@@ -388,13 +389,11 @@ class TestExpectationParserTests(unittest.TestCase):
     def test_tokenize_missing_colon(self):
         expectation = TestExpectationParser.tokenize('Qux.')
         self.assertEqual(expectation.is_malformed(), True)
-        self.assertEqual(expectation.comment, 'Qux.')
         self.assertEqual(str(expectation.errors), '["Missing a \':\'"]')
 
     def test_tokenize_extra_colon(self):
         expectation = TestExpectationParser.tokenize('FOO : : bar')
         self.assertEqual(expectation.is_malformed(), True)
-        self.assertEqual(expectation.comment, 'FOO : : bar')
         self.assertEqual(str(expectation.errors), '["Extraneous \':\'"]')
 
     def test_tokenize_empty_comment(self):
@@ -412,13 +411,11 @@ class TestExpectationParserTests(unittest.TestCase):
     def test_tokenize_missing_equal(self):
         expectation = TestExpectationParser.tokenize('FOO : bar')
         self.assertEqual(expectation.is_malformed(), True)
-        self.assertEqual(expectation.comment, 'FOO : bar')
         self.assertEqual(str(expectation.errors), "['Missing expectations\']")
 
     def test_tokenize_extra_equal(self):
         expectation = TestExpectationParser.tokenize('FOO : bar = BAZ = Qux.')
         self.assertEqual(expectation.is_malformed(), True)
-        self.assertEqual(expectation.comment, 'FOO : bar = BAZ = Qux.')
         self.assertEqual(str(expectation.errors), '["Extraneous \'=\'"]')
 
     def test_tokenize_valid(self):
@@ -455,38 +452,82 @@ class TestExpectationParserTests(unittest.TestCase):
 
 
 class TestExpectationSerializerTests(unittest.TestCase):
+    def __init__(self, testFunc):
+        test_port = port.get('test-win-xp', None)
+        self._serializer = TestExpectationSerializer(TestConfigurationConverter(test_port.all_test_configurations(), test_port.configuration_specifier_macros()))
+        unittest.TestCase.__init__(self, testFunc)
+
     def assert_round_trip(self, in_string, expected_string=None):
         expectation = TestExpectationParser.tokenize(in_string)
         if expected_string is None:
             expected_string = in_string
-        self.assertEqual(expected_string, TestExpectationSerializer.to_string(expectation))
+        self.assertEqual(expected_string, self._serializer.to_string(expectation))
 
     def assert_list_round_trip(self, in_string, expected_string=None):
         expectations = TestExpectationParser.tokenize_list(in_string)
         if expected_string is None:
             expected_string = in_string
-        self.assertEqual(expected_string, TestExpectationSerializer.list_to_string(expectations))
+        self.assertEqual(expected_string, TestExpectationSerializer.list_to_string(expectations, SpecifierSorter()))
 
-    def assert_to_string(self, expectation, expected_string):
-        self.assertEqual(TestExpectationSerializer.to_string(expectation), expected_string)
-
-    def test_string_serializer(self):
+    def test_unparsed_to_string(self):
         expectation = TestExpectationLine()
-        self.assert_to_string(expectation, '')
+
+        self.assertEqual(self._serializer.to_string(expectation), '')
         expectation.comment = 'Qux.'
-        self.assert_to_string(expectation, '//Qux.')
+        self.assertEqual(self._serializer.to_string(expectation), '//Qux.')
         expectation.name = 'bar'
-        self.assert_to_string(expectation, ' : bar =  //Qux.')
+        self.assertEqual(self._serializer.to_string(expectation), ' : bar =  //Qux.')
         expectation.modifiers = ['foo']
-        self.assert_to_string(expectation, 'FOO : bar =  //Qux.')
+        self.assertEqual(self._serializer.to_string(expectation), 'FOO : bar =  //Qux.')
         expectation.expectations = ['bAz']
-        self.assert_to_string(expectation, 'FOO : bar = BAZ //Qux.')
+        self.assertEqual(self._serializer.to_string(expectation), 'FOO : bar = BAZ //Qux.')
         expectation.expectations = ['bAz1', 'baZ2']
-        self.assert_to_string(expectation, 'FOO : bar = BAZ1 BAZ2 //Qux.')
+        self.assertEqual(self._serializer.to_string(expectation), 'FOO : bar = BAZ1 BAZ2 //Qux.')
         expectation.modifiers = ['foo1', 'foO2']
-        self.assert_to_string(expectation, 'FOO1 FOO2 : bar = BAZ1 BAZ2 //Qux.')
+        self.assertEqual(self._serializer.to_string(expectation), 'FOO1 FOO2 : bar = BAZ1 BAZ2 //Qux.')
         expectation.errors.append('Oh the horror.')
-        self.assert_to_string(expectation, 'Qux.')
+        self.assertEqual(self._serializer.to_string(expectation), '')
+        expectation.original_string = 'Yes it is!'
+        self.assertEqual(self._serializer.to_string(expectation), 'Yes it is!')
+
+    def test_parsed_to_string(self):
+        expectation_line = TestExpectationLine()
+        expectation_line.parsed_bug_modifier = 'BUGX'
+        expectation_line.name = 'test/name/for/realz.html'
+        expectation_line.parsed_expectations = set([IMAGE])
+        self.assertEqual(self._serializer.to_string(expectation_line), '')
+        expectation_line.matching_configurations = set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')])
+        self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP RELEASE CPU : test/name/for/realz.html = IMAGE')
+        expectation_line.matching_configurations = set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'release', 'gpu')])
+        self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP RELEASE : test/name/for/realz.html = IMAGE')
+        expectation_line.matching_configurations = set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'debug', 'gpu')])
+        self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP RELEASE CPU : test/name/for/realz.html = IMAGE\nBUGX XP DEBUG GPU : test/name/for/realz.html = IMAGE')
+
+    def test_parsed_expectations_string(self):
+        expectation_line = TestExpectationLine()
+        expectation_line.parsed_expectations = set([])
+        self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), '')
+        expectation_line.parsed_expectations = set([IMAGE_PLUS_TEXT])
+        self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), 'image+text')
+        expectation_line.parsed_expectations = set([PASS, FAIL])
+        self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), 'pass fail')
+        expectation_line.parsed_expectations = set([FAIL, PASS])
+        self.assertEqual(self._serializer._parsed_expectations_string(expectation_line), 'pass fail')
+
+    def test_parsed_modifier_string(self):
+        expectation_line = TestExpectationLine()
+        expectation_line.parsed_bug_modifier = 'garden-o-matic'
+        expectation_line.parsed_modifiers = ['for', 'the']
+        self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, []), 'garden-o-matic for the')
+        self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, ['win']), 'garden-o-matic for the win')
+        expectation_line.parsed_bug_modifier = ''
+        expectation_line.parsed_modifiers = []
+        self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, []), '')
+        self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, ['win']), 'win')
+
+    def test_format_result(self):
+        self.assertEqual(TestExpectationSerializer._format_result('modifiers', 'name', 'expectations', 'comment'), 'MODIFIERS : name = EXPECTATIONS //comment')
+        self.assertEqual(TestExpectationSerializer._format_result('modifiers', 'name', 'expectations', None), 'MODIFIERS : name = EXPECTATIONS')
 
     def test_string_roundtrip(self):
         self.assert_round_trip('')

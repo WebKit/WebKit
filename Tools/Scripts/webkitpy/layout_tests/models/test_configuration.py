@@ -74,14 +74,17 @@ class SpecifierSorter:
             for category, specifier in test_configuration.items():
                 self.add_specifier(category, specifier)
 
+        self.add_macros(macros)
+
+    def add_specifier(self, category, specifier):
+        self._specifier_to_category[specifier] = category
+
+    def add_macros(self, macros):
         if not macros:
             return
         # Assume well-formed macros.
         for macro, specifier_list in macros.items():
             self.add_specifier(self.category_for_specifier(specifier_list[0]), macro)
-
-    def add_specifier(self, category, specifier):
-        self._specifier_to_category[specifier] = category
 
     @classmethod
     def category_priority(cls, category):
@@ -133,6 +136,11 @@ class TestConfigurationConverter:
                 if len(set_by_category) == 1 and self._specifier_sorter.category_priority(category) > self._specifier_sorter.specifier_priority(specifier):
                     self._junk_specifier_combinations[specifier] = set_by_category
 
+        self._specifier_sorter.add_macros(configuration_macros)
+
+    def specifier_sorter(self):
+        return self._specifier_sorter
+
     def _expand_macros(self, specifier):
         expanded_specifiers = self._configuration_macros.get(specifier)
         return expanded_specifiers or [specifier]
@@ -170,7 +178,7 @@ class TestConfigurationConverter:
 
         # Easy out: if the set is all configurations, the modifier is empty.
         if len(test_configuration_set) == len(self._all_test_configurations):
-            return []
+            return [[]]
 
         # 1) Build a list of specifier sets, discarding specifiers that don't add value.
         specifiers_list = []

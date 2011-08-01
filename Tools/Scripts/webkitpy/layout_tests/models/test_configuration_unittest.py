@@ -130,6 +130,13 @@ class SpecifierSorterTest(unittest.TestCase):
         self.assertEquals(sorter.category_for_specifier('one'), 'version')
         self.assertEquals(sorter.category_for_specifier('renaissance'), 'architecture')
 
+    def test_add_macros(self):
+        sorter = SpecifierSorter(self._all_test_configurations)
+        sorter.add_macros(MOCK_MACROS)
+        self.assertEquals(sorter.category_for_specifier('mac'), 'version')
+        self.assertEquals(sorter.category_for_specifier('win'), 'version')
+        self.assertEquals(sorter.category_for_specifier('x86'), 'architecture')
+
     def test_category_priority(self):
         sorter = SpecifierSorter(self._all_test_configurations)
         self.assertEquals(sorter.category_priority('version'), 0)
@@ -258,7 +265,8 @@ class TestConfigurationConverterTest(unittest.TestCase):
     def test_to_specifier_lists(self):
         converter = TestConfigurationConverter(self._all_test_configurations)
 
-        self.assertEquals(converter.to_specifiers_list(set(self._all_test_configurations)), [])
+        self.assertEquals(converter.to_specifiers_list(set(self._all_test_configurations)), [[]])
+        self.assertEquals(converter.to_specifiers_list(set()), [])
 
         configs_to_match = set([
             TestConfiguration(None, 'xp', 'x86', 'release', 'gpu'),
@@ -358,3 +366,8 @@ class TestConfigurationConverterTest(unittest.TestCase):
             TestConfiguration(None, 'snowleopard', 'x86', 'release', 'gpu'),
         ])
         self.assertEquals(converter.to_specifiers_list(configs_to_match), [set(['win', 'mac', 'release', 'gpu'])])
+
+    def test_specifier_converter_access(self):
+        specifier_sorter = TestConfigurationConverter(self._all_test_configurations, MOCK_MACROS).specifier_sorter()
+        self.assertEquals(specifier_sorter.category_for_specifier('snowleopard'), 'version')
+        self.assertEquals(specifier_sorter.category_for_specifier('mac'), 'version')

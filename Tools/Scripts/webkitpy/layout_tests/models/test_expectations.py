@@ -52,9 +52,6 @@ _log = logging.getLogger(__name__)
 (PASS, FAIL, TEXT, IMAGE, IMAGE_PLUS_TEXT, AUDIO, TIMEOUT, CRASH, SKIP, WONTFIX,
  SLOW, REBASELINE, MISSING, FLAKY, NOW, NONE) = range(16)
 
-# Test expectation file update action constants
-(NO_CHANGE, REMOVE_TEST, REMOVE_PLATFORM, ADD_PLATFORMS_EXCEPT_THIS) = range(4)
-
 
 def result_was_expected(result, expected_results, test_needs_rebaselining, test_is_skipped):
     """Returns whether we got a result we were expecting.
@@ -124,26 +121,54 @@ class ParseError(Exception):
 
 class TestExpectationSerializer:
     """Provides means of serializing TestExpectationLine instances."""
-    @classmethod
-    def to_string(cls, expectation):
+    def __init__(self, test_configuration_converter):
+        self._test_configuration_converter = test_configuration_converter
+        self._parsed_expectation_to_string = dict([[parsed_expectation, expectation_string] for expectation_string, parsed_expectation in TestExpectations.EXPECTATIONS.items()])
+
+    def to_string(self, expectation_line):
+        if expectation_line.is_malformed():
+            return expectation_line.original_string or ''
+
+        if expectation_line.name is None:
+            return '' if expectation_line.comment is None else "//%s" % expectation_line.comment
+
+        if expectation_line.parsed_bug_modifier:
+            specifiers_list = self._test_configuration_converter.to_specifiers_list(expectation_line.matching_configurations)
+            result = []
+            for specifiers in specifiers_list:
+                modifiers = self._parsed_modifier_string(expectation_line, specifiers)
+                expectations = self._parsed_expectations_string(expectation_line)
+                result.append(self._format_result(modifiers, expectation_line.name, expectations, expectation_line.comment))
+            return "\n".join(result)
+
+        return self._format_result(" ".join(expectation_line.modifiers), expectation_line.name, " ".join(expectation_line.expectations), expectation_line.comment)
+
+    def _parsed_expectations_string(self, expectation_line):
         result = []
-        if expectation.is_malformed():
-            result.append(expectation.comment)
-        else:
-            if expectation.name is None:
-                if expectation.comment is not None:
-                    result.append('//')
-                    result.append(expectation.comment)
-            else:
-                result.append("%s : %s = %s" % (" ".join(expectation.modifiers).upper(), expectation.name, " ".join(expectation.expectations).upper()))
-                if expectation.comment is not None:
-                    result.append(" //%s" % (expectation.comment))
+        for index in TestExpectations.EXPECTATION_ORDER:
+            if index in expectation_line.parsed_expectations:
+                result.append(self._parsed_expectation_to_string[index])
+        return ' '.join(result)
 
-        return ''.join(result)
+    def _parsed_modifier_string(self, expectation_line, specifiers):
+        result = []
+        if expectation_line.parsed_bug_modifier:
+            result.append(expectation_line.parsed_bug_modifier)
+        result.extend(expectation_line.parsed_modifiers)
+        result.extend(self._test_configuration_converter.specifier_sorter().sort_specifiers(specifiers))
+        return ' '.join(result)
 
     @classmethod
-    def list_to_string(cls, expectations):
-        return "\n".join([TestExpectationSerializer.to_string(expectation) for expectation in expectations])
+    def _format_result(cls, modifiers, name, expectations, comment):
+        result = "%s : %s = %s" % (modifiers.upper(), name, expectations.upper())
+        if comment is not None:
+            result += " //%s" % comment
+        return result
+
+    @classmethod
+    def list_to_string(cls, expectations, test_configuration_converter):
+        serializer = cls(test_configuration_converter)
+        return "\n".join([serializer.to_string(expectation) for expectation in expectations])
 
 
 class TestExpectationParser:
@@ -264,6 +289,7 @@ class TestExpectationParser:
 
         """
         expectation_line = TestExpectationLine()
+        expectation_line.original_string = expectation_string
         expectation_line.line_number = line_number
         comment_index = expectation_string.find("//")
         if comment_index == -1:
@@ -283,9 +309,7 @@ class TestExpectationParser:
             if len(test_and_expectation) != 2:
                 expectation_line.errors.append("Missing expectations" if len(test_and_expectation) < 2 else "Extraneous '='")
 
-        if expectation_line.is_malformed():
-            expectation_line.comment = expectation_string
-        else:
+        if not expectation_line.is_malformed():
             expectation_line.modifiers = cls._split_space_separated(parts[0])
             expectation_line.name = test_and_expectation[0].strip()
             expectation_line.expectations = cls._split_space_separated(test_and_expectation[1])
@@ -314,6 +338,7 @@ class TestExpectationLine:
 
     def __init__(self):
         """Initializes a blank-line equivalent of an expectation."""
+        self.original_string = None
         self.line_number = None
         self.name = None
         self.path = None
@@ -654,6 +679,7 @@ class TestExpectations:
         self._is_lint_mode = is_lint_mode
         self._model = TestExpectationsModel()
         self._parser = TestExpectationParser(port, tests, is_lint_mode)
+        self._test_configuration_converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
 
         self._expectations = TestExpectationParser.tokenize_list(expectations)
         self._add_expectations(self._expectations, overrides_allowed=False)
@@ -736,9 +762,9 @@ class TestExpectations:
         warnings = []
         for expectation in self._expectations:
             for error in expectation.errors:
-                errors.append("Line:%s %s %s" % (expectation.line_number, error, expectation.name if expectation.expectations else expectation.comment))
+                errors.append("Line:%s %s %s" % (expectation.line_number, error, expectation.name if expectation.expectations else expectation.original_string))
             for warning in expectation.warnings:
-                warnings.append("Line:%s %s %s" % (expectation.line_number, warning, expectation.name if expectation.expectations else expectation.comment))
+                warnings.append("Line:%s %s %s" % (expectation.line_number, warning, expectation.name if expectation.expectations else expectation.original_string))
 
         if len(errors) or len(warnings):
             _log.error("FAILURES FOR %s" % str(self._test_config))
@@ -769,7 +795,7 @@ class TestExpectations:
         def without_rebaseline_modifier(expectation):
             return not (not expectation.is_malformed() and expectation.name in tests and "rebaseline" in expectation.modifiers)
 
-        return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
+        return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations), self._test_configuration_converter)
 
     def _add_expectations(self, expectation_list, overrides_allowed):
         for expectation_line in expectation_list:

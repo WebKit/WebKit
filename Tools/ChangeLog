@@ -1,3 +1,24 @@
+2011-08-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Teach TestExpectationSerializer about parsed expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=65444
+
+        This is a bit largish in size, but the essentials are:
+        * TestExpectationSerializer, given a parsed TestExpectationLine, can now spit out a pretty string.
+        * We now store original content of the expectation line on TestExpectationLine.
+        * Lots of tests.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py: Fixed an issue where we didn't
+            populate macros correctly, also fixed an issue where we incorrectly returned an empty list
+            for all configurations.
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py: Added tests for those.
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Removed vestiges of code long gone,
+            refactored TestExpectationsSerializer to recognize and correctly serialize parsed TestExpectationLine instances,
+            changed to store and use TestExpectationLine.original_string.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Added tests.
+
 2011-08-01  Adam Barth  <abarth@webkit.org>
 
         Remove unused functionality from gardeningserver
