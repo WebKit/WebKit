@@ -1,3 +1,13 @@
+2011-08-01  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        [Qt] Fix tst_QWebPage::loadHtml5Video() API test
+        https://bugs.webkit.org/show_bug.cgi?id=65452
+
+        Reviewed by Csaba Osztrogonác.
+
+        * tests/qwebpage/tst_qwebpage.cpp: Mark failing test case as expected fail
+        (tst_QWebPage::loadHtml5Video):
+
 2011-07-30  Patrick Gansterer  <paroga@webkit.org>
 
         Remove inclusion of MainThread.h from Threading.h

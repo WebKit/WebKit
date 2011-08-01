@@ -480,6 +480,7 @@ void tst_QWebPage::loadHtml5Video()
     m_view->setHtml("<p><video id ='video' src='" + url + "' autoplay/></p>");
     QTest::qWait(2000);
     QUrl mUrl = DumpRenderTreeSupportQt::mediaContentUrlByElementId(m_page->mainFrame(), "video");
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65452", Continue);
     QCOMPARE(mUrl.toEncoded(), url);
 #else
     QSKIP("This test requires Qt Multimedia", SkipAll);
