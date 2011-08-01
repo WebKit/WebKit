@@ -301,7 +301,7 @@ private:
     void updateFirstPartyForCookies();
     void setFirstPartyForCookies(const KURL&);
     
-    void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType loadType, bool isMainResource, bool cookiePolicyURLFromRequest);
+    void addExtraFieldsToRequest(ResourceRequest&, FrameLoadType, bool isMainResource);
 
     void clearProvisionalLoad();
     void transitionToCommitted(PassRefPtr<CachedPage>);

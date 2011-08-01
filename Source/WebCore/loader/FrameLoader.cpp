@@ -1175,7 +1175,7 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
         RefPtr<SecurityOrigin> referrerOrigin = SecurityOrigin::createFromString(referrer);
         addHTTPOriginIfNeeded(request, referrerOrigin->toString());
     }
-    addExtraFieldsToRequest(request, newLoadType, true, event || isFormSubmission);
+    addExtraFieldsToRequest(request, newLoadType, true);
     if (newLoadType == FrameLoadTypeReload || newLoadType == FrameLoadTypeReloadFromOrigin)
         request.setCachePolicy(ReloadIgnoringCacheData);
 
@@ -2437,20 +2437,20 @@ void FrameLoader::detachViewsAndDocumentLoader()
     
 void FrameLoader::addExtraFieldsToSubresourceRequest(ResourceRequest& request)
 {
-    addExtraFieldsToRequest(request, m_loadType, false, false);
+    addExtraFieldsToRequest(request, m_loadType, false);
 }
 
 void FrameLoader::addExtraFieldsToMainResourceRequest(ResourceRequest& request)
 {
-    addExtraFieldsToRequest(request, m_loadType, true, false);
+    addExtraFieldsToRequest(request, m_loadType, true);
 }
 
-void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool mainResource, bool cookiePolicyURLFromRequest)
+void FrameLoader::addExtraFieldsToRequest(ResourceRequest& request, FrameLoadType loadType, bool mainResource)
 {
     // Don't set the cookie policy URL if it's already been set.
     // But make sure to set it on all requests, as it has significance beyond the cookie policy for all protocols (<rdar://problem/6616664>).
     if (request.firstPartyForCookies().isEmpty()) {
-        if (mainResource && (isLoadingMainFrame() || cookiePolicyURLFromRequest))
+        if (mainResource && isLoadingMainFrame())
             request.setFirstPartyForCookies(request.url());
         else if (Document* document = m_frame->document())
             request.setFirstPartyForCookies(document->firstPartyForCookies());
@@ -2550,7 +2550,7 @@ void FrameLoader::loadPostRequest(const ResourceRequest& inRequest, const String
     workingResourceRequest.setHTTPMethod("POST");
     workingResourceRequest.setHTTPBody(formData);
     workingResourceRequest.setHTTPContentType(contentType);
-    addExtraFieldsToRequest(workingResourceRequest, loadType, true, true);
+    addExtraFieldsToRequest(workingResourceRequest, loadType, true);
 
     NavigationAction action(url, loadType, true, event);
 
@@ -3024,7 +3024,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
 
         // Make sure to add extra fields to the request after the Origin header is added for the FormData case.
         // See https://bugs.webkit.org/show_bug.cgi?id=22194 for more discussion.
-        addExtraFieldsToRequest(request, m_loadType, true, formData);
+        addExtraFieldsToRequest(request, m_loadType, true);
         addedExtraFields = true;
         
         // FIXME: Slight hack to test if the NSURL cache contains the page we're going to.
@@ -3067,7 +3067,7 @@ void FrameLoader::loadDifferentDocumentItem(HistoryItem* item, FrameLoadType loa
     }
     
     if (!addedExtraFields)
-        addExtraFieldsToRequest(request, m_loadType, true, formData);
+        addExtraFieldsToRequest(request, m_loadType, true);
 
     loadWithNavigationAction(request, action, false, loadType, 0);
 }

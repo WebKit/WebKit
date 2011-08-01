@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<title>Checks that a user generated POST request does not circumvent third-party cookie rules</title>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+    layoutTestController.dumpChildFramesAsText();
+    layoutTestController.setAlwaysAcceptCookies(false);
+}
+
+function runTest()
+{
+    if (window.eventSender) {
+        // Click somewhere on the button!
+        var form = document.getElementById("form");
+        eventSender.mouseMoveTo(form.offsetLeft + 5, form.offsetTop + 5);
+        eventSender.mouseDown();
+        eventSender.mouseUp();
+    }
+}
+</script>
+<body onload="runTest()">
+    <div>
+        <form id="form" action="http://localhost:8000/security/cookies/resources/set-a-cookie.php" method="POST" target="iframe">
+          <input type="submit" />
+        </form>
+        <iframe src="javascript:false" name="iframe"></iframe>
+    </div>
+</body>
+</html>

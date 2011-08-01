@@ -1,3 +1,19 @@
+2011-08-01  Jochen Eisinger  <jochen@chromium.org>
+
+        Require explicit user action to override the policy URL on form submissions.
+        https://bugs.webkit.org/show_bug.cgi?id=61809
+
+        Reviewed by Adam Barth.
+
+        * http/tests/loading/redirect-methods-expected.txt:
+        * http/tests/security/cookies/resources/set-a-cookie.php: Added.
+        * http/tests/security/cookies/third-party-cookie-blocking-expected.txt: Added.
+        * http/tests/security/cookies/third-party-cookie-blocking-main-frame-expected.txt: Added.
+        * http/tests/security/cookies/third-party-cookie-blocking-main-frame.html: Added.
+        * http/tests/security/cookies/third-party-cookie-blocking-user-action-expected.txt: Added.
+        * http/tests/security/cookies/third-party-cookie-blocking-user-action.html: Added.
+        * http/tests/security/cookies/third-party-cookie-blocking.html: Added.
+
 2011-08-01  Anna Cavender  <annacc@chromium.org>
 
         media/track tests should be skipped on all platforms until feature is fully implemented.
