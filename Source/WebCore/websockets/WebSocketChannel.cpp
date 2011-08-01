@@ -82,7 +82,7 @@ const WebSocketChannel::OpCode WebSocketChannel::OpCodeClose = 0x8;
 const WebSocketChannel::OpCode WebSocketChannel::OpCodePing = 0x9;
 const WebSocketChannel::OpCode WebSocketChannel::OpCodePong = 0xA;
 
-WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol)
+WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketChannelClient* client)
     : m_context(context)
     , m_client(client)
     , m_buffer(0)
@@ -103,12 +103,9 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     Document* document = static_cast<Document*>(m_context);
     if (Settings* settings = document->settings())
         m_useHixie76Protocol = settings->useHixie76WebSocketProtocol();
-    m_handshake = adoptPtr(new WebSocketHandshake(url, protocol, context, m_useHixie76Protocol));
 
     if (Page* page = document->page())
         m_identifier = page->progress()->createUniqueIdentifier();
-    if (m_identifier)
-        InspectorInstrumentation::didCreateWebSocket(m_context, m_identifier, url, m_context->url());
 }
 
 WebSocketChannel::~WebSocketChannel()
@@ -121,12 +118,15 @@ bool WebSocketChannel::useHixie76Protocol()
     return m_useHixie76Protocol;
 }
 
-void WebSocketChannel::connect()
+void WebSocketChannel::connect(const KURL& url, const String& protocol)
 {
     LOG(Network, "WebSocketChannel %p connect", this);
     ASSERT(!m_handle);
     ASSERT(!m_suspended);
+    m_handshake = adoptPtr(new WebSocketHandshake(url, protocol, m_context, m_useHixie76Protocol));
     m_handshake->reset();
+    if (m_identifier)
+        InspectorInstrumentation::didCreateWebSocket(m_context, m_identifier, url, m_context->url());
     ref();
     m_handle = SocketStreamHandle::create(m_handshake->url(), this);
 }

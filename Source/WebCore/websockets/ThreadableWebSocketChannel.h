@@ -47,10 +47,10 @@ class ThreadableWebSocketChannel {
     WTF_MAKE_NONCOPYABLE(ThreadableWebSocketChannel);
 public:
     ThreadableWebSocketChannel() { }
-    static PassRefPtr<ThreadableWebSocketChannel> create(ScriptExecutionContext*, WebSocketChannelClient*, const KURL&, const String& protocol);
+    static PassRefPtr<ThreadableWebSocketChannel> create(ScriptExecutionContext*, WebSocketChannelClient*);
 
     virtual bool useHixie76Protocol() = 0;
-    virtual void connect() = 0;
+    virtual void connect(const KURL&, const String& protocol) = 0;
     virtual bool send(const String& message) = 0;
     virtual unsigned long bufferedAmount() const = 0;
     virtual void close() = 0;

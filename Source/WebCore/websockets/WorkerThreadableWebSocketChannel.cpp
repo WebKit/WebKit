@@ -49,10 +49,10 @@
 
 namespace WebCore {
 
-WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerContext* context, WebSocketChannelClient* client, const String& taskMode, const KURL& url, const String& protocol)
+WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel(WorkerContext* context, WebSocketChannelClient* client, const String& taskMode)
     : m_workerContext(context)
     , m_workerClientWrapper(ThreadableWebSocketChannelClientWrapper::create(client))
-    , m_bridge(Bridge::create(m_workerClientWrapper, m_workerContext, taskMode, url, protocol))
+    , m_bridge(Bridge::create(m_workerClientWrapper, m_workerContext, taskMode))
 {
 }
 
@@ -68,10 +68,10 @@ bool WorkerThreadableWebSocketChannel::useHixie76Protocol()
     return m_workerClientWrapper->useHixie76Protocol();
 }
 
-void WorkerThreadableWebSocketChannel::connect()
+void WorkerThreadableWebSocketChannel::connect(const KURL& url, const String& protocol)
 {
     if (m_bridge)
-        m_bridge->connect();
+        m_bridge->connect(url, protocol);
 }
 
 bool WorkerThreadableWebSocketChannel::send(const String& message)
@@ -120,10 +120,10 @@ void WorkerThreadableWebSocketChannel::resume()
         m_bridge->resume();
 }
 
-WorkerThreadableWebSocketChannel::Peer::Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode, const KURL& url, const String& protocol)
+WorkerThreadableWebSocketChannel::Peer::Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode)
     : m_workerClientWrapper(clientWrapper)
     , m_loaderProxy(loaderProxy)
-    , m_mainWebSocketChannel(WebSocketChannel::create(context, this, url, protocol))
+    , m_mainWebSocketChannel(WebSocketChannel::create(context, this))
     , m_taskMode(taskMode)
 {
     ASSERT(isMainThread());
@@ -143,12 +143,12 @@ bool WorkerThreadableWebSocketChannel::Peer::useHixie76Protocol()
     return m_mainWebSocketChannel->useHixie76Protocol();
 }
 
-void WorkerThreadableWebSocketChannel::Peer::connect()
+void WorkerThreadableWebSocketChannel::Peer::connect(const KURL& url, const String& protocol)
 {
     ASSERT(isMainThread());
     if (!m_mainWebSocketChannel)
         return;
-    m_mainWebSocketChannel->connect();
+    m_mainWebSocketChannel->connect(url, protocol);
 }
 
 static void workerContextDidSend(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, bool sent)
@@ -279,21 +279,21 @@ void WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel(ScriptExecuti
     workerClientWrapper->setSyncMethodDone();
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, PassRefPtr<ThreadableWebSocketChannelClientWrapper> prpClientWrapper, const String& taskMode, const KURL& url, const String& protocol)
+void WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, PassRefPtr<ThreadableWebSocketChannelClientWrapper> prpClientWrapper, const String& taskMode)
 {
     ASSERT(isMainThread());
     ASSERT_UNUSED(context, context->isDocument());
 
     RefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper = prpClientWrapper;
 
-    Peer* peer = Peer::create(clientWrapper, thisPtr->m_loaderProxy, context, taskMode, url, protocol);
+    Peer* peer = Peer::create(clientWrapper, thisPtr->m_loaderProxy, context, taskMode);
     thisPtr->m_loaderProxy.postTaskForModeToWorkerContext(
         createCallbackTask(&Bridge::setWebSocketChannel,
                            AllowCrossThreadAccess(thisPtr),
                            AllowCrossThreadAccess(peer), clientWrapper, peer->useHixie76Protocol()), taskMode);
 }
 
-WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerContext> workerContext, const String& taskMode, const KURL& url, const String& protocol)
+WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerContext> workerContext, const String& taskMode)
     : m_workerClientWrapper(workerClientWrapper)
     , m_workerContext(workerContext)
     , m_loaderProxy(m_workerContext->thread()->workerLoaderProxy())
@@ -304,7 +304,7 @@ WorkerThreadableWebSocketChannel::Bridge::Bridge(PassRefPtr<ThreadableWebSocketC
     setMethodNotCompleted();
     m_loaderProxy.postTaskToLoader(
         createCallbackTask(&Bridge::mainThreadCreateWebSocketChannel,
-                           AllowCrossThreadAccess(this), m_workerClientWrapper, m_taskMode, url, protocol));
+                           AllowCrossThreadAccess(this), m_workerClientWrapper, m_taskMode));
     waitForMethodCompletion();
     ASSERT(m_peer);
 }
@@ -314,20 +314,20 @@ WorkerThreadableWebSocketChannel::Bridge::~Bridge()
     disconnect();
 }
 
-void WorkerThreadableWebSocketChannel::mainThreadConnect(ScriptExecutionContext* context, Peer* peer)
+void WorkerThreadableWebSocketChannel::mainThreadConnect(ScriptExecutionContext* context, Peer* peer, const KURL& url, const String& protocol)
 {
     ASSERT(isMainThread());
     ASSERT_UNUSED(context, context->isDocument());
     ASSERT(peer);
 
-    peer->connect();
+    peer->connect(url, protocol);
 }
 
-void WorkerThreadableWebSocketChannel::Bridge::connect()
+void WorkerThreadableWebSocketChannel::Bridge::connect(const KURL& url, const String& protocol)
 {
     ASSERT(m_workerClientWrapper);
     ASSERT(m_peer);
-    m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadConnect, AllowCrossThreadAccess(m_peer)));
+    m_loaderProxy.postTaskToLoader(createCallbackTask(&WorkerThreadableWebSocketChannel::mainThreadConnect, AllowCrossThreadAccess(m_peer), url, protocol));
 }
 
 void WorkerThreadableWebSocketChannel::mainThreadSend(ScriptExecutionContext* context, Peer* peer, const String& message)

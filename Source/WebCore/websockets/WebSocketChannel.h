@@ -51,11 +51,11 @@ namespace WebCore {
     class WebSocketChannel : public RefCounted<WebSocketChannel>, public SocketStreamHandleClient, public ThreadableWebSocketChannel {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol) { return adoptRef(new WebSocketChannel(context, client, url, protocol)); }
+        static PassRefPtr<WebSocketChannel> create(ScriptExecutionContext* context, WebSocketChannelClient* client) { return adoptRef(new WebSocketChannel(context, client)); }
         virtual ~WebSocketChannel();
 
         virtual bool useHixie76Protocol();
-        virtual void connect();
+        virtual void connect(const KURL&, const String& protocol);
         virtual bool send(const String& message);
         virtual unsigned long bufferedAmount() const;
         virtual void close(); // Start closing handshake.
@@ -81,7 +81,7 @@ namespace WebCore {
         virtual void derefThreadableWebSocketChannel() { deref(); }
 
     private:
-        WebSocketChannel(ScriptExecutionContext*, WebSocketChannelClient*, const KURL&, const String& protocol);
+        WebSocketChannel(ScriptExecutionContext*, WebSocketChannelClient*);
 
         bool appendToBuffer(const char* data, size_t len);
         void skipBuffer(size_t len);

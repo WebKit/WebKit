@@ -54,14 +54,14 @@ class WorkerRunLoop;
 class WorkerThreadableWebSocketChannel : public RefCounted<WorkerThreadableWebSocketChannel>, public ThreadableWebSocketChannel {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<ThreadableWebSocketChannel> create(WorkerContext* workerContext, WebSocketChannelClient* client, const String& taskMode, const KURL& url, const String& protocol)
+    static PassRefPtr<ThreadableWebSocketChannel> create(WorkerContext* workerContext, WebSocketChannelClient* client, const String& taskMode)
     {
-        return adoptRef(new WorkerThreadableWebSocketChannel(workerContext, client, taskMode, url, protocol));
+        return adoptRef(new WorkerThreadableWebSocketChannel(workerContext, client, taskMode));
     }
     virtual ~WorkerThreadableWebSocketChannel();
 
     virtual bool useHixie76Protocol();
-    virtual void connect();
+    virtual void connect(const KURL&, const String& protocol);
     virtual bool send(const String& message);
     virtual unsigned long bufferedAmount() const;
     virtual void close();
@@ -83,14 +83,14 @@ private:
     class Peer : public WebSocketChannelClient {
         WTF_MAKE_NONCOPYABLE(Peer); WTF_MAKE_FAST_ALLOCATED;
     public:
-        static Peer* create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode, const KURL& url, const String& protocol)
+        static Peer* create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode)
         {
-            return new Peer(clientWrapper, loaderProxy, context, taskMode, url, protocol);
+            return new Peer(clientWrapper, loaderProxy, context, taskMode);
         }
         ~Peer();
 
         bool useHixie76Protocol();
-        void connect();
+        void connect(const KURL&, const String& protocol);
         void send(const String& message);
         void bufferedAmount();
         void close();
@@ -105,7 +105,7 @@ private:
         virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus);
 
     private:
-        Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode, const KURL&, const String& protocol);
+        Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode);
 
         RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         WorkerLoaderProxy& m_loaderProxy;
@@ -116,12 +116,12 @@ private:
     // Bridge for Peer.  Running on the worker thread.
     class Bridge : public RefCounted<Bridge> {
     public:
-        static PassRefPtr<Bridge> create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerContext> workerContext, const String& taskMode, const KURL& url, const String& protocol)
+        static PassRefPtr<Bridge> create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, PassRefPtr<WorkerContext> workerContext, const String& taskMode)
         {
-            return adoptRef(new Bridge(workerClientWrapper, workerContext, taskMode, url, protocol));
+            return adoptRef(new Bridge(workerClientWrapper, workerContext, taskMode));
         }
         ~Bridge();
-        void connect();
+        void connect(const KURL&, const String& protocol);
         bool send(const String& message);
         unsigned long bufferedAmount();
         void close();
@@ -134,12 +134,12 @@ private:
         using RefCounted<Bridge>::deref;
 
     private:
-        Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, PassRefPtr<WorkerContext>, const String& taskMode, const KURL&, const String& protocol);
+        Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, PassRefPtr<WorkerContext>, const String& taskMode);
 
         static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, bool useHixie76Protocol);
 
         // Executed on the main thread to create a Peer for this bridge.
-        static void mainThreadCreateWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, const String& taskMode, const KURL&, const String& protocol);
+        static void mainThreadCreateWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, const String& taskMode);
 
         // Executed on the worker context's thread.
         void clearClientWrapper();
@@ -154,9 +154,9 @@ private:
         Peer* m_peer;
     };
 
-    WorkerThreadableWebSocketChannel(WorkerContext*, WebSocketChannelClient*, const String& taskMode, const KURL&, const String& protocol);
+    WorkerThreadableWebSocketChannel(WorkerContext*, WebSocketChannelClient*, const String& taskMode);
 
-    static void mainThreadConnect(ScriptExecutionContext*, Peer*);
+    static void mainThreadConnect(ScriptExecutionContext*, Peer*, const KURL&, const String& protocol);
     static void mainThreadSend(ScriptExecutionContext*, Peer*, const String& message);
     static void mainThreadBufferedAmount(ScriptExecutionContext*, Peer*);
     static void mainThreadClose(ScriptExecutionContext*, Peer*);

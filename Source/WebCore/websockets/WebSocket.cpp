@@ -151,8 +151,10 @@ void WebSocket::connect(const String& url, const String& protocol, ExceptionCode
         return;
     }
 
-    m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this, m_url, m_protocol);
-    m_channel->connect();
+    m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this);
+    // FIXME: Get the value of m_channel->useHixie76Protocol() and validate the value of subprotocol
+    // if hybi-10 protocol is used.
+    m_channel->connect(m_url, m_protocol);
     ActiveDOMObject::setPendingActivity(this);
 }
 

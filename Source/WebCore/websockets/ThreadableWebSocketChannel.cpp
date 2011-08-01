@@ -50,7 +50,7 @@ namespace WebCore {
 
 static const char webSocketChannelMode[] = "webSocketChannelMode";
 
-PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol)
+PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(ScriptExecutionContext* context, WebSocketChannelClient* client)
 {
     ASSERT(context);
     ASSERT(client);
@@ -61,12 +61,12 @@ PassRefPtr<ThreadableWebSocketChannel> ThreadableWebSocketChannel::create(Script
         WorkerRunLoop& runLoop = workerContext->thread()->runLoop();
         String mode = webSocketChannelMode;
         mode.append(String::number(runLoop.createUniqueId()));
-        return WorkerThreadableWebSocketChannel::create(workerContext, client, mode, url, protocol);
+        return WorkerThreadableWebSocketChannel::create(workerContext, client, mode);
     }
 #endif // ENABLE(WORKERS)
 
     ASSERT(context->isDocument());
-    return WebSocketChannel::create(context, client, url, protocol);
+    return WebSocketChannel::create(context, client);
 }
 
 } // namespace WebCore

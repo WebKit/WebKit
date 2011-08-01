@@ -1,3 +1,52 @@
+2011-08-01  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Receive URL and subprotocol in WebSocketChannel::connect()
+        https://bugs.webkit.org/show_bug.cgi?id=65367
+
+        Reviewed by Kent Tamura.
+
+        To implement multiple subprotocols support (bug 65247), WebSocket::connect() will need to validate
+        the value of subprotocols after constructing WebSocketChannel, because the result depends on which
+        WebSocket protocol is used, which is obtained from WebSocketChannel::useHixie76Protocol(). This
+        means the subprotocol value will not be available at the time of WebSocketChannel construction.
+
+        This change moves URL and subprotocol arguments in WebSocketChannel constructor to
+        WebSocketChannel::connect(), which allows WebSocket::connect() function to check the subprotocol
+        value before the actual connection is established.
+
+        Relocating URL argument is technically not necessary, but seemed legitimate in terms of functional
+        correspondence between WebSocket and WebSocketChannel (constructor versus connect()).
+
+        No change in behavior, thus no new tests.
+
+        * websockets/ThreadableWebSocketChannel.cpp:
+        Remove "url" and "protocol" arguments from constructor and add them in connect().
+        (WebCore::ThreadableWebSocketChannel::create):
+        * websockets/ThreadableWebSocketChannel.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * websockets/WebSocketChannel.cpp: Same as ThreadableWebSocketChannel.
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::connect):
+        InspectorInstrumentation::didCreateWebSocket() call was moved to connect() because it needs URL.
+        This does not change behavior, because connect() is guaranteed to be called immediately after
+        WebSocketChannel is constructed.
+        * websockets/WebSocketChannel.h:
+        (WebCore::WebSocketChannel::create):
+        * websockets/WorkerThreadableWebSocketChannel.cpp: Same as ThreadableWebSocketChannel.
+        (WebCore::WorkerThreadableWebSocketChannel::WorkerThreadableWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::connect):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::Peer):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::connect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::Bridge):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadConnect):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::connect):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+        (WebCore::WorkerThreadableWebSocketChannel::create):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::create):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::create):
+
 2011-08-01  Luke Macpherson   <macpherson@chromium.org>
 
         Add iterator to CSSValueList
