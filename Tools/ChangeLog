@@ -1,3 +1,18 @@
+2011-08-01  Adam Barth  <abarth@webkit.org>
+
+        Remove unused functionality from gardeningserver
+        https://bugs.webkit.org/show_bug.cgi?id=65479
+
+        Reviewed by Dimitri Glazkov.
+
+        We now handle these operations directly from the front-end.  That means
+        they work even without the gardening server running!
+
+        Also, add some missing files to the list of static files.
+
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py:
+
 2011-08-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Introduce SpecifierSorter, a thing that knows how specifiers should be ordered.

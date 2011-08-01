@@ -69,18 +69,6 @@ class GardeningServerTest(unittest.TestCase):
         handler.path = path
         OutputCapture().assert_outputs(self, handler.do_POST, expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
-    def test_changelog(self):
-        expected_stderr = "MOCK run_and_throw_if_fail: ['mock-update-webkit'], cwd=/mock-checkout\n"
-        expected_stdout = """== Begin JSON Response ==
-{"bug_id": 42, "author_email": "abarth@webkit.org", "reviewer_text": "Darin Adler", "author_name": "Adam Barth", "changed_files": ["path/to/file", "another/file"]}
-== End JSON Response ==
-"""
-        self._post_to_path("/changelog?revision=2314", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
-
-    def test_buildbot(self):
-        expected_stdout = '== Begin JSON Response ==\n[{"is_green": true, "name": "Builder1", "activity": "building"}, {"is_green": true, "name": "Builder2", "activity": "idle"}]\n== End JSON Response ==\n'
-        self._post_to_path("/buildbot", expected_stdout=expected_stdout, expected_stderr='')
-
     def test_rollout(self):
         expected_stderr = "MOCK run_command: ['echo', 'rollout', '--force-clean', '--non-interactive', '2314', 'MOCK rollout reason'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
