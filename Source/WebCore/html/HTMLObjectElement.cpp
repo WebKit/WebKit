@@ -121,7 +121,7 @@ void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
         }
         m_name = newName;
     } else if (attr->name() == borderAttr) {
-        addCSSLength(attr, CSSPropertyBorderWidth, attr->value().toInt() ? attr->value() : "0");
+        addCSSLength(attr, CSSPropertyBorderWidth, String::number(parseBorderWidthAttribute(attr)));
         addCSSProperty(attr, CSSPropertyBorderTopStyle, CSSValueSolid);
         addCSSProperty(attr, CSSPropertyBorderRightStyle, CSSValueSolid);
         addCSSProperty(attr, CSSPropertyBorderBottomStyle, CSSValueSolid);

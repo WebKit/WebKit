@@ -1,3 +1,18 @@
+2011-08-01  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        BORDER attribute with the object tag, using percentage values not working.
+        https://bugs.webkit.org/show_bug.cgi?id=65176
+
+        Reviewed by Hajime Morita.
+
+        Added the tests with border width with percentages in a new file. Moved them
+        from images border test file.
+
+        * fast/borders/border-width-percent-expected.txt: Added.
+        * fast/borders/border-width-percent.html: Added.
+        * fast/images/border-expected.txt:
+        * fast/images/script-tests/border.js:
+
 2011-08-01  Tony Gentilcore  <tonyg@chromium.org>
 
         [chromium] Update expectations for fast/text/international/bidi-mirror-he-ar.html

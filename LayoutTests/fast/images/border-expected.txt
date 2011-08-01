@@ -21,11 +21,6 @@ PASS imageBorderWidth('10q') is 10
 PASS imageBorderWidth(' 10q') is 10
 PASS imageBorderWidth('10q ') is 10
 PASS imageBorderWidth(' 10q ') is 10
-PASS imageBorderWidth('10%') is 10
-PASS imageBorderWidth('-10%') is 0
-PASS imageBorderWidth(' +10%') is 10
-PASS imageBorderWidth(0, 'border-width: 10%') is 0
-PASS imageBorderWidth(0, 'border-width: -10%') is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

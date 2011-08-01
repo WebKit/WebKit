@@ -1,3 +1,21 @@
+2011-08-01  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        BORDER attribute with the object tag, using percentage values not working.
+        https://bugs.webkit.org/show_bug.cgi?id=65176
+
+        Reviewed by Hajime Morita.
+
+        When border presentational attribute for object element has % in it, it should be parsed using HTML parser rules.
+
+        Test: fast/borders/border-width-percent.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::parseBorderWidthAttribute):
+        * html/HTMLElement.h:
+        * html/HTMLImageElement.cpp:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+
 2011-08-01  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Receive URL and subprotocol in WebSocketChannel::connect()

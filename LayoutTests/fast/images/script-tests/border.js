@@ -36,11 +36,4 @@ shouldBe("imageBorderWidth(' 10q')", "10");
 shouldBe("imageBorderWidth('10q ')", "10");
 shouldBe("imageBorderWidth(' 10q ')", "10");
 
-shouldBe("imageBorderWidth('10%')", "10");
-shouldBe("imageBorderWidth('-10%')", "0");
-shouldBe("imageBorderWidth(' +10%')", "10");
-
-shouldBe("imageBorderWidth(0, 'border-width: 10%')", "0");
-shouldBe("imageBorderWidth(0, 'border-width: -10%')", "0");
-
 var successfullyParsed = true;

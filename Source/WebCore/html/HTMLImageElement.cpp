@@ -98,17 +98,6 @@ bool HTMLImageElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
     return HTMLElement::mapToEntry(attrName, result);
 }
 
-static unsigned int parseBorderWidthAttribute(Attribute* attr)
-{
-    ASSERT(attr && attr->name() == borderAttr);
-
-    unsigned int borderWidth = 0;
-    if (!attr->value().isEmpty() && !attr->value().isNull())
-        parseHTMLNonNegativeInteger(attr->value(), borderWidth);
-
-    return borderWidth;
-}
-
 void HTMLImageElement::parseMappedAttribute(Attribute* attr)
 {
     const QualifiedName& attrName = attr->name();
