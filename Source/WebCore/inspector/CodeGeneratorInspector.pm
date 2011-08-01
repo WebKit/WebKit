@@ -456,9 +456,9 @@ sub generateBackendFunction
 
     my $indent = "";
     if (scalar(@inArgs)) {
-        push(@function, "    if (RefPtr<InspectorObject> paramsContainer = requestMessageObject->getObject(\"params\")) {");
-        push(@function, "        InspectorObject* paramsContainerPtr = paramsContainer.get();");
-        push(@function, "        InspectorArray* protocolErrorsPtr = protocolErrors.get();");
+        push(@function, "    RefPtr<InspectorObject> paramsContainer = requestMessageObject->getObject(\"params\");");
+        push(@function, "    InspectorObject* paramsContainerPtr = paramsContainer.get();");
+        push(@function, "    InspectorArray* protocolErrorsPtr = protocolErrors.get();");
 
         foreach my $parameter (@inArgs) {
             my $name = $parameter->name;
@@ -466,10 +466,10 @@ sub generateBackendFunction
             my $typeString = camelCase($parameter->type);
             my $optionalFlagArgument = "0";
             if ($parameter->extendedAttributes->{"optional"}) {
-                push(@function, "        bool ${name}_valueFound = false;");
+                push(@function, "    bool ${name}_valueFound = false;");
                 $optionalFlagArgument = "&${name}_valueFound";
             }
-            push(@function, "        " . typeTraits($type, "variable") . " in_$name = get$typeString(paramsContainerPtr, \"$name\", $optionalFlagArgument, protocolErrorsPtr);");
+            push(@function, "    " . typeTraits($type, "variable") . " in_$name = get$typeString(paramsContainerPtr, \"$name\", $optionalFlagArgument, protocolErrorsPtr);");
         }
         push(@function, "");
         $indent = "    ";
@@ -482,12 +482,8 @@ sub generateBackendFunction
                           "in_" . $_->name), @inArgs),
                      map("&out_" . $_->name, @outArgs)));
 
-    push(@function, "$indent    if (!protocolErrors->length())");
-    push(@function, "$indent        $domainAccessor->$functionName($args);");
-    if (scalar(@inArgs)) {
-        push(@function, "    } else");
-        push(@function, "        protocolErrors->pushString(\"'params' property with type 'object' was not found.\");");
-    }
+    push(@function, $indent . "if (!protocolErrors->length())");
+    push(@function, $indent . "    $domainAccessor->$functionName($args);");
     push(@function, "");
     push(@function, "    RefPtr<InspectorObject> result = InspectorObject::create();");
     if (scalar(@outArgs)) {
@@ -590,13 +586,21 @@ sub generateArgumentGetters
 
 $return InspectorBackendDispatcher::get$typeString(InspectorObject* object, const String& name, bool* valueFound, InspectorArray* protocolErrors)
 {
-    ASSERT(object);
     ASSERT(protocolErrors);
 
     if (valueFound)
         *valueFound = false;
 
     $variable value = $defaultValue;
+
+    if (!object) {
+        if (!valueFound) {
+            // Required parameter in missing params container.
+            protocolErrors->pushString(String::format("'params' object must contain required parameter '\%s' with type '$json'.", name.utf8().data()));
+        }
+        return value;
+    }
+
     InspectorObject::const_iterator end = object->end();
     InspectorObject::const_iterator valueIterator = object->find(name);
 
@@ -607,7 +611,7 @@ $return InspectorBackendDispatcher::get$typeString(InspectorObject* object, cons
     }
 
     if (!valueIterator->second->as$json(&value))
-        protocolErrors->pushString(String::format("Parameter '\%s' has wrong type. It should be '$json'.", name.utf8().data()));
+        protocolErrors->pushString(String::format("Parameter '\%s' has wrong type. It must be '$json'.", name.utf8().data()));
     else
         if (valueFound)
             *valueFound = true;
@@ -644,13 +648,13 @@ $mapEntries
 
     RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
     if (!parsedMessage) {
-        reportProtocolError(0, ParseError, "Message should be in JSON format");
+        reportProtocolError(0, ParseError, "Message must be in JSON format");
         return;
     }
 
     RefPtr<InspectorObject> messageObject = parsedMessage->asObject();
     if (!messageObject) {
-        reportProtocolError(0, InvalidRequest, "Message should be a JSONified object");
+        reportProtocolError(0, InvalidRequest, "Message must be a JSONified object");
         return;
     }
 
@@ -661,7 +665,7 @@ $mapEntries
     }
 
     if (!callIdValue->asNumber(&callId)) {
-        reportProtocolError(0, InvalidRequest, "The type of 'id' property should be number");
+        reportProtocolError(0, InvalidRequest, "The type of 'id' property must be number");
         return;
     }
 
@@ -673,7 +677,7 @@ $mapEntries
 
     String method;
     if (!methodValue->asString(&method)) {
-        reportProtocolError(&callId, InvalidRequest, "The type of 'method' property should be string");
+        reportProtocolError(&callId, InvalidRequest, "The type of 'method' property must be string");
         return;
     }
 
@@ -792,13 +796,14 @@ InspectorBackendStub.prototype = {
         var domainAndMethod = request.method.split(".");
         var agentMethod = domainAndMethod[0] + "Agent." + domainAndMethod[1];
 
+        var hasParams = false;
         if (request.params) {
             for (var key in request.params) {
                 var typeName = request.params[key].type;
                 var optionalFlag = request.params[key].optional;
 
                 if (args.length === 0 && !optionalFlag) {
-                    console.error("Protocol Error: Invalid number of arguments for method '" + agentMethod + "' call. It should have the next arguments '" + JSON.stringify(request.params) + "'.");
+                    console.error("Protocol Error: Invalid number of arguments for method '" + agentMethod + "' call. It must have the next arguments '" + JSON.stringify(request.params) + "'.");
                     return;
                 }
 
@@ -809,17 +814,20 @@ InspectorBackendStub.prototype = {
                 }
 
                 if (typeof value !== typeName) {
-                    console.error("Protocol Error: Invalid type of argument '" + key + "' for method '" + agentMethod + "' call. It should be '" + typeName + "' but it is '" + typeof value + "'.");
+                    console.error("Protocol Error: Invalid type of argument '" + key + "' for method '" + agentMethod + "' call. It must be '" + typeName + "' but it is '" + typeof value + "'.");
                     return;
                 }
 
                 request.params[key] = value;
+                hasParams = true;
             }
+            if (!hasParams)
+                delete request.params;
         }
 
         if (args.length === 1 && !callback) {
             if (typeof args[0] !== "undefined") {
-                console.error("Protocol Error: Optional callback argument for method '" + agentMethod + "' call should be a function but its type is '" + typeof args[0] + "'.");
+                console.error("Protocol Error: Optional callback argument for method '" + agentMethod + "' call must be a function but its type is '" + typeof args[0] + "'.");
                 return;
             }
         }

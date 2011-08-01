@@ -3,13 +3,13 @@ Tests that InspectorBackendDispatcher is catching incorrect messages.
 {
     error : {
         code : -32700
-        message : "Message should be in JSON format"
+        message : "Message must be in JSON format"
     }
     id : null
 }
 error.code: -32700
-error.getMessage(): Message should be in JSON format
-error.toString(): Parse error(-32700): Message should be in JSON format.
+error.getMessage(): Message must be in JSON format
+error.toString(): Parse error(-32700): Message must be in JSON format.
 -------------------------------------------------------
 {
     error : {
@@ -25,24 +25,24 @@ error.toString(): Invalid Request(-32600): 'id' property was not found.
 {
     error : {
         code : -32600
-        message : "The type of 'id' property should be number"
+        message : "The type of 'id' property must be number"
     }
     id : null
 }
 error.code: -32600
-error.getMessage(): The type of 'id' property should be number
-error.toString(): Invalid Request(-32600): The type of 'id' property should be number.
+error.getMessage(): The type of 'id' property must be number
+error.toString(): Invalid Request(-32600): The type of 'id' property must be number.
 -------------------------------------------------------
 {
     error : {
         code : -32600
-        message : "The type of 'method' property should be string"
+        message : "The type of 'method' property must be string"
     }
     id : 1
 }
 error.code: -32600
-error.getMessage(): The type of 'method' property should be string
-error.toString(): Invalid Request(-32600): The type of 'method' property should be string.
+error.getMessage(): The type of 'method' property must be string
+error.toString(): Invalid Request(-32600): The type of 'method' property must be string.
 -------------------------------------------------------
 {
     error : {
@@ -71,28 +71,30 @@ error.toString(): Method not found(-32601): 'DOM.test' wasn't found.
         code : -32602
         message : "Some arguments of method 'Page.getResourceContent' can't be processed"
         data : [
-            "'params' property with type 'object' was not found."
+            "'params' object must contain required parameter 'frameId' with type 'String'."
+            "'params' object must contain required parameter 'url' with type 'String'."
         ]
     }
     id : 4
 }
 error.code: -32602
 error.getMessage(): Some arguments of method 'Page.getResourceContent' can't be processed
-error.toString(): Invalid params(-32602): Some arguments of method 'Page.getResourceContent' can't be processed. 'params' property with type 'object' was not found.
+error.toString(): Invalid params(-32602): Some arguments of method 'Page.getResourceContent' can't be processed. 'params' object must contain required parameter 'frameId' with type 'String'. 'params' object must contain required parameter 'url' with type 'String'.
 -------------------------------------------------------
 {
     error : {
         code : -32602
         message : "Some arguments of method 'Page.getResourceContent' can't be processed"
         data : [
-            "'params' property with type 'object' was not found."
+            "'params' object must contain required parameter 'frameId' with type 'String'."
+            "'params' object must contain required parameter 'url' with type 'String'."
         ]
     }
     id : 5
 }
 error.code: -32602
 error.getMessage(): Some arguments of method 'Page.getResourceContent' can't be processed
-error.toString(): Invalid params(-32602): Some arguments of method 'Page.getResourceContent' can't be processed. 'params' property with type 'object' was not found.
+error.toString(): Invalid params(-32602): Some arguments of method 'Page.getResourceContent' can't be processed. 'params' object must contain required parameter 'frameId' with type 'String'. 'params' object must contain required parameter 'url' with type 'String'.
 -------------------------------------------------------
 {
     error : {

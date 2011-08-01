@@ -1,3 +1,12 @@
+2011-07-28  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [protocol] methods where all parameters are optional should not require empty params object.
+        https://bugs.webkit.org/show_bug.cgi?id=65331
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/report-protocol-errors-expected.txt:
+
 2011-07-31  Adam Barth  <abarth@webkit.org>
 
         These results appear to differ only in text rendering.
