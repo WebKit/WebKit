@@ -406,7 +406,7 @@ WebInspector.ConsoleView.prototype = {
             return;
 
         if (!expressionString && WebInspector.panels.scripts.paused)
-            WebInspector.panels.scripts.getSelectedCallFrameVariables(reportCompletions.bind(this));
+            WebInspector.panels.scripts.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
         else
             this.evalInInspectedWindow(expressionString, "completion", true, true, undefined, evaluated.bind(this));
 

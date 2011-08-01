@@ -1,3 +1,9 @@
+2011-08-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Trivial fix for inspector/debugger/debugger-completions-on-call-frame.html after r92122.
+
+        * inspector/front-end/ConsoleView.js:
+
 2011-08-01  Hayato Ito  <hayato@chromium.org>
 
         Add support for getting an element in shadow root by its id into a window.internals object.
