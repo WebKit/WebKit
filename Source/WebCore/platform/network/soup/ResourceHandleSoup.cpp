@@ -838,11 +838,11 @@ static bool startNonHTTPRequest(ResourceHandle* handle, KURL url)
 SoupSession* ResourceHandle::defaultSession()
 {
     static SoupSession* session = 0;
-    // Values taken from http://stevesouders.com/ua/index.php following
+    // Values taken from http://www.browserscope.org/  following
     // the rule "Do What Every Other Modern Browser Is Doing". They seem
     // to significantly improve page loading time compared to soup's
     // default values.
-    static const int maxConnections = 60;
+    static const int maxConnections = 35;
     static const int maxConnectionsPerHost = 6;
 
     if (!session) {

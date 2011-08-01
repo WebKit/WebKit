@@ -1,3 +1,15 @@
+2011-08-01  Marco Peereboom  <marco@peereboom.us>
+
+        [Soup] Set default max-conns to a more sane default value and fix comment 
+        https://bugs.webkit.org/show_bug.cgi?id=65335
+
+        Reviewed by Martin Robinson.
+
+        Rigged the xxxterm web browser and validated that the default values were set properly.
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::defaultSession):
+
 2011-07-28  Abhishek Arya  <inferno@chromium.org>
 
         Regression(82144): Crash in TrailingObjects::updateMidpointsForTrailingBoxes
