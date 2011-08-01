@@ -1,3 +1,15 @@
+2011-08-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92108.
+        http://trac.webkit.org/changeset/92108
+        https://bugs.webkit.org/show_bug.cgi?id=65459
+
+        breaks SL compile (Requested by tonyg-cr on #webkit).
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
 2011-08-01  Amruth Raj  <amruthraj@motorola.com>
 
         Custom cursors cause the WebProcess to crash

@@ -321,12 +321,6 @@ void ArgumentCoder<Cursor>::encode(ArgumentEncoder* encoder, const Cursor& curso
     if (cursor.type() != Cursor::Custom)
         return;
 
-    if (cursor.image()->isNull()) {
-        encoder->encodeBool(false); // There is no valid image being encoded.
-        return;
-    }
-
-    encoder->encodeBool(true);
     encodeImage(encoder, cursor.image());
     encoder->encode(cursor.hotSpot());
 }
@@ -347,15 +341,6 @@ bool ArgumentCoder<Cursor>::decode(ArgumentDecoder* decoder, Cursor& cursor)
         (void)cursorReference.platformCursor();
 
         cursor = cursorReference;
-        return true;
-    }
-
-    bool isValidImagePresent;
-    if (!decoder->decode(isValidImagePresent))
-        return false;
-
-    if (!isValidImagePresent) {
-        cursor = Cursor(Image::nullImage(), IntPoint());
         return true;
     }
 
