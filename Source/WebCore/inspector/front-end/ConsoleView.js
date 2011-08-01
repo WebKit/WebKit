@@ -408,26 +408,33 @@ WebInspector.ConsoleView.prototype = {
         if (!expressionString && WebInspector.panels.scripts.paused)
             WebInspector.panels.scripts.getSelectedCallFrameVariables(reportCompletions.bind(this));
         else
-            this.evalInInspectedWindow(expressionString, "completion", true, true, evaluated.bind(this));
+            this.evalInInspectedWindow(expressionString, "completion", true, true, undefined, evaluated.bind(this));
 
         function evaluated(result, wasThrown)
         {
             if (wasThrown)
                 return;
-            result.getAllProperties(evaluatedProperties.bind(this));
+            var getCompletions = function()
+            {
+                var resultSet = {};
+                for (var o = this; o; o = o.__proto__) {
+                    try {
+                        var names = Object.getOwnPropertyNames(o);
+                        for (var i = 0; i < names.length; ++i)
+                            resultSet[names[i]] = true;
+                    } catch (e) {
+                    }
+                }
+                return resultSet;
+            }
+            result.callFunctionJSON(getCompletions, receivedPropertyNames.bind(this));
         }
 
-        function evaluatedProperties(properties)
+        function receivedPropertyNames(propertyNames)
         {
             RuntimeAgent.releaseObjectGroup("completion");
-            var propertyNames = {};
-            for (var i = 0; properties && i < properties.length; ++i)
-                propertyNames[properties[i].name] = true;
-            reportCompletions.call(this, propertyNames);
-        }
-
-        function reportCompletions(propertyNames)
-        {
+            if (!propertyNames)
+                return;
             var includeCommandLineAPI = (!dotNotation && !bracketNotation);
             if (includeCommandLineAPI) {
                 const commandLineAPI = ["dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear"];
@@ -595,7 +602,7 @@ WebInspector.ConsoleView.prototype = {
         }
     },
 
-    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, callback)
+    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, evalAsJSONValue, callback)
     {
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
             WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, callback);
@@ -612,7 +619,7 @@ WebInspector.ConsoleView.prototype = {
             if (!error)
                 callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
-        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, this._currentEvaluationContextId(), evalCallback);
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, this._currentEvaluationContextId(), evalAsJSONValue, evalCallback);
     },
 
     _enterKeyPressed: function(event)
@@ -643,7 +650,7 @@ WebInspector.ConsoleView.prototype = {
 
             self.addMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
         }
-        this.evalInInspectedWindow(str, "console", true, undefined, printResult);
+        this.evalInInspectedWindow(str, "console", true, undefined, undefined, printResult);
 
         WebInspector.userMetrics.ConsoleEvaluated.record();
     },

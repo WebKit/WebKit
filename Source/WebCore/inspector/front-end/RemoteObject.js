@@ -194,7 +194,17 @@ WebInspector.RemoteObject.prototype = {
             callback((error || wasThrown) ? null : WebInspector.RemoteObject.fromPayload(result));
         }
 
-        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), undefined, mycallback);
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), undefined, undefined, mycallback);
+    },
+
+    callFunctionJSON: function(functionDeclaration, callback)
+    {
+        function mycallback(error, result, wasThrown)
+        {
+            callback((error || wasThrown) ? null : result.value);
+        }
+
+        RuntimeAgent.callFunctionOn(this._objectId, functionDeclaration.toString(), undefined, true, mycallback);
     },
 
     release: function()

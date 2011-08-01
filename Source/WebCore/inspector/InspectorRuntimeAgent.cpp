@@ -45,6 +45,11 @@
 
 namespace WebCore {
 
+static bool asBool(const bool* const b)
+{
+    return b ? *b : false;
+}
+
 InspectorRuntimeAgent::InspectorRuntimeAgent(InjectedScriptManager* injectedScriptManager)
     : m_injectedScriptManager(injectedScriptManager)
 #if ENABLE(JAVASCRIPT_DEBUGGER)
@@ -57,7 +62,7 @@ InspectorRuntimeAgent::~InspectorRuntimeAgent()
 {
 }
 
-void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, const String* const frameId, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, const String* const frameId, const bool* const sendResultByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     ScriptState* scriptState = 0;
     if (frameId) {
@@ -77,13 +82,13 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
     ASSERT(m_scriptDebugServer);
     bool pauseStateChanged = false;
     ScriptDebugServer::PauseOnExceptionsState presentState = m_scriptDebugServer->pauseOnExceptionsState();
-    if (doNotPauseOnExceptions && *doNotPauseOnExceptions && presentState != ScriptDebugServer::DontPauseOnExceptions) {
+    if (asBool(doNotPauseOnExceptions) && presentState != ScriptDebugServer::DontPauseOnExceptions) {
         m_scriptDebugServer->setPauseOnExceptionsState(ScriptDebugServer::DontPauseOnExceptions);
         pauseStateChanged = true;
     }
 #endif
 
-    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", includeCommandLineAPI ? *includeCommandLineAPI : false, result, wasThrown);
+    injectedScript.evaluate(errorString, expression, objectGroup ? *objectGroup : "", asBool(includeCommandLineAPI), asBool(sendResultByValue), result, wasThrown);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     if (pauseStateChanged)
@@ -91,7 +96,7 @@ void InspectorRuntimeAgent::evaluate(ErrorString* errorString, const String& exp
 #endif
 }
 
-void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, const bool* const sendResultByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
@@ -101,7 +106,7 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
     String arguments;
     if (optionalArguments)
         arguments = (*optionalArguments)->toJSONString();
-    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, result, wasThrown);
+    injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(sendResultByValue), result, wasThrown);
 }
 
 void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result)

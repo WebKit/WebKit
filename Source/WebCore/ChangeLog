@@ -1,3 +1,42 @@
+2011-08-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: typing an expression in an iframe leads to multiple "Unsafe JavaScript attempt to access frame..." errors
+        https://bugs.webkit.org/show_bug.cgi?id=65457
+
+        Console completions are now done using evaluation which returns a JSON object with all property names rather than a remote
+        object. Also Runtime.evaluate and Runtime.callFunctionOn commands were extended with an optional parameter that allows to
+        get result as JSON value.
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/console-cd-completions.html
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluate):
+        (WebCore::InjectedScript::callFunctionOn):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        ():
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::asBool):
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::callFunctionOn):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._completions.evaluated.getCompletions):
+        (WebInspector.ConsoleView.prototype._completions.evaluated):
+        (WebInspector.ConsoleView.prototype._completions.receivedPropertySet):
+        (WebInspector.ConsoleView.prototype._completions):
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        (WebInspector.RemoteObject.prototype.callFunction):
+        (WebInspector.RemoteObject.prototype.callFunctionJSON):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype.update):
+
 2011-08-01  Mihnea Ovidenie  <mihnea@adobe.com>
 
         BORDER attribute with the object tag, using percentage values not working.

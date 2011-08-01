@@ -53,8 +53,22 @@ public:
     virtual ~InspectorRuntimeAgent();
 
     // Part of the protocol.
-    void evaluate(ErrorString*, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, const bool* const doNotPauseOnExceptions, const String* const frameId, RefPtr<InspectorObject>* result, bool* wasThrown);
-    void callFunctionOn(ErrorString*, const String& objectId, const String& expression, const RefPtr<InspectorArray>* const optionalArguments, RefPtr<InspectorObject>* result, bool* wasThrown);
+    void evaluate(ErrorString*,
+                  const String& expression,
+                  const String* const objectGroup,
+                  const bool* const includeCommandLineAPI,
+                  const bool* const doNotPauseOnExceptions,
+                  const String* const frameId,
+                  const bool* const sendResultByValue,
+                  RefPtr<InspectorObject>* result,
+                  bool* wasThrown);
+    void callFunctionOn(ErrorString*,
+                        const String& objectId,
+                        const String& expression,
+                        const RefPtr<InspectorArray>* const optionalArguments,
+                        const bool* const sendResultByValue,
+                        RefPtr<InspectorObject>* result,
+                        bool* wasThrown);
     void releaseObject(ErrorString*, const String& objectId);
     void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result);
     void releaseObjectGroup(ErrorString*, const String& objectGroup);

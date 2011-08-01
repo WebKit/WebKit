@@ -1,3 +1,14 @@
+2011-08-01  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: typing an expression in an iframe leads to multiple "Unsafe JavaScript attempt to access frame..." errors
+        https://bugs.webkit.org/show_bug.cgi?id=65457
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/console-cd-completions-expected.txt: Added.
+        * http/tests/inspector/console-cd-completions.html: Added.
+        * http/tests/inspector/resources/console-cd-completions-iframe.html: Added.
+
 2011-08-01  Tony Gentilcore  <tonyg@chromium.org>
 
         [chromium] http/tests/inspector/resource-tree/resource-tree-document-url.html occasionally times out

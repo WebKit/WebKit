@@ -1,0 +1,53 @@
+<html>
+<head>
+<script src="console-test.js"></script>
+<script src="inspector-test.js"></script>
+<script>
+
+function test()
+{
+    InspectorTest.showConsolePanel();
+    var selector = WebInspector.console._contextSelectElement;
+    var option = selector.firstChild;
+    while (option) {
+        if (option.textContent && option.textContent.indexOf("myIFrame") === 0)
+            break;
+        option = option.nextSibling;
+    }
+    if (!option) {
+        InspectorTest.addResult("FAILED: myIFrame not found in the context list");
+        InspectorTest.completeTest();
+        return;
+    }
+    option.selected = true;
+
+
+    WebInspector.console._completions("", "myGlob", false, checkCompletions.bind(this));
+    function checkCompletions(completions)
+    {
+        var expected = ["myGlobalVar", "myGlobalFunction"];
+        for (var i = 0; i < expected.length; ++i) {
+            if (completions.indexOf(expected[i]) !== -1)
+                InspectorTest.addResult(expected[i]);
+            else
+                InspectorTest.addResult("NOT FOUND: " + expected[i]);
+        }
+        InspectorTest.dumpConsoleMessages();
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body>
+<p>
+Test that completions in the context of an iframe with a different origin will
+result in names of its global variables. Test passes if all global variables
+are found among completions AND there are NO console messages.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=65457">Bug 65457.</a>
+</p>
+<iframe name="myIFrame" src="http://localhost:8000/inspector/resources/console-cd-completions-iframe.html" onload="runTest()"></iframe>
+
+</body>
+</html>

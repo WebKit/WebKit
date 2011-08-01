@@ -108,10 +108,10 @@ InjectedScript.prototype = {
     },
 
     // This method cannot throw.
-    _wrapObject: function(object, objectGroupName)
+    _wrapObject: function(object, objectGroupName, forceValueType)
     {
         try {
-            return new InjectedScript.RemoteObject(object, objectGroupName);
+            return new InjectedScript.RemoteObject(object, objectGroupName, forceValueType);
         } catch (e) {
             try {
                 var description = injectedScript._describe(e);
@@ -183,8 +183,8 @@ InjectedScript.prototype = {
         for (var i = 0; i < propertyNames.length; ++i) {
             var propertyName = propertyNames[i];
 
-            var getter = object["__lookupGetter__"] && object.__lookupGetter__(propertyName);
-            var setter = object["__lookupSetter__"] && object.__lookupSetter__(propertyName);
+            var getter = (typeof object["__lookupGetter__"] === "function") && object.__lookupGetter__(propertyName);
+            var setter = (typeof object["__lookupSetter__"] === "function") && object.__lookupSetter__(propertyName);
             if (getter || setter) {
                 if (getter) {
                     var property = {};
@@ -246,12 +246,12 @@ InjectedScript.prototype = {
         return Object.keys(propertyNameSet);
     },
 
-    evaluate: function(expression, objectGroup, injectCommandLineAPI)
+    evaluate: function(expression, objectGroup, injectCommandLineAPI, sendResultByValue)
     {
-        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI);
+        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, sendResultByValue);
     },
 
-    callFunctionOn: function(objectId, expression, args)
+    callFunctionOn: function(objectId, expression, args, sendResultByValue)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -287,18 +287,18 @@ InjectedScript.prototype = {
                 return "Given expression does not evaluate to a function";
 
             return { wasThrown: false,
-                     result: this._wrapObject(func.apply(object, resolvedArgs), objectGroup) };
+                     result: this._wrapObject(func.apply(object, resolvedArgs), objectGroup, sendResultByValue) };
         } catch (e) {
             return { wasThrown: true,
                      result: this._wrapObject(e, objectGroup) };
         }
     },
 
-    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI)
+    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, sendResultByValue)
     {
         try {
             return { wasThrown: false,
-                     result: this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup) };
+                     result: this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, sendResultByValue) };
         } catch (e) {
             return { wasThrown: true,
                      result: this._wrapObject(e, objectGroup) };
@@ -450,10 +450,10 @@ InjectedScript.prototype = {
 
 var injectedScript = new InjectedScript();
 
-InjectedScript.RemoteObject = function(object, objectGroupName)
+InjectedScript.RemoteObject = function(object, objectGroupName, forceValueType)
 {
     this.type = typeof object;
-    if (injectedScript.isPrimitiveValue(object) || object === null) {
+    if (injectedScript.isPrimitiveValue(object) || object === null || forceValueType) {
 
         // We don't send undefined values over JSON.
         if (typeof object !== "undefined")

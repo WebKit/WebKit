@@ -54,21 +54,23 @@ InjectedScript::InjectedScript(ScriptObject injectedScriptObject, InspectedState
 {
 }
 
-void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool sendResultByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluate");
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
+    function.appendArgument(sendResultByValue);
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const String& arguments, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const String& arguments, bool sendResultByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "callFunctionOn");
     function.appendArgument(objectId);
     function.appendArgument(expression);
     function.appendArgument(arguments);
+    function.appendArgument(sendResultByValue);
     makeEvalCall(errorString, function, result, wasThrown);
 }
 

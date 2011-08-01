@@ -230,7 +230,7 @@
                     { "name": "type", "type": "string", "enum": ["object", "function", "undefined", "string", "number", "boolean"], "description": "Object type." },
                     { "name": "subtype", "type": "string", "optional": true, "enum": ["array", "null", "node", "regexp", "date"], "description": "Object subtype hint. Specified for <code>object</code> type values only." },
                     { "name": "className", "type": "string", "optional": true, "description": "Object class (constructor) name. Specified for <code>object</code> type values only." },
-                    { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values)." },
+                    { "name": "value", "type": "any", "optional": true, "description": "Remote object value (in case of primitive values or JSON values if it was requested)." },
                     { "name": "description", "type": "string", "optional": true, "description": "String representation of the object." },
                     { "name": "objectId", "$ref": "RemoteObjectId", "optional": true, "description": "Unique object identifier (for non-primitive values)." }
                 ]
@@ -263,7 +263,8 @@
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation." },
                     { "name": "doNotPauseOnExceptions", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions. Overrides setPauseOnException state." },
-                    { "name": "frameId", "type": "string", "optional": true, "description": "Specifies in which frame to perform evaluation." }
+                    { "name": "frameId", "type": "string", "optional": true, "description": "Specifies in which frame to perform evaluation." },
+                    { "name": "sendResultByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object which should be sent by value." }
                 ],
                 "returns": [
                     { "name": "result", "$ref": "RemoteObject", "description": "Evaluation result." },
@@ -276,7 +277,8 @@
                 "parameters": [
                     { "name": "objectId", "$ref": "RemoteObjectId", "description": "Identifier of the object to call function on." },
                     { "name": "functionDeclaration", "type": "string", "description": "Declaration of the function to call." },
-                    { "name": "arguments", "type": "array", "items": { "$ref": "CallArgument", "description": "Call argument." }, "optional": true, "description": "Call arguments. All call arguments must belong to the same JavaScript world as the target object." }
+                    { "name": "arguments", "type": "array", "items": { "$ref": "CallArgument", "description": "Call argument." }, "optional": true, "description": "Call arguments. All call arguments must belong to the same JavaScript world as the target object." },
+                    { "name": "sendResultByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object which should be sent by value." }
                 ],
                 "returns": [
                     { "name": "result", "$ref": "RemoteObject", "description": "Call result." },
