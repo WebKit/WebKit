@@ -1,3 +1,15 @@
+2011-08-01  Anna Cavender  <annacc@chromium.org>
+
+        media/track tests should be skipped on all platforms until feature is fully implemented.
+        https://bugs.webkit.org/show_bug.cgi?id=65482
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Search field in designMode causes a crash

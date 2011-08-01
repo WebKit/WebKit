@@ -192,6 +192,14 @@ inspector/debugger/live-edit.html
 fast/repaint/scale-page-shrink.html
 
 # =========================================================================== #
+#       Feature not yet supported.                                            #
+# =========================================================================== #
+
+# Tests for WebVTT parser for <track>.  Feature is not yet functional.
+# https://bugs.webkit.org/show_bug.cgi?id=43668
+media/track/
+
+# =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #
 # Drag n drop support on DRT cannot work at the moment because Qt's drag'n'drop
