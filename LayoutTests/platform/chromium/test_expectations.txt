@@ -633,6 +633,7 @@ BUGWK56602 SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
 
 BUGWK60110 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
 BUGWK60110 WIN DEBUG SLOW : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
+BUGWK60110 LINUX SLOW : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
 
 BUGJAMESR WIN LINUX : inspector/styles/styles-disable-then-delete.html = TIMEOUT PASS
 
