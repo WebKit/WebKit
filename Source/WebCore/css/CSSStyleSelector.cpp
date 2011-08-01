@@ -191,11 +191,10 @@ AnimationList* list = m_style->accessAnimations(); \
 size_t childIndex = 0; \
 if (value->isValueList()) { \
     /* Walk each value and put it into an animation, creating new animations as needed. */ \
-    CSSValueList* valueList = static_cast<CSSValueList*>(value); \
-    for (unsigned int i = 0; i < valueList->length(); i++) { \
+    for (CSSValueListIterator i = value; i.hasMore(); i.advance()) { \
         if (childIndex <= list->size()) \
             list->append(Animation::create()); \
-        mapAnimation##Prop(list->animation(childIndex), valueList->itemWithoutBoundsCheck(i)); \
+        mapAnimation##Prop(list->animation(childIndex), i.value()); \
         ++childIndex; \
     } \
 } else { \
@@ -241,11 +240,10 @@ AnimationList* list = m_style->accessTransitions(); \
 size_t childIndex = 0; \
 if (value->isValueList()) { \
     /* Walk each value and put it into a transition, creating new animations as needed. */ \
-    CSSValueList* valueList = static_cast<CSSValueList*>(value); \
-    for (unsigned int i = 0; i < valueList->length(); i++) { \
+    for (CSSValueListIterator i = value; i.hasMore(); i.advance()) { \
         if (childIndex <= list->size()) \
             list->append(Animation::create()); \
-        mapAnimation##Prop(list->animation(childIndex), valueList->itemWithoutBoundsCheck(i)); \
+        mapAnimation##Prop(list->animation(childIndex), i.value()); \
         ++childIndex; \
     } \
 } else { \
@@ -4018,12 +4016,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (!value->isValueList())
             return;
 
-        CSSValueList* list = static_cast<CSSValueList*>(value);
-        int len = list->length();
-
 #if ENABLE(CSS_REGIONS)
-        if (len == 1 && list->itemWithoutBoundsCheck(0)->isPrimitiveValue()) {
-            CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(list->itemWithoutBoundsCheck(0));
+        CSSValueListInspector inspector = value;
+        if (inspector.length() == 1 && inspector.first()->isPrimitiveValue()) {
+            CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(inspector->first());
             if (contentValue->primitiveType() == CSSPrimitiveValue::CSS_FROM_FLOW) {
                 m_style->setRegionThread(contentValue->getStringValue().impl());
                 return;
@@ -4032,8 +4028,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 #endif
 
         bool didSet = false;
-        for (int i = 0; i < len; i++) {
-            CSSValue* item = list->itemWithoutBoundsCheck(i);
+        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+            CSSValue* item = i.value();
             if (item->isImageGeneratorValue()) {
                 m_style->setContent(static_cast<CSSImageGeneratorValue*>(item)->generatedImage(), didSet);
                 didSet = true;
@@ -4116,17 +4112,16 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         if (value->isValueList()) {
             CSSValueList* list = static_cast<CSSValueList*>(value);
-            size_t length = list->length();
-            QuotesData* data = QuotesData::create(length);
+            QuotesData* data = QuotesData::create(list->length());
             if (!data)
                 return; // Out of memory
             String* quotes = data->data();
-            for (size_t i = 0; i < length; i++) {
-                CSSValue* item = list->itemWithoutBoundsCheck(i);
+            for (CSSValueListIterator i = list; i.hasMore(); i.advance()) {
+                CSSValue* item = i.value();
                 ASSERT(item->isPrimitiveValue());
                 primitiveValue = static_cast<CSSPrimitiveValue*>(item);
                 ASSERT(primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_STRING);
-                quotes[i] = primitiveValue->getStringValue();
+                quotes[i.index()] = primitiveValue->getStringValue();
             }
             m_style->setQuotes(adoptRef(data));
         } else if (primitiveValue) {
@@ -4162,17 +4157,15 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (!value->isValueList())
             return;
         FontDescription fontDescription = m_style->fontDescription();
-        CSSValueList* list = static_cast<CSSValueList*>(value);
-        int len = list->length();
         FontFamily& firstFamily = fontDescription.firstFamily();
         FontFamily* currFamily = 0;
-        
+
         // Before mapping in a new font-family property, we should reset the generic family.
         bool oldFamilyUsedFixedDefaultSize = fontDescription.useFixedDefaultSize();
         fontDescription.setGenericFamily(FontDescription::NoFamily);
 
-        for (int i = 0; i < len; i++) {
-            CSSValue* item = list->itemWithoutBoundsCheck(i);
+        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+            CSSValue* item = i.value();
             if (!item->isPrimitiveValue())
                 continue;
             CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(item);
@@ -4248,11 +4241,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         } else {
             if (!value->isValueList())
                 return;
-            CSSValueList *list = static_cast<CSSValueList*>(value);
-            int len = list->length();
-            for (int i = 0; i < len; i++)
+            for (CSSValueListIterator i = value; i.hasMore(); i.advance())
             {
-                CSSValue *item = list->itemWithoutBoundsCheck(i);
+                CSSValue* item = i.value();
                 if (!item->isPrimitiveValue())
                     continue;
                 primitiveValue = static_cast<CSSPrimitiveValue*>(item);
@@ -4453,13 +4444,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (!value->isValueList())
             return;
 
-        CSSValueList *list = static_cast<CSSValueList*>(value);
-        int len = list->length();
-        for (int i = 0; i < len; i++) {
-            CSSValue* currValue = list->itemWithoutBoundsCheck(i);
+        for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
+            CSSValue* currValue = i.value();
             if (!currValue->isShadowValue())
                 continue;
-            ShadowValue* item = static_cast<ShadowValue*>(list->itemWithoutBoundsCheck(i));
+            ShadowValue* item = static_cast<ShadowValue*>(currValue);
             int x = item->x->computeLength<int>(style(), m_rootElementStyle, zoomFactor);
             int y = item->y->computeLength<int>(style(), m_rootElementStyle, zoomFactor);
             int blur = item->blur ? item->blur->computeLength<int>(style(), m_rootElementStyle, zoomFactor) : 0;
@@ -4470,9 +4459,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 color = getColorFromPrimitiveValue(item->color.get());
             OwnPtr<ShadowData> shadowData = adoptPtr(new ShadowData(x, y, blur, spread, shadowStyle, id == CSSPropertyWebkitBoxShadow, color.isValid() ? color : Color::transparent));
             if (id == CSSPropertyTextShadow)
-                m_style->setTextShadow(shadowData.release(), i /* add to the list if this is not the firsty entry */);
+                m_style->setTextShadow(shadowData.release(), i.index()); // add to the list if this is not the first entry
             else
-                m_style->setBoxShadow(shadowData.release(), i /* add to the list if this is not the firsty entry */);
+                m_style->setBoxShadow(shadowData.release(), i.index()); // add to the list if this is not the first entry
         }
         return;
     }
@@ -5285,48 +5274,43 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 void CSSStyleSelector::applyPageSizeProperty(CSSValue* value)
 {
     m_style->resetPageSizeType();
-    if (!value->isValueList())
-        return;
-    CSSValueList* valueList = static_cast<CSSValueList*>(value);
     Length width;
     Length height;
     PageSizeType pageSizeType = PAGE_SIZE_AUTO;
-    switch (valueList->length()) {
+    CSSValueListInspector inspector = value;
+    switch (inspector.length()) {
     case 2: {
         // <length>{2} | <page-size> <orientation>
         pageSizeType = PAGE_SIZE_RESOLVED;
-        if (!valueList->item(0)->isPrimitiveValue() || !valueList->item(1)->isPrimitiveValue())
+        if (!inspector.first()->isPrimitiveValue() || !inspector.second()->isPrimitiveValue())
             return;
-        CSSPrimitiveValue* primitiveValue0 = static_cast<CSSPrimitiveValue*>(valueList->item(0));
-        CSSPrimitiveValue* primitiveValue1 = static_cast<CSSPrimitiveValue*>(valueList->item(1));
-        int type0 = primitiveValue0->primitiveType();
-        int type1 = primitiveValue1->primitiveType();
-        if (CSSPrimitiveValue::isUnitTypeLength(type0)) {
+        CSSPrimitiveValue* first = static_cast<CSSPrimitiveValue*>(inspector.first());
+        CSSPrimitiveValue* second = static_cast<CSSPrimitiveValue*>(inspector.second());
+        if (first->isLength()) {
             // <length>{2}
-            if (!CSSPrimitiveValue::isUnitTypeLength(type1))
+            if (!second->isLength())
                 return;
-            width = primitiveValue0->computeLength<Length>(style(), m_rootElementStyle);
-            height = primitiveValue1->computeLength<Length>(style(), m_rootElementStyle);
+            width = first->computeLength<Length>(style(), m_rootElementStyle);
+            height = second->computeLength<Length>(style(), m_rootElementStyle);
         } else {
             // <page-size> <orientation>
             // The value order is guaranteed. See CSSParser::parseSizeParameter.
-            if (!pageSizeFromName(primitiveValue0, primitiveValue1, width, height))
+            if (!pageSizeFromName(first, second, width, height))
                 return;
         }
         break;
     }
     case 1: {
         // <length> | auto | <page-size> | [ portrait | landscape]
-        if (!valueList->item(0)->isPrimitiveValue())
+        if (!inspector.first()->isPrimitiveValue())
             return;
-        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(valueList->item(0));
-        int type = primitiveValue->primitiveType();
-        if (CSSPrimitiveValue::isUnitTypeLength(type)) {
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(inspector.first());
+        if (primitiveValue->isLength()) {
             // <length>
             pageSizeType = PAGE_SIZE_RESOLVED;
             width = height = primitiveValue->computeLength<Length>(style(), m_rootElementStyle);
         } else {
-            if (type != CSSPrimitiveValue::CSS_IDENT)
+            if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_IDENT)
                 return;
             switch (primitiveValue->getIdent()) {
             case CSSValueAuto:
@@ -6280,14 +6264,12 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
 
     float zoomFactor = style ? style->effectiveZoom() : 1;
     TransformOperations operations;
-    CSSValueList* list = static_cast<CSSValueList*>(inValue);
-    unsigned size = list->length();
-    for (unsigned i = 0; i < size; i++) {
-        CSSValue* currValue = list->itemWithoutBoundsCheck(i);
+    for (CSSValueListIterator i = inValue; i.hasMore(); i.advance()) {
+        CSSValue* currValue = i.value();
         if (!currValue->isWebKitCSSTransformValue())
             continue;
 
-        WebKitCSSTransformValue* transformValue = static_cast<WebKitCSSTransformValue*>(list->itemWithoutBoundsCheck(i));
+        WebKitCSSTransformValue* transformValue = static_cast<WebKitCSSTransformValue*>(i.value());
         if (!transformValue->length())
             continue;
 

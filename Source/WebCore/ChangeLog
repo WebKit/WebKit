@@ -1,3 +1,45 @@
+2011-08-01  Luke Macpherson   <macpherson@chromium.org>
+
+        Add iterator to CSSValueList
+        https://bugs.webkit.org/show_bug.cgi?id=65297
+
+        Reviewed by Darin Adler.
+
+        No new tests / refactoring only.
+
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::isLength):
+        Add shorthand to determine if this primitive value is a length.
+        * css/CSSStyleSelector.cpp:
+        Use CSSValueListIterator throughout.
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::applyPageSizeProperty):
+        (WebCore::CSSStyleSelector::createTransformOperations):
+        * css/CSSValueList.cpp:
+        (WebCore::CSSValueList::copy):
+        Use itemWithoutBoundsCheck() instead of item().
+        * css/CSSValueList.h:
+        Add CSSValueListIterator and CSSValueListInspector class definitions.
+        (WebCore::CSSValueList::item)
+        Provide inline definition of item.
+        (WebCore::CSSValueListIterator::CSSValueListIterator):
+        (WebCore::CSSValueListIterator::hasMore):
+        Return true if there are more values to consume, including the current value.
+        (WebCore::CSSValueListIterator::value):
+        Return the value at the current position.
+        (WebCore::CSSValueListIterator::next):
+        Move the iterator forward to the next item.
+        (WebCore::CSSValueListIterator::index):
+        Return the current position in the list.
+        (WebCore::CSSValueListInspector::item):
+        Return the item at a given index.
+        (WebCore::CSSValueListInspector::first):
+        Return the first item in the list.
+        (WebCore::CSSValueListInspector::second):
+        Return the second item in the list.
+        (WebCore::CSSValueListInspector::length):
+        Return the size of the underlying list.
+
 2011-08-01  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: group scripts by folder in the scripts selector.

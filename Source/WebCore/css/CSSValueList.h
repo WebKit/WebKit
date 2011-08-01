@@ -47,8 +47,8 @@ public:
     virtual ~CSSValueList();
 
     size_t length() const { return m_values.size(); }
-    CSSValue* item(unsigned);
-    CSSValue* itemWithoutBoundsCheck(unsigned index) { return m_values[index].get(); }
+    CSSValue* item(size_t index) { return index < m_values.size() ? m_values[index].get() : 0; }
+    CSSValue* itemWithoutBoundsCheck(size_t index) { return m_values[index].get(); }
 
     void append(PassRefPtr<CSSValue>);
     void prepend(PassRefPtr<CSSValue>);
@@ -73,6 +73,33 @@ private:
     bool m_isSpaceSeparated;
 };
 
+// Objects of this class are intended to be stack-allocated and scoped to a single function.
+// Please take care not to pass these around as they do hold onto a raw pointer.
+class CSSValueListInspector {
+public:
+    CSSValueListInspector(CSSValue* value) : m_list((value && value->isValueList()) ? static_cast<CSSValueList*>(value) : 0) { }
+    CSSValue* item(size_t index) const { ASSERT(index < length()); return m_list->itemWithoutBoundsCheck(index); }
+    CSSValue* first() const { return item(0); }
+    CSSValue* second() const { return item(1); }
+    size_t length() const { return m_list ? m_list->length() : 0; }
+private:
+    CSSValueList* m_list;
+};
+
+// Wrapper that can be used to iterate over any CSSValue. Non-list values and 0 behave as zero-length lists.
+// Objects of this class are intended to be stack-allocated and scoped to a single function.
+// Please take care not to pass these around as they do hold onto a raw pointer.
+class CSSValueListIterator {
+public:
+    CSSValueListIterator(CSSValue* value) : m_inspector(value), m_position(0) { }
+    bool hasMore() const { return m_position < m_inspector.length(); }
+    CSSValue* value() const { return m_inspector.item(m_position); }
+    void advance() { m_position++; ASSERT(m_position <= m_inspector.length());}
+    size_t index() const { return m_position; }
+private:
+    CSSValueListInspector m_inspector;
+    size_t m_position;
+};
 } // namespace WebCore
 
 #endif // CSSValueList_h

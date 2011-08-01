@@ -46,13 +46,6 @@ CSSValueList::~CSSValueList()
 {
 }
 
-CSSValue* CSSValueList::item(unsigned index)
-{
-    if (index >= m_values.size())
-        return 0;
-    return m_values[index].get();
-}
-
 unsigned short CSSValueList::cssValueType() const
 {
     return CSS_VALUE_LIST;
@@ -98,7 +91,7 @@ PassRefPtr<CSSValueList> CSSValueList::copy()
 {
     PassRefPtr<CSSValueList> newList = m_isSpaceSeparated ? createSpaceSeparated() : createCommaSeparated();
     for (size_t index = 0; index < m_values.size(); index++)
-        newList->append(item(index));
+        newList->append(m_values[index]);
     return newList;
 }
 
