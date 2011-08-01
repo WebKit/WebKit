@@ -1,3 +1,49 @@
+2011-08-01  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Rename SocketStreamHandleClient member functions
+        https://bugs.webkit.org/show_bug.cgi?id=65374
+
+        Reviewed by Kent Tamura.
+
+        Rename SocketStreamHandleClient member functions to avoid conflict of the names of
+        FileReaderLoaderClient functions.
+
+        No change in behavior, thus no new tests are added.
+
+        * platform/network/SocketStreamHandleClient.h:
+        (WebCore::SocketStreamHandleClient::didOpenSocketStream):
+        (WebCore::SocketStreamHandleClient::didCloseSocketStream):
+        (WebCore::SocketStreamHandleClient::didReceiveSocketStreamData):
+        (WebCore::SocketStreamHandleClient::didFailSocketStream):
+        * platform/network/brew/SocketStreamHandleBrew.cpp:
+        (WebCore::SocketStreamHandlePrivate::socketConnected):
+        (WebCore::SocketStreamHandlePrivate::socketReadyRead):
+        (WebCore::SocketStreamHandlePrivate::socketClosed):
+        (WebCore::SocketStreamHandlePrivate::socketError):
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::addCONNECTCredentials):
+        (WebCore::SocketStreamHandle::readStreamCallback):
+        (WebCore::SocketStreamHandle::writeStreamCallback):
+        (WebCore::SocketStreamHandle::reportErrorToClient):
+        (WebCore::SocketStreamHandle::platformClose):
+        * platform/network/qt/SocketStreamHandleQt.cpp:
+        (WebCore::SocketStreamHandlePrivate::socketConnected):
+        (WebCore::SocketStreamHandlePrivate::socketReadyRead):
+        (WebCore::SocketStreamHandlePrivate::socketClosedCallback):
+        (WebCore::SocketStreamHandlePrivate::socketErrorCallback):
+        * platform/network/soup/SocketStreamHandleSoup.cpp:
+        (WebCore::SocketStreamHandle::connected):
+        (WebCore::SocketStreamHandle::readBytes):
+        (WebCore::SocketStreamHandle::platformSend):
+        (WebCore::SocketStreamHandle::platformClose):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didOpenSocketStream):
+        (WebCore::WebSocketChannel::didCloseSocketStream):
+        (WebCore::WebSocketChannel::didReceiveSocketStreamData):
+        (WebCore::WebSocketChannel::didFailSocketStream):
+        (WebCore::WebSocketChannel::resumeTimerFired):
+        * websockets/WebSocketChannel.h:
+
 2011-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92094.

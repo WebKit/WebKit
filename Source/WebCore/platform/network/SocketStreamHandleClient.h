@@ -43,11 +43,11 @@ namespace WebCore {
     public:
         virtual ~SocketStreamHandleClient() { }
 
-        virtual void didOpen(SocketStreamHandle*) { }
-        virtual void didClose(SocketStreamHandle*) { }
-        virtual void didReceiveData(SocketStreamHandle*, const char* /*data*/, int /*length*/) { }
+        virtual void didOpenSocketStream(SocketStreamHandle*) { }
+        virtual void didCloseSocketStream(SocketStreamHandle*) { }
+        virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char* /*data*/, int /*length*/) { }
 
-        virtual void didFail(SocketStreamHandle*, const SocketStreamError&) { }
+        virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&) { }
 
         // No authentication for streams per se, but proxy may ask for credentials.
         virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&) { }

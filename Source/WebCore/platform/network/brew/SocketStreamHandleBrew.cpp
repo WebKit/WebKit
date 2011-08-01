@@ -113,7 +113,7 @@ void SocketStreamHandlePrivate::socketConnected()
 {
     if (m_streamHandle && m_streamHandle->client()) {
         m_streamHandle->m_state = SocketStreamHandleBase::Open;
-        m_streamHandle->client()->didOpen(m_streamHandle);
+        m_streamHandle->client()->didOpenSocketStream(m_streamHandle);
     }
 
     ISOCKET_Readable(m_socket.get(), socketReadableCallback, this);
@@ -130,7 +130,7 @@ void SocketStreamHandlePrivate::socketReadyRead()
             return;
         }
 
-        m_streamHandle->client()->didReceiveData(m_streamHandle, buffer.data(), readSize);
+        m_streamHandle->client()->didReceiveSocketStreamData(m_streamHandle, buffer.data(), readSize);
     }
 
     ISOCKET_Readable(m_socket.get(), socketReadableCallback, this);
@@ -166,7 +166,7 @@ void SocketStreamHandlePrivate::socketClosed()
         SocketStreamHandle* streamHandle = m_streamHandle;
         m_streamHandle = 0;
         // This following call deletes _this_. Nothing should be after it.
-        streamHandle->client()->didClose(streamHandle);
+        streamHandle->client()->didCloseSocketStream(streamHandle);
     }
 }
 
@@ -177,7 +177,7 @@ void SocketStreamHandlePrivate::socketError(int error)
         SocketStreamHandle* streamHandle = m_streamHandle;
         m_streamHandle = 0;
         // This following call deletes _this_. Nothing should be after it.
-        streamHandle->client()->didClose(streamHandle);
+        streamHandle->client()->didCloseSocketStream(streamHandle);
     }
 }
 

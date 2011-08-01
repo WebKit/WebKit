@@ -65,10 +65,11 @@ namespace WebCore {
         virtual void suspend();
         virtual void resume();
 
-        virtual void didOpen(SocketStreamHandle*);
-        virtual void didClose(SocketStreamHandle*);
-        virtual void didReceiveData(SocketStreamHandle*, const char*, int);
-        virtual void didFail(SocketStreamHandle*, const SocketStreamError&);
+        // SocketStreamHandleClient functions.
+        virtual void didOpenSocketStream(SocketStreamHandle*);
+        virtual void didCloseSocketStream(SocketStreamHandle*);
+        virtual void didReceiveSocketStreamData(SocketStreamHandle*, const char*, int);
+        virtual void didFailSocketStream(SocketStreamHandle*, const SocketStreamError&);
         virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
         virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
 

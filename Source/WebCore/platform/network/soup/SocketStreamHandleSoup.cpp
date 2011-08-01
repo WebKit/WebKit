@@ -102,7 +102,7 @@ SocketStreamHandle::~SocketStreamHandle()
 void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* error)
 {
     if (error) {
-        m_client->didFail(this, SocketStreamError(error->code));
+        m_client->didFailSocketStream(this, SocketStreamError(error->code));
         return;
     }
 
@@ -117,7 +117,7 @@ void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* 
     // The client can close the handle, potentially removing the last reference.
     RefPtr<SocketStreamHandle> protect(this); 
     m_state = Open;
-    m_client->didOpen(this);
+    m_client->didOpenSocketStream(this);
     if (!m_socketConnection) // Client closed the connection.
         return;
 }
@@ -125,7 +125,7 @@ void SocketStreamHandle::connected(GSocketConnection* socketConnection, GError* 
 void SocketStreamHandle::readBytes(signed long bytesRead, GError* error)
 {
     if (error) {
-        m_client->didFail(this, SocketStreamError(error->code));
+        m_client->didFailSocketStream(this, SocketStreamError(error->code));
         return;
     }
 
@@ -136,7 +136,7 @@ void SocketStreamHandle::readBytes(signed long bytesRead, GError* error)
 
     // The client can close the handle, potentially removing the last reference.
     RefPtr<SocketStreamHandle> protect(this); 
-    m_client->didReceiveData(this, m_readBuffer, bytesRead);
+    m_client->didReceiveSocketStreamData(this, m_readBuffer, bytesRead);
     if (m_inputStream) // The client may have closed the connection.
         g_input_stream_read_async(m_inputStream.get(), m_readBuffer, READ_BUFFER_SIZE, G_PRIORITY_DEFAULT, 0,
             reinterpret_cast<GAsyncReadyCallback>(readReadyCallback), m_id);
@@ -163,7 +163,7 @@ int SocketStreamHandle::platformSend(const char* data, int length)
     GOwnPtr<GError> error;
     gssize written = g_pollable_output_stream_write_nonblocking(m_outputStream.get(), data, length, 0, &error.outPtr());
     if (error && !g_error_matches(error.get(), G_IO_ERROR, G_IO_ERROR_WOULD_BLOCK)) {
-        m_client->didFail(this, SocketStreamError(error->code)); // FIXME: Provide a sensible error.
+        m_client->didFailSocketStream(this, SocketStreamError(error->code)); // FIXME: Provide a sensible error.
         return 0;
     }
 
@@ -185,7 +185,7 @@ void SocketStreamHandle::platformClose()
         GOwnPtr<GError> error;
         g_io_stream_close(G_IO_STREAM(m_socketConnection.get()), 0, &error.outPtr());
         if (error)
-            m_client->didFail(this, SocketStreamError(error->code)); // FIXME: Provide a sensible error.
+            m_client->didFailSocketStream(this, SocketStreamError(error->code)); // FIXME: Provide a sensible error.
         m_socketConnection = 0;
     }
 
@@ -193,7 +193,7 @@ void SocketStreamHandle::platformClose()
     m_inputStream = 0;
     delete m_readBuffer;
 
-    m_client->didClose(this);
+    m_client->didCloseSocketStream(this);
 }
 
 void SocketStreamHandle::didReceiveAuthenticationChallenge(const AuthenticationChallenge&)

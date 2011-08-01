@@ -1,3 +1,16 @@
+2011-08-01  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Rename SocketStreamHandleClient member functions
+        https://bugs.webkit.org/show_bug.cgi?id=65374
+
+        Reviewed by Kent Tamura.
+
+        * src/SocketStreamHandle.cpp:
+        (WebCore::SocketStreamHandleInternal::didOpenStream):
+        (WebCore::SocketStreamHandleInternal::didReceiveData):
+        (WebCore::SocketStreamHandleInternal::didClose):
+        (WebCore::SocketStreamHandleInternal::didFail):
+
 2011-07-31  Bill Budge  <bbudge@chromium.org>
 
         [Chromium] Remove the parameterless WebFrame::createAssociatedURLLoader

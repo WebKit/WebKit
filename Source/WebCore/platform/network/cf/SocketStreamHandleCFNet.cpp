@@ -329,7 +329,7 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
 
     if (!CFHTTPAuthenticationRequiresUserNameAndPassword(authentication.get())) {
         // That's all we can offer...
-        m_client->didFail(this, SocketStreamError()); // FIXME: Provide a sensible error.
+        m_client->didFailSocketStream(this, SocketStreamError()); // FIXME: Provide a sensible error.
         return;
     }
 
@@ -354,7 +354,7 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
 
         if (!proxyAuthorizationString) {
             // Fails e.g. for NTLM auth.
-            m_client->didFail(this, SocketStreamError()); // FIXME: Provide a sensible error.
+            m_client->didFailSocketStream(this, SocketStreamError()); // FIXME: Provide a sensible error.
             return;
         }
 
@@ -366,7 +366,7 @@ void SocketStreamHandle::addCONNECTCredentials(CFHTTPMessageRef proxyResponse)
 
     // FIXME: Ask the client if credentials could not be found.
 
-    m_client->didFail(this, SocketStreamError()); // FIXME: Provide a sensible error.
+    m_client->didFailSocketStream(this, SocketStreamError()); // FIXME: Provide a sensible error.
 }
 
 CFStringRef SocketStreamHandle::copyCFStreamDescription(void* info)
@@ -445,7 +445,7 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
             m_state = Open;
 
             RefPtr<SocketStreamHandle> protect(this); // The client can close the handle, potentially removing the last reference.
-            m_client->didOpen(this);
+            m_client->didOpenSocketStream(this);
             if (m_state == Closed)
                 break;
             // Fall through.
@@ -463,7 +463,7 @@ void SocketStreamHandle::readStreamCallback(CFStreamEventType type)
             ptr = localBuffer;
         }
 
-        m_client->didReceiveData(this, reinterpret_cast<const char*>(ptr), length);
+        m_client->didReceiveSocketStreamData(this, reinterpret_cast<const char*>(ptr), length);
 
         break;
     }
@@ -504,7 +504,7 @@ void SocketStreamHandle::writeStreamCallback(CFStreamEventType type)
             m_state = Open;
 
             RefPtr<SocketStreamHandle> protect(this); // The client can close the handle, potentially removing the last reference.
-            m_client->didOpen(this);
+            m_client->didOpenSocketStream(this);
             break;
         }
 
@@ -543,7 +543,7 @@ void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
         description = String(descriptionCF.get());
     }
 
-    m_client->didFail(this, SocketStreamError(static_cast<int>(errorCode), m_url.string(), description));
+    m_client->didFailSocketStream(this, SocketStreamError(static_cast<int>(errorCode), m_url.string(), description));
 }
 
 SocketStreamHandle::~SocketStreamHandle()
@@ -571,7 +571,7 @@ void SocketStreamHandle::platformClose()
     ASSERT(!m_readStream == !m_writeStream);
     if (!m_readStream) {
         if (m_connectingSubstate == New || m_connectingSubstate == ExecutingPACFile)
-            m_client->didClose(this);
+            m_client->didCloseSocketStream(this);
         return;
     }
 
@@ -589,7 +589,7 @@ void SocketStreamHandle::platformClose()
     m_readStream = 0;
     m_writeStream = 0;
 
-    m_client->didClose(this);
+    m_client->didCloseSocketStream(this);
 }
 
 void SocketStreamHandle::receivedCredential(const AuthenticationChallenge&, const Credential&)

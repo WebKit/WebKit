@@ -130,7 +130,7 @@ void SocketStreamHandleInternal::didOpenStream(WebSocketStreamHandle* socketHand
         m_maxPendingSendAllowed = maxPendingSendAllowed;
         m_handle->m_state = SocketStreamHandleBase::Open;
         if (m_handle->m_client) {
-            m_handle->m_client->didOpen(m_handle);
+            m_handle->m_client->didOpenSocketStream(m_handle);
             return;
         }
     }
@@ -155,7 +155,7 @@ void SocketStreamHandleInternal::didReceiveData(WebSocketStreamHandle* socketHan
     if (m_handle && m_socket.get()) {
         ASSERT(socketHandle == m_socket.get());
         if (m_handle->m_client)
-            m_handle->m_client->didReceiveData(m_handle, data.data(), data.size());
+            m_handle->m_client->didReceiveSocketStreamData(m_handle, data.data(), data.size());
     }
 }
 
@@ -168,7 +168,7 @@ void SocketStreamHandleInternal::didClose(WebSocketStreamHandle* socketHandle)
         SocketStreamHandle* h = m_handle;
         m_handle = 0;
         if (h->m_client)
-            h->m_client->didClose(h);
+            h->m_client->didCloseSocketStream(h);
     }
 }
 
@@ -181,7 +181,7 @@ void SocketStreamHandleInternal::didFail(WebSocketStreamHandle* socketHandle, co
         SocketStreamHandle* h = m_handle;
         m_handle = 0;
         if (h->m_client)
-            h->m_client->didClose(h);  // didFail(h, err);
+            h->m_client->didCloseSocketStream(h); // didFail(h, err);
     }
 }
 

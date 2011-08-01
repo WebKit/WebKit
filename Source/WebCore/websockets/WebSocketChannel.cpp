@@ -203,9 +203,9 @@ void WebSocketChannel::resume()
         m_resumeTimer.startOneShot(0);
 }
 
-void WebSocketChannel::didOpen(SocketStreamHandle* handle)
+void WebSocketChannel::didOpenSocketStream(SocketStreamHandle* handle)
 {
-    LOG(Network, "WebSocketChannel %p didOpen", this);
+    LOG(Network, "WebSocketChannel %p didOpenSocketStream", this);
     ASSERT(handle == m_handle);
     if (!m_context)
         return;
@@ -216,9 +216,9 @@ void WebSocketChannel::didOpen(SocketStreamHandle* handle)
         fail("Failed to send WebSocket handshake.");
 }
 
-void WebSocketChannel::didClose(SocketStreamHandle* handle)
+void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
 {
-    LOG(Network, "WebSocketChannel %p didClose", this);
+    LOG(Network, "WebSocketChannel %p didCloseSocketStream", this);
     if (m_identifier && m_context)
         InspectorInstrumentation::didCloseWebSocket(m_context, m_identifier);
     ASSERT_UNUSED(handle, handle == m_handle || !m_handle);
@@ -239,9 +239,9 @@ void WebSocketChannel::didClose(SocketStreamHandle* handle)
     deref();
 }
 
-void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* data, int len)
+void WebSocketChannel::didReceiveSocketStreamData(SocketStreamHandle* handle, const char* data, int len)
 {
-    LOG(Network, "WebSocketChannel %p didReceiveData %d", this, len);
+    LOG(Network, "WebSocketChannel %p didReceiveSocketStreamData %d", this, len);
     RefPtr<WebSocketChannel> protect(this); // The client can close the channel, potentially removing the last reference.
     ASSERT(handle == m_handle);
     if (!m_context) {
@@ -268,9 +268,9 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
             break;
 }
 
-void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamError& error)
+void WebSocketChannel::didFailSocketStream(SocketStreamHandle* handle, const SocketStreamError& error)
 {
-    LOG(Network, "WebSocketChannel %p didFail", this);
+    LOG(Network, "WebSocketChannel %p didFailSocketStream", this);
     ASSERT(handle == m_handle || !m_handle);
     if (m_context) {
         String message;
@@ -395,7 +395,7 @@ void WebSocketChannel::resumeTimerFired(Timer<WebSocketChannel>* timer)
         if (!processBuffer())
             break;
     if (!m_suspended && m_client && m_closed && m_handle)
-        didClose(m_handle.get());
+        didCloseSocketStream(m_handle.get());
 }
 
 void WebSocketChannel::startClosingHandshake()
