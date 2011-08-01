@@ -26,15 +26,18 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+namespace WebCore {
+
+OpenGLFunctionTable* openGLFunctionTable()
+{
+    static OpenGLFunctionTable table;
+    return &table;
+}
+
 #if PLATFORM(QT) && defined(QT_OPENGL_ES_2)
 #define ASSIGN_FUNCTION_TABLE_ENTRY(FunctionName, success) \
     openGLFunctionTable()->FunctionName = ::FunctionName
 #else
-#define ASSIGN_FUNCTION_TABLE_ENTRY(FunctionName, success) \
-    openGLFunctionTable()->FunctionName = reinterpret_cast<FunctionName##Type>(lookupOpenGLFunctionAddress(#FunctionName, success))
-#endif
-
-namespace WebCore {
 
 #if PLATFORM(QT)
 static void* getProcAddress(const char* procName)
@@ -86,11 +89,9 @@ static void* lookupOpenGLFunctionAddress(const char* functionName, bool& success
     return target;
 }
 
-OpenGLFunctionTable* openGLFunctionTable()
-{
-    static OpenGLFunctionTable table;
-    return &table;
-}
+#define ASSIGN_FUNCTION_TABLE_ENTRY(FunctionName, success) \
+    openGLFunctionTable()->FunctionName = reinterpret_cast<FunctionName##Type>(lookupOpenGLFunctionAddress(#FunctionName, success))
+#endif
 
 bool initializeOpenGLShims()
 {
@@ -110,7 +111,17 @@ bool initializeOpenGLShims()
     ASSIGN_FUNCTION_TABLE_ENTRY(glBlendEquation, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glBlendEquationSeparate, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glBlendFuncSeparate, success);
+#if defined(GL_ES_VERSION_2_0)
+
+#if defined(GL_ANGLE_framebuffer_blit)
+    openGLFunctionTable()->glBlitFramebuffer = ::GL_ANGLE_framebuffer_blit;
+#else
+    openGLFunctionTable()->glBlitFramebuffer = 0;
+#endif
+
+#else
     ASSIGN_FUNCTION_TABLE_ENTRY(glBlitFramebuffer, success);
+#endif
     ASSIGN_FUNCTION_TABLE_ENTRY(glBufferData, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glBufferSubData, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glCheckFramebufferStatus, success);
@@ -156,7 +167,19 @@ bool initializeOpenGLShims()
     ASSIGN_FUNCTION_TABLE_ENTRY(glIsShader, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glLinkProgram, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glRenderbufferStorage, success);
+#if defined(GL_ES_VERSION_2_0)
+
+#if defined(GL_APPLE_framebuffer_multisample)
+    openGLFunctionTable()->glRenderbufferStorageMultisample = ::glRenderbufferStorageMultisampleAPPLE;
+#elif defined(GL_ANGLE_framebuffer_multisample)
+    openGLFunctionTable()->glRenderbufferStorageMultisample = ::glRenderbufferStorageMultisampleANGLE;
+#else
+    openGLFunctionTable()->glRenderbufferStorageMultisample = 0;
+#endif
+
+#else
     ASSIGN_FUNCTION_TABLE_ENTRY(glRenderbufferStorageMultisample, success);
+#endif
     ASSIGN_FUNCTION_TABLE_ENTRY(glSampleCoverage, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glShaderSource, success);
     ASSIGN_FUNCTION_TABLE_ENTRY(glStencilFuncSeparate, success);

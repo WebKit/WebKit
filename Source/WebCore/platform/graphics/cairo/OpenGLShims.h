@@ -23,6 +23,11 @@
 #include <GL/gl.h>
 #endif
 
+#if defined(GL_ES_VERSION_2_0)
+// Some openGL ES systems miss this typedef.
+typedef char GLchar;
+#endif
+
 typedef struct _OpenGLFunctionTable OpenGLFunctionTable;
 
 namespace WebCore {

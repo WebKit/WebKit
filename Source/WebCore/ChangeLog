@@ -1,3 +1,22 @@
+2011-08-01  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt] OpenGLShims does not build on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=65465
+
+        Reviewed by Noam Rosenthal.
+
+        Fix the build with OpenGL ES 2:
+        -lookupOpenGLFunctionAddress() was defined but not used for OpenGL ES.
+        -glBlitFramebuffer() and glRenderbufferStorageMultisample() are not part of the specification.
+        When those are available as platform extension, the extension has been added.
+        -GLchar is not defined on some platform. The patch adds the same typedef as the official definition
+        to avoid conflicts.
+
+        * platform/graphics/cairo/OpenGLShims.cpp:
+        (lookupOpenGLFunctionAddress):
+        (WebCore::initializeOpenGLShims):
+        * platform/graphics/cairo/OpenGLShims.h:
+
 2011-08-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Trivial fix for inspector/debugger/debugger-completions-on-call-frame.html after r92122.
