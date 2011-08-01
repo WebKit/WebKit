@@ -3735,3 +3735,5 @@ BUGWK65295 WIN LINUX : fast/layers/self-painting-outline.html = IMAGE
 BUGWK65366 : fast/js/parseInt.html = TEXT
 
 BUGCR91061 LINUX DEBUG : fast/text/regional-indicator-symobls.html = TIMEOUT
+
+BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE

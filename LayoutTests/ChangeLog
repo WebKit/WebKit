@@ -1,3 +1,14 @@
+2011-08-01  Tony Gentilcore  <tonyg@chromium.org>
+
+        [chromium] fast/css/outline-auto-empty-rects.html broken by r92059
+        https://bugs.webkit.org/show_bug.cgi?id=65453
+
+        This patch just expects the test to fail for now.
+
+        Unreviewed expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-01  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: group scripts by folder in the scripts selector.
