@@ -1644,6 +1644,7 @@ WebInspector.MIMETypes = {
     "application/javascript":      {4: true},
     "application/ecmascript":      {4: true},
     "application/x-javascript":    {4: true},
+    "application/json":            {4: true},
     "text/javascript1.1":          {4: true},
     "text/javascript1.2":          {4: true},
     "text/javascript1.3":          {4: true},

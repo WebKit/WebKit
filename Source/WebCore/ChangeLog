@@ -1,3 +1,17 @@
+2011-08-01  Adam Barth  <abarth@webkit.org>
+
+        application/json MIME type shouldn't cause warnings in <script> tags
+        https://bugs.webkit.org/show_bug.cgi?id=65448
+
+        Reviewed by Pavel Feldman.
+
+        This patch stops the web inspector from logging a ton of spam warnings
+        when a web page uses a JSONP service (which points script tags at
+        application/json resources).
+
+        * inspector/front-end/inspector.js:
+        (WebInspector.reset):
+
 2011-08-01  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Rename SocketStreamHandleClient member functions
