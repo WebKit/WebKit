@@ -81,6 +81,7 @@ namespace JSC {
         // [ 8, 16... 128 )
         static const size_t preciseStep = MarkedBlock::atomSize;
         static const size_t preciseCutoff = 128;
+        static const size_t maximumPreciseAllocationSize = preciseCutoff - preciseStep;
         static const size_t preciseCount = preciseCutoff / preciseStep - 1;
 
         // [ 128, 256... 1024 )
@@ -113,7 +114,7 @@ namespace JSC {
     inline NewSpace::SizeClass& NewSpace::sizeClassFor(size_t bytes)
     {
         ASSERT(bytes && bytes < maxCellSize);
-        if (bytes < preciseCutoff)
+        if (bytes <= maximumPreciseAllocationSize)
             return m_preciseSizeClasses[(bytes - 1) / preciseStep];
         return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
     }

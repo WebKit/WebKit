@@ -1,3 +1,29 @@
+2011-08-01  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r92092): Build fails on 64 bit
+        https://bugs.webkit.org/show_bug.cgi?id=65458
+
+        Reviewed by Oliver Hunt.
+        
+        The build was broken because some compilers were smart enough to see
+        an array index out of bounds due to the decision fuction for when to
+        go from precise size classes to imprecise size classes being broken:
+        it would assume that sizes in the range 97..128 belonged to a precise
+        size class when in fact they belonged to an imprecise one.
+        
+        In fact, the code would have run correctly, by way of a fluke, because
+        though the 4th precise size class (for 97..128) didn't exist, the next
+        array over from m_preciseSizeClasses was m_impreciseSizeClasses, and
+        its first entry would have been a size class that is appropriate for
+        allocations in the range 97..128.  However, this relies on specific
+        ordering of fields in NewSpace, so it's still a bug.
+        
+        This fixes the bug by ensuring that allocations larger than 96 use
+        the imprecise size classes.
+
+        * heap/NewSpace.h:
+        (JSC::NewSpace::sizeClassFor):
+
 2011-07-31  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64679
