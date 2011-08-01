@@ -1,3 +1,21 @@
+2011-08-01  Chris Rogers  <crogers@google.com>
+
+        Add audionode.html and gain.html web audio layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=65276
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/audionode-expected.txt: Added.
+        * webaudio/audionode.html: Added.
+        * webaudio/gain-expected.wav: Added.
+        * webaudio/gain.html: Added.
+        * webaudio/resources/buffer-loader.js: Added.
+        (BufferLoader):
+        (BufferLoader.prototype.loadBuffer.request.onload):
+        (BufferLoader.prototype.loadBuffer.request.onerror):
+        (BufferLoader.prototype.loadBuffer):
+        (BufferLoader.prototype.load):
+
 2011-08-01  Scott Graham  <scottmg@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=61006
