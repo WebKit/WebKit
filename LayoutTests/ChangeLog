@@ -1,3 +1,12 @@
+2011-08-01  Chris Rogers  <crogers@google.com>
+
+        One more test_expectations.txt fix for windows web audio
+        https://bugs.webkit.org/show_bug.cgi?id=65496
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-01  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rolling out r92022.
