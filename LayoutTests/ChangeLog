@@ -1,3 +1,14 @@
+2011-08-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r92127.
+
+        * platform/qt-4.8/css2.1/t0602-c13-inh-underlin-00-e-expected.png: Added.
+        * platform/qt-4.8/css2.1/t0602-c13-inh-underlin-00-e-expected.txt: Added.
+        * platform/qt-4.8/editing/selection/4397952-expected.png: Added.
+        * platform/qt-4.8/editing/selection/4397952-expected.txt: Added.
+        * platform/qt-mac/Skipped: Skip failing tests.
+        * platform/qt-wk2/Skipped: Skip failing tests.
+
 2011-08-01  Anders Carlsson  <andersca@apple.com>
 
         Add fast/forms/selection-direction.html to the Skipped list.

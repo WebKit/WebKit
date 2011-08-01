@@ -1,0 +1,25 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 4 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 611x22
+          text run at (0,0) width 284: "This tests caret movement across buttons. "
+          text run at (284,0) width 327: "The caret should be just after the second button."
+      RenderBlock {DIV} at (0,38) size 784x37
+        RenderButton {INPUT} at (2,2) size 40x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 28x21
+            RenderText at (0,0) size 28x21
+              text run at (0,0) width 28: "Foo"
+        RenderButton {INPUT} at (46,2) size 40x33 [bgcolor=#C0C0C0]
+          RenderBlock (anonymous) at (6,6) size 28x21
+            RenderText at (0,0) size 28x21
+              text run at (0,0) width 28: "Bar"
+        RenderText {#text} at (0,0) size 0x0
+caret: position 1 of child 2 {INPUT} of child 2 {DIV} of body
