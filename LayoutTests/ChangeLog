@@ -1,3 +1,19 @@
+2011-08-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        REGRESSION (r92048): svg/custom/external-paintserver-reference.svg, svg/custom/linking-base-external-reference.xhtml failing on SnowLeopard Intel Release (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=65432
+
+        Revert accidentally committed changes, and update Qt specific expected results.
+
+        * platform/qt/svg/custom/external-paintserver-reference-expected.png: Copied from LayoutTests/svg/custom/external-paintserver-reference-expected.png.
+        * platform/qt/svg/custom/external-paintserver-reference-expected.txt: Copied from LayoutTests/svg/custom/external-paintserver-reference-expected.txt.
+        * platform/qt/svg/custom/linking-base-external-reference-expected.png: Copied from LayoutTests/svg/custom/linking-base-external-reference-expected.png.
+        * platform/qt/svg/custom/linking-base-external-reference-expected.txt: Copied from LayoutTests/svg/custom/linking-base-external-reference-expected.txt.
+        * svg/custom/external-paintserver-reference-expected.png: Revert r92048.
+        * svg/custom/external-paintserver-reference-expected.txt: Revert r92048.
+        * svg/custom/linking-base-external-reference-expected.png: Revert r92048.
+        * svg/custom/linking-base-external-reference-expected.txt: Revert r92048.
+
 2011-08-01  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: unflake inspector test that was just added.
