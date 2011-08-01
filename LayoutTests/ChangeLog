@@ -1,5 +1,20 @@
 2011-07-31  Adam Barth  <abarth@webkit.org>
 
+        Adding expected results.  These results appear to differ only in the scrollbar.
+
+        * platform/chromium-linux/svg/custom/external-paintserver-reference-expected.png: Added.
+        * platform/chromium-linux/svg/custom/linking-base-external-reference-expected.png: Added.
+        * platform/chromium-mac/svg/custom/external-paintserver-reference-expected.png: Added.
+        * platform/chromium-mac/svg/custom/external-paintserver-reference-expected.txt: Added.
+        * platform/chromium-mac/svg/custom/linking-base-external-reference-expected.png: Added.
+        * platform/chromium-mac/svg/custom/linking-base-external-reference-expected.txt: Added.
+        * platform/chromium-win/svg/custom/external-paintserver-reference-expected.png: Added.
+        * platform/chromium-win/svg/custom/external-paintserver-reference-expected.txt: Added.
+        * platform/chromium-win/svg/custom/linking-base-external-reference-expected.png: Added.
+        * platform/chromium-win/svg/custom/linking-base-external-reference-expected.txt: Added.
+
+2011-07-31  Adam Barth  <abarth@webkit.org>
+
         Update baseline.  This patch might cause Linux to start failing, but in
         that case, we can add a more specific Linux result.  This approach is
         somewhat of an exploration of this automated rebaselining algorithm.
