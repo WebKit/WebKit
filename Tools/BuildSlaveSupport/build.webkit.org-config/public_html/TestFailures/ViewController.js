@@ -23,9 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function ViewController(buildbot, bugzilla) {
+function ViewController(buildbot) {
     this._buildbot = buildbot;
-    this._bugzilla = bugzilla;
     this._navigationID = 0;
 
     var self = this;
@@ -103,7 +102,7 @@ ViewController.prototype = {
                 item.appendChild(self._domForRegressionRange(builder, buildName, passingBuildName, failingTestNames));
 
                 if (passingBuildName || !stillFetchingData) {
-                    var bugForm = new FailingTestsBugForm(self._bugzilla, builder, buildName, passingBuildName, failingTestNames);
+                    var bugForm = new FailingTestsBugForm(builder, buildName, passingBuildName, failingTestNames);
                     item.appendChild(self._domForNewAndExistingBugs(builder, failingTestNames, bugForm))
                 }
             });
@@ -244,9 +243,6 @@ ViewController.prototype = {
     },
 
     _domForAuxiliaryUIElements: function() {
-        if (!this._bugzilla)
-            return document.createDocumentFragment();
-
         var aside = document.createElement('aside');
         aside.appendChild(document.createTextNode('Something not working? Have an idea to improve this page? '));
         var link = document.createElement('a');
@@ -261,7 +257,7 @@ ViewController.prototype = {
             cc: 'aroben@apple.com',
             short_desc: 'TestFailures page needs more unicorns!',
         };
-        link.href = addQueryParametersToURL(this._bugzilla.baseURL + 'enter_bug.cgi', queryParameters);
+        link.href = addQueryParametersToURL(config.kBugzillaURL + 'enter_bug.cgi', queryParameters);
         link.target = '_blank';
 
         return aside;
@@ -327,9 +323,6 @@ ViewController.prototype = {
     _domForNewAndExistingBugs: function(tester, failingTests, bugForm) {
         var result = document.createDocumentFragment();
 
-        if (!this._bugzilla)
-            return result;
-
         var container = document.createElement('p');
         result.appendChild(container);
 
@@ -340,7 +333,7 @@ ViewController.prototype = {
 
         bugsContainer.appendChild(document.createTextNode('Searching for bugs related to ' + (failingTests.length > 1 ? 'these tests' : 'this test') + '\u2026'));
 
-        this._bugzilla.quickSearch('ALL ' + failingTests.join('|'), function(bugs) {
+        bugzilla.quickSearch('ALL ' + failingTests.join('|'), function(bugs) {
             if (!bugs.length) {
                 bugsContainer.parentNode.removeChild(bugsContainer);
                 return;
@@ -367,8 +360,8 @@ ViewController.prototype = {
                 return item;
             }
 
-            var openBugs = bugs.filter(function(bug) { return Bugzilla.isOpenStatus(bug.status) });
-            var closedBugs = bugs.filter(function(bug) { return !Bugzilla.isOpenStatus(bug.status) });
+            var openBugs = bugs.filter(function(bug) { return bugzilla.isOpenStatus(bug.status) });
+            var closedBugs = bugs.filter(function(bug) { return !bugzilla.isOpenStatus(bug.status) });
 
             list.appendChildren(openBugs.map(bugToListItem));
 
@@ -454,7 +447,7 @@ ViewController.prototype = {
                     }));
 
                     var failingBuildNames = failures.map(function(historyItem) { return historyItem.build });
-                    var bugForm = new FlakyTestBugForm(self._bugzilla, builder, failingBuildNames, testName, allBuilds.last(), allBuilds[0], allBuilds.length);
+                    var bugForm = new FlakyTestBugForm(builder, failingBuildNames, testName, allBuilds.last(), allBuilds[0], allBuilds.length);
                     container.appendChild(self._domForNewAndExistingBugs(builder, [testName], bugForm));
                 }
             });

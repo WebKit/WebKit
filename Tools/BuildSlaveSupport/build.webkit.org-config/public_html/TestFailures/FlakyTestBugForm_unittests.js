@@ -28,9 +28,6 @@
 module('FlakyTestBugForm');
 
 function createTestForm(failingBuildNames, failingTest, oldestAnalyzedBuild, newestAnalyzedBuild, analyzedBuildCount) {
-    var mockBugzilla = {};
-    mockBugzilla.baseURL = '[BUGZILLA BASE URL]';
-
     var mockBuildbot = {};
     mockBuildbot.parseBuildName = function(buildName) {
         var match = /(\d+)/.exec(buildName);
@@ -47,7 +44,7 @@ function createTestForm(failingBuildNames, failingTest, oldestAnalyzedBuild, new
         return '[RESULTS PAGE URL ' + this.name + ', ' + buildName + ']';
     }
 
-    return new FlakyTestBugForm(mockBugzilla, mockBuilder, failingBuildNames, failingTest, oldestAnalyzedBuild, newestAnalyzedBuild, analyzedBuildCount);
+    return new FlakyTestBugForm(mockBuilder, failingBuildNames, failingTest, oldestAnalyzedBuild, newestAnalyzedBuild, analyzedBuildCount);
 }
 
 const testCases = [

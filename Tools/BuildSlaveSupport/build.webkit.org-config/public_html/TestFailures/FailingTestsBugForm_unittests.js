@@ -28,9 +28,6 @@
 module('FailingTestsBugForm');
 
 function createTestForm(testerName, failingBuildName, passingBuildName, failingTests) {
-    var mockBugzilla = {};
-    mockBugzilla.baseURL = '[BUGZILLA BASE URL]';
-
     var mockBuildbot = {};
     mockBuildbot.parseBuildName = function(buildName) {
         var match = /(\d+)/.exec(buildName);
@@ -47,7 +44,7 @@ function createTestForm(testerName, failingBuildName, passingBuildName, failingT
         return '[RESULTS PAGE URL ' + this.name + ', ' + buildName + ']';
     }
 
-    return new FailingTestsBugForm(mockBugzilla, mockBuilder, failingBuildName, passingBuildName, failingTests);
+    return new FailingTestsBugForm(mockBuilder, failingBuildName, passingBuildName, failingTests);
 }
 
 test('keywords are set', 1, function() {

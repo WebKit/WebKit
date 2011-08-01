@@ -28,9 +28,6 @@
 module('TestRelatedBugForm');
 
 function createTestForm(testerName) {
-    var mockBugzilla = {};
-    mockBugzilla.baseURL = '[BUGZILLA BASE URL]';
-
     var mockBuildbot = {};
     mockBuildbot.parseBuildName = function(buildName) {
         var match = /(\d+)/.exec(buildName);
@@ -47,7 +44,7 @@ function createTestForm(testerName) {
         return '[RESULTS PAGE URL ' + this.name + ', ' + buildName + ']';
     }
 
-    return new TestRelatedBugForm(mockBugzilla, mockBuilder);
+    return new TestRelatedBugForm(mockBuilder);
 }
 
 test('component and keywords are set', 2, function() {

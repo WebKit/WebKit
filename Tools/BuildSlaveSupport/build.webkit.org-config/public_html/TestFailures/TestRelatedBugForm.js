@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function TestRelatedBugForm(bugzilla, tester) {
-    NewBugForm.call(this, bugzilla);
+function TestRelatedBugForm(tester) {
+    NewBugForm.call(this);
 
     this._tester = tester;
 

@@ -1,5 +1,50 @@
 2011-08-01  Adam Barth  <abarth@webkit.org>
 
+        Refactor bugzilla.js for use by garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=65450
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch refactors bugzilla.js to use the AsynchronousCache and
+        updates the style to use a module instead of an object.  This patch
+        then fixes all the existing code that uses this class to use the new
+        API style.
+
+        This main benefit of this patch is we remove the tricky manual caching
+        and this code is now available to use in garden-o-matic (since the
+        dependency on Utilities.js is now gone).
+
+        I ran all the unit tests and poked around in TestFailures a bit to see
+        that everything seemed to be working properly.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Bugzilla.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm.js:
+        (FailingTestsBugForm):
+        (FailingTestsBugForm.prototype._createBugTitle):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyTestBugForm.js:
+        (FlakyTestBugForm):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyTestBugForm_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NewBugForm.js:
+        (NewBugForm):
+        (NewBugForm.prototype.domElement):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NewBugForm_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestRelatedBugForm.js:
+        (TestRelatedBugForm):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestRelatedBugForm_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder.start):
+        (ViewController.prototype._displayBuilder):
+        (ViewController.prototype._domForAuxiliaryUIElements):
+        (ViewController.prototype._domForNewAndExistingBugs.bugzilla.quickSearch):
+        (ViewController.prototype._domForPossiblyFlakyTests.flakyList.appendChildren):
+        (ViewController.prototype._domForPossiblyFlakyTests):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html:
+
+2011-08-01  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic shouldn't require local server to determine if compile failed
         https://bugs.webkit.org/show_bug.cgi?id=65446
 

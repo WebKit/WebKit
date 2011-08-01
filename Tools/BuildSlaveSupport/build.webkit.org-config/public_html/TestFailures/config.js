@@ -30,6 +30,7 @@ config.kBuildersThatOnlyCompile = [
 ];
 
 config.kTracURL = 'http://trac.webkit.org';
+config.kBugzillaURL = 'https://bugs.webkit.org';
 
 config.kRevisionAttr = 'data-revision';
 config.kTestNameAttr = 'data-test-name';

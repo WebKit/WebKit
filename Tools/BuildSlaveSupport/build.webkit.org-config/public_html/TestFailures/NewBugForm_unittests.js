@@ -40,10 +40,7 @@ const testFormData = {
 };
 
 function createTestForm() {
-    var mockBugzilla = {};
-    mockBugzilla.baseURL = 'http://bugs.example.com/';
-
-    var form = new NewBugForm(mockBugzilla);
+    var form = new NewBugForm();
     for (var key in testFormData) {
         form[key] = testFormData[key].value;
     }
@@ -62,7 +59,7 @@ test('domElement() posts to enter_bug.cgi', 3, function() {
     var formElement = createTestForm().domElement();
     equal(formElement.tagName, 'FORM');
     equal(formElement.method, 'POST');
-    equal(formElement.action, 'http://bugs.example.com/enter_bug.cgi');
+    equal(formElement.action, 'https://bugs.webkit.org/enter_bug.cgi');
 });
 
 test('domElement() contains only hidden input elements', 9, function() {

@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function FlakyTestBugForm(bugzilla, tester, failingBuildNames, failingTest, oldestAnalyzedBuild, newestAnalyzedBuild, analyzedBuildCount) {
-    TestRelatedBugForm.call(this, bugzilla, tester);
+function FlakyTestBugForm(tester, failingBuildNames, failingTest, oldestAnalyzedBuild, newestAnalyzedBuild, analyzedBuildCount) {
+    TestRelatedBugForm.call(this, tester);
 
     this._failingBuildNames = failingBuildNames;
     this._failingTest = failingTest;

@@ -23,69 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function Bugzilla(baseURL) {
-    this.baseURL = baseURL;
-    this._cache = {};
-}
+var bugzilla = bugzilla || {};
 
-Bugzilla.prototype = {
-    quickSearch: function(query, callback) {
-        var cacheKey = 'quickSearch_' + query;
-        if (cacheKey in this._cache) {
-            callback(this._cache[cacheKey]);
-            return;
-        }
+(function() {
 
-        var callbacksCacheKey = 'quickSearchCallbacks_' + query;
-        if (callbacksCacheKey in this._cache) {
-            this._cache[callbacksCacheKey].push(callback);
-            return;
-        }
-
-        this._cache[callbacksCacheKey] = [callback];
-
-        var queryParameters = {
-            ctype: 'rss',
-            order: 'bugs.bug_id desc',
-            quicksearch: query,
-        };
-
-        var self = this;
-        fetchResource(this.baseURL + 'buglist.cgi', 'POST', queryParameters, function(xhr) {
-            var entries = xhr.responseXML.getElementsByTagName('entry');
-            var results = Array.prototype.map.call(entries, function(entry) {
-                var container = document.createElement('div');
-                container.innerHTML = entry.getElementsByTagName('summary')[0].textContent;
-                var statusRow = container.querySelector('tr.bz_feed_bug_status');
-                return {
-                    title: entry.getElementsByTagName('title')[0].textContent,
-                    url: entry.getElementsByTagName('id')[0].textContent,
-                    status: statusRow.cells[1].textContent,
-                };
-            });
-
-            self._cache[cacheKey] = results;
-
-            var callbacks = self._cache[callbacksCacheKey];
-            delete self._cache[callbacksCacheKey];
-
-            callbacks.forEach(function(callback) {
-                callback(results);
-            });
-        });
-    },
+var kOpenStatuses = {
+    UNCONFIRMED: true,
+    NEW: true,
+    ASSIGNED: true,
+    REOPENED: true,
 };
 
-Bugzilla.isOpenStatus = function(status) {
-    const openStatuses = {
-        UNCONFIRMED: true,
-        NEW: true,
-        ASSIGNED: true,
-        REOPENED: true,
+var g_searchCache = new base.AsynchronousCache(function(query, callback) {
+    var url = config.kBugzillaURL + '/buglist.cgi?' + $.param({
+        ctype: 'rss',
+        order: 'bugs.bug_id desc',
+        quicksearch: query,
+    });
 
-    };
-    return status in openStatuses;
+    $.get(url, function(responseXML) {
+        var entries = responseXML.getElementsByTagName('entry');
+        var results = Array.prototype.map.call(entries, function(entry) {
+            var container = document.createElement('div');
+            // FIXME: Is this an XSS risk?
+            container.innerHTML = entry.getElementsByTagName('summary')[0].textContent;
+            var statusRow = container.querySelector('tr.bz_feed_bug_status');
+            return {
+                title: entry.getElementsByTagName('title')[0].textContent,
+                url: entry.getElementsByTagName('id')[0].textContent,
+                status: statusRow.cells[1].textContent,
+            };
+        });
+        callback(results);
+    });
+});
+
+bugzilla.quickSearch = function(query, callback)
+{
+    g_searchCache.get(query, callback);
+};
+
+bugzilla.isOpenStatus = function(status)
+{
+    return status in kOpenStatuses;
 };
 
 // This value is built-in to all Bugzilla installations. See <http://webkit.org/b/61660>.
-Bugzilla.maximumBugTitleLength = 255;
+bugzilla.kMaximumBugTitleLength = 255;
+
+})();

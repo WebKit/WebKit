@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function FailingTestsBugForm(bugzilla, tester, failingBuildName, passingBuildName, failingTests) {
-    TestRelatedBugForm.call(this, bugzilla, tester);
+function FailingTestsBugForm(tester, failingBuildName, passingBuildName, failingTests) {
+    TestRelatedBugForm.call(this, tester);
 
     this._failingBuildName = failingBuildName;
     this._passingBuildName = passingBuildName;
@@ -79,19 +79,19 @@ FailingTestsBugForm.prototype = {
         var titleSuffix = ' failing on ' + this._tester.name;
         var title = titlePrefix + this._failingTests.join(', ') + titleSuffix;
 
-        if (title.length <= Bugzilla.maximumBugTitleLength)
+        if (title.length <= bugzilla.kMaximumBugTitleLength)
             return title;
 
         var pathPrefix = longestCommonPathPrefix(this._failingTests);
         if (pathPrefix) {
             title = titlePrefix + this._failingTests.length + ' ' + pathPrefix + ' tests' + titleSuffix;
-            if (title.length <= Bugzilla.maximumBugTitleLength)
+            if (title.length <= bugzilla.kMaximumBugTitleLength)
                 return title;
         }
 
         title = titlePrefix + this._failingTests.length + ' tests' + titleSuffix;
 
-        console.assert(title.length <= Bugzilla.maximumBugTitleLength);
+        console.assert(title.length <= bugzilla.kMaximumBugTitleLength);
         return title;
     },
 

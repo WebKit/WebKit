@@ -23,8 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-function NewBugForm(bugzilla) {
-    this._bugzilla = bugzilla;
+function NewBugForm() {
 }
 
 NewBugForm.prototype = {
@@ -52,7 +51,7 @@ NewBugForm.prototype = {
 
         var form = document.createElement('form');
         form.method = 'POST';
-        form.action = this._bugzilla.baseURL + 'enter_bug.cgi';
+        form.action = config.kBugzillaURL + '/enter_bug.cgi';
 
         for (var key in formData) {
             var input = document.createElement('input');
