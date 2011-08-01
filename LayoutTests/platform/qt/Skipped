@@ -1857,6 +1857,7 @@ http/tests/inspector/network/network-size-sync.html
 # https://bugs.webkit.org/show_bug.cgi?id=64097
 http/tests/inspector/network/network-disable-cache-memory.html
 http/tests/inspector/network/network-disable-cache-xhrs.html
+http/tests/inspector/network/disabled-cache-crash.html
 
 # [Qt] media/video-playbackrate.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=57476

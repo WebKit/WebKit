@@ -1,0 +1,66 @@
+<html>
+<head>
+<script type="text/javascript">
+    if (window.layoutTestController)
+       layoutTestController.setCanOpenWindows();
+
+    var ga = document.createElement('script');
+    ga.type = 'text/javascript';
+    ga.async = true;
+    ga.src = 'script.js';
+    var s = document.getElementsByTagName('script')[0];
+    s.parentNode.insertBefore(ga, s);
+</script>
+<script src="../inspector-test.js"></script>
+<script type="text/javascript">
+
+function openWindow1()
+{
+    window.open(window.location, "_blank");
+    console.log("window 1 ok");
+}
+
+function openWindow2()
+{
+    window.open(window.location, "_blank");
+    console.log("window 2 ok");
+}
+
+function test()
+{
+    if (!window.internals) {
+        console.log("This test cannot be run as window.internals is not available.");
+        return;
+    }
+    NetworkAgent.setCacheDisabled(true, step1);
+    internals.disableMemoryCache(true);
+
+    function step1(msg)
+    {
+        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        InspectorTest.evaluateInPage("openWindow1()");
+    }
+
+    function step2(msg)
+    {
+        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step3);
+        InspectorTest.evaluateInPage("openWindow2()");
+    }
+
+    function step3(msg)
+    {
+        NetworkAgent.setCacheDisabled(false, step4);
+    }
+
+    function step4(msg)
+    {
+        internals.disableMemoryCache(false);
+        InspectorTest.completeTest();
+    }
+}
+</script>
+<head>
+<body onload="runTest()">
+</body>
+</html>
+

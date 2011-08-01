@@ -32,6 +32,7 @@
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "InspectorController.h"
+#include "MemoryCache.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
 #include "RenderObject.h"
@@ -145,6 +146,11 @@ String Internals::shadowPseudoId(Element* element, ExceptionCode& ec)
     }
 
     return element->shadowPseudoId().string();
+}
+
+void Internals::disableMemoryCache(bool disabled)
+{
+    WebCore::memoryCache()->setDisabled(disabled);
 }
 
 #if ENABLE(INSPECTOR)

@@ -1,3 +1,20 @@
+2011-08-01  Scott Graham  <scottmg@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=61006
+
+        Test for CachedResourceLoader. Not caused by cache-disabling but very
+        difficult to reproduce when cache is active, so use cache disable in
+        inspector to exercise code.
+
+        Reviewed by Antti Koivisto.
+
+        * http/tests/inspector/network/disabled-cache-crash-expected.txt: Added.
+        * http/tests/inspector/network/disabled-cache-crash.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-08-01  Jochen Eisinger  <jochen@chromium.org>
 
         Require explicit user action to override the policy URL on form submissions.
