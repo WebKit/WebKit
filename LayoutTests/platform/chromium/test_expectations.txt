@@ -3741,3 +3741,5 @@ BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 // New test added by r92105.
 BUGPFELDMAN WIN LINUX : inspector/debugger/scripts-sorting.html = PASS TEXT
+
+BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
