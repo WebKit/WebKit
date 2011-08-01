@@ -1,3 +1,16 @@
+2011-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Search field in designMode causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=65362
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a test to ensure WebKit doesn't crash when a user tries to delete inside
+        an empty search field in the design mode.
+
+        * editing/input/search-field-crash-in-designmode-expected.txt: Added.
+        * editing/input/search-field-crash-in-designmode.html: Added.
+
 2011-07-28  Abhishek Arya  <inferno@chromium.org>
 
         Regression(82144): Crash in TrailingObjects::updateMidpointsForTrailingBoxes

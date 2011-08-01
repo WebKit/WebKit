@@ -1,3 +1,22 @@
+2011-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Search field in designMode causes a crash
+        https://bugs.webkit.org/show_bug.cgi?id=65362
+
+        Reviewed by Dimitri Glazkov.
+
+        The crashed was caused by editing code inadvertently deleting search and cancel buttons in the design mode.
+        Fixed the bug by avoid inheriting user-modify property from the shadow host.
+
+        Test: editing/input/search-field-crash-in-designmode.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::isAtShadowBoundary): Moved.
+        (WebCore::CSSStyleSelector::styleForElement): Overrides -webkit-user-modify by the initial value after m_style
+        inherited the values from m_parentStyle but before applying matched rules.
+        * dom/Node.cpp:
+        (WebCore::Node::rendererIsEditable): Ignore page's editability inside a shadow DOM.
+
 2011-08-01  Marco Peereboom  <marco@peereboom.us>
 
         [Soup] Set default max-conns to a more sane default value and fix comment 

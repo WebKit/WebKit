@@ -781,7 +781,7 @@ bool Node::isContentEditable()
 
 bool Node::rendererIsEditable(EditableLevel editableLevel) const
 {
-    if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable())
+    if (document()->frame() && document()->frame()->page() && document()->frame()->page()->isEditable() && !shadowTreeRootNode())
         return true;
 
     // Ideally we'd call ASSERT(!needsStyleRecalc()) here, but

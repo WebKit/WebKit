@@ -1299,6 +1299,15 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
     return documentStyle.release();
 }
 
+static inline bool isAtShadowBoundary(Element* element)
+{
+    if (!element)
+        return false;
+
+    ContainerNode* parentNode = element->parentNode();
+    return parentNode && parentNode->isShadowRoot();
+}
+
 // If resolveForRootDefault is true, style based on user agent style sheet only. This is used in media queries, where
 // relative units are interpreted according to document root element style, styled only with UA stylesheet
 
@@ -1352,6 +1361,10 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         // Make sure our fonts are initialized if we don't inherit them from our parent style.
         m_style->font().update(0);
     }
+
+    // Don't propagate user-modify into shadow DOM
+    if (isAtShadowBoundary(e))
+        m_style->setUserModify(RenderStyle::initialUserModify());
 
     if (e->isLink()) {
         m_style->setIsLink(true);
@@ -1801,15 +1814,6 @@ static void addIntrinsicMargins(RenderStyle* style)
         if (style->marginBottom().quirk())
             style->setMarginBottom(Length(intrinsicMargin, Fixed));
     }
-}
-
-static inline bool isAtShadowBoundary(Element* element)
-{
-    if (!element)
-        return false;
-
-    ContainerNode* parentNode = element->parentNode();
-    return parentNode && parentNode->isShadowRoot();
 }
 
 void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parentStyle, Element *e)
