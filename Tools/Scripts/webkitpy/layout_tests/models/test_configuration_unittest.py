@@ -32,6 +32,21 @@ from webkitpy.layout_tests import port
 from webkitpy.layout_tests.models.test_configuration import *
 
 
+def make_mock_all_test_configurations_set():
+    all_test_configurations = set()
+    for version, architecture in (('snowleopard', 'x86'), ('xp', 'x86'), ('win7', 'x86'), ('lucid', 'x86'), ('lucid', 'x86_64')):
+        for build_type in ('debug', 'release'):
+            for graphics_type in ('cpu', 'gpu'):
+                all_test_configurations.add(TestConfiguration(None, version, architecture, build_type, graphics_type))
+    return all_test_configurations
+
+MOCK_MACROS = {
+    'mac': ['snowleopard'],
+    'win': ['xp', 'win7'],
+    'linux': ['lucid'],
+}
+
+
 class TestConfigurationTest(unittest.TestCase):
     def test_items(self):
         config = TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')
@@ -91,18 +106,54 @@ class TestConfigurationTest(unittest.TestCase):
         self.assertEquals('<xp, x86, release, cpu>', str(config))
 
 
+class SpecifierSorterTest(unittest.TestCase):
+    def __init__(self, testFunc):
+        self._all_test_configurations = make_mock_all_test_configurations_set()
+        unittest.TestCase.__init__(self, testFunc)
+
+    def test_init(self):
+        sorter = SpecifierSorter()
+        self.assertEquals(sorter.category_for_specifier('control'), None)
+        sorter = SpecifierSorter(self._all_test_configurations)
+        self.assertEquals(sorter.category_for_specifier('xp'), 'version')
+        sorter = SpecifierSorter(self._all_test_configurations, MOCK_MACROS)
+        self.assertEquals(sorter.category_for_specifier('mac'), 'version')
+
+    def test_add_specifier(self):
+        sorter = SpecifierSorter()
+        self.assertEquals(sorter.category_for_specifier('control'), None)
+        sorter.add_specifier('version', 'control')
+        self.assertEquals(sorter.category_for_specifier('control'), 'version')
+        sorter.add_specifier('version', 'one')
+        self.assertEquals(sorter.category_for_specifier('one'), 'version')
+        sorter.add_specifier('architecture', 'renaissance')
+        self.assertEquals(sorter.category_for_specifier('one'), 'version')
+        self.assertEquals(sorter.category_for_specifier('renaissance'), 'architecture')
+
+    def test_category_priority(self):
+        sorter = SpecifierSorter(self._all_test_configurations)
+        self.assertEquals(sorter.category_priority('version'), 0)
+        self.assertEquals(sorter.category_priority('build_type'), 2)
+
+    def test_specifier_priority(self):
+        sorter = SpecifierSorter(self._all_test_configurations)
+        self.assertEquals(sorter.specifier_priority('x86'), 1)
+        self.assertEquals(sorter.specifier_priority('gpu'), 3)
+        self.assertEquals(sorter.specifier_priority('snowleopard'), 0)
+
+    def test_sort_specifiers(self):
+        sorter = SpecifierSorter(self._all_test_configurations, MOCK_MACROS)
+        self.assertEquals(sorter.sort_specifiers(set()), [])
+        self.assertEquals(sorter.sort_specifiers(set(['x86'])), ['x86'])
+        self.assertEquals(sorter.sort_specifiers(set(['x86', 'win7'])), ['win7', 'x86'])
+        self.assertEquals(sorter.sort_specifiers(set(['gpu', 'x86', 'debug', 'win7'])), ['win7', 'x86', 'debug', 'gpu'])
+        self.assertEquals(sorter.sort_specifiers(set(['gpu', 'snowleopard', 'x86', 'debug', 'win7'])), ['snowleopard', 'win7', 'x86', 'debug', 'gpu'])
+        self.assertEquals(sorter.sort_specifiers(set(['gpu', 'x86', 'mac', 'debug', 'win7'])), ['mac', 'win7', 'x86', 'debug', 'gpu'])
+
+
 class TestConfigurationConverterTest(unittest.TestCase):
     def __init__(self, testFunc):
-        self._all_test_configurations = set()
-        for version, architecture in (('snowleopard', 'x86'), ('xp', 'x86'), ('win7', 'x86'), ('lucid', 'x86'), ('lucid', 'x86_64')):
-            for build_type in ('debug', 'release'):
-                for graphics_type in ('cpu', 'gpu'):
-                    self._all_test_configurations.add(TestConfiguration(None, version, architecture, build_type, graphics_type))
-        self._macros = {
-            'mac': ['snowleopard'],
-            'win': ['xp', 'win7'],
-            'linux': ['lucid'],
-        }
+        self._all_test_configurations = make_mock_all_test_configurations_set()
         unittest.TestCase.__init__(self, testFunc)
 
     def test_to_config_set(self):
@@ -179,7 +230,7 @@ class TestConfigurationConverterTest(unittest.TestCase):
         self.assertEquals(converter.to_config_set(set(['lucid', 'snowleopard', 'release', 'cpu'])), configs_to_match)
 
     def test_macro_expansion(self):
-        converter = TestConfigurationConverter(self._all_test_configurations, self._macros)
+        converter = TestConfigurationConverter(self._all_test_configurations, MOCK_MACROS)
 
         configs_to_match = set([
             TestConfiguration(None, 'xp', 'x86', 'release', 'gpu'),
@@ -283,7 +334,7 @@ class TestConfigurationConverterTest(unittest.TestCase):
         self.assertEquals(specifiers_list, [set(['bob', 'foo', 'godzilla']), set(['foo']), set(['people'])])
 
     def test_converter_macro_collapsing(self):
-        converter = TestConfigurationConverter(self._all_test_configurations, self._macros)
+        converter = TestConfigurationConverter(self._all_test_configurations, MOCK_MACROS)
 
         configs_to_match = set([
             TestConfiguration(None, 'xp', 'x86', 'release', 'gpu'),

@@ -1,3 +1,14 @@
+2011-08-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Introduce SpecifierSorter, a thing that knows how specifiers should be ordered.
+        https://bugs.webkit.org/show_bug.cgi?id=65413
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py: Added SpecifierSorter and converted
+            existing code to use it.
+        * Scripts/webkitpy/layout_tests/models/test_configuration_unittest.py: Added unit tests and cleaned up a bit.
+
 2011-08-01  Adam Barth  <abarth@webkit.org>
 
         Refactor bugzilla.js for use by garden-o-matic

@@ -64,12 +64,53 @@ class TestConfiguration(object):
         return self.__dict__.values()
 
 
+class SpecifierSorter:
+    def __init__(self, all_test_configurations=None, macros=None):
+        self._specifier_to_category = {}
+
+        if not all_test_configurations:
+            return
+        for test_configuration in all_test_configurations:
+            for category, specifier in test_configuration.items():
+                self.add_specifier(category, specifier)
+
+        if not macros:
+            return
+        # Assume well-formed macros.
+        for macro, specifier_list in macros.items():
+            self.add_specifier(self.category_for_specifier(specifier_list[0]), macro)
+
+    def add_specifier(self, category, specifier):
+        self._specifier_to_category[specifier] = category
+
+    @classmethod
+    def category_priority(cls, category):
+        return TestConfiguration.category_order().index(category)
+
+    def specifier_priority(self, specifier):
+        return self.category_priority(self._specifier_to_category[specifier])
+
+    def category_for_specifier(self, specifier):
+        return self._specifier_to_category.get(specifier)
+
+    def sort_specifiers(self, specifiers):
+        category_slots = map(lambda x: [], TestConfiguration.category_order())
+        for specifier in specifiers:
+            category_slots[self.specifier_priority(specifier)].append(specifier)
+
+        def sort_and_return(result, specifier_list):
+            specifier_list.sort()
+            return result + specifier_list
+
+        return reduce(sort_and_return, category_slots, [])
+
+
 class TestConfigurationConverter:
     def __init__(self, all_test_configurations, configuration_macros=None):
         self._all_test_configurations = all_test_configurations
         self._configuration_macros = configuration_macros or {}
         self._specifier_to_configuration_set = {}
-        self._specifier_to_category = {}
+        self._specifier_sorter = SpecifierSorter()
         self._collapsing_sets_by_size = {}
         self._junk_specifier_combinations = {}
         collapsing_sets_by_category = {}
@@ -77,7 +118,7 @@ class TestConfigurationConverter:
         for configuration in all_test_configurations:
             for category, specifier in configuration.items():
                 self._specifier_to_configuration_set.setdefault(specifier, set()).add(configuration)
-                self._specifier_to_category[specifier] = category
+                self._specifier_sorter.add_specifier(category, specifier)
                 collapsing_sets_by_category.setdefault(category, set()).add(specifier)
                 # FIXME: This seems extra-awful.
                 for cat2, spec2 in configuration.items():
@@ -87,15 +128,9 @@ class TestConfigurationConverter:
         for collapsing_set in collapsing_sets_by_category.values():
             self._collapsing_sets_by_size.setdefault(len(collapsing_set), set()).add(frozenset(collapsing_set))
 
-        def category_priority(category):
-            return TestConfiguration.category_order().index(category)
-
-        def specifier_priority(specifier):
-            return category_priority(self._specifier_to_category[specifier])
-
         for specifier, sets_by_category in matching_sets_by_category.items():
             for category, set_by_category in sets_by_category.items():
-                if len(set_by_category) == 1 and category_priority(category) > specifier_priority(specifier):
+                if len(set_by_category) == 1 and self._specifier_sorter.category_priority(category) > self._specifier_sorter.specifier_priority(specifier):
                     self._junk_specifier_combinations[specifier] = set_by_category
 
     def _expand_macros(self, specifier):
@@ -116,7 +151,7 @@ class TestConfigurationConverter:
                     if error_list is not None:
                         error_list.append("Unrecognized modifier '" + expanded_specifier + "'")
                     return set()
-                category = self._specifier_to_category[expanded_specifier]
+                category = self._specifier_sorter.category_for_specifier(expanded_specifier)
                 matching_sets.setdefault(category, set()).update(configurations)
 
         return reduce(set.intersection, matching_sets.values())
