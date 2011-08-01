@@ -1,5 +1,14 @@
 2011-07-31  Adam Barth  <abarth@webkit.org>
 
+        These results appear to differ only in text rendering.
+
+        * platform/chromium-win-xp/fast/text/international/bidi-mirror-he-ar-expected.png:
+        * platform/chromium-win-xp/fast/text/justify-ideograph-leading-expansion-expected.png: Removed.
+        * platform/chromium-win/fast/text/international/bidi-mirror-he-ar-expected.png:
+        * platform/chromium-win/fast/text/justify-ideograph-leading-expansion-expected.png:
+
+2011-07-31  Adam Barth  <abarth@webkit.org>
+
         Adding expected results.  These results appear to differ only in the scrollbar.
 
         * platform/chromium-linux/svg/custom/external-paintserver-reference-expected.png: Added.
