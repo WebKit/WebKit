@@ -212,12 +212,10 @@ function showUnexpectedFailure(failureAnalysis)
     var impliedFirstFailingRevision = failureAnalysis.newestPassingRevision + 1;
     var regressionRows = rowsInRevisionRange(impliedFirstFailingRevision, failureAnalysis.oldestFailingRevision);
 
-    // FIXME: We need to create more rows if regressionRows.length is zero.
-
     $('.entry', regressionRows).addClass('possible-regression');
 
     var failureSummary = ui.summarizeFailure(failureAnalysis).attr(config.kRevisionAttr, impliedFirstFailingRevision);
-    regressionRows.last().after(failureSummary);
+    (regressionRows.length ? regressionRows : $('.recent-history tr')).last().after(failureSummary);
 
     // FIXME: We should just compute this for failureSummary instead of recomputing the whole page.
     showBuilderProgress();
