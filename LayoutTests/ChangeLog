@@ -1,3 +1,9 @@
+2011-08-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove time out expectation since media/track has been added to the skipped list on Qt.
+
+        * platform/qt/test_expectations.txt:
+
 2011-08-01  Chris Rogers  <crogers@google.com>
 
         Add audionode.html and gain.html web audio layout tests
