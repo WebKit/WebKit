@@ -1,3 +1,16 @@
+2011-08-01  Hayato Ito  <hayato@chromium.org>
+
+        Add support for getting an element in shadow root by its id into a window.internals object.
+        https://bugs.webkit.org/show_bug.cgi?id=64587
+
+        Reviewed by Hajime Morita.
+
+        * fast/dom/shadow/get-element-by-id-in-shadow-root-expected.txt: Added.
+        * fast/dom/shadow/get-element-by-id-in-shadow-root.html: Added.
+        * fast/dom/shadow/resources/create-dom.js: Added.
+        (createShadow):
+        (createDom):
+
 2011-08-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: typing an expression in an iframe leads to multiple "Unsafe JavaScript attempt to access frame..." errors

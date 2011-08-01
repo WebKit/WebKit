@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/create-dom.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests to ensure that internals.getElementByIdInTreeScope can get an element in TreeScope by its id. Can only run within DRT");
+
+function getElementInShadow(path)
+{
+    var ids = path.split('/');
+    var element = document.getElementById(ids[0]);
+    for (var i = 1; element != null && i < ids.length; ++i) {
+        var shadowRoot = internals.shadowRoot(element);
+        element = internals.getElementByIdInShadowRoot(shadowRoot, ids[i]);
+    }
+    return element;
+}
+
+function prepareDomTree(parent)
+{
+    parent.appendChild(
+        createShadow('div', {'id': 'divA'},
+                     createDom('input', {'id': 'inputB'}),
+                     createShadow('div', {'id': 'divC'},
+                                  createDom('input', {'id': 'inputD'}))));
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    prepareDomTree(document.body);
+    shouldBeEqualToString("getElementInShadow('divA/inputB').id", 'inputB');
+    shouldBeEqualToString("getElementInShadow('divA/divC').id", 'divC');
+    shouldBeEqualToString("getElementInShadow('divA/divC/inputD').id", 'inputD');
+}
+
+test();
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

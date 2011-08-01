@@ -1,0 +1,12 @@
+Tests to ensure that internals.getElementByIdInTreeScope can get an element in TreeScope by its id. Can only run within DRT
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS getElementInShadow('divA/inputB').id is "inputB"
+PASS getElementInShadow('divA/divC').id is "divC"
+PASS getElementInShadow('divA/divC/inputD').id is "inputD"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

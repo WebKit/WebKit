@@ -1,3 +1,12 @@
+2011-08-01  Hayato Ito  <hayato@chromium.org>
+
+        Add support for getting an element in shadow root by its id into a window.internals object.
+        https://bugs.webkit.org/show_bug.cgi?id=64587
+
+        Reviewed by Hajime Morita.
+
+        * Source/autotools/symbols.filter:
+
 2011-08-01  Neil Roberts  <neil@linux.intel.com>
 
         build: Fix finding the headers for GStreamer

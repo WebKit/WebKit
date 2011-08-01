@@ -72,6 +72,15 @@ PassRefPtr<Element> Internals::createShadowContentElement(Document* document, Ex
     return ShadowContentElement::create(document);
 }
 
+Element* Internals::getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode& ec)
+{
+    if (!shadowRoot || !shadowRoot->isShadowRoot()) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    return toShadowRoot(shadowRoot)->getElementById(id);
+}
+
 String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
 {
     if (!element) {

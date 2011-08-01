@@ -54,6 +54,7 @@ public:
     Element* includerFor(Node*, ExceptionCode&);
     String shadowPseudoId(Element*, ExceptionCode&);
     PassRefPtr<Element> createShadowContentElement(Document*, ExceptionCode&);
+    Element* getElementByIdInShadowRoot(Node* shadowRoot, const String& id, ExceptionCode&);
 
 #if ENABLE(INSPECTOR)
     void setInspectorResourcesDataSizeLimits(Document*, int maximumResourcesContentSize, int maximumSingleResourceContentSize, ExceptionCode&);
