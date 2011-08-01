@@ -1,3 +1,14 @@
+2011-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92094.
+        http://trac.webkit.org/changeset/92094
+        https://bugs.webkit.org/show_bug.cgi?id=65443
+
+        Triggered many asserts (Requested by abarth on #webkit).
+
+        * fast/events/event-target-reset-expected.txt: Removed.
+        * fast/events/event-target-reset.html: Removed.
+
 2011-07-31  Dominic Cooney  <dominicc@chromium.org>
 
         Event target set to null post event dispatch
