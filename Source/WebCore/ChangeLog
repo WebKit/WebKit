@@ -1,3 +1,21 @@
+2011-08-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: group scripts by folder in the scripts selector.
+        https://bugs.webkit.org/show_bug.cgi?id=65321
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/debugger/scripts-sorting.html
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._sourceFileAdded.get if):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.insertOrdered.optionCompare):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.insertOrdered):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+        (WebInspector.ScriptsPanel.prototype._folderAndDisplayNameForScriptURL):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.suggestedFileName):
+
 2011-07-28  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [protocol] methods where all parameters are optional should not require empty params object.

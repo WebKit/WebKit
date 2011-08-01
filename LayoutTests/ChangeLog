@@ -1,3 +1,15 @@
+2011-08-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: group scripts by folder in the scripts selector.
+        https://bugs.webkit.org/show_bug.cgi?id=65321
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/scripts-sorting-expected.txt: Added.
+        * inspector/debugger/scripts-sorting.html: Added.
+
 2011-07-28  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [protocol] methods where all parameters are optional should not require empty params object.

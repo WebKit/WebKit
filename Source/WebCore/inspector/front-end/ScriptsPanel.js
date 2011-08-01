@@ -240,7 +240,8 @@ WebInspector.ScriptsPanel.prototype = {
         this._addOptionToFilesSelect(sourceFile);
 
         var lastViewedURL = WebInspector.settings.lastViewedScriptFile.get();
-        if (this._filesSelectElement.length === 1) {
+        if (!this._filesSelectElement.initialSelectionProcessed) {
+            this._filesSelectElement.initialSelectionProcessed = true;
             // Option we just added is the only option in files select.
             // We have to show corresponding source frame immediately.
             this._showSourceFrameAndAddToHistory(sourceFile.id);
@@ -254,59 +255,77 @@ WebInspector.ScriptsPanel.prototype = {
     _addOptionToFilesSelect: function(sourceFile)
     {
         var select = this._filesSelectElement;
+        if (!select.folderOptions)
+            select.folderOptions = {};
+
         var option = document.createElement("option");
-        option.text = this._displayNameForScriptURL(sourceFile.url) || WebInspector.UIString("(program)");
+        var parsedURL = sourceFile.url.asParsedURL();
+
+        var names = this._folderAndDisplayNameForScriptURL(sourceFile.url);
+        option.text = names.displayName ? "\u00a0\u00a0\u00a0\u00a0" + names.displayName : WebInspector.UIString("(program)");
+        option.scriptNameForTest = names.displayName;
+        var folderNameForSorting = (sourceFile.isContentScript ? "2" : "0") + names.folderName;
+        option.nameForSorting = folderNameForSorting + "\t/\t" + names.displayName; // Use '\t' to make files stick to their folder.
         option.title = sourceFile.url;
-        option.isContentScript = sourceFile.isContentScript;
         if (sourceFile.isContentScript)
             option.addStyleClass("extension-script");
-        function compare(a, b)
-        {
-            return a < b ? -1 : (a > b ? 1 : 0);
-        }
-        function optionCompare(a, b)
-        {
-            if (a === select.contentScriptSection)
-                return b.isContentScript ? -1 : 1;
-            if (b === select.contentScriptSection)
-                return a.isContentScript ? 1 : -1;
 
-            if (a.isContentScript && !b.isContentScript)
-                return 1;
-            if (!a.isContentScript && b.isContentScript)
-                return -1;
-
-            return compare(a.text, b.text) || compare(a.title, b.title);
+        function insertOrdered(option)
+        {
+            function optionCompare(a, b)
+            {
+                return a.nameForSorting.localeCompare(b.nameForSorting);
+            }
+            var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
+            select.insertBefore(option, insertionIndex < 0 ? null : select.childNodes.item(insertionIndex));
         }
 
-        var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
-        select.insertBefore(option, insertionIndex < 0 ? null : select.childNodes.item(insertionIndex));
+        insertOrdered(option);
 
         if (sourceFile.isContentScript && !select.contentScriptSection) {
             var contentScriptSection = document.createElement("option");
             contentScriptSection.text = WebInspector.UIString("Content scripts");
             contentScriptSection.disabled = true;
+            option.nameForSorting = "1/ContentScriptSeparator";
             select.contentScriptSection = contentScriptSection;
-
-            var insertionIndex = insertionIndexForObjectInListSortedByFunction(contentScriptSection, select.childNodes, optionCompare);
-            select.insertBefore(contentScriptSection, insertionIndex < 0 ? null : select.childNodes.item(insertionIndex));
+            insertOrdered(contentScriptSection);
         }
+
+        if (names.folderName && !select.folderOptions[names.folderName]) {
+            var folderOption = document.createElement("option");
+            folderOption.text = names.folderName;
+            folderOption.nameForSorting = folderNameForSorting;
+            folderOption.disabled = true;
+            select.folderOptions[names.folderName] = folderOption;
+            insertOrdered(folderOption);
+        }
+
         option._sourceFileId = sourceFile.id;
         this._sourceFileIdToFilesSelectOption[sourceFile.id] = option;
     },
 
-    _displayNameForScriptURL: function(url)
+    _folderAndDisplayNameForScriptURL: function(url)
     {
+        var parsedURL = url.asParsedURL();
+        if (parsedURL)
+            url = parsedURL.path;
+
+        var folderName = "";
         var displayName = url;
-        var indexOfQuery = displayName.indexOf("?");
-        if (indexOfQuery > 0)
-            displayName = displayName.substring(0, indexOfQuery);
+
         var fromIndex = displayName.lastIndexOf("/", displayName.length - 2);
-        if (fromIndex !== -1)
+        if (fromIndex !== -1) {
+            folderName = displayName.substring(0, fromIndex);
             displayName = displayName.substring(fromIndex + 1);
-        if (displayName.length > 100)
-            displayName = displayName.substring(0, 80) + "...";
-        return displayName;
+        }
+
+        if (displayName.length > 80)
+            displayName = "\u2026" + displayName.substring(displayName.length - 80);
+
+        if (folderName.length > 80)
+            folderName = "\u2026" + folderName.substring(folderName.length - 80);
+ 
+        return { folderName: folderName, displayName: displayName};
     },
 
     setScriptSourceIsBeingEdited: function(sourceFileId, inEditMode)
@@ -495,6 +514,11 @@ WebInspector.ScriptsPanel.prototype = {
         this._sourceFileIdToSourceFrame = {};
         this._sourceFileIdToFilesSelectOption = {};
         this._filesSelectElement.removeChildren();
+        this._filesSelectElement.removeChildren();
+        this._filesSelectElement.folderOptions = {};
+        delete this._filesSelectElement.initialSelectionProcessed;
+        delete this._filesSelectElement.contentScriptSection;
+
         this.functionsSelectElement.removeChildren();
         this.viewsContainerElement.removeChildren();
 
@@ -1181,7 +1205,8 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
     suggestedFileName: function()
     {
         var sourceFile = this._model.sourceFile(this._sourceFileId);
-        return WebInspector.panels.scripts._displayNameForScriptURL(sourceFile.url) || "untitled.js";
+        var names = WebInspector.panels.scripts._folderAndDisplayNameForScriptURL(sourceFile.url);
+        return names.displayName || "untitled.js";
     }
 }
 
