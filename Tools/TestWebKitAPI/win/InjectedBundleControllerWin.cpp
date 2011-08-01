@@ -23,9 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "InjectedBundleController.h"
-
-#import <Foundation/Foundation.h>
+#include "InjectedBundleController.h"
 
 namespace TestWebKitAPI {
 

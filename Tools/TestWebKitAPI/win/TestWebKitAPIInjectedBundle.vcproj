@@ -389,6 +389,10 @@
 			Name="win"
 			>
 			<File
+				RelativePath=".\InjectedBundleControllerWin.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\PlatformUtilitiesWin.cpp"
 				>
 			</File>
