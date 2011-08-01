@@ -1,3 +1,11 @@
+2011-07-31  Adam Barth  <abarth@webkit.org>
+
+        Update baseline.  This patch might cause Linux to start failing, but in
+        that case, we can add a more specific Linux result.  This approach is
+        somewhat of an exploration of this automated rebaselining algorithm.
+
+        * platform/chromium-win/svg/batik/text/textLength-expected.txt:
+
 2011-07-31  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92094.
