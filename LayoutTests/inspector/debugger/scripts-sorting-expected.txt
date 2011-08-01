@@ -14,10 +14,5 @@ Debugger was enabled.
 /i/js
     jquery-1.5.1.min.js
     jquery.cookie.js
-LayoutTests/http/tests/inspector
-    debugger-test.js
-    inspector-test.js
-LayoutTests/inspector/debugger
-    scripts-sorting.html
 Debugger was disabled.
 

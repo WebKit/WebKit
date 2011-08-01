@@ -1,3 +1,11 @@
+2011-08-01  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: unflake inspector test that was just added.
+
+        * inspector/debugger/scripts-sorting-expected.txt:
+        * inspector/debugger/scripts-sorting.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-08-01  Hayato Ito  <hayato@chromium.org>
 
         Add support for getting an element in shadow root by its id into a window.internals object.
