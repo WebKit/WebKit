@@ -1,3 +1,14 @@
+2011-08-01  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rolling out r92022.
+        http://trac.webkit.org/changeset/92022
+        https://bugs.webkit.org/show_bug.cgi?id=65203
+
+        try to see if this is causing a bunch of browser tests failues
+        on win bots - will recommit if not
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove time out expectation since media/track has been added to the skipped list on Qt.

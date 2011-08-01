@@ -1,3 +1,36 @@
+2011-08-01  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rolling out r92022.
+        http://trac.webkit.org/changeset/92022
+        https://bugs.webkit.org/show_bug.cgi?id=65203
+
+        try to see if this is causing a bunch of browser tests failues
+        on win bots - will recommit if not
+
+        * platform/graphics/chromium/FontChromiumWin.cpp:
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::TransparencyAwareFontPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::init):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::initializeForGDI):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareFontPainter::~TransparencyAwareFontPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::TransparencyAwareGlyphPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::~TransparencyAwareGlyphPainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareGlyphPainter::drawGlyphs):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::hdc):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::TransparencyAwareUniscribePainter):
+        (WebCore::TransparencyAwareFontPainter::TransparencyAwareUniscribePainter::~TransparencyAwareUniscribePainter):
+        (WebCore::drawGlyphsWin):
+        (WebCore::Font::drawComplexText):
+        * platform/graphics/chromium/UniscribeHelper.cpp:
+        (WebCore::UniscribeHelper::draw):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::isNativeFontRenderingAllowed):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        * platform/graphics/skia/SkiaFontWin.cpp:
+        (WebCore::windowsCanHandleDrawTextShadow):
+        (WebCore::windowsCanHandleTextDrawing):
+        (WebCore::windowsCanHandleTextDrawingWithoutShadow):
+        * platform/graphics/skia/SkiaFontWin.h:
+
 2011-08-01  Scott Graham  <scottmg@chromium.org>
 
         REGRESSION (r39725?): Resources removed from document can not be freed
