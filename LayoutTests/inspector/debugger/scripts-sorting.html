@@ -31,8 +31,12 @@ function test()
     function step1()
     {
         var select = WebInspector.panels.scripts._filesSelectElement;
-        for (var i = 0; i < select.length; ++i)
-            InspectorTest.addResult(select[i].textContent.replace(/\u00a0/g, " "));
+        for (var i = 0; i < select.length; ++i) {
+            var text = select[i].textContent.replace(/\u00a0/g, " ");
+            if (text.indexOf("LayoutTests/") !== -1)
+                text = text.substring(text.indexOf("LayoutTests/"));
+            InspectorTest.addResult(text);
+        }
         InspectorTest.completeDebuggerTest();
     }
 }

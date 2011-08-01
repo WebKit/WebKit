@@ -1,3 +1,10 @@
+2011-08-01  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: unflake inspector test that was just added.
+
+        * inspector/debugger/scripts-sorting-expected.txt:
+        * inspector/debugger/scripts-sorting.html:
+
 2011-08-01  Tony Gentilcore  <tonyg@chromium.org>
 
         [chromium] fast/css/outline-auto-empty-rects.html broken by r92059

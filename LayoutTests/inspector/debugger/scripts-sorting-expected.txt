@@ -14,10 +14,10 @@ Debugger was enabled.
 /i/js
     jquery-1.5.1.min.js
     jquery.cookie.js
-…cal/google/code/chromium/src/third_party/WebKit/LayoutTests/http/tests/inspector
+LayoutTests/http/tests/inspector
     debugger-test.js
     inspector-test.js
-…local/google/code/chromium/src/third_party/WebKit/LayoutTests/inspector/debugger
+LayoutTests/inspector/debugger
     scripts-sorting.html
 Debugger was disabled.
 
