@@ -1,3 +1,17 @@
+2011-07-31  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64679
+        Fix bugs in Array.prototype this handling.
+
+        Unreviewed - rolling out r91290.
+
+        Checking in failing results - we can't fix this bug just yet
+        for web compatibility reasons.
+
+        * fast/js/array-prototype-properties-expected.txt:
+        * ietestcenter/Javascript/15.4.4.14-5-28-expected.txt:
+        * ietestcenter/Javascript/15.4.4.15-5-28-expected.txt:
+
 2011-07-31  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix fast/dom/Range/getBoundingClientRect.html after r92089.
