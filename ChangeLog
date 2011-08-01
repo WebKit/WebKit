@@ -1,3 +1,25 @@
+2011-08-01  Neil Roberts  <neil@linux.intel.com>
+
+        build: Fix finding the headers for GStreamer
+
+        The cmake files to find the various GStreamer packages were all
+        checking for the header gst/gst.h. However if gst-plugins-base is
+        installed into a separate prefix from gstreamer then all of these
+        tests would only pick up the gstreamer include path so the build
+        would fail. This patch changes it to try and find a file
+        appropriate to each package.
+
+        https://bugs.webkit.org/show_bug.cgi?id=64933
+
+        Reviewed by Martin Robinson.
+
+        * Source/cmake/FindGStreamer-App.cmake:
+        * Source/cmake/FindGStreamer-Base.cmake:
+        * Source/cmake/FindGStreamer-Interfaces.cmake:
+        * Source/cmake/FindGStreamer-Pbutils.cmake:
+        * Source/cmake/FindGStreamer-Plugins-Base.cmake:
+        * Source/cmake/FindGStreamer-Video.cmake:
+
 2011-07-31  Daniel Bates  <dbates@webkit.org>
 
         Add missing semicolons to build fix attempt in <http://trac.webkit.org/changeset/92080>.

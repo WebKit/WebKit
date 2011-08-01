@@ -15,7 +15,7 @@ libfind_pkg_check_modules(GStreamer-Interfaces_PKGCONF gstreamer-interfaces-0.10
 
 # Include dir
 find_path(GStreamer-Interfaces_INCLUDE_DIR
-  NAMES gst/gst.h
+  NAMES gst/interfaces/mixer.h
   PATHS ${GStreamer-Interfaces_PKGCONF_INCLUDE_DIRS}
   PATH_SUFFIXES gstreamer-0.10
 )

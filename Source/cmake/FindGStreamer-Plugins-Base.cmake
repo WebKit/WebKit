@@ -15,7 +15,7 @@ libfind_pkg_check_modules(GStreamer-Plugins-Base_PKGCONF gstreamer-plugins-base-
 
 # Include dir
 find_path(GStreamer-Plugins-Base_INCLUDE_DIR
-  NAMES gst/gst.h
+  NAMES gst/audio/audio.h
   PATHS ${GStreamer-Plugins-Base_PKGCONF_INCLUDE_DIRS}
   PATH_SUFFIXES gstreamer-0.10
 )

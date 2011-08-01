@@ -15,7 +15,7 @@ libfind_pkg_check_modules(GStreamer-Pbutils_PKGCONF gstreamer-pbutils-0.10)
 
 # Include dir
 find_path(GStreamer-Pbutils_INCLUDE_DIR
-  NAMES gst/gst.h
+  NAMES gst/pbutils/pbutils.h
   PATHS ${GStreamer-Pbutils_PKGCONF_INCLUDE_DIRS}
   PATH_SUFFIXES gstreamer-0.10
 )
