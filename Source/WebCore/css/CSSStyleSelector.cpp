@@ -1362,7 +1362,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
         m_style->font().update(0);
     }
 
-    // Don't propagate user-modify into shadow DOM
+    // Even if surrounding content is user-editable, shadow DOM should act as a single unit, and not necessarily be editable
     if (isAtShadowBoundary(e))
         m_style->setUserModify(RenderStyle::initialUserModify());
 
