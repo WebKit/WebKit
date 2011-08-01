@@ -187,68 +187,67 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 764x38
-          text run at (0,0) width 286: "This tests caret movement across an iframe. "
-          text run at (286,0) width 478: "The caret shouldn't enter the iframe as the user arrows across it (unless we"
-          text run at (0,19) width 194: "decide later that we want it to)."
-      RenderBlock {DIV} at (0,52) size 784x207
-        RenderBlock {DIV} at (0,0) size 784x207
-          RenderText {#text} at (0,188) size 48x19
-            text run at (0,188) width 48: "iframe: "
-          RenderPartObject {IFRAME} at (48,0) size 402x202 [border: (1px solid #000000)]
-            layer at (0,0) size 384x209
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 779x44
+          text run at (0,0) width 298: "This tests caret movement across an iframe. "
+          text run at (298,0) width 481: "The caret shouldn't enter the iframe as the user arrows across it (unless"
+          text run at (0,22) width 232: "we decide later that we want it to)."
+      RenderBlock {DIV} at (0,60) size 784x208
+        RenderBlock {DIV} at (0,0) size 784x208
+          RenderText {#text} at (0,186) size 53x22
+            text run at (0,186) width 53: "iframe: "
+          RenderPartObject {IFRAME} at (53,0) size 402x202 [border: (1px solid #000000)]
+            layer at (0,0) size 384x236
               RenderView at (0,0) size 384x200
-            layer at (0,0) size 384x209
-              RenderBlock {HTML} at (0,0) size 384x209
-                RenderBody {BODY} at (8,8) size 368x193
-                  RenderBlock {P} at (0,0) size 368x95
-                    RenderText {#text} at (0,0) size 368x95
-                      text run at (0,0) width 321: "This tests caret movement through an inline table. "
-                      text run at (321,0) width 38: "There"
-                      text run at (0,19) width 368: "should be visual positions before and after the inline table,"
-                      text run at (0,38) width 143: "as if it were an image. "
-                      text run at (143,38) width 221: "The caret shouldn't skip across the"
-                      text run at (0,57) width 353: "table, but should enter it (unless we later decide that we"
-                      text run at (0,76) width 159: "don't want this behavior)."
-                  RenderBlock {DIV} at (0,109) size 368x84
-                    RenderBlock {DIV} at (0,0) size 368x84
-                      RenderText {#text} at (0,65) size 78x19
-                        text run at (0,65) width 78: "Inline Table:"
-                      RenderTable {TABLE} at (78,0) size 132x79 [border: (1px outset #808080)]
-                        RenderTableSection {TBODY} at (1,1) size 130x77
-                          RenderTableRow {TR} at (0,2) size 130x23
-                            RenderTableCell {TD} at (2,2) size 44x23 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 27x19
-                                text run at (2,2) width 27: "One"
-                            RenderTableCell {TD} at (48,2) size 36x23 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 27x19
-                                text run at (2,2) width 27: "Two"
-                            RenderTableCell {TD} at (86,2) size 42x23 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 38x19
-                                text run at (2,2) width 38: "Three"
-                          RenderTableRow {TR} at (0,27) size 130x23
-                            RenderTableCell {TD} at (2,27) size 44x23 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 30x19
-                                text run at (2,2) width 30: "Four"
-                            RenderTableCell {TD} at (48,27) size 36x23 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 27x19
-                                text run at (2,2) width 27: "Five"
-                            RenderTableCell {TD} at (86,27) size 42x23 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 19x19
-                                text run at (2,2) width 19: "Six"
-                          RenderTableRow {TR} at (0,52) size 130x23
-                            RenderTableCell {TD} at (2,52) size 44x23 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 40x19
+            layer at (0,0) size 384x236
+              RenderBlock {HTML} at (0,0) size 384x236
+                RenderBody {BODY} at (8,8) size 368x220
+                  RenderBlock {P} at (0,0) size 368x110
+                    RenderText {#text} at (0,0) size 364x110
+                      text run at (0,0) width 337: "This tests caret movement through an inline table."
+                      text run at (0,22) width 354: "There should be visual positions before and after the"
+                      text run at (0,44) width 232: "inline table, as if it were an image. "
+                      text run at (232,44) width 132: "The caret shouldn't"
+                      text run at (0,66) width 341: "skip across the table, but should enter it (unless we"
+                      text run at (0,88) width 310: "later decide that we don't want this behavior)."
+                  RenderBlock {DIV} at (0,126) size 368x94
+                    RenderBlock {DIV} at (0,0) size 368x94
+                      RenderText {#text} at (0,72) size 87x22
+                        text run at (0,72) width 87: "Inline Table:"
+                      RenderTable {TABLE} at (87,0) size 140x88 [border: (1px outset #808080)]
+                        RenderTableSection {TBODY} at (1,1) size 138x86
+                          RenderTableRow {TR} at (0,2) size 138x26
+                            RenderTableCell {TD} at (2,2) size 44x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 28x22
+                                text run at (2,2) width 28: "One"
+                            RenderTableCell {TD} at (48,2) size 41x26 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 31x22
+                                text run at (2,2) width 31: "Two"
+                            RenderTableCell {TD} at (91,2) size 45x26 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 41x22
+                                text run at (2,2) width 41: "Three"
+                          RenderTableRow {TR} at (0,30) size 138x26
+                            RenderTableCell {TD} at (2,30) size 44x26 [border: (1px inset #808080)] [r=1 c=0 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 34x22
+                                text run at (2,2) width 34: "Four"
+                            RenderTableCell {TD} at (48,30) size 41x26 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 29x22
+                                text run at (2,2) width 29: "Five"
+                            RenderTableCell {TD} at (91,30) size 45x26 [border: (1px inset #808080)] [r=1 c=2 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 21x22
+                                text run at (2,2) width 21: "Six"
+                          RenderTableRow {TR} at (0,58) size 138x26
+                            RenderTableCell {TD} at (2,58) size 44x26 [border: (1px inset #808080)] [r=2 c=0 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 40x22
                                 text run at (2,2) width 40: "Seven"
-                            RenderTableCell {TD} at (48,52) size 36x23 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 32x19
-                                text run at (2,2) width 32: "Eight"
-                            RenderTableCell {TD} at (86,52) size 42x23 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
-                              RenderText {#text} at (2,2) size 29x19
-                                text run at (2,2) width 29: "Nine"
-                      RenderText {#text} at (210,65) size 66x19
-                        text run at (210,65) width 66: "The End..."
-          RenderText {#text} at (450,188) size 68x19
-            text run at (450,188) width 68: " the end ..."
+                            RenderTableCell {TD} at (48,58) size 41x26 [border: (1px inset #808080)] [r=2 c=1 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 37x22
+                                text run at (2,2) width 37: "Eight"
+                            RenderTableCell {TD} at (91,58) size 45x26 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
+                              RenderText {#text} at (2,2) size 32x22
+                                text run at (2,2) width 32: "Nine"
+                      RenderText {#text} at (227,72) size 72x22
+                        text run at (227,72) width 72: "The End..."
+          RenderText {#text} at (455,186) size 70x22
+            text run at (455,186) width 70: " the end ..."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

@@ -1,3 +1,5 @@
+EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 3 of DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -54,18 +56,18 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 705x19
-          text run at (0,0) width 302: "This tests caret movement across a select box. "
-          text run at (302,0) width 403: "The caret should skip over the select box as if it were an image."
-      RenderBlock {DIV} at (0,33) size 784x29
-        RenderBlock {DIV} at (0,0) size 784x29
-          RenderText {#text} at (0,6) size 72x19
-            text run at (0,6) width 72: "select box: "
-          RenderMenuList {SELECT} at (74,2) size 74x25 [bgcolor=#FFFFFF]
-            RenderBlock (anonymous) at (8,4) size 42x19
-              RenderText at (0,0) size 8x19
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 734x22
+          text run at (0,0) width 310: "This tests caret movement across a select box. "
+          text run at (310,0) width 424: "The caret should skip over the select box as if it were an image."
+      RenderBlock {DIV} at (0,38) size 784x31
+        RenderBlock {DIV} at (0,0) size 784x31
+          RenderText {#text} at (0,4) size 74x22
+            text run at (0,4) width 74: "select box: "
+          RenderMenuList {SELECT} at (76,2) size 36x27 [bgcolor=#FFFFFF]
+            RenderBlock (anonymous) at (4,2) size 8x22
+              RenderText at (0,0) size 8x22
                 text run at (0,0) width 8: "1"
-          RenderText {#text} at (150,6) size 68x19
-            text run at (150,6) width 68: " the end ..."
+          RenderText {#text} at (114,4) size 70x22
+            text run at (114,4) width 70: " the end ..."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

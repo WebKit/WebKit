@@ -1,74 +1,73 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x253
-  RenderBlock {HTML} at (0,0) size 800x253
-    RenderBody {BODY} at (8,14) size 784x225 [color=#0000FF]
-      RenderBlock {P} at (0,0) size 784x39
-        RenderInline (generated) at (0,0) size 9x19 [color=#008000]
-          RenderText {#text} at (0,0) size 9x19
-            text run at (0,0) width 9: "T"
-        RenderText {#text} at (9,0) size 20x19
-          text run at (9,0) width 20: "he "
-        RenderInline {STRONG} at (0,0) size 66x20
-          RenderText {#text} at (29,0) size 66x20
-            text run at (29,0) width 66: "first letter"
-        RenderText {#text} at (95,0) size 304x19
-          text run at (95,0) width 206: " of this paragraph, and only that "
-          text run at (301,0) width 98: "one, should be "
-        RenderInline {STRONG} at (0,0) size 39x20
-          RenderText {#text} at (399,0) size 39x20
-            text run at (399,0) width 39: "green"
-        RenderText {#text} at (438,0) size 769x39
-          text run at (438,0) width 177: ". If this precise combination "
-          text run at (615,0) width 154: "does not occur, then the"
-          text run at (0,20) width 190: "user agent has failed this test."
-      RenderBlock {P} at (0,53) size 784x56
-        RenderInline (generated) at (0,0) size 17x36 [color=#008000]
-          RenderText {#text} at (0,0) size 17x36
-            text run at (0,0) width 17: "T"
-        RenderText {#text} at (17,13) size 20x19
-          text run at (17,13) width 20: "he "
-        RenderInline {STRONG} at (0,0) size 66x20
-          RenderText {#text} at (37,13) size 66x20
-            text run at (37,13) width 66: "first letter"
-        RenderText {#text} at (103,13) size 331x19
-          text run at (103,13) width 206: " of this paragraph, and only that "
-          text run at (309,13) width 125: "one, should be in a "
-        RenderInline {STRONG} at (0,0) size 39x20
-          RenderText {#text} at (434,13) size 39x20
-            text run at (434,13) width 39: "larger"
-        RenderText {#text} at (473,13) size 131x19
-          text run at (473,13) width 131: " font size, as well as "
-        RenderInline {STRONG} at (0,0) size 39x20
-          RenderText {#text} at (604,13) size 39x20
-            text run at (604,13) width 39: "green"
-        RenderText {#text} at (643,13) size 735x43
-          text run at (643,13) width 92: ". If this precise"
-          text run at (0,37) width 183: "combination does not occur, "
-          text run at (183,37) width 246: "then the user agent has failed this test."
-      RenderBlock {P} at (0,123) size 784x102
-        RenderInline (generated) at (0,0) size 47x62 [color=#008000]
-          RenderText {#text} at (0,0) size 47x62
-            text run at (0,0) width 47: "\"T"
-        RenderText {#text} at (47,33) size 20x19
-          text run at (47,33) width 20: "he "
-        RenderInline {STRONG} at (0,0) size 132x20
-          RenderText {#text} at (67,33) size 132x20
-            text run at (67,33) width 132: "first two characters"
-        RenderText {#text} at (199,33) size 458x19
-          text run at (199,33) width 132: " in this paragraph (a "
-          text run at (331,33) width 326: "double-quote mark and a capital 'T') should be in a "
-        RenderInline {STRONG} at (0,0) size 81x20
-          RenderText {#text} at (657,33) size 81x20
-            text run at (657,33) width 42: "much "
-            text run at (699,33) width 39: "larger"
-        RenderText {#text} at (738,33) size 766x49
-          text run at (738,33) width 28: " font"
-          text run at (0,63) width 255: "size than the rest of the paragraph, and "
-        RenderInline {STRONG} at (0,0) size 39x20
-          RenderText {#text} at (255,63) size 39x20
-            text run at (255,63) width 39: "green"
-        RenderText {#text} at (294,63) size 762x39
-          text run at (294,63) width 279: ". If this precise combination does not occur, "
-          text run at (573,63) width 189: "then the user agent has failed"
-          text run at (0,83) width 53: "this test."
+layer at (0,0) size 800x290
+  RenderBlock {HTML} at (0,0) size 800x290
+    RenderBody {BODY} at (8,16) size 784x258 [color=#0000FF]
+      RenderBlock {P} at (0,0) size 784x44
+        RenderInline (generated) at (0,0) size 11x22 [color=#008000]
+          RenderText {#text} at (0,0) size 11x22
+            text run at (0,0) width 11: "T"
+        RenderText {#text} at (11,0) size 20x22
+          text run at (11,0) width 20: "he "
+        RenderInline {STRONG} at (0,0) size 66x22
+          RenderText {#text} at (31,0) size 66x22
+            text run at (31,0) width 66: "first letter"
+        RenderText {#text} at (97,0) size 325x22
+          text run at (97,0) width 224: " of this paragraph, and only that "
+          text run at (321,0) width 101: "one, should be "
+        RenderInline {STRONG} at (0,0) size 38x22
+          RenderText {#text} at (422,0) size 38x22
+            text run at (422,0) width 38: "green"
+        RenderText {#text} at (460,0) size 752x44
+          text run at (460,0) width 190: ". If this precise combination "
+          text run at (650,0) width 102: "does not occur,"
+          text run at (0,22) width 256: "then the user agent has failed this test."
+      RenderBlock {P} at (0,60) size 784x64
+        RenderInline (generated) at (0,0) size 21x42 [color=#008000]
+          RenderText {#text} at (0,0) size 21x42
+            text run at (0,0) width 21: "T"
+        RenderText {#text} at (21,15) size 20x22
+          text run at (21,15) width 20: "he "
+        RenderInline {STRONG} at (0,0) size 66x22
+          RenderText {#text} at (41,15) size 66x22
+            text run at (41,15) width 66: "first letter"
+        RenderText {#text} at (107,15) size 354x22
+          text run at (107,15) width 224: " of this paragraph, and only that "
+          text run at (331,15) width 130: "one, should be in a "
+        RenderInline {STRONG} at (0,0) size 41x22
+          RenderText {#text} at (461,15) size 41x22
+            text run at (461,15) width 41: "larger"
+        RenderText {#text} at (502,15) size 134x22
+          text run at (502,15) width 134: " font size, as well as "
+        RenderInline {STRONG} at (0,0) size 38x22
+          RenderText {#text} at (636,15) size 38x22
+            text run at (636,15) width 38: "green"
+        RenderText {#text} at (674,15) size 772x49
+          text run at (674,15) width 98: ". If this precise"
+          text run at (0,42) width 194: "combination does not occur, "
+          text run at (194,42) width 256: "then the user agent has failed this test."
+      RenderBlock {P} at (0,140) size 784x118
+        RenderInline (generated) at (0,0) size 68x74 [color=#008000]
+          RenderText {#text} at (0,0) size 68x74
+            text run at (0,0) width 68: "\"T"
+        RenderText {#text} at (68,38) size 20x22
+          text run at (68,38) width 20: "he "
+        RenderInline {STRONG} at (0,0) size 131x22
+          RenderText {#text} at (88,38) size 131x22
+            text run at (88,38) width 131: "first two characters"
+        RenderText {#text} at (219,38) size 494x22
+          text run at (219,38) width 143: " in this paragraph (a "
+          text run at (362,38) width 351: "double-quote mark and a capital 'T') should be in a "
+        RenderInline {STRONG} at (0,0) size 751x58
+          RenderText {#text} at (713,38) size 751x58
+            text run at (713,38) width 38: "much"
+            text run at (0,74) width 41: "larger"
+        RenderText {#text} at (41,74) size 305x22
+          text run at (41,74) width 305: " font size than the rest of the paragraph, and "
+        RenderInline {STRONG} at (0,0) size 38x22
+          RenderText {#text} at (346,74) size 38x22
+            text run at (346,74) width 38: "green"
+        RenderText {#text} at (384,74) size 768x44
+          text run at (384,74) width 296: ". If this precise combination does not occur, "
+          text run at (680,74) width 88: "then the user"
+          text run at (0,96) width 164: "agent has failed this test."

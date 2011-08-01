@@ -1,0 +1,36 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x576
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 57x22
+          text run at (0,0) width 57: "Test for "
+        RenderInline {I} at (0,0) size 751x44
+          RenderInline {A} at (0,0) size 304x22 [color=#0000EE]
+            RenderText {#text} at (57,0) size 304x22
+              text run at (57,0) width 304: "http://bugs.webkit.org/show_bug.cgi?id=14911"
+          RenderText {#text} at (361,0) size 751x44
+            text run at (361,0) width 4: " "
+            text run at (365,0) width 386: "REGRESSION: Clicking in pasted text doesn't position the"
+            text run at (0,22) width 154: "insertion point correctly"
+        RenderText {#text} at (154,22) size 4x22
+          text run at (154,22) width 4: "."
+      RenderBlock {P} at (0,60) size 784x22
+        RenderText {#text} at (0,0) size 595x22
+          text run at (0,0) width 561: "You should be able to select individual letters in \x{201C}ipsum\x{201D} by dragging in the yellow "
+          text run at (561,0) width 34: "area "
+        RenderInline {EM} at (0,0) size 38x22
+          RenderText {#text} at (595,0) size 38x22
+            text run at (595,0) width 38: "above"
+        RenderText {#text} at (633,0) size 42x22
+          text run at (633,0) width 42: " them."
+      RenderBlock (floating) {DIV} at (0,98) size 91x80 [bgcolor=#FFFFAA]
+        RenderInline {SPAN} at (0,0) size 91x22 [bgcolor=#FFFFFF]
+          RenderText {#text} at (0,29) size 50x22
+            text run at (0,29) width 50: "Lorem "
+          RenderText {#text} at (50,29) size 41x22
+            text run at (50,29) width 41: "ipsum"
+        RenderText {#text} at (0,0) size 0x0
+selection start: position 1 of child 0 {#text} of child 1 {SPAN} of child 4 {DIV} of body
+selection end:   position 5 of child 2 {#text} of child 1 {SPAN} of child 4 {DIV} of body

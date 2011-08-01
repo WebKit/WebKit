@@ -9,7 +9,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 2 of #text > P > DIV > DIV > BODY > HTML > #document to 4 of #text > P > DIV > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > P > DIV > DIV > BODY > HTML > #document to 2 of #text > P > DIV > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > P > DIV > DIV > BODY > HTML > #document to 2 of #text > P > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -17,37 +17,37 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x302 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x97
-          RenderText {#text} at (0,0) size 77x33
-            text run at (0,0) width 77: "Tests: "
+      RenderBlock {DIV} at (0,0) size 784x308 [border: (2px solid #0000FF)]
+        RenderBlock {DIV} at (14,14) size 756x99
+          RenderText {#text} at (0,0) size 67x33
+            text run at (0,0) width 67: "Tests: "
           RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 747x63
-            text run at (0,33) width 747: "Deleting when a selection starts in the middle of the last paragraph and"
-            text run at (0,65) width 384: "extends to the end of that paragraph"
-        RenderBlock {DIV} at (14,127) size 756x161
-          RenderText {#text} at (0,0) size 214x33
-            text run at (0,0) width 214: "Expected Results: "
-          RenderBR {BR} at (214,24) size 0x0
-          RenderText {#text} at (0,33) size 752x127
-            text run at (0,33) width 752: "Should see the four lines in the red box. First line should be \"one\". Next"
-            text run at (0,65) width 224: "one should be \"two\". "
-            text run at (224,65) width 497: "Next one should be \"three\". Last one should be"
-            text run at (0,97) width 52: "\"fo\". "
-            text run at (52,97) width 660: "Insertion point should be blinking at the start of the fourth (last)"
-            text run at (0,129) width 43: "line."
-      RenderBlock {DIV} at (0,326) size 784x132
-        RenderBlock {DIV} at (0,0) size 784x132 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (2,2) size 780x32
-            RenderText {#text} at (0,0) size 39x31
-              text run at (0,0) width 39: "one"
-          RenderBlock {P} at (2,34) size 780x32
-            RenderText {#text} at (0,0) size 37x31
+          RenderText {#text} at (0,33) size 728x66
+            text run at (0,33) width 728: "Deleting when a selection starts in the middle of the last paragraph and"
+            text run at (0,66) width 372: "extends to the end of that paragraph"
+        RenderBlock {DIV} at (14,129) size 756x165
+          RenderText {#text} at (0,0) size 189x33
+            text run at (0,0) width 189: "Expected Results: "
+          RenderBR {BR} at (189,24) size 0x0
+          RenderText {#text} at (0,33) size 734x132
+            text run at (0,33) width 734: "Should see the four lines in the red box. First line should be \"one\". Next"
+            text run at (0,66) width 220: "one should be \"two\". "
+            text run at (220,66) width 481: "Next one should be \"three\". Last one should be"
+            text run at (0,99) width 58: "\"fo\". "
+            text run at (58,99) width 657: "Insertion point should be blinking at the start of the fourth (last)"
+            text run at (0,132) width 44: "line."
+      RenderBlock {DIV} at (0,332) size 784x136
+        RenderBlock {DIV} at (0,0) size 784x136 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (2,2) size 780x33
+            RenderText {#text} at (0,0) size 36x33
+              text run at (0,0) width 36: "one"
+          RenderBlock {P} at (2,35) size 780x33
+            RenderText {#text} at (0,0) size 37x33
               text run at (0,0) width 37: "two"
-          RenderBlock {P} at (2,66) size 780x32
-            RenderText {#text} at (0,0) size 54x31
+          RenderBlock {P} at (2,68) size 780x33
+            RenderText {#text} at (0,0) size 54x33
               text run at (0,0) width 54: "three"
-          RenderBlock {P} at (2,98) size 780x32
-            RenderText {#text} at (0,0) size 20x31
+          RenderBlock {P} at (2,101) size 780x33
+            RenderText {#text} at (0,0) size 20x33
               text run at (0,0) width 20: "fo"
 caret: position 2 of child 0 {#text} of child 5 {P} of child 1 {DIV} of child 3 {DIV} of body

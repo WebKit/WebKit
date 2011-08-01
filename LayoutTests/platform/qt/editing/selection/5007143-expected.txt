@@ -3,22 +3,22 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x57
-        RenderText {#text} at (0,0) size 783x57
-          text run at (0,0) width 522: "This tests for a bug when moving the caret forward/backward by a line/paragraph. "
-          text run at (522,0) width 261: "The horizontal position of the caret would"
-          text run at (0,19) width 545: "be lost when moving the caret into an empty paragraph, when it should be preserved. "
-          text run at (545,19) width 236: "The caret should be between the first"
-          text run at (0,38) width 243: "and second 'x's in the third paragraph."
-      RenderBlock {DIV} at (0,71) size 784x76
-        RenderText {#text} at (0,0) size 21x19
-          text run at (0,0) width 21: "xxx"
-        RenderBR {BR} at (21,14) size 0x0
-        RenderText {#text} at (0,19) size 21x19
-          text run at (0,19) width 21: "xxx"
-        RenderBR {BR} at (21,33) size 0x0
-        RenderBR {BR} at (0,38) size 0x19
-        RenderText {#text} at (0,57) size 21x19
-          text run at (0,57) width 21: "xxx"
-        RenderBR {BR} at (21,71) size 0x0
+      RenderBlock {P} at (0,0) size 784x66
+        RenderText {#text} at (0,0) size 779x66
+          text run at (0,0) width 566: "This tests for a bug when moving the caret forward/backward by a line/paragraph. "
+          text run at (566,0) width 199: "The horizontal position of the"
+          text run at (0,22) width 665: "caret would be lost when moving the caret into an empty paragraph, when it should be preserved. "
+          text run at (665,22) width 114: "The caret should"
+          text run at (0,44) width 399: "be between the first and second 'x's in the third paragraph."
+      RenderBlock {DIV} at (0,82) size 784x88
+        RenderText {#text} at (0,0) size 24x22
+          text run at (0,0) width 24: "xxx"
+        RenderBR {BR} at (24,16) size 0x0
+        RenderText {#text} at (0,22) size 24x22
+          text run at (0,22) width 24: "xxx"
+        RenderBR {BR} at (24,38) size 0x0
+        RenderBR {BR} at (0,44) size 0x22
+        RenderText {#text} at (0,66) size 24x22
+          text run at (0,66) width 24: "xxx"
+        RenderBR {BR} at (24,82) size 0x0
 caret: position 2 of child 6 {#text} of child 2 {DIV} of body

@@ -7,6 +7,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
@@ -15,18 +17,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x92 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 749x63
-          text run at (14,14) width 749: "Should see \"XX\" in a top red box, and another \"XX\" in a red box inside "
-          text run at (14,46) width 86: "the first."
-      RenderBlock {DIV} at (0,116) size 784x120
-        RenderBlock {DIV} at (0,0) size 784x120 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x32
-            RenderText {#text} at (0,0) size 16x31
-              text run at (0,0) width 16: "X"
-            RenderText {#text} at (16,0) size 16x31
-              text run at (16,0) width 16: "X"
-          RenderBlock {DIV} at (14,46) size 756x60 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 32x31
-              text run at (14,14) width 32: "XX"
+      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 743x66
+          text run at (14,14) width 737: "Should see \"XX\" in a top red box, and another \"XX\" in a red box inside"
+          text run at (751,14) width 6: " "
+          text run at (14,47) width 87: "the first."
+      RenderBlock {DIV} at (0,118) size 784x122
+        RenderBlock {DIV} at (0,0) size 784x122 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x33
+            RenderText {#text} at (0,0) size 17x33
+              text run at (0,0) width 17: "X"
+            RenderText {#text} at (17,0) size 17x33
+              text run at (17,0) width 17: "X"
+          RenderBlock {DIV} at (14,47) size 756x61 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 34x33
+              text run at (14,14) width 34: "XX"
 caret: position 2 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

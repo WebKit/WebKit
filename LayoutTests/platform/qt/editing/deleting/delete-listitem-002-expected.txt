@@ -9,22 +9,23 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 4 of #text > LI > UL > DIV > BODY > HTML > #document to 5 of #text > LI > UL > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 3 of #text > LI > UL > DIV > BODY > HTML > #document to 3 of #text > LI > UL > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > LI > UL > DIV > BODY > HTML > #document to 4 of #text > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > LI > UL > DIV > BODY > HTML > #document to 4 of #text > LI > UL > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 2 of #text > LI > UL > DIV > BODY > HTML > #document to 2 of #text > LI > UL > DIV > BODY > HTML > #document toDOMRange:range from 3 of #text > LI > UL > DIV > BODY > HTML > #document to 3 of #text > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 2 of #text > LI > UL > DIV > BODY > HTML > #document to 3 of #text > LI > UL > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 1 of #text > LI > UL > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > BODY > HTML > #document toDOMRange:range from 2 of #text > LI > UL > DIV > BODY > HTML > #document to 2 of #text > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 1 of #text > LI > UL > DIV > BODY > HTML > #document to 2 of #text > LI > UL > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of LI > UL > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document toDOMRange:range from 1 of #text > LI > UL > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > LI > UL > DIV > BODY > HTML > #document to 1 of #text > LI > UL > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 0 of LI > UL > DIV > BODY > HTML > #document to 0 of LI > UL > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -34,25 +35,25 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x236 [border: (2px solid #FF0000)]
-        RenderBlock {UL} at (14,38) size 756x160
-          RenderListItem {LI} at (40,0) size 716x32
-            RenderListMarker at (-23,0) size 10x31: bullet
-            RenderText {#text} at (0,0) size 39x31
-              text run at (0,0) width 39: "one"
-          RenderListItem {LI} at (40,32) size 716x32
-            RenderListMarker at (-23,0) size 10x31: bullet
-            RenderText {#text} at (0,0) size 37x31
+      RenderBlock {DIV} at (0,0) size 784x241 [border: (2px solid #FF0000)]
+        RenderBlock {UL} at (14,38) size 756x165
+          RenderListItem {LI} at (40,0) size 716x33
+            RenderListMarker at (-24,0) size 10x33: bullet
+            RenderText {#text} at (0,0) size 36x33
+              text run at (0,0) width 36: "one"
+          RenderListItem {LI} at (40,33) size 716x33
+            RenderListMarker at (-24,0) size 10x33: bullet
+            RenderText {#text} at (0,0) size 37x33
               text run at (0,0) width 37: "two"
-          RenderListItem {LI} at (40,64) size 716x32
-            RenderListMarker at (-23,0) size 10x31: bullet
-            RenderBR {BR} at (0,0) size 0x31
-          RenderListItem {LI} at (40,96) size 716x32
-            RenderListMarker at (-23,0) size 10x31: bullet
-            RenderText {#text} at (0,0) size 41x31
-              text run at (0,0) width 41: "four"
-          RenderListItem {LI} at (40,128) size 716x32
-            RenderListMarker at (-23,0) size 10x31: bullet
-            RenderText {#text} at (0,0) size 37x31
-              text run at (0,0) width 37: "five"
+          RenderListItem {LI} at (40,66) size 716x33
+            RenderListMarker at (-24,0) size 10x33: bullet
+            RenderBR {BR} at (0,0) size 0x33
+          RenderListItem {LI} at (40,99) size 716x33
+            RenderListMarker at (-24,0) size 10x33: bullet
+            RenderText {#text} at (0,0) size 44x33
+              text run at (0,0) width 44: "four"
+          RenderListItem {LI} at (40,132) size 716x33
+            RenderListMarker at (-24,0) size 10x33: bullet
+            RenderText {#text} at (0,0) size 38x33
+              text run at (0,0) width 38: "five"
 caret: position 0 of child 0 {BR} of child 5 {LI} of child 1 {UL} of child 1 {DIV} of body

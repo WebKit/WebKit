@@ -1,6 +1,7 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #document to 6 of BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
@@ -8,19 +9,19 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {DIV} at (0,0) size 784x61 [border: (2px solid #FF0000)]
-        RenderText {#text} at (182,15) size 313x31
-          text run at (182,15) width 313: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 99x33
-          RenderText {#text} at (495,14) size 99x33
-            text run at (495,14) width 99: "centered"
-        RenderText {#text} at (594,15) size 7x31
-          text run at (594,15) width 7: "."
+        RenderText {#text} at (196,14) size 297x33
+          text run at (196,14) width 297: "Here is some text. Should be "
+        RenderInline {B} at (0,0) size 90x33
+          RenderText {#text} at (492,14) size 90x33
+            text run at (492,14) width 90: "centered"
+        RenderText {#text} at (581,14) size 7x33
+          text run at (581,14) width 7: "."
       RenderBlock {DIV} at (0,61) size 784x61 [border: (2px solid #FF0000)]
-        RenderText {#text} at (14,15) size 313x31
-          text run at (14,15) width 313: "Here is some text. Should be "
-        RenderInline {B} at (0,0) size 101x33
-          RenderText {#text} at (327,14) size 101x33
-            text run at (327,14) width 101: "flush left"
-        RenderText {#text} at (428,15) size 7x31
-          text run at (428,15) width 7: "."
+        RenderText {#text} at (14,14) size 296x33
+          text run at (14,14) width 296: "Here is some text. Should be "
+        RenderInline {B} at (0,0) size 90x33
+          RenderText {#text} at (310,14) size 90x33
+            text run at (310,14) width 90: "flush left"
+        RenderText {#text} at (400,14) size 6x33
+          text run at (400,14) width 6: "."
 caret: position 1 of child 0 {#text} of child 1 {DIV} of body

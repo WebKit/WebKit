@@ -1,3 +1,13 @@
+2011-08-01  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        [Qt] Update expected results and unskip now passing tests.
+
+        Reviewed by Csaba Osztrogonác.
+
+        * platform/qt/Skipped:
+        * platform/qt/css2.1/ [...]: Updated.
+        * platform/qt/editing/ [...]: Updated.
+
 2011-08-01  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: unflake inspector test that was just added.

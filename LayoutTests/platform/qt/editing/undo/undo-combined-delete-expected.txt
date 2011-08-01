@@ -6,18 +6,27 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 6 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 7 of #text > SPAN > DIV > BODY > HTML > #document to 7 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 6 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 6 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 6 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 5 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 9 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 9 of #text > SPAN > DIV > BODY > HTML > #document to 10 of #text > SPAN > DIV > BODY > HTML > #document toDOMRange:range from 5 of #text > SPAN > DIV > BODY > HTML > #document to 9 of #text > SPAN > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -25,11 +34,12 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x92 [border: (2px solid #FF0000)]
-        RenderInline {SPAN} at (0,0) size 745x63
-          RenderText {#text} at (14,14) size 745x63
-            text run at (14,14) width 745: "This word should be selected, since the test deleted it a character at a "
-            text run at (14,46) width 281: "time and then did an undo."
+      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #FF0000)]
+        RenderInline {SPAN} at (0,0) size 712x66
+          RenderText {#text} at (14,14) size 712x66
+            text run at (14,14) width 706: "This word should be selected, since the test deleted it a character at a"
+            text run at (720,14) width 6: " "
+            text run at (14,47) width 274: "time and then did an undo."
         RenderText {#text} at (0,0) size 0x0
 selection start: position 5 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body
 selection end:   position 9 of child 0 {#text} of child 1 {SPAN} of child 1 {DIV} of body

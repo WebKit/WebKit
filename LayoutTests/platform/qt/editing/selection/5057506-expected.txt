@@ -1,0 +1,30 @@
+ALERT: 34
+ALERT: 126
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {P} at (0,0) size 784x88
+        RenderText {#text} at (0,0) size 781x88
+          text run at (0,0) width 536: "This tests double clicking after the last character in the last cell of a block table. "
+          text run at (536,0) width 219: "The paragraph break (the space"
+          text run at (0,22) width 622: "between the last character and the first character in the next paragraph) should be selected. "
+          text run at (622,22) width 120: "Selection painting"
+          text run at (0,44) width 614: "problems might prevent the paragraph break from appearing as selected even though it is. "
+          text run at (614,44) width 167: "To test manually, double"
+          text run at (0,66) width 430: "click inside the table cell, after the last character, and hit delete. "
+          text run at (430,66) width 302: "Afterward, the table should contain 'foobar'."
+      RenderBlock {DIV} at (0,104) size 784x54
+        RenderTable {TABLE} at (0,0) size 110x32 [border: (1px outset #808080)]
+          RenderTableSection {TBODY} at (1,1) size 108x30
+            RenderTableRow {TR} at (0,2) size 108x26
+              RenderTableCell {TD} at (2,2) size 104x26 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+                RenderInline {SPAN} at (0,0) size 21x22
+                  RenderText {#text} at (2,2) size 21x22
+                    text run at (2,2) width 21: "foo"
+        RenderBlock {DIV} at (0,32) size 784x22
+          RenderText {#text} at (0,0) size 24x22
+            text run at (0,0) width 24: "bar"
+selection start: position 0 of child 0 {#text} of child 0 {SPAN} of child 0 {TD} of child 0 {TR} of child 0 {TBODY} of child 1 {TABLE} of child 2 {DIV} of body
+selection end:   position 0 of child 3 {DIV} of child 2 {DIV} of body

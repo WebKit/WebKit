@@ -1,7 +1,10 @@
 EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of DIV > BODY > HTML > #document to 1 of DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 0 of #text > A > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > A > DIV > BODY > HTML > #document to 4 of #text > A > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BODY > HTML > #document to 6 of #text > DIV > BODY > HTML > #document toDOMRange:range from 4 of #text > A > DIV > BODY > HTML > #document to 4 of #text > A > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -10,17 +13,17 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 774x38
-          text run at (0,0) width 586: "This tests for a bug when a selection is replaced by content with selectReplacement == true. "
-          text run at (586,0) width 188: "Below, you should see 'A new"
-          text run at (0,19) width 56: "link' and "
-          text run at (56,19) width 154: "'link' should be selected."
-      RenderBlock {DIV} at (0,52) size 784x19
-        RenderText {#text} at (0,0) size 43x19
-          text run at (0,0) width 43: "A new "
-        RenderInline {A} at (0,0) size 21x19 [color=#0000EE]
-          RenderText {#text} at (43,0) size 21x19
-            text run at (43,0) width 21: "link"
+      RenderBlock {P} at (0,0) size 784x44
+        RenderText {#text} at (0,0) size 766x44
+          text run at (0,0) width 618: "This tests for a bug when a selection is replaced by content with selectReplacement == true. "
+          text run at (618,0) width 148: "Below, you should see"
+          text run at (0,22) width 116: "'A new link' and "
+          text run at (116,22) width 163: "'link' should be selected."
+      RenderBlock {DIV} at (0,60) size 784x22
+        RenderText {#text} at (0,0) size 48x22
+          text run at (0,0) width 48: "A new "
+        RenderInline {A} at (0,0) size 26x22 [color=#0000EE]
+          RenderText {#text} at (48,0) size 26x22
+            text run at (48,0) width 26: "link"
 selection start: position 0 of child 0 {#text} of child 1 {A} of child 2 {DIV} of body
 selection end:   position 4 of child 0 {#text} of child 1 {A} of child 2 {DIV} of body

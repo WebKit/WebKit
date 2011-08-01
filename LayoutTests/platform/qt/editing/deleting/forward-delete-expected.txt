@@ -2,24 +2,31 @@ EDITING DELEGATE: shouldBeginEditingInDOMRange:range from 0 of BODY > HTML > #do
 EDITING DELEGATE: webViewDidBeginEditing:WebViewDidBeginEditingNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document toDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > BODY > HTML > #document
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x92 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 755x63
-          text run at (14,14) width 755: "Should see \"bar\" in the red box. Insertion point should be at the start of "
-          text run at (14,46) width 151: "the document."
-      RenderBlock {DIV} at (0,116) size 784x60
-        RenderBlock {DIV} at (0,0) size 784x60 [border: (2px solid #FF0000)]
-          RenderText {#text} at (14,14) size 34x31
-            text run at (14,14) width 34: "bar"
+      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 741x66
+          text run at (14,14) width 735: "Should see \"bar\" in the red box. Insertion point should be at the start of"
+          text run at (749,14) width 6: " "
+          text run at (14,47) width 145: "the document."
+      RenderBlock {DIV} at (0,118) size 784x61
+        RenderBlock {DIV} at (0,0) size 784x61 [border: (2px solid #FF0000)]
+          RenderText {#text} at (14,14) size 36x33
+            text run at (14,14) width 36: "bar"
 caret: position 0 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

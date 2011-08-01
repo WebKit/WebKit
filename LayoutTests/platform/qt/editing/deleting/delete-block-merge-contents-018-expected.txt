@@ -6,6 +6,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
@@ -14,18 +16,19 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x92 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 731x63
-          text run at (14,14) width 731: "Should see \"Test OK\" in top red box, followed by \"...more text\", in its "
-          text run at (14,46) width 136: "own red box."
-      RenderBlock {DIV} at (0,116) size 784x120
-        RenderBlock {DIV} at (0,0) size 784x120 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x32
-            RenderText {#text} at (0,0) size 15x31
-              text run at (0,0) width 15: "T"
-            RenderText {#text} at (15,0) size 74x31
-              text run at (15,0) width 74: "est OK"
-          RenderBlock {DIV} at (14,46) size 756x60 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 121x31
-              text run at (14,14) width 121: "...more text"
+      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 724x66
+          text run at (14,14) width 718: "Should see \"Test OK\" in top red box, followed by \"...more text\", in its"
+          text run at (732,14) width 6: " "
+          text run at (14,47) width 132: "own red box."
+      RenderBlock {DIV} at (0,118) size 784x122
+        RenderBlock {DIV} at (0,0) size 784x122 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x33
+            RenderText {#text} at (0,0) size 16x33
+              text run at (0,0) width 16: "T"
+            RenderText {#text} at (16,0) size 72x33
+              text run at (16,0) width 72: "est OK"
+          RenderBlock {DIV} at (14,47) size 756x61 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 117x33
+              text run at (14,14) width 117: "...more text"
 caret: position 2 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

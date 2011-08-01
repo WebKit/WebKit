@@ -7,6 +7,8 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 3 of #text > DIV > DIV > BODY > HTML > #document to 1 of #text > DIV > DIV > DIV > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > DIV > DIV > BODY > HTML > #document to 2 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
@@ -15,19 +17,20 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x92 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 734x63
-          text run at (14,14) width 734: "Should see \"XX\" in outer red box, and another \"XX\" in an orange box "
-          text run at (14,46) width 235: "nested in a green box."
-      RenderBlock {DIV} at (0,116) size 784x148
-        RenderBlock {DIV} at (0,0) size 784x148 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x32
-            RenderText {#text} at (0,0) size 16x31
-              text run at (0,0) width 16: "X"
-            RenderText {#text} at (16,0) size 16x31
-              text run at (16,0) width 16: "X"
-          RenderBlock {DIV} at (14,46) size 756x88 [border: (2px solid #008000)]
-            RenderBlock {DIV} at (14,14) size 728x60 [border: (2px solid #FFA500)]
-              RenderText {#text} at (14,14) size 32x31
-                text run at (14,14) width 32: "XX"
+      RenderBlock {DIV} at (0,0) size 784x94 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 730x66
+          text run at (14,14) width 724: "Should see \"XX\" in outer red box, and another \"XX\" in an orange box"
+          text run at (738,14) width 6: " "
+          text run at (14,47) width 222: "nested in a green box."
+      RenderBlock {DIV} at (0,118) size 784x150
+        RenderBlock {DIV} at (0,0) size 784x150 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x33
+            RenderText {#text} at (0,0) size 17x33
+              text run at (0,0) width 17: "X"
+            RenderText {#text} at (17,0) size 17x33
+              text run at (17,0) width 17: "X"
+          RenderBlock {DIV} at (14,47) size 756x89 [border: (2px solid #008000)]
+            RenderBlock {DIV} at (14,14) size 728x61 [border: (2px solid #FFA500)]
+              RenderText {#text} at (14,14) size 34x33
+                text run at (14,14) width 34: "XX"
 caret: position 2 of child 0 {#text} of child 1 {DIV} of child 3 {DIV} of body

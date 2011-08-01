@@ -3,13 +3,15 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 737x19
-          text run at (0,0) width 340: "This tests moving backward by sentence boundaries. "
-          text run at (340,0) width 397: "The caret should be at the start of the second to last sentence."
-      RenderBlock {DIV} at (0,33) size 784x57
-        RenderText {#text} at (0,0) size 769x57
-          text run at (0,0) width 769: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique senectus et "
-          text run at (0,19) width 740: "netus et malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique leo eu velit. "
-          text run at (0,38) width 660: "Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem."
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 772x22
+          text run at (0,0) width 360: "This tests moving backward by sentence boundaries. "
+          text run at (360,0) width 412: "The caret should be at the start of the second to last sentence."
+      RenderBlock {DIV} at (0,38) size 784x66
+        RenderText {#text} at (0,0) size 784x66
+          text run at (0,0) width 735: "Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nunc a augue. Pellentesque habitant morbi tristique"
+          text run at (735,0) width 4: " "
+          text run at (0,22) width 768: "senectus et netus et malesuada fames ac turpis egestas. Mauris ut pede. Integer lacus. Ut ipsum. Phasellus tristique"
+          text run at (768,22) width 4: " "
+          text run at (0,44) width 784: "leo eu velit. Vestibulum arcu lacus, blandit ac, condimentum sed, commodo in, arcu. Curabitur suscipit pede eu sem."
 caret: position 241 of child 0 {#text} of child 2 {DIV} of body

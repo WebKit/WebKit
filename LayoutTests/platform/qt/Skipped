@@ -835,31 +835,15 @@ animations/animation-drt-api-multiple-keyframes.html
 # https://bugs.webkit.org/show_bug.cgi?id=33834
 css1/box_properties/acid_test.html
 
-css2.1/t010403-shand-font-02-b.html
-css2.1/t010403-shand-font-03-b.html
-css2.1/t0511-c21-pseud-link-02-e.html
-css2.1/t0511-c21-pseud-link-03-e.html
 css2.1/t051201-c23-first-line-00-b.html
-css2.1/t051202-c24-first-lttr-00-b.html
-css2.1/t051202-c26-psudo-nest-00-c.html
-css2.1/t0602-c13-inh-underlin-00-e.html
-css2.1/t0804-c5507-ipadn-r-02-b-ag.html
-css2.1/t0805-c5522-brdr-02-e.html
-css2.1/t0905-c414-flt-fit-01-d-g.html
-css2.1/t0905-c5525-flthw-00-c-g.html
-css2.1/t0905-c5526-flthw-00-c-g.html
 css2.1/t1004-c43-rpl-ibx-00-d-ag.html
-css2.1/t100801-c42-ibx-ht-00-d-a.html
 css2.1/t100801-c544-valgn-01-d-ag.html
 css2.1/t100801-c548-ln-ht-02-b-ag.html
-css2.1/t1008-c44-ln-box-00-d-ag.html
-css2.1/t1008-c44-ln-box-01-d-ag.html
 css2.1/t1008-c44-ln-box-02-d-ag.html
 css2.1/t1202-counters-04-b.html
 css2.1/t1601-c547-indent-00-b-a.html
 css2.1/t1602-c43-center-00-d-ag.html
 css2.1/t1604-c541-word-sp-00-b-a.html
-css2.1/t1604-c541-word-sp-01-b-a.html
 css2.1/t1604-c542-letter-sp-00-b-a.html
 css2.1/t1604-c542-letter-sp-01-b-a.html
 css2.1/t1605-c545-txttrans-00-b-ag.html
@@ -869,7 +853,6 @@ css2.1/t140201-c534-bgreps-02-c-ag.html
 css2.1/t140201-c534-bgreps-03-c-ag.html
 css2.1/t140201-c534-bgreps-04-c-ag.html
 css2.1/t140201-c534-bgreps-05-c-ag.html
-css2.1/t140201-c537-bgfxps-00-c-ag.html
 
 # [Qt] css2.1/20110323/inline-non-replaced-height-* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=62710
@@ -900,37 +883,12 @@ dom/xhtml/level3/core/nodelookupprefix19.xhtml
 # ============================================================================= #
 
 # -- fail with --platform mac --ignore-metrics
-editing/deleting/delete-ligature-001.html
-editing/deleting/delete-ligature-002.html
-editing/deleting/delete-ligature-003.html
 editing/deleting/delete-block-table.html
-editing/deleting/delete-line-end-ws-002.html
-editing/deleting/deletionUI-single-instance.html
-editing/deleting/collapse-whitespace-3587601-fix.html
-editing/deleting/delete-3608430-fix.html
-editing/deleting/delete-3608462-fix.html
-editing/deleting/delete-3800834-fix.html
-editing/deleting/delete-4083333-fix.html
-editing/deleting/delete-and-undo.html
-editing/deleting/delete-at-paragraph-boundaries-008.html
-editing/deleting/delete-block-merge-contents-018.html
-editing/deleting/delete-block-merge-contents-021.html
-editing/deleting/delete-block-merge-contents-022.html
-editing/deleting/delete-br-007.html
-editing/deleting/delete-contiguous-ws-001.html
-editing/deleting/delete-leading-ws-001.html
-editing/deleting/delete-listitem-001.html
-editing/deleting/delete-listitem-002.html
+editing/deleting/delete-ligature-001.html
 editing/deleting/delete-tab-001.html
 editing/deleting/delete-tab-002.html
 editing/deleting/delete-tab-003.html
 editing/deleting/delete-tab-004.html
-editing/deleting/delete-ws-fixup-001.html
-editing/deleting/delete-ws-fixup-002.html
-editing/deleting/delete-ws-fixup-003.html
-editing/deleting/delete-ws-fixup-004.html
-editing/deleting/forward-delete.html
-editing/deleting/smart-delete-002.html
 
 # =========================================================================== #
 #       Failing editing/selection tests.                                      #
@@ -941,43 +899,18 @@ editing/selection/extend-selection-after-double-click.html
 
 # -- fail with --platform mac --ignore-metrics
 editing/selection/doubleclick-beside-cr-span.html
-editing/selection/drag-start-event-client-x-y.html
 editing/selection/hit-test-anonymous.html
 editing/selection/4895428-1.html
 editing/selection/4895428-4.html
-editing/selection/5057506-2.html
-editing/selection/5057506.html
 editing/selection/5232159.html
 editing/selection/5333725.html
-editing/selection/click-start-of-line.html
 editing/selection/contains-boundaries.html
 editing/selection/designmode-no-caret.html
 editing/selection/drag-to-contenteditable-iframe.html
 editing/selection/fake-drag.html
-editing/selection/inline-closest-leaf-child.html
-editing/selection/mixed-editability-1.html
 editing/selection/select-from-textfield-outwards.html
-editing/selection/4983858.html
-editing/selection/end-of-document.html
 editing/selection/move-left-right.html
-editing/selection/select-all-001.html
-editing/selection/select-all-002.html
-editing/selection/select-all-003.html
-editing/selection/5081257-1.html
-editing/selection/5081257-2.html
-editing/selection/5234383-1.html
-editing/selection/5234383-2.html
-editing/selection/7152-1.html
-editing/selection/7152-2.html
-editing/selection/drag-in-iframe.html
-editing/selection/editable-html-element.html
-editing/selection/editable-non-editable-crash.html
-editing/selection/move-between-blocks-no-001.html
 editing/selection/move-past-trailing-space.html
-editing/selection/replace-selection-1.html
-editing/selection/select-all-005.html
-editing/selection/select-all-006.html
-editing/selection/select-box.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=52883
 editing/selection/rtl-move-selection-right-left.html
@@ -995,18 +928,8 @@ editing/selection/shift-click.html
 
 # -- pass with --platform mac --ignore-metrics
 editing/selection/extend-selection-bidi.html
-editing/selection/selection-background.html
-editing/selection/4397952.html
-editing/selection/4932260-1.html
-editing/selection/5007143-2.html
-editing/selection/5007143.html
 editing/selection/caret-rtl-2.html
 editing/selection/caret-rtl.html
-editing/selection/iframe.html
-editing/selection/image-before-linebreak.html
-editing/selection/mixed-editability-2.html
-editing/selection/move-by-character-6.html
-editing/selection/select-element-paragraph-boundary.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=41918
 editing/selection/5195166-1.html
@@ -1060,21 +983,9 @@ editing/spelling/spellcheck-paste.html
 # ============================================================================= #
 
 editing/style/style-3681552-fix-002.html
-editing/style/apple-style-editable-mix.html
 editing/style/style-3681552-fix-001.html
 editing/style/typing-style-001.html
 editing/style/typing-style-002.html
-editing/style/unbold-in-bold.html
-editing/style/4916887.html
-editing/style/5017613-1.html
-editing/style/5017613-2.html
-editing/style/5228141.html
-editing/style/block-style-001.html
-editing/style/block-style-002.html
-editing/style/block-style-003.html
-editing/style/block-styles-007.html
-editing/style/designmode.html
-editing/style/highlight.html
 editing/style/style-boundary-002.html
 editing/style/style-boundary-003.html
 editing/style/style-boundary-005.html
@@ -1083,35 +994,9 @@ editing/style/style-boundary-005.html
 # failing undo tests
 # ============================================================================= #
 
-# -- pass with --platform mac --ignore-metrics
-editing/undo/5378473.html
-editing/undo/redo-typing-001.html
-editing/undo/undo-misspellings.html
-editing/undo/undo-typing-001.html
-
-# -- fail with --platform mac --ignore-metrics
-editing/undo/4063751.html
-editing/undo/undo-combined-delete-boundary.html
-editing/undo/undo-combined-delete.html
-editing/undo/undo-delete-boundary.html
-editing/undo/undo-delete.html
-editing/undo/undo-forward-delete-boundary.html
-editing/undo/undo-forward-delete.html
-
 # ============================================================================= #
 # failing unsupported-content tests
 # ============================================================================= #
-# -- pass with --platform mac --ignore-metrics
-editing/unsupported-content/list-delete-001.html
-editing/unsupported-content/list-delete-003.html
-editing/unsupported-content/list-type-after.html
-editing/unsupported-content/list-type-before.html
-editing/unsupported-content/table-delete-001.html
-editing/unsupported-content/table-delete-002.html
-editing/unsupported-content/table-delete-003.html
-editing/unsupported-content/table-type-after.html
-editing/unsupported-content/table-type-before.html
-
 
 # ============================================================================= #
 # failing fast tests
