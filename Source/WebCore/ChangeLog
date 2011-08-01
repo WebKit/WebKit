@@ -1,3 +1,22 @@
+2011-08-01  Tim Horton  <timothy_horton@apple.com>
+
+        Severe shadow repaint issues with SVGText elements
+        https://bugs.webkit.org/show_bug.cgi?id=63648
+        <rdar://problem/7632269>
+
+        Reviewed by Darin Adler.
+
+        Make SVG elements which inherit from RenderSVGBlock take text-shadow
+        overflow into account when determining whether or not they should draw
+
+        Test: svg/custom/repaint-shadow.svg
+
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::visualOverflowRect):
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::visualOverflowRect):
+        * rendering/svg/RenderSVGBlock.h:
+
 2011-08-01  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rolling out r92022.

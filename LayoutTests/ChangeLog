@@ -1,3 +1,18 @@
+2011-08-01  Tim Horton  <timothy_horton@apple.com>
+
+        Severe shadow repaint issues with SVGText elements
+        https://bugs.webkit.org/show_bug.cgi?id=63648
+        <rdar://problem/7632269>
+
+        Reviewed by Darin Adler.
+
+        Make SVG elements which inherit from RenderSVGBlock take text-shadow
+        overflow into account when determining whether or not they should draw
+
+        * platform/mac/svg/custom/repaint-shadow-expected.png: Added.
+        * platform/mac/svg/custom/repaint-shadow-expected.txt: Added.
+        * svg/custom/repaint-shadow.svg: Added.
+
 2011-08-01  Chris Rogers  <crogers@google.com>
 
         One more test_expectations.txt fix for windows web audio

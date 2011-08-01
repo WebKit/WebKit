@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewbox="0 0 480 360">
+    <text x="20" y="60" font-family="Ahem" font-size="50px" style="text-shadow: 200px 200px 5px red">X</text>
+    <text x="170" y="60" font-family="Ahem" font-size="50px" style="text-shadow: 200px 200px 5px red">X</text>
+
+    <script>
+        var text = document.getElementsByTagName('text')[1];
+
+        window.setTimeout(function() {
+            // Show differences, makes it easier to spot the repaint rect changes
+            if (window.layoutTestController)
+                layoutTestController.display();
+
+            text.setAttribute("x", 171);
+
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
+        }, 0);
+
+        if (window.layoutTestController)
+            layoutTestController.waitUntilDone();
+
+    </script>
+</svg>

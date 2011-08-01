@@ -34,6 +34,16 @@ RenderSVGBlock::RenderSVGBlock(SVGElement* node)
 {
 }
 
+IntRect RenderSVGBlock::visualOverflowRect() const
+{
+    LayoutRect borderRect = borderBoxRect();
+
+    if (const ShadowData* textShadow = style()->textShadow())
+        textShadow->adjustRectForShadow(borderRect);
+
+    return borderRect;
+}
+
 void RenderSVGBlock::setStyle(PassRefPtr<RenderStyle> style) 
 {
     RefPtr<RenderStyle> useStyle = style;
