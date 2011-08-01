@@ -3355,7 +3355,7 @@ BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 BUG_HCLAM : editing/inserting/typing-at-end-of-line.html = FAIL MISSING
 
 // Flakiness around r85622.
-BUG_HCLAM WIN SLOW : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS
+BUGWK65463 WIN : http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS TIMEOUT
 
 // Failure introduced by Chromium r83848.
 BUG_HCLAM : fast/url/ipv6.html = TEXT
