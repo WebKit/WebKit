@@ -1,3 +1,16 @@
+2011-07-31  Dominic Cooney  <dominicc@chromium.org>
+
+        Event target set to null post event dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=63934
+
+        Reviewed by Dimitri Glazkov.
+
+        Test: fast/events/event-target-reset.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent): Reset target to outermost
+        shadow host.
+
 2011-07-31  Sam Weinig  <sam@webkit.org>
 
         REGRESSION: getBoundingClientRect() method of Range incorrectly returns null for collapsed Range

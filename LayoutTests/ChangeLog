@@ -1,3 +1,13 @@
+2011-07-31  Dominic Cooney  <dominicc@chromium.org>
+
+        Event target set to null post event dispatch
+        https://bugs.webkit.org/show_bug.cgi?id=63934
+
+        Reviewed by Dimitri Glazkov.
+
+        * fast/events/event-target-reset-expected.txt: Added.
+        * fast/events/event-target-reset.html: Added.
+
 2011-07-31  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64679

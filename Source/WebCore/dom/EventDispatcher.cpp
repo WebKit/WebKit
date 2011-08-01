@@ -364,7 +364,12 @@ doneWithDefault:
 
     // Ensure that after event dispatch, the event's target object is the
     // outermost shadow DOM boundary.
-    event->setTarget(windowContext.target());
+    if (topEventContext())
+        event->setTarget(topEventContext()->target());
+    else {
+        ASSERT(!m_node->isInShadowTree());
+        event->setTarget(m_node.get());
+    }
     event->setCurrentTarget(0);
     InspectorInstrumentation::didDispatchEvent(cookie);
 

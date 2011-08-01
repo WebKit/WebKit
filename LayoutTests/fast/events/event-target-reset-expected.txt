@@ -1,0 +1,7 @@
+Tests that events don't have their target reset to null after being dispatched.
+
+PASS event.target.tagName == "IFRAME"
+PASS savedEvent.target.tagName == "IFRAME"
+
+TEST COMPLETE
+
