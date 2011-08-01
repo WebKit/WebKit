@@ -401,6 +401,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\InjectedBundleControllerWin.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\WindowMessageObserver.h"
 				>
 			</File>

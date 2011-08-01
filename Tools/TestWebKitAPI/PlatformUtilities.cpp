@@ -31,6 +31,14 @@
 namespace TestWebKitAPI {
 namespace Util {
 
+WKContextRef createContextWithInjectedBundle()
+{
+    WKRetainPtr<WKStringRef> injectedBundlePath(AdoptWK, createInjectedBundlePath());
+    WKContextRef context = WKContextCreateWithInjectedBundlePath(injectedBundlePath.get());
+
+    return context;
+}
+
 WKContextRef createContextForInjectedBundleTest(const std::string& testName, WKTypeRef userData)
 {
     WKRetainPtr<WKStringRef> injectedBundlePath(AdoptWK, createInjectedBundlePath());

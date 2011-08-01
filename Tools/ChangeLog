@@ -1,3 +1,29 @@
+2011-07-31  Anders Carlsson  <andersca@apple.com>
+
+        Fix SpacebarScrolling WebKit2 API test
+        https://bugs.webkit.org/show_bug.cgi?id=65431
+
+        Reviewed by Sam Weinig.
+
+        Add a way to do platform-specific bundle initialization, and use it to disable smooth
+        scrolling. Also make it possible for a test to load the injected bundle without actually running
+        a test from it.
+
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        (TestWebKitAPI::InjectedBundleController::initialize):
+        * TestWebKitAPI/InjectedBundleController.h:
+        * TestWebKitAPI/PlatformUtilities.cpp:
+        (TestWebKitAPI::Util::createContextWithInjectedBundle):
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp:
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/mac/InjectedBundleControllerMac.mm: Added.
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * TestWebKitAPI/win/InjectedBundleControllerWin.cpp: Added.
+        (TestWebKitAPI::InjectedBundleController::platformInitialize):
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
 2011-07-31  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Use set comparison to find duplicate or overlapping specifiers in test expectations.

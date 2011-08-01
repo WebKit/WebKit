@@ -44,6 +44,7 @@ bool shouldTranslateMessage(const MSG&);
 
 void sleep(double seconds);
 
+WKContextRef createContextWithInjectedBundle();
 WKContextRef createContextForInjectedBundleTest(const std::string&, WKTypeRef userData = 0);
 
 WKStringRef createInjectedBundlePath();

@@ -48,7 +48,7 @@ static void didNotHandleKeyEventCallback(WKPageRef, WKNativeEventPtr event, cons
 
 TEST(WebKit2, SpacebarScrolling)
 {
-    WKRetainPtr<WKContextRef> context(AdoptWK, WKContextCreate());
+    WKRetainPtr<WKContextRef> context(AdoptWK, Util::createContextWithInjectedBundle());
     PlatformWebView webView(context.get());
 
     WKPageLoaderClient loaderClient;

@@ -52,6 +52,8 @@ private:
     InjectedBundleController();
     ~InjectedBundleController();
 
+    void platformInitialize();
+
     static void didCreatePage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
     static void willDestroyPage(WKBundleRef, WKBundlePageRef, const void* clientInfo);
     static void didInitializePageGroup(WKBundleRef, WKBundlePageGroupRef, const void* clientInfo);
