@@ -1,3 +1,13 @@
+2011-08-01  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add null check to setSwapbuffersCompletCallbackChromium
+        https://bugs.webkit.org/show_bug.cgi?id=65485
+
+        Reviewed by James Robinson.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::SwapBuffersCompleteCallbackAdapter::create):
+
 2011-08-01  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Rename SocketStreamHandleClient member functions

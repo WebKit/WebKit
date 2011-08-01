@@ -1249,7 +1249,7 @@ void SwapBuffersCompleteCallbackAdapter::onSwapBuffersComplete()
 
 PassOwnPtr<SwapBuffersCompleteCallbackAdapter> SwapBuffersCompleteCallbackAdapter::create(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb)
 {
-    return adoptPtr(new SwapBuffersCompleteCallbackAdapter(cb));
+    return adoptPtr(cb.get() ? new SwapBuffersCompleteCallbackAdapter(cb) : 0);
 }
 
 void GraphicsContext3DInternal::setSwapBuffersCompleteCallbackCHROMIUM(PassOwnPtr<Extensions3DChromium::SwapBuffersCompleteCallbackCHROMIUM> cb)
