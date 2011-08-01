@@ -451,30 +451,6 @@ results.fetchResultsURLs = function(builderName, testName, failureTypeList, call
     });
 };
 
-function isBuilderThatOnlyCompiles(builderName)
-{
-    return config.kBuildersThatOnlyCompile.indexOf(builderName) != -1;
-}
-
-// FIXME: This method isn't tested because we don't have a good strategy for
-// mocking out the network. Maybe all network requests should go through a
-// "net" module?
-results.fetchBuildersWithCompileErrors = function(callback) {
-    $.get('/buildbot', function(builderStatuses) {
-        var brokenBuilders = [];
-
-        $.each(builderStatuses, function(index, builderStatus) {
-            if (builderStatus['is_green'])
-                return;
-            var builderName = builderStatus['name'];
-            if (isBuilderThatOnlyCompiles(builderName))
-                brokenBuilders.push(builderName);
-        });
-
-        callback(brokenBuilders);
-    });
-};
-
 results.fetchResultsForBuilder = function(builderName, callback)
 {
     base.jsonp(resultsSummaryURL(builderName, kResultsName), function(resultsTree) {

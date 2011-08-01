@@ -221,9 +221,18 @@ function showUnexpectedFailure(failureAnalysis)
     showBuilderProgress();
 }
 
+function showFailingBuildersInfobar(builderNameList)
+{
+    if (builderNameList.length)
+        displayInfobar(ui.infobarMessageForCompileErrors(builderNameList), kBuildFailedInfobarType);
+    else
+        hideInfobarIfOfType(kBuildFailedInfobarType);
+}
+
 function update()
 {
     displayOnButterbar('Loading...');
+    builders.buildersFailingStepRequredForTestCoverage(showFailingBuildersInfobar);
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
         showRecentCommits();
         showBuilderProgress();

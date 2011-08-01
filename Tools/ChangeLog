@@ -1,5 +1,29 @@
 2011-08-01  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic shouldn't require local server to determine if compile failed
+        https://bugs.webkit.org/show_bug.cgi?id=65446
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch adds some basic bindings for the buildbot JSON API.  I
+        wanted to use Buildbot.js an Builder.js from the original TestFailures,
+        but they make a number of WebKit-specific assumptions.  We'll
+        eventually need to reconcile these pieces of code.
+
+        I should really add tests for this code, but that will require me to
+        build a better mock network.  I'll be happy to do that in a follow-up
+        patch.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/builders.js: Added.
+            - It's very unclear to me whether didFail is correct.  Supposedly
+              the first entry here is the exit code of the step, which is 0 on
+              success.  I suspect we'll need to improve this function over time.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js:
+
+2011-08-01  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should show all failures, even ones that it can't find a regression range for
         https://bugs.webkit.org/show_bug.cgi?id=65447
 
