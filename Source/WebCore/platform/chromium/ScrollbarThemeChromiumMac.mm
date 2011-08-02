@@ -163,6 +163,8 @@ void ScrollbarThemeChromiumMac::registerScrollbar(Scrollbar* scrollbar)
     bool isHorizontal = scrollbar->orientation() == HorizontalScrollbar;
     WKScrollbarPainterRef scrollbarPainter = wkMakeScrollbarPainter(scrollbar->controlSize(), isHorizontal);
     scrollbarMap()->add(scrollbar, scrollbarPainter);
+    updateEnabledState(scrollbar);
+    updateScrollbarOverlayStyle(scrollbar);
 }
 
 void ScrollbarThemeChromiumMac::unregisterScrollbar(Scrollbar* scrollbar)
@@ -173,6 +175,8 @@ void ScrollbarThemeChromiumMac::unregisterScrollbar(Scrollbar* scrollbar)
 void ScrollbarThemeChromiumMac::setNewPainterForScrollbar(Scrollbar* scrollbar, WKScrollbarPainterRef newPainter)
 {
     scrollbarMap()->set(scrollbar, newPainter);
+    updateEnabledState(scrollbar);
+    updateScrollbarOverlayStyle(scrollbar);
 }
 
 WKScrollbarPainterRef ScrollbarThemeChromiumMac::painterForScrollbar(Scrollbar* scrollbar)
@@ -218,6 +222,25 @@ bool ScrollbarThemeChromiumMac::usesOverlayScrollbars() const
         return wkScrollbarPainterUsesOverlayScrollers();
     else
         return false;
+}
+
+static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlayStyle style)
+{
+    switch (style) {
+    case ScrollbarOverlayStyleDark:
+        return wkScrollerKnobStyleDark;
+    case ScrollbarOverlayStyleLight:
+        return wkScrollerKnobStyleLight;
+    default:
+        return wkScrollerKnobStyleDefault;
+    }
+}
+
+void ScrollbarThemeChromiumMac::updateScrollbarOverlayStyle(Scrollbar* scrollbar)
+{
+    if (isScrollbarOverlayAPIAvailable()) {
+        wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), toScrollbarPainterKnobStyle(scrollbar->scrollableArea()->scrollbarOverlayStyle()));
+    }
 }
 
 double ScrollbarThemeChromiumMac::initialAutoscrollTimerDelay()
@@ -424,18 +447,6 @@ static int scrollbarPartToHIPressedState(ScrollbarPart part)
     }
 }
 
-static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlayStyle style)
-{
-    switch (style) {
-    case ScrollbarOverlayStyleDark:
-        return wkScrollerKnobStyleDark;
-    case ScrollbarOverlayStyleLight:
-        return wkScrollerKnobStyleLight;
-    default:
-        return wkScrollerKnobStyleDefault;
-    }
-}
-
 static PlatformBridge::ThemePaintState scrollbarStateToThemeState(Scrollbar* scrollbar) {
     if (!scrollbar->enabled())
         return PlatformBridge::StateDisabled;
@@ -445,6 +456,13 @@ static PlatformBridge::ThemePaintState scrollbarStateToThemeState(Scrollbar* scr
         return PlatformBridge::StatePressed;
 
     return PlatformBridge::StateActive;
+}
+
+void ScrollbarThemeChromiumMac::updateEnabledState(Scrollbar* scrollbar)
+{
+    if (isScrollbarOverlayAPIAvailable()) {
+        wkScrollbarPainterSetEnabled(scrollbarMap()->get(scrollbar).get(), scrollbar->enabled());
+    }
 }
 
 bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
@@ -476,8 +494,6 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
 #else
         scrollAnimator->setIsDrawingIntoLayer(false);
 #endif
-
-        wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), toScrollbarPainterKnobStyle(scrollbar->scrollableArea()->scrollbarOverlayStyle()));
 
         GraphicsContextStateSaver stateSaver(*context);
         context->clip(damageRect);

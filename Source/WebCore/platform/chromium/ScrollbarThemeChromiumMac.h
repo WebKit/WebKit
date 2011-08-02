@@ -40,12 +40,15 @@ public:
     ScrollbarThemeChromiumMac();
     virtual ~ScrollbarThemeChromiumMac();
 
+    virtual void updateEnabledState(Scrollbar*);
+
     virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 
     virtual bool supportsControlTints() const { return true; }
     virtual bool usesOverlayScrollbars() const;
+    virtual void updateScrollbarOverlayStyle(Scrollbar*);
 
     virtual double initialAutoscrollTimerDelay();
     virtual double autoscrollTimerDelay();
@@ -65,6 +68,8 @@ protected:
     virtual IntRect backButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
     virtual IntRect forwardButtonRect(Scrollbar*, ScrollbarPart, bool painting = false);
     virtual IntRect trackRect(Scrollbar*, bool painting = false);
+
+    virtual int maxOverlapBetweenPages() { return 40; }
 
     virtual int minimumThumbLength(Scrollbar*);
 

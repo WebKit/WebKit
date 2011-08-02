@@ -1,3 +1,25 @@
+2011-08-02  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium: Update forked ScrollbarThemeChromiumMac.mm
+        https://bugs.webkit.org/show_bug.cgi?id=65555
+
+        Merge recent changes to ScrollbarThemeMac.mm to ScrollbarThemeChromiumMac.mm.
+
+        Reviewed by James Robinson.
+
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.h:
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm:
+        (wkScrollbarPainterSetEnabled):
+        * platform/chromium/ScrollbarThemeChromiumMac.h:
+        (WebCore::ScrollbarThemeChromiumMac::maxOverlapBetweenPages):
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::registerScrollbar):
+        (WebCore::ScrollbarThemeChromiumMac::setNewPainterForScrollbar):
+        (WebCore::toScrollbarPainterKnobStyle):
+        (WebCore::ScrollbarThemeChromiumMac::updateScrollbarOverlayStyle):
+        (WebCore::ScrollbarThemeChromiumMac::updateEnabledState):
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+
 2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from SVG IDL files
