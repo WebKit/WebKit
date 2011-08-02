@@ -1,3 +1,19 @@
+2011-08-02  Gavin Peters  <gavinp@chromium.org>
+
+        fail earlier to track down null CachedScript execution
+        https://bugs.webkit.org/show_bug.cgi?id=65563
+
+        Over in http://code.google.com/p/chromium/issues/detail?id=75604 I can't reproduce the problem.  Careful reading of the code hasn't led me
+        to an obvious cause either.  This patch should cause failure earlier, and lead to better stacks.  I'll watch Chrome Canary's crash
+        uploads carefully, and remove this CRASH() (and fix the underlying problem) once I understand it.
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, as my goal here is to get telemetry on a bug that I cannot reproduce.
+
+        * dom/ScriptRunner.cpp:
+        (WebCore::ScriptRunner::queueScriptForExecution):
+
 2011-08-02  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium: Update forked ScrollbarThemeChromiumMac.mm
