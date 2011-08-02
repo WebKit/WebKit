@@ -1,3 +1,15 @@
+2011-08-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Fix build after changeset 92106
+        https://bugs.webkit.org/show_bug.cgi?id=65539
+
+        Reviewed by Adam Roben.
+
+        No new tests since it is just a build fix.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-08-01  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [REGRESSION] Console evaluations leading to resource loading cause errors.

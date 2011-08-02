@@ -4023,7 +4023,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 #if ENABLE(CSS_REGIONS)
         CSSValueListInspector inspector = value;
         if (inspector.length() == 1 && inspector.first()->isPrimitiveValue()) {
-            CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(inspector->first());
+            CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(inspector.first());
             if (contentValue->primitiveType() == CSSPrimitiveValue::CSS_FROM_FLOW) {
                 m_style->setRegionThread(contentValue->getStringValue().impl());
                 return;
