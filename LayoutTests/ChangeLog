@@ -1,3 +1,12 @@
+2011-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Add Snow Leopard specific test results.
+
+        * platform/mac-snowleopard/fast/forms/input-placeholder-visibility-1-expected.txt: Added.
+        * platform/mac-snowleopard/fast/forms/input-placeholder-visibility-3-expected.txt: Added.
+        * platform/mac-snowleopard/fast/forms/textarea-placeholder-visibility-1-expected.txt: Added.
+        * platform/mac-snowleopard/fast/forms/textarea-placeholder-visibility-2-expected.txt: Added.
+
 2011-08-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Remove time out expectation since media/track has been added to the skipped list on GTK.
