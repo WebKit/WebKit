@@ -2489,7 +2489,7 @@ BUGCR66085 WIN LINUX : dom/html/level1/core/documentgetdoctypenodtd.html = PASS 
 BUGCR66085 LINUX : editing/selection/3690703-2.html = PASS TIMEOUT
 BUGCR66085 LINUX : fast/dom/Geolocation/disconnected-frame-permission-denied.html = PASS TIMEOUT
 BUGCR66085 WIN LINUX : fast/events/5056619.html = PASS TIMEOUT
-//BUGCR66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
+BUGCR66085 LINUX : fast/js/cyclic-proto.html = PASS TIMEOUT
 BUGCR66085 WIN LINUX : fast/replaced/css-content-and-webkit-mask-box-image-crash.html = PASS TIMEOUT
 BUGCR66085 LINUX : http/tests/xmlhttprequest/xmlhttprequest-test-send-flag.html = PASS TIMEOUT
 
@@ -3330,7 +3330,7 @@ BUGWK60931 DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-u
 BUGCR82881 MAC LINUX XP VISTA : http/tests/appcache/interrupted-update.html = PASS TEXT
 
 // Flaky on Linux
-//BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT IMAGE+TEXT PASS
+BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT IMAGE+TEXT PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = FAIL PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = TEXT IMAGE+TEXT PASS
 
@@ -3635,18 +3635,6 @@ BUGWK65124 WIN : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT
 BUGWK65124 : fast/blockflow/japanese-rl-text-with-broken-font.html = FAIL
 BUGWK65124 WIN : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT
-
-BUGWK65129 : media/media-controls-clone.html = CRASH PASS
-
-BUGWK65149 LINUX : userscripts/user-script-image-document.html = CRASH PASS
-
-BUGWK65152 : fast/js/cyclic-proto.html = CRASH PASS
-BUGWK65152 : fast/js/cyclic-prototypes.html = CRASH PASS
-
-BUGWK65155 : fast/selectors/001.html = CRASH PASS
-BUGWK65155 : media/audio-only-video-intrinsic-size.html = CRASH PASS
-BUGWK65155 : fast/dom/beforeload/script-before-load-dynamic.html = CRASH PASS
-BUGWK65155 : fast/speech/input-appearance-numberandspeech.html = CRASH PASS FAIL
 
 BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
 
