@@ -1,3 +1,11 @@
+2011-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        * fast/blockflow/japanese-rl-text-with-broken-font.html:
+        This test would create an empty RenderText after the change to make it asynchronous.
+        Fix this by putting the script inside the head.
+
 2011-08-02  Van Lam  <vanlam@google.com>
 
         --webkit-visual-word: ctrl-arrow is not able to reach the boundary of line
