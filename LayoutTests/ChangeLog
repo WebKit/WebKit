@@ -1,5 +1,11 @@
 2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][Mac] Unreviewed gardening. Paint the Qt Snow Leopard bot green.
+
+        * platform/qt-mac/Skipped: Skip a failing test.
+
+2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening.
 
         * platform/qt/Skipped: Add comment after r92175.

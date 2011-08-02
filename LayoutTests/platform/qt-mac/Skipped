@@ -5014,3 +5014,6 @@ editing/unsupported-content/table-delete-002.html
 editing/unsupported-content/table-delete-003.html
 editing/unsupported-content/table-type-after.html
 editing/unsupported-content/table-type-before.html
+
+# Qt specific result was added by r92163, but it fails on Qt-Mac platform
+svg/custom/repaint-shadow.svg
