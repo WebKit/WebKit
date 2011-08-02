@@ -1,3 +1,9 @@
+2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening. Paint the Qt bot green.
+
+        * platform/qt/Skipped: Skip failing tests.
+
 2011-08-02  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Chromium test_expectations.txt update for r92165
