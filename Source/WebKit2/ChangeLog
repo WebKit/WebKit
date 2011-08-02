@@ -1,3 +1,14 @@
+2011-08-02  Amruth Raj  <amruthraj@motorola.com>
+
+        Custom cursors cause the WebProcess to crash
+        https://bugs.webkit.org/show_bug.cgi?id=64802
+
+        Reviewed by Martin Robinson.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode): In case of a NULL cursor image, encode a bool indicating that.
+        (CoreIPC::::decode): Decode the image only if required.
+
 2011-08-01  Scott Graham  <scottmg@chromium.org>
 
         REGRESSION (r39725?): Resources removed from document can not be freed until the document is deleted

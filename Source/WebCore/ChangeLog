@@ -1,3 +1,12 @@
+2011-08-02  Amruth Raj  <amruthraj@motorola.com>
+
+        Custom cursors cause the WebProcess to crash
+        https://bugs.webkit.org/show_bug.cgi?id=64802
+
+        Reviewed by Martin Robinson.
+
+        * WebCore.exp.in:
+
 2011-08-02  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: _normalizeEventTypes (via console's monitorEvents) doesnt handle all events like 'search' and other atypical ones.
