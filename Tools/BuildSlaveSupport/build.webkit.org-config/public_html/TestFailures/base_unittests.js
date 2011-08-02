@@ -48,6 +48,46 @@ test("keys", 4, function() {
     deepEqual(base.keys({"a": 1, "b": { "c" : 1}}), ["a", "b"]);
 });
 
+test("callInParallel", 4, function() {
+    var expectedCall = [true, true, true];
+    var expectCompletionCallback = true;
+
+    base.callInParallel([
+        function(callback) {
+            ok(expectedCall[0]);
+            expectedCall[0] = false;
+            callback();
+        },
+        function(callback) {
+            ok(expectedCall[1]);
+            expectedCall[1] = false;
+            callback();
+        },
+        function(callback) {
+            ok(expectedCall[2]);
+            expectedCall[2] = false;
+            callback();
+        },
+    ], function() {
+        ok(expectCompletionCallback);
+        expectCompletionCallback = false;
+    })
+});
+
+test("callInSequence", 7, function() {
+    var expectedArg = 42;
+    var expectCompletionCallback = true;
+
+    base.callInSequence(function(arg, callback) {
+        ok(arg < 45);
+        equals(arg, expectedArg++);
+        callback();
+    }, [42, 43, 44], function() {
+        ok(expectCompletionCallback);
+        expectCompletionCallback = false;
+    })
+});
+
 test("RequestTracker", 3, function() {
     var ready = false;
     var tracker = new base.RequestTracker(1, function() {

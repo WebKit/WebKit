@@ -77,4 +77,9 @@ class GardeningServerTest(unittest.TestCase):
     def test_rebaseline(self):
         expected_stderr = "MOCK run_command: ['echo', 'rebaseline-test', 'MOCK builder', 'user-scripts/another-test.html', 'txt'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
-        self._post_to_path("/rebaseline?builder=MOCK+builder&test=user-scripts/another-test.html&suffix=txt", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
+        self._post_to_path("/rebaseline?builder=MOCK+builder&test=user-scripts/another-test.html&extension=txt", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
+
+    def test_optimizebaselines(self):
+        expected_stderr = "MOCK run_command: ['echo', 'optimize-baselines', 'user-scripts/another-test.html'], cwd=/mock-checkout\n"
+        expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
+        self._post_to_path("/optimizebaselines?test=user-scripts/another-test.html", expected_stderr=expected_stderr, expected_stdout=expected_stdout)

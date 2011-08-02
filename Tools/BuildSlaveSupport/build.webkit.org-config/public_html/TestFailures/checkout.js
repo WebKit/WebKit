@@ -14,7 +14,7 @@ checkout.subversionURLForTest = function(testName)
     return kWebKitTrunk + 'LayoutTests/' + testName;
 }
 
-checkout.existsAtRevision = function (subversionURL, revision, callback)
+checkout.existsAtRevision = function(subversionURL, revision, callback)
 {
     $.ajax({
         method: 'HEAD',
@@ -28,46 +28,38 @@ checkout.existsAtRevision = function (subversionURL, revision, callback)
     });
 };
 
+checkout.optimizeBaselines = function(testName, callback)
+{
+    $.post('/optimizebaselines?' + $.param({
+        'test': testName,
+    }), function() {
+        callback();
+    });
+};
+
 checkout.rebaseline = function(builderName, testName, failureTypeList, callback)
 {
-    var extensionList = [];
+    var extensionList = Array.prototype.concat.apply([], failureTypeList.map(results.failureTypeToExtensionList));
 
-    $.each(failureTypeList, function(index, failureType) {
-        extensionList = extensionList.concat(results.failureTypeToExtensionList(failureType));
-    });
-
-    if (!extensionList.length)
-        callback();
-
-    var requestTracker = new base.RequestTracker(extensionList.length, callback);
-
-    $.each(extensionList, function(index, extension) {
+    base.callInSequence(function(extension, callback) {
         $.post('/rebaseline?' + $.param({
             'builder': builderName,
             'test': testName,
-            // FIXME: Rename "suffix" query parameter to "extension".
-            'suffix': extension
+            'extension': extension
         }), function() {
-            requestTracker.requestComplete();
+            callback();
         });
-    });
+    }, extensionList, callback);
 };
 
 checkout.rebaselineAll = function(rebaselineTasks, callback)
 {
-    var nextIndex = 0;
-
-    function rebaselineNext()
-    {
-        if (nextIndex >= rebaselineTasks.length) {
-            callback();
-            return;
-        }
-        var task = rebaselineTasks[nextIndex++];
-        checkout.rebaseline(task.builderName, task.testName, task.failureTypeList, rebaselineNext);
-    }
-
-    rebaselineNext();
+    base.callInSequence(function(task, callback) {
+        checkout.rebaseline(task.builderName, task.testName, task.failureTypeList, callback);
+    }, rebaselineTasks, function() {
+        var testNameList = base.uniquifyArray(rebaselineTasks.map(function(task) { return task.testName; }));
+        base.callInSequence(checkout.optimizeBaselines, testNameList, callback);
+    });
 };
 
 })();

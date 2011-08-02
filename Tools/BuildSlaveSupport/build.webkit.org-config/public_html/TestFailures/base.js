@@ -134,16 +134,18 @@ base.callInParallel = function(functionList, callback)
     });
 };
 
-base.callInSequence = function(functionList, callback)
+base.callInSequence = function(func, argumentList, callback)
 {
     var nextIndex = 0;
 
     function callNext()
     {
-        if (nextIndex >= functionList.length)
+        if (nextIndex >= argumentList.length) {
             callback();
+            return;
+        }
 
-        functionList[nextIndex].call(null, callNext);
+        func(argumentList[nextIndex++], callNext);
     }
 
     callNext();
