@@ -1,3 +1,27 @@
+2011-08-01  Bradley Nelson  <bradnelson@chromium.org>
+
+        Shard webcore_remaining for msvs official builds
+
+        https://bugs.webkit.org/show_bug.cgi?id=65475
+
+        Reviewed by Darin Fisher.
+
+        webcore_remaining has consistently exceeded Visual Studio 2008's
+        capacity to link when link time code generation is turned on (full
+        release builds).  This has been dealt with the past by carving off
+        larger and larger pieces of webcore_remaining (ie webcore_html,
+        webcore_renderer etc).
+        A new option has been added to gyp to automate this sharding:
+        'msvs_shard': SHARD_COUNT,
+        Targets marked in this way will be built in several pieces
+        (target_0, target_1...).
+        Since the resulting project is less comprehensible in the IDE (and
+        since the linking limitation only afflicts official builds), this
+        option is only needed for those builds.
+        This patch shards webcore_remaining into 10 parts for official builds.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-08-01  Alice Boxhall  <aboxhall@chromium.org>
 
         WAI-ARIA textbox role should be AXTextArea for aria-multiline=true, AXTextField for aria-multiline=false

@@ -1700,6 +1700,11 @@
         ],
       },
       'conditions': [
+        # Shard this taret into ten parts to work around linker limitations.
+        # on link time code generation builds.
+        ['OS=="win" and buildtype=="Official"', {
+          'msvs_shard': 10,
+        }],
         ['OS=="win"', {
           'sources/': [
             ['exclude', 'Posix\\.cpp$'],
