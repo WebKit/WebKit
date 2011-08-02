@@ -945,8 +945,9 @@ public:
     void setTextDecoration(int v) { SET_VAR(visual, textDecoration, v); }
     void setDirection(TextDirection v) { inherited_flags._direction = v; }
     void setLineHeight(Length v) { SET_VAR(inherited, line_height, v) }
-    void setZoom(float f) { SET_VAR(visual, m_zoom, f); setEffectiveZoom(effectiveZoom() * zoom()); }
-    void setEffectiveZoom(float f) { SET_VAR(rareInheritedData, m_effectiveZoom, f) }
+    bool setZoom(float);
+    void setZoomWithoutReturnValue(float f) { setZoom(f); }
+    bool setEffectiveZoom(float);
     void setImageRendering(EImageRendering v) { SET_VAR(rareInheritedData, m_imageRendering, v) }
 
     void setWhiteSpace(EWhiteSpace v) { inherited_flags._white_space = v; }
@@ -1429,6 +1430,23 @@ inline int adjustForAbsoluteZoom(int value, const RenderStyle* style)
 inline float adjustFloatForAbsoluteZoom(float value, const RenderStyle* style)
 {
     return value / style->effectiveZoom();
+}
+
+inline bool RenderStyle::setZoom(float f)
+{
+    if (compareEqual(visual->m_zoom, f))
+        return false;
+    visual.access()->m_zoom = f;
+    setEffectiveZoom(effectiveZoom() * zoom());
+    return true;
+}
+
+inline bool RenderStyle::setEffectiveZoom(float f)
+{
+    if (compareEqual(rareInheritedData->m_effectiveZoom, f))
+        return false;
+    rareInheritedData.access()->m_effectiveZoom = f;
+    return true;
 }
 
 } // namespace WebCore

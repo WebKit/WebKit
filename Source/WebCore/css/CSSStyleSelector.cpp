@@ -4276,31 +4276,26 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     {
         // Reset the zoom in effect before we do anything.  This allows the setZoom method to accurately compute a new
         // zoom in effect.
-        m_style->setEffectiveZoom(m_parentStyle ? m_parentStyle->effectiveZoom() : RenderStyle::initialZoom());
-        
-        // Now we can handle inherit and initial.
-        HANDLE_INHERIT_AND_INITIAL(zoom, Zoom)
-        
-        // Handle normal/reset, numbers and percentages.
-        int type = primitiveValue->primitiveType();
-        if (primitiveValue->getIdent() == CSSValueNormal)
-            m_style->setZoom(RenderStyle::initialZoom());
+        setEffectiveZoom(m_parentStyle ? m_parentStyle->effectiveZoom() : RenderStyle::initialZoom());
+
+        if (isInherit)
+            setZoom(m_parentStyle->zoom());
+        else if (isInitial || primitiveValue->getIdent() == CSSValueNormal)
+            setZoom(RenderStyle::initialZoom());
         else if (primitiveValue->getIdent() == CSSValueReset) {
-            m_style->setEffectiveZoom(RenderStyle::initialZoom());
-            m_style->setZoom(RenderStyle::initialZoom());
+            setEffectiveZoom(RenderStyle::initialZoom());
+            setZoom(RenderStyle::initialZoom());
         } else if (primitiveValue->getIdent() == CSSValueDocument) {
             float docZoom = m_checker.m_document->renderer()->style()->zoom();
-            m_style->setEffectiveZoom(docZoom);
-            m_style->setZoom(docZoom);
-        } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE) {
+            setEffectiveZoom(docZoom);
+            setZoom(docZoom);
+        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE) {
             if (primitiveValue->getFloatValue())
-                m_style->setZoom(primitiveValue->getFloatValue() / 100.0f);
-        } else if (type == CSSPrimitiveValue::CSS_NUMBER) {
+                setZoom(primitiveValue->getFloatValue() / 100.0f);
+        } else if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_NUMBER) {
             if (primitiveValue->getFloatValue())
-                m_style->setZoom(primitiveValue->getFloatValue());
+                setZoom(primitiveValue->getFloatValue());
         }
-        
-        m_fontDirty = true;
         return;
     }
 // shorthand properties

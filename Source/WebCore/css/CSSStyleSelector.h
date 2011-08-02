@@ -116,6 +116,8 @@ public:
         FontDescription fontDescription() { return style()->fontDescription(); }
         FontDescription parentFontDescription() {return parentStyle()->fontDescription(); }
         void setFontDescription(FontDescription fontDescription) { m_fontDirty |= style()->setFontDescription(fontDescription); }
+        void setZoom(float f) { m_fontDirty |= style()->setZoom(f); }
+        void setEffectiveZoom(float f) { m_fontDirty |= style()->setEffectiveZoom(f); }
 
     private:
         void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);

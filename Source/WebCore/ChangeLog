@@ -1,3 +1,35 @@
+2011-08-01  Luke Macpherson   <macpherson@chromium.org>
+
+        Don't set m_fontDirty when setting zoom unless zoom has actually changed
+        https://bugs.webkit.org/show_bug.cgi?id=65092
+
+        Reviewed by Darin Adler.
+
+        No new tests as no functionality changed - this is an optimization that
+        should be logically equivalent to the current code.
+
+        The intent here is to avoid setting m_fontDirty unless the fornt information is actually dirty.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use setZoom and setEffectiveZoom wrapper functions.
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::setZoom):
+        Wrapper for m_style->setZoom() that automatically updates m_fontDirty.
+        (WebCore::CSSStyleSelector::setEffectiveZoom):
+        Wrapper for m_style->setEffectiveZoom that automatically updates m_fontDirty.
+        * page/animation/AnimationBase.cpp:
+        (WebCore::AnimationBase::ensurePropertyMap):
+        Use 
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::setZoom):
+        Return true only if underlying values change.
+        (WebCore::InheritedFlags::setZoomWithoutReturnValue):
+        Return void to match function pointer type where required.
+        (WebCore::InheritedFlags::setEffectiveZoom):
+        Return true only if underlying values change.
+
 2011-08-01  Jean-luc Brouillet  <jeanluc@chromium.org>
 
         Removing old source files in gyp files that slow build
