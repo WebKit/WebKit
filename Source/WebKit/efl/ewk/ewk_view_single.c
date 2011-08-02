@@ -437,6 +437,8 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data *sd
         goto error_iterator;
     }
 
+    ewk_view_layout_if_needed_recursive(sd->_priv);
+
     int sx, sy;
     ewk_frame_scroll_pos_get(sd->main_frame, &sx, &sy);
 

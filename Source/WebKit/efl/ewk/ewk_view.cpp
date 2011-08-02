@@ -853,8 +853,6 @@ static void _ewk_view_smart_calculate(Evas_Object *o)
     }
     sd->changed.position = EINA_FALSE;
 
-    ewk_view_layout_if_needed_recursive(sd->_priv);
-
     if (!sd->api->scrolls_process(sd))
         ERR("failed to process scrolls.");
     _ewk_view_scrolls_flush(priv);
