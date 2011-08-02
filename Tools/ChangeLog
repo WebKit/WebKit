@@ -1,3 +1,12 @@
+2011-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Add mac-lion platform to old-run-webkit-tests
+        https://bugs.webkit.org/show_bug.cgi?id=65577
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitdirs.pm:
+        (isLion):
+
 2011-08-02  Alexandru Chiculita  <achicu@adobe.com>
 
         Buildbot: The Properties object has no "hasProperty" method in buildbot 8.3

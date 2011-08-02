@@ -1034,6 +1034,11 @@ sub isSnowLeopard()
     return isDarwin() && osXVersion()->{"minor"} == 6;
 }
 
+sub isLion()
+{
+    return isDarwin() && osXVersion()->{"minor"} == 7;
+}
+
 sub isWindowsNT()
 {
     return $ENV{'OS'} eq 'Windows_NT';

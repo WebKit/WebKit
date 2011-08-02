@@ -215,7 +215,7 @@ my %previousWindowsPostMortemDebuggerValues;
 
 my $realPlatform;
 
-my @macPlatforms = ("mac-leopard", "mac-snowleopard", "mac");
+my @macPlatforms = ("mac-leopard", "mac-snowleopard", "mac-lion", "mac");
 my @winPlatforms = ("win-xp", "win-vista", "win-7sp0", "win");
 
 if (isAppleMacWebKit()) {
@@ -224,6 +224,9 @@ if (isAppleMacWebKit()) {
         $tolerance = 0.1;
     } elsif (isSnowLeopard()) {
         $platform = "mac-snowleopard";
+        $tolerance = 0.1;
+    } elsif (isLion()) {
+        $platform = "mac-lion";
         $tolerance = 0.1;
     } else {
         $platform = "mac";
