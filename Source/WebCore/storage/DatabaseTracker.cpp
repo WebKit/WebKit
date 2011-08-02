@@ -102,7 +102,7 @@ String DatabaseTracker::databaseDirectoryPath() const
 
 String DatabaseTracker::trackerDatabasePath() const
 {
-    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath, "Databases.db");
+    return SQLiteFileSystem::appendDatabaseFileNameToPath(m_databaseDirectoryPath.threadsafeCopy(), "Databases.db");
 }
 
 void DatabaseTracker::openTrackerDatabase(bool createIfDoesNotExist)

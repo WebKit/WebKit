@@ -1,3 +1,20 @@
+2011-08-01  srikumar bonda  <srikumar.b@gmail.com>
+
+        Use threadsafeCopy() API when using Database Directory path variable 
+        https://bugs.webkit.org/show_bug.cgi?id=65436
+
+        Reviewed by David Levin.
+
+        Use threadsafeCopy() API while using m_databaseDirectoryPath string variable
+        when the databaseGuard lock hasn't been taken in DatabaseTracker class. 
+        This is just a safety fix.
+
+        No changes to functionality so no new tests.
+
+        * storage/DatabaseTracker.cpp:
+        (WebCore::DatabaseTracker::trackerDatabasePath):
+        (WebCore::DatabaseTracker::deleteOrigin):
+
 2011-08-01  Michael Nordman  <michaeln@google.com>
 
         [Chromium] WebSQLDatabase version handling is broken in multi-process browsers.
