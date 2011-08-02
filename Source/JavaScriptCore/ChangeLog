@@ -1,3 +1,16 @@
+2011-08-01  Michael Saboff  <msaboff@apple.com>
+
+        Virtual copying of FastMalloc allocated memory causes madvise MADV_FREE_REUSABLE errors
+        https://bugs.webkit.org/show_bug.cgi?id=65502
+
+        Reviewed by Anders Carlsson.
+
+        With the fix of the issues causing madvise MADV_FREE_REUSABLE to fail,
+        added an assert to the return code of madvise to catch any regressions.
+
+        * wtf/TCSystemAlloc.cpp:
+        (TCMalloc_SystemRelease):
+
 2011-08-02  Anders Carlsson  <andersca@apple.com>
 
         Fix Windows build.

@@ -155,7 +155,7 @@ bool Connection::sendOutgoingMessage(MessageID messageID, PassOwnPtr<ArgumentEnc
     if (messageSize > sizeof(buffer)) {
         messageBodyIsOOL = true;
 
-        attachments.append(Attachment(arguments->buffer(), arguments->bufferSize(), MACH_MSG_VIRTUAL_COPY, false));
+        attachments.append(Attachment(arguments->buffer(), arguments->bufferSize(), MACH_MSG_PHYSICAL_COPY, false));
         numberOfOOLMemoryDescriptors++;
         messageSize = machMessageSize(0, numberOfPortDescriptors, numberOfOOLMemoryDescriptors);
     }

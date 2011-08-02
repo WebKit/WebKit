@@ -1,3 +1,18 @@
+2011-08-01  Michael Saboff  <msaboff@apple.com>
+
+        Virtual copying of FastMalloc allocated memory causes madvise MADV_FREE_REUSABLE errors
+        https://bugs.webkit.org/show_bug.cgi?id=65502
+
+        Reviewed by Anders Carlsson.
+
+        Changed OOL message to use MACH_MSG_PHYSICAL_COPY flag instead of virtual flag
+        so that the original memory region isn't referenced by the message and ultimately
+        the receiving process.  The additional reference caused madvise(MADV_FREE_REUSABLE)
+        to fail when it encountered such pages.
+
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+
 2011-07-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt] Add QtWebProcess in PATH at runtime for WebKit2 API auto tests.

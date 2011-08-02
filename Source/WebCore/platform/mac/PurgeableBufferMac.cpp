@@ -64,13 +64,7 @@ PassOwnPtr<PurgeableBuffer> PurgeableBuffer::create(const char* data, size_t siz
     if (ret != KERN_SUCCESS)
         return nullptr;
 
-    ret = vm_copy(mach_task_self(), reinterpret_cast<vm_address_t>(data), size, buffer);
-
-    ASSERT(ret == KERN_SUCCESS);
-    if (ret != KERN_SUCCESS) {
-        vm_deallocate(mach_task_self(), buffer, size);
-        return nullptr;
-    }
+    memcpy(reinterpret_cast<char*>(buffer), data, size);
 
     return adoptPtr(new PurgeableBuffer(reinterpret_cast<char*>(buffer), size));
 }
