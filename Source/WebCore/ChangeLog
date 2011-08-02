@@ -1,3 +1,14 @@
+2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from WebKitAnimationList.idl
+        https://bugs.webkit.org/show_bug.cgi?id=65571
+
+        Reviewed by Adam Barth.
+
+        No new tests, all existing tests pass.
+
+        * page/WebKitAnimationList.idl:
+
 2011-08-02  James Robinson  <jamesr@chromium.org>
 
         [chromium] Decouple layer visibility calculations from render surfaces / computed draw transforms
