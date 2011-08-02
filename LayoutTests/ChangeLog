@@ -1,3 +1,10 @@
+2011-08-01  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, rebaseline, webkit gardener stuff.
+
+        * platform/chromium-mac/svg/custom/repaint-shadow-expected.png: Added.
+        * platform/chromium-win/svg/custom/repaint-shadow-expected.png: Added.
+
 2011-08-01  Tim Horton  <timothy_horton@apple.com>
 
         Severe shadow repaint issues with SVGText elements
