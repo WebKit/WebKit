@@ -159,7 +159,7 @@ void JSGlobalData::storeVPtrs()
     JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
 }
 
-JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType)
+JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)
     : globalDataType(globalDataType)
     , clientData(0)
     , arrayConstructorTable(fastNew<HashTable>(JSC::arrayConstructorTable))
@@ -190,7 +190,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , lexer(new Lexer(this))
     , parser(new Parser)
     , interpreter(0)
-    , heap(this)
+    , heap(this, heapSize)
     , dynamicGlobalObject(0)
     , cachedUTCOffset(std::numeric_limits<double>::quiet_NaN())
     , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
@@ -357,19 +357,19 @@ JSGlobalData::~JSGlobalData()
 #endif
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(ThreadStackType type)
+PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(ThreadStackType type, HeapSize heapSize)
 {
-    return adoptRef(new JSGlobalData(APIContextGroup, type));
+    return adoptRef(new JSGlobalData(APIContextGroup, type, heapSize));
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type)
+PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type, HeapSize heapSize)
 {
-    return adoptRef(new JSGlobalData(Default, type));
+    return adoptRef(new JSGlobalData(Default, type, heapSize));
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type)
+PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type, HeapSize heapSize)
 {
-    return create(type);
+    return create(type, heapSize);
 }
 
 bool JSGlobalData::sharedInstanceExists()
@@ -381,7 +381,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
 {
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
-        instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall)).leakRef();
+        instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall, SmallHeap)).leakRef();
 #if ENABLE(JSC_MULTIPLE_THREADS)
         instance->makeUsableFromMultipleThreads();
 #endif

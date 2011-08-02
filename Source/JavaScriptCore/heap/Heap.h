@@ -53,6 +53,9 @@ namespace JSC {
 
     enum OperationInProgress { NoOperation, Allocation, Collection };
     
+    // Heap size hint.
+    enum HeapSize { SmallHeap, LargeHeap };
+    
     class Heap {
         WTF_MAKE_NONCOPYABLE(Heap);
     public:
@@ -67,7 +70,7 @@ namespace JSC {
         static void writeBarrier(const JSCell*, JSValue);
         static void writeBarrier(const JSCell*, JSCell*);
 
-        Heap(JSGlobalData*);
+        Heap(JSGlobalData*, HeapSize);
         ~Heap();
         void destroy(); // JSGlobalData must call destroy() before ~Heap().
 
@@ -160,6 +163,9 @@ namespace JSC {
         static void* blockFreeingThreadStartFunc(void* heap);
 #endif
 
+        const HeapSize m_heapSize;
+        const size_t m_minBytesPerCycle;
+        
         OperationInProgress m_operationInProgress;
         NewSpace m_newSpace;
         MarkedBlockSet m_blocks;

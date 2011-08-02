@@ -42,7 +42,15 @@ namespace JSC {
 
 namespace { 
 
-const size_t minBytesPerCycle = 512 * 1024;
+static size_t heapSizeForHint(HeapSize heapSize)
+{
+#if ENABLE(LARGE_HEAP)
+    if (heapSize == LargeHeap)
+        return 16 * 1024 * 1024;
+    ASSERT(heapSize == SmallHeap);
+#endif
+    return 512 * 1024;
+}
 
 static inline bool isValidSharedInstanceThreadState()
 {
@@ -230,8 +238,10 @@ inline PassOwnPtr<TypeCountSet> RecordType::returnValue()
 
 } // anonymous namespace
 
-Heap::Heap(JSGlobalData* globalData)
-    : m_operationInProgress(NoOperation)
+Heap::Heap(JSGlobalData* globalData, HeapSize heapSize)
+    : m_heapSize(heapSize)
+    , m_minBytesPerCycle(heapSizeForHint(heapSize))
+    , m_operationInProgress(NoOperation)
     , m_newSpace(this)
     , m_extraCost(0)
     , m_markListSet(0)
@@ -242,7 +252,7 @@ Heap::Heap(JSGlobalData* globalData)
     , m_isSafeToCollect(false)
     , m_globalData(globalData)
 {
-    m_newSpace.setHighWaterMark(minBytesPerCycle);
+    m_newSpace.setHighWaterMark(m_minBytesPerCycle);
     (*m_activityCallback)();
 #if ENABLE(LAZY_BLOCK_FREEING)
     m_numberOfFreeBlocks = 0;
@@ -660,7 +670,7 @@ void Heap::collect(SweepToggle sweepToggle)
     // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
     size_t proportionalBytes = 2 * size();
-    m_newSpace.setHighWaterMark(max(proportionalBytes, minBytesPerCycle));
+    m_newSpace.setHighWaterMark(max(proportionalBytes, m_minBytesPerCycle));
 
     JAVASCRIPTCORE_GC_END();
 

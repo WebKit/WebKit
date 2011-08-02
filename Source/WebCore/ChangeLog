@@ -1,3 +1,19 @@
+2011-08-02  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC GC is far too conservative about growing the heap size, particularly
+        on desktop platforms
+        https://bugs.webkit.org/show_bug.cgi?id=65438
+
+        Reviewed by Oliver Hunt.
+
+        No change in behavior, thus no new tests.
+        
+        Pass the LargeHeap hint to JSGlobalData when creating the JSC runtime
+        instance corresponding to non-worker JS code.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::commonJSGlobalData):
+
 2011-08-02  Van Lam  <vanlam@google.com>
 
         --webkit-visual-word: ctrl-arrow is not able to reach the boundary of line

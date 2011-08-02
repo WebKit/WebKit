@@ -113,7 +113,7 @@ namespace JSC {
         // than the old singleton APIShared JSGlobalData created for use by
         // the original API.
         enum GlobalDataType { Default, APIContextGroup, APIShared };
-
+        
         struct ClientData {
             virtual ~ClientData() = 0;
         };
@@ -123,9 +123,9 @@ namespace JSC {
         static bool sharedInstanceExists();
         static JSGlobalData& sharedInstance();
 
-        static PassRefPtr<JSGlobalData> create(ThreadStackType);
-        static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType);
-        static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType);
+        static PassRefPtr<JSGlobalData> create(ThreadStackType, HeapSize = SmallHeap);
+        static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType, HeapSize = SmallHeap);
+        static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType, HeapSize = SmallHeap);
         ~JSGlobalData();
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
@@ -281,7 +281,7 @@ namespace JSC {
         void releaseExecutableMemory();
 
     private:
-        JSGlobalData(GlobalDataType, ThreadStackType);
+        JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
 #if ENABLE(JIT) && ENABLE(INTERPRETER)

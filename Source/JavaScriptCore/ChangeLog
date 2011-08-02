@@ -1,5 +1,40 @@
 2011-08-02  Filip Pizlo  <fpizlo@apple.com>
 
+        JSC GC is far too conservative about growing the heap size, particularly
+        on desktop platforms
+        https://bugs.webkit.org/show_bug.cgi?id=65438
+
+        Reviewed by Oliver Hunt.
+
+        The minimum heap size is now 16MB instead of 512KB, provided all of the
+        following are true:
+        a) ENABLE(LARGE_HEAP) is set, which currently only happens on
+           x86 targets, but could reasonably happen on any platform that is
+           known to have a decent amount of RAM.
+        b) JSGlobalData is initialized with HeapSize = LargeHeap, which
+           currently only happens when it's the JSDOMWindowBase in WebCore or
+           in the jsc command-line tool.
+           
+        This is a 4.1% speed-up on SunSpider.
+
+        * JavaScriptCore.exp:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::collect):
+        * heap/Heap.h:
+        * jsc.cpp:
+        (main):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::createContextGroup):
+        (JSC::JSGlobalData::create):
+        (JSC::JSGlobalData::createLeaked):
+        (JSC::JSGlobalData::sharedInstance):
+        * runtime/JSGlobalData.h:
+        * wtf/Platform.h:
+
+2011-08-02  Filip Pizlo  <fpizlo@apple.com>
+
         JSC does a GC even when the heap still has free pages
         https://bugs.webkit.org/show_bug.cgi?id=65445
 
