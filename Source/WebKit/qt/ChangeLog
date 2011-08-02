@@ -1,3 +1,13 @@
+2011-08-02  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        [Qt] tst_QWebElement::style() fails because QWebElement::CascadedStyle doesn't work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=65244
+
+        Reviewed by Csaba Osztrogonác.
+
+        * tests/qwebelement/tst_qwebelement.cpp: Mark failing test case as expected fail
+        (tst_QWebElement::style):
+
 2011-08-01  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         [Qt] Fix tst_QWebPage::loadHtml5Video() API test
