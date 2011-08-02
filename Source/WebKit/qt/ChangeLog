@@ -1,5 +1,17 @@
 2011-08-02  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
+        [Qt] Fix tst_QDeclarativeWebView::basicProperties() and historyNav() autotests
+        https://bugs.webkit.org/show_bug.cgi?id=61042
+        Remove mark as expected fail where unexpected pass and mark failing test case as expected fail
+
+        Reviewed by Csaba Osztrogonác.
+
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp:
+        (tst_QDeclarativeWebView::basicProperties):
+        (tst_QDeclarativeWebView::historyNav):
+
+2011-08-02  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
         [Qt] Fix tst_QWebPage::viewModes() API test
         https://bugs.webkit.org/show_bug.cgi?id=65531
 
