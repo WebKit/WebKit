@@ -1,5 +1,15 @@
 2011-08-02  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
+        [Qt] Fix tst_QWebFrame::connectAndDisconnect() API test
+        https://bugs.webkit.org/show_bug.cgi?id=65170
+
+        Reviewed by Csaba Osztrogonác.
+
+        * tests/qwebframe/tst_qwebframe.cpp: Mark failing test case as expected fail
+        (tst_QWebFrame::connectAndDisconnect):
+
+2011-08-02  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
         [Qt] Fix tst_QWebElement::render() API test
         https://bugs.webkit.org/show_bug.cgi?id=65243
 
