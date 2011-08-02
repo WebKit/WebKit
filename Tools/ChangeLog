@@ -1,3 +1,41 @@
+2011-08-01  Stephanie Lewis  <slewis@apple.com>
+
+        Finish reconfiguration started by Lucas Forschler
+        Reconfigured slaves:
+        Removed Leopard Intel Release (Build)
+        Removed Leopard Intel Release (Tests)
+        Remove apple-pixel-1
+        Added Lion slaves from disabled Leopard slaves
+
+        Added builders:
+        Lion Intel Release (Build)
+        Lion Intel Debug (Build)
+        Lion Intel Release (Tests)
+        Lion Intel Release WK2 (Tests)
+        Lion Intel Debug (Tests)
+        Lion Intel Debug WK2 (Tests)
+
+        Added triggers:
+        lion-intel-debug-tests
+        lion-intel-debug-test-wk2
+        lion-intel-release-tests
+        lion-intel-release-tests-wk2
+        
+        Removed trigger:
+        leopard-intel-release-tests
+
+        Added PlatformSpecificScheduler:
+        mac-lion
+
+        Added "mac-lion" to build.py and build_unitttest.py
+
+        Reviewed by Mark Rowe.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * Scripts/webkitpy/common/config/build.py:
+        * Scripts/webkitpy/common/config/build_unittest.py:
+
+ 
 2011-08-01  Adam Barth  <abarth@webkit.org>
 
         webkit-patch needs to be able to "optimize" the storage of baselines on disk

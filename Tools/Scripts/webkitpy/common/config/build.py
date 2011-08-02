@@ -37,7 +37,7 @@ def _should_file_trigger_build(target_platform, file):
     # and start using it for their bots. Someone familiar with each platform
     # will have to figure out what the right set of directories/patterns is for
     # that platform.
-    assert(target_platform in ("mac-leopard", "mac-snowleopard", "win"))
+    assert(target_platform in ("mac-leopard", "mac-lion", "mac-snowleopard", "win"))
 
     directories = [
         # Directories that shouldn't trigger builds on any bots.
@@ -72,8 +72,8 @@ def _should_file_trigger_build(target_platform, file):
         ("gtk", ["gtk"]),
         ("mac", ["chromium-mac", "mac"]),
         ("mac-leopard", ["mac-leopard"]),
-        ("mac-snowleopard", ["mac", "win"]),
-        ("mac-wk2", ["mac-snowleopard", "win"]),
+        ("mac-snowleopard", ["mac-leopard", "mac-snowleopard", "win"]),
+        ("mac-wk2", ["mac-lion", "mac-snowleopard", "win"]),
         ("objc", ["mac"]),
         ("qt", ["qt"]),
         ("skia", ["chromium"]),

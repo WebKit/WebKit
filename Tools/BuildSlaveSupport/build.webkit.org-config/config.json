@@ -2,27 +2,26 @@
     "slaves":     [ { "name": "test-slave", "platform": "*" },
 
                     { "name": "apple-xserve-1", "platform": "mac-leopard" },
-                    { "name": "apple-xserve-2", "platform": "mac-leopard" },
-                    { "name": "apple-xserve-3", "platform": "mac-leopard" },
-
+                    { "name": "apple-macpro-7", "platform": "mac-leopard" },	
+                  
                     { "name": "apple-xserve-4", "platform": "mac-snowleopard" },
                     { "name": "apple-xserve-5", "platform": "mac-snowleopard" },
                     { "name": "apple-xserve-6", "platform": "mac-snowleopard" },
                     { "name": "apple-xserve-7", "platform": "mac-snowleopard" },
                     { "name": "apple-xserve-8", "platform": "mac-snowleopard" },	
                     { "name": "apple-xserve-9", "platform": "mac-snowleopard" },	
-
-                    { "name": "apple-pixel-1", "platform": "mac-leopard" },
-
                     { "name": "apple-macpro-1", "platform": "mac-snowleopard" },
                     { "name": "apple-macpro-2", "platform": "mac-snowleopard" },
                     { "name": "apple-macpro-3", "platform": "mac-snowleopard" },
-                    { "name": "apple-macpro-4", "platform": "mac-leopard" },
-                    { "name": "apple-macpro-5", "platform": "mac-leopard" },	
-                    { "name": "apple-macpro-6", "platform": "mac-leopard" },
-                    { "name": "apple-macpro-7", "platform": "mac-leopard" },	
-                    	
 
+                    { "name": "apple-macpro-4", "platform": "mac-lion" },
+                    { "name": "apple-macpro-5", "platform": "mac-lion" },	
+                    { "name": "apple-macpro-6", "platform": "mac-lion" },
+                    { "name": "apple-macpro-8", "platform": "mac-lion" },	
+                    { "name": "apple-xserve-2", "platform": "mac-lion" },
+                    { "name": "apple-xserve-3", "platform": "mac-lion" },
+                    { "name": "apple-xserve-10", "platform": "mac-lion" },
+                    
                     { "name": "apple-windows-1", "platform": "win"},
                     { "name": "apple-windows-2", "platform": "win"},
                     { "name": "apple-windows-3", "platform": "win"},
@@ -72,24 +71,14 @@
                     { "name": "hfreyther-mipsel-linux1", "platform": "qt"}
                   ],
 
-    "builders":   [ { "name": "Leopard Intel Release (Build)", "type": "Build", "builddir": "leopard-intel-release",
-                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
-                      "triggers": ["leopard-intel-release-tests"],
-                      "slavenames": ["apple-xserve-1", "apple-xserve-2", "test-slave"]
-                    },
-                    { "name": "Leopard Intel Release (Tests)", "type": "Test", "builddir": "leopard-intel-release-tests",
-                      "platform": "mac-leopard", "configuration": "release", "architectures": ["i386"],
-                      "slavenames": ["apple-macpro-4", "apple-pixel-1", "test-slave", "apple-macpro-7"]
-                    },
-
-                    { "name": "Leopard Intel Debug (Build)", "type": "Build", "builddir": "leopard-intel-debug",
+    "builders":   [ { "name": "Leopard Intel Debug (Build)", "type": "Build", "builddir": "leopard-intel-debug",
                       "platform": "mac-leopard", "configuration": "debug", "architectures": ["i386"],
                       "triggers": ["leopard-intel-debug-tests"],
-                      "slavenames": ["apple-xserve-1", "apple-xserve-2", "test-slave"]
+                      "slavenames": ["apple-xserve-1"]
                     },
                     { "name": "Leopard Intel Debug (Tests)", "type": "Test", "builddir": "leopard-intel-debug-tests",
                       "platform": "mac-leopard", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["apple-xserve-3", "test-slave", "apple-macpro-5", "apple-macpro-6", "apple-macpro-7"]
+                      "slavenames": ["apple-macpro-7"]
                     },
                     { "name": "SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "snowleopard-intel-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"],
@@ -120,6 +109,32 @@
                     { "name": "SnowLeopard Intel Debug (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "snowleopard-intel-debug-tests-wk2",
                       "platform": "mac-snowleopard", "configuration": "debug", "architectures": ["x86_64"],
                       "slavenames": ["apple-xserve-9"]
+                    },
+                    { "name": "Lion Intel Debug (Build)", "type": "Build", "builddir": "lion-intel-debug",
+                      "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
+                      "triggers": ["lion-intel-debug-tests"],
+                      "slavenames": ["apple-xserve-2"]
+                    },
+                    { "name": "Lion Intel Release (Build)", "type": "Build", "builddir": "lion-intel-release",
+                      "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["lion-intel-release-tests"],
+                      "slavenames": ["apple-xserve-3"]
+                    },
+                    { "name": "Lion Intel Debug (Tests)", "type": "Test", "builddir": "lion-intel-debug-tests",
+                      "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-macpro-4"]
+                    },
+                    { "name": "Lion Intel Debug (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-debug-tests-wk2",
+                      "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
+                      "slavenames": ["apple-macpro-8"]
+                    },
+                    { "name": "Lion Intel Release (Tests)", "type": "Test", "builddir": "lion-intel-release-tests",
+                      "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["apple-macpro-5", "apple-xserve-10"]
+                    },
+                    { "name": "Lion Intel Release (WebKit2 Tests)", "type": "TestWebKit2", "builddir": "lion-intel-release-tests-wk2",
+                      "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["apple-macpro-6"]
                     },
                     {
                       "name": "Windows Release (Build)", "type": "Build", "builddir": "win-release",
@@ -263,11 +278,23 @@
                       "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks", "SnowLeopard Intel Debug (Build)",
                                        "CSSRegions SnowLeopard Intel Release (Build)"]
                     },
+                    { "type": "PlatformSpecificScheduler", "platform": "mac-lion", "branch": "trunk", "treeStableTimer": 45.0,
+                      "builderNames": ["Lion Intel Release (Build)", "Lion Intel Debug (Build)"]
+                    },
                     { "type": "PlatformSpecificScheduler", "platform": "win", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Windows Release (Build)", "Windows Debug (Build)"]
                     },
-                    { "type": "Triggerable", "name": "leopard-intel-release-tests",
-                      "builderNames": ["Leopard Intel Release (Tests)"]
+                    { "type": "Triggerable", "name": "lion-intel-release-tests",
+                      "builderNames": ["Lion Intel Release (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "lion-intel-release-tests-wk2",
+                      "builderNames": ["Lion Intel Release (WebKit2 Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "lion-intel-debug-tests",
+                      "builderNames": ["Lion Intel Debug (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "lion-intel-debug-tests-wk2",
+                      "builderNames": ["Lion Intel Debug (WebKit2 Tests)"]
                     },
                     { "type": "Triggerable", "name": "leopard-intel-debug-tests",
                       "builderNames": ["Leopard Intel Debug (Tests)"]
