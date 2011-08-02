@@ -54,7 +54,8 @@ var Preferences = {
     useLowerCaseMenuTitlesOnWindows: false,
     canInspectWorkers: false,
     canClearCacheAndCookies: false,
-    canDisableCache: false
+    canDisableCache: false,
+    showNetworkPanelInitiatorColumn: false
 }
 
 WebInspector.Settings = function()

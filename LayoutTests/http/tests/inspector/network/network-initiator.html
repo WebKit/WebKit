@@ -9,7 +9,7 @@ function addClassToDiv()
 {
     // We need to setTimeout, to make sure that style recalculation scheduling
     // is really triggered by adding a class to the div.
-    window.setTimeout(addClassToDivStep2.bind(this), 0);
+    window.setTimeout(addClassToDivStep2, 0);
 }
 
 function addClassToDivStep2()

@@ -55,6 +55,7 @@ var context = {};  // Used by WebCore's inspector routines.
     Preferences.canInspectWorkers = true;
     Preferences.canClearCacheAndCookies = true;
     Preferences.canDisableCache = true;
+    Preferences.showNetworkPanelInitiatorColumn = true;
 })();
 
 // Recognize WebP as a valid image mime type.
