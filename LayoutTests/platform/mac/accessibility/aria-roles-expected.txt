@@ -50,7 +50,7 @@ X
 
 Actual text box:
 
- This test PASSES in DumpRenderTree. The role is AXRole: AXTextArea
+ This test PASSES in DumpRenderTree. The role is AXRole: AXTextField
 
 The following should be an image:
 

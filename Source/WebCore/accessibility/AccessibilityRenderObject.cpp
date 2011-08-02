@@ -2996,7 +2996,7 @@ AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
     if (role == ButtonRole && ariaHasPopup())
         role = PopUpButtonRole;
 
-    if (role == TextAreaRole && ariaIsMultiline())
+    if (role == TextAreaRole && !ariaIsMultiline())
         role = TextFieldRole;
     
     if (role)
