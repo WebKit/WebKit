@@ -259,6 +259,7 @@
                     },
                     { "name": "CSSRegions SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "cssregions-snowleopard-intel-release",
                       "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"], "features": ["css-regions", "css-exclusions"],
+                      "upload": true,
                       "slavenames": ["adobe-mac-slave1"]
                     }
                   ],

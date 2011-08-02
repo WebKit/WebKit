@@ -1,3 +1,21 @@
+2011-08-02  Alexandru Chiculita  <achicu@adobe.com>
+
+        CSS Regions build bot should archive and upload output files
+        https://bugs.webkit.org/show_bug.cgi?id=65200
+
+        Until now the buildbots would only upload the result archive if the 'trigger' parameters was specified. The
+        upload was needed, because the testbots needed to download and use the archive. For CSS Regions we don't have
+        a testbot yet, but we want to save the archive on the server for manual testing. Added new parameter
+        in config.json, called "upload" that when set to "true" will force the upload to the buildmaster server.
+
+        The "features" argument is now taken into account when determining the name of the archive on the server. That
+        was needed in order to avoid the CSS Regions Mac buildbot overwrite the SnowLeopard Mac build.
+
+        Reviewed by Adam Roben.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-08-02  Patrick Gansterer  <paroga@webkit.org>
 
         Fix _win32_check_running_pid on 64bit windows python
