@@ -111,17 +111,27 @@ WebInspector.ResourceContentView.prototype = {
         return true;
     },
 
-    get sourceView()
+    get innerView()
     {
-        if (!this._sourceView && WebInspector.ResourceView.hasTextContent(this.resource))
-            this._sourceView = new WebInspector.ResourceSourceFrame(this.resource);
-        return this._sourceView;
+        return this._innerView;
+    },
+
+    set innerView(innerView)
+    {
+        this._innerView = innerView;
     },
 
     show: function(parentElement)
     {
         WebInspector.ResourceView.prototype.show.call(this, parentElement);
         this._ensureInnerViewShown();
+    },
+
+    hide: function()
+    {
+        if (this._innerView)
+            this._innerView.hide();
+        WebInspector.ResourceView.prototype.hide.call(this);
     },
 
     _ensureInnerViewShown: function()

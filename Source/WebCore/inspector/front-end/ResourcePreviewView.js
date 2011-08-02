@@ -41,6 +41,7 @@ WebInspector.ResourcePreviewView.prototype = {
             if (!this._emptyView) {
                 this._emptyView = this._createEmptyView();
                 this._emptyView.show(this.element);
+                this.innerView = this._emptyView; 
             }
         } else {
             if (this._emptyView) {
@@ -50,6 +51,7 @@ WebInspector.ResourcePreviewView.prototype = {
             if (!this._previewView)
                 this._previewView = this._createPreviewView();
             this._previewView.show(this.element);
+            this.innerView = this._previewView; 
         }
     },
 

@@ -1,5 +1,21 @@
 2011-08-02  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Should save scroll positions for network panel Response and Preview tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=65557
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.ResourceContentView.prototype.get innerView):
+        (WebInspector.ResourceContentView.prototype.set innerView):
+        (WebInspector.ResourceContentView.prototype.hide):
+        * inspector/front-end/ResourcePreviewView.js:
+        (WebInspector.ResourcePreviewView.prototype.contentLoaded):
+        * inspector/front-end/ResourceResponseView.js:
+        (WebInspector.ResourceResponseView.prototype.contentLoaded):
+
+2011-08-02  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Remove initator column for JSC, fix network resource initiator tests.
         https://bugs.webkit.org/show_bug.cgi?id=65534
 

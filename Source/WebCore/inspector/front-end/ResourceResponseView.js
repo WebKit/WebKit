@@ -47,6 +47,7 @@ WebInspector.ResourceResponseView.prototype = {
             if (!this._emptyView) {
                 this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no response data available."));
                 this._emptyView.show(this.element);
+                this.innerView = this._emptyView; 
             }
         } else {
             if (this._emptyView) {
@@ -54,6 +55,7 @@ WebInspector.ResourceResponseView.prototype = {
                 delete this._emptyView;
             }
             this.sourceView.show(this.element);
+            this.innerView = this.sourceView; 
         }
     }
 }
