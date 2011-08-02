@@ -1,3 +1,13 @@
+2011-08-02  Andreas Kling  <kling@webkit.org>
+
+        [Qt] Simplify Path::translate() implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=65540
+
+        Reviewed by Benjamin Poulain.
+
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::translate):
+
 2011-07-30  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: merge FormattedSourceFile into SourceFile.

@@ -144,9 +144,7 @@ bool Path::strokeContains(StrokeStyleApplier* applier, const FloatPoint& point) 
 
 void Path::translate(const FloatSize& size)
 {
-    QTransform matrix;
-    matrix.translate(size.width(), size.height());
-    m_path = m_path * matrix;
+    m_path.translate(size.width(), size.height());
 }
 
 FloatRect Path::boundingRect() const
