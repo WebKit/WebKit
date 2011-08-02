@@ -45,7 +45,7 @@ function runGetNumberOfFailingTestsTest(jsonData, callback) {
 
     // FIXME: It's lame to be modifying singletons like this. We should get rid
     // of our singleton usage entirely!
-    var realPersistentCache = window.PersistentCache;
+    ok(!("PersistentCache" in window));
     window.PersistentCache = {
         contains: function() { return false; },
         set: function() { },
@@ -56,8 +56,7 @@ function runGetNumberOfFailingTestsTest(jsonData, callback) {
 
     window.getResource = realGetResource;
     equal(window.getResource, realGetResource);
-    window.PersistentCache = realPersistentCache;
-    equal(window.PersistentCache, realPersistentCache);
+    delete window.PersistentCache;
 }
 
 test("getNumberOfFailingTests shouldn't include leaks", 4, function() {
