@@ -58,6 +58,14 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/unicode/CharacterNames.h>
 
+#if ENABLE(GESTURE_EVENTS)
+#include "PlatformGestureEvent.h"
+#endif
+
+#if ENABLE(TOUCH_EVENTS)
+#include "PlatformTouchEvent.h"
+#endif
+
 using namespace std;
 using namespace WTF;
 using namespace Unicode;
@@ -105,6 +113,12 @@ public:
     virtual bool handleMouseReleaseEvent(const PlatformMouseEvent&);
     virtual bool handleWheelEvent(const PlatformWheelEvent&);
     virtual bool handleKeyEvent(const PlatformKeyboardEvent&);
+#if ENABLE(TOUCH_EVENTS)
+    virtual bool handleTouchEvent(const PlatformTouchEvent&);
+#endif
+#if ENABLE(GESTURE_RECOGNIZER)
+    virtual bool handleGestureEvent(const PlatformGestureEvent&);
+#endif
 
     // ScrollView
     virtual HostWindow* hostWindow() const;
@@ -511,6 +525,40 @@ bool PopupContainer::handleWheelEvent(const PlatformWheelEvent& event)
         constructRelativeWheelEvent(event, this, m_listBox.get()));
 }
 
+#if ENABLE(TOUCH_EVENTS)
+bool PopupContainer::handleTouchEvent(const PlatformTouchEvent&)
+{
+    return false;
+}
+#endif
+
+#if ENABLE(GESTURE_RECOGNIZER)
+// FIXME: Refactor this code to share functionality with EventHandler::handleGestureEvent.
+bool PopupContainer::handleGestureEvent(const PlatformGestureEvent& gestureEvent)
+{
+    switch (gestureEvent.type()) {
+    case PlatformGestureEvent::TapType: {
+        PlatformMouseEvent fakeMouseMove(gestureEvent.position(), gestureEvent.globalPosition(), NoButton, MouseEventMoved, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+        PlatformMouseEvent fakeMouseDown(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, MouseEventPressed, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+        PlatformMouseEvent fakeMouseUp(gestureEvent.position(), gestureEvent.globalPosition(), LeftButton, MouseEventReleased, /* clickCount */ 1, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey(), gestureEvent.timestamp());
+        // handleMouseMoveEvent(fakeMouseMove);
+        handleMouseDownEvent(fakeMouseDown);
+        handleMouseReleaseEvent(fakeMouseUp);
+        return true;
+    }
+    case PlatformGestureEvent::ScrollUpdateType: {
+        PlatformWheelEvent syntheticWheelEvent(gestureEvent.position(), gestureEvent.globalPosition(), gestureEvent.deltaX(), gestureEvent.deltaY(), gestureEvent.deltaX() / 120.0f, gestureEvent.deltaY() / 120.0f, ScrollByPixelWheelEvent, /* isAccepted */ false, gestureEvent.shiftKey(), gestureEvent.ctrlKey(), gestureEvent.altKey(), gestureEvent.metaKey());
+        handleWheelEvent(syntheticWheelEvent);
+        return true;
+    }
+    case PlatformGestureEvent::ScrollBeginType:
+    case PlatformGestureEvent::ScrollEndType:
+        break;
+    }
+    return false;
+}
+#endif
+
 bool PopupContainer::handleKeyEvent(const PlatformKeyboardEvent& event)
 {
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
@@ -753,6 +801,20 @@ bool PopupListBox::isInterestedInEventForKey(int keyCode)
         return false;
     }
 }
+
+#if ENABLE(TOUCH_EVENTS)
+bool PopupListBox::handleTouchEvent(const PlatformTouchEvent&)
+{
+    return false;
+}
+#endif
+
+#if ENABLE(GESTURE_RECOGNIZER)
+bool PopupListBox::handleGestureEvent(const PlatformGestureEvent&)
+{
+    return false;
+}
+#endif
 
 static bool isCharacterTypeEvent(const PlatformKeyboardEvent& event)
 {

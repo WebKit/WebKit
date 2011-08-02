@@ -80,10 +80,6 @@ class Widget;
 class PlatformGestureEvent;
 #endif
 
-#if ENABLE(GESTURE_RECOGNIZER)
-class PlatformGestureRecognizer;
-#endif
-
 #if ENABLE(DRAG_SUPPORT)
 extern const int LinkDragHysteresis;
 extern const int ImageDragHysteresis;
@@ -164,10 +160,6 @@ public:
 
 #if ENABLE(GESTURE_EVENTS)
     bool handleGestureEvent(const PlatformGestureEvent&);
-#endif
-
-#if ENABLE(GESTURE_RECOGNIZER)
-    void resetGestureRecognizer();
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -428,9 +420,6 @@ private:
     typedef HashMap<int, RefPtr<EventTarget> > TouchTargetMap;
     TouchTargetMap m_originatingTouchPointTargets;
     bool m_touchPressed;
-#endif
-#if ENABLE(GESTURE_RECOGNIZER)
-    OwnPtr<PlatformGestureRecognizer> m_gestureRecognizer;
 #endif
 };
 

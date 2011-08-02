@@ -232,10 +232,6 @@ void FrameView::reset()
     m_isVisuallyNonEmpty = false;
     m_firstVisuallyNonEmptyLayoutCallbackPending = true;
     m_maintainScrollPositionAnchor = 0;
-
-#if ENABLE(GESTURE_RECOGNIZER)
-    frame()->eventHandler()->resetGestureRecognizer();
-#endif
 }
 
 bool FrameView::isFrameView() const 
