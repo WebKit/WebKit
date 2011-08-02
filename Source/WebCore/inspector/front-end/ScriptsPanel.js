@@ -286,7 +286,7 @@ WebInspector.ScriptsPanel.prototype = {
             var contentScriptSection = document.createElement("option");
             contentScriptSection.text = WebInspector.UIString("Content scripts");
             contentScriptSection.disabled = true;
-            option.nameForSorting = "1/ContentScriptSeparator";
+            contentScriptSection.nameForSorting = "1/ContentScriptSeparator";
             select.contentScriptSection = contentScriptSection;
             insertOrdered(contentScriptSection);
         }

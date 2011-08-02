@@ -1,3 +1,10 @@
+2011-08-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fixing inspector tests.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+
 2011-08-02  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: one line inspector style change.

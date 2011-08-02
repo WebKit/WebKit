@@ -1,3 +1,12 @@
+2011-08-02  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: fixing inspector tests.
+
+        * inspector/debugger/scripts-panel-expected.txt:
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/scripts-sorting-expected.txt:
+        * platform/chromium/inspector/debugger/scripts-sorting-expected.txt: Copied from LayoutTests/inspector/debugger/scripts-sorting-expected.txt.
+
 2011-08-02  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Malformed chromium test expectation fix, again. Sorry for the spam...

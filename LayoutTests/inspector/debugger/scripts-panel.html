@@ -22,7 +22,7 @@ function test()
                 for (var i = 0; i < files.length; ++i) {
                     var found = false;
                     for (var j = 0; j < select.length; ++j) {
-                        if (select[j].text === files[i]) {
+                        if (select[j].text.indexOf(files[i]) !== -1) {
                             found = true;
                             break;
                         }
@@ -48,7 +48,7 @@ function test()
             function showSourceFrame(fileName)
             {
                 for (var i = 0; i < select.length; ++i) {
-                    if (select[i].text !== fileName)
+                    if (select[i].text.indexOf(fileName) === -1)
                         continue;
                     select.selectedIndex = i;
                     panel._filesSelectChanged();
@@ -58,24 +58,25 @@ function test()
 
             function checkCurrentlySelectedFileName(fileName)
             {
-                InspectorTest.assertEquals(fileName, select[select.selectedIndex].text);
+                InspectorTest.assertTrue(select[select.selectedIndex].text.indexOf(fileName) !== -1, "Option text should contain file name: " + select[select.selectedIndex].text + " vs " + fileName);
             }
 
             for (var i = 0; i < files.length; ++i)
                 showSourceFrame(files[i]);
             checkCurrentlySelectedFileName("scripts-panel.html");
-            InspectorTest.assertEquals(true, panel.forwardButton.disabled);
+            InspectorTest.assertEquals(true, panel.forwardButton.disabled, "Forward should be disabled at first.");
 
             panel.backButton.click();
             checkCurrentlySelectedFileName("script3.js");
-            InspectorTest.assertEquals(false, panel.forwardButton.disabled);
+            InspectorTest.assertEquals(false, panel.forwardButton.disabled, "Forward should be enabled after back button click.");
 
             panel.forwardButton.click();
             checkCurrentlySelectedFileName("scripts-panel.html");
-            InspectorTest.assertEquals(true, panel.forwardButton.disabled);
+            InspectorTest.assertEquals(true, panel.forwardButton.disabled, "Forward should be disabled after forward button click.");
 
             for (var i = 0; i < files.length - 1; ++i)
                 panel.backButton.click();
+
             checkCurrentlySelectedFileName("debugger-test.js");
 
             panel.forwardButton.click();
@@ -117,7 +118,7 @@ function test()
 
             function didReload()
             {
-                InspectorTest.assertEquals("scripts-panel.html", select[select.selectedIndex].text);
+                InspectorTest.assertTrue(select[select.selectedIndex].text.indexOf("scripts-panel.html") !== -1);
                 // There should be maximum 2 source frames: first one is the first shown, second one is the last viewed ("scripts-panel.html").
                 InspectorTest.assertEquals(true, sourceFrameCount <= 2, "too many source frames created after page reload");
                 next();
@@ -147,8 +148,9 @@ function test()
             var select = panel._filesSelectElement;
             for (var i = 0; i < select.length; ++i) {
                 var option = select[i];
+                var text = option.text.replace(/.*LayoutTests/, "LayoutTests");
                 var tooltip = option.title.replace(rootURL, "<root>/");
-                InspectorTest.addResult("text: " + option.text + ", tooltip: " + tooltip);
+                InspectorTest.addResult("text: " + text + ", tooltip: " + tooltip);
             }
             next();
         }
