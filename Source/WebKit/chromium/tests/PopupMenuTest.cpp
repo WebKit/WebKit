@@ -447,7 +447,7 @@ TEST_F(SelectPopupMenuTest, DISABLED_SelectItemEventFire)
     EXPECT_STREQ("upclickchangeupclick", std::string(element.innerText().utf8()).c_str());
 }
 
-TEST_F(SelectPopupMenuTest, SelectItemKeyEvent)
+TEST_F(SelectPopupMenuTest, FLAKY_SelectItemKeyEvent)
 {
     registerMockedURLLoad("select_event.html");
     m_webView->settings()->setJavaScriptEnabled(true);
