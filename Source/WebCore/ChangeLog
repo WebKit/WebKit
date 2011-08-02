@@ -1,3 +1,23 @@
+2011-08-02  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement CSSPropertyWebkitTextCombine, CSSPropertyWebkitTextEmphasisPosition and CSSPropertyWebkitTextEmphasisStyle in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=65517
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests. Just refactoring and moving code around.
+
+        * css/CSSStyleApplyProperty.cpp:
+        Added class ApplyPropertyTextEmphasisStyle to handle the special TextEmphasisStyle logic.
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyInheritValue):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyInitialValue):
+        (WebCore::ApplyPropertyTextEmphasisStyle::applyValue):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Added initializations for CSSPropertyWebkitTextCombine, CSSPropertyWebkitTextEmphasisPosition, CSSPropertyWebkitTextEmphasisStyle.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove existing implementations.
+
 2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from SpeechInputResultList.idl

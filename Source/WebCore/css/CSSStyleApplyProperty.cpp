@@ -685,6 +685,68 @@ private:
     }
 };
 
+class ApplyPropertyTextEmphasisStyle : public ApplyPropertyBase {
+private:
+    virtual void applyInheritValue(CSSStyleSelector* selector) const
+    {
+        selector->style()->setTextEmphasisFill(selector->parentStyle()->textEmphasisFill());
+        selector->style()->setTextEmphasisMark(selector->parentStyle()->textEmphasisMark());
+        selector->style()->setTextEmphasisCustomMark(selector->parentStyle()->textEmphasisCustomMark());
+    }
+
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
+    {
+        selector->style()->setTextEmphasisFill(RenderStyle::initialTextEmphasisFill());
+        selector->style()->setTextEmphasisMark(RenderStyle::initialTextEmphasisMark());
+        selector->style()->setTextEmphasisCustomMark(RenderStyle::initialTextEmphasisCustomMark());
+    }
+
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (value->isValueList()) {
+            CSSValueList* list = static_cast<CSSValueList*>(value);
+            ASSERT(list->length() == 2);
+            if (list->length() != 2)
+                return;
+            for (unsigned i = 0; i < 2; ++i) {
+                CSSValue* item = list->itemWithoutBoundsCheck(i);
+                if (!item->isPrimitiveValue())
+                    continue;
+
+                CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(item);
+                if (value->getIdent() == CSSValueFilled || value->getIdent() == CSSValueOpen)
+                    selector->style()->setTextEmphasisFill(*value);
+                else
+                    selector->style()->setTextEmphasisMark(*value);
+            }
+            selector->style()->setTextEmphasisCustomMark(nullAtom);
+            return;
+        }
+
+        if (!value->isPrimitiveValue())
+            return;
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+
+        if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_STRING) {
+            selector->style()->setTextEmphasisFill(TextEmphasisFillFilled);
+            selector->style()->setTextEmphasisMark(TextEmphasisMarkCustom);
+            selector->style()->setTextEmphasisCustomMark(primitiveValue->getStringValue());
+            return;
+        }
+
+        selector->style()->setTextEmphasisCustomMark(nullAtom);
+
+        if (primitiveValue->getIdent() == CSSValueFilled || primitiveValue->getIdent() == CSSValueOpen) {
+            selector->style()->setTextEmphasisFill(*primitiveValue);
+            selector->style()->setTextEmphasisMark(TextEmphasisMarkAuto);
+        } else {
+            selector->style()->setTextEmphasisFill(TextEmphasisFillFilled);
+            selector->style()->setTextEmphasisMark(*primitiveValue);
+        }
+
+    }
+};
+
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
 {
     DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
@@ -868,6 +930,11 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitColumnCount, new ApplyPropertyAuto<unsigned short>(&RenderStyle::columnCount, &RenderStyle::setColumnCount, &RenderStyle::hasAutoColumnCount, &RenderStyle::setHasAutoColumnCount));
     setPropertyHandler(CSSPropertyWebkitColumnGap, new ApplyPropertyAuto<float, ComputeLength, CSSValueNormal>(&RenderStyle::columnGap, &RenderStyle::setColumnGap, &RenderStyle::hasNormalColumnGap, &RenderStyle::setHasNormalColumnGap));
     setPropertyHandler(CSSPropertyWebkitColumnWidth, new ApplyPropertyAuto<float, ComputeLength>(&RenderStyle::columnWidth, &RenderStyle::setColumnWidth, &RenderStyle::hasAutoColumnWidth, &RenderStyle::setHasAutoColumnWidth));
+
+    setPropertyHandler(CSSPropertyWebkitTextCombine, new ApplyPropertyDefault<TextCombine>(&RenderStyle::textCombine, &RenderStyle::setTextCombine, &RenderStyle::initialTextCombine));
+    setPropertyHandler(CSSPropertyWebkitTextEmphasisPosition, new ApplyPropertyDefault<TextEmphasisPosition>(&RenderStyle::textEmphasisPosition, &RenderStyle::setTextEmphasisPosition, &RenderStyle::initialTextEmphasisPosition));
+    setPropertyHandler(CSSPropertyWebkitTextEmphasisStyle, new ApplyPropertyTextEmphasisStyle());
+
     setPropertyHandler(CSSPropertyZIndex, new ApplyPropertyAuto<int>(&RenderStyle::zIndex, &RenderStyle::setZIndex, &RenderStyle::hasAutoZIndex, &RenderStyle::setHasAutoZIndex));
 }
 

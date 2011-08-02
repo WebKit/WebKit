@@ -5059,62 +5059,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
 
-    case CSSPropertyWebkitTextCombine:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(textCombine, TextCombine)
-        return;
-
-    case CSSPropertyWebkitTextEmphasisPosition:
-        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(textEmphasisPosition, TextEmphasisPosition)
-        return;
-
-    case CSSPropertyWebkitTextEmphasisStyle:
-        HANDLE_INHERIT_AND_INITIAL(textEmphasisFill, TextEmphasisFill)
-        HANDLE_INHERIT_AND_INITIAL(textEmphasisMark, TextEmphasisMark)
-        HANDLE_INHERIT_AND_INITIAL(textEmphasisCustomMark, TextEmphasisCustomMark)
-        if (isInherit || isInitial)
-            return;
-
-        if (value->isValueList()) {
-            CSSValueList* list = static_cast<CSSValueList*>(value);
-            ASSERT(list->length() == 2);
-            if (list->length() != 2)
-                return;
-            for (unsigned i = 0; i < 2; ++i) {
-                CSSValue* item = list->itemWithoutBoundsCheck(i);
-                if (!item->isPrimitiveValue())
-                    continue;
-
-                CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(item);
-                if (value->getIdent() == CSSValueFilled || value->getIdent() == CSSValueOpen)
-                    m_style->setTextEmphasisFill(*value);
-                else
-                    m_style->setTextEmphasisMark(*value);
-            }
-            m_style->setTextEmphasisCustomMark(nullAtom);
-            return;
-        }
-
-        if (!primitiveValue)
-            return;
-
-        if (primitiveValue->primitiveType() == CSSPrimitiveValue::CSS_STRING) {
-            m_style->setTextEmphasisFill(TextEmphasisFillFilled);
-            m_style->setTextEmphasisMark(TextEmphasisMarkCustom);
-            m_style->setTextEmphasisCustomMark(primitiveValue->getStringValue());
-            return;
-        }
-
-        m_style->setTextEmphasisCustomMark(nullAtom);
-
-        if (primitiveValue->getIdent() == CSSValueFilled || primitiveValue->getIdent() == CSSValueOpen) {
-            m_style->setTextEmphasisFill(*primitiveValue);
-            m_style->setTextEmphasisMark(TextEmphasisMarkAuto);
-        } else {
-            m_style->setTextEmphasisFill(TextEmphasisFillFilled);
-            m_style->setTextEmphasisMark(*primitiveValue);
-        }
-
-        return;
     case CSSPropertyWebkitLineBoxContain: {
         HANDLE_INHERIT_AND_INITIAL(lineBoxContain, LineBoxContain)
         if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
@@ -5258,6 +5202,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
     case CSSPropertyWebkitColumnWidth:
+    case CSSPropertyWebkitTextCombine:
+    case CSSPropertyWebkitTextEmphasisPosition:
+    case CSSPropertyWebkitTextEmphasisStyle:
     case CSSPropertyZIndex:
         ASSERT_NOT_REACHED();
         return;
