@@ -1,3 +1,10 @@
+2011-08-01  Tim Horton  <timothy_horton@apple.com>
+
+        Unreviewed, rebaseline test results for recently added test.
+
+        * platform/chromium-linux/svg/custom/repaint-shadow-expected.png: Added.
+        * platform/qt/svg/custom/repaint-shadow-expected.txt: Added.
+
 2011-08-01  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rebaseline, webkit gardener stuff.
