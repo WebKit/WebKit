@@ -284,11 +284,6 @@ namespace JSC {
 #endif
     }
 
-    inline Structure* JSCell::createDummyStructure(JSGlobalData& globalData)
-    {
-        return Structure::create(globalData, jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, &s_dummyCellInfo);
-    }
-
     ALWAYS_INLINE void MarkStack::internalAppend(JSCell* cell)
     {
         ASSERT(!m_isCheckingForDefaultMarkViolation);

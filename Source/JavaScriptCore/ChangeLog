@@ -1,3 +1,50 @@
+2011-08-02  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC GC uses dummy cells to avoid having to remember which cells
+        it has already destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=65556
+
+        Reviewed by Oliver Hunt.
+        
+        This gets rid of dummy cells, and ensures that it's not necessary
+        to invoke a destructor on cells that have already been swept.  In
+        the common case, a block knows that either all of its free cells
+        still need to have destructors called, or none of them do, which
+        minimizes the amount of branching that needs to happen per cell
+        when performing a sweep.
+        
+        This is performance neutral on SunSpider and V8.  It is meant as
+        a stepping stone to simplify the implementation of more
+        sophisticated sweeping algorithms.
+
+        * heap/Heap.cpp:
+        (JSC::CountFunctor::ClearMarks::operator()):
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::initForCellSize):
+        (JSC::MarkedBlock::callDestructor):
+        (JSC::MarkedBlock::specializedReset):
+        (JSC::MarkedBlock::reset):
+        (JSC::MarkedBlock::specializedSweep):
+        (JSC::MarkedBlock::sweep):
+        (JSC::MarkedBlock::produceFreeList):
+        (JSC::MarkedBlock::lazySweep):
+        (JSC::MarkedBlock::blessNewBlockForFastPath):
+        (JSC::MarkedBlock::blessNewBlockForSlowPath):
+        (JSC::MarkedBlock::canonicalizeBlock):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::FreeCell::setNoObject):
+        (JSC::MarkedBlock::setDestructorState):
+        (JSC::MarkedBlock::destructorState):
+        (JSC::MarkedBlock::notifyMayHaveFreshFreeCells):
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSCell::JSCell):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::clearBuiltinStructures):
+        * runtime/JSGlobalData.h:
+        * runtime/Structure.h:
+
 2011-08-01  Michael Saboff  <msaboff@apple.com>
 
         Virtual copying of FastMalloc allocated memory causes madvise MADV_FREE_REUSABLE errors

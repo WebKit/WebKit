@@ -227,7 +227,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     evalExecutableStructure.set(*this, EvalExecutable::createStructure(*this, jsNull()));
     programExecutableStructure.set(*this, ProgramExecutable::createStructure(*this, jsNull()));
     functionExecutableStructure.set(*this, FunctionExecutable::createStructure(*this, jsNull()));
-    dummyMarkableCellStructure.set(*this, JSCell::createDummyStructure(*this));
     regExpStructure.set(*this, RegExp::createStructure(*this, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, jsNull()));
 
@@ -286,7 +285,6 @@ void JSGlobalData::clearBuiltinStructures()
     evalExecutableStructure.clear();
     programExecutableStructure.clear();
     functionExecutableStructure.clear();
-    dummyMarkableCellStructure.clear();
     regExpStructure.clear();
     structureChainStructure.clear();
 }

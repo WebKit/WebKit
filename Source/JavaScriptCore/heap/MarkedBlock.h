@@ -28,8 +28,20 @@
 #include <wtf/PageAllocationAligned.h>
 #include <wtf/StdLibExtras.h>
 
-namespace JSC {
+// Set to log state transitions of blocks.
+#define HEAP_LOG_BLOCK_STATE_TRANSITIONS 0
 
+#if HEAP_LOG_BLOCK_STATE_TRANSITIONS
+#define HEAP_DEBUG_BLOCK(block) do {                                    \
+        printf("%s:%d %s: block %s = %p\n",                             \
+               __FILE__, __LINE__, __FUNCTION__, #block, (block));      \
+    } while (false)
+#else
+#define HEAP_DEBUG_BLOCK(block) ((void)0)
+#endif
+
+namespace JSC {
+    
     class Heap;
     class JSCell;
 
@@ -37,7 +49,13 @@ namespace JSC {
 
     static const size_t KB = 1024;
     
-    void destructor(JSCell*); // Defined in JSCell.h.
+    // A marked block is a page-aligned container for heap-allocated objects.
+    // Objects are allocated within cells of the marked block. For a given
+    // marked block, all cells have the same size. Objects smaller than the
+    // cell size may be allocated in the marked block, in which case the
+    // allocation suffers from internal fragmentation: wasted space whose
+    // size is equal to the difference between the cell size and the object
+    // size.
 
     class MarkedBlock : public DoublyLinkedListNode<MarkedBlock> {
         friend class WTF::DoublyLinkedListNode<MarkedBlock>;
@@ -52,6 +70,13 @@ namespace JSC {
 
         struct FreeCell {
             FreeCell* next;
+            
+            void setNoObject()
+            {
+                // This relies on FreeCell not having a vtable, and the next field
+                // falling exactly where a vtable would have been.
+                next = 0;
+            }
         };
         
         struct VoidFunctor {
@@ -96,6 +121,9 @@ namespace JSC {
         // them, and returns a linked list of those cells.
         FreeCell* lazySweep();
         
+        // Notify the block that destructors may have to be called again.
+        void notifyMayHaveFreshFreeCells();
+        
         void initForCellSize(size_t cellSize);
         
         // These should be called immediately after a block is created.
@@ -132,6 +160,8 @@ namespace JSC {
     private:
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
         static const size_t atomMask = ~(atomSize - 1); // atomSize must be a power of two.
+        
+        enum DestructorState { FreeCellsDontHaveObjects, SomeFreeCellsStillHaveObjects, AllFreeCellsHaveObjects };
 
         typedef char Atom[atomSize];
 
@@ -140,11 +170,34 @@ namespace JSC {
 
         size_t atomNumber(const void*);
         size_t ownerSetNumber(const JSCell*);
-
+        
+        template<DestructorState destructorState>
+        static void callDestructor(JSCell*, void* jsFinalObjectVPtr);
+        
+        template<DestructorState destructorState>
+        void specializedReset();
+        
+        template<DestructorState destructorState>
+        void specializedSweep();
+        
+        template<DestructorState destructorState>
+        MarkedBlock::FreeCell* produceFreeList();
+        
+        void setDestructorState(DestructorState destructorState)
+        {
+            m_destructorState = static_cast<int8_t>(destructorState);
+        }
+        
+        DestructorState destructorState()
+        {
+            return static_cast<DestructorState>(m_destructorState);
+        }
+        
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
         size_t m_atomsPerCell;
         WTF::Bitmap<blockSize / atomSize> m_marks;
         bool m_inNewSpace;
+        int8_t m_destructorState; // use getters/setters for this, particularly since we may want to compact this (effectively log(3)/log(2)-bit) field into other fields
         OwnerSet m_ownerSets[ownerSetsPerBlock];
         PageAllocationAligned m_allocation;
         Heap* m_heap;
@@ -185,6 +238,27 @@ namespace JSC {
     inline void MarkedBlock::setInNewSpace(bool inNewSpace)
     {
         m_inNewSpace = inNewSpace;
+    }
+    
+    inline void MarkedBlock::notifyMayHaveFreshFreeCells()
+    {
+        HEAP_DEBUG_BLOCK(this);
+        
+        // This is called at the beginning of GC. If this block is
+        // AllFreeCellsHaveObjects, then it means that we filled up
+        // the block in this collection. If it's in any other state,
+        // then this collection will potentially produce new free
+        // cells; new free cells always have objects. Hence if the
+        // state currently claims that there are no objects in free
+        // cells then we need to bump it over. Otherwise leave it be.
+        // This all crucially relies on the collector canonicalizing
+        // blocks before doing anything else, as canonicalizeBlocks
+        // will correctly set SomeFreeCellsStillHaveObjects for
+        // blocks that were only partially filled during this
+        // mutation cycle.
+        
+        if (destructorState() == FreeCellsDontHaveObjects)
+            setDestructorState(SomeFreeCellsStillHaveObjects);
     }
 
     inline bool MarkedBlock::isEmpty()

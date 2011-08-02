@@ -57,29 +57,85 @@ void MarkedBlock::initForCellSize(size_t cellSize)
 {
     m_atomsPerCell = (cellSize + atomSize - 1) / atomSize;
     m_endAtom = atomsPerBlock - m_atomsPerCell + 1;
+    setDestructorState(SomeFreeCellsStillHaveObjects);
+}
+
+template<MarkedBlock::DestructorState specializedDestructorState>
+void MarkedBlock::callDestructor(JSCell* cell, void* jsFinalObjectVPtr)
+{
+    if (specializedDestructorState == FreeCellsDontHaveObjects)
+        return;
+    void* vptr = cell->vptr();
+    if (specializedDestructorState == AllFreeCellsHaveObjects || vptr) {
+        if (vptr == jsFinalObjectVPtr) {
+            JSFinalObject* object = reinterpret_cast<JSFinalObject*>(cell);
+            object->JSFinalObject::~JSFinalObject();
+        } else
+            cell->~JSCell();
+    }
+}
+
+template<MarkedBlock::DestructorState specializedDestructorState>
+void MarkedBlock::specializedReset()
+{
+    void* jsFinalObjectVPtr = m_heap->globalData()->jsFinalObjectVPtr;
+
+    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
+        callDestructor<specializedDestructorState>(reinterpret_cast<JSCell*>(&atoms()[i]), jsFinalObjectVPtr);
 }
 
 void MarkedBlock::reset()
 {
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
-        reinterpret_cast<JSCell*>(&atoms()[i])->~JSCell();
+    switch (destructorState()) {
+    case FreeCellsDontHaveObjects:
+    case SomeFreeCellsStillHaveObjects:
+        specializedReset<SomeFreeCellsStillHaveObjects>();
+        break;
+    default:
+        ASSERT(destructorState() == AllFreeCellsHaveObjects);
+        specializedReset<AllFreeCellsHaveObjects>();
+        break;
+    }
+}
+
+template<MarkedBlock::DestructorState specializedDestructorState>
+void MarkedBlock::specializedSweep()
+{
+    if (specializedDestructorState != FreeCellsDontHaveObjects) {
+        void* jsFinalObjectVPtr = m_heap->globalData()->jsFinalObjectVPtr;
+        
+        for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
+            if (m_marks.get(i))
+                continue;
+            
+            JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
+            callDestructor<specializedDestructorState>(cell, jsFinalObjectVPtr);
+            cell->setVPtr(0);
+        }
+        
+        setDestructorState(FreeCellsDontHaveObjects);
+    }
 }
 
 void MarkedBlock::sweep()
 {
-    Structure* dummyMarkableCellStructure = m_heap->globalData()->dummyMarkableCellStructure.get();
-
-    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
-        if (m_marks.get(i))
-            continue;
-
-        JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
-        cell->~JSCell();
-        new (cell) JSCell(*m_heap->globalData(), dummyMarkableCellStructure);
+    HEAP_DEBUG_BLOCK(this);
+    
+    switch (destructorState()) {
+    case FreeCellsDontHaveObjects:
+        break;
+    case SomeFreeCellsStillHaveObjects:
+        specializedSweep<SomeFreeCellsStillHaveObjects>();
+        break;
+    default:
+        ASSERT(destructorState() == AllFreeCellsHaveObjects);
+        specializedSweep<AllFreeCellsHaveObjects>();
+        break;
     }
 }
 
-MarkedBlock::FreeCell* MarkedBlock::lazySweep()
+template<MarkedBlock::DestructorState specializedDestructorState>
+ALWAYS_INLINE MarkedBlock::FreeCell* MarkedBlock::produceFreeList()
 {
     // This returns a free list that is ordered in reverse through the block.
     // This is fine, since the allocation code makes no assumptions about the
@@ -92,18 +148,40 @@ MarkedBlock::FreeCell* MarkedBlock::lazySweep()
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
         if (!m_marks.testAndSet(i)) {
             JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
-            if (cell->vptr() == jsFinalObjectVPtr) {
-                JSFinalObject* object = reinterpret_cast<JSFinalObject*>(cell);
-                object->JSFinalObject::~JSFinalObject();
-            } else
-                cell->~JSCell();
+            if (specializedDestructorState != FreeCellsDontHaveObjects)
+                callDestructor<specializedDestructorState>(cell, jsFinalObjectVPtr);
             FreeCell* freeCell = reinterpret_cast<FreeCell*>(cell);
             freeCell->next = result;
             result = freeCell;
         }
     }
     
+    // This is sneaky: if we're producing a free list then we intend to
+    // fill up the free cells in the block with objects, which means that
+    // if we have a new GC then all of the free stuff in this block will
+    // comprise objects rather than empty cells.
+    setDestructorState(AllFreeCellsHaveObjects);
+
     return result;
+}
+
+MarkedBlock::FreeCell* MarkedBlock::lazySweep()
+{
+    // This returns a free list that is ordered in reverse through the block.
+    // This is fine, since the allocation code makes no assumptions about the
+    // order of the free list.
+    
+    HEAP_DEBUG_BLOCK(this);
+    
+    switch (destructorState()) {
+    case FreeCellsDontHaveObjects:
+        return produceFreeList<FreeCellsDontHaveObjects>();
+    case SomeFreeCellsStillHaveObjects:
+        return produceFreeList<SomeFreeCellsStillHaveObjects>();
+    default:
+        ASSERT(destructorState() == AllFreeCellsHaveObjects);
+        return produceFreeList<AllFreeCellsHaveObjects>();
+    }
 }
 
 MarkedBlock::FreeCell* MarkedBlock::blessNewBlockForFastPath()
@@ -111,6 +189,8 @@ MarkedBlock::FreeCell* MarkedBlock::blessNewBlockForFastPath()
     // This returns a free list that is ordered in reverse through the block,
     // as in lazySweep() above.
     
+    HEAP_DEBUG_BLOCK(this);
+
     FreeCell* result = 0;
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
         m_marks.set(i);
@@ -118,28 +198,45 @@ MarkedBlock::FreeCell* MarkedBlock::blessNewBlockForFastPath()
         freeCell->next = result;
         result = freeCell;
     }
+    
+    // See produceFreeList(). If we're here then we intend to fill the
+    // block with objects, so once a GC happens, all free cells will be
+    // occupied by objects.
+    setDestructorState(AllFreeCellsHaveObjects);
+
     return result;
 }
 
 void MarkedBlock::blessNewBlockForSlowPath()
 {
-    Structure* dummyMarkableCellStructure = m_heap->globalData()->dummyMarkableCellStructure.get();
+    HEAP_DEBUG_BLOCK(this);
+
+    m_marks.clearAll();
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
-        new (&atoms()[i]) JSCell(*m_heap->globalData(), dummyMarkableCellStructure, JSCell::CreatingEarlyCell);
+        reinterpret_cast<FreeCell*>(&atoms()[i])->setNoObject();
+    
+    setDestructorState(FreeCellsDontHaveObjects);
 }
 
 void MarkedBlock::canonicalizeBlock(FreeCell* firstFreeCell)
 {
-    Structure* dummyMarkableCellStructure = m_heap->globalData()->dummyMarkableCellStructure.get();
+    HEAP_DEBUG_BLOCK(this);
     
-    for (FreeCell* current = firstFreeCell; current;) {
-        FreeCell* next = current->next;
-        size_t i = atomNumber(current);
+    ASSERT(destructorState() == AllFreeCellsHaveObjects);
+    
+    if (firstFreeCell) {
+        for (FreeCell* current = firstFreeCell; current;) {
+            FreeCell* next = current->next;
+            size_t i = atomNumber(current);
+            
+            m_marks.clear(i);
+            
+            current->setNoObject();
+            
+            current = next;
+        }
         
-        m_marks.clear(i);
-        new (static_cast<void*>(current)) JSCell(*m_heap->globalData(), dummyMarkableCellStructure, JSCell::CreatingEarlyCell);
-
-        current = next;
+        setDestructorState(SomeFreeCellsStillHaveObjects);
     }
 }
 

@@ -71,7 +71,6 @@ namespace JSC {
         friend class Structure;
         friend class StructureChain;
         friend class RegExp;
-        friend void destructor(JSCell*);
 
         enum CreatingEarlyCellTag { CreatingEarlyCell };
 
@@ -83,11 +82,8 @@ namespace JSC {
         JSCell(JSGlobalData&, Structure*);
         JSCell(JSGlobalData&, Structure*, CreatingEarlyCellTag);
         virtual ~JSCell();
-        static const ClassInfo s_dummyCellInfo;
 
     public:
-        static Structure* createDummyStructure(JSGlobalData&);
-
         // Querying the type.
         bool isString() const;
         bool isObject() const;
@@ -180,7 +176,7 @@ namespace JSC {
 #endif
             m_structure.setEarlyValue(globalData, this, structure);
         // Very first set of allocations won't have a real structure.
-        ASSERT(m_structure || !globalData.dummyMarkableCellStructure);
+        ASSERT(m_structure || !globalData.structureStructure);
     }
 
     inline JSCell::~JSCell()
@@ -348,11 +344,6 @@ namespace JSC {
     inline JSObject* JSValue::toThisObject(ExecState* exec) const
     {
         return isCell() ? asCell()->toThisObject(exec) : toThisObjectSlowCase(exec);
-    }
-
-    inline void destructor(JSCell* cell)
-    {
-        cell->~JSCell();
     }
 
     template <typename T> void* allocateCell(Heap& heap)

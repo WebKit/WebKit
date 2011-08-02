@@ -30,8 +30,6 @@
 
 namespace JSC {
 
-const ClassInfo JSCell::s_dummyCellInfo = { "DummyCell", 0, 0, 0 };
-
 bool JSCell::getUInt32(uint32_t&) const
 {
     return false;

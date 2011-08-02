@@ -173,7 +173,6 @@ namespace JSC {
         Strong<Structure> evalExecutableStructure;
         Strong<Structure> programExecutableStructure;
         Strong<Structure> functionExecutableStructure;
-        Strong<Structure> dummyMarkableCellStructure;
         Strong<Structure> regExpStructure;
         Strong<Structure> structureChainStructure;
 

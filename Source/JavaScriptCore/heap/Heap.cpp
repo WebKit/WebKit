@@ -108,6 +108,7 @@ struct ClearMarks : MarkedBlock::VoidFunctor {
 inline void ClearMarks::operator()(MarkedBlock* block)
 {
     block->clearMarks();
+    block->notifyMayHaveFreshFreeCells();
 }
 
 struct Sweep : MarkedBlock::VoidFunctor {
