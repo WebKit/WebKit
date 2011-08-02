@@ -1,3 +1,14 @@
+2011-08-02  Alexandru Chiculita  <achicu@adobe.com>
+
+        Buildbot: The Properties object has no "hasProperty" method in buildbot 8.3
+        https://bugs.webkit.org/show_bug.cgi?id=65554
+
+        Using "has_key" instead of "hasProperty" in order to support buildbot 8.3.
+
+        Reviewed by Adam Roben.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-08-02  Jochen Eisinger  <jochen@chromium.org>
 
         Implement WebPermissionClient::allowPlugins for layout tests
