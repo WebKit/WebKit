@@ -112,12 +112,15 @@ void ImageBuffer::clip(GraphicsContext* context, const FloatRect& rect) const
 void ImageBuffer::draw(GraphicsContext* context, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect,
                        CompositeOperator op, bool useLowQualityScale)
 {
-    m_context->platformContext()->makeGrContextCurrent();
-    SkDevice* srcDevice = m_context->platformContext()->canvas()->getDevice();
-    SkBitmap bitmap = srcDevice->accessBitmap(false);
-    SkAutoLockPixels bitmapLock(bitmap);
+    // Set both graphics contexts current. This looks a little weird, but is
+    // necessary since we may be drawing from an accelerated to
+    // non-accelerated context (e.g., printing), or vice versa. Note that it
+    // only works because the context is actually the same underlying context
+    // (or null), since we use one context for accelerated drawing. If that
+    // assumption changes, we'll have to revisit this code.
     context->platformContext()->makeGrContextCurrent();
-    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(bitmap, context == m_context);
+    m_context->platformContext()->makeGrContextCurrent();
+    RefPtr<Image> image = BitmapImageSingleFrameSkia::create(*m_data.m_platformContext.bitmap(), context == m_context);
     context->drawImage(image.get(), styleColorSpace, destRect, srcRect, op, useLowQualityScale);
 }
 
