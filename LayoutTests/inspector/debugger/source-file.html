@@ -54,7 +54,7 @@ function test()
         function testPlainConvertLocation(next)
         {
             var script = new WebInspector.Script("1", "foo.js", 0, 0, 20, 80, undefined, undefined, false);
-            var sourceFile = new WebInspector.SourceFile("id", script);
+            var sourceFile = new WebInspector.RawSourceCode("id", script);
 
             checkUILocation(sourceFile, 10, 20, sourceFile.rawLocationToUILocation(rl(10, 20)));
             checkRawLocation(script, 30, 40, sourceFile.uiLocationToRawLocation(30, 40));
@@ -66,7 +66,7 @@ function test()
         {
             var script1 = new WebInspector.Script("1", "foo.js", 10, 20, 30, 40, undefined, undefined, false);
             var script2 = new WebInspector.Script("2", "foo.js", 50, 60, 70, 80, undefined, undefined, false);
-            var sourceFile = new WebInspector.SourceFile("id", script1);
+            var sourceFile = new WebInspector.RawSourceCode("id", script1);
             sourceFile.addScript(script2);
 
             checkUILocation(sourceFile, 20, 0, sourceFile.rawLocationToUILocation(rl(20, 0)));
@@ -81,7 +81,8 @@ function test()
         function testFormattedConvertLocation(next)
         {
             var script = new WebInspector.Script("1", "foo.js", 0, 0, 20, 80, undefined, undefined, false);
-            var sourceFile = new WebInspector.FormattedSourceFile("id", script, null, mockScriptFormatter);
+            var sourceFile = new WebInspector.RawSourceCode("id", script, mockScriptFormatter);
+            sourceFile.setFormatted(true);
 
             function didCreateSourceMapping()
             {
@@ -96,7 +97,8 @@ function test()
         {
             var script1 = new WebInspector.Script("1", "foo.js", 10, 20, 30, 40, undefined, undefined, false);
             var script2 = new WebInspector.Script("2", "foo.js", 50, 60, 70, 80, undefined, undefined, false);
-            var sourceFile = new WebInspector.FormattedSourceFile("id", script1, null, mockScriptFormatter);
+            var sourceFile = new WebInspector.RawSourceCode("id", script1, mockScriptFormatter);
+            sourceFile.setFormatted(true);
             sourceFile.addScript(script2);
 
             function didCreateSourceMapping()

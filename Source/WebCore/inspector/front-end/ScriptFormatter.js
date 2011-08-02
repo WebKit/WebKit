@@ -30,8 +30,6 @@
 
 WebInspector.ScriptFormatter = function()
 {
-    this._worker = new Worker("ScriptFormatterWorker.js");
-    this._worker.onmessage = this._didFormatContent.bind(this);
     this._tasks = [];
 }
 
@@ -68,6 +66,15 @@ WebInspector.ScriptFormatter.prototype = {
         var formattedContent = event.data.content;
         var sourceMapping = new WebInspector.FormattedSourceMapping(originalContent.lineEndings(), formattedContent.lineEndings(), event.data.mapping);
         task.callback(formattedContent, sourceMapping);
+    },
+
+    get _worker()
+    {
+        if (!this._cachedWorker) {
+            this._cachedWorker = new Worker("ScriptFormatterWorker.js");
+            this._cachedWorker.onmessage = this._didFormatContent.bind(this);
+        }
+        return this._cachedWorker;
     }
 }
 

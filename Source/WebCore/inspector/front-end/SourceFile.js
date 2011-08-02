@@ -28,9 +28,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.SourceFile = function(id, script, contentChangedDelegate)
+// RawSourceCode represents JavaScript resource or HTML resource with inlined scripts
+// as it came from network.
+WebInspector.RawSourceCode = function(id, script, formatter, contentChangedDelegate)
 {
     this._scripts = [script];
+    this._formatter = formatter;
+    this._formatted = false;
     this._contentChangedDelegate = contentChangedDelegate;
     if (script.sourceURL)
         this._resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);
@@ -46,7 +50,7 @@ WebInspector.SourceFile = function(id, script, contentChangedDelegate)
         this._resource.addEventListener("finished", this.reload.bind(this));
 }
 
-WebInspector.SourceFile.prototype = {
+WebInspector.RawSourceCode.prototype = {
     addScript: function(script)
     {
         this._scripts.push(script);
@@ -82,6 +86,12 @@ WebInspector.SourceFile.prototype = {
         return closestScript;
     },
 
+    setFormatted: function(formatted)
+    {
+        // FIXME: this should initiate formatting and trigger events to update ui.
+        this._formatted = formatted;
+    },
+
     requestContent: function(callback)
     {
         if (this._contentLoaded) {
@@ -106,8 +116,17 @@ WebInspector.SourceFile.prototype = {
 
     createSourceMappingIfNeeded: function(callback)
     {
-        // Plain source without mapping.
-        callback();
+        if (!this._formatted) {
+            callback();
+            return;
+        }
+
+        function didRequestContent()
+        {
+            callback();
+        }
+        // Force content formatting to obtain the mapping.
+        this.requestContent(didRequestContent.bind(this));
     },
 
     forceLoadContent: function(script)
@@ -239,6 +258,21 @@ WebInspector.SourceFile.prototype = {
 
     _didRequestContent: function(mimeType, content)
     {
+        if (!this._formatted) {
+            this._invokeRequestContentCallbacks(mimeType, content);
+            return;
+        }
+
+        function didFormatContent(formattedContent, mapping)
+        {
+            this._mapping = mapping;
+            this._invokeRequestContentCallbacks(mimeType, formattedContent);
+        }
+        this._formatter.formatContent(mimeType, content, didFormatContent.bind(this));
+    },
+
+    _invokeRequestContentCallbacks: function(mimeType, content)
+    {
         this._contentLoaded = true;
         this._contentRequested = false;
         this._mimeType = mimeType;
@@ -257,33 +291,3 @@ WebInspector.SourceFile.prototype = {
         return this._resource && !this._resource.finished;
     }
 }
-
-WebInspector.FormattedSourceFile = function(sourceFileId, script, contentChangedDelegate, formatter)
-{
-    WebInspector.SourceFile.call(this, sourceFileId, script, contentChangedDelegate);
-    this._formatter = formatter;
-}
-
-WebInspector.FormattedSourceFile.prototype = {
-    createSourceMappingIfNeeded: function(callback)
-    {
-        function didRequestContent()
-        {
-            callback();
-        }
-        // Force content formatting to obtain the mapping.
-        this.requestContent(didRequestContent.bind(this));
-    },
-
-    _didRequestContent: function(mimeType, text)
-    {
-        function didFormatContent(formattedText, mapping)
-        {
-            this._mapping = mapping;
-            WebInspector.SourceFile.prototype._didRequestContent.call(this, mimeType, formattedText);
-        }
-        this._formatter.formatContent(mimeType, text, didFormatContent.bind(this));
-    }
-}
-
-WebInspector.FormattedSourceFile.prototype.__proto__ = WebInspector.SourceFile.prototype;

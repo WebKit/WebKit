@@ -30,6 +30,8 @@
 
 WebInspector.DebuggerPresentationModel = function()
 {
+    // FIXME: apply formatter from outside as a generic mapping.
+    this._formatter = new WebInspector.ScriptFormatter();
     this._sourceFiles = {};
     this._messages = [];
     this._anchors = [];
@@ -94,7 +96,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             callback(uiLocation.sourceFile.id, uiLocation.lineNumber);
         }
         // FIXME: force source formatting if needed. This will go away once formatting
-        // is fully encapsulated in SourceFile.
+        // is fully encapsulated in RawSourceCode class.
         sourceFile.createSourceMappingIfNeeded(didCreateSourceMapping);
     },
 
@@ -108,7 +110,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             callback(rawLocation);
         }
         // FIXME: force source formatting if needed. This will go away once formatting
-        // is fully encapsulated in SourceFile.
+        // is fully encapsulated in RawSourceCode class.
         sourceFile.createSourceMappingIfNeeded(didCreateSourceMapping);
     },
 
@@ -157,10 +159,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
             if (this._sourceFiles[sourceFileId] === sourceFile)
                 this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, this._sourceFiles[sourceFileId]);
         }
-        if (!this._formatSourceFiles)
-            sourceFile = new WebInspector.SourceFile(sourceFileId, script, contentChanged.bind(this));
-        else
-            sourceFile = new WebInspector.FormattedSourceFile(sourceFileId, script, contentChanged.bind(this), this._formatter());
+        sourceFile = new WebInspector.RawSourceCode(sourceFileId, script, this._formatter, contentChanged.bind(this));
+        sourceFile.setFormatted(this._formatSourceFiles);
         this._sourceFiles[sourceFileId] = sourceFile;
 
         this._restoreBreakpoints(sourceFile);
@@ -286,13 +286,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         if (WebInspector.debuggerModel.callFrames)
             this._debuggerPaused();
-    },
-
-    _formatter: function()
-    {
-        if (!this._scriptFormatter)
-            this._scriptFormatter = new WebInspector.ScriptFormatter();
-        return this._scriptFormatter;
     },
 
     _consoleMessageAdded: function(event)
