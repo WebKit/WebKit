@@ -3672,7 +3672,7 @@ BUGWK65524 WIN : fast/text/justify-ideograph-leading-expansion.html = IMAGE
 
 // The expectations were modified by http://trac.webkit.org/changeset/92165
 // May just need rebaselines.
-BUG_HAMAJI MAC : fast/forms/input-placeholder-visibility-1-expected.html
-BUG_HAMAJI MAC : fast/forms/input-placeholder-visibility-3-expected.html
-BUG_HAMAJI MAC : fast/forms/textarea-placeholder-visibility-1-expected.html
-BUG_HAMAJI MAC : fast/forms/textarea-placeholder-visibility-2-expected.html
+BUG_HAMAJI MAC : fast/forms/input-placeholder-visibility-1-expected.html = TEXT
+BUG_HAMAJI MAC : fast/forms/input-placeholder-visibility-3-expected.html = TEXT
+BUG_HAMAJI MAC : fast/forms/textarea-placeholder-visibility-1-expected.html = TEXT
+BUG_HAMAJI MAC : fast/forms/textarea-placeholder-visibility-2-expected.html = TEXT

@@ -1,3 +1,9 @@
+2011-08-02  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Fix malformed chromium test expectation introduced by r92173
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Unreviewed gardening. Paint the Qt Snow Leopard bot green.
