@@ -27,15 +27,14 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG,
         ObjCProtocol,
         OmitConstructor
     ] ElementTimeControl { 
         void beginElement();
-        void beginElementAt(in float offset);
+        void beginElementAt(in [Optional=CallWithDefaultValue] float offset);
         void endElement();
-        void endElementAt(in float offset);
+        void endElementAt(in [Optional=CallWithDefaultValue] float offset);
     };
 
 }

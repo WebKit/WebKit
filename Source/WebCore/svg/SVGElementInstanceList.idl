@@ -25,11 +25,10 @@
 
 module svg {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGElementInstanceList {
         readonly attribute unsigned long length;
 
-        SVGElementInstance item(in unsigned long index);
+        SVGElementInstance item(in [Optional=CallWithDefaultValue] unsigned long index);
     };
 }

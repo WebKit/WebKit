@@ -26,7 +26,6 @@ module svg {
     // TODO: Fix SVGSVGElement inheritance (css::DocumentCSS)! 
     // TODO: no events::DocumentEvent available!
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGSVGElement : SVGElement,
                                                 SVGTests,
@@ -56,23 +55,23 @@ module svg {
                      /*setter raises(DOMException)*/;
         readonly attribute SVGPoint currentTranslate;
 
-        unsigned long suspendRedraw(in unsigned long maxWaitMilliseconds);
-        void unsuspendRedraw(in unsigned long suspendHandleId);
+        unsigned long suspendRedraw(in [Optional=CallWithDefaultValue] unsigned long maxWaitMilliseconds);
+        void unsuspendRedraw(in [Optional=CallWithDefaultValue] unsigned long suspendHandleId);
         void unsuspendRedrawAll();
         void forceRedraw();
         void pauseAnimations();
         void unpauseAnimations();
         boolean animationsPaused();
         float getCurrentTime();
-        void setCurrentTime(in float seconds);
-        NodeList getIntersectionList(in SVGRect rect, 
-                                           in SVGElement referenceElement);
-        NodeList getEnclosureList(in SVGRect rect, 
-                                        in SVGElement referenceElement);
-        boolean checkIntersection(in SVGElement element, 
-                                  in SVGRect rect);
-        boolean checkEnclosure(in SVGElement element, 
-                               in SVGRect rect);
+        void setCurrentTime(in [Optional=CallWithDefaultValue] float seconds);
+        NodeList getIntersectionList(in [Optional=CallWithDefaultValue] SVGRect rect, 
+                                     in [Optional=CallWithDefaultValue] SVGElement referenceElement);
+        NodeList getEnclosureList(in [Optional=CallWithDefaultValue] SVGRect rect, 
+                                  in [Optional=CallWithDefaultValue] SVGElement referenceElement);
+        boolean checkIntersection(in [Optional=CallWithDefaultValue] SVGElement element, 
+                                  in [Optional=CallWithDefaultValue] SVGRect rect);
+        boolean checkEnclosure(in [Optional=CallWithDefaultValue] SVGElement element, 
+                               in [Optional=CallWithDefaultValue] SVGRect rect);
         void deselectAll();
 
         SVGNumber createSVGNumber();
@@ -82,8 +81,8 @@ module svg {
         SVGMatrix createSVGMatrix();
         SVGRect createSVGRect();
         SVGTransform createSVGTransform();
-        SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix);
-        Element getElementById(in DOMString elementId);
+        SVGTransform createSVGTransformFromMatrix(in [Optional=CallWithDefaultValue] SVGMatrix matrix);
+        Element getElementById(in [Optional=CallWithDefaultValue] DOMString elementId);
     };
 
 }

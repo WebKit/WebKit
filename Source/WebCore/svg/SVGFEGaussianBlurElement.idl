@@ -26,7 +26,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG&FILTERS
     ] SVGFEGaussianBlurElement : SVGElement,
                                                            SVGFilterPrimitiveStandardAttributes { 
@@ -34,7 +33,8 @@ module svg {
         readonly attribute SVGAnimatedNumber stdDeviationX;
         readonly attribute SVGAnimatedNumber stdDeviationY;
 
-        void setStdDeviation(in float stdDeviationX, in float stdDeviationY);
+        void setStdDeviation(in [Optional=CallWithDefaultValue] float stdDeviationX, 
+                             in [Optional=CallWithDefaultValue] float stdDeviationY);
     };
 
 }

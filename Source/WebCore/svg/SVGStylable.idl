@@ -28,7 +28,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG,
         ObjCProtocol,
         OmitConstructor
@@ -36,7 +35,7 @@ module svg {
         readonly attribute SVGAnimatedString className;
         readonly attribute CSSStyleDeclaration style;
 
-        CSSValue getPresentationAttribute(in DOMString name);
+        CSSValue getPresentationAttribute(in [Optional=CallWithDefaultValue] DOMString name);
     };
 
 }

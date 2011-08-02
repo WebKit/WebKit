@@ -26,7 +26,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGMarkerElement : SVGElement,
                                                    SVGLangSpace,
@@ -52,7 +51,7 @@ module svg {
         readonly attribute SVGAnimatedAngle       orientAngle;
 
         void setOrientToAuto();
-        void setOrientToAngle(in SVGAngle angle);
+        void setOrientToAngle(in [Optional=CallWithDefaultValue] SVGAngle angle);
     };
 
 }

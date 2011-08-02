@@ -1,5 +1,33 @@
 2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
 
+        Remove LegacyDefaultOptionalArguments flag from SVG IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=65337
+
+        Reviewed by Nikolas Zimmermann.
+
+        No new tests, all existing tests pass.
+
+        * svg/ElementTimeControl.idl:
+        * svg/SVGAnimationElement.idl:
+        * svg/SVGDocument.idl:
+        * svg/SVGElementInstance.idl:
+        * svg/SVGElementInstanceList.idl:
+        * svg/SVGException.idl:
+        * svg/SVGFEDropShadowElement.idl:
+        * svg/SVGFEGaussianBlurElement.idl:
+        * svg/SVGFEMorphologyElement.idl:
+        * svg/SVGFilterElement.idl:
+        * svg/SVGLocatable.idl:
+        * svg/SVGMarkerElement.idl:
+        * svg/SVGPathElement.idl:
+        * svg/SVGSVGElement.idl:
+        * svg/SVGStylable.idl:
+        * svg/SVGStyleElement.idl:
+        * svg/SVGTests.idl:
+        * svg/SVGTextContentElement.idl:
+
+2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
+
         Remove LegacyDefaultOptionalArguments flag from CSS IDL files
         https://bugs.webkit.org/show_bug.cgi?id=65341
 

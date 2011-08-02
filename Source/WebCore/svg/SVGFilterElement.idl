@@ -27,7 +27,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG&FILTERS
     ] SVGFilterElement : SVGElement,
                                                    SVGURIReference,
@@ -44,7 +43,8 @@ module svg {
         readonly attribute SVGAnimatedInteger     filterResX;
         readonly attribute SVGAnimatedInteger     filterResY;
 
-        void setFilterRes(in unsigned long filterResX, in unsigned long filterResY);
+        void setFilterRes(in [Optional=CallWithDefaultValue] unsigned long filterResX, 
+                          in [Optional=CallWithDefaultValue] unsigned long filterResY);
     };
 
 }

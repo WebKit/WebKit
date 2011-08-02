@@ -26,7 +26,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGTextContentElement : SVGElement,
                                                         SVGTests,
@@ -43,20 +42,20 @@ module svg {
 
         long getNumberOfChars();
         float getComputedTextLength();
-        float getSubStringLength(in [IsIndex] unsigned long offset, 
-                                 in [IsIndex] unsigned long length)
+        float getSubStringLength(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset, 
+                                 in [Optional=CallWithDefaultValue,IsIndex] unsigned long length)
             raises(DOMException);
-        SVGPoint getStartPositionOfChar(in [IsIndex] unsigned long offset)
+        SVGPoint getStartPositionOfChar(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset)
             raises(DOMException);
-        SVGPoint getEndPositionOfChar(in [IsIndex] unsigned long offset)
+        SVGPoint getEndPositionOfChar(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset)
             raises(DOMException);
-        SVGRect getExtentOfChar(in [IsIndex] unsigned long offset)
+        SVGRect getExtentOfChar(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset)
             raises(DOMException);
-        float getRotationOfChar(in [IsIndex] unsigned long offset)
+        float getRotationOfChar(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset)
             raises(DOMException);
-        long getCharNumAtPosition(in SVGPoint point);
-        void selectSubString(in [IsIndex] unsigned long offset, 
-                             in [IsIndex] unsigned long length)
+        long getCharNumAtPosition(in [Optional=CallWithDefaultValue] SVGPoint point);
+        void selectSubString(in [Optional=CallWithDefaultValue,IsIndex] unsigned long offset, 
+                             in [Optional=CallWithDefaultValue,IsIndex] unsigned long length)
             raises(DOMException);
     };
 

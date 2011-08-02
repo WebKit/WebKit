@@ -22,13 +22,12 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGDocument : Document {
         readonly attribute SVGSVGElement        rootElement;
 
         // Overwrite the one in events::DocumentEvent
-        Event createEvent(in DOMString eventType)
+        Event createEvent(in [Optional=CallWithDefaultValue] DOMString eventType)
             raises(DOMException);
     };
 

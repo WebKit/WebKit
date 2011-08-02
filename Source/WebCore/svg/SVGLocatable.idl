@@ -27,7 +27,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG,
         ObjCProtocol,
         OmitConstructor
@@ -38,7 +37,7 @@ module svg {
         SVGRect   getBBox();
         SVGMatrix getCTM();
         SVGMatrix getScreenCTM();
-        SVGMatrix getTransformToElement(in SVGElement element)
+        SVGMatrix getTransformToElement(in [Optional=CallWithDefaultValue] SVGElement element)
             raises(SVGException);
     };
 
