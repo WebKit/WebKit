@@ -1004,13 +1004,6 @@ void WebViewImpl::resize(const WebSize& newSize)
             m_client->didInvalidateRect(damagedRect);
         }
     }
-
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_layerRenderer && isAcceleratedCompositingActive()) {
-        m_layerRenderer->resizeOnscreenContent(IntSize(max(1, m_size.width),
-                                                       max(1, m_size.height)));
-    }
-#endif
 }
 
 void WebViewImpl::willEndLiveResize()
@@ -2529,8 +2522,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         m_client->didActivateAcceleratedCompositing(false);
     } else if (m_layerRenderer) {
         m_isAcceleratedCompositingActive = true;
-        m_layerRenderer->resizeOnscreenContent(WebCore::IntSize(max(1, m_size.width),
-                                                                max(1, m_size.height)));
+        updateLayerRendererViewport();
 
         m_client->didActivateAcceleratedCompositing(true);
     } else {

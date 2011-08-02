@@ -138,8 +138,6 @@ public:
     const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
     const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram();
 
-    void resizeOnscreenContent(const IntSize&);
-
     void getFramebufferPixels(void *pixels, const IntRect& rect);
 
     TextureManager* contentsTextureManager() const { return m_contentsTextureManager.get(); }

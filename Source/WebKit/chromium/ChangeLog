@@ -1,3 +1,14 @@
+2011-08-02  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Remove resizeOnscreenContent from LRC. It can be derived.
+        https://bugs.webkit.org/show_bug.cgi?id=65519
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2011-08-01  Jean-luc Brouillet  <jeanluc@chromium.org>
 
         Removing old source files in gyp files that slow build

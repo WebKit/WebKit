@@ -518,6 +518,8 @@ void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRec
     m_viewportScrollPosition = scrollPosition;
 
     if (visibleRectChanged) {
+        if (m_context)
+            m_context->reshape(std::max(1, visibleRect.width()), std::max(1, visibleRect.height()));
         // Reset the current render surface to force an update of the viewport and
         // projection matrix next time useRenderSurface is called.
         m_currentRenderSurface = 0;
@@ -1123,13 +1125,6 @@ void LayerRendererChromium::setDrawViewportRect(const IntRect& drawRect, bool fl
     GLC(m_context.get(), m_context->viewport(0, 0, drawRect.width(), drawRect.height()));
 }
 
-
-
-void LayerRendererChromium::resizeOnscreenContent(const IntSize& size)
-{
-    if (m_context)
-        m_context->reshape(size.width(), size.height());
-}
 
 bool LayerRendererChromium::initializeSharedObjects()
 {
