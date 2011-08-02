@@ -1,3 +1,18 @@
+2011-08-02  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix _win32_check_running_pid on 64bit windows python
+        https://bugs.webkit.org/show_bug.cgi?id=64950
+
+        Reviewed by Adam Roben.
+
+        Use the correct types for the PROCESSENTRY32 struct.
+        th32DefaultHeapID is declared as ULONG_PTR and not as DWORD.
+        Using 32bit for pointers instead of 64bit results in an ERROR_BAD_LENGTH
+        failure, when calling the Process32First function.
+        This is covered by the executive unittest.
+
+        * Scripts/webkitpy/common/system/executive.py:
+
 2011-08-01  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should call optimize-baselines when rebaselining tests
