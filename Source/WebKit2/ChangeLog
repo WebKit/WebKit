@@ -1,3 +1,25 @@
+2011-07-29  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt] Add QtWebProcess in PATH at runtime for WebKit2 API auto tests.
+        https://bugs.webkit.org/show_bug.cgi?id=65378
+
+        Reviewed by Benjamin Poulain.
+
+        This prevent the runner of the tests from having to add it to PATH himself.
+
+        * UIProcess/API/qt/tests/commonviewtests/tst_commonviewtests.cpp:
+        (tst_CommonViewTests::tst_CommonViewTests):
+        * UIProcess/API/qt/tests/qdesktopwebview/tst_qdesktopwebview.cpp:
+        (tst_QDesktopWebView::tst_QDesktopWebView):
+        * UIProcess/API/qt/tests/qtouchwebview/tst_qtouchwebview.cpp:
+        (tst_QTouchWebView::tst_QTouchWebView):
+        * UIProcess/API/qt/tests/tests.pri:
+        * UIProcess/API/qt/tests/util.cpp: Copied from Source/WebKit2/UIProcess/API/qt/tests/util.h.
+        Move definitions to a cpp file to prevent unused static symbol warnings.
+        (addQtWebProcessToPath):
+        (waitForSignal):
+        * UIProcess/API/qt/tests/util.h:
+
 2011-07-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         TiledDrawingArea: Handle update requests in the order they were received.

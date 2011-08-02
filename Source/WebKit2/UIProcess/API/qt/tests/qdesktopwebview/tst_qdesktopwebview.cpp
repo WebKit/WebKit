@@ -26,6 +26,8 @@
 
 class tst_QDesktopWebView : public QObject {
     Q_OBJECT
+public:
+    tst_QDesktopWebView();
 
 private slots:
     void init();
@@ -38,6 +40,11 @@ private:
     inline QDesktopWebView* webView() const;
     QScopedPointer<TestWindow> m_window;
 };
+
+tst_QDesktopWebView::tst_QDesktopWebView()
+{
+    addQtWebProcessToPath();
+}
 
 void tst_QDesktopWebView::init()
 {

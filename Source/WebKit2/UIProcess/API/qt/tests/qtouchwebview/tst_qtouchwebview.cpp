@@ -22,6 +22,7 @@
 #include <qtouchwebpage.h>
 #include <qtouchwebview.h>
 #include "../testwindow.h"
+#include "../util.h"
 
 Q_DECLARE_METATYPE(QTouchWebPage*);
 
@@ -43,6 +44,7 @@ private:
 
 tst_QTouchWebView::tst_QTouchWebView()
 {
+    addQtWebProcessToPath();
     qRegisterMetaType<QTouchWebPage*>("QTouchWebPage*");
 }
 

@@ -26,28 +26,8 @@
 #define TESTS_SOURCE_DIR ""
 #endif
 
-/**
- * Starts an event loop that runs until the given signal is received.
- * Optionally the event loop
- * can return earlier on a timeout.
- *
- * \return \p true if the requested signal was received
- *         \p false on timeout
- */
-static bool waitForSignal(QObject* obj, const char* signal, int timeout = 10000)
-{
-    QEventLoop loop;
-    QObject::connect(obj, signal, &loop, SLOT(quit()));
-    QTimer timer;
-    QSignalSpy timeoutSpy(&timer, SIGNAL(timeout()));
-    if (timeout > 0) {
-        QObject::connect(&timer, SIGNAL(timeout()), &loop, SLOT(quit()));
-        timer.setSingleShot(true);
-        timer.start(timeout);
-    }
-    loop.exec();
-    return timeoutSpy.isEmpty();
-}
+void addQtWebProcessToPath();
+bool waitForSignal(QObject*, const char* signal, int timeout = 10000);
 
 // Will try to wait for the condition while allowing event processing
 #define QTRY_VERIFY(__expr) \

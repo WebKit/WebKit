@@ -25,6 +25,9 @@
 
 class tst_CommonViewTests : public QObject {
     Q_OBJECT
+public:
+    tst_CommonViewTests();
+
 private slots:
     void init();
     void cleanup();
@@ -43,6 +46,11 @@ private slots:
 private:
     QScopedPointer<WebViewAbstraction> viewAbstraction;
 };
+
+tst_CommonViewTests::tst_CommonViewTests()
+{
+    addQtWebProcessToPath();
+}
 
 void tst_CommonViewTests::init()
 {
