@@ -1,3 +1,24 @@
+2011-08-02  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Add fullscreen button to media control UI.
+        https://bugs.webkit.org/show_bug.cgi?id=64428
+
+        Implement functions for full screen in ChromeClientEfl in order to display a full screen button on media control UI.
+        When full screen mode is activated by pressing the button, the functions are called by Document. So, if there is no implemented
+        function, full screen button will not be shown.
+        In addition, a .edc file and an image file are added for full screen button.
+
+        Reviewed by Antonio Gomes.
+
+        * DefaultTheme/default.edc:
+        * DefaultTheme/widget/mediacontrol/fullscreenbutton/fullscreen_button.edc: Added.
+        * DefaultTheme/widget/mediacontrol/fullscreenbutton/fullscreenbutton.png: Added.
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::supportsFullScreenForElement):
+        (WebCore::ChromeClientEfl::enterFullScreenForElement):
+        (WebCore::ChromeClientEfl::exitFullScreenForElement):
+        * WebCoreSupport/ChromeClientEfl.h:
+
 2011-07-29  Michal Pakula vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Implement EditorClientEfl::respondToChangedContents

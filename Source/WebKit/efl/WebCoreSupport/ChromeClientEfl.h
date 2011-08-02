@@ -136,6 +136,12 @@ public:
     virtual CompositingTriggerFlags allowedCompositingTriggers() const;
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    virtual bool supportsFullScreenForElement(const WebCore::Element*, bool withKeyboard);
+    virtual void enterFullScreenForElement(WebCore::Element*);
+    virtual void exitFullScreenForElement(WebCore::Element*);
+#endif
+
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*);
     virtual void formStateDidChange(const Node*);

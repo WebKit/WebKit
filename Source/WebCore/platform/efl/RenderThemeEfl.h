@@ -63,6 +63,7 @@ enum FormType { // KEEP IN SYNC WITH edjeGroupFromFormType()
     MuteUnMuteButton,
     SeekForwardButton,
     SeekBackwardButton,
+    FullScreenButton,
 #endif
     FormTypeLast
 };

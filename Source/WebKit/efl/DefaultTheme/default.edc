@@ -80,4 +80,5 @@ collections {
 #include "widget/mediacontrol/mutebutton/mute_button.edc"
 #include "widget/mediacontrol/seekforwardbutton/seekforward_button.edc"
 #include "widget/mediacontrol/seekbackwardbutton/seekbackward_button.edc"
+#include "widget/mediacontrol/fullscreenbutton/fullscreen_button.edc"
 }

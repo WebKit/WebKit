@@ -622,6 +622,7 @@ const char* RenderThemeEfl::edjeGroupFromFormType(FormType type) const
         W("mediacontrol/mute_button"),
         W("mediacontrol/seekforward_button"),
         W("mediacontrol/seekbackward_button"),
+        W("mediacontrol/fullscreen_button"),
 #endif
 #undef W
         0
@@ -1136,6 +1137,8 @@ bool RenderThemeEfl::emitMediaButtonSignal(FormType formType, MediaControlElemen
         edje_object_signal_emit(entry->o, "seekforward", "");
     else if (mediaElementType == MediaSeekBackButton)
         edje_object_signal_emit(entry->o, "seekbackward", "");
+    else if (mediaElementType == MediaFullscreenButton)
+        edje_object_signal_emit(entry->o, "fullscreen", "");
     else
         return false;
 
@@ -1154,8 +1157,14 @@ String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float d
 
 bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    notImplemented();
-    return false;
+    Node* mediaNode = object->node() ? object->node()->shadowAncestorNode() : 0;
+    if (!mediaNode || (!mediaNode->hasTagName(videoTag)))
+        return false;
+
+    if (!emitMediaButtonSignal(FullScreenButton, MediaFullscreenButton, rect))
+        return false;
+
+    return paintThemePart(object, FullScreenButton, info, rect);
 }
 
 bool RenderThemeEfl::paintMediaMuteButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
