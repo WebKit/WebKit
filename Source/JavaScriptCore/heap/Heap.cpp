@@ -404,8 +404,16 @@ void* Heap::allocateSlowCase(NewSpace::SizeClass& sizeClass)
     if (LIKELY(result != 0))
         return result;
 
-    if (m_newSpace.waterMark() < m_newSpace.highWaterMark() || !m_isSafeToCollect) {
-        m_newSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize));
+    AllocationEffort allocationEffort;
+    
+    if (m_newSpace.waterMark() < m_newSpace.highWaterMark() || !m_isSafeToCollect)
+        allocationEffort = AllocationMustSucceed;
+    else
+        allocationEffort = AllocationCanFail;
+    
+    MarkedBlock* block = allocateBlock(sizeClass.cellSize, allocationEffort);
+    if (block) {
+        m_newSpace.addBlock(sizeClass, block);
         void* result = tryAllocate(sizeClass);
         ASSERT(result);
         return result;
@@ -420,7 +428,7 @@ void* Heap::allocateSlowCase(NewSpace::SizeClass& sizeClass)
     
     ASSERT(m_newSpace.waterMark() < m_newSpace.highWaterMark());
     
-    m_newSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize));
+    m_newSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize, AllocationMustSucceed));
     
     result = tryAllocate(sizeClass);
     ASSERT(result);
@@ -694,11 +702,14 @@ bool Heap::isValidAllocation(size_t bytes)
     return true;
 }
 
-MarkedBlock* Heap::allocateBlock(size_t cellSize)
+MarkedBlock* Heap::allocateBlock(size_t cellSize, Heap::AllocationEffort allocationEffort)
 {
     MarkedBlock* block;
     
 #if !ENABLE(LAZY_BLOCK_FREEING)
+    if (allocationEffort == AllocationCanFail)
+        return 0;
+    
     block = MarkedBlock::create(this, cellSize);
 #else
     {
@@ -712,6 +723,8 @@ MarkedBlock* Heap::allocateBlock(size_t cellSize)
     }
     if (block)
         block->initForCellSize(cellSize);
+    else if (allocationEffort == AllocationCanFail)
+        return 0;
     else
         block = MarkedBlock::create(this, cellSize);
 #endif

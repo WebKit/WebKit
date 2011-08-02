@@ -124,13 +124,15 @@ namespace JSC {
 
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
+        
+        enum AllocationEffort { AllocationMustSucceed, AllocationCanFail };
 
         bool isValidAllocation(size_t);
         void reportExtraMemoryCostSlowCase(size_t);
         void canonicalizeBlocks();
         void resetAllocator();
 
-        MarkedBlock* allocateBlock(size_t cellSize);
+        MarkedBlock* allocateBlock(size_t cellSize, AllocationEffort);
         void freeBlocks(MarkedBlock*);
 
         void clearMarks();

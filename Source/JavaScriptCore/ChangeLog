@@ -1,3 +1,33 @@
+2011-08-02  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC does a GC even when the heap still has free pages
+        https://bugs.webkit.org/show_bug.cgi?id=65445
+
+        Reviewed by Oliver Hunt.
+        
+        If the high watermark is not reached, then we allocate new blocks as
+        before.  If the current watermark does reach (or exceed) the high
+        watermark, then we check if there is a block on the free block pool.
+        If there is, we simply allocation from it.  If there isn't, we
+        invoke a collectin as before.  This effectively couples the elastic
+        scavenging to the collector's decision function.  That is, if an
+        application rapidly varies its heap usage (sometimes using more and
+        sometimes less) then the collector will not thrash as it used to.
+        But if heap usage drops and stays low then the scavenger thread and
+        the GC will eventually reach a kind of consensus: the GC will set
+        the watermark low because of low heap usage, and the scavenger thread
+        will steadily eliminate pages from the free page pool, until the size
+        of the free pool is below the high watermark.
+        
+        On command-line, this is neutral on SunSpider and Kraken and a 3% win
+        on V8.  In browser, this is a 1% win on V8 and neutral on the other
+        two.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::allocateSlowCase):
+        (JSC::Heap::allocateBlock):
+        * heap/Heap.h:
+
 2011-08-02  Jeff Miller  <jeffm@apple.com>
 
         Move WTF_USE_AVFOUNDATION from JavaScriptCore/wtf/platform.h to WebCore/config.h
