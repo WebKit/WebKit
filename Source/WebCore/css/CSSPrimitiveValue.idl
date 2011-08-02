@@ -19,9 +19,7 @@
 
 module css {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] CSSPrimitiveValue : CSSValue {
+    interface CSSPrimitiveValue : CSSValue {
 
         // UnitTypes
         const unsigned short CSS_UNKNOWN    = 0;
@@ -53,13 +51,13 @@ module css {
 
         readonly attribute unsigned short primitiveType;
 
-        [OldStyleObjC] void setFloatValue(in unsigned short unitType,
-                                          in float floatValue)
+        [OldStyleObjC] void setFloatValue(in [Optional=CallWithDefaultValue] unsigned short unitType,
+                                          in [Optional=CallWithDefaultValue] float floatValue)
             raises(DOMException);
-        float getFloatValue(in unsigned short unitType)
+        float getFloatValue(in [Optional=CallWithDefaultValue] unsigned short unitType)
             raises(DOMException);
-        [OldStyleObjC] void setStringValue(in unsigned short stringType, 
-                                           in DOMString stringValue)
+        [OldStyleObjC] void setStringValue(in [Optional=CallWithDefaultValue] unsigned short stringType, 
+                                           in [Optional=CallWithDefaultValue] DOMString stringValue)
             raises(DOMException);
         DOMString getStringValue()
             raises(DOMException);

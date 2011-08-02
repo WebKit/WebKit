@@ -18,12 +18,10 @@
  */
 
 module view {
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] MediaQueryList {
+    interface MediaQueryList {
         readonly attribute DOMString media;
         readonly attribute boolean matches;
-        void addListener(in MediaQueryListListener listener);
-        void removeListener(in MediaQueryListListener listener);
+        void addListener(in [Optional=CallWithDefaultValue] MediaQueryListListener listener);
+        void removeListener(in [Optional=CallWithDefaultValue] MediaQueryListListener listener);
     };
 }

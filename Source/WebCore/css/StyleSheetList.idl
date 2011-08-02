@@ -22,14 +22,13 @@ module stylesheets {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplDocument,
         HasIndexGetter,
         HasNameGetter,
         V8DependentLifetime
     ] StyleSheetList {
         readonly attribute unsigned long    length;
-        StyleSheet         item(in unsigned long index);
+        StyleSheet         item(in [Optional=CallWithDefaultValue] unsigned long index);
     };
 
 }

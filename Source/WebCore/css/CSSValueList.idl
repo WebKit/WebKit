@@ -27,11 +27,10 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         HasIndexGetter
     ] CSSValueList : CSSValue {
         readonly attribute unsigned long    length;
-        CSSValue           item(in unsigned long index);
+        CSSValue           item(in [Optional=CallWithDefaultValue] unsigned long index);
     };
 
 }

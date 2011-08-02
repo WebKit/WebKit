@@ -19,12 +19,11 @@
 
 module view {
     interface [
-        LegacyDefaultOptionalArguments,
         NoStaticTables,
         ObjCProtocol,
         PureInterface,
         OmitConstructor
     ] MediaQueryListListener {
-        void queryChanged(in MediaQueryList list);
+        void queryChanged(in [Optional=CallWithDefaultValue] MediaQueryList list);
     };
 }

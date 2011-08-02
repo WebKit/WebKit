@@ -26,10 +26,9 @@
 
 module view {
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplFrame
     ] StyleMedia {
         readonly attribute DOMString type;
-        boolean matchMedium(in DOMString mediaquery);
+        boolean matchMedium(in [Optional=CallWithDefaultValue] DOMString mediaquery);
     };
 }

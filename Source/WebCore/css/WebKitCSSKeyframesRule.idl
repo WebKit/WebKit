@@ -30,16 +30,15 @@ module css {
 
     // Introduced in DOM Level ?:
     interface [
-        LegacyDefaultOptionalArguments,
         HasIndexGetter
     ] WebKitCSSKeyframesRule : CSSRule {
 
         attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString name;
         readonly attribute CSSRuleList cssRules;
         
-        void insertRule(in DOMString rule);
-        void deleteRule(in DOMString key);
-        WebKitCSSKeyframeRule findRule(in DOMString key);
+        void insertRule(in [Optional=CallWithDefaultValue] DOMString rule);
+        void deleteRule(in [Optional=CallWithDefaultValue] DOMString key);
+        WebKitCSSKeyframeRule findRule(in [Optional=CallWithDefaultValue] DOMString key);
     };
 
 }

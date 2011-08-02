@@ -27,7 +27,6 @@ module stylesheets {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable,
         HasIndexGetter
     ] MediaList {
@@ -36,10 +35,10 @@ module stylesheets {
                      setter raises(DOMException);
         readonly attribute unsigned long length;
 
-        [ConvertNullStringTo=Null] DOMString item(in unsigned long index);
-        void deleteMedium(in DOMString oldMedium)
+        [ConvertNullStringTo=Null] DOMString item(in [Optional=CallWithDefaultValue] unsigned long index);
+        void deleteMedium(in [Optional=CallWithDefaultValue] DOMString oldMedium)
             raises(DOMException);
-        void appendMedium(in DOMString newMedium)
+        void appendMedium(in [Optional=CallWithDefaultValue] DOMString newMedium)
             raises(DOMException);
 
     };

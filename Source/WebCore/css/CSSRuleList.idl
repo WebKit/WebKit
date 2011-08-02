@@ -27,13 +27,12 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         CustomIsReachable,
         HasIndexGetter,
         V8DependentLifetime
     ] CSSRuleList {
         readonly attribute unsigned long    length;
-        CSSRule           item(in unsigned long index);
+        CSSRule           item(in [Optional=CallWithDefaultValue] unsigned long index);
     };
 
 }

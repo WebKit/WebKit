@@ -21,26 +21,24 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] CSSStyleSheet : StyleSheet {
+    interface CSSStyleSheet : StyleSheet {
         readonly attribute CSSRule          ownerRule;
         readonly attribute CSSRuleList      cssRules;
 
-        [OldStyleObjC] unsigned long insertRule(in DOMString rule, 
-                                                in unsigned long index)
+        [OldStyleObjC] unsigned long insertRule(in [Optional=CallWithDefaultValue] DOMString rule, 
+                                                in [Optional=CallWithDefaultValue] unsigned long index)
             raises(DOMException);
-        void               deleteRule(in unsigned long index)
+        void               deleteRule(in [Optional=CallWithDefaultValue] unsigned long index)
             raises(DOMException);
 
         // IE Extensions
         readonly attribute CSSRuleList      rules;
 
-        long addRule(in DOMString selector,
-                     in DOMString style,
+        long addRule(in [Optional=CallWithDefaultValue] DOMString selector,
+                     in [Optional=CallWithDefaultValue] DOMString style,
                      in [Optional] unsigned long index)
             raises(DOMException);
-        void removeRule(in unsigned long index)
+        void removeRule(in [Optional=CallWithDefaultValue] unsigned long index)
             raises(DOMException);
     };
 

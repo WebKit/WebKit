@@ -22,7 +22,6 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         CustomMarkFunction,
         GenerateIsReachable=ImplRoot,
         DelegatingPutFunction,
@@ -33,23 +32,23 @@ module css {
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        cssText
                      setter raises(DOMException);
 
-        [ConvertNullStringTo=Null] DOMString          getPropertyValue(in DOMString propertyName);
-        [JSCCustom] CSSValue           getPropertyCSSValue(in DOMString propertyName);
-        [ConvertNullStringTo=Null] DOMString          removeProperty(in DOMString propertyName)
+        [ConvertNullStringTo=Null] DOMString          getPropertyValue(in [Optional=CallWithDefaultValue] DOMString propertyName);
+        [JSCCustom] CSSValue           getPropertyCSSValue(in [Optional=CallWithDefaultValue] DOMString propertyName);
+        [ConvertNullStringTo=Null] DOMString          removeProperty(in [Optional=CallWithDefaultValue] DOMString propertyName)
             raises(DOMException);
-        [ConvertNullStringTo=Null] DOMString          getPropertyPriority(in DOMString propertyName);
-        [OldStyleObjC] void setProperty(in DOMString propertyName, 
-                                        in [ConvertNullToNullString] DOMString value, 
-                                        in DOMString priority)
+        [ConvertNullStringTo=Null] DOMString          getPropertyPriority(in [Optional=CallWithDefaultValue] DOMString propertyName);
+        [OldStyleObjC] void setProperty(in [Optional=CallWithDefaultValue] DOMString propertyName, 
+                                        in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString value, 
+                                        in [Optional=CallWithDefaultValue] DOMString priority)
             raises(DOMException);
 
         readonly attribute unsigned long    length;
-        DOMString          item(in unsigned long index);
+        DOMString          item(in [Optional=CallWithDefaultValue] unsigned long index);
         readonly attribute CSSRule          parentRule;
 
         // Extensions
-        [ConvertNullStringTo=Null] DOMString          getPropertyShorthand(in DOMString propertyName);
-        boolean            isPropertyImplicit(in DOMString propertyName);
+        [ConvertNullStringTo=Null] DOMString          getPropertyShorthand(in [Optional=CallWithDefaultValue] DOMString propertyName);
+        boolean            isPropertyImplicit(in [Optional=CallWithDefaultValue] DOMString propertyName);
     };
 
 }

@@ -21,16 +21,14 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] CSSMediaRule : CSSRule {
+    interface CSSMediaRule : CSSRule {
         readonly attribute MediaList media;
         readonly attribute CSSRuleList cssRules;
         
-        [OldStyleObjC] unsigned long      insertRule(in DOMString rule, 
-                                                     in unsigned long index)
+        [OldStyleObjC] unsigned long      insertRule(in [Optional=CallWithDefaultValue] DOMString rule, 
+                                                     in [Optional=CallWithDefaultValue] unsigned long index)
             raises(DOMException);
-        void               deleteRule(in unsigned long index)
+        void               deleteRule(in [Optional=CallWithDefaultValue] unsigned long index)
             raises(DOMException);
     };
 

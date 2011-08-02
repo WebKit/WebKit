@@ -1,3 +1,26 @@
+2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from CSS IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=65341
+
+        Reviewed by Adam Barth.
+
+        No new tests. All existing tests pass.
+
+        * css/CSSMediaRule.idl:
+        * css/CSSPrimitiveValue.idl:
+        * css/CSSRuleList.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSStyleSheet.idl:
+        * css/CSSValueList.idl:
+        * css/MediaList.idl:
+        * css/MediaQueryList.idl:
+        * css/MediaQueryListListener.idl:
+        * css/StyleMedia.idl:
+        * css/StyleSheetList.idl:
+        * css/WebKitCSSKeyframesRule.idl:
+        * css/WebKitCSSMatrix.idl:
+
 2011-08-02  Robert Kroeger  <rjkroege@chromium.org>
 
         [chromium] Layering violations in gesture recognizer
