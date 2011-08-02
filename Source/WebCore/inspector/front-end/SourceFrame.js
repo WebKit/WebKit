@@ -83,13 +83,9 @@ WebInspector.SourceFrame.prototype = {
         WebInspector.View.prototype.show.call(this, parentElement);
 
         this._ensureContentLoaded();
+        
+        this.restoreScrollPositions();
 
-        if (this.loaded) {
-            if (this._scrollTop)
-                this._textViewer.scrollTop = this._scrollTop;
-            if (this._scrollLeft)
-                this._textViewer.scrollLeft = this._scrollLeft;
-        }
         // Resize after setting the initial scroll positions to avoid unnecessary rendering work.
         this._textViewer.resize();
     },
@@ -98,11 +94,8 @@ WebInspector.SourceFrame.prototype = {
     {
         WebInspector.View.prototype.hide.call(this);
 
-        if (this.loaded) {
-            this._scrollTop = this._textViewer.scrollTop;
-            this._scrollLeft = this._textViewer.scrollLeft;
+        if (this.loaded)
             this._textViewer.freeCachedElements();
-        }
 
         this._textViewer.hide();
         this._hidePopup();
@@ -168,14 +161,24 @@ WebInspector.SourceFrame.prototype = {
         return this._textModel;
     },
 
+    get scrollLeft()
+    {
+        return this.loaded ? this._textViewer.scrollLeft : 0;
+    },
+
+    set scrollLeft(scrollLeft)
+    {
+        if (this.loaded)
+            this._textViewer.scrollLeft = scrollLeft;
+    },
+
     get scrollTop()
     {
-        return this.loaded ? this._textViewer.scrollTop : this._scrollTop;
+        return this.loaded ? this._textViewer.scrollTop : 0;
     },
 
     set scrollTop(scrollTop)
     {
-        this._scrollTop = scrollTop;
         if (this.loaded)
             this._textViewer.scrollTop = scrollTop;
     },

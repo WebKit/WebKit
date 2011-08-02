@@ -50,6 +50,7 @@ WebInspector.View.prototype = {
     _innerShow: function()
     {
         this.element.addStyleClass("visible");
+        this.restoreScrollPositions();
     },
 
     show: function(parentElement)
@@ -66,6 +67,7 @@ WebInspector.View.prototype = {
 
     _innerHide: function()
     {
+        this.storeScrollPositions();
         this.element.removeStyleClass("visible");
     },
 
@@ -79,6 +81,24 @@ WebInspector.View.prototype = {
     {
         if (this.element.parentNode)
             this.element.parentNode.removeChild(this.element);
+    },
+
+    storeScrollPositions: function()
+    {
+        this._scrollLeft = this.scrollLeft;
+        this._scrollTop = this.scrollTop;
+    },
+    
+    inheritScrollPositionsFromView: function(view)
+    {
+        this._scrollLeft = view._scrollLeft;
+        this._scrollTop = view._scrollTop;
+    },
+
+    restoreScrollPositions: function()
+    {
+        this.scrollLeft = this._scrollLeft;
+        this.scrollTop = this._scrollTop;
     }
 }
 

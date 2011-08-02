@@ -1399,15 +1399,13 @@ WebInspector.FrameResourceTreeElement.prototype = {
         var newView = this._createSourceView();
 
         var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
-        var scrollTop = oldView.scrollTop;
+        newView.inheritScrollPositionsFromView(oldView);
 
         this._sourceView.detach();
         this._sourceView = newView;
 
         if (oldViewParentNode)
             newView.show(oldViewParentNode);
-        if (scrollTop)
-            newView.scrollTop = scrollTop;
 
         return newView;
     }    

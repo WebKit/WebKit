@@ -1,3 +1,29 @@
+2011-08-02  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: SourceFrame should store saved scroll positions in View.
+        https://bugs.webkit.org/show_bug.cgi?id=65472
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameResourceTreeElement.prototype._recreateSourceView):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._sourceFileChanged):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.show):
+        (WebInspector.SourceFrame.prototype.hide):
+        (WebInspector.SourceFrame.prototype.get scrollLeft):
+        (WebInspector.SourceFrame.prototype.set scrollLeft):
+        (WebInspector.SourceFrame.prototype.get scrollTop):
+        (WebInspector.SourceFrame.prototype.set scrollTop):
+        * inspector/front-end/View.js:
+        (WebInspector.View.prototype._innerShow):
+        (WebInspector.View.prototype._innerHide):
+        (WebInspector.View.prototype.detach):
+        (WebInspector.View.prototype.storeScrollPositions):
+        (WebInspector.View.prototype.inheritScrollPositionsFromView):
+        (WebInspector.View.prototype.restoreScrollPositions):
+
 2011-08-02  Jeff Miller  <jeffm@apple.com>
 
         Move WTF_USE_AVFOUNDATION from JavaScriptCore/wtf/platform.h to WebCore/config.h

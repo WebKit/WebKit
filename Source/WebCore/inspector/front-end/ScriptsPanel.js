@@ -652,7 +652,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
 
         var newSourceFrame = this._createSourceFrame(sourceFileId)
-        newSourceFrame.scrollTop = oldSourceFrame.scrollTop;
+        newSourceFrame.inheritScrollPositionsFromView(oldSourceFrame);
         this.visibleView = newSourceFrame;
     },
 
