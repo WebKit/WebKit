@@ -1,3 +1,19 @@
+2011-08-02  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Ignore empty requests on policy decisions.
+        https://bugs.webkit.org/show_bug.cgi?id=64536
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        This is the same fix introduced in the GTK+ port in r41313: empty
+        request should be ignored, so tests such as
+        fast/loader/empty-embed-src-attribute.html do not crash.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForResponse):
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction):
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction):
+
 2011-08-02  Eunsol Park  <eunsol47.park@samsung.com>
 
         [EFL] Remove overlapping recursive layout function 

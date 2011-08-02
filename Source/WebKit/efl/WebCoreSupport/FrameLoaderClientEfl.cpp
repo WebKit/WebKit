@@ -283,20 +283,32 @@ void FrameLoaderClientEfl::dispatchDidReceiveResponse(DocumentLoader*, unsigned 
     m_response = response;
 }
 
-void FrameLoaderClientEfl::dispatchDecidePolicyForResponse(FramePolicyFunction function, const ResourceResponse& response, const ResourceRequest&)
+void FrameLoaderClientEfl::dispatchDecidePolicyForResponse(FramePolicyFunction function, const ResourceResponse& response, const ResourceRequest& resourceRequest)
 {
     // we need to call directly here (currently callPolicyFunction does that!)
     ASSERT(function);
+
+    if (resourceRequest.isNull()) {
+        callPolicyFunction(function, PolicyIgnore);
+        return;
+    }
+
     if (canShowMIMEType(response.mimeType()))
         callPolicyFunction(function, PolicyUse);
     else
         callPolicyFunction(function, PolicyDownload);
 }
 
-void FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest&, PassRefPtr<FormState>, const String&)
+void FrameLoaderClientEfl::dispatchDecidePolicyForNewWindowAction(FramePolicyFunction function, const NavigationAction& action, const ResourceRequest& resourceRequest, PassRefPtr<FormState>, const String&)
 {
     ASSERT(function);
     ASSERT(m_frame);
+
+    if (resourceRequest.isNull()) {
+        callPolicyFunction(function, PolicyIgnore);
+        return;
+    }
+
     // if not acceptNavigationRequest - look at Qt -> PolicyIgnore;
     // FIXME: do proper check and only reset forms when on PolicyIgnore
     Frame* f = ewk_frame_core_get(m_frame);
@@ -308,6 +320,12 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(FramePolicyFu
 {
     ASSERT(function);
     ASSERT(m_frame);
+
+    if (resourceRequest.isNull()) {
+        callPolicyFunction(function, PolicyIgnore);
+        return;
+    }
+
     // if not acceptNavigationRequest - look at Qt -> PolicyIgnore;
     // FIXME: do proper check and only reset forms when on PolicyIgnore
     char* url = strdup(resourceRequest.url().string().utf8().data());
