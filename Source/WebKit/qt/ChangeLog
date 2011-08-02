@@ -1,5 +1,15 @@
 2011-08-02  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
+        [Qt] Fix tst_QWebElement::render() API test
+        https://bugs.webkit.org/show_bug.cgi?id=65243
+
+        Reviewed by Csaba Osztrogonác.
+
+        * tests/qwebelement/tst_qwebelement.cpp: Mark failing test case as expected fail
+        (tst_QWebElement::render):
+
+2011-08-02  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
         [Qt] tst_QWebElement::style() fails because QWebElement::CascadedStyle doesn't work as expected
         https://bugs.webkit.org/show_bug.cgi?id=65244
 

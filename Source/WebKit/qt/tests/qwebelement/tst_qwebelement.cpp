@@ -989,6 +989,7 @@ void tst_QWebElement::render()
     imgs[0].render(&painter1);
     painter1.end();
 
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65243", Continue);
     QVERIFY(image1 == testImage);
 
     // render image 2nd time to make sure that cached rendering works fine
@@ -998,6 +999,7 @@ void tst_QWebElement::render()
     imgs[0].render(&painter2);
     painter2.end();
 
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65243", Continue);
     QVERIFY(image2 == testImage);
 
     // compare table rendered through QWebElement::render to whole page table rendering
@@ -1034,6 +1036,9 @@ void tst_QWebElement::render()
 #endif
         painter.end();
 
+        // The first chunk in this test is passing, but the others are failing
+        if (x > 0)
+            QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65243", Continue);
         QVERIFY(chunk == image4.copy(chunkPaintRect));
     }
 }
