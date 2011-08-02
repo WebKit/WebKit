@@ -1,3 +1,14 @@
+2011-08-02  Jeff Miller  <jeffm@apple.com>
+
+        Move WTF_USE_AVFOUNDATION from JavaScriptCore/wtf/platform.h to WebCore/config.h
+        https://bugs.webkit.org/show_bug.cgi?id=65552
+        
+        Since this is a WebCore feature, there's no need to define it in JavaScriptCore/wtf/platform.h.
+
+        Reviewed by Adam Roben.
+
+        * wtf/Platform.h: Removed WTF_USE_AVFOUNDATION.
+
 2011-08-01  Jean-luc Brouillet  <jeanluc@chromium.org>
 
         Removing old source files in gyp files that slow build
