@@ -1575,6 +1575,8 @@ BUG_JEREMY MAC : fast/frames/onlyCommentInIFrame.html = FAIL
 BUGCR26042 DEBUG : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
 BUGCR26042 LINUX RELEASE : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
 
+BUGWK65567 WIN LINUX DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
+
 // Incorrect baseline removed.
 BUGCR25433 WIN LINUX : css2.1/t040103-ident-03-c.html = IMAGE
 
