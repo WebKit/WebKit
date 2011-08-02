@@ -1,3 +1,53 @@
+2011-08-01  Michael Nordman  <michaeln@google.com>
+
+        [Chromium] WebSQLDatabase version handling is broken in multi-process browsers.
+        https://bugs.webkit.org/show_bug.cgi?id=65486
+
+        The WebCore::AbstractDatabase class maintains a global in-memory map of
+        the version numbers associated with open database files, but that map is
+        not reliable in a multi-process system like Chrome. So instead of relying
+        on the cached values in that map, we read the value from the database (and
+        update the cached value) where possible. There are two edge cases where that's
+        not possible because the scriptable interface requires synchronous access
+        to the version: the .version attribute getter and the .openDatabase() method.
+        In those cases, we have no choice but to use the potentially stale cached value.
+
+        Reviewed by Darin Fisher.
+
+        No new tests. Existing layout tests cover the version handling functionality.
+
+        * storage/AbstractDatabase.cpp:
+        (WebCore::AbstractDatabase::version):
+        (WebCore::AbstractDatabase::performOpenAndVerify):
+        (WebCore::AbstractDatabase::getVersionFromDatabase):
+        (WebCore::AbstractDatabase::setVersionInDatabase):
+        (WebCore::AbstractDatabase::setExpectedVersion):
+        (WebCore::AbstractDatabase::getCachedVersion):
+        (WebCore::AbstractDatabase::setCachedVersion):
+        (WebCore::AbstractDatabase::getActualVersionForTransaction):
+        * storage/AbstractDatabase.h:
+        (WebCore::AbstractDatabase::expectedVersion):
+        * storage/ChangeVersionWrapper.cpp:
+        (WebCore::ChangeVersionWrapper::handleCommitFailedAfterPostflight):
+        * storage/ChangeVersionWrapper.h:
+        * storage/Database.cpp:
+        (WebCore::Database::openDatabase):
+        * storage/DatabaseSync.cpp:
+        (WebCore::DatabaseSync::openDatabaseSync):
+        (WebCore::DatabaseSync::changeVersion):
+        * storage/SQLTransaction.cpp:
+        (WebCore::SQLTransaction::SQLTransaction):
+        (WebCore::SQLTransaction::executeSQL):
+        (WebCore::SQLTransaction::openTransactionAndPreflight):
+        (WebCore::SQLTransaction::runCurrentStatement):
+        (WebCore::SQLTransaction::postflightAndCommit):
+        * storage/SQLTransaction.h:
+        * storage/SQLTransactionSync.cpp:
+        (WebCore::SQLTransactionSync::SQLTransactionSync):
+        (WebCore::SQLTransactionSync::executeSQL):
+        (WebCore::SQLTransactionSync::begin):
+        * storage/SQLTransactionSync.h:
+
 2011-08-01  Tim Horton  <timothy_horton@apple.com>
 
         Severe shadow repaint issues with SVGText elements

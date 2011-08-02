@@ -34,6 +34,7 @@
 #if ENABLE(DATABASE)
 
 #include "ExceptionCode.h"
+#include "PlatformString.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
@@ -70,6 +71,7 @@ private:
     RefPtr<DatabaseSync> m_database;
     RefPtr<SQLTransactionSyncCallback> m_callback;
     bool m_readOnly;
+    bool m_hasVersionMismatch;
 
     bool m_modifiedDatabase;
     OwnPtr<SQLTransactionClient> m_transactionClient;

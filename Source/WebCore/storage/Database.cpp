@@ -109,12 +109,7 @@ PassRefPtr<Database> Database::openDatabase(ScriptExecutionContext* context, con
 
     InspectorInstrumentation::didOpenDatabase(context, database, context->securityOrigin()->host(), name, expectedVersion);
 
-    // If it's a new database and a creation callback was provided, reset the expected
-    // version to "" and schedule the creation callback. Because of some subtle String
-    // implementation issues, we have to reset m_expectedVersion here instead of doing
-    // it inside performOpenAndVerify() which is run on the DB thread.
     if (database->isNew() && creationCallback.get()) {
-        database->m_expectedVersion = "";
         LOG(StorageAPI, "Scheduling DatabaseCreationCallbackTask for database %p\n", database.get());
         database->m_scriptExecutionContext->postTask(DatabaseCreationCallbackTask::create(database, creationCallback));
     }

@@ -78,6 +78,7 @@ SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> 
     , m_modifiedDatabase(false)
     , m_lockAcquired(false)
     , m_readOnly(readOnly)
+    , m_hasVersionMismatch(false)
 {
     ASSERT(m_database);
 }
@@ -104,9 +105,6 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
 
     if (m_database->deleted())
         statement->setDatabaseDeletedError();
-
-    if (!m_database->versionMatchesExpected())
-        statement->setVersionMismatchedError();
 
     enqueueStatement(statement);
 }
@@ -272,9 +270,26 @@ void SQLTransaction::openTransactionAndPreflight()
         return;
     }
 
+    // Note: We intentionally retrieve the actual version even with an empty expected version.
+    // In multi-process browsers, we take this opportinutiy to update the cached value for
+    // the actual version. In single-process browsers, this is just a map lookup.
+    String actualVersion;
+    if (!m_database->getActualVersionForTransaction(actualVersion)) {
+        m_database->disableAuthorizer();
+        m_sqliteTransaction.clear();
+        m_database->enableAuthorizer();
+        m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to read version");
+        handleTransactionError(false);
+        return;
+    }
+    m_hasVersionMismatch = !m_database->expectedVersion().isEmpty()
+                           && (m_database->expectedVersion() != actualVersion);
+
     // Transaction Steps 3 - Peform preflight steps, jumping to the error callback if they fail
     if (m_wrapper && !m_wrapper->performPreflight(this)) {
+        m_database->disableAuthorizer();
         m_sqliteTransaction.clear();
+        m_database->enableAuthorizer();
         m_transactionError = m_wrapper->sqlError();
         if (!m_transactionError)
             m_transactionError = SQLError::create(SQLError::UNKNOWN_ERR, "unknown error occured setting up transaction");
@@ -368,6 +383,9 @@ bool SQLTransaction::runCurrentStatement()
         return false;
 
     m_database->resetAuthorizer();
+
+    if (m_hasVersionMismatch)
+        m_currentStatement->setVersionMismatchedError();
 
     if (m_currentStatement->execute(m_database.get())) {
         if (m_database->lastActionChangedDatabase()) {
@@ -465,6 +483,8 @@ void SQLTransaction::postflightAndCommit()
 
     // If the commit failed, the transaction will still be marked as "in progress"
     if (m_sqliteTransaction->inProgress()) {
+        if (m_wrapper)
+            m_wrapper->handleCommitFailedAfterPostflight(this);
         m_successCallbackWrapper.clear();
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "failed to commit the transaction");
         handleTransactionError(false);

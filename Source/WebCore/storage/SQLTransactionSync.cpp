@@ -58,6 +58,7 @@ SQLTransactionSync::SQLTransactionSync(DatabaseSync* db, PassRefPtr<SQLTransacti
     : m_database(db)
     , m_callback(callback)
     , m_readOnly(readOnly)
+    , m_hasVersionMismatch(false)
     , m_modifiedDatabase(false)
     , m_transactionClient(adoptPtr(new SQLTransactionClient()))
 {
@@ -79,7 +80,7 @@ PassRefPtr<SQLResultSet> SQLTransactionSync::executeSQL(const String& sqlStateme
         return 0;
     }
 
-    if (!m_database->versionMatchesExpected()) {
+    if (m_hasVersionMismatch) {
         ec = SQLException::VERSION_ERR;
         return 0;
     }
@@ -150,6 +151,16 @@ ExceptionCode SQLTransactionSync::begin()
         return SQLException::DATABASE_ERR;
     }
 
+    // Note: We intentionally retrieve the actual version even with an empty expected version.
+    // In multi-process browsers, we take this opportinutiy to update the cached value for
+    // the actual version. In single-process browsers, this is just a map lookup.
+    String actualVersion;
+    if (!m_database->getActualVersionForTransaction(actualVersion)) {
+        rollback();
+        return SQLException::DATABASE_ERR;
+    }
+    m_hasVersionMismatch = !m_database->expectedVersion().isEmpty()
+                           && (m_database->expectedVersion() != actualVersion);
     return 0;
 }
 

@@ -67,7 +67,6 @@ PassRefPtr<DatabaseSync> DatabaseSync::openDatabaseSync(ScriptExecutionContext* 
     DatabaseTracker::tracker().setDatabaseDetails(context->securityOrigin(), name, displayName, estimatedSize);
 
     if (database->isNew() && creationCallback.get()) {
-        database->m_expectedVersion = "";
         LOG(StorageAPI, "Invoking the creation callback for database %p\n", database.get());
         creationCallback->handleEvent(database.get());
     }
@@ -123,8 +122,10 @@ void DatabaseSync::changeVersion(const String& oldVersion, const String& newVers
         return;
     }
 
-    if ((ec = transaction->commit()))
+    if ((ec = transaction->commit())) {
+        setCachedVersion(oldVersion);
         return;
+    }
 
     setExpectedVersion(newVersion);
 }

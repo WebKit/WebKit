@@ -34,6 +34,7 @@
 #include "DatabaseTracker.h"
 #include "Logging.h"
 #include "SQLiteStatement.h"
+#include "SQLiteTransaction.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include <wtf/HashMap.h>
@@ -235,13 +236,16 @@ void AbstractDatabase::closeDatabase()
 
 String AbstractDatabase::version() const
 {
-    MutexLocker locker(guidMutex());
-    return guidToVersionMap().get(m_guid).threadsafeCopy();
+    // Note: In multi-process browsers the cached value may be accurate, but we cannot read the
+    // actual version from the database without potentially inducing a deadlock.
+    // FIXME: Add an async version getter to the DatabaseAPI.
+    return getCachedVersion();
 }
 
-static const int maxSqliteBusyWaitTime = 30000;
 bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode& ec)
 {
+    const int maxSqliteBusyWaitTime = 30000;
+
     if (!m_sqliteDatabase.open(m_filename, true)) {
         LOG_ERROR("Unable to open database at path %s", m_filename.ascii().data());
         ec = INVALID_STATE_ERR;
@@ -250,8 +254,6 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
     if (!m_sqliteDatabase.turnOnIncrementalAutoVacuum())
         LOG_ERROR("Unable to turn on incremental auto-vacuum for database %s", m_filename.ascii().data());
 
-    ASSERT(m_databaseAuthorizer);
-    m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer);
     m_sqliteDatabase.setBusyTimeout(maxSqliteBusyWaitTime);
 
     String currentVersion;
@@ -263,8 +265,34 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
             // Map null string to empty string (see updateGuidVersionMap()).
             currentVersion = entry->second.isNull() ? String("") : entry->second;
             LOG(StorageAPI, "Current cached version for guid %i is %s", m_guid, currentVersion.ascii().data());
+
+#if PLATFORM(CHROMIUM)
+            // Note: In multi-process browsers the cached value may be inaccurate, but
+            // we cannot read the actual version from the database without potentially
+            // inducing a form of deadlock, a busytimeout error when trying to
+            // access the database. So we'll use the cached value if we're able to read
+            // the value without waiting, and otherwise use the cached value (which may be off).
+            // FIXME: Add an async openDatabase method to the DatabaseAPI.
+            const int noSqliteBusyWaitTime = 0;
+            m_sqliteDatabase.setBusyTimeout(noSqliteBusyWaitTime);
+            String versionFromDatabase;
+            if (getVersionFromDatabase(versionFromDatabase, false)) {
+                currentVersion = versionFromDatabase;
+                updateGuidVersionMap(m_guid, currentVersion);
+            }
+            m_sqliteDatabase.setBusyTimeout(maxSqliteBusyWaitTime);
+#endif
         } else {
             LOG(StorageAPI, "No cached version for guid %i", m_guid);
+
+            SQLiteTransaction transaction(m_sqliteDatabase);
+            transaction.begin();
+            if (!transaction.inProgress()) {
+                LOG_ERROR("Unable to begin transaction while opening %s", databaseDebugName().ascii().data());
+                ec = INVALID_STATE_ERR;
+                m_sqliteDatabase.close();
+                return false;
+            }
 
             if (!m_sqliteDatabase.tableExists(databaseInfoTableName())) {
                 m_new = true;
@@ -272,34 +300,33 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
                 if (!m_sqliteDatabase.executeCommand("CREATE TABLE " + databaseInfoTableName() + " (key TEXT NOT NULL ON CONFLICT FAIL UNIQUE ON CONFLICT REPLACE,value TEXT NOT NULL ON CONFLICT FAIL);")) {
                     LOG_ERROR("Unable to create table %s in database %s", databaseInfoTableName().ascii().data(), databaseDebugName().ascii().data());
                     ec = INVALID_STATE_ERR;
-                    // Close the handle to the database file.
+                    transaction.rollback();
                     m_sqliteDatabase.close();
                     return false;
                 }
-            }
-
-            if (!getVersionFromDatabase(currentVersion)) {
+            } else if (!getVersionFromDatabase(currentVersion, false)) {
                 LOG_ERROR("Failed to get current version from database %s", databaseDebugName().ascii().data());
                 ec = INVALID_STATE_ERR;
-                // Close the handle to the database file.
+                transaction.rollback();
                 m_sqliteDatabase.close();
                 return false;
             }
+
             if (currentVersion.length()) {
                 LOG(StorageAPI, "Retrieved current version %s from database %s", currentVersion.ascii().data(), databaseDebugName().ascii().data());
             } else if (!m_new || shouldSetVersionInNewDatabase) {
                 LOG(StorageAPI, "Setting version %s in database %s that was just created", m_expectedVersion.ascii().data(), databaseDebugName().ascii().data());
-                if (!setVersionInDatabase(m_expectedVersion)) {
+                if (!setVersionInDatabase(m_expectedVersion, false)) {
                     LOG_ERROR("Failed to set version %s in database %s", m_expectedVersion.ascii().data(), databaseDebugName().ascii().data());
                     ec = INVALID_STATE_ERR;
-                    // Close the handle to the database file.
+                    transaction.rollback();
                     m_sqliteDatabase.close();
                     return false;
                 }
                 currentVersion = m_expectedVersion;
             }
-
             updateGuidVersionMap(m_guid, currentVersion);
+            transaction.commit();
         }
     }
 
@@ -314,12 +341,17 @@ bool AbstractDatabase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, 
         LOG(StorageAPI, "page expects version %s from database %s, which actually has version name %s - openDatabase() call will fail", m_expectedVersion.ascii().data(),
             databaseDebugName().ascii().data(), currentVersion.ascii().data());
         ec = INVALID_STATE_ERR;
-        // Close the handle to the database file.
         m_sqliteDatabase.close();
         return false;
     }
 
+    ASSERT(m_databaseAuthorizer);
+    m_sqliteDatabase.setAuthorizer(m_databaseAuthorizer);
+
     m_opened = true;
+
+    if (m_new && !shouldSetVersionInNewDatabase)
+        m_expectedVersion = ""; // The caller provided a creationCallback which will set the expected version.
 
     return true;
 }
@@ -364,14 +396,17 @@ const String& AbstractDatabase::databaseVersionKey()
     return key;
 }
 
-bool AbstractDatabase::getVersionFromDatabase(String& version)
+bool AbstractDatabase::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
     DEFINE_STATIC_LOCAL(String, getVersionQuery, ("SELECT value FROM " + databaseInfoTableName() + " WHERE key = '" + databaseVersionKey() + "';"));
 
     m_databaseAuthorizer->disable();
 
     bool result = retrieveTextResultFromDatabase(m_sqliteDatabase, getVersionQuery.threadsafeCopy(), version);
-    if (!result)
+    if (result) {
+        if (shouldCacheVersion)
+            setCachedVersion(version);
+    } else
         LOG_ERROR("Failed to retrieve version from database %s", databaseDebugName().ascii().data());
 
     m_databaseAuthorizer->enable();
@@ -379,7 +414,7 @@ bool AbstractDatabase::getVersionFromDatabase(String& version)
     return result;
 }
 
-bool AbstractDatabase::setVersionInDatabase(const String& version)
+bool AbstractDatabase::setVersionInDatabase(const String& version, bool shouldCacheVersion)
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
@@ -388,7 +423,10 @@ bool AbstractDatabase::setVersionInDatabase(const String& version)
     m_databaseAuthorizer->disable();
 
     bool result = setTextValueInDatabase(m_sqliteDatabase, setVersionQuery.threadsafeCopy(), version);
-    if (!result)
+    if (result) {
+        if (shouldCacheVersion)
+            setCachedVersion(version);
+    } else
         LOG_ERROR("Failed to set version %s in database (%s)", version.ascii().data(), setVersionQuery.ascii().data());
 
     m_databaseAuthorizer->enable();
@@ -396,22 +434,35 @@ bool AbstractDatabase::setVersionInDatabase(const String& version)
     return result;
 }
 
-bool AbstractDatabase::versionMatchesExpected() const
-{
-    if (!m_expectedVersion.isEmpty()) {
-        MutexLocker locker(guidMutex());
-        return m_expectedVersion == guidToVersionMap().get(m_guid);
-    }
-
-    return true;
-}
-
 void AbstractDatabase::setExpectedVersion(const String& version)
 {
     m_expectedVersion = version.threadsafeCopy();
+}
+
+String AbstractDatabase::getCachedVersion() const
+{
+    MutexLocker locker(guidMutex());
+    return guidToVersionMap().get(m_guid).threadsafeCopy();
+}
+
+void AbstractDatabase::setCachedVersion(const String& actualVersion)
+{
     // Update the in memory database version map.
     MutexLocker locker(guidMutex());
-    updateGuidVersionMap(m_guid, version);
+    updateGuidVersionMap(m_guid, actualVersion);
+}
+
+bool AbstractDatabase::getActualVersionForTransaction(String &actualVersion)
+{
+    ASSERT(m_sqliteDatabase.transactionInProgress());
+#if PLATFORM(CHROMIUM)
+    // Note: In multi-process browsers the cached value may be inaccurate.
+    // So we retrieve the value from the database and update the cached value here.
+    return getVersionFromDatabase(actualVersion, true);
+#else
+    actualVersion = getCachedVersion();
+    return true;
+#endif
 }
 
 void AbstractDatabase::disableAuthorizer()

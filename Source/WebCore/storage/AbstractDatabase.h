@@ -71,12 +71,6 @@ public:
     void interrupt();
     bool isInterrupted();
 
-    // FIXME: move all version-related methods to a DatabaseVersionTracker class
-    bool versionMatchesExpected() const;
-    void setExpectedVersion(const String& version);
-    bool getVersionFromDatabase(String& version);
-    bool setVersionInDatabase(const String& version);
-
     void disableAuthorizer();
     void enableAuthorizer();
     void setAuthorizerReadOnly();
@@ -91,12 +85,24 @@ public:
     virtual void closeImmediately() = 0;
 
 protected:
+    friend class SQLTransactionSync;
+    friend class SQLTransaction;
+    friend class ChangeVersionWrapper;
+
     AbstractDatabase(ScriptExecutionContext*, const String& name, const String& expectedVersion,
                      const String& displayName, unsigned long estimatedSize);
 
     void closeDatabase();
 
     virtual bool performOpenAndVerify(bool shouldSetVersionInNewDatabase, ExceptionCode& ec);
+
+    bool getVersionFromDatabase(String& version, bool shouldCacheVersion = true);
+    bool setVersionInDatabase(const String& version, bool shouldCacheVersion = true);
+    void setExpectedVersion(const String&);
+    const String& expectedVersion() const { return m_expectedVersion; }
+    String getCachedVersion()const;
+    void setCachedVersion(const String&);
+    bool getActualVersionForTransaction(String& version);
 
     static const String& databaseInfoTableName();
 

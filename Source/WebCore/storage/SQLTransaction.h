@@ -55,8 +55,8 @@ public:
     virtual ~SQLTransactionWrapper() { }
     virtual bool performPreflight(SQLTransaction*) = 0;
     virtual bool performPostflight(SQLTransaction*) = 0;
-
     virtual SQLError* sqlError() const = 0;
+    virtual void handleCommitFailedAfterPostflight(SQLTransaction*) = 0;
 };
 
 class SQLTransaction : public ThreadSafeRefCounted<SQLTransaction> {
@@ -123,6 +123,7 @@ private:
     bool m_modifiedDatabase;
     bool m_lockAcquired;
     bool m_readOnly;
+    bool m_hasVersionMismatch;
 
     Mutex m_statementMutex;
     Deque<RefPtr<SQLStatement> > m_statementQueue;

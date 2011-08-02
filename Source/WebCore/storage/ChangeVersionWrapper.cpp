@@ -78,6 +78,11 @@ bool ChangeVersionWrapper::performPostflight(SQLTransaction* transaction)
     return true;
 }
 
+void ChangeVersionWrapper::handleCommitFailedAfterPostflight(SQLTransaction* transaction)
+{
+    transaction->database()->setCachedVersion(m_oldVersion);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(DATABASE)

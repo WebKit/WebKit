@@ -44,8 +44,8 @@ public:
 
     virtual bool performPreflight(SQLTransaction*);
     virtual bool performPostflight(SQLTransaction*);
-
     virtual SQLError* sqlError() const { return m_sqlError.get(); }
+    virtual void handleCommitFailedAfterPostflight(SQLTransaction*);
 
 private:
     ChangeVersionWrapper(const String& oldVersion, const String& newVersion);
