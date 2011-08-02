@@ -717,7 +717,7 @@ fast/ruby/rubyDOM-remove-text2.html
 # https://bugs.webkit.org/show_bug.cgi?id=58396
 http/tests/misc/favicon-loads-with-icon-loading-override.html
 
-# Missing layoutTestController.setAlwaysAcceptCookies
+# Missing layoutTestController.setAlwaysAcceptCookies - implemented for Qt version >= 4.8
 http/tests/security/cookies/third-party-cookie-blocking-main-frame.html
 http/tests/security/cookies/third-party-cookie-blocking-user-action.html
 http/tests/security/cookies/third-party-cookie-blocking.html

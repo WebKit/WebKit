@@ -1,5 +1,11 @@
 2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped: Add comment after r92175.
+
+2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed gardening. Paint the Qt bot green.
 
         * platform/qt/Skipped: Skip failing tests.
