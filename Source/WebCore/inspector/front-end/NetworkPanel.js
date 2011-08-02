@@ -1947,6 +1947,12 @@ WebInspector.NetworkDataGridNode.prototype = {
             this._initiatorCell.removeChildren();
             if (initiator.type === "script") {
                 var topFrame = initiator.stackTrace[0];
+                // This could happen when resource loading was triggered by console. 
+                if (!topFrame.url) {
+                    this._initiatorCell.addStyleClass("network-dim-cell");
+                    this._initiatorCell.setTextAndTitle(WebInspector.UIString("Other"));
+                    return;
+                }
                 this._initiatorCell.title = topFrame.url + ":" + topFrame.lineNumber;
                 this._initiatorCell.appendChild(WebInspector.linkifyResourceAsNode(topFrame.url, "scripts", topFrame.lineNumber));
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Script"));

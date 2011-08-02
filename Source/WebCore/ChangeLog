@@ -1,3 +1,15 @@
+2011-08-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [REGRESSION] Console evaluations leading to resource loading cause errors.
+        https://bugs.webkit.org/show_bug.cgi?id=65466
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/network/network-initiator-from-console.html
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._refreshInitiatorCell):
+
 2011-08-02  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: img[width=90] or align attributes shouldnt be shown above element.style block (as they have lower specificity)

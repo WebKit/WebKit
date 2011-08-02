@@ -1,0 +1,53 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+var test = function()
+{
+    InspectorTest.reloadPage(step1);
+
+    function findResourceByURL(url)
+    {
+        var resources = WebInspector.networkLog.resources;
+        for (var i = 0; i < resources.length; ++i) {
+            if (url.test(resources[i].url))
+                return resources[i];
+        }
+    }
+
+    function step1()
+    {
+        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, onResource);
+        var str = "";
+        str += "var s = document.createElement(\"script\");";
+        str += "s.src = \"resources/script.js\";";
+        str += "document.head.appendChild(s);";
+        WebInspector.console.evalInInspectedWindow(str, "console", true, undefined, undefined, function(){})
+    }
+
+    function onResource(event)
+    {
+        var resource = event.data;
+        if (/script.js/.test(resource.url))
+            step2();
+    }
+
+    function step2()
+    {
+        if (!findResourceByURL(/script.js/))
+            return;
+
+        WebInspector.panels.network.show();
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests that there is no javascript error when console evaluation causes resource loading.</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=65466">Bug 65466</a>
+</body>
+</html>

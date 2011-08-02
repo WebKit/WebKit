@@ -1,3 +1,13 @@
+2011-08-01  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [REGRESSION] Console evaluations leading to resource loading cause errors.
+        https://bugs.webkit.org/show_bug.cgi?id=65466
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network/network-initiator-from-console-expected.txt: Added.
+        * http/tests/inspector/network/network-initiator-from-console.html: Added.
+
 2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         Web Inspector: REGRESSION(r92105): It made 2 tests fail
