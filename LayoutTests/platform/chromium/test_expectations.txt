@@ -3665,3 +3665,7 @@ BUGCR91061 LINUX DEBUG : fast/text/regional-indicator-symobls.html = TIMEOUT
 BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
+
+// Just needs rebaselines?
+BUGWK65524 WIN : fast/text/international/bidi-mirror-he-ar.html = IMAGE
+BUGWK65524 WIN : fast/text/justify-ideograph-leading-expansion.html = IMAGE

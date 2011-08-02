@@ -1,3 +1,12 @@
+2011-08-02  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Layout Test fast/text/international/bidi-mirror-he-ar.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=65524
+
+        Just update test_expectations.txt
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening after r92127.
