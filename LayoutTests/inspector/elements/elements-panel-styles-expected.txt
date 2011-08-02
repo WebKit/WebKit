@@ -31,6 +31,8 @@ margin-right: 0px;
     .foo - 0px elements-panel-styles.css:14
 margin-top: 10px;
     .foo - 10px elements-panel-styles.css:14
+text-align: -webkit-left;
+    div[align=left] - -webkit-left 
 
 [expanded] element.style { ()
 display: none;
@@ -61,6 +63,9 @@ border-radius: 5px;
 
 [expanded] div { (user agent stylesheet)
 /-- overloaded --/ display: block;
+
+[expanded] div[align=left] { ()
+text-align: -webkit-left;
 
 ======== Inherited from div#container ========
 [expanded] #container { (elements-panel-styles.css:5)
