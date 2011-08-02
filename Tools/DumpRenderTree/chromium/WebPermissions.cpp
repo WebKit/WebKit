@@ -50,6 +50,11 @@ bool WebPermissions::allowStorage(WebKit::WebFrame*, bool)
     return m_storageAllowed;
 }
 
+bool WebPermissions::allowPlugins(WebKit::WebFrame*, bool enabledPerSettings)
+{
+    return enabledPerSettings && m_pluginsAllowed;
+}
+
 bool WebPermissions::allowDisplayingInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
                                                     const WebKit::WebSecurityOrigin&, const WebKit::WebURL&)
 {
@@ -72,6 +77,11 @@ void WebPermissions::setStorageAllowed(bool storageAllowed)
     m_storageAllowed = storageAllowed;
 }
 
+void WebPermissions::setPluginsAllowed(bool pluginsAllowed)
+{
+    m_pluginsAllowed = pluginsAllowed;
+}
+
 void WebPermissions::setDisplayingInsecureContentAllowed(bool allowed)
 {
     m_displayingInsecureContentAllowed = allowed;
@@ -86,6 +96,7 @@ void WebPermissions::reset()
 {
     m_imagesAllowed = true;
     m_storageAllowed = true;
+    m_pluginsAllowed = true;
     m_displayingInsecureContentAllowed = false;
     m_runningInsecureContentAllowed = false;
 }

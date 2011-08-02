@@ -1,3 +1,13 @@
+2011-08-02  Jochen Eisinger  <jochen@chromium.org>
+
+        Add a test for FrameLoaderClient::allowPlugins
+        https://bugs.webkit.org/show_bug.cgi?id=33991
+
+        Reviewed by Adam Barth.
+
+        * platform/chromium/permissionclient/plugin-permission-expected.txt: Added.
+        * platform/chromium/permissionclient/plugin-permission.html: Added.
+
 2011-08-02  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rebaseline, gardener stuff.

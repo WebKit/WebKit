@@ -382,6 +382,7 @@ public:
     // WebPermissionClient related.
     void setImagesAllowed(const CppArgumentList&, CppVariant*);
     void setStorageAllowed(const CppArgumentList&, CppVariant*);
+    void setPluginsAllowed(const CppArgumentList&, CppVariant*);
 
     // Enable or disable plugins.
     void setPluginsEnabled(const CppArgumentList&, CppVariant*);

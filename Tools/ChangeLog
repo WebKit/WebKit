@@ -1,3 +1,20 @@
+2011-08-02  Jochen Eisinger  <jochen@chromium.org>
+
+        Implement WebPermissionClient::allowPlugins for layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=33991
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setPluginsAllowed):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/WebPermissions.cpp:
+        (WebPermissions::allowPlugins):
+        (WebPermissions::setPluginsAllowed):
+        (WebPermissions::reset):
+        * DumpRenderTree/chromium/WebPermissions.h:
+
 2011-08-02  Adam Barth  <abarth@webkit.org>
 
         TestFailures unit tests leak a global variable

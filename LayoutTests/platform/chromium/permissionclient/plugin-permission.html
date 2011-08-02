@@ -1,0 +1,54 @@
+<html>
+<head>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function log(a) 
+{
+    document.getElementById("results").innerHTML += a + "<br>";
+}
+
+function test()
+{
+    var plugin = document.createElement('embed');
+    plugin.setAttribute("type", "application/x-webkit-test-netscape");
+    plugin.setAttribute("onNew", "loadedFirst()");
+    document.getElementById("plugins").appendChild(plugin);
+}
+
+function done()
+{
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function loadedFirst()
+{
+    log("PASS: first plugin loaded");
+    if (window.layoutTestController && layoutTestController.setPluginsAllowed)
+        layoutTestController.setPluginsAllowed(false);
+    else
+        log("This test requires layoutTestController.setPluginsAllowed, so it be can't run in a browser.");
+
+    var plugin = document.createElement('embed');
+    plugin.setAttribute("type", "application/x-webkit-test-netscape");
+    plugin.setAttribute("onNew", "loadedSecond()");
+    document.getElementById("plugins").appendChild(plugin);
+    window.setTimeout(done, 5);
+}
+
+function loadedSecond()
+{
+    log("FAIL: second plugin loaded");
+}
+</script>
+</head>
+<body onload="test()">
+  <div id="plugins">
+  </div>
+  <div id="results"></div>
+</body>
+</html>

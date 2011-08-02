@@ -193,6 +193,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setTextDirection", &LayoutTestController::setTextDirection);
     bindMethod("setImagesAllowed", &LayoutTestController::setImagesAllowed);
     bindMethod("setStorageAllowed", &LayoutTestController::setStorageAllowed);
+    bindMethod("setPluginsAllowed", &LayoutTestController::setPluginsAllowed);
 
     // The following are stubs.
     bindMethod("abortModal", &LayoutTestController::abortModal);
@@ -767,6 +768,13 @@ void LayoutTestController::setStorageAllowed(const CppArgumentList& arguments, C
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_shell->webPermissions()->setStorageAllowed(arguments[0].toBoolean());
+    result->setNull();
+}
+
+void LayoutTestController::setPluginsAllowed(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webPermissions()->setPluginsAllowed(arguments[0].toBoolean());
     result->setNull();
 }
 
