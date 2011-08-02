@@ -1,3 +1,26 @@
+2011-08-01  Adam Barth  <abarth@webkit.org>
+
+        webkit-patch needs to be able to "optimize" the storage of baselines on disk
+        https://bugs.webkit.org/show_bug.cgi?id=65418
+
+        Reviewed by Dimitri Glazkov.
+
+        If we're not careful when rebaselining tests, we can end up with lots
+        of duplicate expected results files in the tree.  This patch adds a
+        webkit-patch command that optimizes the storage of expected results on
+        disk.
+
+        This command is similar to deduplicate-tests, except that it can move
+        test results around rather than just remove duplicate results.
+
+        Unfortunately, this problem is very tricky because the baseline search
+        structure is a hypergraph.  This patch include a huerstic optimizer
+        that appears to work on a bunch of examples I've tried.  We'll likely
+        need to refine it as gain experience.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
 2011-08-01  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Teach TestExpectationSerializer about parsed expectations.

@@ -34,6 +34,7 @@ import codecs
 import errno
 import exceptions
 import glob
+import hashlib
 import os
 import shutil
 import sys
@@ -222,6 +223,10 @@ class FileSystem(object):
         The file is written encoded as UTF-8 with no BOM."""
         with codecs.open(path, 'w', 'utf8') as f:
             f.write(contents)
+
+    def sha1(self, path):
+        contents = self.read_binary_file(path)
+        return hashlib.sha1(contents).hexdigest()
 
     def relpath(self, path, start='.'):
         return ospath.relpath(path, start)

@@ -32,9 +32,11 @@ import shutil
 import urllib
 
 import webkitpy.common.config.urls as config_urls
+from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.system.user import User
+from webkitpy.layout_tests.layout_package.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.port import factory
 from webkitpy.tool.grammar import pluralize
@@ -126,6 +128,25 @@ class RebaselineTest(AbstractDeclarativeCommand):
 
     def execute(self, options, args, tool):
         self._rebaseline_test(args[0], args[1], args[2])
+
+
+class OptimizeBaselines(AbstractDeclarativeCommand):
+    name = "optimize-baselines"
+    help_text = "Reshuffles the baselines for a the given test to use as litte space on disk as possible."
+    argument_names = "TEST_NAME"
+
+    # FIXME: Should TestResultWriter know how to compute this string?
+    def _baseline_name(self, test_name, suffix):
+        return self._tool.filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + suffix
+
+    def execute(self, options, args, tool):
+        baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
+
+        test_name = args[0]
+        for suffix in ['.png', '.txt']:
+            baseline_name = self._baseline_name(test_name, suffix)
+            if not baseline_optimizer.optimize(baseline_name):
+                print "Hueristics failed to optimize %s" % baseline_name
 
 
 class Rebaseline(AbstractDeclarativeCommand):

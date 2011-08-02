@@ -27,6 +27,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import errno
+import hashlib
 import os
 import re
 
@@ -283,6 +284,10 @@ class MockFileSystem(object):
 
     def write_text_file(self, path, contents):
         return self.write_binary_file(path, contents.encode('utf-8'))
+
+    def sha1(self, path):
+        contents = self.read_binary_file(path)
+        return hashlib.sha1(contents).hexdigest()
 
     def relpath(self, path, start='.'):
         return ospath.relpath(path, start, self.abspath, self.sep)

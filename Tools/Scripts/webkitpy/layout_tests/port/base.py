@@ -541,6 +541,9 @@ class Port(object):
         """Return the absolute path to the top of the LayoutTests directory."""
         return self.path_from_webkit_base('LayoutTests')
 
+    def webkit_base(self):
+        return self._filesystem.abspath(self.path_from_webkit_base('.'))
+
     def skipped_layout_tests(self):
         return []
 
