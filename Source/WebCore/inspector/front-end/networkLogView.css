@@ -113,6 +113,10 @@
     color: gray;
 }
 
+.network-error-row, .network-error-row .network-cell-subtitle {
+    color: rgb(230, 0, 0);
+}
+
 .initiator-column a {
     color: inherit;
 }
@@ -373,10 +377,6 @@
 
 .network-dim-cell {
     color: grey;
-}
-
-.network-error-row {
-    color: rgb(230, 0, 0);
 }
 
 /* Dividers */

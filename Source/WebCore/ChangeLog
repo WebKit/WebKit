@@ -1,3 +1,10 @@
+2011-08-02  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: one line inspector style change.
+
+        * inspector/front-end/networkLogView.css:
+        (.network-error-row, .network-error-row .network-cell-subtitle):
+
 2011-08-02  Amruth Raj  <amruthraj@motorola.com>
 
         Custom cursors cause the WebProcess to crash
