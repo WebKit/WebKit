@@ -79,6 +79,17 @@ for ARCH in ${ARCHS} ; do
   # Change directories to extract the archive to ensure correct pathnames.
   (cd "${ARCH_DIR}" && ar -x "${INPUT_NAME}")
 
+  # libWebKitSystemInterfaceLeopard.a's cuDbUtils.o references a few symbols
+  # that are not defined in any framework in OS X 10.5. If it's linked into a
+  # libwebkit.dylib with -Wl,-all_load, linking to libwebkit.dylib will result
+  # in these unresolved symbols:
+  # __ZN8Security12KeychainCore6Schema22X509CrlSchemaIndexListE$non_lazy_ptr
+  # __ZN8Security12KeychainCore6Schema23X509CrlSchemaIndexCountE$non_lazy_ptr
+  # __ZN8Security12KeychainCore6Schema26X509CrlSchemaAttributeListE$non_lazy_ptr
+  # __ZN8Security12KeychainCore6Schema27X509CrlSchemaAttributeCountE$non_lazy_ptr
+  # Since nothing in cuDbUtils.o is needed, just remove it.
+  rm "${ARCH_DIR}"/cuDbUtils.o
+
   # Use ld -r to relink each object that was in the archive.  Providing an
   # empty -exported_symbols_list will transform all symbols to private_extern;
   # these symbols are retained with -keep_private_externs.

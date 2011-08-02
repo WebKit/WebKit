@@ -1,3 +1,12 @@
+2011-08-02  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Fix unresolved symbols error when linking to libwebkit.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=65498
+
+        Reviewed by Dimitri Glazkov.
+
+        * WebCore.gyp/mac/adjust_visibility.sh:
+
 2011-08-02  Mihnea Ovidenie  <mihnea@adobe.com>
 
         hover then un-hover makes state change
