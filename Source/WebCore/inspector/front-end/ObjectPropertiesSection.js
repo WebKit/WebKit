@@ -141,6 +141,8 @@ WebInspector.ObjectPropertyTreeElement = function(property)
 
     // Pass an empty title, the title gets made later in onattach.
     TreeElement.call(this, "", null, false);
+    this.toggleOnClick = true;
+    this.selectable = false;
 }
 
 WebInspector.ObjectPropertyTreeElement.prototype = {

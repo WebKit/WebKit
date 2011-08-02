@@ -1435,7 +1435,7 @@ body.inactive .placard.selected {
     text-overflow: ellipsis;
     overflow: hidden;
     -webkit-user-select: text;
-    cursor: auto;
+    cursor: default;
 }
 
 .properties-tree li.parent {
@@ -1451,7 +1451,6 @@ body.inactive .placard.selected {
     margin-top: 0;
     padding-right: 3px;
     -webkit-user-select: none;
-    cursor: default;
 }
 
 .properties-tree li.parent.expanded::before {

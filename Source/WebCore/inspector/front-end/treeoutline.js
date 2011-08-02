@@ -654,7 +654,9 @@ TreeElement.treeElementToggled = function(event)
     if (!element || !element.treeElement)
         return;
 
-    if (!element.treeElement.isEventWithinDisclosureTriangle(event))
+    var toggleOnClick = element.treeElement.toggleOnClick && !element.treeElement.selectable;
+    var isInTriangle = element.treeElement.isEventWithinDisclosureTriangle(event);
+    if (!toggleOnClick && !isInTriangle)
         return;
 
     if (element.treeElement.expanded) {

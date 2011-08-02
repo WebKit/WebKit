@@ -1,3 +1,20 @@
+2011-08-02  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: arrow is a pain to click in console. Drive-by selection reset fix.
+        https://bugs.webkit.org/show_bug.cgi?id=65467
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._messagesClicked):
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement):
+        * inspector/front-end/inspector.css:
+        (.properties-tree li):
+        (.properties-tree li.parent::before):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.treeElementToggled):
+
 2011-08-01  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: button + "New style rule"

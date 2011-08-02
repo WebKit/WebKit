@@ -45,7 +45,6 @@ WebInspector.ConsoleView = function(drawer)
         this._contextSelectElement.addStyleClass("hidden");
 
     this.messagesElement = document.getElementById("console-messages");
-    this.messagesElement.addEventListener("selectstart", this._messagesSelectStart.bind(this), false);
     this.messagesElement.addEventListener("click", this._messagesClicked.bind(this), true);
 
     this.promptElement = document.getElementById("console-prompt");
@@ -517,29 +516,14 @@ WebInspector.ConsoleView.prototype = {
         ConsoleAgent.setMonitoringXHREnabled(event.data);
     },
 
-    _messagesSelectStart: function(event)
-    {
-        if (this._selectionTimeout)
-            clearTimeout(this._selectionTimeout);
-
-        this.prompt.clearAutoComplete();
-
-        function moveBackIfOutside()
-        {
-            delete this._selectionTimeout;
-            if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)
-                this.prompt.moveCaretToEndOfPrompt();
-            this.prompt.autoCompleteSoon();
-        }
-
-        this._selectionTimeout = setTimeout(moveBackIfOutside.bind(this), 100);
-    },
-
     _messagesClicked: function(event)
     {
         var link = event.target.enclosingNodeOrSelfWithNodeName("a");
-        if (!link || !link.representedNode)
+        if (!link || !link.representedNode) {
+            if (!this.prompt.isCaretInsidePrompt() && window.getSelection().isCollapsed)
+                this.prompt.moveCaretToEndOfPrompt();
             return;
+        }
 
         WebInspector.updateFocusedNode(link.representedNode.id);
         event.stopPropagation();
