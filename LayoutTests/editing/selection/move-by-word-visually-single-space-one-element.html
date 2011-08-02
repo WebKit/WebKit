@@ -35,33 +35,33 @@ If there are multiple nodes in the line, the sequence is array of [anchor_node_i
 where child_node_index is optional, default is the first child of the anchor node.
 -->
 <!-- pure English -->
-<div dir=ltr class="test_move_by_word" title="0 4 8 12 16|19 16 12 8 4 0" contenteditable>abc def hij opq rst</div>
-<div dir=rtl class="test_move_by_word" title="19 3 7 11 15 0|0 15 11 7 3" contenteditable>abc def hij opq rst</div>
+<div dir=ltr class="test_move_by_word" title="0 4 8 12 16 19|19 16 12 8 4 0" contenteditable>abc def hij opq rst</div>
+<div dir=rtl class="test_move_by_word" title="19 3 7 11 15 0|0 15 11 7 3 19" contenteditable>abc def hij opq rst</div>
 
 <!-- pure Hebrew -->
-<div dir=ltr class="test_move_by_word" title="0 15 11 7 3|19 3 7 11 15 0" contenteditable>ששש נננ בבב גגג קקק</div>
-<div dir=rtl class="test_move_by_word" title="19 16 12 8 4 0|0 4 8 12 16" contenteditable>ששש נננ בבב גגג קקק</div>
+<div dir=ltr class="test_move_by_word" title="0 15 11 7 3 19|19 3 7 11 15 0" contenteditable>ששש נננ בבב גגג קקק</div>
+<div dir=rtl class="test_move_by_word" title="19 16 12 8 4 0|0 4 8 12 16 19" contenteditable>ששש נננ בבב גגג קקק</div>
 
 <!-- bidi text -->
 <!-- English Hebrew English -->
-<div dir=ltr class="test_move_by_word" title="0 4 8 12 19 15 24 28 32|35 32 28 24 15 19 12 8 4 0" contenteditable>abc def hij אאא בבב צצצ opr uvw xyz</div>
-<div dir=rtl class="test_move_by_word" title="35 27 31 24 20 16 12 3 7 0|0 7 3 12 16 20 24 31 27" contenteditable>abc def hij אאא בבב צצצ opr uvw xyz</div>
+<div dir=ltr class="test_move_by_word" title="0 4 8 12 19 15 24 28 32 35|35 32 28 24 15 19 12 8 4 0" contenteditable>abc def hij אאא בבב צצצ opr uvw xyz</div>
+<div dir=rtl class="test_move_by_word" title="35 27 31 24 20 16 12 3 7 0|0 7 3 12 16 20 24 31 27 35" contenteditable>abc def hij אאא בבב צצצ opr uvw xyz</div>
 
-<div dir=ltr class="test_move_by_word" title="0 4 8 11 16 20|23 20 16 11 8 4 0" contenteditable>abc def שנב סטז uvw xyz</div>
-<div dir=rtl class="test_move_by_word" title="23 19 16 12 8 3 0|0 3 8 12 16 19" contenteditable>abc def שנב סטז uvw xyz</div>
+<div dir=ltr class="test_move_by_word" title="0 4 8 11 16 20 23|23 20 16 11 8 4 0" contenteditable>abc def שנב סטז uvw xyz</div>
+<div dir=rtl class="test_move_by_word" title="23 19 16 12 8 3 0|0 3 8 12 16 19 23" contenteditable>abc def שנב סטז uvw xyz</div>
 
-<div dir=ltr class="test_move_by_word" title="0 4 8|11 8 4 0" contenteditable>aaa אאא bbb</div>
+<div dir=ltr class="test_move_by_word" title="0 4 8 11|11 8 4 0" contenteditable>aaa אאא bbb</div>
 <div dir=rtl class="test_move_by_word" title="11 8 4 0|0 4 8 11" contenteditable>aaa אאא bbb</div>
 
 <!-- Hebrew English Hebrew -->
-<div dir=ltr class="test_move_by_word" title="0 7 3 12 16 20 24 31 27|35 27 31 24 20 16 12 3 7 0" contenteditable>אאא בבב צצצ aaa bbb ccc דדד עעע פפפ</div>
-<div dir=rtl class="test_move_by_word" title="35 32 28 24 15 19 12 8 4 0|0 4 8 12 19 15 24 28 32" contenteditable>אאא בבב צצצ aaa bbb ccc דדד עעע פפפ</div>
+<div dir=ltr class="test_move_by_word" title="0 7 3 12 16 20 24 31 27 35|35 27 31 24 20 16 12 3 7 0" contenteditable>אאא בבב צצצ aaa bbb ccc דדד עעע פפפ</div>
+<div dir=rtl class="test_move_by_word" title="35 32 28 24 15 19 12 8 4 0|0 4 8 12 19 15 24 28 32 35" contenteditable>אאא בבב צצצ aaa bbb ccc דדד עעע פפפ</div>
 
-<div dir=ltr class="test_move_by_word" title="0 3 8 12 16 19|23 19 16 12 8 3 0" contenteditable>אאא בבב aaa bbb צצצ דדד</div>
-<div dir=rtl class="test_move_by_word" title="23 20 16 11 8 4 0|0 4 8 11 16 20" contenteditable>אאא בבב aaa bbb צצצ דדד</div>
+<div dir=ltr class="test_move_by_word" title="0 3 8 12 16 19 23|23 19 16 12 8 3 0" contenteditable>אאא בבב aaa bbb צצצ דדד</div>
+<div dir=rtl class="test_move_by_word" title="23 20 16 11 8 4 0|0 4 8 11 16 20 23" contenteditable>אאא בבב aaa bbb צצצ דדד</div>
 
 <div dir=ltr class="test_move_by_word" title="0 4 8 11|11 8 4 0" contenteditable>שנב abc סטז</div>
-<div dir=rtl class="test_move_by_word" title="11 8 4 0|0 4 8" contenteditable>שנב abc סטז</div>
+<div dir=rtl class="test_move_by_word" title="11 8 4 0|0 4 8 11" contenteditable>שנב abc סטז</div>
 
 </div>
 <pre id="console"></pre>

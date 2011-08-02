@@ -1173,6 +1173,12 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection dire
 
 static const int invalidOffset = -1;
 
+static bool isBoxVisuallyLastInLine(const InlineBox* box, TextDirection blockDirection)
+{
+    return blockDirection == LTR ? !box->nextLeafChild() || box->nextLeafChild()->renderer()->isBR()
+        : !box->prevLeafChild() || box->prevLeafChild()->renderer()->isBR();
+}
+
 static bool positionIsInBox(const VisiblePosition& wordBreak, const InlineBox* box, int& offsetOfWordBreak)
 {
     if (wordBreak.isNull())
@@ -1359,9 +1365,21 @@ struct WordBoundaryEntry {
     
 typedef Vector<WordBoundaryEntry, 50> WordBoundaryVector;
     
+static void appendPositionAtLogicalEndOfLine(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
+{
+    VisiblePosition endOfBlock = logicalEndOfLine(createPositionAvoidingIgnoredNode(box->renderer()->node(), box->caretMaxOffset()));
+
+    int offsetOfEndOfBlock;
+    if (positionIsInBox(endOfBlock, box, offsetOfEndOfBlock))
+        orderedWordBoundaries.append(WordBoundaryEntry(endOfBlock, offsetOfEndOfBlock));
+}
+    
 static void collectWordBreaksInBoxInsideBlockWithSameDirectionality(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
 {
     orderedWordBoundaries.clear();
+
+    if (!box->renderer()->isBR() && isBoxVisuallyLastInLine(box, box->direction()))
+        appendPositionAtLogicalEndOfLine(box, orderedWordBoundaries);
     
     VisiblePosition wordBreak;
     int offsetOfWordBreak = invalidOffset;
@@ -1377,6 +1395,9 @@ static void collectWordBreaksInBoxInsideBlockWithSameDirectionality(const Inline
 static void collectWordBreaksInBoxInsideBlockWithDifferntDirectionality(const InlineBox* box, WordBoundaryVector& orderedWordBoundaries)
 {
     orderedWordBoundaries.clear();
+    
+    if (!box->renderer()->isBR() && isBoxVisuallyLastInLine(box, box->direction() == LTR ? RTL : LTR))
+        appendPositionAtLogicalEndOfLine(box, orderedWordBoundaries);
     
     VisiblePosition wordBreak;
     int offsetOfWordBreak = invalidOffset;

@@ -1,3 +1,22 @@
+2011-08-02  Van Lam  <vanlam@google.com>
+
+        --webkit-visual-word: ctrl-arrow is not able to reach the boundary of line
+        https://bugs.webkit.org/show_bug.cgi?id=61346
+
+        Reviewed by Ryosuke Niwa.
+
+        Updated test cases to check for visual word movement to the end-of-line
+        position.
+
+        * editing/selection/move-by-word-visually-multi-line-expected.txt:
+        * editing/selection/move-by-word-visually-multi-line.html:
+        * editing/selection/move-by-word-visually-multi-space-expected.txt:
+        * editing/selection/move-by-word-visually-multi-space.html:
+        * editing/selection/move-by-word-visually-single-space-inline-element-expected.txt:
+        * editing/selection/move-by-word-visually-single-space-inline-element.html:
+        * editing/selection/move-by-word-visually-single-space-one-element-expected.txt:
+        * editing/selection/move-by-word-visually-single-space-one-element.html:
+
 2011-08-02  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, test expectations update, gardener stuff.
