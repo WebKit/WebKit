@@ -1,3 +1,20 @@
+2011-08-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] webInspector.inspectedPage.reload() is broken
+        https://bugs.webkit.org/show_bug.cgi?id=65476
+
+        - fixed webInspector.inspectedWindow.reload(), brought tests back.
+        - removed redundant setting of user agent in FrameLoader::loadResourceSynchronously()
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: http/tests/inspector/extensions-useragent.html
+
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer.prototype._onReload):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadResourceSynchronously):
+
 2011-08-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fixing inspector tests.

@@ -1,0 +1,12 @@
+Tests WebInspector extension API
+
+Started extension.
+Running tests...
+RUNNING TEST: extension_testUserAgent
+Page reloaded.
+Page reloaded.
+user-agent header for extensions-useragent.html: Mozilla/4.0 (compatible; WebInspector Extension User-Agent override; RSX-11M)
+user-agent header for xhr-exists.html: Mozilla/4.0 (compatible; WebInspector Extension User-Agent override; RSX-11M)
+navigator.userAgent: Mozilla/4.0 (compatible; WebInspector Extension User-Agent override; RSX-11M)
+All tests done.
+

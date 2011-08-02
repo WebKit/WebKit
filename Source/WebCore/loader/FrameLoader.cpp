@@ -2579,7 +2579,6 @@ unsigned long FrameLoader::loadResourceSynchronously(const ResourceRequest& requ
 
     if (Page* page = m_frame->page())
         initialRequest.setFirstPartyForCookies(page->mainFrame()->loader()->documentLoader()->request().url());
-    initialRequest.setHTTPUserAgent(client()->userAgent(request.url()));
     
     addExtraFieldsToSubresourceRequest(initialRequest);
 

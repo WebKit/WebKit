@@ -606,6 +606,7 @@ BUGWK58013 SKIP : compositing/scaling/tiled-layer-recursion.html = FAIL
 WONTFIX SKIP : inspector/extensions = FAIL
 WONTFIX SKIP : http/tests/inspector/extensions-headers.html = FAIL
 WONTFIX SKIP : http/tests/inspector/extensions-resources-redirect.html = FAIL
+WONTFIX SKIP : http/tests/inspector/extensions-useragent.html = FAIL
 
 // There is no enough plugins support in DRT
 WONTFIX SKIP : http/tests/inspector/network/network-embed.html = FAIL

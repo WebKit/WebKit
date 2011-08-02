@@ -1,3 +1,13 @@
+2011-08-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] webInspector.inspectedPage.reload() is broken
+        https://bugs.webkit.org/show_bug.cgi?id=65476
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/extensions-useragent-expected.txt: Added.
+        * http/tests/inspector/extensions-useragent.html: Added.
+
 2011-08-02  Pavel Feldman  <pfeldman@chromium.org>
 
         Not reviewed: fixing inspector tests.

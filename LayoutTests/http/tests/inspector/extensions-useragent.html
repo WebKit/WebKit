@@ -1,0 +1,68 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="extensions-test.js"></script>
+<script type="text/javascript">
+
+function extension_testUserAgent(nextTest)
+{
+    const resourcesToCheck = [
+        "extensions-useragent.html",
+        "xhr-exists.html"
+    ];
+    var resourceCount = 0;
+    var queuedOutput = [];
+
+    function onResource(resource)
+    {
+        var url = resource.request.url.replace(/^.*[/]/, "");
+        if (resourcesToCheck.indexOf(url) < 0)
+            return;
+
+        queuedOutput.push("user-agent header for " + url + ": " + getHeader(resource.request.headers, "user-agent"));
+        if (++resourceCount < resourcesToCheck.length)
+            return;
+        webInspector.resources.onFinished.removeListener(onResource);
+        webInspector.inspectedWindow.eval("navigator.userAgent", onEval);
+    }
+    function getHeader(headers, name)
+    {
+        for (var i = 0; i < headers.length; ++i) {
+            if (headers[i].name.toLowerCase() === name)
+                return headers[i].value;
+        }
+    }
+    function onEval(result)
+    {
+        queuedOutput.push("navigator.userAgent: " + result);
+        webInspector.inspectedWindow.eval("", cleanUp);
+    }
+    function cleanUp()
+    {
+        evaluateOnFrontend("InspectorTest.runWhenPageLoads(reply)", onPageLoaded);
+        webInspector.inspectedWindow.reload("");
+    }
+    function onPageLoaded()
+    {
+        for (var i = 0; i < queuedOutput.length; ++i)
+            output(queuedOutput[i]);
+        nextTest();
+    }
+
+    webInspector.resources.onFinished.addListener(onResource);
+    webInspector.inspectedWindow.reload("Mozilla/4.0 (compatible; WebInspector Extension User-Agent override; RSX-11M)");
+}
+
+(function()
+{
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "resources/xhr-exists.html", false);
+    xhr.send(null);
+})();
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests WebInspector extension API</p>
+</body>
+</html>
