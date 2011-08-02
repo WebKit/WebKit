@@ -872,7 +872,7 @@ BUGWK53378 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg
 BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE
 BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = IMAGE+TEXT
-BUGWK62974 : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE
 BUGWK62974 WIN LINUX : svg/batik/text/textEffect.svg = IMAGE+TEXT
 BUGWK62974 MAC : svg/batik/text/textEffect.svg = IMAGE
 BUGWK62974 WIN LINUX : svg/batik/text/textEffect3.svg = IMAGE+TEXT
@@ -2801,7 +2801,6 @@ BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javasc
 
 BUGCR75109 WIN LINUX : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
 BUGCR75109 WIN LINUX : fast/css/getComputedStyle/computed-style.html = TEXT CRASH
-BUGCR75109 WIN LINUX MAC : platform/chromium/fast/text/international/complex-text-rectangle.html = TEXT
 BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
@@ -3594,7 +3593,7 @@ BUGCR89331 WIN7 : plugins/mouse-click-plugin-clears-selection.html = MISSING PAS
 
 BUGCR89474 : fast/js/call-base-resolution.html = PASS TEXT
 
-BUGWK64675 : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
+BUGWK64675 WIN LINUX : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
 
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
@@ -3635,7 +3634,7 @@ BUGWK65063 LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = CRASH 
 BUGWK65063 LINUX : fast/canvas/webgl/data-view-test.html = CRASH PASS
 BUGWK65063 MAC : css2.1/t0905-c414-flt-01-d-g.html = IMAGE
 
-BUGWK65124 : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
+BUGWK65124 WIN LINUX : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT
 BUGWK65124 : fast/blockflow/japanese-rl-text-with-broken-font.html = FAIL
@@ -3660,9 +3659,3 @@ BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
 
-// The expectations were modified by http://trac.webkit.org/changeset/92165
-// May just need rebaselines.
-BUG_HAMAJI MAC : fast/forms/input-placeholder-visibility-1.html = TEXT
-BUG_HAMAJI MAC : fast/forms/input-placeholder-visibility-3.html = TEXT
-BUG_HAMAJI MAC : fast/forms/textarea-placeholder-visibility-1.html = TEXT
-BUG_HAMAJI MAC : fast/forms/textarea-placeholder-visibility-2.html = TEXT
