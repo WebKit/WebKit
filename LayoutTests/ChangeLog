@@ -1,3 +1,10 @@
+2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening after r92127.
+
+        * platform/qt/editing/selection/4397952-expected.png: Updated.
+        * platform/qt/editing/selection/4397952-expected.txt: Updated.
+
 2011-08-01  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: button + "New style rule"
