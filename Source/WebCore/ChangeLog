@@ -1,5 +1,16 @@
 2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
 
+        Remove LegacyDefaultOptionalArguments flag from SpeechInputResultList.idl
+        https://bugs.webkit.org/show_bug.cgi?id=65570
+
+        Reviewed by Adam Barth.
+
+        No new tests, all existing tests pass
+
+        * page/SpeechInputResultList.idl:
+
+2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
+
         Remove LegacyDefaultOptionalArguments flag from EventSource.idl
         https://bugs.webkit.org/show_bug.cgi?id=65568
 
