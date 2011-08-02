@@ -86,6 +86,7 @@ void initializeThreading()
     atomicallyInitializedStaticMutex = new Mutex;
     threadMapMutex();
     initializeRandomNumberGenerator();
+    ThreadIdentifierData::initializeOnce();
     wtfThreadData();
 #if ENABLE(WTF_MULTIPLE_THREADS)
     s_dtoaP5Mutex = new Mutex;
