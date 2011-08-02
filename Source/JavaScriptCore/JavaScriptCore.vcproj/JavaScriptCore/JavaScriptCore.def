@@ -96,11 +96,13 @@ EXPORTS
     ?convertUTF8ToUTF16@Unicode@WTF@@YA?AW4ConversionResult@12@PAPBDPBDPAPA_WPA_W_N@Z
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
     ?create@JSByteArray@JSC@@SAPAV12@PAVExecState@2@PAVStructure@2@PAVByteArray@WTF@@@Z
+    ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@W4HeapSize@2@@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
     ?create@RegExp@JSC@@SAPAV12@AAVJSGlobalData@2@ABVUString@2@W4RegExpFlags@2@@Z
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createInterruptedExecutionException@JSC@@YAPAVJSObject@1@PAVJSGlobalData@1@@Z
+    ?createLeaked@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@W4HeapSize@2@@Z
     ?createRangeError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createReferenceError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createSingleCharacterString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@E@Z
