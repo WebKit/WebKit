@@ -1,5 +1,14 @@
 2011-08-02  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: _normalizeEventTypes (via console's monitorEvents) doesnt handle all events like 'search' and other atypical ones.
+        https://bugs.webkit.org/show_bug.cgi?id=65468
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InjectedScriptSource.js:
+
+2011-08-02  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: 404/errors should get a RED visual treatment so easier to identify.
         https://bugs.webkit.org/show_bug.cgi?id=65471
 
