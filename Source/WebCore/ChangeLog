@@ -1,5 +1,17 @@
 2011-08-02  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: 404/errors should get a RED visual treatment so easier to identify.
+        https://bugs.webkit.org/show_bug.cgi?id=65471
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._refreshStatusCell):
+        * inspector/front-end/networkLogView.css:
+        (.network-error-cell):
+
+2011-08-02  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: arrow is a pain to click in console. Drive-by selection reset fix.
         https://bugs.webkit.org/show_bug.cgi?id=65467
 

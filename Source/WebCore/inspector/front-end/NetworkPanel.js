@@ -1889,6 +1889,7 @@ WebInspector.NetworkDataGridNode.prototype = {
             else
                 this._statusCell.setTextAndTitle(WebInspector.UIString("(failed)"));
             this._statusCell.addStyleClass("network-dim-cell");
+            this.element.addStyleClass("network-error-row");
             return;
         }
 
@@ -1896,15 +1897,20 @@ WebInspector.NetworkDataGridNode.prototype = {
         if (fromCache) {
             this._statusCell.setTextAndTitle(WebInspector.UIString("(from cache)"));
             this._statusCell.addStyleClass("network-dim-cell");
+            this.element.removeStyleClass("network-error-row");
             return;
         }
 
         this._statusCell.removeStyleClass("network-dim-cell");
+        this.element.removeStyleClass("network-error-row");
+
         if (this._resource.statusCode) {
             this._statusCell.appendChild(document.createTextNode(this._resource.statusCode));
             this._statusCell.removeStyleClass("network-dim-cell");
             this._appendSubtitle(this._statusCell, this._resource.statusText);
             this._statusCell.title = this._resource.statusCode + " " + this._resource.statusText;
+            if (this._resource.statusCode >= 400)
+                this.element.addStyleClass("network-error-row");
         } else {
             if (this._resource.isDataURL() && this._resource.finished)
                 this._statusCell.setTextAndTitle(WebInspector.UIString("(data url)"));

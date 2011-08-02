@@ -375,6 +375,10 @@
     color: grey;
 }
 
+.network-error-row {
+    color: rgb(230, 0, 0);
+}
+
 /* Dividers */
 
 .network-timeline-grid {
