@@ -1,5 +1,16 @@
 2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
 
+        Remove LegacyDefaultOptionalArguments flag from History.idl
+        https://bugs.webkit.org/show_bug.cgi?id=65572
+
+        Reviewed by Adam Barth.
+
+        No new tests, all existing tests pass.
+
+        * page/History.idl:
+
+2011-08-02  Mark Pilgrim  <pilgrim@chromium.org>
+
         Remove LegacyDefaultOptionalArguments flag from WebKitAnimationList.idl
         https://bugs.webkit.org/show_bug.cgi?id=65571
 

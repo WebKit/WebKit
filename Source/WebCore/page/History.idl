@@ -26,7 +26,6 @@
 module window {
 
     interface [
-        LegacyDefaultOptionalArguments,
 #if defined(V8_BINDING) && V8_BINDING
         CheckDomainSecurity,
 #endif
@@ -41,7 +40,7 @@ module window {
 
         [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void back();
         [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void forward();
-        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void go(in long distance);
+        [DoNotCheckDomainSecurity, CallWith=ScriptExecutionContext] void go(in [Optional=CallWithDefaultValue] long distance);
         
         [Custom, EnabledAtRuntime] void pushState(in any data, in DOMString title, in optional DOMString url)
             raises(DOMException);
