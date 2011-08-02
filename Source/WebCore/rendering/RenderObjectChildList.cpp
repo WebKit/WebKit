@@ -410,6 +410,14 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
     }
     
     RenderObject* insertBefore = (type == BEFORE) ? owner->virtualChildren()->firstChild() : 0;
+    if (insertBefore && insertBefore->isAnonymousBlock() && insertBefore->childrenInline() && !insertBefore->isEmpty()) {
+        // We are going to add the "before" element. We have to check whether the "insertBefore" element
+        // is an anonymous block with inline children. If it is, then we should insert the "before" element
+        // before the first inline child of the anonymous block, otherwise we will end up with the "before"
+        // element in a different block. We do this only when the anonymous block has children, otherwise
+        // we end up with the before element in a wrong block.
+        insertBefore = insertBefore->firstChild();
+    }
 
     // Generated content consists of a single container that houses multiple children (specified
     // by the content property).  This generated content container gets the pseudo-element style set on it.

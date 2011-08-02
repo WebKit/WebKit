@@ -1,3 +1,22 @@
+2011-08-02  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        hover then un-hover makes state change
+        https://bugs.webkit.org/show_bug.cgi?id=56401
+
+        Reviewed by David Hyatt.
+
+        When a 'before' pseudo-element is re-added, we should check whether the insertion point is an anonymous
+        block with inline children. If it is, then we should change the insertion point to the first child of the
+        anonymous block, otherwise the 'before' pseudo-element ends up in a different block. We choose the insertion
+        point to be the first child only if the anonymous block has children, otherwise the before element ends up
+        in a wrong block.
+
+        Tests: fast/dynamic/hover-before-position-after-style-change.html
+               fast/dynamic/hover-before-position-after-style-change2.html
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent):
+
 2011-08-02  Andreas Kling  <kling@webkit.org>
 
         [Qt] Simplify Path::translate() implementation.
