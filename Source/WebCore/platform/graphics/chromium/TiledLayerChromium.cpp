@@ -60,7 +60,7 @@ TiledLayerChromium::~TiledLayerChromium()
 
 PassRefPtr<CCLayerImpl> TiledLayerChromium::createCCLayerImpl()
 {
-    return CCTiledLayerImpl::create(this, id());
+    return CCTiledLayerImpl::create(id());
 }
 
 void TiledLayerChromium::cleanupResources()
@@ -150,7 +150,7 @@ void TiledLayerChromium::setIsMask(bool isMask)
 
 TransformationMatrix TiledLayerChromium::tilingTransform() const
 {
-    TransformationMatrix transform = ccLayerImpl()->drawTransform();
+    TransformationMatrix transform = drawTransform();
 
     if (contentBounds().isEmpty())
         return transform;

@@ -36,9 +36,9 @@ namespace {
 
 class MockCCLayerImpl : public CCLayerImpl {
 public:
-    static PassRefPtr<MockCCLayerImpl> create(LayerChromium* owner, int layerId)
+    static PassRefPtr<MockCCLayerImpl> create(int layerId)
     {
-        return adoptRef(new MockCCLayerImpl(owner, layerId));
+        return adoptRef(new MockCCLayerImpl(layerId));
     }
     virtual ~MockCCLayerImpl()
     {
@@ -49,8 +49,8 @@ public:
     void setCCLayerDestructionList(Vector<int>* list) { m_ccLayerDestructionList = list; }
 
 private:
-    MockCCLayerImpl(LayerChromium* owner, int layerId)
-        : CCLayerImpl(owner, layerId)
+    MockCCLayerImpl(int layerId)
+        : CCLayerImpl(layerId)
         , m_ccLayerDestructionList(0)
     {
     }
@@ -69,7 +69,7 @@ public:
 
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl()
     {
-        return MockCCLayerImpl::create(this, m_layerId);
+        return MockCCLayerImpl::create(m_layerId);
     }
 
     virtual void pushPropertiesTo(CCLayerImpl* ccLayer)

@@ -31,13 +31,12 @@
 
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-#include "PluginLayerChromium.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-CCPluginLayerImpl::CCPluginLayerImpl(LayerChromium* owner, int id)
-    : CCLayerImpl(owner, id)
+CCPluginLayerImpl::CCPluginLayerImpl(int id)
+    : CCLayerImpl(id)
     , m_textureId(0)
 {
 }

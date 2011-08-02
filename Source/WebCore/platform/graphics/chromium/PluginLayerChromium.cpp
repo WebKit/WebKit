@@ -49,7 +49,7 @@ PluginLayerChromium::PluginLayerChromium(GraphicsLayerChromium* owner)
 
 PassRefPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
 {
-    return CCPluginLayerImpl::create(this, m_layerId);
+    return CCPluginLayerImpl::create(m_layerId);
 }
 
 void PluginLayerChromium::setTextureId(unsigned id)

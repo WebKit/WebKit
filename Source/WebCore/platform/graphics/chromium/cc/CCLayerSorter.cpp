@@ -26,8 +26,8 @@
 
 #include "cc/CCLayerSorter.h"
 
-#include "RenderSurfaceChromium.h"
 #include "TransformationMatrix.h"
+#include "cc/CCRenderSurface.h"
 #include <limits.h>
 
 using namespace std;
@@ -278,7 +278,7 @@ void CCLayerSorter::createGraphNodes(LayerList::iterator first, LayerList::itera
     for (LayerList::const_iterator it = first; it < last; it++) {
         m_nodes.append(GraphNode(it->get()));
         GraphNode& node = m_nodes.at(m_nodes.size() - 1);
-        RenderSurfaceChromium* renderSurface = node.layer->renderSurface();
+        CCRenderSurface* renderSurface = node.layer->renderSurface();
         if (!node.layer->drawsContent() && !renderSurface)
             continue;
 

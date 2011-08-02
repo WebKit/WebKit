@@ -38,7 +38,6 @@
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "LayerTilerChromium.h"
-#include "RenderSurfaceChromium.h"
 #include "SkBitmap.h"
 #include "VideoLayerChromium.h"
 #include "cc/CCCanvasLayerImpl.h"
@@ -129,8 +128,8 @@ public:
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
     const LayerChromium::BorderProgram* borderProgram();
     const CCHeadsUpDisplay::Program* headsUpDisplayProgram();
-    const RenderSurfaceChromium::Program* renderSurfaceProgram();
-    const RenderSurfaceChromium::MaskProgram* renderSurfaceMaskProgram();
+    const CCRenderSurface::Program* renderSurfaceProgram();
+    const CCRenderSurface::MaskProgram* renderSurfaceMaskProgram();
     const LayerTilerChromium::Program* tilerProgram();
     const LayerTilerChromium::ProgramSwizzle* tilerProgramSwizzle();
     const CCCanvasLayerImpl::Program* canvasLayerProgram();
@@ -160,11 +159,13 @@ public:
 #ifndef NDEBUG
     static bool s_inPaintLayerContents;
 #endif
+    typedef Vector<RefPtr<LayerChromium> > LayerList;
+    typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
+
 protected:
     virtual PassOwnPtr<CCLayerTreeHostImplProxy> createLayerTreeHostImplProxy();
 
 private:
-    typedef Vector<RefPtr<CCLayerImpl> > LayerList;
     typedef HashMap<GraphicsContext3D*, int> ChildContextMap;
 
     // FIXME: This needs to be moved to the CCLayerTreeHostImpl when that class exists.
@@ -172,16 +173,15 @@ private:
 
     LayerRendererChromium(CCLayerTreeHostClient*, PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
 
-    void updateLayers(LayerList& renderSurfaceLayerList);
+    void updateLayers(LayerChromium*);
     void updateRootLayerContents();
-    void updatePropertiesAndRenderSurfaces(CCLayerImpl*, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layers);
 
     void paintLayerContents(const LayerList&);
     void updateCompositorResources(const LayerList& renderSurfaceLayerList);
-    void updateCompositorResources(CCLayerImpl*);
+    void updateCompositorResources(LayerChromium*);
 
-    void drawLayers(const LayerList& renderSurfaceLayerList);
-    void drawLayer(CCLayerImpl*, RenderSurfaceChromium*);
+    void drawLayersInternal();
+    void drawLayer(CCLayerImpl*, CCRenderSurface*);
 
     void drawRootLayer();
     LayerTexture* getOffscreenLayerTexture();
@@ -191,7 +191,7 @@ private:
 
     void setDrawViewportRect(const IntRect&, bool flipY);
 
-    bool useRenderSurface(RenderSurfaceChromium*);
+    bool useRenderSurface(CCRenderSurface*);
 
     bool makeContextCurrent();
 
@@ -219,7 +219,7 @@ private:
 
     OwnPtr<LayerList> m_computedRenderSurfaceLayerList;
 
-    RenderSurfaceChromium* m_currentRenderSurface;
+    CCRenderSurface* m_currentRenderSurface;
     unsigned m_offscreenFramebufferId;
     bool m_compositeOffscreen;
 
@@ -233,14 +233,14 @@ private:
     OwnPtr<GeometryBinding> m_sharedGeometry;
     OwnPtr<LayerChromium::BorderProgram> m_borderProgram;
     OwnPtr<CCHeadsUpDisplay::Program> m_headsUpDisplayProgram;
-    OwnPtr<RenderSurfaceChromium::Program> m_renderSurfaceProgram;
-    OwnPtr<RenderSurfaceChromium::MaskProgram> m_renderSurfaceMaskProgram;
     OwnPtr<LayerTilerChromium::Program> m_tilerProgram;
     OwnPtr<LayerTilerChromium::ProgramSwizzle> m_tilerProgramSwizzle;
     OwnPtr<CCCanvasLayerImpl::Program> m_canvasLayerProgram;
+    OwnPtr<CCPluginLayerImpl::Program> m_pluginLayerProgram;
+    OwnPtr<CCRenderSurface::MaskProgram> m_renderSurfaceMaskProgram;
+    OwnPtr<CCRenderSurface::Program> m_renderSurfaceProgram;
     OwnPtr<CCVideoLayerImpl::RGBAProgram> m_videoLayerRGBAProgram;
     OwnPtr<CCVideoLayerImpl::YUVProgram> m_videoLayerYUVProgram;
-    OwnPtr<CCPluginLayerImpl::Program> m_pluginLayerProgram;
 
     OwnPtr<TextureManager> m_contentsTextureManager;
     OwnPtr<TextureManager> m_renderSurfaceTextureManager;
@@ -260,7 +260,7 @@ private:
 
     bool m_animating;
 
-    RenderSurfaceChromium* m_defaultRenderSurface;
+    CCRenderSurface* m_defaultRenderSurface;
 
     CCLayerSorter m_layerSorter;
 };

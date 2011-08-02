@@ -32,7 +32,6 @@
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
-#include "RenderSurfaceChromium.h"
 #include <wtf/text/WTFString.h>
 
 namespace {
@@ -60,9 +59,8 @@ void toGLMatrix(float* flattened, const WebCore::TransformationMatrix& m)
 
 namespace WebCore {
 
-CCLayerImpl::CCLayerImpl(LayerChromium* owner, int id)
-    : m_owner(owner)
-    , m_parent(0)
+CCLayerImpl::CCLayerImpl(int id)
+    : m_parent(0)
     , m_layerId(id)
     , m_anchorPoint(0.5, 0.5)
     , m_anchorPointZ(0)
@@ -83,8 +81,6 @@ CCLayerImpl::CCLayerImpl(LayerChromium* owner, int id)
 
 CCLayerImpl::~CCLayerImpl()
 {
-    if (m_owner)
-        m_owner->setCCLayerImpl(0);
 }
 
 void CCLayerImpl::addChild(PassRefPtr<CCLayerImpl> child)
@@ -122,16 +118,16 @@ void CCLayerImpl::setLayerRenderer(LayerRendererChromium* renderer)
     m_layerRenderer = renderer;
 }
 
-RenderSurfaceChromium* CCLayerImpl::createRenderSurface()
+void CCLayerImpl::createRenderSurface()
 {
-    m_renderSurface = adoptPtr(new RenderSurfaceChromium(this));
-    return m_renderSurface.get();
+    ASSERT(!m_renderSurface);
+    m_renderSurface = adoptPtr(new CCRenderSurface(this));
 }
 
-bool CCLayerImpl::descendantsDrawsContent()
+bool CCLayerImpl::descendantDrawsContent()
 {
     for (size_t i = 0; i < m_children.size(); ++i) {
-        if (m_children[i]->drawsContent() || m_children[i]->descendantsDrawsContent())
+        if (m_children[i]->drawsContent() || m_children[i]->descendantDrawsContent())
             return true;
     }
     return false;
@@ -142,19 +138,8 @@ void CCLayerImpl::draw()
     ASSERT_NOT_REACHED();
 }
 
-void CCLayerImpl::updateCompositorResources()
-{
-    m_owner->updateCompositorResources();
-}
-
-void CCLayerImpl::unreserveContentsTexture()
-{
-    m_owner->unreserveContentsTexture();
-}
-
 void CCLayerImpl::bindContentsTexture()
 {
-    m_owner->bindContentsTexture();
 }
 
 void CCLayerImpl::cleanupResources()

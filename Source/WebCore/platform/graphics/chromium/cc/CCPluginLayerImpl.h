@@ -34,9 +34,9 @@ namespace WebCore {
 
 class CCPluginLayerImpl : public CCLayerImpl {
 public:
-    static PassRefPtr<CCPluginLayerImpl> create(LayerChromium* owner, int id)
+    static PassRefPtr<CCPluginLayerImpl> create(int id)
     {
-        return adoptRef(new CCPluginLayerImpl(owner, id));
+        return adoptRef(new CCPluginLayerImpl(id));
     }
     virtual ~CCPluginLayerImpl();
 
@@ -49,7 +49,7 @@ public:
     void setTextureId(unsigned id) { m_textureId = id; }
 
 private:
-    CCPluginLayerImpl(LayerChromium*, int);
+    explicit CCPluginLayerImpl(int);
 
     unsigned m_textureId;
 };

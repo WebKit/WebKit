@@ -44,6 +44,7 @@
 #include "LayerTexture.h"
 #include "LayerTextureUpdaterCanvas.h"
 #include "NotImplemented.h"
+#include "RenderSurfaceChromium.h"
 #include "TextStream.h"
 #include "TextureManager.h"
 #include "TreeSynchronizer.h"
@@ -63,6 +64,8 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
+using namespace std;
+
 namespace WebCore {
 
 // FIXME: Make this limit adjustable and give it a useful value.
@@ -78,7 +81,9 @@ static size_t textureMemoryLowLimitBytes = 3 * 1024 * 1024;
 bool LayerRendererChromium::s_inPaintLayerContents = false;
 #endif
 
-static IntRect calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const TransformationMatrix& transform)
+namespace {
+
+IntRect calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const TransformationMatrix& transform)
 {
     // Is this layer fully contained within the target surface?
     IntRect layerInSurfaceSpace = transform.mapRect(layerBoundRect);
@@ -102,7 +107,7 @@ static IntRect calculateVisibleRect(const IntRect& targetSurfaceRect, const IntR
 }
 
 // Returns true if the matrix has no rotation, skew or perspective components to it.
-static bool isScaleOrTranslation(const TransformationMatrix& m)
+bool isScaleOrTranslation(const TransformationMatrix& m)
 {
     return !m.m12() && !m.m13() && !m.m14()
            && !m.m21() && !m.m23() && !m.m24()
@@ -111,10 +116,23 @@ static bool isScaleOrTranslation(const TransformationMatrix& m)
 
 }
 
+void sortLayers(Vector<RefPtr<LayerChromium> >::iterator, Vector<RefPtr<LayerChromium> >::iterator, void*)
+{
+    // Currently we don't use z-order to decide what to paint, so there's no need to actually sort LayerChromiums.
+}
+
+void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLayerImpl> >::iterator end, CCLayerSorter* layerSorter)
+{
+    TRACE_EVENT("LayerRendererChromium::sortLayers", 0, 0);
+    layerSorter->sort(first, end);
+}
+
 // Recursively walks the layer tree starting at the given node and computes all the
 // necessary transformations, scissor rectangles, render surfaces, etc.
-void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layerList)
+template<typename LayerType, typename RenderSurfaceType, typename LayerSorter>
+void calculateDrawTransformsAndVisibility(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
 {
+    typedef Vector<RefPtr<LayerType> > LayerList;
     // Compute the new matrix transformation that will be applied to this layer and
     // all its children. It's important to remember that the layer's position
     // is the position of the layer's anchor point. Also, the coordinate system used
@@ -172,11 +190,11 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
     bool useSurfaceForOpacity = layer->opacity() != 1 && !layer->preserves3D();
     bool useSurfaceForMasking = layer->maskLayer();
     bool useSurfaceForReflection = layer->replicaLayer();
-    bool useSurfaceForFlatDescendants = layer->parent() && layer->parent()->preserves3D() && !layer->preserves3D() && layer->descendantsDrawsContent();
-    if (useSurfaceForMasking || useSurfaceForReflection || useSurfaceForFlatDescendants || ((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantsDrawsContent())) {
-        RenderSurfaceChromium* renderSurface = layer->renderSurface();
-        if (!renderSurface)
-            renderSurface = layer->createRenderSurface();
+    bool useSurfaceForFlatDescendants = layer->parent() && layer->parent()->preserves3D() && !layer->preserves3D() && layer->descendantDrawsContent();
+    if (useSurfaceForMasking || useSurfaceForReflection || useSurfaceForFlatDescendants || ((useSurfaceForClipping || useSurfaceForOpacity) && layer->descendantDrawsContent())) {
+        if (!layer->renderSurface())
+            layer->createRenderSurface();
+        RenderSurfaceType* renderSurface = layer->renderSurface();
 
         // The origin of the new surface is the upper left corner of the layer.
         TransformationMatrix drawTransform;
@@ -232,7 +250,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
             layer->setTargetRenderSurface(layer->parent()->targetRenderSurface());
         }
 
-        if (layer != m_rootCCLayerImpl.get())
+        if (layer != rootLayer)
             layer->clearRenderSurface();
 
         if (layer->masksToBounds()) {
@@ -288,11 +306,11 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
     unsigned thisLayerIndex = descendants.size() - 1;
 
     for (size_t i = 0; i < layer->children().size(); ++i) {
-        CCLayerImpl* child = layer->children()[i].get();
-        updatePropertiesAndRenderSurfaces(child, sublayerMatrix, renderSurfaceLayerList, descendants);
+        LayerType* child = layer->children()[i].get();
+        calculateDrawTransformsAndVisibility<LayerType, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, renderSurfaceLayerList, descendants, layerSorter, maxTextureSize);
 
         if (child->renderSurface()) {
-            RenderSurfaceChromium* childRenderSurface = child->renderSurface();
+            RenderSurfaceType* childRenderSurface = child->renderSurface();
             IntRect drawableContentRect = layer->drawableContentRect();
             drawableContentRect.unite(enclosingIntRect(childRenderSurface->drawableContentRect()));
             layer->setDrawableContentRect(drawableContentRect);
@@ -310,10 +328,10 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
         layer->setDrawableContentRect(drawableContentRect);
     }
 
-    if (layer->renderSurface() && layer != m_rootCCLayerImpl.get()) {
-        RenderSurfaceChromium* renderSurface = layer->renderSurface();
-        IntRect renderSurfaceContentRect = layer->drawableContentRect();
-        FloatPoint surfaceCenter = FloatRect(renderSurfaceContentRect).center();
+    if (layer->renderSurface() && layer != rootLayer) {
+        RenderSurfaceType* renderSurface = layer->renderSurface();
+        IntRect clippedContentRect = layer->drawableContentRect();
+        FloatPoint surfaceCenter = FloatRect(clippedContentRect).center();
 
         // Restrict the RenderSurface size to the portion that's visible.
         FloatSize centerOffsetDueToClipping;
@@ -321,22 +339,23 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
         // Don't clip if the layer is reflected as the reflection shouldn't be
         // clipped.
         if (!layer->replicaLayer()) {
-            if (!renderSurface->scissorRect().isEmpty() && !renderSurfaceContentRect.isEmpty()) {
-                IntRect surfaceScissorRect = calculateVisibleRect(renderSurface->scissorRect(), renderSurfaceContentRect, renderSurface->originTransform());
-                renderSurfaceContentRect.intersect(surfaceScissorRect);
+            if (!renderSurface->scissorRect().isEmpty() && !clippedContentRect.isEmpty()) {
+                IntRect surfaceScissorRect = calculateVisibleRect(renderSurface->scissorRect(), clippedContentRect, renderSurface->originTransform());
+                clippedContentRect.intersect(surfaceScissorRect);
             }
-            FloatPoint clippedSurfaceCenter = FloatRect(renderSurfaceContentRect).center();
+            FloatPoint clippedSurfaceCenter = FloatRect(clippedContentRect).center();
             centerOffsetDueToClipping = clippedSurfaceCenter - surfaceCenter;
         }
 
         // The RenderSurface backing texture cannot exceed the maximum supported
         // texture size.
-        renderSurfaceContentRect.setWidth(std::min(renderSurfaceContentRect.width(), m_maxTextureSize));
-        renderSurfaceContentRect.setHeight(std::min(renderSurfaceContentRect.height(), m_maxTextureSize));
+        clippedContentRect.setWidth(min(clippedContentRect.width(), maxTextureSize));
+        clippedContentRect.setHeight(min(clippedContentRect.height(), maxTextureSize));
 
-        if (renderSurfaceContentRect.isEmpty())
+        if (clippedContentRect.isEmpty())
             renderSurface->clearLayerList();
-        renderSurface->setContentRect(renderSurfaceContentRect);
+
+        renderSurface->setContentRect(clippedContentRect);
 
         // Since the layer starts a new render surface we need to adjust its
         // scissor rect to be expressed in the new surface's coordinate system.
@@ -362,7 +381,9 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
     // drawn from back to front. If the preserves-3d property is also set on the parent then
     // skip the sorting as the parent will sort all the descendants anyway.
     if (layer->preserves3D() && (!layer->parent() || !layer->parent()->preserves3D()))
-        m_layerSorter.sort(&descendants.at(thisLayerIndex), descendants.end());
+        sortLayers(&descendants.at(thisLayerIndex), descendants.end(), layerSorter);
+}
+
 }
 
 static TransformationMatrix orthoMatrix(float left, float right, float bottom, float top)
@@ -549,19 +570,12 @@ void LayerRendererChromium::updateLayers()
     if (!m_rootLayer)
         return;
 
-    {
-        TRACE_EVENT("LayerRendererChromium::synchronizeTrees", this, 0);
-        m_rootCCLayerImpl = TreeSynchronizer::synchronizeTrees(m_rootLayer.get(), m_rootCCLayerImpl.get());
-    }
-
-    m_computedRenderSurfaceLayerList = adoptPtr(new LayerList());
-    updateLayers(*m_computedRenderSurfaceLayerList);
+    updateLayers(m_rootLayer.get());
 }
 
 void LayerRendererChromium::drawLayers()
 {
     ASSERT(m_hardwareCompositing);
-    ASSERT(m_computedRenderSurfaceLayerList);
     // Before drawLayers:
     if (hardwareCompositing()) {
         // FIXME: The multithreaded compositor case will not work as long as
@@ -575,8 +589,14 @@ void LayerRendererChromium::drawLayers()
         }
     }
 
+    {
+        TRACE_EVENT("LayerRendererChromium::synchronizeTrees", this, 0);
+        m_rootCCLayerImpl = TreeSynchronizer::synchronizeTrees(m_rootLayer.get(), m_rootCCLayerImpl.get());
+    }
+
+
     m_renderSurfaceTextureManager->setMemoryLimitBytes(textureMemoryHighLimitBytes - m_contentsTextureManager->currentMemoryUseBytes());
-    drawLayers(*m_computedRenderSurfaceLayerList);
+    drawLayersInternal();
 
     m_contentsTextureManager->unprotectAllTextures();
     m_contentsTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes);
@@ -590,33 +610,31 @@ void LayerRendererChromium::drawLayers()
         copyOffscreenTextureToDisplay();
 }
 
-void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
+void LayerRendererChromium::updateLayers(LayerChromium* rootLayer)
 {
     TRACE_EVENT("LayerRendererChromium::updateLayers", this, 0);
-    CCLayerImpl* rootDrawLayer = m_rootLayer->ccLayerImpl();
 
-    if (!rootDrawLayer->renderSurface())
-        rootDrawLayer->createRenderSurface();
-    ASSERT(rootDrawLayer->renderSurface());
-
-    rootDrawLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), m_viewportVisibleRect.size()));
+    if (!rootLayer->renderSurface())
+        rootLayer->createRenderSurface();
+    rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), m_viewportVisibleRect.size()));
 
     IntRect rootScissorRect(m_viewportVisibleRect);
     // The scissorRect should not include the scroll offset.
     rootScissorRect.move(-m_viewportScrollPosition.x(), -m_viewportScrollPosition.y());
-    rootDrawLayer->setScissorRect(rootScissorRect);
+    rootLayer->setScissorRect(rootScissorRect);
 
-    m_defaultRenderSurface = rootDrawLayer->renderSurface();
+    LayerList renderSurfaceLayerList;
+    renderSurfaceLayerList.append(rootLayer);
 
-    renderSurfaceLayerList.append(rootDrawLayer);
+    RenderSurfaceChromium* rootRenderSurface = rootLayer->renderSurface();
+    rootRenderSurface->clearLayerList();
 
     TransformationMatrix identityMatrix;
-    m_defaultRenderSurface->clearLayerList();
-    // Unfortunately, updatePropertiesAndRenderSurfaces() currently both updates the layers and updates the draw state
-    // (transforms, etc). It'd be nicer if operations on the presentation layers happened later, but the draw
-    // transforms are needed by large layers to determine visibility. Tiling will fix this by eliminating the
-    // concept of a large content layer.
-    updatePropertiesAndRenderSurfaces(rootDrawLayer, identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->layerList());
+
+    {
+        TRACE_EVENT("LayerRendererChromium::updateLayers::calcDrawEtc", this, 0);
+        calculateDrawTransformsAndVisibility<LayerChromium, RenderSurfaceChromium, void*>(rootLayer, rootLayer, identityMatrix, renderSurfaceLayerList, rootRenderSurface->layerList(), 0, m_maxTextureSize);
+    }
 
 #ifndef NDEBUG
     s_inPaintLayerContents = true;
@@ -661,7 +679,7 @@ static void paintContentsIfDirty(LayerChromium* layer, const IntRect& visibleLay
 void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLayerList)
 {
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
 
@@ -678,17 +696,15 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
         if (!renderSurface->drawOpacity())
             continue;
 
-        LayerList& layerList = renderSurface->layerList();
+        const LayerList& layerList = renderSurface->layerList();
         ASSERT(layerList.size());
         for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
-            CCLayerImpl* ccLayerImpl = layerList[layerIndex].get();
+            LayerChromium* layer = layerList[layerIndex].get();
 
             // Layers that start a new render surface will be painted when the render
             // surface's list is processed.
-            if (ccLayerImpl->renderSurface() && ccLayerImpl->renderSurface() != renderSurface)
+            if (layer->renderSurface() && layer->renderSurface() != renderSurface)
                 continue;
-
-            LayerChromium* layer = ccLayerImpl->owner();
 
             layer->setLayerRenderer(this);
 
@@ -706,10 +722,10 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
             if (layer->bounds().isEmpty())
                 continue;
 
-            IntRect targetSurfaceRect = ccLayerImpl->targetRenderSurface() ? ccLayerImpl->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
-            if (layer->ccLayerImpl()->usesLayerScissor())
-                targetSurfaceRect.intersect(layer->ccLayerImpl()->scissorRect());
-            IntRect visibleLayerRect = calculateVisibleLayerRect(targetSurfaceRect, layer->bounds(), layer->contentBounds(), ccLayerImpl->drawTransform());
+            IntRect targetSurfaceRect = layer->targetRenderSurface() ? layer->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
+            if (layer->usesLayerScissor())
+                targetSurfaceRect.intersect(layer->scissorRect());
+            IntRect visibleLayerRect = calculateVisibleLayerRect(targetSurfaceRect, layer->bounds(), layer->contentBounds(), layer->drawTransform());
 
             paintContentsIfDirty(layer, visibleLayerRect);
 
@@ -728,14 +744,35 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
     }
 }
 
-void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
+void LayerRendererChromium::drawLayersInternal()
 {
     if (m_viewportVisibleRect.isEmpty() || !m_rootLayer)
         return;
 
     TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
-    CCLayerImpl* rootDrawLayer = m_rootLayer->ccLayerImpl();
+    CCLayerImpl* rootDrawLayer = m_rootCCLayerImpl.get();
     makeContextCurrent();
+
+    if (!rootDrawLayer->renderSurface())
+        rootDrawLayer->createRenderSurface();
+    rootDrawLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), m_viewportVisibleRect.size()));
+
+    IntRect rootScissorRect(m_viewportVisibleRect);
+    // The scissorRect should not include the scroll offset.
+    rootScissorRect.move(-m_viewportScrollPosition.x(), -m_viewportScrollPosition.y());
+    rootDrawLayer->setScissorRect(rootScissorRect);
+
+    CCLayerList renderSurfaceLayerList;
+    renderSurfaceLayerList.append(rootDrawLayer);
+
+    TransformationMatrix identityMatrix;
+    m_defaultRenderSurface = rootDrawLayer->renderSurface();
+    m_defaultRenderSurface->clearLayerList();
+
+    {
+        TRACE_EVENT("LayerRendererChromium::drawLayersInternal::calcDrawEtc", this, 0);
+        calculateDrawTransformsAndVisibility<CCLayerImpl, CCRenderSurface, CCLayerSorter>(rootDrawLayer, rootDrawLayer, identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->layerList(), &m_layerSorter, m_maxTextureSize);
+    }
 
     // The GL viewport covers the entire visible area, including the scrollbars.
     GLC(m_context.get(), m_context->viewport(0, 0, m_viewportVisibleRect.width(), m_viewportVisibleRect.height()));
@@ -774,7 +811,7 @@ void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
     // correct order.
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
         CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
-        RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
+        CCRenderSurface* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
 
         renderSurface->setSkipsDraw(true);
@@ -798,7 +835,7 @@ void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
                 GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
             }
 
-            LayerList& layerList = renderSurface->layerList();
+            const CCLayerList& layerList = renderSurface->layerList();
             for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex)
                 drawLayer(layerList[layerIndex].get(), renderSurface);
         }
@@ -918,7 +955,7 @@ bool LayerRendererChromium::isLayerVisible(LayerChromium* layer, const Transform
 void LayerRendererChromium::updateCompositorResources(const LayerList& renderSurfaceLayerList)
 {
     for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
-        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        LayerChromium* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
 
@@ -928,19 +965,17 @@ void LayerRendererChromium::updateCompositorResources(const LayerList& renderSur
         const LayerList& layerList = renderSurface->layerList();
         ASSERT(layerList.size());
         for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
-            CCLayerImpl* ccLayerImpl = layerList[layerIndex].get();
-            if (ccLayerImpl->renderSurface() && ccLayerImpl->renderSurface() != renderSurface)
+            LayerChromium* layer = layerList[layerIndex].get();
+            if (layer->renderSurface() && layer->renderSurface() != renderSurface)
                 continue;
 
-            updateCompositorResources(ccLayerImpl);
+            updateCompositorResources(layer);
         }
     }
 }
 
-void LayerRendererChromium::updateCompositorResources(CCLayerImpl* ccLayerImpl)
+void LayerRendererChromium::updateCompositorResources(LayerChromium* layer)
 {
-    LayerChromium* layer = ccLayerImpl->owner();
-
     if (layer->bounds().isEmpty())
         return;
 
@@ -948,14 +983,12 @@ void LayerRendererChromium::updateCompositorResources(CCLayerImpl* ccLayerImpl)
         return;
 
     if (layer->maskLayer())
-        updateCompositorResources(ccLayerImpl->maskLayer());
+        updateCompositorResources(layer->maskLayer());
     if (layer->replicaLayer())
-        updateCompositorResources(ccLayerImpl->replicaLayer());
+        updateCompositorResources(layer->replicaLayer());
 
     if (layer->drawsContent())
         layer->updateCompositorResources();
-
-    layer->pushPropertiesTo(ccLayerImpl);
 }
 
 void LayerRendererChromium::setCompositeOffscreen(bool compositeOffscreen)
@@ -965,13 +998,13 @@ void LayerRendererChromium::setCompositeOffscreen(bool compositeOffscreen)
 
     m_compositeOffscreen = compositeOffscreen;
 
-    if (!m_compositeOffscreen && m_rootLayer)
-        m_rootLayer->ccLayerImpl()->clearRenderSurface();
+    if (!m_compositeOffscreen && m_rootCCLayerImpl)
+        m_rootCCLayerImpl->clearRenderSurface();
 }
 
 LayerTexture* LayerRendererChromium::getOffscreenLayerTexture()
 {
-    return m_compositeOffscreen ? m_rootLayer->ccLayerImpl()->renderSurface()->contentsTexture() : 0;
+    return m_compositeOffscreen && m_rootCCLayerImpl ? m_rootCCLayerImpl->renderSurface()->contentsTexture() : 0;
 }
 
 void LayerRendererChromium::copyOffscreenTextureToDisplay()
@@ -988,7 +1021,7 @@ void LayerRendererChromium::copyOffscreenTextureToDisplay()
     }
 }
 
-bool LayerRendererChromium::useRenderSurface(RenderSurfaceChromium* renderSurface)
+bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
 {
     if (m_currentRenderSurface == renderSurface)
         return true;
@@ -1022,7 +1055,7 @@ bool LayerRendererChromium::useRenderSurface(RenderSurfaceChromium* renderSurfac
     return true;
 }
 
-void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium* targetSurface)
+void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targetSurface)
 {
     if (layer->renderSurface() && layer->renderSurface() != targetSurface) {
         layer->renderSurface()->draw(layer->getDrawRect());
@@ -1048,7 +1081,6 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
         setScissorToRect(scissorRect);
     } else
         GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
-
 
     if (!layer->doubleSided()) {
         // FIXME: Need to take into account the cumulative render surface transforms all the way from
@@ -1141,7 +1173,7 @@ bool LayerRendererChromium::initializeSharedObjects()
     // We will always need these programs to render, so create the programs eagerly so that the shader compilation can
     // start while we do other work. Other programs are created lazily on first access.
     m_sharedGeometry = adoptPtr(new GeometryBinding(m_context.get()));
-    m_renderSurfaceProgram = adoptPtr(new RenderSurfaceChromium::Program(m_context.get()));
+    m_renderSurfaceProgram = adoptPtr(new CCRenderSurface::Program(m_context.get()));
     m_tilerProgram = adoptPtr(new LayerTilerChromium::Program(m_context.get()));
 
     GLC(m_context.get(), m_context->flush());
@@ -1173,7 +1205,7 @@ const CCHeadsUpDisplay::Program* LayerRendererChromium::headsUpDisplayProgram()
     return m_headsUpDisplayProgram.get();
 }
 
-const RenderSurfaceChromium::Program* LayerRendererChromium::renderSurfaceProgram()
+const CCRenderSurface::Program* LayerRendererChromium::renderSurfaceProgram()
 {
     ASSERT(m_renderSurfaceProgram);
     if (!m_renderSurfaceProgram->initialized()) {
@@ -1183,10 +1215,10 @@ const RenderSurfaceChromium::Program* LayerRendererChromium::renderSurfaceProgra
     return m_renderSurfaceProgram.get();
 }
 
-const RenderSurfaceChromium::MaskProgram* LayerRendererChromium::renderSurfaceMaskProgram()
+const CCRenderSurface::MaskProgram* LayerRendererChromium::renderSurfaceMaskProgram()
 {
     if (!m_renderSurfaceMaskProgram)
-        m_renderSurfaceMaskProgram = adoptPtr(new RenderSurfaceChromium::MaskProgram(m_context.get()));
+        m_renderSurfaceMaskProgram = adoptPtr(new CCRenderSurface::MaskProgram(m_context.get()));
     if (!m_renderSurfaceMaskProgram->initialized()) {
         TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
         m_renderSurfaceMaskProgram->initialize();
@@ -1339,8 +1371,8 @@ bool LayerRendererChromium::isCompositorContextLost()
 
 void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, LayerChromium* layer) const
 {
-    if (layer->ccLayerImpl()->renderSurface())
-        layer->ccLayerImpl()->renderSurface()->dumpSurface(ts, indent);
+    if (layer->renderSurface())
+        layer->renderSurface()->dumpSurface(ts, indent);
 
     for (size_t i = 0; i < layer->children().size(); ++i)
         dumpRenderSurfaces(ts, indent, layer->children()[i].get());

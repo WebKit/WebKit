@@ -38,9 +38,9 @@ class VideoFrameProvider;
 
 class CCVideoLayerImpl : public CCLayerImpl {
 public:
-    static PassRefPtr<CCVideoLayerImpl> create(LayerChromium* owner, int id)
+    static PassRefPtr<CCVideoLayerImpl> create(int id)
     {
-        return adoptRef(new CCVideoLayerImpl(owner, id));
+        return adoptRef(new CCVideoLayerImpl(id));
     }
     virtual ~CCVideoLayerImpl();
 
@@ -56,7 +56,7 @@ public:
     void setTexture(size_t, VideoLayerChromium::Texture);
 
 private:
-    CCVideoLayerImpl(LayerChromium*, int);
+    explicit CCVideoLayerImpl(int);
 
     void drawYUV(const YUVProgram*) const;
     void drawRGBA(const RGBAProgram*) const;

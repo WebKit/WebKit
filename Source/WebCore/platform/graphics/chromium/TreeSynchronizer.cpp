@@ -74,8 +74,6 @@ PassRefPtr<CCLayerImpl> TreeSynchronizer::synchronizeTreeRecursive(LayerChromium
     else
         ccLayerImpl->setReplicaLayer(0);
 
-    layer->setCCLayerImpl(ccLayerImpl.get());
-
     layer->pushPropertiesTo(ccLayerImpl.get());
     return ccLayerImpl.release();
 }

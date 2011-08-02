@@ -29,15 +29,14 @@
 
 #include "cc/CCCanvasLayerImpl.h"
 
-#include "CanvasLayerChromium.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-CCCanvasLayerImpl::CCCanvasLayerImpl(LayerChromium* owner, int id)
-    : CCLayerImpl(owner, id)
+CCCanvasLayerImpl::CCCanvasLayerImpl(int id)
+    : CCLayerImpl(id)
     , m_textureId(0)
     , m_hasAlpha(true)
     , m_premultipliedAlpha(true)

@@ -31,6 +31,7 @@
 #include "IntRect.h"
 #include "TextStream.h"
 #include "TransformationMatrix.h"
+#include "cc/CCRenderSurface.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -40,13 +41,12 @@ namespace WebCore {
 
 class LayerChromium;
 class LayerRendererChromium;
-class RenderSurfaceChromium;
 
 class CCLayerImpl : public RefCounted<CCLayerImpl> {
 public:
-    static PassRefPtr<CCLayerImpl> create(LayerChromium* owner, int id)
+    static PassRefPtr<CCLayerImpl> create(int id)
     {
-        return adoptRef(new CCLayerImpl(owner, id));
+        return adoptRef(new CCLayerImpl(id));
     }
     virtual ~CCLayerImpl();
 
@@ -70,7 +70,6 @@ public:
 #endif
 
     virtual void draw();
-    virtual void updateCompositorResources();
     void unreserveContentsTexture();
     virtual void bindContentsTexture();
 
@@ -79,7 +78,7 @@ public:
     bool drawsContent() const { return m_drawsContent; }
 
     // Returns true if any of the layer's descendants has content to draw.
-    bool descendantsDrawsContent();
+    bool descendantDrawsContent();
 
     void cleanupResources();
 
@@ -124,9 +123,8 @@ public:
     void setLayerRenderer(LayerRendererChromium*);
     LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
 
-    RenderSurfaceChromium* createRenderSurface();
-
-    RenderSurfaceChromium* renderSurface() const { return m_renderSurface.get(); }
+    CCRenderSurface* renderSurface() const { return m_renderSurface.get(); }
+    void createRenderSurface();
     void clearRenderSurface() { m_renderSurface.clear(); }
 
     float drawOpacity() const { return m_drawOpacity; }
@@ -134,9 +132,8 @@ public:
 
     const IntRect& scissorRect() const { return m_scissorRect; }
     void setScissorRect(const IntRect& rect) { m_scissorRect = rect; }
-
-    RenderSurfaceChromium* targetRenderSurface() const { return m_targetRenderSurface; }
-    void setTargetRenderSurface(RenderSurfaceChromium* surface) { m_targetRenderSurface = surface; }
+    CCRenderSurface* targetRenderSurface() const { return m_targetRenderSurface; }
+    void setTargetRenderSurface(CCRenderSurface* surface) { m_targetRenderSurface = surface; }
 
     const IntSize& bounds() const { return m_bounds; }
     void setBounds(const IntSize& bounds) { m_bounds = bounds; }
@@ -160,15 +157,8 @@ public:
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
-    // HACK TODO fix this
-    LayerChromium* owner() const { return m_owner; }
-    void clearOwner() { m_owner = 0; }
-
 protected:
-    // For now, CCLayerImpls have a back pointer to their LayerChromium.
-    // FIXME: remove this after https://bugs.webkit.org/show_bug.cgi?id=58833 is fixed.
-    LayerChromium* m_owner;
-    CCLayerImpl(LayerChromium*, int);
+    explicit CCLayerImpl(int);
 
     static void writeIndent(TextStream&, int indent);
 
@@ -216,7 +206,7 @@ private:
     // either to this layer (if m_targetRenderSurface == m_renderSurface) or
     // to an ancestor of this layer. The target render surface determines the
     // coordinate system the layer's transforms are relative to.
-    RenderSurfaceChromium* m_targetRenderSurface;
+    CCRenderSurface* m_targetRenderSurface;
 
     // The global depth value of the center of the layer. This value is used
     // to sort layers from back to front.
@@ -236,7 +226,7 @@ private:
 
     // Render surface associated with this layer. The layer and its descendants
     // will render to this surface.
-    OwnPtr<RenderSurfaceChromium> m_renderSurface;
+    OwnPtr<CCRenderSurface> m_renderSurface;
 
     // Hierarchical bounding rect containing the layer and its descendants.
     IntRect m_drawableContentRect;

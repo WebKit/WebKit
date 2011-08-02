@@ -55,7 +55,7 @@ CanvasLayerChromium::~CanvasLayerChromium()
 
 PassRefPtr<CCLayerImpl> CanvasLayerChromium::createCCLayerImpl()
 {
-    return CCCanvasLayerImpl::create(this, m_layerId);
+    return CCCanvasLayerImpl::create(m_layerId);
 }
 
 void CanvasLayerChromium::pushPropertiesTo(CCLayerImpl* layer)

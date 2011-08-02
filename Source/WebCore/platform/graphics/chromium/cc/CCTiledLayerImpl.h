@@ -33,9 +33,9 @@ namespace WebCore {
 
 class CCTiledLayerImpl : public CCLayerImpl {
 public:
-    static PassRefPtr<CCTiledLayerImpl> create(LayerChromium* owner, int id)
+    static PassRefPtr<CCTiledLayerImpl> create(int id)
     {
-        return adoptRef(new CCTiledLayerImpl(owner, id));
+        return adoptRef(new CCTiledLayerImpl(id));
     }
     virtual ~CCTiledLayerImpl();
 
@@ -48,7 +48,7 @@ public:
     void setTiler(LayerTilerChromium* tiler) { m_tiler = tiler; }
 
 private:
-    CCTiledLayerImpl(LayerChromium*, int id);
+    explicit CCTiledLayerImpl(int id);
 
     TransformationMatrix m_tilingTransform;
     LayerTilerChromium* m_tiler;

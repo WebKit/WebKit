@@ -69,7 +69,7 @@ VideoLayerChromium::~VideoLayerChromium()
 
 PassRefPtr<CCLayerImpl> VideoLayerChromium::createCCLayerImpl()
 {
-    return CCVideoLayerImpl::create(this, m_layerId);
+    return CCVideoLayerImpl::create(m_layerId);
 }
 
 void VideoLayerChromium::deleteTexturesInUse()

@@ -59,8 +59,8 @@ const float CCVideoLayerImpl::yuvAdjust[3] = {
     -0.5f,
 };
 
-CCVideoLayerImpl::CCVideoLayerImpl(LayerChromium* owner, int id)
-    : CCLayerImpl(owner, id)
+CCVideoLayerImpl::CCVideoLayerImpl(int id)
+    : CCLayerImpl(id)
 {
 }
 

@@ -61,9 +61,9 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_contentsDirty(false)
     , m_layerId(s_nextLayerId++)
     , m_parent(0)
-    , m_ccLayerImpl(0)
     , m_anchorPoint(0.5, 0.5)
     , m_backgroundColor(0, 0, 0, 0)
+    , m_debugBorderWidth(0)
     , m_opacity(1.0)
     , m_zPosition(0.0)
     , m_anchorPointZ(0)
@@ -74,7 +74,10 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_geometryFlipped(false)
     , m_needsDisplayOnBoundsChange(false)
     , m_doubleSided(true)
+    , m_usesLayerScissor(false)
     , m_replicaLayer(0)
+    , m_drawOpacity(0)
+    , m_targetRenderSurface(0)
 {
     ASSERT(!LayerRendererChromium::s_inPaintLayerContents);
 }
@@ -85,9 +88,6 @@ LayerChromium::~LayerChromium()
     // Our parent should be holding a reference to us so there should be no
     // way for us to be destroyed while we still have a parent.
     ASSERT(!parent());
-
-    if (m_ccLayerImpl)
-        m_ccLayerImpl->clearOwner();
 
     // Remove the parent reference from all children.
     removeAllChildren();
@@ -381,12 +381,7 @@ void LayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
 
 PassRefPtr<CCLayerImpl> LayerChromium::createCCLayerImpl()
 {
-    return CCLayerImpl::create(this, m_layerId);
-}
-
-CCLayerImpl* LayerChromium::ccLayerImpl() const
-{
-    return m_ccLayerImpl;
+    return CCLayerImpl::create(m_layerId);
 }
 
 void LayerChromium::setBorderColor(const Color& color)
@@ -404,6 +399,21 @@ void LayerChromium::setBorderWidth(float width)
 LayerRendererChromium* LayerChromium::layerRenderer() const
 {
     return m_layerRenderer.get();
+}
+
+void LayerChromium::createRenderSurface()
+{
+    ASSERT(!m_renderSurface);
+    m_renderSurface = adoptPtr(new RenderSurfaceChromium(this));
+}
+
+bool LayerChromium::descendantDrawsContent()
+{
+    for (size_t i = 0; i < m_children.size(); ++i) {
+        if (m_children[i]->drawsContent() || m_children[i]->descendantDrawsContent())
+            return true;
+    }
+    return false;
 }
 
 }

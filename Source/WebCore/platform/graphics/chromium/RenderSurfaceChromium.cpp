@@ -29,17 +29,14 @@
 
 #include "RenderSurfaceChromium.h"
 
-#include "cc/CCLayerImpl.h"
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
-#include "LayerTexture.h"
-#include "TextStream.h"
 #include <wtf/text/CString.h>
 
 namespace WebCore {
 
-RenderSurfaceChromium::RenderSurfaceChromium(CCLayerImpl* owningLayer)
+RenderSurfaceChromium::RenderSurfaceChromium(LayerChromium* owningLayer)
     : m_owningLayer(owningLayer)
     , m_maskLayer(0)
     , m_skipsDraw(false)
@@ -49,17 +46,6 @@ RenderSurfaceChromium::RenderSurfaceChromium(CCLayerImpl* owningLayer)
 
 RenderSurfaceChromium::~RenderSurfaceChromium()
 {
-    cleanupResources();
-}
-
-void RenderSurfaceChromium::cleanupResources()
-{
-    if (!m_contentsTexture)
-        return;
-
-    ASSERT(layerRenderer());
-
-    m_contentsTexture.clear();
 }
 
 LayerRendererChromium* RenderSurfaceChromium::layerRenderer()
@@ -77,105 +63,6 @@ FloatRect RenderSurfaceChromium::drawableContentRect() const
         drawableContentRect.unite(m_replicaDrawTransform.mapRect(localContentRect));
 
     return drawableContentRect;
-}
-
-bool RenderSurfaceChromium::prepareContentsTexture()
-{
-    IntSize requiredSize(m_contentRect.size());
-    TextureManager* textureManager = layerRenderer()->renderSurfaceTextureManager();
-
-    if (!m_contentsTexture)
-        m_contentsTexture = LayerTexture::create(layerRenderer()->context(), textureManager);
-
-    if (m_contentsTexture->isReserved())
-        return true;
-
-    if (!m_contentsTexture->reserve(requiredSize, GraphicsContext3D::RGBA)) {
-        m_skipsDraw = true;
-        return false;
-    }
-
-    m_skipsDraw = false;
-    return true;
-}
-
-void RenderSurfaceChromium::releaseContentsTexture()
-{
-    if (m_skipsDraw || !m_contentsTexture)
-        return;
-    m_contentsTexture->unreserve();
-}
-
-void RenderSurfaceChromium::drawSurface(CCLayerImpl* maskLayer, const TransformationMatrix& drawTransform)
-{
-    GraphicsContext3D* context3D = layerRenderer()->context();
-
-    int shaderMatrixLocation = -1;
-    int shaderAlphaLocation = -1;
-    const RenderSurfaceChromium::Program* program = layerRenderer()->renderSurfaceProgram();
-    const RenderSurfaceChromium::MaskProgram* maskProgram = layerRenderer()->renderSurfaceMaskProgram();
-    ASSERT(program && program->initialized());
-    bool useMask = false;
-    if (maskLayer && maskLayer->drawsContent()) {
-        if (!maskLayer->bounds().isEmpty()) {
-            context3D->makeContextCurrent();
-            GLC(context3D, context3D->useProgram(maskProgram->program()));
-            GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
-            GLC(context3D, context3D->uniform1i(maskProgram->fragmentShader().samplerLocation(), 0));
-            m_contentsTexture->bindTexture();
-            GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE1));
-            GLC(context3D, context3D->uniform1i(maskProgram->fragmentShader().maskSamplerLocation(), 1));
-            maskLayer->bindContentsTexture();
-            GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
-            shaderMatrixLocation = maskProgram->vertexShader().matrixLocation();
-            shaderAlphaLocation = maskProgram->fragmentShader().alphaLocation();
-            useMask = true;
-        }
-    }
-
-    if (!useMask) {
-        GLC(context3D, context3D->useProgram(program->program()));
-        m_contentsTexture->bindTexture();
-        GLC(context3D, context3D->uniform1i(program->fragmentShader().samplerLocation(), 0));
-        shaderMatrixLocation = program->vertexShader().matrixLocation();
-        shaderAlphaLocation = program->fragmentShader().alphaLocation();
-    }
-    
-    LayerChromium::drawTexturedQuad(layerRenderer()->context(), layerRenderer()->projectionMatrix(), drawTransform,
-                                        m_contentRect.width(), m_contentRect.height(), m_drawOpacity,
-                                        shaderMatrixLocation, shaderAlphaLocation);
-}
-
-void RenderSurfaceChromium::draw(const IntRect&)
-{
-    if (m_skipsDraw || !m_contentsTexture)
-        return;
-    // FIXME: By using the same RenderSurface for both the content and its reflection,
-    // it's currently not possible to apply a separate mask to the reflection layer
-    // or correctly handle opacity in reflections (opacity must be applied after drawing
-    // both the layer and its reflection). The solution is to introduce yet another RenderSurface
-    // to draw the layer and its reflection in. For now we only apply a separate reflection
-    // mask if the contents don't have a mask of their own.
-    CCLayerImpl* replicaMaskLayer = m_maskLayer;
-    if (!m_maskLayer && m_owningLayer->replicaLayer())
-        replicaMaskLayer = m_owningLayer->replicaLayer()->maskLayer();
-
-    if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerScissor())
-        layerRenderer()->setScissorToRect(m_scissorRect);
-    else
-        GLC(layerRenderer()->context(), layerRenderer()->context()->disable(GraphicsContext3D::SCISSOR_TEST));
-
-
-    // Reflection draws before the layer.
-    if (m_owningLayer->replicaLayer())
-        drawSurface(replicaMaskLayer, m_replicaDrawTransform);
-
-    drawSurface(m_maskLayer, m_drawTransform);
-}
-
-void RenderSurfaceChromium::clearLayerList()
-{
-    m_layerList.clear();
 }
 
 String RenderSurfaceChromium::name() const

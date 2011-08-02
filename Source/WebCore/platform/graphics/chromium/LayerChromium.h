@@ -104,7 +104,6 @@ public:
     const String& name() const { return m_name; }
 
     void setMaskLayer(LayerChromium* maskLayer) { m_maskLayer = maskLayer; }
-    CCLayerImpl* maskDrawLayer() const { return m_maskLayer ? m_maskLayer->ccLayerImpl() : 0; }
     LayerChromium* maskLayer() const { return m_maskLayer.get(); }
 
     void setNeedsDisplay(const FloatRect& dirtyRect);
@@ -145,6 +144,9 @@ public:
 
     bool preserves3D() { return m_owner && m_owner->preserves3D(); }
 
+    void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
+    bool usesLayerScissor() const { return m_usesLayerScissor; }
+
     // Derived types must override this method if they need to react to a change
     // in the LayerRendererChromium.
     virtual void setLayerRenderer(LayerRendererChromium*);
@@ -170,9 +172,6 @@ public:
 
     void setBorderWidth(float);
 
-    // Everything from here down in the public section will move to CCLayerImpl.
-    CCLayerImpl* ccLayerImpl() const;
-
     static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
                                  float width, float height, float opacity,
                                  int matrixLocation, int alphaLocation);
@@ -186,6 +185,24 @@ public:
     typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> BorderProgram;
 
     int id() const { return m_layerId; }
+
+    void clearRenderSurface() { m_renderSurface.clear(); }
+    RenderSurfaceChromium* renderSurface() const { return m_renderSurface.get(); }
+    void createRenderSurface();
+
+    float drawOpacity() const { return m_drawOpacity; }
+    void setDrawOpacity(float opacity) { m_drawOpacity = opacity; }
+    const IntRect& scissorRect() const { return m_scissorRect; }
+    void setScissorRect(const IntRect& rect) { m_scissorRect = rect; }
+    RenderSurfaceChromium* targetRenderSurface() const { return m_targetRenderSurface; }
+    void setTargetRenderSurface(RenderSurfaceChromium* surface) { m_targetRenderSurface = surface; }
+    const TransformationMatrix& drawTransform() const { return m_drawTransform; }
+    void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
+    const IntRect& drawableContentRect() const { return m_drawableContentRect; }
+    void setDrawableContentRect(const IntRect& rect) { m_drawableContentRect = rect; }
+
+    // Returns true if any of the layer's descendants has content to draw.
+    bool descendantDrawsContent();
 
 protected:
     GraphicsLayerChromium* m_owner;
@@ -210,18 +227,10 @@ protected:
 
     RefPtr<LayerChromium> m_maskLayer;
 
-    // All layer shaders share the same attribute locations for the vertex positions
-    // and texture coordinates. This allows switching shaders without rebinding attribute
-    // arrays.
-    static const unsigned s_positionAttribLocation;
-    static const unsigned s_texCoordAttribLocation;
-
     friend class TreeSynchronizer;
     friend class CCLayerImpl;
     // Constructs a CCLayerImpl of the correct runtime type for this LayerChromium type.
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
-    // FIXME: Remove when https://bugs.webkit.org/show_bug.cgi?id=58830 is fixed.
-    void setCCLayerImpl(CCLayerImpl* impl) { m_ccLayerImpl = impl; }
     int m_layerId;
 
 private:
@@ -245,10 +254,6 @@ private:
 
     RefPtr<LayerRendererChromium> m_layerRenderer;
 
-    // Temporary forward weak pointer to the CCLayerImpl associated with this layer.
-    // FIXME: Remove when https://bugs.webkit.org/show_bug.cgi?id=58830 is fixed.
-    CCLayerImpl* m_ccLayerImpl;
-
     // Layer properties.
     IntSize m_bounds;
     IntRect m_visibleLayerRect;
@@ -267,6 +272,7 @@ private:
     bool m_geometryFlipped;
     bool m_needsDisplayOnBoundsChange;
     bool m_doubleSided;
+    bool m_usesLayerScissor;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;
@@ -275,6 +281,14 @@ private:
 
     // Replica layer used for reflections.
     RefPtr<LayerChromium> m_replicaLayer;
+
+    // Transient properties.
+    OwnPtr<RenderSurfaceChromium> m_renderSurface;
+    float m_drawOpacity;
+    IntRect m_scissorRect;
+    RenderSurfaceChromium* m_targetRenderSurface;
+    TransformationMatrix m_drawTransform;
+    IntRect m_drawableContentRect;
 
     String m_name;
 };

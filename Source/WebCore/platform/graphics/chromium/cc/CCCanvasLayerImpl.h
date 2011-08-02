@@ -34,9 +34,9 @@ namespace WebCore {
 
 class CCCanvasLayerImpl : public CCLayerImpl {
 public:
-    static PassRefPtr<CCCanvasLayerImpl> create(LayerChromium* owner, int id)
+    static PassRefPtr<CCCanvasLayerImpl> create(int id)
     {
-        return adoptRef(new CCCanvasLayerImpl(owner, id));
+        return adoptRef(new CCCanvasLayerImpl(id));
     }
     virtual ~CCCanvasLayerImpl();
 
@@ -50,7 +50,7 @@ public:
     void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
     void setPremultipliedAlpha(bool premultipliedAlpha) { m_premultipliedAlpha = premultipliedAlpha; }
 private:
-    CCCanvasLayerImpl(LayerChromium*, int);
+    explicit CCCanvasLayerImpl(int);
 
     unsigned m_textureId;
     bool m_hasAlpha;

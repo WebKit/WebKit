@@ -3559,6 +3559,8 @@
             'platform/graphics/chromium/cc/CCMainThreadTask.h',
             'platform/graphics/chromium/cc/CCPluginLayerImpl.cpp',
             'platform/graphics/chromium/cc/CCPluginLayerImpl.h',
+            'platform/graphics/chromium/cc/CCRenderSurface.cpp',
+            'platform/graphics/chromium/cc/CCRenderSurface.h',
             'platform/graphics/chromium/cc/CCThread.cpp',
             'platform/graphics/chromium/cc/CCThread.h',
             'platform/graphics/chromium/cc/CCThreadTask.h',

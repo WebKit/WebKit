@@ -1,3 +1,150 @@
+2011-08-02  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Decouple layer visibility calculations from render surfaces / computed draw transforms
+        https://bugs.webkit.org/show_bug.cgi?id=58840
+
+        Reviewed by Kenneth Russell.
+
+        This decouples the layer visibility related calculations from the LayerChromium and CCLayerImpl trees.  This is
+        done by making LayerRendererChromium's "calculate the world" function (renamed
+        calculateDrawTransformsAndVisibility()) a templated, free function that can operate on either LayerChromium +
+        RenderSurfaceChromium pairs or on CCLayerImpl + CCRenderSurface pairs and invoking it twice, once before
+        painting and once before drawing.  Before painting, these calculations are used to determine which layers are
+        potentially visible and should be painted, which depends on the calculated opacity, render surface bounds, and
+        draw transforms.  Before drawing, these calculations are used to figure out everything needed to draw.
+
+        RenderSurfaceChromium is now used just for visibility calculations when painting.  CCRenderSurfaceChromium is
+        responsible for actually drawing the render surfaces.
+
+        This does mean that in the current implementation the second calculations are redundant, but in the future this
+        won't be the case since the pre-draw time calculations might be influenced by animations or gestures.  I've
+        added some traces to try to monitor if this math is a significant amount of the per-frame computation.  Note
+        that layer sorting only happens on the CCLayerImpl tree and the layer sort algorithm is the most expensive part
+        of the calculations currently.
+
+        This removes all of the weak back/forward pointers between LayerChromium and CCLayerImpls, the trees are now
+        truly decoupled.
+
+        Covered by compositing/ tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::~LayerChromium):
+        (WebCore::LayerChromium::createCCLayerImpl):
+        (WebCore::LayerChromium::createRenderSurface):
+        (WebCore::LayerChromium::descendantsDrawsContent):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::setUsesLayerScissor):
+        (WebCore::LayerChromium::usesLayerScissor):
+        (WebCore::LayerChromium::clearRenderSurface):
+        (WebCore::LayerChromium::renderSurface):
+        (WebCore::LayerChromium::drawOpacity):
+        (WebCore::LayerChromium::setDrawOpacity):
+        (WebCore::LayerChromium::scissorRect):
+        (WebCore::LayerChromium::setScissorRect):
+        (WebCore::LayerChromium::targetRenderSurface):
+        (WebCore::LayerChromium::setTargetRenderSurface):
+        (WebCore::LayerChromium::drawTransform):
+        (WebCore::LayerChromium::setDrawTransform):
+        (WebCore::LayerChromium::drawableContentRect):
+        (WebCore::LayerChromium::setDrawableContentRect):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        (WebCore::LayerRendererChromium::updateCompositorResources):
+        (WebCore::LayerRendererChromium::setCompositeOffscreen):
+        (WebCore::LayerRendererChromium::getOffscreenLayerTexture):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::renderSurfaceProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceMaskProgram):
+        (WebCore::LayerRendererChromium::dumpRenderSurfaces):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::RenderSurfaceChromium):
+        (WebCore::RenderSurfaceChromium::~RenderSurfaceChromium):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        (WebCore::RenderSurfaceChromium::clearLayerList):
+        (WebCore::RenderSurfaceChromium::layerList):
+        (WebCore::RenderSurfaceChromium::setMaskLayer):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::createCCLayerImpl):
+        (WebCore::TiledLayerChromium::tilingTransform):
+        * platform/graphics/chromium/TreeSynchronizer.cpp:
+        (WebCore::TreeSynchronizer::synchronizeTreeRecursive):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::CCCanvasLayerImpl):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        (WebCore::CCCanvasLayerImpl::create):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::~CCLayerImpl):
+        (WebCore::CCLayerImpl::createRenderSurface):
+        (WebCore::CCLayerImpl::bindContentsTexture):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::create):
+        (WebCore::CCLayerImpl::renderSurface):
+        (WebCore::CCLayerImpl::targetRenderSurface):
+        (WebCore::CCLayerImpl::setTargetRenderSurface):
+        * platform/graphics/chromium/cc/CCLayerSorter.cpp:
+        (WebCore::CCLayerSorter::createGraphNodes):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::CCPluginLayerImpl):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        (WebCore::CCPluginLayerImpl::create):
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp: Copied from Source/WebCore/platform/graphics/chromium/RenderSurfaceChromium.cpp.
+        (WebCore::CCRenderSurface::CCRenderSurface):
+        (WebCore::CCRenderSurface::~CCRenderSurface):
+        (WebCore::CCRenderSurface::cleanupResources):
+        (WebCore::CCRenderSurface::layerRenderer):
+        (WebCore::CCRenderSurface::drawableContentRect):
+        (WebCore::CCRenderSurface::prepareContentsTexture):
+        (WebCore::CCRenderSurface::releaseContentsTexture):
+        (WebCore::CCRenderSurface::drawSurface):
+        (WebCore::CCRenderSurface::draw):
+        (WebCore::CCRenderSurface::name):
+        (WebCore::writeIndent):
+        (WebCore::CCRenderSurface::dumpSurface):
+        (WebCore::CCRenderSurface::owningLayerId):
+        * platform/graphics/chromium/cc/CCRenderSurface.h: Copied from Source/WebCore/platform/graphics/chromium/RenderSurfaceChromium.h.
+        (WebCore::CCRenderSurface::contentRectCenter):
+        (WebCore::CCRenderSurface::drawOpacity):
+        (WebCore::CCRenderSurface::setDrawOpacity):
+        (WebCore::CCRenderSurface::setDrawTransform):
+        (WebCore::CCRenderSurface::drawTransform):
+        (WebCore::CCRenderSurface::setReplicaDrawTransform):
+        (WebCore::CCRenderSurface::replicaDrawTransform):
+        (WebCore::CCRenderSurface::setOriginTransform):
+        (WebCore::CCRenderSurface::originTransform):
+        (WebCore::CCRenderSurface::setScissorRect):
+        (WebCore::CCRenderSurface::scissorRect):
+        (WebCore::CCRenderSurface::setContentRect):
+        (WebCore::CCRenderSurface::contentRect):
+        (WebCore::CCRenderSurface::setSkipsDraw):
+        (WebCore::CCRenderSurface::skipsDraw):
+        (WebCore::CCRenderSurface::clearLayerList):
+        (WebCore::CCRenderSurface::layerList):
+        (WebCore::CCRenderSurface::setMaskLayer):
+        (WebCore::CCRenderSurface::contentsTexture):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::CCTiledLayerImpl):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (WebCore::CCTiledLayerImpl::create):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::CCVideoLayerImpl):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (WebCore::CCVideoLayerImpl::create):
+
 2011-08-02  Luke Macpherson   <macpherson@chromium.org>
 
         Implement CSSPropertyWebkitTextCombine, CSSPropertyWebkitTextEmphasisPosition and CSSPropertyWebkitTextEmphasisStyle in CSSStyleApplyProperty.

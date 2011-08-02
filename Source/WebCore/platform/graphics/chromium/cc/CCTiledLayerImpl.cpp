@@ -29,16 +29,14 @@
 
 #include "cc/CCTiledLayerImpl.h"
 
-#include "ContentLayerChromium.h"
-
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class LayerTexture;
 
-CCTiledLayerImpl::CCTiledLayerImpl(LayerChromium* owner, int id)
-    : CCLayerImpl(owner, id)
+CCTiledLayerImpl::CCTiledLayerImpl(int id)
+    : CCLayerImpl(id)
     , m_tiler(0)
 {
 }
