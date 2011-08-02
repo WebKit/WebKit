@@ -183,6 +183,7 @@ CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
 CFHTTPCookieStorageRef (*wkCopyHTTPCookieStorage)(CFURLStorageSessionRef);
 unsigned (*wkGetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef);
+void (*wkSetHTTPCookieAcceptPolicy)(CFHTTPCookieStorageRef, unsigned);
 NSArray *(*wkHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSURL *);
 void (*wkSetHTTPCookiesForURL)(CFHTTPCookieStorageRef, NSArray *, NSURL *, NSURL *);
 void (*wkDeleteHTTPCookie)(CFHTTPCookieStorageRef, NSHTTPCookie *);
