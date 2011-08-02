@@ -1549,6 +1549,8 @@ bool WebViewImpl::selectionRange(WebPoint& start, WebPoint& end) const
     if (!frame)
         return false;
     RefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
+    if (!selectedRange)
+        return false;
     RefPtr<Range> range(Range::create(selectedRange->startContainer()->document(),
                                       selectedRange->startContainer(),
                                       selectedRange->startOffset(),
