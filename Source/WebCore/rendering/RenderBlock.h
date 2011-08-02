@@ -66,6 +66,7 @@ typedef unsigned TextRunFlags;
 
 class RenderBlock : public RenderBox {
 public:
+    friend class LineLayoutState;
     RenderBlock(Node*);
     virtual ~RenderBlock();
 
@@ -554,9 +555,9 @@ private:
     };
 
     void checkFloatsInCleanLine(RootInlineBox*, Vector<FloatWithRect>&, size_t& floatIndex, bool& encounteredNewFloat, bool& dirtiedByFloat);
-    RootInlineBox* determineStartPosition(LineLayoutState&, LineInfo&, InlineBidiResolver&, Vector<FloatWithRect>&, unsigned& numCleanFloats);
-    RootInlineBox* determineEndPosition(RootInlineBox* startBox, Vector<FloatWithRect>&, size_t floatIndex, InlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus, int& yPos);
-    bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus, RootInlineBox*& endLine, int& endYPos);
+    RootInlineBox* determineStartPosition(LineLayoutState&, InlineBidiResolver&);
+    void determineEndPosition(LineLayoutState&, RootInlineBox* startBox, InlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus);
+    bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus);
 
     RootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
     InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox);
@@ -767,7 +768,10 @@ private:
 
     // Helper function for layoutInlineChildren()
     RootInlineBox* createLineBoxesFromBidiRuns(BidiRunList<BidiRun>&, const InlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun);
-    void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild, Vector<FloatWithRect>&);
+    void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild);
+    void layoutRunsAndFloatsInRange(LineLayoutState&, InlineBidiResolver&, const InlineIterator& cleanLineStart, const BidiStatus& cleanLineBidiStatus);
+    void linkToEndLineIfNeeded(LineLayoutState&);
+    static void repaintDirtyFloats(Vector<FloatWithRect>& floats);
 
     // Pagination routines.
     

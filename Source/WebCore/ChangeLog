@@ -1,3 +1,41 @@
+2011-08-02  Alexandru Chiculita  <achicu@adobe.com>
+
+        Split RenderBlock::layoutRunsAndFloats into multiple methods
+        https://bugs.webkit.org/show_bug.cgi?id=65376
+
+        Extracted layoutRunsAndFloatsInRange, linkToEndLineIfNeeded and repaintDirtyFloats methods and moved
+        most of the locals to LineLayoutState.
+
+        Reviewed by David Hyatt.
+
+        No new tests needed because it is just refactoring existing code.
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineLayoutState::LineLayoutState):
+        (WebCore::LineLayoutState::endLineMatched):
+        (WebCore::LineLayoutState::setEndLineMatched):
+        (WebCore::LineLayoutState::checkForFloatsFromLastLine):
+        (WebCore::LineLayoutState::setCheckForFloatsFromLastLine):
+        (WebCore::LineLayoutState::lineInfo):
+        (WebCore::LineLayoutState::endLineLogicalTop):
+        (WebCore::LineLayoutState::setEndLineLogicalTop):
+        (WebCore::LineLayoutState::endLine):
+        (WebCore::LineLayoutState::setEndLine):
+        (WebCore::LineLayoutState::lastFloat):
+        (WebCore::LineLayoutState::setLastFloat):
+        (WebCore::LineLayoutState::floats):
+        (WebCore::LineLayoutState::floatIndex):
+        (WebCore::LineLayoutState::setFloatIndex):
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::repaintDirtyFloats):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::determineEndPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+
 2011-08-02  Nat Duca  <nduca@chromium.org>
 
         [chromium] Remove resizeOnscreenContent from LRC. It can be derived.
