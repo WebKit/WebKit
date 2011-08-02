@@ -1,3 +1,9 @@
+2011-08-02  Anders Carlsson  <andersca@apple.com>
+
+        Fix a Windows build error.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+
 2011-08-02  Filip Pizlo  <fpizlo@apple.com>
 
         JSC GC is far too conservative about growing the heap size, particularly
