@@ -654,6 +654,9 @@ BUGWK62309 WIN LINUX DEBUG : inspector/styles/parse-utf8-bom.html = PASS TIMEOUT
 BUGWK62309 WIN : inspector/styles/styles-source-lines.html = PASS TEXT
 
 BUGPFELDMAN : inspector/debugger/debugger-activation-crash2.html = PASS TEXT TIMEOUT
+
+BUGWK65558 WIN LINUX : http/tests/inspector/network/disabled-cache-crash.html = PASS TEXT MISSING
+
 // -----------------------------------------------------------------
 // Other
 // -----------------------------------------------------------------

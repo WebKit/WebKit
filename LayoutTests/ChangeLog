@@ -1,3 +1,9 @@
+2011-08-02  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, test expectations update, gardener stuff.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-02  Jochen Eisinger  <jochen@chromium.org>
 
         Add a test for FrameLoaderClient::allowPlugins
