@@ -1,0 +1,54 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    WebInspector.showPanel("elements");
+    InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
+
+    var treeElement;
+
+    function step1()
+    {
+        // Click add new rule
+        document.getElementById("add-style-button-test-id").click();
+        InspectorTest.selectNodeAndWaitForStyles("other", step2);
+    }
+
+    function step2() {
+        // Click add new rule
+        document.getElementById("add-style-button-test-id").click();
+        InspectorTest.selectNodeAndWaitForStyles("inspected", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("After adding new rule (inspected):");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.selectNodeAndWaitForStyles("other", step4);
+    }
+
+    function step4()
+    {
+        InspectorTest.addResult("After adding new rule (other):");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that adding a new rule works after sitching nodes.
+</p>
+
+<div id="inspected" style="font-size: 12px">Text</div>
+<div id="other" style="color:red"></div>
+
+</body>
+</html>

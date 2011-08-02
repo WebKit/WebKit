@@ -1,3 +1,16 @@
+2011-08-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: button + "New style rule"
+        https://bugs.webkit.org/show_bug.cgi?id=65409
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/styles/styles-add-new-rule.html
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.BlankStylePropertiesSection.prototype.editingSelectorCommitted):
+
 2011-08-01  Luke Macpherson   <macpherson@chromium.org>
 
         Don't set m_fontDirty when setting zoom unless zoom has actually changed

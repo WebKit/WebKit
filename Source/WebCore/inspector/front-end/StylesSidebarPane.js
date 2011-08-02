@@ -71,6 +71,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
 
     var addButton = document.createElement("button");
     addButton.className = "pane-title-button add";
+    addButton.id = "add-style-button-test-id";
     addButton.title = WebInspector.UIString("New Style Rule");
     addButton.addEventListener("click", this._createNewRule.bind(this), false);
     this.titleElement.appendChild(addButton);
@@ -1285,24 +1286,23 @@ WebInspector.BlankStylePropertiesSection.prototype = {
 
     editingSelectorCommitted: function(element, newContent, oldContent, context)
     {
-        var self = this;
         function successCallback(newRule, doesSelectorAffectSelectedNode)
         {
-            var styleRule = { section: self, style: newRule.style, selectorText: newRule.selectorText, sourceURL: newRule.sourceURL, rule: newRule };
-            self.makeNormal(styleRule);
+            var styleRule = { section: this, style: newRule.style, selectorText: newRule.selectorText, sourceURL: newRule.sourceURL, rule: newRule };
+            this.makeNormal(styleRule);
 
             if (!doesSelectorAffectSelectedNode) {
-                self.noAffect = true;
-                self.element.addStyleClass("no-affect");
+                this.noAffect = true;
+                this.element.addStyleClass("no-affect");
             }
 
-            self.subtitleElement.textContent = WebInspector.UIString("via inspector");
-            self.expand();
-
-            self.addNewBlankProperty().startEditing();
+            this.subtitleElement.textContent = WebInspector.UIString("via inspector");
+            this.expand();
+            if (this.element.parentElement)  // Might have been detached already.
+                this.addNewBlankProperty().startEditing();
         }
 
-        WebInspector.cssModel.addRule(this.pane.node.id, newContent, successCallback, this.editingSelectorCancelled.bind(this));
+        WebInspector.cssModel.addRule(this.pane.node.id, newContent, successCallback.bind(this), this.editingSelectorCancelled.bind(this));
     },
 
     editingSelectorCancelled: function()

@@ -1,3 +1,13 @@
+2011-08-01  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: button + "New style rule"
+        https://bugs.webkit.org/show_bug.cgi?id=65409
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/styles/styles-add-new-rule-expected.txt: Added.
+        * inspector/styles/styles-add-new-rule.html: Added.
+
 2011-08-01  Anders Carlsson  <andersca@apple.com>
 
         Update Lion specific test results.
