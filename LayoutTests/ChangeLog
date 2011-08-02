@@ -1,3 +1,10 @@
+2011-08-02  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Web Inspector: REGRESSION(r92105): It made 2 tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=65525
+
+        * platform/qt/Skipped: Unskip tests, because r92185 fixed the bug.
+
 2011-08-02  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: img[width=90] or align attributes shouldnt be shown above element.style block (as they have lower specificity)
