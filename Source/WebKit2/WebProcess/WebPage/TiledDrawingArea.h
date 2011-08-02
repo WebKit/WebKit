@@ -31,7 +31,7 @@
 #include "DrawingArea.h"
 #include "RunLoop.h"
 #include <WebCore/IntRect.h>
-#include <wtf/Vector.h>
+#include <wtf/Deque.h>
 
 namespace WebKit {
 
@@ -83,8 +83,8 @@ private:
         WebCore::IntRect dirtyRect;
         float scale;
     };
-    typedef HashMap<int, TileUpdate> UpdateMap;
-    UpdateMap m_pendingUpdates;
+    typedef Deque<OwnPtr<TileUpdate> > UpdateList;
+    UpdateList m_pendingUpdates;
     RunLoop::Timer<TiledDrawingArea> m_tileUpdateTimer;
 };
 

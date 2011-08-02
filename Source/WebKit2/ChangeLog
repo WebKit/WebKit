@@ -1,3 +1,22 @@
+2011-07-12  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        TiledDrawingArea: Handle update requests in the order they were received.
+        https://bugs.webkit.org/show_bug.cgi?id=64365
+
+        Reviewed by Andreas Kling.
+
+        TiledDrawingAreaProxy::createTiles() uses the distance of tiles to the
+        center of the viewport to decide which tile should be rendered first.
+        This logic is useless if the requests are not handled in the same order
+        as they were received.
+        Now use a list instead of a map to hold pending tile update requests.
+
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::tileUpdateTimerFired):
+        (WebKit::TiledDrawingArea::cancelTileUpdate):
+        (WebKit::TiledDrawingArea::requestTileUpdate):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+
 2011-08-02  Amruth Raj  <amruthraj@motorola.com>
 
         Custom cursors cause the WebProcess to crash

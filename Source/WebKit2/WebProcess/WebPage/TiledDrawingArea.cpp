@@ -165,11 +165,10 @@ void TiledDrawingArea::tileUpdateTimerFired()
 {
     ASSERT(!m_pendingUpdates.isEmpty());
 
-    UpdateMap::iterator it = m_pendingUpdates.begin();
-    TileUpdate update = it->second;
-    m_pendingUpdates.remove(it);
+    OwnPtr<TileUpdate> update = m_pendingUpdates.first().release();
+    m_pendingUpdates.removeFirst();
 
-    updateTile(update.tileID, update.dirtyRect, update.scale);
+    updateTile(update->tileID, update->dirtyRect, update->scale);
 
     if (m_pendingUpdates.isEmpty())
         m_webPage->send(Messages::DrawingAreaProxy::AllTileUpdatesProcessed());
@@ -179,10 +178,13 @@ void TiledDrawingArea::tileUpdateTimerFired()
 
 void TiledDrawingArea::cancelTileUpdate(int tileID)
 {
-    UpdateMap::iterator it = m_pendingUpdates.find(tileID);
-    if (it == m_pendingUpdates.end())
-        return;
-    m_pendingUpdates.remove(it);
+    UpdateList::iterator end = m_pendingUpdates.end();
+    for (UpdateList::iterator it = m_pendingUpdates.begin(); it != end; ++it) {
+        if ((*it)->tileID == tileID) {
+            m_pendingUpdates.remove(it);
+            break;
+        }
+    }
     if (m_pendingUpdates.isEmpty()) {
         m_webPage->send(Messages::DrawingAreaProxy::AllTileUpdatesProcessed());
         m_tileUpdateTimer.stop();
@@ -191,17 +193,20 @@ void TiledDrawingArea::cancelTileUpdate(int tileID)
 
 void TiledDrawingArea::requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect, float scale)
 {
-    UpdateMap::iterator it = m_pendingUpdates.find(tileID);
-    if (it != m_pendingUpdates.end())
-        it->second.dirtyRect.unite(dirtyRect);
-    else {
-        TileUpdate update;
-        update.tileID = tileID;
-        update.dirtyRect = dirtyRect;
-        update.scale = scale;
-        m_pendingUpdates.add(tileID, update);
-        scheduleTileUpdate();
+    UpdateList::iterator end = m_pendingUpdates.end();
+    for (UpdateList::iterator it = m_pendingUpdates.begin(); it != end; ++it) {
+        if ((*it)->tileID == tileID) {
+            (*it)->dirtyRect.unite(dirtyRect);
+            return;
+        }
     }
+
+    OwnPtr<TileUpdate> update(adoptPtr(new TileUpdate));
+    update->tileID = tileID;
+    update->dirtyRect = dirtyRect;
+    update->scale = scale;
+    m_pendingUpdates.append(update.release());
+    scheduleTileUpdate();
 }
 
 } // namespace WebKit
