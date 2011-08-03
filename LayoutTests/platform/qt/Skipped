@@ -2238,3 +2238,12 @@ http/tests/inspector/network/network-request-revision-content.html
 # [Qt]Web Inspector: http/tests/inspector/network/network-sidebar-width.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=65526
 http/tests/inspector/network/network-sidebar-width.html
+
+# [Qt]REGRESSION(r92254): It made 2 tests timeout
+# https://bugs.webkit.org/show_bug.cgi?id=65609
+fast/frames/lots-of-objects.html
+fast/frames/lots-of-iframes.html
+
+# [Qt]REGRESSION(r92224): It made editing/text-iterator/basic-iteration.html timeout
+# https://bugs.webkit.org/show_bug.cgi?id=65605
+editing/text-iterator/basic-iteration.html
