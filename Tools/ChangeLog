@@ -1,3 +1,13 @@
+2011-08-03  David Levin  <levin@chromium.org>
+
+        Rename WEBKIT_API to WEBKIT_EXPORT in check-webkit-style.
+        https://bugs.webkit.org/show_bug.cgi?id=65652
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/style/checkers/cpp.py:
+        * Scripts/webkitpy/style/checkers/cpp_unittest.py:
+
 2011-08-03  Filip Pizlo  <fpizlo@apple.com>
 
         Adding Filip Pizlo to committer list.
