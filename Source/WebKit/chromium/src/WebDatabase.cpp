@@ -113,17 +113,6 @@ void WebDatabase::resetSpaceAvailable(const WebString& originIdentifier)
 #endif
 }
 
-// FIXME: This is deprecated, delete after rolling DEPs and chrome is using the new methods.
-void WebDatabase::updateDatabaseSize(
-    const WebString& originIdentifier, const WebString& databaseName,
-    long long databaseSize, long long spaceAvailable)
-{
-#if ENABLE(DATABASE)
-    updateDatabaseSize(originIdentifier, databaseName, databaseSize);
-    updateSpaceAvailable(originIdentifier, spaceAvailable);
-#endif
-}
-
 void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, const WebString& databaseName)
 {
 #if ENABLE(DATABASE)

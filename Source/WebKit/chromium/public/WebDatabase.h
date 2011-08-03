@@ -61,11 +61,6 @@ public:
     WEBKIT_API static void closeDatabaseImmediately(
         const WebString& originIdentifier, const WebString& databaseName);
 
-    // DEPRECATED - to be removed soon
-    WEBKIT_API static void updateDatabaseSize(
-        const WebString& originIdentifier, const WebString& databaseName,
-        long long databaseSize, long long spaceAvailable);
-
 #if WEBKIT_IMPLEMENTATION
     WebDatabase(const WebCore::AbstractDatabase*);
 #endif
