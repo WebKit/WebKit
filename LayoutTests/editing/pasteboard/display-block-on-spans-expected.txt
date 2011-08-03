@@ -29,8 +29,11 @@ after:
 | <span>
 |   style="display:block"
 |   <b>
-|     "This<#selection-caret>"
-|   <b>
+|     <span>
+|       class="Apple-style-span"
+|       style="font-weight: normal; "
+|       <b>
+|         "This<#selection-caret>"
 |     " is another paragraph."
 |   <br>
 | "

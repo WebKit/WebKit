@@ -7,4 +7,4 @@ bar
 foo
 bar
 execCutCommand: <div id="test" class="editing"> <pre><br></pre> </div>
-execPasteCommand: <div id="test" class="editing"> <pre><span class="Apple-style-span" style="font-family: Times; white-space: normal; "><pre>foo bar</pre></span></pre> </div>
+execPasteCommand: <div id="test" class="editing"> <pre>foo bar</pre> </div>

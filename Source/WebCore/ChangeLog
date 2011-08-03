@@ -1,3 +1,26 @@
+2011-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        select-all, copy, paste of specialAncestorElements (e.g. pre, h1, etc) nests the element inside itself
+        https://bugs.webkit.org/show_bug.cgi?id=26483
+
+        Reviewed by Enrica Casucci.
+
+        The bug was caused by WebKit serializing pre, h1, etc... to retain structure and appearance when copying
+        rich content and pasting did not remove such nodes wrapping the copied contents.
+
+        Fixed the bug by extending r81887 and r83322 to remove those elements from where WebKit pastes into.
+
+        Test: editing/pasteboard/copy-paste-text-in-h1.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::nodeHasAttributesToPreserve): Extracted from isInlineNodeWithStyle.
+        (WebCore::isInlineNodeWithStyle): Calls nodeHasAttributesToPreserve.
+        (WebCore::ReplaceSelectionCommand::doApply): Calls ancestorToRetainStructureAndAppearance.
+        Remove nodes copied by ancestorToRetainStructureAndAppearance at insertionPos before pasting the fragment.
+        * editing/markup.cpp:
+        (WebCore::ancestorToRetainStructureAndAppearance): Takes ShouldIncludeParagraphSeparators.
+        * editing/markup.h:
+
 2011-08-03  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from Console.idl

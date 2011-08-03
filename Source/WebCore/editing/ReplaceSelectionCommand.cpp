@@ -760,6 +760,12 @@ static Node* enclosingInline(Node* node)
     return node;
 }
 
+static bool nodeHasAttributesToPreserve(const HTMLElement* element)
+{
+    const NamedNodeMap* attributeMap = element->attributeMap();
+    return attributeMap && !attributeMap->isEmpty() && (attributeMap->length() > 1 || !element->hasAttribute(styleAttr));
+}
+
 static bool isInlineNodeWithStyle(const Node* node)
 {
     // We don't want to skip over any block elements.
@@ -781,11 +787,7 @@ static bool isInlineNodeWithStyle(const Node* node)
 
     // We can skip inline elements that don't have attributes or whose only
     // attribute is the style attribute.
-    const NamedNodeMap* attributeMap = element->attributeMap();
-    if (!attributeMap || attributeMap->isEmpty() || (attributeMap->length() == 1 && element->hasAttribute(styleAttr)))
-        return true;
-
-    return false;
+    return !nodeHasAttributesToPreserve(static_cast<const HTMLElement*>(node));
 }
     
 void ReplaceSelectionCommand::doApply()
@@ -937,16 +939,21 @@ void ReplaceSelectionCommand::doApply()
     // We can skip this optimization for fragments not wrapped in one of
     // our style spans and for positions inside list items
     // since insertAsListItems already does the right thing.
-    if (!m_matchStyle && !enclosingList(insertionPos.containerNode()) && isStyleSpan(fragment.firstChild())) {
+    if (!m_matchStyle && !enclosingList(insertionPos.containerNode()) && isStyleSpan(fragment.firstChild())
+        && VisiblePosition(firstPositionInNode(insertionPos.containerNode())) == VisiblePosition(lastPositionInNode(insertionPos.containerNode()))) {
         if (insertionPos.containerNode()->isTextNode() && insertionPos.offsetInContainerNode() && !insertionPos.atLastEditingPositionForNode()) {
             splitTextNodeContainingElement(insertionPos.containerText(), insertionPos.offsetInContainerNode());
             insertionPos = firstPositionInNode(insertionPos.containerNode());
         }
 
-        // FIXME: isInlineNodeWithStyle does not check editability.
-        if (RefPtr<Node> nodeToSplitTo = highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle)) {
-            if (insertionPos.containerNode() != nodeToSplitTo) {
-                nodeToSplitTo = splitTreeToNode(insertionPos.anchorNode(), nodeToSplitTo.get(), true).get();
+        RefPtr<Node> nodeToSplitTo = highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle);
+        if (HTMLElement* ancestor = ancestorToRetainStructureAndAppearance(nodeToSplitTo ? nodeToSplitTo.get() : insertionPos.containerNode(), IncludeParagraphSeparators)) {
+            if (ancestor->parentNode() && unsplittableElementForPosition(insertionPos)->contains(ancestor->parentNode()) && !nodeHasAttributesToPreserve(ancestor))
+                nodeToSplitTo = ancestor;
+        }
+        if (nodeToSplitTo) {
+            if (insertionPos.containerNode() != nodeToSplitTo->parentNode()) {
+                nodeToSplitTo = splitTreeToNode(insertionPos.anchorNode(), nodeToSplitTo->parentNode()).get();
                 insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
             }
         }
