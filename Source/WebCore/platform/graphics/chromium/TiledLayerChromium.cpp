@@ -38,7 +38,7 @@
 #include <wtf/CurrentTime.h>
 
 // Start tiling when the width and height of a layer are larger than this size.
-static int maxUntiledSize = 510;
+static int maxUntiledSize = 512;
 
 // When tiling is enabled, use tiles of this dimension squared.
 static int defaultTileSize = 256;
@@ -50,7 +50,6 @@ namespace WebCore {
 TiledLayerChromium::TiledLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
     , m_tilingOption(AutoTile)
-    , m_borderTexels(true)
 {
 }
 
@@ -80,7 +79,7 @@ void TiledLayerChromium::updateTileSizeAndTilingOption()
     if (!m_tiler)
         return;
 
-    const IntSize tileSize(defaultTileSize, defaultTileSize);
+    const IntSize tileSize(min(defaultTileSize, contentBounds().width()), min(defaultTileSize, contentBounds().height()));
 
     // Tile if both dimensions large, or any one dimension large and the other
     // extends into a second tile. This heuristic allows for long skinny layers
@@ -97,8 +96,7 @@ void TiledLayerChromium::updateTileSizeAndTilingOption()
     else
         isTiled = autoTiled;
 
-    // Empty tile size tells the tiler to avoid tiling.
-    IntSize requestedSize = isTiled ? tileSize : IntSize();
+    IntSize requestedSize = isTiled ? tileSize : contentBounds();
     const int maxSize = layerRenderer()->maxTextureSize();
     IntSize clampedSize = requestedSize.shrunkTo(IntSize(maxSize, maxSize));
     m_tiler->setTileSize(clampedSize);
@@ -128,7 +126,7 @@ void TiledLayerChromium::createTilerIfNeeded()
     m_tiler = LayerTilerChromium::create(
         layerRenderer(),
         IntSize(defaultTileSize, defaultTileSize),
-        m_borderTexels ? LayerTilerChromium::HasBorderTexels : LayerTilerChromium::NoBorderTexels);
+        LayerTilerChromium::HasBorderTexels);
 }
 
 void TiledLayerChromium::updateCompositorResources()
@@ -144,7 +142,6 @@ void TiledLayerChromium::setTilingOption(TilingOption tilingOption)
 
 void TiledLayerChromium::setIsMask(bool isMask)
 {
-    m_borderTexels = !isMask;
     setTilingOption(isMask ? NeverTile : AutoTile);
 }
 

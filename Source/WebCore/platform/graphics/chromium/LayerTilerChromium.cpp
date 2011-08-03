@@ -84,6 +84,7 @@ void LayerTilerChromium::setTileSize(const IntSize& size)
     reset();
 
     m_tileSize = size;
+    m_tilingData.setMaxTextureSize(max(size.width(), size.height()));
 }
 
 LayerTexture* LayerTilerChromium::getSingleTexture()
@@ -189,22 +190,15 @@ IntRect LayerTilerChromium::tileContentRect(const Tile* tile) const
 IntRect LayerTilerChromium::tileLayerRect(const Tile* tile) const
 {
     const int index = m_tilingData.tileIndex(tile->i(), tile->j());
-    return m_tilingData.tileBoundsWithBorder(index);
-}
-
-IntRect LayerTilerChromium::tileTexRect(const Tile* tile) const
-{
-    const int index = m_tilingData.tileIndex(tile->i(), tile->j());
-    return m_tilingData.tileBoundsWithOuterBorder(index);
+    IntRect layerRect = m_tilingData.tileBoundsWithBorder(index);
+    layerRect.setSize(m_tileSize);
+    return layerRect;
 }
 
 void LayerTilerChromium::invalidateRect(const IntRect& contentRect)
 {
     if (contentRect.isEmpty() || m_skipsDraw)
         return;
-
-    IntSize oldLayerSize(m_tilingData.totalSizeX(), m_tilingData.totalSizeY());
-    const IntRect oldLayerRect = IntRect(IntPoint(), oldLayerSize);
 
     growLayerToContain(contentRect);
 
@@ -222,12 +216,6 @@ void LayerTilerChromium::invalidateRect(const IntRect& contentRect)
             IntRect bound = tileLayerRect(tile);
             bound.intersect(layerRect);
             tile->m_dirtyLayerRect.unite(bound);
-
-            // Invalidate old layer area to clear any contents left from
-            // previous layer size.
-            IntRect oldBound = tileLayerRect(tile);
-            oldBound.intersect(oldLayerRect);
-            tile->m_dirtyLayerRect.unite(oldBound);
         }
     }
 }
@@ -284,7 +272,6 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextur
     // Create tiles as needed, expanding a dirty rect to contain all
     // the dirty regions currently being drawn.
     IntRect dirtyLayerRect;
-    IntSize tileSize;
     int left, top, right, bottom;
     contentRectToTileIndices(contentRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
@@ -293,19 +280,16 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextur
             if (!tile)
                 tile = createTile(i, j);
 
-            IntSize texSize = tileTexRect(tile).size();
-            if (!tile->texture()->isValid(texSize, m_textureFormat))
+            if (!tile->texture()->isValid(m_tileSize, m_textureFormat))
                 tile->m_dirtyLayerRect = tileLayerRect(tile);
 
-            if (!tile->texture()->reserve(texSize, m_textureFormat)) {
+            if (!tile->texture()->reserve(m_tileSize, m_textureFormat)) {
                 m_skipsDraw = true;
                 reset();
                 return;
             }
 
             dirtyLayerRect.unite(tile->m_dirtyLayerRect);
-
-            tileSize = tileSize.expandedTo(texSize);
         }
     }
 
@@ -318,7 +302,7 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect, LayerTextur
     if (dirtyLayerRect.isEmpty())
         return;
 
-    textureUpdater->prepareToUpdate(m_paintRect, tileSize, m_tilingData.borderTexels());
+    textureUpdater->prepareToUpdate(m_paintRect, m_tileSize, m_tilingData.borderTexels());
 }
 
 void LayerTilerChromium::updateRect(LayerTextureUpdater* textureUpdater)
@@ -343,8 +327,7 @@ void LayerTilerChromium::updateRect(LayerTextureUpdater* textureUpdater)
 
             // Calculate page-space rectangle to copy from.
             IntRect sourceRect = tileContentRect(tile);
-            IntRect texRect = tileTexRect(tile);
-            const IntPoint anchor = texRect.location();
+            const IntPoint anchor = sourceRect.location();
             sourceRect.intersect(layerRectToContentRect(tile->m_dirtyLayerRect));
             // Paint rect not guaranteed to line up on tile boundaries, so
             // make sure that sourceRect doesn't extend outside of it.
@@ -394,12 +377,22 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
     if (m_skipsDraw || !m_tiles.size() || contentRect.isEmpty())
         return;
 
+    // Use anti-aliasing programs when border texels are preset and transform
+    // is not an integer translation.
+    bool useAA = (m_tilingData.borderTexels() && !globalTransform.isIntegerTranslation());
+
     switch (m_sampledTexelFormat) {
     case LayerTextureUpdater::SampledTexelFormatRGBA:
-        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgram());
+        if (useAA)
+            drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgramAA(), layerRenderer()->tilerProgramAA()->fragmentShader().fragmentTexTransformLocation(), layerRenderer()->tilerProgramAA()->fragmentShader().edgeLocation());
+        else
+            drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgram(), -1, -1);
         break;
     case LayerTextureUpdater::SampledTexelFormatBGRA:
-        drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgramSwizzle());
+        if (useAA)
+            drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgramSwizzleAA(), layerRenderer()->tilerProgramSwizzleAA()->fragmentShader().fragmentTexTransformLocation(), layerRenderer()->tilerProgramSwizzleAA()->fragmentShader().edgeLocation());
+        else
+            drawTiles(contentRect, globalTransform, opacity, layerRenderer()->tilerProgramSwizzle(), -1, -1);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -411,17 +404,7 @@ void LayerTilerChromium::growLayerToContain(const IntRect& contentRect)
     // Grow the tile array to contain this content rect.
     IntRect layerRect = contentRectToLayerRect(contentRect);
     IntSize rectSize = IntSize(layerRect.maxX(), layerRect.maxY());
-    IntSize texSize = m_tileSize;
 
-    // Use rect with border texels as max texture size when tile size
-    // has not been specified.
-    if (texSize.isEmpty()) {
-        texSize = rectSize;
-        if (m_tilingData.borderTexels())
-            texSize.expand(2, 2);
-    }
-
-    m_tilingData.setMaxTextureSize(max(texSize.width(), texSize.height()));
     IntSize oldLayerSize(m_tilingData.totalSizeX(), m_tilingData.totalSizeY());
     IntSize newSize = rectSize.expandedTo(oldLayerSize);
     m_tilingData.setTotalSize(newSize.width(), newSize.height());
@@ -457,14 +440,9 @@ static FloatPoint intersect(const Edge& a, const Edge& b)
 }
 
 template <class T>
-void LayerTilerChromium::drawTiles(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity, const T* program)
+void LayerTilerChromium::drawTiles(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation)
 {
-    GraphicsContext3D* context = layerRendererContext();
-    GLC(context, context->useProgram(program->program()));
-    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
-    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-
-    TransformationMatrix matrix(globalTransform);
+    TransformationMatrix matrix(layerRenderer()->windowMatrix() * layerRenderer()->projectionMatrix() * globalTransform);
 
     // We don't care about Z component.
     TransformationMatrix matrixXYW =
@@ -478,44 +456,65 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
         return;
 
     TransformationMatrix inverse = matrixXYW.inverse();
-    IntRect bounds(m_layerPosition, IntSize(m_tilingData.totalSizeX(),
-                                            m_tilingData.totalSizeY()));
 
-    // Include outer border texels in bounds.
-    bounds.inflate(m_tilingData.borderTexels());
+    GraphicsContext3D* context = layerRendererContext();
+    GLC(context, context->useProgram(program->program()));
+    GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
 
-    // Map bounds to device space.
-    FloatQuad boundsQuad = matrix.mapQuad(FloatQuad(bounds));
+    // Map content rectangle to device space.
+    FloatQuad deviceQuad = matrix.mapQuad(FloatQuad(contentRect));
 
     // Counter-clockwise?
-    float sign = isCCW(boundsQuad) ? -1 : 1;
+    float sign = isCCW(deviceQuad) ? -1 : 1;
 
     // Compute outer edges.
-    Edge leftEdge = computeEdge(boundsQuad.p4(), boundsQuad.p1(), sign);
-    Edge rightEdge = computeEdge(boundsQuad.p2(), boundsQuad.p3(), sign);
-    Edge topEdge = computeEdge(boundsQuad.p1(), boundsQuad.p2(), sign);
-    Edge bottomEdge = computeEdge(boundsQuad.p3(), boundsQuad.p4(), sign);
+    Edge leftEdge = computeEdge(deviceQuad.p4(), deviceQuad.p1(), sign);
+    Edge rightEdge = computeEdge(deviceQuad.p2(), deviceQuad.p3(), sign);
+    Edge topEdge = computeEdge(deviceQuad.p1(), deviceQuad.p2(), sign);
+    Edge bottomEdge = computeEdge(deviceQuad.p3(), deviceQuad.p4(), sign);
 
-    // Move outer edges to ensure that all partially covered pixels are
-    // processed.
-    float zDistance = m_tilingData.borderTexels() * 0.5f;
-    leftEdge.move(0, 0, zDistance);
-    rightEdge.move(0, 0, zDistance);
-    topEdge.move(0, 0, zDistance);
-    bottomEdge.move(0, 0, zDistance);
+    if (edgeLocation != -1) {
+        // Move outer edges to ensure that all partially covered pixels are
+        // processed.
+        leftEdge.move(0, 0, 0.5f);
+        rightEdge.move(0, 0, 0.5f);
+        topEdge.move(0, 0, 0.5f);
+        bottomEdge.move(0, 0, 0.5f);
 
-    GC3Dint filter = (m_tilingData.borderTexels() && !matrix.isIntegerTranslation()) ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
+        float edge[12];
+        edge[0] = leftEdge.x();
+        edge[1] = leftEdge.y();
+        edge[2] = leftEdge.z();
+        edge[3] = topEdge.x();
+        edge[4] = topEdge.y();
+        edge[5] = topEdge.z();
+        edge[6] = rightEdge.x();
+        edge[7] = rightEdge.y();
+        edge[8] = rightEdge.z();
+        edge[9] = bottomEdge.x();
+        edge[10] = bottomEdge.y();
+        edge[11] = bottomEdge.z();
+        GLC(context, context->uniform3fv(edgeLocation, edge, 4));
+    }
 
     Edge prevEdgeY = topEdge;
 
     int left, top, right, bottom;
     contentRectToTileIndices(contentRect, left, top, right, bottom);
+    IntRect layerRect = contentRectToLayerRect(contentRect);
     for (int j = top; j <= bottom; ++j) {
         Edge prevEdgeX = leftEdge;
 
         Edge edgeY = bottomEdge;
         if (j < (m_tilingData.numTilesY() - 1)) {
-            IntRect tileRect = m_tilingData.tileBounds(m_tilingData.tileIndex(0, j));
+            IntRect tileRect = unionRect(m_tilingData.tileBounds(m_tilingData.tileIndex(0, j)), m_tilingData.tileBounds(m_tilingData.tileIndex(m_tilingData.numTilesX() - 1, j)));
+            tileRect.intersect(layerRect);
+
+            // Skip empty rows.
+            if (tileRect.isEmpty())
+                continue;
+
             tileRect.move(m_layerPosition.x(), m_layerPosition.y());
 
             FloatPoint p1(tileRect.maxX(), tileRect.maxY());
@@ -537,27 +536,58 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
             ASSERT(tile->texture()->isReserved());
 
             tile->texture()->bindTexture();
-            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
-            GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
 
             // Don't use tileContentRect here, as that contains the full
             // rect with border texels which shouldn't be drawn.
             IntRect tileRect = m_tilingData.tileBounds(m_tilingData.tileIndex(tile->i(), tile->j()));
+            IntRect displayRect = tileRect;
+            tileRect.intersect(layerRect);
+
+            // Keep track of how the top left has moved, so the texture can be
+            // offset the same amount.
+            IntSize displayOffset = tileRect.minXMinYCorner() - displayRect.minXMinYCorner();
+
+            // Skip empty tiles.
+            if (tileRect.isEmpty())
+                continue;
+
             tileRect.move(m_layerPosition.x(), m_layerPosition.y());
 
-            IntPoint texOffset = m_tilingData.textureOffset();
-            IntRect texRect = tileTexRect(tile);
-            float tileWidth = static_cast<float>(texRect.width());
-            float tileHeight = static_cast<float>(texRect.height());
-            float texTranslateX = (texOffset.x() - tileRect.x()) / tileWidth;
-            float texTranslateY = (texOffset.y() - tileRect.y()) / tileHeight;
-            float texScaleX = tileRect.width() / tileWidth;
-            float texScaleY = tileRect.height() / tileHeight;
+            FloatRect clampRect(tileRect);
+            // Clamp texture coordinates to avoid sampling outside the layer
+            // by deflating the tile region half a texel or half a texel
+            // minus epsilon for one pixel layers. The resulting clamp region
+            // is mapped to the unit square by the vertex shader and mapped
+            // back to normalized texture coordinates by the fragment shader
+            // after being clamped to 0-1 range.
+            const float epsilon = 1 / 1024.0f;
+            float clampX = min(0.5, clampRect.width() / 2.0 - epsilon);
+            float clampY = min(0.5, clampRect.height() / 2.0 - epsilon);
+            clampRect.inflateX(-clampX);
+            clampRect.inflateY(-clampY);
+            FloatSize clampOffset = clampRect.minXMinYCorner() - FloatRect(tileRect).minXMinYCorner();
+
+            FloatPoint texOffset = m_tilingData.textureOffset(tile->i(), tile->j()) + clampOffset + FloatSize(displayOffset);
+            float tileWidth = static_cast<float>(m_tileSize.width());
+            float tileHeight = static_cast<float>(m_tileSize.height());
+
+            // Map clamping rectangle to unit square.
+            float vertexTexTranslateX = -clampRect.x() / clampRect.width();
+            float vertexTexTranslateY = -clampRect.y() / clampRect.height();
+            float vertexTexScaleX = tileRect.width() / clampRect.width();
+            float vertexTexScaleY = tileRect.height() / clampRect.height();
+
+            // Map to normalized texture coordinates.
+            float fragmentTexTranslateX = texOffset.x() / tileWidth;
+            float fragmentTexTranslateY = texOffset.y() / tileHeight;
+            float fragmentTexScaleX = clampRect.width() / tileWidth;
+            float fragmentTexScaleY = clampRect.height() / tileHeight;
+
             // OpenGL coordinate system is bottom-up.
             // If tile texture is top-down, we need to flip the texture coordinates.
             if (m_textureOrientation == LayerTextureUpdater::TopDownOrientation) {
-                texTranslateY = 1.0 - texTranslateY;
-                texScaleY *= -1.0;
+                fragmentTexTranslateY = 1.0 - fragmentTexTranslateY;
+                fragmentTexScaleY *= -1.0;
             }
 
             Edge edgeX = rightEdge;
@@ -585,51 +615,48 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
             // Normalize to tileRect.
             quad.scale(1.0f / tileRect.width(), 1.0f / tileRect.height());
 
-            drawTexturedQuad(context, quad, layerRenderer()->projectionMatrix(), matrix, tileRect.width(), tileRect.height(), opacity, texTranslateX, texTranslateY, texScaleX, texScaleY, program);
+            if (fragmentTexTransformLocation == -1) {
+                // Move fragment shader transform to vertex shader. We can do
+                // this while still producing correct results as
+                // fragmentTexTransformLocation should always be non-negative
+                // when tiles are transformed in a way that could result in
+                // sampling outside the layer.
+                vertexTexScaleX *= fragmentTexScaleX;
+                vertexTexScaleY *= fragmentTexScaleY;
+                vertexTexTranslateX *= fragmentTexScaleX;
+                vertexTexTranslateY *= fragmentTexScaleY;
+                vertexTexTranslateX += fragmentTexTranslateX;
+                vertexTexTranslateY += fragmentTexTranslateY;
+            } else
+                GLC(context, context->uniform4f(fragmentTexTransformLocation, fragmentTexTranslateX, fragmentTexTranslateY, fragmentTexScaleX, fragmentTexScaleY));
+
+            GLC(context, context->uniform4f(program->vertexShader().vertexTexTransformLocation(), vertexTexTranslateX, vertexTexTranslateY, vertexTexScaleX, vertexTexScaleY));
+
+            float point[8];
+            point[0] = quad.p1().x();
+            point[1] = quad.p1().y();
+            point[2] = quad.p2().x();
+            point[3] = quad.p2().y();
+            point[4] = quad.p3().x();
+            point[5] = quad.p3().y();
+            point[6] = quad.p4().x();
+            point[7] = quad.p4().y();
+            GLC(context, context->uniform2fv(program->vertexShader().pointLocation(), point, 4));
+
+            LayerChromium::drawTexturedQuad(context, layerRenderer()->projectionMatrix(), globalTransform,
+                                            tileRect.width(), tileRect.height(), opacity,
+                                            program->vertexShader().matrixLocation(),
+                                            program->fragmentShader().alphaLocation());
 
             prevEdgeX = edgeX;
+            // Reverse direction.
+            prevEdgeX.scale(-1, -1, -1);
         }
 
         prevEdgeY = edgeY;
+        // Reverse direction.
+        prevEdgeY.scale(-1, -1, -1);
     }
-}
-
-template <class T>
-void LayerTilerChromium::drawTexturedQuad(GraphicsContext3D* context, const FloatQuad& quad, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
-                                          float width, float height, float opacity,
-                                          float texTranslateX, float texTranslateY,
-                                          float texScaleX, float texScaleY,
-                                          const T* program)
-{
-    static float glMatrix[16];
-
-    TransformationMatrix renderMatrix = drawMatrix;
-
-    // Apply a scaling factor to size the quad from 1x1 to its intended size.
-    renderMatrix.scale3d(width, height, 1);
-
-    // Apply the projection matrix before sending the transform over to the shader.
-    LayerChromium::toGLMatrix(&glMatrix[0], projectionMatrix * renderMatrix);
-
-    GLC(context, context->uniformMatrix4fv(program->vertexShader().matrixLocation(), false, &glMatrix[0], 1));
-
-    GLC(context, context->uniform1f(program->fragmentShader().alphaLocation(), opacity));
-
-    GLC(context, context->uniform4f(program->vertexShader().texTransformLocation(),
-        texTranslateX, texTranslateY, texScaleX, texScaleY));
-
-    float point[8];
-    point[0] = quad.p1().x();
-    point[1] = quad.p1().y();
-    point[2] = quad.p2().x();
-    point[3] = quad.p2().y();
-    point[4] = quad.p3().x();
-    point[5] = quad.p3().y();
-    point[6] = quad.p4().x();
-    point[7] = quad.p4().y();
-    GLC(context, context->uniform2fv(program->vertexShader().pointLocation(), point, 4));
-
-    GLC(context, context->drawElements(GraphicsContext3D::TRIANGLES, 6, GraphicsContext3D::UNSIGNED_SHORT, 0));
 }
 
 } // namespace WebCore

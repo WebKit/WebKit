@@ -121,6 +121,7 @@ public:
     static void debugGLCall(GraphicsContext3D*, const char* command, const char* file, int line);
 
     const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
+    const TransformationMatrix& windowMatrix() const { return m_windowMatrix; }
 
     bool checkTextureSize(const IntSize&);
     int maxTextureSize() const { return m_maxTextureSize; }
@@ -132,6 +133,8 @@ public:
     const CCRenderSurface::MaskProgram* renderSurfaceMaskProgram();
     const LayerTilerChromium::Program* tilerProgram();
     const LayerTilerChromium::ProgramSwizzle* tilerProgramSwizzle();
+    const LayerTilerChromium::ProgramAA* tilerProgramAA();
+    const LayerTilerChromium::ProgramSwizzleAA* tilerProgramSwizzleAA();
     const CCCanvasLayerImpl::Program* canvasLayerProgram();
     const CCPluginLayerImpl::Program* pluginLayerProgram();
     const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
@@ -209,6 +212,7 @@ private:
     IntPoint m_viewportScrollPosition;
 
     TransformationMatrix m_projectionMatrix;
+    TransformationMatrix m_windowMatrix;
 
     RefPtr<LayerChromium> m_rootLayer;
     OwnPtr<LayerTextureUpdater> m_rootLayerTextureUpdater;
@@ -235,6 +239,8 @@ private:
     OwnPtr<CCHeadsUpDisplay::Program> m_headsUpDisplayProgram;
     OwnPtr<LayerTilerChromium::Program> m_tilerProgram;
     OwnPtr<LayerTilerChromium::ProgramSwizzle> m_tilerProgramSwizzle;
+    OwnPtr<LayerTilerChromium::ProgramAA> m_tilerProgramAA;
+    OwnPtr<LayerTilerChromium::ProgramSwizzleAA> m_tilerProgramSwizzleAA;
     OwnPtr<CCCanvasLayerImpl::Program> m_canvasLayerProgram;
     OwnPtr<CCPluginLayerImpl::Program> m_pluginLayerProgram;
     OwnPtr<CCRenderSurface::MaskProgram> m_renderSurfaceMaskProgram;

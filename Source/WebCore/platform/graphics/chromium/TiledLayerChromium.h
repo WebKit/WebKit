@@ -73,7 +73,6 @@ private:
     TransformationMatrix tilingTransform() const;
 
     TilingOption m_tilingOption;
-    bool m_borderTexels;
 };
 
 }

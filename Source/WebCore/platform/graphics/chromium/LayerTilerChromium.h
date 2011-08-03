@@ -75,10 +75,14 @@ public:
     // recycled by the texture manager.
     void protectTileTextures(const IntRect& contentRect);
 
-    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexAlpha> Program;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexAlpha> Program;
     // Shader program that swaps red and blue components of texture.
     // Used when texture format does not match native color format.
-    typedef ProgramBinding<VertexShaderQuad, FragmentShaderRGBATexSwizzleAlpha> ProgramSwizzle;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexSwizzleAlpha> ProgramSwizzle;
+
+    // Shader program that produces anti-aliased layer edges.
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexAlphaAA> ProgramAA;
+    typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexSwizzleAlphaAA> ProgramSwizzleAA;
 
     // If this tiler has exactly one tile, return its texture. Otherwise, null.
     LayerTexture* getSingleTexture();
@@ -110,14 +114,7 @@ private:
 
     // Draw all tiles that intersect with contentRect.
     template <class T>
-    void drawTiles(const IntRect& contentRect, const TransformationMatrix&, float opacity, const T* program);
-
-    template <class T>
-    void drawTexturedQuad(GraphicsContext3D*, const FloatQuad&, const TransformationMatrix& projectionMatrix, const TransformationMatrix& drawMatrix,
-                          float width, float height, float opacity,
-                          float texTranslateX, float texTranslateY,
-                          float texScaleX, float texScaleY,
-                          const T* program);
+    void drawTiles(const IntRect& contentRect, const TransformationMatrix&, float opacity, const T* program, int fragmentTexTransformLocation, int edgeLocation);
 
     // Grow layer size to contain this rectangle.
     void growLayerToContain(const IntRect& contentRect);
@@ -135,7 +132,6 @@ private:
     Tile* tileAt(int, int) const;
     IntRect tileContentRect(const Tile*) const;
     IntRect tileLayerRect(const Tile*) const;
-    IntRect tileTexRect(const Tile*) const;
 
     GC3Denum m_textureFormat;
 

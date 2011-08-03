@@ -405,6 +405,21 @@ static TransformationMatrix orthoMatrix(float left, float right, float bottom, f
     return ortho;
 }
 
+static TransformationMatrix screenMatrix(int x, int y, int width, int height)
+{
+    TransformationMatrix screen;
+
+    // Map to viewport.
+    screen.translate3d(x, y, 0);
+    screen.scale3d(width, height, 0);
+
+    // Map x, y and z to unit square.
+    screen.translate3d(0.5, 0.5, 0.5);
+    screen.scale3d(0.5, 0.5, 0.5);
+
+    return screen;
+}
+
 PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHostClient* client, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing)
 {
     RefPtr<GraphicsContext3D> context = client->createLayerTreeHostContext3D();
@@ -776,6 +791,7 @@ void LayerRendererChromium::drawLayersInternal()
 
     // The GL viewport covers the entire visible area, including the scrollbars.
     GLC(m_context.get(), m_context->viewport(0, 0, m_viewportVisibleRect.width(), m_viewportVisibleRect.height()));
+    m_windowMatrix = screenMatrix(0, 0, m_viewportVisibleRect.width(), m_viewportVisibleRect.height());
 
     // Bind the common vertex attributes used for drawing all the layers.
     m_sharedGeometry->prepareForDraw();
@@ -1155,6 +1171,7 @@ void LayerRendererChromium::setDrawViewportRect(const IntRect& drawRect, bool fl
     else
         m_projectionMatrix = orthoMatrix(drawRect.x(), drawRect.maxX(), drawRect.y(), drawRect.maxY());
     GLC(m_context.get(), m_context->viewport(0, 0, drawRect.width(), drawRect.height()));
+    m_windowMatrix = screenMatrix(0, 0, drawRect.width(), drawRect.height());
 }
 
 
@@ -1245,6 +1262,28 @@ const LayerTilerChromium::ProgramSwizzle* LayerRendererChromium::tilerProgramSwi
         m_tilerProgramSwizzle->initialize();
     }
     return m_tilerProgramSwizzle.get();
+}
+
+const LayerTilerChromium::ProgramAA* LayerRendererChromium::tilerProgramAA()
+{
+    if (!m_tilerProgramAA)
+        m_tilerProgramAA = adoptPtr(new LayerTilerChromium::ProgramAA(m_context.get()));
+    if (!m_tilerProgramAA->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tilerProgramAA::initialize", this, 0);
+        m_tilerProgramAA->initialize();
+    }
+    return m_tilerProgramAA.get();
+}
+
+const LayerTilerChromium::ProgramSwizzleAA* LayerRendererChromium::tilerProgramSwizzleAA()
+{
+    if (!m_tilerProgramSwizzleAA)
+        m_tilerProgramSwizzleAA = adoptPtr(new LayerTilerChromium::ProgramSwizzleAA(m_context.get()));
+    if (!m_tilerProgramSwizzleAA->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzleAA::initialize", this, 0);
+        m_tilerProgramSwizzleAA->initialize();
+    }
+    return m_tilerProgramSwizzleAA.get();
 }
 
 const CCCanvasLayerImpl::Program* LayerRendererChromium::canvasLayerProgram()

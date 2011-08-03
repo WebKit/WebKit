@@ -2704,6 +2704,24 @@ BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html =
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
 BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 
+BUGWK64942 : compositing/color-matching/image-color-matching.html = IMAGE
+BUGWK64942 : compositing/geometry/ancestor-overflow-change.html = IMAGE
+BUGWK64942 : compositing/geometry/fixed-position.html = IMAGE
+BUGWK64942 : compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
+BUGWK64942 : compositing/geometry/layer-due-to-layer-children.html = IMAGE
+BUGWK64942 : compositing/geometry/vertical-scroll-composited.html = IMAGE
+BUGWK64942 : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
+BUGWK64942 : compositing/reflections/nested-reflection-transition.html = IMAGE
+BUGWK64942 : compositing/reflections/transform-inside-reflection.html = IMAGE
+BUGWK64942 : compositing/shadows/shadow-drawing.html = IMAGE
+BUGWK64942 : compositing/transitions/scale-transition-no-start.html = IMAGE
+BUGWK64942 : media/video-transformed.html = IMAGE
+BUGWK64942 : media/video-zoom-controls.html  = IMAGE
+BUGWK64942 : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
+BUGWK64942 : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
+BUGWK64942 : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
+BUGWK64942 : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
+
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
 

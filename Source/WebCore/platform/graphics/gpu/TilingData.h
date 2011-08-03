@@ -61,7 +61,6 @@ public:
 
     IntRect tileBounds(int tile) const;
     IntRect tileBoundsWithBorder(int tile) const;
-    IntRect tileBoundsWithOuterBorder(int tile) const;
     FloatRect tileBoundsNormalized(int tile) const;
     int tilePositionX(int xIndex) const;
     int tilePositionY(int yIndex) const;
@@ -75,7 +74,7 @@ public:
     void intersectDrawQuad(const FloatRect& srcRect, const FloatRect& dstRect, int tile, FloatRect* newSrc, FloatRect* newDst) const;
 
     // Difference between tileBound's and tileBoundWithBorder's location().
-    IntPoint textureOffset() const;
+    IntPoint textureOffset(int xIndex, int yIndex) const;
 
 private:
     TilingData() : m_maxTextureSize(0), m_totalSizeX(0), m_totalSizeY(0) {}
