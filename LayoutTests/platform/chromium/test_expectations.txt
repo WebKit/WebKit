@@ -2704,24 +2704,41 @@ BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html =
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
 BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 
-BUGWK64942 : compositing/color-matching/image-color-matching.html = IMAGE
-BUGWK64942 : compositing/geometry/ancestor-overflow-change.html = IMAGE
-BUGWK64942 : compositing/geometry/fixed-position.html = IMAGE
-BUGWK64942 : compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
-BUGWK64942 : compositing/geometry/layer-due-to-layer-children.html = IMAGE
-BUGWK64942 : compositing/geometry/vertical-scroll-composited.html = IMAGE
-BUGWK64942 : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
-BUGWK64942 : compositing/reflections/nested-reflection-transition.html = IMAGE
-BUGWK64942 : compositing/reflections/transform-inside-reflection.html = IMAGE
-BUGWK64942 : compositing/shadows/shadow-drawing.html = IMAGE
-BUGWK64942 : compositing/transitions/scale-transition-no-start.html = IMAGE
-BUGWK64942 : media/video-transformed.html = IMAGE
-BUGWK64942 : media/video-zoom-controls.html  = IMAGE
-BUGWK64942 : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
-BUGWK64942 : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
-BUGWK64942 : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
-BUGWK64942 : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
-
+BUGWK64942 GPU : compositing/color-matching/image-color-matching.html = IMAGE
+BUGWK64942 GPU RELEASE LINUX : compositing/direct-image-compositing.html = IMAGE
+BUGWK64942 GPU WIN MAC : compositing/direct-image-compositing.html = IMAGE
+BUGWK64942 GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
+BUGWK64942 GPU RELEASE LINUX : compositing/geometry/fixed-in-composited.html = IMAGE
+BUGWK64942 GPU WIN MAC : compositing/geometry/fixed-in-composited.html = IMAGE
+BUGWK64942 GPU : compositing/geometry/fixed-position.html = IMAGE
+BUGWK64942 GPU : compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
+BUGWK64942 GPU : compositing/geometry/layer-due-to-layer-children.html = IMAGE
+BUGWK64942 GPU WIN : compositing/geometry/tall-page-composited.html = IMAGE
+BUGWK64942 GPU RELEASE LINUX : compositing/geometry/tall-page-composited.html = IMAGE
+BUGWK64942 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
+BUGWK64942 GPU RELEASE LINUX : compositing/masks/masked-ancestor.html = IMAGE
+BUGWK64942 GPU WIN MAC : compositing/masks/masked-ancestor.html = IMAGE
+BUGWK64942 GPU RELEASE LINUX : compositing/masks/simple-composited-mask.html = IMAGE
+BUGWK64942 GPU WIN MAC : compositing/masks/simple-composited-mask.html = IMAGE
+BUGWK64942 GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
+BUGWK64942 GPU : compositing/reflections/nested-reflection-transition.html = IMAGE
+BUGWK64942 GPU : compositing/reflections/transform-inside-reflection.html = IMAGE
+BUGWK64942 GPU : compositing/shadows/shadow-drawing.html = IMAGE
+BUGWK64942 GPU : compositing/transitions/scale-transition-no-start.html = IMAGE
+BUGWK64942 GPU RELEASE LINUX : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGWK64942 GPU WIN MAC : fast/canvas/canvas-text-alignment.html = IMAGE
+BUGWK64942 GPU RELEASE LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGWK64942 GPU WIN MAC : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGWK64942 GPU : media/video-transformed.html = IMAGE
+BUGWK64942 GPU : media/video-zoom-controls.html  = IMAGE
+BUGWK64942 GPU WIN : media/video-zoom.html = IMAGE
+BUGWK64942 GPU RELEASE LINUX : media/video-zoom.html = IMAGE
+BUGWK64942 GPU : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
+BUGWK64942 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
+BUGWK64942 GPU RELEASE LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
+BUGWK64942 GPU WIN MAC : platform/chromium/compositing/layout-width-change.html = IMAGE
+BUGWK64942 GPU : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
+BUGWK64942 GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
 
@@ -3182,7 +3199,7 @@ BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
 // pulled in from downstream during webkit roll 84350:84431
 BUGCASEQ WIN LINUX : editing/selection/select-from-textfield-outwards.html = IMAGE+TEXT
 BUGCASEQ WIN LINUX : fast/forms/input-text-drag-down.html = IMAGE+TEXT
-BUGCASEQ LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
+BUGCASEQ CPU LEOPARD : fast/canvas/image-object-in-canvas.html = IMAGE
 
 BUGDPRANKE MAC DEBUG : transitions/cancel-transition.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : fast/dom/Node/mutation-blur.html = CRASH PASS
