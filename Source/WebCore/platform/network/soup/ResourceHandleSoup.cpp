@@ -360,6 +360,14 @@ static void gotChunkCallback(SoupMessage* msg, SoupBuffer* chunk, gpointer data)
     client->didReceiveData(handle.get(), chunk->data, chunk->length, -1);
 }
 
+static void finishedCallback(SoupMessage* msg, gpointer data)
+{
+    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
+    if (!handle)
+        return;
+    handle->getInternal()->m_finished = true;
+}
+
 static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroying = false)
 {
     ResourceHandleInternal* d = handle->getInternal();
@@ -564,6 +572,8 @@ static bool startHTTPRequest(ResourceHandle* handle)
     url.removeFragmentIdentifier();
     request.setURL(url);
 
+    d->m_finished = false;
+
     GOwnPtr<GError> error;
     d->m_soupRequest = adoptGRef(soup_requester_request(requester, url.string().utf8().data(), &error.outPtr()));
     if (error) {
@@ -589,6 +599,7 @@ static bool startHTTPRequest(ResourceHandle* handle)
     g_signal_connect(soupMessage, "got-headers", G_CALLBACK(gotHeadersCallback), handle);
     g_signal_connect(soupMessage, "wrote-body-data", G_CALLBACK(wroteBodyDataCallback), handle);
     d->m_gotChunkHandler = g_signal_connect(soupMessage, "got-chunk", G_CALLBACK(gotChunkCallback), handle);
+    d->m_finishedHandler = g_signal_connect(soupMessage, "finished", G_CALLBACK(finishedCallback), handle);
 
     String firstPartyString = request.firstPartyForCookies().string();
     if (!firstPartyString.isEmpty()) {
@@ -703,8 +714,9 @@ void ResourceHandle::platformSetDefersLoading(bool defersLoading)
     if (!d->m_soupMessage)
         return;
 
+    // Avoid any operation on not yet started messages and completed messages.
     SoupMessage* soupMessage = d->m_soupMessage.get();
-    if (soupMessage->status_code != SOUP_STATUS_NONE)
+    if (d->m_finished || soupMessage->status_code == SOUP_STATUS_NONE)
         return;
 
     if (defersLoading)

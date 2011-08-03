@@ -1,3 +1,19 @@
+2011-08-03  Philippe Normand  <pnormand@igalia.com>
+
+        libsoup-CRITICAL **: soup_message_io_pause: assertion `io != NULL' failed
+        https://bugs.webkit.org/show_bug.cgi?id=64263
+
+        Reviewed by Martin Robinson.
+
+        Avoid any operation on not yet started messages and completed messages.
+
+        * platform/network/ResourceHandleInternal.h:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::finishedCallback):
+        (WebCore::startHTTPRequest):
+        (WebCore::ResourceHandle::platformSetDefersLoading):
+
 2011-08-03  Jeremy Moskovich  <jeremy@chromium.org>
 
         [Chromium] Fix OOP font loading to work on 10.6.6 and above.
