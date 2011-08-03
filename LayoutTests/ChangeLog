@@ -1,3 +1,13 @@
+2011-08-03  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from navigator IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=65370
+
+        Reviewed by Adam Barth.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+        * platform/chromium/fast/dom/navigator-detached-no-crash-expected.txt:
+
 2011-08-03  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, fix an error in test_expectations.txt.

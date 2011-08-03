@@ -24,7 +24,6 @@
 
 module window {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=MEDIA_STREAM,
         Callback=FunctionOnly
     ] NavigatorUserMediaSuccessCallback {
