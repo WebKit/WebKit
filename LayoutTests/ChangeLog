@@ -1,5 +1,11 @@
 2011-08-02  James Robinson  <jamesr@chromium.org>
 
+        More expectation updates for r92255
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-02  James Robinson  <jamesr@chromium.org>
+
         Expectation follow-up for r92255
 
         * platform/chromium/test_expectations.txt:
