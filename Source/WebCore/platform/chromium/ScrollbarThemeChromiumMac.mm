@@ -491,9 +491,15 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
                                      scrollbar->frameRect());
 
         IntRect tickmarkTrackRect(IntPoint(), trackRect(scrollbar, false).size());
-        // Inset by 2 on the left and 3 on the right.
-        tickmarkTrackRect.setX(tickmarkTrackRect.x() + 2);
-        tickmarkTrackRect.setWidth(tickmarkTrackRect.width() - 3);
+        if (tickmarkTrackRect.width() <= 10) {
+            // For narrow scrollbars inset by 1 on the left and 3 on the right.
+            tickmarkTrackRect.setX(tickmarkTrackRect.x() + 1);
+            tickmarkTrackRect.setWidth(tickmarkTrackRect.width() - 4);
+        } else {
+            // For wide scrollbars inset by 2 on the left and 3 on the right.
+            tickmarkTrackRect.setX(tickmarkTrackRect.x() + 2);
+            tickmarkTrackRect.setWidth(tickmarkTrackRect.width() - 5);
+        }
         paintTickmarks(context, scrollbar, tickmarkTrackRect);
 
         wkScrollbarPainterPaintKnob(scrollbarPainter);
@@ -566,7 +572,7 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     tickmarkTrackRect.inflateY(-tickmarkTrackRect.width());
     // Inset by 2 on the left and 3 on the right.
     tickmarkTrackRect.setX(tickmarkTrackRect.x() + 2);
-    tickmarkTrackRect.setWidth(tickmarkTrackRect.width() - 3);
+    tickmarkTrackRect.setWidth(tickmarkTrackRect.width() - 5);
     paintTickmarks(drawingContext, scrollbar, tickmarkTrackRect);
 
     if (hasThumb(scrollbar)) {
