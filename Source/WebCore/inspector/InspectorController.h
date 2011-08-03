@@ -97,7 +97,7 @@ public:
 
     void showConsole();
     void inspect(Node*);
-    void drawNodeHighlight(GraphicsContext&) const;
+    void drawHighlight(GraphicsContext&) const;
     void hideHighlight();
     Node* highlightedNode() const;
 

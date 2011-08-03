@@ -374,9 +374,9 @@ void InspectorController::evaluateForTestInFrontend(long callId, const String& s
     m_inspectorAgent->evaluateForTestInFrontend(callId, script);
 }
 
-void InspectorController::drawNodeHighlight(GraphicsContext& context) const
+void InspectorController::drawHighlight(GraphicsContext& context) const
 {
-    m_domAgent->drawNodeHighlight(context);
+    m_domAgent->drawHighlight(context);
 }
 
 void InspectorController::showConsole()

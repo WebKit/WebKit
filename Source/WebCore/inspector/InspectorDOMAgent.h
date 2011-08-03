@@ -58,6 +58,7 @@ class InspectorClient;
 class InspectorDOMAgent;
 class InspectorFrontend;
 class InspectorPageAgent;
+class IntRect;
 class HitTestResult;
 class MatchJob;
 class HTMLElement;
@@ -132,10 +133,9 @@ public:
     void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
     void hideHighlight(ErrorString*);
+    void highlightRect(ErrorString*, int x, int y, int width, int height);
     void highlightNode(ErrorString*, int nodeId, String* mode);
-    void hideNodeHighlight(ErrorString* error) { hideHighlight(error); }
     void highlightFrame(ErrorString*, const String& frameId);
-    void hideFrameHighlight(ErrorString* error) { hideHighlight(error); }
     void moveTo(ErrorString*, int nodeId, int targetNodeId, const int* const anchorNodeId, int* newNodeId);
 
     Node* highlightedNode() const { return m_highlightedNode.get(); }
@@ -168,7 +168,7 @@ public:
     void inspect(Node*);
     void focusNode();
 
-    void drawNodeHighlight(GraphicsContext&) const;
+    void drawHighlight(GraphicsContext&) const;
 
     // We represent embedded doms as a part of the same hierarchy. Hence we treat children of frame owners differently.
     // We also skip whitespace text nodes conditionally. Following methods encapsulate these specifics.
@@ -232,6 +232,7 @@ private:
     HashSet<RefPtr<Node> > m_searchResults;
     OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
     RefPtr<Node> m_highlightedNode;
+    OwnPtr<IntRect> m_highlightedRect;
     String m_highlightMode;
     RefPtr<Node> m_nodeToFocus;
     bool m_searchingForNode;

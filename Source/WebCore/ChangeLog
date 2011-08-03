@@ -1,5 +1,38 @@
 2011-08-03  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: [Timeline] Hover on paint events and see rect outline around that area.
+        https://bugs.webkit.org/show_bug.cgi?id=65510
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.exp.in:
+        * WebCore.order:
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::drawRectHighlight):
+        * inspector/DOMNodeHighlighter.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::drawHighlight):
+        * inspector/InspectorController.h:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::highlightRect):
+        (WebCore::InspectorDOMAgent::hideHighlight):
+        (WebCore::InspectorDOMAgent::drawHighlight):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameTreeElement.prototype.onselect):
+        (WebInspector.FrameTreeElement.prototype.set hovered):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._mouseOut):
+        (WebInspector.TimelinePanel.prototype._mouseMove):
+        (WebInspector.TimelinePanel.prototype._highlightRect):
+        (WebInspector.TimelinePanel.prototype._hideRectHighlight):
+        * inspector/front-end/inspector.js:
+        (WebInspector.highlightDOMNode):
+
+2011-08-03  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: make text in popover selectable + make popover re-appear faster.
         https://bugs.webkit.org/show_bug.cgi?id=65603
 

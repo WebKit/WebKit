@@ -67,6 +67,7 @@
 #include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
+#include "IntRect.h"
 #include "MutationEvent.h"
 #include "Node.h"
 #include "NodeList.h"
@@ -1012,6 +1013,12 @@ void InspectorDOMAgent::highlight(ErrorString*, Node* node, const String& mode)
     m_client->highlight();
 }
 
+void InspectorDOMAgent::highlightRect(ErrorString*, int x, int y, int width, int height)
+{
+    m_highlightedRect = adoptPtr(new IntRect(x, y, width, height));
+    m_client->highlight();
+}
+
 void InspectorDOMAgent::highlightNode(ErrorString* error, int nodeId, String* mode)
 {
     if (Node* node = nodeForId(nodeId))
@@ -1028,6 +1035,7 @@ void InspectorDOMAgent::highlightFrame(ErrorString* error, const String& frameId
 void InspectorDOMAgent::hideHighlight(ErrorString*)
 {
     m_highlightedNode = 0;
+    m_highlightedRect.clear();
     m_client->hideHighlight();
 }
 
@@ -1509,8 +1517,13 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::resolveNode(Node* node, const Str
     return injectedScript.wrapNode(node, objectGroup);
 }
 
-void InspectorDOMAgent::drawNodeHighlight(GraphicsContext& context) const
+void InspectorDOMAgent::drawHighlight(GraphicsContext& context) const
 {
+    if (m_highlightedRect) {
+        DOMNodeHighlighter::drawRectHighlight(context, m_document.get(), m_highlightedRect.get());
+        return;
+    }
+
     if (!m_highlightedNode)
         return;
 

@@ -73,7 +73,7 @@ using namespace WebCore;
         ASSERT([[NSGraphicsContext currentContext] isFlipped]);
 
         GraphicsContext context((PlatformGraphicsContext*)[[NSGraphicsContext currentContext] graphicsPort]);
-        [_webNodeHighlight inspectorController]->drawNodeHighlight(context);
+        [_webNodeHighlight inspectorController]->drawHighlight(context);
         [NSGraphicsContext restoreGraphicsState];
     }
 }

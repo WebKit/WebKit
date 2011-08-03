@@ -1008,6 +1008,16 @@
                 "description": "Enters the 'inspect' mode. In this mode, elements that user is hovering over are highlighted. Backend then generates 'inspect' command upon element selection."
             },
             {
+                "name": "highlightRect",
+                "parameters": [
+                    { "name": "x", "type": "integer", "description": "X coordinate" },
+                    { "name": "y", "type": "integer", "description": "Y coordinate" },
+                    { "name": "width", "type": "integer", "description": "Rectangle width" },
+                    { "name": "height", "type": "integer", "description": "Rectangle height" }
+                ],
+                "description": "Highlights given rectangle. Coordinates are absolute with respect to the main frame viewport."
+            },
+            {
                 "name": "highlightNode",
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "Identifier of the node to highlight" },
@@ -1016,7 +1026,7 @@
                 "description": "Highlights DOM node with given id."
             },
             {
-                "name": "hideNodeHighlight",
+                "name": "hideHighlight",
                 "description": "Hides DOM node highlight."
             },
             {
@@ -1025,10 +1035,6 @@
                     { "name": "frameId", "type": "string", "description": "Identifier of the frame to highlight" }
                 ],
                 "description": "Highlights owner element of the frame with given id."
-            },
-            {
-                "name": "hideFrameHighlight",
-                "description": "Hides frame owner highlight."
             },
             {
                 "name": "pushNodeByPathToFrontend",

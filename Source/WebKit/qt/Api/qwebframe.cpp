@@ -397,7 +397,7 @@ void QWebFramePrivate::renderRelativeCoords(GraphicsContext* context, QFlags<QWe
 #if ENABLE(INSPECTOR)
     if (frame->page()->inspectorController()->highlightedNode()) {
         context->save();
-        frame->page()->inspectorController()->drawNodeHighlight(*context);
+        frame->page()->inspectorController()->drawHighlight(*context);
         context->restore();
     }
 #endif

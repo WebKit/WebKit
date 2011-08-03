@@ -665,7 +665,7 @@ static void paintWebView(Frame* frame, gboolean transparent, GraphicsContext& co
 
     context.save();
     context.clip(clipRect);
-    frame->page()->inspectorController()->drawNodeHighlight(context);
+    frame->page()->inspectorController()->drawHighlight(context);
     context.restore();
 }
 #ifdef GTK_API_VERSION_2

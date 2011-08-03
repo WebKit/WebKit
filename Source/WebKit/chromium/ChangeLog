@@ -1,3 +1,13 @@
+2011-08-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [Timeline] Hover on paint events and see rect outline around that area.
+        https://bugs.webkit.org/show_bug.cgi?id=65510
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::paintPageOverlay):
+
 2011-08-03  Jeremy Moskovich  <jeremy@chromium.org>
 
         [Chromium] Fix OOP font loading to work on 10.6.6 and above.

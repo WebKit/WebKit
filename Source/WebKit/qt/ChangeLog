@@ -1,3 +1,13 @@
+2011-08-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [Timeline] Hover on paint events and see rect outline around that area.
+        https://bugs.webkit.org/show_bug.cgi?id=65510
+
+        Reviewed by Yury Semikhatsky.
+
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::renderRelativeCoords):
+
 2011-08-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: remove Node parameter from the InspectorClient::highlight

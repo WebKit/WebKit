@@ -31,7 +31,9 @@
 
 namespace WebCore {
 
+class Document;
 class GraphicsContext;
+class IntRect;
 class Node;
 
 namespace DOMNodeHighlighter {
@@ -45,6 +47,8 @@ enum HighlightMode {
 };
 
 void drawNodeHighlight(GraphicsContext&, Node*, HighlightMode);
+
+void drawRectHighlight(GraphicsContext&, Document*, IntRect*);
 
 } // namespace DOMNodeHighlighter
 

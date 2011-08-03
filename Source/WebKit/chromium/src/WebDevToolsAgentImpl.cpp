@@ -279,7 +279,7 @@ void WebDevToolsAgentImpl::paintPageOverlay(GraphicsContext& gc)
 {
     InspectorController* ic = inspectorController();
     if (ic)
-        ic->drawNodeHighlight(gc);
+        ic->drawHighlight(gc);
 }
 
 void WebDevToolsAgentImpl::highlight()

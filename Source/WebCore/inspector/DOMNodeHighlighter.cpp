@@ -137,9 +137,9 @@ void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& bound
     static const int rectInflatePx = 4;
     static const int fontHeightPx = 12;
     static const int borderWidthPx = 1;
-    static const Color tooltipBackgroundColor(255, 255, 194, 255);
-    static const Color tooltipBorderColor(Color::black);
-    static const Color tooltipFontColor(Color::black);
+    DEFINE_STATIC_LOCAL(Color, tooltipBackgroundColor, (255, 255, 194, 255));
+    DEFINE_STATIC_LOCAL(Color, tooltipBorderColor, (Color::black));
+    DEFINE_STATIC_LOCAL(Color, tooltipFontColor, (Color::black));
     FontCachePurgePreventer fontCachePurgePreventer;
 
     Element* element = static_cast<Element*>(node);
@@ -298,6 +298,39 @@ void drawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
     WebCore::Settings* settings = containingFrame->settings();
     if (mode == DOMNodeHighlighter::HighlightAll)
         drawElementTitle(context, node, boundingBox, titleAnchorBox, overlayRect, settings);
+}
+
+void drawRectHighlight(GraphicsContext& context, Document* document, IntRect* rect)
+{
+    if (!document)
+        return;
+    FrameView* view = document->frame()->view();
+
+    FloatRect overlayRect = view->visibleContentRect();
+    context.translate(-overlayRect.x(), -overlayRect.y());
+
+    static const int outlineThickness = 2;
+    DEFINE_STATIC_LOCAL(Color, outlineColor, (255, 0, 0, 228));
+    DEFINE_STATIC_LOCAL(Color, fillColor, (255, 0, 0, 20));
+
+    Path quadPath = quadToPath(FloatRect(*rect));
+
+    // Clip out the quad, then draw with a 2px stroke to get a pixel
+    // of outline (because inflating a quad is hard)
+    {
+        context.save();
+        context.clipOut(quadPath);
+
+        context.setStrokeThickness(outlineThickness);
+        context.setStrokeColor(outlineColor, ColorSpaceDeviceRGB);
+        context.strokePath(quadPath);
+
+        context.restore();
+    }
+
+    // Now do the fill
+    context.setFillColor(fillColor, ColorSpaceDeviceRGB);
+    context.fillPath(quadPath);
 }
 
 } // namespace DOMNodeHighlighter

@@ -158,7 +158,7 @@ void WebNodeHighlight::update()
 
     GraphicsContext context(hdc);
 
-    m_inspectedWebView->page()->inspectorController()->drawNodeHighlight(context);
+    m_inspectedWebView->page()->inspectorController()->drawHighlight(context);
 
     BLENDFUNCTION bf;
     bf.BlendOp = AC_SRC_OVER;

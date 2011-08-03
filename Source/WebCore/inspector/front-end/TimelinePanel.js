@@ -94,6 +94,8 @@ WebInspector.TimelinePanel = function()
     this._scrollTop = 0;
 
     this._popoverHelper = new WebInspector.PopoverHelper(this._containerElement, this._getPopoverAnchor.bind(this), this._showPopover.bind(this), true);
+    this._containerElement.addEventListener("mousemove", this._mouseMove.bind(this), false);
+    this._containerElement.addEventListener("mouseout", this._mouseOut.bind(this), false);
 
     // Disable short events filter by default.
     this.toggleFilterButton.toggled = true;
@@ -710,6 +712,37 @@ WebInspector.TimelinePanel.prototype = {
     _getPopoverAnchor: function(element)
     {
         return element.enclosingNodeOrSelfWithClass("timeline-graph-bar") || element.enclosingNodeOrSelfWithClass("timeline-tree-item");
+    },
+
+    _mouseOut: function(e)
+    {
+        this._hideRectHighlight();
+    },
+
+    _mouseMove: function(e)
+    {
+        var anchor = this._getPopoverAnchor(e.target);
+
+        if (anchor && anchor.row._record.type === "Paint")
+            this._highlightRect(anchor.row._record);
+        else
+            this._hideRectHighlight();
+    },
+
+    _highlightRect: function(record)
+    {
+        if (this._highlightedRect === record.data)
+            return;
+        this._highlightedRect = record.data;
+        DOMAgent.highlightRect(this._highlightedRect.x, this._highlightedRect.y, this._highlightedRect.width, this._highlightedRect.height);
+    },
+
+    _hideRectHighlight: function()
+    {
+        if (this._highlightedRect) {
+            delete this._highlightedRect;
+            DOMAgent.hideHighlight();
+        }
     },
 
     _showPopover: function(anchor)
