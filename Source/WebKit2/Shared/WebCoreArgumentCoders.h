@@ -221,7 +221,12 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
         WebCore::Cursor::Type type = static_cast<WebCore::Cursor::Type>(typeInt);
 
         if (type != WebCore::Cursor::Custom) {
-            cursor = WebCore::Cursor::fromType(type);
+            const WebCore::Cursor& cursorReference = WebCore::Cursor::fromType(type);
+            // Calling platformCursor here will eagerly create the platform cursor for the cursor singletons inside WebCore.
+            // This will avoid having to re-create the platform cursors over and over.
+            (void)cursorReference.platformCursor();
+
+            cursor = cursorReference;
             return true;
         }
 
