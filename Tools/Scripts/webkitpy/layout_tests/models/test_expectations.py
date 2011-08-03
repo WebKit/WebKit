@@ -119,7 +119,7 @@ class ParseError(Exception):
         return 'ParseError(fatal=%s, errors=%s)' % (self.fatal, self.errors)
 
 
-class TestExpectationSerializer:
+class TestExpectationSerializer(object):
     """Provides means of serializing TestExpectationLine instances."""
     def __init__(self, test_configuration_converter):
         self._test_configuration_converter = test_configuration_converter
@@ -139,7 +139,7 @@ class TestExpectationSerializer:
                 modifiers = self._parsed_modifier_string(expectation_line, specifiers)
                 expectations = self._parsed_expectations_string(expectation_line)
                 result.append(self._format_result(modifiers, expectation_line.name, expectations, expectation_line.comment))
-            return "\n".join(result)
+            return "\n".join(result) if result else None
 
         return self._format_result(" ".join(expectation_line.modifiers), expectation_line.name, " ".join(expectation_line.expectations), expectation_line.comment)
 
@@ -166,12 +166,12 @@ class TestExpectationSerializer:
         return result
 
     @classmethod
-    def list_to_string(cls, expectations, test_configuration_converter):
+    def list_to_string(cls, expectation_lines, test_configuration_converter):
         serializer = cls(test_configuration_converter)
-        return "\n".join([serializer.to_string(expectation) for expectation in expectations])
+        return "\n".join([line for line in [serializer.to_string(expectation_line) for expectation_line in expectation_lines] if line is not None])
 
 
-class TestExpectationParser:
+class TestExpectationParser(object):
     """Provides parsing facilities for lines in the test_expectation.txt file."""
 
     BUG_MODIFIER_PREFIX = 'bug'
@@ -185,7 +185,7 @@ class TestExpectationParser:
 
     def __init__(self, port, full_test_list, allow_rebaseline_modifier):
         self._port = port
-        self._test_configuration_converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
+        self._test_configuration_converter = TestConfigurationConverter(set(port.all_test_configurations()), port.configuration_specifier_macros())
         self._full_test_list = full_test_list
         self._allow_rebaseline_modifier = allow_rebaseline_modifier
 
@@ -359,6 +359,9 @@ class TestExpectationLine:
     def is_invalid(self):
         return self.is_malformed() or len(self.warnings) > 0
 
+    def is_flaky(self):
+        return len(self.parsed_expectations) > 1
+
     @classmethod
     def create_passing_expectation(cls, test):
         expectation_line = TestExpectationLine()
@@ -370,7 +373,7 @@ class TestExpectationLine:
 
 
 # FIXME: Refactor API to be a proper CRUD.
-class TestExpectationsModel:
+class TestExpectationsModel(object):
     """Represents relational store of all expectations and provides CRUD semantics to manage it."""
 
     def __init__(self):
@@ -431,6 +434,9 @@ class TestExpectationsModel:
     def has_test(self, test):
         return test in self._test_to_expectation_line
 
+    def get_expectation_line(self, test):
+        return self._test_to_expectation_line.get(test)
+
     def get_expectations(self, test):
         return self._test_to_expectations[test]
 
@@ -478,7 +484,7 @@ class TestExpectationsModel:
             self._result_type_to_tests[SKIP].add(test)
         elif expectation_line.parsed_expectations == set([PASS]):
             self._result_type_to_tests[PASS].add(test)
-        elif len(expectation_line.parsed_expectations) > 1:
+        elif expectation_line.is_flaky():
             self._result_type_to_tests[FLAKY].add(test)
         else:
             self._result_type_to_tests[FAIL].add(test)
@@ -573,7 +579,119 @@ class TestExpectationsModel:
         return False
 
 
-class TestExpectations:
+class BugManager(object):
+    """A simple interface for managing bugs from TestExpectationsEditor."""
+    def close_bug(self, bug_id, reference_bug_id=None):
+        raise NotImplementedError("BugManager.close_bug")
+
+    def create_bug(self):
+        """Should return a newly created bug id in the form of r"BUG[^\d].*"."""
+        raise NotImplementedError("BugManager.create_bug")
+
+
+class TestExpectationsEditor(object):
+    """
+    The editor assumes that the expectation data is error-free.
+    """
+
+    def __init__(self, expectation_lines, bug_manager):
+        self._bug_manager = bug_manager
+        self._expectation_lines = expectation_lines
+        self._tests_with_directory_paths = set()
+        # FIXME: Unify this with TestExpectationsModel.
+        self._test_to_expectation_lines = {}
+        for expectation_line in expectation_lines:
+            for test in expectation_line.matching_tests:
+                if test == expectation_line.path:
+                    self._test_to_expectation_lines.setdefault(test, []).append(expectation_line)
+                else:
+                    self._tests_with_directory_paths.add(test)
+
+    def remove_expectation(self, test, test_config_set, remove_flakes=False):
+        """Removes existing expectations for {test} in the of test configurations {test_config_set}.
+        If the test is flaky, the expectation is not removed, unless remove_flakes is True.
+
+        In this context, removing expectations does not imply that the test is passing -- we are merely removing
+        any information about this test from the expectations.
+
+        We do not remove the actual expectation lines here. Instead, we adjust TestExpectationLine.matching_configurations.
+        The serializer will figure out what to do:
+        * An empty matching_configurations set means that the this line matches nothing and will serialize as None.
+        * A matching_configurations set that can't be expressed as one line will be serialized as multiple lines.
+
+        Also, we do only adjust matching_configurations for lines that match tests exactly, because expectation lines with
+        better path matches are valid and always win.
+
+        For example, the expectation with the path "fast/events/shadow/" will
+        be ignored when removing expectations for the test "fast/event/shadow/awesome-crash.html", since we can just
+        add a new expectation line for "fast/event/shadow/awesome-crash.html" to influence expected results.
+        """
+        expectation_lines = self._test_to_expectation_lines.get(test, [])
+        for expectation_line in expectation_lines:
+            if (not expectation_line.is_flaky() or remove_flakes) and expectation_line.matching_configurations & test_config_set:
+                expectation_line.matching_configurations = expectation_line.matching_configurations - test_config_set
+                if not expectation_line.matching_configurations:
+                    self._bug_manager.close_bug(expectation_line.parsed_bug_modifier)
+                return
+
+    def update_expectation(self, test, test_config_set, expectation_set, parsed_bug_modifier=None):
+        """Updates expectations for {test} in the set of test configuration {test_config_set} to the values of {expectation_set}.
+        If {parsed_bug_modifier} is supplied, it is used for updated expectations. Otherwise, a new bug is created.
+
+        Here, we treat updating expectations to PASS as special: if possible, the corresponding lines are completely removed.
+        """
+        # FIXME: Allow specifying modifiers (SLOW, SKIP, WONTFIX).
+        expectation_lines = self._test_to_expectation_lines.get(test, [])
+        remaining_configurations = test_config_set.copy()
+        bug_id = self._get_valid_bug_id(parsed_bug_modifier)
+        remove_expectations = expectation_set == set([PASS]) and test not in self._tests_with_directory_paths
+        for expectation_line in expectation_lines:
+            if expectation_line.matching_configurations == remaining_configurations:
+                # Tweak expectations on existing line.
+                if expectation_line.parsed_expectations == expectation_set:
+                    return
+                self._bug_manager.close_bug(expectation_line.parsed_bug_modifier, bug_id)
+                if remove_expectations:
+                    expectation_line.matching_configurations = set()
+                    return
+                expectation_line.parsed_expectations = expectation_set
+                expectation_line.parsed_bug_modifier = bug_id
+                return
+            elif expectation_line.matching_configurations >= remaining_configurations:
+                # 1) Split up into two expectation lines:
+                # * one with old expectations (existing expectation_line)
+                # * one with new expectations (new expectation_line)
+                # 2) Finish looking, since there will be no more remaining configs to test for.
+                expectation_line.matching_configurations -= remaining_configurations
+                break
+            elif expectation_line.matching_configurations <= remaining_configurations:
+                # Remove existing expectation line.
+                self._bug_manager.close_bug(expectation_line.parsed_bug_modifier, bug_id)
+                expectation_line.matching_configurations = set()
+            else:
+                intersection = expectation_line.matching_configurations & remaining_configurations
+                if intersection:
+                    expectation_line.matching_configurations -= intersection
+
+        if not remove_expectations:
+            self._expectation_lines.append(self._create_new_line(test, bug_id, remaining_configurations, expectation_set))
+
+    def _get_valid_bug_id(self, suggested_bug_id):
+        # FIXME: Flesh out creating a bug properly (title, etc.)
+        return suggested_bug_id or self._bug_manager.create_bug()
+
+    def _create_new_line(self, name, bug_id, config_set, expectation_set):
+        new_line = TestExpectationLine()
+        new_line.name = name
+        new_line.parsed_bug_modifier = bug_id
+        new_line.matching_configurations = config_set
+        new_line.parsed_expectations = expectation_set
+        # Ensure index integrity for multiple operations.
+        self._test_to_expectation_lines.setdefault(name, []).append(new_line)
+        return new_line
+
+
+class TestExpectations(object):
     """Test expectations consist of lines with specifications of what
     to expect from layout test cases. The test cases can be directories
     in which case the expectations apply to all test cases in that

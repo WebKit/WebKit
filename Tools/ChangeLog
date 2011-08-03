@@ -1,3 +1,18 @@
+2011-08-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Add a way to edit test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=64922
+
+        Implements a TestExpectationsEditor, which provides a standard way to
+        update and remove test expectations.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Changed TestExpectationSerializer to skip lines that match no test configurations,
+            added TestExpectationLine.is_flaky, added BugManager, a simple interface to be fleshed out later, and a TestExpectationsEditor, the big
+            enchilada.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Loads of tests to capture desired behavior.
+
 2011-08-03  Andreas Kling  <kling@webkit.org>
 
         [Qt] MiniBrowser: Unbreak load progress indication.
