@@ -171,7 +171,7 @@ WebInspector.PopoverHelper = function(panelElement, getAnchor, showPopup, showOn
 WebInspector.PopoverHelper.prototype = {
     setTimeout: function(timeout)
     {
-         this._timeout = timeout;
+        this._timeout = timeout;
     },
 
     _mouseDown: function(event)
@@ -186,7 +186,7 @@ WebInspector.PopoverHelper.prototype = {
         if (this._hoverElement === event.target || (this._hoverElement && this._hoverElement.isAncestor(event.target)))
             return;
 
-        // User has 500ms (this._timeout / 2) to reach the popup.
+        // User has 250ms (this._timeout / 4) to reach the popup.
         if (this._popup && !this._hidePopupTimer) {
             var self = this;
             function doHide()
@@ -194,7 +194,7 @@ WebInspector.PopoverHelper.prototype = {
                 self._hidePopup();
                 delete self._hidePopupTimer;
             }
-            this._hidePopupTimer = setTimeout(doHide, this._timeout / 2);
+            this._hidePopupTimer = setTimeout(doHide, this._timeout / 4);
         }
 
         this._handleMouseAction(event);
@@ -208,7 +208,7 @@ WebInspector.PopoverHelper.prototype = {
         if (!this._hoverElement)
             return;
 
-        const toolTipDelay = isMouseDown ? 0 : (this._popup ? this._timeout * 0.6 : this._timeout);
+        const toolTipDelay = isMouseDown ? 0 : (this._popup ? this._timeout * 0.3 : this._timeout);
         this._hoverTimer = setTimeout(this._mouseHover.bind(this, this._hoverElement), toolTipDelay);
     },
 

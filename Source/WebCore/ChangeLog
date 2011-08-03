@@ -1,3 +1,17 @@
+2011-08-03  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make text in popover selectable + make popover re-appear faster.
+        https://bugs.webkit.org/show_bug.cgi?id=65603
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/Popover.js:
+        (WebInspector.PopoverHelper.prototype.setTimeout):
+        (WebInspector.PopoverHelper.prototype._mouseMove):
+        (WebInspector.PopoverHelper.prototype._handleMouseAction):
+        * inspector/front-end/popover.css:
+        (.popover .content):
+
 2011-08-03  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Console scroll position should be saved when switching panels.
