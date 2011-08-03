@@ -1,3 +1,28 @@
+2011-08-03  Jeff Miller  <jeffm@apple.com>
+
+        Generate WebCoreHeaderDetection.h on Windows to define HAVE_AVCF
+        https://bugs.webkit.org/show_bug.cgi?id=65634
+        
+        AVFoundation support on Windows will (eventually) be predicated on the
+        availability of AVFoundationCF headers and libraries in the WebKit Support
+        Libraries, so we test for the existence of one of the header files (AVCFBase.h)
+        to determine whether to AVCF is available.
+        
+        For now, even if AVFoundationCF is available, leave WTF_USE_AVFOUNDATION off, since
+        it's not ready to be turned on yet (which is covered by http://webkit.org/b/65400).
+        
+        Ideally, we would generate WebCoreHeaderDetection.h on all platforms so we could
+        include it unconditionally in WebCore's config.h, but unfortunately the Mac-only file
+        ExportFileGenerator.cpp depends on WTF_USE_AVFOUNDATION being set correctly, and since this
+        .cpp file is also generated it doesn't have access to WebCoreHeaderDetection.h.
+
+        Reviewed by Adam Roben.
+
+        No change in functionality, so new tests.
+
+        * DerivedSources.make: Add rule to generate WebCoreHeaderDetection.h to set HAVE_AVCF on Windows.
+        * config.h: Include WebCoreHeaderDetection.h on Windows, check for HAVE(AVCF) but always leave WTF_USE_AVFOUNDATION off on Windows for now.
+
 2011-08-03  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Implement PeerConnection and SignalingCallback

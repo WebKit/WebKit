@@ -29,6 +29,10 @@
 
 #include <wtf/Platform.h>
 
+#if OS(WINDOWS)
+#include <WebCore/WebCoreHeaderDetection.h>
+#endif
+
 /* See note in wtf/Platform.h for more info on EXPORT_MACROS. */
 #if USE(EXPORT_MACROS)
 
@@ -221,3 +225,7 @@ typedef float CGFloat;
 #define WTF_USE_AVFOUNDATION 1
 #endif
 
+#if PLATFORM(WIN) && HAVE(AVCF)
+/// FIXME: Adopt AVCF media back end on Windows http://webkit.org/b/65400
+#define WTF_USE_AVFOUNDATION 0
+#endif
