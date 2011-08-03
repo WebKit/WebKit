@@ -1,3 +1,16 @@
+2011-08-03  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC GC heap size improvement breaks build on some platforms due to
+        unused parameter
+        https://bugs.webkit.org/show_bug.cgi?id=65641
+
+        Reviewed by Darin Adler.
+        
+        Fix build on non-x86 platforms, by ensuring that the relevant
+        parameter always appears to be used even when it isn't.
+
+        * heap/Heap.cpp:
+
 2011-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Reorganize pkg-config files

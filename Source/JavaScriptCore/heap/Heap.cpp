@@ -42,14 +42,20 @@ namespace JSC {
 
 namespace { 
 
+static const size_t largeHeapSize = 16 * 1024 * 1024;
+static const size_t smallHeapSize = 512 * 1024;
+
 static size_t heapSizeForHint(HeapSize heapSize)
 {
 #if ENABLE(LARGE_HEAP)
     if (heapSize == LargeHeap)
-        return 16 * 1024 * 1024;
+        return largeHeapSize;
     ASSERT(heapSize == SmallHeap);
+    return smallHeapSize;
+#else
+    ASSERT_UNUSED(heapSize, heapSize == LargeHeap || heapSize == SmallHeap);
+    return smallHeapSize;
 #endif
-    return 512 * 1024;
 }
 
 static inline bool isValidSharedInstanceThreadState()
