@@ -67,11 +67,11 @@ public:
 
     // Asynchronously executes debugger command in the render thread.
     // |callerIdentifier| will be used for sending response.
-    WEBKIT_API static void executeDebuggerCommand(
+    WEBKIT_EXPORT static void executeDebuggerCommand(
         const WebString& command, int callerIdentifier);
 
     // Asynchronously request debugger to pause immediately.
-    WEBKIT_API static void debuggerPauseScript();
+    WEBKIT_EXPORT static void debuggerPauseScript();
 
     class MessageDescriptor {
     public:
@@ -80,15 +80,15 @@ public:
         virtual WebString message() = 0;
     };
     // Asynchronously request debugger to pause immediately and run the command.
-    WEBKIT_API static void interruptAndDispatch(MessageDescriptor*);
-    WEBKIT_API static bool shouldInterruptForMessage(const WebString&);
-    WEBKIT_API static void processPendingMessages();
+    WEBKIT_EXPORT static void interruptAndDispatch(MessageDescriptor*);
+    WEBKIT_EXPORT static bool shouldInterruptForMessage(const WebString&);
+    WEBKIT_EXPORT static void processPendingMessages();
 
     typedef void (*MessageLoopDispatchHandler)();
 
     // Installs dispatch handle that is going to be called periodically
     // while on a breakpoint.
-    WEBKIT_API static void setMessageLoopDispatchHandler(MessageLoopDispatchHandler);
+    WEBKIT_EXPORT static void setMessageLoopDispatchHandler(MessageLoopDispatchHandler);
 };
 
 } // namespace WebKit

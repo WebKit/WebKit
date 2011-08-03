@@ -41,7 +41,7 @@ struct WebScreenInfo;
 
 class WebScreenInfoFactory {
 public:
-    WEBKIT_API static WebScreenInfo screenInfo(Display*, int screenNumber);
+    WEBKIT_EXPORT static WebScreenInfo screenInfo(Display*, int screenNumber);
 };
 
 } // namespace WebKit

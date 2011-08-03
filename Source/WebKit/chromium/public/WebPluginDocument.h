@@ -53,7 +53,7 @@ public:
     }
     void assign(const WebPluginDocument& d) { WebNode::assign(d); }
 
-    WEBKIT_API WebPlugin* plugin();
+    WEBKIT_EXPORT WebPlugin* plugin();
 
 #if WEBKIT_IMPLEMENTATION
     WebPluginDocument(const WTF::PassRefPtr<WebCore::PluginDocument>&);

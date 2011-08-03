@@ -40,7 +40,7 @@ class WebSpeechInputListener;
 
 class WebSpeechInputControllerMock : public WebSpeechInputController {
 public:
-    WEBKIT_API static WebSpeechInputControllerMock* create(
+    WEBKIT_EXPORT static WebSpeechInputControllerMock* create(
         WebSpeechInputListener* listener);
     virtual ~WebSpeechInputControllerMock() { }
 

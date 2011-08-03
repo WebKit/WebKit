@@ -40,13 +40,13 @@ class WebString;
 
 class WebIDBKeyPath {
 public:
-    WEBKIT_API static WebIDBKeyPath create(const WebString&);
+    WEBKIT_EXPORT static WebIDBKeyPath create(const WebString&);
     WebIDBKeyPath(const WebIDBKeyPath& keyPath) { assign(keyPath); }
     ~WebIDBKeyPath() { reset(); }
 
-    WEBKIT_API int parseError() const;
-    WEBKIT_API void assign(const WebIDBKeyPath&);
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT int parseError() const;
+    WEBKIT_EXPORT void assign(const WebIDBKeyPath&);
+    WEBKIT_EXPORT void reset();
 
 #if WEBKIT_IMPLEMENTATION
     operator const WTF::Vector<WebCore::IDBKeyPathElement, 0>& () const;

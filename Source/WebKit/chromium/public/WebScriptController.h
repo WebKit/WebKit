@@ -51,16 +51,16 @@ public:
     // matching group.
     // Will only affect v8 contexts initialized after this call. Takes ownership
     // of the v8::Extension object passed.
-    WEBKIT_API static void registerExtension(v8::Extension*);
+    WEBKIT_EXPORT static void registerExtension(v8::Extension*);
 
     // Enables special settings which are only applicable if V8 is executed
     // in the single thread which must be the main thread.
     // FIXME: make a try to dynamically detect when this condition is broken
     // and automatically switch off single thread mode.
-    WEBKIT_API static void enableV8SingleThreadMode();
+    WEBKIT_EXPORT static void enableV8SingleThreadMode();
 
     // Process any pending JavaScript console messages.
-    WEBKIT_API static void flushConsoleMessages();
+    WEBKIT_EXPORT static void flushConsoleMessages();
 
 private:
     WebScriptController();

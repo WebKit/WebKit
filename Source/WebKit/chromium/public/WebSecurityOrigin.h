@@ -56,45 +56,45 @@ public:
         return *this;
     }
 
-    WEBKIT_API static WebSecurityOrigin createFromDatabaseIdentifier(const WebString& databaseIdentifier);
-    WEBKIT_API static WebSecurityOrigin createFromString(const WebString&);
-    WEBKIT_API static WebSecurityOrigin create(const WebURL&);
+    WEBKIT_EXPORT static WebSecurityOrigin createFromDatabaseIdentifier(const WebString& databaseIdentifier);
+    WEBKIT_EXPORT static WebSecurityOrigin createFromString(const WebString&);
+    WEBKIT_EXPORT static WebSecurityOrigin create(const WebURL&);
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebSecurityOrigin&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebSecurityOrigin&);
 
     bool isNull() const { return !m_private; }
 
-    WEBKIT_API WebString protocol() const;
-    WEBKIT_API WebString host() const;
-    WEBKIT_API unsigned short port() const;
+    WEBKIT_EXPORT WebString protocol() const;
+    WEBKIT_EXPORT WebString host() const;
+    WEBKIT_EXPORT unsigned short port() const;
 
     // The empty WebSecurityOrigin is the least privileged WebSecurityOrigin.
-    WEBKIT_API bool isEmpty() const;
+    WEBKIT_EXPORT bool isEmpty() const;
 
     // Returns true if this WebSecurityOrigin can script objects in the given
     // SecurityOrigin. For example, call this function before allowing
     // script from one security origin to read or write objects from
     // another SecurityOrigin.
-    WEBKIT_API bool canAccess(const WebSecurityOrigin&) const;
+    WEBKIT_EXPORT bool canAccess(const WebSecurityOrigin&) const;
 
     // Returns true if this WebSecurityOrigin can read content retrieved from
     // the given URL. For example, call this function before allowing script
     // from a given security origin to receive contents from a given URL.
-    WEBKIT_API bool canRequest(const WebURL&) const;
+    WEBKIT_EXPORT bool canRequest(const WebURL&) const;
 
     // Returns a string representation of the WebSecurityOrigin.  The empty
     // WebSecurityOrigin is represented by "null".  The representation of a
     // non-empty WebSecurityOrigin resembles a standard URL.
-    WEBKIT_API WebString toString() const;
+    WEBKIT_EXPORT WebString toString() const;
 
     // Returns a string representation of this WebSecurityOrigin that can
     // be used as a file.  Should be used in storage APIs only.
-    WEBKIT_API WebString databaseIdentifier() const;
+    WEBKIT_EXPORT WebString databaseIdentifier() const;
 
     // Returns true if this WebSecurityOrigin can access usernames and 
     // passwords stored in password manager.
-    WEBKIT_API bool canAccessPasswordManager() const;
+    WEBKIT_EXPORT bool canAccessPasswordManager() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebSecurityOrigin(const WTF::PassRefPtr<WebCore::SecurityOrigin>&);

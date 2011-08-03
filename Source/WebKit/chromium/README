@@ -27,13 +27,13 @@ DEFINES
   defined when building the 'src' directory, and it should also be defined by
   the consumer to ensure proper linkage to the shared library.
 
-  WEBKIT_API is defined for platforms (e.g., Windows) that require additional
-  annotations on functions and methods, which should be exported from WebKit
-  when it is built as a DLL.  In general, this includes all public methods
-  unless the methods are defined inline, marked pure virtual, or contained
-  within a WEBKIT_IMPLEMENTATION section.  Also, any private method called by a
-  public inline-defined method should be annotated with WEBKIT_API.  WEBKIT_API
-  is not used to export whole classes.
+  WEBKIT_EXPORT is defined for platforms (e.g., Windows) that require
+  additional annotations on functions and methods, which should be exported
+  from WebKit when it is built as a DLL.  In general, this includes all public
+  methods unless the methods are defined inline, marked pure virtual, or
+  contained within a WEBKIT_IMPLEMENTATION section.  Also, any private method
+  called by a public inline-defined method should be annotated with
+  WEBKIT_EXPORT.  WEBKIT_EXPORT is not used to export whole classes.
 
   WEBKIT_USING_SKIA is defined when using Skia as the graphics library.
 

@@ -60,43 +60,43 @@ public:
         return *this;
     }
 
-    WEBKIT_API void initialize();
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebDragData&);
+    WEBKIT_EXPORT void initialize();
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebDragData&);
 
     bool isNull() const { return !m_private; }
 
-    WEBKIT_API WebString url() const;
-    WEBKIT_API void setURL(const WebURL&);
+    WEBKIT_EXPORT WebString url() const;
+    WEBKIT_EXPORT void setURL(const WebURL&);
 
-    WEBKIT_API WebString urlTitle() const;
-    WEBKIT_API void setURLTitle(const WebString&);
+    WEBKIT_EXPORT WebString urlTitle() const;
+    WEBKIT_EXPORT void setURLTitle(const WebString&);
 
-    WEBKIT_API WebString downloadMetadata() const;
-    WEBKIT_API void setDownloadMetadata(const WebString&);
+    WEBKIT_EXPORT WebString downloadMetadata() const;
+    WEBKIT_EXPORT void setDownloadMetadata(const WebString&);
 
-    WEBKIT_API WebString fileExtension() const;
-    WEBKIT_API void setFileExtension(const WebString&);
+    WEBKIT_EXPORT WebString fileExtension() const;
+    WEBKIT_EXPORT void setFileExtension(const WebString&);
 
-    WEBKIT_API bool containsFilenames() const;
-    WEBKIT_API void filenames(WebVector<WebString>&) const;
-    WEBKIT_API void setFilenames(const WebVector<WebString>&);
-    WEBKIT_API void appendToFilenames(const WebString&);
+    WEBKIT_EXPORT bool containsFilenames() const;
+    WEBKIT_EXPORT void filenames(WebVector<WebString>&) const;
+    WEBKIT_EXPORT void setFilenames(const WebVector<WebString>&);
+    WEBKIT_EXPORT void appendToFilenames(const WebString&);
 
-    WEBKIT_API WebString plainText() const;
-    WEBKIT_API void setPlainText(const WebString&);
+    WEBKIT_EXPORT WebString plainText() const;
+    WEBKIT_EXPORT void setPlainText(const WebString&);
 
-    WEBKIT_API WebString htmlText() const;
-    WEBKIT_API void setHTMLText(const WebString&);
+    WEBKIT_EXPORT WebString htmlText() const;
+    WEBKIT_EXPORT void setHTMLText(const WebString&);
 
-    WEBKIT_API WebURL htmlBaseURL() const;
-    WEBKIT_API void setHTMLBaseURL(const WebURL&);
+    WEBKIT_EXPORT WebURL htmlBaseURL() const;
+    WEBKIT_EXPORT void setHTMLBaseURL(const WebURL&);
 
-    WEBKIT_API WebString fileContentFilename() const;
-    WEBKIT_API void setFileContentFilename(const WebString&);
+    WEBKIT_EXPORT WebString fileContentFilename() const;
+    WEBKIT_EXPORT void setFileContentFilename(const WebString&);
 
-    WEBKIT_API WebData fileContent() const;
-    WEBKIT_API void setFileContent(const WebData&);
+    WEBKIT_EXPORT WebData fileContent() const;
+    WEBKIT_EXPORT void setFileContent(const WebData&);
 
 #if WEBKIT_IMPLEMENTATION
     WebDragData(const WTF::PassRefPtr<WebCore::ChromiumDataObject>&);

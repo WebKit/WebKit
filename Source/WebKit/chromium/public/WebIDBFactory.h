@@ -47,7 +47,7 @@ class WebSecurityOrigin;
 // http://dev.w3.org/2006/webapi/WebSimpleDB/
 class WebIDBFactory {
 public:
-    WEBKIT_API static WebIDBFactory* create();
+    WEBKIT_EXPORT static WebIDBFactory* create();
 
     virtual ~WebIDBFactory() { }
 
@@ -63,8 +63,8 @@ public:
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     // Used for DumpRenderTree tests.
-    WEBKIT_API static void setOverrideBackingStoreType(BackingStoreType);
-    WEBKIT_API static void setTemporaryDatabaseFolder(const WebString& path);
+    WEBKIT_EXPORT static void setOverrideBackingStoreType(BackingStoreType);
+    WEBKIT_EXPORT static void setTemporaryDatabaseFolder(const WebString& path);
 };
 
 } // namespace WebKit

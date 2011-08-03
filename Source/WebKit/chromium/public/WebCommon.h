@@ -63,20 +63,20 @@
 #endif
 
 // -----------------------------------------------------------------------------
-// Exported symbols need to be annotated with WEBKIT_API
+// Exported symbols need to be annotated with WEBKIT_EXPORT
 
 #if defined(WEBKIT_DLL)
     #if defined(WIN32)
         #if WEBKIT_IMPLEMENTATION
-            #define WEBKIT_API __declspec(dllexport)
+            #define WEBKIT_EXPORT __declspec(dllexport)
         #else
-            #define WEBKIT_API __declspec(dllimport)
+            #define WEBKIT_EXPORT __declspec(dllimport)
         #endif
     #else
-        #define WEBKIT_API __attribute__((visibility("default")))
+        #define WEBKIT_EXPORT __attribute__((visibility("default")))
     #endif
 #else
-    #define WEBKIT_API
+    #define WEBKIT_EXPORT
 #endif
 
 // -----------------------------------------------------------------------------
@@ -104,7 +104,7 @@ typedef unsigned short WebUChar;
 // -----------------------------------------------------------------------------
 // Assertions
 
-WEBKIT_API void failedAssertion(const char* file, int line, const char* function, const char* assertion);
+WEBKIT_EXPORT void failedAssertion(const char* file, int line, const char* function, const char* assertion);
 
 } // namespace WebKit
 

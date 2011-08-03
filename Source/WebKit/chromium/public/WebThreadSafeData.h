@@ -49,11 +49,11 @@ public:
     WebThreadSafeData() { }
     ~WebThreadSafeData() { reset(); }
 
-    WEBKIT_API void assign(const WebThreadSafeData&);
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void assign(const WebThreadSafeData&);
+    WEBKIT_EXPORT void reset();
 
-    WEBKIT_API size_t size() const;
-    WEBKIT_API const char* data() const;
+    WEBKIT_EXPORT size_t size() const;
+    WEBKIT_EXPORT const char* data() const;
 
     bool isEmpty() const { return !size(); }
 

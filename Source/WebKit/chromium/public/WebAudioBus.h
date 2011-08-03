@@ -47,16 +47,16 @@ public:
     ~WebAudioBus() { reset(); }
     
     // initialize() allocates memory of the given length for the given number of channels.
-    WEBKIT_API void initialize(unsigned numberOfChannels, size_t length, double sampleRate);
+    WEBKIT_EXPORT void initialize(unsigned numberOfChannels, size_t length, double sampleRate);
 
     // reset() releases the memory allocated from initialize().
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void reset();
     
-    WEBKIT_API unsigned numberOfChannels() const;
-    WEBKIT_API size_t length() const;
-    WEBKIT_API double sampleRate() const;
+    WEBKIT_EXPORT unsigned numberOfChannels() const;
+    WEBKIT_EXPORT size_t length() const;
+    WEBKIT_EXPORT double sampleRate() const;
     
-    WEBKIT_API float* channelData(unsigned channelIndex);
+    WEBKIT_EXPORT float* channelData(unsigned channelIndex);
 
 #if WEBKIT_IMPLEMENTATION
     WTF::PassOwnPtr<WebCore::AudioBus> release();    

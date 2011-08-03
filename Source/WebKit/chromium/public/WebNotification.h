@@ -57,8 +57,8 @@ public:
 
     ~WebNotification() { reset(); }
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebNotification&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebNotification&);
 
     WebNotification& operator=(const WebNotification& other)
     {
@@ -68,37 +68,37 @@ public:
 
     // Operators required to put WebNotification in an ordered map.
     bool equals(const WebNotification& other) const { return m_private == other.m_private; }
-    WEBKIT_API bool lessThan(const WebNotification& other) const;
+    WEBKIT_EXPORT bool lessThan(const WebNotification& other) const;
 
     // Is the notification HTML vs. icon-title-text?
-    WEBKIT_API bool isHTML() const;
+    WEBKIT_EXPORT bool isHTML() const;
 
     // If HTML, the URL which contains the contents of the notification.
-    WEBKIT_API WebURL url() const;
+    WEBKIT_EXPORT WebURL url() const;
 
-    WEBKIT_API WebURL iconURL() const;
-    WEBKIT_API WebString title() const;
-    WEBKIT_API WebString body() const;
-    WEBKIT_API WebTextDirection direction() const;
+    WEBKIT_EXPORT WebURL iconURL() const;
+    WEBKIT_EXPORT WebString title() const;
+    WEBKIT_EXPORT WebString body() const;
+    WEBKIT_EXPORT WebTextDirection direction() const;
 
-    WEBKIT_API WebString replaceId() const;
+    WEBKIT_EXPORT WebString replaceId() const;
 
     // Called if the presenter goes out of scope before the notification does.
-    WEBKIT_API void detachPresenter();
+    WEBKIT_EXPORT void detachPresenter();
 
     // Called to indicate the notification has been displayed.
-    WEBKIT_API void dispatchDisplayEvent();
+    WEBKIT_EXPORT void dispatchDisplayEvent();
 
     // Called to indicate an error has occurred with this notification.
-    WEBKIT_API void dispatchErrorEvent(const WebString& errorMessage);
+    WEBKIT_EXPORT void dispatchErrorEvent(const WebString& errorMessage);
 
     // Called to indicate the notification has been closed.  If it was
     // closed by the user (as opposed to automatically by the system),
     // the byUser parameter will be true.
-    WEBKIT_API void dispatchCloseEvent(bool byUser);
+    WEBKIT_EXPORT void dispatchCloseEvent(bool byUser);
 
     // Called to indicate the notification was clicked on.
-    WEBKIT_API void dispatchClickEvent();
+    WEBKIT_EXPORT void dispatchClickEvent();
 
 #if WEBKIT_IMPLEMENTATION
     WebNotification(const WTF::PassRefPtr<WebCore::Notification>&);

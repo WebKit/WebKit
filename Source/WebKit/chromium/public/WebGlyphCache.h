@@ -40,7 +40,7 @@ namespace WebKit {
 class WebGlyphCache {
 public:
     // Returns the number of pages in the glyph cache.
-    WEBKIT_API static size_t pageCount();
+    WEBKIT_EXPORT static size_t pageCount();
 
 private:
     WebGlyphCache();  // Not intended to be instanced.

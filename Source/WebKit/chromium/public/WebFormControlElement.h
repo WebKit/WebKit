@@ -54,19 +54,19 @@ public:
     }
     void assign(const WebFormControlElement& e) { WebElement::assign(e); }
 
-    WEBKIT_API bool isEnabled() const;
-    WEBKIT_API bool isReadOnly() const;
-    WEBKIT_API WebString formControlName() const;
-    WEBKIT_API WebString formControlType() const;
+    WEBKIT_EXPORT bool isEnabled() const;
+    WEBKIT_EXPORT bool isReadOnly() const;
+    WEBKIT_EXPORT WebString formControlName() const;
+    WEBKIT_EXPORT WebString formControlType() const;
 
-    WEBKIT_API void dispatchFormControlChangeEvent();
+    WEBKIT_EXPORT void dispatchFormControlChangeEvent();
 
     // Returns the name that should be used for the specified |element| when
     // storing autofill data.  This is either the field name or its id, an empty
     // string if it has no name and no id.
-    WEBKIT_API WebString nameForAutofill() const;
+    WEBKIT_EXPORT WebString nameForAutofill() const;
 
-    WEBKIT_API WebFormElement form() const;
+    WEBKIT_EXPORT WebFormElement form() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebFormControlElement(const WTF::PassRefPtr<WebCore::HTMLFormControlElement>&);

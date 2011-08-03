@@ -83,7 +83,7 @@ template <typename T> class WebVector;
 class WebFrame {
 public:
     // Returns the number of live WebFrame objects, used for leak checking.
-    WEBKIT_API static int instanceCount();
+    WEBKIT_EXPORT static int instanceCount();
 
     // The two functions below retrieve the WebFrame instances relating the
     // currently executing JavaScript.  Since JavaScript can make function
@@ -101,19 +101,19 @@ public:
     // The 'current context' is the context the JS engine is currently
     // inside of; the context that is at the top of the JS function stack.
     // frameForCurrentContext() would return frame B in our example.
-    WEBKIT_API static WebFrame* frameForEnteredContext();
-    WEBKIT_API static WebFrame* frameForCurrentContext();
+    WEBKIT_EXPORT static WebFrame* frameForEnteredContext();
+    WEBKIT_EXPORT static WebFrame* frameForCurrentContext();
 
 #if WEBKIT_USING_V8
     // Returns the frame corresponding to the given context. This can return 0
     // if the context is detached from the frame, or if the context doesn't
     // correspond to a frame (e.g., workers).
-    WEBKIT_API static WebFrame* frameForContext(v8::Handle<v8::Context>);
+    WEBKIT_EXPORT static WebFrame* frameForContext(v8::Handle<v8::Context>);
 #endif
 
     // Returns the frame inside a given frame or iframe element. Returns 0 if
     // the given element is not a frame, iframe or if the frame is empty.
-    WEBKIT_API static WebFrame* fromFrameOwnerElement(const WebElement&);
+    WEBKIT_EXPORT static WebFrame* fromFrameOwnerElement(const WebElement&);
 
 
     // Basic properties ---------------------------------------------------

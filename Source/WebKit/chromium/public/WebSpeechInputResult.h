@@ -44,8 +44,8 @@ public:
     WebSpeechInputResult() { }
     ~WebSpeechInputResult() { reset(); }
 
-    WEBKIT_API void set(const WebString& utterance, double confidence);
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void set(const WebString& utterance, double confidence);
+    WEBKIT_EXPORT void reset();
 
 #if WEBKIT_IMPLEMENTATION
     WebSpeechInputResult(const WTF::PassRefPtr<WebCore::SpeechInputResult>&);

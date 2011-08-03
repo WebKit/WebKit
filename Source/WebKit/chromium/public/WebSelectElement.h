@@ -54,9 +54,9 @@ public:
     }
     void assign(const WebSelectElement& element) { WebFormControlElement::assign(element); }
 
-    WEBKIT_API void setValue(const WebString&);
-    WEBKIT_API WebString value() const;
-    WEBKIT_API WebVector<WebElement> listItems() const;
+    WEBKIT_EXPORT void setValue(const WebString&);
+    WEBKIT_EXPORT WebString value() const;
+    WEBKIT_EXPORT WebVector<WebElement> listItems() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebSelectElement(const WTF::PassRefPtr<WebCore::HTMLSelectElement>&);

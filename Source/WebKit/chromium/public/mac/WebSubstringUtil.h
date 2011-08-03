@@ -47,7 +47,7 @@ class WebSubstringUtil {
 public:
     // Returns an autoreleased NSAttributedString that is a substring of the
     // Frame at the given range, or nil on error.
-    WEBKIT_API static NSAttributedString* attributedSubstringInRange(WebFrame*,
+    WEBKIT_EXPORT static NSAttributedString* attributedSubstringInRange(WebFrame*,
         size_t location,
         size_t length);
 };

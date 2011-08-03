@@ -43,7 +43,7 @@ class WebMediaPlayer;
 
 class WebMediaElement : public WebElement {
 public:
-    WEBKIT_API WebMediaPlayer* player() const;
+    WEBKIT_EXPORT WebMediaPlayer* player() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebMediaElement(const WTF::PassRefPtr<WebCore::HTMLMediaElement>&);

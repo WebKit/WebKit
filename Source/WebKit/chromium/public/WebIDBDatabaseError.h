@@ -50,11 +50,11 @@ public:
         return *this;
     }
 
-    WEBKIT_API void assign(const WebIDBDatabaseError&);
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void assign(const WebIDBDatabaseError&);
+    WEBKIT_EXPORT void reset();
 
-    WEBKIT_API unsigned short code() const;
-    WEBKIT_API WebString message() const;
+    WEBKIT_EXPORT unsigned short code() const;
+    WEBKIT_EXPORT WebString message() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebIDBDatabaseError(const WTF::PassRefPtr<WebCore::IDBDatabaseError>&);
@@ -63,7 +63,7 @@ public:
 #endif
 
 private:
-    WEBKIT_API void assign(unsigned short code, const WebString& message);
+    WEBKIT_EXPORT void assign(unsigned short code, const WebString& message);
 
     WebPrivatePtr<WebCore::IDBDatabaseError> m_private;
 };

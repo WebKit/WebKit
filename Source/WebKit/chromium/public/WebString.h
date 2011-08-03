@@ -69,22 +69,22 @@ public:
         return *this;
     }
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebString&);
-    WEBKIT_API void assign(const WebUChar* data, size_t len);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebString&);
+    WEBKIT_EXPORT void assign(const WebUChar* data, size_t len);
 
-    WEBKIT_API bool equals(const WebString& s) const;
+    WEBKIT_EXPORT bool equals(const WebString& s) const;
 
-    WEBKIT_API size_t length() const;
-    WEBKIT_API const WebUChar* data() const;
+    WEBKIT_EXPORT size_t length() const;
+    WEBKIT_EXPORT const WebUChar* data() const;
 
     bool isEmpty() const { return !length(); }
     bool isNull() const { return !m_private; }
 
-    WEBKIT_API WebCString utf8() const;
+    WEBKIT_EXPORT WebCString utf8() const;
 
-    WEBKIT_API static WebString fromUTF8(const char* data, size_t length);
-    WEBKIT_API static WebString fromUTF8(const char* data);
+    WEBKIT_EXPORT static WebString fromUTF8(const char* data, size_t length);
+    WEBKIT_EXPORT static WebString fromUTF8(const char* data);
 
     template <int N> WebString(const char (&data)[N])
         : m_private(0)

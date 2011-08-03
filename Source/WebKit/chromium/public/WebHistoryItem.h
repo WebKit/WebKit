@@ -60,66 +60,66 @@ public:
         return *this;
     }
 
-    WEBKIT_API void initialize();
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebHistoryItem&);
+    WEBKIT_EXPORT void initialize();
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebHistoryItem&);
 
     bool isNull() const { return m_private.isNull(); }
 
-    WEBKIT_API WebString urlString() const;
-    WEBKIT_API void setURLString(const WebString&);
+    WEBKIT_EXPORT WebString urlString() const;
+    WEBKIT_EXPORT void setURLString(const WebString&);
 
-    WEBKIT_API WebString originalURLString() const;
-    WEBKIT_API void setOriginalURLString(const WebString&);
+    WEBKIT_EXPORT WebString originalURLString() const;
+    WEBKIT_EXPORT void setOriginalURLString(const WebString&);
 
-    WEBKIT_API WebString referrer() const;
-    WEBKIT_API void setReferrer(const WebString&);
+    WEBKIT_EXPORT WebString referrer() const;
+    WEBKIT_EXPORT void setReferrer(const WebString&);
 
-    WEBKIT_API WebString target() const;
-    WEBKIT_API void setTarget(const WebString&);
+    WEBKIT_EXPORT WebString target() const;
+    WEBKIT_EXPORT void setTarget(const WebString&);
 
-    WEBKIT_API WebString parent() const;
-    WEBKIT_API void setParent(const WebString&);
+    WEBKIT_EXPORT WebString parent() const;
+    WEBKIT_EXPORT void setParent(const WebString&);
 
-    WEBKIT_API WebString title() const;
-    WEBKIT_API void setTitle(const WebString&);
+    WEBKIT_EXPORT WebString title() const;
+    WEBKIT_EXPORT void setTitle(const WebString&);
 
-    WEBKIT_API WebString alternateTitle() const;
-    WEBKIT_API void setAlternateTitle(const WebString&);
+    WEBKIT_EXPORT WebString alternateTitle() const;
+    WEBKIT_EXPORT void setAlternateTitle(const WebString&);
 
-    WEBKIT_API double lastVisitedTime() const;
-    WEBKIT_API void setLastVisitedTime(double);
+    WEBKIT_EXPORT double lastVisitedTime() const;
+    WEBKIT_EXPORT void setLastVisitedTime(double);
 
-    WEBKIT_API WebPoint scrollOffset() const;
-    WEBKIT_API void setScrollOffset(const WebPoint&);
+    WEBKIT_EXPORT WebPoint scrollOffset() const;
+    WEBKIT_EXPORT void setScrollOffset(const WebPoint&);
 
-    WEBKIT_API bool isTargetItem() const;
-    WEBKIT_API void setIsTargetItem(bool);
+    WEBKIT_EXPORT bool isTargetItem() const;
+    WEBKIT_EXPORT void setIsTargetItem(bool);
 
-    WEBKIT_API int visitCount() const;
-    WEBKIT_API void setVisitCount(int);
+    WEBKIT_EXPORT int visitCount() const;
+    WEBKIT_EXPORT void setVisitCount(int);
 
-    WEBKIT_API WebVector<WebString> documentState() const;
-    WEBKIT_API void setDocumentState(const WebVector<WebString>&);
+    WEBKIT_EXPORT WebVector<WebString> documentState() const;
+    WEBKIT_EXPORT void setDocumentState(const WebVector<WebString>&);
 
-    WEBKIT_API long long itemSequenceNumber() const;
-    WEBKIT_API void setItemSequenceNumber(long long);
+    WEBKIT_EXPORT long long itemSequenceNumber() const;
+    WEBKIT_EXPORT void setItemSequenceNumber(long long);
 
-    WEBKIT_API long long documentSequenceNumber() const;
-    WEBKIT_API void setDocumentSequenceNumber(long long);
+    WEBKIT_EXPORT long long documentSequenceNumber() const;
+    WEBKIT_EXPORT void setDocumentSequenceNumber(long long);
 
-    WEBKIT_API WebSerializedScriptValue stateObject() const;
-    WEBKIT_API void setStateObject(const WebSerializedScriptValue&);
+    WEBKIT_EXPORT WebSerializedScriptValue stateObject() const;
+    WEBKIT_EXPORT void setStateObject(const WebSerializedScriptValue&);
 
-    WEBKIT_API WebString httpContentType() const;
-    WEBKIT_API void setHTTPContentType(const WebString&);
+    WEBKIT_EXPORT WebString httpContentType() const;
+    WEBKIT_EXPORT void setHTTPContentType(const WebString&);
 
-    WEBKIT_API WebHTTPBody httpBody() const;
-    WEBKIT_API void setHTTPBody(const WebHTTPBody&);
+    WEBKIT_EXPORT WebHTTPBody httpBody() const;
+    WEBKIT_EXPORT void setHTTPBody(const WebHTTPBody&);
 
-    WEBKIT_API WebVector<WebHistoryItem> children() const;
-    WEBKIT_API void setChildren(const WebVector<WebHistoryItem>&);
-    WEBKIT_API void appendToChildren(const WebHistoryItem&);
+    WEBKIT_EXPORT WebVector<WebHistoryItem> children() const;
+    WEBKIT_EXPORT void setChildren(const WebVector<WebHistoryItem>&);
+    WEBKIT_EXPORT void appendToChildren(const WebHistoryItem&);
 
 #if WEBKIT_IMPLEMENTATION
     WebHistoryItem(const WTF::PassRefPtr<WebCore::HistoryItem>&);

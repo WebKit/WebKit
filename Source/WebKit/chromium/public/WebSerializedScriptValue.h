@@ -51,18 +51,18 @@ public:
         return *this;
     }
 
-    WEBKIT_API static WebSerializedScriptValue fromString(const WebString&);
+    WEBKIT_EXPORT static WebSerializedScriptValue fromString(const WebString&);
 
     // Create a WebSerializedScriptValue that represents a serialization error.
-    WEBKIT_API static WebSerializedScriptValue createInvalid();
+    WEBKIT_EXPORT static WebSerializedScriptValue createInvalid();
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebSerializedScriptValue&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebSerializedScriptValue&);
 
     bool isNull() const { return m_private.isNull(); }
 
     // Returns a string representation of the WebSerializedScriptValue.
-    WEBKIT_API WebString toString() const;
+    WEBKIT_EXPORT WebString toString() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebSerializedScriptValue(const WTF::PassRefPtr<WebCore::SerializedScriptValue>&);

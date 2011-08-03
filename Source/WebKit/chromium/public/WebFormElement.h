@@ -59,15 +59,15 @@ namespace WebKit {
         }
         void assign(const WebFormElement& element) { WebElement::assign(element); }
 
-        WEBKIT_API bool autoComplete() const;
-        WEBKIT_API WebString action() const;
-        WEBKIT_API WebString name() const;
-        WEBKIT_API WebString method() const;
-        WEBKIT_API bool wasUserSubmitted() const;
-        WEBKIT_API void submit();
+        WEBKIT_EXPORT bool autoComplete() const;
+        WEBKIT_EXPORT WebString action() const;
+        WEBKIT_EXPORT WebString name() const;
+        WEBKIT_EXPORT WebString method() const;
+        WEBKIT_EXPORT bool wasUserSubmitted() const;
+        WEBKIT_EXPORT void submit();
         // FIXME: Deprecate and replace with WebVector<WebElement>.
-        WEBKIT_API void getNamedElements(const WebString&, WebVector<WebNode>&);
-        WEBKIT_API void getFormControlElements(WebVector<WebFormControlElement>&) const;
+        WEBKIT_EXPORT void getNamedElements(const WebString&, WebVector<WebNode>&);
+        WEBKIT_EXPORT void getFormControlElements(WebVector<WebFormControlElement>&) const;
 
 #if WEBKIT_IMPLEMENTATION
         WebFormElement(const WTF::PassRefPtr<WebCore::HTMLFormElement>&);

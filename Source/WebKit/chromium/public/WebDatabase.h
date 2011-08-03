@@ -43,22 +43,22 @@ class WebString;
 
 class WebDatabase {
 public:
-    WEBKIT_API WebString name() const;
-    WEBKIT_API WebString displayName() const;
-    WEBKIT_API unsigned long estimatedSize() const;
-    WEBKIT_API WebSecurityOrigin securityOrigin() const;
+    WEBKIT_EXPORT WebString name() const;
+    WEBKIT_EXPORT WebString displayName() const;
+    WEBKIT_EXPORT unsigned long estimatedSize() const;
+    WEBKIT_EXPORT WebSecurityOrigin securityOrigin() const;
 
-    WEBKIT_API static void setObserver(WebDatabaseObserver*);
-    WEBKIT_API static WebDatabaseObserver* observer();
+    WEBKIT_EXPORT static void setObserver(WebDatabaseObserver*);
+    WEBKIT_EXPORT static WebDatabaseObserver* observer();
 
-    WEBKIT_API static void updateDatabaseSize(
+    WEBKIT_EXPORT static void updateDatabaseSize(
         const WebString& originIdentifier, const WebString& name, long long size);
-    WEBKIT_API static void updateSpaceAvailable(
+    WEBKIT_EXPORT static void updateSpaceAvailable(
         const WebString& originIdentifier, long long spaceAvailable);
-    WEBKIT_API static void resetSpaceAvailable(
+    WEBKIT_EXPORT static void resetSpaceAvailable(
         const WebString& originIdentifier);
 
-    WEBKIT_API static void closeDatabaseImmediately(
+    WEBKIT_EXPORT static void closeDatabaseImmediately(
         const WebString& originIdentifier, const WebString& databaseName);
 
 #if WEBKIT_IMPLEMENTATION

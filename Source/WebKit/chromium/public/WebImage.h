@@ -70,13 +70,13 @@ public:
     // Decodes the given image data.  If the image has multiple frames,
     // then the frame whose size is desiredSize is returned.  Otherwise,
     // the first frame is returned.
-    WEBKIT_API static WebImage fromData(const WebData&, const WebSize& desiredSize);
+    WEBKIT_EXPORT static WebImage fromData(const WebData&, const WebSize& desiredSize);
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebImage&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebImage&);
 
-    WEBKIT_API bool isNull() const;
-    WEBKIT_API WebSize size() const;
+    WEBKIT_EXPORT bool isNull() const;
+    WEBKIT_EXPORT WebSize size() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebImage(const WTF::PassRefPtr<WebCore::Image>&);
@@ -116,7 +116,7 @@ private:
 
 private:
     void init() { m_imageRef = 0; }
-    WEBKIT_API void assign(CGImageRef);
+    WEBKIT_EXPORT void assign(CGImageRef);
     CGImageRef m_imageRef;
 #endif
 };

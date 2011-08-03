@@ -43,14 +43,14 @@ public:
     WebIDBKeyRange(const WebIDBKeyRange& keyRange) { assign(keyRange); }
     WebIDBKeyRange(const WebIDBKey& lower, const WebIDBKey& upper, bool lowerOpen, bool upperOpen) { assign(lower, upper, lowerOpen, upperOpen); }
 
-    WEBKIT_API WebIDBKey lower() const;
-    WEBKIT_API WebIDBKey upper() const;
-    WEBKIT_API bool lowerOpen() const;
-    WEBKIT_API bool upperOpen() const;
+    WEBKIT_EXPORT WebIDBKey lower() const;
+    WEBKIT_EXPORT WebIDBKey upper() const;
+    WEBKIT_EXPORT bool lowerOpen() const;
+    WEBKIT_EXPORT bool upperOpen() const;
 
-    WEBKIT_API void assign(const WebIDBKeyRange&);
-    WEBKIT_API void assign(const WebIDBKey& lower, const WebIDBKey& upper, bool lowerOpen, bool upperOpen);
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void assign(const WebIDBKeyRange&);
+    WEBKIT_EXPORT void assign(const WebIDBKey& lower, const WebIDBKey& upper, bool lowerOpen, bool upperOpen);
+    WEBKIT_EXPORT void reset();
 
 #if WEBKIT_IMPLEMENTATION
     WebIDBKeyRange(const WTF::PassRefPtr<WebCore::IDBKeyRange>&);

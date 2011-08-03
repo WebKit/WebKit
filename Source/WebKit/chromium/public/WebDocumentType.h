@@ -54,7 +54,7 @@ public:
     }
     void assign(const WebDocumentType& e) { WebNode::assign(e); }
 
-    WEBKIT_API WebString name() const;
+    WEBKIT_EXPORT WebString name() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebDocumentType(const WTF::PassRefPtr<WebCore::DocumentType>&);

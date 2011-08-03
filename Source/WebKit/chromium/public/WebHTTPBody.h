@@ -67,30 +67,30 @@ public:
         return *this;
     }
 
-    WEBKIT_API void initialize();
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebHTTPBody&);
+    WEBKIT_EXPORT void initialize();
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebHTTPBody&);
 
     bool isNull() const { return !m_private; }
 
     // Returns the number of elements comprising the http body.
-    WEBKIT_API size_t elementCount() const;
+    WEBKIT_EXPORT size_t elementCount() const;
 
     // Sets the values of the element at the given index.  Returns false if
     // index is out of bounds.
-    WEBKIT_API bool elementAt(size_t index, Element&) const;
+    WEBKIT_EXPORT bool elementAt(size_t index, Element&) const;
 
     // Append to the list of elements.
-    WEBKIT_API void appendData(const WebData&);
-    WEBKIT_API void appendFile(const WebString&);
+    WEBKIT_EXPORT void appendData(const WebData&);
+    WEBKIT_EXPORT void appendFile(const WebString&);
     // Passing -1 to fileLength means to the end of the file.
-    WEBKIT_API void appendFileRange(const WebString&, long long fileStart, long long fileLength, double modificationTime);
-    WEBKIT_API void appendBlob(const WebURL&);
+    WEBKIT_EXPORT void appendFileRange(const WebString&, long long fileStart, long long fileLength, double modificationTime);
+    WEBKIT_EXPORT void appendBlob(const WebURL&);
 
     // Identifies a particular form submission instance.  A value of 0 is
     // used to indicate an unspecified identifier.
-    WEBKIT_API long long identifier() const;
-    WEBKIT_API void setIdentifier(long long);
+    WEBKIT_EXPORT long long identifier() const;
+    WEBKIT_EXPORT void setIdentifier(long long);
 
 #if WEBKIT_IMPLEMENTATION
     WebHTTPBody(const WTF::PassRefPtr<WebCore::FormData>&);

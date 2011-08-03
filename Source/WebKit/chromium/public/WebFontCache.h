@@ -39,13 +39,13 @@ namespace WebKit {
 class WebFontCache {
 public:
     // Returns the number of items in the font data cache.
-    WEBKIT_API static size_t fontDataCount();
+    WEBKIT_EXPORT static size_t fontDataCount();
 
     // Returns the number of inactive items in the font data cache.
-    WEBKIT_API static size_t inactiveFontDataCount();
+    WEBKIT_EXPORT static size_t inactiveFontDataCount();
 
     // Clears the cache.
-    WEBKIT_API static void clear();
+    WEBKIT_EXPORT static void clear();
 
 private:
     WebFontCache();  // Not intended to be instanced.

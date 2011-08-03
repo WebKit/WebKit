@@ -60,38 +60,38 @@ public:
         return *this;
     }
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebDOMEvent&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebDOMEvent&);
 
     bool isNull() const { return !m_private; }
 
-    WEBKIT_API WebString type() const;
-    WEBKIT_API WebNode target() const;
-    WEBKIT_API WebNode currentTarget() const;
+    WEBKIT_EXPORT WebString type() const;
+    WEBKIT_EXPORT WebNode target() const;
+    WEBKIT_EXPORT WebNode currentTarget() const;
 
-    WEBKIT_API PhaseType eventPhase() const;
-    WEBKIT_API bool bubbles() const;
-    WEBKIT_API bool cancelable() const;
+    WEBKIT_EXPORT PhaseType eventPhase() const;
+    WEBKIT_EXPORT bool bubbles() const;
+    WEBKIT_EXPORT bool cancelable() const;
 
-    WEBKIT_API bool isUIEvent() const;
-    WEBKIT_API bool isMouseEvent() const;
-    WEBKIT_API bool isMutationEvent() const;
-    WEBKIT_API bool isKeyboardEvent() const;
-    WEBKIT_API bool isTextEvent() const;
-    WEBKIT_API bool isCompositionEvent() const;
-    WEBKIT_API bool isDragEvent() const;
-    WEBKIT_API bool isClipboardEvent() const;
-    WEBKIT_API bool isMessageEvent() const;
-    WEBKIT_API bool isWheelEvent() const;
-    WEBKIT_API bool isBeforeTextInsertedEvent() const;
-    WEBKIT_API bool isOverflowEvent() const;
-    WEBKIT_API bool isPageTransitionEvent() const;
-    WEBKIT_API bool isPopStateEvent() const;
-    WEBKIT_API bool isProgressEvent() const;
-    WEBKIT_API bool isXMLHttpRequestProgressEvent() const;
-    WEBKIT_API bool isWebKitAnimationEvent() const;
-    WEBKIT_API bool isWebKitTransitionEvent() const;
-    WEBKIT_API bool isBeforeLoadEvent() const;
+    WEBKIT_EXPORT bool isUIEvent() const;
+    WEBKIT_EXPORT bool isMouseEvent() const;
+    WEBKIT_EXPORT bool isMutationEvent() const;
+    WEBKIT_EXPORT bool isKeyboardEvent() const;
+    WEBKIT_EXPORT bool isTextEvent() const;
+    WEBKIT_EXPORT bool isCompositionEvent() const;
+    WEBKIT_EXPORT bool isDragEvent() const;
+    WEBKIT_EXPORT bool isClipboardEvent() const;
+    WEBKIT_EXPORT bool isMessageEvent() const;
+    WEBKIT_EXPORT bool isWheelEvent() const;
+    WEBKIT_EXPORT bool isBeforeTextInsertedEvent() const;
+    WEBKIT_EXPORT bool isOverflowEvent() const;
+    WEBKIT_EXPORT bool isPageTransitionEvent() const;
+    WEBKIT_EXPORT bool isPopStateEvent() const;
+    WEBKIT_EXPORT bool isProgressEvent() const;
+    WEBKIT_EXPORT bool isXMLHttpRequestProgressEvent() const;
+    WEBKIT_EXPORT bool isWebKitAnimationEvent() const;
+    WEBKIT_EXPORT bool isWebKitTransitionEvent() const;
+    WEBKIT_EXPORT bool isBeforeLoadEvent() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebDOMEvent(const WTF::PassRefPtr<WebCore::Event>&);

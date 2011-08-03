@@ -71,12 +71,12 @@ public:
         return *this;
     }
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebData&);
-    WEBKIT_API void assign(const char* data, size_t size);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebData&);
+    WEBKIT_EXPORT void assign(const char* data, size_t size);
 
-    WEBKIT_API size_t size() const;
-    WEBKIT_API const char* data() const;
+    WEBKIT_EXPORT size_t size() const;
+    WEBKIT_EXPORT const char* data() const;
 
     bool isEmpty() const { return !size(); }
     bool isNull() const { return !m_private; }

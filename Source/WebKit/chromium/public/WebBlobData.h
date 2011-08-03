@@ -60,21 +60,21 @@ public:
 
     WebBlobData() : m_private(0) { }
 
-    WEBKIT_API void initialize();
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void initialize();
+    WEBKIT_EXPORT void reset();
 
     bool isNull() const { return !m_private; }
 
     // Returns the number of items.
-    WEBKIT_API size_t itemCount() const;
+    WEBKIT_EXPORT size_t itemCount() const;
 
     // Retrieves the values of the item at the given index.  Returns false if
     // index is out of bounds.
-    WEBKIT_API bool itemAt(size_t index, Item& result) const;
+    WEBKIT_EXPORT bool itemAt(size_t index, Item& result) const;
 
-    WEBKIT_API WebString contentType() const;
+    WEBKIT_EXPORT WebString contentType() const;
 
-    WEBKIT_API WebString contentDisposition() const;
+    WEBKIT_EXPORT WebString contentDisposition() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebBlobData(const WTF::PassOwnPtr<WebCore::BlobData>&);

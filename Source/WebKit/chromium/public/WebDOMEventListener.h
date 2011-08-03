@@ -47,8 +47,8 @@ class WebString;
 
 class WebDOMEventListener {
 public:
-    WEBKIT_API WebDOMEventListener();
-    WEBKIT_API virtual ~WebDOMEventListener();
+    WEBKIT_EXPORT WebDOMEventListener();
+    WEBKIT_EXPORT virtual ~WebDOMEventListener();
 
     // Called when an event is received.
     virtual void handleEvent(const WebDOMEvent&) = 0;

@@ -66,67 +66,67 @@ public:
         setURL(url);
     }
 
-    WEBKIT_API void initialize();
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebURLResponse&);
+    WEBKIT_EXPORT void initialize();
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebURLResponse&);
 
-    WEBKIT_API bool isNull() const;
+    WEBKIT_EXPORT bool isNull() const;
 
-    WEBKIT_API WebURL url() const;
-    WEBKIT_API void setURL(const WebURL&);
+    WEBKIT_EXPORT WebURL url() const;
+    WEBKIT_EXPORT void setURL(const WebURL&);
 
-    WEBKIT_API unsigned connectionID() const;
-    WEBKIT_API void setConnectionID(unsigned);
+    WEBKIT_EXPORT unsigned connectionID() const;
+    WEBKIT_EXPORT void setConnectionID(unsigned);
 
-    WEBKIT_API bool connectionReused() const;
-    WEBKIT_API void setConnectionReused(bool);
+    WEBKIT_EXPORT bool connectionReused() const;
+    WEBKIT_EXPORT void setConnectionReused(bool);
 
-    WEBKIT_API WebURLLoadTiming loadTiming();
-    WEBKIT_API void setLoadTiming(const WebURLLoadTiming&);
+    WEBKIT_EXPORT WebURLLoadTiming loadTiming();
+    WEBKIT_EXPORT void setLoadTiming(const WebURLLoadTiming&);
 
-    WEBKIT_API WebHTTPLoadInfo httpLoadInfo();
-    WEBKIT_API void setHTTPLoadInfo(const WebHTTPLoadInfo&);
+    WEBKIT_EXPORT WebHTTPLoadInfo httpLoadInfo();
+    WEBKIT_EXPORT void setHTTPLoadInfo(const WebHTTPLoadInfo&);
 
-    WEBKIT_API double responseTime() const;
-    WEBKIT_API void setResponseTime(double);
+    WEBKIT_EXPORT double responseTime() const;
+    WEBKIT_EXPORT void setResponseTime(double);
 
-    WEBKIT_API WebString mimeType() const;
-    WEBKIT_API void setMIMEType(const WebString&);
+    WEBKIT_EXPORT WebString mimeType() const;
+    WEBKIT_EXPORT void setMIMEType(const WebString&);
 
-    WEBKIT_API long long expectedContentLength() const;
-    WEBKIT_API void setExpectedContentLength(long long);
+    WEBKIT_EXPORT long long expectedContentLength() const;
+    WEBKIT_EXPORT void setExpectedContentLength(long long);
 
-    WEBKIT_API WebString textEncodingName() const;
-    WEBKIT_API void setTextEncodingName(const WebString&);
+    WEBKIT_EXPORT WebString textEncodingName() const;
+    WEBKIT_EXPORT void setTextEncodingName(const WebString&);
 
-    WEBKIT_API WebString suggestedFileName() const;
-    WEBKIT_API void setSuggestedFileName(const WebString&);
+    WEBKIT_EXPORT WebString suggestedFileName() const;
+    WEBKIT_EXPORT void setSuggestedFileName(const WebString&);
 
-    WEBKIT_API int httpStatusCode() const;
-    WEBKIT_API void setHTTPStatusCode(int);
+    WEBKIT_EXPORT int httpStatusCode() const;
+    WEBKIT_EXPORT void setHTTPStatusCode(int);
 
-    WEBKIT_API WebString httpStatusText() const;
-    WEBKIT_API void setHTTPStatusText(const WebString&);
+    WEBKIT_EXPORT WebString httpStatusText() const;
+    WEBKIT_EXPORT void setHTTPStatusText(const WebString&);
 
-    WEBKIT_API WebString httpHeaderField(const WebString& name) const;
-    WEBKIT_API void setHTTPHeaderField(const WebString& name, const WebString& value);
-    WEBKIT_API void addHTTPHeaderField(const WebString& name, const WebString& value);
-    WEBKIT_API void clearHTTPHeaderField(const WebString& name);
-    WEBKIT_API void visitHTTPHeaderFields(WebHTTPHeaderVisitor*) const;
+    WEBKIT_EXPORT WebString httpHeaderField(const WebString& name) const;
+    WEBKIT_EXPORT void setHTTPHeaderField(const WebString& name, const WebString& value);
+    WEBKIT_EXPORT void addHTTPHeaderField(const WebString& name, const WebString& value);
+    WEBKIT_EXPORT void clearHTTPHeaderField(const WebString& name);
+    WEBKIT_EXPORT void visitHTTPHeaderFields(WebHTTPHeaderVisitor*) const;
 
-    WEBKIT_API double lastModifiedDate() const;
-    WEBKIT_API void setLastModifiedDate(double);
+    WEBKIT_EXPORT double lastModifiedDate() const;
+    WEBKIT_EXPORT void setLastModifiedDate(double);
 
-    WEBKIT_API long long appCacheID() const;
-    WEBKIT_API void setAppCacheID(long long);
+    WEBKIT_EXPORT long long appCacheID() const;
+    WEBKIT_EXPORT void setAppCacheID(long long);
 
-    WEBKIT_API WebURL appCacheManifestURL() const;
-    WEBKIT_API void setAppCacheManifestURL(const WebURL&);
+    WEBKIT_EXPORT WebURL appCacheManifestURL() const;
+    WEBKIT_EXPORT void setAppCacheManifestURL(const WebURL&);
 
     // A consumer controlled value intended to be used to record opaque
     // security info related to this request.
-    WEBKIT_API WebCString securityInfo() const;
-    WEBKIT_API void setSecurityInfo(const WebCString&);
+    WEBKIT_EXPORT WebCString securityInfo() const;
+    WEBKIT_EXPORT void setSecurityInfo(const WebCString&);
 
 #if defined(WEBKIT_IMPLEMENTATION)
     WebCore::ResourceResponse& toMutableResourceResponse();
@@ -134,45 +134,45 @@ public:
 #endif
 
     // Flag whether this request was served from the disk cache entry.
-    WEBKIT_API bool wasCached() const;
-    WEBKIT_API void setWasCached(bool);
+    WEBKIT_EXPORT bool wasCached() const;
+    WEBKIT_EXPORT void setWasCached(bool);
 
     // Flag whether this request was loaded via the SPDY protocol or not.
     // SPDY is an experimental web protocol, see http://dev.chromium.org/spdy
-    WEBKIT_API bool wasFetchedViaSPDY() const;
-    WEBKIT_API void setWasFetchedViaSPDY(bool);
+    WEBKIT_EXPORT bool wasFetchedViaSPDY() const;
+    WEBKIT_EXPORT void setWasFetchedViaSPDY(bool);
 
     // Flag whether this request was loaded after the TLS/Next-Protocol-Negotiation was used.
     // This is related to SPDY.
-    WEBKIT_API bool wasNpnNegotiated() const;
-    WEBKIT_API void setWasNpnNegotiated(bool);
+    WEBKIT_EXPORT bool wasNpnNegotiated() const;
+    WEBKIT_EXPORT void setWasNpnNegotiated(bool);
 
     // Flag whether this request was made when "Alternate-Protocol: xxx"
     // is present in server's response.
-    WEBKIT_API bool wasAlternateProtocolAvailable() const;
-    WEBKIT_API void setWasAlternateProtocolAvailable(bool);
+    WEBKIT_EXPORT bool wasAlternateProtocolAvailable() const;
+    WEBKIT_EXPORT void setWasAlternateProtocolAvailable(bool);
 
     // Flag whether this request was loaded via an explicit proxy (HTTP, SOCKS, etc).
-    WEBKIT_API bool wasFetchedViaProxy() const;
-    WEBKIT_API void setWasFetchedViaProxy(bool);
+    WEBKIT_EXPORT bool wasFetchedViaProxy() const;
+    WEBKIT_EXPORT void setWasFetchedViaProxy(bool);
 
     // Flag whether this request is part of a multipart response.
-    WEBKIT_API bool isMultipartPayload() const;
-    WEBKIT_API void setIsMultipartPayload(bool);
+    WEBKIT_EXPORT bool isMultipartPayload() const;
+    WEBKIT_EXPORT void setIsMultipartPayload(bool);
 
     // This indicates the location of a downloaded response if the
     // WebURLRequest had the downloadToFile flag set to true.  This file path
     // remains valid for the lifetime of the WebURLLoader used to create it.
-    WEBKIT_API WebString downloadFilePath() const;
-    WEBKIT_API void setDownloadFilePath(const WebString&);
+    WEBKIT_EXPORT WebString downloadFilePath() const;
+    WEBKIT_EXPORT void setDownloadFilePath(const WebString&);
 
     // Remote IP address of the socket which fetched this resource.
-    WEBKIT_API WebString remoteIPAddress() const;
-    WEBKIT_API void setRemoteIPAddress(const WebString&);
+    WEBKIT_EXPORT WebString remoteIPAddress() const;
+    WEBKIT_EXPORT void setRemoteIPAddress(const WebString&);
 
     // Remote port number of the socket which fetched this resource.
-    WEBKIT_API unsigned short remotePort() const;
-    WEBKIT_API void setRemotePort(unsigned short);
+    WEBKIT_EXPORT unsigned short remotePort() const;
+    WEBKIT_EXPORT void setRemotePort(unsigned short);
 
 protected:
     void assign(WebURLResponsePrivate*);

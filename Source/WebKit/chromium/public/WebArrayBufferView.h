@@ -43,12 +43,12 @@ public:
     WebArrayBufferView() { }
     WebArrayBufferView(const WebArrayBufferView& v) { assign(v); }
 
-    WEBKIT_API void* baseAddress() const;
-    WEBKIT_API unsigned byteOffset() const;
-    WEBKIT_API unsigned byteLength() const;
+    WEBKIT_EXPORT void* baseAddress() const;
+    WEBKIT_EXPORT unsigned byteOffset() const;
+    WEBKIT_EXPORT unsigned byteLength() const;
 
-    WEBKIT_API void assign(const WebArrayBufferView&);
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void assign(const WebArrayBufferView&);
+    WEBKIT_EXPORT void reset();
 
 #if WEBKIT_IMPLEMENTATION
     WebArrayBufferView(const WTF::PassRefPtr<WebCore::ArrayBufferView>&);

@@ -43,13 +43,13 @@ public:
     WebIDBKey() { }
     ~WebIDBKey() { reset(); }
 
-    WEBKIT_API static WebIDBKey createNull();
-    WEBKIT_API static WebIDBKey createString(const WebString&);
-    WEBKIT_API static WebIDBKey createDate(double);
-    WEBKIT_API static WebIDBKey createNumber(double);
-    WEBKIT_API static WebIDBKey createInvalid();
-    WEBKIT_API static WebIDBKey createFromValueAndKeyPath(const WebSerializedScriptValue&, const WebIDBKeyPath&);
-    WEBKIT_API static WebSerializedScriptValue injectIDBKeyIntoSerializedValue(const WebIDBKey&, const WebSerializedScriptValue&, const WebIDBKeyPath&);
+    WEBKIT_EXPORT static WebIDBKey createNull();
+    WEBKIT_EXPORT static WebIDBKey createString(const WebString&);
+    WEBKIT_EXPORT static WebIDBKey createDate(double);
+    WEBKIT_EXPORT static WebIDBKey createNumber(double);
+    WEBKIT_EXPORT static WebIDBKey createInvalid();
+    WEBKIT_EXPORT static WebIDBKey createFromValueAndKeyPath(const WebSerializedScriptValue&, const WebIDBKeyPath&);
+    WEBKIT_EXPORT static WebSerializedScriptValue injectIDBKeyIntoSerializedValue(const WebIDBKey&, const WebSerializedScriptValue&, const WebIDBKeyPath&);
 
     WebIDBKey(const WebIDBKey& e) { assign(e); }
     WebIDBKey& operator=(const WebIDBKey& e)
@@ -58,13 +58,13 @@ public:
         return *this;
     }
 
-    WEBKIT_API void assign(const WebIDBKey&);
-    WEBKIT_API void assignNull();
-    WEBKIT_API void assignString(const WebString&);
-    WEBKIT_API void assignDate(double);
-    WEBKIT_API void assignNumber(double);
-    WEBKIT_API void assignInvalid();
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void assign(const WebIDBKey&);
+    WEBKIT_EXPORT void assignNull();
+    WEBKIT_EXPORT void assignString(const WebString&);
+    WEBKIT_EXPORT void assignDate(double);
+    WEBKIT_EXPORT void assignNumber(double);
+    WEBKIT_EXPORT void assignInvalid();
+    WEBKIT_EXPORT void reset();
 
     enum Type {
         NullType = 0,
@@ -75,10 +75,10 @@ public:
         InvalidType
     };
 
-    WEBKIT_API Type type() const;
-    WEBKIT_API WebString string() const; // Only valid for StringType.
-    WEBKIT_API double date() const; // Only valid for DateType.
-    WEBKIT_API double number() const; // Only valid for NumberType.
+    WEBKIT_EXPORT Type type() const;
+    WEBKIT_EXPORT WebString string() const; // Only valid for StringType.
+    WEBKIT_EXPORT double date() const; // Only valid for DateType.
+    WEBKIT_EXPORT double number() const; // Only valid for NumberType.
 
 #if WEBKIT_IMPLEMENTATION
     WebIDBKey(const WTF::PassRefPtr<WebCore::IDBKey>&);

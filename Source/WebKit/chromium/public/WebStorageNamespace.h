@@ -47,8 +47,8 @@ public:
     // where the SQLite databases that make LocalStorage data persistent are located.
     // If path is empty, data will not persist. You should call delete on the returned
     // object when you're finished.
-    WEBKIT_API static WebStorageNamespace* createLocalStorageNamespace(const WebString& backingDirectoryPath, unsigned quota);
-    WEBKIT_API static WebStorageNamespace* createSessionStorageNamespace(unsigned quota);
+    WEBKIT_EXPORT static WebStorageNamespace* createLocalStorageNamespace(const WebString& backingDirectoryPath, unsigned quota);
+    WEBKIT_EXPORT static WebStorageNamespace* createSessionStorageNamespace(unsigned quota);
 
     // The quota for each storage area.  Suggested by the spec.
     static const unsigned m_localStorageQuota = 5 * 1024 * 1024;

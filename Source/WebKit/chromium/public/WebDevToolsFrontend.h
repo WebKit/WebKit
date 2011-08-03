@@ -43,9 +43,9 @@ class WebView;
 // direct and delegate Apis to the host.
 class WebDevToolsFrontend {
 public:
-    WEBKIT_API static WebDevToolsFrontend* create(WebView* view,
-                                                  WebDevToolsFrontendClient* client,
-                                                  const WebString& applicationLocale);
+    WEBKIT_EXPORT static WebDevToolsFrontend* create(WebView* view,
+                                                     WebDevToolsFrontendClient* client,
+                                                     const WebString& applicationLocale);
 
     virtual ~WebDevToolsFrontend() {}
 

@@ -72,39 +72,39 @@ public:
     }
     void assign(const WebDocument& e) { WebNode::assign(e); }
 
-    WEBKIT_API WebURL url() const;
+    WEBKIT_EXPORT WebURL url() const;
     // Note: Security checks should use the securityOrigin(), not url().
-    WEBKIT_API WebSecurityOrigin securityOrigin() const;
+    WEBKIT_EXPORT WebSecurityOrigin securityOrigin() const;
 
-    WEBKIT_API WebString encoding() const;
+    WEBKIT_EXPORT WebString encoding() const;
 
     // The url of the OpenSearch Desription Document (if any).
-    WEBKIT_API WebURL openSearchDescriptionURL() const;
+    WEBKIT_EXPORT WebURL openSearchDescriptionURL() const;
 
     // Returns the frame the document belongs to or 0 if the document is frameless.
-    WEBKIT_API WebFrame* frame() const;
-    WEBKIT_API bool isHTMLDocument() const;
-    WEBKIT_API bool isXHTMLDocument() const;
-    WEBKIT_API bool isPluginDocument() const;
-    WEBKIT_API WebURL baseURL() const;
-    WEBKIT_API WebURL firstPartyForCookies() const;
-    WEBKIT_API WebElement documentElement() const;
-    WEBKIT_API WebElement body() const;
-    WEBKIT_API WebElement head();
-    WEBKIT_API WebString title() const;
-    WEBKIT_API WebNodeCollection all();
-    WEBKIT_API void forms(WebVector<WebFormElement>&) const;
-    WEBKIT_API WebURL completeURL(const WebString&) const;
-    WEBKIT_API WebElement getElementById(const WebString&) const;
-    WEBKIT_API WebNode focusedNode() const;
-    WEBKIT_API WebDocumentType doctype() const;
-    WEBKIT_API WebAccessibilityObject accessibilityObject() const;
+    WEBKIT_EXPORT WebFrame* frame() const;
+    WEBKIT_EXPORT bool isHTMLDocument() const;
+    WEBKIT_EXPORT bool isXHTMLDocument() const;
+    WEBKIT_EXPORT bool isPluginDocument() const;
+    WEBKIT_EXPORT WebURL baseURL() const;
+    WEBKIT_EXPORT WebURL firstPartyForCookies() const;
+    WEBKIT_EXPORT WebElement documentElement() const;
+    WEBKIT_EXPORT WebElement body() const;
+    WEBKIT_EXPORT WebElement head();
+    WEBKIT_EXPORT WebString title() const;
+    WEBKIT_EXPORT WebNodeCollection all();
+    WEBKIT_EXPORT void forms(WebVector<WebFormElement>&) const;
+    WEBKIT_EXPORT WebURL completeURL(const WebString&) const;
+    WEBKIT_EXPORT WebElement getElementById(const WebString&) const;
+    WEBKIT_EXPORT WebNode focusedNode() const;
+    WEBKIT_EXPORT WebDocumentType doctype() const;
+    WEBKIT_EXPORT WebAccessibilityObject accessibilityObject() const;
 
     // Inserts the given CSS source code as a user stylesheet in the document.
     // Meant for programatic/one-off injection, as opposed to
     // WebView::addUserStyleSheet which inserts styles for the lifetime of the
     // WebView.
-    WEBKIT_API void insertUserStyleSheet(const WebString& sourceCode, UserStyleLevel);
+    WEBKIT_EXPORT void insertUserStyleSheet(const WebString& sourceCode, UserStyleLevel);
 
 #if WEBKIT_IMPLEMENTATION
     WebDocument(const WTF::PassRefPtr<WebCore::Document>&);

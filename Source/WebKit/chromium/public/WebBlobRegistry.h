@@ -40,7 +40,7 @@ class WebURL;
 
 class WebBlobRegistry {
 public:
-    WEBKIT_API static WebBlobRegistry* create();
+    WEBKIT_EXPORT static WebBlobRegistry* create();
 
     virtual ~WebBlobRegistry() { }
 

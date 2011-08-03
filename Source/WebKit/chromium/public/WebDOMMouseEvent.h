@@ -40,21 +40,21 @@ namespace WebKit {
 
 class WebDOMMouseEvent : public WebDOMEvent {
 public:
-    WEBKIT_API int screenX() const;
-    WEBKIT_API int screenY() const;
-    WEBKIT_API int clientX() const;
-    WEBKIT_API int clientY() const;
-    WEBKIT_API int layerX();
-    WEBKIT_API int layerY();
-    WEBKIT_API int offsetX();
-    WEBKIT_API int offsetY();
-    WEBKIT_API int pageX() const;
-    WEBKIT_API int pageY() const;
-    WEBKIT_API int x() const;
-    WEBKIT_API int y() const;
+    WEBKIT_EXPORT int screenX() const;
+    WEBKIT_EXPORT int screenY() const;
+    WEBKIT_EXPORT int clientX() const;
+    WEBKIT_EXPORT int clientY() const;
+    WEBKIT_EXPORT int layerX();
+    WEBKIT_EXPORT int layerY();
+    WEBKIT_EXPORT int offsetX();
+    WEBKIT_EXPORT int offsetY();
+    WEBKIT_EXPORT int pageX() const;
+    WEBKIT_EXPORT int pageY() const;
+    WEBKIT_EXPORT int x() const;
+    WEBKIT_EXPORT int y() const;
 
-    WEBKIT_API int button() const;
-    WEBKIT_API bool buttonDown() const;
+    WEBKIT_EXPORT int button() const;
+    WEBKIT_EXPORT bool buttonDown() const;
 };
 
 } // namespace WebKit

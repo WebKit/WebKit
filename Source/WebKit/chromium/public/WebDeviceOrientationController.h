@@ -41,7 +41,7 @@ public:
     {
     }
 
-    WEBKIT_API void didChangeDeviceOrientation(const WebDeviceOrientation&);
+    WEBKIT_EXPORT void didChangeDeviceOrientation(const WebDeviceOrientation&);
 
 #if WEBKIT_IMPLEMENTATION
     WebCore::DeviceOrientationController* controller() const;

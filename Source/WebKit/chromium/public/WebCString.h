@@ -75,22 +75,22 @@ public:
     // Returns 0 if both strings are equals, a value greater than zero if the
     // first character that does not match has a greater value in this string
     // than in |other|, or a value less than zero to indicate the opposite.
-    WEBKIT_API int compare(const WebCString& other) const;
+    WEBKIT_EXPORT int compare(const WebCString& other) const;
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebCString&);
-    WEBKIT_API void assign(const char* data, size_t len);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebCString&);
+    WEBKIT_EXPORT void assign(const char* data, size_t len);
 
-    WEBKIT_API size_t length() const;
-    WEBKIT_API const char* data() const;
+    WEBKIT_EXPORT size_t length() const;
+    WEBKIT_EXPORT const char* data() const;
 
     bool isEmpty() const { return !length(); }
     bool isNull() const { return !m_private; }
 
-    WEBKIT_API WebString utf16() const;
+    WEBKIT_EXPORT WebString utf16() const;
 
-    WEBKIT_API static WebCString fromUTF16(const WebUChar* data, size_t length);
-    WEBKIT_API static WebCString fromUTF16(const WebUChar* data);
+    WEBKIT_EXPORT static WebCString fromUTF16(const WebUChar* data, size_t length);
+    WEBKIT_EXPORT static WebCString fromUTF16(const WebUChar* data);
 
 #if WEBKIT_IMPLEMENTATION
     WebCString(const WTF::CString&);

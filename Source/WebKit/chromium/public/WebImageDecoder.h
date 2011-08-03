@@ -55,32 +55,32 @@ public:
 
     // Sets data contents for underlying decoder. All the API methods
     // require that setData() is called prior to their use.
-    WEBKIT_API void setData(const WebData& data, bool allDataReceived);
+    WEBKIT_EXPORT void setData(const WebData& data, bool allDataReceived);
 
     // Deletes owned decoder.
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void reset();
 
     // Returns true if image decoding failed.
-    WEBKIT_API bool isFailed() const;
+    WEBKIT_EXPORT bool isFailed() const;
     
     // Returns true if size information is available for the decoder.
-    WEBKIT_API bool isSizeAvailable() const;
+    WEBKIT_EXPORT bool isSizeAvailable() const;
 
     // Returns the size of the image.
-    WEBKIT_API WebSize size() const;
+    WEBKIT_EXPORT WebSize size() const;
 
     // Gives frame count for the image. For multiple frames, decoder scans the image data for the count.
-    WEBKIT_API size_t frameCount() const;
+    WEBKIT_EXPORT size_t frameCount() const;
 
     // Returns if the frame at given index is completely decoded.
-    WEBKIT_API bool isFrameCompleteAtIndex(int index) const;
+    WEBKIT_EXPORT bool isFrameCompleteAtIndex(int index) const;
 
     // Creates and returns WebImage from buffer at the index.
-    WEBKIT_API WebImage getFrameAtIndex(int index) const;
+    WEBKIT_EXPORT WebImage getFrameAtIndex(int index) const;
 
 private:
     // Creates type-specific decoder.
-    WEBKIT_API void init(Type type);
+    WEBKIT_EXPORT void init(Type type);
 
     WebImageDecoderPrivate* m_private;
 };

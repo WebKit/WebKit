@@ -43,7 +43,7 @@ class WebWorkerClient;
 class WebWorker {
 public:
     // Instantiates a built-in WebWorker.
-    WEBKIT_API static WebWorker* create(WebWorkerClient*);
+    WEBKIT_EXPORT static WebWorker* create(WebWorkerClient*);
 
     virtual ~WebWorker() { }
     virtual void startWorkerContext(const WebURL& scriptURL,

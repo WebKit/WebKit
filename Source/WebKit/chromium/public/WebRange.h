@@ -57,18 +57,18 @@ public:
         return *this;
     }
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebRange&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebRange&);
 
     bool isNull() const { return !m_private; }
 
-    WEBKIT_API int startOffset() const;
-    WEBKIT_API int endOffset() const;
-    WEBKIT_API WebNode startContainer(int& exceptionCode) const;
-    WEBKIT_API WebNode endContainer(int& exceptionCode) const;
+    WEBKIT_EXPORT int startOffset() const;
+    WEBKIT_EXPORT int endOffset() const;
+    WEBKIT_EXPORT WebNode startContainer(int& exceptionCode) const;
+    WEBKIT_EXPORT WebNode endContainer(int& exceptionCode) const;
 
-    WEBKIT_API WebString toHTMLText() const;
-    WEBKIT_API WebString toPlainText() const;
+    WEBKIT_EXPORT WebString toHTMLText() const;
+    WEBKIT_EXPORT WebString toPlainText() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebRange(const WTF::PassRefPtr<WebCore::Range>&);

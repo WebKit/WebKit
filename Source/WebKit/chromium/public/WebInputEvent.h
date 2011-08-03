@@ -237,7 +237,7 @@ public:
 
     // Sets keyIdentifier based on the value of windowsKeyCode.  This is
     // handy for generating synthetic keyboard events.
-    WEBKIT_API void setKeyIdentifierFromWindowsKeyCode();
+    WEBKIT_EXPORT void setKeyIdentifierFromWindowsKeyCode();
 };
 
 // WebMouseEvent --------------------------------------------------------------

@@ -53,15 +53,15 @@ public:
     }
     void assign(const WebOptionElement& element) { WebFormControlElement::assign(element); }
 
-    WEBKIT_API void setValue(const WebString&);
-    WEBKIT_API WebString value() const;
+    WEBKIT_EXPORT void setValue(const WebString&);
+    WEBKIT_EXPORT WebString value() const;
 
-    WEBKIT_API int index() const;
-    WEBKIT_API WebString text() const;
-    WEBKIT_API bool defaultSelected() const;
-    WEBKIT_API void setDefaultSelected(bool);
-    WEBKIT_API WebString label() const;
-    WEBKIT_API bool isEnabled() const;
+    WEBKIT_EXPORT int index() const;
+    WEBKIT_EXPORT WebString text() const;
+    WEBKIT_EXPORT bool defaultSelected() const;
+    WEBKIT_EXPORT void setDefaultSelected(bool);
+    WEBKIT_EXPORT WebString label() const;
+    WEBKIT_EXPORT bool isEnabled() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebOptionElement(const WTF::PassRefPtr<WebCore::HTMLOptionElement>&);

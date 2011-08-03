@@ -60,12 +60,12 @@ public:
     };
 
     // Creates a WebScrollbar.
-    WEBKIT_API static WebScrollbar* create(WebScrollbarClient*, Orientation);
+    WEBKIT_EXPORT static WebScrollbar* create(WebScrollbarClient*, Orientation);
 
     virtual ~WebScrollbar() {}
 
     // Gets the thickness of the scrollbar in pixels.
-    WEBKIT_API static int defaultThickness();
+    WEBKIT_EXPORT static int defaultThickness();
 
     // Sets the rectangle of the scrollbar.
     virtual void setLocation(const WebRect&) = 0;

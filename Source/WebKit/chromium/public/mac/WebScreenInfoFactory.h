@@ -45,7 +45,7 @@ struct WebScreenInfo;
 
 class WebScreenInfoFactory {
 public:
-    WEBKIT_API static WebScreenInfo screenInfo(NSView*);
+    WEBKIT_EXPORT static WebScreenInfo screenInfo(NSView*);
 };
 
 } // namespace WebKit

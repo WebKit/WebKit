@@ -54,32 +54,32 @@ namespace WebKit {
 
         // This returns true for all of textfield-looking types such as text,
         // password, search, email, url, and number.
-        WEBKIT_API bool isTextField() const;
+        WEBKIT_EXPORT bool isTextField() const;
         // This returns true only for type=text.
-        WEBKIT_API bool isText() const;
-        WEBKIT_API bool isPasswordField() const;
-        WEBKIT_API bool isImageButton() const;
-        WEBKIT_API bool autoComplete() const;
-        WEBKIT_API int maxLength() const;
-        WEBKIT_API bool isActivatedSubmit() const;
-        WEBKIT_API void setActivatedSubmit(bool);
-        WEBKIT_API int size() const;
-        WEBKIT_API void setValue(const WebString&, bool sendChangeEvent = false);
-        WEBKIT_API WebString value() const;
-        WEBKIT_API void setSuggestedValue(const WebString&);
-        WEBKIT_API WebString suggestedValue() const;
-        WEBKIT_API void setPlaceholder(const WebString&);
-        WEBKIT_API WebString placeholder() const;
-        WEBKIT_API bool isAutofilled() const;
-        WEBKIT_API void setAutofilled(bool);
-        WEBKIT_API void setSelectionRange(int, int);
-        WEBKIT_API int selectionStart() const;
-        WEBKIT_API int selectionEnd() const;
-        WEBKIT_API bool isValidValue(const WebString&) const;
-        WEBKIT_API bool isChecked() const;
+        WEBKIT_EXPORT bool isText() const;
+        WEBKIT_EXPORT bool isPasswordField() const;
+        WEBKIT_EXPORT bool isImageButton() const;
+        WEBKIT_EXPORT bool autoComplete() const;
+        WEBKIT_EXPORT int maxLength() const;
+        WEBKIT_EXPORT bool isActivatedSubmit() const;
+        WEBKIT_EXPORT void setActivatedSubmit(bool);
+        WEBKIT_EXPORT int size() const;
+        WEBKIT_EXPORT void setValue(const WebString&, bool sendChangeEvent = false);
+        WEBKIT_EXPORT WebString value() const;
+        WEBKIT_EXPORT void setSuggestedValue(const WebString&);
+        WEBKIT_EXPORT WebString suggestedValue() const;
+        WEBKIT_EXPORT void setPlaceholder(const WebString&);
+        WEBKIT_EXPORT WebString placeholder() const;
+        WEBKIT_EXPORT bool isAutofilled() const;
+        WEBKIT_EXPORT void setAutofilled(bool);
+        WEBKIT_EXPORT void setSelectionRange(int, int);
+        WEBKIT_EXPORT int selectionStart() const;
+        WEBKIT_EXPORT int selectionEnd() const;
+        WEBKIT_EXPORT bool isValidValue(const WebString&) const;
+        WEBKIT_EXPORT bool isChecked() const;
 
         // Exposes the default value of the maxLength attribute.
-        WEBKIT_API static int defaultMaxLength();
+        WEBKIT_EXPORT static int defaultMaxLength();
 
 #if WEBKIT_IMPLEMENTATION
         WebInputElement(const WTF::PassRefPtr<WebCore::HTMLInputElement>&);
@@ -88,7 +88,7 @@ namespace WebKit {
 #endif
     };
 
-    WEBKIT_API WebInputElement* toWebInputElement(WebElement*);
+    WEBKIT_EXPORT WebInputElement* toWebInputElement(WebElement*);
 
     inline const WebInputElement* toWebInputElement(const WebElement* element)
     {

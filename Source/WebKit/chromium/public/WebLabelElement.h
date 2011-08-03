@@ -54,7 +54,7 @@ public:
 
     void assign(const WebLabelElement& element) { WebElement::assign(element); }
 
-    WEBKIT_API WebElement correspondingControl();
+    WEBKIT_EXPORT WebElement correspondingControl();
 
 #if WEBKIT_IMPLEMENTATION
     WebLabelElement(const WTF::PassRefPtr<WebCore::HTMLLabelElement>&);

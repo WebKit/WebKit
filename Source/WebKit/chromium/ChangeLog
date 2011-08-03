@@ -1,3 +1,114 @@
+2011-08-03  Darin Fisher  <darin@chromium.org>
+
+        [Chromium] Rename WEBKIT_API to WEBKIT_EXPORT.
+        https://bugs.webkit.org/show_bug.cgi?id=65649
+
+        Reviewed by Adam Barth.
+
+        * README:
+        * public/WebAccessibilityCache.h:
+        * public/WebAccessibilityObject.h:
+        * public/WebArrayBufferView.h:
+        * public/WebAttribute.h:
+        * public/WebAudioBus.h:
+        * public/WebBindings.h:
+        * public/WebBlobData.h:
+        * public/WebBlobRegistry.h:
+        * public/WebCString.h:
+        * public/WebCache.h:
+        * public/WebColor.h:
+        * public/WebCommon.h:
+        * public/WebCrossOriginPreflightResultCache.h:
+        * public/WebDOMEvent.h:
+        * public/WebDOMEventListener.h:
+        * public/WebDOMMouseEvent.h:
+        * public/WebDOMMutationEvent.h:
+        * public/WebDOMStringList.h:
+        * public/WebData.h:
+        * public/WebDatabase.h:
+        * public/WebDevToolsAgent.h:
+        * public/WebDevToolsFrontend.h:
+        * public/WebDeviceOrientationClientMock.h:
+        * public/WebDeviceOrientationController.h:
+        * public/WebDocument.h:
+        * public/WebDocumentType.h:
+        * public/WebDragData.h:
+        * public/WebElement.h:
+        * public/WebFont.h:
+        * public/WebFontCache.h:
+        * public/WebFormControlElement.h:
+        * public/WebFormElement.h:
+        * public/WebFrame.h:
+        * public/WebGeolocationClientMock.h:
+        * public/WebGeolocationController.h:
+        * public/WebGeolocationError.h:
+        * public/WebGeolocationPermissionRequest.h:
+        * public/WebGeolocationPermissionRequestManager.h:
+        * public/WebGeolocationPosition.h:
+        * public/WebGlyphCache.h:
+        * public/WebHTTPBody.h:
+        * public/WebHTTPLoadInfo.h:
+        * public/WebHistoryItem.h:
+        * public/WebIDBDatabaseError.h:
+        * public/WebIDBFactory.h:
+        * public/WebIDBKey.h:
+        * public/WebIDBKeyPath.h:
+        * public/WebIDBKeyRange.h:
+        * public/WebImage.h:
+        * public/WebImageDecoder.h:
+        * public/WebInputElement.h:
+        * public/WebInputEvent.h:
+        * public/WebKit.h:
+        * public/WebLabelElement.h:
+        * public/WebMediaElement.h:
+        * public/WebNamedNodeMap.h:
+        * public/WebNetworkStateNotifier.h:
+        * public/WebNode.h:
+        * public/WebNodeCollection.h:
+        * public/WebNodeList.h:
+        * public/WebNotification.h:
+        * public/WebOptionElement.h:
+        * public/WebPageSerializer.h:
+        * public/WebPasswordFormData.h:
+        * public/WebPerformance.h:
+        * public/WebPluginDocument.h:
+        * public/WebPopupMenu.h:
+        * public/WebRange.h:
+        * public/WebRegularExpression.h:
+        * public/WebRuntimeFeatures.h:
+        * public/WebScriptController.h:
+        * public/WebScrollbar.h:
+        * public/WebSearchableFormData.h:
+        * public/WebSecurityOrigin.h:
+        * public/WebSecurityPolicy.h:
+        * public/WebSelectElement.h:
+        * public/WebSerializedScriptValue.h:
+        * public/WebSharedWorker.h:
+        * public/WebSpeechInputControllerMock.h:
+        * public/WebSpeechInputResult.h:
+        * public/WebStorageEventDispatcher.h:
+        * public/WebStorageNamespace.h:
+        * public/WebString.h:
+        * public/WebTestingSupport.h:
+        * public/WebThreadSafeData.h:
+        * public/WebURLLoadTiming.h:
+        * public/WebURLRequest.h:
+        * public/WebURLResponse.h:
+        * public/WebView.h:
+        * public/WebWorker.h:
+        * public/gtk/WebFontInfo.h:
+        * public/gtk/WebInputEventFactory.h:
+        * public/linux/WebFontRenderStyle.h:
+        * public/linux/WebFontRendering.h:
+        * public/linux/WebRenderTheme.h:
+        * public/mac/WebInputEventFactory.h:
+        * public/mac/WebScreenInfoFactory.h:
+        * public/mac/WebSubstringUtil.h:
+        * public/win/WebInputEventFactory.h:
+        * public/win/WebScreenInfoFactory.h:
+        * public/x11/WebScreenInfoFactory.h:
+        * tests/WebUnitTests.h:
+
 2011-08-03  Michael Nordman  <michaeln@google.com>
 
         [Chromium] Minor cleanup, remove a deprecated method.

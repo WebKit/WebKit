@@ -43,68 +43,68 @@ namespace WebKit {
 // certain level of maturity.
 class WebRuntimeFeatures {
 public:
-    WEBKIT_API static void enableDatabase(bool);
-    WEBKIT_API static bool isDatabaseEnabled();
+    WEBKIT_EXPORT static void enableDatabase(bool);
+    WEBKIT_EXPORT static bool isDatabaseEnabled();
 
-    WEBKIT_API static void enableLocalStorage(bool);
-    WEBKIT_API static bool isLocalStorageEnabled();
+    WEBKIT_EXPORT static void enableLocalStorage(bool);
+    WEBKIT_EXPORT static bool isLocalStorageEnabled();
 
-    WEBKIT_API static void enableSessionStorage(bool);
-    WEBKIT_API static bool isSessionStorageEnabled();
+    WEBKIT_EXPORT static void enableSessionStorage(bool);
+    WEBKIT_EXPORT static bool isSessionStorageEnabled();
 
-    WEBKIT_API static void enableMediaPlayer(bool);
-    WEBKIT_API static bool isMediaPlayerEnabled();
+    WEBKIT_EXPORT static void enableMediaPlayer(bool);
+    WEBKIT_EXPORT static bool isMediaPlayerEnabled();
 
-    WEBKIT_API static void enableSockets(bool);
-    WEBKIT_API static bool isSocketsEnabled();
+    WEBKIT_EXPORT static void enableSockets(bool);
+    WEBKIT_EXPORT static bool isSocketsEnabled();
 
-    WEBKIT_API static void enableNotifications(bool);
-    WEBKIT_API static bool isNotificationsEnabled();
+    WEBKIT_EXPORT static void enableNotifications(bool);
+    WEBKIT_EXPORT static bool isNotificationsEnabled();
 
-    WEBKIT_API static void enableApplicationCache(bool);
-    WEBKIT_API static bool isApplicationCacheEnabled();
+    WEBKIT_EXPORT static void enableApplicationCache(bool);
+    WEBKIT_EXPORT static bool isApplicationCacheEnabled();
     
-    WEBKIT_API static void enableDataTransferItems(bool);
-    WEBKIT_API static bool isDataTransferItemsEnabled();
+    WEBKIT_EXPORT static void enableDataTransferItems(bool);
+    WEBKIT_EXPORT static bool isDataTransferItemsEnabled();
 
-    WEBKIT_API static void enableGeolocation(bool);
-    WEBKIT_API static bool isGeolocationEnabled();
+    WEBKIT_EXPORT static void enableGeolocation(bool);
+    WEBKIT_EXPORT static bool isGeolocationEnabled();
 
-    WEBKIT_API static void enableIndexedDatabase(bool);
-    WEBKIT_API static bool isIndexedDatabaseEnabled();
+    WEBKIT_EXPORT static void enableIndexedDatabase(bool);
+    WEBKIT_EXPORT static bool isIndexedDatabaseEnabled();
 
-    WEBKIT_API static void enableWebAudio(bool);
-    WEBKIT_API static bool isWebAudioEnabled();
+    WEBKIT_EXPORT static void enableWebAudio(bool);
+    WEBKIT_EXPORT static bool isWebAudioEnabled();
 
-    WEBKIT_API static void enablePushState(bool);
-    WEBKIT_API static bool isPushStateEnabled(bool);
+    WEBKIT_EXPORT static void enablePushState(bool);
+    WEBKIT_EXPORT static bool isPushStateEnabled(bool);
 
-    WEBKIT_API static void enableTouch(bool);
-    WEBKIT_API static bool isTouchEnabled();
+    WEBKIT_EXPORT static void enableTouch(bool);
+    WEBKIT_EXPORT static bool isTouchEnabled();
 
-    WEBKIT_API static void enableDeviceMotion(bool);
-    WEBKIT_API static bool isDeviceMotionEnabled();
+    WEBKIT_EXPORT static void enableDeviceMotion(bool);
+    WEBKIT_EXPORT static bool isDeviceMotionEnabled();
 
-    WEBKIT_API static void enableDeviceOrientation(bool);
-    WEBKIT_API static bool isDeviceOrientationEnabled();
+    WEBKIT_EXPORT static void enableDeviceOrientation(bool);
+    WEBKIT_EXPORT static bool isDeviceOrientationEnabled();
 
-    WEBKIT_API static void enableSpeechInput(bool);
-    WEBKIT_API static bool isSpeechInputEnabled();
+    WEBKIT_EXPORT static void enableSpeechInput(bool);
+    WEBKIT_EXPORT static bool isSpeechInputEnabled();
 
-    WEBKIT_API static void enableXHRResponseBlob(bool);
-    WEBKIT_API static bool isXHRResponseBlobEnabled();
+    WEBKIT_EXPORT static void enableXHRResponseBlob(bool);
+    WEBKIT_EXPORT static bool isXHRResponseBlobEnabled();
 
-    WEBKIT_API static void enableFileSystem(bool);
-    WEBKIT_API static bool isFileSystemEnabled();
+    WEBKIT_EXPORT static void enableFileSystem(bool);
+    WEBKIT_EXPORT static bool isFileSystemEnabled();
     
-    WEBKIT_API static void enableJavaScriptI18NAPI(bool);
-    WEBKIT_API static bool isJavaScriptI18NAPIEnabled();
+    WEBKIT_EXPORT static void enableJavaScriptI18NAPI(bool);
+    WEBKIT_EXPORT static bool isJavaScriptI18NAPIEnabled();
 
-    WEBKIT_API static void enableQuota(bool);
-    WEBKIT_API static bool isQuotaEnabled();
+    WEBKIT_EXPORT static void enableQuota(bool);
+    WEBKIT_EXPORT static bool isQuotaEnabled();
 
-    WEBKIT_API static void enableMediaStream(bool);
-    WEBKIT_API static bool isMediaStreamEnabled();
+    WEBKIT_EXPORT static void enableMediaStream(bool);
+    WEBKIT_EXPORT static bool isMediaStreamEnabled();
 
 private:
     WebRuntimeFeatures();

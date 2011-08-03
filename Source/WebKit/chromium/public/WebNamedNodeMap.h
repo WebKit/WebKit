@@ -55,11 +55,11 @@ public:
         return *this;
     }
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebNamedNodeMap&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebNamedNodeMap&);
 
-    WEBKIT_API unsigned length() const;
-    WEBKIT_API WebAttribute attributeItem(unsigned) const;
+    WEBKIT_EXPORT unsigned length() const;
+    WEBKIT_EXPORT WebAttribute attributeItem(unsigned) const;
 
 #if WEBKIT_IMPLEMENTATION
     WebNamedNodeMap(const WTF::PassRefPtr<WebCore::NamedNodeMap>&);

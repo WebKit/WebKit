@@ -50,7 +50,7 @@ public:
     //
     // Returns: the font family or an empty string if the request could not be
     // satisfied.
-    WEBKIT_API static WebCString familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale);
+    WEBKIT_EXPORT static WebCString familyForChars(const WebUChar* characters, size_t numCharacters, const char* preferredLocale);
 
     // Fill out the given WebFontRenderStyle with the user's preferences for
     // rendering the given font at the given size.
@@ -63,7 +63,7 @@ public:
     //     +--------------------------------+
     //     I: italic flag
     //     B: bold flag
-    WEBKIT_API static void renderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* result);
+    WEBKIT_EXPORT static void renderStyleForStrike(const char* family, int sizeAndStyle, WebFontRenderStyle* result);
 };
 
 } // namespace WebKit

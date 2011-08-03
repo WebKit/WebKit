@@ -37,7 +37,7 @@ namespace WebKit {
 
 // In chromium multi-dll build, webkit unittest code are compiled in webkit.dll.
 // This is the API to run all unittests inside webkit.dll.
-WEBKIT_API int RunAllUnitTests(int argc, char** argv);
+WEBKIT_EXPORT int RunAllUnitTests(int argc, char** argv);
 
 } // namespace WebKit
 

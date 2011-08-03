@@ -54,11 +54,11 @@ public:
         return *this;
     }
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebNodeList&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebNodeList&);
 
-    WEBKIT_API unsigned length() const;
-    WEBKIT_API WebNode item(size_t) const;
+    WEBKIT_EXPORT unsigned length() const;
+    WEBKIT_EXPORT WebNode item(size_t) const;
 
 #if WEBKIT_IMPLEMENTATION
     WebNodeList(const WTF::PassRefPtr<WebCore::NodeList>&);

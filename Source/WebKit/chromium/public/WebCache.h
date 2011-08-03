@@ -66,19 +66,19 @@ public:
     };
 
     // Sets the capacities of the resource cache, evicting objects as necessary.
-    WEBKIT_API static void setCapacities(size_t minDeadCapacity,
-                                         size_t maxDeadCapacity,
-                                         size_t capacity);
+    WEBKIT_EXPORT static void setCapacities(size_t minDeadCapacity,
+                                            size_t maxDeadCapacity,
+                                            size_t capacity);
 
     // Clears the cache (as much as possible; some resources may not be
     // cleared if they are actively referenced).
-    WEBKIT_API static void clear();
+    WEBKIT_EXPORT static void clear();
 
     // Gets the usage statistics from the resource cache.
-    WEBKIT_API static void getUsageStats(UsageStats*);
+    WEBKIT_EXPORT static void getUsageStats(UsageStats*);
 
     // Get usage stats about the resource cache.
-    WEBKIT_API static void getResourceTypeStats(ResourceTypeStats*);
+    WEBKIT_EXPORT static void getResourceTypeStats(ResourceTypeStats*);
 
 private:
     WebCache();  // Not intended to be instanced.

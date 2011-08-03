@@ -45,14 +45,14 @@ class WebString;
 
 class WebGeolocationClientMock : public WebGeolocationClient {
 public:
-    WEBKIT_API static WebGeolocationClientMock* create();
+    WEBKIT_EXPORT static WebGeolocationClientMock* create();
     ~WebGeolocationClientMock() { reset(); }
 
-    WEBKIT_API void setPosition(double latitude, double longitude, double accuracy);
-    WEBKIT_API void setError(int errorCode, const WebString& message);
-    WEBKIT_API void setPermission(bool);
-    WEBKIT_API int numberOfPendingPermissionRequests() const;
-    WEBKIT_API void resetMock();
+    WEBKIT_EXPORT void setPosition(double latitude, double longitude, double accuracy);
+    WEBKIT_EXPORT void setError(int errorCode, const WebString& message);
+    WEBKIT_EXPORT void setPermission(bool);
+    WEBKIT_EXPORT int numberOfPendingPermissionRequests() const;
+    WEBKIT_EXPORT void resetMock();
 
     virtual void startUpdating();
     virtual void stopUpdating();
@@ -68,7 +68,7 @@ public:
 
 private:
     WebGeolocationClientMock();
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void reset();
 
     WebPrivateOwnPtr<WebCore::GeolocationClientMock> m_clientMock;
 };

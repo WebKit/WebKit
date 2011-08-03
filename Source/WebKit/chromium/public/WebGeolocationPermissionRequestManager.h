@@ -45,13 +45,13 @@ public:
     WebGeolocationPermissionRequestManager() { init(); }
     ~WebGeolocationPermissionRequestManager() { reset(); }
 
-    WEBKIT_API int add(const WebKit::WebGeolocationPermissionRequest&);
-    WEBKIT_API bool remove(const WebKit::WebGeolocationPermissionRequest&, int&);
-    WEBKIT_API bool remove(int, WebKit::WebGeolocationPermissionRequest&);
+    WEBKIT_EXPORT int add(const WebKit::WebGeolocationPermissionRequest&);
+    WEBKIT_EXPORT bool remove(const WebKit::WebGeolocationPermissionRequest&, int&);
+    WEBKIT_EXPORT bool remove(int, WebKit::WebGeolocationPermissionRequest&);
 
 private:
-    WEBKIT_API void init();
-    WEBKIT_API void reset();
+    WEBKIT_EXPORT void init();
+    WEBKIT_EXPORT void reset();
 
     WebPrivateOwnPtr<WebGeolocationPermissionRequestManagerPrivate> m_private;
     int m_lastId;

@@ -55,11 +55,11 @@ public:
         return *this;
     }
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebAttribute&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebAttribute&);
 
-    WEBKIT_API WebString localName() const;
-    WEBKIT_API WebString value() const;
+    WEBKIT_EXPORT WebString localName() const;
+    WEBKIT_EXPORT WebString value() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebAttribute(const WTF::PassRefPtr<WebCore::Attribute>&);

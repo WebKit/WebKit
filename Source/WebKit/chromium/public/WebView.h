@@ -58,9 +58,9 @@ struct WebPoint;
 
 class WebView : public WebWidget {
 public:
-    WEBKIT_API static const double textSizeMultiplierRatio;
-    WEBKIT_API static const double minTextSizeMultiplier;
-    WEBKIT_API static const double maxTextSizeMultiplier;
+    WEBKIT_EXPORT static const double textSizeMultiplierRatio;
+    WEBKIT_EXPORT static const double minTextSizeMultiplier;
+    WEBKIT_EXPORT static const double maxTextSizeMultiplier;
 
     // Controls the time that user scripts injected into the document run.
     enum UserScriptInjectAt {
@@ -86,7 +86,7 @@ public:
     // Creates a WebView that is NOT yet initialized.  You will need to
     // call initializeMainFrame to finish the initialization.  It is valid
     // to pass null client pointers.
-    WEBKIT_API static WebView* create(WebViewClient*);
+    WEBKIT_EXPORT static WebView* create(WebViewClient*);
 
     // After creating a WebView, you should immediately call this method.
     // You can optionally modify the settings before calling this method.
@@ -200,8 +200,8 @@ public:
 
     // Helper functions to convert between zoom level and zoom factor.  zoom
     // factor is zoom percent / 100, so 300% = 3.0.
-    WEBKIT_API static double zoomLevelToZoomFactor(double zoomLevel);
-    WEBKIT_API static double zoomFactorToZoomLevel(double factor);
+    WEBKIT_EXPORT static double zoomLevelToZoomFactor(double zoomLevel);
+    WEBKIT_EXPORT static double zoomFactorToZoomLevel(double factor);
 
 
     // Media ---------------------------------------------------------------
@@ -306,18 +306,18 @@ public:
     // Popup menu ----------------------------------------------------------
 
     // Sets whether select popup menus should be rendered by the browser.
-    WEBKIT_API static void setUseExternalPopupMenus(bool);
+    WEBKIT_EXPORT static void setUseExternalPopupMenus(bool);
 
 
     // Visited link state --------------------------------------------------
 
     // Tells all WebView instances to update the visited link state for the
     // specified hash.
-    WEBKIT_API static void updateVisitedLinkState(unsigned long long hash);
+    WEBKIT_EXPORT static void updateVisitedLinkState(unsigned long long hash);
 
     // Tells all WebView instances to update the visited state for all
     // their links.
-    WEBKIT_API static void resetVisitedLinkState();
+    WEBKIT_EXPORT static void resetVisitedLinkState();
 
 
     // Custom colors -------------------------------------------------------
@@ -332,22 +332,22 @@ public:
                                     unsigned inactiveForegroundColor) = 0;
 
     // User scripts --------------------------------------------------------
-    WEBKIT_API static void addUserScript(const WebString& sourceCode,
-                                         const WebVector<WebString>& patterns,
-                                         UserScriptInjectAt injectAt,
-                                         UserContentInjectIn injectIn);
-    WEBKIT_API static void addUserStyleSheet(const WebString& sourceCode,
-                                             const WebVector<WebString>& patterns,
-                                             UserContentInjectIn injectIn,
-                                             UserStyleInjectionTime injectionTime = UserStyleInjectInSubsequentDocuments);
-    WEBKIT_API static void removeAllUserContent();
+    WEBKIT_EXPORT static void addUserScript(const WebString& sourceCode,
+                                            const WebVector<WebString>& patterns,
+                                            UserScriptInjectAt injectAt,
+                                            UserContentInjectIn injectIn);
+    WEBKIT_EXPORT static void addUserStyleSheet(const WebString& sourceCode,
+                                                const WebVector<WebString>& patterns,
+                                                UserContentInjectIn injectIn,
+                                                UserStyleInjectionTime injectionTime = UserStyleInjectInSubsequentDocuments);
+    WEBKIT_EXPORT static void removeAllUserContent();
 
     // Modal dialog support ------------------------------------------------
 
     // Call these methods before and after running a nested, modal event loop
     // to suspend script callbacks and resource loads.
-    WEBKIT_API static void willEnterModalLoop();
-    WEBKIT_API static void didExitModalLoop();
+    WEBKIT_EXPORT static void willEnterModalLoop();
+    WEBKIT_EXPORT static void didExitModalLoop();
 
     // GPU acceleration support --------------------------------------------
 

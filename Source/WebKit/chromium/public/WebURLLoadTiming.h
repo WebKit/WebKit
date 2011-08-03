@@ -51,47 +51,47 @@ public:
         return *this;
     }
 
-    WEBKIT_API void initialize();
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebURLLoadTiming&);
+    WEBKIT_EXPORT void initialize();
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebURLLoadTiming&);
 
     bool isNull() const { return m_private.isNull(); }
 
-    WEBKIT_API double requestTime() const;
-    WEBKIT_API void setRequestTime(double time);
+    WEBKIT_EXPORT double requestTime() const;
+    WEBKIT_EXPORT void setRequestTime(double time);
 
-    WEBKIT_API int proxyStart() const;
-    WEBKIT_API void setProxyStart(int start);
+    WEBKIT_EXPORT int proxyStart() const;
+    WEBKIT_EXPORT void setProxyStart(int start);
 
-    WEBKIT_API int proxyEnd() const;
-    WEBKIT_API void setProxyEnd(int end);
+    WEBKIT_EXPORT int proxyEnd() const;
+    WEBKIT_EXPORT void setProxyEnd(int end);
 
-    WEBKIT_API int dnsStart() const;
-    WEBKIT_API void setDNSStart(int start);
+    WEBKIT_EXPORT int dnsStart() const;
+    WEBKIT_EXPORT void setDNSStart(int start);
 
-    WEBKIT_API int dnsEnd() const;
-    WEBKIT_API void setDNSEnd(int end);
+    WEBKIT_EXPORT int dnsEnd() const;
+    WEBKIT_EXPORT void setDNSEnd(int end);
 
-    WEBKIT_API int connectStart() const;
-    WEBKIT_API void setConnectStart(int start);
+    WEBKIT_EXPORT int connectStart() const;
+    WEBKIT_EXPORT void setConnectStart(int start);
 
-    WEBKIT_API int connectEnd() const;
-    WEBKIT_API void setConnectEnd(int end);
+    WEBKIT_EXPORT int connectEnd() const;
+    WEBKIT_EXPORT void setConnectEnd(int end);
 
-    WEBKIT_API int sendStart() const;
-    WEBKIT_API void setSendStart(int start);
+    WEBKIT_EXPORT int sendStart() const;
+    WEBKIT_EXPORT void setSendStart(int start);
 
-    WEBKIT_API int sendEnd() const;
-    WEBKIT_API void setSendEnd(int end);
+    WEBKIT_EXPORT int sendEnd() const;
+    WEBKIT_EXPORT void setSendEnd(int end);
 
-    WEBKIT_API int receiveHeadersEnd() const;
-    WEBKIT_API void setReceiveHeadersEnd(int end);
+    WEBKIT_EXPORT int receiveHeadersEnd() const;
+    WEBKIT_EXPORT void setReceiveHeadersEnd(int end);
 
-    WEBKIT_API int sslStart() const;
-    WEBKIT_API void setSSLStart(int start);
+    WEBKIT_EXPORT int sslStart() const;
+    WEBKIT_EXPORT void setSSLStart(int start);
 
-    WEBKIT_API int sslEnd() const;
-    WEBKIT_API void setSSLEnd(int end);
+    WEBKIT_EXPORT int sslEnd() const;
+    WEBKIT_EXPORT void setSSLEnd(int end);
 
 #if WEBKIT_IMPLEMENTATION
     WebURLLoadTiming(const WTF::PassRefPtr<WebCore::ResourceLoadTiming>&);

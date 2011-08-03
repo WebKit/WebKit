@@ -49,21 +49,21 @@ class WebNamedNodeMap;
         WebElement& operator=(const WebElement& e) { WebNode::assign(e); return *this; }
         void assign(const WebElement& e) { WebNode::assign(e); }
 
-        WEBKIT_API bool isFormControlElement() const;
-        WEBKIT_API bool isTextFormControlElement() const;
-        WEBKIT_API WebString tagName() const;
-        WEBKIT_API bool hasTagName(const WebString&) const;
-        WEBKIT_API bool hasAttribute(const WebString&) const;
-        WEBKIT_API WebString getAttribute(const WebString&) const;
-        WEBKIT_API bool setAttribute(const WebString& name, const WebString& value);
-        WEBKIT_API WebNamedNodeMap attributes() const;
-        WEBKIT_API WebString innerText();
+        WEBKIT_EXPORT bool isFormControlElement() const;
+        WEBKIT_EXPORT bool isTextFormControlElement() const;
+        WEBKIT_EXPORT WebString tagName() const;
+        WEBKIT_EXPORT bool hasTagName(const WebString&) const;
+        WEBKIT_EXPORT bool hasAttribute(const WebString&) const;
+        WEBKIT_EXPORT WebString getAttribute(const WebString&) const;
+        WEBKIT_EXPORT bool setAttribute(const WebString& name, const WebString& value);
+        WEBKIT_EXPORT WebNamedNodeMap attributes() const;
+        WEBKIT_EXPORT WebString innerText();
 
         // Returns the language code specified for this element.  This attribute
         // is inherited, so the returned value is drawn from the closest parent
         // element that has the lang attribute set, or from the HTTP
         // "Content-Language" header as a fallback.
-        WEBKIT_API WebString computeInheritedLanguage() const;
+        WEBKIT_EXPORT WebString computeInheritedLanguage() const;
 
 #if WEBKIT_IMPLEMENTATION
         WebElement(const WTF::PassRefPtr<WebCore::Element>&);

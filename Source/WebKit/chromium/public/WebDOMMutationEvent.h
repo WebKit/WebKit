@@ -46,11 +46,11 @@ public:
         Removal         = 3
     };
 
-    WEBKIT_API WebNode relatedNode() const;
-    WEBKIT_API WebString prevValue() const;
-    WEBKIT_API WebString newValue() const;
-    WEBKIT_API WebString attrName() const;
-    WEBKIT_API AttrChangeType attrChange() const;
+    WEBKIT_EXPORT WebNode relatedNode() const;
+    WEBKIT_EXPORT WebString prevValue() const;
+    WEBKIT_EXPORT WebString newValue() const;
+    WEBKIT_EXPORT WebString attrName() const;
+    WEBKIT_EXPORT AttrChangeType attrChange() const;
 };
 
 } // namespace WebKit

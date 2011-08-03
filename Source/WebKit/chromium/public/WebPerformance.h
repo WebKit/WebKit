@@ -53,33 +53,33 @@ public:
         return *this;
     }
 
-    WEBKIT_API void reset();
-    WEBKIT_API void assign(const WebPerformance&);
+    WEBKIT_EXPORT void reset();
+    WEBKIT_EXPORT void assign(const WebPerformance&);
 
     // This only returns one of {Other|Reload|BackForward}.
     // Form submits and link clicks all fall under other.
-    WEBKIT_API WebNavigationType navigationType() const;
+    WEBKIT_EXPORT WebNavigationType navigationType() const;
 
-    WEBKIT_API double navigationStart() const;
-    WEBKIT_API double unloadEventEnd() const;
-    WEBKIT_API double redirectStart() const;
-    WEBKIT_API double redirectEnd() const;
-    WEBKIT_API unsigned short redirectCount() const;
-    WEBKIT_API double fetchStart() const;
-    WEBKIT_API double domainLookupStart() const;
-    WEBKIT_API double domainLookupEnd() const;
-    WEBKIT_API double connectStart() const;
-    WEBKIT_API double connectEnd() const;
-    WEBKIT_API double requestStart() const;
-    WEBKIT_API double responseStart() const;
-    WEBKIT_API double responseEnd() const;
-    WEBKIT_API double domLoading() const;
-    WEBKIT_API double domInteractive() const;
-    WEBKIT_API double domContentLoadedEventStart() const;
-    WEBKIT_API double domContentLoadedEventEnd() const;
-    WEBKIT_API double domComplete() const;
-    WEBKIT_API double loadEventStart() const;
-    WEBKIT_API double loadEventEnd() const;
+    WEBKIT_EXPORT double navigationStart() const;
+    WEBKIT_EXPORT double unloadEventEnd() const;
+    WEBKIT_EXPORT double redirectStart() const;
+    WEBKIT_EXPORT double redirectEnd() const;
+    WEBKIT_EXPORT unsigned short redirectCount() const;
+    WEBKIT_EXPORT double fetchStart() const;
+    WEBKIT_EXPORT double domainLookupStart() const;
+    WEBKIT_EXPORT double domainLookupEnd() const;
+    WEBKIT_EXPORT double connectStart() const;
+    WEBKIT_EXPORT double connectEnd() const;
+    WEBKIT_EXPORT double requestStart() const;
+    WEBKIT_EXPORT double responseStart() const;
+    WEBKIT_EXPORT double responseEnd() const;
+    WEBKIT_EXPORT double domLoading() const;
+    WEBKIT_EXPORT double domInteractive() const;
+    WEBKIT_EXPORT double domContentLoadedEventStart() const;
+    WEBKIT_EXPORT double domContentLoadedEventEnd() const;
+    WEBKIT_EXPORT double domComplete() const;
+    WEBKIT_EXPORT double loadEventStart() const;
+    WEBKIT_EXPORT double loadEventEnd() const;
 
 #if WEBKIT_IMPLEMENTATION
     WebPerformance(const WTF::PassRefPtr<WebCore::Performance>&);

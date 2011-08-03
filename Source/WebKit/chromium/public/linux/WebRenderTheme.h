@@ -36,7 +36,7 @@
 namespace WebKit {
 
 // Set caret blink interval for text input areas.
-WEBKIT_API void setCaretBlinkInterval(double);
+WEBKIT_EXPORT void setCaretBlinkInterval(double);
 
 } // namespace WebKit
 
