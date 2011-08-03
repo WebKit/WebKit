@@ -55,6 +55,7 @@
 #include <WebCore/LinkHash.h>
 #include <WebCore/Logging.h>
 #include <WebCore/ResourceRequest.h>
+#include <runtime/InitializeThreading.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
@@ -74,6 +75,7 @@ static WTF::RefCountedLeakCounter webContextCounter("WebContext");
 
 WebContext* WebContext::sharedProcessContext()
 {
+    JSC::initializeThreading();
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
     static WebContext* context = adoptRef(new WebContext(ProcessModelSharedSecondaryProcess, String())).leakRef();
@@ -89,6 +91,7 @@ WebContext* WebContext::sharedThreadContext()
 
 PassRefPtr<WebContext> WebContext::create(const String& injectedBundlePath)
 {
+    JSC::initializeThreading();
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
     return adoptRef(new WebContext(ProcessModelSecondaryProcess, injectedBundlePath));
