@@ -3369,11 +3369,6 @@ BUGWK60931 DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-u
 // Flaky since added by r86478
 BUGCR82881 MAC LINUX XP VISTA : http/tests/appcache/interrupted-update.html = PASS TEXT
 
-// Flaky on Linux
-BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = TEXT IMAGE+TEXT PASS
-BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = FAIL PASS
-BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = TEXT IMAGE+TEXT PASS
-
 // Fails on windows - added in r86693
 BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT
 BUGCR82950 WIN : http/tests/navigation/post-302-response.html = TEXT
