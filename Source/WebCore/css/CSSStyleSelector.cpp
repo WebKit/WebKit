@@ -4425,9 +4425,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyImageRendering:
-        if (!primitiveValue)
-            return;
-        m_style->setImageRendering(*primitiveValue);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(imageRendering, ImageRendering);
         return;
     case CSSPropertyTextShadow:
     case CSSPropertyBoxShadow:

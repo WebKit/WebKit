@@ -1,3 +1,16 @@
+2011-08-03  Luke Macpherson   <macpherson@chromium.org>
+
+        Use appropriate macro for CSSPropertyImageRendering.
+        https://bugs.webkit.org/show_bug.cgi?id=65594
+
+        Reviewed by Simon Fraser.
+
+        No new tests / trivial code cleanup only.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macro.
+
 2011-08-03  Dan Bernstein  <mitz@apple.com>
 
         FontCache::getFontData() does not set the familyIndex to cAllFamiliesScanned if the last font is a custom font
