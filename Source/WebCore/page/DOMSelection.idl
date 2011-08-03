@@ -32,7 +32,6 @@ module window {
     // This is based off of Mozilla's Selection interface
     // https://developer.mozilla.org/En/DOM/Selection
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplFrame,
         OmitConstructor
     ] DOMSelection {
@@ -44,7 +43,8 @@ module window {
         readonly attribute boolean isCollapsed;
         readonly attribute long rangeCount;
 
-        void collapse(in Node node, in long index)
+        void collapse(in [Optional=CallWithDefaultValue] Node node, 
+                      in [Optional=CallWithDefaultValue] long index)
             raises(DOMException);
         void collapseToEnd()
             raises(DOMException);
@@ -52,17 +52,19 @@ module window {
             raises(DOMException);
 
         void deleteFromDocument();
-        boolean containsNode(in Node node, in boolean allowPartial);
-        void selectAllChildren(in Node node)
+        boolean containsNode(in [Optional=CallWithDefaultValue] Node node, 
+                             in [Optional=CallWithDefaultValue] boolean allowPartial);
+        void selectAllChildren(in [Optional=CallWithDefaultValue] Node node)
             raises(DOMException);
 
-        void extend(in Node node, in long offset)
+        void extend(in [Optional=CallWithDefaultValue] Node node, 
+                    in [Optional=CallWithDefaultValue] long offset)
             raises(DOMException);
 
-        Range getRangeAt(in long index)
+        Range getRangeAt(in [Optional=CallWithDefaultValue] long index)
             raises(DOMException);
         void removeAllRanges();
-        void addRange(in Range range);
+        void addRange(in [Optional=CallWithDefaultValue] Range range);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         [DontEnum] DOMString toString();
@@ -78,10 +80,16 @@ module window {
         // IE's type accessor returns "none", "text" and "control"
         readonly attribute DOMString type;
 
-        void modify(in DOMString alter, in DOMString direction, in DOMString granularity);
-        void setBaseAndExtent(in Node baseNode, in long baseOffset, in Node extentNode, in long extentOffset)
+        void modify(in [Optional=CallWithDefaultValue] DOMString alter, 
+                    in [Optional=CallWithDefaultValue] DOMString direction, 
+                    in [Optional=CallWithDefaultValue] DOMString granularity);
+        void setBaseAndExtent(in [Optional=CallWithDefaultValue] Node baseNode, 
+                              in [Optional=CallWithDefaultValue] long baseOffset, 
+                              in [Optional=CallWithDefaultValue] Node extentNode, 
+                              in [Optional=CallWithDefaultValue] long extentOffset)
             raises(DOMException);
-        void setPosition(in Node node, in long offset)
+        void setPosition(in [Optional=CallWithDefaultValue] Node node, 
+                         in [Optional=CallWithDefaultValue] long offset)
             raises(DOMException);
 
         // IE extentions
