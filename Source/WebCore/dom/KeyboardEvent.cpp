@@ -159,6 +159,11 @@ KeyboardEvent* findKeyboardEvent(Event* event)
     return 0;
 }
 
+PassRefPtr<KeyboardEventDispatchMediator> KeyboardEventDispatchMediator::create(PassRefPtr<KeyboardEvent> event)
+{
+    return adoptRef(new KeyboardEventDispatchMediator(event));
+}
+
 KeyboardEventDispatchMediator::KeyboardEventDispatchMediator(PassRefPtr<KeyboardEvent> event)
     : EventDispatchMediator(event)
 {

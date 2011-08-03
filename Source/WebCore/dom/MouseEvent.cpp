@@ -159,6 +159,11 @@ SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefP
     }
 }
 
+PassRefPtr<MouseEventDispatchMediator> MouseEventDispatchMediator::create(PassRefPtr<MouseEvent> mouseEvent)
+{
+    return adoptRef(new MouseEventDispatchMediator(mouseEvent));
+}
+
 MouseEventDispatchMediator::MouseEventDispatchMediator(PassRefPtr<MouseEvent> mouseEvent)
     : EventDispatchMediator(mouseEvent)
 {

@@ -117,9 +117,9 @@ namespace WebCore {
 
 class KeyboardEventDispatchMediator : public EventDispatchMediator {
 public:
-    explicit KeyboardEventDispatchMediator(PassRefPtr<KeyboardEvent>);
-
+    static PassRefPtr<KeyboardEventDispatchMediator> create(PassRefPtr<KeyboardEvent>);
 private:
+    explicit KeyboardEventDispatchMediator(PassRefPtr<KeyboardEvent>);
     virtual bool dispatchEvent(EventDispatcher*) const;
 };
 

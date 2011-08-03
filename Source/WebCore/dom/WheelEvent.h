@@ -83,9 +83,9 @@ namespace WebCore {
 
 class WheelEventDispatchMediator : public EventDispatchMediator {
 public:
-    WheelEventDispatchMediator(const PlatformWheelEvent&, PassRefPtr<AbstractView>);
-
+    static PassRefPtr<WheelEventDispatchMediator> create(const PlatformWheelEvent&, PassRefPtr<AbstractView>);
 private:
+    WheelEventDispatchMediator(const PlatformWheelEvent&, PassRefPtr<AbstractView>);
     WheelEvent* event() const;
     virtual bool dispatchEvent(EventDispatcher*) const;
 };
