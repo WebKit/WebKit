@@ -1,3 +1,41 @@
+2011-08-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK svg rebaseline after r92047.
+
+        * platform/gtk/svg/W3C-SVG-1.1/masking-path-04-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/struct-use-05-b-expected.txt:
+        * platform/gtk/svg/batik/filters/feTile-expected.txt:
+        * platform/gtk/svg/batik/paints/patternPreserveAspectRatioA-expected.txt:
+        * platform/gtk/svg/batik/paints/patternRegionA-expected.txt:
+        * platform/gtk/svg/batik/paints/patternRegions-expected.txt:
+        * platform/gtk/svg/batik/paints/patternRegions-positioned-objects-expected.txt:
+        * platform/gtk/svg/batik/text/longTextOnPath-expected.txt:
+        * platform/gtk/svg/batik/text/smallFonts-expected.txt:
+        * platform/gtk/svg/batik/text/textAnchor-expected.txt:
+        * platform/gtk/svg/batik/text/textDecoration-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect2-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect3-expected.txt:
+        * platform/gtk/svg/batik/text/textFeatures-expected.txt:
+        * platform/gtk/svg/batik/text/textLayout-expected.txt:
+        * platform/gtk/svg/batik/text/textLayout2-expected.txt:
+        * platform/gtk/svg/batik/text/textLength-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPath-expected.txt:
+        * platform/gtk/svg/batik/text/textOnPathSpaces-expected.txt:
+        * platform/gtk/svg/batik/text/textPosition-expected.txt:
+        * platform/gtk/svg/batik/text/textPosition2-expected.txt:
+        * platform/gtk/svg/batik/text/textProperties-expected.txt:
+        * platform/gtk/svg/batik/text/textProperties2-expected.txt:
+        * platform/gtk/svg/batik/text/textStyles-expected.txt:
+        * platform/gtk/svg/batik/text/verticalText-expected.txt:
+        * platform/gtk/svg/batik/text/verticalTextOnPath-expected.txt:
+        * platform/gtk/svg/custom/external-paintserver-reference-expected.txt: Added.
+        * platform/gtk/svg/custom/linking-base-external-reference-expected.txt: Added.
+        * platform/gtk/svg/custom/text-linking-expected.txt:
+        * platform/gtk/svg/custom/zero-path-square-cap-rendering2-expected.txt: Added.
+        * platform/gtk/svg/hixie/error/014-expected.txt:
+        * platform/gtk/svg/hixie/use/002-expected.txt:
+
 2011-08-03  Takashi Toyoshima  <toyoshim@chromium.org>
 
         WebSocket: Could not handle zero length text frame.

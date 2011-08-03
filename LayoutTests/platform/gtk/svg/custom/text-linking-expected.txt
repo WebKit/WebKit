@@ -1,7 +1,7 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
-  RenderSVGRoot {svg} at (97,35) size 235x219
+  RenderSVGRoot {svg} at (97,35) size 166x219
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
       RenderSVGText {text} at (0,-15) size 163x19 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 163x19
@@ -12,13 +12,11 @@ layer at (0,0) size 800x600
         RenderSVGTSpan {tspan} at (0,0) size 77x19
           RenderSVGInlineText {#text} at (0,0) size 77x19
             chunk 1 text run 1 at (100.00,50.00) startOffset 0 endOffset 13 width 77.00: "tspan in link"
-    RenderSVGText {text} at (100,85) size 232x19 contains 1 chunk(s)
-      RenderSVGInline {a} at (0,0) size 232x19
-        RenderSVGInline {tref} at (0,0) size 232x19
-          RenderSVGInlineText {#text} at (0,0) size 167x19
-            chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 26 width 167.00: "Referenced character data "
-          RenderSVGInlineText {#text} at (167,0) size 65x19
-            chunk 1 text run 1 at (267.00,100.00) startOffset 0 endOffset 12 width 65.00: "tref in link"
+    RenderSVGText {text} at (100,85) size 163x19 contains 1 chunk(s)
+      RenderSVGInline {a} at (0,0) size 163x19
+        RenderSVGInline {tref} at (0,0) size 163x19
+          RenderSVGInlineText {#text} at (0,0) size 163x19
+            chunk 1 text run 1 at (100.00,100.00) startOffset 0 endOffset 25 width 163.00: "Referenced character data"
     RenderSVGText {text} at (97,125) size 100x29 contains 1 chunk(s)
       RenderSVGInline {a} at (0,0) size 100x29
         RenderSVGTextPath {textPath} at (0,0) size 100x29

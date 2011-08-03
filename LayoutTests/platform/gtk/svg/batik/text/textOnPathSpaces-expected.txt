@@ -264,3 +264,4 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (0,0) size 84x12
             chunk 1 text run 1 at (35.00,90.00) startOffset 0 endOffset 18 width 84.00: "\"spacingAndGlyphs\""
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

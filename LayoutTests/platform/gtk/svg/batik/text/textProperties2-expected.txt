@@ -139,3 +139,4 @@ layer at (0,0) size 450x500
           RenderSVGInlineText {#text} at (33,0) size 67x19
             chunk 1 text run 1 at (53.60,230.00) startOffset 0 endOffset 11 width 66.40: "finish text"
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0

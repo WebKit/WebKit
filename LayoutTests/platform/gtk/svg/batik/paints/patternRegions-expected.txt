@@ -159,3 +159,4 @@ layer at (0,0) size 450x500
               RenderSVGInlineText {#text} at (0,0) size 68x12
                 chunk 1 text run 1 at (0.00,10.00) startOffset 0 endOffset 16 width 68.00: "overflow=visible"
     RenderSVGContainer {use} at (0,0) size 0x0
+      RenderSVGContainer {g} at (0,0) size 0x0
