@@ -137,7 +137,7 @@ public:
         m_type = XMLTokenTypes::XMLDeclaration;
         m_xmlDeclarationData = adoptPtr(new XMLDeclarationData());
     }
-    
+
     void appendToXMLVersion(UChar character)
     {
         ASSERT(character);
@@ -388,14 +388,90 @@ public:
 #endif // NDEBUG
 
 private:
-
-    typedef DoctypeDataBase DoctypeData;
+    // AtomicXMLToken needs to steal some of our pointers from us
+    // FIXME: add take* functions
+    friend class AtomicXMLToken;
 
     // "target" for ProcessingInstruction, "prefix" for StartTag and EndTag
     DataVector m_target;
 
     // For XML Declaration
     OwnPtr<XMLDeclarationData> m_xmlDeclarationData;
+};
+
+class AtomicXMLToken : public AtomicMarkupTokenBase<XMLToken> {
+    WTF_MAKE_NONCOPYABLE(AtomicXMLToken);
+public:
+    AtomicXMLToken(XMLToken& token)
+        : AtomicMarkupTokenBase<XMLToken>(&token)
+    {
+        switch (m_type) {
+        case XMLTokenTypes::ProcessingInstruction:
+            m_name = AtomicString(token.target().data(), token.target().size());
+            m_data = String(token.data().data(), token.data().size());
+            break;
+        case XMLTokenTypes::XMLDeclaration:
+            m_xmlDeclarationData = token.m_xmlDeclarationData.release();
+            break;
+        case XMLTokenTypes::StartTag:
+        case XMLTokenTypes::EndTag: {
+            if (token.prefix().size())
+                m_prefix = AtomicString(token.prefix().data(), token.prefix().size());
+            initializeAttributes(token.attributes());
+            break;
+        }
+        case XMLTokenTypes::CDATA:
+            m_data = String(token.data().data(), token.data().size());
+            break;
+        case XMLTokenTypes::Entity:
+            m_name = AtomicString(token.name().data(), token.name().size());
+            break;
+        default:
+            break;
+        }
+    }
+
+    AtomicXMLToken(XMLTokenTypes::Type type, AtomicString name, PassRefPtr<NamedNodeMap> attributes = 0)
+        : AtomicMarkupTokenBase<XMLToken>(type, name, attributes)
+    {
+    }
+
+    const AtomicString& prefix() const
+    {
+        ASSERT(m_type == XMLTokenTypes::StartTag || m_type == XMLTokenTypes::EndTag);
+        return m_prefix;
+    }
+
+    const AtomicString& target() const
+    {
+        ASSERT(m_type == XMLTokenTypes::ProcessingInstruction);
+        return m_name;
+    }
+
+    const String& data() const
+    {
+        ASSERT(m_type == XMLTokenTypes::CDATA || m_type == XMLTokenTypes::ProcessingInstruction);
+        return m_data;
+    }
+
+    WTF::Vector<UChar>& xmlVersion() const
+    {
+        ASSERT(m_type == XMLTokenTypes::XMLDeclaration);
+        return m_xmlDeclarationData->m_version;
+    }
+
+    bool xmlStandalone() const
+    {
+        ASSERT(m_type == XMLTokenTypes::XMLDeclaration);
+        return m_xmlDeclarationData->m_hasStandalone && m_xmlDeclarationData->m_standalone;
+    }
+
+private:
+    // "prefix" for StartTag, EndTag
+    AtomicString m_prefix;
+
+    // For XML declaration
+    OwnPtr<XMLToken::XMLDeclarationData> m_xmlDeclarationData;
 };
 
 }

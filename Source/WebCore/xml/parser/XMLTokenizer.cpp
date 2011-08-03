@@ -42,6 +42,26 @@ using namespace WTF;
 
 namespace WebCore {
 
+// This has to go in a .cpp file, as the linker doesn't like it being included more than once.
+// We don't have an XMLToken.cpp though, so this is the next best place.
+template<>
+QualifiedName AtomicMarkupTokenBase<XMLToken>::nameForAttribute(const XMLToken::Attribute& attribute) const
+{
+    return QualifiedName(attribute.m_prefix.isEmpty() ? nullAtom : AtomicString(attribute.m_prefix.data(), attribute.m_prefix.size()), AtomicString(attribute.m_name.data(), attribute.m_name.size()), nullAtom);
+}
+
+template<>
+bool AtomicMarkupTokenBase<XMLToken>::usesName() const
+{
+    return m_type == XMLTokenTypes::StartTag || m_type == XMLTokenTypes::EndTag || m_type == XMLTokenTypes::DOCTYPE || m_type == XMLTokenTypes::Entity;
+}
+
+template<>
+bool AtomicMarkupTokenBase<XMLToken>::usesAttributes() const
+{
+    return m_type == XMLTokenTypes::StartTag || m_type == XMLTokenTypes::EndTag;
+}
+
 namespace {
 
 inline bool isValidNameStart(UChar cc)

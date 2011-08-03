@@ -1,3 +1,46 @@
+2011-08-03  Jeffrey Pfau  <jpfau@apple.com>
+
+        Make atomic XML token
+        https://bugs.webkit.org/show_bug.cgi?id=65639
+
+        Reviewed by Adam Barth.
+
+        Create a shared AtomicMarkupTokenBase that is shared by AtomicHTMLToken and the new AtomicXMLToken
+
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::setForceQuirks):
+        (WebCore::AtomicHTMLToken::AtomicHTMLToken):
+        (WebCore::AtomicHTMLToken::forceQuirks):
+        * html/parser/HTMLTokenizer.cpp:
+        (WebCore::::nameForAttribute):
+        (WebCore::::usesName):
+        (WebCore::::usesAttributes):
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::AtomicMarkupTokenBase::AtomicMarkupTokenBase):
+        (WebCore::AtomicMarkupTokenBase::type):
+        (WebCore::AtomicMarkupTokenBase::name):
+        (WebCore::AtomicMarkupTokenBase::setName):
+        (WebCore::AtomicMarkupTokenBase::selfClosing):
+        (WebCore::AtomicMarkupTokenBase::getAttributeItem):
+        (WebCore::AtomicMarkupTokenBase::attributes):
+        (WebCore::AtomicMarkupTokenBase::takeAtributes):
+        (WebCore::AtomicMarkupTokenBase::characters):
+        (WebCore::AtomicMarkupTokenBase::comment):
+        (WebCore::AtomicMarkupTokenBase::publicIdentifier):
+        (WebCore::AtomicMarkupTokenBase::systemIdentifier):
+        (WebCore::::initializeAttributes):
+        * xml/parser/XMLToken.h:
+        (WebCore::AtomicXMLToken::AtomicXMLToken):
+        (WebCore::AtomicXMLToken::prefix):
+        (WebCore::AtomicXMLToken::target):
+        (WebCore::AtomicXMLToken::data):
+        (WebCore::AtomicXMLToken::xmlVersion):
+        (WebCore::AtomicXMLToken::xmlStandalone):
+        * xml/parser/XMLTokenizer.cpp:
+        (WebCore::::nameForAttribute):
+        (WebCore::::usesName):
+        (WebCore::::usesAttributes):
+
 2011-08-03  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from geolocation IDL files

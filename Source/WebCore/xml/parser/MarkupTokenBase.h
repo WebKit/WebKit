@@ -66,13 +66,14 @@ public:
     WTF::Vector<UChar, 32> m_value;
 };
 
-template<typename TypeSet, typename DoctypeData = DoctypeDataBase, typename AttributeType = AttributeBase>
+template<typename TypeSet, typename DoctypeDataType = DoctypeDataBase, typename AttributeType = AttributeBase>
 class MarkupTokenBase {
     WTF_MAKE_NONCOPYABLE(MarkupTokenBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef TypeSet Type;
     typedef AttributeType Attribute;
+    typedef DoctypeDataType DoctypeData;
 
     typedef WTF::Vector<Attribute, 10> AttributeList;
     typedef WTF::Vector<UChar, 1024> DataVector;
@@ -350,10 +351,11 @@ protected:
         return m_data;
     }
 
-    // FIXME: I'm not sure what the final relationship between HTMLToken and
-    // AtomicHTMLToken will be. I'm marking this a friend for now, but we'll
+    // FIXME: I'm not sure what the final relationship between MarkupTokenBase and
+    // AtomicMarkupTokenBase will be. I'm marking this a friend for now, but we'll
     // want to end up with a cleaner interface between the two classes.
-    friend class AtomicHTMLToken;
+    template<typename Token>
+    friend class AtomicMarkupTokenBase;
 
     typename Type::Type m_type;
     typename Attribute::Range m_range; // Always starts at zero.
@@ -370,6 +372,178 @@ protected:
     // A pointer into m_attributes used during lexing.
     Attribute* m_currentAttribute;
 };
+
+template<typename Token>
+class AtomicMarkupTokenBase {
+    WTF_MAKE_NONCOPYABLE(AtomicMarkupTokenBase);
+public:
+    AtomicMarkupTokenBase(Token* token)
+        : m_type(token->type())
+    {
+        ASSERT(token);
+
+        switch (m_type) {
+        case Token::Type::Uninitialized:
+            ASSERT_NOT_REACHED();
+            break;
+        case Token::Type::DOCTYPE:
+            m_name = AtomicString(token->name().data(), token->name().size());
+            m_doctypeData = token->m_doctypeData.release();
+            break;
+        case Token::Type::EndOfFile:
+            break;
+        case Token::Type::StartTag:
+        case Token::Type::EndTag: {
+            m_selfClosing = token->selfClosing();
+            m_name = AtomicString(token->name().data(), token->name().size());
+            initializeAttributes(token->attributes());
+            break;
+        }
+        case Token::Type::Comment:
+            m_data = String(token->comment().data(), token->comment().size());
+            break;
+        case Token::Type::Character:
+            m_externalCharacters = &token->characters();
+            break;
+        default:
+            break;
+        }
+    }
+
+    AtomicMarkupTokenBase(typename Token::Type::Type type, AtomicString name, PassRefPtr<NamedNodeMap> attributes = 0)
+        : m_type(type)
+        , m_name(name)
+        , m_attributes(attributes)
+    {
+        ASSERT(usesName());
+    }
+
+    typename Token::Type::Type type() const { return m_type; }
+
+    const AtomicString& name() const
+    {
+        ASSERT(usesName());
+        return m_name;
+    }
+
+    void setName(const AtomicString& name)
+    {
+        ASSERT(usesName());
+        m_name = name;
+    }
+
+    bool selfClosing() const
+    {
+        ASSERT(m_type == Token::Type::StartTag || m_type == Token::Type::EndTag);
+        return m_selfClosing;
+    }
+
+    Attribute* getAttributeItem(const QualifiedName& attributeName)
+    {
+        ASSERT(usesAttributes());
+        if (!m_attributes)
+            return 0;
+        return m_attributes->getAttributeItem(attributeName);
+    }
+
+    NamedNodeMap* attributes() const
+    {
+        ASSERT(usesAttributes());
+        return m_attributes.get();
+    }
+
+    PassRefPtr<NamedNodeMap> takeAtributes()
+    {
+        ASSERT(usesAttributes());
+        return m_attributes.release();
+    }
+
+    const typename Token::DataVector& characters() const
+    {
+        ASSERT(m_type == Token::Type::Character);
+        return *m_externalCharacters;
+    }
+
+    const String& comment() const
+    {
+        ASSERT(m_type == Token::Type::Comment);
+        return m_data;
+    }
+
+    // FIXME: Distinguish between a missing public identifer and an empty one.
+    WTF::Vector<UChar>& publicIdentifier() const
+    {
+        ASSERT(m_type == Token::Type::DOCTYPE);
+        return m_doctypeData->m_publicIdentifier;
+    }
+
+    // FIXME: Distinguish between a missing system identifer and an empty one.
+    WTF::Vector<UChar>& systemIdentifier() const
+    {
+        ASSERT(m_type == Token::Type::DOCTYPE);
+        return m_doctypeData->m_systemIdentifier;
+    }
+
+protected:
+    typename Token::Type::Type m_type;
+
+    void initializeAttributes(const typename Token::AttributeList& attributes);
+    QualifiedName nameForAttribute(const typename Token::Attribute&) const;
+
+    bool usesName() const;
+
+    bool usesAttributes() const;
+
+    // "name" for DOCTYPE, StartTag, and EndTag
+    AtomicString m_name;
+
+    // "data" for Comment
+    String m_data;
+
+    // "characters" for Character
+    //
+    // We don't want to copy the the characters out of the Token, so we
+    // keep a pointer to its buffer instead. This buffer is owned by the
+    // Token and causes a lifetime dependence between these objects.
+    //
+    // FIXME: Add a mechanism for "internalizing" the characters when the
+    //        HTMLToken is destructed.
+    const typename Token::DataVector* m_externalCharacters;
+
+    // For DOCTYPE
+    OwnPtr<typename Token::DoctypeData> m_doctypeData;
+
+    // For StartTag and EndTag
+    bool m_selfClosing;
+
+    RefPtr<NamedNodeMap> m_attributes;
+};
+
+template<typename Token>
+inline void AtomicMarkupTokenBase<Token>::initializeAttributes(const typename Token::AttributeList& attributes)
+{
+    size_t size = attributes.size();
+    if (!size)
+        return;
+
+    m_attributes = NamedNodeMap::create();
+    m_attributes->reserveInitialCapacity(size);
+    for (size_t i = 0; i < size; ++i) {
+        const typename Token::Attribute& attribute = attributes[i];
+        if (attribute.m_name.isEmpty())
+            continue;
+
+        // FIXME: We should be able to add the following ASSERT once we fix
+        // https://bugs.webkit.org/show_bug.cgi?id=62971
+        //   ASSERT(attribute.m_nameRange.m_start);
+        ASSERT(attribute.m_nameRange.m_end);
+        ASSERT(attribute.m_valueRange.m_start);
+        ASSERT(attribute.m_valueRange.m_end);
+
+        String value(attribute.m_value.data(), attribute.m_value.size());
+        m_attributes->insertAttribute(Attribute::createMapped(nameForAttribute(attribute), value), false);
+    }
+}
 
 }
 
