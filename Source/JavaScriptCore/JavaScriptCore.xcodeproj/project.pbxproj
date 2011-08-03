@@ -44,6 +44,7 @@
 		08E279E90EF83B10007DB523 /* RandomNumberSeed.h in Headers */ = {isa = PBXBuildFile; fileRef = 08E279E80EF83B10007DB523 /* RandomNumberSeed.h */; };
 		0B330C270F38C62300692DE3 /* TypeTraits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0B330C260F38C62300692DE3 /* TypeTraits.cpp */; };
 		0B4D7E630F319AC800AD7E58 /* TypeTraits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0B4D7E620F319AC800AD7E58 /* TypeTraits.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0BAC94A01338728400CF135B /* ThreadRestrictionVerifier.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BDFFAE00FC6192900D69EF4 /* CrossThreadRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BDFFAE10FC6193100D69EF4 /* OwnFastMallocPtr.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0BF28A2911A33DC300638F84 /* SizeLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0BF28A2811A33DC300638F84 /* SizeLimits.cpp */; };
@@ -722,6 +723,7 @@
 		08E279E80EF83B10007DB523 /* RandomNumberSeed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RandomNumberSeed.h; sourceTree = "<group>"; };
 		0B330C260F38C62300692DE3 /* TypeTraits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TypeTraits.cpp; sourceTree = "<group>"; };
 		0B4D7E620F319AC800AD7E58 /* TypeTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypeTraits.h; sourceTree = "<group>"; };
+		0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadRestrictionVerifier.h; sourceTree = "<group>"; };
 		0BDFFAD10FC616EC00D69EF4 /* OwnFastMallocPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OwnFastMallocPtr.h; sourceTree = "<group>"; };
 		0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrossThreadRefCounted.h; sourceTree = "<group>"; };
 		0BF28A2811A33DC300638F84 /* SizeLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizeLimits.cpp; sourceTree = "<group>"; };
@@ -1650,8 +1652,6 @@
 			children = (
 				A1D764511354448B00C5C7C0 /* Alignment.h */,
 				A7C40C07130B057D00D002A1 /* BlockStack.h */,
-				A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */,
-				A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */,
 				5135FAD512D26856003C083B /* Decoder.h */,
 				5135FAD612D26856003C083B /* Encoder.h */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
@@ -1750,6 +1750,8 @@
 				969A07290ED1CE6900F1F681 /* SegmentedVector.h */,
 				76FB9F1012E851960051A2EB /* SHA1.cpp */,
 				76FB9F0E12E851860051A2EB /* SHA1.h */,
+				A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */,
+				A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */,
 				0BF28A2811A33DC300638F84 /* SizeLimits.cpp */,
 				86D87DA512BC4B14008E73A1 /* StackBounds.cpp */,
 				86D87DA612BC4B14008E73A1 /* StackBounds.h */,
@@ -1771,6 +1773,7 @@
 				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
 				BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */,
 				E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */,
+				0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */,
 				0B330C260F38C62300692DE3 /* TypeTraits.cpp */,
 				0B4D7E620F319AC800AD7E58 /* TypeTraits.h */,
 				E195678D09E7CF1200B89D13 /* unicode */,
@@ -2519,6 +2522,7 @@
 				18BAB55410DAE066000D945B /* ThreadIdentifierDataPthreads.h in Headers */,
 				BC18C4700E16F5CD00B34460 /* Threading.h in Headers */,
 				BC5F7BBF11823B590052C02C /* ThreadingPrimitives.h in Headers */,
+				0BAC94A01338728400CF135B /* ThreadRestrictionVerifier.h in Headers */,
 				BC5F7BC011823B590052C02C /* ThreadSafeRefCounted.h in Headers */,
 				BC18C4710E16F5CD00B34460 /* ThreadSpecific.h in Headers */,
 				A7386556118697B400540279 /* ThunkGenerators.h in Headers */,

@@ -1,3 +1,20 @@
+2011-08-01  David Levin  <levin@chromium.org>
+
+        Add asserts to RefCounted to make sure ref/deref happens on the right thread.
+        https://bugs.webkit.org/show_bug.cgi?id=31639
+
+        Reviewed by Dmitry Titov.
+
+        No new functionality exposed so no new tests. (The change is basically adding
+        more testing.)
+
+        * ForwardingHeaders/wtf/ThreadRestrictionVerifier.h: Added.
+        * loader/icon/IconDatabase.cpp:
+        (WebCore::IconDatabase::defaultIcon): Set the mutex which does the guarding of the variable.
+        (WebCore::IconDatabase::setIconDataForIconURL): Ditto.
+        (WebCore::IconDatabase::getOrCreateIconRecord): Ditto.
+        (WebCore::IconDatabase::readFromDatabase): Ditto.
+
 2011-08-02  Luke Macpherson   <macpherson@chromium.org>
 
         Clean up value clampling in CSSStyleSelector and CSSPrimitiveValue.

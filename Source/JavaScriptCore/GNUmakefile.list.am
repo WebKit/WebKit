@@ -578,6 +578,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/text/WTFString.h \
 	Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.cpp \
 	Source/JavaScriptCore/wtf/ThreadIdentifierDataPthreads.h \
+	Source/JavaScriptCore/wtf/ThreadRestrictionVerifier.h \
 	Source/JavaScriptCore/wtf/Threading.cpp \
 	Source/JavaScriptCore/wtf/Threading.h \
 	Source/JavaScriptCore/wtf/ThreadingPrimitives.h \

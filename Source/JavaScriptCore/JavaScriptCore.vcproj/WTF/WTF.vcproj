@@ -1009,6 +1009,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\wtf\ThreadRestrictionVerifier.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\wtf\ThreadSafeRefCounted.h"
 			>
 		</File>

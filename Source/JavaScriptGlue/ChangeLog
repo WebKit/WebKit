@@ -1,3 +1,12 @@
+2011-08-01  David Levin  <levin@chromium.org>
+
+        Add asserts to RefCounted to make sure ref/deref happens on the right thread.
+        https://bugs.webkit.org/show_bug.cgi?id=31639
+
+        Reviewed by Dmitry Titov.
+
+        * ForwardingHeaders/wtf/ThreadRestrictionVerifier.h: Added.
+
 2011-07-27  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove operator new from JSCell

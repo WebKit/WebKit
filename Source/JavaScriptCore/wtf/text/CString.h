@@ -41,7 +41,14 @@ private:
     friend class CString;
 
     static PassRefPtr<CStringBuffer> create(size_t length) { return adoptRef(new CStringBuffer(length)); }
-    CStringBuffer(size_t length) : m_vector(length) { }
+    CStringBuffer(size_t length) : m_vector(length)
+    {
+#if PLATFORM(CHROMIUM)
+        // FIXME: Need to fix some start-up code in Chromium Linux and some test code for
+        // Chromium OS X in order to remove this.
+        deprecatedTurnOffVerifier();
+#endif
+    }
     char* mutableData() { return m_vector.data(); }
 
     Vector<char> m_vector;

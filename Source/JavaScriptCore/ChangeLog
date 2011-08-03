@@ -1,3 +1,38 @@
+2011-08-01  David Levin  <levin@chromium.org>
+
+        Add asserts to RefCounted to make sure ref/deref happens on the right thread.
+        https://bugs.webkit.org/show_bug.cgi?id=31639
+
+        Reviewed by Dmitry Titov.
+
+        * GNUmakefile.list.am: Added new files to the build.
+        * JavaScriptCore.gypi: Ditto.
+        * JavaScriptCore.vcproj/WTF/WTF.vcproj: Ditto.
+        * JavaScriptCore.xcodeproj/project.pbxproj: Ditto.
+        * jit/ExecutableAllocator.h:
+        (JSC::ExecutablePool::ExecutablePool): Turned off checks for this
+        due to not being able to figure out what was guarding it (bug 58091).
+        * parser/SourceProvider.h:
+        (JSC::SourceProvider::SourceProvider): Ditto.
+        * wtf/CMakeLists.txt: Added new files to the build.
+        * wtf/ThreadRestrictionVerifier.h: Added.
+        Everything is done in the header to avoid the issue with exports
+        that are only useful in debug but still needing to export them.
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::ref): Added checks using the non thread safe verifier.
+        and filed bug 58171 about making it stricter.
+        (WTF::RefCountedBase::hasOneRef): Ditto.
+        (WTF::RefCountedBase::refCount): Ditto.
+        (WTF::RefCountedBase::setMutexForVerifier): Expose a way to change the checks to be based
+        on a mutex. This is in the header to avoid adding more exports from JavaScriptCore.
+        (WTF::RefCountedBase::deprecatedTurnOffVerifier): Temporary way to turn off verification.
+        Filed bug 58174 to remove this method.
+        (WTF::RefCountedBase::derefBase):
+        * wtf/SizeLimits.cpp: Adjusted the debug size check for RefCounted.
+        * wtf/text/CString.h:
+        (WTF::CStringBuffer::CStringBuffer): Turned off checks for this while a fix is being
+        done in Chromium (bug 58093).
+
 2011-08-02  Filip Pizlo  <fpizlo@apple.com>
 
         JSC GC may not be able to reuse partially-free blocks after a
