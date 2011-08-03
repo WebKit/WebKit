@@ -474,7 +474,7 @@ inline void FrameView::incrementVisuallyNonEmptyPixelCount(const IntSize& size)
         return;
     m_visuallyNonEmptyPixelCount += size.width() * size.height();
     // Use a threshold value to prevent very small amounts of visible content from triggering didFirstVisuallyNonEmptyLayout
-    static const unsigned visualPixelThreshold = 256 * 256;
+    static const unsigned visualPixelThreshold = 32 * 32;
     if (m_visuallyNonEmptyPixelCount > visualPixelThreshold)
         setIsVisuallyNonEmpty();
 }
