@@ -1,3 +1,16 @@
+2011-08-03  Anders Carlsson  <andersca@apple.com>
+
+        webarchive/loading/missing-data.html is failing on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=63507
+
+        Reviewed by Adam Barth.
+
+        When loading a main resource from a web archive, make sure that the working URL is actually
+        the URL of the resource, and not the URL of the web archive itself.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+
 2011-08-03  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from DOMWindow.idl

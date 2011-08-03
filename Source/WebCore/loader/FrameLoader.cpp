@@ -568,7 +568,10 @@ void FrameLoader::receivedFirstData()
 {
     KURL workingURL = activeDocumentLoader()->documentURL();
 #if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
-    if (m_archive)
+    // FIXME: The document loader, not the frame loader, should be in charge of loading web archives.
+    // Once this is done, we can just make DocumentLoader::documentURL() return the right URL
+    // based on whether it has a non-null archive or not.
+    if (m_archive && activeDocumentLoader()->parsedArchiveData())
         workingURL = m_archive->mainResource()->url();
 #endif
 
