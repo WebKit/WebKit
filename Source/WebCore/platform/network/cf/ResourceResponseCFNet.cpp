@@ -137,6 +137,9 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     
 bool ResourceResponse::platformCompare(const ResourceResponse& a, const ResourceResponse& b)
 {
+    // CFEqual crashes if you pass it 0 so do an early check before calling it.
+    if (!a.cfURLResponse() || !b.cfURLResponse())
+        return a.cfURLResponse() == b.cfURLResponse();
     return CFEqual(a.cfURLResponse(), b.cfURLResponse());
 }
 
