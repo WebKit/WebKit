@@ -561,7 +561,11 @@ bool WebSocketChannel::processFrame()
             m_continuousFrameData.swap(continuousFrameData);
             m_hasContinuousFrame = false;
             if (m_continuousFrameOpCode == OpCodeText) {
-                String message = String::fromUTF8(continuousFrameData.data(), continuousFrameData.size());
+                String message;
+                if (continuousFrameData.size())
+                    message = String::fromUTF8(continuousFrameData.data(), continuousFrameData.size());
+                else
+                    message = "";
                 if (message.isNull())
                     fail("Could not decode a text frame as UTF-8.");
                 else
@@ -575,7 +579,11 @@ bool WebSocketChannel::processFrame()
 
     case OpCodeText:
         if (frame.final) {
-            String message = String::fromUTF8(frame.payload, frame.payloadLength);
+            String message;
+            if (frame.payloadLength)
+                message = String::fromUTF8(frame.payload, frame.payloadLength);
+            else
+                message = "";
             skipBuffer(frame.frameEnd - m_buffer);
             if (message.isNull())
                 fail("Could not decode a text frame as UTF-8.");
