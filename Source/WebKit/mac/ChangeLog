@@ -1,5 +1,13 @@
 2011-08-03  Mark Rowe  <mrowe@apple.com>
 
+        Bring some order to FeatureDefines.xcconfig to make it easier to follow.
+
+        Reviewed by Sam Weinig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
+2011-08-03  Mark Rowe  <mrowe@apple.com>
+
         Clean up FeatureDefines.xcconfig to remove some unnecessary conditional settings
 
         Reviewed by Dave Kilzer.
