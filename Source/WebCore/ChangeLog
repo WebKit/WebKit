@@ -1,3 +1,24 @@
+2011-08-02  Luke Macpherson   <macpherson@chromium.org>
+
+        Clean up value clampling in CSSStyleSelector and CSSPrimitiveValue.
+        https://bugs.webkit.org/show_bug.cgi?id=65441
+
+        Reviewed by Simon Fraser.
+
+        No new tests / refactoring only.
+
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getFloatValue):
+        Implement in terms of the new templated getValue().
+        (WebCore::CSSPrimitiveValue::getIntValue):
+        Implement in terms of the new templated getValue().
+        (WebCore::CSSPrimitiveValue::getValue):
+        Templated getValue that works for all numeric types.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use getValue<short> instead of rolling-your-own clamp to short.
+
 2011-08-02  Julien Chaffraix  <jchaffraix@webkit.org>
 
         RenderObject::computeRectForRepaint and clippedOverflowRectForRepaint should be const

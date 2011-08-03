@@ -157,13 +157,17 @@ public:
     double getDoubleValue() const { return m_value.num; }
 
     void setFloatValue(unsigned short unitType, double floatValue, ExceptionCode&);
-    float getFloatValue(unsigned short unitType, ExceptionCode& ec) const { return clampToFloat(getDoubleValue(unitType, ec)); }
-    float getFloatValue(unsigned short unitType) const { return clampToFloat(getDoubleValue(unitType)); }
-    float getFloatValue() const { return clampToFloat(m_value.num); }
+    float getFloatValue(unsigned short unitType, ExceptionCode& ec) const { return getValue<float>(unitType, ec); }
+    float getFloatValue(unsigned short unitType) const { return getValue<float>(unitType); }
+    float getFloatValue() const { return getValue<float>(); }
 
-    int getIntValue(unsigned short unitType, ExceptionCode& ec) const { return clampToInteger(getDoubleValue(unitType, ec)); }
-    int getIntValue(unsigned short unitType) const { return clampToInteger(getDoubleValue(unitType)); }
-    int getIntValue() const { return clampToInteger(m_value.num); }
+    int getIntValue(unsigned short unitType, ExceptionCode& ec) const { return getValue<int>(unitType, ec); }
+    int getIntValue(unsigned short unitType) const { return getValue<int>(unitType); }
+    int getIntValue() const { return getValue<int>(); }
+
+    template<typename T> inline T getValue(unsigned short unitType, ExceptionCode& ec) const { return clampTo<T>(getDoubleValue(unitType, ec)); }
+    template<typename T> inline T getValue(unsigned short unitType) const { return clampTo<T>(getDoubleValue(unitType)); }
+    template<typename T> inline T getValue() const { return clampTo<T>(m_value.num); }
 
     void setStringValue(unsigned short stringType, const String& stringValue, ExceptionCode&);
     String getStringValue(ExceptionCode&) const;

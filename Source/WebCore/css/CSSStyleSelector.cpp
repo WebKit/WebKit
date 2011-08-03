@@ -4496,7 +4496,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
         // Clamp opacity to the range 0-1
-        m_style->setOpacity(min(1.0f, max(0.0f, primitiveValue->getFloatValue())));
+        m_style->setOpacity(clampTo<float>(primitiveValue->getDoubleValue(), 0, 1));
         return;
     case CSSPropertyWebkitBoxAlign:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxAlign, BoxAlign)
@@ -4770,7 +4770,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (primitiveValue->getIdent() == CSSValueAuto)
             m_style->setHyphenationLimitAfter(-1);
         else
-            m_style->setHyphenationLimitAfter(min(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_NUMBER), static_cast<int>(numeric_limits<short>::max())));
+            m_style->setHyphenationLimitAfter(primitiveValue->getValue<short>(CSSPrimitiveValue::CSS_NUMBER));
         return;
     }
     case CSSPropertyWebkitHyphenateLimitBefore: {
@@ -4778,7 +4778,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (primitiveValue->getIdent() == CSSValueAuto)
             m_style->setHyphenationLimitBefore(-1);
         else
-            m_style->setHyphenationLimitBefore(min(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_NUMBER), static_cast<int>(numeric_limits<short>::max())));
+            m_style->setHyphenationLimitBefore(primitiveValue->getValue<short>(CSSPrimitiveValue::CSS_NUMBER));
         return;
     }
     case CSSPropertyWebkitLocale: {
