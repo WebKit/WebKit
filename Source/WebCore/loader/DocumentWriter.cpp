@@ -211,6 +211,8 @@ void DocumentWriter::end()
 
 void DocumentWriter::endIfNotLoadingMainResource()
 {
+    // FIXME: This isn't really the check we should be doing. We should re-work
+    // how we end parsing to match the model in HTML5.
     if (m_frame->loader()->isLoadingMainResource() || !m_frame->page() || !m_frame->document())
         return;
 
@@ -219,6 +221,8 @@ void DocumentWriter::endIfNotLoadingMainResource()
     // so we'll add a protective refcount
     RefPtr<Frame> protector(m_frame);
 
+    if (!m_parser)
+        return;
     // FIXME: m_parser->finish() should imply m_parser->flush().
     m_parser->flush(this);
     if (!m_parser)

@@ -1,3 +1,13 @@
+2011-08-03  Adam Barth  <abarth@webkit.org>
+
+        Crash in DocumentWriter::endIfNotLoadingMainResource
+        https://bugs.webkit.org/show_bug.cgi?id=65581
+
+        Reviewed by Nate Chapin.
+
+        * fast/loader/reload-zero-byte-plugin-expected.txt: Added.
+        * fast/loader/reload-zero-byte-plugin.html: Added.
+
 2011-08-03  Anders Carlsson  <andersca@apple.com>
 
         Add a Mac Lion skipped list.

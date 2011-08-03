@@ -1,3 +1,25 @@
+2011-08-03  Adam Barth  <abarth@webkit.org>
+
+        Crash in DocumentWriter::endIfNotLoadingMainResource
+        https://bugs.webkit.org/show_bug.cgi?id=65581
+
+        Reviewed by Nate Chapin.
+
+        This function is poorly designed because isLoadingMainResource is a
+        poor proxy for determing whether to flush/finish the parser.  Really,
+        we should change how loads complete to match the model in HTML5, but
+        that's pretty tricky.  In the meantime, this null check fixes the
+        crash.
+
+        I'm sure there's another bug on file about this crash, but we've never
+        been able to reproduce it.  Thanks to Berend-Jan Wever for the test
+        case!
+
+        Test: fast/loader/reload-zero-byte-plugin.html
+
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::endIfNotLoadingMainResource):
+
 2011-08-03  Anders Carlsson  <andersca@apple.com>
 
         WebCore images backing CG patterns should be released on the main thread
