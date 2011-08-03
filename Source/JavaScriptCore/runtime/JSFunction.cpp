@@ -90,8 +90,8 @@ JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeCha
     , m_scopeChain(exec->globalData(), this, scopeChainNode)
 {
     ASSERT(inherits(&s_info));
-    const Identifier& name = static_cast<FunctionExecutable*>(m_executable.get())->name();
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    setStructure(exec->globalData(), scopeChainNode->globalObject->namedFunctionStructure());
+    putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
 }
 
 JSFunction::~JSFunction()

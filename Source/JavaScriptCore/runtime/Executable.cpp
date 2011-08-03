@@ -144,6 +144,7 @@ FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const Identifie
 {
     m_firstLine = firstLine;
     m_lastLine = lastLine;
+    m_nameValue.set(globalData, this, jsString(&globalData, name.ustring()));
 }
 
 FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
@@ -156,6 +157,7 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
 {
     m_firstLine = firstLine;
     m_lastLine = lastLine;
+    m_nameValue.set(exec->globalData(), this, jsString(&exec->globalData(), name.ustring()));
 }
 
 
@@ -439,6 +441,8 @@ void FunctionExecutable::visitChildren(SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(structure()->typeInfo().overridesVisitChildren());
     ScriptExecutable::visitChildren(visitor);
+    if (m_nameValue)
+        visitor.append(&m_nameValue);
     if (m_codeBlockForCall)
         m_codeBlockForCall->visitAggregate(visitor);
     if (m_codeBlockForConstruct)

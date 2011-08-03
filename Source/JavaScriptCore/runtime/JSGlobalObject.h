@@ -116,6 +116,8 @@ namespace JSC {
         WriteBarrier<Structure> m_nullPrototypeObjectStructure;
         WriteBarrier<Structure> m_errorStructure;
         WriteBarrier<Structure> m_functionStructure;
+        WriteBarrier<Structure> m_namedFunctionStructure;
+        size_t m_functionNameOffset;
         WriteBarrier<Structure> m_numberObjectStructure;
         WriteBarrier<Structure> m_regExpMatchesArrayStructure;
         WriteBarrier<Structure> m_regExpStructure;
@@ -229,6 +231,8 @@ namespace JSC {
         Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
         Structure* errorStructure() const { return m_errorStructure.get(); }
         Structure* functionStructure() const { return m_functionStructure.get(); }
+        Structure* namedFunctionStructure() const { return m_namedFunctionStructure.get(); }
+        size_t functionNameOffset() const { return m_functionNameOffset; }
         Structure* numberObjectStructure() const { return m_numberObjectStructure.get(); }
         Structure* internalFunctionStructure() const { return m_internalFunctionStructure.get(); }
         Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }

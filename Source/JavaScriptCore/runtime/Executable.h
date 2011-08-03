@@ -226,7 +226,7 @@ namespace JSC {
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
             if (SamplingTool* sampler = globalData.interpreter->sampler())
-                sampler->notifyOfScope(*globalData, this);
+                sampler->notifyOfScope(globalData, this);
 #else
             UNUSED_PARAM(globalData);
 #endif
@@ -478,6 +478,7 @@ namespace JSC {
         }
 
         const Identifier& name() { return m_name; }
+        JSString* nameValue() const { return m_nameValue.get(); }
         size_t parameterCount() const { return m_parameters->size(); }
         unsigned capturedVariableCount() const { return m_numCapturedVariables; }
         UString paramString() const;
@@ -509,6 +510,7 @@ namespace JSC {
         OwnPtr<FunctionCodeBlock> m_codeBlockForCall;
         OwnPtr<FunctionCodeBlock> m_codeBlockForConstruct;
         Identifier m_name;
+        WriteBarrier<JSString> m_nameValue;
         SharedSymbolTable* m_symbolTable;
     };
 
