@@ -1,3 +1,32 @@
+2011-08-02  Jeffrey Pfau  <jpfau@apple.com>
+
+        Add namespace prefix support in XML tokenizer
+        https://bugs.webkit.org/show_bug.cgi?id=65578
+
+        Reviewed by Adam Barth.
+
+        This also changes markup debug printing to print to stderr instead of stdout
+
+        * xml/parser/MarkupTokenBase.h:
+        (WebCore::MarkupTokenBase::printString):
+        * xml/parser/XMLToken.h:
+        (WebCore::XMLToken::XMLDeclarationData::XMLDeclarationData):
+        (WebCore::XMLToken::clear):
+        (WebCore::XMLToken::appendToName):
+        (WebCore::XMLToken::name):
+        (WebCore::XMLToken::target):
+        (WebCore::XMLToken::data):
+        (WebCore::XMLToken::prefix):
+        (WebCore::XMLToken::xmlDeclarationData):
+        (WebCore::XMLToken::endPrefix):
+        (WebCore::XMLToken::hasPrefix):
+        (WebCore::XMLToken::endAttributePrefix):
+        (WebCore::XMLToken::attributeHasPrefix):
+        (WebCore::XMLToken::printAttrs):
+        (WebCore::XMLToken::print):
+        * xml/parser/XMLTokenizer.cpp:
+        (WebCore::XMLTokenizer::nextToken):
+
 2011-08-02  Zhenyao Mo  <zmo@google.com>
 
         Unreviewed, rolling out r92238.

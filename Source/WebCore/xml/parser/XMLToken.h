@@ -27,6 +27,7 @@
 #ifndef XMLToken_h
 #define XMLToken_h
 
+#include "Element.h"
 #include "MarkupTokenBase.h"
 
 namespace WebCore {
@@ -38,9 +39,6 @@ public:
         ProcessingInstruction,
         XMLDeclaration,
         DOCTYPE,
-        AttributeListDeclaration,
-        ElementDeclaration,
-        EntityDeclaration,
         CDATA,
         StartTag,
         EndTag,
@@ -51,24 +49,72 @@ public:
     };
 };
 
-class XMLToken : public MarkupTokenBase<XMLTokenTypes> {
+class PrefixedAttribute : public AttributeBase {
 public:
+    Range m_prefixRange;
+    WTF::Vector<UChar, 32> m_prefix;
+};
+
+class XMLToken : public MarkupTokenBase<XMLTokenTypes, DoctypeDataBase, PrefixedAttribute> {
+public:
+    class XMLDeclarationData {
+        WTF_MAKE_NONCOPYABLE(XMLDeclarationData);
+    public:
+        XMLDeclarationData()
+            : m_hasStandalone(false)
+            , m_hasEncoding(false)
+            , m_standalone(false)
+        {
+        }
+
+        bool m_hasStandalone;
+        bool m_hasEncoding;
+        bool m_standalone;
+        WTF::Vector<UChar> m_encoding;
+        WTF::Vector<UChar> m_version;
+    };
+
     virtual void clear()
     {
-        MarkupTokenBase<XMLTokenTypes>::clear();
+        MarkupTokenBase<XMLTokenTypes, DoctypeDataBase, PrefixedAttribute>::clear();
         m_target.clear();
     }
-    
+
     void appendToName(UChar character)
     {
         ASSERT(m_type == XMLTokenTypes::StartTag || m_type == XMLTokenTypes::EndTag || m_type == XMLTokenTypes::DOCTYPE || m_type == XMLTokenTypes::Entity);
-        MarkupTokenBase<XMLTokenTypes>::appendToName(character);
+        MarkupTokenBase<XMLTokenTypes, DoctypeDataBase, PrefixedAttribute>::appendToName(character);
     }
-    
+
     const DataVector& name() const
     {
         ASSERT(m_type == XMLTokenTypes::StartTag || m_type == XMLTokenTypes::EndTag || m_type == XMLTokenTypes::DOCTYPE || m_type == XMLTokenTypes::Entity);
-        return MarkupTokenBase<XMLTokenTypes>::name();
+        return MarkupTokenBase<XMLTokenTypes, DoctypeDataBase, PrefixedAttribute>::name();
+    }
+
+    const DataVector& target() const
+    {
+        ASSERT(m_type == XMLTokenTypes::ProcessingInstruction);
+        return m_target;
+    }
+
+    const DataVector& data() const
+    {
+        ASSERT(m_type == XMLTokenTypes::CDATA || m_type == XMLTokenTypes::ProcessingInstruction);
+        return m_data;
+    }
+
+    const DataVector& prefix() const
+    {
+        ASSERT(m_type == XMLTokenTypes::StartTag || m_type == XMLTokenTypes::EndTag);
+        return m_target;
+    }
+
+    const XMLDeclarationData& xmlDeclarationData() const
+    {
+        ASSERT(m_type == XMLTokenTypes::XMLDeclaration);
+        ASSERT(m_xmlDeclarationData);
+        return *m_xmlDeclarationData.get();
     }
 
     void beginDOCTYPE()
@@ -153,6 +199,20 @@ public:
         m_data.append(character);
     }
 
+    void endPrefix()
+    {
+        ASSERT(m_type == XMLTokenTypes::StartTag || m_type == XMLTokenTypes::EndTag);
+        ASSERT(m_target.isEmpty());
+        // FIXME: see if we can avoid the copy inherent with this swap
+        m_target.swap(m_data);
+    }
+
+    bool hasPrefix() const
+    {
+        ASSERT(m_type == XMLTokenTypes::StartTag || m_type == XMLTokenTypes::EndTag);
+        return m_target.size();
+    }
+
     void beginCDATA()
     {
         ASSERT(m_type == XMLTokenTypes::Uninitialized);
@@ -179,151 +239,161 @@ public:
         m_data.append(character);
     }
 
+    void endAttributePrefix(int offset)
+    {
+        ASSERT(m_type == XMLTokenTypes::StartTag);
+        int index = offset - m_baseOffset;
+        m_currentAttribute->m_prefix.swap(m_currentAttribute->m_name);
+        m_currentAttribute->m_prefixRange.m_start = m_currentAttribute->m_valueRange.m_start;
+        m_currentAttribute->m_prefixRange.m_end = index;
+        m_currentAttribute->m_nameRange.m_start = index;
+        m_currentAttribute->m_nameRange.m_end = index;
+    }
+
+    bool attributeHasPrefix()
+    {
+        ASSERT(m_type == XMLTokenTypes::StartTag);
+        return !m_currentAttribute->m_prefix.isEmpty();
+    }
+
 #ifndef NDEBUG
+    void printAttrs() const
+    {
+        AttributeList::const_iterator iter = m_attributes.begin();
+        for (; iter != m_attributes.end(); ++iter) {
+            fprintf(stderr, " ");
+            if (!iter->m_prefix.isEmpty()) {
+                printString(iter->m_prefix);
+                fprintf(stderr, ":");
+            }
+            printString(iter->m_name);
+            fprintf(stderr, "=\"");
+            printString(iter->m_value);
+            fprintf(stderr, "\"");
+        }
+    }
+
     void print() const
     {
         switch (m_type) {
         case XMLTokenTypes::Uninitialized:
-            printf("UNITIALIZED");
+            fprintf(stderr, "UNITIALIZED");
             break;
 
         case XMLTokenTypes::ProcessingInstruction:
-            printf("ProcessingInstruction: ");
-            printf("<?");
+            fprintf(stderr, "ProcessingInstruction: ");
+            fprintf(stderr, "<?");
             printString(m_target);
-            printf(" ");
+            fprintf(stderr, " ");
             printString(m_data);
-            printf("?>");
+            fprintf(stderr, "?>");
             break;
 
         case XMLTokenTypes::XMLDeclaration:
-            printf("XML Declaration: ");
-            printf("<?xml version=\"");
+            fprintf(stderr, "XML Declaration: ");
+            fprintf(stderr, "<?xml version=\"");
             ASSERT(m_xmlDeclarationData);
             printString(m_xmlDeclarationData->m_version);
-            printf("\"");
+            fprintf(stderr, "\"");
             if (m_xmlDeclarationData->m_hasEncoding) {
-                printf(" encoding=\"");
+                fprintf(stderr, " encoding=\"");
                 printString(m_xmlDeclarationData->m_encoding);
-                printf("\"");
+                fprintf(stderr, "\"");
             }
             if (m_xmlDeclarationData->m_hasStandalone)
-                printf(" standalone=\"%s\"", m_xmlDeclarationData->m_standalone ? "yes" : "no");
-            printf("?>");
+                fprintf(stderr, " standalone=\"%s\"", m_xmlDeclarationData->m_standalone ? "yes" : "no");
+            fprintf(stderr, "?>");
             break;
 
         case XMLTokenTypes::DOCTYPE:
-            printf("DOCTYPE: ");
+            fprintf(stderr, "DOCTYPE: ");
             ASSERT(m_doctypeData);
-            printf("<!DOCTYPE ");
+            fprintf(stderr, "<!DOCTYPE ");
             printString(m_data);
             if (m_doctypeData->m_hasPublicIdentifier) {
-                printf(" PUBLIC \"");
+                fprintf(stderr, " PUBLIC \"");
                 printString(m_doctypeData->m_publicIdentifier);
-                printf("\"");
+                fprintf(stderr, "\"");
                 if (m_doctypeData->m_hasSystemIdentifier) {
-                    printf(" \"");
+                    fprintf(stderr, " \"");
                     printString(m_doctypeData->m_systemIdentifier);
-                    printf("\"");
+                    fprintf(stderr, "\"");
                 }
             } else if (m_doctypeData->m_hasSystemIdentifier) {
-                printf(" SYSTEM \"");
+                fprintf(stderr, " SYSTEM \"");
                 printString(m_doctypeData->m_systemIdentifier);
-                printf("\"");
+                fprintf(stderr, "\"");
             }
-            printf(">");
-            break;
-
-        case XMLTokenTypes::AttributeListDeclaration:
-            printf("Attribute List: ");
-            printf("<!ATTLIST>");
-            break;
-
-        case XMLTokenTypes::ElementDeclaration:
-            printf("Element Declaration: ");
-            printf("<!ELEMENT>");
-            break;
-
-        case XMLTokenTypes::EntityDeclaration:
-            printf("Entity Declaration: ");
-            printf("<!ENTITY>");
+            fprintf(stderr, ">");
             break;
 
         case XMLTokenTypes::CDATA:
-            printf("CDATA: ");
-            printf("<![CDATA[");
+            fprintf(stderr, "CDATA: ");
+            fprintf(stderr, "<![CDATA[");
             printString(m_data);
-            printf("]]>");
+            fprintf(stderr, "]]>");
             break;
 
         case XMLTokenTypes::StartTag:
-            printf("Start Tag: ");
-            printf("<");
+            fprintf(stderr, "Start Tag: ");
+            fprintf(stderr, "<");
+            if (hasPrefix()) {
+                printString(m_target);
+                fprintf(stderr, ":");
+            }
             printString(m_data);
             printAttrs();
             if (selfClosing())
-                printf("/");
-            printf(">");
+                fprintf(stderr, "/");
+            fprintf(stderr, ">");
             break;
 
         case XMLTokenTypes::EndTag:
-            printf("End Tag: ");
-            printf("</");
+            fprintf(stderr, "End Tag: ");
+            fprintf(stderr, "</");
+            if (hasPrefix()) {
+                printString(m_target);
+                fprintf(stderr, ":");
+            }
             printString(m_data);
-            printf(">");
+            fprintf(stderr, ">");
             break;
 
         case XMLTokenTypes::Comment:
-            printf("Comment: ");
-            printf("<!--");
+            fprintf(stderr, "Comment: ");
+            fprintf(stderr, "<!--");
             printString(m_data);
-            printf("-->");
+            fprintf(stderr, "-->");
             break;
 
         case XMLTokenTypes::Character:
-            printf("Characters: ");
+            fprintf(stderr, "Characters: ");
             printString(m_data);
             break;
 
         case XMLTokenTypes::Entity:
-            printf("Entity: ");
-            printf("&");
+            fprintf(stderr, "Entity: ");
+            fprintf(stderr, "&");
             printString(m_data);
-            printf(";");
+            fprintf(stderr, ";");
             break;
 
         case XMLTokenTypes::EndOfFile:
-            printf("EOF");
+            fprintf(stderr, "EOF");
             break;
         }
 
-        printf("\n");
+        fprintf(stderr, "\n");
     }
 #endif // NDEBUG
 
 private:
+
     typedef DoctypeDataBase DoctypeData;
 
-    class XMLDeclarationData {
-        WTF_MAKE_NONCOPYABLE(XMLDeclarationData);
-    public:
-        XMLDeclarationData()
-            : m_hasStandalone(false)
-            , m_hasEncoding(false)
-            , m_standalone(false)
-        {
-        }
-        
-        bool m_hasStandalone;
-        bool m_hasEncoding;
-        bool m_standalone;
-        WTF::Vector<UChar> m_encoding;
-        WTF::Vector<UChar> m_version;
-    };
-
-    // "target" for ProcessingInstruction
+    // "target" for ProcessingInstruction, "prefix" for StartTag and EndTag
     DataVector m_target;
-    
+
     // For XML Declaration
     OwnPtr<XMLDeclarationData> m_xmlDeclarationData;
 };

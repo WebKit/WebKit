@@ -114,7 +114,7 @@ inline bool isValidNameChar(UChar cc)
         return true;
     if (cc < 0x30)
         return false;
-    if (cc < 0x3B)
+    if (cc < 0x3A)
         return true;
     if (cc < 0x0300)
         return false;
@@ -301,6 +301,9 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
         else if (isValidNameChar(cc)) {
             m_token->appendToName(cc);
             XML_ADVANCE_TO(TagNameState);
+        } else if (cc == ':' && !m_token->hasPrefix()) {
+            m_token->endPrefix();
+            XML_ADVANCE_TO(TagNameState);
         } else {
             parseError();
             return emitEndOfFile(source);
@@ -315,6 +318,9 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
             return emitAndResumeIn(source, XMLTokenizerState::DataState);
         else if (isValidNameChar(cc)) {
             m_token->appendToName(cc);
+            XML_ADVANCE_TO(EndTagNameState);
+        } else if (cc == ':' && !m_token->hasPrefix()) {
+            m_token->endPrefix();
             XML_ADVANCE_TO(EndTagNameState);
         } else {
             parseError();
@@ -363,6 +369,9 @@ bool XMLTokenizer::nextToken(SegmentedString& source, XMLToken& token)
             XML_ADVANCE_TO(BeforeAttributeValueState);
         } else if (isValidNameChar(cc)) {
             m_token->appendToAttributeName(cc);
+            XML_ADVANCE_TO(AttributeNameState);
+        } else if (cc == ':' && !m_token->attributeHasPrefix()) {
+            m_token->endAttributePrefix(source.numberOfCharactersConsumed());
             XML_ADVANCE_TO(AttributeNameState);
         } else {
             parseError();

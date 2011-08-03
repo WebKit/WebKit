@@ -51,27 +51,28 @@ public:
     WTF::Vector<UChar> m_publicIdentifier;
     WTF::Vector<UChar> m_systemIdentifier;
 };
-    
-template<typename TypeSet, typename DoctypeData = DoctypeDataBase>
-class MarkupTokenBase {
-    WTF_MAKE_NONCOPYABLE(MarkupTokenBase);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    typedef TypeSet Type;
 
+class AttributeBase {
+public:
     class Range {
     public:
         int m_start;
         int m_end;
     };
 
-    class Attribute {
-    public:
-        Range m_nameRange;
-        Range m_valueRange;
-        WTF::Vector<UChar, 32> m_name;
-        WTF::Vector<UChar, 32> m_value;
-    };
+    Range m_nameRange;
+    Range m_valueRange;
+    WTF::Vector<UChar, 32> m_name;
+    WTF::Vector<UChar, 32> m_value;
+};
+
+template<typename TypeSet, typename DoctypeData = DoctypeDataBase, typename AttributeType = AttributeBase>
+class MarkupTokenBase {
+    WTF_MAKE_NONCOPYABLE(MarkupTokenBase);
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    typedef TypeSet Type;
+    typedef AttributeType Attribute;
 
     typedef WTF::Vector<Attribute, 10> AttributeList;
     typedef WTF::Vector<UChar, 1024> DataVector;
@@ -334,19 +335,7 @@ protected:
     {
         DataVector::const_iterator iter = string.begin();
         for (; iter != string.end(); ++iter)
-            printf("%lc", wchar_t(*iter));
-    }
-    
-    void printAttrs() const
-    {
-        typename AttributeList::const_iterator iter = m_attributes.begin();
-        for (; iter != m_attributes.end(); ++iter) {
-            printf(" ");
-            printString(iter->m_name);
-            printf("=\"");
-            printString(iter->m_value);
-            printf("\"");
-        }
+            fprintf(stderr, "%lc", wchar_t(*iter));
     }
 #endif // NDEBUG
 
@@ -367,7 +356,7 @@ protected:
     friend class AtomicHTMLToken;
 
     typename Type::Type m_type;
-    Range m_range; // Always starts at zero.
+    typename Attribute::Range m_range; // Always starts at zero.
     int m_baseOffset;
     DataVector m_data;
 
