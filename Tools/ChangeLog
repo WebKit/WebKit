@@ -1,3 +1,10 @@
+2011-08-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Build fix for WebKit2GTK+.
+
+        * WebKitTestRunner/GNUmakefile.am: Include libInternals as one of
+        of the library dependencies of the injected bundle.
+
 2011-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Install web and plugin processes in libexecdir instead of bindir

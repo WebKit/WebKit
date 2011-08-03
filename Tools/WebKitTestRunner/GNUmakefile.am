@@ -79,6 +79,9 @@ Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
 	Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.cpp \
 	Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.h
 
+Libraries_libTestRunnerInjectedBundle_la_LIBADD = \
+	libWebCoreInternals.la
+
 Libraries_libTestRunnerInjectedBundle_la_LDFLAGS = \
 	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \
 	$(no_undefined) \
