@@ -1,3 +1,10 @@
+2011-08-03  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK baselines for media/media-controls-clone.html.
+
+        * platform/gtk/media/media-controls-clone-expected.png: Added.
+        * platform/gtk/media/media-controls-clone-expected.txt: Added.
+
 2011-08-03  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Remove flaky failures of fast/speech/input-appearance-*.html.
