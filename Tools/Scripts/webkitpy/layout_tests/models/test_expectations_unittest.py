@@ -502,7 +502,7 @@ class TestExpectationSerializerTests(unittest.TestCase):
 
     def test_parsed_to_string(self):
         expectation_line = TestExpectationLine()
-        expectation_line.parsed_bug_modifier = 'BUGX'
+        expectation_line.parsed_bug_modifiers = ['BUGX']
         expectation_line.name = 'test/name/for/realz.html'
         expectation_line.parsed_expectations = set([IMAGE])
         self.assertEqual(self._serializer.to_string(expectation_line), None)
@@ -526,14 +526,20 @@ class TestExpectationSerializerTests(unittest.TestCase):
 
     def test_parsed_modifier_string(self):
         expectation_line = TestExpectationLine()
-        expectation_line.parsed_bug_modifier = 'garden-o-matic'
+        expectation_line.parsed_bug_modifiers = ['garden-o-matic']
         expectation_line.parsed_modifiers = ['for', 'the']
         self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, []), 'garden-o-matic for the')
         self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, ['win']), 'garden-o-matic for the win')
-        expectation_line.parsed_bug_modifier = ''
+        expectation_line.parsed_bug_modifiers = []
         expectation_line.parsed_modifiers = []
         self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, []), '')
         self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, ['win']), 'win')
+        expectation_line.parsed_bug_modifiers = ['garden-o-matic', 'total', 'is']
+        self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, ['win']), 'garden-o-matic is total win')
+        expectation_line.parsed_bug_modifiers = []
+        expectation_line.parsed_modifiers = ['garden-o-matic', 'total', 'is']
+        self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, ['win']), 'garden-o-matic is total win')
+
 
     def test_format_result(self):
         self.assertEqual(TestExpectationSerializer._format_result('modifiers', 'name', 'expectations', 'comment'), 'MODIFIERS : name = EXPECTATIONS //comment')
@@ -627,11 +633,11 @@ class TestExpectationEditorTests(unittest.TestCase):
         result = TestExpectationSerializer.list_to_string(expectation_lines, converter)
         self.assertEquals(result, expected_string)
 
-    def assert_update_roundtrip(self, in_string, test, expectation_set, expected_string, remove_flakes=False, parsed_bug_modifier=None, test_configs=None):
+    def assert_update_roundtrip(self, in_string, test, expectation_set, expected_string, remove_flakes=False, parsed_bug_modifiers=None, test_configs=None):
         test_config_set = test_configs or set([self.test_port.test_configuration()])
         expectation_lines = self.make_parsed_expectation_lines(in_string)
         editor = TestExpectationsEditor(expectation_lines, MockBugManager())
-        editor.update_expectation(test, test_config_set, expectation_set, parsed_bug_modifier=parsed_bug_modifier)
+        editor.update_expectation(test, test_config_set, expectation_set, parsed_bug_modifiers=parsed_bug_modifiers)
         converter = TestConfigurationConverter(self.test_port.all_test_configurations(), self.test_port.configuration_specifier_macros())
         result = TestExpectationSerializer.list_to_string(expectation_lines, converter)
         self.assertEquals(result, expected_string)
@@ -793,7 +799,7 @@ BUGX1 XP RELEASE CPU : failures/expected/keyboard.html = TEXT""")
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE CPU : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
-BUGAWESOME XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", parsed_bug_modifier='BUGAWESOME')
+BUGAWESOME XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", parsed_bug_modifiers=['BUGAWESOME'])
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
@@ -807,7 +813,7 @@ BUGX1 XP RELEASE GPU : failures/expected/keyboard.html = TEXT""")
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
 BUGX1 XP RELEASE GPU : failures/expected/keyboard.html = TEXT
-BUGAWESOME XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", parsed_bug_modifier='BUGAWESOME')
+BUGAWESOME XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", parsed_bug_modifiers=['BUGAWESOME'])
 
         self.assert_update_roundtrip("""
 BUGX1 WIN : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
@@ -855,7 +861,7 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE"""
         editor = TestExpectationsEditor(expectation_lines, MockBugManager())
         test = "failures/expected/keyboard.html"
 
-        editor.update_expectation(test, set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')]), set([IMAGE_PLUS_TEXT]), 'BUG_UPDATE1')
+        editor.update_expectation(test, set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')]), set([IMAGE_PLUS_TEXT]), ['BUG_UPDATE1'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 XP DEBUG CPU : failures/expected/keyboard.html = IMAGE
 BUGX1 XP GPU : failures/expected/keyboard.html = IMAGE
@@ -863,7 +869,7 @@ BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE
 BUG_UPDATE1 XP RELEASE CPU : failures/expected/keyboard.html = IMAGE+TEXT""")
 
-        editor.update_expectation(test, set([TestConfiguration(None, 'xp', 'x86', 'debug', 'cpu')]), set([TEXT]), 'BUG_UPDATE2')
+        editor.update_expectation(test, set([TestConfiguration(None, 'xp', 'x86', 'debug', 'cpu')]), set([TEXT]), ['BUG_UPDATE2'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 XP GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
@@ -871,7 +877,7 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE
 BUG_UPDATE1 XP RELEASE CPU : failures/expected/keyboard.html = IMAGE+TEXT
 BUG_UPDATE2 XP DEBUG CPU : failures/expected/keyboard.html = TEXT""")
 
-        editor.update_expectation(test, self.WIN_RELEASE_CPU_CONFIGS, set([CRASH]), 'BUG_UPDATE3')
+        editor.update_expectation(test, self.WIN_RELEASE_CPU_CONFIGS, set([CRASH]), ['BUG_UPDATE3'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 VISTA DEBUG CPU : failures/expected/keyboard.html = IMAGE
 BUGX1 WIN7 RELEASE GPU : failures/expected/keyboard.html = IMAGE
@@ -881,7 +887,7 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE
 BUG_UPDATE2 XP DEBUG CPU : failures/expected/keyboard.html = TEXT
 BUG_UPDATE3 WIN RELEASE CPU : failures/expected/keyboard.html = CRASH""")
 
-        editor.update_expectation(test, self.RELEASE_CONFIGS, set([FAIL]), 'BUG_UPDATE4')
+        editor.update_expectation(test, self.RELEASE_CONFIGS, set([FAIL]), ['BUG_UPDATE4'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 XP DEBUG GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
@@ -889,7 +895,7 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE
 BUG_UPDATE2 XP DEBUG CPU : failures/expected/keyboard.html = TEXT
 BUG_UPDATE4 RELEASE : failures/expected/keyboard.html = FAIL""")
 
-        editor.update_expectation(test, set(self.test_port.all_test_configurations()), set([TIMEOUT]), 'BUG_UPDATE5')
+        editor.update_expectation(test, set(self.test_port.all_test_configurations()), set([TIMEOUT]), ['BUG_UPDATE5'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX2 WIN : failures/expected/audio.html = IMAGE
 BUG_UPDATE5 : failures/expected/keyboard.html = TIMEOUT""")

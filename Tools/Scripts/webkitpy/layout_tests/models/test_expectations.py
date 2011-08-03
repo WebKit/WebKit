@@ -132,7 +132,7 @@ class TestExpectationSerializer(object):
         if expectation_line.name is None:
             return '' if expectation_line.comment is None else "//%s" % expectation_line.comment
 
-        if expectation_line.parsed_bug_modifier:
+        if expectation_line.parsed_bug_modifiers:
             specifiers_list = self._test_configuration_converter.to_specifiers_list(expectation_line.matching_configurations)
             result = []
             for specifiers in specifiers_list:
@@ -152,9 +152,9 @@ class TestExpectationSerializer(object):
 
     def _parsed_modifier_string(self, expectation_line, specifiers):
         result = []
-        if expectation_line.parsed_bug_modifier:
-            result.append(expectation_line.parsed_bug_modifier)
-        result.extend(expectation_line.parsed_modifiers)
+        if expectation_line.parsed_bug_modifiers:
+            result.extend(sorted(expectation_line.parsed_bug_modifiers))
+        result.extend(sorted(expectation_line.parsed_modifiers))
         result.extend(self._test_configuration_converter.specifier_sorter().sort_specifiers(specifiers))
         return ' '.join(result)
 
@@ -215,11 +215,11 @@ class TestExpectationParser(object):
                 if re.match(self.BUG_MODIFIER_REGEX, modifier):
                     expectation_line.errors.append('BUG\d+ is not allowed, must be one of BUGCR\d+, BUGWK\d+, BUGV8_\d+, or a non-numeric bug identifier.')
                 else:
-                    expectation_line.parsed_bug_modifier = modifier
+                    expectation_line.parsed_bug_modifiers.append(modifier)
             else:
                 parsed_specifiers.add(modifier)
 
-        if not expectation_line.parsed_bug_modifier and not has_wontfix:
+        if not expectation_line.parsed_bug_modifiers and not has_wontfix:
             expectation_line.warnings.append('Test lacks BUG modifier.')
 
         if self._allow_rebaseline_modifier and self.REBASELINE_MODIFIER in expectation_line.modifiers:
@@ -344,7 +344,7 @@ class TestExpectationLine:
         self.path = None
         self.modifiers = []
         self.parsed_modifiers = []
-        self.parsed_bug_modifier = None
+        self.parsed_bug_modifiers = []
         self.matching_configurations = set()
         self.expectations = []
         self.parsed_expectations = set()
@@ -581,7 +581,7 @@ class TestExpectationsModel(object):
 
 class BugManager(object):
     """A simple interface for managing bugs from TestExpectationsEditor."""
-    def close_bug(self, bug_id, reference_bug_id=None):
+    def close_bug(self, bug_ids, reference_bug_ids=None):
         raise NotImplementedError("BugManager.close_bug")
 
     def create_bug(self):
@@ -631,31 +631,31 @@ class TestExpectationsEditor(object):
             if (not expectation_line.is_flaky() or remove_flakes) and expectation_line.matching_configurations & test_config_set:
                 expectation_line.matching_configurations = expectation_line.matching_configurations - test_config_set
                 if not expectation_line.matching_configurations:
-                    self._bug_manager.close_bug(expectation_line.parsed_bug_modifier)
+                    self._bug_manager.close_bug(expectation_line.parsed_bug_modifiers)
                 return
 
-    def update_expectation(self, test, test_config_set, expectation_set, parsed_bug_modifier=None):
+    def update_expectation(self, test, test_config_set, expectation_set, parsed_bug_modifiers=None):
         """Updates expectations for {test} in the set of test configuration {test_config_set} to the values of {expectation_set}.
-        If {parsed_bug_modifier} is supplied, it is used for updated expectations. Otherwise, a new bug is created.
+        If {parsed_bug_modifiers} is supplied, it is used for updated expectations. Otherwise, a new bug is created.
 
         Here, we treat updating expectations to PASS as special: if possible, the corresponding lines are completely removed.
         """
         # FIXME: Allow specifying modifiers (SLOW, SKIP, WONTFIX).
         expectation_lines = self._test_to_expectation_lines.get(test, [])
         remaining_configurations = test_config_set.copy()
-        bug_id = self._get_valid_bug_id(parsed_bug_modifier)
+        bug_ids = self._get_valid_bug_ids(parsed_bug_modifiers)
         remove_expectations = expectation_set == set([PASS]) and test not in self._tests_with_directory_paths
         for expectation_line in expectation_lines:
             if expectation_line.matching_configurations == remaining_configurations:
                 # Tweak expectations on existing line.
                 if expectation_line.parsed_expectations == expectation_set:
                     return
-                self._bug_manager.close_bug(expectation_line.parsed_bug_modifier, bug_id)
+                self._bug_manager.close_bug(expectation_line.parsed_bug_modifiers, bug_ids)
                 if remove_expectations:
                     expectation_line.matching_configurations = set()
                     return
                 expectation_line.parsed_expectations = expectation_set
-                expectation_line.parsed_bug_modifier = bug_id
+                expectation_line.parsed_bug_modifiers = bug_ids
                 return
             elif expectation_line.matching_configurations >= remaining_configurations:
                 # 1) Split up into two expectation lines:
@@ -666,7 +666,7 @@ class TestExpectationsEditor(object):
                 break
             elif expectation_line.matching_configurations <= remaining_configurations:
                 # Remove existing expectation line.
-                self._bug_manager.close_bug(expectation_line.parsed_bug_modifier, bug_id)
+                self._bug_manager.close_bug(expectation_line.parsed_bug_modifiers, bug_ids)
                 expectation_line.matching_configurations = set()
             else:
                 intersection = expectation_line.matching_configurations & remaining_configurations
@@ -674,16 +674,16 @@ class TestExpectationsEditor(object):
                     expectation_line.matching_configurations -= intersection
 
         if not remove_expectations:
-            self._expectation_lines.append(self._create_new_line(test, bug_id, remaining_configurations, expectation_set))
+            self._expectation_lines.append(self._create_new_line(test, bug_ids, remaining_configurations, expectation_set))
 
-    def _get_valid_bug_id(self, suggested_bug_id):
+    def _get_valid_bug_ids(self, suggested_bug_ids):
         # FIXME: Flesh out creating a bug properly (title, etc.)
-        return suggested_bug_id or self._bug_manager.create_bug()
+        return suggested_bug_ids or [self._bug_manager.create_bug()]
 
-    def _create_new_line(self, name, bug_id, config_set, expectation_set):
+    def _create_new_line(self, name, bug_ids, config_set, expectation_set):
         new_line = TestExpectationLine()
         new_line.name = name
-        new_line.parsed_bug_modifier = bug_id
+        new_line.parsed_bug_modifiers = bug_ids
         new_line.matching_configurations = config_set
         new_line.parsed_expectations = expectation_set
         # Ensure index integrity for multiple operations.
