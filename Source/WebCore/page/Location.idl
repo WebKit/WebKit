@@ -29,7 +29,6 @@
 module window {
 
     interface [
-        LegacyDefaultOptionalArguments,
 #if defined(V8_BINDING) && V8_BINDING
         CheckDomainSecurity,
 #endif
@@ -47,8 +46,8 @@ module window {
                  attribute [DoNotCheckDomainSecurityOnSet, CustomSetter, V8DisallowShadowing] DOMString href;
 #endif
 
-        [Custom, V8OnInstance] void assign(in DOMString url);
-        [Custom, V8OnInstance] void replace(in DOMString url);
+        [Custom, V8OnInstance] void assign(in [Optional=CallWithDefaultValue] DOMString url);
+        [Custom, V8OnInstance] void replace(in [Optional=CallWithDefaultValue] DOMString url);
         [Custom, V8OnInstance] void reload();
 
         // URI decomposition attributes
