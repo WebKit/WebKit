@@ -1,3 +1,13 @@
+2011-08-03  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Web Inspector: Remove InspectorFrontendHost load/saveSessionSetting
+        https://bugs.webkit.org/show_bug.cgi?id=65582
+
+        Reviewed by Pavel Feldman.
+
+        * WebCoreSupport/WebInspectorClient.h:
+        * WebCoreSupport/WebInspectorClient.mm:
+
 2011-08-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [Timeline] Hover on paint events and see rect outline around that area.

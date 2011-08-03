@@ -228,20 +228,6 @@ void InspectorFrontendHost::saveAs(const String& fileName, const String& content
         m_client->saveAs(fileName, content);
 }
 
-void InspectorFrontendHost::saveSessionSetting(const String& key, const String& value)
-{
-    if (m_client)
-        m_client->saveSessionSetting(key, value);
-}
-
-String InspectorFrontendHost::loadSessionSetting(const String& key)
-{
-    String value;
-    if (m_client)
-        m_client->loadSessionSetting(key, &value);
-    return value;
-}
-
 void InspectorFrontendHost::sendMessageToBackend(const String& message)
 {
     if (m_client)

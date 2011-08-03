@@ -167,7 +167,7 @@ WebInspector.ScriptsPanel = function()
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.CallFrameSelected, this._callFrameSelected, this);
 
     var enableDebugger = Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled.get();
-    if (enableDebugger || InspectorFrontendHost.loadSessionSetting("debugger-enabled") === "true")
+    if (enableDebugger)
         WebInspector.debuggerModel.enableDebugger();
 }
 
@@ -478,7 +478,6 @@ WebInspector.ScriptsPanel.prototype = {
         if (this._debuggerEnabled)
             return;
 
-        InspectorFrontendHost.saveSessionSetting("debugger-enabled", "true");
         this._debuggerEnabled = true;
         this.reset(true);
     },
@@ -488,7 +487,6 @@ WebInspector.ScriptsPanel.prototype = {
         if (!this._debuggerEnabled)
             return;
 
-        InspectorFrontendHost.saveSessionSetting("debugger-enabled", "false");
         this._debuggerEnabled = false;
         this.reset(true);
     },

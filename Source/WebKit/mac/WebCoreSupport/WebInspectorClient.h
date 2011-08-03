@@ -69,17 +69,12 @@ public:
 
     void releaseFrontendPage();
 
-    void saveSessionSetting(const String& key, const String& value);
-    void loadSessionSetting(const String& key, String* value);
-
 private:
     WTF::PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> createFrontendSettings();
 
     WebView *m_webView;
     RetainPtr<WebNodeHighlighter> m_highlighter;
     WebCore::Page* m_frontendPage;
-
-    WTF::HashMap<WTF::String, WTF::String> m_sessionSettings;
 };
 
 
@@ -101,9 +96,6 @@ public:
 
     virtual void setAttachedWindowHeight(unsigned height);
     virtual void inspectedURLChanged(const WTF::String& newURL);
-
-    virtual void saveSessionSetting(const String& key, const String& value);
-    virtual void loadSessionSetting(const String& key, String* value);
 
 private:
     void updateWindowTitle() const;

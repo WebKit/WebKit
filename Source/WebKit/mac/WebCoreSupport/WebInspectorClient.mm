@@ -190,20 +190,6 @@ void WebInspectorFrontendClient::inspectedURLChanged(const String& newURL)
     updateWindowTitle();
 }
 
-void WebInspectorFrontendClient::saveSessionSetting(const String& key, const String& value)
-{
-    WebInspectorClient* client = [m_windowController.get() inspectorClient];
-    if (client)
-        client->saveSessionSetting(key, value);
-}
-
-void WebInspectorFrontendClient::loadSessionSetting(const String& key, String* value)
-{
-    WebInspectorClient* client = [m_windowController.get() inspectorClient];
-    if (client)
-        client->loadSessionSetting(key, value);
-}
-
 void WebInspectorFrontendClient::updateWindowTitle() const
 {
     NSString *title = [NSString stringWithFormat:UI_STRING_INTERNAL("Web Inspector — %@", "Web Inspector window title"), (NSString *)m_inspectedURL];

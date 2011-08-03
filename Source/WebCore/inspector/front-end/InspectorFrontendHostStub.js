@@ -138,14 +138,6 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     {
     },
 
-    saveSessionSetting: function(key, value)
-    {
-    },
-
-    loadSessionSetting: function(key)
-    {
-    },
-
     recordActionTaken: function(actionCode)
     {
     },

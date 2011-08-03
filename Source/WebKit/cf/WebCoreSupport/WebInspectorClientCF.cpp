@@ -131,18 +131,6 @@ void WebInspectorClient::releaseFrontendPage()
     m_frontendPage = 0;
 }
 
-void WebInspectorClient::saveSessionSetting(const String& key, const String& value)
-{
-    if (!key.isEmpty())
-        m_sessionSettings.set(key, value);
-}
-
-void WebInspectorClient::loadSessionSetting(const String& key, String* value)
-{
-    if (!key.isEmpty())
-        *value = m_sessionSettings.get(key);
-}
-
 WTF::PassOwnPtr<WebCore::InspectorFrontendClientLocal::Settings> WebInspectorClient::createFrontendSettings()
 {
     class InspectorFrontendSettingsCF : public WebCore::InspectorFrontendClientLocal::Settings {
