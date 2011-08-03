@@ -1,3 +1,26 @@
+2011-08-03  Jeremy Moskovich  <jeremy@chromium.org>
+
+        [Chromium] Fix OOP font loading to work on 10.6.6 and above.
+        https://bugs.webkit.org/show_bug.cgi?id=65543
+
+        In 10.6.6 the function used to get the unique ID for an NSFont in the 
+        renderer was changed so it fails in the sandbox (it now tries to access
+        the on-disk font file). In order to work around this, we get the font
+        ID from the browser process.
+
+        To speed things up, we introduce 2 levels of caching in WebKit. A font
+        name cache where we can perform a quick lookup without the need for the
+        font id and a font id cache which we can only lookup in after getting
+        the unique ID from the browser process.
+
+        Reviewed by Kenneth Russell.
+
+        No new tests since this is not readily testable.
+
+        * public/mac/WebSandboxSupport.h: Plumb font ID parameter through.
+        * src/PlatformBridge.cpp:
+        (WebCore::PlatformBridge::loadFont): ditto.
+
 2011-08-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: remove Node parameter from the InspectorClient::highlight

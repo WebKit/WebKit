@@ -151,7 +151,7 @@ public:
     static bool ensureFontLoaded(HFONT);
 #endif
 #if OS(DARWIN)
-    static bool loadFont(NSFont* srcFont, ATSFontContainerRef* out);
+    static bool loadFont(NSFont* srcFont, ATSFontContainerRef*, uint32_t* fontID);
 #elif OS(UNIX)
     static void getRenderStyleForStrike(const char* family, int sizeAndStyle, FontRenderStyle* result);
     static String getFontFamilyForCharacters(const UChar*, size_t numCharacters, const char* preferredLocale);

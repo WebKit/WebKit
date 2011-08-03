@@ -444,17 +444,18 @@ bool PlatformBridge::ensureFontLoaded(HFONT font)
 #endif
 
 #if OS(DARWIN)
-bool PlatformBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* out)
+bool PlatformBridge::loadFont(NSFont* srcFont, ATSFontContainerRef* container, uint32_t* fontID)
 {
     WebSandboxSupport* ss = webKitClient()->sandboxSupport();
     if (ss)
-        return ss->loadFont(srcFont, out);
+        return ss->loadFont(srcFont, container, fontID);
 
     // This function should only be called in response to an error loading a
     // font due to being blocked by the sandbox.
     // This by definition shouldn't happen if there is no sandbox support.
     ASSERT_NOT_REACHED();
-    *out = 0;
+    *container = 0;
+    *fontID = 0;
     return false;
 }
 #elif OS(UNIX)

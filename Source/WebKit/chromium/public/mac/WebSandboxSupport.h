@@ -46,7 +46,8 @@ class WebSandboxSupport {
 public:
     // Given an input font - |srcFont| [which can't be loaded due to sandbox
     // restrictions].  Return a font container belonging to an equivalent
-    // font file that can be used to access the font.
+    // font file that can be used to access the font and a unique identifier
+    // corresponding to the on-disk font file.
     //
     // Note that a font container may contain multiple fonts, the caller is
     // responsible for retreiving the appropriate font from the container.
@@ -55,7 +56,7 @@ public:
     // parameter and must call ATSFontDeactivate() to unload it when done.
     //
     // Returns: true on success, false on error.
-    virtual bool loadFont(NSFont* srcFont, ATSFontContainerRef* out) = 0;
+    virtual bool loadFont(NSFont* srcFont, ATSFontContainerRef*, uint32_t* fontID) = 0;
 };
 
 } // namespace WebKit
