@@ -1,3 +1,17 @@
+2011-08-03  Roland Steiner  <rolandsteiner@chromium.org>
+
+        [V8] V8CSSRuleCustom.cpp: not all enum values are listed in switch statement
+        https://bugs.webkit.org/show_bug.cgi?id=65598
+
+        Reviewed by Dimitri Glazkov.
+
+        Added UNKNOWN_RULE to the switch statement.
+
+        No new tests. (No semantic change)
+
+        * bindings/v8/custom/V8CSSRuleCustom.cpp:
+        (WebCore::toV8):
+
 2011-08-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [Timeline] Hover on paint events and see rect outline around that area.

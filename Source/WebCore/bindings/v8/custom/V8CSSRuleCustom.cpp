@@ -47,6 +47,11 @@ v8::Handle<v8::Value> toV8(CSSRule* impl)
     if (!impl)
         return v8::Null();
     switch (impl->type()) {
+    case CSSRule::UNKNOWN_RULE:
+        // CSSUnknownRule.idl is explicitly excluded as it doesn't add anything
+        // over CSSRule.idl (see WebCore.gyp/WebCore.gyp: 'bindings_idl_files').
+        // -> Use the base class wrapper here.
+        return V8CSSRule::wrap(impl);
     case CSSRule::STYLE_RULE:
         return toV8(static_cast<CSSStyleRule*>(impl));
     case CSSRule::CHARSET_RULE:
