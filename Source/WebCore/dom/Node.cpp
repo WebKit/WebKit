@@ -2714,7 +2714,7 @@ void Node::dispatchScopedEvent(PassRefPtr<Event> event)
 
 bool Node::dispatchEvent(PassRefPtr<Event> event)
 {
-    return EventDispatcher::dispatchEvent(this, EventDispatchMediator(event));
+    return EventDispatcher::dispatchEvent(this, EventDispatchMediator::create(event));
 }
 
 void Node::dispatchSubtreeModifiedEvent()
@@ -2746,13 +2746,13 @@ void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr
 
 bool Node::dispatchKeyEvent(const PlatformKeyboardEvent& event)
 {
-    return EventDispatcher::dispatchEvent(this, KeyboardEventDispatchMediator(KeyboardEvent::create(event, document()->defaultView())));
+    return EventDispatcher::dispatchEvent(this, KeyboardEventDispatchMediator::create(KeyboardEvent::create(event, document()->defaultView())));
 }
 
 bool Node::dispatchMouseEvent(const PlatformMouseEvent& event, const AtomicString& eventType,
     int detail, Node* relatedTarget)
 {
-    return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator(MouseEvent::create(eventType, document()->defaultView(), event, detail, relatedTarget)));
+    return EventDispatcher::dispatchEvent(this, MouseEventDispatchMediator::create(MouseEvent::create(eventType, document()->defaultView(), event, detail, relatedTarget)));
 }
 
 void Node::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents, bool showPressedLook)
@@ -2762,7 +2762,7 @@ void Node::dispatchSimulatedClick(PassRefPtr<Event> event, bool sendMouseEvents,
 
 bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
 {
-    return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator(event, document()->defaultView()));
+    return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document()->defaultView()));
 }
 
 void Node::dispatchFocusEvent()

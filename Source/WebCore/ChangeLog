@@ -1,3 +1,39 @@
+2011-08-03  Hayato Ito  <hayato@chromium.org>
+
+        Make EventDispatchMediator RefCounted.
+        https://bugs.webkit.org/show_bug.cgi?id=65529
+
+        Reviewed by Hajime Morita.
+
+        Make EventDispatchMediator RefCounted so that it can be enqueued into a
+        ScopedEventQueue and called later.
+        A necessary change for ScopedEventQueue should be addressed in another patch.
+
+        This is a minor update of r92256, which failed on chromium win builds.
+
+        No changes to functionality so no new tests.
+
+        * dom/Event.cpp:
+        (WebCore::EventDispatchMediator::create):
+        * dom/Event.h:
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/EventDispatcher.h:
+        * dom/KeyboardEvent.cpp:
+        (WebCore::KeyboardEventDispatchMediator::create):
+        * dom/KeyboardEvent.h:
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEventDispatchMediator::create):
+        * dom/MouseEvent.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchEvent):
+        (WebCore::Node::dispatchKeyEvent):
+        (WebCore::Node::dispatchMouseEvent):
+        (WebCore::Node::dispatchWheelEvent):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEventDispatchMediator::create):
+        * dom/WheelEvent.h:
+
 2011-08-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: remove Node parameter from the InspectorClient::highlight
