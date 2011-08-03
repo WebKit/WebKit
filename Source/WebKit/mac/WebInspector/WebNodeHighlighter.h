@@ -36,6 +36,6 @@
     WebNodeHighlight *_currentHighlight;
 }
 - (id)initWithInspectedWebView:(WebView *)webView;
-- (void)highlightNode:(DOMNode *)node;
+- (void)highlight;
 - (void)hideHighlight;
 @end

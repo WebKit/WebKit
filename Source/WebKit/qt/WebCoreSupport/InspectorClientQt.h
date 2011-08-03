@@ -43,7 +43,6 @@ class QWebView;
 namespace WebCore {
 class InspectorFrontendClientQt;
 class InspectorServerRequestHandlerQt;
-class Node;
 class Page;
 class RemoteFrontendChannel;
 
@@ -55,7 +54,7 @@ public:
 
     virtual void openInspectorFrontend(WebCore::InspectorController*);
 
-    virtual void highlight(Node*);
+    virtual void highlight();
     virtual void hideHighlight();
 
     virtual bool sendMessageToFrontend(const String&);

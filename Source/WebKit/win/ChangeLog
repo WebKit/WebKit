@@ -1,3 +1,14 @@
+2011-08-03  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: remove Node parameter from the InspectorClient::highlight
+        https://bugs.webkit.org/show_bug.cgi?id=65549
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCoreSupport/WebInspectorClient.cpp:
+        (WebInspectorClient::highlight):
+        * WebCoreSupport/WebInspectorClient.h:
+
 2011-07-31  Daniel Bates  <dbates@webkit.org>
 
         Attempt to fix the WinCairo Debug build after r92059 (https://bugs.webkit.org/show_bug.cgi?id=65419).

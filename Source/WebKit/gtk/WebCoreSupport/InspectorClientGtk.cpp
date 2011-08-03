@@ -161,7 +161,7 @@ void InspectorClient::releaseFrontendPage()
     m_frontendPage = 0;
 }
 
-void InspectorClient::highlight(Node*)
+void InspectorClient::highlight()
 {
     hideHighlight();
 }

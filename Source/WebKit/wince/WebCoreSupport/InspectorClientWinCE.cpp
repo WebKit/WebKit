@@ -55,7 +55,7 @@ void InspectorClientWinCE::releaseFrontendPage()
     notImplemented();
 }
 
-void InspectorClientWinCE::highlight(Node* node)
+void InspectorClientWinCE::highlight()
 {
     notImplemented();
 }

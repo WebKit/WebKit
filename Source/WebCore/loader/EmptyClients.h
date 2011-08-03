@@ -589,7 +589,7 @@ public:
     
     virtual void openInspectorFrontend(InspectorController*) { }
 
-    virtual void highlight(Node*) { }
+    virtual void highlight() { }
     virtual void hideHighlight() { }
 
     virtual bool sendMessageToFrontend(const String&) { return false; }

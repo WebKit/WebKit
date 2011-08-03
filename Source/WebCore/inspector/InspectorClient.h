@@ -44,7 +44,7 @@ public:
 
     virtual void openInspectorFrontend(InspectorController*) = 0;
 
-    virtual void highlight(Node*) = 0;
+    virtual void highlight() = 0;
     virtual void hideHighlight() = 0;
 
     // Navigation can cause some WebKit implementations to change the view / page / inspector controller instance.

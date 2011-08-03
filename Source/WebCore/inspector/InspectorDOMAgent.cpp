@@ -1009,7 +1009,7 @@ void InspectorDOMAgent::highlight(ErrorString*, Node* node, const String& mode)
     ASSERT_ARG(node, node);
     m_highlightedNode = node;
     m_highlightMode = mode;
-    m_client->highlight(node);
+    m_client->highlight();
 }
 
 void InspectorDOMAgent::highlightNode(ErrorString* error, int nodeId, String* mode)

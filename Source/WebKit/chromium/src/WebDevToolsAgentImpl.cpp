@@ -282,7 +282,7 @@ void WebDevToolsAgentImpl::paintPageOverlay(GraphicsContext& gc)
         ic->drawNodeHighlight(gc);
 }
 
-void WebDevToolsAgentImpl::highlight(Node* node)
+void WebDevToolsAgentImpl::highlight()
 {
     m_webViewImpl->setPageOverlayClient(this);
 }

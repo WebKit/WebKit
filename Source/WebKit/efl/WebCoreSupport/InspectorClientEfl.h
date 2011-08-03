@@ -36,7 +36,6 @@
 #include <wtf/Forward.h>
 
 namespace WebCore {
-class Node;
 class Page;
 
 class InspectorClientEfl : public WebCore::InspectorClient {
@@ -45,7 +44,7 @@ public:
 
     virtual void openInspectorFrontend(InspectorController*);
 
-    virtual void highlight(Node*);
+    virtual void highlight();
     virtual void hideHighlight();
 
     virtual void populateSetting(const String& key, String* value);

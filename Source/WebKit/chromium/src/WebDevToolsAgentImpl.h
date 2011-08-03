@@ -86,7 +86,7 @@ public:
     // InspectorClient implementation.
     virtual void inspectorDestroyed();
     virtual void openInspectorFrontend(WebCore::InspectorController*);
-    virtual void highlight(WebCore::Node*);
+    virtual void highlight();
     virtual void hideHighlight();
     virtual void updateInspectorStateCookie(const WTF::String&);
     virtual bool sendMessageToFrontend(const WTF::String&);

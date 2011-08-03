@@ -52,7 +52,7 @@ void InspectorClientWx::openInspectorFrontend(WebCore::InspectorController*)
     notImplemented();
 }
 
-void InspectorClientWx::highlight(Node*)
+void InspectorClientWx::highlight()
 {
     notImplemented();
 }

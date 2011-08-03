@@ -97,9 +97,9 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
 }
 
-void WebInspectorClient::highlight(Node* node)
+void WebInspectorClient::highlight()
 {
-    [m_highlighter.get() highlightNode:kit(node)];
+    [m_highlighter.get() highlight];
 }
 
 void WebInspectorClient::hideHighlight()

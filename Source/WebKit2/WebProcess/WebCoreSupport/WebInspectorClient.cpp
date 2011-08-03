@@ -54,7 +54,7 @@ void WebInspectorClient::openInspectorFrontend(InspectorController*)
     inspectorPage->corePage()->inspectorController()->setInspectorFrontendClient(adoptPtr(new WebInspectorFrontendClient(m_page, inspectorPage)));
 }
 
-void WebInspectorClient::highlight(Node*)
+void WebInspectorClient::highlight()
 {
     if (!m_highlightOverlay) {
         RefPtr<PageOverlay> highlightOverlay = PageOverlay::create(this);

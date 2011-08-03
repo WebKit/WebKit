@@ -31,7 +31,6 @@
 
 namespace WebCore {
 
-class Node;
 class Page;
 
 class InspectorClientWx : public InspectorClient {
@@ -43,7 +42,7 @@ public:
 
     virtual void openInspectorFrontend(WebCore::InspectorController*);
 
-    virtual void highlight(Node*);
+    virtual void highlight();
     virtual void hideHighlight();
 
     virtual void populateSetting(const String& key, String* value);

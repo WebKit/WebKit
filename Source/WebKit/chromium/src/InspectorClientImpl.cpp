@@ -69,10 +69,10 @@ void InspectorClientImpl::openInspectorFrontend(InspectorController* controller)
         agent->openInspectorFrontend(controller);
 }
 
-void InspectorClientImpl::highlight(Node* node)
+void InspectorClientImpl::highlight()
 {
     if (WebDevToolsAgentImpl* agent = devToolsAgent())
-        agent->highlight(node);
+        agent->highlight();
 }
 
 void InspectorClientImpl::hideHighlight()

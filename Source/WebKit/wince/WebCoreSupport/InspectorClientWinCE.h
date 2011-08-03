@@ -40,7 +40,7 @@ public:
 
     virtual void openInspectorFrontend(WebCore::InspectorController*);
 
-    virtual void highlight(WebCore::Node*);
+    virtual void highlight();
     virtual void hideHighlight();
 
     virtual void populateSetting(const WTF::String& key, WTF::String* value);

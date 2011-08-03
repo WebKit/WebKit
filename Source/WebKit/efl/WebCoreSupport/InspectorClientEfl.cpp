@@ -38,7 +38,7 @@ void InspectorClientEfl::openInspectorFrontend(InspectorController*)
     notImplemented();
 }
 
-void InspectorClientEfl::highlight(Node* node)
+void InspectorClientEfl::highlight()
 {
     notImplemented();
 }

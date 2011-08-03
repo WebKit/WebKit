@@ -265,7 +265,7 @@ void InspectorClientQt::detachRemoteFrontend()
 #endif
 }
 
-void InspectorClientQt::highlight(Node*)
+void InspectorClientQt::highlight()
 {
     hideHighlight();
 }

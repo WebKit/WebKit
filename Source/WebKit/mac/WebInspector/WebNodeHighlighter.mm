@@ -54,7 +54,7 @@
 
 // MARK: -
 
-- (void)highlightNode:(DOMNode *)node
+- (void)highlight
 {
     // The scrollview's content view stays around between page navigations, so target it.
     NSView *view = [[[[[_inspectedWebView mainFrame] frameView] documentView] enclosingScrollView] contentView];

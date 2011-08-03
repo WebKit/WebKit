@@ -175,7 +175,7 @@ void WebInspectorClient::openInspectorFrontend(InspectorController* inspectorCon
     m_frontendHwnd = frontendHwnd;
 }
 
-void WebInspectorClient::highlight(Node*)
+void WebInspectorClient::highlight()
 {
     bool creatingHighlight = !m_highlight;
 
