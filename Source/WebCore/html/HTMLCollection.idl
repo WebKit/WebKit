@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         HasIndexGetter,
         HasNameGetter,
         CustomCall,
@@ -30,11 +29,11 @@ module html {
         Polymorphic
     ] HTMLCollection {
         readonly attribute unsigned long length;
-        [Custom] Node item(in unsigned long index);
-        [Custom] Node namedItem(in DOMString name);
+        [Custom] Node item(in [Optional=CallWithDefaultValue] unsigned long index);
+        [Custom] Node namedItem(in [Optional=CallWithDefaultValue] DOMString name);
 
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
-        NodeList tags(in DOMString name);
+        NodeList tags(in [Optional=CallWithDefaultValue] DOMString name);
 #endif
     };
 

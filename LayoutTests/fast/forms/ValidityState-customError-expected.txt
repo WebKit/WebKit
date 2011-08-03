@@ -35,6 +35,14 @@ PASS customErrorFor("input-submit-no-changes") is false
 
 Many changes for customError:
 Set some value, and set with no arguments.
+PASS setCustomValidity() threw Not enough arguments
+PASS setCustomValidity() threw Not enough arguments
+PASS setCustomValidity() threw Not enough arguments
+PASS setCustomValidity() threw Not enough arguments
+PASS setCustomValidity() threw Not enough arguments
+PASS setCustomValidity() threw Not enough arguments
+PASS setCustomValidity() threw Not enough arguments
+PASS setCustomValidity() threw Not enough arguments
 PASS customErrorFor("fieldset-many-changes") is false
 PASS customErrorFor("button-many-changes") is false
 PASS customErrorFor("button-button-many-changes") is false

@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateNativeConverter
     ] HTMLTableSectionElement : HTMLElement {
         attribute [Reflect] DOMString align;
@@ -29,8 +28,8 @@ module html {
         attribute [Reflect=charoff] DOMString chOff;
         attribute [Reflect] DOMString vAlign;
         readonly attribute HTMLCollection rows;
-        HTMLElement insertRow(in long index) raises(DOMException);
-        void deleteRow(in long index) raises(DOMException);
+        HTMLElement insertRow(in [Optional=CallWithDefaultValue] long index) raises(DOMException);
+        void deleteRow(in [Optional=CallWithDefaultValue] long index) raises(DOMException);
     };
 
 }

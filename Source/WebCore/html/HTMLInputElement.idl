@@ -20,9 +20,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLInputElement : HTMLElement {
+    interface HTMLInputElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString defaultValue;
         attribute [Reflect=checked] boolean defaultChecked;
         readonly attribute HTMLFormElement form;
@@ -93,7 +91,9 @@ module html {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         [Custom] void setSelectionRange(in long start, in long end);
 #else
-        [Custom] void setSelectionRange(in long start, in long end, in [Optional] DOMString direction);
+        [Custom] void setSelectionRange(in [Optional=CallWithDefaultValue] long start, 
+                                        in [Optional=CallWithDefaultValue] long end, 
+                                        in [Optional] DOMString direction);
 #endif
 
 #if defined(LANGUAGE_OBJECTIVE_C)

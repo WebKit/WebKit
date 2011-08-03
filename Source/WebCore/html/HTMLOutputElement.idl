@@ -23,9 +23,7 @@
  */
 
 module html {
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLOutputElement : HTMLElement {
+    interface HTMLOutputElement : HTMLElement {
         attribute [Custom] DOMSettableTokenList htmlFor;
         readonly attribute HTMLFormElement form;
         attribute [Reflect] DOMString name;

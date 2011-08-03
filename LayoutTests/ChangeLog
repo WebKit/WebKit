@@ -1,5 +1,19 @@
 2011-08-03  Mark Pilgrim  <pilgrim@chromium.org>
 
+        Remove LegacyDefaultOptionalArguments flag from HTML DOM IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=65338
+
+        Reviewed by Adam Barth.
+
+        * fast/files/create-blob-url-crash-expected.txt:
+        * fast/files/create-blob-url-crash.html:
+        * fast/files/revoke-blob-url-expected.txt:
+        * fast/files/revoke-blob-url.html:
+        * fast/forms/ValidityState-customError-expected.txt:
+        * fast/forms/ValidityState-customError.html:
+
+2011-08-03  Mark Pilgrim  <pilgrim@chromium.org>
+
         Remove LegacyDefaultOptionalArguments flag from navigator IDL files
         https://bugs.webkit.org/show_bug.cgi?id=65370
 

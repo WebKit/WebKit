@@ -31,7 +31,6 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         CustomConstructFunction,
         V8CustomConstructor,
@@ -39,7 +38,8 @@ module html {
         GenerateToJS
     ] DOMFormData {
         // void append(DOMString name, Blob value);
-        [Custom] void append(in DOMString name, in DOMString value);
+        [Custom] void append(in [Optional=CallWithDefaultValue] DOMString name, 
+                             in [Optional=CallWithDefaultValue] DOMString value);
     };
 
 }

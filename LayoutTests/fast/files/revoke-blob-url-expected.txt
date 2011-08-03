@@ -1,5 +1,5 @@
 Test calling revokeObjectURL with no argument.
-PASS
+PASS: Not enough arguments
 Test calling revokeObjectURL with empty URL.
 PASS
 Test calling revokeObjectURL with invalid URL.

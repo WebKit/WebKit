@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateNativeConverter,
         CustomPushEventHandlerScope
     ] HTMLElement : Element {
@@ -49,14 +48,14 @@ module html {
                  attribute [ConvertNullToNullString] DOMString outerText
                      setter raises(DOMException);
 
-        Element insertAdjacentElement(in DOMString where,
-                                      in Element element)
+        Element insertAdjacentElement(in [Optional=CallWithDefaultValue] DOMString where,
+                                      in [Optional=CallWithDefaultValue] Element element)
             raises(DOMException);
-        void insertAdjacentHTML(in DOMString where,
-                                in DOMString html)
+        void insertAdjacentHTML(in [Optional=CallWithDefaultValue] DOMString where,
+                                in [Optional=CallWithDefaultValue] DOMString html)
             raises(DOMException);
-        void insertAdjacentText(in DOMString where,
-                                in DOMString text)
+        void insertAdjacentText(in [Optional=CallWithDefaultValue] DOMString where,
+                                in [Optional=CallWithDefaultValue] DOMString text)
             raises(DOMException);
 
         readonly attribute HTMLCollection children;

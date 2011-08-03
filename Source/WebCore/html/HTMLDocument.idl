@@ -21,13 +21,12 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         HasOverridingNameGetter
     ] HTMLDocument : Document {
         [Custom, NoCPPCustom] void open();
         void close();
-        [Custom] void write(in DOMString text);
-        [Custom] void writeln(in DOMString text);
+        [Custom] void write(in [Optional=CallWithDefaultValue] DOMString text);
+        [Custom] void writeln(in [Optional=CallWithDefaultValue] DOMString text);
 
         readonly attribute HTMLCollection embeds;
         readonly attribute HTMLCollection plugins;

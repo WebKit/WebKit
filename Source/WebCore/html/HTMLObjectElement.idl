@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         DelegatingPutFunction,
         DelegatingGetOwnPropertySlot,
         CustomCall

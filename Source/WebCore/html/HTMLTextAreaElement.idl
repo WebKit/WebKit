@@ -20,9 +20,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLTextAreaElement : HTMLElement {
+    interface HTMLTextAreaElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString defaultValue;
         readonly attribute HTMLFormElement form;
         readonly attribute ValidityState validity;
@@ -54,7 +52,9 @@ module html {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         void setSelectionRange(in long start, in long end);
 #else
-        void setSelectionRange(in long start, in long end, in [Optional] DOMString direction);
+        void setSelectionRange(in [Optional=CallWithDefaultValue] long start, 
+                               in [Optional=CallWithDefaultValue] long end, 
+                               in [Optional] DOMString direction);
 #endif
         readonly attribute NodeList labels;
     };

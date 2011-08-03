@@ -9,9 +9,13 @@ function log(message)
 
 function test()
 {
-    log("Test that createObjectURL with no argument should not cause crash.");
-    var url = webkitURL.createObjectURL();
-    log(url == undefined ? "PASS" : "FAIL");
+    log("Test that createObjectURL with no argument should throw an exception.");
+    try {
+        var url = webkitURL.createObjectURL();
+        log("FAIL");
+    } catch(err) {
+        log("PASS: " + err.message);
+    }
 
     log("DONE");
 }

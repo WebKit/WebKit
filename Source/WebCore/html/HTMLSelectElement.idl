@@ -21,7 +21,6 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         HasIndexGetter,
         HasCustomIndexSetter
     ] HTMLSelectElement : HTMLElement {
@@ -53,7 +52,8 @@ module html {
         attribute [Reflect] boolean required;
         attribute long size;
         
-        [OldStyleObjC] void add(in HTMLElement element, in HTMLElement before) raises(DOMException);
+        [OldStyleObjC] void add(in [Optional=CallWithDefaultValue] HTMLElement element, 
+                                in [Optional=CallWithDefaultValue] HTMLElement before) raises(DOMException);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         // In JavaScript, we support both option index and option object parameters.
@@ -65,8 +65,8 @@ module html {
 
         // These methods are not in DOM Level 2 IDL, but are mentioned in the standard:
         // "The contained options can be directly accessed through the select element as a collection."
-        Node item(in [IsIndex] unsigned long index);
-        Node namedItem(in DOMString name);
+        Node item(in [IsIndex,Optional=CallWithDefaultValue] unsigned long index);
+        Node namedItem(in [Optional=CallWithDefaultValue] DOMString name);
         readonly attribute NodeList labels;
     };
 

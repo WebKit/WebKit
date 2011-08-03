@@ -20,9 +20,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLTableElement : HTMLElement {
+    interface HTMLTableElement : HTMLElement {
         attribute HTMLTableCaptionElement caption setter raises(DOMException);
         attribute HTMLTableSectionElement tHead setter raises(DOMException);
         attribute HTMLTableSectionElement tFoot setter raises(DOMException);
@@ -48,8 +46,8 @@ module html {
         HTMLElement createCaption();
         void deleteCaption();
 
-        HTMLElement insertRow(in long index) raises(DOMException);
-        void deleteRow(in long index) raises(DOMException);
+        HTMLElement insertRow(in [Optional=CallWithDefaultValue] long index) raises(DOMException);
+        void deleteRow(in [Optional=CallWithDefaultValue] long index) raises(DOMException);
     };
 
 }

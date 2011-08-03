@@ -26,14 +26,13 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         HasIndexGetter,
         HasNameGetter,
         CustomCall,
         MasqueradesAsUndefined
     ] HTMLAllCollection {
         readonly attribute unsigned long length;
-        [Custom] Node item(in unsigned long index);
+        [Custom] Node item(in [Optional=CallWithDefaultValue] unsigned long index);
         [Custom] Node namedItem(in DOMString name);
 
         // FIXME: This should return an HTMLAllCollection.

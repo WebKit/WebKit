@@ -10,8 +10,12 @@ function log(message)
 function test()
 {
     log("Test calling revokeObjectURL with no argument.");
-    var url = webkitURL.revokeObjectURL();
-    log(url == undefined ? "PASS" : "FAIL");
+    try {
+        var url = webkitURL.revokeObjectURL();
+        log("FAIL");
+    } catch(err) {
+        log("PASS: " + err.message);
+    }
 
     log("Test calling revokeObjectURL with empty URL.");
     webkitURL.revokeObjectURL("");

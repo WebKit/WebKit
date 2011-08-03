@@ -20,9 +20,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLAnchorElement : HTMLElement {
+    interface HTMLAnchorElement : HTMLElement {
         attribute [Reflect] DOMString accessKey;
         attribute [Reflect] DOMString charset;
         attribute [Reflect] DOMString coords;

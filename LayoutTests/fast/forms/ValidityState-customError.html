@@ -97,7 +97,13 @@ debug('Set some value, and set with no arguments.');
 v = document.getElementsByName("many-changes");
 for (i = 0; i < v.length; i++) {
     v[i].setCustomValidity("Custom string");
-    v[i].setCustomValidity();
+    try {
+        v[i].setCustomValidity();
+        testFailed("setCustomValidity() did not throw");
+    } catch(err) {
+        testPassed("setCustomValidity() threw " + err.message);
+    }
+    v[i].setCustomValidity(undefined);
 }
 shouldBeFalse('customErrorFor("fieldset-many-changes")');
 shouldBeFalse('customErrorFor("button-many-changes")');

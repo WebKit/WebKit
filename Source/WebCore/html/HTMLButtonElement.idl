@@ -20,9 +20,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLButtonElement : HTMLElement {
+    interface HTMLButtonElement : HTMLElement {
         readonly attribute HTMLFormElement form;
 
         attribute [Reflect, URL] DOMString formAction;

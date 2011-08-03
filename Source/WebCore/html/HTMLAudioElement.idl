@@ -25,7 +25,6 @@
 
 module html {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=VIDEO
     ] HTMLAudioElement : HTMLMediaElement {
     
