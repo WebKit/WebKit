@@ -542,6 +542,11 @@ bool WebSocketChannel::processFrame()
 
     switch (frame.opCode) {
     case OpCodeContinuation:
+        // An unexpected continuation frame is received without any leading frame.
+        if (!m_hasContinuousFrame) {
+            fail("Received unexpected continuation frame.");
+            return false;
+        }
         // Throw away content of a binary message because binary messages are not supported yet.
         if (m_continuousFrameOpCode == OpCodeText)
             m_continuousFrameData.append(frame.payload, frame.payloadLength);

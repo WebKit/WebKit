@@ -1,3 +1,16 @@
+2011-08-02  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        WebSocket: Should be closed by receiving invalid continuation frame.
+
+        https://bugs.webkit.org/show_bug.cgi?id=65527
+
+        Reviewed by Kent Tamura.
+
+        Test: http/tests/websocket/tests/hybi/invalid-continuation.html
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::processFrame):
+
 2011-08-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92256.

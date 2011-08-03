@@ -1,3 +1,15 @@
+2011-08-02  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        WebSocket: Should be closed by receiving invalid continuation frame.
+
+        https://bugs.webkit.org/show_bug.cgi?id=65527
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hybi/invalid-continuation-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/invalid-continuation.html: Added.
+        * http/tests/websocket/tests/hybi/invalid-continuation_wsh.py: Added.
+
 2011-08-02  James Robinson  <jamesr@chromium.org>
 
         More expectation updates for r92255
