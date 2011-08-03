@@ -1,3 +1,17 @@
+2011-08-03  Andreas Kling  <kling@webkit.org>
+
+        [Qt] MiniBrowser: Unbreak load progress indication.
+        https://bugs.webkit.org/show_bug.cgi?id=65614
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        loadProgress() was renamed to loadProgressChanged().
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+        (BrowserWindow::onLoadProgressChanged):
+        * MiniBrowser/qt/BrowserWindow.h:
+
 2011-08-03  Martin Robinson  <mrobinson@igalia.com>
 
         Build fix for WebKit2GTK+.

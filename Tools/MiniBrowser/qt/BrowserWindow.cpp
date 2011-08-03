@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010, 2011 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2010 University of Szeged
  *
  * All rights reserved.
@@ -57,7 +57,7 @@ BrowserWindow::BrowserWindow(WindowOptions* options)
 
     setAttribute(Qt::WA_DeleteOnClose);
 
-    connect(webView(), SIGNAL(loadProgress(int)), SLOT(loadProgress(int)));
+    connect(webView(), SIGNAL(loadProgressChanged(int)), SLOT(onLoadProgressChanged(int)));
     connect(webView(), SIGNAL(titleChanged(QString)), SLOT(setWindowTitle(QString)));
     connect(webView(), SIGNAL(urlChanged(QUrl)), SLOT(urlChanged(QUrl)));
 
@@ -163,7 +163,7 @@ void BrowserWindow::changeLocation()
     m_browser->load(string);
 }
 
-void BrowserWindow::loadProgress(int progress)
+void BrowserWindow::onLoadProgressChanged(int progress)
 {
     QColor backgroundColor = QApplication::palette().color(QPalette::Base);
     QColor progressColor = QColor(120, 180, 240);
