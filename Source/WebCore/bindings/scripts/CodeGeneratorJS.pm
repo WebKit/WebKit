@@ -1976,11 +1976,11 @@ sub GenerateImplementation
                 my $numParameters = @{$function->parameters};
 
                 my $requiresAllArguments;
-                if ($dataNode->extendedAttributes->{"LegacyDefaultOptionalArguments"}) {
-                    $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"};
-                } else {
-                    $requiresAllArguments = "Raise";
+                my $requiresAllArgumentsDefault = "";
+                if (!$dataNode->extendedAttributes->{"LegacyDefaultOptionalArguments"}) {
+                    $requiresAllArgumentsDefault = "Raise";
                 }
+                $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"} || $requiresAllArgumentsDefault;
                 if ($requiresAllArguments) {
                     my $numMandatoryParams = @{$function->parameters};
                     foreach my $param (reverse(@{$function->parameters})) {

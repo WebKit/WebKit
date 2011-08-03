@@ -26,7 +26,6 @@
 module window {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CheckDomainSecurity,
         CustomDefineGetter,
         CustomDefineSetter,
@@ -80,18 +79,18 @@ module window {
                                            in [Optional] DOMObject dialogArgs,
                                            in [Optional] DOMString featureArgs);
 
-        void alert(in DOMString message);
-        boolean confirm(in DOMString message);
-        [ConvertNullStringTo=Null] DOMString prompt(in DOMString message,
-                                                    in [ConvertUndefinedOrNullToNullString] DOMString defaultValue);
+        void alert(in [Optional=CallWithDefaultValue] DOMString message);
+        boolean confirm(in [Optional=CallWithDefaultValue] DOMString message);
+        [ConvertNullStringTo=Null] DOMString prompt(in [Optional=CallWithDefaultValue] DOMString message,
+                                                    in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString defaultValue);
 
-        boolean find(in DOMString string,
-                     in boolean caseSensitive,
-                     in boolean backwards,
-                     in boolean wrap,
-                     in boolean wholeWord,
-                     in boolean searchInFrames,
-                     in boolean showDialog);
+        boolean find(in [Optional=CallWithDefaultValue] DOMString string,
+                     in [Optional=CallWithDefaultValue] boolean caseSensitive,
+                     in [Optional=CallWithDefaultValue] boolean backwards,
+                     in [Optional=CallWithDefaultValue] boolean wrap,
+                     in [Optional=CallWithDefaultValue] boolean wholeWord,
+                     in [Optional=CallWithDefaultValue] boolean searchInFrames,
+                     in [Optional=CallWithDefaultValue] boolean showDialog);
 
         attribute [Replaceable] boolean offscreenBuffering;
 
@@ -148,25 +147,27 @@ module window {
         readonly attribute StyleMedia styleMedia;
 
         // DOM Level 2 Style Interface
-        CSSStyleDeclaration getComputedStyle(in Element element,
-                                             in [ConvertUndefinedOrNullToNullString] DOMString pseudoElement);
+        CSSStyleDeclaration getComputedStyle(in [Optional=CallWithDefaultValue] Element element,
+                                             in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString pseudoElement);
 
         // WebKit extensions
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-        CSSRuleList getMatchedCSSRules(in Element element,
-                                       in DOMString pseudoElement);
+        CSSRuleList getMatchedCSSRules(in [Optional=CallWithDefaultValue] Element element,
+                                       in [Optional=CallWithDefaultValue] DOMString pseudoElement);
 #endif
 
         attribute [Replaceable] double devicePixelRatio;
         
-        WebKitPoint webkitConvertPointFromPageToNode(in Node node, in WebKitPoint p);
-        WebKitPoint webkitConvertPointFromNodeToPage(in Node node, in WebKitPoint p);
+        WebKitPoint webkitConvertPointFromPageToNode(in [Optional=CallWithDefaultValue] Node node, 
+                                                     in [Optional=CallWithDefaultValue] WebKitPoint p);
+        WebKitPoint webkitConvertPointFromNodeToPage(in [Optional=CallWithDefaultValue] Node node, 
+                                                     in [Optional=CallWithDefaultValue] WebKitPoint p);
 
 #if defined(ENABLE_OFFLINE_WEB_APPLICATIONS) && ENABLE_OFFLINE_WEB_APPLICATIONS
         readonly attribute [EnabledAtRuntime] DOMApplicationCache applicationCache;
 #endif    
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [EnabledAtRuntime, RequiresAllArguments=Raise] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+        [EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
 #endif
 #if defined(ENABLE_DOM_STORAGE) && ENABLE_DOM_STORAGE
@@ -225,14 +226,15 @@ module window {
 #endif
 
         // Timers
-        [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
+        [Custom] long setTimeout(in [Optional=CallWithDefaultValue] TimeoutHandler handler, 
+                                 in [Optional=CallWithDefaultValue] long timeout);
         // [Custom] long setTimeout(in TimeoutHandler handler, in long timeout, arguments...);
         // [Custom] long setTimeout(in DOMString code, in long timeout);
-        void clearTimeout(in long handle);
+        void clearTimeout(in [Optional=CallWithDefaultValue] long handle);
         [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
         // [Custom] long setInterval(in TimeoutHandler handler, in long timeout, arguments...);
         // [Custom] long setInterval(in DOMString code, in long timeout);
-        void clearInterval(in long handle);
+        void clearInterval(in [Optional=CallWithDefaultValue] long handle);
 
 #if defined(ENABLE_REQUEST_ANIMATION_FRAME)
         // WebKit animation extensions
@@ -241,9 +243,9 @@ module window {
 #endif
 
         // Base64
-        DOMString atob(in [ConvertNullToNullString] DOMString string)
+        DOMString atob(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString string)
             raises(DOMException);
-        DOMString btoa(in [ConvertNullToNullString] DOMString string)
+        DOMString btoa(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString string)
             raises(DOMException);
 
         // Events
