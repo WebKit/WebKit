@@ -394,7 +394,7 @@ size_t FontCache::inactiveFontDataCount()
 
 const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontSelector* fontSelector)
 {
-    SimpleFontData* result = 0;
+    FontData* result = 0;
 
     int startIndex = familyIndex;
     const FontFamily* startFamily = &font.fontDescription().family();
@@ -404,12 +404,11 @@ const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontS
     while (currFamily && !result) {
         familyIndex++;
         if (currFamily->family().length()) {
-            if (fontSelector) {
-                FontData* data = fontSelector->getFontData(font.fontDescription(), currFamily->family());
-                if (data)
-                    return data;
-            }
-            result = getCachedFontData(font.fontDescription(), currFamily->family());
+            if (fontSelector)
+                result = fontSelector->getFontData(font.fontDescription(), currFamily->family());
+
+            if (!result)
+                result = getCachedFontData(font.fontDescription(), currFamily->family());
         }
         currFamily = currFamily->next();
     }

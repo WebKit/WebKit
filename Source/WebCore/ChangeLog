@@ -1,3 +1,16 @@
+2011-08-03  Dan Bernstein  <mitz@apple.com>
+
+        FontCache::getFontData() does not set the familyIndex to cAllFamiliesScanned if the last font is a custom font
+        https://bugs.webkit.org/show_bug.cgi?id=65597
+
+        Reviewed by Simon Fraser.
+
+        No test added because behavior is unchanged, but this saves a call to getFontData().
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getFontData): Eliminated early return inside the loop, allowing execution
+        to continue and familyIndex to be set.
+
 2011-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add RenderedPosition
