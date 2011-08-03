@@ -330,6 +330,9 @@ def build(bld):
         # once we move over to the new FPD implementation, remove this.
         excludes.append('FontPlatformData.cpp')
         
+        # we don't use gestures currently
+        excludes.append('PlatformGestureRecognizer.cpp')
+        
         if sys.platform.startswith('darwin'):
             webcore.includes += ' Source/WebKit/mac/WebCoreSupport WebCore/platform/mac'
             webcore.source += ' Source/WebKit/mac/WebCoreSupport/WebSystemInterface.mm'
