@@ -151,7 +151,8 @@ void QDesktopWebViewPrivate::showContextMenu(QSharedPointer<QMenu> menu)
     activeMenu = menu;
 
     menu->setParent(widget, menu->windowFlags());
-    menu->exec(widget->mapToGlobal(menu->pos()));
+    QPoint menuPositionInScene = q->mapToScene(menu->pos()).toPoint();
+    menu->exec(widget->mapToGlobal(menuPositionInScene));
     // The last function to get out of exec() clear the local copy.
     if (activeMenu == menu)
         activeMenu.clear();
