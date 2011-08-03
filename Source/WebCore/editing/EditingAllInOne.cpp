@@ -57,6 +57,7 @@
 #include <RemoveFormatCommand.cpp>
 #include <RemoveNodeCommand.cpp>
 #include <RemoveNodePreservingChildrenCommand.cpp>
+#include <RenderedPosition.cpp>
 #include <ReplaceNodeWithSpanCommand.cpp>
 #include <ReplaceSelectionCommand.cpp>
 #include <SetNodeAttributeCommand.cpp>

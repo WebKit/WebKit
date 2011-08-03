@@ -1398,6 +1398,8 @@ webcore_sources += \
 	Source/WebCore/editing/RemoveNodeCommand.h \
 	Source/WebCore/editing/RemoveNodePreservingChildrenCommand.cpp \
 	Source/WebCore/editing/RemoveNodePreservingChildrenCommand.h \
+	Source/WebCore/editing/RenderedPosition.cpp \
+	Source/WebCore/editing/RenderedPosition.h \
 	Source/WebCore/editing/ReplaceNodeWithSpanCommand.cpp \
 	Source/WebCore/editing/ReplaceNodeWithSpanCommand.h \
 	Source/WebCore/editing/ReplaceSelectionCommand.cpp \

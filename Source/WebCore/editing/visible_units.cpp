@@ -34,6 +34,7 @@
 #include "RenderBlock.h"
 #include "RenderLayer.h"
 #include "RenderObject.h"
+#include "RenderedPosition.h"
 #include "Text.h"
 #include "TextBoundaries.h"
 #include "TextBreakIterator.h"
@@ -323,24 +324,6 @@ bool isStartOfWord(const VisiblePosition& p)
 
 // ---------
 
-static RootInlineBox *rootBoxForLine(const VisiblePosition &c)
-{
-    Position p = c.deepEquivalent();
-    Node* node = p.deprecatedNode();
-    if (!node)
-        return 0;
-
-    RenderObject *renderer = node->renderer();
-    if (!renderer)
-        return 0;
-
-    InlineBox* box;
-    int offset;
-    c.getInlineBoxAndOffset(box, offset);
-    
-    return box ? box->root() : 0;
-}
-
 static VisiblePosition positionAvoidingFirstPositionInTable(const VisiblePosition& c)
 {
     // return table offset 0 instead of the first VisiblePosition inside the table
@@ -356,7 +339,7 @@ static VisiblePosition startPositionForLine(const VisiblePosition& c)
     if (c.isNull())
         return VisiblePosition();
 
-    RootInlineBox *rootBox = rootBoxForLine(c);
+    RootInlineBox* rootBox = RenderedPosition(c).rootBox();
     if (!rootBox) {
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
@@ -404,7 +387,7 @@ static VisiblePosition endPositionForLine(const VisiblePosition& c)
     if (c.isNull())
         return VisiblePosition();
 
-    RootInlineBox *rootBox = rootBoxForLine(c);
+    RootInlineBox* rootBox = RenderedPosition(c).rootBox();
     if (!rootBox) {
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
@@ -1063,7 +1046,7 @@ static VisiblePosition logicalStartPositionForLine(const VisiblePosition& c)
     if (c.isNull())
         return VisiblePosition();
 
-    RootInlineBox* rootBox = rootBoxForLine(c);
+    RootInlineBox* rootBox = RenderedPosition(c).rootBox();
     if (!rootBox) {
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.
@@ -1103,7 +1086,7 @@ static VisiblePosition logicalEndPositionForLine(const VisiblePosition& c)
     if (c.isNull())
         return VisiblePosition();
 
-    RootInlineBox* rootBox = rootBoxForLine(c);
+    RootInlineBox* rootBox = RenderedPosition(c).rootBox();
     if (!rootBox) {
         // There are VisiblePositions at offset 0 in blocks without
         // RootInlineBoxes, like empty editable blocks and bordered blocks.

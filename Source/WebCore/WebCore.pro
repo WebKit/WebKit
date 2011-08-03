@@ -598,6 +598,7 @@ SOURCES += \
     editing/RemoveFormatCommand.cpp \
     editing/RemoveNodeCommand.cpp \
     editing/RemoveNodePreservingChildrenCommand.cpp \
+    editing/RenderedPosition.cpp \
     editing/ReplaceNodeWithSpanCommand.cpp \
     editing/ReplaceSelectionCommand.cpp \
     editing/SetNodeAttributeCommand.cpp \
@@ -1586,6 +1587,7 @@ HEADERS += \
     editing/RemoveFormatCommand.h \
     editing/RemoveNodeCommand.h \
     editing/RemoveNodePreservingChildrenCommand.h \
+    editing/RenderedPosition.h \
     editing/ReplaceNodeWithSpanCommand.h \
     editing/ReplaceSelectionCommand.h \
     editing/SetNodeAttributeCommand.h \

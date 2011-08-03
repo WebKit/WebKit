@@ -2476,6 +2476,8 @@
             'editing/RemoveNodeCommand.h',
             'editing/RemoveNodePreservingChildrenCommand.cpp',
             'editing/RemoveNodePreservingChildrenCommand.h',
+            'editing/RenderedPosition.cpp',
+            'editing/RenderedPosition.h',
             'editing/ReplaceNodeWithSpanCommand.cpp',
             'editing/ReplaceNodeWithSpanCommand.h',
             'editing/ReplaceSelectionCommand.cpp',
