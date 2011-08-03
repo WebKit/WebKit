@@ -5828,7 +5828,7 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads)
         quads.append(RenderBox::localToAbsoluteQuad(FloatRect(0, 0, width(), height())));
 }
 
-IntRect RenderBlock::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth)
+IntRect RenderBlock::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth) const
 {
     IntRect r(RenderBox::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
     if (isAnonymousBlockContinuation())

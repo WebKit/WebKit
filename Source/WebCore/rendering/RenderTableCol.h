@@ -56,7 +56,7 @@ private:
     virtual bool canHaveChildren() const;
     virtual bool requiresLayer() const { return false; }
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     RenderTable* table() const;

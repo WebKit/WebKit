@@ -82,12 +82,12 @@ const RenderSVGText* RenderSVGText::locateRenderSVGTextAncestor(const RenderObje
     return toRenderSVGText(start);
 }
 
-IntRect RenderSVGText::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderSVGText::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-void RenderSVGText::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+void RenderSVGText::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed) const
 {
     SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }

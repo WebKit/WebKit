@@ -75,7 +75,7 @@ private:
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&) { }
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
 
     virtual unsigned caretMaxRenderedOffset() const;
     virtual VisiblePosition positionForPoint(const LayoutPoint&);

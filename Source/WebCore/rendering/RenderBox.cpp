@@ -1379,7 +1379,7 @@ void RenderBox::deleteLineBoxWrapper()
     }
 }
 
-IntRect RenderBox::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderBox::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return IntRect();
@@ -1410,7 +1410,7 @@ IntRect RenderBox::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintCo
     return r;
 }
 
-void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
+void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed) const
 {
     // The rect we compute at each step is shifted by our x/y offset in the parent container's coordinate space.
     // Only when we cross a writing mode boundary will we have to possibly flipForWritingMode (to convert into a more appropriate

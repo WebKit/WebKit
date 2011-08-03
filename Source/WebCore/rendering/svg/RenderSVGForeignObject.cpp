@@ -66,12 +66,12 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const IntPoint&)
         childPaintInfo.context->endTransparencyLayer();
 }
 
-IntRect RenderSVGForeignObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderSVGForeignObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-void RenderSVGForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+void RenderSVGForeignObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed) const
 {
     SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }

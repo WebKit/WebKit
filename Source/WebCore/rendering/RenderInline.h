@@ -126,9 +126,9 @@ private:
     virtual LayoutUnit offsetWidth() const { return linesBoundingBox().width(); }
     virtual LayoutUnit offsetHeight() const { return linesBoundingBox().height(); }
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
-    virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed);
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth) const;
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed) const;
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState&) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;

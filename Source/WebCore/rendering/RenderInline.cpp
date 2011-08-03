@@ -954,7 +954,7 @@ IntRect RenderInline::linesVisualOverflowBoundingBox() const
     return rect;
 }
 
-IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     // Only run-ins are allowed in here during layout.
     ASSERT(!view() || !view()->layoutStateEnabled() || isRunIn());
@@ -973,7 +973,7 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
     // We need to add in the relative position offsets of any inlines (including us) up to our
     // containing block.
     RenderBlock* cb = containingBlock();
-    for (RenderObject* inlineFlow = this; inlineFlow && inlineFlow->isRenderInline() && inlineFlow != cb; 
+    for (const RenderObject* inlineFlow = this; inlineFlow && inlineFlow->isRenderInline() && inlineFlow != cb;
          inlineFlow = inlineFlow->parent()) {
          if (inlineFlow->style()->position() == RelativePosition && inlineFlow->hasLayer())
             toRenderInline(inlineFlow)->layer()->relativePositionOffset(left, top);
@@ -1017,7 +1017,7 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
     return r;
 }
 
-IntRect RenderInline::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth)
+IntRect RenderInline::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth) const
 {
     IntRect r(RenderBoxModelObject::rectWithOutlineForRepaint(repaintContainer, outlineWidth));
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
@@ -1027,7 +1027,7 @@ IntRect RenderInline::rectWithOutlineForRepaint(RenderBoxModelObject* repaintCon
     return r;
 }
 
-void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
+void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed) const
 {
     if (RenderView* v = view()) {
         // LayoutState is only valid for root-relative repainting

@@ -625,7 +625,7 @@ private:
     // children.
     virtual RenderBlock* firstLineBlock() const;
 
-    virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
+    virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth) const;
     virtual RenderStyle* outlineStyleForRepaint() const;
     
     virtual RenderObject* hoverAncestor() const;

@@ -394,12 +394,12 @@ const AffineTransform& RenderSVGRoot::localToParentTransform() const
     return m_localToParentTransform;
 }
 
-IntRect RenderSVGRoot::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderSVGRoot::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed) const
 {
     // Apply our local transforms (except for x/y translation), then our shadow, 
     // and then call RenderBox's method to handle all the normal CSS Box model bits

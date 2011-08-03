@@ -45,7 +45,7 @@
 
 namespace WebCore {
 
-IntRect SVGRenderSupport::clippedOverflowRectForRepaint(RenderObject* object, RenderBoxModelObject* repaintContainer)
+IntRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer)
 {
     // Return early for any cases where we don't actually paint
     if (object->style()->visibility() != VISIBLE && !object->enclosingLayer()->hasVisibleContent())
@@ -58,7 +58,7 @@ IntRect SVGRenderSupport::clippedOverflowRectForRepaint(RenderObject* object, Re
     return repaintRect;
 }
 
-void SVGRenderSupport::computeRectForRepaint(RenderObject* object, RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+void SVGRenderSupport::computeRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
 {
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())

@@ -1359,7 +1359,7 @@ IntRect RenderText::linesVisualOverflowBoundingBox() const
     return rect;
 }
 
-IntRect RenderText::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderText::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     RenderObject* rendererToRepaint = containingBlock();
 

@@ -1,3 +1,86 @@
+2011-08-02  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        RenderObject::computeRectForRepaint and clippedOverflowRectForRepaint should be const
+        https://bugs.webkit.org/show_bug.cgi?id=65494
+
+        Reviewed by Darin Adler.
+
+        No new tests, const-ness change only.
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::absoluteClippedOverflowRect):
+        (WebCore::RenderObject::computeAbsoluteRepaintRect):
+        Made those 2 const as they call a const method now.
+
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint): Use a const RenderObject* for iterating as
+        this is const.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::rectWithOutlineForRepaint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clippedOverflowRectForRepaint):
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::rectWithOutlineForRepaint):
+        (WebCore::RenderInline::computeRectForRepaint):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::rectWithOutlineForRepaint):
+        (WebCore::RenderObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderObject::computeRectForRepaint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::clippedOverflowRectForRepaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::clippedOverflowRectForRepaint):
+        (WebCore::RenderTableCell::computeRectForRepaint):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::clippedOverflowRectForRepaint):
+        * rendering/RenderTableCol.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::clippedOverflowRectForRepaint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::clippedOverflowRectForRepaint):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::computeRectForRepaint):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGForeignObject::computeRectForRepaint):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGGradientStop.h:
+        (WebCore::RenderSVGGradientStop::clippedOverflowRectForRepaint):
+        * rendering/svg/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::clippedOverflowRectForRepaint):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGInline::computeRectForRepaint):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGModelObject::computeRectForRepaint):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGRoot::computeRectForRepaint):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGText::computeRectForRepaint):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint):
+        (WebCore::SVGRenderSupport::computeRectForRepaint):
+        * rendering/svg/SVGRenderSupport.h:
+        Updated the following method's signature to use a const object.
+
 2011-08-02  Jeffrey Pfau  <jpfau@apple.com>
 
         Add namespace prefix support in XML tokenizer

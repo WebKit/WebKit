@@ -659,22 +659,22 @@ public:
 
     // Returns the rect that should be repainted whenever this object changes.  The rect is in the view's
     // coordinate space.  This method deals with outlines and overflow.
-    IntRect absoluteClippedOverflowRect()
+    IntRect absoluteClippedOverflowRect() const
     {
         return clippedOverflowRectForRepaint(0);
     }
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);    
-    virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth);
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth) const;
 
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in view coordinates.
-    void computeAbsoluteRepaintRect(IntRect& r, bool fixed = false)
+    void computeAbsoluteRepaintRect(IntRect& r, bool fixed = false) const
     {
         return computeRectForRepaint(0, r, fixed);
     }
     // Given a rect in the object's coordinate space, compute a rect suitable for repainting
     // that rect in the coordinate space of repaintContainer.
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false) const;
 
     // If multiple-column layout results in applying an offset to the given point, add the same
     // offset to the given size.

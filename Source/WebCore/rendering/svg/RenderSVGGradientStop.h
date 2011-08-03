@@ -43,7 +43,7 @@ public:
     // This overrides are needed to prevent ASSERTs on <svg><stop /></svg>
     // RenderObject's default implementations ASSERT_NOT_REACHED()
     // https://bugs.webkit.org/show_bug.cgi?id=20400
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) const { return IntRect(); }
     virtual FloatRect objectBoundingBox() const { return FloatRect(); }
     virtual FloatRect strokeBoundingBox() const { return FloatRect(); }
     virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }

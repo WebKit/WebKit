@@ -169,7 +169,7 @@ void RenderTableRow::layout()
     setNeedsLayout(false);
 }
 
-IntRect RenderTableRow::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderTableRow::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     ASSERT(parent());
 

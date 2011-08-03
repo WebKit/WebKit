@@ -517,7 +517,7 @@ void RenderReplaced::setIntrinsicSize(const IntSize& size)
     m_intrinsicSize = size;
 }
 
-IntRect RenderReplaced::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer)
+IntRect RenderReplaced::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     if (style()->visibility() != VISIBLE && !enclosingLayer()->hasVisibleContent())
         return IntRect();

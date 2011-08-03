@@ -301,7 +301,7 @@ void RenderView::repaintRectangleInViewAndCompositedLayers(const IntRect& ur, bo
 #endif
 }
 
-void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
+void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed) const
 {
     // If a container was specified, and was not 0 or the RenderView,
     // then we should have found it by now.

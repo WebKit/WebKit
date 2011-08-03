@@ -1352,20 +1352,20 @@ bool RenderObject::checkForRepaintDuringLayout() const
     return !document()->view()->needsFullRepaint() && !hasLayer();
 }
 
-IntRect RenderObject::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth)
+IntRect RenderObject::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth) const
 {
     IntRect r(clippedOverflowRectForRepaint(repaintContainer));
     r.inflate(outlineWidth);
     return r;
 }
 
-IntRect RenderObject::clippedOverflowRectForRepaint(RenderBoxModelObject*)
+IntRect RenderObject::clippedOverflowRectForRepaint(RenderBoxModelObject*) const
 {
     ASSERT_NOT_REACHED();
     return IntRect();
 }
 
-void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed)
+void RenderObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& rect, bool fixed) const
 {
     if (repaintContainer == this)
         return;

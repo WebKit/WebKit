@@ -147,8 +147,8 @@ private:
     virtual void paintMask(PaintInfo&, const LayoutPoint&);
 
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false);
+    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false) const;
 
     void paintCollapsedBorder(GraphicsContext*, const LayoutRect&);
 

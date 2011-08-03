@@ -61,8 +61,8 @@ public:
     static bool paintInfoIntersectsRepaintRect(const FloatRect& localRepaintRect, const AffineTransform& localTransform, const PaintInfo&);
 
     // Important functions used by nearly all SVG renderers centralizing coordinate transformations / repaint rect calculations
-    static IntRect clippedOverflowRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer);
-    static void computeRectForRepaint(RenderObject*, RenderBoxModelObject* repaintContainer, IntRect&, bool fixed);
+    static IntRect clippedOverflowRectForRepaint(const RenderObject*, RenderBoxModelObject* repaintContainer);
+    static void computeRectForRepaint(const RenderObject*, RenderBoxModelObject* repaintContainer, IntRect&, bool fixed);
     static void mapLocalToContainer(const RenderObject*, RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&);
 
     // Shared between SVG renderers and resources.
