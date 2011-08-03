@@ -1,3 +1,17 @@
+2011-08-03  Anders Carlsson  <andersca@apple.com>
+
+        WebCore images backing CG patterns should be released on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=65630
+
+        Reviewed by Sam Weinig.
+
+        * platform/graphics/cg/PatternCG.cpp:
+        (WebCore::patternReleaseOnMainThreadCallback):
+        Deref the image.
+
+        (WebCore::patternReleaseCallback):
+        Call callOnMainThread.
+
 2011-08-03  Luke Macpherson   <macpherson@chromium.org>
 
         Use appropriate macro for CSSPropertyImageRendering.

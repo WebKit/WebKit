@@ -29,8 +29,8 @@
 
 #include "AffineTransform.h"
 #include "GraphicsContext.h"
-
 #include <ApplicationServices/ApplicationServices.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
@@ -45,9 +45,14 @@ static void patternCallback(void* info, CGContextRef context)
     CGContextDrawImage(context, rect, platformImage);
 }
 
-static void patternReleaseCallback(void* info)
+static void patternReleaseOnMainThreadCallback(void* info)
 {
     static_cast<Image*>(info)->deref();
+}
+
+static void patternReleaseCallback(void* info)
+{
+    callOnMainThread(patternReleaseOnMainThreadCallback, info);
 }
 
 CGPatternRef Pattern::createPlatformPattern(const AffineTransform& userSpaceTransformation) const
