@@ -58,7 +58,8 @@ void NewSpace::removeBlock(MarkedBlock* block)
 {
     block->setInNewSpace(false);
     SizeClass& sizeClass = sizeClassFor(block->cellSize());
-    sizeClass.nextBlock = block->next();
+    if (sizeClass.nextBlock == block)
+        sizeClass.nextBlock = block->next();
     sizeClass.blockList.remove(block);
 }
 
