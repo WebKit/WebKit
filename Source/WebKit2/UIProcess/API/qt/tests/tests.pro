@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = qtouchwebview qdesktopwebview commonviewtests
+SUBDIRS = qtouchwebview qdesktopwebview commonviewtests qmltests

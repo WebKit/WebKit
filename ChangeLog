@@ -1,3 +1,12 @@
+2011-08-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Expose web view classes to QML
+        https://bugs.webkit.org/show_bug.cgi?id=65339
+
+        Reviewed by Benjamin Poulain.
+
+        * Source/WebKit.pro: Include QML plugin subdir in the build system for WK2.
+
 2011-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Install web and plugin processes in libexecdir instead of bindir

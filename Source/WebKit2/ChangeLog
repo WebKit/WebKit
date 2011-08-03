@@ -1,3 +1,29 @@
+2011-08-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Expose web view classes to QML
+        https://bugs.webkit.org/show_bug.cgi?id=65339
+
+        Reviewed by Benjamin Poulain.
+
+        This patch also uses QuickTest from QtDeclarative to provide the basic autotest
+        infrastructure for the exposed elements.
+
+        * UIProcess/API/qt/qmlplugin/plugin.cpp: Added.
+        (WebKit2QmlPlugin::registerTypes):
+        * UIProcess/API/qt/qmlplugin/qmldir: Added.
+        * UIProcess/API/qt/qmlplugin/qmlplugin.pro: Added.
+        * UIProcess/API/qt/qtouchwebpage.h: Expose load() to QML environment.
+        * UIProcess/API/qt/qtouchwebview.h: Since QTouchWebPage* doesn't change once set
+        in the constructor, we mark the page property as CONSTANT. This avoid QML
+        warnings for not having a NOTIFY signal for the property change.
+
+        * UIProcess/API/qt/tests/tests.pro:
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_properties.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/TouchWebView/tst_properties.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/test1.html: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro: Added.
+        * UIProcess/API/qt/tests/qmltests/tst_qmltests.cpp: Added.
+
 2011-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Install web and plugin processes in libexecdir instead of bindir

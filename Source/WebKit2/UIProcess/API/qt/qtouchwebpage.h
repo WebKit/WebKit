@@ -46,7 +46,7 @@ public:
 
     virtual ~QTouchWebPage();
 
-    void load(const QUrl&);
+    Q_INVOKABLE void load(const QUrl&);
     Q_INVOKABLE QUrl url() const;
 
     Q_INVOKABLE QString title() const;
