@@ -134,6 +134,7 @@ WebInspector.Drawer.prototype = {
         }
 
         this._currentAnimation = WebInspector.animateStyle(animations, this._animationDuration(), animationFinished.bind(this));
+        this.restoreScrollPositions();
     },
 
     hide: function()
@@ -358,6 +359,28 @@ WebInspector.Drawer.prototype = {
         delete this._statusBarDragOffset;
 
         event.stopPropagation();
+    },
+    
+    get scrollLeft()
+    {
+        return this.visibleView ? this.visibleView.scrollLeft : 0;
+    },
+
+    set scrollLeft(scrollLeft)
+    {
+        if (this.visibleView)
+            this.visibleView.scrollLeft = scrollLeft;
+    },
+
+    get scrollTop()
+    {
+        return this.visibleView ? this.visibleView.scrollTop : 0;
+    },
+
+    set scrollTop(scrollTop)
+    {
+        if (this.visibleView)
+            this.visibleView.scrollTop = scrollTop;
     }
 }
 

@@ -739,6 +739,26 @@ WebInspector.ConsoleView.prototype = {
     {
         // Prevent infinite expansion of cross-referencing arrays.
         return this._format(output, output.subtype && output.subtype === "array");
+    },
+    
+    get scrollLeft()
+    {
+        return this.messagesElement.scrollLeft;
+    },
+
+    set scrollLeft(scrollLeft)
+    {
+        this.messagesElement.scrollLeft = scrollLeft;
+    },
+
+    get scrollTop()
+    {
+        return this.messagesElement.scrollTop;
+    },
+
+    set scrollTop(scrollTop)
+    {
+        this.messagesElement.scrollTop = scrollTop;
     }
 }
 

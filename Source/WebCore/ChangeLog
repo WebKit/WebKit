@@ -1,3 +1,24 @@
+2011-08-03  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Console scroll position should be saved when switching panels.
+        https://bugs.webkit.org/show_bug.cgi?id=65607
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._formatAsArrayEntry):
+        (WebInspector.ConsoleView.prototype.get scrollLeft):
+        (WebInspector.ConsoleView.prototype.set scrollLeft):
+        (WebInspector.ConsoleView.prototype.get scrollTop):
+        (WebInspector.ConsoleView.prototype.set scrollTop):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype._endStatusBarDragging):
+        (WebInspector.Drawer.prototype.get scrollLeft):
+        (WebInspector.Drawer.prototype.set scrollLeft):
+        (WebInspector.Drawer.prototype.get scrollTop):
+        (WebInspector.Drawer.prototype.set scrollTop):
+
 2011-08-03  Philippe Normand  <pnormand@igalia.com>
 
         libsoup-CRITICAL **: soup_message_io_pause: assertion `io != NULL' failed
