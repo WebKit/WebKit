@@ -324,21 +324,24 @@ void FrameView::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
         m_frame->document()->didRemoveWheelEventHandler();
 }
 
-ScrollbarOverlayStyle FrameView::recommendedScrollbarOverlayStyle() const
+void FrameView::recalculateScrollbarOverlayStyle()
 {
-    Color bgColor = m_frame->getDocumentBackgroundColor();
-    if (!bgColor.isValid())
-        return ScrollbarOverlayStyleDefault;
-    
-    // Reduce the background color from RGB to a lightness value
-    // and determine which scrollbar style to use based on a lightness
-    // heuristic.
-    double hue, saturation, lightness;
-    bgColor.getHSL(hue, saturation, lightness);
-    if (lightness > .5)
-        return ScrollbarOverlayStyleDefault;
-    
-    return ScrollbarOverlayStyleLight;
+    ScrollbarOverlayStyle oldOverlayStyle = scrollbarOverlayStyle();
+    ScrollbarOverlayStyle overlayStyle = ScrollbarOverlayStyleDefault;
+
+    Color backgroundColor = documentBackgroundColor();
+    if (backgroundColor.isValid()) {
+        // Reduce the background color from RGB to a lightness value
+        // and determine which scrollbar style to use based on a lightness
+        // heuristic.
+        double hue, saturation, lightness;
+        backgroundColor.getHSL(hue, saturation, lightness);
+        if (lightness <= .5)
+            overlayStyle = ScrollbarOverlayStyleLight;
+    }
+
+    if (oldOverlayStyle != overlayStyle)
+        setScrollbarOverlayStyle(overlayStyle);
 }
 
 void FrameView::clear()
@@ -1886,6 +1889,8 @@ void FrameView::setBaseBackgroundColor(const Color& backgroundColor)
         m_baseBackgroundColor = Color::white;
     else
         m_baseBackgroundColor = backgroundColor;
+
+    recalculateScrollbarOverlayStyle();
 }
 
 void FrameView::updateBackgroundRecursively(const Color& backgroundColor, bool transparent)
@@ -2346,6 +2351,46 @@ void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& corne
     }
 
     ScrollView::paintScrollCorner(context, cornerRect);
+}
+
+Color FrameView::documentBackgroundColor() const
+{
+    // <https://bugs.webkit.org/show_bug.cgi?id=59540> We blend the background color of
+    // the document and the body against the base background color of the frame view.
+    // Background images are unfortunately impractical to include.
+
+    // Return invalid Color objects whenever there is insufficient information.
+    if (!frame()->document())
+        return Color();
+
+    Element* htmlElement = frame()->document()->documentElement();
+    Element* bodyElement = frame()->document()->body();
+
+    // Start with invalid colors.
+    Color htmlBackgroundColor;
+    Color bodyBackgroundColor;
+    if (htmlElement && htmlElement->renderer())
+        htmlBackgroundColor = htmlElement->renderer()->style()->visitedDependentColor(CSSPropertyBackgroundColor);
+    if (bodyElement && bodyElement->renderer())
+        bodyBackgroundColor = bodyElement->renderer()->style()->visitedDependentColor(CSSPropertyBackgroundColor);
+
+    if (!bodyBackgroundColor.isValid()) {
+        if (!htmlBackgroundColor.isValid())
+            return Color();
+        return baseBackgroundColor().blend(htmlBackgroundColor);
+    }
+
+    if (!htmlBackgroundColor.isValid())
+        return baseBackgroundColor().blend(bodyBackgroundColor);
+
+    // We take the aggregate of the base background color
+    // the <html> background color, and the <body>
+    // background color to find the document color. The
+    // addition of the base background color is not
+    // technically part of the document background, but it
+    // otherwise poses problems when the aggregate is not
+    // fully opaque.
+    return baseBackgroundColor().blend(htmlBackgroundColor).blend(bodyBackgroundColor);
 }
 
 bool FrameView::hasCustomScrollbars() const

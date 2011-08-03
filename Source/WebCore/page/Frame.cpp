@@ -504,46 +504,6 @@ String Frame::matchLabelsAgainstElement(const Vector<String>& labels, Element* e
     
     return matchLabelsAgainstString(labels, element->getAttribute(idAttr));
 }
-    
-Color Frame::getDocumentBackgroundColor() const
-{
-    // <https://bugs.webkit.org/show_bug.cgi?id=59540> We blend the background color of
-    // the document and the body against the base background color of the frame view.
-    // Background images are unfortunately impractical to include.
-
-    // Return invalid Color objects whenever there is insufficient information.
-    if (!m_doc)
-        return Color();
-
-    Element* htmlElement = m_doc->documentElement();
-    Element* bodyElement = m_doc->body();
-
-    // start as invalid colors
-    Color htmlBackgroundColor;
-    Color bodyBackgroundColor;
-    if (htmlElement && htmlElement->renderer())
-        htmlBackgroundColor = htmlElement->renderer()->style()->visitedDependentColor(CSSPropertyBackgroundColor);
-    if (bodyElement && bodyElement->renderer())
-        bodyBackgroundColor = bodyElement->renderer()->style()->visitedDependentColor(CSSPropertyBackgroundColor);
-    
-    if (!bodyBackgroundColor.isValid()) {
-        if (!htmlBackgroundColor.isValid())
-            return Color();
-        return view()->baseBackgroundColor().blend(htmlBackgroundColor);
-    }
-    
-    if (!htmlBackgroundColor.isValid())
-        return view()->baseBackgroundColor().blend(bodyBackgroundColor);
-    
-    // We take the aggregate of the base background color
-    // the <html> background color, and the <body>
-    // background color to find the document color. The
-    // addition of the base background color is not
-    // technically part of the document background, but it
-    // otherwise poses problems when the aggregate is not
-    // fully opaque.
-    return view()->baseBackgroundColor().blend(htmlBackgroundColor).blend(bodyBackgroundColor);
-}
 
 void Frame::setPrinting(bool printing, const FloatSize& pageSize, float maximumShrinkRatio, AdjustViewSizeOrNot shouldAdjustViewSize)
 {

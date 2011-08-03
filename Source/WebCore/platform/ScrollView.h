@@ -107,6 +107,8 @@ public:
 
     virtual bool avoidScrollbarCreation() const { return false; }
 
+    virtual void setScrollbarOverlayStyle(ScrollbarOverlayStyle);
+
     // By default you only receive paint events for the area that is visible. In the case of using a
     // tiled backing store, this function can be set, so that the view paints the entire contents.
     bool paintsEntireContents() const { return m_paintsEntireContents; }
@@ -386,6 +388,7 @@ private:
     void platformSetScrollbarsSuppressed(bool repaintOnUnsuppress);
     void platformRepaintContentRectangle(const IntRect&, bool now);
     bool platformIsOffscreen() const;
+    void platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle);
    
     void platformSetScrollOrigin(const IntPoint&, bool updatePositionAtAll, bool updatePositionSynchronously);
 

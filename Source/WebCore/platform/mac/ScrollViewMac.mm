@@ -203,6 +203,23 @@ bool ScrollView::platformIsOffscreen() const
     return ![platformWidget() window] || ![[platformWidget() window] isVisible];
 }
 
+static inline NSScrollerKnobStyle toNSScrollerKnobStyle(ScrollbarOverlayStyle style)
+{
+    switch (style) {
+    case ScrollbarOverlayStyleDark:
+        return NSScrollerKnobStyleDark;
+    case ScrollbarOverlayStyleLight:
+        return NSScrollerKnobStyleLight;
+    default:
+        return NSScrollerKnobStyleDefault;
+    }
+}
+
+void ScrollView::platformSetScrollbarOverlayStyle(ScrollbarOverlayStyle overlayStyle)
+{
+    [scrollView() setScrollerKnobStyle:toNSScrollerKnobStyle(overlayStyle)];
+}
+
 void ScrollView::platformSetScrollOrigin(const IntPoint& origin, bool updatePositionAtAll, bool updatePositionSynchronously)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

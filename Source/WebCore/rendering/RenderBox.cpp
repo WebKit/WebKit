@@ -336,6 +336,8 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
             }
             setNeedsLayoutAndPrefWidthsRecalc();
         }
+
+        frame()->view()->recalculateScrollbarOverlayStyle();
     }
 }
 

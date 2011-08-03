@@ -47,6 +47,7 @@ public:
     
     virtual bool supportsControlTints() const { return true; }
     virtual bool usesOverlayScrollbars() const;
+    virtual void updateScrollbarOverlayStyle(Scrollbar*);
 
     virtual double initialAutoscrollTimerDelay();
     virtual double autoscrollTimerDelay();
