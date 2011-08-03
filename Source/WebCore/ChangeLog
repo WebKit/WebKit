@@ -1,3 +1,15 @@
+2011-08-03  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium Mac: Make sure scrollbars flash when web page loads
+        https://bugs.webkit.org/show_bug.cgi?id=65586
+
+        On slow web pages scrollbars wouldn't flash when the page was done loading. The problem was that we were flashing the scrollbar 0.1 second after the load operation had started. If the page was slow to load then we might not have scrollbars to flash. To work around this I added an extra check to make sure that we had indeed finished loading the page before flashing the scrollbars.
+
+        Reviewed by James Robinson.
+
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::ScrollAnimatorChromiumMac::initialScrollbarPaintTimerFired):
+
 2011-08-03  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from navigator IDL files
