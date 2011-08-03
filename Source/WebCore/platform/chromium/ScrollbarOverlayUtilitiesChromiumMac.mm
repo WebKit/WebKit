@@ -187,11 +187,6 @@ void wkScrollbarPainterSetDelegate(WKScrollbarPainterRef painter, id scrollbarPa
     [painter setDelegate:scrollbarPainterDelegate];
 }
 
-void wkScrollbarPainterSetEnabled(WKScrollbarPainterRef painter, bool enabled)
-{
-    [painter setEnabled:enabled];
-}
-
 CGFloat wkScrollbarPainterTrackAlpha(WKScrollbarPainterRef painter)
 {
     return [painter trackAlpha];

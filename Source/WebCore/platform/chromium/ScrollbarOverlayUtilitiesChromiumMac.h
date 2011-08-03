@@ -61,7 +61,6 @@ void wkScrollbarPainterPaintTrack(WKScrollbarPainterRef, bool enabled, double va
 void wkScrollbarPainterPaintKnob(WKScrollbarPainterRef);
 int wkScrollbarMinimumThumbLength(WKScrollbarPainterRef);
 void wkScrollbarPainterSetDelegate(WKScrollbarPainterRef, id scrollbarPainterDelegate);
-void wkScrollbarPainterSetEnabled(WKScrollbarPainterRef, bool enabled);
 CGFloat wkScrollbarPainterTrackAlpha(WKScrollbarPainterRef);
 WKScrollbarPainterRef wkMakeScrollbarPainter(int controlSize, bool isHorizontal);
 int wkScrollbarThickness(int controlSize);
