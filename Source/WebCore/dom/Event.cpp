@@ -289,11 +289,6 @@ void Event::setUnderlyingEvent(PassRefPtr<Event> ue)
     m_underlyingEvent = ue;
 }
 
-PassRefPtr<EventDispatchMediator> EventDispatchMediator::create(PassRefPtr<Event> event)
-{
-    return adoptRef(new EventDispatchMediator(event));
-}
-
 EventDispatchMediator::EventDispatchMediator(PassRefPtr<Event> event)
     : m_event(event)
 {

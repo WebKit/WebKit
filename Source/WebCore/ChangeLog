@@ -1,3 +1,29 @@
+2011-08-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92256.
+        http://trac.webkit.org/changeset/92256
+        https://bugs.webkit.org/show_bug.cgi?id=65593
+
+        Causing tons of crashes on the chromium win bots (Requested by
+        jamesr on #webkit).
+
+        * dom/Event.cpp:
+        * dom/Event.h:
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchEvent):
+        * dom/EventDispatcher.h:
+        * dom/KeyboardEvent.cpp:
+        * dom/KeyboardEvent.h:
+        * dom/MouseEvent.cpp:
+        * dom/MouseEvent.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchEvent):
+        (WebCore::Node::dispatchKeyEvent):
+        (WebCore::Node::dispatchMouseEvent):
+        (WebCore::Node::dispatchWheelEvent):
+        * dom/WheelEvent.cpp:
+        * dom/WheelEvent.h:
+
 2011-08-02  Hayato Ito  <hayato@chromium.org>
 
         Make EventDispatchMediator RefCounted.

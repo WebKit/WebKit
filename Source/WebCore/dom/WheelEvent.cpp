@@ -91,11 +91,6 @@ inline static WheelEvent::Granularity granularity(const PlatformWheelEvent& even
     return event.granularity() == ScrollByPageWheelEvent ? WheelEvent::Page : WheelEvent::Pixel;
 }
 
-PassRefPtr<WheelEventDispatchMediator> WheelEventDispatchMediator::create(const PlatformWheelEvent& event, PassRefPtr<AbstractView> view)
-{
-    return adoptRef(new WheelEventDispatchMediator(event, view));
-}
-
 WheelEventDispatchMediator::WheelEventDispatchMediator(const PlatformWheelEvent& event, PassRefPtr<AbstractView> view)
 {
     if (!(event.deltaX() || event.deltaY()))

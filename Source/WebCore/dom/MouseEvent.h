@@ -100,10 +100,9 @@ private:
 
 class MouseEventDispatchMediator : public EventDispatchMediator {
 public:
-    static PassRefPtr<MouseEventDispatchMediator> create(PassRefPtr<MouseEvent>);
+    explicit MouseEventDispatchMediator(PassRefPtr<MouseEvent>);
 
 private:
-    explicit MouseEventDispatchMediator(PassRefPtr<MouseEvent>);
     MouseEvent* event() const;
 
     virtual bool dispatchEvent(EventDispatcher*) const;

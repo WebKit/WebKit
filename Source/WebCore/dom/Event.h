@@ -199,15 +199,14 @@ namespace WebCore {
         RefPtr<Event> m_underlyingEvent;
     };
 
-class EventDispatchMediator : public RefCounted<Event> {
+class EventDispatchMediator {
 public:
-    static PassRefPtr<EventDispatchMediator> create(PassRefPtr<Event>);
+    explicit EventDispatchMediator(PassRefPtr<Event>);
     virtual ~EventDispatchMediator();
 
     virtual bool dispatchEvent(EventDispatcher*) const;
 
 protected:
-    explicit EventDispatchMediator(PassRefPtr<Event>);
     EventDispatchMediator();
 
     Event* event() const;

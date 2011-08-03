@@ -48,9 +48,8 @@ enum EventDispatchBehavior {
 
 class EventDispatcher {
 public:
-    static bool dispatchEvent(Node*, PassRefPtr<EventDispatchMediator>);
+    static bool dispatchEvent(Node*, const EventDispatchMediator&);
     static void dispatchScopedEvent(Node*, PassRefPtr<Event>);
-    static void dispatchScopedEventDispatchMediator(Node*, PassRefPtr<EventDispatchMediator>);
 
     static void dispatchSimulatedClick(Node*, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook);
 
