@@ -40,6 +40,7 @@ GENSOURCES_INSPECTOR := $(GENPROGRAMS)/resources/inspector
 WebCore := $(srcdir)/Source/WebCore
 WebKit := $(srcdir)/Source/WebKit/gtk
 WebKit2 := $(srcdir)/Source/WebKit2
+pkgconfigdir := $(libdir)/pkgconfig
 
 # Libraries and support components
 bin_PROGRAMS :=
@@ -89,6 +90,7 @@ BUILT_SOURCES :=
 CLEANFILES :=
 DISTCLEANFILES :=
 MAINTAINERCLEANFILES :=
+pkgconfig_DATA :=
 
 # We do not care at all about this implicit built-in make rules,
 # disable them to save some build time

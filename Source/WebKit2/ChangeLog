@@ -1,3 +1,15 @@
+2011-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Reorganize pkg-config files
+        https://bugs.webkit.org/show_bug.cgi?id=65548
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Rename pc file as webkit2gtk.pc.in. WebKit2
+        depends on gtk3 unconditionally so we don't need to use
+        WEBKITGTK_PC_NAME.
+        * webkit2gtk.pc.in: Renamed from Source/WebKit2/gtk/webkit2.pc.in.
+
 2011-08-01  Michael Saboff  <msaboff@apple.com>
 
         Virtual copying of FastMalloc allocated memory causes madvise MADV_FREE_REUSABLE errors

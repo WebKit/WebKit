@@ -258,10 +258,7 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/webkit/webkitwebwindowfeatures.cpp \
 	Source/WebKit/gtk/webkit/webkitwebwindowfeaturesprivate.h
 
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = \
-	Source/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc \
-	Source/WebKit/gtk/javascriptcoregtk-@WEBKITGTK_API_VERSION@.pc
+pkgconfig_DATA += Source/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc
 
 if ENABLE_INTROSPECTION
 
@@ -594,7 +591,6 @@ DISTCLEANFILES += \
 	$(top_builddir)/Source/WebKit/gtk/docs/version.xml \
 	$(top_builddir)/Source/WebKit/gtk/docs/GNUmakefile \
 	$(top_builddir)/Source/WebKit/gtk/@WEBKITGTK_PC_NAME@-@WEBKITGTK_API_VERSION@.pc \
-	$(top_builddir)/Source/WebKit/gtk/javascriptcoregtk-@WEBKITGTK_API_VERSION@.pc \
 	$(top_builddir)/Source/WebKit/gtk/org.webkitgtk-@WEBKITGTK_API_VERSION@.gschema.xml \
 	$(top_builddir)/Source/WebKit/gtk/webkit/webkitversion.h
 

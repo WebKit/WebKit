@@ -73,6 +73,8 @@ javascriptcore_cflags += \
 	$(GLIB_CFLAGS) \
 	$(UNICODE_CFLAGS)
 
+pkgconfig_DATA += Source/JavaScriptCore/javascriptcoregtk-@WEBKITGTK_API_VERSION@.pc
+
 Source/JavaScriptCore/Lexer.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
 	$(AM_V_GEN)$(PERL) $^ > $@
 
@@ -175,3 +177,6 @@ CLEANFILES += \
 	Programs/jsc \
 	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@ \
 	Programs/minidom
+
+DISTCLEANFILES += \
+	$(top_builddir)/Source/JavaScriptCore/javascriptcoregtk-@WEBKITGTK_API_VERSION@.pc
