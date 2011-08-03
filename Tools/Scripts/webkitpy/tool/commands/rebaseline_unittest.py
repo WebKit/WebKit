@@ -56,4 +56,8 @@ class BuilderToPortTest(unittest.TestCase):
     def test_port_for_builder(self):
         converter = BuilderToPort()
         port = converter.port_for_builder("Leopard Intel Debug (Tests)")
-        self.assertEqual(port.name(), "mac-leopard")
+        self.assertEqual(str(port.test_configuration()), "<leopard, x86, debug, cpu>")
+        port = converter.port_for_builder("Leopard Intel Release (Tests)")
+        self.assertEqual(str(port.test_configuration()), "<leopard, x86, release, cpu>")
+        port = converter.port_for_builder("Webkit Win (dbg)(1)")
+        self.assertEqual(str(port.test_configuration()), "<xp, x86, debug, cpu>")

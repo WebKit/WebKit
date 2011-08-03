@@ -43,8 +43,18 @@ from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
 
+class RebaseliningOptions(object):
+
+    DEBUG_CONFIGURATION_REGEX = r"[d|D](ebu|b)g"
+
+    def __init__(self, builder_name):
+        self.configuration = "Debug" if re.search(self.DEBUG_CONFIGURATION_REGEX, builder_name) else "Release"
+        self.builder_name = builder_name
+
+
 # FIXME: This logic should be moved to builders.py.
 class BuilderToPort(object):
+
     _builder_name_to_port_name = {
         # These builders are on build.webkit.org.
         r"SnowLeopard": "mac-snowleopard",
@@ -60,8 +70,8 @@ class BuilderToPort(object):
         r"Webkit Win$": "chromium-win-xp",
         r"Webkit Vista": "chromium-win-vista",
         r"Webkit Win7": "chromium-win-win7",
-        r"Webkit Win \(dbg\)\(1\)": "chromium-win-win7",  # FIXME: Is this correct?
-        r"Webkit Win \(dbg\)\(2\)": "chromium-win-win7",  # FIXME: Is this correct?
+        r"Webkit Win \(dbg\)\(1\)": "chromium-win-xp",
+        r"Webkit Win \(dbg\)\(2\)": "chromium-win-xp",
         r"Webkit Linux": "chromium-linux-x86_64",
         r"Webkit Linux 32": "chromium-linux-x86",
         r"Webkit Linux \(dbg\)\(1\)": "chromium-linux-x86_64",
@@ -81,7 +91,7 @@ class BuilderToPort(object):
     def port_for_builder(self, builder_name):
         port_name = self._port_name_for_builder_name(builder_name)
         assert(port_name)  # Need to update _builder_name_to_port_name
-        port = factory.get(port_name)
+        port = factory.get(port_name, RebaseliningOptions(builder_name))
         assert(port)  # Need to update _builder_name_to_port_name
         return port
 
