@@ -47,6 +47,7 @@ ScrollableArea::ScrollableArea()
     , m_inLiveResize(false)
     , m_verticalScrollElasticity(ScrollElasticityNone)
     , m_horizontalScrollElasticity(ScrollElasticityNone)
+    , m_scrollbarOverlayStyle(ScrollbarOverlayStyleDefault)
 {
 }
 
