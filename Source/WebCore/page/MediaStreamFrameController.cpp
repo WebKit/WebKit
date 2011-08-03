@@ -36,7 +36,9 @@
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
 #include "Page.h"
+#include "PeerConnection.h"
 #include "SecurityOrigin.h"
+#include "SignalingCallback.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -49,6 +51,7 @@ public:
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
     virtual bool isGenerateStreamRequest() const { return false; }
     virtual bool isRecordedDataRequest() const { return false; }
+    virtual bool isSignalingRequest() const { return false; }
 
     virtual void abort() = 0;
 
@@ -358,6 +361,126 @@ void MediaStreamFrameController::streamGenerationFailed(int requestId, Navigator
 void MediaStreamFrameController::streamFailed(const String& label)
 {
     getStreamFromLabel(label)->streamEnded();
+}
+
+PassRefPtr<PeerConnection> MediaStreamFrameController::createPeerConnection(const String& configuration, PassRefPtr<SignalingCallback> signalingCallback)
+{
+    int clientId = m_clients.getNextId();
+    RefPtr<PeerConnection> peerConnection = PeerConnection::create(this, clientId, configuration, signalingCallback);
+    if (peerConnection)
+        m_clients.add(clientId, peerConnection.get());
+    return peerConnection.release();
+}
+
+void MediaStreamFrameController::newPeerConnection(int peerConnectionId, const String& configuration)
+{
+    if (pageController())
+        pageController()->newPeerConnection(this, peerConnectionId, configuration);
+}
+
+void MediaStreamFrameController::closePeerConnection(int peerConnectionId)
+{
+    if (pageController())
+        pageController()->closePeerConnection(this, peerConnectionId);
+}
+
+void MediaStreamFrameController::startNegotiation(int peerConnectionId)
+{
+    if (pageController())
+        pageController()->startNegotiation(this, peerConnectionId);
+}
+
+void MediaStreamFrameController::processSignalingMessage(int peerConnectionId, const String& message)
+{
+    if (pageController())
+        pageController()->processSignalingMessage(this, peerConnectionId, message);
+}
+
+void MediaStreamFrameController::message(int peerConnectionId, const String& message)
+{
+    if (pageController())
+        pageController()->message(this, peerConnectionId, message);
+}
+
+void MediaStreamFrameController::addStream(int peerConnectionId, PassRefPtr<MediaStream> prpStream)
+{
+    RefPtr<MediaStream> stream = prpStream;
+    ASSERT(m_streams.contains(stream->label()));
+
+    if (pageController())
+        pageController()->addStream(this, peerConnectionId, stream->label());
+}
+
+void MediaStreamFrameController::removeStream(int peerConnectionId, PassRefPtr<MediaStream> prpStream)
+{
+    RefPtr<MediaStream> stream = prpStream;
+    ASSERT(m_streams.contains(stream->label()));
+
+    if (pageController())
+        pageController()->removeStream(this, peerConnectionId, stream->label());
+}
+
+void MediaStreamFrameController::onMessage(int peerConnectionId, const String& message)
+{
+    ASSERT(m_clients.contains(peerConnectionId));
+    ASSERT(m_clients.get(peerConnectionId)->isPeerConnection());
+
+    RefPtr<PeerConnection> peerConnection = static_cast<PeerConnection*>(m_clients.get(peerConnectionId));
+
+    peerConnection->onMessage(message);
+}
+
+void MediaStreamFrameController::onAddStream(int peerConnectionId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks)
+{
+    ASSERT(!streamLabel.isEmpty());
+    ASSERT(m_clients.contains(peerConnectionId));
+    ASSERT(m_clients.get(peerConnectionId)->isPeerConnection());
+
+    RefPtr<MediaStream> stream = MediaStream::create(this, streamLabel, tracks);
+
+    RefPtr<PeerConnection> peerConnection = static_cast<PeerConnection*>(m_clients.get(peerConnectionId));
+    peerConnection->streamAdded(stream.release());
+}
+
+void MediaStreamFrameController::onRemoveStream(int peerConnectionId, const String& streamLabel)
+{
+    ASSERT(!streamLabel.isEmpty());
+    ASSERT(m_clients.contains(peerConnectionId));
+    ASSERT(m_clients.get(peerConnectionId)->isPeerConnection());
+
+    RefPtr<PeerConnection> peerConnection = static_cast<PeerConnection*>(m_clients.get(peerConnectionId));
+    peerConnection->streamRemoved(streamLabel);
+}
+
+void MediaStreamFrameController::onSignalingMessage(int peerConnectionId, const String& message)
+{
+    ASSERT(m_clients.contains(peerConnectionId));
+    ASSERT(m_clients.get(peerConnectionId)->isPeerConnection());
+
+    RefPtr<PeerConnection> peerConnection = static_cast<PeerConnection*>(m_clients.get(peerConnectionId));
+    peerConnection->onSignalingMessage(message);
+}
+
+void MediaStreamFrameController::onNegotiationStarted(int peerConnectionId)
+{
+    // FIXME: Assert or not?
+    ASSERT(m_clients.contains(peerConnectionId));
+    ASSERT(m_clients.get(peerConnectionId)->isPeerConnection());
+
+    RefPtr<PeerConnection> peerConnection = static_cast<PeerConnection*>(m_clients.get(peerConnectionId));
+
+    peerConnection->onNegotiationStarted();
+}
+
+void MediaStreamFrameController::onNegotiationDone(int peerConnectionId)
+{
+    // FIXME: Assert or not?
+    ASSERT(m_clients.contains(peerConnectionId));
+    ASSERT(m_clients.get(peerConnectionId)->isPeerConnection());
+
+    RefPtr<PeerConnection> peerConnection = static_cast<PeerConnection*>(m_clients.get(peerConnectionId));
+
+    peerConnection->onNegotiationDone();
 }
 
 } // namespace WebCore

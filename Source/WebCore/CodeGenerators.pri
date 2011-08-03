@@ -327,6 +327,8 @@ IDL_BINDINGS += \
     loader/appcache/DOMApplicationCache.idl \
     notifications/Notification.idl \
     notifications/NotificationCenter.idl \
+    p2p/PeerConnection.idl \
+    p2p/SignalingCallback.idl \
     page/BarInfo.idl \
     page/Console.idl \
     page/Coordinates.idl \

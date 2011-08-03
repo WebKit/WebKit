@@ -168,6 +168,7 @@
       '../loader/icon',
       '../mathml',
       '../notifications',
+      '../p2p',
       '../page',
       '../page/animation',
       '../page/chromium',

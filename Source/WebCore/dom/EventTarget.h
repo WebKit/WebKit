@@ -59,6 +59,7 @@ namespace WebCore {
     class MessagePort;
     class Node;
     class Notification;
+    class PeerConnection;
     class SVGElementInstance;
     class ScriptExecutionContext;
     class SharedWorker;
@@ -152,6 +153,7 @@ namespace WebCore {
 #if ENABLE(MEDIA_STREAM)
         virtual MediaStream* toMediaStream();
         virtual LocalMediaStream* toLocalMediaStream();
+        virtual PeerConnection* toPeerConnection();
 #endif
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

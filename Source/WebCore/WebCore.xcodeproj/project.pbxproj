@@ -1099,6 +1099,7 @@
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
+		490C47CE13E82D1800F7AB82 /* DispatchTask.h in Headers */ = {isa = PBXBuildFile; fileRef = 490C47CD13E82D1800F7AB82 /* DispatchTask.h */; };
 		492863991253B8FC00F792D6 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 492863981253B8FC00F792D6 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		49291E4B134172C800E753DE /* ImageRenderingMode.h in Headers */ = {isa = PBXBuildFile; fileRef = 49291E4A134172C800E753DE /* ImageRenderingMode.h */; };
 		493E5E0912D6420500020081 /* PlatformCALayerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 493E5E0812D6420500020081 /* PlatformCALayerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1142,10 +1143,18 @@
 		499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */; };
 		499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		49A5A4FE13E2F01E00CFDAE0 /* PeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */; };
+		49A5A4FF13E2F01E00CFDAE0 /* PeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */; };
+		49A5A50113E2F01E00CFDAE0 /* SignalingCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */; };
 		49A85B6B138D573A00ECB7B3 /* StreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A85B68138D573900ECB7B3 /* StreamEvent.cpp */; };
 		49A85B6C138D573A00ECB7B3 /* StreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A85B69138D573A00ECB7B3 /* StreamEvent.h */; };
 		49A85B77138D58EE00ECB7B3 /* JSStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A85B75138D58EE00ECB7B3 /* JSStreamEvent.cpp */; };
 		49A85B78138D58EE00ECB7B3 /* JSStreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A85B76138D58EE00ECB7B3 /* JSStreamEvent.h */; };
+		49BE30D213D9747B003808A9 /* JSPeerConnectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */; };
+		49BE30F313D97646003808A9 /* JSPeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */; };
+		49BE30F413D97646003808A9 /* JSPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BE30F013D97646003808A9 /* JSPeerConnection.h */; };
+		49BE30F513D97646003808A9 /* JSSignalingCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30F113D97646003808A9 /* JSSignalingCallback.cpp */; };
+		49BE30F613D97646003808A9 /* JSSignalingCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BE30F213D97646003808A9 /* JSSignalingCallback.h */; };
 		49C7B9931042D2D30009D447 /* JSWebGLBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */; };
 		49C7B9941042D2D30009D447 /* JSWebGLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */; };
 		49C7B9951042D2D30009D447 /* JSInt8Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49C7B9821042D2D30009D447 /* JSInt8Array.cpp */; };
@@ -7652,6 +7661,7 @@
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
+		490C47CD13E82D1800F7AB82 /* DispatchTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DispatchTask.h; sourceTree = "<group>"; };
 		492863981253B8FC00F792D6 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
 		49291E4A134172C800E753DE /* ImageRenderingMode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageRenderingMode.h; sourceTree = "<group>"; };
 		493E5E0812D6420500020081 /* PlatformCALayerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCALayerClient.h; path = ca/PlatformCALayerClient.h; sourceTree = "<group>"; };
@@ -7701,11 +7711,21 @@
 		499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsLayerCA.cpp; path = ca/GraphicsLayerCA.cpp; sourceTree = "<group>"; };
 		499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphicsLayerCA.h; path = ca/GraphicsLayerCA.h; sourceTree = "<group>"; };
 		499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCAAnimation.h; path = ca/PlatformCAAnimation.h; sourceTree = "<group>"; };
+		49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PeerConnection.cpp; path = p2p/PeerConnection.cpp; sourceTree = "<group>"; };
+		49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PeerConnection.h; path = p2p/PeerConnection.h; sourceTree = "<group>"; };
+		49A5A4FA13E2F01E00CFDAE0 /* PeerConnection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = PeerConnection.idl; path = p2p/PeerConnection.idl; sourceTree = "<group>"; };
+		49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignalingCallback.h; path = p2p/SignalingCallback.h; sourceTree = "<group>"; };
+		49A5A4FC13E2F01E00CFDAE0 /* SignalingCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SignalingCallback.idl; path = p2p/SignalingCallback.idl; sourceTree = "<group>"; };
 		49A85B68138D573900ECB7B3 /* StreamEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamEvent.cpp; sourceTree = "<group>"; };
 		49A85B69138D573A00ECB7B3 /* StreamEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamEvent.h; sourceTree = "<group>"; };
 		49A85B6A138D573A00ECB7B3 /* StreamEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamEvent.idl; sourceTree = "<group>"; };
 		49A85B75138D58EE00ECB7B3 /* JSStreamEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStreamEvent.cpp; sourceTree = "<group>"; };
 		49A85B76138D58EE00ECB7B3 /* JSStreamEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStreamEvent.h; sourceTree = "<group>"; };
+		49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPeerConnectionCustom.cpp; sourceTree = "<group>"; };
+		49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPeerConnection.cpp; sourceTree = "<group>"; };
+		49BE30F013D97646003808A9 /* JSPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPeerConnection.h; sourceTree = "<group>"; };
+		49BE30F113D97646003808A9 /* JSSignalingCallback.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSignalingCallback.cpp; sourceTree = "<group>"; };
+		49BE30F213D97646003808A9 /* JSSignalingCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSignalingCallback.h; sourceTree = "<group>"; };
 		49C7B9801042D2D30009D447 /* JSWebGLBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLBuffer.cpp; sourceTree = "<group>"; };
 		49C7B9811042D2D30009D447 /* JSWebGLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLBuffer.h; sourceTree = "<group>"; };
 		49C7B9821042D2D30009D447 /* JSInt8Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInt8Array.cpp; sourceTree = "<group>"; };
@@ -12906,6 +12926,7 @@
 				BCB16BFB0979C38700467741 /* loader */,
 				FABE72EC1059C1EB00D999DD /* mathml */,
 				333F703D0FB49C16008E12A6 /* notifications */,
+				49A5A4F613E2EFE600CFDAE0 /* p2p */,
 				65BF02180974806300C43196 /* page */,
 				BCF1A5BA097832090061A123 /* platform */,
 				5DCF83690D59157800953BC6 /* plugins */,
@@ -14031,6 +14052,18 @@
 				494BC40C12AEDD9E00743BD2 /* TransformationMatrixCA.cpp */,
 			);
 			name = ca;
+			sourceTree = "<group>";
+		};
+		49A5A4F613E2EFE600CFDAE0 /* p2p */ = {
+			isa = PBXGroup;
+			children = (
+				49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */,
+				49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */,
+				49A5A4FA13E2F01E00CFDAE0 /* PeerConnection.idl */,
+				49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */,
+				49A5A4FC13E2F01E00CFDAE0 /* SignalingCallback.idl */,
+			);
+			name = p2p;
 			sourceTree = "<group>";
 		};
 		49E911B20EF86D27009D0CAF /* transforms */ = {
@@ -17287,6 +17320,8 @@
 				BCD9C2BF0C17B69E005C90A2 /* JSNodeList.h */,
 				65DF31E909D1CC60000BE325 /* JSNotation.cpp */,
 				65DF31EA09D1CC60000BE325 /* JSNotation.h */,
+				49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */,
+				49BE30F013D97646003808A9 /* JSPeerConnection.h */,
 				598365E31355F604001B185D /* JSPositionCallback.cpp */,
 				598365DC1355F53C001B185D /* JSPositionCallback.h */,
 				FE80DA6D0E9C472F000D6F75 /* JSPositionError.cpp */,
@@ -17297,6 +17332,8 @@
 				65DF31EC09D1CC60000BE325 /* JSProcessingInstruction.h */,
 				E4B423850CBFB73C00AF2ECE /* JSProgressEvent.cpp */,
 				E4B423860CBFB73C00AF2ECE /* JSProgressEvent.h */,
+				49BE30F113D97646003808A9 /* JSSignalingCallback.cpp */,
+				49BE30F213D97646003808A9 /* JSSignalingCallback.h */,
 				75415D4F129AB2D2003AD669 /* JSSpeechInputEvent.cpp */,
 				75415D50129AB2D2003AD669 /* JSSpeechInputEvent.h */,
 				75415D51129AB2D2003AD669 /* JSSpeechInputResult.cpp */,
@@ -18649,6 +18686,7 @@
 				BCB773600C17853D00132BA4 /* JSNodeFilterCustom.cpp */,
 				1A750DD30A90E729000FF215 /* JSNodeIteratorCustom.cpp */,
 				BCD9C2610C17AA67005C90A2 /* JSNodeListCustom.cpp */,
+				49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */,
 				E1AD12D51295D0BD00ACA989 /* JSProcessingInstructionCustom.cpp */,
 				9FA37EE61172FCF000C4CD55 /* JSScriptProfileNodeCustom.cpp */,
 				51DCE8010CAC9F1C00488358 /* JSSQLResultSetRowListCustom.cpp */,
@@ -19724,6 +19762,7 @@
 				59A85EA1119D68D900DEF1EF /* DeviceOrientationEvent.cpp */,
 				59A85EA3119D68EC00DEF1EF /* DeviceOrientationEvent.h */,
 				59A85EAA119D7B6E00DEF1EF /* DeviceOrientationEvent.idl */,
+				490C47CD13E82D1800F7AB82 /* DispatchTask.h */,
 				A8185F3409765765005826D9 /* Document.cpp */,
 				A8185F3809765765005826D9 /* Document.h */,
 				6548E24809E1E04D00AF8020 /* Document.idl */,
@@ -21974,6 +22013,7 @@
 				A826E8AE0A1A8F2300CD1BB6 /* JSOptionConstructor.h in Headers */,
 				1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */,
 				E1284BB110449FFA00EAEB52 /* JSPageTransitionEvent.h in Headers */,
+				49BE30F413D97646003808A9 /* JSPeerConnection.h in Headers */,
 				8A9A587511E84C81008ACFD1 /* JSPerformance.h in Headers */,
 				8A9A587111E84C36008ACFD1 /* JSPerformanceNavigation.h in Headers */,
 				8A9A588811E84F37008ACFD1 /* JSPerformanceTiming.h in Headers */,
@@ -21994,6 +22034,7 @@
 				9FA37EFD1172FDA600C4CD55 /* JSScriptProfileNode.h in Headers */,
 				41D07A7F0FF935CA0095EDCE /* JSSharedWorker.h in Headers */,
 				41D1690610238B66009BC827 /* JSSharedWorkerContext.h in Headers */,
+				49BE30F613D97646003808A9 /* JSSignalingCallback.h in Headers */,
 				75415D56129AB2D2003AD669 /* JSSpeechInputEvent.h in Headers */,
 				75415D58129AB2D2003AD669 /* JSSpeechInputResult.h in Headers */,
 				75415D5A129AB2D2003AD669 /* JSSpeechInputResultList.h in Headers */,
@@ -22407,6 +22448,7 @@
 				A8FA6E5D0E4CFDED00D5CF49 /* Pattern.h in Headers */,
 				B22279710D00BF220071B782 /* PatternAttributes.h in Headers */,
 				B27535650B053814002CE64F /* PDFDocumentImage.h in Headers */,
+				49A5A4FF13E2F01E00CFDAE0 /* PeerConnection.h in Headers */,
 				8A7CC96B12076D73001D4588 /* PendingScript.h in Headers */,
 				8A844D0511D3C18E0014065C /* Performance.h in Headers */,
 				8AF4E55611DC5A36000ED3DE /* PerformanceNavigation.h in Headers */,
@@ -22703,6 +22745,7 @@
 				41D168E810226E89009BC827 /* SharedWorkerContext.h in Headers */,
 				41D168EA10226E89009BC827 /* SharedWorkerRepository.h in Headers */,
 				41D168EE10226E89009BC827 /* SharedWorkerThread.h in Headers */,
+				49A5A50113E2F01E00CFDAE0 /* SignalingCallback.h in Headers */,
 				B2C3DA650D006CD600EF6F26 /* SimpleFontData.h in Headers */,
 				51327D6011A33A2B004F9D65 /* SinkDocument.h in Headers */,
 				49E911CD0EF86D47009D0CAF /* SkewTransformOperation.h in Headers */,
@@ -23279,6 +23322,7 @@
 				508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */,
 				D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */,
 				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
+				490C47CE13E82D1800F7AB82 /* DispatchTask.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24953,6 +24997,8 @@
 				A826EC480A1B0CBE00CD1BB6 /* JSOptionConstructor.cpp in Sources */,
 				1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */,
 				E1284BB210449FFA00EAEB52 /* JSPageTransitionEvent.cpp in Sources */,
+				49BE30F313D97646003808A9 /* JSPeerConnection.cpp in Sources */,
+				49BE30D213D9747B003808A9 /* JSPeerConnectionCustom.cpp in Sources */,
 				8A9A587411E84C81008ACFD1 /* JSPerformance.cpp in Sources */,
 				8A9A587011E84C36008ACFD1 /* JSPerformanceNavigation.cpp in Sources */,
 				8A9A588711E84F37008ACFD1 /* JSPerformanceTiming.cpp in Sources */,
@@ -24976,6 +25022,7 @@
 				41D07A7E0FF935CA0095EDCE /* JSSharedWorker.cpp in Sources */,
 				41D1690510238B66009BC827 /* JSSharedWorkerContext.cpp in Sources */,
 				14CD8D82106B529000A46D23 /* JSSharedWorkerCustom.cpp in Sources */,
+				49BE30F513D97646003808A9 /* JSSignalingCallback.cpp in Sources */,
 				75415D55129AB2D2003AD669 /* JSSpeechInputEvent.cpp in Sources */,
 				75415D57129AB2D2003AD669 /* JSSpeechInputResult.cpp in Sources */,
 				75415D59129AB2D2003AD669 /* JSSpeechInputResultList.cpp in Sources */,
@@ -25383,6 +25430,7 @@
 				A8FA6E5E0E4CFDED00D5CF49 /* Pattern.cpp in Sources */,
 				A80A38FE0E50CC8200A25EBC /* PatternCG.cpp in Sources */,
 				B27535640B053814002CE64F /* PDFDocumentImage.cpp in Sources */,
+				49A5A4FE13E2F01E00CFDAE0 /* PeerConnection.cpp in Sources */,
 				8A7CC97012076F8A001D4588 /* PendingScript.cpp in Sources */,
 				8A844D0411D3C18E0014065C /* Performance.cpp in Sources */,
 				8AF4E55511DC5A36000ED3DE /* PerformanceNavigation.cpp in Sources */,

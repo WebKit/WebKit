@@ -102,6 +102,7 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSNodeIteratorCustom.cpp
     bindings/js/JSNodeListCustom.cpp
     bindings/js/JSOptionConstructor.cpp
+    bindings/js/JSPeerConnectionCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSProcessingInstructionCustom.cpp
     bindings/js/JSScriptProfileNodeCustom.cpp

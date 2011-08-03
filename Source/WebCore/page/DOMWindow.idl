@@ -337,6 +337,8 @@ module window {
         attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] DeviceOrientationEventConstructor DeviceOrientationEvent;
         attribute [Conditional=DEVICE_ORIENTATION,EnabledAtRuntime] EventListener ondeviceorientation;
 
+        attribute [Conditional=MEDIA_STREAM,EnabledAtRuntime] PeerConnectionConstructor PeerConnection;
+
         // EventTarget interface
         [Custom] void addEventListener(in DOMString type,
                                       in EventListener listener,

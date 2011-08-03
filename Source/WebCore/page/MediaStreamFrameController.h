@@ -45,8 +45,10 @@ class MediaStreamTrackList;
 class NavigatorUserMediaErrorCallback;
 class NavigatorUserMediaSuccessCallback;
 class Page;
+class PeerConnection;
 class ScriptExecutionContext;
 class SecurityOrigin;
+class SignalingCallback;
 
 class MediaStreamFrameController {
     WTF_MAKE_NONCOPYABLE(MediaStreamFrameController);
@@ -69,6 +71,7 @@ public:
         virtual bool isMediaStream() const { return false; }
         virtual bool isLocalMediaStream() const { return false; }
         virtual bool isGenericClient() const { return false; }
+        virtual bool isPeerConnection() const { return false; }
 
         // Called when the frame controller is being disconnected to the MediaStreamClient embedder.
         // Clients should override this to send any required shutdown messages.
@@ -137,6 +140,13 @@ public:
         virtual void unregister() { unregisterClient(this); }
     };
 
+    class PeerConnectionClient : public GenericClient {
+    public:
+        PeerConnectionClient(MediaStreamFrameController* frameController, int id) : GenericClient(frameController, id) { }
+        virtual ~PeerConnectionClient() { }
+        virtual bool isPeerConnection() const { return true; }
+    };
+
     MediaStreamFrameController(Frame*);
     virtual ~MediaStreamFrameController();
 
@@ -148,28 +158,32 @@ public:
     void disconnectFrame();
     void transferToNewPage(Page*);
 
-    // Parse the options string provided to the generateStream method.
     static GenerateStreamOptionFlags parseGenerateStreamOptions(const String&);
-
-    // Create a new generated stream asynchronously with the provided options.
     void generateStream(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
-
-    // Stop a local media stream.
     void stopGeneratedStream(const String& streamLabel);
-
-    // Enable/disable an track.
     void setMediaStreamTrackEnabled(const String& trackId, bool enabled);
+
+    PassRefPtr<PeerConnection> createPeerConnection(const String& configuration, PassRefPtr<SignalingCallback>);
+    void newPeerConnection(int peerConnectionId, const String& configuration);
+    void startNegotiation(int peerConnectionId);
+    void processSignalingMessage(int peerConnectionId, const String& message);
+    void message(int peerConnectionId, const String& message);
+    void addStream(int peerConnectionId, PassRefPtr<MediaStream>);
+    void removeStream(int peerConnectionId, PassRefPtr<MediaStream>);
+    void closePeerConnection(int peerConnectionId);
 
     // --- Calls coming back from the controller. --- //
 
-    // Report the generation of a new local stream.
     void streamGenerated(int requestId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks);
-
-    // Report a failure in the generation of a new stream.
     void streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode);
-
-    // Report the end of a stream for external reasons.
     void streamFailed(const String& streamLabel);
+
+    void onSignalingMessage(int peerConnectionId, const String& message);
+    void onMessage(int peerConnectionId, const String& message);
+    void onAddStream(int peerConnectionId, const String& streamLabel, PassRefPtr<MediaStreamTrackList>);
+    void onRemoveStream(int peerConnectionId, const String& streamLabel);
+    void onNegotiationStarted(int peerConnectionId);
+    void onNegotiationDone(int peerConnectionId);
 
 private:
     class Request;

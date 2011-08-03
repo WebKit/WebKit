@@ -34,6 +34,8 @@
 
 namespace WebCore {
 
+// FIXME: This is used for holding list of PeerConnection as well,
+// so rename class is in order.
 class MediaStreamController::Request {
 public:
     Request()
@@ -55,6 +57,7 @@ private:
 MediaStreamController::MediaStreamController(MediaStreamClient* client)
     : m_client(client)
     , m_nextGlobalRequestId(1)
+    , m_nextGlobalPeerConnectionId(1)
 {
 }
 
@@ -89,6 +92,8 @@ void MediaStreamController::unregisterFrameController(MediaStreamFrameController
 
     for (Vector<String>::iterator it = frameStreams.begin(); it != frameStreams.end(); ++it)
         m_streams.remove(*it);
+
+    // FIXME: Add unregister functionality for peer connection objects.
 }
 
 int MediaStreamController::registerRequest(int localId, MediaStreamFrameController* frameController)
@@ -150,6 +155,130 @@ void MediaStreamController::streamFailed(const String& streamLabel)
     // Don't assert since the frame controller can have been destroyed by the time this is called.
     if (m_streams.contains(streamLabel))
         m_streams.get(streamLabel)->streamFailed(streamLabel);
+}
+
+void MediaStreamController::onSignalingMessage(int controllerPeerConnectionId, const String& message)
+{
+    // Don't assert since the frame controller can have been destroyed.
+    if (m_peerConnections.contains(controllerPeerConnectionId)) {
+        const Request& peerConnection = m_peerConnections.get(controllerPeerConnectionId);
+        ASSERT(peerConnection.frameController());
+        peerConnection.frameController()->onSignalingMessage(peerConnection.localId(), message);
+    }
+}
+
+bool MediaStreamController::frameToPagePeerConnectionId(MediaStreamFrameController* frameController, int framePeerConnectionId, int& pagePeerConnectionId)
+{
+    pagePeerConnectionId = -1;
+    // FIXME: Is there a better way to find the global ID in the map?
+    for (RequestMap::iterator it = m_peerConnections.begin(); it != m_peerConnections.end(); ++it) {
+        if (it->second.frameController() == frameController && it->second.localId() == framePeerConnectionId) {
+            pagePeerConnectionId = it->first;
+            return true;
+        }
+    }
+    return false;
+}
+
+void MediaStreamController::processSignalingMessage(MediaStreamFrameController* frameController, int framePeerConnectionId, const String& message)
+{
+    int pagePeerConnectionId;
+    if (frameToPagePeerConnectionId(frameController, framePeerConnectionId, pagePeerConnectionId))
+        m_client->processSignalingMessage(pagePeerConnectionId, message);
+}
+
+void MediaStreamController::message(MediaStreamFrameController* frameController, int framePeerConnectionId, const String& message)
+{
+    int pagePeerConnectionId;
+    if (frameToPagePeerConnectionId(frameController, framePeerConnectionId, pagePeerConnectionId))
+        m_client->message(pagePeerConnectionId, message);
+}
+
+void MediaStreamController::onMessage(int controllerPeerConnectionId, const String& message)
+{
+    // Don't assert since the frame controller can have been destroyed
+    if (m_peerConnections.contains(controllerPeerConnectionId)) {
+        const Request& peerConnection = m_peerConnections.get(controllerPeerConnectionId);
+        ASSERT(peerConnection.frameController());
+        peerConnection.frameController()->onMessage(peerConnection.localId(), message);
+    }
+}
+
+void MediaStreamController::addStream(MediaStreamFrameController* frameController, int framePeerConnectionId, const String& streamLabel)
+{
+    int pagePeerConnectionId;
+    if (frameToPagePeerConnectionId(frameController, framePeerConnectionId, pagePeerConnectionId))
+        m_client->addStream(pagePeerConnectionId, streamLabel);
+}
+
+void MediaStreamController::onAddStream(int controllerPeerConnectionId, const String& streamLabel, PassRefPtr<MediaStreamTrackList> tracks)
+{
+    // Don't assert since the frame controller can have been destroyed
+    if (m_peerConnections.contains(controllerPeerConnectionId)) {
+        const Request& peerConnection = m_peerConnections.get(controllerPeerConnectionId);
+        ASSERT(peerConnection.frameController());
+        peerConnection.frameController()->onAddStream(peerConnection.localId(), streamLabel, tracks);
+    }
+}
+
+void MediaStreamController::removeStream(MediaStreamFrameController* frameController, int framePeerConnectionId, const String& streamLabel)
+{
+    int pagePeerConnectionId;
+    if (frameToPagePeerConnectionId(frameController, framePeerConnectionId, pagePeerConnectionId))
+        m_client->removeStream(pagePeerConnectionId, streamLabel);
+}
+
+void MediaStreamController::onRemoveStream(int controllerPeerConnectionId, const String& streamLabel)
+{
+    // Don't assert since the frame controller can have been destroyed
+    if (m_peerConnections.contains(controllerPeerConnectionId)) {
+        // TODO: Better name of peerConnection variable?
+        const Request& peerConnection = m_peerConnections.get(controllerPeerConnectionId);
+        ASSERT(peerConnection.frameController());
+        peerConnection.frameController()->onRemoveStream(peerConnection.localId(), streamLabel);
+    }
+}
+
+void MediaStreamController::newPeerConnection(MediaStreamFrameController* frameController, int framePeerConnectionId, const String& configuration)
+{
+    int pagePeerConnectionId = m_nextGlobalPeerConnectionId++;
+    m_peerConnections.add(pagePeerConnectionId, Request(framePeerConnectionId, frameController));
+
+    m_client->newPeerConnection(pagePeerConnectionId, configuration);
+}
+
+void MediaStreamController::closePeerConnection(MediaStreamFrameController* frameController, int framePeerConnectionId)
+{
+    int pagePeerConnectionId;
+    if (frameToPagePeerConnectionId(frameController, framePeerConnectionId, pagePeerConnectionId))
+        m_client->closePeerConnection(pagePeerConnectionId);
+}
+
+void MediaStreamController::startNegotiation(MediaStreamFrameController* frameController, int framePeerConnectionId)
+{
+    int pagePeerConnectionId;
+    if (frameToPagePeerConnectionId(frameController, framePeerConnectionId, pagePeerConnectionId))
+        m_client->startNegotiation(pagePeerConnectionId);
+}
+
+void MediaStreamController::onNegotiationStarted(int controllerPeerConnectionId)
+{
+    // Don't assert since the frame controller can have been destroyed
+    if (m_peerConnections.contains(controllerPeerConnectionId)) {
+        const Request& peerConnection = m_peerConnections.get(controllerPeerConnectionId);
+        ASSERT(peerConnection.frameController());
+        peerConnection.frameController()->onNegotiationStarted(peerConnection.localId());
+    }
+}
+
+void MediaStreamController::onNegotiationDone(int controllerPeerConnectionId)
+{
+    // Don't assert since the frame controller can have been destroyed
+    if (m_peerConnections.contains(controllerPeerConnectionId)) {
+        const Request& peerConnection = m_peerConnections.get(controllerPeerConnectionId);
+        ASSERT(peerConnection.frameController());
+        peerConnection.frameController()->onNegotiationDone(peerConnection.localId());
+    }
 }
 
 } // namespace WebCore

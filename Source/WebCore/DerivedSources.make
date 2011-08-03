@@ -39,6 +39,7 @@ VPATH = \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
     $(WebCore)/notifications \
+    $(WebCore)/p2p \
     $(WebCore)/page \
     $(WebCore)/plugins \
     $(WebCore)/storage \
@@ -332,6 +333,7 @@ DOM_CLASSES = \
     OperationNotAllowedException \
     OverflowEvent \
     PageTransitionEvent \
+    PeerConnection \
     Performance \
     PerformanceNavigation \
     PerformanceTiming \
@@ -349,6 +351,7 @@ DOM_CLASSES = \
     SharedWorkerContext \
     ScriptProfile \
     ScriptProfileNode \
+    SignalingCallback \
     SpeechInputEvent \
     SpeechInputResult \
     SpeechInputResultList \

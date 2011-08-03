@@ -2012,6 +2012,7 @@ IF (ENABLE_MEDIA_STREAM)
         dom/MediaStreamTrack.cpp
         dom/MediaStreamTrackList.cpp
         dom/StreamEvent.cpp
+        p2p/PeerConnection.cpp
         page/MediaStreamController.cpp
         page/MediaStreamFrameController.cpp
     )
@@ -2023,6 +2024,8 @@ IF (ENABLE_MEDIA_STREAM)
         dom/MediaStreamTrack.idl
         dom/MediaStreamTrackList.idl
         dom/StreamEvent.idl
+        p2p/PeerConnection.idl
+        p2p/SignalingCallback.idl
         page/NavigatorUserMediaError.idl
     )
 ENDIF ()

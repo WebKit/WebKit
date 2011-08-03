@@ -1,3 +1,14 @@
+2011-08-03  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Implement PeerConnection and SignalingCallback
+        https://bugs.webkit.org/show_bug.cgi?id=65101
+
+        Reviewed by Adam Barth.
+
+        LayoutTests will be provided by a follow-up CL, see <https://bugs.webkit.org/show_bug.cgi?id=56587>.
+
+        * platform/chromium/fast/dom/prototype-inheritance-expected.txt:
+
 2011-08-03  Adam Barth  <abarth@webkit.org>
 
         Crash in DocumentWriter::endIfNotLoadingMainResource

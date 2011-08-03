@@ -3245,6 +3245,8 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
         dom/MediaStreamTrack.h \
         dom/MediaStreamTrackList.h \
         dom/StreamEvent.h \
+        p2p/PeerConnection.h \
+        p2p/SignalingCallback.h \
         page/CallbackTask.h \
         page/MediaStreamClient.h \
         page/MediaStreamController.h \
@@ -3260,12 +3262,18 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
         dom/MediaStreamTrack.cpp \
         dom/MediaStreamTrackList.cpp \
         dom/StreamEvent.cpp \
+        p2p/PeerConnection.cpp \
         page/MediaStreamController.cpp \
         page/MediaStreamFrameController.cpp
 
     v8 {
         SOURCES += \
-            bindings/v8/custom/V8NavigatorCustom.cpp
+            bindings/v8/custom/V8NavigatorCustom.cpp \
+            bindings/v8/custom/V8PeerConnectionCustom.cpp
+    } else {
+        SOURCES += \
+            bindings/js/JSNavigatorCustom.cpp \
+            bindings/js/JSPeerConnectionCustom.cpp
     }
 }
 

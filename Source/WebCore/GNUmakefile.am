@@ -38,6 +38,7 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/loader/icon \
 	-I$(srcdir)/Source/WebCore/mathml \
 	-I$(srcdir)/Source/WebCore/notifications \
+	-I$(srcdir)/Source/WebCore/p2p \
 	-I$(srcdir)/Source/WebCore/page \
 	-I$(srcdir)/Source/WebCore/page/animation \
 	-I$(srcdir)/Source/WebCore/platform \
@@ -739,6 +740,7 @@ IDL_PATH := \
     $(WebCore)/inspector \
     $(WebCore)/loader/appcache \
     $(WebCore)/notifications \
+    $(WebCore)/p2p \
     $(WebCore)/page \
     $(WebCore)/plugins \
     $(WebCore)/storage \

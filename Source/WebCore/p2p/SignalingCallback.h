@@ -22,48 +22,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamClient_h
-#define MediaStreamClient_h
+#ifndef SignalingCallback_h
+#define SignalingCallback_h
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/Forward.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-class SecurityOrigin;
+class PeerConnection;
 
-enum GenerateStreamOptionFlag {
-    GenerateStreamRequestAudio = 1,
-    GenerateStreamRequestVideoFacingUser = 1 << 1,
-    GenerateStreamRequestVideoFacingEnvironment = 1 << 2,
-};
-
-typedef unsigned GenerateStreamOptionFlags;
-
-class MediaStreamClient {
+class SignalingCallback : public RefCounted<SignalingCallback> {
 public:
-    // MediaStream functions.
-    virtual void mediaStreamDestroyed() = 0;
-    virtual void generateStream(int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>) = 0;
-    virtual void stopGeneratedStream(const String& streamLabel) = 0;
-    virtual void setMediaStreamTrackEnabled(const String& trackId, bool enabled) = 0;
-
-    // PeerConnection functions.
-    virtual void newPeerConnection(int peerConnectionId, const String& configuration) = 0;
-    virtual void startNegotiation(int peerConnectionId) = 0;
-    virtual void processSignalingMessage(int peerConnectionId, const String& message) = 0;
-    virtual void message(int peerConnectionId, const String& message) = 0;
-    virtual void addStream(int peerConnectionId, const String& streamLabel) = 0;
-    virtual void removeStream(int peerConnectionId, const String& streamLabel) = 0;
-    virtual void closePeerConnection(int peerConnectionId) = 0;
-
-protected:
-    virtual ~MediaStreamClient() { }
+    virtual ~SignalingCallback() { }
+    virtual bool handleEvent(const String&, PeerConnection*) = 0;
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // MediaStreamClient_h
+#endif // SignalingCallback_h

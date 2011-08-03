@@ -65,6 +65,7 @@
 #include "V8NodeFilterCondition.h"
 #include "V8NodeList.h"
 #include "V8Notification.h"
+#include "V8PeerConnection.h"
 #include "V8Proxy.h"
 #include "V8SharedWorker.h"
 #include "V8SharedWorkerContext.h"
@@ -454,6 +455,9 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
 
     if (MediaStream* stream = target->toMediaStream())
         return toV8(stream);
+
+    if (PeerConnection* peerConnection = target->toPeerConnection())
+        return toV8(peerConnection);
 #endif
 
     ASSERT(0);

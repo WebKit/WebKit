@@ -1,3 +1,127 @@
+2011-08-03  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Implement PeerConnection and SignalingCallback
+        https://bugs.webkit.org/show_bug.cgi?id=65101
+
+        Reviewed by Adam Barth.
+
+        LayoutTests will be provided by a follow-up CL, see <https://bugs.webkit.org/show_bug.cgi?id=56587>.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::peerConnectionEnabled):
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSPeerConnectionCustom.cpp: Copied from Source/WebCore/page/MediaStreamClient.h.
+        (WebCore::JSPeerConnectionConstructor::constructJSPeerConnection):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * bindings/v8/custom/V8PeerConnectionCustom.cpp: Added.
+        (WebCore::V8PeerConnection::constructorCallback):
+        * dom/DispatchTask.h: Added.
+        (WebCore::SimpleDispatchTask::create):
+        (WebCore::SimpleDispatchTask::performTask):
+        (WebCore::SimpleDispatchTask::SimpleDispatchTask):
+        (WebCore::DispatchTask::create):
+        (WebCore::DispatchTask::performTask):
+        (WebCore::DispatchTask::DispatchTask):
+        * dom/EventNames.h:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toPeerConnection):
+        * dom/EventTarget.h:
+        * p2p/PeerConnection.cpp: Added.
+        (WebCore::PeerConnection::create):
+        (WebCore::PeerConnection::PeerConnection):
+        (WebCore::PeerConnection::init):
+        (WebCore::PeerConnection::~PeerConnection):
+        (WebCore::PeerConnection::localStreams):
+        (WebCore::PeerConnection::remoteStreams):
+        (WebCore::PeerConnection::processSignalingMessage):
+        (WebCore::PeerConnection::send):
+        (WebCore::PeerConnection::addStream):
+        (WebCore::PeerConnection::removeStream):
+        (WebCore::PeerConnection::close):
+        (WebCore::PeerConnection::onNegotiationStarted):
+        (WebCore::PeerConnection::onNegotiationDone):
+        (WebCore::PeerConnection::streamAdded):
+        (WebCore::PeerConnection::streamRemoved):
+        (WebCore::PeerConnection::onMessage):
+        (WebCore::PeerConnection::onSignalingMessage):
+        (WebCore::PeerConnection::toPeerConnection):
+        (WebCore::PeerConnection::scriptExecutionContext):
+        (WebCore::PeerConnection::eventTargetData):
+        (WebCore::PeerConnection::ensureEventTargetData):
+        (WebCore::PeerConnection::postMessageEvent):
+        (WebCore::PeerConnection::postSignalingEvent):
+        (WebCore::PeerConnection::postStreamAddedEvent):
+        (WebCore::PeerConnection::postStreamRemovedEvent):
+        (WebCore::PeerConnection::postSimpleEvent):
+        (WebCore::PeerConnection::postStartNegotiationTask):
+        (WebCore::PeerConnection::dispatchMessageEvent):
+        (WebCore::PeerConnection::dispatchSignalingEvent):
+        (WebCore::PeerConnection::dispatchStreamEvent):
+        (WebCore::PeerConnection::dispatchSimpleEvent):
+        (WebCore::PeerConnection::dispatchStartNegotiationTask):
+        * p2p/PeerConnection.h: Added.
+        (WebCore::PeerConnection::readyState):
+        (WebCore::PeerConnection::refEventTarget):
+        (WebCore::PeerConnection::derefEventTarget):
+        * p2p/PeerConnection.idl: Added.
+        * p2p/SignalingCallback.h: Copied from Source/WebCore/page/MediaStreamClient.h.
+        (WebCore::SignalingCallback::~SignalingCallback):
+        * p2p/SignalingCallback.idl: Added.
+        * page/DOMWindow.idl:
+        * page/MediaStreamClient.h:
+        * page/MediaStreamController.cpp:
+        (WebCore::MediaStreamController::MediaStreamController):
+        (WebCore::MediaStreamController::unregisterFrameController):
+        (WebCore::MediaStreamController::onSignalingMessage):
+        (WebCore::MediaStreamController::frameToPagePeerConnectionId):
+        (WebCore::MediaStreamController::processSignalingMessage):
+        (WebCore::MediaStreamController::message):
+        (WebCore::MediaStreamController::onMessage):
+        (WebCore::MediaStreamController::addStream):
+        (WebCore::MediaStreamController::onAddStream):
+        (WebCore::MediaStreamController::removeStream):
+        (WebCore::MediaStreamController::onRemoveStream):
+        (WebCore::MediaStreamController::newPeerConnection):
+        (WebCore::MediaStreamController::closePeerConnection):
+        (WebCore::MediaStreamController::startNegotiation):
+        (WebCore::MediaStreamController::onNegotiationStarted):
+        (WebCore::MediaStreamController::onNegotiationDone):
+        * page/MediaStreamController.h:
+        * page/MediaStreamFrameController.cpp:
+        (WebCore::MediaStreamFrameController::Request::isSignalingRequest):
+        (WebCore::MediaStreamFrameController::createPeerConnection):
+        (WebCore::MediaStreamFrameController::newPeerConnection):
+        (WebCore::MediaStreamFrameController::closePeerConnection):
+        (WebCore::MediaStreamFrameController::startNegotiation):
+        (WebCore::MediaStreamFrameController::processSignalingMessage):
+        (WebCore::MediaStreamFrameController::message):
+        (WebCore::MediaStreamFrameController::addStream):
+        (WebCore::MediaStreamFrameController::removeStream):
+        (WebCore::MediaStreamFrameController::onMessage):
+        (WebCore::MediaStreamFrameController::onAddStream):
+        (WebCore::MediaStreamFrameController::onRemoveStream):
+        (WebCore::MediaStreamFrameController::onSignalingMessage):
+        (WebCore::MediaStreamFrameController::onNegotiationStarted):
+        (WebCore::MediaStreamFrameController::onNegotiationDone):
+        * page/MediaStreamFrameController.h:
+        (WebCore::MediaStreamFrameController::ClientBase::isPeerConnection):
+        (WebCore::MediaStreamFrameController::PeerConnectionClient::PeerConnectionClient):
+        (WebCore::MediaStreamFrameController::PeerConnectionClient::~PeerConnectionClient):
+        (WebCore::MediaStreamFrameController::PeerConnectionClient::isPeerConnection):
+
 2011-08-03  Joseph Pecoraro  <joepeck@webkit.org>
 
         Web Inspector: Remove InspectorFrontendHost load/saveSessionSetting

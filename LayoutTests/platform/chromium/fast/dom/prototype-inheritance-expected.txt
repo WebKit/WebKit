@@ -293,6 +293,8 @@ PASS inner.OverflowEvent.isInner is true
 PASS inner.OverflowEvent.constructor.isInner is true
 PASS inner.PageTransitionEvent.isInner is true
 PASS inner.PageTransitionEvent.constructor.isInner is true
+PASS inner.PeerConnection.isInner is true
+PASS inner.PeerConnection.constructor.isInner is true
 PASS inner.Plugin.isInner is true
 PASS inner.Plugin.constructor.isInner is true
 PASS inner.PluginArray.isInner is true

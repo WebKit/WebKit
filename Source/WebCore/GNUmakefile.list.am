@@ -411,6 +411,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOverflowEvent.h \
 	DerivedSources/WebCore/JSPageTransitionEvent.cpp \
 	DerivedSources/WebCore/JSPageTransitionEvent.h \
+	DerivedSources/WebCore/JSPeerConnection.cpp \
+	DerivedSources/WebCore/JSPeerConnection.h \
 	DerivedSources/WebCore/JSPerformance.cpp \
 	DerivedSources/WebCore/JSPerformance.h \
 	DerivedSources/WebCore/JSPerformanceNavigation.cpp \
@@ -447,6 +449,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSharedWorkerContext.h \
 	DerivedSources/WebCore/JSSharedWorker.cpp \
 	DerivedSources/WebCore/JSSharedWorker.h \
+	DerivedSources/WebCore/JSSignalingCallback.cpp \
+	DerivedSources/WebCore/JSSignalingCallback.h \
 	DerivedSources/WebCore/JSSpeechInputEvent.cpp \
 	DerivedSources/WebCore/JSSpeechInputEvent.h \
 	DerivedSources/WebCore/JSSpeechInputResult.cpp \
@@ -780,6 +784,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSNodeListCustom.cpp \
 	Source/WebCore/bindings/js/JSOptionConstructor.cpp \
 	Source/WebCore/bindings/js/JSOptionConstructor.h \
+	Source/WebCore/bindings/js/JSPeerConnectionCustom.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.cpp \
 	Source/WebCore/bindings/js/JSPluginElementFunctions.h \
 	Source/WebCore/bindings/js/JSProcessingInstructionCustom.cpp \
@@ -1120,6 +1125,7 @@ webcore_sources += \
 	Source/WebCore/dom/DeviceOrientationEvent.cpp \
 	Source/WebCore/dom/DeviceOrientationEvent.h \
 	Source/WebCore/dom/DeviceOrientation.h \
+	Source/WebCore/dom/DispatchTask.h \
 	Source/WebCore/dom/Document.cpp \
 	Source/WebCore/dom/DocumentFragment.cpp \
 	Source/WebCore/dom/DocumentFragment.h \
@@ -2190,6 +2196,9 @@ webcore_sources += \
 	Source/WebCore/notifications/Notification.cpp \
 	Source/WebCore/notifications/Notification.h \
 	Source/WebCore/notifications/NotificationPresenter.h \
+	Source/WebCore/p2p/PeerConnection.cpp \
+	Source/WebCore/p2p/PeerConnection.h \
+	Source/WebCore/p2p/SignalingCallback.h \
 	Source/WebCore/page/animation/AnimationBase.cpp \
 	Source/WebCore/page/animation/AnimationBase.h \
 	Source/WebCore/page/animation/AnimationController.cpp \

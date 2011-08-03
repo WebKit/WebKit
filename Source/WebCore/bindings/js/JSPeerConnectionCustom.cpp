@@ -22,48 +22,49 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamClient_h
-#define MediaStreamClient_h
+#include "config.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/Forward.h>
+#include "JSPeerConnection.h"
+
+#include "CallbackFunction.h"
+#include "DOMWindow.h"
+#include "Frame.h"
+#include "JSDOMWindowCustom.h"
+#include "JSSignalingCallback.h"
+#include "MediaStreamFrameController.h"
+#include "PeerConnection.h"
 
 namespace WebCore {
 
-class SecurityOrigin;
+using namespace JSC;
 
-enum GenerateStreamOptionFlag {
-    GenerateStreamRequestAudio = 1,
-    GenerateStreamRequestVideoFacingUser = 1 << 1,
-    GenerateStreamRequestVideoFacingEnvironment = 1 << 2,
-};
+EncodedJSValue JSC_HOST_CALL JSPeerConnectionConstructor::constructJSPeerConnection(ExecState* exec)
+{
+    JSPeerConnectionConstructor* jsConstructor = static_cast<JSPeerConnectionConstructor*>(exec->callee());
 
-typedef unsigned GenerateStreamOptionFlags;
+    String configuration = ustringToString(exec->argument(0).toString(exec));
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
 
-class MediaStreamClient {
-public:
-    // MediaStream functions.
-    virtual void mediaStreamDestroyed() = 0;
-    virtual void generateStream(int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>) = 0;
-    virtual void stopGeneratedStream(const String& streamLabel) = 0;
-    virtual void setMediaStreamTrackEnabled(const String& trackId, bool enabled) = 0;
+    RefPtr<SignalingCallback> signalingCallback = createFunctionOnlyCallback<JSSignalingCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(1));
+    if (exec->hadException())
+        return JSValue::encode(JSValue());
 
-    // PeerConnection functions.
-    virtual void newPeerConnection(int peerConnectionId, const String& configuration) = 0;
-    virtual void startNegotiation(int peerConnectionId) = 0;
-    virtual void processSignalingMessage(int peerConnectionId, const String& message) = 0;
-    virtual void message(int peerConnectionId, const String& message) = 0;
-    virtual void addStream(int peerConnectionId, const String& streamLabel) = 0;
-    virtual void removeStream(int peerConnectionId, const String& streamLabel) = 0;
-    virtual void closePeerConnection(int peerConnectionId) = 0;
+    Frame* frame = asJSDOMWindow(exec->lexicalGlobalObject())->impl()->frame();
+    MediaStreamFrameController* frameController = frame ? frame->mediaStreamFrameController() : 0;
 
-protected:
-    virtual ~MediaStreamClient() { }
-};
+    RefPtr<PeerConnection> peerConnection;
+    if (frameController)
+        peerConnection = frameController->createPeerConnection(configuration, signalingCallback);
+
+    if (!peerConnection)
+        return JSValue::encode(JSValue());
+
+    return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), peerConnection.get())));
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamClient_h

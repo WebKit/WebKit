@@ -180,6 +180,11 @@ namespace WebCore {
     \
     macro(audioprocess) \
     \
+    macro(connecting) \
+    macro(addstream) \
+    macro(removestream) \
+    \
+
 // end of DOM_EVENT_NAMES_FOR_EACH
 
     class EventNames {

@@ -123,6 +123,7 @@
 #include "JSNodeIteratorCustom.cpp"
 #include "JSNodeListCustom.cpp"
 #include "JSOptionConstructor.cpp"
+#include "JSPeerConnectionCustom.cpp"
 #include "JSPluginElementFunctions.cpp"
 #include "JSProcessingInstructionCustom.cpp"
 #include "JSSQLResultSetRowListCustom.cpp"
