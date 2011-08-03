@@ -1,3 +1,9 @@
+2011-08-03  Zhenyao Mo  <zmo@google.com>
+
+        Unreviewed, skip fast/loader/reload-zero-byte-plugin.html for now, gardener stuff.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-03  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Implement PeerConnection and SignalingCallback
