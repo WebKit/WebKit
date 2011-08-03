@@ -1,3 +1,11 @@
+2011-08-03  Filip Pizlo  <fpizlo@apple.com>
+
+        Adding Filip Pizlo to committer list.
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-08-03  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Add "optimize-expectations" command to webkit-patch.
