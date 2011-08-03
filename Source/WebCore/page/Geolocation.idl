@@ -27,13 +27,16 @@ module core {
 
     interface [
         Conditional=GEOLOCATION, 
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Geolocation {
-        [Custom] void getCurrentPosition(in PositionCallback successCallback, in PositionErrorCallback errorCallback, in PositionOptions options);
+        [Custom] void getCurrentPosition(in PositionCallback successCallback, 
+                                         in [Optional=CallWithDefaultValue] PositionErrorCallback errorCallback, 
+                                         in [Optional=CallWithDefaultValue] PositionOptions options);
 
-        [Custom] long watchPosition(in PositionCallback successCallback, in PositionErrorCallback errorCallback, in PositionOptions options);
+        [Custom] long watchPosition(in PositionCallback successCallback, 
+                                    in [Optional=CallWithDefaultValue] PositionErrorCallback errorCallback, 
+                                    in [Optional=CallWithDefaultValue] PositionOptions options);
 
         void clearWatch(in long watchId);
     };

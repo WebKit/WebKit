@@ -1,5 +1,18 @@
 2011-08-03  Mark Pilgrim  <pilgrim@chromium.org>
 
+        Remove LegacyDefaultOptionalArguments flag from geolocation IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=65355
+
+        Reviewed by Adam Barth.
+
+        No new tests, all existing tests pass.
+
+        * page/Geolocation.idl:
+        * page/PositionCallback.idl:
+        * page/PositionErrorCallback.idl:
+
+2011-08-03  Mark Pilgrim  <pilgrim@chromium.org>
+
         Remove LegacyDefaultOptionalArguments flag from DOMSelection.idl
         https://bugs.webkit.org/show_bug.cgi?id=65566
 
