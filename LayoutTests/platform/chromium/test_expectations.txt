@@ -2739,7 +2739,8 @@ BUGWK64942 GPU RELEASE LINUX : platform/chromium/compositing/layout-width-change
 BUGWK64942 GPU WIN MAC : platform/chromium/compositing/layout-width-change.html = IMAGE
 BUGWK64942 GPU : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
 BUGWK64942 GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
-BUGWK64942 GPU MAC : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+BUGWK64942 GPU WIN MAC : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+BUGWK64942 GPU WIN : compositing/iframes/composited-iframe-alignment.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = IMAGE PASS
 

@@ -1,3 +1,13 @@
+2011-08-03  Stephen White  <senorblanco@chromium.org>
+
+        [chromium] Added two compositing tests whose pixel results on the
+        Mesa bots are different following
+        http://trac.webkit.org/changeset/92255.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-03  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK baselines for media/media-controls-clone.html.
