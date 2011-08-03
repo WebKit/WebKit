@@ -29,7 +29,6 @@
 module window {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Console {
@@ -52,7 +51,7 @@ module window {
         [Custom] void profileEnd(in DOMString title);
 #endif
 
-        void time(in [ConvertUndefinedOrNullToNullString] DOMString title);
+        void time(in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString title);
         [CustomArgumentHandling] void timeEnd(in [ConvertUndefinedOrNullToNullString] DOMString title);
         [CustomArgumentHandling] void timeStamp();
         [CustomArgumentHandling] void group();
