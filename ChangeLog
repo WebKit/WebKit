@@ -1,5 +1,15 @@
 2011-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [GTK] Install web and plugin processes in libexecdir instead of bindir
+        https://bugs.webkit.org/show_bug.cgi?id=65600
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Initialize libexec_PROGRAMS, only used by
+        WebKit2 in this moment.
+
+2011-08-03  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [GTK] Reorganize pkg-config files
         https://bugs.webkit.org/show_bug.cgi?id=65548
 

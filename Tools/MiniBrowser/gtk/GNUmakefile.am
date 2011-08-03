@@ -4,6 +4,7 @@ bin_PROGRAMS += \
 Programs_MiniBrowser_CPPFLAGS = \
 	-I$(srcdir)/Source \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs/\" \
 	$(global_cppflags) \
 	$(GLIB_CFLAGS) \
 	$(GTK_CFLAGS)

@@ -45,6 +45,7 @@ pkgconfigdir := $(libdir)/pkgconfig
 # Libraries and support components
 bin_PROGRAMS :=
 noinst_PROGRAMS :=
+libexec_PROGRAMS :=
 noinst_HEADERS :=
 noinst_LTLIBRARIES :=
 lib_LTLIBRARIES :=

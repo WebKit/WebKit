@@ -76,7 +76,8 @@ void ProcessLauncher::launchProcess()
         return;
     }
 
-    GOwnPtr<gchar> binaryPath(g_build_filename(applicationDirectoryPath().data(),
+    const gchar* execDirectory = g_getenv("WEBKIT_EXEC_PATH");
+    GOwnPtr<gchar> binaryPath(g_build_filename(execDirectory ? execDirectory : LIBEXECDIR,
                                                m_launchOptions.processType == ProcessLauncher::WebProcess ? gWebKitWebProcessName : gWebKitPluginProcessName, NULL));
     GOwnPtr<gchar> socket(g_strdup_printf("%d", sockets[0]));
     char* argv[3];

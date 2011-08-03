@@ -93,6 +93,9 @@ int main(int argc, char *argv[])
     }
     g_option_context_free (context);
 
+    // Prefer the not installed web and plugin processes.
+    g_setenv("WEBKIT_EXEC_PATH", WEBKIT_EXEC_PATH, FALSE);
+
     WKContextRef processContext = createWKContextWithInjectedBundle();
 
     if (uriArguments) {

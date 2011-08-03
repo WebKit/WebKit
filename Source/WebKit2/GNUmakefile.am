@@ -844,6 +844,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPP
 	-I$(top_builddir)/DerivedSources/WebKit2/include/JavaScriptCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebCore \
 	-I$(top_builddir)/DerivedSources/WebKit2/include/WebKit2 \
+	-DLIBEXECDIR=\""$(libexecdir)"\" \
 	$(webcore_cppflags) \
 	$(webcoregtk_cppflags) \
 	$(javascriptcore_cppflags) \
@@ -960,7 +961,7 @@ DISTCLEANFILES += \
 	$(top_builddir)/WebKit2/webkit2gtk-@WEBKITGTK_API_VERSION@.pc
 
 # WebKitWebProcess
-bin_PROGRAMS += \
+libexec_PROGRAMS += \
 	Programs/WebKitWebProcess
 
 Programs_WebKitWebProcess_CPPFLAGS = \
@@ -1037,7 +1038,7 @@ libWebCoreGtk2_la_CPPFLAGS = \
 	$(XT_CFLAGS) \
 	$(ZLIB_LIBS)
 
-bin_PROGRAMS += \
+libexec_PROGRAMS += \
 	Programs/WebKitPluginProcess
 
 Programs_WebKitPluginProcess_CPPFLAGS = \

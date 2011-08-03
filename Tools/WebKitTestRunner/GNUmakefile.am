@@ -24,6 +24,7 @@ Programs_WebKitTestRunner_CPPFLAGS = \
 	-include Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h \
 	-I$(srcdir)/Tools/WebKitTestRunner \
 	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	-DWEBKIT_EXEC_PATH=\"${shell pwd}/$(top_builddir)/Programs/\" \
 	$(global_cppflags) \
 	$(javascriptcore_cppflags) \
 	$(GLOBALDEPS_CFLAGS) \
