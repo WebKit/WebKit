@@ -1,3 +1,21 @@
+2011-08-04  Luke Macpherson   <macpherson@chromium.org>
+
+        Support cast between CSSPrimitiveValue and EborderFit, use in CSSStyleSelector.
+        https://bugs.webkit.org/show_bug.cgi?id=65665
+
+        Reviewed by Simon Fraser.
+
+        No new tests / refactoring only.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        Support cast from EBorderFit.
+        (WebCore::CSSPrimitiveValue::operator EBorderFit):
+        Support cast to EBorderFit.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use new cast to allow use of appropriate macro.
+
 2011-08-04  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: rename sendResultByValue to returnByValue in Runtime agent.

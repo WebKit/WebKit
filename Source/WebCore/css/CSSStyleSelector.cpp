@@ -4787,14 +4787,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_fontDirty = true;
         return;
     }
-    case CSSPropertyWebkitBorderFit: {
-        HANDLE_INHERIT_AND_INITIAL(borderFit, BorderFit);
-        if (primitiveValue->getIdent() == CSSValueBorder)
-            m_style->setBorderFit(BorderFitBorder);
-        else
-            m_style->setBorderFit(BorderFitLines);
+    case CSSPropertyWebkitBorderFit:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(borderFit, BorderFit);
         return;
-    }
     case CSSPropertyWebkitTextSizeAdjust: {
         HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
         if (!primitiveValue || !primitiveValue->getIdent()) return;

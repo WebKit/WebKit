@@ -3030,6 +3030,33 @@ template<> inline CSSPrimitiveValue::operator EBorderCollapse() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderFit e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case BorderFitBorder:
+        m_value.ident = CSSValueBorder;
+        break;
+    case BorderFitLines:
+        m_value.ident = CSSValueLines;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EBorderFit() const
+{
+    switch (m_value.ident) {
+    case CSSValueBorder:
+        return BorderFitBorder;
+    case CSSValueLines:
+        return BorderFitLines;
+    default:
+        ASSERT_NOT_REACHED();
+        return BorderFitLines;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EImageRendering e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
