@@ -1,5 +1,11 @@
 2011-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Revert an erroneous rebaseline from r92315.
+
+        * fast/dom/navigator-detached-no-crash-expected.txt:
+
+2011-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium Windows and Linux rebaselines after r92330.
 
         * platform/chromium-win/editing/pasteboard/paste-pre-001-expected.txt: Removed.
