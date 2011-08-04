@@ -87,6 +87,10 @@ public:
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    virtual String extraFullScreenStyleSheet();
+#endif
+
 #ifdef GTK_API_VERSION_2
     GtkWidget* gtkContainer() const;
     GtkWidget* gtkEntry() const;

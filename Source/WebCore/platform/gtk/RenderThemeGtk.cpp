@@ -478,6 +478,13 @@ String RenderThemeGtk::extraMediaControlsStyleSheet()
     return String(mediaControlsGtkUserAgentStyleSheet, sizeof(mediaControlsGtkUserAgentStyleSheet));
 }
 
+#if ENABLE(FULLSCREEN_API)
+String RenderThemeGtk::extraFullScreenStyleSheet()
+{
+    return String(fullscreenQuickTimeUserAgentStyleSheet, sizeof(fullscreenQuickTimeUserAgentStyleSheet));
+}
+#endif
+
 void RenderThemeGtk::adjustMediaSliderThumbSize(RenderStyle* style) const
 {
     ASSERT(style->appearance() == MediaSliderThumbPart);

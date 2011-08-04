@@ -1,3 +1,18 @@
+2011-08-03  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] fullscreen/video-controls-override.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=65618
+
+        Reviewed by Martin Robinson.
+
+        Implement extraFullScreenStyleSheet() and provide the QuickTime
+        stylesheet for now, later we might want our own stylesheet.
+
+        * GNUmakefile.am:
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::extraFullScreenStyleSheet):
+        * platform/gtk/RenderThemeGtk.h:
+
 2011-08-04  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: Rename sourceId -> scriptId in the protocol and the source code.
