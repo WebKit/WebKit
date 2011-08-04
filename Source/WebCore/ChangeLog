@@ -1,3 +1,19 @@
+2011-08-03  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium Mac: Make ScrollbarOverlayUtilitiesChromiumMac.h c++ compatible
+        https://bugs.webkit.org/show_bug.cgi?id=65659
+
+        Reviewed by James Robinson.
+
+        ScrollbarOverlayUtilitiesChromiumMac.h couldn't be included from pure c++ code because it used NSInteger. I fixed this by checking for __OBJC__ before using NSInteger.
+
+        Currently no pure c++ files are including ScrollbarOverlayUtilitiesChromiumMac.h but this will change in future patches from jam@chromium.org.
+
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.h:
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm:
+        (wkScrollbarPainterControllerStyle):
+        (wkSetScrollbarPainterControllerStyle):
+
 2011-08-03  Luke Macpherson   <macpherson@chromium.org>
 
         Support cast between CSSPrimitiveValue and EBoxSizing, use in CSSStyleSelector.

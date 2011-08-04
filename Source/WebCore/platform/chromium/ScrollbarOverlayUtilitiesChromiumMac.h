@@ -35,8 +35,13 @@ enum {
     NSScrollerStyleLegacy       = 0,
     NSScrollerStyleOverlay      = 1
 };
+
+#ifdef __OBJC__
 typedef NSInteger NSScrollerStyle;
 #endif
+#endif
+
+typedef uint32 wkScrollerStyle;
 
 #ifdef __OBJC__
 @class NSScrollerImp;
@@ -93,11 +98,11 @@ void wkContentAreaDidHide(WKScrollbarPainterControllerRef);
 void wkDidBeginScrollGesture(WKScrollbarPainterControllerRef);
 void wkDidEndScrollGesture(WKScrollbarPainterControllerRef);
 void wkScrollbarPainterForceFlashScrollers(WKScrollbarPainterControllerRef);
-void wkSetScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef, int newStyle);
+void wkSetScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef, wkScrollerStyle newStyle);
 void wkSetPainterForPainterController(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
 WKScrollbarPainterRef wkVerticalScrollbarPainterForController(WKScrollbarPainterControllerRef);
 WKScrollbarPainterRef wkHorizontalScrollbarPainterForController(WKScrollbarPainterControllerRef);
-NSScrollerStyle wkScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef);
+wkScrollerStyle wkScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef);
 
 #endif // USE(WK_SCROLLBAR_PAINTER)
 

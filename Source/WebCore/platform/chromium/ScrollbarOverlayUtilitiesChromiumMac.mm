@@ -218,7 +218,7 @@ WKScrollbarPainterRef wkHorizontalScrollbarPainterForController(WKScrollbarPaint
     return [controller horizontalScrollerImp];
 }
 
-NSScrollerStyle wkScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef controller)
+wkScrollerStyle wkScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef controller)
 {
     return [controller scrollerStyle];
 }
@@ -241,7 +241,7 @@ void wkSetPainterForPainterController(WKScrollbarPainterControllerRef controller
         [controller setVerticalScrollerImp:painter];
 }
 
-void wkSetScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef painter, int newStyle)
+void wkSetScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef painter, wkScrollerStyle newStyle)
 {
     [painter setScrollerStyle:newStyle];
 }
