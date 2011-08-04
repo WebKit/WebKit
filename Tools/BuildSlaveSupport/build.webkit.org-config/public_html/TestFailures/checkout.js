@@ -37,25 +37,19 @@ checkout.optimizeBaselines = function(testName, callback)
     });
 };
 
-checkout.rebaseline = function(builderName, testName, failureTypeList, callback)
-{
-    var extensionList = Array.prototype.concat.apply([], failureTypeList.map(results.failureTypeToExtensionList));
-
-    base.callInSequence(function(extension, callback) {
-        $.post('/rebaseline?' + $.param({
-            'builder': builderName,
-            'test': testName,
-            'extension': extension
-        }), function() {
-            callback();
-        });
-    }, extensionList, callback);
-};
-
-checkout.rebaselineAll = function(rebaselineTasks, callback)
+checkout.rebaseline = function(rebaselineTasks, callback)
 {
     base.callInSequence(function(task, callback) {
-        checkout.rebaseline(task.builderName, task.testName, task.failureTypeList, callback);
+        var extensionList = Array.prototype.concat.apply([], task.failureTypeList.map(results.failureTypeToExtensionList));
+        base.callInSequence(function(extension, callback) {
+            $.post('/rebaseline?' + $.param({
+                'builder': task.builderName,
+                'test': task.testName,
+                'extension': extension
+            }), function() {
+                callback();
+            });
+        }, extensionList, callback);
     }, rebaselineTasks, function() {
         var testNameList = base.uniquifyArray(rebaselineTasks.map(function(task) { return task.testName; }));
         base.callInSequence(checkout.optimizeBaselines, testNameList, callback);

@@ -59,6 +59,16 @@ function toggleButton(button, isEnabled)
         button.attr('disabled', true)
 }
 
+function rebaseline(rebaselineTasks)
+{
+    displayOnButterbar('Rebaselining...');
+    checkout.rebaseline(rebaselineTasks, function() {
+        dismissButterbar();
+        // FIXME: We should use something like a lightbox rather than alert!
+        alert('New results downloaded to your working copy. Please use "webkit-patch land-cowboy" to land the updated baselines.');
+    });
+}
+
 function showResultsDetail(testName, builderName, failureTypeList)
 {
     var failureTypes = failureTypeList.join(' ');
@@ -97,6 +107,15 @@ function showResultsDetail(testName, builderName, failureTypeList)
     });
 }
 
+function executeQueuedRebaselines()
+{
+    var rebaselineQueue = model.takeRebaselineQueue();
+    if (!rebaselineQueue.length)
+        return;
+    // FIXME: Should we confirm with the use before executing the queue?
+    rebaseline(rebaselineQueue);
+}
+
 function hideResultsDetail()
 {
     $('.results-detail').fadeOut('fast', function() {
@@ -106,11 +125,15 @@ function hideResultsDetail()
         // but doing so helps the garbage collector free memory.
         g_resultsDetailsIterator = null;
     });
+    executeQueuedRebaselines();
 }
 
 function nextResultsDetail()
 {
-    g_resultsDetailsIterator.callNext();
+    if (g_resultsDetailsIterator.hasNext())
+        g_resultsDetailsIterator.callNext();
+    else
+        hideResultsDetail();
 }
 
 function previousResultsDetail()
@@ -118,7 +141,7 @@ function previousResultsDetail()
     g_resultsDetailsIterator.callPrevious();
 }
 
-function rebaselineResults()
+function addToRebaselineQueue()
 {
     var failureDetails = $('.failure-details', $(this).parents('.results-detail'));
 
@@ -127,8 +150,8 @@ function rebaselineResults()
     var failureTypes = failureDetails.attr(config.kFailureTypesAttr);
     var failureTypeList = failureTypes.split(' ');
 
-    displayOnButterbar('Rebaselining...');
-    checkout.rebaseline(builderName, testName, failureTypeList, dismissButterbar);
+    model.queueForRebaseline(builderName, testName, failureTypeList);
+    nextResultsDetail();
 }
 
 function selectedFailures()
@@ -159,8 +182,7 @@ function selectedFailures()
 
 function rebaselineSelected()
 {
-    displayOnButterbar('Rebaselining...');
-    checkout.rebaselineAll(selectedFailures(), dismissButterbar);
+    rebaseline(selectedFailures());
 }
 
 function showSelectedFailures()
@@ -247,7 +269,7 @@ $('.refresh').live('click', update);
 
 $('.results-detail .actions .next').live('click', nextResultsDetail);
 $('.results-detail .actions .previous').live('click', previousResultsDetail);
-$('.results-detail .actions .rebaseline').live('click', rebaselineResults);
+$('.results-detail .actions .rebaseline').live('click', addToRebaselineQueue);
 $('.results-detail .actions .dismiss').live('click', hideResultsDetail);
 
 $(document).ready(function() {

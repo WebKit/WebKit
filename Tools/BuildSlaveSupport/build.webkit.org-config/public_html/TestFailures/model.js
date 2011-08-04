@@ -6,6 +6,7 @@ var kCommitLogLength = 50;
 
 model.state = {};
 model.state.failureAnalysisByTest = {};
+model.state.rebaselineQueue = []
 
 function findAndMarkRevertedRevisions(commitDataList)
 {
@@ -19,6 +20,22 @@ function findAndMarkRevertedRevisions(commitDataList)
             commitData.wasReverted = true;
     });
 }
+
+model.queueForRebaseline = function(builderName, testName, failureTypeList)
+{
+    model.state.rebaselineQueue.push({
+        'builderName': builderName,
+        'testName': testName,
+        'failureTypeList': failureTypeList,
+    });
+};
+
+model.takeRebaselineQueue = function()
+{
+    var queue = model.state.rebaselineQueue;
+    model.state.rebaselineQueue = [];
+    return queue;
+};
 
 model.updateRecentCommits = function(callback)
 {
@@ -40,6 +57,7 @@ model.updateResultsByBuilder = function(callback)
 model.analyzeUnexpectedFailures = function(callback)
 {
     var unexpectedFailures = results.unexpectedFailuresByTest(model.state.resultsByBuilder);
+    console.log(unexpectedFailures);
 
     $.each(model.state.failureAnalysisByTest, function(testName, failureAnalysis) {
         if (!(testName in unexpectedFailures))
