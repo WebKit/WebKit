@@ -114,6 +114,11 @@ CFURLCredentialRef createCF(const Credential& coreCredential)
         ASSERT_NOT_REACHED();
     }
     
+#if CERTIFICATE_CREDENTIALS_SUPPORTED
+    if (coreCredential.type() == CredentialTypeClientCertificate)
+        return CFURLCredentialCreateWithIdentityAndCertificateArray(kCFAllocatorDefault, coreCredential.identity(), coreCredential.certificates(), persistence);
+#endif
+
     CFStringRef user = coreCredential.user().createCFString();
     CFStringRef password = coreCredential.password().createCFString();
     CFURLCredentialRef result = CFURLCredentialCreate(0, user, password, 0, persistence);
@@ -214,8 +219,15 @@ Credential core(CFURLCredentialRef cfCredential)
     default:
         ASSERT_NOT_REACHED();
     }
-    
-    return Credential(CFURLCredentialGetUsername(cfCredential), CFURLCredentialCopyPassword(cfCredential), persistence);
+
+#if CERTIFICATE_CREDENTIALS_SUPPORTED
+    SecIdentityRef identity = CFURLCredentialGetCertificateIdentity(cfCredential);
+    if (identity)
+        return Credential(identity, CFURLCredentialGetCertificateArray(cfCredential), persistence);
+#endif
+
+    RetainPtr<CFStringRef> password(AdoptCF, CFURLCredentialCopyPassword(cfCredential));
+    return Credential(CFURLCredentialGetUsername(cfCredential), password.get(), persistence);
 }
 
 ProtectionSpace core(CFURLProtectionSpaceRef cfSpace)
