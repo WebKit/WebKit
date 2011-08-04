@@ -1,5 +1,15 @@
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
+        Update baselines after <http://trac.webkit.org/changeset/92340>.
+
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png:
+
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
         This test triggers a crasher on some ports.  The crasher is filed already.
 
         * platform/qt/Skipped:
