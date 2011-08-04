@@ -1,3 +1,14 @@
+2011-08-04  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Speed up webkit-patch optimize-expectations significantly by not collecting test files.
+        https://bugs.webkit.org/show_bug.cgi?id=65697
+
+        I neglected to realize that collecting test names is not necessary for this operation.
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/tool/commands/expectations.py: Changed to pass an empty list of test files.
+
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
         checkout_unittest.js should have better coverage of checkout.js
