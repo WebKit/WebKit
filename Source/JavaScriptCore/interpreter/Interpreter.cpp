@@ -437,21 +437,26 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
         return JSValue();
     
     CodeBlock* codeBlock = callFrame->codeBlock();
-    if (!codeBlock->isStrictMode()) {
-        // FIXME: We can use the preparser in strict mode, we just need additional logic
-        // to prevent duplicates.
-        LiteralParser preparser(callFrame, programSource.characters(), programSource.length(), LiteralParser::NonStrictJSON);
-        if (JSValue parsedObject = preparser.tryLiteralParse())
-            return parsedObject;
-    }
-
+    
     ScopeChainNode* scopeChain = callFrame->scopeChain();
-    JSValue exceptionValue;
-    EvalExecutable* eval = codeBlock->evalCodeCache().get(callFrame, codeBlock->ownerExecutable(), codeBlock->isStrictMode(), programSource, scopeChain, exceptionValue);
+    EvalExecutable* eval = codeBlock->evalCodeCache().tryGet(codeBlock->isStrictMode(), programSource, scopeChain);
 
-    ASSERT(!eval == exceptionValue);
-    if (UNLIKELY(!eval))
-        return throwError(callFrame, exceptionValue);
+    if (!eval) {
+        if (!codeBlock->isStrictMode()) {
+            // FIXME: We can use the preparser in strict mode, we just need additional logic
+            // to prevent duplicates.
+            LiteralParser preparser(callFrame, programSource.characters(), programSource.length(), LiteralParser::NonStrictJSON);
+            if (JSValue parsedObject = preparser.tryLiteralParse())
+                return parsedObject;
+        }
+
+        JSValue exceptionValue;
+        eval = codeBlock->evalCodeCache().getSlow(callFrame, codeBlock->ownerExecutable(), codeBlock->isStrictMode(), programSource, scopeChain, exceptionValue);
+        
+        ASSERT(!eval == exceptionValue);
+        if (UNLIKELY(!eval))
+            return throwError(callFrame, exceptionValue);
+    }
 
     JSValue thisValue = callFrame->uncheckedR(codeBlock->thisRegister()).jsValue();
     ASSERT(isValidThisObject(thisValue, callFrame));

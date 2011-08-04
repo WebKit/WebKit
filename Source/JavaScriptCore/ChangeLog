@@ -1,3 +1,21 @@
+2011-08-04  Filip Pizlo  <fpizlo@apple.com>
+
+        Eval handling attempts literal parsing even when the eval
+        string is in the cache
+        https://bugs.webkit.org/show_bug.cgi?id=65675
+
+        Reviewed by Oliver Hunt.
+        
+        This is a 25% speed-up on date-format-tofte and a 1.5% speed-up overall
+        in SunSpider.  It's neutral on V8.
+
+        * bytecode/EvalCodeCache.h:
+        (JSC::EvalCodeCache::tryGet):
+        (JSC::EvalCodeCache::getSlow):
+        (JSC::EvalCodeCache::get):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+
 2011-08-03  Mark Rowe  <mrowe@apple.com>
 
         Bring some order to FeatureDefines.xcconfig to make it easier to follow.
