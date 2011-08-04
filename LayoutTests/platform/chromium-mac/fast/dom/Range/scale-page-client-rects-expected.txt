@@ -1,2 +1,1 @@
-CONSOLE MESSAGE: line 15: Uncaught TypeError: Object [object Object] has no method 'scalePageBy'
-This test must be run via DumpRenderTree.
+Pass

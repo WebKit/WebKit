@@ -1,5 +1,12 @@
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
+        Test progression after <http://trac.webkit.org/changeset/92341>.
+
+        * platform/chromium-mac/fast/dom/Element/scale-page-client-rects-expected.txt:
+        * platform/chromium-mac/fast/dom/Range/scale-page-client-rects-expected.txt:
+
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
         Update baselines after <http://trac.webkit.org/changeset/92340>.
 
         * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:
