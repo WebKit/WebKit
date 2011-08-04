@@ -47,6 +47,7 @@ public:
     virtual void timeChanged(double);
     virtual void seekCompleted(bool);
     virtual void didEnd();
+    virtual void contentsNeedsDisplay() { }
 
     class Notification {
     public:
@@ -67,6 +68,7 @@ public:
             PlayerTimeChanged,
             SeekCompleted,
             DurationChanged,
+            ContentsNeedsDisplay,
         };
         
         Notification()
@@ -238,6 +240,7 @@ protected:
     void invalidateCachedDuration();
 
     const String& assetURL() const { return m_assetURL; }
+
 private:
     MediaPlayer* m_player;
 
@@ -275,7 +278,8 @@ private:
     bool m_playWhenFramesAvailable;
 };
 
-}
+} // namespace WebCore
 
-#endif
-#endif
+#endif // ENABLE(VIDEO) && USE(AVFOUNDATION)
+
+#endif // MediaPlayerPrivateAVFoundation_h

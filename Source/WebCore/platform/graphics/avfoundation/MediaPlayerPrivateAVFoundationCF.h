@@ -26,4 +26,84 @@
 #ifndef MediaPlayerPrivateAVFoundationCF_h
 #define MediaPlayerPrivateAVFoundationCF_h
 
+#if PLATFORM(WIN) && ENABLE(VIDEO) && USE(AVFOUNDATION)
+
+#include "MediaPlayerPrivateAVFoundation.h"
+
+namespace WebCore {
+
+class AVFWrapper;
+
+class MediaPlayerPrivateAVFoundationCF : public MediaPlayerPrivateAVFoundation {
+public:
+    virtual ~MediaPlayerPrivateAVFoundationCF();
+
+    static void registerMediaEngine(MediaEngineRegistrar);
+
+private:
+    MediaPlayerPrivateAVFoundationCF(MediaPlayer*);
+
+    // Engine support
+    static PassOwnPtr<MediaPlayerPrivateInterface> create(MediaPlayer*);
+    static void getSupportedTypes(HashSet<String>& types);
+    static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs);
+    static bool isAvailable();
+
+    virtual void cancelLoad();
+
+    virtual PlatformMedia platformMedia() const;
+
+    virtual void platformSetVisible(bool);
+    virtual void platformPlay();
+    virtual void platformPause();
+    virtual float currentTime() const;
+    virtual void setVolume(float);
+    virtual void setClosedCaptionsVisible(bool);
+    virtual void paint(GraphicsContext*, const IntRect&);
+    virtual void paintCurrentFrameInContext(GraphicsContext*, const IntRect&);
+    virtual PlatformLayer* platformLayer() const;
+    virtual bool supportsAcceleratedRendering() const { return true; }
+    virtual float mediaTimeForTimeValue(float) const;
+
+    virtual void createAVPlayer();
+    virtual void createAVPlayerItem();
+    virtual void createAVAssetForURL(const String& url);
+    virtual MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const;
+    virtual MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const;
+
+    virtual void checkPlayability();
+    virtual void updateRate();
+    virtual float rate() const;
+    virtual void seekToTime(float time);
+    virtual unsigned totalBytes() const;
+    virtual PassRefPtr<TimeRanges> platformBufferedTimeRanges() const;
+    virtual float platformMaxTimeSeekable() const;
+    virtual float platformDuration() const;
+    virtual float platformMaxTimeLoaded() const;
+    virtual void beginLoadingMetadata();
+    virtual void tracksChanged();
+    virtual void sizeChanged();
+
+    virtual bool hasAvailableVideoFrame() const;
+
+    virtual void createContextVideoRenderer();
+    virtual void destroyContextVideoRenderer();
+
+    virtual void createVideoLayer();
+    virtual void destroyVideoLayer();
+
+    virtual bool hasContextRenderer() const;
+    virtual bool hasLayerRenderer() const;
+
+    virtual void contentsNeedsDisplay();
+
+    friend class AVFWrapper;
+    AVFWrapper* m_avfWrapper;
+    
+    bool m_videoFrameHasDrawn;
+};
+
+}
+
+#endif // PLATFORM(WIN) && ENABLE(VIDEO) && USE(AVFOUNDATION)
 #endif // MediaPlayerPrivateAVFoundationCF_h

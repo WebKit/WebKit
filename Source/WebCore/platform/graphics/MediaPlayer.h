@@ -52,6 +52,7 @@
 class AVPlayer;
 class QTMovie;
 #endif
+class AVCFPlayer;
 class QTMovieGWorld;
 class QTMovieVisualContext;
 
@@ -74,6 +75,7 @@ struct PlatformMedia {
         ChromiumMediaPlayerType,
         QtMediaPlayerType,
         AVFoundationMediaPlayerType,
+        AVFoundationCFMediaPlayerType
     } type;
 
     union {
@@ -84,6 +86,7 @@ struct PlatformMedia {
         MediaPlayerPrivateInterface* chromiumMediaPlayer;
         MediaPlayerPrivateInterface* qtMediaPlayer;
         AVPlayer* avfMediaPlayer;
+        AVCFPlayer* avcfMediaPlayer;
     } media;
 };
 

@@ -226,6 +226,5 @@ typedef float CGFloat;
 #endif
 
 #if PLATFORM(WIN) && HAVE(AVCF)
-/// FIXME: Adopt AVCF media back end on Windows http://webkit.org/b/65400
-#define WTF_USE_AVFOUNDATION 0
+#define WTF_USE_AVFOUNDATION 1
 #endif

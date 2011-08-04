@@ -1,3 +1,137 @@
+2011-08-04  Jeff Miller  <jeffm@apple.com>
+
+        Adopt AVCF media back end on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=65400
+        <rdar://problem/9894105>
+        
+        First cut at implementation in MediaPlayerPrivateAVFoundationCF.cpp/.h, based on
+        work by Eric Carlson. Note that use of AVFoundation is determined at runtime, and
+        defaults to off.
+
+        Reviewed by Darin Adler.
+
+        No new tests, uses existing media tests.
+
+        * config.h: Turn on WTF_USE_AVFOUNDATION on Windows if AVFoundationCF is available.
+        
+        * platform/graphics/MediaPlayer.cpp:
+        (WebCore::installedMediaEngines): Register MediaPlayerPrivateAVFoundationCF on Windows.
+        * platform/graphics/MediaPlayer.h: Add support for an AVCFPlayer.
+        
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::setPreload): Workaround an AVCF limitation that prevents an AVCFPlayer from being created without an AVCFItem.
+        (WebCore::MediaPlayerPrivateAVFoundation::dispatchNotification): Added support for ContentsNeedsDisplay notification.
+        
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::contentsNeedsDisplay): Added support for ContentsNeedsDisplay notification.
+        
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.cpp: Added implementation.
+        (WebCore::AVFWrapper::caVideoLayer):
+        (WebCore::AVFWrapper::videoLayerWrapper):
+        (WebCore::AVFWrapper::videoLayer):
+        (WebCore::AVFWrapper::avPlayer):
+        (WebCore::AVFWrapper::avAsset):
+        (WebCore::AVFWrapper::avPlayerItem):
+        (WebCore::AVFWrapper::timeObserver):
+        (WebCore::AVFWrapper::imageGenerator):
+        (WebCore::AVFWrapper::dispatchQueue):
+        (WebCore::LayerClient::LayerClient):
+        (WebCore::LayerClient::~LayerClient):
+        (WebCore::LayerClient::platformCALayerRespondsToLayoutChanges):
+        (WebCore::LayerClient::platformCALayerAnimationStarted):
+        (WebCore::LayerClient::platformCALayerContentsOrientation):
+        (WebCore::LayerClient::platformCALayerPaintContents):
+        (WebCore::LayerClient::platformCALayerShowDebugBorders):
+        (WebCore::LayerClient::platformCALayerShowRepaintCounter):
+        (WebCore::LayerClient::platformCALayerIncrementRepaintCount):
+        (WebCore::LayerClient::platformCALayerContentsOpaque):
+        (WebCore::LayerClient::platformCALayerDrawsContent):
+        (WebCore::LayerClient::platformCALayerLayerDidDisplay):
+        (WebCore::boolString):
+        (WebCore::metadataKeyNames):
+        (WebCore::CMTimeRangeStartKey):
+        (WebCore::CMTimeRangeDurationKey):
+        (WebCore::CACFContextNeedsFlushNotification):
+        (WebCore::videoLayer):
+        (WebCore::avPlayer):
+        (WebCore::avAsset):
+        (WebCore::avPlayerItem):
+        (WebCore::imageGenerator):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::create):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::registerMediaEngine):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::MediaPlayerPrivateAVFoundationCF):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::~MediaPlayerPrivateAVFoundationCF):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::cancelLoad):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::hasLayerRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::hasContextRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createContextVideoRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::destroyContextVideoRenderer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::destroyVideoLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::hasAvailableVideoFrame):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createAVPlayer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createAVPlayerItem):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::createAVAssetForURL):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::checkPlayability):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::beginLoadingMetadata):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::playerItemStatus):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformMedia):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformLayer):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformSetVisible):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformPlay):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformPause):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::updateRate):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformDuration):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::currentTime):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::seekToTime):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::setVolume):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::setClosedCaptionsVisible):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::rate):
+        (WebCore::timeRangeIsValidAndNotEmpty):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformBufferedTimeRanges):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeSeekable):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::platformMaxTimeLoaded):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::totalBytes):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::assetStatus):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::paintCurrentFrameInContext):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::paint):
+        (WebCore::mimeTypeCache):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::getSupportedTypes):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::supportsType):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::isAvailable):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::mediaTimeForTimeValue):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::tracksChanged):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::sizeChanged):
+        (WebCore::MediaPlayerPrivateAVFoundationCF::contentsNeedsDisplay):
+        (WebCore::AVFWrapper::AVFWrapper):
+        (WebCore::AVFWrapper::~AVFWrapper):
+        (WebCore::AVFWrapper::scheduleDisconnectAndDelete):
+        (WebCore::AVFWrapper::disconnectAndDeleteAVFWrapper):
+        (WebCore::AVFWrapper::deleteAVFWrapper):
+        (WebCore::AVFWrapper::createAssetForURL):
+        (WebCore::AVFWrapper::createPlayer):
+        (WebCore::AVFWrapper::createPlayerItem):
+        (WebCore::AVFWrapper::periodicTimeObserverCallback):
+        (WebCore::AVFWrapper::notificationCallback):
+        (WebCore::AVFWrapper::loadPlayableCompletionCallback):
+        (WebCore::AVFWrapper::checkPlayability):
+        (WebCore::AVFWrapper::loadMetadataCompletionCallback):
+        (WebCore::AVFWrapper::beginLoadingMetadata):
+        (WebCore::AVFWrapper::seekCompletedCallback):
+        (WebCore::AVFWrapper::seekToTime):
+        (WebCore::AVFWrapper::setAsset):
+        (WebCore::AVFWrapper::platformLayer):
+        (WebCore::AVFWrapper::createAVCFVideoLayer):
+        (WebCore::AVFWrapper::destroyVideoLayer):
+        (WebCore::AVFWrapper::setVideoLayerNeedsCommit):
+        (WebCore::AVFWrapper::setVideoLayerHidden):
+        (WebCore::AVFWrapper::createImageGenerator):
+        (WebCore::AVFWrapper::destroyImageGenerator):
+        (WebCore::AVFWrapper::createImageForTimeInRect):
+        (WebCore::LayerClient::platformCALayerLayoutSublayersOfLayer):
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.h: Added implementation.
+
 2011-08-04  Jochen Eisinger  <jochen@chromium.org>
 
         Get rid of ResourceRequestBase::m_targetType. Move it to chromium's ResourceRequest.
