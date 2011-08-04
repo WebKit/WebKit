@@ -3667,7 +3667,7 @@ BUGWK65124 WIN : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT
 BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
-BUGWK65219 WIN : webaudio/gain.html = PASS CRASH
+BUGWK65219 WIN LINUX : webaudio/gain.html = PASS CRASH
 BUGWK65219 WIN : webaudio/audionode.html = PASS CRASH
 
 // Needs new baseline for slight pixel value changes due to changes in

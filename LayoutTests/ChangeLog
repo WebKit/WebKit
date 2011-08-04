@@ -1,3 +1,9 @@
+2011-08-04  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, mark gain.html as flaky on Linux chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-04  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip 2 crashing tests on GTK. See bug 65699 and 65702.
