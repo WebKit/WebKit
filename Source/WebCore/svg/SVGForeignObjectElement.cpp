@@ -86,26 +86,40 @@ bool SVGForeignObjectElement::isSupportedAttribute(const QualifiedName& attrName
 
 void SVGForeignObjectElement::parseMappedAttribute(Attribute* attr)
 {
-    SVGParsingError parseError = NoError;
-    const AtomicString& value = attr->value();
-
-    if (!isSupportedAttribute(attr->name()))
+    if (!isSupportedAttribute(attr->name())) {
         SVGStyledTransformableElement::parseMappedAttribute(attr);
-    else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
-    else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (attr->name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
-    else if (attr->name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (SVGTests::parseMappedAttribute(attr)
-               || SVGLangSpace::parseMappedAttribute(attr)
-               || SVGExternalResourcesRequired::parseMappedAttribute(attr)) {
-    } else
-        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    reportAttributeParsingError(parseError, attr);
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::xAttr) {
+        setXBaseValue(SVGLength(LengthModeWidth, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::yAttr) {
+        setYBaseValue(SVGLength(LengthModeHeight, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::widthAttr) {
+        setWidthBaseValue(SVGLength(LengthModeWidth, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::heightAttr) {
+        setHeightBaseValue(SVGLength(LengthModeHeight, value));
+        return;
+    }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)

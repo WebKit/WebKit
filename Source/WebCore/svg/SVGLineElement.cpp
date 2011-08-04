@@ -83,25 +83,39 @@ bool SVGLineElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGLineElement::parseMappedAttribute(Attribute* attr)
 {
-    SVGParsingError parseError = NoError;
-
-    if (!isSupportedAttribute(attr->name()))
+    if (!isSupportedAttribute(attr->name())) {
         SVGStyledTransformableElement::parseMappedAttribute(attr);
-    else if (attr->name() == SVGNames::x1Attr)
-        setX1BaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::y1Attr)
-        setY1BaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (attr->name() == SVGNames::x2Attr)
-        setX2BaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::y2Attr)
-        setY2BaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (SVGTests::parseMappedAttribute(attr)
-             || SVGLangSpace::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)) {
-    } else
-        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    reportAttributeParsingError(parseError, attr);
+    if (attr->name() == SVGNames::x1Attr) {
+        setX1BaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::y1Attr) {
+        setY1BaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::x2Attr) {
+        setX2BaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::y2Attr) {
+        setY2BaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGLineElement::svgAttributeChanged(const QualifiedName& attrName)

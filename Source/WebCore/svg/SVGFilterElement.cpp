@@ -122,40 +122,63 @@ bool SVGFilterElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGFilterElement::parseMappedAttribute(Attribute* attr)
 {
-    SVGParsingError parseError = NoError;
-    const AtomicString& value = attr->value();
-
-    if (!isSupportedAttribute(attr->name()))
+    if (!isSupportedAttribute(attr->name())) {
         SVGStyledElement::parseMappedAttribute(attr);
-    else if (attr->name() == SVGNames::filterUnitsAttr) {
+        return;
+    }
+
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::filterUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             setFilterUnitsBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::primitiveUnitsAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::primitiveUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
         if (propertyValue > 0)
             setPrimitiveUnitsBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
-    else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (attr->name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
-    else if (attr->name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
-    else if (attr->name() == SVGNames::filterResAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::xAttr) {
+        setXBaseValue(SVGLength(LengthModeWidth, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::yAttr) {
+        setYBaseValue(SVGLength(LengthModeHeight, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::widthAttr) {
+        setWidthBaseValue(SVGLength(LengthModeWidth, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::heightAttr) {
+        setHeightBaseValue(SVGLength(LengthModeHeight, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::filterResAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setFilterResXBaseValue(x);
             setFilterResYBaseValue(y);
         }
-    } else if (SVGURIReference::parseMappedAttribute(attr)
-             || SVGLangSpace::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)) {
-    } else
-        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    reportAttributeParsingError(parseError, attr);
+    if (SVGURIReference::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFilterElement::svgAttributeChanged(const QualifiedName& attrName)

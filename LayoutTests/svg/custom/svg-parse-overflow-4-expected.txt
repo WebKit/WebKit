@@ -1,2 +1,1 @@
-CONSOLE MESSAGE: line 8: Error: Invalid value for <foreignObject> attribute y="105.0e50"
 

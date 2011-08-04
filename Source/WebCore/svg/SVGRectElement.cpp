@@ -90,29 +90,57 @@ bool SVGRectElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGRectElement::parseMappedAttribute(Attribute* attr)
 {
-    SVGParsingError parseError = NoError;
-
-    if (!isSupportedAttribute(attr->name()))
+    if (!isSupportedAttribute(attr->name())) {
         SVGStyledTransformableElement::parseMappedAttribute(attr);
-    else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (attr->name() == SVGNames::rxAttr)
-        setRxBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
-    else if (attr->name() == SVGNames::ryAttr)
-        setRyBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));
-    else if (attr->name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
-    else if (attr->name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));
-    else if (SVGTests::parseMappedAttribute(attr)
-             || SVGLangSpace::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)) {
-    } else
-        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    reportAttributeParsingError(parseError, attr);
+    if (attr->name() == SVGNames::xAttr) {
+        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::yAttr) {
+        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::rxAttr) {
+        setRxBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        if (rxBaseValue().value(this) < 0)
+            document()->accessSVGExtensions()->reportError("A negative value for rect <rx> is not allowed");
+        return;
+    }
+
+    if (attr->name() == SVGNames::ryAttr) {
+        setRyBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        if (ryBaseValue().value(this) < 0)
+            document()->accessSVGExtensions()->reportError("A negative value for rect <ry> is not allowed");
+        return;
+    }
+
+    if (attr->name() == SVGNames::widthAttr) {
+        setWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        if (widthBaseValue().value(this) < 0)
+            document()->accessSVGExtensions()->reportError("A negative value for rect <width> is not allowed");
+        return;
+    }
+
+    if (attr->name() == SVGNames::heightAttr) {
+        setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        if (heightBaseValue().value(this) < 0)
+            document()->accessSVGExtensions()->reportError("A negative value for rect <height> is not allowed");
+        return;
+    }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)

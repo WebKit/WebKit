@@ -89,24 +89,39 @@ bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrNam
 
 void SVGRadialGradientElement::parseMappedAttribute(Attribute* attr)
 {
-    SVGParsingError parseError = NoError;
-
-    if (!isSupportedAttribute(attr->name()))
+    if (!isSupportedAttribute(attr->name())) {
         SVGGradientElement::parseMappedAttribute(attr);
-    else if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (attr->name() == SVGNames::rAttr)
-        setRBaseValue(SVGLength::construct(LengthModeOther, attr->value(), parseError, ForbidNegativeLengths));
-    else if (attr->name() == SVGNames::fxAttr)
-        setFxBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::fyAttr)
-        setFyBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else
-        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    reportAttributeParsingError(parseError, attr);
+    if (attr->name() == SVGNames::cxAttr) {
+        setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::cyAttr) {
+        setCyBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::rAttr) {
+        setRBaseValue(SVGLength(LengthModeOther, attr->value()));
+        if (rBaseValue().value(this) < 0)
+            document()->accessSVGExtensions()->reportError("A negative value for radial gradient radius <r> is not allowed");
+        return;
+    }
+
+    if (attr->name() == SVGNames::fxAttr) {
+        setFxBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::fyAttr) {
+        setFyBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName)

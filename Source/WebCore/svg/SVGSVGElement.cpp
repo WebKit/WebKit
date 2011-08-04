@@ -267,8 +267,6 @@ void SVGSVGElement::updateCurrentTranslate()
 
 void SVGSVGElement::parseMappedAttribute(Attribute* attr)
 {
-    SVGParsingError parseError = NoError;
-
     if (!nearestViewportElement()) {
         bool setListener = true;
 
@@ -293,24 +291,33 @@ void SVGSVGElement::parseMappedAttribute(Attribute* attr)
     else if (attr->name() == HTMLNames::onerrorAttr)
         document()->setWindowAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(document()->frame(), attr));
     else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
+        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
     else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
+        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
     else if (attr->name() == SVGNames::widthAttr) {
-        setWidthBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
+        setWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
         addCSSProperty(attr, CSSPropertyWidth, attr->value());
+        if (widthBaseValue().value(this) < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for svg attribute <width> is not allowed");
     } else if (attr->name() == SVGNames::heightAttr) {
-        setHeightBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));
+        setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
         addCSSProperty(attr, CSSPropertyHeight, attr->value());
-    } else if (SVGTests::parseMappedAttribute(attr)
-               || SVGLangSpace::parseMappedAttribute(attr)
-               || SVGExternalResourcesRequired::parseMappedAttribute(attr)
-               || SVGFitToViewBox::parseMappedAttribute(document(), attr)
-               || SVGZoomAndPan::parseMappedAttribute(attr)) {
-    } else
-        SVGStyledLocatableElement::parseMappedAttribute(attr);
+        if (heightBaseValue().value(this) < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for svg attribute <height> is not allowed");
+    } else {
+        if (SVGTests::parseMappedAttribute(attr))
+            return;
+        if (SVGLangSpace::parseMappedAttribute(attr))
+            return;
+        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+            return;
+        if (SVGFitToViewBox::parseMappedAttribute(document(), attr))
+            return;
+        if (SVGZoomAndPan::parseMappedAttribute(attr))
+            return;
 
-    reportAttributeParsingError(parseError, attr);
+        SVGStyledLocatableElement::parseMappedAttribute(attr);
+    }
 }
 
 // This hack will not handle the case where we're setting a width/height

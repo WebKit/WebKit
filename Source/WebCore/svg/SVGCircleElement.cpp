@@ -24,12 +24,10 @@
 #include "SVGCircleElement.h"
 
 #include "Attribute.h"
-#include "ExceptionCode.h"
 #include "FloatPoint.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
 #include "SVGElementInstance.h"
-#include "SVGException.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 
@@ -81,23 +79,36 @@ bool SVGCircleElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGCircleElement::parseMappedAttribute(Attribute* attr)
 {
-    SVGParsingError parseError = NoError;
-
-    if (!isSupportedAttribute(attr->name()))
+    if (!isSupportedAttribute(attr->name())) {
         SVGStyledTransformableElement::parseMappedAttribute(attr);
-    else if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (attr->name() == SVGNames::rAttr)
-        setRBaseValue(SVGLength::construct(LengthModeOther, attr->value(), parseError, ForbidNegativeLengths));
-    else if (SVGTests::parseMappedAttribute(attr)
-             || SVGLangSpace::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)) {
-    } else
-        ASSERT_NOT_REACHED();
+        return;
+    }
 
-    reportAttributeParsingError(parseError, attr);
+    if (attr->name() == SVGNames::cxAttr) {
+        setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::cyAttr) {
+        setCyBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::rAttr) {
+        setRBaseValue(SVGLength(LengthModeOther, attr->value()));
+        if (rBaseValue().value(this) < 0.0)
+            document()->accessSVGExtensions()->reportError("A negative value for circle <r> is not allowed");
+        return;
+    }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGCircleElement::svgAttributeChanged(const QualifiedName& attrName)

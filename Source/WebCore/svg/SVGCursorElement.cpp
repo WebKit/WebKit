@@ -80,21 +80,29 @@ bool SVGCursorElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGCursorElement::parseMappedAttribute(Attribute* attr)
 {
-    SVGParsingError parseError = NoError;
-
-    if (!isSupportedAttribute(attr->name()))
+    if (!isSupportedAttribute(attr->name())) {
         SVGElement::parseMappedAttribute(attr);
-    else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
-    else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
-    else if (SVGTests::parseMappedAttribute(attr)
-             || SVGExternalResourcesRequired::parseMappedAttribute(attr)
-             || SVGURIReference::parseMappedAttribute(attr)) {
-    } else
-        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (attr->name() == SVGNames::xAttr) {
+        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::yAttr) {
+        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
     
-    reportAttributeParsingError(parseError, attr);
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+    if (SVGURIReference::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGCursorElement::addClient(SVGElement* element)

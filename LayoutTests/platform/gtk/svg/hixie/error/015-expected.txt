@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 6: Error: Invalid value for <rect> attribute width=" 300"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 300x200
