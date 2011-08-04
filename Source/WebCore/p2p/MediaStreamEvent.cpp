@@ -22,41 +22,57 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef StreamEvent_h
-#define StreamEvent_h
+#include "config.h"
+#include "MediaStreamEvent.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include "Event.h"
-#include <wtf/text/AtomicString.h>
+#include "EventNames.h"
+#include "MediaStream.h"
 
 namespace WebCore {
 
-class Stream;
+PassRefPtr<MediaStreamEvent> MediaStreamEvent::create()
+{
+    return adoptRef(new MediaStreamEvent);
+}
 
-class StreamEvent : public Event {
-public:
-    virtual ~StreamEvent();
+PassRefPtr<MediaStreamEvent> MediaStreamEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
+{
+    return adoptRef(new MediaStreamEvent(type, canBubble, cancelable, stream));
+}
 
-    static PassRefPtr<StreamEvent> create();
-    static PassRefPtr<StreamEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
 
-    void initStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
+MediaStreamEvent::MediaStreamEvent()
+{
+}
 
-    // From EventTarget.
-    virtual bool isMediaStreamEvent() const { return true; }
+MediaStreamEvent::MediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
+    : Event(type, canBubble, cancelable)
+    , m_stream(stream)
+{
+}
 
-    PassRefPtr<MediaStream> stream() const;
+MediaStreamEvent::~MediaStreamEvent()
+{
+}
 
-private:
-    StreamEvent();
-    StreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
+void MediaStreamEvent::initMediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
+{
+    if (dispatched())
+        return;
 
-    RefPtr<MediaStream> m_stream;
-};
+    initEvent(type, canBubble, cancelable);
+
+    m_stream = stream;
+}
+
+PassRefPtr<MediaStream> MediaStreamEvent::stream() const
+{
+    return m_stream;
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // StreamEvent_h

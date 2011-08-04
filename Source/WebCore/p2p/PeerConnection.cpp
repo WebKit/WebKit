@@ -32,11 +32,11 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "MediaStream.h"
+#include "MediaStreamEvent.h"
 #include "MediaStreamList.h"
 #include "MessageEvent.h"
 #include "ScriptExecutionContext.h"
 #include "SignalingCallback.h"
-#include "StreamEvent.h"
 
 namespace WebCore {
 
@@ -293,7 +293,7 @@ void PeerConnection::dispatchSignalingEvent(const String& message)
 void PeerConnection::dispatchStreamEvent(const String& name, PassRefPtr<MediaStream> stream)
 {
     RefPtr<MediaStream> s = stream;
-    dispatchEvent(StreamEvent::create(name, false, false, s));
+    dispatchEvent(MediaStreamEvent::create(name, false, false, s));
 }
 
 void PeerConnection::dispatchSimpleEvent(const String& eventName)

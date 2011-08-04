@@ -148,7 +148,7 @@ namespace WebCore {
         virtual bool isCloseEvent() const;
 #endif
 #if ENABLE(MEDIA_STREAM)
-        virtual bool isStreamEvent() const;
+        virtual bool isMediaStreamEvent() const;
 #endif
         bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }
         bool immediatePropagationStopped() const { return m_immediatePropagationStopped; }

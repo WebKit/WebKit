@@ -2011,7 +2011,7 @@ IF (ENABLE_MEDIA_STREAM)
         dom/MediaStreamList.cpp
         dom/MediaStreamTrack.cpp
         dom/MediaStreamTrackList.cpp
-        dom/StreamEvent.cpp
+        p2p/MediaStreamEvent.cpp
         p2p/PeerConnection.cpp
         page/MediaStreamController.cpp
         page/MediaStreamFrameController.cpp
@@ -2023,7 +2023,7 @@ IF (ENABLE_MEDIA_STREAM)
         dom/MediaStreamList.idl
         dom/MediaStreamTrack.idl
         dom/MediaStreamTrackList.idl
-        dom/StreamEvent.idl
+        p2p/MediaStreamEvent.idl
         p2p/PeerConnection.idl
         p2p/SignalingCallback.idl
         page/NavigatorUserMediaError.idl

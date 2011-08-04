@@ -111,8 +111,8 @@
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-#include "JSStreamEvent.h"
-#include "StreamEvent.h"
+#include "JSMediaStreamEvent.h"
+#include "MediaStreamEvent.h"
 #endif
 
 using namespace JSC;
@@ -214,8 +214,8 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CloseEvent, event);
 #endif
 #if ENABLE(MEDIA_STREAM)
-    else if (event->isStreamEvent())
-        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, StreamEvent, event);
+    else if (event->isMediaStreamEvent())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, MediaStreamEvent, event);
 #endif
     else
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Event, event);

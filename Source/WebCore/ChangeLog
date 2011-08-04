@@ -1,3 +1,39 @@
+2011-08-04  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Rename StreamEvent to MediaStreamEvent
+        https://bugs.webkit.org/show_bug.cgi?id=65669
+
+        Reviewed by Tony Gentilcore.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * dom/DOMAllInOne.cpp:
+        * dom/Event.cpp:
+        (WebCore::Event::isMediaStreamEvent):
+        * dom/Event.h:
+        * p2p/MediaStreamEvent.cpp: Renamed from Source/WebCore/dom/StreamEvent.cpp.
+        (WebCore::MediaStreamEvent::create):
+        (WebCore::MediaStreamEvent::MediaStreamEvent):
+        (WebCore::MediaStreamEvent::~MediaStreamEvent):
+        (WebCore::MediaStreamEvent::initMediaStreamEvent):
+        (WebCore::MediaStreamEvent::stream):
+        * p2p/MediaStreamEvent.h: Renamed from Source/WebCore/dom/StreamEvent.h.
+        (WebCore::MediaStreamEvent::isMediaStreamEvent):
+        * p2p/MediaStreamEvent.idl: Renamed from Source/WebCore/dom/StreamEvent.idl.
+        * p2p/PeerConnection.cpp:
+        (WebCore::PeerConnection::dispatchStreamEvent):
+
 2011-08-02  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Fix index data invalidation bugs.

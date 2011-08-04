@@ -251,7 +251,7 @@ bool Event::isCloseEvent() const
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-bool Event::isStreamEvent() const
+bool Event::isMediaStreamEvent() const
 {
     return false;
 }

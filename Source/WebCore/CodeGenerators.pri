@@ -164,7 +164,6 @@ IDL_BINDINGS += \
     dom/ProgressEvent.idl \
     dom/RangeException.idl \
     dom/Range.idl \
-    dom/StreamEvent.idl \
     dom/StringCallback.idl \
     dom/Text.idl \
     dom/TextEvent.idl \
@@ -327,6 +326,7 @@ IDL_BINDINGS += \
     loader/appcache/DOMApplicationCache.idl \
     notifications/Notification.idl \
     notifications/NotificationCenter.idl \
+    p2p/MediaStreamEvent.idl \
     p2p/PeerConnection.idl \
     p2p/SignalingCallback.idl \
     page/BarInfo.idl \

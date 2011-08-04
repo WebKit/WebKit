@@ -3244,7 +3244,7 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
         dom/MediaStreamList.h \
         dom/MediaStreamTrack.h \
         dom/MediaStreamTrackList.h \
-        dom/StreamEvent.h \
+        p2p/MediaStreamEvent.h \
         p2p/PeerConnection.h \
         p2p/SignalingCallback.h \
         page/CallbackTask.h \
@@ -3261,7 +3261,7 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
         dom/MediaStreamList.cpp \
         dom/MediaStreamTrack.cpp \
         dom/MediaStreamTrackList.cpp \
-        dom/StreamEvent.cpp \
+        p2p/MediaStreamEvent.cpp \
         p2p/PeerConnection.cpp \
         page/MediaStreamController.cpp \
         page/MediaStreamFrameController.cpp

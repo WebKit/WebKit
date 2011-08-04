@@ -303,6 +303,7 @@ DOM_CLASSES = \
     MediaQueryList \
     MediaQueryListListener \
     MediaStream \
+    MediaStreamEvent \
     MediaStreamList \
     MediaStreamTrack \
     MediaStreamTrackList \
@@ -372,7 +373,6 @@ DOM_CLASSES = \
     StorageInfoErrorCallback \
     StorageInfoQuotaCallback \
     StorageInfoUsageCallback \
-    StreamEvent \
     StringCallback \
     SVGAElement \
     SVGAltGlyphDefElement \
@@ -888,6 +888,7 @@ IDL_INCLUDES = \
     $(WebCore)/fileapi \
     $(WebCore)/html \
     $(WebCore)/css \
+    $(WebCore)/p2p \
     $(WebCore)/page \
     $(WebCore)/notifications \
     $(WebCore)/xml \

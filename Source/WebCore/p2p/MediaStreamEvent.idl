@@ -22,57 +22,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "StreamEvent.h"
+module p2p {
 
-#if ENABLE(MEDIA_STREAM)
+    // According to the WHATWG specification:
+    // http://www.whatwg.org/specs/web-apps/current-work/multipage/video-conferencing-and-peer-to-peer-communication.html#mediastreamevent
+    interface [
+        Conditional=MEDIA_STREAM,
+    ] MediaStreamEvent : Event {
+       readonly attribute MediaStream stream;
 
-#include "EventNames.h"
-#include "MediaStream.h"
+       void initMediaStreamEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
+                                 in [Optional=CallWithDefaultValue] boolean canBubbleArg,
+                                 in [Optional=CallWithDefaultValue] boolean cancelableArg,
+                                 in [Optional=CallWithDefaultValue] MediaStream streamArg);
+    };
 
-namespace WebCore {
-
-PassRefPtr<StreamEvent> StreamEvent::create()
-{
-    return adoptRef(new StreamEvent);
 }
-
-PassRefPtr<StreamEvent> StreamEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
-{
-    return adoptRef(new StreamEvent(type, canBubble, cancelable, stream));
-}
-
-
-StreamEvent::StreamEvent()
-{
-}
-
-StreamEvent::StreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
-    : Event(type, canBubble, cancelable)
-    , m_stream(stream)
-{
-}
-
-StreamEvent::~StreamEvent()
-{
-}
-
-void StreamEvent::initStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream> stream)
-{
-    if (dispatched())
-        return;
-
-    initEvent(type, canBubble, cancelable);
-
-    m_stream = stream;
-}
-
-PassRefPtr<MediaStream> StreamEvent::stream() const
-{
-    return m_stream;
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(MEDIA_STREAM)
-

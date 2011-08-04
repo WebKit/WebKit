@@ -57,7 +57,6 @@
 #include "V8Proxy.h"
 #include "V8SpeechInputEvent.h"
 #include "V8StorageEvent.h"
-#include "V8StreamEvent.h"
 #include "V8TextEvent.h"
 #include "V8TouchEvent.h"
 #include "V8UIEvent.h"
@@ -73,6 +72,10 @@
 #if ENABLE(WEB_AUDIO)
 #include "V8AudioProcessingEvent.h"
 #include "V8OfflineAudioCompletionEvent.h"
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+#include "V8MediaStreamEvent.h"
 #endif
 
 namespace WebCore {
@@ -186,8 +189,8 @@ v8::Handle<v8::Value> toV8(Event* impl)
         return toV8(static_cast<CloseEvent*>(impl));
 #endif
 #if ENABLE(MEDIA_STREAM)
-    if (impl->isStreamEvent())
-        return toV8(static_cast<StreamEvent*>(impl));
+    if (impl->isMediaStreamEvent())
+        return toV8(static_cast<MediaStreamEvent*>(impl));
 #endif
     return V8Event::wrap(impl);
 }

@@ -22,19 +22,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module events {
+#ifndef MediaStreamEvent_h
+#define MediaStreamEvent_h
 
-    // According to the WHATWG specification, section 9.7:
-    // http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#streamevent
-    interface [
-        Conditional=MEDIA_STREAM,
-    ] StreamEvent : Event {
-       readonly attribute MediaStream stream;
+#if ENABLE(MEDIA_STREAM)
 
-       void initStreamEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
-                            in [Optional=CallWithDefaultValue] boolean canBubbleArg,
-                            in [Optional=CallWithDefaultValue] boolean cancelableArg,
-                            in [Optional=CallWithDefaultValue] MediaStream streamArg);
-    };
+#include "Event.h"
+#include <wtf/text/AtomicString.h>
 
-}
+namespace WebCore {
+
+class Stream;
+
+class MediaStreamEvent : public Event {
+public:
+    virtual ~MediaStreamEvent();
+
+    static PassRefPtr<MediaStreamEvent> create();
+    static PassRefPtr<MediaStreamEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
+
+    void initMediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
+
+    // From EventTarget.
+    virtual bool isMediaStreamEvent() const { return true; }
+
+    PassRefPtr<MediaStream> stream() const;
+
+private:
+    MediaStreamEvent();
+    MediaStreamEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<MediaStream>);
+
+    RefPtr<MediaStream> m_stream;
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(MEDIA_STREAM)
+
+#endif // MediaStreamEvent_h

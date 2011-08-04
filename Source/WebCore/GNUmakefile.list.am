@@ -355,6 +355,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMediaList.h \
 	DerivedSources/WebCore/JSMediaStream.cpp \
 	DerivedSources/WebCore/JSMediaStream.h \
+	DerivedSources/WebCore/JSMediaStreamEvent.cpp \
+	DerivedSources/WebCore/JSMediaStreamEvent.h \
 	DerivedSources/WebCore/JSMediaStreamList.cpp \
 	DerivedSources/WebCore/JSMediaStreamList.h \
 	DerivedSources/WebCore/JSMediaStreamTrack.cpp \
@@ -467,8 +469,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
 	DerivedSources/WebCore/JSStorageInfoQuotaCallback.h \
 	DerivedSources/WebCore/JSStorageInfoUsageCallback.h \
-	DerivedSources/WebCore/JSStreamEvent.cpp \
-	DerivedSources/WebCore/JSStreamEvent.h \
 	DerivedSources/WebCore/JSStyleMedia.cpp \
 	DerivedSources/WebCore/JSStyleMedia.h \
 	DerivedSources/WebCore/JSStyleSheet.cpp \
@@ -1289,8 +1289,6 @@ webcore_sources += \
 	Source/WebCore/dom/StaticHashSetNodeList.h \
 	Source/WebCore/dom/StaticNodeList.cpp \
 	Source/WebCore/dom/StaticNodeList.h \
-	Source/WebCore/dom/StreamEvent.cpp \
-	Source/WebCore/dom/StreamEvent.h \
 	Source/WebCore/dom/StyledElement.cpp \
 	Source/WebCore/dom/StyledElement.h \
 	Source/WebCore/dom/StyleElement.cpp \
@@ -2196,6 +2194,8 @@ webcore_sources += \
 	Source/WebCore/notifications/Notification.cpp \
 	Source/WebCore/notifications/Notification.h \
 	Source/WebCore/notifications/NotificationPresenter.h \
+	Source/WebCore/p2p/MediaStreamEvent.cpp \
+	Source/WebCore/p2p/MediaStreamEvent.h \
 	Source/WebCore/p2p/PeerConnection.cpp \
 	Source/WebCore/p2p/PeerConnection.h \
 	Source/WebCore/p2p/SignalingCallback.h \

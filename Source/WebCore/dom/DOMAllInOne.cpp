@@ -120,7 +120,6 @@
 #include "SpaceSplitString.cpp"
 #include "StaticHashSetNodeList.cpp"
 #include "StaticNodeList.cpp"
-#include "StreamEvent.cpp"
 #include "StyleElement.cpp"
 #include "StyledElement.cpp"
 #include "TagNodeList.cpp"

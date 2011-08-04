@@ -1143,13 +1143,13 @@
 		499B3ED6128CD31400E726C2 /* GraphicsLayerCA.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */; };
 		499B3ED7128CD31400E726C2 /* GraphicsLayerCA.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		499B3EDD128DB50200E726C2 /* PlatformCAAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		49A2CFD913E9787E00579F13 /* MediaStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A2CFD613E9787E00579F13 /* MediaStreamEvent.cpp */; };
+		49A2CFDA13E9787E00579F13 /* MediaStreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A2CFD713E9787E00579F13 /* MediaStreamEvent.h */; };
+		49A2D39413E981A300579F13 /* JSMediaStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A2D39213E981A300579F13 /* JSMediaStreamEvent.cpp */; };
+		49A2D39513E981A300579F13 /* JSMediaStreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A2D39313E981A300579F13 /* JSMediaStreamEvent.h */; };
 		49A5A4FE13E2F01E00CFDAE0 /* PeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */; };
 		49A5A4FF13E2F01E00CFDAE0 /* PeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */; };
 		49A5A50113E2F01E00CFDAE0 /* SignalingCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */; };
-		49A85B6B138D573A00ECB7B3 /* StreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A85B68138D573900ECB7B3 /* StreamEvent.cpp */; };
-		49A85B6C138D573A00ECB7B3 /* StreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A85B69138D573A00ECB7B3 /* StreamEvent.h */; };
-		49A85B77138D58EE00ECB7B3 /* JSStreamEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49A85B75138D58EE00ECB7B3 /* JSStreamEvent.cpp */; };
-		49A85B78138D58EE00ECB7B3 /* JSStreamEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 49A85B76138D58EE00ECB7B3 /* JSStreamEvent.h */; };
 		49BE30D213D9747B003808A9 /* JSPeerConnectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */; };
 		49BE30F313D97646003808A9 /* JSPeerConnection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */; };
 		49BE30F413D97646003808A9 /* JSPeerConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 49BE30F013D97646003808A9 /* JSPeerConnection.h */; };
@@ -7711,16 +7711,16 @@
 		499B3ED4128CD31400E726C2 /* GraphicsLayerCA.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GraphicsLayerCA.cpp; path = ca/GraphicsLayerCA.cpp; sourceTree = "<group>"; };
 		499B3ED5128CD31400E726C2 /* GraphicsLayerCA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GraphicsLayerCA.h; path = ca/GraphicsLayerCA.h; sourceTree = "<group>"; };
 		499B3EDC128DB50100E726C2 /* PlatformCAAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformCAAnimation.h; path = ca/PlatformCAAnimation.h; sourceTree = "<group>"; };
+		49A2CFD613E9787E00579F13 /* MediaStreamEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaStreamEvent.cpp; path = p2p/MediaStreamEvent.cpp; sourceTree = "<group>"; };
+		49A2CFD713E9787E00579F13 /* MediaStreamEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaStreamEvent.h; path = p2p/MediaStreamEvent.h; sourceTree = "<group>"; };
+		49A2CFD813E9787E00579F13 /* MediaStreamEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = MediaStreamEvent.idl; path = p2p/MediaStreamEvent.idl; sourceTree = "<group>"; };
+		49A2D39213E981A300579F13 /* JSMediaStreamEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamEvent.cpp; sourceTree = "<group>"; };
+		49A2D39313E981A300579F13 /* JSMediaStreamEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamEvent.h; sourceTree = "<group>"; };
 		49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PeerConnection.cpp; path = p2p/PeerConnection.cpp; sourceTree = "<group>"; };
 		49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PeerConnection.h; path = p2p/PeerConnection.h; sourceTree = "<group>"; };
 		49A5A4FA13E2F01E00CFDAE0 /* PeerConnection.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = PeerConnection.idl; path = p2p/PeerConnection.idl; sourceTree = "<group>"; };
 		49A5A4FB13E2F01E00CFDAE0 /* SignalingCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SignalingCallback.h; path = p2p/SignalingCallback.h; sourceTree = "<group>"; };
 		49A5A4FC13E2F01E00CFDAE0 /* SignalingCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SignalingCallback.idl; path = p2p/SignalingCallback.idl; sourceTree = "<group>"; };
-		49A85B68138D573900ECB7B3 /* StreamEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamEvent.cpp; sourceTree = "<group>"; };
-		49A85B69138D573A00ECB7B3 /* StreamEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamEvent.h; sourceTree = "<group>"; };
-		49A85B6A138D573A00ECB7B3 /* StreamEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamEvent.idl; sourceTree = "<group>"; };
-		49A85B75138D58EE00ECB7B3 /* JSStreamEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStreamEvent.cpp; sourceTree = "<group>"; };
-		49A85B76138D58EE00ECB7B3 /* JSStreamEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStreamEvent.h; sourceTree = "<group>"; };
 		49BE30D113D9747B003808A9 /* JSPeerConnectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPeerConnectionCustom.cpp; sourceTree = "<group>"; };
 		49BE30EF13D97646003808A9 /* JSPeerConnection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSPeerConnection.cpp; sourceTree = "<group>"; };
 		49BE30F013D97646003808A9 /* JSPeerConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSPeerConnection.h; sourceTree = "<group>"; };
@@ -14057,6 +14057,9 @@
 		49A5A4F613E2EFE600CFDAE0 /* p2p */ = {
 			isa = PBXGroup;
 			children = (
+				49A2CFD613E9787E00579F13 /* MediaStreamEvent.cpp */,
+				49A2CFD713E9787E00579F13 /* MediaStreamEvent.h */,
+				49A2CFD813E9787E00579F13 /* MediaStreamEvent.idl */,
 				49A5A4F813E2F01E00CFDAE0 /* PeerConnection.cpp */,
 				49A5A4F913E2F01E00CFDAE0 /* PeerConnection.h */,
 				49A5A4FA13E2F01E00CFDAE0 /* PeerConnection.idl */,
@@ -17306,6 +17309,8 @@
 				B1E545D013462B0B0092A545 /* JSLocalMediaStream.h */,
 				B1E545D713462B0B0092A545 /* JSMediaStream.cpp */,
 				B1E545D813462B0B0092A545 /* JSMediaStream.h */,
+				49A2D39213E981A300579F13 /* JSMediaStreamEvent.cpp */,
+				49A2D39313E981A300579F13 /* JSMediaStreamEvent.h */,
 				B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */,
 				B14353F7138EA95B00D53276 /* JSMediaStreamList.h */,
 				49C9F48A13D57D320052600A /* JSMediaStreamTrack.cpp */,
@@ -17340,8 +17345,6 @@
 				75415D52129AB2D2003AD669 /* JSSpeechInputResult.h */,
 				75415D53129AB2D2003AD669 /* JSSpeechInputResultList.cpp */,
 				75415D54129AB2D2003AD669 /* JSSpeechInputResultList.h */,
-				49A85B75138D58EE00ECB7B3 /* JSStreamEvent.cpp */,
-				49A85B76138D58EE00ECB7B3 /* JSStreamEvent.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
 			);
@@ -19547,6 +19550,8 @@
 				066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */,
 				53C8298B13D8D92700DE2DEB /* RenderFlexibleBox.cpp */,
 				53C8298C13D8D92700DE2DEB /* RenderFlexibleBox.h */,
+				508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */,
+				508CCA4D13CF106B003151F3 /* RenderFlowThread.h */,
 				A871DECC0A1530C700B12A68 /* RenderFrame.cpp */,
 				A871DECB0A1530C700B12A68 /* RenderFrame.h */,
 				0FD3080C117CF7E700A791F7 /* RenderFrameBase.cpp */,
@@ -19670,8 +19675,6 @@
 				A8CFF04C0A154F09000A4234 /* TableLayout.h */,
 				37FC96DA1104ED71003E1FAD /* TrailingFloatsRootInlineBox.h */,
 				BCA257141293C010007A263D /* VerticalPositionCache.h */,
-				508CCA4D13CF106B003151F3 /* RenderFlowThread.h */,
-				508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */,
 			);
 			path = rendering;
 			sourceTree = "<group>";
@@ -19967,9 +19970,6 @@
 				CEA3949B11D45CDA003094CF /* StaticHashSetNodeList.h */,
 				BC7FA62C0D1F0EFF00DB22A9 /* StaticNodeList.cpp */,
 				BC7FA62B0D1F0EFF00DB22A9 /* StaticNodeList.h */,
-				49A85B68138D573900ECB7B3 /* StreamEvent.cpp */,
-				49A85B69138D573A00ECB7B3 /* StreamEvent.h */,
-				49A85B6A138D573A00ECB7B3 /* StreamEvent.idl */,
 				8102C5871325BB1100DDE67A /* StringCallback.cpp */,
 				81AC6C35131C57D30009A7E0 /* StringCallback.h */,
 				81AC6C34131C57C20009A7E0 /* StringCallback.idl */,
@@ -20668,6 +20668,7 @@
 				89878555122CA064003AABDA /* DirectoryReader.h in Headers */,
 				890AE0E11256A07900F5968C /* DirectoryReaderBase.h in Headers */,
 				893C48031248BD3A002B3D86 /* DirectoryReaderSync.h in Headers */,
+				490C47CE13E82D1800F7AB82 /* DispatchTask.h in Headers */,
 				FD31609112B026F700C1A359 /* Distance.h in Headers */,
 				84730D771248F0B300D3A9C9 /* DistantLightSource.h in Headers */,
 				B2F34FE60E82F81400F627CD /* DNS.h in Headers */,
@@ -21980,6 +21981,7 @@
 				BC3C39B70C0D3D8D005F4D7A /* JSMediaList.h in Headers */,
 				D3A94A47122DC40F00A37BBC /* JSMediaQueryList.h in Headers */,
 				B1E545E613462B0B0092A545 /* JSMediaStream.h in Headers */,
+				49A2D39513E981A300579F13 /* JSMediaStreamEvent.h in Headers */,
 				B14353F9138EA95B00D53276 /* JSMediaStreamList.h in Headers */,
 				49C9F48F13D57D320052600A /* JSMediaStreamTrack.h in Headers */,
 				49C9F49113D57D320052600A /* JSMediaStreamTrackList.h in Headers */,
@@ -22053,7 +22055,6 @@
 				892CF20C134C8BB300AAEDA1 /* JSStorageInfo.h in Headers */,
 				892CF20E134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h in Headers */,
 				892CF212134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h in Headers */,
-				49A85B78138D58EE00ECB7B3 /* JSStreamEvent.h in Headers */,
 				0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */,
 				BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */,
 				A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */,
@@ -22303,8 +22304,8 @@
 				93309DF8099E64920056E581 /* markup.h in Headers */,
 				9728C3141268E4390041E89B /* MarkupAccumulator.h in Headers */,
 				00A629C113D0BEC70050AC52 /* MarkupTokenBase.h in Headers */,
-				00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h in Headers */,
 				00C60E4213D797AE0092A275 /* MarkupTokenizerBase.h in Headers */,
+				00C60E3F13D76D7E0092A275 /* MarkupTokenizerInlineMethods.h in Headers */,
 				FABE72F51059C1EB00D999DD /* MathMLElement.h in Headers */,
 				44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */,
 				FABE72F71059C1EB00D999DD /* MathMLInlineContainerElement.h in Headers */,
@@ -22335,6 +22336,7 @@
 				B1E5457E1346291F0092A545 /* MediaStream.h in Headers */,
 				B1E54594134629C10092A545 /* MediaStreamClient.h in Headers */,
 				B1E54598134629C10092A545 /* MediaStreamController.h in Headers */,
+				49A2CFDA13E9787E00579F13 /* MediaStreamEvent.h in Headers */,
 				B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */,
 				B14353D6138EA8ED00D53276 /* MediaStreamList.h in Headers */,
 				49C9F32613D574F90052600A /* MediaStreamTrack.h in Headers */,
@@ -22514,6 +22516,7 @@
 				FD31603C12B0267600C1A359 /* RealtimeAnalyser.h in Headers */,
 				FD31603E12B0267600C1A359 /* RealtimeAnalyserNode.h in Headers */,
 				BC4368E80C226E32005EFB5F /* Rect.h in Headers */,
+				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
 				85031B4C0A44EFC700F992E0 /* RegisteredEventListener.h in Headers */,
 				B2C3DA2D0D006C1D00EF6F26 /* RegularExpression.h in Headers */,
 				93309E01099E64920056E581 /* RemoveCSSPropertyCommand.h in Headers */,
@@ -22537,6 +22540,7 @@
 				A8EA73C40A1900E300A8EF5F /* RenderFieldset.h in Headers */,
 				066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */,
 				53C8298E13D8D92700DE2DEB /* RenderFlexibleBox.h in Headers */,
+				508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */,
 				A871DED30A1530C700B12A68 /* RenderFrame.h in Headers */,
 				0FD3080F117CF7E700A791F7 /* RenderFrameBase.h in Headers */,
 				A871DED10A1530C700B12A68 /* RenderFrameSet.h in Headers */,
@@ -22576,6 +22580,7 @@
 				A871DED70A1530C700B12A68 /* RenderPart.h in Headers */,
 				A43BF59D1149292800C643CA /* RenderProgress.h in Headers */,
 				5A574F25131DB93900471B88 /* RenderQuote.h in Headers */,
+				D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */,
 				A871DFE30A15376B00B12A68 /* RenderReplaced.h in Headers */,
 				BCA846D70DC67A350026C309 /* RenderReplica.h in Headers */,
 				1479FAEE109AE37500DED655 /* RenderRuby.h in Headers */,
@@ -22733,8 +22738,8 @@
 				498770E91242C535002226BA /* Shader.h in Headers */,
 				0F3DD45012F5EA1B000D9190 /* ShadowBlur.h in Headers */,
 				A74C2D3C13811E0D00F83572 /* ShadowContentElement.h in Headers */,
-				A71C30B91381265E00DBC351 /* ShadowInclusionSelector.h in Headers */,
 				BC5EB8C40E82031B00B25965 /* ShadowData.h in Headers */,
+				A71C30B91381265E00DBC351 /* ShadowInclusionSelector.h in Headers */,
 				A6D169641346B4C1000EB770 /* ShadowRoot.h in Headers */,
 				A80E6CE80A1989CA007FB8C5 /* ShadowValue.h in Headers */,
 				B2AFFC940D00A5DF0030074D /* ShapeArabic.h in Headers */,
@@ -22817,7 +22822,6 @@
 				C5102D940FD9AA2D00FAFF04 /* StorageSyncManager.h in Headers */,
 				3AB02D2A12D4F91600FBB694 /* StorageTracker.h in Headers */,
 				3AC3680012EF7A09006A3D6F /* StorageTrackerClient.h in Headers */,
-				49A85B6C138D573A00ECB7B3 /* StreamEvent.h in Headers */,
 				81AC6C36131C57D30009A7E0 /* StringCallback.h in Headers */,
 				65488D6B0DD5A83D009D83B2 /* StringSourceProvider.h in Headers */,
 				B23540F30D00782E002382FA /* StringTruncator.h in Headers */,
@@ -23319,10 +23323,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */,
-				D70AD65813E1342B005B50B4 /* RenderRegion.h in Headers */,
-				BCAB418213E356E800D8AAF3 /* Region.h in Headers */,
-				490C47CE13E82D1800F7AB82 /* DispatchTask.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24955,6 +24955,7 @@
 				1464E06C135EC10600FDB00A /* JSMediaListCustom.cpp in Sources */,
 				D3A94A46122DC40F00A37BBC /* JSMediaQueryList.cpp in Sources */,
 				B1E545E513462B0B0092A545 /* JSMediaStream.cpp in Sources */,
+				49A2D39413E981A300579F13 /* JSMediaStreamEvent.cpp in Sources */,
 				B14353F8138EA95B00D53276 /* JSMediaStreamList.cpp in Sources */,
 				49C9F48E13D57D320052600A /* JSMediaStreamTrack.cpp in Sources */,
 				49C9F49013D57D320052600A /* JSMediaStreamTrackList.cpp in Sources */,
@@ -25046,7 +25047,6 @@
 				892CF20B134C8BB300AAEDA1 /* JSStorageInfo.cpp in Sources */,
 				892CF20D134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp in Sources */,
 				892CF211134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp in Sources */,
-				49A85B77138D58EE00ECB7B3 /* JSStreamEvent.cpp in Sources */,
 				0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */,
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,
 				BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */,
@@ -25340,6 +25340,7 @@
 				D3AA10F3123A98AA0092152B /* MediaQueryMatcher.cpp in Sources */,
 				B1E5457D1346291F0092A545 /* MediaStream.cpp in Sources */,
 				B1E54597134629C10092A545 /* MediaStreamController.cpp in Sources */,
+				49A2CFD913E9787E00579F13 /* MediaStreamEvent.cpp in Sources */,
 				B1E54595134629C10092A545 /* MediaStreamFrameController.cpp in Sources */,
 				B14353D5138EA8ED00D53276 /* MediaStreamList.cpp in Sources */,
 				49C9F32713D574F90052600A /* MediaStreamTrack.cpp in Sources */,
@@ -25474,6 +25475,7 @@
 				F55B3DCD1251F12D003EF269 /* RangeInputType.cpp in Sources */,
 				FD31603B12B0267600C1A359 /* RealtimeAnalyser.cpp in Sources */,
 				FD31603D12B0267600C1A359 /* RealtimeAnalyserNode.cpp in Sources */,
+				BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */,
 				85031B4B0A44EFC700F992E0 /* RegisteredEventListener.cpp in Sources */,
 				B2C3DA2C0D006C1D00EF6F26 /* RegularExpression.cpp in Sources */,
 				93309E00099E64920056E581 /* RemoveCSSPropertyCommand.cpp in Sources */,
@@ -25497,6 +25499,7 @@
 				A8EA73C30A1900E300A8EF5F /* RenderFieldset.cpp in Sources */,
 				066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */,
 				53C8298D13D8D92700DE2DEB /* RenderFlexibleBox.cpp in Sources */,
+				508CCA5013CF106B003151F3 /* RenderFlowThread.cpp in Sources */,
 				A871DED40A1530C700B12A68 /* RenderFrame.cpp in Sources */,
 				0FD3080E117CF7E700A791F7 /* RenderFrameBase.cpp in Sources */,
 				A871DED20A1530C700B12A68 /* RenderFrameSet.cpp in Sources */,
@@ -25535,6 +25538,7 @@
 				A871DED00A1530C700B12A68 /* RenderPart.cpp in Sources */,
 				A43BF59C1149292800C643CA /* RenderProgress.cpp in Sources */,
 				5A574F24131DB93900471B88 /* RenderQuote.cpp in Sources */,
+				D70AD65713E1342B005B50B4 /* RenderRegion.cpp in Sources */,
 				A871DFE20A15376B00B12A68 /* RenderReplaced.cpp in Sources */,
 				BCA846D60DC67A350026C309 /* RenderReplica.cpp in Sources */,
 				1479FAED109AE37500DED655 /* RenderRuby.cpp in Sources */,
@@ -25654,8 +25658,8 @@
 				498770E81242C535002226BA /* Shader.cpp in Sources */,
 				0F3DD44F12F5EA1B000D9190 /* ShadowBlur.cpp in Sources */,
 				A766CF8C13810E0C0011A0B3 /* ShadowContentElement.cpp in Sources */,
-				A71C30B81381265E00DBC351 /* ShadowInclusionSelector.cpp in Sources */,
 				BC5EB8C30E82031B00B25965 /* ShadowData.cpp in Sources */,
+				A71C30B81381265E00DBC351 /* ShadowInclusionSelector.cpp in Sources */,
 				A6D169621346B49B000EB770 /* ShadowRoot.cpp in Sources */,
 				A80E6CF40A1989CA007FB8C5 /* ShadowValue.cpp in Sources */,
 				B2AFFC930D00A5DF0030074D /* ShapeArabic.c in Sources */,
@@ -25727,7 +25731,6 @@
 				C55E38C010040D5D00A56BDB /* StorageNamespaceImpl.cpp in Sources */,
 				C5102D950FD9AA2D00FAFF04 /* StorageSyncManager.cpp in Sources */,
 				3AB02D2B12D4F91600FBB694 /* StorageTracker.cpp in Sources */,
-				49A85B6B138D573A00ECB7B3 /* StreamEvent.cpp in Sources */,
 				B2C3DA300D006C1D00EF6F26 /* String.cpp in Sources */,
 				8102C5881325BB1100DDE67A /* StringCallback.cpp in Sources */,
 				B2B2645C0D00A77E000ACC1D /* StringCF.cpp in Sources */,
@@ -26114,9 +26117,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				508CCA5013CF106B003151F3 /* RenderFlowThread.cpp in Sources */,
-				D70AD65713E1342B005B50B4 /* RenderRegion.cpp in Sources */,
-				BCAB418113E356E800D8AAF3 /* Region.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
