@@ -91,9 +91,13 @@ void TouchViewInterface::pinchGestureEnded()
     m_viewportView->d->viewportRectUpdated();
 }
 
-void TouchViewInterface::setViewNeedsDisplay(const QRect& invalidatedRect)
+SGAgent* TouchViewInterface::sceneGraphAgent() const
 {
-    m_pageView->update(invalidatedRect);
+    return &m_pageView->d->sgAgent;
+}
+
+void TouchViewInterface::setViewNeedsDisplay(const QRect&)
+{
 }
 
 QSize TouchViewInterface::drawingAreaSize()

@@ -24,7 +24,7 @@
 #include "qwebkitglobal.h"
 #include "qwebkittypes.h"
 
-#include <QtDeclarative/qsgpainteditem.h>
+#include <QtDeclarative/qsgitem.h>
 #include <QSharedPointer>
 
 class QTouchWebPagePrivate;
@@ -36,7 +36,7 @@ namespace WebKit {
     class TouchViewInterface;
 }
 
-class QWEBKIT_EXPORT QTouchWebPage : public QSGPaintedItem {
+class QWEBKIT_EXPORT QTouchWebPage : public QSGItem {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
@@ -56,7 +56,7 @@ public:
 
     QWebNavigationController* navigationController() const;
 
-    virtual void paint(QPainter*);
+    virtual QSGNode* updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*);
     virtual bool event(QEvent*);
 
 Q_SIGNALS:

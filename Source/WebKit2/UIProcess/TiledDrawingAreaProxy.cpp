@@ -35,6 +35,11 @@
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
 
+#if PLATFORM(QT)
+#include "SGAgent.h"
+#include "TouchViewInterface.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -48,22 +53,43 @@ class TiledDrawingAreaTileSet {
 public:
     typedef HashMap<TiledDrawingAreaTile::Coordinate, RefPtr<TiledDrawingAreaTile> > TileMap;
 
-    TiledDrawingAreaTileSet(float contentsScale = 1.0f);
+    TiledDrawingAreaTileSet(PlatformWebView*, float contentsScale = 1.0f);
+    ~TiledDrawingAreaTileSet();
 
     WebCore::IntRect mapToContents(const WebCore::IntRect&) const;
     WebCore::IntRect mapFromContents(const WebCore::IntRect&) const;
 
     TileMap& tiles() { return m_tiles; }
     float contentsScale() const { return m_contentsScale; }
+#if PLATFORM(QT)
+    int sgNodeID() const { return m_sgNodeID; }
+#endif
 
 private:
     TileMap m_tiles;
     float m_contentsScale;
+#if PLATFORM(QT)
+    SGAgent* m_sgAgent;
+    int m_sgNodeID;
+#endif
 };
 
-TiledDrawingAreaTileSet::TiledDrawingAreaTileSet(float contentsScale)
+TiledDrawingAreaTileSet::TiledDrawingAreaTileSet(PlatformWebView* webView, float contentsScale)
     : m_contentsScale(contentsScale)
+#if PLATFORM(QT)
+    , m_sgAgent(webView->sceneGraphAgent())
+    , m_sgNodeID(m_sgAgent->createScaleNode(0, 1 / contentsScale))
+#endif
 {
+}
+
+TiledDrawingAreaTileSet::~TiledDrawingAreaTileSet()
+{
+#if PLATFORM(QT)
+    // Forcing the tiles destruction to remove their sg node before removing their parent node.
+    m_tiles.clear();
+    m_sgAgent->removeNode(m_sgNodeID);
+#endif
 }
 
 IntRect TiledDrawingAreaTileSet::mapToContents(const IntRect& rect) const
@@ -99,7 +125,7 @@ TiledDrawingAreaProxy::TiledDrawingAreaProxy(PlatformWebView* webView, WebPagePr
     , m_isWaitingForDidSetFrameNotification(false)
     , m_isVisible(true)
     , m_webView(webView)
-    , m_currentTileSet(adoptPtr(new TiledDrawingAreaTileSet))
+    , m_currentTileSet(adoptPtr(new TiledDrawingAreaTileSet(webView)))
     , m_tileBufferUpdateTimer(RunLoop::main(), this, &TiledDrawingAreaProxy::tileBufferUpdateTimerFired)
     , m_tileCreationTimer(RunLoop::main(), this, &TiledDrawingAreaProxy::tileCreationTimerFired)
     , m_tileSize(defaultTileWidth, defaultTileHeight)
@@ -408,7 +434,7 @@ void TiledDrawingAreaProxy::setContentsScale(float scale)
         m_previousTileSet = m_currentTileSet.release();
         disableTileSetUpdates(m_previousTileSet.get());
     }
-    m_currentTileSet = adoptPtr(new TiledDrawingAreaTileSet(scale));
+    m_currentTileSet = adoptPtr(new TiledDrawingAreaTileSet(m_webView, scale));
     createTiles();
 }
 
@@ -496,7 +522,11 @@ void TiledDrawingAreaProxy::createTiles()
     unsigned tilesToCreateCount = tilesToCreate.size();
     for (unsigned n = 0; n < tilesToCreateCount; ++n) {
         TiledDrawingAreaTile::Coordinate coordinate = tilesToCreate[n];
-        RefPtr<TiledDrawingAreaTile> tile = TiledDrawingAreaTile::create(this, coordinate);
+        RefPtr<TiledDrawingAreaTile> tile = TiledDrawingAreaTile::create(this, m_webView, coordinate);
+#if PLATFORM(QT)
+        ASSERT(m_currentTileSet->sgNodeID());
+        tile->setParentNodeID(m_currentTileSet->sgNodeID());
+#endif
         m_currentTileSet->tiles().set(coordinate, tile);
     }
 
@@ -561,7 +591,7 @@ void TiledDrawingAreaProxy::disableTileSetUpdates(TiledDrawingAreaTileSet* tileS
 
 void TiledDrawingAreaProxy::removeAllTiles()
 {
-    m_currentTileSet = adoptPtr(new TiledDrawingAreaTileSet(m_currentTileSet->contentsScale()));
+    m_currentTileSet = adoptPtr(new TiledDrawingAreaTileSet(m_webView, m_currentTileSet->contentsScale()));
 }
 
 

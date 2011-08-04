@@ -39,12 +39,7 @@ namespace WebKit {
 
 void TiledDrawingAreaProxy::updateWebView(const Vector<IntRect>& paintedArea)
 {
-    if (!page() || !page()->isValid())
-        return;
-
-    unsigned size = paintedArea.size();
-    for (unsigned n = 0; n < size; ++n)
-        static_cast<ViewInterface*>(m_webView)->setViewNeedsDisplay(QRect(paintedArea[n]));
+    // SG updates are triggered through SGAgent.
 }
 
 WebPageProxy* TiledDrawingAreaProxy::page()

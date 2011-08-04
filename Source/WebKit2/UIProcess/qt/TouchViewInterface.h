@@ -29,6 +29,8 @@ class QTouchWebView;
 
 namespace WebKit {
 
+class SGAgent;
+
 class TouchViewInterface : public ViewInterface
 {
 public:
@@ -42,6 +44,8 @@ public:
     void pinchGestureStarted();
     void pinchGestureRequestUpdate(const QPointF&, qreal);
     void pinchGestureEnded();
+
+    SGAgent* sceneGraphAgent() const;
 
 private:
     /* Implementation of ViewInterface */

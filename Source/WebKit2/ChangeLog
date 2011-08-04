@@ -1,3 +1,63 @@
+2011-08-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt][WK2] Create scene graph nodes for tiles in QTouchWebView instead of using imperative painting.
+        https://bugs.webkit.org/show_bug.cgi?id=65528
+
+        Reviewed by Benjamin Poulain.
+
+        Converts QTouchWebPage from QSGPaintedItem to a straight QSGItem.
+        - A SGTileNode is created and added to the scene graph for each tile,
+          positioning them relatively to the page.
+          It's basically a QSGSimpleTextureNode with support for specifying a
+          source rect plus for owning the QSGTexture for proper destruction on
+          shutdown by the rendering thread.
+        - Scale nodes are used as parent of tile nodes to revert the scaling set on the
+          QTouchWebPage and allow us to keep using integer coordinates.
+        - The SGAgent class is introduced to carry scene graph update request up to the
+          updatePaintNode call of the item, which may be on the scene graph rendering thread.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::QTouchWebPage):
+        (QTouchWebPage::updatePaintNode):
+        Delegate scene graph updates to the SGAgent which received update requests from the tiled drawing area.
+        (QTouchWebPage::event):
+        (QTouchWebPage::geometryChanged):
+        (QTouchWebPagePrivate::QTouchWebPagePrivate):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        Manage the scale node in the TileSet, it will be the parent node of Tile nodes.
+        (WebKit::TiledDrawingAreaTileSet::sgNodeID):
+        (WebKit::TiledDrawingAreaTileSet::TiledDrawingAreaTileSet):
+        (WebKit::TiledDrawingAreaTileSet::~TiledDrawingAreaTileSet):
+        (WebKit::TiledDrawingAreaProxy::TiledDrawingAreaProxy):
+        (WebKit::TiledDrawingAreaProxy::setContentsScale):
+        (WebKit::TiledDrawingAreaProxy::createTiles):
+        (WebKit::TiledDrawingAreaProxy::removeAllTiles):
+        * UIProcess/TiledDrawingAreaTile.h:
+        (WebKit::TiledDrawingAreaTile::create):
+        * UIProcess/qt/SGAgent.cpp: Added.
+        * UIProcess/qt/SGAgent.h: Added.
+        * UIProcess/qt/SGTileNode.cpp: Added.
+        * UIProcess/qt/SGTileNode.h: Added.
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        Disable the paint call and update the scene graph on incorporateUpdate through the SGAgent.
+        (WebKit::TiledDrawingAreaProxy::updateWebView):
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp:
+        (WebKit::TiledDrawingAreaTile::TiledDrawingAreaTile):
+        (WebKit::TiledDrawingAreaTile::~TiledDrawingAreaTile):
+        (WebKit::TiledDrawingAreaTile::isReadyToPaint):
+        (WebKit::TiledDrawingAreaTile::swapBackBufferToFront):
+        (WebKit::TiledDrawingAreaTile::paint):
+        (WebKit::TiledDrawingAreaTile::incorporateUpdate):
+        (WebKit::TiledDrawingAreaTile::disableUpdates):
+        (WebKit::TiledDrawingAreaTile::setParentNodeID):
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::sceneGraphAgent):
+        (WebKit::TouchViewInterface::setViewNeedsDisplay):
+        * UIProcess/qt/TouchViewInterface.h:
+        * WebKit2.pro:
+
 2011-08-04  Alexis Menard  <alexis.menard@openbossa.org>
 
         [Qt] Make navigation actions properly usable in QML.

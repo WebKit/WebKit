@@ -43,11 +43,22 @@ namespace WebKit {
 class TiledDrawingAreaProxy;
 class UpdateInfo;
 
+#if PLATFORM(MAC)
+typedef WKView PlatformWebView;
+#elif PLATFORM(WIN)
+class WebView;
+typedef WebView PlatformWebView;
+#elif PLATFORM(QT)
+class SGAgent;
+class TouchViewInterface;
+typedef TouchViewInterface PlatformWebView;
+#endif
+
 class TiledDrawingAreaTile : public RefCounted<TiledDrawingAreaTile> {
 public:
     typedef WebCore::IntPoint Coordinate;
 
-    static PassRefPtr<TiledDrawingAreaTile> create(TiledDrawingAreaProxy* proxy, const Coordinate& tileCoordinate) { return adoptRef(new TiledDrawingAreaTile(proxy, tileCoordinate)); }
+    static PassRefPtr<TiledDrawingAreaTile> create(TiledDrawingAreaProxy* proxy, PlatformWebView* webView, const Coordinate& tileCoordinate) { return adoptRef(new TiledDrawingAreaTile(proxy, webView, tileCoordinate)); }
     ~TiledDrawingAreaTile();
 
     bool isDirty() const;
@@ -67,9 +78,12 @@ public:
     void disableUpdates();
 
     int ID() const { return m_ID; }
+#if PLATFORM(QT)
+    void setParentNodeID(int);
+#endif
 
 private:
-    TiledDrawingAreaTile(TiledDrawingAreaProxy* proxy, const TiledDrawingAreaTile::Coordinate& tileCoordinate);
+    TiledDrawingAreaTile(TiledDrawingAreaProxy*, PlatformWebView*, const TiledDrawingAreaTile::Coordinate& tileCoordinate);
 
     TiledDrawingAreaProxy* m_proxy;
     Coordinate m_coordinate;
@@ -79,10 +93,11 @@ private:
     bool m_hasUpdatePending;
 
 #if PLATFORM(QT)
-    QPixmap m_buffer;
-    QPixmap m_backBuffer;
+    QImage m_backBuffer;
+    SGAgent* m_sgAgent;
+    int m_nodeID;
+    int m_parentNodeID;
     bool m_isBackBufferValid;
-    bool m_isFrontBufferValid;
     QRegion m_dirtyRegion;
 #endif
 };

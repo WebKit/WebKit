@@ -18,35 +18,38 @@
  *
  */
 
-#ifndef qtouchwebpage_p_h
-#define qtouchwebpage_p_h
+#ifndef SGTileNode_h
+#define SGTileNode_h
 
-#include "SGAgent.h"
-#include "qtouchwebpage.h"
-#include "qwebnavigationcontroller.h"
-#include <QMenu>
+#include <QSGGeometryNode>
+#include <QSGOpaqueTextureMaterial>
+#include <QSGTextureMaterial>
 
-class QRectF;
-class QSGNode;
-class QString;
-class QTouchWebPage;
-class QTouchWebPageProxy;
+QT_BEGIN_NAMESPACE
+class QSGTexture;
+QT_END_NAMESPACE
 
-class QTouchWebPagePrivate {
+namespace WebKit {
+
+class SGTileNode : public QSGGeometryNode {
 public:
-    QTouchWebPagePrivate(QTouchWebPage* view);
+    SGTileNode();
 
-    static QTouchWebPagePrivate* getPageViewPrivate(QTouchWebPage* view) { return view->d; }
+    void setTargetRect(const QRectF&);
+    void setSourceRect(const QRectF&);
+    // This takes ownership of the texture.
+    void setTexture(QSGTexture*);
 
-    void setPage(QTouchWebPageProxy*);
+private:
+    QSGGeometry m_geometry;
+    QSGOpaqueTextureMaterial m_opaqueMaterial;
+    QSGTextureMaterial m_material;
+    QScopedPointer<QSGTexture> m_texture;
 
-    void setViewportRect(const QRectF&);
-    void commitScaleChange();
-
-    QTouchWebPage* const q;
-    QTouchWebPageProxy* page;
-    QWebNavigationController* navigationController;
-    WebKit::SGAgent sgAgent;
+    QRectF m_targetRect;
+    QRectF m_sourceRect;
 };
 
-#endif /* qtouchwebpage_p_h */
+}
+
+#endif /* SGTileNode_h */

@@ -27,8 +27,10 @@
 #include "TiledDrawingAreaTile.h"
 
 #include "GraphicsContext.h"
+#include "SGAgent.h"
 #include "ShareableBitmap.h"
 #include "TiledDrawingAreaProxy.h"
+#include "TouchViewInterface.h"
 #include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -40,13 +42,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-TiledDrawingAreaTile::TiledDrawingAreaTile(TiledDrawingAreaProxy* proxy, const Coordinate& tileCoordinate)
+TiledDrawingAreaTile::TiledDrawingAreaTile(TiledDrawingAreaProxy* proxy, PlatformWebView* webView, const Coordinate& tileCoordinate)
     : m_proxy(proxy)
     , m_coordinate(tileCoordinate)
     , m_rect(proxy->tileRectForCoordinate(tileCoordinate))
     , m_hasUpdatePending(false)
+    , m_sgAgent(webView->sceneGraphAgent())
+    , m_nodeID(0)
+    , m_parentNodeID(0)
     , m_isBackBufferValid(false)
-    , m_isFrontBufferValid(false)
     , m_dirtyRegion(m_rect)
 {
     static int id = 0;
@@ -63,6 +67,8 @@ TiledDrawingAreaTile::~TiledDrawingAreaTile()
     qDebug() << "deleting tile id=" << m_ID;
 #endif
     disableUpdates();
+    if (m_nodeID)
+        m_sgAgent->removeNode(m_nodeID);
 }
 
 bool TiledDrawingAreaTile::isDirty() const
@@ -72,7 +78,7 @@ bool TiledDrawingAreaTile::isDirty() const
 
 bool TiledDrawingAreaTile::isReadyToPaint() const
 {
-    return m_isFrontBufferValid;
+    return !!m_nodeID;
 }
 
 bool TiledDrawingAreaTile::hasReadyBackBuffer() const
@@ -101,26 +107,12 @@ void TiledDrawingAreaTile::resize(const IntSize& newSize)
 
 void TiledDrawingAreaTile::swapBackBufferToFront()
 {
-    ASSERT(!m_backBuffer.isNull());
-
-    const QPixmap swap = m_buffer;
-    m_buffer = m_backBuffer;
-    m_isFrontBufferValid = m_isBackBufferValid;
-    m_isBackBufferValid = false;
-    m_backBuffer = swap;
+    // FIXME: Implement once we can tight invalidated tile updates together.
 }
 
 void TiledDrawingAreaTile::paint(GraphicsContext* context, const IntRect& rect)
 {
-    ASSERT(!m_buffer.isNull());
-
-    IntRect target = intersection(rect, m_rect);
-    IntRect source((target.x() - m_rect.x()),
-                   (target.y() - m_rect.y()),
-                   target.width(),
-                   target.height());
-
-    context->platformContext()->drawPixmap(target, m_buffer, source);
+    ASSERT_NOT_REACHED();
 }
 
 void TiledDrawingAreaTile::incorporateUpdate(const UpdateInfo& updateInfo, float)
@@ -136,14 +128,21 @@ void TiledDrawingAreaTile::incorporateUpdate(const UpdateInfo& updateInfo, float
     const QSize tileSize = m_proxy->tileSize();
 
     if (m_backBuffer.size() != tileSize) {
-        m_backBuffer = QPixmap(tileSize);
+        m_backBuffer = QImage(tileSize, image.format());
         m_backBuffer.fill(Qt::transparent);
     }
 
-    QPainter painter(&m_backBuffer);
-    painter.drawPixmap(0, 0, m_buffer);
-    IntSize drawPoint = updateChunkRect.location() - m_rect.location();
-    painter.drawImage(QPoint(drawPoint.width(), drawPoint.height()), image);
+    {
+        QPainter painter(&m_backBuffer);
+        IntSize drawPoint = updateChunkRect.location() - m_rect.location();
+        painter.drawImage(QPoint(drawPoint.width(), drawPoint.height()), image);
+    }
+
+    if (!m_nodeID)
+        m_nodeID = m_sgAgent->createTileNode(m_parentNodeID);
+    ASSERT(m_nodeID);
+    QRect sourceRect(0, 0, m_rect.width(), m_rect.height());
+    m_sgAgent->setNodeTexture(m_nodeID, m_backBuffer, sourceRect, m_rect);
 }
 
 void TiledDrawingAreaTile::disableUpdates()
@@ -157,9 +156,15 @@ void TiledDrawingAreaTile::disableUpdates()
     }
 
     m_proxy->unregisterTile(m_ID);
-    m_backBuffer = QPixmap();
+    m_backBuffer = QImage();
     m_isBackBufferValid = false;
     m_proxy = 0;
+}
+
+void TiledDrawingAreaTile::setParentNodeID(int nodeID)
+{
+    ASSERT(!m_nodeID);
+    m_parentNodeID = nodeID;
 }
 
 void TiledDrawingAreaTile::updateBackBuffer()

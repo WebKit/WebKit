@@ -21,28 +21,24 @@
 #include "config.h"
 #include "qtouchwebpage.h"
 #include "qtouchwebpage_p.h"
-#include "qtouchwebpageproxy.h"
 
+#include "qtouchwebpageproxy.h"
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>
 #include <QPainter>
+#include <QSGNode>
 #include <QUrl>
-#include <QtDebug>
 
 QTouchWebPage::QTouchWebPage(QSGItem* parent)
-    : QSGPaintedItem(parent)
+    : QSGItem(parent)
     , d(new QTouchWebPagePrivate(this))
 {
+    setFlag(ItemHasContents);
 }
 
 QTouchWebPage::~QTouchWebPage()
 {
     delete d;
-}
-
-void QTouchWebPage::paint(QPainter* painter)
-{
-    d->page->paint(painter, boundingRect().toAlignedRect());
 }
 
 void QTouchWebPage::load(const QUrl& url)
@@ -67,6 +63,18 @@ int QTouchWebPage::loadProgress() const
 
 /*! \reimp
 */
+QSGNode* QTouchWebPage::updatePaintNode(QSGNode* oldNode, UpdatePaintNodeData*)
+{
+    if (!oldNode)
+        oldNode = new QSGNode;
+    d->sgAgent.updatePaintNode(oldNode);
+
+    // QSGItem takes ownership of this return value and it's children between and after updatePaintNode calls.
+    return oldNode;
+}
+
+/*! \reimp
+*/
 bool QTouchWebPage::event(QEvent* ev)
 {
     switch (ev->type()) {
@@ -82,7 +90,7 @@ bool QTouchWebPage::event(QEvent* ev)
 
     if (d->page->handleEvent(ev))
         return true;
-    return QSGPaintedItem::event(ev);
+    return QSGItem::event(ev);
 }
 
 void QTouchWebPage::keyPressEvent(QKeyEvent* event)
@@ -117,7 +125,7 @@ void QTouchWebPage::touchEvent(QTouchEvent* event)
 
 void QTouchWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
-    QSGPaintedItem::geometryChanged(newGeometry, oldGeometry);
+    QSGItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size())
         d->page->setDrawingAreaSize(newGeometry.size().toSize());
 }
@@ -133,6 +141,7 @@ QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
     : q(view)
     , page(0)
     , navigationController(0)
+    , sgAgent(view)
 {
 }
 
