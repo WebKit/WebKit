@@ -164,7 +164,7 @@ function previousResultsDetail()
 
 function failureInfoFromResultsDetail()
 {
-    var failureDetails = $('.failure-details', $(this).parents('.results-detail'));
+    var failureDetails = $('.results-detail .failure-details');
     return {
         'builderName': failureDetails.attr(config.kBuilderNameAttr),
         'testName': failureDetails.attr(config.kTestNameAttr),
