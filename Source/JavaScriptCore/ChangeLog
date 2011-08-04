@@ -1,3 +1,17 @@
+2011-08-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Interpreter can potentially GC in the middle of initializing a structure chain
+        https://bugs.webkit.org/show_bug.cgi?id=65638
+
+        Reviewed by Oliver Hunt.
+
+        Moved the allocation of a prototype StructureChain before the initialization of 
+        the structure chain within the interpreter that was causing intermittent GC crashes.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCachePutByID):
+        * wtf/Platform.h:
+
 2011-08-04  Filip Pizlo  <fpizlo@apple.com>
 
         Eval handling attempts literal parsing even when the eval

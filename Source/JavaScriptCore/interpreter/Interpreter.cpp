@@ -1394,10 +1394,14 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
         normalizePrototypeChain(callFrame, baseCell);
         JSCell* owner = codeBlock->ownerExecutable();
         JSGlobalData& globalData = callFrame->globalData();
+        // Get the prototype here because the call to prototypeChain could cause a 
+        // GC allocation, which we don't want to happen while we're in the middle of 
+        // initializing the union.
+        StructureChain* prototypeChain = structure->prototypeChain(callFrame);
         vPC[0] = getOpcode(op_put_by_id_transition);
         vPC[4].u.structure.set(globalData, owner, structure->previousID());
         vPC[5].u.structure.set(globalData, owner, structure);
-        vPC[6].u.structureChain.set(callFrame->globalData(), codeBlock->ownerExecutable(), structure->prototypeChain(callFrame));
+        vPC[6].u.structureChain.set(callFrame->globalData(), codeBlock->ownerExecutable(), prototypeChain);
         ASSERT(vPC[6].u.structureChain);
         vPC[7] = slot.cachedOffset();
         return;
