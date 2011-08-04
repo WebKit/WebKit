@@ -1,5 +1,18 @@
 2011-08-03  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic should be able to update expecations from the details pane
+        https://bugs.webkit.org/show_bug.cgi?id=65648
+
+        Reviewed by Dimitri Glazkov.
+
+        The new button queues up the updates, which get executed all at once.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model.js:
+
+2011-08-03  Adam Barth  <abarth@webkit.org>
+
         Add UI to garden-o-matic for updating expectations
         https://bugs.webkit.org/show_bug.cgi?id=65644
 

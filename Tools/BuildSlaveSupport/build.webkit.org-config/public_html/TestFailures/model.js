@@ -6,7 +6,8 @@ var kCommitLogLength = 50;
 
 model.state = {};
 model.state.failureAnalysisByTest = {};
-model.state.rebaselineQueue = []
+model.state.rebaselineQueue = [];
+model.state.expectationsUpdateQueue = [];
 
 function findAndMarkRevertedRevisions(commitDataList)
 {
@@ -21,19 +22,27 @@ function findAndMarkRevertedRevisions(commitDataList)
     });
 }
 
-model.queueForRebaseline = function(builderName, testName, failureTypeList)
+model.queueForRebaseline = function(failureInfo)
 {
-    model.state.rebaselineQueue.push({
-        'builderName': builderName,
-        'testName': testName,
-        'failureTypeList': failureTypeList,
-    });
+    model.state.rebaselineQueue.push(failureInfo);
 };
 
 model.takeRebaselineQueue = function()
 {
     var queue = model.state.rebaselineQueue;
     model.state.rebaselineQueue = [];
+    return queue;
+};
+
+model.queueForExpectationUpdate = function(failureInfo)
+{
+    model.state.expectationsUpdateQueue.push(failureInfo);
+};
+
+model.takeExpectationUpdateQueue = function()
+{
+    var queue = model.state.expectationsUpdateQueue;
+    model.state.expectationsUpdateQueue = [];
     return queue;
 };
 

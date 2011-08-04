@@ -61,18 +61,14 @@ function toggleButton(button, isEnabled)
 
 function rebaseline(failureInfoList)
 {
+    if (!failureInfoList.length)
+        return;
     displayOnButterbar('Rebaselining...');
     checkout.rebaseline(failureInfoList, function() {
         dismissButterbar();
         // FIXME: We should use something like a lightbox rather than alert!
         alert('New results downloaded to your working copy. Please use "webkit-patch land-cowboy" to land the updated baselines.');
     });
-}
-
-function updateExpectations(failureInfoList)
-{
-    displayOnButterbar('Adding expectations...');
-    checkout.updateExpectations(failureInfoList, dismissButterbar);
 }
 
 function showResultsDetail(testName, builderName, failureTypeList)
@@ -113,15 +109,6 @@ function showResultsDetail(testName, builderName, failureTypeList)
     });
 }
 
-function executeQueuedRebaselines()
-{
-    var failureInfoList = model.takeRebaselineQueue();
-    if (!failureInfoList.length)
-        return;
-    // FIXME: Should we confirm with the use before executing the queue?
-    rebaseline(failureInfoList);
-}
-
 function hideResultsDetail()
 {
     $('.results-detail').fadeOut('fast', function() {
@@ -131,7 +118,10 @@ function hideResultsDetail()
         // but doing so helps the garbage collector free memory.
         g_resultsDetailsIterator = null;
     });
-    executeQueuedRebaselines();
+    checkout.updateExpectations(model.takeExpectationUpdateQueue(), function() {
+        // FIXME: Should we confirm with the use before executing the queue?
+        rebaseline(model.takeRebaselineQueue());
+    });
 }
 
 function nextResultsDetail()
@@ -147,16 +137,25 @@ function previousResultsDetail()
     g_resultsDetailsIterator.callPrevious();
 }
 
-function addToRebaselineQueue()
+function failureInfoFromResultsDetail()
 {
     var failureDetails = $('.failure-details', $(this).parents('.results-detail'));
+    return {
+        'builderName': failureDetails.attr(config.kBuilderNameAttr),
+        'testName': failureDetails.attr(config.kTestNameAttr),
+        'failureTypeList': failureDetails.attr(config.kFailureTypesAttr).split(' '),
+    }
+}
 
-    var builderName = failureDetails.attr(config.kBuilderNameAttr);
-    var testName = failureDetails.attr(config.kTestNameAttr);
-    var failureTypes = failureDetails.attr(config.kFailureTypesAttr);
-    var failureTypeList = failureTypes.split(' ');
+function addToRebaselineQueue()
+{
+    model.queueForRebaseline(failureInfoFromResultsDetail());
+    nextResultsDetail();
+}
 
-    model.queueForRebaseline(builderName, testName, failureTypeList);
+function addToExpectationUpdateQueue()
+{
+    model.queueForExpectationUpdate(failureInfoFromResultsDetail());
     nextResultsDetail();
 }
 
@@ -193,7 +192,7 @@ function rebaselineSelected()
 
 function updateExpectationsForSelected()
 {
-    updateExpectations(selectedFailures());
+    checkout.updateExpectations(selectedFailures(), $.noop);
 }
 
 function showSelectedFailures()
@@ -282,6 +281,7 @@ $('.refresh').live('click', update);
 $('.results-detail .actions .next').live('click', nextResultsDetail);
 $('.results-detail .actions .previous').live('click', previousResultsDetail);
 $('.results-detail .actions .rebaseline').live('click', addToRebaselineQueue);
+$('.results-detail .actions .update-expectation').live('click', addToExpectationUpdateQueue);
 $('.results-detail .actions .dismiss').live('click', hideResultsDetail);
 
 $(document).ready(function() {
