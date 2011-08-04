@@ -61,6 +61,20 @@ function didFailStepRequredForTestCoverage(buildInfo)
     return buildInfo.steps.filter(isStepRequredForTestCoverage).filter(didFail).length > 0;
 }
 
+function mostRecentCompletedBuildNumber(individualBuilderStatus)
+{
+    if (!individualBuilderStatus)
+        return null;
+
+    for (var i = individualBuilderStatus.cachedBuilds.length - 1; i >= 0; --i) {
+        var buildNumber = individualBuilderStatus.cachedBuilds[i];
+        if (individualBuilderStatus.currentBuilds.indexOf(buildNumber) == -1)
+            return buildNumber;
+    }
+
+    return null;
+}
+
 var g_buildInfoCache = new base.AsynchronousCache(function(key, callback) {
     var explodedKey = key.split('\n');
     net.get(urlForBuildInfo(explodedKey[0], explodedKey[1]), callback);
@@ -72,7 +86,12 @@ function fetchMostRecentBuildInfoByBuilder(callback)
     var requestTracker = new base.RequestTracker(config.kBuilders.length, callback, [buildInfoByBuilder]);
     net.get(kChromiumBuildBotURL + '/json/builders', function(builderStatus) {
         $.each(config.kBuilders, function(index, builderName) {
-            var buildNumber = builderStatus[builderName].cachedBuilds.pop();
+            var buildNumber = mostRecentCompletedBuildNumber(builderStatus[builderName]);
+            if (!buildNumber) {
+                buildInfoByBuilder[builderName] = null;
+                requestTracker.requestComplete();
+                return;
+            }
 
             g_buildInfoCache.get(builderName + '\n' + buildNumber, function(buildInfo) {
                 buildInfoByBuilder[builderName] = buildInfo;
@@ -87,6 +106,8 @@ builders.buildersFailingStepRequredForTestCoverage = function(callback)
     fetchMostRecentBuildInfoByBuilder(function(buildInfoByBuilder) {
         var builderNameList = [];
         $.each(buildInfoByBuilder, function(builderName, buildInfo) {
+            if (!buildInfo)
+                return;
             if (didFailStepRequredForTestCoverage(buildInfo))
                 builderNameList.push(builderName);
         });
