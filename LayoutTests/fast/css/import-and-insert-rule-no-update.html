@@ -33,10 +33,21 @@ function test() {
         layoutTestController.notifyDone();
 }
 
+function waitForSheetToFinishLoading()
+{
+    if (document.styleSheets.length && document.styleSheets[0].rules[1].styleSheet) {
+        test();
+        return;
+    }
+
+    window.setTimeout(waitForSheetToFinishLoading, 10)
+}
+
 window.onload = function() {
     document.styleSheets[0].insertRule('@import "green.css";', 1);
+
     // We need to wait some time to let the stylesheet load before testing.
-    window.setTimeout(test, 25);
+    window.setTimeout(waitForSheetToFinishLoading, 10);
 };
 </script>
 </body></html>

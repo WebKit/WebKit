@@ -1,5 +1,16 @@
 2011-08-04  Anders Carlsson  <andersca@apple.com>
 
+        Make fast/css/import-and-insert-rule-no-update.html less flaky
+        https://bugs.webkit.org/show_bug.cgi?id=65713
+
+        Reviewed by Dan Bernstein.
+
+        Wait until the @imported style sheet has finished loading before running the test.
+
+        * fast/css/import-and-insert-rule-no-update.html:
+
+2011-08-04  Anders Carlsson  <andersca@apple.com>
+
         Add more failing tests to the skipped list.
 
         * platform/mac-lion/Skipped:
