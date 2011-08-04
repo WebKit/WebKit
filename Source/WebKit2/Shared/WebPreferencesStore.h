@@ -36,6 +36,12 @@ namespace WebKit {
 
 // macro(KeyUpper, KeyLower, TypeNameUpper, TypeName, DefaultValue) 
 
+#if PLATFORM(WIN)
+#define DEFAULT_WEBKIT_AVFOUNDATION_ENABLED false
+#else
+#define DEFAULT_WEBKIT_AVFOUNDATION_ENABLED true
+#endif
+
 #define FOR_EACH_WEBKIT_BOOL_PREFERENCE(macro) \
     macro(JavaScriptEnabled, javaScriptEnabled, Bool, bool, true) \
     macro(LoadsImagesAutomatically, loadsImagesAutomatically, Bool, bool, true) \
@@ -74,7 +80,7 @@ namespace WebKit {
     macro(WebSecurityEnabled, webSecurityEnabled, Bool, bool, true) \
     macro(AllowUniversalAccessFromFileURLs, allowUniversalAccessFromFileURLs, Bool, bool, false) \
     macro(AllowFileAccessFromFileURLs, allowFileAccessFromFileURLs, Bool, bool, false) \
-    macro(AVFoundationEnabled, isAVFoundationEnabled, Bool, bool, true) \
+    macro(AVFoundationEnabled, isAVFoundationEnabled, Bool, bool, DEFAULT_WEBKIT_AVFOUNDATION_ENABLED) \
     macro(Hixie76WebSocketProtocolEnabled, hixie76WebSocketProtocolEnabled, Bool, bool, true) \
     macro(MediaPlaybackRequiresUserGesture, mediaPlaybackRequiresUserGesture, Bool, bool, false) \
     macro(MediaPlaybackAllowsInline, mediaPlaybackAllowsInline, Bool, bool, true) \
