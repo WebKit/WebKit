@@ -66,6 +66,8 @@ static inline const AtomicString& getGenericFontFamilyForScript(const ScriptFont
     ScriptFontFamilyMap::const_iterator it = fontMap.find(static_cast<int>(script));
     if (it != fontMap.end())
         return it->second;
+    if (script != USCRIPT_COMMON)
+        return getGenericFontFamilyForScript(fontMap, USCRIPT_COMMON);
     return emptyAtom;
 }
 

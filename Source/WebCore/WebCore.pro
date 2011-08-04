@@ -960,6 +960,7 @@ SOURCES += \
     platform/text/Base64.cpp \
     platform/text/BidiContext.cpp \
     platform/text/Hyphenation.cpp \
+    platform/text/LocaleToScriptMappingDefault.cpp \
     platform/text/LocalizedDateNone.cpp \
     platform/text/LocalizedNumberNone.cpp \
     platform/text/QuotedPrintable.cpp \
@@ -2031,6 +2032,7 @@ HEADERS += \
     platform/leveldb/LevelDBWriteBatch.h \
     platform/text/BidiRunList.h \
     platform/text/LineEnding.h \
+    platform/text/LocaleToScriptMapping.h \
     platform/text/TextCheckerClient.h \
     platform/text/TextChecking.h \
     platform/text/UnicodeBidi.h \

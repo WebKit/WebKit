@@ -83,6 +83,7 @@ public:
         , m_fontSmoothing(AutoSmoothing)
         , m_textRendering(AutoTextRendering)
         , m_isSpecifiedFont(false)
+        , m_script(USCRIPT_COMMON)
     {
     }
 
@@ -108,6 +109,7 @@ public:
     unsigned keywordSize() const { return m_keywordSize; }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }
     TextRenderingMode textRenderingMode() const { return static_cast<TextRenderingMode>(m_textRendering); }
+    UScriptCode script() const { return m_script; }
 
     FontTraitsMask traitsMask() const;
     bool isSpecifiedFont() const { return m_isSpecifiedFont; }
@@ -138,6 +140,7 @@ public:
     void setOrientation(FontOrientation orientation) { m_orientation = orientation; }
     void setTextOrientation(TextOrientation textOrientation) { m_textOrientation = textOrientation; }
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; }
+    void setScript(UScriptCode s) { m_script = s; }
 
 private:
     FontFamily m_familyList; // The list of font families to be used.
@@ -168,6 +171,7 @@ private:
     unsigned m_fontSmoothing : 2; // FontSmoothingMode
     unsigned m_textRendering : 2; // TextRenderingMode
     bool m_isSpecifiedFont : 1; // True if a web page specifies a non-generic font family as the first font family.
+    UScriptCode m_script; // Used to help choose an appropriate font for generic font families.
 };
 
 inline bool FontDescription::operator==(const FontDescription& other) const
@@ -188,7 +192,8 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_isSpecifiedFont == other.m_isSpecifiedFont
         && m_orientation == other.m_orientation
         && m_textOrientation == other.m_textOrientation
-        && m_widthVariant == other.m_widthVariant;
+        && m_widthVariant == other.m_widthVariant
+        && m_script == other.m_script;
 }
 
 }

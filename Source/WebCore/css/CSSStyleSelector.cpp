@@ -69,6 +69,7 @@
 #include "HTMLTextAreaElement.h"
 #include "KeyframeList.h"
 #include "LinkHash.h"
+#include "LocaleToScriptMapping.h"
 #include "Matrix3DTransformOperation.h"
 #include "MatrixTransformOperation.h"
 #include "MediaList.h"
@@ -1283,6 +1284,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
             documentStyle->setForceBackgroundsToWhite(true);
         const AtomicString& stdfont = settings->standardFontFamily();
         if (!stdfont.isEmpty()) {
+            fontDescription.setGenericFamily(FontDescription::StandardFamily);
             fontDescription.firstFamily().setFamily(stdfont);
             fontDescription.firstFamily().appendFamily(0);
         }
@@ -3479,7 +3481,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
 
                 if (applyFirst) {
                     COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
-                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 14, CSS_zoom_is_end_of_first_prop_range);
+                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 15, CSS_zoom_is_end_of_first_prop_range);
                     COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
 
                     // give special priority to font-xxx, color properties, etc
@@ -4779,6 +4781,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setLocale(nullAtom);
         else
             m_style->setLocale(primitiveValue->getStringValue());
+        FontDescription fontDescription = m_style->fontDescription();
+        fontDescription.setScript(localeToScriptCodeForFontSelection(m_style->locale()));
+        if (m_style->setFontDescription(fontDescription))
+            m_fontDirty = true;
         return;
     }
     case CSSPropertyWebkitBorderFit: {

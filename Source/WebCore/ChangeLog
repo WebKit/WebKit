@@ -1,3 +1,46 @@
+2011-08-04  Matt Falkenhagen  <falken@chromium.org>
+
+        Use -webkit-locale for font selection.
+        https://bugs.webkit.org/show_bug.cgi?id=10874
+
+        Reviewed by Dan Bernstein.
+
+        Infer a script from -webkit-locale to use to choose a font for generic
+        font families and the default unstyled font.  The font is retrieved
+        from per-script font settings (see bug 20797).  Since these settings
+        have not changed there should be no visible effect yet.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontSelector.cpp: Use script when getting font from Settings
+        (WebCore::fontDataForGenericFamily):
+        (WebCore::CSSFontSelector::getFontData):
+        * css/CSSPropertyNames.in: Increase priority of -webkit-locale since it affects font
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        (WebCore::CSSStyleSelector::applyDeclarations):
+        (WebCore::CSSStyleSelector::applyProperty): Set script in font based on -webkit-locale
+        * page/Settings.cpp:
+        (WebCore::getGenericFontFamilyForScript): Fallback to USCRIPT_COMMON
+        * platform/graphics/FontDescription.h: Add m_script
+        (WebCore::FontDescription::FontDescription):
+        (WebCore::FontDescription::script):
+        (WebCore::FontDescription::setScript):
+        (WebCore::FontDescription::operator==):
+        * platform/text/LocaleToScriptMapping.h: Added.
+        * platform/text/LocaleToScriptMappingDefault.cpp: Added.
+        (WebCore::localeToScriptCodeForFontSelection):
+        (WebCore::LocaleScript::if):
+        (WebCore::LocaleScript::while):
+        * platform/text/LocaleToScriptMappingICU.cpp: Added.
+        (WebCore::scriptCodeForFontSelection):
+        (WebCore::localeToScriptCodeForFontSelection):
+
 2011-08-04  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Pretty print JSONP in network panel preview tab.

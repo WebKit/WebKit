@@ -21,6 +21,7 @@ font-variant
 font-weight
 text-rendering
 -webkit-font-smoothing
+-webkit-locale
 -webkit-text-orientation
 -epub-text-orientation = -webkit-text-orientation
 -webkit-text-size-adjust
@@ -250,7 +251,6 @@ z-index
 -webkit-line-box-contain
 -webkit-line-break
 -webkit-line-clamp
--webkit-locale
 -webkit-logical-width
 -webkit-logical-height
 -webkit-margin-after-collapse

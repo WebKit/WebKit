@@ -1340,6 +1340,7 @@
         ['exclude', 'platform/image-encoders/PNGImageEncoder\\.(cpp|h)$'],
         ['exclude', 'platform/network/ResourceHandle\\.cpp$'],
         ['exclude', 'platform/sql/SQLiteFileSystem\\.cpp$'],
+        ['exclude', 'platform/text/LocaleToScriptMappingDefault\\.cpp$'],
         ['exclude', 'platform/text/LocalizedNumberNone\\.cpp$'],
         ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
       ],

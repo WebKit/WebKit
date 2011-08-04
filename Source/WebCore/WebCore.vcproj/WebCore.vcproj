@@ -31565,6 +31565,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\text\LocaleToScriptMappingDefault.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\text\LocaleToScriptMapping.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\text\LocalizedDate.h"
 					>
 				</File>

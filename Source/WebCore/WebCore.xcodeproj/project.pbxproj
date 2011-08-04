@@ -1720,6 +1720,8 @@
 		75793ED40D0CE85B007FC0AC /* DOMMessageEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75793ED10D0CE85B007FC0AC /* DOMMessageEvent.mm */; };
 		75793ED50D0CE85B007FC0AC /* DOMMessageEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */; };
 		758978EC127090D60076D5A9 /* SpeechInputResult.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 758978EA127090D60076D5A9 /* SpeechInputResult.cpp */; };
+		7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */ = {isa = PBXBuildFile; fileRef = 7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */; };
+		7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */; };
 		7637C541112E7B74003D6CDC /* WebSocketHandshakeRequest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7637C540112E7B74003D6CDC /* WebSocketHandshakeRequest.cpp */; };
 		7637C543112E7B7E003D6CDC /* WebSocketHandshakeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7637C542112E7B7E003D6CDC /* WebSocketHandshakeRequest.h */; };
 		767F99BE11A1194A0080C51D /* WebSocketHandshakeResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 767F99BD11A1194A0080C51D /* WebSocketHandshakeResponse.cpp */; };
@@ -8347,6 +8349,8 @@
 		75793ED20D0CE85B007FC0AC /* DOMMessageEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DOMMessageEventInternal.h; sourceTree = "<group>"; };
 		758978EA127090D60076D5A9 /* SpeechInputResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SpeechInputResult.cpp; sourceTree = "<group>"; };
 		758978EB127090D60076D5A9 /* SpeechInputResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpeechInputResult.h; sourceTree = "<group>"; };
+		7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocaleToScriptMapping.h; sourceTree = "<group>"; };
+		7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LocaleToScriptMappingDefault.cpp; sourceTree = "<group>"; };
 		7637C540112E7B74003D6CDC /* WebSocketHandshakeRequest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketHandshakeRequest.cpp; sourceTree = "<group>"; };
 		7637C542112E7B7E003D6CDC /* WebSocketHandshakeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketHandshakeRequest.h; sourceTree = "<group>"; };
 		767F99BD11A1194A0080C51D /* WebSocketHandshakeResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketHandshakeResponse.cpp; sourceTree = "<group>"; };
@@ -18300,6 +18304,8 @@
 				A5ABB78613B904BC00F197E3 /* LineBreakIteratorPoolICU.h */,
 				89B5EA9F11E8003D00F2367E /* LineEnding.cpp */,
 				89B5EAA011E8003D00F2367E /* LineEnding.h */,
+				7633A72413D8B33A008501B6 /* LocaleToScriptMapping.h */,
+				7633A72513D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp */,
 				A5732B0C136A16C4005C8D7C /* LocalizedDate.h */,
 				A5732B0E136A1715005C8D7C /* LocalizedDateNone.cpp */,
 				F5142C68123F12B000F5BD4C /* LocalizedNumber.h */,
@@ -22288,6 +22294,7 @@
 				7EE6846912D26E3800E79415 /* LoaderRunLoopCF.h in Headers */,
 				06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */,
 				89878568122CA064003AABDA /* LocalFileSystem.h in Headers */,
+				7633A72613D8B33A008501B6 /* LocaleToScriptMapping.h in Headers */,
 				BC5CFCA911F793320099ED09 /* LocalizationStrategy.h in Headers */,
 				A5732B0D136A16C4005C8D7C /* LocalizedDate.h in Headers */,
 				F5142C69123F12B000F5BD4C /* LocalizedNumber.h in Headers */,
@@ -25299,6 +25306,7 @@
 				7EE6846812D26E3800E79415 /* LoaderRunLoopCF.cpp in Sources */,
 				06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */,
 				89878567122CA064003AABDA /* LocalFileSystem.cpp in Sources */,
+				7633A72713D8B33A008501B6 /* LocaleToScriptMappingDefault.cpp in Sources */,
 				A5732B0F136A1715005C8D7C /* LocalizedDateNone.cpp in Sources */,
 				F5CC42DC12F801CA00D5F7E3 /* LocalizedNumberMac.mm in Sources */,
 				C046E1AC1208A9FE00BA2CF7 /* LocalizedStrings.cpp in Sources */,

@@ -392,20 +392,21 @@ static FontData* fontDataForGenericFamily(Document* document, const FontDescript
         return 0;
     
     AtomicString genericFamily;
+    UScriptCode script = fontDescription.script();
     if (familyName == "-webkit-serif")
-        genericFamily = settings->serifFontFamily();
+        genericFamily = settings->serifFontFamily(script);
     else if (familyName == "-webkit-sans-serif")
-        genericFamily = settings->sansSerifFontFamily();
+        genericFamily = settings->sansSerifFontFamily(script);
     else if (familyName == "-webkit-cursive")
-        genericFamily = settings->cursiveFontFamily();
+        genericFamily = settings->cursiveFontFamily(script);
     else if (familyName == "-webkit-fantasy")
-        genericFamily = settings->fantasyFontFamily();
+        genericFamily = settings->fantasyFontFamily(script);
     else if (familyName == "-webkit-monospace")
-        genericFamily = settings->fixedFontFamily();
+        genericFamily = settings->fixedFontFamily(script);
     else if (familyName == "-webkit-pictograph")
-        genericFamily = settings->pictographFontFamily();
+        genericFamily = settings->pictographFontFamily(script);
     else if (familyName == "-webkit-standard")
-        genericFamily = settings->standardFontFamily();
+        genericFamily = settings->standardFontFamily(script);
 
     if (!genericFamily.isEmpty())
         return fontCache()->getCachedFontData(fontDescription, genericFamily);
@@ -500,6 +501,8 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
     if (m_fontFaces.isEmpty()) {
         if (familyName.startsWith("-webkit-"))
             return fontDataForGenericFamily(m_document, fontDescription, familyName);
+        if (fontDescription.genericFamily() == FontDescription::StandardFamily && !fontDescription.isSpecifiedFont())
+            return fontDataForGenericFamily(m_document, fontDescription, "-webkit-standard");
         return 0;
     }
 
@@ -510,6 +513,8 @@ FontData* CSSFontSelector::getFontData(const FontDescription& fontDescription, c
     if (!familyFontFaces || familyFontFaces->isEmpty()) {
         // If we were handed a generic family, but there was no match, go ahead and return the correct font based off our
         // settings.
+        if (fontDescription.genericFamily() == FontDescription::StandardFamily && !fontDescription.isSpecifiedFont())
+            return fontDataForGenericFamily(m_document, fontDescription, "-webkit-standard");
         return fontDataForGenericFamily(m_document, fontDescription, familyName);
     }
 

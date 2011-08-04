@@ -2799,6 +2799,8 @@ webcore_sources += \
 	Source/WebCore/platform/text/LineBreakIteratorPoolICU.h \
 	Source/WebCore/platform/text/LineEnding.cpp \
 	Source/WebCore/platform/text/LineEnding.h \
+	Source/WebCore/platform/text/LocaleToScriptMapping.h \
+	Source/WebCore/platform/text/LocaleToScriptMappingDefault.cpp \
 	Source/WebCore/platform/text/LocalizedDate.h \
 	Source/WebCore/platform/text/LocalizedDateNone.cpp \
 	Source/WebCore/platform/text/LocalizedNumber.h \

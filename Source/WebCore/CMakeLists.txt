@@ -1154,6 +1154,7 @@ SET(WebCore_SOURCES
     platform/text/BidiContext.cpp
     platform/text/Hyphenation.cpp
     platform/text/LineEnding.cpp
+    platform/text/LocaleToScriptMappingDefault.cpp
     platform/text/LocalizedDateNone.cpp
     platform/text/LocalizedNumberNone.cpp
     platform/text/QuotedPrintable.cpp
