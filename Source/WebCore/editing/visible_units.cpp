@@ -1444,42 +1444,42 @@ static VisiblePosition visuallyLastWordBoundaryInBox(const InlineBox* box, int o
     return VisiblePosition();
 }
         
-static int greatestValueUnder(int offset, bool boxAndBlockAreInSameDirection, const WordBoundaryVector& orderedWordBoundaries)
+static int greatestOffsetUnder(int offset, bool boxAndBlockAreInSameDirection, const WordBoundaryVector& orderedWordBoundaries)
 {
     if (!orderedWordBoundaries.size())
-        return invalidOffset;
+        return -1;
     // FIXME: binary search.
     if (boxAndBlockAreInSameDirection) {
         for (unsigned i = 0; i < orderedWordBoundaries.size(); ++i) {
             if (orderedWordBoundaries[i].offsetInInlineBox < offset)
                 return i;
         }
-        return invalidOffset;
+        return -1;
     }
     for (int i = orderedWordBoundaries.size() - 1; i >= 0; --i) {
         if (orderedWordBoundaries[i].offsetInInlineBox < offset)
             return i;
     }
-    return invalidOffset;
+    return -1;
 }
 
 static int smallestOffsetAbove(int offset, bool boxAndBlockAreInSameDirection, const WordBoundaryVector& orderedWordBoundaries)
 {
     if (!orderedWordBoundaries.size())
-        return invalidOffset;
+        return -1;
     // FIXME: binary search.
     if (boxAndBlockAreInSameDirection) {
         for (int i = orderedWordBoundaries.size() - 1; i >= 0; --i) {
             if (orderedWordBoundaries[i].offsetInInlineBox > offset)
                 return i;
         }
-        return invalidOffset;
+        return -1;
     }
     for (unsigned i = 0; i < orderedWordBoundaries.size(); ++i) {
         if (orderedWordBoundaries[i].offsetInInlineBox > offset)
             return i;
     }
-    return invalidOffset;
+    return -1;
 }
 
 static const RenderBlock* blockWithPreviousLineBox(const RenderBlock* startingBlock)
@@ -1599,7 +1599,7 @@ static VisiblePosition rightWordBoundary(const InlineBox* box, int offset, TextD
     return VisiblePosition();
 }
     
-static bool positionIsInsideBox(const VisiblePosition& wordBreak, const InlineBox* box)
+static bool positionIsInBoxButNotOnBoundary(const VisiblePosition& wordBreak, const InlineBox* box)
 {
     int offsetOfWordBreak;
     return positionIsInBox(wordBreak, box, offsetOfWordBreak)
@@ -1633,15 +1633,15 @@ static VisiblePosition leftWordPositionAcrossBoundary(const VisiblePosition& vis
         else
             wordBreak = nextBoundary(visiblePosition, nextWordPositionBoundary);
     }
-    if (wordBreak.isNotNull() && positionIsInsideBox(wordBreak, box))
+    if (wordBreak.isNotNull() && positionIsInBoxButNotOnBoundary(wordBreak, box))
         return wordBreak;
     
     WordBoundaryVector orderedWordBoundaries;
     collectWordBreaksInBox(box, orderedWordBoundaries, blockDirection);
 
-    int index = box->isLeftToRightDirection() ? greatestValueUnder(offset, blockDirection == LTR, orderedWordBoundaries) :
-        smallestOffsetAbove(offset, blockDirection == RTL, orderedWordBoundaries);
-    if (index != invalidOffset)
+    int index = box->isLeftToRightDirection() ? greatestOffsetUnder(offset, blockDirection == LTR, orderedWordBoundaries)
+        : smallestOffsetAbove(offset, blockDirection == RTL, orderedWordBoundaries);
+    if (index >= 0)
         return orderedWordBoundaries[index].visiblePosition;
     
     return leftWordBoundary(leftInlineBox(box, blockDirection), invalidOffset, blockDirection);
@@ -1670,15 +1670,15 @@ static VisiblePosition rightWordPositionAcrossBoundary(const VisiblePosition& vi
         else
             wordBreak = nextBoundary(visiblePosition, nextWordPositionBoundary);
     }
-    if (wordBreak.isNotNull() && positionIsInsideBox(wordBreak, box))
+    if (wordBreak.isNotNull() && positionIsInBoxButNotOnBoundary(wordBreak, box))
         return wordBreak;
     
     WordBoundaryVector orderedWordBoundaries;
     collectWordBreaksInBox(box, orderedWordBoundaries, blockDirection);
     
-    int index = box->isLeftToRightDirection() ? smallestOffsetAbove(offset, blockDirection == LTR, orderedWordBoundaries) :
-        greatestValueUnder(offset, blockDirection == RTL, orderedWordBoundaries);
-    if (index != invalidOffset)
+    int index = box->isLeftToRightDirection() ? smallestOffsetAbove(offset, blockDirection == LTR, orderedWordBoundaries)
+        : greatestOffsetUnder(offset, blockDirection == RTL, orderedWordBoundaries);
+    if (index >= 0)
         return orderedWordBoundaries[index].visiblePosition;
     
     return rightWordBoundary(rightInlineBox(box, blockDirection), invalidOffset, blockDirection);
