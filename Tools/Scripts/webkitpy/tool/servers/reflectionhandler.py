@@ -61,6 +61,13 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def do_POST(self):
         self._handle_request()
 
+    def _read_entity_body(self):
+        length = int(self.headers.getheader('content-length'))
+        return self.rfile.read(length)
+
+    def _read_entity_body_as_json(self):
+        return json.loads(self._read_entity_body())
+
     def _handle_request(self):
         if "?" in self.path:
             path, query_string = self.path.split("?", 1)

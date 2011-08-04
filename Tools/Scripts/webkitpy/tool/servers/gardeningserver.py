@@ -80,6 +80,11 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         ])
         self._serve_text('success')
 
+    def updateexpectations(self):
+        failure_info_list = self._read_entity_body_as_json()
+        print 'FailureInfoList:', failure_info_list
+        self._serve_text('success')
+
     def rebaseline(self):
         builder = self.query['builder'][0]
         test = self.query['test'][0]

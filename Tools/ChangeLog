@@ -1,5 +1,22 @@
 2011-08-03  Adam Barth  <abarth@webkit.org>
 
+        Add UI to garden-o-matic for updating expectations
+        https://bugs.webkit.org/show_bug.cgi?id=65644
+
+        Reviewed by Dimitri Glazkov.
+
+        The patch plumbs the UI back to the gardening server, but the gardening
+        server endpoint is just a stub at this point.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model.js:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+        * Scripts/webkitpy/tool/servers/reflectionhandler.py:
+
+2011-08-03  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic details view should queue rebaselines for later execution
         https://bugs.webkit.org/show_bug.cgi?id=65636
 

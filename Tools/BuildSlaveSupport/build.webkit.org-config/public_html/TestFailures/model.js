@@ -57,7 +57,6 @@ model.updateResultsByBuilder = function(callback)
 model.analyzeUnexpectedFailures = function(callback)
 {
     var unexpectedFailures = results.unexpectedFailuresByTest(model.state.resultsByBuilder);
-    console.log(unexpectedFailures);
 
     $.each(model.state.failureAnalysisByTest, function(testName, failureAnalysis) {
         if (!(testName in unexpectedFailures))

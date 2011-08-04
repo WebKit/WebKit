@@ -28,6 +28,13 @@ checkout.existsAtRevision = function(subversionURL, revision, callback)
     });
 };
 
+checkout.updateExpectations = function(failureInfoList, callback)
+{
+    $.post('/updateexpectations', JSON.stringify(failureInfoList), function() {
+        callback();
+    });
+};
+
 checkout.optimizeBaselines = function(testName, callback)
 {
     $.post('/optimizebaselines?' + $.param({
@@ -37,21 +44,21 @@ checkout.optimizeBaselines = function(testName, callback)
     });
 };
 
-checkout.rebaseline = function(rebaselineTasks, callback)
+checkout.rebaseline = function(failureInfoList, callback)
 {
-    base.callInSequence(function(task, callback) {
-        var extensionList = Array.prototype.concat.apply([], task.failureTypeList.map(results.failureTypeToExtensionList));
+    base.callInSequence(function(failureInfo, callback) {
+        var extensionList = Array.prototype.concat.apply([], failureInfo.failureTypeList.map(results.failureTypeToExtensionList));
         base.callInSequence(function(extension, callback) {
             $.post('/rebaseline?' + $.param({
-                'builder': task.builderName,
-                'test': task.testName,
+                'builder': failureInfo.builderName,
+                'test': failureInfo.testName,
                 'extension': extension
             }), function() {
                 callback();
             });
         }, extensionList, callback);
-    }, rebaselineTasks, function() {
-        var testNameList = base.uniquifyArray(rebaselineTasks.map(function(task) { return task.testName; }));
+    }, failureInfoList, function() {
+        var testNameList = base.uniquifyArray(failureInfoList.map(function(failureInfo) { return failureInfo.testName; }));
         base.callInSequence(checkout.optimizeBaselines, testNameList, callback);
     });
 };
