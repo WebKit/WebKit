@@ -141,9 +141,9 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint
         paintRect.setX(paintRect.x() + xOff);
     }
     
-    paintBoxShadow(paintInfo.context, paintRect, style(), Normal);
+    paintBoxShadow(paintInfo, paintRect, style(), Normal);
     paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect);
-    paintBoxShadow(paintInfo.context, paintRect, style(), Inset);
+    paintBoxShadow(paintInfo, paintRect, style(), Inset);
 
     if (!style()->hasBorder())
         return;

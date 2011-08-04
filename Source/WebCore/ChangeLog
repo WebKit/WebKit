@@ -1,3 +1,42 @@
+2011-08-03  Ian Henderson  <ianh@apple.com>
+
+        Draw rectangular box shadow for elements with border-radius if no corners are visible
+        https://bugs.webkit.org/show_bug.cgi?id=65006
+
+        Reviewed by Simon Fraser.
+
+        Change "unroundClippedCorners" to "allCornersClippedOut" and use it to
+        determine when the corners' influence affects the blurred shadow in
+        the current drawing region.
+
+        Test: fast/box-shadow/box-shadow-clipped-slices.html
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paintBoxShadow): Pass PaintInfo through to
+        RenderBoxModelObject::paintBoxShadow.
+        (WebCore::InlineFlowBox::paintBoxDecorations): Ditto.
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations): Ditto.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::allCornersClippedOut): Determines whether the bounding rects
+        for any of the given rounded rect's corners intersects the clip rect.
+        (WebCore::RenderBoxModelObject::paintBorder): Instead of "unrounding"
+        any corner outside the clip rect, unround all corners at once, and
+        only if they are all outside the clip rect.
+        (WebCore::RenderBoxModelObject::paintBoxShadow): Determine whether any
+        corner will influence shadow drawing using allCornersClippedOut on the
+        influenceRect, whose corners extend past the fillRect's corners by the
+        blur radius and inside the fillRect's corners by the blur radius.
+        * rendering/RenderBoxModelObject.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations): Pass PaintInfo into
+        RenderBoxModelObject::paintBoxShadow.
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintBoxDecorations): Ditto.
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBoxDecorations): Ditto.
+
 2011-08-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt][Texmap][REGRESSION] http://webkit.org/blog-files/transform-style.html doesn't show composited content

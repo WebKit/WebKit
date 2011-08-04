@@ -1129,6 +1129,37 @@ public:
     bool isPresent;
 };
 
+static bool allCornersClippedOut(const RoundedRect& border, const LayoutRect& clipRect)
+{
+    LayoutRect boundingRect = border.rect();
+    if (clipRect.contains(boundingRect))
+        return false;
+
+    RoundedRect::Radii radii = border.radii();
+
+    LayoutRect topLeftRect(boundingRect.location(), radii.topLeft());
+    if (clipRect.intersects(topLeftRect))
+        return false;
+
+    LayoutRect topRightRect(boundingRect.location(), radii.topRight());
+    topRightRect.setX(boundingRect.maxX() - topRightRect.width());
+    if (clipRect.intersects(topRightRect))
+        return false;
+
+    LayoutRect bottomLeftRect(boundingRect.location(), radii.bottomLeft());
+    bottomLeftRect.setY(boundingRect.maxY() - bottomLeftRect.height());
+    if (clipRect.intersects(bottomLeftRect))
+        return false;
+
+    LayoutRect bottomRightRect(boundingRect.location(), radii.bottomRight());
+    bottomRightRect.setX(boundingRect.maxX() - bottomRightRect.width());
+    bottomRightRect.setY(boundingRect.maxY() - bottomRightRect.height());
+    if (clipRect.intersects(bottomRightRect))
+        return false;
+
+    return true;
+}
+
 #if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
 static bool borderWillArcInnerEdge(const IntSize& firstRadius, const IntSize& secondRadius)
 {
@@ -1381,47 +1412,6 @@ void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext* graphics
     }
 }
 
-static void unroundClippedCorners(RoundedRect& border, const LayoutRect& clipRect)
-{
-    LayoutRect boundingRect = border.rect();
-    if (!border.isRounded() || clipRect.contains(boundingRect))
-        return;
-
-    RoundedRect::Radii adjustedRadii = border.radii();
-    bool didAdjustRadii = false;
-
-    LayoutRect topLeftRect(boundingRect.location(), adjustedRadii.topLeft());
-    if (!clipRect.intersects(topLeftRect)) {
-        adjustedRadii.setTopLeft(IntSize());
-        didAdjustRadii = true;
-    }
-
-    LayoutRect topRightRect(boundingRect.location(), adjustedRadii.topRight());
-    topRightRect.setX(boundingRect.maxX() - topRightRect.width());
-    if (!clipRect.intersects(topRightRect)) {
-        adjustedRadii.setTopRight(IntSize());
-        didAdjustRadii = true;
-    }
-
-    LayoutRect bottomLeftRect(boundingRect.location(), adjustedRadii.bottomLeft());
-    bottomLeftRect.setY(boundingRect.maxY() - bottomLeftRect.height());
-    if (!clipRect.intersects(bottomLeftRect)) {
-        adjustedRadii.setBottomLeft(IntSize());
-        didAdjustRadii = true;
-    }
-
-    LayoutRect bottomRightRect(boundingRect.location(), adjustedRadii.bottomRight());
-    bottomRightRect.setX(boundingRect.maxX() - bottomRightRect.width());
-    bottomRightRect.setY(boundingRect.maxY() - bottomRightRect.height());
-    if (!clipRect.intersects(bottomRightRect)) {
-        adjustedRadii.setBottomRight(IntSize());
-        didAdjustRadii = true;
-    }
-
-    if (didAdjustRadii)
-        border.setRadii(adjustedRadii);
-}
-
 void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rect, const RenderStyle* style,
                                        BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
@@ -1473,10 +1463,10 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rec
             haveAllSolidEdges = false;
     }
 
-    // If one of the corners falls outside the clip region, pretend it has no
-    // radius to improve performance.
-    if (haveAllSolidEdges)
-        unroundClippedCorners(outerBorder, info.rect);
+    // If no corner intersects the clip region, we can pretend outerBorder is
+    // rectangular to improve performance.
+    if (haveAllSolidEdges && outerBorder.isRounded() && allCornersClippedOut(outerBorder, info.rect))
+        outerBorder.setRadii(RoundedRect::Radii());
 
     // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
     if (haveAllSolidEdges && allEdgesVisible && allEdgesShareColor && innerBorder.isRenderable()) {
@@ -2190,10 +2180,10 @@ static inline IntRect areaCastingShadowInHole(const IntRect& holeRect, int shado
     return unionRect(bounds, offsetBounds);
 }
 
-void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const LayoutRect& paintRect, const RenderStyle* s, ShadowStyle shadowStyle, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
+void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRect& paintRect, const RenderStyle* s, ShadowStyle shadowStyle, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     // FIXME: Deal with border-image.  Would be great to use border-image as a mask.
-
+    GraphicsContext* context = info.context;
     if (context->paintingDisabled() || !s->boxShadow())
         return;
 
@@ -2223,7 +2213,7 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const Layout
             if (fillRect.isEmpty())
                 continue;
 
-            LayoutRect shadowRect(border.rect());
+            LayoutRect shadowRect = border.rect();
             shadowRect.inflate(shadowBlur + shadowSpread);
             shadowRect.move(shadowOffset);
 
@@ -2254,8 +2244,14 @@ void RenderBoxModelObject::paintBoxShadow(GraphicsContext* context, const Layout
                 if (!rectToClipOut.isEmpty())
                     context->clipOutRoundedRect(rectToClipOut);
 
-                fillRect.expandRadii(shadowSpread);
-                context->fillRoundedRect(fillRect, Color::black, s->colorSpace());
+                RoundedRect influenceRect(shadowRect, border.radii());
+                influenceRect.expandRadii(2 * shadowBlur + shadowSpread);
+                if (allCornersClippedOut(influenceRect, info.rect))
+                    context->fillRect(fillRect.rect(), Color::black, s->colorSpace());
+                else {
+                    fillRect.expandRadii(shadowSpread);
+                    context->fillRoundedRect(fillRect, Color::black, s->colorSpace());
+                }
             } else {
                 LayoutRect rectToClipOut = border.rect();
 

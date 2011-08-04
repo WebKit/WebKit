@@ -1,3 +1,14 @@
+2011-08-03  Ian Henderson  <ianh@apple.com>
+
+        Draw rectangular box shadow for elements with border-radius if no corners are visible
+        https://bugs.webkit.org/show_bug.cgi?id=65006
+
+        Reviewed by Simon Fraser.
+
+        * fast/box-shadow/box-shadow-clipped-slices.html: Added.
+        * platform/mac/fast/box-shadow/box-shadow-clipped-slices-expected.png: Added.
+        * platform/mac/fast/box-shadow/box-shadow-clipped-slices-expected.txt: Added.
+
 2011-08-03  Noel Gordon  <noel.gordon@gmail.com>
 
         [Chromium] fast/dom/resource-locations-in-created-html-document.html fails on win32
