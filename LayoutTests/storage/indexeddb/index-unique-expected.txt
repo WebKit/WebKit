@@ -1,0 +1,40 @@
+Test features of IndexedDB's unique indices.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('index-unique')
+db = event.target.result
+db.setVersion('new version')
+deleteExisting():
+trans = event.target.result
+PASS trans !== null is true
+Deleted all object stores.
+db.createObjectStore('store')
+store.createIndex('index', 'x', {unique: true})
+setVersionCompleted():
+transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)
+transaction.objectStore('store').put({x: 1}, 'foo')
+addMoreData():
+transaction.objectStore('store').put({x: 1}, 'bar')
+addMoreDataFailed():
+event.preventDefault()
+PASS event.target.errorCode is webkitIDBDatabaseException.CONSTRAINT_ERR
+transaction.objectStore('store').put({x: 0}, 'foo')
+changeDataSuccess():
+transaction.objectStore('store').index('index').openCursor(webkitIDBKeyRange.lowerBound(1))
+cursorSuccess():
+PASS event.target.result is null
+transaction.objectStore('store').index('index').openKeyCursor(webkitIDBKeyRange.lowerBound(1))
+keyCursorSuccess():
+PASS event.target.result is null
+transaction.objectStore('store').put({x: 1}, 'bar')
+addMoreDataSucces():
+transaction.objectStore('store').delete('bar')
+deleteSuccess():
+transaction.objectStore('store').put({x: 1}, 'baz')
+finalAddSuccess():
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

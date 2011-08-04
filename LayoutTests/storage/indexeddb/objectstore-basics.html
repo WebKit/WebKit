@@ -176,8 +176,7 @@ function addSuccess()
 function addAgainFailure()
 {
     debug("addAgainFailure():");
-    // FIXME: This error code needs to be specced.
-    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.UNKNOWN_ERR");
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.CONSTRAINT_ERR");
 
     evalAndLog("event.preventDefault()");
 

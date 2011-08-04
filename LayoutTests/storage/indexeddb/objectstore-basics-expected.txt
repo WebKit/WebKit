@@ -63,7 +63,7 @@ addSuccess():
 PASS event.target.result is "key"
 event.target.source.add({x: 'foo'}, 'zzz')
 addAgainFailure():
-PASS event.target.errorCode is webkitIDBDatabaseException.UNKNOWN_ERR
+PASS event.target.errorCode is webkitIDBDatabaseException.CONSTRAINT_ERR
 event.preventDefault()
 db.transaction([], webkitIDBTransaction.READ_WRITE)
 store = transaction.objectStore('storeName')

@@ -236,7 +236,7 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             return;
         }
         if (!it->second->addingKeyAllowed(key.get())) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "One of the derived (from a keyPath) keys for an index does not satisfy its uniqueness requirements."));
+            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "One of the derived (from a keyPath) keys for an index does not satisfy its uniqueness requirements."));
             return;
         }
         indexKeys.append(key.release());

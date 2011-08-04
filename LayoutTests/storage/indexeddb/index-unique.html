@@ -1,0 +1,147 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test features of IndexedDB's unique indices.");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    request = evalAndLog("webkitIndexedDB.open('index-unique')");
+    request.onsuccess = setVersion;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function setVersion()
+{
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("db.setVersion('new version')");
+    request.onsuccess = deleteExisting;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function deleteExisting()
+{
+    debug("deleteExisting():");
+    var trans = evalAndLog("trans = event.target.result");
+    shouldBeTrue("trans !== null");
+    trans.onabort = unexpectedAbortCallback;
+    trans.oncomplete = setVersionCompleted;
+
+    deleteAllObjectStores(db);
+
+    window.store = evalAndLog("db.createObjectStore('store')");
+    window.indexObject = evalAndLog("store.createIndex('index', 'x', {unique: true})");
+
+    // Let setVersion transaction complete.
+}
+
+function setVersionCompleted()
+{
+    debug("setVersionCompleted():");
+    window.transaction = evalAndLog("transaction = db.transaction([], webkitIDBTransaction.READ_WRITE)");
+
+    request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'foo')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = addMoreData;
+}
+
+function addMoreData()
+{
+    debug("addMoreData():");
+
+    // The x value violates the uniqueness constraint of the index.
+    request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'bar')");
+    request.onerror = addMoreDataFailed;
+    request.onsuccess = unexpectedSuccessCallback;
+}
+
+function addMoreDataFailed()
+{
+    debug("addMoreDataFailed():");
+
+    // Don't abort the transaction.
+    evalAndLog("event.preventDefault()");
+
+    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.CONSTRAINT_ERR");
+
+    // Update the 'foo' entry in object store, changing the value of x.
+    request = evalAndLog("transaction.objectStore('store').put({x: 0}, 'foo')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = changeDataSuccess;
+}
+
+function changeDataSuccess()
+{
+    debug("changeDataSuccess():");
+
+    // An index cursor starting at 1 should not find anything.
+    var request = evalAndLog("transaction.objectStore('store').index('index').openCursor(webkitIDBKeyRange.lowerBound(1))");
+    request.onsuccess = cursorSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function cursorSuccess()
+{
+    debug("cursorSuccess():");
+    shouldBe("event.target.result", "null");
+
+    // A key cursor starting at 1 should not find anything.
+    var request = evalAndLog("transaction.objectStore('store').index('index').openKeyCursor(webkitIDBKeyRange.lowerBound(1))");
+    request.onsuccess = keyCursorSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function keyCursorSuccess()
+{
+    debug("keyCursorSuccess():");
+    shouldBe("event.target.result", "null");
+
+    // Now we should be able to add a value with x: 1.
+    request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'bar')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = addMoreDataSucces;
+}
+
+function addMoreDataSucces()
+{
+    debug("addMoreDataSucces():");
+
+    request = evalAndLog("transaction.objectStore('store').delete('bar')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = deleteSuccess;
+}
+
+function deleteSuccess()
+{
+    debug("deleteSuccess():");
+
+    // Now we should be able to add a value with x: 1 again.
+    request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'baz')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = finalAddSuccess;
+}
+
+function finalAddSuccess() {
+    debug("finalAddSuccess():");
+    done();
+}
+
+test();
+
+var successfullyParsed = true;
+
+</script>
+</body>
+</html>
+

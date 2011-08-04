@@ -1,3 +1,25 @@
+2011-08-02  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Fix index data invalidation bugs.
+        https://bugs.webkit.org/show_bug.cgi?id=65547
+
+        Reviewed by Tony Chang.
+
+        The function that checks whether a key exists in an index failed
+        to check whether that key was still valid or not.
+
+        Deleting a record from an object store must also delete its exists
+        entry, thus invalidating index keys pointing to that record.
+
+        Test: storage/indexeddb/index-unique.html
+
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStoreRecord):
+        (WebCore::findKeyInIndex):
+        (WebCore::IDBLevelDBBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInIndex):
+        (WebCore::CursorOptions::IndexKeyCursorImpl::loadCurrentRow):
+
 2011-08-04  Alexandru Chiculita  <achicu@adobe.com>
 
         Move PODIntervalTree to Source/WebCore/platform

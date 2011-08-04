@@ -512,8 +512,12 @@ void IDBLevelDBBackingStore::deleteObjectStoreRecord(int64_t databaseId, int64_t
 {
     ASSERT(m_currentTransaction);
     const LevelDBRecordIdentifier* levelDBRecordIdentifier = static_cast<const LevelDBRecordIdentifier*>(recordIdentifier);
-    const Vector<char> key = ObjectStoreDataKey::encode(databaseId, objectStoreId, levelDBRecordIdentifier->primaryKey());
-    m_currentTransaction->remove(key);
+
+    const Vector<char> objectStoreDataKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, levelDBRecordIdentifier->primaryKey());
+    m_currentTransaction->remove(objectStoreDataKey);
+
+    const Vector<char> existsEntryKey = ExistsEntryKey::encode(databaseId, objectStoreId, levelDBRecordIdentifier->primaryKey());
+    m_currentTransaction->remove(existsEntryKey);
 }
 
 double IDBLevelDBBackingStore::nextAutoIncrementNumber(int64_t databaseId, int64_t objectStoreId)
@@ -801,52 +805,60 @@ static bool versionExists(LevelDBTransaction* transaction, int64_t databaseId, i
     return decodeInt(data.begin(), data.end()) == version;
 }
 
-PassRefPtr<IDBKey> IDBLevelDBBackingStore::getPrimaryKeyViaIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key)
+static bool findKeyInIndex(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key, Vector<char>& foundEncodedPrimaryKey)
 {
-    ASSERT(m_currentTransaction);
+    ASSERT(foundEncodedPrimaryKey.isEmpty());
+
     const Vector<char> leveldbKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, key, 0);
-    OwnPtr<LevelDBIterator> it = m_currentTransaction->createIterator();
+    OwnPtr<LevelDBIterator> it = transaction->createIterator();
     it->seek(leveldbKey);
 
     for (;;) {
         if (!it->isValid())
-            return 0;
+            return false;
         if (compareIndexKeys(it->key(), leveldbKey) > 0)
-            return 0;
+            return false;
 
         int64_t version;
         const char* p = decodeVarInt(it->value().begin(), it->value().end(), version);
         if (!p)
-            return 0;
-        Vector<char> encodedPrimaryKey;
-        encodedPrimaryKey.append(p, it->value().end() - p);
+            return false;
+        foundEncodedPrimaryKey.append(p, it->value().end() - p);
 
-        if (!versionExists(m_currentTransaction.get(), databaseId, objectStoreId, version, encodedPrimaryKey)) {
+        if (!versionExists(transaction, databaseId, objectStoreId, version, foundEncodedPrimaryKey)) {
             // Delete stale index data entry and continue.
-            m_currentTransaction->remove(it->key());
+            transaction->remove(it->key());
             it->next();
             continue;
         }
 
+        return true;
+    }
+}
+
+PassRefPtr<IDBKey> IDBLevelDBBackingStore::getPrimaryKeyViaIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key)
+{
+    ASSERT(m_currentTransaction);
+
+    Vector<char> foundEncodedPrimaryKey;
+    if (findKeyInIndex(m_currentTransaction.get(), databaseId, objectStoreId, indexId, key, foundEncodedPrimaryKey)) {
         RefPtr<IDBKey> primaryKey;
-        decodeIDBKey(encodedPrimaryKey.begin(), encodedPrimaryKey.end(), primaryKey);
+        decodeIDBKey(foundEncodedPrimaryKey.begin(), foundEncodedPrimaryKey.end(), primaryKey);
         return primaryKey.release();
     }
+
+    return 0;
 }
 
 bool IDBLevelDBBackingStore::keyExistsInIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key)
 {
     ASSERT(m_currentTransaction);
-    const Vector<char> levelDBKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, key, 0);
-    OwnPtr<LevelDBIterator> it = m_currentTransaction->createIterator();
 
-    bool found = false;
+    Vector<char> foundEncodedPrimaryKey;
+    if (findKeyInIndex(m_currentTransaction.get(), databaseId, objectStoreId, indexId, key, foundEncodedPrimaryKey))
+        return true;
 
-    it->seek(levelDBKey);
-    if (it->isValid() && !compareIndexKeys(it->key(), levelDBKey))
-        found = true;
-
-    return found;
+    return false;
 }
 
 namespace {
@@ -1088,7 +1100,7 @@ bool IndexKeyCursorImpl::loadCurrentRow()
     if (!t)
         return false;
 
-    if (objectStoreDataVersion != indexDataVersion) { // FIXME: This is probably not very well covered by the layout tests.
+    if (objectStoreDataVersion != indexDataVersion) {
         m_transaction->remove(m_iterator->key());
         return false;
     }
