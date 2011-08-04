@@ -891,7 +891,7 @@ BUGWK62974 LINUX WIN : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
 BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
 BUGWK62974 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
-BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE
+BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE IMAGE+TEXT
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
 
 // -----------------------------------------------------------------
@@ -2165,7 +2165,7 @@ BUGCR53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 // These tests are consistently failing on Linux, and the latter test is flaky on Win.
 BUGCR53554 LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = IMAGE
 BUGCR53554 WIN : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
-BUGCR53554 LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE
+BUGCR53554 LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE IMAGE+TEXT
 
 // New test, need to verify if it's safe to rebaseline.
 BUGWK44770 LINUX WIN : svg/repaint/filter-repaint.svg = CRASH IMAGE+TEXT
