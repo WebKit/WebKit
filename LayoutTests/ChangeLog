@@ -1,5 +1,13 @@
 2011-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium Windows and Linux rebaselines after r92330.
+
+        * platform/chromium-win/editing/pasteboard/paste-pre-001-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-pre-002-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-text-011-expected.txt: Removed.
+
+2011-08-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         select-all, copy, paste of specialAncestorElements (e.g. pre, h1, etc) nests the element inside itself
         https://bugs.webkit.org/show_bug.cgi?id=26483
 
