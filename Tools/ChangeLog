@@ -1,3 +1,17 @@
+2011-08-04  David Levin  <levin@chromium.org>
+
+        [chromium] Fix assertion failure in ThreadIdentifierData::identifier in TestShell.
+        https://bugs.webkit.org/show_bug.cgi?id=65685
+
+        Reviewed by Dmitry Titov.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::WebViewHost): Intialize WTF threading before
+        anything in WTF is used. Usually this is done by WebViewImpl::WebViewImpl
+        but in some cases code may use WTF without creating WebViewImpl and
+        WTF code functionality may call WTF::currentThread, which requires
+        this initialization now.
+
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
         An educated guess at causing the Windows bots on build.webkit.org to

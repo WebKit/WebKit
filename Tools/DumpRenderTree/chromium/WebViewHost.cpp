@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2010, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -62,8 +62,10 @@
 #include "WebWindowFeatures.h"
 #include "skia/ext/platform_canvas.h"
 #include "webkit/support/webkit_support.h"
+
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 using namespace WebCore;
@@ -1158,6 +1160,7 @@ WebViewHost::WebViewHost(TestShell* shell)
     , m_webWidget(0)
     , m_lastRequestedTextCheckingCompletion(0)
 {
+    WTF::initializeThreading();
     reset();
 }
 
