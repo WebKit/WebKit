@@ -49,6 +49,7 @@ WEBKIT2_API_SOURCES = \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebpage.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qtouchwebview.cpp \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qweberror.cpp \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebnavigationcontroller.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundle.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.cpp \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.cpp \
@@ -131,6 +132,7 @@ WEBKIT2_API_HEADERS += \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qweberror.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qweberror_p.h \
     $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebkittypes.h \
+    $$SOURCE_DIR/WebKit2/UIProcess/API/qt/qwebnavigationcontroller.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardList.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleBackForwardListItem.h \
     $$SOURCE_DIR/WebKit2/WebProcess/InjectedBundle/API/c/WKBundleHitTestResult.h \

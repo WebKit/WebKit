@@ -30,6 +30,7 @@
 class QTouchWebPagePrivate;
 class QTouchWebPageProxy;
 class QWebError;
+class QWebNavigationController;
 
 namespace WebKit {
     class TouchViewInterface;
@@ -40,6 +41,7 @@ class QWEBKIT_EXPORT QTouchWebPage : public QSGPaintedItem {
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
+    Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT)
 
 public:
     QTouchWebPage(QSGItem* parent = 0);
@@ -52,7 +54,7 @@ public:
     Q_INVOKABLE QString title() const;
     int loadProgress() const;
 
-    QAction* navigationAction(QtWebKit::NavigationAction which);
+    QWebNavigationController* navigationController() const;
 
     virtual void paint(QPainter*);
     virtual bool event(QEvent*);

@@ -20,6 +20,7 @@
 #include <QAction>
 #include <QApplication>
 #include <QDesktopWidget>
+#include <qwebnavigationcontroller.h>
 #include "webviewabstraction.h"
 
 WebViewAbstraction::WebViewAbstraction()
@@ -98,9 +99,9 @@ int WebViewAbstraction::loadProgress() const
 
 void WebViewAbstraction::triggerNavigationAction(QtWebKit::NavigationAction which)
 {
-    QAction* touchAction = touchWebView()->page()->navigationAction(which);
+    QAction* touchAction = touchWebView()->page()->navigationController()->navigationAction(which);
     touchAction->trigger();
-    QAction* desktopAction = desktopWebView()->navigationAction(which);
+    QAction* desktopAction = desktopWebView()->navigationController()->navigationAction(which);
     desktopAction->trigger();
 }
 

@@ -41,6 +41,7 @@ QDesktopWebViewPrivate::QDesktopWebViewPrivate(QDesktopWebView* q, WKContextRef 
     : q(q)
     , page(this, contextRef ? new QWKContext(contextRef) : defaultWKContext(), pageGroupRef)
     , isCrashed(false)
+    , navigationController(0)
 {
 }
 
@@ -209,9 +210,11 @@ QString QDesktopWebView::title() const
     return d->page.title();
 }
 
-QAction* QDesktopWebView::navigationAction(QtWebKit::NavigationAction which) const
+QWebNavigationController* QDesktopWebView::navigationController() const
 {
-    return d->page.navigationAction(which);
+    if (!d->navigationController)
+        d->navigationController = new QWebNavigationController(&d->page);
+    return d->navigationController;
 }
 
 static void paintCrashedPage(QPainter* painter, const QRectF& rect)

@@ -29,6 +29,7 @@
 
 class QDesktopWebViewPrivate;
 class QWebError;
+class QWebNavigationController;
 
 QT_BEGIN_NAMESPACE
 class QFocusEvent;
@@ -52,11 +53,9 @@ class QWEBKIT_EXPORT QDesktopWebView : public QSGPaintedItem {
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
-
-    Q_ENUMS(NavigationAction)
+    Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT)
 
 public:
-
     QDesktopWebView(QSGItem* parent = 0);
     virtual ~QDesktopWebView();
 
@@ -64,7 +63,7 @@ public:
     QString title() const;
     int loadProgress() const;
 
-    Q_INVOKABLE QAction* navigationAction(QtWebKit::NavigationAction which) const;
+    QWebNavigationController* navigationController() const;
 
 public Q_SLOTS:
      void load(const QUrl&);

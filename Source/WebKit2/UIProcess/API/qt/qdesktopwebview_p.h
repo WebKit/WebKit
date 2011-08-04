@@ -22,6 +22,7 @@
 #define qdesktopwebview_p_h
 
 #include "qdesktopwebpageproxy.h"
+#include "qwebnavigationcontroller.h"
 #include "ViewInterface.h"
 
 class QDesktopWebView;
@@ -37,6 +38,7 @@ public:
     QDesktopWebPageProxy page;
 
     bool isCrashed;
+    QWebNavigationController* navigationController;
 
 private:
     /* Implementation of ViewInterface */

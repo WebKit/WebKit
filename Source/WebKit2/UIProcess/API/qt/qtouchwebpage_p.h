@@ -23,6 +23,7 @@
 
 #include <QMenu>
 #include "qtouchwebpage.h"
+#include "qwebnavigationcontroller.h"
 
 class QRectF;
 class QString;
@@ -42,6 +43,7 @@ public:
 
     QTouchWebPage* const q;
     QTouchWebPageProxy* page;
+    QWebNavigationController* navigationController;
 };
 
 #endif /* qtouchwebpage_p_h */

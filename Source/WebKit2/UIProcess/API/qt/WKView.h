@@ -24,5 +24,6 @@
 #include <WebKit2/qdesktopwebview.h>
 #include <WebKit2/qtouchwebview.h>
 #include <WebKit2/qtouchwebpage.h>
+#include <WebKit2/qwebnavigationcontroller.h>
 
 #endif /* WKView_h */

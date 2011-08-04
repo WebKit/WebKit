@@ -122,14 +122,17 @@ void QTouchWebPage::geometryChanged(const QRectF& newGeometry, const QRectF& old
         d->page->setDrawingAreaSize(newGeometry.size().toSize());
 }
 
-QAction* QTouchWebPage::navigationAction(QtWebKit::NavigationAction which)
+QWebNavigationController* QTouchWebPage::navigationController() const
 {
-    return d->page->navigationAction(which);
+    if (!d->navigationController)
+        d->navigationController = new QWebNavigationController(d->page);
+    return d->navigationController;
 }
 
 QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
     : q(view)
     , page(0)
+    , navigationController(0)
 {
 }
 

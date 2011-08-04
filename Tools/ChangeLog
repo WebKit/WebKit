@@ -1,3 +1,15 @@
+2011-08-04  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Make navigation actions properly usable in QML.
+        https://bugs.webkit.org/show_bug.cgi?id=65624
+
+        Fix compilation after the introduction of QWebNavigationController.
+
+        Reviewed by Benjamin Poulain.
+
+        * MiniBrowser/qt/BrowserView.cpp:
+        (BrowserView::navigationAction):
+
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
         Another subtle bug due to lack of testing in main.js.  :(

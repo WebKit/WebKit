@@ -21,6 +21,7 @@
 #include <QtTest/QtTest>
 #include <qtouchwebpage.h>
 #include <qtouchwebview.h>
+#include <qwebnavigationcontroller.h>
 #include "../testwindow.h"
 #include "../util.h"
 
@@ -74,19 +75,19 @@ void tst_QTouchWebView::accessPage()
 
 void tst_QTouchWebView::navigationActionsStatusAtStartup()
 {
-    QAction* backAction = webView()->page()->navigationAction(QtWebKit::Back);
+    QAction* backAction = webView()->page()->navigationController()->backAction();
     QVERIFY(backAction);
     QCOMPARE(backAction->isEnabled(), false);
 
-    QAction* forwardAction = webView()->page()->navigationAction(QtWebKit::Forward);
+    QAction* forwardAction = webView()->page()->navigationController()->forwardAction();
     QVERIFY(forwardAction);
     QCOMPARE(forwardAction->isEnabled(), false);
 
-    QAction* stopAction = webView()->page()->navigationAction(QtWebKit::Stop);
+    QAction* stopAction = webView()->page()->navigationController()->stopAction();
     QVERIFY(stopAction);
     QCOMPARE(stopAction->isEnabled(), false);
 
-    QAction* reloadAction = webView()->page()->navigationAction(QtWebKit::Reload);
+    QAction* reloadAction = webView()->page()->navigationController()->reloadAction();
     QVERIFY(reloadAction);
     QCOMPARE(reloadAction->isEnabled(), false);
 }

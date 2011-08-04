@@ -21,6 +21,7 @@
 #include <QScopedPointer>
 #include <QtTest/QtTest>
 #include <qdesktopwebview.h>
+#include <qwebnavigationcontroller.h>
 #include "../testwindow.h"
 #include "../util.h"
 
@@ -63,19 +64,19 @@ inline QDesktopWebView* tst_QDesktopWebView::webView() const
 
 void tst_QDesktopWebView::navigationActionsStatusAtStartup()
 {
-    QAction* backAction = webView()->navigationAction(QtWebKit::Back);
+    QAction* backAction = webView()->navigationController()->backAction();
     QVERIFY(backAction);
     QCOMPARE(backAction->isEnabled(), false);
 
-    QAction* forwardAction = webView()->navigationAction(QtWebKit::Forward);
+    QAction* forwardAction = webView()->navigationController()->forwardAction();
     QVERIFY(forwardAction);
     QCOMPARE(forwardAction->isEnabled(), false);
 
-    QAction* stopAction = webView()->navigationAction(QtWebKit::Stop);
+    QAction* stopAction = webView()->navigationController()->stopAction();
     QVERIFY(stopAction);
     QCOMPARE(stopAction->isEnabled(), false);
 
-    QAction* reloadAction = webView()->navigationAction(QtWebKit::Reload);
+    QAction* reloadAction = webView()->navigationController()->reloadAction();
     QVERIFY(reloadAction);
     QCOMPARE(reloadAction->isEnabled(), false);
 }
@@ -94,7 +95,7 @@ public slots:
     {
         QMetaObject::invokeMethod(this, "finished", Qt::QueuedConnection);
 
-        QAction* stopAction = m_webView->navigationAction(QtWebKit::Stop);
+        QAction* stopAction = m_webView->navigationController()->stopAction();
         QVERIFY(stopAction);
         QCOMPARE(stopAction->isEnabled(), true);
     }
@@ -108,7 +109,7 @@ private:
 
 void tst_QDesktopWebView::stopActionEnabledAfterLoadStarted()
 {
-    QAction* stopAction = webView()->navigationAction(QtWebKit::Stop);
+    QAction* stopAction = webView()->navigationController()->stopAction();
     QVERIFY(stopAction);
     QCOMPARE(stopAction->isEnabled(), false);
 

@@ -34,6 +34,7 @@
 #include <qdesktopwebview.h>
 #include <qtouchwebview.h>
 #include <qtouchwebpage.h>
+#include <qwebnavigationcontroller.h>
 
 BrowserView::BrowserView(bool useTouchWebView, QWidget* parent)
     : QSGCanvas(parent)
@@ -88,9 +89,9 @@ QDesktopWebView* BrowserView::desktopWebView() const
 QAction* BrowserView::navigationAction(QtWebKit::NavigationAction which) const
 {
     if (desktopWebView())
-        return desktopWebView()->navigationAction(which);
+        return desktopWebView()->navigationController()->navigationAction(which);
     if (touchWebView())
-        return touchWebView()->page()->navigationAction(which);
+        return touchWebView()->page()->navigationController()->navigationAction(which);
     Q_ASSERT(false);
     return 0;
 }

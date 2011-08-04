@@ -1,3 +1,59 @@
+2011-08-04  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Make navigation actions properly usable in QML.
+        https://bugs.webkit.org/show_bug.cgi?id=65624
+
+        Add a new class that is exposed in QML to control the navigation
+        like reload/stop/back/forward. Enums are not very QML friendly,
+        it not possible to use enums that are not declared in the same class
+        than the object exposed in QML, therefore it makes hard the sharing
+        between the desktop and the touch views. In addition namespaced enums are
+        even harder to support in QML. QWebNavigationController is
+        not really meant to be used in C++ but it is exported for convenience
+        reason (tests and MiniBrowser) so its API is not meant to be public but
+        exposed in QML through properties and convenience slots. The QML code to use
+        the navigation action in QML will look like "desktopView.navigation.reload();"
+        or "if (desktopView.navigation.reloadAction.enabled) ...".
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/API/qt/WKView.h: To get the forward header generated
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::QDesktopWebViewPrivate):
+        (QDesktopWebView::navigationController):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qmlplugin/plugin.cpp:
+        (WebKit2QmlPlugin::registerTypes):
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::navigationController):
+        (QTouchWebPagePrivate::QTouchWebPagePrivate):
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/API/qt/qwebnavigationcontroller.cpp: Added.
+        (QWebNavigationControllerPrivate::QWebNavigationControllerPrivate):
+        (QWebNavigationController::QWebNavigationController):
+        (QWebNavigationController::~QWebNavigationController):
+        (QWebNavigationController::backAction):
+        (QWebNavigationController::forwardAction):
+        (QWebNavigationController::stopAction):
+        (QWebNavigationController::reloadAction):
+        (QWebNavigationController::navigationAction):
+        (QWebNavigationController::back):
+        (QWebNavigationController::forward):
+        (QWebNavigationController::stop):
+        (QWebNavigationController::reload):
+        * UIProcess/API/qt/qwebnavigationcontroller.h: Added.
+        * UIProcess/API/qt/tests/commonviewtests/webviewabstraction.cpp:
+        (WebViewAbstraction::triggerNavigationAction):
+        * UIProcess/API/qt/tests/qdesktopwebview/tst_qdesktopwebview.cpp:
+        (tst_QDesktopWebView::navigationActionsStatusAtStartup):
+        (LoadStartedCatcher::onLoadStarted):
+        (tst_QDesktopWebView::stopActionEnabledAfterLoadStarted):
+        * UIProcess/API/qt/tests/qtouchwebview/tst_qtouchwebview.cpp:
+        (tst_QTouchWebView::navigationActionsStatusAtStartup):
+        * WebKit2API.pri:
+
 2011-08-03  Jeff Miller  <jeffm@apple.com>
 
         Use of AVFoundation should default to off on Windows
