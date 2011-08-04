@@ -280,6 +280,7 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("updateTouchPoint", &EventSender::updateTouchPoint);
     bindMethod("zoomPageIn", &EventSender::zoomPageIn);
     bindMethod("zoomPageOut", &EventSender::zoomPageOut);
+    bindMethod("scalePageBy", &EventSender::scalePageBy);
 
     // When set to true (the default value), we batch mouse move and mouse up
     // events so we can simulate drag & drop.
@@ -695,6 +696,18 @@ void EventSender::zoomPageIn(const CppArgumentList&, CppVariant* result)
 void EventSender::zoomPageOut(const CppArgumentList&, CppVariant* result)
 {
     webview()->setZoomLevel(false, webview()->zoomLevel() - 1);
+    result->setNull();
+}
+
+void EventSender::scalePageBy(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() < 3 || !arguments[0].isNumber() || !arguments[1].isNumber() || !arguments[2].isNumber())
+        return;
+
+    float scaleFactor = static_cast<float>(arguments[0].toDouble());
+    int x = arguments[1].toInt32();
+    int y = arguments[2].toInt32();
+    webview()->scalePage(scaleFactor, WebPoint(x, y));
     result->setNull();
 }
 

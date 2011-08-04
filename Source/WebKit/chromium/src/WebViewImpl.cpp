@@ -1841,6 +1841,18 @@ double WebView::zoomFactorToZoomLevel(double factor)
     return log(factor) / log(textSizeMultiplierRatio);
 }
 
+void WebViewImpl::scalePage(float scaleFactor, WebPoint origin)
+{
+    if (!page())
+        return;
+
+    Frame* frame = page()->mainFrame();
+    if (!frame)
+        return;
+
+    frame->scalePage(scaleFactor, origin);
+}
+
 void WebViewImpl::performMediaPlayerAction(const WebMediaPlayerAction& action,
                                            const WebPoint& location)
 {

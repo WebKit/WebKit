@@ -1,3 +1,27 @@
+2011-08-03  Kentaro Hara  <haraken@google.com>
+
+        Implement EventSender.scalePageBy()
+        https://bugs.webkit.org/show_bug.cgi?id=58013
+
+        Reviewed by Darin Fisher.
+
+        Implemented EventSender.scalePageBy(f, x, y), which scales a page by a factor of f
+        and then sets a scroll position to (x, y). Enabled the tests that had been waiting
+        for the implementation of EventSender.scalePageBy(f, x, y).
+
+        Tests: compositing/scaling/tiled-layer-recursion.html
+               fast/repaint/scale-page-shrink.html
+               fast/dom/Element/scale-page-client-rects.html
+               fast/dom/Range/scale-page-client-rects.html
+               fast/events/scroll-in-scaled-page-with-overflow-hidden.html
+               fast/dom/Element/scale-page-bounding-client-rect.html
+               fast/dom/Range/scale-page-bounding-client-rect.html
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scalePage): A wrapper method for scalePage() in WebCore.
+        * src/WebViewImpl.h:
+
 2011-08-03  Darin Fisher  <darin@chromium.org>
 
         [Chromium] Rename WEBKIT_API to WEBKIT_EXPORT.

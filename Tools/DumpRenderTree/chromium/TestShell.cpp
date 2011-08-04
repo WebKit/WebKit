@@ -44,6 +44,7 @@
 #include "WebTestingSupport.h"
 #include "WebKit.h"
 #include "WebPermissions.h"
+#include "WebPoint.h"
 #include "WebRuntimeFeatures.h"
 #include "WebScriptController.h"
 #include "WebSettings.h"
@@ -265,6 +266,7 @@ void TestShell::resetTestController()
     m_drtDevToolsAgent->reset();
     if (m_drtDevToolsClient)
         m_drtDevToolsClient->reset();
+    webView()->scalePage(1, WebPoint(0, 0));
     webView()->mainFrame()->clearOpener();
 }
 

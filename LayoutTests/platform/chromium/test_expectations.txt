@@ -594,9 +594,9 @@ BUGCR8630 WIN LINUX : fast/text/font-initial.html = FAIL
 BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 
 // Needs eventSender.scalePageBy().
-BUGWK58013 : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
-BUGWK58013 : fast/events/scroll-in-scaled-page-with-overflow-hidden.html = TEXT
-BUGWK58013 SKIP : compositing/scaling/tiled-layer-recursion.html = FAIL
+// These failures are going to be removed as a rebase line after the patch for bug 58013 is landed.
+BUGWK58013 WIN MAC : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
+BUGWK58013 WIN MAC : compositing/scaling/tiled-layer-recursion.html = FAIL
 
 // -----------------------------------------------------------------
 // Inspector tests
