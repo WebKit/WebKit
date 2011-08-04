@@ -198,6 +198,26 @@ PASS rects[0].left is 8
 FAIL rects[0].top should be 1903. Was 1918.
 PASS rects[0].width is 0
 FAIL rects[0].height should be 18. Was 19.
+Test 10
+PASS rects.length is 4
+FAIL rects[0].left should be 19. Was 18.
+FAIL rects[0].top should be 2088. Was 2106.
+FAIL rects[0].width should be 18. Was 19.
+PASS rects[0].height is 393
+FAIL rects[1].left should be 59. Was 58.
+FAIL rects[1].top should be 2088. Was 2106.
+FAIL rects[1].width should be 18. Was 19.
+PASS rects[1].height is 377
+FAIL rects[2].left should be 99. Was 98.
+FAIL rects[2].top should be 2088. Was 2106.
+FAIL rects[2].width should be 18. Was 19.
+PASS rects[2].height is 372
+FAIL rects[3].left should be 139. Was 138.
+FAIL rects[3].top should be 2088. Was 2106.
+FAIL rects[3].width should be 18. Was 19.
+PASS rects[3].height is 360
+Test 11
+PASS rects.length is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

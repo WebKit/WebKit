@@ -1,3 +1,16 @@
+2011-08-04  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline.
+
+        * platform/gtk/fast/dom/Range/getBoundingClientRect-expected.txt:
+        * platform/gtk/fast/dom/Range/getClientRects-expected.txt:
+        * platform/gtk/fast/dom/Window/window-postmessage-clone-expected.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt: Added.
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt: Added.
+        * platform/gtk/fast/dom/prototype-inheritance-expected.txt: Added.
+        * platform/gtk/fast/js/global-constructors-expected.txt: Added.
+
 2011-08-04  Shinichiro Hamaji  <hamaji@chromium.org>
 
         [Chromium] Needs eventSender.scalePageBy()
