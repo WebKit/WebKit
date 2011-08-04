@@ -1,3 +1,19 @@
+2011-08-04  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Pretty print JSONP in network panel preview tab.
+        https://bugs.webkit.org/show_bug.cgi?id=65559
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/network/network-preview-json.html
+
+        * inspector/front-end/ResourceJSONView.js:
+        (WebInspector.ResourceJSONView.parseJSON.WebInspector.ResourceJSONView.parseJSONP):
+        (WebInspector.ResourceJSONView.parseJSON.WebInspector.ResourceJSONView.prototype._initialize):
+        (WebInspector.ResourceJSONView.parseJSON.WebInspector.ParsedJSON):
+        * inspector/front-end/ResourcePreviewView.js:
+        (WebInspector.ResourcePreviewView.prototype._createPreviewView):
+
 2011-08-04  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: replace isRegex with urlRegex in setBreakpointByUrl

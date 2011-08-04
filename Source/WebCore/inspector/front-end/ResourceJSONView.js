@@ -37,13 +37,36 @@ WebInspector.ResourceJSONView = function(resource, parsedJSON)
 
 WebInspector.ResourceJSONView.parseJSON = function(text)
 {
+    var prefix = "";
+
     // Trim while(1), for(;;), weird numbers, etc. We need JSON start.
     var start = /[{[]/.exec(text);
-    if (start && start.index)
+    if (start && start.index) {
+        prefix = text.substring(0, start.index);
         text = text.substring(start.index);
+    }
 
     try {
-        return JSON.parse(text);
+        return new WebInspector.ParsedJSON(JSON.parse(text), prefix, "");
+    } catch (e) {
+        return;
+    }
+}
+
+WebInspector.ResourceJSONView.parseJSONP = function(text)
+{
+    // Taking everything between first and last parentheses
+    var start = text.indexOf("(");
+    var end = text.lastIndexOf(")");
+    if (start == -1 || end == -1 || end < start)
+        return;
+    
+    var prefix = text.substring(0, start + 1); 
+    var suffix = text.substring(end);
+    var text = text.substring(start + 1, end);
+
+    try {
+        return new WebInspector.ParsedJSON(JSON.parse(text), prefix, suffix);
     } catch (e) {
         return;
     }
@@ -67,9 +90,20 @@ WebInspector.ResourceJSONView.prototype = {
             return;
         this._initialized = true;
 
-        var obj = WebInspector.RemoteObject.fromLocalObject(this._parsedJSON);
-        this.element.appendChild(new WebInspector.ObjectPropertiesSection(obj, obj.description).element);
+        var obj = WebInspector.RemoteObject.fromLocalObject(this._parsedJSON.data);
+        var title = this._parsedJSON.prefix + obj.description + this._parsedJSON.suffix;
+        var section = new WebInspector.ObjectPropertiesSection(obj, title);
+        section.expand();
+        section.editable = false;
+        this.element.appendChild(section.element);
     }
 }
 
 WebInspector.ResourceJSONView.prototype.__proto__ = WebInspector.ResourceView.prototype;
+
+WebInspector.ParsedJSON = function(data, prefix, suffix)
+{
+    this.data = data;
+    this.prefix = prefix;
+    this.suffix = suffix;
+}

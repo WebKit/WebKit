@@ -71,6 +71,12 @@ WebInspector.ResourcePreviewView.prototype = {
                 return new WebInspector.ResourceJSONView(this.resource, parsedJSON);
         }
 
+        if (this.resource.content && this.resource.category === WebInspector.resourceCategories.scripts && this.resource.mimeType === "application/json") {
+            var parsedJSONP = WebInspector.ResourceJSONView.parseJSONP(this.resource.content);
+            if (parsedJSONP)
+                return new WebInspector.ResourceJSONView(this.resource, parsedJSONP);
+        }
+
         if (this._responseView.sourceView)
             return this._responseView.sourceView;
         

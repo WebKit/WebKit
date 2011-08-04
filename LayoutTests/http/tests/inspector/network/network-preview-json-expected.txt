@@ -1,0 +1,3 @@
+Tests ResourceJSONView ability to parse JSON passed in XHR, JSONP
+
+Bug 65559
