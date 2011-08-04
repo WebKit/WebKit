@@ -217,8 +217,9 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
         # Once we fix detect_scm_system to use the mock file system we can add this log back.
         #_log.warn("Failed to determine svn revision for checkout (cwd: %s, webkit_base: %s), leaving 'revision' key blank in full_results.json.\n%s" % (port_obj._filesystem.getcwd(), port_obj.path_from_webkit_base(), e))
         # Handle cases where we're running outside of version control.
-        _log.debug('Failed to learn head_svn_revision:')
-        _log.debug(e)
+        import traceback
+        _log.debug('Failed to learn head svn revision:')
+        _log.debug(traceback.format_exc())
         results['revision'] = ""
 
     return results

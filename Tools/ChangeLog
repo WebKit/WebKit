@@ -1,3 +1,9 @@
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
+        Fancier debug logging.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+
 2011-08-04  David Levin  <levin@chromium.org>
 
         [chromium] Fix assertion failure in ThreadIdentifierData::identifier in TestShell.
