@@ -1,3 +1,15 @@
+2011-08-03  Adam Roben  <aroben@apple.com>
+
+        Test that a 2^25x2^25 pixel layer doesn't cause a crash
+
+        Test for <http://webkit.org/b/65637> <rdar://problem/9784849> Crash beneath
+        PlatformCALayerWinInternal::updateTiles when zooming on Google Maps
+
+        Reviewed by Sam Weinig.
+
+        * compositing/tiling/crash-huge-layer-expected.txt: Added.
+        * compositing/tiling/crash-huge-layer.html: Added.
+
 2011-08-04  Jian Li  <jianli@chromium.org>
 
         Unreviewed, mark gain.html as flaky on Linux chromium.

@@ -1,3 +1,25 @@
+2011-08-03  Adam Roben  <aroben@apple.com>
+
+        Detect and handle overflow in PlatformCALayerWinInternal::constrainedSize
+
+        Google Maps sometimes requests very large (i.e., 2^50 pixels or greater) layers when
+        zooming. PlatformCALayerWinInternal has code to limit tiled layers to 2^27 pixels, but it
+        was not correctly handling overflow. In some cases, this would lead to creating a tiled
+        layer with 0 tiles, which was the cause of this crash.
+
+        Fixes <http://webkit.org/b/65637> <rdar://problem/9784849> Crash beneath
+        PlatformCALayerWinInternal::updateTiles when zooming on Google Maps
+
+        Reviewed by Sam Weinig.
+
+        Test: compositing/tiling/crash-huge-layer.html
+
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::constrainedSize): Check for overflow before seeing if the
+        number of required tiles is larger than the maximum number of allowed tiles.
+        (PlatformCALayerWinInternal::updateTiles): Added an assertion to catch cases where we have a
+        non-empty tiled layer that contains 0 tiles, which would cause the crash in this bug report.
+
 2011-08-04  Stephen White  <senorblanco@chromium.org>
 
         Set graphics context current before canvas.toDataURL().

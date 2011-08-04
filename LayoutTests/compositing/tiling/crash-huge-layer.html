@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+<p>This is a test for <a href="https://bugs.webkit.org/show_bug.cgi?id=65637">Bug 65637: Crash beneath PlatformCALayerWinInternal::updateTiles when zooming on Google Maps</a>. The test passes if the browser does not crash.</p>
+<div style="width: 33554432px; height: 33554432px; -webkit-transform: translateZ(0);">Did you crash?</div>
