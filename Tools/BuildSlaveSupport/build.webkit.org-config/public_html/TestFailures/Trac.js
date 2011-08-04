@@ -122,7 +122,7 @@ var g_cache = new base.AsynchronousCache(function(key, callback) {
 
     var url = trac.logURL(path, startRevision, endRevision, true, true);
 
-    $.get(url, function(commitData) {
+    net.get(url, function(commitData) {
         callback(parseCommitData(commitData));
     });
 });
@@ -155,7 +155,7 @@ trac.recentCommitData = function(path, limit, callback)
         'limit': limit,
     });
 
-    $.get(url, function(commitData) {
+    net.get(url, function(commitData) {
         callback(parseCommitData(commitData));
     });
 };

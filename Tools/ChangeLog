@@ -1,3 +1,31 @@
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic needs a way to mock out the network
+        https://bugs.webkit.org/show_bug.cgi?id=65653
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch introduces the net module, which is a useful mock point for
+        abstracting away the network.  Future patches will use this
+        infrastructure to test some currently untested code.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Bugzilla.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/builders.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/net.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/net_unittests.js: Added.
+        (NetworkSimulator):
+        (NetworkSimulator.prototype.scheduleCallback):
+        (NetworkSimulator.prototype.runTest):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
 2011-08-03  Adam Barth  <abarth@webkit.org>
 
         Use failureInfo more pervasively in garden-o-matic

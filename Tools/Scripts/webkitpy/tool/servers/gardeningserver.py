@@ -48,6 +48,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         "main.css",
         "main.js",
         "model.js",
+        "net.js",
         "partytime.gif",
         "results.js",
         "Trac.js",

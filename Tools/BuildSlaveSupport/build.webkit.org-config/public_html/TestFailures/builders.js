@@ -38,14 +38,14 @@ function didFailStepRequredForTestCoverage(buildInfo)
 
 var g_buildInfoCache = new base.AsynchronousCache(function(key, callback) {
     var explodedKey = key.split('\n');
-    $.get(urlForBuildInfo(explodedKey[0], explodedKey[1]), callback);
+    net.get(urlForBuildInfo(explodedKey[0], explodedKey[1]), callback);
 });
 
 function fetchMostRecentBuildInfoByBuilder(callback)
 {
     var buildInfoByBuilder = {};
     var requestTracker = new base.RequestTracker(config.kBuilders.length, callback, [buildInfoByBuilder]);
-    $.get(kChromiumBuildBotURL + '/json/builders', function(builderStatus) {
+    net.get(kChromiumBuildBotURL + '/json/builders', function(builderStatus) {
         $.each(config.kBuilders, function(index, builderName) {
             var buildNumber = builderStatus[builderName].cachedBuilds.pop();
 

@@ -103,41 +103,6 @@ test("resultNodeForTest", 4, function() {
     equals(results.resultNodeForTest(kExampleResultsJSON, "userscripts/foo/bar.html"), null);
 });
 
-function NetworkSimulator()
-{
-    this._pendingCallbacks = [];
-};
-
-NetworkSimulator.prototype.scheduleCallback = function(callback)
-{
-    this._pendingCallbacks.push(callback);
-}
-
-NetworkSimulator.prototype.runTest = function(testCase)
-{
-    var self = this;
-    var realBase = window.base;
-
-    window.base = {};
-    base.endsWith = realBase.endsWith;
-    base.trimExtension = realBase.trimExtension;
-    base.uniquifyArray = realBase.uniquifyArray;
-    if (self.probeHook)
-        base.probe = self.probeHook;
-    if (self.jsonpHook)
-        base.jsonp = self.jsonpHook;
-
-    testCase();
-
-    while (this._pendingCallbacks.length) {
-        var callback = this._pendingCallbacks.shift();
-        callback();
-    }
-
-    window.base = realBase;
-    equal(window.base, realBase, "Failed to restore real base!");
-}
-
 test("walkHistory", 6, function() {
     var simulator = new NetworkSimulator();
 
@@ -208,7 +173,7 @@ test("walkHistory", 6, function() {
         }
     };
 
-    simulator.jsonpHook = function(url, callback) {
+    simulator.jsonp = function(url, callback) {
         simulator.scheduleCallback(function() {
             if (/dir=1/.test(url)) {
                 if (/builder=Mock/.test(url)) {
@@ -275,7 +240,7 @@ test("walkHistory (no revision)", 3, function() {
         },
     };
 
-    simulator.jsonpHook = function(url, callback) {
+    simulator.jsonp = function(url, callback) {
         simulator.scheduleCallback(function() {
             if (/dir=1/.test(url)) {
                 callback([
@@ -346,7 +311,7 @@ test("fetchResultsURLs", 5, function() {
     var simulator = new NetworkSimulator();
 
     var probedURLs = [];
-    simulator.probeHook = function(url, options)
+    simulator.probe = function(url, options)
     {
         simulator.scheduleCallback(function() {
             probedURLs.push(url);

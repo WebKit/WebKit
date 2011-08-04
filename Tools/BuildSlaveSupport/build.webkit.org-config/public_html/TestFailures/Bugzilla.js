@@ -41,7 +41,7 @@ var g_searchCache = new base.AsynchronousCache(function(query, callback) {
         quicksearch: query,
     });
 
-    $.get(url, function(responseXML) {
+    net.get(url, function(responseXML) {
         var entries = responseXML.getElementsByTagName('entry');
         var results = Array.prototype.map.call(entries, function(entry) {
             var container = document.createElement('div');

@@ -158,7 +158,7 @@ function directoryOfResultsSummaryURL(builderName, testName)
 }
 
 var g_resultsCache = new base.AsynchronousCache(function(key, callback) {
-    base.jsonp(kTestResultsServer + 'testfile?key=' + key, callback);
+    net.jsonp(kTestResultsServer + 'testfile?key=' + key, callback);
 });
 
 function anyIsFailure(resultsList)
@@ -261,7 +261,7 @@ function walkHistory(builderName, testName, callback)
         continueWalk();
     }
 
-    base.jsonp(directoryOfResultsSummaryURL(builderName, kResultsName), function(directory) {
+    net.jsonp(directoryOfResultsSummaryURL(builderName, kResultsName), function(directory) {
         keyList = directory.map(function (element) { return element.key; });
         continueWalk();
     });
@@ -441,7 +441,7 @@ results.fetchResultsURLs = function(failureInfo, callback)
 
     $.each(suffixList, function(index, suffix) {
         var url = stem + testNameStem + suffix;
-        base.probe(url, {
+        net.probe(url, {
             success: function() {
                 resultURLs.push(url);
                 checkComplete();
@@ -453,7 +453,7 @@ results.fetchResultsURLs = function(failureInfo, callback)
 
 results.fetchResultsForBuilder = function(builderName, callback)
 {
-    base.jsonp(resultsSummaryURL(builderName, kResultsName), function(resultsTree) {
+    net.jsonp(resultsSummaryURL(builderName, kResultsName), function(resultsTree) {
         callback(resultsTree);
     });
 };

@@ -81,34 +81,6 @@ base.filterTree = function(tree, isLeaf, predicate)
     return filteredTree;
 };
 
-base.probe = function(url, options)
-{
-    var scriptElement = document.createElement('script');
-    scriptElement.addEventListener('load', function() {
-        $(scriptElement).detach();
-        if (options.success)
-            options.success.call();
-    }, false);
-    scriptElement.addEventListener('error', function() {
-        $(scriptElement).detach();
-        if (options.error)
-            options.error.call();
-    }, false);
-    scriptElement.src = url;
-    document.head.appendChild(scriptElement);
-};
-
-// jQuery makes jsonp requests somewhat ugly (which is fair given that they're
-// terrible for security). We use this wrapper to make our lives slightly easier.
-base.jsonp = function(url, onsuccess)
-{
-    $.ajax({
-        url: url,
-        dataType: 'jsonp',
-        success: onsuccess
-    });
-};
-
 base.RequestTracker = function(requestsInFlight, callback, args)
 {
     this._requestsInFlight = requestsInFlight;

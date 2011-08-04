@@ -16,7 +16,7 @@ checkout.subversionURLForTest = function(testName)
 
 checkout.existsAtRevision = function(subversionURL, revision, callback)
 {
-    $.ajax({
+    net.ajax({
         method: 'HEAD',
         url: subversionURLAtRevision(subversionURL, revision), 
         success: function() {
@@ -30,14 +30,14 @@ checkout.existsAtRevision = function(subversionURL, revision, callback)
 
 checkout.updateExpectations = function(failureInfoList, callback)
 {
-    $.post('/updateexpectations', JSON.stringify(failureInfoList), function() {
+    net.post('/updateexpectations', JSON.stringify(failureInfoList), function() {
         callback();
     });
 };
 
 checkout.optimizeBaselines = function(testName, callback)
 {
-    $.post('/optimizebaselines?' + $.param({
+    net.post('/optimizebaselines?' + $.param({
         'test': testName,
     }), function() {
         callback();
@@ -49,7 +49,7 @@ checkout.rebaseline = function(failureInfoList, callback)
     base.callInSequence(function(failureInfo, callback) {
         var extensionList = Array.prototype.concat.apply([], failureInfo.failureTypeList.map(results.failureTypeToExtensionList));
         base.callInSequence(function(extension, callback) {
-            $.post('/rebaseline?' + $.param({
+            net.post('/rebaseline?' + $.param({
                 'builder': failureInfo.builderName,
                 'test': failureInfo.testName,
                 'extension': extension
