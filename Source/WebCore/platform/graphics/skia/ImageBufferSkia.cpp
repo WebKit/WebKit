@@ -361,20 +361,9 @@ static String ImageToDataURL(T& source, const String& mimeType, const double* qu
 
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const
 {
+    m_context->platformContext()->makeGrContextCurrent();
     SkDevice* device = context()->platformContext()->canvas()->getDevice();
-    SkBitmap bitmap = device->accessBitmap(false);
-
-    // if we can't see the pixels directly, call readPixels() to get a copy.
-    // this could happen if the device is backed by a GPU.
-    bitmap.lockPixels(); // balanced by our destructor, or explicitly if getPixels() fails
-    if (!bitmap.getPixels()) {
-        bitmap.unlockPixels();
-        SkIRect bounds = SkIRect::MakeWH(device->width(), device->height());
-        if (!device->readPixels(bounds, &bitmap))
-            return "data:,";
-    }
-
-    return ImageToDataURL(bitmap, mimeType, quality);
+    return ImageToDataURL(device->accessBitmap(false), mimeType, quality);
 }
 
 String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)

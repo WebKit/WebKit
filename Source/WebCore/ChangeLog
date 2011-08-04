@@ -1,3 +1,16 @@
+2011-08-04  Stephen White  <senorblanco@chromium.org>
+
+        Set graphics context current before canvas.toDataURL().
+        https://bugs.webkit.org/show_bug.cgi?id=65700
+
+        Reviewed by James Robinson.
+
+        No new tests, unfortunately.  The test infrastucture doesn't seem
+        to be conducive to writing multiple-context tests.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+
 2011-08-01  Brian Weinstein  <bweinstein@apple.com>
 
         WebKit2: Web Inspector always starts in undocked mode
