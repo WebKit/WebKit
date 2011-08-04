@@ -8,46 +8,61 @@ var successfullyParsed = false;
 <script src="../fast/js/resources/js-test-pre.js"></script>
 </head>
 <body id="body">
-<input type="text" aria-readonly="true" size=20>
-<input type="text" aria-readonly="false" size=20>
-<input type="text" readonly="readonly" size=20>
-<input type="text" size=20>
-<textarea rows="2" cols="20" readonly="readonly"></textarea>
-<textarea rows="2" cols="20"></textarea>
+<div role="textbox" aria-readonly="false" aria-multiline="false" id="ariaTextBox" tabindex="0"></div>
+<div role="textbox" aria-readonly="true" id="ariaReadOnlyAriaTextBox" tabindex="0"></div>
+<input type="text" aria-readonly="true" id="ariaReadOnlyTextField" size=20>
+<input type="text" aria-readonly="false" id="ariaNonReadOnlyTextField" size=20>
+<input type="text" readonly="readonly" id="htmlReadOnlyTextField" size=20>
+<input type="text" id="textField" size=20>
+<textarea rows="2" cols="20" readonly="readonly" id="htmlReadOnlyTextArea"></textarea>
+<textarea rows="2" cols="20" id="textArea"></textarea>
 <p id="description"></p>
 <div id="console"></div>
 
 <script>
 
-    description("This tests that the aria-readonly attribute works. The first and third text fields should not be writable.");
+    description("This tests that the AXValue property is correctly reported for native and non-native text boxes.");
 
     if (window.accessibilityController) {
+          document.getElementById("ariaTextBox").focus();
+          var ariaTextBox = accessibilityController.focusedElement;
+          var ariaTextBoxIsWritable = ariaTextBox.isAttributeSettable("AXValue");
+          shouldBe("ariaTextBoxIsWritable", "true");
 
-          var body = document.getElementById("body");
-          body.focus();
-          var textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
-          var succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "false");
+          document.getElementById("ariaReadOnlyAriaTextBox").focus();
+          var ariaReadOnlyAriaTextBox = accessibilityController.focusedElement;
+          var ariaReadOnlyAriaTextBoxIsWritable = ariaReadOnlyAriaTextBox.isAttributeSettable("AXValue");
+          shouldBe("ariaReadOnlyAriaTextBoxIsWritable", "false");
 
-          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(1);
-          succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "true");
-          
-          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(2);
-          succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "false");
-            
-          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(3);
-          succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "true");
-          
-          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(4);
-          succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "false");
+          document.getElementById("ariaReadOnlyTextField").focus();
+          var ariaReadOnlyTextField = accessibilityController.focusedElement;
+          var ariaReadOnlyTextFieldIsWritable = ariaReadOnlyTextField.isAttributeSettable("AXValue");
+          shouldBe("ariaReadOnlyTextFieldIsWritable", "false");
 
-          textField = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(5);
-          succeeded = textField.isAttributeSettable("AXValue");
-          shouldBe("succeeded", "true");
+          document.getElementById("ariaNonReadOnlyTextField").focus();
+          var ariaNonReadOnlyTextField = accessibilityController.focusedElement;
+          var ariaNonReadOnlyTextFieldIsWritable = ariaNonReadOnlyTextField.isAttributeSettable("AXValue");
+          shouldBe("ariaNonReadOnlyTextFieldIsWritable", "true");
+
+          document.getElementById("htmlReadOnlyTextField").focus();
+          var htmlReadOnlyTextField = accessibilityController.focusedElement;
+          var htmlReadOnlyTextFieldIsWritable = htmlReadOnlyTextField.isAttributeSettable("AXValue");
+          shouldBe("htmlReadOnlyTextFieldIsWritable", "false");
+
+          document.getElementById("textField").focus();
+          var textField = accessibilityController.focusedElement;
+          var textFieldIsWritable = textField.isAttributeSettable("AXValue");
+          shouldBe("textFieldIsWritable", "true");
+
+          document.getElementById("htmlReadOnlyTextArea").focus();
+          var htmlReadOnlyTextArea = accessibilityController.focusedElement;
+          var htmlReadOnlyTextAreaIsWritable = htmlReadOnlyTextArea.isAttributeSettable("AXValue");
+          shouldBe("htmlReadOnlyTextAreaIsWritable", "false");
+
+          document.getElementById("textArea").focus();
+          var textArea = accessibilityController.focusedElement;
+          var textAreaIsWritable = textArea.isAttributeSettable("AXValue");
+          shouldBe("textAreaIsWritable", "true");
     }
 
     successfullyParsed = true;

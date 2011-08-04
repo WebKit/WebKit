@@ -1,3 +1,13 @@
+2011-08-03  Alice Boxhall  <aboxhall@chromium.org>
+
+        An element with role=textbox should have settable AXValue unless read-only
+        https://bugs.webkit.org/show_bug.cgi?id=65664
+
+        Reviewed by Chris Fleizach.
+
+        * accessibility/aria-readonly-expected.txt:
+        * accessibility/aria-readonly.html:
+
 2011-08-03  Kentaro Hara  <haraken@google.com>
 
         Implement EventSender.scalePageBy()

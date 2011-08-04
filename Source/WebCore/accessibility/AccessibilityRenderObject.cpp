@@ -96,7 +96,7 @@ AccessibilityRenderObject::AccessibilityRenderObject(RenderObject* renderer)
     , m_roleForMSAA(UnknownRole)
 {
     m_role = determineAccessibilityRole();
-    
+
 #ifndef NDEBUG
     m_renderer->setHasAXObject(true);
 #endif
@@ -653,7 +653,7 @@ bool AccessibilityRenderObject::isMultiSelectable() const
         return false;
     return m_renderer->node() && static_cast<HTMLSelectElement*>(m_renderer->node())->multiple();
 }
-    
+
 bool AccessibilityRenderObject::isReadOnly() const
 {
     ASSERT(m_renderer);
@@ -3287,9 +3287,15 @@ bool AccessibilityRenderObject::canSetValueAttribute() const
     if (equalIgnoringCase(getAttribute(aria_readonlyAttr), "true"))
         return false;
 
+    if (isProgressIndicator() || isSlider())
+        return true;
+
+    if (isTextControl() && !isNativeTextControl())
+        return true;
+
     // Any node could be contenteditable, so isReadOnly should be relied upon
     // for this information for all elements.
-    return isProgressIndicator() || isSlider() || !isReadOnly();
+    return !isReadOnly();
 }
 
 bool AccessibilityRenderObject::canSetTextRangeAttributes() const
