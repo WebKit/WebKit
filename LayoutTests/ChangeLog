@@ -1,3 +1,12 @@
+2011-08-04  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        [Chromium] Needs eventSender.scalePageBy()
+        https://bugs.webkit.org/show_bug.cgi?id=58013
+
+        Unreviewed chromium test_expectations.txt update
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-02  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Fix index data invalidation bugs.

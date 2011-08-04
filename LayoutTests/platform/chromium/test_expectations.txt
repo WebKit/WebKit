@@ -3687,3 +3687,7 @@ BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-ag
 BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
 
 BUGWK65666 WIN LINUX : fast/box-shadow/box-shadow-clipped-slices.html = IMAGE
+
+// This test fails with GPU
+BUGWK58013 MAC GPU : compositing/scaling/tiled-layer-recursion.html = CRASH
+BUGWK58013 LINUX GPU : compositing/scaling/tiled-layer-recursion.html = IMAGE
