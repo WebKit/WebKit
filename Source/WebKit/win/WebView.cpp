@@ -6137,7 +6137,7 @@ static KURL toKURL(BSTR bstr)
 
 void WebView::enterFullscreenForNode(Node* node)
 {
-    if (!node->hasTagName(HTMLNames::videoTag))
+    if (!node->hasTagName(HTMLNames::videoTag) || !node->isElementNode() || !static_cast<Element*>(node)->isMediaElement())
         return;
 
 #if ENABLE(VIDEO)

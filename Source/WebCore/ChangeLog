@@ -1,3 +1,33 @@
+2011-08-03  Kent Tamura  <tkent@chromium.org>
+
+        Fix incorrect checks for HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=65590
+
+        Reviewed by Dimitri Glazkov.
+
+        <video> and <audio> can be an HTMLElement instance instead of
+        HTMLMediaElement if MediaPlayer::isAvailable() returns false or
+        the media feature is disabled at runtime.
+
+        * html/HTMLSourceElement.cpp:
+        (WebCore::HTMLSourceElement::insertedIntoTree):
+        (WebCore::HTMLSourceElement::willRemove):
+        * html/HTMLTrackElement.cpp:
+        (WebCore::HTMLTrackElement::insertedIntoTree):
+        (WebCore::HTMLTrackElement::willRemove):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::toParentMediaElement):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::updateWidget):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintMediaMuteButton):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::getMediaElementFromRenderObject):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintMediaSliderTrack):
+        * rendering/RenderThemeWinCE.cpp:
+        (WebCore::mediaElementParent):
+
 2011-08-03  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium Mac: Make ScrollbarOverlayUtilitiesChromiumMac.h c++ compatible

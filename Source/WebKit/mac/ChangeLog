@@ -1,3 +1,17 @@
+2011-08-03  Kent Tamura  <tkent@chromium.org>
+
+        Fix incorrect checks for HTMLMediaElement
+        https://bugs.webkit.org/show_bug.cgi?id=65590
+
+        Reviewed by Dimitri Glazkov.
+
+        <video> and <audio> can be an HTMLElement instance instead of
+        HTMLMediaElement if MediaPlayer::isAvailable() returns false or
+        the media feature is disabled at runtime.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController _isAnyMoviePlaying]):
+
 2011-08-03  Mark Rowe  <mrowe@apple.com>
 
         Bring some order to FeatureDefines.xcconfig to make it easier to follow.

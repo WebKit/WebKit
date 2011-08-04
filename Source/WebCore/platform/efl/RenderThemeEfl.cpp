@@ -1170,7 +1170,7 @@ bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const Pain
 bool RenderThemeEfl::paintMediaMuteButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
     Node* mediaNode = object->node() ? object->node()->shadowAncestorNode() : 0;
-    if (!mediaNode || (!mediaNode->hasTagName(videoTag) && !mediaNode->hasTagName(audioTag)))
+    if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
         return false;
 
     HTMLMediaElement* mediaElement = static_cast<HTMLMediaElement*>(mediaNode);

@@ -57,7 +57,7 @@ using namespace HTMLNames;
 HTMLMediaElement* toParentMediaElement(Node* node)
 {
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
-    if (!mediaNode || (!mediaNode->hasTagName(HTMLNames::videoTag) && !mediaNode->hasTagName(HTMLNames::audioTag)))
+    if (!mediaNode || !mediaNode->isElementNode() || !static_cast<Element*>(mediaNode)->isMediaElement())
         return 0;
 
     return static_cast<HTMLMediaElement*>(mediaNode);

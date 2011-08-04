@@ -57,7 +57,8 @@ PassRefPtr<HTMLTrackElement> HTMLTrackElement::create(const QualifiedName& tagNa
 void HTMLTrackElement::insertedIntoTree(bool deep)
 {
     HTMLElement::insertedIntoTree(deep);
-    if (parentNode() && (parentNode()->hasTagName(audioTag) || parentNode()->hasTagName(videoTag))) {
+    Element* parent = parentElement();
+    if (parent && parent->isMediaElement()) {
         // TODO(annacc):
         // static_cast<HTMLMediaElement*>(parentNode())->trackWasAdded(this);
     }
@@ -65,7 +66,8 @@ void HTMLTrackElement::insertedIntoTree(bool deep)
 
 void HTMLTrackElement::willRemove()
 {
-    if (parentNode() && (parentNode()->hasTagName(audioTag) || parentNode()->hasTagName(videoTag))) {
+    Element* parent = parentElement();
+    if (parent && parent->isMediaElement()) {
         // TODO(annacc):
         // static_cast<HTMLMediaElement*>(parentNode())->trackWillBeRemoved(this);
     }
