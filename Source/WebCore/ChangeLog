@@ -1,3 +1,17 @@
+2011-08-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: replace isRegex with urlRegex in setBreakpointByUrl
+        https://bugs.webkit.org/show_bug.cgi?id=65684
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+
 2011-08-03  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] fullscreen/video-controls-override.html fails

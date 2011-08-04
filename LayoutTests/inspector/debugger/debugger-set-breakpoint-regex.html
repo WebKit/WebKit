@@ -15,26 +15,53 @@ function foo()
 
 function test()
 {
-    InspectorTest.startDebuggerTest(step1);
+    InspectorTest.runDebuggerTestSuite([
+        function testSetNoneOfURLAndRegex(next)
+        {
+            var url = "debugger-set-breakpoint.js";
+            var urlRegex = "debugger-set-breakpoint.*";
+            DebuggerAgent.setBreakpointByUrl(undefined, undefined, 1, step2);
 
-    function step1()
-    {
-        var columnNumber = undefined;
-        var condition = undefined;
-        var isRegex = true;
-        DebuggerAgent.setBreakpointByUrl("debugger-set-breakpoint.*", 8, columnNumber, condition, isRegex, step2);
-    }
+            function step2(result)
+            {
+                InspectorTest.dump(result);
+                next();
+            }
+        },
 
-    function step2()
-    {
-        InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
-    }
+        function testSetBothURLAndRegex(next)
+        {
+            var url = "debugger-set-breakpoint.js";
+            var urlRegex = "debugger-set-breakpoint.*";
+            DebuggerAgent.setBreakpointByUrl(url, urlRegex, 1, step2);
 
-    function step3(callFrames)
-    {
-        InspectorTest.captureStackTrace(callFrames);
-        InspectorTest.completeDebuggerTest();
-    }
+            function step2(result)
+            {
+                InspectorTest.dump(result);
+                next();
+            }
+        },
+
+        function testSetByRegex(next)
+        {
+            var url = undefined;
+            var urlRegex = "debugger-set-breakpoint.*";
+            var columnNumber = undefined;
+            var condition = undefined;
+            DebuggerAgent.setBreakpointByUrl(url, urlRegex, 8, columnNumber, condition, step2);
+
+            function step2(result)
+            {
+                InspectorTest.runTestFunctionAndWaitUntilPaused(step3);
+            }
+        
+            function step3(callFrames)
+            {
+                InspectorTest.captureStackTrace(callFrames);
+                next();
+            }
+        }
+    ]);
 }
 
 </script>

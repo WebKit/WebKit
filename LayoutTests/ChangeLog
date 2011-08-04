@@ -1,5 +1,15 @@
 2011-08-04  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: replace isRegex with urlRegex in setBreakpointByUrl
+        https://bugs.webkit.org/show_bug.cgi?id=65684
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/debugger-set-breakpoint-regex-expected.txt:
+        * inspector/debugger/debugger-set-breakpoint-regex.html:
+
+2011-08-04  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: Rename sourceId -> scriptId in the protocol and the source code.
         https://bugs.webkit.org/show_bug.cgi?id=65682
 
