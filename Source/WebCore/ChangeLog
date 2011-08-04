@@ -1,3 +1,19 @@
+2011-08-04  Fady Samuel  <fsamuel@chromium.org>
+
+        Background Does Not Scale Correctly with Page
+        https://bugs.webkit.org/show_bug.cgi?id=65690
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/repaint/background-scaling.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxFillLayers):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::unscaledDocumentRect):
+        (WebCore::RenderView::documentRect):
+        * rendering/RenderView.h:
+
 2011-08-04  Jochen Eisinger  <jochen@chromium.org>
 
         Introduce a new ResourceRequest::TargetType for XHRs

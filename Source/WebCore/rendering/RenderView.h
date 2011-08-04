@@ -165,6 +165,8 @@ public:
     bool usesCompositing() const;
 #endif
 
+    IntRect unscaledDocumentRect() const;
+
     IntRect documentRect() const;
 
 #if ENABLE(CSS_REGIONS)
