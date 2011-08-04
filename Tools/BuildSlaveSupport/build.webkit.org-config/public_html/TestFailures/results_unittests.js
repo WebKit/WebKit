@@ -360,15 +360,27 @@ test("fetchResultsURLs", 5, function() {
     };
 
     simulator.runTest(function() {
-        results.fetchResultsURLs("Mock Builder", "userscripts/another-test.html", ['IMAGE', 'CRASH'], function(resultURLs) {
+        results.fetchResultsURLs({
+            'builderName': "Mock Builder",
+            'testName': "userscripts/another-test.html",
+            'failureTypeList': ['IMAGE', 'CRASH'],
+        }, function(resultURLs) {
             deepEqual(resultURLs, [
                 "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/another-test-crash-log.txt"
             ]);
         });
-        results.fetchResultsURLs("Mock Builder", "userscripts/another-test.html", ['TIMEOUT'], function(resultURLs) {
+        results.fetchResultsURLs({
+            'builderName': "Mock Builder",
+            'testName': "userscripts/another-test.html",
+            'failureTypeList': ['TIMEOUT'],
+        }, function(resultURLs) {
             deepEqual(resultURLs, []);
         });
-        results.fetchResultsURLs("Mock Builder", "userscripts/taco.html", ['IMAGE', 'IMAGE+TEXT'], function(resultURLs) {
+        results.fetchResultsURLs({
+            'builderName': "Mock Builder",
+            'testName': "userscripts/taco.html",
+            'failureTypeList': ['IMAGE', 'IMAGE+TEXT'],
+        }, function(resultURLs) {
             deepEqual(resultURLs, [
                 "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-expected.png",
                 "http://build.chromium.org/f/chromium/layout_test_results/Mock_Builder/results/layout-test-results/userscripts/taco-actual.png",

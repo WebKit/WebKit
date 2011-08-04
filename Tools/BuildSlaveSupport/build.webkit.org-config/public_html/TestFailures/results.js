@@ -418,12 +418,12 @@ function sortResultURLsBySuffix(urls)
     return sortedURLs;
 }
 
-results.fetchResultsURLs = function(builderName, testName, failureTypeList, callback)
+results.fetchResultsURLs = function(failureInfo, callback)
 {
-    var stem = resultsDirectoryURL(builderName);
-    var testNameStem = base.trimExtension(testName);
+    var stem = resultsDirectoryURL(failureInfo.builderName);
+    var testNameStem = base.trimExtension(failureInfo.testName);
 
-    var suffixList = possibleSuffixListFor(failureTypeList);
+    var suffixList = possibleSuffixListFor(failureInfo.failureTypeList);
 
     var resultURLs = [];
     var requestsInFlight = suffixList.length;

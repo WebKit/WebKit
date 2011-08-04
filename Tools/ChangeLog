@@ -1,5 +1,22 @@
 2011-08-03  Adam Barth  <abarth@webkit.org>
 
+        Use failureInfo more pervasively in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=65650
+
+        Reviewed by Dimitri Glazkov.
+
+        These three variable appears in concert together many places.  This
+        patch unifies the remaining uses into being failureInfo objects, which
+        saves some marshalling.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui_unittests.js:
+
+2011-08-03  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should be able to update expecations from the details pane
         https://bugs.webkit.org/show_bug.cgi?id=65648
 

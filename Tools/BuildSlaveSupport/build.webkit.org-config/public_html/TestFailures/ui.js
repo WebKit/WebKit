@@ -38,16 +38,18 @@ ui.infobarMessageForCompileErrors = function(builderNameList)
     return block;
 };
 
-ui.failureDetailsStatus = function(testName, selectedBuilderName, failureTypes, builderNameList)
+ui.failureDetailsStatus = function(failureInfo, builderNameList)
 {
+    var failureTypes = failureInfo.failureTypeList.join(' ');
+
     var block = $('<span><span class="test-name"></span><span class="builder-list"></span></span>');
-    $('.test-name', block).addClass(failureTypes).text(testName);
+    $('.test-name', block).addClass(failureTypes).text(failureInfo.testName);
 
     var builderList = $('.builder-list', block);
     $.each(builderNameList, function(index, builderName) {
         var builder = $('<span class="builder-name"></span>')
         builder.text(builderName);
-        if (builderName == selectedBuilderName)
+        if (builderName == failureInfo.builderName)
             builder.addClass('selected');
         builderList.append(builder);
     });

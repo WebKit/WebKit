@@ -71,35 +71,35 @@ function rebaseline(failureInfoList)
     });
 }
 
-function showResultsDetail(testName, builderName, failureTypeList)
+function showResultsDetail(failureInfo)
 {
-    var failureTypes = failureTypeList.join(' ');
+    var failureTypes = failureInfo.failureTypeList.join(' ');
 
     var content = $('.results-detail .content');
 
-    if ($('.failure-details', content).attr(config.kBuilderNameAttr) == builderName &&
-        $('.failure-details', content).attr(config.kTestNameAttr) == testName &&
+    if ($('.failure-details', content).attr(config.kBuilderNameAttr) == failureInfo.builderName &&
+        $('.failure-details', content).attr(config.kTestNameAttr) == failureInfo.testName &&
         $('.failure-details', content).attr(config.kFailureTypesAttr) == failureTypes)
         return;
 
     displayOnButterbar('Loading...');
 
-    results.fetchResultsURLs(builderName, testName, failureTypeList, function(resultsURLs) {
+    results.fetchResultsURLs(failureInfo, function(resultsURLs) {
         var status = $('.results-detail .toolbar .status');
 
         status.empty();
         content.empty();
 
         // FIXME: We should be passing the full list of failing builder names as the fourth argument.
-        status.append(ui.failureDetailsStatus(testName, builderName, failureTypes, [builderName]));
+        status.append(ui.failureDetailsStatus(failureInfo, [failureInfo.builderName]));
         content.append(ui.failureDetails(resultsURLs));
 
         toggleButton($('.results-detail .actions .next'), g_resultsDetailsIterator.hasNext());
         toggleButton($('.results-detail .actions .previous'), g_resultsDetailsIterator.hasPrevious());
-        toggleButton($('.results-detail .actions .rebaseline'), results.canRebaseline(failureTypeList));
+        toggleButton($('.results-detail .actions .rebaseline'), results.canRebaseline(failureInfo.failureTypeList));
 
-        $('.failure-details', content).attr(config.kBuilderNameAttr, builderName);
-        $('.failure-details', content).attr(config.kTestNameAttr, testName);
+        $('.failure-details', content).attr(config.kTestNameAttr, failureInfo.testName);
+        $('.failure-details', content).attr(config.kBuilderNameAttr, failureInfo.builderName);
         $('.failure-details', content).attr(config.kFailureTypesAttr, failureTypes);
 
         if (!$('.results-detail').is(":visible"))
@@ -197,10 +197,7 @@ function updateExpectationsForSelected()
 
 function showSelectedFailures()
 {
-    var argumentList = selectedFailures().map(function(failureInfo) {
-        return [failureInfo.testName, failureInfo.builderName, failureInfo.failureTypeList];
-    });
-    g_resultsDetailsIterator = new base.CallbackIterator(showResultsDetail, argumentList);
+    g_resultsDetailsIterator = new base.CallbackIterator(showResultsDetail, selectedFailures());
     g_resultsDetailsIterator.callNext();
 }
 

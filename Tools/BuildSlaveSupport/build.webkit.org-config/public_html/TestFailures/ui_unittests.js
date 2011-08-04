@@ -32,7 +32,11 @@ test("infobarMessageForCompileErrors", 1, function() {
 });
 
 test("failureDetailsStatus", 1, function() {
-    var status = ui.failureDetailsStatus('userscripts/another-test.html', 'Mock Builder', 'TEXT', ['Mock Builder', 'Another Builder']);
+    var status = ui.failureDetailsStatus({
+        'builderName': 'Mock Builder',
+        'testName': 'userscripts/another-test.html',
+        'failureTypeList': ['TEXT'],
+    }, ['Mock Builder', 'Another Builder']);
     status.wrap('<wrapper></wrapper>');
     equal(status.parent().html(),
         '<span>' +
