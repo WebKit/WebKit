@@ -1,3 +1,13 @@
+2011-08-04  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65706
+        Run run-unit-tests on release mode test bots.
+        Reenabling after 61812 is fixed.
+
+        Reviewed by Adam Roben.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
         builders.js needs unit tests
