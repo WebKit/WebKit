@@ -1,3 +1,13 @@
+2011-08-04  Mark Rowe  <mrowe@apple.com>
+
+        Future-proof Xcode configuration settings.
+
+        * Configurations/Base.xcconfig:
+        * Configurations/CompilerVersion.xcconfig:
+        * Configurations/DebugRelease.xcconfig:
+        * Configurations/Version.xcconfig:
+        * Configurations/WebKit2.xcconfig:
+
 2011-08-01  Brian Weinstein  <bweinstein@apple.com>
 
         WebKit2: Web Inspector always starts in undocked mode

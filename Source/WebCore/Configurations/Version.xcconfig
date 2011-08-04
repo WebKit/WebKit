@@ -38,6 +38,8 @@ SYSTEM_VERSION_PREFIX_macosx = $(SYSTEM_VERSION_PREFIX_macosx_$(TARGET_MAC_OS_X_
 SYSTEM_VERSION_PREFIX_macosx_1050 = 5;
 SYSTEM_VERSION_PREFIX_macosx_1060 = 6;
 SYSTEM_VERSION_PREFIX_macosx_1070 = 7;
+SYSTEM_VERSION_PREFIX_macosx_1080 = 8;
+SYSTEM_VERSION_PREFIX_macosx_1090 = 9;
 
 // The production build always uses the full version with a system version prefix.
 BUNDLE_VERSION_Production = $(SYSTEM_VERSION_PREFIX)$(FULL_VERSION);
