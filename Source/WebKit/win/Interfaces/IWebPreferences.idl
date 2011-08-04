@@ -202,4 +202,7 @@ interface IWebPreferences : IUnknown
 
     HRESULT pictographFontFamily([out, retval] BSTR* family);
     HRESULT setPictographFontFamily([in] BSTR family);
+
+    HRESULT setAVFoundationEnabled(BOOL avFoundationEnabled);
+    HRESULT avFoundationEnabled(BOOL *avFoundationEnabled);
 }
