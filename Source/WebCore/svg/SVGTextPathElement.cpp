@@ -74,35 +74,26 @@ bool SVGTextPathElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGTextPathElement::parseMappedAttribute(Attribute* attr)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGTextContentElement::parseMappedAttribute(attr);
-        return;
-    }
-
+    SVGParsingError parseError = NoError;
     const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::startOffsetAttr) {
-        setStartOffsetBaseValue(SVGLength(LengthModeOther, value));
-        return;
-    }
 
-    if (attr->name() == SVGNames::methodAttr) {
+    if (!isSupportedAttribute(attr->name()))
+        SVGTextContentElement::parseMappedAttribute(attr);
+    else if (attr->name() == SVGNames::startOffsetAttr)
+        setStartOffsetBaseValue(SVGLength::construct(LengthModeOther, value, parseError));
+    else if (attr->name() == SVGNames::methodAttr) {
         SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(value);
         if (propertyValue > 0)
             setMethodBaseValue(propertyValue);
-        return;
-    }
-
-    if (attr->name() == SVGNames::spacingAttr) {
+    } else if (attr->name() == SVGNames::spacingAttr) {
         SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(value);
         if (propertyValue > 0)
             setSpacingBaseValue(propertyValue);
-        return;
-    }
+    } else if (SVGURIReference::parseMappedAttribute(attr)) {
+    } else
+        ASSERT_NOT_REACHED();
 
-    if (SVGURIReference::parseMappedAttribute(attr))
-        return;
-
-    ASSERT_NOT_REACHED();
+    reportAttributeParsingError(parseError, attr);
 }
 
 void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)

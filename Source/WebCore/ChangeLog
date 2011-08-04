@@ -1,3 +1,52 @@
+2011-08-04  Tim Horton  <timothy_horton@apple.com>
+
+        Reviewed by Nikolas Zimmerman.
+
+        Errors encountered within SVG documents should be reported to the console
+        https://bugs.webkit.org/show_bug.cgi?id=62599
+        <rdar://problem/9727074>
+
+        Make use of SVGLength::construct when parsing Length attributes; we will
+        now propagate errors which occur while parsing SVGLength attributes to the
+        Web Inspector console.
+
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::parseMappedAttribute):
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::parseMappedAttribute):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::parseMappedAttribute):
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::parseMappedAttribute):
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::parseMappedAttribute):
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::parseMappedAttribute):
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::parseMappedAttribute):
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::parseMappedAttribute):
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseMappedAttribute):
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::parseMappedAttribute):
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::parseMappedAttribute):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::parseMappedAttribute):
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::parseMappedAttribute):
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::parseMappedAttribute):
+
 2011-08-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92419.

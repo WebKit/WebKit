@@ -129,45 +129,26 @@ bool SVGUseElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGUseElement::parseMappedAttribute(Attribute* attr)
 {
-    if (!isSupportedAttribute(attr->name())) {
+    SVGParsingError parseError = NoError;
+
+    if (!isSupportedAttribute(attr->name()))
         SVGStyledTransformableElement::parseMappedAttribute(attr);
-        return;
-    }
+    else if (attr->name() == SVGNames::xAttr)
+        setXBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError));
+    else if (attr->name() == SVGNames::yAttr)
+        setYBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError));
+    else if (attr->name() == SVGNames::widthAttr)
+        setWidthBaseValue(SVGLength::construct(LengthModeWidth, attr->value(), parseError, ForbidNegativeLengths));
+    else if (attr->name() == SVGNames::heightAttr)
+        setHeightBaseValue(SVGLength::construct(LengthModeHeight, attr->value(), parseError, ForbidNegativeLengths));
+    else if (SVGTests::parseMappedAttribute(attr)
+             || SVGLangSpace::parseMappedAttribute(attr)
+             || SVGExternalResourcesRequired::parseMappedAttribute(attr)
+             || SVGURIReference::parseMappedAttribute(attr)) {
+    } else
+        ASSERT_NOT_REACHED();
 
-    if (attr->name() == SVGNames::xAttr) {
-        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
-        return;
-    }
-
-    if (attr->name() == SVGNames::yAttr) {
-        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
-        return;
-    }
-
-    if (attr->name() == SVGNames::widthAttr) {
-        setWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
-        if (widthBaseValue().value(this) < 0)
-            document()->accessSVGExtensions()->reportError("A negative value for use attribute <width> is not allowed");
-        return;
-    }
-
-    if (attr->name() == SVGNames::heightAttr) {
-        setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
-        if (heightBaseValue().value(this) < 0)
-            document()->accessSVGExtensions()->reportError("A negative value for use attribute <height> is not allowed");
-        return;
-    }
-
-    if (SVGTests::parseMappedAttribute(attr))
-        return;
-    if (SVGLangSpace::parseMappedAttribute(attr))
-        return;
-    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-        return;
-    if (SVGURIReference::parseMappedAttribute(attr))
-        return;
-
-    ASSERT_NOT_REACHED();
+    reportAttributeParsingError(parseError, attr);
 }
 
 static inline bool isWellFormedDocument(Document* document)

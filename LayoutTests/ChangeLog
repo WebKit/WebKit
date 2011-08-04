@@ -1,3 +1,33 @@
+2011-08-04  Tim Horton  <timothy_horton@apple.com>
+
+        Reviewed by Nikolas Zimmerman.
+
+        Errors encountered within SVG documents should be reported to the console
+        https://bugs.webkit.org/show_bug.cgi?id=62599
+        <rdar://problem/9727074>
+
+        Adjust SVG error tests to expect new console output on unexpected input.
+
+        * platform/chromium-win/svg/hixie/error/013-expected.txt:
+        * platform/gtk/svg/hixie/error/001-expected.txt:
+        * platform/gtk/svg/hixie/error/007-expected.txt:
+        * platform/gtk/svg/hixie/error/013-expected.txt:
+        * platform/gtk/svg/hixie/error/015-expected.txt:
+        * platform/mac/svg/hixie/error/001-expected.txt:
+        * platform/mac/svg/hixie/error/007-expected.txt:
+        * platform/mac/svg/hixie/error/013-expected.txt:
+        * platform/mac/svg/hixie/error/015-expected.txt:
+        * platform/qt/svg/hixie/error/001-expected.txt:
+        * platform/qt/svg/hixie/error/007-expected.txt:
+        * platform/qt/svg/hixie/error/013-expected.txt:
+        * platform/qt/svg/hixie/error/015-expected.txt:
+        * svg/custom/invalid-length-units-expected.txt:
+        * svg/custom/svg-parse-overflow-1-expected.txt:
+        * svg/custom/svg-parse-overflow-2-expected.txt:
+        * svg/custom/svg-parse-overflow-3-expected.txt:
+        * svg/custom/svg-parse-overflow-4-expected.txt:
+        * svg/custom/svg-parse-overflow-5-expected.txt:
+
 2011-08-04  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92419.

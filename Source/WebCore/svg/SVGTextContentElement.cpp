@@ -230,29 +230,19 @@ bool SVGTextContentElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGTextContentElement::parseMappedAttribute(Attribute* attr)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGStyledElement::parseMappedAttribute(attr);
-        return;
-    }
+    SVGParsingError parseError = NoError;
 
-    if (attr->name() == SVGNames::lengthAdjustAttr) {
+    if (!isSupportedAttribute(attr->name()))
+        SVGStyledElement::parseMappedAttribute(attr);
+    else if (attr->name() == SVGNames::lengthAdjustAttr) {
         SVGLengthAdjustType propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(attr->value());
         if (propertyValue > 0)
             setLengthAdjustBaseValue(propertyValue);
-        return;
-    }
-
-    if (attr->name() == SVGNames::textLengthAttr) {
-        m_textLength.value = SVGLength(LengthModeOther, attr->value());
-        if (m_textLength.value.value(this) < 0)
-            document()->accessSVGExtensions()->reportError("A negative value for text attribute <textLength> is not allowed");
-        return;
-    }
-
-    if (SVGTests::parseMappedAttribute(attr))
-        return;
-
-    if (SVGLangSpace::parseMappedAttribute(attr)) {
+    } else if (attr->name() == SVGNames::textLengthAttr) {
+        m_textLength.value = SVGLength::construct(LengthModeOther, attr->value(), parseError, ForbidNegativeLengths);
+    } else if (SVGTests::parseMappedAttribute(attr)
+               || SVGExternalResourcesRequired::parseMappedAttribute(attr)) {
+    } else if (SVGLangSpace::parseMappedAttribute(attr)) {
         if (attr->name().matches(XMLNames::spaceAttr)) {
             DEFINE_STATIC_LOCAL(const AtomicString, preserveString, ("preserve"));
 
@@ -261,13 +251,10 @@ void SVGTextContentElement::parseMappedAttribute(Attribute* attr)
             else
                 addCSSProperty(attr, CSSPropertyWhiteSpace, CSSValueNowrap);
         }
-        return;
-    }
+    } else
+        ASSERT_NOT_REACHED();
 
-    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-        return;
-
-    ASSERT_NOT_REACHED();
+    reportAttributeParsingError(parseError, attr);
 }
 
 void SVGTextContentElement::svgAttributeChanged(const QualifiedName& attrName)

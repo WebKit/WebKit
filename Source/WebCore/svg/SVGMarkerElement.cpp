@@ -127,57 +127,37 @@ bool SVGMarkerElement::isSupportedAttribute(const QualifiedName& attrName)
 
 void SVGMarkerElement::parseMappedAttribute(Attribute* attr)
 {
-    if (!isSupportedAttribute(attr->name())) {
-        SVGStyledElement::parseMappedAttribute(attr);
-        return;
-    }
-
+    SVGParsingError parseError = NoError;
     const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::markerUnitsAttr) {
+
+    if (!isSupportedAttribute(attr->name()))
+        SVGStyledElement::parseMappedAttribute(attr);
+    else if (attr->name() == SVGNames::markerUnitsAttr) {
         SVGMarkerUnitsType propertyValue = SVGPropertyTraits<SVGMarkerUnitsType>::fromString(value);
         if (propertyValue > 0)
             setMarkerUnitsBaseValue(propertyValue);
-        return;
-    }
-
-    if (attr->name() == SVGNames::refXAttr) {
-        setRefXBaseValue(SVGLength(LengthModeWidth, value));
-        return;
-    }
-
-    if (attr->name() == SVGNames::refYAttr) {
-        setRefYBaseValue(SVGLength(LengthModeHeight, value));
-        return;
-    }
-
-    if (attr->name() == SVGNames::markerWidthAttr) {
-        setMarkerWidthBaseValue(SVGLength(LengthModeWidth, value));
-        return;
-    }
-
-    if (attr->name() == SVGNames::markerHeightAttr) {
-        setMarkerHeightBaseValue(SVGLength(LengthModeHeight, value));
-        return;
-    }
-
-    if (attr->name() == SVGNames::orientAttr) {
+    } else if (attr->name() == SVGNames::refXAttr)
+        setRefXBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+    else if (attr->name() == SVGNames::refYAttr)
+        setRefYBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+    else if (attr->name() == SVGNames::markerWidthAttr)
+        setMarkerWidthBaseValue(SVGLength::construct(LengthModeWidth, value, parseError));
+    else if (attr->name() == SVGNames::markerHeightAttr)
+        setMarkerHeightBaseValue(SVGLength::construct(LengthModeHeight, value, parseError));
+    else if (attr->name() == SVGNames::orientAttr) {
         SVGAngle angle;
         SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(value, angle);
         if (orientType > 0)
             setOrientTypeBaseValue(orientType);
         if (orientType == SVGMarkerOrientAngle)
             setOrientAngleBaseValue(angle);
-        return;
-    }
+    } else if (SVGLangSpace::parseMappedAttribute(attr)
+             || SVGExternalResourcesRequired::parseMappedAttribute(attr)
+             || SVGFitToViewBox::parseMappedAttribute(document(), attr)) {
+    } else
+        ASSERT_NOT_REACHED();
 
-    if (SVGLangSpace::parseMappedAttribute(attr))
-        return;
-    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-        return;
-    if (SVGFitToViewBox::parseMappedAttribute(document(), attr))
-        return;
-
-    ASSERT_NOT_REACHED();
+    reportAttributeParsingError(parseError, attr);
 }
 
 void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
