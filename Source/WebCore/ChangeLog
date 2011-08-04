@@ -1,3 +1,12 @@
+2011-08-04  Darin Fisher  <darin@chromium.org>
+
+        webkitRequestAnimationFrame's element argument needs to be marked optional
+        https://bugs.webkit.org/show_bug.cgi?id=65698
+
+        Reviewed by James Robinson.
+
+        * page/DOMWindow.idl:
+
 2011-08-04  Adam Roben  <aroben@apple.com>
 
         Delete some unused code from platform/graphics/win

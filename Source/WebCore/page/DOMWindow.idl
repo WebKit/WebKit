@@ -238,7 +238,7 @@ module window {
 
 #if defined(ENABLE_REQUEST_ANIMATION_FRAME)
         // WebKit animation extensions
-        long webkitRequestAnimationFrame(in [Callback] RequestAnimationFrameCallback callback, in Element element);
+        long webkitRequestAnimationFrame(in [Callback] RequestAnimationFrameCallback callback, in [Optional=CallWithDefaultValue] Element element);
         void webkitCancelRequestAnimationFrame(in long id);
 #endif
 
