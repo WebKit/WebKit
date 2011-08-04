@@ -1,3 +1,15 @@
+2011-08-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92415.
+        http://trac.webkit.org/changeset/92415
+        https://bugs.webkit.org/show_bug.cgi?id=65728
+
+        Causes many DEBUG crashes (Requested by abarth on #webkit).
+
+        * platform/network/chromium/ResourceRequest.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2011-08-04  Tim Horton  <timothy_horton@apple.com>
 
         Reviewed by Nikolas Zimmerman.

@@ -36,8 +36,6 @@
 
 #if defined(WEBKIT_IMPLEMENTATION)
 namespace WebCore { class ResourceRequest; }
-#else
-#define WEBKIT_HAS_TARGET_IS_XHR
 #endif
 
 namespace WebKit {
@@ -73,7 +71,6 @@ public:
         TargetIsPrefetch = 11,
         TargetIsPrerender = 12,
         TargetIsFavicon = 13,
-        TargetIsXHR = 14,
     };
 
     class ExtraData {
