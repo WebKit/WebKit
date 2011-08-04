@@ -16,36 +16,36 @@ layer at (0,0) size 800x414
 layer at (10,48) size 472x82 clip at (11,49) size 470x80
   RenderTextControl {TEXTAREA} at (2,2) size 472x82 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 466x57
-      RenderText {#text} at (427,0) size 39x38
-        text run at (427,0) width 0 RTL: " "
-        text run at (427,0) width 39 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
+      RenderText {#text} at (425,0) size 41x38
+        text run at (425,0) width 0 RTL: " "
+        text run at (425,0) width 41 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (427,19) width 39: "hello!"
         text run at (466,19) width 0: " "
       RenderBR {BR} at (466,38) size 0x19
 layer at (10,138) size 472x82 clip at (11,139) size 470x80
   RenderTextControl {TEXTAREA} at (2,92) size 472x82 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 466x57
-      RenderText {#text} at (0,0) size 39x38
+      RenderText {#text} at (0,0) size 41x38
         text run at (0,0) width 0 RTL: " "
-        text run at (0,0) width 39 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
+        text run at (0,0) width 41 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (0,19) width 39: "hello!"
         text run at (39,19) width 0: " "
       RenderBR {BR} at (0,38) size 0x19
 layer at (10,228) size 472x82 clip at (11,229) size 470x80
   RenderTextControl {TEXTAREA} at (2,182) size 472x82 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 466x57
-      RenderText {#text} at (0,0) size 39x38
+      RenderText {#text} at (0,0) size 41x38
         text run at (0,0) width 0 RTL: " "
-        text run at (0,0) width 39 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
+        text run at (0,0) width 41 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (0,19) width 39: "hello!"
         text run at (39,19) width 0: " "
       RenderBR {BR} at (0,38) size 0x19
 layer at (10,318) size 472x82 clip at (11,319) size 470x80
   RenderTextControl {TEXTAREA} at (2,272) size 472x82 [bgcolor=#FFFFFF] [border: (1px solid #000000)]
     RenderBlock {DIV} at (3,3) size 466x57
-      RenderText {#text} at (427,0) size 39x38
-        text run at (427,0) width 0 RTL: " "
-        text run at (427,0) width 39 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
+      RenderText {#text} at (425,0) size 41x38
+        text run at (425,0) width 0 RTL: " "
+        text run at (425,0) width 41 RTL: "\x{5E9}\x{5DC}\x{5D5}\x{5DD}!"
         text run at (427,19) width 39: "hello!"
         text run at (466,19) width 0: " "
       RenderBR {BR} at (466,38) size 0x19

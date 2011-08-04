@@ -1,3 +1,12 @@
+2011-08-04  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, GTK rebaseline and test_expectations update (2 tests
+        now passing).
+
+        * platform/gtk/fast/text/international/unicode-bidi-plaintext-expected.txt:
+        * platform/gtk/fast/text/international/unicode-bidi-plaintext-in-textarea-expected.txt:
+        * platform/gtk/test_expectations.txt:
+
 2011-08-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Normalize test_expectations.txt file.
