@@ -1,5 +1,12 @@
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
+        Fix types.  Sadly, main.js has no test coverage.  (I need to think
+        about how to test this part of the code.)
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
         bugzilla.js is missing unit tests
         https://bugs.webkit.org/show_bug.cgi?id=65656
 

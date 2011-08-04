@@ -222,7 +222,8 @@ function updateExpectationsForSelected()
 
 function showSelectedFailures()
 {
-    g_resultsDetailsIterator = new base.CallbackIterator(showResultsDetail, selectedFailures());
+    var listOfArgumentArrays = selectedFailures().map(function(failureInfo) { return [failureInfo]; });
+    g_resultsDetailsIterator = new base.CallbackIterator(showResultsDetail, listOfArgumentArrays);
     g_resultsDetailsIterator.callNext();
 }
 
