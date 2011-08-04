@@ -1,3 +1,5 @@
+# --- Canvas ---
+
 # Failing due to minor differences between accelerated canvas and CG
 # <rdar://problem/9308701>
 canvas/philip/tests/2d.gradient.interpolate.colouralpha.html
@@ -11,5 +13,30 @@ canvas/philip/tests/2d.shadow.enable.off.2.html
 # <rdar://problem/8955076>
 canvas/philip/tests/2d.strokeRect.zero.5.html
 
-# Unknown test failures
+# <rdar://problem/9319445>
+fast/canvas/canvas-createPattern-fillRect-shadow.html
+
+# <rdar://problem/9356215>
+fast/canvas/canvas-fillRect-gradient-shadow.html
+
+# These canvas tests are faulty, need to be fixed
+# <rdar://problem/9326220>
+fast/canvas/canvas-scale-shadowBlur.html
+
+# <rdar://problem/9359442>
+fast/canvas/canvas-strokeRect-gradient-shadow.html
+
+# <rdar://problem/9348555>
+fast/canvas/set-colors.html
+
+# Unknown canvas test failures
 canvas/philip/tests/2d.text.draw.baseline.ideographic.html
+fast/canvas/canvas-draw-canvas-on-canvas-shadow.html
+fast/canvas/canvas-scale-strokePath-shadow.html
+fast/canvas/canvas-strokePath-gradient-shadow.html
+fast/canvas/canvas-strokeRect-alpha-shadow.html
+
+# --- WebGL ---
+
+# Currently failing WebGL tests <rdar://problem/9355460>
+fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
