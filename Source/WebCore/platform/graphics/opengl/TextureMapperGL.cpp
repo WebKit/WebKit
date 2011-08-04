@@ -594,7 +594,7 @@ void BitmapTextureGL::bind()
         GL_CMD(glBindRenderbuffer(GL_RENDERBUFFER, 0))
         GL_CMD(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, id(), 0))
         GL_CMD(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_rbo))
-#if CPU(X86)
+#ifndef TEXMAP_OPENGL_ES_2
         GL_CMD(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_rbo));
 #endif
         GL_CMD(glClearColor(0, 0, 0, 0))
