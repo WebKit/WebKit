@@ -56,7 +56,7 @@ ReverbConvolverStage::ReverbConvolverStage(float* impulseResponse, size_t respon
     
     m_fftKernel.doPaddedFFT(impulseResponse + stageOffset, stageLength);
     m_convolver = adoptPtr(new FFTConvolver(fftSize));
-    m_temporaryBuffer.resize(renderSliceSize);
+    m_temporaryBuffer.allocate(renderSliceSize);
 
     // The convolution stage at offset stageOffset needs to have a corresponding delay to cancel out the offset.
     size_t totalDelay = stageOffset + reverbTotalLatency;
@@ -78,7 +78,7 @@ ReverbConvolverStage::ReverbConvolverStage(float* impulseResponse, size_t respon
     m_preReadWriteIndex = 0;
     m_framesProcessed = 0; // total frames processed so far
 
-    m_preDelayBuffer.resize(m_preDelayLength < fftSize ? fftSize : m_preDelayLength);
+    m_preDelayBuffer.allocate(m_preDelayLength < fftSize ? fftSize : m_preDelayLength);
 }
 
 void ReverbConvolverStage::processInBackground(ReverbConvolver* convolver, size_t framesToProcess)

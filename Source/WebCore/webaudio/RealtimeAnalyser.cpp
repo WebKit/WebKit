@@ -90,7 +90,7 @@ void RealtimeAnalyser::setFftSize(size_t size)
 
     if (m_fftSize != size) {
         m_analysisFrame = adoptPtr(new FFTFrame(m_fftSize));
-        m_magnitudeBuffer.resize(size);
+        m_magnitudeBuffer.allocate(size);
         m_fftSize = size;
     }
 }

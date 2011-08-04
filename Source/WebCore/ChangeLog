@@ -1,3 +1,30 @@
+2011-08-04  Chris Rogers  <crogers@google.com>
+
+        Make sure that AudioArray is 16-byte aligned
+        https://bugs.webkit.org/show_bug.cgi?id=65651
+
+        Reviewed by Kenneth Russell.
+
+        No new tests - this does not change JavaScript API.
+
+        * platform/audio/AudioArray.h:
+        (WebCore::AudioArray::AudioArray):
+        (WebCore::AudioArray::~AudioArray):
+        (WebCore::AudioArray::allocate):
+        (WebCore::AudioArray::data):
+        (WebCore::AudioArray::size):
+        (WebCore::AudioArray::at):
+        (WebCore::AudioArray::operator[]):
+        (WebCore::AudioArray::alignedAddress):
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::Biquad):
+        * platform/audio/ReverbConvolverStage.cpp:
+        (WebCore::ReverbConvolverStage::ReverbConvolverStage):
+        * webaudio/DelayDSPKernel.cpp:
+        (WebCore::DelayDSPKernel::DelayDSPKernel):
+        * webaudio/RealtimeAnalyser.cpp:
+        (WebCore::RealtimeAnalyser::setFftSize):
+
 2011-08-04  Brady Eidson  <beidson@apple.com>
 
         <rdar://problem/9882581>, <rdar://problem/9868015>, and https://bugs.webkit.org/show_bug.cgi?id=65712

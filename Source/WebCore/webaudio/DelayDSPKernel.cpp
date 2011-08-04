@@ -48,7 +48,7 @@ DelayDSPKernel::DelayDSPKernel(DelayProcessor* processor)
     if (!processor)
         return;
 
-    m_buffer.resize(static_cast<size_t>(processor->sampleRate() * DefaultMaxDelayTime));
+    m_buffer.allocate(static_cast<size_t>(processor->sampleRate() * DefaultMaxDelayTime));
     m_buffer.zero();
 
     m_smoothingRate = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, processor->sampleRate());
@@ -69,7 +69,7 @@ DelayDSPKernel::DelayDSPKernel(double maxDelayTime, double sampleRate)
     if (!bufferLength)
         return;
     
-    m_buffer.resize(bufferLength);
+    m_buffer.allocate(bufferLength);
     m_buffer.zero();
 
     m_smoothingRate = AudioUtilities::discreteTimeConstantForSampleRate(SmoothingTimeConstant, sampleRate);

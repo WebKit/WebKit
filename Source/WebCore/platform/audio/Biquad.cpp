@@ -48,8 +48,8 @@ Biquad::Biquad()
 {
 #if OS(DARWIN)
     // Allocate two samples more for filter history
-    m_inputBuffer.resize(kBufferSize + 2);
-    m_outputBuffer.resize(kBufferSize + 2);
+    m_inputBuffer.allocate(kBufferSize + 2);
+    m_outputBuffer.allocate(kBufferSize + 2);
 #endif
 
     // Initialize as pass-thru (straight-wire, no filter effect)
