@@ -1,3 +1,14 @@
+2011-08-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Rename sourceId -> scriptId in the protocol and the source code.
+        https://bugs.webkit.org/show_bug.cgi?id=65682
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/source-file.html:
+
 2011-08-04  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, GTK rebaseline.

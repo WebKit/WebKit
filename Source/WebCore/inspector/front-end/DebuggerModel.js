@@ -126,9 +126,9 @@ WebInspector.DebuggerModel.prototype = {
         return this._scripts;
     },
 
-    scriptForSourceID: function(sourceId)
+    scriptForSourceID: function(scriptId)
     {
-        return this._scripts[sourceId];
+        return this._scripts[scriptId];
     },
 
     scriptsForURL: function(url)
@@ -139,20 +139,20 @@ WebInspector.DebuggerModel.prototype = {
     queryScripts: function(filter)
     {
         var scripts = [];
-        for (var sourceId in this._scripts) {
-            var script = this._scripts[sourceId];
+        for (var scriptId in this._scripts) {
+            var script = this._scripts[scriptId];
             if (filter(script))
                 scripts.push(script);
         }
         return scripts;
     },
 
-    setScriptSource: function(sourceId, newSource, callback)
+    setScriptSource: function(scriptId, newSource, callback)
     {
-        this._scripts[sourceId].editSource(newSource, this._didEditScriptSource.bind(this, sourceId, newSource, callback));
+        this._scripts[scriptId].editSource(newSource, this._didEditScriptSource.bind(this, scriptId, newSource, callback));
     },
 
-    _didEditScriptSource: function(sourceId, newSource, callback, error, callFrames)
+    _didEditScriptSource: function(scriptId, newSource, callback, error, callFrames)
     {
         if (!error && callFrames && callFrames.length)
             this._debuggerPausedDetails.callFrames = callFrames;
@@ -181,10 +181,10 @@ WebInspector.DebuggerModel.prototype = {
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.DebuggerResumed);
     },
 
-    _parsedScriptSource: function(sourceId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript)
+    _parsedScriptSource: function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript)
     {
-        var script = new WebInspector.Script(sourceId, sourceURL, startLine, startColumn, endLine, endColumn, undefined, undefined, isContentScript);
-        this._scripts[sourceId] = script;
+        var script = new WebInspector.Script(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, undefined, undefined, isContentScript);
+        this._scripts[scriptId] = script;
         this.dispatchEventToListeners(WebInspector.DebuggerModel.Events.ParsedScriptSource, script);
     },
 
@@ -229,9 +229,9 @@ WebInspector.DebuggerDispatcher.prototype = {
         this._debuggerModel._debuggerWasDisabled();
     },
 
-    scriptParsed: function(sourceId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript)
+    scriptParsed: function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript)
     {
-        this._debuggerModel._parsedScriptSource(sourceId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript);
+        this._debuggerModel._parsedScriptSource(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, isContentScript);
     },
 
     scriptFailedToParse: function(sourceURL, source, startingLine, errorLine, errorMessage)
@@ -239,8 +239,8 @@ WebInspector.DebuggerDispatcher.prototype = {
         this._debuggerModel._failedToParseScriptSource(sourceURL, source, startingLine, errorLine, errorMessage);
     },
 
-    breakpointResolved: function(breakpointId, sourceId, lineNumber, columnNumber)
+    breakpointResolved: function(breakpointId, scriptId, lineNumber, columnNumber)
     {
-        this._debuggerModel._breakpointResolved(breakpointId, sourceId, lineNumber, columnNumber);
+        this._debuggerModel._breakpointResolved(breakpointId, scriptId, lineNumber, columnNumber);
     }
 }

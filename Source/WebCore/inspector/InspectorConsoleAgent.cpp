@@ -142,11 +142,11 @@ void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageTyp
     addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, arguments, callStack)));
 }
 
-void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceId)
+void InspectorConsoleAgent::addMessageToConsole(MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& scriptId)
 {
     if (!m_inspectorAgent->enabled())
         return;
-    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, lineNumber, sourceId)));
+    addConsoleMessage(adoptPtr(new ConsoleMessage(source, type, level, message, lineNumber, scriptId)));
 }
 
 void InspectorConsoleAgent::startTiming(const String& title)

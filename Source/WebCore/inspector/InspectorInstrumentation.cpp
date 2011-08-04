@@ -687,10 +687,10 @@ void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* inst
         consoleAgent->addMessageToConsole(source, type, level, message, arguments, callStack);
 }
 
-void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceId)
+void InspectorInstrumentation::addMessageToConsoleImpl(InstrumentingAgents* instrumentingAgents, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& scriptId)
 {
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
-        consoleAgent->addMessageToConsole(source, type, level, message, lineNumber, sourceId);
+        consoleAgent->addMessageToConsole(source, type, level, message, lineNumber, scriptId);
 }
 
 void InspectorInstrumentation::consoleCountImpl(InstrumentingAgents* instrumentingAgents, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> stack)

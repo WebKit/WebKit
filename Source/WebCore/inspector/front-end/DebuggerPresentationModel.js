@@ -86,9 +86,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return this._sourceFiles[this._createSourceFileId(scriptURL)];
     },
 
-    _scriptLocationToUILocation: function(sourceURL, sourceId, lineNumber, columnNumber, callback)
+    _scriptLocationToUILocation: function(sourceURL, scriptId, lineNumber, columnNumber, callback)
     {
-        var sourceFile = this._sourceFileForScript(sourceURL, sourceId);
+        var sourceFile = this._sourceFileForScript(sourceURL, scriptId);
 
         function didCreateSourceMapping()
         {
@@ -119,20 +119,20 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._sourceFiles[sourceFileId].requestContent(callback);
     },
 
-    registerAnchor: function(sourceURL, sourceId, lineNumber, columnNumber, updateHandler)
+    registerAnchor: function(sourceURL, scriptId, lineNumber, columnNumber, updateHandler)
     {
-        var anchor = { sourceURL: sourceURL, sourceId: sourceId, lineNumber: lineNumber, columnNumber: columnNumber, updateHandler: updateHandler };
+        var anchor = { sourceURL: sourceURL, scriptId: scriptId, lineNumber: lineNumber, columnNumber: columnNumber, updateHandler: updateHandler };
         this._anchors.push(anchor);
         this._updateAnchor(anchor);
     },
 
     _updateAnchor: function(anchor)
     {
-        var sourceFile = this._sourceFileForScript(anchor.sourceURL, anchor.sourceId);
+        var sourceFile = this._sourceFileForScript(anchor.sourceURL, anchor.scriptId);
         if (!sourceFile)
             return;
 
-        this._scriptLocationToUILocation(anchor.sourceURL, anchor.sourceId, anchor.lineNumber, anchor.columnNumber, anchor.updateHandler);
+        this._scriptLocationToUILocation(anchor.sourceURL, anchor.scriptId, anchor.lineNumber, anchor.columnNumber, anchor.updateHandler);
     },
 
     _parsedScriptSource: function(event)
@@ -147,7 +147,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _addScript: function(script)
     {
-        var sourceFileId = this._createSourceFileId(script.sourceURL, script.sourceId);
+        var sourceFileId = this._createSourceFileId(script.sourceURL, script.scriptId);
         var sourceFile = this._sourceFiles[sourceFileId];
         if (sourceFile) {
             sourceFile.addScript(script);
@@ -217,7 +217,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var oldSource = sourceFile.requestContent(didReceiveSource.bind(this));
         function didReceiveSource(oldSource)
         {
-            WebInspector.debuggerModel.setScriptSource(script.sourceId, newSource, didEditScriptSource.bind(this, oldSource));
+            WebInspector.debuggerModel.setScriptSource(script.scriptId, newSource, didEditScriptSource.bind(this, oldSource));
         }
     },
 
@@ -383,11 +383,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         function didGetScriptLocation(location)
         {
-            var script = WebInspector.debuggerModel.scriptForSourceID(location.sourceId);
+            var script = WebInspector.debuggerModel.scriptForSourceID(location.scriptId);
             if (script.sourceURL)
                 WebInspector.debuggerModel.setBreakpoint(script.sourceURL, location.lineNumber, location.columnNumber, breakpoint.condition, didSetBreakpoint.bind(this));
             else {
-                location.sourceId = script.sourceId;
+                location.scriptId = script.scriptId;
                 WebInspector.debuggerModel.setBreakpointBySourceId(location, breakpoint.condition, didSetBreakpoint.bind(this));
             }
         }
@@ -491,7 +491,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         }
         // Refine line number based on resolved location.
         if (breakpoint.location)
-            this._scriptLocationToUILocation(null, breakpoint.location.sourceId, breakpoint.location.lineNumber, breakpoint.location.columnNumber, didGetUILocation.bind(this));
+            this._scriptLocationToUILocation(null, breakpoint.location.scriptId, breakpoint.location.lineNumber, breakpoint.location.columnNumber, didGetUILocation.bind(this));
         else
             updateSourceFileBreakpointsAndDispatchEvent.call(this);
     },
@@ -584,9 +584,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         for (var i = 0; i < callFrames.length; ++i) {
             var callFrame = callFrames[i];
             var sourceFile;
-            var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.sourceId);
+            var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.scriptId);
             if (script)
-                sourceFile = this._sourceFileForScript(script.sourceURL, script.sourceId);
+                sourceFile = this._sourceFileForScript(script.sourceURL, script.scriptId);
             this._presentationCallFrames.push(new WebInspector.PresenationCallFrame(callFrame, i, this, sourceFile));
         }
         var details = WebInspector.debuggerModel.debuggerPausedDetails;
@@ -614,26 +614,26 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return this._presentationCallFrames[this._selectedCallFrameIndex];
     },
 
-    _sourceFileForScript: function(sourceURL, sourceId)
+    _sourceFileForScript: function(sourceURL, scriptId)
     {
         if (!sourceURL)
-            sourceURL = WebInspector.debuggerModel.scriptForSourceID(sourceId).sourceURL;
-        return this._sourceFiles[this._createSourceFileId(sourceURL, sourceId)];
+            sourceURL = WebInspector.debuggerModel.scriptForSourceID(scriptId).sourceURL;
+        return this._sourceFiles[this._createSourceFileId(sourceURL, scriptId)];
     },
 
     _scriptForSourceFileId: function(sourceFileId)
     {
         function filter(script)
         {
-            return this._createSourceFileId(script.sourceURL, script.sourceId) === sourceFileId;
+            return this._createSourceFileId(script.sourceURL, script.scriptId) === sourceFileId;
         }
         return WebInspector.debuggerModel.queryScripts(filter.bind(this))[0];
     },
 
-    _createSourceFileId: function(sourceURL, sourceId)
+    _createSourceFileId: function(sourceURL, scriptId)
     {
         var prefix = this._formatSourceFiles ? "deobfuscated:" : "";
-        return prefix + (sourceURL || sourceId);
+        return prefix + (sourceURL || scriptId);
     },
 
     _reset: function()
@@ -722,7 +722,7 @@ WebInspector.PresenationCallFrame = function(callFrame, index, model, sourceFile
     this._index = index;
     this._model = model;
     this._sourceFile = sourceFile;
-    this._script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.sourceId);
+    this._script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.scriptId);
 }
 
 WebInspector.PresenationCallFrame.prototype = {
@@ -781,7 +781,7 @@ WebInspector.PresenationCallFrame.prototype = {
     {
         var location = this._callFrame.location;
         if (!this.isInternalScript)
-            this._model._scriptLocationToUILocation(null, location.sourceId, location.lineNumber, location.columnNumber, callback);
+            this._model._scriptLocationToUILocation(null, location.scriptId, location.lineNumber, location.columnNumber, callback);
         else
             callback(undefined, location.lineNumber);
     }

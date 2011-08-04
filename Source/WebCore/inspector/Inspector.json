@@ -331,7 +331,7 @@
                     { "name": "text", "type": "string", "description": "Message text." },
                     { "name": "networkIdentifier", "type": "integer", "optional": true, "description": "Identifier of the network request associated with the console message." },
                     { "name": "parameters", "type": "array", "items": { "$ref": "Runtime.RemoteObject" }, "description": "Message parameters in case of the formatted message." },
-                    { "name": "stackTrace", "$ref": "StackTrace", "description": "Stack trace for assert and error messages." },
+                    { "name": "stackTrace", "$ref": "StackTrace", "description": "Stack trace for assert and error messages." }
                 ]
             },
             {
@@ -1459,10 +1459,15 @@
         "description": "Debugger domain exposes JavaScript debugging functions. It allows setting and removing breakpoints, stepping through execution, exploring stack traces, etc.",
         "types": [
             {
+                "id": "ScriptId",
+                "type": "string",
+                "description": "Unique script identifier."
+            },
+            {
                 "id": "Location",
                 "type": "object",
                 "properties": [
-                    { "name": "sourceId", "type": "string", "description": "Script identifier as reported by the <code>scriptParsed</code>" },
+                    { "name": "scriptId", "$ref": "ScriptId", "description": "Script identifier as reported in the <code>Debugger.scriptParsed</code>." },
                     { "name": "lineNumber", "type": "integer", "description": "Line number in the script." },
                     { "name": "columnNumber", "type": "integer", "optional": true, "description": "Column number in the script." }
                 ],
@@ -1472,22 +1477,22 @@
                 "id": "CallFrame",
                 "type": "object",
                 "properties": [
-                    { "name": "id", "type": "string", "description": "Call frame identifier." },
-                    { "name": "functionName", "type": "string", "description": "Name of the function called on this frame." },
+                    { "name": "id", "type": "string", "description": "Call frame identifier. This identifier is only valid while the virtual machine is paused." },
+                    { "name": "functionName", "type": "string", "description": "Name of the JavaScript function called on this call frame." },
                     { "name": "location", "$ref": "Location", "description": "Location in the source code." },
-                    { "name": "scopeChain", "type": "array", "items": { "$ref": "Scope" }, "description": "Scope chain for given call frame." },
+                    { "name": "scopeChain", "type": "array", "items": { "$ref": "Scope" }, "description": "Scope chain for this call frame." },
                     { "name": "this", "$ref": "Runtime.RemoteObject", "description": "<code>this</code> object for this call frame." }
                 ],
-                "description": "Debugger call frame. Array of call frames form call stack."
+                "description": "JavaScript call frame. Array of call frames form the call stack."
             },
             {
                 "id": "Scope",
                 "type": "object",
                 "properties": [
                     { "name": "type", "type": "string", "enum": ["global", "local", "with", "closure", "catch"], "description": "Scope type." },
-                    { "name": "object", "$ref": "Runtime.RemoteObject", "description": "Object representing the scope." }
+                    { "name": "object", "$ref": "Runtime.RemoteObject", "description": "Object representing the scope. For <code>global</code> and <code>with</code> scopes it represents the actual object; for the rest of the scopes, it is artificial transient object enumerating scope variables as its properties." }
                 ],
-                "description": "Debugger call frame. Array of call frames form call stack."
+                "description": "Scope description."
             }
         ],
         "commands": [
@@ -1570,7 +1575,7 @@
             {
                 "name": "setScriptSource",
                 "parameters": [
-                    { "name": "sourceId", "type": "string", "description": "Id of the script to edit." },
+                    { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to edit." },
                     { "name": "scriptSource", "type": "string", "description": "New content of the script." },
                     { "name": "preview", "type": "boolean", "optional": true, "description": " If true the change will not actually be applied. Preview mode may be used to get result description without actually modifying the code." }
                 ],
@@ -1583,7 +1588,7 @@
             {
                 "name": "getScriptSource",
                 "parameters": [
-                    { "name": "sourceId", "type": "string", "description": "Id of the script to get source for." }
+                    { "name": "scriptId", "$ref": "ScriptId", "description": "Id of the script to get source for." }
                 ],
                 "returns": [
                     { "name": "scriptSource", "type": "string", "description": "Script source." }
@@ -1624,7 +1629,7 @@
             {
                 "name": "scriptParsed",
                 "parameters": [
-                    { "name": "sourceId", "type": "string", "description": "Identifier of the script parsed." },
+                    { "name": "scriptId", "$ref": "ScriptId", "description": "Identifier of the script parsed." },
                     { "name": "url", "type": "string", "description": "URL of the script parsed (if any)." },
                     { "name": "startLine", "type": "integer", "description": "Line offset of the script within the resource with given URL (for script tags)." },
                     { "name": "startColumn", "type": "integer", "description": "Column offset of the script within the resource with given URL." },

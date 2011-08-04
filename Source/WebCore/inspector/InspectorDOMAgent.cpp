@@ -1232,7 +1232,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForEventListener(const
     int lineNumber;
     if (eventListenerHandlerLocation(node->document(), eventListener.get(), sourceName, lineNumber)) {
         RefPtr<InspectorObject> location = InspectorObject::create();
-        location->setString("sourceId", sourceName);
+        location->setString("scriptId", sourceName);
         location->setNumber("lineNumber", lineNumber);
         value->setObject("location", location);
     }

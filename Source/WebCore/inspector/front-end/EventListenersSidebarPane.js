@@ -202,7 +202,7 @@ WebInspector.EventListenerBar.prototype = {
             if (typeof this.eventListener.handlerBody !== "undefined")
                 properties.push(WebInspector.RemoteObjectProperty.fromPrimitiveValue("listenerBody", this.eventListener.handlerBody));
             if (this.eventListener.location) {
-                properties.push(WebInspector.RemoteObjectProperty.fromPrimitiveValue("sourceName", this.eventListener.location.sourceId));
+                properties.push(WebInspector.RemoteObjectProperty.fromPrimitiveValue("sourceName", this.eventListener.location.scriptId));
                 properties.push(WebInspector.RemoteObjectProperty.fromPrimitiveValue("lineNumber", this.eventListener.location.lineNumber));
             }
 
@@ -236,7 +236,7 @@ WebInspector.EventListenerBar.prototype = {
         // Requires that Function.toString() return at least the function's signature.
         if (this.eventListener.location) {
             this.subtitleElement.removeChildren();
-            this.subtitleElement.appendChild(WebInspector.linkifyResourceAsNode(this.eventListener.location.sourceId, "scripts", this.eventListener.location.lineNumber));
+            this.subtitleElement.appendChild(WebInspector.linkifyResourceAsNode(this.eventListener.location.scriptId, "scripts", this.eventListener.location.lineNumber));
         } else {
             var match = this.eventListener.handlerBody.match(/function ([^\(]+?)\(/);
             if (match)

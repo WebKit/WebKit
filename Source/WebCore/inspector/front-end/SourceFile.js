@@ -68,7 +68,7 @@ WebInspector.RawSourceCode.prototype = {
         var rawLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
         if (this._mapping)
             rawLocation = this._mapping.formattedToOriginal(rawLocation);
-        rawLocation.sourceId = this._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).sourceId;
+        rawLocation.scriptId = this._scriptForRawLocation(rawLocation.lineNumber, rawLocation.columnNumber).scriptId;
         return rawLocation;
     },
 
@@ -136,10 +136,10 @@ WebInspector.RawSourceCode.prototype = {
 
         if (!this._concatenatedScripts)
             this._concatenatedScripts = {};
-        if (this._concatenatedScripts[script.sourceId])
+        if (this._concatenatedScripts[script.scriptId])
             return;
         for (var i = 0; i < this._scripts.length; ++i)
-            this._concatenatedScripts[this._scripts[i].sourceId] = true;
+            this._concatenatedScripts[this._scripts[i].scriptId] = true;
 
         this.reload();
 
@@ -235,7 +235,7 @@ WebInspector.RawSourceCode.prototype = {
             }
             var end = { lineNumber: lineNumber, columnNumber: columnNumber };
             if (script)
-                scriptRanges.push({ start: start, end: end, sourceId: script.sourceId });
+                scriptRanges.push({ start: start, end: end, scriptId: script.scriptId });
         }
 
         var scriptOpenTag = "<script>";

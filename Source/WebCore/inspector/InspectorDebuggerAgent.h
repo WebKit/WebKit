@@ -87,8 +87,8 @@ public:
     void removeBreakpoint(ErrorString*, const String& breakpointId);
     void continueToLocation(ErrorString*, PassRefPtr<InspectorObject> location);
 
-    void setScriptSource(ErrorString*, const String& sourceId, const String& newContent, const bool* const preview, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result);
-    void getScriptSource(ErrorString*, const String& sourceId, String* scriptSource);
+    void setScriptSource(ErrorString*, const String& scriptId, const String& newContent, const bool* const preview, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result);
+    void getScriptSource(ErrorString*, const String& scriptId, String* scriptSource);
     void schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data);
     void cancelPauseOnNextStatement();
     void breakProgram(DebuggerEventType type, PassRefPtr<InspectorValue> data);
@@ -122,12 +122,12 @@ private:
 
     PassRefPtr<InspectorArray> currentCallFrames();
 
-    virtual void didParseSource(const String& sourceId, const Script&);
+    virtual void didParseSource(const String& scriptId, const Script&);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
     virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
     virtual void didContinue();
 
-    PassRefPtr<InspectorObject> resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint&);
+    PassRefPtr<InspectorObject> resolveBreakpoint(const String& breakpointId, const String& scriptId, const ScriptBreakpoint&);
     void clear();
 
     typedef HashMap<String, Script> ScriptsMap;

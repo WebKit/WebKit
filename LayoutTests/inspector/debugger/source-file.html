@@ -38,7 +38,7 @@ function test()
 
     function checkRawLocation(script, lineNumber, columnNumber, location)
     {
-        InspectorTest.assertEquals(script.sourceId, location.sourceId);
+        InspectorTest.assertEquals(script.scriptId, location.scriptId);
         InspectorTest.assertEquals(lineNumber, location.lineNumber);
         InspectorTest.assertEquals(columnNumber, location.columnNumber);
     }
