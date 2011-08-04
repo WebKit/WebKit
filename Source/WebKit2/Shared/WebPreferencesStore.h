@@ -84,6 +84,7 @@ namespace WebKit {
     macro(Hixie76WebSocketProtocolEnabled, hixie76WebSocketProtocolEnabled, Bool, bool, true) \
     macro(MediaPlaybackRequiresUserGesture, mediaPlaybackRequiresUserGesture, Bool, bool, false) \
     macro(MediaPlaybackAllowsInline, mediaPlaybackAllowsInline, Bool, bool, true) \
+    macro(InspectorStartsAttached, inspectorStartsAttached, Bool, bool, true) \
     \
 
 #define FOR_EACH_WEBKIT_DOUBLE_PREFERENCE(macro) \

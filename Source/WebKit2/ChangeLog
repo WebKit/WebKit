@@ -1,3 +1,45 @@
+2011-08-01  Brian Weinstein  <bweinstein@apple.com>
+
+        WebKit2: Web Inspector always starts in undocked mode
+        https://bugs.webkit.org/show_bug.cgi?id=65493
+        <rdar://problem/9353114>
+        
+        Reviewed by Adam Roben.
+        
+        When opening the inspector, the web process tells the UI process that the inspector page has loaded,
+        but now will pass another bit of data, whether the inspector can start attached, so the UI process
+        doesn't need to ask the web process to do another calculation on whether or not it can be attached.
+        
+        If the user prefers the inspector to start docked (this defaults to true), and there is room for the
+        window, we send a message to the web process to try and attach the inspector. This makes sure that the
+        inspector knows it is docked (in the web process).
+        
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::attach): Update the user's docked/undocked preference if the inspector is visible
+            when it was attached.
+        (WebKit::WebInspectorProxy::detach): Ditto (but when it was detached).
+        (WebKit::WebInspectorProxy::didLoadInspectorPage): If we can start docked, and the user prefers to start docked,
+            then request the inspector be attached to the window.
+        * UIProcess/WebInspectorProxy.h:
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformOpen): Only show the window if we are going to start undocked.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformOpen): Ditto.
+
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::didLoadInspectorPage): Pass whether or not we can attach the window.
+        (WebKit::WebInspector::requestAttachWindow): Call through to the InspectorController to attach the inspector.
+        (WebKit::WebInspector::canAttachWindow): Ask the InspectorController if we can attach the inspector.
+        * WebProcess/WebPage/WebInspector.h:
+
+        * Shared/WebPreferencesStore.h: Add a new preference for whether or not the inspector should
+            start attached.
+
+        * UIProcess/WebInspectorProxy.messages.in: When the inspector page is loaded, tell the UI Process whether
+            we can attach the inspector without needing another message.
+        * WebProcess/WebPage/WebInspector.messages.in: Add a new message for RequestAttachWindow
+
 2011-08-02  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt][WK2] Create scene graph nodes for tiles in QTouchWebView instead of using imperative painting.

@@ -1,3 +1,22 @@
+2011-08-01  Brian Weinstein  <bweinstein@apple.com>
+
+        WebKit2: Web Inspector always starts in undocked mode
+        https://bugs.webkit.org/show_bug.cgi?id=65493
+        <rdar://problem/9353114>
+        
+        Reviewed by Adam Roben.
+        
+        Expose some methods on InspectorFrontendClient through the InspectorController so WebKit2
+        can request the inspector be docked, or ask whether or not it can be docked.
+
+        * WebCore.exp.in: Export needed methods.
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::requestAttachWindow): Call through to InspectorFrontendClient.
+        (WebCore::InspectorController::canAttachWindow): Ditto.
+        * inspector/InspectorController.h:
+        * inspector/InspectorFrontendClient.h:
+        * inspector/InspectorFrontendClientLocal.h:
+
 2011-08-04  Luke Macpherson   <macpherson@chromium.org>
 
         Support cast between CSSPrimitiveValue and EborderFit, use in CSSStyleSelector.

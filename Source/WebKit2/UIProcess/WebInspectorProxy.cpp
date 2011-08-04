@@ -121,6 +121,9 @@ void WebInspectorProxy::showConsole()
 void WebInspectorProxy::attach()
 {
     m_isAttached = true;
+    
+    if (m_isVisible)
+        inspectorPageGroup()->preferences()->setInspectorStartsAttached(true);
 
     platformAttach();
 }
@@ -128,6 +131,9 @@ void WebInspectorProxy::attach()
 void WebInspectorProxy::detach()
 {
     m_isAttached = false;
+    
+    if (m_isVisible)
+        inspectorPageGroup()->preferences()->setInspectorStartsAttached(false);
 
     platformDetach();
 }
@@ -203,11 +209,15 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     inspectorPage->loadURL(inspectorPageURL());
 }
 
-void WebInspectorProxy::didLoadInspectorPage()
+void WebInspectorProxy::didLoadInspectorPage(bool canStartAttached)
 {
     m_isVisible = true;
 
-    platformOpen();
+    bool willOpenAttached = canStartAttached && inspectorPageGroup()->preferences()->inspectorStartsAttached();
+    platformOpen(willOpenAttached);
+    
+    if (willOpenAttached)
+        m_page->process()->send(Messages::WebInspector::RequestAttachWindow(), m_page->pageID());
 }
 
 void WebInspectorProxy::didClose()

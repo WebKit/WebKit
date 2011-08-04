@@ -198,7 +198,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     return m_inspectorView->page();
 }
 
-void WebInspectorProxy::platformOpen()
+void WebInspectorProxy::platformOpen(bool willOpenAttached)
 {
     registerInspectorViewWindowClass();
 
@@ -207,7 +207,9 @@ void WebInspectorProxy::platformOpen()
     ASSERT(::IsWindow(m_inspectorWindow));
 
     m_inspectorView->setParentWindow(m_inspectorWindow);
-    ::ShowWindow(m_inspectorWindow, SW_SHOW);
+
+    if (!willOpenAttached)
+        ::ShowWindow(m_inspectorWindow, SW_SHOW);
 }
 
 void WebInspectorProxy::platformDidClose()
