@@ -1,3 +1,9 @@
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
+        This test triggers a crasher on some ports.  The crasher is filed already.
+
+        * platform/qt/Skipped:
+
 2011-08-03  Alice Boxhall  <aboxhall@chromium.org>
 
         An element with role=textbox should have settable AXValue unless read-only

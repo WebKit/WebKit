@@ -2247,3 +2247,6 @@ fast/frames/lots-of-iframes.html
 # [Qt]REGRESSION(r92224): It made editing/text-iterator/basic-iteration.html timeout
 # https://bugs.webkit.org/show_bug.cgi?id=65605
 editing/text-iterator/basic-iteration.html
+
+# This test tickles another crasher on Qt.
+fast/loader/reload-zero-byte-plugin.html
