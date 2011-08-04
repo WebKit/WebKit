@@ -1,5 +1,14 @@
 2011-08-04  Jochen Eisinger  <jochen@chromium.org>
 
+        Introduce a new ResourceRequest::TargetType for XHRs
+        https://bugs.webkit.org/show_bug.cgi?id=65544
+
+        Reviewed by Darin Fisher.
+
+        * public/WebURLRequest.h:
+
+2011-08-04  Jochen Eisinger  <jochen@chromium.org>
+
         Get rid of ResourceRequestBase::m_targetType. Move it to chromium's ResourceRequest.
         https://bugs.webkit.org/show_bug.cgi?id=48483
 
