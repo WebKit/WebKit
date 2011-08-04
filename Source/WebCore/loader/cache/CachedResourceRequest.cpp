@@ -44,7 +44,8 @@
 #include <wtf/text/CString.h>
 
 namespace WebCore {
-    
+
+#if PLATFORM(CHROMIUM)
 static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type)
 {
     switch (type) {
@@ -71,6 +72,7 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
     ASSERT_NOT_REACHED();
     return ResourceRequest::TargetIsSubresource;
 }
+#endif
 
 CachedResourceRequest::CachedResourceRequest(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental)
     : m_cachedResourceLoader(cachedResourceLoader)
@@ -90,7 +92,9 @@ PassOwnPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     OwnPtr<CachedResourceRequest> request = adoptPtr(new CachedResourceRequest(cachedResourceLoader, resource, incremental));
 
     ResourceRequest resourceRequest = resource->resourceRequest();
+#if PLATFORM(CHROMIUM)
     resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type()));
+#endif
 
     if (!resource->accept().isEmpty())
         resourceRequest.setHTTPAccept(resource->accept());

@@ -1,3 +1,13 @@
+2011-08-04  Jochen Eisinger  <jochen@chromium.org>
+
+        Get rid of ResourceRequestBase::m_targetType. Move it to chromium's ResourceRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=48483
+
+        Reviewed by Alexey Proskuryakov.
+
+        * src/SharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::SharedWorkerScriptLoader):
+
 2011-08-04  Brian Weinstein  <bweinstein@apple.com>
 
         WebKit2: Web Inspector always starts in undocked mode

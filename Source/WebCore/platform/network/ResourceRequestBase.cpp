@@ -53,7 +53,6 @@ PassOwnPtr<ResourceRequest> ResourceRequestBase::adopt(PassOwnPtr<CrossThreadRes
     request->setFirstPartyForCookies(data->m_firstPartyForCookies);
     request->setHTTPMethod(data->m_httpMethod);
     request->setPriority(data->m_priority);
-    request->setTargetType(data->m_targetType);
 
     request->updateResourceRequest();
     request->m_httpHeaderFields.adopt(data->m_httpHeaders.release());
@@ -87,7 +86,6 @@ PassOwnPtr<CrossThreadResourceRequestData> ResourceRequestBase::copyData() const
     data->m_httpMethod = httpMethod().crossThreadString();
     data->m_httpHeaders = httpHeaderFields().copyData();
     data->m_priority = priority();
-    data->m_targetType = m_targetType;
 
     data->m_responseContentDispositionEncodingFallbackArray.reserveInitialCapacity(m_responseContentDispositionEncodingFallbackArray.size());
     size_t encodingArraySize = m_responseContentDispositionEncodingFallbackArray.size();

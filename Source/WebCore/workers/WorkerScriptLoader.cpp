@@ -32,7 +32,6 @@
 #include "WorkerScriptLoader.h"
 
 #include "CrossThreadTask.h"
-#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
@@ -47,12 +46,14 @@
 
 namespace WebCore {
 
-WorkerScriptLoader::WorkerScriptLoader(ResourceRequestBase::TargetType targetType)
+WorkerScriptLoader::WorkerScriptLoader()
     : m_client(0)
     , m_failed(false)
     , m_identifier(0)
-    , m_targetType(targetType)
     , m_finishing(false)
+#if PLATFORM(CHROMIUM)
+    , m_targetType(ResourceRequest::TargetIsWorker)
+#endif
 {
 }
 
@@ -108,7 +109,9 @@ PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
 {
     OwnPtr<ResourceRequest> request = adoptPtr(new ResourceRequest(m_url));
     request->setHTTPMethod("GET");
+#if PLATFORM(CHROMIUM)
     request->setTargetType(m_targetType);
+#endif
     return request.release();
 }
     

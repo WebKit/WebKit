@@ -70,10 +70,11 @@ public:
         , m_name(name)
         , m_webWorker(webWorker)
         , m_port(port)
-        , m_scriptLoader(WorkerScriptLoader::create(ResourceRequestBase::TargetIsSharedWorker))
+        , m_scriptLoader(WorkerScriptLoader::create())
         , m_loading(false)
         , m_responseAppCacheID(0)
     {
+        m_scriptLoader->setTargetType(ResourceRequest::TargetIsSharedWorker);
     }
 
     ~SharedWorkerScriptLoader();

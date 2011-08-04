@@ -288,7 +288,10 @@ void SharedWorkerScriptLoader::load(const KURL& url)
     m_worker->setPendingActivity(m_worker.get());
 
     // Mark this object as active for the duration of the load.
-    m_scriptLoader = WorkerScriptLoader::create(ResourceRequestBase::TargetIsSharedWorker);
+    m_scriptLoader = WorkerScriptLoader::create();
+#if PLATFORM(CHROMIUM)
+    m_scriptLoader->setTargetType(ResourceRequest::TargetIsSharedWorker);
+#endif
     m_scriptLoader->loadAsynchronously(m_worker->scriptExecutionContext(), url, DenyCrossOriginRequests, this);
 }
 

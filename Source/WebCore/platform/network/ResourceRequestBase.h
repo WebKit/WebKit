@@ -51,24 +51,6 @@ namespace WebCore {
     class ResourceRequestBase {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        // The type of this ResourceRequest, based on how the resource will be used.
-        enum TargetType {
-            TargetIsMainFrame,
-            TargetIsSubframe,
-            TargetIsSubresource,  // Resource is a generic subresource.  (Generally a specific type should be specified)
-            TargetIsStyleSheet,
-            TargetIsScript,
-            TargetIsFontResource,
-            TargetIsImage,
-            TargetIsObject,
-            TargetIsMedia,
-            TargetIsWorker,
-            TargetIsSharedWorker,
-            TargetIsPrefetch,
-            TargetIsPrerender,
-            TargetIsFavicon,
-        };
-
         static PassOwnPtr<ResourceRequest> adopt(PassOwnPtr<CrossThreadResourceRequestData>);
 
         // Gets a copy of the data suitable for passing to another thread.
@@ -147,11 +129,6 @@ namespace WebCore {
         bool reportRawHeaders() const { return m_reportRawHeaders; }
         void setReportRawHeaders(bool reportRawHeaders) { m_reportRawHeaders = reportRawHeaders; }
 
-        // What this request is for.
-        // FIXME: This should be moved out of ResourceRequestBase, <https://bugs.webkit.org/show_bug.cgi?id=48483>.
-        TargetType targetType() const { return m_targetType; }
-        void setTargetType(TargetType type) { m_targetType = type; }
-
         static double defaultTimeoutInterval(); // May return 0 when using platform default.
         static void setDefaultTimeoutInterval(double);
 
@@ -166,7 +143,6 @@ namespace WebCore {
             , m_reportLoadTiming(false)
             , m_reportRawHeaders(false)
             , m_priority(ResourceLoadPriorityLow)
-            , m_targetType(TargetIsSubresource)
         {
         }
 
@@ -182,7 +158,6 @@ namespace WebCore {
             , m_reportLoadTiming(false)
             , m_reportRawHeaders(false)
             , m_priority(ResourceLoadPriorityLow)
-            , m_targetType(TargetIsSubresource)
         {
         }
 
@@ -208,7 +183,6 @@ namespace WebCore {
         bool m_reportLoadTiming;
         bool m_reportRawHeaders;
         ResourceLoadPriority m_priority;
-        TargetType m_targetType;
 
     private:
         const ResourceRequest& asResourceRequest() const;
@@ -237,7 +211,6 @@ namespace WebCore {
         RefPtr<FormData> m_httpBody;
         bool m_allowCookies;
         ResourceLoadPriority m_priority;
-        ResourceRequestBase::TargetType m_targetType;
     };
     
     unsigned initializeMaximumHTTPConnectionCountPerHost();

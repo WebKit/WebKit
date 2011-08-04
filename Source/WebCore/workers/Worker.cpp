@@ -67,7 +67,10 @@ PassRefPtr<Worker> Worker::create(const String& url, ScriptExecutionContext* con
     // The worker context does not exist while loading, so we must ensure that the worker object is not collected, nor are its event listeners.
     worker->setPendingActivity(worker.get());
 
-    worker->m_scriptLoader = WorkerScriptLoader::create(ResourceRequestBase::TargetIsWorker);
+    worker->m_scriptLoader = WorkerScriptLoader::create();
+#if PLATFORM(CHROMIUM)
+    worker->m_scriptLoader->setTargetType(ResourceRequest::TargetIsWorker);
+#endif
     worker->m_scriptLoader->loadAsynchronously(context, scriptURL, DenyCrossOriginRequests, worker.get());
 
     InspectorInstrumentation::didCreateWorker(context, worker->asID(), scriptURL.string(), false);

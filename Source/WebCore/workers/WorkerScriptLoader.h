@@ -31,7 +31,7 @@
 #if ENABLE(WORKERS)
 
 #include "KURL.h"
-#include "ResourceRequestBase.h"
+#include "ResourceRequest.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 
@@ -50,9 +50,9 @@ namespace WebCore {
     class WorkerScriptLoader : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        static PassRefPtr<WorkerScriptLoader> create(ResourceRequestBase::TargetType targetType)
+        static PassRefPtr<WorkerScriptLoader> create()
         {
-            return adoptRef(new WorkerScriptLoader(targetType));
+            return adoptRef(new WorkerScriptLoader());
         }
 
         void loadSynchronously(ScriptExecutionContext*, const KURL&, CrossOriginRequestPolicy);
@@ -73,10 +73,14 @@ namespace WebCore {
         virtual void didFailRedirectCheck();
         virtual void didReceiveAuthenticationCancellation(unsigned long /*identifier*/, const ResourceResponse&);
 
+#if PLATFORM(CHROMIUM)
+        void setTargetType(ResourceRequest::TargetType targetType) { m_targetType = targetType; }
+#endif
+
     private:
         friend class WTF::RefCounted<WorkerScriptLoader>;
 
-        explicit WorkerScriptLoader(ResourceRequestBase::TargetType);
+        WorkerScriptLoader();
         ~WorkerScriptLoader();
 
         PassOwnPtr<ResourceRequest> createResourceRequest();
@@ -91,8 +95,10 @@ namespace WebCore {
         KURL m_responseURL;
         bool m_failed;
         unsigned long m_identifier;
-        ResourceRequestBase::TargetType m_targetType;
         bool m_finishing;
+#if PLATFORM(CHROMIUM)
+        ResourceRequest::TargetType m_targetType;
+#endif
     };
 
 } // namespace WebCore

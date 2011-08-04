@@ -1,3 +1,43 @@
+2011-08-04  Jochen Eisinger  <jochen@chromium.org>
+
+        Get rid of ResourceRequestBase::m_targetType. Move it to chromium's ResourceRequest.
+        https://bugs.webkit.org/show_bug.cgi?id=48483
+
+        Reviewed by Alexey Proskuryakov.
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::loadImage):
+        (WebCore::PingLoader::sendPing):
+        (WebCore::PingLoader::reportContentSecurityPolicyViolation):
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::load):
+        * platform/graphics/gstreamer/WebKitWebSourceGStreamer.cpp:
+        (webKitWebSrcStart):
+        * platform/network/ResourceRequestBase.cpp:
+        (WebCore::ResourceRequestBase::adopt):
+        (WebCore::ResourceRequestBase::copyData):
+        * platform/network/ResourceRequestBase.h:
+        (WebCore::ResourceRequestBase::ResourceRequestBase):
+        * platform/network/chromium/ResourceRequest.cpp:
+        (WebCore::ResourceRequest::doPlatformCopyData):
+        (WebCore::ResourceRequest::doPlatformAdopt):
+        * platform/network/chromium/ResourceRequest.h:
+        (WebCore::ResourceRequest::ResourceRequest):
+        (WebCore::ResourceRequest::targetType):
+        (WebCore::ResourceRequest::setTargetType):
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::load):
+        * workers/Worker.cpp:
+        (WebCore::Worker::create):
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::importScripts):
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::WorkerScriptLoader):
+        (WebCore::WorkerScriptLoader::createResourceRequest):
+        * workers/WorkerScriptLoader.h:
+        (WebCore::WorkerScriptLoader::create):
+        (WebCore::WorkerScriptLoader::setTargetType):
+
 2011-08-04  Jeff Miller  <jeffm@apple.com>
 
         Fix WinCE build after r92308.

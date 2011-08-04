@@ -412,7 +412,6 @@ static bool webKitWebSrcStart(WebKitWebSrc* src)
     KURL url = KURL(KURL(), priv->uri);
 
     ResourceRequest request(url);
-    request.setTargetType(ResourceRequestBase::TargetIsMedia);
     request.setAllowCookies(true);
 
     NetworkingContext* context = 0;
