@@ -62,6 +62,8 @@ void StorageTracker::initializeTracker(const String& storagePath, StorageTracker
 
 void StorageTracker::internalInitialize()
 {
+    m_needsInitialization = false;
+
     ASSERT(isMainThread());
 
     // Make sure text encoding maps have been built on the main thread, as the StorageTracker thread might try to do it there instead.
@@ -72,8 +74,6 @@ void StorageTracker::internalInitialize()
     storageTracker->setIsActive(true);
     storageTracker->m_thread->start();  
     storageTracker->importOriginIdentifiers();
-    
-    m_needsInitialization = false;
 }
 
 StorageTracker& StorageTracker::tracker()
