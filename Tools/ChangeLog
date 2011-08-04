@@ -1,5 +1,19 @@
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
+        bugzilla.js is missing unit tests
+        https://bugs.webkit.org/show_bug.cgi?id=65656
+
+        Reviewed by Adam Roben.
+
+        Testing makes perfect.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/bugzilla_unittests.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/net_unittests.js:
+        (NetworkSimulator.prototype.runTest.get if):
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
         Add missing license blocks to garden-o-matic
         https://bugs.webkit.org/show_bug.cgi?id=65654
 

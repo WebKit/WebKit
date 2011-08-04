@@ -44,6 +44,12 @@ NetworkSimulator.prototype.runTest = function(testCase)
         net.probe = self.probe;
     if (self.jsonp)
         net.jsonp = self.jsonp;
+    if (self.get)
+        net.get = self.get;
+    if (self.post)
+        net.post = self.post;
+    if (self.ajax)
+        net.ajax = self.ajax;
 
     testCase();
 
