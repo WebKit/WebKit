@@ -1,3 +1,21 @@
+2011-08-04  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: rename sendResultByValue to returnByValue in Runtime agent.
+        https://bugs.webkit.org/show_bug.cgi?id=65687
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluate):
+        (WebCore::InjectedScript::callFunctionOn):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::evaluate):
+        (WebCore::InspectorRuntimeAgent::callFunctionOn):
+        * inspector/InspectorRuntimeAgent.h:
+
 2011-08-04  Matt Falkenhagen  <falken@chromium.org>
 
         Use -webkit-locale for font selection.

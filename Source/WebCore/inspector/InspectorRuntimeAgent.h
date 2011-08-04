@@ -59,14 +59,14 @@ public:
                   const bool* const includeCommandLineAPI,
                   const bool* const doNotPauseOnExceptions,
                   const String* const frameId,
-                  const bool* const sendResultByValue,
+                  const bool* const returnByValue,
                   RefPtr<InspectorObject>* result,
                   bool* wasThrown);
     void callFunctionOn(ErrorString*,
                         const String& objectId,
                         const String& expression,
                         const RefPtr<InspectorArray>* const optionalArguments,
-                        const bool* const sendResultByValue,
+                        const bool* const returnByValue,
                         RefPtr<InspectorObject>* result,
                         bool* wasThrown);
     void releaseObject(ErrorString*, const String& objectId);

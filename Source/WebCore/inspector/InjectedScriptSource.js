@@ -246,12 +246,12 @@ InjectedScript.prototype = {
         return Object.keys(propertyNameSet);
     },
 
-    evaluate: function(expression, objectGroup, injectCommandLineAPI, sendResultByValue)
+    evaluate: function(expression, objectGroup, injectCommandLineAPI, returnByValue)
     {
-        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, sendResultByValue);
+        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI, returnByValue);
     },
 
-    callFunctionOn: function(objectId, expression, args, sendResultByValue)
+    callFunctionOn: function(objectId, expression, args, returnByValue)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -287,18 +287,18 @@ InjectedScript.prototype = {
                 return "Given expression does not evaluate to a function";
 
             return { wasThrown: false,
-                     result: this._wrapObject(func.apply(object, resolvedArgs), objectGroup, sendResultByValue) };
+                     result: this._wrapObject(func.apply(object, resolvedArgs), objectGroup, returnByValue) };
         } catch (e) {
             return { wasThrown: true,
                      result: this._wrapObject(e, objectGroup) };
         }
     },
 
-    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, sendResultByValue)
+    _evaluateAndWrap: function(evalFunction, object, expression, objectGroup, isEvalOnCallFrame, injectCommandLineAPI, returnByValue)
     {
         try {
             return { wasThrown: false,
-                     result: this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, sendResultByValue) };
+                     result: this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, returnByValue) };
         } catch (e) {
             return { wasThrown: true,
                      result: this._wrapObject(e, objectGroup) };

@@ -54,23 +54,23 @@ InjectedScript::InjectedScript(ScriptObject injectedScriptObject, InspectedState
 {
 }
 
-void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool sendResultByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InjectedScript::evaluate(ErrorString* errorString, const String& expression, const String& objectGroup, bool includeCommandLineAPI, bool returnByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "evaluate");
     function.appendArgument(expression);
     function.appendArgument(objectGroup);
     function.appendArgument(includeCommandLineAPI);
-    function.appendArgument(sendResultByValue);
+    function.appendArgument(returnByValue);
     makeEvalCall(errorString, function, result, wasThrown);
 }
 
-void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const String& arguments, bool sendResultByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
+void InjectedScript::callFunctionOn(ErrorString* errorString, const String& objectId, const String& expression, const String& arguments, bool returnByValue, RefPtr<InspectorObject>* result, bool* wasThrown)
 {
     ScriptFunctionCall function(m_injectedScriptObject, "callFunctionOn");
     function.appendArgument(objectId);
     function.appendArgument(expression);
     function.appendArgument(arguments);
-    function.appendArgument(sendResultByValue);
+    function.appendArgument(returnByValue);
     makeEvalCall(errorString, function, result, wasThrown);
 }
 

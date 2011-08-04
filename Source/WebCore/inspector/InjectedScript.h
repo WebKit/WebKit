@@ -59,14 +59,14 @@ public:
                   const String& expression,
                   const String& objectGroup,
                   bool includeCommandLineAPI,
-                  bool sendResultByValue,
+                  bool returnByValue,
                   RefPtr<InspectorObject>* result,
                   bool* wasThrown);
     void callFunctionOn(ErrorString*,
                         const String& objectId,
                         const String& expression,
                         const String& arguments,
-                        bool sendResultByValue,
+                        bool returnByValue,
                         RefPtr<InspectorObject>* result,
                         bool* wasThrown);
     void evaluateOnCallFrame(ErrorString*, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown);
