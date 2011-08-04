@@ -58,7 +58,7 @@ class Canvas2DLayerChromium;
 class DrawingBuffer : public RefCounted<DrawingBuffer> {
 public:
     friend class GraphicsContext3D;
-    
+
     ~DrawingBuffer();
 
     void clearFramebuffer();
@@ -114,7 +114,7 @@ private:
     static PassRefPtr<DrawingBuffer> create(GraphicsContext3D*, const IntSize&);
     
     DrawingBuffer(GraphicsContext3D*, const IntSize&, bool multisampleExtensionSupported, bool packedDepthStencilExtensionSupported);
-    
+
     // Platform specific function called after reset() so each platform can do extra work if needed
     void didReset();
 

@@ -38,6 +38,16 @@
 
 namespace WebCore {
 
+// Global resource ceiling (expressed in terms of pixels) for DrawingBuffer creation and resize.
+// When this limit is set, DrawingBuffer::create() and DrawingBuffer::reset() calls that would
+// exceed the global cap will instead clear the buffer.
+#if PLATFORM(CHROMIUM) // Currently, this cap only exists for chromium.
+static int s_maximumResourceUsePixels = 16 * 1024 * 1024;
+#else
+static int s_maximumResourceUsePixels = 0;
+#endif
+static int s_currentResourceUsePixels = 0;
+
 PassRefPtr<DrawingBuffer> DrawingBuffer::create(GraphicsContext3D* context, const IntSize& size)
 {
     Extensions3D* extensions = context->getExtensions();
@@ -60,6 +70,8 @@ void DrawingBuffer::clear()
         return;
 
     m_context->makeContextCurrent();
+    if (!m_size.isEmpty())
+        s_currentResourceUsePixels -= m_size.width() * m_size.height();
 
     if (m_colorBuffer) {
         m_context->deleteTexture(m_colorBuffer);
@@ -202,9 +214,19 @@ bool DrawingBuffer::reset(const IntSize& newSize)
     int maxTextureSize = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_TEXTURE_SIZE, &maxTextureSize);
     if (newSize.height() > maxTextureSize || newSize.width() > maxTextureSize) {
-      clear();
-      return false;
+        clear();
+        return false;
     }
+
+    int pixelDelta = newSize.width() * newSize.height();
+    if (!m_size.isEmpty())
+        pixelDelta -= m_size.width() * m_size.height();
+
+    if (s_maximumResourceUsePixels && (s_currentResourceUsePixels + pixelDelta) > s_maximumResourceUsePixels) {
+        clear();
+        return false;
+    }
+    s_currentResourceUsePixels += pixelDelta;
 
     const GraphicsContext3D::Attributes& attributes = m_context->getContextAttributes();
 
