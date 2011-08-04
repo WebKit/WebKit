@@ -4537,13 +4537,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(boxFlexGroup, BoxFlexGroup)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
-        m_style->setBoxFlexGroup((unsigned int)(primitiveValue->getDoubleValue()));
+        m_style->setBoxFlexGroup(primitiveValue->getValue<unsigned>());
         return;
     case CSSPropertyWebkitBoxOrdinalGroup:
         HANDLE_INHERIT_AND_INITIAL(boxOrdinalGroup, BoxOrdinalGroup)
         if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
             return; // Error case.
-        m_style->setBoxOrdinalGroup((unsigned int)(primitiveValue->getDoubleValue()));
+        m_style->setBoxOrdinalGroup(primitiveValue->getValue<unsigned>());
         return;
     case CSSPropertyBoxSizing:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxSizing, BoxSizing);
@@ -4699,7 +4699,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyWebkitContentOrder:
         HANDLE_INHERIT_AND_INITIAL(regionIndex, RegionIndex);
-        m_style->setRegionIndex(clampToInteger(primitiveValue->getDoubleValue()));
+        m_style->setRegionIndex(primitiveValue->getIntValue());
         return;
     case CSSPropertyWebkitRegionOverflow:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(regionOverflow, RegionOverflow);
@@ -6449,8 +6449,7 @@ bool CSSStyleSelector::createTransformOperations(CSSValue* inValue, RenderStyle*
                     // This is a quirk that should go away when 3d transforms are finalized.
                     double val = firstValue->getDoubleValue();
                     ok = val >= 0;
-                    val = clampToPositiveInteger(val);
-                    p = Length(static_cast<int>(val), Fixed);
+                    p = Length(clampToPositiveInteger(val), Fixed);
                 }
                 
                 if (!ok)
