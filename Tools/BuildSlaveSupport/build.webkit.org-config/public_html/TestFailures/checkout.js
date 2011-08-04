@@ -29,29 +29,10 @@ var checkout = checkout || {};
 
 var kWebKitTrunk = 'http://svn.webkit.org/repository/webkit/trunk/';
 
-function subversionURLAtRevision(subversionURL, revision)
-{
-    return subversionURL + '?r=' + revision;
-}
-
 checkout.subversionURLForTest = function(testName)
 {
     return kWebKitTrunk + 'LayoutTests/' + testName;
 }
-
-checkout.existsAtRevision = function(subversionURL, revision, callback)
-{
-    net.ajax({
-        method: 'HEAD',
-        url: subversionURLAtRevision(subversionURL, revision), 
-        success: function() {
-            callback(true);
-        },
-        error: function() {
-            callback(false);
-        }
-    });
-};
 
 checkout.updateExpectations = function(failureInfoList, callback)
 {
