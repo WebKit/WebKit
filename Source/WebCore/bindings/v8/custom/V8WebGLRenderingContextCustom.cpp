@@ -64,6 +64,7 @@
 #include "V8WebGLUniformLocation.h"
 #include "V8WebGLVertexArrayObjectOES.h"
 #include "WebGLRenderingContext.h"
+#include <limits>
 #include <wtf/FastMalloc.h>
 
 namespace WebCore {
@@ -74,7 +75,8 @@ static float* jsArrayToFloatArray(v8::Handle<v8::Array> array, uint32_t len)
 {
     // Convert the data element-by-element.
     float* data;
-    if (!tryFastMalloc(len * sizeof(float)).getValue(data))
+    if (len > std::numeric_limits<uint32_t>::max() / sizeof(float)
+        || !tryFastMalloc(len * sizeof(float)).getValue(data))
         return 0;
     for (uint32_t i = 0; i < len; i++) {
         v8::Local<v8::Value> val = array->Get(i);
@@ -93,7 +95,8 @@ static int* jsArrayToIntArray(v8::Handle<v8::Array> array, uint32_t len)
 {
     // Convert the data element-by-element.
     int* data;
-    if (!tryFastMalloc(len * sizeof(int)).getValue(data))
+    if (len > std::numeric_limits<uint32_t>::max() / sizeof(int)
+        || !tryFastMalloc(len * sizeof(int)).getValue(data))
         return 0;
     for (uint32_t i = 0; i < len; i++) {
         v8::Local<v8::Value> val = array->Get(i);

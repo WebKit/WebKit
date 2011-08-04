@@ -1,3 +1,18 @@
+2011-08-04  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Fix integer overflow in custom bindings for WebGLRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=65646
+
+        Reviewed by Kenneth Russell.
+
+        Test: fast/canvas/webgl/uniform-array-length-overflow.html
+
+        * bindings/js/JSWebGLRenderingContextCustom.cpp:
+        (WebCore::toVector): Don't crash if allocation fails.
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::jsArrayToFloatArray):
+        (WebCore::jsArrayToIntArray):
+
 2011-08-04  Pratik Solanki  <psolanki@apple.com>
 
         Implement CERTIFICATE_CREDENTIALS_SUPPORTED for CFNetwork

@@ -1,3 +1,15 @@
+2011-08-04  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+        Fix integer overflow in custom bindings for WebGLRenderingContext
+        https://bugs.webkit.org/show_bug.cgi?id=65646
+
+        Reviewed by Kenneth Russell.
+
+        * fast/canvas/webgl/resources/floatArrayUniformShader.vert: Added.
+        * fast/canvas/webgl/resources/intArrayUniformShader2.vert: Added.
+        * fast/canvas/webgl/uniform-array-length-overflow-expected.txt: Added.
+        * fast/canvas/webgl/uniform-array-length-overflow.html: Added.
+
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
         Refine some test expectations to account for flakiness.
