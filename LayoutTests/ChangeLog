@@ -1,3 +1,14 @@
+2011-08-04  Yael Aharon  <yael.aharon@nokia.com>
+
+        [Qt] 69 tests failing after http://trac.webkit.org/changeset/92375
+        https://bugs.webkit.org/show_bug.cgi?id=65721
+
+        Unreviewed.
+        
+        Skipping tests until rebaseline.
+
+        * platform/qt/Skipped:
+
 2011-08-04  Sergey Glazunov  <serg.glazunov@gmail.com>
 
         Fix integer overflow in custom bindings for WebGLRenderingContext
