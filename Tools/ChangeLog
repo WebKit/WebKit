@@ -1,3 +1,11 @@
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
+        More logging to help debug the "no SVN rev on Chromium Windows bots"
+        bug.  My current theory is that we're trying to detect the SCM system
+        in the wrong directory.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
 2011-08-04  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Speed up webkit-patch optimize-expectations significantly by not collecting test files.

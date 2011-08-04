@@ -631,7 +631,11 @@ class Port(object):
         # FIXME: Due to Chromium's insane DEPS system, the root of the WebKit
         # checkout isn't actually from svn.webkit.org. Instead, we detect the
         # scm from the Source directory, which really does map to svn.webkit.org.
-        return detect_scm_system(self.path_from_webkit_base('Source'))
+        path = self.path_from_webkit_base('Source')
+        _log.debug('---webkit_source_scm---')
+        _log.debug(path)
+        _log.debug(os.getcwd())
+        return detect_scm_system(path)
 
     def path_to_test_expectations_file(self):
         """Update the test expectations to the passed-in string.
