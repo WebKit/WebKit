@@ -46,8 +46,7 @@ import re
 import sys
 import time
 
-from webkitpy.common.checkout import scm
-
+from webkitpy.common.checkout.scm import default_scm
 from webkitpy.layout_tests.controllers import manager_worker_broker
 from webkitpy.layout_tests.controllers import worker
 from webkitpy.layout_tests.layout_package import json_layout_results_generator
@@ -209,7 +208,7 @@ def summarize_results(port_obj, expectations, result_summary, retry_summary, tes
     results['has_wdiff'] = port_obj.wdiff_available()
     results['has_pretty_patch'] = port_obj.pretty_patch_available()
     try:
-        results['revision'] = port_obj.webkit_source_scm().head_svn_revision()
+        results['revision'] = default_scm().head_svn_revision()
     except Exception, e:
         # FIXME: We would like to warn here, but that would cause all passing_run integration tests
         # to fail, since they assert that we have no logging output.

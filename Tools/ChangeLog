@@ -1,5 +1,13 @@
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
+        An educated guess at causing the Windows bots on build.webkit.org to
+        find the SVN revision number.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
         More logging to help debug the "no SVN rev on Chromium Windows bots"
         bug.  My current theory is that we're trying to detect the SCM system
         in the wrong directory.
