@@ -1,3 +1,16 @@
+2011-08-04  Nico Weber  <thakis@chromium.org>
+
+        Update the contributors page to recommend webkit-patch instead of many manual steps
+        https://bugs.webkit.org/show_bug.cgi?id=65714
+
+        Reviewed by Adam Barth.
+
+        asvitkine followed the contributing instructions for his first patch, and got
+        the ChangeLog entry wrong: https://bugs.webkit.org/show_bug.cgi?id=65707
+        webkit-patch prevents errors like this and more.
+
+        * coding/contributing.html:
+
 2011-07-21  Jon Lee  <jonlee@apple.com>
 
         Create a new survey page that showcases form and interactive elements for quick reference and comparison.

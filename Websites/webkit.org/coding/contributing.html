@@ -72,8 +72,8 @@ copyright line for yourself or for the company on whose behalf you
 work. Below are sample copyright lines for an individual contributor
 and a company:
 
-<p><code>Copyright (C) 2010 John Smith (jsmith@example.com)</code></p>
-<p><code>Copyright (C) 2010 Company Inc. All rights reserved.</code></p>
+<p><code>Copyright (C) 2011 John Smith (jsmith@example.com)</code></p>
+<p><code>Copyright (C) 2011 Company Inc. All rights reserved.</code></p>
 
 <p>In addition, make sure that any new source code and script files
 you introduce contain license text at the beginning of the file.
@@ -90,6 +90,9 @@ Some older parts of the codebase do not follow these guidelines.
 If you are modifying such code, it is generally best to clean it up
 to comply with the current guidelines. An exception is legacy components,
 which should not be cleaned up.</p>
+
+<p>Your patch will be automatically checked for style compliance when you
+upload it to the bug tracker.</p>
 
 <h3>Regression tests</h3>
 <p>Once you have made your changes, you need to run the regression tests, which is done via the <code>run-webkit-tests</code> script.
@@ -115,53 +118,21 @@ from the online book <a class="book" href="http://svnbook.red-bean.com/">
 Version Control with Subversion</a> and by using the <code>svn help</code>
 command.</p>
 
+<h3>Create the patch</h3>
+
+<p>The easiest way to create a patch is to run
+<code>Tools/Scripts/webkit-patch upload</code>. This will upload your current
+Subversion diff (or Git diff if you
+<a href="http://trac.webkit.org/wiki/UsingGitWithWebKit">use git</a>) to the
+issue tracking system and mark it as ready for review.</p>
+
 <h3 id="changelogs">ChangeLog files</h3>
-<p>ChangeLogs are simple text files which provide historical documentation for all changes to the WebKit project.  All patches require an entry to the ChangeLog. The <code>prepare-ChangeLog</code> script will create a basic entry containing a list of all files that have been changed.  The first line contains the date, your full name, and your email address.  Use this to write up a brief summary of the changes you've made.  Don't worry about the "Reviewed by NOBODY (OOPS!)" line, the person landing your patch will fill this in.</p>
+<p>ChangeLogs are simple text files which provide historical documentation for all changes to the WebKit project.  All patches require an entry to the ChangeLog. The <code>webkit-patch upload</code> script will create a basic entry containing a list of all files that have been changed.  The first line contains the date, your full name, and your email address.  Use this to write up a brief summary of the changes you've made.  Don't worry about the "Reviewed by NOBODY (OOPS!)" line, the person landing your patch will fill this in.</p>
 
 <p>There is one ChangeLog per top-level directory, if you changed code and tests you will need to edit at least two ChangeLogs. The <code>prepare-ChangeLog</code> script will create a stub entries for you.  You should edit these stubs to describe your change, including the full url to the bug (<a href="http://trac.webkit.org/changeset/43259">example entry</a>, note that you can use <code>--bug</code> flag).  (You should set EMAIL_ADDRESS and CHANGE_LOG_NAME in your environment if you will be running this script frequently.)</p>
 
-<p>The "No new tests. (OOPS!)" line appears if <code>prepare-ChangeLog</code> did not detect the addition of test cases.  If your patch does not require test cases (or test cases are not possible), you should include a line stating such.  Otherwise all changes require test cases which should be mentioned in the ChangeLog.</p>
+<p>The "No new tests. (OOPS!)" line appears if <code>webkit-path</code> did not detect the addition of test cases.  If your patch does not require test cases (or test cases are not possible), remove this line and explain why you didn't write tests. Otherwise all changes require test cases which should be mentioned in the ChangeLog. If you keep this line in your ChangeLog entry, your patch will be rejected by the commit bot.</p>
 
-<h3>Create the patch</h3>
-<p>WebKit uses <code>svn-create-patch</code> to create patches. The
-<code>svn-create-patch</code> script is a small wrapper around Subversion's
-<code>diff</code> command that better handles moved, added, and deleted files.
-This command is best run from the top level of your checkout
-to make sure no changes are left out of your patch. It is not necessary to
-break a patch into multiple files.</p>
-
-<p>The <code>svn-create-patch</code> script does not create a file automatically.
-You need to redirect the output yourself using something like:</p>
-<p class="code">svn-create-patch > MyExcellentPatch.txt</p>
-
-<h3 id="submit">Submit your patch</h3>
-<p>Submit your patch by clicking the "Add an attachment" link in the
-<a href="#bugreport">bug report</a> you chose for your contribution.</p>
-
-<p><img src="images/contribute_add_attachment.png"
-alt='Bugzilla "Add an attachment" link'></p>
-
-<p>Complete the attachment form by doing at least the following:
-<ol>
-    <li>Browse to your patch file in the File field.</li>
-    <li>Type a brief description in the Description field, for example
-        "Proposed patch."</li>
-    <li>Check the "patch" checkbox (see picture below).</li>
-    <li>Select the question mark "?" in the "review" pull-down
-        (see picture below).</li>
-    <li>Click Submit at the bottom.</li>
-</ol>
-</p>
-
-<p><img src="images/contribute_mark_review.png"
-alt="Bugzilla patch-submission options"></p>
-
-<p>The patch checkbox and the <code>review:?</code> flag signal to
-WebKit reviewers that your patch is ready for review.
-Setting the review flag also sends an automatic e-mail to the
-<a href="http://lists.webkit.org/mailman/listinfo/webkit-reviews">
-webkit-reviews</a> mailing list which some reviewers subscribe to.
-</p>
 
 <h3>Respond to reviewers</h3>
 <p>A WebKit reviewer must approve your patch before WebKit can accept
