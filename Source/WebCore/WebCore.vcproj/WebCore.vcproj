@@ -28460,46 +28460,6 @@
 						</FileConfiguration>
 					</File>
 					<File
-						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeWin.cpp"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath="..\platform\graphics\win\MediaPlayerPrivateQuickTimeWin.h"
-						>
-						<FileConfiguration
-							Name="Debug_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release_Cairo_CFLite|Win32"
-							ExcludedFromBuild="true"
-							>
-							<Tool
-								Name="VCCustomBuildTool"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
 						RelativePath="..\platform\graphics\win\MediaPlayerPrivateTaskTimer.cpp"
 						>
 					</File>
@@ -51714,7 +51674,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\editing\RenderedPosition.h"
+				RelativePath="..\editing\RemoveNodePreservingChildrenCommand.h"
 				>
 			</File>
 			<File
@@ -51770,7 +51730,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\editing\RemoveNodePreservingChildrenCommand.h"
+				RelativePath="..\editing\RenderedPosition.h"
 				>
 			</File>
 			<File
@@ -68817,11 +68777,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
 					>
 				</File>
 				<File

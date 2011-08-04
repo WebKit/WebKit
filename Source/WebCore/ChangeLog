@@ -1,3 +1,27 @@
+2011-08-04  Adam Roben  <aroben@apple.com>
+
+        Delete some unused code from platform/graphics/win
+
+        MediaPlayerPrivateQuickTimeWin has been unused since r72117, and the GraphicsLayer-related
+        classes have been unused since r75262.
+
+        Fixes <http://webkit.org/b/65689> platform/graphics/win has a bunch of unused code
+
+        Reviewed by Eric Carlson.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        Removed now-deleted files.
+
+        * platform/graphics/win/GraphicsLayerCACF.cpp: Removed.
+        * platform/graphics/win/GraphicsLayerCACF.h: Removed.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.cpp: Removed.
+        * platform/graphics/win/MediaPlayerPrivateQuickTimeWin.h: Removed.
+        * platform/graphics/win/WebLayer.cpp: Removed.
+        * platform/graphics/win/WebLayer.h: Removed.
+        * platform/graphics/win/WebTiledLayer.cpp: Removed.
+        * platform/graphics/win/WebTiledLayer.h: Removed.
+
 2011-08-03  Adam Roben  <aroben@apple.com>
 
         Detect and handle overflow in PlatformCALayerWinInternal::constrainedSize
