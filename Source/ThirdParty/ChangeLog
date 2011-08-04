@@ -1,3 +1,19 @@
+2011-08-03  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=61812
+        TestWebKitApi breaks in release mode due to gtest incompatibility with fast malloc
+
+        Disable fast malloc for offending class (::std::strstream) in gtest.
+        This looks like the most non-intrusive solution.
+
+        Reviewed by David Levin.
+
+        * gtest/include/gtest/internal/gtest-port.h:
+        (testing::internal::StrStream::operator new):
+        (testing::internal::StrStream::operator new[]):
+        (testing::internal::StrStream::operator delete):
+        (testing::internal::StrStream::operator delete[]):
+
 2011-07-05  Adam Barth  <abarth@webkit.org>
 
         Import qunit JavaScript unit testing framework

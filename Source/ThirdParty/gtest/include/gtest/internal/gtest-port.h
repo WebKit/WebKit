@@ -609,7 +609,29 @@ namespace internal {
 
 class String;
 
-typedef ::std::stringstream StrStream;
+class StrStream : public ::std::stringstream {
+ public:
+  void* operator new(size_t, void* p) { return p; }
+  void* operator new[](size_t, void* p) { return p; }
+
+  void* operator new(size_t size) {
+    return malloc(size);
+  }
+
+  void operator delete(void* p) {
+    free(p);
+  }
+
+  void* operator new[](size_t size) {
+    return malloc(size);
+  }
+
+  void operator delete[](void* p) {
+    free(p);
+  }
+};
+
+
 
 // A helper for suppressing warnings on constant condition.  It just
 // returns 'condition'.
