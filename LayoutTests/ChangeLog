@@ -1,5 +1,11 @@
 2011-08-04  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip some svg tests on GTK, likely affected by bug 39022.
+
+        * platform/gtk/Skipped:
+
+2011-08-04  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK rebaseline and test_expectations update (2 tests
         now passing).
 
