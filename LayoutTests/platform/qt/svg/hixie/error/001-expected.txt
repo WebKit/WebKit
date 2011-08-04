@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 3: Error: Invalid value for <circle> attribute r="r"
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
