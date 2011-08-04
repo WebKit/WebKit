@@ -31,7 +31,8 @@
 #include "config.h"
 
 #include "FontPlatformData.h"
-#include "wtf/OwnArrayPtr.h"
+#include <wtf/HashMap.h>
+#include <wtf/OwnArrayPtr.h>
 
 #include "SkFontHost.h"
 #include "SkPaint.h"
@@ -226,14 +227,47 @@ HB_Error harfbuzzSkiaGetTable(void* voidface, const HB_Tag tag, HB_Byte* buffer,
     return HB_Err_Ok;
 }
 
-HarfbuzzFace::HarfbuzzFace(FontPlatformData* platformData)
+typedef pair<HB_FaceRec_*, unsigned> FaceCacheEntry;
+typedef HashMap<unsigned int, FaceCacheEntry, WTF::IntHash<unsigned int>, WTF::UnsignedWithZeroKeyHashTraits<unsigned int> > HarfbuzzFaceCache;
+static HarfbuzzFaceCache* gHarfbuzzFaceCache = 0;
+
+static HB_FaceRec_* getCachedHarfbuzzFace(FontPlatformData* platformData)
 {
-    m_harfbuzzFace = HB_NewFace(platformData, harfbuzzSkiaGetTable);
+    if (!gHarfbuzzFaceCache)
+        gHarfbuzzFaceCache = new HarfbuzzFaceCache;
+    SkFontID uniqueID = platformData->uniqueID();
+    HarfbuzzFaceCache::iterator result = gHarfbuzzFaceCache->find(uniqueID);
+    if (result == gHarfbuzzFaceCache->end()) {
+        FaceCacheEntry entry(HB_NewFace(platformData, harfbuzzSkiaGetTable), 1);
+        gHarfbuzzFaceCache->set(uniqueID, entry);
+        return entry.first;
+    }
+    ++(result.get()->second.second);
+    return result.get()->second.first;
+}
+
+static void releaseCachedHarfbuzzFace(FontPlatformData* platformData)
+{
+    SkFontID uniqueID = platformData->uniqueID();
+    HarfbuzzFaceCache::iterator result = gHarfbuzzFaceCache->find(uniqueID);
+    ASSERT(result != gHarfbuzzFaceCache->end());
+    ASSERT(result.get()->second.second > 0);
+    --(result.get()->second.second);
+    if (!(result.get()->second.second)) {
+        HB_FreeFace(result.get()->second.first);
+        gHarfbuzzFaceCache->remove(uniqueID);
+    }
+}
+
+HarfbuzzFace::HarfbuzzFace(FontPlatformData* platformData)
+    : m_platformData(platformData)
+{
+    m_harfbuzzFace = getCachedHarfbuzzFace(m_platformData);
 }
 
 HarfbuzzFace::~HarfbuzzFace()
 {
-    HB_FreeFace(m_harfbuzzFace);
+    releaseCachedHarfbuzzFace(m_platformData);
 }
 
 }  // namespace WebCore
