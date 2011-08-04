@@ -1,5 +1,33 @@
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
+        Add missing license blocks to garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=65654
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch is entirely boilerplate.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/builders.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/net.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/net_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui_unittests.js:
+
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic needs a way to mock out the network
         https://bugs.webkit.org/show_bug.cgi?id=65653
 
