@@ -1041,13 +1041,6 @@ BUGCR10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onPr
 
 // Post-MERGE failures: these will all need to be fixed one day
 
-// This test assumes we're using unix paths and looks for a file:///test
-// path.  We correctly return file:///C:/test on Windows.  We should fix
-// upstream
-// Expectations for this test changed upstream. We should fix this test, but
-// it doesn't need to block the current release
-BUGCR10325 WIN : fast/dom/resource-locations-in-created-html-document.html = FAIL
-
 // GURL/KURL difference in handling of "http:".
 // New test. We should fix it, but it doesn't need to block the current release
 BUGCR7386 : http/tests/security/postMessage/invalid-origin-throws-exception.html = FAIL

@@ -10,7 +10,11 @@
         htmlDoc.open();
         htmlDoc.write('<html><img id="theImage" src="/test"></html>');
 
-        if (htmlDoc.getElementById('theImage').src == 'file:///test')
+        var path = htmlDoc.getElementById('theImage').src;
+
+        if (path == 'file:///test')
+            document.getElementById('result').innerHTML = 'SUCCESS';
+        else if (/^file:\/\/\/[C-Z]:\/test$/.test(path))  // MS Windows.
             document.getElementById('result').innerHTML = 'SUCCESS';
     }
     </script>

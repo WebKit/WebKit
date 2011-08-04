@@ -1,3 +1,16 @@
+2011-08-03  Noel Gordon  <noel.gordon@gmail.com>
+
+        [Chromium] fast/dom/resource-locations-in-created-html-document.html fails on win32
+        https://bugs.webkit.org/show_bug.cgi?id=65521
+
+        Reviewed by Adam Barth.
+
+        file: scheme URI paths on Windows include the disk drive reference (C: for example).
+        Refer to http://blogs.msdn.com/b/ie/archive/2006/12/06/file-uris-in-windows.aspx.
+
+        * fast/dom/resource-locations-in-created-html-document.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-08-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Revert an erroneous rebaseline from r92315.
