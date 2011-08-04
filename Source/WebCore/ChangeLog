@@ -1,3 +1,21 @@
+2011-08-03  Luke Macpherson   <macpherson@chromium.org>
+
+        Support cast between CSSPrimitiveValue and EBoxSizing, use in CSSStyleSelector.
+        https://bugs.webkit.org/show_bug.cgi?id=65657
+
+        Reviewed by Simon Fraser.
+
+        No new tests / refactoring only.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        Implement cast from EBoxSizing.
+        (WebCore::CSSPrimitiveValue::operator EBoxSizing):
+        Implement cast to EBoxSizing.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use appropriate macro to simplify code using cast.
+
 2011-08-03  Ian Henderson  <ianh@apple.com>
 
         Draw rectangular box shadow for elements with border-radius if no corners are visible

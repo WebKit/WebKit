@@ -4546,13 +4546,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setBoxOrdinalGroup((unsigned int)(primitiveValue->getDoubleValue()));
         return;
     case CSSPropertyBoxSizing:
-        HANDLE_INHERIT_AND_INITIAL(boxSizing, BoxSizing)
-        if (!primitiveValue)
-            return;
-        if (primitiveValue->getIdent() == CSSValueContentBox)
-            m_style->setBoxSizing(CONTENT_BOX);
-        else
-            m_style->setBoxSizing(BORDER_BOX);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxSizing, BoxSizing);
         return;
     case CSSPropertyWebkitColumnSpan: {
         HANDLE_INHERIT_AND_INITIAL(columnSpan, ColumnSpan)

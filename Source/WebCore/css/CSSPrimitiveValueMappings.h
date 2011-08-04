@@ -597,6 +597,33 @@ template<> inline CSSPrimitiveValue::operator EBoxAlignment() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxSizing e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case BORDER_BOX:
+        m_value.ident = CSSValueBorderBox;
+        break;
+    case CONTENT_BOX:
+        m_value.ident = CSSValueContentBox;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EBoxSizing() const
+{
+    switch (m_value.ident) {
+    case CSSValueBorderBox:
+        return BORDER_BOX;
+    case CSSValueContentBox:
+        return CONTENT_BOX;
+    default:
+        ASSERT_NOT_REACHED();
+        return BORDER_BOX;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBoxDirection e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
