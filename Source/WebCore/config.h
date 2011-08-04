@@ -29,7 +29,7 @@
 
 #include <wtf/Platform.h>
 
-#if OS(WINDOWS) && !PLATFORM(QT) && !PLATFORM(CHROMIUM)
+#if OS(WINDOWS) && !OS(WINCE) && !PLATFORM(QT) && !PLATFORM(CHROMIUM)
 #include <WebCore/WebCoreHeaderDetection.h>
 #endif
 
