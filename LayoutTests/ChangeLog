@@ -1,5 +1,11 @@
 2011-08-04  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip 2 crashing tests on GTK. See bug 65699 and 65702.
+
+        * platform/gtk/Skipped:
+
+2011-08-04  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, skip some svg tests on GTK, likely affected by bug 39022.
 
         * platform/gtk/Skipped:

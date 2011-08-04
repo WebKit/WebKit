@@ -255,6 +255,12 @@ editing/selection/directionality-after-undo-replace.html
 # https://bugs.webkit.org/show_bug.cgi?id=64530
 editing/selection/editable-html-element.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=65699
+fast/loader/reload-zero-byte-plugin.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=65702
+editing/undo/replace-text-in-node-preserving-markers-crash.html
+
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
