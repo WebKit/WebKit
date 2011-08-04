@@ -38,7 +38,6 @@ PASS input.type for "telephone" is correctly "text".
 PASS input.type for "time" is correctly "time".
 PASS input.type for "url" is correctly "url".
 PASS input.type for "uri" is correctly "text".
-PASS input.type for "week" is correctly "week".
 PASS successfullyParsed is true
 
 TEST COMPLETE

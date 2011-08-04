@@ -1,4 +1,4 @@
-description('Check stepping-up and -down for <input> from renderer. No cases of empty initial values for type=date, datetime, datetime-local, month, time, week.');
+description('Check stepping-up and -down for <input> from renderer. No cases of empty initial values for type=date, datetime, datetime-local, month, time.');
 
 var input = document.createElement('input');
 var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
@@ -335,29 +335,6 @@ shouldBe('stepDown("00:00", null, null)', '"00:00"');
 debug('stepDown()/stepUp() for stepMismatch values');
 shouldBe('stepDown("20:13", "3", "20:12:56")', '"20:12:59"');
 shouldBe('stepUp("00:13", "7", "")', '"00:13:04"');
-
-debug('');
-debug('Week type');
-input.type = 'week';
-debug('Function arguments are (value, step, {min or max}, [stepCount]).');
-debug('Normal cases');
-shouldBe('stepUp("2010-W02", null, null)', '"2010-W03"');
-shouldBe('stepDown("2010-W02", null, null)', '"2010-W01"');
-shouldBe('stepUp("2010-W02", null, null, 10)', '"2010-W12"');
-shouldBe('stepDown("2010-W02", null, null, 11)', '"2009-W44"');
-shouldBe('stepUp("1970-W01", "4", null, 2)', '"1970-W09"');
-shouldBe('stepDown("1970-W01", "4", null, 3)', '"1969-W41"');
-debug('Step=any');
-shouldBe('stepUp("2010-W02", "any", null)', '"2010-W03"');
-shouldBe('stepDown("2010-W02", "any", null)', '"2010-W01"');
-debug('Overflow/underflow');
-shouldBe('stepUp("2010-W02", "3.40282346e+38", null)', '"275760-W37"');
-shouldBe('stepDown("2010-W02", "3.40282346e+38", null)', '"1970-W01"');
-shouldBe('stepUp("2010-W02", "1", "2010-W02")', '"2010-W02"');
-shouldBe('stepDown("2010-W02", "1", "2010-W02")', '"2010-W02"');
-debug('stepDown()/stepUp() for stepMismatch values');
-shouldBe('stepDown("2010-W02", "2", "2009-W52")', '"2010-W01"');
-shouldBe('stepUp("1970-W02", "4", "")', '"1970-W05"');
 
 debug('');
 var successfullyParsed = true;

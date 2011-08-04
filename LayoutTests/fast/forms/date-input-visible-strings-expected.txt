@@ -5,7 +5,6 @@ datetime: value='2011-04-27T01:56:20.391Z' visible='2011-04-27T01:56:20.391Z'
 datetime-local: value='2011-04-27T01:56:20.391' visible='2011-04-27T01:56:20.391'
 month: value='2011-04' visible='2011-04'
 time: value='01:56:20.391' visible='01:56:20.391'
-week: value='2011-W17' visible='2011-W17'
 PASS successfullyParsed is true
 
 TEST COMPLETE

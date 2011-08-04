@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
 description('Tests for .valueAsDate with &lt;input type=week>.');
 
 var input = document.createElement('input');
@@ -57,3 +67,7 @@ shouldBe('setValueAsDateAndGetValue(0, 11, 31)', '""');
 shouldBe('setValueAsDateAndGetValue(0, 0, 1)', '""');
 
 var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

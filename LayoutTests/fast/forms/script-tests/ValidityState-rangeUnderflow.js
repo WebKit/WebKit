@@ -193,30 +193,4 @@ checkUnderflow('13:16', '14:00');
 // Disabled
 checkNotUnderflow('23:59', '23:59:30', true);
 
-// ----------------------------------------------------------------
-debug('');
-debug('Type=week');
-input.type = 'week';
-input.max = '';
-// No underflow cases
-checkNotUnderflow('2010-W01', null);
-checkNotUnderflow('2010-W01', '');
-checkNotUnderflow('2010-W01', 'foo');
-// 1000-W01 is smaller than the implicit minimum value.
-// But the month parser rejects it before comparing the minimum value.
-checkNotUnderflow('1000-W01', '');
-checkNotUnderflow('1583-W01', '');
-checkNotUnderflow('2010-W01', '2009-W51');
-checkNotUnderflow('2010-W01', '2009-W01');
-checkNotUnderflow('foo', '2011-W01');
-
-// Underflow cases
-checkUnderflow('2010-W01', '2010-W02');
-checkUnderflow('9999-W01', '10000-W12');
-input.max = '2009-W52';  // value < min && value > max
-checkUnderflow('2010-W01', '2010-W02');
-
-// Disabled
-checkNotUnderflow('9999-W01', '10000-W12', true);
-
 var successfullyParsed = true;

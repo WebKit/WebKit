@@ -182,29 +182,4 @@ checkOverflow('13:16', '12:00');
 // Disabled
 checkNotOverflow('23:59:59.999', '13:16', true);
 
-// ----------------------------------------------------------------
-debug('');
-debug('Type=week');
-input.type = 'week';
-input.min = '';
-// No overflow cases
-checkNotOverflow('2010-W01', null);
-checkNotOverflow('2010-W01', '');
-checkNotOverflow('2010-W01', 'foo');
-checkNotOverflow('2010-W01', '2010-W01');
-checkNotOverflow('2010-W01', '2010-W02');
-checkNotOverflow('2010-W01', '2011-W01');
-checkNotOverflow('foo', '2011-W01');
-checkNotOverflow('2010-W01', '0000-W01'); // Invalid max value.
-
-// Overflow cases
-checkOverflow('2010-W01', '1582-W01');
-checkOverflow('2010-W01', '2009-W12');
-checkOverflow('9999-W01', '2010-W12');
-input.min = '2010-W02';  // value < min && value > max
-checkOverflow('2010-W01', '2009-W50');
-
-// Disabled
-checkNotOverflow('9999-W01', '2010-W12', true);
-
 var successfullyParsed = true;

@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
 description('Tests for .valueAsNumber with &lt;input type=week>.');
 
 var input = document.createElement('input');
@@ -67,3 +77,7 @@ shouldThrow('input.valueAsNumber = Number.NEGATIVE_INFINITY', '"Error: NOT_SUPPO
 shouldThrow('input.valueAsNumber = Date.UTC(275760, 8, 14)', '"Error: NOT_SUPPORTED_ERR: DOM Exception 9"');
 
 var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

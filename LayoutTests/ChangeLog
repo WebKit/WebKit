@@ -1,3 +1,55 @@
+2011-08-04  Kent Tamura  <tkent@chromium.org>
+
+        Move <input type=week> tests to fast/forms/week/
+        https://bugs.webkit.org/show_bug.cgi?id=65676
+
+        Reviewed by Tony Chang.
+
+        * fast/forms/ValidityState-rangeOverflow-expected.txt:
+        * fast/forms/ValidityState-rangeUnderflow-expected.txt:
+        * fast/forms/ValidityState-stepMismatch-expected.txt:
+        * fast/forms/ValidityState-typeMismatch-week-expected.txt: Removed.
+        * fast/forms/ValidityState-typeMismatch-week.html: Removed.
+        * fast/forms/date-input-visible-strings-expected.txt:
+        * fast/forms/date-input-visible-strings.html:
+        * fast/forms/input-stepup-stepdown-expected.txt:
+        * fast/forms/input-stepup-stepdown-from-renderer-expected.txt:
+        * fast/forms/input-type-change3-expected.txt:
+        * fast/forms/input-valueasdate-week-expected.txt: Removed.
+        * fast/forms/input-valueasdate-week.html: Removed.
+        * fast/forms/input-valueasnumber-week-expected.txt: Removed.
+        * fast/forms/input-valueasnumber-week.html: Removed.
+        * fast/forms/script-tests/ValidityState-rangeOverflow.js:
+        * fast/forms/script-tests/ValidityState-rangeUnderflow.js:
+        * fast/forms/script-tests/ValidityState-stepMismatch.js:
+        * fast/forms/script-tests/ValidityState-typeMismatch-week.js: Removed.
+        * fast/forms/script-tests/input-stepup-stepdown-from-renderer.js:
+        * fast/forms/script-tests/input-stepup-stepdown.js:
+        * fast/forms/script-tests/input-type-change3.js:
+        * fast/forms/script-tests/input-valueasdate-week.js: Removed.
+        * fast/forms/script-tests/input-valueasnumber-week.js: Removed.
+        * fast/forms/week: Added.
+        * fast/forms/week/ValidityState-rangeOverflow-week-expected.txt: Added.
+        * fast/forms/week/ValidityState-rangeOverflow-week.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeOverflow.js.
+        * fast/forms/week/ValidityState-rangeUnderflow-week-expected.txt: Added.
+        * fast/forms/week/ValidityState-rangeUnderflow-week.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeUnderflow.js.
+        * fast/forms/week/ValidityState-stepMismatch-week-expected.txt: Added.
+        * fast/forms/week/ValidityState-stepMismatch-week.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-stepMismatch.js.
+        * fast/forms/week/ValidityState-typeMismatch-week-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-typeMismatch-week-expected.txt.
+        * fast/forms/week/ValidityState-typeMismatch-week.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-typeMismatch-week.js.
+        * fast/forms/week/input-valueasdate-week-expected.txt: Copied from LayoutTests/fast/forms/input-valueasdate-week-expected.txt.
+        * fast/forms/week/input-valueasdate-week.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasdate-week.js.
+        * fast/forms/week/input-valueasnumber-week-expected.txt: Copied from LayoutTests/fast/forms/input-valueasnumber-week-expected.txt.
+        * fast/forms/week/input-valueasnumber-week.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasnumber-week.js.
+        * fast/forms/week/week-input-type-expected.txt: Added.
+        * fast/forms/week/week-input-type.html: Copied from LayoutTests/fast/forms/script-tests/input-type-change3.js.
+        * fast/forms/week/week-input-visible-string-expected.txt: Added.
+        * fast/forms/week/week-input-visible-string.html: Copied from LayoutTests/fast/forms/date-input-visible-strings.html.
+        * fast/forms/week/week-stepup-stepdown-expected.txt: Added.
+        * fast/forms/week/week-stepup-stepdown-from-renderer-expected.txt: Added.
+        * fast/forms/week/week-stepup-stepdown-from-renderer.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown-from-renderer.js.
+        * fast/forms/week/week-stepup-stepdown.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown.js.
+
 2011-08-04  Tim Horton  <timothy_horton@apple.com>
 
         Reviewed by Nikolas Zimmerman.

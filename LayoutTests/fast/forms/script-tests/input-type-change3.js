@@ -52,7 +52,6 @@ check("telephone", "text");
 check("time", "time");
 check("url", "url");
 check("uri", "text");
-check("week", "week");
 
 var successfullyParsed = true;
 

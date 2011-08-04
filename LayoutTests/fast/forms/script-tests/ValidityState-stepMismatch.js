@@ -1,4 +1,4 @@
-description('Check stepMismatch results for type=date, datetime, datetime-local, month, time, week.');
+description('Check stepMismatch results for type=date, datetime, datetime-local, month, time.');
 
 var input = document.createElement('input');
 document.body.appendChild(input);
@@ -237,39 +237,6 @@ debug('Special step value');
 shouldBeFalse('stepMismatchFor("12:35", "any", "12:34")');
 debug('Disabled');
 shouldBeFalse('stepMismatchFor("12:34:55.001", "1", "12:34:56", true)');
-
-debug('');
-debug('Week type');
-input.type = 'week';
-debug('Empty values');
-shouldBeFalse('stepMismatchFor("", null, null)');
-shouldBeFalse('stepMismatchFor("", "2", "1970-W02")');
-debug('Normal step values');
-shouldBeTrue('stepMismatchFor("2010-W03", "2", "2010-W02")');
-shouldBeFalse('stepMismatchFor("2010-W02", "2", "2010-W02")');
-shouldBeFalse('stepMismatchFor("2010-W04", "2", "2010-W02")');
-shouldBeTrue('stepMismatchFor("1800-W11", "3", "1800-W09")');
-shouldBeFalse('stepMismatchFor("1800-W09", "3", "1800-W09")');
-shouldBeFalse('stepMismatchFor("1800-W12", "3", "1800-W09")');
-shouldBeTrue('stepMismatchFor("275760-W35", "3", "275760-W33")');
-shouldBeFalse('stepMismatchFor("275760-W35", "2", "275760-W33")');
-debug('Implicit step base');
-shouldBeFalse('stepMismatchFor("1970-W01", "2", null)');
-shouldBeTrue('stepMismatchFor("1970-W02", "2", null)');
-shouldBeFalse('stepMismatchFor("1970-W03", "2", null)');
-shouldBeTrue('stepMismatchFor("1970-W04", "2", null)');
-debug('Fractional step values');
-shouldBeFalse('stepMismatchFor("2010-W03", "0.1", "2010-W02")');
-shouldBeFalse('stepMismatchFor("2010-W03", "1.1", "2010-W02")');
-shouldBeTrue('stepMismatchFor("2010-W03", "1.9", "2010-W02")');
-debug('Invalid or no step values');
-shouldBeFalse('stepMismatchFor("2010-W03", null, "2010-W02")');
-shouldBeFalse('stepMismatchFor("2010-W03", "-1", "2010-W02")');
-shouldBeFalse('stepMismatchFor("2010-W03", "foo", "2010-W02")');
-debug('Special step value');
-shouldBeFalse('stepMismatchFor("2010-W03", "any", "2010-W02")');
-debug('Disabled');
-shouldBeFalse('stepMismatchFor("2010-W03", "2", "2010-W02", true)');
 
 debug('');
 debug('Unsupported types');
