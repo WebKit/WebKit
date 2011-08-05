@@ -199,4 +199,7 @@ interface IWebPreferences : IUnknown
 
     HRESULT editingBehavior([out, retval] WebKitEditingBehavior* editingBehavior);
     HRESULT setEditingBehavior([in] WebKitEditingBehavior behavior);
+
+    HRESULT setAVFoundationEnabled(BOOL avFoundationEnabled);
+    HRESULT avFoundationEnabled(BOOL *avFoundationEnabled);
 }

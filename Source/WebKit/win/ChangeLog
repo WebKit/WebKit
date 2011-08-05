@@ -1,3 +1,27 @@
+2011-08-05  Lucas Forschler  <lforschler@apple.com>
+
+    Merged 92414.
+
+    2011-08-04  Jeff Miller  <jeffm@apple.com>
+
+        Add support for setting and getting whether AVFoundation is enabled to IWebPreferences
+        https://bugs.webkit.org/show_bug.cgi?id=65718
+
+        Reviewed by Adam Roben.
+
+        * Interfaces/IWebPreferences.idl: Added setAVFoundationEnabled() and avFoundationEnabled().
+
+        * WebPreferenceKeysPrivate.h: Added WebKitAVFoundationEnabledPreferenceKey.
+
+        * WebPreferences.cpp:
+        (WebPreferences::avFoundationEnabled): Added.
+        (WebPreferences::setAVFoundationEnabled): Added.
+
+        * WebPreferences.h: Added setAVFoundationEnabled() and avFoundationEnabled().
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Keep settings for AVFoundation being enabled in sync.
+
 2011-06-07  Lucas Forschler  <lforschler@apple.com>
 
     Merged 88260.

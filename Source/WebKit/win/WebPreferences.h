@@ -286,6 +286,12 @@ public:
     virtual HRESULT STDMETHODCALLTYPE shouldPaintCustomScrollbars( 
     /* [retval][out] */ BOOL *shouldPaint);
 
+    virtual HRESULT STDMETHODCALLTYPE setAVFoundationEnabled(
+    /* [in] */ BOOL);
+
+    virtual HRESULT STDMETHODCALLTYPE avFoundationEnabled(
+    /* [retval][out] */ BOOL*);
+
     // IWebPreferencesPrivate
     virtual HRESULT STDMETHODCALLTYPE setDeveloperExtrasEnabled(
         /* [in] */ BOOL);

@@ -1551,6 +1551,29 @@ HRESULT WebPreferences::setFullScreenEnabled(BOOL enabled)
 #endif
 }
 
+HRESULT WebPreferences::avFoundationEnabled(BOOL* enabled)
+{
+#if USE(AVFOUNDATION)
+    if (!enabled)
+        return E_POINTER;
+
+    *enabled = boolValueForKey(CFSTR(WebKitAVFoundationEnabledPreferenceKey));
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
+HRESULT WebPreferences::setAVFoundationEnabled(BOOL enabled)
+{
+#if USE(AVFOUNDATION)
+    setBoolValue(CFSTR(WebKitAVFoundationEnabledPreferenceKey), enabled);
+    return S_OK;
+#else
+    return E_NOTIMPL;
+#endif
+}
+
 void WebPreferences::willAddToWebView()
 {
     ++m_numWebViews;
