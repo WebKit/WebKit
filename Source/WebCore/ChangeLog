@@ -1,3 +1,9 @@
+2011-08-05  Adam Barth  <abarth@webkit.org>
+
+        Attempt to heal media/video-can-play-type.html and media/video-src-change.html.
+
+        * html/HTMLMediaElement.idl:
+
 2011-08-05  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from notifications IDL files
