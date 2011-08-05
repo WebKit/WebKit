@@ -51,6 +51,10 @@ class MockServer(object):
 class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
     def __init__(self, server):
         self.server = server
+        self.body = None
+
+    def _read_entity_body(self):
+        return self.body if self.body else ''
 
     def _serve_text(self, text):
         print "== Begin Response =="
@@ -64,9 +68,10 @@ class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
 
 
 class GardeningServerTest(unittest.TestCase):
-    def _post_to_path(self, path, expected_stderr=None, expected_stdout=None):
+    def _post_to_path(self, path, body=None, expected_stderr=None, expected_stdout=None):
         handler = TestGardeningHTTPRequestHandler(MockServer())
         handler.path = path
+        handler.body = body
         OutputCapture().assert_outputs(self, handler.do_POST, expected_stderr=expected_stderr, expected_stdout=expected_stdout)
 
     def test_rollout(self):
@@ -83,3 +88,8 @@ class GardeningServerTest(unittest.TestCase):
         expected_stderr = "MOCK run_command: ['echo', 'optimize-baselines', 'user-scripts/another-test.html'], cwd=/mock-checkout\n"
         expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         self._post_to_path("/optimizebaselines?test=user-scripts/another-test.html", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
+
+    def test_updateexpectations(self):
+        expected_stderr = ""
+        expected_stdout = "FailureInfoList: []\n== Begin Response ==\nsuccess\n== End Response ==\n"
+        self._post_to_path("/updateexpectations", body="[]", expected_stderr=expected_stderr, expected_stdout=expected_stdout)
