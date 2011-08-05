@@ -1,3 +1,38 @@
+2011-08-04  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Stop using free-lists for database/object store/index ids.
+        https://bugs.webkit.org/show_bug.cgi?id=65678
+
+        Reviewed by Tony Chang.
+
+        Don't use free-lists for database/object store/index ids,
+        just assign increasing numbers.
+
+        It turns out that deleting an object store and creating a new one with
+        the same id would cause the delete markers from the old object store to
+        slow down lookups into the new one. Therefore we should generate
+        a new id every time. Running out of ids (64 bits for databases and
+        object stores, 32 bits for indices) is not realistic.
+
+        Also make functions that generate new ids report errors, and make the
+        callers of those functions check the return values.
+
+        We must still delete free-lists when deleting an object store, and we
+        must keep the code for encoding/decoding/comparison of free-list keys
+        since users might have them in their databases.
+
+        This is just a performance optimization, so no new tests.
+
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::getNewDatabaseId):
+        (WebCore::IDBLevelDBBackingStore::setIDBDatabaseMetaData):
+        (WebCore::getNewObjectStoreId):
+        (WebCore::IDBLevelDBBackingStore::createObjectStore):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStore):
+        (WebCore::getNewIndexId):
+        (WebCore::IDBLevelDBBackingStore::createIndex):
+        (WebCore::IDBLevelDBBackingStore::deleteIndex):
+
 2011-08-05  Roland Steiner  <rolandsteiner@chromium.org>
 
         Unreviewed: change an instance of isImportRule() that was overlooked in commit 92448.

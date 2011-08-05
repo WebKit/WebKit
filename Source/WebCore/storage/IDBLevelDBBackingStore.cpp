@@ -181,25 +181,6 @@ bool IDBLevelDBBackingStore::extractIDBDatabaseMetaData(const String& name, Stri
 
 static int64_t getNewDatabaseId(LevelDBDatabase* db)
 {
-    const Vector<char> freeListStartKey = DatabaseFreeListKey::encode(0);
-    const Vector<char> freeListStopKey = DatabaseFreeListKey::encodeMaxKey();
-
-    OwnPtr<LevelDBIterator> it = db->createIterator();
-    for (it->seek(freeListStartKey); it->isValid() && compareKeys(it->key(), freeListStopKey) < 0; it->next()) {
-        const char *p = it->key().begin();
-        const char *limit = it->key().end();
-
-        DatabaseFreeListKey freeListKey;
-        p = DatabaseFreeListKey::decode(p, limit, &freeListKey);
-        ASSERT(p);
-
-        bool ok = db->remove(it->key());
-        ASSERT_UNUSED(ok, ok);
-
-        return freeListKey.databaseId();
-    }
-
-    // If we got here, there was no free-list.
     int64_t maxDatabaseId = -1;
     if (!getInt(db, MaxDatabaseIdKey::encode(), maxDatabaseId))
         maxDatabaseId = 0;
@@ -207,17 +188,18 @@ static int64_t getNewDatabaseId(LevelDBDatabase* db)
     ASSERT(maxDatabaseId >= 0);
 
     int64_t databaseId = maxDatabaseId + 1;
-    bool ok = putInt(db, MaxDatabaseIdKey::encode(), databaseId);
-    ASSERT_UNUSED(ok, ok);
+    if (!putInt(db, MaxDatabaseIdKey::encode(), databaseId))
+        return -1;
 
     return databaseId;
-
 }
 
 bool IDBLevelDBBackingStore::setIDBDatabaseMetaData(const String& name, const String& version, int64_t& rowId, bool invalidRowId)
 {
     if (invalidRowId) {
         rowId = getNewDatabaseId(m_db.get());
+        if (rowId < 0)
+            return false;
 
         const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
         if (!putInt(m_db.get(), key, rowId))
@@ -289,24 +271,6 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
 
 static int64_t getNewObjectStoreId(LevelDBTransaction* transaction, int64_t databaseId)
 {
-    const Vector<char> freeListStartKey = ObjectStoreFreeListKey::encode(databaseId, 0);
-    const Vector<char> freeListStopKey = ObjectStoreFreeListKey::encodeMaxKey(databaseId);
-
-    OwnPtr<LevelDBIterator> it = transaction->createIterator();
-    for (it->seek(freeListStartKey); it->isValid() && compareKeys(it->key(), freeListStopKey) < 0; it->next()) {
-        const char* p = it->key().begin();
-        const char* limit = it->key().end();
-
-        ObjectStoreFreeListKey freeListKey;
-        p = ObjectStoreFreeListKey::decode(p, limit, &freeListKey);
-        ASSERT(p);
-
-        bool ok = transaction->remove(it->key());
-        ASSERT_UNUSED(ok, ok);
-
-        return freeListKey.objectStoreId();
-    }
-
     int64_t maxObjectStoreId = -1;
     const Vector<char> maxObjectStoreIdKey = DatabaseMetaDataKey::encode(databaseId, DatabaseMetaDataKey::kMaxObjectStoreId);
     if (!getInt(transaction, maxObjectStoreIdKey, maxObjectStoreId))
@@ -315,8 +279,8 @@ static int64_t getNewObjectStoreId(LevelDBTransaction* transaction, int64_t data
     ASSERT(maxObjectStoreId >= 0);
 
     int64_t objectStoreId = maxObjectStoreId + 1;
-    bool ok = putInt(transaction, maxObjectStoreIdKey, objectStoreId);
-    ASSERT_UNUSED(ok, ok);
+    if (!putInt(transaction, maxObjectStoreIdKey, objectStoreId))
+        return -1;
 
     return objectStoreId;
 }
@@ -325,6 +289,8 @@ bool IDBLevelDBBackingStore::createObjectStore(int64_t databaseId, const String&
 {
     ASSERT(m_currentTransaction);
     int64_t objectStoreId = getNewObjectStoreId(m_currentTransaction.get(), databaseId);
+    if (objectStoreId < 0)
+        return false;
 
     const Vector<char> nameKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0);
     const Vector<char> keyPathKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 1);
@@ -402,7 +368,6 @@ void IDBLevelDBBackingStore::deleteObjectStore(int64_t databaseId, int64_t objec
     if (!deleteRange(m_currentTransaction.get(), ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 0), ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 6)))
         return; // FIXME: Report error.
 
-    putString(m_currentTransaction.get(), ObjectStoreFreeListKey::encode(databaseId, objectStoreId), "");
     m_currentTransaction->remove(ObjectStoreNamesKey::encode(databaseId, objectStoreName));
 
     if (!deleteRange(m_currentTransaction.get(), IndexFreeListKey::encode(databaseId, objectStoreId, 0), IndexFreeListKey::encodeMaxKey(databaseId, objectStoreId)))
@@ -641,25 +606,6 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
 
 static int64_t getNewIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
 {
-    const Vector<char> startKey = IndexFreeListKey::encode(databaseId, objectStoreId, 0);
-    const Vector<char> stopKey = IndexFreeListKey::encodeMaxKey(databaseId, objectStoreId);
-
-    OwnPtr<LevelDBIterator> it = transaction->createIterator();
-    for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
-        const char* p = it->key().begin();
-        const char* limit = it->key().end();
-
-        IndexFreeListKey freeListKey;
-        p = IndexFreeListKey::decode(p, limit, &freeListKey);
-        ASSERT(p);
-
-        bool ok = transaction->remove(it->key());
-        ASSERT_UNUSED(ok, ok);
-
-        ASSERT(freeListKey.indexId() >= kMinimumIndexId);
-        return freeListKey.indexId();
-    }
-
     int64_t maxIndexId = -1;
     const Vector<char> maxIndexIdKey = ObjectStoreMetaDataKey::encode(databaseId, objectStoreId, 5);
     if (!getInt(transaction, maxIndexIdKey, maxIndexId))
@@ -668,9 +614,8 @@ static int64_t getNewIndexId(LevelDBTransaction* transaction, int64_t databaseId
     ASSERT(maxIndexId >= 0);
 
     int64_t indexId = maxIndexId + 1;
-    bool ok = putInt(transaction, maxIndexIdKey, indexId);
-    if (!ok)
-        return false;
+    if (!putInt(transaction, maxIndexIdKey, indexId))
+        return -1;
 
     return indexId;
 }
@@ -679,6 +624,8 @@ bool IDBLevelDBBackingStore::createIndex(int64_t databaseId, int64_t objectStore
 {
     ASSERT(m_currentTransaction);
     indexId = getNewIndexId(m_currentTransaction.get(), databaseId, objectStoreId);
+    if (indexId < 0)
+        return false;
 
     const Vector<char> nameKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 0);
     const Vector<char> uniqueKey = IndexMetaDataKey::encode(databaseId, objectStoreId, indexId, 1);
@@ -730,12 +677,6 @@ void IDBLevelDBBackingStore::deleteIndex(int64_t databaseId, int64_t objectStore
     const Vector<char> indexDataEnd = IndexDataKey::encode(databaseId, objectStoreId, indexId, maxIDBKey(), 0);
 
     if (!deleteRange(m_currentTransaction.get(), indexDataStart, indexDataEnd)) {
-        LOG_ERROR("Internal Indexed DB error.");
-        return;
-    }
-
-    const Vector<char> freeListKey = IndexFreeListKey::encode(databaseId, objectStoreId, indexId);
-    if (!putInt(m_currentTransaction.get(), freeListKey, 0)) {
         LOG_ERROR("Internal Indexed DB error.");
         return;
     }
