@@ -34,7 +34,6 @@ module threads {
     interface [
         Conditional=NOTIFICATIONS,
         ActiveDOMObject,
-        LegacyDefaultOptionalArguments,
         OmitConstructor
     ] NotificationCenter {
        [V8Custom] Notification createHTMLNotification(in DOMString url) raises(Exception);
