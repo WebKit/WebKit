@@ -1,3 +1,14 @@
+2011-08-05  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from appcache IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=65752
+
+        Reviewed by Adam Barth.
+
+        No new tests, all existing tests pass.
+
+        * loader/appcache/DOMApplicationCache.idl:
+
 2011-08-04  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Stop using free-lists for database/object store/index ids.
