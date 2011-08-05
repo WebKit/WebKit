@@ -1,3 +1,16 @@
+2011-08-05  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Andreas Kling.
+
+        Reverted commit r87797, http://trac.webkit.org/changeset/87797, because it
+        causes the regression reported under bug# 63582.
+
+        [Qt] REGRESSION(r87797): Broke KDEWebKit's custom QNAM.
+        https://bugs.webkit.org/show_bug.cgi?id=63582
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::setFrame):
+
 2011-08-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [Timeline] Hover on paint events and see rect outline around that area.

@@ -232,10 +232,8 @@ void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
     connect(this, SIGNAL(loadProgress(int)),
             m_webFrame->page(), SIGNAL(loadProgress(int)));
 
-    // FIXME: The queued connection here is needed because of a problem with QNetworkAccessManager.
-    //        See http://bugreports.qt.nokia.com/browse/QTBUG-18718
     connect(this, SIGNAL(unsupportedContent(QNetworkReply*)),
-            m_webFrame->page(), SIGNAL(unsupportedContent(QNetworkReply*)), Qt::QueuedConnection);
+            m_webFrame->page(), SIGNAL(unsupportedContent(QNetworkReply*)));
 
     connect(this, SIGNAL(titleChanged(QString)),
             m_webFrame, SIGNAL(titleChanged(QString)));
