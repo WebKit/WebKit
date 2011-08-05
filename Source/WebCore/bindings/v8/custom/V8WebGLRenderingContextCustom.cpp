@@ -74,7 +74,7 @@ namespace WebCore {
 static float* jsArrayToFloatArray(v8::Handle<v8::Array> array, uint32_t len)
 {
     // Convert the data element-by-element.
-    float* data;
+    float* data = 0;
     if (len > std::numeric_limits<uint32_t>::max() / sizeof(float)
         || !tryFastMalloc(len * sizeof(float)).getValue(data))
         return 0;
@@ -94,7 +94,7 @@ static float* jsArrayToFloatArray(v8::Handle<v8::Array> array, uint32_t len)
 static int* jsArrayToIntArray(v8::Handle<v8::Array> array, uint32_t len)
 {
     // Convert the data element-by-element.
-    int* data;
+    int* data = 0;
     if (len > std::numeric_limits<uint32_t>::max() / sizeof(int)
         || !tryFastMalloc(len * sizeof(int)).getValue(data))
         return 0;

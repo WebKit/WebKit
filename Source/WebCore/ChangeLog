@@ -1,3 +1,11 @@
+2011-08-04  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed build fix.  gcc 4.5 can't figure out that the 'data' variables are always initialized in these functions.
+
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::jsArrayToFloatArray):
+        (WebCore::jsArrayToIntArray):
+
 2011-08-05  Roland Steiner  <rolandsteiner@chromium.org>
 
         Improve const-correctness in CSS code: type information methods
