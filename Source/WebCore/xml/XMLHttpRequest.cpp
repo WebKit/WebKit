@@ -636,6 +636,9 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
 
     ResourceRequest request(m_url);
     request.setHTTPMethod(m_method);
+#if PLATFORM(CHROMIUM)
+    request.setTargetType(ResourceRequest::TargetIsXHR);
+#endif
 
     if (m_requestEntityBody) {
         ASSERT(m_method != "GET");

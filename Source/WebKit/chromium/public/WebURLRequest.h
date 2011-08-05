@@ -38,6 +38,9 @@
 namespace WebCore { class ResourceRequest; }
 #endif
 
+// FIXME: remove #define once the Chromium side has updated.
+#define WEBKIT_HAS_TARGET_IS_XHR
+
 namespace WebKit {
 
 class WebCString;
@@ -71,6 +74,7 @@ public:
         TargetIsPrefetch = 11,
         TargetIsPrerender = 12,
         TargetIsFavicon = 13,
+        TargetIsXHR = 14,
     };
 
     class ExtraData {

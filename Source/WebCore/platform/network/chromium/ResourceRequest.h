@@ -55,6 +55,7 @@ namespace WebCore {
             TargetIsPrefetch,
             TargetIsPrerender,
             TargetIsFavicon,
+            TargetIsXHR,
         };
 
         class ExtraData : public RefCounted<ExtraData> {
