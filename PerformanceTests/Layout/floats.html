@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Floats layout performance tester</title>
+        <style>
+            .float {
+                float: left;
+                width: 5px;
+                height: 5px;
+                border: 1px solid green;
+            }
+            .big {
+                width: 10px;
+            }
+            .float-end {
+                clear:left;
+            }
+
+            #framerate_panel {
+                display: none;
+            }
+        </style>
+        <script>
+            function createElement(tag, parent, className, id)
+            {
+                var el = document.createElement(tag);
+                el.className = className;
+                el.id = id;
+                parent.appendChild(el);
+                return el;
+            }
+
+            function createSet(width, height)
+            {
+                var container = createElement("div", document.body, "container");
+                for (var y = 0; y < height; ++y) {
+                    for (var x = 0; x < width; ++x)
+                        createElement("div", container, "float", "float" + x + "_" + y);
+                    createElement("div", container, "float-end", "end" + x)
+                }
+            }
+
+            function toggle(str, str1, str2)
+            {
+                if (str == str1)
+                    return str2;
+                return str1;
+            }
+
+            function test(width, height) 
+            {
+                document.getElementById("test_panel").style.display = "none";
+                document.getElementById("framerate_panel").style.display = "block";
+
+                createSet(width, height);
+                var updates = 0;
+                var startTime = new Date();
+
+                function updateTimer()
+                {
+                    ++updates;
+
+                    var newTime = new Date();
+                    var deltaTime = newTime - startTime;
+
+                    if ((deltaTime > 0 && updates > 100) || deltaTime > 1000) {
+                        var fps = updates * 100 / deltaTime;
+                        document.getElementById("fps").innerHTML = fps;
+                        updates = 0;
+                        startTime = newTime;
+                    }
+                }
+
+                function update()
+                {
+                    var x = Math.floor(Math.random() * width);
+                    var y = Math.floor(Math.random() * height);
+                    var el = document.getElementById("float" + x + "_" + y);
+                    el.className = toggle(el.className, "float", "float big");
+                    updateTimer();
+                }
+                setInterval(update, 0);
+            }
+        </script>
+    </head>
+    <body>
+        <div id="framerate_panel">Framerate: <span id="fps">calculating...</span> fps</div>
+        <div id="test_panel">
+            <p>Choose the size of the test:</p>
+            <button onclick="test(2, 100)">2 by 100</button>
+            <button onclick="test(20, 100)">20 by 100</button>
+            <button onclick="test(50, 100)">50 by 100</button>
+            <button onclick="test(100, 100)">100 by 100</button>
+        </div>
+    </body>
+</html>
