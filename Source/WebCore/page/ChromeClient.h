@@ -71,6 +71,10 @@ namespace WebCore {
     class GraphicsLayer;
 #endif
 
+#if ENABLE(INPUT_COLOR)
+    class ColorChooser;
+#endif
+
 #if ENABLE(NOTIFICATIONS)
     class NotificationPresenter;
 #endif
@@ -230,6 +234,12 @@ namespace WebCore {
         // to use Geolocation.
         virtual void requestGeolocationPermissionForFrame(Frame*, Geolocation*) = 0;
         virtual void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*) = 0;
+
+#if ENABLE(INPUT_COLOR)
+        virtual void openColorChooser(ColorChooser*, const Color&) = 0;
+        virtual void closeColorChooser() = 0;
+        virtual void setSelectedColorInColorChooser(const Color&) = 0;
+#endif
 
         virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) = 0;
         // Asynchronous request to load an icon for specified filenames.

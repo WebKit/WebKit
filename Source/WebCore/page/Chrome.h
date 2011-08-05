@@ -36,6 +36,9 @@ class NSView;
 namespace WebCore {
 
     class ChromeClient;
+#if ENABLE(INPUT_COLOR)
+    class ColorChooser;
+#endif
     class FileChooser;
     class FileIconLoader;
     class FloatRect;
@@ -153,6 +156,12 @@ namespace WebCore {
         // For client-based geolocation, these two methods have moved to GeolocationClient. https://bugs.webkit.org/show_bug.cgi?id=50061
         void requestGeolocationPermissionForFrame(Frame*, Geolocation*);
         void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
+
+#if ENABLE(INPUT_COLOR)
+        void openColorChooser(ColorChooser*, const Color&);
+        void closeColorChooser();
+        void setSelectedColorInColorChooser(const Color&);
+#endif
 
         void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
         void loadIconForFiles(const Vector<String>&, FileIconLoader*);

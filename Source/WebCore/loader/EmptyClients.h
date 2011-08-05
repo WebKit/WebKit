@@ -196,6 +196,12 @@ public:
     virtual void enumerateChosenDirectory(FileChooser*) { }
 #endif
 
+#if ENABLE(INPUT_COLOR)
+    void openColorChooser(ColorChooser*, const Color&) { }
+    void closeColorChooser() { }
+    void setSelectedColorInColorChooser(const Color&) { }
+#endif
+
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>) { }
     virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*) { }
 

@@ -1,3 +1,64 @@
+2011-08-05  Keishi Hattori  <keishi@webkit.org>
+
+        Implement <input type=color> UI behavior WebCore part
+        https://bugs.webkit.org/show_bug.cgi?id=62619
+
+        Reviewed by Kent Tamura.
+
+        * WebCore.exp.in: Added __ZN7WebCore12ColorChooser7chooserEv and
+        __ZNK7WebCore12ColorChooser13colorSelectedERKNS_5ColorE
+        * WebCore.xcodeproj/project.pbxproj: Added ColorChooser.{h,cpp}
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::~ColorInputType): Added. Close color chooser. ex. when type attribute changes.
+        (WebCore::ColorInputType::valueAsColor): Added.
+        (WebCore::ColorInputType::setValueAsColor): Added.
+        (WebCore::ColorInputType::valueChanged): Update selected color in color chooser too.
+        (WebCore::ColorInputType::handleClickEvent): Opens color chooser.
+        (WebCore::ColorInputType::handleDOMActivateEvent): Called when element.click(). Open color chooser only
+        when it was initiated by a user interaction.
+        (WebCore::ColorInputType::detach): Close color chooser. Called when input element or its ancestors have "display:none"
+        or is removed from DOM.
+        (WebCore::ColorInputType::colorSelected): Callback from color chooser.
+        (WebCore::ColorInputType::closeColorChooserIfClientIsInDocument): Close color chooser if element is in
+        document. Called when the page navigates away.
+        (WebCore::ColorInputType::closeColorChooserIfCurrentClient): Close color chooser if this input type is the current client of ColorChooser.
+        * html/ColorInputType.h:
+        * html/FileInputType.cpp:
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::detach): Calls InputType::detach
+        * html/InputType.cpp:
+        (WebCore::InputType::chrome): Added. Used in FileInputType and ColorInputType.
+        (WebCore::InputType::detach): ColorInputType overrides this.
+        * html/InputType.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::openColorChooser): Added.
+        (WebCore::EmptyChromeClient::closeColorChooser): Added.
+        (WebCore::EmptyChromeClient::setSelectedColorInColorChooser): Added.
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted): Close color chooser when
+        navigating away from the page.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::openColorChooser): Added. Opens the color chooser.
+        (WebCore::Chrome::closeColorChooser): Added. Tries to close the color chooser. Might not close if the
+        listener of the color chooser is another part of the browser or another render process.
+        (WebCore::Chrome::setSelectedColorInColorChooser): Added. Sets the selected color in the color chooser.
+        Again, might not be executed if the listener of the color chooser is another part of the browser or another render process.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/ColorChooser.cpp: Added.
+        (WebCore::ColorChooserClient::~ColorChooserClient): Disconnects itself from the ColorChooser.
+        (WebCore::ColorChooser::chooser): Get shared instance of ColorChooser.
+        (WebCore::ColorChooser::chooser): Get shared instance of ColorChooser.
+        (WebCore::ColorChooser::connectClient): Connects a ColorChooserClient that receives the colorSelected callbacks.
+        (WebCore::ColorChooser::disconnectClient): Disconnects the connectClient.
+        (WebCore::ColorChooser::closeColorChooserIfClientIsInDocument): Close the color chooser if the client is
+        inside the document.
+        (WebCore::ColorChooser::colorSelected): Called from color chooser listener.
+        * platform/ColorChooser.h: Added.
+        (WebCore::ColorChooser::client): Added. Returns the current connected client.
+        (WebCore::ColorChooser::ColorChooser): Added.
+
 2011-08-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: check that detaching frame has been attached before removing it from the console selector

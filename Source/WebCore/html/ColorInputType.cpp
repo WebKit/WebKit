@@ -31,9 +31,12 @@
 #include "config.h"
 #include "ColorInputType.h"
 
+#include "Chrome.h"
 #include "Color.h"
 #include "HTMLDivElement.h"
 #include "HTMLInputElement.h"
+#include "MouseEvent.h"
+#include "ScriptController.h"
 #include "ShadowRoot.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
@@ -60,6 +63,11 @@ PassOwnPtr<InputType> ColorInputType::create(HTMLInputElement* element)
 {
     return adoptPtr(new ColorInputType(element));
 }
+
+ColorInputType::~ColorInputType()
+{
+    closeColorChooserIfCurrentClient();
+}    
 
 bool ColorInputType::isColorControl() const
 {
@@ -92,6 +100,16 @@ String ColorInputType::sanitizeValue(const String& proposedValue)
     return proposedValue.lower();
 }
 
+Color ColorInputType::valueAsColor() const
+{
+    return Color(element()->value());
+}
+
+void ColorInputType::setValueAsColor(const Color& color) const
+{
+    element()->setValue(color.serialized(), true);
+}
+
 void ColorInputType::createShadowSubtree()
 {
     Document* document = element()->document();
@@ -111,6 +129,58 @@ void ColorInputType::createShadowSubtree()
 void ColorInputType::valueChanged()
 {
     updateColorSwatch();
+    if (ColorChooser::chooser()->client() == this) {
+        if (Chrome* chrome = this->chrome())
+            chrome->setSelectedColorInColorChooser(valueAsColor());
+    }
+}
+
+void ColorInputType::handleClickEvent(MouseEvent* event)
+{
+    if (event->isSimulated())
+        return;
+
+    if (element()->disabled() || element()->readOnly())
+        return;
+
+    if (Chrome* chrome = this->chrome()) {
+        ColorChooser::chooser()->connectClient(this);
+        chrome->openColorChooser(ColorChooser::chooser(), valueAsColor());
+    }
+    event->setDefaultHandled();
+}
+
+void ColorInputType::handleDOMActivateEvent(Event* event)
+{
+    if (element()->disabled() || element()->readOnly() || !element()->renderer())
+        return;
+
+    if (!ScriptController::processingUserGesture())
+        return;
+
+    if (Chrome* chrome = this->chrome()) {
+        ColorChooser::chooser()->connectClient(this);
+        chrome->openColorChooser(ColorChooser::chooser(), valueAsColor());
+    }
+    event->setDefaultHandled();
+}
+
+void ColorInputType::detach()
+{
+    closeColorChooserIfCurrentClient();
+}
+
+void ColorInputType::colorSelected(const Color& color)
+{
+    if (element()->disabled() || element()->readOnly())
+        return;
+    setValueAsColor(color);
+}
+
+void ColorInputType::closeColorChooserIfClientIsInDocument(Document* document)
+{
+    if (element()->document() == document)
+        closeColorChooserIfCurrentClient();
 }
 
 void ColorInputType::updateColorSwatch()
@@ -127,6 +197,14 @@ HTMLElement* ColorInputType::shadowColorSwatch() const
 {
     ShadowRoot* shadow = element()->shadowRoot();
     return shadow ? toHTMLElement(shadow->firstChild()->firstChild()) : 0;
+}
+
+void ColorInputType::closeColorChooserIfCurrentClient()
+{
+    if (ColorChooser::chooser()->client() == this) {
+        if (Chrome* chrome = this->chrome())
+            chrome->closeColorChooser();
+    }
 }
 
 } // namespace WebCore
