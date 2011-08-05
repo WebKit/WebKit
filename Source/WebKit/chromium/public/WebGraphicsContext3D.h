@@ -167,9 +167,6 @@ public:
     virtual void* mapTexSubImage2DCHROMIUM(WGC3Denum target, WGC3Dint level, WGC3Dint xoffset, WGC3Dint yoffset, WGC3Dsizei width, WGC3Dsizei height, WGC3Denum format, WGC3Denum type, WGC3Denum access) = 0;
     virtual void unmapTexSubImage2DCHROMIUM(const void*) = 0;
 
-    // GL_CHROMIUM_copy_texture_to_parent_texture
-    virtual void copyTextureToParentTextureCHROMIUM(WebGLId texture, WebGLId parentTexture) = 0;
-
     // GL_CHROMIUM_request_extension
     virtual WebString getRequestableExtensionsCHROMIUM() = 0;
     virtual void requestExtensionCHROMIUM(const char*) = 0;

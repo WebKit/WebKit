@@ -272,10 +272,6 @@ public:
     void* mapTexSubImage2DCHROMIUM(GC3Denum target, GC3Dint level, GC3Dint xoffset, GC3Dint yoffset, GC3Dsizei width, GC3Dsizei height, GC3Denum format, GC3Denum type, GC3Denum access);
     void unmapTexSubImage2DCHROMIUM(const void*);
 
-    // GL_CHROMIUM_copy_texture_to_parent_texture
-    bool supportsCopyTextureToParentTextureCHROMIUM();
-    void copyTextureToParentTextureCHROMIUM(Platform3DObject texture, Platform3DObject parentTexture);
-
     // GL_CHROMIUM_framebuffer_multisample
     void blitFramebufferCHROMIUM(GC3Dint srcX0, GC3Dint srcY0, GC3Dint srcX1, GC3Dint srcY1, GC3Dint dstX0, GC3Dint dstY0, GC3Dint dstX1, GC3Dint dstY1, GC3Dbitfield mask, GC3Denum filter);
     void renderbufferStorageMultisampleCHROMIUM(GC3Denum target, GC3Dsizei samples, GC3Denum internalformat, GC3Dsizei width, GC3Dsizei height);

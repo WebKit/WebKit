@@ -84,10 +84,6 @@ DrawingBuffer::~DrawingBuffer()
     clear();
 }
 
-void DrawingBuffer::didReset()
-{
-}
-
 PlatformLayer* DrawingBuffer::platformLayer()
 {
     return m_platformLayer.get();

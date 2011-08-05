@@ -97,11 +97,6 @@ void Extensions3DChromium::unmapTexSubImage2DCHROMIUM(const void* data)
     m_internal->unmapTexSubImage2DCHROMIUM(data);
 }
 
-void Extensions3DChromium::copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture)
-{
-    m_internal->copyTextureToParentTextureCHROMIUM(texture, parentTexture);
-}
-
 Platform3DObject Extensions3DChromium::createVertexArrayOES()
 {
     return 0;

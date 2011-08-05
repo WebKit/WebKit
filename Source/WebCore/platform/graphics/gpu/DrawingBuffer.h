@@ -90,19 +90,6 @@ public:
     void publishToPlatformLayer();
 #endif
 
-#if PLATFORM(CHROMIUM)
-    class WillPublishCallback {
-        WTF_MAKE_NONCOPYABLE(WillPublishCallback);
-    public:
-        WillPublishCallback() { }
-        virtual ~WillPublishCallback() { }
-        
-        virtual void willPublish() = 0;
-    };
-
-    void setWillPublishCallback(PassOwnPtr<WillPublishCallback> callback) { m_callback = callback; }
-#endif
-
 #if USE(SKIA)
     void setGrContext(GrContext* ctx);
     void getGrPlatformSurfaceDesc(GrPlatformSurfaceDesc*);
@@ -114,9 +101,6 @@ private:
     static PassRefPtr<DrawingBuffer> create(GraphicsContext3D*, const IntSize&);
     
     DrawingBuffer(GraphicsContext3D*, const IntSize&, bool multisampleExtensionSupported, bool packedDepthStencilExtensionSupported);
-
-    // Platform specific function called after reset() so each platform can do extra work if needed
-    void didReset();
 
     RefPtr<GraphicsContext3D> m_context;
     IntSize m_size;
@@ -137,7 +121,6 @@ private:
     Platform3DObject m_multisampleColorBuffer;
 
 #if PLATFORM(CHROMIUM)
-    OwnPtr<WillPublishCallback> m_callback;
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<Canvas2DLayerChromium> m_platformLayer;
 #endif

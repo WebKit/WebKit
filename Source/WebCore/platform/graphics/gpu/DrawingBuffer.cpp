@@ -286,8 +286,6 @@ bool DrawingBuffer::reset(const IntSize& newSize)
 
     clearFramebuffer();
 
-    didReset();
-
     return true;
 }
 

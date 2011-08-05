@@ -49,7 +49,7 @@ public:
     virtual void updateCompositorResources();
 
     void setTextureChanged();
-    unsigned textureId() const;
+    virtual unsigned textureId() const;
     void setDrawingBuffer(DrawingBuffer*);
 
     virtual void setLayerRenderer(LayerRendererChromium*);

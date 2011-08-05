@@ -71,10 +71,6 @@ DrawingBuffer::~DrawingBuffer()
     clear();
 }
 
-void DrawingBuffer::didReset()
-{
-}
-
 Platform3DObject DrawingBuffer::platformColorBuffer() const
 {
     return m_colorBuffer;

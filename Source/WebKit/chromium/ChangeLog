@@ -1,3 +1,17 @@
+2011-08-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Accelerated canvas breaks when moving canvases or resources between Pages
+        https://bugs.webkit.org/show_bug.cgi?id=65402
+
+        Reviewed by Stephen White.
+
+        Remove plumbing for copyTextureToParentTexture extension, it's no longer used or needed.
+
+        * public/WebGraphicsContext3D.h:
+        * src/Extensions3DChromium.cpp:
+        * src/GraphicsContext3DChromium.cpp:
+        * src/GraphicsContext3DInternal.h:
+
 2011-08-05  Jochen Eisinger  <jochen@chromium.org>
 
         Introduce a new ResourceRequest::TargetType for XHRs

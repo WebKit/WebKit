@@ -49,6 +49,8 @@ PassRefPtr<WebGLLayerChromium> WebGLLayerChromium::create(GraphicsLayerChromium*
 WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
     : CanvasLayerChromium(owner)
     , m_context(0)
+    , m_textureId(0)
+    , m_textureChanged(true)
     , m_contextSupportsRateLimitingExtension(false)
     , m_rateLimitingTimer(this, &WebGLLayerChromium::rateLimitContext)
     , m_textureUpdated(false)

@@ -74,10 +74,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringHash.h>
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-#include "GraphicsContext3D.h"
-#endif
-
 #if ENABLE(DOM_STORAGE)
 #include "StorageArea.h"
 #include "StorageNamespace.h"
@@ -744,23 +740,6 @@ void Page::setDebugger(JSC::Debugger* debugger)
 
     for (Frame* frame = m_mainFrame.get(); frame; frame = frame->tree()->traverseNext())
         frame->script()->attachDebugger(m_debugger);
-}
-
-GraphicsContext3D* Page::sharedGraphicsContext3D()
-{
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    if (!m_sharedGraphicsContext3D) {
-        GraphicsContext3D::Attributes attr;
-        attr.depth = false;
-        attr.stencil = true;
-        attr.antialias = false;
-        attr.canRecoverFromContextLoss = false; // Canvas contexts can not handle lost contexts.
-        m_sharedGraphicsContext3D = GraphicsContext3D::create(attr, chrome());
-    }
-    return m_sharedGraphicsContext3D.get();
-#else // !ENABLE(ACCELERATED_2D_CANVAS)
-    return 0;
-#endif
 }
 
 #if ENABLE(DOM_STORAGE)

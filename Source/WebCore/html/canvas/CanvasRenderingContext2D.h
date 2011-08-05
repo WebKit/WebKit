@@ -36,7 +36,6 @@
 #include "PlatformString.h"
 #include <wtf/Vector.h>
 
-
 #if USE(ACCELERATED_COMPOSITING)
 #include "GraphicsLayer.h"
 #endif
@@ -56,7 +55,7 @@ class TextMetrics;
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
 class DrawingBuffer;
-class GraphicsContext3D;
+class SharedGraphicsContext3D;
 #endif
 
 typedef int ExceptionCode;
@@ -308,7 +307,7 @@ private:
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
     RefPtr<DrawingBuffer> m_drawingBuffer;
-    RefPtr<GraphicsContext3D> m_context3D;
+    RefPtr<SharedGraphicsContext3D> m_context3D;
 #endif
 };
 

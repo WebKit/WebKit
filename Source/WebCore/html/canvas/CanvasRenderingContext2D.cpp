@@ -66,6 +66,7 @@
 #include "ChromeClient.h"
 #include "DrawingBuffer.h"
 #include "FrameView.h"
+#include "SharedGraphicsContext3D.h"
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayer.h"
 #endif
@@ -142,9 +143,6 @@ CanvasRenderingContext2D::CanvasRenderingContext2D(HTMLCanvasElement* canvas, bo
 #if ENABLE(DASHBOARD_SUPPORT)
     , m_usesDashboardCompatibilityMode(usesDashboardCompatibilityMode)
 #endif
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    , m_context3D(0)
-#endif
 {
 #if !ENABLE(DASHBOARD_SUPPORT)
     ASSERT_UNUSED(usesDashboardCompatibilityMode, !usesDashboardCompatibilityMode);
@@ -195,7 +193,7 @@ bool CanvasRenderingContext2D::paintsIntoCanvasBuffer() const
 {
 #if ENABLE(ACCELERATED_2D_CANVAS)
     if (m_context3D)
-        return m_context3D->paintsIntoCanvasBuffer();
+        return m_context3D->context()->paintsIntoCanvasBuffer();
 #endif
     return true;
 }
@@ -2050,7 +2048,7 @@ void CanvasRenderingContext2D::resetAcceleration()
 
     if (!m_context3D) {
         Page* page = canvas()->document()->page();
-        m_context3D = page->sharedGraphicsContext3D();
+        m_context3D = SharedGraphicsContext3D::create(page->chrome());
         if (!m_context3D) {
             clearAcceleration();
             return;
@@ -2063,14 +2061,14 @@ void CanvasRenderingContext2D::resetAcceleration()
             return;
         }
     } else {
-        m_drawingBuffer = m_context3D->createDrawingBuffer(canvas()->size());
+        m_drawingBuffer = m_context3D->context()->createDrawingBuffer(canvas()->size());
         if (!m_drawingBuffer) {
             clearAcceleration();
             return;
         }
     }
 
-    ctx->setGraphicsContext3D(m_context3D.get(), m_drawingBuffer.get(), canvas()->size());
+    ctx->setGraphicsContext3D(m_context3D->context(), m_drawingBuffer.get(), canvas()->size());
 }
 #endif
 

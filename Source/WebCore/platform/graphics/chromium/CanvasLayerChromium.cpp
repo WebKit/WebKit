@@ -42,8 +42,6 @@ namespace WebCore {
 
 CanvasLayerChromium::CanvasLayerChromium(GraphicsLayerChromium* owner)
     : LayerChromium(owner)
-    , m_textureChanged(true)
-    , m_textureId(0)
     , m_hasAlpha(true)
     , m_premultipliedAlpha(true)
 {
@@ -63,7 +61,7 @@ void CanvasLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     LayerChromium::pushPropertiesTo(layer);
 
     CCCanvasLayerImpl* canvasLayer = static_cast<CCCanvasLayerImpl*>(layer);
-    canvasLayer->setTextureId(m_textureId);
+    canvasLayer->setTextureId(textureId());
     canvasLayer->setHasAlpha(m_hasAlpha);
     canvasLayer->setPremultipliedAlpha(m_premultipliedAlpha);
 }

@@ -54,8 +54,6 @@ Canvas2DLayerChromium::Canvas2DLayerChromium(DrawingBuffer* drawingBuffer, Graph
 
 Canvas2DLayerChromium::~Canvas2DLayerChromium()
 {
-    if (m_textureId)
-        layerRendererContext()->deleteTexture(m_textureId);
     if (m_drawingBuffer && layerRenderer())
         layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());
 }
@@ -72,27 +70,6 @@ void Canvas2DLayerChromium::updateCompositorResources()
 {
     if (!m_contentsDirty || !drawsContent())
         return;
-    if (m_textureChanged) { // We have to generate a new backing texture.
-        GraphicsContext3D* context = layerRendererContext();
-        if (m_textureId)
-            context->deleteTexture(m_textureId);
-        m_textureId = context->createTexture();
-        context->activeTexture(GraphicsContext3D::TEXTURE0);
-        context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
-        IntSize size = m_drawingBuffer->size();
-        context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, size.width(), size.height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE);
-        // Set the min-mag filters to linear and wrap modes to GraphicsContext3D::CLAMP_TO_EDGE
-        // to get around NPOT texture limitations of GLES.
-        context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR);
-        context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR);
-        context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE);
-        context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE);
-        m_textureChanged = false;
-        // The flush() here is required because we have to make sure that the texture created in this
-        // context (the compositor context) is actually created by the service side before the child context
-        // attempts to use it (in publishToPlatformLayer).
-        context->flush();
-    }
     // Update the contents of the texture used by the compositor.
     if (m_contentsDirty) {
         m_drawingBuffer->publishToPlatformLayer();
@@ -100,14 +77,9 @@ void Canvas2DLayerChromium::updateCompositorResources()
     }
 }
 
-void Canvas2DLayerChromium::setTextureChanged()
-{
-    m_textureChanged = true;
-}
-
 unsigned Canvas2DLayerChromium::textureId() const
 {
-    return m_textureId;
+    return m_drawingBuffer ? m_drawingBuffer->platformColorBuffer() : 0;
 }
 
 void Canvas2DLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
@@ -117,7 +89,6 @@ void Canvas2DLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
             layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());
 
         m_drawingBuffer = drawingBuffer;
-        m_textureChanged = true;
 
         if (drawingBuffer && layerRenderer())
             layerRenderer()->addChildContext(m_drawingBuffer->graphicsContext3D().get());

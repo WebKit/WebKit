@@ -1,3 +1,34 @@
+2011-08-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Accelerated canvas breaks when moving canvases or resources between Pages
+        https://bugs.webkit.org/show_bug.cgi?id=65402
+
+        Reviewed by Stephen White.
+
+        Use one shared GraphicsContext3D for the whole process instead of one per Page as canvases can move between
+        pages and directly draw into contexts in different pages.  Also switches DrawingBufferChromium over to use a
+        directly shared the color attachment instead of copying it to a separate texture and removes the now-unnecessary
+        DrawingBuffer::didReset() call and WillPublishCallback mechanism.
+
+        * page/Page.cpp:
+        (WebCore::Page::sharedGraphicsContext3D):
+        * page/Page.h:
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::~Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        (WebCore::Canvas2DLayerChromium::textureId):
+        (WebCore::Canvas2DLayerChromium::setDrawingBuffer):
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::CanvasLayerChromium):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/DrawingBufferChromium.cpp:
+        (WebCore::DrawingBuffer::DrawingBuffer):
+        (WebCore::DrawingBuffer::publishToPlatformLayer):
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::WebGLLayerChromium):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+
 2011-08-05  Anders Carlsson  <andersca@apple.com>
 
         Fix Chromium build.

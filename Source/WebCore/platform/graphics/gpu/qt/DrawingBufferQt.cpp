@@ -71,10 +71,6 @@ DrawingBuffer::~DrawingBuffer()
     clear();
 }
 
-void DrawingBuffer::didReset()
-{
-}
-
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
 {

@@ -65,12 +65,15 @@ private:
     explicit WebGLLayerChromium(GraphicsLayerChromium* owner);
     friend class WebGLLayerChromiumRateLimitTask;
 
+    virtual unsigned textureId() const { return m_textureId; }
     void rateLimitContext(Timer<WebGLLayerChromium>*);
 
     // GraphicsContext3D::platformLayer has a side-effect of assigning itself
     // to the layer. Because of that GraphicsContext3D's destructor will reset
     // layer's context to 0.
     GraphicsContext3D* m_context;
+    unsigned m_textureId;
+    bool m_textureChanged;
     bool m_contextSupportsRateLimitingExtension;
     Timer<WebGLLayerChromium> m_rateLimitingTimer;
     bool m_textureUpdated;

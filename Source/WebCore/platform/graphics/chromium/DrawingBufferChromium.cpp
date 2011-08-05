@@ -32,9 +32,7 @@
 
 #include "DrawingBuffer.h"
 
-#include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
-
 #if USE(SKIA)
 #include "GrContext.h"
 #endif
@@ -62,7 +60,6 @@ static unsigned generateColorTexture(GraphicsContext3D* context, const IntSize& 
     return offscreenColorTexture;
 }
 
-
 DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
                              const IntSize& size,
                              bool multisampleExtensionSupported,
@@ -82,10 +79,6 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_grContext(0)
 #endif
 {
-    if (!m_context->getExtensions()->supports("GL_CHROMIUM_copy_texture_to_parent_texture")) {
-        m_context.clear();
-        return;
-    }
     m_fbo = context->createFramebuffer();
     context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     m_colorBuffer = generateColorTexture(context, size);
@@ -115,31 +108,16 @@ void DrawingBuffer::publishToPlatformLayer()
     if (!m_context)
         return;
 
-    if (m_callback)
-        m_callback->willPublish();
     if (multisample())
         commit();
-    unsigned parentTexture = m_platformLayer->textureId();
-    // We do the copy in the canvas' (child) context so that it executes in the correct order relative to
-    // other commands in the child context. This ensures that the parent texture always contains a complete
-    // frame and not some intermediate result.
     m_context->makeContextCurrent();
 #if USE(SKIA)
     if (m_grContext)
         m_grContext->flush(0);
 #endif
-    static_cast<Extensions3DChromium*>(m_context->getExtensions())->copyTextureToParentTextureCHROMIUM(m_colorBuffer, parentTexture);
     m_context->flush();
 }
 #endif
-
-void DrawingBuffer::didReset()
-{
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_platformLayer)
-        m_platformLayer->setTextureChanged();
-#endif
-}
 
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()

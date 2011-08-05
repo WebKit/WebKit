@@ -79,7 +79,6 @@ namespace WebCore {
     class VisibleSelection;
     class ScrollableArea;
     class Settings;
-    class GraphicsContext3D;
     class SpeechInput;
     class SpeechInputClient;
 #if ENABLE(DOM_STORAGE)
@@ -259,8 +258,6 @@ namespace WebCore {
         static void allVisitedStateChanged(PageGroup*);
         static void visitedStateChanged(PageGroup*, LinkHash visitedHash);
 
-        GraphicsContext3D* sharedGraphicsContext3D();
-
 #if ENABLE(DOM_STORAGE)
         StorageNamespace* sessionStorage(bool optionalCreate = true);
         void setSessionStorage(PassRefPtr<StorageNamespace>);
@@ -317,10 +314,6 @@ namespace WebCore {
         OwnPtr<Chrome> m_chrome;
         OwnPtr<DragCaretController> m_dragCaretController;
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-        RefPtr<GraphicsContext3D> m_sharedGraphicsContext3D;
-#endif
-        
 #if ENABLE(DRAG_SUPPORT)
         OwnPtr<DragController> m_dragController;
 #endif

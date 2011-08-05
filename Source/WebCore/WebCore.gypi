@@ -3650,6 +3650,8 @@
             'platform/graphics/gpu/DrawingBuffer.h',
             'platform/graphics/gpu/Shader.cpp',
             'platform/graphics/gpu/Shader.h',
+            'platform/graphics/gpu/SharedGraphicsContext3D.cpp',
+            'platform/graphics/gpu/SharedGraphicsContext3D.h',
             'platform/graphics/gpu/Texture.cpp',
             'platform/graphics/gpu/Texture.h',
             'platform/graphics/gpu/TilingData.cpp',

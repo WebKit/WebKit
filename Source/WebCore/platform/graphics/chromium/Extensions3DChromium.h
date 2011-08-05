@@ -40,7 +40,6 @@ public:
     //   GL_CHROMIUM_resource_safe  : indicating that textures/renderbuffers are always initialized before read/write.
     //   GL_CHROMIUM_strict_attribs : indicating a GL error is generated for out-of-bounds buffer accesses.
     //   GL_CHROMIUM_map_sub
-    //   GL_CHROMIUM_copy_texture_to_parent_texture
     //   GL_CHROMIUM_swapbuffers_complete_callback
     //   GL_CHROMIUM_rate_limit_offscreen_context
 
@@ -67,9 +66,6 @@ public:
     void unmapBufferSubDataCHROMIUM(const void*);
     void* mapTexSubImage2DCHROMIUM(unsigned target, int level, int xoffset, int yoffset, int width, int height, unsigned format, unsigned type, unsigned access);
     void unmapTexSubImage2DCHROMIUM(const void*);
-
-    // GL_CHROMIUM_copy_texture_to_parent_texture
-    void copyTextureToParentTextureCHROMIUM(unsigned texture, unsigned parentTexture);
 
     // GL_CHROMIUM_swapbuffers_complete_callback
     class SwapBuffersCompleteCallbackCHROMIUM {
