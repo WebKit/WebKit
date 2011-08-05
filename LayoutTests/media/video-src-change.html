@@ -29,7 +29,7 @@
                 consoleWrite("");
                 
                 if (++loadedCount >= 2) {
-                    mediaElement.removeEventListener('loadedmetadata');
+                    mediaElement.removeEventListener('loadedmetadata', loadedmetadata);
                     endTest();
                     return;
                 }
