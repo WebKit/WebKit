@@ -1,5 +1,16 @@
 2011-08-05  Mark Pilgrim  <pilgrim@chromium.org>
 
+        Remove LegacyDefaultOptionalArguments flag from web audio API
+        https://bugs.webkit.org/show_bug.cgi?id=65750
+
+        Reviewed by Adam Barth.
+
+        No new tests, all existing tests pass.
+
+        * webaudio/AudioBufferSourceNode.idl:
+
+2011-08-05  Mark Pilgrim  <pilgrim@chromium.org>
+
         Remove LegacyDefaultOptionalArguments flag from Web Workers
         https://bugs.webkit.org/show_bug.cgi?id=65746
 

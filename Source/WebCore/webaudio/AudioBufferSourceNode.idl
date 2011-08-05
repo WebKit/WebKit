@@ -25,7 +25,6 @@
 module audio {
     // A cached (non-streamed), memory-resident audio source
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO,
         GenerateToJS
     ] AudioBufferSourceNode : AudioSourceNode {
