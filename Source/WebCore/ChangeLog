@@ -1,3 +1,13 @@
+2011-08-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: check that detaching frame has been attached before removing it from the console selector
+        https://bugs.webkit.org/show_bug.cgi?id=65686
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/JavaScriptContextManager.js:
+        (WebInspector.JavaScriptContextManager.prototype._frameDetached):
+
 2011-08-05  Keishi Hattori  <keishi@webkit.org>
 
         Sort WebCore.xcodeproj

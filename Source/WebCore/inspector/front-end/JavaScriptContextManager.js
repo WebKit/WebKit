@@ -59,6 +59,8 @@ WebInspector.JavaScriptContextManager.prototype = {
     {
         var frameId = event.data;
         var context = this._frameIdToContext[frameId];
+        if (!context)
+            return;
         this._consoleView.removeContext(context);
         delete this._frameIdToContext[frameId];
     },
