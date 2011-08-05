@@ -3690,3 +3690,7 @@ BUGWK58013 MAC GPU : compositing/scaling/tiled-layer-recursion.html = CRASH
 BUGWK58013 LINUX GPU : compositing/scaling/tiled-layer-recursion.html = IMAGE
 
 BUGWK65754 WIN MAC : fast/loader/ping-error.html = CRASH
+
+BUGWK65757 : fast/xsl/import-after-comment.xml = MISSING CRASH
+BUGWK65757 : fast/xsl/xslt-nested-stylesheets.xml = MISSING CRASH
+BUGWK65757 : fast/xsl/xslt-second-level-import.xml = MISSING CRASH
