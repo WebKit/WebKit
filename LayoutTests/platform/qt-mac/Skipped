@@ -5017,3 +5017,6 @@ editing/unsupported-content/table-type-before.html
 
 # Qt specific result was added by r92163, but it fails on Qt-Mac platform
 svg/custom/repaint-shadow.svg
+
+# Skip after r92375
+fast/forms/enter-clicks-buttons.html

@@ -1,3 +1,10 @@
+2011-08-05  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Ossyize fast/forms/enter-clicks-buttons.html because
+        it makes Qt SnowLeopard Intel Release bot bleeding after r92375.
+
+        * platform/qt-mac/Skipped:
+
 2011-08-05  David Reveman  <reveman@chromium.org>
 
         [chromium] Rebaseline following r92255.
