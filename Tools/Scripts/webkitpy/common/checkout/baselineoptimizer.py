@@ -145,6 +145,7 @@ class BaselineOptimizer(object):
             if new_results_by_directory.get(directory) != result:
                 file_name = self._filesystem.join(self._scm.checkout_root, directory, baseline_name)
                 self._scm.delete(file_name)
+                # FIXME: Check for empty directories and remove them as well.
 
     def optimize(self, baseline_name):
         results_by_directory, new_results_by_directory = self._find_optimal_result_placement(baseline_name)

@@ -31,33 +31,71 @@ import unittest
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.commands.rebaseline import *
-from webkitpy.tool.mocktool import MockTool
+from webkitpy.tool.mocktool import MockTool, MockExecutive
 
 
 class TestRebaseline(unittest.TestCase):
-    # This just makes sure the code runs without exceptions.
     def test_tests_to_update(self):
         command = Rebaseline()
         command.bind_to_tool(MockTool())
         build = Mock()
         OutputCapture().assert_outputs(self, command._tests_to_update, [build])
 
-
-class TestRebaselineTest(unittest.TestCase):
-    def test_tests_to_update(self):
+    def test_rebaseline_test(self):
         command = RebaselineTest()
         command.bind_to_tool(MockTool())
-        build = Mock()
-        expected_stdout = "Retrieving http://example.com/f/builders/Webkit Linux/results//userscripts/another-test-actual.txt ...\n"
+        expected_stdout = "Retrieving http://example.com/f/builders/Webkit Linux/results/userscripts/another-test-actual.txt.\n"
         OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Linux", "userscripts/another-test.html", "txt"], expected_stdout=expected_stdout)
 
-
-class BuilderToPortTest(unittest.TestCase):
-    def test_port_for_builder(self):
-        converter = BuilderToPort()
-        port = converter.port_for_builder("Leopard Intel Debug (Tests)")
-        self.assertEqual(str(port.test_configuration()), "<leopard, x86, debug, cpu>")
-        port = converter.port_for_builder("Leopard Intel Release (Tests)")
-        self.assertEqual(str(port.test_configuration()), "<leopard, x86, release, cpu>")
-        port = converter.port_for_builder("Webkit Win (dbg)(1)")
-        self.assertEqual(str(port.test_configuration()), "<xp, x86, debug, cpu>")
+    def test_rebaseline_expectations(self):
+        command = RebaselineExpectations()
+        tool = MockTool()
+        tool.executive = MockExecutive(should_log=True)
+        command.bind_to_tool(tool)
+        expected_stdout = """Retrieving results for chromium-gpu-mac-leopard from Webkit Mac10.5 - GPU.
+Retrieving results for chromium-gpu-mac-snowleopard from Webkit Mac10.6 - GPU.
+Retrieving results for chromium-gpu-win-win7 from Webkit Win7 - GPU.
+Retrieving results for chromium-gpu-win-xp from Webkit Win - GPU.
+Retrieving results for chromium-linux-x86 from Webkit Linux 32.
+    userscripts/another-test.html
+    userscripts/images.svg
+Retrieving results for chromium-linux-x86_64 from Webkit Linux (dbg)(2).
+    userscripts/another-test.html
+    userscripts/images.svg
+Retrieving results for chromium-mac-leopard from Webkit Mac10.5 (dbg)(1).
+    userscripts/another-test.html
+    userscripts/images.svg
+Retrieving results for chromium-mac-snowleopard from Webkit Mac10.6 (dbg).
+    userscripts/another-test.html
+    userscripts/images.svg
+Retrieving results for chromium-win-vista from Webkit Vista.
+    userscripts/another-test.html
+    userscripts/images.svg
+Retrieving results for chromium-win-win7 from Webkit Win7.
+    userscripts/another-test.html
+    userscripts/images.svg
+Retrieving results for chromium-win-xp from Webkit Win (dbg)(2).
+    userscripts/another-test.html
+    userscripts/images.svg
+Optimizing baselines for userscripts/another-test.html.
+Optimizing baselines for userscripts/images.svg.
+"""
+        expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux 32', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux 32', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux (dbg)(2)', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux (dbg)(2)', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.5 (dbg)(1)', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.5 (dbg)(1)', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.6 (dbg)', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.6 (dbg)', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Vista', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Vista', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win7', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win7', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win (dbg)(2)', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win (dbg)(2)', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/images.svg'], cwd=/mock-checkout
+"""
+        command._tests_to_rebaseline = lambda port: [] if not port.name().find('-gpu-') == -1 else ['userscripts/another-test.html', 'userscripts/images.svg']
+        OutputCapture().assert_outputs(self, command.execute, [MockTool(), None, None], expected_stdout=expected_stdout, expected_stderr=expected_stderr)

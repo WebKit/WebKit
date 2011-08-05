@@ -35,12 +35,25 @@ import webkitpy.common.config.urls as config_urls
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
 from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.layouttestresults import LayoutTestResults
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.common.system.user import User
 from webkitpy.layout_tests.layout_package.test_result_writer import TestResultWriter
 from webkitpy.layout_tests.models import test_failures
-from webkitpy.layout_tests.port import factory
+from webkitpy.layout_tests.models.test_expectations import TestExpectations
+from webkitpy.layout_tests.port import factory, builders
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
+
+
+_baseline_suffix_list = ['png', 'txt']
+
+
+def _port_for_builder(builder_name):
+    port_name = builders.port_name_for_builder_name(builder_name)
+    assert(port_name)  # Need to update port_name_for_builder_name
+    port = factory.get(port_name, RebaseliningOptions(builder_name))
+    assert(port)  # Need to update port_name_for_builder_name
+    return port
 
 
 class RebaseliningOptions(object):
@@ -52,54 +65,11 @@ class RebaseliningOptions(object):
         self.builder_name = builder_name
 
 
-# FIXME: This logic should be moved to builders.py.
-class BuilderToPort(object):
-
-    _builder_name_to_port_name = {
-        # These builders are on build.webkit.org.
-        r"SnowLeopard": "mac-snowleopard",
-        r"Leopard": "mac-leopard",
-        r"Windows": "win",
-        r"GTK": "gtk",
-        r"Qt": "qt",
-        r"Chromium Mac": "chromium-mac",
-        r"Chromium Linux": "chromium-linux",
-        r"Chromium Win": "chromium-win",
-
-        # These builders are on build.chromium.org.
-        r"Webkit Win$": "chromium-win-xp",
-        r"Webkit Vista": "chromium-win-vista",
-        r"Webkit Win7": "chromium-win-win7",
-        r"Webkit Win \(dbg\)\(1\)": "chromium-win-xp",
-        r"Webkit Win \(dbg\)\(2\)": "chromium-win-xp",
-        r"Webkit Linux": "chromium-linux-x86_64",
-        r"Webkit Linux 32": "chromium-linux-x86",
-        r"Webkit Linux \(dbg\)\(1\)": "chromium-linux-x86_64",
-        r"Webkit Linux \(dbg\)\(2\)": "chromium-linux-x86_64",
-        r"Webkit Mac10\.5": "chromium-mac-leopard",
-        r"Webkit Mac10\.5 \(dbg\)\(1\)": "chromium-mac-leopard",
-        r"Webkit Mac10\.5 \(dbg\)\(2\)": "chromium-mac-leopard",
-        r"Webkit Mac10\.6": "chromium-mac-snowleopard",
-        r"Webkit Mac10\.6 \(dbg\)": "chromium-mac-snowleopard",
-    }
-
-    def _port_name_for_builder_name(self, builder_name):
-        for regexp, port_name in self._builder_name_to_port_name.items():
-            if re.match(regexp, builder_name):
-                return port_name
-
-    def port_for_builder(self, builder_name):
-        port_name = self._port_name_for_builder_name(builder_name)
-        assert(port_name)  # Need to update _builder_name_to_port_name
-        port = factory.get(port_name, RebaseliningOptions(builder_name))
-        assert(port)  # Need to update _builder_name_to_port_name
-        return port
-
-
 class RebaselineTest(AbstractDeclarativeCommand):
     name = "rebaseline-test"
     help_text = "Rebaseline a single test from a buildbot.  (Currently works only with build.chromium.org buildbots.)"
-    argument_names = "BUILDER_NAME TEST_NAME SUFFIX"
+    # FIXME: Remove SUFFIX argument.
+    argument_names = "BUILDER_NAME TEST_NAME [SUFFIX]"
 
     def _results_url(self, builder_name):
         # FIXME: Generalize this command to work with non-build.chromium.org builders.
@@ -107,10 +77,12 @@ class RebaselineTest(AbstractDeclarativeCommand):
         return builder.accumulated_results_url()
 
     def _baseline_directory(self, builder_name):
-        port = BuilderToPort().port_for_builder(builder_name)
+        port = _port_for_builder(builder_name)
         return port.baseline_path()
 
     def _save_baseline(self, data, target_baseline):
+        if not data:
+            return
         filesystem = self._tool.filesystem
         filesystem.maybe_make_directory(filesystem.dirname(target_baseline))
         filesystem.write_binary_file(target_baseline, data)
@@ -130,14 +102,15 @@ class RebaselineTest(AbstractDeclarativeCommand):
         results_url = self._results_url(builder_name)
         baseline_directory = self._baseline_directory(builder_name)
 
-        source_baseline = "%s/%s" % (results_url, self._file_name_for_actual_result(test_name, suffix))
+        source_baseline = "%s%s" % (results_url, self._file_name_for_actual_result(test_name, suffix))
         target_baseline = os.path.join(baseline_directory, self._file_name_for_expected_result(test_name, suffix))
 
-        print "Retrieving %s ..." % source_baseline
-        self._save_baseline(self._tool.web.get_binary(source_baseline), target_baseline)
+        print "Retrieving %s." % source_baseline
+        self._save_baseline(self._tool.web.get_binary(source_baseline, convert_404_to_None=True), target_baseline)
 
     def execute(self, options, args, tool):
-        self._rebaseline_test(args[0], args[1], args[2])
+        for suffix in _baseline_suffix_list:
+            self._rebaseline_test(args[0], args[1], suffix)
 
 
 class OptimizeBaselines(AbstractDeclarativeCommand):
@@ -147,16 +120,63 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
 
     # FIXME: Should TestResultWriter know how to compute this string?
     def _baseline_name(self, test_name, suffix):
-        return self._tool.filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + suffix
+        return self._tool.filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + "." + suffix
 
     def execute(self, options, args, tool):
         baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
 
         test_name = args[0]
-        for suffix in ['.png', '.txt']:
+        for suffix in _baseline_suffix_list:
             baseline_name = self._baseline_name(test_name, suffix)
             if not baseline_optimizer.optimize(baseline_name):
                 print "Hueristics failed to optimize %s" % baseline_name
+
+
+class RebaselineExpectations(AbstractDeclarativeCommand):
+    name = "rebaseline-expectations"
+    help_text = "Rebaselines the tests indicated in test_expectations.txt."
+
+    def _run_webkit_patch(self, args):
+        try:
+            self._tool.executive.run_command([self._tool.path()] + args, cwd=self._tool.scm().checkout_root)
+        except ScriptError, e:
+            pass
+
+    def _is_supported_port(self, port_name):
+        # FIXME: Support non-Chromium ports.
+        return port_name.startswith('chromium-')
+
+    def _update_expectations_file(self, port, expectations, tests_to_rebaseline):
+        new_expectations = expectations.remove_rebaselined_tests(tests_to_rebaseline)
+        path = port.path_to_test_expectations_file()
+        self._tool.filesystem.write_text_file(path, new_expectations)
+
+    # FIXME: We read and write the test_expectations.txt file once for each port.  That seems excessive.
+    def _tests_to_rebaseline(self, port):
+        expectations = TestExpectations(port, None, port.test_expectations(), port.test_configuration())
+        tests_to_rebaseline = expectations.get_rebaselining_failures()
+        self._update_expectations_file(port, expectations, tests_to_rebaseline)
+        return tests_to_rebaseline
+
+    def _rebaseline_port(self, port_name):
+        if not self._is_supported_port(port_name):
+            return
+        builder_name = builders.builder_name_for_port_name(port_name)
+        if not builder_name:
+            return
+        print "Retrieving results for %s from %s." % (port_name, builder_name)
+        for test_name in self._tests_to_rebaseline(factory.get(port_name)):
+            self._touched_test_names.add(test_name)
+            print "    %s" % test_name
+            self._run_webkit_patch(['rebaseline-test', builder_name, test_name])
+
+    def execute(self, options, args, tool):
+        self._touched_test_names = set([])
+        for port_name in factory.all_port_names():
+            self._rebaseline_port(port_name)
+        for test_name in self._touched_test_names:
+            print "Optimizing baselines for %s." % test_name
+            self._run_webkit_patch(['optimize-baselines', test_name])
 
 
 class Rebaseline(AbstractDeclarativeCommand):
@@ -191,7 +211,7 @@ class Rebaseline(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         builder, build_number = self._builder_to_pull_from()
         build = builder.build(build_number)
-        port = BuilderToPort().port_for_builder(builder.name())
+        port = builder_name_for_port_name.port_for_builder(builder.name())
 
         for test in self._tests_to_update(build):
             results_url = self._results_url_for_test(build, test)

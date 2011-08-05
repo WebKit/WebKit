@@ -776,7 +776,7 @@ class TestExpectations(object):
         return cls.EXPECTATIONS.get(string.lower())
 
     def __init__(self, port, tests, expectations,
-                 test_config, is_lint_mode, overrides=None):
+                 test_config, is_lint_mode=False, overrides=None):
         """Loads and parses the test expectations given in the string.
         Args:
             port: handle to object containing platform-specific functionality

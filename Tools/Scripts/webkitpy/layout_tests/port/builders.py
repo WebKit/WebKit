@@ -29,61 +29,94 @@
 
 import re
 
+from webkitpy.common.memoized import memoized
+
+
+_exact_matches = {
+    # These builders are on build.chromium.org.
+    "Webkit Win": "chromium-win-xp",
+    "Webkit Vista": "chromium-win-vista",
+    "Webkit Win7": "chromium-win-win7",
+    "Webkit Win (dbg)(1)": "chromium-win-xp",
+    "Webkit Win (dbg)(2)": "chromium-win-xp",
+    "Webkit Linux": "chromium-linux-x86_64",
+    "Webkit Linux 32": "chromium-linux-x86",
+    "Webkit Linux (dbg)(1)": "chromium-linux-x86_64",
+    "Webkit Linux (dbg)(2)": "chromium-linux-x86_64",
+    "Webkit Mac10.5": "chromium-mac-leopard",
+    "Webkit Mac10.5 (dbg)(1)": "chromium-mac-leopard",
+    "Webkit Mac10.5 (dbg)(2)": "chromium-mac-leopard",
+    "Webkit Mac10.6": "chromium-mac-snowleopard",
+    "Webkit Mac10.6 (dbg)": "chromium-mac-snowleopard",
+    "Webkit Mac10.6 - GPU": "chromium-gpu-mac-snowleopard",
+    "Webkit Win - GPU": "chromium-gpu-win-xp",
+    "Webkit Win7 - GPU": "chromium-gpu-win-win7",
+    # FIXME: For some reason, these port names don't work correctly.
+    # "Webkit Linux - GPU": "chromium-gpu-linux-x86_64",
+    # "Webkit Linux 32 - GPU": "chromium-gpu-linux-x86",
+    "Webkit Mac10.5 - GPU": "chromium-gpu-mac-leopard",
+    "Webkit Mac10.6 - GPU": "chromium-gpu-mac-snowleopard",
+
+    # These builders are on build.webkit.org.
+    "GTK Linux 32-bit Debug": "gtk",
+    "Leopard Intel Debug (Tests)": "mac-leopard",
+    "SnowLeopard Intel Release (Tests)": "mac-snowleopard",
+    "SnowLeopard Intel Release (WebKit2 Tests)": "mac-wk2",
+    "Qt Linux Release": "qt-linux",
+    "Windows XP Debug (Tests)": "win-xp",
+    "Windows 7 Release (WebKit2 Tests)": "win-wk2",
+}
+
+
+_fuzzy_matches = {
+    # These builders are on build.webkit.org.
+    r"SnowLeopard": "mac-snowleopard",
+    r"Leopard": "mac-leopard",
+    r"Windows": "win",
+    r"GTK": "gtk",
+    r"Qt": "qt",
+    r"Chromium Mac": "chromium-mac",
+    r"Chromium Linux": "chromium-linux",
+    r"Chromium Win": "chromium-win",
+}
+
+
+_ports_without_builders = [
+    # FIXME: Including chromium-gpu-linux below is a workaroudn for
+    # chromium-gpu-linux-x86_64 and chromium-gpu-linux-x86 not working properly.
+    "chromium-gpu-linux",
+    "google-chrome-linux32",
+    "google-chrome-linux64",
+    "qt-mac",
+    "qt-win",
+    "qt-wk2",
+]
+
 
 def builder_path_from_name(builder_name):
     return re.sub(r'[\s().]', '_', builder_name)
 
 
-# Compiled manually from http://build.chromium.org/p/chromium/json/builders/help?as_text=1
-# Values of None mean there are no bots running at build.webkit.org or
-# build.chromium.org for that port.
-# FIXME Make the values in this map into lists.
-CHROMIUM_PORT_TO_BUILDER_NAME = {
-    'chromium-gpu-linux': builder_path_from_name('Webkit Linux - GPU'),
-
-    'chromium-gpu-mac-snowleopard': builder_path_from_name('Webkit Mac10.6 - GPU'),
-    'chromium-gpu-mac-leopard': builder_path_from_name('Webkit Mac10.5 - GPU'),
-
-    'chromium-gpu-win-xp': builder_path_from_name('Webkit Win - GPU'),
-    'chromium-gpu-win-vista': builder_path_from_name('Webkit Vista - GPU'),
-    'chromium-gpu-win-win7': builder_path_from_name('Webkit Win7 - GPU'),
-
-    'chromium-linux-x86_64': builder_path_from_name('Linux Tests x64'),
-    'chromium-linux-x86': builder_path_from_name('Linux Tests (dbg)(1)'),
-
-    'chromium-mac-leopard': builder_path_from_name('Mac10.5 Tests (1)'),
-    'chromium-mac-snowleopard': builder_path_from_name('Mac 10.6 Tests (dbg)(1)'),
-
-    'chromium-win-xp': builder_path_from_name('XP Tests (dbg)(5)'),
-    'chromium-win-vista': builder_path_from_name('Vista Tests (dbg)(1)'),
-    'chromium-win-win7': None,
-
-    'google-chrome-linux32': None,
-    'google-chrome-linux64': None,
-}
-
-# Compiled manually from http://build.webkit.org/builders
-WEBKIT_PORT_TO_BUILDER_NAME = {
-    'gtk': 'GTK Linux 32-bit Debug',
-
-    'mac-leopard': 'Leopard Intel Debug (Tests)',
-    'mac-snowleopard': 'SnowLeopard Intel Release (Tests)',
-    'mac-wk2': 'SnowLeopard Intel Release (WebKit2 Tests)',
-
-    'qt-linux': 'Qt Linux Release',
-    'qt-mac': None,
-    'qt-win': None,
-    'qt-wk2': None,
-
-    'win-xp': 'Windows XP Debug (Tests)',
-    'win': None,
-    'win-wk2': 'Windows 7 Release (WebKit2 Tests)',
-}
-
-PORT_TO_BUILDER_NAME = {}
-PORT_TO_BUILDER_NAME.update(CHROMIUM_PORT_TO_BUILDER_NAME)
-PORT_TO_BUILDER_NAME.update(WEBKIT_PORT_TO_BUILDER_NAME)
+@memoized
+def all_port_names():
+    return sorted(set(_exact_matches.values() + _ports_without_builders))
 
 
-def builder_name_for_platform(platform):
-    return PORT_TO_BUILDER_NAME.get(platform)
+def port_name_for_builder_name(builder_name):
+    if builder_name in _exact_matches:
+        return _exact_matches[builder_name]
+
+    for regexp, port_name in _fuzzy_matches.items():
+        if re.match(regexp, builder_name):
+            return port_name
+
+
+def builder_name_for_port_name(target_port_name):
+    for builder_name, port_name in _exact_matches.items():
+        if port_name == target_port_name:
+            return builder_name
+    return None
+
+
+def builder_path_for_port_name(port_name):
+    builder_path_from_name(builder_name_for_port_name(port_name))

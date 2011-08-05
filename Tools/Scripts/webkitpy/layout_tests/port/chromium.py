@@ -226,7 +226,7 @@ class ChromiumPort(Port):
             'chromium', 'test_expectations.txt')
 
     def _results_for_platform(self, platform):
-        builder_name = builders.builder_name_for_platform(platform)
+        builder_name = builders.builder_path_for_port_name(platform)
         if not builder_name:
             raise Exception("Can't find builder for %s" % platform)
         zip_url = urls.chromium_results_zip_url(builder_name)

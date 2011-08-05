@@ -42,7 +42,7 @@ def all_port_names():
     by real ports. This does not include any "fake" names like "test"
     or "mock-mac", and it does not include any directories that are not ."""
     # FIXME: There's probably a better way to generate this list ...
-    return builders.PORT_TO_BUILDER_NAME.keys()
+    return builders.all_port_names()
 
 
 def get(port_name=None, options=None, **kwargs):
