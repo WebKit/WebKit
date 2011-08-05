@@ -1,5 +1,11 @@
 2011-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Fix unit test breakage by plumbing convert_404_to_None in MockWeb.
+
+        * Scripts/webkitpy/tool/mocktool.py: Added missing parameter to MockWeb.get_binary
+
+2011-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Garden-o-matic updateexpectations needs a unit test.
         https://bugs.webkit.org/show_bug.cgi?id=65780
 

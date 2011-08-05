@@ -821,8 +821,8 @@ class MockWorkspace(object):
 
 
 class MockWeb(object):
-    def get_binary(self, url):
-        return "MOCK Web result"
+    def get_binary(self, url, convert_404_to_None=False):
+        return "MOCK Web result, convert 404 to None=%s" % convert_404_to_None
 
 
 class MockTool(object):
