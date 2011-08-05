@@ -1,8 +1,13 @@
 2011-08-05  Lucas Forschler  <lforschler@apple.com>
+    Another speculative Windows build fix, since r88958 never made it into the branch.
+    
+    * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp: Initialize a variable.
+    
+2011-08-05  Lucas Forschler  <lforschler@apple.com>
     Windows build fix, since r88958 never made it into the branch.
-    
-    * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h: Add stub for createAVAssetForCacheResource().
-    
+
+    * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.h: Add stub for createAVAssetForCacheResource().
+
 2011-08-05  Lucas Forschler  <lforschler@apple.com>
 
     Merged 92404.
