@@ -1,3 +1,12 @@
+2011-08-05  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Unreviewed: change an instance of isImportRule() that was overlooked in commit 92448.
+
+        No new tests. (No functional change)
+
+        * xml/XSLImportRule.h:
+        (WebCore::XSLImportRule::isImportRule):
+
 2011-08-05  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from remaining SVG IDL files

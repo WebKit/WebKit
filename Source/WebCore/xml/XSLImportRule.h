@@ -55,7 +55,7 @@ public:
 private:
     XSLImportRule(XSLStyleSheet* parentSheet, const String& href);
 
-    virtual bool isImportRule() { return true; }
+    virtual bool isImportRule() const { return true; }
 
     // from CachedResourceClient
     virtual void setXSLStyleSheet(const String& href, const KURL& baseURL, const String& sheet);
