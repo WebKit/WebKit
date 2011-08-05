@@ -3665,3 +3665,26 @@ BUGWK65757 : fast/xsl/xslt-nested-stylesheets.xml = MISSING CRASH
 BUGWK65757 : fast/xsl/xslt-second-level-import.xml = MISSING CRASH
 
 BUGWK65758 : fast/xsl/xslt-import-depth.xml = IMAGE+TEXT CRASH
+
+BUGWK64942 WIN GPU : compositing/color-matching/image-color-matching.html = IMAGE
+BUGWK64942 WIN GPU : compositing/direct-image-compositing.html = IMAGE
+BUGWK64942 WIN GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
+BUGWK64942 WIN GPU : compositing/geometry/fixed-position.html = IMAGE
+BUGWK64942 WIN GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+BUGWK64942 WIN GPU : compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
+BUGWK64942 WIN GPU : compositing/geometry/layer-due-to-layer-children.html = IMAGE
+BUGWK64942 WIN GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
+BUGWK64942 WIN GPU : compositing/iframes/composited-iframe-alignment.html = IMAGE
+BUGWK64942 WIN GPU : compositing/masks/masked-ancestor.html = IMAGE
+BUGWK64942 WIN GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
+BUGWK64942 WIN GPU : compositing/reflections/nested-reflection-transition.html = IMAGE
+BUGWK64942 WIN GPU : compositing/reflections/transform-inside-reflection.html = IMAGE
+BUGWK64942 WIN GPU : compositing/shadows/shadow-drawing.html = IMAGE
+BUGWK64942 WIN MAC GPU :  compositing/transitions/scale-transition-no-start.html = IMAGE
+BUGWK64942 MAC GPU : media/video-transformed.html = IMAGE
+BUGWK64942 MAC GPU : media/video-zoom-controls.html = IMAGE
+BUGWK64942 MAC GPU : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
+BUGWK64942 MAC GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
+BUGWK64942 MAC GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+BUGWK64942 MAC GPU : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
+BUGWK64942 MAC GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE

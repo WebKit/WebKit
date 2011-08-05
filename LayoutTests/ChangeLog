@@ -1,3 +1,10 @@
+2011-08-05  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, skip those tests still failing on chromium due to incomplete
+        baseline caused by r92466.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         REGRESSION(r92433): media/video-src-change.html fails
