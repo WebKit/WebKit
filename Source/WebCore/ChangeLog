@@ -1,3 +1,55 @@
+2011-08-04  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        DocumentMarker: Type specific details should be separately held by other object.
+        https://bugs.webkit.org/show_bug.cgi?id=59855
+
+        - Introduced DocumentMarkerDetails abstract class and two its subclasses
+          DocumentMarkerDescription and DocumentMarkerActiveMatch,
+        
+        - Replacing DocumentMarker::m_description and
+          DocumentMarker::m_activeMatch with these new details classes.
+        
+        No new tests. No behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp:
+        * dom/DocumentMarker.cpp: Added.
+        (WebCore::emptyDescription):
+        (WebCore::DocumentMarkerDetails::DocumentMarkerDetails):
+        (WebCore::DocumentMarkerDetails::~DocumentMarkerDetails):
+        (WebCore::DocumentMarkerDescription::description):
+        (WebCore::DocumentMarkerDescription::isDescription):        
+        (WebCore::DocumentMarkerDescription::DocumentMarkerDescription):
+        (WebCore::DocumentMarkerDescription::createUnlessEmpty):
+        (WebCore::DocumentMarkerDescription::compatibleTypes):
+        (WebCore::DocumentMarkerTextMatch::activeMatch):    
+        (WebCore::DocumentMarkerTextMatch::isTextMatch):
+        (WebCore::DocumentMarkerTextMatch::DocumentMarkerTextMatch):
+        (WebCore::DocumentMarkerTextMatch::instanceFor):
+        (WebCore::DocumentMarkerTextMatch::compatibleTypes):
+        (WebCore::DocumentMarker::DocumentMarker):
+        (WebCore::DocumentMarker::shiftOffsets):
+        (WebCore::DocumentMarker::setActiveMatch):
+        (WebCore::DocumentMarker::description):
+        (WebCore::DocumentMarker::activeMatch):
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::details):
+        (WebCore::DocumentMarker::clearDetails):
+        (WebCore::DocumentMarkerDetails::isDescription):
+        (WebCore::DocumentMarkerDetails::isTextMatch):
+        (WebCore::DocumentMarkerDetails::isAllowedFor):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+
 2011-08-04  Scott Graham  <scottmg@chromium.org>
 
         Bad interaction between document destruction and unload events

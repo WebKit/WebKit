@@ -3373,6 +3373,7 @@
 		A77979290D6B9E64003851B9 /* JSImageData.h in Headers */ = {isa = PBXBuildFile; fileRef = A77979250D6B9E64003851B9 /* JSImageData.h */; };
 		A77B41A012E675A90054343D /* TextEventInputType.h in Headers */ = {isa = PBXBuildFile; fileRef = A77B419F12E675A90054343D /* TextEventInputType.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A77D0012133B0AEB00D6658C /* TextChecking.h in Headers */ = {isa = PBXBuildFile; fileRef = A77D0011133B0AEB00D6658C /* TextChecking.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A781C6A713828B5D0012A62A /* DocumentMarker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A781C6A613828B5D0012A62A /* DocumentMarker.cpp */; };
 		A784941B0B5FE507001E237A /* Clipboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A784941A0B5FE507001E237A /* Clipboard.cpp */; };
 		A78E526F1346BD1700AD9C31 /* MeterShadowElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */; };
 		A78E52701346BD1700AD9C31 /* MeterShadowElement.h in Headers */ = {isa = PBXBuildFile; fileRef = A78E526E1346BD1700AD9C31 /* MeterShadowElement.h */; };
@@ -9968,6 +9969,7 @@
 		A77979250D6B9E64003851B9 /* JSImageData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSImageData.h; sourceTree = "<group>"; };
 		A77B419F12E675A90054343D /* TextEventInputType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextEventInputType.h; sourceTree = "<group>"; };
 		A77D0011133B0AEB00D6658C /* TextChecking.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextChecking.h; sourceTree = "<group>"; };
+		A781C6A613828B5D0012A62A /* DocumentMarker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentMarker.cpp; sourceTree = "<group>"; };
 		A784941A0B5FE507001E237A /* Clipboard.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Clipboard.cpp; sourceTree = "<group>"; };
 		A78E526D1346BD1700AD9C31 /* MeterShadowElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MeterShadowElement.cpp; sourceTree = "<group>"; };
 		A78E526E1346BD1700AD9C31 /* MeterShadowElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MeterShadowElement.h; sourceTree = "<group>"; };
@@ -19773,6 +19775,7 @@
 				59A85EAA119D7B6E00DEF1EF /* DeviceOrientationEvent.idl */,
 				490C47CD13E82D1800F7AB82 /* DispatchTask.h */,
 				A8185F3409765765005826D9 /* Document.cpp */,
+				A781C6A613828B5D0012A62A /* DocumentMarker.cpp */,
 				A8185F3809765765005826D9 /* Document.h */,
 				6548E24809E1E04D00AF8020 /* Document.idl */,
 				A8185F3709765765005826D9 /* DocumentFragment.cpp */,
@@ -23941,6 +23944,7 @@
 				A8185F3F09765766005826D9 /* DocumentFragment.cpp in Sources */,
 				93E227E00AF589AD00D48324 /* DocumentLoader.cpp in Sources */,
 				1C26497A0D7E248A00BD10F2 /* DocumentLoaderMac.cpp in Sources */,
+				A781C6A713828B5D0012A62A /* DocumentMarker.cpp in Sources */,
 				CE057FA51220731100A476D5 /* DocumentMarkerController.cpp in Sources */,
 				14947FFD12F80CD200A0F631 /* DocumentOrderedMap.cpp in Sources */,
 				A8C2280E11D4A59700D5A7D3 /* DocumentParser.cpp in Sources */,

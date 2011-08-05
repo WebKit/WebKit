@@ -1132,6 +1132,7 @@ webcore_sources += \
 	Source/WebCore/dom/Document.h \
 	Source/WebCore/dom/DocumentMarkerController.cpp \
 	Source/WebCore/dom/DocumentMarkerController.h \
+	Source/WebCore/dom/DocumentMarker.cpp \
 	Source/WebCore/dom/DocumentMarker.h \
 	Source/WebCore/dom/DocumentOrderedMap.cpp \
 	Source/WebCore/dom/DocumentOrderedMap.h \

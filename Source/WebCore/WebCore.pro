@@ -478,6 +478,7 @@ SOURCES += \
     dom/Document.cpp \
     dom/DocumentFragment.cpp \
     dom/DocumentMarkerController.cpp \
+    dom/DocumentMarker.cpp \
     dom/DocumentOrderedMap.cpp \
     dom/DocumentParser.cpp \
     dom/DocumentType.cpp \

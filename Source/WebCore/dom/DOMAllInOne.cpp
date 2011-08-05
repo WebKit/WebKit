@@ -58,6 +58,7 @@
 #include "DeviceOrientationEvent.cpp"
 #include "Document.cpp"
 #include "DocumentFragment.cpp"
+#include "DocumentMarker.cpp"
 #include "DocumentMarkerController.cpp"
 #include "DocumentOrderedMap.cpp"
 #include "DocumentParser.cpp"

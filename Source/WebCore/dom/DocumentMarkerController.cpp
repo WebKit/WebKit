@@ -652,7 +652,7 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range*
                 continue;
             }
 
-            marker.clearDescription();
+            marker.clearDetails();
         }
     }
 }

@@ -515,6 +515,7 @@ SET(WebCore_SOURCES
     dom/DeviceOrientationEvent.cpp
     dom/Document.cpp
     dom/DocumentMarkerController.cpp
+    dom/DocumentMarker.cpp
     dom/DocumentFragment.cpp
     dom/DocumentParser.cpp
     dom/DocumentOrderedMap.cpp
