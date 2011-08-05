@@ -26,7 +26,6 @@
 module html {
     interface [
         Conditional=WEBGL, 
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplContext,
         OmitConstructor, 
         DontCheckEnums
@@ -34,8 +33,8 @@ module html {
         const unsigned int VERTEX_ARRAY_BINDING_OES = 0x85B5;
         
         [StrictTypeChecking] WebGLVertexArrayObjectOES createVertexArrayOES();
-        [StrictTypeChecking] void         deleteVertexArrayOES(in WebGLVertexArrayObjectOES arrayObject);
-        [StrictTypeChecking] boolean      isVertexArrayOES(in WebGLVertexArrayObjectOES arrayObject);
-        [StrictTypeChecking] void         bindVertexArrayOES(in WebGLVertexArrayObjectOES arrayObject) raises(DOMException);
+        [StrictTypeChecking] void         deleteVertexArrayOES(in [Optional=CallWithDefaultValue] WebGLVertexArrayObjectOES arrayObject);
+        [StrictTypeChecking] boolean      isVertexArrayOES(in [Optional=CallWithDefaultValue] WebGLVertexArrayObjectOES arrayObject);
+        [StrictTypeChecking] void         bindVertexArrayOES(in [Optional=CallWithDefaultValue] WebGLVertexArrayObjectOES arrayObject) raises(DOMException);
     };
 }
