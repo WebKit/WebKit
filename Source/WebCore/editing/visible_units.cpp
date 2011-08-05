@@ -217,12 +217,6 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     return VisiblePosition(pos, VP_UPSTREAM_IF_POSSIBLE);
 }
 
-static bool canHaveCursor(RenderObject* o)
-{
-    return (o->isText() && toRenderText(o)->linesBoundingBox().height())
-        || (o->isBox() && toRenderBox(o)->borderBoundingBox().height());
-}
-
 // ---------
 
 static unsigned startWordBoundary(const UChar* characters, unsigned length, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
@@ -541,19 +535,14 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
                 break;
             Position pos = createLegacyEditingPosition(n, caretMinOffset(n));
             if (pos.isCandidate()) {
-                RenderObject* o = n->renderer();
-                ASSERT(o);
-                if (canHaveCursor(o)) {
-                    Position maxPos = createLegacyEditingPosition(n, caretMaxOffset(n));
-                    maxPos.getInlineBoxAndOffset(DOWNSTREAM, box, ignoredCaretOffset);
-                    if (box) {
-                        // previous root line box found
-                        root = box->root();
-                        break;
-                    }
-
-                    return VisiblePosition(pos, DOWNSTREAM);
+                pos.getInlineBoxAndOffset(DOWNSTREAM, box, ignoredCaretOffset);
+                if (box) {
+                    // previous root line box found
+                    root = box->root();
+                    break;
                 }
+
+                return VisiblePosition(pos, DOWNSTREAM);
             }
             n = previousLeafWithSameEditability(n);
         }
