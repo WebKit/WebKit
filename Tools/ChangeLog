@@ -1,3 +1,9 @@
+2011-08-04  Adam Barth  <abarth@webkit.org>
+
+        Another speculative fix for the "svn revision on Windows" problem.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+
 2011-08-04  Mark Rowe  <mrowe@apple.com>
 
         Future-proof Xcode configuration settings.

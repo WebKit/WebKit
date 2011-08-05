@@ -99,8 +99,12 @@ class Git(SCM, SVNRepository):
 
     @classmethod
     def in_working_directory(cls, path):
-        # FIXME: This should use an Executive.
-        return run_command(['git', 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=Executive.ignore_error).rstrip() == "true"
+        try:
+            # FIXME: This should use an Executive.
+            return run_command(['git', 'rev-parse', '--is-inside-work-tree'], cwd=path, error_handler=Executive.ignore_error).rstrip() == "true"
+        except OSError, e:
+            # The Windows bots seem to through a WindowsError when git isn't installed.
+            return False
 
     @classmethod
     def find_checkout_root(cls, path):
