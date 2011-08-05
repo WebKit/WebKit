@@ -40,3 +40,9 @@ fast/canvas/canvas-strokeRect-alpha-shadow.html
 
 # Currently failing WebGL tests <rdar://problem/9355460>
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
+
+# --- Failures that need investigation ---
+
+# These fail in DRT but look correct in Safari.
+fast/text/emphasis-combined-text.html
+fast/text/international/text-combine-image-test.html

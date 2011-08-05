@@ -1,5 +1,11 @@
 2011-08-05  Anders Carlsson  <andersca@apple.com>
 
+        Add two fast/text tests to the skipped list.
+
+        * platform/mac-lion/Skipped:
+
+2011-08-05  Anders Carlsson  <andersca@apple.com>
+
         Add Lion specific test results for css1 and css2.1.
 
         * platform/mac-snowleopard/css1: Added.
