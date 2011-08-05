@@ -87,7 +87,7 @@ public:
     bool printing() const;
 
     virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset);
-    virtual void absoluteQuads(Vector<FloatQuad>&);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed);
 
 #if USE(ACCELERATED_COMPOSITING)
     void setMaximalOutlineSize(int o);

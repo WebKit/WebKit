@@ -76,9 +76,9 @@ void RenderSVGModelObject::absoluteRects(Vector<LayoutRect>&, const LayoutPoint&
     ASSERT_NOT_REACHED();
 }
 
-void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads)
+void RenderSVGModelObject::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
 {
-    quads.append(localToAbsoluteQuad(strokeBoundingBox()));
+    quads.append(localToAbsoluteQuad(strokeBoundingBox(), false, wasFixed));
 }
 
 void RenderSVGModelObject::willBeDestroyed()

@@ -48,7 +48,7 @@ public:
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false) const;
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&,  bool* wasFixed = 0) const;
-    virtual void absoluteQuads(Vector<FloatQuad>&);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed);
 
 private:
     virtual InlineFlowBox* createInlineFlowBox();

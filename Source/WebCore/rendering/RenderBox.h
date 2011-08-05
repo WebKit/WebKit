@@ -228,7 +228,7 @@ public:
     virtual LayoutUnit collapsedMarginAfter() const { return marginAfter(); }
 
     virtual void absoluteRects(Vector<IntRect>&, const LayoutPoint& accumulatedOffset);
-    virtual void absoluteQuads(Vector<FloatQuad>&);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed);
     
     IntRect reflectionBox() const;
     int reflectionOffset() const;

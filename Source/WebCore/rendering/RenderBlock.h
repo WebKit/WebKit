@@ -650,7 +650,7 @@ private:
     LayoutUnit logicalRightSelectionOffset(RenderBlock* rootBlock, LayoutUnit position);
     
     virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset);
-    virtual void absoluteQuads(Vector<FloatQuad>&);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed);
 
     LayoutUnit desiredColumnWidth() const;
     unsigned desiredColumnCount() const;

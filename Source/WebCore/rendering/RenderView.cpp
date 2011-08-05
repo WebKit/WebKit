@@ -333,8 +333,10 @@ void RenderView::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& acc
     rects.append(LayoutRect(accumulatedOffset, m_layer->size()));
 }
 
-void RenderView::absoluteQuads(Vector<FloatQuad>& quads)
+void RenderView::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
 {
+    if (wasFixed)
+        *wasFixed = false;
     quads.append(FloatRect(FloatPoint(), m_layer->size()));
 }
 

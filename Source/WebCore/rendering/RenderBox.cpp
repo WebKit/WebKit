@@ -463,9 +463,9 @@ void RenderBox::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& accu
     rects.append(LayoutRect(accumulatedOffset, size()));
 }
 
-void RenderBox::absoluteQuads(Vector<FloatQuad>& quads)
+void RenderBox::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
 {
-    quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height())));
+    quads.append(localToAbsoluteQuad(FloatRect(0, 0, width(), height()), false, wasFixed));
 }
 
 void RenderBox::updateLayerTransform()

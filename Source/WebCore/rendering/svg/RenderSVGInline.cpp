@@ -82,7 +82,7 @@ void RenderSVGInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer
     SVGRenderSupport::mapLocalToContainer(this, repaintContainer, useTransforms, fixed, transformState, wasFixed);
 }
 
-void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
+void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
 {
     RenderObject* object = RenderSVGText::locateRenderSVGTextAncestor(this);
     if (!object)
@@ -90,7 +90,7 @@ void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
 
     FloatRect textBoundingBox = object->strokeBoundingBox();
     for (InlineFlowBox* box = firstLineBox(); box; box = box->nextLineBox())
-        quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->logicalWidth(), box->logicalHeight())));
+        quads.append(localToAbsoluteQuad(FloatRect(textBoundingBox.x() + box->x(), textBoundingBox.y() + box->y(), box->logicalWidth(), box->logicalHeight()), false, wasFixed));
 }
 
 void RenderSVGInline::willBeDestroyed()

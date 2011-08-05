@@ -606,7 +606,7 @@ public:
     IntRect absoluteBoundingBoxRect(bool useTransforms = false);
 
     // Build an array of quads in absolute coords for line boxes
-    virtual void absoluteQuads(Vector<FloatQuad>&) { }
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* /*wasFixed*/ = 0) { }
 
     void absoluteFocusRingQuads(Vector<FloatQuad>&);
 

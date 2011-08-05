@@ -112,10 +112,17 @@ public:
     Node* shadowTreeRootNode() const;
 
     IntRect boundingBox();
+    
+    enum RangeInFixedPosition {
+        NotFixedPosition,
+        PartiallyFixedPosition,
+        EntirelyFixedPosition
+    };
+    
     // Not transform-friendly
-    void textRects(Vector<IntRect>&, bool useSelectionHeight = false);
+    void textRects(Vector<IntRect>&, bool useSelectionHeight = false, RangeInFixedPosition* = 0);
     // Transform-friendly
-    void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false) const;
+    void textQuads(Vector<FloatQuad>&, bool useSelectionHeight = false, RangeInFixedPosition* = 0) const;
     void getBorderAndTextQuads(Vector<FloatQuad>&) const;
     FloatRect boundingRect() const;
 

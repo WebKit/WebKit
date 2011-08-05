@@ -56,7 +56,7 @@ public:
     virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer, IntPoint*) const;
 
     virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset);
-    virtual void absoluteQuads(Vector<FloatQuad>&);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed);
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);

@@ -224,9 +224,9 @@ VisiblePosition RenderSVGText::positionForPoint(const LayoutPoint& pointInConten
     return closestBox->renderer()->positionForPoint(LayoutPoint(pointInContents.x(), closestBox->y()));
 }
 
-void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads)
+void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
 {
-    quads.append(localToAbsoluteQuad(strokeBoundingBox()));
+    quads.append(localToAbsoluteQuad(strokeBoundingBox(), false, wasFixed));
 }
 
 void RenderSVGText::paint(PaintInfo& paintInfo, const IntPoint&)

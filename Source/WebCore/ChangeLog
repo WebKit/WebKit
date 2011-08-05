@@ -1,3 +1,55 @@
+2011-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Add code to determine whether a Range in inside fixed position content
+        https://bugs.webkit.org/show_bug.cgi?id=65720
+
+        Reviewed by Sam Weinig.
+
+        Propagate the 'wasFixed' flag out from various methods that
+        are used when computing the collection of rects or quads
+        for a range. Use the flag in Range to computer whether
+        the Range is entirely within, partially within, or outside
+        of fixed-position content.
+
+        * WebCore.exp.in:
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        * dom/Range.cpp:
+        (WebCore::Range::textRects):
+        (WebCore::Range::textQuads):
+        * dom/Range.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::absoluteQuads):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteQuads):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteQuads):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::absoluteQuads):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuads):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::absoluteQuads):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::absoluteQuads):
+        * rendering/svg/RenderSVGHiddenContainer.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::absoluteQuads):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::absoluteQuads):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::absoluteQuads):
+        * rendering/svg/RenderSVGText.h:
+
 2011-08-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from Document.idl

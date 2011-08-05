@@ -552,20 +552,20 @@ void RenderInline::culledInlineAbsoluteRects(const RenderInline* container, Vect
     }
 }
 
-void RenderInline::absoluteQuads(Vector<FloatQuad>& quads)
+void RenderInline::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
 {
     if (!alwaysCreateLineBoxes())
         culledInlineAbsoluteQuads(this, quads);
     else if (InlineFlowBox* curr = firstLineBox()) {
         for (; curr; curr = curr->nextLineBox()) {
             FloatRect localRect(curr->x(), curr->y(), curr->width(), curr->height());
-            quads.append(localToAbsoluteQuad(localRect));
+            quads.append(localToAbsoluteQuad(localRect, false, wasFixed));
         }
     } else
-        quads.append(localToAbsoluteQuad(FloatRect()));
+        quads.append(localToAbsoluteQuad(FloatRect(), false, wasFixed));
 
     if (continuation())
-        continuation()->absoluteQuads(quads);
+        continuation()->absoluteQuads(quads, wasFixed);
 }
 
 void RenderInline::culledInlineAbsoluteQuads(const RenderInline* container, Vector<FloatQuad>& quads)

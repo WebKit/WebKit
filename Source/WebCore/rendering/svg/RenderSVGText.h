@@ -60,7 +60,7 @@ private:
     virtual bool requiresLayer() const { return false; }
     virtual void layout();
 
-    virtual void absoluteQuads(Vector<FloatQuad>&);
+    virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed);
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
     virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false) const;

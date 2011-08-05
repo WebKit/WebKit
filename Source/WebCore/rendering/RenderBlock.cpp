@@ -5812,7 +5812,7 @@ void RenderBlock::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& ac
         rects.append(LayoutRect(accumulatedOffset, size()));
 }
 
-void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads)
+void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
@@ -5822,10 +5822,10 @@ void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads)
         // https://bugs.webkit.org/show_bug.cgi?id=46781
         FloatRect localRect(0, -collapsedMarginBefore(),
                             width(), height() + collapsedMarginBefore() + collapsedMarginAfter());
-        quads.append(localToAbsoluteQuad(localRect));
-        continuation()->absoluteQuads(quads);
+        quads.append(localToAbsoluteQuad(localRect, false, wasFixed));
+        continuation()->absoluteQuads(quads, wasFixed);
     } else
-        quads.append(RenderBox::localToAbsoluteQuad(FloatRect(0, 0, width(), height())));
+        quads.append(RenderBox::localToAbsoluteQuad(FloatRect(0, 0, width(), height()), false, wasFixed));
 }
 
 IntRect RenderBlock::rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth) const

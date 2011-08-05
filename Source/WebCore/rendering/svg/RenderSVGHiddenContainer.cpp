@@ -44,7 +44,7 @@ void RenderSVGHiddenContainer::paint(PaintInfo&, const IntPoint&)
     // This subtree does not paint.
 }
 
-void RenderSVGHiddenContainer::absoluteQuads(Vector<FloatQuad>&)
+void RenderSVGHiddenContainer::absoluteQuads(Vector<FloatQuad>&, bool*)
 {
     // This subtree does not take up space or paint
 }
