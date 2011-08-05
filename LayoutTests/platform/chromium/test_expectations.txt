@@ -3688,3 +3688,5 @@ BUGWK65666 LINUX WIN : fast/box-shadow/box-shadow-clipped-slices.html = IMAGE
 // This test fails with GPU
 BUGWK58013 MAC GPU : compositing/scaling/tiled-layer-recursion.html = CRASH
 BUGWK58013 LINUX GPU : compositing/scaling/tiled-layer-recursion.html = IMAGE
+
+BUGWK65754 WIN MAC : fast/loader/ping-error.html = CRASH
