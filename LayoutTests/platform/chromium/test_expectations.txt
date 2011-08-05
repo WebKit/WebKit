@@ -2696,43 +2696,12 @@ BUGWK55968 WIN DEBUG GPU : compositing/webgl/webgl-nonpremultiplied-blend.html =
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
 BUGCR74102 LINUX GPU : media/video-controls-rendering.html = PASS IMAGE
 
-BUGWK64942 GPU : compositing/color-matching/image-color-matching.html = IMAGE
-BUGWK64942 LINUX RELEASE GPU : compositing/direct-image-compositing.html = IMAGE
-BUGWK64942 MAC WIN GPU : compositing/direct-image-compositing.html = IMAGE
-BUGWK64942 GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
-BUGWK64942 LINUX RELEASE GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGWK64942 MAC WIN GPU : compositing/geometry/fixed-in-composited.html = IMAGE
-BUGWK64942 GPU : compositing/geometry/fixed-position.html = IMAGE
-BUGWK64942 GPU : compositing/geometry/layer-due-to-layer-children-deep.html = IMAGE
-BUGWK64942 GPU : compositing/geometry/layer-due-to-layer-children.html = IMAGE
 BUGWK64942 WIN GPU : compositing/geometry/tall-page-composited.html = IMAGE
-BUGWK64942 LINUX RELEASE GPU : compositing/geometry/tall-page-composited.html = IMAGE
-BUGWK64942 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
-BUGWK64942 LINUX RELEASE GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGWK64942 MAC WIN GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGWK64942 LINUX RELEASE GPU : compositing/masks/simple-composited-mask.html = IMAGE
 BUGWK64942 MAC WIN GPU : compositing/masks/simple-composited-mask.html = IMAGE
-BUGWK64942 GPU : compositing/overflow/fixed-position-ancestor-clip.html = IMAGE
-BUGWK64942 GPU : compositing/reflections/nested-reflection-transition.html = IMAGE
-BUGWK64942 GPU : compositing/reflections/transform-inside-reflection.html = IMAGE
-BUGWK64942 GPU : compositing/shadows/shadow-drawing.html = IMAGE
-BUGWK64942 GPU : compositing/transitions/scale-transition-no-start.html = IMAGE
-BUGWK64942 LINUX RELEASE GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK64942 MAC WIN GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGWK64942 LINUX RELEASE GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 BUGWK64942 MAC WIN GPU : fast/canvas/image-object-in-canvas.html = IMAGE
-BUGWK64942 GPU : media/video-transformed.html = IMAGE
-BUGWK64942 GPU : media/video-zoom-controls.html = IMAGE
 BUGWK64942 WIN GPU : media/video-zoom.html = IMAGE
-BUGWK64942 LINUX RELEASE GPU : media/video-zoom.html = IMAGE
-BUGWK64942 GPU : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
-BUGWK64942 GPU : platform/chromium/compositing/huge-layer-rotated.html = IMAGE
-BUGWK64942 LINUX RELEASE GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
-BUGWK64942 MAC WIN GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
-BUGWK64942 GPU : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
-BUGWK64942 GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
-BUGWK64942 MAC WIN GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
-BUGWK64942 WIN GPU : compositing/iframes/composited-iframe-alignment.html = IMAGE
 
 BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 

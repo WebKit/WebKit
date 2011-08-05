@@ -1,3 +1,81 @@
+2011-08-05  David Reveman  <reveman@chromium.org>
+
+        [chromium] Rebaseline following r92255.
+        https://bugs.webkit.org/show_bug.cgi?id=65736
+
+        Reviewed by James Robinson.
+
+        * platform/chromium-gpu-linux/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-linux/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/ancestor-overflow-change-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/layer-due-to-layer-children-deep-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/layer-due-to-layer-children-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/tall-page-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-gpu-linux/compositing/masks/simple-composited-mask-expected.png:
+        * platform/chromium-gpu-linux/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-transition-expected.png:
+        * platform/chromium-gpu-linux/compositing/reflections/transform-inside-reflection-expected.png:
+        * platform/chromium-gpu-linux/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-linux/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/chromium-gpu-linux/fast/canvas/image-object-in-canvas-expected.png:
+        * platform/chromium-gpu-linux/media/video-transformed-expected.png:
+        * platform/chromium-gpu-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-linux/media/video-zoom-expected.png:
+        * platform/chromium-gpu-linux/platform/chromium/compositing/backface-visibility-transformed-expected.png:
+        * platform/chromium-gpu-linux/platform/chromium/compositing/huge-layer-rotated-expected.png:
+        * platform/chromium-gpu-linux/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-linux/platform/chromium/compositing/perpendicular-layer-sorting-expected.png:
+        * platform/chromium-gpu-linux/platform/chromium/compositing/tiny-layer-rotated-expected.png:
+        * platform/chromium-gpu-mac/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-mac/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/ancestor-overflow-change-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/layer-due-to-layer-children-deep-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/layer-due-to-layer-children-expected.png:
+        * platform/chromium-gpu-mac/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-gpu-mac/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-transition-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/transform-inside-reflection-expected.png:
+        * platform/chromium-gpu-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-mac/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/chromium-gpu-mac/media/video-transformed-expected.png:
+        * platform/chromium-gpu-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/backface-visibility-transformed-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/huge-layer-rotated-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/perpendicular-layer-sorting-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/tiny-layer-rotated-expected.png:
+        * platform/chromium-gpu-win/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-win/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/ancestor-overflow-change-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-deep-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-gpu-win/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transition-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/transform-inside-reflection-expected.png:
+        * platform/chromium-gpu-win/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-win/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/chromium-gpu-win/media/video-transformed-expected.png:
+        * platform/chromium-gpu-win/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-win/platform/chromium/compositing/backface-visibility-transformed-expected.png:
+        * platform/chromium-gpu-win/platform/chromium/compositing/huge-layer-rotated-expected.png:
+        * platform/chromium-gpu-win/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-win/platform/chromium/compositing/perpendicular-layer-sorting-expected.png:
+        * platform/chromium-gpu-win/platform/chromium/compositing/tiny-layer-rotated-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-08-05  Shinichiro Hamaji  <hamaji@chromium.org>
 
         Layout Test fast/xsl/xslt-import-depth.xml is failing
