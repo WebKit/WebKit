@@ -20,6 +20,12 @@ function test()
             ["RuntimeAgent", "evaluate", 'testObject', 'test', false],
             ["RuntimeAgent", "evaluate", 'testObject', 'test'],
             ["RuntimeAgent", "callFunctionOn", result.objectId, 'function() { this.assignedByCallFunctionOn = "callFunctionOn function works fine"; return this.assignedByCallFunctionOn; }'],
+
+            // test returnByValue:
+            ["RuntimeAgent", "evaluate", 'var o = {n:2011, b:true, s:"a string", o:{n:2011}}; o', 'test', false, true, undefined, true],
+            ["RuntimeAgent", "evaluate", 'var x = {}; x.self = x; x', 'test', false, true, undefined, true],
+            ["RuntimeAgent", "callFunctionOn", result.objectId, 'function() { this.self = this; return this; }', undefined, true],
+
             ["RuntimeAgent", "getProperties", result.objectId, false],
             ["RuntimeAgent", "releaseObject", result.objectId],
             ["RuntimeAgent", "releaseObjectGroup", 'test']];

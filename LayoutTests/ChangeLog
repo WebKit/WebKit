@@ -1,3 +1,13 @@
+2011-08-05  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: constrain maximum depth for returnByValue objects
+        https://bugs.webkit.org/show_bug.cgi?id=65761
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/protocol/runtime-agent.html:
+
 2011-08-05  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Add http/tests/inspector/resource-tree/resource-tree-non-unique-url.html

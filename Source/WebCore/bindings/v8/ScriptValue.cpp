@@ -73,12 +73,17 @@ String ScriptValue::toString(ScriptState*) const
 }
 
 #if ENABLE(INSPECTOR)
-static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value)
+static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value, int maxDepth)
 {
     if (value.IsEmpty()) {
         ASSERT_NOT_REACHED();
         return 0;
     }
+
+    if (!maxDepth)
+        return 0;
+    maxDepth--;
+
     if (value->IsNull() || value->IsUndefined())
         return InspectorValue::null();
     if (value->IsBoolean())
@@ -93,11 +98,9 @@ static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value
         uint32_t length = array->Length();
         for (uint32_t i = 0; i < length; i++) {
             v8::Local<v8::Value> value = array->Get(v8::Int32::New(i));
-            RefPtr<InspectorValue> element = v8ToInspectorValue(value);
-            if (!element) {
-                ASSERT_NOT_REACHED();
-                element = InspectorValue::null();
-            }
+            RefPtr<InspectorValue> element = v8ToInspectorValue(value, maxDepth);
+            if (!element)
+                return 0;
             inspectorArray->pushValue(element);
         }
         return inspectorArray;
@@ -112,11 +115,9 @@ static PassRefPtr<InspectorValue> v8ToInspectorValue(v8::Handle<v8::Value> value
             // FIXME(yurys): v8::Object should support GetOwnPropertyNames
             if (name->IsString() && !object->HasRealNamedProperty(v8::Handle<v8::String>::Cast(name)))
                 continue;
-            RefPtr<InspectorValue> propertyValue = v8ToInspectorValue(object->Get(name));
-            if (!propertyValue) {
-                ASSERT_NOT_REACHED();
-                continue;
-            }
+            RefPtr<InspectorValue> propertyValue = v8ToInspectorValue(object->Get(name), maxDepth);
+            if (!propertyValue)
+                return 0;
             inspectorObject->setValue(toWebCoreStringWithNullCheck(name), propertyValue);
         }
         return inspectorObject;
@@ -130,7 +131,7 @@ PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState* scriptStat
     v8::HandleScope handleScope;
     // v8::Object::GetPropertyNames() expects current context to be not null.
     v8::Context::Scope contextScope(scriptState->context());
-    return v8ToInspectorValue(m_value);
+    return v8ToInspectorValue(m_value, InspectorValue::maxDepth);
 }
 #endif
 

@@ -192,9 +192,11 @@ void InjectedScript::makeCall(ScriptFunctionCall& function, RefPtr<InspectorValu
     ScriptValue resultValue = function.call(hadException);
 
     ASSERT(!hadException);
-    if (!hadException)
+    if (!hadException) {
         *result = resultValue.toInspectorValue(m_injectedScriptObject.scriptState());
-    else
+        if (!*result)
+            *result = InspectorString::create(String::format("Object has too long reference chain(must not be longer than %d)", InspectorValue::maxDepth));
+    } else
         *result = InspectorString::create("Exception while making a call.");
 }
 

@@ -78,6 +78,88 @@ response:
 }
 
 -----------------------------------------------------------
+RuntimeAgent.evaluate("var o = {n:2011, b:true, s:\"a string\", o:{n:2011}}; o","test",false,true,null,true)
+
+request:
+{
+    method : "Runtime.evaluate"
+    params : {
+        expression : "var o = {n:2011, b:true, s:"a string", o:{n:2011}}; o"
+        objectGroup : "test"
+        includeCommandLineAPI : false
+        doNotPauseOnExceptions : true
+        returnByValue : true
+    }
+    id : <number>
+}
+
+response:
+{
+    result : {
+        result : {
+            type : "object"
+            value : {
+                n : 2011
+                b : true
+                s : "a string"
+                o : {
+                    n : 2011
+                }
+            }
+        }
+    }
+    id : <number>
+}
+
+-----------------------------------------------------------
+RuntimeAgent.evaluate("var x = {}; x.self = x; x","test",false,true,null,true)
+
+request:
+{
+    method : "Runtime.evaluate"
+    params : {
+        expression : "var x = {}; x.self = x; x"
+        objectGroup : "test"
+        includeCommandLineAPI : false
+        doNotPauseOnExceptions : true
+        returnByValue : true
+    }
+    id : <number>
+}
+
+response:
+{
+    error : {
+        code : -32000
+        message : "Object has too long reference chain(must not be longer than 1000)"
+    }
+    id : <number>
+}
+
+-----------------------------------------------------------
+RuntimeAgent.callFunctionOn(<string>,"function() { this.self = this; return this; }",null,true)
+
+request:
+{
+    method : "Runtime.callFunctionOn"
+    params : {
+        objectId : <string>
+        functionDeclaration : "function() { this.self = this; return this; }"
+        returnByValue : true
+    }
+    id : <number>
+}
+
+response:
+{
+    error : {
+        code : -32000
+        message : "Object has too long reference chain(must not be longer than 1000)"
+    }
+    id : <number>
+}
+
+-----------------------------------------------------------
 RuntimeAgent.getProperties(<string>,false)
 
 request:
@@ -99,6 +181,15 @@ response:
                 value : {
                     type : "string"
                     value : "callFunctionOn function works fine"
+                }
+            }
+            {
+                name : "self"
+                value : {
+                    type : "object"
+                    objectId : <string>
+                    className : <string>
+                    description : "TestObject"
                 }
             }
             {

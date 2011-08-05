@@ -48,6 +48,8 @@ class InspectorObject;
 
 class InspectorValue : public RefCounted<InspectorValue> {
 public:
+    static const int maxDepth = 1000;
+
     InspectorValue() : m_type(TypeNull) { }
     virtual ~InspectorValue() { }
 

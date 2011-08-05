@@ -111,12 +111,17 @@ ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptV
 }
 
 #if ENABLE(INSPECTOR)
-static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, JSValue value)
+static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, JSValue value, int maxDepth)
 {
     if (!value) {
         ASSERT_NOT_REACHED();
         return 0;
     }
+
+    if (!maxDepth)
+        return 0;
+    maxDepth--;
+
     if (value.isNull() || value.isUndefined())
         return InspectorValue::null();
     if (value.isBoolean())
@@ -134,11 +139,9 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
             unsigned length = array->length();
             for (unsigned i = 0; i < length; i++) {
                 JSValue element = array->getIndex(i);
-                RefPtr<InspectorValue> elementValue = jsToInspectorValue(scriptState, element);
-                if (!elementValue) {
-                    ASSERT_NOT_REACHED();
-                    elementValue = InspectorValue::null();
-                }
+                RefPtr<InspectorValue> elementValue = jsToInspectorValue(scriptState, element, maxDepth);
+                if (!elementValue)
+                    return 0;
                 inspectorArray->pushValue(elementValue);
             }
             return inspectorArray;
@@ -150,11 +153,9 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
         for (size_t i = 0; i < propertyNames.size(); i++) {
             const Identifier& name =  propertyNames[i];
             JSValue propertyValue = object->get(scriptState, name);
-            RefPtr<InspectorValue> inspectorValue = jsToInspectorValue(scriptState, propertyValue);
-            if (!inspectorValue) {
-                ASSERT_NOT_REACHED();
-                inspectorValue = InspectorValue::null();
-            }
+            RefPtr<InspectorValue> inspectorValue = jsToInspectorValue(scriptState, propertyValue, maxDepth);
+            if (!inspectorValue)
+                return 0;
             inspectorObject->setValue(String(name.characters(), name.length()), inspectorValue);
         }
         return inspectorObject;
@@ -165,7 +166,7 @@ static PassRefPtr<InspectorValue> jsToInspectorValue(ScriptState* scriptState, J
 
 PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState* scriptState) const
 {
-    return jsToInspectorValue(scriptState, m_value.get());
+    return jsToInspectorValue(scriptState, m_value.get(), InspectorValue::maxDepth);
 }
 #endif // ENABLE(INSPECTOR)
 
