@@ -51,11 +51,6 @@ public:
 
     ~WebKitCSSKeyframesRule();
 
-    virtual bool isKeyframesRule() { return true; }
-
-    // Inherited from CSSRule
-    virtual unsigned short type() const { return WEBKIT_KEYFRAMES_RULE; }
-
     String name() const;
     void setName(const String&);
     
@@ -83,6 +78,10 @@ public:
 
 private:
     WebKitCSSKeyframesRule(CSSStyleSheet* parent);
+
+    virtual bool isKeyframesRule() const { return true; }
+    // Inherited from CSSRule
+    virtual CSSRuleType type() const { return WEBKIT_KEYFRAMES_RULE; }
 
     int findRuleIndex(const String& key) const;
     

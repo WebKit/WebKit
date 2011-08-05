@@ -46,8 +46,7 @@ public:
         WEBKIT_KEYFRAME_RULE
     };
 
-    // FIXME: Change to return CSSRuleType.
-    virtual unsigned short type() const = 0;
+    virtual CSSRuleType type() const = 0;
 
     CSSStyleSheet* parentStyleSheet() const;
     CSSRule* parentRule() const;
@@ -64,7 +63,7 @@ protected:
     }
 
 private:
-    virtual bool isRule() { return true; }
+    virtual bool isRule() const { return true; }
 };
 
 } // namespace WebCore

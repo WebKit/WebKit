@@ -1,3 +1,54 @@
+2011-08-05  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Improve const-correctness in CSS code: type information methods
+        https://bugs.webkit.org/show_bug.cgi?id=65506
+
+        Reviewed by Simon Fraser.
+
+        Make "is...()" functions (e.g., "isStyleRule()") const.
+        Also, change CSSRule's type() function to return CSSRuleType.
+
+        No new tests. (no change in semantics)
+
+        * css/CSSCharsetRule.h:
+        (WebCore::CSSCharsetRule::isCharsetRule):
+        (WebCore::CSSCharsetRule::type):
+        * css/CSSFontFaceRule.h:
+        (WebCore::CSSFontFaceRule::isFontFaceRule):
+        (WebCore::CSSFontFaceRule::type):
+        * css/CSSImportRule.h:
+        (WebCore::CSSImportRule::isImportRule):
+        (WebCore::CSSImportRule::type):
+        * css/CSSMediaRule.h:
+        (WebCore::CSSMediaRule::isMediaRule):
+        (WebCore::CSSMediaRule::type):
+        * css/CSSPageRule.h:
+        (WebCore::CSSPageRule::isPageRule):
+        (WebCore::CSSPageRule::type):
+        * css/CSSRule.h:
+        (WebCore::CSSRule::isRule):
+        * css/CSSStyleRule.h:
+        (WebCore::CSSStyleRule::isStyleRule):
+        (WebCore::CSSStyleRule::type):
+        * css/CSSUnknownRule.h:
+        (WebCore::CSSUnknownRule::type):
+        * css/StyleBase.h:
+        (WebCore::StyleBase::isCharsetRule):
+        (WebCore::StyleBase::isFontFaceRule):
+        (WebCore::StyleBase::isImportRule):
+        (WebCore::StyleBase::isKeyframeRule):
+        (WebCore::StyleBase::isKeyframesRule):
+        (WebCore::StyleBase::isMediaRule):
+        (WebCore::StyleBase::isPageRule):
+        (WebCore::StyleBase::isRule):
+        (WebCore::StyleBase::isStyleRule):
+        * css/WebKitCSSKeyframeRule.h:
+        (WebCore::WebKitCSSKeyframeRule::isKeyframeRule):
+        (WebCore::WebKitCSSKeyframeRule::type):
+        * css/WebKitCSSKeyframesRule.h:
+        (WebCore::WebKitCSSKeyframesRule::isKeyframesRule):
+        (WebCore::WebKitCSSKeyframesRule::type):
+
 2011-08-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from plugin IDL files

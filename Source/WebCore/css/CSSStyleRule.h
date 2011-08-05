@@ -64,10 +64,9 @@ protected:
     CSSStyleRule(CSSStyleSheet* parent, int sourceLine);
 
 private:
-    virtual bool isStyleRule() { return true; }
-
+    virtual bool isStyleRule() const { return true; }
     // Inherited from CSSRule
-    virtual unsigned short type() const { return STYLE_RULE; }
+    virtual CSSRuleType type() const { return STYLE_RULE; }
 
     RefPtr<CSSMutableStyleDeclaration> m_style;
     CSSSelectorList m_selectorList;

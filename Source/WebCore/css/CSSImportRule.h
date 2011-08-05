@@ -57,11 +57,11 @@ public:
 private:
     CSSImportRule(CSSStyleSheet* parent, const String& href, PassRefPtr<MediaList>);
 
-    virtual bool isImportRule() { return true; }
-    virtual void insertedIntoParent();
-
+    virtual bool isImportRule() const { return true; }
     // from CSSRule
-    virtual unsigned short type() const { return IMPORT_RULE; }
+    virtual CSSRuleType type() const { return IMPORT_RULE; }
+
+    virtual void insertedIntoParent();
 
     // from CachedResourceClient
     virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet*);

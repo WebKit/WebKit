@@ -48,16 +48,17 @@ namespace WebCore {
         KURL baseURL() const;
 
         virtual bool isCSSStyleSheet() const { return false; }
-        virtual bool isCharsetRule() { return false; }
-        virtual bool isFontFaceRule() { return false; }
-        virtual bool isImportRule() { return false; }
-        virtual bool isKeyframeRule() { return false; }
-        virtual bool isKeyframesRule() { return false; }
-        virtual bool isMediaRule() { return false; }
-        virtual bool isPageRule() { return false; }
-        
-        virtual bool isRule() { return false; }
-        virtual bool isStyleRule() { return false; }
+
+        virtual bool isCharsetRule() const { return false; }
+        virtual bool isFontFaceRule() const { return false; }
+        virtual bool isImportRule() const { return false; }
+        virtual bool isKeyframeRule() const { return false; }
+        virtual bool isKeyframesRule() const { return false; }
+        virtual bool isMediaRule() const { return false; }
+        virtual bool isPageRule() const { return false; }
+        virtual bool isRule() const { return false; }
+        virtual bool isStyleRule() const { return false; }
+
         virtual bool isStyleSheet() const { return false; }
         virtual bool isXSLStyleSheet() const { return false; }
 

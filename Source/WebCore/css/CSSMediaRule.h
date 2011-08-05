@@ -55,10 +55,9 @@ public:
 private:
     CSSMediaRule(CSSStyleSheet* parent, PassRefPtr<MediaList>, PassRefPtr<CSSRuleList>);
 
-    virtual bool isMediaRule() { return true; }
-
+    virtual bool isMediaRule() const { return true; }
     // Inherited from CSSRule
-    virtual unsigned short type() const { return MEDIA_RULE; }
+    virtual CSSRuleType type() const { return MEDIA_RULE; }
 
     RefPtr<MediaList> m_lstMedia;
     RefPtr<CSSRuleList> m_lstCSSRules;

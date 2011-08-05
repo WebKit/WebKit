@@ -28,7 +28,7 @@ namespace WebCore {
 
 class CSSUnknownRule : public CSSRule {
 private:
-    virtual unsigned short type() const { return UNKNOWN_RULE; }
+    virtual CSSRuleType type() const { return UNKNOWN_RULE; }
 };
 
 } // namespace WebCore

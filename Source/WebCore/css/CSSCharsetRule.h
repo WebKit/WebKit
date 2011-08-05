@@ -44,10 +44,9 @@ public:
 private:
     CSSCharsetRule(CSSStyleSheet* parent, const String& encoding);
 
-    virtual bool isCharsetRule() { return true; }
-
+    virtual bool isCharsetRule() const { return true; }
     // from CSSRule
-    virtual unsigned short type() const { return CHARSET_RULE; }
+    virtual CSSRuleType type() const { return CHARSET_RULE; }
 
     String m_encoding;
 };

@@ -49,11 +49,6 @@ public:
 
     virtual ~WebKitCSSKeyframeRule();
 
-    virtual bool isKeyframeRule() { return true; }
-
-    // Inherited from CSSRule
-    virtual unsigned short type() const { return WEBKIT_KEYFRAME_RULE; }
-
     String keyText() const              { return m_key; }
     void setKeyText(const String& s)    { m_key = s; }
     
@@ -72,6 +67,10 @@ public:
     const CSSMutableStyleDeclaration*   declaration() const { return m_style.get(); }
     
 private:
+    virtual bool isKeyframeRule() const { return true; }
+    // Inherited from CSSRule
+    virtual CSSRuleType type() const { return WEBKIT_KEYFRAME_RULE; }
+
     static void parseKeyString(const String& s, Vector<float>& keys);
     
     WebKitCSSKeyframeRule(CSSStyleSheet* parent);
