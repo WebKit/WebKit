@@ -84,12 +84,11 @@ inline static EventTarget* eventTargetRespectingSVGTargetRules(Node* referenceNo
     return referenceNode->isSVGElement() ? findElementInstance(referenceNode) : referenceNode;
 }
 
-void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<Event> event)
+void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
-    event->setTarget(eventTargetRespectingSVGTargetRules(node));
-
-    ScopedEventQueue::instance()->enqueueEvent(event);
+    mediator->event()->setTarget(eventTargetRespectingSVGTargetRules(node));
+    ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
 }
 
 void EventDispatcher::dispatchSimulatedClick(Node* node, PassRefPtr<Event> underlyingEvent, bool sendMouseEvents, bool showPressedLook)

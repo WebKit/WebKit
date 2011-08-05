@@ -50,6 +50,7 @@ class DynamicNodeList;
 class Element;
 class Event;
 class EventContext;
+class EventDispatchMediator;
 class EventListener;
 class FloatPoint;
 class Frame;
@@ -546,6 +547,7 @@ public:
     using EventTarget::dispatchEvent;
     bool dispatchEvent(PassRefPtr<Event>);
     void dispatchScopedEvent(PassRefPtr<Event>);
+    void dispatchScopedEventDispatchMediator(PassRefPtr<EventDispatchMediator>);
 
     virtual void handleLocalEvents(Event*);
 

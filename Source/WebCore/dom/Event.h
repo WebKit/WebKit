@@ -205,12 +205,11 @@ public:
     virtual ~EventDispatchMediator();
 
     virtual bool dispatchEvent(EventDispatcher*) const;
+    Event* event() const;
 
 protected:
     explicit EventDispatchMediator(PassRefPtr<Event>);
     EventDispatchMediator();
-
-    Event* event() const;
     void setEvent(PassRefPtr<Event>);
 
 private:

@@ -32,13 +32,13 @@
 #define ScopedEventQueue_h
 
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class Event;
+class EventDispatchMediator;
 
 class ScopedEventQueue {
     WTF_MAKE_NONCOPYABLE(ScopedEventQueue);
@@ -46,7 +46,7 @@ class ScopedEventQueue {
 public:
     ~ScopedEventQueue();
 
-    void enqueueEvent(PassRefPtr<Event>);
+    void enqueueEventDispatchMediator(PassRefPtr<EventDispatchMediator>);
     void dispatchAllEvents();
     static ScopedEventQueue* instance();
 
@@ -56,9 +56,9 @@ public:
 private:
     ScopedEventQueue();
     static void initialize();
-    void dispatchEvent(PassRefPtr<Event>) const;
+    void dispatchEvent(PassRefPtr<EventDispatchMediator>) const;
 
-    Vector<RefPtr<Event> > m_queuedEvents;
+    Vector<RefPtr<EventDispatchMediator> > m_queuedEventDispatchMediators;
     unsigned m_scopingLevel;
 
     static ScopedEventQueue* s_instance;

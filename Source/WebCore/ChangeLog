@@ -1,3 +1,27 @@
+2011-08-04  Hayato Ito  <hayato@chromium.org>
+
+        Make ScopedEventQueue enqueue an EventDispatchMediator, instead of an Event.
+        https://bugs.webkit.org/show_bug.cgi?id=65613
+
+        Reviewed by Dimitri Glazkov.
+
+        No changes to functionality so no new tests.
+
+        * dom/Event.h:
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::dispatchScopedEvent):
+        * dom/EventDispatcher.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchScopedEvent):
+        (WebCore::Node::dispatchScopedEventDispatchMediator):
+        * dom/Node.h:
+        * dom/ScopedEventQueue.cpp:
+        (WebCore::ScopedEventQueue::~ScopedEventQueue):
+        (WebCore::ScopedEventQueue::enqueueEventDispatchMediator):
+        (WebCore::ScopedEventQueue::dispatchAllEvents):
+        (WebCore::ScopedEventQueue::dispatchEvent):
+        * dom/ScopedEventQueue.h:
+
 2011-08-04  James Robinson  <jamesr@chromium.org>
 
         Unreviewed build fix.  gcc 4.5 can't figure out that the 'data' variables are always initialized in these functions.

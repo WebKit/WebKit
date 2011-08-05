@@ -32,7 +32,10 @@
 #include "ScopedEventQueue.h"
 
 #include "Event.h"
+#include "EventDispatcher.h"
 #include "EventTarget.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -46,7 +49,7 @@ ScopedEventQueue::ScopedEventQueue()
 ScopedEventQueue::~ScopedEventQueue()
 {
     ASSERT(!m_scopingLevel);
-    ASSERT(!m_queuedEvents.size());
+    ASSERT(!m_queuedEventDispatchMediators.size());
 }
 
 void ScopedEventQueue::initialize()
@@ -56,27 +59,28 @@ void ScopedEventQueue::initialize()
     s_instance = instance.leakPtr();
 }
 
-void ScopedEventQueue::enqueueEvent(PassRefPtr<Event> event)
+void ScopedEventQueue::enqueueEventDispatchMediator(PassRefPtr<EventDispatchMediator> mediator)
 {
     if (m_scopingLevel)
-        m_queuedEvents.append(event);
+        m_queuedEventDispatchMediators.append(mediator);
     else
-        dispatchEvent(event);
+        dispatchEvent(mediator);
 }
 
 void ScopedEventQueue::dispatchAllEvents()
 {
-    Vector<RefPtr<Event> > queuedEvents;
-    queuedEvents.swap(m_queuedEvents);
+    Vector<RefPtr<EventDispatchMediator> > queuedEventDispatchMediators;
+    queuedEventDispatchMediators.swap(m_queuedEventDispatchMediators);
 
-    for (size_t i = 0; i < queuedEvents.size(); i++)
-        dispatchEvent(queuedEvents[i].release());
+    for (size_t i = 0; i < queuedEventDispatchMediators.size(); i++)
+        dispatchEvent(queuedEventDispatchMediators[i].release());
 }
 
-void ScopedEventQueue::dispatchEvent(PassRefPtr<Event> event) const
+void ScopedEventQueue::dispatchEvent(PassRefPtr<EventDispatchMediator> mediator) const
 {
-    RefPtr<EventTarget> eventTarget = event->target();
-    eventTarget->dispatchEvent(event);
+    ASSERT(mediator->event()->target());
+    Node* node = mediator->event()->target()->toNode();
+    EventDispatcher::dispatchEvent(node, mediator);
 }
 
 ScopedEventQueue* ScopedEventQueue::instance()
