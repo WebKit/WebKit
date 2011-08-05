@@ -1,3 +1,19 @@
+2011-08-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        [WebKit2] Fix code paths that can leave frame view paint behavior in the wrong state
+        https://bugs.webkit.org/show_bug.cgi?id=63779
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent): Unrelated cleanup. Removed unneeded local variable.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotInViewCoordinates): Rearranged code so that the call to
+        setPaintBehavior is after the early exit. Also got rid of unneeded save/restore since
+        the function uses a graphics context that it then throws away.
+        (WebKit::WebPage::scaledSnapshotInDocumentCoordinates): Ditto.
+
 2011-08-04  Mark Rowe  <mrowe@apple.com>
 
         Future-proof Xcode configuration settings.

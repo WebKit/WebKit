@@ -590,8 +590,7 @@ void PluginView::handleEvent(Event* event)
             focusPluginElement();
         
         // Adjust mouse coordinates to account for pageScaleFactor
-        float scaleFactor = frame()->pageScaleFactor();
-        WebMouseEvent eventWithScaledCoordinates(*(static_cast<const WebMouseEvent*>(currentEvent)), scaleFactor);
+        WebMouseEvent eventWithScaledCoordinates(*static_cast<const WebMouseEvent*>(currentEvent), frame()->pageScaleFactor());
         didHandleEvent = m_plugin->handleMouseEvent(eventWithScaledCoordinates);
     } else if (event->type() == eventNames().mousewheelEvent && currentEvent->type() == WebEvent::Wheel) {
         // We have a wheel event.

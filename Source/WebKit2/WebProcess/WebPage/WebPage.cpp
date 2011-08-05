@@ -869,22 +869,18 @@ PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, Ima
     if (!frameView)
         return 0;
 
-    frameView->updateLayoutAndStyleIfNeededRecursive();
-
-    PaintBehavior oldBehavior = frameView->paintBehavior();
-    frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
-
     RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
     if (!snapshot->bitmap())
         return 0;
     
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
-
-    graphicsContext->save();
     graphicsContext->translate(-rect.x(), -rect.y());
-    frameView->paint(graphicsContext.get(), rect);
-    graphicsContext->restore();
 
+    frameView->updateLayoutAndStyleIfNeededRecursive();
+
+    PaintBehavior oldBehavior = frameView->paintBehavior();
+    frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
+    frameView->paint(graphicsContext.get(), rect);
     frameView->setPaintBehavior(oldBehavior);
 
     return snapshot.release();
@@ -896,30 +892,20 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotInDocumentCoordinates(const IntRect&
     if (!frameView)
         return 0;
 
+    IntSize size(ceil(rect.width() * scaleFactor), ceil(rect.height() * scaleFactor));
+    RefPtr<WebImage> snapshot = WebImage::create(size, options);
+    if (!snapshot->bitmap())
+        return 0;
+
+    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
+    graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
+    graphicsContext->translate(-rect.x(), -rect.y());
+
     frameView->updateLayoutAndStyleIfNeededRecursive();
 
     PaintBehavior oldBehavior = frameView->paintBehavior();
     frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
-
-    bool scale = scaleFactor != 1;
-    IntSize size = rect.size();
-    if (scale) 
-        size = IntSize(ceil(rect.width() * scaleFactor), ceil(rect.height() * scaleFactor));
-
-    RefPtr<WebImage> snapshot = WebImage::create(size, options);
-    if (!snapshot->bitmap())
-        return 0;
-    
-    OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
-    graphicsContext->save();
-    
-    if (scale)
-        graphicsContext->scale(FloatSize(scaleFactor, scaleFactor));
-    
-    graphicsContext->translate(-rect.x(), -rect.y());
     frameView->paintContents(graphicsContext.get(), rect);
-    graphicsContext->restore();
-
     frameView->setPaintBehavior(oldBehavior);
 
     return snapshot.release();
