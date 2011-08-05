@@ -1,5 +1,12 @@
 2011-08-04  Simon Fraser  <simon.fraser@apple.com>
 
+        Fix release build failure with last commit.
+
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+
+2011-08-04  Simon Fraser  <simon.fraser@apple.com>
+
         Add code to determine whether a Range in inside fixed position content
         https://bugs.webkit.org/show_bug.cgi?id=65720
 
