@@ -1,3 +1,10 @@
+2011-08-05  Keishi Hattori  <keishi@webkit.org>
+
+        Sort WebCore.xcodeproj
+        Accomplished using sort-Xcode-project-file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-08-05  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: constrain maximum depth for returnByValue objects
