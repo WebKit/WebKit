@@ -2230,11 +2230,6 @@ svg/W3C-SVG-1.1-SE/styling-pres-02-f.svg
 # https://bugs.webkit.org/show_bug.cgi?id=65257
 svg/custom/zero-path-square-cap-rendering2.svg
 
-# [Qt]Web Inspector: REGRESSION(r91928): It made 2 tests fail
-# https://bugs.webkit.org/show_bug.cgi?id=65364
-http/tests/inspector/network/network-initiator.html
-http/tests/inspector/network/network-request-revision-content.html
-
 # [Qt]Web Inspector: http/tests/inspector/network/network-sidebar-width.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=65526
 http/tests/inspector/network/network-sidebar-width.html
