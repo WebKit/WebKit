@@ -3688,3 +3688,6 @@ BUGWK64942 MAC GPU : platform/chromium/compositing/huge-layer-rotated.html = IMA
 BUGWK64942 MAC GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 BUGWK64942 MAC GPU : platform/chromium/compositing/perpendicular-layer-sorting.html = IMAGE
 BUGWK64942 MAC GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
+
+// Might need rebaseline.
+BUGJIANLI WIN LINUX : fast/repaint/canvas-putImageData.html = TEXT
