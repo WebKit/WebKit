@@ -63,7 +63,7 @@ public:
     // Important functions used by nearly all SVG renderers centralizing coordinate transformations / repaint rect calculations
     static IntRect clippedOverflowRectForRepaint(const RenderObject*, RenderBoxModelObject* repaintContainer);
     static void computeRectForRepaint(const RenderObject*, RenderBoxModelObject* repaintContainer, IntRect&, bool fixed);
-    static void mapLocalToContainer(const RenderObject*, RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&);
+    static void mapLocalToContainer(const RenderObject*, RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0);
 
     // Shared between SVG renderers and resources.
     static void applyStrokeStyleToContext(GraphicsContext*, const RenderStyle*, const RenderObject*);

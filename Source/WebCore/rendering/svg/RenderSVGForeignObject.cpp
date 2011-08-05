@@ -159,12 +159,12 @@ bool RenderSVGForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, 
     return false;
 }
 
-void RenderSVGForeignObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
+void RenderSVGForeignObject::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, bool* wasFixed) const
 {
     // When crawling up the hierachy starting from foreignObject child content, useTransforms may not be set to true.
     if (!useTransforms)
         useTransforms = true;
-    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
+    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState, wasFixed);
 }
 
 }

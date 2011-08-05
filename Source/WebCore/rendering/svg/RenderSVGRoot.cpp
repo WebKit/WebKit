@@ -415,14 +415,14 @@ void RenderSVGRoot::computeRectForRepaint(RenderBoxModelObject* repaintContainer
     RenderBox::computeRectForRepaint(repaintContainer, repaintRect, fixed);
 }
 
-void RenderSVGRoot::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed , bool useTransforms, TransformState& transformState) const
+void RenderSVGRoot::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, bool* wasFixed) const
 {
     ASSERT(!fixed); // We should have no fixed content in the SVG rendering tree.
     ASSERT(useTransforms); // mapping a point through SVG w/o respecting trasnforms is useless.
 
     // Transform to our border box and let RenderBox transform the rest of the way.
     transformState.applyTransform(localToBorderBoxTransform());
-    RenderBox::mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState);
+    RenderBox::mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, wasFixed);
 }
 
 void RenderSVGRoot::updateCachedBoundaries()

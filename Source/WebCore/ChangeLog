@@ -1,3 +1,51 @@
+2011-08-04  Simon Fraser  <simon.fraser@apple.com>
+
+        Add code to determine whether a Range in inside fixed position content
+        https://bugs.webkit.org/show_bug.cgi?id=65720
+
+        Reviewed by Dan Bernstein.
+
+        Add an out param for various coordinate mapping functions
+        that tells us whether the point or rectangle being
+        mapped is inside fixed-position content.
+        
+        This brings back some of the changes from r89754.
+        
+        No behavior changes, so no tests.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::mapLocalToContainer):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::mapLocalToContainer):
+        (WebCore::RenderObject::localToContainerQuad):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::localToAbsoluteQuad):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::mapLocalToContainer):
+        * rendering/RenderView.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::mapLocalToContainer):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::mapLocalToContainer):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::mapLocalToContainer):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::mapLocalToContainer):
+        * rendering/svg/RenderSVGText.h:
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::mapLocalToContainer):
+        * rendering/svg/SVGRenderSupport.h:
+
 2011-08-04  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from DOM-related files except Document.idl

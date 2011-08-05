@@ -92,9 +92,9 @@ void RenderSVGText::computeRectForRepaint(RenderBoxModelObject* repaintContainer
     SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
-void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState) const
+void RenderSVGText::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState& transformState, bool* wasFixed) const
 {
-    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState);
+    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, fixed, useTransforms, transformState, wasFixed);
 }
 
 static inline void recursiveUpdateScaledFont(RenderObject* start)

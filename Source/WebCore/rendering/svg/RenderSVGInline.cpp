@@ -77,9 +77,9 @@ void RenderSVGInline::computeRectForRepaint(RenderBoxModelObject* repaintContain
     SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }
 
-void RenderSVGInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState& transformState) const
+void RenderSVGInline::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState& transformState, bool* wasFixed) const
 {
-    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, useTransforms, fixed, transformState);
+    SVGRenderSupport::mapLocalToContainer(this, repaintContainer, useTransforms, fixed, transformState, wasFixed);
 }
 
 void RenderSVGInline::absoluteQuads(Vector<FloatQuad>& quads)
