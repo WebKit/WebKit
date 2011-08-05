@@ -36,15 +36,6 @@
 #include <wtf/text/CString.h>
 
 
-/**
- * Sets the path where the cookies are going to be stored. Use @c NULL for keep
- * them just in memory.
- *
- * @param filename path to the cookies.txt file.
- *
- * @return @c EINA_FALSE if it wasn't possible to create the cookie jar,
- *          @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_cookies_file_set(const char *filename)
 {
 #if USE(SOUP)
@@ -73,9 +64,6 @@ Eina_Bool ewk_cookies_file_set(const char *filename)
 #endif
 }
 
-/**
- * Clears all the cookies from the cookie jar.
- */
 void ewk_cookies_clear(void)
 {
 #if USE(SOUP)
@@ -91,11 +79,6 @@ void ewk_cookies_clear(void)
 #endif
 }
 
-/**
- * Returns a list of cookies in the cookie jar.
- *
- * @return an @c Eina_List with all the cookies in the cookie jar.
- */
 Eina_List *ewk_cookies_get_all(void)
 {
     Eina_List *el = 0;
@@ -123,14 +106,6 @@ Eina_List *ewk_cookies_get_all(void)
     return el;
 }
 
-/**
- * Deletes a cookie from the cookie jar.
- *
- * Note that the fields name, value, domain and path are used to match this
- * cookie in the cookie jar.
- *
- * @param cookie an @c Ewk_Cookie that has the info relative to that cookie.
- */
 void ewk_cookies_cookie_del(Ewk_Cookie *cookie)
 {
 #if USE(SOUP)
@@ -155,11 +130,6 @@ void ewk_cookies_cookie_del(Ewk_Cookie *cookie)
 #endif
 }
 
-/**
- * Frees the memory used by a cookie.
- *
- * @param cookie the Ewk_Cookie struct that will be freed.
- */
 void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
 {
 #if USE(SOUP)
@@ -172,12 +142,6 @@ void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
 #endif
 }
 
-/**
- * Sets the cookies accept policy.
- *
- * @param p the acceptance policy
- * @see Ewk_Cookie_Policy
- */
 void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
 {
 #if USE(SOUP)

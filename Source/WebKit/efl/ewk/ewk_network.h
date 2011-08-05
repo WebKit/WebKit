@@ -31,9 +31,27 @@
 extern "C" {
 #endif
 
+/**
+ * Sets the given proxy URI to network backend.
+ *
+ * @param proxy URI to set
+ */
 EAPI void             ewk_network_proxy_uri_set(const char *proxy);
+
+/**
+ * Gets the proxy URI from the network backend.
+ *
+ * The returned string should be freed by eina_stringshare_del() after use.
+ *
+ * @return current proxy URI or @c 0 if it's not set
+ */
 EAPI const char      *ewk_network_proxy_uri_get(void);
 
+/**
+ * Sets if network backend is online or not.
+ * 
+ * @param online @c EINA_FALSE if network is disconnected
+ */
 EAPI void             ewk_network_state_notifier_online_set(Eina_Bool online);
 
 #ifdef __cplusplus

@@ -67,16 +67,6 @@ int _ewk_log_dom = -1;
 
 static Eina_Bool _ewk_init_body(void);
 
-/**
- * Initializes webkit's instance.
- *
- * - initializes components needed by Efl,
- * - sets web database location,
- * - sets page cache capacity,
- * - increases a reference count of webkit's instance.
- *
- * @return a reference count of webkit's instance on success or 0 on failure
- */
 int ewk_init(void)
 {
     if (_ewk_init_count)
@@ -133,13 +123,6 @@ error_eina:
     return 0;
 }
 
-/**
- * Decreases a reference count of webkit's instance, possibly destroying it.
- *
- * If the reference count reaches 0 webkit's instance is destroyed.
- *
- * @return a reference count of webkit's instance
- */
 int ewk_shutdown(void)
 {
     _ewk_init_count--;

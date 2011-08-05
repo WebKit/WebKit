@@ -35,10 +35,57 @@ extern "C" {
 /** Creates a type name for _Ewk_Window_Features. */
 typedef struct _Ewk_Window_Features Ewk_Window_Features;
 
+/**
+ * Decreases the referece count of an Ewk_Window_Features, possibly freeing it.
+ *
+ * When the reference count of the object reaches 0, the one is freed.
+ *
+ * @param window_features the object to decrease reference count
+ */
 EAPI void         ewk_window_features_unref(Ewk_Window_Features *window_features);
+
+/**
+ * Increases the reference count of an Ewk_Window_Features.
+ *
+ * @param window_features the object to increase reference count
+ */
 EAPI void         ewk_window_features_ref(Ewk_Window_Features *window_features);
 
+/**
+ * Gets boolean properties of an Ewk_Window_Features.
+ *
+ * Properties are returned in the respective pointers. Passing @c 0 to any of
+ * these pointers will make that property to not be returned.
+ *
+ * @param window_features the object to get boolean properties
+ * @param toolbar_visible the pointer to store if toolbar is visible
+ * @param statusbar_visible the pointer to store if statusbar is visible
+ * @param scrollbars_visible the pointer to store if scrollbars is visible
+ * @param menubar_visible the pointer to store if menubar is visible
+ * @param locationbar_visible the pointer to store if locationbar is visible
+ * @param fullscreen the pointer to store if fullscreen is enabled
+ *
+ * @see ewk_window_features_int_property_get
+ */
 EAPI void         ewk_window_features_bool_property_get(Ewk_Window_Features *window_features, Eina_Bool *toolbar_visible, Eina_Bool *statusbar_visible, Eina_Bool *scrollbars_visible, Eina_Bool *menubar_visible, Eina_Bool *locationbar_visible, Eina_Bool *fullscreen);
+
+/**
+ * Gets int properties of an Ewk_Window_Features.
+ *
+ * Properties are returned in the respective pointers. Passing @c 0 to any of
+ * these pointers will make that property to not be returned.
+ *
+ * Make sure to check if the value returned is less than 0 before using it, since in
+ * that case it means that property was not set in winwdow_features object.
+ *
+ * @param window_features the window's features
+ * @param x the pointer to store x position
+ * @param y the pointer to store y position
+ * @param w the pointer to store width
+ * @param h the pointer to store height
+ *
+ * @see ewk_window_features_bool_property_get
+ */
 EAPI void         ewk_window_features_int_property_get(Ewk_Window_Features *window_features, int *x, int *y, int *w, int *h);
 
 #ifdef __cplusplus

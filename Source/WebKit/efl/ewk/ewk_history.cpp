@@ -110,13 +110,6 @@ static inline Eina_List *_ewk_history_item_list_get(const WebCore::HistoryItemVe
     return ret;
 }
 
-/**
- * Go forward in history one item, if possible.
- *
- * @param history which history instance to modify.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
- */
 Eina_Bool ewk_history_forward(Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, EINA_FALSE);
@@ -126,13 +119,6 @@ Eina_Bool ewk_history_forward(Ewk_History* history)
     return EINA_TRUE;
 }
 
-/**
- * Go back in history one item, if possible.
- *
- * @param history which history instance to modify.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
- */
 Eina_Bool ewk_history_back(Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, EINA_FALSE);
@@ -142,18 +128,6 @@ Eina_Bool ewk_history_back(Ewk_History* history)
     return EINA_TRUE;
 }
 
-/**
- * Adds the given item to history.
- *
- * Memory handling: This will not modify or even take references to
- * given item (Ewk_History_Item), so you should still handle it with
- * ewk_history_item_free().
- *
- * @param history which history instance to modify.
- * @param item reference to add to history. Unmodified. Must @b not be @c NULL.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
- */
 Eina_Bool ewk_history_history_item_add(Ewk_History* history, const Ewk_History_Item* item)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, history_core, EINA_FALSE);
@@ -162,18 +136,6 @@ Eina_Bool ewk_history_history_item_add(Ewk_History* history, const Ewk_History_I
     return EINA_TRUE;
 }
 
-/**
- * Sets the given item as current in history (go to item).
- *
- * Memory handling: This will not modify or even take references to
- * given item (Ewk_History_Item), so you should still handle it with
- * ewk_history_item_free().
- *
- * @param history which history instance to modify.
- * @param item reference to go to history. Unmodified. Must @b not be @c NULL.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
- */
 Eina_Bool ewk_history_history_item_set(Ewk_History* history, const Ewk_History_Item* item)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, history_core, EINA_FALSE);
@@ -182,75 +144,30 @@ Eina_Bool ewk_history_history_item_set(Ewk_History* history, const Ewk_History_I
     return EINA_TRUE;
 }
 
-/**
- * Get the first item from back list, if any.
- *
- * @param history which history instance to query.
- *
- * @return the @b newly allocated item instance. This memory must be
- *         released with ewk_history_item_free() after use.
- */
 Ewk_History_Item* ewk_history_history_item_back_get(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
     return _ewk_history_item_new(core->backItem());
 }
 
-/**
- * Get the current item in history, if any.
- *
- * @param history which history instance to query.
- *
- * @return the @b newly allocated item instance. This memory must be
- *         released with ewk_history_item_free() after use.
- */
 Ewk_History_Item* ewk_history_history_item_current_get(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
     return _ewk_history_item_new(core->currentItem());
 }
 
-/**
- * Get the first item from forward list, if any.
- *
- * @param history which history instance to query.
- *
- * @return the @b newly allocated item instance. This memory must be
- *         released with ewk_history_item_free() after use.
- */
 Ewk_History_Item* ewk_history_history_item_forward_get(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
     return _ewk_history_item_new(core->forwardItem());
 }
 
-/**
- * Get item at given position, if any at that index.
- *
- * @param history which history instance to query.
- * @param index position of item to get.
- *
- * @return the @b newly allocated item instance. This memory must be
- *         released with ewk_history_item_free() after use.
- */
 Ewk_History_Item* ewk_history_history_item_nth_get(const Ewk_History* history, int index)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
     return _ewk_history_item_new(core->itemAtIndex(index));
 }
 
-/**
- * Queries if given item is in history.
- *
- * Memory handling: This will not modify or even take references to
- * given item (Ewk_History_Item), so you should still handle it with
- * ewk_history_item_free().
- *
- * @param history which history instance to modify.
- * @param item reference to check in history. Must @b not be @c NULL.
- *
- * @return @c EINA_TRUE if in history, @c EINA_FALSE if not or failure.
- */
 Eina_Bool ewk_history_history_item_contains(const Ewk_History* history, const Ewk_History_Item* item)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, history_core, EINA_FALSE);
@@ -258,19 +175,6 @@ Eina_Bool ewk_history_history_item_contains(const Ewk_History* history, const Ew
     return history_core->containsItem(item_core);
 }
 
-/**
- * Get the whole forward list.
- *
- * @param history which history instance to query.
- *
- * @return a newly allocated list of @b newly allocated item
- *         instance. This memory of each item must be released with
- *         ewk_history_item_free() after use. use
- *         ewk_history_item_list_free() for convenience.
- *
- * @see ewk_history_item_list_free()
- * @see ewk_history_forward_list_get_with_limit()
- */
 Eina_List* ewk_history_forward_list_get(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
@@ -280,21 +184,6 @@ Eina_List* ewk_history_forward_list_get(const Ewk_History* history)
     return _ewk_history_item_list_get(items);
 }
 
-/**
- * Get the forward list within the given limit.
- *
- * @param history which history instance to query.
- * @param limit the maximum number of items to return.
- *
- * @return a newly allocated list of @b newly allocated item
- *         instance. This memory of each item must be released with
- *         ewk_history_item_free() after use. use
- *         ewk_history_item_list_free() for convenience.
- *
- * @see ewk_history_item_list_free()
- * @see ewk_history_forward_list_length()
- * @see ewk_history_forward_list_get()
- */
 Eina_List* ewk_history_forward_list_get_with_limit(const Ewk_History* history, int limit)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
@@ -303,34 +192,12 @@ Eina_List* ewk_history_forward_list_get_with_limit(const Ewk_History* history, i
     return _ewk_history_item_list_get(items);
 }
 
-/**
- * Get the whole size of forward list.
- *
- * @param history which history instance to query.
- *
- * @return number of elements in whole list.
- *
- * @see ewk_history_forward_list_get_with_limit()
- */
 int ewk_history_forward_list_length(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
     return core->forwardListCount();
 }
 
-/**
- * Get the whole back list.
- *
- * @param history which history instance to query.
- *
- * @return a newly allocated list of @b newly allocated item
- *         instance. This memory of each item must be released with
- *         ewk_history_item_free() after use. use
- *         ewk_history_item_list_free() for convenience.
- *
- * @see ewk_history_item_list_free()
- * @see ewk_history_back_list_get_with_limit()
- */
 Eina_List* ewk_history_back_list_get(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
@@ -340,21 +207,6 @@ Eina_List* ewk_history_back_list_get(const Ewk_History* history)
     return _ewk_history_item_list_get(items);
 }
 
-/**
- * Get the back list within the given limit.
- *
- * @param history which history instance to query.
- * @param limit the maximum number of items to return.
- *
- * @return a newly allocated list of @b newly allocated item
- *         instance. This memory of each item must be released with
- *         ewk_history_item_free() after use. use
- *         ewk_history_item_list_free() for convenience.
- *
- * @see ewk_history_item_list_free()
- * @see ewk_history_back_list_length()
- * @see ewk_history_back_list_get()
- */
 Eina_List* ewk_history_back_list_get_with_limit(const Ewk_History* history, int limit)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
@@ -363,42 +215,18 @@ Eina_List* ewk_history_back_list_get_with_limit(const Ewk_History* history, int 
     return _ewk_history_item_list_get(items);
 }
 
-/**
- * Get the whole size of back list.
- *
- * @param history which history instance to query.
- *
- * @return number of elements in whole list.
- *
- * @see ewk_history_back_list_get_with_limit()
- */
 int ewk_history_back_list_length(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
     return core->backListCount();
 }
 
-/**
- * Get maximum capacity of given history.
- *
- * @param history which history instance to query.
- *
- * @return maximum number of entries this history will hold.
- */
 int ewk_history_limit_get(Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
     return core->capacity();
 }
 
-/**
- * Set maximum capacity of given history.
- *
- * @param history which history instance to modify.
- * @param limit maximum size to allow.
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_history_limit_set(const Ewk_History* history, int limit)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, EINA_FALSE);
@@ -406,15 +234,6 @@ Eina_Bool ewk_history_limit_set(const Ewk_History* history, int limit)
     return EINA_TRUE;
 }
 
-/**
- * Create a new history item with given URI and title.
- *
- * @param uri where this resource is located.
- * @param title resource title.
- *
- * @return newly allocated history item or @c NULL on errors. You must
- *         free this item with ewk_history_item_free().
- */
 Ewk_History_Item* ewk_history_item_new(const char* uri, const char* title)
 {
     WTF::String u = WTF::String::fromUTF8(uri);
@@ -430,23 +249,12 @@ static inline void _ewk_history_item_free(Ewk_History_Item* item, WebCore::Histo
     free(item);
 }
 
-/**
- * Free given history item instance.
- *
- * @param item what to free.
- */
 void ewk_history_item_free(Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core);
     _ewk_history_item_free(item, core);
 }
 
-/**
- * Free given list and associated history items instances.
- *
- * @param history_items list of items to free (both list nodes and
- *        item instances).
- */
 void ewk_history_item_list_free(Eina_List* history_items)
 {
     void* d;
@@ -456,17 +264,6 @@ void ewk_history_item_list_free(Eina_List* history_items)
     }
 }
 
-/**
- * Query title for given history item.
- *
- * @param item history item to query.
- *
- * @return the title pointer, that may be @c NULL. This pointer is
- *         guaranteed to be eina_stringshare, so whenever possible
- *         save yourself some cpu cycles and use
- *         eina_stringshare_ref() instead of eina_stringshare_add() or
- *         strdup().
- */
 const char* ewk_history_item_title_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
@@ -476,17 +273,6 @@ const char* ewk_history_item_title_get(const Ewk_History_Item* item)
     return i->title;
 }
 
-/**
- * Query alternate title for given history item.
- *
- * @param item history item to query.
- *
- * @return the alternate title pointer, that may be @c NULL. This
- *         pointer is guaranteed to be eina_stringshare, so whenever
- *         possible save yourself some cpu cycles and use
- *         eina_stringshare_ref() instead of eina_stringshare_add() or
- *         strdup().
- */
 const char* ewk_history_item_title_alternate_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
@@ -497,13 +283,6 @@ const char* ewk_history_item_title_alternate_get(const Ewk_History_Item* item)
     return i->alternate_title;
 }
 
-/**
- * Set alternate title for given history item.
- *
- * @param item history item to query.
- * @param title new alternate title to use for given item. No
- *        references are kept after this function returns.
- */
 void ewk_history_item_title_alternate_set(Ewk_History_Item* item, const char* title)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core);
@@ -512,17 +291,6 @@ void ewk_history_item_title_alternate_set(Ewk_History_Item* item, const char* ti
     core->setAlternateTitle(WTF::String::fromUTF8(title));
 }
 
-/**
- * Query URI for given history item.
- *
- * @param item history item to query.
- *
- * @return the URI pointer, that may be @c NULL. This pointer is
- *         guaranteed to be eina_stringshare, so whenever possible
- *         save yourself some cpu cycles and use
- *         eina_stringshare_ref() instead of eina_stringshare_add() or
- *         strdup().
- */
 const char* ewk_history_item_uri_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
@@ -532,17 +300,6 @@ const char* ewk_history_item_uri_get(const Ewk_History_Item* item)
     return i->uri;
 }
 
-/**
- * Query original URI for given history item.
- *
- * @param item history item to query.
- *
- * @return the original URI pointer, that may be @c NULL. This pointer
- *         is guaranteed to be eina_stringshare, so whenever possible
- *         save yourself some cpu cycles and use
- *         eina_stringshare_ref() instead of eina_stringshare_add() or
- *         strdup().
- */
 const char* ewk_history_item_uri_original_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
@@ -553,30 +310,12 @@ const char* ewk_history_item_uri_original_get(const Ewk_History_Item* item)
     return i->original_uri;
 }
 
-/**
- * Query last visited time for given history item.
- *
- * @param item history item to query.
- *
- * @return the time in seconds this item was visited.
- */
 double ewk_history_item_time_last_visited_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0.0);
     return core->lastVisitedTime();
 }
 
-/**
- * Get the icon (aka favicon) associated with this history item.
- *
- * @note in order to have this working, one must open icon database
- *       with ewk_settings_icon_database_path_set().
- *
- * @param item history item to query.
- *
- * @return the surface reference or @c NULL on errors. Note that the
- *         reference may be to a standard fallback icon.
- */
 cairo_surface_t* ewk_history_item_icon_surface_get(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
@@ -589,22 +328,6 @@ cairo_surface_t* ewk_history_item_icon_surface_get(const Ewk_History_Item* item)
     return icon->nativeImageForCurrentFrame();
 }
 
-/**
- * Add an Evas_Object of type 'image' to given canvas with history item icon.
- *
- * This is an utility function that creates an Evas_Object of type
- * image set to have fill always match object size
- * (evas_object_image_filled_add()), saving some code to use it from Evas.
- *
- * @note in order to have this working, one must open icon database
- *       with ewk_settings_icon_database_path_set().
- *
- * @param item history item to query.
- * @param canvas evas instance where to add resulting object.
- *
- * @return newly allocated Evas_Object instance or @c NULL on
- *         errors. Delete the object with evas_object_del().
- */
 Evas_Object* ewk_history_item_icon_object_add(const Ewk_History_Item* item, Evas* canvas)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
@@ -621,40 +344,18 @@ Evas_Object* ewk_history_item_icon_object_add(const Ewk_History_Item* item, Evas
     return ewk_util_image_from_cairo_surface_add(canvas, surface);
 }
 
-/**
- * Query if given item is still in page cache.
- *
- * @param item history item to query.
- *
- * @return @c EINA_TRUE if in cache, @c EINA_FALSE otherwise.
- */
 Eina_Bool ewk_history_item_page_cache_exists(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, EINA_FALSE);
     return core->isInPageCache();
 }
 
-/**
- * Query number of times item was visited.
- *
- * @param item history item to query.
- *
- * @return number of visits.
- */
 int ewk_history_item_visit_count(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
     return core->visitCount();
 }
 
-/**
- * Query if last visit to item was failure or not.
- *
- * @param item history item to query.
- *
- * @return @c EINA_TRUE if last visit was failure, @c EINA_FALSE if it
- *         was fine.
- */
 Eina_Bool ewk_history_item_visit_last_failed(const Ewk_History_Item* item)
 {
     EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, EINA_TRUE);

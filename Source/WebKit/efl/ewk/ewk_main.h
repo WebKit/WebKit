@@ -32,7 +32,25 @@
 extern "C" {
 #endif
 
+/**
+ * Initializes webkit's instance.
+ *
+ * - initializes components needed by Efl,
+ * - sets web database location,
+ * - sets page cache capacity,
+ * - increases a reference count of webkit's instance.
+ *
+ * @return a reference count of webkit's instance on success or 0 on failure
+ */
 EAPI int ewk_init(void);
+
+/**
+ * Decreases a reference count of webkit's instance, possibly destroying it.
+ *
+ * If the reference count reaches 0 webkit's instance is destroyed.
+ *
+ * @return a reference count of webkit's instance
+ */
 EAPI int ewk_shutdown(void);
 
 #ifdef __cplusplus

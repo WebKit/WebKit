@@ -74,11 +74,53 @@ typedef enum _Ewk_Cookie_Policy Ewk_Cookie_Policy;
 
 /************************** Exported functions ***********************/
 
+/**
+ * Sets the path where the cookies are going to be stored. 
+ *
+ * @param filename path to the cookies.txt file, use @c 0 for keep
+ *        cookies just in memory.
+ *
+ * @return @c EINA_FALSE if it wasn't possible to create the cookie jar,
+ *          @c EINA_TRUE otherwise.
+ */
 EAPI Eina_Bool          ewk_cookies_file_set(const char *filename);
+
+/**
+ * Clears all the cookies from the cookie jar.
+ */
 EAPI void               ewk_cookies_clear(void);
+
+/**
+ * Returns a list of cookies in the cookie jar.
+ *
+ * @return an @c Eina_List with all the cookies in the cookie jar
+ */
 EAPI Eina_List*         ewk_cookies_get_all(void);
+
+/**
+ * Deletes a cookie from the cookie jar.
+ *
+ * Note that the fields name, value, domain and path are used to match this
+ * cookie in the cookie jar.
+ *
+ * @param cookie an @c Ewk_Cookie that has the info relative to that cookie
+ */
 EAPI void               ewk_cookies_cookie_del(Ewk_Cookie *cookie);
+
+/**
+ * Frees the memory used by a cookie.
+ *
+ * @param cookie the Ewk_Cookie struct that will be freed
+ */
 EAPI void               ewk_cookies_cookie_free(Ewk_Cookie *cookie);
+
+/**
+ * Sets accept policy for the cookies.
+ *
+ * @param p the acceptance policy
+ *
+ * @see Ewk_Cookie_Policy
+ */
 EAPI void               ewk_cookies_policy_set(Ewk_Cookie_Policy p);
 EAPI Ewk_Cookie_Policy  ewk_cookies_policy_get(void);
 

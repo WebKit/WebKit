@@ -24,11 +24,6 @@
 #include "ewk_auth_soup.h"
 #endif
 
-/**
- * Sets callback to be called when authentication is required.
- *
- * @param callback callback to be called.
- */
 void ewk_auth_show_dialog_callback_set(Ewk_Auth_Show_Dialog_Callback callback)
 {
 #if USE(SOUP)

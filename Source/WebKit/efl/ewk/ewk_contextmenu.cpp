@@ -60,24 +60,12 @@ struct _Ewk_Context_Menu_Item {
     Eina_Bool enabled:1;
 };
 
-/**
- * Increases the reference count of the given object.
- *
- * @param menu the context menu object to increase the reference count
- */
 void ewk_context_menu_ref(Ewk_Context_Menu *menu)
 {
     EINA_SAFETY_ON_NULL_RETURN(menu);
     menu->__ref++;
 }
 
-/**
- * Decreases the reference count of the given object, possibly freeing it.
- *
- * When the reference count it's reached 0, the menu with all items are freed.
- *
- * @param menu the context menu object to decrease the reference count
- */
 void ewk_context_menu_unref(Ewk_Context_Menu *menu)
 {
     EINA_SAFETY_ON_NULL_RETURN(menu);
@@ -92,14 +80,6 @@ void ewk_context_menu_unref(Ewk_Context_Menu *menu)
     free(menu);
 }
 
-/**
- * Destroys the context menu object.
- *
- * @param menu the context menu object to destroy
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
- *
- * @see ewk_context_menu_item_free
- */
 Eina_Bool ewk_context_menu_destroy(Ewk_Context_Menu *menu)
 {
 #if ENABLE(CONTEXT_MENUS)
@@ -112,12 +92,6 @@ Eina_Bool ewk_context_menu_destroy(Ewk_Context_Menu *menu)
 #endif
 }
 
-/**
- * Gets the list of items.
- *
- * @param o the context menu object to get list of the items
- * @return the list of the items on success or @c 0 on failure
- */
 const Eina_List *ewk_context_menu_item_list_get(Ewk_Context_Menu *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, 0);
@@ -125,19 +99,6 @@ const Eina_List *ewk_context_menu_item_list_get(Ewk_Context_Menu *o)
     return o->items;
 }
 
-/**
- * Creates a new item of the context menu.
- *
- * @param type specifies a type of the item
- * @param action specifies a action of the item
- * @param submenu specifies a submenu of the item
- * @param title specifies a title of the item
- * @param checked
- * @param enabled @c EINA_TRUE to enable the item or @c EINA_FALSE to disable
- * @return the pointer to the new item on success or @c 0 on failure
- *
- * @note The return value @b should @b be freed after use.
- */
 Ewk_Context_Menu_Item *ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type,
         Ewk_Context_Menu_Action action, Ewk_Context_Menu *submenu,
         const char *title, Eina_Bool checked, Eina_Bool enabled)
@@ -156,13 +117,6 @@ Ewk_Context_Menu_Item *ewk_context_menu_item_new(Ewk_Context_Menu_Item_Type type
     return item;
 }
 
-/**
- * Selects the item from the context menu object.
- *
- * @param menu the context menu object
- * @param item the item is selected
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- */
 Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu *menu, Ewk_Context_Menu_Item *item)
 {
 #if ENABLE(CONTEXT_MENUS)
@@ -180,14 +134,6 @@ Eina_Bool ewk_context_menu_item_select(Ewk_Context_Menu *menu, Ewk_Context_Menu_
 #endif
 }
 
-/**
- * Destroys the item of the context menu object.
- *
- * @param item the item to destroy
- *
- * @see ewk_context_menu_destroy
- * @see ewk_context_menu_unref
- */
 void ewk_context_menu_item_free(Ewk_Context_Menu_Item *item)
 {
     EINA_SAFETY_ON_NULL_RETURN(item);
@@ -196,29 +142,12 @@ void ewk_context_menu_item_free(Ewk_Context_Menu_Item *item)
     free(item);
 }
 
-/**
- * Gets type of the item.
- *
- * @param o the item to get the type
- * @return type of the item on success or @c EWK_ACTION_TYPE on failure
- *
- * @see ewk_context_menu_item_type_set
- */
 Ewk_Context_Menu_Item_Type ewk_context_menu_item_type_get(Ewk_Context_Menu_Item *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EWK_ACTION_TYPE);
     return o->type;
 }
 
-/**
- * Sets the type of item.
- *
- * @param o the item to set the type
- * @param type a new type for the item object
- * @return @c EINA_TRUE on success, or @c EINA_FALSE on failure
- *
- * @see ewk_context_menu_item_type_get
- */
 Eina_Bool ewk_context_menu_item_type_set(Ewk_Context_Menu_Item *o, Ewk_Context_Menu_Item_Type type)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EINA_FALSE);
@@ -226,29 +155,12 @@ Eina_Bool ewk_context_menu_item_type_set(Ewk_Context_Menu_Item *o, Ewk_Context_M
     return EINA_TRUE;
 }
 
-/**
- * Gets an action of the item.
- *
- * @param o the item to get the action
- * @return an action of the item on success or @c EWK_CONTEXT_MENU_ITEM_TAG_NO_ACTION on failure
- *
- * @see ewk_context_menu_item_action_set
- */
 Ewk_Context_Menu_Action ewk_context_menu_item_action_get(Ewk_Context_Menu_Item *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EWK_CONTEXT_MENU_ITEM_TAG_NO_ACTION);
     return o->action;
 }
 
-/**
- * Sets an action of the item.
- *
- * @param o the item to set the action
- * @param action a new action for the item object
- * @return @c EINA_TRUE on success, or @c EINA_FALSE on failure
- *
- * @see ewk_context_menu_item_action_get
- */
 Eina_Bool ewk_context_menu_item_action_set(Ewk_Context_Menu_Item *o, Ewk_Context_Menu_Action action)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EINA_FALSE);
@@ -256,29 +168,12 @@ Eina_Bool ewk_context_menu_item_action_set(Ewk_Context_Menu_Item *o, Ewk_Context
     return EINA_TRUE;
 }
 
-/**
- * Gets a title of the item.
- *
- * @param o the item to get the title
- * @return a title of the item on success, or @c 0 on failure
- *
- * @see ewk_context_menu_item_title_set
- */
 const char *ewk_context_menu_item_title_get(Ewk_Context_Menu_Item *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, 0);
     return o->title;
 }
 
-/**
- * Sets a title of the item.
- *
- * @param o the item to set the title
- * @param title a new title for the item object
- * @return a new title of the item on success or @c 0 on failure
- *
- * @see ewk_context_menu_item_title_get
- */
 const char *ewk_context_menu_item_title_set(Ewk_Context_Menu_Item *o, const char *title)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, 0);
@@ -299,29 +194,12 @@ Eina_Bool ewk_context_menu_item_checked_set(Ewk_Context_Menu_Item *o, Eina_Bool 
     return EINA_TRUE;
 }
 
-/**
- * Gets if the item is enabled.
- *
- * @param o the item to get enabled state
- * @return @c EINA_TRUE if it's enabled, @c EINA_FALSE if not or on failure
- *
- * @see ewk_context_menu_item_enabled_set
- */
 Eina_Bool ewk_context_menu_item_enabled_get(Ewk_Context_Menu_Item *o)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EINA_FALSE);
     return o->enabled;
 }
 
-/**
- * Enables/disables the item.
- *
- * @param o the item to enable/disable
- * @param enabled @c EINA_TRUE to enable the item or @c EINA_FALSE to disable
- * @return @c EINA_TRUE on success, or @c EINA_FALSE on failure
- *
- * @see ewk_context_menu_item_enabled_get
- */
 Eina_Bool ewk_context_menu_item_enabled_set(Ewk_Context_Menu_Item *o, Eina_Bool enabled)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(o, EINA_FALSE);

@@ -286,35 +286,12 @@ static inline Evas_Smart *_ewk_frame_smart_class_new(void)
     return smart;
 }
 
-/**
- * Retrieves the ewk_view object that owns this frame.
- *
- * @param o frame object to get view object
- *
- * @return view object or @c 0 on failure
- */
 Evas_Object *ewk_frame_view_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     return sd->view;
 }
 
-/**
- * Returns a new iterator over all direct children frames.
- *
- * Keep frame object intact while iteration happens otherwise frame
- * may be destroyed while iterated.
- *
- * Iteration results are Evas_Object*, so give eina_iterator_next() a
- * pointer to it.
- *
- * Returned iterator should be freed by eina_iterator_free().
- *
- * @param o frame object to create the iterator
- *
- * @return a newly allocated iterator on sucess, or @c 0 if not possible to
- *      create the iterator
- */
 Eina_Iterator *ewk_frame_children_iterator_new(Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
@@ -332,25 +309,6 @@ Eina_Iterator *ewk_frame_children_iterator_new(Evas_Object *o)
     return &it->base;
 }
 
-/**
- * Finds a child frame by its name, recursively.
- *
- * For pre-defined names, returns @a o if @a name is "_self" or
- * "_current", returns @a o's parent frame if @a name is "_parent",
- * and returns the main frame if @a name is "_top". Also returns @a o
- * if it is the main frame and @a name is either "_parent" or
- * "_top". For other names, this function returns the first frame that
- * matches @a name. This function searches @a o and its descendents
- * first, then @a o's parent and its children moving up the hierarchy
- * until a match is found. If no match is found in @a o's hierarchy,
- * this function will search for a matching frame in other main frame
- * hierarchies.
- *
- * @param o frame object to find a child frame
- * @param name child frame name
- *
- * @return child frame of the given frame, or @c 0 if the the child wasn't found
- */
 Evas_Object *ewk_frame_child_find(Evas_Object *o, const char *name)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
@@ -360,14 +318,6 @@ Evas_Object *ewk_frame_child_find(Evas_Object *o, const char *name)
     return kit(sd->frame->tree()->find(WTF::AtomicString(s)));
 }
 
-/**
- * Asks the main frame to load the given URI.
- *
- * @param o frame object to load uri
- * @param uri uniform resource identifier to load
- *
- * @return @c EINA_TRUE on success, or @c EINA_FALSE on failure
- */
 Eina_Bool ewk_frame_uri_set(Evas_Object *o, const char *uri)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -378,48 +328,18 @@ Eina_Bool ewk_frame_uri_set(Evas_Object *o, const char *uri)
     return EINA_TRUE;
 }
 
-/**
- * Gets the uri of this frame.
- *
- * It returns an internal string and should not
- * be modified. The string is guaranteed to be stringshared.
- *
- * @param o frame object to get uri
- *
- * @return frame uri on success or @c 0 on failure
- */
 const char *ewk_frame_uri_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     return sd->uri;
 }
 
-/**
- * Gets the title of this frame.
- *
- * It returns an internal string and should not
- * be modified. The string is guaranteed to be stringshared.
- *
- * @param o frame object to get title
- *
- * @return frame title on success or @c 0 on failure
- */
 const char *ewk_frame_title_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     return sd->title;
 }
 
-/**
- * Gets the name of this frame.
- *
- * It returns an internal string and should not
- * be modified. The string is guaranteed to be stringshared.
- *
- * @param o frame object to get name
- *
- * @return frame name on success or @c 0 on failure
- */
 const char *ewk_frame_name_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
@@ -438,16 +358,6 @@ const char *ewk_frame_name_get(const Evas_Object *o)
     return sd->name;
 }
 
-/**
- * Gets last known contents size.
- *
- * @param o frame object to get contents size
- * @param w pointer to store contents size width, may be @c 0
- * @param h pointer to store contents size height, may be @c 0
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure and
- *         @a w and @a h will be zeroed
- */
 Eina_Bool ewk_frame_contents_size_get(const Evas_Object *o, Evas_Coord *w, Evas_Coord *h)
 {
     if (w)
@@ -493,20 +403,6 @@ static Eina_Bool _ewk_frame_contents_set_internal(Ewk_Frame_Smart_Data *sd, cons
     return EINA_TRUE;
 }
 
-/**
- * Requests loading the given contents in this frame.
- *
- * @param o frame object to load document
- * @param contents what to load into frame
- * @param contents_size size of @a contents (in bytes),
- *        if @c 0 is given, length of @a contents is used
- * @param mime_type type of @a contents data, if @c 0 is given "text/html" is assumed
- * @param encoding encoding for @a contents data, if @c 0 is given "UTF-8" is assumed
- * @param base_uri base uri to use for relative resources, may be @c 0,
- *        if provided @b must be an absolute uri
- *
- * @return @c EINA_TRUE on successful request, @c EINA_FALSE on errors
- */
 Eina_Bool ewk_frame_contents_set(Evas_Object *o, const char *contents, size_t contents_size, const char *mime_type, const char *encoding, const char *base_uri)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -516,26 +412,6 @@ Eina_Bool ewk_frame_contents_set(Evas_Object *o, const char *contents, size_t co
         (sd, contents, contents_size, mime_type, encoding, base_uri, 0);
 }
 
-/**
- * Requests loading alternative contents for unreachable URI in this frame.
- *
- * This is similar to ewk_frame_contents_set(), but is used when some
- * URI was failed to load, using the provided content instead. The main
- * difference is that back-forward navigation list is not changed.
- *
- * @param o frame object to load alternative content
- * @param contents what to load into frame, must @b not be @c 0
- * @param contents_size size of @a contents (in bytes),
- *        if @c 0 is given, length of @a contents is used
- * @param mime_type type of @a contents data, if @c 0 is given "text/html" is assumed
- * @param encoding encoding used for @a contents data, if @c 0 is given "UTF-8" is assumed
- * @param base_uri base URI to use for relative resources, may be @c 0,
- *        if provided must be an absolute uri
- * @param unreachable_uri the URI that failed to load and is getting the
- *        alternative representation
- *
- * @return @c EINA_TRUE on successful request, @c EINA_FALSE on errors
- */
 Eina_Bool ewk_frame_contents_alternate_set(Evas_Object *o, const char *contents, size_t contents_size, const char *mime_type, const char *encoding, const char *base_uri, const char *unreachable_uri)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -547,14 +423,6 @@ Eina_Bool ewk_frame_contents_alternate_set(Evas_Object *o, const char *contents,
          unreachable_uri);
 }
 
-/**
- * Requests execution of the given script.
- *
- * @param o frame object to execute script
- * @param script Java Script to execute
- *
- * @return @c EINA_TRUE if request was done, @c EINA_FALSE on errors
- */
 Eina_Bool ewk_frame_script_execute(Evas_Object *o, const char *script)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -564,13 +432,6 @@ Eina_Bool ewk_frame_script_execute(Evas_Object *o, const char *script)
     return EINA_TRUE;
 }
 
-/**
- * Queries if the frame is editable.
- *
- * @param o the frame object to query editable state
- *
- * @return @c EINA_TRUE if the frame is editable, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_editable_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -578,14 +439,6 @@ Eina_Bool ewk_frame_editable_get(const Evas_Object *o)
     return sd->editable;
 }
 
-/**
- * Sets editable state for frame.
- *
- * @param o the frame object to set editable state
- * @param editable a new state to set
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_editable_set(Evas_Object *o, Eina_Bool editable)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -598,15 +451,6 @@ Eina_Bool ewk_frame_editable_set(Evas_Object *o, Eina_Bool editable)
     return EINA_TRUE;
 }
 
-/**
- * Gets the copy of the selected text.
- *
- * The returned string @b should be freed after use.
- *
- * @param o the frame object to get selected text
- *
- * @return a newly allocated string or @c 0 if nothing is selected or on failure
- */
 char *ewk_frame_selection_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
@@ -617,17 +461,6 @@ char *ewk_frame_selection_get(const Evas_Object *o)
     return strdup(s.data());
 }
 
-/**
- * Searches the given string in a document.
- *
- * @param o frame object where to search the text
- * @param string reference string to search
- * @param case_sensitive if search should be case sensitive or not
- * @param forward if search is from cursor and on or backwards
- * @param wrap if search should wrap at the end
- *
- * @return @c EINA_TRUE if the given string was found, @c EINA_FALSE if not or failure
- */
 Eina_Bool ewk_frame_text_search(const Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -637,17 +470,6 @@ Eina_Bool ewk_frame_text_search(const Evas_Object *o, const char *string, Eina_B
     return sd->frame->editor()->findString(WTF::String::fromUTF8(string), forward, case_sensitive, wrap, true);
 }
 
-/**
- * Marks matches the given string in a document.
- *
- * @param o frame object where to search text
- * @param string reference string to match
- * @param case_sensitive if match should be case sensitive or not
- * @param highlight if matches should be highlighted
- * @param limit maximum amount of matches, or zero to unlimited
- *
- * @return number of matched @a string
- */
 unsigned int ewk_frame_text_matches_mark(Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
@@ -658,14 +480,6 @@ unsigned int ewk_frame_text_matches_mark(Evas_Object *o, const char *string, Ein
     return sd->frame->editor()->countMatchesForText(WTF::String::fromUTF8(string), case_sensitive, limit, true);
 }
 
-/**
- * Unmarks all marked matches in a document.
- * Reverses the effect of ewk_frame_text_matches_mark().
- *
- * @param o frame object where to unmark matches
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure
- */
 Eina_Bool ewk_frame_text_matches_unmark_all(Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -691,13 +505,6 @@ Eina_Bool ewk_frame_text_matches_highlight_set(Evas_Object *o, Eina_Bool highlig
     return EINA_TRUE;
 }
 
-/**
- * Returns whether matches marked with ewk_frame_text_matches_mark() are highlighted.
- *
- * @param o frame object to query if matches are highlighted or not
- *
- * @return @c EINA_TRUE if matches are highlighted, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_text_matches_highlight_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -721,17 +528,6 @@ static bool _ewk_frame_rect_is_negative_value(const WebCore::IntRect &i)
     return (i.x() < 0 || i.y() < 0);
 }
 
-/**
- * Returns the position of the n-th matched text in the frame.
- *
- * @param o frame object where matches are marked
- * @param n index of element 
- * @param x the pointer to store the horizontal position of @a n matched text, may be @c 0
- * @param y the pointer to store the vertical position of @a n matched text, may be @c 0
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE when no matches were found or
- *         @a n is bigger than search results or on failure
- */
 Eina_Bool ewk_frame_text_matches_nth_pos_get(Evas_Object *o, size_t n, int *x, int *y)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -754,13 +550,6 @@ Eina_Bool ewk_frame_text_matches_nth_pos_get(Evas_Object *o, size_t n, int *x, i
     return EINA_TRUE;
 }
 
-/**
- * Asks frame to stop loading.
- *
- * @param o frame object to stop loading
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_stop(Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -769,15 +558,6 @@ Eina_Bool ewk_frame_stop(Evas_Object *o)
     return EINA_TRUE;
 }
 
-/**
- * Asks frame to reload current document.
- *
- * @param o frame object to reload current document
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- *
- * @see ewk_frame_reload_full()
- */
 Eina_Bool ewk_frame_reload(Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -786,13 +566,6 @@ Eina_Bool ewk_frame_reload(Evas_Object *o)
     return EINA_TRUE;
 }
 
-/**
- * Asks frame to fully reload current document, using no previous caches.
- *
- * @param o frame object to reload current document
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_reload_full(Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -801,43 +574,16 @@ Eina_Bool ewk_frame_reload_full(Evas_Object *o)
     return EINA_TRUE;
 }
 
-/**
- * Asks the frame to navigate back in the history.
- *
- * @param o frame object to navigate back
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- *
- * @see ewk_frame_navigate()
- */
 Eina_Bool ewk_frame_back(Evas_Object *o)
 {
     return ewk_frame_navigate(o, -1);
 }
 
-/**
- * Asks frame to navigate forward in the history.
- *
- * @param o frame object to navigate forward
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- *
- * @see ewk_frame_navigate()
- */
 Eina_Bool ewk_frame_forward(Evas_Object *o)
 {
     return ewk_frame_navigate(o, 1);
 }
 
-/**
- * Navigates back or forward in the history.
- *
- * @param o frame object to navigate
- * @param steps if positive navigates that amount forwards, if negative
- *        does backwards
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_navigate(Evas_Object *o, int steps)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -849,43 +595,16 @@ Eina_Bool ewk_frame_navigate(Evas_Object *o, int steps)
     return EINA_TRUE;
 }
 
-/**
- * Queries if it's possible to navigate backwards one item in the history.
- *
- * @param o frame object to query if backward navigation is possible
- *
- * @return @c EINA_TRUE if it's possible to navigate backwards one item in the history, @c EINA_FALSE otherwise
- *
- * @see ewk_frame_navigate_possible()
- */
 Eina_Bool ewk_frame_back_possible(Evas_Object *o)
 {
     return ewk_frame_navigate_possible(o, -1);
 }
 
-/**
- * Queries if it's possible to navigate forwards one item in the history.
- *
- * @param o frame object to query if forward navigation is possible
- *
- * @return @c EINA_TRUE if it's possible to navigate forwards in the history, @c EINA_FALSE otherwise
- *
- * @see ewk_frame_navigate_possible()
- */
 Eina_Bool ewk_frame_forward_possible(Evas_Object *o)
 {
     return ewk_frame_navigate_possible(o, 1);
 }
 
-/**
- * Queries if it's possible to navigate given @a steps in the history.
- *
- * @param o frame object to query if is possible to navigate @a steps in the history
- * @param steps positive value navigates that amount forwards, negative value 
- *        does backwards
- *
- * @return @c EINA_TRUE if it's possible to navigate @a steps in the history, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_navigate_possible(Evas_Object *o, int steps)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -894,13 +613,6 @@ Eina_Bool ewk_frame_navigate_possible(Evas_Object *o, int steps)
     return page->canGoBackOrForward(steps);
 }
 
-/**
- * Gets the current zoom level used by this frame.
- *
- * @param o frame object to get zoom level
- *
- * @return zoom level for the frame or @c -1.0 on failure
- */
 float ewk_frame_zoom_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, -1.0);
@@ -911,16 +623,6 @@ float ewk_frame_zoom_get(const Evas_Object *o)
     return sd->frame->pageZoomFactor();
 }
 
-/**
- * Sets the current zoom level used by this frame.
- *
- * @param o frame object to change zoom level
- * @param zoom a new zoom level
- *
- * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
- *
- * @see ewk_frame_zoom_text_only_set()
- */
 Eina_Bool ewk_frame_zoom_set(Evas_Object *o, float zoom)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -932,27 +634,12 @@ Eina_Bool ewk_frame_zoom_set(Evas_Object *o, float zoom)
     return EINA_TRUE;
 }
 
-/**
- * Queries if zoom level just applies to text only and not other elements.
- *
- * @param o frame to query zoom level for text only
- *
- * @return @c EINA_TRUE if zoom level is applied to text only, @c EINA_FALSE if not or on failure
- */
 Eina_Bool ewk_frame_zoom_text_only_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     return sd->textZoom;
 }
 
-/**
- * Sets if zoom level just applies to text only and not other elements.
- *
- * @param o frame to apply zoom level for text only
- * @param setting @c EINA_TRUE if zoom level should be applied to text only, @c EINA_FALSE if not
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_zoom_text_only_set(Evas_Object *o, Eina_Bool setting)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -969,11 +656,6 @@ Eina_Bool ewk_frame_zoom_text_only_set(Evas_Object *o, Eina_Bool setting)
     return EINA_TRUE;
 }
 
-/**
- * Frees hit test instance created by ewk_frame_hit_test_new().
- *
- * @param hit_test instance
- */
 void ewk_frame_hit_test_free(Ewk_Hit_Test *hit_test)
 {
     EINA_SAFETY_ON_NULL_RETURN(hit_test);
@@ -987,17 +669,6 @@ void ewk_frame_hit_test_free(Ewk_Hit_Test *hit_test)
     free(hit_test);
 }
 
-/**
- * Creates a new hit test for the given frame and point.
- *
- * The returned object should be freed by ewk_frame_hit_test_free().
- *
- * @param o frame object to do hit test on
- * @param x the horizontal position to query
- * @param y the vertical position to query
- *
- * @return a newly allocated hit test on success, @c 0 otherwise
- */
 Ewk_Hit_Test *ewk_frame_hit_test_new(const Evas_Object *o, int x, int y)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
@@ -1070,18 +741,6 @@ Ewk_Hit_Test *ewk_frame_hit_test_new(const Evas_Object *o, int x, int y)
     return hit_test;
 }
 
-/**
- * Sets a relative scroll of the given frame.
- *
- * This function does scroll @a dx and @a dy pixels
- * from the current position of scroll.
- *
- * @param o frame object to scroll
- * @param dx horizontal offset to scroll
- * @param dy vertical offset to scroll
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- */
 Eina_Bool
 ewk_frame_scroll_add(Evas_Object *o, int dx, int dy)
 {
@@ -1092,18 +751,6 @@ ewk_frame_scroll_add(Evas_Object *o, int dx, int dy)
     return EINA_TRUE;
 }
 
-/**
- * Sets an absolute scroll of the given frame.
- *
- * Both values are from zero to the contents size minus the viewport
- * size. See ewk_frame_scroll_size_get().
- *
- * @param o frame object to scroll
- * @param x horizontal position to scroll
- * @param y vertical position to scroll
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- */
 Eina_Bool
 ewk_frame_scroll_set(Evas_Object *o, int x, int y)
 {
@@ -1114,21 +761,6 @@ ewk_frame_scroll_set(Evas_Object *o, int x, int y)
     return EINA_TRUE;
 }
 
-/**
- * Gets the possible scroll size of the given frame.
- *
- * Possible scroll size is contents size minus the viewport
- * size. It's the last allowed value for ewk_frame_scroll_set()
- *
- * @param o frame object to get scroll size
- * @param w the pointer to store the horizontal size that is possible to scroll,
- *        may be @c 0
- * @param h the pointer to store the vertical size that is possible to scroll,
- *        may be @c 0
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise and
- *         values are zeroed
- */
 Eina_Bool
 ewk_frame_scroll_size_get(const Evas_Object *o, int *w, int *h)
 {
@@ -1147,16 +779,6 @@ ewk_frame_scroll_size_get(const Evas_Object *o, int *w, int *h)
     return EINA_TRUE;
 }
 
-/**
- * Gets the current scroll position of given frame.
- *
- * @param o frame object to get the current scroll position
- * @param x the pointer to store the horizontal position, may be @c 0
- * @param y the pointer to store the vertical position. may be @c 0
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise and
- *         values are zeroed.
- */
 Eina_Bool
 ewk_frame_scroll_pos_get(const Evas_Object *o, int *x, int *y)
 {
@@ -1175,19 +797,6 @@ ewk_frame_scroll_pos_get(const Evas_Object *o, int *x, int *y)
     return EINA_TRUE;
 }
 
-/**
- * Gets the visible content geometry of the frame.
- *
- * @param o frame object to query visible content geometry
- * @param include_scrollbars whenever to include scrollbars size
- * @param x the pointer to store the horizontal position, may be @c 0
- * @param y the pointer to store the vertical position, may be @c 0
- * @param w the pointer to store width, may be @c 0
- * @param h the pointer to store height, may be @c 0
- *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise and
- *         values are zeroed
- */
 Eina_Bool ewk_frame_visible_content_geometry_get(const Evas_Object *o, Eina_Bool include_scrollbars, int *x, int *y, int *w, int *h)
 {
     if (x)
@@ -1213,17 +822,6 @@ Eina_Bool ewk_frame_visible_content_geometry_get(const Evas_Object *o, Eina_Bool
     return EINA_TRUE;
 }
 
-/**
- * Queries if the frame should be repainted completely.
- *
- * Function tells if dirty areas should be repainted 
- * even if they are out of the screen.
- *
- * @param o frame object to query if the frame should be repainted completely
- *
- * @return @c EINA_TRUE if any dirty areas should be repainted, @c EINA_FALSE
- *         otherwise
- */
 Eina_Bool ewk_frame_paint_full_get(const Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1232,16 +830,6 @@ Eina_Bool ewk_frame_paint_full_get(const Evas_Object *o)
     return sd->frame->view()->paintsEntireContents();
 }
 
-/**
- * Sets if the frame should be repainted completely.
- *
- * Function sets if dirty areas should be repainted 
- * even if they are out of the screen.
- *
- * @param o frame object to set if the frame should be repainted completely
- * @param flag @c EINA_TRUE to repaint the frame completely,
- *             @c EINA_FALSE if not
- */
 void ewk_frame_paint_full_set(Evas_Object *o, Eina_Bool flag)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd);
@@ -1250,13 +838,6 @@ void ewk_frame_paint_full_set(Evas_Object *o, Eina_Bool flag)
     sd->frame->view()->setPaintsEntireContents(flag);
 }
 
-/**
- * Feeds the focus in event to the frame.
- *
- * @param o frame object to feed focus
- *
- * @return @c EINA_TRUE if the focus was handled, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_feed_focus_in(Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1266,13 +847,6 @@ Eina_Bool ewk_frame_feed_focus_in(Evas_Object *o)
     return EINA_TRUE;
 }
 
-/**
- * Feeds the focus out event to the frame.
- *
- * @param o frame object to remove focus
- *
- * @return @c EINA_FALSE since the feature is not implemented
- */
 Eina_Bool ewk_frame_feed_focus_out(Evas_Object *o)
 {
     // TODO: what to do on focus out?
@@ -1280,14 +854,6 @@ Eina_Bool ewk_frame_feed_focus_out(Evas_Object *o)
     return EINA_FALSE;
 }
 
-/**
- * Feeds the mouse wheel event to the frame.
- *
- * @param o frame object to feed the mouse wheel event
- * @param ev the mouse wheel event
- *
- * @return @c EINA_TRUE if the mouse wheel event was handled, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_feed_mouse_wheel(Evas_Object *o, const Evas_Event_Mouse_Wheel *ev)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1303,14 +869,6 @@ Eina_Bool ewk_frame_feed_mouse_wheel(Evas_Object *o, const Evas_Event_Mouse_Whee
     return sd->frame->eventHandler()->handleWheelEvent(event);
 }
 
-/**
- * Feeds the mouse down event to the frame.
- *
- * @param o frame object to feed the mouse down event
- * @param ev the mouse down event
- *
- * @return @c EINA_TRUE if the mouse down event was handled, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_feed_mouse_down(Evas_Object *o, const Evas_Event_Mouse_Down *ev)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1329,14 +887,6 @@ Eina_Bool ewk_frame_feed_mouse_down(Evas_Object *o, const Evas_Event_Mouse_Down 
     return sd->frame->eventHandler()->handleMousePressEvent(event);
 }
 
-/**
- * Feeds the mouse up event to the frame.
- *
- * @param o frame object to feed the mouse up event
- * @param ev the mouse up event
- *
- * @return @c EINA_TRUE if the mouse up event was handled, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_feed_mouse_up(Evas_Object *o, const Evas_Event_Mouse_Up *ev)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1355,14 +905,6 @@ Eina_Bool ewk_frame_feed_mouse_up(Evas_Object *o, const Evas_Event_Mouse_Up *ev)
     return sd->frame->eventHandler()->handleMouseReleaseEvent(event);
 }
 
-/**
- * Feeds the mouse move event to the frame.
- *
- * @param o frame object to feed the mouse move event
- * @param ev the mouse move event
- *
- * @return @c EINA_TRUE if the mouse move event was handled, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_feed_mouse_move(Evas_Object *o, const Evas_Event_Mouse_Move *ev)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1382,16 +924,6 @@ Eina_Bool ewk_frame_feed_mouse_move(Evas_Object *o, const Evas_Event_Mouse_Move 
     return sd->frame->eventHandler()->mouseMoved(event);
 }
 
-/**
- * Feeds the touch event to the frame.
- *
- * @param o frame object to feed touch event
- * @param action the action of touch event
- * @param points a list of points (Ewk_Touch_Point) to process
- * @param metaState DEPRECTAED, not supported for now
- *
- * @return @c EINA_TRUE if touch event was handled, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_feed_touch_event(Evas_Object *o, Ewk_Touch_Event_Type action, Eina_List *points, int metaState)
 {
     Eina_Bool ret = EINA_FALSE;
@@ -1497,14 +1029,6 @@ static inline Eina_Bool _ewk_frame_handle_key_scrolling(WebCore::Frame *frame, c
     return EINA_TRUE;
 }
 
-/**
- * Feeds the keyboard key down event to the frame.
- *
- * @param o frame object to feed event
- * @param ev keyboard key down event
- *
- * @return @c EINA_TRUE if the key down event was handled, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_feed_key_down(Evas_Object *o, const Evas_Event_Key_Down *ev)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1521,14 +1045,6 @@ Eina_Bool ewk_frame_feed_key_down(Evas_Object *o, const Evas_Event_Key_Down *ev)
     return _ewk_frame_handle_key_scrolling(sd->frame, event);
 }
 
-/**
- * Feeds the keyboard key up event to the frame.
- *
- * @param o frame object to feed event
- * @param ev keyboard key up event
- *
- * @return @c EINA_TRUE if the key up event was handled, @c EINA_FALSE otherwise
- */
 Eina_Bool ewk_frame_feed_key_up(Evas_Object *o, const Evas_Event_Key_Up *ev)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
@@ -1542,12 +1058,6 @@ Eina_Bool ewk_frame_feed_key_up(Evas_Object *o, const Evas_Event_Key_Up *ev)
     return sd->frame->eventHandler()->keyEvent(event);
 }
 
-/**
- * Returns current text selection type.
- *
- * @param o a frame object to check selection type
- * @return Current text selection type on success or no selection otherwise
- */
 Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(Evas_Object *o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EWK_TEXT_SELECTION_NONE);

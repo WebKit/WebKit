@@ -30,11 +30,6 @@
 #include <libsoup/soup.h>
 #endif
 
-/**
- * Sets the given proxy URI to network backend.
- *
- * @param proxy URI to set.
- */
 void ewk_network_proxy_uri_set(const char *proxy)
 {
 #if USE(SOUP)
@@ -56,13 +51,6 @@ void ewk_network_proxy_uri_set(const char *proxy)
 #endif
 }
 
-/**
- * Gets the proxy URI from the network backend.
- *
- * The returned string should be freed by eina_stringshare_del() after use.
- *
- * @return current proxy URI or @c 0 if it's not set.
- */
 const char *ewk_network_proxy_uri_get(void)
 {
 #if USE(SOUP)
@@ -82,11 +70,6 @@ const char *ewk_network_proxy_uri_get(void)
 #endif
 }
 
-/**
- * Sets if network backend is online or not.
- * 
- * @param online @c EINA_FALSE if network is disconnected.
- */
 void ewk_network_state_notifier_online_set(Eina_Bool online)
 {
     WebCore::networkStateNotifier().setOnLine(online);
