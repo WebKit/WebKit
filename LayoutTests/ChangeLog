@@ -1,5 +1,13 @@
 2011-08-05  Anders Carlsson  <andersca@apple.com>
 
+        Add a Lion specific test for fast/repaint/canvas-putImageData.html
+
+        * platform/mac-snowleopard/fast/repaint: Added.
+        * platform/mac-snowleopard/fast/repaint/canvas-putImageData-expected.txt: Copied from fast/repaint/canvas-putImageData-expected.txt.
+        * platform/mac/fast/repaint/canvas-putImageData-expected.txt: Added.
+
+2011-08-05  Anders Carlsson  <andersca@apple.com>
+
         Add more Lion specific test results.
 
         * platform/mac-snowleopard/fast/text/capitalize-boundaries-expected.png: Copied from platform/mac/fast/text/capitalize-boundaries-expected.png.
