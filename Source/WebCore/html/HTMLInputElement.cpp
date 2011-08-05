@@ -663,6 +663,9 @@ void HTMLInputElement::subtreeHasChanged()
         if (Frame* frame = document()->frame())
             frame->editor()->textDidChangeInTextField(this);
     }
+    // When typing in an input field, childrenChanged is not called, so we need to force the directionality check.
+    if (isTextField())
+        calculateAndAdjustDirectionality();
 }
 
 const AtomicString& HTMLInputElement::formControlType() const

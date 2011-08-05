@@ -40,6 +40,7 @@
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "HTMLTextFormControlElement.h"
 #include "RenderWordBreak.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
@@ -52,6 +53,7 @@
 namespace WebCore {
 
 using namespace HTMLNames;
+using namespace WTF;
 
 using std::min;
 using std::max;
@@ -871,10 +873,19 @@ TextDirection HTMLElement::directionalityIfhasDirAutoAttribute(bool& isAuto) con
 
 TextDirection HTMLElement::directionality(Node** strongDirectionalityTextNode) const
 {
+    if (HTMLTextFormControlElement* textElement = toTextFormControl(const_cast<HTMLElement*>(this))) {
+        bool hasStrongDirectionality;
+        Unicode::Direction textDirection = textElement->value().defaultWritingDirection(&hasStrongDirectionality);
+        if (hasStrongDirectionality && strongDirectionalityTextNode)
+            *strongDirectionalityTextNode = textElement;
+        return (textDirection == Unicode::LeftToRight) ? LTR : RTL;
+    }
+
     Node* node = firstChild();
     while (node) {
-        // Skip bdi, script and style elements
-        if (equalIgnoringCase(node->nodeName(), "bdi") || node->hasTagName(scriptTag) || node->hasTagName(styleTag)) {
+        // Skip bdi, script, style and text form controls.
+        if (equalIgnoringCase(node->nodeName(), "bdi") || node->hasTagName(scriptTag) || node->hasTagName(styleTag) 
+            || (node->isElementNode() && toElement(node)->isTextFormControl())) {
             node = node->traverseNextSibling(this);
             continue;
         }

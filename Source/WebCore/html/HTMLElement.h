@@ -93,6 +93,7 @@ protected:
     unsigned parseBorderWidthAttribute(Attribute*);
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    void calculateAndAdjustDirectionality();
 
 private:
     virtual String nodeName() const;
@@ -106,7 +107,6 @@ private:
 
     void dirAttributeChanged(Attribute*);
     void adjustDirectionalityIfNeededAfterChildAttributeChanged(Element* child);
-    void calculateAndAdjustDirectionality();
     void adjustDirectionalityIfNeededAfterChildrenChanged(Node* beforeChange, int childCountDelta);
     TextDirection directionality(Node** strongDirectionalityTextNode= 0) const;
 };

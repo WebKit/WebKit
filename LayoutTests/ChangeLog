@@ -1,3 +1,17 @@
+2011-08-05  Yael Aharon  <yael.aharon@nokia.com>
+
+        dir=auto needs to work on value of input and textarea elements
+        https://bugs.webkit.org/show_bug.cgi?id=65428
+
+        Reviewed by Darin Adler.
+
+        * fast/dom/HTMLElement/attr-dir-auto-changed-text-form-control-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-changed-text-form-control.html: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-text-form-control-child-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-text-form-control-child.html: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-text-form-control-expected.txt: Added.
+        * fast/dom/HTMLElement/attr-dir-auto-text-form-control.html: Added.
+
 2011-08-05  Vsevolod Vlasov  <vsevik@chromium.org>
 
         [Qt]Web Inspector: REGRESSION(r91928): It made 2 tests fail

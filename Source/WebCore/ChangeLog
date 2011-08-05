@@ -1,3 +1,30 @@
+2011-08-05  Yael Aharon  <yael.aharon@nokia.com>
+
+        dir=auto needs to work on value of input and textarea elements
+        https://bugs.webkit.org/show_bug.cgi?id=65428
+
+        Reviewed by Darin Adler.
+
+        Changed the directionality algorithm to evaluate the value of input elements and textarea elements when
+        they have the attribute dir-auto Set.
+        Also skip these elements when evaluating the directionality of their ancestors.
+
+        HTMLTextAreaElement::childrenChanged is not called when a user types into the textarea, so call
+        calculateAndAdjustDirectionality() explicitly from HTMLTextAreaElement::subtreeHasChanged().
+
+        HTMLInputElement::childrenChanged is not called when a user types into the textarea, so call
+        calculateAndAdjustDirectionality() explicitly from HTMLTextAreaElement::subtreeHasChanged().
+
+        Tests: fast/dom/HTMLElement/attr-dir-auto-changed-text-form-control.html
+               fast/dom/HTMLElement/attr-dir-auto-text-form-control-child.html
+               fast/dom/HTMLElement/attr-dir-auto-text-form-control.html
+
+        * html/HTMLElement.cpp:
+        (WebCore::HTMLElement::directionality):
+        * html/HTMLElement.h:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::subtreeHasChanged):
+
 2011-08-05  Keishi Hattori  <keishi@webkit.org>
 
         Implement <input type=color> UI behavior WebCore part
