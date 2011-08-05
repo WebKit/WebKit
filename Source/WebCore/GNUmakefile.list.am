@@ -2310,9 +2310,6 @@ webcore_sources += \
 	Source/WebCore/page/PerformanceNavigation.h \
 	Source/WebCore/page/PerformanceTiming.cpp \
 	Source/WebCore/page/PerformanceTiming.h \
-	Source/WebCore/page/PluginHalter.cpp \
-	Source/WebCore/page/PluginHalter.h \
-	Source/WebCore/page/PluginHalterClient.h \
 	Source/WebCore/page/PositionCallback.h \
 	Source/WebCore/page/PositionError.h \
 	Source/WebCore/page/PositionErrorCallback.h \

@@ -1066,34 +1066,4 @@ PassRefPtr<Image> PluginView::snapshot()
 #endif
 }
 
-void PluginView::halt()
-{
-    ASSERT(!m_isHalted);
-    ASSERT(m_isStarted);
-
-#if !PLATFORM(QT)
-    // Show a screenshot of the plug-in.
-    toRenderWidget(m_element->renderer())->showSubstituteImage(snapshot());
-#endif
-
-    m_isHalted = true;
-    m_hasBeenHalted = true;
-
-    stop();
-    platformDestroy();
-}
-
-void PluginView::restart()
-{
-    ASSERT(!m_isStarted);
-    ASSERT(m_isHalted);
-
-    // Clear any substitute image.
-    toRenderWidget(m_element->renderer())->showSubstituteImage(0);
-
-    m_isHalted = false;
-    m_haveUpdatedPluginWidget = false;
-    start();
-}
-
 } // namespace WebCore

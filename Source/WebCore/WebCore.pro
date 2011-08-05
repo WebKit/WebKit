@@ -941,7 +941,6 @@ SOURCES += \
     page/Performance.cpp \
     page/PerformanceNavigation.cpp \
     page/PerformanceTiming.cpp \
-    page/PluginHalter.cpp \
     page/PrintContext.cpp \
     page/Screen.cpp \
     page/SecurityOrigin.cpp \

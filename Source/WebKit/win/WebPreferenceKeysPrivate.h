@@ -136,8 +136,6 @@
 
 #define WebKitUseHighResolutionTimersPreferenceKey "WebKitUseHighResolutionTimers"
 
-#define WebKitPluginAllowedRunTimePreferenceKey "WebKitPluginAllowedRunTime"
-
 #define WebKitFrameFlatteningEnabledPreferenceKey "WebKitFrameFlatteningEnabled"
 
 #define WebKitAcceleratedCompositingEnabledPreferenceKey "WebKitAcceleratedCompositingEnabled"

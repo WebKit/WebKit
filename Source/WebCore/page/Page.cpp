@@ -57,7 +57,6 @@
 #include "NetworkStateNotifier.h"
 #include "PageGroup.h"
 #include "PluginData.h"
-#include "PluginHalter.h"
 #include "PluginView.h"
 #include "PluginViewBase.h"
 #include "ProgressTracker.h"
@@ -175,11 +174,6 @@ Page::Page(PageClients& pageClients)
 
     ASSERT(!allPages->contains(this));
     allPages->add(this);
-
-    if (pageClients.pluginHalterClient) {
-        m_pluginHalter = adoptPtr(new PluginHalter(pageClients.pluginHalterClient.release()));
-        m_pluginHalter->setPluginAllowedRunTime(m_settings->pluginAllowedRunTime());
-    }
 
 #ifndef NDEBUG
     pageCounter.increment();
@@ -884,24 +878,6 @@ void Page::privateBrowsingStateChanged()
 
     for (size_t i = 0; i < pluginViewBases.size(); ++i)
         pluginViewBases[i]->privateBrowsingStateChanged(privateBrowsingEnabled);
-}
-
-void Page::pluginAllowedRunTimeChanged()
-{
-    if (m_pluginHalter)
-        m_pluginHalter->setPluginAllowedRunTime(m_settings->pluginAllowedRunTime());
-}
-
-void Page::didStartPlugin(HaltablePlugin* obj)
-{
-    if (m_pluginHalter)
-        m_pluginHalter->didStartPlugin(obj);
-}
-
-void Page::didStopPlugin(HaltablePlugin* obj)
-{
-    if (m_pluginHalter)
-        m_pluginHalter->didStopPlugin(obj);
 }
 
 void Page::addScrollableArea(ScrollableArea* scrollableArea)

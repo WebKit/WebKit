@@ -118,7 +118,6 @@ Settings::Settings(Page* page)
 #if ENABLE(DOM_STORAGE)
     , m_sessionStorageQuota(StorageMap::noQuota)
 #endif
-    , m_pluginAllowedRunTime(numeric_limits<unsigned>::max())
     , m_editingBehaviorType(editingBehaviorTypeForPlatform())
     , m_maximumHTMLParserDOMTreeDepth(defaultMaximumHTMLParserDOMTreeDepth)
     , m_isSpatialNavigationEnabled(false)
@@ -746,12 +745,6 @@ void Settings::setShowRepaintCounter(bool enabled)
 void Settings::setExperimentalNotificationsEnabled(bool enabled)
 {
     m_experimentalNotificationsEnabled = enabled;
-}
-
-void Settings::setPluginAllowedRunTime(unsigned runTime)
-{
-    m_pluginAllowedRunTime = runTime;
-    m_page->pluginAllowedRunTimeChanged();
 }
 
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))

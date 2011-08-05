@@ -49,7 +49,6 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformString.h"
 #include "PlatformWheelEvent.h"
-#include "PluginHalterClient.h"
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "ResourceHandleManager.h"

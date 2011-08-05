@@ -216,12 +216,6 @@ void RenderWidget::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     }
 }
 
-void RenderWidget::showSubstituteImage(PassRefPtr<Image> prpImage)
-{
-    m_substituteImage = prpImage;
-    repaint();
-}
-
 void RenderWidget::notifyWidget(WidgetNotification notification)
 {
     if (m_widget)
@@ -268,25 +262,21 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     if (m_widget) {
         // Tell the widget to paint now.  This is the only time the widget is allowed
         // to paint itself.  That way it will composite properly with z-indexed layers.
-        if (m_substituteImage)
-            paintInfo.context->drawImage(m_substituteImage.get(), style()->colorSpace(), m_widget->frameRect());
-        else {
-            LayoutPoint widgetLocation = m_widget->frameRect().location();
-            LayoutPoint paintLocation(adjustedPaintOffset.x() + borderLeft() + paddingLeft(), adjustedPaintOffset.y() + borderTop() + paddingTop());
-            LayoutRect paintRect = paintInfo.rect;
+        LayoutPoint widgetLocation = m_widget->frameRect().location();
+        LayoutPoint paintLocation(adjustedPaintOffset.x() + borderLeft() + paddingLeft(), adjustedPaintOffset.y() + borderTop() + paddingTop());
+        LayoutRect paintRect = paintInfo.rect;
 
-            LayoutSize widgetPaintOffset = paintLocation - widgetLocation;
-            // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
-            // not the root. In this case, shift the CTM and adjust the paintRect to be root-relative to fix plug-in drawing.
-            if (!widgetPaintOffset.isZero()) {
-                paintInfo.context->translate(widgetPaintOffset);
-                paintRect.move(-widgetPaintOffset);
-            }
-            m_widget->paint(paintInfo.context, paintRect);
-
-            if (!widgetPaintOffset.isZero())
-                paintInfo.context->translate(-widgetPaintOffset);
+        LayoutSize widgetPaintOffset = paintLocation - widgetLocation;
+        // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
+        // not the root. In this case, shift the CTM and adjust the paintRect to be root-relative to fix plug-in drawing.
+        if (!widgetPaintOffset.isZero()) {
+            paintInfo.context->translate(widgetPaintOffset);
+            paintRect.move(-widgetPaintOffset);
         }
+        m_widget->paint(paintInfo.context, paintRect);
+
+        if (!widgetPaintOffset.isZero())
+            paintInfo.context->translate(-widgetPaintOffset);
 
         if (m_widget->isFrameView()) {
             FrameView* frameView = static_cast<FrameView*>(m_widget.get());

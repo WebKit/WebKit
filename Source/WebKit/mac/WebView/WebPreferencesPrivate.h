@@ -126,9 +126,6 @@ extern NSString *WebPreferencesChangedInternalNotification;
 - (BOOL)experimentalNotificationsEnabled;
 - (void)setExperimentalNotificationsEnabled:(BOOL)notificationsEnabled;
 
-- (unsigned)pluginAllowedRunTime;
-- (void)setPluginAllowedRunTime:(unsigned)allowedRunTime;
-
 - (BOOL)isFrameFlatteningEnabled;
 - (void)setFrameFlatteningEnabled:(BOOL)flag;
 

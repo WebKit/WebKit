@@ -404,12 +404,6 @@ public:
     virtual HRESULT STDMETHODCALLTYPE shouldUseHighResolutionTimers(
     /* [retval][out] */ BOOL* useHighResolutionTimers);
 
-    virtual HRESULT STDMETHODCALLTYPE setPluginAllowedRunTime(
-    /* [in] */ UINT allowedRunTime);
-
-    virtual HRESULT STDMETHODCALLTYPE pluginAllowedRunTime(
-    /* [retval][out] */ UINT* allowedRunTime);
-
     virtual HRESULT STDMETHODCALLTYPE isFrameFlatteningEnabled(
     /* [retval][out] */ BOOL* enabled);
 

@@ -1,3 +1,35 @@
+2011-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Remove PluginHalter
+        https://bugs.webkit.org/show_bug.cgi?id=65729
+
+        Reviewed by Darin Adler.
+
+        Remove plug-in halter and associated classes.
+
+        * Interfaces/IWebPluginHalterDelegate.idl: Removed.
+        * Interfaces/IWebPreferencesPrivate.idl:
+        * Interfaces/IWebViewPrivate.idl:
+        * Interfaces/WebKit.idl:
+        * WebCoreSupport/WebPluginHalterClient.cpp: Removed.
+        * WebCoreSupport/WebPluginHalterClient.h: Removed.
+        * WebKit.vcproj/Interfaces.vcproj:
+        * WebKit.vcproj/WebKit.vcproj:
+        * WebPreferenceKeysPrivate.h:
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings):
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::close):
+        (WebView::initWithFrame):
+        (WebView::notifyPreferencesChanged):
+        (WebView::unused1):
+        (WebView::unused2):
+        (WebView::unused3):
+        (WebView::unused4):
+        (WebView::unused5):
+        * WebView.h:
+
 2011-08-04  Jeff Miller  <jeffm@apple.com>
 
         Add support for setting and getting whether AVFoundation is enabled to IWebPreferences

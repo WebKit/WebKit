@@ -42,7 +42,6 @@ interface IWebFrameLoadDelegatePrivate;
 interface IWebHistoryDelegate;
 interface IWebInspector;
 interface IWebInspectorPrivate;
-interface IWebPluginHalterDelegate;
 interface IWebURLRequest;
 interface IWebView;
 
@@ -197,8 +196,8 @@ interface IWebViewPrivate : IUnknown
     HRESULT removeUserStyleSheetsFromGroup([in] BSTR groupName, [in] IWebScriptWorld*);
     HRESULT removeAllUserContentFromGroup([in] BSTR groupName);
 
-    HRESULT setPluginHalterDelegate([in] IWebPluginHalterDelegate* d);
-    HRESULT pluginHalterDelegate([retval, out] IWebPluginHalterDelegate** d);
+    HRESULT unused1();
+    HRESULT unused2();
 
     // If rect is 0, the entire backing store will be invalidated.
     HRESULT invalidateBackingStore([in] const RECT* rect);
@@ -219,9 +218,9 @@ interface IWebViewPrivate : IUnknown
     HRESULT historyDelegate([out,retval] IWebHistoryDelegate** historyDelegate);
     HRESULT addVisitedLinks([in] BSTR* visitedURLs, [in] unsigned visitedURLCount);
 
-    HRESULT isNodeHaltedPlugin([in] IDOMNode*, [retval, out] BOOL*);
-    HRESULT restartHaltedPluginForNode([in] IDOMNode*);
-    HRESULT hasPluginForNodeBeenHalted([in] IDOMNode*, [retval, out] BOOL*);
+    HRESULT unused3();
+    HRESULT unused4();
+    HRESULT unused5();
 
     HRESULT setGeolocationProvider([in] IWebGeolocationProvider* locationProvider);
     HRESULT geolocationProvider([out, retval] IWebGeolocationProvider** locationProvider);

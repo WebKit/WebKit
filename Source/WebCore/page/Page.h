@@ -74,8 +74,6 @@ namespace WebCore {
     class Node;
     class PageGroup;
     class PluginData;
-    class PluginHalter;
-    class PluginHalterClient;
     class ProgressTracker;
     class RenderTheme;
     class VisibleSelection;
@@ -113,7 +111,6 @@ namespace WebCore {
             EditorClient* editorClient;
             DragClient* dragClient;
             InspectorClient* inspectorClient;
-            OwnPtr<PluginHalterClient> pluginHalterClient;
             GeolocationClient* geolocationClient;
             DeviceMotionClient* deviceMotionClient;
             DeviceOrientationClient* deviceOrientationClient;
@@ -253,10 +250,6 @@ namespace WebCore {
         void dnsPrefetchingStateChanged();
         void privateBrowsingStateChanged();
 
-        void didStartPlugin(HaltablePlugin*);
-        void didStopPlugin(HaltablePlugin*);
-        void pluginAllowedRunTimeChanged();
-
         static void setDebuggerForAllPages(JSC::Debugger*);
         void setDebugger(JSC::Debugger*);
         JSC::Debugger* debugger() const { return m_debugger; }
@@ -392,8 +385,6 @@ namespace WebCore {
         int m_customHTMLTokenizerChunkSize;
 
         bool m_canStartMedia;
-
-        OwnPtr<PluginHalter> m_pluginHalter;
 
 #if ENABLE(DOM_STORAGE)
         RefPtr<StorageNamespace> m_sessionStorage;

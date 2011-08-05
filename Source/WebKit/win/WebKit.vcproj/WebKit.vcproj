@@ -1243,14 +1243,6 @@
 				RelativePath="..\WebCoreSupport\WebPlatformStrategies.h"
 				>
 			</File>
-			<File
-				RelativePath="..\WebCoreSupport\WebPluginHalterClient.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\WebCoreSupport\WebPluginHalterClient.h"
-				>
-			</File>
 		</Filter>
 		<File
 			RelativePath="..\WebKitPrefix.cpp"

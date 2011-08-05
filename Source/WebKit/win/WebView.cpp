@@ -57,7 +57,6 @@
 #include "WebMutableURLRequest.h"
 #include "WebNotificationCenter.h"
 #include "WebPlatformStrategies.h"
-#include "WebPluginHalterClient.h"
 #include "WebPreferences.h"
 #include "WebScriptWorld.h"
 #include "resource.h"
@@ -708,7 +707,6 @@ HRESULT STDMETHODCALLTYPE WebView::close()
     setResourceLoadDelegate(0);
     setUIDelegate(0);
     setFormDelegate(0);
-    setPluginHalterDelegate(0);
 
     if (m_webInspector)
         m_webInspector->webViewClosed();
@@ -2643,7 +2641,6 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
     pageClients.editorClient = new WebEditorClient(this);
     pageClients.dragClient = new WebDragClient(this);
     pageClients.inspectorClient = new WebInspectorClient(this);
-    pageClients.pluginHalterClient = adoptPtr(new WebPluginHalterClient(this));
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     pageClients.geolocationClient = new WebGeolocationClient(this);
 #endif
@@ -4806,12 +4803,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setShouldUseHighResolutionTimers(enabled);
 
-    UINT runTime;
-    hr = prefsPrivate->pluginAllowedRunTime(&runTime);
-    if (FAILED(hr))
-        return hr;
-    settings->setPluginAllowedRunTime(runTime);
-
     hr = prefsPrivate->isFrameFlatteningEnabled(&enabled);
     if (FAILED(hr))
         return hr;
@@ -6467,85 +6458,34 @@ void WebView::setAcceleratedCompositing(bool accelerated)
 }
 #endif
 
-HRESULT STDMETHODCALLTYPE WebView::setPluginHalterDelegate(IWebPluginHalterDelegate* d)
+HRESULT WebView::unused1()
 {
-    m_pluginHalterDelegate = d;
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
-HRESULT STDMETHODCALLTYPE WebView::pluginHalterDelegate(IWebPluginHalterDelegate** d)
+HRESULT WebView::unused2()
 {
-    if (!d)
-        return E_POINTER;
-
-    if (!m_pluginHalterDelegate)
-        return E_FAIL;
-
-    return m_pluginHalterDelegate.copyRefTo(d);
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
-static PluginView* pluginViewForNode(IDOMNode* domNode)
+HRESULT WebView::unused3()
 {
-    COMPtr<DOMNode> webKitDOMNode(Query, domNode);
-    if (!webKitDOMNode)
-        return 0;
-
-    Node* node = webKitDOMNode->node();
-    if (!node)
-        return 0;
-
-    RenderObject* renderer = node->renderer();
-    if (!renderer || !renderer->isWidget())
-        return 0;
-
-    Widget* widget = toRenderWidget(renderer)->widget();
-    if (!widget || !widget->isPluginView())
-        return 0;
-
-    return static_cast<PluginView*>(widget);
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
-HRESULT WebView::isNodeHaltedPlugin(IDOMNode* domNode, BOOL* result)
+HRESULT WebView::unused4()
 {
-    if (!domNode || !result)
-        return E_POINTER;
-
-    *result = FALSE;
-
-    PluginView* view = pluginViewForNode(domNode);
-    if (!view)
-        return E_FAIL;
-
-    *result = view->isHalted();
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
-HRESULT WebView::restartHaltedPluginForNode(IDOMNode* domNode)
+HRESULT WebView::unused5()
 {
-    if (!domNode)
-        return E_POINTER;
-
-    PluginView* view = pluginViewForNode(domNode);
-    if (!view)
-        return E_FAIL;
-
-    view->restart();
-    return S_OK;
-}
-
-HRESULT WebView::hasPluginForNodeBeenHalted(IDOMNode* domNode, BOOL* result)
-{
-    if (!domNode || !result)
-        return E_POINTER;
-
-    *result = FALSE;
-
-    PluginView* view = pluginViewForNode(domNode);
-    if (!view)
-        return E_FAIL;
-
-    *result = view->hasBeenHalted();
-    return S_OK;
+    ASSERT_NOT_REACHED();
+    return E_FAIL;
 }
 
 HRESULT WebView::setGeolocationProvider(IWebGeolocationProvider* locationProvider)

@@ -98,7 +98,6 @@
 #define WebKitWebAudioEnabledPreferenceKey @"WebKitWebAudioEnabled"
 #define WebKitWebGLEnabledPreferenceKey @"WebKitWebGLEnabled"
 #define WebKitAccelerated2dCanvasEnabledPreferenceKey @"WebKitAccelerated2dCanvasEnabled"
-#define WebKitPluginAllowedRunTimePreferenceKey @"WebKitPluginAllowedRunTime"
 #define WebKitFrameFlatteningEnabledPreferenceKey @"WebKitFrameFlatteningEnabled"
 #define WebKitSpatialNavigationEnabledPreferenceKey @"WebKitSpatialNavigationEnabled"
 #define WebKitPaginateDuringLayoutEnabledPreferenceKey @"WebKitPaginateDuringLayoutEnabled"

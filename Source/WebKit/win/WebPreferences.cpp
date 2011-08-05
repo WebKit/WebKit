@@ -256,9 +256,6 @@ void WebPreferences::initializeDefaultSettings()
 
     CFDictionaryAddValue(defaults, CFSTR(WebKitUseHighResolutionTimersPreferenceKey), kCFBooleanTrue);
 
-    RetainPtr<CFStringRef> pluginAllowedRunTime(AdoptCF, CFStringCreateWithFormat(0, 0, CFSTR("%u"), numeric_limits<unsigned>::max()));
-    CFDictionaryAddValue(defaults, CFSTR(WebKitPluginAllowedRunTimePreferenceKey), pluginAllowedRunTime.get());
-
     CFDictionaryAddValue(defaults, CFSTR(WebKitAcceleratedCompositingEnabledPreferenceKey), kCFBooleanFalse);
     
     CFDictionaryAddValue(defaults, CFSTR(WebKitShowDebugBordersPreferenceKey), kCFBooleanFalse);
@@ -1487,18 +1484,6 @@ HRESULT STDMETHODCALLTYPE WebPreferences::setShouldUseHighResolutionTimers(BOOL 
 HRESULT STDMETHODCALLTYPE WebPreferences::shouldUseHighResolutionTimers(BOOL* useHighResolutionTimers)
 {
     *useHighResolutionTimers = boolValueForKey(CFSTR(WebKitUseHighResolutionTimersPreferenceKey));
-    return S_OK;
-}
-
-HRESULT WebPreferences::setPluginAllowedRunTime(UINT allowedRunTime)
-{
-    setIntegerValue(CFSTR(WebKitPluginAllowedRunTimePreferenceKey), allowedRunTime);
-    return S_OK;
-}
-
-HRESULT WebPreferences::pluginAllowedRunTime(UINT* allowedRunTime)
-{
-    *allowedRunTime = integerValueForKey(CFSTR(WebKitPluginAllowedRunTimePreferenceKey));
     return S_OK;
 }
 

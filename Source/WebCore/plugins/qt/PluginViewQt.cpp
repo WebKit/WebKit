@@ -1040,14 +1040,6 @@ void PluginView::platformDestroy()
         XFreeColormap(QX11Info::display(), m_colormap);
 }
 
-void PluginView::halt()
-{
-}
-
-void PluginView::restart()
-{
-}
- 
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* PluginView::platformLayer() const
 {

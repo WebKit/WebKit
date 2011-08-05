@@ -91,7 +91,6 @@
 #import "WebPanelAuthenticationHandler.h"
 #import "WebPlatformStrategies.h"
 #import "WebPluginDatabase.h"
-#import "WebPluginHalterClient.h"
 #import "WebPolicyDelegate.h"
 #import "WebPreferenceKeysPrivate.h"
 #import "WebPreferencesPrivate.h"
@@ -744,7 +743,6 @@ static NSString *leakSolarWalkQuirksUserScriptContents()
     pageClients.editorClient = new WebEditorClient(self);
     pageClients.dragClient = new WebDragClient(self);
     pageClients.inspectorClient = new WebInspectorClient(self);
-    pageClients.pluginHalterClient = adoptPtr(new WebPluginHalterClient(self));
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     pageClients.geolocationClient = new WebGeolocationClient(self);
 #endif
@@ -1563,7 +1561,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setCanvasUsesAcceleratedDrawing([preferences canvasUsesAcceleratedDrawing]);    
     settings->setShowDebugBorders([preferences showDebugBorders]);
     settings->setShowRepaintCounter([preferences showRepaintCounter]);
-    settings->setPluginAllowedRunTime([preferences pluginAllowedRunTime]);
     settings->setWebAudioEnabled([preferences webAudioEnabled]);
     settings->setWebGLEnabled([preferences webGLEnabled]);
     settings->setAccelerated2dCanvasEnabled([preferences accelerated2dCanvasEnabled]);
@@ -2537,59 +2534,6 @@ static inline IMP getMethod(id o, SEL s)
 - (BOOL)_includesFlattenedCompositingLayersWhenDrawingToBitmap
 {
     return _private->includesFlattenedCompositingLayersWhenDrawingToBitmap;
-}
-
-#if ENABLE(NETSCAPE_PLUGIN_API)
-static WebBaseNetscapePluginView *_pluginViewForNode(DOMNode *node)
-{
-    if (!node)
-        return nil;
-    
-    Node* coreNode = core(node);
-    if (!coreNode)
-        return nil;
-    
-    RenderObject* renderer = coreNode->renderer();
-    if (!renderer || !renderer->isWidget())
-        return nil;
-    
-    Widget* widget = toRenderWidget(renderer)->widget();
-    if (!widget || !widget->platformWidget())
-        return nil;
-    
-    NSView *view = widget->platformWidget();
-    if (![view isKindOfClass:[WebBaseNetscapePluginView class]])
-        return nil;
-    
-    return (WebBaseNetscapePluginView *)view;
-}
-#endif // ENABLE(NETSCAPE_PLUGIN_API)
-
-+ (BOOL)_isNodeHaltedPlugin:(DOMNode *)node
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    return [_pluginViewForNode(node) isHalted];
-#else
-    return YES;
-#endif
-}
-
-+ (BOOL)_hasPluginForNodeBeenHalted:(DOMNode *)node
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    return [_pluginViewForNode(node) hasBeenHalted];
-#else
-    return YES;
-#endif
-}
-+ (void)_restartHaltedPluginForNode:(DOMNode *)node
-{
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    if (!node)
-        return;
-    
-    [_pluginViewForNode(node) resumeFromHalt];
-#endif
 }
 
 - (NSPasteboard *)_insertionPasteboard

@@ -51,7 +51,6 @@
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLPlugInElement.h>
-#import <WebCore/HaltablePlugin.h>
 #import <WebCore/Page.h>
 #import <WebCore/ProtectionSpace.h>
 #import <WebCore/RenderView.h>
@@ -70,48 +69,6 @@
 static const NSTimeInterval ClearSubstituteImageDelay = 0.5;
 
 using namespace WebCore;
-
-class WebHaltablePlugin : public HaltablePlugin {
-public:
-    WebHaltablePlugin(WebBaseNetscapePluginView* view)
-        : m_view(view)
-    {
-    }
-    
-private:
-    virtual void halt();
-    virtual void restart();
-    virtual Node* node() const;
-    virtual bool isWindowed() const;
-    virtual String pluginName() const;
-
-    WebBaseNetscapePluginView* m_view;
-};
-
-void WebHaltablePlugin::halt()
-{
-    [m_view halt];
-}
-
-void WebHaltablePlugin::restart()
-{ 
-    [m_view resumeFromHalt];
-}
-    
-Node* WebHaltablePlugin::node() const
-{
-    return [m_view element];
-}
-
-bool WebHaltablePlugin::isWindowed() const
-{
-    return false;
-}
-
-String WebHaltablePlugin::pluginName() const
-{
-    return [[m_view pluginPackage] pluginInfo].name;
-}
 
 @implementation WebBaseNetscapePluginView
 
@@ -163,7 +120,6 @@ String WebHaltablePlugin::pluginName() const
         _mode = NP_EMBED;
     
     _loadManually = loadManually;
-    _haltable = adoptPtr(new WebHaltablePlugin(self));
     return self;
 }
 
@@ -454,7 +410,6 @@ String WebHaltablePlugin::pluginName() const
     }
     
     _isStarted = YES;
-    page->didStartPlugin(_haltable.get());
 
     [[self webView] addPluginInstanceView:self];
 
@@ -484,11 +439,6 @@ String WebHaltablePlugin::pluginName() const
     if (!_isStarted)
         return;
 
-    if (Frame* frame = core([self webFrame])) {
-        if (Page* page = frame->page())
-            page->didStopPlugin(_haltable.get());
-    }
-    
     _isStarted = NO;
     
     [[self webView] removePluginInstanceView:self];
@@ -500,61 +450,6 @@ String WebHaltablePlugin::pluginName() const
     [self removeWindowObservers];
     
     [self destroyPlugin];
-}
-
-- (void)halt
-{
-    ASSERT(!_isHalted);
-    ASSERT(_isStarted);
-    Element *element = [self element];
-#ifndef BUILDING_ON_LEOPARD
-    CGImageRef cgImage = CGImageRetain([core([self webFrame])->nodeImage(element).get() CGImageForProposedRect:nil context:nil hints:nil]);
-#else
-    RetainPtr<CGImageSourceRef> imageRef(AdoptCF, CGImageSourceCreateWithData((CFDataRef)[core([self webFrame])->nodeImage(element).get() TIFFRepresentation], 0));
-    CGImageRef cgImage = CGImageSourceCreateImageAtIndex(imageRef.get(), 0, 0);
-#endif
-    ASSERT(cgImage);
-    
-    // BitmapImage will release the passed in CGImage on destruction.
-    RefPtr<Image> nodeImage = BitmapImage::create(cgImage);
-    ASSERT(element->renderer());
-    toRenderWidget(element->renderer())->showSubstituteImage(nodeImage);
-    [self stop];
-    _isHalted = YES;  
-    _hasBeenHalted = YES;
-}
-
-- (void)_clearSubstituteImage
-{
-    Element* element = [self element];
-    if (!element)
-        return;
-    
-    RenderObject* renderer = element->renderer();
-    if (!renderer)
-        return;
-    
-    toRenderWidget(renderer)->showSubstituteImage(0);
-}
-
-- (void)resumeFromHalt
-{
-    ASSERT(_isHalted);
-    ASSERT(!_isStarted);
-    [self start];
-    
-    if (_isStarted)
-        _isHalted = NO;
-    
-    ASSERT([self element]->renderer());
-    // FIXME 7417484: This is a workaround for plug-ins not drawing immediately. We'd like to detect when the
-    // plug-in actually draws instead of just assuming it will do so within 0.5 seconds of being restarted.
-    [self performSelector:@selector(_clearSubstituteImage) withObject:nil afterDelay:ClearSubstituteImageDelay];
-}
-
-- (BOOL)isHalted
-{
-    return _isHalted;
 }
 
 - (BOOL)shouldClipOutPlugin
@@ -594,11 +489,6 @@ String WebHaltablePlugin::pluginName() const
 - (void)clearCachedSnapshot
 {
     _cachedSnapshot.clear();
-}
-
-- (BOOL)hasBeenHalted
-{
-    return _hasBeenHalted;
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow

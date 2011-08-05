@@ -3065,58 +3065,6 @@
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath="..\Interfaces\IWebPluginHalterDelegate.idl"
-			>
-			<FileConfiguration
-				Name="Debug|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCMIDLTool"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCMIDLTool"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Production|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCMIDLTool"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug_All|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCMIDLTool"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Release_Cairo_CFLite|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCMIDLTool"
-				/>
-			</FileConfiguration>
-			<FileConfiguration
-				Name="Debug_Cairo_CFLite|Win32"
-				ExcludedFromBuild="true"
-				>
-				<Tool
-					Name="VCMIDLTool"
-				/>
-			</FileConfiguration>
-		</File>
-		<File
 			RelativePath="..\Interfaces\IWebPolicyDelegate.idl"
 			>
 			<FileConfiguration

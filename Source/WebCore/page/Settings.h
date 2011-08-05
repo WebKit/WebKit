@@ -344,9 +344,6 @@ namespace WebCore {
         static bool shouldUseHighResolutionTimers() { return gShouldUseHighResolutionTimers; }
 #endif
 
-        void setPluginAllowedRunTime(unsigned);
-        unsigned pluginAllowedRunTime() const { return m_pluginAllowedRunTime; }
-
         void setWebAudioEnabled(bool);
         bool webAudioEnabled() const { return m_webAudioEnabled; }
 
@@ -478,7 +475,6 @@ namespace WebCore {
 #if ENABLE(DOM_STORAGE)
         unsigned m_sessionStorageQuota;
 #endif
-        unsigned m_pluginAllowedRunTime;
         unsigned m_editingBehaviorType;
         unsigned m_maximumHTMLParserDOMTreeDepth;
         bool m_isSpatialNavigationEnabled : 1;

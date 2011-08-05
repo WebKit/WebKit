@@ -1,3 +1,28 @@
+2011-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Remove PluginHalter
+        https://bugs.webkit.org/show_bug.cgi?id=65729
+
+        Reviewed by Darin Adler.
+
+        Remove plug-in halter and associated classes.
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView initWithFrame:pluginPackage:URL:baseURL:MIMEType:attributeKeys:attributeValues:loadManually:element:WebCore::]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView stop]):
+        * WebCoreSupport/WebPluginHalterClient.h: Removed.
+        * WebCoreSupport/WebPluginHalterClient.mm: Removed.
+        * WebView/WebPreferenceKeysPrivate.h:
+        * WebView/WebPreferences.mm:
+        (+[WebPreferences initialize]):
+        * WebView/WebPreferencesPrivate.h:
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView _preferencesChanged:]):
+        * WebView/WebViewPrivate.h:
+
 2011-08-04  Mark Rowe  <mrowe@apple.com>
 
         Future-proof Xcode configuration settings.

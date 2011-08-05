@@ -120,14 +120,6 @@ void PluginView::updatePluginWidget()
 {
 }
 
-void PluginView::halt()
-{
-}
-
-void PluginView::restart()
-{
-}
-
 #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
 void PluginView::handleFocusInEvent()
 {

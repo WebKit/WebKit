@@ -802,8 +802,8 @@ public:
     virtual HRESULT STDMETHODCALLTYPE removeUserStyleSheetsFromGroup(BSTR groupName, IWebScriptWorld*);
     virtual HRESULT STDMETHODCALLTYPE removeAllUserContentFromGroup(BSTR groupName);
 
-    virtual HRESULT STDMETHODCALLTYPE setPluginHalterDelegate(IWebPluginHalterDelegate*);
-    virtual HRESULT STDMETHODCALLTYPE pluginHalterDelegate(IWebPluginHalterDelegate**);
+    virtual HRESULT STDMETHODCALLTYPE unused1();
+    virtual HRESULT STDMETHODCALLTYPE unused2();
 
     virtual HRESULT STDMETHODCALLTYPE invalidateBackingStore(const RECT*);
 
@@ -815,9 +815,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE historyDelegate(IWebHistoryDelegate** historyDelegate);
     virtual HRESULT STDMETHODCALLTYPE addVisitedLinks(BSTR* visitedURLs, unsigned visitedURLCount);
 
-    virtual HRESULT STDMETHODCALLTYPE isNodeHaltedPlugin(IDOMNode*, BOOL*);
-    virtual HRESULT STDMETHODCALLTYPE restartHaltedPluginForNode(IDOMNode*);
-    virtual HRESULT STDMETHODCALLTYPE hasPluginForNodeBeenHalted(IDOMNode*, BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE unused3();
+    virtual HRESULT STDMETHODCALLTYPE unused4();
+    virtual HRESULT STDMETHODCALLTYPE unused5();
 
     virtual HRESULT STDMETHODCALLTYPE setGeolocationProvider(IWebGeolocationProvider* locationProvider);
     virtual HRESULT STDMETHODCALLTYPE geolocationProvider(IWebGeolocationProvider** locationProvider);
@@ -1059,7 +1059,6 @@ protected:
     COMPtr<IWebHistoryDelegate> m_historyDelegate;
     COMPtr<WebPreferences> m_preferences;
     COMPtr<WebInspector> m_webInspector;
-    COMPtr<IWebPluginHalterDelegate> m_pluginHalterDelegate;
     COMPtr<IWebGeolocationProvider> m_geolocationProvider;
 
     bool m_userAgentOverridden;

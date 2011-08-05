@@ -271,9 +271,6 @@ bool PluginView::start()
     if (m_status != PluginStatusLoadedSuccessfully)
         return false;
 
-    if (parentFrame()->page())
-        parentFrame()->page()->didStartPlugin(this);
-
     return true;
 }
 
@@ -317,9 +314,6 @@ void PluginView::stop()
 {
     if (!m_isStarted)
         return;
-
-    if (parentFrame()->page())
-        parentFrame()->page()->didStopPlugin(this);
 
     LOG(Plugins, "PluginView::stop(): Stopping plug-in '%s'", m_plugin->name().utf8().data());
 
@@ -880,8 +874,6 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_loadManually(loadManually)
     , m_manualStream(0)
     , m_isJavaScriptPaused(false)
-    , m_isHalted(false)
-    , m_hasBeenHalted(false)
     , m_haveCalledSetWindow(false)
 {
     if (!m_plugin) {
@@ -1289,16 +1281,6 @@ const char* PluginView::userAgentStatic()
 }
 #endif
 
-
-Node* PluginView::node() const
-{
-    return m_element;
-}
-
-String PluginView::pluginName() const
-{
-    return m_plugin->name();
-}
 
 void PluginView::lifeSupportTimerFired(Timer<PluginView>*)
 {

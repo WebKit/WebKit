@@ -29,7 +29,6 @@
 #define PluginView_h
 
 #include "FrameLoadRequest.h"
-#include "HaltablePlugin.h"
 #include "IntRect.h"
 #include "MediaCanStartListener.h"
 #include "PluginViewBase.h"
@@ -141,7 +140,6 @@ namespace WebCore {
                      , private PluginStreamClient
 #endif
                      , public PluginManualLoader
-                     , private HaltablePlugin
                      , private MediaCanStartListener {
     public:
         static PassRefPtr<PluginView> create(Frame* parentFrame, const IntSize&, Element*, const KURL&, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually);
@@ -243,16 +241,6 @@ namespace WebCore {
         void didReceiveData(const char*, int);
         void didFinishLoading();
         void didFail(const ResourceError&);
-
-        // HaltablePlugin
-        virtual void halt();
-        virtual void restart();
-        virtual Node* node() const;
-        virtual bool isWindowed() const { return m_isWindowed; }
-        virtual String pluginName() const;
-
-        bool isHalted() const { return m_isHalted; }
-        bool hasBeenHalted() const { return m_hasBeenHalted; }
 
         static bool isCallingPlugin();
 
@@ -460,9 +448,6 @@ private:
         RefPtr<PluginStream> m_manualStream;
 
         bool m_isJavaScriptPaused;
-
-        bool m_isHalted;
-        bool m_hasBeenHalted;
 
         bool m_haveCalledSetWindow;
 

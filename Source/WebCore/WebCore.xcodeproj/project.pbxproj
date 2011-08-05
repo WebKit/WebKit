@@ -1730,10 +1730,6 @@
 		7637C543112E7B7E003D6CDC /* WebSocketHandshakeRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 7637C542112E7B7E003D6CDC /* WebSocketHandshakeRequest.h */; };
 		767F99BE11A1194A0080C51D /* WebSocketHandshakeResponse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 767F99BD11A1194A0080C51D /* WebSocketHandshakeResponse.cpp */; };
 		767F99C011A119560080C51D /* WebSocketHandshakeResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 767F99BF11A119560080C51D /* WebSocketHandshakeResponse.h */; };
-		7693BAD2106C2DCA007B0823 /* HaltablePlugin.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BACE106C2DCA007B0823 /* HaltablePlugin.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7693BACF106C2DCA007B0823 /* PluginHalter.cpp */; };
-		7693BAD4106C2DCA007B0823 /* PluginHalter.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BAD0106C2DCA007B0823 /* PluginHalter.h */; };
-		7693BAD5106C2DCA007B0823 /* PluginHalterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7694563C1214D97C0007CBAE /* JSDOMTokenList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7694563A1214D97C0007CBAE /* JSDOMTokenList.cpp */; };
 		7694563D1214D97C0007CBAE /* JSDOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 7694563B1214D97C0007CBAE /* JSDOMTokenList.h */; };
 		7694565B1214DB630007CBAE /* DOMDOMTokenList.h in Headers */ = {isa = PBXBuildFile; fileRef = 769456591214DB630007CBAE /* DOMDOMTokenList.h */; };
@@ -8366,10 +8362,6 @@
 		7637C542112E7B7E003D6CDC /* WebSocketHandshakeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketHandshakeRequest.h; sourceTree = "<group>"; };
 		767F99BD11A1194A0080C51D /* WebSocketHandshakeResponse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketHandshakeResponse.cpp; sourceTree = "<group>"; };
 		767F99BF11A119560080C51D /* WebSocketHandshakeResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketHandshakeResponse.h; sourceTree = "<group>"; };
-		7693BACE106C2DCA007B0823 /* HaltablePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HaltablePlugin.h; sourceTree = "<group>"; };
-		7693BACF106C2DCA007B0823 /* PluginHalter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginHalter.cpp; sourceTree = "<group>"; };
-		7693BAD0106C2DCA007B0823 /* PluginHalter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginHalter.h; sourceTree = "<group>"; };
-		7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginHalterClient.h; sourceTree = "<group>"; };
 		7694563A1214D97C0007CBAE /* JSDOMTokenList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMTokenList.cpp; sourceTree = "<group>"; };
 		7694563B1214D97C0007CBAE /* JSDOMTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMTokenList.h; sourceTree = "<group>"; };
 		769456591214DB630007CBAE /* DOMDOMTokenList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMDOMTokenList.h; sourceTree = "<group>"; };
@@ -14610,7 +14602,6 @@
 				FE80D7BC0E9C1F25000D6F75 /* Geoposition.idl */,
 				C50B561412119D23008B46E0 /* GroupSettings.cpp */,
 				C50B561512119D23008B46E0 /* GroupSettings.h */,
-				7693BACE106C2DCA007B0823 /* HaltablePlugin.h */,
 				BC94D1500C275C8B006BC617 /* History.cpp */,
 				BC94D1510C275C8B006BC617 /* History.h */,
 				BC94D1520C275C8B006BC617 /* History.idl */,
@@ -14660,9 +14651,6 @@
 				8AF4E55811DC5A63000ED3DE /* PerformanceTiming.cpp */,
 				8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */,
 				8AF4E55A11DC5A63000ED3DE /* PerformanceTiming.idl */,
-				7693BACF106C2DCA007B0823 /* PluginHalter.cpp */,
-				7693BAD0106C2DCA007B0823 /* PluginHalter.h */,
-				7693BAD1106C2DCA007B0823 /* PluginHalterClient.h */,
 				FE80D7BD0E9C1F25000D6F75 /* PositionCallback.h */,
 				593AB6971355CD9200FC8211 /* PositionCallback.idl */,
 				FE80D7BF0E9C1F25000D6F75 /* PositionError.h */,
@@ -21511,7 +21499,6 @@
 				B2A015AB0AF6CD53006BCE0E /* GraphicsTypes.h in Headers */,
 				77A17A7B12F2890B004E02F6 /* GraphicsTypes3D.h in Headers */,
 				C50B561712119D23008B46E0 /* GroupSettings.h in Headers */,
-				7693BAD2106C2DCA007B0823 /* HaltablePlugin.h in Headers */,
 				8482B7461198C35400BFB005 /* HashChangeEvent.h in Headers */,
 				A8748BE012CBF2DC001FBA41 /* HashTools.h in Headers */,
 				F55B3DC01251F12D003EF269 /* HiddenInputType.h in Headers */,
@@ -22503,8 +22490,6 @@
 				935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */,
 				A9C6E4F40D745E48006442E9 /* PluginData.h in Headers */,
 				97205ABC1239292700B17380 /* PluginDocument.h in Headers */,
-				7693BAD4106C2DCA007B0823 /* PluginHalter.h in Headers */,
-				7693BAD5106C2DCA007B0823 /* PluginHalterClient.h in Headers */,
 				1ADA14110E1AE5D900023EE5 /* PluginMainThreadScheduler.h in Headers */,
 				1AA8799011CBE846003C664F /* PluginStrategy.h in Headers */,
 				0AFDAC3D10F5448C00E1F3D2 /* PluginViewBase.h in Headers */,
@@ -25483,7 +25468,6 @@
 				1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */,
 				A9C6E4F30D745E48006442E9 /* PluginData.cpp in Sources */,
 				97205ABB1239292700B17380 /* PluginDocument.cpp in Sources */,
-				7693BAD3106C2DCA007B0823 /* PluginHalter.cpp in Sources */,
 				1ADA14100E1AE5D900023EE5 /* PluginMainThreadScheduler.cpp in Sources */,
 				76FF17E311235673001D61B5 /* PluginViewNone.cpp in Sources */,
 				B2B1F7160D00CAA8004AEA64 /* PointerEventsHitRules.cpp in Sources */,

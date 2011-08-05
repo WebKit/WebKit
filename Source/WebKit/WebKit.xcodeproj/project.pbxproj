@@ -11,8 +11,6 @@
 		065AD5A40B0C32C7005A2B1D /* WebContextMenuClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */; };
 		06693DDC0BFBA85200216072 /* WebInspectorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 06693DDA0BFBA85200216072 /* WebInspectorClient.h */; };
 		06693DDD0BFBA85200216072 /* WebInspectorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06693DDB0BFBA85200216072 /* WebInspectorClient.mm */; };
-		0A2D87FD107AF52B00CDDEE3 /* WebPluginHalterClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */; };
-		0A2D87FE107AF52B00CDDEE3 /* WebPluginHalterClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */; };
 		0AB752370FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */; };
 		0AB752380FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */; };
 		0ACE917310FE47E30096A45F /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0ACE917210FE47E30096A45F /* OpenGL.framework */; };
@@ -389,8 +387,6 @@
 		065AD5A20B0C32C7005A2B1D /* WebContextMenuClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuClient.mm; sourceTree = "<group>"; };
 		06693DDA0BFBA85200216072 /* WebInspectorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebInspectorClient.h; sourceTree = "<group>"; };
 		06693DDB0BFBA85200216072 /* WebInspectorClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebInspectorClient.mm; sourceTree = "<group>"; };
-		0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPluginHalterClient.h; sourceTree = "<group>"; };
-		0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPluginHalterClient.mm; sourceTree = "<group>"; };
 		0AB752350FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebNetscapeContainerCheckContextInfo.h; sourceTree = "<group>"; };
 		0AB752360FA2E4DB00D7CBB1 /* WebNetscapeContainerCheckContextInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapeContainerCheckContextInfo.mm; sourceTree = "<group>"; };
 		0ACE917210FE47E30096A45F /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = /System/Library/Frameworks/OpenGL.framework; sourceTree = "<absolute>"; };
@@ -1322,8 +1318,6 @@
 				84723BE4056D719E0044BFEA /* WebKeyGenerator.mm */,
 				1AA879B411CBE9BF003C664F /* WebPlatformStrategies.h */,
 				1AA879B511CBE9BF003C664F /* WebPlatformStrategies.mm */,
-				0A2D87FB107AF52B00CDDEE3 /* WebPluginHalterClient.h */,
-				0A2D87FC107AF52B00CDDEE3 /* WebPluginHalterClient.mm */,
 				A5DEFC0711D5331C00885273 /* WebSecurityOrigin.mm */,
 				A5DEFC0811D5331C00885273 /* WebSecurityOriginInternal.h */,
 				A5DEFC0911D5331C00885273 /* WebSecurityOriginPrivate.h */,
@@ -1575,7 +1569,6 @@
 				939810B00824BF01008DF038 /* WebPluginContainerPrivate.h in Headers */,
 				939810370824BF01008DF038 /* WebPluginController.h in Headers */,
 				939810380824BF01008DF038 /* WebPluginDatabase.h in Headers */,
-				0A2D87FD107AF52B00CDDEE3 /* WebPluginHalterClient.h in Headers */,
 				939810390824BF01008DF038 /* WebPluginPackage.h in Headers */,
 				225F881509F97E8A00423A40 /* WebPluginPrivate.h in Headers */,
 				1A77B02E0EE7730500C8A1F9 /* WebPluginRequest.h in Headers */,
@@ -1967,7 +1960,6 @@
 				939811260824BF01008DF038 /* WebPluginContainerCheck.mm in Sources */,
 				939810DA0824BF01008DF038 /* WebPluginController.mm in Sources */,
 				939810DB0824BF01008DF038 /* WebPluginDatabase.mm in Sources */,
-				0A2D87FE107AF52B00CDDEE3 /* WebPluginHalterClient.mm in Sources */,
 				939810DC0824BF01008DF038 /* WebPluginPackage.mm in Sources */,
 				1A77B02F0EE7730500C8A1F9 /* WebPluginRequest.m in Sources */,
 				224100F90918190100D2D266 /* WebPluginsPrivate.m in Sources */,
