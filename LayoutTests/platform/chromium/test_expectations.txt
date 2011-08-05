@@ -455,6 +455,10 @@ WONTFIX SKIP : http/tests/media/video-cross-site.html = PASS FAIL TIMEOUT
 // Pre-HTML5 parser quirks only apply to the mac port for now.
 WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 
+// Chromium's video codecs don't support alpha information encoded in the video
+// data, so this test is not applicable.
+BUGWK55519 WONTFIX SKIP : compositing/video/video-background-color.html = FAIL
+
 // -----------------------------------------------------------------
 // CHROME REWRITTEN TESTS
 // -----------------------------------------------------------------
@@ -2647,10 +2651,6 @@ WONTFIX GPU LEOPARD : animations/3d = IMAGE PASS
 
 // Will need windows and linux baselines
 BUGWK58182 GPU : compositing/images/content-image-change.html = PASS FAIL
-
-// The picture does not match the video in the test.
-BUGWK55519 LINUX WIN GPU : compositing/video/video-background-color.html = IMAGE+TEXT
-BUGWK55519 MAC GPU : compositing/video/video-background-color.html = IMAGE
 
 BUGWK47923 GPU : compositing/geometry/limit-layer-bounds-opacity-transition.html = TIMEOUT
 

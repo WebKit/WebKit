@@ -1,3 +1,15 @@
+2011-08-05  Ami Fischman  <fischman@chromium.org>
+
+        compositing/video/video-background-color.html test does not produce correct output
+        https://bugs.webkit.org/show_bug.cgi?id=55519
+
+        Unreviewed.
+        
+        Chromium doesn't support video codecs that support alpha, so stop
+        running (and failing) a test that depends on codecs supporting alpha.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-05  Yael Aharon  <yael.aharon@nokia.com>
 
         dir=auto needs to work on value of input and textarea elements
