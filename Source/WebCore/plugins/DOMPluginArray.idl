@@ -21,15 +21,14 @@
 module window {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplFrame,
         HasNameGetter,
         HasIndexGetter
     ] DOMPluginArray {
         readonly attribute unsigned long length;
-        DOMPlugin item(in unsigned long index);
-        DOMPlugin namedItem(in DOMString name);
-        void refresh(in boolean reload);
+        DOMPlugin item(in [Optional=CallWithDefaultValue] unsigned long index);
+        DOMPlugin namedItem(in [Optional=CallWithDefaultValue] DOMString name);
+        void refresh(in [Optional=CallWithDefaultValue] boolean reload);
     };
 
 }

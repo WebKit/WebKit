@@ -1,5 +1,18 @@
 2011-08-04  Mark Pilgrim  <pilgrim@chromium.org>
 
+        Remove LegacyDefaultOptionalArguments flag from plugin IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=65745
+
+        Reviewed by Adam Barth.
+
+        No new tests, all existing tests pass.
+
+        * plugins/DOMMimeTypeArray.idl:
+        * plugins/DOMPlugin.idl:
+        * plugins/DOMPluginArray.idl:
+
+2011-08-04  Mark Pilgrim  <pilgrim@chromium.org>
+
         Remove LegacyDefaultOptionalArguments flag from XML/XSL IDL files
         https://bugs.webkit.org/show_bug.cgi?id=65740
 
