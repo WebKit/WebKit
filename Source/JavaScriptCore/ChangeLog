@@ -1,3 +1,23 @@
+2011-08-05  Mark Rowe  <mrowe@apple.com>
+
+        <http://webkit.org/b/65785> ThreadRestrictionVerifier needs a mode where an object
+        is tied to a particular dispatch queue
+
+        A RefCounted object can be opted in to this mode by calling setDispatchQueueForVerifier
+        with the dispatch queue it will be tied to. This will cause ThreadRestrictionVerifier
+        to ensure that all operations are performed on the given dispatch queue.
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/RefCounted.h:
+        (WTF::RefCountedBase::setDispatchQueueForVerifier):
+        * wtf/ThreadRestrictionVerifier.h:
+        (WTF::ThreadRestrictionVerifier::ThreadRestrictionVerifier):
+        (WTF::ThreadRestrictionVerifier::~ThreadRestrictionVerifier):
+        (WTF::ThreadRestrictionVerifier::setDispatchQueueMode):
+        (WTF::ThreadRestrictionVerifier::setShared):
+        (WTF::ThreadRestrictionVerifier::isSafeToUse):
+
 2011-08-05  Oliver Hunt  <oliver@apple.com>
 
         Inline allocation of function objects

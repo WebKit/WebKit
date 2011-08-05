@@ -71,6 +71,10 @@ public:
 
     void setMutexForVerifier(Mutex&);
 
+#if HAVE(DISPATCH_H)
+    void setDispatchQueueForVerifier(dispatch_queue_t);
+#endif
+
     // Turns off verification. Use of this method is discouraged (instead extend
     // ThreadRestrictionVerifier to verify your case).
     // FIXME: remove this method.
@@ -211,6 +215,17 @@ inline void RefCountedBase::setMutexForVerifier(Mutex& mutex)
     m_verifier.setMutexMode(mutex);
 }
 #endif
+
+#if HAVE(DISPATCH_H)
+#ifdef NDEBUG
+inline void RefCountedBase::setDispatchQueueForVerifier(dispatch_queue_t) { }
+#else
+inline void RefCountedBase::setDispatchQueueForVerifier(dispatch_queue_t queue)
+{
+    m_verifier.setDispatchQueueMode(queue);
+}
+#endif // NDEBUG
+#endif // HAVE(DISPATCH_H)
 
 } // namespace WTF
 

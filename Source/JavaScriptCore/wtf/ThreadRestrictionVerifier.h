@@ -35,6 +35,10 @@
 #include <wtf/Threading.h>
 #include <wtf/ThreadingPrimitives.h>
 
+#if HAVE(DISPATCH_H)
+#include <dispatch/dispatch.h>
+#endif
+
 #ifndef NDEBUG
 
 namespace WTF {
@@ -50,8 +54,19 @@ public:
         , m_shared(false)
         , m_owningThread(0)
         , m_mutex(0)
+#if HAVE(DISPATCH_H)
+        , m_owningQueue(0)
+#endif
     {
     }
+
+#if HAVE(DISPATCH_H)
+    ~ThreadRestrictionVerifier()
+    {
+        if (m_owningQueue)
+            dispatch_release(m_owningQueue);
+    }
+#endif
 
     void setMutexMode(Mutex& mutex)
     {
@@ -59,6 +74,16 @@ public:
         m_mode = MutexVerificationMode;
         m_mutex = &mutex;
     }
+
+#if HAVE(DISPATCH_H)
+    void setDispatchQueueMode(dispatch_queue_t queue)
+    {
+        ASSERT(m_mode == SingleThreadVerificationMode);
+        m_mode = SingleDispatchQueueVerificationMode;
+        m_owningQueue = queue;
+        dispatch_retain(m_owningQueue);
+    }
+#endif
 
     void turnOffVerification()
     {
@@ -82,6 +107,9 @@ public:
             m_owningThread = currentThread();
             return;
 
+#if HAVE(DISPATCH_H)
+        case SingleDispatchQueueVerificationMode:
+#endif
         case MutexVerificationMode:
         case NoVerificationMode:
             return;
@@ -105,6 +133,11 @@ public:
             m_mutex->unlock();
             return false;
 
+#if HAVE(DISPATCH_H)
+        case SingleDispatchQueueVerificationMode:
+            return m_owningQueue == dispatch_get_current_queue();
+#endif
+
         case NoVerificationMode:
             return true;
         }
@@ -116,7 +149,10 @@ private:
     enum VerificationMode {
         SingleThreadVerificationMode,
         MutexVerificationMode,
-        NoVerificationMode
+        NoVerificationMode,
+#if HAVE(DISPATCH_H)
+        SingleDispatchQueueVerificationMode,
+#endif
     };
 
     VerificationMode m_mode;
@@ -127,6 +163,11 @@ private:
 
     // Used by MutexVerificationMode.
     Mutex* m_mutex;
+
+#if HAVE(DISPATCH_H)
+    // Used by SingleDispatchQueueVerificationMode.
+    dispatch_queue_t m_owningQueue;
+#endif
 };
 
 }
