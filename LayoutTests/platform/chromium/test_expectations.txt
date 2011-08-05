@@ -3215,9 +3215,6 @@ BUGDPRANKE LINUX MAC DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
 
-// Introduced in r84454
-BUGWK60126 : fast/transforms/selection-bounds-in-transformed-view.html = TEXT
-
 // more failures for triaging, fails on deps bots at least?
 BUGWK60123 LINUX DEBUG : editing/pasteboard/merge-end-2.html = PASS CRASH
 BUGDPRANKE DEBUG : animations/keyframes-out-of-order.html = PASS TEXT
@@ -3622,7 +3619,7 @@ BUGWK64675 LINUX WIN : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEX
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
 //BUGCR75424 LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
-//BUGCR75424 LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
+BUGCR75424 LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
 
 BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 
@@ -3661,7 +3658,7 @@ BUGWK65063 MAC : css2.1/t0905-c414-flt-01-d-g.html = IMAGE
 BUGWK65124 LINUX WIN : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT
-BUGWK65124 : fast/blockflow/japanese-rl-text-with-broken-font.html = FAIL
+BUGWK65124 WIN : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT
 
 BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
