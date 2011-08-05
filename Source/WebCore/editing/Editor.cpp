@@ -71,6 +71,7 @@
 #include "RenderBlock.h"
 #include "RenderPart.h"
 #include "RenderTextControl.h"
+#include "RenderedPosition.h"
 #include "ReplaceSelectionCommand.h"
 #include "Settings.h"
 #include "Sound.h"
@@ -2733,31 +2734,13 @@ IntRect Editor::firstRectForRange(Range* range) const
     ASSERT(range->startContainer());
     ASSERT(range->endContainer());
 
-    InlineBox* startInlineBox;
-    int startCaretOffset;
-    Position startPosition = VisiblePosition(range->startPosition()).deepEquivalent();
-    if (startPosition.isNull())
+    LayoutRect startCaretRect = RenderedPosition(VisiblePosition(range->startPosition()).deepEquivalent(), DOWNSTREAM).absoluteRect(extraWidthToEndOfLine);
+    if (startCaretRect == LayoutRect())
         return IntRect();
-    startPosition.getInlineBoxAndOffset(DOWNSTREAM, startInlineBox, startCaretOffset);
 
-    RenderObject* startRenderer = startPosition.deprecatedNode()->renderer();
-    ASSERT(startRenderer);
-    IntRect startCaretRect = startRenderer->localCaretRect(startInlineBox, startCaretOffset, &extraWidthToEndOfLine);
-    if (startCaretRect != IntRect())
-        startCaretRect = startRenderer->localToAbsoluteQuad(FloatRect(startCaretRect)).enclosingBoundingBox();
-
-    InlineBox* endInlineBox;
-    int endCaretOffset;
-    Position endPosition = VisiblePosition(range->endPosition()).deepEquivalent();
-    if (endPosition.isNull())
+    LayoutRect endCaretRect = RenderedPosition(VisiblePosition(range->endPosition()).deepEquivalent(), UPSTREAM).absoluteRect();
+    if (endCaretRect == LayoutRect())
         return IntRect();
-    endPosition.getInlineBoxAndOffset(UPSTREAM, endInlineBox, endCaretOffset);
-
-    RenderObject* endRenderer = endPosition.deprecatedNode()->renderer();
-    ASSERT(endRenderer);
-    IntRect endCaretRect = endRenderer->localCaretRect(endInlineBox, endCaretOffset);
-    if (endCaretRect != IntRect())
-        endCaretRect = endRenderer->localToAbsoluteQuad(FloatRect(endCaretRect)).enclosingBoundingBox();
 
     if (startCaretRect.y() == endCaretRect.y()) {
         // start and end are on the same line

@@ -1,3 +1,25 @@
+2011-08-04  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use RenderedPosition instead of getInlineBoxAndOffset in Editor and AccessibilityObject
+        https://bugs.webkit.org/show_bug.cgi?id=65647
+
+        Reviewed by Hajime Morita.
+
+        Encapsulated the use of getInlineBoxAndOffset in Editor.cpp and AccessibilityObject.cpp by RenderedPosition.
+
+        Also added rendererFromPosition that returns the renderer of deprecatedNode but using a proper Position interface.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::updateAXLineStartForVisiblePosition):
+        * editing/Editor.cpp:
+        (WebCore::Editor::firstRectForRange):
+        * editing/RenderedPosition.cpp:
+        (WebCore::rendererFromPosition):
+        (WebCore::RenderedPosition::RenderedPosition):
+        (WebCore::RenderedPosition::absoluteRect):
+        * editing/RenderedPosition.h:
+        (WebCore::RenderedPosition::absoluteRect):
+
 2011-08-04  Hayato Ito  <hayato@chromium.org>
 
         Make ScopedEventQueue enqueue an EventDispatchMediator, instead of an Event.

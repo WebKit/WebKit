@@ -49,6 +49,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "RenderedPosition.h"
 #include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "htmlediting.h"
@@ -289,22 +290,15 @@ static VisiblePosition updateAXLineStartForVisiblePosition(const VisiblePosition
     // So let's update the position to include that.
     VisiblePosition tempPosition;
     VisiblePosition startPosition = visiblePosition;
-    Position p;
-    RenderObject* renderer;
     while (true) {
         tempPosition = startPosition.previous();
-        if (tempPosition.isNull())
+        if (tempPosition.isNull() || tempPosition.isNull())
             break;
-        p = tempPosition.deepEquivalent();
-        if (!p.deprecatedNode())
-            break;
-        renderer = p.deprecatedNode()->renderer();
+        Position p = tempPosition.deepEquivalent();
+        RenderObject* renderer = p.deprecatedNode()->renderer();
         if (!renderer || (renderer->isRenderBlock() && !p.deprecatedEditingOffset()))
             break;
-        InlineBox* box;
-        int ignoredCaretOffset;
-        p.getInlineBoxAndOffset(tempPosition.affinity(), box, ignoredCaretOffset);
-        if (box)
+        if (!RenderedPosition(tempPosition).isNull())
             break;
         startPosition = tempPosition;
     }

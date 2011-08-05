@@ -37,6 +37,33 @@
 
 namespace WebCore {
 
+static inline RenderObject* rendererFromPosition(const Position& position)
+{
+    ASSERT(position.isNotNull());
+    Node* rendererNode = 0;
+    switch (position.anchorType()) {
+    case Position::PositionIsOffsetInAnchor:
+        rendererNode = position.computeNodeAfterPosition();
+        if (!rendererNode || !rendererNode->renderer())
+            rendererNode = position.anchorNode()->lastChild();
+        break;
+
+    case Position::PositionIsBeforeAnchor:
+    case Position::PositionIsAfterAnchor:
+        break;
+
+    case Position::PositionIsBeforeChildren:
+        rendererNode = position.anchorNode()->firstChild();
+        break;
+    case Position::PositionIsAfterChildren:
+        rendererNode = position.anchorNode()->lastChild();
+        break;
+    }
+    if (!rendererNode || !rendererNode->renderer())
+        rendererNode = position.anchorNode();
+    return rendererNode->renderer();
+}
+
 RenderedPosition::RenderedPosition(const VisiblePosition& position)
     : m_renderer(0)
     , m_inlineBox(0)
@@ -47,6 +74,31 @@ RenderedPosition::RenderedPosition(const VisiblePosition& position)
     position.getInlineBoxAndOffset(m_inlineBox, m_offset);
     if (m_inlineBox)
         m_renderer = m_inlineBox->renderer();
+    else
+        m_renderer = rendererFromPosition(position.deepEquivalent());
+}
+
+RenderedPosition::RenderedPosition(const Position& position, EAffinity affinity)
+    : m_renderer(0)
+    , m_inlineBox(0)
+    , m_offset(0)
+{
+    if (position.isNull())
+        return;
+    position.getInlineBoxAndOffset(affinity, m_inlineBox, m_offset);
+    if (m_inlineBox)
+        m_renderer = m_inlineBox->renderer();
+    else
+        m_renderer = rendererFromPosition(position);
+}
+
+LayoutRect RenderedPosition::absoluteRect(int* extraWidthToEndOfLine) const
+{
+    if (isNull())
+        return LayoutRect();
+
+    LayoutRect localRect = m_renderer->localCaretRect(m_inlineBox, m_offset, extraWidthToEndOfLine);
+    return localRect == LayoutRect() ? LayoutRect() : m_renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
 };

@@ -32,6 +32,7 @@
 #define RenderedPosition_h
 
 #include "InlineBox.h"
+#include "LayoutTypes.h"
 #include "TextAffinity.h"
 
 namespace WebCore {
@@ -44,11 +45,17 @@ class RenderedPosition {
 public:
     RenderedPosition();
     explicit RenderedPosition(const VisiblePosition&);
+    explicit RenderedPosition(const Position&, EAffinity);
 
-    bool isNull() { return !m_renderer; }
+    bool isNull() const { return !m_renderer; }
     RootInlineBox* rootBox() { return m_inlineBox ? m_inlineBox->root() : 0; }
 
+    LayoutRect absoluteRect() const { return absoluteRect(0); }
+    LayoutRect absoluteRect(int& extraWidthToEndOfLine) const { return absoluteRect(&extraWidthToEndOfLine); }
+
 private:
+    LayoutRect absoluteRect(int* extraWidthToEndOfLine) const;
+
     RenderObject* m_renderer;
     InlineBox* m_inlineBox;
     int m_offset;
