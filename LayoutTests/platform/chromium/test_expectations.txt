@@ -3694,3 +3694,5 @@ BUGWK65754 WIN MAC : fast/loader/ping-error.html = CRASH
 BUGWK65757 : fast/xsl/import-after-comment.xml = MISSING CRASH
 BUGWK65757 : fast/xsl/xslt-nested-stylesheets.xml = MISSING CRASH
 BUGWK65757 : fast/xsl/xslt-second-level-import.xml = MISSING CRASH
+
+BUGWK65758 : fast/xsl/xslt-import-depth.xml = IMAGE+TEXT CRASH
