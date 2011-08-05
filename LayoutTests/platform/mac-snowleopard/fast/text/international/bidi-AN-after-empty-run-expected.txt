@@ -18,13 +18,13 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 320x18
           text run at (0,0) width 320: "The boxes below should be identical to each other."
       RenderBlock {DIV} at (0,68) size 90x52 [border: (1px solid #0000FF)]
-        RenderText {#text} at (5,6) size 60x39
-          text run at (5,6) width 56 RTL: "\x{627}\x{644}\x{645}\x{627}\x{626}\x{629} \x{645}\x{644}\x{64A}\x{627}\x{631}"
-          text run at (60,6) width 5: " "
+        RenderText {#text} at (5,6) size 62x39
+          text run at (5,6) width 58 RTL: "\x{627}\x{644}\x{645}\x{627}\x{626}\x{629} \x{645}\x{644}\x{64A}\x{627}\x{631}"
+          text run at (63,6) width 4: " "
           text run at (5,27) width 20 RTL: " \x{645}\x{646}"
-          text run at (24,27) width 41: "12345"
+          text run at (25,27) width 40: "12345"
       RenderBlock {DIV} at (0,120) size 90x52 [border: (1px solid #0000FF)]
         RenderText {#text} at (5,6) size 60x39
-          text run at (5,6) width 56 RTL: "\x{627}\x{644}\x{645}\x{627}\x{626}\x{629} \x{645}\x{644}\x{64A}\x{627}\x{631}"
+          text run at (5,6) width 58 RTL: "\x{627}\x{644}\x{645}\x{627}\x{626}\x{629} \x{645}\x{644}\x{64A}\x{627}\x{631}"
           text run at (5,27) width 20 RTL: " \x{645}\x{646}"
-          text run at (24,27) width 41: "12345"
+          text run at (25,27) width 40: "12345"

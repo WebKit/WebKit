@@ -1,5 +1,54 @@
 2011-08-05  Anders Carlsson  <andersca@apple.com>
 
+        Add more Lion specific test results.
+
+        * platform/mac-snowleopard/fast/text/capitalize-boundaries-expected.png: Copied from platform/mac/fast/text/capitalize-boundaries-expected.png.
+        * platform/mac-snowleopard/fast/text/capitalize-boundaries-expected.txt: Copied from platform/mac/fast/text/capitalize-boundaries-expected.txt.
+        * platform/mac-snowleopard/fast/text/complex-text-opacity-expected.png: Copied from platform/mac/fast/text/complex-text-opacity-expected.png.
+        * platform/mac-snowleopard/fast/text/complex-text-opacity-expected.txt: Copied from platform/mac/fast/text/complex-text-opacity-expected.txt.
+        * platform/mac-snowleopard/fast/text/international: Added.
+        * platform/mac-snowleopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Copied from platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt.
+        * platform/mac-snowleopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html: Copied from platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html.
+        * platform/mac-snowleopard/fast/text/international/bidi-AN-after-L-expected.png: Copied from platform/mac/fast/text/international/bidi-AN-after-L-expected.png.
+        * platform/mac-snowleopard/fast/text/international/bidi-AN-after-L-expected.txt: Copied from platform/mac/fast/text/international/bidi-AN-after-L-expected.txt.
+        * platform/mac-snowleopard/fast/text/international/bidi-AN-after-empty-run-expected.png: Copied from platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.png.
+        * platform/mac-snowleopard/fast/text/international/bidi-AN-after-empty-run-expected.txt: Copied from platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.txt.
+        * platform/mac-snowleopard/fast/text/international/bidi-CS-after-AN-expected.png: Copied from platform/mac/fast/text/international/bidi-CS-after-AN-expected.png.
+        * platform/mac-snowleopard/fast/text/international/bidi-CS-after-AN-expected.txt: Copied from platform/mac/fast/text/international/bidi-CS-after-AN-expected.txt.
+        * platform/mac-snowleopard/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png: Copied from platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png.
+        * platform/mac-snowleopard/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt: Copied from platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt.
+        * platform/mac-snowleopard/fast/text/international/bidi-neutral-run-expected.png: Copied from platform/mac/fast/text/international/bidi-neutral-run-expected.png.
+        * platform/mac-snowleopard/fast/text/international/bidi-neutral-run-expected.txt: Copied from platform/mac/fast/text/international/bidi-neutral-run-expected.txt.
+        * platform/mac-snowleopard/fast/text/international/bold-bengali-expected.png: Copied from platform/mac/fast/text/international/bold-bengali-expected.png.
+        * platform/mac-snowleopard/fast/text/international/bold-bengali-expected.txt: Copied from platform/mac/fast/text/international/bold-bengali-expected.txt.
+        * platform/mac-snowleopard/fast/text/international/khmer-selection-expected.png: Copied from platform/mac/fast/text/international/khmer-selection-expected.png.
+        * platform/mac-snowleopard/fast/text/international/khmer-selection-expected.txt: Copied from platform/mac/fast/text/international/khmer-selection-expected.txt.
+        * platform/mac/fast/text/capitalize-boundaries-expected.png:
+        * platform/mac/fast/text/capitalize-boundaries-expected.txt:
+        * platform/mac/fast/text/complex-text-opacity-expected.png:
+        * platform/mac/fast/text/complex-text-opacity-expected.txt:
+        * platform/mac/fast/text/hyphenate-locale-expected.txt:
+        * platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.png:
+        * platform/mac/fast/text/international/bidi-AN-after-L-expected.txt:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.png:
+        * platform/mac/fast/text/international/bidi-AN-after-empty-run-expected.txt:
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.png:
+        * platform/mac/fast/text/international/bidi-CS-after-AN-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.png:
+        * platform/mac/fast/text/international/bidi-neutral-directionality-paragraph-start-expected.txt:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.png:
+        * platform/mac/fast/text/international/bidi-neutral-run-expected.txt:
+        * platform/mac/fast/text/international/bold-bengali-expected.png:
+        * platform/mac/fast/text/international/bold-bengali-expected.txt:
+        * platform/mac/fast/text/international/khmer-selection-expected.png:
+        * platform/mac/fast/text/international/khmer-selection-expected.txt:
+        * platform/mac/fast/text/justify-ideograph-leading-expansion-expected.png:
+        * platform/mac/fast/text/justify-ideograph-leading-expansion-expected.txt:
+        * platform/mac/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png:
+
+2011-08-05  Anders Carlsson  <andersca@apple.com>
+
         Add two fast/text tests to the skipped list.
 
         * platform/mac-lion/Skipped:

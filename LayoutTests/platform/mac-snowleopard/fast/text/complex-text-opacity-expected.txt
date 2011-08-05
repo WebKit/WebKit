@@ -38,29 +38,29 @@ layer at (0,0) size 800x600
           text run at (484,0) width 6: " "
         RenderText {#text} at (0,0) size 0x0
       RenderBlock {DIV} at (0,74) size 784x33
-        RenderInline {SPAN} at (0,0) size 53x29
-          RenderText {#text} at (573,0) size 53x29
-            text run at (573,0) width 53 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-        RenderText {#text} at (567,0) size 7x29
-          text run at (567,0) width 7 RTL: " "
-        RenderText {#text} at (510,0) size 7x29
-          text run at (510,0) width 7 RTL: " "
-        RenderText {#text} at (453,0) size 7x29
-          text run at (453,0) width 7 RTL: " "
-        RenderText {#text} at (395,0) size 7x29
-          text run at (395,0) width 7 RTL: " "
-        RenderText {#text} at (338,0) size 7x29
-          text run at (338,0) width 7 RTL: " "
-        RenderText {#text} at (280,0) size 7x29
-          text run at (280,0) width 7 RTL: " "
-        RenderText {#text} at (223,0) size 7x29
-          text run at (223,0) width 7 RTL: " "
-        RenderText {#text} at (166,0) size 7x29
-          text run at (166,0) width 7 RTL: " "
-        RenderText {#text} at (108,0) size 7x29
-          text run at (108,0) width 7 RTL: " "
-        RenderText {#text} at (51,0) size 7x29
-          text run at (51,0) width 7 RTL: " "
+        RenderInline {SPAN} at (0,0) size 50x29
+          RenderText {#text} at (560,0) size 50x29
+            text run at (560,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+        RenderText {#text} at (554,0) size 6x29
+          text run at (554,0) width 6 RTL: " "
+        RenderText {#text} at (498,0) size 6x29
+          text run at (498,0) width 6 RTL: " "
+        RenderText {#text} at (442,0) size 6x29
+          text run at (442,0) width 6 RTL: " "
+        RenderText {#text} at (386,0) size 6x29
+          text run at (386,0) width 6 RTL: " "
+        RenderText {#text} at (330,0) size 6x29
+          text run at (330,0) width 6 RTL: " "
+        RenderText {#text} at (274,0) size 6x29
+          text run at (274,0) width 6 RTL: " "
+        RenderText {#text} at (218,0) size 6x29
+          text run at (218,0) width 6 RTL: " "
+        RenderText {#text} at (162,0) size 6x29
+          text run at (162,0) width 6 RTL: " "
+        RenderText {#text} at (106,0) size 6x29
+          text run at (106,0) width 6 RTL: " "
+        RenderText {#text} at (50,0) size 6x29
+          text run at (50,0) width 6 RTL: " "
         RenderText {#text} at (0,0) size 0x0
 layer at (8,42) size 43x29
   RenderInline {SPAN} at (0,0) size 43x29
@@ -102,43 +102,43 @@ layer at (8,42) size 43x29
   RenderInline {SPAN} at (0,0) size 43x29
     RenderText {#text} at (490,0) size 43x29
       text run at (490,0) width 43: "\x{916}\x{94B}\x{91C}\x{947}\x{902}"
-layer at (8,82) size 52x29
-  RenderInline {SPAN} at (0,0) size 52x29
-    RenderText {#text} at (516,0) size 52x29
-      text run at (516,0) width 52 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-layer at (8,82) size 52x29
-  RenderInline {SPAN} at (0,0) size 52x29
-    RenderText {#text} at (459,0) size 52x29
-      text run at (459,0) width 52 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-layer at (8,82) size 53x29
-  RenderInline {SPAN} at (0,0) size 53x29
-    RenderText {#text} at (401,0) size 53x29
-      text run at (401,0) width 53 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-layer at (8,82) size 52x29
-  RenderInline {SPAN} at (0,0) size 52x29
-    RenderText {#text} at (344,0) size 52x29
-      text run at (344,0) width 52 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-layer at (8,82) size 53x29
-  RenderInline {SPAN} at (0,0) size 53x29
-    RenderText {#text} at (286,0) size 53x29
-      text run at (286,0) width 53 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-layer at (8,82) size 52x29
-  RenderInline {SPAN} at (0,0) size 52x29
-    RenderText {#text} at (229,0) size 52x29
-      text run at (229,0) width 52 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-layer at (8,82) size 52x29
-  RenderInline {SPAN} at (0,0) size 52x29
-    RenderText {#text} at (172,0) size 52x29
-      text run at (172,0) width 52 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-layer at (8,82) size 53x29
-  RenderInline {SPAN} at (0,0) size 53x29
-    RenderText {#text} at (114,0) size 53x29
-      text run at (114,0) width 53 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-layer at (8,82) size 52x29
-  RenderInline {SPAN} at (0,0) size 52x29
-    RenderText {#text} at (57,0) size 52x29
-      text run at (57,0) width 52 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
-layer at (8,82) size 52x29
-  RenderInline {SPAN} at (0,0) size 52x29
-    RenderText {#text} at (0,0) size 52x29
-      text run at (0,0) width 52 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (504,0) size 50x29
+      text run at (504,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (448,0) size 50x29
+      text run at (448,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (392,0) size 50x29
+      text run at (392,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (336,0) size 50x29
+      text run at (336,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (280,0) size 50x29
+      text run at (280,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (224,0) size 50x29
+      text run at (224,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (168,0) size 50x29
+      text run at (168,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (112,0) size 50x29
+      text run at (112,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (56,0) size 50x29
+      text run at (56,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
+layer at (8,82) size 50x29
+  RenderInline {SPAN} at (0,0) size 50x29
+    RenderText {#text} at (0,0) size 50x29
+      text run at (0,0) width 50 RTL: "\x{64A}\x{624}\x{644}\x{645}\x{646}\x{64A}"
