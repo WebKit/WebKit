@@ -4697,10 +4697,12 @@ fast/dom/attribute-namespaces.xhtml
 fast/dynamic/insertAdjacentText.html
 svg/custom/svg-parse-overflow-5.html
 fast/css/dashboard-regions-attr-crash.html
+ietestcenter/Javascript/15.2.3.6-3-14.html
 ietestcenter/Javascript/15.2.3.11-4-18.html
 ietestcenter/Javascript/15.4.4.14-1-5.html
 fast/css/first-line-parent-style-different.html
 fast/dom/background-shorthand-csstext.html
+fast/encoding/bom-in-content.html
 fast/events/anchor-empty-focus.html
 
 # Qt result was added by r91977, but it fails on Qt-Mac platform

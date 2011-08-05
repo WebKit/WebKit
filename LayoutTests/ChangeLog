@@ -10,6 +10,12 @@
 
 2011-08-05  Zoltan Horvath  <zoltan@webkit.org>
 
+        [Qt] Skip 2 crashy tests on Qt SnowLeopard Intel Release bot to make a green world,
+
+        * platform/qt-mac/Skipped:
+
+2011-08-05  Zoltan Horvath  <zoltan@webkit.org>
+
         [Qt] Add http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
         to Skiplist because it makes ARMv5 Linux Qt Release weepy.
 
