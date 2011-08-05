@@ -68,6 +68,9 @@ private:
     virtual void createAVPlayer();
     virtual void createAVPlayerItem();
     virtual void createAVAssetForURL(const String& url);
+#if ENABLE(OFFLINE_WEB_APPLICATIONS)
+    virtual void createAVAssetForCacheResource(ApplicationCacheResource*) { };
+#endif
     virtual MediaPlayerPrivateAVFoundation::ItemStatus playerItemStatus() const;
     virtual MediaPlayerPrivateAVFoundation::AssetStatus assetStatus() const;
 
