@@ -8,6 +8,7 @@ http/tests/history/back-to-post.php
 http/tests/inspector/resource-tree/resource-tree-document-url.html
 http/tests/inspector/resource-tree/resource-tree-frame-add.html
 http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
+http/tests/inspector/resource-tree/resource-tree-non-unique-url.html
 http/tests/inspector/resource-tree/resource-tree-reload.html
 http/tests/navigation/forward-and-cancel.html
 http/tests/security/cross-frame-access-put.html
