@@ -119,14 +119,14 @@ layer at (0,0) size 785x1696
             text run at (753,0) width 0 RTL: "\x{202C}"
             text run at (753,0) width 16: "12"
         RenderBlock {DIV} at (0,710) size 769x21
-          RenderText {#text} at (752,1) size 17x18
-            text run at (752,1) width 1 RTL: "\x{202A}"
-            text run at (752,1) width 1 RTL: "\x{202C}"
-            text run at (752,1) width 17: "\x{660}\x{661}"
+          RenderText {#text} at (753,1) size 16x18
+            text run at (753,1) width 0 RTL: "\x{202A}"
+            text run at (753,1) width 0 RTL: "\x{202C}"
+            text run at (753,1) width 16: "\x{660}\x{661}"
         RenderBlock {DIV} at (0,731) size 769x21
-          RenderText {#text} at (750,1) size 19x18
-            text run at (750,1) width 1 RTL: "\x{202A}"
-            text run at (750,1) width 19 RTL: "\x{683}\x{684}\x{202C}"
+          RenderText {#text} at (751,1) size 18x18
+            text run at (751,1) width 0 RTL: "\x{202A}"
+            text run at (751,1) width 18 RTL: "\x{683}\x{684}\x{202C}"
         RenderBlock {DIV} at (0,752) size 769x18
           RenderText {#text} at (769,0) size 0x18
             text run at (769,0) width 0 RTL: "\x{202A}"
@@ -241,15 +241,15 @@ layer at (0,0) size 785x1696
             text run at (0,0) width 16: "12\x{202C}"
             text run at (16,0) width 0: "\x{202A}"
         RenderBlock {DIV} at (0,710) size 769x21
-          RenderText {#text} at (0,1) size 17x18
-            text run at (0,1) width 17: "\x{660}\x{661}"
-            text run at (16,1) width 1: "\x{202C}"
-            text run at (16,1) width 1: "\x{202A}"
+          RenderText {#text} at (0,1) size 16x18
+            text run at (0,1) width 16: "\x{660}\x{661}"
+            text run at (16,1) width 0: "\x{202C}"
+            text run at (16,1) width 0: "\x{202A}"
         RenderBlock {DIV} at (0,731) size 769x21
-          RenderText {#text} at (0,1) size 19x18
-            text run at (0,1) width 19 RTL: "\x{683}\x{684}"
-            text run at (18,1) width 1: "\x{202C}"
-            text run at (18,1) width 1: "\x{202A}"
+          RenderText {#text} at (0,1) size 18x18
+            text run at (0,1) width 18 RTL: "\x{683}\x{684}"
+            text run at (18,1) width 0: "\x{202C}"
+            text run at (18,1) width 0: "\x{202A}"
         RenderBlock {DIV} at (0,752) size 769x18
           RenderText {#text} at (0,0) size 0x18
             text run at (0,0) width 0: "\x{1}\x{202C}"

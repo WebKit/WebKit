@@ -1,3 +1,25 @@
+2011-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Add more Lion specific test results and add more tests to the skipped list.
+
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/fast/dom: Added.
+        * platform/mac-snowleopard/fast/dom/52776-expected.png: Copied from platform/mac/fast/dom/52776-expected.png.
+        * platform/mac-snowleopard/fast/dom/52776-expected.txt: Copied from platform/mac/fast/dom/52776-expected.txt.
+        * platform/mac-snowleopard/fast/loader: Added.
+        * platform/mac-snowleopard/fast/preloader: Added.
+        * platform/mac-snowleopard/fast/preloader/document-write-2-expected.txt: Copied from fast/preloader/document-write-2-expected.txt.
+        * platform/mac-snowleopard/fast/preloader/document-write-expected.txt: Copied from fast/preloader/document-write-expected.txt.
+        * platform/mac-snowleopard/fast/preloader/script-expected.txt: Copied from fast/preloader/script-expected.txt.
+        * platform/mac/fast/dom/52776-expected.png:
+        * platform/mac/fast/dom/52776-expected.txt:
+        * platform/mac/fast/loader/file-url-mimetypes-2-expected.txt:
+        * platform/mac/fast/loader/file-url-mimetypes-expected.txt:
+        * platform/mac/fast/preloader: Added.
+        * platform/mac/fast/preloader/document-write-2-expected.txt: Added.
+        * platform/mac/fast/preloader/document-write-expected.txt: Added.
+        * platform/mac/fast/preloader/script-expected.txt: Added.
+
 2011-08-05  Jian Li  <jianli@chromium.org>
 
         Skip canvas-putImageData.html in chromium.

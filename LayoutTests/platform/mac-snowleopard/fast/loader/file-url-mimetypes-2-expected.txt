@@ -1,4 +1,4 @@
-example-js.js has MIME type text/javascript
+example-js.js has MIME type application/x-javascript
 example-jscript.jscript has MIME type text/javascript
 example-kar.kar has MIME type audio/midi
 example-l.l has MIME type text/plain
@@ -17,7 +17,7 @@ example-m3u.m3u has MIME type audio/x-mpegurl
 example-m4a.m4a has MIME type audio/mp4
 example-m4b.m4b has MIME type application/octet-stream
 example-m4p.m4p has MIME type audio/x-m4p
-example-m4v.m4v has MIME type video/x-m4v
+example-m4v.m4v has MIME type application/octet-stream
 example-m75.m75 has MIME type video/mpeg
 example-mac.mac has MIME type image/x-macpaint
 example-man.man has MIME type application/x-troff-man

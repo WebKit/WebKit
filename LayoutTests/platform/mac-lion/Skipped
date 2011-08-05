@@ -46,3 +46,13 @@ fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
 # These fail in DRT but look correct in Safari.
 fast/text/emphasis-combined-text.html
 fast/text/international/text-combine-image-test.html
+
+# Sending the mouse down event to the scrollbar starts a nested run loop which causes a hang.
+fast/events/mousedown-in-subframe-scrollbar.html
+
+# Unknown failures.
+platform/mac/fast/forms/listbox-scrollbar-hit-test.html
+platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
+
+# The french sort order seems to have changed in Lion.
+fast/xsl/sort-locale.xml
