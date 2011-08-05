@@ -27,7 +27,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CustomMarkFunction,
         GenerateNativeConverter
     ] SVGElementInstance

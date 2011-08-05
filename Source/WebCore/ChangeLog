@@ -1,3 +1,14 @@
+2011-08-05  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Remove LegacyDefaultOptionalArguments flag from remaining SVG IDL files
+        https://bugs.webkit.org/show_bug.cgi?id=65751
+
+        Reviewed by Adam Barth.
+
+        No new tests, all existing tests pass.
+
+        * svg/SVGElementInstance.idl:
+
 2011-08-05  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not delay scroll event handling - scroll is already async.
