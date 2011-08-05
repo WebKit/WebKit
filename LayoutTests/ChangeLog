@@ -1,3 +1,31 @@
+2011-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Add Lion specific test results for css1 and css2.1.
+
+        * platform/mac-snowleopard/css1: Added.
+        * platform/mac-snowleopard/css1/font_properties: Added.
+        * platform/mac-snowleopard/css1/font_properties/font-expected.png: Copied from platform/mac/css1/font_properties/font-expected.png.
+        * platform/mac-snowleopard/css1/font_properties/font-expected.txt: Copied from platform/mac/css1/font_properties/font-expected.txt.
+        * platform/mac-snowleopard/css2.1: Added.
+        * platform/mac-snowleopard/css2.1/t1202-counter-09-b-expected.png: Copied from platform/mac/css2.1/t1202-counter-09-b-expected.png.
+        * platform/mac-snowleopard/css2.1/t1202-counter-09-b-expected.txt: Copied from platform/mac/css2.1/t1202-counter-09-b-expected.txt.
+        * platform/mac-snowleopard/css2.1/t1202-counters-09-b-expected.png: Copied from platform/mac/css2.1/t1202-counters-09-b-expected.png.
+        * platform/mac-snowleopard/css2.1/t1202-counters-09-b-expected.txt: Copied from platform/mac/css2.1/t1202-counters-09-b-expected.txt.
+        * platform/mac-snowleopard/css2.1/t1508-c527-font-05-b-expected.png: Copied from platform/mac/css2.1/t1508-c527-font-05-b-expected.png.
+        * platform/mac-snowleopard/css2.1/t1508-c527-font-05-b-expected.txt: Copied from platform/mac/css2.1/t1508-c527-font-05-b-expected.txt.
+        * platform/mac-snowleopard/css2.1/t1508-c527-font-10-c-expected.png: Copied from platform/mac/css2.1/t1508-c527-font-10-c-expected.png.
+        * platform/mac-snowleopard/css2.1/t1508-c527-font-10-c-expected.txt: Copied from platform/mac/css2.1/t1508-c527-font-10-c-expected.txt.
+        * platform/mac/css1/font_properties/font-expected.png:
+        * platform/mac/css1/font_properties/font-expected.txt:
+        * platform/mac/css2.1/t1202-counter-09-b-expected.png:
+        * platform/mac/css2.1/t1202-counter-09-b-expected.txt:
+        * platform/mac/css2.1/t1202-counters-09-b-expected.png:
+        * platform/mac/css2.1/t1202-counters-09-b-expected.txt:
+        * platform/mac/css2.1/t1508-c527-font-05-b-expected.png:
+        * platform/mac/css2.1/t1508-c527-font-05-b-expected.txt:
+        * platform/mac/css2.1/t1508-c527-font-10-c-expected.png:
+        * platform/mac/css2.1/t1508-c527-font-10-c-expected.txt:
+
 2011-08-05  Jian Li  <jianli@chromium.org>
 
         Unreviewed, skip those tests still failing on chromium due to incomplete
