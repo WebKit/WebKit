@@ -1,3 +1,30 @@
+2011-08-04  Scott Graham  <scottmg@chromium.org>
+
+        Bad interaction between document destruction and unload events
+        https://bugs.webkit.org/show_bug.cgi?id=64741
+
+        Reviewed by Adam Barth.
+
+        Three different errors triggered by this test case. The case to
+        consider is a subdocument with an onunload on an element, that
+        destroys the parent document during the onunload. One fix was a
+        lifetime issue fixed by a protecting RefPtr, and another was an
+        additional cancel of event triggers. The main fix was that during the
+        transition to commited state, the documentLoader is being replaced by
+        the provisionalDocumentLoader. But, because during firing events in
+        the subdocument the parent is destroyed, that subevent caused the
+        provisionalDocumentLoader to be detached from its frame. By marking
+        the page as being in committed state before the parent documentLoader
+        is set, this is avoided.
+
+        Test: loader/document-destruction-within-unload.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::implicitOpen):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+        (WebCore::FrameLoader::detachChildren):
+
 2011-08-04  Simon Fraser  <simon.fraser@apple.com>
 
         Add code to determine whether a Range in inside fixed position content

@@ -1834,9 +1834,13 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
     if (m_documentLoader)
         m_documentLoader->stopLoadingPlugIns();
 
+    // State must be set before setting m_documentLoader to avoid
+    // m_provisionalDocumentLoader getting detached from the frame via a sub
+    // frame. See https://bugs.webkit.org/show_bug.cgi?id=64741 for more
+    // discussion.
+    setState(FrameStateCommittedPage);
     setDocumentLoader(m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(0);
-    setState(FrameStateCommittedPage);
 
 #if ENABLE(TOUCH_EVENTS)
     if (isLoadingMainFrame())
@@ -2332,12 +2336,14 @@ void FrameLoader::frameLoadCompleted()
 
 void FrameLoader::detachChildren()
 {
+    typedef Vector<RefPtr<Frame> > FrameVector;
+    FrameVector protect;
+
     // FIXME: Is it really necessary to do this in reverse order?
-    Frame* previous;
-    for (Frame* child = m_frame->tree()->lastChild(); child; child = previous) {
-        previous = child->tree()->previousSibling();
-        child->loader()->detachFromParent();
-    }
+    for (Frame* child = m_frame->tree()->lastChild(); child; child = child->tree()->previousSibling())
+        protect.append(child);
+    for (FrameVector::iterator it = protect.begin(); it != protect.end(); ++it)
+        (*it)->loader()->detachFromParent();
 }
 
 void FrameLoader::closeAndRemoveChild(Frame* child)

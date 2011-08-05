@@ -1,3 +1,15 @@
+2011-08-04  Scott Graham  <scottmg@chromium.org>
+
+        Bad interaction between document destruction and unload events
+        https://bugs.webkit.org/show_bug.cgi?id=64741
+
+        Reviewed by Adam Barth.
+
+        * loader/document-destruction-within-unload-expected.txt: Added.
+        * loader/document-destruction-within-unload.html: Added.
+        * loader/resources/document-destruction-within-unload-iframe.html: Added.
+        * loader/resources/document-destruction-within-unload.svg: Added.
+
 2011-08-04  Kent Tamura  <tkent@chromium.org>
 
         Move <input type=week> tests to fast/forms/week/

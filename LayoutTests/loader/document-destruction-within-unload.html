@@ -1,0 +1,20 @@
+<html>
+    <body>
+        <script>
+            if (window.layoutTestController) {
+                layoutTestController.dumpAsText();
+                layoutTestController.waitUntilDone();
+            }
+        </script>
+        <iframe src="resources/document-destruction-within-unload-iframe.html">
+        </iframe>
+        <p>For the test to pass there should be no crash.</p>
+        <script>
+            function done() {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
+        </script>
+
+    </body>
+</html>
