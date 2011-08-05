@@ -1995,10 +1995,6 @@ void Document::implicitOpen()
 
     removeChildren();
 
-    // cancel again, as removeChildren can cause event triggers to be added
-    // again, which we don't want triggered on the old document.
-    cancelParsing();
-
     setCompatibilityMode(NoQuirksMode);
 
     m_parser = createParser();
