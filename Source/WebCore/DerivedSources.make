@@ -955,3 +955,16 @@ DOM%.h : %.idl $(DOM_BINDINGS_SCRIPTS) bindings/objc/PublicDOMInterfaces.h
 # --------
 
 endif # MACOS
+
+# ------------------------
+
+# Header detection
+
+ifeq ($(OS),Windows_NT)
+
+all : WebCoreHeaderDetection.h
+
+WebCoreHeaderDetection.h : DerivedSources.make
+	if [ -f "$(WEBKITLIBRARIESDIR)/include/AVFoundationCF/AVCFBase.h" ]; then echo "#define HAVE_AVCF 1" > $@; else echo > $@; fi
+
+endif # Windows_NT
