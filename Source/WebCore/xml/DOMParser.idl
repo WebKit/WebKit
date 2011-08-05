@@ -19,9 +19,9 @@
 
 module xpath {
     interface [
-        LegacyDefaultOptionalArguments,
         CanBeConstructed
     ] DOMParser {
-        Document parseFromString(in DOMString str, in DOMString contentType);
+        Document parseFromString(in [Optional=CallWithDefaultValue] DOMString str, 
+                                 in [Optional=CallWithDefaultValue] DOMString contentType);
     };
 }

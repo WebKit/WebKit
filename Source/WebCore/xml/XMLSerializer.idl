@@ -21,10 +21,9 @@
 module xpath {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CanBeConstructed
     ] XMLSerializer {
-        DOMString serializeToString(in Node node)
+        DOMString serializeToString(in [Optional=CallWithDefaultValue] Node node)
             raises(DOMException);
     };
 

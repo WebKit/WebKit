@@ -33,7 +33,6 @@ module xml {
     // http://bugs.webkit.org/show_bug.cgi?id=5446
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=XSLT,
         CanBeConstructed,
         CustomConstructFunction,

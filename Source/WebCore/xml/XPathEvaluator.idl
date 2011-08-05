@@ -19,21 +19,20 @@
 
 module xpath {
     interface [
-        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         Conditional=XPATH
     ] XPathEvaluator {
-        XPathExpression createExpression(in DOMString expression,
-                                         in XPathNSResolver resolver)
+        XPathExpression createExpression(in [Optional=CallWithDefaultValue] DOMString expression,
+                                         in [Optional=CallWithDefaultValue] XPathNSResolver resolver)
             raises(DOMException);
 
-        XPathNSResolver createNSResolver(in Node nodeResolver);
+        XPathNSResolver createNSResolver(in [Optional=CallWithDefaultValue] Node nodeResolver);
 
-        XPathResult evaluate(in DOMString expression,
-                             in Node contextNode, 
-                             in XPathNSResolver resolver,
-                             in unsigned short type,
-                             in XPathResult inResult)
+        XPathResult evaluate(in [Optional=CallWithDefaultValue] DOMString expression,
+                             in [Optional=CallWithDefaultValue] Node contextNode, 
+                             in [Optional=CallWithDefaultValue] XPathNSResolver resolver,
+                             in [Optional=CallWithDefaultValue] unsigned short type,
+                             in [Optional=CallWithDefaultValue] XPathResult inResult)
             raises(DOMException);
     };
 }

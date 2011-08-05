@@ -20,7 +20,6 @@
 module xpath {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=XPATH,
         CustomMarkFunction
     ] XPathResult {
@@ -54,7 +53,7 @@ module xpath {
             
         Node iterateNext()
             raises (DOMException);
-        Node snapshotItem(in unsigned long index)
+        Node snapshotItem(in [Optional=CallWithDefaultValue] unsigned long index)
             raises (DOMException);
     };
 
