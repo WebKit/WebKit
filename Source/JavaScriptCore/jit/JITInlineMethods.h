@@ -374,29 +374,60 @@ ALWAYS_INLINE bool JIT::isOperandConstantImmediateChar(unsigned src)
     return m_codeBlock->isConstantRegisterIndex(src) && getConstantOperand(src).isString() && asString(getConstantOperand(src).asCell())->length() == 1;
 }
 
-template<typename T>
-inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)
+template <typename ClassType, typename StructureType> inline void JIT::emitAllocateBasicJSObject(StructureType structure, void* vtable, RegisterID result, RegisterID storagePtr)
 {
-    NewSpace::SizeClass* sizeClass = &m_globalData->heap.sizeClassFor(sizeof(JSFinalObject));
+    NewSpace::SizeClass* sizeClass = &m_globalData->heap.sizeClassFor(sizeof(ClassType));
     loadPtr(&sizeClass->firstFreeCell, result);
     addSlowCase(branchTestPtr(Zero, result));
-    
+
     // remove the object from the free list
-    loadPtr(Address(result), scratch);
-    storePtr(scratch, &sizeClass->firstFreeCell);
-    
+    loadPtr(Address(result), storagePtr);
+    storePtr(storagePtr, &sizeClass->firstFreeCell);
+
     // initialize the object's vtable
-    storePtr(ImmPtr(m_globalData->jsFinalObjectVPtr), Address(result));
-    
+    storePtr(TrustedImmPtr(vtable), Address(result));
+
     // initialize the object's structure
     storePtr(structure, Address(result, JSCell::structureOffset()));
-    
+
     // initialize the inheritor ID
-    storePtr(ImmPtr(0), Address(result, JSObject::offsetOfInheritorID()));
-    
+    storePtr(TrustedImmPtr(0), Address(result, JSObject::offsetOfInheritorID()));
+
     // initialize the object's property storage pointer
-    addPtr(Imm32(sizeof(JSObject)), result, scratch);
-    storePtr(scratch, Address(result, JSObject::offsetOfPropertyStorage()));
+    addPtr(TrustedImm32(sizeof(JSObject)), result, storagePtr);
+    storePtr(storagePtr, Address(result, ClassType::offsetOfPropertyStorage()));
+}
+
+template <typename T> inline void JIT::emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch)
+{
+    emitAllocateBasicJSObject<JSFinalObject>(structure, m_globalData->jsFinalObjectVPtr, result, scratch);
+}
+
+inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, RegisterID scopeChain, RegisterID result, RegisterID storagePtr)
+{
+    emitAllocateBasicJSObject<JSFunction>(TrustedImmPtr(m_codeBlock->globalObject()->namedFunctionStructure()), m_globalData->jsFunctionVPtr, result, storagePtr);
+
+    // store the function's scope chain
+    storePtr(scopeChain, Address(result, JSFunction::offsetOfScopeChain()));
+
+    // store the function's executable member
+    storePtr(TrustedImmPtr(executable), Address(result, JSFunction::offsetOfExecutable()));
+
+    
+    // store the function's global object
+    int globalObjectOffset = sizeof(JSValue) * JSFunction::GlobalObjectSlot;
+    storePtr(TrustedImmPtr(m_codeBlock->globalObject()), Address(regT1, globalObjectOffset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+#if USE(JSVALUE32_64)
+    store32(TrustedImm32(JSValue::CellTag), Address(regT1, globalObjectOffset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+#endif
+
+    // store the function's name
+    ASSERT(executable->nameValue());
+    int functionNameOffset = sizeof(JSValue) * m_codeBlock->globalObject()->functionNameOffset();
+    storePtr(TrustedImmPtr(executable->nameValue()), Address(regT1, functionNameOffset + OBJECT_OFFSETOF(JSValue, u.asBits.payload)));
+#if USE(JSVALUE32_64)
+    store32(TrustedImm32(JSValue::CellTag), Address(regT1, functionNameOffset + OBJECT_OFFSETOF(JSValue, u.asBits.tag)));
+#endif
 }
 
 #if USE(JSVALUE32_64)

@@ -1,3 +1,39 @@
+2011-08-05  Oliver Hunt  <oliver@apple.com>
+
+        Inline allocation of function objects
+        https://bugs.webkit.org/show_bug.cgi?id=65779
+
+        Reviewed by Gavin Barraclough.
+
+        Inline allocation and initilisation of function objects
+        in generated code.  This ended up being a 60-70% improvement
+        in function allocation performance.  This improvement shows
+        up as a ~2% improvement in 32bit sunspider and V8, but is a
+        wash on 64-bit.
+
+        We currently don't inline the allocation of named function
+        expressions, as that requires being able to gc allocate a
+        variable object.
+
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        * jit/JIT.h:
+        (JSC::JIT::emitStoreCell):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitAllocateBasicJSObject):
+        (JSC::JIT::emitAllocateJSFinalObject):
+        (JSC::JIT::emitAllocateJSFunction):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_func):
+        (JSC::JIT::emitSlow_op_new_func):
+        (JSC::JIT::emit_op_new_func_exp):
+        (JSC::JIT::emitSlow_op_new_func_exp):
+        * jit/JITOpcodes32_64.cpp:
+            Removed duplicate implementation of op_new_func and op_new_func_exp
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::offsetOfScopeChain):
+        (JSC::JSFunction::offsetOfExecutable):
+
 2011-08-04  David Levin  <levin@chromium.org>
 
         CStringBuffer should have thread safety checks turned on.

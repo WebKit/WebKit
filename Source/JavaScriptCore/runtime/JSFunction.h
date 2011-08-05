@@ -110,6 +110,16 @@ namespace JSC {
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
 
+        static inline size_t offsetOfScopeChain()
+        {
+            return OBJECT_OFFSETOF(JSFunction, m_scopeChain);
+        }
+
+        static inline size_t offsetOfExecutable()
+        {
+            return OBJECT_OFFSETOF(JSFunction, m_executable);
+        }
+
     protected:
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
