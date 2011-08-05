@@ -17,6 +17,13 @@
 if (window.layoutTestController)
     layoutTestController.waitUntilDone();
 
+function objCWrapperIsInstanceOf(node, className)
+{
+    if (!window.objCController)
+        return "only works under DumpRenderTree";
+    return !!objCController.isObjectInstanceOf(node, className);
+}
+
 function objCWrapperClass(node)
 {
     if (!window.objCController)
@@ -265,15 +272,15 @@ function runTest()
     debug('JavaScript types');
     debug('');
 
-    shouldBe("objCWrapperClass(null)", "'nil'");
-    shouldBe("objCWrapperClass(undefined)", "'WebUndefined'");
-    shouldBe("objCWrapperClass(0)", "'NSCFNumber'");
-    shouldBe("objCWrapperClass(1)", "'NSCFNumber'");
-    shouldBe("objCWrapperClass(false)", "'NSCFBoolean'");
-    shouldBe("objCWrapperClass(true)", "'NSCFBoolean'");
-    shouldBe("objCWrapperClass('')", "'NSCFString'");
-    shouldBe("objCWrapperClass({ })", "'WebScriptObject'");
-    shouldBe("objCWrapperClass([ ])", "'WebScriptObject'");
+    shouldBeTrue("objCWrapperIsInstanceOf(null, 'nil')");
+    shouldBeTrue("objCWrapperIsInstanceOf(undefined, 'WebUndefined')");
+    shouldBeTrue("objCWrapperIsInstanceOf(0, 'NSNumber')");
+    shouldBeTrue("objCWrapperIsInstanceOf(1, 'NSNumber')");
+    shouldBeTrue("objCWrapperIsInstanceOf(false, 'NSNumber')");
+    shouldBeTrue("objCWrapperIsInstanceOf(true, 'NSNumber')");
+    shouldBeTrue("objCWrapperIsInstanceOf('', 'NSString')");
+    shouldBeTrue("objCWrapperIsInstanceOf({ }, 'WebScriptObject')");
+    shouldBeTrue("objCWrapperIsInstanceOf([ ], 'WebScriptObject')");
 
     shouldBe("objCObjectOfClass('NSNull')", "null"); // can't test with typeof because typeof null is 'object'
     shouldBe("typeof objCObjectOfClass('')", "'undefined'");

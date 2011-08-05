@@ -1,3 +1,17 @@
+2011-08-05  Anders Carlsson  <andersca@apple.com>
+
+        Future proof an Objective-C test
+        https://bugs.webkit.org/show_bug.cgi?id=65788
+
+        Reviewed by Dan Bernstein.
+
+        Add isObjectInstanceOf to ObjCController.
+
+        * DumpRenderTree/mac/ObjCController.m:
+        (+[ObjCController isSelectorExcludedFromWebScript:]):
+        (+[ObjCController webScriptNameForSelector:]):
+        (-[ObjCController isObject:instanceOf:]):
+
 2011-08-05  Adam Barth  <abarth@webkit.org>
 
         trac.js needs unittests

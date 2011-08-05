@@ -66,6 +66,7 @@ static void* runJavaScriptThread(void* arg)
 {
     if (0
             || aSelector == @selector(classNameOf:)
+            || aSelector == @selector(isObject:instanceOf:)
             || aSelector == @selector(objectOfClass:)
             || aSelector == @selector(arrayOfString)
             || aSelector == @selector(identityIsEqual::)
@@ -87,6 +88,8 @@ static void* runJavaScriptThread(void* arg)
 {
     if (aSelector == @selector(classNameOf:))
         return @"className";
+    if (aSelector == @selector(isObject:instanceOf:))
+        return @"isObjectInstanceOf";
     if (aSelector == @selector(objectOfClass:))
         return @"objectOfClass";
     if (aSelector == @selector(arrayOfString))
@@ -113,6 +116,14 @@ static void* runJavaScriptThread(void* arg)
     return nil;
 }
 
+- (BOOL)isObject:(id)object instanceOf:(NSString *)aClass
+{
+    if (!object)
+        return [aClass isEqualToString:@"nil"];
+
+    return [object isKindOfClass:NSClassFromString(aClass)];
+}
+            
 - (NSString *)classNameOf:(id)object
 {
     if (!object)

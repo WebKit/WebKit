@@ -175,15 +175,15 @@ PASS tagObjCWrapperClass('xmp') is 'DOMHTMLPreElement'
 
 JavaScript types
 
-PASS objCWrapperClass(null) is 'nil'
-PASS objCWrapperClass(undefined) is 'WebUndefined'
-PASS objCWrapperClass(0) is 'NSCFNumber'
-PASS objCWrapperClass(1) is 'NSCFNumber'
-PASS objCWrapperClass(false) is 'NSCFBoolean'
-PASS objCWrapperClass(true) is 'NSCFBoolean'
-PASS objCWrapperClass('') is 'NSCFString'
-PASS objCWrapperClass({ }) is 'WebScriptObject'
-PASS objCWrapperClass([ ]) is 'WebScriptObject'
+PASS objCWrapperIsInstanceOf(null, 'nil') is true
+PASS objCWrapperIsInstanceOf(undefined, 'WebUndefined') is true
+PASS objCWrapperIsInstanceOf(0, 'NSNumber') is true
+PASS objCWrapperIsInstanceOf(1, 'NSNumber') is true
+PASS objCWrapperIsInstanceOf(false, 'NSNumber') is true
+PASS objCWrapperIsInstanceOf(true, 'NSNumber') is true
+PASS objCWrapperIsInstanceOf('', 'NSString') is true
+PASS objCWrapperIsInstanceOf({ }, 'WebScriptObject') is true
+PASS objCWrapperIsInstanceOf([ ], 'WebScriptObject') is true
 PASS objCObjectOfClass('NSNull') is null
 PASS typeof objCObjectOfClass('') is 'undefined'
 PASS typeof objCObjectOfClass('WebUndefined') is 'undefined'
