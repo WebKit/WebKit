@@ -21,7 +21,6 @@
 module core {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateNativeConverter,
         InlineGetOwnPropertySlot
     ] Element : Node {
@@ -30,39 +29,39 @@ module core {
 
         readonly attribute [ConvertNullStringTo=Null] DOMString tagName;
 
-        [ConvertNullStringTo=Null] DOMString getAttribute(in DOMString name);
-        [OldStyleObjC] void setAttribute(in DOMString name,
-                                         in DOMString value)
+        [ConvertNullStringTo=Null] DOMString getAttribute(in [Optional=CallWithDefaultValue] DOMString name);
+        [OldStyleObjC] void setAttribute(in [Optional=CallWithDefaultValue] DOMString name,
+                                         in [Optional=CallWithDefaultValue] DOMString value)
             raises(DOMException);
-        void removeAttribute(in DOMString name)
+        void removeAttribute(in [Optional=CallWithDefaultValue] DOMString name)
             raises(DOMException);
-        Attr getAttributeNode(in DOMString name);
-        Attr setAttributeNode(in Attr newAttr)
+        Attr getAttributeNode(in [Optional=CallWithDefaultValue] DOMString name);
+        Attr setAttributeNode(in [Optional=CallWithDefaultValue] Attr newAttr)
             raises(DOMException);
-        Attr removeAttributeNode(in Attr oldAttr)
+        Attr removeAttributeNode(in [Optional=CallWithDefaultValue] Attr oldAttr)
             raises(DOMException);
-        NodeList getElementsByTagName(in DOMString name);
+        NodeList getElementsByTagName(in [Optional=CallWithDefaultValue] DOMString name);
 
         // DOM Level 2 Core
 
-        [OldStyleObjC] DOMString getAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                                in DOMString localName);
-        [OldStyleObjC] void setAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                           in DOMString qualifiedName, 
-                                           in DOMString value)
+        [OldStyleObjC] DOMString getAttributeNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+                                                in [Optional=CallWithDefaultValue] DOMString localName);
+        [OldStyleObjC] void setAttributeNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+                                           in [Optional=CallWithDefaultValue] DOMString qualifiedName, 
+                                           in [Optional=CallWithDefaultValue] DOMString value)
             raises(DOMException);
         [OldStyleObjC] void removeAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
                                               in DOMString localName)
             raises(DOMException);
-        [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                                       in DOMString localName);
-        [OldStyleObjC] Attr getAttributeNodeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                               in DOMString localName);
-        Attr setAttributeNodeNS(in Attr newAttr)
+        [OldStyleObjC] NodeList getElementsByTagNameNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+                                                       in [Optional=CallWithDefaultValue] DOMString localName);
+        [OldStyleObjC] Attr getAttributeNodeNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+                                               in [Optional=CallWithDefaultValue] DOMString localName);
+        Attr setAttributeNodeNS(in [Optional=CallWithDefaultValue] Attr newAttr)
             raises(DOMException);
         boolean hasAttribute(in DOMString name);
-        [OldStyleObjC] boolean hasAttributeNS(in [ConvertNullToNullString] DOMString namespaceURI,
-                                              in DOMString localName);
+        [OldStyleObjC] boolean hasAttributeNS(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI,
+                                              in [Optional=CallWithDefaultValue] DOMString localName);
 
         readonly attribute CSSStyleDeclaration style;
 
@@ -88,33 +87,33 @@ module core {
 
         // IE extensions
 
-        boolean contains(in Element element);
+        boolean contains(in [Optional=CallWithDefaultValue] Element element);
 
         // WebKit extensions
 
         void scrollIntoViewIfNeeded(in [Optional] boolean centerIfNeeded);
-        void scrollByLines(in long lines);
-        void scrollByPages(in long pages);
+        void scrollByLines(in [Optional=CallWithDefaultValue] long lines);
+        void scrollByPages(in [Optional=CallWithDefaultValue] long pages);
 
 #if defined(ENABLE_ANIMATION_API) && ENABLE_ANIMATION_API
         WebKitAnimationList webkitGetAnimations();
 #endif
 
         // HTML 5
-        NodeList getElementsByClassName(in DOMString name);
+        NodeList getElementsByClassName(in [Optional=CallWithDefaultValue] DOMString name);
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
         readonly attribute DOMStringMap dataset;
 #endif
 
         // NodeSelector - Selector API
-        [RequiresAllArguments=Raise] Element querySelector(in DOMString selectors)
+        Element querySelector(in DOMString selectors)
             raises(DOMException);
-        [RequiresAllArguments=Raise] NodeList querySelectorAll(in DOMString selectors)
+        NodeList querySelectorAll(in DOMString selectors)
             raises(DOMException);
 
         // WebKit extension, pending specification.
-        boolean webkitMatchesSelector(in DOMString selectors)
+        boolean webkitMatchesSelector(in [Optional=CallWithDefaultValue] DOMString selectors)
             raises(DOMException);
 
         // ElementTraversal API
@@ -137,7 +136,7 @@ module core {
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
         const unsigned short ALLOW_KEYBOARD_INPUT = 1;
-        void webkitRequestFullScreen(in unsigned short flags);
+        void webkitRequestFullScreen(in [Optional=CallWithDefaultValue] unsigned short flags);
 #endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C

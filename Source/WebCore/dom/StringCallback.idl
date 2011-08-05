@@ -30,7 +30,6 @@
 
 module core {
     interface [
-        LegacyDefaultOptionalArguments,
         Callback
     ] StringCallback {
         boolean handleEvent(in DOMString data);

@@ -32,12 +32,11 @@ module core {
 
     interface [
         Conditional=DATA_TRANSFER_ITEMS,
-        LegacyDefaultOptionalArguments,
     ] DataTransferItem {
         readonly attribute DOMString kind;
         readonly attribute DOMString type;
 
-        void getAsString(in [Callback] StringCallback callback);
+        void getAsString(in [Callback,Optional=CallWithDefaultValue] StringCallback callback);
         Blob getAsFile();
     };
 

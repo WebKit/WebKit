@@ -22,7 +22,6 @@ module events {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         NoStaticTables,
         ObjCProtocol,
         PureInterface,

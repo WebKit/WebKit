@@ -26,7 +26,6 @@
 module events {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=TOUCH_EVENTS,
         HasIndexGetter
     ] TouchList {

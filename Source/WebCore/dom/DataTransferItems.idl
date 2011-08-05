@@ -32,17 +32,17 @@ module core {
 
     interface [
         Conditional=DATA_TRANSFER_ITEMS,
-        LegacyDefaultOptionalArguments,
         HasIndexGetter,
 #if defined(V8_BINDING) && V8_BINDING
         CustomDeleteProperty,
 #endif
     ] DataTransferItems {
         readonly attribute long length;
-        DataTransferItem item(in unsigned long index) getter;
+        DataTransferItem item(in [Optional=CallWithDefaultValue] unsigned long index) getter;
 
         void clear();
-        void add(in DOMString data, in DOMString type) raises(DOMException);
+        void add(in [Optional=CallWithDefaultValue] DOMString data, 
+                 in [Optional=CallWithDefaultValue] DOMString type) raises(DOMException);
     };
 
 }

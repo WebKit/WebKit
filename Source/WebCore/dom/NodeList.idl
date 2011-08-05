@@ -21,14 +21,13 @@
 module core {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CustomIsReachable,
         HasIndexGetter,
         HasNameGetter,
         CustomCall
     ] NodeList {
 
-        Node item(in [IsIndex] unsigned long index);
+        Node item(in [IsIndex,Optional=CallWithDefaultValue] unsigned long index);
 
         readonly attribute unsigned long length;
 

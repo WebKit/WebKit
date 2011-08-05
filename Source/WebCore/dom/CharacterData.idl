@@ -19,33 +19,31 @@
 
 module core {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] CharacterData : Node {
+    interface CharacterData : Node {
 
         attribute [ConvertNullToNullString] DOMString data
             setter raises(DOMException);
 
         readonly attribute unsigned long length;
         
-        [ConvertNullStringTo=Null, OldStyleObjC] DOMString substringData(in [IsIndex] unsigned long offset, 
-                                                           in [IsIndex] unsigned long length)
+        [ConvertNullStringTo=Null, OldStyleObjC] DOMString substringData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
+                                                                         in [IsIndex,Optional=CallWithDefaultValue] unsigned long length)
             raises(DOMException);
 
-        void appendData(in DOMString data)
+        void appendData(in [Optional=CallWithDefaultValue] DOMString data)
             raises(DOMException);
 
-        [OldStyleObjC] void insertData(in [IsIndex] unsigned long offset, 
-                        in DOMString data)
+        [OldStyleObjC] void insertData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
+                                       in [Optional=CallWithDefaultValue] DOMString data)
             raises(DOMException);
 
-        [OldStyleObjC] void deleteData(in [IsIndex] unsigned long offset, 
-                        in [IsIndex] unsigned long length)
+        [OldStyleObjC] void deleteData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
+                                       in [IsIndex,Optional=CallWithDefaultValue] unsigned long length)
             raises(DOMException);
 
-        [OldStyleObjC] void replaceData(in [IsIndex] unsigned long offset, 
-                         in [IsIndex] unsigned long length,
-                         in DOMString data)
+        [OldStyleObjC] void replaceData(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset, 
+                                        in [IsIndex,Optional=CallWithDefaultValue] unsigned long length,
+                                        in [Optional=CallWithDefaultValue] DOMString data)
             raises(DOMException);
     
     };

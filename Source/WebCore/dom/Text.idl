@@ -19,18 +19,16 @@
 
 module core {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] Text : CharacterData {
+    interface Text : CharacterData {
 
         // DOM Level 1
 
-        Text splitText(in [IsIndex] unsigned long offset)
+        Text splitText(in [IsIndex,Optional=CallWithDefaultValue] unsigned long offset)
             raises (DOMException);
 
         // Introduced in DOM Level 3:
         readonly attribute DOMString       wholeText;
-        Text               replaceWholeText(in DOMString content)
+        Text               replaceWholeText(in [Optional=CallWithDefaultValue] DOMString content)
                                             raises(DOMException);
     };
 

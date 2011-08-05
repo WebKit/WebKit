@@ -26,13 +26,12 @@
 module core {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateConstructor,
         HasIndexGetter
     ] DOMStringList {
         readonly attribute unsigned long length;
-        [ConvertNullStringTo=Null] DOMString item(in [IsIndex] unsigned long index);
-        boolean contains(in DOMString string);
+        [ConvertNullStringTo=Null] DOMString item(in [IsIndex,Optional=CallWithDefaultValue] unsigned long index);
+        boolean contains(in [Optional=CallWithDefaultValue] DOMString string);
     };
 
 }

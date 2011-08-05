@@ -19,13 +19,11 @@
 
 module core {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] DocumentFragment : Node {
+    interface DocumentFragment : Node {
         // NodeSelector - Selector API
-        [RequiresAllArguments=Raise] Element querySelector(in DOMString selectors)
+        Element querySelector(in DOMString selectors)
             raises(DOMException);
-        [RequiresAllArguments=Raise] NodeList querySelectorAll(in DOMString selectors)
+        NodeList querySelectorAll(in DOMString selectors)
             raises(DOMException);
     };
 

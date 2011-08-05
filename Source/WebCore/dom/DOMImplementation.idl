@@ -21,36 +21,35 @@
 module core {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplDocument,
         V8DependentLifetime
     ] DOMImplementation {
 
         // DOM Level 1
 
-        [OldStyleObjC] boolean hasFeature(in DOMString feature, 
-                                          in [ConvertNullToNullString] DOMString version);
+        [OldStyleObjC] boolean hasFeature(in [Optional=CallWithDefaultValue] DOMString feature, 
+                                          in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString version);
 
         // DOM Level 2
 
-        [OldStyleObjC] DocumentType createDocumentType(in [ConvertUndefinedOrNullToNullString] DOMString qualifiedName,
-                                                       in [ConvertUndefinedOrNullToNullString] DOMString publicId,
-                                                       in [ConvertUndefinedOrNullToNullString] DOMString systemId)
+        [OldStyleObjC] DocumentType createDocumentType(in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString qualifiedName,
+                                                       in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString publicId,
+                                                       in [ConvertUndefinedOrNullToNullString,Optional=CallWithDefaultValue] DOMString systemId)
             raises(DOMException);
-        [OldStyleObjC] Document createDocument(in [ConvertNullToNullString] DOMString namespaceURI, 
-                                               in [ConvertNullToNullString] DOMString qualifiedName, 
-                                               in [ConvertNullToNullString] DocumentType doctype)
+        [OldStyleObjC] Document createDocument(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI, 
+                                               in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString qualifiedName, 
+                                               in [ConvertNullToNullString,Optional=CallWithDefaultValue] DocumentType doctype)
             raises(DOMException);
 
         // DOMImplementationCSS interface from DOM Level 2 CSS
 
-        [OldStyleObjC] CSSStyleSheet createCSSStyleSheet(in DOMString title,
-                                                         in DOMString media)
+        [OldStyleObjC] CSSStyleSheet createCSSStyleSheet(in [Optional=CallWithDefaultValue] DOMString title,
+                                                         in [Optional=CallWithDefaultValue] DOMString media)
             raises(DOMException);
 
         // HTMLDOMImplementation interface from DOM Level 2 HTML
 
-        HTMLDocument createHTMLDocument(in DOMString title);
+        HTMLDocument createHTMLDocument(in [Optional=CallWithDefaultValue] DOMString title);
     };
 
 }

@@ -21,7 +21,6 @@
 module core {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CustomHeader,
         CustomMarkFunction,
         CustomPushEventHandlerScope,
@@ -80,13 +79,13 @@ module core {
             raises(DOMException);
 
         boolean            hasChildNodes();
-        Node               cloneNode(in boolean deep);
+        Node               cloneNode(in [Optional=CallWithDefaultValue] boolean deep);
         void               normalize();
 
         // Introduced in DOM Level 2:
 
-        [OldStyleObjC] boolean isSupported(in DOMString feature, 
-                                           in [ConvertNullToNullString] DOMString version);
+        [OldStyleObjC] boolean isSupported(in [Optional=CallWithDefaultValue] DOMString feature, 
+                                           in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString version);
 
         readonly attribute [ConvertNullStringTo=Null] DOMString        namespaceURI;
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        prefix
@@ -103,11 +102,11 @@ module core {
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString       textContent
                      setter raises(DOMException);
 
-        boolean            isSameNode(in Node other);
-        boolean            isEqualNode(in Node other);
-        [ConvertNullStringTo=Null] DOMString          lookupPrefix(in [ConvertNullToNullString] DOMString namespaceURI);
-        boolean            isDefaultNamespace(in [ConvertNullToNullString] DOMString namespaceURI);
-        [ConvertNullStringTo=Null] DOMString          lookupNamespaceURI(in [ConvertNullToNullString] DOMString prefix);
+        boolean            isSameNode(in [Optional=CallWithDefaultValue] Node other);
+        boolean            isEqualNode(in [Optional=CallWithDefaultValue] Node other);
+        [ConvertNullStringTo=Null] DOMString          lookupPrefix(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI);
+        boolean            isDefaultNamespace(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString namespaceURI);
+        [ConvertNullStringTo=Null] DOMString          lookupNamespaceURI(in [ConvertNullToNullString,Optional=CallWithDefaultValue] DOMString prefix);
 
         // DocumentPosition
         const unsigned short      DOCUMENT_POSITION_DISCONNECTED = 0x01;
@@ -117,7 +116,7 @@ module core {
         const unsigned short      DOCUMENT_POSITION_CONTAINED_BY = 0x10;
         const unsigned short      DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC = 0x20;
 
-        unsigned short     compareDocumentPosition(in Node other);
+        unsigned short     compareDocumentPosition(in [Optional=CallWithDefaultValue] Node other);
 
 #if 0
         DOMObject          getFeature(in DOMString feature, 

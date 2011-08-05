@@ -27,7 +27,6 @@
 module events {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CustomMarkFunction,
         GenerateIsReachable=Impl,
         ActiveDOMObject,

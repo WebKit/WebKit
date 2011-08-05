@@ -32,7 +32,6 @@ module core {
     interface [
         Callback=FunctionOnly,
         Conditional=REQUEST_ANIMATION_FRAME,
-        LegacyDefaultOptionalArguments,
     ] RequestAnimationFrameCallback{
         boolean handleEvent(in DOMTimeStamp time);
     };
