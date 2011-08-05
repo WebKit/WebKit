@@ -1,3 +1,15 @@
+2011-08-05  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Unreviewed build fix for Qt-Minimal buildbot
+
+        Use ~/.QtTestBrowser for the cookiejar when QDesktopServices
+        is disabled.
+
+        Rubber-stamped by Holger Freyther.
+
+        * QtTestBrowser/cookiejar.cpp:
+        (TestBrowserCookieJar::TestBrowserCookieJar):
+
 2011-08-05  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         [Qt] QtTestBrowser: Add support for saving cookies on disk
