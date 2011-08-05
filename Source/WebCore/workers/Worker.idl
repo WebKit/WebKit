@@ -28,7 +28,6 @@ module threads {
 
     interface [
         Conditional=WORKERS,
-        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         CanBeConstructed,
         CustomConstructFunction,

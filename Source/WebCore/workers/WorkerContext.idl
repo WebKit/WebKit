@@ -28,7 +28,6 @@ module threads {
 
     interface [
         Conditional=WORKERS,
-        LegacyDefaultOptionalArguments,
         CustomMarkFunction,
         DelegatingGetOwnPropertySlot,
         EventTarget,
@@ -51,19 +50,19 @@ module threads {
         [Custom] void importScripts(/*[Variadic] in DOMString urls */);
                  attribute [Replaceable] WorkerNavigator navigator;
 #if defined(ENABLE_DATABASE) && ENABLE_DATABASE
-        [EnabledAtRuntime, RequiresAllArguments=Raise] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+        [EnabledAtRuntime] Database openDatabase(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
-        [EnabledAtRuntime, RequiresAllArguments=Raise] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
+        [EnabledAtRuntime] DatabaseSync openDatabaseSync(in DOMString name, in DOMString version, in DOMString displayName, in unsigned long estimatedSize, in [Callback, Optional] DatabaseCallback creationCallback)
             raises(DOMException);
 #endif
 
         // Timers
         [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
         // [Custom] long setTimeout(in DOMString code, in long timeout);
-        void clearTimeout(in long handle);
+        void clearTimeout(in [Optional=CallWithDefaultValue] long handle);
         [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
         // [Custom] long setInterval(in DOMString code, in long timeout);
-        void clearInterval(in long handle);
+        void clearInterval(in [Optional=CallWithDefaultValue] long handle);
 
 
         // EventTarget interface
