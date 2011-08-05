@@ -1,3 +1,24 @@
+2011-08-05  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
+
+        [Qt] QtTestBrowser: Add support for saving cookies on disk
+        https://bugs.webkit.org/show_bug.cgi?id=65328
+
+        Simple cookiejar that saves cookies on disk.
+
+        Added menu options to clear cookies (Edit->Clear cookies) and
+        disable disk cookies (Settings->[ ]Save Cookies on Disk).
+
+        Option -no-disk-cookies is also available.
+
+        Reviewed by Andreas Kling.
+
+        * QtTestBrowser/QtTestBrowser.pro:
+        * QtTestBrowser/cookiejar.cpp: Added.
+        * QtTestBrowser/cookiejar.h: Added.
+        * QtTestBrowser/launcherwindow.cpp:
+        * QtTestBrowser/launcherwindow.h:
+        * QtTestBrowser/main.cpp:
+
 2011-08-04  Adam Barth  <abarth@webkit.org>
 
         model.js needs some unit testing

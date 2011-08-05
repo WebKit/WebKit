@@ -33,7 +33,10 @@
  */
 
 #include "launcherwindow.h"
+#include "cookiejar.h"
 #include "urlloader.h"
+
+#include <QCoreApplication>
 
 #if !defined(QT_NO_FILEDIALOG) && !defined(QT_NO_MESSAGEBOX)
 #include <QFileDialog>
@@ -49,6 +52,12 @@
 
 const int gExitClickArea = 80;
 QVector<int> LauncherWindow::m_zoomLevels;
+
+static TestBrowserCookieJar* testBrowserCookieJarInstance()
+{
+    static TestBrowserCookieJar* cookieJar = new TestBrowserCookieJar(qApp);
+    return cookieJar;
+}
 
 LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
     : MainWindow()
@@ -121,6 +130,12 @@ void LauncherWindow::initializeView()
     QUrl url = page()->mainFrame()->url();
     setPage(new WebPage(this));
     setDiskCache(m_windowOptions.useDiskCache);
+    setUseDiskCookies(m_windowOptions.useDiskCookies);
+
+    // We reuse the same cookieJar on multiple QNAMs, which is OK.
+    QObject* cookieJarParent = testBrowserCookieJarInstance()->parent();
+    page()->networkAccessManager()->setCookieJar(testBrowserCookieJarInstance());
+    testBrowserCookieJarInstance()->setParent(cookieJarParent);
 
     QSplitter* splitter = static_cast<QSplitter*>(centralWidget());
 
@@ -225,6 +240,8 @@ void LauncherWindow::createChrome()
 #endif
     QAction* setEditable = editMenu->addAction("Set Editable", this, SLOT(setEditable(bool)));
     setEditable->setCheckable(true);
+
+    editMenu->addAction("Clear Cookies", this, SLOT(clearCookies()));
 
     QMenu* viewMenu = menuBar()->addMenu("&View");
     viewMenu->addAction(page()->action(QWebPage::Stop));
@@ -439,6 +456,11 @@ void LauncherWindow::createChrome()
     QAction* toggleJavascriptCanOpenWindows = settingsMenu->addAction("Enable js popup windows", this, SLOT(toggleJavascriptCanOpenWindows(bool)));
     toggleJavascriptCanOpenWindows->setCheckable(true);
     toggleJavascriptCanOpenWindows->setChecked(false);
+
+    QAction* toggleUseDiskCookies = settingsMenu->addAction("Save Cookies on Disk", this, SLOT(setUseDiskCookies(bool)));
+    toggleUseDiskCookies->setCheckable(true);
+    toggleUseDiskCookies->setChecked(m_windowOptions.useDiskCookies);
+
 #ifndef QT_NO_LINEEDIT
     m_findBar = new QToolBar("Find", this);
     addToolBar(Qt::BottomToolBarArea, m_findBar);
@@ -883,6 +905,16 @@ void LauncherWindow::toggleInterruptingJavaScriptEnabled(bool enable)
 void LauncherWindow::toggleJavascriptCanOpenWindows(bool enable)
 {
     page()->settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, enable);
+}
+
+void LauncherWindow::setUseDiskCookies(bool enable)
+{
+    testBrowserCookieJarInstance()->setDiskStorageEnabled(enable);
+}
+
+void LauncherWindow::clearCookies()
+{
+    testBrowserCookieJarInstance()->reset();
 }
 
 void LauncherWindow::toggleAutoLoadImages(bool enable)

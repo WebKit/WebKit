@@ -10,6 +10,7 @@ SOURCES += \
     webpage.cpp \
     webview.cpp \
     fpstimer.cpp \
+    cookiejar.cpp
 
 HEADERS += \
     locationedit.h \
@@ -21,6 +22,7 @@ HEADERS += \
     webpage.h \
     webview.h \
     fpstimer.h \
+    cookiejar.h
 
 !isEqual(QT_ARCH,sh4): CONFIG += uitools
 

@@ -97,6 +97,7 @@ public:
         , useLocalStorage(false)
         , useOfflineStorageDatabase(false)
         , useOfflineWebApplicationCache(false)
+        , useDiskCookies(true)
         , offlineStorageDefaultQuotaSize(0)
 #if defined(QT_CONFIGURED_WITH_OPENGL)
         , useQGLWidgetViewport(false)
@@ -126,6 +127,7 @@ public:
     bool useLocalStorage;
     bool useOfflineStorageDatabase;
     bool useOfflineWebApplicationCache;
+    bool useDiskCookies;
     quint64 offlineStorageDefaultQuotaSize;
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     bool useQGLWidgetViewport;
@@ -188,6 +190,8 @@ protected slots:
     void toggleInterruptingJavaScriptEnabled(bool enable);
     void toggleJavascriptCanOpenWindows(bool enable);
     void toggleAutoLoadImages(bool enable);
+    void setUseDiskCookies(bool enable);
+    void clearCookies();
     void togglePlugins(bool enable);
     void toggleLocalStorage(bool toggle);
     void toggleOfflineStorageDatabase(bool toggle);

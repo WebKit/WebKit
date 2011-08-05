@@ -195,6 +195,7 @@ void LauncherApplication::handleUserOptions()
              << "[-tiled-backing-store]"
              << "[-resizes-to-contents]"
              << "[-local-storage-enabled]"
+             << "[-no-disk-cookies]"
              << "[-offline-storage-database-enabled]"
              << "[-offline-web-application-cache-enabled]"
              << "[-set-offline-storage-default-quota maxSize]"
@@ -245,7 +246,10 @@ void LauncherApplication::handleUserOptions()
     
     if (args.contains("-local-storage-enabled"))
         windowOptions.useLocalStorage = true;
-        
+
+    if (args.contains("-no-disk-cookies"))
+        windowOptions.useDiskCookies = false;
+
     if (args.contains("-maximize"))
         windowOptions.startMaximized = true;
 
