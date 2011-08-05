@@ -806,6 +806,10 @@ glyphs
 inline-box
 replaced
 
+// -webkit-font-feature-settings
+on
+off
+
 // image-rendering
 //auto
 //optimizeSpeed

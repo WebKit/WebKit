@@ -20,6 +20,7 @@ font-style
 font-variant
 font-weight
 text-rendering
+-webkit-font-feature-settings
 -webkit-font-smoothing
 -webkit-locale
 -webkit-text-orientation

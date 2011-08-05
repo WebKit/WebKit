@@ -42,6 +42,8 @@
 #include "CSSValueList.h"
 #include "Document.h"
 #include "ExceptionCode.h"
+#include "FontFeatureSettings.h"
+#include "FontFeatureValue.h"
 #include "Rect.h"
 #include "RenderBox.h"
 #include "RenderLayer.h"
@@ -1141,6 +1143,18 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             }
             ASSERT_NOT_REACHED();
             return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+        case CSSPropertyWebkitFontFeatureSettings: {
+            const FontFeatureSettings* featureSettings = style->fontDescription().featureSettings();
+            if (!featureSettings || !featureSettings->size())
+                return primitiveValueCache->createIdentifierValue(CSSValueNormal);
+            RefPtr<CSSValueList> list = CSSValueList::createCommaSeparated();
+            for (unsigned i = 0; i < featureSettings->size(); ++i) {
+                const FontFeature& feature = featureSettings->at(i);
+                RefPtr<FontFeatureValue> featureValue = FontFeatureValue::create(feature.tag(), feature.value());
+                list->append(featureValue.release());
+            }
+            return list.release();
+        }
         case CSSPropertyHeight:
             if (renderer)
                 return zoomAdjustedPixelValue(sizingBox(renderer).height(), style.get(), primitiveValueCache);

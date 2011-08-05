@@ -98,4 +98,11 @@ FontTraitsMask FontDescription::traitsMask() const
     
 }
 
+FontDescription FontDescription::makeNormalFeatureSettings() const
+{
+    FontDescription normalDescription(*this);
+    normalDescription.setFeatureSettings(0);
+    return normalDescription;
+}
+
 } // namespace WebCore

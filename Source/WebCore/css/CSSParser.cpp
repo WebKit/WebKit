@@ -61,6 +61,7 @@
 #include "Document.h"
 #include "FloatConversion.h"
 #include "FontFamilyValue.h"
+#include "FontFeatureValue.h"
 #include "FontValue.h"
 #include "HTMLParserIdioms.h"
 #include "HashTools.h"
@@ -2083,6 +2084,12 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = true;
         else
             return parseLineBoxContain(important);
+        break;
+    case CSSPropertyWebkitFontFeatureSettings:
+        if (id == CSSValueNormal)
+            validPrimitive = true;
+        else
+            return parseFontFeatureSettings(important);
         break;
 
 #if ENABLE(CSS_EXCLUSIONS)
@@ -6300,6 +6307,67 @@ bool CSSParser::parseLineBoxContain(bool important)
 
     addProperty(CSSPropertyWebkitLineBoxContain, CSSLineBoxContainValue::create(lineBoxContain), important);
     return true;
+}
+
+bool CSSParser::parseFontFeatureTag(CSSValueList* settings)
+{
+    // Feature tag name consists of 4-letter characters.
+    static const int tagNameLength = 4;
+
+    CSSParserValue* value = m_valueList->current();
+    // Feature tag name comes first
+    if (value->unit != CSSPrimitiveValue::CSS_STRING && value->unit != CSSPrimitiveValue::CSS_IDENT)
+        return false;
+    if (value->string.length != tagNameLength)
+        return false;
+    for (int i = 0; i < tagNameLength; ++i) {
+        // Limits the range of characters to 0x20-0x7E, following the tag name rules defiend in the OpenType specification.
+        UChar character = value->string.characters[i];
+        if (character < 0x20 || character > 0x7E)
+            return false;
+    }
+
+    String tag = value->string;
+    int tagValue = 1;
+    // Feature tag values could follow: <integer> | on | off
+    value = m_valueList->next();
+    if (value) {
+        if (value->unit == CSSPrimitiveValue::CSS_NUMBER && value->isInt && value->fValue >= 0) {
+            tagValue = value->fValue;
+            m_valueList->next();
+        } else if (value->id == CSSValueOn || value->id == CSSValueOff) {
+            tagValue = value->id == CSSValueOn;
+            m_valueList->next();
+        }
+    }
+    settings->append(FontFeatureValue::create(tag, tagValue));
+    return true;
+}
+
+bool CSSParser::parseFontFeatureSettings(bool important)
+{
+    if (m_valueList->size() == 1 && m_valueList->current()->id == CSSValueNormal) {
+        RefPtr<CSSPrimitiveValue> normalValue = primitiveValueCache()->createIdentifierValue(CSSValueNormal);
+        m_valueList->next();
+        addProperty(CSSPropertyWebkitFontFeatureSettings, normalValue.release(), important);
+        return true;
+    }
+
+    RefPtr<CSSValueList> settings = CSSValueList::createCommaSeparated();
+    for (CSSParserValue* value = m_valueList->current(); value; value = m_valueList->next()) {
+        if (!parseFontFeatureTag(settings.get()))
+            return false;
+
+        // If the list isn't parsed fully, the current value should be comma.
+        value = m_valueList->current();
+        if (value && !(value->unit == CSSParserValue::Operator && value->iValue == ','))
+            return false;
+    }
+    if (settings->length()) {
+        addProperty(CSSPropertyWebkitFontFeatureSettings, settings.release(), important);
+        return true;
+    }
+    return false;
 }
 
 static inline int yyerror(const char*) { return 1; }

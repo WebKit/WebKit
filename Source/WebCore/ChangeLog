@@ -1,3 +1,63 @@
+2011-08-05  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Parsing CSS3 font-feature-settings property
+        https://bugs.webkit.org/show_bug.cgi?id=63618
+
+        Introduces CSS3 font-feature-settings property as -webkit-font-feature-settings.  This change only contains parsing part.  Parsed information are stored in FontDescription class.
+
+        Reviewed by Shinichiro Hamaji.
+
+        Test: css3/font-feature-settings-parsing.html
+
+        * CMakeLists.txt: Added FontFeatureValue.{h,cpp} and FontFeatureSettings.{h,cpp}.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue): Added CSSPropertyWebkitFontFeatureSettings.
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue): Added parsing code for -webkit-font-feature-settings.
+        (WebCore::CSSParser::parseFontFeatureTag): Added.
+        (WebCore::CSSParser::parseFontFeatureSettings): Added.
+        * css/CSSParser.h: Added parseFontFeatureSettings().
+        * css/CSSPropertyNames.in: Added -webkit-font-feature-settings.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyDeclarations): Modified a compile assert to follow adding -webkit-font-feature-settings.
+        (WebCore::CSSStyleSelector::applyProperty): Added a case clause for CSSPropertyWebkitFontFeatureSettings.
+        * css/CSSValue.h:
+        (WebCore::CSSValue::isFontFeatureValue): Added.
+        * css/CSSValueKeywords.in: Added 'on' and 'off' keywords.
+        * css/FontFeatureValue.cpp: Added.
+        (WebCore::FontFeatureValue::FontFeatureValue):
+        (WebCore::FontFeatureValue::value):
+        (WebCore::FontFeatureValue::cssText):
+        * css/FontFeatureValue.h: Added.
+        (WebCore::FontFeatureValue::create):
+        (WebCore::FontFeatureValue::tag):
+        (WebCore::FontFeatureValue::isFontFeatureValue):
+        * platform/graphics/FontDescription.cpp:
+        (WebCore::FontDescription::makeNormalFeatureSettings): Added.
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::FontDescription): Added m_featureSettings member variable.
+        (WebCore::FontDescription::featureSettings): Added.
+        (WebCore::FontDescription::setFeatureSettings): Added.
+        (WebCore::FontDescription::operator==): Modified to take into account m_featureSettings
+        * platform/graphics/FontFeatureSettings.cpp: Added.
+        (WebCore::FontFeature::FontFeature):
+        (WebCore::FontFeature::operator=):
+        (WebCore::FontFeature::operator==):
+        (WebCore::FontFeatureSettings::FontFeatureSettings):
+        * platform/graphics/FontFeatureSettings.h: Added.
+        (WebCore::FontFeature::tag):
+        (WebCore::FontFeature::value):
+        (WebCore::FontFeatureSettings::create):
+        (WebCore::FontFeatureSettings::append):
+        (WebCore::FontFeatureSettings::size):
+        (WebCore::FontFeatureSettings::operator[]):
+        (WebCore::FontFeatureSettings::at):
+
 2011-08-05  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from websockets

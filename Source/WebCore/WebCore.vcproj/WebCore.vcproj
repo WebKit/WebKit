@@ -27721,6 +27721,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\graphics\FontFeatureSettings.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\graphics\FontFeatureSettings.h"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\graphics\FontFastPath.cpp"
 					>
 				</File>
@@ -33051,6 +33059,14 @@
 			</File>
 			<File
 				RelativePath="..\css\FontFamilyValue.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\FontFeatureValue.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\css\FontFeatureValue.h"
 				>
 			</File>
 			<File

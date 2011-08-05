@@ -465,6 +465,7 @@ SET(WebCore_SOURCES
     css/CSSUnicodeRangeValue.cpp
     css/CSSValueList.cpp
     css/FontFamilyValue.cpp
+    css/FontFeatureValue.cpp
     css/FontValue.cpp
     css/MediaFeatureNames.cpp
     css/MediaList.cpp
@@ -1062,6 +1063,7 @@ SET(WebCore_SOURCES
     platform/graphics/FontFallbackList.cpp
     platform/graphics/FontFamily.cpp
     platform/graphics/FontFastPath.cpp
+    platform/graphics/FontFeatureSettings.cpp
     platform/graphics/GeneratedImage.cpp
     platform/graphics/GlyphPageTreeNode.cpp
     platform/graphics/Gradient.cpp

@@ -1016,6 +1016,8 @@ webcore_sources += \
 	Source/WebCore/css/DashboardRegion.h \
 	Source/WebCore/css/FontFamilyValue.cpp \
 	Source/WebCore/css/FontFamilyValue.h \
+	Source/WebCore/css/FontFeatureValue.cpp \
+	Source/WebCore/css/FontFeatureValue.h \
 	Source/WebCore/css/FontValue.cpp \
 	Source/WebCore/css/FontValue.h \
 	Source/WebCore/css/MediaFeatureNames.cpp \
@@ -2504,6 +2506,8 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/FontFamily.cpp \
 	Source/WebCore/platform/graphics/FontFamily.h \
 	Source/WebCore/platform/graphics/FontFastPath.cpp \
+	Source/WebCore/platform/graphics/FontFeatureSettings.cpp \
+	Source/WebCore/platform/graphics/FontFeatureSettings.h \
 	Source/WebCore/platform/graphics/Font.h \
 	Source/WebCore/platform/graphics/FontMetrics.h \
 	Source/WebCore/platform/graphics/FontOrientation.h \

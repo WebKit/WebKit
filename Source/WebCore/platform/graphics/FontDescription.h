@@ -26,6 +26,7 @@
 #define FontDescription_h
 
 #include "FontFamily.h"
+#include "FontFeatureSettings.h"
 #include "FontOrientation.h"
 #include "FontRenderingMode.h"
 #include "FontSmoothingMode.h"
@@ -34,6 +35,8 @@
 #include "TextOrientation.h"
 #include "TextRenderingMode.h"
 #include <wtf/MathExtras.h>
+
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -116,6 +119,8 @@ public:
     FontOrientation orientation() const { return m_orientation; }
     TextOrientation textOrientation() const { return m_textOrientation; }
     FontWidthVariant widthVariant() const { return m_widthVariant; }
+    FontFeatureSettings* featureSettings() const { return m_featureSettings.get(); }
+    FontDescription makeNormalFeatureSettings() const;
 
     void setFamily(const FontFamily& family) { m_familyList = family; }
     void setComputedSize(float s) { ASSERT(isfinite(s)); m_computedSize = s; }
@@ -141,6 +146,7 @@ public:
     void setTextOrientation(TextOrientation textOrientation) { m_textOrientation = textOrientation; }
     void setWidthVariant(FontWidthVariant widthVariant) { m_widthVariant = widthVariant; }
     void setScript(UScriptCode s) { m_script = s; }
+    void setFeatureSettings(PassRefPtr<FontFeatureSettings> settings) { m_featureSettings = settings; }
 
 private:
     FontFamily m_familyList; // The list of font families to be used.
@@ -153,6 +159,8 @@ private:
     TextOrientation m_textOrientation; // Only used by vertical text. Determines the default orientation for non-ideograph glyphs.
 
     FontWidthVariant m_widthVariant;
+
+    RefPtr<FontFeatureSettings> m_featureSettings;
 
     unsigned m_italic : 1; // FontItalic
     unsigned m_smallCaps : 1; // FontSmallCaps
@@ -193,7 +201,8 @@ inline bool FontDescription::operator==(const FontDescription& other) const
         && m_orientation == other.m_orientation
         && m_textOrientation == other.m_textOrientation
         && m_widthVariant == other.m_widthVariant
-        && m_script == other.m_script;
+        && m_script == other.m_script
+        && m_featureSettings == other.m_featureSettings;
 }
 
 }

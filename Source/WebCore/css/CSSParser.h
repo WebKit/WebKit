@@ -197,6 +197,9 @@ namespace WebCore {
 
         bool parseLineBoxContain(bool important);
 
+        bool parseFontFeatureTag(CSSValueList*);
+        bool parseFontFeatureSettings(bool important);
+
         int yyparse();
 
         CSSParserSelector* createFloatingSelector();

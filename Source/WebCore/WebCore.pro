@@ -428,6 +428,7 @@ SOURCES += \
     css/CSSUnicodeRangeValue.cpp \
     css/CSSValueList.cpp \
     css/FontFamilyValue.cpp \
+    css/FontFeatureValue.cpp \
     css/FontValue.cpp \
     css/MediaFeatureNames.cpp \
     css/MediaList.cpp \
@@ -980,6 +981,7 @@ SOURCES += \
     platform/graphics/FontDescription.cpp \
     platform/graphics/FontFallbackList.cpp \
     platform/graphics/FontFamily.cpp \
+    platform/graphics/FontFeatureSettings.cpp \
     platform/graphics/BitmapImage.cpp \
     platform/graphics/Color.cpp \
     platform/graphics/FloatPoint3D.cpp \
@@ -1426,6 +1428,7 @@ HEADERS += \
     css/CSSUnicodeRangeValue.h \
     css/CSSValueList.h \
     css/FontFamilyValue.h \
+    css/FontFeatureValue.h \
     css/FontValue.h \
     css/MediaFeatureNames.h \
     css/MediaList.h \
@@ -1981,6 +1984,7 @@ HEADERS += \
     platform/graphics/FontData.h \
     platform/graphics/FontDescription.h \
     platform/graphics/FontFamily.h \
+    platform/graphics/FontFeatureSettings.h \
     platform/graphics/FontMetrics.h \
     platform/graphics/Font.h \
     platform/graphics/GeneratedImage.h \

@@ -56,6 +56,7 @@
 #include "Counter.h"
 #include "FocusController.h"
 #include "FontFamilyValue.h"
+#include "FontFeatureValue.h"
 #include "FontValue.h"
 #include "Frame.h"
 #include "FrameSelection.h"
@@ -3481,7 +3482,7 @@ void CSSStyleSelector::applyDeclarations(bool isImportant, int startIndex, int e
 
                 if (applyFirst) {
                     COMPILE_ASSERT(firstCSSProperty == CSSPropertyColor, CSS_color_is_first_property);
-                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 15, CSS_zoom_is_end_of_first_prop_range);
+                    COMPILE_ASSERT(CSSPropertyZoom == CSSPropertyColor + 16, CSS_zoom_is_end_of_first_prop_range);
                     COMPILE_ASSERT(CSSPropertyLineHeight == CSSPropertyZoom + 1, CSS_line_height_is_after_zoom);
 
                     // give special priority to font-xxx, color properties, etc
@@ -5080,6 +5081,32 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
         return;
 #endif
+
+    // CSS Fonts Module Level 3
+    case CSSPropertyWebkitFontFeatureSettings: {
+        if (primitiveValue && primitiveValue->getIdent() == CSSValueNormal) {
+            setFontDescription(m_style->fontDescription().makeNormalFeatureSettings());
+            return;
+        }
+
+        if (!value->isValueList())
+            return;
+
+        FontDescription fontDescription = m_style->fontDescription();
+        CSSValueList* list = static_cast<CSSValueList*>(value);
+        RefPtr<FontFeatureSettings> settings = FontFeatureSettings::create();
+        int len = list->length();
+        for (int i = 0; i < len; ++i) {
+            CSSValue* item = list->itemWithoutBoundsCheck(i);
+            if (!item->isFontFeatureValue())
+                continue;
+            FontFeatureValue* feature = static_cast<FontFeatureValue*>(item);
+            settings->append(FontFeature(feature->tag(), feature->value()));
+        }
+        fontDescription.setFeatureSettings(settings.release());
+        setFontDescription(fontDescription);
+        return;
+    }
 
     // These properties are implemented in the CSSStyleApplyProperty lookup table.
     case CSSPropertyColor:

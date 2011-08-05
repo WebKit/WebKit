@@ -58,6 +58,7 @@ public:
     virtual bool isFlexValue() const { return false; }
 #endif
     virtual bool isFontFamilyValue() const { return false; }
+    virtual bool isFontFeatureValue() const { return false; }
     virtual bool isFontValue() const { return false; }
     virtual bool isImageGeneratorValue() const { return false; }
     virtual bool isImageValue() const { return false; }
