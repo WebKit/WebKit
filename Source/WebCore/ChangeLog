@@ -1,3 +1,13 @@
+2011-08-05  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not delay scroll event handling - scroll is already async.
+        https://bugs.webkit.org/show_bug.cgi?id=65693
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype._syncScroll):
+
 2011-08-05  Mark Pilgrim  <pilgrim@chromium.org>
 
         Remove LegacyDefaultOptionalArguments flag from web audio API

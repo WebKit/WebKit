@@ -200,14 +200,11 @@ WebInspector.TextViewer.prototype = {
 
     _syncScroll: function()
     {
-        // Async call due to performance reasons.
-        setTimeout(function() {
-            var mainElement = this._mainPanel.element;
-            var gutterElement = this._gutterPanel.element;
-            // Handle horizontal scroll bar at the bottom of the main panel.
-            this._gutterPanel.syncClientHeight(mainElement.clientHeight);
-            gutterElement.scrollTop = mainElement.scrollTop;
-        }.bind(this), 0);
+        var mainElement = this._mainPanel.element;
+        var gutterElement = this._gutterPanel.element;
+        // Handle horizontal scroll bar at the bottom of the main panel.
+        this._gutterPanel.syncClientHeight(mainElement.clientHeight);
+        gutterElement.scrollTop = mainElement.scrollTop;
     },
 
     _syncDecorationsForLine: function(lineNumber)
