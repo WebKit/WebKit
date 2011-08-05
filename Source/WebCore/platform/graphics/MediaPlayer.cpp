@@ -58,6 +58,9 @@
 #elif PLATFORM(WIN)
 #include "MediaPlayerPrivateQuickTimeVisualContext.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivateQuickTimeVisualContext
+#if USE(AVFOUNDATION)
+#include "MediaPlayerPrivateAVFoundationCF.h"
+#endif
 #elif PLATFORM(QT)
 #if USE(QT_MULTIMEDIA) && !USE(GSTREAMER)
 #include "MediaPlayerPrivateQt.h"
@@ -190,9 +193,14 @@ static Vector<MediaPlayerFactory*>& installedMediaEngines()
         MediaPlayerPrivateGStreamer::registerMediaEngine(addMediaEngine);
 #endif
 
-#if USE(AVFOUNDATION) && PLATFORM(MAC)
-        if (Settings::isAVFoundationEnabled())
+#if USE(AVFOUNDATION)
+        if (Settings::isAVFoundationEnabled()) {
+#if PLATFORM(MAC)
             MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(addMediaEngine);
+#elif PLATFORM(WIN)
+            MediaPlayerPrivateAVFoundationCF::registerMediaEngine(addMediaEngine);
+#endif
+        }
 #endif
 
 #if !PLATFORM(GTK) && !PLATFORM(EFL) && !(PLATFORM(QT) && USE(GSTREAMER))
