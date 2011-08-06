@@ -625,7 +625,6 @@
             'page/GeolocationPosition.h',
             'page/Geoposition.h',
             'page/GroupSettings.h',
-            'page/HaltablePlugin.h',
             'page/MediaCanStartListener.h',
             'page/MemoryInfo.h',
             'page/Page.h',

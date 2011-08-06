@@ -1,3 +1,15 @@
+2011-08-05  Noel Gordon  <noel.gordon@gmail.com>
+
+        [Chromium] Remove HaltablePlugin references from gyp project files
+        https://bugs.webkit.org/show_bug.cgi?id=65808
+
+        HaltablePlugin and related classes were removed in r92492.  Remove any
+        reference to the deleted files from the gyp project files.
+
+        Reviewed by Adam Barth.
+
+        * WebCore.gypi: remove HaltablePlugin.h reference.
+
 2011-08-05  Mark Rowe  <mrowe@apple.com>
 
         Attempt to fix the build after r92538.
