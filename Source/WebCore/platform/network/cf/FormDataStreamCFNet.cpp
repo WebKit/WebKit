@@ -91,10 +91,12 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> formData)
 
 PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
 {
-    if (RetainPtr<CFDataRef> bodyData = CFURLRequestCopyHTTPRequestBody(request))
+    RetainPtr<CFDataRef> bodyData(AdoptCF, CFURLRequestCopyHTTPRequestBody(request));
+    if (bodyData)
         return FormData::create(CFDataGetBytePtr(bodyData.get()), CFDataGetLength(bodyData.get()));
 
-    if (RetainPtr<CFArrayRef> bodyParts = wkCFURLRequestCopyHTTPRequestBodyParts(request)) {
+    RetainPtr<CFArrayRef> bodyParts(AdoptCF, wkCFURLRequestCopyHTTPRequestBodyParts(request));
+    if (bodyParts) {
         RefPtr<FormData> formData = FormData::create();
 
         CFIndex count = CFArrayGetCount(bodyParts.get());
