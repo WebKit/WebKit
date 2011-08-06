@@ -1,5 +1,22 @@
 2011-08-06  Adam Barth  <abarth@webkit.org>
 
+        Optimize expected results for editing.
+        This patch was created with webkit-patch bulk-optimize-baselines.
+
+        * platform/chromium-mac/editing/pasteboard/copy-paste-float-expected.txt: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-blockquote-before-blockquote-expected.txt: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-double-nested-blockquote-before-blockquote-expected.txt: Removed.
+        * platform/chromium-win-xp/editing/pasteboard/block-wrappers-necessary-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/copy-paste-float-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-before-blockquote-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-double-nested-blockquote-before-blockquote-expected.txt: Removed.
+        * platform/chromium/editing/pasteboard/5761530-1-expected.txt: Removed.
+        * platform/chromium/editing/pasteboard/copy-paste-float-expected.txt: Added.
+        * platform/chromium/editing/pasteboard/paste-blockquote-before-blockquote-expected.txt: Added.
+        * platform/chromium/editing/pasteboard/paste-double-nested-blockquote-before-blockquote-expected.txt: Added.
+
+2011-08-06  Adam Barth  <abarth@webkit.org>
+
         Optimize expected results for animations.
         This patch was created with webkit-patch bulk-optimize-baselines.
 
