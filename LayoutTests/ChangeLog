@@ -1,6 +1,15 @@
 2011-08-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed gardening.
+        Fix environmental differencies in the results added in r92564.
+        I was in the wrong chroot.
+
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+
+2011-08-06  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed gardening.
         Add missing Qt results.
 
         * platform/qt/Skipped:
