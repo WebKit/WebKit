@@ -1,3 +1,15 @@
+2011-08-06  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Potential Leaks - RetainPtr<> over retaining Create'd objects
+        https://bugs.webkit.org/show_bug.cgi?id=65806
+
+        Reviewed by Darin Adler.
+
+        Fix a possible leak by adopting an allocation instead of retaining it.
+
+        * WebView/WebView.mm:
+        (-[WebView previousValidKeyView]):
+
 2011-08-05  Anders Carlsson  <andersca@apple.com>
 
         Remove PluginHalter

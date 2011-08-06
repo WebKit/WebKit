@@ -105,7 +105,7 @@ NetworkStateNotifier::NetworkStateNotifier()
     if (!m_store)
         return;
 
-    RetainPtr<CFRunLoopSourceRef> configSource = SCDynamicStoreCreateRunLoopSource(0, m_store.get(), 0);
+    RetainPtr<CFRunLoopSourceRef> configSource(AdoptCF, SCDynamicStoreCreateRunLoopSource(0, m_store.get(), 0));
     if (!configSource)
         return;
 
