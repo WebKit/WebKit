@@ -1,5 +1,18 @@
 2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Follow-up for r92545.
+        
+        Rebaseline some tests on gtk/qt and win.
+
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
+        * platform/qt/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Removed.
+
+2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         REGRESSION(87526): ASSERT(!needsLayout()) followed by graphical glitches on google charts (svg loaded in iframe)
         https://bugs.webkit.org/show_bug.cgi?id=64974
 
