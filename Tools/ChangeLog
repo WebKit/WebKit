@@ -1,3 +1,9 @@
+2011-08-06  Adam Barth  <abarth@webkit.org>
+
+        Add a small command to optimize baselines in bulk.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
 2011-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Fix unit test breakage by plumbing convert_404_to_None in MockWeb.

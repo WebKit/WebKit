@@ -30,6 +30,7 @@ import os.path
 import re
 import shutil
 import urllib
+import fileinput
 
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
@@ -54,6 +55,11 @@ def _port_for_builder(builder_name):
     port = factory.get(port_name, RebaseliningOptions(builder_name))
     assert(port)  # Need to update port_name_for_builder_name
     return port
+
+
+# FIXME: Should TestResultWriter know how to compute this string?
+def _baseline_name(fs, test_name, suffix):
+    return fs.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + "." + suffix
 
 
 class RebaseliningOptions(object):
@@ -115,21 +121,32 @@ class RebaselineTest(AbstractDeclarativeCommand):
 
 class OptimizeBaselines(AbstractDeclarativeCommand):
     name = "optimize-baselines"
-    help_text = "Reshuffles the baselines for a the given test to use as litte space on disk as possible."
+    help_text = "Reshuffles the baselines for the given test to use as litte space on disk as possible."
     argument_names = "TEST_NAME"
 
-    # FIXME: Should TestResultWriter know how to compute this string?
-    def _baseline_name(self, test_name, suffix):
-        return self._tool.filesystem.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + "." + suffix
+    def _optimize_baseline(self, test_name):
+        for suffix in _baseline_suffix_list:
+            baseline_name = _baseline_name(self._tool.filesystem, test_name, suffix)
+            if not self._baseline_optimizer.optimize(baseline_name):
+                print "Hueristics failed to optimize %s" % baseline_name
 
     def execute(self, options, args, tool):
-        baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
+        self._baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
+        self._optimize_baseline(args[0])
 
-        test_name = args[0]
-        for suffix in _baseline_suffix_list:
-            baseline_name = self._baseline_name(test_name, suffix)
-            if not baseline_optimizer.optimize(baseline_name):
-                print "Hueristics failed to optimize %s" % baseline_name
+
+class BulkOptimizeBaselines(OptimizeBaselines):
+    name = "bulk-optimize-baselines"
+    help_text = """Reshuffles the baselines for tests to use as litte space on disk as possible.
+Please provide the list of tests (separated by new lines) via stdin."""
+    argument_names = None
+
+    def execute(self, options, args, tool):
+        self._baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
+        for test_name in fileinput.input(['-']):
+            test_name = test_name.strip()
+            print "Optimizing %s." % test_name
+            self._optimize_baseline(test_name)
 
 
 class RebaselineExpectations(AbstractDeclarativeCommand):
