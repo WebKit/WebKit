@@ -229,7 +229,8 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
     }
     context()->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
     context()->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, Extensions3D::DEPTH24_STENCIL8, m_bufferSize.width(), m_bufferSize.height());
-    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
 
     // Create a skia gpu canvas.
     GrPlatformSurfaceDesc targetDesc;

@@ -1,3 +1,17 @@
+2011-08-05  Tom Hudson  <tomhudson@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=64613
+        Use supported framebuffer renderbuffer mode; chromium command buffer
+        allows DEPTH and STENCIL but not DEPTH_STENCIL.
+
+        Reviewed by James Robinson.
+
+        No new tests because was caught by extant tests, albeit only when
+        accelerated drawing and forced compositing were both turned on.
+
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterSkPicture::createFrameBuffer):
+
 2011-08-05  Anna Cavender  <annacc@chromium.org>
 
         Adding a WebVTTParser for <track>.
