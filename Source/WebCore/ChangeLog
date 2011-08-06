@@ -1,3 +1,33 @@
+2011-08-05  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r92477.
+        http://trac.webkit.org/changeset/92477
+        https://bugs.webkit.org/show_bug.cgi?id=62619
+
+        Layering violation. We should not use WebCore/dom/ in
+        WebCore/platform/.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::valueChanged):
+        * html/ColorInputType.h:
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::chrome):
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::detach):
+        * html/InputType.cpp:
+        * html/InputType.h:
+        * loader/EmptyClients.h:
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/ColorChooser.cpp: Removed.
+        * platform/ColorChooser.h: Removed.
+
 2011-08-05  Darin Adler  <darin@apple.com>
 
         Try to fix Qt Mac build.

@@ -52,10 +52,6 @@
 #include "StorageNamespace.h"
 #endif
 
-#if ENABLE(INPUT_COLOR)
-#include "ColorChooser.h"
-#endif
-
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -468,23 +464,6 @@ void Chrome::cancelGeolocationPermissionRequestForFrame(Frame* frame, Geolocatio
 void Chrome::enumerateChosenDirectory(FileChooser* fileChooser)
 {
     m_client->enumerateChosenDirectory(fileChooser);
-}
-#endif
-
-#if ENABLE(INPUT_COLOR)
-void Chrome::openColorChooser(ColorChooser* colorChooser, const Color& initialColor)
-{
-    m_client->openColorChooser(colorChooser, initialColor);
-}
-
-void Chrome::closeColorChooser()
-{
-    m_client->closeColorChooser();
-}
-
-void Chrome::setSelectedColorInColorChooser(const Color& color)
-{
-    m_client->setSelectedColorInColorChooser(color);
 }
 #endif
 

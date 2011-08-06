@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "Icon.h"
 #include "LocalizedStrings.h"
+#include "Page.h"
 #include "RenderFileUploadControl.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
@@ -330,6 +331,13 @@ void FileInputType::updateRendering(PassRefPtr<Icon> icon)
     m_icon = icon;
     if (element()->renderer())
         element()->renderer()->repaint();
+}
+
+Chrome* FileInputType::chrome() const
+{
+    if (Page* page = element()->document()->page())
+        return page->chrome();
+    return 0;
 }
 
 void FileInputType::receiveDroppedFiles(const Vector<String>& paths)

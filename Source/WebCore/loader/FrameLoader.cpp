@@ -100,10 +100,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#if ENABLE(INPUT_COLOR)
-#include "ColorChooser.h"
-#endif
-
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
 #endif
@@ -1819,11 +1815,6 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
     if (m_frame->view())
         m_frame->view()->scrollAnimator()->cancelAnimations();
-
-#if ENABLE(INPUT_COLOR)
-    if (m_frame->document())
-        ColorChooser::chooser()->closeColorChooserIfClientIsInDocument(m_frame->document());
-#endif
 
     m_client->setCopiesOnScroll();
     history()->updateForCommit();

@@ -1941,8 +1941,3 @@ __ZNK7WebCore13ResourceErrorcvP7NSErrorEv
 __ZN7WebCore12SchedulePairC1EP9NSRunLoopPK10__CFString
 __ZN7WebCore14ResourceHandle12releaseProxyEv
 #endif
-
-#if ENABLE(INPUT_COLOR)
-__ZN7WebCore12ColorChooser7chooserEv
-__ZNK7WebCore12ColorChooser13colorSelectedERKNS_5ColorE
-#endif

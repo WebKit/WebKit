@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class Chrome;
 class FileList;
 
 class FileInputType : public BaseButtonInputType, private FileChooserClient, private FileIconLoaderClient {
@@ -76,6 +77,7 @@ private:
     void receiveDropForDirectoryUpload(const Vector<String>&);
 #endif
     void requestIcon(const Vector<String>&);
+    Chrome* chrome() const;
 
     RefPtr<FileList> m_fileList;
     RefPtr<Icon> m_icon;

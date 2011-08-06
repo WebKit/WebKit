@@ -41,8 +41,6 @@
 namespace WebCore {
 
 class BeforeTextInsertedEvent;
-class Chrome;
-class Color;
 class DateComponents;
 class Event;
 class FileList;
@@ -93,7 +91,7 @@ public:
 
 #if ENABLE(INPUT_COLOR)
     virtual bool isColorControl() const;
-#endif
+#endif // ENABLE(INPUT_COLOR)
     virtual bool isCheckbox() const;
     virtual bool isEmailField() const;
     virtual bool isFileUpload() const;
@@ -207,7 +205,6 @@ public:
     virtual bool rendererIsNeeded();
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
     virtual void attach();
-    virtual void detach();
     virtual void minOrMaxAttributeChanged();
     virtual void altAttributeChanged();
     virtual void srcAttributeChanged();
@@ -263,7 +260,6 @@ protected:
     void dispatchSimulatedClickIfActive(KeyboardEvent*) const;
     // We can't make this a static const data member because VC++ doesn't like it.
     static double defaultStepBase() { return 0.0; }
-    Chrome* chrome() const;
 
 private:
     // Raw pointer because the HTMLInputElement object owns this InputType object.
