@@ -1,5 +1,30 @@
 2011-08-06  Adam Barth  <abarth@webkit.org>
 
+        Remove dead code in webkitpy
+        https://bugs.webkit.org/show_bug.cgi?id=65818
+
+        Reviewed by Dimitri Glazkov.
+
+        This code was added to support the rebaseline2 command six months ago,
+        but the rebaseline2 command was never finished and no one else has used
+        this code since it was landed.  This patch removes the dead code.  If
+        we revive rebaseline2, then we can revert this patch and recover the
+        code.  Until then, this code is just dead weight.
+
+        * Scripts/webkitpy/common/net/buildbot/buildbot.py:
+        * Scripts/webkitpy/common/net/buildbot/buildbot_unittest.py:
+        * Scripts/webkitpy/common/net/testoutput.py: Removed.
+        * Scripts/webkitpy/common/net/testoutput_unittest.py: Removed.
+        * Scripts/webkitpy/common/net/testoutputset.py: Removed.
+        * Scripts/webkitpy/common/net/testoutputset_unittest.py: Removed.
+        * Scripts/webkitpy/common/system/directoryfileset.py: Removed.
+        * Scripts/webkitpy/common/system/directoryfileset_unittest.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
+2011-08-06  Adam Barth  <abarth@webkit.org>
+
         webkit-patch optimize-baselines can't handle promotions to base results directory
         https://bugs.webkit.org/show_bug.cgi?id=65819
 

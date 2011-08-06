@@ -467,11 +467,6 @@ class BuildBotTest(unittest.TestCase):
         b.results_url = self.results_url
         self.assertEquals("some-url.zip", b.results_zip_url())
 
-    def test_results(self):
-        builder = Builder('builder', BuildBot())
-        b = Build(builder, 123, 123, True)
-        self.assertTrue(b.results())
-
 
 if __name__ == '__main__':
     unittest.main()

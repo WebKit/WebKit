@@ -80,16 +80,6 @@ class WebKitPort(Port):
         expectations_directory = self._wk2_port_name() if self.get_option('webkit_test_runner') else self.port_name
         return self._filesystem.join(self._webkit_baseline_path(expectations_directory), 'test_expectations.txt')
 
-    def _results_for_platform(self, platform):
-        builder_name = builders.builder_path_for_port_name(platform)
-        if not builder_name:
-            raise Exception("Can't find builder for %s" % platform)
-        builders_by_name = dict([(builder.name(), builder) for builder in BuildBot().builders()])
-        builder = builders_by_name[builder_name]
-        result_set = builder.latest_cached_build().results()
-        result_set.set_platform(platform)
-        return result_set
-
     def _driver_build_script_name(self):
         if self.get_option('webkit_test_runner'):
             return "build-webkittestrunner"

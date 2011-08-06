@@ -40,10 +40,8 @@ import time
 import webbrowser
 
 from webkitpy.common.config import urls
-from webkitpy.common.net.testoutputset import TestOutputSet
 from webkitpy.common.system import executive
 from webkitpy.common.system.path import cygpath
-from webkitpy.common.system.zipfileset import ZipFileSet
 from webkitpy.layout_tests.models import test_expectations
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.layout_tests.port.base import Port
@@ -224,14 +222,6 @@ class ChromiumPort(Port):
     def path_to_test_expectations_file(self):
         return self.path_from_webkit_base('LayoutTests', 'platform',
             'chromium', 'test_expectations.txt')
-
-    def _results_for_platform(self, platform):
-        builder_name = builders.builder_path_for_port_name(platform)
-        if not builder_name:
-            raise Exception("Can't find builder for %s" % platform)
-        zip_url = urls.chromium_results_zip_url(builder_name)
-        return TestOutputSet(builder_name, platform, ZipFileSet(zip_url),
-                include_expected=False)
 
     def default_results_directory(self):
         try:

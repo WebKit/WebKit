@@ -44,9 +44,7 @@ from webkitpy.common.net.failuremap import FailureMap
 from webkitpy.common.net.layouttestresults import LayoutTestResults
 from webkitpy.common.net.networktransaction import NetworkTransaction
 from webkitpy.common.net.regressionwindow import RegressionWindow
-from webkitpy.common.net.testoutputset import TestOutputSet
 from webkitpy.common.system.logutils import get_logger
-from webkitpy.common.system.zipfileset import ZipFileSet
 from webkitpy.thirdparty.BeautifulSoup import BeautifulSoup
 
 
@@ -243,9 +241,6 @@ class Build(object):
 
     def results_zip_url(self):
         return "%s.zip" % self.results_url()
-
-    def results(self):
-        return TestOutputSet(self._builder.name(), None, ZipFileSet(self.results_zip_url()), include_expected=False)
 
     def _fetch_file_from_results(self, file_name):
         # It seems this can return None if the url redirects and then returns 404.

@@ -39,7 +39,6 @@ import os
 
 from webkitpy.common.checkout.scm import detect_scm_system
 from webkitpy.common.memoized import memoized
-from webkitpy.common.net.testoutputset import AggregateTestOutputSet
 
 
 # Handle Python < 2.6 where multiprocessing isn't available.
@@ -586,14 +585,6 @@ class Port(object):
         This is used to help identify the exact port when parsing test
         expectations, determining search paths, and logging information."""
         return self._version
-
-    def _results_for_platform(self, platform):
-        """Returns a TestOutputSet for the bots of the given platform."""
-        raise NotImplementedError('Port._results_for_platform')
-
-    def buildbot_test_output_set(self, platforms):
-        """Returns a TestOutputSet for the specified platforms for this ports buildbots."""
-        return AggregateTestOutputSet([self._results_for_platform(platform) for platform in platforms])
 
     def graphics_type(self):
         """Returns whether the port uses accelerated graphics ('gpu') or not ('cpu')."""
