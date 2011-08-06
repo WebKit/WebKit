@@ -1,3 +1,36 @@
+2011-08-06  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed gardening.
+        Add missing Qt results.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/writing-mode/border-styles-vertical-lr-expected.png: Added.
+        * platform/qt/fast/writing-mode/border-styles-vertical-lr-expected.txt: Added.
+        * platform/qt/fast/writing-mode/border-styles-vertical-rl-expected.png: Added.
+        * platform/qt/fast/writing-mode/border-styles-vertical-rl-expected.txt: Added.
+        * platform/qt/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png: Added.
+        * platform/qt/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.txt: Added.
+        * platform/qt/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png: Added.
+        * platform/qt/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.txt: Added.
+        * platform/qt/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.png: Added.
+        * platform/qt/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.txt: Added.
+        * platform/qt/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png: Added.
+        * platform/qt/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.txt: Added.
+        * platform/qt/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png: Added.
+        * platform/qt/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Added.
+        * platform/qt/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Added.
+
 2011-08-06  Adam Barth  <abarth@webkit.org>
 
         Fix baselines for cross-origin-xsl-BLOCKED.html.  These results

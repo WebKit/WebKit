@@ -2098,8 +2098,6 @@ http/tests/security/isolatedWorld/cross-origin-xhr.html
 fast/block/float/overhanging-tall-block.html
 fast/backgrounds/border-radius-split-background-image.html
 fast/backgrounds/border-radius-split-background.html
-fast/blockflow/border-styles-vertical-lr.html
-fast/blockflow/border-styles-vertical-rl.html
 fast/borders/border-antialiasing.html
 fast/borders/border-styles-split.html
 fast/borders/mixed-border-styles-radius2.html
