@@ -528,8 +528,6 @@
             'runtime/JSValue.cpp',
             'runtime/JSVariableObject.cpp',
             'runtime/JSWrapperObject.cpp',
-            'runtime/JSZombie.cpp',
-            'runtime/JSZombie.h',
             'runtime/LiteralParser.cpp',
             'runtime/LiteralParser.h',
             'runtime/Lookup.cpp',
