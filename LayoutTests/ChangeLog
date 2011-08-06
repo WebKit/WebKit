@@ -1,5 +1,16 @@
 2011-08-06  Adam Barth  <abarth@webkit.org>
 
+        Optimize expected results for animations.
+        This patch was created with webkit-patch bulk-optimize-baselines.
+
+        * platform/chromium-mac/animations/keyframes-rule-expected.txt: Removed.
+        * platform/chromium-mac/animations/opacity-transform-animation-expected.png: Added.
+        * platform/chromium-win/animations/keyframes-rule-expected.txt: Removed.
+        * platform/chromium/animations/keyframes-rule-expected.txt: Added.
+        * platform/chromium/animations/opacity-transform-animation-expected.png: Removed.
+
+2011-08-06  Adam Barth  <abarth@webkit.org>
+
         Optimize expected results for http/tests/security.
         This patch was created with webkit-patch optimize-baselines.
 
