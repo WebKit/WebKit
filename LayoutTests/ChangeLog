@@ -1,3 +1,10 @@
+2011-08-05  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip a failing test added by r92526 to Qt's skipped list.
+        The failure is tracked by the bug 65801.
+
+        * platform/qt/Skipped:
+
 2011-08-05  Jian Li  <jianli@chromium.org>
 
         Skip test eeza-Pro-vertical-metrics-adjustment.html in chromium.
