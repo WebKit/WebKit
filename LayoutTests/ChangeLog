@@ -1,5 +1,20 @@
 2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        More gardening: Fix mac-leopard/mac-wk2 failing SVG tests.
+        
+        Not reviewed.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/mac-leopard/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+        * platform/mac-wk2/svg/W3C-SVG-1.1: Added.
+        * platform/mac-wk2/svg/W3C-SVG-1.1/fonts-elem-04-b-expected.txt: Added.
+        * platform/mac-wk2/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Added.
+        * platform/mac-wk2/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Added.
+        * platform/mac-wk2/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Added.
+
+2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Win gardening: Rebaseline four svg tests that only needed an update, win7/winxp svg results are clean again.
 
         Not reviewed.
