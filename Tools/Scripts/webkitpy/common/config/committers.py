@@ -248,6 +248,7 @@ committers_unable_to_review = [
     Committer("Satish Sampath", "satish@chromium.org"),
     Committer("Scott Violet", "sky@chromium.org", "sky"),
     Committer("Sergio Villar Senin", ["svillar@igalia.com", "sergio@webkit.org"], "svillar"),
+    Committer("Siddharth Mathur", "siddharth.mathur@nokia.com", "simathur"),
     Committer("Steve Lacey", "sjl@chromium.org", "stevela"),
     Committer("Tim Horton", "timothy_horton@apple.com", "thorton"),
     Committer("Trey Matteson", "trey@usa.net", "trey"),
