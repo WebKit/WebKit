@@ -36,15 +36,18 @@ def _baseline_search_hypergraph(fs):
 
     # These edges in the hypergraph aren't visible on build.webkit.org,
     # but they impose constraints on how we optimize baselines.
-    hypergraph['mac-future'] = ['LayoutTests/platform/mac-future', 'LayoutTests/platform/mac']
-    hypergraph['qt-unknown'] = ['LayoutTests/platform/qt-unknown', 'LayoutTests/platform/qt']
+    hypergraph['mac-future'] = ['LayoutTests/platform/mac-future', 'LayoutTests/platform/mac', 'LayoutTests']
+    hypergraph['qt-unknown'] = ['LayoutTests/platform/qt-unknown', 'LayoutTests/platform/qt', 'LayoutTests']
+
+    # FIXME: Should we get this constant from somewhere?
+    fallback_path = ['LayoutTests']
 
     for port_name in port_factory.all_port_names():
         port = port_factory.get(port_name)
         webkit_base = port.webkit_base()
         search_path = port.baseline_search_path()
         if search_path:
-            hypergraph[port_name] = [fs.relpath(path, webkit_base) for path in search_path]
+            hypergraph[port_name] = [fs.relpath(path, webkit_base) for path in search_path] + fallback_path
     return hypergraph
 
 

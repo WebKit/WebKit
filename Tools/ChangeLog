@@ -1,5 +1,17 @@
 2011-08-06  Adam Barth  <abarth@webkit.org>
 
+        webkit-patch optimize-baselines can't handle promotions to base results directory
+        https://bugs.webkit.org/show_bug.cgi?id=65819
+
+        Reviewed by Dimitri Glazkov.
+
+        This bug came up when testing the optimizer on some editing baselines.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+
+2011-08-06  Adam Barth  <abarth@webkit.org>
+
         Add a small command to optimize baselines in bulk.
 
         * Scripts/webkitpy/tool/commands/rebaseline.py:

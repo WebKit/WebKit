@@ -89,6 +89,30 @@ class BaselineOptimizerTest(unittest.TestCase):
             'LayoutTests/platform/qt': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
         })
 
+    def test_common_directory_includes_root(self):
+        # Note: The resulting directories are "wrong" in the sense that
+        # enacting this plan would change semantics. However, this test case
+        # demonstrates that we don't throw an exception in this case. :)
+        self._assertOptimization({
+            'LayoutTests/platform/gtk': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
+            'LayoutTests/platform/qt': 'bcbd457d545986b7abf1221655d722363079ac87',
+            'LayoutTests/platform/chromium-win': '3764ac11e1f9fbadd87a90a2e40278319190a0d3',
+            'LayoutTests/platform/mac': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
+        }, {
+            'LayoutTests/platform/qt': 'bcbd457d545986b7abf1221655d722363079ac87',
+            'LayoutTests/platform/chromium-win': '3764ac11e1f9fbadd87a90a2e40278319190a0d3',
+            'LayoutTests': 'e8608763f6241ddacdd5c1ef1973ba27177d0846',
+        })
+
+        self._assertOptimization({
+            'LayoutTests/platform/chromium-win': '23a30302a6910f8a48b1007fa36f3e3158341834',
+            'LayoutTests': '9c876f8c3e4cc2aef9519a6c1174eb3432591127',
+            'LayoutTests/platform/chromium-mac': '23a30302a6910f8a48b1007fa36f3e3158341834',
+        }, {
+            'LayoutTests/platform/chromium': '23a30302a6910f8a48b1007fa36f3e3158341834',
+            'LayoutTests': '9c876f8c3e4cc2aef9519a6c1174eb3432591127',
+        })
+
     def test_complex_shadowing(self):
         self._assertOptimization({
             'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
