@@ -1,8 +1,21 @@
 2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Win gardening: Rebaseline four svg tests that only needed an update, win7/winxp svg results are clean again.
+
+        Not reviewed.
+
+        * platform/win/svg/W3C-SVG-1.1-SE/linking-uri-01-b-expected.txt: Added.
+        * platform/win/svg/W3C-SVG-1.1-SE/text-intro-02-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/text-intro-09-b-expected.txt:
+        * platform/win/svg/W3C-SVG-1.1-SE/text-tspan-02-b-expected.txt: Added.
+
+2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Follow-up for r92545.
-        
         Rebaseline some tests on gtk/qt and win.
+
+        Not reviewed.
 
         * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt:
         * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt:
