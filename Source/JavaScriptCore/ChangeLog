@@ -1,3 +1,16 @@
+2011-08-05  Gavin Barraclough  <barraclough@apple.com>
+
+        String replace with the empty string means string removal
+        https://bugs.webkit.org/show_bug.cgi?id=65799
+
+        Reviewed by Sam Weinig.
+
+        Optimization for String.prototype.replace([RegExp], ""), this improves v8-regexp by ~3%.
+
+        * runtime/StringPrototype.cpp:
+        (JSC::jsSpliceSubstrings):
+        (JSC::stringProtoFuncReplace):
+
 2011-08-05  Noel Gordon  <noel.gordon@gmail.com>
 
         [Chromium] Remove JSZombie references from gyp project files.

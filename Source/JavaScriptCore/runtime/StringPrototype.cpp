@@ -248,6 +248,41 @@ public:
     int length;
 };
 
+static ALWAYS_INLINE JSValue jsSpliceSubstrings(ExecState* exec, JSString* sourceVal, const UString& source, const StringRange* substringRanges, int rangeCount)
+{
+    if (rangeCount == 1) {
+        int sourceSize = source.length();
+        int position = substringRanges[0].position;
+        int length = substringRanges[0].length;
+        if (position <= 0 && length >= sourceSize)
+            return sourceVal;
+        // We could call UString::substr, but this would result in redundant checks
+        return jsString(exec, StringImpl::create(source.impl(), max(0, position), min(sourceSize, length)));
+    }
+
+    int totalLength = 0;
+    for (int i = 0; i < rangeCount; i++)
+        totalLength += substringRanges[i].length;
+
+    if (!totalLength)
+        return jsString(exec, "");
+
+    UChar* buffer;
+    RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
+    if (!impl)
+        return throwOutOfMemoryError(exec);
+
+    int bufferPos = 0;
+    for (int i = 0; i < rangeCount; i++) {
+        if (int srcLen = substringRanges[i].length) {
+            StringImpl::copyChars(buffer + bufferPos, source.characters() + substringRanges[i].position, srcLen);
+            bufferPos += srcLen;
+        }
+    }
+
+    return jsString(exec, impl.release());
+}
+
 static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, JSString* sourceVal, const UString& source, const StringRange* substringRanges, int rangeCount, const UString* separators, int separatorCount)
 {
     if (rangeCount == 1 && separatorCount == 0) {
@@ -266,11 +301,11 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
     for (int i = 0; i < separatorCount; i++)
         totalLength += separators[i].length();
 
-    if (totalLength == 0)
+    if (!totalLength)
         return jsString(exec, "");
 
     UChar* buffer;
-    PassRefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
+    RefPtr<StringImpl> impl = StringImpl::tryCreateUninitialized(totalLength, buffer);
     if (!impl)
         return throwOutOfMemoryError(exec);
 
@@ -291,7 +326,7 @@ static ALWAYS_INLINE JSValue jsSpliceSubstringsWithSeparators(ExecState* exec, J
         }
     }
 
-    return jsString(exec, impl);
+    return jsString(exec, impl.release());
 }
 
 EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
@@ -319,6 +354,44 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
         bool global = reg->global();
 
         RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
+
+        // Optimization for substring removal (replace with empty).
+        if (global && callType == CallTypeNone && !replacementString.length()) {
+            int lastIndex = 0;
+            unsigned startPosition = 0;
+
+            Vector<StringRange, 16> sourceRanges;
+
+            while (true) {
+                int matchIndex;
+                int matchLen = 0;
+                int* ovector;
+                regExpConstructor->performMatch(*globalData, reg, source, startPosition, matchIndex, matchLen, &ovector);
+                if (matchIndex < 0)
+                    break;
+
+                if (lastIndex < matchIndex)
+                    sourceRanges.append(StringRange(lastIndex, matchIndex - lastIndex));
+
+                lastIndex = matchIndex + matchLen;
+                startPosition = lastIndex;
+
+                // special case of empty match
+                if (!matchLen) {
+                    startPosition++;
+                    if (startPosition > sourceLen)
+                        break;
+                }
+            }
+
+            if (!lastIndex)
+                return JSValue::encode(sourceVal);
+
+            if (static_cast<unsigned>(lastIndex) < sourceLen)
+                sourceRanges.append(StringRange(lastIndex, sourceLen - lastIndex));
+
+            return JSValue::encode(jsSpliceSubstrings(exec, sourceVal, source, sourceRanges.data(), sourceRanges.size()));
+        }
 
         int lastIndex = 0;
         unsigned startPosition = 0;
@@ -372,7 +445,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
                 startPosition = lastIndex;
 
                 // special case of empty match
-                if (matchLen == 0) {
+                if (!matchLen) {
                     startPosition++;
                     if (startPosition > sourceLen)
                         break;
@@ -425,7 +498,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
                 startPosition = lastIndex;
 
                 // special case of empty match
-                if (matchLen == 0) {
+                if (!matchLen) {
                     startPosition++;
                     if (startPosition > sourceLen)
                         break;
