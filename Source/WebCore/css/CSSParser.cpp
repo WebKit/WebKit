@@ -6333,7 +6333,9 @@ bool CSSParser::parseFontFeatureTag(CSSValueList* settings)
     value = m_valueList->next();
     if (value) {
         if (value->unit == CSSPrimitiveValue::CSS_NUMBER && value->isInt && value->fValue >= 0) {
-            tagValue = value->fValue;
+            tagValue = (int)value->fValue;
+            if (tagValue < 0)
+                return false;
             m_valueList->next();
         } else if (value->id == CSSValueOn || value->id == CSSValueOff) {
             tagValue = value->id == CSSValueOn;
