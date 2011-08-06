@@ -1,3 +1,22 @@
+2011-08-05  Darin Adler  <darin@apple.com>
+
+        Fix Timer heap implementation to work with more libraries (other versions of STL)
+        https://bugs.webkit.org/show_bug.cgi?id=65782
+
+        Reviewed by Anders Carlsson.
+
+        No behavior change, so no tests needed. Existing tests pass.
+
+        * platform/Timer.cpp: Added TimerHeapPointer and TimerHeapReference class
+        alongside the TimerHeapIterator class. Also added a swap function. Also
+        added a TimerHeapLessThanFunction class.
+        (WebCore::TimerBase::heapDecreaseKey): Pass pointers in to the TimerHeapIterator
+        since that's how the class works now. Pass a TimerHeapLessThanFunction object
+        instead of letting the library use the < operator directly.
+        (WebCore::TimerBase::heapPopMin): Ditto.
+
+        * platform/Timer.h: Updated for above changes.
+
 2011-08-06  Aron Rosenberg  <arosenberg@logitech.com>
 
         Reviewed by Benjamin Poulain.
