@@ -1,3 +1,14 @@
+2011-08-06  Aron Rosenberg  <arosenberg@logitech.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Fix build with Intel compiler on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=65088
+
+        Intel compiler needs .lib suffixes instead of .a
+
+        * WebKit2.pri:
+
 2011-08-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.

@@ -159,6 +159,7 @@ disable_uitools: DEFINES *= QT_NO_UITOOLS
 # Disable a few warnings on Windows. The warnings are also
 # disabled in WebKitLibraries/win/tools/vsprops/common.vsprops
 win32-msvc*|wince*: QMAKE_CXXFLAGS += -wd4291 -wd4344 -wd4396 -wd4503 -wd4800 -wd4819 -wd4996
+win32-icc: QMAKE_CXXFLAGS += -wd873
 
 CONFIG(qt_minimal) {
     DEFINES *= QT_NO_ANIMATION

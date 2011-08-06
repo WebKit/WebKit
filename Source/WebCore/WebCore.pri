@@ -355,7 +355,7 @@ use_qt_mobile_theme: DEFINES += WTF_USE_QT_MOBILE_THEME=1
 defineTest(prependWebCoreLib) {
     pathToWebCoreOutput = $$ARGS/$$WEBCORE_DESTDIR
 
-    win32-msvc*|wince* {
+    win32-msvc*|wince*|win32-icc {
         LIBS = -l$$WEBCORE_TARGET $$LIBS
         LIBS = -L$$pathToWebCoreOutput $$LIBS
         POST_TARGETDEPS += $${pathToWebCoreOutput}$${QMAKE_DIR_SEP}$${WEBCORE_TARGET}.lib

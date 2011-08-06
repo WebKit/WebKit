@@ -1,3 +1,19 @@
+2011-08-06  Aron Rosenberg  <arosenberg@logitech.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Fix build with Intel compiler on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=65088
+
+        Intel compiler needs .lib suffixes instead of .a
+        Intel compiler doesn't support nullptr
+        Intel compiler supports unsized arrays
+
+        * JavaScriptCore.pri:
+        * jsc.cpp:
+        * wtf/ByteArray.h:
+        * wtf/NullPtr.h:
+
 2011-08-05  Gavin Barraclough  <barraclough@apple.com>
 
         String replace with the empty string means string removal

@@ -76,7 +76,7 @@ defineTest(prependJavaScriptCoreLib) {
     # Argument is the relative path to JavaScriptCore.pro's qmake output
     pathToJavaScriptCoreOutput = $$ARGS/$$JAVASCRIPTCORE_DESTDIR
 
-    win32-msvc*|wince* {
+    win32-msvc*|wince*|win32-icc {
         LIBS = -l$$JAVASCRIPTCORE_TARGET $$LIBS
         LIBS = -L$$pathToJavaScriptCoreOutput $$LIBS
         POST_TARGETDEPS += $${pathToJavaScriptCoreOutput}$${QMAKE_DIR_SEP}$${JAVASCRIPTCORE_TARGET}.lib
