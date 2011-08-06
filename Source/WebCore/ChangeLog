@@ -1,3 +1,20 @@
+2011-08-06  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Should use C++-style cast in CSSParser.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=65807
+
+        Replaces C-style cast with C++style cast.
+
+        Reviewed by Shinichiro Hamaji.
+
+        No new tests because no behavior change.
+
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseAnimationTimingFunction):
+        (WebCore::CSSParser::parseFont):
+        (WebCore::CSSParser::parseColorFromValue):
+        (WebCore::CSSParser::parseFontFeatureTag):
+
 2011-08-05  Noel Gordon  <noel.gordon@gmail.com>
 
         [Chromium] Remove HaltablePlugin references from gyp project files

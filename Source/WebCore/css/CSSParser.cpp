@@ -3284,7 +3284,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationTimingFunction()
         CSSParserValue* v = args->current();
         if (!validUnit(v, FInteger, m_strict))
             return 0;
-        numSteps = (int) min(v->fValue, (double)INT_MAX);
+        numSteps = static_cast<int>(min(v->fValue, (double)INT_MAX));
         if (numSteps < 1)
             return 0;
         v = args->next();
@@ -3929,7 +3929,7 @@ bool CSSParser::parseFont(bool important)
                 valid = false;
             }
         } else if (!font->weight && validUnit(value, FInteger | FNonNeg, true)) {
-            int weight = (int)value->fValue;
+            int weight = static_cast<int>(value->fValue);
             int val = 0;
             if (weight == 100)
                 val = CSSValue100;
@@ -4764,7 +4764,7 @@ bool CSSParser::parseColorFromValue(CSSParserValue* value, RGBA32& c)
 {
     if (!m_strict && value->unit == CSSPrimitiveValue::CSS_NUMBER &&
         value->fValue >= 0. && value->fValue < 1000000.) {
-        String str = String::format("%06d", (int)(value->fValue+.5));
+        String str = String::format("%06d", static_cast<int>((value->fValue+.5)));
         if (!CSSParser::parseColor(str, c, m_strict))
             return false;
     } else if (value->unit == CSSPrimitiveValue::CSS_PARSER_HEXCOLOR ||
@@ -6333,7 +6333,7 @@ bool CSSParser::parseFontFeatureTag(CSSValueList* settings)
     value = m_valueList->next();
     if (value) {
         if (value->unit == CSSPrimitiveValue::CSS_NUMBER && value->isInt && value->fValue >= 0) {
-            tagValue = (int)value->fValue;
+            tagValue = static_cast<int>(value->fValue);
             if (tagValue < 0)
                 return false;
             m_valueList->next();
