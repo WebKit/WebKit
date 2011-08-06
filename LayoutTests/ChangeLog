@@ -1,5 +1,18 @@
 2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        svg/zoom/page/zoom-svg-through-object-with-*.xhtml are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=63186
+
+        It turns out r92545 only partly resolved flakiness on non-mac platforms (especially gtk)
+        - try reentering event loop after zooming, by calling notifyDone() using a 0ms timeout.
+
+        Rubber-stamped by Antti Koivisto.
+
+        * svg/zoom/resources/testPageZoom.js:
+        (.setTimeout.): Reenter event loop after calling zoomPageIn/Out, before calling layoutTestController.notifyDone().
+
+2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         More gardening: Fix mac-leopard/mac-wk2 failing SVG tests.
         
         Not reviewed.

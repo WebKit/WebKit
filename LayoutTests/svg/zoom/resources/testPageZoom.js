@@ -17,7 +17,7 @@ if (window.layoutTestController && window.eventSender) {
                 completeDynamicTest();
             }, 0);
         } else {
-            layoutTestController.notifyDone();
+            setTimeout(function() { layoutTestController.notifyDone(); }, 0);
         }
     }, 0);
 }
