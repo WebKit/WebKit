@@ -105,23 +105,7 @@ RenderBox* RenderPart::embeddedContentBox() const
 {
     if (!node() || !widget() || !widget()->isFrameView())
         return 0;
-
-    FrameView* view = static_cast<FrameView*>(widget());
-    RenderView* contentRenderer = view->frame() ? view->frame()->contentRenderer() : 0;
-    if (!contentRenderer)
-        return 0;
-
-    RenderObject* rootChild = contentRenderer->firstChild();
-    if (!rootChild || !rootChild->isBox())
-        return 0;
-
-#if ENABLE(SVG)
-    // Curently only embedded SVG documents participate in the size-negotiation logic.
-    if (rootChild->isSVGRoot())
-        return toRenderBox(rootChild);
-#endif
-
-    return 0;
+    return static_cast<FrameView*>(widget())->embeddedContentBox();
 }
 
 }

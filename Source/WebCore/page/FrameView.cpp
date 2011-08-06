@@ -70,6 +70,7 @@
 #endif
 
 #if ENABLE(SVG)
+#include "RenderSVGRoot.h"
 #include "SVGDocument.h"
 #include "SVGSVGElement.h"
 #endif
@@ -830,6 +831,36 @@ RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const
     return onlyDuringLayout && layoutPending() ? 0 : m_layoutRoot;
 }
 
+inline void FrameView::forceLayoutParentViewIfNeeded()
+{
+#if ENABLE(SVG)
+    RenderPart* ownerRenderer = m_frame->ownerRenderer();
+    if (!ownerRenderer || !ownerRenderer->frame())
+        return;
+
+    RenderBox* contentBox = embeddedContentBox();
+    if (!contentBox)
+        return;
+
+    RenderSVGRoot* svgRoot = toRenderSVGRoot(contentBox);
+    if (!svgRoot->needsSizeNegotiationWithHostDocument())
+        return;
+
+    // Clear needs-size-negotiation flag in RenderSVGRoot, so the next call to our
+    // layout() method won't fire the size negotiation logic again.
+    svgRoot->scheduledSizeNegotiationWithHostDocument();
+    ASSERT(!svgRoot->needsSizeNegotiationWithHostDocument());
+
+    // Mark the owner renderer as needing layout.
+    ownerRenderer->setNeedsLayoutAndPrefWidthsRecalc();
+
+    // Synchronously enter layout.
+    FrameView* frameView = ownerRenderer->frame()->view();
+    ASSERT(frameView);
+    frameView->layout();
+#endif
+}
+
 void FrameView::layout(bool allowSubtree)
 {
     if (m_inLayout)
@@ -1088,11 +1119,34 @@ void FrameView::layout(bool allowSubtree)
     InspectorInstrumentation::didLayout(cookie);
 
     m_nestedLayoutCount--;
-    if (!m_nestedLayoutCount) {
-        Page* page = frame() ? frame()->page() : 0;
-        if (page)
-            return page->chrome()->client()->layoutUpdated(frame());
-    }
+    if (m_nestedLayoutCount)
+        return;
+
+    Page* page = frame() ? frame()->page() : 0;
+    if (!page)
+        return;
+
+    page->chrome()->client()->layoutUpdated(frame());
+    forceLayoutParentViewIfNeeded();
+}
+
+RenderBox* FrameView::embeddedContentBox() const
+{
+#if ENABLE(SVG)
+    RenderView* contentRenderer = m_frame->contentRenderer();
+    if (!contentRenderer)
+        return 0;
+
+    RenderObject* rootChild = contentRenderer->firstChild();
+    if (!rootChild || !rootChild->isBox())
+        return 0;
+
+    // Curently only embedded SVG documents participate in the size-negotiation logic.
+    if (rootChild->isSVGRoot())
+        return toRenderBox(rootChild);
+#endif
+
+    return 0;
 }
 
 void FrameView::addWidgetToUpdate(RenderEmbeddedObject* object)

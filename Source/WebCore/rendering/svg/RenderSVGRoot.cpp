@@ -53,7 +53,7 @@ RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
     : RenderBox(node)
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)
-    , m_didNegotiateSize(false)
+    , m_needsSizeNegotiationWithHostDocument(false)
 {
     setReplaced(true);
 }
@@ -127,27 +127,6 @@ LayoutUnit RenderSVGRoot::computeIntrinsicHeight(LayoutUnit replacedHeight) cons
         return replacedHeight;
     // FIXME: Remove unnecessary rounding when layout is off ints: webkit.org/b/63656
     return static_cast<int>(ceilf(replacedHeight * style()->effectiveZoom()));
-}
-
-void RenderSVGRoot::negotiateSizeWithHostDocumentIfNeeded()
-{
-    if (m_didNegotiateSize)
-        return;
-
-    Frame* frame = node() && node()->document() ? node()->document()->frame() : 0;
-    if (!frame)
-        return;
-
-    // If our frame has an owner renderer, we're embedded through eg. object/embed.
-    // If we're embedded in a host document, we may be loaded after the host document
-    // has finished layout. If the <object> doesn't specifiy width/height attributes
-    // it has defaulted to 300x150 intrinsic size. If the SVG document has been loaded
-    // we notify the RenderPart about the potential size changes, now it can properly
-    // synchronize the intrinsic width/height/ratio, as defined in the SVG spec.
-    if (RenderPart* ownerRenderer = frame->ownerRenderer()) {
-        ownerRenderer->setNeedsLayoutAndPrefWidthsRecalc();
-        m_didNegotiateSize = true;
-    }
 }
 
 LayoutUnit RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
@@ -231,13 +210,18 @@ void RenderSVGRoot::layout()
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && needsLayout);
 
     LayoutSize oldSize(width(), height());
-    negotiateSizeWithHostDocumentIfNeeded();
     computeLogicalWidth();
     computeLogicalHeight();
     calcViewport();
 
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
     m_isLayoutSizeChanged = svg->hasRelativeLengths() && oldSize != size();
+ 
+    if (view() && view()->frameView() && view()->frameView()->embeddedContentBox()) {
+        if (!m_needsSizeNegotiationWithHostDocument)
+            m_needsSizeNegotiationWithHostDocument = !m_everHadLayout || oldSize != size();
+    } else
+        ASSERT(!m_needsSizeNegotiationWithHostDocument);
 
     SVGRenderSupport::layoutChildren(this, needsLayout);
     m_isLayoutSizeChanged = false;

@@ -44,6 +44,7 @@ class IntRect;
 class KURL;
 class Node;
 class Page;
+class RenderBox;
 class RenderEmbeddedObject;
 class RenderLayer;
 class RenderObject;
@@ -287,6 +288,8 @@ public:
 
     void setAnimatorsAreActive();
 
+    RenderBox* embeddedContentBox() const;
+
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
     virtual void scrollContentsSlowPath(const IntRect& updateRect);
@@ -313,6 +316,7 @@ private:
 
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
 
+    void forceLayoutParentViewIfNeeded();
     void performPostLayoutTasks();
 
     virtual void repaintContentRectangle(const IntRect&, bool immediate);

@@ -1,3 +1,59 @@
+2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        REGRESSION(87526): ASSERT(!needsLayout()) followed by graphical glitches on google charts (svg loaded in iframe)
+        https://bugs.webkit.org/show_bug.cgi?id=64974
+
+        svg/zoom/page/zoom-svg-through-object-with-*.xhtml are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=63186
+
+        Reviewed by Zoltan Herczeg.
+
+        Rollout r89484, which disabled some svg/zoom/page tests, to see whether the flakiness is gone now.
+        Add several new tests in svg/as-object - covering bug 64974.
+
+        * platform/mac/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png: Added.
+        * platform/mac/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1-expected.txt: Added.
+        * platform/mac/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png: Added.
+        * platform/mac/svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2-expected.txt: Added.
+        * platform/mac/svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.png: Added.
+        * platform/mac/svg/as-object/embedded-svg-size-changes-expected.png: Added.
+        * platform/mac/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.png: Added.
+        * platform/mac/svg/as-object/embedded-svg-size-changes-no-layout-triggers-expected.txt: Added.
+        * platform/mac/svg/as-object/nested-embedded-svg-size-changes-expected.png: Added.
+        * platform/mac/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.png: Added.
+        * platform/mac/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1-expected.txt: Added.
+        * platform/mac/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.png: Added.
+        * platform/mac/svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2-expected.txt: Added.
+        * svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1.html: Added.
+        * svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html: Added.
+        * svg/as-object/embedded-svg-immediate-offsetWidth-query-expected.txt: Added.
+        * svg/as-object/embedded-svg-immediate-offsetWidth-query.html: Added.
+        * svg/as-object/embedded-svg-size-changes-expected.txt: Added.
+        * svg/as-object/embedded-svg-size-changes-no-layout-triggers.html: Added.
+        * svg/as-object/embedded-svg-size-changes.html: Added.
+        * svg/as-object/nested-embedded-svg-size-changes-expected.txt: Added.
+        * svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1.html: Added.
+        * svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2.html: Added.
+        * svg/as-object/nested-embedded-svg-size-changes.html: Added.
+        * svg/as-object/resources: Added.
+        * svg/as-object/resources/embedded-svg-size-changes-no-layout-triggers.svg: Added.
+        * svg/as-object/resources/embedded-svg-size-changes.svg: Added.
+        * svg/as-object/resources/nested-embedded-svg-size-changes-target-no-layout-triggers-1.html: Added.
+        * svg/as-object/resources/nested-embedded-svg-size-changes-target-no-layout-triggers-2.html: Added.
+        * svg/as-object/resources/nested-embedded-svg-size-changes-target.html: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml: Copied from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml-disabled.
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml-disabled: Removed.
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml: Copied from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml-disabled.
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml-disabled: Removed.
+        * svg/zoom/page/zoom-svg-through-object-with-auto-size.html: Copied from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-auto-size.html-disabled.
+        * svg/zoom/page/zoom-svg-through-object-with-auto-size.html-disabled: Removed.
+        * svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml: Copied from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml-disabled.
+        * svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml-disabled: Removed.
+        * svg/zoom/page/zoom-svg-through-object-with-override-size.html: Copied from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-override-size.html-disabled.
+        * svg/zoom/page/zoom-svg-through-object-with-override-size.html-disabled: Removed.
+        * svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml: Copied from LayoutTests/svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml-disabled.
+        * svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml-disabled: Removed.
+
 2011-08-05  Dan Bernstein  <mitz@apple.com>
 
         Renamed fast/blockflow to fast/writing-mode.
