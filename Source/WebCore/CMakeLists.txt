@@ -1998,6 +1998,7 @@ IF (ENABLE_VIDEO_TRACK)
         html/TextTrackCueList.cpp
         loader/CueLoader.cpp
         platform/track/CueParser.cpp
+        platform/track/WebVTTParser.cpp
     )
 ENDIF()
 

@@ -35,6 +35,7 @@
 #include "CueParser.h"
 
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "ThreadableLoader.h"
 
 namespace WebCore {
@@ -70,15 +71,20 @@ bool CueParser::supportsType(const String& url)
     return false;
 }
 
-void CueParser::didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&)
+void CueParser::didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse& response)
 {
-    // FIXME(62893): Create m_private based on MIME type.
-    m_client->trackLoadStarted();
+    if (response.mimeType() == "text/vtt")
+        createWebVTTParser();
 }
 
-void CueParser::didReceiveData(const char* data, int len)
+void CueParser::didReceiveData(const char* data, int length)
 {
-    // FIXME(62893): Send data along to m_private parser to be parsed.
+    // If mime type from didReceiveResponse was not informative, sniff file content.
+    if (!m_private && WebVTTParser::hasRequiredFileIdentifier(data, length))
+        createWebVTTParser();
+
+    if (m_private)
+        m_private->parseBytes(data, length);
 }
 
 void CueParser::didFinishLoading(unsigned long)
@@ -94,6 +100,19 @@ void CueParser::didFail(const ResourceError&)
 void CueParser::fetchParsedCues(Vector<RefPtr<TextTrackCue> >&)
 {
     // FIXME(62893): Implement.
+}
+
+void CueParser::newCuesParsed()
+{
+    m_client->newCuesParsed();
+}
+
+void CueParser::createWebVTTParser()
+{
+    if (!m_private) {
+        m_private = WebVTTParser::create(this);
+        m_client->trackLoadStarted();
+    }
 }
 
 } // namespace WebCore

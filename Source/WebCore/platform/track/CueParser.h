@@ -33,9 +33,9 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "CueParserPrivate.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
+#include "WebVTTParser.h"
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
@@ -53,7 +53,7 @@ public:
     virtual void trackLoadCompleted() = 0;
 };
 
-class CueParser : public ThreadableLoaderClient {
+class CueParser : public ThreadableLoaderClient, CueParserPrivateClient {
 public:
     CueParser();
     virtual ~CueParser();
@@ -67,8 +67,11 @@ public:
     bool supportsType(const String&);
 
     void fetchParsedCues(Vector<RefPtr<TextTrackCue> >&);
+    void newCuesParsed();
 
 private:
+    void createWebVTTParser();
+ 
     RefPtr<ThreadableLoader> m_loader;
     OwnPtr<CueParserPrivateInterface> m_private;
     CueParserClient* m_client;

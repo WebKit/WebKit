@@ -4430,6 +4430,8 @@
             'platform/track/CueParser.cpp',
             'platform/track/CueParser.h',
             'platform/track/CueParserPrivate.h',
+            'platform/track/WebVTTParser.cpp',
+            'platform/track/WebVTTParser.h',
             'platform/win/BString.cpp',
             'platform/win/BString.h',
             'platform/win/BitmapInfo.cpp',

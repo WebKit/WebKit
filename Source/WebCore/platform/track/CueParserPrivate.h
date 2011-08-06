@@ -51,10 +51,10 @@ public:
     virtual ~CueParserPrivateInterface() { }
 
     // Input data to the parser to parse.
-    virtual void parseBytes(const char*, int) = 0;
+    virtual void parseBytes(const char*, unsigned) = 0;
 
     // Transfers ownership of last parsed cues to caller.
-    virtual void fetchParsedCues(Vector<PassRefPtr<TextTrackCue> >&) = 0;
+    virtual void fetchParsedCues(Vector<RefPtr<TextTrackCue> >&) = 0;
 
 protected:
     CueParserPrivateInterface() { }

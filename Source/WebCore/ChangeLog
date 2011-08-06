@@ -1,3 +1,26 @@
+2011-08-05  Anna Cavender  <annacc@chromium.org>
+
+        Adding a WebVTTParser for <track>.
+        https://bugs.webkit.org/show_bug.cgi?id=62882
+
+        Reviewed by Eric Carlson.
+
+        Feature is hidden behind VIDEO_TRACK feature define, which is turned off, but
+        new tests have been added in media/track/ (and are skipped).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/TextTrackCue.cpp:
+        * html/TextTrackCue.h:
+        * platform/track/CueParser.cpp:
+        * platform/track/CueParser.h:
+        * platform/track/CueParserPrivate.h:
+        * platform/track/WebVTTParser.cpp: Added.
+        * platform/track/WebVTTParser.h: Added.
+
 2011-08-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92330.

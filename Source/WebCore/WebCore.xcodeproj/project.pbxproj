@@ -4079,6 +4079,8 @@
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
+		B10B740E13BE80BF00BC1C26 /* WebVTTParser.h in Headers */ = {isa = PBXBuildFile; fileRef = B10B740C13BE80BF00BC1C26 /* WebVTTParser.h */; };
+		B10B740F13BE80BF00BC1C26 /* WebVTTParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10B740D13BE80BF00BC1C26 /* WebVTTParser.cpp */; };
 		B14353D5138EA8ED00D53276 /* MediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */; };
 		B14353D6138EA8ED00D53276 /* MediaStreamList.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353D2138EA8ED00D53276 /* MediaStreamList.h */; };
 		B14353F8138EA95B00D53276 /* JSMediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */; };
@@ -10592,6 +10594,8 @@
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGPath.cpp; sourceTree = "<group>"; };
 		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
+		B10B740C13BE80BF00BC1C26 /* WebVTTParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVTTParser.h; path = platform/track/WebVTTParser.h; sourceTree = "<group>"; };
+		B10B740D13BE80BF00BC1C26 /* WebVTTParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebVTTParser.cpp; path = platform/track/WebVTTParser.cpp; sourceTree = "<group>"; };
 		B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamList.cpp; sourceTree = "<group>"; };
 		B14353D2138EA8ED00D53276 /* MediaStreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamList.h; sourceTree = "<group>"; };
 		B14353D3138EA8ED00D53276 /* MediaStreamList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamList.idl; sourceTree = "<group>"; };
@@ -18045,6 +18049,8 @@
 				B2E4EC950D00C22B00432643 /* SVGZoomEvent.h */,
 				B2E4EC960D00C22B00432643 /* SVGZoomEvent.idl */,
 				B28C6A260D00C44800334AA4 /* xlinkattrs.in */,
+				B10B740C13BE80BF00BC1C26 /* WebVTTParser.h */,
+				B10B740D13BE80BF00BC1C26 /* WebVTTParser.cpp */,
 			);
 			path = svg;
 			sourceTree = "<group>";
@@ -23332,6 +23338,16 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				B1AD4E5D13A12A0B00846B27 /* CueIndex.h in Headers */,
+				B1AD4E5F13A12A0B00846B27 /* LoadableTextTrack.h in Headers */,
+				B1AD4E6313A12A0B00846B27 /* MutableTextTrack.h in Headers */,
+				B1AD4E6713A12A0B00846B27 /* TextTrack.h in Headers */,
+				B1AD4E6913A12A0B00846B27 /* TextTrackCue.h in Headers */,
+				B1AD4E6B13A12A0B00846B27 /* TextTrackCueList.h in Headers */,
+				B1AD4E7413A12A4600846B27 /* CueLoader.h in Headers */,
+				B1AD4E7C13A12A7200846B27 /* CueParser.h in Headers */,
+				B1AD4E7D13A12A7200846B27 /* CueParserPrivate.h in Headers */,
+				B10B740E13BE80BF00BC1C26 /* WebVTTParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26129,6 +26145,15 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				B1AD4E5C13A12A0B00846B27 /* CueIndex.cpp in Sources */,
+				B1AD4E5E13A12A0B00846B27 /* LoadableTextTrack.cpp in Sources */,
+				B1AD4E6213A12A0B00846B27 /* MutableTextTrack.cpp in Sources */,
+				B1AD4E6613A12A0B00846B27 /* TextTrack.cpp in Sources */,
+				B1AD4E6813A12A0B00846B27 /* TextTrackCue.cpp in Sources */,
+				B1AD4E6A13A12A0B00846B27 /* TextTrackCueList.cpp in Sources */,
+				B1AD4E7313A12A4600846B27 /* CueLoader.cpp in Sources */,
+				B1AD4E7B13A12A7200846B27 /* CueParser.cpp in Sources */,
+				B10B740F13BE80BF00BC1C26 /* WebVTTParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -2860,6 +2860,8 @@ webcore_sources += \
 	Source/WebCore/platform/track/CueParser.h \
 	Source/WebCore/platform/track/CueParser.cpp \
 	Source/WebCore/platform/track/CueParserPrivate.h \
+	Source/WebCore/platform/track/WebVTTParser.cpp \
+	Source/WebCore/platform/track/WebVTTParser.h \
 	Source/WebCore/platform/TreeShared.h \
 	Source/WebCore/platform/URLString.h \
 	Source/WebCore/platform/UUID.cpp \

@@ -2119,6 +2119,7 @@ HEADERS += \
     platform/Timer.h \
     platform/track/CueParser.h \
     platform/track/CueParserPrivate.h \
+    platform/track/WebVTTParser.h \
     platform/Widget.h \
     platform/PlatformStrategies.h \
     platform/LocalizedStrings.h \
