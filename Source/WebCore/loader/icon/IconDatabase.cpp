@@ -99,11 +99,6 @@ static IconDatabaseClient* defaultClient()
     return defaultClient;
 }
 
-bool IconDatabase::documentCanHaveIcon(const String& documentURL) const
-{
-    return !documentURL.isEmpty() && !protocolIs(documentURL, "about");
-}
-
 // ************************
 // *** Main Thread Only ***
 // ************************

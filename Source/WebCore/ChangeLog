@@ -1,3 +1,22 @@
+2011-08-06  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        REGRESSION (r91540): Favicons are not loaded
+        https://bugs.webkit.org/show_bug.cgi?id=65692
+
+        Reviewed by Darin Adler.
+
+        The policy that evaluates whether a page can have icon or not should not
+        need to be reimplemented each time a new IconDatabaseBase is derived,
+        so it was moved to WebCore's scope.
+
+        * loader/icon/IconController.cpp:
+        (WebCore::IconController::startLoader):
+        * loader/icon/IconDatabase.cpp:
+        * loader/icon/IconDatabase.h:
+        * loader/icon/IconDatabaseBase.cpp:
+        (WebCore::documentCanHaveIcon):
+        * loader/icon/IconDatabaseBase.h:
+
 2011-08-06  Kenichi Ishibashi  <bashi@chromium.org>
 
         Should use C++-style cast in CSSParser.cpp

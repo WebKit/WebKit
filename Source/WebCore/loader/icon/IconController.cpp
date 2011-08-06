@@ -114,7 +114,7 @@ void IconController::startLoader()
         return;
 
     ASSERT(!m_frame->tree()->parent());
-    if (!iconDatabase().documentCanHaveIcon(m_frame->document()->url()))
+    if (!documentCanHaveIcon(m_frame->document()->url()))
         return;
 
     KURL iconURL(url());

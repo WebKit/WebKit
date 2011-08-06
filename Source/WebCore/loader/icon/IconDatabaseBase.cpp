@@ -27,6 +27,7 @@
 #include "IconDatabaseBase.h"
 
 #include "IconDatabase.h"
+#include "KURL.h"
 #include "SharedBuffer.h"
 
 namespace WebCore {
@@ -64,6 +65,11 @@ IconDatabaseBase& iconDatabase()
 void setGlobalIconDatabase(IconDatabaseBase* newGlobalDatabase)
 {
     globalDatabase = newGlobalDatabase;
+}
+
+bool documentCanHaveIcon(const String& documentURL)
+{
+    return !documentURL.isEmpty() && !protocolIs(documentURL, "about");
 }
 
 } // namespace WebCore
