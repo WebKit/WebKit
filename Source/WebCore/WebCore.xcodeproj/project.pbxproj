@@ -1546,6 +1546,8 @@
 		5A574F25131DB93900471B88 /* RenderQuote.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A574F23131DB93900471B88 /* RenderQuote.h */; };
 		5A574F28131DB96D00471B88 /* QuotesData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5A574F26131DB96D00471B88 /* QuotesData.cpp */; };
 		5A574F29131DB96D00471B88 /* QuotesData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5A574F27131DB96D00471B88 /* QuotesData.h */; };
+		5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */; };
+		5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */; };
 		5D4F51DF132725480016F541 /* HTMLConverter.mm in Sources */ = {isa = PBXBuildFile; fileRef = C5392D341326AD0100043D35 /* HTMLConverter.mm */; };
 		5D874F130D161D3200796C3B /* NetscapePlugInStreamLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93E227DD0AF589AD00D48324 /* NetscapePlugInStreamLoader.cpp */; };
 		5D87BB8311E3ED8600702B6F /* ExportFileGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */; };
@@ -4079,8 +4081,6 @@
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
-		B10B740E13BE80BF00BC1C26 /* WebVTTParser.h in Headers */ = {isa = PBXBuildFile; fileRef = B10B740C13BE80BF00BC1C26 /* WebVTTParser.h */; };
-		B10B740F13BE80BF00BC1C26 /* WebVTTParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B10B740D13BE80BF00BC1C26 /* WebVTTParser.cpp */; };
 		B14353D5138EA8ED00D53276 /* MediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */; };
 		B14353D6138EA8ED00D53276 /* MediaStreamList.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353D2138EA8ED00D53276 /* MediaStreamList.h */; };
 		B14353F8138EA95B00D53276 /* JSMediaStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */; };
@@ -8164,6 +8164,8 @@
 		5A574F23131DB93900471B88 /* RenderQuote.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderQuote.h; sourceTree = "<group>"; };
 		5A574F26131DB96D00471B88 /* QuotesData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuotesData.cpp; path = style/QuotesData.cpp; sourceTree = "<group>"; };
 		5A574F27131DB96D00471B88 /* QuotesData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = QuotesData.h; path = style/QuotesData.h; sourceTree = "<group>"; };
+		5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebVTTParser.cpp; sourceTree = "<group>"; };
+		5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVTTParser.h; sourceTree = "<group>"; };
 		5D4B8C5211E52C8B00BBB62F /* WebCore.exp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = WebCore.exp.in; sourceTree = "<group>"; };
 		5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = WebCoreExportFileGenerator; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D87BB8211E3ED8600702B6F /* ExportFileGenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ExportFileGenerator.cpp; path = DerivedSources/WebCore/ExportFileGenerator.cpp; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -10594,26 +10596,24 @@
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGPath.cpp; sourceTree = "<group>"; };
 		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
-		B10B740C13BE80BF00BC1C26 /* WebVTTParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebVTTParser.h; path = platform/track/WebVTTParser.h; sourceTree = "<group>"; };
-		B10B740D13BE80BF00BC1C26 /* WebVTTParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebVTTParser.cpp; path = platform/track/WebVTTParser.cpp; sourceTree = "<group>"; };
 		B14353D1138EA8ED00D53276 /* MediaStreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamList.cpp; sourceTree = "<group>"; };
 		B14353D2138EA8ED00D53276 /* MediaStreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamList.h; sourceTree = "<group>"; };
 		B14353D3138EA8ED00D53276 /* MediaStreamList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MediaStreamList.idl; sourceTree = "<group>"; };
 		B14353F6138EA95B00D53276 /* JSMediaStreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMediaStreamList.cpp; sourceTree = "<group>"; };
 		B14353F7138EA95B00D53276 /* JSMediaStreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMediaStreamList.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
-		B1AD4E4B13A12A0B00846B27 /* CueIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CueIndex.cpp; path = html/CueIndex.cpp; sourceTree = SOURCE_ROOT; };
-		B1AD4E4C13A12A0B00846B27 /* CueIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CueIndex.h; path = html/CueIndex.h; sourceTree = SOURCE_ROOT; };
-		B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LoadableTextTrack.cpp; path = html/LoadableTextTrack.cpp; sourceTree = SOURCE_ROOT; };
-		B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LoadableTextTrack.h; path = html/LoadableTextTrack.h; sourceTree = SOURCE_ROOT; };
-		B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MutableTextTrack.cpp; path = html/MutableTextTrack.cpp; sourceTree = SOURCE_ROOT; };
-		B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MutableTextTrack.h; path = html/MutableTextTrack.h; sourceTree = SOURCE_ROOT; };
-		B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextTrack.cpp; path = html/TextTrack.cpp; sourceTree = SOURCE_ROOT; };
-		B1AD4E5613A12A0B00846B27 /* TextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrack.h; path = html/TextTrack.h; sourceTree = SOURCE_ROOT; };
-		B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextTrackCue.cpp; path = html/TextTrackCue.cpp; sourceTree = SOURCE_ROOT; };
-		B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrackCue.h; path = html/TextTrackCue.h; sourceTree = SOURCE_ROOT; };
-		B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextTrackCueList.cpp; path = html/TextTrackCueList.cpp; sourceTree = SOURCE_ROOT; };
-		B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextTrackCueList.h; path = html/TextTrackCueList.h; sourceTree = SOURCE_ROOT; };
+		B1AD4E4B13A12A0B00846B27 /* CueIndex.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CueIndex.cpp; sourceTree = "<group>"; };
+		B1AD4E4C13A12A0B00846B27 /* CueIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CueIndex.h; sourceTree = "<group>"; };
+		B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoadableTextTrack.cpp; sourceTree = "<group>"; };
+		B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableTextTrack.h; sourceTree = "<group>"; };
+		B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MutableTextTrack.cpp; sourceTree = "<group>"; };
+		B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MutableTextTrack.h; sourceTree = "<group>"; };
+		B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrack.cpp; sourceTree = "<group>"; };
+		B1AD4E5613A12A0B00846B27 /* TextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrack.h; sourceTree = "<group>"; };
+		B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackCue.cpp; sourceTree = "<group>"; };
+		B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCue.h; sourceTree = "<group>"; };
+		B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextTrackCueList.cpp; sourceTree = "<group>"; };
+		B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextTrackCueList.h; sourceTree = "<group>"; };
 		B1AD4E7113A12A4600846B27 /* CueLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CueLoader.cpp; path = loader/CueLoader.cpp; sourceTree = SOURCE_ROOT; };
 		B1AD4E7213A12A4600846B27 /* CueLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CueLoader.h; path = loader/CueLoader.h; sourceTree = SOURCE_ROOT; };
 		B1AD4E7813A12A7200846B27 /* CueParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CueParser.cpp; sourceTree = "<group>"; };
@@ -13826,24 +13826,9 @@
 			isa = PBXGroup;
 			children = (
 				41815C1B138319630057AAA4 /* js */,
-				B1AD4E7713A12A7200846B27 /* track */,
-				B1AD4E4B13A12A0B00846B27 /* CueIndex.cpp */,
-				B1AD4E4C13A12A0B00846B27 /* CueIndex.h */,
-				B1AD4E7113A12A4600846B27 /* CueLoader.cpp */,
-				B1AD4E7213A12A4600846B27 /* CueLoader.h */,
 				417DA4CF13734326007C57FB /* Internals.cpp */,
 				417DA4CE13734326007C57FB /* Internals.h */,
 				41813F9113818AD60057AAA4 /* Internals.idl */,
-				B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */,
-				B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */,
-				B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */,
-				B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */,
-				B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */,
-				B1AD4E5613A12A0B00846B27 /* TextTrack.h */,
-				B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */,
-				B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */,
-				B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */,
-				B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */,
 			);
 			path = testing;
 			sourceTree = "<group>";
@@ -16104,6 +16089,8 @@
 				93C441FF0F813AE100C1A634 /* CollectionType.h */,
 				F55B3D7F1251F12D003EF269 /* ColorInputType.cpp */,
 				F55B3D801251F12D003EF269 /* ColorInputType.h */,
+				B1AD4E4B13A12A0B00846B27 /* CueIndex.cpp */,
+				B1AD4E4C13A12A0B00846B27 /* CueIndex.h */,
 				F55B3D811251F12D003EF269 /* DateInputType.cpp */,
 				F55B3D821251F12D003EF269 /* DateInputType.h */,
 				F55B3D831251F12D003EF269 /* DateTimeInputType.cpp */,
@@ -16395,12 +16382,16 @@
 				A456FA2511AD4A830020B420 /* LabelsNodeList.h */,
 				985BB96B13A94058007A0B69 /* LinkRelAttribute.cpp */,
 				985BB96C13A94058007A0B69 /* LinkRelAttribute.h */,
+				B1AD4E4D13A12A0B00846B27 /* LoadableTextTrack.cpp */,
+				B1AD4E4E13A12A0B00846B27 /* LoadableTextTrack.h */,
 				97205AB31239291000B17380 /* MediaDocument.cpp */,
 				97205AB41239291000B17380 /* MediaDocument.h */,
 				E446139B0CD6331000FADA75 /* MediaError.h */,
 				E446139C0CD6331000FADA75 /* MediaError.idl */,
 				F55B3D911251F12D003EF269 /* MonthInputType.cpp */,
 				F55B3D921251F12D003EF269 /* MonthInputType.h */,
+				B1AD4E5113A12A0B00846B27 /* MutableTextTrack.cpp */,
+				B1AD4E5213A12A0B00846B27 /* MutableTextTrack.h */,
 				F55B3D931251F12D003EF269 /* NumberInputType.cpp */,
 				F55B3D941251F12D003EF269 /* NumberInputType.h */,
 				F55B3D951251F12D003EF269 /* PasswordInputType.cpp */,
@@ -16429,6 +16420,12 @@
 				F55B3DA61251F12D003EF269 /* TextInputType.h */,
 				BCEF45E80E687767001C1287 /* TextMetrics.h */,
 				BCEF453F0E676AC1001C1287 /* TextMetrics.idl */,
+				B1AD4E5513A12A0B00846B27 /* TextTrack.cpp */,
+				B1AD4E5613A12A0B00846B27 /* TextTrack.h */,
+				B1AD4E5713A12A0B00846B27 /* TextTrackCue.cpp */,
+				B1AD4E5813A12A0B00846B27 /* TextTrackCue.h */,
+				B1AD4E5913A12A0B00846B27 /* TextTrackCueList.cpp */,
+				B1AD4E5A13A12A0B00846B27 /* TextTrackCueList.h */,
 				F55B3DA71251F12D003EF269 /* TimeInputType.cpp */,
 				F55B3DA81251F12D003EF269 /* TimeInputType.h */,
 				E446139D0CD6331000FADA75 /* TimeRanges.cpp */,
@@ -17550,10 +17547,11 @@
 				B1AD4E7813A12A7200846B27 /* CueParser.cpp */,
 				B1AD4E7913A12A7200846B27 /* CueParser.h */,
 				B1AD4E7A13A12A7200846B27 /* CueParserPrivate.h */,
+				5D21A80013ECE5DF00BB7064 /* WebVTTParser.cpp */,
+				5D21A80113ECE5DF00BB7064 /* WebVTTParser.h */,
 			);
-			name = track;
-			path = platform/track;
-			sourceTree = SOURCE_ROOT;
+			path = track;
+			sourceTree = "<group>";
 		};
 		B22277CA0D00BF1E0071B782 /* svg */ = {
 			isa = PBXGroup;
@@ -18049,8 +18047,6 @@
 				B2E4EC950D00C22B00432643 /* SVGZoomEvent.h */,
 				B2E4EC960D00C22B00432643 /* SVGZoomEvent.idl */,
 				B28C6A260D00C44800334AA4 /* xlinkattrs.in */,
-				B10B740C13BE80BF00BC1C26 /* WebVTTParser.h */,
-				B10B740D13BE80BF00BC1C26 /* WebVTTParser.cpp */,
 			);
 			path = svg;
 			sourceTree = "<group>";
@@ -18885,6 +18881,8 @@
 				E1C416110F6562FD0092D2FB /* CrossOriginAccessControl.h */,
 				E1C415DD0F655D7C0092D2FB /* CrossOriginPreflightResultCache.cpp */,
 				E1C415D90F655D6F0092D2FB /* CrossOriginPreflightResultCache.h */,
+				B1AD4E7113A12A4600846B27 /* CueLoader.cpp */,
+				B1AD4E7213A12A4600846B27 /* CueLoader.h */,
 				93E227DB0AF589AD00D48324 /* DocumentLoader.cpp */,
 				656D371E0ADBA5DE00A4554D /* DocumentLoader.h */,
 				8A12E35C11FA33280025836A /* DocumentLoadTiming.h */,
@@ -19019,6 +19017,7 @@
 				516030090CC4245400C8AC25 /* posix */,
 				1A2E6E560CC551E0004A2062 /* sql */,
 				B2C3D9EC0D006C1D00EF6F26 /* text */,
+				B1AD4E7713A12A7200846B27 /* track */,
 				BCFB2F74097A2E1A00BA703D /* Arena.cpp */,
 				BCFB2F75097A2E1A00BA703D /* Arena.h */,
 				2EF1BFF6121CB0BD00C27627 /* AsyncFileStream.h */,
@@ -23347,7 +23346,7 @@
 				B1AD4E7413A12A4600846B27 /* CueLoader.h in Headers */,
 				B1AD4E7C13A12A7200846B27 /* CueParser.h in Headers */,
 				B1AD4E7D13A12A7200846B27 /* CueParserPrivate.h in Headers */,
-				B10B740E13BE80BF00BC1C26 /* WebVTTParser.h in Headers */,
+				5D21A80313ECE5DF00BB7064 /* WebVTTParser.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -26153,7 +26152,7 @@
 				B1AD4E6A13A12A0B00846B27 /* TextTrackCueList.cpp in Sources */,
 				B1AD4E7313A12A4600846B27 /* CueLoader.cpp in Sources */,
 				B1AD4E7B13A12A7200846B27 /* CueParser.cpp in Sources */,
-				B10B740F13BE80BF00BC1C26 /* WebVTTParser.cpp in Sources */,
+				5D21A80213ECE5DF00BB7064 /* WebVTTParser.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

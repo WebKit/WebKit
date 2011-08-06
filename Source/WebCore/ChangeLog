@@ -1,3 +1,19 @@
+2011-08-05  Mark Rowe  <mrowe@apple.com>
+
+        Attempt to fix the build after r92538.
+
+        Like all of the recent "track"-related work the new files in r92538 appear to have
+        been added to completely random places in the Xcode project. However, this time
+        the file paths were marked as being relative to their containing group resulting in
+        Xcode being unable to find the files on disk.
+
+        I've attempted to clean up all of the "track"-related mess in the Xcode project.
+        The location of the files in the project now reflect their locations on disk, and
+        are all correctly marked as being relative to their containing group as is our
+        convention.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-08-05  Tom Hudson  <tomhudson@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=64613
