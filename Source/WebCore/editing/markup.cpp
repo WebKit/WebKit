@@ -350,7 +350,7 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
     return lastClosed;
 }
 
-HTMLElement* ancestorToRetainStructureAndAppearance(Node* commonAncestor, ShouldIncludeParagraphSeparators shouldIncludeParagraphSeparators)
+static Node* ancestorToRetainStructureAndAppearance(Node* commonAncestor)
 {
     Node* commonAncestorBlock = enclosingBlock(commonAncestor);
 
@@ -362,7 +362,7 @@ HTMLElement* ancestorToRetainStructureAndAppearance(Node* commonAncestor, Should
         while (table && !table->hasTagName(tableTag))
             table = table->parentNode();
 
-        return toHTMLElement(table);
+        return table;
     }
 
     if (commonAncestorBlock->hasTagName(listingTag)
@@ -376,11 +376,7 @@ HTMLElement* ancestorToRetainStructureAndAppearance(Node* commonAncestor, Should
         || commonAncestorBlock->hasTagName(h3Tag)
         || commonAncestorBlock->hasTagName(h4Tag)
         || commonAncestorBlock->hasTagName(h5Tag))
-        return toHTMLElement(commonAncestorBlock);
-
-    if (shouldIncludeParagraphSeparators == IncludeParagraphSeparators
-        && (commonAncestorBlock->hasTagName(pTag) || commonAncestorBlock->hasTagName(divTag)))
-        return toHTMLElement(commonAncestorBlock);
+        return commonAncestorBlock;
 
     return 0;
 }

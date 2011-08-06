@@ -1,3 +1,20 @@
+2011-08-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92330.
+        http://trac.webkit.org/changeset/92330
+        https://bugs.webkit.org/show_bug.cgi?id=65804
+
+        caused various regressions in paste (Requested by rniwa on
+        #webkit).
+
+        * editing/pasteboard/5065605-expected.txt:
+        * editing/pasteboard/copy-paste-text-in-h1-expected.txt: Removed.
+        * editing/pasteboard/copy-paste-text-in-h1.html: Removed.
+        * editing/pasteboard/display-block-on-spans-expected.txt:
+        * editing/pasteboard/paste-pre-001-expected.txt:
+        * editing/pasteboard/paste-pre-002-expected.txt:
+        * editing/pasteboard/paste-text-011-expected.txt:
+
 2011-08-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip a failing test added by r92526 to Qt's skipped list.

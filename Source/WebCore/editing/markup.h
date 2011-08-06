@@ -33,35 +33,31 @@
 
 namespace WebCore {
 
-class Document;
-class DocumentFragment;
-class Element;
-class HTMLElement;
-class KURL;
-class Node;
-class Range;
+    class Document;
+    class DocumentFragment;
+    class Element;
+    class KURL;
+    class Node;
+    class Range;
 
-enum EChildrenOnly { IncludeNode, ChildrenOnly };
-enum EAbsoluteURLs { DoNotResolveURLs, AbsoluteURLs };
+    enum EChildrenOnly { IncludeNode, ChildrenOnly };
+    enum EAbsoluteURLs { DoNotResolveURLs, AbsoluteURLs };
 
-PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text);
-PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, FragmentScriptingPermission = FragmentScriptingAllowed);
-PassRefPtr<DocumentFragment> createFragmentFromNodes(Document*, const Vector<Node*>&);
+    PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text);
+    PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, FragmentScriptingPermission = FragmentScriptingAllowed);
+    PassRefPtr<DocumentFragment> createFragmentFromNodes(Document*, const Vector<Node*>&);
 
-bool isPlainTextMarkup(Node*);
+    bool isPlainTextMarkup(Node *node);
 
-String createMarkup(const Range*, Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
-String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0, EAbsoluteURLs = DoNotResolveURLs);
+    String createMarkup(const Range*,
+        Vector<Node*>* = 0, EAnnotateForInterchange = DoNotAnnotateForInterchange, bool convertBlocksToInlines = false, EAbsoluteURLs = DoNotResolveURLs);
+    String createMarkup(const Node*, EChildrenOnly = IncludeNode, Vector<Node*>* = 0, EAbsoluteURLs = DoNotResolveURLs);
+    
+    String createFullMarkup(const Node*);
+    String createFullMarkup(const Range*);
 
-String createFullMarkup(const Node*);
-String createFullMarkup(const Range*);
-
-String urlToMarkup(const KURL&, const String& title);
-String imageToMarkup(const KURL&, Element*);
-
-enum ShouldIncludeParagraphSeparators { DoNotIncludeParagraphSeparators, IncludeParagraphSeparators };
-HTMLElement* ancestorToRetainStructureAndAppearance(Node*, ShouldIncludeParagraphSeparators = DoNotIncludeParagraphSeparators);
-
+    String urlToMarkup(const KURL&, const String& title);
+    String imageToMarkup(const KURL&, Element*);
 }
 
 #endif // markup_h
