@@ -1329,6 +1329,23 @@ void RenderBoxModelObject::paintOneBorderSide(GraphicsContext* graphicsContext, 
     }
 }
 
+static LayoutRect calculateSideRect(const RoundedRect& outerBorder, const BorderEdge edges[], int side)
+{
+    LayoutRect sideRect = outerBorder.rect();
+    int width = edges[side].width;
+
+    if (side == BSTop)
+        sideRect.setHeight(width);
+    else if (side == BSBottom)
+        sideRect.shiftYEdgeTo(sideRect.maxY() - width);
+    else if (side == BSLeft)
+        sideRect.setWidth(width);
+    else
+        sideRect.shiftXEdgeTo(sideRect.maxX() - width);
+
+    return sideRect;
+}
+
 void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, const RenderStyle* style, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
                                             const BorderEdge edges[], BorderEdgeFlags edgeSet, BackgroundBleedAvoidance bleedAvoidance,
                                             bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor)
@@ -1340,32 +1357,28 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
         roundedPath.addRoundedRect(outerBorder);
     
     if (edges[BSTop].shouldRender() && includesEdge(edgeSet, BSTop)) {
-        LayoutRect sideRect = outerBorder.rect();
-        sideRect.setHeight(edges[BSTop].width);
+        LayoutRect sideRect = calculateSideRect(outerBorder, edges, BSTop);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSTop].style) || borderWillArcInnerEdge(innerBorder.radii().topLeft(), innerBorder.radii().topRight()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSTop, BSLeft, BSRight, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 
     if (edges[BSBottom].shouldRender() && includesEdge(edgeSet, BSBottom)) {
-        LayoutRect sideRect = outerBorder.rect();
-        sideRect.shiftYEdgeTo(sideRect.maxY() - edges[BSBottom].width);
+        LayoutRect sideRect = calculateSideRect(outerBorder, edges, BSBottom);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSBottom].style) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().bottomRight()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSBottom, BSLeft, BSRight, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 
     if (edges[BSLeft].shouldRender() && includesEdge(edgeSet, BSLeft)) {
-        LayoutRect sideRect = outerBorder.rect();
-        sideRect.setWidth(edges[BSLeft].width);
+        LayoutRect sideRect = calculateSideRect(outerBorder, edges, BSLeft);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSLeft].style) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().topLeft()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSLeft, BSTop, BSBottom, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 
     if (edges[BSRight].shouldRender() && includesEdge(edgeSet, BSRight)) {
-        LayoutRect sideRect = outerBorder.rect();
-        sideRect.shiftXEdgeTo(sideRect.maxX() - edges[BSRight].width);
+        LayoutRect sideRect = calculateSideRect(outerBorder, edges, BSRight);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSRight].style) || borderWillArcInnerEdge(innerBorder.radii().bottomRight(), innerBorder.radii().topRight()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSRight, BSTop, BSBottom, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
@@ -1443,6 +1456,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rec
         const BorderEdge& currEdge = edges[i];
         if (currEdge.presentButInvisible()) {
             allEdgesVisible = false;
+            allEdgesShareColor = false;
             continue;
         }
         
@@ -1469,9 +1483,9 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rec
         outerBorder.setRadii(RoundedRect::Radii());
 
     // isRenderable() check avoids issue described in https://bugs.webkit.org/show_bug.cgi?id=38787
-    if (haveAllSolidEdges && allEdgesVisible && allEdgesShareColor && innerBorder.isRenderable()) {
+    if (haveAllSolidEdges && allEdgesShareColor && innerBorder.isRenderable()) {
         // Fast path for drawing all solid edges.
-        if (outerBorder.isRounded() || haveAlphaColor) {
+        if (allEdgesVisible && (outerBorder.isRounded() || haveAlphaColor)) {
             Path path;
             
             if (outerBorder.isRounded() && bleedAvoidance != BackgroundBleedUseTransparencyLayer)
@@ -1487,10 +1501,25 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rec
             graphicsContext->setFillRule(RULE_EVENODD);
             graphicsContext->setFillColor(edges[firstVisibleEdge].color, style->colorSpace());
             graphicsContext->fillPath(path);
-        } else
-            paintBorderSides(graphicsContext, style, outerBorder, innerBorder, edges, AllBorderEdges, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias);
-    
-        return;
+            return;
+        } 
+        // Avoid creating transparent layers
+        if (!allEdgesVisible && !outerBorder.isRounded() && haveAlphaColor) {
+            Path path;
+
+            for (int i = BSTop; i <= BSLeft; ++i) {
+                const BorderEdge& currEdge = edges[i];
+                if (currEdge.shouldRender()) {
+                    LayoutRect sideRect = calculateSideRect(outerBorder, edges, i);
+                    path.addRect(sideRect);
+                }
+            }
+
+            graphicsContext->setFillRule(RULE_NONZERO);
+            graphicsContext->setFillColor(edges[firstVisibleEdge].color, style->colorSpace());
+            graphicsContext->fillPath(path);
+            return;
+        }
     }
 
     bool clipToOuterBorder = outerBorder.isRounded();
