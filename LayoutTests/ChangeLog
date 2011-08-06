@@ -1,5 +1,14 @@
 2011-08-06  Adam Barth  <abarth@webkit.org>
 
+        Fix baselines for cross-origin-xsl-BLOCKED.html.  These results
+        uncovered a subtle bug in webkit-patch bulk-optimize-baselines, which
+        I'll fix in a follow-up patch.
+
+        * platform/chromium-mac/http/tests/security/cross-origin-xsl-BLOCKED-expected.txt: Added.
+        * platform/chromium-win/http/tests/security/cross-origin-xsl-BLOCKED-expected.txt: Added.
+
+2011-08-06  Adam Barth  <abarth@webkit.org>
+
         Optimize expected results for editing.
         This patch was created with webkit-patch bulk-optimize-baselines.
 
