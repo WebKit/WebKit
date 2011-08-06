@@ -1,3 +1,17 @@
+2011-08-06  Dan Bernstein  <mitz@apple.com>
+
+        Move the shared LineBreakIteratorPool from ThreadGlobalData into its own ThreadSpecific
+        https://bugs.webkit.org/show_bug.cgi?id=65809
+
+        Reviewed by Darin Adler and Sam Weinig.
+
+        * platform/ThreadGlobalData.cpp:
+        (WebCore::ThreadGlobalData::destroy): Removed code to clear the m_lineBreakIteratorPool member
+        variable, which was removed.
+        * platform/ThreadGlobalData.h: Removed lineBreakIteratorPool() and associated member variable.
+        * platform/text/LineBreakIteratorPoolICU.h:
+        (WebCore::LineBreakIteratorPool::sharedPool): Changed to return a thread-specific pool.
+
 2011-08-06  Joseph Pecoraro  <joepeck@webkit.org>
 
         Potential Leaks - RetainPtr<> over retaining Create'd objects

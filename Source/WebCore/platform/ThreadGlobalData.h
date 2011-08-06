@@ -42,7 +42,6 @@ using WTF::ThreadSpecific;
 namespace WebCore {
 
     class EventNames;
-    class LineBreakIteratorPool;
     class ThreadTimers;
 
     struct ICUConverterWrapper;
@@ -60,7 +59,6 @@ namespace WebCore {
 
 #if USE(ICU_UNICODE)
         ICUConverterWrapper& cachedConverterICU() { return *m_cachedConverterICU; }
-        LineBreakIteratorPool& lineBreakIteratorPool();
 #endif
 
 #if PLATFORM(MAC)
@@ -77,7 +75,6 @@ namespace WebCore {
 
 #if USE(ICU_UNICODE)
         ICUConverterWrapper* m_cachedConverterICU;
-        OwnPtr<LineBreakIteratorPool> m_lineBreakIteratorPool;
 #endif
 
 #if PLATFORM(MAC)

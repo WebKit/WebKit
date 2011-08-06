@@ -27,11 +27,12 @@
 #define LineBreakIteratorPoolICU_h
 
 #include "TextBreakIteratorInternalICU.h"
-#include "ThreadGlobalData.h"
 #include <unicode/ubrk.h>
 #include <wtf/Assertions.h>
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/ThreadSpecific.h>
+#include <wtf/text/AtomicString.h>
 #include <wtf/text/CString.h>
 
 namespace WebCore {
@@ -41,7 +42,8 @@ class LineBreakIteratorPool {
 public:
     static LineBreakIteratorPool& sharedPool()
     {
-        return threadGlobalData().lineBreakIteratorPool();
+        static WTF::ThreadSpecific<LineBreakIteratorPool>* pool = new WTF::ThreadSpecific<LineBreakIteratorPool>;
+        return **pool;
     }
 
     static PassOwnPtr<LineBreakIteratorPool> create() { return adoptPtr(new LineBreakIteratorPool); }
@@ -92,6 +94,8 @@ private:
     typedef Vector<Entry, capacity> Pool;
     Pool m_pool;
     HashMap<UBreakIterator*, AtomicString> m_vendedIterators;
+
+    friend WTF::ThreadSpecific<LineBreakIteratorPool>::operator LineBreakIteratorPool*();
 };
 
 }
