@@ -303,7 +303,7 @@ editing/selection/caret-mode-paragraph-keys-navigation.html
 
 # This test is failing on the Leopard Intel Debug buildbot
 # https://bugs.webkit.org/show_bug.cgi?id=51807
-fast/blockflow/broken-ideograph-small-caps.html
+fast/writing-mode/broken-ideograph-small-caps.html
 
 # Request ENABLE(REQUEST_ANIMATION_FRAME) support
 fast/animation

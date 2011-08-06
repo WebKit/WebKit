@@ -178,11 +178,6 @@ editing/undo/undo-deleteWord.html
 editing/undo/undo-smart-delete-reversed-selection.html
 editing/undo/undo-smart-delete-word.html
 fast/block/positioning/hittest-on-relative-positioned-children.html
-fast/blockflow/horizontal-bt-replaced-selection.html
-fast/blockflow/japanese-lr-selection.html
-fast/blockflow/japanese-rl-selection.html
-fast/blockflow/vertical-lr-replaced-selection.html
-fast/blockflow/vertical-rl-replaced-selection.html
 fast/css/user-drag-none.html
 fast/dom/HTMLSelectElement/click-size-zero-no-crash.html
 fast/dom/Window/window-postmessage-clone-frames.html
@@ -372,6 +367,11 @@ fast/text/atsui-rtl-override-selection.html
 fast/text/international/khmer-selection.html
 fast/text/offsetForPosition-complex-fallback.html
 fast/text/reset-drag-on-mouse-down.html
+fast/writing-mode/horizontal-bt-replaced-selection.html
+fast/writing-mode/japanese-lr-selection.html
+fast/writing-mode/japanese-rl-selection.html
+fast/writing-mode/vertical-lr-replaced-selection.html
+fast/writing-mode/vertical-rl-replaced-selection.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi/file-last-modified.html

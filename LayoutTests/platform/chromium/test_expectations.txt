@@ -2335,24 +2335,24 @@ BUGWK48143 : svg/dom/altGlyph-dom.xhtml = PASS CRASH
 BUGWK48256 LINUX WIN : fast/multicol/float-multicol.html = PASS IMAGE+TEXT
 BUGWK48341 XP DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
 BUGWK48341 LINUX MAC DEBUG : svg/W3C-SVG-1.1/masking-intro-01-f.svg = CRASH
-BUGWK48352 : fast/blockflow/block-level-images.html = PASS IMAGE
+BUGWK48352 : fast/writing-mode/block-level-images.html = PASS IMAGE
 
 // Vertical text needs to be implemented in platforms other than OS X.
-BUGCR65877 LINUX WIN : fast/blockflow/border-vertical-lr.html = IMAGE+TEXT
-BUGCR65877 : fast/blockflow/japanese-lr-selection.html = IMAGE+TEXT IMAGE
-BUGCR65877 : fast/blockflow/japanese-rl-selection.html = IMAGE+TEXT IMAGE
-BUGCR65877 WIN : fast/blockflow/broken-ideographic-font.html = IMAGE
-BUGCR65877 LINUX : fast/blockflow/broken-ideographic-font.html = IMAGE+TEXT
-BUGCR65877 LINUX WIN : fast/blockflow/vertical-font-fallback.html = IMAGE+TEXT
-//BUGCR65877 LINUX WIN : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
-BUGCR65877 LINUX WIN : fast/blockflow/Kusa-Makura-background-canvas.html = IMAGE+TEXT
+BUGCR65877 LINUX WIN : fast/writing-mode/border-vertical-lr.html = IMAGE+TEXT
+BUGCR65877 : fast/writing-mode/japanese-lr-selection.html = IMAGE+TEXT IMAGE
+BUGCR65877 : fast/writing-mode/japanese-rl-selection.html = IMAGE+TEXT IMAGE
+BUGCR65877 WIN : fast/writing-mode/broken-ideographic-font.html = IMAGE
+BUGCR65877 LINUX : fast/writing-mode/broken-ideographic-font.html = IMAGE+TEXT
+BUGCR65877 LINUX WIN : fast/writing-mode/vertical-font-fallback.html = IMAGE+TEXT
+//BUGCR65877 LINUX WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
+BUGCR65877 LINUX WIN : fast/writing-mode/Kusa-Makura-background-canvas.html = IMAGE+TEXT
 BUGCR65877 WIN : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
 BUGWK53451 LINUX : fast/text/international/text-combine-image-test.html = IMAGE+TEXT
 
 // New test, introduced by http://trac.webkit.org/changeset/70813 with only platform/mac baselines.
-BUGWK61161 LINUX WIN : fast/blockflow/border-image-horizontal-bt.html = IMAGE+TEXT
-BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-rl.html = IMAGE+TEXT
-BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
+BUGWK61161 LINUX WIN : fast/writing-mode/border-image-horizontal-bt.html = IMAGE+TEXT
+BUGWK61161 LINUX WIN : fast/writing-mode/border-image-vertical-rl.html = IMAGE+TEXT
+BUGWK61161 LINUX WIN : fast/writing-mode/border-image-vertical-lr.html = IMAGE+TEXT
 
 // These tests started failing presumably after r70850
 BUGCR88911 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE+TEXT
@@ -2817,13 +2817,13 @@ BUGWK58587 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK58587 LINUX DEBUG GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 
 // WebKit roll 80564:80631: vertical text fallout - these probably just need rebaseline:
-BUGWK56072 VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
+BUGWK56072 VISTA : fast/writing-mode/vertical-baseline-alignment.html = IMAGE
 BUGWK56072 VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK56072 VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
 // introduced by Dave Hyatt in WK r80582
-BUGCR75561 LINUX WIN : fast/blockflow/text-orientation-basic.html = IMAGE+TEXT
-BUGCR75561 LEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE
+BUGCR75561 LINUX WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
+BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE
 
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
@@ -2917,7 +2917,7 @@ BUGCR77494 LINUX WIN : fast/repaint/transform-replaced-shadows.html = IMAGE
 BUGCR77619 SNOWLEOPARD : plugins/plugin-javascript-access.html = TEXT
 
 // New test added in r82056. The arrow does not point upwards.
-BUGCR77574 LINUX : fast/blockflow/fallback-orientation.html = IMAGE
+BUGCR77574 LINUX : fast/writing-mode/fallback-orientation.html = IMAGE
 
 // Regression in r82056.
 BUGWK57302 LEOPARD : fast/ruby/base-shorter-than-text.html = IMAGE+TEXT
@@ -3025,8 +3025,8 @@ BUGCR79910 SNOWLEOPARD : fast/text/international/bidi-linebreak-003.html = IMAGE
 
 // The following are failures due to Skia bugs on Win/Linux
 // http://code.google.com/p/chromium/issues/detail?id=79917
-BUGCR79917 LINUX WIN : fast/blockflow/border-styles-vertical-lr.html = IMAGE+TEXT
-BUGCR79917 LINUX WIN : fast/blockflow/border-styles-vertical-rl.html = IMAGE+TEXT
+BUGCR79917 LINUX WIN : fast/writing-mode/border-styles-vertical-lr.html = IMAGE+TEXT
+BUGCR79917 LINUX WIN : fast/writing-mode/border-styles-vertical-rl.html = IMAGE+TEXT
 BUGCR79917 LINUX WIN : fast/borders/border-radius-inset-outset.html = IMAGE+TEXT
 BUGCR79917 LINUX WIN : fast/borders/border-styles-split.html = IMAGE+TEXT
 BUGCR79917 LINUX WIN : css1/box_properties/border_style.html = IMAGE
@@ -3588,8 +3588,8 @@ BUGWK64675 LINUX WIN : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEX
 
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
-//BUGCR75424 LEOPARD : fast/blockflow/broken-ideograph-small-caps.html = IMAGE
-BUGCR75424 LEOPARD : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE
+//BUGCR75424 LEOPARD : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
+BUGCR75424 LEOPARD : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE
 
 BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 
@@ -3627,11 +3627,11 @@ BUGWK65063 MAC : css2.1/t0905-c414-flt-01-d-g.html = IMAGE
 
 BUGWK65124 LINUX WIN : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
-BUGWK65124 WIN : fast/blockflow/japanese-lr-text.html = IMAGE+TEXT
-BUGWK65124 WIN : fast/blockflow/japanese-rl-text-with-broken-font.html = IMAGE+TEXT
-BUGWK65124 WIN : fast/blockflow/japanese-rl-text.html = IMAGE+TEXT
+BUGWK65124 WIN : fast/writing-mode/japanese-lr-text.html = IMAGE+TEXT
+BUGWK65124 WIN : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE+TEXT
+BUGWK65124 WIN : fast/writing-mode/japanese-rl-text.html = IMAGE+TEXT
 
-BUGWK65199 : fast/blockflow/broken-ideograph-small-caps.html = PASS FAIL
+BUGWK65199 : fast/writing-mode/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
 BUGWK65219 WIN LINUX : webaudio/gain.html = PASS CRASH

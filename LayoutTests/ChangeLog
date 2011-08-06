@@ -1,3 +1,41 @@
+2011-08-05  Dan Bernstein  <mitz@apple.com>
+
+        Renamed fast/blockflow to fast/writing-mode.
+
+        Rubber-stamped by Sam Weinig.
+
+        * fast/blockflow: Removed.
+        * fast/writing-mode: Copied from fast/blockflow.
+        * platform/chromium-linux/fast/blockflow: Removed.
+        * platform/chromium-linux/fast/writing-mode: Copied from platform/chromium-linux/fast/blockflow.
+        * platform/chromium-mac-leopard/fast/blockflow: Removed.
+        * platform/chromium-mac-leopard/fast/writing-mode: Copied from platform/chromium-mac-leopard/fast/blockflow.
+        * platform/chromium-mac/fast/blockflow: Removed.
+        * platform/chromium-mac/fast/writing-mode: Copied from platform/chromium-mac/fast/blockflow.
+        * platform/chromium-win-vista/fast/blockflow: Removed.
+        * platform/chromium-win-vista/fast/writing-mode: Copied from platform/chromium-win-vista/fast/blockflow.
+        * platform/chromium-win-xp/fast/blockflow: Removed.
+        * platform/chromium-win-xp/fast/writing-mode: Copied from platform/chromium-win-xp/fast/blockflow.
+        * platform/chromium-win/fast/blockflow: Removed.
+        * platform/chromium-win/fast/writing-mode: Copied from platform/chromium-win/fast/blockflow.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/blockflow: Removed.
+        * platform/gtk/fast/writing-mode: Copied from platform/gtk/fast/blockflow.
+        * platform/mac-leopard/fast/blockflow: Removed.
+        * platform/mac-leopard/fast/writing-mode: Copied from platform/mac-leopard/fast/blockflow.
+        * platform/mac-wk2/fast/blockflow: Removed.
+        * platform/mac-wk2/fast/writing-mode: Copied from platform/mac-wk2/fast/blockflow.
+        * platform/mac/Skipped:
+        * platform/mac/fast/blockflow: Removed.
+        * platform/mac/fast/writing-mode: Copied from platform/mac/fast/blockflow.
+        * platform/qt-mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/fast/blockflow: Removed.
+        * platform/qt/fast/writing-mode: Copied from platform/qt/fast/blockflow.
+        * platform/win/fast/blockflow: Removed.
+        * platform/win/fast/writing-mode: Copied from platform/win/fast/blockflow.
+        * platform/wk2/Skipped:
+
 2011-08-05  Ryosuke Niwa  <rniwa@webkit.org>
 
         r92330 has been rolled out so its rebaseline needs to be reverted as well
