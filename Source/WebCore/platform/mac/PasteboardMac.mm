@@ -150,7 +150,7 @@ void Pasteboard::writeSelection(NSPasteboard* pasteboard, NSArray* pasteboardTyp
 #ifndef BUILDING_ON_LEOPARD
     else {
         // In WebKit2 we are using a different way to create the NSAttributedString from the DOMrange that doesn't require access to the WebView.
-        RetainPtr<WebHTMLConverter> converter = [[WebHTMLConverter alloc] initWithDOMRange:kit(selectedRange)];
+        RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(selectedRange)]);
         if (converter)
             attributedString = [converter.get() attributedString];
     }

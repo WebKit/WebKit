@@ -1,3 +1,13 @@
+2011-08-06  Mark Rowe  <mrowe@apple.com>
+
+        Fix a memory leak found via code inspection.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeSelection): Adopt the newly-allocated WebHTMLConverter
+        instance so that it does not leak.
+
 2011-08-05  Darin Adler  <darin@apple.com>
 
         Fix Timer heap implementation to work with more libraries (other versions of STL)
