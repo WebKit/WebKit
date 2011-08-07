@@ -536,6 +536,22 @@ ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, const Identif
     return getOwnPropertySlot(exec, propertyName, slot);
 }
 
+// Fast call to get a property where we may not yet have converted the string to an
+// identifier. The first time we perform a property access with a given string, try
+// performing the property map lookup without forming an identifier. We detect this
+// case by checking whether the hash has yet been set for this string.
+ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(ExecState* exec, const UString& name)
+{
+    if (!m_structure->typeInfo().overridesGetOwnPropertySlot() && !m_structure->hasGetterSetterProperties()) {
+        size_t offset = name.impl()->hasHash()
+            ? m_structure->get(exec->globalData(), Identifier(exec, name))
+            : m_structure->get(exec->globalData(), name);
+        if (offset != WTF::notFound)
+            return asObject(this)->locationForOffset(offset)->get();
+    }
+    return JSValue();
+}
+
 // It may seem crazy to inline a function this large but it makes a big difference
 // since this is function very hot in variable lookup
 ALWAYS_INLINE bool JSObject::getPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)

@@ -2249,12 +2249,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
     JSValue subscript = stackFrame.args[1].jsValue();
 
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        Identifier propertyName(callFrame, asString(subscript)->value(callFrame));
-        PropertySlot slot(baseValue.asCell());
-        // JSString::value may have thrown, but we shouldn't find a property with a null identifier,
-        // so we should miss this case and wind up in the CHECK_FOR_EXCEPTION_AT_END, below.
-        if (baseValue.asCell()->fastGetOwnPropertySlot(callFrame, propertyName, slot)) {
-            JSValue result = slot.getValue(callFrame, propertyName);
+        if (JSValue result = baseValue.asCell()->fastGetOwnProperty(callFrame, asString(subscript)->value(callFrame))) {
             CHECK_FOR_EXCEPTION();
             return JSValue::encode(result);
         }

@@ -210,10 +210,8 @@ EncodedJSValue operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, En
             if (propertyAsUInt32 == propertyAsDouble)
                 return getByVal(exec, base, propertyAsUInt32);
         } else if (property.isString()) {
-            Identifier propertyName(exec, asString(property)->value(exec));
-            PropertySlot slot(base);
-            if (base->fastGetOwnPropertySlot(exec, propertyName, slot))
-                return JSValue::encode(slot.getValue(exec, propertyName));
+            if (JSValue result = base->fastGetOwnProperty(exec, asString(property)->value(exec)))
+                return JSValue::encode(result);
         }
     }
 

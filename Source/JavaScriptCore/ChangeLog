@@ -1,3 +1,32 @@
+2011-08-06  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65821
+        Don't form identifiers the first time a string is used as a property name.
+
+        Reviewed by Oliver Hunt.
+
+        This is a 1% win on SunSpider.
+
+        * dfg/DFGOperations.cpp:
+            - Use fastGetOwnProperty.
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+            - Use fastGetOwnProperty.
+        * runtime/JSCell.h:
+        * runtime/JSObject.h:
+        (JSC::JSCell::fastGetOwnProperty):
+            - Fast call to get a property without creating an identifier the first time.
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::find):
+        (JSC::PropertyTable::findWithString):
+            - Add interface to look up by either strinsg or identifiers.
+        * runtime/Structure.h:
+        (JSC::Structure::get):
+            - Add a get() call that takes a UString, not an Identifier.
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::hasHash):
+            - Add a call to check if the has has been set (to detect the first use as a property name).
+
 2011-08-06  Aron Rosenberg  <arosenberg@logitech.com>
 
         Reviewed by Benjamin Poulain.

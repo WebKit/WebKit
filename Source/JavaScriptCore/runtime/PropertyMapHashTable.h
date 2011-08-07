@@ -154,7 +154,8 @@ public:
     const_iterator end() const;
 
     // Find a value in the table.
-    find_iterator find(const KeyType& key);
+    find_iterator find(const KeyType&);
+    find_iterator findWithString(const KeyType&);
     // Add a value to the table
     std::pair<find_iterator, bool> add(const ValueType& entry);
     // Remove a value from the table.
@@ -324,6 +325,7 @@ inline PropertyTable::const_iterator PropertyTable::end() const
 inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
 {
     ASSERT(key);
+    ASSERT(key->isIdentifier());
     unsigned hash = key->existingHash();
     unsigned step = 0;
 
@@ -343,7 +345,39 @@ inline PropertyTable::find_iterator PropertyTable::find(const KeyType& key)
 #endif
 
         if (!step)
-            step =WTF::doubleHash(key->existingHash()) | 1;
+            step = WTF::doubleHash(key->existingHash()) | 1;
+        hash += step;
+
+#if DUMP_PROPERTYMAP_STATS
+        ++numRehashes;
+#endif
+    }
+}
+
+inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType& key)
+{
+    ASSERT(key);
+    ASSERT(!key->isIdentifier() && !key->hasHash());
+    unsigned hash = key->hash();
+    unsigned step = 0;
+
+#if DUMP_PROPERTYMAP_STATS
+    ++numProbes;
+#endif
+
+    while (true) {
+        unsigned entryIndex = m_index[hash & m_indexMask];
+        if (entryIndex == EmptyEntryIndex)
+            return std::make_pair((ValueType*)0, hash & m_indexMask);
+        if (equal(key, table()[entryIndex - 1].key))
+            return std::make_pair(&table()[entryIndex - 1], hash & m_indexMask);
+
+#if DUMP_PROPERTYMAP_STATS
+        ++numCollisions;
+#endif
+
+        if (!step)
+            step = WTF::doubleHash(key->existingHash()) | 1;
         hash += step;
 
 #if DUMP_PROPERTYMAP_STATS
