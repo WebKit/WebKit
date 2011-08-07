@@ -864,6 +864,8 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/websockets/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/workers/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/xml/*.idl) \
+	Source/ThirdParty/ANGLE/src/compiler/glslang.l \
+	Source/ThirdParty/ANGLE/src/compiler/glslang.y \
 	Source/WebCore/bindings/scripts/CodeGenerator.pm \
 	Source/WebCore/bindings/scripts/IDLParser.pm \
 	Source/WebCore/bindings/scripts/IDLStructure.pm \

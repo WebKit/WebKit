@@ -1,3 +1,10 @@
+2011-08-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Distribution fix for GTK+.
+
+        * GNUmakefile.am: Add some files to the distribution list.
+        * GNUmakefile.list.am: Strip removed files from the source list.
+
 2011-08-07  Jochen Eisinger  <jochen@chromium.org>
 
         Move FrameLoadRequest to loader/

@@ -1,3 +1,9 @@
+2011-08-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Distribution fix for GTK+.
+
+        * GNUmakefile.list.am: Strip removed files from the source list.
+
 2011-08-06  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65821

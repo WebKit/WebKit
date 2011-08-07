@@ -2270,7 +2270,6 @@ webcore_sources += \
 	Source/WebCore/page/Geoposition.h \
 	Source/WebCore/page/GroupSettings.cpp \
 	Source/WebCore/page/GroupSettings.h \
-	Source/WebCore/page/HaltablePlugin.h \
 	Source/WebCore/page/History.cpp \
 	Source/WebCore/page/History.h \
 	Source/WebCore/page/Location.cpp \
