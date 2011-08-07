@@ -2319,3 +2319,10 @@ tables/mozilla_expected_failures/collapsing_borders/bug41262-6.html
 # [Qt] move-selection-back-line-strict.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=65801
 editing/execCommand/move-selection-back-line-strict.html
+
+# [Qt] svg/zoom/page/zoom-svg-through-* results diverging between bots
+# https://bugs.webkit.org/show_bug.cgi?id=65831
+svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
+svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml
+svg/zoom/page/zoom-svg-through-object-with-auto-size.html
+svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml
