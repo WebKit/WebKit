@@ -1,3 +1,11 @@
+2011-08-07  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline a test on GTK+ for which r92554 checked in an
+        incorrect result.
+
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png: Update results.
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Ditto.
+
 2011-08-06  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed gardening.
