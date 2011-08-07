@@ -73,7 +73,7 @@ QString QWKHistoryItem::title() const
 {
     if (!d->m_backForwardListItem)
         return QString();
-    WKRetainPtr<WKStringRef> title = WKBackForwardListItemCopyTitle(d->m_backForwardListItem.get());
+    WKRetainPtr<WKStringRef> title(AdoptWK, WKBackForwardListItemCopyTitle(d->m_backForwardListItem.get()));
     return WKStringCopyQString(title.get());
 }
 
@@ -81,7 +81,7 @@ QUrl QWKHistoryItem::url() const
 {
     if (!d->m_backForwardListItem)
         return QUrl();
-    WKRetainPtr<WKURLRef> url = WKBackForwardListItemCopyURL(d->m_backForwardListItem.get());
+    WKRetainPtr<WKURLRef> url(AdoptWK, WKBackForwardListItemCopyURL(d->m_backForwardListItem.get()));
     return WKURLCopyQUrl(url.get());
 }
 

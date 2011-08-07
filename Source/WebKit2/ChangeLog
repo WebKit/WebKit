@@ -1,3 +1,16 @@
+2011-08-07  Joseph Pecoraro  <joepeck@webkit.org>
+
+        [QT] Possible Leaks WKRetainPtr<> should Adopt allocated Copy
+        https://bugs.webkit.org/show_bug.cgi?id=65790
+
+        Reviewed by Sam Weinig.
+
+        Fix a leak by adopting an allocation instead of retaining it.
+
+        * UIProcess/qt/qwkhistory.cpp:
+        (QWKHistoryItem::title):
+        (QWKHistoryItem::url):
+
 2011-08-06  Mark Rowe  <mrowe@apple.com>
 
         Fix a memory leak found via code inspection.
