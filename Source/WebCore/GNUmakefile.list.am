@@ -2119,6 +2119,7 @@ webcore_sources += \
 	Source/WebCore/loader/FrameLoaderStateMachine.cpp \
 	Source/WebCore/loader/FrameLoaderStateMachine.h \
 	Source/WebCore/loader/FrameLoaderTypes.h \
+	Source/WebCore/loader/FrameLoadRequest.h \
 	Source/WebCore/loader/FrameNetworkingContext.h \
 	Source/WebCore/loader/FTPDirectoryParser.cpp \
 	Source/WebCore/loader/FTPDirectoryParser.h \
@@ -2255,7 +2256,6 @@ webcore_sources += \
 	Source/WebCore/page/Frame.h \
 	Source/WebCore/page/FrameActionScheduler.cpp \
 	Source/WebCore/page/FrameActionScheduler.h \
-	Source/WebCore/page/FrameLoadRequest.h \
 	Source/WebCore/page/FrameTree.cpp \
 	Source/WebCore/page/FrameTree.h \
 	Source/WebCore/page/FrameView.cpp \

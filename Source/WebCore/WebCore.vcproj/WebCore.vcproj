@@ -25510,10 +25510,6 @@
 				</File>
 			</File>
 			<File
-				RelativePath="..\page\FrameLoadRequest.h"
-				>
-			</File>
-			<File
 				RelativePath="..\page\FrameTree.cpp"
 				>
 			</File>
@@ -26035,6 +26031,10 @@
 			</File>
 			<File
 				RelativePath="..\loader\FrameLoaderTypes.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\FrameLoadRequest.h"
 				>
 			</File>
 			<File

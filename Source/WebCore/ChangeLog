@@ -1,3 +1,22 @@
+2011-08-07  Jochen Eisinger  <jochen@chromium.org>
+
+        Move FrameLoadRequest to loader/
+        https://bugs.webkit.org/show_bug.cgi?id=65817
+
+        Reviewed by Alexey Proskuryakov.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/FrameLoadRequest.h:
+        (WebCore::FrameLoadRequest::FrameLoadRequest):
+        (WebCore::FrameLoadRequest::isEmpty):
+        (WebCore::FrameLoadRequest::requester):
+        (WebCore::FrameLoadRequest::resourceRequest):
+        (WebCore::FrameLoadRequest::frameName):
+        (WebCore::FrameLoadRequest::setFrameName):
+
 2011-08-07  Sam White  <samuel.white@rochester.edu>
 
         Add the ability to search the AccessibilityObject cache
