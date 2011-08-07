@@ -185,6 +185,30 @@ static JSValueRef attributedStringRangeIsMisspelledCallback(JSContextRef context
     return JSValueMakeBoolean(context, toAXElement(thisObject)->attributedStringRangeIsMisspelled(location, length));
 }
 
+static JSValueRef uiElementForSearchPredicateCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    AccessibilityUIElement* startElement = 0;
+    bool isDirectionNext = true;
+    JSStringRef searchKey = 0;
+    JSStringRef searchText = 0;
+    if (argumentCount == 4) {
+        startElement = toAXElement(JSValueToObject(context, arguments[0], exception));
+        isDirectionNext = JSValueToBoolean(context, arguments[1]);
+        if (JSValueIsString(context, arguments[2]))
+            searchKey = JSValueToStringCopy(context, arguments[2], exception);
+        if (JSValueIsString(context, arguments[3]))
+            searchText = JSValueToStringCopy(context, arguments[3], exception);
+    }
+    
+    JSObjectRef resultObject = AccessibilityUIElement::makeJSAccessibilityUIElement(context, toAXElement(thisObject)->uiElementForSearchPredicate(startElement, isDirectionNext, searchKey, searchText));
+    if (searchKey)
+        JSStringRelease(searchKey);
+    if (searchText)
+        JSStringRelease(searchText);
+    
+    return resultObject;
+}
+
 static JSValueRef indexOfChildCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     if (argumentCount != 1)
@@ -966,6 +990,7 @@ JSClassRef AccessibilityUIElement::getJSClass()
         { "stringForRange", stringForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributedStringForRange", attributedStringForRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "attributedStringRangeIsMisspelled", attributedStringRangeIsMisspelledCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "uiElementForSearchPredicate", uiElementForSearchPredicateCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "childAtIndex", childAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "linkedUIElementAtIndex", linkedUIElementAtIndexCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "indexOfChild", indexOfChildCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

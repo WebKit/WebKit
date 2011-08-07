@@ -580,6 +580,12 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
     return false;
 }
 
+AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(AccessibilityUIElement* startElement, bool isDirectionNext, JSStringRef searchKey, JSStringRef searchText)
+{
+    // FIXME: implement
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned column, unsigned row)
 {
     if (!m_element)

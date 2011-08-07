@@ -932,6 +932,26 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned location
     return false;
 }
 
+AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(AccessibilityUIElement* startElement, bool isDirectionNext, JSStringRef searchKey, JSStringRef searchText)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    NSMutableDictionary* parameter = [NSMutableDictionary dictionary];
+    [parameter setObject:(isDirectionNext) ? @"AXDirectionNext" : @"AXDirectionPrevious" forKey:@"AXDirection"];
+    [parameter setObject:[NSNumber numberWithInt:1] forKey:@"AXResultsLimit"];
+    if (startElement)
+        [parameter setObject:(id)startElement->platformUIElement() forKey:@"AXStartElement"];
+    if (searchKey)
+        [parameter setObject:[NSString stringWithJSStringRef:searchKey] forKey:@"AXSearchKey"];
+    if (searchText)
+        [parameter setObject:[NSString stringWithJSStringRef:searchText] forKey:@"AXSearchText"];
+    
+    id uiElement = [[m_element accessibilityAttributeValue:@"AXUIElementsForSearchPredicate" forParameter:parameter] lastObject];
+    return AccessibilityUIElement(uiElement);
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
 JSStringRef AccessibilityUIElement::attributesOfColumnHeaders()
 {
     // not yet defined in AppKit... odd

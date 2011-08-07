@@ -1,3 +1,29 @@
+2011-08-07  Sam White  <samuel.white@rochester.edu>
+
+        Add the ability to search the AccessibilityObject cache
+        https://bugs.webkit.org/show_bug.cgi?id=64994
+        
+        New AccessibilityObject cache search functionality and API for the mac
+        platform to expose it. At this point the AccessibilityObject cache can
+        be searched using one of the supported search keys that have been defined
+        in AccessibilityObject.h, or by passing search text.
+
+        Reviewed by Chris Fleizach.
+
+        Test: platform/mac/accessibility/search-predicate.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::isAccessibilityObjectSearchMatch):
+        (WebCore::AccessibilityObject::isAccessibilityTextSearchMatch):
+        (WebCore::AccessibilityObject::accessibilityObjectContainsText):
+        (WebCore::AccessibilityObject::accessibleObjectsWithAccessibilitySearchPredicate):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (createAccessibilitySearchKeyMap):
+        (accessibilitySearchKeyForString):
+        (-[AccessibilityObjectWrapper accessibilityParameterizedAttributeNames]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:forParameter:]):
+
 2011-08-06  Mark Rowe  <mrowe@apple.com>
 
         Fix a memory leak found via code inspection.

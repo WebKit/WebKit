@@ -1,3 +1,26 @@
+2011-08-07  Sam White  <samuel.white@rochester.edu>
+
+        Add the ability to search the AccessibilityObject cache
+        https://bugs.webkit.org/show_bug.cgi?id=64994
+        
+        Added testing support for AccessibilityObject cache searching. Currently,
+        only the mac platform is full supported and has had API exposed. Other
+        platforms have only have this new functionality stubbed. Full implementation
+        is a job suited only for an accessibility expert of each respective platform.
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (uiElementForSearchPredicateCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::uiElementForSearchPredicate):
+
 2011-08-06  Adam Barth  <abarth@webkit.org>
 
         Remove dead code in webkitpy

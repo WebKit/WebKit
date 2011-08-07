@@ -75,6 +75,7 @@ class AccessibilityObjectWrapper;
 
 namespace WebCore {
 
+class AccessibilityObject;
 class AXObjectCache;
 class Element;
 class Frame;
@@ -217,6 +218,60 @@ enum AccessibilitySortDirection {
     SortDirectionDescending,
 };
 
+enum AccessibilitySearchDirection {
+    SearchDirectionNext = 1,
+    SearchDirectionPrevious
+};
+
+enum AccessibilitySearchKey {
+    AnyTypeSearchKey = 1,
+    BlockquoteSameLevelSearchKey,
+    BlockquoteSearchKey,
+    BoldFontSearchKey,
+    ButtonSearchKey,
+    CheckBoxSearchKey,
+    ControlSearchKey,
+    DifferentTypeSearchKey,
+    FontChangeSearchKey,
+    FontColorChangeSearchKey,
+    FrameSearchKey,
+    GraphicSearchKey,
+    HeadingLevel1SearchKey,
+    HeadingLevel2SearchKey,
+    HeadingLevel3SearchKey,
+    HeadingLevel4SearchKey,
+    HeadingLevel5SearchKey,
+    HeadingLevel6SearchKey,
+    HeadingSameLevelSearchKey,
+    HeadingSearchKey,
+    ItalicFontSearchKey,
+    LandmarkSearchKey,
+    LinkSearchKey,
+    ListSearchKey,
+    LiveRegionSearchKey,
+    MisspelledWordSearchKey,
+    PlainTextSearchKey,
+    RadioGroupSearchKey,
+    SameTypeSearchKey,
+    StaticTextSearchKey,
+    StyleChangeSearchKey,
+    TableSameLevelSearchKey,
+    TableSearchKey,
+    TextFieldSearchKey,
+    UnderlineSearchKey,
+    UnvisitedLinkSearchKey,
+    VisitedLinkSearchKey
+};
+
+struct AccessibilitySearchPredicate {
+    AccessibilityObject* axContainerObject;
+    AccessibilityObject* axStartObject;
+    AccessibilitySearchDirection axSearchDirection;
+    AccessibilitySearchKey axSearchKey;
+    String* searchText;
+    unsigned resultsLimit;
+};
+
 struct VisiblePositionRange {
 
     VisiblePosition start;
@@ -253,6 +308,10 @@ struct PlainTextRange {
 class AccessibilityObject : public RefCounted<AccessibilityObject> {
 protected:
     AccessibilityObject();
+    
+    // Should only be called by accessibleObjectsWithAccessibilitySearchPredicate for AccessibilityObject searching.
+    static bool isAccessibilityObjectSearchMatch(AccessibilityObject*, AccessibilitySearchPredicate*);
+    static bool isAccessibilityTextSearchMatch(AccessibilityObject*, AccessibilitySearchPredicate*);
 public:
     virtual ~AccessibilityObject();
     virtual void detach();
@@ -262,6 +321,8 @@ public:
     virtual bool isAccessibilityRenderObject() const { return false; }
     virtual bool isAccessibilityScrollbar() const { return false; }
     virtual bool isAccessibilityScrollView() const { return false; }
+    
+    bool accessibilityObjectContainsText(String *) const;
     
     virtual bool isAnchor() const { return false; }
     virtual bool isAttachment() const { return false; }
@@ -408,6 +469,7 @@ public:
     virtual AccessibilityObject* parentObjectUnignored() const;
     virtual AccessibilityObject* parentObjectIfExists() const { return 0; }
     static AccessibilityObject* firstAccessibleObjectFromNode(const Node*);
+    static void accessibleObjectsWithAccessibilitySearchPredicate(AccessibilitySearchPredicate*, AccessibilityChildrenVector&);
 
     virtual AccessibilityObject* observableObject() const { return 0; }
     virtual void linkedUIElements(AccessibilityChildrenVector&) const { }

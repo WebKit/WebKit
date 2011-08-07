@@ -87,6 +87,159 @@ void AccessibilityObject::detach()
 #endif    
 }
 
+bool AccessibilityObject::isAccessibilityObjectSearchMatch(AccessibilityObject* axObject, AccessibilitySearchPredicate* axSearchPredicate)
+{
+    if (!axObject || !axSearchPredicate)
+        return false;
+    
+    switch (axSearchPredicate->axSearchKey) {
+    // The AnyTypeSearchKey matches any non-null AccessibilityObject.
+    case AnyTypeSearchKey:
+        return true;
+        
+    case BlockquoteSameLevelSearchKey:
+        return axSearchPredicate->axStartObject
+            && axObject->isBlockquote()
+            && axObject->blockquoteLevel() == axSearchPredicate->axStartObject->blockquoteLevel();
+        
+    case BlockquoteSearchKey:
+        return axObject->isBlockquote();
+        
+    case BoldFontSearchKey:
+        return axObject->hasBoldFont();
+        
+    case ButtonSearchKey:
+        return axObject->isButton();
+        
+    case CheckBoxSearchKey:
+        return axObject->isCheckbox();
+        
+    case ControlSearchKey:
+        return axObject->isControl();
+        
+    case DifferentTypeSearchKey:
+        return axSearchPredicate->axStartObject
+            && axObject->roleValue() != axSearchPredicate->axStartObject->roleValue();
+        
+    case FontChangeSearchKey:
+        return axSearchPredicate->axStartObject
+            && !axObject->hasSameFont(axSearchPredicate->axStartObject->renderer());
+        
+    case FontColorChangeSearchKey:
+        return axSearchPredicate->axStartObject
+            && !axObject->hasSameFontColor(axSearchPredicate->axStartObject->renderer());
+        
+    // FIXME: Handle this search key.
+    case FrameSearchKey:
+        return false;
+        
+    case GraphicSearchKey:
+        return axObject->isImage();
+        
+    case HeadingLevel1SearchKey:
+        return axObject->headingLevel() == 1;
+        
+    case HeadingLevel2SearchKey:
+        return axObject->headingLevel() == 2;
+        
+    case HeadingLevel3SearchKey:
+        return axObject->headingLevel() == 3;
+        
+    case HeadingLevel4SearchKey:
+        return axObject->headingLevel() == 4;
+        
+    case HeadingLevel5SearchKey:
+        return axObject->headingLevel() == 5;
+        
+    case HeadingLevel6SearchKey:
+        return axObject->headingLevel() == 6;
+        
+    case HeadingSameLevelSearchKey:
+        return axSearchPredicate->axStartObject
+            && axObject->isHeading()
+            && axObject->headingLevel() == axSearchPredicate->axStartObject->headingLevel();
+        
+    case HeadingSearchKey:
+        return axObject->isHeading();
+        
+    case ItalicFontSearchKey:
+        return axObject->hasItalicFont();
+        
+    case LandmarkSearchKey:
+        return axObject->isLandmark();
+        
+    case LinkSearchKey:
+        return axObject->isLink();
+        
+    case ListSearchKey:
+        return axObject->isList();
+        
+    case LiveRegionSearchKey:
+        return axObject->supportsARIALiveRegion();
+        
+    case MisspelledWordSearchKey:
+        return axObject->hasMisspelling();
+        
+    case PlainTextSearchKey:
+        return axObject->hasPlainText();
+        
+    case RadioGroupSearchKey:
+        return axObject->isRadioGroup();
+        
+    case SameTypeSearchKey:
+        return axSearchPredicate->axStartObject
+            && axObject->roleValue() == axSearchPredicate->axStartObject->roleValue();
+        
+    case StaticTextSearchKey:
+        return axObject->hasStaticText();
+        
+    case StyleChangeSearchKey:
+        return axSearchPredicate->axStartObject
+            && !axObject->hasSameStyle(axSearchPredicate->axStartObject->renderer());
+        
+    case TableSameLevelSearchKey:
+        return axSearchPredicate->axStartObject
+            && axObject->isAccessibilityTable()
+            && axObject->tableLevel() == axSearchPredicate->axStartObject->tableLevel();
+        
+    case TableSearchKey:
+        return axObject->isAccessibilityTable();
+        
+    case TextFieldSearchKey:
+        return axObject->isTextControl();
+        
+    case UnderlineSearchKey:
+        return axObject->hasUnderline();
+        
+    case UnvisitedLinkSearchKey:
+        return axObject->isUnvisited();
+        
+    case VisitedLinkSearchKey:
+        return axObject->isVisited();
+        
+    default:
+        return false;
+    }
+}
+
+bool AccessibilityObject::isAccessibilityTextSearchMatch(AccessibilityObject* axObject, AccessibilitySearchPredicate* axSearchPredicate)
+{
+    if (!axObject || !axSearchPredicate)
+        return false;
+    
+    return axObject->accessibilityObjectContainsText(axSearchPredicate->searchText);
+}
+
+bool AccessibilityObject::accessibilityObjectContainsText(String* text) const
+{
+    // If text is null or empty we return true.
+    return !text
+        || text->isEmpty()
+        || title().contains(*text, false)
+        || accessibilityDescription().contains(*text, false)
+        || stringValue().contains(*text, false);
+}
+
 bool AccessibilityObject::isBlockquote() const
 {
     return node() && node()->hasTagName(blockquoteTag);
@@ -193,6 +346,40 @@ AccessibilityObject* AccessibilityObject::firstAccessibleObjectFromNode(const No
     }
 
     return accessibleObject;
+}
+
+void AccessibilityObject::accessibleObjectsWithAccessibilitySearchPredicate(AccessibilitySearchPredicate* axSearchPredicate, AccessibilityChildrenVector& axResults)
+{
+    ASSERT(AXObjectCache::accessibilityEnabled());
+    
+    if (!axSearchPredicate)
+        return;
+    
+    AccessibilityChildrenVector axChildren;
+    if (axSearchPredicate->axContainerObject)
+        axChildren.append(axSearchPredicate->axContainerObject);
+    
+    bool isSearchDirectionNext = (axSearchPredicate->axSearchDirection == SearchDirectionNext);
+    bool didFindAXStartObject = (!axSearchPredicate->axStartObject);
+    
+    // FIXME: Iterate the AccessibilityObject cache creating and adding objects if nessesary.
+    while (!axChildren.isEmpty() && axResults.size() < axSearchPredicate->resultsLimit) {
+        AccessibilityObject* axChild = axChildren.last().get();
+        axChildren.removeLast();
+        
+        if (didFindAXStartObject) {
+            if (isAccessibilityObjectSearchMatch(axChild, axSearchPredicate)
+                && isAccessibilityTextSearchMatch(axChild, axSearchPredicate))
+                axResults.append(axChild);
+        } else if (axChild == axSearchPredicate->axStartObject)
+            didFindAXStartObject = true;
+        
+        AccessibilityChildrenVector axGrandchildren = axChild->children();
+        unsigned axGrandchildrenSize = axChild->children().size();
+        for (unsigned i = (isSearchDirectionNext) ? axGrandchildrenSize : 0; (isSearchDirectionNext) ? i > 0 : i < axGrandchildrenSize; (isSearchDirectionNext) ? i-- : i++)
+            // FIXME: Handle attachments.
+            axChildren.append(axGrandchildren.at((isSearchDirectionNext) ? i - 1 : i).get());
+    }
 }
 
 bool AccessibilityObject::isARIAInput(AccessibilityRole ariaRole)

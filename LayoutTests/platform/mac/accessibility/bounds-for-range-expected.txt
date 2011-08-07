@@ -51,6 +51,7 @@ AXStyleTextMarkerRangeForTextMarker
 AXLengthForTextMarkerRange
 AXBoundsForRange
 AXStringForRange
+AXUIElementsForSearchPredicate
 
 ----------------------
 {{-1.000000, -1.000000}, {59.000000, 18.000000}}

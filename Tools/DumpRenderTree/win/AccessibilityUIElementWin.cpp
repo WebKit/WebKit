@@ -488,6 +488,11 @@ bool AccessibilityUIElement::attributedStringRangeIsMisspelled(unsigned, unsigne
     return false;
 }
 
+AccessibilityUIElement AccessibilityUIElement::uiElementForSearchPredicate(AccessibilityUIElement* startElement, bool isDirectionNext, JSStringRef searchKey, JSStringRef searchText)
+{
+    return 0;
+}
+
 AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned column, unsigned row)
 {
     return 0;

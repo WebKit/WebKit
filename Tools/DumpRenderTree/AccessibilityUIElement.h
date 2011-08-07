@@ -192,6 +192,7 @@ public:
     JSStringRef stringForRange(unsigned location, unsigned length);
     JSStringRef attributedStringForRange(unsigned location, unsigned length);
     bool attributedStringRangeIsMisspelled(unsigned location, unsigned length);
+    AccessibilityUIElement uiElementForSearchPredicate(AccessibilityUIElement* startElement, bool isDirectionNext, JSStringRef searchKey, JSStringRef searchText);
     
     // Table-specific
     AccessibilityUIElement cellForColumnAndRow(unsigned column, unsigned row);

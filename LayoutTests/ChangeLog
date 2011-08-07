@@ -1,3 +1,21 @@
+2011-08-07  Sam White  <samuel.white@rochester.edu>
+
+        Add the ability to search the AccessibilityObject cache
+        https://bugs.webkit.org/show_bug.cgi?id=64994
+        
+        Tests for the new AccessibilityObject cache search API and the additional
+        functionality in the AccessibilityObject class that makes AccessibilityObject
+        cache searching possible.
+        
+        Additional tests for finding frames, misspellings, and visited links will be
+        included in a subsequent patch.
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/accessibility/bounds-for-range-expected.txt:
+        * platform/mac/accessibility/search-predicate-expected.txt: Added.
+        * platform/mac/accessibility/search-predicate.html: Added.
+
 2011-08-07  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline a test on GTK+ for which r92554 checked in an
