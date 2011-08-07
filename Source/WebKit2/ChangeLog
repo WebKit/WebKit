@@ -1,3 +1,13 @@
+2011-08-06  Mark Rowe  <mrowe@apple.com>
+
+        Fix a memory leak found via code inspection.
+
+        Rubber-stamped by Dan Bernstein.
+
+        * WebProcess/Downloads/mac/DownloadMac.mm:
+        (WebKit::setOriginalURLForDownload): Adopt the newly-allocated NSURL instance
+        so that it does not leak.
+
 2011-08-06  Aron Rosenberg  <arosenberg@logitech.com>
 
         Reviewed by Benjamin Poulain.

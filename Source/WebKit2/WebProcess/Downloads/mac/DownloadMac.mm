@@ -110,7 +110,7 @@ static void setOriginalURLForDownload(WebPage *webPage, NSURLDownload *download,
         else
             hostOnlyURLString.adoptNS([[NSString alloc] initWithFormat:@"%@://%@", scheme, host]);
 
-        RetainPtr<NSURL> hostOnlyURL = [[NSURL alloc] initWithString:hostOnlyURLString.get()];
+        RetainPtr<NSURL> hostOnlyURL(AdoptNS, [[NSURL alloc] initWithString:hostOnlyURLString.get()]);
 
         ASSERT([download respondsToSelector:@selector(_setOriginatingURL:)]);
         [download _setOriginatingURL:hostOnlyURL.get()];
