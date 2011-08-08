@@ -81,19 +81,18 @@ namespace WebCore {
 //    V8GCController::unregisterGlobalHandle(type, host, handle);
 // #endif
 //
-typedef HashMap<v8::Value*, GlobalHandleInfo*> GlobalHandleMap;
 
-static GlobalHandleMap& globalHandleMap()
+static GlobalHandleMap& currentGlobalHandleMap()
 {
-    DEFINE_STATIC_LOCAL(GlobalHandleMap, staticGlobalHandleMap, ());
-    return staticGlobalHandleMap;
+    return V8BindingPerIsolateData::current()->globalHandleMap();
 }
 
 // The function is the place to set the break point to inspect
 // live global handles. Leaks are often come from leaked global handles.
 static void enumerateGlobalHandles()
 {
-    for (GlobalHandleMap::iterator it = globalHandleMap().begin(), end = globalHandleMap().end(); it != end; ++it) {
+    GlobalHandleMap& globalHandleMap = currentGlobalHandleMap();
+    for (GlobalHandleMap::iterator it = globalHandleMap.begin(), end = globalHandleMap.end(); it != end; ++it) {
         GlobalHandleInfo* info = it->second;
         UNUSED_PARAM(info);
         v8::Value* handle = it->first;
@@ -103,14 +102,16 @@ static void enumerateGlobalHandles()
 
 void V8GCController::registerGlobalHandle(GlobalHandleType type, void* host, v8::Persistent<v8::Value> handle)
 {
-    ASSERT(!globalHandleMap().contains(*handle));
-    globalHandleMap().set(*handle, new GlobalHandleInfo(host, type));
+    GlobalHandleMap& globalHandleMap = currentGlobalHandleMap();
+    ASSERT(!globalHandleMap.contains(*handle));
+    globalHandleMap.set(*handle, new GlobalHandleInfo(host, type));
 }
 
 void V8GCController::unregisterGlobalHandle(void* host, v8::Persistent<v8::Value> handle)
 {
-    ASSERT(globalHandleMap().contains(*handle));
-    GlobalHandleInfo* info = globalHandleMap().take(*handle);
+    GlobalHandleMap& globalHandleMap = currentGlobalHandleMap();
+    ASSERT(globalHandleMap.contains(*handle));
+    GlobalHandleInfo* info = globalHandleMap.take(*handle);
     ASSERT(info->m_host == host);
     delete info;
 }

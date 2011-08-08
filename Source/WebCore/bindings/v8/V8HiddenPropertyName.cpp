@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8HiddenPropertyName.h"
 
+#include "V8Binding.h"
 #include <string.h>
 #include <wtf/Vector.h>
 
@@ -42,8 +43,11 @@ namespace WebCore {
 #define V8_DEFINE_PROPERTY(name) \
 v8::Handle<v8::String> V8HiddenPropertyName::name() \
 { \
-    static v8::Persistent<v8::String>* string = createString("WebCore::HiddenProperty::" V8_AS_STRING(name)); \
-    return *string; \
+    V8HiddenPropertyName* hiddenPropertyName = V8BindingPerIsolateData::current()->hiddenPropertyName(); \
+    if (hiddenPropertyName->m_##name.IsEmpty()) { \
+        hiddenPropertyName->m_##name = createString("WebCore::HiddenProperty::" V8_AS_STRING(name)); \
+    } \
+    return hiddenPropertyName->m_##name; \
 }
 
 V8_HIDDEN_PROPERTIES(V8_DEFINE_PROPERTY);
@@ -59,10 +63,10 @@ v8::Handle<v8::String> V8HiddenPropertyName::hiddenReferenceName(const char* nam
     return v8::String::NewSymbol(prefixedName.data(), static_cast<int>(prefixedName.size()));
 }
 
-v8::Persistent<v8::String>* V8HiddenPropertyName::createString(const char* key)
+v8::Persistent<v8::String> V8HiddenPropertyName::createString(const char* key)
 {
     v8::HandleScope scope;
-    return new v8::Persistent<v8::String>(v8::Persistent<v8::String>::New(v8::String::NewSymbol(key)));
+    return v8::Persistent<v8::String>::New(v8::String::NewSymbol(key));
 }
 
 }  // namespace WebCore

@@ -137,7 +137,8 @@ void V8LazyEventListener::prepareListenerObject(ScriptExecutionContext* context)
             // source returned (sometimes a RegExp is applied as well) for some
             // other use. That fails miserably if the actual wrapper source is
             // returned.
-            DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, toStringTemplate, ());
+            v8::Persistent<v8::FunctionTemplate>& toStringTemplate =
+                V8BindingPerIsolateData::current()->lazyEventListenerToStringTemplate();
             if (toStringTemplate.IsEmpty())
                 toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(V8LazyEventListenerToString));
             v8::Local<v8::Function> toStringFunction;

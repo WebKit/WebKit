@@ -1,3 +1,41 @@
+2011-08-08  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65778
+        [WebWorkers][chromium] Make statics thread-safe and make sure V8 API accesses correct isolates.
+
+        Reviewed by David Levin.
+
+        Covered by existing tests.
+
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8BindingPerIsolateData::lazyEventListenerToStringTemplate):
+        (WebCore::V8BindingPerIsolateData::hiddenPropertyName):
+        (WebCore::V8BindingPerIsolateData::globalHandleMap):
+        (WebCore::AllowAllocation::AllowAllocation): Moving to V8Binding.h from V8Utilities.h to resolve header dependency.
+        (WebCore::AllowAllocation::~AllowAllocation):
+        (WebCore::AllowAllocation::current):
+        (WebCore::SafeAllocation::newInstance):
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::currentGlobalHandleMap):
+        (WebCore::enumerateGlobalHandles):
+        (WebCore::V8GCController::registerGlobalHandle):
+        (WebCore::V8GCController::unregisterGlobalHandle):
+        * bindings/v8/V8HiddenPropertyName.cpp:
+        (WebCore::V8HiddenPropertyName::createString):
+        * bindings/v8/V8HiddenPropertyName.h:
+        * bindings/v8/V8LazyEventListener.cpp:
+        (WebCore::V8LazyEventListener::prepareListenerObject):
+        * bindings/v8/V8NPObject.cpp:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::checkNewLegal):
+        * bindings/v8/V8Utilities.h:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::WorkerContextExecutionProxy):
+        (WebCore::WorkerContextExecutionProxy::initIsolate):
+        * bindings/v8/WorkerContextExecutionProxy.h:
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::scheduleExecutionTermination):
+
 2011-08-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92607.

@@ -95,56 +95,6 @@ namespace WebCore {
         return V8CallbackType::create(value, getScriptExecutionContext());
     }
 
-    class AllowAllocation {
-    public:
-        inline AllowAllocation()
-        {
-            m_previous = m_current;
-            m_current = true;
-        }
-
-        inline ~AllowAllocation()
-        {
-            m_current = m_previous;
-        }
-
-        static bool m_current;
-
-    private:
-        bool m_previous;
-    };
-
-    class SafeAllocation {
-     public:
-      static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>);
-      static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::ObjectTemplate>);
-      static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
-    };
-
-    v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> function)
-    {
-        if (function.IsEmpty())
-            return v8::Local<v8::Object>();
-        AllowAllocation allow;
-        return function->NewInstance();
-    }
-
-    v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::ObjectTemplate> objectTemplate)
-    {
-        if (objectTemplate.IsEmpty())
-            return v8::Local<v8::Object>();
-        AllowAllocation allow;
-        return objectTemplate->NewInstance();
-    }
-
-    v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[])
-    {
-        if (function.IsEmpty())
-            return v8::Local<v8::Object>();
-        AllowAllocation allow;
-        return function->NewInstance(argc, argv);
-    }
-
 } // namespace WebCore
 
 #endif // V8Utilities_h
