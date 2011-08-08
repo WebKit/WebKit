@@ -185,11 +185,11 @@ var test = function()
             function didEvaluate()
             {
                 dumpConsoleMessageURLs();
-                InspectorTest.addSniffer(panel, "formatAnchorText", InspectorTest.runAfterPendingDispatches.bind(InspectorTest, didFormatAnchorText));
+                InspectorTest.addSniffer(WebInspector, "formatLinkText", InspectorTest.runAfterPendingDispatches.bind(InspectorTest, didFormatLinkText));
                 panel._toggleFormatSourceFiles();
             }
 
-            function didFormatAnchorText()
+            function didFormatLinkText()
             {
                 dumpConsoleMessageURLs();
                 next();

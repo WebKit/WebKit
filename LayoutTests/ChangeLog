@@ -1,3 +1,9 @@
+2011-08-08  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: unreviewed, build fix for r92598.
+
+        * inspector/debugger/script-formatter.html:
+
 2011-08-08  Andrei Popescu  <andreip@google.com>
 
         svg/zoom/page/zoom-svg-through-object-with-*.xhtml are flaky
