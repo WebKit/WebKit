@@ -740,7 +740,7 @@ WebInspector.ConsoleView.prototype = {
         // Prevent infinite expansion of cross-referencing arrays.
         return this._format(output, output.subtype && output.subtype === "array");
     },
-    
+
     get scrollLeft()
     {
         return this.messagesElement.scrollLeft;
@@ -844,10 +844,10 @@ WebInspector.ConsoleMessage.prototype = {
         this._formattedMessage.className = "console-message-text source-code";
 
         if (this._stackTrace && this._stackTrace.length && this._stackTrace[0].url) {
-            var urlElement = WebInspector.linkifyCallFrameAsNode(this._stackTrace[0], "console-message-url");
+            var urlElement = this._linkifyCallFrame(this._stackTrace[0]);
             this._formattedMessage.appendChild(urlElement);
         } else if (this.url && this.url !== "undefined") {
-            var urlElement = WebInspector.linkifyResourceAsNode(this.url, "scripts", this.line, "console-message-url");
+            var urlElement = this._linkifyLocation(this.url, this.line, 0);
             this._formattedMessage.appendChild(urlElement);
         }
 
@@ -878,6 +878,19 @@ WebInspector.ConsoleMessage.prototype = {
 
         // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
         this.message = this._formattedMessage.textContent;
+    },
+
+    _linkifyLocation: function(url, lineNumber, columnNumber)
+    {
+        // FIXME(62725): stack trace line/column numbers are one-based.
+        lineNumber = lineNumber ? lineNumber - 1 : undefined;
+        columnNumber = columnNumber ? columnNumber - 1 : 0;
+        return WebInspector.debuggerPresentationModel.linkifyLocation(url, lineNumber, columnNumber, "console-message-url");
+    },
+
+    _linkifyCallFrame: function(callFrame)
+    {
+        return this._linkifyLocation(callFrame.url, callFrame.lineNumber, callFrame.columnNumber);
     },
 
     isErrorOrWarning: function()
@@ -1044,7 +1057,7 @@ WebInspector.ConsoleMessage.prototype = {
             content.appendChild(messageTextElement);
 
             if (frame.url) {
-                var urlElement = WebInspector.linkifyCallFrameAsNode(frame, "console-message-url");
+                var urlElement = this._linkifyCallFrame(frame);
                 content.appendChild(urlElement);
             }
 

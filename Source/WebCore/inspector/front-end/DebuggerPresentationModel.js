@@ -34,7 +34,8 @@ WebInspector.DebuggerPresentationModel = function()
     this._formatter = new WebInspector.ScriptFormatter();
     this._sourceFiles = {};
     this._messages = [];
-    this._anchors = [];
+    // FIXME: move this to RawSourceCode when it's not re-created in pretty-print mode.
+    this._sourceMappingListeners = [];
     this._breakpointsByDebuggerId = {};
     this._breakpointsWithoutSourceFile = {};
 
@@ -119,20 +120,42 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._sourceFiles[sourceFileId].requestContent(callback);
     },
 
-    registerAnchor: function(sourceURL, scriptId, lineNumber, columnNumber, updateHandler)
+    addSourceMappingListener: function(sourceURL, sourceId, listener)
     {
-        var anchor = { sourceURL: sourceURL, scriptId: scriptId, lineNumber: lineNumber, columnNumber: columnNumber, updateHandler: updateHandler };
-        this._anchors.push(anchor);
-        this._updateAnchor(anchor);
+        this._sourceMappingListeners.push(listener);
     },
 
-    _updateAnchor: function(anchor)
+    removeSourceMappingListener: function(sourceURL, sourceId, listener)
     {
-        var sourceFile = this._sourceFileForScript(anchor.sourceURL, anchor.scriptId);
-        if (!sourceFile)
-            return;
+        // FIXME: implement this.
+    },
 
-        this._scriptLocationToUILocation(anchor.sourceURL, anchor.scriptId, anchor.lineNumber, anchor.columnNumber, anchor.updateHandler);
+    linkifyLocation: function(sourceURL, lineNumber, columnNumber, classes)
+    {
+        var linkText = WebInspector.formatLinkText(sourceURL, lineNumber);
+        var anchor = WebInspector.linkifyURLAsNode(sourceURL, linkText, classes, false);
+
+        var sourceFile = this._sourceFileForScript(sourceURL);
+        if (!sourceFile) {
+            anchor.setAttribute("preferred_panel", "resources");
+            anchor.setAttribute("line_number", lineNumber);
+            return anchor;
+        }
+
+        function updateAnchor()
+        {
+            function didGetLocation(sourceFileId, lineNumber)
+            {
+                anchor.textContent = WebInspector.formatLinkText(sourceFile.url, lineNumber);
+                anchor.setAttribute("preferred_panel", "scripts");
+                anchor.setAttribute("source_file_id", sourceFileId);
+                anchor.setAttribute("line_number", lineNumber);
+            }
+            this._scriptLocationToUILocation(sourceURL, null, lineNumber, columnNumber, didGetLocation.bind(this));
+        }
+        updateAnchor.call(this);
+        this.addSourceMappingListener(sourceURL, null, updateAnchor.bind(this));
+        return anchor;
     },
 
     _parsedScriptSource: function(event)
@@ -281,8 +304,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         for (var i = 0; i < messages.length; ++i)
             this._addConsoleMessage(messages[i]);
 
-        for (var i = 0; i < this._anchors.length; ++i)
-            this._updateAnchor(this._anchors[i]);
+        // FIXME: move this to RawSourceCode.
+        for (var i = 0; i < this._sourceMappingListeners.length; ++i)
+            this._sourceMappingListeners[i]();
 
         if (WebInspector.debuggerModel.callFrames)
             this._debuggerPaused();
@@ -616,8 +640,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _sourceFileForScript: function(sourceURL, scriptId)
     {
-        if (!sourceURL)
-            sourceURL = WebInspector.debuggerModel.scriptForSourceID(scriptId).sourceURL;
+        if (!sourceURL) {
+            var script = WebInspector.debuggerModel.scriptForSourceID(scriptId);
+            if (!script)
+                return;
+            sourceURL = script.sourceURL;
+        }
         return this._sourceFiles[this._createSourceFileId(sourceURL, scriptId)];
     },
 
@@ -658,7 +686,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _debuggerReset: function()
     {
         this._reset();
-        this._anchors = [];
+        this._sourceMappingListeners = [];
         this._presentationCallFrames = [];
         this._selectedCallFrameIndex = 0;
     }

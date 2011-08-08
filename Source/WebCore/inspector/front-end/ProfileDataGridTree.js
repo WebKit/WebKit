@@ -96,10 +96,9 @@ WebInspector.ProfileDataGridNode.prototype = {
             cell.addStyleClass("highlight");
 
         if (this.profileNode.url) {
-            var lineNumber;
-            if (this.profileNode.lineNumber > 0)
-                lineNumber = this.profileNode.lineNumber;
-            var urlElement = WebInspector.linkifyResourceAsNode(this.profileNode.url, "scripts", lineNumber, "profile-node-file");
+            // FIXME(62725): profileNode should reference a debugger location.
+            var lineNumber = this.profileNode.lineNumber ? this.profileNode.lineNumber - 1 : 0;
+            var urlElement = WebInspector.debuggerPresentationModel.linkifyLocation(this.profileNode.url, lineNumber, 0, "profile-node-file");
             cell.insertBefore(urlElement, cell.firstChild);
         }
 

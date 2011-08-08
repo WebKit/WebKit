@@ -1977,11 +1977,12 @@ WebInspector.NetworkDataGridNode.prototype = {
                     return;
                 }
                 this._initiatorCell.title = topFrame.url + ":" + topFrame.lineNumber;
-                this._initiatorCell.appendChild(WebInspector.linkifyResourceAsNode(topFrame.url, "scripts", topFrame.lineNumber));
+                var urlElement = WebInspector.debuggerPresentationModel.linkifyLocation(topFrame.url, topFrame.lineNumber - 1, 0);
+                this._initiatorCell.appendChild(urlElement);
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Script"));
             } else { // initiator.type === "parser"
                 this._initiatorCell.title = initiator.url + ":" + initiator.lineNumber;
-                this._initiatorCell.appendChild(WebInspector.linkifyResourceAsNode(initiator.url, "resources", initiator.lineNumber));
+                this._initiatorCell.appendChild(WebInspector.linkifyResourceAsNode(initiator.url, initiator.lineNumber - 1));
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Parser"));
             }
         }

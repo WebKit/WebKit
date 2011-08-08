@@ -356,7 +356,7 @@ WebInspector.TimelinePanel.prototype = {
         this.toggleFilterButton.element.title = this._calculator._showShortEvents ? this._hideShortRecordsTitleText : this._showShortRecordsTitleText;
         this._scheduleRefresh(true);
     },
-    
+
     _garbageCollectButtonClicked: function()
     {
         ProfilerAgent.collectGarbage();
@@ -1115,21 +1115,21 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             case WebInspector.TimelineAgent.RecordType.GCEvent:
                 return WebInspector.UIString("%s collected", Number.bytesToString(this.data.usedHeapSizeDelta));
             case WebInspector.TimelineAgent.RecordType.TimerFire:
-                return this.scriptName ? WebInspector.linkifyResourceAsNode(this.scriptName, "scripts", this.scriptLine, "", "") : this.data.timerId;
+                return this.scriptName ? this._linkifyLocation(this.scriptName, this.scriptLine, 0) : this.data.timerId;
             case WebInspector.TimelineAgent.RecordType.FunctionCall:
-                return this.scriptName ? WebInspector.linkifyResourceAsNode(this.scriptName, "scripts", this.scriptLine, "", "") : null;
+                return this.scriptName ? this._linkifyLocation(this.scriptName, this.scriptLine, 0) : null;
             case WebInspector.TimelineAgent.RecordType.EventDispatch:
                 return this.data ? this.data.type : null;
             case WebInspector.TimelineAgent.RecordType.Paint:
                 return this.data.width + "\u2009\u00d7\u2009" + this.data.height;
             case WebInspector.TimelineAgent.RecordType.TimerInstall:
             case WebInspector.TimelineAgent.RecordType.TimerRemove:
-                return this.stackTrace ? WebInspector.linkifyCallFrameAsNode(this.stackTrace[0], "") : this.data.timerId;
+                return this.stackTrace ? this._linkifyCallFrame(this.stackTrace[0]) : this.data.timerId;
             case WebInspector.TimelineAgent.RecordType.ParseHTML:
             case WebInspector.TimelineAgent.RecordType.RecalculateStyles:
-                return this.stackTrace ? WebInspector.linkifyCallFrameAsNode(this.stackTrace[0], "") : null;
+                return this.stackTrace ? this._linkifyCallFrame(this.stackTrace[0]) : null;
             case WebInspector.TimelineAgent.RecordType.EvaluateScript:
-                return this.url ? WebInspector.linkifyResourceAsNode(this.url, "scripts", this.data.lineNumber, "", "") : null;
+                return this.url ? this._linkifyLocation(this.url, this.data.lineNumber, 0) : null;
             case WebInspector.TimelineAgent.RecordType.XHRReadyStateChange:
             case WebInspector.TimelineAgent.RecordType.XHRLoad:
             case WebInspector.TimelineAgent.RecordType.ScheduleResourceRequest:
@@ -1143,6 +1143,19 @@ WebInspector.TimelinePanel.FormattedRecord.prototype = {
             default:
                 return null;
         }
+    },
+
+    _linkifyLocation: function(url, lineNumber, columnNumber)
+    {
+        // FIXME(62725): stack trace line/column numbers are one-based.
+        lineNumber = lineNumber ? lineNumber - 1 : lineNumber;
+        columnNumber = columnNumber ? columnNumber - 1 : 0;
+        return WebInspector.debuggerPresentationModel.linkifyLocation(url, lineNumber, columnNumber, "timeline-details");
+    },
+
+    _linkifyCallFrame: function(callFrame)
+    {
+        return this._linkifyLocation(callFrame.url, callFrame.lineNumber, callFrame.columnNumber);
     },
 
     _calculateAggregatedStats: function(categories)
@@ -1212,7 +1225,7 @@ WebInspector.TimelinePanel.PopupContentHelper.prototype = {
 
     _appendLinkRow: function(title, scriptName, scriptLine)
     {
-        var link = WebInspector.linkifyResourceAsNode(scriptName, "scripts", scriptLine, "timeline-details");
+        var link = WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyLocation(scriptName, scriptLine, 0, "timeline-details");
         this._appendElementRow(title, link);
     },
 
@@ -1227,7 +1240,8 @@ WebInspector.TimelinePanel.PopupContentHelper.prototype = {
             row.appendChild(this._createCell(stackFrame.functionName ? stackFrame.functionName : WebInspector.UIString("(anonymous function)"), "timeline-function-name"));
             row.appendChild(this._createCell(" @ "));
             var linkCell = document.createElement("td");
-            linkCell.appendChild(WebInspector.linkifyCallFrameAsNode(stackFrame, "timeline-details"));
+            var urlElement = WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyCallFrame(stackFrame);
+            linkCell.appendChild(urlElement);
             row.appendChild(linkCell);
             framesTable.appendChild(row);
         }

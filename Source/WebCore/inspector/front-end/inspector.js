@@ -240,7 +240,7 @@ var WebInspector = {
             this._settingsButton.toggled = false;
             delete this._settingsScreen;
         }
-        
+
         if (!this._settingsScreen) {
             this._settingsScreen = new WebInspector.SettingsScreen();
             this._settingsScreen.show(onhide.bind(this));
@@ -519,6 +519,7 @@ WebInspector.doLoadedDone = function()
 
     this.cssModel = new WebInspector.CSSStyleModel();
     this.debuggerModel = new WebInspector.DebuggerModel();
+    this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
 
     this.searchController = new WebInspector.SearchController();
     this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
@@ -1322,19 +1323,21 @@ WebInspector.linkifyURL = function(url, linkText, classes, isExternal, tooltipTe
     return WebInspector.linkifyURLAsNode(url, linkText, classes, isExternal, tooltipText).outerHTML;
 }
 
-WebInspector.linkifyResourceAsNode = function(url, preferredPanel, oneBasedLineNumber, classes, tooltipText)
+WebInspector.formatLinkText = function(url, lineNumber)
 {
-    preferredPanel = preferredPanel || "scripts";
-    // FIXME(62725): stack trace line/column numbers are one-based.
-    var lineNumber = oneBasedLineNumber ? oneBasedLineNumber - 1 : undefined;
-    return this.panels[preferredPanel].createAnchor(url, lineNumber, 0, classes, tooltipText);
+    var text = WebInspector.displayNameForURL(url);
+    if (lineNumber !== undefined)
+        text += ":" + (lineNumber + 1);
+    return text;
 }
 
-WebInspector.linkifyCallFrameAsNode = function(callFrame, classes, tooltipText)
+WebInspector.linkifyResourceAsNode = function(url, lineNumber, classes, tooltipText)
 {
-    // FIXME(62725): stack trace line/column numbers are one-based.
-    var columnNumber = callFrame.columnNumber ? callFrame.columnNumber - 1 : 0;
-    return this.panels.scripts.createAnchor(callFrame.url, callFrame.lineNumber - 1, columnNumber, classes, tooltipText);
+    var linkText = this.formatLinkText(url, lineNumber);
+    var anchor = this.linkifyURLAsNode(url, linkText, classes, false, tooltipText);
+    anchor.setAttribute("preferred_panel", "resources");
+    anchor.setAttribute("line_number", lineNumber);
+    return anchor;
 }
 
 WebInspector.resourceURLForRelatedNode = function(node, url)

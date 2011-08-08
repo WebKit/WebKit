@@ -1,3 +1,49 @@
+2011-08-08  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: refactor links creation.
+        https://bugs.webkit.org/show_bug.cgi?id=65612
+
+        Reviewed by Pavel Feldman.
+
+        No new tests - it is refactoring, modified code covered by script-formatter.html test.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+        (WebInspector.ConsoleMessage.prototype._linkifyLocation):
+        (WebInspector.ConsoleMessage.prototype._linkifyCallFrame):
+        (WebInspector.ConsoleMessage.prototype._populateStackTraceTreeElement):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype.addSourceMappingListener):
+        (WebInspector.DebuggerPresentationModel.prototype.removeSourceMappingListener):
+        (WebInspector.DebuggerPresentationModel.prototype.linkifyLocation.updateAnchor.didGetLocation):
+        (WebInspector.DebuggerPresentationModel.prototype.linkifyLocation.updateAnchor):
+        (WebInspector.DebuggerPresentationModel.prototype.linkifyLocation):
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceFileForScript):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        * inspector/front-end/EventListenersSidebarPane.js:
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._refreshInitiatorCell):
+        * inspector/front-end/Panel.js:
+        * inspector/front-end/ProfileDataGridTree.js:
+        (WebInspector.ProfileDataGridNode.prototype.createCell):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._folderAndDisplayNameForScriptURL):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.linkifyUncopyable):
+        (WebInspector.StylePropertiesSection):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._getRecordDetails):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyLocation):
+        (WebInspector.TimelinePanel.FormattedRecord.prototype._linkifyCallFrame):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendLinkRow):
+        (WebInspector.TimelinePanel.PopupContentHelper.prototype._appendStackTrace):
+        * inspector/front-end/inspector.js:
+        (WebInspector._showSettingsScreen):
+        (WebInspector.formatLinkText):
+        (WebInspector.linkifyResourceAsNode):
+
 2011-08-08  Andrew Wason  <rectalogic@rectalogic.com>
 
         [Qt] Implement WebGL antialiasing (part 3)

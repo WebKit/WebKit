@@ -28,7 +28,7 @@ WebInspector.ScriptsPanel = function()
 {
     WebInspector.Panel.call(this, "scripts");
 
-    this._presentationModel = new WebInspector.DebuggerPresentationModel();
+    this._presentationModel = WebInspector.debuggerPresentationModel;
 
     this.registerShortcuts();
 
@@ -324,7 +324,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (folderName.length > 80)
             folderName = "\u2026" + folderName.substring(folderName.length - 80);
- 
+
         return { folderName: folderName, displayName: displayName};
     },
 
@@ -545,14 +545,6 @@ WebInspector.ScriptsPanel.prototype = {
             x.show(this.viewsContainerElement);
     },
 
-    createAnchor: function(url, lineNumber, columnNumber, classes, tooltipText)
-    {
-        var anchor = WebInspector.Panel.prototype.createAnchor.call(this, url, lineNumber, columnNumber, classes, tooltipText);
-        if (lineNumber !== undefined)
-            this._presentationModel.registerAnchor(url, null, lineNumber, columnNumber, this._updateAnchor.bind(this, anchor));
-        return anchor;
-    },
-
     canShowAnchorLocation: function(anchor)
     {
         return this._debuggerEnabled && this._presentationModel.sourceFileForScriptURL(anchor.href);
@@ -561,17 +553,6 @@ WebInspector.ScriptsPanel.prototype = {
     showAnchorLocation: function(anchor)
     {
         this._showSourceLine(anchor.getAttribute("source_file_id"), parseInt(anchor.getAttribute("line_number")));
-    },
-
-    _updateAnchor: function(anchor, sourceFileId, lineNumber)
-    {
-        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
-        var url = sourceFile.url || WebInspector.UIString("(program)");
-        anchor.textContent = this.formatAnchorText(url, lineNumber)
-        // Used for showing anchor location.
-        anchor.setAttribute("preferred_panel", "scripts");
-        anchor.setAttribute("source_file_id", sourceFileId);
-        anchor.setAttribute("line_number", lineNumber);
     },
 
     _showSourceLine: function(sourceFileId, lineNumber)

@@ -236,7 +236,12 @@ WebInspector.EventListenerBar.prototype = {
         // Requires that Function.toString() return at least the function's signature.
         if (this.eventListener.location) {
             this.subtitleElement.removeChildren();
-            this.subtitleElement.appendChild(WebInspector.linkifyResourceAsNode(this.eventListener.location.scriptId, "scripts", this.eventListener.location.lineNumber));
+            // FIXME(62725): eventListener.location should be a debugger Location.
+            var url = this.eventListener.location.scriptId;
+            var lineNumber = this.eventListener.location.lineNumber - 1;
+            var columnNumber = 0;
+            var urlElement = WebInspector.debuggerPresentationModel.linkifyLocation(url, lineNumber, columnNumber);
+            this.subtitleElement.appendChild(urlElement);
         } else {
             var match = this.eventListener.handlerBody.match(/function ([^\(]+?)\(/);
             if (match)
