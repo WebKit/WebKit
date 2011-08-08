@@ -3686,6 +3686,7 @@ BUGWK64942 MAC GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMA
 
 // Might need rebaseline.
 BUGJIANLI WIN LINUX : fast/repaint/canvas-putImageData.html = TEXT
+BUGJIANLI WIN MAC : fast/preloader/script.html = PASS TEXT
 
 // These tests were disabled and re-enabled in r92545 and r92550.
 // Unfortunately they are failing for us.
