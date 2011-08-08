@@ -94,7 +94,7 @@ private:
 
 class ScheduledURLNavigation : public ScheduledNavigation {
 protected:
-    ScheduledURLNavigation(double delay, PassRefPtr<SecurityOrigin> securityOrigin, const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool duringLoad, bool isLocationChange)
+    ScheduledURLNavigation(double delay, SecurityOrigin* securityOrigin, const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool duringLoad, bool isLocationChange)
         : ScheduledNavigation(delay, lockHistory, lockBackForwardList, duringLoad, isLocationChange)
         , m_securityOrigin(securityOrigin)
         , m_url(url)
@@ -106,7 +106,7 @@ protected:
     virtual void fire(Frame* frame)
     {
         UserGestureIndicator gestureIndicator(wasUserGesture() ? DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
-        frame->loader()->changeLocation(m_securityOrigin, KURL(ParsedURLString, m_url), m_referrer, lockHistory(), lockBackForwardList(), false);
+        frame->loader()->changeLocation(m_securityOrigin.get(), KURL(ParsedURLString, m_url), m_referrer, lockHistory(), lockBackForwardList(), false);
     }
 
     virtual void didStartTimer(Frame* frame, Timer<NavigationScheduler>* timer)
@@ -146,7 +146,7 @@ private:
 
 class ScheduledRedirect : public ScheduledURLNavigation {
 public:
-    ScheduledRedirect(double delay, PassRefPtr<SecurityOrigin> securityOrigin, const String& url, bool lockHistory, bool lockBackForwardList)
+    ScheduledRedirect(double delay, SecurityOrigin* securityOrigin, const String& url, bool lockHistory, bool lockBackForwardList)
         : ScheduledURLNavigation(delay, securityOrigin, url, String(), lockHistory, lockBackForwardList, false, false)
     {
         clearUserGesture();
@@ -164,13 +164,13 @@ public:
 
 class ScheduledLocationChange : public ScheduledURLNavigation {
 public:
-    ScheduledLocationChange(PassRefPtr<SecurityOrigin> securityOrigin, const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool duringLoad)
+    ScheduledLocationChange(SecurityOrigin* securityOrigin, const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool duringLoad)
         : ScheduledURLNavigation(0.0, securityOrigin, url, referrer, lockHistory, lockBackForwardList, duringLoad, true) { }
 };
 
 class ScheduledRefresh : public ScheduledURLNavigation {
 public:
-    ScheduledRefresh(PassRefPtr<SecurityOrigin> securityOrigin, const String& url, const String& referrer)
+    ScheduledRefresh(SecurityOrigin* securityOrigin, const String& url, const String& referrer)
         : ScheduledURLNavigation(0.0, securityOrigin, url, referrer, true, true, false, true)
     {
     }
@@ -332,7 +332,7 @@ bool NavigationScheduler::mustLockBackForwardList(Frame* targetFrame)
     return false;
 }
 
-void NavigationScheduler::scheduleLocationChange(PassRefPtr<SecurityOrigin> securityOrigin, const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList)
+void NavigationScheduler::scheduleLocationChange(SecurityOrigin* securityOrigin, const String& url, const String& referrer, bool lockHistory, bool lockBackForwardList)
 {
     if (!shouldScheduleNavigation(url))
         return;

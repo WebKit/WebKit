@@ -33,18 +33,18 @@ namespace WebCore {
 
 struct FrameLoadRequest {
 public:
-    explicit FrameLoadRequest(PassRefPtr<SecurityOrigin> requester)
+    explicit FrameLoadRequest(SecurityOrigin* requester)
         : m_requester(requester)
     {
     }
 
-    FrameLoadRequest(PassRefPtr<SecurityOrigin> requester, const ResourceRequest& resourceRequest)
+    FrameLoadRequest(SecurityOrigin* requester, const ResourceRequest& resourceRequest)
         : m_requester(requester)
         , m_resourceRequest(resourceRequest)
     {
     }
 
-    FrameLoadRequest(PassRefPtr<SecurityOrigin> requester, const ResourceRequest& resourceRequest, const String& frameName)
+    FrameLoadRequest(SecurityOrigin* requester, const ResourceRequest& resourceRequest, const String& frameName)
         : m_requester(requester)
         , m_resourceRequest(resourceRequest)
         , m_frameName(frameName)
