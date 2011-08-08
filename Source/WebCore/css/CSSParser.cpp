@@ -3284,7 +3284,7 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationTimingFunction()
         CSSParserValue* v = args->current();
         if (!validUnit(v, FInteger, m_strict))
             return 0;
-        numSteps = static_cast<int>(min(v->fValue, (double)INT_MAX));
+        numSteps = clampToInteger(v->fValue);
         if (numSteps < 1)
             return 0;
         v = args->next();
@@ -6333,7 +6333,7 @@ bool CSSParser::parseFontFeatureTag(CSSValueList* settings)
     value = m_valueList->next();
     if (value) {
         if (value->unit == CSSPrimitiveValue::CSS_NUMBER && value->isInt && value->fValue >= 0) {
-            tagValue = static_cast<int>(value->fValue);
+            tagValue = clampToInteger(value->fValue);
             if (tagValue < 0)
                 return false;
             m_valueList->next();
@@ -6952,7 +6952,7 @@ WebKitCSSKeyframeRule* CSSParser::createKeyframeRule(CSSParserValueList* keys)
     // Create a key string from the passed keys
     String keyString;
     for (unsigned i = 0; i < keys->size(); ++i) {
-        float key = (float) keys->valueAt(i)->fValue;
+        float key = static_cast<float>(keys->valueAt(i)->fValue);
         if (i != 0)
             keyString += ",";
         keyString += String::number(key);
