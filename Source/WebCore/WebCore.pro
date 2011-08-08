@@ -1901,7 +1901,6 @@ HEADERS += \
     page/Geolocation.h \
     page/Geoposition.h \
     page/GroupSettings.h \
-    page/HaltablePlugin.h \
     page/History.h \
     page/Location.h \
     page/MouseEventWithHitTestResults.h \
@@ -1912,8 +1911,6 @@ HEADERS += \
     page/Page.h \
     page/PageSerializer.h \
     page/PageVisibilityState.h \
-    page/PluginHalter.h \
-    page/PluginHalterClient.h \
     page/PrintContext.h \
     page/Screen.h \
     page/SecurityOrigin.h \

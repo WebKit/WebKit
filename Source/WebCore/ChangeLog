@@ -1,3 +1,13 @@
+2011-08-08  Andras Becsi  <abecsi@webkit.org>
+
+        [Qt] Clean up project file after r92492.
+
+        Unreviewed gardening.
+
+        No new tests needed.
+
+        * WebCore.pro: remove nonexistent PluginHalterClient.h, PluginHalter.h, HaltablePlugin.h.
+
 2011-08-08  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: refactor links creation.
