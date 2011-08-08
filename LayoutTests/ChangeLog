@@ -1,3 +1,34 @@
+2011-08-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dump-as-markup conversion: paste-blockquote-into-blockquote.html and prevent-block-nesting-01.html
+        https://bugs.webkit.org/show_bug.cgi?id=65837
+
+        Reviewed by Kent Tamura.
+
+        Converted the tests to dump-as-markup tests to improve the readability of the expected results.
+
+        * editing/pasteboard/paste-blockquote-into-blockquote-expected.txt: Added.
+        * editing/pasteboard/paste-blockquote-into-blockquote.html:
+        * editing/pasteboard/prevent-block-nesting-01-expected.txt: Added.
+        * editing/pasteboard/prevent-block-nesting-01.html:
+        * platform/chromium-linux/editing/pasteboard/paste-blockquote-into-blockquote-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/prevent-block-nesting-01-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-into-blockquote-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-into-blockquote-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/prevent-block-nesting-01-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/prevent-block-nesting-01-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/paste-blockquote-into-blockquote-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/prevent-block-nesting-01-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/prevent-block-nesting-01-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/paste-blockquote-into-blockquote-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/prevent-block-nesting-01-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/prevent-block-nesting-01-expected.png: Removed.
+        * platform/mac/editing/pasteboard/prevent-block-nesting-01-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-blockquote-into-blockquote-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/prevent-block-nesting-01-expected.txt: Removed.
+
 2011-08-07  Noel Gordon  <noel.gordon@gmail.com>
 
         Layout Test fast/xsl/xslt-import-depth.xml is failing

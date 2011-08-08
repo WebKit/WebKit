@@ -1,5 +1,6 @@
 <html>
 <head>
+<script src="../../resources/dump-as-markup.js"></script>
 <style>
 blockquote {
     color: blue;
@@ -9,17 +10,19 @@ blockquote {
 }
 </style>
 </head>
-
 <body>
-<p>This tests pasting a blockquote into a blockquote. Nothing below should be double-blockquoted.</p>
-<div contenteditable="true"><blockquote type='cite' id="block">One</blockquote></div>
-
+<p id="description">This tests pasting a blockquote into a blockquote. Nothing below should be double-blockquoted.</p>
+<div id="test" contenteditable="true"><blockquote type='cite' id="block">One</blockquote></div>
 <script>
 var sel = window.getSelection();
 var block = document.getElementById("block");
 
 sel.setPosition(block, 3);
 document.execCommand("InsertHTML", false, "<span><blockquote type='cite'><div>Two</div><div>Three</div></blockquote></span>");
+
+Markup.description(document.getElementById('description').textContent);
+Markup.dump('test');
+
 </script>
 </body>
 </html>
