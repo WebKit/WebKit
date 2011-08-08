@@ -141,6 +141,12 @@ class GardeningExpectationsUpdaterTest(unittest.TestCase):
         expectations_after = "BUG_OLD XP RELEASE GPU : failures/expected/image.html = TEXT\nBUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
         self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
 
+    def test_spurious_updates(self):
+        failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE"]}]
+        expectations_before = "BUG_OLDER MAC LINUX : failures/expected/image.html = IMAGE+TEXT\nBUG_OLD XP RELEASE CPU :  failures/expected/image.html = TEXT"
+        expectations_after = "BUG_OLDER MAC LINUX : failures/expected/image.html = IMAGE+TEXT\nBUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
+
 
 class GardeningServerTest(unittest.TestCase):
     def _post_to_path(self, path, body=None, expected_stderr=None, expected_stdout=None):

@@ -1,5 +1,18 @@
 2011-08-08  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        garden-o-matic should only touch expectations that need updating.
+        https://bugs.webkit.org/show_bug.cgi?id=65876
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Added reconstitute_only_these to TestExpectationSerializer.list_to_string,
+            so that a caller could influence which lines to serialize from values.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Added tests.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py: Started using reconstitute_only_these.
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py: Added tests.
+
+2011-08-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
         TestExpectationsEditor should return a list of updated expectations.
         https://bugs.webkit.org/show_bug.cgi?id=65872
 

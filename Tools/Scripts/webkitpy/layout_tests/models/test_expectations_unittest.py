@@ -464,7 +464,8 @@ class TestExpectationParserTests(unittest.TestCase):
 class TestExpectationSerializerTests(unittest.TestCase):
     def __init__(self, testFunc):
         test_port = port.get('test-win-xp', None)
-        self._serializer = TestExpectationSerializer(TestConfigurationConverter(test_port.all_test_configurations(), test_port.configuration_specifier_macros()))
+        self._converter = TestConfigurationConverter(test_port.all_test_configurations(), test_port.configuration_specifier_macros())
+        self._serializer = TestExpectationSerializer(self._converter)
         unittest.TestCase.__init__(self, testFunc)
 
     def assert_round_trip(self, in_string, expected_string=None):
@@ -477,7 +478,7 @@ class TestExpectationSerializerTests(unittest.TestCase):
         expectations = TestExpectationParser.tokenize_list(in_string)
         if expected_string is None:
             expected_string = in_string
-        self.assertEqual(expected_string, TestExpectationSerializer.list_to_string(expectations, SpecifierSorter()))
+        self.assertEqual(expected_string, TestExpectationSerializer.list_to_string(expectations, self._converter))
 
     def test_unparsed_to_string(self):
         expectation = TestExpectationLine()
@@ -540,7 +541,6 @@ class TestExpectationSerializerTests(unittest.TestCase):
         expectation_line.parsed_modifiers = ['garden-o-matic', 'total', 'is']
         self.assertEqual(self._serializer._parsed_modifier_string(expectation_line, ['win']), 'garden-o-matic is total win')
 
-
     def test_format_result(self):
         self.assertEqual(TestExpectationSerializer._format_result('modifiers', 'name', 'expectations', 'comment'), 'MODIFIERS : name = EXPECTATIONS //comment')
         self.assertEqual(TestExpectationSerializer._format_result('modifiers', 'name', 'expectations', None), 'MODIFIERS : name = EXPECTATIONS')
@@ -576,6 +576,29 @@ class TestExpectationSerializerTests(unittest.TestCase):
         self.assert_list_round_trip('bar')
         self.assert_list_round_trip('bar\n//Qux.')
         self.assert_list_round_trip('bar\n//Qux.\n')
+
+    def test_reconstitute_only_these(self):
+        lines = []
+        reconstitute_only_these = []
+
+        def add_line(matching_configurations, reconstitute):
+            expectation_line = TestExpectationLine()
+            expectation_line.original_string = "Nay"
+            expectation_line.parsed_bug_modifiers = ['BUGX']
+            expectation_line.name = 'Yay'
+            expectation_line.parsed_expectations = set([IMAGE])
+            expectation_line.matching_configurations = matching_configurations
+            lines.append(expectation_line)
+            if reconstitute:
+                reconstitute_only_these.append(expectation_line)
+
+        add_line(set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')]), False)
+        add_line(set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'release', 'gpu')]), True)
+        add_line(set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'debug', 'gpu')]), False)
+        serialized = TestExpectationSerializer.list_to_string(lines, self._converter)
+        self.assertEquals(serialized, "BUGX XP RELEASE CPU : Yay = IMAGE\nBUGX XP RELEASE : Yay = IMAGE\nBUGX XP RELEASE CPU : Yay = IMAGE\nBUGX XP DEBUG GPU : Yay = IMAGE")
+        serialized = TestExpectationSerializer.list_to_string(lines, self._converter, reconstitute_only_these=reconstitute_only_these)
+        self.assertEquals(serialized, "Nay\nBUGX XP RELEASE : Yay = IMAGE\nNay")
 
     def test_string_whitespace_stripping(self):
         self.assert_round_trip('\n', '')

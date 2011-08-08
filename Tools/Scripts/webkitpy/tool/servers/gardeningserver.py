@@ -55,13 +55,14 @@ class GardeningExpectationsUpdater(BugManager):
         for expectation_line in expectation_lines:
             self._parser.parse(expectation_line)
         editor = TestExpectationsEditor(expectation_lines, self)
+        updated_expectation_lines = []
         for failure_info in failure_info_list:
             expectation_set = set(filter(None, map(TestExpectations.expectation_from_string, failure_info['failureTypeList'])))
             assert(expectation_set)
             test_name = failure_info['testName']
             assert(test_name)
-            editor.update_expectation(test_name, set([self._builder_to_test_config(failure_info['builderName'])]), expectation_set)
-        self._tool.filesystem.write_text_file(self._path_to_test_expectations_file, TestExpectationSerializer.list_to_string(expectation_lines, self._converter))
+            updated_expectation_lines.extend(editor.update_expectation(test_name, set([self._builder_to_test_config(failure_info['builderName'])]), expectation_set))
+        self._tool.filesystem.write_text_file(self._path_to_test_expectations_file, TestExpectationSerializer.list_to_string(expectation_lines, self._converter, reconstitute_only_these=updated_expectation_lines))
 
 
 class GardeningHTTPServer(BaseHTTPServer.HTTPServer):

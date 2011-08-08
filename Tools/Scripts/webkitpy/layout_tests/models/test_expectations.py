@@ -166,9 +166,18 @@ class TestExpectationSerializer(object):
         return result
 
     @classmethod
-    def list_to_string(cls, expectation_lines, test_configuration_converter):
+    def list_to_string(cls, expectation_lines, test_configuration_converter, reconstitute_only_these=None):
         serializer = cls(test_configuration_converter)
-        return "\n".join([line for line in [serializer.to_string(expectation_line) for expectation_line in expectation_lines] if line is not None])
+
+        def serialize(expectation_line):
+            if not reconstitute_only_these or expectation_line in reconstitute_only_these:
+                return serializer.to_string(expectation_line)
+            return expectation_line.original_string
+
+        def nones_out(expectation_line):
+            return expectation_line is not None
+
+        return "\n".join(filter(nones_out, map(serialize, expectation_lines)))
 
 
 class TestExpectationParser(object):
