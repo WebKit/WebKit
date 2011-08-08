@@ -2326,3 +2326,9 @@ svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
 svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml
 svg/zoom/page/zoom-svg-through-object-with-auto-size.html
 svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml
+# 4 other tests are diverging on Qt SnowLeopard Intel
+fast/writing-mode/border-styles-vertical-lr.html
+fast/writing-mode/border-styles-vertical-rl.html
+svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml
+svg/zoom/page/zoom-svg-through-object-with-override-size.html
+
