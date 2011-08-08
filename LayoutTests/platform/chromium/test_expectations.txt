@@ -58,6 +58,7 @@ BUGWK55913 DEBUG : jquery/manipulation.html = PASS TIMEOUT
 BUGWK55913 SLOW DEBUG : jquery/offset.html = PASS
 BUGWK55913 SLOW DEBUG : jquery/traversing.html = PASS
 BUGWK55913 DEBUG : jquery/dimensions.html = PASS TIMEOUT
+BUGWK55913 MAC LINUX DEBUG : jquery/data.html = PASS TIMEOUT
 
 BUGWK64498 SLOW DEBUG : fast/encoding/parser-tests-40.html = PASS
 BUGWK64502 SLOW DEBUG : fast/forms/form-associated-element-crash3.html = PASS
@@ -2235,7 +2236,7 @@ BUG_AUTO DEBUG : animations/suspend-resume-animation.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
 
 // Seems to have been crashing intermittently for as long as we have test history.
-BUGCR62741 LINUX WIN DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = PASS CRASH
+BUGCR62741 LINUX WIN MAC DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = PASS CRASH
 
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
@@ -2623,7 +2624,7 @@ BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
 
 BUGCR71418 LEOPARD : fast/borders/border-radius-split-inline.html = IMAGE
 
-BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
+BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT CRASH
 BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 
 BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = PASS CRASH
@@ -3697,3 +3698,5 @@ BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage
 BUGWK63186 MAC WIN LINUX : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE+TEXT
 BUGWK63186 MAC WIN LINUX : svg/as-object/embedded-svg-size-changes.html = IMAGE+TEXT
 BUGWK63186 MAC WIN LINUX : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE+TEXT
+
+BUGWK65862 MAC DEBUG : storage/indexeddb/index-cursor.html = PASS TIMEOUT
