@@ -1,3 +1,26 @@
+2011-08-08  Andrew Wason  <rectalogic@rectalogic.com>
+
+        [Qt] Implement WebGL antialiasing (part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=64879
+
+        Reviewed by Noam Rosenthal.
+
+        Existing WebGL layout tests cover this.
+
+        Implement WebGL antialiasing for Qt desktop.
+        Existing code in GraphicsContext3DOpenGL.cpp manages the
+        multisample FBO. GraphicsContext3DQt.cpp creates it and blits
+        it to the regular FBO when painting.
+        Requires adoption of Extensions3DOpenGL to be fully functional.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::paintToTextureMapper):
+        (WebCore::GraphicsContext3DInternal::paint):
+        (WebCore::GraphicsContext3DInternal::multisampleResolve):
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        (WebCore::GraphicsContext3D::~GraphicsContext3D):
+
 2011-08-08  Anders Carlsson  <andersca@apple.com>
 
         Fix build.
