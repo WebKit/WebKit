@@ -1,5 +1,17 @@
 2011-08-08  Oliver Hunt  <oliver@apple.com>
 
+        Using mprotect to create guard pages breaks our use of madvise to release executable memory
+        https://bugs.webkit.org/show_bug.cgi?id=65870
+
+        Reviewed by Gavin Barraclough.
+
+        Use mmap rather than mprotect to clear guard page permissions.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+
+2011-08-08  Oliver Hunt  <oliver@apple.com>
+
         Non-extensibility does not prevent mutating [[Prototype]]
         https://bugs.webkit.org/show_bug.cgi?id=65832
 
