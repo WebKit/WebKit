@@ -182,7 +182,7 @@ void IDBTransaction::contextDestroyed()
 
 void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)
 {
-    ASSERT(!m_finished);
+    ASSERT_WITH_MESSAGE(!m_finished, "A finished transaction tried to enqueue an event of type %s.", event->type().string().utf8().data());
     if (!scriptExecutionContext())
         return;
 
