@@ -10,10 +10,8 @@ div { text-align: center; }
 These demonstrate 11475: the '\n's at the end of the fragment should be unrendered.<br><br>
 
 <script id="script">
-if (window.layoutTestController) {
-    layoutTestController.dumpAsText(true);
+if (window.layoutTestController)
     layoutTestController.dumpEditingCallbacks();
-}
 
 var s = window.getSelection();
 var e = document.body;
