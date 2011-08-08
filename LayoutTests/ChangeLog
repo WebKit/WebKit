@@ -1,3 +1,28 @@
+2011-08-08  Adam Barth  <abarth@webkit.org>
+
+        Optimize baselines for fast/dom/DOMException.
+        This patch was created with webkit-patch bulk-optimize-baselines.
+        (I've manually remove the README file because we don't use these sorts
+        of README files anymore.)
+
+        * platform/chromium-mac/fast/dom/DOMException: Removed.
+        * platform/chromium-mac/fast/dom/DOMException/EventException-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/DOMException/README: Removed.
+        * platform/chromium-mac/fast/dom/DOMException/RangeException-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/DOMException/XPathException-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/DOMException/prototype-object-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/DOMException: Removed.
+        * platform/chromium-win/fast/dom/DOMException/EventException-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/DOMException/README: Removed.
+        * platform/chromium-win/fast/dom/DOMException/RangeException-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/DOMException/XPathException-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/DOMException/prototype-object-expected.txt: Removed.
+        * platform/chromium/fast/dom/DOMException: Added.
+        * platform/chromium/fast/dom/DOMException/EventException-expected.txt: Added.
+        * platform/chromium/fast/dom/DOMException/RangeException-expected.txt: Added.
+        * platform/chromium/fast/dom/DOMException/XPathException-expected.txt: Added.
+        * platform/chromium/fast/dom/DOMException/prototype-object-expected.txt: Added.
+
 2011-08-08  Jian Li  <jianli@chromium.org>
 
         Unreviewed, mark preventExtensions.html as failed on chromium.

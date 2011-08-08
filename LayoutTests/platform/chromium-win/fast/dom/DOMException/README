@@ -1,7 +1,0 @@
-XPathException
-RangeException
-prototype-object
-EventException
----------------------------------
-toString of exception constructors and exception prototypes 
-differ with v8 and KJS.
