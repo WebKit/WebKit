@@ -1,3 +1,13 @@
+2011-08-07  Shinichiro Hamaji  <hamaji@chromium.org>
+
+        Layout Test fast/loader/ping-error.html is failing
+        https://bugs.webkit.org/show_bug.cgi?id=65754
+
+        Unreviewed chromium test_expectations.txt update
+        No more failure as r92439 was rolled out by r92453
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed test fix after r92578. I accidentally added the call to dumpAsText(true).

@@ -3659,8 +3659,6 @@ BUGWK65666 LINUX WIN : fast/box-shadow/box-shadow-clipped-slices.html = IMAGE
 BUGWK58013 MAC GPU : compositing/scaling/tiled-layer-recursion.html = CRASH
 BUGWK58013 LINUX GPU : compositing/scaling/tiled-layer-recursion.html = IMAGE
 
-BUGWK65754 WIN MAC : fast/loader/ping-error.html = CRASH
-
 BUGWK64942 WIN GPU : compositing/color-matching/image-color-matching.html = IMAGE
 BUGWK64942 WIN GPU : compositing/direct-image-compositing.html = IMAGE
 BUGWK64942 WIN GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
