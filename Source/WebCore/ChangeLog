@@ -1,3 +1,12 @@
+2011-08-08  Benjamin Poulain  <benjamin@webkit.org>
+
+        Build fix after r92589, defaultSize is not used.
+        
+        Reviewed by Andreas Kling.
+
+        * html/InputType.cpp:
+        (WebCore::InputType::sizeShouldIncludeDecoration):
+
 2011-08-08  Keishi Hattori  <keishi@webkit.org>
 
         Implement <input type=color> UI behavior WebCore part

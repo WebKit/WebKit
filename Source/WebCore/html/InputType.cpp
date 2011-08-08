@@ -250,7 +250,7 @@ double InputType::maximum() const
     return 0;
 }
 
-bool InputType::sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const
+bool InputType::sizeShouldIncludeDecoration(int, int& preferredSize) const
 {
     preferredSize = element()->size();
     return false;
