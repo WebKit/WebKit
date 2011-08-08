@@ -1,3 +1,62 @@
+2011-08-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92610.
+        http://trac.webkit.org/changeset/92610
+        https://bugs.webkit.org/show_bug.cgi?id=65868
+
+        Caused assertion failures when running fast/multicol tests
+        (Requested by andersca on #webkit).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PODIntervalTree.h:
+        (WebCore::PODIntervalTree::allOverlaps):
+        (WebCore::PODIntervalTree::searchForOverlapsFrom):
+        * platform/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::add):
+        (WebCore::PODRedBlackTree::remove):
+        (WebCore::PODRedBlackTree::contains):
+        (WebCore::PODRedBlackTree::visitInorder):
+        (WebCore::PODRedBlackTree::size):
+        (WebCore::PODRedBlackTree::checkInvariants):
+        (WebCore::PODRedBlackTree::dump):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlock::lowestFloatLogicalBottom):
+        (WebCore::RenderBlock::addPositionedFloats):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::hasOverhangingFloat):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::markSiblingsWithFloatsForLayout):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        (WebCore::RenderBlock::FloatingObjects::clear):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        (WebCore::RenderBlock::FloatingObject::setX):
+        (WebCore::RenderBlock::FloatingObject::setY):
+        (WebCore::RenderBlock::FloatingObject::setWidth):
+        (WebCore::RenderBlock::FloatingObject::setHeight):
+        (WebCore::RenderBlock::FloatingObject::setFrameRect):
+        (WebCore::RenderBlock::FloatingObjects::FloatingObjects):
+        (WebCore::RenderBlock::FloatingObjects::set):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+
 2011-08-08  Emil A Eklund  <eae@chromium.org>
 
         Rename absoluteQuadsForRange and InlineTextBox::selectionRect to local*
