@@ -131,6 +131,7 @@ public:
     virtual bool isIndeterminate() const { return indeterminate(); }
 
     int size() const;
+    bool sizeShouldIncludeDecoration(int& preferredSize) const;
 
     void setType(const String&);
 

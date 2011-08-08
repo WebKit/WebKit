@@ -249,6 +249,12 @@ double InputType::maximum() const
     return 0;
 }
 
+bool InputType::sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const
+{
+    preferredSize = element()->size();
+    return false;
+}
+
 bool InputType::stepMismatch(const String&, double) const
 {
     // Non-supported types should be rejected by HTMLInputElement::getAllowedValueStep().
@@ -450,6 +456,10 @@ bool InputType::canChangeFromAnotherType() const
 }
 
 void InputType::minOrMaxAttributeChanged()
+{
+}
+
+void InputType::stepAttributeChanged()
 {
 }
 

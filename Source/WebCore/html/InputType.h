@@ -143,6 +143,7 @@ public:
     virtual double defaultValueForStepUp() const;
     virtual double minimum() const;
     virtual double maximum() const;
+    virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const;
     virtual bool stepMismatch(const String&, double step) const;
     virtual double stepBase() const;
     virtual double stepBaseWithDecimalPlaces(unsigned*) const;
@@ -206,6 +207,7 @@ public:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const;
     virtual void attach();
     virtual void minOrMaxAttributeChanged();
+    virtual void stepAttributeChanged();
     virtual void altAttributeChanged();
     virtual void srcAttributeChanged();
     virtual void valueChanged();

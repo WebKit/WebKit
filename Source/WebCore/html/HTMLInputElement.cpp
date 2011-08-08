@@ -50,6 +50,7 @@
 #include "KeyboardEvent.h"
 #include "LocalizedStrings.h"
 #include "MouseEvent.h"
+#include "NumberInputType.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "RenderTextControlSingleLine.h"
@@ -804,7 +805,10 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == multipleAttr) {
         m_inputType->multipleAttributeChanged();
         setNeedsValidityCheck();
-    } else if (attr->name() == patternAttr || attr->name() == precisionAttr || attr->name() == stepAttr)
+    } else if (attr->name() == stepAttr) {
+        m_inputType->stepAttributeChanged();
+        setNeedsValidityCheck();
+    } else if (attr->name() == patternAttr || attr->name() == precisionAttr)
         setNeedsValidityCheck();
     else if (attr->name() == disabledAttr) {
         m_inputType->disabledAttributeChanged();
@@ -992,6 +996,11 @@ void HTMLInputElement::setIndeterminate(bool newValue)
 int HTMLInputElement::size() const
 {
     return m_size;
+}
+
+bool HTMLInputElement::sizeShouldIncludeDecoration(int& preferredSize) const
+{
+    return m_inputType->sizeShouldIncludeDecoration(defaultSize, preferredSize);
 }
 
 void HTMLInputElement::copyNonAttributeProperties(const Element* source)

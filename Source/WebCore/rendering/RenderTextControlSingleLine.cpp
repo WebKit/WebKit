@@ -389,10 +389,11 @@ float RenderTextControlSingleLine::getAvgCharWidth(AtomicString family)
 
     return RenderTextControl::getAvgCharWidth(family);
 }
-    
+
 int RenderTextControlSingleLine::preferredContentWidth(float charWidth) const
 {
-    int factor = inputElement()->size();
+    int factor;
+    bool includesDecoration = inputElement()->sizeShouldIncludeDecoration(factor);
     if (factor <= 0)
         factor = 20;
 
@@ -422,6 +423,17 @@ int RenderTextControlSingleLine::preferredContentWidth(float charWidth) const
     if (RenderBox* cancelRenderer = cancelButton ? cancelButton->renderBox() : 0)
         result += cancelRenderer->borderLeft() + cancelRenderer->borderRight() +
                   cancelRenderer->paddingLeft() + cancelRenderer->paddingRight();
+
+    if (includesDecoration) {
+        HTMLElement* spinButton = innerSpinButtonElement();
+        if (RenderBox* spinRenderer = spinButton ? spinButton->renderBox() : 0) {
+            result += spinRenderer->borderLeft() + spinRenderer->borderRight() +
+                  spinRenderer->paddingLeft() + spinRenderer->paddingRight();
+            // Since the width of spinRenderer is not calculated yet, spinRenderer->width() returns 0.
+            // So computedStyle()->width() is used instead.
+            result += spinButton->computedStyle()->width().value();
+        }
+    }
 
 #if ENABLE(INPUT_SPEECH)
     HTMLElement* speechButton = speechButtonElement();

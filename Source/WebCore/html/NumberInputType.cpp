@@ -53,6 +53,21 @@ using namespace std;
 static const double numberDefaultStep = 1.0;
 static const double numberStepScaleFactor = 1.0;
 
+static unsigned lengthBeforeDecimalPoint(double value)
+{
+    // If value is negative, '-' should be counted.
+
+    double absoluteValue = fabs(value);
+    if (absoluteValue < 1)
+        return value < 0 ? 2 : 1;
+
+    unsigned length = static_cast<unsigned>(log10(floor(absoluteValue))) + 1;
+    if (value < 0)
+        length += 1;
+
+    return length;
+}
+
 PassOwnPtr<InputType> NumberInputType::create(HTMLInputElement* element)
 {
     return adoptPtr(new NumberInputType(element));
@@ -119,6 +134,53 @@ double NumberInputType::minimum() const
 double NumberInputType::maximum() const
 {
     return parseToDouble(element()->fastGetAttribute(maxAttr), numeric_limits<float>::max());
+}
+
+bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const
+{
+    preferredSize = defaultSize;
+
+    unsigned minValueDecimalPlaces;
+    double minValueDouble;
+    String minValue = element()->fastGetAttribute(minAttr);
+    if (!parseToDoubleForNumberTypeWithDecimalPlaces(minValue, &minValueDouble, &minValueDecimalPlaces))
+        return false;
+
+    unsigned maxValueDecimalPlaces;
+    double maxValueDouble;
+    String maxValue = element()->fastGetAttribute(maxAttr);
+    if (!parseToDoubleForNumberTypeWithDecimalPlaces(maxValue, &maxValueDouble, &maxValueDecimalPlaces))
+        return false;
+
+    if (maxValueDouble < minValueDouble) {
+        maxValueDouble = minValueDouble;
+        maxValueDecimalPlaces = maxValueDecimalPlaces;
+    }
+
+    unsigned stepValueDecimalPlaces;
+    double stepValueDouble;
+    String stepValue = element()->fastGetAttribute(stepAttr);
+    if (equalIgnoringCase(stepValue, "any"))
+        return false;
+    if (!parseToDoubleForNumberTypeWithDecimalPlaces(stepValue, &stepValueDouble, &stepValueDecimalPlaces)) {
+        stepValueDouble = 1;
+        stepValueDecimalPlaces = 0;
+    }
+
+    unsigned length = lengthBeforeDecimalPoint(minValueDouble);
+    length = max(length, lengthBeforeDecimalPoint(maxValueDouble));
+    length = max(length, lengthBeforeDecimalPoint(stepValueDouble));
+
+    unsigned lengthAfterDecimalPoint = minValueDecimalPlaces;
+    lengthAfterDecimalPoint = max(lengthAfterDecimalPoint, maxValueDecimalPlaces);
+    lengthAfterDecimalPoint = max(lengthAfterDecimalPoint, stepValueDecimalPlaces);
+
+    // '.' should be counted if the value has decimal places.
+    if (lengthAfterDecimalPoint > 0)
+        length += lengthAfterDecimalPoint + 1;
+
+    preferredSize = length;
+    return true;
 }
 
 bool NumberInputType::isSteppable() const
@@ -272,6 +334,22 @@ bool NumberInputType::supportsPlaceholder() const
 bool NumberInputType::isNumberField() const
 {
     return true;
+}
+
+void NumberInputType::minOrMaxAttributeChanged()
+{
+    InputType::minOrMaxAttributeChanged();
+
+    if (element()->renderer())
+        element()->renderer()->setNeedsLayoutAndPrefWidthsRecalc();
+}
+
+void NumberInputType::stepAttributeChanged()
+{
+    InputType::stepAttributeChanged();
+
+    if (element()->renderer())
+        element()->renderer()->setNeedsLayoutAndPrefWidthsRecalc();
 }
 
 } // namespace WebCore

@@ -1,3 +1,13 @@
+2011-08-08  Shinya Kawanaka  <shinyak@google.com>
+
+        Added the test to check the width of input[type=number].
+        https://bugs.webkit.org/show_bug.cgi?id=60673
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/input-number-size-expected.txt: Added.
+        * fast/forms/input-number-size.html: Added.
+
 2011-08-07  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Skip divergent tests

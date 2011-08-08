@@ -1,3 +1,47 @@
+2011-08-08  Shinya Kawanaka  <shinyak@google.com>
+
+        The input[type=number] element should be as wide as necessary to show the widest possible value.
+        https://bugs.webkit.org/show_bug.cgi?id=60673
+
+        Reviewed by Kent Tamura.
+
+        The size of input[type=number] is calculated from min/max/step attributes to show the widest possible value.
+        If min or max attribute is absent, the default size is used.
+        Also, if its css width is not auto, the width is used with priority.
+
+        If min/max/attribute is set dynamically, the size of the input[type=number] will be recalculated.
+
+        Test: fast/forms/input-number-size.html
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+           Added stepAttributeChanged handler.
+        (WebCore::HTMLInputElement::sizeShouldIncludeDecoration):
+           Returns true if a renderer should include decoration (e.g. inner spinbox).
+           Also returns the preferred size of the input.
+        * html/HTMLInputElement.h:
+        * html/InputType.cpp:
+        (WebCore::InputType::sizeShouldIncludeDecoration):
+           Same as WebCore::HTMLInputElement::sizeShouldIncludeDecoration.
+        (WebCore::InputType::stepAttributeChanged):
+           Will be called When step attribute is changed.
+           Sets a flag to recalculate layout.
+        * html/InputType.h:
+        * html/NumberInputType.cpp:
+        (WebCore::lengthBeforeDecimalPoint):
+           Calculates the width before the decimal point.
+        (WebCore::NumberInputType::sizeShouldIncludeDecoration):
+           Same as WebCore::HTMLInputElement::sizeShouldIncludeDecoration.
+           However, this will calculate the preferred size from min/max/step attribute.
+        (WebCore::NumberInputType::minOrMaxAttributeChanged):
+           Sets a flag to recalculate layout.
+        (WebCore::NumberInputType::stepAttributeChanged): ditto.
+        * html/NumberInputType.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+           Uses preferredSize instead of size.
+           Also, adds innerSpinButtonElement size to width if sizeShouldIncludeDecoration returns true.
+
 2011-08-08  Kenichi Ishibashi  <bashi@chromium.org>
 
         Should not use C-style cast in CSSParser.cpp

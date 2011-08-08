@@ -51,6 +51,7 @@ private:
     virtual bool supportsRangeLimitation() const;
     virtual double minimum() const;
     virtual double maximum() const;
+    virtual bool sizeShouldIncludeDecoration(int defaultSize, int& preferredSize) const;
     virtual bool isSteppable() const;
     virtual bool stepMismatch(const String&, double) const;
     virtual double stepBase() const;
@@ -72,6 +73,8 @@ private:
     virtual bool shouldRespectSpeechAttribute();
     virtual bool supportsPlaceholder() const;
     virtual bool isNumberField() const;
+    virtual void minOrMaxAttributeChanged();
+    virtual void stepAttributeChanged();
 };
 
 } // namespace WebCore
