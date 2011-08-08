@@ -592,6 +592,8 @@ var windowLoaded = function()
     } else
         WebInspector.loaded();
 
+    WebInspector.setAttachedWindow(WebInspector.queryParamsObject.docked === "true");
+
     window.removeEventListener("DOMContentLoaded", windowLoaded, false);
     delete windowLoaded;
 };

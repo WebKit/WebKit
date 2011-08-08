@@ -114,10 +114,11 @@ private:
     virtual Type type() const { return APIType; }
 
     WebPageProxy* platformCreateInspectorPage();
-    void platformOpen(bool willOpenAttached);
+    void platformOpen();
     void platformDidClose();
     void platformBringToFront();
     void platformInspectedURLChanged(const String&);
+    unsigned platformInspectedWindowHeight();
     void platformAttach();
     void platformDetach();
     void platformSetAttachedWindowHeight(unsigned);
@@ -127,10 +128,13 @@ private:
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
-    void didLoadInspectorPage(bool canStartAttached);
+    void didLoadInspectorPage();
     void didClose();
     void bringToFront();
     void inspectedURLChanged(const String&);
+
+    bool canAttach();
+    bool shouldOpenAttached();
 
     static WebPageGroup* inspectorPageGroup();
 
@@ -153,6 +157,7 @@ private:
 
     static const unsigned initialWindowWidth = 750;
     static const unsigned initialWindowHeight = 650;
+    static const unsigned minimumAttachedHeight = 250;
 
     WebPageProxy* m_page;
 

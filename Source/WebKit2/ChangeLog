@@ -1,3 +1,41 @@
+2011-08-05  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: implement dock/undock in WebKit2 without getting into WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=65763
+
+        InspectorFrontendClient.h can't have synchronous canAttachWindow() returning value
+        since in the multiprocess environment, you can't immediately get back to it from the host.
+
+        r92384 introduced an unhealthy WebKit -> WebCore -> WebKit canAttach query where embedder
+        was asking itself a question. This loop was fixed.
+
+        Reviewed by Yury Semikhatsky.
+
+        * UIProcess/WebInspectorProxy.cpp:
+        (WebKit::WebInspectorProxy::attach):
+        (WebKit::WebInspectorProxy::createInspectorPage):
+        (WebKit::WebInspectorProxy::didLoadInspectorPage):
+        (WebKit::WebInspectorProxy::shouldOpenAttached):
+        * UIProcess/WebInspectorProxy.h:
+        * UIProcess/WebInspectorProxy.messages.in:
+        * UIProcess/efl/WebInspectorEfl.cpp:
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        * UIProcess/gtk/WebInspectorGtk.cpp:
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformOpen):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        * UIProcess/qt/WebInspectorProxyQt.cpp:
+        (WebKit::WebInspectorProxy::platformOpen):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformOpen):
+        (WebKit::WebInspectorProxy::platformInspectedWindowHeight):
+        * WebProcess/WebPage/WebInspector.cpp:
+        (WebKit::WebInspector::didLoadInspectorPage):
+        * WebProcess/WebPage/WebInspector.h:
+        * WebProcess/WebPage/WebInspector.messages.in:
+
 2011-08-07  Joseph Pecoraro  <joepeck@webkit.org>
 
         [QT] Possible Leaks WKRetainPtr<> should Adopt allocated Copy

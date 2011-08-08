@@ -66,7 +66,6 @@ public:
     virtual void requestAttachWindow();
     virtual void requestDetachWindow();
     virtual void changeAttachedWindowHeight(unsigned);
-    virtual bool canAttachWindow();
     virtual void saveAs(const WTF::String& fileName, const WTF::String& content);
 
     virtual void inspectedURLChanged(const WTF::String&);

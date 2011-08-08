@@ -509,22 +509,6 @@ void InspectorController::setResourcesDataSizeLimitsFromInternals(int maximumRes
     m_resourceAgent->setResourcesDataSizeLimitsFromInternals(maximumResourcesContentSize, maximumSingleResourceContentSize);
 }
 
-void InspectorController::requestAttachWindow()
-{
-    if (!m_inspectorFrontendClient)
-        return;
-
-    m_inspectorFrontendClient->requestAttachWindow();
-}
-    
-bool InspectorController::canAttachWindow()
-{
-    if (!m_inspectorFrontendClient)
-        return false;
-    
-    return m_inspectorFrontendClient->canAttachWindow();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

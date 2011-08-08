@@ -109,7 +109,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     return toImpl(m_inspectorView.get().pageRef);
 }
 
-void WebInspectorProxy::platformOpen(bool willOpenAttached)
+void WebInspectorProxy::platformOpen()
 {
     ASSERT(!m_inspectorWindow);
 
@@ -135,10 +135,12 @@ void WebInspectorProxy::platformOpen(bool willOpenAttached)
     [m_inspectorView.get() setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [contentView addSubview:m_inspectorView.get()];
 
-    if (!willOpenAttached)
-        [window makeKeyAndOrderFront:nil];
-
     m_inspectorWindow.adoptNS(window);
+
+    if (m_isAttached)
+        platformAttach();
+    else
+        [window makeKeyAndOrderFront:nil];
 }
 
 void WebInspectorProxy::platformDidClose()
@@ -181,6 +183,13 @@ void WebInspectorProxy::inspectedViewFrameDidChange()
 
     [m_inspectorView.get() setFrame:NSMakeRect(inspectedLeft, 0.0, inspectedWidth, inspectorHeight)];
     [inspectedView setFrame:NSMakeRect(inspectedLeft, inspectorHeight, inspectedWidth, inspectedTop - inspectorHeight)];
+}
+
+unsigned WebInspectorProxy::platformInspectedWindowHeight()
+{
+    WKView *inspectedView = m_page->wkView();
+    NSRect inspectedViewRect = [inspectedView frame];
+    return static_cast<unsigned>(inspectedViewRect.size.height);
 }
 
 void WebInspectorProxy::platformAttach()

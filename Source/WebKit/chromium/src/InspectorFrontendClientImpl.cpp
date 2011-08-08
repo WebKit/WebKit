@@ -125,12 +125,6 @@ void InspectorFrontendClientImpl::changeAttachedWindowHeight(unsigned)
     // Do nothing;
 }
 
-bool InspectorFrontendClientImpl::canAttachWindow()
-{
-    // FIXME: Implement this if it is ever called by Chromium.
-    return false;
-}
-    
 void InspectorFrontendClientImpl::saveAs(const String& fileName, const String& content)
 {
     m_client->saveAs(fileName, content);

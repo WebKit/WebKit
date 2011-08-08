@@ -65,6 +65,12 @@ String WebInspectorProxy::inspectorPageURL() const
     return String();
 }
 
+unsigned WebInspectorProxy::platformInspectedWindowHeight()
+{
+    notImplemented();
+    return 0;
+}
+
 void WebInspectorProxy::platformAttach()
 {
     notImplemented();

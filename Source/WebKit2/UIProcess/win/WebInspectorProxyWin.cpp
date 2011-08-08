@@ -198,7 +198,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     return m_inspectorView->page();
 }
 
-void WebInspectorProxy::platformOpen(bool willOpenAttached)
+void WebInspectorProxy::platformOpen()
 {
     registerInspectorViewWindowClass();
 
@@ -208,7 +208,9 @@ void WebInspectorProxy::platformOpen(bool willOpenAttached)
 
     m_inspectorView->setParentWindow(m_inspectorWindow);
 
-    if (!willOpenAttached)
+    if (m_isAttached)
+        platformAttach();
+    else
         ::ShowWindow(m_inspectorWindow, SW_SHOW);
 }
 
@@ -243,6 +245,16 @@ void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
     // FIXME: this should be made localizable once WebKit2 supports it. <rdar://problem/8728860>
     String title = makeString("Web Inspector ", static_cast<UChar>(0x2014), ' ', urlString);
     ::SetWindowTextW(m_inspectorWindow, title.charactersWithNullTermination());
+}
+
+unsigned WebInspectorProxy::platformInspectedWindowHeight()
+{
+    HWND inspectedWindow = m_page->nativeWindow();
+
+    RECT inspectedWindowRect;
+    ::GetWindowRect(inspectedWindow, &inspectedWindowRect);
+
+    return static_cast<unsigned>(inspectedWindowRect.bottom - inspectedWindowRect.top);
 }
 
 void WebInspectorProxy::platformAttach()

@@ -120,8 +120,11 @@ void WebInspectorProxy::showConsole()
 
 void WebInspectorProxy::attach()
 {
+    if (!canAttach())
+        return;
+
     m_isAttached = true;
-    
+
     if (m_isVisible)
         inspectorPageGroup()->preferences()->setInspectorStartsAttached(true);
 
@@ -206,18 +209,19 @@ void WebInspectorProxy::createInspectorPage(uint64_t& inspectorPageID, WebPageCr
     inspectorPageID = inspectorPage->pageID();
     inspectorPageParameters = inspectorPage->creationParameters();
 
-    inspectorPage->loadURL(inspectorPageURL());
+    String url = inspectorPageURL();
+    if (shouldOpenAttached())
+        url += "?docked=true";
+    inspectorPage->loadURL(url);
 }
 
-void WebInspectorProxy::didLoadInspectorPage(bool canStartAttached)
+void WebInspectorProxy::didLoadInspectorPage()
 {
     m_isVisible = true;
+    m_isAttached = shouldOpenAttached();
 
-    bool willOpenAttached = canStartAttached && inspectorPageGroup()->preferences()->inspectorStartsAttached();
-    platformOpen(willOpenAttached);
-    
-    if (willOpenAttached)
-        m_page->process()->send(Messages::WebInspector::RequestAttachWindow(), m_page->pageID());
+    // platformOpen is responsible for rendering attached mode depending on m_isAttached.
+    platformOpen();
 }
 
 void WebInspectorProxy::didClose()
@@ -241,6 +245,17 @@ void WebInspectorProxy::bringToFront()
 void WebInspectorProxy::inspectedURLChanged(const String& urlString)
 {
     platformInspectedURLChanged(urlString);
+}
+
+bool WebInspectorProxy::canAttach()
+{
+    unsigned inspectedWindowHeight = platformInspectedWindowHeight();
+    return inspectedWindowHeight && minimumAttachedHeight <= (inspectedWindowHeight * 3 / 4);
+}
+
+bool WebInspectorProxy::shouldOpenAttached()
+{
+    return inspectorPageGroup()->preferences()->inspectorStartsAttached() && canAttach();
 }
 
 } // namespace WebKit

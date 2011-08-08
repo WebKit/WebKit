@@ -78,7 +78,7 @@ WebPage* WebInspector::createInspectorPage()
 // Called from WebInspectorFrontendClient
 void WebInspector::didLoadInspectorPage()
 {
-    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::DidLoadInspectorPage(canAttachWindow()), m_page->pageID());
+    WebProcess::shared().connection()->send(Messages::WebInspectorProxy::DidLoadInspectorPage(), m_page->pageID());
 }
 
 void WebInspector::didClose()
@@ -179,16 +179,6 @@ void WebInspector::stopPageProfiling()
 {
     m_page->corePage()->inspectorController()->stopTimelineProfiler();
     // FIXME: show the Timeline panel.
-}
-
-void WebInspector::requestAttachWindow()
-{
-    m_inspectorPage->corePage()->inspectorController()->requestAttachWindow();
-}
-
-bool WebInspector::canAttachWindow() const
-{
-    return m_inspectorPage->corePage()->inspectorController()->canAttachWindow();
 }
 
 } // namespace WebKit

@@ -65,7 +65,6 @@ var devtools = devtools || {};
 
 devtools.domContentLoaded = function()
 {
-    WebInspector.setAttachedWindow(WebInspector.queryParamsObject.docked === "true");
     if (WebInspector.queryParamsObject.toolbarColor && WebInspector.queryParamsObject.textColor)
         WebInspector.setToolbarColors(WebInspector.queryParamsObject.toolbarColor, WebInspector.queryParamsObject.textColor);
 }
