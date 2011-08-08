@@ -1,5 +1,50 @@
 2011-08-08  Adam Barth  <abarth@webkit.org>
 
+        Optimize baselines for fast/dom/HTMLAnchorElement and fast/dom/Window.
+        This patch was created with webkit-patch bulk-optimize-baselines.
+        (Note: I massaged the two results that enumerate the global object to
+        leave the "base" results as matching mac even though the tool wanted to
+        push those results down into the mac directory.)
+
+        * platform/chromium-mac/fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/HTMLAnchorElement/set-href-attribute-hostname-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/HTMLAnchorElement/set-href-attribute-pathname-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/HTMLAnchorElement/set-href-attribute-port-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/HTMLAnchorElement/set-href-attribute-search-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/Window/element-constructors-on-window-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/Window/get-set-properties-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/Window/window-custom-prototype-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/Window/window-postmessage-args-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/Window/window-properties-device-orientation-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/Window/window-properties-geolocation-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/Window/window-property-shadowing-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/HTMLAnchorElement/set-href-attribute-pathname-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/HTMLAnchorElement/set-href-attribute-port-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/Window/element-constructors-on-window-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/Window/get-set-properties-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/Window/window-custom-prototype-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/Window/window-postmessage-args-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/Window/window-postmessage-clone-frames-expected.txt: Added.
+        * platform/chromium-win/fast/dom/Window/window-properties-device-orientation-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/Window/window-properties-geolocation-expected.txt: Removed.
+        * platform/chromium-win/fast/dom/Window/window-property-shadowing-expected.txt: Removed.
+        * platform/chromium/fast/dom/HTMLAnchorElement/set-href-attribute-host-expected.txt: Added.
+        * platform/chromium/fast/dom/HTMLAnchorElement/set-href-attribute-hostname-expected.txt: Added.
+        * platform/chromium/fast/dom/HTMLAnchorElement/set-href-attribute-pathname-expected.txt: Added.
+        * platform/chromium/fast/dom/HTMLAnchorElement/set-href-attribute-port-expected.txt: Added.
+        * platform/chromium/fast/dom/HTMLAnchorElement/set-href-attribute-search-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/element-constructors-on-window-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/get-set-properties-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-custom-prototype-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-postmessage-args-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-postmessage-clone-frames-expected.txt: Removed.
+        * platform/chromium/fast/dom/Window/window-properties-device-orientation-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-properties-geolocation-expected.txt: Added.
+        * platform/chromium/fast/dom/Window/window-property-shadowing-expected.txt: Added.
+
+2011-08-08  Adam Barth  <abarth@webkit.org>
+
         Optimize baselines for fast/dom/DOMException.
         This patch was created with webkit-patch bulk-optimize-baselines.
         (I've manually remove the README file because we don't use these sorts
