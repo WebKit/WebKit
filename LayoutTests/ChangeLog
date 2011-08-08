@@ -1,3 +1,20 @@
+2011-08-08  Anders Carlsson  <andersca@apple.com>
+
+        More Lion specific results.
+
+        * platform/mac-lion/Skipped:
+        * platform/mac-snowleopard/editing: Added.
+        * platform/mac-snowleopard/editing/input: Added.
+        * platform/mac-snowleopard/editing/input/devanagari-ligature-expected.png: Copied from platform/mac/editing/input/devanagari-ligature-expected.png.
+        * platform/mac-snowleopard/editing/input/devanagari-ligature-expected.txt: Copied from platform/mac/editing/input/devanagari-ligature-expected.txt.
+        * platform/mac-snowleopard/fast/xsl: Added.
+        * platform/mac-snowleopard/fast/xsl/sort-locale-expected.txt: Added.
+        * platform/mac/editing/input/devanagari-ligature-expected.png:
+        * platform/mac/editing/input/devanagari-ligature-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-at-beginning-of-word-1-expected.txt:
+        * platform/mac/editing/spelling/autocorrection-at-beginning-of-word-2-expected.txt:
+        * platform/mac/fast/xsl/sort-locale-expected.txt: Added.
+
 2011-08-08  Jian Li  <jianli@chromium.org>
 
         Unreviewed, fix more typo in test_expectations.txt.

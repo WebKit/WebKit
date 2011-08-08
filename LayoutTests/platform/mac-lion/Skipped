@@ -41,7 +41,21 @@ fast/canvas/canvas-strokeRect-alpha-shadow.html
 # Currently failing WebGL tests <rdar://problem/9355460>
 fast/canvas/webgl/tex-image-and-sub-image-2d-with-video.html
 
-# --- Failures that need investigation ---
+# --- Editing ---
+
+# Sometimes fail <rdar://problem/9356912>
+platform/mac/editing/spelling/autocorrection-delete.html
+platform/mac/editing/spelling/autocorrection-removing-underline-after-paste.html
+platform/mac/editing/spelling/autocorrection-removing-underline.html
+platform/mac/editing/spelling/autocorrection-simple.html
+platform/mac/editing/spelling/delete-autocorrected-word-1.html
+platform/mac/editing/spelling/delete-autocorrected-word-2.html
+platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-using-punctuation.html  
+
+# Pasting replaces the three periods with an ellipsis on Lion
+editing/pasteboard/5478250.html
+
+# --- Misc failures that need investigation ---
 
 # These fail in DRT but look correct in Safari.
 fast/text/emphasis-combined-text.html
@@ -51,8 +65,6 @@ fast/text/international/text-combine-image-test.html
 fast/events/mousedown-in-subframe-scrollbar.html
 
 # Unknown failures.
+editing/spelling/spellcheck-paste.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
-
-# The french sort order seems to have changed in Lion.
-fast/xsl/sort-locale.xml
