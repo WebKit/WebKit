@@ -68,4 +68,7 @@ shouldBe('test(freeze(obj()))', '"(a:1)(b:2)SF"'); // sealed and frozen, CANNOT 
 // check that we can preventExtensions on a host function.
 shouldBe('Object.preventExtensions(Math.sin)', 'Math.sin');
 
+shouldBeUndefined('var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; o.newProp;');
+shouldThrow('"use strict"; var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" };');
+
 successfullyParsed = true;

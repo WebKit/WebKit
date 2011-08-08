@@ -11,6 +11,8 @@ PASS test(preventExtensions(obj())) is "(b:4)"
 PASS test(seal(obj())) is "(a:1)(b:4)S"
 PASS test(freeze(obj())) is "(a:1)(b:2)SF"
 PASS Object.preventExtensions(Math.sin) is Math.sin
+PASS var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; o.newProp; is undefined.
+PASS "use strict"; var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; threw exception TypeError: Attempted to assign to readonly property..
 PASS successfullyParsed is true
 
 TEST COMPLETE

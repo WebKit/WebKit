@@ -1,3 +1,16 @@
+2011-08-08  Oliver Hunt  <oliver@apple.com>
+
+        Non-extensibility does not prevent mutating [[Prototype]]
+        https://bugs.webkit.org/show_bug.cgi?id=65832
+
+        Reviewed by Gavin Barraclough.
+
+        Add tests to ensure we can't assign to __proto__ when an object
+        is not extensible.
+
+        * fast/js/preventExtensions-expected.txt:
+        * fast/js/script-tests/preventExtensions.js:
+
 2011-08-08  Jian Li  <jianli@chromium.org>
 
         Unreviewed, mark 1 test as flaky in chromium.

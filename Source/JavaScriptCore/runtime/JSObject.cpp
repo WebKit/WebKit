@@ -110,6 +110,13 @@ void JSObject::put(ExecState* exec, const Identifier& propertyName, JSValue valu
         // Setting __proto__ to a non-object, non-null value is silently ignored to match Mozilla.
         if (!value.isObject() && !value.isNull())
             return;
+
+        if (!isExtensible()) {
+            if (slot.isStrictMode())
+                throwTypeError(exec, StrictModeReadonlyPropertyWriteError);
+            return;
+        }
+            
         if (!setPrototypeWithCycleCheck(exec->globalData(), value))
             throwError(exec, createError(exec, "cyclic __proto__ value"));
         return;

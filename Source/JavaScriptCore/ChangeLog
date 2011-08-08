@@ -1,3 +1,15 @@
+2011-08-08  Oliver Hunt  <oliver@apple.com>
+
+        Non-extensibility does not prevent mutating [[Prototype]]
+        https://bugs.webkit.org/show_bug.cgi?id=65832
+
+        Reviewed by Gavin Barraclough.
+
+        Disallow mutation of __proto__ on objects that are not extensible.
+
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::put):
+
 2011-08-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not track speculation decisions for global variables
