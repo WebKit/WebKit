@@ -1,3 +1,36 @@
+2011-08-08  Alexei Svitkine  <asvitkine@chromium.org>
+
+        [Chromium] Enable rubber banding when scrolling.
+
+        https://bugs.webkit.org/show_bug.cgi?id=65707
+
+        Reviewed by Dimitri Glazkov.
+
+        * features.gypi:
+        * public/WebInputEvent.h:
+        (WebKit::WebMouseWheelEvent::WebMouseWheelEvent):
+        (WebKit::WebGestureEvent::WebGestureEvent):
+        * public/mac/WebInputEventFactory.h:
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        * src/WebInputEventConversion.h:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::GestureEvent):
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::gestureEvent):
+        (WebKit::WebViewImpl::handleInputEvent):
+        * src/WebViewImpl.h:
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::gestureEventTypeForEvent):
+        (WebKit::phaseForNSEventPhase):
+        (WebKit::phaseForEvent):
+        (WebKit::momentumPhaseForEvent):
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+        (WebKit::WebInputEventFactory::gestureEvent):
+
 2011-08-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Unreviewed. Rolled Chromium DEPS from 95576 to 95783.
