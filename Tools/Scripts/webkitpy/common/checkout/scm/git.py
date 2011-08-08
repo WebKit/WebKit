@@ -144,7 +144,7 @@ class Git(SCM, SVNRepository):
         return self._filesystem.exists(self.absolute_path(self._filesystem.join('.git', 'rebase-apply')))
 
     def working_directory_is_clean(self):
-        return self.run(['git', 'diff', 'HEAD', '--name-only'], cwd=self.checkout_root) == ""
+        return self.run(['git', 'diff', 'HEAD', '--no-renames', '--name-only'], cwd=self.checkout_root) == ""
 
     def clean_working_directory(self):
         # FIXME: These should probably use cwd=self.checkout_root.
@@ -157,7 +157,7 @@ class Git(SCM, SVNRepository):
     def status_command(self):
         # git status returns non-zero when there are changes, so we use git diff name --name-status HEAD instead.
         # No file contents printed, thus utf-8 autodecoding in self.run is fine.
-        return ["git", "diff", "--name-status", "HEAD"]
+        return ["git", "diff", "--name-status", "--no-renames", "HEAD"]
 
     def _status_regexp(self, expected_types):
         return '^(?P<status>[%s])\t(?P<filename>.+)$' % expected_types
@@ -186,7 +186,7 @@ class Git(SCM, SVNRepository):
 
     def changed_files(self, git_commit=None):
         # FIXME: --diff-filter could be used to avoid the "extract_filenames" step.
-        status_command = ['git', 'diff', '-r', '--name-status', '-C', '-M', "--no-ext-diff", "--full-index", self.merge_base(git_commit)]
+        status_command = ['git', 'diff', '-r', '--name-status', "--no-renames", "--no-ext-diff", "--full-index", self.merge_base(git_commit)]
         # FIXME: I'm not sure we're returning the same set of files that SVN.changed_files is.
         # Added (A), Copied (C), Deleted (D), Modified (M), Renamed (R)
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ADM"))
@@ -209,7 +209,7 @@ class Git(SCM, SVNRepository):
     def conflicted_files(self):
         # We do not need to pass decode_output for this diff command
         # as we're passing --name-status which does not output any data.
-        status_command = ['git', 'diff', '--name-status', '-C', '-M', '--diff-filter=U']
+        status_command = ['git', 'diff', '--name-status', '--no-renames', '--diff-filter=U']
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("U"))
 
     def added_files(self):
@@ -244,7 +244,7 @@ class Git(SCM, SVNRepository):
         """Returns a byte array (str()) representing the patch file.
         Patch files are effectively binary since they may contain
         files of multiple different encodings."""
-        command = ['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "-M", self.merge_base(git_commit), "--"]
+        command = ['git', 'diff', '--binary', "--no-ext-diff", "--full-index", "--no-renames", self.merge_base(git_commit), "--"]
         if changed_files:
             command += changed_files
         return self.prepend_svn_revision(self.run(command, decode_output=False, cwd=self.checkout_root))
@@ -282,7 +282,7 @@ class Git(SCM, SVNRepository):
         return self.create_patch(git_commit)
 
     def diff_for_file(self, path, log=None):
-        return self.run(['git', 'diff', 'HEAD', '--', path], cwd=self.checkout_root)
+        return self.run(['git', 'diff', 'HEAD', '--no-renames', '--', path], cwd=self.checkout_root)
 
     def show_head(self, path):
         return self.run(['git', 'show', 'HEAD:' + self.to_object_name(path)], decode_output=False)
@@ -462,4 +462,4 @@ class Git(SCM, SVNRepository):
         return CommitMessage(commit_lines[first_line_after_headers:])
 
     def files_changed_summary_for_commit(self, commit_id):
-        return self.run(['git', 'diff-tree', '--shortstat', '--no-commit-id', commit_id])
+        return self.run(['git', 'diff-tree', '--shortstat', '--no-renames', '--no-commit-id', commit_id])

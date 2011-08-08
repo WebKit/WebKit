@@ -962,6 +962,17 @@ class GitTest(SCMTest):
         # self._shared_test_head_svn_revision().
         self.assertEqual(scm.head_svn_revision(), '')
 
+    def test_rename_files(self):
+        scm = self.tracking_scm
+
+        run_command(['git', 'mv', 'foo_file', 'bar_file'])
+        scm.commit_locally_with_message('message')
+
+        patch = scm.create_patch()
+        self.assertFalse(re.search(r'rename from ', patch))
+        self.assertFalse(re.search(r'rename to ', patch))
+
+
 class GitSVNTest(SCMTest):
 
     def _setup_git_checkout(self):
