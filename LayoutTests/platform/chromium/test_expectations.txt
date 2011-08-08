@@ -3701,3 +3701,6 @@ BUGWK63186 MAC WIN LINUX : svg/as-object/embedded-svg-size-changes.html = IMAGE+
 BUGWK63186 MAC WIN LINUX : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE+TEXT IMAGE
 
 BUGWK65862 MAC DEBUG : storage/indexeddb/index-cursor.html = PASS TIMEOUT
+
+// Caused by r92618
+BUGWK65874 : fast/js/preventExtensions.html = TEXT

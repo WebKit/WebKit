@@ -1,3 +1,9 @@
+2011-08-08  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, mark preventExtensions.html as failed on chromium.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-08  Tony Chang  <tony@chromium.org>
 
         implement basic horizontal flexing
