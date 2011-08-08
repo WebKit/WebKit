@@ -1,3 +1,12 @@
+2011-08-08  Andras Becsi  <abecsi@webkit.org>
+
+        [Qt] fast/forms/input-number-size.html added in r92589 fails
+        https://bugs.webkit.org/show_bug.cgi?id=65851
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped: Skip the test.
+
 2011-08-08  John Knottenbelt  <jknotten@chromium.org>
 
         Adjust test expectations.

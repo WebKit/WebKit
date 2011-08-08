@@ -1064,6 +1064,10 @@ fast/repaint/inline-relative-positioned.html
 # eventSender missing touchCancel() and cancelTouchPoint()
 fast/events/touch/send-oncancel-event.html
 
+# [Qt] fast/forms/input-number-size.html added in r92589 fails
+# https://bugs.webkit.org/show_bug.cgi?id=65851
+fast/forms/input-number-size.html
+
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
 
