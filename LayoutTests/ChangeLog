@@ -1,5 +1,11 @@
 2011-08-08  Jian Li  <jianli@chromium.org>
 
+        Unreviewed, update chromium test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-08  Jian Li  <jianli@chromium.org>
+
         Unreviewed, mark some tests as flaky on chromium.
 
         * platform/chromium/test_expectations.txt:
