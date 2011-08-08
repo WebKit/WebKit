@@ -1,3 +1,14 @@
+2011-08-08  Eric Seidel  <eric@webkit.org>
+
+        Move the --leaks bot back over to NRWT now that I'm back
+        from vacation and able to debug it.
+
+        Unreviewed.
+
+        * Scripts/run-webkit-tests:
+        (usingWebKit2):
+        (useNewRunWebKitTests):
+
 2011-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Wire up updating expectations in garden-o-matic.
