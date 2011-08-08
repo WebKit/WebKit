@@ -133,11 +133,6 @@ void WebPopupMenuImpl::MouseWheel(const WebMouseWheelEvent& event)
     m_widget->handleWheelEvent(PlatformWheelEventBuilder(m_widget, event));
 }
 
-bool WebPopupMenuImpl::GestureEvent(const WebGestureEvent& event)
-{
-    return m_widget->handleGestureEvent(PlatformGestureEventBuilder(m_widget, event));
-}
-
 #if ENABLE(TOUCH_EVENTS)
 bool WebPopupMenuImpl::TouchEvent(const WebTouchEvent& event)
 {
@@ -270,10 +265,6 @@ bool WebPopupMenuImpl::handleInputEvent(const WebInputEvent& inputEvent)
     case WebInputEvent::TouchEnd:
     case WebInputEvent::TouchCancel:
         return TouchEvent(*static_cast<const WebTouchEvent*>(&inputEvent));
-
-    case WebInputEvent::GestureScrollBegin:
-    case WebInputEvent::GestureScrollEnd:
-        return GestureEvent(*static_cast<const WebGestureEvent*>(&inputEvent));
 
     case WebInputEvent::Undefined:
     case WebInputEvent::MouseEnter:

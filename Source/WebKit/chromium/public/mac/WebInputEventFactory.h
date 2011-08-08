@@ -46,7 +46,6 @@ namespace WebKit {
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebMouseWheelEvent;
-class WebGestureEvent;
 
 class WebInputEventFactory {
 public:
@@ -54,7 +53,6 @@ public:
     WEBKIT_EXPORT static WebKeyboardEvent keyboardEvent(wchar_t character, int modifiers, double timeStampSeconds);
     WEBKIT_EXPORT static WebMouseEvent mouseEvent(NSEvent*, NSView*);
     WEBKIT_EXPORT static WebMouseWheelEvent mouseWheelEvent(NSEvent*, NSView*);
-    WEBKIT_EXPORT static WebGestureEvent gestureEvent(NSEvent *, NSView *);
 };
 
 } // namespace WebKit

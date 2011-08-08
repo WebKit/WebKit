@@ -1,3 +1,28 @@
+2011-08-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92607.
+        http://trac.webkit.org/changeset/92607
+        https://bugs.webkit.org/show_bug.cgi?id=65865
+
+        This patch breaks Chromium Mac Canary (Requested by jianli on
+        #webkit).
+
+        * features.gypi:
+        * public/WebInputEvent.h:
+        (WebKit::WebMouseWheelEvent::WebMouseWheelEvent):
+        * public/mac/WebInputEventFactory.h:
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformWheelEventBuilder::PlatformWheelEventBuilder):
+        * src/WebInputEventConversion.h:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+        * src/WebViewImpl.h:
+        * src/mac/WebInputEventFactory.mm:
+        (WebKit::WebInputEventFactory::mouseWheelEvent):
+
 2011-08-08  Alexei Svitkine  <asvitkine@chromium.org>
 
         [Chromium] Enable rubber banding when scrolling.

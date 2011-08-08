@@ -603,14 +603,6 @@ bool WebViewImpl::mouseWheel(const WebMouseWheelEvent& event)
     return mainFrameImpl()->frame()->eventHandler()->handleWheelEvent(platformEvent);
 }
 
-#if ENABLE(GESTURE_EVENTS)
-bool WebViewImpl::gestureEvent(const WebGestureEvent& event)
-{
-    PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
-    return mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
-}
-#endif
-
 bool WebViewImpl::keyEvent(const WebKeyboardEvent& event)
 {
     ASSERT((event.type == WebInputEvent::RawKeyDown)
@@ -1287,13 +1279,6 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
     case WebInputEvent::Char:
         handled = charEvent(*static_cast<const WebKeyboardEvent*>(&inputEvent));
         break;
-
-#if ENABLE(GESTURE_EVENTS)
-    case WebInputEvent::GestureScrollBegin:
-    case WebInputEvent::GestureScrollEnd:
-        handled = gestureEvent(*static_cast<const WebGestureEvent*>(&inputEvent));
-        break;
-#endif
 
 #if ENABLE(TOUCH_EVENTS)
     case WebInputEvent::TouchStart:

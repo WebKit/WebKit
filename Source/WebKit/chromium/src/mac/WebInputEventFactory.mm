@@ -34,25 +34,6 @@
 #include "WebInputEvent.h"
 #include <wtf/ASCIICType.h>
 
-#if !defined(MAC_OS_X_VERSION_10_7) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_7)
-
-enum {
-    NSEventPhaseNone        = 0,
-    NSEventPhaseBegan       = 0x1 << 0,
-    NSEventPhaseStationary  = 0x1 << 1,
-    NSEventPhaseChanged     = 0x1 << 2,
-    NSEventPhaseEnded       = 0x1 << 3,
-    NSEventPhaseCancelled   = 0x1 << 4
-};
-typedef NSUInteger NSEventPhase;
-
-@interface NSEvent (LionSDKDeclarations)
-- (NSEventPhase)phase;
-- (NSEventPhase)momentumPhase;
-@end
-
-#endif  // MAC_OS_X_VERSION_10_7
-
 namespace WebKit {
 
 // WebKeyboardEvent -----------------------------------------------------------
@@ -166,19 +147,6 @@ static int windowsKeyCodeForKeyEvent(NSEvent* event)
     // Map Mac virtual key code directly to Windows one for any keys not handled above.
     // E.g. the key next to Caps Lock has the same Event.keyCode on U.S. keyboard ('A') and on Russian keyboard (CYRILLIC LETTER EF).
     return WebCore::windowsKeyCodeForKeyCode([event keyCode]);
-}
-
-static WebInputEvent::Type gestureEventTypeForEvent(NSEvent *event)
-{
-    switch ([event type]) {
-    case NSEventTypeBeginGesture:
-        return WebInputEvent::GestureScrollBegin;
-    case NSEventTypeEndGesture:
-        return WebInputEvent::GestureScrollEnd;
-    default:
-        ASSERT_NOT_REACHED();
-        return WebInputEvent::GestureScrollEnd;
-    }
 }
 
 static inline NSString* textFromEvent(NSEvent* event)
@@ -739,40 +707,6 @@ WebMouseEvent WebInputEventFactory::mouseEvent(NSEvent* event, NSView* view)
 
 // WebMouseWheelEvent ---------------------------------------------------------
 
-static WebMouseWheelEvent::Phase phaseForNSEventPhase(NSEventPhase eventPhase)
-{
-    uint32_t phase = WebMouseWheelEvent::PhaseNone; 
-    if (eventPhase & NSEventPhaseBegan)
-        phase |= WebMouseWheelEvent::PhaseBegan;
-    if (eventPhase & NSEventPhaseStationary)
-        phase |= WebMouseWheelEvent::PhaseStationary;
-    if (eventPhase & NSEventPhaseChanged)
-        phase |= WebMouseWheelEvent::PhaseChanged;
-    if (eventPhase & NSEventPhaseEnded)
-        phase |= WebMouseWheelEvent::PhaseEnded;
-    if (eventPhase & NSEventPhaseCancelled)
-        phase |= WebMouseWheelEvent::PhaseCancelled;
-    return static_cast<WebMouseWheelEvent::Phase>(phase);
-}
-
-static WebMouseWheelEvent::Phase phaseForEvent(NSEvent *event)
-{
-    if (![event respondsToSelector:@selector(phase)])
-        return WebMouseWheelEvent::PhaseNone;
-
-    NSEventPhase eventPhase = [event phase];
-    return phaseForNSEventPhase(eventPhase);
-}
-
-static WebMouseWheelEvent::Phase momentumPhaseForEvent(NSEvent *event)
-{
-    if (![event respondsToSelector:@selector(momentumPhase)])
-        return WebMouseWheelEvent::PhaseNone;
-
-    NSEventPhase eventMomentumPhase = [event momentumPhase];
-    return phaseForNSEventPhase(eventMomentumPhase);
-}
-
 WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(NSEvent* event, NSView* view)
 {
     WebMouseWheelEvent result;
@@ -904,7 +838,6 @@ WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(NSEvent* event, NSView*
         result.deltaY = CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventPointDeltaAxis1);
         result.wheelTicksX = result.deltaX / scrollbarPixelsPerCocoaTick;
         result.wheelTicksY = result.deltaY / scrollbarPixelsPerCocoaTick;
-        result.hasPreciseScrollingDeltas = true;
     } else {
         result.deltaX = [event deltaX] * scrollbarPixelsPerCocoaTick;
         result.deltaY = [event deltaY] * scrollbarPixelsPerCocoaTick;
@@ -912,29 +845,6 @@ WebMouseWheelEvent WebInputEventFactory::mouseWheelEvent(NSEvent* event, NSView*
         result.wheelTicksX = CGEventGetIntegerValueField(cgEvent, kCGScrollWheelEventDeltaAxis2);
     }
 
-    result.timeStampSeconds = [event timestamp];
-
-    result.phase              = phaseForEvent(event);
-    result.momentumPhase      = momentumPhaseForEvent(event);
-
-    return result;
-}
-
-WebGestureEvent WebInputEventFactory::gestureEvent(NSEvent *event, NSView *view)
-{
-    WebGestureEvent result;
-
-    // Use a temporary WebMouseEvent to get the location.
-    WebMouseEvent temp;
-
-    setWebEventLocationFromEventInView(&temp, event, view);
-    result.x = temp.x;
-    result.y = temp.y;
-    result.globalX = temp.globalX;
-    result.globalY = temp.globalY;
-
-    result.type = gestureEventTypeForEvent(event);
-    result.modifiers = modifiersFromEvent(event);
     result.timeStampSeconds = [event timestamp];
 
     return result;

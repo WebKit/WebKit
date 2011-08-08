@@ -84,7 +84,6 @@ class WebAccessibilityObject;
 class WebDevToolsAgentClient;
 class WebDevToolsAgentPrivate;
 class WebFrameImpl;
-class WebGestureEvent;
 class WebImage;
 class WebKeyboardEvent;
 class WebMouseEvent;
@@ -278,7 +277,6 @@ public:
     void mouseContextMenu(const WebMouseEvent&);
     void mouseDoubleClick(const WebMouseEvent&);
     bool mouseWheel(const WebMouseWheelEvent&);
-    bool gestureEvent(const WebGestureEvent&);
     bool keyEvent(const WebKeyboardEvent&);
     bool charEvent(const WebKeyboardEvent&);
     bool touchEvent(const WebTouchEvent&);

@@ -100,10 +100,6 @@ public:
         KeyUp,
         Char,
 
-        // WebGestureEvent
-        GestureScrollBegin,
-        GestureScrollEnd,
-
         // WebTouchEvent
         TouchStart,
         TouchMove,
@@ -283,15 +279,6 @@ public:
 
 class WebMouseWheelEvent : public WebMouseEvent {
 public:
-    enum Phase {
-        PhaseNone        = 0,
-        PhaseBegan       = 1 << 1,
-        PhaseStationary  = 1 << 2,
-        PhaseChanged     = 1 << 3,
-        PhaseEnded       = 1 << 4,
-        PhaseCancelled   = 1 << 5,
-    };
-
     float deltaX;
     float deltaY;
     float wheelTicksX;
@@ -303,10 +290,6 @@ public:
     // transfering it over the wire.
     int scrollByPage;
 
-    bool hasPreciseScrollingDeltas;
-    Phase phase;
-    Phase momentumPhase;
-
     WebMouseWheelEvent(unsigned sizeParam = sizeof(WebMouseWheelEvent))
         : WebMouseEvent(sizeParam)
         , deltaX(0.0f)
@@ -314,27 +297,6 @@ public:
         , wheelTicksX(0.0f)
         , wheelTicksY(0.0f)
         , scrollByPage(false)
-        , hasPreciseScrollingDeltas(false)
-        , phase(PhaseNone)
-        , momentumPhase(PhaseNone)
-    {
-    }
-};
-
-// WebGestureEvent --------------------------------------------------------------
-
-class WebGestureEvent : public WebInputEvent {
-public:
-    int x;
-    int y;
-    int globalX;
-    int globalY;
-
-    WebGestureEvent(unsigned sizeParam = sizeof(WebGestureEvent))
-        : x(0)
-        , y(0)
-        , globalX(0)
-        , globalY(0)
     {
     }
 };

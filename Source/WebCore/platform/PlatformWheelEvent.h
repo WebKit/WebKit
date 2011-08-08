@@ -73,7 +73,7 @@ namespace WebCore {
         ScrollByPixelWheelEvent
     };
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC)
     enum PlatformWheelEventPhase {
         PlatformWheelEventPhaseNone        = 0,
         PlatformWheelEventPhaseBegan       = 1 << 1,
@@ -97,7 +97,7 @@ namespace WebCore {
             , m_ctrlKey(false)
             , m_altKey(false)
             , m_metaKey(false)
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC)
             , m_hasPreciseScrollingDeltas(false)
             , m_phase(PlatformWheelEventPhaseNone)
             , m_momentumPhase(PlatformWheelEventPhaseNone)
@@ -119,7 +119,7 @@ namespace WebCore {
             , m_ctrlKey(ctrlKey)
             , m_altKey(altKey)
             , m_metaKey(metaKey)
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC)
             , m_hasPreciseScrollingDeltas(false)
             , m_phase(PlatformWheelEventPhaseNone)
             , m_momentumPhase(PlatformWheelEventPhaseNone)
@@ -174,9 +174,7 @@ namespace WebCore {
 #if defined(__OBJC__)
         PlatformWheelEvent(NSEvent *, NSView *windowView);
 #endif
-#endif
 
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
         PlatformWheelEventPhase phase() const { return m_phase; }
         PlatformWheelEventPhase momentumPhase() const { return m_momentumPhase; }
         bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
@@ -215,7 +213,7 @@ namespace WebCore {
         bool m_ctrlKey;
         bool m_altKey;
         bool m_metaKey;
-#if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
+#if PLATFORM(MAC)
         bool m_hasPreciseScrollingDeltas;
         PlatformWheelEventPhase m_phase;
         PlatformWheelEventPhase m_momentumPhase;

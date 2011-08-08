@@ -52,7 +52,6 @@ class Widget;
 }
 
 namespace WebKit {
-class WebGestureEvent;
 class WebKeyboardEvent;
 class WebMouseEvent;
 class WebMouseWheelEvent;
@@ -105,7 +104,6 @@ public:
     void MouseUp(const WebMouseEvent&);
     void MouseDoubleClick(const WebMouseEvent&);
     void MouseWheel(const WebMouseWheelEvent&);
-    bool GestureEvent(const WebGestureEvent&);
     bool TouchEvent(const WebTouchEvent&);
     bool KeyEvent(const WebKeyboardEvent&);
 
