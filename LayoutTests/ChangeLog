@@ -1,3 +1,11 @@
+2011-08-08  Adam Barth  <abarth@webkit.org>
+
+        Add fast/js/regexp-overflow.html result back for Chromium.  I'm not
+        sure why bulk-rebaseline-tests remove it.  There's some bug in the
+        script I need to track down.
+
+        * platform/chromium/fast/js/regexp-overflow-expected.txt: Added.
+
 2011-08-08  Jian Li  <jianli@chromium.org>
 
         Unreviewed, mark gradient-after-transparent-border.html as failed on chromium.
