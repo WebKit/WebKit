@@ -399,6 +399,9 @@ enum EDisplay {
 #if ENABLE(WCSS)
     WAP_MARQUEE,
 #endif
+#if ENABLE(CSS3_FLEXBOX)
+    FLEXBOX, INLINE_FLEXBOX,
+#endif
     NONE
 };
 

@@ -1560,6 +1560,13 @@ void RenderBox::computeLogicalWidth()
         setLogicalWidth(overrideWidth());
         return;
     }
+#if ENABLE(CSS3_FLEXBOX)
+    // FIXME: Check direction once flex-direction is implemented.
+    if (hasOverrideSize() && parent()->isFlexibleBox()) {
+        setLogicalWidth(overrideWidth());
+        return;
+    }
+#endif
 
     // FIXME: Account for block-flow in flexible boxes.
     // https://bugs.webkit.org/show_bug.cgi?id=46418

@@ -1,3 +1,32 @@
+2011-08-08  Tony Chang  <tony@chromium.org>
+
+        implement basic horizontal flexing
+        https://bugs.webkit.org/show_bug.cgi?id=65045
+
+        Reviewed by David Hyatt.
+
+        Test: css3/flexbox/001.html
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeLogicalWidth):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::FlexibleBoxIterator::FlexibleBoxIterator): flexitem iterator
+        (WebCore::RenderFlexibleBox::FlexibleBoxIterator::first):
+        (WebCore::RenderFlexibleBox::FlexibleBoxIterator::next):
+        (WebCore::RenderFlexibleBox::FlexibleBoxIterator::reset):
+        (WebCore::RenderFlexibleBox::layoutBlock):
+        (WebCore::preferredFlexItemContentWidth): Returns the intrinsic size of a flex item's content.
+        (WebCore::RenderFlexibleBox::layoutHorizontalBlock): Runs the flex algorithm
+        (WebCore::preferredSizeForMarginsAndPadding):
+        (WebCore::RenderFlexibleBox::computePreferredSize): Calculate the preferred size of the
+            flex items.
+        * rendering/RenderFlexibleBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/style/RenderStyleConstants.h:
+
 2011-08-08  David Grogan  <dgrogan@chromium.org>
 
         Add detail to ASSERT message in IDBTransaction::enqueueEvent

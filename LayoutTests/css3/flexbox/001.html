@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+.horizontal-box {
+    width: 600px;
+}
+.horizontal-box div {
+    height: 20px;
+    border: 0;
+}
+
+.horizontal-box :nth-child(1) {
+    background-color: blue;
+}
+.horizontal-box :nth-child(2) {
+    background-color: green;
+}
+.horizontal-box :nth-child(3) {
+    background-color: red;
+}
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<script src="resources/flexbox.js"></script>
+<body onload="checkHorizontalBoxen()">
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="200" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(1)"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="200" style="width: -webkit-flex(.5)"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(.5)"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(.5)"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="300" style="width: -webkit-flex(3)"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(2)"></div>
+  <div data-expected-width="100" style="width: -webkit-flex(1)"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="250" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="250" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="100" style="width: 100px"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="150" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="150" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="300" style="width: 50%"></div>
+</div>
+
+<!-- The first two boxes should fill the extra 300px evenly (each gets 150px extra). -->
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="150" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="350" style="width: -webkit-flex(1 200px)"></div>
+  <div data-expected-width="100" style="width: 100px"></div>
+</div>
+
+<!-- Like the last test, except the middle box gets more space than the first box. -->
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="100" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="400" style="width: -webkit-flex(2 33.333333%)"></div>
+  <div data-expected-width="100" style="width: 100px"></div>
+</div>
+
+<!-- Test some negative flexing. -->
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="200" style="width: -webkit-flex(1 1 300px)"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(2 1 300px)"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(3 1 300px)"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="250" style="width: -webkit-flex(1 1 300px)"></div>
+  <div data-expected-width="150" style="width: -webkit-flex(2 3 300px)"></div>
+  <div data-expected-width="200" style="width: 200px"></div>
+</div>
+
+<!-- Test flexitem borders. -->
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="250" style="width: -webkit-flex(1); border-left: 150px solid black"></div>
+  <div data-expected-width="250" style="width: -webkit-flex(1 0 0px); border-right: 150px solid orange"></div>
+  <div data-expected-width="100" style="width: -webkit-flex(1 0 0px)"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="300" style="width: 100px; border: 100px solid black"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(2)"></div>
+  <div data-expected-width="100" style="width: -webkit-flex(1)"></div>
+</div>
+
+<!-- Test flexitem padding. -->
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="250" style="width: -webkit-flex(1); padding-left: 150px"></div>
+  <div data-expected-width="250" style="width: -webkit-flex(1 0 0px); padding-right: 150px"></div>
+  <div data-expected-width="100" style="width: -webkit-flex(1 0 0px)"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="300" style="width: 100px; padding: 100px"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(2)"></div>
+  <div data-expected-width="100" style="width: -webkit-flex(1)"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="200" style="width: -webkit-flex(1); padding-left: 25%"></div>
+  <div data-expected-width="150" style="width: -webkit-flex(3);"></div>
+  <div data-expected-width="250" style="width: 100px; padding-right: 25%"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="200" style="width: -webkit-flex(1); padding-left: 50px; border-right: 50px solid black"></div>
+  <div data-expected-width="250" style="width: -webkit-flex(2); border-right: 50px solid orange"></div>
+  <div data-expected-width="150" style="width: -webkit-flex(1); padding-right: 50px;"></div>
+</div>
+
+<!-- Test items with an intrinsic size. -->
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="200" style="width: -webkit-flex(1)">
+      <div style="width: 100px; height: 100%;"></div>
+  </div>
+  <div data-expected-width="200" style="width: -webkit-flex(2)"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(2)"></div>
+</div>
+
+<div style="display: -webkit-flexbox" class="horizontal-box">
+  <div data-expected-width="200" style="width: -webkit-flex(1 0 0)">
+      <div style="width: 100px; height: 100%;"></div>
+  </div>
+  <div data-expected-width="200" style="width: -webkit-flex(1)"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(1)"></div>
+</div>
+
+</body>
+</html>

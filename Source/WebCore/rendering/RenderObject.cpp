@@ -44,6 +44,7 @@
 #include "RenderArena.h"
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
+#include "RenderFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
@@ -169,6 +170,11 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
         case BOX:
         case INLINE_BOX:
             return new (arena) RenderDeprecatedFlexibleBox(node);
+#if ENABLE(CSS3_FLEXBOX)
+        case FLEXBOX:
+        case INLINE_FLEXBOX:
+            return new (arena) RenderFlexibleBox(node);
+#endif
     }
 
     return 0;
