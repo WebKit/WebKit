@@ -1,3 +1,15 @@
+2011-08-08  Cris Neckar  <cdn@chromium.org>
+
+        Remove counter nodes from the tree and fix-up children when they are removed from the counter map.
+        https://bugs.webkit.org/show_bug.cgi?id=65346
+
+        Reviewed by Adam Barth.
+
+        Covered by existing CSS counter tests.
+
+        * rendering/CounterNode.cpp:
+        (WebCore::CounterNode::~CounterNode):
+
 2011-08-08  Tony Chang  <tony@chromium.org>
 
         implement basic horizontal flexing

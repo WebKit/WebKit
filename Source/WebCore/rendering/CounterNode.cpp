@@ -44,6 +44,49 @@ CounterNode::CounterNode(RenderObject* o, bool hasResetType, int value)
 
 CounterNode::~CounterNode()
 {
+    // Ideally this would be an assert and this would never be reached. In reality this happens a lot
+    // so we need to handle these cases. The node is still connected to the tree so we need to detach it.
+    if (m_parent || m_previousSibling || m_nextSibling || m_firstChild || m_lastChild) {
+        CounterNode* oldParent = 0;
+        CounterNode* oldPreviousSibling = 0;
+        // Instead of calling removeChild() we do this safely as the tree is likely broken if we get here.
+        if (m_parent) {
+            if (m_parent->m_firstChild == this)
+                m_parent->m_firstChild = m_nextSibling;
+            if (m_parent->m_lastChild == this)
+                m_parent->m_lastChild = m_previousSibling;
+            oldParent = m_parent;
+            m_parent = 0;
+        }
+        if (m_previousSibling) {
+            if (m_previousSibling->m_nextSibling == this)
+                m_previousSibling->m_nextSibling = m_nextSibling;
+            oldPreviousSibling = m_previousSibling;
+            m_previousSibling = 0;
+        }
+        if (m_nextSibling) {
+            if (m_nextSibling->m_previousSibling == this)
+                m_nextSibling->m_previousSibling = oldPreviousSibling;
+            m_nextSibling = 0;
+        }
+        if (m_firstChild) {
+            // The node's children are reparented to the old parent.
+            for (CounterNode* child = m_firstChild; child; ) {
+                CounterNode* nextChild = child->m_nextSibling;
+                CounterNode* nextSibling = 0;
+                child->m_parent = oldParent;
+                if (oldPreviousSibling) {
+                    nextSibling = oldPreviousSibling->m_nextSibling;
+                    child->m_previousSibling = oldPreviousSibling;
+                    oldPreviousSibling->m_nextSibling = child;
+                    child->m_nextSibling = nextSibling;
+                    nextSibling->m_previousSibling = child;
+                    oldPreviousSibling = child;
+                }
+                child = nextChild;
+            }
+        }
+    }
     resetRenderers();
 }
 
