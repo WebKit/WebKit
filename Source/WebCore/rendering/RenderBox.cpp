@@ -3226,17 +3226,17 @@ bool RenderBox::avoidsFloats() const
 
 void RenderBox::addShadowOverflow()
 {
-    int shadowLeft;
-    int shadowRight;
-    int shadowTop;
-    int shadowBottom;
+    LayoutUnit shadowLeft;
+    LayoutUnit shadowRight;
+    LayoutUnit shadowTop;
+    LayoutUnit shadowBottom;
     style()->getBoxShadowExtent(shadowTop, shadowRight, shadowBottom, shadowLeft);
-    IntRect borderBox = borderBoxRect();
-    int overflowLeft = borderBox.x() + shadowLeft;
-    int overflowRight = borderBox.maxX() + shadowRight;
-    int overflowTop = borderBox.y() + shadowTop;
-    int overflowBottom = borderBox.maxY() + shadowBottom;
-    addVisualOverflow(IntRect(overflowLeft, overflowTop, overflowRight - overflowLeft, overflowBottom - overflowTop));
+    LayoutRect borderBox = borderBoxRect();
+    LayoutUnit overflowLeft = borderBox.x() + shadowLeft;
+    LayoutUnit overflowRight = borderBox.maxX() + shadowRight;
+    LayoutUnit overflowTop = borderBox.y() + shadowTop;
+    LayoutUnit overflowBottom = borderBox.maxY() + shadowBottom;
+    addVisualOverflow(LayoutRect(overflowLeft, overflowTop, overflowRight - overflowLeft, overflowBottom - overflowTop));
 }
 
 void RenderBox::addOverflowFromChild(RenderBox* child, const LayoutSize& delta)

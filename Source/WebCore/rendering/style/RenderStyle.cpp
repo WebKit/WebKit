@@ -721,7 +721,7 @@ void RenderStyle::setContent(QuoteType quote, bool add)
     rareNonInheritedData.access()->m_content = ContentData::create(quote);
 }
 
-void RenderStyle::applyTransform(TransformationMatrix& transform, const IntSize& borderBoxSize, ApplyTransformOrigin applyOrigin) const
+void RenderStyle::applyTransform(TransformationMatrix& transform, const LayoutSize& borderBoxSize, ApplyTransformOrigin applyOrigin) const
 {
     // transform-origin brackets the transform with translate operations.
     // Optimize for the case where the only transform is a translation, since the transform-origin is irrelevant
@@ -793,17 +793,17 @@ void RenderStyle::setBoxShadow(PassOwnPtr<ShadowData> shadowData, bool add)
     rareData->m_boxShadow = shadowData;
 }
 
-static RoundedRect::Radii calcRadiiFor(const BorderData& border, int width, int height)
+static RoundedRect::Radii calcRadiiFor(const BorderData& border, LayoutSize size)
 {
     return RoundedRect::Radii(
-        LayoutSize(border.topLeft().width().calcValue(width), 
-                   border.topLeft().height().calcValue(height)),
-        LayoutSize(border.topRight().width().calcValue(width),
-                   border.topRight().height().calcValue(height)),
-        LayoutSize(border.bottomLeft().width().calcValue(width), 
-                   border.bottomLeft().height().calcValue(height)),
-        LayoutSize(border.bottomRight().width().calcValue(width), 
-                   border.bottomRight().height().calcValue(height)));
+        LayoutSize(border.topLeft().width().calcValue(size.width()), 
+                   border.topLeft().height().calcValue(size.height())),
+        LayoutSize(border.topRight().width().calcValue(size.width()),
+                   border.topRight().height().calcValue(size.height())),
+        LayoutSize(border.bottomLeft().width().calcValue(size.width()), 
+                   border.bottomLeft().height().calcValue(size.height())),
+        LayoutSize(border.bottomRight().width().calcValue(size.width()), 
+                   border.bottomRight().height().calcValue(size.height())));
 }
 
 static float calcConstraintScaleFor(const IntRect& rect, const RoundedRect::Radii& radii)
@@ -838,36 +838,36 @@ static float calcConstraintScaleFor(const IntRect& rect, const RoundedRect::Radi
     return factor;
 }
 
-RoundedRect RenderStyle::getRoundedBorderFor(const IntRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+RoundedRect RenderStyle::getRoundedBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     RoundedRect roundedRect(borderRect);
     if (hasBorderRadius()) {
-        RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.width(), borderRect.height());
+        RoundedRect::Radii radii = calcRadiiFor(surround->border, borderRect.size());
         radii.scale(calcConstraintScaleFor(borderRect, radii));
         roundedRect.includeLogicalEdges(radii, isHorizontalWritingMode(), includeLogicalLeftEdge, includeLogicalRightEdge);
     }
     return roundedRect;
 }
 
-RoundedRect RenderStyle::getRoundedInnerBorderFor(const IntRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
     bool horizontal = isHorizontalWritingMode();
 
-    int leftWidth = (!horizontal || includeLogicalLeftEdge) ? borderLeftWidth() : 0;
-    int rightWidth = (!horizontal || includeLogicalRightEdge) ? borderRightWidth() : 0;
-    int topWidth = (horizontal || includeLogicalLeftEdge) ? borderTopWidth() : 0;
-    int bottomWidth = (horizontal || includeLogicalRightEdge) ? borderBottomWidth() : 0;
+    LayoutUnit leftWidth = (!horizontal || includeLogicalLeftEdge) ? borderLeftWidth() : 0;
+    LayoutUnit rightWidth = (!horizontal || includeLogicalRightEdge) ? borderRightWidth() : 0;
+    LayoutUnit topWidth = (horizontal || includeLogicalLeftEdge) ? borderTopWidth() : 0;
+    LayoutUnit bottomWidth = (horizontal || includeLogicalRightEdge) ? borderBottomWidth() : 0;
 
     return getRoundedInnerBorderFor(borderRect, topWidth, bottomWidth, leftWidth, rightWidth, includeLogicalLeftEdge, includeLogicalRightEdge);
 }
 
-RoundedRect RenderStyle::getRoundedInnerBorderFor(const IntRect& borderRect,
-    int topWidth, int bottomWidth, int leftWidth, int rightWidth, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
+RoundedRect RenderStyle::getRoundedInnerBorderFor(const LayoutRect& borderRect,
+    LayoutUnit topWidth, LayoutUnit bottomWidth, LayoutUnit leftWidth, LayoutUnit rightWidth, bool includeLogicalLeftEdge, bool includeLogicalRightEdge) const
 {
-    IntRect innerRect(borderRect.x() + leftWidth, 
-            borderRect.y() + topWidth, 
-            borderRect.width() - leftWidth - rightWidth, 
-            borderRect.height() - topWidth - bottomWidth);
+    LayoutRect innerRect(borderRect.x() + leftWidth, 
+               borderRect.y() + topWidth, 
+               borderRect.width() - leftWidth - rightWidth, 
+               borderRect.height() - topWidth - bottomWidth);
 
     RoundedRect roundedRect(innerRect);
 
