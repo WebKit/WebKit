@@ -1,3 +1,9 @@
+2011-08-08  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, fix more typo in test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-08  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: unreviewed, build fix for r92598.

@@ -3688,12 +3688,12 @@ BUGJIANLI WIN LINUX : fast/repaint/canvas-putImageData.html = TEXT
 
 // These tests were disabled and re-enabled in r92545 and r92550.
 // Unfortunately they are failing for us.
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE + TEXT
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE + TEXT
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE + TEXT
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE + TEXT
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE + TEXT
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE + TEXT
-BUGWK63186 MAC WIN LINUX : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE + TEXT
-BUGWK63186 MAC WIN LINUX : svg/as-object/embedded-svg-size-changes.html = IMAGE + TEXT
-BUGWK63186 MAC WIN LINUX : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE + TEXT
+BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT
+BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT
+BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT
+BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
+BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
+BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT
+BUGWK63186 MAC WIN LINUX : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE+TEXT
+BUGWK63186 MAC WIN LINUX : svg/as-object/embedded-svg-size-changes.html = IMAGE+TEXT
+BUGWK63186 MAC WIN LINUX : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE+TEXT
