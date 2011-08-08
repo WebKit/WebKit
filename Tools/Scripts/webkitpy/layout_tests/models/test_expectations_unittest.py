@@ -633,11 +633,14 @@ class TestExpectationEditorTests(unittest.TestCase):
         result = TestExpectationSerializer.list_to_string(expectation_lines, converter)
         self.assertEquals(result, expected_string)
 
-    def assert_update_roundtrip(self, in_string, test, expectation_set, expected_string, remove_flakes=False, parsed_bug_modifiers=None, test_configs=None):
+    def assert_update_roundtrip(self, in_string, test, expectation_set, expected_string, expected_update_count, remove_flakes=False, parsed_bug_modifiers=None, test_configs=None):
         test_config_set = test_configs or set([self.test_port.test_configuration()])
         expectation_lines = self.make_parsed_expectation_lines(in_string)
         editor = TestExpectationsEditor(expectation_lines, MockBugManager())
-        editor.update_expectation(test, test_config_set, expectation_set, parsed_bug_modifiers=parsed_bug_modifiers)
+        updated_expectation_lines = editor.update_expectation(test, test_config_set, expectation_set, parsed_bug_modifiers=parsed_bug_modifiers)
+        for updated_expectation_line in updated_expectation_lines:
+            self.assertTrue(updated_expectation_line in expectation_lines)
+        self.assertEquals(len(updated_expectation_lines), expected_update_count)
         converter = TestConfigurationConverter(self.test_port.all_test_configurations(), self.test_port.configuration_specifier_macros())
         result = TestExpectationSerializer.list_to_string(expectation_lines, converter)
         self.assertEquals(result, expected_string)
@@ -778,79 +781,79 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE""")
     def test_update_expectation(self):
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE CPU : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
-BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""")
+BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 1)
 
         self.assert_update_roundtrip("""
-BUGX1 XP RELEASE CPU : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([PASS]), '')
+BUGX1 XP RELEASE CPU : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([PASS]), '', 1)
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE CPU : failures/expected = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
 BUGX1 XP RELEASE CPU : failures/expected = TEXT
-BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""")
+BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 1)
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE CPU : failures/expected = TEXT""", 'failures/expected/keyboard.html', set([PASS]), """
 BUGX1 XP RELEASE CPU : failures/expected = TEXT
-BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = PASS""")
+BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = PASS""", 1)
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE CPU : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([TEXT]), """
-BUGX1 XP RELEASE CPU : failures/expected/keyboard.html = TEXT""")
+BUGX1 XP RELEASE CPU : failures/expected/keyboard.html = TEXT""", 0)
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE CPU : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
-BUGAWESOME XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", parsed_bug_modifiers=['BUGAWESOME'])
+BUGAWESOME XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 1, parsed_bug_modifiers=['BUGAWESOME'])
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
 BUGX1 XP RELEASE GPU : failures/expected/keyboard.html = TEXT
-BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""")
+BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 2)
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([PASS]), """
-BUGX1 XP RELEASE GPU : failures/expected/keyboard.html = TEXT""")
+BUGX1 XP RELEASE GPU : failures/expected/keyboard.html = TEXT""", 1)
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
 BUGX1 XP RELEASE GPU : failures/expected/keyboard.html = TEXT
-BUGAWESOME XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", parsed_bug_modifiers=['BUGAWESOME'])
+BUGAWESOME XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 2, parsed_bug_modifiers=['BUGAWESOME'])
 
         self.assert_update_roundtrip("""
 BUGX1 WIN : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
 BUGX1 XP DEBUG CPU : failures/expected/keyboard.html = TEXT
 BUGX1 XP GPU : failures/expected/keyboard.html = TEXT
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = TEXT
-BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""")
+BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 2)
 
         self.assert_update_roundtrip("""
 BUGX1 WIN : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([PASS]), """
 BUGX1 XP DEBUG CPU : failures/expected/keyboard.html = TEXT
 BUGX1 XP GPU : failures/expected/keyboard.html = TEXT
-BUGX1 VISTA WIN7 : failures/expected/keyboard.html = TEXT""")
+BUGX1 VISTA WIN7 : failures/expected/keyboard.html = TEXT""", 1)
 
         self.assert_update_roundtrip("""
 BUGX1 WIN : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
 BUGX1 XP DEBUG CPU : failures/expected/keyboard.html = TEXT
 BUGX1 XP GPU : failures/expected/keyboard.html = TEXT
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = TEXT
-BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""")
+BUG_NEWLY_CREATED XP RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 2)
 
         self.assert_update_roundtrip("""
 BUGX1 XP RELEASE CPU: failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
-BUG_NEWLY_CREATED WIN RELEASE CPU : failures/expected/keyboard.html = IMAGE""", test_configs=self.WIN_RELEASE_CPU_CONFIGS)
+BUG_NEWLY_CREATED WIN RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 2, test_configs=self.WIN_RELEASE_CPU_CONFIGS)
 
         self.assert_update_roundtrip("""
-BUGX1 XP RELEASE CPU: failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([PASS]), '', test_configs=self.WIN_RELEASE_CPU_CONFIGS)
+BUGX1 XP RELEASE CPU: failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([PASS]), '', 1, test_configs=self.WIN_RELEASE_CPU_CONFIGS)
 
         self.assert_update_roundtrip("""
 BUGX1 RELEASE CPU: failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
 BUGX1 LINUX MAC RELEASE CPU : failures/expected/keyboard.html = TEXT
-BUG_NEWLY_CREATED WIN RELEASE CPU : failures/expected/keyboard.html = IMAGE""", test_configs=self.WIN_RELEASE_CPU_CONFIGS)
+BUG_NEWLY_CREATED WIN RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 2, test_configs=self.WIN_RELEASE_CPU_CONFIGS)
 
         self.assert_update_roundtrip("""
 BUGX1 MAC : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
 BUGX1 MAC : failures/expected/keyboard.html = TEXT
-BUG_NEWLY_CREATED WIN RELEASE CPU : failures/expected/keyboard.html = IMAGE""", test_configs=self.WIN_RELEASE_CPU_CONFIGS)
+BUG_NEWLY_CREATED WIN RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 1, test_configs=self.WIN_RELEASE_CPU_CONFIGS)
 
     def test_update_expectation_multiple(self):
         in_string = """

@@ -641,6 +641,7 @@ class TestExpectationsEditor(object):
         Here, we treat updating expectations to PASS as special: if possible, the corresponding lines are completely removed.
         """
         # FIXME: Allow specifying modifiers (SLOW, SKIP, WONTFIX).
+        updated_expectations = []
         expectation_lines = self._test_to_expectation_lines.get(test, [])
         remaining_configurations = test_config_set.copy()
         bug_ids = self._get_valid_bug_ids(parsed_bug_modifiers)
@@ -649,32 +650,40 @@ class TestExpectationsEditor(object):
             if expectation_line.matching_configurations == remaining_configurations:
                 # Tweak expectations on existing line.
                 if expectation_line.parsed_expectations == expectation_set:
-                    return
+                    return updated_expectations
                 self._bug_manager.close_bug(expectation_line.parsed_bug_modifiers, bug_ids)
+                updated_expectations.append(expectation_line)
                 if remove_expectations:
                     expectation_line.matching_configurations = set()
-                    return
-                expectation_line.parsed_expectations = expectation_set
-                expectation_line.parsed_bug_modifiers = bug_ids
-                return
+                else:
+                    expectation_line.parsed_expectations = expectation_set
+                    expectation_line.parsed_bug_modifiers = bug_ids
+                return updated_expectations
             elif expectation_line.matching_configurations >= remaining_configurations:
                 # 1) Split up into two expectation lines:
                 # * one with old expectations (existing expectation_line)
                 # * one with new expectations (new expectation_line)
                 # 2) Finish looking, since there will be no more remaining configs to test for.
                 expectation_line.matching_configurations -= remaining_configurations
+                updated_expectations.append(expectation_line)
                 break
             elif expectation_line.matching_configurations <= remaining_configurations:
                 # Remove existing expectation line.
                 self._bug_manager.close_bug(expectation_line.parsed_bug_modifiers, bug_ids)
                 expectation_line.matching_configurations = set()
+                updated_expectations.append(expectation_line)
             else:
                 intersection = expectation_line.matching_configurations & remaining_configurations
                 if intersection:
                     expectation_line.matching_configurations -= intersection
+                    updated_expectations.append(expectation_line)
 
         if not remove_expectations:
-            self._expectation_lines.append(self._create_new_line(test, bug_ids, remaining_configurations, expectation_set))
+            new_expectation_line = self._create_new_line(test, bug_ids, remaining_configurations, expectation_set)
+            updated_expectations.append(new_expectation_line)
+            self._expectation_lines.append(new_expectation_line)
+
+        return updated_expectations
 
     def _get_valid_bug_ids(self, suggested_bug_ids):
         # FIXME: Flesh out creating a bug properly (title, etc.)

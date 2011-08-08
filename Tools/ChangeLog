@@ -1,3 +1,13 @@
+2011-08-08  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        TestExpectationsEditor should return a list of updated expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=65872
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Added a list to store lines that are being updated.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Changed tests to account for updated lines.
+
 2011-08-08  Jochen Eisinger  <jochen@chromium.org>
 
         Fix SCM webkitpy unit test failures
