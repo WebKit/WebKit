@@ -122,7 +122,7 @@ public:
     void mergeInlineStyleOfElement(StyledElement*);
     void mergeStyleFromRules(StyledElement*);
     void mergeStyleFromRulesForSerialization(StyledElement*);
-    void removeStyleFromRules(StyledElement*);
+    void removeStyleFromRulesAndContext(StyledElement*, Node* context);
 
     float fontSizeDelta() const { return m_fontSizeDelta; }
     bool hasFontSizeDelta() const { return m_fontSizeDelta != NoFontDelta; }
@@ -141,6 +141,7 @@ private:
     void extractFontSizeDelta();
     bool conflictsWithInlineStyleOfElement(StyledElement*, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const;
     void mergeStyle(CSSMutableStyleDeclaration*);
+    void removePropertiesInElementDefaultStyle(StyledElement*);
 
     RefPtr<CSSMutableStyleDeclaration> m_mutableStyle;
     bool m_shouldUseFixedDefaultFontSize;

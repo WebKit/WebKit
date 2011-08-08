@@ -1,3 +1,23 @@
+2011-08-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove redundant inline styles from the pasted contents more aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=65833
+
+        Reviewed by Tony Chang.
+
+        Added a test to paste contents with many redundant styles. WebKit should remove as much style spans as possible
+        (all of this in this case).
+
+        * editing/pasteboard/4930986-2-expected.txt: style attribute now has a trailing space.
+        * editing/pasteboard/interchange-newline-1-expected.txt: No longer has a wrapping span without any attributes.
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt: Ditto.
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt: Ditto.
+        * editing/pasteboard/paste-blockquote-into-blockquote-2-expected.txt: Ditto.
+        * editing/pasteboard/paste-blockquote-into-blockquote-expected.txt: Ditto.
+        * editing/pasteboard/prevent-block-nesting-01-expected.txt: Ditto.
+        * editing/pasteboard/paste-with-redundant-style-expected.txt: Added.
+        * editing/pasteboard/paste-with-redundant-style.html: Added.
+
 2011-08-08  Oliver Hunt  <oliver@apple.com>
 
         Non-extensibility does not prevent mutating [[Prototype]]

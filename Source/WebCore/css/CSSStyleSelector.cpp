@@ -2058,7 +2058,7 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
         }
     }
 
-    if (m_matchAuthorAndUserStyles) {
+    if (m_matchAuthorAndUserStyles && (rulesToInclude & AuthorCSSRules)) {
         m_checker.m_sameOriginOnly = !(rulesToInclude & CrossOriginCSSRules);
 
         // Check the rules in author sheets.

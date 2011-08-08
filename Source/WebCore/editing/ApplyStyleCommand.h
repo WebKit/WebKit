@@ -130,6 +130,7 @@ private:
 };
 
 bool isStyleSpan(const Node*);
+bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element*);
 PassRefPtr<HTMLElement> createStyleSpanElement(Document*);
 
 } // namespace WebCore

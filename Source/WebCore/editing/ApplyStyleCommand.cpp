@@ -70,6 +70,26 @@ bool isStyleSpan(const Node *node)
     return elem->hasLocalName(spanAttr) && elem->getAttribute(classAttr) == styleSpanClassString();
 }
 
+bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element* element)
+{
+    if (!element || !element->hasTagName(spanTag))
+        return false;
+
+    const bool readonly = true;
+    NamedNodeMap* map = element->attributes(readonly);
+    if (!map || map->isEmpty())
+        return true;
+
+    unsigned matchedAttributes = 0;
+    if (element->fastGetAttribute(classAttr) == styleSpanClassString())
+        matchedAttributes++;
+    if (element->hasAttribute(styleAttr))
+        matchedAttributes++;
+
+    ASSERT(matchedAttributes <= map->length());
+    return matchedAttributes == map->length();
+}
+
 static bool isUnstyledStyleSpan(const Node* node)
 {
     if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))

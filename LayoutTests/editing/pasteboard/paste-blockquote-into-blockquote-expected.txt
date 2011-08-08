@@ -4,8 +4,7 @@ This tests pasting a blockquote into a blockquote. Nothing below should be doubl
 |   type="cite"
 |   "One"
 |   "Two"
-| <span>
-|   <blockquote>
-|     type="cite"
-|     <div>
-|       "Three<#selection-caret>"
+| <blockquote>
+|   type="cite"
+|   <div>
+|     "Three<#selection-caret>"

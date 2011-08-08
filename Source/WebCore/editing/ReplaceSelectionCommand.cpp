@@ -478,34 +478,55 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
 // a div inserted into a document with div { display:inline; }.
 void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline()
 {
-    for (RefPtr<Node> node = m_firstNodeInserted.get(); node; node = node->traverseNextNode()) {
+    RefPtr<Node> pastEndNode = m_lastLeafInserted ? m_lastLeafInserted->traverseNextNode() : 0;
+    RefPtr<Node> next;
+    for (RefPtr<Node> node = m_firstNodeInserted.get(); node && node != pastEndNode; node = next) {
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
-        if (isStyleSpan(node.get())) {
-            HTMLElement* e = toHTMLElement(node.get());
+
+        next = node->traverseNextNode();
+        if (!node->isStyledElement())
+            continue;
+
+        StyledElement* element = static_cast<StyledElement*>(node.get());
+
+        CSSMutableStyleDeclaration* inlineStyle = element->inlineStyleDecl();
+        RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
+        if (inlineStyle) {
+            ContainerNode* context = element->parentNode();
+
+            // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
+            // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
+            Node* blockquoteNode = isMailPasteAsQuotationNode(context) ? context : enclosingNodeOfType(firstPositionInNode(context), isMailBlockquote, CanCrossEditingBoundary);
+            if (blockquoteNode)
+                newInlineStyle->removeStyleFromRulesAndContext(element, document()->documentElement());
+
+            newInlineStyle->removeStyleFromRulesAndContext(element, context);
+        }
+
+        if (!inlineStyle || newInlineStyle->isEmpty()) {
+            if (isStyleSpanOrSpanWithOnlyStyleAttribute(element))
+                removeNodePreservingChildren(element);
+            else
+                removeNodeAttribute(element, styleAttr);
+        } else if (newInlineStyle->style()->length() != inlineStyle->length())
+            setNodeAttribute(element, styleAttr, newInlineStyle->style()->cssText());
+
+        if (isStyleSpan(element)) {
+            if (!element->firstChild()) {
+                removeNodePreservingChildren(element);
+                continue;
+            }
             // There are other styles that style rules can give to style spans,
             // but these are the two important ones because they'll prevent
             // inserted content from appearing in the right paragraph.
             // FIXME: Hyatt is concerned that selectively using display:inline will give inconsistent
             // results. We already know one issue because td elements ignore their display property
             // in quirks mode (which Mail.app is always in). We should look for an alternative.
-            if (isBlock(e))
-                e->getInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueInline);
-            if (e->renderer() && e->renderer()->style()->isFloating())
-                e->getInlineStyleDecl()->setProperty(CSSPropertyFloat, CSSValueNone);
-        } else if (node->isStyledElement()) {
-            StyledElement* element = static_cast<StyledElement*>(node.get());
-            if (CSSMutableStyleDeclaration* inlineStyle = element->inlineStyleDecl()) {
-                RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
-                newInlineStyle->removeStyleFromRules(element);
-                if (!newInlineStyle->style() || !newInlineStyle->style()->length())
-                    removeNodeAttribute(element, styleAttr);
-                else if (newInlineStyle->style()->length() < inlineStyle->length())
-                    setNodeAttribute(element, styleAttr, newInlineStyle->style()->cssText());                    
-            }
+            if (isBlock(element))
+                element->getInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueInline);
+            if (element->renderer() && element->renderer()->style()->isFloating())
+                element->getInlineStyleDecl()->setProperty(CSSPropertyFloat, CSSValueNone);
         }
-
-        if (node == m_lastLeafInserted)
-            break;
     }
 }
 

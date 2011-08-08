@@ -1,3 +1,35 @@
+2011-08-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove redundant inline styles from the pasted contents more aggressively
+        https://bugs.webkit.org/show_bug.cgi?id=65833
+
+        Reviewed by Tony Chang.
+
+        Make removeRedundantStylesAndKeepStyleSpanInline more aggressively remove redundant styles by realizing that
+        when an editing inheritable property in an inline style declaration of an element can be safely removed
+        if it is present either in style rules or in its ancestor and not overridden by style rules or default style
+        of the element.
+
+        Test: editing/pasteboard/paste-with-redundant-style.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement): Do not match author style sheets if AuthorCSSRules
+        is not included in the rules to include. This is used in EditingStyle::removePropertiesInElementDefaultStyle.
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::isStyleSpanOrSpanWithOnlyStyleAttribute): Added; returns true if the element is a style span or
+        span possibly with a style attribute.
+        * editing/ApplyStyleCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::styleFromMatchedRulesForElement): Takes rulesToInclude.
+        (WebCore::EditingStyle::mergeStyleFromRules): Calls styleFromMatchedRulesForElement with AuthorCSSRules
+        | CrossOriginCSSRules to keep the original behavior.
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext): Renamed from removeStyleFromRules; removes styles that
+        are present in context and not overridden by matched rules.
+        (WebCore::EditingStyle::removePropertiesInElementDefaultStyle): Added.
+        * editing/EditingStyle.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline): See the description above.
+
 2011-08-08  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65778

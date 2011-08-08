@@ -818,11 +818,10 @@ void EditingStyle::mergeStyle(CSSMutableStyleDeclaration* style)
     }
 }
 
-static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesForElement(Element* element)
+static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesForElement(Element* element, unsigned rulesToInclude)
 {
     RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
-    RefPtr<CSSRuleList> matchedRules = element->document()->styleSelector()->styleRulesForElement(element,
-        CSSStyleSelector::AuthorCSSRules | CSSStyleSelector::CrossOriginCSSRules);
+    RefPtr<CSSRuleList> matchedRules = element->document()->styleSelector()->styleRulesForElement(element, rulesToInclude);
     if (matchedRules) {
         for (unsigned i = 0; i < matchedRules->length(); i++) {
             if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
@@ -837,7 +836,8 @@ static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesForElement(El
 
 void EditingStyle::mergeStyleFromRules(StyledElement* element)
 {
-    RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(element);
+    RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(element,
+        CSSStyleSelector::AuthorCSSRules | CSSStyleSelector::CrossOriginCSSRules);
     // Styles from the inline style declaration, held in the variable "style", take precedence 
     // over those from matched rules.
     if (m_mutableStyle)
@@ -870,17 +870,41 @@ void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
     m_mutableStyle->merge(fromComputedStyle.get());
 }
 
-void EditingStyle::removeStyleFromRules(StyledElement* element)
+void EditingStyle::removeStyleFromRulesAndContext(StyledElement* element, Node* context)
 {
+    ASSERT(element);
     if (!m_mutableStyle)
         return;
 
-    RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(element);
-    if (!styleFromMatchedRules)
+    // 1. Remove style from matched rules because style remain without repeating it in inline style declaration
+    RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(element, CSSStyleSelector::AllButEmptyCSSRules);
+    if (styleFromMatchedRules && styleFromMatchedRules->length())
+        m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), styleFromMatchedRules.get());
+
+    // 2. Remove style present in context and not overriden by matched rules.
+    RefPtr<EditingStyle> computedStyle = EditingStyle::create(context, EditingInheritablePropertiesAndBackgroundColorInEffect);
+    if (computedStyle->m_mutableStyle) {
+        computedStyle->removePropertiesInElementDefaultStyle(element);
+        m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), computedStyle->m_mutableStyle.get());
+    }
+}
+
+void EditingStyle::removePropertiesInElementDefaultStyle(StyledElement* element)
+{
+    if (!m_mutableStyle || !m_mutableStyle->length())
         return;
 
-    m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), styleFromMatchedRules.get());
+    RefPtr<CSSMutableStyleDeclaration> defaultStyle = styleFromMatchedRulesForElement(element, CSSStyleSelector::UAAndUserCSSRules);
+
+    Vector<int> propertiesToRemove(defaultStyle->length());
+    size_t i = 0;
+    CSSMutableStyleDeclaration::const_iterator end = defaultStyle->end();
+    for (CSSMutableStyleDeclaration::const_iterator it = defaultStyle->begin(); it != end; ++it, ++i)
+        propertiesToRemove[i] = it->id();
+
+    m_mutableStyle->removePropertiesInSet(propertiesToRemove.data(), propertiesToRemove.size());
 }
+    
 
 static void reconcileTextDecorationProperties(CSSMutableStyleDeclaration* style)
 {    
