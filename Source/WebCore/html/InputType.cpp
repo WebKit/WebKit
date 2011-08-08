@@ -48,6 +48,7 @@
 #include "LocalizedStrings.h"
 #include "MonthInputType.h"
 #include "NumberInputType.h"
+#include "Page.h"
 #include "PasswordInputType.h"
 #include "RadioInputType.h"
 #include "RangeInputType.h"
@@ -401,6 +402,13 @@ void InputType::dispatchSimulatedClickIfActive(KeyboardEvent* event) const
     event->setDefaultHandled();
 }
 
+Chrome* InputType::chrome() const
+{
+    if (Page* page = element()->document()->page())
+        return page->chrome();
+    return 0;
+}
+
 bool InputType::canSetStringValue() const
 {
     return true;
@@ -426,6 +434,10 @@ void InputType::accessKeyAction(bool)
 }
 
 void InputType::attach()
+{
+}
+
+void InputType::detach()
 {
 }
 

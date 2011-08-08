@@ -31,15 +31,19 @@
 #ifndef ColorInputType_h
 #define ColorInputType_h
 
-#include "BaseButtonInputType.h"
+#include "ColorChooser.h"
+#include "InputType.h"
 
 #if ENABLE(INPUT_COLOR)
 
 namespace WebCore {
 
-class ColorInputType : public InputType {
+class ColorInputType : public InputType, public ColorChooserClient {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
+    virtual ~ColorInputType();
+
+    void closeColorChooserIfCurrentClient() const;
 
 private:
     ColorInputType(HTMLInputElement* element) : InputType(element) { }
@@ -48,8 +52,17 @@ private:
     virtual bool supportsRequired() const;
     virtual String fallbackValue();
     virtual String sanitizeValue(const String&);
+    virtual Color valueAsColor() const;
+    virtual void setValueAsColor(const Color&) const;
     virtual void createShadowSubtree();
     virtual void valueChanged();
+    virtual void handleClickEvent(MouseEvent*);
+    virtual void handleDOMActivateEvent(Event*);
+    virtual void detach();
+
+    // ColorChooserClient implementation.
+    virtual void colorSelected(const Color&);
+    virtual bool isColorInputType() const;
 
     void updateColorSwatch();
     HTMLElement* shadowColorSwatch() const;

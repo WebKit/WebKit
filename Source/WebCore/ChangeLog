@@ -1,3 +1,59 @@
+2011-08-08  Keishi Hattori  <keishi@webkit.org>
+
+        Implement <input type=color> UI behavior WebCore part
+        https://bugs.webkit.org/show_bug.cgi?id=62619
+
+        Reviewed by Kent Tamura.
+
+        * WebCore.exp.in: Added __ZN7WebCore12ColorChooser7chooserEv and
+        __ZNK7WebCore12ColorChooser13colorSelectedERKNS_5ColorE
+        * WebCore.xcodeproj/project.pbxproj: Added ColorChooser.{h,cpp}
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::~ColorInputType): Added. Close color chooser. ex. when type attribute changes.
+        (WebCore::ColorInputType::valueAsColor): Added.
+        (WebCore::ColorInputType::setValueAsColor): Added.
+        (WebCore::ColorInputType::valueChanged): Update selected color in color chooser too.
+        (WebCore::ColorInputType::handleClickEvent): Opens color chooser.
+        (WebCore::ColorInputType::handleDOMActivateEvent): Called when element.click(). Open color chooser only
+        when it was initiated by a user interaction.
+        (WebCore::ColorInputType::detach): Close color chooser. Called when input element or its ancestors have "display:none"
+        or is removed from DOM.
+        (WebCore::ColorInputType::colorSelected): Callback from color chooser.
+        (WebCore::ColorInputType::isColorInputType): Returns true.
+        (WebCore::ColorInputType::closeColorChooserIfCurrentClient): Close color chooser if this input type is the current client of ColorChooser.
+        * html/ColorInputType.h:
+        * html/FileInputType.cpp:
+        * html/FileInputType.h:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::detach): Calls InputType::detach
+        * html/InputType.cpp:
+        (WebCore::InputType::chrome): Added. Used in FileInputType and ColorInputType.
+        (WebCore::InputType::detach): ColorInputType overrides this.
+        * html/InputType.h:
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::openColorChooser):
+        (WebCore::EmptyChromeClient::closeColorChooser):
+        (WebCore::EmptyChromeClient::setSelectedColorInColorChooser):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted): Close color chooser when navigating away from the page. We do this here
+        because ColorInputType::detach() is called seconds after the page transition so it is too slow.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::openColorChooser): Added.
+        (WebCore::Chrome::closeColorChooser): Added.
+        (WebCore::Chrome::setSelectedColorInColorChooser): Added.
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * platform/ColorChooser.cpp: Added.
+        (WebCore::ColorChooserClient::~ColorChooserClient): Disconnects itself from the ColorChooser.
+        (WebCore::ColorChooser::chooser): Get shared instance of ColorChooser.
+        (WebCore::ColorChooser::connectClient): Connects a ColorChooserClient that receives the colorSelected callbacks.
+        (WebCore::ColorChooser::disconnectClient): Disconnects the connectClient.
+        (WebCore::ColorChooser::colorSelected): Called from color chooser listener.
+        * platform/ColorChooser.h: Added.
+        (WebCore::ColorChooserClient::isColorInputType): Added.
+        (WebCore::ColorChooser::client): Added. Returns the current connected client.
+        (WebCore::ColorChooser::ColorChooser): Added.
+
 2011-08-08  Shinya Kawanaka  <shinyak@google.com>
 
         The input[type=number] element should be as wide as necessary to show the widest possible value.

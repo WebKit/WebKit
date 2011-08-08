@@ -100,6 +100,11 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(INPUT_COLOR)
+#include "ColorChooser.h"
+#include "ColorInputType.h"
+#endif
+
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
 #endif
@@ -1815,6 +1820,12 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
 
     if (m_frame->view())
         m_frame->view()->scrollAnimator()->cancelAnimations();
+
+#if ENABLE(INPUT_COLOR)
+    ColorChooserClient* colorChooserClient = ColorChooser::chooser()->client();
+    if (colorChooserClient && colorChooserClient->isColorInputType())
+        static_cast<ColorInputType*>(colorChooserClient)->closeColorChooserIfCurrentClient();
+#endif
 
     m_client->setCopiesOnScroll();
     history()->updateForCommit();
