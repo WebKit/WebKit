@@ -36,8 +36,6 @@
 #include "MathExtras.h"
 #include "PlatformString.h"
 #include "V8DOMWrapper.h"
-#include "V8GCController.h"
-#include "V8HiddenPropertyName.h"
 #include <wtf/text/AtomicString.h>
 
 #include <v8.h>
@@ -87,12 +85,6 @@ namespace WebCore {
         RefPtr<StringImpl> m_lastStringImpl;
     };
 
-    class AllowAllocation;
-
-#ifndef NDEBUG
-    typedef HashMap<v8::Value*, GlobalHandleInfo*> GlobalHandleMap;
-#endif
-
     class V8BindingPerIsolateData {
     public:
         static V8BindingPerIsolateData* create(v8::Isolate*);
@@ -115,17 +107,9 @@ namespace WebCore {
         TemplateMap& templateMap() { return m_templates; }
         v8::Persistent<v8::String>& toStringName() { return m_toStringName; }
         v8::Persistent<v8::FunctionTemplate>& toStringTemplate() { return m_toStringTemplate; }
-
-        v8::Persistent<v8::FunctionTemplate>& lazyEventListenerToStringTemplate()
-        {
-            return m_lazyEventListenerToStringTemplate;
-        }
-
         StringCache* stringCache() { return &m_stringCache; }
 
         DOMDataList& allStores() { return m_domDataList; }
-
-        V8HiddenPropertyName* hiddenPropertyName() { return &m_hiddenPropertyName; }
 
         void registerDOMDataStore(DOMDataStore* domDataStore) 
         {
@@ -143,10 +127,6 @@ namespace WebCore {
         // DOMDataStore is owned outside V8BindingPerIsolateData.
         void setDOMDataStore(DOMDataStore* store) { m_domDataStore = store; }
 
-#ifndef NDEBUG
-        GlobalHandleMap& globalHandleMap() { return m_globalHandleMap; }
-#endif
-
     private:
         explicit V8BindingPerIsolateData(v8::Isolate*);
         ~V8BindingPerIsolateData();
@@ -155,74 +135,11 @@ namespace WebCore {
         TemplateMap m_templates;
         v8::Persistent<v8::String> m_toStringName;
         v8::Persistent<v8::FunctionTemplate> m_toStringTemplate;
-        v8::Persistent<v8::FunctionTemplate> m_lazyEventListenerToStringTemplate;
         StringCache m_stringCache;
 
         DOMDataList m_domDataList;
         DOMDataStore* m_domDataStore;
-
-        V8HiddenPropertyName m_hiddenPropertyName;
-
-        bool m_currentAllocationsAllowed;
-        friend class AllowAllocation;
-
-#ifndef NDEBUG
-        GlobalHandleMap m_globalHandleMap;
-#endif
     };
-
-    class AllowAllocation {
-    public:
-        AllowAllocation()
-        {
-            V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
-            m_previous = data->m_currentAllocationsAllowed;
-            data->m_currentAllocationsAllowed = true;
-        }
-
-        ~AllowAllocation()
-        {
-            V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
-            data->m_currentAllocationsAllowed = m_previous;
-        }
-
-        static bool current() { return V8BindingPerIsolateData::current()->m_currentAllocationsAllowed; }
-
-    private:
-        bool m_previous;
-    };
-
-    class SafeAllocation {
-    public:
-        static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>);
-        static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::ObjectTemplate>);
-        static inline v8::Local<v8::Object> newInstance(v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
-    };
-
-    v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> function)
-    {
-        if (function.IsEmpty())
-            return v8::Local<v8::Object>();
-        AllowAllocation allow;
-        return function->NewInstance();
-    }
-
-    v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::ObjectTemplate> objectTemplate)
-    {
-        if (objectTemplate.IsEmpty())
-            return v8::Local<v8::Object>();
-        AllowAllocation allow;
-        return objectTemplate->NewInstance();
-    }
-
-    v8::Local<v8::Object> SafeAllocation::newInstance(v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[])
-    {
-        if (function.IsEmpty())
-            return v8::Local<v8::Object>();
-        AllowAllocation allow;
-        return function->NewInstance(argc, argv);
-    }
-
 
 
     enum ExternalMode {

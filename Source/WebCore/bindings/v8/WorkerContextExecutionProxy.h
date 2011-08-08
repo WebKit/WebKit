@@ -73,7 +73,7 @@ namespace WebCore {
         v8::Local<v8::Context> context() { return v8::Local<v8::Context>::New(m_context); }
 
     private:
-        void initIsolate();
+        void initV8();
         bool initContextIfNeeded();
         void dispose();
 
