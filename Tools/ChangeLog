@@ -1,3 +1,13 @@
+2011-08-08  Jochen Eisinger  <jochen@chromium.org>
+
+        Fix SCM webkitpy unit test failures
+        https://bugs.webkit.org/show_bug.cgi?id=65823
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+
 2011-08-08  Eric Seidel  <eric@webkit.org>
 
         Move the --leaks bot back over to NRWT now that I'm back

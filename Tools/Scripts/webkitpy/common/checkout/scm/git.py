@@ -202,6 +202,10 @@ class Git(SCM, SVNRepository):
         return self._changes_files_for_commit(commit_id)
 
     def revisions_changing_file(self, path, limit=5):
+        # raise a script error if path does not exists to match the behavior of  the svn implementation.
+        if not self._filesystem.exists(path):
+            raise ScriptError(message="Path %s does not exist." % path)
+
         # git rev-list head --remove-empty --limit=5 -- path would be equivalent.
         commit_ids = self.run(["git", "log", "--remove-empty", "--pretty=format:%H", "-%s" % limit, "--", path]).splitlines()
         return filter(lambda revision: revision, map(self.svn_revision_from_git_commit, commit_ids))

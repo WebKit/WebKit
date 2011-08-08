@@ -558,7 +558,7 @@ class SVNTest(SCMTest):
 +++ ChangeLog	(working copy)
 @@ -1,5 +1,13 @@
  2009-10-26  Eric Seidel  <eric@webkit.org>
-
+%(whitespace)s
 +        Reviewed by NOBODY (OOPS!).
 +
 +        Second most awesome change ever.
@@ -568,9 +568,9 @@ class SVNTest(SCMTest):
 +2009-10-26  Eric Seidel  <eric@webkit.org>
 +
          Reviewed by Foo Bar.
-
+%(whitespace)s
          Most awesome change ever.
-"""
+""" % {'whitespace': ' '}
         one_line_overlap_entry = """DATE_HERE  Eric Seidel  <eric@webkit.org>
 
         Reviewed by REVIEWER_HERE.
@@ -584,9 +584,9 @@ class SVNTest(SCMTest):
 --- ChangeLog	(revision 5)
 +++ ChangeLog	(working copy)
 @@ -2,6 +2,14 @@
-
+%(whitespace)s
          Reviewed by Foo Bar.
-
+%(whitespace)s
 +        Second most awesome change ever.
 +
 +        * scm_unittest.py:
@@ -596,9 +596,9 @@ class SVNTest(SCMTest):
 +        Reviewed by Foo Bar.
 +
          Most awesome change ever.
-
+%(whitespace)s
          * scm_unittest.py:
-"""
+""" % {'whitespace': ' '}
         two_line_overlap_entry = """DATE_HERE  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Foo Bar.
@@ -946,7 +946,7 @@ class GitTest(SCMTest):
     def test_create_patch(self):
         write_into_file_at_path('test_file_commit1', 'contents')
         run_command(['git', 'add', 'test_file_commit1'])
-        scm = detect_scm_system(self.untracking_checkout_path)
+        scm = self.tracking_scm
         scm.commit_locally_with_message('message')
 
         patch = scm.create_patch()
@@ -1511,7 +1511,7 @@ class GitTestWithMock(unittest.TestCase):
 
     def test_create_patch(self):
         scm = self.make_scm(logging_executive=True)
-        expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD'], cwd=/mock-checkoutMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--'], cwd=/mock-checkoutMOCK run_command: ['git', 'log', '-25'], cwd=/mock-checkout\n"
+        expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD'], cwd=%(checkout)s\nMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--'], cwd=%(checkout)s\nMOCK run_command: ['git', 'log', '-25'], cwd=None\n" % {'checkout': scm.checkout_root}
         OutputCapture().assert_outputs(self, scm.create_patch, expected_stderr=expected_stderr)
 
     def test_push_local_commits_to_server_with_username_and_password(self):
