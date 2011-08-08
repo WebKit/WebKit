@@ -124,6 +124,7 @@ WEBCORE_INCLUDEPATH = \
 WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/bridge/qt \
     $$SOURCE_DIR/WebCore/page/qt \
+    $$SOURCE_DIR/WebCore/platform/graphics/opengl \
     $$SOURCE_DIR/WebCore/platform/graphics/qt \
     $$SOURCE_DIR/WebCore/platform/network/qt \
     $$SOURCE_DIR/WebCore/platform/qt \

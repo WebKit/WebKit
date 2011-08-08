@@ -1523,14 +1523,12 @@ bool GraphicsContext3D::layerComposited() const
     return m_layerComposited;
 }
 
-#if !PLATFORM(QT)
 Extensions3D* GraphicsContext3D::getExtensions()
 {
     if (!m_extensions)
         m_extensions = adoptPtr(new Extensions3DOpenGL(this));
     return m_extensions.get();
 }
-#endif
 
 }
 

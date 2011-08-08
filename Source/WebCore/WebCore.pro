@@ -3659,7 +3659,11 @@ contains(DEFINES, ENABLE_WEBGL=1) {
     INCLUDEPATH += $$PWD/platform/graphics/gpu
 
     !contains(QT_CONFIG, opengles2) {
+        HEADERS += \
+            platform/graphics/opengl/Extensions3DOpenGL.h
+
         SOURCES += \
+            platform/graphics/opengl/Extensions3DOpenGL.cpp \
             platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
 
         ANGLE_DIR = $$replace(PWD, "WebCore", "ThirdParty/ANGLE")

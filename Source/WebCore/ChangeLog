@@ -1,3 +1,29 @@
+2011-08-08  Andrew Wason  <rectalogic@rectalogic.com>
+
+        [Qt] Implement WebGL antialiasing (part 3)
+        https://bugs.webkit.org/show_bug.cgi?id=64879
+
+        Reviewed by Noam Rosenthal.
+
+        Existing WebGL layout tests.
+
+        Adopt Extensions3DOpenGL for Qt desktop as a prerequisite
+        for implementing WebGL antialiasing.
+        Extensions3DQt is still used for ES2.
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/opengl/Extensions3DOpenGL.cpp:
+        (WebCore::Extensions3DOpenGL::createVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::deleteVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::isVertexArrayOES):
+        (WebCore::Extensions3DOpenGL::bindVertexArrayOES):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::getExtensions):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::layerComposited):
+
 2011-08-08  Benjamin Poulain  <benjamin@webkit.org>
 
         Build fix after r92589, defaultSize is not used.

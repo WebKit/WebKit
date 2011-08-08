@@ -23,7 +23,11 @@
 #include "WebGLObject.h"
 #include <cairo/OpenGLShims.h>
 #include "CanvasRenderingContext.h"
+#if defined(QT_OPENGL_ES_2)
 #include "Extensions3DQt.h"
+#else
+#include "Extensions3DOpenGL.h"
+#endif
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HostWindow.h"
@@ -1495,7 +1499,6 @@ bool GraphicsContext3D::layerComposited() const
 {
     return m_layerComposited;
 }
-#endif
 
 Extensions3D* GraphicsContext3D::getExtensions()
 {
@@ -1503,6 +1506,7 @@ Extensions3D* GraphicsContext3D::getExtensions()
         m_extensions = adoptPtr(new Extensions3DQt);
     return m_extensions.get();
 }
+#endif
 
 bool GraphicsContext3D::getImageData(Image* image,
                                      GC3Denum format,

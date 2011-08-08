@@ -88,9 +88,10 @@ namespace WebCore {
 class CanvasRenderingContext;
 class DrawingBuffer;
 class Extensions3D;
-#if PLATFORM(MAC) || PLATFORM(GTK)
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(QT)
 class Extensions3DOpenGL;
-#elif PLATFORM(QT)
+#endif
+#if PLATFORM(QT)
 class Extensions3DQt;
 #endif
 class HostWindow;
@@ -918,7 +919,7 @@ public:
     HashMap<Platform3DObject, ShaderSourceEntry> m_shaderSourceMap;
 
     ANGLEWebKitBridge m_compiler;
-#if PLATFORM(QT)
+#if PLATFORM(QT) && defined(QT_OPENGL_ES_2)
     friend class Extensions3DQt;
     OwnPtr<Extensions3DQt> m_extensions;
 #else
