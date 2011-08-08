@@ -31,6 +31,13 @@ import sys
 
 import webkitpy.to_be_moved.rebaseline_chromium_webkit_tests
 
+
 if __name__ == '__main__':
-    # FIXME: We shouldn't pass sys.argv to rebaseline_chromium_webkit_tests.
-    sys.exit(webkitpy.to_be_moved.rebaseline_chromium_webkit_tests.main(sys.argv[1:]))
+    print """This script is depreciated.  Please use use "webkit-patch rebaseline-expectations" instead.
+
+If that command does not work properly, please file a bug and CC abarth. If you
+really need to use the old script, run this command again with
+--use-deprecated-script as the first argument."""
+
+    if len(sys.argv) > 1 and sys.argv[1] == '--use-deprecated-script':
+        sys.exit(webkitpy.to_be_moved.rebaseline_chromium_webkit_tests.main(sys.argv[2:]))
