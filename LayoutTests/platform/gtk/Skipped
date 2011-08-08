@@ -681,6 +681,7 @@ security/set-form-autocomplete-attribute.html
 # Tests in svg/ directory
 #   Tests failing
 svg/filters/feColorMatrix-values.svg
+svg/filters/sourceAlpha.svg
 svg/dom/altGlyph-dom.xhtml
 svg/custom/getSubStringLength.html
 svg/custom/getscreenctm-in-mixed-content2.xhtml
@@ -1088,13 +1089,11 @@ svg/batik/paints/gradientLimit.svg
 svg/custom/circular-marker-reference-2.svg
 svg/custom/non-circular-marker-reference.svg
 
-# The following  canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
-# fail for Mac and can likely be removed from this Skipped list when they are removed from
-# the Mac Skipped list.
+# Canvas tests
 
-canvas/philip/tests/2d.drawImage.broken.html
-#NOTE: 2d.composite.operation.clear is failing because we support the "clear" composite op
-#without our vendor prefix since it was around in canvas before the spec was written.
+# Tests that fail across all platforms.
+# Even though some platforms don't skip these tests, there are platform-specific
+# results generated that make these tests 'pass'.
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
 canvas/philip/tests/2d.composite.uncovered.fill.copy.html
@@ -1105,11 +1104,18 @@ canvas/philip/tests/2d.composite.uncovered.image.source-in.html
 canvas/philip/tests/2d.composite.uncovered.image.source-out.html
 canvas/philip/tests/2d.composite.uncovered.pattern.copy.html
 canvas/philip/tests/2d.drawImage.broken.html
+canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
+canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html
+canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html
+canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html
 canvas/philip/tests/2d.imageData.create1.type.html
 canvas/philip/tests/2d.imageData.create2.type.html
+canvas/philip/tests/2d.imageData.put.wrongtype.html
 canvas/philip/tests/2d.imageData.get.type.html
 canvas/philip/tests/2d.missingargs.html
 canvas/philip/tests/2d.pattern.image.broken.html
+canvas/philip/tests/2d.pattern.image.incomplete.empty.html
+canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
 canvas/philip/tests/2d.text.draw.baseline.bottom.html
 canvas/philip/tests/2d.text.draw.baseline.hanging.html
 canvas/philip/tests/2d.text.draw.baseline.ideographic.html
@@ -1126,7 +1132,6 @@ canvas/philip/tests/2d.text.font.parse.complex.html
 canvas/philip/tests/2d.text.font.parse.invalid.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.html
 canvas/philip/tests/2d.text.font.parse.size.percentage.default.html
-svg/filters/sourceAlpha.svg
 canvas/philip/tests/2d.text.font.parse.system.html
 canvas/philip/tests/2d.text.measure.width.space.html
 canvas/philip/tests/toDataURL.jpeg.alpha.html
@@ -1134,25 +1139,38 @@ canvas/philip/tests/type.prototype.html
 
 # These tests are failing for us, but not for Mac. This likely
 # indicates platform specific problems.
+
+# When drawing canvas into itself, WebCore draws canvas's buffer into the same buffer. This
+# results in recursive drawing into cairo surface. We should either use groups when drawing
+# with cairo or copy the buffer every time the HTMLCanvasElement gets repainted.
 canvas/philip/tests/2d.drawImage.self.2.html
+
+# A testcase for this failure is already in cairo tree, but has not yet been fixed.
+# https://bugs.webkit.org/show_bug.cgi?id=54471
+# http://cgit.freedesktop.org/cairo/commit/?id=4d4056872db94573183473610ad1d81d5439fdc6
 canvas/philip/tests/2d.path.arc.selfintersect.1.html
 canvas/philip/tests/2d.path.arc.shape.3.html
+
+# This test already passes with cairo trunk, but we're waiting for a new release.
+# Cairo commit http://cgit.freedesktop.org/cairo/commit/?id=e46dc9e17a6f6737d5624dbcdd3c42c2353a72f1
+# Cairo test http://cgit.freedesktop.org/cairo/commit/?id=7386960d063e4a3642fb281aaae071404d837bdb
 canvas/philip/tests/2d.path.arc.zeroradius.html
+
+# A testcase for this failure is already in cairo tree, but has not yet been fixed.
+# http://cgit.freedesktop.org/cairo/commit/?id=303f56a2d34a23d933a02fa625873211fb51eb3b
 canvas/philip/tests/2d.path.rect.selfintersect.html
+
+# Strangely set miter limit - calculations suggest it should be 1.414 (and the test passes
+# with miter limit set to that) but perhaps there are special steps to be taken because the
+# rectangle has zero height.
 canvas/philip/tests/2d.path.rect.zero.6.html
+
+# Repeat-x/-y doesn't work - not supported in Cairo, workaround needed
+# https://bugs.webkit.org/show_bug.cgi?id=53085
 canvas/philip/tests/2d.pattern.paint.repeatx.coord1.html
 canvas/philip/tests/2d.pattern.paint.repeatx.outside.html
 canvas/philip/tests/2d.pattern.paint.repeaty.coord1.html
 canvas/philip/tests/2d.pattern.paint.repeaty.outside.html
-
-# Failing tests after sync with Philip Taylor's upstream tests
-canvas/philip/tests/2d.drawImage.image.incomplete.omitted.html
-canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html
-canvas/philip/tests/2d.fillStyle.parse.rgb-eof.html
-canvas/philip/tests/2d.fillStyle.parse.rgba-eof.html
-canvas/philip/tests/2d.imageData.put.wrongtype.html
-canvas/philip/tests/2d.pattern.image.incomplete.empty.html
-canvas/philip/tests/2d.pattern.image.incomplete.omitted.html
 
 # Fake italics do not work: https://bugs.webkit.org/show_bug.cgi?id=40856
 fast/text/fake-italic.html
