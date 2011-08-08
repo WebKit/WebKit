@@ -30,7 +30,6 @@ import os.path
 import re
 import shutil
 import urllib
-import fileinput
 
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
@@ -42,6 +41,7 @@ from webkitpy.layout_tests.layout_package.test_result_writer import TestResultWr
 from webkitpy.layout_tests.models import test_failures
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
 from webkitpy.layout_tests.port import factory, builders
+from webkitpy.layout_tests.port import test_files
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 
@@ -120,14 +120,17 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
 
 class BulkOptimizeBaselines(OptimizeBaselines):
     name = "bulk-optimize-baselines"
-    help_text = """Reshuffles the baselines for tests to use as litte space on disk as possible.
-Please provide the list of tests (separated by new lines) via stdin."""
-    argument_names = None
+    help_text = """Reshuffles the baselines for tests to use as litte space on disk as possible."""
+    argument_names = "TEST_NAMES"
+
+    def _to_test_name(self, file_name):
+        return self._tool.filesystem.relpath(file_name, self._port.layout_tests_dir())
 
     def execute(self, options, args, tool):
         self._baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
-        for test_name in fileinput.input(['-']):
-            test_name = test_name.strip()
+        self._port = factory.get("chromium-win-win7")  # FIXME: This should be selectable.
+
+        for test_name in map(self._to_test_name, test_files.find(self._port, args)):
             print "Optimizing %s." % test_name
             self._optimize_baseline(test_name)
 

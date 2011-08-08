@@ -1,5 +1,17 @@
 2011-08-08  Adam Barth  <abarth@webkit.org>
 
+        bulk-optimize-baselines should take directories on the command line
+        https://bugs.webkit.org/show_bug.cgi?id=65879
+
+        Reviewed by Dimitri Glazkov.
+
+        Passing lists of tests via stdin is a pain.  It's easier if the command
+        takes a list of tests on the command line, like run-webkit-tests.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
+2011-08-08  Adam Barth  <abarth@webkit.org>
+
         Deprecate rebaseline-chromium-webkit-tests
         https://bugs.webkit.org/show_bug.cgi?id=65873
 
