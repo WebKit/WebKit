@@ -1,3 +1,12 @@
+2011-08-08  John Knottenbelt  <jknotten@chromium.org>
+
+        Adjust test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=65847
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-08  Shinya Kawanaka  <shinyak@google.com>
 
         Added the test to check the width of input[type=number].

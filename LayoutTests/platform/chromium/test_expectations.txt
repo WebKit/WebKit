@@ -3449,7 +3449,6 @@ BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hixie76/client-close.html = PASS TEXT
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/hybi/client-close.html = PASS TEXT
 
-BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = PASS CRASH
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = PASS IMAGE
 
 BUGCR84157 WIN GPU : fast/canvas/canvas-currentColor.html = TEXT
