@@ -1,3 +1,10 @@
+2011-08-08  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::sizeShouldIncludeDecoration): Fixed an obvious typo.
+
 2011-08-08  Andras Becsi  <abecsi@webkit.org>
 
         [Qt] Clean up project file after r92492.

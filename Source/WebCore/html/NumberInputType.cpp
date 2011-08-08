@@ -154,7 +154,7 @@ bool NumberInputType::sizeShouldIncludeDecoration(int defaultSize, int& preferre
 
     if (maxValueDouble < minValueDouble) {
         maxValueDouble = minValueDouble;
-        maxValueDecimalPlaces = maxValueDecimalPlaces;
+        maxValueDecimalPlaces = minValueDecimalPlaces;
     }
 
     unsigned stepValueDecimalPlaces;
