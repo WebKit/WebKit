@@ -1,3 +1,9 @@
+2011-08-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Unreviewed. Rolled Chromium DEPS from 95576 to 95783.
+
+        * DEPS:
+
 2011-08-05  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: implement dock/undock in WebKit2 without getting into WebCore.
