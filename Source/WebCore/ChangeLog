@@ -1,3 +1,10 @@
+2011-08-07  Keishi Hattori  <keishi@webkit.org>
+
+        Sort WebCore.xcodeproj
+        Accomplished using sort-Xcode-project-file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-08-07  James Kozianski  <koz@chromium.org>
 
         Make the fullscreen JS API enabled at runtime.
