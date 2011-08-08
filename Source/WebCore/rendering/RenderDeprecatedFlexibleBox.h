@@ -50,10 +50,10 @@ public:
     virtual bool isFlexingChildren() const { return m_flexingChildren; }
     virtual bool isStretchingChildren() const { return m_stretchingChildren; }
 
-    void placeChild(RenderBox* child, const IntPoint& location);
+    void placeChild(RenderBox* child, const LayoutPoint& location);
 
 protected:
-    int allowedChildFlex(RenderBox* child, bool expanding, unsigned group);
+    LayoutUnit allowedChildFlex(RenderBox* child, bool expanding, unsigned group);
 
     bool hasMultipleLines() const { return style()->boxLines() == MULTIPLE; }
     bool isVertical() const { return style()->boxOrient() == VERTICAL; }

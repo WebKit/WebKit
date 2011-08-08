@@ -1,5 +1,25 @@
 2011-08-08  Emil A Eklund  <eae@chromium.org>
 
+        Switch legacy flexbox to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=65340
+
+        Reviewed by Eric Seidel.
+
+        No new tests, no new functionality.
+
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::RenderDeprecatedFlexibleBox::calcHorizontalPrefWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::calcVerticalPrefWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::computePreferredLogicalWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::placeChild):
+        (WebCore::RenderDeprecatedFlexibleBox::allowedChildFlex):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+
+2011-08-08  Emil A Eklund  <eae@chromium.org>
+
         Switch RenderStyle to to new layout types
         https://bugs.webkit.org/show_bug.cgi?id=65208
 
