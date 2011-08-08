@@ -29,10 +29,17 @@
 
 """Factory method to retrieve the appropriate port implementation."""
 
-
+import re
 import sys
 
 from webkitpy.layout_tests.port import builders
+
+
+class BuilderOptions(object):
+
+    def __init__(self, builder_name):
+        self.configuration = "Debug" if re.search(r"[d|D](ebu|b)g", builder_name) else "Release"
+        self.builder_name = builder_name
 
 
 def all_port_names():
@@ -55,6 +62,14 @@ def get(port_name=None, options=None, **kwargs):
     if options:
         kwargs['options'] = options
     return _get_kwargs(**kwargs)
+
+
+def get_from_builder_name(builder_name):
+    port_name = builders.port_name_for_builder_name(builder_name)
+    assert(port_name)  # Need to update port_name_for_builder_name
+    port = get(port_name, BuilderOptions(builder_name))
+    assert(port)  # Need to update port_name_for_builder_name
+    return port
 
 
 def _get_kwargs(**kwargs):

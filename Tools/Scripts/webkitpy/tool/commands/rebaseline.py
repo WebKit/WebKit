@@ -49,26 +49,9 @@ from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 _baseline_suffix_list = ['png', 'txt']
 
 
-def _port_for_builder(builder_name):
-    port_name = builders.port_name_for_builder_name(builder_name)
-    assert(port_name)  # Need to update port_name_for_builder_name
-    port = factory.get(port_name, RebaseliningOptions(builder_name))
-    assert(port)  # Need to update port_name_for_builder_name
-    return port
-
-
 # FIXME: Should TestResultWriter know how to compute this string?
 def _baseline_name(fs, test_name, suffix):
     return fs.splitext(test_name)[0] + TestResultWriter.FILENAME_SUFFIX_EXPECTED + "." + suffix
-
-
-class RebaseliningOptions(object):
-
-    DEBUG_CONFIGURATION_REGEX = r"[d|D](ebu|b)g"
-
-    def __init__(self, builder_name):
-        self.configuration = "Debug" if re.search(self.DEBUG_CONFIGURATION_REGEX, builder_name) else "Release"
-        self.builder_name = builder_name
 
 
 class RebaselineTest(AbstractDeclarativeCommand):
@@ -83,7 +66,7 @@ class RebaselineTest(AbstractDeclarativeCommand):
         return builder.accumulated_results_url()
 
     def _baseline_directory(self, builder_name):
-        port = _port_for_builder(builder_name)
+        port = factory.get_from_builder_name(builder_name)
         return port.baseline_path()
 
     def _save_baseline(self, data, target_baseline):

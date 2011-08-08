@@ -35,15 +35,27 @@ except ImportError:
 import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
+from webkitpy.layout_tests.port import factory
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockTool, MockExecutive
 from webkitpy.tool.servers.gardeningserver import *
+
+
+class TestPortFactory(object):
+    @classmethod
+    def create(cls):
+        return factory.get("test-win-xp")
+
+    @classmethod
+    def path_to_test_expectations_file(cls):
+        return cls.create().path_to_test_expectations_file()
 
 
 class MockServer(object):
     def __init__(self):
         self.tool = MockTool()
         self.tool.executive = MockExecutive(should_log=True)
+        self.tool.filesystem.files[TestPortFactory.path_to_test_expectations_file()] = ""
 
 
 # The real GardeningHTTPRequestHandler has a constructor that's too hard to
@@ -52,6 +64,9 @@ class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
     def __init__(self, server):
         self.server = server
         self.body = None
+
+    def _expectations_updater(self):
+        return GardeningExpectationsUpdater(self.server.tool, TestPortFactory.create())
 
     def _read_entity_body(self):
         return self.body if self.body else ''
@@ -65,6 +80,66 @@ class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
         print "== Begin JSON Response =="
         print json.dumps(json_object)
         print "== End JSON Response =="
+
+
+class GardeningExpectationsUpdaterTest(unittest.TestCase):
+    def __init__(self, testFunc):
+        self.tool = MockTool()
+        self.tool.executive = MockExecutive(should_log=True)
+        self.tool.filesystem.files[TestPortFactory.path_to_test_expectations_file()] = ""
+        unittest.TestCase.__init__(self, testFunc)
+
+    def assert_update(self, failure_info_list, expectations_before=None, expectations_after=None, expected_exception=None):
+        updater = GardeningExpectationsUpdater(self.tool, TestPortFactory.create())
+        path_to_test_expectations_file = TestPortFactory.path_to_test_expectations_file()
+        self.tool.filesystem.files[path_to_test_expectations_file] = expectations_before or ""
+        if expected_exception:
+            self.assertRaises(expected_exception, updater.update_expectations, (failure_info_list))
+        else:
+            updater.update_expectations(failure_info_list)
+            self.assertEquals(self.tool.filesystem.files[path_to_test_expectations_file], expectations_after)
+
+    def test_empty_expectations(self):
+        failure_info_list = []
+        expectations_before = ""
+        expectations_after = ""
+        self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
+
+    def test_unknown_builder(self):
+        failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Bob", "failureTypeList": ["IMAGE"]}]
+        self.assert_update(failure_info_list, expected_exception=AssertionError)
+
+    def test_empty_failure_type_list(self):
+        failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": []}]
+        self.assert_update(failure_info_list, expected_exception=AssertionError)
+
+    def test_empty_test_name(self):
+        failure_info_list = [{"testName": "", "builderName": "Webkit Win", "failureTypeList": ["TEXT"]}]
+        self.assert_update(failure_info_list, expected_exception=AssertionError)
+
+    def test_unknown_failure_type(self):
+        failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE", "EXPLODE"]}]
+        expectations_before = ""
+        expectations_after = "\nBUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
+
+    def test_add_new_expectation(self):
+        failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE"]}]
+        expectations_before = ""
+        expectations_after = "\nBUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
+
+    def test_replace_old_expectation(self):
+        failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE"]}]
+        expectations_before = "BUG_OLD XP RELEASE CPU : failures/expected/image.html = TEXT"
+        expectations_after = "BUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
+
+    def test_supplement_old_expectation(self):
+        failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE"]}]
+        expectations_before = "BUG_OLD XP RELEASE :  failures/expected/image.html = TEXT"
+        expectations_after = "BUG_OLD XP RELEASE GPU : failures/expected/image.html = TEXT\nBUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
+        self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
 
 
 class GardeningServerTest(unittest.TestCase):
@@ -91,5 +166,5 @@ class GardeningServerTest(unittest.TestCase):
 
     def test_updateexpectations(self):
         expected_stderr = ""
-        expected_stdout = "FailureInfoList: []\n== Begin Response ==\nsuccess\n== End Response ==\n"
+        expected_stdout = "== Begin Response ==\nsuccess\n== End Response ==\n"
         self._post_to_path("/updateexpectations", body="[]", expected_stderr=expected_stderr, expected_stdout=expected_stdout)

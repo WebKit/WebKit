@@ -25,7 +25,43 @@
 import BaseHTTPServer
 import os
 
+from webkitpy.common.memoized import memoized
 from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
+from webkitpy.layout_tests.models.test_expectations import BugManager, TestExpectationParser, TestExpectations, TestExpectationsEditor, TestExpectationSerializer
+from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
+from webkitpy.layout_tests.port import factory
+
+
+class GardeningExpectationsUpdater(BugManager):
+    def __init__(self, tool, port):
+        self._converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
+        self._parser = TestExpectationParser(port, [], allow_rebaseline_modifier=False)
+        self._path_to_test_expectations_file = port.path_to_test_expectations_file()
+        self._tool = tool
+
+    @memoized
+    def _builder_to_test_config(self, builder_name):
+        return factory.get_from_builder_name(builder_name).test_configuration()
+
+    def close_bug(self, bug_id, reference_bug_id=None):
+        # FIXME: Implement this properly.
+        pass
+
+    def create_bug(self):
+        return "BUG_NEW"
+
+    def update_expectations(self, failure_info_list):
+        expectation_lines = TestExpectationParser.tokenize_list(self._tool.filesystem.read_text_file(self._path_to_test_expectations_file))
+        for expectation_line in expectation_lines:
+            self._parser.parse(expectation_line)
+        editor = TestExpectationsEditor(expectation_lines, self)
+        for failure_info in failure_info_list:
+            expectation_set = set(filter(None, map(TestExpectations.expectation_from_string, failure_info['failureTypeList'])))
+            assert(expectation_set)
+            test_name = failure_info['testName']
+            assert(test_name)
+            editor.update_expectation(test_name, set([self._builder_to_test_config(failure_info['builderName'])]), expectation_set)
+        self._tool.filesystem.write_text_file(self._path_to_test_expectations_file, TestExpectationSerializer.list_to_string(expectation_lines, self._converter))
 
 
 class GardeningHTTPServer(BaseHTTPServer.HTTPServer):
@@ -69,6 +105,13 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
     def _run_webkit_patch(self, args):
         return self.server.tool.executive.run_command([self.server.tool.path()] + args, cwd=self.server.tool.scm().checkout_root)
 
+    @memoized
+    def _expectations_updater(self):
+        # FIXME: Should split failure_info_list into lists per port, then edit each expectations file separately.
+        # For now, assume Chromium port.
+        port = factory.get("chromium-win-win7")
+        return GardeningExpectationsUpdater(self.server.tool, port)
+
     def rollout(self):
         revision = self.query['revision'][0]
         reason = self.query['reason'][0]
@@ -82,8 +125,7 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         self._serve_text('success')
 
     def updateexpectations(self):
-        failure_info_list = self._read_entity_body_as_json()
-        print 'FailureInfoList:', failure_info_list
+        self._expectations_updater().update_expectations(self._read_entity_body_as_json())
         self._serve_text('success')
 
     def rebaseline(self):

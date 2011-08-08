@@ -1,3 +1,15 @@
+2011-08-05  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Wire up updating expectations in garden-o-matic.
+        https://bugs.webkit.org/show_bug.cgi?id=65794
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/port/factory.py: Moved _port_for_builder from rebaseline.py to here, rename to get_from_builder_name.
+        * Scripts/webkitpy/tool/commands/rebaseline.py: Adapted callsites to new location.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py: Added GardeningExpectationsUpdater, which knows how to update expectations.
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py: Added loads of tests.
+
 2011-08-08  Jochen Eisinger  <jochen@chromium.org>
 
         webkit-patch doesn't get along with renamed files
