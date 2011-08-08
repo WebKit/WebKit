@@ -112,12 +112,12 @@
                     },
                     { "name": "Lion Intel Debug (Build)", "type": "Build", "builddir": "lion-intel-debug",
                       "platform": "mac-lion", "configuration": "debug", "architectures": ["x86_64"],
-                      "triggers": ["lion-intel-debug-tests"],
+                      "triggers": ["lion-intel-debug-tests", "lion-intel-debug-tests-wk2"],
                       "slavenames": ["apple-xserve-2"]
                     },
                     { "name": "Lion Intel Release (Build)", "type": "Build", "builddir": "lion-intel-release",
                       "platform": "mac-lion", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["lion-intel-release-tests"],
+                      "triggers": ["lion-intel-release-tests", "lion-intel-release-tests-wk2"],
                       "slavenames": ["apple-xserve-3"]
                     },
                     { "name": "Lion Intel Debug (Tests)", "type": "Test", "builddir": "lion-intel-debug-tests",

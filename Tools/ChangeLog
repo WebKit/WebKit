@@ -1,3 +1,11 @@
+2011-08-08  Lucas Forschler  <lforschler@apple.com>
+
+        Add triggers for Lion WK2 test bots.
+
+        Reviewed by Stephanie Lewis.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2011-08-08  Adam Barth  <abarth@webkit.org>
 
         bulk-optimize-baselines should take directories on the command line
