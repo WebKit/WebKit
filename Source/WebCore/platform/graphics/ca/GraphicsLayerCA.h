@@ -37,9 +37,14 @@
 #include <wtf/RetainPtr.h>
 #include <wtf/text/StringHash.h>
 
+// Enable this to add a light red wash over the visible portion of Tiled Layers, as computed
+// by syncCompositingState().
+// #define VISIBLE_TILE_WASH
+
 namespace WebCore {
 
 class PlatformCALayer;
+class TransformState;
 
 class GraphicsLayerCA : public GraphicsLayer, public PlatformCALayerClient {
 public:
@@ -119,9 +124,9 @@ public:
     virtual void setMaintainsPixelAlignment(bool);
     virtual void pageScaleFactorChanged();
 
-    void recursiveCommitChanges(float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
+    void recursiveCommitChanges(const TransformState&, float pageScaleFactor = 1, const FloatPoint& positionRelativeToBase = FloatPoint(), bool affectedByPageScale = false);
 
-    virtual void syncCompositingState();
+    virtual void syncCompositingState(const FloatRect&);
     virtual void syncCompositingStateForThisLayerOnly();
 
     bool allowTiledLayer() const { return m_allowTiledLayer; }
@@ -137,7 +142,7 @@ private:
 
     virtual void platformCALayerAnimationStarted(CFTimeInterval beginTime);
     virtual CompositingCoordinatesOrientation platformCALayerContentsOrientation() const { return contentsOrientation(); }
-    virtual void platformCALayerPaintContents(GraphicsContext& context, const IntRect& clip) { paintGraphicsLayerContents(context, clip); }
+    virtual void platformCALayerPaintContents(GraphicsContext&, const IntRect& clip);
     virtual bool platformCALayerShowDebugBorders() const { return showDebugBorders(); }
     virtual bool platformCALayerShowRepaintCounter() const { return showRepaintCounter(); }
     virtual int platformCALayerIncrementRepaintCount() { return incrementRepaintCount(); }
@@ -348,6 +353,10 @@ private:
     OwnPtr<LayerMap> m_layerClones;
     OwnPtr<LayerMap> m_structuralLayerClones;
     OwnPtr<LayerMap> m_contentsLayerClones;
+
+#ifdef VISIBLE_TILE_WASH
+    RefPtr<PlatformCALayer> m_visibleTileWashLayer;
+#endif
     
     enum ContentsLayerPurpose {
         NoContentsLayer = 0,

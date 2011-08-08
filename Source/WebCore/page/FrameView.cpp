@@ -701,8 +701,11 @@ bool FrameView::syncCompositingStateForThisFrame(Frame* rootFrameForSync)
     Document* document = m_frame->document();
     if (isDocumentRunningFullScreenAnimation(document)) {
         RenderLayerBacking* backing = document->fullScreenRenderer()->layer()->backing();
-        if (GraphicsLayer* fullScreenLayer = backing->graphicsLayer())
-            fullScreenLayer->syncCompositingState();
+        if (GraphicsLayer* fullScreenLayer = backing->graphicsLayer()) {
+            // FIXME: Passing frameRect() is correct only when RenderLayerCompositor uses a ScrollLayer (as in WebKit2)
+            // otherwise, the passed clip rect needs to take scrolling into account
+            fullScreenLayer->syncCompositingState(frameRect());
+        }
     }
 #endif
     return true;

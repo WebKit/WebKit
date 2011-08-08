@@ -30,6 +30,25 @@
 
 namespace WebCore {
 
+TransformState& TransformState::operator=(const TransformState& other)
+{
+    m_mapPoint = other.m_mapPoint;
+    m_mapQuad = other.m_mapQuad;
+    if (m_mapPoint)
+        m_lastPlanarPoint = other.m_lastPlanarPoint;
+    if (m_mapQuad)
+        m_lastPlanarQuad = other.m_lastPlanarQuad;
+    m_accumulatingTransform = other.m_accumulatingTransform;
+    m_direction = other.m_direction;
+    
+    m_accumulatedTransform.clear();
+
+    if (other.m_accumulatedTransform)
+        m_accumulatedTransform = adoptPtr(new TransformationMatrix(*other.m_accumulatedTransform));
+        
+    return *this;
+}
+
 void TransformState::move(int x, int y, TransformAccumulation accumulate)
 {
     if (m_accumulatingTransform && m_accumulatedTransform) {

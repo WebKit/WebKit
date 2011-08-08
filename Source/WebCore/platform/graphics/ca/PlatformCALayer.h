@@ -195,6 +195,10 @@ public:
     void printTree() const;
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    void synchronouslyDisplayTilesInRect(const FloatRect&);
+#endif
+
 protected:
     PlatformCALayer(LayerType, PlatformLayer*, PlatformCALayerClient*);
     

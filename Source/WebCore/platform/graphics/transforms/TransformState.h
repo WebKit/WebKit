@@ -36,7 +36,6 @@
 namespace WebCore {
 
 class TransformState {
-    WTF_MAKE_NONCOPYABLE(TransformState);
 public:
     enum TransformDirection { ApplyTransformDirection, UnapplyInverseTransformDirection };
     enum TransformAccumulation { FlattenTransform, AccumulateTransform };
@@ -68,6 +67,10 @@ public:
         , m_direction(mappingDirection)
     {
     }
+    
+    TransformState(const TransformState& other) { *this = other; }
+
+    TransformState& operator=(const TransformState&);
     
     void setQuad(const FloatQuad& quad) { m_lastPlanarQuad = quad; }
     

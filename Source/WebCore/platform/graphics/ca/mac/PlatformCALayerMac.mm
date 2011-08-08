@@ -89,6 +89,14 @@ static double mediaTimeToCurrentTime(CFTimeInterval t)
 
 @end
 
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+@interface CATiledLayer(GraphicsLayerCAPrivate)
+- (void)displayInRect:(CGRect)r levelOfDetail:(int)lod options:(NSDictionary *)dict;
+- (BOOL)canDrawConcurrently;
+- (void)setCanDrawConcurrently:(BOOL)flag;
+@end
+#endif
+
 @interface CALayer(Private)
 - (void)setContentsChanged;
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -749,5 +757,22 @@ void PlatformCALayer::setContentsScale(float value)
     UNUSED_PARAM(value);
 #endif
 }
+
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+void PlatformCALayer::synchronouslyDisplayTilesInRect(const FloatRect& rect)
+{
+    if (m_layerType != LayerTypeWebTiledLayer)
+        return;
+
+    WebTiledLayer *tiledLayer = static_cast<WebTiledLayer*>(m_layer.get());
+
+    BEGIN_BLOCK_OBJC_EXCEPTIONS
+    BOOL oldCanDrawConcurrently = [tiledLayer canDrawConcurrently];
+    [tiledLayer setCanDrawConcurrently:NO];
+    [tiledLayer displayInRect:rect levelOfDetail:0 options:nil];
+    [tiledLayer setCanDrawConcurrently:oldCanDrawConcurrently];
+    END_BLOCK_OBJC_EXCEPTIONS
+}
+#endif
 
 #endif // USE(ACCELERATED_COMPOSITING)

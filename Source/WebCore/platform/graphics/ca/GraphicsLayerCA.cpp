@@ -36,6 +36,7 @@
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "SystemTime.h"
+#include "TransformState.h"
 #include "TranslateTransformOperation.h"
 #include <QuartzCore/CATransform3D.h>
 #include <limits.h>
@@ -810,9 +811,10 @@ FloatPoint GraphicsLayerCA::computePositionRelativeToBase(float& pageScale) cons
     return FloatPoint();
 }
 
-void GraphicsLayerCA::syncCompositingState()
+void GraphicsLayerCA::syncCompositingState(const FloatRect& clipRect)
 {
-    recursiveCommitChanges();
+    TransformState state(TransformState::UnapplyInverseTransformDirection, FloatQuad(clipRect));
+    recursiveCommitChanges(state);
 }
 
 void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
@@ -823,8 +825,46 @@ void GraphicsLayerCA::syncCompositingStateForThisLayerOnly()
     commitLayerChangesAfterSublayers();
 }
 
-void GraphicsLayerCA::recursiveCommitChanges(float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
+void GraphicsLayerCA::recursiveCommitChanges(const TransformState& state, float pageScaleFactor, const FloatPoint& positionRelativeToBase, bool affectedByPageScale)
 {
+    // Save the state before sending down to kids and restore it after
+    TransformState localState = state;
+    
+    TransformState::TransformAccumulation accumulation = preserves3D() ? TransformState::AccumulateTransform : TransformState::FlattenTransform;
+    localState.move(-m_position.x(), -m_position.y(), accumulation);
+    
+    if (!transform().isIdentity()) {
+        TransformationMatrix transformWithAnchorPoint;
+        FloatPoint3D absoluteAnchorPoint(anchorPoint());
+        absoluteAnchorPoint.scale(size().width(), size().height(), 1);
+        transformWithAnchorPoint.translate3d(absoluteAnchorPoint.x(), absoluteAnchorPoint.y(), absoluteAnchorPoint.z());
+        transformWithAnchorPoint.multiply(transform());
+        transformWithAnchorPoint.translate3d(-absoluteAnchorPoint.x(), -absoluteAnchorPoint.y(), -absoluteAnchorPoint.z());
+        localState.applyTransform(transformWithAnchorPoint, accumulation);
+    }
+    
+    FloatRect clipRectForChildren = localState.lastPlanarQuad().boundingBox();
+    FloatRect clipRectForSelf;
+    
+    if (masksToBounds()) {
+        ASSERT(accumulation == TransformState::FlattenTransform);
+        
+        // Replace the quad in the TransformState with one that is clipped to this layer's bounds
+        clipRectForSelf = FloatRect(0, 0, m_size.width(), m_size.height());
+        clipRectForSelf.intersect(clipRectForChildren);
+        localState.setQuad(clipRectForSelf);
+    }
+
+#ifdef VISIBLE_TILE_WASH
+    if (m_visibleTileWashLayer) {
+        if (clipRectForSelf.isEmpty()) {
+            clipRectForSelf = FloatRect(0, 0, m_size.width(), m_size.height());
+            clipRectForSelf.intersect(clipRectForChildren);
+        }
+        m_visibleTileWashLayer->setFrame(clipRectForSelf);
+    }
+#endif
+
     bool hadChanges = m_uncommittedChanges;
     
     if (appliesPageScale()) {
@@ -844,13 +884,17 @@ void GraphicsLayerCA::recursiveCommitChanges(float pageScaleFactor, const FloatP
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
+    
+    if (!childrenTransform().isIdentity())    
+        localState.applyTransform(childrenTransform(), accumulation);
+    
     for (size_t i = 0; i < numChildren; ++i) {
         GraphicsLayerCA* curChild = static_cast<GraphicsLayerCA*>(childLayers[i]);
-        curChild->recursiveCommitChanges(pageScaleFactor, baseRelativePosition, affectedByPageScale);
+        curChild->recursiveCommitChanges(localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
     }
 
     if (m_replicaLayer)
-        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges(pageScaleFactor, baseRelativePosition, affectedByPageScale);
+        static_cast<GraphicsLayerCA*>(m_replicaLayer)->recursiveCommitChanges(localState, pageScaleFactor, baseRelativePosition, affectedByPageScale);
 
     if (m_maskLayer)
         static_cast<GraphicsLayerCA*>(m_maskLayer)->commitLayerChangesAfterSublayers();
@@ -859,6 +903,11 @@ void GraphicsLayerCA::recursiveCommitChanges(float pageScaleFactor, const FloatP
 
     if (hadChanges && client())
         client()->didCommitChangesForLayer(this);
+}
+
+void GraphicsLayerCA::platformCALayerPaintContents(GraphicsContext& context, const IntRect& clip)
+{
+    paintGraphicsLayerContents(context, clip);
 }
 
 void GraphicsLayerCA::commitLayerChangesBeforeSublayers(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
@@ -989,6 +1038,11 @@ void GraphicsLayerCA::updateSublayerList()
         for (size_t i = 0; i < newSublayers.size(); --i)
             newSublayers[i]->removeFromSuperlayer();
     }
+    
+#ifdef VISIBLE_TILE_WASH
+    if (m_visibleTileWashLayer)
+        newSublayers.append(m_visibleTileWashLayer);
+#endif
 
     if (m_structuralLayer) {
         m_structuralLayer->setSublayers(newSublayers);
@@ -2062,6 +2116,21 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
     m_layer = PlatformCALayer::create(useTiledLayer ? PlatformCALayer::LayerTypeWebTiledLayer : PlatformCALayer::LayerTypeWebLayer, this);
     m_usingTiledLayer = useTiledLayer;
     
+#ifdef VISIBLE_TILE_WASH
+    if (useTiledLayer) {
+        static Color washFillColor(255, 0, 0, 50);
+        static Color washBorderColor(255, 0, 0, 100);
+        
+        m_visibleTileWashLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
+        m_visibleTileWashLayer->setName("Visible Tile Wash Layer");
+        m_visibleTileWashLayer->setAnchorPoint(FloatPoint3D(0, 0, 0));
+        m_visibleTileWashLayer->setBorderColor(washBorderColor);
+        m_visibleTileWashLayer->setBorderWidth(8);
+        m_visibleTileWashLayer->setBackgroundColor(washFillColor);
+    } else
+        m_visibleTileWashLayer = 0;
+#endif
+    
     if (useTiledLayer) {
 #if !HAVE_MODERN_QUARTZCORE
         // Tiled layer has issues with flipped coordinates.
@@ -2074,7 +2143,12 @@ void GraphicsLayerCA::swapFromOrToTiledLayer(bool useTiledLayer, float pageScale
     }
 
     m_layer->adoptSublayers(oldLayer.get());
-    
+
+#ifdef VISIBLE_TILE_WASH
+    if (m_visibleTileWashLayer)
+        m_layer->appendSublayer(m_visibleTileWashLayer.get());
+#endif
+
     // FIXME: Skip this step if we don't have a superlayer. This is problably a benign
     // case that happens while restructuring the layer tree.
     ASSERT(oldLayer->superlayer());

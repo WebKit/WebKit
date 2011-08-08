@@ -173,7 +173,7 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
     [CATransaction setDisableActions:YES];
     m_rootLayer->removeAllChildren();
     m_rootLayer->addChild(layer);
-    m_rootLayer->syncCompositingState();
+    m_rootLayer->syncCompositingState(getFullScreenRect());
     [CATransaction commit];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:m_rootLayer->platformLayer() userInfo:nil];
@@ -203,7 +203,7 @@ void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)
 
     IntRect destinationFrame = getFullScreenRect();
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
-    m_rootLayer->syncCompositingState();
+    m_rootLayer->syncCompositingState(destinationFrame);
 
     // FIXME: Once we gain the ability to do native WebKit animations of generated
     // content, this can change to use them.  Meanwhile, we'll have to animate the
@@ -226,7 +226,7 @@ void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
 
     IntRect destinationFrame = getFullScreenRect();
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
-    m_rootLayer->syncCompositingState();
+    m_rootLayer->syncCompositingState(destinationFrame);
 
     // FIXME: Once we gain the ability to do native WebKit animations of generated
     // content, this can change to use them.  Meanwhile, we'll have to animate the

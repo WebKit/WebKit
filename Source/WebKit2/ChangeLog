@@ -1,3 +1,17 @@
+2011-08-08  Chris Marrin  <cmarrin@apple.com>
+
+        Logic to compute visible display rect in GraphicsLayerCA::syncCompositingState
+        https://bugs.webkit.org/show_bug.cgi?id=65708
+
+        Supply initial display rects for the full-screen case
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer):
+        (WebKit::WebFullScreenManagerMac::beginEnterFullScreenAnimation):
+        (WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation):
+
 2011-08-08  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9652350> REGRESSION (r87755): WKView doesn't update when I drag files into a background Safari window

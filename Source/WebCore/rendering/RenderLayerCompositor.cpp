@@ -203,9 +203,15 @@ void RenderLayerCompositor::flushPendingLayerChanges(bool isFlushRoot)
     ASSERT(!m_flushingLayers);
     m_flushingLayers = true;
 
-    if (GraphicsLayer* rootLayer = rootGraphicsLayer())
-        rootLayer->syncCompositingState();
-
+    if (GraphicsLayer* rootLayer = rootGraphicsLayer()) {
+        FrameView* frameView = m_renderView ? m_renderView->frameView() : 0;
+        if (frameView) {
+            // FIXME: Passing frameRect() is correct only when RenderLayerCompositor uses a ScrollLayer (as in WebKit2)
+            // otherwise, the passed clip rect needs to take scrolling into account
+            rootLayer->syncCompositingState(frameView->frameRect());
+        }
+    }
+    
     ASSERT(m_flushingLayers);
     m_flushingLayers = false;
 }

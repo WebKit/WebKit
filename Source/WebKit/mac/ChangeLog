@@ -1,3 +1,16 @@
+2011-08-08  Chris Marrin  <cmarrin@apple.com>
+
+        Logic to compute visible display rect in GraphicsLayerCA::syncCompositingState
+        https://bugs.webkit.org/show_bug.cgi?id=65708
+
+        Supply initial display rects for the full-screen case
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController enterFullscreen:]):
+        (-[WebFullScreenController exitFullscreen]):
+
 2011-08-06  Joseph Pecoraro  <joepeck@webkit.org>
 
         Potential Leaks - RetainPtr<> over retaining Create'd objects

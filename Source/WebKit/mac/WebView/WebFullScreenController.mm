@@ -421,7 +421,7 @@ private:
     // Some properties haven't propogated from the GraphicsLayer to the CALayer yet. So
     // tell the renderer's layer to sync it's compositing state:
     GraphicsLayer* rendererGraphics = _renderer->layer()->backing()->graphicsLayer();
-    rendererGraphics->syncCompositingState();    
+    rendererGraphics->syncCompositingState(destinationFrame);    
 
     CALayer* rendererLayer = rendererGraphics->platformLayer();
     [[self _fullscreenWindow] setRendererLayer:rendererLayer];    
@@ -572,7 +572,7 @@ private:
     
     [self _document]->setFullScreenRendererBackgroundColor(Color::transparent);
 
-    rendererGraphics->syncCompositingState();    
+    rendererGraphics->syncCompositingState(layerEndFrame);    
 
     CALayer* rendererLayer = rendererGraphics->platformLayer();
     [[self _fullscreenWindow] setRendererLayer:rendererLayer];    
