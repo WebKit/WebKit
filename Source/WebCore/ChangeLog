@@ -1,3 +1,10 @@
+2011-08-08  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * platform/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::Counter::visit):
+
 2011-08-08  Alexandru Chiculita  <achicu@adobe.com>
 
         Optimize floating elements lookup
