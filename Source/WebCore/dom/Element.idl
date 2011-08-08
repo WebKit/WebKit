@@ -136,7 +136,7 @@ module core {
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
         const unsigned short ALLOW_KEYBOARD_INPUT = 1;
-        void webkitRequestFullScreen(in [Optional=CallWithDefaultValue] unsigned short flags);
+        [EnabledAtRuntime] void webkitRequestFullScreen(in [Optional=CallWithDefaultValue] unsigned short flags);
 #endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C

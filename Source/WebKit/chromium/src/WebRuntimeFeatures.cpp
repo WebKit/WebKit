@@ -356,4 +356,22 @@ bool WebRuntimeFeatures::isMediaStreamEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableFullScreenAPI(bool enable)
+{
+#if ENABLE(FULLSCREEN_API)
+    RuntimeEnabledFeatures::setWebkitFullScreenAPIEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isFullScreenAPIEnabled()
+{
+#if ENABLE(FULLSCREEN_API)
+    return RuntimeEnabledFeatures::webkitFullScreenAPIEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

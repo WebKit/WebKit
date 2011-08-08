@@ -146,4 +146,8 @@ bool RuntimeEnabledFeatures::openDatabaseSyncEnabled()
 bool RuntimeEnabledFeatures::isQuotaEnabled = false;
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+bool RuntimeEnabledFeatures::isFullScreenAPIEnabled = true;
+#endif
+
 } // namespace WebCore

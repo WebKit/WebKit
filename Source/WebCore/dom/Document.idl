@@ -238,10 +238,10 @@ module core {
             raises(DOMException);
 
 #if defined(ENABLE_FULLSCREEN_API) && ENABLE_FULLSCREEN_API
-        readonly attribute boolean webkitIsFullScreen;
-        readonly attribute boolean webkitFullScreenKeyboardInputAllowed;
-        readonly attribute Element webkitCurrentFullScreenElement;
-        void webkitCancelFullScreen();
+        readonly attribute [EnabledAtRuntime] boolean webkitIsFullScreen;
+        readonly attribute [EnabledAtRuntime] boolean webkitFullScreenKeyboardInputAllowed;
+        readonly attribute [EnabledAtRuntime] Element webkitCurrentFullScreenElement;
+        [EnabledAtRuntime] void webkitCancelFullScreen();
 #endif
 
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C

@@ -106,6 +106,9 @@ public:
     WEBKIT_EXPORT static void enableMediaStream(bool);
     WEBKIT_EXPORT static bool isMediaStreamEnabled();
 
+    WEBKIT_EXPORT static void enableFullScreenAPI(bool);
+    WEBKIT_EXPORT static bool isFullScreenAPIEnabled();
+
 private:
     WebRuntimeFeatures();
 };

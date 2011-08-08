@@ -70,6 +70,16 @@ public:
     static bool webkitIDBRequestEnabled() { return isIndexedDBEnabled; }
     static bool webkitIDBTransactionEnabled() { return isIndexedDBEnabled; }
 
+#if ENABLE(FULLSCREEN_API)
+    static bool webkitFullScreenAPIEnabled() { return isFullScreenAPIEnabled; }
+    static void setWebkitFullScreenAPIEnabled(bool isEnabled) { isFullScreenAPIEnabled = isEnabled; }
+    static bool webkitRequestFullScreenEnabled() { return isFullScreenAPIEnabled; }
+    static bool webkitIsFullScreenEnabled() { return isFullScreenAPIEnabled; }
+    static bool webkitFullScreenKeyboardInputAllowedEnabled() { return isFullScreenAPIEnabled; }
+    static bool webkitCurrentFullScreenElementEnabled() { return isFullScreenAPIEnabled; }
+    static bool webkitCancelFullScreenEnabled() { return isFullScreenAPIEnabled; }
+#endif
+
 #if ENABLE(VIDEO)
     static bool audioEnabled();
     static bool htmlMediaElementEnabled();
@@ -191,6 +201,10 @@ private:
 
 #if ENABLE(QUOTA)
     static bool isQuotaEnabled;
+#endif
+
+#if ENABLE(FULLSCREEN_API)
+    static bool isFullScreenAPIEnabled;
 #endif
 };
 
