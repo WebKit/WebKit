@@ -430,10 +430,7 @@ private:
 
     void predictArray(NodeIndex nodeIndex)
     {
-        Node* nodePtr = &m_graph[nodeIndex];
-
-        if (nodePtr->op == GetLocal)
-            m_graph.predict(nodePtr->local(), PredictArray);
+        m_graph.predict(m_graph[nodeIndex], PredictArray);
     }
 
     void predictInt32(NodeIndex nodeIndex)
@@ -445,9 +442,8 @@ private:
 
         if (nodePtr->op == ValueToInt32)
             nodePtr = &m_graph[nodePtr->child1()];
-
-        if (nodePtr->op == GetLocal)
-            m_graph.predict(nodePtr->local(), PredictInt32);
+        
+        m_graph.predict(*nodePtr, PredictInt32);
     }
 
     JSGlobalData* m_globalData;
@@ -701,13 +697,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             // If both operands can statically be determined to the numbers, then this is an arithmetic add.
             // Otherwise, we must assume this may be performing a concatenation to a string.
-            if (m_graph[op1].hasNumericResult() && m_graph[op2].hasNumericResult()) {
-                if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
-                    predictInt32(op1);
-                    predictInt32(op2);
-                }
+            if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
+                predictInt32(op1);
+                predictInt32(op2);
+            }
+            if (m_graph[op1].hasNumericResult() && m_graph[op2].hasNumericResult())
                 set(currentInstruction[1].u.operand, addToGraph(ArithAdd, toNumber(op1), toNumber(op2)));
-            } else
+            else
                 set(currentInstruction[1].u.operand, addToGraph(ValueAdd, op1, op2));
             NEXT_OPCODE(op_add);
         }

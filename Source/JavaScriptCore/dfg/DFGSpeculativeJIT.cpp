@@ -654,7 +654,7 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case ValueToNumber: {
-        if (isInteger(node.child1())) {
+        if (shouldSpeculateInteger(node.child1())) {
             SpeculateIntegerOperand op1(this, node.child1());
             GPRTemporary result(this, op1);
             m_jit.move(op1.gpr(), result.gpr());

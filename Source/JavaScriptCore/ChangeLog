@@ -1,3 +1,40 @@
+2011-08-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT does not track speculation decisions for global variables
+        https://bugs.webkit.org/show_bug.cgi?id=65825
+
+        Reviewed by Gavin Barraclough.
+        
+        Added the capability to track predictions for global variables, and
+        ensured that code can abstract over the source of prediction (local
+        versus global variable) wherever it is appropriate to do so.  Also
+        cleaned up the code in SpeculativeJIT that decides how to speculate
+        based on recorded predictions (for example instead of using isInteger,
+        which makes sense for local predictions where the GetLocal would
+        return an integer value, we now tend to use shouldSpeculateInteger,
+        which checks if the value is either already an integer or should be
+        speculated to be an integer).
+        
+        This is an 0.8% win on SunSpider, almost entirely thanks to a 25%
+        win on controlflow-recursive.  It's also a 4.8% win on v8-crypto.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::predictArray):
+        (JSC::DFG::ByteCodeParser::predictInt32):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::predictGlobalVar):
+        (JSC::DFG::Graph::predict):
+        (JSC::DFG::Graph::getGlobalVarPrediction):
+        (JSC::DFG::Graph::getPrediction):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateInteger):
+        (JSC::DFG::SpeculativeJIT::shouldSpeculateDouble):
+
 2011-08-07  Martin Robinson  <mrobinson@igalia.com>
 
         Distribution fix for GTK+.

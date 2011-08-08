@@ -30,6 +30,7 @@
 
 #include <RegisterFile.h>
 #include <dfg/DFGNode.h>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/StdLibExtras.h>
 
@@ -194,7 +195,31 @@ public:
             m_argumentPredictions[argument].m_value |= prediction;
         } else if ((unsigned)operand < m_variablePredictions.size())
             m_variablePredictions[operand].m_value |= prediction;
-            
+    }
+    
+    void predictGlobalVar(unsigned varNumber, PredictedType prediction)
+    {
+        HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVarPredictions.find(varNumber + 1);
+        if (iter == m_globalVarPredictions.end()) {
+            PredictionSlot predictionSlot;
+            predictionSlot.m_value |= prediction;
+            m_globalVarPredictions.add(varNumber + 1, predictionSlot);
+        } else
+            iter->second.m_value |= prediction;
+    }
+    
+    void predict(Node& node, PredictedType prediction)
+    {
+        switch (node.op) {
+        case GetLocal:
+            predict(node.local(), prediction);
+            break;
+        case GetGlobalVar:
+            predictGlobalVar(node.varNumber(), prediction);
+            break;
+        default:
+            break;
+        }
     }
 
     PredictedType getPrediction(int operand)
@@ -206,6 +231,34 @@ public:
         if ((unsigned)operand < m_variablePredictions.size())
             return m_variablePredictions[operand].m_value;
         return PredictNone;
+    }
+    
+    PredictedType getGlobalVarPrediction(unsigned varNumber)
+    {
+        HashMap<unsigned, PredictionSlot>::iterator iter = m_globalVarPredictions.find(varNumber + 1);
+        if (iter == m_globalVarPredictions.end())
+            return PredictNone;
+        return iter->second.m_value;
+    }
+    
+    PredictedType getPrediction(Node& node)
+    {
+        Node* nodePtr = &node;
+        
+        if (nodePtr->op == ValueToNumber)
+            nodePtr = &(*this)[nodePtr->child1()];
+
+        if (nodePtr->op == ValueToInt32)
+            nodePtr = &(*this)[nodePtr->child1()];
+        
+        switch (nodePtr->op) {
+        case GetLocal:
+            return getPrediction(nodePtr->local());
+        case GetGlobalVar:
+            return getGlobalVarPrediction(nodePtr->varNumber());
+        default:
+            return PredictNone;
+        }
     }
 
 #ifndef NDEBUG
@@ -223,6 +276,7 @@ private:
 
     Vector<PredictionSlot, 16> m_argumentPredictions;
     Vector<PredictionSlot, 16> m_variablePredictions;
+    HashMap<unsigned, PredictionSlot> m_globalVarPredictions;
 };
 
 } } // namespace JSC::DFG
