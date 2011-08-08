@@ -1,10 +1,6 @@
 <html>
 <head>
-<script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
-</script>
-
+<script src="../../resources/dump-as-markup.js"></script>
 <style>
 div { text-align: center; }
 </style>
@@ -13,7 +9,10 @@ div { text-align: center; }
 <body contentEditable="true">
 These demonstrate 11475: the '\n's at the end of the fragment should be unrendered.<br><br>
 
-<script>
+<script id="test">
+if (window.layoutTestController)
+    layoutTestController.dumpEditingCallbacks();
+
 var s = window.getSelection();
 var e = document.body;
 
@@ -22,8 +21,9 @@ document.execCommand("SelectAll");
 s.modify("move", "forward", "character");
 document.execCommand("InsertHTML", false, "<div>This test checks that pasing in a combination of nested blocks where one starts with a text field doesn't crash or fail assertions.</div>\n<div>\n<div>\n<input type='text'> \n<span>x</span>\n</div>\n</div>");
 
-</script>
+e.removeChild(document.getElementById('test'));
+Markup.dump(e);
 
+</script>
 </body>
 </html>
-

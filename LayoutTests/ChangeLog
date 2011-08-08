@@ -1,3 +1,40 @@
+2011-08-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dump-as-markup conversion: nested-blocks-with-text-area.html and nested-blocks-with-text-field.html
+        https://bugs.webkit.org/show_bug.cgi?id=65836
+
+        Reviewed by Kent Tamura.
+
+        Converted the tests to dump-as-markup tests to improve the readability of the expected results.
+
+        * editing/pasteboard/nested-blocks-with-text-area-expected.txt: Added.
+        * editing/pasteboard/nested-blocks-with-text-area.html:
+        * editing/pasteboard/nested-blocks-with-text-field-expected.txt: Added.
+        * editing/pasteboard/nested-blocks-with-text-field.html:
+        * platform/chromium-linux/editing/pasteboard/nested-blocks-with-text-area-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/nested-blocks-with-text-field-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/pasteboard/nested-blocks-with-text-area-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/pasteboard/nested-blocks-with-text-field-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/nested-blocks-with-text-area-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/nested-blocks-with-text-area-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/nested-blocks-with-text-field-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/nested-blocks-with-text-field-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/nested-blocks-with-text-area-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/nested-blocks-with-text-area-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/nested-blocks-with-text-field-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/nested-blocks-with-text-field-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/nested-blocks-with-text-area-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/nested-blocks-with-text-field-expected.png: Removed.
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.png: Removed.
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-area-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-field-expected.png: Removed.
+        * platform/mac/editing/pasteboard/nested-blocks-with-text-field-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/nested-blocks-with-text-area-expected.png: Removed.
+        * platform/qt/editing/pasteboard/nested-blocks-with-text-area-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/nested-blocks-with-text-field-expected.png: Removed.
+        * platform/qt/editing/pasteboard/nested-blocks-with-text-field-expected.txt: Removed.
+        * platform/win/editing/pasteboard/nested-blocks-with-text-area-expected.txt: Removed.
+
 2011-08-07  Noel Gordon  <noel.gordon@gmail.com>
 
         Layout Test fast/xsl/import-after-comment.xml is failing
