@@ -3527,6 +3527,8 @@ BUGCR89282 SNOWLEOPARD : fast/forms/input-appearance-range.html = IMAGE
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
+// Need to update baseline files.
+BUGWK65359 : fast/forms/validation-message-appearance.html = FAIL
 
 // This test ASSERTs in skia since it was added.
 BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = CRASH TEXT

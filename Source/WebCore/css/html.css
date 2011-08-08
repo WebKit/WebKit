@@ -724,7 +724,7 @@ output {
 }
 
 ::-webkit-validation-bubble-message {
-    display: block;
+    display: -webkit-box;
     position: relative;
     top: -4px;
     font: message-box;
@@ -741,6 +741,14 @@ output {
     line-height: normal;
     white-space: normal;
     z-index: 2147483644;
+}
+
+::-webkit-validation-bubble-text-block {
+    -webkit-box-flex: 1;
+}
+
+::-webkit-validation-bubble-heading {
+    font-weight: bold;
 }
 
 ::-webkit-validation-bubble-arrow {

@@ -160,6 +160,13 @@ String RenderThemeChromiumMac::extraFullScreenStyleSheet()
 }
 #endif
 
+String RenderThemeChromiumMac::extraDefaultStyleSheet()
+{
+    return RenderThemeMac::extraDefaultStyleSheet() +
+           String(themeChromiumUserAgentStyleSheet, sizeof(themeChromiumUserAgentStyleSheet));
+}
+
+
 bool RenderThemeChromiumMac::paintMediaVolumeSliderContainer(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
     return true;

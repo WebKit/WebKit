@@ -97,7 +97,8 @@ RenderThemeChromiumSkia::~RenderThemeChromiumSkia()
 String RenderThemeChromiumSkia::extraDefaultStyleSheet()
 {
     return String(themeWinUserAgentStyleSheet, sizeof(themeWinUserAgentStyleSheet)) +
-           String(themeChromiumSkiaUserAgentStyleSheet, sizeof(themeChromiumSkiaUserAgentStyleSheet));
+           String(themeChromiumSkiaUserAgentStyleSheet, sizeof(themeChromiumSkiaUserAgentStyleSheet)) +
+           String(themeChromiumUserAgentStyleSheet, sizeof(themeChromiumUserAgentStyleSheet));
 }
 
 String RenderThemeChromiumSkia::extraQuirksStyleSheet()

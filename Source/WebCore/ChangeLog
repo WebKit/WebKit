@@ -1,3 +1,49 @@
+2011-07-28  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Make form validation bubble fit with Chrome UI style
+        https://bugs.webkit.org/show_bug.cgi?id=65359
+
+        Reviewed by Hajime Morita.
+
+        Change the appearance of validation message bubble for
+        Chromium. Basically it doesn't change for other ports.
+
+        - Introduce a new element to put an icon, and enclose it and the
+        message text by a flexible box.
+        - Repesent the message text by two elements. One for the heading,
+        another for the remaining.
+
+        - Introduce themeChromium.css
+
+        * WebCore.gyp/WebCore.gyp: Add themeChromium.css.
+        * css/html.css:
+        (::-webkit-validation-bubble-message): Make this a flexible box container.
+        (::-webkit-validation-bubble-text-block): Takes flexibility.
+        (::-webkit-validation-bubble-heading):
+        Make the content bold because we removed <b></b>.
+        * css/themeChromium.css: Added.
+        (::-webkit-validation-bubble):
+        (::-webkit-validation-bubble-message):
+        (::-webkit-validation-bubble-arrow):
+        (::-webkit-validation-bubble-arrow-clipper):
+        (::-webkit-validation-bubble-icon):
+        (::-webkit-validation-bubble-heading):
+        (::-webkit-validation-bubble-body):
+        * html/ValidationMessage.cpp:
+        (WebCore::ValidationMessage::setMessageDOMAndStartTimer):
+        Sets the text into m_messageHeading and m_messageBody, instead of m_bubbleMessage.
+        Use ASSERT_NO_EXCEPTION.
+        (WebCore::ValidationMessage::buildBubbleTree):
+        Build the new structure, and use ASSERT_NO_EXCEPTION.
+        (WebCore::ValidationMessage::deleteBubbleTree):
+        Clear m_messageHeading and m_messageBody.
+        * html/ValidationMessage.h:
+        * rendering/RenderThemeChromiumMac.h: Add extraDefaultStyleSheet().
+        * rendering/RenderThemeChromiumMac.mm:
+        (WebCore::RenderThemeChromiumMac::extraDefaultStyleSheet): Append themeChromium.css.
+        * rendering/RenderThemeChromiumSkia.cpp:
+        (WebCore::RenderThemeChromiumSkia::extraDefaultStyleSheet): Append themeChromium.css.
+
 2011-08-07  Keishi Hattori  <keishi@webkit.org>
 
         Sort WebCore.xcodeproj
