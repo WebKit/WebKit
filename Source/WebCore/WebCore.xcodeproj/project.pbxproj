@@ -1336,6 +1336,10 @@
 		501BAAA913950E2C00F7ACEB /* WindRule.h in Headers */ = {isa = PBXBuildFile; fileRef = 501BAAA813950E2C00F7ACEB /* WindRule.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		508CCA4F13CF106B003151F3 /* RenderFlowThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 508CCA4D13CF106B003151F3 /* RenderFlowThread.h */; };
 		508CCA5013CF106B003151F3 /* RenderFlowThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */; };
+		5097C5A313EABA7E002DE4AF /* PODArena.h in Headers */ = {isa = PBXBuildFile; fileRef = 5097C59F13EABA7E002DE4AF /* PODArena.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5097C5A413EABA7E002DE4AF /* PODInterval.h in Headers */ = {isa = PBXBuildFile; fileRef = 5097C5A013EABA7E002DE4AF /* PODInterval.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5097C5A513EABA7E002DE4AF /* PODIntervalTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 5097C5A113EABA7E002DE4AF /* PODIntervalTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		5097C5A613EABA7E002DE4AF /* PODRedBlackTree.h in Headers */ = {isa = PBXBuildFile; fileRef = 5097C5A213EABA7E002DE4AF /* PODRedBlackTree.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		50E566D6139E38C500214433 /* CSSWrapShapes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 501BAAB11395114B00F7ACEB /* CSSWrapShapes.cpp */; };
 		510184690B08602A004A825F /* CachedPage.h in Headers */ = {isa = PBXBuildFile; fileRef = 510184670B08602A004A825F /* CachedPage.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		5101846A0B08602A004A825F /* CachedPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510184680B08602A004A825F /* CachedPage.cpp */; };
@@ -7937,6 +7941,10 @@
 		501BAAB11395114B00F7ACEB /* CSSWrapShapes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CSSWrapShapes.cpp; sourceTree = "<group>"; };
 		508CCA4D13CF106B003151F3 /* RenderFlowThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderFlowThread.h; sourceTree = "<group>"; };
 		508CCA4E13CF106B003151F3 /* RenderFlowThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFlowThread.cpp; sourceTree = "<group>"; };
+		5097C59F13EABA7E002DE4AF /* PODArena.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODArena.h; sourceTree = "<group>"; };
+		5097C5A013EABA7E002DE4AF /* PODInterval.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODInterval.h; sourceTree = "<group>"; };
+		5097C5A113EABA7E002DE4AF /* PODIntervalTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODIntervalTree.h; sourceTree = "<group>"; };
+		5097C5A213EABA7E002DE4AF /* PODRedBlackTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PODRedBlackTree.h; sourceTree = "<group>"; };
 		510184670B08602A004A825F /* CachedPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedPage.h; sourceTree = "<group>"; };
 		510184680B08602A004A825F /* CachedPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedPage.cpp; sourceTree = "<group>"; };
 		510D4A2D103165EE0049EA54 /* SocketStreamErrorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SocketStreamErrorBase.cpp; sourceTree = "<group>"; };
@@ -19008,6 +19016,10 @@
 		BCF1A5BA097832090061A123 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				5097C59F13EABA7E002DE4AF /* PODArena.h */,
+				5097C5A013EABA7E002DE4AF /* PODInterval.h */,
+				5097C5A113EABA7E002DE4AF /* PODIntervalTree.h */,
+				5097C5A213EABA7E002DE4AF /* PODRedBlackTree.h */,
 				49E912A40EFAC8E6009D0CAF /* animation */,
 				FD31604012B026A300C1A359 /* audio */,
 				1AE42F670AA4B8CB00C8612D /* cf */,
@@ -23354,6 +23366,10 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				5097C5A313EABA7E002DE4AF /* PODArena.h in Headers */,
+				5097C5A413EABA7E002DE4AF /* PODInterval.h in Headers */,
+				5097C5A513EABA7E002DE4AF /* PODIntervalTree.h in Headers */,
+				5097C5A613EABA7E002DE4AF /* PODRedBlackTree.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

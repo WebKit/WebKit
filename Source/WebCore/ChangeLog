@@ -1,3 +1,95 @@
+2011-08-08  Alexandru Chiculita  <achicu@adobe.com>
+
+        Optimize floating elements lookup
+        https://bugs.webkit.org/show_bug.cgi?id=65668
+
+        Added an interval tree in the FloatingObjects structure. Also added new mechanisms to make
+        sure the tree is updated correctly when a float is repositioned.
+
+        Changed the PODIntervalTree to support giving a search adapter that can be implemented by the
+        client. I'm not adding a different bug for that because PODIntervalTree is not used anywhere else
+        and would be hard to test that the change is not breaking anything.
+
+        Reviewed by David Hyatt.
+
+        No new tests, just a refactor on the floating objects data structure.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/PODIntervalTree.h:
+        (WebCore::PODIntervalSearchAdapter::PODIntervalSearchAdapter):
+        (WebCore::PODIntervalSearchAdapter::lowValue):
+        (WebCore::PODIntervalSearchAdapter::highValue):
+        (WebCore::PODIntervalSearchAdapter::collectIfNeeded):
+        (WebCore::PODIntervalTree::PODIntervalTree):
+        (WebCore::PODIntervalTree::allOverlaps):
+        (WebCore::PODIntervalTree::allOverlapsWithAdapter):
+        (WebCore::PODIntervalTree::searchForOverlapsFrom):
+        * platform/PODRedBlackTree.h:
+        (WebCore::PODRedBlackTree::PODRedBlackTree):
+        (WebCore::PODRedBlackTree::clear):
+        (WebCore::PODRedBlackTree::isInitialized):
+        (WebCore::PODRedBlackTree::initIfNeeded):
+        (WebCore::PODRedBlackTree::add):
+        (WebCore::PODRedBlackTree::remove):
+        (WebCore::PODRedBlackTree::contains):
+        (WebCore::PODRedBlackTree::visitInorder):
+        (WebCore::PODRedBlackTree::size):
+        (WebCore::PODRedBlackTree::checkInvariants):
+        (WebCore::PODRedBlackTree::dump):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::styleDidChange):
+        (WebCore::RenderBlock::addOverflowFromFloats):
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::selectionGaps):
+        (WebCore::RenderBlock::insertFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::removeFloatingObjectsBelow):
+        (WebCore::RenderBlock::positionNewFloats):
+        (WebCore::::collectIfNeeded):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        (WebCore::RenderBlock::nextFloatLogicalBottomBelow):
+        (WebCore::RenderBlock::lowestFloatLogicalBottom):
+        (WebCore::RenderBlock::addPositionedFloats):
+        (WebCore::RenderBlock::clearFloats):
+        (WebCore::RenderBlock::addOverhangingFloats):
+        (WebCore::RenderBlock::hasOverhangingFloat):
+        (WebCore::RenderBlock::addIntrudingFloats):
+        (WebCore::RenderBlock::markSiblingsWithFloatsForLayout):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::adjustForBorderFit):
+        (WebCore::RenderBlock::FloatingObjects::clear):
+        (WebCore::RenderBlock::FloatingObjects::intervalForFloatingObject):
+        (WebCore::RenderBlock::FloatingObjects::addPlacedObject):
+        (WebCore::RenderBlock::FloatingObjects::removePlacedObject):
+        (WebCore::RenderBlock::FloatingObjects::add):
+        (WebCore::RenderBlock::FloatingObjects::remove):
+        (WebCore::RenderBlock::FloatingObjects::computePlacedFloatsTree):
+        (WebCore::::string):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::FloatingObject::FloatingObject):
+        (WebCore::RenderBlock::FloatingObject::setX):
+        (WebCore::RenderBlock::FloatingObject::setY):
+        (WebCore::RenderBlock::FloatingObject::setWidth):
+        (WebCore::RenderBlock::FloatingObject::setHeight):
+        (WebCore::RenderBlock::FloatingObject::setFrameRect):
+        (WebCore::RenderBlock::FloatingObject::isInPlacedTree):
+        (WebCore::RenderBlock::FloatingObject::setIsInPlacedTree):
+        (WebCore::RenderBlock::FloatIntervalSearchAdapter::FloatIntervalSearchAdapter):
+        (WebCore::RenderBlock::FloatIntervalSearchAdapter::lowValue):
+        (WebCore::RenderBlock::FloatIntervalSearchAdapter::highValue):
+        (WebCore::RenderBlock::FloatingObjects::FloatingObjects):
+        (WebCore::RenderBlock::FloatingObjects::setHorizontalWritingMode):
+        (WebCore::RenderBlock::FloatingObjects::set):
+        (WebCore::RenderBlock::FloatingObjects::placedFloatsTree):
+        (WebCore::RenderBlock::FloatingObjects::computePlacedFloatsTreeIfNeeded):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutRunsAndFloatsInRange):
+        (WebCore::RenderBlock::linkToEndLineIfNeeded):
+        (WebCore::RenderBlock::matchedEndLine):
+        (WebCore::RenderBlock::positionNewFloatOnLine):
+
 2011-08-08  Alexei Svitkine  <asvitkine@chromium.org>
 
         [Chromium] Enable rubber banding when scrolling.

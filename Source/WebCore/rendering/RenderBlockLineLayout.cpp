@@ -1091,7 +1091,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         }
 
         if (m_floatingObjects && lastRootBox()) {
-            FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+            const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
             FloatingObjectSetIterator it = floatingObjectSet.begin();
             FloatingObjectSetIterator end = floatingObjectSet.end();
             if (layoutState.lastFloat()) {
@@ -1172,7 +1172,7 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             trailingFloatsLineBox->setBlockLogicalHeight(logicalHeight());
         }
 
-        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         FloatingObjectSetIterator it = floatingObjectSet.begin();
         FloatingObjectSetIterator end = floatingObjectSet.end();
         if (layoutState.lastFloat()) {
@@ -1491,7 +1491,7 @@ bool RenderBlock::matchedEndLine(LineLayoutState& layoutState, const InlineBidiR
 
         int logicalBottom = lastLine->blockLogicalHeight() + abs(delta);
 
-        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         FloatingObjectSetIterator end = floatingObjectSet.end();
         for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
             FloatingObject* f = *it;
@@ -1528,7 +1528,7 @@ bool RenderBlock::matchedEndLine(LineLayoutState& layoutState, const InlineBidiR
 
                 int logicalBottom = lastLine->blockLogicalHeight() + abs(delta);
 
-                FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+                const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
                 FloatingObjectSetIterator end = floatingObjectSet.end();
                 for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                     FloatingObject* f = *it;
@@ -2550,7 +2550,7 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
     if (!newFloat->m_paginationStrut)
         return true;
 
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     ASSERT(floatingObjectSet.last() == newFloat);
 
     int floatLogicalTop = logicalTopForFloat(newFloat);
@@ -2575,7 +2575,9 @@ bool RenderBlock::positionNewFloatOnLine(FloatingObject* newFloat, FloatingObjec
             if (o->isRenderBlock())
                 toRenderBlock(o)->setChildNeedsLayout(true, false);
             o->layoutIfNeeded();
+            m_floatingObjects->removePlacedObject(f);
             setLogicalTopForFloat(f, logicalTopForFloat(f) + f->m_paginationStrut);
+            m_floatingObjects->addPlacedObject(f);
         }
     }
 

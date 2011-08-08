@@ -30,12 +30,17 @@
                 return el;
             }
 
-            function createSet(width, height)
+            function createSet(width, height, nested)
             {
                 var container = createElement("div", document.body, "container");
                 for (var y = 0; y < height; ++y) {
                     for (var x = 0; x < width; ++x)
                         createElement("div", container, "float", "float" + x + "_" + y);
+
+                    var nestedContainer = container;
+                    for ( ; nested > 0; --nested)
+                        nestedContainer = createElement("div", nestedContainer, "nested", "nested" + x + "_" + nested);
+                    
                     createElement("div", container, "float-end", "end" + x)
                 }
             }
@@ -47,12 +52,14 @@
                 return str1;
             }
 
-            function test(width, height) 
+            function test(width, height, nested) 
             {
+                nested = nested || 0;
+
                 document.getElementById("test_panel").style.display = "none";
                 document.getElementById("framerate_panel").style.display = "block";
 
-                createSet(width, height);
+                createSet(width, height, nested);
                 var updates = 0;
                 var startTime = new Date();
 
@@ -91,6 +98,11 @@
             <button onclick="test(20, 100)">20 by 100</button>
             <button onclick="test(50, 100)">50 by 100</button>
             <button onclick="test(100, 100)">100 by 100</button>
+            <p>Nested divs:</p>
+            <button onclick="test(2, 100, 100)">2 by 100, 100 nested</button>
+            <button onclick="test(20, 100, 100)">20 by 100, 100 nested</button>
+            <button onclick="test(50, 100, 100)">50 by 100, 100 nested</button>
+            <button onclick="test(100, 100, 100)">100 by 100, 100 nested</button>
         </div>
     </body>
 </html>

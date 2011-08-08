@@ -274,7 +274,7 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     bool canPropagateFloatIntoSibling = !isFloatingOrPositioned() && !avoidsFloats();
     if (diff == StyleDifferenceLayout && s_canPropagateFloatIntoSibling && !canPropagateFloatIntoSibling && hasOverhangingFloats()) {
         RenderBlock* parentBlock = this;
-        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         FloatingObjectSetIterator end = floatingObjectSet.end();
 
         for (RenderObject* curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
@@ -1436,7 +1436,7 @@ void RenderBlock::addOverflowFromFloats()
     if (!m_floatingObjects)
         return;
 
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
@@ -2294,7 +2294,7 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
     // FIXME: Avoid disabling LayoutState. At the very least, don't disable it for floats originating
     // in this block. Better yet would be to push extra state for the containers of other floats.
     LayoutStateDisabler layoutStateDisabler(view());
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
@@ -2627,7 +2627,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, const LayoutPoint& paintOffs
     if (!m_floatingObjects)
         return;
 
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
@@ -2879,7 +2879,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const LayoutPoint& r
             for (RenderBlock* cb = containingBlock(); cb && !cb->isRenderView(); cb = cb->containingBlock())
                 clipOutPositionedObjects(paintInfo, IntPoint(cb->x(), cb->y()), cb->m_positionedObjects.get()); // FIXME: Not right for flipped writing modes.
         if (m_floatingObjects) {
-            FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+            const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
             FloatingObjectSetIterator end = floatingObjectSet.end();
             for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* r = *it;
@@ -3190,10 +3190,10 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 
     // Create the list of special objects if we don't aleady have one
     if (!m_floatingObjects)
-        m_floatingObjects = adoptPtr(new FloatingObjects);
+        m_floatingObjects = adoptPtr(new FloatingObjects(isHorizontalWritingMode()));
     else {
         // Don't insert the object again if it's already in the list
-        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         FloatingObjectSetIterator it = floatingObjectSet.find<RenderBox*, FloatingObjectHashTranslator>(o);
         if (it != floatingObjectSet.end())
             return *it;
@@ -3224,8 +3224,7 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
     newObj->m_isDescendant = true;
     newObj->m_renderer = o;
 
-    m_floatingObjects->increaseObjectsCount(newObj->type());
-    m_floatingObjects->set().add(newObj);
+    m_floatingObjects->add(newObj);
     
     return newObj;
 }
@@ -3233,8 +3232,8 @@ RenderBlock::FloatingObject* RenderBlock::insertFloatingObject(RenderBox* o)
 void RenderBlock::removeFloatingObject(RenderBox* o)
 {
     if (m_floatingObjects) {
-        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        FloatingObjectSet::iterator it = floatingObjectSet.find<RenderBox*, FloatingObjectHashTranslator>(o);
+        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator it = floatingObjectSet.find<RenderBox*, FloatingObjectHashTranslator>(o);
         if (it != floatingObjectSet.end()) {
             FloatingObject* r = *it;
             if (childrenInline()) {
@@ -3259,8 +3258,7 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
                 }
                 markLinesDirtyInBlockRange(0, logicalBottom);
             }
-            m_floatingObjects->decreaseObjectsCount(r->type());
-            floatingObjectSet.remove(it);
+            m_floatingObjects->remove(r);
             ASSERT(!r->m_originatingLine);
             delete r;
         }
@@ -3272,11 +3270,10 @@ void RenderBlock::removeFloatingObjectsBelow(FloatingObject* lastFloat, int logi
     if (!m_floatingObjects)
         return;
     
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObject* curr = floatingObjectSet.last();
     while (curr != lastFloat && (!curr->isPlaced() || logicalTopForFloat(curr) >= logicalOffset)) {
-        m_floatingObjects->decreaseObjectsCount(curr->type());
-        floatingObjectSet.removeLast();
+        m_floatingObjects->remove(curr);
         ASSERT(!curr->m_originatingLine);
         delete curr;
         curr = floatingObjectSet.last();
@@ -3288,7 +3285,7 @@ bool RenderBlock::positionNewFloats()
     if (!m_floatingObjects)
         return false;
 
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     if (floatingObjectSet.isEmpty())
         return false;
 
@@ -3403,7 +3400,7 @@ bool RenderBlock::positionNewFloats()
         setLogicalTopForFloat(floatingObject, logicalTop);
         setLogicalHeightForFloat(floatingObject, logicalHeightForChild(childBox) + marginBeforeForChild(childBox) + marginAfterForChild(childBox));
 
-        floatingObject->setIsPlaced();
+        m_floatingObjects->addPlacedObject(floatingObject);
 
         // If the child moved, we have to repaint it.
         if (childBox->checkForRepaintDuringLayout())
@@ -3505,11 +3502,30 @@ bool RenderBlock::hasPercentHeightDescendant(RenderBox* descendant)
 }
 #endif
 
-// FIXME: The logicalLeftOffsetForLine/logicalRightOffsetForLine functions are very slow if there are many floats
-// present. We need to add a structure to floating objects to represent "lines" of floats.  Then instead of checking
-// each float individually, we'd just walk backwards through the "lines" and stop when we hit a line that is fully above
-// the vertical offset that we'd like to check.  Computing the "lines" would be rather complicated, but could replace the left
-// objects and right objects count hack that is currently used here.
+template <RenderBlock::FloatingObject::Type FloatTypeValue>
+inline void RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::collectIfNeeded(const IntervalType& interval) const
+{
+    const FloatingObject* r = interval.data();
+    if (r->type() == FloatTypeValue && interval.low() <= m_value && m_value < interval.high()) {
+        // All the objects returned from the tree should be already placed.
+        ASSERT(r->isPlaced() && m_renderer->logicalTopForFloat(r) <= m_value && m_renderer->logicalBottomForFloat(r) > m_value);
+
+        if (FloatTypeValue == FloatingObject::FloatLeft 
+            && m_renderer->logicalRightForFloat(r) > m_offset) {
+            m_offset = m_renderer->logicalRightForFloat(r);
+            if (m_heightRemaining)
+                *m_heightRemaining = m_renderer->logicalBottomForFloat(r) - m_value;
+        }
+
+        if (FloatTypeValue == FloatingObject::FloatRight
+            && m_renderer->logicalLeftForFloat(r) < m_offset) {
+            m_offset = m_renderer->logicalLeftForFloat(r);
+            if (m_heightRemaining)
+                *m_heightRemaining = m_renderer->logicalBottomForFloat(r) - m_value;
+        }
+    }
+}
+
 LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const
 {
     LayoutUnit left = fixedOffset;
@@ -3517,23 +3533,8 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
         if (heightRemaining)
             *heightRemaining = 1;
 
-        // We know the list is non-empty, since we have "left" objects to search for.
-        // Therefore we can assume that begin != end, and that we can do at least one
-        // decrement.
-        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        FloatingObjectSetIterator begin = floatingObjectSet.begin();
-        FloatingObjectSetIterator it = floatingObjectSet.end();
-        do {
-            --it;
-            FloatingObject* r = *it;
-            if (r->isPlaced() && logicalTopForFloat(r) <= logicalTop && logicalBottomForFloat(r) > logicalTop
-                && r->type() == FloatingObject::FloatLeft
-                && logicalRightForFloat(r) > left) {
-                left = max(left, logicalRightForFloat(r));
-                if (heightRemaining)
-                    *heightRemaining = logicalBottomForFloat(r) - logicalTop;
-            }
-        } while (it != begin);
+        FloatIntervalSearchAdapter<FloatingObject::FloatLeft> adapter(this, logicalTop, left, heightRemaining);
+        m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
     }
 
     if (applyTextIndent && style()->isLeftToRightDirection()) {
@@ -3553,24 +3554,9 @@ LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutU
     if (m_floatingObjects && m_floatingObjects->hasRightObjects()) {
         if (heightRemaining)
             *heightRemaining = 1;
-            
-        // We know the list is non-empty, since we have "right" objects to search for.
-        // Therefore we can assume that begin != end, and that we can do at least one
-        // decrement.
-        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
-        FloatingObjectSetIterator begin = floatingObjectSet.begin();
-        FloatingObjectSetIterator it = floatingObjectSet.end();
-        do {
-            --it;
-            FloatingObject* r = *it;
-            if (r->isPlaced() && logicalTopForFloat(r) <= logicalTop && logicalBottomForFloat(r) > logicalTop
-                && r->type() == FloatingObject::FloatRight
-                && logicalLeftForFloat(r) < right) {
-                right = min(right, logicalLeftForFloat(r));
-                if (heightRemaining)
-                    *heightRemaining = logicalBottomForFloat(r) - logicalTop;
-            }
-        } while (it != begin);
+
+        FloatIntervalSearchAdapter<FloatingObject::FloatRight> adapter(this, logicalTop, right, heightRemaining);
+        m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
     }
     
     if (applyTextIndent && !style()->isLeftToRightDirection()) {
@@ -3595,7 +3581,7 @@ int RenderBlock::nextFloatLogicalBottomBelow(int logicalHeight) const
         return 0;
 
     int bottom = INT_MAX;
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
@@ -3612,7 +3598,7 @@ int RenderBlock::lowestFloatLogicalBottom(FloatingObject::Type floatType) const
     if (!m_floatingObjects)
         return 0;
     int lowestFloatBottom = 0;
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         FloatingObject* r = *it;
@@ -3660,7 +3646,8 @@ void RenderBlock::addPositionedFloats()
         setLogicalLeftForFloat(floatingObject, logicalLeftForChild(positionedObject) - marginLogicalLeftForChild(positionedObject));
         setLogicalTopForFloat(floatingObject, logicalTopForChild(positionedObject) - marginBeforeForChild(positionedObject));
         setLogicalHeightForFloat(floatingObject, logicalHeightForChild(positionedObject) + marginBeforeForChild(positionedObject) + marginAfterForChild(positionedObject));
-        floatingObject->setIsPlaced(true);
+
+        m_floatingObjects->addPlacedObject(floatingObject);
         
         m_hasPositionedFloats = true;
     }
@@ -3668,6 +3655,9 @@ void RenderBlock::addPositionedFloats()
 
 void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
 {
+    if (m_floatingObjects)
+        m_floatingObjects->setHorizontalWritingMode(isHorizontalWritingMode());
+
     // Clear our positioned floats boolean.
     m_hasPositionedFloats = false;
 
@@ -3686,10 +3676,10 @@ void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
     RendererToFloatInfoMap floatMap;
 
     if (m_floatingObjects) {
-        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
         if (childrenInline()) {
-            FloatingObjectSet::iterator end = floatingObjectSet.end();
-            for (FloatingObjectSet::iterator it = floatingObjectSet.begin(); it != end; ++it) {
+            FloatingObjectSetIterator end = floatingObjectSet.end();
+            for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* f = *it;
                 floatMap.add(f->m_renderer, f);
             }
@@ -3741,7 +3731,7 @@ void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
         int changeLogicalTop = numeric_limits<int>::max();
         int changeLogicalBottom = numeric_limits<int>::min();
         if (m_floatingObjects) {
-            FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+            const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
             FloatingObjectSetIterator end = floatingObjectSet.end();
             for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* f = *it;
@@ -3823,10 +3813,9 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
-                    m_floatingObjects = adoptPtr(new FloatingObjects);
+                    m_floatingObjects = adoptPtr(new FloatingObjects(isHorizontalWritingMode()));
 
-                m_floatingObjects->increaseObjectsCount(floatingObj->type());
-                m_floatingObjects->set().add(floatingObj);
+                m_floatingObjects->add(floatingObj);
             }
         } else {
             if (makeChildPaintOtherFloats && !r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer() &&
@@ -3853,7 +3842,7 @@ bool RenderBlock::hasOverhangingFloat(RenderBox* renderer)
     if (!m_floatingObjects || hasColumns() || !parent())
         return false;
 
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator it = floatingObjectSet.find<RenderBox*, FloatingObjectHashTranslator>(renderer);
     if (it == floatingObjectSet.end())
         return false;
@@ -3869,7 +3858,7 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
 
     logicalLeftOffset += (isHorizontalWritingMode() ? marginLeft() : marginTop());
 
-    FloatingObjectSet& prevSet = prev->m_floatingObjects->set();
+    const FloatingObjectSet& prevSet = prev->m_floatingObjects->set();
     FloatingObjectSetIterator prevEnd = prevSet.end();
     for (FloatingObjectSetIterator prevIt = prevSet.begin(); prevIt != prevEnd; ++prevIt) {
         FloatingObject* r = *prevIt;
@@ -3897,9 +3886,8 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, i
                 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects)
-                    m_floatingObjects = adoptPtr(new FloatingObjects);
-                m_floatingObjects->increaseObjectsCount(floatingObj->type());
-                m_floatingObjects->set().add(floatingObj);
+                    m_floatingObjects = adoptPtr(new FloatingObjects(isHorizontalWritingMode()));
+                m_floatingObjects->add(floatingObj);
             }
         }
     }
@@ -3940,7 +3928,7 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderBox* floatToRemove
 
 void RenderBlock::markSiblingsWithFloatsForLayout()
 {
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
         if (logicalBottomForFloat(*it) > logicalHeight()) {
@@ -4092,7 +4080,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
         adjustedLocation += toSize(toRenderView(this)->frameView()->scrollPosition());
     }
 
-    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator begin = floatingObjectSet.begin();
     for (FloatingObjectSetIterator it = floatingObjectSet.end(); it != begin;) {
         --it;
@@ -5699,7 +5687,7 @@ void RenderBlock::adjustForBorderFit(int x, int& left, int& right) const
         }
         
         if (m_floatingObjects) {
-            FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+            const FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
             FloatingObjectSetIterator end = floatingObjectSet.end();
             for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
                 FloatingObject* r = *it;
@@ -6443,6 +6431,7 @@ const char* RenderBlock::renderName() const
 inline void RenderBlock::FloatingObjects::clear()
 {
     m_set.clear();
+    m_placedFloatsTree.clear();
     m_leftObjectsCount = 0;
     m_rightObjectsCount = 0;
     m_positionedObjectsCount = 0;
@@ -6466,6 +6455,73 @@ inline void RenderBlock::FloatingObjects::decreaseObjectsCount(FloatingObject::T
         m_rightObjectsCount--;
     else
         m_positionedObjectsCount--;
+}
+
+inline RenderBlock::FloatingObjectInterval RenderBlock::FloatingObjects::intervalForFloatingObject(FloatingObject* floatingObject)
+{
+    if (m_horizontalWritingMode)
+        return RenderBlock::FloatingObjectInterval(floatingObject->y(), floatingObject->maxY(), floatingObject);
+    return RenderBlock::FloatingObjectInterval(floatingObject->x(), floatingObject->maxX(), floatingObject);
+}
+
+void RenderBlock::FloatingObjects::addPlacedObject(FloatingObject* floatingObject)
+{
+    ASSERT(!floatingObject->isInPlacedTree());
+
+    floatingObject->setIsPlaced(true);
+    if (m_placedFloatsTree.isInitialized())
+        m_placedFloatsTree.add(intervalForFloatingObject(floatingObject));
+
+#ifndef NDEBUG
+    floatingObject->setIsInPlacedTree(true);      
+#endif
+}
+
+void RenderBlock::FloatingObjects::removePlacedObject(FloatingObject* floatingObject)
+{
+    ASSERT(floatingObject->isPlaced() && floatingObject->isInPlacedTree());
+
+    if (m_placedFloatsTree.isInitialized()) {
+        bool removed = m_placedFloatsTree.remove(intervalForFloatingObject(floatingObject));
+        ASSERT_UNUSED(removed, removed);
+    }
+    
+    floatingObject->setIsPlaced(false);
+#ifndef NDEBUG
+    floatingObject->setIsInPlacedTree(false);
+#endif
+}
+
+inline void RenderBlock::FloatingObjects::add(FloatingObject* floatingObject)
+{
+    increaseObjectsCount(floatingObject->type());
+    m_set.add(floatingObject);
+    if (floatingObject->isPlaced())
+        addPlacedObject(floatingObject);
+}
+
+inline void RenderBlock::FloatingObjects::remove(FloatingObject* floatingObject)
+{
+    decreaseObjectsCount(floatingObject->type());
+    m_set.remove(floatingObject);
+    ASSERT(floatingObject->isPlaced() || !floatingObject->isInPlacedTree());
+    if (floatingObject->isPlaced())
+        removePlacedObject(floatingObject);
+}
+
+void RenderBlock::FloatingObjects::computePlacedFloatsTree()
+{
+    ASSERT(!m_placedFloatsTree.isInitialized());
+    if (m_set.isEmpty())
+        return;
+    m_placedFloatsTree.initIfNeeded();
+    FloatingObjectSetIterator it = m_set.begin();
+    FloatingObjectSetIterator end = m_set.end();
+    for (; it != end; ++it) {
+        FloatingObject* floatingObject = *it;
+        if (floatingObject->isPlaced())
+            m_placedFloatsTree.add(intervalForFloatingObject(floatingObject));
+    }
 }
 
 TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, const UChar* characters, int length, RenderStyle* style, TextRun::ExpansionBehavior expansion, TextRunFlags flags)
@@ -6500,6 +6556,17 @@ void RenderBlock::showLineTreeAndMark(const InlineBox* markedBox1, const char* m
     showRenderObject();
     for (const RootInlineBox* root = firstRootBox(); root; root = root->nextRootBox())
         root->showLineTreeAndMark(markedBox1, markedLabel1, markedBox2, markedLabel2, obj, 1);
+}
+
+// These helpers are only used by the PODIntervalTree for debugging purposes.
+String ValueToString<int>::string(const int value)
+{
+    return String::number(value);
+}
+
+String ValueToString<RenderBlock::FloatingObject*>::string(const RenderBlock::FloatingObject* floatingObject)
+{
+    return String::format("%p (%dx%d %dx%d)", floatingObject, floatingObject->x(), floatingObject->y(), floatingObject->maxX(), floatingObject->maxY());
 }
 
 #endif
