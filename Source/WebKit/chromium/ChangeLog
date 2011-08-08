@@ -1,3 +1,13 @@
+2011-08-08  Scott Byer  <scottbyer@chromium.org>
+
+        Scroll animator changes to nail the framerate
+        https://bugs.webkit.org/show_bug.cgi?id=65645
+
+        Reviewed by James Robinson.
+
+        * tests/ScrollAnimatorNoneTest.cpp:
+        (TEST):
+
 2011-08-08  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65778

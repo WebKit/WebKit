@@ -79,8 +79,7 @@ public:
 
     void reset()
     {
-        stopAnimationTimerIfNeeded(&m_horizontalData);
-        stopAnimationTimerIfNeeded(&m_verticalData);
+        stopAnimationTimerIfNeeded();
         m_currentPosX = 0;
         m_currentPosY = 0;
         m_horizontalData.reset();
@@ -93,57 +92,57 @@ public:
 TEST(ScrollAnimatorEnabled, Enabled)
 {
     MockScrollableArea scrollableArea(true);
-    MockScrollAnimatorNone scrollAnimatorChromium(&scrollableArea);
+    MockScrollAnimatorNone scrollAnimatorNone(&scrollableArea);
 
     EXPECT_CALL(scrollableArea, scrollSize(_)).Times(AtLeast(1)).WillRepeatedly(Return(1000));
-    EXPECT_CALL(scrollableArea, setScrollOffset(_)).Times(AtLeast(1));
+    EXPECT_CALL(scrollableArea, setScrollOffset(_)).Times(3);
 
-    scrollAnimatorChromium.scroll(HorizontalScrollbar, ScrollByLine, 100, 1);
-    EXPECT_NE(100, scrollAnimatorChromium.currentX());
-    EXPECT_NE(0, scrollAnimatorChromium.currentX());
-    EXPECT_EQ(0, scrollAnimatorChromium.currentY());
-    scrollAnimatorChromium.reset();
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByLine, 100, 1);
+    EXPECT_NE(100, scrollAnimatorNone.currentX());
+    EXPECT_NE(0, scrollAnimatorNone.currentX());
+    EXPECT_EQ(0, scrollAnimatorNone.currentY());
+    scrollAnimatorNone.reset();
 
-    scrollAnimatorChromium.scroll(HorizontalScrollbar, ScrollByPage, 100, 1);
-    EXPECT_NE(100, scrollAnimatorChromium.currentX());
-    EXPECT_NE(0, scrollAnimatorChromium.currentX());
-    EXPECT_EQ(0, scrollAnimatorChromium.currentY());
-    scrollAnimatorChromium.reset();
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPage, 100, 1);
+    EXPECT_NE(100, scrollAnimatorNone.currentX());
+    EXPECT_NE(0, scrollAnimatorNone.currentX());
+    EXPECT_EQ(0, scrollAnimatorNone.currentY());
+    scrollAnimatorNone.reset();
 
-    scrollAnimatorChromium.scroll(HorizontalScrollbar, ScrollByPixel, 4, 25);
-    EXPECT_NE(100, scrollAnimatorChromium.currentX());
-    EXPECT_NE(0, scrollAnimatorChromium.currentX());
-    EXPECT_EQ(0, scrollAnimatorChromium.currentY());
-    scrollAnimatorChromium.reset();
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPixel, 4, 25);
+    EXPECT_NE(100, scrollAnimatorNone.currentX());
+    EXPECT_NE(0, scrollAnimatorNone.currentX());
+    EXPECT_EQ(0, scrollAnimatorNone.currentY());
+    scrollAnimatorNone.reset();
 }
 
 TEST(ScrollAnimatorEnabled, Disabled)
 {
     MockScrollableArea scrollableArea(false);
-    MockScrollAnimatorNone scrollAnimatorChromium(&scrollableArea);
+    MockScrollAnimatorNone scrollAnimatorNone(&scrollableArea);
 
     EXPECT_CALL(scrollableArea, scrollSize(_)).Times(AtLeast(1)).WillRepeatedly(Return(1000));
-    EXPECT_CALL(scrollableArea, setScrollOffset(_)).Times(AtLeast(1));
+    EXPECT_CALL(scrollableArea, setScrollOffset(_)).Times(4);
 
-    scrollAnimatorChromium.scroll(HorizontalScrollbar, ScrollByLine, 100, 1);
-    EXPECT_EQ(100, scrollAnimatorChromium.currentX());
-    EXPECT_EQ(0, scrollAnimatorChromium.currentY());
-    scrollAnimatorChromium.reset();
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByLine, 100, 1);
+    EXPECT_EQ(100, scrollAnimatorNone.currentX());
+    EXPECT_EQ(0, scrollAnimatorNone.currentY());
+    scrollAnimatorNone.reset();
 
-    scrollAnimatorChromium.scroll(HorizontalScrollbar, ScrollByPage, 100, 1);
-    EXPECT_EQ(100, scrollAnimatorChromium.currentX());
-    EXPECT_EQ(0, scrollAnimatorChromium.currentY());
-    scrollAnimatorChromium.reset();
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPage, 100, 1);
+    EXPECT_EQ(100, scrollAnimatorNone.currentX());
+    EXPECT_EQ(0, scrollAnimatorNone.currentY());
+    scrollAnimatorNone.reset();
 
-    scrollAnimatorChromium.scroll(HorizontalScrollbar, ScrollByDocument, 100, 1);
-    EXPECT_EQ(100, scrollAnimatorChromium.currentX());
-    EXPECT_EQ(0, scrollAnimatorChromium.currentY());
-    scrollAnimatorChromium.reset();
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByDocument, 100, 1);
+    EXPECT_EQ(100, scrollAnimatorNone.currentX());
+    EXPECT_EQ(0, scrollAnimatorNone.currentY());
+    scrollAnimatorNone.reset();
 
-    scrollAnimatorChromium.scroll(HorizontalScrollbar, ScrollByPixel, 100, 1);
-    EXPECT_EQ(100, scrollAnimatorChromium.currentX());
-    EXPECT_EQ(0, scrollAnimatorChromium.currentY());
-    scrollAnimatorChromium.reset();
+    scrollAnimatorNone.scroll(HorizontalScrollbar, ScrollByPixel, 100, 1);
+    EXPECT_EQ(100, scrollAnimatorNone.currentX());
+    EXPECT_EQ(0, scrollAnimatorNone.currentY());
+    scrollAnimatorNone.reset();
 }
 
 class ScrollAnimatorNoneTest : public testing::Test {

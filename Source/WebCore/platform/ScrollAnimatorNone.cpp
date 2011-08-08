@@ -48,10 +48,9 @@ using namespace std;
 
 namespace WebCore {
 
-static double kTickTime = .0166;
-
-// This is used to set the timer delay - it needs to be slightly smaller than the tick count to leave some overhead.
-static double kAnimationTimerDelay = 0.015;
+static double kFrameRate = 60;
+static double kTickTime = 1 / kFrameRate;
+static double kMinimumTimerInterval = .001;
 
 PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
@@ -131,7 +130,6 @@ double ScrollAnimatorNone::PerAxisData::curveDerivativeAt(Curve curve, double t)
 
 ScrollAnimatorNone::PerAxisData::PerAxisData(ScrollAnimatorNone* parent, float* currentPosition)
     : m_currentPosition(currentPosition)
-    , m_animationTimer(parent, &ScrollAnimatorNone::animationTimerFired)
 {
     reset();
 }
@@ -194,7 +192,7 @@ bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(ScrollbarOrientat
         // FIXME: This should be the time from the event that got us here.
         m_startTime = currentTime - kTickTime / 2;
         m_startPosition = *m_currentPosition;
-        m_lastAnimationTime = currentTime;
+        m_lastAnimationTime = m_startTime;
     }
     m_startVelocity = m_currentVelocity;
 
@@ -240,8 +238,10 @@ bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(ScrollbarOrientat
 // FIXME: Add in jank detection trace events into this function.
 bool ScrollAnimatorNone::PerAxisData::animateScroll(double currentTime)
 {
-    // Get the current time; grabbing the current time once helps keep a consistent heartbeat.
     double lastScrollInterval = currentTime - m_lastAnimationTime;
+    if (lastScrollInterval < kMinimumTimerInterval)
+        return true;
+
     m_lastAnimationTime = currentTime;
 
     double deltaTime = currentTime - m_startTime;
@@ -274,13 +274,13 @@ ScrollAnimatorNone::ScrollAnimatorNone(ScrollableArea* scrollableArea)
     : ScrollAnimator(scrollableArea)
     , m_horizontalData(this, &m_currentPosX)
     , m_verticalData(this, &m_currentPosY)
+    , m_animationTimer(this, &ScrollAnimatorNone::animationTimerFired)
 {
 }
 
 ScrollAnimatorNone::~ScrollAnimatorNone()
 {
-    stopAnimationTimerIfNeeded(&m_horizontalData);
-    stopAnimationTimerIfNeeded(&m_verticalData);
+    stopAnimationTimerIfNeeded();
 }
 
 bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
@@ -311,24 +311,21 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
     if (!parameters.m_isEnabled)
         return ScrollAnimator::scroll(orientation, granularity, step, multiplier);
 
-    // This is an animatable scroll. Calculate the scroll delta.
-    PerAxisData* data = (orientation == VerticalScrollbar) ? &m_verticalData : &m_horizontalData;
-
+    // This is an animatable scroll. Set the animation in motion using the appropriate parameters.
     float scrollableSize = static_cast<float>(m_scrollableArea->scrollSize(orientation));
-    bool result = data->updateDataFromParameters(orientation, step, multiplier, scrollableSize, WTF::currentTime(), &parameters);
-    if (!data->m_animationTimer.isActive()) {
-        result &= data->animateScroll(WTF::currentTime());
-        if (result)
-            data->m_animationTimer.startOneShot(kAnimationTimerDelay);
+
+    PerAxisData& data = (orientation == VerticalScrollbar) ? m_verticalData : m_horizontalData;
+    bool needToScroll = data.updateDataFromParameters(orientation, step, multiplier, scrollableSize, WTF::monotonicallyIncreasingTime(), &parameters);
+    if (needToScroll && !m_animationTimer.isActive()) {
+        m_startTime = data.m_startTime;
+        animationTimerFired(&m_animationTimer);
     }
-    notityPositionChanged();
-    return result;
+    return needToScroll;
 }
 
 void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
 {
-    stopAnimationTimerIfNeeded(&m_horizontalData);
-    stopAnimationTimerIfNeeded(&m_verticalData);
+    stopAnimationTimerIfNeeded();
 
     m_horizontalData.reset();
     *m_horizontalData.m_currentPosition = offset.x();
@@ -343,21 +340,25 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
 
 void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
 {
-    double currentTime = WTF::currentTime();
-    if ((timer == &m_horizontalData.m_animationTimer) ?
-        m_horizontalData.animateScroll(currentTime) :
-        m_verticalData.animateScroll(currentTime))
-    {
-        double delta = WTF::currentTime() - currentTime;
-        timer->startOneShot(kAnimationTimerDelay - delta);
+    double currentTime = WTF::monotonicallyIncreasingTime();
+    double deltaToNextFrame = ceil((currentTime - m_startTime) * kFrameRate) / kFrameRate - (currentTime - m_startTime);
+
+    bool continueAnimation = false;
+    if (m_horizontalData.m_startTime && m_horizontalData.animateScroll(currentTime + deltaToNextFrame))
+        continueAnimation = true;
+    if (m_verticalData.m_startTime && m_verticalData.animateScroll(currentTime + deltaToNextFrame))
+        continueAnimation = true;
+    if (continueAnimation) {
+        double nextTimerInterval = max(kMinimumTimerInterval, deltaToNextFrame);
+        timer->startOneShot(nextTimerInterval);
     }
     notityPositionChanged();
 }
 
-void ScrollAnimatorNone::stopAnimationTimerIfNeeded(PerAxisData* data)
+void ScrollAnimatorNone::stopAnimationTimerIfNeeded()
 {
-    if (data->m_animationTimer.isActive())
-        data->m_animationTimer.stop();
+    if (m_animationTimer.isActive())
+        m_animationTimer.stop();
 }
 
 } // namespace WebCore

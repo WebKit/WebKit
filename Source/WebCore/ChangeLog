@@ -1,3 +1,24 @@
+2011-08-08  Scott Byer  <scottbyer@chromium.org>
+
+        Scroll animator changes to nail the framerate
+        https://bugs.webkit.org/show_bug.cgi?id=65645
+
+        Reviewed by James Robinson.
+
+        Partial test in ScrollAnimatorNoneTest::Enabled.
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::PerAxisData::PerAxisData):
+        (WebCore::ScrollAnimatorNone::PerAxisData::updateDataFromParameters):
+        (WebCore::ScrollAnimatorNone::PerAxisData::animateScroll):
+        (WebCore::ScrollAnimatorNone::ScrollAnimatorNone):
+        (WebCore::ScrollAnimatorNone::~ScrollAnimatorNone):
+        (WebCore::ScrollAnimatorNone::scroll):
+        (WebCore::ScrollAnimatorNone::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorNone::animationTimerFired):
+        (WebCore::ScrollAnimatorNone::stopAnimationTimerIfNeeded):
+        * platform/ScrollAnimatorNone.h:
+
 2011-08-08  Emil A Eklund  <eae@chromium.org>
 
         Switch legacy flexbox to to new layout types

@@ -112,14 +112,16 @@ protected:
         Curve m_releaseCurve;
 
         ScrollbarOrientation m_orientation;
-        Timer<ScrollAnimatorNone> m_animationTimer;
     };
 
     void animationTimerFired(Timer<ScrollAnimatorNone>*);
-    void stopAnimationTimerIfNeeded(PerAxisData*);
+    void stopAnimationTimerIfNeeded();
 
     PerAxisData m_horizontalData;
     PerAxisData m_verticalData;
+
+    double m_startTime;
+    Timer<ScrollAnimatorNone> m_animationTimer;
 };
 
 } // namespace WebCore
