@@ -1,3 +1,22 @@
+2011-08-05  Brent Fulgham  <bfulgham@webkit.org>
+
+        WebView::performLayeredWindowUpdate() crashes with
+        NULL pointer when using layered window updates.
+        https://bugs.webkit.org/show_bug.cgi?id=60618
+
+        Reviewed by Adam Roben.
+
+        During resize operations, the backing store will be destroyed if
+        the window's size (either height or width) is set to zero. The
+        bug was identified when a user first resized a WebView to zero
+        dimensions, then attempted to perform a MoveWindow. The paint
+        message triggered by the MoveWindow attempted to use the layered
+        window update logic, which encountered the nulled backing store.
+
+        * WebView.cpp:
+        (WebView::performLayeredWindowUpdate): Add an early
+         return when there is no backing store to blend with.
+
 2011-08-05  Anders Carlsson  <andersca@apple.com>
 
         Remove PluginHalter

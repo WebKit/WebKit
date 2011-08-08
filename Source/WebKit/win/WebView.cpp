@@ -1000,6 +1000,10 @@ void WebView::updateBackingStore(FrameView* frameView, HDC dc, bool backingStore
 
 void WebView::performLayeredWindowUpdate()
 {
+    // The backing store may have been destroyed if the window rect was set to zero height or zero width.
+    if (!m_backingStoreBitmap)
+        return;
+
     HDC hdcScreen = ::GetDC(m_viewWindow);
     OwnPtr<HDC> hdcMem = adoptPtr(::CreateCompatibleDC(hdcScreen));
     HBITMAP hbmOld = static_cast<HBITMAP>(::SelectObject(hdcMem.get(), m_backingStoreBitmap->handle()));
