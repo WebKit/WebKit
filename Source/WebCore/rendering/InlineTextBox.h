@@ -105,7 +105,7 @@ private:
 public:
     virtual IntRect calculateBoundaries() const { return IntRect(x(), y(), width(), height()); }
 
-    virtual IntRect selectionRect(int startPos, int endPos);
+    virtual IntRect localSelectionRect(int startPos, int endPos);
     bool isSelected(int startPos, int endPos) const;
     void selectionStartEnd(int& sPos, int& ePos);
 

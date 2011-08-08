@@ -117,7 +117,7 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
     return selectionRect;
 }
 
-IntRect SVGInlineTextBox::selectionRect(int startPosition, int endPosition)
+IntRect SVGInlineTextBox::localSelectionRect(int startPosition, int endPosition)
 {
     int boxStart = start();
     startPosition = max(startPosition - boxStart, 0);

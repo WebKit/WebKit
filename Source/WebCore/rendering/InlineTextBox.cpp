@@ -173,7 +173,7 @@ static void adjustCharactersAndLengthForHyphen(BufferForAppendingHyphen& charact
     length += hyphenString.length();
 }
 
-IntRect InlineTextBox::selectionRect(int startPos, int endPos)
+IntRect InlineTextBox::localSelectionRect(int startPos, int endPos)
 {
     int sPos = max(startPos - m_start, 0);
     int ePos = min(endPos - m_start, (int)m_len);

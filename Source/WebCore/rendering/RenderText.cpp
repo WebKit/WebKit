@@ -272,10 +272,10 @@ void RenderText::absoluteRects(Vector<LayoutRect>& rects, const LayoutPoint& acc
         rects.append(enclosingLayoutRect(FloatRect(accumulatedOffset + box->topLeft(), box->size())));
 }
 
-static FloatRect absoluteQuadForTextBox(InlineTextBox* box, unsigned start, unsigned end, bool useSelectionHeight)
+static FloatRect localQuadForTextBox(InlineTextBox* box, unsigned start, unsigned end, bool useSelectionHeight)
 {
     unsigned realEnd = min(box->end() + 1, end);
-    IntRect r = box->selectionRect(start, realEnd);
+    IntRect r = box->localSelectionRect(start, realEnd);
     if (r.height()) {
         if (!useSelectionHeight) {
             // Change the height and y position (or width and x for vertical text)
@@ -310,7 +310,7 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
         if (start <= box->start() && box->end() < end) {
             IntRect r = box->calculateBoundaries();
             if (useSelectionHeight) {
-                IntRect selectionRect = box->selectionRect(start, end);
+                IntRect selectionRect = box->localSelectionRect(start, end);
                 if (box->isHorizontal()) {
                     r.setHeight(selectionRect.height());
                     r.setY(selectionRect.y());
@@ -322,7 +322,7 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
             rects.append(localToAbsoluteQuad(FloatQuad(r), false, wasFixed).enclosingBoundingBox());
         } else {
             // FIXME: This code is wrong. It's converting local to absolute twice. http://webkit.org/b/65722
-            FloatRect rect = absoluteQuadForTextBox(box, start, end, useSelectionHeight);
+            FloatRect rect = localQuadForTextBox(box, start, end, useSelectionHeight);
             if (!rect.isZero())
                 rects.append(localToAbsoluteQuad(rect, false, wasFixed).enclosingBoundingBox());
         }
@@ -392,7 +392,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
         if (start <= box->start() && box->end() < end) {
             IntRect r(box->calculateBoundaries());
             if (useSelectionHeight) {
-                IntRect selectionRect = box->selectionRect(start, end);
+                IntRect selectionRect = box->localSelectionRect(start, end);
                 if (box->isHorizontal()) {
                     r.setHeight(selectionRect.height());
                     r.setY(selectionRect.y());
@@ -403,7 +403,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
             }
             quads.append(localToAbsoluteQuad(FloatRect(r), false, wasFixed));
         } else {
-            FloatRect rect = absoluteQuadForTextBox(box, start, end, useSelectionHeight);
+            FloatRect rect = localQuadForTextBox(box, start, end, useSelectionHeight);
             if (!rect.isZero())
                 quads.append(localToAbsoluteQuad(rect, false, wasFixed));
         }
@@ -1406,7 +1406,7 @@ LayoutRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintCont
 
     LayoutRect rect;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        rect.unite(box->selectionRect(startPos, endPos));
+        rect.unite(box->localSelectionRect(startPos, endPos));
         rect.unite(ellipsisRectForBox(box, startPos, endPos));
     }
 

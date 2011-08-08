@@ -117,12 +117,12 @@ IntRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, int
 
     // Use the edge of the selection rect to determine the caret rect.
     if (static_cast<unsigned>(caretOffset) < textBox->start() + textBox->len()) {
-        IntRect rect = textBox->selectionRect(caretOffset, caretOffset + 1);
+        IntRect rect = textBox->localSelectionRect(caretOffset, caretOffset + 1);
         int x = box->isLeftToRightDirection() ? rect.x() : rect.maxX();
         return IntRect(x, rect.y(), caretWidth, rect.height());
     }
 
-    IntRect rect = textBox->selectionRect(caretOffset - 1, caretOffset);
+    IntRect rect = textBox->localSelectionRect(caretOffset - 1, caretOffset);
     int x = box->isLeftToRightDirection() ? rect.maxX() : rect.x();
     return IntRect(x, rect.y(), caretWidth, rect.height());
 }

@@ -1,3 +1,33 @@
+2011-08-08  Emil A Eklund  <eae@chromium.org>
+
+        Rename absoluteQuadsForRange and InlineTextBox::selectionRect to local*
+        https://bugs.webkit.org/show_bug.cgi?id=65722
+
+        Reviewed by Simon Fraser.
+
+        No new tests, no new functionality.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::localSelectionRect):
+        Rename InlineTextBox::selectionRect to localSelectionRect to reflect that
+        it, unlike RenderObject::selectionRect returns a rect in the local
+        coordinate space.
+
+        * rendering/InlineTextBox.h:
+        * rendering/RenderText.cpp:
+        (WebCore::localQuadForTextBox):
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        (WebCore::RenderText::selectionRectForRepaint):
+        Rename absoluteQuadForTextBox to localQuadForTextBox to reflect that it
+        returns a quad in the local coordinate space.
+        
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::localCaretRect):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::localSelectionRect):
+        * rendering/svg/SVGInlineTextBox.h:
+
 2011-08-08  Jochen Eisinger  <jochen@chromium.org>
 
         Use a raw pointer to the security origin in the ctor of FrameLoadRequest
