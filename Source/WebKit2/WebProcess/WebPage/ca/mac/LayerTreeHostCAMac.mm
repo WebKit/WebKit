@@ -95,8 +95,10 @@ void LayerTreeHostCAMac::setLayerFlushSchedulingEnabled(bool layerFlushingEnable
 
     m_layerFlushSchedulingEnabled = layerFlushingEnabled;
 
-    if (m_layerFlushSchedulingEnabled)
+    if (m_layerFlushSchedulingEnabled) {
+        scheduleLayerFlush();
         return;
+    }
 
     if (!m_flushPendingLayerChangesRunLoopObserver)
         return;
