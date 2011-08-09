@@ -1,5 +1,11 @@
 2011-08-09  Anders Carlsson  <andersca@apple.com>
 
+        Skip a couple of SVG tests that are missing parts of the content for some odd reason.
+
+        * platform/mac-lion/Skipped:
+
+2011-08-09  Anders Carlsson  <andersca@apple.com>
+
         Add Lion tests results for a couple of bidi SVG tests.
 
         * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt.

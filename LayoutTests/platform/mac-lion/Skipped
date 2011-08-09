@@ -118,6 +118,20 @@ plugins/form-value.html
 # WebKit1 OOP plug-ins: Exceptions aren't thrown on invoke failure.
 plugins/npruntime/invoke-failure.html
 
+# --- SVG ---
+
+# Missing some of the content.
+svg/W3C-SVG-1.1/coords-viewattr-01-b.svg
+svg/W3C-SVG-1.1/coords-viewattr-02-b.svg
+svg/custom/preserve-aspect-ratio-syntax.svg
+svg/custom/viewbox-syntax.svg
+svg/zoom/page/zoom-coords-viewattr-01-b.svg
+svg/zoom/text/zoom-coords-viewattr-01-b.svg
+svg/W3C-SVG-1.1/render-elems-03-t.svg
+
+# Has text chunked differently from Snow Leopard.
+svg/W3C-SVG-1.1-SE/types-dom-01-b.svg
+
 # --- Misc failures that need investigation ---
 
 # These fail in DRT but look correct in Safari.
