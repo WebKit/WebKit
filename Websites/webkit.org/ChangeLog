@@ -1,3 +1,12 @@
+2011-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Broken link to LICENSE on contributing code page
+        https://bugs.webkit.org/show_bug.cgi?id=65947
+
+        Reviewed by Ryosuke Niwa.
+
+        * coding/contributing.html:
+
 2011-08-04  Dan Bernstein  <mitz@apple.com>
 
         Fixed a typo.
