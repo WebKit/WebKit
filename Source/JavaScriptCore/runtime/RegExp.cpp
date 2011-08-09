@@ -24,6 +24,7 @@
 #include "RegExp.h"
 
 #include "Lexer.h"
+#include "RegExpCache.h"
 #include "yarr/Yarr.h"
 #include "yarr/YarrJIT.h"
 #include <stdio.h>
@@ -33,6 +34,8 @@
 #include <wtf/OwnArrayPtr.h>
 
 namespace JSC {
+
+const ClassInfo RegExp::s_info = { "RegExp", 0, 0, 0 };
 
 RegExpFlags regExpFlags(const UString& string)
 {
@@ -73,8 +76,10 @@ struct RegExpRepresentation {
     OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
 };
 
-inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
-    : m_patternString(patternString)
+RegExp::RegExp(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
+    : JSCell(globalData, globalData.regExpStructure.get())
+    , m_state(NotCompiled)
+    , m_patternString(patternString)
     , m_flags(flags)
     , m_constructionError(0)
     , m_numSubpatterns(0)
@@ -82,55 +87,66 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, Re
     , m_rtMatchCallCount(0)
     , m_rtMatchFoundCount(0)
 #endif
-    , m_representation(adoptPtr(new RegExpRepresentation))
 {
-    m_state = compile(globalData);
+    Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), &m_constructionError);
+    if (m_constructionError)
+        m_state = ParseError;
+    else
+        m_numSubpatterns = pattern.m_numSubpatterns;
 }
 
 RegExp::~RegExp()
 {
 }
 
-PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
+RegExp* RegExp::createWithoutCaching(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
 {
-    RefPtr<RegExp> res = adoptRef(new RegExp(globalData, patternString, flags));
-#if ENABLE(REGEXP_TRACING)
-    globalData->addRegExpToTrace(res);
-#endif
-    return res.release();
+    return new (allocateCell<RegExp>(globalData.heap)) RegExp(globalData, patternString, flags);
 }
 
-RegExp::RegExpState RegExp::compile(JSGlobalData* globalData)
+RegExp* RegExp::create(JSGlobalData& globalData, const UString& patternString, RegExpFlags flags)
 {
+    return globalData.regExpCache()->lookupOrCreate(patternString, flags);
+}
+
+void RegExp::compile(JSGlobalData* globalData)
+{
+    ASSERT(m_state == NotCompiled);
+    m_representation = adoptPtr(new RegExpRepresentation);
     Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), &m_constructionError);
-    if (m_constructionError)
-        return ParseError;
+    if (m_constructionError) {
+        ASSERT_NOT_REACHED();
+        m_state = ParseError;
+        return;
+    }
 
-    m_numSubpatterns = pattern.m_numSubpatterns;
+    globalData->regExpCache()->addToStrongCache(this);
 
-    RegExpState res = ByteCode;
+    ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
+
+    m_state = ByteCode;
 
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && globalData->canUseJIT()) {
         Yarr::jitCompile(pattern, globalData, m_representation->m_regExpJITCode);
 #if ENABLE(YARR_JIT_DEBUG)
         if (!m_representation->m_regExpJITCode.isFallBack())
-            res = JITCode;
+            m_state = JITCode;
         else
-            res = ByteCode;
+            m_state = ByteCode;
 #else
-        if (!m_representation->m_regExpJITCode.isFallBack())
-            return JITCode;
+        if (!m_representation->m_regExpJITCode.isFallBack()) {
+            m_state = JITCode;
+            return;
+        }
 #endif
     }
 #endif
 
     m_representation->m_regExpBytecode = Yarr::byteCompile(pattern, &globalData->m_regExpAllocator);
-
-    return res;
 }
 
-int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
+int RegExp::match(JSGlobalData& globalData, const UString& s, int startOffset, Vector<int, 32>* ovector)
 {
     if (startOffset < 0)
         startOffset = 0;
@@ -143,6 +159,8 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
         return -1;
 
     if (m_state != ParseError) {
+        compileIfNecessary(globalData);
+
         int offsetVectorSize = (m_numSubpatterns + 1) * 2;
         int* offsetVector;
         Vector<int, 32> nonReturnedOvector;
@@ -184,6 +202,13 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
     return -1;
 }
 
+void RegExp::invalidateCode()
+{
+    if (!m_representation)
+        return;
+    m_state = NotCompiled;
+    m_representation.clear();
+}
 
 #if ENABLE(YARR_JIT_DEBUG)
 void RegExp::matchCompareWithInterpreter(const UString& s, int startOffset, int* offsetVector, int jitResult)
@@ -265,5 +290,5 @@ void RegExp::matchCompareWithInterpreter(const UString& s, int startOffset, int*
         printf("%-40.40s %16.16s %10d %10d\n", formattedPattern, jitAddr, m_rtMatchCallCount, m_rtMatchFoundCount);
     }
 #endif
-    
+
 } // namespace JSC

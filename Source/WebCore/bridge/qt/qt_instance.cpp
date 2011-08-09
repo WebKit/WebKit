@@ -47,8 +47,11 @@ static QObjectInstanceMap cachedInstances;
 // Derived RuntimeObject
 class QtRuntimeObject : public RuntimeObject {
 public:
-    QtRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<Instance>);
-
+    static QtRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<Instance> instance)
+    {
+        return new (allocateCell<QtRuntimeObject>(*exec->heap())) QtRuntimeObject(exec, globalObject, instance);
+    }
+    
     static const ClassInfo s_info;
 
     virtual void visitChildren(SlotVisitor& visitor)
@@ -66,6 +69,9 @@ public:
 
 protected:
     static const unsigned StructureFlags = RuntimeObject::StructureFlags | OverridesVisitChildren;
+
+private:
+    QtRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<Instance>);
 };
 
 const ClassInfo QtRuntimeObject::s_info = { "QtRuntimeObject", &RuntimeObject::s_info, 0, 0 };
@@ -182,7 +188,7 @@ RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
 {
     JSLock lock(SilenceAssertionsOnly);
     m_methods.clear();
-    return new (exec) QtRuntimeObject(exec, exec->lexicalGlobalObject(), this);
+    return QtRuntimeObject::create(exec, exec->lexicalGlobalObject(), this);
 }
 
 void QtInstance::visitAggregate(SlotVisitor& visitor)
@@ -240,7 +246,7 @@ JSValue QtInstance::getMethod(ExecState* exec, const Identifier& propertyName)
     if (!getClass())
         return jsNull();
     MethodList methodList = m_class->methodsNamed(propertyName, this);
-    return new (exec) RuntimeMethod(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeMethod>(exec), propertyName, methodList);
+    return RuntimeMethod::create(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeMethod>(exec), propertyName, methodList);
 }
 
 JSValue QtInstance::invokeMethod(ExecState*, RuntimeMethod*)

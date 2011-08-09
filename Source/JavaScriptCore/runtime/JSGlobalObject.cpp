@@ -124,13 +124,11 @@ void JSGlobalObject::init(JSObject* thisValue)
     structure()->disableSpecificFunctionTracking();
 
     m_globalData = Heap::heap(this)->globalData();
-    m_globalScopeChain.set(*m_globalData, this, new (m_globalData.get()) ScopeChainNode(0, this, m_globalData.get(), this, thisValue));
+    m_globalScopeChain.set(*m_globalData, this, ScopeChainNode::create(0, this, m_globalData.get(), this, thisValue));
 
     JSGlobalObject::globalExec()->init(0, 0, m_globalScopeChain.get(), CallFrame::noCaller(), 0, 0);
 
     m_debugger = 0;
-
-    m_profileGroup = 0;
 
     reset(prototype());
 }
@@ -187,15 +185,16 @@ void JSGlobalObject::reset(JSValue prototype)
 {
     ExecState* exec = JSGlobalObject::globalExec();
 
-    m_functionPrototype.set(exec->globalData(), this, new (exec) FunctionPrototype(exec, this, FunctionPrototype::createStructure(exec->globalData(), jsNull()))); // The real prototype will be set once ObjectPrototype is created.
+    m_functionPrototype.set(exec->globalData(), this, FunctionPrototype::create(exec, this, FunctionPrototype::createStructure(exec->globalData(), jsNull()))); // The real prototype will be set once ObjectPrototype is created.
     m_functionStructure.set(exec->globalData(), this, JSFunction::createStructure(exec->globalData(), m_functionPrototype.get()));
+    m_namedFunctionStructure.set(exec->globalData(), this, Structure::addPropertyTransition(exec->globalData(), m_functionStructure.get(), exec->globalData().propertyNames->name, DontDelete | ReadOnly | DontEnum, 0, m_functionNameOffset));
     m_internalFunctionStructure.set(exec->globalData(), this, InternalFunction::createStructure(exec->globalData(), m_functionPrototype.get()));
     JSFunction* callFunction = 0;
     JSFunction* applyFunction = 0;
     m_functionPrototype->addFunctionProperties(exec, this, m_functionStructure.get(), &callFunction, &applyFunction);
     m_callFunction.set(exec->globalData(), this, callFunction);
     m_applyFunction.set(exec->globalData(), this, applyFunction);
-    m_objectPrototype.set(exec->globalData(), this, new (exec) ObjectPrototype(exec, this, ObjectPrototype::createStructure(exec->globalData(), jsNull())));
+    m_objectPrototype.set(exec->globalData(), this, ObjectPrototype::create(exec, this, ObjectPrototype::createStructure(exec->globalData(), jsNull())));
     m_functionPrototype->structure()->setPrototypeWithoutTransition(exec->globalData(), m_objectPrototype.get());
 
     m_emptyObjectStructure.set(exec->globalData(), this, m_objectPrototype->inheritorID(exec->globalData()));
@@ -206,52 +205,54 @@ void JSGlobalObject::reset(JSValue prototype)
     m_callbackConstructorStructure.set(exec->globalData(), this, JSCallbackConstructor::createStructure(exec->globalData(), m_objectPrototype.get()));
     m_callbackObjectStructure.set(exec->globalData(), this, JSCallbackObject<JSObjectWithGlobalObject>::createStructure(exec->globalData(), m_objectPrototype.get()));
 
-    m_arrayPrototype.set(exec->globalData(), this, new (exec) ArrayPrototype(this, ArrayPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    m_arrayPrototype.set(exec->globalData(), this, ArrayPrototype::create(exec, this, ArrayPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
     m_arrayStructure.set(exec->globalData(), this, JSArray::createStructure(exec->globalData(), m_arrayPrototype.get()));
     m_regExpMatchesArrayStructure.set(exec->globalData(), this, RegExpMatchesArray::createStructure(exec->globalData(), m_arrayPrototype.get()));
 
-    m_stringPrototype.set(exec->globalData(), this, new (exec) StringPrototype(exec, this, StringPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    m_stringPrototype.set(exec->globalData(), this, StringPrototype::create(exec, this, StringPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
     m_stringObjectStructure.set(exec->globalData(), this, StringObject::createStructure(exec->globalData(), m_stringPrototype.get()));
 
-    m_booleanPrototype.set(exec->globalData(), this, new (exec) BooleanPrototype(exec, this, BooleanPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    m_booleanPrototype.set(exec->globalData(), this, BooleanPrototype::create(exec, this, BooleanPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
     m_booleanObjectStructure.set(exec->globalData(), this, BooleanObject::createStructure(exec->globalData(), m_booleanPrototype.get()));
 
-    m_numberPrototype.set(exec->globalData(), this, new (exec) NumberPrototype(exec, this, NumberPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    m_numberPrototype.set(exec->globalData(), this, NumberPrototype::create(exec, this, NumberPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
     m_numberObjectStructure.set(exec->globalData(), this, NumberObject::createStructure(exec->globalData(), m_numberPrototype.get()));
 
-    m_datePrototype.set(exec->globalData(), this, new (exec) DatePrototype(exec, this, DatePrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    m_datePrototype.set(exec->globalData(), this, DatePrototype::create(exec, this, DatePrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
     m_dateStructure.set(exec->globalData(), this, DateInstance::createStructure(exec->globalData(), m_datePrototype.get()));
 
-    m_regExpPrototype.set(exec->globalData(), this, new (exec) RegExpPrototype(exec, this, RegExpPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    RegExp* emptyRegex = RegExp::create(exec->globalData(), "", NoFlags);
+    
+    m_regExpPrototype.set(exec->globalData(), this, RegExpPrototype::create(exec, this, RegExpPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), emptyRegex));
     m_regExpStructure.set(exec->globalData(), this, RegExpObject::createStructure(exec->globalData(), m_regExpPrototype.get()));
 
     m_methodCallDummy.set(exec->globalData(), this, constructEmptyObject(exec));
 
-    ErrorPrototype* errorPrototype = new (exec) ErrorPrototype(exec, this, ErrorPrototype::createStructure(exec->globalData(), m_objectPrototype.get()));
+    ErrorPrototype* errorPrototype = ErrorPrototype::create(exec, this, ErrorPrototype::createStructure(exec->globalData(), m_objectPrototype.get()));
     m_errorStructure.set(exec->globalData(), this, ErrorInstance::createStructure(exec->globalData(), errorPrototype));
 
     // Constructors
 
-    JSCell* objectConstructor = new (exec) ObjectConstructor(exec, this, ObjectConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_objectPrototype.get());
-    JSCell* functionConstructor = new (exec) FunctionConstructor(exec, this, FunctionConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_functionPrototype.get());
-    JSCell* arrayConstructor = new (exec) ArrayConstructor(exec, this, ArrayConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_arrayPrototype.get());
-    JSCell* stringConstructor = new (exec) StringConstructor(exec, this, StringConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_stringPrototype.get());
-    JSCell* booleanConstructor = new (exec) BooleanConstructor(exec, this, BooleanConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_booleanPrototype.get());
-    JSCell* numberConstructor = new (exec) NumberConstructor(exec, this, NumberConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_numberPrototype.get());
-    JSCell* dateConstructor = new (exec) DateConstructor(exec, this, DateConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_datePrototype.get());
+    JSCell* objectConstructor = ObjectConstructor::create(exec, this, ObjectConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_objectPrototype.get());
+    JSCell* functionConstructor = FunctionConstructor::create(exec, this, FunctionConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_functionPrototype.get());
+    JSCell* arrayConstructor = ArrayConstructor::create(exec, this, ArrayConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_arrayPrototype.get());
+    JSCell* stringConstructor = StringConstructor::create(exec, this, StringConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_stringPrototype.get());
+    JSCell* booleanConstructor = BooleanConstructor::create(exec, this, BooleanConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_booleanPrototype.get());
+    JSCell* numberConstructor = NumberConstructor::create(exec, this, NumberConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_numberPrototype.get());
+    JSCell* dateConstructor = DateConstructor::create(exec, this, DateConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_datePrototype.get());
 
-    m_regExpConstructor.set(exec->globalData(), this, new (exec) RegExpConstructor(exec, this, RegExpConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_regExpPrototype.get()));
+    m_regExpConstructor.set(exec->globalData(), this, RegExpConstructor::create(exec, this, RegExpConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), m_regExpPrototype.get()));
 
-    m_errorConstructor.set(exec->globalData(), this, new (exec) ErrorConstructor(exec, this, ErrorConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), errorPrototype));
+    m_errorConstructor.set(exec->globalData(), this, ErrorConstructor::create(exec, this, ErrorConstructor::createStructure(exec->globalData(), m_functionPrototype.get()), errorPrototype));
 
     Structure* nativeErrorPrototypeStructure = NativeErrorPrototype::createStructure(exec->globalData(), errorPrototype);
     Structure* nativeErrorStructure = NativeErrorConstructor::createStructure(exec->globalData(), m_functionPrototype.get());
-    m_evalErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "EvalError"));
-    m_rangeErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "RangeError"));
-    m_referenceErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "ReferenceError"));
-    m_syntaxErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "SyntaxError"));
-    m_typeErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "TypeError"));
-    m_URIErrorConstructor.set(exec->globalData(), this, new (exec) NativeErrorConstructor(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "URIError"));
+    m_evalErrorConstructor.set(exec->globalData(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "EvalError"));
+    m_rangeErrorConstructor.set(exec->globalData(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "RangeError"));
+    m_referenceErrorConstructor.set(exec->globalData(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "ReferenceError"));
+    m_syntaxErrorConstructor.set(exec->globalData(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "SyntaxError"));
+    m_typeErrorConstructor.set(exec->globalData(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "TypeError"));
+    m_URIErrorConstructor.set(exec->globalData(), this, NativeErrorConstructor::create(exec, this, nativeErrorStructure, nativeErrorPrototypeStructure, "URIError"));
 
     m_objectPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, objectConstructor, DontEnum);
     m_functionPrototype->putDirectFunctionWithoutTransition(exec->globalData(), exec->propertyNames().constructor, functionConstructor, DontEnum);
@@ -279,15 +280,15 @@ void JSGlobalObject::reset(JSValue prototype)
     putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "TypeError"), m_typeErrorConstructor.get(), DontEnum);
     putDirectFunctionWithoutTransition(exec->globalData(), Identifier(exec, "URIError"), m_URIErrorConstructor.get(), DontEnum);
 
-    m_evalFunction.set(exec->globalData(), this, new (exec) JSFunction(exec, this, m_functionStructure.get(), 1, exec->propertyNames().eval, globalFuncEval));
+    m_evalFunction.set(exec->globalData(), this, JSFunction::create(exec, this, m_functionStructure.get(), 1, exec->propertyNames().eval, globalFuncEval));
     putDirectFunctionWithoutTransition(exec, m_evalFunction.get(), DontEnum);
 
     GlobalPropertyInfo staticGlobals[] = {
-        GlobalPropertyInfo(Identifier(exec, "Math"), new (exec) MathObject(exec, this, MathObject::createStructure(exec->globalData(), m_objectPrototype.get())), DontEnum | DontDelete),
+        GlobalPropertyInfo(Identifier(exec, "Math"), MathObject::create(exec, this, MathObject::createStructure(exec->globalData(), m_objectPrototype.get())), DontEnum | DontDelete),
         GlobalPropertyInfo(Identifier(exec, "NaN"), jsNaN(), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(Identifier(exec, "Infinity"), jsNumber(Inf), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(Identifier(exec, "Infinity"), jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(Identifier(exec, "undefined"), jsUndefined(), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(Identifier(exec, "JSON"), new (exec) JSONObject(this, JSONObject::createStructure(exec->globalData(), m_objectPrototype.get())), DontEnum | DontDelete)
+        GlobalPropertyInfo(Identifier(exec, "JSON"), JSONObject::create(exec, this, JSONObject::createStructure(exec->globalData(), m_objectPrototype.get())), DontEnum | DontDelete)
     };
     addStaticGlobals(staticGlobals, WTF_ARRAY_LENGTH(staticGlobals));
 
@@ -382,81 +383,32 @@ void JSGlobalObject::disableEval()
     m_isEvalEnabled = false;
 }
 
-void JSGlobalObject::copyGlobalsFrom(RegisterFile& registerFile)
+void JSGlobalObject::resizeRegisters(size_t newSize)
 {
-    ASSERT(!m_registerArray);
-    ASSERT(!m_registerArraySize);
-
-    int numGlobals = registerFile.numGlobals();
-    if (!numGlobals) {
-        m_registers = 0;
+    // Previous duplicate symbols may have created spare capacity in m_registerArray.
+    if (newSize <= m_registerArraySize)
         return;
-    }
 
-    OwnArrayPtr<WriteBarrier<Unknown> > registerArray = copyRegisterArray(globalData(), reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.lastGlobal()), numGlobals, numGlobals);
-    WriteBarrier<Unknown>* registers = registerArray.get() + numGlobals;
-    setRegisters(registers, registerArray.release(), numGlobals);
-}
+    size_t oldSize = m_registerArraySize;
+    OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[newSize]);
+    for (size_t i = 0; i < oldSize; ++i)
+        registerArray[i].set(globalData(), this, m_registerArray[i].get());
+    for (size_t i = oldSize; i < newSize; ++i)
+        registerArray[i].setUndefined();
 
-void JSGlobalObject::copyGlobalsTo(RegisterFile& registerFile)
-{
-    JSGlobalObject* lastGlobalObject = registerFile.globalObject();
-    if (lastGlobalObject && lastGlobalObject != this)
-        lastGlobalObject->copyGlobalsFrom(registerFile);
-
-    registerFile.setGlobalObject(this);
-    registerFile.setNumGlobals(symbolTable().size());
-
-    if (m_registerArray) {
-        // The register file is always a gc root so no barrier is needed here
-        memcpy(registerFile.start() - m_registerArraySize, m_registerArray.get(), m_registerArraySize * sizeof(WriteBarrier<Unknown>));
-        setRegisters(reinterpret_cast<WriteBarrier<Unknown>*>(registerFile.start()), nullptr, 0);
-    }
-}
-
-void JSGlobalObject::resizeRegisters(int oldSize, int newSize)
-{
-    ASSERT(oldSize <= newSize);
-    if (newSize == oldSize)
-        return;
-    ASSERT(newSize && newSize > oldSize);
-    if (m_registerArray || !m_registers) {
-        ASSERT(static_cast<size_t>(oldSize) == m_registerArraySize);
-        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[newSize]);
-        for (int i = 0; i < oldSize; i++)
-            registerArray[newSize - oldSize + i].set(globalData(), this, m_registerArray[i].get());
-        WriteBarrier<Unknown>* registers = registerArray.get() + newSize;
-        setRegisters(registers, registerArray.release(), newSize);
-    } else {
-        ASSERT(static_cast<size_t>(newSize) < globalData().interpreter->registerFile().maxGlobals());
-        globalData().interpreter->registerFile().setNumGlobals(newSize);
-    }
-
-    for (int i = -newSize; i < -oldSize; ++i)
-        m_registers[i].setUndefined();
-}
-
-void* JSGlobalObject::operator new(size_t size, JSGlobalData* globalData)
-{
-    return globalData->heap.allocate(size);
+    WriteBarrier<Unknown>* registers = registerArray.get();
+    setRegisters(registers, registerArray.release(), newSize);
 }
 
 void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
 {
-    size_t oldSize = m_registerArraySize;
-    size_t newSize = oldSize + count;
-    OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[newSize]);
-    if (m_registerArray) {
-        // memcpy is safe here as we're copying barriers we already own from the existing array
-        memcpy(registerArray.get() + count, m_registerArray.get(), oldSize * sizeof(Register));
-    }
+    resizeRegisters(symbolTable().size() + count);
 
-    WriteBarrier<Unknown>* registers = registerArray.get() + newSize;
-    setRegisters(registers, registerArray.release(), newSize);
-
-    for (int i = 0, index = -static_cast<int>(oldSize) - 1; i < count; ++i, --index) {
+    for (int i = 0; i < count; ++i) {
         GlobalPropertyInfo& global = globals[i];
         ASSERT(global.attributes & DontDelete);
+        
+        int index = symbolTable().size();
         SymbolTableEntry newEntry(index, global.attributes);
         symbolTable().add(global.identifier.impl(), newEntry);
         registerAt(index).set(globalData(), this, global.value);
@@ -480,7 +432,7 @@ bool JSGlobalObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier&
 void JSGlobalObject::WeakMapsFinalizer::finalize(Handle<Unknown> handle, void*)
 {
     JSGlobalObject* globalObject = asGlobalObject(handle.get());
-    globalObject->m_weakMaps.clear();
+    globalObject->m_rareData.clear();
 }
 
 JSGlobalObject::WeakMapsFinalizer* JSGlobalObject::weakMapsFinalizer()

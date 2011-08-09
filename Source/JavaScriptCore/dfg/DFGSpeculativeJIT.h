@@ -84,9 +84,10 @@ struct SpeculationCheck {
     struct RegisterInfo {
         NodeIndex nodeIndex;
         DataFormat format;
+        bool isSpilled;
     };
     RegisterInfo m_gprInfo[GPRInfo::numberOfRegisters];
-    NodeIndex m_fprInfo[FPRInfo::numberOfRegisters];
+    RegisterInfo m_fprInfo[FPRInfo::numberOfRegisters];
 };
 typedef SegmentedVector<SpeculationCheck, 16> SpeculationCheckVector;
 
@@ -129,6 +130,7 @@ public:
     // machine registers, implicitly generating speculation checks as needed.
     GPRReg fillSpeculateInt(NodeIndex, DataFormat& returnFormat);
     GPRReg fillSpeculateIntStrict(NodeIndex);
+    FPRReg fillSpeculateDouble(NodeIndex);
     GPRReg fillSpeculateCell(NodeIndex);
 
 private:
@@ -138,56 +140,61 @@ private:
     void checkArgumentTypes();
     void initializeVariableTypes();
 
-    bool isDoubleConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
+    bool isInteger(NodeIndex nodeIndex)
     {
-        if (!m_jit.isDoubleConstant(nodeIndex))
-            return false;
-        double value = m_jit.valueOfDoubleConstant(nodeIndex);
+        Node& node = m_jit.graph()[nodeIndex];
+        if (node.hasInt32Result())
+            return true;
 
-        int32_t asInt32 = static_cast<int32_t>(value);
-        if (value != asInt32)
-            return false;
-        if (!asInt32 && signbit(value))
-            return false;
+        if (isInt32Constant(nodeIndex))
+            return true;
 
-        out = asInt32;
-        return true;
-    }
-
-    bool isJSConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
-    {
-        if (!m_jit.isJSConstant(nodeIndex))
-            return false;
-        JSValue value = m_jit.valueOfJSConstant(nodeIndex);
-
-        if (!value.isInt32())
-            return false;
+        VirtualRegister virtualRegister = node.virtualRegister();
+        GenerationInfo& info = m_generationInfo[virtualRegister];
         
-        out = value.asInt32();
-        return true;
+        return (info.registerFormat() | DataFormatJS) == DataFormatJSInteger
+            || (info.spillFormat() | DataFormatJS) == DataFormatJSInteger;
     }
 
-    bool detectPeepHoleBranch()
+    bool isRegisterDataFormatDouble(NodeIndex nodeIndex)
     {
-        // Check if the block contains precisely one more node.
-        if (m_compileIndex + 2 != m_jit.graph().m_blocks[m_block]->end)
-            return false;
+        Node& node = m_jit.graph()[nodeIndex];
+        VirtualRegister virtualRegister = node.virtualRegister();
+        GenerationInfo& info = m_generationInfo[virtualRegister];
 
-        // Check if the lastNode is a branch on this node.
-        Node& lastNode = m_jit.graph()[m_compileIndex + 1];
-        return lastNode.op == Branch && lastNode.child1 == m_compileIndex;
+        if ((info.registerFormat() | DataFormatJS) == DataFormatJSDouble
+            || (info.spillFormat() | DataFormatJS) == DataFormatJSDouble)
+            return true;
+        
+        if (node.op == GetLocal && isDoublePrediction(m_jit.graph().getPrediction(node.local())))
+            return true;
+        
+        return false;
+    }
+    
+    bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)
+    {
+        return !(isRegisterDataFormatDouble(op1) || isRegisterDataFormatDouble(op2)) && (isInteger(op1) || isInteger(op2));
     }
 
-    void compilePeepHoleBranch(Node&, JITCompiler::RelationalCondition);
+    bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);
+    void compilePeepHoleIntegerBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::RelationalCondition);
+    void compilePeepHoleDoubleBranch(Node&, NodeIndex branchNodeIndex, JITCompiler::DoubleCondition, Z_DFGOperation_EJJ);
+    
+    JITCompiler::Jump convertToDouble(GPRReg value, FPRReg result, GPRReg tmp);
 
     // Add a speculation check without additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail)
     {
+        if (!m_compileOkay)
+            return;
         m_speculationChecks.append(SpeculationCheck(jumpToFail, this));
     }
     // Add a speculation check with additional recovery.
     void speculationCheck(MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
     {
+        if (!m_compileOkay)
+            return;
         m_speculationRecoveryList.append(recovery);
         m_speculationChecks.append(SpeculationCheck(jumpToFail, this, m_speculationRecoveryList.size()));
     }
@@ -195,10 +202,7 @@ private:
     // Called when we statically determine that a speculation will fail.
     void terminateSpeculativeExecution()
     {
-        // FIXME: in cases where we can statically determine we're going to bail out from the speculative
-        // JIT we should probably rewind code generation and only produce the non-speculative path.
         m_compileOkay = false;
-        speculationCheck(m_jit.jump());
     }
 
     template<bool strict>
@@ -304,11 +308,52 @@ public:
             m_gprOrInvalid = m_jit->fillSpeculateIntStrict(index());
         return m_gprOrInvalid;
     }
+    
+    void use()
+    {
+        m_jit->use(m_index);
+    }
 
 private:
     SpeculativeJIT* m_jit;
     NodeIndex m_index;
     GPRReg m_gprOrInvalid;
+};
+
+class SpeculateDoubleOperand {
+public:
+    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, NodeIndex index)
+        : m_jit(jit)
+        , m_index(index)
+        , m_fprOrInvalid(InvalidFPRReg)
+    {
+        ASSERT(m_jit);
+        if (jit->isFilled(index))
+            fpr();
+    }
+
+    ~SpeculateDoubleOperand()
+    {
+        ASSERT(m_fprOrInvalid != InvalidFPRReg);
+        m_jit->unlock(m_fprOrInvalid);
+    }
+
+    NodeIndex index() const
+    {
+        return m_index;
+    }
+
+    FPRReg fpr()
+    {
+        if (m_fprOrInvalid == InvalidFPRReg)
+            m_fprOrInvalid = m_jit->fillSpeculateDouble(index());
+        return m_fprOrInvalid;
+    }
+
+private:
+    SpeculativeJIT* m_jit;
+    NodeIndex m_index;
+    FPRReg m_fprOrInvalid;
 };
 
 class SpeculateCellOperand {
@@ -339,6 +384,11 @@ public:
         if (m_gprOrInvalid == InvalidGPRReg)
             m_gprOrInvalid = m_jit->fillSpeculateCell(index());
         return m_gprOrInvalid;
+    }
+    
+    void use()
+    {
+        m_jit->use(m_index);
     }
 
 private:

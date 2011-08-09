@@ -322,7 +322,6 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_construct_NotJSConstruct(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_create_this(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_convert_this(STUB_ARGS_DECLARATION);
-    EncodedJSValue JIT_STUB cti_op_convert_this_strict(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_create_arguments(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_create_arguments_no_params(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_del_by_id(STUB_ARGS_DECLARATION);
@@ -352,6 +351,8 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_is_undefined(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_less(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_lesseq(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_greater(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_greatereq(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_lshift(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_mod(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_mul(STUB_ARGS_DECLARATION);
@@ -370,6 +371,7 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_resolve_global_dynamic(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_resolve_skip(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_resolve_with_base(STUB_ARGS_DECLARATION);
+    EncodedJSValue JIT_STUB cti_op_resolve_with_this(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_rshift(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_strcat(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_op_stricteq(STUB_ARGS_DECLARATION);
@@ -380,6 +382,7 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_urshift(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_to_object(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_array(STUB_ARGS_DECLARATION);
+    JSObject* JIT_STUB cti_op_new_array_buffer(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_func(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_func_exp(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_object(STUB_ARGS_DECLARATION);
@@ -393,9 +396,10 @@ extern "C" {
     int JIT_STUB cti_op_eq_strings(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jless(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jlesseq(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_jgreater(STUB_ARGS_DECLARATION);
+    int JIT_STUB cti_op_jgreatereq(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_jtrue(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_op_load_varargs(STUB_ARGS_DECLARATION);
-    int JIT_STUB cti_op_loop_if_lesseq(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_timeout_check(STUB_ARGS_DECLARATION);
     int JIT_STUB cti_has_property(STUB_ARGS_DECLARATION);
     void JIT_STUB cti_op_check_has_instance(STUB_ARGS_DECLARATION);

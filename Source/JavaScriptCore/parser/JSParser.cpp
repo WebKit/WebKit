@@ -43,14 +43,26 @@ using namespace JSC;
 using namespace std;
 
 namespace JSC {
-#define fail() do { m_error = true; return 0; } while (0)
+#define fail() do { if (!m_error) updateErrorMessage(); return 0; } while (0)
+#define failWithToken(tok) do { if (!m_error) updateErrorMessage(tok); return 0; } while (0)
+#define failWithMessage(msg) do { if (!m_error) updateErrorMessage(msg); return 0; } while (0)
+#define failWithNameAndMessage(before, name, after) do { if (!m_error) updateErrorWithNameAndMessage(before, name, after); return 0; } while (0)
 #define failIfFalse(cond) do { if (!(cond)) fail(); } while (0)
+#define failIfFalseWithMessage(cond, msg) do { if (!(cond)) failWithMessage(msg); } while (0)
+#define failIfFalseWithNameAndMessage(cond, before, name, msg) do { if (!(cond)) failWithNameAndMessage(before, name, msg); } while (0)
 #define failIfTrue(cond) do { if ((cond)) fail(); } while (0)
+#define failIfTrueWithMessage(cond, msg) do { if ((cond)) failWithMessage(msg); } while (0)
+#define failIfTrueWithNameAndMessage(cond, before, name, msg) do { if ((cond)) failWithNameAndMessage(before, name, msg); } while (0)
 #define failIfTrueIfStrict(cond) do { if ((cond) && strictMode()) fail(); } while (0)
+#define failIfTrueIfStrictWithMessage(cond, msg) do { if ((cond) && strictMode()) failWithMessage(msg); } while (0)
+#define failIfTrueIfStrictWithNameAndMessage(cond, before, name, after) do { if ((cond) && strictMode()) failWithNameAndMessage(before, name, after); } while (0)
 #define failIfFalseIfStrict(cond) do { if ((!(cond)) && strictMode()) fail(); } while (0)
-#define consumeOrFail(tokenType) do { if (!consume(tokenType)) fail(); } while (0)
-#define matchOrFail(tokenType) do { if (!match(tokenType)) fail(); } while (0)
-#define failIfStackOverflow() do { failIfFalse(canRecurse()); } while (0)
+#define failIfFalseIfStrictWithMessage(cond, msg) do { if ((!(cond)) && strictMode()) failWithMessage(msg); } while (0)
+#define failIfFalseIfStrictWithNameAndMessage(cond, before, name, after) do { if ((!(cond)) && strictMode()) failWithNameAndMessage(before, name, after); } while (0)
+#define consumeOrFail(tokenType) do { if (!consume(tokenType)) failWithToken(tokenType); } while (0)
+#define consumeOrFailWithFlags(tokenType, flags) do { if (!consume(tokenType, flags)) failWithToken(tokenType); } while (0)
+#define matchOrFail(tokenType) do { if (!match(tokenType)) failWithToken(tokenType); } while (0)
+#define failIfStackOverflow() do { failIfFalseWithMessage(canRecurse(), "Code nested too deeply."); } while (0)
 
 // Macros to make the more common TreeBuilder types a little less verbose
 #define TreeStatement typename TreeBuilder::Statement
@@ -70,8 +82,8 @@ COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
 class JSParser {
 public:
-    JSParser(Lexer*, JSGlobalData*, FunctionParameters*, bool isStrictContext, bool isFunction, SourceProvider*);
-    const char* parseProgram();
+    JSParser(Lexer*, JSGlobalData*, FunctionParameters*, bool isStrictContext, bool isFunction, const SourceCode*);
+    UString parseProgram();
 private:
     struct AllowInOverride {
         AllowInOverride(JSParser* parser)
@@ -98,7 +110,7 @@ private:
         bool m_isLoop;
     };
     
-    void next(Lexer::LexType lexType = Lexer::IdentifyReservedWords)
+    ALWAYS_INLINE void next(unsigned lexType = 0)
     {
         m_lastLine = m_token.m_info.line;
         m_lastTokenEnd = m_token.m_info.endOffset;
@@ -106,37 +118,319 @@ private:
         m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info, lexType, strictMode());
     }
     
-    bool nextTokenIsColon()
+    ALWAYS_INLINE void nextExpectIdentifier(unsigned lexType = 0)
+    {
+        m_lastLine = m_token.m_info.line;
+        m_lastTokenEnd = m_token.m_info.endOffset;
+        m_lexer->setLastLineNumber(m_lastLine);
+        m_token.m_type = m_lexer->lexExpectIdentifier(&m_token.m_data, &m_token.m_info, lexType, strictMode());
+    }
+    
+    ALWAYS_INLINE bool nextTokenIsColon()
     {
         return m_lexer->nextTokenIsColon();
     }
 
-    bool consume(JSTokenType expected)
+    ALWAYS_INLINE bool consume(JSTokenType expected, unsigned flags = 0)
     {
         bool result = m_token.m_type == expected;
-        failIfFalse(result);
-        next();
+        if (result)
+            next(flags);
         return result;
     }
 
-    bool match(JSTokenType expected)
+    ALWAYS_INLINE UString getToken() {
+        SourceProvider* sourceProvider = m_source->provider();
+        return UString(sourceProvider->getRange(tokenStart(), tokenEnd()).impl());
+    }
+    
+    ALWAYS_INLINE bool match(JSTokenType expected)
     {
         return m_token.m_type == expected;
     }
 
-    int tokenStart()
+    ALWAYS_INLINE int tokenStart()
     {
         return m_token.m_info.startOffset;
     }
 
-    int tokenLine()
+    ALWAYS_INLINE int tokenLine()
     {
         return m_token.m_info.line;
     }
 
-    int tokenEnd()
+    ALWAYS_INLINE int tokenEnd()
     {
         return m_token.m_info.endOffset;
+    }
+    
+    const char* getTokenName(JSTokenType tok) 
+    {
+        switch (tok) {
+        case NULLTOKEN: 
+            return "null";
+        case TRUETOKEN:
+            return "true";
+        case FALSETOKEN: 
+            return "false";
+        case BREAK: 
+            return "break";
+        case CASE: 
+            return "case";
+        case DEFAULT: 
+            return "defualt";
+        case FOR: 
+            return "for";
+        case NEW: 
+            return "new";
+        case VAR: 
+            return "var";
+        case CONSTTOKEN: 
+            return "const";
+        case CONTINUE: 
+            return "continue";
+        case FUNCTION: 
+            return "function";
+        case IF: 
+            return "if";
+        case THISTOKEN: 
+            return "this";
+        case DO: 
+            return "do";
+        case WHILE: 
+            return "while";
+        case SWITCH: 
+            return "switch";
+        case WITH: 
+            return "with";
+        case THROW: 
+            return "throw";
+        case TRY: 
+            return "try";
+        case CATCH: 
+            return "catch";
+        case FINALLY: 
+            return "finally";
+        case DEBUGGER: 
+            return "debugger";
+        case ELSE: 
+            return "else";
+        case OPENBRACE: 
+            return "{";
+        case CLOSEBRACE: 
+            return "}";
+        case OPENPAREN: 
+            return "(";
+        case CLOSEPAREN: 
+            return ")";
+        case OPENBRACKET: 
+            return "[";
+        case CLOSEBRACKET: 
+            return "]";
+        case COMMA: 
+            return ",";
+        case QUESTION: 
+            return "?";
+        case SEMICOLON: 
+            return ";";
+        case COLON: 
+            return ":";
+        case DOT: 
+            return ".";
+        case EQUAL: 
+            return "=";
+        case PLUSEQUAL: 
+            return "+=";
+        case MINUSEQUAL: 
+            return "-=";
+        case MULTEQUAL: 
+            return "*=";
+        case DIVEQUAL: 
+            return "/=";
+        case LSHIFTEQUAL: 
+            return "<<=";
+        case RSHIFTEQUAL: 
+            return ">>=";
+        case URSHIFTEQUAL: 
+            return ">>>=";
+        case ANDEQUAL: 
+            return "&=";
+        case MODEQUAL: 
+            return "%=";
+        case XOREQUAL: 
+            return "^=";
+        case OREQUAL: 
+            return "|=";
+        case AUTOPLUSPLUS: 
+        case PLUSPLUS: 
+            return "++";
+        case AUTOMINUSMINUS: 
+        case MINUSMINUS: 
+            return "--";
+        case EXCLAMATION: 
+            return "!";
+        case TILDE: 
+            return "~";
+        case TYPEOF: 
+            return "typeof";
+        case VOIDTOKEN: 
+            return "void";
+        case DELETETOKEN: 
+            return "delete";
+        case OR: 
+            return "||";
+        case AND: 
+            return "&&";
+        case BITOR: 
+            return "|";
+        case BITXOR: 
+            return "^";
+        case BITAND: 
+            return "&";
+        case EQEQ: 
+            return "==";
+        case NE: 
+            return "!=";
+        case STREQ: 
+            return "===";
+        case STRNEQ: 
+            return "!==";
+        case LT: 
+            return "<";
+        case GT: 
+            return ">";
+        case LE: 
+            return "<=";
+        case GE: 
+            return ">=";
+        case INSTANCEOF: 
+            return "instanceof";
+        case INTOKEN: 
+            return "in";
+        case LSHIFT: 
+            return "<<";
+        case RSHIFT: 
+            return ">>";
+        case URSHIFT: 
+            return ">>>";
+        case PLUS: 
+            return "+";
+        case MINUS: 
+            return "-";
+        case TIMES: 
+            return "*";
+        case DIVIDE: 
+            return "/";
+        case MOD: 
+            return "%";
+        case RETURN: 
+        case RESERVED_IF_STRICT:
+        case RESERVED: 
+        case NUMBER:
+        case IDENT: 
+        case STRING: 
+        case ERRORTOK:
+        case EOFTOK: 
+            return 0;
+        case LastUntaggedToken: 
+            break;
+        }
+        ASSERT_NOT_REACHED();
+        return "internal error";
+    }
+    
+    ALWAYS_INLINE void updateErrorMessageSpecialCase(JSTokenType expectedToken) 
+    {
+        String errorMessage;
+        switch (expectedToken) {
+        case RESERVED_IF_STRICT:
+            errorMessage = "Use of reserved word '";
+            errorMessage += getToken().impl();
+            errorMessage += "' in strict mode";
+            m_errorMessage = errorMessage.impl();
+            return;
+        case RESERVED:
+            errorMessage = "Use of reserved word '";
+            errorMessage += getToken().impl();
+            errorMessage += "'";
+            m_errorMessage = errorMessage.impl();
+            return;
+        case NUMBER: 
+            errorMessage = "Unexpected number '";
+            errorMessage += getToken().impl();
+            errorMessage += "'";
+            m_errorMessage = errorMessage.impl();
+            return;
+        case IDENT: 
+            errorMessage = "Expected an identifier but found '";
+            errorMessage += getToken().impl();
+            errorMessage += "' instead";
+            m_errorMessage = errorMessage.impl();
+            return;
+        case STRING: 
+            errorMessage = "Unexpected string ";
+            errorMessage += getToken().impl();
+            m_errorMessage = errorMessage.impl();
+            return;
+        case ERRORTOK: 
+            errorMessage = "Unrecognized token '";
+            errorMessage += getToken().impl();
+            errorMessage += "'";
+            m_errorMessage = errorMessage.impl();
+            return;
+        case EOFTOK:  
+            m_errorMessage = "Unexpected EOF";
+            return;
+        case RETURN:
+            m_errorMessage = "Return statements are only valid inside functions";
+            return;
+        default:
+            ASSERT_NOT_REACHED();
+            m_errorMessage = "internal error";
+            return;
+        }
+    }
+        
+    NEVER_INLINE void updateErrorMessage() 
+    {
+        m_error = true;
+        const char* name = getTokenName(m_token.m_type);
+        if (!name) 
+            updateErrorMessageSpecialCase(m_token.m_type);
+        else 
+            m_errorMessage = UString(String::format("Unexpected token '%s'", name).impl());
+    }
+    
+    NEVER_INLINE void updateErrorMessage(JSTokenType expectedToken) 
+    {
+        m_error = true;
+        const char* name = getTokenName(expectedToken);
+        if (name)
+            m_errorMessage = UString(String::format("Expected token '%s'", name).impl());
+        else {
+            if (!getTokenName(m_token.m_type))
+                updateErrorMessageSpecialCase(m_token.m_type);
+            else
+                updateErrorMessageSpecialCase(expectedToken);
+        } 
+    }
+    
+    NEVER_INLINE void updateErrorWithNameAndMessage(const char* beforeMsg, UString name, const char* afterMsg) 
+    {
+        m_error = true;
+        String prefix(beforeMsg);
+        String postfix(afterMsg);
+        prefix += " '";
+        prefix += name.impl();
+        prefix += "' ";
+        prefix += postfix;
+        m_errorMessage = prefix.impl();
+    }
+    
+    NEVER_INLINE void updateErrorMessage(const char* msg) 
+    {   
+        m_error = true;
+        m_errorMessage = UString(msg);
     }
     
     void startLoop() { currentScope()->startLoop(); }
@@ -248,7 +542,7 @@ private:
     Lexer* m_lexer;
     StackBounds m_stack;
     bool m_error;
-    const char* m_errorMessage;
+    UString m_errorMessage;
     JSGlobalData* m_globalData;
     JSToken m_token;
     bool m_allowsIn;
@@ -606,15 +900,16 @@ private:
     }
 
     SourceProviderCache* m_functionCache;
+    const SourceCode* m_source;
 };
 
-const char* jsParse(JSGlobalData* globalData, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, const SourceCode* source)
+UString jsParse(JSGlobalData* globalData, FunctionParameters* parameters, JSParserStrictness strictness, JSParserMode parserMode, const SourceCode* source)
 {
-    JSParser parser(globalData->lexer, globalData, parameters, strictness == JSParseStrict, parserMode == JSParseFunctionCode, source->provider());
+    JSParser parser(globalData->lexer, globalData, parameters, strictness == JSParseStrict, parserMode == JSParseFunctionCode, source);
     return parser.parseProgram();
 }
 
-JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* parameters, bool inStrictContext, bool isFunction, SourceProvider* provider)
+JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* parameters, bool inStrictContext, bool isFunction, const SourceCode* source)
     : m_lexer(lexer)
     , m_stack(globalData->stack())
     , m_error(false)
@@ -625,11 +920,12 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* p
     , m_lastTokenEnd(0)
     , m_assignmentCount(0)
     , m_nonLHSCount(0)
-    , m_syntaxAlreadyValidated(provider->isValid())
+    , m_syntaxAlreadyValidated(source->provider()->isValid())
     , m_statementDepth(0)
     , m_nonTrivialExpressionCount(0)
     , m_lastIdentifier(0)
     , m_functionCache(m_lexer->sourceProvider()->cache())
+    , m_source(source)
 {
     ScopeRef scope = pushScope();
     if (isFunction)
@@ -644,7 +940,7 @@ JSParser::JSParser(Lexer* lexer, JSGlobalData* globalData, FunctionParameters* p
     m_lexer->setLastLineNumber(tokenLine());
 }
 
-const char* JSParser::parseProgram()
+UString JSParser::parseProgram()
 {
     unsigned oldFunctionCacheSize = m_functionCache ? m_functionCache->byteSize() : 0;
     ASTBuilder context(m_globalData, m_lexer);
@@ -668,7 +964,7 @@ const char* JSParser::parseProgram()
 
     m_globalData->parser->didFinishParsing(sourceElements, context.varDeclarations(), context.funcDeclarations(), features,
                                            m_lastLine, context.numConstants(), capturedVariables);
-    return 0;
+    return UString();
 }
 
 bool JSParser::allowAutomaticSemicolon()
@@ -791,12 +1087,12 @@ template <class TreeBuilder> TreeExpression JSParser::parseVarDeclarationList(Tr
         lastIdent = name;
         next();
         bool hasInitializer = match(EQUAL);
-        failIfFalseIfStrict(declareVariable(name));
+        failIfFalseIfStrictWithNameAndMessage(declareVariable(name), "Cannot declare a variable named", name->impl(), "in strict mode.");
         context.addVar(name, (hasInitializer || (!m_allowsIn && match(INTOKEN))) ? DeclarationStacks::HasInitializer : 0);
         if (hasInitializer) {
             int varDivot = tokenStart() + 1;
             initStart = tokenStart();
-            next(); // consume '='
+            next(TreeBuilder::DontBuildStrings); // consume '='
             int initialAssignments = m_assignmentCount;
             TreeExpression initializer = parseAssignmentExpression(context);
             initEnd = lastTokenEnd();
@@ -828,7 +1124,7 @@ template <class TreeBuilder> TreeConstDeclList JSParser::parseConstDeclarationLi
         context.addVar(name, DeclarationStacks::IsConstant | (hasInitializer ? DeclarationStacks::HasInitializer : 0));
         TreeExpression initializer = 0;
         if (hasInitializer) {
-            next(); // consume '='
+            next(TreeBuilder::DontBuildStrings); // consume '='
             initializer = parseAssignmentExpression(context);
         }
         tail = context.appendConstDecl(tail, name, initializer);
@@ -875,8 +1171,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseForStatement(TreeBuild
 
         // Handle for-in with var declaration
         int inLocation = tokenStart();
-        if (!consume(INTOKEN))
-            fail();
+        consumeOrFail(INTOKEN);
 
         TreeExpression expr = parseExpression(context);
         failIfFalse(expr);
@@ -957,12 +1252,12 @@ template <class TreeBuilder> TreeStatement JSParser::parseBreakStatement(TreeBui
     next();
 
     if (autoSemiColon()) {
-        failIfFalse(breakIsValid());
+        failIfFalseWithMessage(breakIsValid(), "'break' is only valid inside a switch or loop statement");
         return context.createBreakStatement(startCol, endCol, startLine, endLine);
     }
     matchOrFail(IDENT);
     const Identifier* ident = m_token.m_data.ident;
-    failIfFalse(getLabel(ident));
+    failIfFalseWithNameAndMessage(getLabel(ident), "Label", ident->impl(), "is not defined");
     endCol = tokenEnd();
     endLine = tokenLine();
     next();
@@ -980,14 +1275,14 @@ template <class TreeBuilder> TreeStatement JSParser::parseContinueStatement(Tree
     next();
 
     if (autoSemiColon()) {
-        failIfFalse(continueIsValid());
+        failIfFalseWithMessage(continueIsValid(), "'continue' is only valid inside a loop statement");
         return context.createContinueStatement(startCol, endCol, startLine, endLine);
     }
     matchOrFail(IDENT);
     const Identifier* ident = m_token.m_data.ident;
     ScopeLabelInfo* label = getLabel(ident);
-    failIfFalse(label);
-    failIfFalse(label->m_isLoop);
+    failIfFalseWithNameAndMessage(label, "Label", ident->impl(), "is not defined");
+    failIfFalseWithMessage(label->m_isLoop, "'continue' is only valid inside a loop statement");
     endCol = tokenEnd();
     endLine = tokenLine();
     next();
@@ -1041,7 +1336,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseThrowStatement(TreeBui
 template <class TreeBuilder> TreeStatement JSParser::parseWithStatement(TreeBuilder& context)
 {
     ASSERT(match(WITH));
-    failIfTrue(strictMode());
+    failIfTrueWithMessage(strictMode(), "'with' statements are not valid in strict mode");
     currentScope()->setNeedsFullActivation();
     int startLine = tokenLine();
     next();
@@ -1149,13 +1444,13 @@ template <class TreeBuilder> TreeStatement JSParser::parseTryStatement(TreeBuild
         ident = m_token.m_data.ident;
         next();
         AutoPopScopeRef catchScope(this, pushScope());
-        failIfFalseIfStrict(catchScope->declareVariable(ident));
+        failIfFalseIfStrictWithNameAndMessage(catchScope->declareVariable(ident), "Cannot declare a variable named", ident->impl(), "in strict mode");
         catchScope->preventNewDecls();
         consumeOrFail(CLOSEPAREN);
         matchOrFail(OPENBRACE);
         int initialEvalCount = context.evalCount();
         catchBlock = parseBlockStatement(context);
-        failIfFalse(catchBlock);
+        failIfFalseWithMessage(catchBlock, "'try' must have a catch or finally block");
         catchHasEval = initialEvalCount != context.evalCount();
         failIfFalse(popScope(catchScope, TreeBuilder::NeedsFreeVariableInfo));
     }
@@ -1213,7 +1508,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseStatement(TreeBuilder&
     case CONSTTOKEN:
         return parseConstDeclaration(context);
     case FUNCTION:
-        failIfFalseIfStrict(m_statementDepth == 1);
+        failIfFalseIfStrictWithMessage(m_statementDepth == 1, "Functions cannot be declared in a nested block in strict mode");
         return parseFunctionDeclaration(context);
     case SEMICOLON:
         next();
@@ -1264,7 +1559,7 @@ template <class TreeBuilder> TreeStatement JSParser::parseStatement(TreeBuilder&
 template <class TreeBuilder> TreeFormalParameterList JSParser::parseFormalParameters(TreeBuilder& context)
 {
     matchOrFail(IDENT);
-    failIfFalseIfStrict(declareParameter(m_token.m_data.ident));
+    failIfFalseIfStrictWithNameAndMessage(declareParameter(m_token.m_data.ident), "Cannot declare a parameter named", m_token.m_data.ident->impl(), " in strict mode");
     TreeFormalParameterList list = context.createFormalParameterList(*m_token.m_data.ident);
     TreeFormalParameterList tail = list;
     next();
@@ -1272,7 +1567,7 @@ template <class TreeBuilder> TreeFormalParameterList JSParser::parseFormalParame
         next();
         matchOrFail(IDENT);
         const Identifier* ident = m_token.m_data.ident;
-        failIfFalseIfStrict(declareParameter(ident));
+        failIfFalseIfStrictWithNameAndMessage(declareParameter(ident), "Cannot declare a parameter named", ident->impl(), "in strict mode");
         next();
         tail = context.createFormalParameterList(tail, *ident);
     }
@@ -1296,7 +1591,7 @@ template <JSParser::FunctionRequirements requirements, bool nameIsInContainingSc
     functionScope->setIsFunction();
     if (match(IDENT)) {
         name = m_token.m_data.ident;
-        failIfTrue(*name == m_globalData->propertyNames->underscoreProto);
+        failIfTrueWithMessage(*name == m_globalData->propertyNames->underscoreProto, "Cannot name a function __proto__");
         next();
         if (!nameIsInContainingScope)
             failIfFalseIfStrict(functionScope->declareVariable(name));
@@ -1334,8 +1629,8 @@ template <JSParser::FunctionRequirements requirements, bool nameIsInContainingSc
     body = parseFunctionBody(context);
     failIfFalse(body);
     if (functionScope->strictMode() && name) {
-        failIfTrue(m_globalData->propertyNames->arguments == *name);
-        failIfTrue(m_globalData->propertyNames->eval == *name);
+        failIfTrueWithNameAndMessage(m_globalData->propertyNames->arguments == *name, "Function name", name->impl(), "is not valid in strict mode");
+        failIfTrueWithNameAndMessage(m_globalData->propertyNames->eval == *name, "Function name", name->impl(), "is not valid in strict mode");
     }
     closeBracePos = m_token.m_data.intValue;
     
@@ -1552,7 +1847,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseExpression(TreeBuilde
     failIfFalse(right);
     typename TreeBuilder::Comma commaNode = context.createCommaExpr(node, right);
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         right = parseAssignmentExpression(context);
         failIfFalse(right);
         context.appendToComma(commaNode, right);
@@ -1597,10 +1892,10 @@ template <typename TreeBuilder> TreeExpression JSParser::parseAssignmentExpressi
         context.assignmentStackAppend(assignmentStack, lhs, start, tokenStart(), m_assignmentCount, op);
         start = tokenStart();
         m_assignmentCount++;
-        next();
+        next(TreeBuilder::DontBuildStrings);
         if (strictMode() && m_lastIdentifier && context.isResolve(lhs)) {
-            failIfTrueIfStrict(m_globalData->propertyNames->eval == *m_lastIdentifier);
-            failIfTrueIfStrict(m_globalData->propertyNames->arguments == *m_lastIdentifier);
+            failIfTrueIfStrictWithMessage(m_globalData->propertyNames->eval == *m_lastIdentifier, "'eval' cannot be modified in strict mode");
+            failIfTrueIfStrictWithMessage(m_globalData->propertyNames->arguments == *m_lastIdentifier, "'arguments' cannot be modified in strict mode");
             declareWrite(m_lastIdentifier);
             m_lastIdentifier = 0;
         }
@@ -1630,9 +1925,9 @@ template <class TreeBuilder> TreeExpression JSParser::parseConditionalExpression
         return cond;
     m_nonTrivialExpressionCount++;
     m_nonLHSCount++;
-    next();
+    next(TreeBuilder::DontBuildStrings);
     TreeExpression lhs = parseAssignmentExpression(context);
-    consumeOrFail(COLON);
+    consumeOrFailWithFlags(COLON, TreeBuilder::DontBuildStrings);
 
     TreeExpression rhs = parseAssignmentExpression(context);
     failIfFalse(rhs);
@@ -1670,7 +1965,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseBinaryExpression(Tree
         m_nonTrivialExpressionCount++;
         m_nonLHSCount++;
         int operatorToken = m_token.m_type;
-        next();
+        next(TreeBuilder::DontBuildStrings);
 
         while (operatorStackDepth &&  context.operatorStackHasHigherPrecedence(operatorStackDepth, precedence)) {
             ASSERT(operandStackDepth > 1);
@@ -1705,7 +2000,11 @@ template <bool complete, class TreeBuilder> TreeProperty JSParser::parseProperty
         wasIdent = true;
     case STRING: {
         const Identifier* ident = m_token.m_data.ident;
-        next(Lexer::IgnoreReservedWords);
+        if (complete || (wasIdent && (*ident == m_globalData->propertyNames->get || *ident == m_globalData->propertyNames->set)))
+            nextExpectIdentifier(Lexer::IgnoreReservedWords);
+        else
+            nextExpectIdentifier(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
+
         if (match(COLON)) {
             next();
             TreeExpression node = parseAssignmentExpression(context);
@@ -1747,7 +2046,7 @@ template <bool complete, class TreeBuilder> TreeProperty JSParser::parseProperty
 template <class TreeBuilder> TreeExpression JSParser::parseObjectLiteral(TreeBuilder& context)
 {
     int startOffset = m_token.m_data.intValue;
-    consumeOrFail(OPENBRACE);
+    consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings);
 
     if (match(CLOSEBRACE)) {
         next();
@@ -1764,7 +2063,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseObjectLiteral(TreeBui
     TreePropertyList propertyList = context.createPropertyList(property);
     TreePropertyList tail = propertyList;
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         // allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939
         if (match(CLOSEBRACE))
             break;
@@ -1829,15 +2128,15 @@ template <class TreeBuilder> TreeExpression JSParser::parseStrictObjectLiteral(T
 
 template <class TreeBuilder> TreeExpression JSParser::parseArrayLiteral(TreeBuilder& context)
 {
-    consumeOrFail(OPENBRACKET);
+    consumeOrFailWithFlags(OPENBRACKET, TreeBuilder::DontBuildStrings);
 
     int elisions = 0;
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         elisions++;
     }
     if (match(CLOSEBRACKET)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         return context.createArray(elisions);
     }
 
@@ -1847,7 +2146,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseArrayLiteral(TreeBuil
     typename TreeBuilder::ElementList tail = elementList;
     elisions = 0;
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         elisions = 0;
 
         while (match(COMMA)) {
@@ -1856,7 +2155,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseArrayLiteral(TreeBuil
         }
 
         if (match(CLOSEBRACKET)) {
-            next();
+            next(TreeBuilder::DontBuildStrings);
             return context.createArray(elisions, elementList);
         }
         TreeExpression elem = parseAssignmentExpression(context);
@@ -1935,9 +2234,9 @@ template <class TreeBuilder> TreeExpression JSParser::parsePrimaryExpression(Tre
         next();
         TreeExpression re = context.createRegExp(*pattern, *flags, start);
         if (!re) {
-            m_errorMessage = Yarr::checkSyntax(pattern->ustring());
-            ASSERT(m_errorMessage);
-            fail();
+            const char* yarrErrorMsg = Yarr::checkSyntax(pattern->ustring());
+            ASSERT(!m_errorMessage.isNull());
+            failWithMessage(yarrErrorMsg);
         }
         return re;
     }
@@ -1948,9 +2247,9 @@ template <class TreeBuilder> TreeExpression JSParser::parsePrimaryExpression(Tre
 
 template <class TreeBuilder> TreeArguments JSParser::parseArguments(TreeBuilder& context)
 {
-    consumeOrFail(OPENPAREN);
+    consumeOrFailWithFlags(OPENPAREN, TreeBuilder::DontBuildStrings);
     if (match(CLOSEPAREN)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         return context.createArguments();
     }
     TreeExpression firstArg = parseAssignmentExpression(context);
@@ -1959,7 +2258,7 @@ template <class TreeBuilder> TreeArguments JSParser::parseArguments(TreeBuilder&
     TreeArgumentsList argList = context.createArgumentsList(firstArg);
     TreeArgumentsList tail = argList;
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         TreeExpression arg = parseAssignmentExpression(context);
         failIfFalse(arg);
         tail = context.createArgumentsList(tail, arg);
@@ -2004,8 +2303,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseMemberExpression(Tree
             TreeExpression property = parseExpression(context);
             failIfFalse(property);
             base = context.createBracketAccess(base, property, initialAssignments != m_assignmentCount, expressionStart, expressionEnd, tokenEnd());
-            if (!consume(CLOSEBRACKET))
-                fail();
+            consumeOrFail(CLOSEBRACKET);
             m_nonLHSCount = nonLHSCount;
             break;
         }
@@ -2033,9 +2331,9 @@ template <class TreeBuilder> TreeExpression JSParser::parseMemberExpression(Tree
         case DOT: {
             m_nonTrivialExpressionCount++;
             int expressionEnd = lastTokenEnd();
-            next(Lexer::IgnoreReservedWords);
+            nextExpectIdentifier(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
             matchOrFail(IDENT);
-            base = context.createDotAccess(base, *m_token.m_data.ident, expressionStart, expressionEnd, tokenEnd());
+            base = context.createDotAccess(base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEnd());
             next();
             break;
         }
@@ -2090,14 +2388,14 @@ template <class TreeBuilder> TreeExpression JSParser::parseUnaryExpression(TreeB
             isEvalOrArguments = *m_lastIdentifier == m_globalData->propertyNames->eval || *m_lastIdentifier == m_globalData->propertyNames->arguments;
         }
     }
-    failIfTrueIfStrict(isEvalOrArguments && modifiesExpr);
+    failIfTrueIfStrictWithNameAndMessage(isEvalOrArguments && modifiesExpr, "'", m_lastIdentifier->impl(), "' cannot be modified in strict mode");
     switch (m_token.m_type) {
     case PLUSPLUS:
         m_nonTrivialExpressionCount++;
         m_nonLHSCount++;
         expr = context.makePostfixNode(expr, OpPlusPlus, subExprStart, lastTokenEnd(), tokenEnd());
         m_assignmentCount++;
-        failIfTrueIfStrict(isEvalOrArguments);
+        failIfTrueIfStrictWithNameAndMessage(isEvalOrArguments, "'", m_lastIdentifier->impl(), "' cannot be modified in strict mode");
         failIfTrueIfStrict(requiresLExpr);
         next();
         break;
@@ -2106,7 +2404,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseUnaryExpression(TreeB
         m_nonLHSCount++;
         expr = context.makePostfixNode(expr, OpMinusMinus, subExprStart, lastTokenEnd(), tokenEnd());
         m_assignmentCount++;
-        failIfTrueIfStrict(isEvalOrArguments);
+        failIfTrueIfStrictWithNameAndMessage(isEvalOrArguments, "'", m_lastIdentifier->impl(), "' cannot be modified in strict mode");
         failIfTrueIfStrict(requiresLExpr);
         next();
         break;
@@ -2150,7 +2448,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseUnaryExpression(TreeB
             expr = context.createVoid(expr);
             break;
         case DELETETOKEN:
-            failIfTrueIfStrict(context.isResolve(expr));
+            failIfTrueIfStrictWithNameAndMessage(context.isResolve(expr), "Cannot delete unqualified property", m_lastIdentifier->impl(), "in strict mode");
             expr = context.makeDeleteNode(expr, context.unaryTokenStackLastStart(tokenStackDepth), end, end);
             break;
         default:

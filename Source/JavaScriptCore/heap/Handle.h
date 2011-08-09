@@ -47,6 +47,7 @@ template <> class Handle<JSValue>;
 template<typename KeyType, typename MappedType, typename FinalizerCallback, typename HashArg, typename KeyTraitsArg> class WeakGCMap;
 
 class HandleBase {
+    template <typename T> friend class Weak;
     friend class HandleHeap;
     friend struct JSCallbackObjectData;
     template <typename KeyType, typename MappedType, typename FinalizerCallback, typename HashArg, typename KeyTraitsArg> friend class WeakGCMap;
@@ -79,31 +80,19 @@ private:
 template <typename Base, typename T> struct HandleConverter {
     T* operator->()
     {
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get()->isZombie());
-#endif
         return static_cast<Base*>(this)->get();
     }
     const T* operator->() const
     {
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get()->isZombie());
-#endif
         return static_cast<const Base*>(this)->get();
     }
 
     T* operator*()
     {
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get()->isZombie());
-#endif
         return static_cast<Base*>(this)->get();
     }
     const T* operator*() const
     {
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get()->isZombie());
-#endif
         return static_cast<const Base*>(this)->get();
     }
 };
@@ -118,9 +107,6 @@ template <typename Base> struct HandleConverter<Base, Unknown> {
 private:
     JSValue jsValue() const
     {
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!static_cast<const Base*>(this)->get() || !static_cast<const Base*>(this)->get().isZombie());
-#endif
         return static_cast<const Base*>(this)->get();
     }
 };

@@ -90,8 +90,8 @@ JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeCha
     , m_scopeChain(exec->globalData(), this, scopeChainNode)
 {
     ASSERT(inherits(&s_info));
-    const Identifier& name = static_cast<FunctionExecutable*>(m_executable.get())->name();
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    setStructure(exec->globalData(), scopeChainNode->globalObject->namedFunctionStructure());
+    putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
 }
 
 JSFunction::~JSFunction()
@@ -179,6 +179,8 @@ JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&
 
 static inline WriteBarrierBase<Unknown>* createPrototypeProperty(JSGlobalData& globalData, JSGlobalObject* globalObject, JSFunction* function)
 {
+    ASSERT(!function->isHostFunction());
+
     ExecState* exec = globalObject->globalExec();
     if (WriteBarrierBase<Unknown>* location = function->getDirectLocation(globalData, exec->propertyNames().prototype))
         return location;
@@ -190,7 +192,8 @@ static inline WriteBarrierBase<Unknown>* createPrototypeProperty(JSGlobalData& g
 
 void JSFunction::preventExtensions(JSGlobalData& globalData)
 {
-    createPrototypeProperty(globalData, scope()->globalObject.get(), this);
+    if (!isHostFunction())
+        createPrototypeProperty(globalData, scope()->globalObject.get(), this);
     JSObject::preventExtensions(globalData);
 }
 
@@ -280,7 +283,6 @@ void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
         getOwnPropertySlot(exec, exec->propertyNames().prototype, slot);
 
         propertyNames.add(exec->propertyNames().arguments);
-        propertyNames.add(exec->propertyNames().callee);
         propertyNames.add(exec->propertyNames().caller);
         propertyNames.add(exec->propertyNames().length);
     }

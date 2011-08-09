@@ -30,12 +30,11 @@ namespace JSC {
     class JSGlobalData;
     class JSGlobalObject;
     class JSObject;
-    class MarkStack;
     class ScopeChainIterator;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
     
     class ScopeChainNode : public JSCell {
-    public:
+    private:
         ScopeChainNode(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
             : JSCell(*globalData, globalData->scopeChainNodeStructure.get())
             , globalData(globalData)
@@ -48,6 +47,16 @@ namespace JSC {
             ASSERT(globalObject);
         }
 
+    public:
+        static ScopeChainNode* create(ExecState* exec, ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
+        {
+            return new (allocateCell<ScopeChainNode>(*exec->heap())) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+        }
+        static ScopeChainNode* create(ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
+        {
+            return new (allocateCell<ScopeChainNode>(globalData->heap)) ScopeChainNode(next, object, globalData, globalObject, globalThis);
+        }
+        
         JSGlobalData* globalData;
         WriteBarrier<ScopeChainNode> next;
         WriteBarrier<JSObject> object;
@@ -77,7 +86,7 @@ namespace JSC {
     inline ScopeChainNode* ScopeChainNode::push(JSObject* o)
     {
         ASSERT(o);
-        return new (globalData) ScopeChainNode(this, o, globalData, globalObject.get(), globalThis.get());
+        return ScopeChainNode::create(this, o, globalData, globalObject.get(), globalThis.get());
     }
 
     inline ScopeChainNode* ScopeChainNode::pop()

@@ -56,8 +56,14 @@ namespace JSC {
     };
 
     class RegExpConstructor : public InternalFunction {
-    public:
+    private:
         RegExpConstructor(ExecState*, JSGlobalObject*, Structure*, RegExpPrototype*);
+
+    public:
+        static RegExpConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
+        {
+            return new (allocateCell<RegExpConstructor>(*exec->heap())) RegExpConstructor(exec, globalObject, structure, regExpPrototype);
+        }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
@@ -70,7 +76,7 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        void performMatch(RegExp*, const UString&, int startOffset, int& position, int& length, int** ovector = 0);
+        void performMatch(JSGlobalData&, RegExp*, const UString&, int startOffset, int& position, int& length, int** ovector = 0);
         JSObject* arrayOfMatches(ExecState*) const;
 
         void setInput(const UString&);
@@ -96,7 +102,7 @@ namespace JSC {
 
     RegExpConstructor* asRegExpConstructor(JSValue);
 
-    JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&);
+    JSObject* constructRegExp(ExecState*, JSGlobalObject*, const ArgList&, bool callAsConstructor = false);
 
     inline RegExpConstructor* asRegExpConstructor(JSValue value)
     {
@@ -109,9 +115,9 @@ namespace JSC {
       expression matching through the performMatch function. We use cached results to calculate, 
       e.g., RegExp.lastMatch and RegExp.leftParen.
     */
-    ALWAYS_INLINE void RegExpConstructor::performMatch(RegExp* r, const UString& s, int startOffset, int& position, int& length, int** ovector)
+    ALWAYS_INLINE void RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* r, const UString& s, int startOffset, int& position, int& length, int** ovector)
     {
-        position = r->match(s, startOffset, &d->tempOvector());
+        position = r->match(globalData, s, startOffset, &d->tempOvector());
 
         if (ovector)
             *ovector = d->tempOvector().data();

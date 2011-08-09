@@ -6,7 +6,7 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 PASS successfullyParsed is true
 
 TEST COMPLETE
-PASS INPUT has a marker on 'foo bar'
+FAIL INPUT should have a marker on for 'foo bar'
 PASS INPUT has a marker on 'fo<b>o ba</b>r'
 PASS TEXTAREA has a marker on 'foo bar'
 PASS TEXTAREA has a marker on 'fo<b>o ba</b>r'

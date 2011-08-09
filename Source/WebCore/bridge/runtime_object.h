@@ -35,7 +35,11 @@ namespace Bindings {
 
 class RuntimeObject : public JSObjectWithGlobalObject {
 public:
-    RuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<Instance>);
+    static RuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
+    {
+        return new (allocateCell<RuntimeObject>(*exec->heap())) RuntimeObject(exec, globalObject, structure, instance);
+    }
+
     virtual ~RuntimeObject();
 
     virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -67,6 +71,7 @@ public:
     }
 
 protected:
+    RuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<Instance>);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSObjectWithGlobalObject::StructureFlags;
 
 private:

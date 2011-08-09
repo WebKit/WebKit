@@ -50,8 +50,7 @@ void StructureStubInfo::deref()
     case access_get_by_id_chain:
     case access_put_by_id_transition:
     case access_put_by_id_replace:
-    case access_get_by_id:
-    case access_put_by_id:
+    case access_unset:
     case access_get_by_id_generic:
     case access_put_by_id_generic:
     case access_get_array_length:
@@ -95,8 +94,7 @@ void StructureStubInfo::visitAggregate(SlotVisitor& visitor)
     case access_put_by_id_replace:
         visitor.append(&u.putByIdReplace.baseObjectStructure);
         return;
-    case access_get_by_id:
-    case access_put_by_id:
+    case access_unset:
     case access_get_by_id_generic:
     case access_put_by_id_generic:
     case access_get_array_length:

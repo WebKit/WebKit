@@ -234,31 +234,14 @@ sub IndexGetterReturnsStrings
     return 0;
 }
 
-sub AddIncludesForType
+sub AddIncludesForTypeInImpl
 {
     my $type = $codeGenerator->StripModule(shift);
     my $isCallback = @_ ? shift : 0;
-
-    # When we're finished with the one-file-per-class
-    # reorganization, we won't need these special cases.
-    if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->AvoidInclusionOfType($type)
-        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array") {
-    } elsif ($type =~ /SVGPathSeg/) {
-        $joinedName = $type;
-        $joinedName =~ s/Abs|Rel//;
-        $implIncludes{"${joinedName}.h"} = 1;
-    } elsif ($type eq "XPathNSResolver") {
-        $implIncludes{"JSXPathNSResolver.h"} = 1;
-        $implIncludes{"JSCustomXPathNSResolver.h"} = 1;
-    } elsif ($isCallback) {
-        $implIncludes{"JS${type}.h"} = 1;
-    } else {
-        # default, include the same named file
-        $implIncludes{"${type}.h"} = 1;
-    }
-
+    
+    AddIncludesForType($type, $isCallback, \%implIncludes);
+    
     # additional includes (things needed to compile the bindings but not the header)
-
     if ($type eq "CanvasRenderingContext2D") {
         $implIncludes{"CanvasGradient.h"} = 1;
         $implIncludes{"CanvasPattern.h"} = 1;
@@ -275,6 +258,39 @@ sub AddIncludesForType
 
     if ($type eq "MediaQueryListListener") {
         $implIncludes{"MediaQueryListListener.h"} = 1;
+    }
+}
+
+sub AddIncludesForTypeInHeader
+{
+    my $type = $codeGenerator->StripModule(shift);
+    my $isCallback = @_ ? shift : 0;
+    
+    AddIncludesForType($type, $isCallback, \%headerIncludes);
+}
+
+sub AddIncludesForType
+{
+    my $type = shift;
+    my $isCallback = shift;
+    my $includesRef = shift;
+
+    # When we're finished with the one-file-per-class
+    # reorganization, we won't need these special cases.
+    if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->AvoidInclusionOfType($type)
+        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array") {
+    } elsif ($type =~ /SVGPathSeg/) {
+        $joinedName = $type;
+        $joinedName =~ s/Abs|Rel//;
+        $includesRef->{"${joinedName}.h"} = 1;
+    } elsif ($type eq "XPathNSResolver") {
+        $includesRef->{"JSXPathNSResolver.h"} = 1;
+        $includesRef->{"JSCustomXPathNSResolver.h"} = 1;
+    } elsif ($isCallback) {
+        $includesRef->{"JS${type}.h"} = 1;
+    } else {
+        # default, include the same named file
+        $includesRef->{"${type}.h"} = 1;
     }
 }
 
@@ -671,7 +687,9 @@ sub GenerateHeader
         $headerIncludes{"$implClassName.h"} = 1;
     } else {
         # Implementation class forward declaration
-        AddClassForwardIfNeeded($implClassName) unless $svgPropertyOrListPropertyType;
+        if ($interfaceName eq "DOMWindow" || $dataNode->extendedAttributes->{"IsWorkerContext"}) {
+            AddClassForwardIfNeeded($implClassName) unless $svgPropertyOrListPropertyType;
+        }
     }
 
     AddClassForwardIfNeeded("JSDOMWindowShell") if $interfaceName eq "DOMWindow";
@@ -679,15 +697,25 @@ sub GenerateHeader
     # Class declaration
     push(@headerContent, "class $className : public $parentClassName {\n");
     push(@headerContent, "    typedef $parentClassName Base;\n");
-    push(@headerContent, "public:\n");
 
-    # Constructor
+    # Static create methods
+    push(@headerContent, "public:\n");
     if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    $className(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
+        push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl, JSDOMWindowShell* windowShell)\n");
+        push(@headerContent, "    {\n");
+        push(@headerContent, "        return new (JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl, windowShell);\n");
+        push(@headerContent, "    }\n\n");
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
-        push(@headerContent, "    $className(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<$implType>);\n");
+        push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl)\n");
+        push(@headerContent, "    {\n");
+        push(@headerContent, "        return new (JSC::allocateCell<$className>(globalData.heap)) ${className}(globalData, structure, impl);\n");
+        push(@headerContent, "    }\n\n");
     } else {
-        push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<$implType>);\n");
+        AddIncludesForTypeInHeader($implType) unless $svgPropertyOrListPropertyType;
+        push(@headerContent, "    static $className* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<$implType> impl)\n");
+        push(@headerContent, "    {\n");
+        push(@headerContent, "        return new (JSC::allocateCell<$className>(globalObject->globalData().heap)) $className(structure, globalObject, impl);\n");
+        push(@headerContent, "    }\n\n");
     }
 
     # Prototype
@@ -744,7 +772,6 @@ sub GenerateHeader
     # Structure ID
     if ($interfaceName eq "DOMWindow") {
         $structureFlags{"JSC::ImplementsHasInstance"} = 1;
-        $structureFlags{"JSC::NeedsThisConversion"} = 1;
     }
     push(@headerContent,
         "    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)\n" .
@@ -874,8 +901,17 @@ sub GenerateHeader
         push(@headerContent, "    static const unsigned AnonymousSlotCount = $numCachedAttributes + Base::AnonymousSlotCount;\n");
     }
 
-    # structure flags
     push(@headerContent, "protected:\n");
+    # Constructor
+    if ($interfaceName eq "DOMWindow") {
+        push(@headerContent, "    $className(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<$implType>, JSDOMWindowShell*);\n");
+    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
+        push(@headerContent, "    $className(JSC::JSGlobalData&, JSC::Structure*, PassRefPtr<$implType>);\n");
+    } else {
+        push(@headerContent, "    $className(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<$implType>);\n");
+    }
+
+    # structure flags
     push(@headerContent, "    static const unsigned StructureFlags = ");
     foreach my $structureFlag (keys %structureFlags) {
         push(@headerContent, $structureFlag . " | ");
@@ -960,13 +996,15 @@ sub GenerateHeader
     push(@headerContent, "class ${className}Prototype : public JSC::JSObjectWithGlobalObject {\n");
     push(@headerContent, "    typedef JSC::JSObjectWithGlobalObject Base;\n");
     push(@headerContent, "public:\n");
-    if ($interfaceName eq "DOMWindow") {
-        push(@headerContent, "    void* operator new(size_t);\n");
-    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
-        push(@headerContent, "    void* operator new(size_t, JSC::JSGlobalData*);\n");
-    } else {
+    if ($interfaceName ne "DOMWindow" && !$dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);\n");
     }
+
+    push(@headerContent, "    static ${className}Prototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)\n");
+    push(@headerContent, "    {\n");
+    push(@headerContent, "        return new (JSC::allocateCell<${className}Prototype>(globalData.heap)) ${className}Prototype(globalData, globalObject, structure);\n");
+    push(@headerContent, "    }\n\n");
+
     push(@headerContent, "    static const JSC::ClassInfo s_info;\n");
     if ($numFunctions > 0 || $numConstants > 0 || $dataNode->extendedAttributes->{"DelegatingPrototypeGetOwnPropertySlot"}) {
         push(@headerContent, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
@@ -991,6 +1029,7 @@ sub GenerateHeader
     # Custom defineGetter function
     push(@headerContent, "    virtual void defineGetter(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::JSObject* getterFunction, unsigned attributes);\n") if $dataNode->extendedAttributes->{"CustomPrototypeDefineGetter"};
 
+    push(@headerContent, "\nprivate:\n");
     push(@headerContent, "    ${className}Prototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, globalObject, structure) { }\n");
 
     # structure flags
@@ -1235,7 +1274,7 @@ sub GenerateImplementation
     $implIncludes{"<wtf/GetPtr.h>"} = 1;
     $implIncludes{"<runtime/PropertyNameArray.h>"} = 1 if $dataNode->extendedAttributes->{"HasIndexGetter"} || $dataNode->extendedAttributes->{"HasCustomIndexGetter"} || $dataNode->extendedAttributes->{"HasNumericIndexGetter"};
 
-    AddIncludesForType($interfaceName);
+    AddIncludesForTypeInImpl($interfaceName);
 
     @implContent = ();
 
@@ -1330,17 +1369,7 @@ sub GenerateImplementation
     } else {
         push(@implContent, "const ClassInfo ${className}Prototype::s_info = { \"${visibleClassName}Prototype\", &JSC::JSObjectWithGlobalObject::s_info, &${className}PrototypeTable, 0 };\n\n");
     }
-    if ($interfaceName eq "DOMWindow") {
-        push(@implContent, "void* ${className}Prototype::operator new(size_t size)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return JSDOMWindow::commonJSGlobalData()->heap.allocate(size);\n");
-        push(@implContent, "}\n\n");
-    } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
-        push(@implContent, "void* ${className}Prototype::operator new(size_t size, JSGlobalData* globalData)\n");
-        push(@implContent, "{\n");
-        push(@implContent, "    return globalData->heap.allocate(size);\n");
-        push(@implContent, "}\n\n");
-    } else {
+    if ($interfaceName ne "DOMWindow" && !$dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@implContent, "JSObject* ${className}Prototype::self(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         push(@implContent, "    return getDOMPrototype<${className}>(exec, globalObject);\n");
@@ -1427,11 +1456,11 @@ sub GenerateImplementation
 
     # Constructor
     if ($interfaceName eq "DOMWindow") {
-        AddIncludesForType("JSDOMWindowShell");
+        AddIncludesForTypeInImpl("JSDOMWindowShell");
         push(@implContent, "${className}::$className(JSGlobalData& globalData, Structure* structure, PassRefPtr<$implType> impl, JSDOMWindowShell* shell)\n");
         push(@implContent, "    : $parentClassName(globalData, structure, impl, shell)\n");
     } elsif ($dataNode->extendedAttributes->{"IsWorkerContext"}) {
-        AddIncludesForType($interfaceName);
+        AddIncludesForTypeInImpl($interfaceName);
         push(@implContent, "${className}::$className(JSGlobalData& globalData, Structure* structure, PassRefPtr<$implType> impl)\n");
         push(@implContent, "    : $parentClassName(globalData, structure, impl)\n");
     } else {
@@ -1466,9 +1495,9 @@ sub GenerateImplementation
         push(@implContent, "JSObject* ${className}::createPrototype(ExecState* exec, JSGlobalObject* globalObject)\n");
         push(@implContent, "{\n");
         if ($hasParent && $parentClassName ne "JSC::DOMNodeFilter") {
-            push(@implContent, "    return new (exec) ${className}Prototype(exec->globalData(), globalObject, ${className}Prototype::createStructure(exec->globalData(), ${parentClassName}Prototype::self(exec, globalObject)));\n");
+            push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(exec->globalData(), ${parentClassName}Prototype::self(exec, globalObject)));\n");
         } else {
-            push(@implContent, "    return new (exec) ${className}Prototype(exec->globalData(), globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));\n");
+            push(@implContent, "    return ${className}Prototype::create(exec->globalData(), globalObject, ${className}Prototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));\n");
         }
         push(@implContent, "}\n\n");
     }
@@ -1853,7 +1882,7 @@ sub GenerateImplementation
     # Functions
     if ($numFunctions > 0) {
         foreach my $function (@{$dataNode->functions}) {
-            AddIncludesForType($function->signature->type);
+            AddIncludesForTypeInImpl($function->signature->type);
 
             my $functionName = $codeGenerator->WK_lcfirst($className) . "PrototypeFunction" . $codeGenerator->WK_ucfirst($function->signature->name);
 
@@ -2363,12 +2392,12 @@ sub GenerateCallbackImplementation
                 next;
             }
 
-            AddIncludesForType($function->signature->type);
+            AddIncludesForTypeInImpl($function->signature->type);
             push(@implContent, "\n" . GetNativeType($function->signature->type) . " ${className}::" . $function->signature->name . "(");
 
             my @args = ();
             foreach my $param (@params) {
-                AddIncludesForType($param->type, 1);
+                AddIncludesForTypeInImpl($param->type, 1);
                 push(@args, GetNativeType($param->type) . " " . $param->name);
             }
             push(@implContent, join(", ", @args));
@@ -2973,8 +3002,14 @@ sub GenerateConstructorDeclaration
     my $callWith = $dataNode->extendedAttributes->{"CallWith"};
 
     push(@$outputArray, "class ${constructorClassName} : public DOMConstructorObject {\n");
-    push(@$outputArray, "public:\n");
+    push(@$outputArray, "private:\n");
     push(@$outputArray, "    ${constructorClassName}(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);\n\n");
+    
+    push(@$outputArray, "public:\n");
+    push(@$outputArray, "    static $constructorClassName* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
+    push(@$outputArray, "    {\n");
+    push(@$outputArray, "        return new (JSC::allocateCell<$constructorClassName>(*exec->heap())) $constructorClassName(exec, structure, globalObject);\n");
+    push(@$outputArray, "    }\n\n");
 
     push(@$outputArray, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
     push(@$outputArray, "    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n");

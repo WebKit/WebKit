@@ -33,8 +33,12 @@ namespace JSC {
     
 class RuntimeArray : public JSArray {
 public:
+    static RuntimeArray* create(ExecState* exec, Bindings::Array* array)
+    {
+        return new (allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, array);
+    }
+
     typedef Bindings::Array BindingsArray;
-    RuntimeArray(ExecState*, Bindings::Array*);
     virtual ~RuntimeArray();
 
     virtual void getOwnPropertyNames(ExecState*, PropertyNameArray&, EnumerationMode mode = ExcludeDontEnumProperties);
@@ -67,6 +71,7 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSArray::StructureFlags;
 
 private:
+    RuntimeArray(ExecState*, Bindings::Array*);
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     static JSValue indexGetter(ExecState*, JSValue, unsigned);
 };

@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 2: ReferenceError: Can't find variable: createSVGTestCase
 SVG 1.1 dynamic animation tests
 
 Test behavior on dynamic-update of attributeName
@@ -5,9 +6,4 @@ Test behavior on dynamic-update of attributeName
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS rect.style.color is 'rgb(0, 128, 0)'
-PASS rect.style.fill is '#008000'
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

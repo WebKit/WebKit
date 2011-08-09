@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
-
 #include "HandleStack.h"
 
-#include "MarkStack.h"
+#include "HeapRootVisitor.h"
 
 namespace JSC {
 
@@ -39,7 +38,7 @@ HandleStack::HandleStack()
     grow();
 }
 
-void HandleStack::mark(HeapRootVisitor& heapRootMarker)
+void HandleStack::visit(HeapRootVisitor& heapRootVisitor)
 {
     const Vector<HandleSlot>& blocks = m_blockStack.blocks();
     size_t blockLength = m_blockStack.blockLength;
@@ -47,10 +46,10 @@ void HandleStack::mark(HeapRootVisitor& heapRootMarker)
     int end = blocks.size() - 1;
     for (int i = 0; i < end; ++i) {
         HandleSlot block = blocks[i];
-        heapRootMarker.mark(block, blockLength);
+        heapRootVisitor.visit(block, blockLength);
     }
     HandleSlot block = blocks[end];
-    heapRootMarker.mark(block, m_frame.m_next - block);
+    heapRootVisitor.visit(block, m_frame.m_next - block);
 }
 
 void HandleStack::grow()

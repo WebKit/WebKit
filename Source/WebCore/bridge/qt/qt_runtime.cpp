@@ -848,9 +848,9 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
             UString pattern((UChar*)re.pattern().utf16(), re.pattern().length());
             RegExpFlags flags = (re.caseSensitivity() == Qt::CaseInsensitive) ? FlagIgnoreCase : NoFlags;
 
-            RefPtr<JSC::RegExp> regExp = JSC::RegExp::create(&exec->globalData(), pattern, flags);
+            JSC::RegExp* regExp = JSC::RegExp::create(exec->globalData(), pattern, flags);
             if (regExp->isValid())
-                return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
+                return RegExpObject::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp);
             return jsNull();
         }
     }
@@ -883,14 +883,14 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
         dt.isDST = -1;
         double ms = gregorianDateTimeToMS(exec, dt, time.msec(), /*inputIsUTC*/ false);
 
-        return new (exec) DateInstance(exec, exec->lexicalGlobalObject()->dateStructure(), trunc(ms));
+        return DateInstance::create(exec, exec->lexicalGlobalObject()->dateStructure(), trunc(ms));
     }
 
     if (type == QMetaType::QByteArray) {
         QByteArray qtByteArray = variant.value<QByteArray>();
         WTF::RefPtr<WTF::ByteArray> wtfByteArray = WTF::ByteArray::create(qtByteArray.length());
         memcpy(wtfByteArray->data(), qtByteArray.constData(), qtByteArray.length());
-        return new (exec) JSC::JSByteArray(exec, JSC::JSByteArray::createStructure(exec->globalData(), jsNull()), wtfByteArray.get());
+        return JSC::JSByteArray::create(exec, JSC::JSByteArray::createStructure(exec->globalData(), jsNull()), wtfByteArray.get());
     }
 
     if (type == QMetaType::QObjectStar || type == QMetaType::QWidgetStar) {
@@ -948,16 +948,16 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
     if (type == QMetaType::QVariantList) {
         QVariantList vl = variant.toList();
         qConvDebug() << "got a " << vl.count() << " length list:" << vl;
-        return new (exec) RuntimeArray(exec, new QtArray<QVariant>(vl, QMetaType::Void, root));
+        return RuntimeArray::create(exec, new QtArray<QVariant>(vl, QMetaType::Void, root));
     } else if (type == QMetaType::QStringList) {
         QStringList sl = variant.value<QStringList>();
-        return new (exec) RuntimeArray(exec, new QtArray<QString>(sl, QMetaType::QString, root));
+        return RuntimeArray::create(exec, new QtArray<QString>(sl, QMetaType::QString, root));
     } else if (type == (QMetaType::Type) qMetaTypeId<QObjectList>()) {
         QObjectList ol= variant.value<QObjectList>();
-        return new (exec) RuntimeArray(exec, new QtArray<QObject*>(ol, QMetaType::QObjectStar, root));
+        return RuntimeArray::create(exec, new QtArray<QObject*>(ol, QMetaType::QObjectStar, root));
     } else if (type == (QMetaType::Type)qMetaTypeId<QList<int> >()) {
         QList<int> il= variant.value<QList<int> >();
-        return new (exec) RuntimeArray(exec, new QtArray<int>(il, QMetaType::Int, root));
+        return RuntimeArray::create(exec, new QtArray<int>(il, QMetaType::Int, root));
     }
 
     if (type == (QMetaType::Type)qMetaTypeId<QVariant>()) {
@@ -1521,7 +1521,7 @@ JSValue QtRuntimeMetaMethod::connectGetter(ExecState* exec, JSValue slotBase, co
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_connect)
-        d->m_connect.set(exec->globalData(), thisObj, new (exec) QtRuntimeConnectionMethod(exec, ident, true, d->m_instance, d->m_index, d->m_signature));
+        d->m_connect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident, true, d->m_instance, d->m_index, d->m_signature));
     return d->m_connect.get();
 }
 
@@ -1531,7 +1531,7 @@ JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase,
     QW_DS(QtRuntimeMetaMethod, thisObj);
 
     if (!d->m_disconnect)
-        d->m_disconnect.set(exec->globalData(), thisObj, new (exec) QtRuntimeConnectionMethod(exec, ident, false, d->m_instance, d->m_index, d->m_signature));
+        d->m_disconnect.set(exec->globalData(), thisObj, QtRuntimeConnectionMethod::create(exec, ident, false, d->m_instance, d->m_index, d->m_signature));
     return d->m_disconnect.get();
 }
 

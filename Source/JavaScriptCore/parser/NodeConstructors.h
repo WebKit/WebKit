@@ -449,16 +449,6 @@ namespace JSC {
     {
     }
 
-    inline ReverseBinaryOpNode::ReverseBinaryOpNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : BinaryOpNode(globalData, expr1, expr2, opcodeID, rightHasAssignments)
-    {
-    }
-
-    inline ReverseBinaryOpNode::ReverseBinaryOpNode(JSGlobalData* globalData, ResultType type, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID opcodeID, bool rightHasAssignments)
-        : BinaryOpNode(globalData, type, expr1, expr2, opcodeID, rightHasAssignments)
-    {
-    }
-
     inline MultNode::MultNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
         : BinaryOpNode(globalData, ResultType::numberTypeCanReuse(), expr1, expr2, op_mul, rightHasAssignments)
     {
@@ -506,7 +496,7 @@ namespace JSC {
     }
 
     inline GreaterNode::GreaterNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : ReverseBinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_less, rightHasAssignments)
+        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_greater, rightHasAssignments)
     {
     }
 
@@ -516,7 +506,7 @@ namespace JSC {
     }
 
     inline GreaterEqNode::GreaterEqNode(JSGlobalData* globalData, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments)
-        : ReverseBinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_lesseq, rightHasAssignments)
+        : BinaryOpNode(globalData, ResultType::booleanType(), expr1, expr2, op_greatereq, rightHasAssignments)
     {
     }
 

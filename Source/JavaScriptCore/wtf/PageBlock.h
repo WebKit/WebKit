@@ -37,12 +37,12 @@ class PageBlock {
 public:
     PageBlock();
     PageBlock(const PageBlock&);
-    PageBlock(void*, size_t);
+    PageBlock(void*, size_t, bool hasGuardPages);
     
     void* base() const { return m_base; }
     size_t size() const { return m_size; }
 
-    operator bool() const { return !!m_base; }
+    operator bool() const { return !!m_realBase; }
 
     bool contains(void* containedBase, size_t containedSize)
     {
@@ -51,24 +51,28 @@ public:
     }
 
 private:
+    void* m_realBase;
     void* m_base;
     size_t m_size;
 };
 
 inline PageBlock::PageBlock()
-    : m_base(0)
+    : m_realBase(0)
+    , m_base(0)
     , m_size(0)
 {
 }
 
 inline PageBlock::PageBlock(const PageBlock& other)
-    : m_base(other.m_base)
+    : m_realBase(other.m_realBase)
+    , m_base(other.m_base)
     , m_size(other.m_size)
 {
 }
 
-inline PageBlock::PageBlock(void* base, size_t size)
-    : m_base(base)
+inline PageBlock::PageBlock(void* base, size_t size, bool hasGuardPages)
+    : m_realBase(base)
+    , m_base(static_cast<char*>(base) + ((base && hasGuardPages) ? pageSize() : 0))
     , m_size(size)
 {
 }

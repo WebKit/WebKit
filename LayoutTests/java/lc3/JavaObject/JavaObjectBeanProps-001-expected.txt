@@ -1,3 +1,4 @@
+FAIL: Timed out waiting for notifyDone to be called
 LiveConnect 3.0 JavaScript to Java Data Type Conversion JavaObject Field or method access
 
 FAIL dt["boolean"] should be true (of type boolean). Was undefined (of type undefined).
@@ -14,7 +15,4 @@ FAIL dt["short"] should be 32767 (of type number). Was undefined (of type undefi
 FAIL dt["getShort"]() should be 5. Was 32767.
 FAIL dt["char"] should be 65535 (of type number). Was undefined (of type undefined).
 FAIL dt["getChar"]() should be 97. Was 65535.
-PASS successfullyParsed is true
-
-TEST COMPLETE
  

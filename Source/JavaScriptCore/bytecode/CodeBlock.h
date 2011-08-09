@@ -33,10 +33,11 @@
 #include "EvalCodeCache.h"
 #include "Instruction.h"
 #include "JITCode.h"
+#include "JITWriteBarrier.h"
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
 #include "Nodes.h"
-#include "RegExp.h"
+#include "RegExpObject.h"
 #include "UString.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
@@ -97,17 +98,23 @@ namespace JSC {
     struct CallLinkInfo {
         CallLinkInfo()
             : hasSeenShouldRepatch(false)
+            , isCall(false)
         {
         }
 
-        CodeLocationNearCall callReturnLocation;
+        CodeLocationLabel callReturnLocation; // it's a near call in the old JIT, or a normal call in DFG
         CodeLocationDataLabelPtr hotPathBegin;
         CodeLocationNearCall hotPathOther;
-        WriteBarrier<JSFunction> callee;
-        bool hasSeenShouldRepatch;
-        
-        void setUnlinked() { callee.clear(); }
+        JITWriteBarrier<JSFunction> callee;
+        bool hasSeenShouldRepatch : 1;
+        bool isCall : 1;
+
         bool isLinked() { return callee; }
+        void unlink()
+        {
+            hasSeenShouldRepatch = false;
+            callee.clear();
+        }
 
         bool seenOnce()
         {
@@ -122,31 +129,28 @@ namespace JSC {
 
     struct MethodCallLinkInfo {
         MethodCallLinkInfo()
+            : seen(false)
         {
         }
 
         bool seenOnce()
         {
-            ASSERT(!cachedStructure);
-            return cachedPrototypeStructure;
+            return seen;
         }
 
         void setSeen()
         {
-            ASSERT(!cachedStructure && !cachedPrototypeStructure);
-            // We use the values of cachedStructure & cachedPrototypeStructure to indicate the
-            // current state.
-            //     - In the initial state, both are null.
-            //     - Once this transition has been taken once, cachedStructure is
-            //       null and cachedPrototypeStructure is set to a nun-null value.
-            //     - Once the call is linked both structures are set to non-null values.
-            cachedPrototypeStructure.setWithoutWriteBarrier((Structure*)1);
+            seen = true;
         }
 
         CodeLocationCall callReturnLocation;
-        CodeLocationDataLabelPtr structureLabel;
-        WriteBarrier<Structure> cachedStructure;
-        WriteBarrier<Structure> cachedPrototypeStructure;
+        JITWriteBarrier<Structure> cachedStructure;
+        JITWriteBarrier<Structure> cachedPrototypeStructure;
+        // We'd like this to actually be JSFunction, but InternalFunction and JSFunction
+        // don't have a common parent class and we allow specialisation on both
+        JITWriteBarrier<JSObjectWithGlobalObject> cachedFunction;
+        JITWriteBarrier<JSObject> cachedPrototype;
+        bool seen;
     };
 
     struct GlobalResolveInfo {
@@ -269,7 +273,10 @@ namespace JSC {
                 return 1;
             return binarySearch<CallReturnOffsetToBytecodeOffset, unsigned, getCallReturnOffset>(callIndices.begin(), callIndices.size(), getJITCode().offsetOf(returnAddress.value()))->bytecodeOffset;
         }
+
+        void unlinkCalls();
 #endif
+
 #if ENABLE(INTERPRETER)
         unsigned bytecodeOffset(Instruction* returnAddress)
         {
@@ -339,6 +346,8 @@ namespace JSC {
 
         void createActivation(CallFrame*);
 
+        void clearEvalCache();
+
 #if ENABLE(INTERPRETER)
         void addPropertyAccessInstruction(unsigned propertyAccessInstruction)
         {
@@ -353,12 +362,8 @@ namespace JSC {
         bool hasGlobalResolveInstructionAtBytecodeOffset(unsigned bytecodeOffset);
 #endif
 #if ENABLE(JIT)
+        void setNumberOfStructureStubInfos(size_t size) { m_structureStubInfos.grow(size); }
         size_t numberOfStructureStubInfos() const { return m_structureStubInfos.size(); }
-        void addStructureStubInfo(const StructureStubInfo& stubInfo)
-        {
-            if (m_globalData->canUseJIT())
-                m_structureStubInfos.append(stubInfo);
-        }
         StructureStubInfo& structureStubInfo(int index) { return m_structureStubInfos[index]; }
 
         void addGlobalResolveInfo(unsigned globalResolveInstruction)
@@ -369,13 +374,21 @@ namespace JSC {
         GlobalResolveInfo& globalResolveInfo(int index) { return m_globalResolveInfos[index]; }
         bool hasGlobalResolveInfoAtBytecodeOffset(unsigned bytecodeOffset);
 
+        void setNumberOfCallLinkInfos(size_t size) { m_callLinkInfos.grow(size); }
         size_t numberOfCallLinkInfos() const { return m_callLinkInfos.size(); }
-        void addCallLinkInfo() { m_callLinkInfos.append(CallLinkInfo()); }
         CallLinkInfo& callLinkInfo(int index) { return m_callLinkInfos[index]; }
 
-        void addMethodCallLinkInfos(unsigned n) { m_methodCallLinkInfos.grow(n); }
+        void addMethodCallLinkInfos(unsigned n) { ASSERT(m_globalData->canUseJIT()); m_methodCallLinkInfos.grow(n); }
         MethodCallLinkInfo& methodCallLinkInfo(int index) { return m_methodCallLinkInfos[index]; }
 #endif
+        unsigned globalResolveInfoCount() const
+        {
+#if ENABLE(JIT)    
+            if (m_globalData->canUseJIT())
+                return m_globalResolveInfos.size();
+#endif
+            return 0;
+        }
 
         // Exception handling support
 
@@ -451,8 +464,28 @@ namespace JSC {
         }
         FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
 
-        unsigned addRegExp(PassRefPtr<RegExp> r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
+        unsigned addRegExp(RegExp* r)
+        {
+            createRareDataIfNecessary();
+            unsigned size = m_rareData->m_regexps.size();
+            m_rareData->m_regexps.append(WriteBarrier<RegExp>(*m_globalData, ownerExecutable(), r));
+            return size;
+        }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
+
+        unsigned addConstantBuffer(unsigned length)
+        {
+            createRareDataIfNecessary();
+            unsigned size = m_rareData->m_constantBuffers.size();
+            m_rareData->m_constantBuffers.append(Vector<JSValue>(length));
+            return size;
+        }
+
+        JSValue* constantBuffer(unsigned index)
+        {
+            ASSERT(m_rareData);
+            return m_rareData->m_constantBuffers[index].data();
+        }
 
         JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
@@ -555,8 +588,11 @@ namespace JSC {
             Vector<HandlerInfo> m_exceptionHandlers;
 
             // Rare Constants
-            Vector<RefPtr<RegExp> > m_regexps;
+            Vector<WriteBarrier<RegExp> > m_regexps;
 
+            // Buffers used for large array literals
+            Vector<Vector<JSValue> > m_constantBuffers;
+            
             // Jump Tables
             Vector<SimpleJumpTable> m_immediateSwitchJumpTables;
             Vector<SimpleJumpTable> m_characterSwitchJumpTables;

@@ -39,6 +39,7 @@ namespace JSC { namespace DFG {
 
 class SpeculateIntegerOperand;
 class SpeculateStrictInt32Operand;
+class SpeculateDoubleOperand;
 class SpeculateCellOperand;
 
 
@@ -63,6 +64,8 @@ protected:
         SpillOrderInteger = 5,  // needs spill and box
         SpillOrderDouble = 6,   // needs spill and convert
     };
+    
+    enum UseChildrenMode { CallUseChildren, UseChildrenCalledExplicitly };
 
 
 public:
@@ -116,6 +119,17 @@ public:
             spill(spillMe);
         return gpr;
     }
+    GPRReg allocate(GPRReg specific)
+    {
+        VirtualRegister spillMe = m_gprs.allocateSpecific(specific);
+        if (spillMe != InvalidVirtualRegister)
+            spill(spillMe);
+        return specific;
+    }
+    GPRReg tryAllocate()
+    {
+        return m_gprs.tryAllocate();
+    }
     FPRReg fprAllocate()
     {
         VirtualRegister spillMe;
@@ -143,6 +157,41 @@ public:
         return info.registerFormat() == DataFormatDouble;
     }
 
+    // Called on an operand once it has been consumed by a parent node.
+    void use(NodeIndex nodeIndex)
+    {
+        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
+        GenerationInfo& info = m_generationInfo[virtualRegister];
+
+        // use() returns true when the value becomes dead, and any
+        // associated resources may be freed.
+        if (!info.use())
+            return;
+
+        // Release the associated machine registers.
+        DataFormat registerFormat = info.registerFormat();
+        if (registerFormat == DataFormatDouble)
+            m_fprs.release(info.fpr());
+        else if (registerFormat != DataFormatNone)
+            m_gprs.release(info.gpr());
+    }
+
+    static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR);
+
+    static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg)
+    {
+        if (preserve1 != GPRInfo::regT0 && preserve2 != GPRInfo::regT0 && preserve3 != GPRInfo::regT0)
+            return GPRInfo::regT0;
+
+        if (preserve1 != GPRInfo::regT1 && preserve2 != GPRInfo::regT1 && preserve3 != GPRInfo::regT1)
+            return GPRInfo::regT1;
+
+        if (preserve1 != GPRInfo::regT2 && preserve2 != GPRInfo::regT2 && preserve3 != GPRInfo::regT2)
+            return GPRInfo::regT2;
+
+        return GPRInfo::regT3;
+    }
+
 protected:
     JITCodeGenerator(JITCompiler& jit, bool isSpeculative)
         : m_jit(jit)
@@ -151,6 +200,158 @@ protected:
         , m_generationInfo(m_jit.codeBlock()->m_numCalleeRegisters)
         , m_blockHeads(jit.graph().m_blocks.size())
     {
+    }
+
+    // These methods are used when generating 'unexpected'
+    // calls out from JIT code to C++ helper routines -
+    // they spill all live values to the appropriate
+    // slots in the RegisterFile without changing any state
+    // in the GenerationInfo.
+    void silentSpillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
+    {
+        GenerationInfo& info = m_generationInfo[spillMe];
+        ASSERT(info.registerFormat() != DataFormatNone);
+        ASSERT(info.registerFormat() != DataFormatDouble);
+
+        if (!info.needsSpill() || (info.gpr() == exclude))
+            return;
+
+        DataFormat registerFormat = info.registerFormat();
+
+        if (registerFormat == DataFormatInteger) {
+            m_jit.store32(info.gpr(), JITCompiler::addressFor(spillMe));
+        } else {
+            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
+            m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
+        }
+    }
+    void silentSpillFPR(VirtualRegister spillMe, FPRReg exclude = InvalidFPRReg)
+    {
+        GenerationInfo& info = m_generationInfo[spillMe];
+        ASSERT(info.registerFormat() == DataFormatDouble);
+
+        if (info.fpr() == exclude)
+            return;
+        if (!info.needsSpill()) {
+            // it's either a constant or it's already been spilled
+            ASSERT(m_jit.graph()[info.nodeIndex()].isConstant() || info.spillFormat() != DataFormatNone);
+            return;
+        }
+        
+        // it's neither a constant nor has it been spilled.
+        ASSERT(!m_jit.graph()[info.nodeIndex()].isConstant());
+        ASSERT(info.spillFormat() == DataFormatNone);
+
+        m_jit.storeDouble(info.fpr(), JITCompiler::addressFor(spillMe));
+    }
+
+    void silentFillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
+    {
+        GenerationInfo& info = m_generationInfo[spillMe];
+        if (info.gpr() == exclude)
+            return;
+
+        NodeIndex nodeIndex = info.nodeIndex();
+        Node& node = m_jit.graph()[nodeIndex];
+        ASSERT(info.registerFormat() != DataFormatNone);
+        ASSERT(info.registerFormat() != DataFormatDouble);
+        DataFormat registerFormat = info.registerFormat();
+
+        if (registerFormat == DataFormatInteger) {
+            if (node.isConstant()) {
+                ASSERT(isInt32Constant(nodeIndex));
+                m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), info.gpr());
+            } else
+                m_jit.load32(JITCompiler::addressFor(spillMe), info.gpr());
+            return;
+        }
+
+        if (node.isConstant())
+            m_jit.move(valueOfJSConstantAsImmPtr(nodeIndex), info.gpr());
+        else {
+            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
+            m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
+        }
+    }
+    void silentFillFPR(VirtualRegister spillMe, GPRReg canTrample, FPRReg exclude = InvalidFPRReg)
+    {
+        GenerationInfo& info = m_generationInfo[spillMe];
+        if (info.fpr() == exclude)
+            return;
+
+        NodeIndex nodeIndex = info.nodeIndex();
+        Node& node = m_jit.graph()[nodeIndex];
+        ASSERT(info.registerFormat() == DataFormatDouble);
+
+        if (node.isConstant()) {
+            ASSERT(isDoubleConstant(nodeIndex));
+            m_jit.move(JITCompiler::ImmPtr(bitwise_cast<void*>(valueOfDoubleConstant(nodeIndex))), canTrample);
+            m_jit.movePtrToDouble(canTrample, info.fpr());
+            return;
+        }
+        
+        if (info.spillFormat() != DataFormatNone) {
+            // it was already spilled previously, which means we need unboxing.
+            ASSERT(info.spillFormat() & DataFormatJS);
+            m_jit.loadPtr(JITCompiler::addressFor(spillMe), canTrample);
+            unboxDouble(canTrample, info.fpr());
+            return;
+        }
+
+        m_jit.loadDouble(JITCompiler::addressFor(spillMe), info.fpr());
+    }
+    
+    void silentSpillAllRegisters(GPRReg exclude)
+    {
+        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister)
+                silentSpillGPR(iter.name(), exclude);
+        }
+        for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister)
+                silentSpillFPR(iter.name());
+        }
+    }
+    void silentSpillAllRegisters(FPRReg exclude)
+    {
+        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister)
+                silentSpillGPR(iter.name());
+        }
+        for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister)
+                silentSpillFPR(iter.name(), exclude);
+        }
+    }
+    void silentFillAllRegisters(GPRReg exclude)
+    {
+        GPRReg canTrample = GPRInfo::regT0;
+        if (exclude == GPRInfo::regT0)
+            canTrample = GPRInfo::regT1;
+        
+        for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister)
+                silentFillFPR(iter.name(), canTrample);
+        }
+        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister)
+                silentFillGPR(iter.name(), exclude);
+        }
+    }
+    void silentFillAllRegisters(FPRReg exclude)
+    {
+        GPRReg canTrample = GPRInfo::regT0;
+        
+        for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister) {
+                ASSERT_UNUSED(exclude, iter.regID() != exclude);
+                silentFillFPR(iter.name(), canTrample, exclude);
+            }
+        }
+        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
+            if (iter.name() != InvalidVirtualRegister)
+                silentFillGPR(iter.name());
+        }
     }
 
     // These methods convert between doubles, and doubles boxed and JSValues.
@@ -173,25 +374,6 @@ protected:
     FPRReg unboxDouble(GPRReg gpr)
     {
         return unboxDouble(gpr, fprAllocate());
-    }
-
-    // Called on an operand once it has been consumed by a parent node.
-    void use(NodeIndex nodeIndex)
-    {
-        VirtualRegister virtualRegister = m_jit.graph()[nodeIndex].virtualRegister();
-        GenerationInfo& info = m_generationInfo[virtualRegister];
-
-        // use() returns true when the value becomes dead, and any
-        // associated resources may be freed.
-        if (!info.use())
-            return;
-
-        // Release the associated machine registers.
-        DataFormat registerFormat = info.registerFormat();
-        if (registerFormat == DataFormatDouble)
-            m_fprs.release(info.fpr());
-        else if (registerFormat != DataFormatNone)
-            m_gprs.release(info.gpr());
     }
 
     // Spill a VirtualRegister to the RegisterFile.
@@ -230,14 +412,26 @@ protected:
         info.spill((DataFormat)(spillFormat | DataFormatJS));
     }
 
+    bool isKnownInteger(NodeIndex);
+    bool isKnownNumeric(NodeIndex);
+    bool isKnownCell(NodeIndex);
+    
+    bool isKnownNotInteger(NodeIndex);
+
     // Checks/accessors for constant values.
     bool isConstant(NodeIndex nodeIndex) { return m_jit.isConstant(nodeIndex); }
+    bool isJSConstant(NodeIndex nodeIndex) { return m_jit.isJSConstant(nodeIndex); }
     bool isInt32Constant(NodeIndex nodeIndex) { return m_jit.isInt32Constant(nodeIndex); }
     bool isDoubleConstant(NodeIndex nodeIndex) { return m_jit.isDoubleConstant(nodeIndex); }
-    bool isJSConstant(NodeIndex nodeIndex) { return m_jit.isJSConstant(nodeIndex); }
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.valueOfInt32Constant(nodeIndex); }
     double valueOfDoubleConstant(NodeIndex nodeIndex) { return m_jit.valueOfDoubleConstant(nodeIndex); }
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.valueOfJSConstant(nodeIndex); }
+    bool isNullConstant(NodeIndex nodeIndex)
+    {
+        if (!isConstant(nodeIndex))
+            return false;
+        return valueOfJSConstant(nodeIndex).isNull();
+    }
 
     Identifier* identifier(unsigned index)
     {
@@ -278,20 +472,9 @@ protected:
     }
 #endif
 
-    // Get the JSValue representation of a constant.
-    JSValue constantAsJSValue(NodeIndex nodeIndex)
+    MacroAssembler::ImmPtr valueOfJSConstantAsImmPtr(NodeIndex nodeIndex)
     {
-        Node& node = m_jit.graph()[nodeIndex];
-        if (isInt32Constant(nodeIndex))
-            return jsNumber(node.int32Constant());
-        if (isDoubleConstant(nodeIndex))
-            return JSValue(JSValue::EncodeAsDouble, node.numericConstant());
-        ASSERT(isJSConstant(nodeIndex));
-        return valueOfJSConstant(nodeIndex);
-    }
-    MacroAssembler::ImmPtr constantAsJSValueAsImmPtr(NodeIndex nodeIndex)
-    {
-        return MacroAssembler::ImmPtr(JSValue::encode(constantAsJSValue(nodeIndex)));
+        return MacroAssembler::ImmPtr(JSValue::encode(valueOfJSConstant(nodeIndex)));
     }
 
     // Helper functions to enable code sharing in implementations of bit/shift ops.
@@ -359,6 +542,47 @@ protected:
             ASSERT_NOT_REACHED();
         }
     }
+    
+    // Returns the node index of the branch node if peephole is okay, NoNode otherwise.
+    NodeIndex detectPeepHoleBranch()
+    {
+        NodeIndex lastNodeIndex = m_jit.graph().m_blocks[m_block]->end - 1;
+
+        // Check that no intervening nodes will be generated.
+        for (NodeIndex index = m_compileIndex + 1; index < lastNodeIndex; ++index) {
+            if (m_jit.graph()[index].shouldGenerate())
+                return NoNode;
+        }
+
+        // Check if the lastNode is a branch on this node.
+        Node& lastNode = m_jit.graph()[lastNodeIndex];
+        return lastNode.op == Branch && lastNode.child1() == m_compileIndex ? lastNodeIndex : NoNode;
+    }
+
+    JITCompiler::Call cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump(), NodeType = GetById);
+    void cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    void cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget = JITCompiler::Jump());
+    
+    void nonSpeculativeNonPeepholeCompareNull(NodeIndex operand, bool invert = false);
+    void nonSpeculativePeepholeBranchNull(NodeIndex operand, NodeIndex branchNodeIndex, bool invert = false);
+    bool nonSpeculativeCompareNull(Node&, NodeIndex operand, bool invert = false);
+    
+    void nonSpeculativePeepholeBranch(Node&, NodeIndex branchNodeIndex, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
+    void nonSpeculativeNonPeepholeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
+    bool nonSpeculativeCompare(Node&, MacroAssembler::RelationalCondition, Z_DFGOperation_EJJ helperFunction);
+    
+    void nonSpeculativePeepholeStrictEq(Node&, NodeIndex branchNodeIndex, bool invert = false);
+    void nonSpeculativeNonPeepholeStrictEq(Node&, bool invert = false);
+    bool nonSpeculativeStrictEq(Node&, bool invert = false);
+    
+    void emitBranch(Node&);
+    
+    MacroAssembler::Address addressOfCallData(int idx)
+    {
+        return MacroAssembler::Address(GPRInfo::callFrameRegister, (m_jit.codeBlock()->m_numCalleeRegisters + idx) * static_cast<int>(sizeof(Register)));
+    }
+    
+    void emitCall(Node&);
 
     // Called once a node has completed code generation but prior to setting
     // its result, to free up its children. (This must happen prior to setting
@@ -368,10 +592,11 @@ protected:
 
     // These method called to initialize the the GenerationInfo
     // to describe the result of an operation.
-    void integerResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatInteger)
+    void integerResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatInteger, UseChildrenMode mode = CallUseChildren)
     {
         Node& node = m_jit.graph()[nodeIndex];
-        useChildren(node);
+        if (mode == CallUseChildren)
+            useChildren(node);
 
         VirtualRegister virtualRegister = node.virtualRegister();
         GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -387,38 +612,51 @@ protected:
             info.initJSValue(nodeIndex, node.refCount(), reg, format);
         }
     }
-    void noResult(NodeIndex nodeIndex)
+    void integerResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode)
     {
+        integerResult(reg, nodeIndex, DataFormatInteger, mode);
+    }
+    void noResult(NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
+    {
+        if (mode == UseChildrenCalledExplicitly)
+            return;
         Node& node = m_jit.graph()[nodeIndex];
         useChildren(node);
     }
-    void cellResult(GPRReg reg, NodeIndex nodeIndex)
+    void cellResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
         Node& node = m_jit.graph()[nodeIndex];
-        useChildren(node);
+        if (mode == CallUseChildren)
+            useChildren(node);
 
         VirtualRegister virtualRegister = node.virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderCell);
         GenerationInfo& info = m_generationInfo[virtualRegister];
         info.initCell(nodeIndex, node.refCount(), reg);
     }
-    void jsValueResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatJS)
+    void jsValueResult(GPRReg reg, NodeIndex nodeIndex, DataFormat format = DataFormatJS, UseChildrenMode mode = CallUseChildren)
     {
         if (format == DataFormatJSInteger)
             m_jit.jitAssertIsJSInt32(reg);
         
         Node& node = m_jit.graph()[nodeIndex];
-        useChildren(node);
+        if (mode == CallUseChildren)
+            useChildren(node);
 
         VirtualRegister virtualRegister = node.virtualRegister();
         m_gprs.retain(reg, virtualRegister, SpillOrderJS);
         GenerationInfo& info = m_generationInfo[virtualRegister];
         info.initJSValue(nodeIndex, node.refCount(), reg, format);
     }
-    void doubleResult(FPRReg reg, NodeIndex nodeIndex)
+    void jsValueResult(GPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode)
+    {
+        jsValueResult(reg, nodeIndex, DataFormatJS, mode);
+    }
+    void doubleResult(FPRReg reg, NodeIndex nodeIndex, UseChildrenMode mode = CallUseChildren)
     {
         Node& node = m_jit.graph()[nodeIndex];
-        useChildren(node);
+        if (mode == CallUseChildren)
+            useChildren(node);
 
         VirtualRegister virtualRegister = node.virtualRegister();
         m_fprs.retain(reg, virtualRegister, SpillOrderDouble);
@@ -459,7 +697,7 @@ protected:
             m_jit.move(srcB, destB);
             m_jit.move(srcA, destA);
         } else
-            m_jit.swap(destB, destB);
+            m_jit.swap(destA, destB);
     }
     template<FPRReg destA, FPRReg destB>
     void setupTwoStubArgs(FPRReg srcA, FPRReg srcB)
@@ -564,6 +802,20 @@ protected:
     }
 
     // These methods add calls to C++ helper functions.
+    void callOperation(J_DFGOperation_EP operation, GPRReg result, void* pointer)
+    {
+        ASSERT(isFlushed());
+
+        m_jit.move(JITCompiler::TrustedImmPtr(pointer), GPRInfo::argumentGPR1);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+
+        appendCallWithExceptionCheck(operation);
+        m_jit.move(GPRInfo::returnValueGPR, result);
+    }
+    void callOperation(J_DFGOperation_EI operation, GPRReg result, Identifier* identifier)
+    {
+        callOperation((J_DFGOperation_EP)operation, result, identifier);
+    }
     void callOperation(J_DFGOperation_EJP operation, GPRReg result, GPRReg arg1, void* pointer)
     {
         ASSERT(isFlushed());
@@ -652,9 +904,9 @@ protected:
         m_jit.moveDouble(FPRInfo::returnValueFPR, result);
     }
 
-    void appendCallWithExceptionCheck(const FunctionPtr& function)
+    JITCompiler::Call appendCallWithExceptionCheck(const FunctionPtr& function)
     {
-        m_jit.appendCallWithExceptionCheck(function, m_jit.graph()[m_compileIndex].exceptionInfo);
+        return m_jit.appendCallWithExceptionCheck(function, m_jit.graph()[m_compileIndex].exceptionInfo);
     }
 
     void addBranch(const MacroAssembler::Jump& jump, BlockIndex destination)
@@ -765,6 +1017,11 @@ public:
             m_gprOrInvalid = m_jit->fillInteger(index(), m_format);
         return m_gprOrInvalid;
     }
+    
+    void use()
+    {
+        m_jit->use(m_index);
+    }
 
 private:
     JITCodeGenerator* m_jit;
@@ -802,6 +1059,11 @@ public:
             m_fprOrInvalid = m_jit->fillDouble(index());
         return m_fprOrInvalid;
     }
+    
+    void use()
+    {
+        m_jit->use(m_index);
+    }
 
 private:
     JITCodeGenerator* m_jit;
@@ -838,6 +1100,11 @@ public:
             m_gprOrInvalid = m_jit->fillJSValue(index());
         return m_gprOrInvalid;
     }
+    
+    void use()
+    {
+        m_jit->use(m_index);
+    }
 
 private:
     JITCodeGenerator* m_jit;
@@ -856,6 +1123,7 @@ private:
 class GPRTemporary {
 public:
     GPRTemporary(JITCodeGenerator*);
+    GPRTemporary(JITCodeGenerator*, GPRReg specific);
     GPRTemporary(JITCodeGenerator*, SpeculateIntegerOperand&);
     GPRTemporary(JITCodeGenerator*, SpeculateIntegerOperand&, SpeculateIntegerOperand&);
     GPRTemporary(JITCodeGenerator*, IntegerOperand&);
@@ -874,13 +1142,6 @@ public:
         return m_gpr;
     }
 
-protected:
-    GPRTemporary(JITCodeGenerator* jit, GPRReg lockedGPR)
-        : m_jit(jit)
-        , m_gpr(lockedGPR)
-    {
-    }
-
 private:
     JITCodeGenerator* m_jit;
     GPRReg m_gpr;
@@ -891,6 +1152,8 @@ public:
     FPRTemporary(JITCodeGenerator*);
     FPRTemporary(JITCodeGenerator*, DoubleOperand&);
     FPRTemporary(JITCodeGenerator*, DoubleOperand&, DoubleOperand&);
+    FPRTemporary(JITCodeGenerator*, SpeculateDoubleOperand&);
+    FPRTemporary(JITCodeGenerator*, SpeculateDoubleOperand&, SpeculateDoubleOperand&);
 
     ~FPRTemporary()
     {
@@ -923,15 +1186,8 @@ private:
 class GPRResult : public GPRTemporary {
 public:
     GPRResult(JITCodeGenerator* jit)
-        : GPRTemporary(jit, lockedResult(jit))
+        : GPRTemporary(jit, GPRInfo::returnValueGPR)
     {
-    }
-
-private:
-    static GPRReg lockedResult(JITCodeGenerator* jit)
-    {
-        jit->lock(GPRInfo::returnValueGPR);
-        return GPRInfo::returnValueGPR;
     }
 };
 

@@ -35,23 +35,31 @@
 #include "MainThread.h"
 
 #include <Ecore.h>
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/StdLibExtras.h>
 
 namespace WTF {
 
-void initializeMainThreadPlatform()
+static OwnPtr<Ecore_Pipe>& pipeObject()
 {
+    DEFINE_STATIC_LOCAL(OwnPtr<Ecore_Pipe>, pipeObject, ());
+    return pipeObject;
 }
 
-static Eina_Bool timeoutFired(void*)
+static void monitorDispatchFunctions(void*, void*, unsigned int)
 {
     dispatchFunctionsFromMainThread();
-    return ECORE_CALLBACK_CANCEL;
+}
+
+void initializeMainThreadPlatform()
+{
+    pipeObject() = adoptPtr(ecore_pipe_add(monitorDispatchFunctions, 0));
 }
 
 void scheduleDispatchFunctionsOnMainThread()
 {
-    ecore_timer_add(0, timeoutFired, 0);
+    ecore_pipe_write(pipeObject().get(), "", 0);
 }
-
 
 }

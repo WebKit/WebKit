@@ -68,7 +68,7 @@ MacroAssemblerCodePtr charCodeAtThunkGenerator(JSGlobalData* globalData, Executa
     SpecializedThunkJIT jit(1, globalData, pool);
     stringCharLoad(jit);
     jit.returnInt32(SpecializedThunkJIT::regT0);
-    return jit.finalize(globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }
 
 MacroAssemblerCodePtr charAtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
@@ -77,7 +77,7 @@ MacroAssemblerCodePtr charAtThunkGenerator(JSGlobalData* globalData, ExecutableP
     stringCharLoad(jit);
     charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }
 
 MacroAssemblerCodePtr fromCharCodeThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
@@ -87,7 +87,7 @@ MacroAssemblerCodePtr fromCharCodeThunkGenerator(JSGlobalData* globalData, Execu
     jit.loadInt32Argument(0, SpecializedThunkJIT::regT0);
     charToString(jit, globalData, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT0, SpecializedThunkJIT::regT1);
     jit.returnJSCell(SpecializedThunkJIT::regT0);
-    return jit.finalize(globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }
 
 MacroAssemblerCodePtr sqrtThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
@@ -99,11 +99,192 @@ MacroAssemblerCodePtr sqrtThunkGenerator(JSGlobalData* globalData, ExecutablePoo
     jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
     jit.sqrtDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT0);
     jit.returnDouble(SpecializedThunkJIT::fpRegT0);
-    return jit.finalize(globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }
 
+#if OS(DARWIN) || (OS(WINDOWS) && CPU(X86))
+#define SYMBOL_STRING(name) "_" #name
+#else
+#define SYMBOL_STRING(name) #name
+#endif
+    
+#if (OS(LINUX) || OS(FREEBSD)) && CPU(X86_64)
+#define SYMBOL_STRING_RELOCATION(name) #name "@plt"
+#elif OS(DARWIN) || (CPU(X86_64) && COMPILER(MINGW) && !GCC_VERSION_AT_LEAST(4, 5, 0))
+#define SYMBOL_STRING_RELOCATION(name) "_" #name
+#elif CPU(X86) && COMPILER(MINGW)
+#define SYMBOL_STRING_RELOCATION(name) "@" #name "@4"
+#else
+#define SYMBOL_STRING_RELOCATION(name) #name
+#endif
+
+#define UnaryDoubleOpWrapper(function) function##Wrapper
+enum MathThunkCallingConvention { };
+typedef MathThunkCallingConvention(*MathThunk)(MathThunkCallingConvention);
+extern "C" {
+
+double jsRound(double);
+double jsRound(double d)
+{
+    double integer = ceil(d);
+    return integer - (integer - d > 0.5);
+}
+
+}
+    
+#if CPU(X86_64) && COMPILER(GCC) && (PLATFORM(MAC) || OS(LINUX))
+
+#define defineUnaryDoubleOpWrapper(function) \
+    asm( \
+        ".text\n" \
+        ".globl " SYMBOL_STRING(function##Thunk) "\n" \
+        SYMBOL_STRING(function##Thunk) ":" "\n" \
+        "call " SYMBOL_STRING_RELOCATION(function) "\n" \
+        "ret\n" \
+    );\
+    extern "C" { \
+        MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+    } \
+    static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
+
+#elif CPU(X86) && COMPILER(GCC) && (PLATFORM(MAC) || OS(LINUX))
+#define defineUnaryDoubleOpWrapper(function) \
+    asm( \
+        ".text\n" \
+        ".globl " SYMBOL_STRING(function##Thunk) "\n" \
+        SYMBOL_STRING(function##Thunk) ":" "\n" \
+        "subl $8, %esp\n" \
+        "movsd %xmm0, (%esp) \n" \
+        "call " SYMBOL_STRING_RELOCATION(function) "\n" \
+        "fstpl (%esp) \n" \
+        "movsd (%esp), %xmm0 \n" \
+        "addl $8, %esp\n" \
+        "ret\n" \
+    );\
+    extern "C" { \
+        MathThunkCallingConvention function##Thunk(MathThunkCallingConvention); \
+    } \
+    static MathThunk UnaryDoubleOpWrapper(function) = &function##Thunk;
+
+#else
+
+#define defineUnaryDoubleOpWrapper(function) \
+    static MathThunk UnaryDoubleOpWrapper(function) = 0
+#endif
+
+defineUnaryDoubleOpWrapper(jsRound);
+defineUnaryDoubleOpWrapper(exp);
+defineUnaryDoubleOpWrapper(log);
+defineUnaryDoubleOpWrapper(floor);
+defineUnaryDoubleOpWrapper(ceil);
+
+MacroAssemblerCodePtr floorThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+    SpecializedThunkJIT jit(1, globalData, pool);
+    MacroAssembler::Jump nonIntJump;
+    if (!UnaryDoubleOpWrapper(floor) || !jit.supportsFloatingPoint())
+        return globalData->jitStubs->ctiNativeCall();
+    jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+    nonIntJump.link(&jit);
+    jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+    jit.callDoubleToDouble(UnaryDoubleOpWrapper(floor));
+    SpecializedThunkJIT::JumpList doubleResult;
+    jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+    doubleResult.link(&jit);
+    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+}
+
+MacroAssemblerCodePtr ceilThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+    SpecializedThunkJIT jit(1, globalData, pool);
+    if (!UnaryDoubleOpWrapper(ceil) || !jit.supportsFloatingPoint())
+        return globalData->jitStubs->ctiNativeCall();
+    MacroAssembler::Jump nonIntJump;
+    jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+    nonIntJump.link(&jit);
+    jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+    jit.callDoubleToDouble(UnaryDoubleOpWrapper(ceil));
+    SpecializedThunkJIT::JumpList doubleResult;
+    jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+    doubleResult.link(&jit);
+    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+}
+
+static const double negativeZeroConstant = -0.0;
 static const double oneConstant = 1.0;
 static const double negativeHalfConstant = -0.5;
+    
+MacroAssemblerCodePtr roundThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+    SpecializedThunkJIT jit(1, globalData, pool);
+    if (!UnaryDoubleOpWrapper(jsRound) || !jit.supportsFloatingPoint())
+        return globalData->jitStubs->ctiNativeCall();
+    MacroAssembler::Jump nonIntJump;
+    jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+    nonIntJump.link(&jit);
+    jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+    jit.callDoubleToDouble(UnaryDoubleOpWrapper(jsRound));
+    SpecializedThunkJIT::JumpList doubleResult;
+    jit.branchConvertDoubleToInt32(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0, doubleResult, SpecializedThunkJIT::fpRegT1);
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+    doubleResult.link(&jit);
+    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+}
+
+MacroAssemblerCodePtr expThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+    if (!UnaryDoubleOpWrapper(exp))
+        return globalData->jitStubs->ctiNativeCall();
+    SpecializedThunkJIT jit(1, globalData, pool);
+    if (!jit.supportsFloatingPoint())
+        return globalData->jitStubs->ctiNativeCall();
+    jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+    jit.callDoubleToDouble(UnaryDoubleOpWrapper(exp));
+    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+}
+
+MacroAssemblerCodePtr logThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+    if (!UnaryDoubleOpWrapper(log))
+        return globalData->jitStubs->ctiNativeCall();
+    SpecializedThunkJIT jit(1, globalData, pool);
+    if (!jit.supportsFloatingPoint())
+        return globalData->jitStubs->ctiNativeCall();
+    jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+    jit.callDoubleToDouble(UnaryDoubleOpWrapper(log));
+    jit.returnDouble(SpecializedThunkJIT::fpRegT0);
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+}
+
+MacroAssemblerCodePtr absThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
+{
+    SpecializedThunkJIT jit(1, globalData, pool);
+    if (!jit.supportsDoubleBitops())
+        return globalData->jitStubs->ctiNativeCall();
+    MacroAssembler::Jump nonIntJump;
+    jit.loadInt32Argument(0, SpecializedThunkJIT::regT0, nonIntJump);
+    jit.rshift32(SpecializedThunkJIT::regT0, MacroAssembler::TrustedImm32(31), SpecializedThunkJIT::regT1);
+    jit.add32(SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT0);
+    jit.xor32(SpecializedThunkJIT::regT1, SpecializedThunkJIT::regT0);
+    jit.appendFailure(jit.branch32(MacroAssembler::Equal, SpecializedThunkJIT::regT0, MacroAssembler::TrustedImm32(1 << 31)));
+    jit.returnInt32(SpecializedThunkJIT::regT0);
+    nonIntJump.link(&jit);
+    // Shame about the double int conversion here.
+    jit.loadDouble(&negativeZeroConstant, SpecializedThunkJIT::fpRegT1);
+    jit.loadDoubleArgument(0, SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::regT0);
+    jit.andnotDouble(SpecializedThunkJIT::fpRegT0, SpecializedThunkJIT::fpRegT1);
+    jit.returnDouble(SpecializedThunkJIT::fpRegT1);
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
+}
 
 MacroAssemblerCodePtr powThunkGenerator(JSGlobalData* globalData, ExecutablePool* pool)
 {
@@ -154,7 +335,7 @@ MacroAssemblerCodePtr powThunkGenerator(JSGlobalData* globalData, ExecutablePool
     } else
         jit.appendFailure(nonIntExponent);
 
-    return jit.finalize(globalData->jitStubs->ctiNativeCall());
+    return jit.finalize(*globalData, globalData->jitStubs->ctiNativeCall());
 }
 
 }

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "OSAllocator.h"
 
+#include "PageAllocation.h"
 #include <errno.h>
 #include <sys/mman.h>
 #include <wtf/Assertions.h>
@@ -33,9 +34,9 @@
 
 namespace WTF {
 
-void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable)
+void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, bool executable, bool includesGuardPages)
 {
-    void* result = reserveAndCommit(bytes, usage, writable, executable);
+    void* result = reserveAndCommit(bytes, usage, writable, executable, includesGuardPages);
 #if HAVE(MADV_FREE_REUSE)
     // To support the "reserve then commit" model, we have to initially decommit.
     while (madvise(result, bytes, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
@@ -43,7 +44,7 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, 
     return result;
 }
 
-void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable)
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool includesGuardPages)
 {
     // All POSIX reservations start out logically committed.
     int protection = PROT_READ;
@@ -54,6 +55,18 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 
     int flags = MAP_PRIVATE | MAP_ANON;
 
+#if OS(LINUX)
+    // Linux distros usually do not allow overcommit by default, so
+    // JSC's strategy of mmaping a large amount of memory upfront
+    // won't work very well on some systems. Fortunately there's a
+    // flag we can pass to mmap to disable the overcommit check for
+    // this particular call, so we can get away with it as long as the
+    // overcommit flag value in /proc/sys/vm/overcommit_memory is 0
+    // ('heuristic') and not 2 (always check). 0 is the usual default
+    // value, so this should work well in general.
+    flags |= MAP_NORESERVE;
+#endif
+
 #if OS(DARWIN)
     int fd = usage;
 #else
@@ -63,6 +76,7 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
     void* result = 0;
 #if (OS(DARWIN) && CPU(X86_64))
     if (executable) {
+        ASSERT(includesGuardPages);
         // Cook up an address to allocate at, using the following recipe:
         //   17 bits of zero, stay in userspace kids.
         //   26 bits of randomness for ASLR.
@@ -81,8 +95,18 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 #endif
 
     result = mmap(result, bytes, protection, flags, fd, 0);
-    if (result == MAP_FAILED)
-        CRASH();
+    if (result == MAP_FAILED) {
+    #if ENABLE(INTERPRETER)
+        if (executable)
+            result = 0;
+        else
+    #endif
+            CRASH();
+    }
+    if (result && includesGuardPages) {
+        mprotect(result, pageSize(), PROT_NONE);
+        mprotect(static_cast<char*>(result) + bytes - pageSize(), pageSize(), PROT_NONE);
+    }
     return result;
 }
 

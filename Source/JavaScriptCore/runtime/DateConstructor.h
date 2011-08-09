@@ -28,8 +28,14 @@ namespace JSC {
     class DatePrototype;
 
     class DateConstructor : public InternalFunction {
-    public:
+    private:
         DateConstructor(ExecState*, JSGlobalObject*, Structure*, DatePrototype*);
+        
+    public:
+        static DateConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, DatePrototype* datePrototype)
+        {
+            return new (allocateCell<DateConstructor>(*exec->heap())) DateConstructor(exec, globalObject, structure, datePrototype);
+        }
 
         static const ClassInfo s_info;
 

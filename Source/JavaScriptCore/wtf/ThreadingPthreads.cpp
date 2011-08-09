@@ -33,6 +33,8 @@
 #if USE(PTHREADS)
 
 #include "CurrentTime.h"
+#include "DateMath.h"
+#include "dtoa.h"
 #include "HashMap.h"
 #include "MainThread.h"
 #include "RandomNumberSeed.h"
@@ -40,6 +42,7 @@
 #include "ThreadIdentifierDataPthreads.h"
 #include "ThreadSpecific.h"
 #include "UnusedParam.h"
+#include <wtf/WTFThreadData.h>
 #include <errno.h>
 
 #if !COMPILER(MSVC)
@@ -78,9 +81,18 @@ void initializeThreading()
     if (atomicallyInitializedStaticMutex)
         return;
 
+    // StringImpl::empty() does not construct its static string in a threadsafe fashion,
+    // so ensure it has been initialized from here.
+    StringImpl::empty();
     atomicallyInitializedStaticMutex = new Mutex;
     threadMapMutex();
     initializeRandomNumberGenerator();
+    ThreadIdentifierData::initializeOnce();
+    wtfThreadData();
+#if ENABLE(WTF_MULTIPLE_THREADS)
+    s_dtoaP5Mutex = new Mutex;
+    initializeDates();
+#endif
 }
 
 void lockAtomicallyInitializedStaticMutex()

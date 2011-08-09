@@ -55,7 +55,7 @@ namespace WTF {
 
             // FIXME: perhaps we should have a more abstract macro that indicates when
             // going 4 bytes at a time is unsafe
-#if CPU(ARM) || CPU(SH4) || CPU(MIPS)
+#if CPU(ARM) || CPU(SH4) || CPU(MIPS) || CPU(SPARC)
             const UChar* aChars = a->characters();
             const UChar* bChars = b->characters();
             for (unsigned i = 0; i != aLength; ++i) {

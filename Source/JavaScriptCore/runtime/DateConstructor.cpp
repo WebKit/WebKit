@@ -126,7 +126,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
                 || (numArgs >= 5 && isnan(doubleArguments[4]))
                 || (numArgs >= 6 && isnan(doubleArguments[5]))
                 || (numArgs >= 7 && isnan(doubleArguments[6])))
-            value = NaN;
+            value = std::numeric_limits<double>::quiet_NaN();
         else {
             GregorianDateTime t;
             int year = JSC::toInt32(doubleArguments[0]);
@@ -142,7 +142,7 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
         }
     }
 
-    return new (exec) DateInstance(exec, globalObject->dateStructure(), value);
+    return DateInstance::create(exec, globalObject->dateStructure(), value);
 }
     
 static EncodedJSValue JSC_HOST_CALL constructWithDateConstructor(ExecState* exec)

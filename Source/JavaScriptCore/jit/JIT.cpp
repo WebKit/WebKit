@@ -74,8 +74,6 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_globalData(globalData)
     , m_codeBlock(codeBlock)
     , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
-    , m_propertyAccessCompilationInfo(codeBlock ? codeBlock->numberOfStructureStubInfos() : 0)
-    , m_callStructureStubCompilationInfo(codeBlock ? codeBlock->numberOfCallLinkInfos() : 0)
     , m_bytecodeOffset((unsigned)-1)
 #if USE(JSVALUE32_64)
     , m_jumpTargetIndex(0)
@@ -175,7 +173,6 @@ void JIT::privateCompileMainPass()
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
     unsigned instructionCount = m_codeBlock->instructions().size();
 
-    m_propertyAccessInstructionIndex = 0;
     m_globalResolveInfoIndex = 0;
     m_callLinkInfoIndex = 0;
 
@@ -200,6 +197,8 @@ void JIT::privateCompileMainPass()
         DEFINE_BINARY_OP(op_in)
         DEFINE_BINARY_OP(op_less)
         DEFINE_BINARY_OP(op_lesseq)
+        DEFINE_BINARY_OP(op_greater)
+        DEFINE_BINARY_OP(op_greatereq)
         DEFINE_UNARY_OP(op_is_boolean)
         DEFINE_UNARY_OP(op_is_function)
         DEFINE_UNARY_OP(op_is_number)
@@ -224,7 +223,6 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_get_callee)
         DEFINE_OP(op_create_this)
         DEFINE_OP(op_convert_this)
-        DEFINE_OP(op_convert_this_strict)
         DEFINE_OP(op_init_lazy_reg)
         DEFINE_OP(op_create_arguments)
         DEFINE_OP(op_debug)
@@ -251,16 +249,22 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_jmp_scopes)
         DEFINE_OP(op_jneq_null)
         DEFINE_OP(op_jneq_ptr)
-        DEFINE_OP(op_jnless)
         DEFINE_OP(op_jless)
         DEFINE_OP(op_jlesseq)
+        DEFINE_OP(op_jgreater)
+        DEFINE_OP(op_jgreatereq)
+        DEFINE_OP(op_jnless)
         DEFINE_OP(op_jnlesseq)
+        DEFINE_OP(op_jngreater)
+        DEFINE_OP(op_jngreatereq)
         DEFINE_OP(op_jsr)
         DEFINE_OP(op_jtrue)
         DEFINE_OP(op_load_varargs)
         DEFINE_OP(op_loop)
         DEFINE_OP(op_loop_if_less)
         DEFINE_OP(op_loop_if_lesseq)
+        DEFINE_OP(op_loop_if_greater)
+        DEFINE_OP(op_loop_if_greatereq)
         DEFINE_OP(op_loop_if_true)
         DEFINE_OP(op_loop_if_false)
         DEFINE_OP(op_lshift)
@@ -274,6 +278,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_neq)
         DEFINE_OP(op_neq_null)
         DEFINE_OP(op_new_array)
+        DEFINE_OP(op_new_array_buffer)
         DEFINE_OP(op_new_func)
         DEFINE_OP(op_new_func_exp)
         DEFINE_OP(op_new_object)
@@ -304,6 +309,7 @@ void JIT::privateCompileMainPass()
         DEFINE_OP(op_resolve_global_dynamic)
         DEFINE_OP(op_resolve_skip)
         DEFINE_OP(op_resolve_with_base)
+        DEFINE_OP(op_resolve_with_this)
         DEFINE_OP(op_ret)
         DEFINE_OP(op_call_put_result)
         DEFINE_OP(op_ret_object_or_this)
@@ -327,19 +333,13 @@ void JIT::privateCompileMainPass()
         case op_get_by_id_chain:
         case op_get_by_id_generic:
         case op_get_by_id_proto:
-        case op_get_by_id_proto_list:
         case op_get_by_id_self:
-        case op_get_by_id_self_list:
         case op_get_by_id_getter_chain:
         case op_get_by_id_getter_proto:
-        case op_get_by_id_getter_proto_list:
         case op_get_by_id_getter_self:
-        case op_get_by_id_getter_self_list:
         case op_get_by_id_custom_chain:
         case op_get_by_id_custom_proto:
-        case op_get_by_id_custom_proto_list:
         case op_get_by_id_custom_self:
-        case op_get_by_id_custom_self_list:
         case op_get_string_length:
         case op_put_by_id_generic:
         case op_put_by_id_replace:
@@ -348,8 +348,7 @@ void JIT::privateCompileMainPass()
         }
     }
 
-    ASSERT(m_propertyAccessInstructionIndex == m_codeBlock->numberOfStructureStubInfos());
-    ASSERT(m_callLinkInfoIndex == m_codeBlock->numberOfCallLinkInfos());
+    ASSERT(m_callLinkInfoIndex == m_callStructureStubCompilationInfo.size());
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
@@ -396,7 +395,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_call_varargs)
         DEFINE_SLOWCASE_OP(op_construct)
         DEFINE_SLOWCASE_OP(op_convert_this)
-        DEFINE_SLOWCASE_OP(op_convert_this_strict)
+        DEFINE_SLOWCASE_OP(op_create_this)
         DEFINE_SLOWCASE_OP(op_div)
         DEFINE_SLOWCASE_OP(op_eq)
         DEFINE_SLOWCASE_OP(op_get_by_id)
@@ -407,14 +406,20 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_check_has_instance)
         DEFINE_SLOWCASE_OP(op_instanceof)
         DEFINE_SLOWCASE_OP(op_jfalse)
-        DEFINE_SLOWCASE_OP(op_jnless)
         DEFINE_SLOWCASE_OP(op_jless)
         DEFINE_SLOWCASE_OP(op_jlesseq)
+        DEFINE_SLOWCASE_OP(op_jgreater)
+        DEFINE_SLOWCASE_OP(op_jgreatereq)
+        DEFINE_SLOWCASE_OP(op_jnless)
         DEFINE_SLOWCASE_OP(op_jnlesseq)
+        DEFINE_SLOWCASE_OP(op_jngreater)
+        DEFINE_SLOWCASE_OP(op_jngreatereq)
         DEFINE_SLOWCASE_OP(op_jtrue)
         DEFINE_SLOWCASE_OP(op_load_varargs)
         DEFINE_SLOWCASE_OP(op_loop_if_less)
         DEFINE_SLOWCASE_OP(op_loop_if_lesseq)
+        DEFINE_SLOWCASE_OP(op_loop_if_greater)
+        DEFINE_SLOWCASE_OP(op_loop_if_greatereq)
         DEFINE_SLOWCASE_OP(op_loop_if_true)
         DEFINE_SLOWCASE_OP(op_loop_if_false)
         DEFINE_SLOWCASE_OP(op_lshift)
@@ -425,6 +430,7 @@ void JIT::privateCompileSlowCases()
         DEFINE_SLOWCASE_OP(op_negate)
 #endif
         DEFINE_SLOWCASE_OP(op_neq)
+        DEFINE_SLOWCASE_OP(op_new_object)
         DEFINE_SLOWCASE_OP(op_not)
         DEFINE_SLOWCASE_OP(op_nstricteq)
         DEFINE_SLOWCASE_OP(op_post_dec)
@@ -451,10 +457,8 @@ void JIT::privateCompileSlowCases()
         emitJumpSlowToHot(jump(), 0);
     }
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    ASSERT(m_propertyAccessInstructionIndex == m_codeBlock->numberOfStructureStubInfos());
-#endif
-    ASSERT(m_callLinkInfoIndex == m_codeBlock->numberOfCallLinkInfos());
+    ASSERT(m_propertyAccessInstructionIndex == m_propertyAccessCompilationInfo.size());
+    ASSERT(m_callLinkInfoIndex == m_callStructureStubCompilationInfo.size());
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
@@ -522,7 +526,7 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     ASSERT(m_jmpTable.isEmpty());
 
-    LinkBuffer patchBuffer(this, m_globalData->executableAllocator);
+    LinkBuffer patchBuffer(*m_globalData, this, m_globalData->executableAllocator);
 
     // Translate vPC offsets into addresses in JIT generated code, for switch tables.
     for (unsigned i = 0; i < m_switches.size(); ++i) {
@@ -572,38 +576,35 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     for (Vector<JSRInfo>::iterator iter = m_jsrSites.begin(); iter != m_jsrSites.end(); ++iter)
         patchBuffer.patch(iter->storeLocation, patchBuffer.locationOf(iter->target).executableAddress());
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    for (unsigned i = 0; i < m_codeBlock->numberOfStructureStubInfos(); ++i) {
+    m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
+    for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
         info.callReturnLocation = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].hotPathBegin);
     }
-#endif
-#if ENABLE(JIT_OPTIMIZE_CALL)
+    m_codeBlock->setNumberOfCallLinkInfos(m_callStructureStubCompilationInfo.size());
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
-        info.callReturnLocation = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation);
+        info.isCall = m_callStructureStubCompilationInfo[i].isCall;
+        info.callReturnLocation = CodeLocationLabel(patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation));
         info.hotPathBegin = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
         info.hotPathOther = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].hotPathOther);
     }
-#endif
     unsigned methodCallCount = m_methodCallCompilationInfo.size();
     m_codeBlock->addMethodCallLinkInfos(methodCallCount);
     for (unsigned i = 0; i < methodCallCount; ++i) {
         MethodCallLinkInfo& info = m_codeBlock->methodCallLinkInfo(i);
-        info.structureLabel = patchBuffer.locationOf(m_methodCallCompilationInfo[i].structureToCompare);
+        info.cachedStructure.setLocation(patchBuffer.locationOf(m_methodCallCompilationInfo[i].structureToCompare));
         info.callReturnLocation = m_codeBlock->structureStubInfo(m_methodCallCompilationInfo[i].propertyAccessIndex).callReturnLocation;
     }
 
     if (m_codeBlock->codeType() == FunctionCode && functionEntryArityCheck)
         *functionEntryArityCheck = patchBuffer.locationOf(arityCheck);
 
-    return patchBuffer.finalizeCode();
+    return JITCode(patchBuffer.finalizeCode(), JITCode::BaselineJIT);
 }
 
-#if ENABLE(JIT_OPTIMIZE_CALL)
-
-void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData)
+void JIT::linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData, CodeSpecializationKind kind)
 {
     RepatchBuffer repatchBuffer(callerCodeBlock);
 
@@ -611,32 +612,19 @@ void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* ca
     // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
     if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
         ASSERT(!callLinkInfo->isLinked());
-        callLinkInfo->callee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
-        repatchBuffer.repatch(callLinkInfo->hotPathBegin, callee);
+        callLinkInfo->callee.set(*globalData, callLinkInfo->hotPathBegin, callerCodeBlock->ownerExecutable(), callee);
         repatchBuffer.relink(callLinkInfo->hotPathOther, code);
     }
 
     // patch the call so we do not continue to try to link.
-    repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualCall());
-}
-
-void JIT::linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData)
-{
-    RepatchBuffer repatchBuffer(callerCodeBlock);
-
-    // Currently we only link calls with the exact number of arguments.
-    // If this is a native call calleeCodeBlock is null so the number of parameters is unimportant
-    if (!calleeCodeBlock || (callerArgCount == calleeCodeBlock->m_numParameters)) {
-        ASSERT(!callLinkInfo->isLinked());
-        callLinkInfo->callee.set(*globalData, callerCodeBlock->ownerExecutable(), callee);
-        repatchBuffer.repatch(callLinkInfo->hotPathBegin, callee);
-        repatchBuffer.relink(callLinkInfo->hotPathOther, code);
+    if (kind == CodeForCall) {
+        repatchBuffer.relink(CodeLocationNearCall(callLinkInfo->callReturnLocation), globalData->jitStubs->ctiVirtualCall());
+        return;
     }
 
-    // patch the call so we do not continue to try to link.
-    repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualConstruct());
+    ASSERT(kind == CodeForConstruct);
+    repatchBuffer.relink(CodeLocationNearCall(callLinkInfo->callReturnLocation), globalData->jitStubs->ctiVirtualConstruct());
 }
-#endif // ENABLE(JIT_OPTIMIZE_CALL)
 
 } // namespace JSC
 

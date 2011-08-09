@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "MarkStack.h"
+#ifndef DFGRepatch_h
+#define DFGRepatch_h
 
-#if OS(WINDOWS)
+#if ENABLE(DFG_JIT)
 
-#include "windows.h"
+#include <dfg/DFGJITCompiler.h>
+#include <dfg/DFGOperations.h>
 
-namespace JSC {
+namespace JSC { namespace DFG {
 
-void MarkStack::initializePagesize()
-{
-    SYSTEM_INFO system_info;
-    GetSystemInfo(&system_info);
-    MarkStack::s_pageSize = system_info.dwPageSize;
-}
+void dfgRepatchGetByID(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
+void dfgRepatchGetMethod(ExecState*, JSValue, const Identifier&, const PropertySlot&, MethodCallLinkInfo&);
+void dfgBuildGetByIDList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
+void dfgBuildGetByIDProtoList(ExecState*, JSValue, const Identifier&, const PropertySlot&, StructureStubInfo&);
+void dfgRepatchPutByID(ExecState*, JSValue, const Identifier&, const PutPropertySlot&, StructureStubInfo&, PutKind);
+void dfgLinkFor(ExecState*, CallLinkInfo&, CodeBlock*, JSFunction* callee, MacroAssemblerCodePtr, CodeSpecializationKind);
 
-}
+} } // namespace JSC::DFG
 
+#endif
 #endif

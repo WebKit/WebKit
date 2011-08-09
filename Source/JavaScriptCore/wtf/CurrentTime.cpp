@@ -33,7 +33,10 @@
 #include "config.h"
 #include "CurrentTime.h"
 
-#if OS(WINDOWS)
+#if PLATFORM(MAC)
+#include <mach/mach_time.h>
+#include <sys/time.h>
+#elif OS(WINDOWS)
 
 // Windows is first since we want to use hires timers, despite USE(CF)
 // being defined.
@@ -59,6 +62,8 @@ extern "C" time_t mktime(struct tm *t);
 #include <wx/datetime.h>
 #elif PLATFORM(BREWMP)
 #include <AEEStdLib.h>
+#elif PLATFORM(EFL)
+#include <Ecore.h>
 #else
 #include <sys/time.h>
 #endif
@@ -283,6 +288,13 @@ double currentTime()
     return static_cast<double>(diffSeconds + GETUTCSECONDS() + ((GETTIMEMS() % 1000) / msPerSecond));
 }
 
+#elif PLATFORM(EFL)
+
+double currentTime()
+{
+    return ecore_time_unix_get();
+}
+
 #else
 
 double currentTime()
@@ -290,6 +302,40 @@ double currentTime()
     struct timeval now;
     gettimeofday(&now, 0);
     return now.tv_sec + now.tv_usec / 1000000.0;
+}
+
+#endif
+
+#if PLATFORM(MAC)
+
+double monotonicallyIncreasingTime()
+{
+    // Based on listing #2 from Apple QA 1398.
+    static mach_timebase_info_data_t timebaseInfo;
+    if (!timebaseInfo.denom) {
+        kern_return_t kr = mach_timebase_info(&timebaseInfo);
+        ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
+    }
+    return (mach_absolute_time() * timebaseInfo.numer) / (1.0e9 * timebaseInfo.denom);
+}
+
+#elif PLATFORM(EFL)
+
+double monotonicallyIncreasingTime()
+{
+    return ecore_time_get();
+}
+
+#else
+
+double monotonicallyIncreasingTime()
+{
+    static double lastTime = 0;
+    double currentTimeNow = currentTime();
+    if (currentTimeNow < lastTime)
+        return lastTime;
+    lastTime = currentTimeNow;
+    return currentTimeNow;
 }
 
 #endif

@@ -28,9 +28,14 @@ namespace JSC {
     class ObjectPrototype;
 
     class DatePrototype : public DateInstance {
-    public:
+    private:
         DatePrototype(ExecState*, JSGlobalObject*, Structure*);
 
+    public:
+        static DatePrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+        {
+            return new (allocateCell<DatePrototype>(*exec->heap())) DatePrototype(exec, globalObject, structure);
+        }
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 

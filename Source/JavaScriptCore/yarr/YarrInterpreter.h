@@ -71,6 +71,7 @@ struct ByteTerm {
         TypeParentheticalAssertionEnd,
         TypeCheckInput,
         TypeUncheckInput,
+        TypeDotStarEnclosure,
     } type;
     union {
         struct {
@@ -95,6 +96,10 @@ struct ByteTerm {
             int end;
             bool onceThrough;
         } alternative;
+        struct {
+            bool m_bol : 1;
+            bool m_eol : 1;
+        } anchors;
         unsigned checkInputCount;
     };
     unsigned frameLocation;
@@ -294,6 +299,14 @@ struct ByteTerm {
     static ByteTerm SubpatternEnd()
     {
         return ByteTerm(TypeSubpatternEnd);
+    }
+    
+    static ByteTerm DotStarEnclosure(bool bolAnchor, bool eolAnchor)
+    {
+        ByteTerm term(TypeDotStarEnclosure);
+        term.anchors.m_bol = bolAnchor;
+        term.anchors.m_eol = eolAnchor;
+        return term;
     }
 
     bool invert()

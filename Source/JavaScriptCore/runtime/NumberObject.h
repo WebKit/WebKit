@@ -26,8 +26,14 @@
 namespace JSC {
 
     class NumberObject : public JSWrapperObject {
+    protected:
+        NumberObject(JSGlobalData&, Structure*);
+
     public:
-        explicit NumberObject(JSGlobalData&, Structure*);
+        static NumberObject* create(JSGlobalData& globalData, Structure* structure)
+        {
+            return new (allocateCell<NumberObject>(globalData.heap)) NumberObject(globalData, structure);
+        }
 
         static const ClassInfo s_info;
 

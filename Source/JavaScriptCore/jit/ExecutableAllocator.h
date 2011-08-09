@@ -66,8 +66,7 @@ extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLeng
 #include <wtf/brew/RefPtrBrew.h>
 #endif
 
-#define JIT_ALLOCATOR_PAGE_SIZE (ExecutableAllocator::pageSize)
-#define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (ExecutableAllocator::pageSize * 4)
+#define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (pageSize() * 4)
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 #define PROTECTION_FLAGS_RW (PROT_READ | PROT_WRITE)
@@ -78,6 +77,9 @@ extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLeng
 #endif
 
 namespace JSC {
+
+class JSGlobalData;
+void releaseExecutableMemory(JSGlobalData&);
 
 inline size_t roundUpAllocationSize(size_t request, size_t granularity)
 {
@@ -120,12 +122,12 @@ public:
 #endif
     typedef Vector<Allocation, 2> AllocationList;
 
-    static PassRefPtr<ExecutablePool> create(size_t n)
+    static PassRefPtr<ExecutablePool> create(JSGlobalData& globalData, size_t n)
     {
-        return adoptRef(new ExecutablePool(n));
+        return adoptRef(new ExecutablePool(globalData, n));
     }
 
-    void* alloc(size_t n)
+    void* alloc(JSGlobalData& globalData, size_t n)
     {
         ASSERT(m_freePtr <= m_end);
 
@@ -141,7 +143,7 @@ public:
 
         // Insufficient space to allocate in the existing pool
         // so we need allocate into a new pool
-        return poolAllocate(n);
+        return poolAllocate(globalData, n);
     }
     
     void tryShrink(void* allocation, size_t oldSize, size_t newSize)
@@ -164,9 +166,9 @@ private:
     static Allocation systemAlloc(size_t n);
     static void systemRelease(Allocation& alloc);
 
-    ExecutablePool(size_t n);
+    ExecutablePool(JSGlobalData&, size_t n);
 
-    void* poolAllocate(size_t n);
+    void* poolAllocate(JSGlobalData&, size_t n);
 
     char* m_freePtr;
     char* m_end;
@@ -177,13 +179,10 @@ class ExecutableAllocator {
     enum ProtectionSetting { Writable, Executable };
 
 public:
-    static size_t pageSize;
-    ExecutableAllocator()
+    ExecutableAllocator(JSGlobalData& globalData)
     {
-        if (!pageSize)
-            intializePageSize();
         if (isValid())
-            m_smallAllocationPool = ExecutablePool::create(JIT_ALLOCATOR_LARGE_ALLOC_SIZE);
+            m_smallAllocationPool = ExecutablePool::create(globalData, JIT_ALLOCATOR_LARGE_ALLOC_SIZE);
 #if !ENABLE(INTERPRETER)
         else
             CRASH();
@@ -194,7 +193,7 @@ public:
 
     static bool underMemoryPressure();
 
-    PassRefPtr<ExecutablePool> poolForSize(size_t n)
+    PassRefPtr<ExecutablePool> poolForSize(JSGlobalData& globalData, size_t n)
     {
         // Try to fit in the existing small allocator
         ASSERT(m_smallAllocationPool);
@@ -203,10 +202,10 @@ public:
 
         // If the request is large, we just provide a unshared allocator
         if (n > JIT_ALLOCATOR_LARGE_ALLOC_SIZE)
-            return ExecutablePool::create(n);
+            return ExecutablePool::create(globalData, n);
 
         // Create a new allocator
-        RefPtr<ExecutablePool> pool = ExecutablePool::create(JIT_ALLOCATOR_LARGE_ALLOC_SIZE);
+        RefPtr<ExecutablePool> pool = ExecutablePool::create(globalData, JIT_ALLOCATOR_LARGE_ALLOC_SIZE);
 
         // If the new allocator will result in more free space than in
         // the current small allocator, then we will use it instead
@@ -338,13 +337,16 @@ private:
 #endif
 
     RefPtr<ExecutablePool> m_smallAllocationPool;
-    static void intializePageSize();
 };
 
-inline ExecutablePool::ExecutablePool(size_t n)
+inline ExecutablePool::ExecutablePool(JSGlobalData& globalData, size_t n)
 {
-    size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
+    size_t allocSize = roundUpAllocationSize(n, pageSize());
     Allocation mem = systemAlloc(allocSize);
+    if (!mem.base()) {
+        releaseExecutableMemory(globalData);
+        mem = systemAlloc(allocSize);
+    }
     m_pools.append(mem);
     m_freePtr = static_cast<char*>(mem.base());
     if (!m_freePtr)
@@ -352,13 +354,17 @@ inline ExecutablePool::ExecutablePool(size_t n)
     m_end = m_freePtr + allocSize;
 }
 
-inline void* ExecutablePool::poolAllocate(size_t n)
+inline void* ExecutablePool::poolAllocate(JSGlobalData& globalData, size_t n)
 {
-    size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
+    size_t allocSize = roundUpAllocationSize(n, pageSize());
     
     Allocation result = systemAlloc(allocSize);
-    if (!result.base())
-        CRASH(); // Failed to allocate
+    if (!result.base()) {
+        releaseExecutableMemory(globalData);
+        result = systemAlloc(allocSize);
+        if (!result.base())
+            CRASH(); // Failed to allocate
+    }
     
     ASSERT(m_end >= m_freePtr);
     if ((allocSize - n) > static_cast<size_t>(m_end - m_freePtr)) {

@@ -41,6 +41,7 @@ class MacroAssemblerARM : public AbstractMacroAssembler<ARMAssembler> {
     COMPILE_ASSERT(!(DoubleConditionBitSpecial & DoubleConditionMask), DoubleConditionBitSpecial_should_not_interfere_with_ARMAssembler_Condition_codes);
 public:
     typedef ARMRegisters::FPRegisterID FPRegisterID;
+    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
 
     enum RelationalCondition {
         Equal = ARMAssembler::EQ,
@@ -178,10 +179,15 @@ public:
 
         m_assembler.movs_r(dest, m_assembler.asr_r(dest, ARMRegisters::S0));
     }
-
+    
     void rshift32(TrustedImm32 imm, RegisterID dest)
     {
-        m_assembler.movs_r(dest, m_assembler.asr(dest, imm.m_value & 0x1f));
+        rshift32(dest, imm, dest);
+    }
+
+    void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.movs_r(dest, m_assembler.asr(src, imm.m_value & 0x1f));
     }
     
     void urshift32(RegisterID shift_amount, RegisterID dest)
@@ -271,6 +277,13 @@ public:
         DataLabel32 dataLabel(this);
         m_assembler.ldr_un_imm(ARMRegisters::S0, 0);
         m_assembler.dtr_ur(true, dest, address.base, ARMRegisters::S0);
+        return dataLabel;
+    }
+    
+    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        DataLabelCompact dataLabel(this);
+        load32WithAddressOffsetPatch(address, dest);
         return dataLabel;
     }
 
@@ -408,7 +421,7 @@ public:
             m_assembler.ldr_un_imm(ARMRegisters::S0, right.m_value);
             m_assembler.cmp_r(left, ARMRegisters::S0);
         } else {
-            ARMWord tmp = m_assembler.getOp2(-right.m_value);
+            ARMWord tmp = (right.m_value == 0x80000000) ? ARMAssembler::INVALID_IMM : m_assembler.getOp2(-right.m_value);
             if (tmp != ARMAssembler::INVALID_IMM)
                 m_assembler.cmn_r(left, tmp);
             else
@@ -781,6 +794,7 @@ public:
     {
         return s_isVFPPresent;
     }
+    bool supportsDoubleBitops() const { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -846,6 +860,11 @@ public:
     void sqrtDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.vsqrt_f64_r(dest, src);
+    }
+    
+    void andnotDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT_NOT_REACHED();
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
@@ -1013,7 +1032,7 @@ private:
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
-        ARMAssembler::linkCall(code, call.m_jmp, function.value());
+        ARMAssembler::linkCall(code, call.m_label, function.value());
     }
 
     static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)

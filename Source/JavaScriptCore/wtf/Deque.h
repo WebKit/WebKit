@@ -78,6 +78,9 @@ namespace WTF {
         const T& first() const { ASSERT(m_start != m_end); return m_buffer.buffer()[m_start]; }
         PassType takeFirst();
 
+        T& last() { ASSERT(m_start != m_end); return *(--end()); }
+        const T& last() const { ASSERT(m_start != m_end); return *(--end()); }
+
         template<typename U> void append(const U&);
         template<typename U> void prepend(const U&);
         void removeFirst();
@@ -610,7 +613,6 @@ namespace WTF {
     template<typename T, size_t inlineCapacity>
     inline DequeIteratorBase<T, inlineCapacity>& DequeIteratorBase<T, inlineCapacity>::operator=(const Base& other)
     {
-        checkValidity();
         other.checkValidity();
         removeFromIteratorsList();
 

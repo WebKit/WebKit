@@ -251,7 +251,7 @@ JSObject* OpaqueJSClass::prototype(ExecState* exec)
 
     if (!jsClassData.cachedPrototype) {
         // Recursive, but should be good enough for our purposes
-        jsClassData.cachedPrototype.set(exec->globalData(), new (exec) JSCallbackObject<JSObjectWithGlobalObject>(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData), 0); // set jsClassData as the object's private data, so it can clear our reference on destruction
+        jsClassData.cachedPrototype.set(exec->globalData(), JSCallbackObject<JSObjectWithGlobalObject>::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->callbackObjectStructure(), prototypeClass, &jsClassData), 0); // set jsClassData as the object's private data, so it can clear our reference on destruction
         if (parentClass) {
             if (JSObject* prototype = parentClass->prototype(exec))
                 jsClassData.cachedPrototype->setPrototype(exec->globalData(), prototype);

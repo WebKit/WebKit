@@ -117,7 +117,7 @@ public:
 
 private:
     PageAllocation(void* base, size_t size)
-        : PageBlock(base, size)
+        : PageBlock(base, size, false)
     {
     }
 };

@@ -179,9 +179,9 @@ double parseIntOverflow(const char* s, int length, int radix)
     double radixMultiplier = 1.0;
 
     for (const char* p = s + length - 1; p >= s; p--) {
-        if (radixMultiplier == Inf) {
+        if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
-                number = Inf;
+                number = std::numeric_limits<double>::infinity();
                 break;
             }
         } else {
@@ -201,9 +201,9 @@ double parseIntOverflow(const UChar* s, int length, int radix)
     double radixMultiplier = 1.0;
 
     for (const UChar* p = s + length - 1; p >= s; p--) {
-        if (radixMultiplier == Inf) {
+        if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
-                number = Inf;
+                number = std::numeric_limits<double>::infinity();
                 break;
             }
         } else {
@@ -247,7 +247,7 @@ static double parseInt(const UString& s, int radix)
     }
 
     if (radix < 2 || radix > 36)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     int firstDigitPosition = p;
     bool sawDigit = false;
@@ -270,7 +270,7 @@ static double parseInt(const UString& s, int radix)
     }
 
     if (!sawDigit)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     return sign * number;
 }
@@ -338,27 +338,27 @@ static double jsStrDecimalLiteral(const UChar*& data, const UChar* end)
     case 'I':
         if (isInfinity(data, end)) {
             data += SizeOfInfinity;
-            return Inf;
+            return std::numeric_limits<double>::infinity();
         }
         break;
 
     case '+':
         if (isInfinity(data + 1, end)) {
             data += SizeOfInfinity + 1;
-            return Inf;
+            return std::numeric_limits<double>::infinity();
         }
         break;
 
     case '-':
         if (isInfinity(data + 1, end)) {
             data += SizeOfInfinity + 1;
-            return -Inf;
+            return -std::numeric_limits<double>::infinity();
         }
         break;
     }
 
     // Not a number.
-    return NaN;
+    return std::numeric_limits<double>::quiet_NaN();
 }
 
 // See ecma-262 9.3.1
@@ -372,7 +372,7 @@ double jsToNumber(const UString& s)
             return c - '0';
         if (isStrWhiteSpace(c))
             return 0;
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     }
 
     const UChar* data = s.characters();
@@ -400,7 +400,7 @@ double jsToNumber(const UString& s)
             break;
     }
     if (data != end)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     return number;
 }
@@ -413,7 +413,7 @@ static double parseFloat(const UString& s)
         UChar c = s.characters()[0];
         if (isASCIIDigit(c))
             return c - '0';
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     }
 
     const UChar* data = s.characters();
@@ -427,7 +427,7 @@ static double parseFloat(const UString& s)
 
     // Empty string.
     if (data == end)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     return jsStrDecimalLiteral(data, end);
 }
@@ -445,7 +445,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 
     UString s = x.toString(exec);
 
-    LiteralParser preparser(exec, s, LiteralParser::NonStrictJSON);
+    LiteralParser preparser(exec, s.characters(), s.length(), LiteralParser::NonStrictJSON);
     if (JSValue parsedObject = preparser.tryLiteralParse())
         return JSValue::encode(parsedObject);
 
@@ -460,24 +460,29 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
 {
     JSValue value = exec->argument(0);
-    int32_t radix = exec->argument(1).toInt32(exec);
+    JSValue radixValue = exec->argument(1);
 
-    if (radix != 0 && radix != 10)
-        return JSValue::encode(jsNumber(parseInt(value.toString(exec), radix)));
+    // Optimized handling for numbers:
+    // If the argument is 0 or a number in range 10^-6 <= n < INT_MAX+1, then parseInt
+    // results in a truncation to integer. In the case of -0, this is converted to 0.
+    //
+    // This is also a truncation for values in the range INT_MAX+1 <= n < 10^21,
+    // however these values cannot be trivially truncated to int since 10^21 exceeds
+    // even the int64_t range. Negative numbers are a little trickier, the case for
+    // values in the range -10^21 < n <= -1 are similar to those for integer, but
+    // values in the range -1 < n <= -10^-6 need to truncate to -0, not 0.
+    static const double tenToTheMinus6 = 0.000001;
+    static const double intMaxPlusOne = 2147483648.0;
+    double n;
+    if (value.getNumber(n) && ((n < intMaxPlusOne && n >= tenToTheMinus6) || !n) && radixValue.isUndefinedOrNull())
+        return JSValue::encode(jsNumber(static_cast<int32_t>(n)));
 
-    if (value.isInt32())
-        return JSValue::encode(value);
+    // If ToString throws, we shouldn't call ToInt32.
+    UString s = value.toString(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
 
-    if (value.isDouble()) {
-        double d = value.asDouble();
-        if (isfinite(d))
-            return JSValue::encode(jsNumber((d > 0) ? floor(d) : ceil(d)));
-        if (isnan(d) || isinf(d))
-            return JSValue::encode(jsNaN());
-        return JSValue::encode(jsNumber(0));
-    }
-
-    return JSValue::encode(jsNumber(parseInt(value.toString(exec), radix)));
+    return JSValue::encode(jsNumber(parseInt(s, radixValue.toInt32(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
@@ -493,7 +498,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState* exec)
 {
     double n = exec->argument(0).toNumber(exec);
-    return JSValue::encode(jsBoolean(!isnan(n) && !isinf(n)));
+    return JSValue::encode(jsBoolean(isfinite(n)));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState* exec)

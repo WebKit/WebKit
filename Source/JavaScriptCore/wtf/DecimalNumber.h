@@ -40,7 +40,7 @@ class DecimalNumber {
 public:
     DecimalNumber(double d)
     {
-        ASSERT(!isnan(d) && !isinf(d));
+        ASSERT(isfinite(d));
         dtoa(m_significand, d, m_sign, m_exponent, m_precision);
 
         ASSERT(m_precision);
@@ -54,7 +54,7 @@ public:
 
     DecimalNumber(double d, RoundingSignificantFiguresType, unsigned significantFigures)
     {
-        ASSERT(!isnan(d) && !isinf(d));
+        ASSERT(isfinite(d));
         dtoaRoundSF(m_significand, d, significantFigures, m_sign, m_exponent, m_precision);
 
         ASSERT(significantFigures && significantFigures <= sizeof(DtoaBuffer));
@@ -68,7 +68,7 @@ public:
 
     DecimalNumber(double d, RoundingDecimalPlacesType, unsigned decimalPlaces)
     {
-        ASSERT(!isnan(d) && !isinf(d));
+        ASSERT(isfinite(d));
         dtoaRoundDP(m_significand, d, decimalPlaces, m_sign, m_exponent, m_precision);
 
         unsigned significantFigures = 1 + m_exponent + decimalPlaces;

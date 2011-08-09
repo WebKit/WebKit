@@ -409,7 +409,7 @@ public:
         ASSERT(PageTables32MB::size() == 32 * 1024 * 1024);
         ASSERT(PageTables1GB::size() == 1024 * 1024 * 1024);
 
-        m_reservation = PageReservation::reserve(FixedVMPoolPageTables::size(), OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        m_reservation = PageReservation::reserveWithGuardPages(FixedVMPoolPageTables::size(), OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
 #if !ENABLE(INTERPRETER)
         if (!isValid())
             CRASH();
@@ -424,13 +424,13 @@ public:
         ASSERT(size);
 
         if (size >= FixedVMPoolPageTables::size())
-            CRASH();
+            return ExecutablePool::Allocation(0, 0);
         if (m_pages.isFull())
-            CRASH();
+            return ExecutablePool::Allocation(0, 0);
 
         size_t offset = m_pages.allocate(sizeClass);
         if (offset == notFound)
-            CRASH();
+            return ExecutablePool::Allocation(0, 0);
 
         void* pointer = offsetToPointer(offset);
         m_reservation.commit(pointer, size);
@@ -490,11 +490,6 @@ size_t ExecutableAllocator::committedByteCount()
     SpinLockHolder lockHolder(&spinlock);
     return allocator ? allocator->allocated() : 0;
 }   
-
-void ExecutableAllocator::intializePageSize()
-{
-    ExecutableAllocator::pageSize = getpagesize();
-}
 
 bool ExecutableAllocator::isValid() const
 {

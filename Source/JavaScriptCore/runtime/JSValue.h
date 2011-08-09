@@ -34,9 +34,6 @@
 
 namespace JSC {
 
-    extern const double NaN;
-    extern const double Inf;
-
     class ExecState;
     class Identifier;
     class JSCell;
@@ -82,8 +79,6 @@ namespace JSC {
         } asBits;
 #endif
     };
-
-    double nonInlineNaN();
 
     // This implements ToInt32, defined in ECMA-262 9.5.
     int32_t toInt32(double);
@@ -157,6 +152,7 @@ namespace JSC {
         bool isBoolean() const;
         bool isNumber() const;
         bool isString() const;
+        bool isPrimitive() const;
         bool isGetterSetter() const;
         bool isObject() const;
         bool inherits(const ClassInfo*) const;
@@ -194,10 +190,6 @@ namespace JSC {
         int32_t toInt32(ExecState*) const;
         uint32_t toUInt32(ExecState*) const;
 
-#if ENABLE(JSC_ZOMBIES)
-        bool isZombie() const;
-#endif
-
         // Floating point conversions (this is a convenience method for webcore;
         // signle precision float is not a representation used in JS or JSC).
         float toFloat(ExecState* exec) const { return static_cast<float>(toNumber(exec)); }
@@ -211,7 +203,6 @@ namespace JSC {
         void putDirect(ExecState*, const Identifier& propertyName, JSValue, PutPropertySlot&);
         void put(ExecState*, unsigned propertyName, JSValue);
 
-        bool needsThisConversion() const;
         JSObject* toThisObject(ExecState*) const;
         JSValue toStrictThisObject(ExecState*) const;
         UString toThisString(ExecState*) const;
@@ -241,6 +232,7 @@ namespace JSC {
         JSValue(HashTableDeletedValueTag);
 
         inline const JSValue asValue() const { return *this; }
+        double toNumberSlowCase(ExecState*) const;
         JSObject* toObjectSlowCase(ExecState*, JSGlobalObject*) const;
         JSObject* toThisObjectSlowCase(ExecState*) const;
 

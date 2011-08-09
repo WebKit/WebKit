@@ -267,11 +267,25 @@ String String::stripWhiteSpace() const
     return m_impl->stripWhiteSpace();
 }
 
+String String::stripWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace) const
+{
+    if (!m_impl)
+        return String();
+    return m_impl->stripWhiteSpace(isWhiteSpace);
+}
+
 String String::simplifyWhiteSpace() const
 {
     if (!m_impl)
         return String();
     return m_impl->simplifyWhiteSpace();
+}
+
+String String::simplifyWhiteSpace(IsWhiteSpaceFunctionPtr isWhiteSpace) const
+{
+    if (!m_impl)
+        return String();
+    return m_impl->simplifyWhiteSpace(isWhiteSpace);
 }
 
 String String::removeCharacters(CharacterMatchFunctionPtr findMatch) const
@@ -963,6 +977,11 @@ const String& emptyString()
 String* string(const char*);
 Vector<char> asciiDebug(StringImpl* impl);
 Vector<char> asciiDebug(String& string);
+
+void String::show() const
+{
+    fprintf(stderr, "%s\n", asciiDebug(impl()).data());
+}
 
 String* string(const char* s)
 {

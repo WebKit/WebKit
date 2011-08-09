@@ -59,14 +59,27 @@ namespace JSC {
 
     class Arguments : public JSNonFinalObject {
     public:
+        static Arguments* create(JSGlobalData& globalData, CallFrame* callFrame)
+        {
+            return new (allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);
+        }
+        
+        static Arguments* createNoParameters(JSGlobalData& globalData, CallFrame* callFrame)
+        {
+            return new (allocateCell<Arguments>(globalData.heap)) Arguments(callFrame, NoParameters);
+        }
+
         // Use an enum because otherwise gcc insists on doing a memory
         // read.
         enum { MaxArguments = 0x10000 };
 
+    private:
         enum NoParametersType { NoParameters };
-
+        
         Arguments(CallFrame*);
         Arguments(CallFrame*, NoParametersType);
+
+    public:
         virtual ~Arguments();
 
         static const ClassInfo s_info;

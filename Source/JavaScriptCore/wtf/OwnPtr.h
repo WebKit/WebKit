@@ -74,11 +74,6 @@ namespace WTF {
 
         void swap(OwnPtr& o) { std::swap(m_ptr, o.m_ptr); }
 
-#ifdef LOOSE_OWN_PTR
-        explicit OwnPtr(PtrType ptr) : m_ptr(ptr) { }
-        void set(PtrType);
-#endif
-
     private:
         OwnPtr& operator=(const OwnPtr<T>&);
 
@@ -117,16 +112,6 @@ namespace WTF {
         m_ptr = 0;
         return ptr;
     }
-
-#ifdef LOOSE_OWN_PTR
-    template<typename T> inline void OwnPtr<T>::set(PtrType ptr)
-    {
-        ASSERT(!ptr || m_ptr != ptr);
-        PtrType oldPtr = m_ptr;
-        m_ptr = ptr;
-        deleteOwnedPtr(oldPtr);
-    }
-#endif
 
     template<typename T> inline OwnPtr<T>& OwnPtr<T>::operator=(const PassOwnPtr<T>& o)
     {

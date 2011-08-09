@@ -35,19 +35,37 @@ namespace JSC {
     class JSGlobalObject;
     class NativeExecutable;
     class VPtrHackExecutable;
+    namespace DFG {
+    class JITCodeGenerator;
+    }
 
     EncodedJSValue JSC_HOST_CALL callHostFunctionAsConstructor(ExecState*);
 
     class JSFunction : public JSObjectWithGlobalObject {
         friend class JIT;
+        friend class DFG::JITCodeGenerator;
         friend class JSGlobalData;
 
         typedef JSObjectWithGlobalObject Base;
 
-    public:
         JSFunction(ExecState*, JSGlobalObject*, Structure*, int length, const Identifier&, NativeFunction);
         JSFunction(ExecState*, JSGlobalObject*, Structure*, int length, const Identifier&, NativeExecutable*);
         JSFunction(ExecState*, FunctionExecutable*, ScopeChainNode*);
+        
+    public:
+        static JSFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& ident, NativeFunction nativeFunc)
+        {
+            return new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, structure, length, ident, nativeFunc);
+        }
+        static JSFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& ident, NativeExecutable* nativeExec)
+        {
+            return new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, structure, length, ident, nativeExec);
+        }
+        static JSFunction* create(ExecState* exec, FunctionExecutable* funcExec, ScopeChainNode* scopeChain)
+        {
+            return new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, funcExec, scopeChain);
+        }
+        
         virtual ~JSFunction();
 
         const UString& name(ExecState*);
@@ -57,6 +75,15 @@ namespace JSC {
         ScopeChainNode* scope()
         {
             ASSERT(!isHostFunctionNonInline());
+            return m_scopeChain.get();
+        }
+        // This method may be called for host functins, in which case it
+        // will return an arbitrary value. This should only be used for
+        // optimized paths in which the return value does not matter for
+        // host functions, and checking whether the function is a host
+        // function is deemed too expensive.
+        ScopeChainNode* scopeUnchecked()
+        {
             return m_scopeChain.get();
         }
         void setScope(JSGlobalData& globalData, ScopeChainNode* scopeChain)

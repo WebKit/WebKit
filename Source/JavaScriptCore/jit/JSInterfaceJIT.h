@@ -193,11 +193,6 @@ namespace JSC {
         inline Jump emitLoadInt32(unsigned virtualRegisterIndex, RegisterID dst);
         inline Jump emitLoadDouble(unsigned virtualRegisterIndex, FPRegisterID dst, RegisterID scratch);
 
-        inline void storePtrWithWriteBarrier(TrustedImmPtr ptr, RegisterID /* owner */, Address dest)
-        {
-            storePtr(ptr, dest);
-        }
-
 #if USE(JSVALUE32_64)
         inline Jump emitJumpIfNotJSCell(unsigned virtualRegisterIndex);
         inline Address tagFor(int index, RegisterID base = callFrameRegister);
@@ -276,7 +271,8 @@ namespace JSC {
         loadDouble(addressFor(virtualRegisterIndex), dst);
         done.link(this);
         return notInt;
-    }    
+    }
+
 #endif
 
 #if USE(JSVALUE64)
@@ -315,7 +311,7 @@ namespace JSC {
         done.link(this);
         return notNumber;
     }
-    
+
     ALWAYS_INLINE void JSInterfaceJIT::emitFastArithImmToInt(RegisterID)
     {
     }

@@ -113,7 +113,7 @@ namespace JSC {
         // than the old singleton APIShared JSGlobalData created for use by
         // the original API.
         enum GlobalDataType { Default, APIContextGroup, APIShared };
-
+        
         struct ClientData {
             virtual ~ClientData() = 0;
         };
@@ -123,9 +123,9 @@ namespace JSC {
         static bool sharedInstanceExists();
         static JSGlobalData& sharedInstance();
 
-        static PassRefPtr<JSGlobalData> create(ThreadStackType);
-        static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType);
-        static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType);
+        static PassRefPtr<JSGlobalData> create(ThreadStackType, HeapSize = SmallHeap);
+        static PassRefPtr<JSGlobalData> createLeaked(ThreadStackType, HeapSize = SmallHeap);
+        static PassRefPtr<JSGlobalData> createContextGroup(ThreadStackType, HeapSize = SmallHeap);
         ~JSGlobalData();
 
 #if ENABLE(JSC_MULTIPLE_THREADS)
@@ -173,14 +173,11 @@ namespace JSC {
         Strong<Structure> evalExecutableStructure;
         Strong<Structure> programExecutableStructure;
         Strong<Structure> functionExecutableStructure;
-        Strong<Structure> dummyMarkableCellStructure;
+        Strong<Structure> regExpStructure;
         Strong<Structure> structureChainStructure;
 
-#if ENABLE(JSC_ZOMBIES)
-        Strong<Structure> zombieStructure;
-#endif
-
         static void storeVPtrs();
+        static JS_EXPORTDATA void* jsFinalObjectVPtr;
         static JS_EXPORTDATA void* jsArrayVPtr;
         static JS_EXPORTDATA void* jsByteArrayVPtr;
         static JS_EXPORTDATA void* jsStringVPtr;
@@ -233,11 +230,11 @@ namespace JSC {
         JSValue exception;
 #if ENABLE(JIT)
         ReturnAddressPtr exceptionLocation;
+        JSValue hostCallReturnValue;
 #endif
 
         HashMap<OpaqueJSClass*, OpaqueJSClassContextData*> opaqueJSClassData;
 
-        unsigned globalObjectCount;
         JSGlobalObject* dynamicGlobalObject;
 
         HashSet<JSObject*> stringRecursionCheckVisitedObjects;
@@ -280,9 +277,10 @@ namespace JSC {
         void clearBuiltinStructures();
 
         bool isCollectorBusy() { return heap.isBusy(); }
+        void releaseExecutableMemory();
 
     private:
-        JSGlobalData(GlobalDataType, ThreadStackType);
+        JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
         static JSGlobalData*& sharedInstanceInternal();
         void createNativeThunk();
 #if ENABLE(JIT) && ENABLE(INTERPRETER)

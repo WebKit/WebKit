@@ -45,6 +45,9 @@ public:
     static JSC::JSValue call(JSC::ExecState* exec, JSC::JSValue functionObject, JSC::CallType callType, const JSC::CallData& callData, JSC::JSValue thisValue, const JSC::ArgList& args)
     {
         JSMainThreadExecState currentState(exec);
+        // Ensure DOM global object is unwrapped to the shell.
+        if (thisValue.isObject())
+            thisValue = thisValue.toThisObject(exec);
         return JSC::call(exec, functionObject, callType, callData, thisValue, args);
     };
 

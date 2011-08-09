@@ -56,27 +56,26 @@ namespace WTF {
  * int-receiving constructors are hidden from API.
  */
 
-template<typename NUMBER>
+template<typename T>
 class TextPosition {
 public:
-    TextPosition(NUMBER line, NUMBER column)
+    TextPosition(T line, T column)
         : m_line(line)
         , m_column(column)
     {
     }
     TextPosition() {}
-
     bool operator==(const TextPosition& other) { return m_line == other.m_line && m_column == other.m_column; }
     bool operator!=(const TextPosition& other) { return !((*this) == other); }
 
     // A 'minimum' value of position, used as a default value.
-    static TextPosition<NUMBER> minimumPosition() { return TextPosition<NUMBER>(NUMBER::base(), NUMBER::base()); }
+    static TextPosition<T> minimumPosition() { return TextPosition<T>(T::base(), T::base()); }
 
     // A value with line value less than a minimum; used as an impossible position.
-    static TextPosition<NUMBER> belowRangePosition() { return TextPosition<NUMBER>(NUMBER::belowBase(), NUMBER::belowBase()); }
+    static TextPosition<T> belowRangePosition() { return TextPosition<T>(T::belowBase(), T::belowBase()); }
 
-    NUMBER m_line;
-    NUMBER m_column;
+    T m_line;
+    T m_column;
 };
 
 class OneBasedNumber;

@@ -30,7 +30,9 @@
 #include <cmath>
 #include <float.h>
 #include <limits>
+#include <stdint.h>
 #include <stdlib.h>
+#include <wtf/StdLibExtras.h>
 
 #if OS(SOLARIS)
 #include <ieeefp.h>
@@ -207,45 +209,49 @@ inline float deg2turn(float d) { return d / 360.0f; }
 inline float rad2grad(float r) { return r * 200.0f / piFloat; }
 inline float grad2rad(float g) { return g * piFloat / 200.0f; }
 
-inline int clampToInteger(double d)
+// std::numeric_limits<T>::min() returns the smallest positive value for floating point types
+template<typename T> inline T defaultMinimumForClamp() { return std::numeric_limits<T>::min(); }
+template<> inline float defaultMinimumForClamp() { return -std::numeric_limits<float>::max(); }
+template<> inline double defaultMinimumForClamp() { return -std::numeric_limits<double>::max(); }
+template<typename T> inline T defaultMaximumForClamp() { return std::numeric_limits<T>::max(); }
+
+template<typename T> inline T clampTo(double value, T min = defaultMinimumForClamp<T>(), T max = defaultMaximumForClamp<T>())
 {
-    const double minIntAsDouble = std::numeric_limits<int>::min();
-    const double maxIntAsDouble = std::numeric_limits<int>::max();
-    return static_cast<int>(std::max(std::min(d, maxIntAsDouble), minIntAsDouble));
+    if (value >= static_cast<double>(max))
+        return max;
+    if (value <= static_cast<double>(min))
+        return min;
+    return static_cast<T>(value);
+}
+template<> inline long long int clampTo(double, long long int, long long int); // clampTo does not support long long ints.
+
+inline int clampToInteger(double value)
+{
+    return clampTo<int>(value);
 }
 
-inline int clampToPositiveInteger(double d)
+inline float clampToFloat(double value)
 {
-    const double maxIntAsDouble = std::numeric_limits<int>::max();
-    return static_cast<int>(std::max<double>(std::min(d, maxIntAsDouble), 0));
+    return clampTo<float>(value);
 }
 
-inline int clampToInteger(float x)
+inline int clampToPositiveInteger(double value)
 {
-    static const int s_intMax = std::numeric_limits<int>::max();
-    static const int s_intMin = std::numeric_limits<int>::min();
-    
-    if (x >= static_cast<float>(s_intMax))
-        return s_intMax;
-    if (x < static_cast<float>(s_intMin))
-        return s_intMin;
+    return clampTo<int>(value, 0);
+}
+
+inline int clampToInteger(float value)
+{
+    return clampTo<int>(value);
+}
+
+inline int clampToInteger(unsigned x)
+{
+    const unsigned intMax = static_cast<unsigned>(std::numeric_limits<int>::max());
+
+    if (x >= intMax)
+        return std::numeric_limits<int>::max();
     return static_cast<int>(x);
-}
-
-inline int clampToPositiveInteger(float x)
-{
-    static const int s_intMax = std::numeric_limits<int>::max();
-    
-    if (x >= static_cast<float>(s_intMax))
-        return s_intMax;
-    if (x < 0)
-        return 0;
-    return static_cast<int>(x);
-}
-
-inline int clampToInteger(unsigned value)
-{
-    return static_cast<int>(std::min(value, static_cast<unsigned>(std::numeric_limits<int>::max())));
 }
 
 #if !COMPILER(MSVC) && !(COMPILER(RVCT) && PLATFORM(BREWMP)) && !OS(SOLARIS) && !OS(SYMBIAN)
@@ -254,5 +260,26 @@ using std::isinf;
 using std::isnan;
 using std::signbit;
 #endif
+
+// decompose 'number' to its sign, exponent, and mantissa components.
+// The result is interpreted as:
+//     (sign ? -1 : 1) * pow(2, exponent) * (mantissa / (1 << 52))
+inline void decomposeDouble(double number, bool& sign, int32_t& exponent, uint64_t& mantissa)
+{
+    ASSERT(isfinite(number));
+
+    sign = signbit(number);
+
+    uint64_t bits = WTF::bitwise_cast<uint64_t>(number);
+    exponent = (static_cast<int32_t>(bits >> 52) & 0x7ff) - 0x3ff;
+    mantissa = bits & 0xFFFFFFFFFFFFFull;
+
+    // Check for zero/denormal values; if so, adjust the exponent,
+    // if not insert the implicit, omitted leading 1 bit.
+    if (exponent == -0x3ff)
+        exponent = mantissa ? -0x3fe : 0;
+    else
+        mantissa |= 0x10000000000000ull;
+}
 
 #endif // #ifndef WTF_MathExtras_h

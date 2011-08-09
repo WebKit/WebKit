@@ -27,7 +27,9 @@
 
 #include "RegExp.h"
 #include "RegExpKey.h"
+#include "Strong.h"
 #include "UString.h"
+#include "Weak.h"
 #include <wtf/FixedArray.h>
 #include <wtf/HashMap.h>
 
@@ -36,31 +38,28 @@
 
 namespace JSC {
 
-class RegExpCache {
-
-typedef HashMap<RegExpKey, RefPtr<RegExp> > RegExpCacheMap;
+class RegExpCache : private WeakHandleOwner {
+friend class RegExp;
+typedef HashMap<RegExpKey, Weak<RegExp> > RegExpCacheMap;
 
 public:
-    PassRefPtr<RegExp> lookupOrCreate(const UString& patternString, RegExpFlags);
-    PassRefPtr<RegExp> create(const UString& patternString, RegExpFlags, RegExpCacheMap::iterator);
     RegExpCache(JSGlobalData* globalData);
+    void invalidateCode();
 
 private:
-    static const unsigned maxCacheablePatternLength = 256;
+    
+    static const unsigned maxStrongCacheablePatternLength = 256;
 
-#if PLATFORM(IOS)
-    // The RegExpCache can currently hold onto multiple Mb of memory;
-    // as a short-term fix some embedded platforms may wish to reduce the cache size.
-    static const int maxCacheableEntries = 32;
-#else
-    static const int maxCacheableEntries = 256;
-#endif
+    static const int maxStrongCacheableEntries = 32;
 
-    FixedArray<RegExpKey, maxCacheableEntries> patternKeyArray;
-    RegExpCacheMap m_cacheMap;
+    virtual void finalize(Handle<Unknown>, void* context);
+
+    RegExp* lookupOrCreate(const UString& patternString, RegExpFlags);
+    void addToStrongCache(RegExp*);
+    RegExpCacheMap m_weakCache; // Holds all regular expressions currently live.
+    int m_nextEntryInStrongCache;
+    WTF::FixedArray<Strong<RegExp>, maxStrongCacheableEntries> m_strongCache; // Holds a select few regular expressions that have compiled and executed
     JSGlobalData* m_globalData;
-    int m_nextKeyToEvict;
-    bool m_isFull;
 };
 
 } // namespace JSC

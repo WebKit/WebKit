@@ -26,9 +26,15 @@
 namespace JSC {
 
     class BooleanPrototype : public BooleanObject {
-    public:
+    private:
         BooleanPrototype(ExecState*, JSGlobalObject*, Structure*);
 
+    public:
+        static BooleanPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+        {
+            return new (allocateCell<BooleanPrototype>(*exec->heap())) BooleanPrototype(exec, globalObject, structure);
+        }
+        
         static const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

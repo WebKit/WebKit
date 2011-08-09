@@ -28,50 +28,59 @@
 #include "config.h"
 
 #include "RegExpCache.h"
+#include "RegExpObject.h"
 
 namespace JSC {
 
-PassRefPtr<RegExp> RegExpCache::lookupOrCreate(const UString& patternString, RegExpFlags flags)
+RegExp* RegExpCache::lookupOrCreate(const UString& patternString, RegExpFlags flags)
 {
-    if (patternString.length() < maxCacheablePatternLength) {
-        pair<RegExpCacheMap::iterator, bool> result = m_cacheMap.add(RegExpKey(flags, patternString), 0);
-        if (!result.second)
-            return result.first->second;
-        else
-            return create(patternString, flags, result.first);
-    }
-    return create(patternString, flags, m_cacheMap.end());
-}
-
-PassRefPtr<RegExp> RegExpCache::create(const UString& patternString, RegExpFlags flags, RegExpCacheMap::iterator iterator) 
-{
-    RefPtr<RegExp> regExp = RegExp::create(m_globalData, patternString, flags);
-
-    if (patternString.length() >= maxCacheablePatternLength)
-        return regExp;
-
-    RegExpKey key = RegExpKey(flags, patternString);
-    iterator->first = key;
-    iterator->second = regExp;
-
-    ++m_nextKeyToEvict;
-    if (m_nextKeyToEvict == maxCacheableEntries) {
-        m_nextKeyToEvict = 0;
-        m_isFull = true;
-    }
-    if (m_isFull)
-        m_cacheMap.remove(RegExpKey(patternKeyArray[m_nextKeyToEvict].flagsValue, patternKeyArray[m_nextKeyToEvict].pattern));
-
-    patternKeyArray[m_nextKeyToEvict].flagsValue = key.flagsValue;
-    patternKeyArray[m_nextKeyToEvict].pattern = patternString.impl();
+    RegExpKey key(flags, patternString);
+    RegExpCacheMap::iterator result = m_weakCache.find(key);
+    if (result != m_weakCache.end())
+        return result->second.get();
+    RegExp* regExp = RegExp::createWithoutCaching(*m_globalData, patternString, flags);
+#if ENABLE(REGEXP_TRACING)
+    m_globalData->addRegExpToTrace(regExp);
+#endif
+    // We need to do a second lookup to add the RegExp as
+    // allocating it may have caused a gc cycle, which in
+    // turn may have removed items from the cache.
+    m_weakCache.add(key, Weak<RegExp>(*m_globalData, regExp, this));
     return regExp;
 }
 
 RegExpCache::RegExpCache(JSGlobalData* globalData)
-    : m_globalData(globalData)
-    , m_nextKeyToEvict(-1)
-    , m_isFull(false)
+    : m_nextEntryInStrongCache(0)
+    , m_globalData(globalData)
 {
+}
+
+void RegExpCache::finalize(Handle<Unknown> handle, void*)
+{
+    RegExp* regExp = static_cast<RegExp*>(handle.get().asCell());
+    m_weakCache.remove(regExp->key());
+    regExp->invalidateCode();
+}
+
+void RegExpCache::addToStrongCache(RegExp* regExp)
+{
+    UString pattern = regExp->pattern();
+    if (pattern.length() > maxStrongCacheablePatternLength)
+        return;
+    m_strongCache[m_nextEntryInStrongCache].set(*m_globalData, regExp);
+    m_nextEntryInStrongCache++;
+    if (m_nextEntryInStrongCache == maxStrongCacheableEntries)
+        m_nextEntryInStrongCache = 0;
+}
+
+void RegExpCache::invalidateCode()
+{
+    for (int i = 0; i < maxStrongCacheableEntries; i++)
+        m_strongCache[i].clear();
+    m_nextEntryInStrongCache = 0;
+    RegExpCacheMap::iterator end = m_weakCache.end();
+    for (RegExpCacheMap::iterator ptr = m_weakCache.begin(); ptr != end; ++ptr)
+        ptr->second->invalidateCode();
 }
 
 }

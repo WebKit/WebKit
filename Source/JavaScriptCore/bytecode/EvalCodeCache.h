@@ -41,27 +41,36 @@
 
 namespace JSC {
 
-    class MarkStack;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 
     class EvalCodeCache {
     public:
+        EvalExecutable* tryGet(bool inStrictContext, const UString& evalSource, ScopeChainNode* scopeChain)
+        {
+            if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
+                return m_cacheMap.get(evalSource.impl()).get();
+            return 0;
+        }
+        
+        EvalExecutable* getSlow(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, const UString& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
+        {
+            EvalExecutable* evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext);
+            exceptionValue = evalExecutable->compile(exec, scopeChain);
+            if (exceptionValue)
+                return 0;
+            
+            if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
+                m_cacheMap.set(evalSource.impl(), WriteBarrier<EvalExecutable>(exec->globalData(), owner, evalExecutable));
+            
+            return evalExecutable;
+        }
+        
         EvalExecutable* get(ExecState* exec, ScriptExecutable* owner, bool inStrictContext, const UString& evalSource, ScopeChainNode* scopeChain, JSValue& exceptionValue)
         {
-            EvalExecutable* evalExecutable = 0;
+            EvalExecutable* evalExecutable = tryGet(inStrictContext, evalSource, scopeChain);
 
-            if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject())
-                evalExecutable = m_cacheMap.get(evalSource.impl()).get();
-
-            if (!evalExecutable) {
-                evalExecutable = EvalExecutable::create(exec, makeSource(evalSource), inStrictContext);
-                exceptionValue = evalExecutable->compile(exec, scopeChain);
-                if (exceptionValue)
-                    return 0;
-
-                if (!inStrictContext && evalSource.length() < maxCacheableSourceLength && (*scopeChain->begin())->isVariableObject() && m_cacheMap.size() < maxCacheEntries)
-                    m_cacheMap.set(evalSource.impl(), WriteBarrier<EvalExecutable>(exec->globalData(), owner, evalExecutable));
-            }
+            if (!evalExecutable)
+                evalExecutable = getSlow(exec, owner, inStrictContext, evalSource, scopeChain, exceptionValue);
 
             return evalExecutable;
         }
@@ -69,6 +78,11 @@ namespace JSC {
         bool isEmpty() const { return m_cacheMap.isEmpty(); }
 
         void visitAggregate(SlotVisitor&);
+
+        void clear()
+        {
+            m_cacheMap.clear();
+        }
 
     private:
         static const unsigned maxCacheableSourceLength = 256;

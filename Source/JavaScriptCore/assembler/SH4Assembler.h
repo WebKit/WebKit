@@ -1232,6 +1232,12 @@ public:
         uint32_t address = (offset << 2) + ((reinterpret_cast<uint32_t>(instructionPtr) + 4) &(~0x3));
         *reinterpret_cast<uint32_t*>(address) = newAddress;
     }
+    
+    static uint32_t readPCrelativeAddress(int offset, uint16_t* instructionPtr)
+    {
+        uint32_t address = (offset << 2) + ((reinterpret_cast<uint32_t>(instructionPtr) + 4) &(~0x3));
+        return *reinterpret_cast<uint32_t*>(address);
+    }
 
     static uint16_t* getInstructionPtr(void* code, int offset)
     {
@@ -1346,10 +1352,20 @@ public:
         patchPointer(where, value);
     }
 
+    static void* readPointer(void* code)
+    {
+        return static_cast<void*>(readInt32(code));
+    }
+
     static void repatchInt32(void* where, int32_t value)
     {
         uint16_t* instructionPtr = reinterpret_cast<uint16_t*>(where);
         changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, value);
+    }
+
+    static void repatchCompact(void* where, int32_t value)
+    {
+        repatchInt32(where, value);
     }
 
     static void relinkCall(void* from, void* to)
@@ -1469,9 +1485,14 @@ public:
         changePCrelativeAddress((*(reinterpret_cast<uint16_t*>(code)) & 0xff), reinterpret_cast<uint16_t*>(code), value);
     }
 
-    void* executableCopy(ExecutablePool* allocator)
+    static uint32_t readInt32(void* code)
     {
-        return m_buffer.executableCopy(allocator);
+        return readPCrelativeAddress((*(reinterpret_cast<uint16_t*>(code)) & 0xff), reinterpret_cast<uint16_t*>(code));
+    }
+
+    void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
+    {
+        return m_buffer.executableCopy(globalData, allocator);
     }
 
     void prefix(uint16_t pre)

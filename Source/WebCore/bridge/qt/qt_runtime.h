@@ -24,6 +24,7 @@
 #include "Completion.h"
 #include "Strong.h"
 #include "Weak.h"
+#include "qt_instance.h"
 #include "runtime_method.h"
 
 #include <qbytearray.h>
@@ -33,8 +34,6 @@
 
 namespace JSC {
 namespace Bindings {
-
-class QtInstance;
 
 class QtField : public Field {
 public:
@@ -174,7 +173,10 @@ protected:
 class QtRuntimeMetaMethod : public QtRuntimeMethod
 {
 public:
-    QtRuntimeMetaMethod(ExecState *exec, const Identifier &n, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate);
+    static QtRuntimeMetaMethod* create(ExecState* exec, const Identifier& n, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate)
+    {
+        return new (allocateCell<QtRuntimeMetaMethod>(*exec->heap())) QtRuntimeMetaMethod(exec, n, inst, index, signature, allowPrivate);
+    }
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
@@ -186,6 +188,8 @@ protected:
     QtRuntimeMetaMethodData* d_func() const {return reinterpret_cast<QtRuntimeMetaMethodData*>(d_ptr);}
 
 private:
+    QtRuntimeMetaMethod(ExecState*, const Identifier&, PassRefPtr<QtInstance>, int index, const QByteArray&, bool allowPrivate);
+
     virtual CallType getCallData(CallData&);
     static EncodedJSValue JSC_HOST_CALL call(ExecState* exec);
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
@@ -197,7 +201,10 @@ class QtConnectionObject;
 class QtRuntimeConnectionMethod : public QtRuntimeMethod
 {
 public:
-    QtRuntimeConnectionMethod(ExecState *exec, const Identifier &n, bool isConnect, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature );
+    static QtRuntimeConnectionMethod* create(ExecState* exec, const Identifier& n, bool isConnect, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature)
+    {
+        return new (allocateCell<QtRuntimeConnectionMethod>(*exec->heap())) QtRuntimeConnectionMethod(exec, n, isConnect, inst, index, signature);
+    }
 
     virtual bool getOwnPropertySlot(ExecState *, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
@@ -207,6 +214,8 @@ protected:
     QtRuntimeConnectionMethodData* d_func() const {return reinterpret_cast<QtRuntimeConnectionMethodData*>(d_ptr);}
 
 private:
+    QtRuntimeConnectionMethod(ExecState*, const Identifier&, bool isConnect, PassRefPtr<QtInstance>, int index, const QByteArray&);
+
     virtual CallType getCallData(CallData&);
     static EncodedJSValue JSC_HOST_CALL call(ExecState* exec);
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);

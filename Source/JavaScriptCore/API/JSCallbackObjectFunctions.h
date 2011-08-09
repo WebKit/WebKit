@@ -149,8 +149,11 @@ bool JSCallbackObject<Base>::getOwnPropertySlot(ExecState* exec, const Identifie
         
         if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec)) {
             if (staticValues->contains(propertyName.impl())) {
-                slot.setCustom(this, staticValueGetter);
-                return true;
+                JSValue value = getStaticValue(exec, propertyName);
+                if (value) {
+                    slot.setValue(value);
+                    return true;
+                }
             }
         }
         
@@ -225,8 +228,7 @@ void JSCallbackObject<Base>::put(ExecState* exec, const Identifier& propertyName
                         throwError(exec, toJS(exec, exception));
                     if (result || exception)
                         return;
-                } else
-                    throwError(exec, createReferenceError(exec, "Attempt to set a property that is not settable."));
+                }
             }
         }
         
@@ -442,7 +444,7 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
     // a binary expression where lhs threw an exception in its conversion to
     // primitive
     if (exec->hadException())
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     JSContextRef ctx = toRef(exec);
     JSObjectRef thisRef = toRef(this);
     
@@ -461,7 +463,7 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
 
             double dValue;
             if (value)
-                return toJS(exec, value).getNumber(dValue) ? dValue : NaN;
+                return toJS(exec, value).getNumber(dValue) ? dValue : std::numeric_limits<double>::quiet_NaN();
         }
             
     return Base::toNumber(exec);
@@ -515,14 +517,12 @@ bool JSCallbackObject<Base>::inherits(JSClassRef c) const
 }
 
 template <class Base>
-JSValue JSCallbackObject<Base>::staticValueGetter(ExecState* exec, JSValue slotBase, const Identifier& propertyName)
+JSValue JSCallbackObject<Base>::getStaticValue(ExecState* exec, const Identifier& propertyName)
 {
-    JSCallbackObject* thisObj = asCallbackObject(slotBase);
-    
-    JSObjectRef thisRef = toRef(thisObj);
+    JSObjectRef thisRef = toRef(this);
     RefPtr<OpaqueJSString> propertyNameRef;
     
-    for (JSClassRef jsClass = thisObj->classRef(); jsClass; jsClass = jsClass->parentClass)
+    for (JSClassRef jsClass = classRef(); jsClass; jsClass = jsClass->parentClass)
         if (OpaqueJSClassStaticValuesTable* staticValues = jsClass->staticValues(exec))
             if (StaticValueEntry* entry = staticValues->get(propertyName.impl()))
                 if (JSObjectGetPropertyCallback getProperty = entry->getProperty) {
@@ -542,7 +542,7 @@ JSValue JSCallbackObject<Base>::staticValueGetter(ExecState* exec, JSValue slotB
                         return toJS(exec, value);
                 }
 
-    return throwError(exec, createReferenceError(exec, "Static value property defined with NULL getProperty callback."));
+    return JSValue();
 }
 
 template <class Base>
@@ -560,7 +560,7 @@ JSValue JSCallbackObject<Base>::staticFunctionGetter(ExecState* exec, JSValue sl
             if (StaticFunctionEntry* entry = staticFunctions->get(propertyName.impl())) {
                 if (JSObjectCallAsFunctionCallback callAsFunction = entry->callAsFunction) {
                     
-                    JSObject* o = new (exec) JSCallbackFunction(exec, asGlobalObject(thisObj->getAnonymousValue(0)), callAsFunction, propertyName);
+                    JSObject* o = JSCallbackFunction::create(exec, asGlobalObject(thisObj->getAnonymousValue(0)), callAsFunction, propertyName);
                     thisObj->putDirect(exec->globalData(), propertyName, o, entry->attributes);
                     return o;
                 }

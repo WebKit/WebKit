@@ -33,10 +33,10 @@ class SourceProviderCacheItem;
 class SourceProviderCache {
 public:
     SourceProviderCache() : m_contentByteSize(0) {}
-    ~SourceProviderCache();
+    JS_EXPORT_PRIVATE ~SourceProviderCache();
 
-    void clear();
-    unsigned byteSize() const;
+    JS_EXPORT_PRIVATE void clear();
+    JS_EXPORT_PRIVATE unsigned byteSize() const;
     void add(int sourcePosition, PassOwnPtr<SourceProviderCacheItem>, unsigned size);
     const SourceProviderCacheItem* get(int sourcePosition) const { return m_map.get(sourcePosition); }
 

@@ -62,8 +62,8 @@ const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, 0, 
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
 
-RegExpPrototype::RegExpPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
-    : RegExpObject(globalObject, structure, RegExp::create(&exec->globalData(), "", NoFlags))
+RegExpPrototype::RegExpPrototype(ExecState*, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
+    : RegExpObject(globalObject, structure, regExp)
 {
 }
 
@@ -101,7 +101,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     if (!thisValue.inherits(&RegExpObject::s_info))
         return throwVMTypeError(exec);
 
-    RefPtr<RegExp> regExp;
+    RegExp* regExp;
     JSValue arg0 = exec->argument(0);
     JSValue arg1 = exec->argument(1);
     
@@ -122,13 +122,13 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
             if (flags == InvalidFlags)
                 return throwVMError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
         }
-        regExp = exec->globalData().regExpCache()->lookupOrCreate(pattern, flags);
+        regExp = RegExp::create(exec->globalData(), pattern, flags);
     }
 
     if (!regExp->isValid())
         return throwVMError(exec, createSyntaxError(exec, regExp->errorMessage()));
 
-    asRegExpObject(thisValue)->setRegExp(regExp.release());
+    asRegExpObject(thisValue)->setRegExp(exec->globalData(), regExp);
     asRegExpObject(thisValue)->setLastIndex(0);
     return JSValue::encode(jsUndefined());
 }
@@ -136,11 +136,8 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    if (!thisValue.inherits(&RegExpObject::s_info)) {
-        if (thisValue.inherits(&RegExpPrototype::s_info))
-            return JSValue::encode(jsNontrivialString(exec, "//"));
+    if (!thisValue.inherits(&RegExpObject::s_info))
         return throwVMTypeError(exec);
-    }
 
     RegExpObject* thisObject = asRegExpObject(thisValue);
 

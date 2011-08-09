@@ -46,6 +46,15 @@ extern "C" {
 */
 JS_EXPORT JSGlobalContextRef JSContextGetGlobalContext(JSContextRef ctx);
 
+    
+/*!
+@function
+@abstract Gets a Backtrace for the existing context
+@param ctx The JSContext whose backtrace you want to get
+@result A string containing the backtrace
+*/
+JS_EXPORT JSStringRef JSContextCreateBacktrace(JSContextRef ctx, unsigned maxStackSize) AVAILABLE_IN_WEBKIT_VERSION_4_0;
+    
 #ifdef __cplusplus
 }
 #endif

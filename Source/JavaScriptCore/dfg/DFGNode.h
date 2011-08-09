@@ -38,6 +38,8 @@
 #define DFG_JIT_BREAK_ON_EVERY_BLOCK 0
 // Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
 #define DFG_JIT_BREAK_ON_EVERY_NODE 0
+// Emit a breakpoint into the speculation failure code.
+#define DFG_JIT_BREAK_ON_SPECULATION_FAILURE 0
 // Disable the DFG JIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE 0
 // Disable the SpeculativeJIT without having to touch Platform.h!
@@ -74,6 +76,7 @@ typedef uint32_t ExceptionInfo;
 #define NodeIsJump        0x40000
 #define NodeIsBranch      0x80000
 #define NodeIsTerminal   0x100000
+#define NodeHasVarArgs   0x200000
 
 // These values record the result type of the node (as checked by NodeResultMask, above), 0 for no result.
 #define NodeResultJS      0x1000
@@ -83,9 +86,7 @@ typedef uint32_t ExceptionInfo;
 // This macro defines a set of information about all known node types, used to populate NodeId, NodeType below.
 #define FOR_EACH_DFG_OP(macro) \
     /* Nodes for constants. */\
-    macro(JSConstant, NodeResultJS | NodeIsConstant) \
-    macro(Int32Constant, NodeResultJS | NodeIsConstant) \
-    macro(DoubleConstant, NodeResultJS | NodeIsConstant) \
+    macro(JSConstant, NodeResultJS) \
     macro(ConvertThis, NodeResultJS) \
     \
     /* Nodes for local variable access. */\
@@ -101,7 +102,6 @@ typedef uint32_t ExceptionInfo;
     macro(BitRShift, NodeResultInt32) \
     macro(BitURShift, NodeResultInt32) \
     /* Bitwise operators call ToInt32 on their operands. */\
-    macro(NumberToInt32, NodeResultInt32) \
     macro(ValueToInt32, NodeResultInt32 | NodeMustGenerate) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
     macro(UInt32ToNumber, NodeResultDouble) \
@@ -113,7 +113,6 @@ typedef uint32_t ExceptionInfo;
     macro(ArithDiv, NodeResultDouble) \
     macro(ArithMod, NodeResultDouble) \
     /* Arithmetic operators call ToNumber on their operands. */\
-    macro(Int32ToNumber, NodeResultDouble) \
     macro(ValueToNumber, NodeResultDouble | NodeMustGenerate) \
     \
     /* Add of values may either be arithmetic, or result in string concatenation. */\
@@ -129,16 +128,31 @@ typedef uint32_t ExceptionInfo;
     macro(GetById, NodeResultJS | NodeMustGenerate) \
     macro(PutById, NodeMustGenerate) \
     macro(PutByIdDirect, NodeMustGenerate) \
+    macro(GetMethod, NodeResultJS | NodeMustGenerate) \
     macro(GetGlobalVar, NodeResultJS | NodeMustGenerate) \
     macro(PutGlobalVar, NodeMustGenerate) \
     \
     /* Nodes for comparison operations. */\
     macro(CompareLess, NodeResultJS | NodeMustGenerate) \
     macro(CompareLessEq, NodeResultJS | NodeMustGenerate) \
+    macro(CompareGreater, NodeResultJS | NodeMustGenerate) \
+    macro(CompareGreaterEq, NodeResultJS | NodeMustGenerate) \
     macro(CompareEq, NodeResultJS | NodeMustGenerate) \
     macro(CompareStrictEq, NodeResultJS) \
     \
+    /* Calls. */\
+    macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    macro(Construct, NodeResultJS | NodeMustGenerate | NodeHasVarArgs) \
+    \
+    /* Resolve nodes. */\
+    macro(Resolve, NodeResultJS | NodeMustGenerate) \
+    macro(ResolveBase, NodeResultJS | NodeMustGenerate) \
+    macro(ResolveBaseStrictPut, NodeResultJS | NodeMustGenerate) \
+    \
     /* Nodes for misc operations. */\
+    macro(Breakpoint, NodeMustGenerate) \
+    macro(CheckHasInstance, NodeMustGenerate) \
+    macro(InstanceOf, NodeResultJS) \
     macro(LogicalNot, NodeResultJS) \
     \
     /* Block terminals. */\
@@ -174,43 +188,60 @@ struct OpInfo {
 //
 // Node represents a single operation in the data flow graph.
 struct Node {
+    enum VarArgTag { VarArg };
+
     // Construct a node with up to 3 children, no immediate value.
     Node(NodeType op, ExceptionInfo exceptionInfo, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : op(op)
         , exceptionInfo(exceptionInfo)
-        , child1(child1)
-        , child2(child2)
-        , child3(child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
     {
+        ASSERT(!(op & NodeHasVarArgs));
+        children.fixed.child1 = child1;
+        children.fixed.child2 = child2;
+        children.fixed.child3 = child3;
     }
 
     // Construct a node with up to 3 children and an immediate value.
     Node(NodeType op, ExceptionInfo exceptionInfo, OpInfo imm, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : op(op)
         , exceptionInfo(exceptionInfo)
-        , child1(child1)
-        , child2(child2)
-        , child3(child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm.m_value)
     {
+        ASSERT(!(op & NodeHasVarArgs));
+        children.fixed.child1 = child1;
+        children.fixed.child2 = child2;
+        children.fixed.child3 = child3;
     }
 
     // Construct a node with up to 3 children and two immediate values.
     Node(NodeType op, ExceptionInfo exceptionInfo, OpInfo imm1, OpInfo imm2, NodeIndex child1 = NoNode, NodeIndex child2 = NoNode, NodeIndex child3 = NoNode)
         : op(op)
         , exceptionInfo(exceptionInfo)
-        , child1(child1)
-        , child2(child2)
-        , child3(child3)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
         , m_opInfo(imm1.m_value)
+        , m_opInfo2(imm2.m_value)
     {
-        m_constantValue.opInfo2 = imm2.m_value;
+        ASSERT(!(op & NodeHasVarArgs));
+        children.fixed.child1 = child1;
+        children.fixed.child2 = child2;
+        children.fixed.child3 = child3;
+    }
+    
+    // Construct a node with a variable number of children and no immediate values.
+    Node(VarArgTag, NodeType op, ExceptionInfo exceptionInfo, unsigned firstChild, unsigned numChildren)
+        : op(op)
+        , exceptionInfo(exceptionInfo)
+        , m_virtualRegister(InvalidVirtualRegister)
+        , m_refCount(0)
+    {
+        ASSERT(op & NodeHasVarArgs);
+        children.variable.firstChild = firstChild;
+        children.variable.numChildren = numChildren;
     }
 
     bool mustGenerate()
@@ -220,7 +251,7 @@ struct Node {
 
     bool isConstant()
     {
-        return op & NodeIsConstant;
+        return op == JSConstant;
     }
 
     unsigned constantNumber()
@@ -240,10 +271,15 @@ struct Node {
         return (VirtualRegister)m_opInfo;
     }
 
+#if !ASSERT_DISABLED
+    // If we want to use this in production code, should make it faster -
+    // e.g. make hasIdentifier a flag in the bitfield.
     bool hasIdentifier()
     {
-        return op == GetById || op == PutById || op == PutByIdDirect;
+        return op == GetById || op == PutById || op == PutByIdDirect || op == GetMethod
+            || op == Resolve || op == ResolveBase || op == ResolveBaseStrictPut;
     }
+#endif
 
     unsigned identifierNumber()
     {
@@ -290,30 +326,6 @@ struct Node {
         return !hasJSResult();
     }
 
-    int32_t int32Constant()
-    {
-        ASSERT(op == Int32Constant);
-        return m_constantValue.asInt32;
-    }
-
-    void setInt32Constant(int32_t value)
-    {
-        ASSERT(op == Int32Constant);
-        m_constantValue.asInt32 = value;
-    }
-
-    double numericConstant()
-    {
-        ASSERT(op == DoubleConstant);
-        return m_constantValue.asDouble;
-    }
-
-    void setDoubleConstant(double value)
-    {
-        ASSERT(op == DoubleConstant);
-        m_constantValue.asDouble = value;
-    }
-
     bool isJump()
     {
         return op & NodeIsJump;
@@ -338,7 +350,7 @@ struct Node {
     unsigned notTakenBytecodeOffset()
     {
         ASSERT(isBranch());
-        return m_constantValue.opInfo2;
+        return m_opInfo2;
     }
 
     VirtualRegister virtualRegister()
@@ -375,27 +387,59 @@ struct Node {
     {
         return mustGenerate() ? m_refCount - 1 : m_refCount;
     }
+    
+    NodeIndex child1()
+    {
+        ASSERT(!(op & NodeHasVarArgs));
+        return children.fixed.child1;
+    }
 
+    NodeIndex child2()
+    {
+        ASSERT(!(op & NodeHasVarArgs));
+        return children.fixed.child2;
+    }
+
+    NodeIndex child3()
+    {
+        ASSERT(!(op & NodeHasVarArgs));
+        return children.fixed.child3;
+    }
+    
+    unsigned firstChild()
+    {
+        ASSERT(op & NodeHasVarArgs);
+        return children.variable.firstChild;
+    }
+    
+    unsigned numChildren()
+    {
+        ASSERT(op & NodeHasVarArgs);
+        return children.variable.numChildren;
+    }
+    
     // This enum value describes the type of the node.
     NodeType op;
     // Used to look up exception handling information (currently implemented as a bytecode index).
     ExceptionInfo exceptionInfo;
     // References to up to 3 children (0 for no child).
-    NodeIndex child1, child2, child3;
+    union {
+        struct {
+            NodeIndex child1, child2, child3;
+        } fixed;
+        struct {
+            unsigned firstChild;
+            unsigned numChildren;
+        } variable;
+    } children;
 
 private:
     // The virtual register number (spill location) associated with this .
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).
     unsigned m_refCount;
-    // An immediate value, accesses type-checked via accessors above.
-    unsigned m_opInfo;
-    // The value of an int32/double constant.
-    union {
-        int32_t asInt32;
-        double asDouble;
-        unsigned opInfo2;
-    } m_constantValue;
+    // Immediate values, accesses type-checked via accessors above.
+    unsigned m_opInfo, m_opInfo2;
 };
 
 } } // namespace JSC::DFG

@@ -125,6 +125,11 @@ public:
         branch32(cond, left, right).linkTo(target, this);
     }
 
+    Jump branch32(RelationalCondition cond, TrustedImm32 left, RegisterID right)
+    {
+        return branch32(commute(cond), right, left);
+    }
+
     void branch16(RelationalCondition cond, BaseIndex left, RegisterID right, Label target)
     {
         branch16(cond, left, right).linkTo(target, this);
@@ -140,6 +145,35 @@ public:
         jump().linkTo(target, this);
     }
 
+    // Commute a relational condition, returns a new condition that will produce
+    // the same results given the same inputs but with their positions exchanged.
+    static RelationalCondition commute(RelationalCondition condition)
+    {
+        switch (condition) {
+        case Above:
+            return Below;
+        case AboveOrEqual:
+            return BelowOrEqual;
+        case Below:
+            return Above;
+        case BelowOrEqual:
+            return AboveOrEqual;
+        case GreaterThan:
+            return LessThan;
+        case GreaterThanOrEqual:
+            return LessThanOrEqual;
+        case LessThan:
+            return GreaterThan;
+        case LessThanOrEqual:
+            return GreaterThanOrEqual;
+        default:
+            break;
+        }
+
+        ASSERT(condition == Equal || condition == NotEqual);
+        return condition;
+    }
+    
 
     // Ptr methods
     // On 32-bit platforms (i.e. x86), these methods directly map onto their 32-bit equivalents.
@@ -234,6 +268,11 @@ public:
     DataLabel32 loadPtrWithAddressOffsetPatch(Address address, RegisterID dest)
     {
         return load32WithAddressOffsetPatch(address, dest);
+    }
+    
+    DataLabelCompact loadPtrWithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        return load32WithCompactAddressOffsetPatch(address, dest);
     }
 
     void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)

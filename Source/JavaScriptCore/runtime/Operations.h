@@ -49,14 +49,14 @@ namespace JSC {
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
-            return new (globalData) JSString(globalData, fiberCount, s1, s2);
+            return JSString::create(*globalData, fiberCount, s1, s2);
 
         JSString::RopeBuilder ropeBuilder(fiberCount);
         if (UNLIKELY(ropeBuilder.isOutOfMemory()))
             return throwOutOfMemoryError(exec);
         ropeBuilder.append(s1);
         ropeBuilder.append(s2);
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, JSString* s2)
@@ -74,14 +74,14 @@ namespace JSC {
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
-            return new (globalData) JSString(globalData, fiberCount, u1, s2);
+            return JSString::create(*globalData, fiberCount, u1, s2);
 
         JSString::RopeBuilder ropeBuilder(fiberCount);
         if (UNLIKELY(ropeBuilder.isOutOfMemory()))
             return throwOutOfMemoryError(exec);
         ropeBuilder.append(u1);
         ropeBuilder.append(s2);
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, JSString* s1, const UString& u2)
@@ -99,14 +99,14 @@ namespace JSC {
         JSGlobalData* globalData = &exec->globalData();
 
         if (fiberCount <= JSString::s_maxInternalRopeLength)
-            return new (globalData) JSString(globalData, fiberCount, s1, u2);
+            return JSString::create(*globalData, fiberCount, s1, u2);
 
         JSString::RopeBuilder ropeBuilder(fiberCount);
         if (UNLIKELY(ropeBuilder.isOutOfMemory()))
             return throwOutOfMemoryError(exec);
         ropeBuilder.append(s1);
         ropeBuilder.append(u2);
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2)
@@ -121,7 +121,7 @@ namespace JSC {
             return throwOutOfMemoryError(exec);
 
         JSGlobalData* globalData = &exec->globalData();
-        return new (globalData) JSString(globalData, u1, u2);
+        return JSString::create(*globalData, u1, u2);
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, const UString& u1, const UString& u2, const UString& u3)
@@ -142,7 +142,7 @@ namespace JSC {
             return throwOutOfMemoryError(exec);
 
         JSGlobalData* globalData = &exec->globalData();
-        return new (globalData) JSString(globalData, u1, u2, u3);
+        return JSString::create(*globalData, u1, u2, u3);
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, Register* strings, unsigned count)
@@ -160,7 +160,7 @@ namespace JSC {
 
         JSGlobalData* globalData = &exec->globalData();
         if (fiberCount == 3)
-            return new (globalData) JSString(exec, strings[0].jsValue(), strings[1].jsValue(), strings[2].jsValue());
+            return JSString::create(exec, strings[0].jsValue(), strings[1].jsValue(), strings[2].jsValue());
 
         JSString::RopeBuilder ropeBuilder(fiberCount);
         if (UNLIKELY(ropeBuilder.isOutOfMemory()))
@@ -185,7 +185,7 @@ namespace JSC {
         if (overflow)
             return throwOutOfMemoryError(exec);
 
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     ALWAYS_INLINE JSValue jsString(ExecState* exec, JSValue thisValue)
@@ -232,7 +232,7 @@ namespace JSC {
             return throwOutOfMemoryError(exec);
 
         JSGlobalData* globalData = &exec->globalData();
-        return new (globalData) JSString(globalData, ropeBuilder.release());
+        return JSString::create(*globalData, ropeBuilder.release());
     }
 
     // ECMA 11.9.3
@@ -334,6 +334,10 @@ namespace JSC {
         return strictEqualSlowCaseInline(exec, v1, v2);
     }
 
+    // See ES5 11.8.1/11.8.2/11.8.5 for definition of leftFirst, this value ensures correct
+    // evaluation ordering for argument conversions for '<' and '>'. For '<' pass the value
+    // true, for leftFirst, for '>' pass the value false (and reverse operand order).
+    template<bool leftFirst>
     ALWAYS_INLINE bool jsLess(CallFrame* callFrame, JSValue v1, JSValue v2)
     {
         if (v1.isInt32() && v2.isInt32())
@@ -350,16 +354,26 @@ namespace JSC {
 
         JSValue p1;
         JSValue p2;
-        bool wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
-        bool wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        bool wasNotString1;
+        bool wasNotString2;
+        if (leftFirst) {
+            wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+            wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        } else {
+            wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+            wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        }
 
         if (wasNotString1 | wasNotString2)
             return n1 < n2;
-
         return asString(p1)->value(callFrame) < asString(p2)->value(callFrame);
     }
 
-    inline bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
+    // See ES5 11.8.3/11.8.4/11.8.5 for definition of leftFirst, this value ensures correct
+    // evaluation ordering for argument conversions for '<=' and '=>'. For '<=' pass the
+    // value true, for leftFirst, for '=>' pass the value false (and reverse operand order).
+    template<bool leftFirst>
+    ALWAYS_INLINE bool jsLessEq(CallFrame* callFrame, JSValue v1, JSValue v2)
     {
         if (v1.isInt32() && v2.isInt32())
             return v1.asInt32() <= v2.asInt32();
@@ -375,12 +389,18 @@ namespace JSC {
 
         JSValue p1;
         JSValue p2;
-        bool wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
-        bool wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        bool wasNotString1;
+        bool wasNotString2;
+        if (leftFirst) {
+            wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+            wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+        } else {
+            wasNotString2 = v2.getPrimitiveNumber(callFrame, n2, p2);
+            wasNotString1 = v1.getPrimitiveNumber(callFrame, n1, p1);
+        }
 
         if (wasNotString1 | wasNotString2)
             return n1 <= n2;
-
         return !(asString(p2)->value(callFrame) < asString(p1)->value(callFrame));
     }
 

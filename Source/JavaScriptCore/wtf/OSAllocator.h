@@ -45,7 +45,7 @@ public:
     // These methods are symmetric; reserveUncommitted allocates VM in an uncommitted state,
     // releaseDecommitted should be called on a region of VM allocated by a single reservation,
     // the memory must all currently be in a decommitted state.
-    static void* reserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
+    static void* reserveUncommitted(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool includesGuardPages = false);
     static void releaseDecommitted(void*, size_t);
 
     // These methods are symmetric; they commit or decommit a region of VM (uncommitted VM should
@@ -57,7 +57,7 @@ public:
     // These methods are symmetric; reserveAndCommit allocates VM in an committed state,
     // decommitAndRelease should be called on a region of VM allocated by a single reservation,
     // the memory must all currently be in a committed state.
-    static void* reserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false);
+    static void* reserveAndCommit(size_t, Usage = UnknownUsage, bool writable = true, bool executable = false, bool includesGuardPages = false);
     static void decommitAndRelease(void* base, size_t size);
 
     // These methods are akin to reserveAndCommit/decommitAndRelease, above - however rather than

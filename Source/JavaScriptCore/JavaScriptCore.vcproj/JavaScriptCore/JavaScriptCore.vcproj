@@ -922,14 +922,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\JSZombie.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\runtime\JSZombie.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\LiteralParser.cpp"
 				>
 			</File>
@@ -1898,11 +1890,19 @@
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\MarkedSpace.cpp"
+                                    RelativePath="..\..\heap\NewSpace.cpp"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\MarkedSpace.h"
+                                    RelativePath="..\..\heap\NewSpace.h"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\OldSpace.cpp"
+                                    >
+                            </File>
+                            <File
+                                    RelativePath="..\..\heap\OldSpace.h"
                                     >
                             </File>
                             <File
@@ -1914,7 +1914,7 @@
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\MarkStackWin.cpp"
+                                    RelativePath="..\..\heap\HeapRootVisitor.h"
                                     >
                             </File>
                             <File

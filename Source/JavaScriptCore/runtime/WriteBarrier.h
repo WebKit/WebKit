@@ -86,10 +86,6 @@ public:
     {
         this->m_cell = reinterpret_cast<JSCell*>(value);
         Heap::writeBarrier(owner, this->m_cell);
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!isZombie(owner));
-        ASSERT(!isZombie(m_cell));
-#endif
     }
     
     T* get() const
@@ -102,9 +98,6 @@ public:
     T* operator*() const
     {
         ASSERT(m_cell);
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!isZombie(m_cell));
-#endif
         validateCell<T>(static_cast<T*>(m_cell));
         return static_cast<T*>(m_cell);
     }
@@ -128,9 +121,6 @@ public:
     void setWithoutWriteBarrier(T* value)
     {
         this->m_cell = reinterpret_cast<JSCell*>(value);
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!m_cell || !isZombie(m_cell));
-#endif
     }
 
 #if ENABLE(GC_VALIDATION)
@@ -145,19 +135,12 @@ template <> class WriteBarrierBase<Unknown> {
 public:
     void set(JSGlobalData&, const JSCell* owner, JSValue value)
     {
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!isZombie(owner));
-        ASSERT(!value.isZombie());
-#endif
         m_value = JSValue::encode(value);
         Heap::writeBarrier(owner, value);
     }
 
     void setWithoutWriteBarrier(JSValue value)
     {
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!value.isZombie());
-#endif
         m_value = JSValue::encode(value);
     }
 
@@ -234,14 +217,14 @@ template<typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
     internalAppend(*slot->slot());
 }
 
-inline void MarkStack::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count, MarkSetProperties properties)
+inline void MarkStack::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     JSValue* values = barriers->slot();
 #if ENABLE(GC_VALIDATION)
     validateSet(values, count);
 #endif
     if (count)
-        m_markSets.append(MarkSet(values, values + count, properties));
+        m_markSets.append(MarkSet(values, values + count));
 }
 
 } // namespace JSC

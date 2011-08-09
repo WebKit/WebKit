@@ -54,8 +54,26 @@ namespace JSC {
     typedef Vector<ExecState*, 16> ExecStateStack;
     
     class JSGlobalObject : public JSVariableObject {
-    protected:
+    private:
         typedef HashSet<RefPtr<OpaqueJSWeakObjectMap> > WeakMapSet;
+
+        class WeakMapsFinalizer : public WeakHandleOwner {
+        public:
+            virtual void finalize(Handle<Unknown>, void* context);
+        };
+
+        struct JSGlobalObjectRareData {
+            JSGlobalObjectRareData()
+                : profileGroup(0)
+            {
+            }
+
+            WeakMapSet weakMaps;
+            unsigned profileGroup;
+            Weak<JSGlobalObject> weakMapsFinalizer;
+        };
+
+    protected:
 
         RefPtr<JSGlobalData> m_globalData;
 
@@ -98,21 +116,17 @@ namespace JSC {
         WriteBarrier<Structure> m_nullPrototypeObjectStructure;
         WriteBarrier<Structure> m_errorStructure;
         WriteBarrier<Structure> m_functionStructure;
+        WriteBarrier<Structure> m_namedFunctionStructure;
+        size_t m_functionNameOffset;
         WriteBarrier<Structure> m_numberObjectStructure;
         WriteBarrier<Structure> m_regExpMatchesArrayStructure;
         WriteBarrier<Structure> m_regExpStructure;
         WriteBarrier<Structure> m_stringObjectStructure;
         WriteBarrier<Structure> m_internalFunctionStructure;
 
-        unsigned m_profileGroup;
         Debugger* m_debugger;
 
-        WeakMapSet m_weakMaps;
-        Weak<JSGlobalObject> m_weakMapsFinalizer;
-        class WeakMapsFinalizer : public WeakHandleOwner {
-        public:
-            virtual void finalize(Handle<Unknown>, void* context);
-        };
+        OwnPtr<JSGlobalObjectRareData> m_rareData;
         static WeakMapsFinalizer* weakMapsFinalizer();
 
         WeakRandom m_weakRandom;
@@ -121,9 +135,21 @@ namespace JSC {
 
         bool m_isEvalEnabled;
 
+        void createRareDataIfNeeded()
+        {
+            if (!m_rareData)
+                m_rareData = adoptPtr(new JSGlobalObjectRareData);
+        }
+        
     public:
-        void* operator new(size_t, JSGlobalData*);
+        static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
+        {
+            return new (allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);
+        }
 
+        static JS_EXPORTDATA const ClassInfo s_info;
+
+    protected:
         explicit JSGlobalObject(JSGlobalData& globalData, Structure* structure)
             : JSVariableObject(globalData, structure, &m_symbolTable, 0)
             , m_registerArraySize(0)
@@ -136,9 +162,6 @@ namespace JSC {
             init(this);
         }
 
-        static JS_EXPORTDATA const ClassInfo s_info;
-
-    protected:
         JSGlobalObject(JSGlobalData& globalData, Structure* structure, JSObject* thisValue)
             : JSVariableObject(globalData, structure, &m_symbolTable, 0)
             , m_registerArraySize(0)
@@ -208,14 +231,21 @@ namespace JSC {
         Structure* nullPrototypeObjectStructure() const { return m_nullPrototypeObjectStructure.get(); }
         Structure* errorStructure() const { return m_errorStructure.get(); }
         Structure* functionStructure() const { return m_functionStructure.get(); }
+        Structure* namedFunctionStructure() const { return m_namedFunctionStructure.get(); }
+        size_t functionNameOffset() const { return m_functionNameOffset; }
         Structure* numberObjectStructure() const { return m_numberObjectStructure.get(); }
         Structure* internalFunctionStructure() const { return m_internalFunctionStructure.get(); }
         Structure* regExpMatchesArrayStructure() const { return m_regExpMatchesArrayStructure.get(); }
         Structure* regExpStructure() const { return m_regExpStructure.get(); }
         Structure* stringObjectStructure() const { return m_stringObjectStructure.get(); }
 
-        void setProfileGroup(unsigned value) { m_profileGroup = value; }
-        unsigned profileGroup() const { return m_profileGroup; }
+        void setProfileGroup(unsigned value) { createRareDataIfNeeded(); m_rareData->profileGroup = value; }
+        unsigned profileGroup() const
+        { 
+            if (!m_rareData)
+                return 0;
+            return m_rareData->profileGroup;
+        }
 
         Debugger* debugger() const { return m_debugger; }
         void setDebugger(Debugger* debugger) { m_debugger = debugger; }
@@ -238,9 +268,7 @@ namespace JSC {
         void disableEval();
         bool isEvalEnabled() { return m_isEvalEnabled; }
 
-        void copyGlobalsFrom(RegisterFile&);
-        void copyGlobalsTo(RegisterFile&);
-        void resizeRegisters(int oldSize, int newSize);
+        void resizeRegisters(size_t newSize);
 
         void resetPrototype(JSGlobalData&, JSValue prototype);
 
@@ -253,14 +281,16 @@ namespace JSC {
 
         void registerWeakMap(OpaqueJSWeakObjectMap* map)
         {
-            if (!m_weakMapsFinalizer)
-                m_weakMapsFinalizer.set(globalData(), this, weakMapsFinalizer());
-            m_weakMaps.add(map);
+            createRareDataIfNeeded();
+            if (!m_rareData->weakMapsFinalizer)
+                m_rareData->weakMapsFinalizer.set(globalData(), this, weakMapsFinalizer());
+            m_rareData->weakMaps.add(map);
         }
 
         void deregisterWeakMap(OpaqueJSWeakObjectMap* map)
         {
-            m_weakMaps.remove(map);
+            if (m_rareData)
+                m_rareData->weakMaps.remove(map);
         }
 
         double weakRandomNumber() { return m_weakRandom.get(); }
@@ -289,8 +319,6 @@ namespace JSC {
         void reset(JSValue prototype);
 
         void setRegisters(WriteBarrier<Unknown>* registers, PassOwnArrayPtr<WriteBarrier<Unknown> > registerArray, size_t count);
-
-        void* operator new(size_t); // can only be allocated with JSGlobalData
     };
 
     JSGlobalObject* asGlobalObject(JSValue);
@@ -380,7 +408,7 @@ namespace JSC {
 
     inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject)
     {
-        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure());
+        return JSArray::create(exec->globalData(), globalObject->arrayStructure());
     }
     
     inline JSArray* constructEmptyArray(ExecState* exec)
@@ -390,7 +418,7 @@ namespace JSC {
 
     inline JSArray* constructEmptyArray(ExecState* exec, JSGlobalObject* globalObject, unsigned initialLength)
     {
-        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), initialLength, CreateInitialized);
+        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), initialLength, CreateInitialized);
     }
 
     inline JSArray* constructEmptyArray(ExecState* exec, unsigned initialLength)
@@ -402,7 +430,7 @@ namespace JSC {
     {
         MarkedArgumentBuffer values;
         values.append(singleItemValue);
-        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), values);
+        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), values);
     }
 
     inline JSArray* constructArray(ExecState* exec, JSValue singleItemValue)
@@ -412,7 +440,7 @@ namespace JSC {
 
     inline JSArray* constructArray(ExecState* exec, JSGlobalObject* globalObject, const ArgList& values)
     {
-        return new (exec) JSArray(exec->globalData(), globalObject->arrayStructure(), values);
+        return JSArray::create(exec->globalData(), globalObject->arrayStructure(), values);
     }
 
     inline JSArray* constructArray(ExecState* exec, const ArgList& values)

@@ -184,7 +184,7 @@ JSValue JSObjectKJSValue(JSUserObject* ptr)
         if (!handled)
         {
             ExecState* exec = getThreadGlobalExecState();
-            result = new (exec) UserObjectImp(exec->globalData(), getThreadGlobalObject()->userObjectStructure(), ptr);
+            result = UserObjectImp::create(exec->globalData(), getThreadGlobalObject()->userObjectStructure(), ptr);
         }
     }
     return result;
@@ -414,7 +414,7 @@ static JSGlueGlobalObject* getThreadGlobalObject()
     pthread_once(&globalObjectKeyOnce, initializeGlobalObjectKey);
     JSGlueGlobalObject* globalObject = static_cast<JSGlueGlobalObject*>(pthread_getspecific(globalObjectKey));
     if (!globalObject) {
-        globalObject = new (getThreadGlobalData()) JSGlueGlobalObject(*getThreadGlobalData(), JSGlueGlobalObject::createStructure(*getThreadGlobalData(), jsNull()));
+        globalObject = JSGlueGlobalObject::create(*getThreadGlobalData(), JSGlueGlobalObject::createStructure(*getThreadGlobalData(), jsNull()));
         gcProtect(globalObject);
         pthread_setspecific(globalObjectKey, globalObject);
     }

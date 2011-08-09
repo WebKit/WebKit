@@ -88,7 +88,7 @@ namespace WebCore {
     {
         if (JSC::JSObject* constructor = const_cast<JSDOMGlobalObject*>(globalObject)->constructors().get(&ConstructorClass::s_info).get())
             return constructor;
-        JSC::JSObject* constructor = new (exec) ConstructorClass(exec, ConstructorClass::createStructure(exec->globalData(), globalObject->objectPrototype()), const_cast<JSDOMGlobalObject*>(globalObject));
+        JSC::JSObject* constructor = ConstructorClass::create(exec, ConstructorClass::createStructure(exec->globalData(), globalObject->objectPrototype()), const_cast<JSDOMGlobalObject*>(globalObject));
         ASSERT(!const_cast<JSDOMGlobalObject*>(globalObject)->constructors().contains(&ConstructorClass::s_info));
         JSC::WriteBarrier<JSC::JSObject> temp;
         const_cast<JSDOMGlobalObject*>(globalObject)->constructors().add(&ConstructorClass::s_info, temp).first->second.set(exec->globalData(), globalObject, constructor);

@@ -43,6 +43,8 @@ namespace JSC {
     class ScopeChainNode;
 
     struct ExceptionInfo;
+    
+    enum CodeSpecializationKind { CodeForCall, CodeForConstruct };
 
     class ExecutableBase : public JSCell {
         friend class JIT;
@@ -50,13 +52,23 @@ namespace JSC {
     protected:
         static const int NUM_PARAMETERS_IS_HOST = 0;
         static const int NUM_PARAMETERS_NOT_COMPILED = -1;
-    
-    public:
+
+    protected:
         ExecutableBase(JSGlobalData& globalData, Structure* structure, int numParameters)
             : JSCell(globalData, structure)
             , m_numParametersForCall(numParameters)
             , m_numParametersForConstruct(numParameters)
         {
+#if ENABLE(JIT)
+            Weak<ExecutableBase> finalizer(globalData, this, executableFinalizer());
+            finalizer.leakHandle();
+#endif
+        }
+        
+    public:
+        static ExecutableBase* create(JSGlobalData& globalData, Structure* structure, int numParameters)
+        {
+            return new (allocateCell<ExecutableBase>(globalData.heap)) ExecutableBase(globalData, structure, numParameters);
         }
 
         bool isHostFunction() const
@@ -87,12 +99,69 @@ namespace JSC {
             ASSERT(m_jitCodeForConstruct);
             return m_jitCodeForConstruct;
         }
+        
+        JITCode& generatedJITCodeFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return generatedJITCodeForCall();
+            ASSERT(kind == CodeForConstruct);
+            return generatedJITCodeForConstruct();
+        }
+
+        MacroAssemblerCodePtr generatedJITCodeForCallWithArityCheck()
+        {
+            ASSERT(m_jitCodeForCall);
+            ASSERT(m_jitCodeForCallWithArityCheck);
+            return m_jitCodeForCallWithArityCheck;
+        }
+
+        MacroAssemblerCodePtr generatedJITCodeForConstructWithArityCheck()
+        {
+            ASSERT(m_jitCodeForConstruct);
+            ASSERT(m_jitCodeForConstructWithArityCheck);
+            return m_jitCodeForConstructWithArityCheck;
+        }
+        
+        MacroAssemblerCodePtr generatedJITCodeWithArityCheckFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return generatedJITCodeForCallWithArityCheck();
+            ASSERT(kind == CodeForConstruct);
+            return generatedJITCodeForConstructWithArityCheck();
+        }
+        
+        bool hasJITCodeForCall() const
+        {
+            return m_numParametersForCall >= 0;
+        }
+        
+        bool hasJITCodeForConstruct() const
+        {
+            return m_numParametersForConstruct >= 0;
+        }
+        
+        bool hasJITCodeFor(CodeSpecializationKind kind) const
+        {
+            if (kind == CodeForCall)
+                return hasJITCodeForCall();
+            ASSERT(kind == CodeForConstruct);
+            return hasJITCodeForConstruct();
+        }
+
+        void clearExecutableCode()
+        {
+            m_jitCodeForCall.clear();
+            m_jitCodeForConstruct.clear();
+        }
 
     protected:
         JITCode m_jitCodeForCall;
         JITCode m_jitCodeForConstruct;
         MacroAssemblerCodePtr m_jitCodeForCallWithArityCheck;
         MacroAssemblerCodePtr m_jitCodeForConstructWithArityCheck;
+        
+    private:
+        static WeakHandleOwner* executableFinalizer();
 #endif
     };
 
@@ -103,13 +172,13 @@ namespace JSC {
         static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodePtr callThunk, NativeFunction function, MacroAssemblerCodePtr constructThunk, NativeFunction constructor)
         {
             if (!callThunk)
-                return new (&globalData) NativeExecutable(globalData, JITCode(), function, JITCode(), constructor);
-            return new (&globalData) NativeExecutable(globalData, JITCode::HostFunction(callThunk), function, JITCode::HostFunction(constructThunk), constructor);
+                return new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, JITCode(), function, JITCode(), constructor);
+            return new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, JITCode::HostFunction(callThunk), function, JITCode::HostFunction(constructThunk), constructor);
         }
 #else
         static NativeExecutable* create(JSGlobalData& globalData, NativeFunction function, NativeFunction constructor)
         {
-            return new (&globalData) NativeExecutable(globalData, function, constructor);
+            return new (allocateCell<NativeExecutable>(globalData.heap)) NativeExecutable(globalData, function, constructor);
         }
 #endif
 
@@ -150,15 +219,14 @@ namespace JSC {
 
     class ScriptExecutable : public ExecutableBase {
     public:
-        ScriptExecutable(Structure* structure, JSGlobalData* globalData, const SourceCode& source, bool isInStrictContext)
-            : ExecutableBase(*globalData, structure, NUM_PARAMETERS_NOT_COMPILED)
+        ScriptExecutable(Structure* structure, JSGlobalData& globalData, const SourceCode& source, bool isInStrictContext)
+            : ExecutableBase(globalData, structure, NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
-            relaxAdoptionRequirement();
-            if (SamplingTool* sampler = globalData->interpreter->sampler())
-                sampler->notifyOfScope(this);
+            if (SamplingTool* sampler = globalData.interpreter->sampler())
+                sampler->notifyOfScope(globalData, this);
 #else
             UNUSED_PARAM(globalData);
 #endif
@@ -170,9 +238,8 @@ namespace JSC {
             , m_features(isInStrictContext ? StrictModeFeature : 0)
         {
 #if ENABLE(CODEBLOCK_SAMPLING)
-            relaxAdoptionRequirement();
             if (SamplingTool* sampler = exec->globalData().interpreter->sampler())
-                sampler->notifyOfScope(this);
+                sampler->notifyOfScope(exec->globalData(), this);
 #else
             UNUSED_PARAM(exec);
 #endif
@@ -189,6 +256,9 @@ namespace JSC {
         bool needsActivation() const { return m_hasCapturedVariables || m_features & (EvalFeature | WithFeature | CatchFeature); }
         bool isStrictMode() const { return m_features & StrictModeFeature; }
 
+        virtual void unlinkCalls() = 0;
+        
+        static const ClassInfo s_info;
     protected:
         void recordParse(CodeFeatures features, bool hasCapturedVariables, int firstLine, int lastLine)
         {
@@ -226,7 +296,10 @@ namespace JSC {
             return *m_evalCodeBlock;
         }
 
-        static EvalExecutable* create(ExecState* exec, const SourceCode& source, bool isInStrictContext) { return new (exec) EvalExecutable(exec, source, isInStrictContext); }
+        static EvalExecutable* create(ExecState* exec, const SourceCode& source, bool isInStrictContext) 
+        {
+            return new (allocateCell<EvalExecutable>(*exec->heap())) EvalExecutable(exec, source, isInStrictContext); 
+        }
 
 #if ENABLE(JIT)
         JITCode& generatedJITCode()
@@ -246,6 +319,7 @@ namespace JSC {
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
         virtual void visitChildren(SlotVisitor&);
+        void unlinkCalls();
 
         OwnPtr<EvalCodeBlock> m_evalCodeBlock;
     };
@@ -254,7 +328,7 @@ namespace JSC {
     public:
         static ProgramExecutable* create(ExecState* exec, const SourceCode& source)
         {
-            return new (exec) ProgramExecutable(exec, source);
+            return new (allocateCell<ProgramExecutable>(*exec->heap())) ProgramExecutable(exec, source);
         }
 
         ~ProgramExecutable();
@@ -297,6 +371,7 @@ namespace JSC {
 
         JSObject* compileInternal(ExecState*, ScopeChainNode*);
         virtual void visitChildren(SlotVisitor&);
+        void unlinkCalls();
 
         OwnPtr<ProgramCodeBlock> m_programCodeBlock;
     };
@@ -306,17 +381,17 @@ namespace JSC {
     public:
         static FunctionExecutable* create(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
-            return new (exec) FunctionExecutable(exec, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
+            return new (allocateCell<FunctionExecutable>(*exec->heap())) FunctionExecutable(exec, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
         }
 
-        static FunctionExecutable* create(JSGlobalData* globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
+        static FunctionExecutable* create(JSGlobalData& globalData, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
-            return new (globalData) FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
+            return new (allocateCell<FunctionExecutable>(globalData.heap)) FunctionExecutable(globalData, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);
         }
 
         JSFunction* make(ExecState* exec, ScopeChainNode* scopeChain)
         {
-            return new (exec) JSFunction(exec, this, scopeChain);
+            return JSFunction::create(exec, this, scopeChain);
         }
         
         // Returns either call or construct bytecode. This can be appropriate
@@ -330,12 +405,12 @@ namespace JSC {
             return *m_codeBlockForConstruct;
         }
 
-        JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode)
+        JSObject* compileForCall(ExecState* exec, ScopeChainNode* scopeChainNode, ExecState* calleeArgsExec = 0)
         {
             ASSERT(exec->globalData().dynamicGlobalObject);
             JSObject* error = 0;
             if (!m_codeBlockForCall)
-                error = compileForCallInternal(exec, scopeChainNode);
+                error = compileForCallInternal(exec, scopeChainNode, calleeArgsExec);
             ASSERT(!error == !!m_codeBlockForCall);
             return error;
         }
@@ -371,8 +446,39 @@ namespace JSC {
             ASSERT(m_codeBlockForConstruct);
             return *m_codeBlockForConstruct;
         }
+        
+        JSObject* compileFor(ExecState* exec, ScopeChainNode* scopeChainNode, CodeSpecializationKind kind)
+        {
+            // compileFor should only be called with a callframe set up to call this function,
+            // since we will make speculative optimizations based on the arguments.
+            ASSERT(exec->callee());
+            ASSERT(exec->callee()->inherits(&JSFunction::s_info));
+            ASSERT(asFunction(exec->callee())->jsExecutable() == this);
+
+            if (kind == CodeForCall)
+                return compileForCall(exec, scopeChainNode, exec);
+            ASSERT(kind == CodeForConstruct);
+            return compileForConstruct(exec, scopeChainNode);
+        }
+        
+        bool isGeneratedFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return isGeneratedForCall();
+            ASSERT(kind == CodeForConstruct);
+            return isGeneratedForConstruct();
+        }
+        
+        FunctionCodeBlock& generatedBytecodeFor(CodeSpecializationKind kind)
+        {
+            if (kind == CodeForCall)
+                return generatedBytecodeForCall();
+            ASSERT(kind == CodeForConstruct);
+            return generatedBytecodeForConstruct();
+        }
 
         const Identifier& name() { return m_name; }
+        JSString* nameValue() const { return m_nameValue.get(); }
         size_t parameterCount() const { return m_parameters->size(); }
         unsigned capturedVariableCount() const { return m_numCapturedVariables; }
         UString paramString() const;
@@ -389,38 +495,23 @@ namespace JSC {
         static const ClassInfo s_info;
 
     private:
-        FunctionExecutable(JSGlobalData*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
+        FunctionExecutable(JSGlobalData&, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
         FunctionExecutable(ExecState*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
 
-        JSObject* compileForCallInternal(ExecState*, ScopeChainNode*);
+        JSObject* compileForCallInternal(ExecState*, ScopeChainNode*, ExecState* calleeArgsExec);
         JSObject* compileForConstructInternal(ExecState*, ScopeChainNode*);
         
         static const unsigned StructureFlags = OverridesVisitChildren | ScriptExecutable::StructureFlags;
         unsigned m_numCapturedVariables : 31;
         bool m_forceUsesArguments : 1;
+        void unlinkCalls();
 
         RefPtr<FunctionParameters> m_parameters;
         OwnPtr<FunctionCodeBlock> m_codeBlockForCall;
         OwnPtr<FunctionCodeBlock> m_codeBlockForConstruct;
         Identifier m_name;
+        WriteBarrier<JSString> m_nameValue;
         SharedSymbolTable* m_symbolTable;
-
-#if ENABLE(JIT)
-    public:
-        MacroAssemblerCodePtr generatedJITCodeForCallWithArityCheck()
-        {
-            ASSERT(m_jitCodeForCall);
-            ASSERT(m_jitCodeForCallWithArityCheck);
-            return m_jitCodeForCallWithArityCheck;
-        }
-
-        MacroAssemblerCodePtr generatedJITCodeForConstructWithArityCheck()
-        {
-            ASSERT(m_jitCodeForConstruct);
-            ASSERT(m_jitCodeForConstructWithArityCheck);
-            return m_jitCodeForConstructWithArityCheck;
-        }
-#endif
     };
 
     inline FunctionExecutable* JSFunction::jsExecutable() const
@@ -440,6 +531,15 @@ namespace JSC {
         ASSERT(isHostFunction());
         return static_cast<NativeExecutable*>(m_executable.get())->function();
     }
+
+    inline bool isHostFunction(JSGlobalData& globalData, JSValue value, NativeFunction nativeFunction)
+    {
+        JSFunction* function = static_cast<JSFunction*>(getJSFunction(globalData, value));
+        if (!function || !function->isHostFunction())
+            return false;
+        return function->nativeFunction() == nativeFunction;
+    }
+
 }
 
 #endif

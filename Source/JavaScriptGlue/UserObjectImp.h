@@ -36,7 +36,11 @@
 
 class UserObjectImp : public JSNonFinalObject {
 public:
-    UserObjectImp(JSGlobalData&, Structure*, JSUserObject*);
+    static UserObjectImp* create(JSGlobalData& globalData, Structure* structure, JSUserObject* userObject)
+    {
+        return new (allocateCell<UserObjectImp>(globalData.heap)) UserObjectImp(globalData, structure, userObject);
+    }
+    
     virtual ~UserObjectImp();
 
     static const ClassInfo s_info;
@@ -64,6 +68,7 @@ public:
     }
 
 private:
+    UserObjectImp(JSGlobalData&, Structure*, JSUserObject*);
     static JSValue userObjectGetter(ExecState*, JSValue, const Identifier& propertyName);
 
     JSUserObject* fJSUserObject;

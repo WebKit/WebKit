@@ -1,3 +1,4 @@
+FAIL: Timed out waiting for notifyDone to be called
 EVENT(loadstart)
 EVENT(durationchange)
 EVENT(loadedmetadata)
@@ -32,15 +33,4 @@ EVENT(seeked)
 RUN(video.play())
 EVENT(play)
 EVENT(playing)
-EVENT(ended)
-
-*** played to end, setting 'src' to an invalid movie
-RUN(progressEventCount = 0)
-EVENT(abort)
-EVENT(emptied)
-EVENT(ratechange)
-EVENT(loadstart)
-EVENT(error)
-EXPECTED (progressEventCount == '0') OK
-END OF TEST
 

@@ -172,7 +172,7 @@ JSGlobalData* JSDOMWindowBase::commonJSGlobalData()
 
     static JSGlobalData* globalData = 0;
     if (!globalData) {
-        globalData = JSGlobalData::createLeaked(ThreadStackTypeLarge).releaseRef();
+        globalData = JSGlobalData::createLeaked(ThreadStackTypeLarge, LargeHeap).releaseRef();
         globalData->timeoutChecker.setTimeoutInterval(10000); // 10 seconds
 #ifndef NDEBUG
         globalData->exclusiveThread = currentThread();

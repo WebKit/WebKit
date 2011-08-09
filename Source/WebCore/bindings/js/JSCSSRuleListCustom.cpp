@@ -35,15 +35,15 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, MarkStack& markStack)
+bool JSCSSRuleListOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void*, SlotVisitor& visitor)
 {
     JSCSSRuleList* jsCSSRuleList = static_cast<JSCSSRuleList*>(handle.get().asCell());
     if (!jsCSSRuleList->hasCustomProperties())
         return false;
     if (StyleList* styleList = jsCSSRuleList->impl()->styleList())
-        return markStack.containsOpaqueRoot(root(styleList));
+        return visitor.containsOpaqueRoot(root(styleList));
     if (CSSRule* cssRule = jsCSSRuleList->impl()->item(0))
-        return markStack.containsOpaqueRoot(root(cssRule));
+        return visitor.containsOpaqueRoot(root(cssRule));
     return false;
 }
 

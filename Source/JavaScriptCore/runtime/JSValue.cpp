@@ -54,6 +54,16 @@ double JSValue::toIntegerPreserveNaN(ExecState* exec) const
     return trunc(toNumber(exec));
 }
 
+double JSValue::toNumberSlowCase(ExecState* exec) const
+{
+    ASSERT(!isInt32() && !isDouble());
+    if (isCell())
+        return asCell()->toNumber(exec);
+    if (isTrue())
+        return 1.0;
+    return isUndefined() ? std::numeric_limits<double>::quiet_NaN() : 0; // null and false both convert to 0.
+}
+
 JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObject) const
 {
     ASSERT(!isCell());
@@ -65,7 +75,7 @@ JSObject* JSValue::toObjectSlowCase(ExecState* exec, JSGlobalObject* globalObjec
 
     ASSERT(isUndefinedOrNull());
     throwError(exec, createNotAnObjectError(exec, *this));
-    return new (exec) JSNotAnObject(exec);
+    return JSNotAnObject::create(exec);
 }
 
 JSObject* JSValue::toThisObjectSlowCase(ExecState* exec) const
@@ -90,7 +100,7 @@ JSObject* JSValue::synthesizeObject(ExecState* exec) const
 
     ASSERT(isUndefinedOrNull());
     throwError(exec, createNotAnObjectError(exec, *this));
-    return new (exec) JSNotAnObject(exec);
+    return JSNotAnObject::create(exec);
 }
 
 JSObject* JSValue::synthesizePrototype(ExecState* exec) const
@@ -103,7 +113,7 @@ JSObject* JSValue::synthesizePrototype(ExecState* exec) const
 
     ASSERT(isUndefinedOrNull());
     throwError(exec, createNotAnObjectError(exec, *this));
-    return new (exec) JSNotAnObject(exec);
+    return JSNotAnObject::create(exec);
 }
 
 #ifndef NDEBUG
@@ -178,15 +188,6 @@ int32_t toInt32(double number)
     // If the input value was negative (we could test either 'number' or 'bits',
     // but testing 'bits' is likely faster) invert the result appropriately.
     return bits < 0 ? -result : result;
-}
-
-NEVER_INLINE double nonInlineNaN()
-{
-#if OS(SYMBIAN)
-    return nanval();
-#else
-    return std::numeric_limits<double>::quiet_NaN();
-#endif
 }
 
 bool JSValue::isValidCallee()

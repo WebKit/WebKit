@@ -125,8 +125,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 {
     if (dst == generator.ignoredResult())
         return 0;
-    return generator.emitNewRegExp(generator.finalDestination(dst),
-        generator.globalData()->regExpCache()->lookupOrCreate(m_pattern.ustring(), regExpFlags(m_flags.ustring())));
+    return generator.emitNewRegExp(generator.finalDestination(dst), RegExp::create(*generator.globalData(), m_pattern.ustring(), regExpFlags(m_flags.ustring())));
 }
 
 // ------------------------------ ThisNode -------------------------------------
@@ -172,9 +171,9 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     }
 
     if (!firstPutElement && !m_elision)
-        return generator.emitNewArray(generator.finalDestination(dst), m_element);
+        return generator.emitNewArray(generator.finalDestination(dst), m_element, length);
 
-    RefPtr<RegisterID> array = generator.emitNewArray(generator.tempDestination(dst), m_element);
+    RefPtr<RegisterID> array = generator.emitNewArray(generator.tempDestination(dst), m_element, length);
 
     for (ElementNode* n = firstPutElement; n; n = n->next()) {
         RegisterID* value = generator.emitNode(n->value());
@@ -336,7 +335,7 @@ RegisterID* EvalFunctionCallNode::emitBytecode(BytecodeGenerator& generator, Reg
     RefPtr<RegisterID> func = generator.tempDestination(dst);
     CallArguments callArguments(generator, m_args);
     generator.emitExpressionInfo(divot() - startOffset() + 4, 4, 0);
-    generator.emitResolveWithBase(callArguments.thisRegister(), func.get(), generator.propertyNames().eval);
+    generator.emitResolveWithThis(callArguments.thisRegister(), func.get(), generator.propertyNames().eval);
     return generator.emitCallEval(generator.finalDestination(dst, func.get()), func.get(), callArguments, divot(), startOffset(), endOffset());
 }
 
@@ -375,7 +374,7 @@ RegisterID* FunctionCallResolveNode::emitBytecode(BytecodeGenerator& generator, 
     CallArguments callArguments(generator, m_args);
     int identifierStart = divot() - startOffset();
     generator.emitExpressionInfo(identifierStart + m_ident.length(), m_ident.length(), 0);
-    generator.emitResolveWithBase(callArguments.thisRegister(), func.get(), m_ident);
+    generator.emitResolveWithThis(callArguments.thisRegister(), func.get(), m_ident);
     return generator.emitCall(generator.finalDestinationOrIgnored(dst, func.get()), func.get(), callArguments, divot(), startOffset(), endOffset());
 }
 
@@ -745,7 +744,7 @@ RegisterID* PrefixResolveNode::emitBytecode(BytecodeGenerator& generator, Regist
     size_t depth = 0;
     JSObject* globalObject = 0;
     bool requiresDynamicChecks = false;
-    if (generator.findScopedProperty(m_ident, index, depth, false, requiresDynamicChecks, globalObject) && index != missingSymbolMarker() && !requiresDynamicChecks) {
+    if (generator.findScopedProperty(m_ident, index, depth, true, requiresDynamicChecks, globalObject) && index != missingSymbolMarker() && !requiresDynamicChecks) {
         RefPtr<RegisterID> propDst = generator.emitGetScopedVar(generator.tempDestination(dst), depth, index, globalObject);
         emitPreIncOrDec(generator, propDst.get(), m_operator);
         generator.emitPutScopedVar(depth, index, propDst.get(), globalObject);
@@ -984,13 +983,6 @@ RegisterID* StrictEqualNode::emitBytecode(BytecodeGenerator& generator, Register
     RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
     RegisterID* src2 = generator.emitNode(m_expr2);
     return generator.emitEqualityOp(op_stricteq, generator.finalDestination(dst, src1.get()), src1.get(), src2);
-}
-
-RegisterID* ReverseBinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
-{
-    RefPtr<RegisterID> src1 = generator.emitNodeForLeftHandSide(m_expr1, m_rightHasAssignments, m_expr2->isPure(generator));
-    RegisterID* src2 = generator.emitNode(m_expr2);
-    return generator.emitBinaryOp(opcodeID(), generator.finalDestination(dst, src1.get()), src2, src1.get(), OperandTypes(m_expr2->resultDescriptor(), m_expr1->resultDescriptor()));
 }
 
 RegisterID* ThrowableBinaryOpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* dst)
@@ -1294,6 +1286,7 @@ RegisterID* CommaNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
 
 RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
 {
+    // FIXME: This code does not match the behavior of const in Firefox.
     if (RegisterID* local = generator.constRegisterFor(m_ident)) {
         if (!m_init)
             return local;
@@ -1301,17 +1294,30 @@ RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
         return generator.emitNode(local, m_init);
     }
 
-    if (generator.codeType() != EvalCode) {
-        if (m_init)
-            return generator.emitNode(m_init);
-        else
-            return generator.emitResolve(generator.newTemporary(), m_ident);
+    RefPtr<RegisterID> value = m_init ? generator.emitNode(m_init) : generator.emitLoad(0, jsUndefined());
+
+    ScopeChainIterator iter = generator.scopeChain()->begin();
+    ScopeChainIterator end = generator.scopeChain()->end();
+    size_t depth = 0;
+    for (; iter != end; ++iter, ++depth) {
+        JSObject* currentScope = iter->get();
+        if (!currentScope->isVariableObject())
+            continue;
+        JSVariableObject* currentVariableObject = static_cast<JSVariableObject*>(currentScope);
+        SymbolTableEntry entry = currentVariableObject->symbolTable().get(m_ident.impl());
+        if (entry.isNull())
+            continue;
+
+        return generator.emitPutScopedVar(depth, entry.getIndex(), value.get(), currentVariableObject->isGlobalObject() ? currentVariableObject : 0);
     }
-    // FIXME: While this code should only be hit in eval code, it will potentially
-    // assign to the wrong base if m_ident exists in an intervening dynamic scope.
+
+    if (generator.codeType() != EvalCode)
+        return value.get();
+
+    // FIXME: While this code should only be hit in an eval block, it will assign
+    // to the wrong base if m_ident exists in an intervening with scope.
     RefPtr<RegisterID> base = generator.emitResolveBase(generator.newTemporary(), m_ident);
-    RegisterID* value = m_init ? generator.emitNode(m_init) : generator.emitLoad(0, jsUndefined());
-    return generator.emitPutById(base.get(), m_ident, value);
+    return generator.emitPutById(base.get(), m_ident, value.get());
 }
 
 RegisterID* ConstDeclNode::emitBytecode(BytecodeGenerator& generator, RegisterID*)

@@ -167,17 +167,17 @@ cols=1000 clientWidth=7019
 
 Arial
 input
-size=1 clientWidth=33
-size=2 clientWidth=38
-size=3 clientWidth=43
-size=4 clientWidth=48
-size=5 clientWidth=53
-size=10 clientWidth=78
-size=20 clientWidth=128
-size=50 clientWidth=278
-size=100 clientWidth=528
-size=500 clientWidth=2528
-size=1000 clientWidth=5028
+size=1 clientWidth=34
+size=2 clientWidth=39
+size=3 clientWidth=44
+size=4 clientWidth=49
+size=5 clientWidth=54
+size=10 clientWidth=79
+size=20 clientWidth=129
+size=50 clientWidth=279
+size=100 clientWidth=529
+size=500 clientWidth=2529
+size=1000 clientWidth=5029
 
 textarea
 cols=1 clientWidth=24
@@ -275,17 +275,17 @@ cols=1000 clientWidth=5019
 
 Times New Roman
 input
-size=1 clientWidth=32
-size=2 clientWidth=36
-size=3 clientWidth=40
-size=4 clientWidth=44
-size=5 clientWidth=48
-size=10 clientWidth=68
-size=20 clientWidth=108
-size=50 clientWidth=228
-size=100 clientWidth=428
-size=500 clientWidth=2028
-size=1000 clientWidth=4028
+size=1 clientWidth=33
+size=2 clientWidth=37
+size=3 clientWidth=41
+size=4 clientWidth=45
+size=5 clientWidth=49
+size=10 clientWidth=69
+size=20 clientWidth=109
+size=50 clientWidth=229
+size=100 clientWidth=429
+size=500 clientWidth=2029
+size=1000 clientWidth=4029
 
 textarea
 cols=1 clientWidth=23
@@ -329,17 +329,17 @@ cols=1000 clientWidth=5019
 
 Verdana
 input
-size=1 clientWidth=25
-size=2 clientWidth=31
-size=3 clientWidth=37
-size=4 clientWidth=43
-size=5 clientWidth=49
-size=10 clientWidth=79
-size=20 clientWidth=139
-size=50 clientWidth=319
-size=100 clientWidth=619
-size=500 clientWidth=3019
-size=1000 clientWidth=6019
+size=1 clientWidth=20
+size=2 clientWidth=26
+size=3 clientWidth=32
+size=4 clientWidth=38
+size=5 clientWidth=44
+size=10 clientWidth=74
+size=20 clientWidth=134
+size=50 clientWidth=314
+size=100 clientWidth=614
+size=500 clientWidth=3014
+size=1000 clientWidth=6014
 
 textarea
 cols=1 clientWidth=25

@@ -91,6 +91,28 @@ inline StringAppend<const char*, AtomicString> operator+(const char* string1, co
     return StringAppend<const char*, AtomicString>(string1, string2);
 }
 
+template<typename U, typename V>
+StringAppend<const char*, StringAppend<U, V> > operator+(const char* string1, const StringAppend<U, V>& string2)
+{
+    return StringAppend<const char*, StringAppend<U, V> >(string1, string2);
+}
+
+inline StringAppend<const UChar*, String> operator+(const UChar* string1, const String& string2)
+{
+    return StringAppend<const UChar*, String>(string1, string2);
+}
+
+inline StringAppend<const UChar*, AtomicString> operator+(const UChar* string1, const AtomicString& string2)
+{
+    return StringAppend<const UChar*, AtomicString>(string1, string2);
+}
+
+template<typename U, typename V>
+StringAppend<const UChar*, StringAppend<U, V> > operator+(const UChar* string1, const StringAppend<U, V>& string2)
+{
+    return StringAppend<const UChar*, StringAppend<U, V> >(string1, string2);
+}
+
 template<typename T>
 StringAppend<String, T> operator+(const String& string1, T string2)
 {
@@ -98,9 +120,9 @@ StringAppend<String, T> operator+(const String& string1, T string2)
 }
 
 template<typename U, typename V, typename W>
-StringAppend<U, StringAppend<V, W> > operator+(U string1, const StringAppend<V, W>& string2)
+StringAppend<StringAppend<U, V>, W> operator+(const StringAppend<U, V>& string1, W string2)
 {
-    return StringAppend<U, StringAppend<V, W> >(string1, string2);
+    return StringAppend<StringAppend<U, V>, W>(string1, string2);
 }
 
 } // namespace WTF

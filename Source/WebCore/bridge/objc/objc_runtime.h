@@ -92,7 +92,10 @@ private:
 
 class ObjcFallbackObjectImp : public JSObjectWithGlobalObject {
 public:
-    ObjcFallbackObjectImp(ExecState*, JSGlobalObject*, ObjcInstance*, const Identifier& propertyName);
+    static ObjcFallbackObjectImp* create(ExecState* exec, JSGlobalObject* globalObject, ObjcInstance* instance, const Identifier& propertyName)
+    {
+        return new (allocateCell<ObjcFallbackObjectImp>(*exec->heap())) ObjcFallbackObjectImp(exec, globalObject, instance, propertyName);
+    }
 
     static const ClassInfo s_info;
 
@@ -109,6 +112,7 @@ public:
     }
 
 private:
+    ObjcFallbackObjectImp(ExecState*, JSGlobalObject*, ObjcInstance*, const Identifier& propertyName);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

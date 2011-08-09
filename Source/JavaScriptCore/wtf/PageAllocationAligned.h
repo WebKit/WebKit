@@ -48,13 +48,13 @@ public:
 private:
 #if OS(DARWIN)
     PageAllocationAligned(void* base, size_t size)
-        : PageBlock(base, size)
+        : PageBlock(base, size, false)
     {
     }
 #else
     PageAllocationAligned(void* base, size_t size, void* reservationBase, size_t reservationSize)
-        : PageBlock(base, size)
-        , m_reservation(reservationBase, reservationSize)
+        : PageBlock(base, size, false)
+        , m_reservation(reservationBase, reservationSize, false)
     {
     }
 

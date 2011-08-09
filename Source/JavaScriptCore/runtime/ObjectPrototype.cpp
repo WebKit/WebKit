@@ -104,19 +104,19 @@ bool ObjectPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier
 EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    return JSValue::encode(thisValue.toThisObject(exec));
+    return JSValue::encode(thisValue.toObject(exec));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    return JSValue::encode(jsBoolean(thisValue.toThisObject(exec)->hasOwnProperty(exec, Identifier(exec, exec->argument(0).toString(exec)))));
+    return JSValue::encode(jsBoolean(thisValue.toObject(exec)->hasOwnProperty(exec, Identifier(exec, exec->argument(0).toString(exec)))));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    JSObject* thisObj = thisValue.toThisObject(exec);
+    JSObject* thisObj = thisValue.toObject(exec);
 
     if (!exec->argument(0).isObject())
         return JSValue::encode(jsBoolean(false));
@@ -167,19 +167,36 @@ EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    return JSValue::encode(jsBoolean(thisValue.toThisObject(exec)->propertyIsEnumerable(exec, Identifier(exec, exec->argument(0).toString(exec)))));
+    return JSValue::encode(jsBoolean(thisValue.toObject(exec)->propertyIsEnumerable(exec, Identifier(exec, exec->argument(0).toString(exec)))));
 }
 
+// 15.2.4.3 Object.prototype.toLocaleString()
 EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState* exec)
 {
-    JSValue thisValue = exec->hostThisValue();
-    return JSValue::encode(thisValue.toThisJSString(exec));
+    // 1. Let O be the result of calling ToObject passing the this value as the argument.
+    JSObject* object = exec->hostThisValue().toObject(exec);
+    if (exec->hadException())
+        return JSValue::encode(jsUndefined());
+
+    // 2. Let toString be the result of calling the [[Get]] internal method of O passing "toString" as the argument.
+    JSValue toString = object->get(exec, exec->propertyNames().toString);
+
+    // 3. If IsCallable(toString) is false, throw a TypeError exception.
+    CallData callData;
+    CallType callType = getCallData(toString, callData);
+    if (callType == CallTypeNone)
+        return JSValue::encode(jsUndefined());
+
+    // 4. Return the result of calling the [[Call]] internal method of toString passing O as the this value and no arguments.
+    return JSValue::encode(call(exec, toString, callType, callData, object, exec->emptyList()));
 }
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncToString(ExecState* exec)
 {
     JSValue thisValue = exec->hostThisValue();
-    return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisValue.toThisObject(exec)->className(), "]"));
+    if (thisValue.isUndefinedOrNull())
+        return JSValue::encode(jsNontrivialString(exec, thisValue.isUndefined() ? "[object Undefined]" : "[object Null]"));
+    return JSValue::encode(jsMakeNontrivialString(exec, "[object ", thisValue.toObject(exec)->className(), "]"));
 }
 
 } // namespace JSC

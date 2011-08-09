@@ -113,6 +113,9 @@ public:
     static AtomicString fromUTF8(const char*, size_t);
     static AtomicString fromUTF8(const char*);
 
+#ifndef NDEBUG
+    void show() const;
+#endif
 private:
     String m_string;
     

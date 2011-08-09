@@ -30,54 +30,6 @@
 
 namespace JSC {
 
-#if defined NAN && defined INFINITY
-
-extern const double NaN = NAN;
-extern const double Inf = INFINITY;
-
-#else // !(defined NAN && defined INFINITY)
-
-// The trick is to define the NaN and Inf globals with a different type than the declaration.
-// This trick works because the mangled name of the globals does not include the type, although
-// I'm not sure that's guaranteed. There could be alignment issues with this, since arrays of
-// characters don't necessarily need the same alignment doubles do, but for now it seems to work.
-// It would be good to figure out a 100% clean way that still avoids code that runs at init time.
-
-// Note, we have to use union to ensure alignment. Otherwise, NaN_Bytes can start anywhere,
-// while NaN_double has to be 4-byte aligned for 32-bits.
-// With -fstrict-aliasing enabled, unions are the only safe way to do type masquerading.
-
-static const union {
-    struct {
-        unsigned char NaN_Bytes[8];
-        unsigned char Inf_Bytes[8];
-    } bytes;
-    
-    struct {
-        double NaN_Double;
-        double Inf_Double;
-    } doubles;
-    
-} NaNInf = { {
-#if CPU(BIG_ENDIAN)
-    { 0x7f, 0xf8, 0, 0, 0, 0, 0, 0 },
-    { 0x7f, 0xf0, 0, 0, 0, 0, 0, 0 }
-#elif CPU(MIDDLE_ENDIAN)
-    { 0, 0, 0xf8, 0x7f, 0, 0, 0, 0 },
-    { 0, 0, 0xf0, 0x7f, 0, 0, 0, 0 }
-#else
-    { 0, 0, 0, 0, 0, 0, 0xf8, 0x7f },
-    { 0, 0, 0, 0, 0, 0, 0xf0, 0x7f }
-#endif
-} } ;
-
-extern const double NaN = NaNInf.doubles.NaN_Double;
-extern const double Inf = NaNInf.doubles.Inf_Double;
- 
-#endif // !(defined NAN && defined INFINITY)
-
-const ClassInfo JSCell::s_dummyCellInfo = { "DummyCell", 0, 0, 0 };
-
 bool JSCell::getUInt32(uint32_t&) const
 {
     return false;
@@ -213,12 +165,8 @@ JSObject* JSCell::toObject(ExecState*, JSGlobalObject*) const
 
 bool isZombie(const JSCell* cell)
 {
-#if ENABLE(JSC_ZOMBIES)
-    return cell && cell->isZombie();
-#else
     UNUSED_PARAM(cell);
     return false;
-#endif
 }
 
 void slowValidateCell(JSCell* cell)

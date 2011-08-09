@@ -75,6 +75,53 @@
     macro(writable) \
     macro(displayName)
 
+#define JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(macro) \
+    macro(null) \
+    macro(true) \
+    macro(false) \
+    macro(break) \
+    macro(case) \
+    macro(catch) \
+    macro(const) \
+    macro(default) \
+    macro(finally) \
+    macro(for) \
+    macro(instanceof) \
+    macro(new) \
+    macro(var) \
+    macro(continue) \
+    macro(function) \
+    macro(return) \
+    macro(void) \
+    macro(delete) \
+    macro(if) \
+    macro(this) \
+    macro(do) \
+    macro(while) \
+    macro(else) \
+    macro(in) \
+    macro(switch) \
+    macro(throw) \
+    macro(try) \
+    macro(typeof) \
+    macro(with) \
+    macro(debugger) \
+    macro(class) \
+    macro(enum) \
+    macro(export) \
+    macro(extends) \
+    macro(import) \
+    macro(super) \
+    macro(implements) \
+    macro(interface) \
+    macro(let) \
+    macro(package) \
+    macro(private) \
+    macro(protected) \
+    macro(public) \
+    macro(static) \
+    macro(yield)
+
 namespace JSC {
 
     class CommonIdentifiers {
@@ -90,6 +137,11 @@ namespace JSC {
         const Identifier thisIdentifier;
         const Identifier useStrictIdentifier;
 
+        
+#define JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL(name) const Identifier name##Keyword;
+        JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL)
+#undef JSC_IDENTIFIER_DECLARE_KEYWORD_NAME_GLOBAL
+        
 #define JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL(name) const Identifier name;
         JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL)
 #undef JSC_IDENTIFIER_DECLARE_PROPERTY_NAME_GLOBAL

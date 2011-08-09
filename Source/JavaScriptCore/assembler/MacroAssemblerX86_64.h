@@ -81,9 +81,8 @@ public:
         if (dest == X86Registers::eax)
             m_assembler.movl_mEAX(address);
         else {
-            move(X86Registers::eax, dest);
-            m_assembler.movl_mEAX(address);
-            swap(X86Registers::eax, dest);
+            move(TrustedImmPtr(address), dest);
+            load32(dest, dest);
         }
     }
 
@@ -107,10 +106,8 @@ public:
 
     void store32(TrustedImm32 imm, void* address)
     {
-        move(X86Registers::eax, scratchRegister);
-        move(imm, X86Registers::eax);
-        m_assembler.movl_EAXm(address);
-        move(scratchRegister, X86Registers::eax);
+        move(TrustedImmPtr(address), scratchRegister);
+        store32(imm, scratchRegister);
     }
 
     Call call()
@@ -257,9 +254,8 @@ public:
         if (dest == X86Registers::eax)
             m_assembler.movq_mEAX(address);
         else {
-            move(X86Registers::eax, dest);
-            m_assembler.movq_mEAX(address);
-            swap(X86Registers::eax, dest);
+            move(TrustedImmPtr(address), dest);
+            loadPtr(dest, dest);
         }
     }
 
@@ -267,6 +263,12 @@ public:
     {
         m_assembler.movq_mr_disp32(address.offset, address.base, dest);
         return DataLabel32(this);
+    }
+    
+    DataLabelCompact loadPtrWithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        m_assembler.movq_mr_disp8(address.offset, address.base, dest);
+        return DataLabelCompact(this);
     }
 
     void storePtr(RegisterID src, ImplicitAddress address)
@@ -284,9 +286,8 @@ public:
         if (src == X86Registers::eax)
             m_assembler.movq_EAXm(address);
         else {
-            swap(X86Registers::eax, src);
-            m_assembler.movq_EAXm(address);
-            swap(X86Registers::eax, src);
+            move(TrustedImmPtr(address), scratchRegister);
+            storePtr(src, scratchRegister);
         }
     }
 
@@ -450,6 +451,7 @@ public:
     // See comment on MacroAssemblerARMv7::supportsFloatingPointTruncate()
     bool supportsFloatingPointTruncate() const { return true; }
     bool supportsFloatingPointSqrt() const { return true; }
+    bool supportsDoubleBitops() const { return true; }
 
 private:
     friend class LinkBuffer;
@@ -458,9 +460,9 @@ private:
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
         if (!call.isFlagSet(Call::Near))
-            X86Assembler::linkPointer(code, call.m_jmp.labelAtOffset(-REPTACH_OFFSET_CALL_R11), function.value());
+            X86Assembler::linkPointer(code, call.m_label.labelAtOffset(-REPTACH_OFFSET_CALL_R11), function.value());
         else
-            X86Assembler::linkCall(code, call.m_jmp, function.value());
+            X86Assembler::linkCall(code, call.m_label, function.value());
     }
 
     static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)

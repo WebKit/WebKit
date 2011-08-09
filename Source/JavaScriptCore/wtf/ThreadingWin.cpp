@@ -85,6 +85,8 @@
 
 #include "config.h"
 #include "Threading.h"
+#include "DateMath.h"
+#include "dtoa.h"
 
 #include "MainThread.h"
 #include "ThreadFunctionInvocation.h"
@@ -95,6 +97,7 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RandomNumberSeed.h>
+#include <wtf/WTFThreadData.h>
 
 #if !USE(PTHREADS) && OS(WINDOWS)
 #include "ThreadSpecific.h"
@@ -160,9 +163,18 @@ void initializeThreading()
     if (atomicallyInitializedStaticMutex)
         return;
 
+    // StringImpl::empty() does not construct its static string in a threadsafe fashion,
+    // so ensure it has been initialized from here.
+    StringImpl::empty();
     atomicallyInitializedStaticMutex = new Mutex;
     threadMapMutex();
     initializeRandomNumberGenerator();
+    wtfThreadData();
+#if ENABLE(WTF_MULTIPLE_THREADS)
+    s_dtoaP5Mutex = new Mutex;
+    initializeDates();
+#endif
+
 }
 
 static HashMap<DWORD, HANDLE>& threadMap()

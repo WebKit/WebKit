@@ -217,7 +217,7 @@ JSValueRef JSValueMakeNumber(JSContextRef ctx, double value)
     // generated internally to JavaScriptCore naturally have that representation,
     // but an external NaN might not.
     if (isnan(value))
-        value = NaN;
+        value = std::numeric_limits<double>::quiet_NaN();
 
     return toRef(exec, jsNumber(value));
 }
@@ -234,7 +234,8 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
 {
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
-    LiteralParser parser(exec, string->ustring(), LiteralParser::StrictJSON);
+    UString str = string->ustring();
+    LiteralParser parser(exec, str.characters(), str.length(), LiteralParser::StrictJSON);
     return toRef(exec, parser.tryLiteralParse());
 }
 
@@ -276,7 +277,7 @@ double JSValueToNumber(JSContextRef ctx, JSValueRef value, JSValueRef* exception
         if (exception)
             *exception = toRef(exec, exec->exception());
         exec->clearException();
-        number = NaN;
+        number = std::numeric_limits<double>::quiet_NaN();
     }
     return number;
 }

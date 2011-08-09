@@ -46,6 +46,7 @@ class JSGlobalData;
 namespace DFG {
 
 class JITCodeGenerator;
+class NodeToRegisterMap;
 class NonSpeculativeJIT;
 class SpeculativeJIT;
 class SpeculationRecovery;
@@ -65,6 +66,7 @@ struct CallRecord {
     CallRecord(MacroAssembler::Call call, FunctionPtr function)
         : m_call(call)
         , m_function(function)
+        , m_handlesExceptions(false)
     {
     }
 
@@ -74,6 +76,17 @@ struct CallRecord {
         , m_function(function)
         , m_exceptionCheck(exceptionCheck)
         , m_exceptionInfo(exceptionInfo)
+        , m_handlesExceptions(true)
+    {
+    }
+
+    // Constructor for a call that may cause exceptions, but which are handled
+    // through some mechanism other than the in-line exception handler.
+    CallRecord(MacroAssembler::Call call, FunctionPtr function, ExceptionInfo exceptionInfo)
+        : m_call(call)
+        , m_function(function)
+        , m_exceptionInfo(exceptionInfo)
+        , m_handlesExceptions(true)
     {
     }
 
@@ -81,6 +94,7 @@ struct CallRecord {
     FunctionPtr m_function;
     MacroAssembler::Jump m_exceptionCheck;
     ExceptionInfo m_exceptionInfo;
+    bool m_handlesExceptions;
 };
 
 // === JITCompiler ===
@@ -97,15 +111,18 @@ public:
         : m_globalData(globalData)
         , m_graph(dfg)
         , m_codeBlock(codeBlock)
+        , m_exceptionCheckCount(0)
     {
     }
 
+    void compile(JITCode& entry);
     void compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWithArityCheck);
 
     // Accessors for properties.
     Graph& graph() { return m_graph; }
     CodeBlock* codeBlock() { return m_codeBlock; }
     JSGlobalData* globalData() { return m_globalData; }
+    AssemblerType_T& assembler() { return m_assembler; }
 
 #if CPU(X86_64)
     void preserveReturnAddressAfterCall(GPRReg reg)
@@ -157,6 +174,12 @@ public:
     {
         return Address(GPRInfo::callFrameRegister, virtualRegister * sizeof(Register) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.payload));
     }
+    
+    // Notify the JIT of a call that does not require linking.
+    void notifyCall(Call call, unsigned exceptionInfo)
+    {
+        m_calls.append(CallRecord(call, FunctionPtr(), exceptionInfo));
+    }
 
     // Add a call out from JIT code, without an exception check.
     void appendCall(const FunctionPtr& function)
@@ -166,11 +189,21 @@ public:
     }
 
     // Add a call out from JIT code, with an exception check.
-    void appendCallWithExceptionCheck(const FunctionPtr& function, unsigned exceptionInfo)
+    Call appendCallWithExceptionCheck(const FunctionPtr& function, unsigned exceptionInfo)
     {
         Call functionCall = call();
         Jump exceptionCheck = branchTestPtr(NonZero, AbsoluteAddress(&globalData()->exception));
         m_calls.append(CallRecord(functionCall, function, exceptionCheck, exceptionInfo));
+        return functionCall;
+    }
+    
+    // Add a call out from JIT code, with a fast exception check that tests if the return value is zero.
+    Call appendCallWithFastExceptionCheck(const FunctionPtr& function, unsigned exceptionInfo)
+    {
+        Call functionCall = call();
+        Jump exceptionCheck = branchTestPtr(Zero, GPRInfo::returnValueGPR);
+        m_calls.append(CallRecord(functionCall, function, exceptionCheck, exceptionInfo));
+        return functionCall;
     }
 
     // Helper methods to check nodes for constants.
@@ -178,35 +211,34 @@ public:
     {
         return graph()[nodeIndex].isConstant();
     }
+    bool isJSConstant(NodeIndex nodeIndex)
+    {
+        return graph()[nodeIndex].isConstant();
+    }
     bool isInt32Constant(NodeIndex nodeIndex)
     {
-        return graph()[nodeIndex].op == Int32Constant;
+        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isInt32();
     }
     bool isDoubleConstant(NodeIndex nodeIndex)
     {
-        return graph()[nodeIndex].op == DoubleConstant;
+        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isNumber();
     }
-    bool isJSConstant(NodeIndex nodeIndex)
-    {
-        return graph()[nodeIndex].op == JSConstant;
-    }
-
     // Helper methods get constant values from nodes.
-    int32_t valueOfInt32Constant(NodeIndex nodeIndex)
-    {
-        ASSERT(isInt32Constant(nodeIndex));
-        return graph()[nodeIndex].int32Constant();
-    }
-    double valueOfDoubleConstant(NodeIndex nodeIndex)
-    {
-        ASSERT(isDoubleConstant(nodeIndex));
-        return graph()[nodeIndex].numericConstant();
-    }
     JSValue valueOfJSConstant(NodeIndex nodeIndex)
     {
         ASSERT(isJSConstant(nodeIndex));
         unsigned constantIndex = graph()[nodeIndex].constantNumber();
         return codeBlock()->constantRegister(FirstConstantRegisterIndex + constantIndex).get();
+    }
+    int32_t valueOfInt32Constant(NodeIndex nodeIndex)
+    {
+        ASSERT(isInt32Constant(nodeIndex));
+        return valueOfJSConstant(nodeIndex).asInt32();
+    }
+    double valueOfDoubleConstant(NodeIndex nodeIndex)
+    {
+        ASSERT(isDoubleConstant(nodeIndex));
+        return valueOfJSConstant(nodeIndex).uncheckedGetNumber();
     }
 
     // These methods JIT generate dynamic, debug-only checks - akin to ASSERTs.
@@ -215,11 +247,13 @@ public:
     void jitAssertIsJSInt32(GPRReg);
     void jitAssertIsJSNumber(GPRReg);
     void jitAssertIsJSDouble(GPRReg);
+    void jitAssertIsCell(GPRReg);
 #else
     void jitAssertIsInt32(GPRReg) {}
     void jitAssertIsJSInt32(GPRReg) {}
     void jitAssertIsJSNumber(GPRReg) {}
     void jitAssertIsJSDouble(GPRReg) {}
+    void jitAssertIsCell(GPRReg) {}
 #endif
 
 #if ENABLE(SAMPLING_COUNTERS)
@@ -232,12 +266,32 @@ public:
     void clearSamplingFlag(int32_t flag);
 #endif
 
+    void addPropertyAccess(JITCompiler::Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
+    {
+        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckImmToCall, deltaCallToStructCheck, deltaCallToLoadOrStore, deltaCallToSlowCase, deltaCallToDone,  baseGPR, valueGPR, scratchGPR));
+    }
+    
+    void addMethodGet(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
+    {
+        m_methodGets.append(MethodGetRecord(slowCall, structToCompare, protoObj, protoStructToCompare, putFunction));
+    }
+    
+    void addJSCall(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, unsigned exceptionInfo)
+    {
+        m_jsCalls.append(JSCallRecord(fastCall, slowCall, targetToCheck, isCall, exceptionInfo));
+    }
+
 private:
+    // Internal implementation to compile.
+    void compileEntry();
+    void compileBody();
+    void link(LinkBuffer&);
+
     // These methods used in linking the speculative & non-speculative paths together.
     void fillNumericToDouble(NodeIndex, FPRReg, GPRReg temporary);
     void fillInt32ToInteger(NodeIndex, GPRReg);
     void fillToJS(NodeIndex, GPRReg);
-    void jumpFromSpeculativeToNonSpeculative(const SpeculationCheck&, const EntryLocation&, SpeculationRecovery*);
+    void jumpFromSpeculativeToNonSpeculative(const SpeculationCheck&, const EntryLocation&, SpeculationRecovery*, NodeToRegisterMap& checkNodeToRegisterMap, NodeToRegisterMap& entryNodeToRegisterMap);
     void linkSpeculationChecks(SpeculativeJIT&, NonSpeculativeJIT&);
 
     // The globalData, used to access constants such as the vPtrs.
@@ -250,7 +304,72 @@ private:
     CodeBlock* m_codeBlock;
 
     // Vector of calls out from JIT code, including exception handler information.
+    // Count of the number of CallRecords with exception handlers.
     Vector<CallRecord> m_calls;
+    unsigned m_exceptionCheckCount;
+
+    struct PropertyAccessRecord {
+        PropertyAccessRecord(Call functionCall, int8_t deltaCheckImmToCall, int8_t deltaCallToStructCheck, int8_t deltaCallToLoadOrStore, int8_t deltaCallToSlowCase, int8_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
+            : m_functionCall(functionCall)
+            , m_deltaCheckImmToCall(deltaCheckImmToCall)
+            , m_deltaCallToStructCheck(deltaCallToStructCheck)
+            , m_deltaCallToLoadOrStore(deltaCallToLoadOrStore)
+            , m_deltaCallToSlowCase(deltaCallToSlowCase)
+            , m_deltaCallToDone(deltaCallToDone)
+            , m_baseGPR(baseGPR)
+            , m_valueGPR(valueGPR)
+            , m_scratchGPR(scratchGPR)
+        {
+        }
+
+        JITCompiler::Call m_functionCall;
+        int8_t m_deltaCheckImmToCall;
+        int8_t m_deltaCallToStructCheck;
+        int8_t m_deltaCallToLoadOrStore;
+        int8_t m_deltaCallToSlowCase;
+        int8_t m_deltaCallToDone;
+        int8_t m_baseGPR;
+        int8_t m_valueGPR;
+        int8_t m_scratchGPR;
+    };
+    
+    struct MethodGetRecord {
+        MethodGetRecord(Call slowCall, DataLabelPtr structToCompare, DataLabelPtr protoObj, DataLabelPtr protoStructToCompare, DataLabelPtr putFunction)
+            : m_slowCall(slowCall)
+            , m_structToCompare(structToCompare)
+            , m_protoObj(protoObj)
+            , m_protoStructToCompare(protoStructToCompare)
+            , m_putFunction(putFunction)
+        {
+        }
+        
+        Call m_slowCall;
+        DataLabelPtr m_structToCompare;
+        DataLabelPtr m_protoObj;
+        DataLabelPtr m_protoStructToCompare;
+        DataLabelPtr m_putFunction;
+    };
+    
+    struct JSCallRecord {
+        JSCallRecord(Call fastCall, Call slowCall, DataLabelPtr targetToCheck, bool isCall, unsigned exceptionInfo)
+            : m_fastCall(fastCall)
+            , m_slowCall(slowCall)
+            , m_targetToCheck(targetToCheck)
+            , m_isCall(isCall)
+            , m_exceptionInfo(exceptionInfo)
+        {
+        }
+        
+        Call m_fastCall;
+        Call m_slowCall;
+        DataLabelPtr m_targetToCheck;
+        bool m_isCall;
+        unsigned m_exceptionInfo;
+    };
+
+    Vector<PropertyAccessRecord, 4> m_propertyAccesses;
+    Vector<MethodGetRecord, 4> m_methodGets;
+    Vector<JSCallRecord, 4> m_jsCalls;
 };
 
 } } // namespace JSC::DFG

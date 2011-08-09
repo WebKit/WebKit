@@ -142,8 +142,6 @@ uint32_t ARC4RandomNumberGenerator::randomNumber()
 {
 #if ENABLE(WTF_MULTIPLE_THREADS)
     MutexLocker locker(m_mutex);
-#else
-    ASSERT(isMainThread());
 #endif
 
     m_count -= 4;
@@ -155,8 +153,6 @@ void ARC4RandomNumberGenerator::randomValues(void* buffer, size_t length)
 {
 #if ENABLE(WTF_MULTIPLE_THREADS)
     MutexLocker locker(m_mutex);
-#else
-    ASSERT(isMainThread());
 #endif
 
     unsigned char* result = reinterpret_cast<unsigned char*>(buffer);

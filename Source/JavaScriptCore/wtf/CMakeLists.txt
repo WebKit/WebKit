@@ -117,6 +117,7 @@ SET(WTF_SOURCES
     ByteArray.cpp
     CryptographicallyRandomNumber.cpp
     CurrentTime.cpp
+    DateMath.cpp
     DecimalNumber.cpp
     DynamicAnnotations.cpp
     FastMalloc.cpp
@@ -124,6 +125,8 @@ SET(WTF_SOURCES
     MainThread.cpp
     MD5.cpp
     OSRandomSource.cpp
+    PageAllocationAligned.cpp
+    PageBlock.cpp
     ParallelJobsGeneric.cpp
     RandomNumber.cpp
     RefCountedLeakCounter.cpp
@@ -143,6 +146,13 @@ SET(WTF_SOURCES
     text/WTFString.cpp
 
     unicode/UTF8.cpp
+)
+
+SET(WTF_INCLUDE_DIRECTORIES
+    "${JAVASCRIPTCORE_DIR}"
+    "${JAVASCRIPTCORE_DIR}/wtf"
+    "${JAVASCRIPTCORE_DIR}/wtf/unicode"
+    "${JavaScriptCore_INCLUDE_DIRECTORIES}"
 )
 
 SET(WTF_LIBRARIES

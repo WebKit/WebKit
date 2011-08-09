@@ -244,7 +244,7 @@ JSValue convertObjcValueToValue(ExecState* exec, void* buffer, ObjcValueType typ
             if ([obj isKindOfClass:[NSNumber class]])
                 return jsNumber([obj doubleValue]);
             if ([obj isKindOfClass:[NSArray class]])
-                return new (exec) RuntimeArray(exec, new ObjcArray(obj, rootObject));
+                return RuntimeArray::create(exec, new ObjcArray(obj, rootObject));
             if ([obj isKindOfClass:webScriptObjectClass()]) {
                 JSObject* imp = [obj _imp];
                 return imp ? imp : jsUndefined();

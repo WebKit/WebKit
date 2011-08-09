@@ -36,13 +36,10 @@
 
 namespace JSC {
 
-size_t MarkStack::s_pageSize = 0;
-
 void MarkStack::reset()
 {
-    ASSERT(s_pageSize);
-    m_values.shrinkAllocation(s_pageSize);
-    m_markSets.shrinkAllocation(s_pageSize);
+    m_values.shrinkAllocation(pageSize());
+    m_markSets.shrinkAllocation(pageSize());
     m_opaqueRoots.clear();
 }
 
@@ -54,7 +51,7 @@ void MarkStack::append(ConservativeRoots& conservativeRoots)
         internalAppend(roots[i]);
 }
 
-inline void MarkStack::visitChildren(JSCell* cell)
+inline void SlotVisitor::visitChildren(JSCell* cell)
 {
     ASSERT(Heap::isMarked(cell));
     if (cell->structure()->typeInfo().type() < CompoundType) {
@@ -82,7 +79,7 @@ inline void MarkStack::visitChildren(JSCell* cell)
     cell->visitChildren(*this);
 }
 
-void MarkStack::drain()
+void SlotVisitor::drain()
 {
 #if !ASSERT_DISABLED
     ASSERT(!m_isDraining);

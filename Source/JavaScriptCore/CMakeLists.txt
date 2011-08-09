@@ -14,7 +14,8 @@ SET(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/profiler"
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${JAVASCRIPTCORE_DIR}/yarr"
-    "${WTF_INCLUDE_DIRECTORIES}"
+    "${JAVASCRIPTCORE_DIR}/wtf"
+    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
     "${CMAKE_SOURCE_DIR}"
 )
 
@@ -46,7 +47,8 @@ SET(JavaScriptCore_SOURCES
     heap/HandleStack.cpp
     heap/MachineStackMarker.cpp
     heap/MarkedBlock.cpp
-    heap/MarkedSpace.cpp
+    heap/NewSpace.cpp
+    heap/OldSpace.cpp
     heap/ConservativeRoots.cpp
     heap/MarkStack.cpp
 
@@ -131,7 +133,6 @@ SET(JavaScriptCore_SOURCES
     runtime/JSValue.cpp
     runtime/JSVariableObject.cpp
     runtime/JSWrapperObject.cpp
-    runtime/JSZombie.cpp
     runtime/LiteralParser.cpp
     runtime/Lookup.cpp
     runtime/MathObject.cpp
@@ -168,10 +169,6 @@ SET(JavaScriptCore_SOURCES
     yarr/YarrInterpreter.cpp
     yarr/YarrJIT.cpp
     yarr/YarrSyntaxChecker.cpp
-
-    wtf/DateMath.cpp
-    wtf/PageAllocationAligned.cpp
-    wtf/PageBlock.cpp
 )
 SET(JavaScriptCore_HEADERS )
 
@@ -222,6 +219,13 @@ ADD_CUSTOM_COMMAND(
 ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/yarr/YarrPattern.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/RegExpJitTables.h)
 
 
+#GENERATOR: "KeywordLookup.h": keyword decision tree used by the lexer
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h
+    MAIN_DEPENDENCY ${JAVASCRIPTCORE_DIR}/KeywordLookupGenerator.py
+    COMMAND ${PYTHON_EXECUTABLE} ${JAVASCRIPTCORE_DIR}/KeywordLookupGenerator.py ${JAVASCRIPTCORE_DIR}/parser/Keywords.table > ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h
+    VERBATIM)
+ADD_SOURCE_DEPENDENCIES(${JAVASCRIPTCORE_DIR}/parser/Lexer.cpp ${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}/KeywordLookup.h)
 
 IF (WTF_CPU_ARM)
     LIST(APPEND JavaScriptCore_SOURCES

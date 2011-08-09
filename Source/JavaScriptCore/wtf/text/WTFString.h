@@ -67,8 +67,8 @@ struct StringHash;
 
 bool charactersAreAllASCII(const UChar*, size_t);
 bool charactersAreAllLatin1(const UChar*, size_t);
-int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
-unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
+WTF_EXPORT_PRIVATE int charactersToIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
+WTF_EXPORT_PRIVATE unsigned charactersToUIntStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
 int64_t charactersToInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
 uint64_t charactersToUInt64Strict(const UChar*, size_t, bool* ok = 0, int base = 10);
 intptr_t charactersToIntPtrStrict(const UChar*, size_t, bool* ok = 0, int base = 10);
@@ -79,7 +79,7 @@ int64_t charactersToInt64(const UChar*, size_t, bool* ok = 0); // ignores traili
 uint64_t charactersToUInt64(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 intptr_t charactersToIntPtr(const UChar*, size_t, bool* ok = 0); // ignores trailing garbage
 
-double charactersToDouble(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
+WTF_EXPORT_PRIVATE double charactersToDouble(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 float charactersToFloat(const UChar*, size_t, bool* ok = 0, bool* didReadNumber = 0);
 
 template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters(const UChar*, size_t);
@@ -87,10 +87,10 @@ template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters(const UChar
 class String {
 public:
     // Construct a null string, distinguishable from an empty string.
-    String() { }
+    WTF_EXPORT_PRIVATE String() { }
 
     // Construct a string with UTF-16 data.
-    String(const UChar* characters, unsigned length);
+    WTF_EXPORT_PRIVATE String(const UChar* characters, unsigned length);
 
     // Construct a string by copying the contents of a vector.  To avoid
     // copying, consider using String::adopt instead.
@@ -98,18 +98,18 @@ public:
     explicit String(const Vector<UChar, inlineCapacity>&);
 
     // Construct a string with UTF-16 data, from a null-terminated source.
-    String(const UChar*);
+    WTF_EXPORT_PRIVATE String(const UChar*);
 
     // Construct a string with latin1 data.
-    String(const char* characters, unsigned length);
+    WTF_EXPORT_PRIVATE String(const char* characters, unsigned length);
 
     // Construct a string with latin1 data, from a null-terminated source.
-    String(const char* characters);
+    WTF_EXPORT_PRIVATE String(const char* characters);
 
     // Construct a string referencing an existing StringImpl.
-    String(StringImpl* impl) : m_impl(impl) { }
-    String(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
-    String(RefPtr<StringImpl> impl) : m_impl(impl) { }
+    WTF_EXPORT_PRIVATE String(StringImpl* impl) : m_impl(impl) { }
+    WTF_EXPORT_PRIVATE String(PassRefPtr<StringImpl> impl) : m_impl(impl) { }
+    WTF_EXPORT_PRIVATE String(RefPtr<StringImpl> impl) : m_impl(impl) { }
 
     // Inline the destructor.
     ALWAYS_INLINE ~String() { }
@@ -139,9 +139,9 @@ public:
         return m_impl->characters();
     }
 
-    CString ascii() const;
-    CString latin1() const;
-    CString utf8(bool strict = false) const;
+    WTF_EXPORT_PRIVATE CString ascii() const;
+    WTF_EXPORT_PRIVATE CString latin1() const;
+    WTF_EXPORT_PRIVATE CString utf8(bool strict = false) const;
 
     UChar operator[](unsigned index) const
     {
@@ -150,15 +150,15 @@ public:
         return m_impl->characters()[index];
     }
 
-    static String number(short);
-    static String number(unsigned short);
-    static String number(int);
-    static String number(unsigned);
-    static String number(long);
-    static String number(unsigned long);
-    static String number(long long);
-    static String number(unsigned long long);
-    static String number(double);
+    WTF_EXPORT_PRIVATE static String number(short);
+    WTF_EXPORT_PRIVATE static String number(unsigned short);
+    WTF_EXPORT_PRIVATE static String number(int);
+    WTF_EXPORT_PRIVATE static String number(unsigned);
+    WTF_EXPORT_PRIVATE static String number(long);
+    WTF_EXPORT_PRIVATE static String number(unsigned long);
+    WTF_EXPORT_PRIVATE static String number(long long);
+    WTF_EXPORT_PRIVATE static String number(unsigned long long);
+    WTF_EXPORT_PRIVATE static String number(double);
 
     // Find a single character or string, also with match function & latin1 forms.
     size_t find(UChar c, unsigned start = 0) const
@@ -177,9 +177,9 @@ public:
         { return m_impl ? m_impl->reverseFind(str.impl(), start) : notFound; }
 
     // Case insensitive string matching.
-    size_t findIgnoringCase(const char* str, unsigned start = 0) const
+    WTF_EXPORT_PRIVATE size_t findIgnoringCase(const char* str, unsigned start = 0) const
         { return m_impl ? m_impl->findIgnoringCase(str, start) : notFound; }
-    size_t findIgnoringCase(const String& str, unsigned start = 0) const
+    WTF_EXPORT_PRIVATE size_t findIgnoringCase(const String& str, unsigned start = 0) const
         { return m_impl ? m_impl->findIgnoringCase(str.impl(), start) : notFound; }
     size_t reverseFindIgnoringCase(const String& str, unsigned start = UINT_MAX) const
         { return m_impl ? m_impl->reverseFindIgnoringCase(str.impl(), start) : notFound; }
@@ -192,9 +192,9 @@ public:
     size_t reverseFind(const String& str, unsigned start, bool caseSensitive) const
         { return caseSensitive ? reverseFind(str, start) : reverseFindIgnoringCase(str, start); }
 
-    const UChar* charactersWithNullTermination();
+    WTF_EXPORT_PRIVATE const UChar* charactersWithNullTermination();
     
-    UChar32 characterStartingAt(unsigned) const; // Ditto.
+    WTF_EXPORT_PRIVATE UChar32 characterStartingAt(unsigned) const; // Ditto.
     
     bool contains(UChar c) const { return find(c) != notFound; }
     bool contains(const char* str, bool caseSensitive = true) const { return find(str, 0, caseSensitive) != notFound; }
@@ -205,11 +205,11 @@ public:
     bool endsWith(const String& s, bool caseSensitive = true) const
         { return m_impl ? m_impl->endsWith(s.impl(), caseSensitive) : s.isEmpty(); }
 
-    void append(const String&);
-    void append(char);
-    void append(UChar);
-    void append(const UChar*, unsigned length);
-    void insert(const String&, unsigned pos);
+    WTF_EXPORT_PRIVATE void append(const String&);
+    WTF_EXPORT_PRIVATE void append(char);
+    WTF_EXPORT_PRIVATE void append(UChar);
+    WTF_EXPORT_PRIVATE void append(const UChar*, unsigned length);
+    WTF_EXPORT_PRIVATE void insert(const String&, unsigned pos);
     void insert(const UChar*, unsigned length, unsigned pos);
 
     String& replace(UChar a, UChar b) { if (m_impl) m_impl = m_impl->replace(a, b); return *this; }
@@ -221,31 +221,33 @@ public:
     void makeUpper() { if (m_impl) m_impl = m_impl->upper(); }
     void makeSecure(UChar aChar) { if (m_impl) m_impl = m_impl->secure(aChar); }
 
-    void truncate(unsigned len);
-    void remove(unsigned pos, int len = 1);
+    WTF_EXPORT_PRIVATE void truncate(unsigned len);
+    WTF_EXPORT_PRIVATE void remove(unsigned pos, int len = 1);
 
-    String substring(unsigned pos, unsigned len = UINT_MAX) const;
+    WTF_EXPORT_PRIVATE String substring(unsigned pos, unsigned len = UINT_MAX) const;
     String substringSharingImpl(unsigned pos, unsigned len = UINT_MAX) const;
     String left(unsigned len) const { return substring(0, len); }
     String right(unsigned len) const { return substring(length() - len, len); }
 
     // Returns a lowercase/uppercase version of the string
-    String lower() const;
-    String upper() const;
+    WTF_EXPORT_PRIVATE String lower() const;
+    WTF_EXPORT_PRIVATE String upper() const;
 
-    String stripWhiteSpace() const;
-    String simplifyWhiteSpace() const;
+    WTF_EXPORT_PRIVATE String stripWhiteSpace() const;
+    WTF_EXPORT_PRIVATE String stripWhiteSpace(IsWhiteSpaceFunctionPtr) const;
+    WTF_EXPORT_PRIVATE String simplifyWhiteSpace() const;
+    WTF_EXPORT_PRIVATE String simplifyWhiteSpace(IsWhiteSpaceFunctionPtr) const;
 
-    String removeCharacters(CharacterMatchFunctionPtr) const;
+    WTF_EXPORT_PRIVATE String removeCharacters(CharacterMatchFunctionPtr) const;
     template<bool isSpecialCharacter(UChar)> bool isAllSpecialCharacters() const;
 
     // Return the string with case folded for case insensitive comparison.
-    String foldCase() const;
+    WTF_EXPORT_PRIVATE String foldCase() const;
 
 #if !PLATFORM(QT)
-    static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
+    WTF_EXPORT_PRIVATE static String format(const char *, ...) WTF_ATTRIBUTE_PRINTF(1, 2);
 #else
-    static String format(const char *, ...);
+    WTF_EXPORT_PRIVATE static String format(const char *, ...);
 #endif
 
     // Returns an uninitialized string. The characters needs to be written
@@ -253,34 +255,34 @@ public:
     // Failure to do this will have unpredictable results.
     static String createUninitialized(unsigned length, UChar*& data) { return StringImpl::createUninitialized(length, data); }
 
-    void split(const String& separator, Vector<String>& result) const;
-    void split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const;
-    void split(UChar separator, Vector<String>& result) const;
-    void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
+    WTF_EXPORT_PRIVATE void split(const String& separator, Vector<String>& result) const;
+    WTF_EXPORT_PRIVATE void split(const String& separator, bool allowEmptyEntries, Vector<String>& result) const;
+    WTF_EXPORT_PRIVATE void split(UChar separator, Vector<String>& result) const;
+    WTF_EXPORT_PRIVATE void split(UChar separator, bool allowEmptyEntries, Vector<String>& result) const;
 
-    int toIntStrict(bool* ok = 0, int base = 10) const;
-    unsigned toUIntStrict(bool* ok = 0, int base = 10) const;
-    int64_t toInt64Strict(bool* ok = 0, int base = 10) const;
-    uint64_t toUInt64Strict(bool* ok = 0, int base = 10) const;
-    intptr_t toIntPtrStrict(bool* ok = 0, int base = 10) const;
+    WTF_EXPORT_PRIVATE int toIntStrict(bool* ok = 0, int base = 10) const;
+    WTF_EXPORT_PRIVATE unsigned toUIntStrict(bool* ok = 0, int base = 10) const;
+    WTF_EXPORT_PRIVATE int64_t toInt64Strict(bool* ok = 0, int base = 10) const;
+    WTF_EXPORT_PRIVATE uint64_t toUInt64Strict(bool* ok = 0, int base = 10) const;
+    WTF_EXPORT_PRIVATE intptr_t toIntPtrStrict(bool* ok = 0, int base = 10) const;
 
-    int toInt(bool* ok = 0) const;
-    unsigned toUInt(bool* ok = 0) const;
+    WTF_EXPORT_PRIVATE int toInt(bool* ok = 0) const;
+    WTF_EXPORT_PRIVATE unsigned toUInt(bool* ok = 0) const;
     int64_t toInt64(bool* ok = 0) const;
-    uint64_t toUInt64(bool* ok = 0) const;
-    intptr_t toIntPtr(bool* ok = 0) const;
-    double toDouble(bool* ok = 0, bool* didReadNumber = 0) const;
-    float toFloat(bool* ok = 0, bool* didReadNumber = 0) const;
+    WTF_EXPORT_PRIVATE uint64_t toUInt64(bool* ok = 0) const;
+    WTF_EXPORT_PRIVATE intptr_t toIntPtr(bool* ok = 0) const;
+    WTF_EXPORT_PRIVATE double toDouble(bool* ok = 0, bool* didReadNumber = 0) const;
+    WTF_EXPORT_PRIVATE float toFloat(bool* ok = 0, bool* didReadNumber = 0) const;
 
     bool percentage(int& percentage) const;
 
     // Returns a StringImpl suitable for use on another thread.
-    String crossThreadString() const;
+    WTF_EXPORT_PRIVATE String crossThreadString() const;
     // Makes a deep copy. Helpful only if you need to use a String on another thread
     // (use crossThreadString if the method call doesn't need to be threadsafe).
     // Since the underlying StringImpl objects are immutable, there's no other reason
     // to ever prefer copy() over plain old assignment.
-    String threadsafeCopy() const;
+    WTF_EXPORT_PRIVATE String threadsafeCopy() const;
 
     // Prevent Strings from being implicitly convertable to bool as it will be ambiguous on any platform that
     // allows implicit conversion to another pointer type (e.g., Mac allows implicit conversion to NSString*).
@@ -309,8 +311,8 @@ public:
 #endif
 
 #if PLATFORM(WX)
-    String(const wxString&);
-    operator wxString() const;
+    WTF_EXPORT_PRIVATE String(const wxString&);
+    WTF_EXPORT_PRIVATE operator wxString() const;
 #endif
 
 #if PLATFORM(HAIKU)
@@ -324,11 +326,11 @@ public:
 
     // String::fromUTF8 will return a null string if
     // the input data contains invalid UTF-8 sequences.
-    static String fromUTF8(const char*, size_t);
-    static String fromUTF8(const char*);
+    WTF_EXPORT_PRIVATE static String fromUTF8(const char*, size_t);
+    WTF_EXPORT_PRIVATE static String fromUTF8(const char*);
 
     // Tries to convert the passed in string to UTF-8, but will fall back to Latin-1 if the string is not valid UTF-8.
-    static String fromUTF8WithLatin1Fallback(const char*, size_t);
+    WTF_EXPORT_PRIVATE static String fromUTF8WithLatin1Fallback(const char*, size_t);
     
     // Determines the writing direction using the Unicode Bidi Algorithm rules P2 and P3.
     WTF::Unicode::Direction defaultWritingDirection(bool* hasStrongDirectionality = 0) const
@@ -345,7 +347,11 @@ public:
 
     // Hash table deleted values, which are only constructed and never copied or destroyed.
     String(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
-    bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
+    WTF_EXPORT_PRIVATE bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
+
+#ifndef NDEBUG
+    void show() const;
+#endif
 
 private:
     RefPtr<StringImpl> m_impl;
@@ -415,7 +421,7 @@ inline bool charactersAreAllLatin1(const UChar* characters, size_t length)
     return !(ored & 0xFF00);
 }
 
-int codePointCompare(const String&, const String&);
+WTF_EXPORT_PRIVATE int codePointCompare(const String&, const String&);
 
 inline size_t find(const UChar* characters, unsigned length, UChar matchCharacter, unsigned index = 0)
 {
@@ -498,7 +504,7 @@ template<> struct DefaultHash<String> {
 template <> struct VectorTraits<String> : SimpleClassVectorTraits { };
 
 // Shared global empty string.
-const String& emptyString();
+WTF_EXPORT_PRIVATE const String& emptyString();
 
 }
 

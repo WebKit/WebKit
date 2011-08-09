@@ -51,6 +51,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/UnusedParam.h>
 
 namespace WTF {
@@ -61,6 +62,8 @@ int equivalentYearForDST(int year);
 double parseES5DateFromNullTerminatedCharacters(const char* dateString);
 double parseDateFromNullTerminatedCharacters(const char* dateString);
 double timeClip(double);
+// dayOfWeek: [0, 6] 0 being Monday, day: [1, 31], month: [0, 11], year: ex: 2011, hours: [0, 23], minutes: [0, 59], seconds: [0, 59], utcOffset: [-720,720]. 
+String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset);
 
 inline double jsCurrentTime()
 {
@@ -106,6 +109,7 @@ using WTF::msPerSecond;
 using WTF::msToYear;
 using WTF::secondsPerMinute;
 using WTF::parseDateFromNullTerminatedCharacters;
+using WTF::makeRFC2822DateString;
 using WTF::calculateUTCOffset;
 using WTF::calculateDSTOffset;
 

@@ -67,7 +67,7 @@ namespace JSC {
 
     inline JSValue jsNaN()
     {
-        return JSValue(nonInlineNaN());
+        return JSValue(std::numeric_limits<double>::quiet_NaN());
     }
 
     inline bool JSValue::getNumber(double& result) const
@@ -228,9 +228,6 @@ namespace JSC {
         else
             u.asBits.tag = EmptyValueTag;
         u.asBits.payload = reinterpret_cast<int32_t>(ptr);
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!isZombie());
-#endif
     }
 
     inline JSValue::JSValue(const JSCell* ptr)
@@ -240,9 +237,6 @@ namespace JSC {
         else
             u.asBits.tag = EmptyValueTag;
         u.asBits.payload = reinterpret_cast<int32_t>(const_cast<JSCell*>(ptr));
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!isZombie());
-#endif
     }
 
     inline JSValue::operator bool() const
@@ -384,17 +378,11 @@ namespace JSC {
     inline JSValue::JSValue(JSCell* ptr)
     {
         u.ptr = ptr;
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!isZombie());
-#endif
     }
 
     inline JSValue::JSValue(const JSCell* ptr)
     {
         u.ptr = const_cast<JSCell*>(ptr);
-#if ENABLE(JSC_ZOMBIES)
-        ASSERT(!isZombie());
-#endif
     }
 
     inline JSValue::operator bool() const

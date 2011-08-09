@@ -53,6 +53,13 @@ public:
         set(value);
     }
 
+    enum AdoptTag { Adopt };
+    template<typename U> Weak(AdoptTag, Handle<U> handle)
+        : Handle<T>(handle.slot())
+    {
+        validateCell(get());
+    }
+    
     Weak(const Weak& other)
         : Handle<T>()
     {
@@ -120,6 +127,14 @@ public:
         if (other.slot())
             setSlot(HandleHeap::heapFor(other.slot())->copyWeak(other.slot()));
         return *this;
+    }
+    
+    HandleSlot leakHandle()
+    {
+        ASSERT(HandleHeap::heapFor(slot())->hasFinalizer(slot()));
+        HandleSlot result = slot();
+        setSlot(0);
+        return result;
     }
 
 private:

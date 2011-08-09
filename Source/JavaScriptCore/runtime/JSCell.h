@@ -29,7 +29,7 @@
 #include "Heap.h"
 #include "JSLock.h"
 #include "JSValueInlineMethods.h"
-#include "MarkStack.h"
+#include "SlotVisitor.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
 
@@ -64,13 +64,14 @@ namespace JSC {
         friend class JSString;
         friend class JSValue;
         friend class JSAPIValueWrapper;
-        friend class JSZombie;
         friend class JSGlobalData;
-        friend class MarkedSpace;
+        friend class NewSpace;
         friend class MarkedBlock;
         friend class ScopeChainNode;
         friend class Structure;
         friend class StructureChain;
+        friend class RegExp;
+
         enum CreatingEarlyCellTag { CreatingEarlyCell };
 
     protected:
@@ -81,11 +82,8 @@ namespace JSC {
         JSCell(JSGlobalData&, Structure*);
         JSCell(JSGlobalData&, Structure*, CreatingEarlyCellTag);
         virtual ~JSCell();
-        static const ClassInfo s_dummyCellInfo;
 
     public:
-        static Structure* createDummyStructure(JSGlobalData&);
-
         // Querying the type.
         bool isString() const;
         bool isObject() const;
@@ -118,14 +116,9 @@ namespace JSC {
         virtual JSObject* toObject(ExecState*, JSGlobalObject*) const;
 
         // Garbage collection.
-        void* operator new(size_t, ExecState*);
-        void* operator new(size_t, JSGlobalData*);
         void* operator new(size_t, void* placementNewDestination) { return placementNewDestination; }
 
         virtual void visitChildren(SlotVisitor&);
-#if ENABLE(JSC_ZOMBIES)
-        virtual bool isZombie() const { return false; }
-#endif
 
         // Object operations, with the toObject operation included.
         const ClassInfo* classInfo() const;
@@ -162,6 +155,11 @@ namespace JSC {
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);
         
+        // Note that the first two declarations of operator new have no corresponding implementation and 
+        // will cause link errors if you use them.
+        void* operator new(size_t, ExecState*);
+        void* operator new(size_t, JSGlobalData*);
+        
         WriteBarrier<Structure> m_structure;
     };
 
@@ -178,7 +176,7 @@ namespace JSC {
 #endif
             m_structure.setEarlyValue(globalData, this, structure);
         // Very first set of allocations won't have a real structure.
-        ASSERT(m_structure || !globalData.dummyMarkableCellStructure);
+        ASSERT(m_structure || !globalData.structureStructure);
     }
 
     inline JSCell::~JSCell()
@@ -203,6 +201,11 @@ namespace JSC {
     inline bool JSValue::isString() const
     {
         return isCell() && asCell()->isString();
+    }
+
+    inline bool JSValue::isPrimitive() const
+    {
+        return !isCell() || asCell()->isString();
     }
 
     inline bool JSValue::isGetterSetter() const
@@ -294,7 +297,7 @@ namespace JSC {
             return true;
         }
         ASSERT(isUndefined());
-        number = nonInlineNaN();
+        number = std::numeric_limits<double>::quiet_NaN();
         value = *this;
         return true;
     }
@@ -316,11 +319,7 @@ namespace JSC {
             return asInt32();
         if (isDouble())
             return asDouble();
-        if (isCell())
-            return asCell()->toNumber(exec);
-        if (isTrue())
-            return 1.0;
-        return isUndefined() ? nonInlineNaN() : 0; // null and false both convert to 0.
+        return toNumberSlowCase(exec);
     }
 
     inline JSValue JSValue::getJSNumber()
@@ -347,85 +346,11 @@ namespace JSC {
         return isCell() ? asCell()->toThisObject(exec) : toThisObjectSlowCase(exec);
     }
 
-    inline Heap* Heap::heap(JSValue v)
+    template <typename T> void* allocateCell(Heap& heap)
     {
-        if (!v.isCell())
-            return 0;
-        return heap(v.asCell());
+        return heap.allocate(sizeof(T));
     }
-
-    inline Heap* Heap::heap(JSCell* c)
-    {
-        return MarkedSpace::heap(c);
-    }
-    
-#if ENABLE(JSC_ZOMBIES)
-    inline bool JSValue::isZombie() const
-    {
-        return isCell() && asCell() > (JSCell*)0x1ffffffffL && asCell()->isZombie();
-    }
-#endif
-
-    inline void* MarkedBlock::allocate()
-    {
-        while (m_nextAtom < m_endAtom) {
-            if (!m_marks.testAndSet(m_nextAtom)) {
-                JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[m_nextAtom]);
-                m_nextAtom += m_atomsPerCell;
-                cell->~JSCell();
-                return cell;
-            }
-            m_nextAtom += m_atomsPerCell;
-        }
-
-        return 0;
-    }
-    
-    inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
-    {
-        ASSERT(bytes && bytes < maxCellSize);
-        if (bytes < preciseCutoff)
-            return m_preciseSizeClasses[(bytes - 1) / preciseStep];
-        return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
-    }
-
-    inline void* MarkedSpace::allocate(size_t bytes)
-    {
-        SizeClass& sizeClass = sizeClassFor(bytes);
-        return allocateFromSizeClass(sizeClass);
-    }
-    
-    inline void* Heap::allocate(size_t bytes)
-    {
-        ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
-        ASSERT(JSLock::lockCount() > 0);
-        ASSERT(JSLock::currentThreadIsHoldingLock());
-        ASSERT(bytes <= MarkedSpace::maxCellSize);
-        ASSERT(m_operationInProgress == NoOperation);
-
-        m_operationInProgress = Allocation;
-        void* result = m_markedSpace.allocate(bytes);
-        m_operationInProgress = NoOperation;
-        if (result)
-            return result;
-
-        return allocateSlowCase(bytes);
-    }
-
-    inline void* JSCell::operator new(size_t size, JSGlobalData* globalData)
-    {
-        JSCell* result = static_cast<JSCell*>(globalData->heap.allocate(size));
-        result->m_structure.clear();
-        return result;
-    }
-
-    inline void* JSCell::operator new(size_t size, ExecState* exec)
-    {
-        JSCell* result = static_cast<JSCell*>(exec->heap()->allocate(size));
-        result->m_structure.clear();
-        return result;
-    }
-
+        
 } // namespace JSC
 
 #endif // JSCell_h

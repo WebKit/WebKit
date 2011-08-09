@@ -29,7 +29,6 @@
 #include "Completion.h"
 #include "CallFrame.h"
 #include "JSCell.h"
-#include "MarkStack.h"
 #include "PropertySlot.h"
 #include "PutPropertySlot.h"
 #include "ScopeChain.h"
@@ -49,6 +48,7 @@ namespace JSC {
     
     class HashEntry;
     class InternalFunction;
+    class MarkedBlock;
     class PropertyDescriptor;
     class PropertyNameArray;
     class Structure;
@@ -76,6 +76,7 @@ namespace JSC {
         friend class BatchedTransitionOptimizer;
         friend class JIT;
         friend class JSCell;
+        friend class MarkedBlock;
         friend void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
 
     public:
@@ -221,6 +222,11 @@ namespace JSC {
         void allocatePropertyStorage(size_t oldSize, size_t newSize);
         bool isUsingInlineStorage() const { return static_cast<const void*>(m_propertyStorage) == static_cast<const void*>(this + 1); }
 
+        void* addressOfPropertyAtOffset(size_t offset)
+        {
+            return static_cast<void*>(&m_propertyStorage[offset]);
+        }
+
         static const unsigned baseExternalStorageCapacity = 16;
 
         void flattenDictionaryObject(JSGlobalData& globalData)
@@ -245,7 +251,9 @@ namespace JSC {
         }
 
         static size_t offsetOfInlineStorage();
-        
+        static size_t offsetOfPropertyStorage();
+        static size_t offsetOfInheritorID();
+
         static JS_EXPORTDATA const ClassInfo s_info;
 
     protected:
@@ -352,9 +360,14 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
+        explicit JSFinalObject(VPtrStealingHackType)
+            : JSObject(VPtrStealingHack, m_inlineStorage)
+        {
+        }
+        
         static JSFinalObject* create(ExecState* exec, Structure* structure)
         {
-            return new (exec) JSFinalObject(exec->globalData(), structure);
+            return new (allocateCell<JSFinalObject>(*exec->heap())) JSFinalObject(exec->globalData(), structure);
         }
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -379,6 +392,16 @@ inline size_t JSObject::offsetOfInlineStorage()
 {
     ASSERT(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) == OBJECT_OFFSETOF(JSNonFinalObject, m_inlineStorage));
     return OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage);
+}
+
+inline size_t JSObject::offsetOfPropertyStorage()
+{
+    return OBJECT_OFFSETOF(JSObject, m_propertyStorage);
+}
+
+inline size_t JSObject::offsetOfInheritorID()
+{
+    return OBJECT_OFFSETOF(JSObject, m_inheritorID);
 }
 
 inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)
@@ -446,6 +469,7 @@ inline void JSObject::setPrototype(JSGlobalData& globalData, JSValue prototype)
 
 inline void JSObject::setStructure(JSGlobalData& globalData, Structure* structure)
 {
+    ASSERT(structure->typeInfo().overridesVisitChildren() == m_structure->typeInfo().overridesVisitChildren());
     m_structure.set(globalData, this, structure);
 }
 

@@ -39,7 +39,7 @@ using namespace std;
 
 namespace JSC {
 
-#if ENABLE(OPCODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(OPCODE_STATS)
+#if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(OPCODE_STATS)
 
 const char* const opcodeNames[] = {
 #define OPCODE_NAME_ENTRY(opcode, size) #opcode,

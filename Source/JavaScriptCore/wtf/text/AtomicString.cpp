@@ -365,4 +365,11 @@ AtomicString AtomicString::fromUTF8Internal(const char* charactersStart, const c
     return atomicString;
 }
 
+#ifndef NDEBUG
+void AtomicString::show() const
+{
+    m_string.show();
+}
+#endif
+
 } // namespace WTF

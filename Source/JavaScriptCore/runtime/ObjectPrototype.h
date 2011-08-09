@@ -26,8 +26,14 @@
 namespace JSC {
 
     class ObjectPrototype : public JSNonFinalObject {
-    public:
+    private:
         ObjectPrototype(ExecState*, JSGlobalObject*, Structure*);
+
+    public:
+        static ObjectPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+        {
+            return new (allocateCell<ObjectPrototype>(*exec->heap())) ObjectPrototype(exec, globalObject, structure);
+        }
 
         static const ClassInfo s_info;
 

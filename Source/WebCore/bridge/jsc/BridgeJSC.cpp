@@ -106,7 +106,7 @@ RuntimeObject* Instance::newRuntimeObject(ExecState* exec)
 
     // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
     // We need to pass in the right global object for "i".
-    return new (exec) RuntimeObject(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeObject>(exec), this);
+    return RuntimeObject::create(exec, exec->lexicalGlobalObject(), WebCore::deprecatedGetDOMStructure<RuntimeObject>(exec), this);
 }
 
 void Instance::willInvalidateRuntimeObject()

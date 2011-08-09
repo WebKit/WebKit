@@ -43,8 +43,7 @@ namespace JSC {
         access_get_by_id_proto_list,
         access_put_by_id_transition,
         access_put_by_id_replace,
-        access_get_by_id,
-        access_put_by_id,
+        access_unset,
         access_get_by_id_generic,
         access_put_by_id_generic,
         access_get_array_length,
@@ -52,8 +51,8 @@ namespace JSC {
     };
 
     struct StructureStubInfo {
-        StructureStubInfo(AccessType accessType)
-            : accessType(accessType)
+        StructureStubInfo()
+            : accessType(access_unset)
             , seen(false)
         {
         }
@@ -128,10 +127,23 @@ namespace JSC {
             seen = true;
         }
 
-        int accessType : 31;
-        int seen : 1;
+        int8_t accessType;
+        int8_t seen;
+        
+#if ENABLE(DFG_JIT)
+        int8_t baseGPR;
+        int8_t valueGPR;
+        int8_t scratchGPR;
+        int8_t deltaCallToDone;
+        int8_t deltaCallToStructCheck;
+        int8_t deltaCallToSlowCase;
+#endif
 
         union {
+            struct {
+                int8_t deltaCheckImmToCall;
+                int8_t deltaCallToLoadOrStore;
+            } unset;
             struct {
                 WriteBarrierBase<Structure> baseObjectStructure;
             } getByIdSelf;

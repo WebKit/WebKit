@@ -8,7 +8,7 @@ Already specifying valid source: PASS
 
 No text and no source: PASS
 
-Self-closing <script> tag: PASS
+Self-closing <script> tag: FAIL
 
 Using setAttribute: PASS
 

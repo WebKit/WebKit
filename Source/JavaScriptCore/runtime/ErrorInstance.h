@@ -34,7 +34,7 @@ namespace JSC {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
         }
 
-        static ErrorInstance* create(JSGlobalData*, Structure*, const UString&);
+        static ErrorInstance* create(JSGlobalData&, Structure*, const UString&);
         static ErrorInstance* create(ExecState*, Structure*, JSValue message);
 
 
@@ -45,8 +45,8 @@ namespace JSC {
         virtual bool isErrorInstance() const { return true; }
 
     protected:
-        explicit ErrorInstance(JSGlobalData*, Structure*);
-        explicit ErrorInstance(JSGlobalData*, Structure*, const UString&);
+        explicit ErrorInstance(JSGlobalData&, Structure*);
+        explicit ErrorInstance(JSGlobalData&, Structure*, const UString&);
 
         bool m_appendSourceToMessage;
     };

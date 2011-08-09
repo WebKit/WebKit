@@ -46,12 +46,12 @@
 #include "JSNotAnObject.h"
 #include "JSPropertyNameIterator.h"
 #include "JSStaticScopeObject.h"
-#include "JSZombie.h"
 #include "Lexer.h"
 #include "Lookup.h"
 #include "Nodes.h"
 #include "Parser.h"
 #include "RegExpCache.h"
+#include "RegExpObject.h"
 #include "StrictEvalActivation.h"
 #include <wtf/WTFThreadData.h>
 #if ENABLE(REGEXP_TRACING)
@@ -74,7 +74,7 @@ namespace {
 
 using namespace JSC;
 
-class Recompiler {
+class Recompiler : public MarkedBlock::VoidFunctor {
 public:
     void operator()(JSCell*);
 };
@@ -112,6 +112,7 @@ extern JSC_CONST_HASHTABLE HashTable regExpPrototypeTable;
 extern JSC_CONST_HASHTABLE HashTable stringTable;
 extern JSC_CONST_HASHTABLE HashTable stringConstructorTable;
 
+void* JSGlobalData::jsFinalObjectVPtr;
 void* JSGlobalData::jsArrayVPtr;
 void* JSGlobalData::jsByteArrayVPtr;
 void* JSGlobalData::jsStringVPtr;
@@ -131,6 +132,11 @@ void JSGlobalData::storeVPtrs()
     // Enough storage to fit a JSArray, JSByteArray, JSString, or JSFunction.
     // COMPILE_ASSERTS below check that this is true.
     char storage[64];
+
+    COMPILE_ASSERT(sizeof(JSFinalObject) <= sizeof(storage), sizeof_JSFinalObject_must_be_less_than_storage);
+    JSCell* jsFinalObject = new (storage) JSFinalObject(JSFinalObject::VPtrStealingHack);
+    CLOBBER_MEMORY();
+    JSGlobalData::jsFinalObjectVPtr = jsFinalObject->vptr();
 
     COMPILE_ASSERT(sizeof(JSArray) <= sizeof(storage), sizeof_JSArray_must_be_less_than_storage);
     JSCell* jsArray = new (storage) JSArray(JSArray::VPtrStealingHack);
@@ -153,7 +159,7 @@ void JSGlobalData::storeVPtrs()
     JSGlobalData::jsFunctionVPtr = jsFunction->vptr();
 }
 
-JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType)
+JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType, HeapSize heapSize)
     : globalDataType(globalDataType)
     , clientData(0)
     , arrayConstructorTable(fastNew<HashTable>(JSC::arrayConstructorTable))
@@ -177,13 +183,16 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)
+#if ENABLE(ASSEMBLER)
+    , executableAllocator(*this)
+    , regexAllocator(*this)
+#endif
     , lexer(new Lexer(this))
     , parser(new Parser)
     , interpreter(0)
-    , heap(this)
-    , globalObjectCount(0)
+    , heap(this, heapSize)
     , dynamicGlobalObject(0)
-    , cachedUTCOffset(NaN)
+    , cachedUTCOffset(std::numeric_limits<double>::quiet_NaN())
     , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
     , m_regExpCache(new RegExpCache(this))
 #if ENABLE(REGEXP_TRACING)
@@ -193,7 +202,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , exclusiveThread(0)
 #endif
 {
-    interpreter = new Interpreter(*this);
+    interpreter = new Interpreter;
     if (globalDataType == Default)
         m_stack = wtfThreadData().stack();
 
@@ -218,12 +227,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     evalExecutableStructure.set(*this, EvalExecutable::createStructure(*this, jsNull()));
     programExecutableStructure.set(*this, ProgramExecutable::createStructure(*this, jsNull()));
     functionExecutableStructure.set(*this, FunctionExecutable::createStructure(*this, jsNull()));
-    dummyMarkableCellStructure.set(*this, JSCell::createDummyStructure(*this));
+    regExpStructure.set(*this, RegExp::createStructure(*this, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, jsNull()));
-
-#if ENABLE(JSC_ZOMBIES)
-    zombieStructure.set(*this, JSZombie::createStructure(*this, jsNull()));
-#endif
 
     wtfThreadData().setCurrentIdentifierTable(existingEntryIdentifierTable);
 
@@ -256,6 +261,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #endif
     jitStubs = adoptPtr(new JITThunks(this));
 #endif
+
+    heap.notifyIsSafeToCollect();
 }
 
 void JSGlobalData::clearBuiltinStructures()
@@ -278,12 +285,8 @@ void JSGlobalData::clearBuiltinStructures()
     evalExecutableStructure.clear();
     programExecutableStructure.clear();
     functionExecutableStructure.clear();
-    dummyMarkableCellStructure.clear();
+    regExpStructure.clear();
     structureChainStructure.clear();
-    
-#if ENABLE(JSC_ZOMBIES)
-    zombieStructure.clear();
-#endif
 }
 
 JSGlobalData::~JSGlobalData()
@@ -352,19 +355,19 @@ JSGlobalData::~JSGlobalData()
 #endif
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(ThreadStackType type)
+PassRefPtr<JSGlobalData> JSGlobalData::createContextGroup(ThreadStackType type, HeapSize heapSize)
 {
-    return adoptRef(new JSGlobalData(APIContextGroup, type));
+    return adoptRef(new JSGlobalData(APIContextGroup, type, heapSize));
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type)
+PassRefPtr<JSGlobalData> JSGlobalData::create(ThreadStackType type, HeapSize heapSize)
 {
-    return adoptRef(new JSGlobalData(Default, type));
+    return adoptRef(new JSGlobalData(Default, type, heapSize));
 }
 
-PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type)
+PassRefPtr<JSGlobalData> JSGlobalData::createLeaked(ThreadStackType type, HeapSize heapSize)
 {
-    return create(type);
+    return create(type, heapSize);
 }
 
 bool JSGlobalData::sharedInstanceExists()
@@ -376,7 +379,7 @@ JSGlobalData& JSGlobalData::sharedInstance()
 {
     JSGlobalData*& instance = sharedInstanceInternal();
     if (!instance) {
-        instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall)).leakRef();
+        instance = adoptRef(new JSGlobalData(APIShared, ThreadStackTypeSmall, SmallHeap)).leakRef();
 #if ENABLE(JSC_MULTIPLE_THREADS)
         instance->makeUsableFromMultipleThreads();
 #endif
@@ -413,10 +416,10 @@ JSGlobalData::ClientData::~ClientData()
 
 void JSGlobalData::resetDateCache()
 {
-    cachedUTCOffset = NaN;
+    cachedUTCOffset = std::numeric_limits<double>::quiet_NaN();
     dstOffsetCache.reset();
     cachedDateString = UString();
-    cachedDateStringValue = NaN;
+    cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
     dateInstanceCache.reset();
 }
 
@@ -441,12 +444,60 @@ void JSGlobalData::recompileAllJSFunctions()
     // up throwing away code that is live on the stack.
     ASSERT(!dynamicGlobalObject);
     
-    Recompiler recompiler;
-    heap.forEach(recompiler);
+    heap.forEachCell<Recompiler>();
+}
+
+struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {
+    HashSet<FunctionExecutable*> currentlyExecutingFunctions;
+    void operator()(JSCell* cell)
+    {
+        if (!cell->inherits(&FunctionExecutable::s_info))
+            return;
+        FunctionExecutable* executable = static_cast<FunctionExecutable*>(cell);
+        if (currentlyExecutingFunctions.contains(executable))
+            return;
+        executable->discardCode();
+    }
+};
+
+void JSGlobalData::releaseExecutableMemory()
+{
+    if (dynamicGlobalObject) {
+        StackPreservingRecompiler recompiler;
+        HashSet<JSCell*> roots;
+        heap.getConservativeRegisterRoots(roots);
+        HashSet<JSCell*>::iterator end = roots.end();
+        for (HashSet<JSCell*>::iterator ptr = roots.begin(); ptr != end; ++ptr) {
+            ScriptExecutable* executable = 0;
+            JSCell* cell = *ptr;
+            if (cell->inherits(&ScriptExecutable::s_info))
+                executable = static_cast<ScriptExecutable*>(*ptr);
+            else if (cell->inherits(&JSFunction::s_info)) {
+                JSFunction* function = asFunction(*ptr);
+                if (function->isHostFunction())
+                    continue;
+                executable = function->jsExecutable();
+            } else
+                continue;
+            ASSERT(executable->inherits(&ScriptExecutable::s_info));
+            executable->unlinkCalls();
+            if (executable->inherits(&FunctionExecutable::s_info))
+                recompiler.currentlyExecutingFunctions.add(static_cast<FunctionExecutable*>(executable));
+                
+        }
+        heap.forEachCell<StackPreservingRecompiler>(recompiler);
+    }
+    m_regExpCache->invalidateCode();
+    heap.collectAllGarbage();
+}
+    
+void releaseExecutableMemory(JSGlobalData& globalData)
+{
+    globalData.releaseExecutableMemory();
 }
 
 #if ENABLE(REGEXP_TRACING)
-void JSGlobalData::addRegExpToTrace(PassRefPtr<RegExp> regExp)
+void JSGlobalData::addRegExpToTrace(RegExp* regExp)
 {
     m_rtTraceList->add(regExp);
 }

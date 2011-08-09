@@ -52,8 +52,12 @@ namespace JSC {
         bool isReparsing() const { return m_isReparsing; }
 
         // Functions for the parser itself.
-        enum LexType { IdentifyReservedWords, IgnoreReservedWords };
-        JSTokenType lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType, bool strictMode);
+        enum LexType {
+            IgnoreReservedWords = 1, 
+            DontBuildStrings = 2,
+            DontBuildKeywords = 4
+        };
+        JSTokenType lex(JSTokenData*, JSTokenInfo*, unsigned, bool strictMode);
         bool nextTokenIsColon();
         int lineNumber() const { return m_lineNumber; }
         void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
@@ -65,11 +69,13 @@ namespace JSC {
 
         // Functions for use after parsing.
         bool sawError() const { return m_error; }
+        UString getErrorMessage() const { return m_lexErrorMessage; }
         void clear();
         int currentOffset() { return m_code - m_codeStart; }
         void setOffset(int offset)
         {
             m_error = 0;
+            m_lexErrorMessage = UString();
             m_code = m_codeStart + offset;
             m_buffer8.resize(0);
             m_buffer16.resize(0);
@@ -84,6 +90,10 @@ namespace JSC {
         }
 
         SourceProvider* sourceProvider() const { return m_source->provider(); }
+        
+        JSTokenType lexExpectIdentifier(JSTokenData*, JSTokenInfo*, unsigned, bool strictMode);
+
+        bool isKeyword(const Identifier&);
 
     private:
         friend class JSGlobalData;
@@ -102,6 +112,7 @@ namespace JSC {
         int getUnicodeCharacter();
         void shiftLineTerminator();
 
+        UString getInvalidCharMessage();
         ALWAYS_INLINE const UChar* currentCharacter() const;
         ALWAYS_INLINE int currentOffset() const;
 
@@ -109,8 +120,11 @@ namespace JSC {
 
         ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
 
-        ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, LexType);
-        ALWAYS_INLINE bool parseString(JSTokenData* lvalp, bool strictMode);
+        enum ShiftType { DoBoundsCheck, DoNotBoundsCheck };
+        template <int shiftAmount, ShiftType shouldBoundsCheck> void internalShift();
+        template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType parseKeyword(JSTokenData*);
+        template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, unsigned, bool strictMode);
+        template <bool shouldBuildStrings> ALWAYS_INLINE bool parseString(JSTokenData*, bool strictMode);
         ALWAYS_INLINE void parseHex(double& returnValue);
         ALWAYS_INLINE bool parseOctal(double& returnValue);
         ALWAYS_INLINE bool parseDecimal(double& returnValue);
@@ -136,6 +150,7 @@ namespace JSC {
         bool m_isReparsing;
         bool m_atLineStart;
         bool m_error;
+        UString m_lexErrorMessage;
 
         // current and following unicode characters (int to allow for -1 for end-of-file marker)
         int m_current;
@@ -147,12 +162,12 @@ namespace JSC {
         const HashTable m_keywordTable;
     };
 
-    inline bool Lexer::isWhiteSpace(int ch)
+    ALWAYS_INLINE bool Lexer::isWhiteSpace(int ch)
     {
         return isASCII(ch) ? (ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC) : (WTF::Unicode::isSeparatorSpace(ch) || ch == 0xFEFF);
     }
 
-    inline bool Lexer::isLineTerminator(int ch)
+    ALWAYS_INLINE bool Lexer::isLineTerminator(int ch)
     {
         return ch == '\r' || ch == '\n' || (ch & ~1) == 0x2028;
     }
@@ -165,6 +180,55 @@ namespace JSC {
     inline UChar Lexer::convertUnicode(int c1, int c2, int c3, int c4)
     {
         return (convertHex(c1, c2) << 8) | convertHex(c3, c4);
+    }
+    
+    ALWAYS_INLINE const Identifier* Lexer::makeIdentifier(const UChar* characters, size_t length)
+    {
+        return &m_arena->makeIdentifier(m_globalData, characters, length);
+    }
+
+    ALWAYS_INLINE JSTokenType Lexer::lexExpectIdentifier(JSTokenData* tokenData, JSTokenInfo* tokenInfo, unsigned lexType, bool strictMode)
+    {
+        ASSERT((lexType & IgnoreReservedWords));
+        const UChar* start = m_code;
+        const UChar* ptr = start;
+        const UChar* end = m_codeEnd;
+        if (ptr >= end) {
+            ASSERT(ptr == end);
+            goto slowCase;
+        }
+        if (!WTF::isASCIIAlpha(*ptr))
+            goto slowCase;
+        ++ptr;
+        while (ptr < end) {
+            if (!WTF::isASCIIAlphanumeric(*ptr))
+                break;
+            ++ptr;
+        }
+
+        // Here's the shift
+        if (ptr < end) {
+            if ((!WTF::isASCII(*ptr)) || (*ptr == '\\') || (*ptr == '_') || (*ptr == '$'))
+                goto slowCase;
+            m_current = *ptr;
+        } else
+            m_current = -1;
+
+        m_code = ptr;
+
+        // Create the identifier if needed
+        if (lexType & DontBuildKeywords)
+            tokenData->ident = 0;
+        else
+            tokenData->ident = makeIdentifier(start, ptr - start);
+        tokenInfo->line = m_lineNumber;
+        tokenInfo->startOffset = start - m_codeStart;
+        tokenInfo->endOffset = currentOffset();
+        m_lastToken = IDENT;
+        return IDENT;
+        
+    slowCase:
+        return lex(tokenData, tokenInfo, lexType, strictMode);
     }
 
 } // namespace JSC

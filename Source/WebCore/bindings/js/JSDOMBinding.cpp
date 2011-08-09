@@ -152,7 +152,7 @@ JSValue jsDateOrNull(ExecState* exec, double value)
 {
     if (!isfinite(value))
         return jsNull();
-    return new (exec) DateInstance(exec, exec->lexicalGlobalObject()->dateStructure(), value);
+    return DateInstance::create(exec, exec->lexicalGlobalObject()->dateStructure(), value);
 }
 
 double valueToDate(ExecState* exec, JSValue value)
@@ -306,7 +306,7 @@ bool processingUserGesture()
 
 JSValue objectToStringFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
 {
-    return new (exec) JSFunction(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->functionStructure(), 0, propertyName, objectProtoFuncToString);
+    return JSFunction::create(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->functionStructure(), 0, propertyName, objectProtoFuncToString);
 }
 
 Structure* getCachedDOMStructure(JSDOMGlobalObject* globalObject, const ClassInfo* classInfo)

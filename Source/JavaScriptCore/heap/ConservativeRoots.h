@@ -35,14 +35,11 @@ namespace JSC {
 class JSCell;
 class Heap;
 
-// May contain duplicates.
-
 class ConservativeRoots {
 public:
-    ConservativeRoots(Heap*);
+    ConservativeRoots(const MarkedBlockSet*);
     ~ConservativeRoots();
 
-    void add(void*);
     void add(void* begin, void* end);
     
     size_t size();
@@ -52,20 +49,21 @@ private:
     static const size_t inlineCapacity = 128;
     static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
     
+    void add(void*, TinyBloomFilter);
     void grow();
 
-    Heap* m_heap;
     JSCell** m_roots;
     size_t m_size;
     size_t m_capacity;
+    const MarkedBlockSet* m_blocks;
     JSCell* m_inlineRoots[inlineCapacity];
 };
 
-inline ConservativeRoots::ConservativeRoots(Heap* heap)
-    : m_heap(heap)
-    , m_roots(m_inlineRoots)
+inline ConservativeRoots::ConservativeRoots(const MarkedBlockSet* blocks)
+    : m_roots(m_inlineRoots)
     , m_size(0)
     , m_capacity(inlineCapacity)
+    , m_blocks(blocks)
 {
 }
 
@@ -73,17 +71,6 @@ inline ConservativeRoots::~ConservativeRoots()
 {
     if (m_roots != m_inlineRoots)
         OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(JSCell*));
-}
-
-inline void ConservativeRoots::add(void* p)
-{
-    if (!m_heap->contains(p))
-        return;
-
-    if (m_size == m_capacity)
-        grow();
-
-    m_roots[m_size++] = reinterpret_cast<JSCell*>(p);
 }
 
 inline size_t ConservativeRoots::size()

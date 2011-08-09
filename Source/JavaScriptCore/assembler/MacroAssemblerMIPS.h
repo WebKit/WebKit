@@ -57,6 +57,8 @@ public:
     // FP temp register
     static const FPRegisterID fpTempRegister = MIPSRegisters::f16;
 
+    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
+
     enum RelationalCondition {
         Equal,
         NotEqual,
@@ -328,6 +330,11 @@ public:
         m_assembler.sra(dest, dest, imm.m_value);
     }
 
+    void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.sra(dest, src, imm.m_value);
+    }
+
     void urshift32(RegisterID shiftAmount, RegisterID dest)
     {
         m_assembler.srlv(dest, dest, shiftAmount);
@@ -457,6 +464,11 @@ public:
     void sqrtDouble(FPRegisterID src, FPRegisterID dst)
     {
         m_assembler.sqrtd(dst, src);
+    }
+    
+    void andnotDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT_NOT_REACHED();
     }
 
     // Memory access operations:
@@ -608,6 +620,13 @@ public:
         m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
         m_assembler.lw(dest, addrTempRegister, 0);
         m_fixedWidth = false;
+        return dataLabel;
+    }
+    
+    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        DataLabelCompact dataLabel(this);
+        load32WithAddressOffsetPatch(address, dest);
         return dataLabel;
     }
 
@@ -807,6 +826,7 @@ public:
         return false;
 #endif
     }
+    bool supportsDoubleBitops() const { return false; }
 
     // Stack manipulation operations:
     //
@@ -1777,7 +1797,7 @@ private:
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
-        MIPSAssembler::linkCall(code, call.m_jmp, function.value());
+        MIPSAssembler::linkCall(code, call.m_label, function.value());
     }
 
     static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)

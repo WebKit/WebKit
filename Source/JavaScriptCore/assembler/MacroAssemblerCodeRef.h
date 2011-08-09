@@ -184,7 +184,7 @@ public:
     void* dataLocation() const { ASSERT_VALID_CODE_POINTER(m_value); return m_value; }
 #endif
 
-    bool operator!()
+    bool operator!() const
     {
         return !m_value;
     }

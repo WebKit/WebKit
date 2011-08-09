@@ -26,6 +26,8 @@
 #ifndef JSParser_h
 #define JSParser_h
 
+#include "UString.h"
+
 namespace JSC {
 
 class ExecState;
@@ -66,6 +68,7 @@ enum JSTokenType {
     SWITCH,
     WITH,
     RESERVED,
+    RESERVED_IF_STRICT,
     THROW,
     TRY,
     CATCH,
@@ -159,6 +162,6 @@ struct JSToken {
 enum JSParserStrictness { JSParseNormal, JSParseStrict };
 enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
 
-const char* jsParse(JSGlobalData*, FunctionParameters*, JSParserStrictness, JSParserMode, const SourceCode*);
+UString jsParse(JSGlobalData*, FunctionParameters*, JSParserStrictness, JSParserMode, const SourceCode*);
 }
 #endif // JSParser_h

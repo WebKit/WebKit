@@ -42,6 +42,10 @@ class ThreadIdentifierData {
 public:
     ~ThreadIdentifierData();
 
+    // One time initialization for this class as a whole.
+    // This method must be called before initialize() and it is not thread-safe.
+    static void initializeOnce();
+
     // Creates and puts an instance of ThreadIdentifierData into thread-specific storage.
     static void initialize(ThreadIdentifier identifier);
 
@@ -61,9 +65,6 @@ private:
     // - second, after all thread-specific destructors were invoked, it gets called again - this time, we remove the
     // ThreadIdentifier from the threadMap, completing the cleanup.
     static void destruct(void* data);
-
-    static void initializeKeyOnceHelper();
-    static void initializeKeyOnce();
 
     ThreadIdentifier m_identifier;
     bool m_isDestroyedOnce;

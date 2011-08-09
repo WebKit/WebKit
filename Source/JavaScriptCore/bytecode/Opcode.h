@@ -45,10 +45,10 @@ namespace JSC {
         macro(op_create_this, 3) \
         macro(op_get_callee, 2) \
         macro(op_convert_this, 2) \
-        macro(op_convert_this_strict, 2) \
         \
         macro(op_new_object, 2) \
         macro(op_new_array, 4) \
+        macro(op_new_array_buffer, 4) \
         macro(op_new_regexp, 3) \
         macro(op_mov, 3) \
         \
@@ -61,6 +61,8 @@ namespace JSC {
         macro(op_nstricteq, 4) \
         macro(op_less, 4) \
         macro(op_lesseq, 4) \
+        macro(op_greater, 4) \
+        macro(op_greatereq, 4) \
         \
         macro(op_pre_inc, 2) \
         macro(op_pre_dec, 2) \
@@ -104,21 +106,16 @@ namespace JSC {
         macro(op_resolve_base, 4) \
         macro(op_ensure_property_exists, 3) \
         macro(op_resolve_with_base, 4) \
+        macro(op_resolve_with_this, 4) \
         macro(op_get_by_id, 8) \
         macro(op_get_by_id_self, 8) \
-        macro(op_get_by_id_self_list, 8) \
         macro(op_get_by_id_proto, 8) \
-        macro(op_get_by_id_proto_list, 8) \
         macro(op_get_by_id_chain, 8) \
         macro(op_get_by_id_getter_self, 8) \
-        macro(op_get_by_id_getter_self_list, 8) \
         macro(op_get_by_id_getter_proto, 8) \
-        macro(op_get_by_id_getter_proto_list, 8) \
         macro(op_get_by_id_getter_chain, 8) \
         macro(op_get_by_id_custom_self, 8) \
-        macro(op_get_by_id_custom_self_list, 8) \
         macro(op_get_by_id_custom_proto, 8) \
-        macro(op_get_by_id_custom_proto_list, 8) \
         macro(op_get_by_id_custom_chain, 8) \
         macro(op_get_by_id_generic, 8) \
         macro(op_get_array_length, 8) \
@@ -144,16 +141,22 @@ namespace JSC {
         macro(op_jeq_null, 3) \
         macro(op_jneq_null, 3) \
         macro(op_jneq_ptr, 4) \
-        macro(op_jnless, 4) \
-        macro(op_jnlesseq, 4) \
         macro(op_jless, 4) \
         macro(op_jlesseq, 4) \
+        macro(op_jgreater, 4) \
+        macro(op_jgreatereq, 4) \
+        macro(op_jnless, 4) \
+        macro(op_jnlesseq, 4) \
+        macro(op_jngreater, 4) \
+        macro(op_jngreatereq, 4) \
         macro(op_jmp_scopes, 3) \
         macro(op_loop, 2) \
         macro(op_loop_if_true, 3) \
         macro(op_loop_if_false, 3) \
         macro(op_loop_if_less, 4) \
         macro(op_loop_if_lesseq, 4) \
+        macro(op_loop_if_greater, 4) \
+        macro(op_loop_if_greatereq, 4) \
         macro(op_switch_imm, 4) \
         macro(op_switch_char, 4) \
         macro(op_switch_string, 4) \
@@ -225,7 +228,7 @@ namespace JSC {
     typedef OpcodeID Opcode;
 #endif
 
-#if ENABLE(OPCODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(OPCODE_STATS)
+#if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING) || ENABLE(CODEBLOCK_SAMPLING) || ENABLE(OPCODE_STATS)
 
 #define PADDING_STRING "                                "
 #define PADDING_STRING_LENGTH static_cast<unsigned>(strlen(PADDING_STRING))

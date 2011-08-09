@@ -29,6 +29,7 @@
 #include "Lookup.h"
 #include "RegExpConstructor.h"
 #include "RegExpPrototype.h"
+#include "UStringBuilder.h"
 #include "UStringConcatenate.h"
 #include <wtf/PassOwnPtr.h>
 
@@ -61,9 +62,9 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &JSObjectWithGlobalObject::s_
 @end
 */
 
-RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, NonNullPassRefPtr<RegExp> regExp)
+RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
     : JSObjectWithGlobalObject(globalObject, structure)
-    , d(adoptPtr(new RegExpObjectData(regExp)))
+    , d(adoptPtr(new RegExpObjectData(globalObject->globalData(), this, regExp)))
 {
     ASSERT(inherits(&s_info));
 }
@@ -78,6 +79,8 @@ void RegExpObject::visitChildren(SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(visitor);
+    if (d->regExp)
+        visitor.append(&d->regExp);
     if (UNLIKELY(!d->lastIndex.get().isInt32()))
         visitor.append(&d->lastIndex);
 }
@@ -109,7 +112,41 @@ JSValue regExpObjectMultiline(ExecState*, JSValue slotBase, const Identifier&)
 
 JSValue regExpObjectSource(ExecState* exec, JSValue slotBase, const Identifier&)
 {
-    return jsString(exec, asRegExpObject(slotBase)->regExp()->pattern());
+    UString pattern = asRegExpObject(slotBase)->regExp()->pattern();
+
+    size_t forwardSlashPosition = pattern.find('/');
+    if (forwardSlashPosition == notFound)
+        return jsString(exec, pattern);
+
+    // 'completed' tracks the length of original pattern already copied
+    // into the result buffer.
+    size_t completed = 0;
+    UStringBuilder result;
+
+    do {
+        // 'slashesPosition' points to the first (of possibly zero) backslash
+        // prior to the forwards slash.
+        size_t slashesPosition = forwardSlashPosition;
+        while (slashesPosition && pattern[slashesPosition - 1] == '\\')
+            --slashesPosition;
+
+        // Check whether the number of backslashes is odd or even -
+        // if odd, the forwards slash is already escaped, so we mustn't
+        // double escape it.
+        if ((forwardSlashPosition - slashesPosition) & 1)
+            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition - completed + 1));
+        else {
+            result.append(pattern.substringSharingImpl(completed, forwardSlashPosition - completed));
+            result.append("\\/");
+        }
+        completed = forwardSlashPosition + 1;
+
+        forwardSlashPosition = pattern.find('/', completed);
+    } while (forwardSlashPosition != notFound);
+
+    // Copy in the remainder of the pattern to the buffer.
+    result.append(pattern.substringSharingImpl(completed));
+    return jsString(exec, result.toUString());
 }
 
 JSValue regExpObjectLastIndex(ExecState*, JSValue slotBase, const Identifier&)
@@ -144,11 +181,11 @@ bool RegExpObject::match(ExecState* exec)
 {
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     UString input = exec->argument(0).toString(exec);
-
+    JSGlobalData* globalData = &exec->globalData();
     if (!regExp()->global()) {
         int position;
         int length;
-        regExpConstructor->performMatch(d->regExp.get(), input, 0, position, length);
+        regExpConstructor->performMatch(*globalData, d->regExp.get(), input, 0, position, length);
         return position >= 0;
     }
 
@@ -171,7 +208,7 @@ bool RegExpObject::match(ExecState* exec)
 
     int position;
     int length = 0;
-    regExpConstructor->performMatch(d->regExp.get(), input, lastIndex, position, length);
+    regExpConstructor->performMatch(*globalData, d->regExp.get(), input, lastIndex, position, length);
     if (position < 0) {
         setLastIndex(0);
         return false;

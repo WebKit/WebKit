@@ -45,7 +45,7 @@ using namespace JSC;
 
 namespace WebCore {
 
-bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void* context, MarkStack& markStack)
+bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handle, void* context, SlotVisitor& visitor)
 {
     JSCSSValue* jsCSSValue = static_cast<JSCSSValue*>(handle.get().asCell());
     if (!jsCSSValue->hasCustomProperties())
@@ -54,7 +54,7 @@ bool JSCSSValueOwner::isReachableFromOpaqueRoots(JSC::Handle<JSC::Unknown> handl
     void* root = world->m_cssValueRoots.get(jsCSSValue->impl());
     if (!root)
         return false;
-    return markStack.containsOpaqueRoot(root);
+    return visitor.containsOpaqueRoot(root);
 }
 
 void JSCSSValueOwner::finalize(JSC::Handle<JSC::Unknown> handle, void* context)

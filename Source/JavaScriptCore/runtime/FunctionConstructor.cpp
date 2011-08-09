@@ -112,8 +112,8 @@ JSObject* constructFunctionSkippingEvalEnabledCheck(ExecState* exec, JSGlobalObj
         return throwError(exec, exception);
     }
 
-    ScopeChainNode* scopeChain = new (exec) ScopeChainNode(0, globalObject, &globalData, globalObject, exec->globalThisValue());
-    return new (exec) JSFunction(exec, function, scopeChain);
+    ScopeChainNode* scopeChain = ScopeChainNode::create(exec, 0, globalObject, &globalData, globalObject, exec->globalThisValue());
+    return JSFunction::create(exec, function, scopeChain);
 }
 
 // ECMA 15.3.2 The Function Constructor

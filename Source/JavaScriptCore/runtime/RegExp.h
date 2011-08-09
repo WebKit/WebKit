@@ -24,6 +24,7 @@
 
 #include "UString.h"
 #include "ExecutableAllocator.h"
+#include "Structure.h"
 #include "RegExpKey.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -35,9 +36,9 @@ namespace JSC {
 
     RegExpFlags regExpFlags(const UString&);
 
-    class RegExp : public RefCounted<RegExp> {
+    class RegExp : public JSCell {
     public:
-        static PassRefPtr<RegExp> create(JSGlobalData* globalData, const UString& pattern, RegExpFlags);
+        static RegExp* create(JSGlobalData&, const UString& pattern, RegExpFlags);
         ~RegExp();
 
         bool global() const { return m_flags & FlagGlobal; }
@@ -49,23 +50,49 @@ namespace JSC {
         bool isValid() const { return !m_constructionError && m_flags != InvalidFlags; }
         const char* errorMessage() const { return m_constructionError; }
 
-        int match(const UString&, int startOffset, Vector<int, 32>* ovector = 0);
+        int match(JSGlobalData&, const UString&, int startOffset, Vector<int, 32>* ovector = 0);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
+
+        bool hasCode()
+        {
+            return m_representation;
+        }
+
+        void invalidateCode();
         
 #if ENABLE(REGEXP_TRACING)
         void printTraceData();
 #endif
 
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        {
+            return Structure::create(globalData, prototype, TypeInfo(LeafType, 0), 0, &s_info);
+        }
+        
+        static JS_EXPORTDATA const ClassInfo s_info;
+
+        RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
+
     private:
-        RegExp(JSGlobalData* globalData, const UString& pattern, RegExpFlags);
+        friend class RegExpCache;
+        RegExp(JSGlobalData&, const UString&, RegExpFlags);
+
+        static RegExp* createWithoutCaching(JSGlobalData&, const UString&, RegExpFlags);
 
         enum RegExpState {
             ParseError,
             JITCode,
-            ByteCode
+            ByteCode,
+            NotCompiled
         } m_state;
 
-        RegExpState compile(JSGlobalData*);
+        void compile(JSGlobalData*);
+        void compileIfNecessary(JSGlobalData& globalData)
+        {
+            if (m_representation)
+                return;
+            compile(&globalData);
+        }
 
 #if ENABLE(YARR_JIT_DEBUG)
         void matchCompareWithInterpreter(const UString&, int startOffset, int* offsetVector, int jitResult);

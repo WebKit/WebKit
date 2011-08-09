@@ -37,20 +37,52 @@ namespace JSC {
     class IdentifierArena {
         WTF_MAKE_FAST_ALLOCATED;
     public:
+        IdentifierArena()
+        {
+            clear();
+        }
+
         ALWAYS_INLINE const Identifier& makeIdentifier(JSGlobalData*, const UChar* characters, size_t length);
         const Identifier& makeNumericIdentifier(JSGlobalData*, double number);
 
-        void clear() { m_identifiers.clear(); }
         bool isEmpty() const { return m_identifiers.isEmpty(); }
 
-    private:
+    public:
+        static const int MaximumCachableCharacter = 128;
         typedef SegmentedVector<Identifier, 64> IdentifierVector;
+        void clear()
+        {
+            m_identifiers.clear();
+            for (int i = 0; i < MaximumCachableCharacter; i++)
+                m_shortIdentifiers[i] = 0;
+            for (int i = 0; i < MaximumCachableCharacter; i++)
+                m_recentIdentifiers[i] = 0;
+        }
+
+    private:
         IdentifierVector m_identifiers;
+        FixedArray<Identifier*, MaximumCachableCharacter> m_shortIdentifiers;
+        FixedArray<Identifier*, MaximumCachableCharacter> m_recentIdentifiers;
     };
 
     ALWAYS_INLINE const Identifier& IdentifierArena::makeIdentifier(JSGlobalData* globalData, const UChar* characters, size_t length)
     {
+        if (characters[0] >= MaximumCachableCharacter) {
+            m_identifiers.append(Identifier(globalData, characters, length));
+            return m_identifiers.last();
+        }
+        if (length == 1) {
+            if (Identifier* ident = m_shortIdentifiers[characters[0]])
+                return *ident;
+            m_identifiers.append(Identifier(globalData, characters, length));
+            m_shortIdentifiers[characters[0]] = &m_identifiers.last();
+            return m_identifiers.last();
+        }
+        Identifier* ident = m_recentIdentifiers[characters[0]];
+        if (ident && Identifier::equal(ident->impl(), characters, length))
+            return *ident;
         m_identifiers.append(Identifier(globalData, characters, length));
+        m_recentIdentifiers[characters[0]] = &m_identifiers.last();
         return m_identifiers.last();
     }
 

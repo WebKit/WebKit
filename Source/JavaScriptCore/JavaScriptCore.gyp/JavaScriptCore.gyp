@@ -47,6 +47,15 @@
       }],
     ],
   },
+  'conditions': [
+    ['os_posix == 1 and OS != "mac" and gcc_version==46', {
+      'target_defaults': {
+        # Disable warnings about c++0x compatibility, as some names (such as nullptr) conflict
+        # with upcoming c++0x types.
+        'cflags_cc': ['-Wno-c++0x-compat'],
+      },
+    }],
+  ],
   'targets': [
     {
       # This target sets up defines and includes that are required by WTF and
@@ -83,7 +92,7 @@
               'WTF_USE_NEW_THEME=1',
             ],
           }],
-          ['OS=="linux" or OS=="freebsd"', {
+          ['os_posix == 1 and OS != "mac"', {
             'defines': [
               'WTF_USE_PTHREADS=1',
             ],
@@ -93,7 +102,7 @@
     },
     {
       'target_name': 'wtf',
-      'type': '<(library)',
+      'type': 'static_library',
       'msvs_guid': 'AA8A5A85-592B-4357-BC60-E0E91E026AF6',
       'dependencies': [
         'wtf_config',
@@ -190,7 +199,7 @@
     },
     {
       'target_name': 'yarr',
-      'type': '<(library)',
+      'type': 'static_library',
       'dependencies': [
         'wtf',
       ],
@@ -236,3 +245,9 @@
     },
   ], # targets
 }
+
+# Local Variables:
+# tab-width:2
+# indent-tabs-mode:nil
+# End:
+# vim: set expandtab tabstop=2 shiftwidth=2:

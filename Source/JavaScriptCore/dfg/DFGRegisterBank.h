@@ -79,6 +79,26 @@ public:
     {
     }
 
+    // Attempt to allocate a register - this function finds an unlocked
+    // register, locks it, and returns it. If none can be found, this
+    // returns -1 (InvalidGPRReg or InvalidFPRReg).
+    RegID tryAllocate()
+    {
+        VirtualRegister ignored;
+        
+        for (uint32_t i = m_lastAllocated + 1; i < NUM_REGS; ++i) {
+            if (!m_data[i].lockCount && m_data[i].name == InvalidVirtualRegister)
+                return allocateInternal(i, ignored);
+        }
+        // Loop over the remaining entries.
+        for (uint32_t i = 0; i <= m_lastAllocated; ++i) {
+            if (!m_data[i].lockCount && m_data[i].name == InvalidVirtualRegister)
+                return allocateInternal(i, ignored);
+        }
+        
+        return (RegID)-1;
+    }
+
     // Allocate a register - this function finds an unlocked register,
     // locks it, and returns it. If any named registers exist, one
     // of these should be selected to be allocated. If all unlocked
@@ -137,6 +157,19 @@ public:
         ASSERT(currentLowest != NUM_REGS && currentSpillOrder != SpillHintInvalid);
         // There were no available registers; currentLowest will need to be spilled.
         return allocateInternal(currentLowest, spillMe);
+    }
+
+    // Allocates the given register, even if this will force a spill.
+    VirtualRegister allocateSpecific(RegID reg)
+    {
+        unsigned index = BankInfo::toIndex(reg);
+
+        ++m_data[index].lockCount;
+        VirtualRegister name = nameAtIndex(index);
+        if (name != InvalidVirtualRegister)
+            releaseAtIndex(index);
+        
+        return name;
     }
 
     // retain/release - these methods are used to associate/disassociate names

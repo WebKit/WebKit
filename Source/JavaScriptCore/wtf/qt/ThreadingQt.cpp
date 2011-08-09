@@ -31,10 +31,13 @@
 
 #if !ENABLE(SINGLE_THREADED)
 
+#include "DateMath.h"
+#include "dtoa.h"
 #include "CurrentTime.h"
 #include "HashMap.h"
 #include "MainThread.h"
 #include "RandomNumberSeed.h"
+#include <wtf/WTFThreadData.h>
 
 #include <QCoreApplication>
 #include <QMutex>
@@ -141,9 +144,18 @@ static QThread* threadForIdentifier(ThreadIdentifier id)
 void initializeThreading()
 {
     if (!atomicallyInitializedStaticMutex) {
+        // StringImpl::empty() does not construct its static string in a threadsafe fashion,
+        // so ensure it has been initialized from here.
+        StringImpl::empty();
         atomicallyInitializedStaticMutex = new Mutex;
         threadMapMutex();
         initializeRandomNumberGenerator();
+        wtfThreadData();
+#if ENABLE(WTF_MULTIPLE_THREADS)
+        s_dtoaP5Mutex = new Mutex;
+        initializeDates();
+#endif
+
     }
 }
 

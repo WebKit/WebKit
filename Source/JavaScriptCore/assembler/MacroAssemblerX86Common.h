@@ -40,6 +40,8 @@ class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
 
 public:
     typedef X86Assembler::FPRegisterID FPRegisterID;
+    
+    static const int MaximumCompactPtrAlignedAddressOffset = 127;
 
     enum RelationalCondition {
         Equal = X86Assembler::ConditionE,
@@ -421,6 +423,11 @@ public:
         m_assembler.sqrtsd_rr(src, dst);
     }
 
+    void andnotDouble(FPRegisterID src, FPRegisterID dst)
+    {
+        m_assembler.andnpd_rr(src, dst);
+    }
+
     // Memory access operations:
     //
     // Loads are of the form load(address, destination) and stores of the form
@@ -447,6 +454,25 @@ public:
     {
         m_assembler.movl_mr_disp32(address.offset, address.base, dest);
         return DataLabel32(this);
+    }
+    
+    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        m_assembler.movl_mr_disp8(address.offset, address.base, dest);
+        return DataLabelCompact(this);
+    }
+    
+    static void repatchCompact(CodeLocationDataLabelCompact dataLabelCompact, int32_t value)
+    {
+        ASSERT(value >= 0);
+        ASSERT(value < MaximumCompactPtrAlignedAddressOffset);
+        AssemblerType_T::repatchCompact(dataLabelCompact.dataLocation(), value);
+    }
+    
+    DataLabelCompact loadCompactWithAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        m_assembler.movl_mr_disp8(address.offset, address.base, dest);
+        return DataLabelCompact(this);
     }
 
     void load16(BaseIndex address, RegisterID dest)
@@ -818,15 +844,6 @@ public:
         return Jump(m_assembler.jCC(x86Condition(cond)));
     }
     
-    Jump branch32(RelationalCondition cond, TrustedImm32 left, RegisterID right)
-    {
-        if (((cond == Equal) || (cond == NotEqual)) && !left.m_value)
-            m_assembler.testl_rr(right, right);
-        else
-            m_assembler.cmpl_ir(left.m_value, right);
-        return Jump(m_assembler.jCC(x86Condition(commute(cond))));
-    }
-    
     Jump branch32(RelationalCondition cond, RegisterID left, Address right)
     {
         m_assembler.cmpl_mr(right.offset, right.base, left);
@@ -1175,25 +1192,6 @@ public:
         return static_cast<RelationalCondition>(cond ^ 1);
     }
 
-    // Commute a relational condition, returns a new condition that will produce
-    // the same results given the same inputs but with their positions exchanged.
-    static RelationalCondition commute(RelationalCondition cond)
-    {
-        // Equality is commutative!
-        if (cond == Equal || cond == NotEqual)
-            return cond;
-
-        // Based on the values of x86 condition codes, remap > with < and >= with <=
-        if (cond >= LessThan) {
-            ASSERT(cond == LessThan || cond == LessThanOrEqual || cond == GreaterThan || cond == GreaterThanOrEqual);
-            return static_cast<RelationalCondition>(X86Assembler::ConditionL + X86Assembler::ConditionG - cond);
-        }
-
-        // As above, for unsigned conditions.
-        ASSERT(cond == Below || cond == BelowOrEqual || cond == Above || cond == AboveOrEqual);
-        return static_cast<RelationalCondition>(X86Assembler::ConditionB + X86Assembler::ConditionA - cond);
-    }
-    
     void nop()
     {
         m_assembler.nop();

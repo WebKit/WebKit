@@ -41,6 +41,7 @@ class RepatchBuffer;
 template <class AssemblerType>
 class AbstractMacroAssembler {
 public:
+    friend class JITWriteBarrierBase;
     typedef AssemblerType AssemblerType_T;
 
     typedef MacroAssemblerCodePtr CodePtr;
@@ -304,6 +305,35 @@ public:
         {
         }
 
+        AssemblerLabel label() const { return m_label; }
+
+    private:
+        AssemblerLabel m_label;
+    };
+
+    // DataLabelCompact:
+    //
+    // A DataLabelCompact is used to refer to a location in the code containing a
+    // compact immediate to be patched after the code has been generated.
+    class DataLabelCompact {
+        template<class TemplateAssemblerType>
+        friend class AbstractMacroAssembler;
+        friend class LinkBuffer;
+    public:
+        DataLabelCompact()
+        {
+        }
+        
+        DataLabelCompact(AbstractMacroAssembler<AssemblerType>* masm)
+            : m_label(masm->m_assembler.label())
+        {
+        }
+    
+        DataLabelCompact(AssemblerLabel label)
+            : m_label(label)
+        {
+        }
+
     private:
         AssemblerLabel m_label;
     };
@@ -332,7 +362,7 @@ public:
         }
         
         Call(AssemblerLabel jmp, Flags flags)
-            : m_jmp(jmp)
+            : m_label(jmp)
             , m_flags(flags)
         {
         }
@@ -344,10 +374,10 @@ public:
 
         static Call fromTailJump(Jump jump)
         {
-            return Call(jump.m_jmp, Linkable);
+            return Call(jump.m_label, Linkable);
         }
 
-        AssemblerLabel m_jmp;
+        AssemblerLabel m_label;
     private:
         Flags m_flags;
     };
@@ -371,14 +401,14 @@ public:
 #if CPU(ARM_THUMB2)
         // Fixme: this information should be stored in the instruction stream, not in the Jump object.
         Jump(AssemblerLabel jmp, ARMv7Assembler::JumpType type, ARMv7Assembler::Condition condition = ARMv7Assembler::ConditionInvalid)
-            : m_jmp(jmp)
+            : m_label(jmp)
             , m_type(type)
             , m_condition(condition)
         {
         }
 #else
         Jump(AssemblerLabel jmp)    
-            : m_jmp(jmp)
+            : m_label(jmp)
         {
         }
 #endif
@@ -386,25 +416,25 @@ public:
         void link(AbstractMacroAssembler<AssemblerType>* masm) const
         {
 #if CPU(ARM_THUMB2)
-            masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label(), m_type, m_condition);
+            masm->m_assembler.linkJump(m_label, masm->m_assembler.label(), m_type, m_condition);
 #else
-            masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label());
+            masm->m_assembler.linkJump(m_label, masm->m_assembler.label());
 #endif
         }
         
         void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm) const
         {
 #if CPU(ARM_THUMB2)
-            masm->m_assembler.linkJump(m_jmp, label.m_label, m_type, m_condition);
+            masm->m_assembler.linkJump(m_label, label.m_label, m_type, m_condition);
 #else
-            masm->m_assembler.linkJump(m_jmp, label.m_label);
+            masm->m_assembler.linkJump(m_label, label.m_label);
 #endif
         }
 
-        bool isSet() const { return m_jmp.isSet(); }
+        bool isSet() const { return m_label.isSet(); }
 
     private:
-        AssemblerLabel m_jmp;
+        AssemblerLabel m_label;
 #if CPU(ARM_THUMB2)
         ARMv7Assembler::JumpType m_type;
         ARMv7Assembler::Condition m_condition;
@@ -476,44 +506,10 @@ public:
         return Label(this);
     }
 
-    ptrdiff_t differenceBetween(Label from, Jump to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
-    }
-
-    ptrdiff_t differenceBetween(Label from, Call to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
-    }
-
-    ptrdiff_t differenceBetween(Label from, Label to)
+    template<typename T, typename U>
+    ptrdiff_t differenceBetween(T from, U to)
     {
         return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(Label from, DataLabelPtr to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(Label from, DataLabel32 to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(DataLabelPtr from, Jump to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
-    }
-
-    ptrdiff_t differenceBetween(DataLabelPtr from, DataLabelPtr to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(DataLabelPtr from, Call to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
     }
 
     // Temporary interface; likely to be removed, since may be hard to port to all architectures.
@@ -536,7 +532,7 @@ protected:
 
     static void linkJump(void* code, Jump jump, CodeLocationLabel target)
     {
-        AssemblerType::linkJump(code, jump.m_jmp, target.dataLocation());
+        AssemblerType::linkJump(code, jump.m_label, target.dataLocation());
     }
 
     static void linkPointer(void* code, AssemblerLabel label, void* value)
@@ -551,7 +547,7 @@ protected:
 
     static unsigned getLinkerCallReturnOffset(Call call)
     {
-        return AssemblerType::getCallReturnOffset(call.m_jmp);
+        return AssemblerType::getCallReturnOffset(call.m_label);
     }
 
     static void repatchJump(CodeLocationJump jump, CodeLocationLabel destination)
@@ -564,6 +560,11 @@ protected:
         AssemblerType::relinkCall(nearCall.dataLocation(), destination.executableAddress());
     }
 
+    static void repatchCompact(CodeLocationDataLabelCompact dataLabelCompact, int32_t value)
+    {
+        AssemblerType::repatchCompact(dataLabelCompact.dataLocation(), value);
+    }
+    
     static void repatchInt32(CodeLocationDataLabel32 dataLabel32, int32_t value)
     {
         AssemblerType::repatchInt32(dataLabel32.dataLocation(), value);
@@ -572,6 +573,11 @@ protected:
     static void repatchPointer(CodeLocationDataLabelPtr dataLabelPtr, void* value)
     {
         AssemblerType::repatchPointer(dataLabelPtr.dataLocation(), value);
+    }
+    
+    static void* readPointer(CodeLocationDataLabelPtr dataLabelPtr)
+    {
+        return AssemblerType::readPointer(dataLabelPtr.dataLocation());
     }
 };
 

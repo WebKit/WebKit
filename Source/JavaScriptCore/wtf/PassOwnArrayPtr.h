@@ -42,10 +42,7 @@ public:
     typedef T* PtrType;
 
     PassOwnArrayPtr() : m_ptr(0) { }
-
-#if !defined(LOOSE_PASS_OWN_PTR) || !HAVE(NULLPTR)
     PassOwnArrayPtr(std::nullptr_t) : m_ptr(0) { }
-#endif
 
     // It somewhat breaks the type system to allow transfer of ownership out of
     // a const PassOwnArrayPtr. However, it makes it much easier to work with PassOwnArrayPtr
@@ -74,22 +71,13 @@ public:
 #endif
 
     PassOwnArrayPtr& operator=(const PassOwnArrayPtr<T>&);
-#if !defined(LOOSE_PASS_OWN_ARRAY_PTR) || !HAVE(NULLPTR)
     PassOwnArrayPtr& operator=(std::nullptr_t) { clear(); return *this; }
-#endif
     template<typename U> PassOwnArrayPtr& operator=(const PassOwnArrayPtr<U>&);
 
     template<typename U> friend PassOwnArrayPtr<U> adoptArrayPtr(U*);
 
-#ifdef LOOSE_PASS_OWN_ARRAY_PTR
-    PassOwnArrayPtr(PtrType ptr) : m_ptr(ptr) { }
-    PassOwnArrayPtr& operator=(PtrType);
-#endif
-
 private:
-#ifndef LOOSE_PASS_OWN_ARRAY_PTR
     explicit PassOwnArrayPtr(PtrType ptr) : m_ptr(ptr) { }
-#endif
 
     mutable PtrType m_ptr;
 };
@@ -107,18 +95,6 @@ template<typename T> inline typename PassOwnArrayPtr<T>::PtrType PassOwnArrayPtr
     m_ptr = 0;
     return ptr;
 }
-
-#ifdef LOOSE_PASS_OWN_ARRAY_PTR
-template<typename T> inline PassOwnArrayPtr<T>& PassOwnArrayPtr<T>::operator=(PtrType optr)
-{
-    PtrType ptr = m_ptr;
-    m_ptr = optr;
-    ASSERT(!ptr || m_ptr != ptr);
-    if (ptr)
-        deleteOwnedArrayPtr(ptr);
-    return *this;
-}
-#endif
 
 template<typename T> inline PassOwnArrayPtr<T>& PassOwnArrayPtr<T>::operator=(const PassOwnArrayPtr<T>& optr)
 {

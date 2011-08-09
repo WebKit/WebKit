@@ -29,8 +29,9 @@
 #include <wtf/RefCounted.h>
 
 namespace JSC {
-    class MarkStack;
-    typedef MarkStack SlotVisitor;
+
+class SlotVisitor;
+
 }
 
 namespace WebCore {

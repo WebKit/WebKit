@@ -99,3 +99,10 @@ retgen.wkScript = $$PWD/create_regex_tables
 retgen.input = retgen.wkScript
 retgen.commands = python $$retgen.wkScript > ${QMAKE_FILE_OUT}
 addExtraCompiler(retgen)
+
+#GENERATOR: "KeywordLookup.h": decision tree used by the lexer
+klgen.output = $$JSC_GENERATED_SOURCES_DIR/KeywordLookup.h
+klgen.wkScript = $$PWD/KeywordLookupGenerator.py 
+klgen.input = KEYWORDLUT_FILES
+klgen.commands = python $$klgen.wkScript ${QMAKE_FILE_NAME} > ${QMAKE_FILE_OUT}
+addExtraCompiler(klgen)

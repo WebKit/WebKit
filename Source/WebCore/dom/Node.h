@@ -36,8 +36,7 @@
 #if USE(JSC)
 namespace JSC {
     class JSGlobalData;
-    class MarkStack;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 }
 #endif
 

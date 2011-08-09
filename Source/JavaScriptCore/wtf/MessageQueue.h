@@ -172,16 +172,12 @@ namespace WTF {
     inline void MessageQueue<DataType>::removeIf(Predicate& predicate)
     {
         MutexLocker lock(m_mutex);
-        // See bug 31657 for why this loop looks so weird
-        while (true) {
-            DequeConstIterator<DataType*> found = m_queue.findIf(predicate);
-            if (found == m_queue.end())
-                break;
-
+        DequeConstIterator<DataType*> found = m_queue.end();
+        while ((found = m_queue.findIf(predicate)) != m_queue.end()) {
             DataType* message = *found;
             m_queue.remove(found);
             delete message;
-       }
+        }
     }
 
     template<typename DataType>

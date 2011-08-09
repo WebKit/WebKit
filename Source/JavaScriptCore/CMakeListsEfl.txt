@@ -1,8 +1,6 @@
 LIST(APPEND JavaScriptCore_SOURCES
     jit/ExecutableAllocatorFixedVMPool.cpp
     jit/ExecutableAllocator.cpp
-    heap/MarkStackPosix.cpp
-    wtf/OSAllocatorPosix.cpp
 )
 
 LIST(APPEND JavaScriptCore_LIBRARIES

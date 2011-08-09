@@ -32,10 +32,25 @@ namespace JSC {
 
 class StrictEvalActivation : public JSNonFinalObject {
 public:
-    StrictEvalActivation(ExecState*);
+    static StrictEvalActivation* create(ExecState* exec)
+    {
+        return new (allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);
+    }
+
     virtual bool deleteProperty(ExecState*, const Identifier&);
     virtual JSObject* toThisObject(ExecState*) const;
     virtual JSValue toStrictThisObject(ExecState*) const;
+
+    static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+    {
+        return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+    }
+    
+protected:
+    static const unsigned StructureFlags = IsEnvironmentRecord | JSNonFinalObject::StructureFlags;
+
+private:
+    StrictEvalActivation(ExecState*);
 };
 
 } // namespace JSC

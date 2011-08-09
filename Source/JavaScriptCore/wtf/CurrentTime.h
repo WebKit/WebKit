@@ -58,11 +58,15 @@ inline void getLocalTime(const time_t* localTime, struct tm* localTM)
 #endif
 }
 
+// Provides a monotonically increasing time in seconds since an arbitrary point in the past.
+// On unsupported platforms, this function only guarantees the result will be non-decreasing.
+double monotonicallyIncreasingTime();
+
 } // namespace WTF
 
 using WTF::currentTime;
 using WTF::currentTimeMS;
 using WTF::getLocalTime;
+using WTF::monotonicallyIncreasingTime;
 
 #endif // CurrentTime_h
-

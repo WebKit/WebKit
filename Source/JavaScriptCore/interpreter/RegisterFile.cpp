@@ -31,8 +31,6 @@
 
 #include "ConservativeRoots.h"
 #include "Interpreter.h"
-#include "JSGlobalData.h"
-#include "JSGlobalObject.h"
 
 namespace JSC {
 
@@ -54,30 +52,15 @@ RegisterFile::~RegisterFile()
 
 void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
 {
-    for (Register* it = start(); it != end(); ++it) {
-        JSValue v = it->jsValue();
-        if (!v.isCell())
-            continue;
-        conservativeRoots.add(v.asCell());
-    }
+    conservativeRoots.add(begin(), end());
 }
 
 void RegisterFile::releaseExcessCapacity()
 {
-    m_reservation.decommit(m_start, reinterpret_cast<intptr_t>(m_commitEnd) - reinterpret_cast<intptr_t>(m_start));
-    addToCommittedByteCount(-(reinterpret_cast<intptr_t>(m_commitEnd) - reinterpret_cast<intptr_t>(m_start)));
-    m_commitEnd = m_start;
-    m_maxUsed = m_start;
-}
-
-void RegisterFile::setGlobalObject(JSGlobalObject* globalObject)
-{
-    m_globalObject.set(globalObject->globalData(), globalObject, &m_globalObjectOwner, this);
-}
-
-JSGlobalObject* RegisterFile::globalObject()
-{
-    return m_globalObject.get();
+    ptrdiff_t delta = reinterpret_cast<uintptr_t>(m_commitEnd) - reinterpret_cast<uintptr_t>(m_reservation.base());
+    m_reservation.decommit(m_reservation.base(), delta);
+    addToCommittedByteCount(-delta);
+    m_commitEnd = static_cast<Register*>(m_reservation.base());
 }
 
 void RegisterFile::initializeThreading()

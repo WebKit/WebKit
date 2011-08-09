@@ -44,11 +44,10 @@
 
 namespace JSC {
 
-    class MarkStack;
     class PropertyNameArray;
     class PropertyNameArrayData;
     class StructureChain;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 
     struct ClassInfo;
 
@@ -64,7 +63,7 @@ namespace JSC {
         {
             ASSERT(globalData.structureStructure);
             ASSERT(classInfo);
-            return new (&globalData) Structure(globalData, prototype, typeInfo, anonymousSlotCount, classInfo);
+            return new (allocateCell<Structure>(globalData.heap)) Structure(globalData, prototype, typeInfo, anonymousSlotCount, classInfo);
         }
 
         static void dumpStatistics();
@@ -158,7 +157,7 @@ namespace JSC {
         static Structure* createStructure(JSGlobalData& globalData)
         {
             ASSERT(!globalData.structureStructure);
-            return new (&globalData) Structure(globalData);
+            return new (allocateCell<Structure>(globalData.heap)) Structure(globalData);
         }
         
         static JS_EXPORTDATA const ClassInfo s_info;
@@ -171,7 +170,7 @@ namespace JSC {
         static Structure* create(JSGlobalData& globalData, const Structure* structure)
         {
             ASSERT(globalData.structureStructure);
-            return new (&globalData) Structure(globalData, structure);
+            return new (allocateCell<Structure>(globalData.heap)) Structure(globalData, structure);
         }
         
         typedef enum { 
@@ -283,18 +282,6 @@ namespace JSC {
 #else
         return m_structure->classInfo();
 #endif
-    }
-
-    inline Structure* JSCell::createDummyStructure(JSGlobalData& globalData)
-    {
-        return Structure::create(globalData, jsNull(), TypeInfo(UnspecifiedType), AnonymousSlotCount, &s_dummyCellInfo);
-    }
-
-    inline bool JSValue::needsThisConversion() const
-    {
-        if (UNLIKELY(!isCell()))
-            return true;
-        return asCell()->structure()->typeInfo().needsThisConversion();
     }
 
     ALWAYS_INLINE void MarkStack::internalAppend(JSCell* cell)

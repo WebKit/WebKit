@@ -26,6 +26,7 @@ namespace JSC {
 static const char* const nullCString = 0;
 
 #define INITIALIZE_PROPERTY_NAME(name) , name(globalData, #name)
+#define INITIALIZE_KEYWORD(name) , name##Keyword(globalData, #name)
 
 CommonIdentifiers::CommonIdentifiers(JSGlobalData* globalData)
     : nullIdentifier(globalData, nullCString)
@@ -33,6 +34,7 @@ CommonIdentifiers::CommonIdentifiers(JSGlobalData* globalData)
     , underscoreProto(globalData, "__proto__")
     , thisIdentifier(globalData, "this")
     , useStrictIdentifier(globalData, "use strict")
+    JSC_COMMON_IDENTIFIERS_EACH_KEYWORD(INITIALIZE_KEYWORD)
     JSC_COMMON_IDENTIFIERS_EACH_PROPERTY_NAME(INITIALIZE_PROPERTY_NAME)
 {
 }

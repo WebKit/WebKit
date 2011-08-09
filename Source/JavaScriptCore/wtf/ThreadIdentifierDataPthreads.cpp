@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2009, 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -36,9 +36,11 @@
 
 #include "Threading.h"
 
+#include <limits.h>
+
 namespace WTF {
 
-pthread_key_t ThreadIdentifierData::m_key;
+pthread_key_t ThreadIdentifierData::m_key = PTHREAD_KEYS_MAX;
 
 void clearPthreadHandleForIdentifier(ThreadIdentifier);
 
@@ -47,9 +49,15 @@ ThreadIdentifierData::~ThreadIdentifierData()
     clearPthreadHandleForIdentifier(m_identifier);
 }
 
+void ThreadIdentifierData::initializeOnce()
+{
+    if (pthread_key_create(&m_key, destruct))
+        CRASH();
+}
+
 ThreadIdentifier ThreadIdentifierData::identifier()
 {
-    initializeKeyOnce();
+    ASSERT(m_key != PTHREAD_KEYS_MAX);
     ThreadIdentifierData* threadIdentifierData = static_cast<ThreadIdentifierData*>(pthread_getspecific(m_key));
 
     return threadIdentifierData ? threadIdentifierData->m_identifier : 0;
@@ -58,8 +66,6 @@ ThreadIdentifier ThreadIdentifierData::identifier()
 void ThreadIdentifierData::initialize(ThreadIdentifier id)
 {
     ASSERT(!identifier());
-
-    initializeKeyOnce();
     pthread_setspecific(m_key, new ThreadIdentifierData(id));
 }
 
@@ -76,19 +82,6 @@ void ThreadIdentifierData::destruct(void* data)
     threadIdentifierData->m_isDestroyedOnce = true;
     // Re-setting the value for key causes another destruct() call after all other thread-specific destructors were called.
     pthread_setspecific(m_key, threadIdentifierData);
-}
-
-void ThreadIdentifierData::initializeKeyOnceHelper()
-{
-    if (pthread_key_create(&m_key, destruct))
-        CRASH();
-}
-
-void ThreadIdentifierData::initializeKeyOnce()
-{
-    static pthread_once_t onceControl = PTHREAD_ONCE_INIT;
-    if (pthread_once(&onceControl, initializeKeyOnceHelper))
-        CRASH();
 }
 
 } // namespace WTF

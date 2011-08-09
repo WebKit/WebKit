@@ -276,15 +276,14 @@ void ARMAssembler::dataTransfer32(bool isLoad, RegisterID srcDst, RegisterID bas
             dtr_ur(isLoad, srcDst, base, ARMRegisters::S0 | transferFlag);
         }
     } else {
-        offset = -offset;
-        if (offset <= 0xfff)
-            dtr_d(isLoad, srcDst, base, offset | transferFlag);
-        else if (offset <= 0xfffff) {
-            sub_r(ARMRegisters::S0, base, OP2_IMM | (offset >> 12) | (10 << 8));
-            dtr_d(isLoad, srcDst, ARMRegisters::S0, (offset & 0xfff) | transferFlag);
+        if (offset >= -0xfff)
+            dtr_d(isLoad, srcDst, base, -offset | transferFlag);
+        else if (offset >= -0xfffff) {
+            sub_r(ARMRegisters::S0, base, OP2_IMM | (-offset >> 12) | (10 << 8));
+            dtr_d(isLoad, srcDst, ARMRegisters::S0, (-offset & 0xfff) | transferFlag);
         } else {
             moveImm(offset, ARMRegisters::S0);
-            dtr_dr(isLoad, srcDst, base, ARMRegisters::S0 | transferFlag);
+            dtr_ur(isLoad, srcDst, base, ARMRegisters::S0 | transferFlag);
         }
     }
 }
@@ -314,7 +313,8 @@ void ARMAssembler::baseIndexTransfer32(bool isLoad, RegisterID srcDst, RegisterI
 
 void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID base, int32_t offset)
 {
-    if (offset & 0x3) {
+    // VFP cannot directly access memory that is not four-byte-aligned
+    if (!(offset & 0x3)) {
         if (offset <= 0x3ff && offset >= 0) {
             fdtr_u(isLoad, srcDst, base, offset >> 2);
             return;
@@ -343,14 +343,14 @@ void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID b
     fdtr_u(isLoad, srcDst, ARMRegisters::S0, 0);
 }
 
-void* ARMAssembler::executableCopy(ExecutablePool* allocator)
+void* ARMAssembler::executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
 {
     // 64-bit alignment is required for next constant pool and JIT code as well
     m_buffer.flushWithoutBarrier(true);
     if (!m_buffer.isAligned(8))
         bkpt(0);
 
-    char* data = reinterpret_cast<char*>(m_buffer.executableCopy(allocator));
+    char* data = reinterpret_cast<char*>(m_buffer.executableCopy(globalData, allocator));
 
     for (Jumps::Iterator iter = m_jumps.begin(); iter != m_jumps.end(); ++iter) {
         // The last bit is set if the constant must be placed on constant pool.

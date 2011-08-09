@@ -829,14 +829,6 @@ namespace JSC {
         bool m_rightHasAssignments;
     };
 
-    class ReverseBinaryOpNode : public BinaryOpNode {
-    public:
-        ReverseBinaryOpNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
-        ReverseBinaryOpNode(JSGlobalData*, ResultType, ExpressionNode* expr1, ExpressionNode* expr2, OpcodeID, bool rightHasAssignments);
-
-        virtual RegisterID* emitBytecode(BytecodeGenerator&, RegisterID* = 0);
-    };
-
     class MultNode : public BinaryOpNode {
     public:
         MultNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
@@ -886,7 +878,7 @@ namespace JSC {
         LessNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class GreaterNode : public ReverseBinaryOpNode {
+    class GreaterNode : public BinaryOpNode {
     public:
         GreaterNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
@@ -896,7 +888,7 @@ namespace JSC {
         LessEqNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };
 
-    class GreaterEqNode : public ReverseBinaryOpNode {
+    class GreaterEqNode : public BinaryOpNode {
     public:
         GreaterEqNode(JSGlobalData*, ExpressionNode* expr1, ExpressionNode* expr2, bool rightHasAssignments);
     };

@@ -149,6 +149,7 @@ namespace JSC {
         MacroAssembler::DataLabelPtr hotPathBegin;
         MacroAssembler::Call hotPathOther;
         MacroAssembler::Call callReturnLocation;
+        bool isCall;
     };
 
     struct MethodCallCompilationInfo {
@@ -174,9 +175,10 @@ namespace JSC {
         using MacroAssembler::Label;
 
         static const int patchGetByIdDefaultStructure = -1;
+        static const int patchGetByIdDefaultOffset = 0;
         // Magic number - initial offset cannot be representable as a signed 8bit value, or the X86Assembler
         // will compress the displacement, and we may not be able to fit a patched offset.
-        static const int patchGetByIdDefaultOffset = 256;
+        static const int patchPutByIdDefaultOffset = 256;
 
     public:
         static JITCode compile(JSGlobalData* globalData, CodeBlock* codeBlock, CodePtr* functionEntryArityCheck = 0)
@@ -236,7 +238,7 @@ namespace JSC {
 
         static void patchGetByIdSelf(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress);
         static void patchPutByIdReplace(CodeBlock* codeblock, StructureStubInfo*, Structure*, size_t cachedOffset, ReturnAddressPtr returnAddress, bool direct);
-        static void patchMethodCallProto(JSGlobalData&, CodeBlock* codeblock, MethodCallLinkInfo&, JSFunction*, Structure*, JSObject*, ReturnAddressPtr);
+        static void patchMethodCallProto(JSGlobalData&, CodeBlock* codeblock, MethodCallLinkInfo&, JSObjectWithGlobalObject*, Structure*, JSObject*, ReturnAddressPtr);
 
         static void compilePatchGetArrayLength(JSGlobalData* globalData, CodeBlock* codeBlock, ReturnAddressPtr returnAddress)
         {
@@ -244,8 +246,7 @@ namespace JSC {
             return jit.privateCompilePatchGetArrayLength(returnAddress);
         }
 
-        static void linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, int callerArgCount, JSGlobalData*);
-        static void linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, int callerArgCount, JSGlobalData*);
+        static void linkFor(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, CodePtr, CallLinkInfo*, int callerArgCount, JSGlobalData*, CodeSpecializationKind);
 
     private:
         struct JSRInfo {
@@ -297,6 +298,11 @@ namespace JSC {
 
         void testPrototype(JSValue, JumpList& failureCases);
 
+        void emitWriteBarrier(RegisterID owner, RegisterID scratch);
+        
+        template<typename T>
+        void emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch);
+
 #if USE(JSVALUE32_64)
         bool getOperandConstantImmediateInt(unsigned op1, unsigned op2, unsigned& op, int32_t& constant);
 
@@ -327,10 +333,8 @@ namespace JSC {
         void emitJumpSlowCaseIfNotJSCell(unsigned virtualRegisterIndex, RegisterID tag);
         void linkSlowCaseIfNotJSCell(Vector<SlowCaseEntry>::iterator&, unsigned virtualRegisterIndex);
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
         void compileGetByIdHotPath();
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
-#endif
         void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, Structure* structure, size_t cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterID resultPayload, size_t cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, RegisterID offset);
@@ -349,9 +353,9 @@ namespace JSC {
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 7;
         static const int patchOffsetGetByIdBranchToSlowCase = 13;
-        static const int patchOffsetGetByIdPropertyMapOffset1 = 22;
-        static const int patchOffsetGetByIdPropertyMapOffset2 = 28;
-        static const int patchOffsetGetByIdPutResult = 28;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 19;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 22;
+        static const int patchOffsetGetByIdPutResult = 22;
 #if ENABLE(OPCODE_SAMPLING)
         static const int patchOffsetGetByIdSlowCaseCall = 37;
 #else
@@ -407,9 +411,9 @@ namespace JSC {
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
         static const int patchOffsetGetByIdBranchToSlowCase = 26;
-        static const int patchOffsetGetByIdPropertyMapOffset1 = 36;
-        static const int patchOffsetGetByIdPropertyMapOffset2 = 48;
-        static const int patchOffsetGetByIdPutResult = 52;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 28;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 30;
+        static const int patchOffsetGetByIdPutResult = 32;
 #if ENABLE(OPCODE_SAMPLING)
         #error "OPCODE_SAMPLING is not yet supported"
 #else
@@ -568,10 +572,8 @@ namespace JSC {
         void compileBinaryArithOpSlowCase(OpcodeID, Vector<SlowCaseEntry>::iterator&, unsigned dst, unsigned src1, unsigned src2, OperandTypes);
 #endif
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-        void compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned propertyAccessInstructionIndex);
+        void compileGetByIdHotPath(int baseVReg, Identifier*);
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
-#endif
         void compileGetDirectOffset(RegisterID base, RegisterID result, Structure* structure, size_t cachedOffset);
         void compileGetDirectOffset(JSObject* base, RegisterID result, size_t cachedOffset);
         void compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch);
@@ -584,8 +586,8 @@ namespace JSC {
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
         static const int patchOffsetGetByIdBranchToSlowCase = 20;
-        static const int patchOffsetGetByIdPropertyMapOffset = 31;
-        static const int patchOffsetGetByIdPutResult = 31;
+        static const int patchOffsetGetByIdPropertyMapOffset = 28;
+        static const int patchOffsetGetByIdPutResult = 28;
 #if ENABLE(OPCODE_SAMPLING)
         static const int patchOffsetGetByIdSlowCaseCall = 64;
 #else
@@ -720,6 +722,9 @@ namespace JSC {
 #define END_UNINTERRUPTED_SEQUENCE_FOR_PUT(name, dst) do { endUninterruptedSequence(); } while (false)
 #endif
 
+        void emit_compareAndJump(OpcodeID, unsigned op1, unsigned op2, unsigned target, RelationalCondition);
+        void emit_compareAndJumpSlow(unsigned op1, unsigned op2, unsigned target, DoubleCondition, int (JIT_STUB *stub)(STUB_ARGS_DECLARATION), bool invert, Vector<SlowCaseEntry>::iterator&);
+
         void emit_op_add(Instruction*);
         void emit_op_bitand(Instruction*);
         void emit_op_bitnot(Instruction*);
@@ -734,7 +739,6 @@ namespace JSC {
         void emit_op_get_callee(Instruction*);
         void emit_op_create_this(Instruction*);
         void emit_op_convert_this(Instruction*);
-        void emit_op_convert_this_strict(Instruction*);
         void emit_op_create_arguments(Instruction*);
         void emit_op_debug(Instruction*);
         void emit_op_del_by_id(Instruction*);
@@ -760,16 +764,22 @@ namespace JSC {
         void emit_op_jmp_scopes(Instruction*);
         void emit_op_jneq_null(Instruction*);
         void emit_op_jneq_ptr(Instruction*);
-        void emit_op_jnless(Instruction*);
         void emit_op_jless(Instruction*);
-        void emit_op_jlesseq(Instruction*, bool invert = false);
+        void emit_op_jlesseq(Instruction*);
+        void emit_op_jgreater(Instruction*);
+        void emit_op_jgreatereq(Instruction*);
+        void emit_op_jnless(Instruction*);
         void emit_op_jnlesseq(Instruction*);
+        void emit_op_jngreater(Instruction*);
+        void emit_op_jngreatereq(Instruction*);
         void emit_op_jsr(Instruction*);
         void emit_op_jtrue(Instruction*);
         void emit_op_load_varargs(Instruction*);
         void emit_op_loop(Instruction*);
         void emit_op_loop_if_less(Instruction*);
         void emit_op_loop_if_lesseq(Instruction*);
+        void emit_op_loop_if_greater(Instruction*);
+        void emit_op_loop_if_greatereq(Instruction*);
         void emit_op_loop_if_true(Instruction*);
         void emit_op_loop_if_false(Instruction*);
         void emit_op_lshift(Instruction*);
@@ -781,6 +791,7 @@ namespace JSC {
         void emit_op_neq(Instruction*);
         void emit_op_neq_null(Instruction*);
         void emit_op_new_array(Instruction*);
+        void emit_op_new_array_buffer(Instruction*);
         void emit_op_new_func(Instruction*);
         void emit_op_new_func_exp(Instruction*);
         void emit_op_new_object(Instruction*);
@@ -812,6 +823,7 @@ namespace JSC {
         void emit_op_resolve_global_dynamic(Instruction*);
         void emit_op_resolve_skip(Instruction*);
         void emit_op_resolve_with_base(Instruction*);
+        void emit_op_resolve_with_this(Instruction*);
         void emit_op_ret(Instruction*);
         void emit_op_ret_object_or_this(Instruction*);
         void emit_op_rshift(Instruction*);
@@ -844,7 +856,7 @@ namespace JSC {
         void emitSlow_op_call_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_construct(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_convert_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_convert_this_strict(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_create_this(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_div(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_eq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -855,14 +867,20 @@ namespace JSC {
         void emitSlow_op_check_has_instance(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_instanceof(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jfalse(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jnless(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jless(Instruction*, Vector<SlowCaseEntry>::iterator&);
-        void emitSlow_op_jlesseq(Instruction*, Vector<SlowCaseEntry>::iterator&, bool invert = false);
+        void emitSlow_op_jlesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jgreater(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jgreatereq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jnless(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jnlesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jngreater(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_jngreatereq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_jtrue(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_load_varargs(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_less(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_lesseq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_loop_if_greater(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_loop_if_greatereq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_true(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_loop_if_false(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_lshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -871,6 +889,7 @@ namespace JSC {
         void emitSlow_op_mul(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_negate(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_neq(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_new_object(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_not(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_nstricteq(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_post_dec(Instruction*, Vector<SlowCaseEntry>::iterator&);
@@ -1037,6 +1056,39 @@ namespace JSC {
     inline void JIT::emitSlow_op_loop_if_less(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
     {
         emitSlow_op_jless(currentInstruction, iter);
+    }
+
+    inline void JIT::emit_op_loop_if_lesseq(Instruction* currentInstruction)
+    {
+        emitTimeoutCheck();
+        emit_op_jlesseq(currentInstruction);
+    }
+
+    inline void JIT::emitSlow_op_loop_if_lesseq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+    {
+        emitSlow_op_jlesseq(currentInstruction, iter);
+    }
+
+    inline void JIT::emit_op_loop_if_greater(Instruction* currentInstruction)
+    {
+        emitTimeoutCheck();
+        emit_op_jgreater(currentInstruction);
+    }
+
+    inline void JIT::emitSlow_op_loop_if_greater(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+    {
+        emitSlow_op_jgreater(currentInstruction, iter);
+    }
+
+    inline void JIT::emit_op_loop_if_greatereq(Instruction* currentInstruction)
+    {
+        emitTimeoutCheck();
+        emit_op_jgreatereq(currentInstruction);
+    }
+
+    inline void JIT::emitSlow_op_loop_if_greatereq(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+    {
+        emitSlow_op_jgreatereq(currentInstruction, iter);
     }
 
 } // namespace JSC

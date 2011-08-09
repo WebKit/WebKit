@@ -1,3 +1,14 @@
+2011-08-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by nobody.
+
+        Merged JavaScriptCore & JavaScriptGlue from 86722 to 92405.
+
+        EXCEPT, Did not merge patches:
+            86837, 89283, 90643, 92068, 92254.
+        ALSO, Did merge full patch (including non-JSC/JSG changes) for:
+            87346, 88587, 89069, 90383, 91095, 91194, 91195, 91790, 91903, 92224.
+
 2011-08-05  Lucas Forschler  <lforschler@apple.com>
 
     Merged 92210. 

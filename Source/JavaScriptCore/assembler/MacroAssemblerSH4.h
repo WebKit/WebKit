@@ -29,8 +29,8 @@
 
 #if ENABLE(ASSEMBLER) && CPU(SH4)
 
-#include "AbstractMacroAssembler.h"
 #include "SH4Assembler.h"
+#include "AbstractMacroAssembler.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
@@ -44,6 +44,8 @@ public:
     static const RegisterID stackPointerRegister = SH4Registers::sp;
     static const RegisterID linkRegister = SH4Registers::pr;
     static const RegisterID scratchReg3 = SH4Registers::r13;
+
+    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
 
     enum RelationalCondition {
         Equal = SH4Assembler::EQ,
@@ -732,6 +734,17 @@ public:
         releaseScratch(scr);
         return label;
     }
+    
+    DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        RegisterID scr = claimScratch();
+        DataLabelCompact label(this);
+        m_assembler.loadConstantUnReusable(address.offset, scr);
+        m_assembler.addlRegReg(address.base, scr);
+        m_assembler.movlMemReg(scr, dest);
+        releaseScratch(scr);
+        return label;
+    }
 
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
@@ -749,6 +762,7 @@ public:
     bool supportsFloatingPoint() const { return true; }
     bool supportsFloatingPointTruncate() const { return true; }
     bool supportsFloatingPointSqrt() const { return true; }
+    bool supportsDoubleBitops() const { return false; }
 
     void loadDouble(ImplicitAddress address, FPRegisterID dest)
     {
@@ -1086,6 +1100,11 @@ public:
         if (dest != src)
             m_assembler.dmovRegReg(src, dest);
         m_assembler.dsqrt(dest);
+    }
+    
+    void andnotDouble(FPRegisterID, FPRegisterID)
+    {
+        ASSERT_NOT_REACHED();
     }
 
     Jump branchTest8(ResultCondition cond, Address address, TrustedImm32 mask = TrustedImm32(-1))

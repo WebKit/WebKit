@@ -37,7 +37,7 @@ NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* 
 {
     ASSERT(inherits(&s_info));
 
-    NativeErrorPrototype* prototype = new (exec) NativeErrorPrototype(exec, globalObject, prototypeStructure, nameAndMessage, this);
+    NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, nameAndMessage, this);
 
     putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
     putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);

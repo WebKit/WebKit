@@ -392,7 +392,12 @@ void* TCMalloc_SystemAlloc(size_t size, size_t *actual_size, size_t alignment) {
 
 void TCMalloc_SystemRelease(void* start, size_t length)
 {
-    while (madvise(start, length, MADV_FREE_REUSABLE) == -1 && errno == EAGAIN) { }
+    int madviseResult;
+
+    while ((madviseResult = madvise(start, length, MADV_FREE_REUSABLE)) == -1 && errno == EAGAIN) { }
+
+    // Although really advisory, if madvise fail, we want to know about it.
+    ASSERT_UNUSED(madviseResult, madviseResult != -1);
 }
 
 #elif HAVE(MADV_FREE) || HAVE(MADV_DONTNEED)

@@ -77,7 +77,7 @@ JIT::CodePtr JIT::stringGetByValStubGenerator(JSGlobalData* globalData, Executab
     jit.move(TrustedImm32(0), regT0);
     jit.ret();
     
-    LinkBuffer patchBuffer(&jit, pool);
+    LinkBuffer patchBuffer(*globalData, &jit, pool);
     return patchBuffer.finalizeCode().m_code;
 }
 
@@ -140,7 +140,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
 
 void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch)
 {
-    loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), scratch);
+    loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), scratch);
     loadPtr(BaseIndex(scratch, offset, ScalePtr, 0), result);
 }
 
@@ -220,6 +220,24 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     end.link(this);
 }
 
+void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned base = currentInstruction[1].u.operand;
+    unsigned property = currentInstruction[2].u.operand;
+    unsigned value = currentInstruction[3].u.operand;
+
+    linkSlowCase(iter); // property int32 check
+    linkSlowCaseIfNotJSCell(iter, base); // base cell check
+    linkSlowCase(iter); // base not array check
+    linkSlowCase(iter); // in vector check
+
+    JITStubCall stubPutByValCall(this, cti_op_put_by_val);
+    stubPutByValCall.addArgument(regT0);
+    stubPutByValCall.addArgument(property, regT2);
+    stubPutByValCall.addArgument(value, regT2);
+    stubPutByValCall.call();
+}
+
 void JIT::emit_op_put_by_index(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_put_by_index);
@@ -255,67 +273,6 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
     stubCall.call(currentInstruction[1].u.operand);
 }
 
-
-#if !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-
-/* ------------------------------ BEGIN: !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
-
-// Treat these as nops - the call will be handed as a regular get_by_id/op_call pair.
-void JIT::emit_op_method_check(Instruction*) {}
-void JIT::emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator&) { ASSERT_NOT_REACHED(); }
-#if ENABLE(JIT_OPTIMIZE_METHOD_CALLS)
-#error "JIT_OPTIMIZE_METHOD_CALLS requires JIT_OPTIMIZE_PROPERTY_ACCESS"
-#endif
-
-void JIT::emit_op_get_by_id(Instruction* currentInstruction)
-{
-    unsigned resultVReg = currentInstruction[1].u.operand;
-    unsigned baseVReg = currentInstruction[2].u.operand;
-    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
-
-    emitGetVirtualRegister(baseVReg, regT0);
-    JITStubCall stubCall(this, cti_op_get_by_id_generic);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(TrustedImmPtr(ident));
-    stubCall.call(resultVReg);
-
-    m_propertyAccessInstructionIndex++;
-}
-
-void JIT::emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void JIT::emit_op_put_by_id(Instruction* currentInstruction)
-{
-    unsigned baseVReg = currentInstruction[1].u.operand;
-    Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
-    unsigned valueVReg = currentInstruction[3].u.operand;
-    unsigned direct = currentInstruction[8].u.operand;
-
-    emitGetVirtualRegisters(baseVReg, regT0, valueVReg, regT1);
-
-    JITStubCall stubCall(this, direct ? cti_op_put_by_id_direct_generic, cti_op_put_by_id_generic);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(TrustedImmPtr(ident));
-    stubCall.addArgument(regT1);
-    stubCall.call();
-
-    m_propertyAccessInstructionIndex++;
-}
-
-void JIT::emitSlow_op_put_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-#else // !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-
-/* ------------------------------ BEGIN: ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
-
-#if ENABLE(JIT_OPTIMIZE_METHOD_CALLS)
-
 void JIT::emit_op_method_check(Instruction* currentInstruction)
 {
     // Assert that the following instruction is a get_by_id.
@@ -329,7 +286,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     emitGetVirtualRegister(baseVReg, regT0);
 
     // Do the method check - check the object & its prototype's structure inline (this is the common case).
-    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_propertyAccessInstructionIndex));
+    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_propertyAccessCompilationInfo.size()));
     MethodCallCompilationInfo& info = m_methodCallCompilationInfo.last();
 
     Jump notCell = emitJumpIfNotJSCell(regT0);
@@ -358,7 +315,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
 
     // Do a regular(ish) get_by_id (the slow case will be link to
     // cti_op_get_by_id_method_check instead of cti_op_get_by_id.
-    compileGetByIdHotPath(resultVReg, baseVReg, ident, m_propertyAccessInstructionIndex++);
+    compileGetByIdHotPath(baseVReg, ident);
 
     match.link(this);
     emitPutVirtualRegister(resultVReg);
@@ -380,14 +337,6 @@ void JIT::emitSlow_op_method_check(Instruction* currentInstruction, Vector<SlowC
     m_bytecodeOffset += OPCODE_LENGTH(op_get_by_id);
 }
 
-#else //!ENABLE(JIT_OPTIMIZE_METHOD_CALLS)
-
-// Treat these as nops - the call will be handed as a regular get_by_id/op_call pair.
-void JIT::emit_op_method_check(Instruction*) {}
-void JIT::emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator&) { ASSERT_NOT_REACHED(); }
-
-#endif
-
 void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 {
     unsigned resultVReg = currentInstruction[1].u.operand;
@@ -395,11 +344,11 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
 
     emitGetVirtualRegister(baseVReg, regT0);
-    compileGetByIdHotPath(resultVReg, baseVReg, ident, m_propertyAccessInstructionIndex++);
+    compileGetByIdHotPath(baseVReg, ident);
     emitPutVirtualRegister(resultVReg);
 }
 
-void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propertyAccessInstructionIndex)
+void JIT::compileGetByIdHotPath(int baseVReg, Identifier*)
 {
     // As for put_by_id, get_by_id requires the offset of the Structure and the offset of the access to be patched.
     // Additionally, for get_by_id we need patch the offset of the branch to the slow case (we patch this to jump
@@ -411,7 +360,8 @@ void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propert
     BEGIN_UNINTERRUPTED_SEQUENCE(sequenceGetByIdHotPath);
 
     Label hotPathBegin(this);
-    m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].hotPathBegin = hotPathBegin;
+    m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
+    m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
 
     DataLabelPtr structureToCompare;
     Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
@@ -419,8 +369,8 @@ void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propert
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetGetByIdStructure);
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureCheck), patchOffsetGetByIdBranchToSlowCase)
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT0);
-    DataLabel32 displacementLabel = loadPtrWithAddressOffsetPatch(Address(regT0, patchGetByIdDefaultOffset), regT0);
+    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT0);
+    DataLabelCompact displacementLabel = loadPtrWithCompactAddressOffsetPatch(Address(regT0, patchGetByIdDefaultOffset), regT0);
     ASSERT_JIT_OFFSET_UNUSED(displacementLabel, differenceBetween(hotPathBegin, displacementLabel), patchOffsetGetByIdPropertyMapOffset);
 
     Label putResult(this);
@@ -465,16 +415,13 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
     ASSERT_JIT_OFFSET(differenceBetween(coldPathBegin, call), patchOffsetGetByIdSlowCaseCall);
 
     // Track the location of the call; this will be used to recover patch information.
-    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex].callReturnLocation = call;
-    m_propertyAccessInstructionIndex++;
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].callReturnLocation = call;
 }
 
 void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 {
     unsigned baseVReg = currentInstruction[1].u.operand;
     unsigned valueVReg = currentInstruction[3].u.operand;
-
-    unsigned propertyAccessInstructionIndex = m_propertyAccessInstructionIndex++;
 
     // In order to be able to patch both the Structure, and the object offset, we store one pointer,
     // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
@@ -485,18 +432,21 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
+    emitWriteBarrier(regT0, regT2);
+
     BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
 
     Label hotPathBegin(this);
-    m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].hotPathBegin = hotPathBegin;
+    m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
+    m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
 
     // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.
     DataLabelPtr structureToCompare;
     addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetPutByIdStructure);
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT0);
-    DataLabel32 displacementLabel = storePtrWithAddressOffsetPatch(regT1, Address(regT0, patchGetByIdDefaultOffset));
+    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT0);
+    DataLabel32 displacementLabel = storePtrWithAddressOffsetPatch(regT1, Address(regT0, patchPutByIdDefaultOffset));
 
     END_UNINTERRUPTED_SEQUENCE(sequencePutById);
 
@@ -509,8 +459,6 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
     Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
     unsigned direct = currentInstruction[8].u.operand;
 
-    unsigned propertyAccessInstructionIndex = m_propertyAccessInstructionIndex++;
-
     linkSlowCaseIfNotJSCell(iter, baseVReg);
     linkSlowCase(iter);
 
@@ -521,7 +469,7 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
     Call call = stubCall.call();
 
     // Track the location of the call; this will be used to recover patch information.
-    m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].callReturnLocation = call;
 }
 
 // Compile a store into an object's property storage.  May overwrite the
@@ -532,7 +480,7 @@ void JIT::compilePutDirectOffset(RegisterID base, RegisterID value, Structure* s
     if (structure->isUsingInlineStorage())
         offset += JSObject::offsetOfInlineStorage();
     else
-        loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), base);
+        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
     storePtr(value, Address(base, offset));
 }
 
@@ -544,7 +492,7 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, Structure* 
         offset += JSObject::offsetOfInlineStorage();
         loadPtr(Address(base, offset), result);
     } else {
-        loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), result);
+        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), result);
         loadPtr(Address(result, offset), result);
     }
 }
@@ -588,10 +536,10 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
 
         restoreReturnAddressBeforeReturn(regT3);
     }
+    
+    emitWriteBarrier(regT0, regT2);
 
-    storePtrWithWriteBarrier(TrustedImmPtr(newStructure), regT0, Address(regT0, JSCell::structureOffset()));
-
-    // write the value
+    storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
     compilePutDirectOffset(regT0, regT1, newStructure, cachedOffset);
 
     ret();
@@ -601,7 +549,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     restoreArgumentReferenceForTrampoline();
     Call failureCall = tailRecursiveCall();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock->executablePool());
 
     patchBuffer.link(failureCall, FunctionPtr(direct ? cti_op_put_by_id_direct_fail : cti_op_put_by_id_fail));
 
@@ -628,25 +576,7 @@ void JIT::patchGetByIdSelf(CodeBlock* codeBlock, StructureStubInfo* stubInfo, St
 
     // Patch the offset into the propoerty map to load from, then patch the Structure to look for.
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetGetByIdStructure), structure);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetGetByIdPropertyMapOffset), offset);
-}
-
-void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, JSFunction* callee, Structure* structure, JSObject* proto, ReturnAddressPtr returnAddress)
-{
-    RepatchBuffer repatchBuffer(codeBlock);
-
-    ASSERT(!methodCallLinkInfo.cachedStructure);
-    methodCallLinkInfo.cachedStructure.set(globalData, codeBlock->ownerExecutable(), structure);
-
-    Structure* prototypeStructure = proto->structure();
-    methodCallLinkInfo.cachedPrototypeStructure.set(globalData, codeBlock->ownerExecutable(), prototypeStructure);
-
-    repatchBuffer.repatch(methodCallLinkInfo.structureLabel, structure);
-    repatchBuffer.repatch(methodCallLinkInfo.structureLabel.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoObj), proto);
-    repatchBuffer.repatch(methodCallLinkInfo.structureLabel.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoStruct), prototypeStructure);
-    repatchBuffer.repatch(methodCallLinkInfo.structureLabel.dataLabelPtrAtOffset(patchOffsetMethodCheckPutFunction), callee);
-
-    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id));
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetGetByIdPropertyMapOffset), offset);
 }
 
 void JIT::patchPutByIdReplace(CodeBlock* codeBlock, StructureStubInfo* stubInfo, Structure* structure, size_t cachedOffset, ReturnAddressPtr returnAddress, bool direct)
@@ -679,7 +609,7 @@ void JIT::privateCompilePatchGetArrayLength(ReturnAddressPtr returnAddress)
     emitFastArithIntToImmNoCheck(regT2, regT0);
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock->executablePool());
 
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall);
@@ -737,7 +667,7 @@ void JIT::privateCompileGetByIdProto(StructureStubInfo* stubInfo, Structure* str
     } else
         compileGetDirectOffset(protoObject, regT0, cachedOffset);
     Jump success = jump();
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock->executablePool());
 
     // Use the patch information to link the failure cases back to the original slow case routine.
     CodeLocationLabel slowCaseBegin = stubInfo->callReturnLocation.labelAtOffset(-patchOffsetGetByIdSlowCaseCall);
@@ -790,7 +720,7 @@ void JIT::privateCompileGetByIdSelfList(StructureStubInfo* stubInfo, Polymorphic
         compileGetDirectOffset(regT0, regT0, structure, cachedOffset);
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock->executablePool());
 
     if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
@@ -855,7 +785,7 @@ void JIT::privateCompileGetByIdProtoList(StructureStubInfo* stubInfo, Polymorphi
 
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock->executablePool());
 
     if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
@@ -921,7 +851,7 @@ void JIT::privateCompileGetByIdChainList(StructureStubInfo* stubInfo, Polymorphi
         compileGetDirectOffset(protoObject, regT0, cachedOffset);
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock->executablePool());
     
     if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
@@ -989,7 +919,7 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
         compileGetDirectOffset(protoObject, regT0, cachedOffset);
     Jump success = jump();
 
-    LinkBuffer patchBuffer(this, m_codeBlock->executablePool());
+    LinkBuffer patchBuffer(*m_globalData, this, m_codeBlock->executablePool());
 
     if (needsStubLink) {
         for (Vector<CallRecord>::iterator iter = m_calls.begin(); iter != m_calls.end(); ++iter) {
@@ -1017,9 +947,82 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_proto_list));
 }
 
-/* ------------------------------ END: !ENABLE / ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
+void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
+{
+    int skip = currentInstruction[3].u.operand;
 
-#endif // !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT0);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
+        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
+
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, object)), regT0);
+    loadPtr(Address(regT0, JSVariableObject::offsetOfRegisters()), regT0);
+    loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
+{
+    int skip = currentInstruction[2].u.operand;
+
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
+
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
+        loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
+    loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, object)), regT1);
+
+    emitWriteBarrier(regT1, regT2);
+
+    loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
+    storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
+}
+
+void JIT::emit_op_get_global_var(Instruction* currentInstruction)
+{
+    JSVariableObject* globalObject = m_codeBlock->globalObject();
+    loadPtr(&globalObject->m_registers, regT0);
+    loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_put_global_var(Instruction* currentInstruction)
+{
+    JSGlobalObject* globalObject = m_codeBlock->globalObject();
+
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
+    move(TrustedImmPtr(globalObject), regT1);
+    
+    emitWriteBarrier(regT1, regT2);
+
+    loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
+    storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
+}
+
+void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch)
+{
+    UNUSED_PARAM(owner);
+    UNUSED_PARAM(scratch);
+    ASSERT(owner != scratch);
+}
 
 #endif // USE(JSVALUE64)
 
@@ -1031,6 +1034,21 @@ void JIT::testPrototype(JSValue prototype, JumpList& failureCases)
     ASSERT(prototype.isCell());
     move(TrustedImmPtr(prototype.asCell()), regT3);
     failureCases.append(branchPtr(NotEqual, Address(regT3, JSCell::structureOffset()), TrustedImmPtr(prototype.asCell()->structure())));
+}
+
+void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, JSObjectWithGlobalObject* callee, Structure* structure, JSObject* proto, ReturnAddressPtr returnAddress)
+{
+    RepatchBuffer repatchBuffer(codeBlock);
+    
+    ASSERT(!methodCallLinkInfo.cachedStructure);
+    CodeLocationDataLabelPtr structureLocation = methodCallLinkInfo.cachedStructure.location();
+    methodCallLinkInfo.cachedStructure.set(globalData, structureLocation, codeBlock->ownerExecutable(), structure);
+    
+    Structure* prototypeStructure = proto->structure();
+    methodCallLinkInfo.cachedPrototypeStructure.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoStruct), codeBlock->ownerExecutable(), prototypeStructure);
+    methodCallLinkInfo.cachedPrototype.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckProtoObj), codeBlock->ownerExecutable(), proto);
+    methodCallLinkInfo.cachedFunction.set(globalData, structureLocation.dataLabelPtrAtOffset(patchOffsetMethodCheckPutFunction), codeBlock->ownerExecutable(), callee);
+    repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id));
 }
 
 } // namespace JSC

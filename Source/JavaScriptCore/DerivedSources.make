@@ -46,6 +46,7 @@ all : \
     JavaScriptCore.JSVALUE32_64.exp \
     JavaScriptCore.JSVALUE64.exp \
     JSGlobalObject.lut.h \
+    KeywordLookup.h \
     Lexer.lut.h \
     MathObject.lut.h \
     NumberConstructor.lut.h \
@@ -74,6 +75,9 @@ docs/bytecode.html: make-bytecode-docs.pl Interpreter.cpp
 # character tables for Yarr
 
 RegExpJitTables.h: create_regex_tables
+	python $^ > $@
+
+KeywordLookup.h: KeywordLookupGenerator.py Keywords.table
 	python $^ > $@
 
 # export files

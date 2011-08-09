@@ -35,6 +35,7 @@ namespace JSC {
 JSValue call(ExecState* exec, JSValue functionObject, CallType callType, const CallData& callData, JSValue thisValue, const ArgList& args)
 {
     ASSERT(callType == CallTypeJS || callType == CallTypeHost);
+    ASSERT(isValidThisObject(thisValue, exec));
     return exec->interpreter()->executeCall(exec, asObject(functionObject), callType, callData, thisValue, args);
 }
 

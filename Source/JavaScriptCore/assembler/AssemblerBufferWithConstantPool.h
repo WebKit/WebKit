@@ -195,10 +195,10 @@ public:
         putIntegralUnchecked(value.low);
     }
 
-    void* executableCopy(ExecutablePool* allocator)
+    void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
     {
         flushConstantPool(false);
-        return AssemblerBuffer::executableCopy(allocator);
+        return AssemblerBuffer::executableCopy(globalData, allocator);
     }
 
     void putShortWithConstantInt(uint16_t insn, uint32_t constant, bool isReusable = false)

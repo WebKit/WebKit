@@ -27,11 +27,21 @@
 namespace JSC {
 
     class StringObject : public JSWrapperObject {
-    public:
+    protected:
         StringObject(ExecState*, Structure*);
         StringObject(ExecState*, Structure*, const UString&);
-
+                
+    public:
+        static StringObject* create(ExecState* exec, Structure* structure)
+        {
+            return new (allocateCell<StringObject>(*exec->heap())) StringObject(exec, structure);  
+        }
+        static StringObject* create(ExecState* exec, Structure* structure, const UString& str)
+        {
+            return new (allocateCell<StringObject>(*exec->heap())) StringObject(exec, structure, str);  
+        }
         static StringObject* create(ExecState*, JSGlobalObject*, JSString*);
+        
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
         virtual bool getOwnPropertySlot(ExecState*, unsigned propertyName, PropertySlot&);

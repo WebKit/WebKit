@@ -243,6 +243,11 @@ public:
             return pos == length;
         }
 
+        unsigned end()
+        {
+            return length;
+        }
+
         bool checkInput(int count)
         {
             if ((pos + count) <= length) {
@@ -1044,6 +1049,38 @@ public:
         return JSRegExpErrorNoMatch;
     }
 
+    bool matchDotStarEnclosure(ByteTerm& term, DisjunctionContext* context)
+    {
+        UNUSED_PARAM(term);
+        unsigned matchBegin = context->matchBegin;
+
+        if (matchBegin) {
+            for (matchBegin--; true; matchBegin--) {
+                if (testCharacterClass(pattern->newlineCharacterClass, input.reread(matchBegin))) {
+                    ++matchBegin;
+                    break;
+                }
+
+                if (!matchBegin)
+                    break;
+            }
+        }
+
+        unsigned matchEnd = input.getPos();
+
+        for (; (matchEnd != input.end())
+             && (!testCharacterClass(pattern->newlineCharacterClass, input.reread(matchEnd))); matchEnd++) { }
+
+        if (((matchBegin && term.anchors.m_bol)
+             || ((matchEnd != input.end()) && term.anchors.m_eol))
+            && !pattern->m_multiline)
+            return false;
+
+        context->matchBegin = matchBegin;
+        context->matchEnd = matchEnd;
+        return true;
+    }
+
 #define MATCH_NEXT() { ++context->term; goto matchAgain; }
 #define BACKTRACK() { --context->term; goto backtrack; }
 #define currentTerm() (disjunction->terms[context->term])
@@ -1203,9 +1240,14 @@ public:
                 MATCH_NEXT();
             BACKTRACK();
 
-            case ByteTerm::TypeUncheckInput:
-                input.uncheckInput(currentTerm().checkInputCount);
-                MATCH_NEXT();
+        case ByteTerm::TypeUncheckInput:
+            input.uncheckInput(currentTerm().checkInputCount);
+            MATCH_NEXT();
+                
+        case ByteTerm::TypeDotStarEnclosure:
+            if (matchDotStarEnclosure(currentTerm(), context))
+                return JSRegExpMatch;
+            BACKTRACK();
         }
 
         // We should never fall-through to here.
@@ -1242,91 +1284,94 @@ public:
         case ByteTerm::TypeBodyAlternativeEnd:
             ASSERT_NOT_REACHED();
 
-            case ByteTerm::TypeAlternativeBegin:
-            case ByteTerm::TypeAlternativeDisjunction: {
-                int offset = currentTerm().alternative.next;
-                context->term += offset;
-                if (offset > 0)
-                    MATCH_NEXT();
-                BACKTRACK();
-            }
-            case ByteTerm::TypeAlternativeEnd: {
-                // We should never backtrack back into an alternative of the main body of the regex.
-                BackTrackInfoAlternative* backTrack = reinterpret_cast<BackTrackInfoAlternative*>(context->frame + currentTerm().frameLocation);
-                unsigned offset = backTrack->offset;
-                context->term -= offset;
-                BACKTRACK();
-            }
+        case ByteTerm::TypeAlternativeBegin:
+        case ByteTerm::TypeAlternativeDisjunction: {
+            int offset = currentTerm().alternative.next;
+            context->term += offset;
+            if (offset > 0)
+                MATCH_NEXT();
+            BACKTRACK();
+        }
+        case ByteTerm::TypeAlternativeEnd: {
+            // We should never backtrack back into an alternative of the main body of the regex.
+            BackTrackInfoAlternative* backTrack = reinterpret_cast<BackTrackInfoAlternative*>(context->frame + currentTerm().frameLocation);
+            unsigned offset = backTrack->offset;
+            context->term -= offset;
+            BACKTRACK();
+        }
 
-            case ByteTerm::TypeAssertionBOL:
-            case ByteTerm::TypeAssertionEOL:
-            case ByteTerm::TypeAssertionWordBoundary:
-                BACKTRACK();
+        case ByteTerm::TypeAssertionBOL:
+        case ByteTerm::TypeAssertionEOL:
+        case ByteTerm::TypeAssertionWordBoundary:
+            BACKTRACK();
 
-            case ByteTerm::TypePatternCharacterOnce:
-            case ByteTerm::TypePatternCharacterFixed:
-            case ByteTerm::TypePatternCharacterGreedy:
-            case ByteTerm::TypePatternCharacterNonGreedy:
-                if (backtrackPatternCharacter(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
-            case ByteTerm::TypePatternCasedCharacterOnce:
-            case ByteTerm::TypePatternCasedCharacterFixed:
-            case ByteTerm::TypePatternCasedCharacterGreedy:
-            case ByteTerm::TypePatternCasedCharacterNonGreedy:
-                if (backtrackPatternCasedCharacter(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
-            case ByteTerm::TypeCharacterClass:
-                if (backtrackCharacterClass(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
-            case ByteTerm::TypeBackReference:
-                if (backtrackBackReference(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
-            case ByteTerm::TypeParenthesesSubpattern: {
-                JSRegExpResult result = backtrackParentheses(currentTerm(), context);
+        case ByteTerm::TypePatternCharacterOnce:
+        case ByteTerm::TypePatternCharacterFixed:
+        case ByteTerm::TypePatternCharacterGreedy:
+        case ByteTerm::TypePatternCharacterNonGreedy:
+            if (backtrackPatternCharacter(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypePatternCasedCharacterOnce:
+        case ByteTerm::TypePatternCasedCharacterFixed:
+        case ByteTerm::TypePatternCasedCharacterGreedy:
+        case ByteTerm::TypePatternCasedCharacterNonGreedy:
+            if (backtrackPatternCasedCharacter(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypeCharacterClass:
+            if (backtrackCharacterClass(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypeBackReference:
+            if (backtrackBackReference(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypeParenthesesSubpattern: {
+            JSRegExpResult result = backtrackParentheses(currentTerm(), context);
 
-                if (result == JSRegExpMatch) {
-                    MATCH_NEXT();
-                } else if (result != JSRegExpNoMatch)
-                    return result;
+            if (result == JSRegExpMatch) {
+                MATCH_NEXT();
+            } else if (result != JSRegExpNoMatch)
+                return result;
 
-                BACKTRACK();
-            }
-            case ByteTerm::TypeParenthesesSubpatternOnceBegin:
-                if (backtrackParenthesesOnceBegin(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
-            case ByteTerm::TypeParenthesesSubpatternOnceEnd:
-                if (backtrackParenthesesOnceEnd(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
-            case ByteTerm::TypeParenthesesSubpatternTerminalBegin:
-                if (backtrackParenthesesTerminalBegin(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
-            case ByteTerm::TypeParenthesesSubpatternTerminalEnd:
-                if (backtrackParenthesesTerminalEnd(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
-            case ByteTerm::TypeParentheticalAssertionBegin:
-                if (backtrackParentheticalAssertionBegin(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
-            case ByteTerm::TypeParentheticalAssertionEnd:
-                if (backtrackParentheticalAssertionEnd(currentTerm(), context))
-                    MATCH_NEXT();
-                BACKTRACK();
+            BACKTRACK();
+        }
+        case ByteTerm::TypeParenthesesSubpatternOnceBegin:
+            if (backtrackParenthesesOnceBegin(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypeParenthesesSubpatternOnceEnd:
+            if (backtrackParenthesesOnceEnd(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypeParenthesesSubpatternTerminalBegin:
+            if (backtrackParenthesesTerminalBegin(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypeParenthesesSubpatternTerminalEnd:
+            if (backtrackParenthesesTerminalEnd(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypeParentheticalAssertionBegin:
+            if (backtrackParentheticalAssertionBegin(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
+        case ByteTerm::TypeParentheticalAssertionEnd:
+            if (backtrackParentheticalAssertionEnd(currentTerm(), context))
+                MATCH_NEXT();
+            BACKTRACK();
 
-            case ByteTerm::TypeCheckInput:
-                input.uncheckInput(currentTerm().checkInputCount);
-                BACKTRACK();
+        case ByteTerm::TypeCheckInput:
+            input.uncheckInput(currentTerm().checkInputCount);
+            BACKTRACK();
 
-            case ByteTerm::TypeUncheckInput:
-                input.checkInput(currentTerm().checkInputCount);
-                BACKTRACK();
+        case ByteTerm::TypeUncheckInput:
+            input.checkInput(currentTerm().checkInputCount);
+            BACKTRACK();
+
+        case ByteTerm::TypeDotStarEnclosure:
+            ASSERT_NOT_REACHED();
         }
 
         ASSERT_NOT_REACHED();
@@ -1557,6 +1602,11 @@ public:
         m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
         m_bodyDisjunction->terms[endTerm].atom.quantityCount = quantityCount;
         m_bodyDisjunction->terms[endTerm].atom.quantityType = quantityType;
+    }
+
+    void assertionDotStarEnclosure(bool bolAnchored, bool eolAnchored)
+    {
+        m_bodyDisjunction->terms.append(ByteTerm::DotStarEnclosure(bolAnchored, eolAnchored));
     }
 
     unsigned popParenthesesStack()
@@ -1838,6 +1888,10 @@ public:
                     }
                     break;
                 }
+
+                case PatternTerm::TypeDotStarEnclosure:
+                    assertionDotStarEnclosure(term.anchors.bolAnchor, term.anchors.eolAnchor);
+                    break;
                 }
             }
         }

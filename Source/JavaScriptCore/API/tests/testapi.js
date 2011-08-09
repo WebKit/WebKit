@@ -94,6 +94,9 @@ shouldBe("MyObject('throwOnCall')", "an exception");
 shouldBe("new MyObject('throwOnConstruct')", "an exception");
 shouldBe("'throwOnHasInstance' instanceof MyObject", "an exception");
 
+MyObject.nullGetForwardSet = 1;
+shouldBe("MyObject.nullGetForwardSet", 1);
+
 var foundMyPropertyName = false;
 var foundRegularType = false;
 for (var p in MyObject) {
@@ -162,8 +165,8 @@ shouldBe("constructedObject.value", 1);
 shouldBe("myObject instanceof MyObject", true);
 shouldBe("(new Object()) instanceof MyObject", false);
 
-shouldThrow("MyObject.nullGetSet = 1");
-shouldThrow("MyObject.nullGetSet");
+MyObject.nullGetSet = 1;
+shouldBe("MyObject.nullGetSet", 1);
 shouldThrow("MyObject.nullCall()");
 shouldThrow("MyObject.hasPropertyLie");
 
@@ -246,6 +249,32 @@ shouldThrow("String(EvilExceptionObject)");
 
 shouldBe("EmptyObject", "[object CallbackObject]");
 
+for (var i = 0; i < 6; ++i)
+    PropertyCatchalls.x = i;
+shouldBe("PropertyCatchalls.x", 4);
+
+for (var i = 0; i < 6; ++i)
+    var x = PropertyCatchalls.x;
+shouldBe("x", null);
+
+for (var i = 0; i < 10; ++i) {
+    for (var p in PropertyCatchalls) {
+        if (p == "x")
+            continue;
+        shouldBe("p", i % 10);
+        break;
+    }
+}
+
+PropertyCatchalls.__proto__ = { y: 1 };
+for (var i = 0; i < 6; ++i)
+    var y = PropertyCatchalls.y;
+shouldBe("y", null);
+
+var o = { __proto__: PropertyCatchalls };
+for (var i = 0; i < 6; ++i)
+    var z = PropertyCatchalls.z;
+shouldBe("z", null);
+
 if (failed)
     throw "Some tests failed";
-

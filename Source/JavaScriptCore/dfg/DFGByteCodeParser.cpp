@@ -36,9 +36,12 @@ namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT_RESTRICTIONS)
 // FIXME: Temporarily disable arithmetic, until we fix associated performance regressions.
+// FIXME: temporarily disable property accesses until we fix regressions.
 #define ARITHMETIC_OP() m_parseFailed = true
+#define PROPERTY_ACCESS_OP() m_parseFailed = true
 #else
 #define ARITHMETIC_OP() ((void)0)
+#define PROPERTY_ACCESS_OP() ((void)0)
 #endif
 
 // === ByteCodeParser ===
@@ -59,6 +62,8 @@ public:
         , m_numArguments(codeBlock->m_numParameters)
         , m_numLocals(codeBlock->m_numCalleeRegisters)
         , m_preservedVars(codeBlock->m_numVars)
+        , m_parameterSlots(0)
+        , m_numPassedVarArgs(0)
     {
     }
 
@@ -121,7 +126,7 @@ private:
             if (node.op == GetLocal)
                 return nodeIndex;
             ASSERT(node.op == SetLocal);
-            return node.child1;
+            return node.child1();
         }
 
         // Check for reads of temporaries from prior blocks,
@@ -152,7 +157,7 @@ private:
             if (node.op == GetLocal)
                 return nodeIndex;
             ASSERT(node.op == SetLocal);
-            return node.child1;
+            return node.child1();
         }
 
         NodeIndex phi = addToGraph(Phi);
@@ -172,26 +177,10 @@ private:
     // Get an operand, and perform a ToInt32/ToNumber conversion on it.
     NodeIndex getToInt32(int operand)
     {
-        // Avoid wastefully adding a JSConstant node to the graph, only to
-        // replace it with a Int32Constant (which is what would happen if
-        // we called 'toInt32(get(operand))' in this case).
-        if (operand >= FirstConstantRegisterIndex) {
-            JSValue v = m_codeBlock->getConstant(operand);
-            if (v.isInt32())
-                return getInt32Constant(v.asInt32(), operand - FirstConstantRegisterIndex);
-        }
         return toInt32(get(operand));
     }
     NodeIndex getToNumber(int operand)
     {
-        // Avoid wastefully adding a JSConstant node to the graph, only to
-        // replace it with a DoubleConstant (which is what would happen if
-        // we called 'toNumber(get(operand))' in this case).
-        if (operand >= FirstConstantRegisterIndex) {
-            JSValue v = m_codeBlock->getConstant(operand);
-            if (v.isNumber())
-                return getDoubleConstant(v.uncheckedGetNumber(), operand - FirstConstantRegisterIndex);
-        }
         return toNumber(get(operand));
     }
 
@@ -203,29 +192,15 @@ private:
         if (node.hasInt32Result())
             return index;
 
-        if (node.hasDoubleResult()) {
-            if (node.op == DoubleConstant)
-                return getInt32Constant(JSC::toInt32(valueOfDoubleConstant(index)), node.constantNumber());
-            // 'NumberToInt32(Int32ToNumber(X))' == X, and 'NumberToInt32(UInt32ToNumber(X)) == X'
-            if (node.op == Int32ToNumber || node.op == UInt32ToNumber)
-                return node.child1;
-
-            // We unique NumberToInt32 nodes in a map to prevent duplicate conversions.
-            pair<UnaryOpMap::iterator, bool> result = m_numberToInt32Nodes.add(index, NoNode);
-            // Either we added a new value, or the existing value in the map is non-zero.
-            ASSERT(result.second == (result.first->second == NoNode));
-            if (result.second)
-                result.first->second = addToGraph(NumberToInt32, index);
-            return result.first->second;
-        }
+        if (node.op == UInt32ToNumber)
+            return node.child1();
 
         // Check for numeric constants boxed as JSValues.
         if (node.op == JSConstant) {
             JSValue v = valueOfJSConstant(index);
             if (v.isInt32())
-                return getInt32Constant(v.asInt32(), node.constantNumber());
-            if (v.isNumber())
-                return getInt32Constant(JSC::toInt32(v.uncheckedGetNumber()), node.constantNumber());
+                return getJSConstant(node.constantNumber());
+            // FIXME: We could convert the double ToInteger at this point.
         }
 
         return addToGraph(ValueToInt32, index);
@@ -236,53 +211,18 @@ private:
     {
         Node& node = m_graph[index];
 
-        if (node.hasDoubleResult())
+        if (node.hasDoubleResult() || node.hasInt32Result())
             return index;
-
-        if (node.hasInt32Result()) {
-            if (node.op == Int32Constant)
-                return getDoubleConstant(valueOfInt32Constant(index), node.constantNumber());
-
-            // We unique Int32ToNumber nodes in a map to prevent duplicate conversions.
-            pair<UnaryOpMap::iterator, bool> result = m_int32ToNumberNodes.add(index, NoNode);
-            // Either we added a new value, or the existing value in the map is non-zero.
-            ASSERT(result.second == (result.first->second == NoNode));
-            if (result.second)
-                result.first->second = addToGraph(Int32ToNumber, index);
-            return result.first->second;
-        }
 
         if (node.op == JSConstant) {
             JSValue v = valueOfJSConstant(index);
             if (v.isNumber())
-                return getDoubleConstant(v.uncheckedGetNumber(), node.constantNumber());
+                return getJSConstant(node.constantNumber());
         }
 
         return addToGraph(ValueToNumber, index);
     }
 
-
-    // Used in implementing get, above, where the operand is a constant.
-    NodeIndex getInt32Constant(int32_t value, unsigned constant)
-    {
-        NodeIndex index = m_constants[constant].asInt32;
-        if (index != NoNode)
-            return index;
-        NodeIndex resultIndex = addToGraph(Int32Constant, OpInfo(constant));
-        m_graph[resultIndex].setInt32Constant(value);
-        m_constants[constant].asInt32 = resultIndex;
-        return resultIndex;
-    }
-    NodeIndex getDoubleConstant(double value, unsigned constant)
-    {
-        NodeIndex index = m_constants[constant].asNumeric;
-        if (index != NoNode)
-            return index;
-        NodeIndex resultIndex = addToGraph(DoubleConstant, OpInfo(constant));
-        m_graph[resultIndex].setDoubleConstant(value);
-        m_constants[constant].asNumeric = resultIndex;
-        return resultIndex;
-    }
     NodeIndex getJSConstant(unsigned constant)
     {
         NodeIndex index = m_constants[constant].asJSValue;
@@ -305,34 +245,46 @@ private:
     }
 
     // Convenience methods for checking nodes for constants.
-    bool isInt32Constant(NodeIndex index)
-    {
-        return m_graph[index].op == Int32Constant;
-    }
-    bool isDoubleConstant(NodeIndex index)
-    {
-        return m_graph[index].op == DoubleConstant;
-    }
     bool isJSConstant(NodeIndex index)
     {
         return m_graph[index].op == JSConstant;
     }
-
+    bool isInt32Constant(NodeIndex nodeIndex)
+    {
+        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isInt32();
+    }
+    bool isSmallInt32Constant(NodeIndex nodeIndex)
+    {
+        if (!isJSConstant(nodeIndex))
+            return false;
+        JSValue value = valueOfJSConstant(nodeIndex);
+        if (!value.isInt32())
+            return false;
+        int32_t intValue = value.asInt32();
+        return intValue >= -5 && intValue <= 5;
+    }
+    bool isDoubleConstant(NodeIndex nodeIndex)
+    {
+        return isJSConstant(nodeIndex) && valueOfJSConstant(nodeIndex).isNumber();
+    }
     // Convenience methods for getting constant values.
-    int32_t valueOfInt32Constant(NodeIndex index)
-    {
-        ASSERT(isInt32Constant(index));
-        return m_graph[index].int32Constant();
-    }
-    double valueOfDoubleConstant(NodeIndex index)
-    {
-        ASSERT(isDoubleConstant(index));
-        return m_graph[index].numericConstant();
-    }
     JSValue valueOfJSConstant(NodeIndex index)
     {
         ASSERT(isJSConstant(index));
         return m_codeBlock->getConstant(FirstConstantRegisterIndex + m_graph[index].constantNumber());
+    }
+    int32_t valueOfInt32Constant(NodeIndex nodeIndex)
+    {
+        ASSERT(isInt32Constant(nodeIndex));
+        return valueOfJSConstant(nodeIndex).asInt32();
+    }
+    double valueOfDoubleConstant(NodeIndex nodeIndex)
+    {
+        ASSERT(isDoubleConstant(nodeIndex));
+        double value;
+        bool okay = valueOfJSConstant(nodeIndex).getNumber(value);
+        ASSERT_UNUSED(okay, okay);
+        return value;
     }
 
     // This method returns a JSConstant with the value 'undefined'.
@@ -395,7 +347,7 @@ private:
             for (m_constant1 = 0; m_constant1 < numberOfConstants; ++m_constant1) {
                 JSValue testMe = m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1);
                 if (testMe.isInt32() && testMe.asInt32() == 1)
-                    return getDoubleConstant(1, m_constant1);
+                    return getJSConstant(m_constant1);
             }
 
             // Add the value 1 to the CodeBlock's constants, and add a corresponding slot in m_constants.
@@ -408,7 +360,7 @@ private:
         // m_constant1 must refer to an entry in the CodeBlock's constant pool that has the integer value 1.
         ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1).isInt32());
         ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constant1).asInt32() == 1);
-        return getDoubleConstant(1, m_constant1);
+        return getJSConstant(m_constant1);
     }
 
 
@@ -441,6 +393,40 @@ private:
             m_graph.ref(resultIndex);
         return resultIndex;
     }
+    
+    NodeIndex addToGraph(Node::VarArgTag, NodeType op)
+    {
+        NodeIndex resultIndex = (NodeIndex)m_graph.size();
+        m_graph.append(Node(Node::VarArg, op, m_currentIndex, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
+        
+        m_numPassedVarArgs = 0;
+        
+        if (op & NodeMustGenerate)
+            m_graph.ref(resultIndex);
+        return resultIndex;
+    }
+    void addVarArgChild(NodeIndex child)
+    {
+        m_graph.m_varArgChildren.append(child);
+        m_numPassedVarArgs++;
+    }
+    
+    NodeIndex addCall(Interpreter* interpreter, Instruction* currentInstruction, NodeType op)
+    {
+        addVarArgChild(get(currentInstruction[1].u.operand));
+        int argCount = currentInstruction[2].u.operand;
+        int registerOffset = currentInstruction[3].u.operand;
+        int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
+        for (int argIdx = firstArg; argIdx < firstArg + argCount; argIdx++)
+            addVarArgChild(get(argIdx));
+        NodeIndex call = addToGraph(Node::VarArg, op);
+        Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
+        if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
+            set(putInstruction[1].u.operand, call);
+        if (RegisterFile::CallFrameHeaderSize + (unsigned)argCount > m_parameterSlots)
+            m_parameterSlots = RegisterFile::CallFrameHeaderSize + argCount;
+        return call;
+    }
 
     void predictArray(NodeIndex nodeIndex)
     {
@@ -455,13 +441,10 @@ private:
         Node* nodePtr = &m_graph[nodeIndex];
 
         if (nodePtr->op == ValueToNumber)
-            nodePtr = &m_graph[nodePtr->child1];
+            nodePtr = &m_graph[nodePtr->child1()];
 
         if (nodePtr->op == ValueToInt32)
-            nodePtr = &m_graph[nodePtr->child1];
-
-        if (nodePtr->op == NumberToInt32)
-            nodePtr = &m_graph[nodePtr->child1];
+            nodePtr = &m_graph[nodePtr->child1()];
 
         if (nodePtr->op == GetLocal)
             m_graph.predict(nodePtr->local(), PredictInt32);
@@ -515,6 +498,13 @@ private:
     // typically equal to the number vars, but we expand this to cover all
     // temporaries that persist across blocks (dues to ?:, &&, ||, etc).
     unsigned m_preservedVars;
+    // The number of slots (in units of sizeof(Register)) that we need to
+    // preallocate for calls emanating from this frame. This includes the
+    // size of the CallFrame, only if this is not a leaf function.  (I.e.
+    // this is 0 if and only if this function is a leaf.)
+    unsigned m_parameterSlots;
+    // The number of var args passed to the next var arg node.
+    unsigned m_numPassedVarArgs;
 
     struct PhiStackEntry {
         PhiStackEntry(BasicBlock* block, NodeIndex phi, unsigned varNo)
@@ -530,11 +520,6 @@ private:
     };
     Vector<PhiStackEntry, 16> m_argumentPhiStack;
     Vector<PhiStackEntry, 16> m_localPhiStack;
-
-    // These maps are used to unique ToNumber and ToInt32 operations.
-    typedef HashMap<NodeIndex, NodeIndex> UnaryOpMap;
-    UnaryOpMap m_int32ToNumberNodes;
-    UnaryOpMap m_numberToInt32Nodes;
 };
 
 #define NEXT_OPCODE(name) \
@@ -716,9 +701,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             // If both operands can statically be determined to the numbers, then this is an arithmetic add.
             // Otherwise, we must assume this may be performing a concatenation to a string.
-            if (m_graph[op1].hasNumericResult() && m_graph[op2].hasNumericResult())
+            if (m_graph[op1].hasNumericResult() && m_graph[op2].hasNumericResult()) {
+                if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
+                    predictInt32(op1);
+                    predictInt32(op2);
+                }
                 set(currentInstruction[1].u.operand, addToGraph(ArithAdd, toNumber(op1), toNumber(op2)));
-            else
+            } else
                 set(currentInstruction[1].u.operand, addToGraph(ValueAdd, op1, op2));
             NEXT_OPCODE(op_add);
         }
@@ -727,6 +716,10 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             ARITHMETIC_OP();
             NodeIndex op1 = getToNumber(currentInstruction[2].u.operand);
             NodeIndex op2 = getToNumber(currentInstruction[3].u.operand);
+            if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
+                predictInt32(op1);
+                predictInt32(op2);
+            }
             set(currentInstruction[1].u.operand, addToGraph(ArithSub, op1, op2));
             NEXT_OPCODE(op_sub);
         }
@@ -757,10 +750,27 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         // === Misc operations ===
 
+#if ENABLE(DEBUG_WITH_BREAKPOINT)
+        case op_debug:
+            addToGraph(Breakpoint);
+            NEXT_OPCODE(op_debug);
+#endif
         case op_mov: {
             NodeIndex op = get(currentInstruction[2].u.operand);
             set(currentInstruction[1].u.operand, op);
             NEXT_OPCODE(op_mov);
+        }
+
+        case op_check_has_instance:
+            addToGraph(CheckHasInstance, get(currentInstruction[1].u.operand));
+            NEXT_OPCODE(op_check_has_instance);
+
+        case op_instanceof: {
+            NodeIndex value = get(currentInstruction[2].u.operand);
+            NodeIndex baseValue = get(currentInstruction[3].u.operand);
+            NodeIndex prototype = get(currentInstruction[4].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(InstanceOf, value, baseValue, prototype));
+            NEXT_OPCODE(op_instanceof);
         }
 
         case op_not: {
@@ -784,6 +794,22 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             set(currentInstruction[1].u.operand, addToGraph(CompareLessEq, op1, op2));
             NEXT_OPCODE(op_lesseq);
+        }
+
+        case op_greater: {
+            ARITHMETIC_OP();
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CompareGreater, op1, op2));
+            NEXT_OPCODE(op_greater);
+        }
+
+        case op_greatereq: {
+            ARITHMETIC_OP();
+            NodeIndex op1 = get(currentInstruction[2].u.operand);
+            NodeIndex op2 = get(currentInstruction[3].u.operand);
+            set(currentInstruction[1].u.operand, addToGraph(CompareGreaterEq, op1, op2));
+            NEXT_OPCODE(op_greatereq);
         }
 
         case op_eq: {
@@ -860,11 +886,28 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
             NEXT_OPCODE(op_put_by_val);
         }
+            
+        case op_method_check: {
+            Instruction* getInstruction = currentInstruction + OPCODE_LENGTH(op_method_check);
+            
+            ASSERT(interpreter->getOpcodeID(getInstruction->u.opcode) == op_get_by_id);
+            
+            NodeIndex base = get(getInstruction[2].u.operand);
+            unsigned identifier = getInstruction[3].u.operand;
+            
+            NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), base);
+            set(getInstruction[1].u.operand, getMethod);
+            aliases.recordGetMethod(getMethod);
+            
+            m_currentIndex += OPCODE_LENGTH(op_method_check) + OPCODE_LENGTH(op_get_by_id);
+            continue;
+        }
 
         case op_get_by_id: {
+            PROPERTY_ACCESS_OP();
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifier = currentInstruction[3].u.operand;
-
+            
             NodeIndex getById = addToGraph(GetById, OpInfo(identifier), base);
             set(currentInstruction[1].u.operand, getById);
             aliases.recordGetById(getById);
@@ -873,6 +916,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_put_by_id: {
+            PROPERTY_ACCESS_OP();
             NodeIndex value = get(currentInstruction[3].u.operand);
             NodeIndex base = get(currentInstruction[1].u.operand);
             unsigned identifier = currentInstruction[2].u.operand;
@@ -959,6 +1003,42 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jneq_null);
         }
 
+        case op_jless: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLess, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jless)), condition);
+            LAST_OPCODE(op_jless);
+        }
+
+        case op_jlesseq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareLessEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jlesseq)), condition);
+            LAST_OPCODE(op_jlesseq);
+        }
+
+        case op_jgreater: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreater, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jgreater)), condition);
+            LAST_OPCODE(op_jgreater);
+        }
+
+        case op_jgreatereq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreaterEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jgreatereq)), condition);
+            LAST_OPCODE(op_jgreatereq);
+        }
+
         case op_jnless: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             NodeIndex op1 = get(currentInstruction[1].u.operand);
@@ -977,22 +1057,22 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_jnlesseq);
         }
 
-        case op_jless: {
+        case op_jngreater: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             NodeIndex op1 = get(currentInstruction[1].u.operand);
             NodeIndex op2 = get(currentInstruction[2].u.operand);
-            NodeIndex condition = addToGraph(CompareLess, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jless)), condition);
-            LAST_OPCODE(op_jless);
+            NodeIndex condition = addToGraph(CompareGreater, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jngreater)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jngreater);
         }
 
-        case op_jlesseq: {
+        case op_jngreatereq: {
             unsigned relativeOffset = currentInstruction[3].u.operand;
             NodeIndex op1 = get(currentInstruction[1].u.operand);
             NodeIndex op2 = get(currentInstruction[2].u.operand);
-            NodeIndex condition = addToGraph(CompareLessEq, op1, op2);
-            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jlesseq)), condition);
-            LAST_OPCODE(op_jlesseq);
+            NodeIndex condition = addToGraph(CompareGreaterEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jngreatereq)), OpInfo(m_currentIndex + relativeOffset), condition);
+            LAST_OPCODE(op_jngreatereq);
         }
 
         case op_loop_if_less: {
@@ -1013,9 +1093,67 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             LAST_OPCODE(op_loop_if_lesseq);
         }
 
-        case op_ret: {
+        case op_loop_if_greater: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreater, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_loop_if_greater)), condition);
+            LAST_OPCODE(op_loop_if_greater);
+        }
+
+        case op_loop_if_greatereq: {
+            unsigned relativeOffset = currentInstruction[3].u.operand;
+            NodeIndex op1 = get(currentInstruction[1].u.operand);
+            NodeIndex op2 = get(currentInstruction[2].u.operand);
+            NodeIndex condition = addToGraph(CompareGreaterEq, op1, op2);
+            addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_loop_if_greatereq)), condition);
+            LAST_OPCODE(op_loop_if_greatereq);
+        }
+
+        case op_ret:
             addToGraph(Return, get(currentInstruction[1].u.operand));
             LAST_OPCODE(op_ret);
+            
+        case op_end:
+            addToGraph(Return, get(currentInstruction[1].u.operand));
+            LAST_OPCODE(op_end);
+            
+        case op_call: {
+            NodeIndex call = addCall(interpreter, currentInstruction, Call);
+            aliases.recordCall(call);
+            NEXT_OPCODE(op_call);
+        }
+            
+        case op_construct: {
+            NodeIndex construct = addCall(interpreter, currentInstruction, Construct);
+            aliases.recordConstruct(construct);
+            NEXT_OPCODE(op_construct);
+        }
+            
+        case op_call_put_result:
+            NEXT_OPCODE(op_call_put_result);
+
+        case op_resolve: {
+            PROPERTY_ACCESS_OP();
+            unsigned identifier = currentInstruction[2].u.operand;
+
+            NodeIndex resolve = addToGraph(Resolve, OpInfo(identifier));
+            set(currentInstruction[1].u.operand, resolve);
+            aliases.recordResolve(resolve);
+
+            NEXT_OPCODE(op_resolve);
+        }
+
+        case op_resolve_base: {
+            PROPERTY_ACCESS_OP();
+            unsigned identifier = currentInstruction[2].u.operand;
+
+            NodeIndex resolve = addToGraph(currentInstruction[3].u.operand ? ResolveBaseStrictPut : ResolveBase, OpInfo(identifier));
+            set(currentInstruction[1].u.operand, resolve);
+            aliases.recordResolve(resolve);
+
+            NEXT_OPCODE(op_resolve_base);
         }
 
         default:
@@ -1034,7 +1172,6 @@ void ByteCodeParser::processPhiStack()
         PhiStackEntry entry = phiStack.last();
         phiStack.removeLast();
         
-        Node& phiNode = m_graph[entry.m_phi];
         PredecessorList& predecessors = entry.m_block->m_predecessors;
         unsigned varNo = entry.m_varNo;
 
@@ -1049,37 +1186,40 @@ void ByteCodeParser::processPhiStack()
                 var.value = valueInPredecessor;
                 phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
             } else if (m_graph[valueInPredecessor].op == GetLocal)
-                valueInPredecessor = m_graph[valueInPredecessor].child1;
+                valueInPredecessor = m_graph[valueInPredecessor].child1();
             ASSERT(m_graph[valueInPredecessor].op == SetLocal || m_graph[valueInPredecessor].op == Phi);
 
-            if (phiNode.refCount())
+            Node* phiNode = &m_graph[entry.m_phi];
+            if (phiNode->refCount())
                 m_graph.ref(valueInPredecessor);
 
-            if (phiNode.child1 == NoNode) {
-                phiNode.child1 = valueInPredecessor;
+            if (phiNode->child1() == NoNode) {
+                phiNode->children.fixed.child1 = valueInPredecessor;
                 continue;
             }
-            if (phiNode.child2 == NoNode) {
-                phiNode.child2 = valueInPredecessor;
+            if (phiNode->child2() == NoNode) {
+                phiNode->children.fixed.child2 = valueInPredecessor;
                 continue;
             }
-            if (phiNode.child3 == NoNode) {
-                phiNode.child3 = valueInPredecessor;
+            if (phiNode->child3() == NoNode) {
+                phiNode->children.fixed.child3 = valueInPredecessor;
                 continue;
             }
 
             NodeIndex newPhi = addToGraph(Phi);
+            
+            phiNode = &m_graph[entry.m_phi]; // reload after vector resize
             Node& newPhiNode = m_graph[newPhi];
-            if (phiNode.refCount())
+            if (phiNode->refCount())
                 m_graph.ref(newPhi);
 
-            newPhiNode.child1 = phiNode.child1;
-            newPhiNode.child2 = phiNode.child2;
-            newPhiNode.child3 = phiNode.child3;
+            newPhiNode.children.fixed.child1 = phiNode->child1();
+            newPhiNode.children.fixed.child2 = phiNode->child2();
+            newPhiNode.children.fixed.child3 = phiNode->child3();
 
-            phiNode.child1 = newPhi;
-            phiNode.child1 = valueInPredecessor;
-            phiNode.child3 = NoNode;
+            phiNode->children.fixed.child1 = newPhi;
+            phiNode->children.fixed.child1 = valueInPredecessor;
+            phiNode->children.fixed.child3 = NoNode;
         }
     }
 }
@@ -1107,9 +1247,10 @@ void ByteCodeParser::allocateVirtualRegisters()
     unsigned sizeExcludingPhiNodes = m_graph.m_blocks.last()->end;
     for (size_t i = 0; i < sizeExcludingPhiNodes; ++i) {
         Node& node = m_graph[i];
+        
         if (!node.shouldGenerate())
             continue;
-
+        
         // GetLocal nodes are effectively phi nodes in the graph, referencing
         // results from prior blocks.
         if (node.op != GetLocal) {
@@ -1117,9 +1258,14 @@ void ByteCodeParser::allocateVirtualRegisters()
             // allocate a VirtualRegister for this node. We do so in this
             // order so that if a child is on its last use, and a
             // VirtualRegister is freed, then it may be reused for node.
-            scoreBoard.use(node.child1);
-            scoreBoard.use(node.child2);
-            scoreBoard.use(node.child3);
+            if (node.op & NodeHasVarArgs) {
+                for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++)
+                    scoreBoard.use(m_graph.m_varArgChildren[childIdx]);
+            } else {
+                scoreBoard.use(node.child1());
+                scoreBoard.use(node.child2());
+                scoreBoard.use(node.child3());
+            }
         }
 
         if (!node.hasResult())
@@ -1135,7 +1281,7 @@ void ByteCodeParser::allocateVirtualRegisters()
     // 'm_numCalleeRegisters' is the number of locals and temporaries allocated
     // for the function (and checked for on entry). Since we perform a new and
     // different allocation of temporaries, more registers may now be required.
-    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_preservedVars;
+    unsigned calleeRegisters = scoreBoard.allocatedCount() + m_preservedVars + m_parameterSlots;
     if ((unsigned)m_codeBlock->m_numCalleeRegisters < calleeRegisters)
         m_codeBlock->m_numCalleeRegisters = calleeRegisters;
 }

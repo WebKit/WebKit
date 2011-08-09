@@ -78,12 +78,12 @@ void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* 
     if (!location) {
         JSFunction* function;
         JSGlobalObject* globalObject = asGlobalObject(thisObj->getAnonymousValue(0).asCell());
-#if ENABLE(JIT) && ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
+#if ENABLE(JIT)
         if (entry->generator())
-            function = new (exec) JSFunction(exec, globalObject, globalObject->functionStructure(), entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator()));
+            function = JSFunction::create(exec, globalObject, globalObject->functionStructure(), entry->functionLength(), propertyName, exec->globalData().getHostFunction(entry->function(), entry->generator()));
         else
 #endif
-            function = new (exec) JSFunction(exec, globalObject, globalObject->functionStructure(), entry->functionLength(), propertyName, entry->function());
+            function = JSFunction::create(exec, globalObject, globalObject->functionStructure(), entry->functionLength(), propertyName, entry->function());
 
         thisObj->putDirectFunction(exec->globalData(), propertyName, function, entry->attributes());
         location = thisObj->getDirectLocation(exec->globalData(), propertyName);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  * Copyright (C) 2007-2009 Torch Mobile, Inc.
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
  *
@@ -365,7 +365,7 @@
 
 #endif /* ARM */
 
-#if CPU(ARM) || CPU(MIPS)
+#if CPU(ARM) || CPU(MIPS) || CPU(SH4)
 #define WTF_CPU_NEEDS_ALIGNED_ACCESS 1
 #endif
 
@@ -543,10 +543,14 @@
 #define WTF_USE_CA 1
 #endif
 
-/* USE(SKIA) for Win/Linux, CG for Mac */
+/* USE(SKIA) for Win/Linux, CG for Mac, unless enabled */
 #if PLATFORM(CHROMIUM)
 #if OS(DARWIN)
+#if USE(SKIA_ON_MAC_CHROMIUM)
+#define WTF_USE_SKIA 1
+#else
 #define WTF_USE_CG 1
+#endif
 #define WTF_USE_ATSUI 1
 #define WTF_USE_CORE_TEXT 1
 #define WTF_USE_ICCJPEG 1
@@ -574,11 +578,11 @@
 #define WTF_USE_PTHREAD_BASED_QT 1
 #endif
 
-#if (PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || (PLATFORM(QT) && (OS(DARWIN) || USE(PTHREAD_BASED_QT)) && !ENABLE(SINGLE_THREADED))) && !defined(ENABLE_JSC_MULTIPLE_THREADS)
+#if (PLATFORM(GTK) || PLATFORM(IOS) || PLATFORM(MAC) || PLATFORM(WIN) || (PLATFORM(QT) && (OS(DARWIN) || USE(PTHREAD_BASED_QT)) && !ENABLE(SINGLE_THREADED))) && !OS(QNX) && !defined(ENABLE_JSC_MULTIPLE_THREADS)
 #define ENABLE_JSC_MULTIPLE_THREADS 1
 #endif
 
-#if ENABLE(JSC_MULTIPLE_THREADS)
+#if ENABLE(JSC_MULTIPLE_THREADS) || PLATFORM(CHROMIUM)
 #define ENABLE_WTF_MULTIPLE_THREADS 1
 #endif
 
@@ -600,7 +604,9 @@
 #endif  /* OS(WINCE) && !PLATFORM(QT) */
 
 #if PLATFORM(QT)
+#ifndef WTF_USE_ICU_UNICODE
 #define WTF_USE_QT4_UNICODE 1
+#endif
 #elif OS(WINCE)
 #define WTF_USE_WINCE_UNICODE 1
 #elif PLATFORM(BREWMP)
@@ -640,6 +646,8 @@
 #define WTF_USE_CF 1
 #define WTF_USE_PTHREADS 1
 #define HAVE_PTHREAD_RWLOCK 1
+
+#define WTF_USE_WK_SCROLLBAR_PAINTER 1
 #endif
 
 #if PLATFORM(BREWMP)
@@ -692,7 +700,7 @@
 #define WTF_USE_PTHREADS 0
 #endif
 
-#if PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(CHROMIUM) && !defined(WIN_CAIRO)
+#if PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(CHROMIUM) && !PLATFORM(WIN_CAIRO)
 #define WTF_USE_CFNETWORK 1
 #endif
 
@@ -705,12 +713,15 @@
 #define ENABLE_WEB_ARCHIVE 1
 #endif
 
-#if PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(CHROMIUM) && !defined(WIN_CAIRO) && !PLATFORM(QT)
+#if PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(CHROMIUM) && !PLATFORM(WIN_CAIRO) && !PLATFORM(QT)
 #define ENABLE_FULLSCREEN_API 1
 #endif
 
 #if PLATFORM(WX)
+#if !CPU(PPC)
 #define ENABLE_ASSEMBLER 1
+#define ENABLE_JIT 1
+#endif
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
 #if OS(DARWIN)
 #define WTF_USE_CF 1
@@ -1016,15 +1027,14 @@
 #if !defined(ENABLE_JIT) \
     && (CPU(X86) || CPU(X86_64) || CPU(ARM) || CPU(MIPS)) \
     && (OS(DARWIN) || !COMPILER(GCC) || GCC_VERSION_AT_LEAST(4, 1, 0)) \
-    && !OS(WINCE)
+    && !OS(WINCE) \
+    && !OS(QNX)
 #define ENABLE_JIT 1
 #endif
 
 /* Currently only implemented for JSVALUE64, only tested on PLATFORM(MAC) */
-#if ENABLE(JIT) && USE(JSVALUE64) && PLATFORM(MAC)
-#define ENABLE_DFG_JIT 0
-/* Enabled with restrictions to circumvent known performance regressions. */
-#define ENABLE_DFG_JIT_RESTRICTIONS 0
+#if !defined(ENABLE_DFG_JIT) && ENABLE(JIT) && USE(JSVALUE64) && PLATFORM(MAC)
+#define ENABLE_DFG_JIT 1
 #endif
 
 /* Ensure that either the JIT or the interpreter has been enabled. */
@@ -1037,32 +1047,13 @@
 
 #if CPU(SH4) && PLATFORM(QT)
 #define ENABLE_JIT 1
-#define ENABLE_YARR 1
-#define ENABLE_YARR_JIT 1
-#define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
-#define ENABLE_ASSEMBLER 1
 #endif
 
 /* Configure the JIT */
-#if ENABLE(JIT)
-    #if CPU(ARM)
-    #if !defined(ENABLE_JIT_USE_SOFT_MODULO) && WTF_ARM_ARCH_AT_LEAST(5)
-    #define ENABLE_JIT_USE_SOFT_MODULO 1
-    #endif
-    #endif
-
-    #ifndef ENABLE_JIT_OPTIMIZE_CALL
-    #define ENABLE_JIT_OPTIMIZE_CALL 1
-    #endif
-    #ifndef ENABLE_JIT_OPTIMIZE_NATIVE_CALL
-    #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 1
-    #endif
-    #ifndef ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS
-    #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
-    #endif
-    #ifndef ENABLE_JIT_OPTIMIZE_METHOD_CALLS
-    #define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 1
-    #endif
+#if CPU(ARM)
+#if !defined(ENABLE_JIT_USE_SOFT_MODULO) && WTF_ARM_ARCH_AT_LEAST(5)
+#define ENABLE_JIT_USE_SOFT_MODULO 1
+#endif
 #endif
 
 #if CPU(X86) && COMPILER(MSVC)
@@ -1114,6 +1105,21 @@
 #endif
 #endif
 
+#if ENABLE(SINGLE_THREADED)
+#undef ENABLE_LAZY_BLOCK_FREEING
+#define ENABLE_LAZY_BLOCK_FREEING 0
+#else
+#define ENABLE_LAZY_BLOCK_FREEING 1
+#endif
+
+#ifndef ENABLE_LARGE_HEAP
+#if CPU(X86) || CPU(X86_64)
+#define ENABLE_LARGE_HEAP 1
+#else
+#define ENABLE_LARGE_HEAP 0
+#endif
+#endif
+
 #if !defined(ENABLE_PAN_SCROLLING) && OS(WINDOWS)
 #define ENABLE_PAN_SCROLLING 1
 #endif
@@ -1129,8 +1135,10 @@
 /* Use the QXmlStreamReader implementation for XMLDocumentParser */
 /* Use the QXmlQuery implementation for XSLTProcessor */
 #if PLATFORM(QT)
+#if !USE(LIBXML2)
 #define WTF_USE_QXMLSTREAM 1
 #define WTF_USE_QXMLQUERY 1
+#endif
 #endif
 
 #if PLATFORM(MAC)
@@ -1145,7 +1153,7 @@
 #endif
 
 /* Accelerated compositing */
-#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(QT) || (PLATFORM(WIN) && !OS(WINCE) &&!defined(WIN_CAIRO))
+#if PLATFORM(MAC) || PLATFORM(IOS) || PLATFORM(QT) || (PLATFORM(WIN) && !OS(WINCE) && !PLATFORM(WIN_CAIRO)) || PLATFORM(EFL)
 #define WTF_USE_ACCELERATED_COMPOSITING 1
 #endif
 
@@ -1165,8 +1173,6 @@
 
 /* Set up a define for a common error that is intended to cause a build error -- thus the space after Error. */
 #define WTF_PLATFORM_CFNETWORK Error USE_macro_should_be_used_with_CFNETWORK
-
-#define ENABLE_JSC_ZOMBIES 0
 
 /* FIXME: Eventually we should enable this for all platforms and get rid of the define. */
 #if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
@@ -1206,7 +1212,7 @@
    breakages one port at a time. */
 #define WTF_USE_EXPORT_MACROS 0
 
-#if (PLATFORM(QT) && !OS(SYMBIAN)) || PLATFORM(GTK)
+#if (PLATFORM(QT) && !OS(SYMBIAN)) || PLATFORM(GTK) || PLATFORM(EFL)
 #define WTF_USE_UNIX_DOMAIN_SOCKETS 1
 #endif
 

@@ -28,8 +28,14 @@ namespace JSC {
     class ArrayPrototype;
 
     class ArrayConstructor : public InternalFunction {
-    public:
+    private:
         ArrayConstructor(ExecState*, JSGlobalObject*, Structure*, ArrayPrototype*);
+        
+    public:
+        static ArrayConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrPrototype)
+        {
+            return new (allocateCell<ArrayConstructor>(*exec->heap())) ArrayConstructor(exec, globalObject, structure, arrPrototype);
+        }
 
         static const ClassInfo s_info;
 

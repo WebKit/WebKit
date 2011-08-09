@@ -45,10 +45,10 @@ FunctionPrototype::FunctionPrototype(ExecState* exec, JSGlobalObject* globalObje
 
 void FunctionPrototype::addFunctionProperties(ExecState* exec, JSGlobalObject* globalObject, Structure* functionStructure, JSFunction** callFunction, JSFunction** applyFunction)
 {
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
-    *applyFunction = new (exec) JSFunction(exec, globalObject, functionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply);
+    putDirectFunctionWithoutTransition(exec, JSFunction::create(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, functionProtoFuncToString), DontEnum);
+    *applyFunction = JSFunction::create(exec, globalObject, functionStructure, 2, exec->propertyNames().apply, functionProtoFuncApply);
     putDirectFunctionWithoutTransition(exec, *applyFunction, DontEnum);
-    *callFunction = new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().call, functionProtoFuncCall);
+    *callFunction = JSFunction::create(exec, globalObject, functionStructure, 1, exec->propertyNames().call, functionProtoFuncCall);
     putDirectFunctionWithoutTransition(exec, *callFunction, DontEnum);
 }
 
@@ -121,12 +121,11 @@ EncodedJSValue JSC_HOST_CALL functionProtoFuncApply(ExecState* exec)
             asArguments(array)->fillArgList(exec, applyArgs);
         else if (isJSArray(&exec->globalData(), array))
             asArray(array)->fillArgList(exec, applyArgs);
-        else if (asObject(array)->inherits(&JSArray::s_info)) {
-            unsigned length = asArray(array)->get(exec, exec->propertyNames().length).toUInt32(exec);
+        else {
+            unsigned length = asObject(array)->get(exec, exec->propertyNames().length).toUInt32(exec);
             for (unsigned i = 0; i < length; ++i)
                 applyArgs.append(asArray(array)->get(exec, i));
-        } else
-            return throwVMTypeError(exec);
+        }
     }
 
     return JSValue::encode(call(exec, thisValue, callType, callData, exec->argument(0), applyArgs));

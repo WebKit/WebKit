@@ -69,6 +69,8 @@ function getTestCases() {
 
     array[item++] = new TestCase( SECTION,    "var VAR = true ? , : 'FAILED'", "PASSED",           (VAR = true ? "PASSED" : "FAILED") );
 
+    array[item++] = new TestCase( SECTION,    "item = " + item +"; VAR = (item < -2147483648) ? 'FAILED' : 'PASSED'", "PASSED",           (VAR = (item < -2147483648) ? "FAILED" : "PASSED") );
+
     return ( array );
 }
 function test() {

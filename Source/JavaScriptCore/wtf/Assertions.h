@@ -235,6 +235,7 @@ WTF_EXPORT_PRIVATE void WTFLogVerbose(const char* file, int line, const char* fu
 #if ASSERT_DISABLED
 
 #define ASSERT(assertion) ((void)0)
+#define ASSERT_AT(assertion, file, line, function) ((void)0)
 #define ASSERT_NOT_REACHED() ((void)0)
 
 #if COMPILER(INTEL) && !OS(WINDOWS) || COMPILER(RVCT)
@@ -250,6 +251,13 @@ inline void assertUnused(T& x) { (void)x; }
 #define ASSERT(assertion) do \
     if (!(assertion)) { \
         WTFReportAssertionFailure(__FILE__, __LINE__, WTF_PRETTY_FUNCTION, #assertion); \
+        CRASH(); \
+    } \
+while (0)
+
+#define ASSERT_AT(assertion, file, line, function) do  \
+    if (!(assertion)) { \
+        WTFReportAssertionFailure(file, line, function, #assertion); \
         CRASH(); \
     } \
 while (0)

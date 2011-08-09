@@ -135,6 +135,17 @@ namespace JSC {
         return !Identifier::equal(a, b);
     }
 
+    inline bool Identifier::equal(const StringImpl* r, const UChar* s, unsigned length)
+    {
+        if (r->length() != length)
+            return false;
+        const UChar* d = r->characters();
+        for (unsigned i = 0; i != length; ++i)
+            if (d[i] != s[i])
+                return false;
+        return true;
+    }
+    
     IdentifierTable* createIdentifierTable();
     void deleteIdentifierTable(IdentifierTable*);
 

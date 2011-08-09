@@ -1086,7 +1086,7 @@ private:
             double d;
             if (!read(d))
                 return JSValue();
-            return new (m_exec) DateInstance(m_exec, m_globalObject->dateStructure(), d);
+            return DateInstance::create(m_exec, m_globalObject->dateStructure(), d);
         }
         case FileTag: {
             RefPtr<File> file;
@@ -1166,8 +1166,8 @@ private:
                 return JSValue();
             RegExpFlags reFlags = regExpFlags(flags->ustring());
             ASSERT(reFlags != InvalidFlags);
-            RefPtr<RegExp> regExp = RegExp::create(&m_exec->globalData(), pattern->ustring(), reFlags);
-            return new (m_exec) RegExpObject(m_exec->lexicalGlobalObject(), m_globalObject->regExpStructure(), regExp); 
+            RegExp* regExp = RegExp::create(m_exec->globalData(), pattern->ustring(), reFlags);
+            return RegExpObject::create(m_exec, m_exec->lexicalGlobalObject(), m_globalObject->regExpStructure(), regExp); 
         }
         case ObjectReferenceTag: {
             unsigned index = 0;

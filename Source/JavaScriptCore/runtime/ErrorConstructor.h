@@ -29,9 +29,15 @@ namespace JSC {
     class ErrorPrototype;
 
     class ErrorConstructor : public InternalFunction {
-    public:
+    private:
         ErrorConstructor(ExecState*, JSGlobalObject*, Structure*, ErrorPrototype*);
 
+    public:
+        static ErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ErrorPrototype* errPrototype)
+        {
+            return new (allocateCell<ErrorConstructor>(*exec->heap())) ErrorConstructor(exec, globalObject, structure, errPrototype);
+        }
+        
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);

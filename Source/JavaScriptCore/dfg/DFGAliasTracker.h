@@ -60,7 +60,7 @@ public:
             // This check ensures the accesses alias, provided that the subscript is an
             // integer index (this is good enough; the speculative path will only generate
             // optimized accesses to handle integer subscripts).
-            if (possibleAlias.child1 == base && equalIgnoringLaterNumericConversion(possibleAlias.child2, property))
+            if (possibleAlias.child1() == base && equalIgnoringLaterNumericConversion(possibleAlias.child2(), property))
                 return m_candidateAliasGetByVal;
         }
         return NoNode;
@@ -82,6 +82,12 @@ public:
         ASSERT_UNUSED(getById, m_graph[getById].op == GetById);
         m_candidateAliasGetByVal = NoNode;
     }
+    
+    void recordGetMethod(NodeIndex getMethod)
+    {
+        ASSERT_UNUSED(getMethod, m_graph[getMethod].op == GetMethod);
+        m_candidateAliasGetByVal = NoNode;
+    }
 
     void recordPutById(NodeIndex putById)
     {
@@ -92,6 +98,26 @@ public:
     void recordPutByIdDirect(NodeIndex putByVal)
     {
         ASSERT_UNUSED(putByVal, m_graph[putByVal].op == PutByIdDirect);
+        m_candidateAliasGetByVal = NoNode;
+    }
+    
+    void recordCall(NodeIndex call)
+    {
+        ASSERT_UNUSED(call, m_graph[call].op == Call);
+        m_candidateAliasGetByVal = NoNode;
+    }
+
+    void recordConstruct(NodeIndex construct)
+    {
+        ASSERT_UNUSED(construct, m_graph[construct].op == Construct);
+        m_candidateAliasGetByVal = NoNode;
+    }
+
+    void recordResolve(NodeIndex resolve)
+    {
+        ASSERT_UNUSED(resolve, m_graph[resolve].op == Resolve
+            || m_graph[resolve].op == ResolveBase
+            || m_graph[resolve].op == ResolveBaseStrictPut);
         m_candidateAliasGetByVal = NoNode;
     }
 
@@ -106,7 +132,7 @@ private:
         if (op1 == op2)
             return true;
         Node& node2 = m_graph[op2];
-        return (node2.op == ValueToNumber || node2.op == ValueToInt32 || node2.op == NumberToInt32) && op1 == node2.child1;
+        return (node2.op == ValueToNumber || node2.op == ValueToInt32) && op1 == node2.child1();
     }
 
     // The graph, to look up potentially aliasing nodes.

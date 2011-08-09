@@ -42,8 +42,7 @@ def build(bld):
 
     if Options.options.port == "wx":
         if building_on_win32:
-            jscore_excludes += ['MarkStackPosix.cpp', 'OSAllocatorPosix.cpp', 'ThreadingPthreads.cpp']
-            sources += ['heap/MarkStackWin.cpp']
+            jscore_excludes += ['OSAllocatorPosix.cpp', 'ThreadingPthreads.cpp']
         else:
             jscore_excludes.append('JSStringRefBSTR.cpp')
             jscore_excludes.extend(get_excludes(jscore_dir, ['*Win.cpp']))

@@ -63,6 +63,7 @@ typedef union _GdkEvent GdkEvent;
 
 #if USE(CAIRO)
 typedef struct _cairo_surface cairo_surface_t;
+typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 #endif
 
 #if PLATFORM(GTK)
@@ -87,8 +88,6 @@ typedef struct _GdkRectangle GdkRectangle;
 typedef struct _GdkDrawable GdkWindow;
 #else
 typedef struct _GdkWindow GdkWindow;
-typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
-typedef cairo_rectangle_int_t GdkRectangle;
 typedef struct _GtkStyleContext GtkStyleContext;
 #endif
 

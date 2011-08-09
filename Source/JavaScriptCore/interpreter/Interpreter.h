@@ -69,7 +69,7 @@ namespace JSC {
         friend class JIT;
         friend class CachedCall;
     public:
-        Interpreter(JSGlobalData&);
+        Interpreter();
 
         RegisterFile& registerFile() { return m_registerFile; }
         
@@ -97,11 +97,11 @@ namespace JSC {
         JSValue execute(ProgramExecutable*, CallFrame*, ScopeChainNode*, JSObject* thisObj);
         JSValue executeCall(CallFrame*, JSObject* function, CallType, const CallData&, JSValue thisValue, const ArgList&);
         JSObject* executeConstruct(CallFrame*, JSObject* function, ConstructType, const ConstructData&, const ArgList&);
-        JSValue execute(EvalExecutable* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain);
+        JSValue execute(EvalExecutable* evalNode, CallFrame*, JSValue thisValue, ScopeChainNode*);
 
         JSValue retrieveArguments(CallFrame*, JSFunction*) const;
-        JSValue retrieveCaller(CallFrame*, JSFunction*) const;
-        void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue& function) const;
+        JS_EXPORT_PRIVATE JSValue retrieveCaller(CallFrame*, JSFunction*) const;
+        JS_EXPORT_PRIVATE void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue& function) const;
         
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         
@@ -121,7 +121,7 @@ namespace JSC {
         void endRepeatCall(CallFrameClosure&);
         JSValue execute(CallFrameClosure&);
 
-        JSValue execute(EvalExecutable*, CallFrame*, JSObject* thisObject, int globalRegisterOffset, ScopeChainNode*);
+        JSValue execute(EvalExecutable*, CallFrame*, JSValue thisValue, int globalRegisterOffset, ScopeChainNode*);
 
 #if ENABLE(INTERPRETER)
         NEVER_INLINE bool resolve(CallFrame*, Instruction*, JSValue& exceptionValue);
@@ -130,6 +130,7 @@ namespace JSC {
         NEVER_INLINE bool resolveGlobalDynamic(CallFrame*, Instruction*, JSValue& exceptionValue);
         NEVER_INLINE void resolveBase(CallFrame*, Instruction* vPC);
         NEVER_INLINE bool resolveBaseAndProperty(CallFrame*, Instruction*, JSValue& exceptionValue);
+        NEVER_INLINE bool resolveThisAndProperty(CallFrame*, Instruction*, JSValue& exceptionValue);
         NEVER_INLINE ScopeChainNode* createExceptionScope(CallFrame*, const Instruction* vPC);
 
         void tryCacheGetByID(CallFrame*, CodeBlock*, Instruction*, JSValue baseValue, const Identifier& propertyName, const PropertySlot&);
@@ -164,7 +165,13 @@ namespace JSC {
         HashMap<Opcode, OpcodeID> m_opcodeIDTable; // Maps Opcode => OpcodeID for decompiling
 #endif
     };
-    
+
+    // This value must not be an object that would require this conversion (WebCore's global object).
+    inline bool isValidThisObject(JSValue thisValue, ExecState* exec)
+    {
+        return !thisValue.isObject() || thisValue.toThisObject(exec) == thisValue;
+    }
+
 } // namespace JSC
 
 #endif // Interpreter_h

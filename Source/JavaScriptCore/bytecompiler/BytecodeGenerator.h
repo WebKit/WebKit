@@ -89,7 +89,7 @@ namespace JSC {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
+        JS_EXPORT_PRIVATE static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
         static bool dumpsGeneratedCode();
 
         BytecodeGenerator(ProgramNode*, ScopeChainNode*, SymbolTable*, ProgramCodeBlock*);
@@ -285,13 +285,13 @@ namespace JSC {
         RegisterID* emitUnaryNoDstOp(OpcodeID, RegisterID* src);
 
         RegisterID* emitNewObject(RegisterID* dst);
-        RegisterID* emitNewArray(RegisterID* dst, ElementNode*); // stops at first elision
+        RegisterID* emitNewArray(RegisterID* dst, ElementNode*, unsigned length); // stops at first elision
 
         RegisterID* emitNewFunction(RegisterID* dst, FunctionBodyNode* body);
         RegisterID* emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* body);
         RegisterID* emitNewFunctionInternal(RegisterID* dst, unsigned index, bool shouldNullCheck);
         RegisterID* emitNewFunctionExpression(RegisterID* dst, FuncExprNode* func);
-        RegisterID* emitNewRegExp(RegisterID* dst, PassRefPtr<RegExp> regExp);
+        RegisterID* emitNewRegExp(RegisterID* dst, RegExp*);
 
         RegisterID* emitMove(RegisterID* dst, RegisterID* src);
 
@@ -313,6 +313,7 @@ namespace JSC {
         RegisterID* emitResolveBase(RegisterID* dst, const Identifier& property);
         RegisterID* emitResolveBaseForPut(RegisterID* dst, const Identifier& property);
         RegisterID* emitResolveWithBase(RegisterID* baseDst, RegisterID* propDst, const Identifier& property);
+        RegisterID* emitResolveWithThis(RegisterID* baseDst, RegisterID* propDst, const Identifier& property);
 
         void emitMethodCheck();
 
@@ -399,6 +400,8 @@ namespace JSC {
         bool shouldEmitProfileHooks() { return m_shouldEmitProfileHooks; }
         
         bool isStrictMode() const { return m_codeBlock->isStrictMode(); }
+        
+        ScopeChainNode* scopeChain() const { return m_scopeChain.get(); }
 
     private:
         void emitOpcode(OpcodeID);
@@ -446,37 +449,29 @@ namespace JSC {
             return newRegister();
         }
 
-        // Returns the RegisterID corresponding to ident.
-        RegisterID* addGlobalVar(const Identifier& ident, bool isConstant)
-        {
-            RegisterID* local;
-            addGlobalVar(ident, isConstant, local);
-            return local;
-        }
-        // Returns true if a new RegisterID was added, false if a pre-existing RegisterID was re-used.
-        bool addGlobalVar(const Identifier&, bool isConstant, RegisterID*&);
+        // Returns the index of the added var.
+        int addGlobalVar(const Identifier&, bool isConstant);
 
         void addParameter(const Identifier&, int parameterIndex);
         
         void preserveLastVar();
+        bool shouldAvoidResolveGlobal();
 
         RegisterID& registerFor(int index)
         {
             if (index >= 0)
                 return m_calleeRegisters[index];
 
-            if (m_parameters.size()) {
-                ASSERT(!m_globals.size());
-                return m_parameters[index + m_parameters.size() + RegisterFile::CallFrameHeaderSize];
-            }
-
-            return m_globals[-index - 1];
+            ASSERT(m_parameters.size());
+            return m_parameters[index + m_parameters.size() + RegisterFile::CallFrameHeaderSize];
         }
 
         unsigned addConstant(const Identifier&);
         RegisterID* addConstantValue(JSValue);
-        unsigned addRegExp(PassRefPtr<RegExp>);
+        unsigned addRegExp(RegExp*);
 
+        unsigned addConstantBuffer(unsigned length);
+        
         FunctionExecutable* makeFunction(ExecState* exec, FunctionBodyNode* body)
         {
             return FunctionExecutable::create(exec, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
@@ -484,8 +479,10 @@ namespace JSC {
 
         FunctionExecutable* makeFunction(JSGlobalData* globalData, FunctionBodyNode* body)
         {
-            return FunctionExecutable::create(globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
+            return FunctionExecutable::create(*globalData, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());
         }
+
+        JSString* addStringConstant(const Identifier&);
 
         void addLineInfo(unsigned lineNo)
         {
@@ -500,8 +497,30 @@ namespace JSC {
         Vector<Instruction>& instructions() { return m_codeBlock->instructions(); }
         SymbolTable& symbolTable() { return *m_symbolTable; }
 
-        bool shouldOptimizeLocals() { return (m_codeType != EvalCode) && !m_dynamicScopeDepth; }
-        bool canOptimizeNonLocals() { return (m_codeType == FunctionCode) && !m_dynamicScopeDepth && !m_codeBlock->usesEval(); }
+        bool shouldOptimizeLocals()
+        {
+            if (m_dynamicScopeDepth)
+                return false;
+
+            if (m_codeType != FunctionCode)
+                return false;
+
+            return true;
+        }
+
+        bool canOptimizeNonLocals()
+        {
+            if (m_dynamicScopeDepth)
+                return false;
+
+            if (m_codeType == EvalCode)
+                return false;
+
+            if (m_codeType == FunctionCode && m_codeBlock->usesEval())
+                return false;
+
+            return true;
+        }
 
         RegisterID* emitThrowExpressionTooDeepException();
 
@@ -528,7 +547,6 @@ namespace JSC {
         SegmentedVector<RegisterID, 32> m_constantPoolRegisters;
         SegmentedVector<RegisterID, 32> m_calleeRegisters;
         SegmentedVector<RegisterID, 32> m_parameters;
-        SegmentedVector<RegisterID, 32> m_globals;
         SegmentedVector<Label, 32> m_labels;
         SegmentedVector<LabelScope, 8> m_labelScopes;
         RefPtr<RegisterID> m_lastVar;
@@ -541,7 +559,6 @@ namespace JSC {
         Vector<SwitchInfo> m_switchContextStack;
         Vector<ForInContext> m_forInContextStack;
 
-        int m_nextGlobalIndex;
         int m_firstConstantIndex;
         int m_nextConstantOffset;
         unsigned m_globalConstantIndex;

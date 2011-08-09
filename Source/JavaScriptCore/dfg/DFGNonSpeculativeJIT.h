@@ -52,9 +52,10 @@ struct EntryLocation {
     struct RegisterInfo {
         NodeIndex nodeIndex;
         DataFormat format;
+        bool isSpilled;
     };
     RegisterInfo m_gprInfo[GPRInfo::numberOfRegisters];
-    NodeIndex m_fprInfo[FPRInfo::numberOfRegisters];
+    RegisterInfo m_fprInfo[FPRInfo::numberOfRegisters];
 };
 
 // === NonSpeculativeJIT ===
@@ -82,153 +83,9 @@ private:
     void compile(SpeculationCheckIndexIterator&, Node&);
     void compile(SpeculationCheckIndexIterator&, BasicBlock&);
 
-    bool isKnownInteger(NodeIndex);
-    bool isKnownNumeric(NodeIndex);
-
-    // These methods are used when generating 'unexpected'
-    // calls out from JIT code to C++ helper routines -
-    // they spill all live values to the appropriate
-    // slots in the RegisterFile without changing any state
-    // in the GenerationInfo.
-    void silentSpillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
-    {
-        GenerationInfo& info = m_generationInfo[spillMe];
-        ASSERT(info.registerFormat() != DataFormatNone && info.registerFormat() != DataFormatDouble);
-
-        if (!info.needsSpill() || (info.gpr() == exclude))
-            return;
-
-        DataFormat registerFormat = info.registerFormat();
-
-        if (registerFormat == DataFormatInteger) {
-            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, info.gpr());
-            m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
-        } else {
-            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
-            m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
-        }
-    }
-    void silentSpillFPR(VirtualRegister spillMe, GPRReg canTrample, FPRReg exclude = InvalidFPRReg)
-    {
-        GenerationInfo& info = m_generationInfo[spillMe];
-        ASSERT(info.registerFormat() == DataFormatDouble);
-
-        if (!info.needsSpill() || (info.fpr() == exclude))
-            return;
-
-        boxDouble(info.fpr(), canTrample);
-        m_jit.storePtr(canTrample, JITCompiler::addressFor(spillMe));
-    }
-
-    void silentFillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
-    {
-        GenerationInfo& info = m_generationInfo[spillMe];
-        if (info.gpr() == exclude)
-            return;
-
-        NodeIndex nodeIndex = info.nodeIndex();
-        Node& node = m_jit.graph()[nodeIndex];
-        ASSERT(info.registerFormat() != DataFormatNone && info.registerFormat() != DataFormatDouble);
-        DataFormat registerFormat = info.registerFormat();
-
-        if (registerFormat == DataFormatInteger) {
-            if (node.isConstant()) {
-                ASSERT(isInt32Constant(nodeIndex));
-                m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), info.gpr());
-            } else
-                m_jit.load32(JITCompiler::addressFor(spillMe), info.gpr());
-            return;
-        }
-
-        if (node.isConstant())
-            m_jit.move(constantAsJSValueAsImmPtr(nodeIndex), info.gpr());
-        else {
-            ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
-            m_jit.loadPtr(JITCompiler::addressFor(spillMe), info.gpr());
-        }
-    }
-    void silentFillFPR(VirtualRegister spillMe, GPRReg canTrample, FPRReg exclude = InvalidFPRReg)
-    {
-        GenerationInfo& info = m_generationInfo[spillMe];
-        if (info.fpr() == exclude)
-            return;
-
-        NodeIndex nodeIndex = info.nodeIndex();
-        Node& node = m_jit.graph()[nodeIndex];
-        ASSERT(info.registerFormat() == DataFormatDouble);
-
-        if (node.isConstant())
-            m_jit.move(constantAsJSValueAsImmPtr(nodeIndex), info.gpr());
-        else {
-            m_jit.loadPtr(JITCompiler::addressFor(spillMe), canTrample);
-            unboxDouble(canTrample, info.fpr());
-        }
-    }
-
-    void silentSpillAllRegisters(GPRReg exclude, GPRReg preserve = InvalidGPRReg)
-    {
-        GPRReg canTrample = GPRInfo::regT0;
-        if (preserve == GPRInfo::regT0)
-            canTrample = GPRInfo::regT1;
-        
-        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister)
-                silentSpillGPR(iter.name(), exclude);
-        }
-        for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister)
-                silentSpillFPR(iter.name(), canTrample);
-        }
-    }
-    void silentSpillAllRegisters(FPRReg exclude, GPRReg preserve = InvalidGPRReg)
-    {
-        GPRReg canTrample = GPRInfo::regT0;
-        if (preserve == GPRInfo::regT0)
-            canTrample = GPRInfo::regT1;
-        
-        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister)
-                silentSpillGPR(iter.name());
-        }
-        for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister)
-                silentSpillFPR(iter.name(), canTrample, exclude);
-        }
-    }
-    void silentFillAllRegisters(GPRReg exclude)
-    {
-        GPRReg canTrample = GPRInfo::regT0;
-        if (exclude == GPRInfo::regT0)
-            canTrample = GPRInfo::regT1;
-        
-        for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister)
-                silentFillFPR(iter.name(), canTrample);
-        }
-        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister)
-                silentFillGPR(iter.name(), exclude);
-        }
-    }
-    void silentFillAllRegisters(FPRReg exclude)
-    {
-        GPRReg canTrample = GPRInfo::regT0;
-        
-        for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister) {
-                ASSERT_UNUSED(exclude, iter.regID() != exclude);
-                silentFillFPR(iter.name(), canTrample, exclude);
-            }
-        }
-        for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
-            if (iter.name() != InvalidVirtualRegister)
-                silentFillGPR(iter.name());
-        }
-    }
-
     // These methods are used to plant calls out to C++
     // helper routines to convert between types.
-    void valueToNumber(JSValueOperand&, FPRReg result);
+    void valueToNumber(JSValueOperand&, GPRReg result);
     void valueToInt32(JSValueOperand&, GPRReg result);
     void numberToInt32(FPRReg, GPRReg result);
 
@@ -239,6 +96,10 @@ private:
     {
         m_entryLocations.append(EntryLocation(entry, this));
     }
+    
+    // internal helpers for add/sub/mul operations
+    void knownConstantArithOp(NodeType op, NodeIndex regChild, NodeIndex immChild, bool commute);
+    void basicArithOp(NodeType op, Node&);
 
     EntryLocationVector m_entryLocations;
 };

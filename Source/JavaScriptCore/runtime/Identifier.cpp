@@ -77,17 +77,6 @@ bool Identifier::equal(const StringImpl* r, const char* s)
     return s[length] == 0;
 }
 
-bool Identifier::equal(const StringImpl* r, const UChar* s, unsigned length)
-{
-    if (r->length() != length)
-        return false;
-    const UChar* d = r->characters();
-    for (unsigned i = 0; i != length; ++i)
-        if (d[i] != s[i])
-            return false;
-    return true;
-}
-
 struct IdentifierCStringTranslator {
     static unsigned hash(const char* c)
     {

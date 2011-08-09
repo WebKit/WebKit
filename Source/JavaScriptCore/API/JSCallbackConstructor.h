@@ -32,8 +32,14 @@
 namespace JSC {
 
 class JSCallbackConstructor : public JSObjectWithGlobalObject {
-public:
+protected:
     JSCallbackConstructor(JSGlobalObject*, Structure*, JSClassRef, JSObjectCallAsConstructorCallback);
+public:
+    static JSCallbackConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, JSClassRef classRef, JSObjectCallAsConstructorCallback callback) 
+    {
+        return new (allocateCell<JSCallbackConstructor>(*exec->heap())) JSCallbackConstructor(globalObject, structure, classRef, callback);
+    }
+    
     virtual ~JSCallbackConstructor();
     JSClassRef classRef() const { return m_class; }
     JSObjectCallAsConstructorCallback callback() const { return m_callback; }

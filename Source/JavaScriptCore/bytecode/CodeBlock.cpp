@@ -38,13 +38,22 @@
 #include "JSFunction.h"
 #include "JSStaticScopeObject.h"
 #include "JSValue.h"
+#include "RepatchBuffer.h"
 #include "UStringConcatenate.h"
 #include <stdio.h>
 #include <wtf/StringExtras.h>
 
+#if ENABLE(DFG_JIT)
+#include "DFGOperations.h"
+#endif
+
 #define DUMP_CODE_BLOCK_STATISTICS 0
 
 namespace JSC {
+
+#if ENABLE(DFG_JIT)
+using namespace DFG;
+#endif
 
 #if !defined(NDEBUG) || ENABLE(OPCODE_SAMPLING)
 
@@ -191,8 +200,6 @@ static bool isPropertyAccess(OpcodeID opcodeID)
         case op_get_by_id_self:
         case op_get_by_id_proto:
         case op_get_by_id_chain:
-        case op_get_by_id_self_list:
-        case op_get_by_id_proto_list:
         case op_put_by_id_transition:
         case op_put_by_id_replace:
         case op_get_by_id:
@@ -252,11 +259,8 @@ static void printStructureStubInfo(const StructureStubInfo& stubInfo, unsigned i
     case access_put_by_id_replace:
         printf("  [%4d] %s: %s\n", instructionOffset, "put_by_id_replace", pointerToSourceString(stubInfo.u.putByIdReplace.baseObjectStructure).utf8().data());
         return;
-    case access_get_by_id:
-        printf("  [%4d] %s\n", instructionOffset, "get_by_id");
-        return;
-    case access_put_by_id:
-        printf("  [%4d] %s\n", instructionOffset, "put_by_id");
+    case access_unset:
+        printf("  [%4d] %s\n", instructionOffset, "unset");
         return;
     case access_get_by_id_generic:
         printf("  [%4d] %s\n", instructionOffset, "op_get_by_id_generic");
@@ -361,12 +365,10 @@ void CodeBlock::dump(ExecState* exec) const
 
     if (!m_constantRegisters.isEmpty()) {
         printf("\nConstants:\n");
-        unsigned registerIndex = m_numVars;
         size_t i = 0;
         do {
-            printf("   k%u = %s\n", registerIndex, valueToSourceString(exec, m_constantRegisters[i].get()).utf8().data());
+            printf("   k%u = %s\n", static_cast<unsigned>(i), valueToSourceString(exec, m_constantRegisters[i].get()).utf8().data());
             ++i;
-            ++registerIndex;
         } while (i < m_constantRegisters.size());
     }
 
@@ -518,11 +520,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] convert_this %s\n", location, registerName(exec, r0).data());
             break;
         }
-        case op_convert_this_strict: {
-            int r0 = (++it)->u.operand;
-            printf("[%4d] convert_this_strict %s\n", location, registerName(exec, r0).data());
-            break;
-        }
         case op_new_object: {
             int r0 = (++it)->u.operand;
             printf("[%4d] new_object\t %s\n", location, registerName(exec, r0).data());
@@ -533,6 +530,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             int argv = (++it)->u.operand;
             int argc = (++it)->u.operand;
             printf("[%4d] new_array\t %s, %s, %d\n", location, registerName(exec, dst).data(), registerName(exec, argv).data(), argc);
+            break;
+        }
+        case op_new_array_buffer: {
+            int dst = (++it)->u.operand;
+            int argv = (++it)->u.operand;
+            int argc = (++it)->u.operand;
+            printf("[%4d] new_array_buffer %s, %d, %d\n", location, registerName(exec, dst).data(), argv, argc);
             break;
         }
         case op_new_regexp: {
@@ -581,6 +585,14 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         }
         case op_lesseq: {
             printBinaryOp(exec, location, it, "lesseq");
+            break;
+        }
+        case op_greater: {
+            printBinaryOp(exec, location, it, "greater");
+            break;
+        }
+        case op_greatereq: {
+            printBinaryOp(exec, location, it, "greatereq");
             break;
         }
         case op_pre_inc: {
@@ -784,6 +796,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] resolve_with_base %s, %s, %s\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data());
             break;
         }
+        case op_resolve_with_this: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int id0 = (++it)->u.operand;
+            printf("[%4d] resolve_with_this %s, %s, %s\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), idName(id0, m_identifiers[id0]).data());
+            break;
+        }
         case op_get_by_id: {
             printGetByIdOp(exec, location, it, "get_by_id");
             break;
@@ -792,16 +811,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(exec, location, it, "get_by_id_self");
             break;
         }
-        case op_get_by_id_self_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_self_list");
-            break;
-        }
         case op_get_by_id_proto: {
             printGetByIdOp(exec, location, it, "get_by_id_proto");
-            break;
-        }
-        case op_get_by_id_proto_list: {
-            printGetByIdOp(exec, location, it, "op_get_by_id_proto_list");
             break;
         }
         case op_get_by_id_chain: {
@@ -812,16 +823,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(exec, location, it, "get_by_id_getter_self");
             break;
         }
-        case op_get_by_id_getter_self_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_getter_self_list");
-            break;
-        }
         case op_get_by_id_getter_proto: {
             printGetByIdOp(exec, location, it, "get_by_id_getter_proto");
-            break;
-        }
-        case op_get_by_id_getter_proto_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_getter_proto_list");
             break;
         }
         case op_get_by_id_getter_chain: {
@@ -832,16 +835,8 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printGetByIdOp(exec, location, it, "get_by_id_custom_self");
             break;
         }
-        case op_get_by_id_custom_self_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_custom_self_list");
-            break;
-        }
         case op_get_by_id_custom_proto: {
             printGetByIdOp(exec, location, it, "get_by_id_custom_proto");
-            break;
-        }
-        case op_get_by_id_custom_proto_list: {
-            printGetByIdOp(exec, location, it, "get_by_id_custom_proto_list");
             break;
         }
         case op_get_by_id_custom_chain: {
@@ -992,27 +987,6 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] jneq_ptr\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
             break;
         }
-        case op_jnless: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            printf("[%4d] jnless\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
-            break;
-        }
-        case op_jnlesseq: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            printf("[%4d] jnlesseq\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
-            break;
-        }
-        case op_loop_if_less: {
-            int r0 = (++it)->u.operand;
-            int r1 = (++it)->u.operand;
-            int offset = (++it)->u.operand;
-            printf("[%4d] loop_if_less\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
-            break;
-        }
         case op_jless: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
@@ -1027,11 +1001,74 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] jlesseq\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
             break;
         }
+        case op_jgreater: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] jgreater\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
+        case op_jgreatereq: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] jgreatereq\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
+        case op_jnless: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] jnless\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
+        case op_jnlesseq: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] jnlesseq\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
+        case op_jngreater: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] jngreater\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
+        case op_jngreatereq: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] jngreatereq\t\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
+        case op_loop_if_less: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] loop_if_less\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
         case op_loop_if_lesseq: {
             int r0 = (++it)->u.operand;
             int r1 = (++it)->u.operand;
             int offset = (++it)->u.operand;
             printf("[%4d] loop_if_lesseq\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
+        case op_loop_if_greater: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] loop_if_greater\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
+            break;
+        }
+        case op_loop_if_greatereq: {
+            int r0 = (++it)->u.operand;
+            int r1 = (++it)->u.operand;
+            int offset = (++it)->u.operand;
+            printf("[%4d] loop_if_greatereq\t %s, %s, %d(->%d)\n", location, registerName(exec, r0).data(), registerName(exec, r1).data(), offset, location + offset);
             break;
         }
         case op_switch_imm: {
@@ -1405,6 +1442,11 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC) const
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) && vPC[4].u.structure) {
+        visitor.append(&vPC[4].u.structure);
+        return;
+    }
+
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self)) {
         visitor.append(&vPC[4].u.structure);
         return;
@@ -1425,6 +1467,10 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC) const
         visitor.append(&vPC[6].u.structureChain);
         return;
     }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) && vPC[4].u.structure) {
+        visitor.append(&vPC[4].u.structure);
+        return;
+    }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
         visitor.append(&vPC[4].u.structure);
         return;
@@ -1432,17 +1478,6 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC) const
     if (vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global) || vPC[0].u.opcode == interpreter->getOpcode(op_resolve_global_dynamic)) {
         if (vPC[3].u.structure)
             visitor.append(&vPC[3].u.structure);
-        return;
-    }
-    if ((vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_proto_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_proto_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_proto_list))
-        || (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self_list))) {
-        PolymorphicAccessStructureList* polymorphicStructures = vPC[4].u.polymorphicStructures;
-        polymorphicStructures->visitAggregate(visitor, vPC[5].u.operand);
-        delete polymorphicStructures;
         return;
     }
 
@@ -1461,14 +1496,19 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
     visitor.append(&m_globalObject);
     visitor.append(&m_ownerExecutable);
-    if (m_rareData)
+    if (m_rareData) {
         m_rareData->m_evalCodeCache.visitAggregate(visitor);
+        size_t regExpCount = m_rareData->m_regexps.size();
+        WriteBarrier<RegExp>* regexps = m_rareData->m_regexps.data();
+        for (size_t i = 0; i < regExpCount; i++)
+            visitor.append(regexps + i);
+    }
     visitor.appendValues(m_constantRegisters.data(), m_constantRegisters.size());
     for (size_t i = 0; i < m_functionExprs.size(); ++i)
         visitor.append(&m_functionExprs[i]);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         visitor.append(&m_functionDecls[i]);
-#if ENABLE(JIT_OPTIMIZE_CALL)
+#if ENABLE(JIT)
     for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i)
         if (callLinkInfo(i).isLinked())
             visitor.append(&callLinkInfo(i).callee);
@@ -1476,6 +1516,8 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 #if ENABLE(INTERPRETER)
     for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
         visitStructures(visitor, &m_instructions[m_propertyAccessInstructions[i]]);
+    for (size_t size = m_globalResolveInstructions.size(), i = 0; i < size; ++i)
+        visitStructures(visitor, &m_instructions[m_globalResolveInstructions[i]]);
 #endif
 #if ENABLE(JIT)
     for (size_t size = m_globalResolveInfos.size(), i = 0; i < size; ++i) {
@@ -1488,10 +1530,14 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 
     for (size_t size = m_methodCallLinkInfos.size(), i = 0; i < size; ++i) {
         if (m_methodCallLinkInfos[i].cachedStructure) {
-            // Both members must be filled at the same time
+            // These members must be filled at the same time, and only after
+            // the MethodCallLinkInfo is set as seen.
+            ASSERT(m_methodCallLinkInfos[i].seenOnce());
             visitor.append(&m_methodCallLinkInfos[i].cachedStructure);
             ASSERT(!!m_methodCallLinkInfos[i].cachedPrototypeStructure);
             visitor.append(&m_methodCallLinkInfos[i].cachedPrototypeStructure);
+            visitor.append(&m_methodCallLinkInfos[i].cachedFunction);
+            visitor.append(&m_methodCallLinkInfos[i].cachedPrototype);
         }
     }
 #endif
@@ -1654,9 +1700,40 @@ void CodeBlock::createActivation(CallFrame* callFrame)
     ASSERT(codeType() == FunctionCode);
     ASSERT(needsFullScopeChain());
     ASSERT(!callFrame->uncheckedR(activationRegister()).jsValue());
-    JSActivation* activation = new (callFrame) JSActivation(callFrame, static_cast<FunctionExecutable*>(ownerExecutable()));
+    JSActivation* activation = JSActivation::create(callFrame->globalData(), callFrame, static_cast<FunctionExecutable*>(ownerExecutable()));
     callFrame->uncheckedR(activationRegister()) = JSValue(activation);
     callFrame->setScopeChain(callFrame->scopeChain()->push(activation));
+}
+    
+#if ENABLE(JIT)
+void CodeBlock::unlinkCalls()
+{
+    if (!(m_callLinkInfos.size() || m_methodCallLinkInfos.size()))
+        return;
+    if (!m_globalData->canUseJIT())
+        return;
+    RepatchBuffer repatchBuffer(this);
+    for (size_t i = 0; i < m_callLinkInfos.size(); i++) {
+        if (!m_callLinkInfos[i].isLinked())
+            continue;
+        if (getJITCode().jitType() == JITCode::DFGJIT) {
+#if ENABLE(DFG_JIT)
+            repatchBuffer.relink(CodeLocationCall(m_callLinkInfos[i].callReturnLocation), m_callLinkInfos[i].isCall ? operationLinkCall : operationLinkConstruct);
+#else
+            ASSERT_NOT_REACHED();
+#endif
+        } else
+            repatchBuffer.relink(CodeLocationNearCall(m_callLinkInfos[i].callReturnLocation), m_callLinkInfos[i].isCall ? m_globalData->jitStubs->ctiVirtualCallLink() : m_globalData->jitStubs->ctiVirtualConstructLink());
+        m_callLinkInfos[i].unlink();
+    }
+}
+#endif
+
+void CodeBlock::clearEvalCache()
+{
+    if (!m_rareData)
+        return;
+    m_rareData->m_evalCodeCache.clear();
 }
 
 } // namespace JSC

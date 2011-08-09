@@ -98,7 +98,7 @@ JSObject* NPRuntimeObjectMap::getOrCreateJSObject(JSGlobalObject* globalObject, 
     if (JSC::Weak<JSNPObject> jsNPObject = m_jsNPObjects.get(npObject))
         return jsNPObject.get();
 
-    JSNPObject* jsNPObject = new (&globalObject->globalData()) JSNPObject(globalObject, this, npObject);
+    JSNPObject* jsNPObject = JSNPObject::create(globalObject, this, npObject);
     m_jsNPObjects.set(npObject, JSC::Weak<JSNPObject>(globalObject->globalData(), jsNPObject, this, npObject));
 
     return jsNPObject;
