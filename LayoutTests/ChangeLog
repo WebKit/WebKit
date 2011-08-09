@@ -1,5 +1,13 @@
 2011-08-08  Adam Barth  <abarth@webkit.org>
 
+        This should actually be the correct fix for
+        fast/js/regexp-overflow.html.  The bug in bulk-optimize-baselines is
+        https://bugs.webkit.org/show_bug.cgi?id=65891.
+
+        * platform/chromium/fast/js/regexp-overflow-expected.txt:
+
+2011-08-08  Adam Barth  <abarth@webkit.org>
+
         Add fast/js/regexp-overflow.html result back for Chromium.  I'm not
         sure why bulk-rebaseline-tests remove it.  There's some bug in the
         script I need to track down.
