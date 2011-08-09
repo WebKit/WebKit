@@ -1,3 +1,13 @@
+2011-08-09  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: provide a way to hide user agent styles
+        https://bugs.webkit.org/show_bug.cgi?id=37766
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/styles/show-user-agent-styles-expected.txt: Added.
+        * inspector/styles/show-user-agent-styles.html: Added.
+
 2011-08-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: REGRESSION (r92672): http/tests/inspector/resource-main-cookies.php failing on Qt Linux Release

@@ -1,3 +1,24 @@
+2011-08-09  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: provide a way to hide user agent styles
+        https://bugs.webkit.org/show_bug.cgi?id=37766
+
+        Reviewed by Yury Semikhatsky.
+
+        Test: inspector/styles/show-user-agent-styles.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane):
+        (WebInspector.StylesSidebarPane.prototype._rebuildStyleRules.get continue):
+        (WebInspector.StylesSidebarPane.prototype._rebuildStyleRules):
+        (WebInspector.StylesSidebarPane.prototype._createElementStatePane):
+        (WebInspector.StylesSidebarPane.prototype._showUserAgentStylesSettingChanged):
+
 2011-08-09  Steve Block  <steveblock@google.com>
 
         JavaMethodJobject is no longer needed by V8

@@ -87,6 +87,7 @@ WebInspector.StylesSidebarPane = function(computedStylePane)
 
     WebInspector.cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.AttrModified, this._attributesUpdated, this);
+    WebInspector.settings.showUserAgentStyles.addChangeListener(this._showUserAgentStylesSettingChanged.bind(this));
 }
 
 WebInspector.StylesSidebarPane.ColorFormat = {
@@ -377,6 +378,8 @@ WebInspector.StylesSidebarPane.prototype = {
             styleRules.push({ isStyleSeparator: true, text: WebInspector.UIString("Matched CSS Rules") });
         for (var i = styles.matchedCSSRules.length - 1; i >= 0; --i) {
             var rule = styles.matchedCSSRules[i];
+            if (!WebInspector.settings.showUserAgentStyles.get() && (rule.isUser || rule.isUserAgent))
+                continue;
             styleRules.push({ style: rule.style, selectorText: rule.selectorText, sourceURL: rule.sourceURL, rule: rule, editable: !!(rule.style && rule.style.id) });
         }
 
@@ -420,6 +423,9 @@ WebInspector.StylesSidebarPane.prototype = {
                 if (!this._containsInherited(rulePayload.style))
                     continue;
                 var rule = rulePayload;
+                if (!WebInspector.settings.showUserAgentStyles.get() && (rule.isUser || rule.isUserAgent))
+                    continue;
+
                 if (!separatorInserted) {
                     insertInheritedNodeSeparator(parentNode);
                     separatorInserted = true;
@@ -763,6 +769,11 @@ WebInspector.StylesSidebarPane.prototype = {
         table.appendChild(tr);
 
         this._elementStatePane.appendChild(table);
+    },
+
+    _showUserAgentStylesSettingChanged: function()
+    {
+        this._innerUpdate(false);
     }
 }
 
