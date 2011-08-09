@@ -1,3 +1,12 @@
+2011-08-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: REGRESSION (r92672): http/tests/inspector/resource-main-cookies.php failing on Qt Linux Release
+        https://bugs.webkit.org/show_bug.cgi?id=65911
+
+        Unreviewed. Skipped test failing on qt.
+
+        * platform/qt/Skipped:
+
 2011-08-09  Andrei Popescu  <andreip@google.com>
 
         [Chromium] Update test expectations for fast/writing-mode/japanese-rl-text-with-broken-font.html
