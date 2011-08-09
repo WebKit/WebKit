@@ -1,3 +1,13 @@
+2011-08-09  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: assertion failure in InspectorDOMStorageResource::bind when opening inspector
+        https://bugs.webkit.org/show_bug.cgi?id=65912
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InspectorDOMStorageAgent.cpp:
+        (WebCore::InspectorDOMStorageAgent::didUseDOMStorage):
+
 2011-08-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: get rid of InspectorInstrumentation::inspectorAgents() map

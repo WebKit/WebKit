@@ -181,7 +181,7 @@ void InspectorDOMStorageAgent::didUseDOMStorage(StorageArea* storageArea, bool i
     m_resources.set(resource->id(), resource);
 
     // Resources are only bound while visible.
-    if (m_frontend)
+    if (m_enabled)
         resource->bind(m_frontend);
 }
 
