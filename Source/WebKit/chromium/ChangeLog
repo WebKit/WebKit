@@ -1,5 +1,14 @@
 2011-08-09  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] remove temporary #define from WebURLRequest.h
+        https://bugs.webkit.org/show_bug.cgi?id=65813
+
+        Reviewed by Darin Fisher.
+
+        * public/WebURLRequest.h:
+
+2011-08-09  Jochen Eisinger  <jochen@chromium.org>
+
         Unreviewed.  Rolled DEPS.
 
         * DEPS:
