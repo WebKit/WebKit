@@ -55,6 +55,67 @@ platform/mac/editing/spelling/removing-underline-after-accepting-autocorrection-
 # Pasting replaces the three periods with an ellipsis on Lion
 editing/pasteboard/5478250.html
 
+# --- Math ML ---
+
+# These have different metrics, and require investigation
+mathml/xHeight.xhtml
+mathml/presentation/attributes.xhtml
+mathml/presentation/fenced.xhtml
+mathml/presentation/fenced-mi.xhtml
+mathml/presentation/fractions-vertical-alignment.xhtml
+mathml/presentation/fractions.xhtml
+mathml/presentation/mo.xhtml
+mathml/presentation/msub-base-changed.xhtml
+mathml/presentation/msub-sub-changed.xhtml
+mathml/presentation/msubsup-base-changed.xhtml
+mathml/presentation/msubsup-sub-changed.xhtml
+mathml/presentation/msubsup-sup-changed.xhtml
+mathml/presentation/msup-base-changed.xhtml
+mathml/presentation/msup-sup-changed.xhtml
+mathml/presentation/over.xhtml
+mathml/presentation/row-alignment.xhtml
+mathml/presentation/row.xhtml
+mathml/presentation/sub.xhtml
+mathml/presentation/subsup.xhtml
+mathml/presentation/sup.xhtml
+mathml/presentation/tables.xhtml
+mathml/presentation/tokenElements.xhtml
+mathml/presentation/under.xhtml
+mathml/presentation/underover.xhtml
+mathml/presentation/roots.xhtml
+mathml/presentation/style.xhtml
+
+# --- Media ---
+
+# These need investigation
+
+media/controls-styling.html
+media/controls-without-preload.html
+media/media-document-audio-repaint.html
+media/media-fullscreen-inline.html
+media/media-fullscreen-not-in-document.html
+media/video-canvas-alpha.html
+media/video-display-aspect-ratio.html
+media/video-frame-accurate-seek.html
+media/video-transformed.html
+media/video-zoom-controls.html
+media/video-zoom.html
+
+# --- Plugins ---
+
+# WebKit1 OOP plug-ins: Can't evaluate JavaScript from NPP_Destroy.
+plugins/document-open.html
+plugins/geturlnotify-during-document-teardown.html
+plugins/nested-plugin-objects.html
+plugins/netscape-destroy-plugin-script-objects.html
+plugins/open-and-close-window-with-plugin.html
+
+# WebKit1 OOP plug-ins: No support for getting the form value.
+plugins/form-value.html
+
+# WebKit1 OOP plug-ins: Exceptions aren't thrown on invoke failure.
+plugins/npruntime/invoke-failure.html
+
 # --- Misc failures that need investigation ---
 
 # These fail in DRT but look correct in Safari.
@@ -68,3 +129,6 @@ fast/events/mousedown-in-subframe-scrollbar.html
 editing/spelling/spellcheck-paste.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
+
+# Most if not all Java tests fail when run in WebKit1.
+java/

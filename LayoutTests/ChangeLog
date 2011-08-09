@@ -1,3 +1,9 @@
+2011-08-09  Anders Carlsson  <andersca@apple.com>
+
+        More Lion skipped list goodness.
+
+        * platform/mac-lion/Skipped:
+
 2011-08-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: XHRs end up in the resources panel.
