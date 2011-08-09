@@ -128,7 +128,7 @@ function test()
         function testFilesSelect(next)
         {
             var panel = new WebInspector.ScriptsPanel();
-            var rootURL = WebInspector.mainResource.url.substring(0, WebInspector.mainResource.url.lastIndexOf("/") + 1);
+            var rootURL = "http://localhost:8080/LayoutTests/inspector/debugger/";
             var nextId = 0;
             function addOption(url, isContentScript)
             {
