@@ -1,3 +1,16 @@
+2011-08-09  Adam Barth  <abarth@webkit.org>
+
+        Upgrade jquery in TestFailures
+        https://bugs.webkit.org/show_bug.cgi?id=65935
+
+        Reviewed by Dimitri Glazkov.
+
+        Upgrade to a newer version of jQuery with better support for CORS and CSP.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+
 2011-08-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92683.
