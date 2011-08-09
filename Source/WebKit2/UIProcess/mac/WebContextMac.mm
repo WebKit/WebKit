@@ -86,6 +86,10 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
 
     ASSERT(!parameters.nsURLCachePath.isEmpty());
 
+#if ENABLE(PLUGIN_PROCESS)
+    parameters.disablePluginProcessMessageTimeout = [[NSUserDefaults standardUserDefaults] boolForKey:@"DisablePluginProcessMessageTimeout"];
+#endif
+
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
     mach_port_t renderServerPort = WKInitializeRenderServer();
     if (renderServerPort != MACH_PORT_NULL)

@@ -126,6 +126,7 @@ public:
 
 #if ENABLE(PLUGIN_PROCESS)
     PluginProcessConnectionManager& pluginProcessConnectionManager() { return m_pluginProcessConnectionManager; }
+    bool disablePluginProcessMessageTimeout() const { return m_disablePluginProcessMessageTimeout; }
 #endif
 
 private:
@@ -240,7 +241,9 @@ private:
 
 #if ENABLE(PLUGIN_PROCESS)
     PluginProcessConnectionManager m_pluginProcessConnectionManager;
+    bool m_disablePluginProcessMessageTimeout;
 #endif
+
 };
 
 } // namespace WebKit

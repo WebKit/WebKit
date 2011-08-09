@@ -134,6 +134,9 @@ WebProcess::WebProcess()
     , m_textCheckerState()
     , m_geolocationManager(this)
     , m_iconDatabaseProxy(this)
+#if ENABLE(PLUGIN_PROCESS)
+    , m_disablePluginProcessMessageTimeout(false)
+#endif
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -232,6 +235,10 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
 #if USE(CFURLSTORAGESESSIONS)
     WebCore::ResourceHandle::setPrivateBrowsingStorageSessionIdentifierBase(parameters.uiProcessBundleIdentifier);
+#endif
+
+#if ENABLE(PLUGIN_PROCESS)
+    m_disablePluginProcessMessageTimeout = parameters.disablePluginProcessMessageTimeout;
 #endif
 }
 

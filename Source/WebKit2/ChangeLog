@@ -1,3 +1,34 @@
+2011-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Add a user default to disable the plug-in process message timeout
+        https://bugs.webkit.org/show_bug.cgi?id=65945
+
+        Reviewed by Adam Roben.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        Add a disablePluginProcessMessageTimeout member variable.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+        Initialize the disablePluginProcessMessageTimeout member variable from the 
+        "DisablePluginProcessMessageTimeout" user default.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::defaultSyncMessageTimeout):
+        Return NoTimeout if WebProcess::disablePluginProcessMessageTimeout returns true.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::initializeWebProcess):
+        Initialize m_disablePluginProcessMessageTimeout.
+        
+        * WebProcess/WebProcess.h:
+        (WebKit::WebProcess::disablePluginProcessMessageTimeout):
+        Add getter.
+
 2011-08-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add ParentClass typedef in all JSC classes

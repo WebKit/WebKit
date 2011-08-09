@@ -64,6 +64,9 @@ static double defaultSyncMessageTimeout(const String& pluginPath)
     if (pathGetFileName(pluginPath) == "PersonalPlugin.bundle")
         return CoreIPC::Connection::NoTimeout;
 
+    if (WebProcess::shared().disablePluginProcessMessageTimeout())
+        return CoreIPC::Connection::NoTimeout;
+
     return syncMessageTimeout;
 }
 

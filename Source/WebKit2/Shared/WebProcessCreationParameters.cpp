@@ -61,6 +61,9 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(shouldTrackVisitedLinks);
     encoder->encode(shouldAlwaysUseComplexTextCodePath);
     encoder->encode(iconDatabaseEnabled);
+#if ENABLE(PLUGIN_PROCESS)
+    encoder->encode(disablePluginProcessMessageTimeout);
+#endif
     encoder->encode(languageCode);
     encoder->encode(textCheckerState);
     encoder->encode(defaultRequestTimeoutInterval);
@@ -118,6 +121,11 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
         return false;
     if (!decoder->decode(parameters.iconDatabaseEnabled))
         return false;
+#if ENABLE(PLUGIN_PROCESS)
+    if (!decoder->decode(parameters.disablePluginProcessMessageTimeout))
+        return false;
+#endif
+
     if (!decoder->decode(parameters.languageCode))
         return false;
     if (!decoder->decode(parameters.textCheckerState))
