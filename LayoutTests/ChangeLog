@@ -1,5 +1,14 @@
 2011-08-09  Anders Carlsson  <andersca@apple.com>
 
+        Add an expected result for svg/W3C-I18N/text-anchor-dirLTR-anchorEnd.svg and check if it's
+        possible to have a pixel test result in a different platform directory from a text result.
+
+        * platform/mac-snowleopard/svg/W3C-I18N: Added.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorEnd-expected.txt:
+
+2011-08-09  Anders Carlsson  <andersca@apple.com>
+
         Tweak an expected result.
 
         * platform/mac-snowleopard/fast/loader/file-url-mimetypes-expected.txt:
