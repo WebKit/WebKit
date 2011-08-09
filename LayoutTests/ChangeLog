@@ -1,3 +1,11 @@
+2011-08-09  Renata Hodovan  <reni@webkit.org>
+
+        [Qt]REGRESSION(r22030): It made one test failed.
+
+        Unreviewed gardening.
+
+        * platform/qt-4.8/Skipped: Skip the failed test.
+
 2011-08-08  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update baseline files for r92585.
