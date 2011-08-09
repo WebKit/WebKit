@@ -29,10 +29,9 @@ namespace JSC {
     // This class is used as a base for classes such as String,
     // Number, Boolean and Date which are wrappers for primitive types.
     class JSWrapperObject : public JSNonFinalObject {
-    protected:
-        explicit JSWrapperObject(JSGlobalData&, Structure*);
-
     public:
+        typedef JSNonFinalObject Base;
+
         JSValue internalValue() const;
         void setInternalValue(JSGlobalData&, JSValue);
 
@@ -42,6 +41,7 @@ namespace JSC {
         }
 
     protected:
+        explicit JSWrapperObject(JSGlobalData&, Structure*);
         static const unsigned StructureFlags = OverridesVisitChildren | JSNonFinalObject::StructureFlags;
 
     private:

@@ -28,6 +28,8 @@ namespace WebCore {
 
     class JSOptionConstructor : public DOMConstructorWithDocument {
     public:
+        typedef DOMConstructorWithDocument Base;
+
         static JSOptionConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
         {
             return new (JSC::allocateCell<JSOptionConstructor>(*exec->heap())) JSOptionConstructor(exec, structure, globalObject);

@@ -44,6 +44,8 @@ namespace JSC {
         friend class JIT;
 
     public:
+        typedef JSNonFinalObject Base;
+
         SymbolTable& symbolTable() const { return *m_symbolTable; }
 
         virtual void putWithAttributes(ExecState*, const Identifier&, JSValue, unsigned attributes) = 0;

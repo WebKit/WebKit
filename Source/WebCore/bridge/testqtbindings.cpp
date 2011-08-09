@@ -76,7 +76,9 @@ using namespace JSC::Bindings;
 
 class Global : public JSNonFinalObject {
 public:
-  virtual UString className() const { return "global"; }
+    typedef JSNonFinalObject Base;
+
+    virtual UString className() const { return "global"; }
 };
 
 static char code[] =

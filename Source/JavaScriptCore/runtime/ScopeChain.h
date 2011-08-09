@@ -48,6 +48,8 @@ namespace JSC {
         }
 
     public:
+        typedef JSCell Base;
+
         static ScopeChainNode* create(ExecState* exec, ScopeChainNode* next, JSObject* object, JSGlobalData* globalData, JSGlobalObject* globalObject, JSObject* globalThis)
         {
             return new (allocateCell<ScopeChainNode>(*exec->heap())) ScopeChainNode(next, object, globalData, globalObject, globalThis);

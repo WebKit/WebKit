@@ -80,6 +80,8 @@ namespace JSC {
         friend void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
 
     public:
+        typedef JSCell Base;
+
         virtual void visitChildren(SlotVisitor&);
         ALWAYS_INLINE void visitChildrenDirect(SlotVisitor&);
 
@@ -332,6 +334,8 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
+        typedef JSObject Base;
+
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
@@ -360,6 +364,8 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
+        typedef JSObject Base;
+
         explicit JSFinalObject(VPtrStealingHackType)
             : JSObject(VPtrStealingHack, m_inlineStorage)
         {

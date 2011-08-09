@@ -32,8 +32,8 @@
 namespace WebCore {
 
 class JSTestInterface : public JSDOMWrapper {
-    typedef JSDOMWrapper Base;
 public:
+    typedef JSDOMWrapper Base;
     static JSTestInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestInterface> impl)
     {
         return new (JSC::allocateCell<JSTestInterface>(globalObject->globalData().heap)) JSTestInterface(structure, globalObject, impl);
@@ -63,8 +63,8 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestInterface*);
 TestInterface* toTestInterface(JSC::JSValue);
 
 class JSTestInterfacePrototype : public JSC::JSObjectWithGlobalObject {
-    typedef JSC::JSObjectWithGlobalObject Base;
 public:
+    typedef JSC::JSObjectWithGlobalObject Base;
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestInterfacePrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {

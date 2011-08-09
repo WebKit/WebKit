@@ -27,10 +27,9 @@
 namespace JSC {
     
     class RegExpObject : public JSObjectWithGlobalObject {
-    protected:
-        RegExpObject(JSGlobalObject*, Structure*, RegExp*);
-
     public:
+        typedef JSObjectWithGlobalObject Base;
+
         static RegExpObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
         {
             return new (allocateCell<RegExpObject>(*exec->heap())) RegExpObject(globalObject, structure, regExp);
@@ -40,8 +39,6 @@ namespace JSC {
         {
             return new (allocateCell<RegExpObject>(globalData.heap)) RegExpObject(globalObject, structure, regExp);
         }
-        
-        typedef JSObjectWithGlobalObject Base;
 
         virtual ~RegExpObject();
 
@@ -76,6 +73,7 @@ namespace JSC {
         }
 
     protected:
+        RegExpObject(JSGlobalObject*, Structure*, RegExp*);
         static const unsigned StructureFlags = OverridesVisitChildren | OverridesGetOwnPropertySlot | JSObjectWithGlobalObject::StructureFlags;
 
     private:

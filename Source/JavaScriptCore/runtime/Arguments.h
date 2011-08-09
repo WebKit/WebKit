@@ -59,6 +59,8 @@ namespace JSC {
 
     class Arguments : public JSNonFinalObject {
     public:
+        typedef JSNonFinalObject Base;
+
         static Arguments* create(JSGlobalData& globalData, CallFrame* callFrame)
         {
             return new (allocateCell<Arguments>(globalData.heap)) Arguments(callFrame);

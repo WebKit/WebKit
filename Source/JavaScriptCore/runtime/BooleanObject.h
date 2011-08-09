@@ -30,6 +30,8 @@ namespace JSC {
         BooleanObject(JSGlobalData&, Structure*);
 
     public:
+        typedef JSWrapperObject Base;
+
         static BooleanObject* create(JSGlobalData& globalData, Structure* structure)
         {
             return new (allocateCell<BooleanObject>(globalData.heap)) BooleanObject(globalData, structure);

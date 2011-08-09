@@ -30,8 +30,8 @@
 namespace WebCore {
 
 class JSTestMediaQueryListListener : public JSDOMWrapper {
-    typedef JSDOMWrapper Base;
 public:
+    typedef JSDOMWrapper Base;
     static JSTestMediaQueryListListener* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestMediaQueryListListener> impl)
     {
         return new (JSC::allocateCell<JSTestMediaQueryListListener>(globalObject->globalData().heap)) JSTestMediaQueryListListener(structure, globalObject, impl);
@@ -61,8 +61,8 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestMediaQueryListListene
 TestMediaQueryListListener* toTestMediaQueryListListener(JSC::JSValue);
 
 class JSTestMediaQueryListListenerPrototype : public JSC::JSObjectWithGlobalObject {
-    typedef JSC::JSObjectWithGlobalObject Base;
 public:
+    typedef JSC::JSObjectWithGlobalObject Base;
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestMediaQueryListListenerPrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {

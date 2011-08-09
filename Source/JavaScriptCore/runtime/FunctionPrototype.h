@@ -26,10 +26,9 @@
 namespace JSC {
 
     class FunctionPrototype : public InternalFunction {
-    private:
-        FunctionPrototype(ExecState*, JSGlobalObject*, Structure*);
-
     public:
+        typedef InternalFunction Base;
+
         static FunctionPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             return new (allocateCell<FunctionPrototype>(*exec->heap())) FunctionPrototype(exec, globalObject, structure);
@@ -43,6 +42,7 @@ namespace JSC {
         }
 
     private:
+        FunctionPrototype(ExecState*, JSGlobalObject*, Structure*);
         virtual CallType getCallData(CallData&);
     };
 

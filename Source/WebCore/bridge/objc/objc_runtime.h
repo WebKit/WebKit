@@ -92,6 +92,8 @@ private:
 
 class ObjcFallbackObjectImp : public JSObjectWithGlobalObject {
 public:
+    typedef JSObjectWithGlobalObject Base;
+
     static ObjcFallbackObjectImp* create(ExecState* exec, JSGlobalObject* globalObject, ObjcInstance* instance, const Identifier& propertyName)
     {
         return new (allocateCell<ObjcFallbackObjectImp>(*exec->heap())) ObjcFallbackObjectImp(exec, globalObject, instance, propertyName);

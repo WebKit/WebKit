@@ -697,10 +697,10 @@ sub GenerateHeader
 
     # Class declaration
     push(@headerContent, "class $className : public $parentClassName {\n");
-    push(@headerContent, "    typedef $parentClassName Base;\n");
 
     # Static create methods
     push(@headerContent, "public:\n");
+    push(@headerContent, "    typedef $parentClassName Base;\n");
     if ($interfaceName eq "DOMWindow") {
         push(@headerContent, "    static $className* create(JSC::JSGlobalData& globalData, JSC::Structure* structure, PassRefPtr<$implType> impl, JSDOMWindowShell* windowShell)\n");
         push(@headerContent, "    {\n");
@@ -995,8 +995,8 @@ sub GenerateHeader
     # Add prototype declaration.
     %structureFlags = ();
     push(@headerContent, "class ${className}Prototype : public JSC::JSObjectWithGlobalObject {\n");
-    push(@headerContent, "    typedef JSC::JSObjectWithGlobalObject Base;\n");
     push(@headerContent, "public:\n");
+    push(@headerContent, "    typedef JSC::JSObjectWithGlobalObject Base;\n");
     if ($interfaceName ne "DOMWindow" && !$dataNode->extendedAttributes->{"IsWorkerContext"}) {
         push(@headerContent, "    static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);\n");
     }
@@ -3066,6 +3066,7 @@ sub GenerateConstructorDeclaration
     push(@$outputArray, "    ${constructorClassName}(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);\n\n");
     
     push(@$outputArray, "public:\n");
+    push(@$outputArray, "    typedef DOMConstructorObject Base;\n");
     push(@$outputArray, "    static $constructorClassName* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)\n");
     push(@$outputArray, "    {\n");
     push(@$outputArray, "        return new (JSC::allocateCell<$constructorClassName>(*exec->heap())) $constructorClassName(exec, structure, globalObject);\n");

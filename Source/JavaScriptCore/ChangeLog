@@ -1,3 +1,99 @@
+2011-08-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add ParentClass typedef in all JSC classes
+        https://bugs.webkit.org/show_bug.cgi?id=65731
+
+        Reviewed by Oliver Hunt.
+
+        Just added the Base typedefs in all the classes that are a subclass of JSCell 
+        to point at their parent classes.  This is a change to support future changes to the way
+        constructors and destructors are implemented in JS objects, among other things.
+
+        * API/JSCallbackConstructor.h:
+        * API/JSCallbackFunction.h:
+        * API/JSCallbackObject.h:
+        (JSC::JSCallbackObject::createStructure):
+        (JSC::JSCallbackObject::visitChildren):
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::asCallbackObject):
+        (JSC::::JSCallbackObject):
+        (JSC::::init):
+        (JSC::::className):
+        (JSC::::getOwnPropertySlot):
+        (JSC::::getOwnPropertyDescriptor):
+        (JSC::::put):
+        (JSC::::deleteProperty):
+        (JSC::::getConstructData):
+        (JSC::::construct):
+        (JSC::::hasInstance):
+        (JSC::::getCallData):
+        (JSC::::call):
+        (JSC::::getOwnPropertyNames):
+        (JSC::::toNumber):
+        (JSC::::toString):
+        (JSC::::setPrivate):
+        (JSC::::getPrivate):
+        (JSC::::inherits):
+        (JSC::::getStaticValue):
+        (JSC::::staticFunctionGetter):
+        (JSC::::callbackGetter):
+        * debugger/DebuggerActivation.h:
+        * jsc.cpp:
+        * runtime/Arguments.h:
+        * runtime/ArrayConstructor.h:
+        * runtime/ArrayPrototype.h:
+        * runtime/BooleanConstructor.h:
+        * runtime/BooleanObject.h:
+        * runtime/BooleanPrototype.h:
+        * runtime/DateConstructor.h:
+        * runtime/DateInstance.h:
+        * runtime/DatePrototype.h:
+        * runtime/Error.cpp:
+        * runtime/ErrorConstructor.h:
+        * runtime/ErrorInstance.h:
+        * runtime/ErrorPrototype.h:
+        * runtime/ExceptionHelpers.cpp:
+        * runtime/Executable.h:
+        * runtime/FunctionConstructor.h:
+        * runtime/FunctionPrototype.h:
+        * runtime/GetterSetter.h:
+        * runtime/InternalFunction.h:
+        * runtime/JSAPIValueWrapper.h:
+        * runtime/JSActivation.h:
+        * runtime/JSArray.h:
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.h:
+        * runtime/JSNotAnObject.h:
+        * runtime/JSONObject.h:
+        * runtime/JSObject.h:
+        * runtime/JSPropertyNameIterator.h:
+        * runtime/JSStaticScopeObject.h:
+        * runtime/JSString.h:
+        * runtime/JSVariableObject.h:
+        * runtime/JSWrapperObject.h:
+        * runtime/MathObject.h:
+        * runtime/NativeErrorConstructor.h:
+        * runtime/NativeErrorPrototype.h:
+        * runtime/NumberConstructor.h:
+        * runtime/NumberObject.h:
+        * runtime/NumberPrototype.h:
+        * runtime/ObjectConstructor.h:
+        * runtime/ObjectPrototype.h:
+        * runtime/RegExp.h:
+        * runtime/RegExpConstructor.h:
+        * runtime/RegExpMatchesArray.h:
+        * runtime/RegExpObject.h:
+        (JSC::RegExpObject::create):
+        * runtime/RegExpPrototype.h:
+        * runtime/ScopeChain.h:
+        * runtime/StrictEvalActivation.h:
+        * runtime/StringConstructor.h:
+        * runtime/StringObject.h:
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        * runtime/StringPrototype.h:
+        * runtime/Structure.h:
+        * runtime/StructureChain.h:
+
 2011-08-08  Oliver Hunt  <oliver@apple.com>
 
         Using mprotect to create guard pages breaks our use of madvise to release executable memory

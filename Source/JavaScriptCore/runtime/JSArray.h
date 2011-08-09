@@ -66,6 +66,8 @@ namespace JSC {
         JSArray(JSGlobalData&, Structure*, const ArgList& initialValues);
         
     public:
+        typedef JSNonFinalObject Base;
+
         JSArray(VPtrStealingHackType);
         virtual ~JSArray();
 

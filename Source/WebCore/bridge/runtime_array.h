@@ -33,6 +33,8 @@ namespace JSC {
     
 class RuntimeArray : public JSArray {
 public:
+    typedef JSArray Base;
+
     static RuntimeArray* create(ExecState* exec, Bindings::Array* array)
     {
         return new (allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, array);

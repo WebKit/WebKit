@@ -28,10 +28,9 @@ namespace JSC {
     class ObjectPrototype;
 
     class ErrorPrototype : public ErrorInstance {
-    protected:
-        ErrorPrototype(ExecState*, JSGlobalObject*, Structure*);
-
     public:
+        typedef ErrorInstance Base;
+
         static ErrorPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             return new (allocateCell<ErrorPrototype>(*exec->heap())) ErrorPrototype(exec, globalObject, structure);
@@ -45,6 +44,7 @@ namespace JSC {
         }
 
     protected:
+        ErrorPrototype(ExecState*, JSGlobalObject*, Structure*);
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ErrorInstance::StructureFlags;
         static const unsigned AnonymousSlotCount = ErrorInstance::AnonymousSlotCount + 1;
 

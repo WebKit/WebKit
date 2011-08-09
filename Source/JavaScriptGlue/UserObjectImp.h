@@ -36,6 +36,8 @@
 
 class UserObjectImp : public JSNonFinalObject {
 public:
+    typedef JSNonFinalObject Base;
+
     static UserObjectImp* create(JSGlobalData& globalData, Structure* structure, JSUserObject* userObject)
     {
         return new (allocateCell<UserObjectImp>(globalData.heap)) UserObjectImp(globalData, structure, userObject);

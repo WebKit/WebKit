@@ -147,6 +147,7 @@ private:
     JSTestObjConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
 
 public:
+    typedef DOMConstructorObject Base;
     static JSTestObjConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         return new (JSC::allocateCell<JSTestObjConstructor>(*exec->heap())) JSTestObjConstructor(exec, structure, globalObject);

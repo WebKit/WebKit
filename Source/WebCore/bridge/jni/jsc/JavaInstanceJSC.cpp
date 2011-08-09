@@ -116,6 +116,8 @@ JSValue JavaInstance::booleanValue() const
 
 class JavaRuntimeMethod : public RuntimeMethod {
 public:
+    typedef RuntimeMethod Base;
+
     static JavaRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
         return new (allocateCell<JavaRuntimeMethod>(*exec->heap())) JavaRuntimeMethod(exec, globalObject, name, list);

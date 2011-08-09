@@ -30,6 +30,8 @@ namespace JSC {
         NumberObject(JSGlobalData&, Structure*);
 
     public:
+        typedef JSWrapperObject Base;
+
         static NumberObject* create(JSGlobalData& globalData, Structure* structure)
         {
             return new (allocateCell<NumberObject>(globalData.heap)) NumberObject(globalData, structure);

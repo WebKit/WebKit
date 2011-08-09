@@ -59,6 +59,9 @@ namespace JSC {
     class Structure : public JSCell {
     public:
         friend class StructureTransitionTable;
+
+        typedef JSCell Base;
+
         static Structure* create(JSGlobalData& globalData, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
         {
             ASSERT(globalData.structureStructure);

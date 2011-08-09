@@ -26,10 +26,9 @@
 namespace JSC {
 
     class NumberPrototype : public NumberObject {
-    private:
-        NumberPrototype(ExecState*, JSGlobalObject*, Structure*);
-
     public:
+        typedef NumberObject Base;
+
         static NumberPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             return new (allocateCell<NumberPrototype>(*exec->heap())) NumberPrototype(exec, globalObject, structure);
@@ -47,6 +46,7 @@ namespace JSC {
         static const unsigned AnonymousSlotCount = NumberObject::AnonymousSlotCount + 1;
 
     private:
+        NumberPrototype(ExecState*, JSGlobalObject*, Structure*);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     };

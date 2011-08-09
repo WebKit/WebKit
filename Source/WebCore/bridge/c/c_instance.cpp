@@ -111,6 +111,8 @@ bool CInstance::supportsInvokeDefaultMethod() const
 
 class CRuntimeMethod : public RuntimeMethod {
 public:
+    typedef RuntimeMethod Base;
+
     static CRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
         return new (allocateCell<CRuntimeMethod>(*exec->heap())) CRuntimeMethod(exec, globalObject, name, list);

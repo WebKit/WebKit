@@ -39,6 +39,8 @@ class NPRuntimeObjectMap;
 
 class JSNPObject : public JSC::JSObjectWithGlobalObject {
 public:
+    typedef JSC::JSObjectWithGlobalObject Base;
+
     static JSNPObject* create(JSC::JSGlobalObject* globalObject, NPRuntimeObjectMap* objectMap, NPObject* npObject)
     {
         return new (JSC::allocateCell<JSNPObject>(globalObject->globalData().heap)) JSNPObject(globalObject, objectMap, npObject);

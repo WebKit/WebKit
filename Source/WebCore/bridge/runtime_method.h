@@ -35,6 +35,8 @@ namespace JSC {
 
 class RuntimeMethod : public InternalFunction {
 public:
+    typedef InternalFunction Base;
+
     static RuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& methodList)
     {
         return new (allocateCell<RuntimeMethod>(*exec->heap())) RuntimeMethod(exec, globalObject, structure, name, methodList);

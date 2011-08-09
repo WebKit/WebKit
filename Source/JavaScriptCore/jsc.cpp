@@ -148,6 +148,8 @@ private:
     GlobalObject(JSGlobalData&, Structure*, const Vector<UString>& arguments);
 
 public:
+    typedef JSGlobalObject Base;
+
     static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
     {
         return new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);

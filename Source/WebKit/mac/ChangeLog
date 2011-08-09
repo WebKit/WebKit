@@ -1,3 +1,17 @@
+2011-08-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add ParentClass typedef in all JSC classes
+        https://bugs.webkit.org/show_bug.cgi?id=65731
+
+        Reviewed by Oliver Hunt.
+
+        Just added the Base typedefs in all the classes that are a subclass of JSCell 
+        to point at their parent classes.  This is a change to support future changes to the way
+        constructors and destructors are implemented in JS objects, among other things.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        * Plugins/Hosted/ProxyRuntimeObject.h:
+
 2011-08-08  Chris Marrin  <cmarrin@apple.com>
 
         Logic to compute visible display rect in GraphicsLayerCA::syncCompositingState

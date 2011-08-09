@@ -1,3 +1,17 @@
+2011-08-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add ParentClass typedef in all JSC classes
+        https://bugs.webkit.org/show_bug.cgi?id=65731
+
+        Reviewed by Oliver Hunt.
+
+        Just added the Base typedefs in all the classes that are a subclass of JSCell 
+        to point at their parent classes.  This is a change to support future changes to the way
+        constructors and destructors are implemented in JS objects, among other things.
+
+        * WebProcess/Plugins/Netscape/JSNPMethod.h:
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+
 2011-08-08  Adrienne Walker  <enne@google.com>
 
         Add testing for --force-compositing-mode to windows.internal

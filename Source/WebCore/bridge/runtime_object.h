@@ -35,6 +35,8 @@ namespace Bindings {
 
 class RuntimeObject : public JSObjectWithGlobalObject {
 public:
+    typedef JSObjectWithGlobalObject Base;
+
     static RuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
     {
         return new (allocateCell<RuntimeObject>(*exec->heap())) RuntimeObject(exec, globalObject, structure, instance);

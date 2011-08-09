@@ -28,10 +28,9 @@ namespace JSC {
     class NumberPrototype;
 
     class NumberConstructor : public InternalFunction {
-    private:
-        NumberConstructor(ExecState*, JSGlobalObject*, Structure*, NumberPrototype*);
-        
     public:
+        typedef InternalFunction Base;
+
         static NumberConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, NumberPrototype* numPrototype)
         {
             return new (allocateCell<NumberConstructor>(*exec->heap())) NumberConstructor(exec, globalObject, structure, numPrototype);
@@ -54,6 +53,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | InternalFunction::StructureFlags;
 
     private:
+        NumberConstructor(ExecState*, JSGlobalObject*, Structure*, NumberPrototype*);
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
     };

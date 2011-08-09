@@ -35,6 +35,8 @@ class JavaInstance;
 
 class JavaRuntimeObject : public RuntimeObject {
 public:
+    typedef RuntimeObject Base;
+
     static JavaRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<JavaInstance> javaInst)
     {
         return new (allocateCell<JavaRuntimeObject>(*exec->heap())) JavaRuntimeObject(exec, globalObject, javaInst);

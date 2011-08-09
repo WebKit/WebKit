@@ -125,6 +125,8 @@ class QtRuntimeConnectionMethodData : public QtRuntimeMethodData {
 // Common base class (doesn't really do anything interesting)
 class QtRuntimeMethod : public InternalFunction {
 public:
+    typedef InternalFunction Base;
+
     virtual ~QtRuntimeMethod();
 
     static const ClassInfo s_info;
@@ -150,6 +152,8 @@ protected:
 class QtRuntimeMetaMethod : public QtRuntimeMethod
 {
 public:
+    typedef QtRuntimeMethod Base;
+
     static QtRuntimeMetaMethod* create(ExecState* exec, const Identifier& n, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate)
     {
         return new (allocateCell<QtRuntimeMetaMethod>(*exec->heap())) QtRuntimeMetaMethod(exec, n, inst, index, signature, allowPrivate);
@@ -175,9 +179,10 @@ private:
 };
 
 class QtConnectionObject;
-class QtRuntimeConnectionMethod : public QtRuntimeMethod
-{
+class QtRuntimeConnectionMethod : public QtRuntimeMethod {
 public:
+    typedef QtRuntimeMethod Base;
+
     static QtRuntimeConnectionMethod* create(ExecState* exec, const Identifier& n, bool isConnect, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature)
     {
         return new (allocateCell<QtRuntimeConnectionMethod>(*exec->heap())) QtRuntimeConnectionMethod(exec, n, isConnect, inst, index, signature);

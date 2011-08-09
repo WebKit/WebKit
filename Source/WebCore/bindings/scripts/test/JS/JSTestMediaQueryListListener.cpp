@@ -68,6 +68,7 @@ private:
     JSTestMediaQueryListListenerConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
 
 public:
+    typedef DOMConstructorObject Base;
     static JSTestMediaQueryListListenerConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         return new (JSC::allocateCell<JSTestMediaQueryListListenerConstructor>(*exec->heap())) JSTestMediaQueryListListenerConstructor(exec, structure, globalObject);

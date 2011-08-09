@@ -32,6 +32,8 @@ namespace JSC {
     class JSAPIValueWrapper : public JSCell {
         friend JSValue jsAPIValueWrapper(ExecState*, JSValue);
     public:
+        typedef JSCell Base;
+
         JSValue value() const { return m_value.get(); }
 
         virtual bool isAPIValueWrapper() const { return true; }

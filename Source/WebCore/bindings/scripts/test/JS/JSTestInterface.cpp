@@ -67,6 +67,7 @@ private:
     JSTestInterfaceConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
 
 public:
+    typedef DOMConstructorObject Base;
     static JSTestInterfaceConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         return new (JSC::allocateCell<JSTestInterfaceConstructor>(*exec->heap())) JSTestInterfaceConstructor(exec, structure, globalObject);

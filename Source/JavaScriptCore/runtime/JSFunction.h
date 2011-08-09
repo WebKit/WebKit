@@ -46,13 +46,13 @@ namespace JSC {
         friend class DFG::JITCodeGenerator;
         friend class JSGlobalData;
 
-        typedef JSObjectWithGlobalObject Base;
-
         JSFunction(ExecState*, JSGlobalObject*, Structure*, int length, const Identifier&, NativeFunction);
         JSFunction(ExecState*, JSGlobalObject*, Structure*, int length, const Identifier&, NativeExecutable*);
         JSFunction(ExecState*, FunctionExecutable*, ScopeChainNode*);
         
     public:
+        typedef JSObjectWithGlobalObject Base;
+
         static JSFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& ident, NativeFunction nativeFunc)
         {
             return new (allocateCell<JSFunction>(*exec->heap())) JSFunction(exec, globalObject, structure, length, ident, nativeFunc);

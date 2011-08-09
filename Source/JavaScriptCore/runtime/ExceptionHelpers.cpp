@@ -49,6 +49,8 @@ private:
     }
 
 public:
+    typedef JSNonFinalObject Base;
+
     static InterruptedExecutionError* create(JSGlobalData& globalData)
     {
         return new (allocateCell<InterruptedExecutionError>(globalData.heap)) InterruptedExecutionError(globalData);
@@ -72,6 +74,8 @@ private:
     }
 
 public:
+    typedef JSNonFinalObject Base;
+
     static TerminatedExecutionError* create(JSGlobalData& globalData)
     {
         return new (allocateCell<TerminatedExecutionError>(globalData.heap)) TerminatedExecutionError(globalData);

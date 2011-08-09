@@ -37,6 +37,8 @@ class CInstance;
 
 class CRuntimeObject : public RuntimeObject {
 public:
+    typedef RuntimeObject Base;
+
     static CRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<CInstance> instance)
     {
         return new (allocateCell<CRuntimeObject>(*exec->heap())) CRuntimeObject(exec, globalObject, instance);

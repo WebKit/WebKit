@@ -50,6 +50,8 @@ Q_GLOBAL_STATIC(QtInstance::QtSenderStack, senderStack)
 // Derived RuntimeObject
 class QtRuntimeObject : public RuntimeObject {
 public:
+    typedef RuntimeObject Base;
+
     static QtRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<Instance> instance)
     {
         return new (allocateCell<QtRuntimeObject>(*exec->heap())) QtRuntimeObject(exec, globalObject, instance);

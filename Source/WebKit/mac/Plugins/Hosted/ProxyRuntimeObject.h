@@ -36,6 +36,8 @@ class ProxyInstance;
 
 class ProxyRuntimeObject : public JSC::Bindings::RuntimeObject {
 public:
+    typedef JSC::Bindings::RuntimeObject Base;
+
     static ProxyRuntimeObject* create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, PassRefPtr<ProxyInstance> instance)
     {
         return new (JSC::allocateCell<ProxyRuntimeObject>(*exec->heap())) ProxyRuntimeObject(exec, globalObject, instance);

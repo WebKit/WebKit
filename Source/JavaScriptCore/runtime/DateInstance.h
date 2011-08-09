@@ -35,6 +35,8 @@ namespace JSC {
         DateInstance(ExecState*, Structure*);
         
     public:
+        typedef JSWrapperObject Base;
+
         static DateInstance* create(ExecState* exec, Structure* structure, double date)
         {
             return new (allocateCell<DateInstance>(*exec->heap())) DateInstance(exec, structure, date);

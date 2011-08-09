@@ -29,6 +29,8 @@ namespace JSC {
         RegExpMatchesArray(ExecState*, RegExpConstructorPrivate*);
 
     public:
+        typedef JSArray Base;
+
         static RegExpMatchesArray* create(ExecState* exec, RegExpConstructorPrivate* ctorPrivate)
         {
             return new (allocateCell<RegExpMatchesArray>(*exec->heap())) RegExpMatchesArray(exec, ctorPrivate);

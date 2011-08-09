@@ -43,6 +43,8 @@ namespace JSC {
         friend class JIT;
 
     public:
+        typedef JSCell Base;
+
         static JSPropertyNameIterator* create(ExecState*, JSObject*);
         static JSPropertyNameIterator* create(ExecState* exec, PropertyNameArrayData* propertyNameArrayData, size_t numCacheableSlot)
         {

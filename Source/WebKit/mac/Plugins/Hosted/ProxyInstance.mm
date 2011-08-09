@@ -179,6 +179,8 @@ JSValue ProxyInstance::invoke(JSC::ExecState* exec, InvokeType type, uint64_t id
 
 class ProxyRuntimeMethod : public RuntimeMethod {
 public:
+    typedef RuntimeMethod Base;
+
     static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
         return new (allocateCell<ProxyRuntimeMethod>(*exec->heap())) ProxyRuntimeMethod(exec, globalObject, name, list);

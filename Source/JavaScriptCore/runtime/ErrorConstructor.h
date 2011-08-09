@@ -29,16 +29,16 @@ namespace JSC {
     class ErrorPrototype;
 
     class ErrorConstructor : public InternalFunction {
-    private:
-        ErrorConstructor(ExecState*, JSGlobalObject*, Structure*, ErrorPrototype*);
-
     public:
+        typedef InternalFunction Base;
+
         static ErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ErrorPrototype* errPrototype)
         {
             return new (allocateCell<ErrorConstructor>(*exec->heap())) ErrorConstructor(exec, globalObject, structure, errPrototype);
         }
         
     private:
+        ErrorConstructor(ExecState*, JSGlobalObject*, Structure*, ErrorPrototype*);
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
     };

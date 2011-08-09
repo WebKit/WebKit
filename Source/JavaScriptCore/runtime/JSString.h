@@ -66,6 +66,8 @@ namespace JSC {
         friend class SpecializedThunkJIT;
         friend struct ThunkHelpers;
 
+        typedef JSCell Base;
+
         class RopeBuilder {
         public:
             RopeBuilder(unsigned fiberCount)

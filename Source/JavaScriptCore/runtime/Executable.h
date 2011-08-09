@@ -53,7 +53,6 @@ namespace JSC {
         static const int NUM_PARAMETERS_IS_HOST = 0;
         static const int NUM_PARAMETERS_NOT_COMPILED = -1;
 
-    protected:
         ExecutableBase(JSGlobalData& globalData, Structure* structure, int numParameters)
             : JSCell(globalData, structure)
             , m_numParametersForCall(numParameters)
@@ -66,6 +65,8 @@ namespace JSC {
         }
         
     public:
+        typedef JSCell Base;
+
         static ExecutableBase* create(JSGlobalData& globalData, Structure* structure, int numParameters)
         {
             return new (allocateCell<ExecutableBase>(globalData.heap)) ExecutableBase(globalData, structure, numParameters);
@@ -168,6 +169,8 @@ namespace JSC {
     class NativeExecutable : public ExecutableBase {
         friend class JIT;
     public:
+        typedef ExecutableBase Base;
+
 #if ENABLE(JIT)
         static NativeExecutable* create(JSGlobalData& globalData, MacroAssemblerCodePtr callThunk, NativeFunction function, MacroAssemblerCodePtr constructThunk, NativeFunction constructor)
         {
@@ -219,6 +222,8 @@ namespace JSC {
 
     class ScriptExecutable : public ExecutableBase {
     public:
+        typedef ExecutableBase Base;
+
         ScriptExecutable(Structure* structure, JSGlobalData& globalData, const SourceCode& source, bool isInStrictContext)
             : ExecutableBase(globalData, structure, NUM_PARAMETERS_NOT_COMPILED)
             , m_source(source)
@@ -277,6 +282,7 @@ namespace JSC {
 
     class EvalExecutable : public ScriptExecutable {
     public:
+        typedef ScriptExecutable Base;
 
         ~EvalExecutable();
 
@@ -326,6 +332,8 @@ namespace JSC {
 
     class ProgramExecutable : public ScriptExecutable {
     public:
+        typedef ScriptExecutable Base;
+
         static ProgramExecutable* create(ExecState* exec, const SourceCode& source)
         {
             return new (allocateCell<ProgramExecutable>(*exec->heap())) ProgramExecutable(exec, source);
@@ -379,6 +387,8 @@ namespace JSC {
     class FunctionExecutable : public ScriptExecutable {
         friend class JIT;
     public:
+        typedef ScriptExecutable Base;
+
         static FunctionExecutable* create(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool isInStrictContext, int firstLine, int lastLine)
         {
             return new (allocateCell<FunctionExecutable>(*exec->heap())) FunctionExecutable(exec, name, source, forceUsesArguments, parameters, isInStrictContext, firstLine, lastLine);

@@ -35,6 +35,8 @@ class ObjcInstance;
 
 class ObjCRuntimeObject : public RuntimeObject {
 public:
+    typedef RuntimeObject Base;
+
     static ObjCRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<ObjcInstance> inst)
     {
         return new (allocateCell<ObjCRuntimeObject>(*exec->heap())) ObjCRuntimeObject(exec, globalObject, inst);

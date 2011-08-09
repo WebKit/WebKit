@@ -198,6 +198,8 @@ struct QtPixmapMetaData {
 // Derived RuntimeObject
 class QtPixmapRuntimeObject : public RuntimeObject {
 public:
+    typedef RuntimeObject Base;
+
     static QtPixmapRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<Instance> instance)
     {
         return new (allocateCell<QtPixmapRuntimeObject>(*exec->heap())) QtPixmapRuntimeObject(exec, globalObject, instance);

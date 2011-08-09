@@ -36,6 +36,8 @@ protected:
     JSCallbackFunction(ExecState*, JSGlobalObject*, JSObjectCallAsFunctionCallback, const Identifier& name);
 
 public:
+    typedef InternalFunction Base;
+
     static JSCallbackFunction* create(ExecState* exec, JSGlobalObject* globalObject, JSObjectCallAsFunctionCallback callback, const Identifier& name)
     {
         return new (allocateCell<JSCallbackFunction>(*exec->heap())) JSCallbackFunction(exec, globalObject, callback, name);

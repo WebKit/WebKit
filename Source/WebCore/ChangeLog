@@ -1,3 +1,45 @@
+2011-08-09  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add ParentClass typedef in all JSC classes
+        https://bugs.webkit.org/show_bug.cgi?id=65731
+
+        Reviewed by Oliver Hunt.
+
+        No new tests.
+
+        Just added the Base typedefs in all the classes that are a subclass of JSCell 
+        to point at their parent classes.  This is a change to support future changes to the way
+        constructors and destructors are implemented in JS objects, among other things.
+
+        * bindings/js/JSAudioConstructor.h:
+        * bindings/js/JSImageConstructor.h:
+        * bindings/js/JSOptionConstructor.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (GenerateHeader):
+        (GenerateConstructorDeclaration):
+        * bindings/scripts/test/JS/JSTestInterface.cpp:
+        * bindings/scripts/test/JS/JSTestInterface.h:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.cpp:
+        * bindings/scripts/test/JS/JSTestMediaQueryListListener.h:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        * bindings/scripts/test/JS/JSTestObj.h:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.cpp:
+        * bindings/scripts/test/JS/JSTestSerializedScriptValueInterface.h:
+        * bridge/c/CRuntimeObject.h:
+        * bridge/c/c_instance.cpp:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        * bridge/jni/jsc/JavaRuntimeObject.h:
+        * bridge/objc/ObjCRuntimeObject.h:
+        * bridge/objc/objc_runtime.h:
+        * bridge/qt/qt_instance.cpp:
+        * bridge/qt/qt_pixmapruntime.cpp:
+        * bridge/qt/qt_runtime.h:
+        * bridge/runtime_array.h:
+        * bridge/runtime_method.h:
+        * bridge/runtime_object.h:
+        * bridge/testqtbindings.cpp:
+        (Global::className):
+
 2011-08-09  Alexei Svitkine  <asvitkine@chromium.org>
 
         [Chromium] Enable rubber banding when scrolling.

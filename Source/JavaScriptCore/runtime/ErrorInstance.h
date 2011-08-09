@@ -27,6 +27,8 @@ namespace JSC {
 
     class ErrorInstance : public JSNonFinalObject {
     public:
+        typedef JSNonFinalObject Base;
+
         static const ClassInfo s_info;
 
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)

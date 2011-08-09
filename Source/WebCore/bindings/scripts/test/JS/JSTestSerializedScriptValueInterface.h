@@ -32,8 +32,8 @@
 namespace WebCore {
 
 class JSTestSerializedScriptValueInterface : public JSDOMWrapper {
-    typedef JSDOMWrapper Base;
 public:
+    typedef JSDOMWrapper Base;
     static JSTestSerializedScriptValueInterface* create(JSC::Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestSerializedScriptValueInterface> impl)
     {
         return new (JSC::allocateCell<JSTestSerializedScriptValueInterface>(globalObject->globalData().heap)) JSTestSerializedScriptValueInterface(structure, globalObject, impl);
@@ -63,8 +63,8 @@ JSC::JSValue toJS(JSC::ExecState*, JSDOMGlobalObject*, TestSerializedScriptValue
 TestSerializedScriptValueInterface* toTestSerializedScriptValueInterface(JSC::JSValue);
 
 class JSTestSerializedScriptValueInterfacePrototype : public JSC::JSObjectWithGlobalObject {
-    typedef JSC::JSObjectWithGlobalObject Base;
 public:
+    typedef JSC::JSObjectWithGlobalObject Base;
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static JSTestSerializedScriptValueInterfacePrototype* create(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure)
     {

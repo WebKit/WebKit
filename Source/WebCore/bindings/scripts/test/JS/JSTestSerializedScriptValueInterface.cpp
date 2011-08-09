@@ -69,6 +69,7 @@ private:
     JSTestSerializedScriptValueInterfaceConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
 
 public:
+    typedef DOMConstructorObject Base;
     static JSTestSerializedScriptValueInterfaceConstructor* create(JSC::ExecState* exec, JSC::Structure* structure, JSDOMGlobalObject* globalObject)
     {
         return new (JSC::allocateCell<JSTestSerializedScriptValueInterfaceConstructor>(*exec->heap())) JSTestSerializedScriptValueInterfaceConstructor(exec, structure, globalObject);
