@@ -1,5 +1,24 @@
 2011-08-09  Anders Carlsson  <andersca@apple.com>
 
+        Add the final batch of Lion specific SVG test results.
+
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1: Added.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png: Copied from platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Copied from platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-intro-05-t-expected.png: Copied from platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.png.
+        * platform/mac-snowleopard/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt: Copied from platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt.
+        * platform/mac-snowleopard/svg/text: Added.
+        * platform/mac-snowleopard/svg/text/text-intro-05-t-expected.png: Copied from platform/mac/svg/text/text-intro-05-t-expected.png.
+        * platform/mac-snowleopard/svg/text/text-intro-05-t-expected.txt: Copied from platform/mac/svg/text/text-intro-05-t-expected.txt.
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-intro-05-t-expected.txt:
+        * platform/mac/svg/text/text-intro-05-t-expected.png:
+        * platform/mac/svg/text/text-intro-05-t-expected.txt:
+
+2011-08-09  Anders Carlsson  <andersca@apple.com>
+
         Skip a couple of SVG tests that are missing parts of the content for some odd reason.
 
         * platform/mac-lion/Skipped:
