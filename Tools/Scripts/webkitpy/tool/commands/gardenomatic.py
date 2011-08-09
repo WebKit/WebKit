@@ -22,18 +22,17 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from webkitpy.tool.commands.abstractlocalservercommand import AbstractLocalServerCommand
+from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.tool.servers.gardeningserver import GardeningHTTPServer
 
 
-class GardenOMatic(AbstractLocalServerCommand):
+class GardenOMatic(AbstractDeclarativeCommand):
     name = "garden-o-matic"
     help_text = "Experimental command for gardening the WebKit tree."
 
-    server = GardeningHTTPServer
-    launch_path = "/garden-o-matic.html"
+    url = "http://build.webkit.org/TestFailures/garden-o-matic.html"
 
-    def _prepare_config(self, options, args, tool):
-        return {
-            'tool': tool,
-        }
+    def execute(self, options, args, tool):
+        self._tool.user.open_url(self.url)
+        httpd = GardeningHTTPServer(httpd_port=8127, config={'tool': tool})
+        httpd.serve_forever()

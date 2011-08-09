@@ -1,5 +1,21 @@
 2011-08-09  Adam Barth  <abarth@webkit.org>
 
+        Teach build.webkit.org's garden-o-matic how to talk to the local server
+        https://bugs.webkit.org/show_bug.cgi?id=65940
+
+        Reviewed by Dimitri Glazkov.
+
+        After this patch, the version of garden-o-matic on build.webkit.org is
+        fully functional.  It can interact with the local server via CORS.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * Scripts/webkitpy/tool/commands/gardenomatic.py:
+        * Scripts/webkitpy/tool/servers/gardeningserver.py:
+
+2011-08-09  Adam Barth  <abarth@webkit.org>
+
         Enable CORS for garden-o-matic
         https://bugs.webkit.org/show_bug.cgi?id=65936
 

@@ -127,6 +127,9 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         ])
         self._serve_text('success')
 
+    def ping(self):
+        self._serve_text('pong')
+
     def updateexpectations(self):
         self._expectations_updater().update_expectations(self._read_entity_body_as_json())
         self._serve_text('success')

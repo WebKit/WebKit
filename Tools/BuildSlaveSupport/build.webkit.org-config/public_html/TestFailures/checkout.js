@@ -32,18 +32,31 @@ var kWebKitTrunk = 'http://svn.webkit.org/repository/webkit/trunk/';
 checkout.subversionURLForTest = function(testName)
 {
     return kWebKitTrunk + 'LayoutTests/' + testName;
-}
+};
+
+checkout.isAvailable = function(callback)
+{
+    net.ajax({
+        url: config.kLocalServerURL + '/ping',
+        success: function() {
+            callback(true);
+        },
+        error: function() {
+            callback(false);
+        },
+    });
+};
 
 checkout.updateExpectations = function(failureInfoList, callback)
 {
-    net.post('/updateexpectations', JSON.stringify(failureInfoList), function() {
+    net.post(config.kLocalServerURL + '/updateexpectations', JSON.stringify(failureInfoList), function() {
         callback();
     });
 };
 
 checkout.optimizeBaselines = function(testName, callback)
 {
-    net.post('/optimizebaselines?' + $.param({
+    net.post(config.kLocalServerURL + '/optimizebaselines?' + $.param({
         'test': testName,
     }), function() {
         callback();
@@ -55,7 +68,7 @@ checkout.rebaseline = function(failureInfoList, callback)
     base.callInSequence(function(failureInfo, callback) {
         var extensionList = Array.prototype.concat.apply([], failureInfo.failureTypeList.map(results.failureTypeToExtensionList));
         base.callInSequence(function(extension, callback) {
-            net.post('/rebaseline?' + $.param({
+            net.post('config.kLocalServerURL + /rebaseline?' + $.param({
                 'builder': failureInfo.builderName,
                 'test': failureInfo.testName,
                 'extension': extension

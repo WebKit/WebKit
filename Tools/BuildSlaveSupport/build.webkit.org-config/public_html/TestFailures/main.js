@@ -36,6 +36,7 @@ var kBuildFailedInfobarType = 'build-failed';
 function dismissButterbar()
 {
     $('.butterbar').fadeOut('fast');
+    checkForLocalServer();
 }
 
 function displayOnButterbar(message)
@@ -284,6 +285,14 @@ function showFailingBuildersInfobar(builderNameList)
         hideInfobarIfOfType(kBuildFailedInfobarType);
 }
 
+function checkForLocalServer()
+{
+    checkout.isAvailable(function(available) {
+        if (!available)
+            displayOnButterbar('Run "webkit-patch garden-o-matic" to enable rebaseline features.')
+    });
+}
+
 function update()
 {
     displayOnButterbar('Loading...');
@@ -293,6 +302,7 @@ function update()
         showBuilderProgress();
         model.analyzeUnexpectedFailures(showUnexpectedFailure);
         dismissButterbar();
+        checkForLocalServer();
     });
 }
 

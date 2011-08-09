@@ -56,6 +56,7 @@ config.kBuildersThatOnlyCompile = [
 
 config.kTracURL = 'http://trac.webkit.org';
 config.kBugzillaURL = 'https://bugs.webkit.org';
+config.kLocalServerURL = 'http://127.0.0.1:8127';
 
 config.kRevisionAttr = 'data-revision';
 config.kTestNameAttr = 'data-test-name';
