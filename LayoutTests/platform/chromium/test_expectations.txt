@@ -637,6 +637,9 @@ BUGWK56602 SKIP : http/tests/inspector/network/network-size.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size-chunked.html = FAIL
 BUGWK56602 SKIP : http/tests/inspector/network/network-size-sync.html = FAIL
 
+// PageAgent can not getCookies from DumpRenderTree.
+BUGWK65770 SKIP : http/tests/inspector/resource-main-cookies.php = FAIL
+
 BUGWK60110 WIN RELEASE : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
 BUGWK60110 SLOW WIN DEBUG : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT
 BUGWK60110 SLOW LINUX : http/tests/inspector/resource-tree/resource-tree-reload.html = PASS TEXT

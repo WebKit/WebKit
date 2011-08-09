@@ -360,6 +360,19 @@ static Vector<CachedResource*> cachedResourcesForFrame(Frame* frame)
     return result;
 }
 
+static Vector<KURL> allResourcesURLsForFrame(Frame* frame)
+{
+    Vector<KURL> result;
+
+    result.append(frame->loader()->documentLoader()->url());
+
+    Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
+    for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it)
+        result.append((*it)->url());
+
+    return result;
+}
+
 void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>* cookies, WTF::String* cookiesString)
 {
     // If we can get raw cookies.
@@ -375,11 +388,10 @@ void InspectorPageAgent::getCookies(ErrorString*, RefPtr<InspectorArray>* cookie
 
     for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext(mainFrame())) {
         Document* document = frame->document();
-        Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
-        for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it) {
+        Vector<KURL> allURLs = allResourcesURLsForFrame(frame);
+        for (Vector<KURL>::const_iterator it = allURLs.begin(); it != allURLs.end(); ++it) {
             Vector<Cookie> docCookiesList;
-            rawCookiesImplemented = getRawCookies(document, KURL(ParsedURLString, (*it)->url()), docCookiesList);
-
+            rawCookiesImplemented = getRawCookies(document, KURL(ParsedURLString, *it), docCookiesList);
             if (!rawCookiesImplemented) {
                 // FIXME: We need duplication checking for the String representation of cookies.
                 ExceptionCode ec = 0;
@@ -410,9 +422,9 @@ void InspectorPageAgent::deleteCookie(ErrorString*, const String& cookieName, co
         if (document->url().host() != domain)
             continue;
 
-        Vector<CachedResource*> allResources = cachedResourcesForFrame(frame);
-        for (Vector<CachedResource*>::const_iterator it = allResources.begin(); it != allResources.end(); ++it)
-            WebCore::deleteCookie(document, KURL(ParsedURLString, (*it)->url()), cookieName);
+        Vector<KURL> allURLs = allResourcesURLsForFrame(frame);
+        for (Vector<KURL>::const_iterator it = allURLs.begin(); it != allURLs.end(); ++it)
+            WebCore::deleteCookie(document, KURL(ParsedURLString, *it), cookieName);
     }
 }
 

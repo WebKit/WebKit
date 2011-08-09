@@ -1,0 +1,6 @@
+This tests that the cookie set by main resource is shown in resources panel.
+
+bug 65770.
+Page reloaded.
+Cookie: cookieName=cookieValue.
+

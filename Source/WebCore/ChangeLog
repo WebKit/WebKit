@@ -1,3 +1,17 @@
+2011-08-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Resources panel does not show main resource cookies.
+        https://bugs.webkit.org/show_bug.cgi?id=65770
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/resource-main-cookies.php
+
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::allResourcesURLsForFrame):
+        (WebCore::InspectorPageAgent::getCookies):
+        (WebCore::InspectorPageAgent::deleteCookie):
+
 2011-08-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92670.
