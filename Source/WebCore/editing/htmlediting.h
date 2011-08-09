@@ -55,7 +55,8 @@ class VisibleSelection;
 
 Node* highestAncestor(Node*);
 Node* highestEditableRoot(const Position&);
-Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule = CannotCrossEditingBoundary);
+Node* highestEnclosingNodeOfType(const Position&, bool (*nodeIsOfType)(const Node*),
+    EditingBoundaryCrossingRule = CannotCrossEditingBoundary, Node* stayWithin = 0);
 Node* lowestEditableAncestor(Node*);   
 
 Node* enclosingBlock(Node*, EditingBoundaryCrossingRule = CannotCrossEditingBoundary);

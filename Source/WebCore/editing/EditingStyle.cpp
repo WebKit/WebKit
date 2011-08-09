@@ -38,12 +38,15 @@
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "HTMLFontElement.h"
+#include "HTMLInterchange.h"
 #include "HTMLNames.h"
 #include "Node.h"
 #include "Position.h"
+#include "QualifiedName.h"
 #include "RenderStyle.h"
 #include "StyledElement.h"
 #include "htmlediting.h"
+#include <wtf/HashSet.h>
 
 namespace WebCore {
 
@@ -96,7 +99,7 @@ public:
     }
 
     virtual ~HTMLElementEquivalent() { }
-    virtual bool matches(Element* element) const { return !m_tagName || element->hasTagName(*m_tagName); }
+    virtual bool matches(const Element* element) const { return !m_tagName || element->hasTagName(*m_tagName); }
     virtual bool hasAttribute() const { return false; }
     virtual bool propertyExistsInStyle(CSSStyleDeclaration* style) const { return style->getPropertyCSSValue(m_propertyID); }
     virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
@@ -185,7 +188,7 @@ public:
         return adoptPtr(new HTMLAttributeEquivalent(propertyID, attrName));
     }
 
-    bool matches(Element* elem) const { return HTMLElementEquivalent::matches(elem) && elem->hasAttribute(m_attrName); }
+    bool matches(const Element* elem) const { return HTMLElementEquivalent::matches(elem) && elem->hasAttribute(m_attrName); }
     virtual bool hasAttribute() const { return true; }
     virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
     virtual void addToStyle(Element*, EditingStyle*) const;
@@ -632,26 +635,35 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
     return conflictingProperties && !conflictingProperties->isEmpty();
 }
 
+static const Vector<OwnPtr<HTMLElementEquivalent> >& htmlElementEquivalents()
+{
+    DEFINE_STATIC_LOCAL(Vector<OwnPtr<HTMLElementEquivalent> >, HTMLElementEquivalents, ());
+
+    if (!HTMLElementEquivalents.size()) {
+        HTMLElementEquivalents.append(HTMLElementEquivalent::create(CSSPropertyFontWeight, CSSValueBold, HTMLNames::bTag));
+        HTMLElementEquivalents.append(HTMLElementEquivalent::create(CSSPropertyFontWeight, CSSValueBold, HTMLNames::strongTag));
+        HTMLElementEquivalents.append(HTMLElementEquivalent::create(CSSPropertyVerticalAlign, CSSValueSub, HTMLNames::subTag));
+        HTMLElementEquivalents.append(HTMLElementEquivalent::create(CSSPropertyVerticalAlign, CSSValueSuper, HTMLNames::supTag));
+        HTMLElementEquivalents.append(HTMLElementEquivalent::create(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::iTag));
+        HTMLElementEquivalents.append(HTMLElementEquivalent::create(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::emTag));
+
+        HTMLElementEquivalents.append(HTMLTextDecorationEquivalent::create(CSSValueUnderline, HTMLNames::uTag));
+        HTMLElementEquivalents.append(HTMLTextDecorationEquivalent::create(CSSValueLineThrough, HTMLNames::sTag));
+        HTMLElementEquivalents.append(HTMLTextDecorationEquivalent::create(CSSValueLineThrough, HTMLNames::strikeTag));
+    }
+
+    return HTMLElementEquivalents;
+}
+
+
 bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement* element, EditingStyle* extractedStyle, ShouldExtractMatchingStyle shouldExtractMatchingStyle) const
 {
     if (!m_mutableStyle)
         return false;
 
-    static const HTMLElementEquivalent* HTMLEquivalents[] = {
-        HTMLElementEquivalent::create(CSSPropertyFontWeight, CSSValueBold, HTMLNames::bTag).leakPtr(),
-        HTMLElementEquivalent::create(CSSPropertyFontWeight, CSSValueBold, HTMLNames::strongTag).leakPtr(),
-        HTMLElementEquivalent::create(CSSPropertyVerticalAlign, CSSValueSub, HTMLNames::subTag).leakPtr(),
-        HTMLElementEquivalent::create(CSSPropertyVerticalAlign, CSSValueSuper, HTMLNames::supTag).leakPtr(),
-        HTMLElementEquivalent::create(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::iTag).leakPtr(),
-        HTMLElementEquivalent::create(CSSPropertyFontStyle, CSSValueItalic, HTMLNames::emTag).leakPtr(),
-
-        HTMLTextDecorationEquivalent::create(CSSValueUnderline, HTMLNames::uTag).leakPtr(),
-        HTMLTextDecorationEquivalent::create(CSSValueLineThrough, HTMLNames::sTag).leakPtr(),
-        HTMLTextDecorationEquivalent::create(CSSValueLineThrough, HTMLNames::strikeTag).leakPtr(),
-    };
-
-    for (size_t i = 0; i < WTF_ARRAY_LENGTH(HTMLEquivalents); ++i) {
-        const HTMLElementEquivalent* equivalent = HTMLEquivalents[i];
+    const Vector<OwnPtr<HTMLElementEquivalent> >& HTMLElementEquivalents = htmlElementEquivalents();
+    for (size_t i = 0; i < HTMLElementEquivalents.size(); ++i) {
+        const HTMLElementEquivalent* equivalent = HTMLElementEquivalents[i].get();
         if (equivalent->matches(element) && equivalent->propertyExistsInStyle(m_mutableStyle.get())
             && (shouldExtractMatchingStyle == ExtractMatchingStyle || !equivalent->valueIsPresentInStyle(element, m_mutableStyle.get()))) {
             if (extractedStyle)
@@ -667,6 +679,8 @@ static const Vector<OwnPtr<HTMLAttributeEquivalent> >& htmlAttributeEquivalents(
     DEFINE_STATIC_LOCAL(Vector<OwnPtr<HTMLAttributeEquivalent> >, HTMLAttributeEquivalents, ());
 
     if (!HTMLAttributeEquivalents.size()) {
+        // elementIsStyledSpanOrHTMLEquivalent depends on the fact each HTMLAttriuteEquivalent matches exactly one attribute
+        // of exactly one element except dirAttr.
         HTMLAttributeEquivalents.append(HTMLAttributeEquivalent::create(CSSPropertyColor, HTMLNames::fontTag, HTMLNames::colorAttr));
         HTMLAttributeEquivalents.append(HTMLAttributeEquivalent::create(CSSPropertyFontFamily, HTMLNames::fontTag, HTMLNames::faceAttr));
         HTMLAttributeEquivalents.append(HTMLFontSizeEquivalent::create());
@@ -728,6 +742,62 @@ bool EditingStyle::extractConflictingImplicitStyleOfAttributes(HTMLElement* elem
 bool EditingStyle::styleIsPresentInComputedStyleOfNode(Node* node) const
 {
     return !m_mutableStyle || !getPropertiesNotIn(m_mutableStyle.get(), computedStyle(node).get())->length();
+}
+
+bool EditingStyle::elementIsStyledSpanOrHTMLEquivalent(const HTMLElement* element)
+{
+    bool elementIsSpanOrElementEquivalent = false;
+    if (element->hasTagName(HTMLNames::spanTag))
+        elementIsSpanOrElementEquivalent = true;
+    else {
+        const Vector<OwnPtr<HTMLElementEquivalent> >& HTMLElementEquivalents = htmlElementEquivalents();
+        size_t i;
+        for (i = 0; i < HTMLElementEquivalents.size(); ++i) {
+            if (HTMLElementEquivalents[i]->matches(element)) {
+                elementIsSpanOrElementEquivalent = true;
+                break;
+            }
+        }
+    }
+
+    const NamedNodeMap* attributeMap = element->attributeMap();
+    if (!attributeMap || attributeMap->isEmpty())
+        return elementIsSpanOrElementEquivalent; // span, b, etc... without any attributes
+
+    unsigned matchedAttributes = 0;
+    const Vector<OwnPtr<HTMLAttributeEquivalent> >& HTMLAttributeEquivalents = htmlAttributeEquivalents();
+    for (size_t i = 0; i < HTMLAttributeEquivalents.size(); ++i) {
+        if (HTMLAttributeEquivalents[i]->matches(element) && HTMLAttributeEquivalents[i]->attributeName() != HTMLNames::dirAttr)
+            matchedAttributes++;
+    }
+
+    if (!elementIsSpanOrElementEquivalent && !matchedAttributes)
+        return false; // element is not a span, a html element equivalent, or font element.
+    
+    if (element->getAttribute(HTMLNames::classAttr) == AppleStyleSpanClass)
+        matchedAttributes++;
+
+    if (element->hasAttribute(HTMLNames::styleAttr)) {
+        if (CSSMutableStyleDeclaration* style = element->inlineStyleDecl()) {
+            CSSMutableStyleDeclaration::const_iterator end = style->end();
+            for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
+                bool matched = false;
+                for (size_t i = 0; i < numEditingInheritableProperties; ++i) {
+                    if (editingInheritableProperties[i] == it->id()) {
+                        matched = true;
+                        break;
+                    }
+                }
+                if (!matched && it->id() != CSSPropertyBackgroundColor)
+                    return false;
+            }
+        }
+        matchedAttributes++;
+    }
+
+    // font with color attribute, span with style attribute, etc...
+    ASSERT(matchedAttributes <= attributeMap->length());
+    return matchedAttributes >= attributeMap->length();
 }
 
 void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWritingDirection shouldPreserveWritingDirection)

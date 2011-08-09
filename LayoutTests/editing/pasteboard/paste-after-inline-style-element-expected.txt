@@ -4,6 +4,7 @@ This test exhibits a bug. The inserted content should be on a separate line but 
 |   type="cite"
 |   <b>
 |     "line 1 "
-|     "line 2<#selection-caret>"
-|     " "
+|   "line 2<#selection-caret>"
+|   " "
+|   <b>
 |     <br>

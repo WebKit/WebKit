@@ -784,29 +784,22 @@ static Node* enclosingInline(Node* node)
 static bool isInlineNodeWithStyle(const Node* node)
 {
     // We don't want to skip over any block elements.
-    if (!node->renderer() || !node->renderer()->isInline())
+    if (isBlock(node))
         return false;
 
     if (!node->isHTMLElement())
         return false;
-    
+
     // We can skip over elements whose class attribute is
     // one of our internal classes.
     const HTMLElement* element = static_cast<const HTMLElement*>(node);
     AtomicString classAttributeValue = element->getAttribute(classAttr);
-    if (classAttributeValue == AppleStyleSpanClass
-        || classAttributeValue == AppleTabSpanClass
+    if (classAttributeValue == AppleTabSpanClass
         || classAttributeValue == AppleConvertedSpace
         || classAttributeValue == ApplePasteAsQuotation)
         return true;
 
-    // We can skip inline elements that don't have attributes or whose only
-    // attribute is the style attribute.
-    const NamedNodeMap* attributeMap = element->attributeMap();
-    if (!attributeMap || attributeMap->isEmpty() || (attributeMap->length() == 1 && element->hasAttribute(styleAttr)))
-        return true;
-
-    return false;
+    return EditingStyle::elementIsStyledSpanOrHTMLEquivalent(element);
 }
     
 void ReplaceSelectionCommand::doApply()
@@ -958,16 +951,16 @@ void ReplaceSelectionCommand::doApply()
     // We can skip this optimization for fragments not wrapped in one of
     // our style spans and for positions inside list items
     // since insertAsListItems already does the right thing.
-    if (!m_matchStyle && !enclosingList(insertionPos.containerNode()) && isStyleSpan(fragment.firstChild())) {
+    if (!m_matchStyle && !enclosingList(insertionPos.containerNode())) {
         if (insertionPos.containerNode()->isTextNode() && insertionPos.offsetInContainerNode() && !insertionPos.atLastEditingPositionForNode()) {
-            splitTextNodeContainingElement(insertionPos.containerText(), insertionPos.offsetInContainerNode());
+            splitTextNode(insertionPos.containerText(), insertionPos.offsetInContainerNode());
             insertionPos = firstPositionInNode(insertionPos.containerNode());
         }
 
-        // FIXME: isInlineNodeWithStyle does not check editability.
-        if (RefPtr<Node> nodeToSplitTo = highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle)) {
-            if (insertionPos.containerNode() != nodeToSplitTo) {
-                nodeToSplitTo = splitTreeToNode(insertionPos.anchorNode(), nodeToSplitTo.get(), true).get();
+        if (RefPtr<Node> nodeToSplitTo = highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle, CannotCrossEditingBoundary,
+            enclosingBlock(insertionPos.containerNode()))) {
+            if (insertionPos.containerNode() != nodeToSplitTo->parentNode()) {
+                nodeToSplitTo = splitTreeToNode(insertionPos.anchorNode(), nodeToSplitTo->parentNode()).get();
                 insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
             }
         }

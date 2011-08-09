@@ -1,12 +1,15 @@
 This tests pasting content with redundant inline style.
-You should not see any style attributes except one on the b element and there should be no spans.
+You should not see any inline styles other than font-weight: bold and there should be exactly one span around WebKit.
+| <em>
+|   style="font-weight: bold; "
+|   "hello world"
+| <br>
+| <span>
+|   style="font-weight: bold;"
+|   "WebKit"
+| <br>
+| <em>
+|   "rocks<#selection-caret>"
 | <b>
 |   style="font-style: italic;"
-|   <em>
-|     "hello world"
-|   <br>
-|   "WebKit"
-|   <br>
-|   <em>
-|     "rocks<#selection-caret>"
 |   <br>

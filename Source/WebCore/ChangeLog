@@ -1,3 +1,35 @@
+2011-08-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Repeated copy and paste result in nested font elements
+        https://bugs.webkit.org/show_bug.cgi?id=65824
+
+        Reviewed by Tony Chang.
+
+        Modified isInlineNodeWithStyle to match font element. Also made the function match strictly with those nodes that
+        ApplyStyleCommand may add to avoid removing non-styling elements. And fixed a regression from r81887 that
+        ReplaceSelectionCommand may remove non-editing styles such as border in the attempt to avoid nesting styling elements.
+
+        This patch paves the way to fix the bug 34564.
+
+        Tests: editing/pasteboard/paste-text-with-style-2.html
+               editing/pasteboard/paste-text-with-style-3.html
+               editing/pasteboard/paste-text-with-style-4.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLElementEquivalent::matches): Takes const Element* instead of Element*.
+        (WebCore::HTMLAttributeEquivalent::matches): Ditto.
+        (WebCore::htmlElementEquivalents): Extracted from conflictsWithImplicitStyleOfElement.
+        (WebCore::EditingStyle::conflictsWithImplicitStyleOfElement): Calls htmlElementEquivalents.
+        (WebCore::EditingStyle::elementIsStyledSpanOrHTMLEquivalent): Added; determines whether an element is style span
+        or a styling element (e.g. b, i, font) possibly with editing style.
+        * editing/EditingStyle.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::isInlineNodeWithStyle): Calls EditingStyle::elementIsStyledSpanOrHTMLEquivalent.
+        (WebCore::ReplaceSelectionCommand::doApply): More aggressively avoid nesting styling elements.
+        * editing/htmlediting.cpp:
+        (WebCore::highestEnclosingNodeOfType):
+        * editing/htmlediting.h:
+
 2011-08-09  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65778

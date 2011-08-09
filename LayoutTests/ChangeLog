@@ -1,3 +1,33 @@
+2011-08-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Repeated copy and paste result in nested style elements such as b and font
+        https://bugs.webkit.org/show_bug.cgi?id=65824
+
+        Reviewed by Tony Chang.
+
+        Added tests to ensure WebKit does not nest styling elements and does not remove elements with non-editing styles.
+        Also rebaselined several tests.
+
+        Because WebKit serializes all editing inheritable styles on copy, we should be able to remove all inline styles
+        at the insertion point on paste. And this patch removes inline style elements such as font and b more aggressively.
+        WebKit erroneously bolded the last words in paste-after-inline-style-element.html and paste-with-redundant-style.html
+        before this change set but this is no longer the case.
+
+        * editing/pasteboard/5065605-expected.txt: Lost wrapping font and span elements.
+        * editing/pasteboard/merge-end-1-expected.txt: Span is split but visually identical.
+        * editing/pasteboard/merge-end-2-expected.txt: Ditto.
+        * editing/pasteboard/paste-after-inline-style-element-expected.txt: No longer bolds "line 2" erroneously.
+        * editing/pasteboard/paste-text-011-expected.txt: Lost wrapping font, b, and span elements.
+        * editing/pasteboard/paste-text-with-style-2-expected.txt: Added.
+        * editing/pasteboard/paste-text-with-style-2.html: Added.
+        * editing/pasteboard/paste-text-with-style-3-expected.txt: Added.
+        * editing/pasteboard/paste-text-with-style-3.html: Added.
+        * editing/pasteboard/paste-text-with-style-4-expected.txt: Added.
+        * editing/pasteboard/paste-text-with-style-4.html: Added.
+        * editing/pasteboard/paste-with-redundant-style-expected.txt: Lost wrapping b.
+        * editing/pasteboard/paste-with-redundant-style.html: Updated comments per rebaseline.
+        * platform/chromium-win/editing/pasteboard/paste-text-011-expected.txt: Removed.
+
 2011-08-09  Abhishek Arya  <inferno@chromium.org>
 
         Tests that we do not crash when trying to dirty line boxes on

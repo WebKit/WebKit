@@ -607,11 +607,11 @@ Node* enclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), 
     return 0;
 }
 
-Node* highestEnclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule)
+Node* highestEnclosingNodeOfType(const Position& p, bool (*nodeIsOfType)(const Node*), EditingBoundaryCrossingRule rule, Node* stayWithin)
 {
     Node* highest = 0;
     Node* root = rule == CannotCrossEditingBoundary ? highestEditableRoot(p) : 0;
-    for (Node* n = p.containerNode(); n; n = n->parentNode()) {
+    for (Node* n = p.containerNode(); n && n != stayWithin; n = n->parentNode()) {
         if (root && !n->rendererIsEditable())
             continue;
         if (nodeIsOfType(n))

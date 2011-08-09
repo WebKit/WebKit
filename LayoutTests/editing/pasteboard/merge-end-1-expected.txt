@@ -2,7 +2,9 @@ This tests the last paragraph in the pasted fragment is merged with the content 
 "baz" and "oo" should be in the same paragraph below.
 | <span>
 |   "f"
-|   "bar"
+| "bar"
+| <span>
 |   <br>
-|   "baz<#selection-caret>"
+| "baz<#selection-caret>"
+| <span>
 |   "oo"

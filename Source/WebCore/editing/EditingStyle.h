@@ -117,6 +117,9 @@ public:
     bool extractConflictingImplicitStyleOfAttributes(HTMLElement*, ShouldPreserveWritingDirection, EditingStyle* extractedStyle,
             Vector<QualifiedName>& conflictingAttributes, ShouldExtractMatchingStyle) const;
     bool styleIsPresentInComputedStyleOfNode(Node*) const;
+
+    static bool elementIsStyledSpanOrHTMLEquivalent(const HTMLElement*);
+
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
     void mergeTypingStyle(Document*);
     void mergeInlineStyleOfElement(StyledElement*);
