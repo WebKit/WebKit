@@ -1,3 +1,12 @@
+2011-08-08  Chris Marrin  <cmarrin@apple.com>
+
+        Fix build breakage caused by http://trac.webkit.org/changeset/92651
+
+        Unreviewed.
+
+        * WebCore.exp.in:
+
+2011-08-08  Chris Marrin  <cmarrin@apple.com>
 
         Logic to compute visible display rect in GraphicsLayerCA::syncCompositingState
         https://bugs.webkit.org/show_bug.cgi?id=65708
