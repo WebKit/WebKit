@@ -1088,6 +1088,7 @@ fast/forms/input-appearance-spinbutton-layer.html
 fast/forms/input-appearance-spinbutton-visibility.html
 fast/forms/input-number-events.html
 fast/forms/input-number-large-padding.html
+fast/forms/input-number-size.html
 fast/forms/input-spinbutton-capturing.html
 fast/forms/spin-button-gets-disabled-or-readonly.html
 
