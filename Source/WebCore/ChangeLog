@@ -1,3 +1,41 @@
+2011-08-09  Emil A Eklund  <eae@chromium.org>
+
+        Switch RenderBlock to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=65396
+
+        Reviewed by Eric Seidel.
+
+        No new tests, no new functionality.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::MarginInfo::MarginInfo):
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::addOverflowFromChildren):
+        (WebCore::RenderBlock::computeOverflow):
+        (WebCore::RenderBlock::adjustPositionedBlock):
+        (WebCore::RenderBlock::adjustFloatingBlock):
+        (WebCore::RenderBlock::collapseMargins):
+        (WebCore::RenderBlock::clearFloatsIfNeeded):
+        (WebCore::RenderBlock::estimateLogicalTopPosition):
+        (WebCore::RenderBlock::determineLogicalLeftPositionForChild):
+        (WebCore::RenderBlock::setLogicalLeftForChild):
+        (WebCore::RenderBlock::setLogicalTopForChild):
+        (WebCore::RenderBlock::layoutBlockChildren):
+        (WebCore::RenderBlock::layoutBlockChild):
+        (WebCore::RenderBlock::flipFloatForWritingMode):
+        (WebCore::RenderBlock::isPointInOverflowControl):
+        (WebCore::RenderBlock::hitTestFloats):
+        * rendering/RenderBlock.h:
+        (WebCore::RenderBlock::logicalTopForFloat):
+        (WebCore::RenderBlock::logicalBottomForFloat):
+        (WebCore::RenderBlock::logicalLeftForFloat):
+        (WebCore::RenderBlock::logicalRightForFloat):
+        (WebCore::RenderBlock::logicalWidthForFloat):
+        (WebCore::RenderBlock::setLogicalTopForFloat):
+        (WebCore::RenderBlock::setLogicalLeftForFloat):
+        (WebCore::RenderBlock::setLogicalHeightForFloat):
+        (WebCore::RenderBlock::setLogicalWidthForFloat):
+
 2011-08-09  Jeffrey Pfau  <jpfau@apple.com>
 
         Initial pass at a new XML tree builder

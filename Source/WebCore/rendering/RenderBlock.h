@@ -97,7 +97,7 @@ public:
     virtual void removeChild(RenderObject*);
 
     enum BlockLayoutPass { NormalLayoutPass, PositionedFloatLayoutPass };
-    virtual void layoutBlock(bool relayoutChildren, int pageLogicalHeight = 0, BlockLayoutPass = NormalLayoutPass);
+    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0, BlockLayoutPass = NormalLayoutPass);
 
     void insertPositionedObject(RenderBox*);
     void removePositionedObject(RenderBox*);
@@ -207,8 +207,8 @@ public:
     int logicalHeightForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->height() : child->width(); }
     int logicalTopForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->y() : child->x(); }
     int logicalLeftForChild(RenderBox* child) { return isHorizontalWritingMode() ? child->x() : child->y(); }
-    void setLogicalLeftForChild(RenderBox* child, int logicalLeft, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
-    void setLogicalTopForChild(RenderBox* child, int logicalTop, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
+    void setLogicalLeftForChild(RenderBox* child, LayoutUnit logicalLeft, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
+    void setLogicalTopForChild(RenderBox* child, LayoutUnit logicalTop, ApplyLayoutDeltaMode = DoNotApplyLayoutDelta);
     LayoutUnit marginBeforeForChild(RenderBoxModelObject* child) const;
     LayoutUnit marginAfterForChild(RenderBoxModelObject* child) const;
     LayoutUnit marginStartForChild(RenderBoxModelObject* child) const;
@@ -342,7 +342,7 @@ protected:
     bool simplifiedLayout();
     void simplifiedNormalFlowLayout();
 
-    void computeOverflow(int oldClientAfterEdge, bool recomputeFloats = false);
+    void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
     virtual void addOverflowFromChildren();
     void addOverflowFromFloats();
     void addOverflowFromPositionedObjects();
@@ -388,7 +388,7 @@ private:
 
     virtual void repaintOverhangingFloats(bool paintAllDescendants);
 
-    void layoutBlockChildren(bool relayoutChildren, int& maxFloatLogicalBottom);
+    void layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloatLogicalBottom);
     void layoutInlineChildren(bool relayoutChildren, int& repaintLogicalTop, int& repaintLogicalBottom);
     BidiRun* handleTrailingSpaces(BidiRunList<BidiRun>&, BidiContext*);
 
@@ -495,35 +495,35 @@ private:
 #endif
     };
 
-    IntPoint flipFloatForWritingMode(const FloatingObject*, const IntPoint&) const;
+    LayoutPoint flipFloatForWritingMode(const FloatingObject*, const LayoutPoint&) const;
 
-    int logicalTopForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->y() : child->x(); }
-    int logicalBottomForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxY() : child->maxX(); }
-    int logicalLeftForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->x() : child->y(); }
-    int logicalRightForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxX() : child->maxY(); }
-    int logicalWidthForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->width() : child->height(); }
-    void setLogicalTopForFloat(FloatingObject* child, int logicalTop)
+    LayoutUnit logicalTopForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->y() : child->x(); }
+    LayoutUnit logicalBottomForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxY() : child->maxX(); }
+    LayoutUnit logicalLeftForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->x() : child->y(); }
+    LayoutUnit logicalRightForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxX() : child->maxY(); }
+    LayoutUnit logicalWidthForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->width() : child->height(); }
+    void setLogicalTopForFloat(FloatingObject* child, LayoutUnit logicalTop)
     {
         if (isHorizontalWritingMode())
             child->setY(logicalTop);
         else
             child->setX(logicalTop);
     }
-    void setLogicalLeftForFloat(FloatingObject* child, int logicalLeft)
+    void setLogicalLeftForFloat(FloatingObject* child, LayoutUnit logicalLeft)
     {
         if (isHorizontalWritingMode())
             child->setX(logicalLeft);
         else
             child->setY(logicalLeft);
     }
-    void setLogicalHeightForFloat(FloatingObject* child, int logicalHeight)
+    void setLogicalHeightForFloat(FloatingObject* child, LayoutUnit logicalHeight)
     {
         if (isHorizontalWritingMode())
             child->setHeight(logicalHeight);
         else
             child->setWidth(logicalHeight);
     }
-    void setLogicalWidthForFloat(FloatingObject* child, int logicalWidth)
+    void setLogicalWidthForFloat(FloatingObject* child, LayoutUnit logicalWidth)
     {
         if (isHorizontalWritingMode())
             child->setWidth(logicalWidth);
@@ -742,7 +742,7 @@ private:
         int m_negativeMargin;
 
     public:
-        MarginInfo(RenderBlock* b, int beforeBorderPadding, int afterBorderPadding);
+        MarginInfo(RenderBlock*, LayoutUnit beforeBorderPadding, LayoutUnit afterBorderPadding);
 
         void setAtBeforeSideOfBlock(bool b) { m_atBeforeSideOfBlock = b; }
         void setAtAfterSideOfBlock(bool b) { m_atAfterSideOfBlock = b; }
@@ -771,16 +771,16 @@ private:
         int margin() const { return m_positiveMargin - m_negativeMargin; }
     };
 
-    void layoutBlockChild(RenderBox* child, MarginInfo&, int& previousFloatLogicalBottom, int& maxFloatLogicalBottom);
+    void layoutBlockChild(RenderBox* child, MarginInfo&, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
     void adjustPositionedBlock(RenderBox* child, const MarginInfo&);
     void adjustFloatingBlock(const MarginInfo&);
     bool handleSpecialChild(RenderBox* child, const MarginInfo&);
     bool handleFloatingChild(RenderBox* child, const MarginInfo&);
     bool handlePositionedChild(RenderBox* child, const MarginInfo&);
     bool handleRunInChild(RenderBox* child);
-    int collapseMargins(RenderBox* child, MarginInfo&);
-    int clearFloatsIfNeeded(RenderBox* child, MarginInfo&, int oldTopPosMargin, int oldTopNegMargin, int yPos);
-    int estimateLogicalTopPosition(RenderBox* child, const MarginInfo&);
+    LayoutUnit collapseMargins(RenderBox* child, MarginInfo&);
+    LayoutUnit clearFloatsIfNeeded(RenderBox* child, MarginInfo&, int oldTopPosMargin, int oldTopNegMargin, int yPos);
+    LayoutUnit estimateLogicalTopPosition(RenderBox* child, const MarginInfo&);
     void determineLogicalLeftPositionForChild(RenderBox* child);
     void handleAfterSideOfBlock(int top, int bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
