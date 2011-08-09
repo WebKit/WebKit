@@ -116,15 +116,15 @@ WebInspector.RemoteObject.prototype = {
 
     getOwnProperties: function(callback)
     {
-        this._getProperties(false, callback);
+        this._getProperties(true, callback);
     },
 
     getAllProperties: function(callback)
     {
-        this._getProperties(true, callback);
+        this._getProperties(false, callback);
     },
 
-    _getProperties: function(ignoreHasOwnProperty, callback)
+    _getProperties: function(ownProperties, callback)
     {
         if (!this._objectId) {
             callback([]);
@@ -136,11 +136,20 @@ WebInspector.RemoteObject.prototype = {
                 callback(null);
                 return;
             }
-            for (var i = 0; properties && i < properties.length; ++i)
-                properties[i].value = WebInspector.RemoteObject.fromPayload(properties[i].value);
-            callback(properties);
+            var result = [];
+            for (var i = 0; properties && i < properties.length; ++i) {
+                var property = properties[i];
+                if (property.get || property.set) {
+                    if (property.get)
+                        result.push(new WebInspector.RemoteObjectProperty("get " + property.name, WebInspector.RemoteObject.fromPayload(property.get), property));
+                    if (property.set)
+                        result.push(new WebInspector.RemoteObjectProperty("set " + property.name, WebInspector.RemoteObject.fromPayload(property.set), property));
+                } else
+                    result.push(new WebInspector.RemoteObjectProperty(property.name, WebInspector.RemoteObject.fromPayload(property.value), property));
+            }
+            callback(result);
         }
-        RuntimeAgent.getProperties(this._objectId, !!ignoreHasOwnProperty, remoteObjectBinder);
+        RuntimeAgent.getProperties(this._objectId, ownProperties, remoteObjectBinder);
     },
 
     setPropertyValue: function(name, value, callback)
@@ -213,10 +222,14 @@ WebInspector.RemoteObject.prototype = {
     }
 }
 
-WebInspector.RemoteObjectProperty = function(name, value)
+WebInspector.RemoteObjectProperty = function(name, value, descriptor)
 {
     this.name = name;
     this.value = value;
+    this.enumerable = descriptor ? !!descriptor.enumerable : true;
+    this.writable = descriptor ? !!descriptor.writable : true;
+    if (descriptor && descriptor.wasThrown)
+        this.wasThrown = true; 
 }
 
 WebInspector.RemoteObjectProperty.fromPrimitiveValue = function(name, value)

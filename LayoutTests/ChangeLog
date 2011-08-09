@@ -1,3 +1,14 @@
+2011-08-09  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: there should be a way to tell what properties are non-enumerable when expanding objects.
+        https://bugs.webkit.org/show_bug.cgi?id=65518
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/runtime/runtime-getProperties-expected.txt:
+        * inspector/runtime/runtime-getProperties.html:
+
 2011-08-09  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         svg/zoom/page/zoom-svg-through-object-with-*.xhtml are flaky

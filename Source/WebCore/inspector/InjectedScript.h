@@ -70,7 +70,7 @@ public:
                         RefPtr<InspectorObject>* result,
                         bool* wasThrown);
     void evaluateOnCallFrame(ErrorString*, const ScriptValue& callFrames, const String& callFrameId, const String& expression, const String& objectGroup, bool includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown);
-    void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result);
+    void getProperties(ErrorString*, const String& objectId, bool ownProperties, RefPtr<InspectorArray>* result);
     Node* nodeForObjectId(const String& objectId);
     void releaseObject(const String& objectId);
 

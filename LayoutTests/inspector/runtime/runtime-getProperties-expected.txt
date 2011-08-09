@@ -9,14 +9,20 @@ Running: testGetterAndSetter
     value : {
         type : "function"
         description : "function () { return 1; }"
+        objectId : <string>
     }
+    enumerable : true
+    writable : false
 }
 {
     name : "set foo"
     value : {
         type : "function"
         description : "function (value) { }"
+        objectId : <string>
     }
+    enumerable : true
+    writable : false
 }
 
 Running: testGetterOnly
@@ -25,6 +31,9 @@ Running: testGetterOnly
     value : {
         type : "function"
         description : "function () { return 1; }"
+        objectId : <string>
     }
+    enumerable : true
+    writable : false
 }
 

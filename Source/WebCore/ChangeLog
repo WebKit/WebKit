@@ -1,3 +1,29 @@
+2011-08-09  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: there should be a way to tell what properties are non-enumerable when expanding objects.
+        https://bugs.webkit.org/show_bug.cgi?id=65518
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::getProperties):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.ondblclick):
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.getOwnProperties):
+        (WebInspector.RemoteObject.prototype.getAllProperties):
+        (WebInspector.RemoteObjectProperty):
+        * inspector/front-end/inspector.css:
+        (.section .properties .dimmed):
+
 2011-08-08  Steve Block  <steveblock@google.com>
 
         Removes V8's JavaInstanceJobject, JavaClassJobject and JavaFieldJobject.

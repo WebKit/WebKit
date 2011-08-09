@@ -166,7 +166,8 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
 
     ondblclick: function(event)
     {
-        this.startEditing();
+        if (this.property.writable)
+            this.startEditing();
     },
 
     onattach: function()
@@ -179,6 +180,8 @@ WebInspector.ObjectPropertyTreeElement.prototype = {
         this.nameElement = document.createElement("span");
         this.nameElement.className = "name";
         this.nameElement.textContent = this.property.name;
+        if (!this.property.enumerable)
+            this.nameElement.addStyleClass("dimmed");
 
         var separatorElement = document.createElement("span");
         separatorElement.className = "separator";

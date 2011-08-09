@@ -1,4 +1,4 @@
-/*
+  /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -165,7 +165,7 @@ InjectedScript.prototype = {
         return result;
     },
 
-    getProperties: function(objectId, ignoreHasOwnProperty)
+    getProperties: function(objectId, ownProperties)
     {
         var parsedObjectId = this._parseObjectId(objectId);
         var object = this._objectForId(parsedObjectId);
@@ -173,46 +173,20 @@ InjectedScript.prototype = {
 
         if (!this._isDefined(object))
             return false;
-        var properties = [];
+        var descriptors = [];
+        this._populatePropertyDescriptors(object, descriptors, ownProperties);
 
-        var propertyNames = ignoreHasOwnProperty ? this._getPropertyNames(object) : Object.getOwnPropertyNames(object);
-        if (!ignoreHasOwnProperty && object.__proto__)
-            propertyNames.push("__proto__");
-
-        // Go over properties, prepare results.
-        for (var i = 0; i < propertyNames.length; ++i) {
-            var propertyName = propertyNames[i];
-
-            var getter = (typeof object["__lookupGetter__"] === "function") && object.__lookupGetter__(propertyName);
-            var setter = (typeof object["__lookupSetter__"] === "function") && object.__lookupSetter__(propertyName);
-            if (getter || setter) {
-                if (getter) {
-                    var property = {};
-                    property.name = "get " + propertyName;
-                    property.value = this._wrapObject(getter, objectGroupName);
-                    properties.push(property);
-                }
-                if (setter) {
-                    var property = {};
-                    property.name = "set " + propertyName;
-                    property.value = this._wrapObject(setter, objectGroupName);
-                    properties.push(property);
-                }
-            } else {
-                var property = {};
-                property.name = propertyName;
-                var value;
-                try {
-                    value = object[propertyName];
-                } catch(e) {
-                    var value = e;
-                    property.wasThrown = true;
-                }
-                property.value = this._wrapObject(value, objectGroupName);
-                properties.push(property);
-            }
+        // Go over properties, wrap object values.
+        for (var i = 0; i < descriptors.length; ++i) {
+            var descriptor = descriptors[i];
+            if (descriptor.get)
+                descriptor.get = this._wrapObject(descriptor.get, objectGroupName);
+            if (descriptor.set)
+                descriptor.set = this._wrapObject(descriptor.set, objectGroupName);
+            if ("value" in descriptor)
+                descriptor.value = this._wrapObject(descriptor.value, objectGroupName);
         }
-        return properties;
+        return descriptors;
     },
 
     releaseObject: function(objectId)
@@ -227,23 +201,37 @@ InjectedScript.prototype = {
         delete this._idToObjectGroupName[id];
     },
 
-    _populatePropertyNames: function(object, resultSet)
+    _populatePropertyDescriptors: function(object, descriptors, ownProperties)
     {
-        for (var o = object; o; o = o.__proto__) {
-            try {
-                var names = Object.getOwnPropertyNames(o);
-                for (var i = 0; i < names.length; ++i)
-                    resultSet[names[i]] = true;
-            } catch (e) {
+        var nameProcessed = {};
+        nameProcessed.__proto__ = null;
+        for (var o = object; this._isDefined(o); o = o.__proto__) {
+            var names = Object.getOwnPropertyNames(o);
+            for (var i = 0; i < names.length; ++i) {
+                var name = names[i];
+                if (nameProcessed[name])
+                    continue;
+
+                try {
+                    nameProcessed[name] = true;
+                    var descriptor = Object.getOwnPropertyDescriptor(object, name);
+                    if (!descriptor)
+                        continue;
+                } catch (e) {
+                    var descriptor = {};
+                    descriptor.value = e;
+                    descriptor.wasThrown = true;
+                }
+
+                descriptor.name = name;
+                descriptors.push(descriptor); 
+            }
+            if (ownProperties) {
+                if (object.__proto__)
+                    descriptors.push({ name: "__proto__", value: object.__proto__, writable: true, configurable: true, enumerable: false});
+                break;
             }
         }
-    },
-
-    _getPropertyNames: function(object, resultSet)
-    {
-        var propertyNameSet = {};
-        this._populatePropertyNames(object, propertyNameSet);
-        return Object.keys(propertyNameSet);
     },
 
     evaluate: function(expression, objectGroup, injectCommandLineAPI, returnByValue)
