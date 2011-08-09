@@ -3602,7 +3602,7 @@ void UnitTest::AddTestPartResult(TestPartResult::Type result_type,
       // the --gtest_catch_exceptions flags are specified.
       DebugBreak();
 #else
-      *static_cast<int*>(NULL) = 1;
+      *static_cast<volatile int*>(NULL) = 1;
 #endif  // GTEST_OS_WINDOWS
     } else if (GTEST_FLAG(throw_on_failure)) {
 #if GTEST_HAS_EXCEPTIONS

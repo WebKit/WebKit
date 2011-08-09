@@ -1,3 +1,11 @@
+2011-08-09  Mark Rowe  <mrowe@apple.com>
+
+        Fix gtest to compile in the release configuration with clang.
+
+        This change was made upstream in r443.
+
+        * gtest/src/gtest.cc:
+
 2011-08-04  Mark Rowe  <mrowe@apple.com>
 
         Future-proof Xcode configuration settings.
