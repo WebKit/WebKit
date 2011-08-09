@@ -83,7 +83,7 @@ WorkerContextExecutionProxy::WorkerContextExecutionProxy(WorkerContext* workerCo
     : m_workerContext(workerContext)
     , m_recursion(0)
 {
-    initV8();
+    initIsolate();
 }
 
 WorkerContextExecutionProxy::~WorkerContextExecutionProxy()
@@ -108,11 +108,14 @@ void WorkerContextExecutionProxy::dispose()
     }
 }
 
-void WorkerContextExecutionProxy::initV8()
+void WorkerContextExecutionProxy::initIsolate()
 {
     // Tell V8 not to call the default OOM handler, binding code will handle it.
     v8::V8::IgnoreOutOfMemoryException();
     v8::V8::SetFatalErrorHandler(reportFatalErrorInV8);
+
+    v8::V8::SetGlobalGCPrologueCallback(&V8GCController::gcPrologue);
+    v8::V8::SetGlobalGCEpilogueCallback(&V8GCController::gcEpilogue);
 
     v8::ResourceConstraints resource_constraints;
     uint32_t here;

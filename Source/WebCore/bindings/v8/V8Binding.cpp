@@ -51,6 +51,7 @@ namespace WebCore {
 
 V8BindingPerIsolateData::V8BindingPerIsolateData(v8::Isolate* isolate)
     : m_domDataStore(0)
+    , m_currentAllocationsAllowed(false)
 {
 }
 

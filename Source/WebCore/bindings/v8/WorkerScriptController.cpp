@@ -94,7 +94,7 @@ ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode,
 
 void WorkerScriptController::scheduleExecutionTermination()
 {
-    v8::V8::TerminateExecution();
+    v8::V8::TerminateExecution(m_isolate);
 }
 
 void WorkerScriptController::forbidExecution()

@@ -31,6 +31,7 @@
 #include "config.h"
 #include "BoundObject.h"
 
+#include "V8Binding.h"
 #include "V8Proxy.h"
 
 namespace WebKit {

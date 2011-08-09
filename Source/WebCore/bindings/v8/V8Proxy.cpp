@@ -132,8 +132,6 @@ typedef HashMap<Node*, v8::Object*> DOMNodeMap;
 typedef HashMap<void*, v8::Object*> DOMObjectMap;
 typedef HashMap<int, v8::FunctionTemplate*> FunctionTemplateMap;
 
-bool AllowAllocation::m_current = false;
-
 static void addMessageToConsole(Page* page, const String& message, const String& sourceID, unsigned lineNumber)
 {
     ASSERT(page);
@@ -783,7 +781,7 @@ v8::Local<v8::Context> V8Proxy::currentContext()
 
 v8::Handle<v8::Value> V8Proxy::checkNewLegal(const v8::Arguments& args)
 {
-    if (!AllowAllocation::m_current)
+    if (!AllowAllocation::current())
         return throwError(TypeError, "Illegal constructor");
 
     return args.This();
