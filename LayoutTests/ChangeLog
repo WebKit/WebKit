@@ -1,3 +1,18 @@
+2011-08-09  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT failure loading web site
+        https://bugs.webkit.org/show_bug.cgi?id=65930
+
+        Reviewed by Oliver Hunt.
+        
+        Reproduced the failure seen in
+        http://www.skinnytaste.com/2011/06/ricotta-cheese-chocolate-chip-muffins.html
+
+        * fast/js/boxed-double-to-int-expected.txt: Added.
+        * fast/js/boxed-double-to-int.html: Added.
+        * fast/js/script-tests/boxed-double-to-int.js: Added.
+        (boxedDoubleToInt):
+
 2011-08-09  Anders Carlsson  <andersca@apple.com>
 
         Add updated media test results for Lion.

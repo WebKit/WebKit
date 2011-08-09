@@ -1,3 +1,16 @@
+2011-08-09  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT failure loading web site
+        https://bugs.webkit.org/show_bug.cgi?id=65930
+
+        Reviewed by Oliver Hunt.
+        
+        Put the use() call after the fpr()/gpr() calls, since doing otherwise
+        breaks the register allocator.
+
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+
 2011-08-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add ParentClass typedef in all JSC classes

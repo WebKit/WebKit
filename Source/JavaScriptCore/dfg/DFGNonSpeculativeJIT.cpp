@@ -510,9 +510,11 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         if ((childInfo.registerFormat() | DataFormatJS) == DataFormatJSDouble) {
             DoubleOperand op1(this, node.child1());
             GPRTemporary result(this);
+            FPRReg fpr = op1.fpr();
+            GPRReg gpr = result.gpr();
             op1.use();
-            numberToInt32(op1.fpr(), result.gpr());
-            integerResult(result.gpr(), m_compileIndex, UseChildrenCalledExplicitly);
+            numberToInt32(fpr, gpr);
+            integerResult(gpr, m_compileIndex, UseChildrenCalledExplicitly);
             break;
         }
 
