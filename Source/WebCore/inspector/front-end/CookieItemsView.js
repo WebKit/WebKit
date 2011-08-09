@@ -45,6 +45,8 @@ WebInspector.CookieItemsView = function(treeElement, cookieDomain)
 
     this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This site has no cookies."));
     this._emptyView.show(this.element);
+    
+    this.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
 }
 
 WebInspector.CookieItemsView.prototype = {
@@ -90,7 +92,7 @@ WebInspector.CookieItemsView.prototype = {
         }
 
         if (!this._cookiesTable) {
-            this._cookiesTable = isAdvanced ? new WebInspector.CookiesTable(this._cookieDomain, false, this._deleteCookie.bind(this)) : new WebInspector.SimpleCookiesTable();
+            this._cookiesTable = isAdvanced ? new WebInspector.CookiesTable(this._cookieDomain, false, this._deleteCookie.bind(this), this._update.bind(this)) : new WebInspector.SimpleCookiesTable();
             this.element.appendChild(this._cookiesTable.element);
         }
 
@@ -151,6 +153,15 @@ WebInspector.CookieItemsView.prototype = {
     _refreshButtonClicked: function(event)
     {
         this._update();
+    },
+    
+    _contextMenu: function()
+    {
+        if (!this._cookies.length) {
+            var contextMenu = new WebInspector.ContextMenu();
+            contextMenu.appendItem(WebInspector.UIString("Refresh"), this._update.bind(this));
+            contextMenu.show(event);
+        }
     }
 }
 

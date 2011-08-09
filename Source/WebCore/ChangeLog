@@ -1,5 +1,26 @@
 2011-08-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Add "Refresh" to context menu of resources panel cookies view.
+        https://bugs.webkit.org/show_bug.cgi?id=65854
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView):
+        (WebInspector.CookieItemsView.prototype._updateWithCookies):
+        (WebInspector.CookieItemsView.prototype._refreshButtonClicked):
+        (WebInspector.CookieItemsView.prototype._contextMenu):
+        * inspector/front-end/CookiesTable.js:
+        (WebInspector.CookiesTable):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype.get refreshCallback):
+        (WebInspector.DataGrid.prototype.set refreshCallback):
+        (WebInspector.DataGrid.prototype._contextMenuInDataTable):
+        * inspector/front-end/ResourceCookiesView.js:
+        (WebInspector.ResourceCookiesView.prototype._buildCookiesTable):
+
+2011-08-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: Resources panel does not show main resource cookies.
         https://bugs.webkit.org/show_bug.cgi?id=65770
 

@@ -155,6 +155,16 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 }
 
 WebInspector.DataGrid.prototype = {
+    get refreshCallback()
+    {
+        return this._refreshCallback;
+    },
+        
+    set refreshCallback(refreshCallback)
+    {
+        this._refreshCallback = refreshCallback;
+    },
+    
     _ondblclick: function(event)
     {
         if (this._editing || this._editingNode)
@@ -878,24 +888,23 @@ WebInspector.DataGrid.prototype = {
     
     _contextMenuInDataTable: function(event)
     {
-        var gridNode = this.dataGridNodeFromNode(event.target);
-        if (!gridNode || !gridNode.selectable)
-            return;
-        
-        if (gridNode.isEventWithinDisclosureTriangle(event))
-            return;
-      
         var contextMenu = new WebInspector.ContextMenu();
-        
-        // FIXME: Use the column names for Editing, instead of just "Edit".
-        if (this.dataGrid._editCallback) {
-            if (gridNode === this.creationNode)
-                contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
-            else
-                contextMenu.appendItem(WebInspector.UIString("Edit"), this._startEditing.bind(this, event.target));
+
+        var gridNode = this.dataGridNodeFromNode(event.target);
+        if (this.dataGrid._refreshCallback && (!gridNode || gridNode !== this.creationNode))
+            contextMenu.appendItem(WebInspector.UIString("Refresh"), this._refreshCallback.bind(this));
+
+        if (gridNode && gridNode.selectable && !gridNode.isEventWithinDisclosureTriangle(event)) {
+            // FIXME: Use the column names for Editing, instead of just "Edit".
+            if (this.dataGrid._editCallback) {
+                if (gridNode === this.creationNode)
+                    contextMenu.appendItem(WebInspector.UIString("Add New"), this._startEditing.bind(this, event.target));
+                else
+                    contextMenu.appendItem(WebInspector.UIString("Edit"), this._startEditing.bind(this, event.target));
+            }
+            if (this.dataGrid._deleteCallback && gridNode !== this.creationNode)
+                contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
         }
-        if (this.dataGrid._deleteCallback && gridNode !== this.creationNode)
-            contextMenu.appendItem(WebInspector.UIString("Delete"), this._deleteCallback.bind(this, gridNode));
         
         contextMenu.show(event);
     },

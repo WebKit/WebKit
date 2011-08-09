@@ -72,7 +72,7 @@ WebInspector.ResourceCookiesView.prototype = {
     {
         this.element.removeChildren();
 
-        this._cookiesTable = new WebInspector.CookiesTable(null, true, true);
+        this._cookiesTable = new WebInspector.CookiesTable(null, true);
         this._cookiesTable.addCookiesFolder(WebInspector.UIString("Request Cookies"), this._resource.requestCookies);
         this._cookiesTable.addCookiesFolder(WebInspector.UIString("Response Cookies"), this._resource.responseCookies);
         this.element.appendChild(this._cookiesTable.element);
