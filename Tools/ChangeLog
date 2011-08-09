@@ -1,3 +1,18 @@
+2011-08-08  Adam Barth  <abarth@webkit.org>
+
+        scm.delete should delete empty parent directories as well
+        https://bugs.webkit.org/show_bug.cgi?id=65878
+
+        Reviewed by Eric Seidel.
+
+        This behavior makes SVN match GIT (which has no concept of empty
+        directories).  This bug comes up a lot when optimizing baselines, which
+        often create empty directories when we're able to optimize everything
+        out of a given folder.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+
 2011-08-08  Lucas Forschler  <lforschler@apple.com>
 
         Add triggers for Lion WK2 test bots.

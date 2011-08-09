@@ -68,6 +68,8 @@ class SVN(SCM, SVNRepository):
     svn_server_host = "svn.webkit.org"
     svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
 
+    _svn_metadata_files = frozenset(['.svn', '_svn'])
+
     def __init__(self, cwd, patch_directories, executive=None):
         SCM.__init__(self, cwd, executive)
         self._bogus_dir = None
@@ -171,9 +173,22 @@ class SVN(SCM, SVNRepository):
         self._add_parent_directories(os.path.dirname(os.path.abspath(path)))
         return self.run(["svn", "add", path], return_exit_code=return_exit_code)
 
+    def _delete_parent_directories(self, path):
+        if not self.in_working_directory(path):
+            return
+        if set(os.listdir(path)) - self._svn_metadata_files:
+            return  # Directory has non-trivial files in it.
+        self.delete(path)
+        dirname = os.path.dirname(path)
+        if dirname != path:
+            self._delete_parent_directories(dirname)
+
     def delete(self, path):
-        parent, base = os.path.split(os.path.abspath(path))
-        return self.run(["svn", "delete", "--force", base], cwd=parent)
+        abs_path = os.path.abspath(path)
+        parent, base = os.path.split(abs_path)
+        result = self.run(["svn", "delete", "--force", base], cwd=parent)
+        self._delete_parent_directories(os.path.dirname(abs_path))
+        return result
 
     def exists(self, path):
         return not self.run(["svn", "info", path], return_exit_code=True, decode_output=False)

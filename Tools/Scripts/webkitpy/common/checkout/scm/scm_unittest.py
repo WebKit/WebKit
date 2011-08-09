@@ -511,6 +511,25 @@ OcmYex&reD$;sO8*F9L)B
         self.scm.add("added_dir/added_file")
         self.assertTrue("added_dir/added_file" in self.scm.added_files())
 
+    def _shared_test_delete_recursively(self):
+        os.mkdir("added_dir")
+        write_into_file_at_path("added_dir/added_file", "new stuff")
+        self.scm.add("added_dir/added_file")
+        self.assertTrue("added_dir/added_file" in self.scm.added_files())
+        self.scm.delete("added_dir/added_file")
+        self.assertFalse("added_dir" in self.scm.added_files())
+
+    def _shared_test_delete_recursively_or_not(self):
+        os.mkdir("added_dir")
+        write_into_file_at_path("added_dir/added_file", "new stuff")
+        write_into_file_at_path("added_dir/another_added_file", "more new stuff")
+        self.scm.add("added_dir/added_file")
+        self.scm.add("added_dir/another_added_file")
+        self.assertTrue("added_dir/added_file" in self.scm.added_files())
+        self.assertTrue("added_dir/another_added_file" in self.scm.added_files())
+        self.scm.delete("added_dir/added_file")
+        self.assertTrue("added_dir/another_added_file" in self.scm.added_files())
+
     def _shared_test_exists(self, scm, commit_function):
         os.chdir(scm.checkout_root)
         self.assertFalse(scm.exists('foo.txt'))
@@ -841,6 +860,12 @@ END
         os.chdir(self.svn_checkout_path)
         self.scm.delete("test_file")
         self.assertTrue("test_file" in self.scm.deleted_files())
+
+    def test_delete_recursively(self):
+        self._shared_test_delete_recursively()
+
+    def test_delete_recursively_or_not(self):
+        self._shared_test_delete_recursively_or_not()
 
     def test_head_svn_revision(self):
         self._shared_test_head_svn_revision()
@@ -1458,6 +1483,12 @@ class GitSVNTest(SCMTest):
         self._two_local_commits()
         self.scm.delete('test_file_commit1')
         self.assertTrue("test_file_commit1" in self.scm.deleted_files())
+
+    def test_delete_recursively(self):
+        self._shared_test_delete_recursively()
+
+    def test_delete_recursively_or_not(self):
+        self._shared_test_delete_recursively_or_not()
 
     def test_head_svn_revision(self):
         self._shared_test_head_svn_revision()
