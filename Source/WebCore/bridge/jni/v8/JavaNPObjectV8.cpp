@@ -97,9 +97,7 @@ bool JavaNPObjectHasMethod(NPObject* obj, NPIdentifier identifier)
     if (!name)
         return false;
 
-    instance->begin();
     bool result = (instance->getClass()->methodsNamed(name).size() > 0);
-    instance->end();
 
     // TODO: use NPN_MemFree
     free(name);
@@ -115,8 +113,6 @@ bool JavaNPObjectInvoke(NPObject* obj, NPIdentifier identifier, const NPVariant*
     NPUTF8* name = _NPN_UTF8FromIdentifier(identifier);
     if (!name)
         return false;
-
-    instance->begin();
 
     MethodList methodList = instance->getClass()->methodsNamed(name);
     // TODO: use NPN_MemFree
@@ -144,8 +140,7 @@ bool JavaNPObjectInvoke(NPObject* obj, NPIdentifier identifier, const NPVariant*
     for (unsigned int i = 0; i < argCount; i++)
         jArgs[i] = convertNPVariantToJavaValue(args[i], jMethod->parameterAt(i));
 
-    JavaValue jResult = instance->invokeMethod(jMethod, jArgs);
-    instance->end();
+    JavaValue jResult = instance->invokeMethod(*jMethod, jArgs);
     delete[] jArgs;
 
     VOID_TO_NPVARIANT(*result);
@@ -161,9 +156,7 @@ bool JavaNPObjectHasProperty(NPObject* obj, NPIdentifier identifier)
     NPUTF8* name = _NPN_UTF8FromIdentifier(identifier);
     if (!name)
         return false;
-    instance->begin();
     bool result = instance->getClass()->fieldNamed(name);
-    instance->end();
     free(name);
     return result;
 }
@@ -178,14 +171,12 @@ bool JavaNPObjectGetProperty(NPObject* obj, NPIdentifier identifier, NPVariant* 
     if (!name)
         return false;
 
-    instance->begin();
     JavaField* field = instance->getClass()->fieldNamed(name);
     free(name); // TODO: use NPN_MemFree
     if (!field)
         return false;
 
-    JavaValue value = instance->getField(field);
-    instance->end();
+    JavaValue value = instance->getField(*field);
 
     convertJavaValueToNPVariant(value, result);
 

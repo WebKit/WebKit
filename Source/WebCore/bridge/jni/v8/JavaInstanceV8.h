@@ -49,14 +49,8 @@ public:
     virtual JavaClass* getClass() const = 0;
     // args must be an array of length greater than or equal to the number of
     // arguments expected by the method.
-    virtual JavaValue invokeMethod(const JavaMethod*, JavaValue* args) = 0;
-    virtual JavaValue getField(const JavaField*) = 0;
-
-    // These functions are called before and after the main entry points into
-    // the native implementations.  They can be used to establish and cleanup
-    // any needed state.
-    virtual void begin() = 0;
-    virtual void end() = 0;
+    virtual JavaValue invokeMethod(const JavaMethod&, JavaValue* args) = 0;
+    virtual JavaValue getField(const JavaField&) = 0;
 };
 
 } // namespace Bindings

@@ -40,8 +40,6 @@ public:
     virtual ~JavaField() {}
 
     virtual String name() const = 0;
-    virtual const char* typeClassName() const = 0;
-    virtual JavaType type() const = 0;
 };
 
 } // namespace Bindings

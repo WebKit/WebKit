@@ -41,9 +41,6 @@ class JavaValue;
 JavaValue convertNPVariantToJavaValue(NPVariant, const String& javaClass);
 void convertJavaValueToNPVariant(JavaValue, NPVariant*);
 
-JavaValue jvalueToJavaValue(const jvalue&, const JavaType&);
-jvalue javaValueToJvalue(const JavaValue&);
-
 } // namespace Bindings
 
 } // namespace JSC

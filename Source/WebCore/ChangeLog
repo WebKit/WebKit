@@ -1,3 +1,43 @@
+2011-08-08  Steve Block  <steveblock@google.com>
+
+        Removes V8's JavaInstanceJobject, JavaClassJobject and JavaFieldJobject.
+        https://bugs.webkit.org/show_bug.cgi?id=57859
+
+        Reviewed by Alexey Proskuryakov.
+
+        This effectively reverts the changes made in Bugs 55383, 57533 and
+        55766. These classes were only used by Android. In the future, Android
+        will use the Chromium WebKit API to implement the Java bridge.
+
+        Towards this goal, this patch ...
+        - Simplfies the JavaInstance, JavaClass and JavaField interfaces for V8.
+          These interfaces will be implemented in Chromium's WebKit layer.
+        - Adds a JavaMethod interface for V8
+        - Removes the jvalue <-> JavaValue conversion functions for V8, which are
+          now superfluous
+        - Removes the calls to JavaInstance::begin()/end() for V8, which are now
+          superfluous
+
+        Will be covered by existing tests once the Chromium WebKit layer is complete.
+
+        * WebCore.gypi:
+        * bridge/jni/v8/JNIUtilityPrivate.cpp:
+        * bridge/jni/v8/JNIUtilityPrivate.h:
+        * bridge/jni/v8/JavaClassJobjectV8.cpp: Removed.
+        * bridge/jni/v8/JavaFieldJobjectV8.cpp: Removed.
+        * bridge/jni/v8/JavaFieldJobjectV8.h: Removed.
+        * bridge/jni/v8/JavaFieldV8.h:
+        * bridge/jni/v8/JavaInstanceJobjectV8.cpp: Removed.
+        * bridge/jni/v8/JavaInstanceJobjectV8.h: Removed.
+        * bridge/jni/v8/JavaInstanceV8.h:
+        * bridge/jni/v8/JavaMethodV8.h:
+        (JSC::Bindings::JavaMethod::~JavaMethod):
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+        (JSC::Bindings::JavaNPObjectHasMethod):
+        (JSC::Bindings::JavaNPObjectInvoke):
+        (JSC::Bindings::JavaNPObjectHasProperty):
+        (JSC::Bindings::JavaNPObjectGetProperty):
+
 2011-08-08  Chris Rogers  <crogers@google.com>
 
         Fix thread-safety of AudioNode deletion

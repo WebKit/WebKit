@@ -28,7 +28,7 @@
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JavaInstanceJobjectV8.h"
+#include "JavaInstanceV8.h"
 #include "JavaNPObjectV8.h"
 #include "JavaValueV8.h"
 #include <wtf/text/CString.h>
@@ -232,106 +232,6 @@ void convertJavaValueToNPVariant(JavaValue value, NPVariant* result)
         }
         break;
     }
-}
-
-JavaValue jvalueToJavaValue(const jvalue& value, const JavaType& type)
-{
-    JavaValue result;
-    result.m_type = type;
-    switch (result.m_type) {
-    case JavaTypeVoid:
-        break;
-    case JavaTypeObject:
-        result.m_objectValue = new JavaInstanceJobject(value.l);
-        break;
-    case JavaTypeString:
-        {
-            jstring javaString = static_cast<jstring>(value.l);
-            const UChar* characters = getUCharactersFromJStringInEnv(getJNIEnv(), javaString);
-            // We take a copy to allow the Java String to be released.
-            result.m_stringValue = String(characters, getJNIEnv()->GetStringLength(javaString));
-            releaseUCharactersForJStringInEnv(getJNIEnv(), javaString, characters);
-        }
-        break;
-    case JavaTypeBoolean:
-        result.m_booleanValue = value.z == JNI_FALSE ? false : true;
-        break;
-    case JavaTypeByte:
-        result.m_byteValue = value.b;
-        break;
-    case JavaTypeChar:
-        result.m_charValue = value.c;
-        break;
-    case JavaTypeShort:
-        result.m_shortValue = value.s;
-        break;
-    case JavaTypeInt:
-        result.m_intValue = value.i;
-        break;
-    case JavaTypeLong:
-        result.m_longValue = value.j;
-        break;
-    case JavaTypeFloat:
-        result.m_floatValue = value.f;
-        break;
-    case JavaTypeDouble:
-        result.m_doubleValue = value.d;
-        break;
-    default:
-        ASSERT(false);
-    }
-    return result;
-}
-
-jvalue javaValueToJvalue(const JavaValue& value)
-{
-    jvalue result;
-    memset(&result, 0, sizeof(jvalue));
-    switch (value.m_type) {
-    case JavaTypeVoid:
-        break;
-    case JavaTypeObject:
-        if (value.m_objectValue) {
-            // This method is used only by JavaInstanceJobject, so we know the
-            // derived type of the object.
-            result.l = static_cast<JavaInstanceJobject*>(value.m_objectValue.get())->javaInstance();
-        }
-        break;
-    case JavaTypeString:
-        // This creates a local reference to a new String object, which will
-        // be released when the call stack returns to Java. Note that this
-        // may cause leaks if invoked from a native message loop, as is the
-        // case in workers.
-        result.l = getJNIEnv()->NewString(value.m_stringValue.characters(), value.m_stringValue.length());
-        break;
-    case JavaTypeBoolean:
-        result.z = value.m_booleanValue ? JNI_TRUE : JNI_FALSE;
-        break;
-    case JavaTypeByte:
-        result.b = value.m_byteValue;
-        break;
-    case JavaTypeChar:
-        result.c = value.m_charValue;
-        break;
-    case JavaTypeShort:
-        result.s = value.m_shortValue;
-        break;
-    case JavaTypeInt:
-        result.i = value.m_intValue;
-        break;
-    case JavaTypeLong:
-        result.j = value.m_longValue;
-        break;
-    case JavaTypeFloat:
-        result.f = value.m_floatValue;
-        break;
-    case JavaTypeDouble:
-        result.d = value.m_doubleValue;
-        break;
-    default:
-        ASSERT(false);
-    }
-    return result;
 }
 
 } // namespace Bindings
