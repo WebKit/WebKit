@@ -55,6 +55,11 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     STATIC_FILE_NAMES = None
     STATIC_FILE_DIRECTORY = None
 
+    # Setting this flag to True causes the server to send
+    #   Access-Control-Allow-Origin: *
+    # with every response.
+    allow_cross_origin_requests = False
+
     def do_GET(self):
         self._handle_request()
 
@@ -100,14 +105,20 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         # otherwise there's a deadlock
         threading.Thread(target=lambda: self.server.shutdown()).start()
 
+    def _send_access_control_header(self):
+        if self.allow_cross_origin_requests:
+            self.send_header('Access-Control-Allow-Origin', '*')
+
     def _serve_text(self, text):
         self.send_response(200)
+        self._send_access_control_header()
         self.send_header("Content-type", "text/plain")
         self.end_headers()
         self.wfile.write(text)
 
     def _serve_json(self, json_object):
         self.send_response(200)
+        self._send_access_control_header()
         self.send_header('Content-type', 'application/json')
         self.end_headers()
         json.dump(json_object, self.wfile)
@@ -118,6 +129,7 @@ class ReflectionHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             return
         with codecs.open(file_path, "rb") as static_file:
             self.send_response(200)
+            self._send_access_control_header()
             self.send_header("Content-Length", os.path.getsize(file_path))
             mime_type, encoding = mimetypes.guess_type(file_path)
             if mime_type:

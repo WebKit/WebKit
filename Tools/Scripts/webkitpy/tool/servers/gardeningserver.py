@@ -103,6 +103,8 @@ class GardeningHTTPRequestHandler(ReflectionHandler):
         "public_html",
         "TestFailures")
 
+    allow_cross_origin_requests = True
+
     def _run_webkit_patch(self, args):
         return self.server.tool.executive.run_command([self.server.tool.path()] + args, cwd=self.server.tool.scm().checkout_root)
 
