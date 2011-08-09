@@ -1064,10 +1064,6 @@ fast/repaint/inline-relative-positioned.html
 # eventSender missing touchCancel() and cancelTouchPoint()
 fast/events/touch/send-oncancel-event.html
 
-# [Qt] fast/forms/input-number-size.html added in r92589 fails
-# https://bugs.webkit.org/show_bug.cgi?id=65851
-fast/forms/input-number-size.html
-
 # Relies on WebKit API [WebView _loadBackForwardListFromOtherView:]
 fast/loader/crash-copying-backforwardlist.html
 
@@ -1666,12 +1662,15 @@ platform/qt/http/tests/cookies/strict-third-party-cookie-blocking.html
 # https://bugs.webkit.org/show_bug.cgi?id=41241
 fast/text/bidi-explicit-embedding-past-end.html
 
-# Need to implement inner-spin-button or outer-spin-button
+# Need to implement inner-spin-button
+# https://bugs.webkit.org/show_bug.cgi?id=65896
 fast/forms/input-appearance-spinbutton-disabled-readonly.html
 fast/forms/input-appearance-spinbutton-layer.html
+fast/forms/input-appearance-spinbutton-visibility.html
 fast/forms/input-number-events.html
-fast/forms/input-spinbutton-capturing.html
 fast/forms/input-number-large-padding.html
+fast/forms/input-number-size.html
+fast/forms/input-spinbutton-capturing.html
 fast/forms/spin-button-gets-disabled-or-readonly.html
 
 # [Qt] fast/dom/beforeload/script-before-load-dynamic.html is crashy-flakey
@@ -1901,7 +1900,6 @@ fast/dom/52776.html
 fast/dom/HTMLMeterElement/meter-appearances-capacity.html
 fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html
 fast/dynamic/text-combine.html
-fast/forms/input-appearance-spinbutton-visibility.html
 fast/forms/input-placeholder-visibility-1.html
 fast/forms/input-placeholder-visibility-3.html
 fast/forms/listbox-bidi-align.html
