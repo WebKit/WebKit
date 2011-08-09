@@ -65,6 +65,8 @@ public:
 
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
 
+    void setForceCompositingMode(Document*, bool enabled, ExceptionCode&);
+
 private:
     Internals();
 };

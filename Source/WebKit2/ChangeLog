@@ -1,3 +1,15 @@
+2011-08-08  Adrienne Walker  <enne@google.com>
+
+        Add testing for --force-compositing-mode to windows.internal
+        https://bugs.webkit.org/show_bug.cgi?id=65777
+
+        Reviewed by Adam Barth.
+
+        Add exports for Document::settings().
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2011-08-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [Qt] Redirect didFindZoomableArea thru to the view

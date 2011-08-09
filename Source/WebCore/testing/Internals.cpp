@@ -37,6 +37,7 @@
 #include "Page.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
+#include "Settings.h"
 #include "ShadowContentElement.h"
 #include "ShadowRoot.h"
 
@@ -176,6 +177,16 @@ PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& e
     if (!renderer)
         return ClientRect::create();
     return ClientRect::create(renderer->absoluteBoundingBoxRect());
+}
+
+void Internals::setForceCompositingMode(Document* document, bool enabled, ExceptionCode& ec)
+{
+    if (!document || !document->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    document->settings()->setForceCompositingMode(enabled);
 }
 
 }

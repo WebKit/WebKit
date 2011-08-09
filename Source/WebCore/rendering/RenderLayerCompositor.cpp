@@ -108,16 +108,6 @@ RenderLayerCompositor::RenderLayerCompositor(RenderView* renderView)
     , m_rootLayerUpdateCount(0)
 #endif // PROFILE_LAYER_REBUILD
 {
-    Settings* settings = m_renderView->document()->settings();
-
-    // Even when forcing compositing mode, ignore child frames, or this will trigger
-    // layer creation from the enclosing RenderIFrame.
-    ASSERT(m_renderView->document()->frame());
-    if (settings && settings->forceCompositingMode() && settings->acceleratedCompositingEnabled()
-        && !m_renderView->document()->frame()->tree()->parent()) {
-        m_forceCompositingMode = true;
-        enableCompositingMode();
-    }
 }
 
 RenderLayerCompositor::~RenderLayerCompositor()
@@ -143,11 +133,15 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
     bool hasAcceleratedCompositing = false;
     bool showDebugBorders = false;
     bool showRepaintCounter = false;
+    bool forceCompositingMode = false;
 
     if (Settings* settings = m_renderView->document()->settings()) {
         hasAcceleratedCompositing = settings->acceleratedCompositingEnabled();
         showDebugBorders = settings->showDebugBorders();
         showRepaintCounter = settings->showRepaintCounter();
+
+        if (!m_renderView->document()->frame()->tree()->parent())
+            forceCompositingMode = settings->forceCompositingMode() && hasAcceleratedCompositing;
     }
 
     // We allow the chrome to override the settings, in case the page is rendered
@@ -162,12 +156,13 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
         }
     }
 
-    if (hasAcceleratedCompositing != m_hasAcceleratedCompositing || showDebugBorders != m_showDebugBorders || showRepaintCounter != m_showRepaintCounter)
+    if (hasAcceleratedCompositing != m_hasAcceleratedCompositing || showDebugBorders != m_showDebugBorders || showRepaintCounter != m_showRepaintCounter || forceCompositingMode != m_forceCompositingMode)
         setCompositingLayersNeedRebuild();
 
     m_hasAcceleratedCompositing = hasAcceleratedCompositing;
     m_showDebugBorders = showDebugBorders;
     m_showRepaintCounter = showRepaintCounter;
+    m_forceCompositingMode = forceCompositingMode;
 }
 
 bool RenderLayerCompositor::canRender3DTransforms() const
@@ -253,6 +248,9 @@ void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer<RenderLayerC
 void RenderLayerCompositor::updateCompositingLayers(CompositingUpdateType updateType, RenderLayer* updateRoot)
 {
     m_updateCompositingLayersTimer.stop();
+
+    if (m_forceCompositingMode && !m_compositing)
+        enableCompositingMode(true);
 
     if (!m_compositingDependsOnGeometry && !m_compositing)
         return;

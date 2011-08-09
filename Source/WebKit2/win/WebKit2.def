@@ -160,6 +160,7 @@ EXPORTS
         ?setDisabled@MemoryCache@WebCore@@QAEX_N@Z
         ?setDOMException@WebCore@@YAXPAVExecState@JSC@@H@Z
         ?setResourcesDataSizeLimitsFromInternals@InspectorController@WebCore@@QAEXHH@Z
+        ?settings@Document@WebCore@@QBEPAVSettings@2@XZ
         ?shadowRoot@Element@WebCore@@QBEPAVShadowRoot@2@XZ
         ?toDocument@WebCore@@YAPAVDocument@1@VJSValue@JSC@@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z

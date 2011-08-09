@@ -1,3 +1,14 @@
+2011-08-08  Adrienne Walker  <enne@google.com>
+
+        Add testing for --force-compositing-mode to windows.internal
+        https://bugs.webkit.org/show_bug.cgi?id=65777
+
+        Reviewed by Adam Barth.
+
+        Add exports for Document::settings().
+
+        * Source/autotools/symbols.filter:
+
 2011-08-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92683.

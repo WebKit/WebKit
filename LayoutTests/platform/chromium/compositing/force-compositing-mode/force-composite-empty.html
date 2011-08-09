@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script>
+      if (window.internals)
+        window.internals.setForceCompositingMode(document, true);
+      function doTest() {
+        if (window.layoutTestController) {
+          document.getElementById("layertree").innerText = layoutTestController.layerTreeAsText();
+          layoutTestController.dumpAsText();
+        }
+      }
+      window.addEventListener("load", doTest, false);
+    </script>
+  </head>
+<body>
+  <!-- in force compositing mode the body should get its own graphics layer -->
+  <pre id="layertree"></pre>
+</body>
+</html>

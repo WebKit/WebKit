@@ -1,3 +1,15 @@
+2011-08-08  Adrienne Walker  <enne@google.com>
+
+        Add testing for --force-compositing-mode to windows.internal
+        https://bugs.webkit.org/show_bug.cgi?id=65777
+
+        Reviewed by Adam Barth.
+
+        Add empty page to test that the root gets a graphics layer.
+
+        * platform/chromium/compositing/force-compositing-mode/force-composite-empty-expected.txt: Added.
+        * platform/chromium/compositing/force-compositing-mode/force-composite-empty.html: Added.
+
 2011-08-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Repeated copy and paste result in nested style elements such as b and font
