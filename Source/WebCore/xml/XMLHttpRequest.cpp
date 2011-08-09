@@ -1048,11 +1048,6 @@ void XMLHttpRequest::didReceiveResponse(unsigned long identifier, const Resource
         m_responseEncoding = response.textEncodingName();
 }
 
-void XMLHttpRequest::didReceiveAuthenticationCancellation(unsigned long, const ResourceResponse& failureResponse)
-{
-    m_response = failureResponse;
-}
-
 void XMLHttpRequest::didReceiveData(const char* data, int len)
 {
     if (m_error)

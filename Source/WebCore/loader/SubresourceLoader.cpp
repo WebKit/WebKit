@@ -267,17 +267,4 @@ void SubresourceLoader::didReceiveAuthenticationChallenge(const AuthenticationCh
     ResourceLoader::didReceiveAuthenticationChallenge(challenge);
 }
 
-void SubresourceLoader::receivedCancellation(const AuthenticationChallenge& challenge)
-{
-    ASSERT(!reachedTerminalState());
-        
-    RefPtr<SubresourceLoader> protect(this);
-
-    if (m_client)
-        m_client->receivedCancellation(this, challenge);
-    
-    ResourceLoader::receivedCancellation(challenge);
-}
-    
-
 }

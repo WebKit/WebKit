@@ -58,7 +58,6 @@ namespace WebCore {
         virtual void didFail(const ResourceError&);
         virtual bool shouldUseCredentialStorage();
         virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
-        virtual void receivedCancellation(const AuthenticationChallenge&);        
         virtual void willCancel(const ResourceError&);
         virtual void didCancel(const ResourceError&);
 

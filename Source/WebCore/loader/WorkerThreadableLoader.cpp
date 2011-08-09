@@ -249,18 +249,6 @@ void WorkerThreadableLoader::MainThreadBridge::didFailRedirectCheck()
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidFailRedirectCheck, m_workerClientWrapper), m_taskMode);
 }
 
-static void workerContextDidReceiveAuthenticationCancellation(ScriptExecutionContext* context, RefPtr<ThreadableLoaderClientWrapper> workerClientWrapper, unsigned long identifier, PassOwnPtr<CrossThreadResourceResponseData> responseData)
-{
-    ASSERT_UNUSED(context, context->isWorkerContext());
-    OwnPtr<ResourceResponse> response(ResourceResponse::adopt(responseData));
-    workerClientWrapper->didReceiveAuthenticationCancellation(identifier, *response);
-}
-
-void WorkerThreadableLoader::MainThreadBridge::didReceiveAuthenticationCancellation(unsigned long identifier, const ResourceResponse& response)
-{
-    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveAuthenticationCancellation, m_workerClientWrapper, identifier, response), m_taskMode);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(WORKERS)

@@ -155,7 +155,6 @@ private:
     virtual void didFinishLoading(unsigned long identifier, double finishTime);
     virtual void didFail(const ResourceError&);
     virtual void didFailRedirectCheck();
-    virtual void didReceiveAuthenticationCancellation(unsigned long identifier, const ResourceResponse&);
 
     String responseMIMEType() const;
     bool responseIsXML() const;

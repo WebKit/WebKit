@@ -1,3 +1,31 @@
+2011-08-09  Nate Chapin  <japhet@chromium.org>
+
+        Remove receivedCancellation() from SubresourceLoaderClient.
+
+        http://bugs.webkit.org/show_bug.cgi?id=65330
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, no change in functionality intended.
+
+        * loader/DocumentThreadableLoader.cpp:
+        * loader/DocumentThreadableLoader.h:
+        * loader/SubresourceLoader.cpp:
+        * loader/SubresourceLoader.h:
+        * loader/SubresourceLoaderClient.h:
+        * loader/ThreadableLoaderClient.h:
+        * loader/WorkerThreadableLoader.cpp:
+        * loader/WorkerThreadableLoader.h:
+        * notifications/Notification.cpp:
+        * notifications/Notification.h:  Remove receivedCancellation() since it's
+           identical to didFail(), which is always called immediately after.
+        * workers/WorkerScriptLoader.cpp:
+        * workers/WorkerScriptLoader.h: Remove receivedCancellation() since it's
+           identical to didFail(), which is always called immediately after.
+        * xml/XMLHttpRequest.cpp:
+        * xml/XMLHttpRequest.h: Remove receivedCancellation().  All it does is
+           set m_response, which is cleared in didFail() before it can be used.
+
 2011-08-09  Steve Block  <steveblock@google.com>
 
         Java Bridge leaks local references

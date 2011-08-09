@@ -316,13 +316,6 @@ void DocumentThreadableLoader::didReceiveAuthenticationChallenge(SubresourceLoad
     }
 }
 
-void DocumentThreadableLoader::receivedCancellation(SubresourceLoader* loader, const AuthenticationChallenge& challenge)
-{
-    ASSERT(m_client);
-    ASSERT_UNUSED(loader, loader == m_loader);
-    m_client->didReceiveAuthenticationCancellation(loader->identifier(), challenge.failureResponse());
-}
-
 void DocumentThreadableLoader::preflightSuccess()
 {
     OwnPtr<ResourceRequest> actualRequest;

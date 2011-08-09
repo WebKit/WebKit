@@ -119,7 +119,6 @@ namespace WebCore {
             virtual void didFinishLoading(unsigned long identifier, double finishTime);
             virtual void didFail(const ResourceError&);
             virtual void didFailRedirectCheck();
-            virtual void didReceiveAuthenticationCancellation(unsigned long identifier, const ResourceResponse&);
 
             // Only to be used on the main thread.
             RefPtr<ThreadableLoader> m_mainThreadLoader;

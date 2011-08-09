@@ -172,11 +172,6 @@ void WorkerScriptLoader::didFailRedirectCheck()
     notifyError();
 }
 
-void WorkerScriptLoader::didReceiveAuthenticationCancellation(unsigned long /*identifier*/, const ResourceResponse&)
-{
-    notifyError();
-}
-
 void WorkerScriptLoader::notifyError()
 {
     m_failed = true;

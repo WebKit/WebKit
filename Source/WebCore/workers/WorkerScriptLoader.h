@@ -71,7 +71,6 @@ namespace WebCore {
         virtual void didFinishLoading(unsigned long identifier, double);
         virtual void didFail(const ResourceError&);
         virtual void didFailRedirectCheck();
-        virtual void didReceiveAuthenticationCancellation(unsigned long /*identifier*/, const ResourceResponse&);
 
 #if PLATFORM(CHROMIUM)
         void setTargetType(ResourceRequest::TargetType targetType) { m_targetType = targetType; }

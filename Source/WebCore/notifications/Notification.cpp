@@ -211,11 +211,6 @@ void Notification::didFailRedirectCheck()
     finishLoading();
 }
 
-void Notification::didReceiveAuthenticationCancellation(unsigned long, const ResourceResponse&)
-{
-    finishLoading();
-}
-
 void Notification::finishLoading()
 {
     if (m_state == Loading) {

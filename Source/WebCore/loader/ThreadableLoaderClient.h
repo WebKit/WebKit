@@ -49,8 +49,6 @@ namespace WebCore {
         virtual void didFail(const ResourceError&) { }
         virtual void didFailRedirectCheck() { }
 
-        virtual void didReceiveAuthenticationCancellation(unsigned long /*identifier*/, const ResourceResponse&) { }
-
         virtual bool isDocumentThreadableLoaderClient() { return false; }
 
     protected:

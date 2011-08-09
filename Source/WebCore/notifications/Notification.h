@@ -107,7 +107,6 @@ namespace WebCore {
         virtual void didFinishLoading(unsigned long identifier, double finishTime);
         virtual void didFail(const ResourceError&);
         virtual void didFailRedirectCheck();
-        virtual void didReceiveAuthenticationCancellation(unsigned long, const ResourceResponse&);
 
     private:
         Notification(const KURL&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);
