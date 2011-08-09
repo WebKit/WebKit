@@ -44,19 +44,23 @@ JavaField::JavaField(JNIEnv* env, jobject aField)
 {
     // Get field type name
     jstring fieldTypeName = 0;
-    if (jobject fieldType = callJNIMethod<jobject>(aField, "getType", "()Ljava/lang/Class;"))
+    jclass fieldType = static_cast<jclass>(callJNIMethod<jobject>(aField, "getType", "()Ljava/lang/Class;"));
+    if (fieldType)
         fieldTypeName = static_cast<jstring>(callJNIMethod<jobject>(fieldType, "getName", "()Ljava/lang/String;"));
     if (!fieldTypeName)
         fieldTypeName = env->NewStringUTF("<Unknown>");
     m_typeClassName = JavaString(env, fieldTypeName);
 
     m_type = javaTypeFromClassName(m_typeClassName.utf8());
+    env->DeleteLocalRef(fieldType);
+    env->DeleteLocalRef(fieldTypeName);
 
     // Get field name
     jstring fieldName = static_cast<jstring>(callJNIMethod<jobject>(aField, "getName", "()Ljava/lang/String;"));
     if (!fieldName)
         fieldName = env->NewStringUTF("<Unknown>");
     m_name = JavaString(env, fieldName);
+    env->DeleteLocalRef(fieldName);
 
     m_field = JobjectWrapper::create(aField);
 }

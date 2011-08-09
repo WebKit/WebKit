@@ -1,3 +1,17 @@
+2011-08-09  Steve Block  <steveblock@google.com>
+
+        Java Bridge leaks local references
+        https://bugs.webkit.org/show_bug.cgi?id=64320
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests as this is just an optimization.
+
+        * bridge/jni/jsc/JavaFieldJSC.cpp:
+        (JavaField::JavaField):
+        * bridge/jni/jsc/JavaMethodJSC.cpp:
+        (JavaMethod::JavaMethod):
+
 2011-08-09  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: files from different domains are mixed in the file selector in Scripts panel
