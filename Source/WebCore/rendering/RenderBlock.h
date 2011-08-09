@@ -24,6 +24,7 @@
 #define RenderBlock_h
 
 #include "GapRects.h"
+#include "PODIntervalTree.h"
 #include "RenderBox.h"
 #include "RenderLineBoxList.h"
 #include "RootInlineBox.h"
@@ -67,6 +68,11 @@ typedef unsigned TextRunFlags;
 class RenderBlock : public RenderBox {
 public:
     friend class LineLayoutState;
+#ifndef NDEBUG
+    // Used by the PODIntervalTree for debugging the FloatingObject.
+    template <class> friend struct ValueToString;
+#endif
+
     RenderBlock(Node*);
     virtual ~RenderBlock();
 
@@ -422,6 +428,9 @@ private:
             , m_shouldPaint(false)
             , m_isDescendant(false)
             , m_isPlaced(false)
+#ifndef NDEBUG
+            , m_isInPlacedTree(false)
+#endif
         {
             ASSERT(type != NoFloat);
             if (type == LeftFloat)
@@ -441,6 +450,9 @@ private:
             , m_shouldPaint(type != FloatPositioned)
             , m_isDescendant(false)
             , m_isPlaced(true)
+#ifndef NDEBUG
+            , m_isInPlacedTree(false)
+#endif
         {
         }
 
@@ -457,13 +469,18 @@ private:
         int width() const { return m_frameRect.width(); }
         int height() const { return m_frameRect.height(); }
 
-        void setX(int x) { m_frameRect.setX(x); }
-        void setY(int y) { m_frameRect.setY(y); }
-        void setWidth(int width) { m_frameRect.setWidth(width); }
-        void setHeight(int height) { m_frameRect.setHeight(height); }
+        void setX(int x) { ASSERT(!isInPlacedTree()); m_frameRect.setX(x); }
+        void setY(int y) { ASSERT(!isInPlacedTree()); m_frameRect.setY(y); }
+        void setWidth(int width) { ASSERT(!isInPlacedTree()); m_frameRect.setWidth(width); }
+        void setHeight(int height) { ASSERT(!isInPlacedTree()); m_frameRect.setHeight(height); }
 
         const IntRect& frameRect() const { ASSERT(isPlaced()); return m_frameRect; }
-        void setFrameRect(const IntRect& frameRect) { m_frameRect = frameRect; }
+        void setFrameRect(const IntRect& frameRect) { ASSERT(!isInPlacedTree()); m_frameRect = frameRect; }
+
+#ifndef NDEBUG
+        bool isInPlacedTree() const { return m_isInPlacedTree; }
+        void setIsInPlacedTree(bool value) { m_isInPlacedTree = value; }
+#endif
 
         RenderBox* m_renderer;
         RootInlineBox* m_originatingLine;
@@ -473,6 +490,9 @@ private:
         bool m_shouldPaint : 1;
         bool m_isDescendant : 1;
         bool m_isPlaced : 1;
+#ifndef NDEBUG
+        bool m_isInPlacedTree : 1;
+#endif
     };
 
     IntPoint flipFloatForWritingMode(const FloatingObject*, const IntPoint&) const;
@@ -799,28 +819,77 @@ private:
     };
     typedef ListHashSet<FloatingObject*, 4, FloatingObjectHashFunctions> FloatingObjectSet;
     typedef FloatingObjectSet::const_iterator FloatingObjectSetIterator;
+    typedef PODInterval<LayoutUnit, FloatingObject*> FloatingObjectInterval;
+    typedef PODIntervalTree<LayoutUnit, FloatingObject*> FloatingObjectTree;
+    
+    template <FloatingObject::Type FloatTypeValue>
+    class FloatIntervalSearchAdapter {
+    public:
+        typedef FloatingObjectInterval IntervalType;
+        
+        FloatIntervalSearchAdapter(const RenderBlock* renderer, LayoutUnit value, LayoutUnit& offset, LayoutUnit* heightRemaining)
+            : m_renderer(renderer)
+            , m_value(value)
+            , m_offset(offset)
+            , m_heightRemaining(heightRemaining)
+        {
+        }
+        
+        inline LayoutUnit lowValue() const { return m_value; }
+        inline LayoutUnit highValue() const { return m_value; }
+        void collectIfNeeded(const IntervalType&) const;
+
+    private:
+        const RenderBlock* m_renderer;
+        LayoutUnit m_value;
+        LayoutUnit& m_offset;
+        LayoutUnit* m_heightRemaining;
+    };
+
     class FloatingObjects {
     public:
-        FloatingObjects()
-            : m_leftObjectsCount(0)
+        FloatingObjects(bool horizontalWritingMode)
+            : m_placedFloatsTree(UninitializedTree)
+            , m_leftObjectsCount(0)
             , m_rightObjectsCount(0)
             , m_positionedObjectsCount(0)
+            , m_horizontalWritingMode(horizontalWritingMode)
         {
         }
 
         void clear();
-        void increaseObjectsCount(FloatingObject::Type);
-        void decreaseObjectsCount(FloatingObject::Type);
+        void add(FloatingObject*);
+        void remove(FloatingObject*);
+        void addPlacedObject(FloatingObject*);
+        void removePlacedObject(FloatingObject*);
+        void setHorizontalWritingMode(bool b = true) { m_horizontalWritingMode = b; }
+
         bool hasLeftObjects() const { return m_leftObjectsCount > 0; }
         bool hasRightObjects() const { return m_rightObjectsCount > 0; }
         bool hasPositionedObjects() const { return m_positionedObjectsCount > 0; }
-        FloatingObjectSet& set() { return m_set; }
-
+        const FloatingObjectSet& set() const { return m_set; }
+        const FloatingObjectTree& placedFloatsTree()
+        {
+            computePlacedFloatsTreeIfNeeded();
+            return m_placedFloatsTree; 
+        }
     private:
+        void computePlacedFloatsTree();
+        inline void computePlacedFloatsTreeIfNeeded()
+        {
+            if (!m_placedFloatsTree.isInitialized())
+                computePlacedFloatsTree();
+        }
+        void increaseObjectsCount(FloatingObject::Type);
+        void decreaseObjectsCount(FloatingObject::Type);
+        FloatingObjectInterval intervalForFloatingObject(FloatingObject*);
+
         FloatingObjectSet m_set;
+        FloatingObjectTree m_placedFloatsTree;
         unsigned m_leftObjectsCount;
         unsigned m_rightObjectsCount;
         unsigned m_positionedObjectsCount;
+        bool m_horizontalWritingMode;
     };
     OwnPtr<FloatingObjects> m_floatingObjects;
     
@@ -894,6 +963,16 @@ inline const RenderBlock* toRenderBlock(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderBlock(const RenderBlock*);
+
+#ifndef NDEBUG
+// These structures are used by PODIntervalTree for debugging purposes.
+template <> struct ValueToString<int> {
+    static String string(const int value);
+};
+template<> struct ValueToString<RenderBlock::FloatingObject*> {
+    static String string(const RenderBlock::FloatingObject*);
+};
+#endif
 
 } // namespace WebCore
 

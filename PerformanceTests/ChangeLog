@@ -1,3 +1,12 @@
+2011-08-09  Alexandru Chiculita  <achicu@adobe.com>
+
+        Fixing 65868 REGRESSION(r92610) caused by 65668 - Optimize floating elements lookup
+        https://bugs.webkit.org/show_bug.cgi?id=65871
+
+        Reviewed by Dave Hyatt.
+
+        * Layout/floats.html: Added the nested divs, so that we can test the propagation impact of the floats tree.
+
 2011-08-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92610.

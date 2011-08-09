@@ -90,6 +90,10 @@ template<class T>
 struct ValueToString;
 #endif
 
+enum UninitializedTreeEnum {
+    UninitializedTree
+};
+
 template<class T>
 class PODRedBlackTree {
 public:
@@ -100,6 +104,19 @@ public:
     protected:
         virtual ~Visitor() { }
     };
+
+    // Constructs a new red-black tree without allocating an arena.
+    // isInitialized will return false in this case. initIfNeeded can be used
+    // to init the structure. This constructor is usefull for creating
+    // lazy initialized tree.
+    PODRedBlackTree(UninitializedTreeEnum)
+        : m_root(0)
+        , m_needsFullOrderingComparisons(false)
+#ifndef NDEBUG
+        , m_verboseDebugging(false)
+#endif
+    {
+    }
 
     // Constructs a new red-black tree, allocating temporary objects
     // from a newly constructed PODArena.
@@ -127,8 +144,28 @@ public:
 
     virtual ~PODRedBlackTree() { }
 
+    // Clearing will delete the contents of the tree. After this call
+    // isInitialized will return false.
+    void clear()
+    {
+        m_arena = 0;
+        m_root = 0;
+    }
+    
+    bool isInitialized() const
+    {
+        return m_arena;
+    }
+    
+    void initIfNeeded()
+    {
+        if (!m_arena)
+            m_arena = PODArena::create();
+    }
+
     void add(const T& data)
     {
+        ASSERT(isInitialized());
         Node* node = m_arena->allocateObject<Node, T>(data);
         insertNode(node);
     }
@@ -136,6 +173,7 @@ public:
     // Returns true if the datum was found in the tree.
     bool remove(const T& data)
     {
+        ASSERT(isInitialized());
         Node* node = treeSearch(data);
         if (node) {
             deleteNode(node);
@@ -144,10 +182,15 @@ public:
         return false;
     }
 
-    bool contains(const T& data) const { return treeSearch(data); }
+    bool contains(const T& data) const
+    {
+        ASSERT(isInitialized());
+        return treeSearch(data);
+    }
 
     void visitInorder(Visitor* visitor) const
     {
+        ASSERT(isInitialized());
         if (!m_root)
             return;
         visitInorderImpl(m_root, visitor);
@@ -155,6 +198,7 @@ public:
 
     int size() const
     {
+        ASSERT(isInitialized());
         Counter counter;
         visitInorder(&counter);
         return counter.count();
@@ -168,6 +212,7 @@ public:
 
     virtual bool checkInvariants() const
     {
+        ASSERT(isInitialized());
         int blackCount;
         return checkInvariantsFromNode(m_root, &blackCount);
     }
@@ -177,7 +222,8 @@ public:
     // debugging purposes.
     void dump() const
     {
-        dumpFromNode(m_root, 0);
+        if (m_arena)
+            dumpFromNode(m_root, 0);
     }
 
     // Turns on or off verbose debugging of the tree, causing many

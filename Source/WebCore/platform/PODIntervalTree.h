@@ -40,6 +40,32 @@ template<class T>
 struct ValueToString;
 #endif
 
+template <class T, class UserData = void*>
+class PODIntervalSearchAdapter {
+public:
+    typedef PODInterval<T, UserData> IntervalType;
+    
+    PODIntervalSearchAdapter(Vector<IntervalType>& result, const T& lowValue, const T& highValue)
+        : m_result(result)
+        , m_lowValue(lowValue)
+        , m_highValue(highValue)
+    {
+    }
+    
+    const T& lowValue() const { return m_lowValue; }
+    const T& highValue() const { return m_highValue; }
+    void collectIfNeeded(const IntervalType& data) const
+    {
+        if (data.overlaps(m_lowValue, m_highValue))
+            m_result.append(data);
+    }
+
+private:
+    Vector<IntervalType>& m_result;
+    T m_lowValue;
+    T m_highValue;
+};
+
 // An interval tree, which is a form of augmented red-black tree. It
 // supports efficient (O(lg n)) insertion, removal and querying of
 // intervals in the tree.
@@ -50,7 +76,14 @@ public:
     // Typedef to reduce typing when declaring intervals to be stored in
     // this tree.
     typedef PODInterval<T, UserData> IntervalType;
+    typedef PODIntervalSearchAdapter<T, UserData> IntervalSearchAdapterType;
 
+    PODIntervalTree(UninitializedTreeEnum unitializedTree)
+        : PODRedBlackTree<IntervalType>(unitializedTree)
+    {
+        init();
+    }
+    
     PODIntervalTree()
         : PODRedBlackTree<IntervalType>()
     {
@@ -80,7 +113,16 @@ public:
     {
         // Explicit dereference of "this" required because of
         // inheritance rules in template classes.
-        searchForOverlapsFrom(this->root(), interval, result);
+        IntervalSearchAdapterType adapter(result, interval.low(), interval.high());
+        searchForOverlapsFrom<IntervalSearchAdapterType>(this->root(), adapter);
+    }
+    
+    template <class AdapterType>
+    void allOverlapsWithAdapter(AdapterType& adapter) const
+    {
+        // Explicit dereference of "this" required because of
+        // inheritance rules in template classes.
+        searchForOverlapsFrom<AdapterType>(this->root(), adapter);
     }
 
     // Helper to create interval objects.
@@ -112,7 +154,8 @@ private:
     // Starting from the given node, adds all overlaps with the given
     // interval to the result vector. The intervals are sorted by
     // increasing low endpoint.
-    void searchForOverlapsFrom(IntervalNode* node, const IntervalType& interval, Vector<IntervalType>& res) const
+    template <class AdapterType>
+    void searchForOverlapsFrom(IntervalNode* node, AdapterType& adapter) const
     {
         if (!node)
             return;
@@ -125,18 +168,17 @@ private:
         if (left
             // This is phrased this way to avoid the need for operator
             // <= on type T.
-            && !(left->data().maxHigh() < interval.low()))
-            searchForOverlapsFrom(left, interval, res);
+            && !(left->data().maxHigh() < adapter.lowValue()))
+            searchForOverlapsFrom<AdapterType>(left, adapter);
 
         // Check for overlap with current node.
-        if (node->data().overlaps(interval))
-            res.append(node->data());
+        adapter.collectIfNeeded(node->data());
 
         // See whether we need to traverse the right subtree.
         // This is phrased this way to avoid the need for operator <=
         // on type T.
-        if (!(interval.high() < node->data().low()))
-            searchForOverlapsFrom(node->right(), interval, res);
+        if (!(adapter.highValue() < node->data().low()))
+            searchForOverlapsFrom<AdapterType>(node->right(), adapter);
     }
 
     virtual bool updateNode(IntervalNode* node)
