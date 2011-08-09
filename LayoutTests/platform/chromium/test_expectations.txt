@@ -58,7 +58,7 @@ BUGWK55913 DEBUG : jquery/manipulation.html = PASS TIMEOUT
 BUGWK55913 SLOW DEBUG : jquery/offset.html = PASS
 BUGWK55913 SLOW DEBUG : jquery/traversing.html = PASS
 BUGWK55913 DEBUG : jquery/dimensions.html = PASS TIMEOUT
-BUGWK55913 MAC LINUX DEBUG : jquery/data.html = PASS TIMEOUT
+BUGWK55913 LINUX MAC DEBUG : jquery/data.html = PASS TIMEOUT
 
 BUGWK64498 SLOW DEBUG : fast/encoding/parser-tests-40.html = PASS
 BUGWK64502 SLOW DEBUG : fast/forms/form-associated-element-crash3.html = PASS
@@ -459,7 +459,7 @@ WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 
 // Chromium's video codecs don't support alpha information encoded in the video
 // data, so this test is not applicable.
-BUGWK55519 WONTFIX SKIP : compositing/video/video-background-color.html = FAIL
+BUGWK55519 SKIP WONTFIX : compositing/video/video-background-color.html = FAIL
 
 // -----------------------------------------------------------------
 // CHROME REWRITTEN TESTS
@@ -897,7 +897,7 @@ BUGWK62974 LINUX WIN : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
 BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
 BUGWK62974 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
 BUGWK62974 : svg/custom/svg-fonts-in-html.html = IMAGE
-BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE IMAGE+TEXT
+BUGWK62974 : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE+TEXT IMAGE
 BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
 
 // -----------------------------------------------------------------
@@ -2171,7 +2171,7 @@ BUGCR53546 WONTFIX LINUX : userscripts/user-script-video-document.html = TEXT
 // These tests are consistently failing on Linux, and the latter test is flaky on Win.
 BUGCR53554 LINUX : svg/W3C-SVG-1.1/fonts-elem-07-b.svg = IMAGE
 BUGCR53554 WIN : svg/custom/svg-fonts-without-missing-glyph.xhtml = PASS IMAGE
-BUGCR53554 LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE IMAGE+TEXT
+BUGCR53554 LINUX : svg/custom/svg-fonts-without-missing-glyph.xhtml = IMAGE+TEXT IMAGE
 
 // New test, need to verify if it's safe to rebaseline.
 BUGWK44770 LINUX WIN : svg/repaint/filter-repaint.svg = CRASH IMAGE+TEXT
@@ -2236,7 +2236,7 @@ BUG_AUTO DEBUG : animations/suspend-resume-animation.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
 
 // Seems to have been crashing intermittently for as long as we have test history.
-BUGCR62741 LINUX WIN MAC DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = PASS CRASH
+BUGCR62741 DEBUG : svg/clip-path/clip-path-text-and-stroke.svg = PASS CRASH
 
 // nodesFromRect() removed from Document.idl and test skipped on other platforms at r68345.
 BUGWK46596 : fast/dom/nodesFromRect-basic.html = TIMEOUT
@@ -2624,7 +2624,7 @@ BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
 
 BUGCR71418 LEOPARD : fast/borders/border-radius-split-inline.html = IMAGE
 
-BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT CRASH
+BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS CRASH TEXT
 BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 
 BUGWK53527 DEBUG : fast/frames/iframe-reparenting-new-page.html = PASS CRASH
@@ -3527,9 +3527,6 @@ BUGCR89282 SNOWLEOPARD : fast/forms/input-appearance-range.html = IMAGE
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT
 
-// Need to update baseline files.
-BUGWK65359 : fast/forms/validation-message-appearance.html = FAIL
-
 // This test ASSERTs in skia since it was added.
 BUGWK63400 LINUX DEBUG : svg/text/svg-zoom-large-value.xhtml = CRASH TEXT
 
@@ -3636,7 +3633,7 @@ BUGWK65124 WIN : fast/writing-mode/japanese-rl-text.html = IMAGE+TEXT
 BUGWK65199 : fast/writing-mode/broken-ideograph-small-caps.html = PASS FAIL
 
 BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
-BUGWK65219 WIN LINUX : webaudio/gain.html = PASS CRASH
+BUGWK65219 LINUX WIN : webaudio/gain.html = PASS CRASH
 BUGWK65219 WIN : webaudio/audionode.html = PASS CRASH
 
 // Needs new baseline for slight pixel value changes due to changes in
@@ -3675,7 +3672,7 @@ BUGWK64942 WIN GPU : compositing/overflow/fixed-position-ancestor-clip.html = IM
 BUGWK64942 WIN GPU : compositing/reflections/nested-reflection-transition.html = IMAGE
 BUGWK64942 WIN GPU : compositing/reflections/transform-inside-reflection.html = IMAGE
 BUGWK64942 WIN GPU : compositing/shadows/shadow-drawing.html = IMAGE
-BUGWK64942 WIN MAC GPU :  compositing/transitions/scale-transition-no-start.html = IMAGE
+BUGWK64942 MAC WIN GPU : compositing/transitions/scale-transition-no-start.html = IMAGE
 BUGWK64942 MAC GPU : media/video-transformed.html = IMAGE
 BUGWK64942 MAC GPU : media/video-zoom-controls.html = IMAGE
 BUGWK64942 MAC GPU : platform/chromium/compositing/backface-visibility-transformed.html = IMAGE
@@ -3685,21 +3682,21 @@ BUGWK64942 MAC GPU : platform/chromium/compositing/perpendicular-layer-sorting.h
 BUGWK64942 MAC GPU : platform/chromium/compositing/tiny-layer-rotated.html = IMAGE
 
 // Might need rebaseline.
-BUGJIANLI WIN LINUX : fast/repaint/canvas-putImageData.html = TEXT
-BUGJIANLI WIN MAC : fast/preloader/script.html = PASS TEXT
+BUGJIANLI LINUX WIN : fast/repaint/canvas-putImageData.html = TEXT
+BUGJIANLI MAC WIN : fast/preloader/script.html = PASS TEXT
 BUGJIANLI MAC : fast/gradients/gradient-after-transparent-border.html = IMAGE
 
 // These tests were disabled and re-enabled in r92545 and r92550.
 // Unfortunately they are failing for us.
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT IMAGE
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT IMAGE
-BUGWK63186 MAC WIN LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 MAC WIN LINUX : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE+TEXT IMAGE
-BUGWK63186 MAC WIN LINUX : svg/as-object/embedded-svg-size-changes.html = IMAGE+TEXT IMAGE
-BUGWK63186 MAC WIN LINUX : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE+TEXT IMAGE
+BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT IMAGE
+BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT IMAGE
+BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT IMAGE
+BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT IMAGE
+BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT IMAGE
+BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
+BUGWK63186 : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE+TEXT IMAGE
+BUGWK63186 : svg/as-object/embedded-svg-size-changes.html = IMAGE+TEXT IMAGE
+BUGWK63186 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE+TEXT IMAGE
 
 BUGWK65862 MAC DEBUG : storage/indexeddb/index-cursor.html = PASS TIMEOUT
 

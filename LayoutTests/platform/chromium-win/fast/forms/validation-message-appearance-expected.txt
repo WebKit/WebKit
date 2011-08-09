@@ -14,22 +14,24 @@ layer at (0,0) size 800x42
         RenderText {#text} at (0,0) size 0x0
 layer at (12,13) size 151x16
   RenderBlock {DIV} at (2,3) size 151x16
-layer at (10,32) size 220x113
-  RenderBlock (positioned) zI: 2147483647 {DIV} at (10,32) size 220x113
-layer at (10,32) size 220x16 scrollHeight 26
-  RenderBlock {DIV} at (0,0) size 220x16
-layer at (10,44) size 220x97
-  RenderBlock (relative positioned) zI: 2147483644 {DIV} at (0,16) size 220x97 [border: (2px solid #440000)]
-    RenderInline {B} at (0,0) size 105x19
-      RenderText {#text} at (10,10) size 105x19
-        text run at (10,10) width 105: "value missing"
-    RenderBR {BR} at (115,10) size 0x18
-    RenderText zI: 2147483644 {#text} at (10,30) size 163x18
-      text run at (10,30) width 163: "Needs at least 8 letters."
-    RenderBR {BR} at (173,30) size 0x18
-    RenderText zI: 2147483644 {#text} at (10,49) size 188x37
-      text run at (10,49) width 188: "Should not be identical with"
-      text run at (10,68) width 148: "the current password."
-layer at (42,32) size 18x18 backgroundClip at (10,32) size 220x16 clip at (10,32) size 220x16 outlineClip at (10,32) size 220x16
-  RenderBlock (relative positioned) zI: 2147483645 {DIV} at (0,0) size 18x18 [bgcolor=#F8ECEC] [border: (2px solid #440000) none (2px solid #440000)]
+layer at (10,32) size 318x98
+  RenderBlock (positioned) zI: 2147483647 {DIV} at (10,32) size 318x98
+layer at (10,32) size 318x13 scrollHeight 26
+  RenderBlock {DIV} at (0,0) size 318x13
+layer at (10,44) size 318x85
+  RenderDeprecatedFlexibleBox (relative positioned) zI: 2147483644 {DIV} at (0,13) size 318x85 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC) (1px solid #AAAAAA) (1px solid #888888) (1px solid #AAAAAA)]
+    RenderBlock {DIV} at (9,9) size 17x17
+    RenderBlock {DIV} at (32,9) size 277x67
+      RenderBlock {DIV} at (0,0) size 277x19
+        RenderText {#text} at (0,0) size 94x18
+          text run at (0,0) width 94: "value missing"
+      RenderBlock {DIV} at (0,19) size 277x48 [color=#444444]
+        RenderText {#text} at (0,0) size 139x16
+          text run at (0,0) width 139: "Needs at least 8 letters."
+        RenderBR {BR} at (139,0) size 0x16
+        RenderText {#text} at (0,16) size 225x32
+          text run at (0,16) width 225: "Should not be identical with the current"
+          text run at (0,32) width 59: "password."
+layer at (42,32) size 18x18 backgroundClip at (10,32) size 318x13 clip at (10,32) size 318x13 outlineClip at (10,32) size 318x13
+  RenderBlock (relative positioned) zI: 2147483645 {DIV} at (0,0) size 18x18 [bgcolor=#FFFFFF] [border: (1px solid #CCCCCC)]
 caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 0 {FORM} of body
