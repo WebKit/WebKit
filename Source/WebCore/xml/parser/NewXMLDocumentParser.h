@@ -36,6 +36,8 @@
 namespace WebCore {
 
 class Document;
+class ContainerNode;
+class XMLTreeBuilder;
 
 class NewXMLDocumentParser : public ScriptableDocumentParser {
     WTF_MAKE_FAST_ALLOCATED;
@@ -44,32 +46,32 @@ public:
     {
         return adoptRef(new NewXMLDocumentParser(document));
     }
-    
+
     virtual TextPosition0 textPosition() const;
     virtual int lineNumber() const;
+
+    // DocumentParser
+    virtual bool hasInsertionPoint();
+    virtual bool finishWasCalled();
+    virtual bool isWaitingForScripts() const;
+    virtual bool isExecutingScript() const;
+    virtual void executeScriptsWaitingForStylesheets();
 
 protected:
     virtual void insert(const SegmentedString&);
     virtual void append(const SegmentedString&);
     virtual void finish();
 
-
 private:
     NewXMLDocumentParser(Document*);
-
-    // DocumentParser
-    virtual void detach();
-    virtual bool hasInsertionPoint();
-    virtual bool finishWasCalled();
-    virtual bool processingData() const;
-    virtual void prepareToStopParsing();
-    virtual void stopParsing();
-    virtual bool isWaitingForScripts() const;
-    virtual bool isExecutingScript() const;
-    virtual void executeScriptsWaitingForStylesheets();
+    virtual ~NewXMLDocumentParser();
 
     OwnPtr<XMLTokenizer> m_tokenizer;
     XMLToken m_token;
+
+    bool m_finishWasCalled;
+
+    OwnPtr<XMLTreeBuilder> m_treeBuilder;
 };
 
 }

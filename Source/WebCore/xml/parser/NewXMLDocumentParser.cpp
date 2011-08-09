@@ -27,12 +27,19 @@
 #include "NewXMLDocumentParser.h"
 
 #include "SegmentedString.h"
+#include "XMLTreeBuilder.h"
 
 namespace WebCore {
 
 NewXMLDocumentParser::NewXMLDocumentParser(Document* document)
     : ScriptableDocumentParser(document)
     , m_tokenizer(XMLTokenizer::create())
+    , m_finishWasCalled(false)
+    , m_treeBuilder(XMLTreeBuilder::create(this, document))
+{
+}
+
+NewXMLDocumentParser::~NewXMLDocumentParser()
 {
 }
 
@@ -63,7 +70,10 @@ void NewXMLDocumentParser::append(const SegmentedString& string)
         m_token.print();
 #endif
 
-        if (m_token.type() == XMLTokenTypes::EndOfFile)
+        AtomicXMLToken token(m_token);
+        m_treeBuilder->processToken(token);
+
+        if (m_token.type() == XMLTokenTypes::EndOfFile || !isParsing())
             break;
 
         m_token.clear();
@@ -73,11 +83,13 @@ void NewXMLDocumentParser::append(const SegmentedString& string)
 
 void NewXMLDocumentParser::finish()
 {
-}
+    ASSERT(!m_finishWasCalled);
+    m_finishWasCalled = true;
 
-void NewXMLDocumentParser::detach()
-{
-    ScriptableDocumentParser::detach();
+    if (isParsing())
+        prepareToStopParsing();
+    document()->setReadyState(Document::Interactive);
+    document()->finishedParsing();
 }
 
 bool NewXMLDocumentParser::hasInsertionPoint()
@@ -87,20 +99,7 @@ bool NewXMLDocumentParser::hasInsertionPoint()
 
 bool NewXMLDocumentParser::finishWasCalled()
 {
-    return false;
-}
-
-bool NewXMLDocumentParser::processingData() const
-{
-    return false;
-}
-
-void NewXMLDocumentParser::prepareToStopParsing()
-{
-}
-
-void NewXMLDocumentParser::stopParsing()
-{
+    return m_finishWasCalled;
 }
 
 bool NewXMLDocumentParser::isWaitingForScripts() const

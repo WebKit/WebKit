@@ -42745,6 +42745,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\xml\parser\NewXMLDocumentParser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\xml\parser\NewXMLDocumentParser.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\xml\parser\XMLDocumentParser.cpp"
 					>
 					<FileConfiguration
@@ -42866,6 +42874,14 @@
 				</File>
 				<File
 					RelativePath="..\xml\parser\XMLTokenizer.h"
+					>
+				</File>
+				<File
+					RelativePath="..\xml\parser\XMLTreeBuilder.h"
+					>
+				</File>
+				<File
+					RelativePath="..\xml\parser\XMLTreeBuilder.cpp"
 					>
 				</File>
 			</Filter>

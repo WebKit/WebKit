@@ -1,3 +1,56 @@
+2011-08-09  Jeffrey Pfau  <jpfau@apple.com>
+
+        Initial pass at a new XML tree builder
+        https://bugs.webkit.org/show_bug.cgi?id=65803
+
+        Reviewed by Adam Barth.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * xml/parser/NewXMLDocumentParser.cpp:
+        (WebCore::NewXMLDocumentParser::NewXMLDocumentParser):
+        (WebCore::NewXMLDocumentParser::~NewXMLDocumentParser):
+        (WebCore::NewXMLDocumentParser::append):
+        (WebCore::NewXMLDocumentParser::finish):
+        (WebCore::NewXMLDocumentParser::finishWasCalled):
+        * xml/parser/NewXMLDocumentParser.h:
+        * xml/parser/XMLTreeBuilder.cpp: Added.
+        (WebCore::XMLTreeBuilder::XMLTreeBuilder):
+        (WebCore::XMLTreeBuilder::processToken):
+        (WebCore::XMLTreeBuilder::pushCurrentNode):
+        (WebCore::XMLTreeBuilder::popCurrentNode):
+        (WebCore::XMLTreeBuilder::processProcessingInstruction):
+        (WebCore::XMLTreeBuilder::processXMLDeclaration):
+        (WebCore::XMLTreeBuilder::processDOCTYPE):
+        (WebCore::XMLTreeBuilder::processStartTag):
+        (WebCore::XMLTreeBuilder::processEndTag):
+        (WebCore::XMLTreeBuilder::processCharacter):
+        (WebCore::XMLTreeBuilder::processCDATA):
+        (WebCore::XMLTreeBuilder::processComment):
+        (WebCore::XMLTreeBuilder::processEntity):
+        (WebCore::XMLTreeBuilder::processNamespaces):
+        (WebCore::XMLTreeBuilder::processAttributes):
+        (WebCore::XMLTreeBuilder::processXMLEntity):
+        (WebCore::XMLTreeBuilder::processHTMLEntity):
+        (WebCore::XMLTreeBuilder::add):
+        (WebCore::XMLTreeBuilder::appendToText):
+        (WebCore::XMLTreeBuilder::enterText):
+        (WebCore::XMLTreeBuilder::exitText):
+        (WebCore::XMLTreeBuilder::NodeStackItem::NodeStackItem):
+        (WebCore::XMLTreeBuilder::NodeStackItem::hasNamespaceURI):
+        (WebCore::XMLTreeBuilder::NodeStackItem::namespaceURI):
+        (WebCore::XMLTreeBuilder::NodeStackItem::setNamespaceURI):
+        (WebCore::XMLTreeBuilder::NodeStackItem::namespaceForPrefix):
+        * xml/parser/XMLTreeBuilder.h: Added.
+        (WebCore::XMLTreeBuilder::create):
+        (WebCore::XMLTreeBuilder::NodeStackItem::namespaceURI):
+        (WebCore::XMLTreeBuilder::NodeStackItem::setNamespaceURI):
+        (WebCore::XMLTreeBuilder::NodeStackItem::node):
+        (WebCore::XMLTreeBuilder::NodeStackItem::setNode):
+
 2011-08-09  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add ParentClass typedef in all JSC classes

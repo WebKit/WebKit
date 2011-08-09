@@ -3836,6 +3836,8 @@ webcore_sources += \
 	Source/WebCore/xml/parser/XMLTokenizer.cpp \
 	Source/WebCore/xml/parser/XMLTokenizer.h \
 	Source/WebCore/xml/parser/XMLToken.h \
+	Source/WebCore/xml/parser/XMLTreeBuilder.cpp \
+	Source/WebCore/xml/parser/XMLTreeBuilder.h \
 	Source/WebCore/xml/DOMParser.cpp \
 	Source/WebCore/xml/DOMParser.h \
 	Source/WebCore/xml/NativeXPathNSResolver.cpp \

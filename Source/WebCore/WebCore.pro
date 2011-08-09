@@ -1208,7 +1208,8 @@ SOURCES += \
     xml/parser/NewXMLDocumentParser.cpp \
     xml/parser/XMLCharacterReferenceParser.cpp \
     xml/parser/XMLDocumentParser.cpp \
-    xml/parser/XMLTokenizer.cpp
+    xml/parser/XMLTokenizer.cpp \
+    xml/parser/XMLTreeBuilder.cpp
 
 HEADERS += \
     accessibility/AccessibilityARIAGridCell.h \
@@ -2520,6 +2521,7 @@ HEADERS += \
     xml/parser/XMLDocumentParser.h \
     xml/parser/XMLTokenizer.h \
     xml/parser/XMLToken.h \
+    xml/parser/XMLTreeBuilder.h \
     xml/DOMParser.h \
     xml/NativeXPathNSResolver.h \
     xml/XMLHttpRequest.h \

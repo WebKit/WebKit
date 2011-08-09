@@ -5135,6 +5135,8 @@
             'xml/parser/XMLTokenizer.cpp',
             'xml/parser/XMLTokenizer.h',
             'xml/parser/XMLToken.h',
+            'xml/parser/XMLTreeBuilder.cpp',
+            'xml/parser/XMLTreeBuilder.h',
             'xml/DOMParser.cpp',
             'xml/DOMParser.h',
             'xml/NativeXPathNSResolver.cpp',
