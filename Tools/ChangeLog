@@ -1,5 +1,19 @@
 2011-08-08  Adam Barth  <abarth@webkit.org>
 
+        Chromium Windows bots can't figure out what SVN revision they're running
+        https://bugs.webkit.org/show_bug.cgi?id=65893
+
+        Reviewed by Eric Seidel.
+
+        The comment in _engage_awesome_windows_hacks explains why we're making
+        this change.  It's ugly and rediculous, but this approach seems better
+        than using shell=True when calling popen.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+
+2011-08-08  Adam Barth  <abarth@webkit.org>
+
         Remove deduplicate-tests
         https://bugs.webkit.org/show_bug.cgi?id=65886
 

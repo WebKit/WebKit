@@ -68,6 +68,8 @@ class SVN(SCM, SVNRepository):
     svn_server_host = "svn.webkit.org"
     svn_server_realm = "<http://svn.webkit.org:80> Mac OS Forge"
 
+    executable_name = "svn"
+
     _svn_metadata_files = frozenset(['.svn', '_svn'])
 
     def __init__(self, cwd, patch_directories, executive=None):
@@ -93,7 +95,7 @@ class SVN(SCM, SVNRepository):
 
     @classmethod
     def value_from_svn_info(cls, path, field_name):
-        svn_info_args = ['svn', 'info']
+        svn_info_args = [cls.executable_name, 'info']
         # FIXME: This method should use a passed in executive or be made an instance method and use self._executive.
         info_output = Executive().run_command(svn_info_args, cwd=path).rstrip()
         match = re.search("^%s: (?P<value>.+)$" % field_name, info_output, re.MULTILINE)
@@ -121,19 +123,22 @@ class SVN(SCM, SVNRepository):
     def commit_success_regexp():
         return "^Committed revision (?P<svn_revision>\d+)\.$"
 
+    def _run_svn(self, args, **kwargs):
+        return self.run([self.executable_name] + args, **kwargs)
+
     @memoized
     def svn_version(self):
-        return self.run(['svn', '--version', '--quiet'])
+        return self._run_svn(['--version', '--quiet'])
 
     def working_directory_is_clean(self):
-        return self.run(["svn", "diff"], cwd=self.checkout_root, decode_output=False) == ""
+        return self._run_svn(["diff"], cwd=self.checkout_root, decode_output=False) == ""
 
     def clean_working_directory(self):
         # Make sure there are no locks lying around from a previously aborted svn invocation.
         # This is slightly dangerous, as it's possible the user is running another svn process
         # on this checkout at the same time.  However, it's much more likely that we're running
         # under windows and svn just sucks (or the user interrupted svn and it failed to clean up).
-        self.run(["svn", "cleanup"], cwd=self.checkout_root)
+        self._run_svn(["cleanup"], cwd=self.checkout_root)
 
         # svn revert -R is not as awesome as git reset --hard.
         # It will leave added files around, causing later svn update
@@ -142,7 +147,7 @@ class SVN(SCM, SVNRepository):
         added_files = reversed(sorted(self.added_files()))
         # added_files() returns directories for SVN, we walk the files in reverse path
         # length order so that we remove files before we try to remove the directories.
-        self.run(["svn", "revert", "-R", "."], cwd=self.checkout_root)
+        self._run_svn(["revert", "-R", "."], cwd=self.checkout_root)
         for path in added_files:
             # This is robust against cwd != self.checkout_root
             absolute_path = self.absolute_path(path)
@@ -153,7 +158,7 @@ class SVN(SCM, SVNRepository):
                 os.remove(absolute_path)
 
     def status_command(self):
-        return ['svn', 'status']
+        return [self.executable_name, 'status']
 
     def _status_regexp(self, expected_types):
         field_count = 6 if self.svn_version() > "1.6" else 5
@@ -171,7 +176,7 @@ class SVN(SCM, SVNRepository):
 
     def add(self, path, return_exit_code=False):
         self._add_parent_directories(os.path.dirname(os.path.abspath(path)))
-        return self.run(["svn", "add", path], return_exit_code=return_exit_code)
+        return self._run_svn(["add", path], return_exit_code=return_exit_code)
 
     def _delete_parent_directories(self, path):
         if not self.in_working_directory(path):
@@ -186,15 +191,15 @@ class SVN(SCM, SVNRepository):
     def delete(self, path):
         abs_path = os.path.abspath(path)
         parent, base = os.path.split(abs_path)
-        result = self.run(["svn", "delete", "--force", base], cwd=parent)
+        result = self._run_svn(["delete", "--force", base], cwd=parent)
         self._delete_parent_directories(os.path.dirname(abs_path))
         return result
 
     def exists(self, path):
-        return not self.run(["svn", "info", path], return_exit_code=True, decode_output=False)
+        return not self._run_svn(["info", path], return_exit_code=True, decode_output=False)
 
     def changed_files(self, git_commit=None):
-        status_command = ["svn", "status"]
+        status_command = [self.executable_name, "status"]
         status_command.extend(self._patch_directories)
         # ACDMR: Addded, Conflicted, Deleted, Modified or Replaced
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ACDMR"))
@@ -202,14 +207,14 @@ class SVN(SCM, SVNRepository):
     def changed_files_for_revision(self, revision):
         # As far as I can tell svn diff --summarize output looks just like svn status output.
         # No file contents printed, thus utf-8 auto-decoding in self.run is fine.
-        status_command = ["svn", "diff", "--summarize", "-c", revision]
+        status_command = [self.executable_name, "diff", "--summarize", "-c", revision]
         return self.run_status_and_extract_filenames(status_command, self._status_regexp("ACDMR"))
 
     def revisions_changing_file(self, path, limit=5):
         revisions = []
         # svn log will exit(1) (and thus self.run will raise) if the path does not exist.
-        log_command = ['svn', 'log', '--quiet', '--limit=%s' % limit, path]
-        for line in self.run(log_command, cwd=self.checkout_root).splitlines():
+        log_command = ['log', '--quiet', '--limit=%s' % limit, path]
+        for line in self._run_svn(log_command, cwd=self.checkout_root).splitlines():
             match = re.search('^r(?P<revision>\d+) ', line)
             if not match:
                 continue
@@ -233,9 +238,6 @@ class SVN(SCM, SVNRepository):
         return "svn"
 
     def head_svn_revision(self):
-        _log.debug('Temporary logging to debug bot...')
-        _log.debug(self.checkout_root)
-        _log.debug(os.getcwd())
         return self.value_from_svn_info(self.checkout_root, 'Revision')
 
     # FIXME: This method should be on Checkout.
@@ -252,17 +254,17 @@ class SVN(SCM, SVNRepository):
             decode_output=False)
 
     def committer_email_for_revision(self, revision):
-        return self.run(["svn", "propget", "svn:author", "--revprop", "-r", revision]).rstrip()
+        return self._run_svn(["propget", "svn:author", "--revprop", "-r", revision]).rstrip()
 
     def contents_at_revision(self, path, revision):
         """Returns a byte array (str()) containing the contents
         of path @ revision in the repository."""
         remote_path = "%s/%s" % (self._repository_url(), path)
-        return self.run(["svn", "cat", "-r", revision, remote_path], decode_output=False)
+        return self._run_svn(["cat", "-r", revision, remote_path], decode_output=False)
 
     def diff_for_revision(self, revision):
         # FIXME: This should probably use cwd=self.checkout_root
-        return self.run(['svn', 'diff', '-c', revision])
+        return self._run_svn(['diff', '-c', revision])
 
     def _bogus_dir_name(self):
         if sys.platform.startswith("win"):
@@ -291,35 +293,35 @@ class SVN(SCM, SVNRepository):
     def diff_for_file(self, path, log=None):
         self._setup_bogus_dir(log)
         try:
-            args = ['svn', 'diff']
+            args = ['diff']
             if self._bogus_dir:
                 args += ['--config-dir', self._bogus_dir]
             args.append(path)
-            return self.run(args, cwd=self.checkout_root)
+            return self._run_svn(args, cwd=self.checkout_root)
         finally:
             self._teardown_bogus_dir(log)
 
     def show_head(self, path):
-        return self.run(['svn', 'cat', '-r', 'BASE', path], decode_output=False)
+        return self._run_svn(['cat', '-r', 'BASE', path], decode_output=False)
 
     def _repository_url(self):
         return self.value_from_svn_info(self.checkout_root, 'URL')
 
     def apply_reverse_diff(self, revision):
         # '-c -revision' applies the inverse diff of 'revision'
-        svn_merge_args = ['svn', 'merge', '--non-interactive', '-c', '-%s' % revision, self._repository_url()]
+        svn_merge_args = ['merge', '--non-interactive', '-c', '-%s' % revision, self._repository_url()]
         log("WARNING: svn merge has been known to take more than 10 minutes to complete.  It is recommended you use git for rollouts.")
-        log("Running '%s'" % " ".join(svn_merge_args))
+        log("Running 'svn %s'" % " ".join(svn_merge_args))
         # FIXME: Should this use cwd=self.checkout_root?
-        self.run(svn_merge_args)
+        self._run_svn(svn_merge_args)
 
     def revert_files(self, file_paths):
         # FIXME: This should probably use cwd=self.checkout_root.
-        self.run(['svn', 'revert'] + file_paths)
+        self._run_svn(['revert'] + file_paths)
 
     def commit_with_message(self, message, username=None, password=None, git_commit=None, force_squash=False, changed_files=None):
         # git-commit and force are not used by SVN.
-        svn_commit_args = ["svn", "commit"]
+        svn_commit_args = ["commit"]
 
         if not username and not self.has_authorization_for_realm(self.svn_server_realm):
             raise AuthenticationError(self.svn_server_host)
@@ -337,11 +339,11 @@ class SVN(SCM, SVNRepository):
             # Return a string which looks like a commit so that things which parse this output will succeed.
             return "Dry run, no commit.\nCommitted revision 0."
 
-        return self.run(svn_commit_args, cwd=self.checkout_root, error_handler=commit_error_handler)
+        return self._run_svn(svn_commit_args, cwd=self.checkout_root, error_handler=commit_error_handler)
 
     def svn_commit_log(self, svn_revision):
         svn_revision = self.strip_r_from_svn_revision(svn_revision)
-        return self.run(['svn', 'log', '--non-interactive', '--revision', svn_revision])
+        return self._run_svn(['log', '--non-interactive', '--revision', svn_revision])
 
     def last_svn_commit_log(self):
         # BASE is the checkout revision, HEAD is the remote repository revision
@@ -350,8 +352,8 @@ class SVN(SCM, SVNRepository):
 
     def propset(self, pname, pvalue, path):
         dir, base = os.path.split(path)
-        return self.run(['svn', 'pset', pname, pvalue, base], cwd=dir)
+        return self._run_svn(['pset', pname, pvalue, base], cwd=dir)
 
     def propget(self, pname, path):
         dir, base = os.path.split(path)
-        return self.run(['svn', 'pget', pname, base], cwd=dir).encode('utf-8').rstrip("\n")
+        return self._run_svn(['pget', pname, base], cwd=dir).encode('utf-8').rstrip("\n")

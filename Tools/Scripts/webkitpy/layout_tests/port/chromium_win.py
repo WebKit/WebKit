@@ -97,6 +97,29 @@ class ChromiumWinPort(chromium.ChromiumPort):
             self._version = port_name[port_name.index('-win-') + len('-win-'):]
             assert self._version in self.SUPPORTED_VERSIONS, "%s is not in %s" % (self._version, self.SUPPORTED_VERSIONS)
         self._operating_system = 'win'
+        self._engage_awesome_windows_hacks()
+
+    def _engage_awesome_windows_hacks(self):
+        try:
+            self._executive.run_command(['svn', 'help'])
+        except OSError, e:
+            try:
+                self._executive.run_command(['svn.bat', 'help'])
+                # Chromium Win uses the depot_tools package, which contains a number
+                # of development tools, including Python and svn. Instead of using a
+                # real svn executable, depot_tools indirects via a batch file, called
+                # svn.bat. This batch file allows depot_tools to auto-update the real
+                # svn executable, which is contained in a subdirectory.
+                #
+                # That's all fine and good, except that subprocess.popen can detect
+                # the difference between a real svn executable and batch file when we
+                # don't provide use shell=True. Rather than use shell=True on Windows,
+                # We hack the svn.bat name into the SVN class.
+                _log.debug('Engaging svn.bat Windows hack.')
+                from webkitpy.common.checkout.scm.svn import SVN
+                SVN.executable_name = 'svn.bat'
+            except OSError, e:
+                _log.debug('Failed to engage svn.bat Windows hack.')
 
     def setup_environ_for_server(self, server_name=None):
         env = chromium.ChromiumPort.setup_environ_for_server(self)
