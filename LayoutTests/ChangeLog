@@ -1,3 +1,38 @@
+2011-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Add Lion tests results for a couple of bidi SVG tests.
+
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt.
+        * platform/mac-snowleopard/svg/W3C-I18N/text-anchor-no-markup-expected.txt: Copied from platform/mac/svg/W3C-I18N/text-anchor-no-markup-expected.txt.
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorMiddle-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-dirLTR-anchorStart-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorEnd-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorMiddle-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-dirNone-anchorStart-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorEnd-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorMiddle-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-dirRTL-anchorStart-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorEnd-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorMiddle-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirLTR-anchorStart-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorEnd-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorMiddle-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-inherited-dirRTL-anchorStart-expected.txt:
+        * platform/mac/svg/W3C-I18N/text-anchor-no-markup-expected.txt:
+
 2011-08-09  Andy Estes  <aestes@apple.com>
 
         Add a Radar number to a skipped test.
