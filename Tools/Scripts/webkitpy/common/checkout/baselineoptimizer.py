@@ -132,23 +132,23 @@ class BaselineOptimizer(object):
         return results_by_directory, new_results_by_directory
 
     def _move_baselines(self, baseline_name, results_by_directory, new_results_by_directory):
-        source_directory_for_result = {}
+        data_for_result = {}
         for directory, result in results_by_directory.items():
-            source_directory_for_result[result] = directory
-
-        for directory, result in new_results_by_directory.items():
-            if results_by_directory.get(directory) != result:
-                source = self._filesystem.join(self._scm.checkout_root, source_directory_for_result[result], baseline_name)
-                destination = self._filesystem.join(self._scm.checkout_root, directory, baseline_name)
-                self._filesystem.maybe_make_directory(self._filesystem.split(destination)[0])
-                self._filesystem.copyfile(source, destination)
-                self._scm.add(destination)
+            if not result in data_for_result:
+                source = self._filesystem.join(self._scm.checkout_root, directory, baseline_name)
+                data_for_result[result] = self._filesystem.read_binary_file(source)
 
         for directory, result in results_by_directory.items():
             if new_results_by_directory.get(directory) != result:
                 file_name = self._filesystem.join(self._scm.checkout_root, directory, baseline_name)
                 self._scm.delete(file_name)
-                # FIXME: Check for empty directories and remove them as well.
+
+        for directory, result in new_results_by_directory.items():
+            if results_by_directory.get(directory) != result:
+                destination = self._filesystem.join(self._scm.checkout_root, directory, baseline_name)
+                self._filesystem.maybe_make_directory(self._filesystem.split(destination)[0])
+                self._filesystem.write_binary_file(destination, data_for_result[result])
+                self._scm.add(destination)
 
     def optimize(self, baseline_name):
         results_by_directory, new_results_by_directory = self._find_optimal_result_placement(baseline_name)

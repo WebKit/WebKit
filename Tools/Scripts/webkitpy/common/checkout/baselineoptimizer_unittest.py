@@ -50,6 +50,21 @@ class BaselineOptimizerTest(unittest.TestCase):
         _, new_results_by_directory = baseline_optimizer._find_optimal_result_placement('mock-baseline.png')
         self.assertEqual(new_results_by_directory, expected_new_results_by_directory)
 
+    def test_move_baselines(self):
+        fs = MockFileSystem()
+        fs.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-win/another/test-expected.txt', 'result A')
+        fs.write_binary_file('/mock-checkout/LayoutTests/platform/chromium-mac/another/test-expected.txt', 'result A')
+        fs.write_binary_file('/mock-checkout/LayoutTests/platform/chromium/another/test-expected.txt', 'result B')
+        baseline_optimizer = BaselineOptimizer(MockSCM(), fs)
+        baseline_optimizer._move_baselines('another/test-expected.txt', {
+            'LayoutTests/platform/chromium-win': 'aaa',
+            'LayoutTests/platform/chromium-mac': 'aaa',
+            'LayoutTests/platform/chromium': 'bbb',
+        }, {
+            'LayoutTests/platform/chromium': 'aaa',
+        })
+        self.assertEqual(fs.read_binary_file('/mock-checkout/LayoutTests/platform/chromium/another/test-expected.txt'), 'result A')
+
     def test_chromium_linux_redundant_with_win(self):
         self._assertOptimization({
             'LayoutTests/platform/chromium-win': '462d03b9c025db1b0392d7453310dbee5f9a9e74',
