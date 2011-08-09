@@ -30,6 +30,7 @@
 
 class TestConfiguration(object):
     def __init__(self, port=None, version=None, architecture=None, build_type=None, graphics_type=None):
+        # FIXME: TestConfiguration() fails due to port == None.
         self.version = version or port.version()
         self.architecture = architecture or port.architecture()
         self.build_type = build_type or port.options.configuration.lower()

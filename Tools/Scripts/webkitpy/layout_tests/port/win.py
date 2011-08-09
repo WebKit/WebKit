@@ -26,11 +26,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-"""WebKit Win implementation of the Port interface."""
-
 import logging
+import re
+import sys
 
 from webkitpy.layout_tests.models.test_configuration import TestConfiguration
+from webkitpy.common.system.executive import ScriptError
 from webkitpy.layout_tests.port.webkit import WebKitPort
 
 
@@ -40,23 +41,61 @@ _log = logging.getLogger(__name__)
 class WinPort(WebKitPort):
     port_name = "win"
 
-    FALLBACK_PATHS = {
-        'win7': [
-            "win",
-            "mac-snowleopard",
-            "mac",
-        ],
-    }
+    # This is a list of all supported OS-VERSION pairs for the AppleWin port
+    # and the order of fallback between them.  Matches ORWT.
+    VERSION_FALLBACK_ORDER = ("win-xp", "win-vista", "win-7sp0", "win")
 
-    def __init__(self, **kwargs):
+    def _version_string_from_windows_version_tuple(self, windows_version_tuple):
+        if windows_version_tuple[:3] == (6, 1, 7600):
+            return '7sp0'
+        if windows_version_tuple[:2] == (6, 0):
+            return 'vista'
+        if windows_version_tuple[:2] == (5, 1):
+            return 'xp'
+        return None
+
+    def _detect_version(self):
+        # Note, this intentionally returns None to mean that it can't detect what the current version is.
+        # Callers can then decide what version they want to pretend to be.
+        try:
+            ver_output = self._executive.run_command(['cmd', '/c', 'ver'])
+        except (ScriptError, OSError) as e:
+            ver_output = ""
+            _log.error("Failed to detect Windows version, assuming latest.\n%s" % e)
+        match_object = re.search(r'(?P<major>\d)\.(?P<minor>\d)\.(?P<build>\d+)', ver_output)
+        if match_object:
+            version_tuple = tuple(map(int, match_object.groups()))
+            return self._version_string_from_windows_version_tuple(version_tuple)
+
+    def __init__(self, os_version_string=None, **kwargs):
+        # FIXME: This will not create a properly versioned WinPort object when instantiated from a buildbot-name, like win-xp.
+        # We'll need to add port_name parsing of some kind (either here, or in factory.py).
         WebKitPort.__init__(self, **kwargs)
-        self._version = 'win7'
+        self._version = os_version_string or self._detect_version() or 'future'  # FIXME: This is a hack, as TestConfiguration assumes that this value is never None even though the base "win" port has no "version".
         self._operating_system = 'win'
 
+    # FIXME: A more sophisitcated version of this function should move to WebKitPort and replace all calls to name().
+    def _port_name_with_version(self):
+        components = [self.port_name]
+        if self._version != 'future':  # FIXME: This is a hack, but TestConfiguration doesn't like self._version ever being None.
+            components.append(self._version)
+        return '-'.join(components)
+
     def baseline_search_path(self):
-        # Based on code from old-run-webkit-tests expectedDirectoryForTest()
-        # FIXME: This does not work for WebKit2.
-        return map(self._webkit_baseline_path, self.FALLBACK_PATHS[self._version])
+        try:
+            fallback_index = self.VERSION_FALLBACK_ORDER.index(self._port_name_with_version())
+            fallback_names = list(self.VERSION_FALLBACK_ORDER[fallback_index:])
+        except ValueError:
+            # Unknown versions just fall back to the base port results.
+            fallback_names = [self.port_name]
+        # FIXME: The AppleWin port falls back to AppleMac for some results.  Eventually we'll have a shared 'apple' port.
+        if self.get_option('webkit_test_runner'):
+            fallback_names.insert(0, 'win-wk2')
+            fallback_names.append('mac-wk2')
+            # Note we do not add 'wk2' here, even though it's included in _skipped_search_paths().
+        # FIXME: Perhaps we should get this list from MacPort?
+        fallback_names.extend(['mac-snowleopard', 'mac'])
+        return map(self._webkit_baseline_path, fallback_names)
 
     def _generate_all_test_configurations(self):
         configurations = []

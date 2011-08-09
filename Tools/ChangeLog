@@ -1,3 +1,24 @@
+2011-07-13  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-test's WinPort has no fallback logic
+        https://bugs.webkit.org/show_bug.cgi?id=64486
+
+        Reviewed by Adam Roben.
+
+        I've tried to write a patch for bug 64439 twice now, and both times
+        I've ended up re-writing half the port system.  So I'm breaking
+        things up into smaller pieces, this being the first.
+
+        WinPort still does not have any port_name parsing, so when instantiated
+        with the name "win-xp" (i.e. by the rebaseline server) it will just behave as the 'win' port.
+        I'll fix this in a second pass when I standardize port_name parsing for all webkit ports.
+
+        Otherwise this should "just work" for windows.  I've not been able to test the
+        version detection on my mac, but the unit tests show the code behaving as designed.
+
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py: Added.
+
 2011-08-09  Adam Barth  <abarth@webkit.org>
 
         Teach build.webkit.org's garden-o-matic how to talk to the local server
