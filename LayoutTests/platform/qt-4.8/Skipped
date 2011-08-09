@@ -8,5 +8,5 @@ http/tests/security/xss-DENIED-xsl-document.xml
 svg/text/lengthAdjust-text-metrics.html
 http/tests/security/cross-frame-access-put.html
 
-# Regression after r22030
+# Regression after r92554
 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
