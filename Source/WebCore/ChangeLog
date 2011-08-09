@@ -1,3 +1,29 @@
+2011-08-09  Steve Block  <steveblock@google.com>
+
+        JavaString is not needed by V8
+        https://bugs.webkit.org/show_bug.cgi?id=65909
+
+        Removes the JavaString wrapper class, moves the JSC implementation
+        to JavaStringJSC.h and removes the V8 implementation.
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests, refactoring only.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/jni/JavaString.h: Removed.
+        * bridge/jni/jni_jsobject.mm:
+        * bridge/jni/jsc/JavaFieldJSC.h:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        * bridge/jni/jsc/JavaMethodJSC.h:
+        * bridge/jni/jsc/JavaStringJSC.h:
+        (JSC::Bindings::JavaString::JavaString):
+        (JSC::Bindings::JavaString::~JavaString):
+        (JSC::Bindings::JavaString::init):
+        * bridge/jni/v8/JavaStringV8.h: Removed.
+
 2011-08-09  Abhishek Arya  <inferno@chromium.org>
 
         Regression(83075): Fix updateAlwaysCreateLineBoxes on information 

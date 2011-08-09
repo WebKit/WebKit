@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2010 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2007, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright 2010, The Android Open Source Project
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,29 +38,28 @@ namespace JSC {
 
 namespace Bindings {
 
-class JavaStringImpl {
+class JavaString {
 public:
-    ~JavaStringImpl()
+    JavaString(JNIEnv* e, jstring s)
     {
-        JSLock lock(SilenceAssertionsOnly);
-        m_impl = 0;
+        init(e, s);
     }
 
-    void init()
+    JavaString(jstring s)
+    {
+        init(getJNIEnv(), s);
+    }
+
+    JavaString()
     {
         JSLock lock(SilenceAssertionsOnly);
         m_impl = UString().impl();
     }
 
-    void init(JNIEnv* e, jstring s)
+    ~JavaString()
     {
-        int size = e->GetStringLength(s);
-        const jchar* uc = getUCharactersFromJStringInEnv(e, s);
-        {
-            JSLock lock(SilenceAssertionsOnly);
-            m_impl = UString(reinterpret_cast<const UChar*>(uc), size).impl();
-        }
-        releaseUCharactersForJStringInEnv(e, s, uc);
+        JSLock lock(SilenceAssertionsOnly);
+        m_impl = 0;
     }
 
     const char* utf8() const
@@ -74,6 +74,17 @@ public:
     StringImpl* impl() const { return m_impl.get(); }
 
 private:
+    void init(JNIEnv* e, jstring s)
+    {
+        int size = e->GetStringLength(s);
+        const jchar* uc = getUCharactersFromJStringInEnv(e, s);
+        {
+            JSLock lock(SilenceAssertionsOnly);
+            m_impl = UString(reinterpret_cast<const UChar*>(uc), size).impl();
+        }
+        releaseUCharactersForJStringInEnv(e, s, uc);
+    }
+
     RefPtr<StringImpl> m_impl;
     mutable CString m_utf8String;
 };

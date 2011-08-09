@@ -1503,7 +1503,6 @@
 		5913A24213D49EBA00F5B05C /* IdentifiersFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 5913A24013D49EBA00F5B05C /* IdentifiersFactory.h */; };
 		59309A1111F4AE5800250603 /* DeviceOrientationClientMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */; };
 		59309A1311F4AE6A00250603 /* DeviceOrientationClientMock.h in Headers */ = {isa = PBXBuildFile; fileRef = 59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		593D3EB1132532950057E7EE /* JavaString.h in Headers */ = {isa = PBXBuildFile; fileRef = 593D3EB0132532950057E7EE /* JavaString.h */; };
 		596950821321059900C3ED18 /* JobjectWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 596950811321059900C3ED18 /* JobjectWrapper.h */; };
 		59695084132105A500C3ED18 /* JobjectWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59695083132105A500C3ED18 /* JobjectWrapper.cpp */; };
 		598365DD1355F557001B185D /* JSPositionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 598365DC1355F53C001B185D /* JSPositionCallback.h */; };
@@ -8120,7 +8119,6 @@
 		59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DeviceOrientationClientMock.h; path = mock/DeviceOrientationClientMock.h; sourceTree = "<group>"; };
 		593AB6971355CD9200FC8211 /* PositionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionCallback.idl; sourceTree = "<group>"; };
 		593AB6991355CDAE00FC8211 /* PositionErrorCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PositionErrorCallback.idl; sourceTree = "<group>"; };
-		593D3EB0132532950057E7EE /* JavaString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaString.h; sourceTree = "<group>"; };
 		5958F1CB1343917C0080B31F /* XMLViewer.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = XMLViewer.css; sourceTree = "<group>"; };
 		5958F1CC1343917C0080B31F /* XMLViewer.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = XMLViewer.js; sourceTree = "<group>"; };
 		596950811321059900C3ED18 /* JobjectWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JobjectWrapper.h; sourceTree = "<group>"; };
@@ -13247,7 +13245,6 @@
 		1A569CCE0D7E2B82007C3983 /* jni */ = {
 			isa = PBXGroup;
 			children = (
-				593D3EB0132532950057E7EE /* JavaString.h */,
 				59B0EEA6132A6F2A004331C7 /* JavaType.h */,
 				1A569CD40D7E2B82007C3983 /* jni_jsobject.h */,
 				1A569CD30D7E2B82007C3983 /* jni_jsobject.mm */,
@@ -21755,7 +21752,6 @@
 				E16982681134680700894115 /* JavaRuntimeObject.h in Headers */,
 				FD31603612B0267600C1A359 /* JavaScriptAudioNode.h in Headers */,
 				1C81BA0A0E97348300266E07 /* JavaScriptCallFrame.h in Headers */,
-				593D3EB1132532950057E7EE /* JavaString.h in Headers */,
 				59BC393F11054A1300FD85DB /* JavaStringJSC.h in Headers */,
 				59B0EEA7132A6F2A004331C7 /* JavaType.h in Headers */,
 				1A569D040D7E2B82007C3983 /* jni_jsobject.h in Headers */,

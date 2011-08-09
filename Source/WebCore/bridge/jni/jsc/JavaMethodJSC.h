@@ -30,7 +30,7 @@
 #if ENABLE(JAVA_BRIDGE)
 
 #include "Bridge.h"
-#include "JavaString.h"
+#include "JavaStringJSC.h"
 #include "JavaType.h"
 
 namespace JSC {

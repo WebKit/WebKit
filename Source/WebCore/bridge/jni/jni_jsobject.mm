@@ -33,7 +33,7 @@
 #include "JNIUtilityPrivate.h"
 #include "JSDOMBinding.h"
 #include "JavaRuntimeObject.h"
-#include "JavaString.h"
+#include "JavaStringJSC.h"
 #include "Logging.h"
 #include "ScriptController.h"
 #include "StringSourceProvider.h"

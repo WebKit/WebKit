@@ -34,7 +34,7 @@
 #include "JavaArrayJSC.h"
 #include "JavaClassJSC.h"
 #include "JavaMethodJSC.h"
-#include "JavaString.h"
+#include "JavaStringJSC.h"
 #include "Logging.h"
 #include "jni_jsobject.h"
 #include "runtime_method.h"
