@@ -54,7 +54,7 @@ example-dls.dls has MIME type audio/dls
 example-dlyan.dlyan has MIME type text/plain
 example-dmg.dmg has MIME type application/x-diskcopy
 example-dms.dms has MIME type application/octet-stream
-example-dng.dng has MIME type image/x-adobe-dng
+example-dng.dng has MIME type application/octet-stream
 example-doc.doc has MIME type application/msword
 example-docm.docm has MIME type application/vnd.ms-word.document.macroenabled.12
 example-docx.docx has MIME type application/vnd.openxmlformats-officedocument.wordprocessingml.document
