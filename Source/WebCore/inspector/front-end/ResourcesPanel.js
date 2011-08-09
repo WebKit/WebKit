@@ -77,8 +77,6 @@ WebInspector.ResourcesPanel = function(database)
 
     this.registerShortcuts();
 
-    WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._refreshResource, this);
-
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._onLoadEventFired, this);
 }
 
@@ -261,17 +259,6 @@ WebInspector.ResourcesPanel.prototype = {
     _cachedResourcesLoaded: function()
     {
         this._initDefaultSelection();
-    },
-
-    _refreshResource: function(event)
-    {
-        var resource = event.data;
-        // FIXME: do not add XHR in the first place based on the native instrumentation.
-        if (resource.type === WebInspector.Resource.Type.XHR) {
-            var resourceTreeElement = this._findTreeElementForResource(resource);
-            if (resourceTreeElement)
-                resourceTreeElement.parent.removeChild(resourceTreeElement);
-        }
     },
 
     addDatabase: function(database)

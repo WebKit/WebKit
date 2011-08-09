@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 13: Done.
+Tests that XHRs are not added to resourceTreeModel.
+
+Bug 60321

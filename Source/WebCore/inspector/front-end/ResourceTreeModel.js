@@ -194,6 +194,11 @@ WebInspector.ResourceTreeModel.prototype = {
             return;
         }
 
+        if (resource.type === WebInspector.Resource.Type.XHR) {
+            this._unbindResourceURL(resource);
+            return;
+        }
+                
         if (resource.finished)
             this._addResourceToFrame(resource);
     },
