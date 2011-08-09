@@ -1046,6 +1046,88 @@
         (WebCore::CSSParser::parseColorFromValue):
         (WebCore::CSSParser::parseFontFeatureTag):
 
+2011-08-06  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        REGRESSION(87526): ASSERT(!needsLayout()) followed by graphical glitches on google charts (svg loaded in iframe)
+        https://bugs.webkit.org/show_bug.cgi?id=64974
+
+        svg/zoom/page/zoom-svg-through-object-with-*.xhtml are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=63186
+
+        Reviewed by Zoltan Herczeg.
+
+        Fix host <-> embedded document size negotiation race. The currently implemented solution relied on a specific
+        order of paint/layout calls, which is broken. Consider rendering a document containing an object/iframe/embed
+        referencing an external SVG file. When FrameView::layout() is called (associated with the outermost RenderView
+        of the host document), it lays out the whole document, and afterwards performPostLayoutTasks() is called.
+        This method then asks the Frames contentRenderer to update its widget positions. This triggers a call
+        of the embedded documents FrameView::layout() method, which now lays out the embedded SVG documents tree
+        through RenderSVGRoot::layout.
+
+        And here's the bug: The size of the object/iframe replaced element, which hosts the embedded document
+        may depend on the intrinsic size of the SVG. We tried to mark the embedded documents _ownerRenderer_ (the RenderPart)
+        as "needs layout and pref width recalc" right from RenderSVGRoot::layout() and hoped that this would cause the whole
+        document to be laid out again, now that the size of the embedded SVG document is known.
+
+        As soon as the SVG document is laid out, the host document will be painted (flush deferred repaints) and an assertion
+        ASSERTS(!needsLayout()) will be fired, as we modified the setNeedsLayout() state after the host document layout finished,
+        right before painting.
+
+        A proper fix is to only keep track in RenderSVGRoot whether it needs to negotiate the size with the host document, but
+        not modify the layout state of the host document in any way. Let FrameView handle the size negotiation right in
+        FrameView::layout().
+
+        Consider following document:
+        <body><iframe src="some.svg"></body>
+        
+        After initial loading & parsing of the document, a FrameView exists for the main frame, and a sub-FrameView
+        for the <iframe>. The external SVG document, may not be loaded yet at this point. That means when RenderIFrame::layout()
+        tries to figure out its size (computeLogicalWidth/Height) - the RenderSVGRoot renderer of the external document hasn't
+        been created yet (as the external document hasn't received data yet) - so it falls back to eg. 300x150 CSS default size
+        (in the simplest case, where width/height are both auto).
+
+        Suppose the external document now finished loading, the RenderSVGRoot is created and a global relayout is triggered
+        starting from the main FrameView. As we already laid out the document once, needsLayout() is false for the main FrameView,
+        so _only_ the child frame view that contains the RenderSVGRoot is now laid out, for the first time.
+
+        After layout is done, the SVG document is fully laid out, though the RenderPart which embedded the SVG does NOT notice
+        the SVG has been laid out, so it still carries the default 300x150 size (and needsLayout=false!).
+
+        The fix is to retrigger layout of the parent frame view by marking the owner renderer of the frame view as "needs layout
+        and pref widths recalc" and immediatiely performing a synchronous update of the layout. It's important to do it sync,
+        as scripts depend on the result of the size negotiation (covered extensively with the new tests in svg/as-object).
+
+        Reenable svg/zoom/page/zoom-svg-through-object* tests to see whether the flakiness is gone.
+
+        Tests: svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-1.html
+               svg/as-object/deep-nested-embedded-svg-size-changes-no-layout-triggers-2.html
+               svg/as-object/embedded-svg-immediate-offsetWidth-query.html
+               svg/as-object/embedded-svg-size-changes-no-layout-triggers.html
+               svg/as-object/embedded-svg-size-changes.html
+               svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-1.html
+               svg/as-object/nested-embedded-svg-size-changes-no-layout-triggers-2.html
+               svg/as-object/nested-embedded-svg-size-changes.html
+               svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
+               svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml
+               svg/zoom/page/zoom-svg-through-object-with-auto-size.html
+               svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml
+               svg/zoom/page/zoom-svg-through-object-with-override-size.html
+               svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Call forceLayoutParentViewIfNeeded() after layout finished.
+        (WebCore::FrameView::forceLayoutParentViewIfNeeded): Added helper method.
+        (WebCore::FrameView::embeddedContentBox): Moved from RenderPart to a more central place.
+        * page/FrameView.h:
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::embeddedContentBox): Moved to FrameView.
+        * rendering/svg/RenderSVGRoot.cpp: Rename m_didNegotiateSize to m_needsSizeNegotiationWithHostDocument.
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::layout): Only figure out if we need neggotiation, don't actually do anything, let FrameView handle this.
+        * rendering/svg/RenderSVGRoot.h: Remove incorrect negotiateSizeWithHostDocumentIfNeeded() logic.
+        (WebCore::RenderSVGRoot::needsSizeNegotiationWithHostDocument): Added getter for m_needsSizeNegotiationWithHostDocument.
+        (WebCore::RenderSVGRoot::scheduledSizeNegotiationWithHostDocument): Added safe way to clear m_needsSizeNegotiationWithHostDocument (asserts if it was false before).
+
 2011-08-05  Noel Gordon  <noel.gordon@gmail.com>
 
         [Chromium] Remove HaltablePlugin references from gyp project files
@@ -9752,7 +9834,6 @@
         (WebCore::RenderReplaced::positionForPoint): Modified to avoid relying entirely
         on InlineBox to calculate the position.
 
->>>>>>> .r91495
 2011-07-21  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: one liner typo fix in Inspector.json.
