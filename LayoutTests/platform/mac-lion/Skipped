@@ -29,10 +29,12 @@ fast/canvas/canvas-strokeRect-gradient-shadow.html
 # <rdar://problem/9348555>
 fast/canvas/set-colors.html
 
+# <rdar://problem/9924676>
+fast/canvas/canvas-scale-strokePath-shadow.html
+
 # Unknown canvas test failures
 canvas/philip/tests/2d.text.draw.baseline.ideographic.html
 fast/canvas/canvas-draw-canvas-on-canvas-shadow.html
-fast/canvas/canvas-scale-strokePath-shadow.html
 fast/canvas/canvas-strokePath-gradient-shadow.html
 fast/canvas/canvas-strokeRect-alpha-shadow.html
 
