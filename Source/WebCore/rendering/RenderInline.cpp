@@ -162,7 +162,7 @@ void RenderInline::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
     }
 }
 
-void RenderInline::updateAlwaysCreateLineBoxes()
+void RenderInline::updateAlwaysCreateLineBoxes(bool fullLayout)
 {
     // Once we have been tainted once, just assume it will happen again. This way effects like hover highlighting that change the
     // background color will only cause a layout on the first rollover.
@@ -189,7 +189,8 @@ void RenderInline::updateAlwaysCreateLineBoxes()
     }
 
     if (alwaysCreateLineBoxes) {
-        dirtyLineBoxes(false);
+        if (!fullLayout)
+            dirtyLineBoxes(false);
         m_alwaysCreateLineBoxes = true;
     }
 }

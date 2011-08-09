@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+<style>
+.table:nth-last-child(even) { line-height: 100%; }
+</style>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function runTest()
+{
+    var test = document.getElementById('test');
+    test.parentNode.removeChild(test);
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+setTimeout("runTest()", 0); 
+</script>
+<table class=table>
+<td><rt>PASS</rt></junk></td>
+<table><span id="test"></table>
+</table>
+</html>

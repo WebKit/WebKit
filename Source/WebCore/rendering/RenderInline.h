@@ -81,7 +81,7 @@ public:
 
     bool alwaysCreateLineBoxes() const { return m_alwaysCreateLineBoxes; }
     void setAlwaysCreateLineBoxes() { m_alwaysCreateLineBoxes = true; }
-    void updateAlwaysCreateLineBoxes();
+    void updateAlwaysCreateLineBoxes(bool fullLayout);
 
 protected:
     virtual void willBeDestroyed();

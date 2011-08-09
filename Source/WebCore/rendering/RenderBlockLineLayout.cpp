@@ -1256,7 +1256,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 }
             } else if (o->isText() || (o->isRenderInline() && !walker.atEndOfInline())) {
                 if (!o->isText())
-                    toRenderInline(o)->updateAlwaysCreateLineBoxes();
+                    toRenderInline(o)->updateAlwaysCreateLineBoxes(layoutState.isFullLayout());
                 if (layoutState.isFullLayout() || o->selfNeedsLayout())
                     dirtyLineBoxesForRenderer(o, layoutState.isFullLayout());
                 o->setNeedsLayout(false);

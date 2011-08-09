@@ -1,3 +1,19 @@
+2011-08-09  Abhishek Arya  <inferno@chromium.org>
+
+        Regression(83075): Fix updateAlwaysCreateLineBoxes on information 
+        about full layout which is needed when dirtying lineboxes.
+        https://bugs.webkit.org/show_bug.cgi?id=65924
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/inline/update-always-create-line-boxes-full-layout-crash.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::updateAlwaysCreateLineBoxes):
+        * rendering/RenderInline.h:
+
 2011-08-09  Nate Chapin  <japhet@chromium.org>
 
         Remove receivedCancellation() from SubresourceLoaderClient.

@@ -1,3 +1,14 @@
+2011-08-09  Abhishek Arya  <inferno@chromium.org>
+
+        Tests that we do not crash when trying to dirty line boxes on
+        a RenderInline needing full relayout.
+        https://bugs.webkit.org/show_bug.cgi?id=65924
+
+        Reviewed by Dave Hyatt.
+
+        * fast/inline/update-always-create-line-boxes-full-layout-crash-expected.txt: Added.
+        * fast/inline/update-always-create-line-boxes-full-layout-crash.html: Added.
+
 2011-08-09  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: rebaselining inspector test.
