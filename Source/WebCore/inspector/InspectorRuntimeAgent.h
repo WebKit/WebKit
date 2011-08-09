@@ -70,7 +70,7 @@ public:
                         RefPtr<InspectorObject>* result,
                         bool* wasThrown);
     void releaseObject(ErrorString*, const String& objectId);
-    void getProperties(ErrorString*, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>* result);
+    void getProperties(ErrorString*, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result);
     void releaseObjectGroup(ErrorString*, const String& objectGroup);
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)

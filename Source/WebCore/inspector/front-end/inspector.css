@@ -1634,8 +1634,8 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     color: rgb(136, 19, 145);
 }
 
-.section .properties .dimmed {
-    opacity: 0.6;
+.section .properties .value.dimmed {
+    color: rgb(100, 100, 100);
 }
 
 .section .properties .value.error {

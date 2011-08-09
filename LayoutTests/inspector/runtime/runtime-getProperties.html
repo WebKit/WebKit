@@ -65,10 +65,13 @@ function test()
         if (property.name === "__proto__")
             return;
 
-        var value = property.value;
-        if (value)
-            property.value = { type: value.type, description: value.description.replace("function foo", "function "), objectId: value.objectId };
-        InspectorTest.dump(property, { objectId: true });
+        var propertyObj = {};
+        propertyObj.name = property.name;
+        propertyObj.value = {};
+        propertyObj.value.type = property.value.type;
+        propertyObj.value.description = property.value.description;
+
+        InspectorTest.dump(propertyObj);
     }
 }
 

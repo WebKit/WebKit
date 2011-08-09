@@ -1,3 +1,32 @@
+2011-08-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92670.
+        http://trac.webkit.org/changeset/92670
+        https://bugs.webkit.org/show_bug.cgi?id=65905
+
+        It broke 3 inspector tests (Requested by Ossy on #webkit).
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::getProperties):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.ondblclick):
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.getOwnProperties):
+        (WebInspector.RemoteObject.prototype.getAllProperties):
+        (WebInspector.RemoteObject.prototype._getProperties.remoteObjectBinder):
+        (WebInspector.RemoteObject.prototype._getProperties):
+        (WebInspector.RemoteObjectProperty):
+        * inspector/front-end/inspector.css:
+        (.section .properties .value.dimmed):
+
 2011-08-09  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: there should be a way to tell what properties are non-enumerable when expanding objects.

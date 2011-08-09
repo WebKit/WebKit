@@ -167,7 +167,7 @@ request:
     method : "Runtime.getProperties"
     params : {
         objectId : <string>
-        ownProperties : false
+        ignoreHasOwnProperty : false
     }
     id : <number>
 }
@@ -177,26 +177,29 @@ response:
     result : {
         result : [
             {
+                name : "assignedByCallFunctionOn"
                 value : {
                     type : "string"
                     value : "callFunctionOn function works fine"
                 }
-                writable : true
-                enumerable : true
-                configurable : true
-                name : "assignedByCallFunctionOn"
             }
             {
+                name : "self"
                 value : {
                     type : "object"
                     objectId : <string>
                     className : <string>
                     description : "TestObject"
                 }
-                writable : true
-                enumerable : true
-                configurable : true
-                name : "self"
+            }
+            {
+                name : "__proto__"
+                value : {
+                    type : "object"
+                    objectId : <string>
+                    className : <string>
+                    description : "TestObject"
+                }
             }
         ]
     }
