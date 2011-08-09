@@ -127,6 +127,8 @@ public:
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
     virtual float userSpaceScaleFactor() const { return 1; }
 
+    virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
+
     void didChangeUrl(const QUrl&);
     void didChangeTitle(const QString&);
 

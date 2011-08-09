@@ -89,6 +89,11 @@ void QDesktopWebViewPrivate::startDrag(Qt::DropActions supportedDropActions, con
     *clientPosition = widget->mapFromGlobal(*globalPosition);
 }
 
+void QDesktopWebViewPrivate::didFindZoomableArea(const QPoint&, const QRect&)
+{
+    // This feature is only used by QTouchWebView.
+}
+
 void QDesktopWebViewPrivate::didChangeUrl(const QUrl& url)
 {
     emit q->urlChanged(url);

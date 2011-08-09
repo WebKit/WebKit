@@ -91,6 +91,10 @@ void TouchViewInterface::pinchGestureEnded()
     m_viewportView->d->viewportRectUpdated();
 }
 
+void TouchViewInterface::didFindZoomableArea(const QPoint&, const QRect&)
+{
+}
+
 SGAgent* TouchViewInterface::sceneGraphAgent() const
 {
     return &m_pageView->d->sgAgent;

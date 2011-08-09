@@ -120,8 +120,3 @@ void QTouchWebPageProxy::setContentsScale(qreal scale)
 {
     drawingArea()->setContentsScale(scale);
 }
-
-void QTouchWebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
-{
-    emit zoomableAreaFound(QRect(area));
-}

@@ -1,5 +1,29 @@
 2011-08-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
+        [Qt] Redirect didFindZoomableArea thru to the view
+        https://bugs.webkit.org/show_bug.cgi?id=65913
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::didFindZoomableArea):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::didFindZoomableArea):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::didFindZoomableArea):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/ViewInterface.h:
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::timerEvent):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::setContentsScale):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+
+2011-08-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
         [Qt] Vastly improve the algorithm for finding a zoomable area when doing double-tap
         https://bugs.webkit.org/show_bug.cgi?id=65907
 

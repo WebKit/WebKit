@@ -400,6 +400,11 @@ WKPageRef QtWebPageProxy::pageRef() const
     return toAPI(m_webPageProxy.get());;
 }
 
+void QtWebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
+{
+    m_viewInterface->didFindZoomableArea(QPoint(target), QRect(area));
+}
+
 void QtWebPageProxy::didChangeUrl(const QUrl& url)
 {
     m_viewInterface->didChangeUrl(url);

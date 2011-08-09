@@ -53,6 +53,7 @@ public:
     virtual bool isVisible() = 0;
 
     virtual void startDrag(Qt::DropActions supportedDropActions, const QImage& dragImage, QMimeData* data, QPoint* clientPosition, QPoint* globalPosition, Qt::DropAction* dropAction) = 0;
+    virtual void didFindZoomableArea(const QPoint&, const QRect&) = 0;
 
     virtual void didChangeUrl(const QUrl&) = 0;
     virtual void didChangeTitle(const QString&) = 0;
