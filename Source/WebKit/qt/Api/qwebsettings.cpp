@@ -1136,6 +1136,7 @@ QString QWebSettings::localStoragePath() const
 */
 void QWebSettings::enablePersistentStorage(const QString& path)
 {
+#ifndef QT_NO_DESKTOPSERVICES
     QString storagePath;
 
     if (path.isEmpty()) {
@@ -1167,6 +1168,7 @@ void QWebSettings::enablePersistentStorage(const QString& path)
         WebCore::PluginDatabase::setPersistentMetadataCacheEnabled(true);
         WebCore::PluginDatabase::setPersistentMetadataCachePath(cachePath);
     }
+#endif
 #endif
 }
 

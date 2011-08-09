@@ -1,3 +1,14 @@
+2011-08-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92683.
+        http://trac.webkit.org/changeset/92683
+        https://bugs.webkit.org/show_bug.cgi?id=65921
+
+         "Breaks Qt --minimal build. Revert pending update of the Qt
+        minimal configuration" (Requested by simathur on #webkit).
+
+        * Source/WebKit.pri:
+
 2011-08-09  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         [Qt] Simplify code by removing QT_NO_DESKTOPSERVICES and QT_NO_NETWORKDISKCACHE
