@@ -1,3 +1,31 @@
+2011-08-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: get rid of InspectorInstrumentation::inspectorAgents() map
+        https://bugs.webkit.org/show_bug.cgi?id=54678
+
+        Added two functions for retrieving InstrumentingAgents from Page and WorkerContext.
+
+        Reviewed by Pavel Feldman.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        (WebCore::InspectorController::inspectedPageDestroyed):
+        * inspector/InspectorController.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::instrumentingAgentsForPage):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InstrumentingAgents.cpp: Copied from Source/WebCore/inspector/WorkerInspectorController.h.
+        (WebCore::instrumentationForPage):
+        (WebCore::instrumentationForWorkerContext):
+        * inspector/InstrumentingAgents.h:
+        * inspector/WorkerInspectorController.h:
+
 2011-08-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Add "Refresh" to context menu of resources panel cookies view.

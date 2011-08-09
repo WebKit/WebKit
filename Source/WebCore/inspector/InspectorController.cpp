@@ -141,8 +141,6 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_runtimeAgent->setScriptDebugServer(&m_debuggerAgent->scriptDebugServer());
 #endif
-
-    InspectorInstrumentation::bindInstrumentingAgents(m_page, m_instrumentingAgents.get());
 }
 
 InspectorController::~InspectorController()
@@ -152,7 +150,6 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
-    InspectorInstrumentation::unbindInstrumentingAgents(m_page);
     disconnectFrontend();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_domDebuggerAgent.clear();

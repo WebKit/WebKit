@@ -69,12 +69,6 @@ static const char* const setTimerEventName = "setTimer";
 static const char* const clearTimerEventName = "clearTimer";
 static const char* const timerFiredEventName = "timerFired";
 
-InspectorInstrumentation::InstrumentingAgentsMap& InspectorInstrumentation::instrumentingAgents()
-{
-    DEFINE_STATIC_LOCAL(InstrumentingAgentsMap, agents, ());
-    return agents;
-}
-
 int InspectorInstrumentation::s_frontendCounter = 0;
 
 static bool eventHasListeners(const AtomicString& eventType, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors)
@@ -872,6 +866,13 @@ InspectorTimelineAgent* InspectorInstrumentation::retrieveTimelineAgent(const In
     if (timelineAgent && timelineAgent->id() == cookie.second)
         return timelineAgent;
     return 0;
+}
+
+InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage(Page* page)
+{
+    if (!page)
+        return 0;
+    return instrumentationForPage(page);
 }
 
 } // namespace WebCore

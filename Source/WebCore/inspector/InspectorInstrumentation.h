@@ -36,7 +36,6 @@
 #include "Frame.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
-#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -188,8 +187,6 @@ public:
 #endif
 
 #if ENABLE(INSPECTOR)
-    static void bindInstrumentingAgents(Page* page, InstrumentingAgents* agents) { instrumentingAgents().set(page, agents); }
-    static void unbindInstrumentingAgents(Page* page) { instrumentingAgents().remove(page); }
     static void frontendCreated() { s_frontendCounter += 1; }
     static void frontendDeleted() { s_frontendCounter -= 1; }
     static bool hasFrontends() { return s_frontendCounter; }
@@ -326,8 +323,6 @@ private:
     static void cancelPauseOnNativeEvent(InstrumentingAgents*);
     static InspectorTimelineAgent* retrieveTimelineAgent(const InspectorInstrumentationCookie&);
 
-    typedef HashMap<Page*, InstrumentingAgents*> InstrumentingAgentsMap;
-    static InstrumentingAgentsMap& instrumentingAgents();
     static int s_frontendCounter;
 #endif
 };
@@ -1030,13 +1025,6 @@ inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForCont
     if (context && context->isDocument())
         return instrumentingAgentsForPage(static_cast<Document*>(context)->page());
     return 0;
-}
-
-inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForPage(Page* page)
-{
-    if (!page)
-        return 0;
-    return instrumentingAgents().get(page);
 }
 
 inline InstrumentingAgents* InspectorInstrumentation::instrumentingAgentsForFrame(Frame* frame)

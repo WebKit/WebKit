@@ -51,6 +51,8 @@ class InspectorResourceAgent;
 class InspectorRuntimeAgent;
 class InspectorTimelineAgent;
 class InspectorWorkerAgent;
+class Page;
+class WorkerContext;
 
 class InstrumentingAgents {
     WTF_MAKE_NONCOPYABLE(InstrumentingAgents);
@@ -163,6 +165,11 @@ private:
     InspectorWorkerAgent* m_inspectorWorkerAgent;
 #endif
 };
+
+InstrumentingAgents* instrumentationForPage(Page*);
+#if ENABLE(WORKERS)
+InstrumentingAgents* instrumentationForWorkerContext(WorkerContext*);
+#endif
 
 }
 

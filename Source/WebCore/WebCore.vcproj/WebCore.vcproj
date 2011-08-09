@@ -68478,6 +68478,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InstrumentingAgents.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InstrumentingAgents.h"
 				>
 			</File>

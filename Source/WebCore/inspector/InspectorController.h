@@ -124,6 +124,7 @@ public:
 
 private:
     friend class PostWorkerNotificationToFrontendTask;
+    friend InstrumentingAgents* instrumentationForPage(Page*);
 
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;

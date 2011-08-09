@@ -2713,6 +2713,7 @@
             'inspector/InspectorWorkerResource.h',
             'inspector/InspectorWorkerAgent.cpp',
             'inspector/InspectorWorkerAgent.h',
+            'inspector/InstrumentingAgents.cpp',
             'inspector/InstrumentingAgents.h',
             'inspector/NetworkResourcesData.cpp',
             'inspector/NetworkResourcesData.h',

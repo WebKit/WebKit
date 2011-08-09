@@ -28,62 +28,34 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WorkerInspectorController_h
-#define WorkerInspectorController_h
+#include "config.h"
+#include "InstrumentingAgents.h"
 
-#if ENABLE(INSPECTOR) && ENABLE(WORKERS)
+#if ENABLE(INSPECTOR)
 
-#include <wtf/FastAllocBase.h>
-#include <wtf/Forward.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/RefPtr.h>
+#include "InspectorController.h"
+#include "Page.h"
+#include "WorkerContext.h"
+#include "WorkerInspectorController.h"
 
 namespace WebCore {
 
-class InjectedScriptManager;
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-class InspectorDebuggerAgent;
-#endif
-class InspectorBackendDispatcher;
-class InspectorFrontend;
-class InspectorFrontendChannel;
-class InspectorInstrumentation;
-class InspectorRuntimeAgent;
-class InspectorState;
-class InstrumentingAgents;
-class WorkerContext;
-
-class WorkerInspectorController {
-    WTF_MAKE_NONCOPYABLE(WorkerInspectorController);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    WorkerInspectorController(WorkerContext*);
-    ~WorkerInspectorController();
-
-    void connectFrontend();
-    void disconnectFrontend();
-    void dispatchMessageFromFrontend(const String&);
-
-private:
-    friend InstrumentingAgents* instrumentationForWorkerContext(WorkerContext*);
-
-    WorkerContext* m_workerContext;
-    OwnPtr<InspectorState> m_state;
-    OwnPtr<InstrumentingAgents> m_instrumentingAgents;
-    OwnPtr<InjectedScriptManager> m_injectedScriptManager;
-#if ENABLE(JAVASCRIPT_DEBUGGER)
-    OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
-#endif
-    OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
-
-    OwnPtr<InspectorFrontendChannel> m_frontendChannel;
-    OwnPtr<InspectorFrontend> m_frontend;
-    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
-};
-
+InstrumentingAgents* instrumentationForPage(Page* page)
+{
+    if (InspectorController* controller = page->inspectorController())
+        return controller->m_instrumentingAgents.get();
+    return 0;
 }
 
-#endif // ENABLE(WORKERS)
+#if ENABLE(WORKERS)
+InstrumentingAgents* instrumentationForWorkerContext(WorkerContext* workerContext)
+{
+    if (WorkerInspectorController* controller = workerContext->workerInspectorController())
+        return controller->m_instrumentingAgents.get();
+    return 0;
+}
+#endif
 
-#endif // !defined(WorkerInspectorController_h)
+} // namespace WebCore
+
+#endif // ENABLE(INSPECTOR)

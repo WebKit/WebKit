@@ -5677,6 +5677,7 @@
 		F34742E51343633C00531BC2 /* PageScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = F34742E31343633C00531BC2 /* PageScriptDebugServer.h */; };
 		F34742E81343635000531BC2 /* WorkerScriptDebugServer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F34742E61343635000531BC2 /* WorkerScriptDebugServer.cpp */; };
 		F34742E91343635000531BC2 /* WorkerScriptDebugServer.h in Headers */ = {isa = PBXBuildFile; fileRef = F34742E71343635000531BC2 /* WorkerScriptDebugServer.h */; };
+		F350B73513F1377D00880C43 /* InstrumentingAgents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F350B73413F1377D00880C43 /* InstrumentingAgents.cpp */; };
 		F3644AFF1119805900E0D537 /* InjectedScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3644AFD1119805900E0D537 /* InjectedScript.cpp */; };
 		F3644B001119805900E0D537 /* InjectedScript.h in Headers */ = {isa = PBXBuildFile; fileRef = F3644AFE1119805900E0D537 /* InjectedScript.h */; };
 		F36E07A41358A8BE00AACBC9 /* WorkerInspectorController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F36E07A21358A8BE00AACBC9 /* WorkerInspectorController.cpp */; };
@@ -12419,6 +12420,7 @@
 		F34742E31343633C00531BC2 /* PageScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PageScriptDebugServer.h; sourceTree = "<group>"; };
 		F34742E61343635000531BC2 /* WorkerScriptDebugServer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerScriptDebugServer.cpp; sourceTree = "<group>"; };
 		F34742E71343635000531BC2 /* WorkerScriptDebugServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerScriptDebugServer.h; sourceTree = "<group>"; };
+		F350B73413F1377D00880C43 /* InstrumentingAgents.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InstrumentingAgents.cpp; sourceTree = "<group>"; };
 		F3644AFD1119805900E0D537 /* InjectedScript.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScript.cpp; sourceTree = "<group>"; };
 		F3644AFE1119805900E0D537 /* InjectedScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScript.h; sourceTree = "<group>"; };
 		F36E07A21358A8BE00AACBC9 /* WorkerInspectorController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WorkerInspectorController.cpp; sourceTree = "<group>"; };
@@ -13589,6 +13591,7 @@
 				F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */,
 				F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */,
 				F375CC061150D300008DDB81 /* InspectorWorkerResource.h */,
+				F350B73413F1377D00880C43 /* InstrumentingAgents.cpp */,
 				F3ABFE0B130E9DA000E7F7D1 /* InstrumentingAgents.h */,
 				1C81BA050E97348300266E07 /* JavaScriptCallFrame.idl */,
 				BCC64F5F0DCFB84E0081EF3B /* localizedStrings.js */,
@@ -24652,6 +24655,7 @@
 				754133AA102E00F400075D00 /* InspectorTimelineAgent.cpp in Sources */,
 				4F3289B511A42AAB005ABE7E /* InspectorValues.cpp in Sources */,
 				F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */,
+				F350B73513F1377D00880C43 /* InstrumentingAgents.cpp in Sources */,
 				49EECDEB10503C2400099FAB /* Int16Array.cpp in Sources */,
 				49EECDE810503C2400099FAB /* Int32Array.cpp in Sources */,
 				49C7B9CB1042D32F0009D447 /* Int8Array.cpp in Sources */,
