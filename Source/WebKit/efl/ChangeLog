@@ -1,3 +1,16 @@
+2011-08-09  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Fix warning caused by undefined static api.
+        https://bugs.webkit.org/show_bug.cgi?id=65301
+
+        Both _ewk_tiled_backing_store_item_request_add and _ewk_tiled_backing_store_item_request_del
+        are declared, but their bodies are not defined and they are not referenced anywhere.
+        Therefore, I remove both two API's declaration in order to resolve warning message caused by them.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * ewk/ewk_tiled_backing_store.c:
+
 2011-08-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Move API documentation of ewk files to the headers

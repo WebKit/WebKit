@@ -133,8 +133,6 @@ int _ewk_tiled_log_dom = -1;
         return __VA_ARGS__;                                          \
     }
 
-static inline void _ewk_tiled_backing_store_item_request_del(Ewk_Tiled_Backing_Store_Data *priv, Ewk_Tiled_Backing_Store_Item *it);
-static inline void _ewk_tiled_backing_store_item_request_add(Ewk_Tiled_Backing_Store_Data *priv, Ewk_Tiled_Backing_Store_Item *it, int m_col, int m_row, float zoom);
 static void _ewk_tiled_backing_store_fill_renderers(Ewk_Tiled_Backing_Store_Data *priv);
 static inline void _ewk_tiled_backing_store_view_dbg(const Ewk_Tiled_Backing_Store_Data *priv);
 static inline void _ewk_tiled_backing_store_changed(Ewk_Tiled_Backing_Store_Data *priv);
