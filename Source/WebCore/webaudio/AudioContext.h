@@ -38,6 +38,7 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
+#include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicStringHash.h>
@@ -67,7 +68,7 @@ class JavaScriptAudioNode;
 // AudioContext is the cornerstone of the web audio API and all AudioNodes are created from it.
 // For thread safety between the audio thread and the main thread, it has a rendering graph locking mechanism. 
 
-class AudioContext : public ActiveDOMObject, public RefCounted<AudioContext>, public EventTarget {
+class AudioContext : public ActiveDOMObject, public ThreadSafeRefCounted<AudioContext>, public EventTarget {
 public:
     // Create an AudioContext for rendering to the audio hardware.
     static PassRefPtr<AudioContext> create(Document*);
@@ -136,10 +137,10 @@ public:
     // Called periodically at the end of each render quantum to dereference finished source nodes.
     void derefFinishedSourceNodes();
 
-    // We reap all marked nodes at the end of each realtime render quantum in deleteMarkedNodes().
+    // We schedule deletion of all marked nodes at the end of each realtime render quantum.
     void markForDeletion(AudioNode*);
     void deleteMarkedNodes();
-
+    
     // Keeps track of the number of connections made.
     void incrementConnectionCount()
     {
@@ -209,9 +210,9 @@ public:
 
     DEFINE_ATTRIBUTE_EVENT_LISTENER(complete);
 
-    // Reconcile ref/deref which are defined both in AudioNode and EventTarget.
-    using RefCounted<AudioContext>::ref;
-    using RefCounted<AudioContext>::deref;
+    // Reconcile ref/deref which are defined both in ThreadSafeRefCounted and EventTarget.
+    using ThreadSafeRefCounted<AudioContext>::ref;
+    using ThreadSafeRefCounted<AudioContext>::deref;
 
     void startRendering();
     void fireCompletionEvent();
@@ -225,6 +226,9 @@ private:
 
     void lazyInitialize();
     void uninitialize();
+
+    void scheduleNodeDeletion();
+    static void deleteMarkedNodesDispatch(void* userData);
     
     bool m_isInitialized;
     bool m_isAudioThreadFinished;
@@ -257,8 +261,10 @@ private:
     // Either accessed when the graph lock is held, or on the main thread when the audio thread has finished.
     Vector<AudioNode*> m_referencedNodes;
 
-    // Accumulate nodes which need to be deleted at the end of a render cycle (in realtime thread) here.
+    // Accumulate nodes which need to be deleted here.
+    // They will be scheduled for deletion (on the main thread) at the end of a render cycle (in realtime thread).
     Vector<AudioNode*> m_nodesToDelete;
+    bool m_isDeletionScheduled;
 
     // Only accessed when the graph lock is held.
     HashSet<AudioNodeInput*> m_dirtyAudioNodeInputs;

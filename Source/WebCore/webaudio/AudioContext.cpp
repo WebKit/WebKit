@@ -120,6 +120,7 @@ AudioContext::AudioContext(Document* document)
     , m_isAudioThreadFinished(false)
     , m_document(document)
     , m_destinationNode(0)
+    , m_isDeletionScheduled(false)
     , m_connectionCount(0)
     , m_audioThread(0)
     , m_graphOwnerThread(UndefinedThreadIdentifier)
@@ -160,10 +161,6 @@ AudioContext::AudioContext(Document* document, unsigned numberOfChannels, size_t
 
 void AudioContext::constructCommon()
 {
-    // Note: because adoptRef() won't be called until we leave this constructor, but code in this constructor needs to reference this context,
-    // relax the check.
-    relaxAdoptionRequirement();
-    
     FFTFrame::initialize();
     
     m_listener = AudioListener::create();
@@ -175,7 +172,7 @@ AudioContext::~AudioContext()
 {
 #if DEBUG_AUDIONODE_REFERENCES
     printf("%p: AudioContext::~AudioContext()\n", this);
-#endif    
+#endif
     // AudioNodes keep a reference to their context, so there should be no way to be in the destructor if there are still AudioNodes around.
     ASSERT(!m_nodesToDelete.size());
     ASSERT(!m_referencedNodes.size());
@@ -227,7 +224,9 @@ void AudioContext::uninitialize()
         
         // Get rid of the sources which may still be playing.
         derefUnfinishedSourceNodes();
-        
+
+        deleteMarkedNodes();
+
         // Because the AudioBuffers are garbage collected, we can't delete them here.
         // Instead, at least release the potentially large amount of allocated memory for the audio data.
         // Note that we do this *after* the context is uninitialized and stops processing audio.
@@ -566,8 +565,9 @@ void AudioContext::handlePostRenderTasks()
         // Dynamically clean up nodes which are no longer needed.
         derefFinishedSourceNodes();
 
-        // Finally actually delete.
-        deleteMarkedNodes();
+        // Don't delete in the real-time thread. Let the main thread do it.
+        // Ref-counted objects held by certain AudioNodes may not be thread-safe.
+        scheduleNodeDeletion();
 
         // Fixup the state of any dirty AudioNodeInputs and AudioNodeOutputs.
         handleDirtyAudioNodeInputs();
@@ -596,12 +596,42 @@ void AudioContext::markForDeletion(AudioNode* node)
     m_nodesToDelete.append(node);
 }
 
+void AudioContext::scheduleNodeDeletion()
+{
+    bool isGood = m_isInitialized && isGraphOwner();
+    ASSERT(isGood);
+    if (!isGood)
+        return;
+
+    // Make sure to call deleteMarkedNodes() on main thread.    
+    if (m_nodesToDelete.size() && !m_isDeletionScheduled) {
+        m_isDeletionScheduled = true;
+
+        // Don't let ourself get deleted before the callback.
+        // See matching deref() in deleteMarkedNodesDispatch().
+        ref();
+        callOnMainThread(deleteMarkedNodesDispatch, this);
+    }
+}
+
+void AudioContext::deleteMarkedNodesDispatch(void* userData)
+{
+    AudioContext* context = reinterpret_cast<AudioContext*>(userData);
+    ASSERT(context);
+    if (!context)
+        return;
+
+    context->deleteMarkedNodes();
+    context->deref();
+}
+
 void AudioContext::deleteMarkedNodes()
 {
-    ASSERT(isGraphOwner() || isAudioThreadFinished());
+    ASSERT(isMainThread());
 
+    AutoLocker locker(this);
+    
     // Note: deleting an AudioNode can cause m_nodesToDelete to grow.
-    size_t nodesDeleted = 0;
     while (size_t n = m_nodesToDelete.size()) {
         AudioNode* node = m_nodesToDelete[n - 1];
         m_nodesToDelete.removeLast();
@@ -618,11 +648,9 @@ void AudioContext::deleteMarkedNodes()
 
         // Finally, delete it.
         delete node;
-
-        // Don't delete too many nodes per render quantum since we don't want to do too much work in the realtime audio thread.
-        if (++nodesDeleted > MaxNodesToDeletePerQuantum)
-            break;
     }
+    
+    m_isDeletionScheduled = false;
 }
 
 void AudioContext::markAudioNodeInputDirty(AudioNodeInput* input)
