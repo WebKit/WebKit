@@ -1,3 +1,18 @@
+2011-08-09  Alexei Svitkine  <asvitkine@chromium.org>
+
+        [Chromium] Enable rubber banding when scrolling.
+
+        https://bugs.webkit.org/show_bug.cgi?id=65707
+
+        Reviewed by Dimitri Glazkov.
+
+        No new tests since this is just syncing changes to chromium platform.
+
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::ScrollAnimatorChromiumMac::handleGestureEvent):
+
 2011-08-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: XHRs end up in the resources panel.

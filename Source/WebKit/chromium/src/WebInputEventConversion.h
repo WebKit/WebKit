@@ -31,12 +31,12 @@
 #ifndef WebInputEventConversion_h
 #define WebInputEventConversion_h
 
-#include "WebInputEvent.h"
-
+#include "PlatformGestureEvent.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformTouchEvent.h"
 #include "PlatformWheelEvent.h"
+#include "WebInputEvent.h"
 
 namespace WebCore {
 class KeyboardEvent;
@@ -51,6 +51,7 @@ namespace WebKit {
 class WebMouseEvent;
 class WebMouseWheelEvent;
 class WebKeyboardEvent;
+class WebGestureEvent;
 
 // These classes are used to convert from WebInputEvent subclasses to
 // corresponding WebCore events.
@@ -64,6 +65,13 @@ class PlatformWheelEventBuilder : public WebCore::PlatformWheelEvent {
 public:
     PlatformWheelEventBuilder(WebCore::Widget*, const WebMouseWheelEvent&);
 };
+
+#if ENABLE(GESTURE_EVENTS)
+class PlatformGestureEventBuilder : public WebCore::PlatformGestureEvent {
+public:
+    PlatformGestureEventBuilder(WebCore::Widget*, const WebGestureEvent&);
+};
+#endif
 
 class PlatformKeyboardEventBuilder : public WebCore::PlatformKeyboardEvent {
 public:

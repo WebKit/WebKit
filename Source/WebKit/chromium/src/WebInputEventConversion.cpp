@@ -100,7 +100,38 @@ PlatformWheelEventBuilder::PlatformWheelEventBuilder(Widget* widget, const WebMo
     m_ctrlKey = (e.modifiers & WebInputEvent::ControlKey);
     m_altKey = (e.modifiers & WebInputEvent::AltKey);
     m_metaKey = (e.modifiers & WebInputEvent::MetaKey);
+#if OS(DARWIN)
+    m_hasPreciseScrollingDeltas = e.hasPreciseScrollingDeltas;
+    m_phase = static_cast<WebCore::PlatformWheelEventPhase>(e.phase);
+    m_momentumPhase = static_cast<WebCore::PlatformWheelEventPhase>(e.momentumPhase);
+    m_timestamp = e.timeStampSeconds;
+#endif
 }
+
+// PlatformGestureEventBuilder --------------------------------------------------
+
+#if ENABLE(GESTURE_EVENTS)
+PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const WebGestureEvent& e)
+{
+    switch (e.type) {
+    case WebInputEvent::GestureScrollBegin:
+        m_type = PlatformGestureEvent::ScrollBeginType;
+        break;
+    case WebInputEvent::GestureScrollEnd:
+        m_type = PlatformGestureEvent::ScrollEndType;
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    m_position = widget->convertFromContainingWindow(IntPoint(e.x, e.y));
+    m_globalPosition = IntPoint(e.globalX, e.globalY);
+    m_timestamp = e.timeStampSeconds;
+    m_shiftKey = (e.modifiers & WebInputEvent::ShiftKey);
+    m_ctrlKey = (e.modifiers & WebInputEvent::ControlKey);
+    m_altKey = (e.modifiers & WebInputEvent::AltKey);
+    m_metaKey = (e.modifiers & WebInputEvent::MetaKey);
+}
+#endif
 
 // MakePlatformKeyboardEvent --------------------------------------------------
 
