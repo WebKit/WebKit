@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<!--
+Tests that we are able to schedule a series of notes to playback with sample-accuracy.
+We use an impulse so we can tell exactly where the rendering is happening.
+-->
+
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css"/>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+<script type="text/javascript" src="resources/audio-testing.js"></script>
+<script type="text/javascript" src="resources/buffer-loader.js"></script>
+</head>
+
+<body>
+
+<div id="description"></div>
+<div id="console"></div>
+
+<script>
+description("Tests sample-accurate scheduling.");
+
+var sampleRate = 44100.0;
+var lengthInSeconds = 4;
+
+var context = 0;
+var bufferLoader = 0;
+var impulse;
+
+// See if we can render at exactly these sample offsets.
+var sampleOffsets = [0, 3, 512, 517, 1000, 1005, 20000, 21234, 37590];
+
+function createImpulse() {
+    // An impulse has a value of 1 at time 0, and is otherwise 0.
+    impulse = context.createBuffer(2, 512, sampleRate);
+    var sampleDataL = impulse.getChannelData(0);
+    var sampleDataR = impulse.getChannelData(1);
+    sampleDataL[0] = 1.0;
+    sampleDataR[0] = 1.0;
+}
+
+function playNote(time) {
+    var bufferSource = context.createBufferSource();
+    bufferSource.buffer = impulse;
+    bufferSource.connect(context.destination);
+    bufferSource.noteOn(time);
+}
+
+function checkSampleAccuracy(event) {
+    var buffer = event.renderedBuffer;
+
+    var bufferDataL = buffer.getChannelData(0);
+    var bufferDataR = buffer.getChannelData(1);
+
+    var success = true;
+    
+    // Go through every sample and make sure it's 0, except at positions in sampleOffsets.
+    for (var i = 0; i < buffer.length; ++i) {
+        // Make sure left == right
+        if (bufferDataL[i] != bufferDataR[i]) {
+            testFailed("Rendered buffer left and right channels are not identical.");
+            success = false;
+            break;
+        }
+        
+        if (bufferDataL[i] != 0) {
+            // Make sure this index is  in sampleOffsets
+            var found = false;
+            for (var j = 0; j < sampleOffsets.length; ++j) {
+                if (sampleOffsets[j] == i) {
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                testFailed("Non-zero sample found at wrong sample offset.");
+                success = false;
+                break;
+            }
+        }
+    }
+
+    if (success) {
+        testPassed("All events rendered with sample-accuracy.");
+    } else {
+        testFailed("Events NOT rendered with sample-accuracy.");
+    }
+
+    finishJSTest();
+}
+
+function runTest() {
+    if (window.layoutTestController) {
+        layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
+    
+    window.jsTestIsAsync = true;
+        
+    // Create offline audio context.
+    context = new webkitAudioContext(2, sampleRate * lengthInSeconds, sampleRate);
+    createImpulse();    
+
+    for (var i = 0; i < sampleOffsets.length; ++i) {
+        var timeInSeconds = sampleOffsets[i] * sampleRate;
+        playNote(timeInSeconds);
+    }
+    
+    context.oncomplete = checkSampleAccuracy;
+    context.startRendering();
+}
+
+runTest();
+successfullyParsed = true;
+
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

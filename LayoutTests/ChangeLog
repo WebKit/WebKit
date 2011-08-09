@@ -1,3 +1,22 @@
+2011-08-09  Chris Rogers  <crogers@google.com>
+
+        Add more Web Audio layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=65786
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/audiobuffersource-expected.wav: Added.
+        * webaudio/audiobuffersource-playbackrate-expected.wav: Added.
+        * webaudio/audiobuffersource-playbackrate.html: Added.
+        * webaudio/audiobuffersource.html: Added.
+        * webaudio/mixing-expected.wav: Added.
+        * webaudio/mixing.html: Added.
+        * webaudio/resources/hyper-reality: Added.
+        * webaudio/resources/hyper-reality/br-jam-loop.wav: Added.
+        * webaudio/resources/hyper-reality/laughter.wav: Added.
+        * webaudio/sample-accurate-scheduling-expected.txt: Added.
+        * webaudio/sample-accurate-scheduling.html: Added.
+
 2011-08-09  Anders Carlsson  <andersca@apple.com>
 
         More Lion skipped list goodness.
