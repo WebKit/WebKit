@@ -1,3 +1,28 @@
+2011-08-09  Anders Carlsson  <andersca@apple.com>
+
+        Add updated media test results for Lion.
+
+        * platform/mac-snowleopard/media: Added.
+        * platform/mac-snowleopard/media/controls-strict-expected.png: Copied from platform/mac/media/controls-strict-expected.png.
+        * platform/mac-snowleopard/media/controls-strict-expected.txt: Copied from platform/mac/media/controls-strict-expected.txt.
+        * platform/mac-snowleopard/media/video-controls-rendering-expected.png: Copied from platform/mac/media/video-controls-rendering-expected.png.
+        * platform/mac-snowleopard/media/video-controls-rendering-expected.txt: Copied from platform/mac/media/video-controls-rendering-expected.txt.
+        * platform/mac-snowleopard/media/video-display-toggle-expected.png: Copied from platform/mac/media/video-display-toggle-expected.png.
+        * platform/mac-snowleopard/media/video-display-toggle-expected.txt: Copied from platform/mac/media/video-display-toggle-expected.txt.
+        * platform/mac-snowleopard/media/video-layer-crash-expected.png: Copied from platform/mac/media/video-layer-crash-expected.png.
+        * platform/mac-snowleopard/media/video-layer-crash-expected.txt: Copied from platform/mac/media/video-layer-crash-expected.txt.
+        * platform/mac-snowleopard/media/video-no-audio-expected.png: Copied from platform/mac/media/video-no-audio-expected.png.
+        * platform/mac-snowleopard/media/video-no-audio-expected.txt: Copied from platform/mac/media/video-no-audio-expected.txt.
+        * platform/mac/media/controls-strict-expected.png:
+        * platform/mac/media/controls-strict-expected.txt:
+        * platform/mac/media/video-controls-rendering-expected.png:
+        * platform/mac/media/video-controls-rendering-expected.txt:
+        * platform/mac/media/video-display-toggle-expected.png:
+        * platform/mac/media/video-display-toggle-expected.txt:
+        * platform/mac/media/video-layer-crash-expected.png:
+        * platform/mac/media/video-no-audio-expected.png:
+        * platform/mac/media/video-no-audio-expected.txt:
+
 2011-08-09  Chris Rogers  <crogers@google.com>
 
         Add more Web Audio layout tests
