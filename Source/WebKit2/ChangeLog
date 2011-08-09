@@ -1,5 +1,14 @@
 2011-08-09  Anders Carlsson  <andersca@apple.com>
 
+        Add a WebKit prefix to the user default.
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WebContextMac.mm:
+        (WebKit::WebContext::platformInitializeWebProcess):
+
+2011-08-09  Anders Carlsson  <andersca@apple.com>
+
         Add a user default to disable the plug-in process message timeout
         https://bugs.webkit.org/show_bug.cgi?id=65945
 

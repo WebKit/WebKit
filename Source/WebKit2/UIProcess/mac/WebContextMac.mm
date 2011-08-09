@@ -87,7 +87,7 @@ void WebContext::platformInitializeWebProcess(WebProcessCreationParameters& para
     ASSERT(!parameters.nsURLCachePath.isEmpty());
 
 #if ENABLE(PLUGIN_PROCESS)
-    parameters.disablePluginProcessMessageTimeout = [[NSUserDefaults standardUserDefaults] boolForKey:@"DisablePluginProcessMessageTimeout"];
+    parameters.disablePluginProcessMessageTimeout = [[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitDisablePluginProcessMessageTimeout"];
 #endif
 
 #if USE(ACCELERATED_COMPOSITING) && HAVE(HOSTED_CORE_ANIMATION)
