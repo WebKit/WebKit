@@ -1,3 +1,37 @@
+2011-08-09  Steve Block  <steveblock@google.com>
+
+        JavaMethodJobject is no longer needed by V8
+        https://bugs.webkit.org/show_bug.cgi?id=65910
+
+        Reviewed by Tony Gentilcore.
+
+        Removes the JavaMethod interface and moves the JavaMethodJobject
+        implementation to bridge/jni/jsc/JavaMethodJSC.[cpp|h].
+
+        No new tests, refactoring only.
+
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bridge/jni/JavaMethod.h: Removed.
+        * bridge/jni/jsc/JavaClassJSC.cpp:
+        (JavaClass::JavaClass):
+        * bridge/jni/jsc/JavaFieldJSC.h:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        * bridge/jni/jsc/JavaMethodJSC.cpp: Renamed from Source/WebCore/bridge/jni/JavaMethodJobject.cpp.
+        (JavaMethod::JavaMethod):
+        (JavaMethod::~JavaMethod):
+        (appendClassName):
+        (JavaMethod::signature):
+        * bridge/jni/jsc/JavaMethodJSC.h: Renamed from Source/WebCore/bridge/jni/JavaMethodJobject.h.
+        (JSC::Bindings::JavaMethod::name):
+        (JSC::Bindings::JavaMethod::returnTypeClassName):
+        (JSC::Bindings::JavaMethod::parameterAt):
+        (JSC::Bindings::JavaMethod::returnType):
+        (JSC::Bindings::JavaMethod::isStatic):
+        (JSC::Bindings::JavaMethod::numParameters):
+        * bridge/jni/v8/JavaNPObjectV8.cpp:
+
 2011-08-09  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: assertion failure in InspectorDOMStorageResource::bind when opening inspector

@@ -33,7 +33,7 @@
 #include "JavaClassV8.h"
 #include "JavaFieldV8.h"
 #include "JavaInstanceV8.h"
-#include "JavaMethod.h"
+#include "JavaMethodV8.h"
 #include "JavaValueV8.h"
 #include "npruntime_impl.h"
 

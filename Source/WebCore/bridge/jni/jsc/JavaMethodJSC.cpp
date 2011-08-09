@@ -25,22 +25,18 @@
  */
 
 #include "config.h"
-#include "JavaMethodJobject.h"
+#include "JavaMethodJSC.h"
 
 #if ENABLE(JAVA_BRIDGE)
 
-#include "JavaString.h"
-
-#if USE(JSC)
 #include <runtime/JSObject.h>
 #include <runtime/ScopeChain.h>
-#endif
 #include <wtf/text/StringBuilder.h>
 
 using namespace JSC;
 using namespace JSC::Bindings;
 
-JavaMethodJobject::JavaMethodJobject(JNIEnv* env, jobject aMethod)
+JavaMethod::JavaMethod(JNIEnv* env, jobject aMethod)
 {
     // Get return type name
     jstring returnTypeName = 0;
@@ -86,7 +82,7 @@ JavaMethodJobject::JavaMethodJobject(JNIEnv* env, jobject aMethod)
     env->DeleteLocalRef(modifierClass);
 }
 
-JavaMethodJobject::~JavaMethodJobject()
+JavaMethod::~JavaMethod()
 {
     if (m_signature)
         fastFree(m_signature);
@@ -114,7 +110,7 @@ static void appendClassName(StringBuilder& builder, const char* className)
     fastFree(result);
 }
 
-const char* JavaMethodJobject::signature() const
+const char* JavaMethod::signature() const
 {
     if (!m_signature) {
 #if USE(JSC)

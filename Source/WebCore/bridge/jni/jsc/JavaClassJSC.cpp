@@ -30,7 +30,7 @@
 
 #include "JSDOMWindow.h"
 #include "JavaFieldJSC.h"
-#include "JavaMethodJobject.h"
+#include "JavaMethodJSC.h"
 #include <runtime/Identifier.h>
 #include <runtime/JSLock.h>
 
@@ -76,7 +76,7 @@ JavaClass::JavaClass(jobject anInstance)
         int numMethods = env->GetArrayLength(methods);
         for (i = 0; i < numMethods; i++) {
             jobject aJMethod = env->GetObjectArrayElement((jobjectArray)methods, i);
-            JavaMethod* aMethod = new JavaMethodJobject(env, aJMethod); // deleted in the JavaClass destructor
+            JavaMethod* aMethod = new JavaMethod(env, aJMethod); // deleted in the JavaClass destructor
             MethodList* methodList;
             {
                 JSLock lock(SilenceAssertionsOnly);

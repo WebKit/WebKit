@@ -33,7 +33,7 @@
 #include "JSDOMBinding.h"
 #include "JavaArrayJSC.h"
 #include "JavaClassJSC.h"
-#include "JavaMethod.h"
+#include "JavaMethodJSC.h"
 #include "JavaString.h"
 #include "Logging.h"
 #include "jni_jsobject.h"

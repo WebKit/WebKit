@@ -31,7 +31,7 @@
 
 #include "BridgeJSC.h"
 #include "JNIUtility.h"
-#include "JavaMethod.h"
+#include "JavaMethodJSC.h"
 #include "JavaString.h"
 #include "JobjectWrapper.h"
 
