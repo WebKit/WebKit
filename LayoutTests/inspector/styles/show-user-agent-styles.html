@@ -35,6 +35,7 @@ function test()
         function step1()
         {
             InspectorTest.dumpSelectedElementStyles(true, false, true);
+            WebInspector.settings.showUserAgentStyles.set(true);
             next();
         }
     }

@@ -1,5 +1,11 @@
 2011-08-09  Pavel Feldman  <pfeldman@google.com>
 
+        Not reviewed: fix inspector tests
+
+        * inspector/styles/show-user-agent-styles.html:
+
+2011-08-09  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: provide a way to hide user agent styles
         https://bugs.webkit.org/show_bug.cgi?id=37766
 
