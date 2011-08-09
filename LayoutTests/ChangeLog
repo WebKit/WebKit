@@ -1,3 +1,15 @@
+2011-08-09  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        svg/zoom/page/zoom-svg-through-object-with-*.xhtml are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=63186
+
+        Not reviewed. More gtk/win gardening.
+
+        * platform/gtk/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.txt: Rebaseline, same result on both gtk 32 bit debug/release and 64bit.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Taken from Win7 bot, WinXP still seems to have a problem.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Removed.
+
 2011-08-09  Renata Hodovan  <reni@webkit.org>
 
         [Qt]REGRESSION(r92554): It made one test failed.

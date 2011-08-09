@@ -25,7 +25,7 @@ layer at (0,0) size 800x195
                     RenderTableCell {td} at (1,90) size 243x82 [r=2 c=0 rs=1 cs=1]
                       RenderEmbeddedObject {object} at (100,5) size 138x69
                         layer at (0,0) size 138x69
-                          RenderView at (0,0) size 123x54
+                          RenderView at (0,0) size 138x69
                         layer at (0,0) size 138x69
                           RenderSVGRoot {svg} at (23,0) size 92x69
                             RenderSVGContainer {g} at (27,8) size 73x46
