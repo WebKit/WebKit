@@ -10,18 +10,19 @@ Running: testSourceFramesCount
 Page reloaded.
 
 Running: testFilesSelect
-text:     ?a=b, tooltip: ?a=b
-text:     ?a=b, tooltip: http://example.com/?a=b
-text:     …oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url, tooltip: very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url
+text:         ?a=b, tooltip: ?a=b
+text:         …oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url, tooltip: very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url
+text: example.com, tooltip: 
+text:         ?a=b, tooltip: http://example.com/?a=b
 text: LayoutTests/inspector/debugger/foo/bar, tooltip: 
-text:     script.js, tooltip: <root>/foo/bar/script.js
-text:     script.js?a=1, tooltip: <root>/foo/bar/script.js?a=1
-text:     script.js?a=2, tooltip: <root>/foo/bar/script.js?a=2
+text:         script.js, tooltip: <root>/foo/bar/script.js
+text:         script.js?a=1, tooltip: <root>/foo/bar/script.js?a=1
+text:         script.js?a=2, tooltip: <root>/foo/bar/script.js?a=2
 text: LayoutTests/inspector/debugger/foo/baz, tooltip: 
-text:     script.js, tooltip: <root>/foo/baz/script.js
+text:         script.js, tooltip: <root>/foo/baz/script.js
 text: Content scripts, tooltip: 
-text:     contentScript.js?a=1, tooltip: <root>/foo/bar/contentScript.js?a=1
-text:     contentScript.js?a=2, tooltip: <root>/foo/bar/contentScript.js?a=2
-text:     contentScript2.js?a=1, tooltip: <root>/foo/bar/contentScript2.js?a=1
+text:         contentScript.js?a=1, tooltip: <root>/foo/bar/contentScript.js?a=1
+text:         contentScript.js?a=2, tooltip: <root>/foo/bar/contentScript.js?a=2
+text:         contentScript2.js?a=1, tooltip: <root>/foo/bar/contentScript2.js?a=1
 Debugger was disabled.
 

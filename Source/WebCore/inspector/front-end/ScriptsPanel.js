@@ -255,6 +255,8 @@ WebInspector.ScriptsPanel.prototype = {
     _addOptionToFilesSelect: function(sourceFile)
     {
         var select = this._filesSelectElement;
+        if (!select.domainOptions)
+            select.domainOptions = {};
         if (!select.folderOptions)
             select.folderOptions = {};
 
@@ -262,9 +264,16 @@ WebInspector.ScriptsPanel.prototype = {
         var parsedURL = sourceFile.url.asParsedURL();
 
         var names = this._folderAndDisplayNameForScriptURL(sourceFile.url);
-        option.text = names.displayName ? "\u00a0\u00a0\u00a0\u00a0" + names.displayName : WebInspector.UIString("(program)");
+        const indent = "\u00a0\u00a0\u00a0\u00a0";
+        option.text = names.displayName ? indent + indent + names.displayName : WebInspector.UIString("(program)");
         option.scriptNameForTest = names.displayName;
-        var folderNameForSorting = (sourceFile.isContentScript ? "2" : "0") + names.folderName;
+
+        var folderNameForSorting;
+        if (sourceFile.isContentScript)
+            folderNameForSorting = "2:" + names.folderName;
+        else
+            folderNameForSorting = "0:" + (names.domain ? names.domain + "\t\t" : "") + names.folderName;
+
         option.nameForSorting = folderNameForSorting + "\t/\t" + names.displayName; // Use '\t' to make files stick to their folder.
         option.title = sourceFile.url;
         if (sourceFile.isContentScript)
@@ -291,9 +300,18 @@ WebInspector.ScriptsPanel.prototype = {
             insertOrdered(contentScriptSection);
         }
 
+        if (!sourceFile.isContentScript && names.domain && !select.domainOptions[names.domain]) {
+            var domainOption = document.createElement("option");
+            domainOption.text = names.domain;
+            domainOption.nameForSorting = "0:" + names.domain;
+            domainOption.disabled = true;
+            select.domainOptions[names.domain] = domainOption;
+            insertOrdered(domainOption);
+        }
+
         if (names.folderName && !select.folderOptions[names.folderName]) {
             var folderOption = document.createElement("option");
-            folderOption.text = names.folderName;
+            folderOption.text = indent + names.folderName;
             folderOption.nameForSorting = folderNameForSorting;
             folderOption.disabled = true;
             select.folderOptions[names.folderName] = folderOption;
@@ -325,7 +343,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (folderName.length > 80)
             folderName = "\u2026" + folderName.substring(folderName.length - 80);
 
-        return { folderName: folderName, displayName: displayName};
+        return { domain: (parsedURL ? parsedURL.host : ""), folderName: folderName, displayName: displayName };
     },
 
     setScriptSourceIsBeingEdited: function(sourceFileId, inEditMode)
@@ -513,6 +531,7 @@ WebInspector.ScriptsPanel.prototype = {
         this._sourceFileIdToFilesSelectOption = {};
         this._filesSelectElement.removeChildren();
         this._filesSelectElement.removeChildren();
+        this._filesSelectElement.domainOptions = {};
         this._filesSelectElement.folderOptions = {};
         delete this._filesSelectElement.initialSelectionProcessed;
         delete this._filesSelectElement.contentScriptSection;

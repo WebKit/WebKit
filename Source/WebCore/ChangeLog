@@ -1,5 +1,19 @@
 2011-08-09  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: files from different domains are mixed in the file selector in Scripts panel
+        https://bugs.webkit.org/show_bug.cgi?id=65601
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+        (WebInspector.ScriptsPanel.prototype._folderAndDisplayNameForScriptURL):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/inspector.css:
+        (select.status-bar-item):
+
+2011-08-09  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: provide a way to hide user agent styles
         https://bugs.webkit.org/show_bug.cgi?id=37766
 
