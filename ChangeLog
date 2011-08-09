@@ -1,3 +1,15 @@
+2011-08-09  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        [Qt] Simplify code by removing QT_NO_DESKTOPSERVICES and QT_NO_NETWORKDISKCACHE
+        https://bugs.webkit.org/show_bug.cgi?id=65880
+
+        Reviewed by Andreas Kling.
+
+        QDesktopServices and QNetworkDiskCache have been around for a while now. Kill flags which 
+        check for their feature flags. Assume that any reasonable Qt build provides them. 
+
+        * Source/WebKit.pri:
+
 2011-08-06  Aron Rosenberg  <arosenberg@logitech.com>
 
         Reviewed by Benjamin Poulain.

@@ -1,3 +1,22 @@
+2011-08-09  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        [Qt] Simplify code by removing QT_NO_DESKTOPSERVICES and QT_NO_NETWORKDISKCACHE
+        https://bugs.webkit.org/show_bug.cgi?id=65880
+
+        Reviewed by Andreas Kling.
+
+        QDesktopServices and QNetworkDiskCache have been around for a while now. Kill flags which 
+        check for their feature flags. Assume that any reasonable Qt build provides them. 
+        * QtTestBrowser/cookiejar.cpp:
+        (TestBrowserCookieJar::TestBrowserCookieJar):
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome):
+        (LauncherWindow::setDiskCache):
+        * QtTestBrowser/main.cpp:
+        (LauncherApplication::handleUserOptions):
+        * QtTestBrowser/webpage.cpp:
+        (WebPage::openUrlInDefaultBrowser):
+
 2011-08-09  Adam Barth  <abarth@webkit.org>
 
         BaselineOptimizer created the wrong baseline for fast/js/regexp-overflow.html

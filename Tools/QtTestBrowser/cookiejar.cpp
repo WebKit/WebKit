@@ -41,12 +41,7 @@ TestBrowserCookieJar::TestBrowserCookieJar(QObject* parent)
     m_timer.setSingleShot(true);
     connect(&m_timer, SIGNAL(timeout()), this, SLOT(saveToDisk()));
 
-#ifndef QT_NO_DESKTOPSERVICES
     QString path = QDesktopServices::storageLocation(QDesktopServices::CacheLocation);
-#else
-    QString path = QDir::homePath() + "/.QtTestBrowser";
-#endif
-
     QDir().mkpath(path);
     m_file.setFileName(path + "/cookieJar");
 }

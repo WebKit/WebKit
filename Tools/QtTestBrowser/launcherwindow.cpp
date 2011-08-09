@@ -45,10 +45,8 @@
 #include <QNetworkReply>
 #endif
 
-#if !defined(QT_NO_NETWORKDISKCACHE) && !defined(QT_NO_DESKTOPSERVICES)
 #include <QtGui/QDesktopServices>
 #include <QtNetwork/QNetworkDiskCache>
-#endif
 
 const int gExitClickArea = 80;
 QVector<int> LauncherWindow::m_zoomLevels;
@@ -435,11 +433,9 @@ void LauncherWindow::createChrome()
 
     QMenu* settingsMenu = menuBar()->addMenu("&Settings");
 
-#if !defined(QT_NO_NETWORKDISKCACHE) && !defined(QT_NO_DESKTOPSERVICES)
     QAction* toggleDiskCache = settingsMenu->addAction("Use Disk Cache", this, SLOT(setDiskCache(bool)));
     toggleDiskCache->setCheckable(true);
     toggleDiskCache->setChecked(m_windowOptions.useDiskCache);
-#endif
 
     QAction* toggleAutoLoadImages = settingsMenu->addAction("Disable Auto Load Images", this, SLOT(toggleAutoLoadImages(bool)));
     toggleAutoLoadImages->setCheckable(true);
@@ -822,7 +818,6 @@ void LauncherWindow::selectElements()
 
 void LauncherWindow::setDiskCache(bool enable)
 {
-#if !defined(QT_NO_NETWORKDISKCACHE) && !defined(QT_NO_DESKTOPSERVICES)
     m_windowOptions.useDiskCache = enable;
     QNetworkDiskCache* cache = 0;
     if (enable) {
@@ -831,7 +826,6 @@ void LauncherWindow::setDiskCache(bool enable)
         cache->setCacheDirectory(cacheLocation);
     }
     page()->networkAccessManager()->setCache(cache);
-#endif
 }
 
 void LauncherWindow::setTouchMocking(bool on)

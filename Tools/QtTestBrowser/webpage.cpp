@@ -108,12 +108,10 @@ bool WebPage::acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& r
 
 void WebPage::openUrlInDefaultBrowser(const QUrl& url)
 {
-#ifndef QT_NO_DESKTOPSERVICES
     if (QAction* action = qobject_cast<QAction*>(sender()))
         QDesktopServices::openUrl(action->data().toUrl());
     else
         QDesktopServices::openUrl(url);
-#endif
 }
 
 QString WebPage::userAgentForUrl(const QUrl& url) const
