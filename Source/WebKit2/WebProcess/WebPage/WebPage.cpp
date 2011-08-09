@@ -2087,19 +2087,39 @@ InjectedBundleBackForwardList* WebPage::backForwardList()
 #if PLATFORM(QT)
 void WebPage::findZoomableAreaForPoint(const WebCore::IntPoint& point)
 {
-    const int minimumZoomTargetWidth = 100;
-
     Frame* mainframe = m_mainFrame->coreFrame();
     HitTestResult result = mainframe->eventHandler()->hitTestResultAtPoint(mainframe->view()->windowToContents(point), /*allowShadowContent*/ false, /*ignoreClipping*/ true);
 
     Node* node = result.innerNode();
-    while (node && node->getRect().width() < minimumZoomTargetWidth)
-        node = node->parentNode();
 
-    IntRect zoomableArea;
-    if (node)
-        zoomableArea = node->getRect();
-    send(Messages::WebPageProxy::DidFindZoomableArea(zoomableArea));
+    if (!node)
+        return;
+
+    IntRect zoomableArea = node->getRect();
+
+    while (true) {
+        bool found = !node->isTextNode() && !node->isShadowRoot();
+
+        // No candidate found, bail out.
+        if (!found && !node->parentNode())
+            return;
+
+        // Candidate found, and it is a better candidate than its parent.
+        // NB: A parent is considered a better candidate iff the node is
+        // contained by it and it is the only child.
+        if (found && (!node->parentNode() || node->parentNode()->childNodeCount() != 1))
+            break;
+
+        node = node->parentNode();
+        zoomableArea.unite(node->getRect());
+    }
+
+    if (node->document() && node->document()->frame() && node->document()->frame()->view()) {
+        const ScrollView* view = node->document()->frame()->view();
+        zoomableArea = view->contentsToWindow(zoomableArea);
+    }
+
+    send(Messages::WebPageProxy::DidFindZoomableArea(point, zoomableArea));
 }
 #endif
 

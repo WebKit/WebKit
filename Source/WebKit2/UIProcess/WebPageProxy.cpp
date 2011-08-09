@@ -2202,9 +2202,9 @@ void WebPageProxy::didChangeContentsSize(const IntSize& size)
     m_pageClient->didChangeContentsSize(size);
 }
 
-void WebPageProxy::didFindZoomableArea(const IntRect& area)
+void WebPageProxy::didFindZoomableArea(const IntPoint& target, const IntRect& area)
 {
-    m_pageClient->didFindZoomableArea(area);
+    m_pageClient->didFindZoomableArea(target, area);
 }
 
 void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point)

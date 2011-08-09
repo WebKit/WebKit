@@ -54,7 +54,7 @@ private:
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
-    virtual void didFindZoomableArea(const WebCore::IntRect&);
+    virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
 
     TouchViewInterface* touchViewInterface() const { return static_cast<TouchViewInterface*>(m_viewInterface); }
     TiledDrawingAreaProxy* drawingArea() const { return static_cast<WebKit::TiledDrawingAreaProxy*>(m_webPageProxy->drawingArea()); }

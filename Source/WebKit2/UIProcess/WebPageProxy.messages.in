@@ -72,7 +72,7 @@ messages -> WebPageProxy {
 #endif
 #if PLATFORM(QT)
     DidChangeContentsSize(WebCore::IntSize newSize)
-    DidFindZoomableArea(WebCore::IntRect area)
+    DidFindZoomableArea(WebCore::IntPoint target, WebCore::IntRect area)
 #endif
 #if ENABLE(TOUCH_EVENTS)
     NeedTouchEvents(bool needTouchEvents)

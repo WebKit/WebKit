@@ -1,3 +1,28 @@
+2011-08-09  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt] Vastly improve the algorithm for finding a zoomable area when doing double-tap
+        https://bugs.webkit.org/show_bug.cgi?id=65907
+
+        Reviewed by Andreas Kling.
+
+        This is upstreaming of the algorithm we are currently using on the N9 browser
+        and this also fixes a bug with not considering the frame positions when finding
+        a zoomable area.
+
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didFindZoomableArea):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::didFindZoomableArea):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::didFindZoomableArea):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findZoomableAreaForPoint):
+
 2011-08-08  Chris Marrin  <cmarrin@apple.com>
 
         Logic to compute visible display rect in GraphicsLayerCA::syncCompositingState
