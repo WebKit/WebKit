@@ -1,3 +1,9 @@
+2011-08-10  Adam Barth  <abarth@webkit.org>
+
+        Update expectations for this test.  It's just a minor flake.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Unify the way we generate HTML for an image in the Clipboard
