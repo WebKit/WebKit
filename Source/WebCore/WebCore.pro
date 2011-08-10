@@ -427,6 +427,7 @@ SOURCES += \
     css/CSSTimingFunctionValue.cpp \
     css/CSSUnicodeRangeValue.cpp \
     css/CSSValueList.cpp \
+    css/CSSWrapShapes.cpp \
     css/FontFamilyValue.cpp \
     css/FontFeatureValue.cpp \
     css/FontValue.cpp \
@@ -1124,6 +1125,7 @@ SOURCES += \
     rendering/RenderFieldset.cpp \
     rendering/RenderFileUploadControl.cpp \
     rendering/RenderFlexibleBox.cpp \
+    rendering/RenderFlowThread.cpp \
     rendering/RenderFrame.cpp \
     rendering/RenderFrameBase.cpp \
     rendering/RenderFrameSet.cpp \
@@ -1148,6 +1150,7 @@ SOURCES += \
     rendering/RenderPart.cpp \
     rendering/RenderProgress.cpp \
     rendering/RenderQuote.cpp \
+    rendering/RenderRegion.cpp \
     rendering/RenderReplaced.cpp \
     rendering/RenderReplica.cpp \
     rendering/RenderRuby.cpp \
@@ -1428,6 +1431,7 @@ HEADERS += \
     css/CSSTimingFunctionValue.h \
     css/CSSUnicodeRangeValue.h \
     css/CSSValueList.h \
+    css/CSSWrapShapes.h \
     css/FontFamilyValue.h \
     css/FontFeatureValue.h \
     css/FontValue.h \

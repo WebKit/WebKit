@@ -1,5 +1,11 @@
 2011-08-10  David Hyatt  <hyatt@apple.com>
 
+        Fix Qt build bustage. Add missing regions/exclusions-related files to their project.
+
+        * WebCore.pro:
+
+2011-08-10  David Hyatt  <hyatt@apple.com>
+
         https://bugs.webkit.org/show_bug.cgi?id=66004
 
         Remove ifdefs for CSS Exclusions (since the feature doesn't exist any longer and has morphed into positioned
