@@ -103,9 +103,9 @@ class WebKitPortTest(port_testcase.PortTestCase):
 
     def test_runtime_feature_list(self):
         port = WebKitPort(executive=MockExecutive())
-        port._executive.run_command = lambda command, cwd=None: "Nonsense"
+        port._executive.run_command = lambda command, cwd=None, error_handler=None: "Nonsense"
         self.assertEquals(port._runtime_feature_list(), [])
-        port._executive.run_command = lambda command, cwd=None: "SupportedFeatures:foo bar"
+        port._executive.run_command = lambda command, cwd=None, error_handler=None: "SupportedFeatures:foo bar"
         self.assertEquals(port._runtime_feature_list(), ['foo', 'bar'])
 
     def test_skipped_directories_for_features(self):

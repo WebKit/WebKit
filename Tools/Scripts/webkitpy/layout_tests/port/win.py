@@ -43,7 +43,7 @@ class WinPort(WebKitPort):
 
     # This is a list of all supported OS-VERSION pairs for the AppleWin port
     # and the order of fallback between them.  Matches ORWT.
-    VERSION_FALLBACK_ORDER = ("win-xp", "win-vista", "win-7sp0", "win")
+    VERSION_FALLBACK_ORDER = ["win-xp", "win-vista", "win-7sp0", "win"]
 
     def _version_string_from_windows_version_tuple(self, windows_version_tuple):
         if windows_version_tuple[:3] == (6, 1, 7600):
@@ -59,7 +59,7 @@ class WinPort(WebKitPort):
         # Callers can then decide what version they want to pretend to be.
         try:
             ver_output = self._executive.run_command(['cmd', '/c', 'ver'])
-        except (ScriptError, OSError) as e:
+        except (ScriptError, OSError), e:
             ver_output = ""
             _log.error("Failed to detect Windows version, assuming latest.\n%s" % e)
         match_object = re.search(r'(?P<major>\d)\.(?P<minor>\d)\.(?P<build>\d+)', ver_output)

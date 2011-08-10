@@ -1,3 +1,12 @@
+2011-08-10  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-test's WinPort has no fallback logic
+        https://bugs.webkit.org/show_bug.cgi?id=64486
+
+        Unreviewed.  Fix test-webkitpy under Python 2.5.
+
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
 2011-08-10  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt][WK2] MiniBrowser is firing twice the QDesktopWebView::mousePressEvent method
