@@ -1,3 +1,18 @@
+2011-08-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL] Sort signal comments by alphabetical order.
+        http://bugs.webkit.org/show_bug.cgi?id=65520
+
+        Reviewed by Kent Tamura.
+
+        Signals caused by ewk still are listed without any specific rule.
+        It sure isn't a nice thing to understand the signal list. So, this patch
+        lists signals by alphabetical order.
+
+        * ewk/ewk_contextmenu.h:
+        * ewk/ewk_frame.h:
+        * ewk/ewk_view.h:
+
 2011-08-09  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Fix warning caused by undefined static api.

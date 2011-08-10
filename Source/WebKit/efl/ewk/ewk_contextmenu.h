@@ -24,13 +24,13 @@
  *
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
- *  - "contextmenu,new", Ewk_Context_Menu *: a new context menu was created
- *    and it gives the context menu as an argument.
+ *  - "contextmenu,customize", Eina_List *: customize context menu is taken
+ *    and it gives a list with items of context menu as an argument.
  *  - "contextmenu,free", Ewk_Context_Menu *: a context menu is freed.
  *  - "contextmenu,item,appended", Ewk_Context_Menu *: a new item was added to
  *    the context menu.
- *  - "contextmenu,customize", Eina_List *: customize context menu is taken
- *    and it gives a list with items of context menu as an argument.
+ *  - "contextmenu,new", Ewk_Context_Menu *: a new context menu was created
+ *    and it gives the context menu as an argument.
  *  - "contextmenu,show", Ewk_Context_Menu *: a context menu is shown.
  */
 

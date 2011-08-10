@@ -35,31 +35,31 @@
  *
  * The following signals (see evas_object_smart_callback_add()) are emitted:
  *
- *  - "title,changed", const char*: title of the main frame was changed.
- *  - "uri,changed", const char*: uri of the main frame was changed.
+ *  - "contents,size,changed", Evas_Coord[2]: reports contents size
+ *     were changed due new layout, script actions or any other events.
+ *  - "editorclient,contents,changed", void: reports that editor client's
+ *    contents were changed
  *  - "load,document,finished", void: frame finished loading the document.
- *  - "load,nonemptylayout,finished", void: frame finished first
- *    non-empty layout.
- *  - "load,started", void: frame started loading the document.
- *  - "load,progress", double*: load progress is changed (overall value
- *    from 0.0 to 1.0, connect to individual frames for fine grained).
+ *  - "load,error", const Ewk_Frame_Load_Error*: reports load failed
+ *    and it gives a pointer to structure defining the error as an argument.
  *  - "load,finished", const Ewk_Frame_Load_Error*: reports load
  *    finished and it gives @c NULL on success or pointer to
  *    structure defining the error.
- *  - "load,provisional", void: frame started provisional load.
  *  - "load,firstlayout,finished", void: frame finished first layout.
- *  - "load,error", const Ewk_Frame_Load_Error*: reports load failed
- *    and it gives a pointer to structure defining the error as an argument.
- *  - "contents,size,changed", Evas_Coord[2]: reports contents size
- *     were changed due new layout, script actions or any other events.
+ *  - "load,nonemptylayout,finished", void: frame finished first
+ *    non-empty layout.
+ *  - "load,progress", double*: load progress is changed (overall value
+ *    from 0.0 to 1.0, connect to individual frames for fine grained).
+ *  - "load,provisional", void: frame started provisional load.
+ *  - "load,started", void: frame started loading the document.
  *  - "navigation,first", void: first navigation was occurred.
  *  - "resource,request,new", Ewk_Frame_Resource_Request*: reports that
  *    there's a new resource request.
  *  - "resource,request,willsend", Ewk_Frame_Resource_Request*: a resource will
  *    be requested.
  *  - "state,save", void: frame's state will be saved as a history item.
- *  - "editorclient,contents,changed", void: reports that editor client's
- *    contents were changed
+ *  - "title,changed", const char*: title of the main frame was changed.
+ *  - "uri,changed", const char*: uri of the main frame was changed.
  */
 
 #ifndef ewk_frame_h
