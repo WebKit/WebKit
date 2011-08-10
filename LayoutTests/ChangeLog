@@ -1,3 +1,16 @@
+2011-08-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: there should be a way to tell what properties are non-enumerable when expanding objects.
+        https://bugs.webkit.org/show_bug.cgi?id=65518
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/debugger/debugger-expand-scope-expected.txt:
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/runtime/runtime-getProperties-expected.txt:
+        * inspector/runtime/runtime-getProperties.html:
+        * platform/chromium/inspector/runtime/runtime-getProperties-expected.txt: Removed.
+
 2011-08-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [REGRESSION] Editor lost after committing a CSS property value for inline style

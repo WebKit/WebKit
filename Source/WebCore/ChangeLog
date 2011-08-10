@@ -1,3 +1,29 @@
+2011-08-10  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: there should be a way to tell what properties are non-enumerable when expanding objects.
+        https://bugs.webkit.org/show_bug.cgi?id=65518
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::getProperties):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        * inspector/Inspector.json:
+        * inspector/InspectorRuntimeAgent.cpp:
+        (WebCore::InspectorRuntimeAgent::getProperties):
+        * inspector/InspectorRuntimeAgent.h:
+        * inspector/front-end/ObjectPropertiesSection.js:
+        (WebInspector.ObjectPropertyTreeElement.prototype.ondblclick):
+        (WebInspector.ObjectPropertyTreeElement.prototype.update):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.getOwnProperties):
+        (WebInspector.RemoteObject.prototype.getAllProperties):
+        (WebInspector.RemoteObjectProperty):
+        * inspector/front-end/inspector.css:
+        (.section .properties .dimmed):
+
 2011-08-10  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: [REGRESSION] Editor lost after committing a CSS property value for inline style

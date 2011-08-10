@@ -109,14 +109,14 @@ void InspectorRuntimeAgent::callFunctionOn(ErrorString* errorString, const Strin
     injectedScript.callFunctionOn(errorString, objectId, expression, arguments, asBool(returnByValue), result, wasThrown);
 }
 
-void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, bool ignoreHasOwnProperty, RefPtr<InspectorArray>* result)
+void InspectorRuntimeAgent::getProperties(ErrorString* errorString, const String& objectId, const bool* const ownProperties, RefPtr<InspectorArray>* result)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     if (injectedScript.hasNoValue()) {
         *errorString = "Inspected frame has gone";
         return;
     }
-    injectedScript.getProperties(errorString, objectId, ignoreHasOwnProperty, result);
+    injectedScript.getProperties(errorString, objectId, ownProperties ? *ownProperties : false, result);
 }
 
 void InspectorRuntimeAgent::releaseObject(ErrorString*, const String& objectId)
