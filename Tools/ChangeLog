@@ -1,3 +1,13 @@
+2011-08-10  Adam Barth  <abarth@webkit.org>
+
+        The URL we were computing for retrieving baselines was missing a slash
+        character because our mocks had an extra slash character.  I've
+        corrected both the code and the mock.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * Scripts/webkitpy/tool/mocktool.py:
+
 2011-08-09  Adam Barth  <abarth@webkit.org>
 
         Move the quote mark to the right place.

@@ -44,7 +44,7 @@ class TestRebaseline(unittest.TestCase):
     def test_rebaseline_test(self):
         command = RebaselineTest()
         command.bind_to_tool(MockTool())
-        expected_stdout = "Retrieving http://example.com/f/builders/Webkit Linux/results/userscripts/another-test-actual.txt.\n"
+        expected_stdout = "Retrieving http://example.com/f/builders/Webkit Linux/results/layout-test-results/userscripts/another-test-actual.txt.\n"
         OutputCapture().assert_outputs(self, command._rebaseline_test, ["Webkit Linux", "userscripts/another-test.html", "txt"], expected_stdout=expected_stdout)
 
     def test_rebaseline_expectations(self):

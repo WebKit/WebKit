@@ -91,7 +91,7 @@ class RebaselineTest(AbstractDeclarativeCommand):
         results_url = self._results_url(builder_name)
         baseline_directory = self._baseline_directory(builder_name)
 
-        source_baseline = "%s%s" % (results_url, self._file_name_for_actual_result(test_name, suffix))
+        source_baseline = "%s/%s" % (results_url, self._file_name_for_actual_result(test_name, suffix))
         target_baseline = os.path.join(baseline_directory, self._file_name_for_expected_result(test_name, suffix))
 
         print "Retrieving %s." % source_baseline
