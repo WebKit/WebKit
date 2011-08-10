@@ -1,3 +1,17 @@
+2011-08-09  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should use huerstics to narrow regression range
+        https://bugs.webkit.org/show_bug.cgi?id=65948
+
+        Reviewed by Dimitri Glazkov.
+
+        When analyzing a regression range, if one of the commit messages
+        mentions the test in question, we now hueristically assume that
+        revision caused the failure.  (I'm shamelessly stealing this idea from
+        TestFailures.)
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model.js:
+
 2011-07-13  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-test's WinPort has no fallback logic

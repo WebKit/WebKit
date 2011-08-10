@@ -47,6 +47,32 @@ function findAndMarkRevertedRevisions(commitDataList)
     });
 }
 
+function fuzzyFind(testName, commitData)
+{
+    var indexOfLastDot = testName.lastIndexOf('.');
+    var stem = indexOfLastDot == -1 ? testName : testName.substr(0, indexOfLastDot);
+    return commitData.message.indexOf(stem) != -1;
+}
+
+function heuristicallyNarrowRegressionRange(failureAnalysis)
+{
+    var commitDataList = model.state.recentCommits;
+    var commitDataIndex = commitDataList.length - 1;
+
+    for(var revision = failureAnalysis.newestPassingRevision + 1; revision <= failureAnalysis.oldestFailingRevision; ++revision) {
+        while (commitDataIndex >= 0 && commitDataList[commitDataIndex].revision < revision)
+            --commitDataIndex;
+        var commitData = commitDataList[commitDataIndex];
+        if (commitData.revision != revision)
+            continue;
+        if (fuzzyFind(failureAnalysis.testName, commitData)) {
+            failureAnalysis.oldestFailingRevision = revision;
+            failureAnalysis.newestPassingRevision = revision - 1;
+            return;
+        }
+    }
+}
+
 model.queueForRebaseline = function(failureInfo)
 {
     model.state.rebaselineQueue.push(failureInfo);
@@ -106,6 +132,8 @@ model.analyzeUnexpectedFailures = function(callback)
                 'oldestFailingRevision': oldestFailingRevision,
                 'newestPassingRevision': newestPassingRevision,
             };
+
+            heuristicallyNarrowRegressionRange(failureAnalysis);
 
             var previousFailureAnalysis = model.state.failureAnalysisByTest[testName];
             if (previousFailureAnalysis
