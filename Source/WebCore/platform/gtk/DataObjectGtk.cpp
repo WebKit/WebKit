@@ -42,7 +42,7 @@ String DataObjectGtk::text()
 String DataObjectGtk::markup()
 {
     if (m_range)
-        return createMarkup(m_range.get(), 0, AnnotateForInterchange, false, AbsoluteURLs);
+        return createMarkup(m_range.get(), 0, AnnotateForInterchange, false, ResolveNonLocalURLs);
     return m_markup;
 }
 

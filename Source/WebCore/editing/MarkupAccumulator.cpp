@@ -73,10 +73,10 @@ void appendCharactersReplacingEntities(Vector<UChar>& out, const UChar* content,
     out.append(content + positionAfterLastEntity, length - positionAfterLastEntity);
 }
 
-MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, const Range* range)
+MarkupAccumulator::MarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs resolveUrlsMethod, const Range* range)
     : m_nodes(nodes)
     , m_range(range)
-    , m_shouldResolveURLs(shouldResolveURLs)
+    , m_resolveURLsMethod(resolveUrlsMethod)
 {
 }
 
@@ -112,6 +112,23 @@ void MarkupAccumulator::serializeNodesWithNamespaces(Node* node, Node* nodeToSki
 
     if (!childrenOnly)
         appendEndTag(node);
+}
+
+String MarkupAccumulator::resolveURLIfNeeded(const Element* element, const String& urlString) const
+{
+    switch (m_resolveURLsMethod) {
+    case ResolveAllURLs:
+        return element->document()->completeURL(urlString).string();
+
+    case ResolveNonLocalURLs:
+        if (!element->document()->url().isLocalFile())
+            return element->document()->completeURL(urlString).string();
+        break;
+
+    case DoNotResolveURLs:
+        break;
+    }
+    return urlString;
 }
 
 void MarkupAccumulator::appendString(const String& string)
@@ -371,14 +388,9 @@ void MarkupAccumulator::appendAttribute(Vector<UChar>& out, Element* element, co
 
     out.append('=');
 
-    if (element->isURLAttribute(const_cast<Attribute*>(&attribute))) {
-        // We don't want to complete file:/// URLs because it may contain sensitive information
-        // about the user's system.
-        if (shouldResolveURLs() && !element->document()->url().isLocalFile())
-            appendQuotedURLAttributeValue(out, element->document()->completeURL(attribute.value()).string());
-        else
-            appendQuotedURLAttributeValue(out, attribute.value()); 
-    } else {
+    if (element->isURLAttribute(const_cast<Attribute*>(&attribute)))
+        appendQuotedURLAttributeValue(out, resolveURLIfNeeded(element, attribute.value()));
+    else {
         out.append('\"');
         appendAttributeValue(out, attribute.value(), documentIsHTML);
         out.append('\"');

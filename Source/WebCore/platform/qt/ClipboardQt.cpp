@@ -288,20 +288,12 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
     if (pixmap)
         m_writableData->setImageData(*pixmap);
 
-    AtomicString imageURL = element->getAttribute(HTMLNames::srcAttr);
-    if (imageURL.isEmpty())
-        return;
-
-    KURL fullURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageURL));
-    if (fullURL.isEmpty())
-        return;
-
     QList<QUrl> urls;
     urls.append(url);
 
     m_writableData->setText(title);
     m_writableData->setUrls(urls);
-    m_writableData->setHtml(imageToMarkup(fullURL, element));
+    m_writableData->setHtml(createMarkup(element, IncludeNode, 0, ResolveAllURLs));
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
         QApplication::clipboard()->setMimeData(m_writableData);
@@ -334,7 +326,7 @@ void ClipboardQt::writeRange(Range* range, Frame* frame)
     QString text = frame->editor()->selectedText();
     text.replace(QChar(0xa0), QLatin1Char(' '));
     m_writableData->setText(text);
-    m_writableData->setHtml(createMarkup(range, 0, AnnotateForInterchange, false, AbsoluteURLs));
+    m_writableData->setHtml(createMarkup(range, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
         QApplication::clipboard()->setMimeData(m_writableData);

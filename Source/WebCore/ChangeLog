@@ -1,3 +1,58 @@
+2011-08-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Unify the way we generate HTML for an image in the Clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=58043
+
+        Reviewed by Ryosuke Niwa.
+
+        Unify the way we generate the markup when dragging and image.
+
+        Previously, the code was using the special function imageToMarkup() that was
+        spread from the Chromium port.
+        That function ignores some edge cases so this patch replace it by the
+        more generic MarkupAccumulator (which is also used by the other pasteboard
+        actions).
+
+        The MarkupAccumulator was modified because following r61178, the local filepath
+        are treated differently (the enum was changed to  make this behavior
+        explicit).
+
+        Tests: fast/drag-and-drop/drag-and-drop-image-contenteditable.html
+               fast/drag-and-drop/drag-and-drop-inputimage-contenteditable.html
+               fast/drag-and-drop/drag-and-drop-objectimage-contenteditable.html
+
+        * editing/MarkupAccumulator.cpp:
+        (WebCore::MarkupAccumulator::MarkupAccumulator):
+        (WebCore::MarkupAccumulator::resolveURLIfNeeded):
+        (WebCore::MarkupAccumulator::appendAttribute):
+        * editing/MarkupAccumulator.h:
+        * editing/markup.cpp:
+        * editing/markup.h:
+        * page/PageSerializer.cpp:
+        (WebCore::SerializerMarkupAccumulator::SerializerMarkupAccumulator):
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::declareAndWriteDragImage):
+        (WebCore::ClipboardChromium::writeRange):
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        * platform/gtk/ClipboardGtk.cpp:
+        (WebCore::ClipboardGtk::declareAndWriteDragImage):
+        (WebCore::ClipboardGtk::writeRange):
+        * platform/gtk/DataObjectGtk.cpp:
+        (WebCore::DataObjectGtk::markup):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        (WebCore::Pasteboard::writeImage):
+        * platform/haiku/PasteboardHaiku.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+        (WebCore::ClipboardQt::writeRange):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeSelection):
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::declareAndWriteDragImage):
+
 2011-08-10  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: auto-completion for string literals doesn't work

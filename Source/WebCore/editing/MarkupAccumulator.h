@@ -66,7 +66,7 @@ struct EntityDescription {
 // FIXME: Noncopyable?
 class MarkupAccumulator {
 public:
-    MarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, const Range* range = 0);
+    MarkupAccumulator(Vector<Node*>*, EAbsoluteURLs resolveUrlsMethod, const Range* = 0);
     virtual ~MarkupAccumulator();
 
     String serializeNodes(Node* node, Node* nodeToSkip, EChildrenOnly childrenOnly);
@@ -100,16 +100,15 @@ protected:
     bool elementCannotHaveEndTag(const Node* node);
     void appendEndMarkup(Vector<UChar>& result, const Node*);
 
-    bool shouldResolveURLs() { return m_shouldResolveURLs == AbsoluteURLs; }
-
     Vector<Node*>* const m_nodes;
     const Range* const m_range;
 
 private:
+    String resolveURLIfNeeded(const Element*, const String& urlString) const;
     void serializeNodesWithNamespaces(Node*, Node* nodeToSkip, EChildrenOnly, const Namespaces*);
 
     Vector<String> m_succeedingMarkup;
-    const bool m_shouldResolveURLs;
+    const EAbsoluteURLs m_resolveURLsMethod;
 };
 
 // FIXME: This method should be integrated with MarkupAccumulator.

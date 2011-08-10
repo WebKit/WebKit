@@ -41,7 +41,7 @@ namespace WebCore {
     class Range;
 
     enum EChildrenOnly { IncludeNode, ChildrenOnly };
-    enum EAbsoluteURLs { DoNotResolveURLs, AbsoluteURLs };
+    enum EAbsoluteURLs { DoNotResolveURLs, ResolveAllURLs, ResolveNonLocalURLs };
 
     PassRefPtr<DocumentFragment> createFragmentFromText(Range* context, const String& text);
     PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document*, const String& markup, const String& baseURL, FragmentScriptingPermission = FragmentScriptingAllowed);
@@ -57,7 +57,6 @@ namespace WebCore {
     String createFullMarkup(const Range*);
 
     String urlToMarkup(const KURL&, const String& title);
-    String imageToMarkup(const KURL&, Element*);
 }
 
 #endif // markup_h

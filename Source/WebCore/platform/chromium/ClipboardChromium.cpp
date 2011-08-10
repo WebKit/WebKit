@@ -265,16 +265,8 @@ void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& u
     // Write the bytes in the image to the file format.
     writeImageToDataObject(m_dataObject.get(), element, url);
 
-    AtomicString imageURL = element->getAttribute(srcAttr);
-    if (imageURL.isEmpty())
-        return;
-
-    KURL fullURL = frame->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(imageURL));
-    if (fullURL.isEmpty())
-        return;
-
     // Put img tag on the clipboard referencing the image
-    m_dataObject->setData(mimeTypeTextHTML, imageToMarkup(fullURL, element));
+    m_dataObject->setData(mimeTypeTextHTML, createMarkup(element, IncludeNode, 0, ResolveAllURLs));
 }
 
 void ClipboardChromium::writeURL(const KURL& url, const String& title, Frame*)
@@ -299,7 +291,7 @@ void ClipboardChromium::writeRange(Range* selectedRange, Frame* frame)
     if (!m_dataObject)
          return;
 
-    m_dataObject->setData(mimeTypeTextHTML, createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs));
+    m_dataObject->setData(mimeTypeTextHTML, createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
     m_dataObject->setHtmlBaseUrl(frame->document()->url());
 
     String str = frame->editor()->selectedText();

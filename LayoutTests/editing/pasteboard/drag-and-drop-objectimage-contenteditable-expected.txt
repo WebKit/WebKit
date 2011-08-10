@@ -1,0 +1,18 @@
+This test verify dragging an image in the page keeps its attributes. To test manually, drag the image and drop it in the rect with a blue border.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+PASS target.getElementsByTagName("object").length is 1
+PASS target.getElementsByTagName("object")[0].attributes.length is 6
+PASS target.getElementsByTagName("object")[0].id is "source"
+PASS target.getElementsByTagName("object")[0].type is "image/png"
+PASS target.getElementsByTagName("object")[0].draggable is true
+PASS target.getElementsByTagName("object")[0].attributes["itemprop"].value is "somedata"
+PASS target.getElementsByTagName("object")[0].attributes["arbitrary"].value is "green"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

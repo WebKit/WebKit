@@ -64,7 +64,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     text.replace(QChar(0xa0), QLatin1Char(' '));
     md->setText(text);
 
-    QString markup = createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs);
+    QString markup = createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs);
 #ifdef Q_OS_MAC
     markup.prepend(QLatin1String("<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /></head><body>"));
     markup.append(QLatin1String("</body></html>"));

@@ -255,6 +255,9 @@ editing/pasteboard/subframe-dragndrop-1.html
 editing/pasteboard/get-data-text-plain-drop.html
 editing/pasteboard/drop-text-events.html
 editing/pasteboard/drop-text-events-sideeffect.html
+editing/pasteboard/drag-and-drop-image-contenteditable.html
+editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
+editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
 
 # data-transfer-items is not a default build option
 # See bug https://bugs.webkit.org/show_bug.cgi?id=60068

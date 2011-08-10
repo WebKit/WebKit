@@ -283,7 +283,7 @@ static CachedImage* getCachedImage(Element* element)
 void ClipboardGtk::declareAndWriteDragImage(Element* element, const KURL& url, const String& label, Frame* frame)
 {
     m_dataObject->setURL(url, label);
-    m_dataObject->setMarkup(createMarkup(element, IncludeNode, 0, AbsoluteURLs));
+    m_dataObject->setMarkup(createMarkup(element, IncludeNode, 0, ResolveAllURLs));
 
     CachedImage* image = getCachedImage(element);
     if (!image || !image->isLoaded())
@@ -308,7 +308,7 @@ void ClipboardGtk::writeRange(Range* range, Frame* frame)
     ASSERT(range);
 
     m_dataObject->setText(frame->editor()->selectedText());
-    m_dataObject->setMarkup(createMarkup(range, 0, AnnotateForInterchange, false, AbsoluteURLs));
+    m_dataObject->setMarkup(createMarkup(range, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
 
     if (m_clipboard)
         PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);

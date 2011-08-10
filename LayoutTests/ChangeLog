@@ -1,3 +1,20 @@
+2011-08-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        Unify the way we generate HTML for an image in the Clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=58043
+
+        Reviewed by Ryosuke Niwa.
+
+        Add 3 tests for dragging an image-like element to an editable area.
+
+        * editing/pasteboard/drag-and-drop-image-contenteditable-expected.txt: Added.
+        * editing/pasteboard/drag-and-drop-image-contenteditable.html: Added.
+        * editing/pasteboard/drag-and-drop-inputimage-contenteditable-expected.txt: Added.
+        * editing/pasteboard/drag-and-drop-inputimage-contenteditable.html: Added.
+        * editing/pasteboard/drag-and-drop-objectimage-contenteditable-expected.txt: Added.
+        * editing/pasteboard/drag-and-drop-objectimage-contenteditable.html: Added.
+        * platform/qt/Skipped: Qt does not have support for testing drag and drop.
+
 2011-08-10  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: auto-completion for string literals doesn't work

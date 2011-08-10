@@ -683,7 +683,7 @@ void ClipboardWin::declareAndWriteDragImage(Element* element, const KURL& url, c
 
     // Put img tag on the clipboard referencing the image
     Vector<char> data;
-    markupToCFHTML(imageToMarkup(fullURL, element), "", data);
+    markupToCFHTML(createMarkup(element, IncludeNode, 0, ResolveAllURLs), "", data);
     medium.hGlobal = createGlobalData(data);
     if (medium.hGlobal && FAILED(m_writableDataObject->SetData(htmlFormat(), &medium, TRUE)))
         ::GlobalFree(medium.hGlobal);

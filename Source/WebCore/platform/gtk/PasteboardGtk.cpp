@@ -60,7 +60,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     GtkClipboard* clipboard = helper->getClipboard(frame);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->setText(frame->editor()->selectedText());
-    dataObject->setMarkup(createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs));
+    dataObject->setMarkup(createMarkup(selectedRange, 0, AnnotateForInterchange, false, ResolveNonLocalURLs));
     helper->writeClipboardContents(clipboard, canSmartCopyOrDelete ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
 }
 
@@ -122,11 +122,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     if (!url.isEmpty()) {
         dataObject->setURL(url, title);
 
-        // This image may be an SVG, embed, or object tag, so do not write the image
-        // tag markup in those cases. Eventually we may want to support passing markup
-        // for these tag types.
-        if (node->hasTagName(HTMLNames::imgTag))
-            dataObject->setMarkup(imageToMarkup(url, static_cast<Element*>(node)));
+        dataObject->setMarkup(createMarkup(static_cast<Element*>(node), IncludeNode, 0, ResolveAllURLs));
     }
 
     GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());

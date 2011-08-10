@@ -854,28 +854,4 @@ String urlToMarkup(const KURL& url, const String& title)
     return String::adopt(markup);
 }
 
-String imageToMarkup(const KURL& url, Element* element)
-{
-    Vector<UChar> markup;
-    append(markup, "<img src=\"");
-    append(markup, url.string());
-    append(markup, "\"");
-
-    NamedNodeMap* attrs = element->attributes();
-    unsigned length = attrs->length();
-    for (unsigned i = 0; i < length; ++i) {
-        Attribute* attr = attrs->attributeItem(i);
-        if (attr->localName() == "src")
-            continue;
-        append(markup, " ");
-        append(markup, attr->localName());
-        append(markup, "=\"");
-        appendCharactersReplacingEntities(markup, attr->value().characters(), attr->value().length(), EntityMaskInAttributeValue);
-        append(markup, "\"");
-    }
-
-    append(markup, "/>");
-    return String::adopt(markup);
-}
-
 }

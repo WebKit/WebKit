@@ -106,8 +106,9 @@ private:
     Document* m_document;
 };
 
+// FIXME: should that really use ResolveNonLocalURLs?
 SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSerializer* serializer, Document* document, Vector<Node*>* nodes)
-    : MarkupAccumulator(nodes, AbsoluteURLs)
+    : MarkupAccumulator(nodes, ResolveNonLocalURLs)
     , m_serializer(serializer)
     , m_document(document)
 {
