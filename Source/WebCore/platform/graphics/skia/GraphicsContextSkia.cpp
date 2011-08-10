@@ -296,7 +296,6 @@ void GraphicsContext::addInnerRoundedRectClip(const IntRect& rect, int thickness
     if (!isRectSkiaSafe(getCTM(), r))
         return;
 
-    platformContext()->makeGrContextCurrent();
     SkPath path;
     path.addOval(r, SkPath::kCW_Direction);
     // only perform the inset if we won't invert r
@@ -356,7 +355,6 @@ void GraphicsContext::clip(const Path& path)
     if (!isPathSkiaSafe(getCTM(), p))
         return;
 
-    platformContext()->makeGrContextCurrent();
     platformContext()->clipPathAntiAliased(p);
 }
 

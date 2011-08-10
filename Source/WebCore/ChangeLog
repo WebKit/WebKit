@@ -1,3 +1,20 @@
+2011-08-10  Ben Wells  <benwells@chromium.org>
+
+        [skia] Move calls to makeGrContextCurrent into clipPathAntiAliased from callers
+        https://bugs.webkit.org/show_bug.cgi?id=65733
+        
+        This protects against callers of clipPathAntiAliased forgetting to call makeGrContextCurrent.
+
+        Reviewed by James Robinson.
+
+        No change in functionality, no new tests.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::addInnerRoundedRectClip):
+        (WebCore::GraphicsContext::clip):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::clipPathAntiAliased):
+
 2011-08-10  Benjamin Poulain  <ikipou@gmail.com>
 
         MarkupAccumulator: make resolution of URLs implicit to appendQuotedURLAttributeValue()
