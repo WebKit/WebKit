@@ -464,6 +464,7 @@ SET(WebCore_SOURCES
     css/CSSTimingFunctionValue.cpp
     css/CSSUnicodeRangeValue.cpp
     css/CSSValueList.cpp
+    css/CSSWrapShapes.cpp
     css/FontFamilyValue.cpp
     css/FontFeatureValue.cpp
     css/FontValue.cpp
@@ -1212,6 +1213,7 @@ SET(WebCore_SOURCES
     rendering/RenderFieldset.cpp
     rendering/RenderFileUploadControl.cpp
     rendering/RenderFlexibleBox.cpp
+    rendering/RenderFlowThread.cpp
     rendering/RenderFrame.cpp
     rendering/RenderFrameBase.cpp
     rendering/RenderFrameSet.cpp
@@ -1237,6 +1239,7 @@ SET(WebCore_SOURCES
     rendering/RenderPart.cpp
     rendering/RenderProgress.cpp
     rendering/RenderQuote.cpp
+    rendering/RenderRegion.cpp
     rendering/RenderReplaced.cpp
     rendering/RenderReplica.cpp
     rendering/RenderRuby.cpp
