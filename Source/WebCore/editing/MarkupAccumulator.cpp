@@ -179,10 +179,12 @@ void MarkupAccumulator::appendCustomAttributes(Vector<UChar>&, Element*, Namespa
 {
 }
 
-void MarkupAccumulator::appendQuotedURLAttributeValue(Vector<UChar>& result, const String& urlString)
+void MarkupAccumulator::appendQuotedURLAttributeValue(Vector<UChar>& result, const Element* element, const Attribute& attribute)
 {
+    ASSERT(element->isURLAttribute(const_cast<Attribute*>(&attribute)));
+    const String resolvedURLString = resolveURLIfNeeded(element, attribute.value());
     UChar quoteChar = '\"';
-    String strippedURLString = urlString.stripWhiteSpace();
+    String strippedURLString = resolvedURLString.stripWhiteSpace();
     if (protocolIsJavaScript(strippedURLString)) {
         // minimal escaping for javascript urls
         if (strippedURLString.contains('"')) {
@@ -199,7 +201,7 @@ void MarkupAccumulator::appendQuotedURLAttributeValue(Vector<UChar>& result, con
 
     // FIXME: This does not fully match other browsers. Firefox percent-escapes non-ASCII characters for innerHTML.
     result.append(quoteChar);
-    appendAttributeValue(result, urlString, false);
+    appendAttributeValue(result, resolvedURLString, false);
     result.append(quoteChar);
 }
 
@@ -389,7 +391,7 @@ void MarkupAccumulator::appendAttribute(Vector<UChar>& out, Element* element, co
     out.append('=');
 
     if (element->isURLAttribute(const_cast<Attribute*>(&attribute)))
-        appendQuotedURLAttributeValue(out, resolveURLIfNeeded(element, attribute.value()));
+        appendQuotedURLAttributeValue(out, element, attribute);
     else {
         out.append('\"');
         appendAttributeValue(out, attribute.value(), documentIsHTML);

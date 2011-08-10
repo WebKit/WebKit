@@ -80,7 +80,6 @@ protected:
     void concatenateMarkup(Vector<UChar>& out);
     void appendAttributeValue(Vector<UChar>& result, const String& attribute, bool documentIsHTML);
     virtual void appendCustomAttributes(Vector<UChar>&, Element*, Namespaces*);
-    void appendQuotedURLAttributeValue(Vector<UChar>& result, const String& urlString);
     void appendNodeValue(Vector<UChar>& out, const Node*, const Range*, EntityMask);
     bool shouldAddNamespaceElement(const Element*);
     bool shouldAddNamespaceAttribute(const Attribute&, Namespaces&);
@@ -105,6 +104,7 @@ protected:
 
 private:
     String resolveURLIfNeeded(const Element*, const String& urlString) const;
+    void appendQuotedURLAttributeValue(Vector<UChar>& result, const Element*, const Attribute&);
     void serializeNodesWithNamespaces(Node*, Node* nodeToSkip, EChildrenOnly, const Namespaces*);
 
     Vector<String> m_succeedingMarkup;
