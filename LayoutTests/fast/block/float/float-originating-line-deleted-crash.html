@@ -1,0 +1,26 @@
+<html>
+Test passes if it does not crash.
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function runTest()
+{
+    child = document.getElementById('test');
+    child.parentNode.removeChild(child);
+
+	document.body.offsetTop;
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+setTimeout("runTest();", 0);
+</script>
+<style id='test'>
+    p { float: left; }
+</style>
+<table><span><p></p><p></p></span></table>
+</html>

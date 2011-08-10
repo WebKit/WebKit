@@ -3253,8 +3253,10 @@ void RenderBlock::removeFloatingObject(RenderBox* o)
                     logicalBottom = max(logicalBottom, logicalTop + 1);
                 }
                 if (r->m_originatingLine) {
-                    ASSERT(r->m_originatingLine->renderer() == this);
-                    r->m_originatingLine->markDirty();
+                    if (!selfNeedsLayout()) {
+                        ASSERT(r->m_originatingLine->renderer() == this);
+                        r->m_originatingLine->markDirty();
+                    }
 #if !ASSERT_DISABLED
                     r->m_originatingLine = 0;
 #endif
@@ -3751,7 +3753,7 @@ void RenderBlock::clearFloats(BlockLayoutPass layoutPass)
                     }
 
                     floatMap.remove(f->m_renderer);
-                    if (oldFloatingObject->m_originatingLine) {
+                    if (oldFloatingObject->m_originatingLine && !selfNeedsLayout()) {
                         ASSERT(oldFloatingObject->m_originatingLine->renderer() == this);
                         oldFloatingObject->m_originatingLine->markDirty();
                     }

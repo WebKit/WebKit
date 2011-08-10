@@ -1,3 +1,17 @@
+2011-08-10  Abhishek Arya  <inferno@chromium.org>
+
+        Check that we do not need layout before trying to dirty
+        m_originatingLine for our floats.
+        https://bugs.webkit.org/show_bug.cgi?id=65938
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/block/float/float-originating-line-deleted-crash.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::removeFloatingObject):
+        (WebCore::RenderBlock::clearFloats):
+
 2011-08-10  David Hyatt  <hyatt@apple.com>
 
         Add missing regions/exclusions-related files to EFL.

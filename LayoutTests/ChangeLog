@@ -1,3 +1,14 @@
+2011-08-10  Abhishek Arya  <inferno@chromium.org>
+
+        Tests that we do not crash when trying to access a removed
+        m_originatingLine for a float.
+        https://bugs.webkit.org/show_bug.cgi?id=65938
+
+        Reviewed by Dave Hyatt.
+
+        * fast/block/float/float-originating-line-deleted-crash-expected.txt: Added.
+        * fast/block/float/float-originating-line-deleted-crash.html: Added.
+
 2011-08-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSC should always throw when function arg list is too long
