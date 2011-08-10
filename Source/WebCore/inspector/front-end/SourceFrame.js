@@ -37,7 +37,6 @@ WebInspector.SourceFrame = function(delegate, url)
     this._url = url;
 
     this._textModel = new WebInspector.TextEditorModel();
-    this._textModel.replaceTabsWithSpaces = true;
 
     var textViewerDelegate = new WebInspector.TextViewerDelegateForSourceFrame(this);
     this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, textViewerDelegate);

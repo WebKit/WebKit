@@ -106,11 +106,6 @@ WebInspector.TextEditorModel.prototype = {
         return newRange;
     },
 
-    set replaceTabsWithSpaces(replaceTabsWithSpaces)
-    {
-        this._replaceTabsWithSpaces = replaceTabsWithSpaces;
-    },
-
     _innerSetText: function(range, text)
     {
         this._eraseRange(range);
@@ -118,7 +113,6 @@ WebInspector.TextEditorModel.prototype = {
             return new WebInspector.TextRange(range.startLine, range.startColumn, range.startLine, range.startColumn);
 
         var newLines = text.split(/\r?\n/);
-        this._replaceTabsIfNeeded(newLines);
 
         var prefix = this._lines[range.startLine].substring(0, range.startColumn);
         var suffix = this._lines[range.startLine].substring(range.startColumn);
@@ -137,34 +131,6 @@ WebInspector.TextEditorModel.prototype = {
         }
         return new WebInspector.TextRange(range.startLine, range.startColumn,
                                           range.startLine + newLines.length - 1, postCaret);
-    },
-
-    _replaceTabsIfNeeded: function(lines)
-    {
-        if (!this._replaceTabsWithSpaces)
-            return;
-        var spaces = [ "    ", "   ", "  ", " "];
-        for (var i = 0; i < lines.length; ++i) {
-            var line = lines[i];
-            var caretIndex = 0;
-            var index = line.indexOf("\t", caretIndex);
-            var buffer = [];
-            var offset = 0;
-            while (index !== -1) {
-                if (index > caretIndex) {
-                    offset += index - caretIndex;
-                    buffer.push(line.substring(caretIndex, index));
-                }
-                caretIndex = index + 1;
-                var space = spaces[offset % 4];
-                offset += space.length;
-                buffer.push(space);
-                index = line.indexOf("\t", caretIndex);
-            }
-            if (line.length > caretIndex)
-                buffer.push(line.substring(caretIndex));
-            lines[i] = buffer.join("");
-        }
     },
 
     _eraseRange: function(range)

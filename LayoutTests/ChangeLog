@@ -1,3 +1,13 @@
+2011-08-10  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: CSS editing file containing tabs leads to the whole file change in revision history.
+        https://bugs.webkit.org/show_bug.cgi?id=65959
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/editor/text-editor-model-replace-tabs-expected.txt: Removed.
+        * inspector/editor/text-editor-model-replace-tabs.html: Removed.
+
 2011-08-10  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: there should be a way to tell what properties are non-enumerable when expanding objects.
