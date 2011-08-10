@@ -707,7 +707,6 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
             writeLayers(ts, rootLayer, posList->at(i), paintDirtyRect, currIndent, behavior);
     }
     
-#if ENABLE(CSS_REGIONS)
     // Altough the RenderFlowThread requires a layer, it is not collected by its parent,
     // so we have to treat it as a special case.
     bool firstRenderFlowThread = true;
@@ -725,7 +724,6 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
             writeLayers(ts, rootLayer, layer, paintDirtyRect, indent + 2, behavior);
         }
     }
-#endif
 }
 
 static String nodePosition(Node* node)

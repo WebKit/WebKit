@@ -55,15 +55,11 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_perspectiveOriginY(RenderStyle::initialPerspectiveOriginY())
     , m_pageSize()
     , m_pageSizeType(PAGE_SIZE_AUTO)
-#if ENABLE(CSS_REGIONS)
     , m_flowThread(RenderStyle::initialFlowThread())
     , m_regionThread(RenderStyle::initialRegionThread())
     , m_regionIndex(RenderStyle::initialRegionIndex())
     , m_regionOverflow(RenderStyle::initialRegionOverflow())
-#endif
-#if ENABLE(CSS_EXCLUSIONS)
     , m_wrapShape(RenderStyle::initialWrapShape())
-#endif
 {
 }
 
@@ -106,15 +102,11 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_perspectiveOriginY(o.m_perspectiveOriginY)
     , m_pageSize(o.m_pageSize)
     , m_pageSizeType(o.m_pageSizeType)
-#if ENABLE(CSS_REGIONS)
     , m_flowThread(o.m_flowThread)
     , m_regionThread(o.m_regionThread)
     , m_regionIndex(o.m_regionIndex)
     , m_regionOverflow(o.m_regionOverflow)
-#endif
-#if ENABLE(CSS_EXCLUSIONS)
     , m_wrapShape(o.m_wrapShape)
-#endif
 {
 }
 
@@ -164,16 +156,11 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && (m_perspectiveOriginY == o.m_perspectiveOriginY)
         && (m_pageSize == o.m_pageSize)
         && (m_pageSizeType == o.m_pageSizeType)
-#if ENABLE(CSS_REGIONS)
         && (m_flowThread == o.m_flowThread)
         && (m_regionThread == o.m_regionThread)
         && (m_regionIndex == o.m_regionIndex)
         && (m_regionOverflow == o.m_regionOverflow)
-#endif
-#if ENABLE(CSS_EXCLUSIONS)
-        && (m_wrapShape == o.m_wrapShape)
-#endif
-        ;
+        && (m_wrapShape == o.m_wrapShape);
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& o) const

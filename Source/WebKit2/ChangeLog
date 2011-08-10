@@ -1,3 +1,13 @@
+2011-08-10  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66004
+
+        Removing the CSS Regions and CSS Exclusions ifdefs.
+
+        Reviewed by Adam Roben.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-08-10  Alexey Proskuryakov  <ap@apple.com>
 
         Accidentally commented out an assertion in BackingStore::incorporateUpdate

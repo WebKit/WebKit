@@ -3879,12 +3879,10 @@ void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderL
 {
     updateVisibilityStatus();
 
-#if ENABLE(CSS_REGIONS)
     // Do not let the RenderFlowThread to render directly to screen. It will only render
     // inside the RenderRegion objects, so avoid collecting it.
     if (renderer()->isRenderFlowThread())
         return;
-#endif
 
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
     if ((m_hasVisibleContent || (m_hasVisibleDescendant && isStackingContext())) && !isNormalFlowOnly()) {

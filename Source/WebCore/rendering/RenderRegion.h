@@ -30,8 +30,6 @@
 #ifndef RenderRegion_h
 #define RenderRegion_h
 
-#if ENABLE(CSS_REGIONS)
-
 #include "RenderBox.h"
 
 namespace WebCore {
@@ -66,7 +64,5 @@ inline const RenderRegion* toRenderRegion(const RenderObject* object)
 void toRenderRegion(const RenderRegion*);
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_REGIONS)
 
 #endif // RenderRegion_h

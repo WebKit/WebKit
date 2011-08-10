@@ -36,10 +36,7 @@ class Pair;
 class RGBColor;
 class Rect;
 class RenderStyle;
-
-#if ENABLE(CSS_EXCLUSIONS)
 class CSSWrapShape;
-#endif
 
 struct Length;
 
@@ -187,9 +184,7 @@ public:
 
     DashboardRegion* getDashboardRegionValue() const { return m_type != CSS_DASHBOARD_REGION ? 0 : m_value.region; }
 
-#if ENABLE(CSS_EXCLUSIONS)
     CSSWrapShape* getShapeValue() const { return m_type != CSS_SHAPE ? 0 : m_value.shape; }
-#endif
 
     int getIdent() const;
     template<typename T> inline operator T() const; // Defined in CSSPrimitiveValueMappings.h
@@ -230,9 +225,8 @@ private:
     void init(PassRefPtr<Rect>);
     void init(PassRefPtr<Pair>);
     void init(PassRefPtr<DashboardRegion>); // FIXME: Dashboard region should not be a primitive value.
-#if ENABLE(CSS_EXCLUSIONS)
     void init(PassRefPtr<CSSWrapShape>);
-#endif
+
     bool getDoubleValueInternal(UnitTypes targetUnitType, double* result) const;
 
     double computeLengthDouble(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier, bool computingFontSize);
@@ -252,9 +246,7 @@ private:
         unsigned rgbcolor;
         Pair* pair;
         DashboardRegion* region;
-#if ENABLE(CSS_EXCLUSIONS)
         CSSWrapShape* shape;
-#endif
     } m_value;
 };
 

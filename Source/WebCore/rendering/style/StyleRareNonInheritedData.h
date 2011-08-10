@@ -136,16 +136,12 @@ public:
     LengthSize m_pageSize;
     PageSizeType m_pageSizeType;
 
-#if ENABLE(CSS_REGIONS)
     AtomicString m_flowThread;
     AtomicString m_regionThread;
     int m_regionIndex;
     RegionOverflow m_regionOverflow;
-#endif
 
-#if ENABLE(CSS_EXCLUSIONS)
     RefPtr<CSSWrapShape> m_wrapShape;
-#endif
 
 private:
     StyleRareNonInheritedData();

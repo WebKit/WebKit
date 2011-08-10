@@ -1589,7 +1589,7 @@ bool CSSParser::parseValue(int propId, bool important)
             validPrimitive = validUnit(value, FTime | FInteger | FNonNeg, m_strict);
         break;
 #endif
-#if ENABLE(CSS_REGIONS)
+
     case CSSPropertyWebkitFlow:
         return parseFlowThread(propId, important);
     case CSSPropertyWebkitContentOrder:
@@ -1599,7 +1599,7 @@ bool CSSParser::parseValue(int propId, bool important)
         if (id == CSSValueAuto || id == CSSValueWebkitBreak)
             validPrimitive = true;
         break;
-#endif
+
     case CSSPropertyWebkitUserDrag: // auto | none | element
         if (id == CSSValueAuto || id == CSSValueNone || id == CSSValueElement)
             validPrimitive = true;
@@ -2092,14 +2092,12 @@ bool CSSParser::parseValue(int propId, bool important)
             return parseFontFeatureSettings(important);
         break;
 
-#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrapShape:
         if (id == CSSValueAuto)
             validPrimitive = true;
         else if (value->unit == CSSParserValue::Function)
             return parseWrapShape(important);
         break;
-#endif
 
 #if ENABLE(SVG)
     default:
@@ -2681,12 +2679,10 @@ bool CSSParser::parseContent(int propId, bool important)
             } else if (isGeneratedImageValue(val)) {
                 if (!parseGeneratedImage(parsedValue))
                     return false;
-#if ENABLE(CSS_REGIONS)
             } else if (equalIgnoringCase(val->function->name, "-webkit-from-flow(")) {
                 parsedValue = parseFromFlowContent(args);
                 if (!parsedValue)
                     return false;
-#endif
             } else
                 return false;
         } else if (val->unit == CSSPrimitiveValue::CSS_IDENT) {
@@ -3673,7 +3669,6 @@ bool CSSParser::parseShape(int propId, bool important)
     return false;
 }
 
-#if ENABLE(CSS_EXCLUSIONS)
 PassRefPtr<CSSWrapShape> CSSParser::parseWrapShapeRect(CSSParserValueList* args)
 {
     ASSERT(args);
@@ -3899,7 +3894,6 @@ bool CSSParser::parseWrapShape(bool important)
 
     return false;
 }
-#endif // ENABLE(CSS_EXCLUSIONS)
 
 // [ 'font-style' || 'font-variant' || 'font-weight' ]? 'font-size' [ / 'line-height' ]? 'font-family'
 bool CSSParser::parseFont(bool important)
@@ -6094,7 +6088,6 @@ PassRefPtr<CSSValueList> CSSParser::parseTransform()
     return list.release();
 }
 
-#if ENABLE(CSS_REGIONS)
 // auto | <flow_name>
 bool CSSParser::parseFlowThread(int propId, bool important)
 {
@@ -6139,7 +6132,6 @@ PassRefPtr<CSSValue> CSSParser::parseFromFlowContent(CSSParserValueList* args)
 
     return CSSPrimitiveValue::create(argFlowThreadName->string, CSSPrimitiveValue::CSS_FROM_FLOW);
 }
-#endif
 
 bool CSSParser::parseTransformOrigin(int propId, int& propId1, int& propId2, int& propId3, RefPtr<CSSValue>& value, RefPtr<CSSValue>& value2, RefPtr<CSSValue>& value3)
 {

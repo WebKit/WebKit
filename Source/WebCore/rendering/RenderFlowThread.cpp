@@ -29,10 +29,7 @@
 
 #include "config.h"
 
-#if ENABLE(CSS_REGIONS)
-
 #include "RenderFlowThread.h"
-
 #include "Node.h"
 
 namespace WebCore {
@@ -114,5 +111,3 @@ void RenderFlowThread::removeChild(RenderObject* child)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_REGIONS)

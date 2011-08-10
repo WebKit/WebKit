@@ -4023,7 +4023,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (!value->isValueList())
             return;
 
-#if ENABLE(CSS_REGIONS)
         CSSValueListInspector inspector = value;
         if (inspector.length() == 1 && inspector.first()->isPrimitiveValue()) {
             CSSPrimitiveValue* contentValue = static_cast<CSSPrimitiveValue*>(inspector.first());
@@ -4032,7 +4031,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 return;
             }
         }
-#endif
 
         bool didSet = false;
         for (CSSValueListIterator i = value; i.hasMore(); i.advance()) {
@@ -4687,7 +4685,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
         return;
 #endif
-#if ENABLE(CSS_REGIONS)
+
     case CSSPropertyWebkitFlow:
         if (isInitial)
             HANDLE_INITIAL_COND(CSSPropertyWebkitFlow, FlowThread);
@@ -4707,7 +4705,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitRegionOverflow:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(regionOverflow, RegionOverflow);
         return;
-#endif
+
     case CSSPropertyWebkitMarqueeDirection:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeDirection, MarqueeDirection)
         return;
@@ -5051,7 +5049,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     
-#if ENABLE(CSS_EXCLUSIONS)
     case CSSPropertyWebkitWrapShape:
         HANDLE_INHERIT_AND_INITIAL(wrapShape, WrapShape);
         if (!primitiveValue)
@@ -5063,7 +5060,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setWrapShape(primitiveValue->getShapeValue());
 
         return;
-#endif
 
     // CSS Fonts Module Level 3
     case CSSPropertyWebkitFontFeatureSettings: {

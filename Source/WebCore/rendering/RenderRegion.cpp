@@ -35,8 +35,6 @@
 #include "PaintInfo.h"
 #include "RenderView.h"
 
-#if ENABLE(CSS_REGIONS)
-
 namespace WebCore {
 
 RenderRegion::RenderRegion(Node* node)
@@ -86,5 +84,3 @@ void RenderRegion::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 }
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_REGIONS)

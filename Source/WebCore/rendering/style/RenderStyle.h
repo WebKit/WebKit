@@ -751,12 +751,10 @@ public:
     bool hasTextCombine() const { return textCombine() != TextCombineNone; }
     // End CSS3 Getters
 
-#if ENABLE(CSS_REGIONS)
     const AtomicString& flowThread() const { return rareNonInheritedData->m_flowThread; }
     const AtomicString& regionThread() const { return rareNonInheritedData->m_regionThread; }
     int regionIndex() const { return rareNonInheritedData->m_regionIndex; }
     RegionOverflow regionOverflow() const { return rareNonInheritedData->m_regionOverflow; }
-#endif
 
     // Apple-specific property getter methods
     EPointerEvents pointerEvents() const { return static_cast<EPointerEvents>(inherited_flags._pointerEvents); }
@@ -1113,12 +1111,10 @@ public:
     void setTextEmphasisPosition(TextEmphasisPosition position) { SET_VAR(rareInheritedData, textEmphasisPosition, position); }
     // End CSS3 Setters
 
-#if ENABLE(CSS_REGIONS)
     void setFlowThread(const AtomicString& flowThread) { SET_VAR(rareNonInheritedData, m_flowThread, flowThread); }
     void setRegionThread(const AtomicString& regionThread) { SET_VAR(rareNonInheritedData, m_regionThread, regionThread); }
     void setRegionIndex(int regionIndex) { SET_VAR(rareNonInheritedData, m_regionIndex, regionIndex); }
     void setRegionOverflow(RegionOverflow regionOverflow) { SET_VAR(rareNonInheritedData, m_regionOverflow, regionOverflow); }
-#endif
 
     // Apple-specific property setters
     void setPointerEvents(EPointerEvents p) { inherited_flags._pointerEvents = p; }
@@ -1170,7 +1166,6 @@ public:
     void setFloodOpacity(float f) { accessSVGStyle()->setFloodOpacity(f); }
 #endif
 
-#if ENABLE(CSS_EXCLUSIONS)
     void setWrapShape(PassRefPtr<CSSWrapShape> shape)
     {
         if (rareNonInheritedData->m_wrapShape != shape)
@@ -1178,7 +1173,6 @@ public:
     }
     CSSWrapShape* wrapShape() const { return rareNonInheritedData->m_wrapShape.get(); }
     static CSSWrapShape* initialWrapShape() { return 0; }
-#endif
 
     bool hasContent() const { return contentData(); }
     const ContentData* contentData() const { return rareNonInheritedData->m_content.get(); }
@@ -1363,12 +1357,10 @@ public:
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
     static EImageRendering initialImageRendering() { return ImageRenderingAuto; }
 
-#if ENABLE(CSS_REGIONS)
     static const AtomicString& initialFlowThread() { return nullAtom; }
     static const AtomicString& initialRegionThread() { return nullAtom; }
     static int initialRegionIndex() { return 0; }
     static RegionOverflow initialRegionOverflow() { return AutoRegionOverflow; }
-#endif
 
     // Keep these at the end.
     static LineClampValue initialLineClamp() { return LineClampValue(); }

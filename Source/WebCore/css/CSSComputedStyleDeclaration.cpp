@@ -247,12 +247,10 @@ static const int computedProperties[] = {
     CSSPropertyWebkitUserDrag,
     CSSPropertyWebkitUserModify,
     CSSPropertyWebkitUserSelect,
-    CSSPropertyWebkitWritingMode
-#if ENABLE(CSS_REGIONS)
-    , CSSPropertyWebkitFlow
-    , CSSPropertyWebkitContentOrder
-    , CSSPropertyWebkitRegionOverflow
-#endif
+    CSSPropertyWebkitWritingMode,
+    CSSPropertyWebkitFlow,
+    CSSPropertyWebkitContentOrder,
+    CSSPropertyWebkitRegionOverflow
 #if ENABLE(SVG)
     ,
     CSSPropertyClipPath,
@@ -1681,7 +1679,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return counterToCSSValue(style.get(), propertyID, primitiveValueCache);
         case CSSPropertyCounterReset:
             return counterToCSSValue(style.get(), propertyID, primitiveValueCache);
-#if ENABLE(CSS_REGIONS)
         case CSSPropertyWebkitFlow:
             if (style->flowThread().isNull())
                 return primitiveValueCache->createIdentifierValue(CSSValueAuto);
@@ -1690,7 +1687,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->regionIndex(), CSSPrimitiveValue::CSS_NUMBER);
         case CSSPropertyWebkitRegionOverflow:
             return primitiveValueCache->createValue(style->regionOverflow());
-#endif
+
         /* Shorthand properties, currently not supported see bug 13658*/
         case CSSPropertyBackground:
         case CSSPropertyBorder:
@@ -1799,13 +1796,11 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyWebkitTransition:
             break;
 
-#if ENABLE(CSS_EXCLUSIONS)
         case CSSPropertyWebkitWrapShape:
             if (!style->wrapShape())
                 return primitiveValueCache->createIdentifierValue(CSSValueAuto);
 
             return primitiveValueCache->createValue(style->wrapShape());
-#endif
 
 #if ENABLE(SVG)
         case CSSPropertyClipPath:

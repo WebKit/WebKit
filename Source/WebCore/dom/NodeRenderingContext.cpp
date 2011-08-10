@@ -46,9 +46,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     , m_visualParentShadowRoot(0)
     , m_includer(0)
     , m_style(0)
-#if ENABLE(CSS_REGIONS)
     , m_parentFlowRenderer(0)
-#endif
 {
     ContainerNode* parent = m_node->parentOrHostNode();
     if (!parent)
@@ -89,9 +87,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
     , m_visualParentShadowRoot(0)
     , m_includer(0)
     , m_style(style)
-#if ENABLE(CSS_REGIONS)
     , m_parentFlowRenderer(0)
-#endif
 {
 }
 
@@ -102,9 +98,7 @@ NodeRenderingContext::~NodeRenderingContext()
 void NodeRenderingContext::setStyle(PassRefPtr<RenderStyle> style)
 {
     m_style = style;
-#if ENABLE(CSS_REGIONS)
     moveToFlowThreadIfNeeded();
-#endif
 }
 
 PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
@@ -166,10 +160,8 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     if (RenderObject* renderer = m_node->renderer())
         return renderer->nextSibling();
 
-#if ENABLE(CSS_REGIONS)
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->nextRendererForNode(m_node);
-#endif
 
     if (m_phase == AttachContentForwarded) {
         if (RenderObject* found = nextRendererOf(m_includer, m_node))
@@ -184,11 +176,9 @@ RenderObject* NodeRenderingContext::nextRenderer() const
 
     for (Node* node = m_node->nextSibling(); node; node = node->nextSibling()) {
         if (node->renderer()) {
-#if ENABLE(CSS_REGIONS)
             // Do not return elements that are attached to a different flow-thread.
             if (node->renderer()->style() && !node->renderer()->style()->flowThread().isEmpty())
                 continue;
-#endif
             return node->renderer();
         }
         if (node->isContentElement()) {
@@ -206,10 +196,8 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     if (RenderObject* renderer = m_node->renderer())
         return renderer->previousSibling();
 
-#if ENABLE(CSS_REGIONS)
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer->previousRendererForNode(m_node);
-#endif
 
     if (m_phase == AttachContentForwarded) {
         if (RenderObject* found = previousRendererOf(m_includer, m_node))
@@ -221,11 +209,9 @@ RenderObject* NodeRenderingContext::previousRenderer() const
     // however, when I tried adding it, several tests failed.
     for (Node* node = m_node->previousSibling(); node; node = node->previousSibling()) {
         if (node->renderer()) {
-#if ENABLE(CSS_REGIONS)
             // Do not return elements that are attached to a different flow-thread.
             if (node->renderer()->style() && !node->renderer()->style()->flowThread().isEmpty())
                 continue;
-#endif
             return node->renderer();
         }
         if (node->isContentElement()) {
@@ -244,10 +230,8 @@ RenderObject* NodeRenderingContext::parentRenderer() const
         return renderer->parent();
     }
 
-#if ENABLE(CSS_REGIONS)
     if (m_parentFlowRenderer)
         return m_parentFlowRenderer;
-#endif
 
     ASSERT(m_location != LocationUndetermined);
     return m_parentNodeForRenderingAndStyle ? m_parentNodeForRenderingAndStyle->renderer() : 0;
@@ -287,7 +271,6 @@ bool NodeRenderingContext::shouldCreateRenderer() const
     return true;
 }
 
-#if ENABLE(CSS_REGIONS)
 void NodeRenderingContext::moveToFlowThreadIfNeeded()
 {
     if (!m_node->isElementNode() || !m_style || m_style->flowThread().isEmpty())
@@ -297,7 +280,6 @@ void NodeRenderingContext::moveToFlowThreadIfNeeded()
     ASSERT(m_node->document()->renderView());
     m_parentFlowRenderer = m_node->document()->renderView()->renderFlowThreadWithName(m_flowThread);
 }
-#endif
 
 NodeRendererFactory::NodeRendererFactory(Node* node)
     : m_context(node)
@@ -365,14 +347,12 @@ void NodeRendererFactory::createRendererIfNeeded()
     RenderObject* nextRenderer = m_context.nextRenderer();
     RenderObject* newRenderer = createRendererAndStyle();
 
-#if ENABLE(CSS_REGIONS)
     if (m_context.hasFlowThreadParent()) {
         parentRenderer = m_context.parentFlowRenderer();
         // Do not call m_context.nextRenderer() here, because it expects to have 
         // the renderer added to its parent already.
         nextRenderer = m_context.parentFlowRenderer()->nextRendererForNode(node);
     }
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     if (document->webkitIsFullScreen() && document->webkitCurrentFullScreenElement() == node)

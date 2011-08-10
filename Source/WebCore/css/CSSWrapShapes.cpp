@@ -29,8 +29,6 @@
 
 #include "config.h"
 
-#if ENABLE(CSS_EXCLUSIONS)
-
 #include "CSSWrapShapes.h"
 
 using namespace WTF;
@@ -147,4 +145,3 @@ String CSSWrapShapePolygon::cssText() const
 
 } // namespace WebCore
 
-#endif // ENABLE(CSS_EXCLUSIONS)

@@ -30,7 +30,6 @@
 #ifndef RenderFlowThread_h
 #define RenderFlowThread_h
 
-#if ENABLE(CSS_REGIONS)
 
 #include "RenderBlock.h"
 #include <wtf/ListHashSet.h>
@@ -93,7 +92,5 @@ inline const RenderFlowThread* toRenderFlowThread(const RenderObject* object)
 void toRenderFlowThread(const RenderFlowThread*);
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_REGIONS)
 
 #endif // RenderFlowThread_h

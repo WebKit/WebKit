@@ -73,8 +73,6 @@ my (
     $clientBasedGeolocationSupport,
     $coverageSupport,
     $css3FlexboxSupport,
-    $cssRegionsSupport,
-    $cssExclusionsSupport,
     $databaseSupport,
     $datalistSupport,
     $dataTransferItemsSupport,
@@ -155,12 +153,6 @@ my @features = (
 
     { option => "css3-flexbox", desc => "Toggle CSS3 Flexbox support",
       define => "ENABLE_CSS3_FLEXBOX", default => 0, value => \$css3FlexboxSupport },
-
-    { option => "css-regions", desc => "Toggle CSS Regions support",
-      define => "ENABLE_CSS_REGIONS", default => 0, value => \$cssRegionsSupport },
-     
-    { option => "css-exclusions", desc => "Toggle CSS Exclusions support",
-      define => "ENABLE_CSS_EXCLUSIONS", default => 0, value => \$cssExclusionsSupport },
 
     { option => "coverage", desc => "Toggle code coverage support",
       define => "", default => 0, value => \$coverageSupport },

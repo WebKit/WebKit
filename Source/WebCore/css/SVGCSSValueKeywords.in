@@ -162,12 +162,7 @@ yellowgreen
 
 // CSS_PROP_CLIP_PATH
 // CSS_PROP_CLIP_RULE
-#if !defined(ENABLE_CSS_EXCLUSIONS) || !ENABLE_CSS_EXCLUSIONS
-// CSS exclusions also uses nonzero and evenodd, so don't duplicate the values
-// if ENABLED_CSS_EXCLUSIONS is enabled.
-nonzero
-evenodd
-#endif
+// nonzero and evenodd part of core CSS values now.
 
 // CSS_PROP_MASK
 // CSS_PROP_OPACITY

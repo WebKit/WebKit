@@ -438,9 +438,7 @@ enum EImageRendering { ImageRenderingAuto, ImageRenderingOptimizeSpeed, ImageRen
 
 enum Order { LogicalOrder = 0, VisualOrder };
 
-#if ENABLE(CSS_REGIONS)
 enum RegionOverflow { AutoRegionOverflow, BreakRegionOverflow };
-#endif
 
 } // namespace WebCore
 

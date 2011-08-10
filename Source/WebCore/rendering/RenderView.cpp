@@ -793,7 +793,6 @@ void RenderView::willMoveOffscreen()
 #endif
 }
 
-#if ENABLE(CSS_REGIONS)
 RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowThread)
 {
     for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
@@ -809,6 +808,5 @@ RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowT
     
     return flowRenderer;
 }
-#endif
 
 } // namespace WebCore

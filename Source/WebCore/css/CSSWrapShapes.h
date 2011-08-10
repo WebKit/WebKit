@@ -30,8 +30,6 @@
 #ifndef CSSWrapShapes_h
 #define CSSWrapShapes_h
 
-#if ENABLE(CSS_EXCLUSIONS)
-
 #include "CSSPrimitiveValue.h"
 #include "PlatformString.h"
 #include "WindRule.h"
@@ -171,7 +169,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(CSS_EXCLUSIONS)
 
 #endif // CSSWrapShapes_h

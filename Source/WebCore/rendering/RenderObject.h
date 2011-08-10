@@ -287,6 +287,7 @@ public:
     virtual bool isRenderImage() const { return false; }
     virtual bool isRenderInline() const { return false; }
     virtual bool isRenderPart() const { return false; }
+    virtual bool isRenderRegion() const { return false; }
     virtual bool isRenderView() const { return false; }
     virtual bool isReplica() const { return false; }
 
@@ -316,9 +317,7 @@ public:
     virtual bool isRenderFullScreenPlaceholder() const { return false; }
 #endif
 
-#if ENABLE(CSS_REGIONS)
     virtual bool isRenderFlowThread() const { return false; }
-#endif
 
     bool isRoot() const { return document()->documentElement() == m_node; }
     bool isBody() const;
@@ -430,10 +429,6 @@ public:
     bool isDragging() const { return m_isDragging; }
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
     bool isHorizontalWritingMode() const { return m_horizontalWritingMode; }
-
-#if ENABLE(CSS_REGIONS)
-    virtual bool isRenderRegion() const { return false; }
-#endif
 
     bool hasLayer() const { return m_hasLayer; }
     

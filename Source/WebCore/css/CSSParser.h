@@ -52,10 +52,7 @@ namespace WebCore {
     class StyleBase;
     class WebKitCSSKeyframeRule;
     class WebKitCSSKeyframesRule;
-
-#if ENABLE(CSS_EXCLUSIONS)
     class CSSWrapShape;
-#endif
 
     class CSSParser {
     public:
@@ -129,13 +126,11 @@ namespace WebCore {
 
         bool parseShape(int propId, bool important);
 
-#if ENABLE(CSS_EXCLUSIONS)
         bool parseWrapShape(bool important);
         PassRefPtr<CSSWrapShape> parseWrapShapeRect(CSSParserValueList* args);
         PassRefPtr<CSSWrapShape> parseWrapShapeCircle(CSSParserValueList* args);
         PassRefPtr<CSSWrapShape> parseWrapShapeEllipse(CSSParserValueList* args);
         PassRefPtr<CSSWrapShape> parseWrapShapePolygon(CSSParserValueList* args);
-#endif
 
         bool parseFont(bool important);
         PassRefPtr<CSSValueList> parseFontFamily();
@@ -168,10 +163,6 @@ namespace WebCore {
         PassRefPtr<CSSValue> parseWCSSInputProperty();
 #endif
 
-#if ENABLE(CSS_REGIONS)
-        bool parseFlowThread(int propId, bool important);
-        PassRefPtr<CSSValue> parseFromFlowContent(CSSParserValueList*);
-#endif
         // CSS3 Parsing Routines (for properties specific to CSS3)
         bool parseShadow(int propId, bool important);
         bool parseBorderImage(int propId, bool important, RefPtr<CSSValue>&);
@@ -199,6 +190,9 @@ namespace WebCore {
 
         bool parseFontFeatureTag(CSSValueList*);
         bool parseFontFeatureSettings(bool important);
+
+        bool parseFlowThread(int propId, bool important);
+        PassRefPtr<CSSValue> parseFromFlowContent(CSSParserValueList*);
 
         int yyparse();
 

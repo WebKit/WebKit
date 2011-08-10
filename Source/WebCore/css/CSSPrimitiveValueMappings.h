@@ -1432,7 +1432,6 @@ template<> inline CSSPrimitiveValue::operator EMarqueeBehavior() const
     }
 }
 
-#if ENABLE(CSS_REGIONS)
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(RegionOverflow e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
@@ -1459,7 +1458,6 @@ template<> inline CSSPrimitiveValue::operator RegionOverflow() const
         return AutoRegionOverflow;
     }
 }
-#endif
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EMarqueeDirection e)
     : m_type(CSS_IDENT)

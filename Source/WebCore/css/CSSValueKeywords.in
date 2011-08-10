@@ -819,14 +819,10 @@ optimizeQuality
 // Positioned Floats
 -webkit-positioned
 
-#if defined(ENABLE_CSS_EXCLUSIONS) && ENABLE_CSS_EXCLUSIONS
 // -webkit-wrap-shape
 nonzero
 evenodd
-#endif
 
-#if defined(ENABLE_CSS_REGIONS) && ENABLE_CSS_REGIONS
 // -webkit-region-overflow
 // auto
 -webkit-break
-#endif

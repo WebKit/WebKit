@@ -1,3 +1,77 @@
+2011-08-10  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66004
+
+        Remove ifdefs for CSS Exclusions (since the feature doesn't exist any longer and has morphed into positioned
+        floats instead). Go ahead and yank the ifdefs for CSS Regions also and just turn them on.
+
+        Reviewed by Adam Roben.
+
+        * Configurations/FeatureDefines.xcconfig:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseContent):
+        (WebCore::CSSParser::parseWrapShape):
+        (WebCore::CSSParser::parseFromFlowContent):
+        * css/CSSParser.h:
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::init):
+        (WebCore::CSSPrimitiveValue::cleanup):
+        (WebCore::CSSPrimitiveValue::getStringValue):
+        (WebCore::CSSPrimitiveValue::cssText):
+        * css/CSSPrimitiveValue.h:
+        (WebCore::CSSPrimitiveValue::getShapeValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator RegionOverflow):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * css/CSSWrapShapes.cpp:
+        * css/CSSWrapShapes.h:
+        * css/SVGCSSValueKeywords.in:
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::setStyle):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::parentRenderer):
+        (WebCore::NodeRenderingContext::moveToFlowThreadIfNeeded):
+        (WebCore::NodeRendererFactory::createRendererIfNeeded):
+        * dom/NodeRenderingContext.h:
+        * rendering/RenderFlowThread.cpp:
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectLayers):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderRegion):
+        (WebCore::RenderObject::isRenderFlowThread):
+        * rendering/RenderRegion.cpp:
+        * rendering/RenderRegion.h:
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::renderFlowThreadWithName):
+        * rendering/RenderView.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::regionOverflow):
+        (WebCore::InheritedFlags::setRegionOverflow):
+        (WebCore::InheritedFlags::initialWrapShape):
+        (WebCore::InheritedFlags::initialRegionOverflow):
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData):
+        (WebCore::StyleRareNonInheritedData::operator==):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-08-10  Abhishek Arya  <inferno@chromium.org>
 
         Don't create html renderer for SVG <glyphRef>

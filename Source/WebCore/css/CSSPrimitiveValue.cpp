@@ -211,14 +211,12 @@ void CSSPrimitiveValue::init(PassRefPtr<Pair> p)
     m_value.pair = p.releaseRef();
 }
 
-#if ENABLE(CSS_EXCLUSIONS)
 void CSSPrimitiveValue::init(PassRefPtr<CSSWrapShape> shape)
 {
     m_type = CSS_SHAPE;
     m_hasCachedCSSText = false;
     m_value.shape = shape.releaseRef();
 }
-#endif
 
 CSSPrimitiveValue::~CSSPrimitiveValue()
 {
@@ -231,9 +229,7 @@ void CSSPrimitiveValue::cleanup()
         case CSS_STRING:
         case CSS_URI:
         case CSS_ATTR:
-#if ENABLE(CSS_REGIONS)
         case CSS_FROM_FLOW:
-#endif
         case CSS_PARSER_HEXCOLOR:
             if (m_value.string)
                 m_value.string->deref();
@@ -253,11 +249,9 @@ void CSSPrimitiveValue::cleanup()
                 m_value.region->deref();
             break;
 #endif
-#if ENABLE(CSS_EXCLUSIONS)
         case CSS_SHAPE:
             m_value.shape->deref();
             break;
-#endif
         default:
             break;
     }
@@ -521,9 +515,7 @@ String CSSPrimitiveValue::getStringValue(ExceptionCode& ec) const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
-#if ENABLE(CSS_REGIONS)
         case CSS_FROM_FLOW:
-#endif
             return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
@@ -541,9 +533,7 @@ String CSSPrimitiveValue::getStringValue() const
         case CSS_STRING:
         case CSS_ATTR:
         case CSS_URI:
-#if ENABLE(CSS_REGIONS)
         case CSS_FROM_FLOW:
-#endif
              return m_value.string;
         case CSS_IDENT:
             return valueOrPropertyName(m_value.ident);
@@ -707,11 +697,9 @@ String CSSPrimitiveValue::cssText() const
         case CSS_STRING:
             text = quoteCSSStringIfNeeded(m_value.string);
             break;
-#if ENABLE(CSS_REGIONS)
         case CSS_FROM_FLOW:
             text = "-webkit-from-flow(" + quoteCSSStringIfNeeded(m_value.string) + ")";
             break;
-#endif
         case CSS_URI:
             text = "url(" + quoteCSSURLIfNeeded(m_value.string) + ")";
             break;
@@ -843,11 +831,9 @@ String CSSPrimitiveValue::cssText() const
         case CSS_PARSER_IDENTIFIER:
             text = quoteCSSStringIfNeeded(m_value.string);
             break;
-#if ENABLE(CSS_EXCLUSIONS)
         case CSS_SHAPE:
             text = m_value.shape->cssText();
             break;
-#endif
     }
 
     ASSERT(!cssTextCache().contains(this));

@@ -1,3 +1,15 @@
+2011-08-10  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66004
+
+        Remove the regions and exclusions bots and also the flags in build-webkit, since I'm just turning
+        the code on by default.
+
+        Reviewed by Adam Roben.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * Scripts/build-webkit:
+
 2011-08-10  Oliver Hunt  <oliver@apple.com>
 
         JSEvaluteScript does not return the correct object when given JSONP data

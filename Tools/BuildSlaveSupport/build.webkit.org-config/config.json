@@ -66,8 +66,6 @@
                     
                     { "name": "efl-linux-slave-1", "platform": "efl" },
 
-                    { "name": "adobe-mac-slave1", "platform": "mac-snowleopard" },
-
                     { "name": "hfreyther-mipsel-linux1", "platform": "qt"}
                   ],
 
@@ -256,11 +254,6 @@
                       "name": "EFL Linux Release (Build)", "type": "Build", "builddir": "efl-linux-release",
                       "platform": "efl", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["efl-linux-slave-1"]
-                    },
-                    { "name": "CSSRegions SnowLeopard Intel Release (Build)", "type": "Build", "builddir": "cssregions-snowleopard-intel-release",
-                      "platform": "mac-snowleopard", "configuration": "release", "architectures": ["x86_64"], "features": ["css-regions", "css-exclusions"],
-                      "upload": true,
-                      "slavenames": ["adobe-mac-slave1"]
                     }
                   ],
 
@@ -274,10 +267,6 @@
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-leopard", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Leopard Intel Debug (Build)"]
-                    },
-                    { "type": "PlatformSpecificScheduler", "platform": "mac-snowleopard", "branch": "trunk", "treeStableTimer": 45.0,
-                      "builderNames": ["SnowLeopard Intel Release (Build)", "SnowLeopard Intel Leaks", "SnowLeopard Intel Debug (Build)",
-                                       "CSSRegions SnowLeopard Intel Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-lion", "branch": "trunk", "treeStableTimer": 45.0,
                       "builderNames": ["Lion Intel Release (Build)", "Lion Intel Debug (Build)"]
