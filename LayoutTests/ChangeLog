@@ -1,3 +1,32 @@
+2011-08-10  James Robinson  <jamesr@chromium.org>
+
+        Update chromium gpu baselines for r92255
+
+        * platform/chromium-gpu-mac/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/chromium-gpu-mac/media/video-transformed-expected.png:
+        * platform/chromium-gpu-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/backface-visibility-transformed-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/huge-layer-rotated-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/perpendicular-layer-sorting-expected.png:
+        * platform/chromium-gpu-mac/platform/chromium/compositing/tiny-layer-rotated-expected.png:
+        * platform/chromium-gpu-win/compositing/color-matching/image-color-matching-expected.png:
+        * platform/chromium-gpu-win/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/ancestor-overflow-change-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/fixed-position-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/horizontal-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-deep-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/layer-due-to-layer-children-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/vertical-scroll-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/iframes/composited-iframe-alignment-expected.png:
+        * platform/chromium-gpu-win/compositing/masks/masked-ancestor-expected.png:
+        * platform/chromium-gpu-win/compositing/overflow/fixed-position-ancestor-clip-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transition-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/transform-inside-reflection-expected.png:
+        * platform/chromium-gpu-win/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-win/compositing/transitions/scale-transition-no-start-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-08-10  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66004
