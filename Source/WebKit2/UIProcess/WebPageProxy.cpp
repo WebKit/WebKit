@@ -1021,6 +1021,9 @@ void WebPageProxy::receivedPolicyDecision(PolicyAction action, WebFrameProxy* fr
 {
     if (!isValid())
         return;
+    
+    if (action == PolicyIgnore)
+        clearPendingAPIRequestURL();
 
     uint64_t downloadID = 0;
     if (action == PolicyDownload) {

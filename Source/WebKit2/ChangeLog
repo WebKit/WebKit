@@ -1,3 +1,15 @@
+2011-08-09  John Sullivan  <sullivan@apple.com>
+
+        WKPageCopyPendingAPIRequestURL returns stale result if policy decision set to Ignore
+        https://bugs.webkit.org/show_bug.cgi?id=65950
+        <rdar://problem/9925931>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::receivedPolicyDecision):
+        Call clearPendingAPIRequestURL() if the policy decision is PolicyIgnore.
+
 2011-08-09  Anders Carlsson  <andersca@apple.com>
 
         Add a WebKit prefix to the user default.
