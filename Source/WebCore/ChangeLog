@@ -1,3 +1,18 @@
+2011-08-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: Network panel always displays file:// resources as "(pending)"
+        https://bugs.webkit.org/show_bug.cgi?id=65784
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/network-status-non-http.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkDataGridNode.prototype._refreshStatusCell):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.isHttpFamily):
+
 2011-08-09  Luke Macpherson   <macpherson@chromium.org>
 
         Use setFontDescription helper to set m_fontDirty.

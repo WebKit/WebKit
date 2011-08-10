@@ -1935,12 +1935,12 @@ WebInspector.NetworkDataGridNode.prototype = {
             if (this._resource.statusCode >= 400)
                 this.element.addStyleClass("network-error-row");
         } else {
-            if (this._resource.isDataURL() && this._resource.finished)
-                this._statusCell.setTextAndTitle(WebInspector.UIString("(data url)"));
+            if (!this._resource.isHttpFamily() && this._resource.finished)
+                this._statusCell.setTextAndTitle(WebInspector.UIString("Success"));
             else if (this._resource.isPingRequest())
                 this._statusCell.setTextAndTitle(WebInspector.UIString("(ping)"));
             else
-                this._statusCell.setTextAndTitle(WebInspector.UIString("(Pending)"));
+                this._statusCell.setTextAndTitle(WebInspector.UIString("(pending)"));
             this._statusCell.addStyleClass("network-dim-cell");
         }
     },

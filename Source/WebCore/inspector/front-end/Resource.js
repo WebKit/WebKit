@@ -877,9 +877,9 @@ WebInspector.Resource.prototype = {
             image.src = this.url;
     },
 
-    isDataURL: function()
+    isHttpFamily: function()
     {
-        return this.url.match(/^data:/i);
+        return this.url.match(/^https?:/i);
     },
 
     requestContentType: function()
