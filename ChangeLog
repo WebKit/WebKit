@@ -1,3 +1,10 @@
+2011-08-10  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix. Do not build LocaleToScriptMappingICU.cpp for now
+        as ICU on Leopard is too old to build this.
+        
+        * wscript:
+
 2011-08-08  Adrienne Walker  <enne@google.com>
 
         Add testing for --force-compositing-mode to windows.internal
