@@ -2337,3 +2337,6 @@ fast/writing-mode/border-styles-vertical-rl.html
 svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml
 svg/zoom/page/zoom-svg-through-object-with-override-size.html
 
+# [Qt] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm fails intermittently
+# https://bugs.webkit.org/show_bug.cgi?id=65969
+http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm

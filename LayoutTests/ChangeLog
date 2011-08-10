@@ -1,3 +1,15 @@
+2011-08-10  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm fails intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=65969
+
+        Unreviewed gardening.
+
+        * platform/qt-4.8/Skipped: Remove http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm, because it isn't Qt 4.8 specific bug.
+        * platform/qt/Skipped: Skip http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm.
+        * platform/qt/http/tests/misc/object-embedding-svg-delayed-size-negotiation-2-expected.txt: Update to the correct results.
+        * platform/qt/test_expectations.txt: Remove http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm.
+
 2011-08-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed test fix.
