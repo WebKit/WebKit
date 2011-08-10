@@ -1,3 +1,17 @@
+2011-08-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT heap prediction causes regressions when combined with
+        aggressive integer prediction
+        https://bugs.webkit.org/show_bug.cgi?id=65954
+
+        Reviewed by Gavin Barraclough.
+        
+        Disabled heap prediction, but did not remove the capability.
+        This improves V8 crypto performance by 20%.
+
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::predict):
+
 2011-08-09  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT does not speculative integers as aggressively as it should

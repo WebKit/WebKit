@@ -164,13 +164,6 @@ public:
         case GetGlobalVar:
             predictGlobalVar(node.varNumber(), prediction);
             break;
-        case GetById:
-        case GetMethod:
-        case GetByVal:
-        case Call:
-        case Construct:
-            node.predict(prediction);
-            break;
         default:
             break;
         }
