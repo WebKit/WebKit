@@ -199,6 +199,9 @@ fast/repaint/scale-page-shrink.html
 # https://bugs.webkit.org/show_bug.cgi?id=43668
 media/track/
 
+# Font feature settings is not implemented.
+css3/font-feature-settings-rendering.html
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

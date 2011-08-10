@@ -203,6 +203,32 @@ float ComplexTextController::widthOfFullRun()
     return widthSum;
 }
 
+static void setupFontFeatures(const FontFeatureSettings* settings, HB_FaceRec_* hbFace)
+{
+    if (!settings)
+        return;
+
+    if (hbFace->gsub)
+        HB_GSUB_Clear_Features(hbFace->gsub);
+    if (hbFace->gpos)
+        HB_GPOS_Clear_Features(hbFace->gpos);
+
+    HB_UShort scriptIndex;
+    HB_GSUB_Select_Script(hbFace->gsub, HB_MAKE_TAG('D', 'F', 'L', 'T'), &scriptIndex);
+    size_t numFeatures = settings->size();
+    for (size_t i = 0; i < numFeatures; ++i) {
+        if (!settings->at(i).value())
+            continue;
+        HB_UShort featureIndex;
+        const UChar* tag = settings->at(i).tag().characters();
+        HB_UInt feature = HB_MAKE_TAG(tag[0], tag[1], tag[2], tag[3]);
+        if (hbFace->gsub && HB_GSUB_Select_Feature(hbFace->gsub, feature, scriptIndex, 0xffff, &featureIndex) == HB_Err_Ok)
+            HB_GSUB_Add_Feature(hbFace->gsub, featureIndex, settings->at(i).value());
+        else if (hbFace->gpos && HB_GPOS_Select_Feature(hbFace->gpos, feature, scriptIndex, 0xffff, &featureIndex) == HB_Err_Ok)
+            HB_GPOS_Add_Feature(hbFace->gpos, featureIndex, settings->at(i).value());
+    }
+}
+
 void ComplexTextController::setupFontForScriptRun()
 {
     FontDataVariant fontDataVariant = AutoVariant;
@@ -220,6 +246,9 @@ void ComplexTextController::setupFontForScriptRun()
     const FontData* fontData = m_font->glyphDataForCharacter(m_item.string[m_item.item.pos], false, fontDataVariant).fontData;
     const FontPlatformData& platformData = fontData->fontDataForCharacter(' ')->platformData();
     m_item.face = platformData.harfbuzzFace()->face();
+    // We only need to setup font features at the beginning of the run.
+    if (!m_item.item.pos)
+        setupFontFeatures(m_font->fontDescription().featureSettings(), m_item.face);
     void* opaquePlatformData = const_cast<FontPlatformData*>(&platformData);
     m_item.font->userData = opaquePlatformData;
 

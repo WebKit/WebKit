@@ -270,6 +270,9 @@ Font::CodePath Font::codePath(const TextRun& run) const
         return Complex;
 #endif
 
+    if (m_fontDescription.featureSettings() && m_fontDescription.featureSettings()->size() > 0)
+        return Complex;
+
     CodePath result = Simple;
 
     // Start from 0 since drawing and highlighting also measure the characters before run->from

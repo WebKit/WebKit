@@ -1608,3 +1608,6 @@ webaudio/
 # Text shadow extents are calculated incorrectly
 # https://bugs.webkit.org/show_bug.cgi?id=65035
 fast/canvas/fillText-shadow.html
+
+# Font feature settings is not implemented.
+css3/font-feature-settings-rendering.html
