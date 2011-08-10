@@ -366,9 +366,9 @@ WebInspector.NetworkLogView.prototype = {
 
     _updateSummaryBar: function()
     {
-        var numRequests = this._resources.length;
+        var requestsNumber = this._resources.length;
 
-        if (!numRequests) {
+        if (!requestsNumber) {
             if (this._summaryBarElement._isDisplayingWarning)
                 return;
             this._summaryBarElement._isDisplayingWarning = true;
@@ -384,18 +384,31 @@ WebInspector.NetworkLogView.prototype = {
         delete this._summaryBarElement._isDisplayingWarning;
 
         var transferSize = 0;
+        var selectedRequestsNumber = 0;
+        var selectedTransferSize = 0;
         var baseTime = -1;
         var maxTime = -1;
         for (var i = 0; i < this._resources.length; ++i) {
             var resource = this._resources[i];
-            transferSize += (resource.cached || !resource.transferSize) ? 0 : resource.transferSize;
+            var resourceTransferSize = (resource.cached || !resource.transferSize) ? 0 : resource.transferSize;
+            transferSize += resourceTransferSize;
+            if (!this._hiddenCategories.all || !this._hiddenCategories[resource.category.name]) {
+                selectedRequestsNumber++;
+                selectedTransferSize += resourceTransferSize;
+            }
             if (resource === WebInspector.mainResource)
                 baseTime = resource.startTime;
             if (resource.endTime > maxTime)
                 maxTime = resource.endTime;
         }
-        var text = String.sprintf(WebInspector.UIString("%d requests"), numRequests);
-        text += "  \u2758  " + String.sprintf(WebInspector.UIString("%s transferred"), Number.bytesToString(transferSize));
+        var text = "";
+        if (this._hiddenCategories.all) {
+            text += String.sprintf(WebInspector.UIString("%d / %d requests"), selectedRequestsNumber, requestsNumber);
+            text += "  \u2758  " + String.sprintf(WebInspector.UIString("%s / %s transferred"), Number.bytesToString(selectedTransferSize), Number.bytesToString(transferSize));
+        } else {
+            text += String.sprintf(WebInspector.UIString("%d requests"), requestsNumber);
+            text += "  \u2758  " + String.sprintf(WebInspector.UIString("%s transferred"), Number.bytesToString(transferSize));
+        }
         if (baseTime !== -1 && this._mainResourceLoadTime !== -1 && this._mainResourceDOMContentTime !== -1 && this._mainResourceDOMContentTime > baseTime) {
             text += "  \u2758  " + String.sprintf(WebInspector.UIString("%s (onload: %s, DOMContentLoaded: %s)"),
                         Number.secondsToString(maxTime - baseTime),
@@ -428,6 +441,7 @@ WebInspector.NetworkLogView.prototype = {
 
         this._filter(e.target, selectMultiple);
         this.performSearch(null, true);
+        this._updateSummaryBar();
     },
 
     _filter: function(target, selectMultiple)
