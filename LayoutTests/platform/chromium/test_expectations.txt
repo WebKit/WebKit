@@ -737,7 +737,6 @@ BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html
 // Need to implement NPP_HandleEvent in the layout_test_plugin
 // WIN started failing during webkit roll 62670 -> 62844.
 BUGCR38353 LINUX MAC : plugins/keyboard-events.html = TEXT
-BUGCR10351 MAC : plugins/mouse-events.html = FAIL
 BUGCR32864 : plugins/mouse-events-fixedpos.html = TEXT
 // Object.keys on an NPObject produces the wrong output.
 BUGCR21901 : plugins/npruntime/enumerate.html = TEXT
@@ -3589,7 +3588,7 @@ BUGWK64675 LINUX WIN : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEX
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
 //BUGCR75424 LEOPARD : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
-BUGCR75424 LEOPARD : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE IMAGE+TEXT
+BUGCR75424 LEOPARD : fast/writing-mode/japanese-rl-text-with-broken-font.html = IMAGE+TEXT IMAGE
 
 BUGCR89673 : fast/js/object-prototype-properties.html = TEXT
 

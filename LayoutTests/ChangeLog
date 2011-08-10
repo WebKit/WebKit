@@ -1,3 +1,20 @@
+2011-08-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [Chromium] plugins/mouse-events.html should pass on the mac.
+        https://bugs.webkit.org/show_bug.cgi?id=65957
+
+        Reviewed by Kent Tamura.
+
+        Cocoa plugins do not generate adjustCursorEvents.  Rebaseline this test result for the
+        chromium Mac port.  Note the WebKit Mac/Win ports report 0 for the line number for all
+        console.log() events.  The Chromium port reports the actual line number, and hence the
+        need for separate test results for Chromium.  Following bug 61721, this test now runs,
+        and passes on all the Chromium ports.  The test confirms user-plugin interactivity, so
+        we don't regress sites like youtube.com.  Refer to bug 11517.
+
+        * platform/chromium-mac/plugins/mouse-events-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-08-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: Network panel always displays file:// resources as "(pending)"
