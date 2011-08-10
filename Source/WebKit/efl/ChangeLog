@@ -1,3 +1,16 @@
+2011-08-10  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Remove unused local variable from _ewk_tiled_backing_store_item_process_idler_cb.
+        https://bugs.webkit.org/show_bug.cgi?id=65846
+
+        As Ewk_Tiled_Backing_Store_Item *it is declared as local variable, but it's never referenced anywhere,
+        it is better to be removed from _ewk_tiled_backing_store_item_process_idler_cb.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_item_process_idler_cb):
+
 2011-08-09  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [EFL] Sort signal comments by alphabetical order.

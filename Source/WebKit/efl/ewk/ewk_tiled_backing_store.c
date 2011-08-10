@@ -367,7 +367,6 @@ end:
 static Eina_Bool _ewk_tiled_backing_store_item_process_idler_cb(void *data)
 {
     Ewk_Tiled_Backing_Store_Data *priv = data;
-    Ewk_Tiled_Backing_Store_Item *it = NULL;
 
     if (priv->process.pre_cb)
         data = priv->process.pre_cb(priv->process.pre_data, priv->self);
