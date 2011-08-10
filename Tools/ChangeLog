@@ -1,3 +1,20 @@
+2011-08-10  Eric Seidel  <eric@webkit.org>
+
+        Clean up ChromiumDriver a little
+        https://bugs.webkit.org/show_bug.cgi?id=65995
+
+        Reviewed by Adam Barth.
+
+        - We no longer support threading, so remove threading specific code.
+        - Add FIXMEs about using ServerProcess instead.
+        - Condense option-mapping if-cascade into a for loop.
+        - Unindent long if blocks by using early return.
+        - Unwrap lines which are needlessly wrapped.
+
+        There should be no functional changes here, just code cleanup/dead-code removal.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-08-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unmuddle construction options for TestConfiguration.

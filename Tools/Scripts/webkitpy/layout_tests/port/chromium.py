@@ -383,6 +383,7 @@ class ChromiumPort(Port):
         return self._build_path(self.get_option('configuration'), binary_name)
 
 
+# FIXME: This should inherit from WebKitDriver now that Chromium has a DumpRenderTree process like the rest of WebKit.
 class ChromiumDriver(Driver):
     KILL_TIMEOUT = 3.0
 
@@ -394,37 +395,31 @@ class ChromiumDriver(Driver):
 
     def _wrapper_options(self):
         cmd = []
+        if self._port.get_option('pixel_tests'):
+            # See note above in diff_image() for why we need _convert_path().
+            cmd.append("--pixel-tests=" + self._port._convert_path(self._image_path))
+        # FIXME: This is not None shouldn't be necessary, unless --js-flags="''" changes behavior somehow?
+        if self._port.get_option('js_flags') is not None:
+            cmd.append('--js-flags="' + self._port.get_option('js_flags') + '"')
+
         # FIXME: We should be able to build this list using only an array of
         # option names, the options (optparse.Values) object, and the orignal
         # list of options from the main method by looking up the option
         # text from the options list if the value is non-None.
-        if self._port.get_option('pixel_tests'):
-            # See note above in diff_image() for why we need _convert_path().
-            cmd.append("--pixel-tests=" + self._port._convert_path(self._image_path))
-
-        if self._port.get_option('startup_dialog'):
-            cmd.append('--testshell-startup-dialog')
-
-        if self._port.get_option('gp_fault_error_box'):
-            cmd.append('--gp-fault-error-box')
-
-        if self._port.get_option('js_flags') is not None:
-            cmd.append('--js-flags="' + self._port.get_option('js_flags') + '"')
-
-        if self._port.get_option('stress_opt'):
-            cmd.append('--stress-opt')
-
-        if self._port.get_option('stress_deopt'):
-            cmd.append('--stress-deopt')
-
-        if self._port.get_option('accelerated_compositing'):
-            cmd.append('--enable-accelerated-compositing')
-        if self._port.get_option('accelerated_2d_canvas'):
-            cmd.append('--enable-accelerated-2d-canvas')
-        if self._port.get_option('accelerated_drawing'):
-            cmd.append('--enable-accelerated-drawing')
-        if self._port.get_option('enable_hardware_gpu'):
-            cmd.append('--enable-hardware-gpu')
+        # FIXME: How many of these options are still used?
+        option_mappings = {
+            'startup_dialog': '--testshell-startup-dialog',
+            'gp_fault_error_box': '--gp-fault-error-box',
+            'stress_opt': '--stress-opt',
+            'stress_deopt': '--stress-deopt',
+            'accelerated_compositing': '--enable-accelerated-compositing',
+            'accelerated_2d_canvas': '--enable-accelerated-2d-canvas',
+            'accelerated_drawing': '--enable-accelerated-drawing',
+            'enable_hardware_gpu': '----enable-hardware-gpu',
+        }
+        for nrwt_option, drt_option in option_mappings.items():
+            if self._port.get_option(nrwt_option):
+                cmd.append(drt_option)
 
         cmd.extend(self._port.get_option('additional_drt_flag', []))
         return cmd
@@ -432,24 +427,17 @@ class ChromiumDriver(Driver):
     def cmd_line(self):
         cmd = self._command_wrapper(self._port.get_option('wrapper'))
         cmd.append(self._port._path_to_driver())
-        cmd.append('--test-shell')  # FIXME: Why does this exist?  TestShell is dead, shouldn't this be removed?
+        # FIXME: Why does --test-shell exist?  TestShell is dead, shouldn't this be removed?
+        # It seems it's still in use in Tools/DumpRenderTree/chromium/DumpRenderTree.cpp as of 8/10/11.
+        cmd.append('--test-shell')
         cmd.extend(self._wrapper_options())
         return cmd
 
     def start(self):
-        # FIXME: Should be an error to call this method twice.
-        cmd = self.cmd_line()
-
-        # We need to pass close_fds=True to work around Python bug #2320
-        # (otherwise we can hang when we kill DumpRenderTree when we are running
-        # multiple threads). See http://bugs.python.org/issue2320 .
-        # Note that close_fds isn't supported on Windows, but this bug only
-        # shows up on Mac and Linux.
-        close_flag = sys.platform not in ('win32', 'cygwin')
-        self._proc = subprocess.Popen(cmd, stdin=subprocess.PIPE,
-                                      stdout=subprocess.PIPE,
-                                      stderr=subprocess.STDOUT,
-                                      close_fds=close_flag)
+        assert not self._proc
+        # FIXME: This should use ServerProcess like WebKitDriver does.
+        # FIXME: We should be reading stderr and stdout separately like how WebKitDriver does.
+        self._proc = subprocess.Popen(self.cmd_line(), stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
     def poll(self):
         return self._proc.poll()
@@ -482,10 +470,8 @@ class ChromiumDriver(Driver):
         return cmd
 
     def _output_image(self):
-        """Returns the image output which driver generated."""
-        png_path = self._image_path
-        if png_path and self._port._filesystem.exists(png_path):
-            return self._port._filesystem.read_binary_file(png_path)
+        if self._image_path and self._port._filesystem.exists(self._image_path):
+            return self._port._filesystem.read_binary_file(self._image_path)
         return None
 
     def _output_image_with_retry(self):
@@ -493,20 +479,20 @@ class ChromiumDriver(Driver):
         # raising "IOError: [Errno 13] Permission denied:"
         retry_num = 50
         timeout_seconds = 5.0
-        for i in range(retry_num):
+        for _ in range(retry_num):
             try:
                 return self._output_image()
             except IOError, e:
-                if e.errno == errno.EACCES:
-                    time.sleep(timeout_seconds / retry_num)
-                else:
+                if e.errno != errno.EACCES:
                     raise e
+            # FIXME: We should have a separate retry delay.
+            # This implementation is likely to exceed the timeout before the expected number of retries.
+            time.sleep(timeout_seconds / retry_num)
         return self._output_image()
 
     def _clear_output_image(self):
-        png_path = self._image_path
-        if png_path and self._port._filesystem.exists(png_path):
-            self._port._filesystem.remove(png_path)
+        if self._image_path and self._port._filesystem.exists(self._image_path):
+            self._port._filesystem.remove(self._image_path)
 
     def run_test(self, driver_input):
         output = []
@@ -545,10 +531,8 @@ class ChromiumDriver(Driver):
                 actual_uri = line.rstrip()[5:]
                 if uri != actual_uri:
                     # GURL capitalizes the drive letter of a file URL.
-                    if (not re.search("^file:///[a-z]:", uri) or
-                        uri.lower() != actual_uri.lower()):
-                        _log.fatal("Test got out of sync:\n|%s|\n|%s|" %
-                                   (uri, actual_uri))
+                    if (not re.search("^file:///[a-z]:", uri) or uri.lower() != actual_uri.lower()):
+                        _log.fatal("Test got out of sync:\n|%s|\n|%s|" % (uri, actual_uri))
                         raise AssertionError("test out of sync")
             elif line.startswith("#MD5:"):
                 actual_checksum = line.rstrip()[5:]
@@ -587,23 +571,25 @@ class ChromiumDriver(Driver):
             crash=crash, test_time=run_time, timeout=timeout, error=''.join(error))
 
     def stop(self):
-        if self._proc:
-            self._proc.stdin.close()
-            self._proc.stdout.close()
-            if self._proc.stderr:
-                self._proc.stderr.close()
-            # Closing stdin/stdout/stderr hangs sometimes on OS X,
-            # (see __init__(), above), and anyway we don't want to hang
-            # the harness if DRT is buggy, so we wait a couple
-            # seconds to give DRT a chance to clean up, but then
-            # force-kill the process if necessary.
-            timeout = time.time() + self.KILL_TIMEOUT
-            while self._proc.poll() is None and time.time() < timeout:
-                time.sleep(0.1)
-            if self._proc.poll() is None:
-                _log.warning('stopping test driver timed out, killing it')
-                self._port._executive.kill_process(self._proc.pid)
-            # FIXME: This is sometime None. What is wrong? assert self._proc.poll() is not None
-            if self._proc.poll() is not None:
-                self._proc.wait()
-            self._proc = None
+        if not self._proc:
+            return
+        # FIXME: If we used ServerProcess all this would happen for free with ServerProces.stop()
+        self._proc.stdin.close()
+        self._proc.stdout.close()
+        if self._proc.stderr:
+            self._proc.stderr.close()
+        # Closing stdin/stdout/stderr hangs sometimes on OS X,
+        # (see __init__(), above), and anyway we don't want to hang
+        # the harness if DRT is buggy, so we wait a couple
+        # seconds to give DRT a chance to clean up, but then
+        # force-kill the process if necessary.
+        timeout = time.time() + self.KILL_TIMEOUT
+        while self._proc.poll() is None and time.time() < timeout:
+            time.sleep(0.1)
+        if self._proc.poll() is None:
+            _log.warning('stopping test driver timed out, killing it')
+            self._port._executive.kill_process(self._proc.pid)
+        # FIXME: This is sometime None. What is wrong? assert self._proc.poll() is not None
+        if self._proc.poll() is not None:
+            self._proc.wait()
+        self._proc = None
