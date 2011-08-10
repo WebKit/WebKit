@@ -796,13 +796,22 @@ WebInspector.PresenationCallFrame.prototype = {
             this._sourceFile.forceLoadContent(this._script);
     },
 
-    evaluate: function(code, objectGroup, includeCommandLineAPI, callback)
+    evaluate: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
     {
         function didEvaluateOnCallFrame(error, result, wasThrown)
         {
-            callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
+            if (error) {
+                console.error(error);
+                callback(null);
+                return;
+            }
+
+            if (returnByValue && !wasThrown)
+                callback(result, wasThrown);
+            else
+                callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
-        DebuggerAgent.evaluateOnCallFrame(this._callFrame.id, code, objectGroup, includeCommandLineAPI, didEvaluateOnCallFrame.bind(this));
+        DebuggerAgent.evaluateOnCallFrame(this._callFrame.id, code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluateOnCallFrame.bind(this));
     },
 
     sourceLine: function(callback)

@@ -107,6 +107,9 @@ WebInspector.WatchExpressionsSection.prototype = {
 
         function appendResult(expression, watchIndex, result, wasThrown)
         {
+            if (!result)
+                return;
+
             var property = new WebInspector.RemoteObjectProperty(expression, result);
             property.watchIndex = watchIndex;
             property.wasThrown = wasThrown;

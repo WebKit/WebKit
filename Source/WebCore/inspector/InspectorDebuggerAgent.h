@@ -98,7 +98,14 @@ public:
     void stepInto(ErrorString*);
     void stepOut(ErrorString*);
     void setPauseOnExceptions(ErrorString*, const String& pauseState);
-    void evaluateOnCallFrame(ErrorString*, const String& callFrameId, const String& expression, const String* const objectGroup, const bool* const includeCommandLineAPI, RefPtr<InspectorObject>* result, bool* wasThrown);
+    void evaluateOnCallFrame(ErrorString*,
+                             const String& callFrameId,
+                             const String& expression,
+                             const String* const objectGroup,
+                             const bool* const includeCommandLineAPI,
+                             const bool* const returnByValue,
+                             RefPtr<InspectorObject>* result,
+                             bool* wasThrown);
 
     class Listener {
     public:

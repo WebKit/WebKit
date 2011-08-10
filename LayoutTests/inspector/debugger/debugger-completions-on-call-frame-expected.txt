@@ -9,6 +9,7 @@ dir
 dirxml
 window
 this
+toExponential
 Script execution resumed.
 Debugger was disabled.
 

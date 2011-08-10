@@ -394,10 +394,10 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.jsBreakpoints.removeBreakpoint(breakpoint.sourceFileId, breakpoint.lineNumber);
     },
 
-    evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, callback)
+    evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
     {
         var selectedCallFrame = this._presentationModel.selectedCallFrame;
-        selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, callback);
+        selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, callback);
     },
 
     getSelectedCallFrameVariables: function(callback)
@@ -1192,7 +1192,7 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
 
     evaluateInSelectedCallFrame: function(string, callback)
     {
-        WebInspector.panels.scripts.evaluateInSelectedCallFrame(string, this._popoverObjectGroup, false, callback);
+        WebInspector.panels.scripts.evaluateInSelectedCallFrame(string, this._popoverObjectGroup, false, false, callback);
     },
 
     releaseEvaluationResult: function()

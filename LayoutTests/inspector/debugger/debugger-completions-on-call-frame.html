@@ -23,30 +23,40 @@ var test = function()
 
     function step2()
     {
-        WebInspector.console._completions("", "var", false, checkAgainstGolden.bind(this, [ "var1", "var2" ], step3));
+        WebInspector.console._completions("", "var", false, checkAgainstGolden.bind(this, [ "var1", "var2" ], [], step3));
     }
 
     function step3()
     {
-        WebInspector.console._completions("", "di", false, checkAgainstGolden.bind(this, [ "dir", "dirxml" ], step4));
+        WebInspector.console._completions("", "di", false, checkAgainstGolden.bind(this, [ "dir", "dirxml" ], [], step4));
     }
 
     function step4()
     {
-        WebInspector.console._completions("", "win", false, checkAgainstGolden.bind(this, [ "window" ], step5));
+        WebInspector.console._completions("", "win", false, checkAgainstGolden.bind(this, [ "window" ], [], step5));
     }
 
     function step5()
     {
-        WebInspector.console._completions("", "t", false, checkAgainstGolden.bind(this, [ "this" ], step6));
+        WebInspector.console._completions("", "t", false, checkAgainstGolden.bind(this, [ "this" ], [], step6));
     }
 
     function step6()
     {
+        WebInspector.console._completions("var1", "toExp", false, checkAgainstGolden.bind(this, [ "toExponential" ], [], step7));
+    }
+
+    function step7()
+    {
+        WebInspector.console._completions("123", "toExp", false, checkAgainstGolden.bind(this, [], [ "toExponential" ], step8));
+    }
+
+    function step8()
+    {
         InspectorTest.completeDebuggerTest();
     }
 
-    function checkAgainstGolden(golden, continuation, completions)
+    function checkAgainstGolden(golden, antiGolden, continuation, completions)
     {
         for (var i = 0; i < golden.length; ++i) {
             if (completions.indexOf(golden[i]) !== -1)
@@ -54,6 +64,12 @@ var test = function()
             else
                 InspectorTest.addResult("NOT FOUND: " + golden[i]);
         }
+
+        for (var i = 0; i < antiGolden.length; ++i) {
+            if (completions.indexOf(antiGolden[i]) !== -1)
+                InspectorTest.addResult("FOUND: " + antiGolden[i]);
+        }
+
         continuation();
     }
 }

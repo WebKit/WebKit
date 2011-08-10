@@ -1,5 +1,37 @@
 2011-08-10  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: auto-completion for string literals doesn't work
+        https://bugs.webkit.org/show_bug.cgi?id=65701
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InjectedScript.cpp:
+        (WebCore::InjectedScript::evaluateOnCallFrame):
+        * inspector/InjectedScript.h:
+        * inspector/InjectedScriptSource.js:
+        (.):
+        ():
+        * inspector/Inspector.json:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::evaluateOnCallFrame):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._completions.evaluated.getCompletions):
+        (WebInspector.ConsoleView.prototype._completions.evaluated):
+        (WebInspector.ConsoleView.prototype._completions.receivedPropertyNamesFromEval):
+        (WebInspector.ConsoleView.prototype._completions.receivedPropertyNames):
+        (WebInspector.ConsoleView.prototype._completions):
+        (WebInspector.ConsoleView.prototype.evalInInspectedWindow):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.PresenationCallFrame.prototype.evaluate):
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.evaluateInSelectedCallFrame):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.evaluateInSelectedCallFrame):
+
+2011-08-10  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: CSS editing file containing tabs leads to the whole file change in revision history.
         https://bugs.webkit.org/show_bug.cgi?id=65959
 

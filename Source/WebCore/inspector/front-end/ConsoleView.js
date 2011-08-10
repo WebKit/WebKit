@@ -401,8 +401,16 @@ WebInspector.ConsoleView.prototype = {
         if (dotNotation || bracketNotation)
             expressionString = expressionString.substr(0, lastIndex);
 
-        if (!expressionString && !prefix)
+        if (!expressionString && !prefix) {
+            completionsReadyCallback([]);
             return;
+        }
+
+        if (parseInt(expressionString) == expressionString) {
+            // User is entering float value, do not suggest anything.
+            completionsReadyCallback([]);
+            return;
+        }
 
         if (!expressionString && WebInspector.panels.scripts.paused)
             WebInspector.panels.scripts.getSelectedCallFrameVariables(receivedPropertyNames.bind(this));
@@ -411,12 +419,25 @@ WebInspector.ConsoleView.prototype = {
 
         function evaluated(result, wasThrown)
         {
-            if (wasThrown)
+            if (!result || wasThrown) {
+                completionsReadyCallback([]);
                 return;
-            var getCompletions = function()
+            }
+
+            function getCompletions(primitiveType)
             {
+                var object;
+                if (primitiveType === "string")
+                    object = new String();
+                else if (primitiveType === "number")
+                    object = new Number();
+                else if (primitiveType === "boolean")
+                    object = new Boolean();
+                else
+                    object = this;
+
                 var resultSet = {};
-                for (var o = this; o; o = o.__proto__) {
+                for (var o = object; o; o = o.__proto__) {
                     try {
                         var names = Object.getOwnPropertyNames(o);
                         for (var i = 0; i < names.length; ++i)
@@ -426,21 +447,34 @@ WebInspector.ConsoleView.prototype = {
                 }
                 return resultSet;
             }
-            result.callFunctionJSON(getCompletions, receivedPropertyNames.bind(this));
+
+            if (result.type === "object" || result.type === "function")
+                result.callFunctionJSON(getCompletions, receivedPropertyNames.bind(this));
+            else if (result.type === "string" || result.type === "number" || result.type === "boolean")
+                this.evalInInspectedWindow("(" + getCompletions + ")(\"" + result.type + "\")", "completion", undefined, true, true, receivedPropertyNamesFromEval.bind(this));
+        }
+
+        function receivedPropertyNamesFromEval(result, wasThrown)
+        {
+            if (result && !wasThrown)
+                receivedPropertyNames.call(this, result.value);
+            else
+                completionsReadyCallback([]);
         }
 
         function receivedPropertyNames(propertyNames)
         {
             RuntimeAgent.releaseObjectGroup("completion");
-            if (!propertyNames)
+            if (!propertyNames) {
+                completionsReadyCallback([]);
                 return;
+            }
             var includeCommandLineAPI = (!dotNotation && !bracketNotation);
             if (includeCommandLineAPI) {
                 const commandLineAPI = ["dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear"];
                 for (var i = 0; i < commandLineAPI.length; ++i)
                     propertyNames[commandLineAPI[i]] = true;
             }
-
             this._reportCompletions(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, Object.keys(propertyNames));
         }
     },
@@ -586,10 +620,10 @@ WebInspector.ConsoleView.prototype = {
         }
     },
 
-    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, evalAsJSONValue, callback)
+    evalInInspectedWindow: function(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, returnByValue, callback)
     {
         if (WebInspector.panels.scripts && WebInspector.panels.scripts.paused) {
-            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, callback);
+            WebInspector.panels.scripts.evaluateInSelectedCallFrame(expression, objectGroup, includeCommandLineAPI, returnByValue, callback);
             return;
         }
 
@@ -600,10 +634,18 @@ WebInspector.ConsoleView.prototype = {
 
         function evalCallback(error, result, wasThrown)
         {
-            if (!error)
+            if (error) {
+                console.error(error);
+                callback(null);
+                return;
+            }
+
+            if (returnByValue && !wasThrown)
+                callback(result, wasThrown);
+            else
                 callback(WebInspector.RemoteObject.fromPayload(result), wasThrown);
         }
-        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, this._currentEvaluationContextId(), evalAsJSONValue, evalCallback);
+        RuntimeAgent.evaluate(expression, objectGroup, includeCommandLineAPI, doNotPauseOnExceptions, this._currentEvaluationContextId(), returnByValue, evalCallback);
     },
 
     _enterKeyPressed: function(event)
@@ -626,6 +668,9 @@ WebInspector.ConsoleView.prototype = {
         var self = this;
         function printResult(result, wasThrown)
         {
+            if (!result)
+                return;
+
             self.prompt.history.push(str);
             self.prompt.historyOffset = 0;
             self.prompt.text = "";
