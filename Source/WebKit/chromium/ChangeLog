@@ -1,3 +1,9 @@
+2011-08-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Rolled DEPS 95813:96009 to pick data url timing fix.
+
+        * DEPS:
+
 2011-08-10  Peter Kasting  <pkasting@google.com>
 
         [Chromium] Name an enum used in some template arguments.
