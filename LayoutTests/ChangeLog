@@ -1,5 +1,17 @@
 2011-08-10  Yuta Kitamura  <yutak@chromium.org>
 
+        WebSocket: Add binaryType attribute
+        https://bugs.webkit.org/show_bug.cgi?id=65967
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hixie76/undefined-attributes-expected.txt: Added.
+        * http/tests/websocket/tests/hixie76/undefined-attributes.html: Added.
+        * http/tests/websocket/tests/hybi/binary-type-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/binary-type.html: Added.
+
+2011-08-10  Yuta Kitamura  <yutak@chromium.org>
+
         WebSocket: Accept multiple subprotocols
         https://bugs.webkit.org/show_bug.cgi?id=65247
 

@@ -58,6 +58,9 @@ module websockets {
         attribute EventListener onerror;
         attribute EventListener onclose;
 
+        attribute [ConvertNullStringTo=Undefined] DOMString binaryType
+            setter raises(DOMException);
+
         [RequiresAllArguments] boolean send(in DOMString data) raises(DOMException);
         void close();
 

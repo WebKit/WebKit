@@ -135,6 +135,7 @@ WebSocket::WebSocket(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
     , m_state(CONNECTING)
     , m_bufferedAmountAfterClose(0)
+    , m_binaryType(BinaryTypeBlob)
 {
 }
 
@@ -289,6 +290,36 @@ unsigned long WebSocket::bufferedAmount() const
     else if (m_state == CLOSING)
         return m_channel->bufferedAmount() + m_bufferedAmountAfterClose;
     return m_bufferedAmountAfterClose;
+}
+
+String WebSocket::binaryType() const
+{
+    if (m_channel->useHixie76Protocol())
+        return String();
+    switch (m_binaryType) {
+    case BinaryTypeBlob:
+        return "blob";
+    case BinaryTypeArrayBuffer:
+        return "arraybuffer";
+    }
+    ASSERT_NOT_REACHED();
+    return String();
+}
+
+void WebSocket::setBinaryType(const String& binaryType, ExceptionCode& ec)
+{
+    if (m_channel->useHixie76Protocol())
+        return;
+    if (binaryType == "blob") {
+        m_binaryType = BinaryTypeBlob;
+        return;
+    }
+    if (binaryType == "arraybuffer") {
+        m_binaryType = BinaryTypeArrayBuffer;
+        return;
+    }
+    ec = SYNTAX_ERR;
+    return;
 }
 
 ScriptExecutionContext* WebSocket::scriptExecutionContext() const

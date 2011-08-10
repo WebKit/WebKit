@@ -74,6 +74,9 @@ namespace WebCore {
         State readyState() const;
         unsigned long bufferedAmount() const;
 
+        String binaryType() const;
+        void setBinaryType(const String& binaryType, ExceptionCode&);
+
         DEFINE_ATTRIBUTE_EVENT_LISTENER(open);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(message);
         DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
@@ -107,12 +110,18 @@ namespace WebCore {
         virtual EventTargetData* eventTargetData();
         virtual EventTargetData* ensureEventTargetData();
 
+        enum BinaryType {
+            BinaryTypeBlob,
+            BinaryTypeArrayBuffer
+        };
+
         RefPtr<ThreadableWebSocketChannel> m_channel;
 
         State m_state;
         KURL m_url;
         EventTargetData m_eventTargetData;
         unsigned long m_bufferedAmountAfterClose;
+        BinaryType m_binaryType;
     };
 
 } // namespace WebCore

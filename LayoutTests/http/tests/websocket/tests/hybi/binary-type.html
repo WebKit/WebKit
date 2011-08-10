@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../../js-test-resources/js-test-style.css">
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script>
+description("Test WebSocket.binaryType attribute.");
+
+if (window.layoutTestController)
+    layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
+
+var ws = new WebSocket("ws://localhost:8880/websocket/tests/hybi/simple");
+shouldBeEqualToString("ws.binaryType", "blob");
+
+ws.binaryType = "arraybuffer";
+shouldBeEqualToString("ws.binaryType", "arraybuffer");
+
+ws.binaryType = "blob";
+shouldBeEqualToString("ws.binaryType", "blob");
+
+shouldThrow("ws.binaryType = 'Blob'", "'Error: SYNTAX_ERR: DOM Exception 12'");
+shouldThrow("ws.binaryType = 'ArrayBuffer'", "'Error: SYNTAX_ERR: DOM Exception 12'");
+shouldThrow("ws.binaryType = ''", "'Error: SYNTAX_ERR: DOM Exception 12'");
+
+var successfullyParsed = true;
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>

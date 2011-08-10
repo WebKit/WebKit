@@ -1,0 +1,14 @@
+Test WebSocket.binaryType attribute.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS ws.binaryType is "blob"
+PASS ws.binaryType is "arraybuffer"
+PASS ws.binaryType is "blob"
+PASS ws.binaryType = 'Blob' threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS ws.binaryType = 'ArrayBuffer' threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS ws.binaryType = '' threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

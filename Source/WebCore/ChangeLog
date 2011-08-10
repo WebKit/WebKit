@@ -1,5 +1,25 @@
 2011-08-10  Yuta Kitamura  <yutak@chromium.org>
 
+        WebSocket: Add binaryType attribute
+        https://bugs.webkit.org/show_bug.cgi?id=65967
+
+        Reviewed by Kent Tamura.
+
+        Add a new attribute "binaryType" to WebSocket. It controls the data type of MessageEvent
+        for WebSocket's binary frames.
+
+        Tests: http/tests/websocket/tests/hixie76/undefined-attributes.html
+               http/tests/websocket/tests/hybi/binary-type.html
+
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::WebSocket):
+        (WebCore::WebSocket::binaryType):
+        (WebCore::WebSocket::setBinaryType):
+        * websockets/WebSocket.h:
+        * websockets/WebSocket.idl:
+
+2011-08-10  Yuta Kitamura  <yutak@chromium.org>
+
         WebSocket: Accept multiple subprotocols
         https://bugs.webkit.org/show_bug.cgi?id=65247
 

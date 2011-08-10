@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../../js-test-resources/js-test-style.css">
+<script src="../../../../js-test-resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Test WebSocket attributes which should not be defined when hixie-76 protocol is used.");
+
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/simple");
+
+shouldBeUndefined("ws.binaryType");
+
+var successfullyParsed = true;
+</script>
+<script src="../../../../js-test-resources/js-test-post.js"></script>
+</body>
+</html>
