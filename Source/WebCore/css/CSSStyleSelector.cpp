@@ -4768,8 +4768,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setLocale(primitiveValue->getStringValue());
         FontDescription fontDescription = m_style->fontDescription();
         fontDescription.setScript(localeToScriptCodeForFontSelection(m_style->locale()));
-        if (m_style->setFontDescription(fontDescription))
-            m_fontDirty = true;
+        setFontDescription(fontDescription);
         return;
     }
     case CSSPropertyWebkitBorderFit:
