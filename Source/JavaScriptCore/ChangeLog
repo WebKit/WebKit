@@ -1,5 +1,22 @@
 2011-08-09  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT does not speculative integers as aggressively as it should
+        https://bugs.webkit.org/show_bug.cgi?id=65949
+
+        Reviewed by Gavin Barraclough.
+        
+        Added a tree walk to propagate integer predictions through arithmetic
+        expressions.
+        
+        This is a 71% speed-up on Kraken's imaging-gaussian-blur, which
+        translates to a 19% speed-up on Kraken overall.  It's neutral on
+        other benchmarks.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::predictInt32):
+
+2011-08-09  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT has no way of propagating predictions to loads and calls
         https://bugs.webkit.org/show_bug.cgi?id=65883
 

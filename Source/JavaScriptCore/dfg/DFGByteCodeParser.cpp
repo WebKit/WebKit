@@ -435,15 +435,32 @@ private:
 
     void predictInt32(NodeIndex nodeIndex)
     {
-        Node* nodePtr = &m_graph[nodeIndex];
-
-        if (nodePtr->op == ValueToNumber)
-            nodePtr = &m_graph[nodePtr->child1()];
-
-        if (nodePtr->op == ValueToInt32)
-            nodePtr = &m_graph[nodePtr->child1()];
+        ASSERT(m_reusableNodeStack.isEmpty());
+        m_reusableNodeStack.append(&m_graph[nodeIndex]);
         
-        m_graph.predict(*nodePtr, PredictInt32);
+        do {
+            Node* nodePtr = m_reusableNodeStack.last();
+            m_reusableNodeStack.removeLast();
+            
+            if (nodePtr->op == ValueToNumber)
+                nodePtr = &m_graph[nodePtr->child1()];
+            
+            if (nodePtr->op == ValueToInt32)
+                nodePtr = &m_graph[nodePtr->child1()];
+            
+            switch (nodePtr->op) {
+            case ArithAdd:
+            case ArithSub:
+            case ArithMul:
+            case ValueAdd:
+                m_reusableNodeStack.append(&m_graph[nodePtr->child1()]);
+                m_reusableNodeStack.append(&m_graph[nodePtr->child2()]);
+                break;
+            default:
+                m_graph.predict(*nodePtr, PredictInt32);
+                break;
+            }
+        } while (!m_reusableNodeStack.isEmpty());
     }
 
     JSGlobalData* m_globalData;
@@ -516,6 +533,8 @@ private:
     };
     Vector<PhiStackEntry, 16> m_argumentPhiStack;
     Vector<PhiStackEntry, 16> m_localPhiStack;
+    
+    Vector<Node*, 16> m_reusableNodeStack;
 };
 
 #define NEXT_OPCODE(name) \
