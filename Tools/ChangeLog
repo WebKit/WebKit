@@ -3,6 +3,17 @@
         Clean up ChromiumDriver a little
         https://bugs.webkit.org/show_bug.cgi?id=65995
 
+        Unreviewed.
+
+        Fix NRWT for chromium.  Silly python.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
+2011-08-10  Eric Seidel  <eric@webkit.org>
+
+        Clean up ChromiumDriver a little
+        https://bugs.webkit.org/show_bug.cgi?id=65995
+
         Reviewed by Adam Barth.
 
         - We no longer support threading, so remove threading specific code.
