@@ -4250,7 +4250,10 @@ skip_id_custom_self:
         uint32_t argCount = 0;
         if (!arguments) {
             argCount = (uint32_t)(callFrame->argumentCount());
-            argCount = min<uint32_t>(argCount, Arguments::MaxArguments);
+            if (argCount > Arguments::MaxArguments) {
+                exceptionValue = createStackOverflowError(callFrame);
+                goto vm_throw;
+            }
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -4277,7 +4280,10 @@ skip_id_custom_self:
             if (asObject(arguments)->classInfo() == &Arguments::s_info) {
                 Arguments* args = asArguments(arguments);
                 argCount = args->numProvidedArguments(callFrame);
-                argCount = min<uint32_t>(argCount, Arguments::MaxArguments);
+                if (argCount > Arguments::MaxArguments) {
+                    exceptionValue = createStackOverflowError(callFrame);
+                    goto vm_throw;
+                }
                 int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
                 Register* newEnd = callFrame->registers() + sizeDelta;
                 if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -4288,7 +4294,10 @@ skip_id_custom_self:
             } else if (isJSArray(&callFrame->globalData(), arguments)) {
                 JSArray* array = asArray(arguments);
                 argCount = array->length();
-                argCount = min<uint32_t>(argCount, Arguments::MaxArguments);
+                if (argCount > Arguments::MaxArguments) {
+                    exceptionValue = createStackOverflowError(callFrame);
+                    goto vm_throw;
+                }
                 int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
                 Register* newEnd = callFrame->registers() + sizeDelta;
                 if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -4299,7 +4308,10 @@ skip_id_custom_self:
             } else {
                 JSObject* argObject = asObject(arguments);
                 argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
-                argCount = min<uint32_t>(argCount, Arguments::MaxArguments);
+                if (argCount > Arguments::MaxArguments) {
+                    exceptionValue = createStackOverflowError(callFrame);
+                    goto vm_throw;
+                }
                 int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
                 Register* newEnd = callFrame->registers() + sizeDelta;
                 if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {

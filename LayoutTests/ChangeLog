@@ -1,3 +1,16 @@
+2011-08-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSC should always throw when function arg list is too long
+        https://bugs.webkit.org/show_bug.cgi?id=65869
+
+        Reviewed by Oliver Hunt.
+
+        Changed the tests to make sure passing too many function arguments throws an exception 
+        rather than truncating the arguments.
+
+        * fast/js/function-apply-many-args-expected.txt:
+        * fast/js/script-tests/function-apply-many-args.js:
+
 2011-08-10  James Robinson  <jamesr@chromium.org>
 
         Update chromium gpu baselines for r92255

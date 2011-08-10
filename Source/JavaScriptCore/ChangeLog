@@ -1,3 +1,23 @@
+2011-08-10  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        JSC should always throw when function arg list is too long
+        https://bugs.webkit.org/show_bug.cgi?id=65869
+
+        Reviewed by Oliver Hunt.
+
+        Changed the behavior of the interpreter and JIT to throw an exception 
+        when too many arguments are passed rather than truncating the list.  Added 
+        a new method to create a "Too many arguments." exception used by this 
+        new functionality.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * runtime/ExceptionHelpers.cpp:
+        (JSC::createTooManyParamsError):
+        * runtime/ExceptionHelpers.h:
+
 2011-08-10  Oliver Hunt  <oliver@apple.com>
 
         Make GC checks more aggressive in release builds

@@ -2502,7 +2502,10 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
     if (!arguments) {
         int providedParams = callFrame->registers()[RegisterFile::ArgumentCount].i() - 1;
         argCount = providedParams;
-        argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));
+        if (argCount > Arguments::MaxArguments) {
+            stackFrame.globalData->exception = createStackOverflowError(callFrame);
+            VM_THROW_EXCEPTION();
+        }
         int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
         Register* newEnd = callFrame->registers() + sizeDelta;
         if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -2536,7 +2539,10 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
         if (asObject(arguments)->classInfo() == &Arguments::s_info) {
             Arguments* argsObject = asArguments(arguments);
             argCount = argsObject->numProvidedArguments(callFrame);
-            argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));
+            if (argCount > Arguments::MaxArguments) {
+                stackFrame.globalData->exception = createStackOverflowError(callFrame);
+                VM_THROW_EXCEPTION();
+            }
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -2547,7 +2553,10 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
         } else if (isJSArray(&callFrame->globalData(), arguments)) {
             JSArray* array = asArray(arguments);
             argCount = array->length();
-            argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));
+            if (argCount > Arguments::MaxArguments) {
+                stackFrame.globalData->exception = createStackOverflowError(callFrame);
+                VM_THROW_EXCEPTION();
+            }
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -2558,7 +2567,10 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
         } else {
             JSObject* argObject = asObject(arguments);
             argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
-            argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));
+            if (argCount > Arguments::MaxArguments) {
+                stackFrame.globalData->exception = createStackOverflowError(callFrame);
+                VM_THROW_EXCEPTION();
+            }
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
