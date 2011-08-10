@@ -1,3 +1,14 @@
+2011-08-09  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT passes the this argument to constructors even though
+        it's not necessary
+        https://bugs.webkit.org/show_bug.cgi?id=65943
+
+        Reviewed by Gavin Barraclough.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+
 2011-08-09  Chao-ying Fu  <fu@mips.com>
 
         Fix one MIPS instruction to call JITStubThunked_##op
