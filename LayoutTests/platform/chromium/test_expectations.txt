@@ -3705,3 +3705,7 @@ BUGWK65862 MAC DEBUG : storage/indexeddb/index-cursor.html = PASS TIMEOUT
 
 // Caused by r92618
 BUGWK65874 : fast/js/preventExtensions.html = TEXT
+
+// Caused by r92704
+BUGWK65951 WIN DEBUG : webaudio/audiobuffersource.html = CRASH
+BUGWK65951 WIN DEBUG : webaudio/mixing.html = CRASH

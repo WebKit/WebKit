@@ -1,3 +1,9 @@
+2011-08-09  Jian Li  <jianli@chromium.org>
+
+        Unreviewed, mark 2 webaudio tests as failed on chromium win.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-09  Kent Tamura  <tkent@chromium.org>
 
         Move <input type=month> tests to fast/forms/month/
