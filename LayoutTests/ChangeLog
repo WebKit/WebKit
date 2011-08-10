@@ -1,3 +1,13 @@
+2011-08-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: console messages markers are lost in Resources panel after page reload
+        https://bugs.webkit.org/show_bug.cgi?id=60701
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/resource-tree/resource-tree-errors-reload-expected.txt: Added.
+        * http/tests/inspector/resource-tree/resource-tree-errors-reload.html: Added.
+
 2011-08-10  Adam Barth  <abarth@webkit.org>
 
         Update expectations for this test.  It's just a minor flake.

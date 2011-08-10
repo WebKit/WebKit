@@ -1,3 +1,21 @@
+2011-08-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: console messages markers are lost in Resources panel after page reload
+        https://bugs.webkit.org/show_bug.cgi?id=60701
+
+        Reviewed by Pavel Feldman.
+
+        Test: http/tests/inspector/resource-tree/resource-tree-errors-reload.html
+
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        (WebInspector.ResourceTreeModel.prototype._consoleMessageAdded):
+        (WebInspector.ResourceTreeModel.prototype._addPendingConsoleMessage):
+        (WebInspector.ResourceTreeModel.prototype._addPendingConsoleMessagesToResource):
+        (WebInspector.ResourceTreeModel.prototype._addConsoleMessageToResource):
+        (WebInspector.ResourceTreeModel.prototype._consoleCleared):
+        (WebInspector.ResourceTreeModel.prototype._bindResourceURL):
+
 2011-08-10  Lars Knudsen  <lars.knudsen@nokia.com>
 
         Add device specific settings to support viewport computing

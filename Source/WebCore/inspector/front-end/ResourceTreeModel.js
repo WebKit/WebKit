@@ -40,6 +40,8 @@ WebInspector.ResourceTreeModel = function(networkManager)
 
     this.frontendReused();
     InspectorBackend.registerDomainDispatcher("Page", new WebInspector.PageDispatcher(this));
+    
+    this._pendingConsoleMessages = {};
 }
 
 WebInspector.ResourceTreeModel.EventTypes = {
@@ -230,9 +232,33 @@ WebInspector.ResourceTreeModel.prototype = {
     {
         var msg = event.data;
         var resource = this.resourceForURL(msg.url);
-        if (!resource)
-            return;
+        if (resource)
+            this._addConsoleMessageToResource(msg, resource);
+        else
+            this._addPendingConsoleMessage(msg);
+    },
 
+    _addPendingConsoleMessage: function(msg)
+    {
+        if (!msg.url)
+            return;
+        if (!this._pendingConsoleMessages[msg.url])
+            this._pendingConsoleMessages[msg.url] = [];
+        this._pendingConsoleMessages[msg.url].push(msg);
+    },
+
+    _addPendingConsoleMessagesToResource: function(resource)
+    {
+        var messages = this._pendingConsoleMessages[resource.url];
+        if (messages) {
+            for (var i = 0; i < messages.length; i++)
+                this._addConsoleMessageToResource(messages[i], resource);
+            delete this._pendingConsoleMessages[resource.url];
+        }
+    },
+
+    _addConsoleMessageToResource: function(msg, resource)
+    {
         switch (msg.level) {
         case WebInspector.ConsoleMessage.MessageLevel.Warning:
             resource.warnings += msg.repeatDelta;
@@ -250,6 +276,8 @@ WebInspector.ResourceTreeModel.prototype = {
         {
             resource.clearErrorsAndWarnings();
         }
+        
+        this._pendingConsoleMessages = {};
         this.forAllResources(callback);
     },
 
@@ -261,6 +289,8 @@ WebInspector.ResourceTreeModel.prototype = {
     _bindResourceURL: function(resource)
     {
         this._resourcesByURL[resource.url] = resource;
+        
+        this._addPendingConsoleMessagesToResource(resource);
     },
 
     _clearChildFramesAndResources: function(frameId, loaderToPreserveId)
