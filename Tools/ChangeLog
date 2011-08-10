@@ -1,3 +1,19 @@
+2011-08-10  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt][WK2] MiniBrowser is firing twice the QDesktopWebView::mousePressEvent method
+        https://bugs.webkit.org/show_bug.cgi?id=65875
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        For some reason, QWidget send fake mouse event on some platform, under certains conditions.
+
+        This causes mouse events to be sent twice in some cases. We work around the problem
+        by defining the first touch point to be a primary touch point (case which hit some
+        weird condition in QWidget, skipping the generation of fake mouse events).
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::notify):
+
 2011-08-10  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66004

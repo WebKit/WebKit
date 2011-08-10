@@ -129,8 +129,11 @@ bool MiniBrowserApplication::notify(QObject* target, QEvent* event)
                 it.value().setState(Qt::TouchPointStationary);
         }
 
+        QList<QTouchEvent::TouchPoint> touchPoints = m_touchPoints.values();
+        QTouchEvent::TouchPoint& firstPoint = touchPoints.first();
+        firstPoint.setState(firstPoint.state() | Qt::TouchPointPrimary);
         m_sendingFakeTouchEvent = true;
-        qt_translateRawTouchEvent(0, QTouchEvent::TouchScreen, m_touchPoints.values());
+        qt_translateRawTouchEvent(0, QTouchEvent::TouchScreen, touchPoints);
         m_sendingFakeTouchEvent = false;
 
         // Get rid of touch-points that are no longer valid
