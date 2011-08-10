@@ -1,3 +1,12 @@
+2011-08-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [REGRESSION] Editor lost after committing a CSS property value for inline style
+        https://bugs.webkit.org/show_bug.cgi?id=65918
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/styles/styles-commit-editing.html:
+
 2011-08-10  Kent Tamura  <tkent@chromium.org>
 
         Move <input type=datetime> tests to fast/forms/datetime/

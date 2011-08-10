@@ -34,6 +34,10 @@ function test()
 
     function step2()
     {
+        if (!WebInspector.isEditingAnyField()) {
+            InspectorTest.addResult("No new property editor active!");
+            InspectorTest.completeTest();
+        }
         InspectorTest.selectNodeWithId("other");
         InspectorTest.runAfterPendingDispatches(step3);
     }

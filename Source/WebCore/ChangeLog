@@ -1,3 +1,19 @@
+2011-08-10  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: [REGRESSION] Editor lost after committing a CSS property value for inline style
+        https://bugs.webkit.org/show_bug.cgi?id=65918
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._innerUpdate.stylesCallback):
+        (WebInspector.StylesSidebarPane.prototype._innerUpdate.computedStyleCallback):
+        (WebInspector.StylesSidebarPane.prototype._innerUpdate):
+        (WebInspector.StylePropertyTreeElement.prototype):
+        (WebInspector.StylePropertyTreeElement.prototype.event):
+        (WebInspector.StylePropertyTreeElement.prototype.styleText.updateInterface.majorChange.isRevert.parentPane):
+        (WebInspector.StylePropertyTreeElement.prototype.styleText.updateInterface.majorChange.isRevert):
+
 2011-08-10  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Add binaryType attribute

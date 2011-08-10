@@ -239,13 +239,15 @@ WebInspector.StylesSidebarPane.prototype = {
         this._innerUpdate(refresh, null);
     },
 
-    _innerUpdate: function(refresh, editedSection)
+    _innerUpdate: function(refresh, editedSection, userCallback)
     {
         var node = this.node;
         if (!node) {
             this._sectionsContainer.removeChildren();
             this._computedStylePane.bodyElement.removeChildren();
             this.sections = {};
+            if (userCallback)
+                userCallback();
             return;
         }
 
@@ -253,12 +255,16 @@ WebInspector.StylesSidebarPane.prototype = {
         {
             if (this.node === node && styles)
                 this._rebuildUpdate(node, styles);
+            if (userCallback)
+                userCallback();
         }
 
         function computedStyleCallback(computedStyle)
         {
             if (this.node === node && computedStyle)
                 this._refreshUpdate(node, computedStyle, editedSection);
+            if (userCallback)
+                userCallback();
         }
 
         if (refresh)
@@ -1623,16 +1629,14 @@ WebInspector.StylePropertyTreeElement.prototype = {
         this.tooltip = this.property.propertyText;
     },
 
-    _updateAll: function()
+    _updatePane: function(userCallback)
     {
-        if (!this.treeOutline)
-            return;
-        if (this.treeOutline.section && this.treeOutline.section.pane)
-            this.treeOutline.section.pane._innerUpdate(true, this.treeOutline.section);
-        else if (this.treeOutline.section)
-            this.treeOutline.section.update(true);
-        else
-            this.updateTitle(); // FIXME: this will not show new properties. But we don't hit this case yet.
+        if (this.treeOutline && this.treeOutline.section && this.treeOutline.section.pane)
+            this.treeOutline.section.pane._innerUpdate(true, this.treeOutline.section, userCallback);
+        else  {
+            if (userCallback)
+                userCallback();
+        }
     },
 
     toggleEnabled: function(event)
@@ -1650,7 +1654,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (this.treeOutline.section && this.treeOutline.section.pane)
                 this.treeOutline.section.pane.dispatchEventToListeners("style property toggled");
 
-            this._updateAll();
+            this._updatePane();
         }
 
         this.property.setDisabled(disabled, callback.bind(this));
@@ -2092,6 +2096,12 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
     applyStyleText: function(styleText, updateInterface, majorChange, isRevert)
     {
+        function userOperationFinishedCallback(parentPane, updateInterface)
+        {
+            if (updateInterface)
+                delete parentPane._userOperation;
+        }
+
         // Leave a way to cancel editing after incremental changes.
         if (!isRevert && !updateInterface && !this._hasBeenModifiedIncrementally()) {
             // Remember the rule's original CSS text on [Page](Up|Down), so it can be restored
@@ -2111,16 +2121,17 @@ WebInspector.StylePropertyTreeElement.prototype = {
         }
 
         var currentNode = this._parentPane.node;
-        this._parentPane._userOperation = true;
+        if (updateInterface)
+            this._parentPane._userOperation = true;
 
-        function callback(originalPropertyText, newStyle)
+        function callback(userCallback, originalPropertyText, newStyle)
         {
-            delete this._parentPane._userOperation;
             if (!newStyle) {
                 if (updateInterface) {
                     // It did not apply, cancel editing.
                     this._revertStyleUponEditingCanceled(originalPropertyText);
                 }
+                userCallback();
                 return;
             }
 
@@ -2131,15 +2142,19 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (section && section.pane)
                 section.pane.dispatchEventToListeners("style edited");
 
-            if (updateInterface && currentNode === section.pane.node)
-                this._updateAll();
+            if (updateInterface && currentNode === section.pane.node) {
+                this._updatePane(userCallback);
+                return;
+            }
+
+            userCallback();
         }
 
         // Append a ";" if the new text does not end in ";".
         // FIXME: this does not handle trailing comments.
         if (styleText.length && !/;\s*$/.test(styleText))
             styleText += ";";
-        this.property.setText(styleText, majorChange, callback.bind(this, this.originalPropertyText));
+        this.property.setText(styleText, majorChange, callback.bind(this, userOperationFinishedCallback.bind(null, this._parentPane, updateInterface), this.originalPropertyText));
     }
 }
 
