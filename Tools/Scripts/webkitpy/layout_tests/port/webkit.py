@@ -220,7 +220,7 @@ class WebKitPort(Port):
         entries = self._filesystem.glob(self._webkit_baseline_path('*'))
         dirs_to_skip = []
         for entry in entries:
-            if self._filesystem.isdir(entry) and not entry in self.baseline_search_path():
+            if self._filesystem.isdir(entry) and entry not in self.baseline_search_path():
                 basename = self._filesystem.basename(entry)
                 dirs_to_skip.append('platform/%s' % basename)
         return dirs_to_skip
@@ -228,17 +228,19 @@ class WebKitPort(Port):
     def _runtime_feature_list(self):
         """Return the supported features of DRT. If a port doesn't support
         this DRT switch, it has to override this method to return None"""
-        driver_path = self._path_to_driver()
-        feature_list = ' '.join(os.popen(driver_path + " --print-supported-features 2>&1").readlines())
-        if "SupportedFeatures:" in feature_list:
-            return feature_list
-        return None
+        supported_features_command = [self._path_to_driver(), '--print-supported-features']
+        output = self._executive.run_command(supported_features_command)
+        # Note: win/DumpRenderTree.cpp does not print a leading space before the features_string.
+        match_object = re.match("SupportedFeatures:\s*(?P<features_string>.*)\s*", output)
+        if not match_object:
+            return []
+        return match_object.group('features_string').split(' ')
 
     def _supported_symbol_list(self):
         """Return the supported symbols of WebCore."""
         webcore_library_path = self._path_to_webcore_library()
         if not webcore_library_path:
-            return None
+            return []
         symbol_list = ' '.join(os.popen("nm " + webcore_library_path).readlines())
         return symbol_list
 

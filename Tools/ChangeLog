@@ -1,5 +1,25 @@
 2011-08-10  Eric Seidel  <eric@webkit.org>
 
+        WIN: NRWT runs compositing tests on configurations that don't support compositing
+        https://bugs.webkit.org/show_bug.cgi?id=64472
+
+        Reviewed by Adam Barth.
+
+        I think the code was just wrong.  It was never splitting the string
+        into list pieces before.
+        I've now tested the supported_features code and theoretically it
+        should now work with Windows DRT.
+
+        I also made the list-lookup functions always return lists, to make
+        it possible to clean up the list-transform code in the future
+        (I opted not to do that cleanup in this patch, but at least now
+        both types of feature lookup functions match return types.)
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/port/webkit_unittest.py:
+
+2011-08-10  Eric Seidel  <eric@webkit.org>
+
         Clean up ChromiumDriver a little
         https://bugs.webkit.org/show_bug.cgi?id=65995
 

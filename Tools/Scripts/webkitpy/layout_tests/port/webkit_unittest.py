@@ -101,6 +101,13 @@ class WebKitPortTest(port_testcase.PortTestCase):
         result_directories = set(TestWebKitPort(supported_symbols, None)._skipped_tests_for_unsupported_features())
         self.assertEqual(result_directories, expected_directories)
 
+    def test_runtime_feature_list(self):
+        port = WebKitPort(executive=MockExecutive())
+        port._executive.run_command = lambda command, cwd=None: "Nonsense"
+        self.assertEquals(port._runtime_feature_list(), [])
+        port._executive.run_command = lambda command, cwd=None: "SupportedFeatures:foo bar"
+        self.assertEquals(port._runtime_feature_list(), ['foo', 'bar'])
+
     def test_skipped_directories_for_features(self):
         supported_features = ["Accelerated Compositing", "Foo Feature"]
         expected_directories = set(["animations/3d", "transforms/3d"])
