@@ -728,7 +728,7 @@ class Port(object):
     def test_configuration(self):
         """Returns the current TestConfiguration for the port."""
         if not self._test_configuration:
-            self._test_configuration = TestConfiguration(self)
+            self._test_configuration = TestConfiguration.from_port(self)
         return self._test_configuration
 
     # FIXME: Belongs on a Platform object.

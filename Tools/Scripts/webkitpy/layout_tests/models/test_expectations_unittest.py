@@ -507,11 +507,11 @@ class TestExpectationSerializerTests(unittest.TestCase):
         expectation_line.name = 'test/name/for/realz.html'
         expectation_line.parsed_expectations = set([IMAGE])
         self.assertEqual(self._serializer.to_string(expectation_line), None)
-        expectation_line.matching_configurations = set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')])
+        expectation_line.matching_configurations = set([TestConfiguration('xp', 'x86', 'release', 'cpu')])
         self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP RELEASE CPU : test/name/for/realz.html = IMAGE')
-        expectation_line.matching_configurations = set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'release', 'gpu')])
+        expectation_line.matching_configurations = set([TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'release', 'gpu')])
         self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP RELEASE : test/name/for/realz.html = IMAGE')
-        expectation_line.matching_configurations = set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'debug', 'gpu')])
+        expectation_line.matching_configurations = set([TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'debug', 'gpu')])
         self.assertEqual(self._serializer.to_string(expectation_line), 'BUGX XP RELEASE CPU : test/name/for/realz.html = IMAGE\nBUGX XP DEBUG GPU : test/name/for/realz.html = IMAGE')
 
     def test_parsed_expectations_string(self):
@@ -592,9 +592,9 @@ class TestExpectationSerializerTests(unittest.TestCase):
             if reconstitute:
                 reconstitute_only_these.append(expectation_line)
 
-        add_line(set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')]), False)
-        add_line(set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'release', 'gpu')]), True)
-        add_line(set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'), TestConfiguration(None, 'xp', 'x86', 'debug', 'gpu')]), False)
+        add_line(set([TestConfiguration('xp', 'x86', 'release', 'cpu')]), False)
+        add_line(set([TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'release', 'gpu')]), True)
+        add_line(set([TestConfiguration('xp', 'x86', 'release', 'cpu'), TestConfiguration('xp', 'x86', 'debug', 'gpu')]), False)
         serialized = TestExpectationSerializer.list_to_string(lines, self._converter)
         self.assertEquals(serialized, "BUGX XP RELEASE CPU : Yay = IMAGE\nBUGX XP RELEASE : Yay = IMAGE\nBUGX XP RELEASE CPU : Yay = IMAGE\nBUGX XP DEBUG GPU : Yay = IMAGE")
         serialized = TestExpectationSerializer.list_to_string(lines, self._converter, reconstitute_only_these=reconstitute_only_these)
@@ -612,26 +612,26 @@ class TestExpectationSerializerTests(unittest.TestCase):
 
 class TestExpectationEditorTests(unittest.TestCase):
     WIN_RELEASE_CPU_CONFIGS = set([
-        TestConfiguration(None, 'vista', 'x86', 'release', 'cpu'),
-        TestConfiguration(None, 'win7', 'x86', 'release', 'cpu'),
-        TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'),
+        TestConfiguration('vista', 'x86', 'release', 'cpu'),
+        TestConfiguration('win7', 'x86', 'release', 'cpu'),
+        TestConfiguration('xp', 'x86', 'release', 'cpu'),
     ])
 
     RELEASE_CONFIGS = set([
-        TestConfiguration(None, 'vista', 'x86', 'release', 'cpu'),
-        TestConfiguration(None, 'win7', 'x86', 'release', 'cpu'),
-        TestConfiguration(None, 'xp', 'x86', 'release', 'cpu'),
-        TestConfiguration(None, 'vista', 'x86', 'release', 'gpu'),
-        TestConfiguration(None, 'win7', 'x86', 'release', 'gpu'),
-        TestConfiguration(None, 'xp', 'x86', 'release', 'gpu'),
-        TestConfiguration(None, 'snowleopard', 'x86', 'release', 'cpu'),
-        TestConfiguration(None, 'leopard', 'x86', 'release', 'cpu'),
-        TestConfiguration(None, 'snowleopard', 'x86', 'release', 'gpu'),
-        TestConfiguration(None, 'leopard', 'x86', 'release', 'gpu'),
-        TestConfiguration(None, 'lucid', 'x86', 'release', 'cpu'),
-        TestConfiguration(None, 'lucid', 'x86_64', 'release', 'cpu'),
-        TestConfiguration(None, 'lucid', 'x86', 'release', 'gpu'),
-        TestConfiguration(None, 'lucid', 'x86_64', 'release', 'gpu'),
+        TestConfiguration('vista', 'x86', 'release', 'cpu'),
+        TestConfiguration('win7', 'x86', 'release', 'cpu'),
+        TestConfiguration('xp', 'x86', 'release', 'cpu'),
+        TestConfiguration('vista', 'x86', 'release', 'gpu'),
+        TestConfiguration('win7', 'x86', 'release', 'gpu'),
+        TestConfiguration('xp', 'x86', 'release', 'gpu'),
+        TestConfiguration('snowleopard', 'x86', 'release', 'cpu'),
+        TestConfiguration('leopard', 'x86', 'release', 'cpu'),
+        TestConfiguration('snowleopard', 'x86', 'release', 'gpu'),
+        TestConfiguration('leopard', 'x86', 'release', 'gpu'),
+        TestConfiguration('lucid', 'x86', 'release', 'cpu'),
+        TestConfiguration('lucid', 'x86_64', 'release', 'cpu'),
+        TestConfiguration('lucid', 'x86', 'release', 'gpu'),
+        TestConfiguration('lucid', 'x86_64', 'release', 'gpu'),
     ])
 
     def __init__(self, testFunc):
@@ -756,20 +756,20 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE"""
         editor = TestExpectationsEditor(expectation_lines, MockBugManager())
         test = "failures/expected/keyboard.html"
 
-        editor.remove_expectation(test, set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')]))
+        editor.remove_expectation(test, set([TestConfiguration('xp', 'x86', 'release', 'cpu')]))
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 XP RELEASE GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 XP DEBUG : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
-        editor.remove_expectation(test, set([TestConfiguration(None, 'xp', 'x86', 'debug', 'cpu')]))
+        editor.remove_expectation(test, set([TestConfiguration('xp', 'x86', 'debug', 'cpu')]))
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 XP GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
-        editor.remove_expectation(test, set([TestConfiguration(None, 'vista', 'x86', 'debug', 'gpu'), TestConfiguration(None, 'win7', 'x86', 'release', 'gpu')]))
+        editor.remove_expectation(test, set([TestConfiguration('vista', 'x86', 'debug', 'gpu'), TestConfiguration('win7', 'x86', 'release', 'gpu')]))
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 VISTA DEBUG CPU : failures/expected/keyboard.html = IMAGE
 BUGX1 WIN7 DEBUG GPU : failures/expected/keyboard.html = IMAGE
@@ -778,7 +778,7 @@ BUGX1 XP GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA RELEASE : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
-        editor.remove_expectation(test, set([TestConfiguration(None, 'xp', 'x86', 'debug', 'gpu'), TestConfiguration(None, 'xp', 'x86', 'release', 'gpu')]))
+        editor.remove_expectation(test, set([TestConfiguration('xp', 'x86', 'debug', 'gpu'), TestConfiguration('xp', 'x86', 'release', 'gpu')]))
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 VISTA DEBUG CPU : failures/expected/keyboard.html = IMAGE
 BUGX1 WIN7 RELEASE CPU : failures/expected/keyboard.html = IMAGE
@@ -786,7 +786,7 @@ BUGX1 WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA RELEASE : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
-        editor.remove_expectation(test, set([TestConfiguration(None, 'vista', 'x86', 'debug', 'cpu'), TestConfiguration(None, 'vista', 'x86', 'debug', 'gpu'), TestConfiguration(None, 'vista', 'x86', 'release', 'gpu')]))
+        editor.remove_expectation(test, set([TestConfiguration('vista', 'x86', 'debug', 'cpu'), TestConfiguration('vista', 'x86', 'debug', 'gpu'), TestConfiguration('vista', 'x86', 'release', 'gpu')]))
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 RELEASE CPU : failures/expected/keyboard.html = IMAGE
@@ -887,7 +887,7 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE"""
         editor = TestExpectationsEditor(expectation_lines, MockBugManager())
         test = "failures/expected/keyboard.html"
 
-        editor.update_expectation(test, set([TestConfiguration(None, 'xp', 'x86', 'release', 'cpu')]), set([IMAGE_PLUS_TEXT]), ['BUG_UPDATE1'])
+        editor.update_expectation(test, set([TestConfiguration('xp', 'x86', 'release', 'cpu')]), set([IMAGE_PLUS_TEXT]), ['BUG_UPDATE1'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 XP DEBUG CPU : failures/expected/keyboard.html = IMAGE
 BUGX1 XP GPU : failures/expected/keyboard.html = IMAGE
@@ -895,7 +895,7 @@ BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
 BUGX2 WIN : failures/expected/audio.html = IMAGE
 BUG_UPDATE1 XP RELEASE CPU : failures/expected/keyboard.html = IMAGE+TEXT""")
 
-        editor.update_expectation(test, set([TestConfiguration(None, 'xp', 'x86', 'debug', 'cpu')]), set([TEXT]), ['BUG_UPDATE2'])
+        editor.update_expectation(test, set([TestConfiguration('xp', 'x86', 'debug', 'cpu')]), set([TEXT]), ['BUG_UPDATE2'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 XP GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE

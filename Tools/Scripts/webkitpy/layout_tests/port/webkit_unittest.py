@@ -52,7 +52,7 @@ class TestWebKitPort(WebKitPort):
         WebKitPort.__init__(self, executive=executive, filesystem=filesystem, user=MockUser(), **kwargs)
 
     def all_test_configurations(self):
-        return [TestConfiguration(self)]
+        return [TestConfiguration.from_port(self)]
 
     def _runtime_feature_list(self):
         return self.feature_list

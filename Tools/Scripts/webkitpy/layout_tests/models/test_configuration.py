@@ -29,12 +29,20 @@
 
 
 class TestConfiguration(object):
-    def __init__(self, port=None, version=None, architecture=None, build_type=None, graphics_type=None):
-        # FIXME: TestConfiguration() fails due to port == None.
-        self.version = version or port.version()
-        self.architecture = architecture or port.architecture()
-        self.build_type = build_type or port.options.configuration.lower()
-        self.graphics_type = graphics_type or port.graphics_type()
+    def __init__(self, version, architecture, build_type, graphics_type):
+        self.version = version
+        self.architecture = architecture
+        self.build_type = build_type
+        self.graphics_type = graphics_type
+
+    @classmethod
+    def from_port(cls, port):
+        assert(port)
+        version = port.version()
+        architecture = port.architecture()
+        build_type = port.options.configuration.lower()
+        graphics_type = port.graphics_type()
+        return TestConfiguration(version, architecture, build_type, graphics_type)
 
     @classmethod
     def category_order(cls):
