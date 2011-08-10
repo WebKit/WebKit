@@ -1,4 +1,4 @@
-description('Check stepUp() and stepDown() bahevior for type=date, datetime, datetime-local.');
+description('Check stepUp() and stepDown() bahevior for type=date, datetime.');
 
 var input = document.createElement('input');
 var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
@@ -105,35 +105,6 @@ shouldThrow('stepUp("2010-02-10T20:13Z", "3.40282346e+38", null)', invalidStateE
 shouldThrow('stepDown("2010-02-10T20:13Z", "3.40282346e+38", null)', invalidStateErr);
 shouldThrow('stepUp("2010-02-10T20:13Z", "1", "2010-02-10T20:13Z")', invalidStateErr);
 shouldThrow('stepDown("2010-02-10T20:13Z", "1", "2010-02-10T20:13Z")', invalidStateErr);
-
-debug('');
-debug('Datetime-local type');
-input.type = 'datetime-local';
-debug('Invalid value');
-shouldThrow('stepUp("", null, null)', invalidStateErr);
-shouldThrow('stepDown("", null, null)', invalidStateErr);
-debug('Non-number arguments');
-shouldBe('stepUp("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", null, null, "0")', '"2010-02-10T20:13"');
-shouldBe('stepUp("2010-02-10T20:13", null, null, "foo")', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", null, null, "foo")', '"2010-02-10T20:13"');
-shouldBe('stepUp("2010-02-10T20:13", null, null, null)', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", null, null, null)', '"2010-02-10T20:13"');
-debug('Normal cases');
-shouldBe('stepUp("2010-02-10T20:13", null, null)', '"2010-02-10T20:14"');
-shouldBe('stepDown("2010-02-10T20:13", null, null)', '"2010-02-10T20:12"');
-shouldBe('stepUp("2010-02-10T20:13", null, null, 10)', '"2010-02-10T20:23"');
-shouldBe('stepDown("2010-02-10T20:13", null, null, 11)', '"2010-02-10T20:02"');
-shouldBe('stepUp("1970-01-01T20:13", "4", null, 2)', '"1970-01-01T20:13:08"');
-shouldBe('stepDown("1970-01-01T20:13", "4", null, 3)', '"1970-01-01T20:12:48"');
-debug('Step=any');
-shouldThrow('stepUp("2010-02-10T20:13", "any", null)', invalidStateErr);
-shouldThrow('stepDown("2010-02-10T20:13", "any", null)', invalidStateErr);
-debug('Overflow/underflow');
-shouldThrow('stepUp("2010-02-10T20:13", "3.40282346e+38", null)', invalidStateErr);
-shouldThrow('stepDown("2010-02-10T20:13", "3.40282346e+38", null)', invalidStateErr);
-shouldThrow('stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13")', invalidStateErr);
-shouldThrow('stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13")', invalidStateErr);
 
 debug('');
 debug('Number type');

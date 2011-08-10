@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
 description('Tests for .valueAsDate with &lt;input type=datetimelocal>.');
 
 var input = document.createElement('input');
@@ -14,3 +24,7 @@ shouldBe('valueAsDateFor("1970-01-01T00:00:00.000")', 'null');
 shouldBe('valueAsDateFor("2009-12-22T11:32:11")', 'null');
 
 var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

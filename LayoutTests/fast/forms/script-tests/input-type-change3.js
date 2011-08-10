@@ -29,9 +29,6 @@ check(" button ", "text");
 check("checkbox", "checkbox");
 check("date", "date");
 check("datetime", "datetime");
-check("datetime-local", "datetime-local");
-check("datetimelocal", "text");
-check("datetime_local", "text");
 check("email", "email");
 check("file", "email"); // We can't change a concrete type to file for a security reason.
 check("hidden", "hidden");

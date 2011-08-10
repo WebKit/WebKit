@@ -1,4 +1,4 @@
-description('Check stepping-up and -down for <input> from renderer. No cases of empty initial values for type=date, datetime, datetime-local.');
+description('Check stepping-up and -down for <input> from renderer. No cases of empty initial values for type=date, datetime.');
 
 var input = document.createElement('input');
 var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
@@ -121,29 +121,6 @@ shouldBe('stepDown("2010-02-10T20:13Z", "1", "2010-02-10T20:13Z")', '"2010-02-10
 debug('stepDown()/stepUp() for stepMismatch values');
 shouldBe('stepDown("2010-02-10T20:13Z", "3", "2010-02-10T20:12:56Z")', '"2010-02-10T20:12:59Z"');
 shouldBe('stepUp("1970-01-01T00:13Z", "7", "")', '"1970-01-01T00:13:04Z"');
-
-debug('');
-debug('Datetime-local type');
-input.type = 'datetime-local';
-debug('Function arguments are (value, step, {min or max}, [stepCount]).');
-debug('Normal cases');
-shouldBe('stepUp("2010-02-10T20:13", null, null)', '"2010-02-10T20:14"');
-shouldBe('stepDown("2010-02-10T20:13", null, null)', '"2010-02-10T20:12"');
-shouldBe('stepUp("2010-02-10T20:13", null, null, 10)', '"2010-02-10T20:23"');
-shouldBe('stepDown("2010-02-10T20:13", null, null, 11)', '"2010-02-10T20:02"');
-shouldBe('stepUp("1970-01-01T20:13", "4", null, 2)', '"1970-01-01T20:13:08"');
-shouldBe('stepDown("1970-01-01T20:13", "4", null, 3)', '"1970-01-01T20:12:48"');
-debug('Step=any');
-shouldBe('stepUp("2010-02-10T20:13", "any", null)', '"2010-02-10T20:14"');
-shouldBe('stepDown("2010-02-10T20:13", "any", null)', '"2010-02-10T20:12"');
-debug('Overflow/underflow');
-shouldBe('stepUp("2010-02-10T20:13", "3.40282346e+38", null)', '"275760-09-13T00:00:00.000"');
-shouldBe('stepDown("2010-02-10T20:13", "3.40282346e+38", null)', '"1970-01-01T00:00:00.000"');
-shouldBe('stepUp("2010-02-10T20:13", "1", "2010-02-10T20:13")', '"2010-02-10T20:13"');
-shouldBe('stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13")', '"2010-02-10T20:13"');
-debug('stepDown()/stepUp() for stepMismatch values');
-shouldBe('stepDown("2010-02-10T20:13", "3", "2010-02-10T20:12:56")', '"2010-02-10T20:12:59"');
-shouldBe('stepUp("1970-01-01T00:13", "7", "")', '"1970-01-01T00:13:04"');
 
 debug('');
 debug('Number type');

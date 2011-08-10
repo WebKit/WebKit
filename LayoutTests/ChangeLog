@@ -1,3 +1,55 @@
+2011-08-09  Kent Tamura  <tkent@chromium.org>
+
+        Move <input type=datetime-local> tests to fast/forms/datetimelocal/
+        https://bugs.webkit.org/show_bug.cgi?id=65958
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/ValidityState-rangeOverflow-expected.txt: Removed datetime-local part.
+        * fast/forms/ValidityState-rangeUnderflow-expected.txt: ditto.
+        * fast/forms/ValidityState-stepMismatch-expected.txt: ditto.
+        * fast/forms/ValidityState-typeMismatch-datetimelocal-expected.txt: Removed.
+        * fast/forms/ValidityState-typeMismatch-datetimelocal.html: Removed.
+        * fast/forms/date-input-visible-strings-expected.txt: Removed datetime-local and time parts.
+        * fast/forms/date-input-visible-strings.html: ditto.
+        * fast/forms/datetimelocal: Added.
+        * fast/forms/datetimelocal/ValidityState-rangeOverflow-datetimelocal-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-rangeOverflow-expected.txt.
+        * fast/forms/datetimelocal/ValidityState-rangeOverflow-datetimelocal.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeOverflow.js.
+        * fast/forms/datetimelocal/ValidityState-rangeUnderflow-datetimelocal-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-rangeUnderflow-expected.txt.
+        * fast/forms/datetimelocal/ValidityState-rangeUnderflow-datetimelocal.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeUnderflow.js.
+        * fast/forms/datetimelocal/ValidityState-stepMismatch-datetimelocal-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-stepMismatch-expected.txt.
+        * fast/forms/datetimelocal/ValidityState-stepMismatch-datetimelocal.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-stepMismatch.js.
+        * fast/forms/datetimelocal/ValidityState-typeMismatch-datetimelocal-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-typeMismatch-datetimelocal-expected.txt.
+        * fast/forms/datetimelocal/ValidityState-typeMismatch-datetimelocal.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-typeMismatch-datetimelocal.js.
+        * fast/forms/datetimelocal/datetimelocal-input-type-expected.txt: Copied from LayoutTests/fast/forms/week/week-input-type-expected.txt.
+        * fast/forms/datetimelocal/datetimelocal-input-type.html: Copied from LayoutTests/fast/forms/week/week-input-type.html.
+        * fast/forms/datetimelocal/datetimelocal-input-visible-string-expected.txt: Copied from LayoutTests/fast/forms/week/week-input-visible-string-expected.txt.
+        * fast/forms/datetimelocal/datetimelocal-input-visible-string.html: Copied from LayoutTests/fast/forms/week/week-input-visible-string.html.
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-expected.txt.
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown-from-renderer-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-from-renderer-expected.txt.
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown-from-renderer.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown-from-renderer.js.
+        * fast/forms/datetimelocal/datetimelocal-stepup-stepdown.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown.js.
+        * fast/forms/datetimelocal/input-valueasdate-datetimelocal-expected.txt: Copied from LayoutTests/fast/forms/input-valueasdate-datetimelocal-expected.txt.
+        * fast/forms/datetimelocal/input-valueasdate-datetimelocal.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasdate-datetimelocal.js.
+        * fast/forms/datetimelocal/input-valueasnumber-datetimelocal-expected.txt: Copied from LayoutTests/fast/forms/input-valueasnumber-datetimelocal-expected.txt.
+        * fast/forms/datetimelocal/input-valueasnumber-datetimelocal.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasnumber-datetimelocal.js.
+        * fast/forms/input-stepup-stepdown-expected.txt: Removed datetime-local part.
+        * fast/forms/input-stepup-stepdown-from-renderer-expected.txt: ditto.
+        * fast/forms/input-type-change3-expected.txt: ditto.
+        * fast/forms/input-valueasdate-datetimelocal-expected.txt: Removed.
+        * fast/forms/input-valueasdate-datetimelocal.html: Removed.
+        * fast/forms/input-valueasnumber-datetimelocal-expected.txt: Removed.
+        * fast/forms/input-valueasnumber-datetimelocal.html: Removed.
+        * fast/forms/script-tests/ValidityState-rangeOverflow.js: Removed datetime-local part.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow.js: ditto.
+        * fast/forms/script-tests/ValidityState-stepMismatch.js: ditto.
+        * fast/forms/script-tests/ValidityState-typeMismatch-datetimelocal.js: Removed.
+        * fast/forms/script-tests/input-stepup-stepdown-from-renderer.js: Removed datetime-local part.
+        * fast/forms/script-tests/input-stepup-stepdown.js: Removed datetime-local part.
+        * fast/forms/script-tests/input-type-change3.js: Removed datetime-local part.
+        * fast/forms/script-tests/input-valueasdate-datetimelocal.js: Removed.
+        * fast/forms/script-tests/input-valueasnumber-datetimelocal.js: Removed.
+
 2011-08-10  Adam Barth  <abarth@webkit.org>
 
         Updated results after http://trac.webkit.org/changeset/92744.

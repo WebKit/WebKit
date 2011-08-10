@@ -34,20 +34,6 @@ PASS The value "9999-01-01T23:59Z" overflows the maximum value "2010-12-31T00:00
 PASS The value "2010-01-27T12:34Z" overflows the maximum value "2010-01-26T12:34Z".
 PASS The value "9999-01-01T23:59Z" doesn't overflow the maximum value "2010-12-31T00:00Z" when disabled.
 
-Type=datetime-local
-PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "".
-PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "".
-PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "foo".
-PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "2010-01-27T12:34".
-PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "2010-01-27T12:34:56".
-PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "2011-01-26T12:34".
-PASS The value "foo" doesn't overflow the maximum value "2011-01-26T12:34".
-PASS The value "2010-01-27T12:34" doesn't overflow the maximum value "0000-01-01T00:00".
-PASS The value "2010-01-27T12:34" overflows the maximum value "2010-01-26T12:33:59.999".
-PASS The value "9999-01-01T23:59" overflows the maximum value "2010-12-31T00:00".
-PASS The value "2010-01-27T12:34" overflows the maximum value "2010-01-26T12:34".
-PASS The value "9999-01-01T23:59" doesn't overflow the maximum value "2010-12-31T00:00" when disabled.
-
 Type=number
 PASS The value "99" doesn't overflow the maximum value "100".
 PASS The value "-101" doesn't overflow the maximum value "-100".
