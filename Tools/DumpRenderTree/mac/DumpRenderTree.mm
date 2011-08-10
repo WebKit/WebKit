@@ -354,6 +354,7 @@ void testStringByEvaluatingJavaScriptFromString()
         @"", @"undefined",
         @"true", @"true",
         @"false", @"false",
+        @"", @"alert('Should not be result')",
         nil
     ];
 

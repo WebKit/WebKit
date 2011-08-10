@@ -841,7 +841,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
                 MarkedArgumentBuffer jsonArg;
                 jsonArg.append(JSONPValue);
                 JSValue thisValue = JSONPPath.size() == 1 ? jsUndefined(): baseObject;
-                JSC::call(callFrame, function, callType, callData, thisValue, jsonArg);
+                JSONPValue = JSC::call(callFrame, function, callType, callData, thisValue, jsonArg);
                 if (callFrame->hadException())
                     return jsUndefined();
                 break;

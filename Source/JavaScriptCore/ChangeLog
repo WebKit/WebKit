@@ -1,3 +1,16 @@
+2011-08-10  Oliver Hunt  <oliver@apple.com>
+
+        JSEvaluteScript does not return the correct object when given JSONP data
+        https://bugs.webkit.org/show_bug.cgi?id=66003
+
+        Reviewed by Gavin Barraclough.
+
+        Make sure we propagate the result of the function call rather than the
+        argument.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+
 2011-08-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT heap prediction causes regressions when combined with

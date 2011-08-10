@@ -1,3 +1,15 @@
+2011-08-10  Oliver Hunt  <oliver@apple.com>
+
+        JSEvaluteScript does not return the correct object when given JSONP data
+        https://bugs.webkit.org/show_bug.cgi?id=66003
+
+        Reviewed by Gavin Barraclough.
+
+        Add a test case.
+
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (testStringByEvaluatingJavaScriptFromString):
+
 2011-08-10  Eric Seidel  <eric@webkit.org>
 
         WIN: NRWT runs compositing tests on configurations that don't support compositing
