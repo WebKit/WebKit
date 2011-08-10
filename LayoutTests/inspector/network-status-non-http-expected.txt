@@ -1,5 +1,5 @@
 {
-    0 : "data:application/javascript,var x = 0;: Success"
+    0 : "data:application/javascript: Success"
     1 : "network-test.js: Success"
     2 : "non-existent-file.js: (failed)"
 }

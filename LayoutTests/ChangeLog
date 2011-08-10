@@ -1,3 +1,10 @@
+2011-08-10  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed test fix.
+
+        * inspector/network-status-non-http-expected.txt:
+        * inspector/network-status-non-http.html:
+
 2011-08-10  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Add binaryType attribute

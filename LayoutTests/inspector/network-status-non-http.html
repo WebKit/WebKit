@@ -17,9 +17,9 @@ function test() {
         for (var i = 0; i < urls.snapshotLength; ++i) {
             var url = urls.snapshotItem(i).value;
             if (resourcesToWatch.test(url)) {
-                var urlTail = /^file:/.test(url) ? url.replace(/.*\//, "") : url;
+                var urlFragment = /^data:/.test(url) ? url.replace(/,.*$/, "") : url.replace(/.*\//, "");
                 var status = document.evaluate("ancestor::tr/td[position()=3]", urls.snapshotItem(i), null, XPathResult.STRING_TYPE, null);
-                outputStrings.push(urlTail + ": " + status.stringValue);
+                outputStrings.push(urlFragment + ": " + status.stringValue);
             }
         }
         outputStrings.sort();
