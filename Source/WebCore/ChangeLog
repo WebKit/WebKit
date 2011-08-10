@@ -1,3 +1,14 @@
+2011-08-10  Scott Graham  <scottmg@google.com>
+
+        OpenTypeSanitizer in chromium gyp files is linked twice
+        https://bugs.webkit.org/show_bug.cgi?id=65927
+
+        Reviewed by Adam Barth.
+
+        No new tests, should just build and link properly on all platforms.
+
+        * WebCore.gyp/WebCore.gyp:
+
 2011-08-10  Oliver Hunt  <oliver@apple.com>
 
         Make GC checks more aggressive in release builds

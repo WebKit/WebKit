@@ -1328,8 +1328,6 @@
         ['exclude', '(android|brew|cairo|ca|cf|cg|curl|efl|freetype|gstreamer|gtk|haiku|linux|mac|opengl|openvg|opentype|pango|posix|qt|soup|svg|symbian|texmap|iphone|win|wince|wx)/'],
         ['exclude', '(?<!Chromium)(Android|Cairo|CF|CG|Curl|Gtk|JSC|Linux|Mac|OpenType|POSIX|Posix|Qt|Safari|Soup|Symbian|Win|WinCE|Wx)\\.(cpp|mm?)$'],
 
-        ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
-
         ['exclude', 'platform/LinkHash\\.cpp$'],
         ['exclude', 'platform/MIMETypeRegistry\\.cpp$'],
         ['exclude', 'platform/Theme\\.cpp$'],
@@ -1360,7 +1358,11 @@
             '<(chromium_src_dir)/third_party/harfbuzz/harfbuzz.gyp:harfbuzz',
           ],
         }],
-        ['OS=="mac" and use_skia==0', {
+        ['OS!="win"', {
+          'sources/': [
+            ['include', 'platform/graphics/opentype/OpenTypeSanitizer\\.cpp$'],
+          ],
+        }],['OS=="mac" and use_skia==0', {
           'sources/': [
             # The Mac build is PLATFORM_CG too.  platform/graphics/cg is the
             # only place that CG files we want to build are located, and not
