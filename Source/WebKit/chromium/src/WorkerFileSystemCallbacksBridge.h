@@ -43,6 +43,10 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 
+namespace WebCore {
+class WorkerLoaderProxy;
+}
+
 namespace WebKit {
 
 class AsyncFileSystem;
@@ -50,7 +54,6 @@ class MainThreadFileSystemCallbacks;
 class ThreadableCallbacksBridgeWrapper;
 class WebCommonWorkerClient;
 class WebFileSystemCallbacks;
-class WebWorkerBase;
 struct WebFileInfo;
 struct WebFileSystemEntry;
 
@@ -78,9 +81,9 @@ public:
 
     void stop();
 
-    static PassRefPtr<WorkerFileSystemCallbacksBridge> create(WebWorkerBase* worker, WebCore::ScriptExecutionContext* workerContext, WebFileSystemCallbacks* callbacks)
+    static PassRefPtr<WorkerFileSystemCallbacksBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, WebCore::ScriptExecutionContext* workerContext, WebFileSystemCallbacks* callbacks)
     {
-        return adoptRef(new WorkerFileSystemCallbacksBridge(worker, workerContext, callbacks));
+        return adoptRef(new WorkerFileSystemCallbacksBridge(workerLoaderProxy, workerContext, callbacks));
     }
 
     // Methods that create an instance and post an initial request task to the main thread. They must be called on the worker thread.
@@ -104,7 +107,7 @@ public:
     void didReadDirectoryOnMainThread(const WebVector<WebFileSystemEntry>&, bool hasMore, const String& mode);
 
 private:
-    WorkerFileSystemCallbacksBridge(WebWorkerBase*, WebCore::ScriptExecutionContext*, WebFileSystemCallbacks*);
+    WorkerFileSystemCallbacksBridge(WebCore::WorkerLoaderProxy*, WebCore::ScriptExecutionContext*, WebFileSystemCallbacks*);
 
     // Methods that are to be called on the main thread.
     static void openFileSystemOnMainThread(WebCore::ScriptExecutionContext*, WebCommonWorkerClient*, WebFileSystem::Type, long long size, bool create, WorkerFileSystemCallbacksBridge*, const String& mode);
@@ -135,7 +138,7 @@ private:
     void mayPostTaskToWorker(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const String& mode);
 
     Mutex m_mutex;
-    WebWorkerBase* m_worker;
+    WebCore::WorkerLoaderProxy* m_workerLoaderProxy;
     WebCore::ScriptExecutionContext* m_workerContext;
 
     // This is self-destructed and must be fired on the worker thread.

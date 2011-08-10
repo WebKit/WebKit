@@ -49,8 +49,7 @@
 #include "WebWorkerClient.h"
 
 #include "WorkerContext.h"
-#include "WorkerFileSystemCallbacksBridge.h"
-#include "WorkerScriptController.h"
+#include "WorkerLoaderProxy.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
 
@@ -59,134 +58,6 @@ using namespace WebCore;
 namespace WebKit {
 
 #if ENABLE(WORKERS)
-
-static const char allowDatabaseMode[] = "allowDatabaseMode";
-static const char allowFileSystemMode[] = "allowFileSystemMode";
-static const char openFileSystemMode[] = "openFileSystemMode";
-
-namespace {
-
-// This class is used to route the result of the WebWorkerBase::allowDatabase
-// call back to the worker context.
-class AllowDatabaseMainThreadBridge : public ThreadSafeRefCounted<AllowDatabaseMainThreadBridge> {
-public:
-    static PassRefPtr<AllowDatabaseMainThreadBridge> create(WebWorkerBase* worker, const WTF::String& mode, WebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String& name, const WTF::String& displayName, unsigned long estimatedSize)
-    {
-        return adoptRef(new AllowDatabaseMainThreadBridge(worker, mode, commonClient, frame, name, displayName, estimatedSize));
-    }
-
-    // These methods are invoked on the worker context.
-    void cancel()
-    {
-        MutexLocker locker(m_mutex);
-        m_worker = 0;
-    }
-
-    bool result()
-    {
-        return m_result;
-    }
-
-    // This method is invoked on the main thread.
-    void signalCompleted(bool result)
-    {
-        MutexLocker locker(m_mutex);
-        if (m_worker)
-            m_worker->postTaskForModeToWorkerContext(
-                createCallbackTask(&didComplete, AllowCrossThreadAccess(this), result), m_mode);
-    }
-
-private:
-    AllowDatabaseMainThreadBridge(WebWorkerBase* worker, const WTF::String& mode, WebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String& name, const WTF::String& displayName, unsigned long estimatedSize)
-        : m_worker(worker)
-        , m_mode(mode)
-    {
-        worker->dispatchTaskToMainThread(
-            createCallbackTask(&allowDatabaseTask, AllowCrossThreadAccess(commonClient),
-                               AllowCrossThreadAccess(frame),
-                               String(name), String(displayName), estimatedSize,
-                               AllowCrossThreadAccess(this)));
-    }
-
-    static void allowDatabaseTask(WebCore::ScriptExecutionContext* context, WebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String name, const WTF::String displayName, unsigned long estimatedSize, PassRefPtr<AllowDatabaseMainThreadBridge> bridge)
-    {
-        if (!commonClient)
-            bridge->signalCompleted(false);
-        else
-            bridge->signalCompleted(commonClient->allowDatabase(frame, name, displayName, estimatedSize));
-    }
-
-    static void didComplete(WebCore::ScriptExecutionContext* context, PassRefPtr<AllowDatabaseMainThreadBridge> bridge, bool result)
-    {
-        bridge->m_result = result;
-    }
-
-    bool m_result;
-    Mutex m_mutex;
-    WebWorkerBase* m_worker;
-    WTF::String m_mode;
-};
-
-// This class is used to route the result of the WebWorkerBase::allowFileSystem
-// call back to the worker context.
-class AllowFileSystemMainThreadBridge : public ThreadSafeRefCounted<AllowFileSystemMainThreadBridge> {
-public:
-    static PassRefPtr<AllowFileSystemMainThreadBridge> create(WebWorkerBase* worker, const WTF::String& mode, WebCommonWorkerClient* commonClient)
-    {
-        return adoptRef(new AllowFileSystemMainThreadBridge(worker, mode, commonClient));
-    }
-
-    // These methods are invoked on the worker context.
-    void cancel()
-    {
-        MutexLocker locker(m_mutex);
-        m_worker = 0;
-    }
-
-    bool result()
-    {
-        return m_result;
-    }
-
-    // This method is invoked on the main thread.
-    void signalCompleted(bool result)
-    {
-        MutexLocker locker(m_mutex);
-        if (m_worker)
-            m_worker->postTaskForModeToWorkerContext(
-                createCallbackTask(&didComplete, AllowCrossThreadAccess(this), result), m_mode);
-    }
-
-private:
-    AllowFileSystemMainThreadBridge(WebWorkerBase* worker, const WTF::String& mode, WebCommonWorkerClient* commonClient)
-        : m_worker(worker)
-        , m_mode(mode)
-    {
-        worker->dispatchTaskToMainThread(
-            createCallbackTask(&allowFileSystemTask, AllowCrossThreadAccess(commonClient),
-                               AllowCrossThreadAccess(this)));
-    }
-
-    static void allowFileSystemTask(WebCore::ScriptExecutionContext* context, WebCommonWorkerClient* commonClient, PassRefPtr<AllowFileSystemMainThreadBridge> bridge)
-    {
-        if (!commonClient)
-            bridge->signalCompleted(false);
-        else
-            bridge->signalCompleted(commonClient->allowFileSystem());
-    }
-
-    static void didComplete(WebCore::ScriptExecutionContext* context, PassRefPtr<AllowFileSystemMainThreadBridge> bridge, bool result)
-    {
-        bridge->m_result = result;
-    }
-
-    bool m_result;
-    Mutex m_mutex;
-    WebWorkerBase* m_worker;
-    WTF::String m_mode;
-};
-
-}
 
 // This function is called on the main thread to force to initialize some static
 // values used in WebKit before any worker thread is started. This is because in
@@ -284,70 +155,6 @@ WebApplicationCacheHost* WebWorkerBase::createApplicationCacheHost(WebFrame*, We
         return commonClient()->createApplicationCacheHost(appcacheHostClient);
     return 0;
 }
-
-bool WebWorkerBase::allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
-{
-    WorkerRunLoop& runLoop = m_workerThread->runLoop();
-    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
-    WorkerContext* workerContext = controller->workerContext();
-
-    // Create a unique mode just for this synchronous call.
-    String mode = allowDatabaseMode;
-    mode.append(String::number(runLoop.createUniqueId()));
-
-    RefPtr<AllowDatabaseMainThreadBridge> bridge = AllowDatabaseMainThreadBridge::create(this, mode, commonClient(), m_webView->mainFrame(), String(name), String(displayName), estimatedSize);
-
-    // Either the bridge returns, or the queue gets terminated.
-    if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated) {
-        bridge->cancel();
-        return false;
-    }
-
-    return bridge->result();
-}
-
-#if ENABLE(FILE_SYSTEM)
-
-bool WebWorkerBase::allowFileSystem()
-{
-    WorkerRunLoop& runLoop = m_workerThread->runLoop();
-    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
-    WorkerContext* workerContext = controller->workerContext();
-
-    // Create a unique mode just for this synchronous call.
-    String mode = allowFileSystemMode;
-    mode.append(String::number(runLoop.createUniqueId()));
-
-    RefPtr<AllowFileSystemMainThreadBridge> bridge = AllowFileSystemMainThreadBridge::create(this, mode, commonClient());
-
-    // Either the bridge returns, or the queue gets terminated.
-    if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated) {
-        bridge->cancel();
-        return false;
-    }
-
-    return bridge->result();
-}
-
-void WebWorkerBase::openFileSystemForWorker(WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks, bool synchronous)
-{
-    WorkerRunLoop& runLoop = m_workerThread->runLoop();
-    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
-    WorkerContext* workerContext = controller->workerContext();
-
-    // Create a unique mode for this openFileSystem call.
-    String mode = openFileSystemMode;
-    mode.append(String::number(runLoop.createUniqueId()));
-
-    RefPtr<WorkerFileSystemCallbacksBridge> bridge = WorkerFileSystemCallbacksBridge::create(this, workerContext, callbacks);
-    bridge->postOpenFileSystemToMainThread(commonClient(), type, size, create, mode);
-
-    if (synchronous) {
-        if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated)
-            bridge->stop();
-    }
-}
-#endif
 
 // WorkerObjectProxy -----------------------------------------------------------
 

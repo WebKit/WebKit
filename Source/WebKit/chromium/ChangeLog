@@ -1,3 +1,37 @@
+2011-08-10  Dmitry Lomov  <dslomov@google.com>
+        
+        [Chromium] Decouple implementation of allowFileSystem, openFileSystem and allowDatabase from WebWorkerBase.
+        https://bugs.webkit.org/show_bug.cgi?id=65997.
+
+        This patch moves implementation of allowFileSystem, openFileSystem and allowDatabase from
+        WebWorkerBase to respectively LocalFileSystemChromium and DatabaseObserver, 
+        parameterizing them with relevant data from WebWorker.
+
+        Reviewed by Jian Li.
+
+        * src/DatabaseObserver.cpp: Move allowDatabase from WebWorkerBase and update the caller.
+        (WebKit::AllowDatabaseMainThreadBridge::create):
+        (WebKit::AllowDatabaseMainThreadBridge::cancel):
+        (WebKit::AllowDatabaseMainThreadBridge::result):
+        (WebKit::AllowDatabaseMainThreadBridge::signalCompleted):
+        (WebKit::AllowDatabaseMainThreadBridge::AllowDatabaseMainThreadBridge):
+        (WebKit::AllowDatabaseMainThreadBridge::allowDatabaseTask):
+        (WebKit::AllowDatabaseMainThreadBridge::didComplete):
+        (WebKit::allowDatabaseForWorker):
+        (WebCore::DatabaseObserver::canEstablishDatabase):
+        * src/LocalFileSystemChromium.cpp: Move allowFileSystem and openFileSystem from WebWorkerBase and update the caller.
+        (WebCore::openFileSystemHelper):
+        * src/WebWorkerBase.cpp: Move allowFileSystem, openFileSystem and allowDatabase to LocalFileSystemChromium and DatabaseObserver resp.
+        * src/WebWorkerBase.h:
+        (WebKit::WebWorkerBase::webView):
+        * src/WorkerFileSystemCallbacksBridge.cpp: Generalized WorkerFileSystemCallbacksBridge to work on WorkerLoaderProxy, not on WebWorkerBase.
+        (WebKit::WorkerFileSystemCallbacksBridge::stop):
+        (WebKit::WorkerFileSystemCallbacksBridge::WorkerFileSystemCallbacksBridge):
+        (WebKit::WorkerFileSystemCallbacksBridge::dispatchTaskToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::mayPostTaskToWorker):
+        * src/WorkerFileSystemCallbacksBridge.h:
+        (WebKit::WorkerFileSystemCallbacksBridge::create):
+
 2011-08-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove Network.initialContentSet from protocol, store workers content on backend.

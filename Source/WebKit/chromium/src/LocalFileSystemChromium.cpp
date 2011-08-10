@@ -40,6 +40,7 @@
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
 #include "PlatformString.h"
+#include "WebCommonWorkerClient.h"
 #include "WebFileError.h"
 #include "WebFileSystem.h"
 #include "WebFileSystemCallbacksImpl.h"
@@ -49,6 +50,7 @@
 #include "WebViewImpl.h"
 #include "WebWorkerImpl.h"
 #include "WorkerContext.h"
+#include "WorkerFileSystemCallbacksBridge.h"
 #include "WorkerThread.h"
 #include <wtf/Threading.h>
 
@@ -68,6 +70,116 @@ enum CreationFlag {
     OpenExisting,
     CreateIfNotPresent
 };
+
+#if ENABLE(WORKERS)
+
+static const char allowFileSystemMode[] = "allowFileSystemMode";
+static const char openFileSystemMode[] = "openFileSystemMode";
+
+// This class is used to route the result of the WebWorkerBase::allowFileSystem
+// call back to the worker context.
+class AllowFileSystemMainThreadBridge : public ThreadSafeRefCounted<AllowFileSystemMainThreadBridge> {
+public:
+    static PassRefPtr<AllowFileSystemMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, WebCommonWorkerClient* commonClient)
+    {
+        return adoptRef(new AllowFileSystemMainThreadBridge(workerLoaderProxy, mode, commonClient));
+    }
+
+    // These methods are invoked on the worker context.
+    void cancel()
+    {
+        MutexLocker locker(m_mutex);
+        m_workerLoaderProxy = 0;
+    }
+
+    bool result()
+    {
+        return m_result;
+    }
+
+    // This method is invoked on the main thread.
+    void signalCompleted(bool result)
+    {
+        MutexLocker locker(m_mutex);
+        if (m_workerLoaderProxy)
+            m_workerLoaderProxy->postTaskForModeToWorkerContext(
+                createCallbackTask(&didComplete, AllowCrossThreadAccess(this), result), m_mode);
+    }
+
+private:
+    AllowFileSystemMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, WebCommonWorkerClient* commonClient)
+        : m_workerLoaderProxy(workerLoaderProxy)
+        , m_mode(mode)
+    {
+        WebWorkerBase::dispatchTaskToMainThread(
+            createCallbackTask(&allowFileSystemTask, AllowCrossThreadAccess(commonClient),
+                               AllowCrossThreadAccess(this)));
+    }
+
+    static void allowFileSystemTask(WebCore::ScriptExecutionContext* context, WebCommonWorkerClient* commonClient, PassRefPtr<AllowFileSystemMainThreadBridge> bridge)
+    {
+        if (commonClient)
+            bridge->signalCompleted(commonClient->allowFileSystem());
+        else
+            bridge->signalCompleted(false);
+    }
+
+    static void didComplete(WebCore::ScriptExecutionContext* context, PassRefPtr<AllowFileSystemMainThreadBridge> bridge, bool result)
+    {
+        bridge->m_result = result;
+    }
+
+    bool m_result;
+    Mutex m_mutex;
+    WebCore::WorkerLoaderProxy* m_workerLoaderProxy;
+    WTF::String m_mode;
+};
+
+bool allowFileSystemForWorker(WebCommonWorkerClient* commonClient)
+{
+    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
+    WorkerContext* workerContext = controller->workerContext();
+    WebCore::WorkerThread* workerThread = workerContext->thread();
+    WorkerRunLoop& runLoop = workerThread->runLoop();
+    WebCore::WorkerLoaderProxy* workerLoaderProxy =  &workerThread->workerLoaderProxy();
+
+    // Create a unique mode just for this synchronous call.
+    String mode = allowFileSystemMode;
+    mode.append(String::number(runLoop.createUniqueId()));
+
+    RefPtr<AllowFileSystemMainThreadBridge> bridge = AllowFileSystemMainThreadBridge::create(workerLoaderProxy, mode, commonClient);
+
+    // Either the bridge returns, or the queue gets terminated.
+    if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated) {
+        bridge->cancel();
+        return false;
+    }
+
+    return bridge->result();
+}
+
+void openFileSystemForWorker(WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks, bool synchronous)
+{
+    WorkerScriptController* controller = WorkerScriptController::controllerForContext();
+    WorkerContext* workerContext = controller->workerContext();
+    WebCore::WorkerThread* workerThread = workerContext->thread();
+    WorkerRunLoop& runLoop = workerThread->runLoop();
+    WebCore::WorkerLoaderProxy* workerLoaderProxy =  &workerThread->workerLoaderProxy();
+
+    // Create a unique mode for this openFileSystem call.
+    String mode = openFileSystemMode;
+    mode.append(String::number(runLoop.createUniqueId()));
+
+    RefPtr<WorkerFileSystemCallbacksBridge> bridge = WorkerFileSystemCallbacksBridge::create(workerLoaderProxy, workerContext, callbacks);
+    bridge->postOpenFileSystemToMainThread(commonClient, type, size, create, mode);
+
+    if (synchronous) {
+        if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated)
+            bridge->stop();
+    }
+}
+
+#endif // ENABLE(WORKERS)
 
 } // namespace
 
@@ -93,10 +205,10 @@ static void openFileSystemHelper(ScriptExecutionContext* context, AsyncFileSyste
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
         WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-        if (!webWorker->allowFileSystem())
+        if (!allowFileSystemForWorker(webWorker->commonClient()))
             allowed = false;
         else
-            webWorker->openFileSystemForWorker(static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronous), synchronous);
+            openFileSystemForWorker(webWorker->commonClient(), static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronous), synchronous);
 #else
         ASSERT_NOT_REACHED();
 #endif

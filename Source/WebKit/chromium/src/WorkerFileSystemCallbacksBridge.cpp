@@ -43,6 +43,7 @@
 #include "WebURL.h"
 #include "WebWorkerBase.h"
 #include "WorkerContext.h"
+#include "WorkerLoaderProxy.h"
 #include "WorkerScriptController.h"
 #include "WorkerThread.h"
 #include <wtf/MainThread.h>
@@ -147,7 +148,7 @@ void WorkerFileSystemCallbacksBridge::stop()
 {
     ASSERT(m_workerContext->isContextThread());
     MutexLocker locker(m_mutex);
-    m_worker = 0;
+    m_workerLoaderProxy = 0;
 
     if (m_callbacksOnWorkerThread) {
         m_callbacksOnWorkerThread->didFail(WebFileErrorAbort);
@@ -337,9 +338,9 @@ void WorkerFileSystemCallbacksBridge::didReadDirectoryOnMainThread(const WebVect
                            AllowCrossThreadAccess(this), entries, hasMore), mode);
 }
 
-WorkerFileSystemCallbacksBridge::WorkerFileSystemCallbacksBridge(WebWorkerBase* worker, ScriptExecutionContext* scriptExecutionContext, WebFileSystemCallbacks* callbacks)
+WorkerFileSystemCallbacksBridge::WorkerFileSystemCallbacksBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, ScriptExecutionContext* scriptExecutionContext, WebFileSystemCallbacks* callbacks)
     : WorkerContext::Observer(static_cast<WorkerContext*>(scriptExecutionContext))
-    , m_worker(worker)
+    , m_workerLoaderProxy(workerLoaderProxy)
     , m_workerContext(scriptExecutionContext)
     , m_callbacksOnWorkerThread(callbacks)
 {
@@ -399,9 +400,9 @@ void WorkerFileSystemCallbacksBridge::runTaskOnWorkerThread(WebCore::ScriptExecu
 
 void WorkerFileSystemCallbacksBridge::dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task> task)
 {
-    ASSERT(m_worker);
+    ASSERT(m_workerLoaderProxy);
     ASSERT(m_workerContext->isContextThread());
-    m_worker->dispatchTaskToMainThread(createCallbackTask(&runTaskOnMainThread, RefPtr<WorkerFileSystemCallbacksBridge>(this).release(), task));
+    WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&runTaskOnMainThread, RefPtr<WorkerFileSystemCallbacksBridge>(this).release(), task));
 }
 
 void WorkerFileSystemCallbacksBridge::mayPostTaskToWorker(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
@@ -413,8 +414,8 @@ void WorkerFileSystemCallbacksBridge::mayPostTaskToWorker(PassOwnPtr<ScriptExecu
     // is very important, to ensure that the m_mutex is still valid when it gets unlocked.)
     RefPtr<WorkerFileSystemCallbacksBridge> bridge = adoptRef(this);
     MutexLocker locker(m_mutex);
-    if (m_worker)
-        m_worker->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, bridge, task), mode);
+    if (m_workerLoaderProxy)
+        m_workerLoaderProxy->postTaskForModeToWorkerContext(createCallbackTask(&runTaskOnWorkerThread, bridge, task), mode);
 }
 
 } // namespace WebCore

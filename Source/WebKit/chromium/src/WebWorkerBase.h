@@ -89,21 +89,15 @@ public:
     virtual void didCreateDataSource(WebFrame*, WebDataSource*);
     virtual WebApplicationCacheHost* createApplicationCacheHost(WebFrame*, WebApplicationCacheHostClient*);
 
-    // Controls whether access to Web Databases is allowed for this worker.
-    bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize);
-
-#if ENABLE(FILE_SYSTEM)
-    // Controls whether access to File System is allowed for this worker.
-    bool allowFileSystem();
-    void openFileSystemForWorker(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*, bool synchronous);
-#endif
-
     // Executes the given task on the main thread.
     static void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
 
+    WebView* webView() const { return m_webView; }
+
+    virtual WebCommonWorkerClient* commonClient() = 0;
+
 protected:
     virtual WebWorkerClient* client() = 0;
-    virtual WebCommonWorkerClient* commonClient() = 0;
 
     void setWorkerThread(PassRefPtr<WebCore::WorkerThread> thread) { m_workerThread = thread; }
     WebCore::WorkerThread* workerThread() { return m_workerThread.get(); }
