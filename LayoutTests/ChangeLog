@@ -1,3 +1,13 @@
+2011-08-10  Abhishek Arya  <inferno@chromium.org>
+
+        ASSERTION FAILED: curr->isRenderInline()
+        https://bugs.webkit.org/show_bug.cgi?id=66000
+
+        Reviewed by David Hyatt.
+
+        * svg/text/glyphref-renderer-create-crash-expected.txt: Added.
+        * svg/text/glyphref-renderer-create-crash.html: Added.
+
 2011-08-10  Noel Gordon  <noel.gordon@gmail.com>
 
         [Chromium] plugins/mouse-events-fixedpos.html should pass on win/mac/linux

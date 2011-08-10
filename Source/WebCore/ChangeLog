@@ -1,3 +1,14 @@
+2011-08-10  Abhishek Arya  <inferno@chromium.org>
+
+        Don't create html renderer for SVG <glyphRef>
+        https://bugs.webkit.org/show_bug.cgi?id=66000
+
+        Reviewed by David Hyatt.
+
+        Test: svg/text/glyphref-renderer-create-crash.html
+
+        * svg/SVGGlyphRefElement.h:
+
 2011-08-10  Scott Graham  <scottmg@google.com>
 
         OpenTypeSanitizer in chromium gyp files is linked twice

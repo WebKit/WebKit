@@ -49,6 +49,8 @@ public:
 private:
     SVGGlyphRefElement(const QualifiedName&, Document*);
 
+    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
+
     BEGIN_DECLARE_ANIMATED_PROPERTIES(SVGGlyphRefElement)
         DECLARE_ANIMATED_STRING(Href, href)
     END_DECLARE_ANIMATED_PROPERTIES
