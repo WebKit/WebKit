@@ -1,3 +1,16 @@
+2011-08-10  Adam Barth  <abarth@webkit.org>
+
+        Updated results after http://trac.webkit.org/changeset/92744.
+
+        * platform/chromium-linux/fast/css-generated-content/table-row-before-after-child-add-expected.png:
+        * platform/chromium-linux/fast/css-generated-content/table-table-before-after-child-add-expected.png:
+        * platform/chromium-mac-leopard/fast/css-generated-content/table-row-before-after-child-add-expected.png:
+        * platform/chromium-mac-leopard/fast/css-generated-content/table-table-before-after-child-add-expected.png:
+        * platform/chromium-mac/fast/css-generated-content/table-row-before-after-child-add-expected.png:
+        * platform/chromium-mac/fast/css-generated-content/table-table-before-after-child-add-expected.png:
+        * platform/chromium-win/fast/css-generated-content/table-row-before-after-child-add-expected.png:
+        * platform/chromium-win/fast/css-generated-content/table-table-before-after-child-add-expected.png:
+
 2011-08-09  Dominic Cooney  <dominicc@chromium.org>
 
         [V8] The prototype property of DOM constructors should be read-only.
