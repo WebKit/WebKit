@@ -1,5 +1,31 @@
 2011-08-10  Oliver Hunt  <oliver@apple.com>
 
+        Make GC checks more aggressive in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=66001
+
+        Reviewed by Gavin Barraclough.
+
+        * heap/HandleHeap.cpp:
+        (JSC::HandleHeap::visitStrongHandles):
+        (JSC::HandleHeap::visitWeakHandles):
+        (JSC::HandleHeap::finalizeWeakHandles):
+        (JSC::HandleHeap::writeBarrier):
+        (JSC::HandleHeap::isLiveNode):
+        (JSC::HandleHeap::isValidWeakNode):
+           Increase handle heap validation logic, and make some of
+           the crashes trigger in release builds as well as debug.
+        * heap/HandleHeap.h:
+        (JSC::HandleHeap::allocate):
+        (JSC::HandleHeap::makeWeak):
+           Ditto
+        * runtime/JSGlobalData.cpp:
+        (WTF::Recompiler::operator()):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::visitChildren):
+           Fix GC bugs found while testing this patch
+
+2011-08-10  Oliver Hunt  <oliver@apple.com>
+
         JSEvaluteScript does not return the correct object when given JSONP data
         https://bugs.webkit.org/show_bug.cgi?id=66003
 

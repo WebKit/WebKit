@@ -84,7 +84,7 @@ inline void Recompiler::operator()(JSCell* cell)
     if (!cell->inherits(&JSFunction::s_info))
         return;
     JSFunction* function = asFunction(cell);
-    if (function->executable()->isHostFunction())
+    if (!function->executable() || function->executable()->isHostFunction())
         return;
     function->jsExecutable()->discardCode();
 }

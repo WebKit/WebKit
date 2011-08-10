@@ -64,8 +64,13 @@ void HandleHeap::grow()
 void HandleHeap::visitStrongHandles(HeapRootVisitor& heapRootVisitor)
 {
     Node* end = m_strongList.end();
-    for (Node* node = m_strongList.begin(); node != end; node = node->next())
+    for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
+#if ENABLE(GC_VALIDATION)
+        if (!isLiveNode(node))
+            CRASH();
+#endif
         heapRootVisitor.visit(node->slot());
+    }
 }
 
 void HandleHeap::visitWeakHandles(HeapRootVisitor& heapRootVisitor)
@@ -74,7 +79,10 @@ void HandleHeap::visitWeakHandles(HeapRootVisitor& heapRootVisitor)
 
     Node* end = m_weakList.end();
     for (Node* node = m_weakList.begin(); node != end; node = node->next()) {
-        ASSERT(isValidWeakNode(node));
+#if ENABLE(GC_VALIDATION)
+        if (!isValidWeakNode(node))
+            CRASH();
+#endif
         JSCell* cell = node->slot()->asCell();
         if (Heap::isMarked(cell))
             continue;
@@ -95,8 +103,11 @@ void HandleHeap::finalizeWeakHandles()
     Node* end = m_weakList.end();
     for (Node* node = m_weakList.begin(); node != end; node = m_nextToFinalize) {
         m_nextToFinalize = node->next();
+#if ENABLE(GC_VALIDATION)
+        if (!isValidWeakNode(node))
+            CRASH();
+#endif
 
-        ASSERT(isValidWeakNode(node));
         JSCell* cell = node->slot()->asCell();
         if (Heap::isMarked(cell))
             continue;
@@ -106,7 +117,10 @@ void HandleHeap::finalizeWeakHandles()
             if (m_nextToFinalize != node->next()) // Owner deallocated node.
                 continue;
         }
-
+#if ENABLE(GC_VALIDATION)
+        if (!isLiveNode(node))
+            CRASH();
+#endif
         *node->slot() = JSValue();
         SentinelLinkedList<Node>::remove(node);
         m_immediateList.push(node);
@@ -117,12 +131,19 @@ void HandleHeap::finalizeWeakHandles()
 
 void HandleHeap::writeBarrier(HandleSlot slot, const JSValue& value)
 {
-    ASSERT(!m_nextToFinalize); // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
+    // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
+    // File a bug with stack trace if you hit this.
+    if (m_nextToFinalize)
+        CRASH();
 
     if (!value == !*slot && slot->isCell() == value.isCell())
         return;
 
     Node* node = toNode(slot);
+#if ENABLE(GC_VALIDATION)
+    if (!isLiveNode(node))
+        CRASH();
+#endif
     SentinelLinkedList<Node>::remove(node);
     if (!value || !value.isCell()) {
         m_immediateList.push(node);
@@ -131,10 +152,18 @@ void HandleHeap::writeBarrier(HandleSlot slot, const JSValue& value)
 
     if (node->isWeak()) {
         m_weakList.push(node);
+#if ENABLE(GC_VALIDATION)
+        if (!isLiveNode(node))
+            CRASH();
+#endif
         return;
     }
 
     m_strongList.push(node);
+#if ENABLE(GC_VALIDATION)
+    if (!isLiveNode(node))
+        CRASH();
+#endif
 }
 
 unsigned HandleHeap::protectedGlobalObjectCount()
@@ -149,9 +178,21 @@ unsigned HandleHeap::protectedGlobalObjectCount()
     return count;
 }
 
-#if !ASSERT_DISABLED
+#if ENABLE(GC_VALIDATION) || !ASSERT_DISABLED
+bool HandleHeap::isLiveNode(Node* node)
+{
+    if (node->prev()->next() != node)
+        return false;
+    if (node->next()->prev() != node)
+        return false;
+        
+    return true;
+}
+
 bool HandleHeap::isValidWeakNode(Node* node)
 {
+    if (!isLiveNode(node))
+        return false;
     if (!node->isWeak())
         return false;
 

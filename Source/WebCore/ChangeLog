@@ -1,3 +1,23 @@
+2011-08-10  Oliver Hunt  <oliver@apple.com>
+
+        Make GC checks more aggressive in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=66001
+
+        Reviewed by Gavin Barraclough.
+
+        Fix GC bugs found while testing increased validation logic
+
+        * bindings/js/JSDOMWindowShell.cpp:
+        (WebCore::JSDOMWindowShell::JSDOMWindowShell):
+        * bindings/js/JSDOMWindowShell.h:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::createWindowShell):
+        * bridge/objc/ObjCRuntimeObject.h:
+        (JSC::Bindings::ObjCRuntimeObject::create):
+        * bridge/objc/ObjCRuntimeObject.mm:
+        (JSC::Bindings::ObjCRuntimeObject::ObjCRuntimeObject):
+        * bridge/objc/objc_instance.mm:
+
 2011-08-10  Ben Wells  <benwells@chromium.org>
 
         [skia] Move calls to makeGrContextCurrent into clipPathAntiAliased from callers

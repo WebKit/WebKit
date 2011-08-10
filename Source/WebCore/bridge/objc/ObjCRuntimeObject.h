@@ -39,7 +39,8 @@ public:
 
     static ObjCRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<ObjcInstance> inst)
     {
-        return new (allocateCell<ObjCRuntimeObject>(*exec->heap())) ObjCRuntimeObject(exec, globalObject, inst);
+        Structure* structure = WebCore::deprecatedGetDOMStructure<ObjCRuntimeObject>(exec);
+        return new (allocateCell<ObjCRuntimeObject>(*exec->heap())) ObjCRuntimeObject(exec, globalObject, inst, structure);
     }
 
     virtual ~ObjCRuntimeObject();
@@ -54,7 +55,7 @@ public:
     }
 
 private:
-    ObjCRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<ObjcInstance>);
+    ObjCRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<ObjcInstance>, Structure*);
 };
 
 }

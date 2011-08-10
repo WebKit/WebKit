@@ -43,8 +43,8 @@ ASSERT_CLASS_FITS_IN_CELL(JSDOMWindowShell);
 
 const ClassInfo JSDOMWindowShell::s_info = { "JSDOMWindowShell", &Base::s_info, 0, 0 };
 
-JSDOMWindowShell::JSDOMWindowShell(PassRefPtr<DOMWindow> window, DOMWrapperWorld* world)
-    : Base(*world->globalData(), JSDOMWindowShell::createStructure(*world->globalData(), jsNull()))
+JSDOMWindowShell::JSDOMWindowShell(PassRefPtr<DOMWindow> window, Structure* structure, DOMWrapperWorld* world)
+    : Base(*world->globalData(), structure)
     , m_world(world)
 {
     ASSERT(inherits(&s_info));

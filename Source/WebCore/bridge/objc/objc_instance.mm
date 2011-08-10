@@ -27,6 +27,7 @@
 #import "objc_instance.h"
 
 #import "runtime_method.h"
+#import <runtime/ObjectPrototype.h>
 #import "JSDOMBinding.h"
 #import "ObjCRuntimeObject.h"
 #import "WebScriptObject.h"
