@@ -65,7 +65,7 @@ class TestConfiguration(object):
         return self.__dict__.values()
 
 
-class SpecifierSorter:
+class SpecifierSorter(object):
     def __init__(self, all_test_configurations=None, macros=None):
         self._specifier_to_category = {}
 
@@ -109,7 +109,7 @@ class SpecifierSorter:
         return reduce(sort_and_return, category_slots, [])
 
 
-class TestConfigurationConverter:
+class TestConfigurationConverter(object):
     def __init__(self, all_test_configurations, configuration_macros=None):
         self._all_test_configurations = all_test_configurations
         self._configuration_macros = configuration_macros or {}

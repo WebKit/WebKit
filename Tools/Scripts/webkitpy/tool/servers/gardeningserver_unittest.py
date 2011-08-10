@@ -36,6 +36,7 @@ import unittest
 
 from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port import factory
+from webkitpy.layout_tests.models.test_configuration import *
 from webkitpy.thirdparty.mock import Mock
 from webkitpy.tool.mocktool import MockTool, MockExecutive
 from webkitpy.tool.servers.gardeningserver import *
@@ -82,6 +83,21 @@ class TestGardeningHTTPRequestHandler(GardeningHTTPRequestHandler):
         print "== End JSON Response =="
 
 
+class BuildCoverageExtrapolatorTest(unittest.TestCase):
+    def test_extrapolate(self):
+        # FIXME: Make this test not rely on actual (not mock) port objects.
+        port = factory.get('chromium-win-win7', None)
+        converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
+        extrapolator = BuildCoverageExtrapolator(converter)
+        self.assertEquals(extrapolator.extrapolate_test_configurations("Webkit Win"), set([TestConfiguration(version='xp', architecture='x86', build_type='release', graphics_type='cpu')]))
+        self.assertEquals(extrapolator.extrapolate_test_configurations("Webkit Vista"), set([
+            TestConfiguration(version='vista', architecture='x86', build_type='debug', graphics_type='cpu'),
+            TestConfiguration(version='vista', architecture='x86', build_type='debug', graphics_type='gpu'),
+            TestConfiguration(version='vista', architecture='x86', build_type='release', graphics_type='gpu'),
+            TestConfiguration(version='vista', architecture='x86', build_type='release', graphics_type='cpu')]))
+        self.assertRaises(KeyError, extrapolator.extrapolate_test_configurations, "Potato")
+
+
 class GardeningExpectationsUpdaterTest(unittest.TestCase):
     def __init__(self, testFunc):
         self.tool = MockTool()
@@ -107,7 +123,7 @@ class GardeningExpectationsUpdaterTest(unittest.TestCase):
 
     def test_unknown_builder(self):
         failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Bob", "failureTypeList": ["IMAGE"]}]
-        self.assert_update(failure_info_list, expected_exception=AssertionError)
+        self.assert_update(failure_info_list, expected_exception=KeyError)
 
     def test_empty_failure_type_list(self):
         failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": []}]

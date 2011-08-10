@@ -1,3 +1,17 @@
+2011-08-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic should extrapolate failures given a set of known results
+        https://bugs.webkit.org/show_bug.cgi?id=65882
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_configuration.py: Spuriously covered my old sins.
+        * Scripts/webkitpy/layout_tests/port/builders.py: Augmented builders dictionary to contain build coverage specifiers,
+            adjusted all call sites.
+        * Scripts/webkitpy/tool/servers/gardeningserver.py: Added BuildCoverageExtrapolator, a thing that
+            makes wider net for specific failures.
+        * Scripts/webkitpy/tool/servers/gardeningserver_unittest.py: Added unit tests.
+
 2011-08-10  Adam Barth  <abarth@webkit.org>
 
         The URL we were computing for retrieving baselines was missing a slash

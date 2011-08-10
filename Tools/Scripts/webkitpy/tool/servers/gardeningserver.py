@@ -30,18 +30,31 @@ from webkitpy.tool.servers.reflectionhandler import ReflectionHandler
 from webkitpy.layout_tests.models.test_expectations import BugManager, TestExpectationParser, TestExpectations, TestExpectationsEditor, TestExpectationSerializer
 from webkitpy.layout_tests.models.test_configuration import TestConfigurationConverter
 from webkitpy.layout_tests.port import factory
+from webkitpy.layout_tests.port import builders
+
+
+class BuildCoverageExtrapolator(object):
+    def __init__(self, test_configuration_converter):
+        self._test_configuration_converter = test_configuration_converter
+
+    @memoized
+    def _covered_test_configurations_for_builder_name(self):
+        coverage = {}
+        for builder_name in builders.all_builder_names():
+            coverage[builder_name] = self._test_configuration_converter.to_config_set(builders.coverage_specifiers_for_builder_name(builder_name))
+        return coverage
+
+    def extrapolate_test_configurations(self, builder_name):
+        return self._covered_test_configurations_for_builder_name()[builder_name]
 
 
 class GardeningExpectationsUpdater(BugManager):
     def __init__(self, tool, port):
         self._converter = TestConfigurationConverter(port.all_test_configurations(), port.configuration_specifier_macros())
+        self._extrapolator = BuildCoverageExtrapolator(self._converter)
         self._parser = TestExpectationParser(port, [], allow_rebaseline_modifier=False)
         self._path_to_test_expectations_file = port.path_to_test_expectations_file()
         self._tool = tool
-
-    @memoized
-    def _builder_to_test_config(self, builder_name):
-        return factory.get_from_builder_name(builder_name).test_configuration()
 
     def close_bug(self, bug_id, reference_bug_id=None):
         # FIXME: Implement this properly.
@@ -56,12 +69,15 @@ class GardeningExpectationsUpdater(BugManager):
             self._parser.parse(expectation_line)
         editor = TestExpectationsEditor(expectation_lines, self)
         updated_expectation_lines = []
+        # FIXME: Group failures by testName+failureTypeList.
         for failure_info in failure_info_list:
             expectation_set = set(filter(None, map(TestExpectations.expectation_from_string, failure_info['failureTypeList'])))
             assert(expectation_set)
             test_name = failure_info['testName']
             assert(test_name)
-            updated_expectation_lines.extend(editor.update_expectation(test_name, set([self._builder_to_test_config(failure_info['builderName'])]), expectation_set))
+            builder_name = failure_info['builderName']
+            affected_test_configuration_set = self._extrapolator.extrapolate_test_configurations(builder_name)
+            updated_expectation_lines.extend(editor.update_expectation(test_name, affected_test_configuration_set, expectation_set))
         self._tool.filesystem.write_text_file(self._path_to_test_expectations_file, TestExpectationSerializer.list_to_string(expectation_lines, self._converter, reconstitute_only_these=updated_expectation_lines))
 
 
