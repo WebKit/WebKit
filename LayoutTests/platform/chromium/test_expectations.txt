@@ -739,7 +739,6 @@ BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html
 // Need to implement NPP_HandleEvent in the layout_test_plugin
 // WIN started failing during webkit roll 62670 -> 62844.
 BUGCR38353 LINUX MAC : plugins/keyboard-events.html = TEXT
-BUGCR32864 : plugins/mouse-events-fixedpos.html = TEXT
 // Object.keys on an NPObject produces the wrong output.
 BUGCR21901 : plugins/npruntime/enumerate.html = TEXT
 BUGCR50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT

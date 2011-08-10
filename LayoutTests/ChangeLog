@@ -1,3 +1,24 @@
+2011-08-10  Noel Gordon  <noel.gordon@gmail.com>
+
+        [Chromium] plugins/mouse-events-fixedpos.html should pass on win/mac/linux
+        https://bugs.webkit.org/show_bug.cgi?id=65841
+
+        Reviewed by Tony Chang.
+
+        Add attribute windowPlugin="false" to the <embed> in this test to force the Chromium
+        Windows and Linux ports to load the test plugin in windowless mode.  The plugin will
+        then receive events and can log them to the console as required by this test.
+
+        Also note, the Apple Mac/Win ports report 0 as the line number for all console.log()
+        messages, whereas, the Chromium ports report the actual line numbers, hence the need
+        for separate test results for Chromium.
+
+        * platform/chromium-linux/plugins/mouse-events-fixedpos-expected.txt:
+        * platform/chromium-mac/plugins/mouse-events-fixedpos-expected.txt:
+        * platform/chromium-win/plugins/mouse-events-fixedpos-expected.txt:
+        * platform/chromium/test_expectations.txt:  New expectations.
+        * plugins/mouse-events-fixedpos.html:  Add <embed> attribute windowPlugin="false".
+
 2011-08-10  Kenichi Ishibashi  <bashi@chromium.org>
 
         [Chromium] Implement text shaping with font-feature-settings on Linux
