@@ -1,5 +1,11 @@
 2011-08-09  Adam Barth  <abarth@webkit.org>
 
+        Move the quote mark to the right place.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout.js:
+
+2011-08-09  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic should use huerstics to narrow regression range
         https://bugs.webkit.org/show_bug.cgi?id=65948
 

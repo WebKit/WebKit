@@ -68,7 +68,7 @@ checkout.rebaseline = function(failureInfoList, callback)
     base.callInSequence(function(failureInfo, callback) {
         var extensionList = Array.prototype.concat.apply([], failureInfo.failureTypeList.map(results.failureTypeToExtensionList));
         base.callInSequence(function(extension, callback) {
-            net.post('config.kLocalServerURL + /rebaseline?' + $.param({
+            net.post(config.kLocalServerURL + '/rebaseline?' + $.param({
                 'builder': failureInfo.builderName,
                 'test': failureInfo.testName,
                 'extension': extension
