@@ -4874,11 +4874,11 @@ void webkit_web_view_set_tooltip_text(WebKitWebView* webView, const char* toolti
  * webkit_web_view_get_hit_test_result:
  * @webView: a #WebKitWebView
  * @event: a #GdkEventButton
- * 
+ *
  * Does a 'hit test' in the coordinates specified by @event to figure
  * out context information about that position in the @webView.
- * 
- * Returns: (transfer none): a newly created #WebKitHitTestResult with the context of the
+ *
+ * Returns: (transfer full): a newly created #WebKitHitTestResult with the context of the
  * specified position.
  *
  * Since: 1.1.15

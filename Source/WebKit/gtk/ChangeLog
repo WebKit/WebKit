@@ -1,3 +1,12 @@
+2011-08-10  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] wrong annotation for the return value of webkit_web_view_get_hit_test_results()
+        https://bugs.webkit.org/show_bug.cgi?id=65985
+
+        Reviewed by Xan Lopez.
+
+        * webkit/webkitwebview.cpp:
+
 2011-08-03  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [Timeline] Hover on paint events and see rect outline around that area.
