@@ -14,7 +14,6 @@ PASS input.type for "button" is correctly "button".
 PASS input.type for " button " is correctly "text".
 PASS input.type for "checkbox" is correctly "checkbox".
 PASS input.type for "date" is correctly "date".
-PASS input.type for "datetime" is correctly "datetime".
 PASS input.type for "email" is correctly "email".
 PASS input.type for "file" is correctly "email".
 PASS input.type for "hidden" is correctly "hidden".

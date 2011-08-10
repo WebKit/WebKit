@@ -65,32 +65,6 @@ checkNotUnderflow('9999-01-01', '10000-12-31', true);
 
 // ----------------------------------------------------------------
 debug('');
-debug('Type=datetime');
-input.type = 'datetime';
-input.max = '';
-// No underflow cases
-checkNotUnderflow('2010-01-27T12:34Z', null);
-checkNotUnderflow('2010-01-27T12:34Z', '');
-checkNotUnderflow('2010-01-27T12:34Z', 'foo');
-// 1000-01-01 is smaller than the implicit minimum value.
-// But the date parser rejects it before comparing the minimum value.
-checkNotUnderflow('1000-01-01T12:34Z', '');
-checkNotUnderflow('1582-10-15T00:00Z', '');
-checkNotUnderflow('2010-01-27T12:34Z', '2010-01-26T00:00Z');
-checkNotUnderflow('2010-01-27T12:34Z', '2009-01-28T00:00Z');
-checkNotUnderflow('foo', '2011-01-26T00:00Z');
-
-// Underflow cases
-checkUnderflow('2010-01-27T12:34Z', '2010-01-27T13:00Z');
-checkUnderflow('9999-01-01T12:00Z', '10000-12-31T12:00Z');
-input.max = '2010-01-01T12:00Z';  // value < min && value > max
-checkUnderflow('2010-01-27T12:00Z', '2010-02-01T12:00Z');
-
-// Disabled
-checkNotUnderflow('9999-01-01T12:00Z', '10000-12-31T12:00Z', true);
-
-// ----------------------------------------------------------------
-debug('');
 debug('Type=number');
 input.type = 'number';
 input.max = '';

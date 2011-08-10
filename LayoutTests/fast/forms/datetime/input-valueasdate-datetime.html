@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
 description('Tests for .valueAsDate with &lt;input type=datetime>.');
 
 var input = document.createElement('input');
@@ -44,3 +54,7 @@ shouldBe('input.step = "1"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0)',
 shouldBe('input.step = "0.001"; setValueAsDateAndGetValue(2010, 0, 21, 0, 0, 0, 0)', '"2010-01-21T00:00:00.000Z"');
 
 var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

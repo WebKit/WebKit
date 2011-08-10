@@ -1,4 +1,4 @@
-description('Check stepMismatch results for type=date, datetime.');
+description('Check stepMismatch results for date, number, range, unsupported types.');
 
 var input = document.createElement('input');
 document.body.appendChild(input);
@@ -40,40 +40,6 @@ debug('Special step value');
 shouldBeFalse('stepMismatchFor("2010-02-10", "any", "2010-02-09")');
 debug('Disabled');
 shouldBeFalse('stepMismatchFor("2010-02-10", "2", "2010-02-09", true)');
-
-debug('');
-debug('Datetime type');
-input.type = 'datetime';
-debug('Empty values');
-shouldBeFalse('stepMismatchFor("", null, null)');
-shouldBeFalse('stepMismatchFor("", "2", "1969-12-31T12:34:56Z")');
-debug('Normal step values');
-shouldBeFalse('stepMismatchFor("2010-02-09T12:34:55Z", "1", "2010-02-09T12:34:56Z")');
-shouldBeTrue('stepMismatchFor("2010-02-09T12:34:55.001Z", "1", "2010-02-09T12:34:56Z")');
-shouldBeFalse('stepMismatchFor("2010-02-09T12:34:56.001Z", "0.001", "2010-02-09T12:34:56Z")');
-shouldBeTrue('stepMismatchFor("2010-02-09T12:34:55Z", "0.333", "2010-02-09T12:34:56Z")');
-shouldBeFalse('stepMismatchFor("2010-02-09T12:34:55.001Z", "0.333", "2010-02-09T12:34:56Z")');
-shouldBeFalse('stepMismatchFor("2010-02-09T12:34Z", "86400", "2010-02-08T12:34Z")');
-shouldBeTrue('stepMismatchFor("2010-02-09T12:34:56Z", "86400", "2010-02-08T12:34Z")');
-shouldBeTrue('stepMismatchFor("275760-09-13T00:00Z", "3", "275760-09-12T23:59:50Z")');
-shouldBeFalse('stepMismatchFor("275760-09-13T00:00Z", "2", "275760-09-12T23:59:50Z")');
-shouldBeTrue('stepMismatchFor("0001-01-01T00:00Z", "3", "0001-01-11T00:00:02Z")');
-shouldBeFalse('stepMismatchFor("0001-01-01T00:00Z", "2", "0001-01-11T00:00:02Z")');
-debug('Implicit step base');
-shouldBeFalse('stepMismatchFor("1970-01-01T12:34Z", "120", null)');
-shouldBeTrue('stepMismatchFor("1970-01-01T12:35Z", "120", null)');
-debug('Small step values');
-shouldBeFalse('stepMismatchFor("2010-02-10T12:34:56.000Z", "0.0003", "2010-02-10T12:34.55.000Z")');
-shouldBeTrue('stepMismatchFor("2010-02-10T12:34:55.001Z", "0.0019", "2010-02-10T12:34.55.000Z")');
-debug('Invalid or no step values');
-shouldBeFalse('stepMismatchFor("2010-02-10T12:34Z", null, "2010-02-09T12:34Z")');
-shouldBeTrue('stepMismatchFor("2010-02-10T12:34:56Z", null, "2010-02-09T12:34Z")');
-shouldBeFalse('stepMismatchFor("2010-02-10T12:34Z", "-1", "2010-02-09T12:34Z")');
-shouldBeFalse('stepMismatchFor("2010-02-10T12:34Z", "foo", "2010-02-09T12:34Z")');
-debug('Special step value');
-shouldBeFalse('stepMismatchFor("2010-02-09T12:34Z", "any", "2010-02-09T12:34Z")');
-debug('Disabled');
-shouldBeFalse('stepMismatchFor("2010-02-09T12:34:55.001Z", "1", "2010-02-09T12:34:56Z", true)');
 
 debug('');
 debug('Number type');

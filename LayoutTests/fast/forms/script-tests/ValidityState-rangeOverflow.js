@@ -63,30 +63,6 @@ checkNotOverflow('9999-01-01', '2010-12-31', true);
 
 // ----------------------------------------------------------------
 debug('');
-debug('Type=datetime');
-input.type = 'datetime';
-input.min = '';
-// No overflow cases
-checkNotOverflow('2010-01-27T12:34Z', null);
-checkNotOverflow('2010-01-27T12:34Z', '');
-checkNotOverflow('2010-01-27T12:34Z', 'foo');
-checkNotOverflow('2010-01-27T12:34Z', '2010-01-27T12:34Z');
-checkNotOverflow('2010-01-27T12:34Z', '2010-01-27T12:34:56Z');
-checkNotOverflow('2010-01-27T12:34Z', '2011-01-26T12:34Z');
-checkNotOverflow('foo', '2011-01-26T12:34Z');
-checkNotOverflow('2010-01-27T12:34Z', '0000-01-01T00:00Z'); // Too small max value.
-
-// Overflow cases
-checkOverflow('2010-01-27T12:34Z', '2010-01-26T12:33:59.999Z');
-checkOverflow('9999-01-01T23:59Z', '2010-12-31T00:00Z');
-input.min = '2010-01-28T12:00Z';  // value < min && value > max
-checkOverflow('2010-01-27T12:34Z', '2010-01-26T12:34Z');
-
-// Disabled
-checkNotOverflow('9999-01-01T23:59Z', '2010-12-31T00:00Z', true);
-
-// ----------------------------------------------------------------
-debug('');
 debug('Type=number');
 input.type = 'number';
 input.min = '';

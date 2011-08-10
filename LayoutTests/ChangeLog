@@ -1,3 +1,55 @@
+2011-08-10  Kent Tamura  <tkent@chromium.org>
+
+        Move <input type=datetime> tests to fast/forms/datetime/
+        https://bugs.webkit.org/show_bug.cgi?id=65970
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/ValidityState-rangeOverflow-expected.txt: Removed "datetime" part.
+        * fast/forms/ValidityState-rangeUnderflow-expected.txt: ditto.
+        * fast/forms/ValidityState-stepMismatch-expected.txt: ditto.
+        * fast/forms/ValidityState-typeMismatch-datetime-expected.txt: Removed.
+        * fast/forms/ValidityState-typeMismatch-datetime.html: Removed.
+        * fast/forms/date-input-visible-strings-expected.txt: Removed "datetime" part.
+        * fast/forms/date-input-visible-strings.html: ditto.
+        * fast/forms/datetime: Added.
+        * fast/forms/datetime/ValidityState-rangeOverflow-datetime-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-rangeOverflow-expected.txt.
+        * fast/forms/datetime/ValidityState-rangeOverflow-datetime.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeOverflow.js.
+        * fast/forms/datetime/ValidityState-rangeUnderflow-datetime-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-rangeUnderflow-expected.txt.
+        * fast/forms/datetime/ValidityState-rangeUnderflow-datetime.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeUnderflow.js.
+        * fast/forms/datetime/ValidityState-stepMismatch-datetime-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-stepMismatch-expected.txt.
+        * fast/forms/datetime/ValidityState-stepMismatch-datetime.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-stepMismatch.js.
+        * fast/forms/datetime/ValidityState-typeMismatch-datetime-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-typeMismatch-datetime-expected.txt.
+        * fast/forms/datetime/ValidityState-typeMismatch-datetime.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-typeMismatch-datetime.js.
+        * fast/forms/datetime/datetime-input-type-expected.txt: Copied from LayoutTests/fast/forms/week/week-input-type-expected.txt.
+        * fast/forms/datetime/datetime-input-type.html: Copied from LayoutTests/fast/forms/week/week-input-type.html.
+        * fast/forms/datetime/datetime-input-visible-string-expected.txt: Copied from LayoutTests/fast/forms/week/week-input-visible-string-expected.txt.
+        * fast/forms/datetime/datetime-input-visible-string.html: Copied from LayoutTests/fast/forms/week/week-input-visible-string.html.
+        * fast/forms/datetime/datetime-stepup-stepdown-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-expected.txt.
+        * fast/forms/datetime/datetime-stepup-stepdown-from-renderer-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-from-renderer-expected.txt.
+        * fast/forms/datetime/datetime-stepup-stepdown-from-renderer.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown-from-renderer.js.
+        * fast/forms/datetime/datetime-stepup-stepdown.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown.js.
+        * fast/forms/datetime/input-valueasdate-datetime-expected.txt: Copied from LayoutTests/fast/forms/input-valueasdate-datetime-expected.txt.
+        * fast/forms/datetime/input-valueasdate-datetime.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasdate-datetime.js.
+        * fast/forms/datetime/input-valueasnumber-datetime-expected.txt: Copied from LayoutTests/fast/forms/input-valueasnumber-datetime-expected.txt.
+        * fast/forms/datetime/input-valueasnumber-datetime.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasnumber-datetime.js.
+        * fast/forms/input-stepup-stepdown-expected.txt: Removed "datetime" part.
+        * fast/forms/input-stepup-stepdown-from-renderer-expected.txt: ditto.
+        * fast/forms/input-type-change3-expected.txt: ditto.
+        * fast/forms/input-valueasdate-datetime-expected.txt: Removed.
+        * fast/forms/input-valueasdate-datetime.html: Removed.
+        * fast/forms/input-valueasnumber-datetime-expected.txt: Removed.
+        * fast/forms/input-valueasnumber-datetime.html: Removed.
+        * fast/forms/script-tests/ValidityState-rangeOverflow.js: Removed "datetime" part.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow.js: ditto.
+        * fast/forms/script-tests/ValidityState-stepMismatch.js: ditto.
+        * fast/forms/script-tests/ValidityState-typeMismatch-datetime.js: Removed.
+        * fast/forms/script-tests/input-stepup-stepdown-from-renderer.js: Removed "datetime" part.
+        * fast/forms/script-tests/input-stepup-stepdown.js: ditto.
+        * fast/forms/script-tests/input-type-change3.js: ditto.
+        * fast/forms/script-tests/input-valueasdate-datetime.js: Removed.
+        * fast/forms/script-tests/input-valueasnumber-datetime.js: Removed.
+
 2011-08-10  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm fails intermittently
