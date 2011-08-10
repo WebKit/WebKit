@@ -117,32 +117,6 @@ checkNotUnderflow('9999-01-01T12:00', '10000-12-31T12:00', true);
 
 // ----------------------------------------------------------------
 debug('');
-debug('Type=month');
-input.type = 'month';
-input.max = '';
-// No underflow cases
-checkNotUnderflow('2010-01', null);
-checkNotUnderflow('2010-01', '');
-checkNotUnderflow('2010-01', 'foo');
-// 1000-01 is smaller than the implicit minimum value.
-// But the month parser rejects it before comparing the minimum value.
-checkNotUnderflow('1000-01', '');
-checkNotUnderflow('1582-10', '');
-checkNotUnderflow('2010-01', '2009-12');
-checkNotUnderflow('2010-01', '2009-01');
-checkNotUnderflow('foo', '2011-01');
-
-// Underflow cases
-checkUnderflow('2010-01', '2010-02');
-checkUnderflow('9999-01', '10000-12');
-input.max = '2009-12';  // value < min && value > max
-checkUnderflow('2010-01', '2010-02');
-
-// Disabled
-checkNotUnderflow('9999-01', '10000-12', true);
-
-// ----------------------------------------------------------------
-debug('');
 debug('Type=number');
 input.type = 'number';
 input.max = '';

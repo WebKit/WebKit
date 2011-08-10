@@ -1,4 +1,4 @@
-description('Check stepping-up and -down for <input> from renderer. No cases of empty initial values for type=date, datetime, datetime-local, month, time.');
+description('Check stepping-up and -down for <input> from renderer. No cases of empty initial values for type=date, datetime, datetime-local, time.');
 
 var input = document.createElement('input');
 var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
@@ -144,29 +144,6 @@ shouldBe('stepDown("2010-02-10T20:13", "1", "2010-02-10T20:13")', '"2010-02-10T2
 debug('stepDown()/stepUp() for stepMismatch values');
 shouldBe('stepDown("2010-02-10T20:13", "3", "2010-02-10T20:12:56")', '"2010-02-10T20:12:59"');
 shouldBe('stepUp("1970-01-01T00:13", "7", "")', '"1970-01-01T00:13:04"');
-
-debug('');
-debug('Month type');
-input.type = 'month';
-debug('Function arguments are (value, step, {min or max}, [stepCount]).');
-debug('Normal cases');
-shouldBe('stepUp("2010-02", null, null)', '"2010-03"');
-shouldBe('stepDown("2010-02", null, null)', '"2010-01"');
-shouldBe('stepUp("2010-02", null, null, 10)', '"2010-12"');
-shouldBe('stepDown("2010-02", null, null, 11)', '"2009-03"');
-shouldBe('stepUp("1970-01", "4", null, 2)', '"1970-09"');
-shouldBe('stepDown("1970-01", "4", null, 3)', '"1969-01"');
-debug('Step=any');
-shouldBe('stepUp("2010-02", "any", null)', '"2010-03"');
-shouldBe('stepDown("2010-02", "any", null)', '"2010-01"');
-debug('Overflow/underflow');
-shouldBe('stepUp("2010-02", "3.40282346e+38", null)', '"275760-09"');
-shouldBe('stepDown("2010-02", "3.40282346e+38", null)', '"1970-01"');
-shouldBe('stepUp("2010-02", "1", "2010-02")', '"2010-02"');
-shouldBe('stepDown("2010-02", "1", "2010-02")', '"2010-02"');
-debug('stepDown()/stepUp() for stepMismatch values');
-shouldBe('stepDown("2010-02", "3", "2009-10")', '"2010-01"');
-shouldBe('stepUp("1970-02", "4", "")', '"1970-05"');
 
 debug('');
 debug('Number type');

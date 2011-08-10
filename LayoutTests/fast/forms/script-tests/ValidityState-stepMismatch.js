@@ -1,4 +1,4 @@
-description('Check stepMismatch results for type=date, datetime, datetime-local, month, time.');
+description('Check stepMismatch results for type=date, datetime, datetime-local, time.');
 
 var input = document.createElement('input');
 document.body.appendChild(input);
@@ -108,37 +108,6 @@ debug('Special step value');
 shouldBeFalse('stepMismatchFor("2010-02-09T12:34", "any", "2010-02-09T12:34")');
 debug('Disabled');
 shouldBeFalse('stepMismatchFor("2010-02-09T12:34:55.001", "1", "2010-02-09T12:34:56", true)');
-
-debug('');
-debug('Month type');
-input.type = 'month';
-debug('Empty values');
-shouldBeFalse('stepMismatchFor("", null, null)');
-shouldBeFalse('stepMismatchFor("", "2", "1969-12")');
-debug('Normal step values');
-shouldBeTrue('stepMismatchFor("2010-03", "2", "2010-02")');
-shouldBeFalse('stepMismatchFor("2010-02", "2", "2010-02")');
-shouldBeFalse('stepMismatchFor("2010-04", "2", "2010-02")');
-shouldBeTrue('stepMismatchFor("1800-11", "3", "1800-09")');
-shouldBeFalse('stepMismatchFor("1800-09", "3", "1800-09")');
-shouldBeFalse('stepMismatchFor("1800-12", "3", "1800-09")');
-shouldBeTrue('stepMismatchFor("275760-09", "3", "275760-08")');
-shouldBeFalse('stepMismatchFor("275760-09", "2", "275760-09")');
-debug('Implicit step base');
-shouldBeTrue('stepMismatchFor("1970-02", "2", null)');
-shouldBeFalse('stepMismatchFor("1970-03", "2", null)');
-debug('Fractional step values');
-shouldBeFalse('stepMismatchFor("2010-03", "0.1", "2010-02")');
-shouldBeFalse('stepMismatchFor("2010-03", "1.1", "2010-02")');
-shouldBeTrue('stepMismatchFor("2010-03", "1.9", "2010-02")');
-debug('Invalid or no step values');
-shouldBeFalse('stepMismatchFor("2010-03", null, "2010-02")');
-shouldBeFalse('stepMismatchFor("2010-03", "-1", "2010-02")');
-shouldBeFalse('stepMismatchFor("2010-03", "foo", "2010-02")');
-debug('Special step value');
-shouldBeFalse('stepMismatchFor("2010-03", "any", "2010-02")');
-debug('Disabled');
-shouldBeFalse('stepMismatchFor("2010-03", "2", "2010-02", true)');
 
 debug('');
 debug('Number type');

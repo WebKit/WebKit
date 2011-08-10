@@ -38,7 +38,6 @@ check("hidden", "hidden");
 check("image", "image");
 check("isindex", "text");
 check("khtml_isindex", "");
-check("month", "month");
 check("number", "number");
 check("password", "password");
 check("passwd", "text");

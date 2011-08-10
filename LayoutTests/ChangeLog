@@ -1,3 +1,60 @@
+2011-08-09  Kent Tamura  <tkent@chromium.org>
+
+        Move <input type=month> tests to fast/forms/month/
+        https://bugs.webkit.org/show_bug.cgi?id=65916
+
+        Reviewed by Tony Chang.
+
+        * fast/forms/ValidityState-rangeOverflow-expected.txt: Removed month part.
+        * fast/forms/ValidityState-rangeUnderflow-expected.txt: Removed month part.
+        * fast/forms/ValidityState-stepMismatch-expected.txt: Removed month part.
+        * fast/forms/ValidityState-typeMismatch-month-expected.txt: Removed.
+        * fast/forms/ValidityState-typeMismatch-month.html: Removed.
+        * fast/forms/date-input-visible-strings-expected.txt: Removed month part.
+        * fast/forms/date-input-visible-strings.html: Removed month part.
+        * fast/forms/input-stepup-stepdown-expected.txt: Removed month part.
+        * fast/forms/input-stepup-stepdown-from-renderer-expected.txt: Removed month part.
+        * fast/forms/input-type-change3-expected.txt: Removed month part.
+        * fast/forms/input-valueasdate-expected.txt: Removed.
+        * fast/forms/input-valueasdate-month-expected.txt: Removed.
+        * fast/forms/input-valueasdate-month.html: Removed.
+        * fast/forms/input-valueasdate.html: Removed.
+        * fast/forms/input-valueasnumber-month-expected.txt: Removed.
+        * fast/forms/input-valueasnumber-month.html: Removed.
+        * fast/forms/month: Added.
+        * fast/forms/month/ValidityState-rangeOverflow-month-expected.txt: Added.
+        * fast/forms/month/ValidityState-rangeOverflow-month.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeOverflow.js.
+        * fast/forms/month/ValidityState-rangeUnderflow-month-expected.txt: Added.
+        * fast/forms/month/ValidityState-rangeUnderflow-month.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeUnderflow.js.
+        * fast/forms/month/ValidityState-stepMismatch-month-expected.txt: Added.
+        * fast/forms/month/ValidityState-stepMismatch-month.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-stepMismatch.js.
+        * fast/forms/month/ValidityState-typeMismatch-month-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-typeMismatch-month-expected.txt.
+        * fast/forms/month/ValidityState-typeMismatch-month.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-typeMismatch-month.js.
+        * fast/forms/month/input-valueasdate-expected.txt: Copied from LayoutTests/fast/forms/input-valueasdate-expected.txt.
+        * fast/forms/month/input-valueasdate-month-expected.txt: Copied from LayoutTests/fast/forms/input-valueasdate-month-expected.txt.
+        * fast/forms/month/input-valueasdate-month.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasdate-month.js.
+        * fast/forms/month/input-valueasdate.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasdate.js.
+        * fast/forms/month/input-valueasnumber-month-expected.txt: Copied from LayoutTests/fast/forms/input-valueasnumber-month-expected.txt.
+        * fast/forms/month/input-valueasnumber-month.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasnumber-month.js.
+        * fast/forms/month/month-input-type-expected.txt: Added.
+        * fast/forms/month/month-input-type.html: Copied from LayoutTests/fast/forms/week/week-input-type.html.
+        * fast/forms/month/month-input-visible-string-expected.txt: Added.
+        * fast/forms/month/month-input-visible-string.html: Copied from LayoutTests/fast/forms/week/week-input-visible-string.html.
+        * fast/forms/month/month-stepup-stepdown-expected.txt: Added.
+        * fast/forms/month/month-stepup-stepdown-from-renderer-expected.txt: Added.
+        * fast/forms/month/month-stepup-stepdown-from-renderer.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown-from-renderer.js.
+        * fast/forms/month/month-stepup-stepdown.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown.js.
+        * fast/forms/script-tests/ValidityState-rangeOverflow.js: Removed month part.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow.js: Removed month part.
+        * fast/forms/script-tests/ValidityState-stepMismatch.js: Removed month part.
+        * fast/forms/script-tests/ValidityState-typeMismatch-month.js: Removed.
+        * fast/forms/script-tests/input-stepup-stepdown-from-renderer.js: Removed month part.
+        * fast/forms/script-tests/input-stepup-stepdown.js: Removed month part.
+        * fast/forms/script-tests/input-type-change3.js: Removed month part.
+        * fast/forms/script-tests/input-valueasdate-month.js: Removed.
+        * fast/forms/script-tests/input-valueasdate.js: Removed.
+        * fast/forms/script-tests/input-valueasnumber-month.js: Removed.
+
 2011-08-09  Anders Carlsson  <andersca@apple.com>
 
         Add the final batch of Lion specific SVG test results.

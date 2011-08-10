@@ -24,7 +24,6 @@ PASS input.type for "hidden" is correctly "hidden".
 PASS input.type for "image" is correctly "image".
 PASS input.type for "isindex" is correctly "text".
 PASS input.type for "khtml_isindex" is correctly "".
-PASS input.type for "month" is correctly "month".
 PASS input.type for "number" is correctly "number".
 PASS input.type for "password" is correctly "password".
 PASS input.type for "passwd" is correctly "text".

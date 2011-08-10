@@ -3,7 +3,6 @@ The user-visible values of the input fields should be localized if the platform 
 date: value='2011-04-27' visible='2011-04-27'
 datetime: value='2011-04-27T01:56:20.391Z' visible='2011-04-27T01:56:20.391Z'
 datetime-local: value='2011-04-27T01:56:20.391' visible='2011-04-27T01:56:20.391'
-month: value='2011-04' visible='2011-04'
 time: value='01:56:20.391' visible='01:56:20.391'
 PASS successfullyParsed is true
 

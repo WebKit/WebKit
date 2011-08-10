@@ -48,20 +48,6 @@ PASS The value "9999-01-01T12:00" undeflows the minimum value "10000-12-31T12:00
 PASS The value "2010-01-27T12:00" undeflows the minimum value "2010-02-01T12:00".
 PASS The value "9999-01-01T12:00" doesn't underflow the minimum value "10000-12-31T12:00" when disabled.
 
-Type=month
-PASS The value "2010-01" doesn't underflow the minimum value "".
-PASS The value "2010-01" doesn't underflow the minimum value "".
-PASS The value "2010-01" doesn't underflow the minimum value "foo".
-PASS The value "1000-01" doesn't underflow the minimum value "".
-PASS The value "1582-10" doesn't underflow the minimum value "".
-PASS The value "2010-01" doesn't underflow the minimum value "2009-12".
-PASS The value "2010-01" doesn't underflow the minimum value "2009-01".
-PASS The value "foo" doesn't underflow the minimum value "2011-01".
-PASS The value "2010-01" undeflows the minimum value "2010-02".
-PASS The value "9999-01" undeflows the minimum value "10000-12".
-PASS The value "2010-01" undeflows the minimum value "2010-02".
-PASS The value "9999-01" doesn't underflow the minimum value "10000-12" when disabled.
-
 Type=number
 PASS The value "101" doesn't underflow the minimum value "100".
 PASS The value "-99" doesn't underflow the minimum value "-100".
