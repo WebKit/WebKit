@@ -1,5 +1,46 @@
 2011-08-09  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT has no way of propagating predictions to loads and calls
+        https://bugs.webkit.org/show_bug.cgi?id=65883
+
+        Reviewed by Gavin Barraclough.
+        
+        This introduces the capability to store predictions on graph
+        nodes.  To save space while being somewhat consistent, the
+        prediction is always stored in the second OpInfo slot (since
+        a GetById will use the first one for the identifier).  This
+        change is a natural extension of r92593 (global variable
+        prediction).
+        
+        This is a 1.5% win on V8 in the arithmetic mean, and a 0.6%
+        win on V8 in the geometric mean.  It is neutral on SunSpider
+        and Kraken.  Interestingly, on V8 it regresses crypto by 3%
+        while progressing deltablue and richards by 2.6% and 4.3%,
+        respectively.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::addCall):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::predict):
+        (JSC::DFG::Graph::getPrediction):
+        * dfg/DFGNode.h:
+        (JSC::DFG::isCellPrediction):
+        (JSC::DFG::isArrayPrediction):
+        (JSC::DFG::isInt32Prediction):
+        (JSC::DFG::isDoublePrediction):
+        (JSC::DFG::isNumberPrediction):
+        (JSC::DFG::predictionToString):
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::hasPrediction):
+        (JSC::DFG::Node::getPrediction):
+        (JSC::DFG::Node::predict):
+
+2011-08-09  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT passes the this argument to constructors even though
         it's not necessary
         https://bugs.webkit.org/show_bug.cgi?id=65943

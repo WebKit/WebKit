@@ -394,10 +394,10 @@ private:
         return resultIndex;
     }
     
-    NodeIndex addToGraph(Node::VarArgTag, NodeType op)
+    NodeIndex addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2)
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(Node::VarArg, op, m_currentIndex, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
+        m_graph.append(Node(Node::VarArg, op, m_currentIndex, info1, info2, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
         
         m_numPassedVarArgs = 0;
         
@@ -419,7 +419,7 @@ private:
         int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
         for (int argIdx = firstArg; argIdx < firstArg + argCount; argIdx++)
             addVarArgChild(get(argIdx));
-        NodeIndex call = addToGraph(Node::VarArg, op);
+        NodeIndex call = addToGraph(Node::VarArg, op, OpInfo(0), OpInfo(PredictNone));
         Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
         if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
             set(putInstruction[1].u.operand, call);
@@ -862,7 +862,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             predictArray(base);
             predictInt32(property);
 
-            NodeIndex getByVal = addToGraph(GetByVal, base, property, aliases.lookupGetByVal(base, property));
+            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(PredictNone), base, property, aliases.lookupGetByVal(base, property));
             set(currentInstruction[1].u.operand, getByVal);
             aliases.recordGetByVal(getByVal);
 
@@ -891,7 +891,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = get(getInstruction[2].u.operand);
             unsigned identifier = getInstruction[3].u.operand;
             
-            NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), base);
+            NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(PredictNone), base);
             set(getInstruction[1].u.operand, getMethod);
             aliases.recordGetMethod(getMethod);
             
@@ -904,7 +904,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifier = currentInstruction[3].u.operand;
             
-            NodeIndex getById = addToGraph(GetById, OpInfo(identifier), base);
+            NodeIndex getById = addToGraph(GetById, OpInfo(identifier), OpInfo(PredictNone), base);
             set(currentInstruction[1].u.operand, getById);
             aliases.recordGetById(getById);
 

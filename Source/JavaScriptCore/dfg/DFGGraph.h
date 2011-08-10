@@ -44,59 +44,6 @@ namespace DFG {
 // helper function to distinguish vars & temporaries from arguments.
 inline bool operandIsArgument(int operand) { return operand < 0; }
 
-typedef uint8_t PredictedType;
-static const PredictedType PredictNone   = 0;
-static const PredictedType PredictCell   = 0x01;
-static const PredictedType PredictArray  = 0x03;
-static const PredictedType PredictInt32  = 0x04;
-static const PredictedType PredictDouble = 0x08;
-static const PredictedType PredictNumber = 0x0c;
-
-inline bool isCellPrediction(PredictedType value)
-{
-    return (value & PredictCell) == PredictCell && !(value & ~PredictArray);
-}
-
-inline bool isArrayPrediction(PredictedType value)
-{
-    return value == PredictArray;
-}
-
-inline bool isInt32Prediction(PredictedType value)
-{
-    return value == PredictInt32;
-}
-
-inline bool isDoublePrediction(PredictedType value)
-{
-    return value == PredictDouble;
-}
-
-inline bool isNumberPrediction(PredictedType value)
-{
-    return !!(value & PredictNumber) && !(value & ~PredictNumber);
-}
-
-#ifndef NDEBUG
-inline const char* predictionToString(PredictedType value)
-{
-    switch (value) {
-    case PredictNone:
-        return "p-bottom";
-    case PredictCell:
-        return "p-cell";
-    case PredictArray:
-        return "p-array";
-    case PredictInt32:
-        return "p-int32";
-    case PredictNumber:
-        return "p-number";
-    default:
-        return "p-top";
-    }
-}
-#endif
-
 struct PredictionSlot {
 public:
     PredictionSlot()
@@ -217,6 +164,13 @@ public:
         case GetGlobalVar:
             predictGlobalVar(node.varNumber(), prediction);
             break;
+        case GetById:
+        case GetMethod:
+        case GetByVal:
+        case Call:
+        case Construct:
+            node.predict(prediction);
+            break;
         default:
             break;
         }
@@ -256,6 +210,12 @@ public:
             return getPrediction(nodePtr->local());
         case GetGlobalVar:
             return getGlobalVarPrediction(nodePtr->varNumber());
+        case GetById:
+        case GetMethod:
+        case GetByVal:
+        case Call:
+        case Construct:
+            return nodePtr->getPrediction();
         default:
             return PredictNone;
         }
