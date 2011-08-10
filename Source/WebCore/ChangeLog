@@ -1,3 +1,19 @@
+2011-08-09  Abhishek Arya  <inferno@chromium.org>
+
+        Style change not propagating for before, after content
+        for table parts.
+        https://bugs.webkit.org/show_bug.cgi?id=51862
+
+        Fix by Chris Evans (cevans@chromium.org).
+        In the table case, make sure to return the before /
+        after parent rather then the before / after node
+        itself.
+
+        Reviewed by Simon Fraser.
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::findBeforeAfterParent):
+
 2011-08-09  Luke Macpherson   <macpherson@chromium.org>
 
         Implement string based properties in CSSStyleApplyProperty.

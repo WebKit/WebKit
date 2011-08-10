@@ -258,7 +258,7 @@ static RenderObject* findBeforeAfterParent(RenderObject* object)
     RenderObject* beforeAfterParent = object;
     while (beforeAfterParent && !(beforeAfterParent->isText() || beforeAfterParent->isImage()))
         beforeAfterParent = beforeAfterParent->firstChild();
-    return beforeAfterParent;
+    return beforeAfterParent ? beforeAfterParent->parent() : 0;
 }
 
 RenderObject* RenderObjectChildList::beforePseudoElementRenderer(const RenderObject* owner) const

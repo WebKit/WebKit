@@ -1,3 +1,14 @@
+2011-08-09  Abhishek Arya  <inferno@chromium.org>
+
+        Fix functional bug where style change was not getting propogated to before, after
+        content.
+        https://bugs.webkit.org/show_bug.cgi?id=51862
+
+        Reviewed by Simon Fraser.
+
+        * platform/mac/fast/css-generated-content/table-row-before-after-child-add-expected.png:
+        * platform/mac/fast/css-generated-content/table-table-before-after-child-add-expected.png:
+
 2011-08-09  Kent Tamura  <tkent@chromium.org>
 
         Another follow-up for r92728.
