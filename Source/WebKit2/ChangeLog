@@ -1,3 +1,14 @@
+2011-08-10  Alexey Proskuryakov  <ap@apple.com>
+
+        Accidentally commented out an assertion in BackingStore::incorporateUpdate
+        https://bugs.webkit.org/show_bug.cgi?id=65989
+
+        Reviewed by Anders Carlsson.
+
+        I couldn't get this assertion to fire in quick testing, let's bring it back.
+
+        * UIProcess/BackingStore.cpp: (WebKit::BackingStore::incorporateUpdate):
+
 2011-08-10  Lars Knudsen  <lars.knudsen@nokia.com>
 
         Add device specific settings to support viewport computing
