@@ -1,5 +1,37 @@
 2011-08-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Remove Network.initialContentSet from protocol, store workers content on backend.
+        https://bugs.webkit.org/show_bug.cgi?id=65929
+
+        Reviewed by Pavel Feldman.
+
+        Tests: http/tests/inspector/network/network-shared-worker.html
+               http/tests/inspector/network/network-worker.html
+
+        * inspector/Inspector.json:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveScriptResponseImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didReceiveScriptResponse):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::setInitialScriptContent):
+        (WebCore::InspectorResourceAgent::didReceiveScriptResponse):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/NetworkManager.js:
+        * inspector/front-end/Resource.js:
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::didReceiveResponse):
+        * workers/Worker.cpp:
+        (WebCore::Worker::didReceiveResponse):
+        * workers/Worker.h:
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::didReceiveResponse):
+        * workers/WorkerScriptLoaderClient.h:
+        (WebCore::WorkerScriptLoaderClient::didReceiveResponse):
+
+2011-08-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: [Network] Filtering by stylesheet does not update the # reqs, filesizes.
         https://bugs.webkit.org/show_bug.cgi?id=65515
 

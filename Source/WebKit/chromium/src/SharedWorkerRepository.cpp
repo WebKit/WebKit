@@ -82,8 +82,8 @@ public:
     static void stopAllLoadersForContext(ScriptExecutionContext*);
 
 private:
-    // WorkerScriptLoaderClient callback
-    virtual void didReceiveResponse(const ResourceResponse&);
+    // WorkerScriptLoaderClient callbacks
+    virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
     virtual void notifyFinished();
 
     virtual void connected();
@@ -153,9 +153,10 @@ static WebMessagePortChannel* getWebPort(PassOwnPtr<MessagePortChannel> port)
     return webPort;
 }
 
-void SharedWorkerScriptLoader::didReceiveResponse(const ResourceResponse& response)
+void SharedWorkerScriptLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
     m_responseAppCacheID = response.appCacheID();
+    InspectorInstrumentation::didReceiveScriptResponse(m_worker->scriptExecutionContext(), identifier);
 }
 
 void SharedWorkerScriptLoader::notifyFinished()

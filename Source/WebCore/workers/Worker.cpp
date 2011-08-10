@@ -129,6 +129,11 @@ bool Worker::hasPendingActivity() const
     return m_contextProxy->hasPendingActivity() || ActiveDOMObject::hasPendingActivity();
 }
 
+void Worker::didReceiveResponse(unsigned long identifier, const ResourceResponse&)
+{
+    InspectorInstrumentation::didReceiveScriptResponse(scriptExecutionContext(), identifier);
+}
+
 void Worker::notifyFinished()
 {
     if (m_scriptLoader->failed())

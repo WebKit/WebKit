@@ -265,7 +265,8 @@ public:
     void load(const KURL&);
 
 private:
-    // WorkerScriptLoaderClient callback
+    // WorkerScriptLoaderClient callbacks
+    virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
     virtual void notifyFinished();
 
     RefPtr<SharedWorker> m_worker;
@@ -293,6 +294,11 @@ void SharedWorkerScriptLoader::load(const KURL& url)
     m_scriptLoader->setTargetType(ResourceRequest::TargetIsSharedWorker);
 #endif
     m_scriptLoader->loadAsynchronously(m_worker->scriptExecutionContext(), url, DenyCrossOriginRequests, this);
+}
+
+void SharedWorkerScriptLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse&)
+{
+    InspectorInstrumentation::didReceiveScriptResponse(m_worker->scriptExecutionContext(), identifier);
 }
 
 void SharedWorkerScriptLoader::notifyFinished()

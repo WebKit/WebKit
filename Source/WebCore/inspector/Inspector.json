@@ -621,15 +621,6 @@
                 ]
             },
             {
-                "name": "initialContentSet",
-                "description": "Fired for worker scripts when their content becomes available.",
-                "parameters": [
-                    { "name": "identifier", "type": "string", "description": "Request identifier." },
-                    { "name": "content", "type": "string", "description": "Resource content." },
-                    { "name": "type", "$ref": "Page.ResourceType", "description": "Resource type." }
-                ]
-            },
-            {
                 "name": "webSocketWillSendHandshakeRequest",
                 "description": "Fired when WebSocket is about to initiate handshake.",
                 "parameters": [

@@ -265,6 +265,8 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
             type = InspectorPageAgent::DocumentResource;
         else if (m_loadingXHRSynchronously || m_resourcesData->resourceType(resourceId) == InspectorPageAgent::XHRResource)
             type = InspectorPageAgent::XHRResource;
+        else if (m_resourcesData->resourceType(resourceId) == InspectorPageAgent::ScriptResource)
+            type = InspectorPageAgent::ScriptResource;
 
         m_resourcesData->responseReceived(resourceId, m_pageAgent->frameId(loader->frame()), response);
     }
@@ -323,7 +325,12 @@ void InspectorResourceAgent::didLoadResourceFromMemoryCache(DocumentLoader* load
 
 void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, const String& sourceString)
 {
-    m_frontend->initialContentSet(IdentifiersFactory::resourceId(identifier), sourceString, InspectorPageAgent::resourceTypeString(InspectorPageAgent::ScriptResource));
+    m_resourcesData->setResourceContent(IdentifiersFactory::resourceId(identifier), sourceString);
+}
+
+void InspectorResourceAgent::didReceiveScriptResponse(unsigned long identifier)
+{
+    m_resourcesData->setResourceType(IdentifiersFactory::resourceId(identifier), InspectorPageAgent::ScriptResource);
 }
 
 void InspectorResourceAgent::setInitialXHRContent(unsigned long identifier, const String& sourceString)

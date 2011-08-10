@@ -134,6 +134,7 @@ public:
     static void willLoadXHRSynchronously(ScriptExecutionContext*);
     static void didLoadXHRSynchronously(ScriptExecutionContext*);
     static void scriptImported(ScriptExecutionContext*, unsigned long identifier, const String& sourceString);
+    static void didReceiveScriptResponse(ScriptExecutionContext*, unsigned long identifier);
     static void domContentLoadedEventFired(Frame*, const KURL&);
     static void loadEventFired(Frame*, const KURL&);
     static void frameDetachedFromParent(Frame*);
@@ -262,6 +263,7 @@ private:
     static void willLoadXHRSynchronouslyImpl(InstrumentingAgents*);
     static void didLoadXHRSynchronouslyImpl(InstrumentingAgents*);
     static void scriptImportedImpl(InstrumentingAgents*, unsigned long identifier, const String& sourceString);
+    static void didReceiveScriptResponseImpl(InstrumentingAgents*, unsigned long identifier);
     static void domContentLoadedEventFiredImpl(InstrumentingAgents*, Frame*, const KURL&);
     static void loadEventFiredImpl(InstrumentingAgents*, Frame*, const KURL&);
     static void frameDetachedFromParentImpl(InstrumentingAgents*, Frame*);
@@ -833,6 +835,14 @@ inline void InspectorInstrumentation::scriptImported(ScriptExecutionContext* con
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         scriptImportedImpl(instrumentingAgents, identifier, sourceString);
+#endif
+}
+
+inline void InspectorInstrumentation::didReceiveScriptResponse(ScriptExecutionContext* context, unsigned long identifier)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        didReceiveScriptResponseImpl(instrumentingAgents, identifier);
 #endif
 }
 

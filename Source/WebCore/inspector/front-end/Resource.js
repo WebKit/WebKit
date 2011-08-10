@@ -802,11 +802,6 @@ WebInspector.Resource.prototype = {
         return this._contentTimestamp;
     },
 
-    setInitialContent: function(content)
-    {
-        this._content = content;
-    },
-
     isEditable: function()
     {
         if (this._actualResource)

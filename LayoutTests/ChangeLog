@@ -1,5 +1,21 @@
 2011-08-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
+        Web Inspector: Remove Network.initialContentSet from protocol, store workers content on backend.
+        https://bugs.webkit.org/show_bug.cgi?id=65929
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network/network-shared-worker-expected.txt: Added.
+        * http/tests/inspector/network/network-shared-worker.html: Added.
+        * http/tests/inspector/network/network-worker-expected.txt: Added.
+        * http/tests/inspector/network/network-worker.html: Added.
+        * http/tests/inspector/network/resources/shared-worker.js: Added.
+        (onconnect):
+        * http/tests/inspector/network/resources/worker.js: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
         Web Inspector: console messages markers are lost in Resources panel after page reload
         https://bugs.webkit.org/show_bug.cgi?id=60701
 

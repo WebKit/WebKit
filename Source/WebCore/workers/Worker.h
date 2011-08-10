@@ -72,6 +72,8 @@ namespace WebCore {
     private:
         Worker(ScriptExecutionContext*);
 
+        // WorkerScriptLoaderClient callbacks
+        virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
         virtual void notifyFinished();
 
         virtual void refEventTarget() { ref(); }

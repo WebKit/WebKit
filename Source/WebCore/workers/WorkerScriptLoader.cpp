@@ -115,7 +115,7 @@ PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
     return request.release();
 }
     
-void WorkerScriptLoader::didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse& response)
+void WorkerScriptLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
     if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode()) {
         m_failed = true;
@@ -124,7 +124,7 @@ void WorkerScriptLoader::didReceiveResponse(unsigned long /*identifier*/, const 
     m_responseURL = response.url();
     m_responseEncoding = response.textEncodingName();
     if (m_client)
-        m_client->didReceiveResponse(response);
+        m_client->didReceiveResponse(identifier, response);
 }
 
 void WorkerScriptLoader::didReceiveData(const char* data, int len)

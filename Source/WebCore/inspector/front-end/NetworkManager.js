@@ -223,17 +223,6 @@ WebInspector.NetworkDispatcher.prototype = {
         this._finishResource(resource, time);
     },
 
-    initialContentSet: function(identifier, sourceString, type)
-    {
-        var resource = WebInspector.networkResourceById(identifier);
-        if (!resource)
-            return;
-
-        resource.type = WebInspector.Resource.Type[type];
-        resource.setInitialContent(sourceString);
-        this._updateResource(resource);
-    },
-
     webSocketCreated: function(identifier, requestURL)
     {
         var resource = this._createResource(identifier, null, null, requestURL);

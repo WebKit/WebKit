@@ -557,6 +557,12 @@ void InspectorInstrumentation::scriptImportedImpl(InstrumentingAgents* instrumen
         resourceAgent->setInitialScriptContent(identifier, sourceString);
 }
 
+void InspectorInstrumentation::didReceiveScriptResponseImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier)
+{
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->didReceiveScriptResponse(identifier);
+}
+
 void InspectorInstrumentation::domContentLoadedEventFiredImpl(InstrumentingAgents* instrumentingAgents, Frame* frame, const KURL& url)
 {
     DocumentLoader* documentLoader = frame->loader()->documentLoader();

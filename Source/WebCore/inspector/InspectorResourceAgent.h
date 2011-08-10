@@ -97,6 +97,7 @@ public:
     void didLoadResourceFromMemoryCache(DocumentLoader*, CachedResource*);
     void mainFrameNavigated(DocumentLoader*);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
+    void didReceiveScriptResponse(unsigned long identifier);
     void setInitialXHRContent(unsigned long identifier, const String& sourceString);
     void didReceiveXHRResponse(unsigned long identifier);
     void willLoadXHRSynchronously();
