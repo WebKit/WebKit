@@ -1,3 +1,15 @@
+2011-08-09  Chao-ying Fu  <fu@mips.com>
+
+        Fix one MIPS instruction to call JITStubThunked_##op
+        https://bugs.webkit.org/show_bug.cgi?id=65942
+
+        Reviewed by Gavin Barraclough.
+
+        Changed "bal" to "jalr" for a possible processor mode change from
+        MIPS32 to MIPS16.
+
+        * jit/JITStubs.cpp:
+
 2011-08-09  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT failure loading web site

@@ -1087,7 +1087,8 @@ static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame,
         ".set macro" "\n" \
         "la    $25," SYMBOL_STRING(JITStubThunked_##op) "\n" \
         ".set nomacro" "\n" \
-        "bal " SYMBOL_STRING(JITStubThunked_##op) "\n" \
+        ".reloc 1f,R_MIPS_JALR," SYMBOL_STRING(JITStubThunked_##op) "\n" \
+        "1: jalr $25" "\n" \
         "nop" "\n" \
         "lw    $31," STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "($29)" "\n" \
         "jr    $31" "\n" \
