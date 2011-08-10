@@ -42,6 +42,7 @@
 #include "WebSocket.h"
 #include "WorkerContext.h"
 #include "WorkerContextExecutionProxy.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -74,11 +75,25 @@ v8::Handle<v8::Value> V8WebSocket::constructorCallback(const v8::Arguments& args
     if (args.Length() < 2)
         webSocket->connect(url, ec);
     else {
-        v8::TryCatch tryCatchProtocol;
-        v8::Handle<v8::String> protocol = args[1]->ToString();
-        if (tryCatchProtocol.HasCaught())
-            return throwError(tryCatchProtocol.Exception());
-        webSocket->connect(url, toWebCoreString(protocol), ec);
+        v8::Local<v8::Value> protocolsValue = args[1];
+        if (protocolsValue->IsArray()) {
+            Vector<String> protocols;
+            v8::Local<v8::Array> protocolsArray = v8::Local<v8::Array>::Cast(protocolsValue);
+            for (uint32_t i = 0; i < protocolsArray->Length(); ++i) {
+                v8::TryCatch tryCatchProtocol;
+                v8::Handle<v8::String> protocol = protocolsArray->Get(v8::Int32::New(i))->ToString();
+                if (tryCatchProtocol.HasCaught())
+                    return throwError(tryCatchProtocol.Exception());
+                protocols.append(toWebCoreString(protocol));
+            }
+            webSocket->connect(url, protocols, ec);
+        } else {
+            v8::TryCatch tryCatchProtocol;
+            v8::Handle<v8::String> protocol = protocolsValue->ToString();
+            if (tryCatchProtocol.HasCaught())
+                return throwError(tryCatchProtocol.Exception());
+            webSocket->connect(url, toWebCoreString(protocol), ec);
+        }
     }
     if (ec)
         return throwError(ec);

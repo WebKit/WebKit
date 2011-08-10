@@ -1,3 +1,30 @@
+2011-08-10  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Accept multiple subprotocols
+        https://bugs.webkit.org/show_bug.cgi?id=65247
+
+        Reviewed by Kent Tamura.
+
+        Add tests to check whether WebSocket accepts multiple subprotocols in constructor.
+
+        * http/tests/websocket/tests/hybi/accept-first-subprotocol_wsh.py: Added.
+        * http/tests/websocket/tests/hybi/invalid-subprotocol-characters-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html: Added.
+        * http/tests/websocket/tests/hybi/invalid-subprotocols-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/invalid-subprotocols.html: Added.
+        * http/tests/websocket/tests/hybi/multiple-subprotocols-expected.txt: Renamed from LayoutTests/http/tests/websocket/tests/hybi/sub-protocol-with-space-expected.txt.
+        * http/tests/websocket/tests/hybi/multiple-subprotocols.html: Added.
+        * http/tests/websocket/tests/hybi/sub-protocol-with-space-expected.txt: Removed.
+        * http/tests/websocket/tests/hybi/sub-protocol-with-space.html:
+        Removed because hybi-10 does not allow subprotocols containing a space.
+        * http/tests/websocket/tests/hybi/workers/multiple-subprotocols-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html: Added.
+        * http/tests/websocket/tests/hybi/workers/resources/multiple-subprotocols.js: Added.
+        (ws.onopen):
+        (ws.onmessage):
+        (ws.onclose):
+        * http/tests/websocket/tests/hybi/workers/resources/protocol-test_wsh.py: Copied from http/tests/websocket/tests/hybi/protocol-test_wsh.py.
+
 2011-08-10  Noel Gordon  <noel.gordon@gmail.com>
 
         [Chromium] plugins/mouse-events.html should pass on the mac.

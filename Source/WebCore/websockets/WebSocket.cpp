@@ -48,6 +48,7 @@
 #include "SecurityOrigin.h"
 #include "ThreadableWebSocketChannel.h"
 #include "WebSocketChannel.h"
+#include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
@@ -55,7 +56,31 @@
 
 namespace WebCore {
 
+static inline bool isValidProtocolCharacter(UChar character)
+{
+    // Hybi-10 says "(Subprotocol string must consist of) characters in the range U+0021 to U+007E not including
+    // separator characters as defined in [RFC2616]."
+    const UChar minimumProtocolCharacter = '!'; // U+0021.
+    const UChar maximumProtocolCharacter = '~'; // U+007E.
+    return character >= minimumProtocolCharacter && character <= maximumProtocolCharacter
+        && character != '"' && character != '(' && character != ')' && character != ',' && character != '/'
+        && !(character >= ':' && character <= '@') // U+003A - U+0040 (':', ';', '<', '=', '>', '?', '@').
+        && !(character >= '[' && character <= ']') // U+005B - U+005D ('[', '\\', ']').
+        && character != '{' && character != '}';
+}
+
 static bool isValidProtocolString(const String& protocol)
+{
+    if (protocol.isEmpty())
+        return false;
+    for (size_t i = 0; i < protocol.length(); ++i) {
+        if (!isValidProtocolCharacter(protocol[i]))
+            return false;
+    }
+    return true;
+}
+
+static bool isValidProtocolStringHixie76(const String& protocol)
 {
     if (protocol.isNull())
         return true;
@@ -79,6 +104,17 @@ static String encodeProtocolString(const String& protocol)
             builder.append("\\\\");
         else
             builder.append(protocol[i]);
+    }
+    return builder.toString();
+}
+
+static String joinStrings(const Vector<String>& strings, const char* separator)
+{
+    StringBuilder builder;
+    for (size_t i = 0; i < strings.size(); ++i) {
+        if (i)
+            builder.append(separator);
+        builder.append(strings[i]);
     }
     return builder.toString();
 }
@@ -110,14 +146,21 @@ WebSocket::~WebSocket()
 
 void WebSocket::connect(const String& url, ExceptionCode& ec)
 {
-    connect(url, String(), ec);
+    Vector<String> protocols;
+    connect(url, protocols, ec);
 }
 
 void WebSocket::connect(const String& url, const String& protocol, ExceptionCode& ec)
 {
-    LOG(Network, "WebSocket %p connect to %s protocol=%s", this, url.utf8().data(), protocol.utf8().data());
+    Vector<String> protocols;
+    protocols.append(protocol);
+    connect(url, protocols, ec);
+}
+
+void WebSocket::connect(const String& url, const Vector<String>& protocols, ExceptionCode& ec)
+{
+    LOG(Network, "WebSocket %p connect to %s", this, url.utf8().data());
     m_url = KURL(KURL(), url);
-    m_protocol = protocol;
 
     if (!m_url.isValid()) {
         scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Invalid url for WebSocket " + m_url.string(), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
@@ -138,12 +181,6 @@ void WebSocket::connect(const String& url, const String& protocol, ExceptionCode
         ec = SYNTAX_ERR;
         return;
     }
-    if (!isValidProtocolString(m_protocol)) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong protocol for WebSocket '" + encodeProtocolString(m_protocol) + "'", 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
-        m_state = CLOSED;
-        ec = SYNTAX_ERR;
-        return;
-    }
     if (!portAllowed(m_url)) {
         scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket port " + String::number(m_url.port()) + " blocked", 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
@@ -152,9 +189,51 @@ void WebSocket::connect(const String& url, const String& protocol, ExceptionCode
     }
 
     m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this);
-    // FIXME: Get the value of m_channel->useHixie76Protocol() and validate the value of subprotocol
-    // if hybi-10 protocol is used.
-    m_channel->connect(m_url, m_protocol);
+
+    String protocolString;
+    if (m_channel->useHixie76Protocol()) {
+        if (!protocols.isEmpty()) {
+            // Emulate JavaScript's Array.toString() behavior.
+            protocolString = joinStrings(protocols, ",");
+        }
+        if (!isValidProtocolStringHixie76(protocolString)) {
+            scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong protocol for WebSocket '" + encodeProtocolString(protocolString) + "'", 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
+            m_state = CLOSED;
+            ec = SYNTAX_ERR;
+            return;
+        }
+    } else {
+        // FIXME: There is a disagreement about restriction of subprotocols between WebSocket API and hybi-10 protocol
+        // draft. The former simply says "only characters in the range U+0021 to U+007E are allowed," while the latter
+        // imposes a stricter rule: "the elements MUST be non-empty strings with characters as defined in [RFC2616],
+        // and MUST all be unique strings."
+        //
+        // Here, we throw SYNTAX_ERR if the given protocols do not meet the latter criteria. This behavior does not
+        // comply with WebSocket API specification, but it seems to be the only reasonable way to handle this conflict.
+        for (size_t i = 0; i < protocols.size(); ++i) {
+            if (!isValidProtocolString(protocols[i])) {
+                scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Wrong protocol for WebSocket '" + encodeProtocolString(protocols[i]) + "'", 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
+                m_state = CLOSED;
+                ec = SYNTAX_ERR;
+                return;
+            }
+        }
+        HashSet<String> visited;
+        for (size_t i = 0; i < protocols.size(); ++i) {
+            if (visited.contains(protocols[i])) {
+                scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket protocols contain duplicates: '" + encodeProtocolString(protocols[i]) + "'", 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
+                m_state = CLOSED;
+                ec = SYNTAX_ERR;
+                return;
+            }
+            visited.add(protocols[i]);
+        }
+
+        if (!protocols.isEmpty())
+            protocolString = joinStrings(protocols, ", ");
+    }
+
+    m_channel->connect(m_url, protocolString);
     ActiveDOMObject::setPendingActivity(this);
 }
 

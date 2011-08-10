@@ -64,6 +64,7 @@ namespace WebCore {
 
         void connect(const String& url, ExceptionCode&);
         void connect(const String& url, const String& protocol, ExceptionCode&);
+        void connect(const String& url, const Vector<String>& protocols, ExceptionCode&);
 
         bool send(const String& message, ExceptionCode&);
 
@@ -110,7 +111,6 @@ namespace WebCore {
 
         State m_state;
         KURL m_url;
-        String m_protocol;
         EventTargetData m_eventTargetData;
         unsigned long m_bufferedAmountAfterClose;
     };

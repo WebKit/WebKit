@@ -184,7 +184,8 @@ void WebSocketChannel::disconnect()
     LOG(Network, "WebSocketChannel %p disconnect", this);
     if (m_identifier && m_context)
         InspectorInstrumentation::didCloseWebSocket(m_context, m_identifier);
-    m_handshake->clearScriptExecutionContext();
+    if (m_handshake)
+        m_handshake->clearScriptExecutionContext();
     m_client = 0;
     m_context = 0;
     if (m_handle)

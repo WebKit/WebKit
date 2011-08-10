@@ -1,0 +1,187 @@
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0000'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0001'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0002'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0003'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0004'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0005'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0006'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0007'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0008'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0009'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u000A'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u000B'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u000C'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u000D'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u000E'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u000F'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0010'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0011'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0012'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0013'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0014'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0015'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0016'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0017'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0018'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u0019'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u001A'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u001B'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u001C'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u001D'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u001E'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u001F'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket ' '
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '"'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '('
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket ')'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket ','
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '/'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket ':'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket ';'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '<'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '='
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '>'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '?'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '@'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '['
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\\'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket ']'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '{'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '}'
+CONSOLE MESSAGE: line 0: Wrong protocol for WebSocket '\u007F'
+WebSocket should fail if subprotocol contains a forbidden character.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS new WebSocket(url, "\u0000") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0001") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0002") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0003") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0004") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0005") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0006") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0007") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0008") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0009") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u000a") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u000b") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u000c") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u000d") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u000e") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u000f") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0010") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0011") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0012") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0013") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0014") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0015") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0016") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0017") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0018") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0019") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u001a") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u001b") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u001c") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u001d") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u001e") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u001f") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0020") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS WebSocket correctly accepted subprotocol "\u0021"
+PASS new WebSocket(url, "\u0022") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS WebSocket correctly accepted subprotocol "\u0023"
+PASS WebSocket correctly accepted subprotocol "\u0024"
+PASS WebSocket correctly accepted subprotocol "\u0025"
+PASS WebSocket correctly accepted subprotocol "\u0026"
+PASS WebSocket correctly accepted subprotocol "\u0027"
+PASS new WebSocket(url, "\u0028") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0029") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS WebSocket correctly accepted subprotocol "\u002a"
+PASS WebSocket correctly accepted subprotocol "\u002b"
+PASS new WebSocket(url, "\u002c") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS WebSocket correctly accepted subprotocol "\u002d"
+PASS WebSocket correctly accepted subprotocol "\u002e"
+PASS new WebSocket(url, "\u002f") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS WebSocket correctly accepted subprotocol "\u0030"
+PASS WebSocket correctly accepted subprotocol "\u0031"
+PASS WebSocket correctly accepted subprotocol "\u0032"
+PASS WebSocket correctly accepted subprotocol "\u0033"
+PASS WebSocket correctly accepted subprotocol "\u0034"
+PASS WebSocket correctly accepted subprotocol "\u0035"
+PASS WebSocket correctly accepted subprotocol "\u0036"
+PASS WebSocket correctly accepted subprotocol "\u0037"
+PASS WebSocket correctly accepted subprotocol "\u0038"
+PASS WebSocket correctly accepted subprotocol "\u0039"
+PASS new WebSocket(url, "\u003a") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u003b") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u003c") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u003d") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u003e") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u003f") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u0040") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS WebSocket correctly accepted subprotocol "\u0041"
+PASS WebSocket correctly accepted subprotocol "\u0042"
+PASS WebSocket correctly accepted subprotocol "\u0043"
+PASS WebSocket correctly accepted subprotocol "\u0044"
+PASS WebSocket correctly accepted subprotocol "\u0045"
+PASS WebSocket correctly accepted subprotocol "\u0046"
+PASS WebSocket correctly accepted subprotocol "\u0047"
+PASS WebSocket correctly accepted subprotocol "\u0048"
+PASS WebSocket correctly accepted subprotocol "\u0049"
+PASS WebSocket correctly accepted subprotocol "\u004a"
+PASS WebSocket correctly accepted subprotocol "\u004b"
+PASS WebSocket correctly accepted subprotocol "\u004c"
+PASS WebSocket correctly accepted subprotocol "\u004d"
+PASS WebSocket correctly accepted subprotocol "\u004e"
+PASS WebSocket correctly accepted subprotocol "\u004f"
+PASS WebSocket correctly accepted subprotocol "\u0050"
+PASS WebSocket correctly accepted subprotocol "\u0051"
+PASS WebSocket correctly accepted subprotocol "\u0052"
+PASS WebSocket correctly accepted subprotocol "\u0053"
+PASS WebSocket correctly accepted subprotocol "\u0054"
+PASS WebSocket correctly accepted subprotocol "\u0055"
+PASS WebSocket correctly accepted subprotocol "\u0056"
+PASS WebSocket correctly accepted subprotocol "\u0057"
+PASS WebSocket correctly accepted subprotocol "\u0058"
+PASS WebSocket correctly accepted subprotocol "\u0059"
+PASS WebSocket correctly accepted subprotocol "\u005a"
+PASS new WebSocket(url, "\u005b") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u005c") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS new WebSocket(url, "\u005d") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS WebSocket correctly accepted subprotocol "\u005e"
+PASS WebSocket correctly accepted subprotocol "\u005f"
+PASS WebSocket correctly accepted subprotocol "\u0060"
+PASS WebSocket correctly accepted subprotocol "\u0061"
+PASS WebSocket correctly accepted subprotocol "\u0062"
+PASS WebSocket correctly accepted subprotocol "\u0063"
+PASS WebSocket correctly accepted subprotocol "\u0064"
+PASS WebSocket correctly accepted subprotocol "\u0065"
+PASS WebSocket correctly accepted subprotocol "\u0066"
+PASS WebSocket correctly accepted subprotocol "\u0067"
+PASS WebSocket correctly accepted subprotocol "\u0068"
+PASS WebSocket correctly accepted subprotocol "\u0069"
+PASS WebSocket correctly accepted subprotocol "\u006a"
+PASS WebSocket correctly accepted subprotocol "\u006b"
+PASS WebSocket correctly accepted subprotocol "\u006c"
+PASS WebSocket correctly accepted subprotocol "\u006d"
+PASS WebSocket correctly accepted subprotocol "\u006e"
+PASS WebSocket correctly accepted subprotocol "\u006f"
+PASS WebSocket correctly accepted subprotocol "\u0070"
+PASS WebSocket correctly accepted subprotocol "\u0071"
+PASS WebSocket correctly accepted subprotocol "\u0072"
+PASS WebSocket correctly accepted subprotocol "\u0073"
+PASS WebSocket correctly accepted subprotocol "\u0074"
+PASS WebSocket correctly accepted subprotocol "\u0075"
+PASS WebSocket correctly accepted subprotocol "\u0076"
+PASS WebSocket correctly accepted subprotocol "\u0077"
+PASS WebSocket correctly accepted subprotocol "\u0078"
+PASS WebSocket correctly accepted subprotocol "\u0079"
+PASS WebSocket correctly accepted subprotocol "\u007a"
+PASS new WebSocket(url, "\u007b") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS WebSocket correctly accepted subprotocol "\u007c"
+PASS new WebSocket(url, "\u007d") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS WebSocket correctly accepted subprotocol "\u007e"
+PASS new WebSocket(url, "\u007f") threw exception Error: SYNTAX_ERR: DOM Exception 12.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

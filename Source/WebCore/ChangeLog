@@ -1,3 +1,39 @@
+2011-08-10  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Accept multiple subprotocols
+        https://bugs.webkit.org/show_bug.cgi?id=65247
+
+        Reviewed by Kent Tamura.
+
+        WebSocket constructor should accept an array of subprotocols if hybi-10 protocol is chosen.
+
+        Tests: http/tests/websocket/tests/hybi/invalid-subprotocol-characters.html
+               http/tests/websocket/tests/hybi/invalid-subprotocols.html
+               http/tests/websocket/tests/hybi/multiple-subprotocols.html
+               http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html
+
+        * bindings/js/JSWebSocketCustom.cpp:
+        (WebCore::JSWebSocketConstructor::constructJSWebSocket):
+        If the second argument of WebSocket constructor is an array, build a Vector<String> and
+        pass it to WebSocket::connect().
+        * bindings/v8/custom/V8WebSocketCustom.cpp:
+        (WebCore::V8WebSocket::constructorCallback):
+        Ditto.
+        * websockets/WebSocket.cpp:
+        (WebCore::isValidProtocolCharacter): Added.
+        (WebCore::isValidProtocolString): Added.
+        (WebCore::isValidProtocolStringHixie76): Renamed from isValidProtocolString.
+        (WebCore::joinStrings):
+        (WebCore::WebSocket::connect):
+        If an array is provided as a subprotocol, and if hixie-76 is used for this connection, it
+        must be converted to a string in the same manner as JavaScript's Array.toString() in order
+        to keep compatibility.
+        * websockets/WebSocket.h:
+        Removed m_protocol because it was not used at all.
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::disconnect):
+        WebSocketChannel may be released before connect() is called, thus m_handshake may be null.
+
 2011-08-10  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: Network panel always displays file:// resources as "(pending)"
