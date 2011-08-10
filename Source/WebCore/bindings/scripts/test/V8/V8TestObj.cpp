@@ -1287,6 +1287,8 @@ COMPILE_ASSERT(0x1abc == TestObj::CONST_VALUE_14, TestObjEnumCONST_VALUE_14IsWro
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
+    desc->ReadOnlyPrototype();
+
     v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestObj", v8::Persistent<v8::FunctionTemplate>(), V8TestObj::internalFieldCount,
         TestObjAttrs, WTF_ARRAY_LENGTH(TestObjAttrs),
         TestObjCallbacks, WTF_ARRAY_LENGTH(TestObjCallbacks));

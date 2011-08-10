@@ -1955,8 +1955,6 @@ BUGCR62301 MAC : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
 BUGCR62301 MAC : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
 BUGCR62301 MAC : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
 
-BUGWK39655 : fast/dom/prototype-property.html = FAIL
-
 // These SVG tests have been flaky on Win from quite some time.
 // Hard to pin down which roll introduced the flakiness.
 BUGCR45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH

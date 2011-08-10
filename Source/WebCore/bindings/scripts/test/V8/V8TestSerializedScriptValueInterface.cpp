@@ -44,6 +44,8 @@ template <typename T> void V8_USE(T) { }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValueInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
+    desc->ReadOnlyPrototype();
+
     v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestSerializedScriptValueInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestSerializedScriptValueInterface::internalFieldCount,
         0, 0,
         0, 0);

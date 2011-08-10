@@ -1,3 +1,12 @@
+2011-08-09  Dominic Cooney  <dominicc@chromium.org>
+
+        [V8] The prototype property of DOM constructors should be read-only.
+        https://bugs.webkit.org/show_bug.cgi?id=39655
+
+        Reviewed by Dimitri Glazkov.
+
+        * platform/chromium/test_expectations.txt: Unskip test for prototypes.
+
 2011-08-09  Kent Tamura  <tkent@chromium.org>
 
         Move <input type=time> tests to fast/forms/time/

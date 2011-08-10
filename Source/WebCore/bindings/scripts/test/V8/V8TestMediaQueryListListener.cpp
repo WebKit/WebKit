@@ -55,6 +55,8 @@ static const BatchedCallback TestMediaQueryListListenerCallbacks[] = {
 };
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListenerTemplate(v8::Persistent<v8::FunctionTemplate> desc)
 {
+    desc->ReadOnlyPrototype();
+
     v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, "TestMediaQueryListListener", v8::Persistent<v8::FunctionTemplate>(), V8TestMediaQueryListListener::internalFieldCount,
         0, 0,
         TestMediaQueryListListenerCallbacks, WTF_ARRAY_LENGTH(TestMediaQueryListListenerCallbacks));

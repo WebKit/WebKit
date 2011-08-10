@@ -2015,6 +2015,8 @@ END
     push(@implContent,  <<END);
 static v8::Persistent<v8::FunctionTemplate> Configure${className}Template(v8::Persistent<v8::FunctionTemplate> desc)
 {
+    desc->ReadOnlyPrototype();
+
     v8::Local<v8::Signature> defaultSignature = configureTemplate(desc, \"${visibleInterfaceName}\", $parentClassTemplate, V8${interfaceName}::internalFieldCount,
 END
     # Set up our attributes if we have them
