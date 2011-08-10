@@ -1622,7 +1622,7 @@ EAPI Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float ma
  *
  * @param o view.
  *
- * @return minimum value of zoom range.
+ * @return minimum value of zoom range, or @c -1.0 on failure.
  */
 EAPI float ewk_view_zoom_range_min_get(Evas_Object *o);
 
@@ -1631,7 +1631,7 @@ EAPI float ewk_view_zoom_range_min_get(Evas_Object *o);
  *
  * @param o view.
  *
- * @return maximum value of zoom range.
+ * @return maximum value of zoom range, or @c -1.0 on failure.
  */
 EAPI float ewk_view_zoom_range_max_get(Evas_Object *o);
 
@@ -1641,8 +1641,10 @@ EAPI float ewk_view_zoom_range_max_get(Evas_Object *o);
  * @param o view.
  * @param user_scalable boolean pointer in which to enable zoom. It defaults
  * to @c EINA_TRUE.
+ *
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE on failure
  */
-EAPI void ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable);
+EAPI Eina_Bool ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable);
 
 /**
  * Gets if zoom is enabled.
@@ -1650,7 +1652,7 @@ EAPI void ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable);
  * @param o view.
  * @param user_scalable where to return the current user scalable value.
  *
- * @return @c EINA_TRUE if zoom is enabled, @c EINA_FALSE if not.
+ * @return @c EINA_TRUE if zoom is enabled, @c EINA_FALSE if not or on failure.
  */
 EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object *o);
 
@@ -1660,7 +1662,7 @@ EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object *o);
  * @param o view.
  * @param user_scalable where to return the current user scalable value.
  *
- * @return @c EINA_TRUE if zoom is enabled, @c EINA_FALSE if not.
+ * @return device pixel ratio or @c -1.0 on failure.
  */
 EAPI float ewk_view_device_pixel_ratio_get(Evas_Object *o);
 

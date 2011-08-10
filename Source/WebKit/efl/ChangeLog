@@ -1,3 +1,22 @@
+2011-08-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] API methods check NULL and return proper value.
+        https://bugs.webkit.org/show_bug.cgi?id=65844
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Check NULL before access to the smart and private data of the view object
+        and return the proper value if error occurred.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_zoom_range_set):
+        (ewk_view_zoom_range_min_get):
+        (ewk_view_zoom_range_max_get):
+        (ewk_view_user_scalable_set):
+        (ewk_view_user_scalable_get):
+        (ewk_view_device_pixel_ratio_get):
+        * ewk/ewk_view.h:
+
 2011-08-10  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Remove unused local variable from _ewk_tiled_backing_store_item_process_idler_cb.

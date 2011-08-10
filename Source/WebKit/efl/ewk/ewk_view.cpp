@@ -3410,8 +3410,8 @@ void ewk_view_viewport_attributes_get(Evas_Object *o, float *w, float *h, float 
 
 Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float max_scale)
 {
-    EWK_VIEW_SD_GET(o, sd);
-    EWK_VIEW_PRIV_GET(sd, priv);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
     if (max_scale < min_scale) {
         WRN("min_scale is larger than max_scale");
@@ -3426,40 +3426,42 @@ Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float max_sca
 
 float ewk_view_zoom_range_min_get(Evas_Object *o)
 {
-    EWK_VIEW_SD_GET(o, sd);
-    EWK_VIEW_PRIV_GET(sd, priv);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
 
     return priv->settings.zoom_range.min_scale;
 }
 
 float ewk_view_zoom_range_max_get(Evas_Object *o)
 {
-    EWK_VIEW_SD_GET(o, sd);
-    EWK_VIEW_PRIV_GET(sd, priv);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
 
     return priv->settings.zoom_range.max_scale;
 }
 
-void ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable)
+Eina_Bool ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable)
 {
-    EWK_VIEW_SD_GET(o, sd);
-    EWK_VIEW_PRIV_GET(sd, priv);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
     priv->settings.zoom_range.user_scalable = user_scalable;
+
+    return EINA_TRUE;
 }
 
 Eina_Bool ewk_view_user_scalable_get(Evas_Object *o)
 {
-    EWK_VIEW_SD_GET(o, sd);
-    EWK_VIEW_PRIV_GET(sd, priv);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
 
     return priv->settings.zoom_range.user_scalable;
 }
 
 float ewk_view_device_pixel_ratio_get(Evas_Object *o)
 {
-    EWK_VIEW_SD_GET(o, sd);
-    EWK_VIEW_PRIV_GET(sd, priv);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, -1.0);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, -1.0);
 
     return priv->settings.device_pixel_ratio;
 }
