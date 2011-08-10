@@ -1,3 +1,23 @@
+2011-08-10  Tony Gentilcore  <tonyg@chromium.org>
+
+        [chromium] Notify MemoryCache of decoded data access
+        https://bugs.webkit.org/show_bug.cgi?id=65859
+
+        Reviewed by James Robinson.
+
+        This causes us to call CachedImage::didDraw() which calls CachedResource::didAccessDecodedData()
+        which updates the LRU for decoded image data and potentially prunes the cache. This is already done
+        by almost all of the other ports.
+
+        The decoded bitmaps obviously use quite a bit of memory, so pruning them when necessary is important.
+        In my tests, this saves several MB on many popular web pages.
+
+        No new tests because no observable difference in functionality.
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::BitmapImage::draw):
+        (WebCore::BitmapImageSingleFrameSkia::draw):
+
 2011-08-10  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Remove Network.initialContentSet from protocol, store workers content on backend.

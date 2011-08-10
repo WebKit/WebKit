@@ -36,6 +36,7 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "GraphicsContext.h"
+#include "ImageObserver.h"
 #include "Logging.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
@@ -489,6 +490,9 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dstRect,
                   enclosingIntRect(normSrcRect),
                   normDstRect,
                   WebCoreCompositeToSkiaComposite(compositeOp));
+
+    if (ImageObserver* observer = imageObserver())
+        observer->didDraw(this);
 }
 
 // FIXME: These should go into BitmapImageSingleFrameSkia.cpp
@@ -512,6 +516,9 @@ void BitmapImageSingleFrameSkia::draw(GraphicsContext* ctxt,
                   enclosingIntRect(normSrcRect),
                   normDstRect,
                   WebCoreCompositeToSkiaComposite(compositeOp));
+
+    if (ImageObserver* observer = imageObserver())
+        observer->didDraw(this);
 }
 
 BitmapImageSingleFrameSkia::BitmapImageSingleFrameSkia(const SkBitmap& bitmap)
