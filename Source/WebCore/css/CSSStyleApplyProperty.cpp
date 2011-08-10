@@ -265,12 +265,12 @@ private:
     }
 };
 
-enum LengthAuto {AutoDisabled = 0, AutoEnabled = 1};
-enum LengthIntrinsic {IntrinsicDisabled = 0, IntrinsicEnabled = 1};
-enum LengthMinIntrinsic {MinIntrinsicDisabled = 0, MinIntrinsicEnabled = 1};
-enum LengthNone {NoneDisabled = 0, NoneEnabled = 1};
-enum LengthUndefined {UndefinedDisabled = 0, UndefinedEnabled = 1};
-enum LengthFlexDirection {FlexDirectionDisabled = 0, FlexWidth = 1, FlexHeight};
+enum LengthAuto { AutoDisabled = 0, AutoEnabled };
+enum LengthIntrinsic { IntrinsicDisabled = 0, IntrinsicEnabled };
+enum LengthMinIntrinsic { MinIntrinsicDisabled = 0, MinIntrinsicEnabled };
+enum LengthNone { NoneDisabled = 0, NoneEnabled };
+enum LengthUndefined { UndefinedDisabled = 0, UndefinedEnabled };
+enum LengthFlexDirection { FlexDirectionDisabled = 0, FlexWidth, FlexHeight };
 template <LengthAuto autoEnabled = AutoDisabled,
           LengthIntrinsic intrinsicEnabled = IntrinsicDisabled,
           LengthMinIntrinsic minIntrinsicEnabled = MinIntrinsicDisabled,
@@ -329,6 +329,29 @@ private:
             } else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 setValue(selector->style(), Length(primitiveValue->getDoubleValue(), Percent));
         }
+    }
+};
+
+enum StringIdentBehavior { NothingMapsToNull = 0, MapNoneToNull, MapAutoToNull };
+template <StringIdentBehavior identBehavior = NothingMapsToNull>
+class ApplyPropertyString : public ApplyPropertyDefaultBase<const AtomicString&> {
+public:
+    ApplyPropertyString(GetterFunction getter, SetterFunction setter, InitialFunction initial)
+        : ApplyPropertyDefaultBase<const AtomicString&>(getter, setter, initial)
+    {
+    }
+
+private:
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (!value->isPrimitiveValue())
+            return;
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        if ((identBehavior == MapNoneToNull && primitiveValue->getIdent() == CSSValueNone)
+            || (identBehavior == MapAutoToNull && primitiveValue->getIdent() == CSSValueAuto))
+            setValue(selector->style(), nullAtom);
+        else
+            setValue(selector->style(), primitiveValue->getStringValue());
     }
 };
 
@@ -930,6 +953,9 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitColumnCount, new ApplyPropertyAuto<unsigned short>(&RenderStyle::columnCount, &RenderStyle::setColumnCount, &RenderStyle::hasAutoColumnCount, &RenderStyle::setHasAutoColumnCount));
     setPropertyHandler(CSSPropertyWebkitColumnGap, new ApplyPropertyAuto<float, ComputeLength, CSSValueNormal>(&RenderStyle::columnGap, &RenderStyle::setColumnGap, &RenderStyle::hasNormalColumnGap, &RenderStyle::setHasNormalColumnGap));
     setPropertyHandler(CSSPropertyWebkitColumnWidth, new ApplyPropertyAuto<float, ComputeLength>(&RenderStyle::columnWidth, &RenderStyle::setColumnWidth, &RenderStyle::hasAutoColumnWidth, &RenderStyle::setHasAutoColumnWidth));
+
+    setPropertyHandler(CSSPropertyWebkitHighlight, new ApplyPropertyString<MapNoneToNull>(&RenderStyle::highlight, &RenderStyle::setHighlight, &RenderStyle::initialHighlight));
+    setPropertyHandler(CSSPropertyWebkitHyphenateCharacter, new ApplyPropertyString<MapAutoToNull>(&RenderStyle::hyphenationString, &RenderStyle::setHyphenationString, &RenderStyle::initialHyphenationString));
 
     setPropertyHandler(CSSPropertyWebkitTextCombine, new ApplyPropertyDefault<TextCombine>(&RenderStyle::textCombine, &RenderStyle::setTextCombine, &RenderStyle::initialTextCombine));
     setPropertyHandler(CSSPropertyWebkitTextEmphasisPosition, new ApplyPropertyDefault<TextEmphasisPosition>(&RenderStyle::textEmphasisPosition, &RenderStyle::setTextEmphasisPosition, &RenderStyle::initialTextEmphasisPosition));

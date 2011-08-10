@@ -4741,25 +4741,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setLineClamp(LineClampValue(primitiveValue->getIntValue(CSSPrimitiveValue::CSS_PERCENTAGE), LineClampPercentage));
         return;
     }
-    case CSSPropertyWebkitHighlight: {
-        HANDLE_INHERIT_AND_INITIAL(highlight, Highlight);
-        if (primitiveValue->getIdent() == CSSValueNone)
-            m_style->setHighlight(nullAtom);
-        else
-            m_style->setHighlight(primitiveValue->getStringValue());
-        return;
-    }
     case CSSPropertyWebkitHyphens:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(hyphens, Hyphens);
         return;
-    case CSSPropertyWebkitHyphenateCharacter: {
-        HANDLE_INHERIT_AND_INITIAL(hyphenationString, HyphenationString);
-        if (primitiveValue->getIdent() == CSSValueAuto)
-            m_style->setHyphenationString(nullAtom);
-        else
-            m_style->setHyphenationString(primitiveValue->getStringValue());
-        return;
-    }
     case CSSPropertyWebkitHyphenateLimitAfter: {
         HANDLE_INHERIT_AND_INITIAL(hyphenationLimitAfter, HyphenationLimitAfter);
         if (primitiveValue->getIdent() == CSSValueAuto)
@@ -5222,6 +5206,8 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitColumnCount:
     case CSSPropertyWebkitColumnGap:
     case CSSPropertyWebkitColumnWidth:
+    case CSSPropertyWebkitHighlight:
+    case CSSPropertyWebkitHyphenateCharacter:
     case CSSPropertyWebkitTextCombine:
     case CSSPropertyWebkitTextEmphasisPosition:
     case CSSPropertyWebkitTextEmphasisStyle:

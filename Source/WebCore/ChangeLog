@@ -1,3 +1,22 @@
+2011-08-09  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement string based properties in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=65662
+
+        Reviewed by Darin Adler.
+
+        No new tests / refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyString::ApplyPropertyString):
+        Added class to handle string based properties.
+        (WebCore::ApplyPropertyString::applyValue):
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Add initializers for CSSPropertyWebkitHighlight and CSSPropertyWebkitHyphenateCharacter.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove existing implementations for CSSPropertyWebkitHighlight and CSSPropertyWebkitHyphenateCharacter.
+
 2011-08-09  Emil A Eklund  <eae@chromium.org>
 
         Switch RenderBlock to to new layout types
