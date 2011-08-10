@@ -1,3 +1,27 @@
+2011-08-10  Lars Knudsen  <lars.knudsen@nokia.com>
+
+        Add device specific settings to support viewport computing
+        https://bugs.webkit.org/show_bug.cgi?id=65984
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Based on patch by Zalan Bujtas.
+
+        Added settings for device size, dpi and layout fallback width
+        to support viewport computing.
+
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setLayoutFallbackWidth):
+        (WebCore::Settings::layoutFallbackWidth):
+        (WebCore::Settings::setDeviceWidth):
+        (WebCore::Settings::deviceWidth):
+        (WebCore::Settings::setDeviceHeight):
+        (WebCore::Settings::deviceHeight):
+        (WebCore::Settings::setDeviceDPI):
+        (WebCore::Settings::deviceDPI):
+
 2011-08-10  Benjamin Poulain  <benjamin@webkit.org>
 
         Unify the way we generate HTML for an image in the Clipboard

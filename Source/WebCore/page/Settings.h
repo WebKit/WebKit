@@ -423,6 +423,18 @@ namespace WebCore {
         void setCrossOriginCheckInGetMatchedCSSRulesDisabled(bool flag) { m_crossOriginCheckInGetMatchedCSSRulesDisabled = flag; }
         bool crossOriginCheckInGetMatchedCSSRulesDisabled() const { return m_crossOriginCheckInGetMatchedCSSRulesDisabled; }
         
+        void setLayoutFallbackWidth(int width) { m_layoutFallbackWidth = width; }
+        int layoutFallbackWidth() const { return m_layoutFallbackWidth; }
+
+        void setDeviceWidth(int width) { m_deviceWidth = width; }
+        int deviceWidth() const { return m_deviceWidth; }
+
+        void setDeviceHeight(int height) { m_deviceHeight = height; }
+        int deviceHeight() const { return m_deviceHeight; }
+
+        void setDeviceDPI(int deviceDPI) { m_deviceDPI = deviceDPI; }
+        int deviceDPI() const { return m_deviceDPI; }
+
         void setForceCompositingMode(bool flag) { m_forceCompositingMode = flag; }
         bool forceCompositingMode() { return m_forceCompositingMode; }
         
@@ -471,7 +483,11 @@ namespace WebCore {
         int m_defaultFixedFontSize;
         int m_validationMessageTimerMagnification;
         int m_minimumAccelerated2dCanvasSize;
+        int m_layoutFallbackWidth;
+        int m_deviceDPI;
         size_t m_maximumDecodedImageSize;
+        int m_deviceWidth;
+        int m_deviceHeight;
 #if ENABLE(DOM_STORAGE)
         unsigned m_sessionStorageQuota;
 #endif

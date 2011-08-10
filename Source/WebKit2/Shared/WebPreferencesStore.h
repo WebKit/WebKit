@@ -103,6 +103,10 @@ namespace WebKit {
     macro(MinimumLogicalFontSize, minimumLogicalFontSize, UInt32, uint32_t, 9) \
     macro(DefaultFontSize, defaultFontSize, UInt32, uint32_t, 16) \
     macro(DefaultFixedFontSize, defaultFixedFontSize, UInt32, uint32_t, 13) \
+    macro(LayoutFallbackWidth, layoutFallbackWidth, UInt32, uint32_t, 980) \
+    macro(DeviceDPI, deviceDPI, UInt32, uint32_t, 240) \
+    macro(DeviceWidth, deviceWidth, UInt32, uint32_t, 480) \
+    macro(DeviceHeight, deviceHeight, UInt32, uint32_t, 854) \
     macro(PDFDisplayMode, pdfDisplayMode, UInt32, uint32_t, 1) \
     macro(EditableLinkBehavior, editableLinkBehavior, UInt32, uint32_t, WebCore::EditableLinkNeverLive) \
     \

@@ -1,3 +1,16 @@
+2011-08-10  Lars Knudsen  <lars.knudsen@nokia.com>
+
+        Add device specific settings to support viewport computing
+        https://bugs.webkit.org/show_bug.cgi?id=65984
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Expose new viewport related WebCore settings to WebKit2.
+
+        * Shared/WebPreferencesStore.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2011-08-09  John Sullivan  <sullivan@apple.com>
 
         WKPageCopyPendingAPIRequestURL returns stale result if policy decision set to Ignore
