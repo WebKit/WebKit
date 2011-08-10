@@ -1,4 +1,4 @@
-Check stepMismatch results for type=date, datetime, datetime-local, time.
+Check stepMismatch results for type=date, datetime, datetime-local.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
@@ -153,36 +153,6 @@ PASS stepMismatchFor("0.9", "0.1000000000000001", "") is false
 PASS stepMismatchFor("1.0", "0.3333333333333333", "") is false
 Disabled
 PASS stepMismatchFor("1", "2", "0", true) is false
-
-Time type
-Empty values
-PASS stepMismatchFor("", null, null) is false
-PASS stepMismatchFor("", "2", "12:34:56") is false
-Normal step values
-PASS stepMismatchFor("12:34:55", "1", "12:34:56") is false
-PASS stepMismatchFor("12:34:55.001", "1", "12:34:56") is true
-PASS stepMismatchFor("12:34:56.001", "0.001", "12:34:56") is false
-PASS stepMismatchFor("12:34:55", "0.333", "12:34:56") is true
-PASS stepMismatchFor("12:34:55.001", "0.333", "12:34:56") is false
-PASS stepMismatchFor("12:34", "86400", "12:34") is false
-PASS stepMismatchFor("23:59:59.998", "86399.999", "00:00") is true
-PASS stepMismatchFor("23:59:59.999", "86399.999", "00:00") is false
-Implicit step base
-PASS stepMismatchFor("12:34", "120", null) is false
-PASS stepMismatchFor("12:35", "120", null) is true
-Small step values
-PASS stepMismatchFor("12:34:55.001", "0.0003", "12:34.55.000") is false
-PASS stepMismatchFor("12:34:55.001", "0.0019", "12:34.55.000") is true
-PASS stepMismatchFor("12:34:55.004", "0.0019", "12:34.55.000") is false
-Invalid or no step values
-PASS stepMismatchFor("12:34", null, "12:34") is false
-PASS stepMismatchFor("12:34:56", null, "12:34") is true
-PASS stepMismatchFor("12:34", "-1", "12:34") is false
-PASS stepMismatchFor("12:34", "foo", "12:34") is false
-Special step value
-PASS stepMismatchFor("12:35", "any", "12:34") is false
-Disabled
-PASS stepMismatchFor("12:34:55.001", "1", "12:34:56", true) is false
 
 Unsupported types
 PASS input.type = "text"; input.step = "3"; input.min = ""; input.value = "2"; input.validity.stepMismatch is false

@@ -135,27 +135,4 @@ checkOverflow('101', '100');
 // Disabled
 checkNotOverflow('101', '1E+2', true);
 
-// ----------------------------------------------------------------
-debug('');
-debug('Type=time');
-input.type = 'time';
-input.min = '';
-// No overflow cases
-checkNotOverflow('13:16', null);
-checkNotOverflow('13:16', '');
-checkNotOverflow('13:16', 'foo');
-checkNotOverflow('13:16', '13:16');
-checkNotOverflow('13:16', '13:17');
-checkNotOverflow('13:16', '14:15');
-checkNotOverflow('foo', '13:16');
-
-// Overflow cases
-checkOverflow('13:16', '13:15');
-checkOverflow('23:59:59.999', '13:16');
-input.min = '14:00';  // value < min && value > max
-checkOverflow('13:16', '12:00');
-
-// Disabled
-checkNotOverflow('23:59:59.999', '13:16', true);
-
 var successfullyParsed = true;

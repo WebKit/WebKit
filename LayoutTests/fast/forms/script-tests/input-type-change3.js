@@ -48,7 +48,6 @@ check("search", "search");
 check("submit", "submit");
 check("tel", "tel");
 check("telephone", "text");
-check("time", "time");
 check("url", "url");
 check("uri", "text");
 

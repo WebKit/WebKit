@@ -1,4 +1,4 @@
-description('Check stepUp() and stepDown() bahevior for type=date, datetime, datetime-local, time.');
+description('Check stepUp() and stepDown() bahevior for type=date, datetime, datetime-local.');
 
 var input = document.createElement('input');
 var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
@@ -275,38 +275,8 @@ shouldBe('stepDownExplicitBounds(null, null, 0.1, 1, 8)', '"0.2"');
 shouldBe('stepDownExplicitBounds(null, null, 0.1, 1)', '"0.9"');
 
 debug('');
-debug('Time type');
-input.type = 'time';
-debug('Invalid value');
-shouldThrow('stepUp("", null, null)', invalidStateErr);
-shouldThrow('stepDown("", null, null)', invalidStateErr);
-debug('Non-number arguments');
-shouldBe('stepUp("20:13", null, null, "0")', '"20:13"');
-shouldBe('stepDown("20:13", null, null, "0")', '"20:13"');
-shouldBe('stepUp("20:13", null, null, "foo")', '"20:13"');
-shouldBe('stepDown("20:13", null, null, "foo")', '"20:13"');
-shouldBe('stepUp("20:13", null, null, null)', '"20:13"');
-shouldBe('stepDown("20:13", null, null, null)', '"20:13"');
-debug('Normal cases');
-shouldBe('stepUp("20:13", null, null)', '"20:14"');
-shouldBe('stepDown("20:13", null, null)', '"20:12"');
-shouldBe('stepUp("20:13", null, null, 10)', '"20:23"');
-shouldBe('stepDown("20:13", null, null, 11)', '"20:02"');
-shouldBe('stepUp("20:13", "4", null, 2)', '"20:13:08"');
-shouldBe('stepDown("20:13", "4", null, 3)', '"20:12:48"');
-debug('Step=any');
-shouldThrow('stepUp("20:13", "any", null)', invalidStateErr);
-shouldThrow('stepDown("20:13", "any", null)', invalidStateErr);
-debug('Overflow/underflow');
-shouldThrow('stepUp("20:13", "3.40282346e+38", null)', invalidStateErr);
-shouldThrow('stepDown("20:13", "3.40282346e+38", null)', invalidStateErr);
-shouldThrow('stepUp("20:13", "1", "20:13")', invalidStateErr);
-shouldThrow('stepDown("20:13", "1", "20:13")', invalidStateErr);
-shouldThrow('stepUp("23:59", null, null)', invalidStateErr);
-shouldThrow('stepDown("00:00", null, null)', invalidStateErr);
-
-debug('');
 debug('Unsupported type');
+input.type = 'text';
 shouldThrow('input.step = "3"; input.min = ""; input.max = ""; input.value = "2"; input.stepDown()', '"Error: INVALID_STATE_ERR: DOM Exception 11"');
 shouldThrow('input.stepDown(0)', '"Error: INVALID_STATE_ERR: DOM Exception 11"');
 shouldThrow('input.stepUp()', '"Error: INVALID_STATE_ERR: DOM Exception 11"');

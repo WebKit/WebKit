@@ -63,20 +63,6 @@ PASS The value "-101" undeflows the minimum value "-100".
 PASS The value "99" undeflows the minimum value "1E+2".
 PASS The value "101" undeflows the minimum value "200".
 PASS The value "99" doesn't underflow the minimum value "1E+2" when disabled.
-
-Type=time
-PASS The value "13:16" doesn't underflow the minimum value "".
-PASS The value "13:16" doesn't underflow the minimum value "".
-PASS The value "13:16" doesn't underflow the minimum value "foo".
-PASS The value "00:00:00.000" doesn't underflow the minimum value "".
-PASS The value "23:59:59.999" doesn't underflow the minimum value "".
-PASS The value "13:16" doesn't underflow the minimum value "11:00".
-PASS The value "13:16" doesn't underflow the minimum value "13:16".
-PASS The value "foo" doesn't underflow the minimum value "11:00".
-PASS The value "13:16" undeflows the minimum value "13:17".
-PASS The value "23:59" undeflows the minimum value "23:59:30".
-PASS The value "13:16" undeflows the minimum value "14:00".
-PASS The value "23:59" doesn't underflow the minimum value "23:59:30" when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,4 +1,4 @@
-description('Check stepMismatch results for type=date, datetime, datetime-local, time.');
+description('Check stepMismatch results for type=date, datetime, datetime-local.');
 
 var input = document.createElement('input');
 document.body.appendChild(input);
@@ -174,38 +174,6 @@ shouldBe('stepMismatchFor("0.9", "0.1000000000000001", "")', 'false');
 shouldBe('stepMismatchFor("1.0", "0.3333333333333333", "")', 'false');
 debug('Disabled');
 shouldBe('stepMismatchFor("1", "2", "0", true)', 'false');
-
-debug('');
-debug('Time type');
-input.type = 'time';
-debug('Empty values');
-shouldBeFalse('stepMismatchFor("", null, null)');
-shouldBeFalse('stepMismatchFor("", "2", "12:34:56")');
-debug('Normal step values');
-shouldBeFalse('stepMismatchFor("12:34:55", "1", "12:34:56")');
-shouldBeTrue('stepMismatchFor("12:34:55.001", "1", "12:34:56")');
-shouldBeFalse('stepMismatchFor("12:34:56.001", "0.001", "12:34:56")');
-shouldBeTrue('stepMismatchFor("12:34:55", "0.333", "12:34:56")');
-shouldBeFalse('stepMismatchFor("12:34:55.001", "0.333", "12:34:56")');
-shouldBeFalse('stepMismatchFor("12:34", "86400", "12:34")');
-shouldBeTrue('stepMismatchFor("23:59:59.998", "86399.999", "00:00")');
-shouldBeFalse('stepMismatchFor("23:59:59.999", "86399.999", "00:00")');
-debug('Implicit step base');
-shouldBeFalse('stepMismatchFor("12:34", "120", null)');
-shouldBeTrue('stepMismatchFor("12:35", "120", null)');
-debug('Small step values');
-shouldBeFalse('stepMismatchFor("12:34:55.001", "0.0003", "12:34.55.000")');
-shouldBeTrue('stepMismatchFor("12:34:55.001", "0.0019", "12:34.55.000")');
-shouldBeFalse('stepMismatchFor("12:34:55.004", "0.0019", "12:34.55.000")');
-debug('Invalid or no step values');
-shouldBeFalse('stepMismatchFor("12:34", null, "12:34")');
-shouldBeTrue('stepMismatchFor("12:34:56", null, "12:34")');
-shouldBeFalse('stepMismatchFor("12:34", "-1", "12:34")');
-shouldBeFalse('stepMismatchFor("12:34", "foo", "12:34")');
-debug('Special step value');
-shouldBeFalse('stepMismatchFor("12:35", "any", "12:34")');
-debug('Disabled');
-shouldBeFalse('stepMismatchFor("12:34:55.001", "1", "12:34:56", true)');
 
 debug('');
 debug('Unsupported types');

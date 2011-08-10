@@ -34,7 +34,6 @@ PASS input.type for "search" is correctly "search".
 PASS input.type for "submit" is correctly "submit".
 PASS input.type for "tel" is correctly "tel".
 PASS input.type for "telephone" is correctly "text".
-PASS input.type for "time" is correctly "time".
 PASS input.type for "url" is correctly "url".
 PASS input.type for "uri" is correctly "text".
 PASS successfullyParsed is true

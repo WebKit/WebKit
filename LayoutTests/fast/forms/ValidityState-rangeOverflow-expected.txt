@@ -63,19 +63,6 @@ PASS The value "-99" overflows the maximum value "-100".
 PASS The value "101" overflows the maximum value "1E+2".
 PASS The value "101" overflows the maximum value "100".
 PASS The value "101" doesn't overflow the maximum value "1E+2" when disabled.
-
-Type=time
-PASS The value "13:16" doesn't overflow the maximum value "".
-PASS The value "13:16" doesn't overflow the maximum value "".
-PASS The value "13:16" doesn't overflow the maximum value "foo".
-PASS The value "13:16" doesn't overflow the maximum value "13:16".
-PASS The value "13:16" doesn't overflow the maximum value "13:17".
-PASS The value "13:16" doesn't overflow the maximum value "14:15".
-PASS The value "foo" doesn't overflow the maximum value "13:16".
-PASS The value "13:16" overflows the maximum value "13:15".
-PASS The value "23:59:59.999" overflows the maximum value "13:16".
-PASS The value "13:16" overflows the maximum value "12:00".
-PASS The value "23:59:59.999" doesn't overflow the maximum value "13:16" when disabled.
 PASS successfullyParsed is true
 
 TEST COMPLETE

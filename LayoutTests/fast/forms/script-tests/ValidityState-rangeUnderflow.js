@@ -143,28 +143,4 @@ checkUnderflow('101', '200');
 // Disabled
 checkNotUnderflow('99', '1E+2', true);
 
-// ----------------------------------------------------------------
-debug('');
-debug('Type=time');
-input.type = 'time';
-input.max = '';
-// No underflow cases
-checkNotUnderflow('13:16', null);
-checkNotUnderflow('13:16', '');
-checkNotUnderflow('13:16', 'foo');
-checkNotUnderflow('00:00:00.000', '');
-checkNotUnderflow('23:59:59.999', '');
-checkNotUnderflow('13:16', '11:00');
-checkNotUnderflow('13:16', '13:16');
-checkNotUnderflow('foo', '11:00');
-
-// Underflow cases
-checkUnderflow('13:16', '13:17');
-checkUnderflow('23:59', '23:59:30');
-input.max = '11:00';  // value < min && value > max
-checkUnderflow('13:16', '14:00');
-
-// Disabled
-checkNotUnderflow('23:59', '23:59:30', true);
-
 var successfullyParsed = true;

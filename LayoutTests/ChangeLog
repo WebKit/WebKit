@@ -1,3 +1,53 @@
+2011-08-09  Kent Tamura  <tkent@chromium.org>
+
+        Move <input type=time> tests to fast/forms/time/
+        https://bugs.webkit.org/show_bug.cgi?id=65955
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/ValidityState-rangeOverflow-expected.txt: Removed 'time' part.
+        * fast/forms/ValidityState-rangeUnderflow-expected.txt: ditto.
+        * fast/forms/ValidityState-stepMismatch-expected.txt: ditto.
+        * fast/forms/ValidityState-typeMismatch-time-expected.txt: Removed.
+        * fast/forms/ValidityState-typeMismatch-time.html: Removed.
+        * fast/forms/input-stepup-stepdown-expected.txt: Removed 'time' part.
+        * fast/forms/input-stepup-stepdown-from-renderer-expected.txt: ditto.
+        * fast/forms/input-type-change3-expected.txt: ditto.
+        * fast/forms/input-valueasdate-time-expected.txt: Removed.
+        * fast/forms/input-valueasdate-time.html: Removed.
+        * fast/forms/input-valueasnumber-time-expected.txt: Removed.
+        * fast/forms/input-valueasnumber-time.html: Removed.
+        * fast/forms/script-tests/ValidityState-rangeOverflow.js: Removed 'time' part.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow.js: ditto.
+        * fast/forms/script-tests/ValidityState-stepMismatch.js: ditto.
+        * fast/forms/script-tests/ValidityState-typeMismatch-time.js: Removed.
+        * fast/forms/script-tests/input-stepup-stepdown-from-renderer.js: Removed 'time' part.
+        * fast/forms/script-tests/input-stepup-stepdown.js: ditto.
+        * fast/forms/script-tests/input-type-change3.js: ditto.
+        * fast/forms/script-tests/input-valueasdate-time.js: Removed.
+        * fast/forms/script-tests/input-valueasnumber-time.js: Removed.
+        * fast/forms/time: Added.
+        * fast/forms/time/ValidityState-rangeOverflow-time-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-rangeOverflow-expected.txt.
+        * fast/forms/time/ValidityState-rangeOverflow-time.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeOverflow.js.
+        * fast/forms/time/ValidityState-rangeUnderflow-time-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-rangeUnderflow-expected.txt.
+        * fast/forms/time/ValidityState-rangeUnderflow-time.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeUnderflow.js.
+        * fast/forms/time/ValidityState-stepMismatch-time-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-stepMismatch-expected.txt.
+        * fast/forms/time/ValidityState-stepMismatch-time.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-stepMismatch.js.
+        * fast/forms/time/ValidityState-typeMismatch-time-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-typeMismatch-time-expected.txt.
+        * fast/forms/time/ValidityState-typeMismatch-time.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-typeMismatch-time.js.
+        * fast/forms/time/input-valueasdate-time-expected.txt: Copied from LayoutTests/fast/forms/input-valueasdate-time-expected.txt.
+        * fast/forms/time/input-valueasdate-time.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasdate-time.js.
+        * fast/forms/time/input-valueasnumber-time-expected.txt: Copied from LayoutTests/fast/forms/input-valueasnumber-time-expected.txt.
+        * fast/forms/time/input-valueasnumber-time.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasnumber-time.js.
+        * fast/forms/time/time-input-type-expected.txt: Copied from LayoutTests/fast/forms/week/week-input-type-expected.txt.
+        * fast/forms/time/time-input-type.html: Copied from LayoutTests/fast/forms/week/week-input-type.html.
+        * fast/forms/time/time-input-visible-string-expected.txt: Copied from LayoutTests/fast/forms/week/week-input-visible-string-expected.txt.
+        * fast/forms/time/time-input-visible-string.html: Copied from LayoutTests/fast/forms/week/week-input-visible-string.html.
+        * fast/forms/time/time-stepup-stepdown-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-expected.txt.
+        * fast/forms/time/time-stepup-stepdown-from-renderer-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-from-renderer-expected.txt.
+        * fast/forms/time/time-stepup-stepdown-from-renderer.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown-from-renderer.js.
+        * fast/forms/time/time-stepup-stepdown.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown.js.
+
 2011-08-09  Abhishek Arya  <inferno@chromium.org>
 
         Fix functional bug where style change was not getting propogated to before, after

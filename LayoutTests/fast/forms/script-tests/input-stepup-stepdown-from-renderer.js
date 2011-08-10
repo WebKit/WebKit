@@ -1,4 +1,4 @@
-description('Check stepping-up and -down for <input> from renderer. No cases of empty initial values for type=date, datetime, datetime-local, time.');
+description('Check stepping-up and -down for <input> from renderer. No cases of empty initial values for type=date, datetime, datetime-local.');
 
 var input = document.createElement('input');
 var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
@@ -287,31 +287,6 @@ shouldBe('stepUpExplicitBounds(null, null, 0.1, 1, 10)', '"2"');
 shouldBe('stepUpExplicitBounds(0, 1, 0.003921568627450980, 0, 255)', '"1"');
 shouldBe('stepDownExplicitBounds(null, null, 0.1, 1, 8)', '"0.2"');
 shouldBe('stepDownExplicitBounds(null, null, 0.1, 1)', '"0.9"');
-
-debug('');
-debug('Time type');
-input.type = 'time';
-debug('Function arguments are (value, step, {min or max}, [stepCount]).');
-debug('Normal cases');
-shouldBe('stepUp("20:13", null, null)', '"20:14"');
-shouldBe('stepDown("20:13", null, null)', '"20:12"');
-shouldBe('stepUp("20:13", null, null, 10)', '"20:23"');
-shouldBe('stepDown("20:13", null, null, 11)', '"20:02"');
-shouldBe('stepUp("20:13", "4", null, 2)', '"20:13:08"');
-shouldBe('stepDown("20:13", "4", null, 3)', '"20:12:48"');
-debug('Step=any');
-shouldBe('stepUp("20:13", "any", null)', '"20:14"');
-shouldBe('stepDown("20:13", "any", null)', '"20:12"');
-debug('Overflow/underflow');
-shouldBe('stepUp("20:13", "3.40282346e+38", null)', '"23:59:59.999"');
-shouldBe('stepDown("20:13", "3.40282346e+38", null)', '"00:00:00.000"');
-shouldBe('stepUp("20:13", "1", "20:13")', '"20:13"');
-shouldBe('stepDown("20:13", "1", "20:13")', '"20:13"');
-shouldBe('stepUp("23:59", null, null)', '"23:59"');
-shouldBe('stepDown("00:00", null, null)', '"00:00"');
-debug('stepDown()/stepUp() for stepMismatch values');
-shouldBe('stepDown("20:13", "3", "20:12:56")', '"20:12:59"');
-shouldBe('stepUp("00:13", "7", "")', '"00:13:04"');
 
 debug('');
 var successfullyParsed = true;
