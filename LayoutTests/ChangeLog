@@ -1,3 +1,9 @@
+2011-08-09  Kent Tamura  <tkent@chromium.org>
+
+        Add a missing </script> for r92728.
+
+        * fast/forms/month/ValidityState-stepMismatch-month.html:
+
 2011-08-09  Jian Li  <jianli@chromium.org>
 
         Unreviewed, mark 2 webaudio tests as failed on chromium win.
