@@ -1,3 +1,10 @@
+2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        r92792 inadvertently removed PlatformSpecificScheduler for all Snow Leopard bots.
+        Revert it partially so that the remaining Snow Leopard bots can fulfill their duty.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2011-08-10  Eric Seidel  <eric@webkit.org>
 
         new-run-webkit-test's WinPort has no fallback logic
