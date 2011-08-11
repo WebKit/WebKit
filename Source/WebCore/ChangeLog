@@ -1,5 +1,13 @@
 2011-08-11  Xan Lopez  <xlopez@igalia.com>
 
+        [GTK] Add another missing file to GNUmakefile
+
+        Reviewed by Gustavo Noronha.
+
+        * GNUmakefile.list.am:
+
+2011-08-11  Xan Lopez  <xlopez@igalia.com>
+
         [GTK] Add missing files to GNUMakefile
 
         Reviewed by Gustavo Noronha.
