@@ -1,3 +1,12 @@
+2011-08-10  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed pixel expectations update. New expectations now have
+        bad grammar markers. (The settings has been enabled since r82159.)
+
+        * platform/mac/editing/pasteboard/paste-text-016-expected.png:
+        * platform/mac/editing/selection/move-by-character-005-expected.png:
+        * platform/mac/editing/spelling/inline_spelling_markers-expected.png:
+
 2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copying can result in span around block elements on the clipboard
