@@ -938,7 +938,6 @@ SOURCES += \
     page/Page.cpp \
     page/PageGroup.cpp \
     page/PageGroupLoadDeferrer.cpp \
-    page/PageSerializer.cpp \
     page/PageVisibilityState.cpp \
     page/Performance.cpp \
     page/PerformanceNavigation.cpp \
@@ -1915,7 +1914,6 @@ HEADERS += \
     page/PageGroup.h \
     page/PageGroupLoadDeferrer.h \
     page/Page.h \
-    page/PageSerializer.h \
     page/PageVisibilityState.h \
     page/PrintContext.h \
     page/Screen.h \
@@ -3794,13 +3792,15 @@ contains(DEFINES, ENABLE_WEBGL=1) {
 
 contains(DEFINES, ENABLE_MHTML=1) {
     HEADERS += \
-        loader/archive/Archive.h
+        loader/archive/Archive.h \
+        page/PageSerializer.h
 
     SOURCES += \
         loader/archive/Archive.cpp \
         loader/archive/ArchiveFactory.cpp \
         loader/archive/mhtml/MHTMLArchive.cpp \
-        loader/archive/mhtml/MHTMLParser.cpp
+        loader/archive/mhtml/MHTMLParser.cpp \
+        page/PageSerializer.cpp
 }
 
 win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{

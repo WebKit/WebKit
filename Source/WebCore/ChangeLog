@@ -1,3 +1,14 @@
+2011-08-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt] PageSerializer is specific to MHTML, we should not compile it
+        https://bugs.webkit.org/show_bug.cgi?id=66054
+
+        Reviewed by Noam Rosenthal.
+
+        PageSerializer is specific to MHTML. Do not build PageSerializer unless MHTML is enabled.
+
+        * WebCore.pro:
+
 2011-08-11  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [refactoring] make tabbed pane a view
