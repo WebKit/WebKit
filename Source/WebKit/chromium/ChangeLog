@@ -1,3 +1,30 @@
+2011-08-11  Marja Hölttä  <marja@chromium.org>
+
+        Remove the temporary workaround added by http://trac.webkit.org/changeset/51338
+        https://bugs.webkit.org/show_bug.cgi?id=65908
+
+        Reviewed by Adam Barth.
+
+        SecurityOrigin for a file URL returns "file://", and
+        SecurityOrigin::createFromString("file://") creates a unique (null)
+        security origin (because "file://" is first canonicalized to "file:///"
+        and that is a directory). This means the conversion SecurityOrigin ->
+        string -> SecurityOrigin doens't give back the same SecurityOrigin in
+        case of file URLs.
+
+        WebStorageNamespaceImpl::createStorageArea contains a workaround which
+        changes the string "file://" into "file:///a" before giving it to
+        SecurityOrigin::createFromString.
+
+        If SecurityOrigin::m_enforceFilePathSeparation is true, then
+        SecurityOrigin::toString() returns "null" for file URLs, and this
+        problem does not exist, and the workaround code is not ran.
+
+        This patch removes the workaround.
+
+        * src/WebStorageNamespaceImpl.cpp:
+        (WebKit::WebStorageNamespaceImpl::createStorageArea):
+
 2011-08-10  John Abd-El-Malek  <jam@chromium.org>
 
         [chromium] Update WebScrollbar so that it works with overlay scrollbars on Lion

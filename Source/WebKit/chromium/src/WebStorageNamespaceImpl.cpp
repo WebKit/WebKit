@@ -61,20 +61,7 @@ WebStorageNamespaceImpl::~WebStorageNamespaceImpl()
 
 WebStorageArea* WebStorageNamespaceImpl::createStorageArea(const WebString& originString)
 {
-    WTF::String originWebCoreString = originString;
-    if (originWebCoreString == "file://") {
-        // FIXME: We should really be passing around WebSecurityOrigin objects
-        //        to represent security origins instead of strings.  One issue
-        //        with using strings is that createFromString(toString) does
-        //        not round-trip for file URLs because file:// looks like a
-        //        directory (which is sandboxed).
-        //
-        // For the time being, we work around this issue by using "file:///a",
-        // which does not look like a directory.  We should fix this when
-        // jorlow gets back from vactation.
-        originWebCoreString = "file:///a";
-    }
-    RefPtr<WebCore::SecurityOrigin> origin = WebCore::SecurityOrigin::createFromString(originWebCoreString);
+    RefPtr<WebCore::SecurityOrigin> origin = WebCore::SecurityOrigin::createFromString(originString);
     return new WebStorageAreaImpl(m_storageNamespace->storageArea(origin.release()));
 }
 
