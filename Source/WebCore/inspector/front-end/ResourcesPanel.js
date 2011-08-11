@@ -713,6 +713,12 @@ WebInspector.ResourcesPanel.prototype = {
                         continue;
                     var resource = frameTreeElement.resourceByURL(searchResult.url);
 
+                    // FIXME: When the same script is used in several frames and this script contains at least 
+                    // one search result then some search results can not be matched with a resource on panel.
+                    // https://bugs.webkit.org/show_bug.cgi?id=66005 
+                    if (!resource)
+                        continue;
+                    
                     if (resource.history.length > 0)
                         continue; // Skip edited resources.
                     this._findTreeElementForResource(resource).searchMatchesFound(searchResult.matchesCount);
@@ -1117,7 +1123,8 @@ WebInspector.FrameTreeElement.prototype = {
 
     resourceByURL: function(url)
     {
-        return this._treeElementForResource[url].representedObject;
+        var treeElement = this._treeElementForResource[url];
+        return treeElement ? treeElement.representedObject : null;
     },
 
     appendChild: function(treeElement)

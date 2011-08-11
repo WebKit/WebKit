@@ -1,3 +1,15 @@
+2011-08-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: [REGRESSION] Resources panel search fails when search result is found in a resource used in several frames.
+        https://bugs.webkit.org/show_bug.cgi?id=66007
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.performSearch.callback):
+        (WebInspector.ResourcesPanel.prototype.performSearch):
+        (WebInspector.FrameTreeElement.prototype.resourceByURL):
+
 2011-08-11  Andras Becsi  <abecsi@webkit.org>
 
         [GTK] Fix the build after r92792.
