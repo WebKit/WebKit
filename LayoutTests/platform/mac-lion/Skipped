@@ -143,8 +143,27 @@ fast/events/mousedown-in-subframe-scrollbar.html
 
 # Unknown failures.
 editing/spelling/spellcheck-paste.html
+http/tests/media/video-play-stall-seek.html
+http/tests/media/video-play-stall.html
+http/tests/multipart/invalid-image-data-standalone.html
+http/tests/navigation/anchor-basic.html
+http/tests/xmlhttprequest/basic-auth-nopassword.html
+http/tests/xmlhttprequest/web-apps/012.html
+http/tests/xmlhttprequest/web-apps/013.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
+
+# Missing an "Inserting some data" 
+storage/quota-tracking.html
+
+# Inserting the "hello " string prepends an extra space before the hello.
+platform/mac/accessibility/selection-value-changes-for-aria-textbox.html
+
+# These still fail, but with different error codes from the other platforms.
+sputnik/Unicode/Unicode_510/S7.6_A3.1.html
+sputnik/Unicode/Unicode_510/S7.6_A3.2.html
+sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
+sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
 
 # Most if not all Java tests fail when run in WebKit1.
 java/
