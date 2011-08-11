@@ -1,3 +1,15 @@
+2011-08-10  Adam Barth  <abarth@webkit.org>
+
+        Add tests of optional arguments for Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=65810
+
+        Reviewed by Sam Weinig.
+
+        Test what happens when calling geolocation APIs with too few arguments.
+
+        * fast/dom/Geolocation/not-enough-arguments-expected.txt: Added.
+        * fast/dom/Geolocation/not-enough-arguments.html: Added.
+
 2011-08-10  Anders Carlsson  <andersca@apple.com>
 
         Skip some more tests on Lion.

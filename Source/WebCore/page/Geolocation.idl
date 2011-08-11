@@ -25,18 +25,19 @@
 
 module core {
 
+    // http://www.w3.org/TR/geolocation-API/#geolocation_interface
     interface [
         Conditional=GEOLOCATION, 
         GenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Geolocation {
-        [Custom] void getCurrentPosition(in PositionCallback successCallback, 
-                                         in [Optional=CallWithDefaultValue] PositionErrorCallback errorCallback, 
-                                         in [Optional=CallWithDefaultValue] PositionOptions options);
+        [Custom] void getCurrentPosition(in PositionCallback successCallback,
+                                         in [Optional] PositionErrorCallback errorCallback,
+                                         in [Optional] PositionOptions options);
 
-        [Custom] long watchPosition(in PositionCallback successCallback, 
-                                    in [Optional=CallWithDefaultValue] PositionErrorCallback errorCallback, 
-                                    in [Optional=CallWithDefaultValue] PositionOptions options);
+        [Custom] long watchPosition(in PositionCallback successCallback,
+                                    in [Optional] PositionErrorCallback errorCallback,
+                                    in [Optional] PositionOptions options);
 
         void clearWatch(in long watchId);
     };

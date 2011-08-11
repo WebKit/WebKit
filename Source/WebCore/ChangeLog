@@ -1,3 +1,26 @@
+2011-08-10  Adam Barth  <abarth@webkit.org>
+
+        Add tests of optional arguments for Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=65810
+
+        Reviewed by Sam Weinig.
+
+        Geolocation's treatment of not-enough-arguments almost matches the
+        spec.  getCurrentPosition and watchPosition work properly, but, because
+        they are custom, we should use the prettier form of the [Optional]
+        attribute.
+
+        Before this series of patches, clearWatch argument was optional, but
+        that doesn't match the spec or other browsers.  Calling this function
+        with zero arguments is pretty non-sensical, so there shouldn't be much
+        compat risk to tightening up our behavior here.  Matching other
+        browsers and the spec seems like the bigger win.  If we run into compat
+        problems, we can re-evaluate this decision.
+
+        Test: fast/dom/Geolocation/not-enough-arguments.html
+
+        * page/Geolocation.idl:
+
 2011-08-10  Tim Horton  <timothy_horton@apple.com>
 
         SVGAElement check for internal non-view anchors is inside ENABLE(SVG_ANIMATION)

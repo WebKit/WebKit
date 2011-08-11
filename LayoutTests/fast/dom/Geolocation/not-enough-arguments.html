@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Tests how Geolocation handles receiving too few arguments.");
+
+shouldThrow("window.navigator.geolocation.getCurrentPosition()");
+shouldThrow("window.navigator.geolocation.watchPosition()");
+shouldThrow("window.navigator.geolocation.clearWatch()");
+
+window.successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
