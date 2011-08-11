@@ -1,5 +1,11 @@
 2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip a test added by r92769 on Windows port since drag and drop won't work well on Windows port.
+
+        * platform/win/Skipped:
+
+2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK and Qt rebaselines after r92792.
 
         * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:

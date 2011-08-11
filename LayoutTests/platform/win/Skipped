@@ -124,6 +124,7 @@ svg/hixie/viewbox/preserveAspectRatio/002.xml
 editing/execCommand/copy-without-selection.html
 
 # Drag & Drop doesn't work correctly in DRT <rdar://5621244>
+editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
 editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/drop-file-svg.html
 editing/pasteboard/get-data-text-plain-drop.html
