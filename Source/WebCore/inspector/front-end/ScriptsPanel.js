@@ -214,6 +214,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (this.visibleView)
             this.visibleView.show(this.viewsContainerElement);
+        this.sidebarPanes.watchExpressions.show();
     },
 
     hide: function()
@@ -221,6 +222,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (this.visibleView)
             this.visibleView.hide();
         WebInspector.Panel.prototype.hide.call(this);
+        this.sidebarPanes.watchExpressions.hide();
     },
 
     get breakpointsActivated()
@@ -540,7 +542,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.viewsContainerElement.removeChildren();
 
         this.sidebarPanes.jsBreakpoints.reset();
-        this.sidebarPanes.watchExpressions.refreshExpressions();
+        this.sidebarPanes.watchExpressions.reset();
         if (!preserveItems && this.sidebarPanes.workers)
             this.sidebarPanes.workers.reset();
     },

@@ -1,3 +1,22 @@
+2011-08-11  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: do not evaluate watch expressions on load.
+        https://bugs.webkit.org/show_bug.cgi?id=66002
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.show):
+        (WebInspector.ScriptsPanel.prototype.hide):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSidebarPane):
+        (WebInspector.WatchExpressionsSidebarPane.prototype.hide):
+        (WebInspector.WatchExpressionsSidebarPane.prototype.reset):
+        (WebInspector.WatchExpressionsSidebarPane.prototype.refreshExpressions):
+        (WebInspector.WatchExpressionsSidebarPane.prototype._refreshExpressionsIfNeeded):
+        (WebInspector.WatchExpressionsSidebarPane.prototype._refreshButtonClicked):
+
 2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Copying can result in span around block elements on the clipboard

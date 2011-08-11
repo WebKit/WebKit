@@ -31,29 +31,58 @@
 WebInspector.WatchExpressionsSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Watch Expressions"));
-    this.reset();
+
+    this.section = new WebInspector.WatchExpressionsSection();
+    this.bodyElement.appendChild(this.section.element);
+
+    var refreshButton = document.createElement("button");
+    refreshButton.className = "pane-title-button refresh";
+    refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
+    this.titleElement.appendChild(refreshButton);
+
+    var addButton = document.createElement("button");
+    addButton.className = "pane-title-button add";
+    addButton.addEventListener("click", this._addButtonClicked.bind(this), false);
+    this.titleElement.appendChild(addButton);
+    this._requiresUpdate = true;
 }
 
 WebInspector.WatchExpressionsSidebarPane.prototype = {
+    show: function()
+    {
+        this._visible = true;
+
+        // Expand and update watches first time they are shown.
+        if (!this._wasShown && WebInspector.settings.watchExpressions.get().length > 0)
+            this.expanded = true;
+
+        this._refreshExpressionsIfNeeded();
+        this._wasShown = true;
+    },
+
+    hide: function()
+    {
+        this._visible = false;
+    },
+
     reset: function()
     {
-        this.bodyElement.removeChildren();
+        this.refreshExpressions();
+    },
 
-        this.expanded = WebInspector.settings.watchExpressions.get().length > 0;
-        this.section = new WebInspector.WatchExpressionsSection();
-        this.bodyElement.appendChild(this.section.element);
+    refreshExpressions: function()
+    {
+        this._requiresUpdate = true;
+        this._refreshExpressionsIfNeeded();
+    },
 
-        var refreshButton = document.createElement("button");
-        refreshButton.className = "pane-title-button refresh";
-        refreshButton.addEventListener("click", this._refreshButtonClicked.bind(this), false);
-        this.titleElement.appendChild(refreshButton);
-
-        var addButton = document.createElement("button");
-        addButton.className = "pane-title-button add";
-        addButton.addEventListener("click", this._addButtonClicked.bind(this), false);
-        this.titleElement.appendChild(addButton);
-
-        this.onexpand = this.refreshExpressions.bind(this);
+    _refreshExpressionsIfNeeded: function()
+    {
+        if (this._requiresUpdate && this._visible) {
+            this.section.update();
+            delete this._requiresUpdate;
+        } else
+            this._requiresUpdate = true;
     },
 
     _addButtonClicked: function(event)
@@ -67,11 +96,6 @@ WebInspector.WatchExpressionsSidebarPane.prototype = {
     {
         event.stopPropagation();
         this.refreshExpressions();
-    },
-
-    refreshExpressions: function()
-    {
-        this.section.update();
     }
 }
 
