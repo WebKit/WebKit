@@ -122,7 +122,7 @@ contains(DEFINES, ENABLE_SINGLE_THREADED=1) {
 }
 
 # WebGL support
-contains(QT_CONFIG, opengl) {
+contains(QT_CONFIG, opengl):!win32-* {
     !contains(DEFINES, ENABLE_WEBGL=.): DEFINES += ENABLE_WEBGL=1
 } else {
     DEFINES += ENABLE_WEBGL=0

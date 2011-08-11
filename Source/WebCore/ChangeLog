@@ -1,3 +1,12 @@
+2011-08-11  Renata Hodovan  <reni@webkit.org>
+
+        [Qt] Fix WebGL on Windows after r92805 
+        https://bugs.webkit.org/show_bug.cgi?id=66042
+
+        WEBGL is temporarly disabled, because it broked the bots.
+
+        * features.pri:
+
 2011-08-11  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: do not evaluate watch expressions on load.
