@@ -1,3 +1,16 @@
+2011-08-11  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should be able to determine when tests unexpectedly pass
+        https://bugs.webkit.org/show_bug.cgi?id=66092
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch just contains the library methods for extracting this
+        information.  I'll add some UI in a subsequent patch.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results_unittests.js:
+
 2011-08-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         New expectation entries should be placed next to existing ones.

@@ -37,6 +37,10 @@ var kExampleResultsJSON = {
             "flaky-scrollbar.html": {
                 "expected": "PASS",
                 "actual": "PASS TEXT"
+            },
+            "unexpected-pass.html": {
+                "expected": "FAIL",
+                "actual": "PASS"
             }
         },
         "userscripts": {
@@ -83,6 +87,20 @@ test("unexpectedFailuresByTest", 1, function() {
             "Mock Builder": {
                 "expected": "PASS",
                 "actual": "TEXT"
+            }
+        }
+    });
+});
+
+test("unexpectedSuccessesByTest", 1, function() {
+    var unexpectedFailuresByTest = results.unexpectedSuccessesByTest({
+        "Mock Builder": kExampleResultsJSON
+    });
+    deepEqual(unexpectedFailuresByTest, {
+        "scrollbars/unexpected-pass.html": {
+            "Mock Builder": {
+                "expected": "FAIL",
+                "actual": "PASS"
             }
         }
     });

@@ -222,6 +222,15 @@ function isUnexpectedFailure(resultNode)
     return anyIsFailure(results.unexpectedResults(resultNode));
 }
 
+function isUnexpectedSuccesses(resultNode)
+{
+    if (!resultNode)
+        return false;
+    if (anyIsFailure(resultNode.actual.split(' ')))
+        return false;
+    return anyIsSuccess(results.unexpectedResults(resultNode));
+}
+
 function isResultNode(node)
 {
     return !!node.actual;
@@ -232,18 +241,33 @@ results.unexpectedFailures = function(resultsTree)
     return base.filterTree(resultsTree.tests, isResultNode, isUnexpectedFailure);
 };
 
-results.unexpectedFailuresByTest = function(resultsByBuilder)
+results.unexpectedSuccesses = function(resultsTree)
 {
-    var unexpectedFailures = {};
+    return base.filterTree(resultsTree.tests, isResultNode, isUnexpectedSuccesses);
+};
+
+function resultsByTest(resultsByBuilder, filter)
+{
+    var resultsByTest = {};
 
     $.each(resultsByBuilder, function(builderName, resultsTree) {
-        $.each(results.unexpectedFailures(resultsTree), function(testName, resultNode) {
-            unexpectedFailures[testName] = unexpectedFailures[testName] || {};
-            unexpectedFailures[testName][builderName] = resultNode;
+        $.each(filter(resultsTree), function(testName, resultNode) {
+            resultsByTest[testName] = resultsByTest[testName] || {};
+            resultsByTest[testName][builderName] = resultNode;
         });
     });
 
-    return unexpectedFailures;
+    return resultsByTest;
+}
+
+results.unexpectedFailuresByTest = function(resultsByBuilder)
+{
+    return resultsByTest(resultsByBuilder, results.unexpectedFailures);
+};
+
+results.unexpectedSuccessesByTest = function(resultsByBuilder)
+{
+    return resultsByTest(resultsByBuilder, results.unexpectedSuccesses);
 };
 
 results.collectUnexpectedResults = function(dictionaryOfResultNodes)
