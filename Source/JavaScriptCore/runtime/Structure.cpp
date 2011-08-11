@@ -83,29 +83,6 @@ inline Structure* StructureTransitionTable::get(StringImpl* rep, unsigned attrib
     return map()->get(make_pair(rep, attributes));
 }
 
-inline void StructureTransitionTable::remove(Structure* structure)
-{
-    if (isUsingSingleSlot()) {
-        // If more than one transition had been added, then we wouldn't be in
-        // single slot mode (even despecifying a from a specific value triggers
-        // map mode).
-        // As such, the passed structure *must* be the existing transition.
-        ASSERT(singleTransition() == structure);
-        clearSingleTransition();
-    } else {
-        // Check whether a mapping exists for structure's key, and whether the
-        // entry is structure (the latter check may fail if we initially had a
-        // transition with a specific value, and this has been despecified).
-
-        // Newer versions of the STL have an std::make_pair function that takes rvalue references.
-        // When either of the parameters are bitfields, the C++ compiler will try to bind them as lvalues, which is invalid. To work around this, use unary "+" to make the parameter an rvalue.
-        // See https://bugs.webkit.org/show_bug.cgi?id=59261 for more details
-        TransitionMap::iterator entry = map()->find(make_pair(structure->m_nameInPrevious, +structure->m_attributesInPrevious));
-        if (entry != map()->end() && structure == entry.get().second)
-            map()->remove(entry);
-    }
-}
-
 inline void StructureTransitionTable::add(JSGlobalData& globalData, Structure* structure)
 {
     if (isUsingSingleSlot()) {

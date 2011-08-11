@@ -93,14 +93,18 @@ public:
 
     ~StructureTransitionTable()
     {
-        if (!isUsingSingleSlot())
+        if (!isUsingSingleSlot()) {
             delete map();
-        else
-            clearSingleTransition();
+            return;
+        }
+
+        HandleSlot slot = this->slot();
+        if (!slot)
+            return;
+        HandleHeap::heapFor(slot)->deallocate(slot);
     }
 
     inline void add(JSGlobalData&, Structure*);
-    inline void remove(Structure*);
     inline bool contains(StringImpl* rep, unsigned attributes) const;
     inline Structure* get(StringImpl* rep, unsigned attributes) const;
 
@@ -143,13 +147,6 @@ private:
                 return reinterpret_cast<Structure*>(slot->asCell());
         }
         return 0;
-    }
-    
-    void clearSingleTransition()
-    {
-        ASSERT(isUsingSingleSlot());
-        if (HandleSlot slot = this->slot())
-            HandleHeap::heapFor(slot)->deallocate(slot);
     }
     
     void setSingleTransition(JSGlobalData& globalData, Structure* structure)

@@ -1,3 +1,16 @@
+2011-08-10  Geoffrey Garen  <ggaren@apple.com>
+
+        Removed some incorrect code that was dead.
+
+        Reviewed by Oliver Hunt.
+
+        clearSingleTransition() wasn't resetting m_data. Luckily,
+        no one cares, because its caller was unused. Removed both.
+
+        * runtime/Structure.cpp:
+        * runtime/StructureTransitionTable.h:
+        (JSC::StructureTransitionTable::~StructureTransitionTable):
+
 2011-08-10  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION(r92670-r92744): WebKit crashes when opening Gmail
