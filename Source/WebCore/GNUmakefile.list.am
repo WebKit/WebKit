@@ -2961,6 +2961,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderFileUploadControl.h \
 	Source/WebCore/rendering/RenderFlexibleBox.cpp \
 	Source/WebCore/rendering/RenderFlexibleBox.h \
+	Source/WebCore/rendering/RenderFlowThread.cpp \
+	Source/WebCore/rendering/RenderFlowThread.h \
 	Source/WebCore/rendering/RenderFrameBase.cpp \
 	Source/WebCore/rendering/RenderFrameBase.h \
 	Source/WebCore/rendering/RenderFrame.cpp \
@@ -3015,6 +3017,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderProgress.h \
 	Source/WebCore/rendering/RenderQuote.cpp \
 	Source/WebCore/rendering/RenderQuote.h \
+	Source/WebCore/rendering/RenderRegion.cpp \
+	Source/WebCore/rendering/RenderRegion.h \
 	Source/WebCore/rendering/RenderReplaced.cpp \
 	Source/WebCore/rendering/RenderReplaced.h \
 	Source/WebCore/rendering/RenderReplica.cpp \

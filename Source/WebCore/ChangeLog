@@ -1,3 +1,15 @@
+2011-08-11  Andras Becsi  <abecsi@webkit.org>
+
+        [GTK] Fix the build after r92792.
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        No new tests needed.
+
+        * GNUmakefile.list.am: add missing
+           RenderFlowThread.{cpp|h}
+           RenderRegion.{cpp|h}
+
 2011-08-11  Renata Hodovan  <reni@webkit.org>
 
         [Qt] Fix WebGL on Windows after r92805 
