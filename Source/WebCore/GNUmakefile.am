@@ -855,6 +855,7 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/inspector/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/loader/appcache/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/notifications/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/p2p/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/page/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/plugins/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/storage/*.idl) \
@@ -885,6 +886,7 @@ EXTRA_DIST += \
 	Source/WebCore/css/CSSPropertyNames.in \
 	Source/WebCore/css/CSSValueKeywords.in \
 	Source/WebCore/css/fullscreen.css \
+	Source/WebCore/css/fullscreenQuickTime.css \
 	Source/WebCore/css/html.css \
 	Source/WebCore/css/make-css-file-arrays.pl \
 	Source/WebCore/css/makegrammar.pl \

@@ -1,3 +1,12 @@
+2011-08-11  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Add missing files to GNUMakefile
+
+        Reviewed by Gustavo Noronha.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+
 2011-08-11  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Use PassRefPtr<> in function arguments in WorkerThreadableWebSocketChannel.cpp

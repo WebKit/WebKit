@@ -2363,6 +2363,8 @@ webcore_sources += \
 	Source/WebCore/platform/AsyncFileSystem.cpp \
 	Source/WebCore/platform/AsyncFileSystem.h \
 	Source/WebCore/platform/AutodrainedPool.h \
+	Source/WebCore/platform/ColorChooser.cpp \
+	Source/WebCore/platform/ColorChooser.h \
 	Source/WebCore/platform/ContentType.cpp \
 	Source/WebCore/platform/ContentType.h \
 	Source/WebCore/platform/ContextMenu.h \
@@ -2745,6 +2747,9 @@ webcore_sources += \
 	Source/WebCore/platform/PlatformMouseEvent.h \
 	Source/WebCore/platform/PlatformScreen.h \
 	Source/WebCore/platform/PlatformWheelEvent.h \
+	Source/WebCore/platform/PODArena.h \
+	Source/WebCore/platform/PODIntervalTree.h \
+	Source/WebCore/platform/PODRedBlackTree.h \
 	Source/WebCore/platform/PopupMenuClient.h \
 	Source/WebCore/platform/PopupMenu.h \
 	Source/WebCore/platform/PopupMenuStyle.h \
