@@ -1,3 +1,11 @@
+2011-08-11  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for Qt.
+
+        Make sure we build when Qt is namespaced.
+
+        * platform/graphics/gstreamer/PlatformVideoWindowPrivate.h:
+
 2011-08-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: use source-file-replaced instead of source-file-changed event.

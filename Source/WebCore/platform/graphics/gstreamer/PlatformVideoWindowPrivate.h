@@ -23,7 +23,9 @@
 #include <QTimer>
 #include <QWidget>
 
+QT_BEGIN_NAMESPACE
 class QKeyEvent;
+QT_END_NAMESPACE
 
 namespace WebCore {
 
