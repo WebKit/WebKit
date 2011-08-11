@@ -1561,7 +1561,7 @@ WebRect WebViewImpl::caretOrSelectionBounds()
 bool WebViewImpl::selectionRange(WebPoint& start, WebPoint& end) const
 {
     const Frame* frame = focusedWebCoreFrame();
-    if (!frame)
+    if (!frame || !frame->selection()->isRange())
         return false;
     RefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
     if (!selectedRange)

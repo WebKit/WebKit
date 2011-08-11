@@ -1,3 +1,12 @@
+2011-08-10  Varun Jain  <varunjain@google.com>
+
+        WebViewImpl::selectionRange should return false if there is no selection
+        https://bugs.webkit.org/show_bug.cgi?id=66012
+
+        Reviewed by Darin Fisher.
+
+        *  Source/WebKit/chromium/src/WebViewImpl.cpp:
+
 2011-08-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Do not build LocaleToScriptMappingICU.cpp for now
