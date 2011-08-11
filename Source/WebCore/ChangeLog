@@ -1,3 +1,14 @@
+2011-08-11  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: source frame popover simetimes pops up after user switches from Scripts panel
+        https://bugs.webkit.org/show_bug.cgi?id=66057
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/SourceFrame.js: remove popover timer when removing popover.
+        (WebInspector.SourceFrame.prototype._mouseDown):
+        (WebInspector.SourceFrame.prototype._hidePopup):
+
 2011-08-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Scripts panel: display the current search match index in the toolbar.

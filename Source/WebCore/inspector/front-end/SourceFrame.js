@@ -661,7 +661,6 @@ WebInspector.SourceFrame.prototype = {
 
     _mouseDown: function(event)
     {
-        this._resetHoverTimer();
         this._hidePopup();
         if (event.button != 0 || event.altKey || event.ctrlKey || event.metaKey)
             return;
@@ -727,6 +726,7 @@ WebInspector.SourceFrame.prototype = {
 
     _hidePopup: function()
     {
+        this._resetHoverTimer();
         if (!this._popup)
             return;
 
