@@ -192,20 +192,7 @@ function selectedFailures()
     $('.test input:checkbox').each(function() {
         if (!this.checked)
             return;
-        var testSummary = $(this).parents('.result');
-        var testName = testSummary.attr(config.kTestNameAttr);
-        $('.builder', testSummary).each(function() {
-            var failureTypes = $(this).attr(config.kFailureTypesAttr);
-            if (!failureTypes)
-                return
-            var failureTypeList = failureTypes.split(' ');
-            var builderName = $(this).attr(config.kBuilderNameAttr);
-            failureInfoList.push({
-                'testName': testName,
-                'builderName': builderName,
-                'failureTypeList': failureTypeList,
-            });
-        });
+        failureInfoList = failureInfoList.concat(ui.failureInfoListForSummary($(this).parents('.result')));
     });
 
     return failureInfoList;

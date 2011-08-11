@@ -71,7 +71,8 @@ class GardeningExpectationsUpdater(BugManager):
         updated_expectation_lines = []
         # FIXME: Group failures by testName+failureTypeList.
         for failure_info in failure_info_list:
-            expectation_set = set(filter(None, map(TestExpectations.expectation_from_string, failure_info['failureTypeList'])))
+            expectation_set = set(filter(lambda expectation: expectation is not None,
+                                         map(TestExpectations.expectation_from_string, failure_info['failureTypeList'])))
             assert(expectation_set)
             test_name = failure_info['testName']
             assert(test_name)

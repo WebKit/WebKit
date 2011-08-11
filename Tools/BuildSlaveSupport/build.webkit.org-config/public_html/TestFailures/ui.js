@@ -141,6 +141,27 @@ ui.summarizeFailure = function(failureAnalysis)
     return block;
 };
 
+ui.failureInfoListForSummary = function(testSummary)
+{
+    var failureInfoList = [];
+
+    var testName = testSummary.attr(config.kTestNameAttr);
+    $('.builder', testSummary).each(function() {
+        var failureTypes = $(this).attr(config.kFailureTypesAttr);
+        if (!failureTypes)
+            return
+        var failureTypeList = failureTypes.split(' ');
+        var builderName = $(this).attr(config.kBuilderNameAttr);
+        failureInfoList.push({
+            'testName': testName,
+            'builderName': builderName,
+            'failureTypeList': failureTypeList,
+        });
+    });
+
+    return failureInfoList;
+};
+
 ui.commitEntry = function(commitData)
 {
     var entry = $('<td class="entry"></td>');

@@ -22,33 +22,17 @@ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 THE POSSIBILITY OF SUCH DAMAGE.
-
-The favicons are from the awesome famfamfam.com, which is the website of Mark
-James, a web developer from Birmingham, UK.
 -->
 <html>
 <head>
-<title>Garden-O-Matic</title>
+<title>Unexpected Passes</title>
 <link rel="stylesheet" href="main.css">
-<link rel="icon" id="favicon" type="image/png" href="favicon-green.png">
 </head>
 <body>
-<div class="butterbar"><span class="status">Loading...</span></div>
-<div class="infobar"><span class="status"></span></div>
 <div class="actions">
-    <button class="show-selected-failures">Show Selected Failures</button><button class="rebaseline-selected">Rebaseline Selected</button><button class="update-expectations-selected">Mark Selected as Expected</button><button class="refresh">Refresh</button>
+    <button class="update-expectations-selected">Mark Selected as Expected</button>
 </div>
-<div class="recent-history"></div>
-<div class="results-detail">
-    <div class="toolbar">
-        <div class="actions">
-            <button class="rebaseline default">Add to Rebaseline Queue</button><button class="update-expectation">Mark Failure as Expected</button><button class="previous">&#9664;</button><button class="next">&#9654;</button><button class="dismiss">Close</button>
-        </div>
-        <div class="status"></div>
-        <div class="clear"></div>
-    </div>
-    <div class="content"></div>
-</div>
+<div class="recent-history"><table class="changelog"></table></div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script> 
 <script src="config.js"></script>
 <script src="base.js"></script>
@@ -60,6 +44,6 @@ James, a web developer from Birmingham, UK.
 <script src="results.js"></script>
 <script src="ui.js"></script>
 <script src="model.js"></script>
-<script src="main.js"></script>
+<script src="unexpected-passes.js"></script>
 </body>
 </html>

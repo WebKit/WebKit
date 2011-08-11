@@ -107,5 +107,38 @@ test("failureDetails (empty)", 1, function() {
         '</table>');
 });
 
+test("summarizeFailure", 1, function() {
+    var failureAnalysis = {
+        "testName": "svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html",
+        "resultNodesByBuilder": {
+            "Webkit Mac10.5": {
+                "expected": "IMAGE",
+                "actual": "PASS"
+            },
+            "Webkit Mac10.5 (dbg)(2)": {
+                "expected": "IMAGE",
+                "actual":"PASS"
+            }
+        }
+    }
+
+    var failureSummary = ui.summarizeFailure(failureAnalysis);
+    var failureInfoList = ui.failureInfoListForSummary(failureSummary);
+
+    deepEqual(failureInfoList, [{
+        "testName": "svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html",
+        "builderName": "Webkit Mac10.5",
+        "failureTypeList": [
+            "PASS"
+        ]
+      }, {
+        "testName": "svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html",
+        "builderName": "Webkit Mac10.5 (dbg)(2)",
+        "failureTypeList": [
+            "PASS"
+        ]
+      }
+    ]);
+});
 
 })();

@@ -151,6 +151,12 @@ class GardeningExpectationsUpdaterTest(unittest.TestCase):
         expectations_after = "BUG_NEW XP RELEASE CPU : failures/expected/image.html = IMAGE"
         self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
 
+    def test_pass_expectation(self):
+        failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["PASS"]}]
+        expectations_before = "BUG_OLD XP RELEASE CPU : failures/expected/image.html = TEXT"
+        expectations_after = ""
+        self.assert_update(failure_info_list, expectations_before=expectations_before, expectations_after=expectations_after)
+
     def test_supplement_old_expectation(self):
         failure_info_list = [{"testName": "failures/expected/image.html", "builderName": "Webkit Win", "failureTypeList": ["IMAGE"]}]
         expectations_before = "BUG_OLD XP RELEASE :  failures/expected/image.html = TEXT"
