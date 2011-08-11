@@ -59,13 +59,13 @@ Retrieving results for chromium-gpu-win-xp from Webkit Win - GPU.
 Retrieving results for chromium-linux-x86 from Webkit Linux 32.
     userscripts/another-test.html
     userscripts/images.svg
-Retrieving results for chromium-linux-x86_64 from Webkit Linux (dbg)(2).
+Retrieving results for chromium-linux-x86_64 from Webkit Linux.
     userscripts/another-test.html
     userscripts/images.svg
-Retrieving results for chromium-mac-leopard from Webkit Mac10.5 (dbg)(1).
+Retrieving results for chromium-mac-leopard from Webkit Mac10.5.
     userscripts/another-test.html
     userscripts/images.svg
-Retrieving results for chromium-mac-snowleopard from Webkit Mac10.6 (dbg).
+Retrieving results for chromium-mac-snowleopard from Webkit Mac10.6.
     userscripts/another-test.html
     userscripts/images.svg
 Retrieving results for chromium-win-vista from Webkit Vista.
@@ -74,7 +74,7 @@ Retrieving results for chromium-win-vista from Webkit Vista.
 Retrieving results for chromium-win-win7 from Webkit Win7.
     userscripts/another-test.html
     userscripts/images.svg
-Retrieving results for chromium-win-xp from Webkit Win (dbg)(2).
+Retrieving results for chromium-win-xp from Webkit Win.
     userscripts/another-test.html
     userscripts/images.svg
 Optimizing baselines for userscripts/another-test.html.
@@ -82,18 +82,18 @@ Optimizing baselines for userscripts/images.svg.
 """
         expected_stderr = """MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux 32', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux 32', 'userscripts/images.svg'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux (dbg)(2)', 'userscripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux (dbg)(2)', 'userscripts/images.svg'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.5 (dbg)(1)', 'userscripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.5 (dbg)(1)', 'userscripts/images.svg'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.6 (dbg)', 'userscripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.6 (dbg)', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Linux', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.5', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.5', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.6', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Mac10.6', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Vista', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Vista', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win7', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win7', 'userscripts/images.svg'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win (dbg)(2)', 'userscripts/another-test.html'], cwd=/mock-checkout
-MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win (dbg)(2)', 'userscripts/images.svg'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win', 'userscripts/another-test.html'], cwd=/mock-checkout
+MOCK run_command: ['echo', 'rebaseline-test', 'Webkit Win', 'userscripts/images.svg'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/another-test.html'], cwd=/mock-checkout
 MOCK run_command: ['echo', 'optimize-baselines', 'userscripts/images.svg'], cwd=/mock-checkout
 """

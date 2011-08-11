@@ -149,17 +149,19 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
         # FIXME: Support non-Chromium ports.
         return port_name.startswith('chromium-')
 
-    def _update_expectations_file(self, port, expectations, tests_to_rebaseline):
-        new_expectations = expectations.remove_rebaselined_tests(tests_to_rebaseline)
-        path = port.path_to_test_expectations_file()
-        self._tool.filesystem.write_text_file(path, new_expectations)
+    def _expectations(self, port):
+        return TestExpectations(port, None, port.test_expectations(), port.test_configuration())
 
-    # FIXME: We read and write the test_expectations.txt file once for each port.  That seems excessive.
+    def _update_expectations_file(self, port_name):
+        if not self._is_supported_port(port_name):
+            return
+        port = factory.get(port_name)
+        expectations = self._expectations(port)
+        path = port.path_to_test_expectations_file()
+        self._tool.filesystem.write_text_file(path, expectations.remove_rebaselined_tests(expectations.get_rebaselining_failures()))
+
     def _tests_to_rebaseline(self, port):
-        expectations = TestExpectations(port, None, port.test_expectations(), port.test_configuration())
-        tests_to_rebaseline = expectations.get_rebaselining_failures()
-        self._update_expectations_file(port, expectations, tests_to_rebaseline)
-        return tests_to_rebaseline
+        return self._expectations(port).get_rebaselining_failures()
 
     def _rebaseline_port(self, port_name):
         if not self._is_supported_port(port_name):
@@ -177,6 +179,8 @@ class RebaselineExpectations(AbstractDeclarativeCommand):
         self._touched_test_names = set([])
         for port_name in factory.all_port_names():
             self._rebaseline_port(port_name)
+        for port_name in factory.all_port_names():
+            self._update_expectations_file(port_name)
         for test_name in self._touched_test_names:
             print "Optimizing baselines for %s." % test_name
             self._run_webkit_patch(['optimize-baselines', test_name])

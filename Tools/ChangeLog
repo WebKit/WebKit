@@ -1,3 +1,14 @@
+2011-08-11  Adam Barth  <abarth@webkit.org>
+
+        rebaseline-expectations should use the release bots, not the debug
+        bots.  The debug bots don't all run all the tests.  Also, delay
+        updating test_expectations a long as possible to avoid clearing out
+        lines that we'll need for other ports.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+
 2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         r92792 inadvertently removed PlatformSpecificScheduler for all Snow Leopard bots.

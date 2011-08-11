@@ -125,7 +125,7 @@ def port_name_for_builder_name(builder_name):
 
 def builder_name_for_port_name(target_port_name):
     for builder_name, builder_info in _exact_matches.items():
-        if builder_info["port_name"] == target_port_name:
+        if builder_info['port_name'] == target_port_name and 'debug' not in builder_info['specifiers']:
             return builder_name
     return None
 
