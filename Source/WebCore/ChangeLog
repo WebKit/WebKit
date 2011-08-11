@@ -1,3 +1,26 @@
+2011-08-11  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Scripts panel: display the current search match index in the toolbar.
+        https://bugs.webkit.org/show_bug.cgi?id=66048
+
+        Reviewed by Pavel Feldman.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.performSearch.finishedCallback):
+        (WebInspector.ScriptsPanel.prototype.performSearch):
+        (WebInspector.ScriptsPanel.prototype.jumpToNextSearchResult):
+        (WebInspector.ScriptsPanel.prototype.jumpToPreviousSearchResult):
+        * inspector/front-end/SearchController.js:
+        (WebInspector.SearchController.prototype.updateSearchMatchesCount):
+        (WebInspector.SearchController.prototype.updateCurrentMatchIndex):
+        (WebInspector.SearchController.prototype.activePanelChanged.performPanelSearch):
+        (WebInspector.SearchController.prototype.activePanelChanged):
+        (WebInspector.SearchController.prototype._updateSearchMatchesCountAndCurrentMatchIndex):
+        (WebInspector.SearchController.prototype._performSearch):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.get currentSearchResultIndex):
+
 2011-08-11  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Add another missing file to GNUmakefile

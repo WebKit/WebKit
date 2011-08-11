@@ -420,6 +420,11 @@ WebInspector.SourceFrame.prototype = {
         return this._searchResults.length && this._currentSearchResultIndex === (this._searchResults.length - 1);
     },
 
+    get currentSearchResultIndex()
+    {
+        return this._currentSearchResultIndex;
+    },
+
     jumpToSearchResult: function(index)
     {
         if (!this.loaded || !this._searchResults.length)

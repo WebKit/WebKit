@@ -49,7 +49,13 @@ WebInspector.SearchController.prototype = {
         panel.currentSearchMatches = matches;
 
         if (panel === WebInspector.currentPanel)
-            this._updateSearchMatchesCount(WebInspector.currentPanel.currentQuery && matches);
+            this._updateSearchMatchesCountAndCurrentMatchIndex(WebInspector.currentPanel.currentQuery && matches);
+    },
+
+    updateCurrentMatchIndex: function(currentMatchIndex, panel)
+    {
+        if (panel === WebInspector.currentPanel)
+            this._updateSearchMatchesCountAndCurrentMatchIndex(panel.currentSearchMatches, currentMatchIndex);
     },
 
     updateSearchLabel: function()
@@ -123,7 +129,7 @@ WebInspector.SearchController.prototype = {
         if (panel.performSearch) {
             function performPanelSearch()
             {
-                this._updateSearchMatchesCount();
+                this._updateSearchMatchesCountAndCurrentMatchIndex();
 
                 panel.currentQuery = this._currentQuery;
                 panel.performSearch(this._currentQuery);
@@ -133,11 +139,11 @@ WebInspector.SearchController.prototype = {
             setTimeout(performPanelSearch.bind(this), 0);
         } else {
             // Update to show Not found for panels that can't be searched.
-            this._updateSearchMatchesCount();
+            this._updateSearchMatchesCountAndCurrentMatchIndex();
         }
     },
 
-    _updateSearchMatchesCount: function(matches)
+    _updateSearchMatchesCountAndCurrentMatchIndex: function(matches, currentMatchIndex)
     {
         if (matches == null) {
             this._matchesElement.addStyleClass("hidden");
@@ -145,10 +151,17 @@ WebInspector.SearchController.prototype = {
         }
 
         if (matches) {
-            if (matches === 1)
-                var matchesString = WebInspector.UIString("1 match");
-            else
-                var matchesString = WebInspector.UIString("%d matches", matches);
+            if (matches === 1) {
+                if (currentMatchIndex === 1)
+                    var matchesString = WebInspector.UIString("1 of 1 match");
+                else
+                    var matchesString = WebInspector.UIString("1 match");
+            } else {
+                if (currentMatchIndex)
+                    var matchesString = WebInspector.UIString("%d of %d matches", currentMatchIndex, matches);
+                else
+                    var matchesString = WebInspector.UIString("%d matches", matches);
+            }
         } else
             var matchesString = WebInspector.UIString("Not Found");
 
@@ -238,7 +251,7 @@ WebInspector.SearchController.prototype = {
                     panel.searchCanceled();
             }
 
-            this._updateSearchMatchesCount();
+            this._updateSearchMatchesCountAndCurrentMatchIndex();
 
             return;
         }
@@ -258,7 +271,7 @@ WebInspector.SearchController.prototype = {
 
         this._currentQuery = query;
 
-        this._updateSearchMatchesCount();
+        this._updateSearchMatchesCountAndCurrentMatchIndex();
 
         if (!currentPanel.performSearch)
             return;
