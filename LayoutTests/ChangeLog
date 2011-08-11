@@ -1,3 +1,9 @@
+2011-08-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix Snow Leopard expectation after r92518.
+
+        * platform/mac-snowleopard/fast/loader/file-url-mimetypes-expected.txt:
+
 2011-08-11  Adam Barth  <abarth@webkit.org>
 
         Test how SpeechInputResultList behaves with not enough arguments
