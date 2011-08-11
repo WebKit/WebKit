@@ -1,3 +1,10 @@
+2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip tests added by r92769 on WebKit2 because TestRunner doesn't support
+        drag and drop by eventSender yet.
+
+        * platform/wk2/Skipped:
+
 2011-08-10  MORITA Hajime  <morrita@google.com>
 
         Unreviewed pixel expectations update. New expectations now have

@@ -95,6 +95,9 @@ editing/inserting/typing-tab-designmode.html
 editing/pasteboard/4944770-2.html
 editing/pasteboard/4947130.html
 editing/pasteboard/copy-standalone-image-crash.html
+editing/pasteboard/drag-and-drop-image-contenteditable.html
+editing/pasteboard/drag-and-drop-inputimage-contenteditable.html
+editing/pasteboard/drag-and-drop-objectimage-contenteditable.html
 editing/pasteboard/drag-drop-dead-frame.html
 editing/pasteboard/drag-drop-input-textarea.html
 editing/pasteboard/drag-drop-list.html
