@@ -196,15 +196,15 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     Element* elt;
     for (elt = document()->ownerElement(); view() && elt && elt->renderer(); elt = elt->document()->ownerElement()) {
         RenderLayer* layer = elt->renderer()->enclosingLayer();
-        if (layer->requiresSlowRepaints()) {
-            frameView()->setUseSlowRepaints();
+        if (layer->cannotBlitToWindow()) {
+            frameView()->setCannotBlitToWindow();
             break;
         }
 
 #if USE(ACCELERATED_COMPOSITING)
         if (RenderLayer* compositingLayer = layer->enclosingCompositingLayer()) {
             if (!compositingLayer->backing()->paintingGoesToWindow()) {
-                frameView()->setUseSlowRepaints();
+                frameView()->setCannotBlitToWindow();
                 break;
             }
         }
@@ -235,7 +235,7 @@ void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint&)
     // Only fill with the base background color (typically white) if we're the root document, 
     // since iframes/frames with no background in the child document should show the parent's background.
     if (frameView()->isTransparent()) // FIXME: This needs to be dynamic.  We should be able to go back to blitting if we ever stop being transparent.
-        frameView()->setUseSlowRepaints(); // The parent must show behind the child.
+        frameView()->setCannotBlitToWindow(); // The parent must show behind the child.
     else {
         Color baseColor = frameView()->baseBackgroundColor();
         if (baseColor.alpha() > 0) {

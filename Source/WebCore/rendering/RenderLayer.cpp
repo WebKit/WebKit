@@ -854,13 +854,13 @@ IntPoint RenderLayer::absoluteToContents(const IntPoint& absolutePoint) const
     return roundedIntPoint(renderer()->absoluteToLocal(absolutePoint, false, true));
 }
 
-bool RenderLayer::requiresSlowRepaints() const
+bool RenderLayer::cannotBlitToWindow() const
 {
     if (isTransparent() || hasReflection() || hasTransform())
         return true;
     if (!parent())
         return false;
-    return parent()->requiresSlowRepaints();
+    return parent()->cannotBlitToWindow();
 }
 
 bool RenderLayer::isTransparent() const

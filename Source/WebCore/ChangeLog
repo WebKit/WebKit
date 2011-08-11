@@ -1,3 +1,36 @@
+2011-08-01  Adrienne Walker  <enne@google.com>
+
+        Enable fast path scrolling for composited iframes
+        https://bugs.webkit.org/show_bug.cgi?id=65056
+
+        Reviewed by James Robinson.
+
+        iframes with composited layers for content should be able to do fast
+        path scrolling because they draw into their own backing. To enable
+        this, useSlowRepaints is modified to return true only for the cases
+        that apply to composited layers. The fast path scrolling function is
+        modified to send the invalidation to the backing itself rather than to
+        the window.
+
+        Renamed a number of "slow repaint" functions to be the more accurate
+        "cannot blit to window" as it will not always force slow path
+        scrolling.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::useSlowRepaints):
+        (WebCore::FrameView::useSlowRepaintsIfNotOverlapped):
+        (WebCore::FrameView::contentsInCompositedLayer):
+        (WebCore::FrameView::setCannotBlitToWindow):
+        (WebCore::FrameView::scrollContentsFastPath):
+        (WebCore::FrameView::scrollContentsSlowPath):
+        * page/FrameView.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::cannotBlitToWindow):
+        * rendering/RenderLayer.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+
 2011-08-10  Adrienne Walker  <enne@google.com>
 
         Support creating compositing layers for scrollable frames and iframes

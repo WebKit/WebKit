@@ -192,7 +192,7 @@ public:
     bool isNormalFlowOnly() const { return m_isNormalFlowOnly; }
     bool isSelfPaintingLayer() const;
 
-    bool requiresSlowRepaints() const;
+    bool cannotBlitToWindow() const;
 
     bool isTransparent() const;
     RenderLayer* transparentPaintingAncestor();

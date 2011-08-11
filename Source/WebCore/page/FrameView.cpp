@@ -199,7 +199,7 @@ FrameView::~FrameView()
 
 void FrameView::reset()
 {
-    m_useSlowRepaints = false;
+    m_cannotBlitToWindow = false;
     m_isOverlapped = false;
     m_contentIsOpaque = false;
     m_borderX = 30;
@@ -1195,10 +1195,12 @@ void FrameView::adjustMediaTypeForPrinting(bool printing)
     }
 }
 
-bool FrameView::useSlowRepaints() const
+bool FrameView::useSlowRepaints(bool considerOverlap) const
 {
-    if (m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || m_isOverlapped || !m_contentIsOpaque)
-        return true;
+    bool mustBeSlow = m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0);
+
+    if (contentsInCompositedLayer())
+        return mustBeSlow;
 
 #if PLATFORM(CHROMIUM)
     // The chromium compositor does not support scrolling a non-composited frame within a composited page through
@@ -1207,21 +1209,20 @@ bool FrameView::useSlowRepaints() const
         return true;
 #endif
 
+    bool isOverlapped = m_isOverlapped && considerOverlap;
+
+    if (mustBeSlow || m_cannotBlitToWindow || isOverlapped || !m_contentIsOpaque)
+        return true;
+
     if (FrameView* parentView = parentFrameView())
-        return parentView->useSlowRepaints();
+        return parentView->useSlowRepaints(considerOverlap);
 
     return false;
 }
 
 bool FrameView::useSlowRepaintsIfNotOverlapped() const
 {
-    if (m_useSlowRepaints || m_slowRepaintObjectCount > 0 || (platformWidget() && m_fixedObjectCount > 0) || !m_contentIsOpaque)
-        return true;
-
-    if (FrameView* parentView = parentFrameView())
-        return parentView->useSlowRepaintsIfNotOverlapped();
-
-    return false;
+    return useSlowRepaints(false);
 }
 
 void FrameView::updateCanBlitOnScrollRecursively()
@@ -1232,9 +1233,22 @@ void FrameView::updateCanBlitOnScrollRecursively()
     }
 }
 
-void FrameView::setUseSlowRepaints()
+bool FrameView::contentsInCompositedLayer() const
 {
-    m_useSlowRepaints = true;
+#if USE(ACCELERATED_COMPOSITING)
+    RenderView* root = m_frame->contentRenderer();
+    if (root && root->layer()->isComposited()) {
+        GraphicsLayer* layer = root->layer()->backing()->graphicsLayer();
+        if (layer && layer->drawsContent())
+            return true;
+    }
+#endif
+    return false;
+}
+
+void FrameView::setCannotBlitToWindow()
+{
+    m_cannotBlitToWindow = true;
     updateCanBlitOnScrollRecursively();
 }
 
@@ -1357,6 +1371,8 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         return true;
     }
 
+    const bool isCompositedContentLayer = contentsInCompositedLayer();
+
     // Get the rects of the fixed objects visible in the rectToScroll
     Vector<IntRect, fixedObjectThreshold> subRectToUpdate;
     bool updateInvalidatedSubRect = true;
@@ -1367,7 +1383,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
             continue;
         IntRect updateRect = renderBox->layer()->repaintRectIncludingDescendants();
         updateRect = contentsToWindow(updateRect);
-        if (clipsRepaints())
+        if (!isCompositedContentLayer && clipsRepaints())
             updateRect.intersect(rectToScroll);
         if (!updateRect.isEmpty()) {
             if (subRectToUpdate.size() >= fixedObjectThreshold) {
@@ -1390,6 +1406,15 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
             IntRect scrolledRect = updateRect;
             scrolledRect.move(scrollDelta);
             updateRect.unite(scrolledRect);
+#if USE(ACCELERATED_COMPOSITING)
+            if (isCompositedContentLayer) {
+                updateRect = windowToContents(updateRect);
+                RenderView* root = m_frame->contentRenderer();
+                ASSERT(root);
+                root->layer()->setBackingNeedsRepaintInRect(updateRect);
+                continue;
+            }
+#endif
             if (clipsRepaints())
                 updateRect.intersect(rectToScroll);
             hostWindow()->invalidateContentsAndWindow(updateRect, false);
@@ -1404,13 +1429,10 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
 void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
 {
 #if USE(ACCELERATED_COMPOSITING)
-    RenderView* root = m_frame->contentRenderer();
-    if (root && root->layer()->isComposited()) {
-        GraphicsLayer* layer = root->layer()->backing()->graphicsLayer();
-        if (layer && layer->drawsContent()) {
-            root->layer()->setBackingNeedsRepaintInRect(visibleContentRect());
-            return;
-        }
+    if (contentsInCompositedLayer()) {
+        RenderView* root = m_frame->contentRenderer();
+        ASSERT(root);
+        root->layer()->setBackingNeedsRepaintInRect(visibleContentRect());
     }
     if (RenderPart* frameRenderer = m_frame->ownerRenderer()) {
         if (frameRenderer->containerForRepaint()) {

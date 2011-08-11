@@ -172,7 +172,7 @@ public:
     void setMediaType(const String&);
     void adjustMediaTypeForPrinting(bool printing);
 
-    void setUseSlowRepaints();
+    void setCannotBlitToWindow();
     void setIsOverlapped(bool);
     bool isOverlapped() const { return m_isOverlapped; }
     bool isOverlappedIncludingAncestors() const;
@@ -306,9 +306,10 @@ private:
     virtual bool isFrameView() const;
 
     friend class RenderWidget;
-    bool useSlowRepaints() const;
+    bool useSlowRepaints(bool considerOverlap = true) const;
     bool useSlowRepaintsIfNotOverlapped() const;
     void updateCanBlitOnScrollRecursively();
+    bool contentsInCompositedLayer() const;
 
     bool hasFixedObjects() const { return m_fixedObjectCount > 0; }
 
@@ -385,7 +386,7 @@ private:
     bool m_doFullRepaint;
     
     bool m_canHaveScrollbars;
-    bool m_useSlowRepaints;
+    bool m_cannotBlitToWindow;
     bool m_isOverlapped;
     bool m_contentIsOpaque;
     unsigned m_slowRepaintObjectCount;
