@@ -1,3 +1,11 @@
+2011-08-11  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Add the javascript core dynamic library for gtk-doc's introspection helper.
+
+        Reviewed by Xan Lopez.
+
+        * docs/GNUmakefile.am:
+
 2011-08-11  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Update NEWS and configure.ac for 1.5.2 release

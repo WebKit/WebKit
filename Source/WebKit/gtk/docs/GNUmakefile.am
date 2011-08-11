@@ -106,6 +106,7 @@ INCLUDES= \
 	$(GTK_CFLAGS) \
 	$(LIBSOUP_CFLAGS)
 GTKDOC_LIBS= \
+	$(top_builddir)/libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(top_builddir)/libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	$(GLIB_LIBS) \
 	$(GTK_LIBS) \
