@@ -59,6 +59,7 @@ public:
 
     // The basics.
     void dumpAsText(bool dumpPixels);
+    void waitForPolicyDelegate();
     void dumpChildFramesAsText() { m_whatToDump = AllFramesText; }
     void waitUntilDone();
     void notifyDone();
@@ -84,6 +85,7 @@ public:
     void setJavaScriptCanAccessClipboard(bool);
     void setPrivateBrowsingEnabled(bool);
     void setAuthorAndUserStylesEnabled(bool);
+    void setCustomPolicyDelegate(bool enabled, bool permissive = false);
     void addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
 
@@ -140,6 +142,8 @@ public:
     bool shouldDumpTitleChanges() const { return m_dumpTitleChanges; }
     bool shouldDumpPixels() const { return m_dumpPixels; }
     bool shouldDumpFullScreenCallbacks() const { return m_dumpFullScreenCallbacks; }
+    bool isPolicyDelegateEnabled() const { return m_policyDelegateEnabled; }
+    bool isPolicyDelegatePermissive() const { return m_policyDelegatePermissive; }
 
     bool waitToDump() const { return m_waitToDump; }
     void waitToDumpWatchdogTimerFired();
@@ -189,6 +193,9 @@ private:
     bool m_testRepaintSweepHorizontally;
 
     bool m_willSendRequestReturnsNull;
+
+    bool m_policyDelegateEnabled;
+    bool m_policyDelegatePermissive;
 
     PlatformTimerRef m_waitToDumpWatchdogTimer;
 };

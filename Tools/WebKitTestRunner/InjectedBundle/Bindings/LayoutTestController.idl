@@ -29,6 +29,7 @@ module WTR {
         // The basics.
         void dumpAsText(in boolean dumpPixels);
         void dumpChildFramesAsText();
+        void waitForPolicyDelegate();
         void waitUntilDone();
         void notifyDone();
 

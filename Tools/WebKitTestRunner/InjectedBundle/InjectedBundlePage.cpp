@@ -37,6 +37,9 @@
 #include <WebKit2/WKBundleBackForwardListItem.h>
 #include <WebKit2/WKBundleFrame.h>
 #include <WebKit2/WKBundleFramePrivate.h>
+#include <WebKit2/WKBundleHitTestResult.h>
+#include <WebKit2/WKBundleNavigationAction.h>
+#include <WebKit2/WKBundleNodeHandlePrivate.h>
 #include <WebKit2/WKBundlePagePrivate.h>
 #include <WebKit2/WKURLRequest.h>
 
@@ -134,6 +137,25 @@ static string toStr(WKBundlePageRef page, WKBundleScriptWorldRef world, WKBundle
     ostringstream out;
     out << "range from " << startOffset << " of " << dumpPath(context, startNodeObject) << " to " << endOffset << " of " << dumpPath(context, endNodeObject);
     return out.str();
+}
+
+static WKRetainPtr<WKStringRef> navigationTypeToString(WKFrameNavigationType type)
+{
+    switch (type) {
+    case kWKFrameNavigationTypeLinkClicked:
+        return adoptWK(WKStringCreateWithUTF8CString("link clicked"));
+    case kWKFrameNavigationTypeFormSubmitted:
+        return adoptWK(WKStringCreateWithUTF8CString("form submitted"));
+    case kWKFrameNavigationTypeBackForward:
+        return adoptWK(WKStringCreateWithUTF8CString("back/forward"));
+    case kWKFrameNavigationTypeReload:
+        return adoptWK(WKStringCreateWithUTF8CString("reload"));
+    case kWKFrameNavigationTypeFormResubmitted:
+        return adoptWK(WKStringCreateWithUTF8CString("form resubmitted"));
+    case kWKFrameNavigationTypeOther:
+        return adoptWK(WKStringCreateWithUTF8CString("other"));
+    }
+    return adoptWK(WKStringCreateWithUTF8CString("illegal value"));
 }
 
 static ostream& operator<<(ostream& out, WKBundleCSSStyleDeclarationRef style)
@@ -720,9 +742,27 @@ void InjectedBundlePage::unableToImplementPolicy(WKBundlePageRef page, WKBundleF
     static_cast<InjectedBundlePage*>(const_cast<void*>(clientInfo))->unableToImplementPolicy(page, frame, error, userData);
 }
 
-WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef request, WKTypeRef*)
+WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNavigationAction(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleNavigationActionRef navigationAction, WKURLRequestRef request, WKTypeRef* userData)
 {
-    return WKBundlePagePolicyActionUse;
+    if (!InjectedBundle::shared().isTestRunning())
+        return WKBundlePagePolicyActionUse;
+
+    if (!InjectedBundle::shared().layoutTestController()->isPolicyDelegateEnabled())
+        return WKBundlePagePolicyActionUse;
+
+    if (InjectedBundle::shared().layoutTestController()->waitToDump()) {
+        InjectedBundle::shared().os() << "Policy delegate: attempt to load " << adoptWK(WKURLRequestCopyURL(request)) << " with navigation type \'" << navigationTypeToString(WKBundleNavigationActionGetNavigationType(navigationAction)) << "\'";
+        WKBundleHitTestResultRef hitTestResultRef = WKBundleNavigationActionCopyHitTestResult(navigationAction);
+        if (hitTestResultRef)
+            InjectedBundle::shared().os() << " originating from " << dumpPath(m_page, m_world.get(), WKBundleHitTestResultCopyNodeHandle(hitTestResultRef));
+
+        InjectedBundle::shared().os() << "\n";
+        InjectedBundle::shared().layoutTestController()->notifyDone();
+    }
+
+    if (InjectedBundle::shared().layoutTestController()->isPolicyDelegatePermissive())
+        return WKBundlePagePolicyActionUse;
+    return WKBundlePagePolicyActionPassThrough;
 }
 
 WKBundlePagePolicyAction InjectedBundlePage::decidePolicyForNewWindowAction(WKBundlePageRef, WKBundleFrameRef, WKBundleNavigationActionRef, WKURLRequestRef, WKStringRef, WKTypeRef*)

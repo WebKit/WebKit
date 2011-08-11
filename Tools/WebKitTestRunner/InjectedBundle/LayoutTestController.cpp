@@ -104,6 +104,8 @@ LayoutTestController::LayoutTestController()
     , m_testRepaint(false)
     , m_testRepaintSweepHorizontally(false)
     , m_willSendRequestReturnsNull(false)
+    , m_policyDelegateEnabled(false)
+    , m_policyDelegatePermissive(false)
 {
     platformInitialize();
 }
@@ -127,7 +129,20 @@ void LayoutTestController::dumpAsText(bool dumpPixels)
     m_whatToDump = MainFrameText;
     m_dumpPixels = dumpPixels;
 }
-    
+
+// FIXME: Needs a full implementation see https://bugs.webkit.org/show_bug.cgi?id=42546
+void LayoutTestController::setCustomPolicyDelegate(bool enabled, bool permissive)
+{
+    m_policyDelegateEnabled = enabled;
+    m_policyDelegatePermissive = permissive;
+}
+
+void LayoutTestController::waitForPolicyDelegate()
+{
+    setCustomPolicyDelegate(true);
+    waitUntilDone();
+}
+
 void LayoutTestController::waitUntilDone()
 {
     m_waitToDump = true;

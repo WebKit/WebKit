@@ -1,3 +1,15 @@
+2011-08-11  Zsolt Fehér  <h490267@stud.u-szeged.hu>
+
+        [WK2] Implement waitForPolicyDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=42330
+
+        Reviewed by Csaba Osztrogonác.
+
+        Unskip passing tests.
+
+        * platform/qt-wk2/Skipped:
+        * platform/wk2/Skipped:
+
 2011-08-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: use source-file-replaced instead of source-file-changed event.

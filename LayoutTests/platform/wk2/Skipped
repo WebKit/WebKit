@@ -1092,29 +1092,6 @@ webarchive/test-xml-stylesheet.xml
 fast/profiler
 inspector/profiler/cpu-profiler-profiling-without-inspector.html
 
-# WebKitTestRunner needs layoutTestController.waitForPolicyDelegate
-# <https://bugs.webkit.org/show_bug.cgi?id=42330>
-fast/encoding/mailto-always-utf-8.html
-fast/forms/mailto/advanced-get.html
-fast/forms/mailto/advanced-put.html
-fast/forms/mailto/formenctype-attribute-button-html.html
-fast/forms/mailto/formenctype-attribute-input-html.html
-fast/forms/mailto/get-multiple-items-text-plain.html
-fast/forms/mailto/get-multiple-items-x-www-form-urlencoded.html
-fast/forms/mailto/get-multiple-items.html
-fast/forms/mailto/get-non-ascii-always-utf-8.html
-fast/forms/mailto/get-non-ascii-text-plain-latin-1.html
-fast/forms/mailto/get-non-ascii-text-plain.html
-fast/forms/mailto/get-non-ascii.html
-fast/forms/mailto/get-overwrite-query.html
-fast/forms/mailto/post-append-query.html
-fast/forms/mailto/post-multiple-items-multipart-form-data.html
-fast/forms/mailto/post-multiple-items-text-plain.html
-fast/forms/mailto/post-multiple-items-x-www-form-urlencoded.html
-fast/forms/mailto/post-multiple-items.html
-fast/forms/mailto/post-text-plain-with-accept-charset.html
-fast/forms/mailto/post-text-plain.html
-
 # WebKitTestRunner needs layoutTestController.dumpFrameLoadCallbacks
 # <https://bugs.webkit.org/show_bug.cgi?id=42331>
 fast/loader/recursive-before-unload-crash.html
