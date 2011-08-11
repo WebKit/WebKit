@@ -377,9 +377,14 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
     if (m_skipsDraw || !m_tiles.size() || contentRect.isEmpty())
         return;
 
+#if defined(OS_CHROMEOS)
+    // FIXME: Disable anti-aliasing to workaround broken driver.
+    bool useAA = false;
+#else
     // Use anti-aliasing programs when border texels are preset and transform
     // is not an integer translation.
     bool useAA = (m_tilingData.borderTexels() && !globalTransform.isIntegerTranslation());
+#endif
 
     switch (m_sampledTexelFormat) {
     case LayerTextureUpdater::SampledTexelFormatRGBA:
