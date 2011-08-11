@@ -1,3 +1,12 @@
+2011-08-11  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] fast/dom/HTMLDocument/hasFocus.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=66076
+
+        Unreviewed gardening.
+
+        * platform/qt/Skipped:
+
 2011-08-11  Adam Barth  <abarth@webkit.org>
 
         Merge expectations to mute flakiness.

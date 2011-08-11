@@ -2350,3 +2350,7 @@ http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm
 # https://bugs.webkit.org/show_bug.cgi?id=65998
 # disable failing tests after https://trac.webkit.org/changeset/92805
 fast/canvas/webgl
+
+# [Qt] fast/dom/HTMLDocument/hasFocus.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=66076
+fast/dom/HTMLDocument/hasFocus.html
