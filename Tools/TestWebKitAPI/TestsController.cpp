@@ -26,6 +26,7 @@
 #include "TestsController.h"
 
 #include <gtest/gtest.h>
+#include <wtf/Threading.h>
 
 namespace TestWebKitAPI {
 
@@ -37,6 +38,7 @@ TestsController& TestsController::shared()
 
 TestsController::TestsController()
 {
+    WTF::initializeThreading();
 }
 
 bool TestsController::run(int argc, char** argv)
