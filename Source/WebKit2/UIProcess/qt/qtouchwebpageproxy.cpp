@@ -33,8 +33,6 @@ QTouchWebPageProxy::QTouchWebPageProxy(TouchViewInterface* viewInterface, QWKCon
     , m_pinchGestureRecognizer(viewInterface)
 {
     init();
-    // FIXME: add proper handling of viewport.
-    setResizesToContentsUsingLayoutSize(QSize(980, 980));
 }
 
 PassOwnPtr<DrawingAreaProxy> QTouchWebPageProxy::createDrawingAreaProxy()
@@ -52,12 +50,6 @@ void QTouchWebPageProxy::processDidCrash()
 void QTouchWebPageProxy::paintContent(QPainter* painter, const QRect& area)
 {
     m_webPageProxy->drawingArea()->paint(IntRect(area), painter);
-}
-
-void QTouchWebPageProxy::setViewportArguments(const WebCore::ViewportArguments& args)
-{
-    m_viewportArguments = args;
-    // FIXME: we must tell our Views to react to the new viewport parameters.
 }
 
 #if ENABLE(TOUCH_EVENTS)

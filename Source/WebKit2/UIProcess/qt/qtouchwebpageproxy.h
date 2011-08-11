@@ -50,7 +50,6 @@ protected:
 private:
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void processDidCrash();
-    virtual void setViewportArguments(const WebCore::ViewportArguments&);
 #if ENABLE(TOUCH_EVENTS)
     virtual void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled);
 #endif
@@ -62,7 +61,6 @@ private:
 
     QtPanGestureRecognizer m_panGestureRecognizer;
     QtPinchGestureRecognizer m_pinchGestureRecognizer;
-    WebCore::ViewportArguments m_viewportArguments;
 };
 
 #endif /* qtouchwebpageproxy_h */

@@ -1,3 +1,30 @@
+2011-08-11  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [Qt/WK2] Add initial support for viewport meta tag
+        https://bugs.webkit.org/show_bug.cgi?id=65975
+
+        Reviewed by Benjamin Poulain.
+
+        Redirect the viewport arguments through to the view.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::didReceiveViewportArguments):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebView::geometryChanged):
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::setViewportArguments):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::updateViewportState):
+        (WebKit::TouchViewInterface::didReceiveViewportArguments):
+        * UIProcess/qt/TouchViewInterface.h:
+        (WebKit::TouchViewInterface::ViewportState::ViewportState):
+        * UIProcess/qt/ViewInterface.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::QTouchWebPageProxy):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+
 2011-08-10  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66004

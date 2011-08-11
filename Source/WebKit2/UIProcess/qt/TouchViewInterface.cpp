@@ -143,6 +143,11 @@ void TouchViewInterface::startDrag(Qt::DropActions supportedDropActions, const Q
     Q_ASSERT(false);
 }
 
+void TouchViewInterface::didReceiveViewportArguments(const WebCore::ViewportArguments& args)
+{
+    m_viewportView->d->setViewportArguments(args);
+}
+
 void TouchViewInterface::didChangeUrl(const QUrl& url)
 {
     emit m_pageView->urlChanged(url);

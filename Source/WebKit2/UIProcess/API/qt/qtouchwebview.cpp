@@ -25,6 +25,8 @@
 #include "TouchViewInterface.h"
 #include "qtouchwebpage_p.h"
 #include "QtWebPageProxy.h"
+#include "WebPageGroup.h"
+#include "WebPreferences.h"
 #include <qgraphicssceneevent.h>
 
 QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
@@ -51,6 +53,35 @@ void QTouchWebViewPrivate::viewportRectUpdated()
     pageViewPrivate->setViewportRect(viewportRectInPageViewCoordinate);
 }
 
+void QTouchWebViewPrivate::updateViewportState()
+{
+    QSize availableSize = q->boundingRect().size().toSize();
+
+    WebPageProxy* wkPage = toImpl(page.pageRef());
+    WebPreferences* wkPrefs = wkPage->pageGroup()->preferences();
+
+    WebCore::ViewportAttributes attr = WebCore::computeViewportAttributes(viewportArguments, wkPrefs->layoutFallbackWidth(), wkPrefs->deviceWidth(), wkPrefs->deviceHeight(), wkPrefs->deviceDPI(), availableSize);
+
+    viewport.initialScale = attr.initialScale;
+    viewport.minimumScale = attr.minimumScale;
+    viewport.maximumScale = attr.maximumScale;
+    viewport.pixelRatio = attr.devicePixelRatio;
+    viewport.isUserScalable = !!attr.userScalable;
+
+    // Overwrite minimum scale value with fit-to-view value, unless the the content author
+    // explicitly says no. NB: We can only do this when we know we have a valid size, ie.
+    // after initial layout has completed.
+
+    // FIXME: Do this on the web process side.
+    wkPage->setResizesToContentsUsingLayoutSize(attr.layoutSize);
+}
+
+void QTouchWebViewPrivate::setViewportArguments(const WebCore::ViewportArguments& args)
+{
+    viewportArguments = args;
+    updateViewportState();
+}
+
 QTouchWebView::QTouchWebView(QSGItem* parent)
     : QSGItem(parent)
     , d(new QTouchWebViewPrivate(this))
@@ -71,8 +102,10 @@ QTouchWebPage* QTouchWebView::page()
 void QTouchWebView::geometryChanged(const QRectF& newGeometry, const QRectF& oldGeometry)
 {
     QSGItem::geometryChanged(newGeometry, oldGeometry);
-    if (newGeometry.size() != oldGeometry.size())
+    if (newGeometry.size() != oldGeometry.size()) {
+        d->updateViewportState();
         d->viewportRectUpdated();
+    }
 }
 
 #include "moc_qtouchwebview.cpp"

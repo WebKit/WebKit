@@ -89,6 +89,11 @@ void QDesktopWebViewPrivate::startDrag(Qt::DropActions supportedDropActions, con
     *clientPosition = widget->mapFromGlobal(*globalPosition);
 }
 
+void QDesktopWebViewPrivate::didReceiveViewportArguments(const WebCore::ViewportArguments&)
+{
+    // This feature is only used by QTouchWebView.
+}
+
 void QDesktopWebViewPrivate::didFindZoomableArea(const QPoint&, const QRect&)
 {
     // This feature is only used by QTouchWebView.

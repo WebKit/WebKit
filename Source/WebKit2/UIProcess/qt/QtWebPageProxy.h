@@ -97,6 +97,7 @@ public:
     virtual void didChangeContentsSize(const WebCore::IntSize&);
 
     virtual void startDrag(const WebCore::DragData&, PassRefPtr<ShareableBitmap> dragImage);
+    virtual void setViewportArguments(const WebCore::ViewportArguments&);
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves);
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);

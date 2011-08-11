@@ -32,13 +32,35 @@ class QTouchWebViewPrivate
 {
 public:
     QTouchWebViewPrivate(QTouchWebView* q);
+
     void scroll(qreal deltaX, qreal deltaY);
     void viewportRectUpdated();
+    void updateViewportState();
+
+    void setViewportArguments(const WebCore::ViewportArguments& args);
+
+    struct ViewportState {
+        ViewportState()
+            : initialScale(1.0)
+            , minimumScale(0.25)
+            , maximumScale(1.8)
+            , pixelRatio(1.0)
+            , isUserScalable(true)
+        { }
+
+        qreal initialScale;
+        qreal minimumScale;
+        qreal maximumScale;
+        qreal pixelRatio;
+        bool isUserScalable;
+    } viewport;
 
     QTouchWebView* const q;
     QScopedPointer<QTouchWebPage> pageView;
     WebKit::TouchViewInterface viewInterface;
     QTouchWebPageProxy page;
+
+    WebCore::ViewportArguments viewportArguments;
 };
 
 #endif /* qtouchwebview_p_h */
