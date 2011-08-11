@@ -603,7 +603,7 @@ BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 
 // Needs eventSender.scalePageBy().
 // These failures are going to be removed as a rebase line after the patch for bug 58013 is landed.
-BUGWK58013 MAC WIN : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
+BUGWK58013 WIN : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
 
 // -----------------------------------------------------------------
 // Inspector tests
@@ -1871,7 +1871,6 @@ BUGWK40272 : canvas/philip/tests/2d.imageData.object.wrap.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.missingargs.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.broken.html = TEXT
 BUGWK45991 LINUX WIN : canvas/philip/tests/2d.text.draw.baseline.ideographic.html = TEXT
-BUGWK48579 : canvas/philip/tests/type.prototype.html = TEXT
 BUGWK50797 : canvas/philip/tests/2d.fillStyle.parse.invalid.rgba-6.html = TEXT
 BUGCR61824 : canvas/philip/tests/2d.pattern.image.string.html = TEXT
 
@@ -2811,11 +2810,6 @@ BUGWK58587 LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.h
 BUGWK58587 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
 BUGWK58587 LINUX DEBUG GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 
-// WebKit roll 80564:80631: vertical text fallout - these probably just need rebaseline:
-BUGWK56072 VISTA : fast/writing-mode/vertical-baseline-alignment.html = IMAGE
-BUGWK56072 VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
-BUGWK56072 VISTA : fast/ruby/base-shorter-than-text.html = FAIL
-
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 LINUX WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT
 BUGCR75561 LEOPARD : fast/writing-mode/text-orientation-basic.html = IMAGE
@@ -3483,7 +3477,7 @@ BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
 
 // Has been timing out since r88913.
 BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT IMAGE+TEXT
-BUGWK62754 SLOW LINUX MAC DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
+BUGWK62754 SLOW LEOPARD LINUX DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 
 BUGWK59921 SLOW LINUX WIN : inspector/debugger/debugger-scripts.html = PASS TEXT
 
@@ -3536,7 +3530,7 @@ BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = PAS
 // Quota enforcement not yet implemented for LevelDB back-end.
 BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
 
-BUGCR88311 MAC DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
+BUGCR88311 SNOWLEOPARD DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
 
 BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = PASS TEXT
 
@@ -3613,7 +3607,7 @@ BUGWK65063 LINUX : fast/canvas/webgl/drawingbuffer-test.html = PASS CRASH
 BUGWK65063 LINUX : fast/canvas/canvas-bg-multiple-removal.html = PASS CRASH
 BUGWK65063 LINUX : fast/canvas/canvas-as-image-incremental-repaint.html = PASS CRASH
 BUGWK65063 LINUX : fast/canvas/webgl/data-view-test.html = PASS CRASH
-BUGWK65063 MAC : css2.1/t0905-c414-flt-01-d-g.html = IMAGE
+BUGWK65063 SNOWLEOPARD : css2.1/t0905-c414-flt-01-d-g.html = IMAGE
 
 BUGWK65124 LINUX WIN : fast/repaint/japanese-rl-selection-clear.html = IMAGE+TEXT
 BUGWK65124 WIN : fast/repaint/japanese-rl-selection-repaint.html = IMAGE+TEXT
@@ -3659,7 +3653,7 @@ BUGJIANLI MAC : fast/gradients/gradient-after-transparent-border.html = IMAGE
 // Unfortunately they are failing for us.
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT IMAGE
+BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT IMAGE
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT IMAGE
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
