@@ -35,7 +35,7 @@ test("updateExpectations", 4, function() {
     var simulator = new NetworkSimulator();
     simulator.post = function(url, data, callback)
     {
-        equals(url, '/updateexpectations');
+        equals(url, 'http://127.0.0.1:8127/updateexpectations');
         equals(data, '[{"builderName":"WebKit Linux","testName":"another/test.svg","failureTypeList":["IMAGE"]}]');
         simulator.scheduleCallback(callback);
     };
@@ -55,7 +55,7 @@ test("optimizeBaselines", 3, function() {
     var simulator = new NetworkSimulator();
     simulator.post = function(url, callback)
     {
-        equals(url, '/optimizebaselines?test=another%2Ftest.svg');
+        equals(url, 'http://127.0.0.1:8127/optimizebaselines?test=another%2Ftest.svg');
         simulator.scheduleCallback(callback);
     };
 
@@ -95,12 +95,12 @@ test("rebaseline", 3, function() {
     });
 
     deepEqual(requestedURLs, [
-        "/rebaseline?builder=WebKit+Linux&test=another%2Ftest.svg&extension=png",
-        "/rebaseline?builder=WebKit+Mac10.6&test=another%2Ftest.svg&extension=txt",
-        "/rebaseline?builder=WebKit+Mac10.6&test=another%2Ftest.svg&extension=png",
-        "/rebaseline?builder=Webkit+Vista&test=fast%2Ftest.html&extension=txt",
-        "/optimizebaselines?test=another%2Ftest.svg",
-        "/optimizebaselines?test=fast%2Ftest.html"
+        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Linux&test=another%2Ftest.svg&extension=png",
+        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Mac10.6&test=another%2Ftest.svg&extension=txt",
+        "http://127.0.0.1:8127/rebaseline?builder=WebKit+Mac10.6&test=another%2Ftest.svg&extension=png",
+        "http://127.0.0.1:8127/rebaseline?builder=Webkit+Vista&test=fast%2Ftest.html&extension=txt",
+        "http://127.0.0.1:8127/optimizebaselines?test=another%2Ftest.svg",
+        "http://127.0.0.1:8127/optimizebaselines?test=fast%2Ftest.html"
     ]);
 });
 
