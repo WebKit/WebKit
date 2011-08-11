@@ -287,9 +287,9 @@ shouldBe("arrayApplyChangeLength4()", "0");
 shouldBe("var a = []; a.length = 0xFFFE; [].constructor.apply('', a).length", "0xFFFE");
 shouldBe("var a = []; a.length = 0xFFFF; [].constructor.apply('', a).length", "0xFFFF");
 shouldBe("var a = []; a.length = 0x10000; [].constructor.apply('', a).length", "0x10000");
-shouldBe("var a = []; a.length = 0x10001; [].constructor.apply('', a).length", "0x10000");
-shouldBe("var a = []; a.length = 0xFFFFFFFE; [].constructor.apply('', a).length", "0x10000");
-shouldBe("var a = []; a.length = 0xFFFFFFFF; [].constructor.apply('', a).length", "0x10000");
+shouldThrow("var a = []; a.length = 0x10001; [].constructor.apply('', a).length");
+shouldThrow("var a = []; a.length = 0xFFFFFFFE; [].constructor.apply('', a).length");
+shouldThrow("var a = []; a.length = 0xFFFFFFFF; [].constructor.apply('', a).length");
 
 // ES5 permits apply with array-like objects.
 shouldBe("(function(a,b,c,d){ return d ? -1 : (a+b+c); }).apply(undefined, {length:3, 0:100, 1:20, 2:3})", '123');
