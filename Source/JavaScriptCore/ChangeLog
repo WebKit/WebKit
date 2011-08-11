@@ -1,3 +1,17 @@
+2011-08-11  Devdatta Deshpande  <pwjd73@motorola.com>
+
+        Implementation of monotonically increasing clock on GTK
+        https://bugs.webkit.org/show_bug.cgi?id=62175
+
+        Reviewed by Martin Robinson.
+
+        * wtf/CurrentTime.cpp:
+        (WTF::monotonicallyIncreasingTime):
+        The default implementation of monotonicallyIncreasingTime only
+        guarantees the result to be non-decreasing.
+        If the system time is changed to past then default implementation will
+        still fail and WebCore timers will not fire.
+
 2011-08-10  Geoffrey Garen  <ggaren@apple.com>
 
         Removed some incorrect code that was dead.

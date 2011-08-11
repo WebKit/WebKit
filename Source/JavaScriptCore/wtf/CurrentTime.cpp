@@ -326,6 +326,13 @@ double monotonicallyIncreasingTime()
     return ecore_time_get();
 }
 
+#elif PLATFORM(GTK)
+
+double monotonicallyIncreasingTime()
+{
+    return static_cast<double>(g_get_monotonic_time() / 1000000.0);
+}
+
 #else
 
 double monotonicallyIncreasingTime()
