@@ -39,30 +39,6 @@ checkNotOverflow('101', '100');
 
 // ----------------------------------------------------------------
 debug('');
-debug('Type=date');
-input.type = 'date';
-input.min = '';
-// No overflow cases
-checkNotOverflow('2010-01-27', null);
-checkNotOverflow('2010-01-27', '');
-checkNotOverflow('2010-01-27', 'foo');
-checkNotOverflow('2010-01-27', '2010-01-27');
-checkNotOverflow('2010-01-27', '2010-01-28');
-checkNotOverflow('2010-01-27', '2011-01-26');
-checkNotOverflow('foo', '2011-01-26');
-checkNotOverflow('2010-01-27', '0000-01-01'); // Too small max value.
-
-// Overflow cases
-checkOverflow('2010-01-27', '2010-01-26');
-checkOverflow('9999-01-01', '2010-12-31');
-input.min = '2010-01-28';  // value < min && value > max
-checkOverflow('2010-01-27', '2010-01-26');
-
-// Disabled
-checkNotOverflow('9999-01-01', '2010-12-31', true);
-
-// ----------------------------------------------------------------
-debug('');
 debug('Type=number');
 input.type = 'number';
 input.min = '';

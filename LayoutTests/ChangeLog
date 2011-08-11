@@ -1,3 +1,53 @@
+2011-08-10  Kent Tamura  <tkent@chromium.org>
+
+        Move <input type=date> tests to fast/forms/date/
+        https://bugs.webkit.org/show_bug.cgi?id=66029
+
+        Reviewed by Hajime Morita.
+
+        * fast/forms/ValidityState-rangeOverflow-expected.txt: Removed "date" part.
+        * fast/forms/ValidityState-rangeUnderflow-expected.txt: ditto.
+        * fast/forms/ValidityState-stepMismatch-expected.txt: ditto.
+        * fast/forms/ValidityState-typeMismatch-date.html: Removed.
+        * fast/forms/date: Added.
+        * fast/forms/date-input-visible-strings-expected.txt: Removed.
+        * fast/forms/date-input-visible-strings.html: Removed.
+        * fast/forms/date/ValidityState-rangeOverflow-date-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-rangeOverflow-expected.txt.
+        * fast/forms/date/ValidityState-rangeOverflow-date.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeOverflow.js.
+        * fast/forms/date/ValidityState-rangeUnderflow-date-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-rangeUnderflow-expected.txt.
+        * fast/forms/date/ValidityState-rangeUnderflow-date.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-rangeUnderflow.js.
+        * fast/forms/date/ValidityState-stepMismatch-date-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-stepMismatch-expected.txt.
+        * fast/forms/date/ValidityState-stepMismatch-date.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-stepMismatch.js.
+        * fast/forms/date/ValidityState-typeMismatch-date-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-typeMismatch-date-expected.txt.
+        * fast/forms/date/ValidityState-typeMismatch-date.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-typeMismatch-date.js.
+        * fast/forms/date/date-input-type-expected.txt: Copied from LayoutTests/fast/forms/week/week-input-type-expected.txt.
+        * fast/forms/date/date-input-type.html: Copied from LayoutTests/fast/forms/week/week-input-type.html.
+        * fast/forms/date/date-input-visible-strings-expected.txt: Copied from LayoutTests/fast/forms/date-input-visible-strings-expected.txt.
+        * fast/forms/date/date-input-visible-strings.html: Copied from LayoutTests/fast/forms/date-input-visible-strings.html.
+        * fast/forms/date/date-stepup-stepdown-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-expected.txt.
+        * fast/forms/date/date-stepup-stepdown-from-renderer-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-from-renderer-expected.txt.
+        * fast/forms/date/date-stepup-stepdown-from-renderer.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown-from-renderer.js.
+        * fast/forms/date/date-stepup-stepdown.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown.js.
+        * fast/forms/date/input-valueasdate-date-expected.txt: Copied from LayoutTests/fast/forms/input-valueasdate-date-expected.txt.
+        * fast/forms/date/input-valueasdate-date.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasdate-date.js.
+        * fast/forms/date/input-valueasnumber-date-expected.txt: Copied from LayoutTests/fast/forms/input-valueasnumber-date-expected.txt.
+        * fast/forms/date/input-valueasnumber-date.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasnumber-date.js.
+        * fast/forms/input-stepup-stepdown-expected.txt: Removed "date" part.
+        * fast/forms/input-stepup-stepdown-from-renderer-expected.txt: ditto.
+        * fast/forms/input-type-change3-expected.txt: ditto.
+        * fast/forms/input-valueasdate-date-expected.txt: Removed.
+        * fast/forms/input-valueasdate-date.html: Removed.
+        * fast/forms/input-valueasnumber-date-expected.txt: Removed.
+        * fast/forms/input-valueasnumber-date.html: Removed.
+        * fast/forms/script-tests/ValidityState-rangeOverflow.js: Removed "date" part.
+        * fast/forms/script-tests/ValidityState-rangeUnderflow.js: ditto.
+        * fast/forms/script-tests/ValidityState-stepMismatch.js: ditto.
+        * fast/forms/script-tests/input-stepup-stepdown-from-renderer.js: ditto.
+        * fast/forms/script-tests/input-stepup-stepdown.js: ditto.
+        * fast/forms/script-tests/input-type-change3.js: ditto.
+        * fast/forms/script-tests/input-valueasdate-date.js: Removed.
+        * fast/forms/script-tests/input-valueasnumber-date.js: Removed.
+
 2011-08-10  Adam Barth  <abarth@webkit.org>
 
         Test how TouchList behaves with too few arguments

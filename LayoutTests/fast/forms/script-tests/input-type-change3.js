@@ -27,7 +27,6 @@ check(" text ", "text");
 check("button", "button");
 check(" button ", "text");
 check("checkbox", "checkbox");
-check("date", "date");
 check("email", "email");
 check("file", "email"); // We can't change a concrete type to file for a security reason.
 check("hidden", "hidden");

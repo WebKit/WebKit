@@ -1,3 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
 description('Tests for .valueAsDate with &lt;input type=date>.');
 
 var input = document.createElement('input');
@@ -40,3 +50,7 @@ shouldBe('input.value = "2010-01-01"; input.valueAsDate = document; input.value'
 shouldBe('input.value = "2010-01-01"; input.valueAsDate = null; input.value', '""');
 
 var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

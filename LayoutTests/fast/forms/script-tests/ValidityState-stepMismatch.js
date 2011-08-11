@@ -1,4 +1,4 @@
-description('Check stepMismatch results for date, number, range, unsupported types.');
+description('Check stepMismatch results for number, range, and unsupported types.');
 
 var input = document.createElement('input');
 document.body.appendChild(input);
@@ -10,36 +10,6 @@ function stepMismatchFor(value, step, min, disabled) {
     input.disabled = !!disabled;
     return input.validity.stepMismatch;
 }
-
-debug('Date type');
-input.type = 'date';
-debug('Empty values');
-shouldBeFalse('stepMismatchFor("", null, null)');
-shouldBeFalse('stepMismatchFor("", "2", "1969-12-31")');
-debug('Normal step values');
-shouldBeTrue('stepMismatchFor("2010-02-10", "2", "2010-02-09")');
-shouldBeFalse('stepMismatchFor("2010-02-09", "2", "2010-02-09")');
-shouldBeFalse('stepMismatchFor("2010-02-11", "2", "2010-02-09")');
-shouldBeTrue('stepMismatchFor("1800-11-11", "3", "1800-11-09")');
-shouldBeFalse('stepMismatchFor("1800-11-09", "3", "1800-11-09")');
-shouldBeFalse('stepMismatchFor("1800-11-12", "3", "1800-11-09")');
-shouldBeTrue('stepMismatchFor("275760-09-13", "3", "275760-09-11")');
-shouldBeFalse('stepMismatchFor("275760-09-13", "2", "275760-09-11")');
-debug('Implicit step base');
-shouldBeTrue('stepMismatchFor("1970-01-02", "2", null)');
-shouldBeFalse('stepMismatchFor("1970-01-03", "2", null)');
-debug('Fractional step values');
-shouldBeFalse('stepMismatchFor("2010-02-10", "0.1", "2010-02-09")');
-shouldBeFalse('stepMismatchFor("2010-02-10", "1.1", "2010-02-09")');
-shouldBeTrue('stepMismatchFor("2010-02-10", "1.9", "2010-02-09")');
-debug('Invalid or no step values');
-shouldBeFalse('stepMismatchFor("2010-02-10", null, "2010-02-09")');
-shouldBeFalse('stepMismatchFor("2010-02-10", "-1", "2010-02-09")');
-shouldBeFalse('stepMismatchFor("2010-02-10", "foo", "2010-02-09")');
-debug('Special step value');
-shouldBeFalse('stepMismatchFor("2010-02-10", "any", "2010-02-09")');
-debug('Disabled');
-shouldBeFalse('stepMismatchFor("2010-02-10", "2", "2010-02-09", true)');
 
 debug('');
 debug('Number type');

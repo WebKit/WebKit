@@ -1,4 +1,4 @@
-description('Check stepping-up and -down for <input> from renderer. No cases of empty initial values for type=date.');
+description('Check stepping-up and -down for <input> from renderer.');
 
 var input = document.createElement('input');
 var invalidStateErr = '"Error: INVALID_STATE_ERR: DOM Exception 11"';
@@ -77,29 +77,6 @@ function stepDownExplicitBounds(min, max, step, value, stepCount) {
     return input.value;
 }
 
-debug('Date type');
-input.type = 'date';
-debug('Function arguments are (value, step, {min or max}, [stepCount]).');
-debug('Normal cases');
-shouldBe('stepUp("2010-02-10", null, null)', '"2010-02-11"');
-shouldBe('stepDown("2010-02-10", null, null)', '"2010-02-09"');
-shouldBe('stepUp("2010-02-10", null, null, 10)', '"2010-02-20"');
-shouldBe('stepDown("2010-02-10", null, null, 11)', '"2010-01-30"');
-shouldBe('stepUp("1970-01-01", "4", null, 2)', '"1970-01-09"');
-shouldBe('stepDown("1970-01-01", "4", null, 3)', '"1969-12-20"');
-debug('Step=any');
-shouldBe('stepUp("2010-02-10", "any", null)', '"2010-02-11"');
-shouldBe('stepDown("2010-02-10", "any", null)', '"2010-02-09"');
-debug('Overflow/underflow');
-shouldBe('stepUp("2010-02-10", "3.40282346e+38", null)','"275760-09-13"');
-shouldBe('stepDown("2010-02-10", "3.40282346e+38", null)', '"1970-01-01"');
-shouldBe('stepUp("2010-02-10", "1", "2010-02-10")', '"2010-02-10"');
-shouldBe('stepDown("2010-02-10", "1", "2010-02-10")', '"2010-02-10"');
-debug('stepDown()/stepUp() for stepMismatch values');
-shouldBe('stepDown("2010-02-10", "3", "2010-02-06")', '"2010-02-09"');
-shouldBe('stepUp("1970-01-02", "2", "")', '"1970-01-03"');
-
-debug('');
 debug('Number type');
 input.type = 'number';
 debug('Function arguments are (value, step, {min or max}, [stepCount]).');
