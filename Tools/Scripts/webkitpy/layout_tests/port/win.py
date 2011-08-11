@@ -99,8 +99,12 @@ class WinPort(WebKitPort):
 
     def _generate_all_test_configurations(self):
         configurations = []
-        for build_type in self.ALL_BUILD_TYPES:
-            configurations.append(TestConfiguration(version=self._version, architecture='x86', build_type=build_type, graphics_type='cpu'))
+        for version in self.VERSION_FALLBACK_ORDER:
+            version = version.replace('win-', '')
+            if version == 'win':  # It's unclear what the "version" for 'win' is?
+                continue
+            for build_type in self.ALL_BUILD_TYPES:
+                configurations.append(TestConfiguration(version=self._version, architecture='x86', build_type=build_type, graphics_type='cpu'))
         return configurations
 
     # FIXME: webkitperl/httpd.pm installs /usr/lib/apache/libphp4.dll on cycwin automatically

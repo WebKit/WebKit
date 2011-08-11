@@ -175,7 +175,7 @@ svg/batik/text/smallFonts.svg
     def test_versions(self):
         port = self.make_port()
         if port:
-            self.assertTrue(port.name() in ('mac-leopard', 'mac-snowleopard', 'mac-future'))
+            self.assertTrue(port.name() in ('mac-leopard', 'mac-snowleopard', 'mac-lion'))
 
         self.assert_name(None, '10.5.3', 'mac-leopard')
         self.assert_name('mac', '10.5.3', 'mac-leopard')
@@ -189,14 +189,10 @@ svg/batik/text/smallFonts.svg
         self.assert_name('mac-snowleopard', '10.5.3', 'mac-snowleopard')
         self.assert_name('mac-snowleopard', '10.6.3', 'mac-snowleopard')
 
-        self.assert_name(None, '10.7', 'mac-future')
-        self.assert_name(None, '10.7.3', 'mac-future')
+        self.assert_name(None, '10.7', 'mac-lion')
+        self.assert_name(None, '10.7.3', 'mac-lion')
         self.assert_name(None, '10.8', 'mac-future')
-        self.assert_name('mac', '10.7.3', 'mac-future')
-        self.assert_name('mac-future', '10.4.3', 'mac-future')
-        self.assert_name('mac-future', '10.5.3', 'mac-future')
-        self.assert_name('mac-future', '10.6.3', 'mac-future')
-        self.assert_name('mac-future', '10.7.3', 'mac-future')
+        self.assert_name('mac', '10.7.3', 'mac-lion')
 
         self.assertRaises(AssertionError, self.assert_name, None, '10.3.1', 'should-raise-assertion-so-this-value-does-not-matter')
 
@@ -210,11 +206,13 @@ svg/batik/text/smallFonts.svg
 
     def test_baseline_search_path(self):
         # FIXME: Is this really right?  Should mac-leopard fallback to mac-snowleopard?
-        self._assert_search_path(['mac-leopard', 'mac-snowleopard', 'mac'], 'leopard')
-        self._assert_search_path(['mac-snowleopard', 'mac'], 'snowleopard')
+        self._assert_search_path(['mac-leopard', 'mac-snowleopard', 'mac-lion', 'mac'], 'leopard')
+        self._assert_search_path(['mac-snowleopard', 'mac-lion', 'mac'], 'snowleopard')
+        self._assert_search_path(['mac-lion', 'mac'], 'lion')
 
-        self._assert_search_path(['mac-wk2', 'mac-leopard', 'mac-snowleopard', 'mac'], 'leopard', use_webkit2=True)
-        self._assert_search_path(['mac-wk2', 'mac-snowleopard', 'mac'], 'snowleopard', use_webkit2=True)
+        self._assert_search_path(['mac-wk2', 'mac-leopard', 'mac-snowleopard', 'mac-lion', 'mac'], 'leopard', use_webkit2=True)
+        self._assert_search_path(['mac-wk2', 'mac-snowleopard', 'mac-lion', 'mac'], 'snowleopard', use_webkit2=True)
+        self._assert_search_path(['mac-wk2', 'mac-lion', 'mac'], 'lion', use_webkit2=True)
 
     def test_show_results_html_file(self):
         port = MacPort(filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())

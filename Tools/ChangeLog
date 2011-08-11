@@ -1,3 +1,24 @@
+2011-08-11  Eric Seidel  <eric@webkit.org>
+
+        NRWT has wrong fallback order for Mac now that Lion exists
+        https://bugs.webkit.org/show_bug.cgi?id=66093
+
+        Reviewed by Adam Barth.
+
+        ORWT used a different system for fallback orders than NRWT did.
+        I moved win.py to match ORWT fallback orders in bug 64486.
+        This bug moves mac.py to match ORWT fallback order
+        and adds 'lion' as a supported OS version.
+
+        Because ChromiumMac shares OS version detection code with AppleMac
+        this also added support for 'lion' to chromium mac.  Hopefully that's a good thing.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+
 2011-08-11  Adam Barth  <abarth@webkit.org>
 
         Update test results now that we use absolute URLs.

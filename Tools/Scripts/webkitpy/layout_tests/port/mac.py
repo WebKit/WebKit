@@ -161,7 +161,7 @@ def os_version(os_version_string=None, supported_versions=None):
     version_strings = {
         5: 'leopard',
         6: 'snowleopard',
-        # Add 7: 'lion' here?
+        7: 'lion',
     }
     assert release_version >= min(version_strings.keys())
     version_string = version_strings.get(release_version, 'future')
@@ -173,36 +173,26 @@ def os_version(os_version_string=None, supported_versions=None):
 class MacPort(WebKitPort):
     port_name = "mac"
 
-    # FIXME: 'wk2' probably shouldn't be a version, it should probably be
-    # a modifier, like 'chromium-gpu' is to 'chromium'.
-    SUPPORTED_VERSIONS = ('leopard', 'snowleopard', 'future', 'wk2')
-
-    FALLBACK_PATHS = {
-        'leopard': [
-            'mac-leopard',
-            'mac-snowleopard',
-            'mac',
-        ],
-        'snowleopard': [
-            'mac-snowleopard',
-            'mac',
-        ],
-        'future': [
-            'mac',
-        ],
-        'wk2': [],  # wk2 does not make sense as a version, this is only here to make the rebaseline unit tests not crash.
-    }
+    # This is a list of all supported OS-VERSION pairs for the AppleMac port
+    # and the order of fallback between them.  Matches ORWT.
+    VERSION_FALLBACK_ORDER = ["mac-leopard", "mac-snowleopard", "mac-lion", "mac"]
 
     def __init__(self, port_name=None, os_version_string=None, **kwargs):
         port_name = port_name or 'mac'
         WebKitPort.__init__(self, port_name=port_name, **kwargs)
+
+        # FIXME: This sort of parsing belongs in factory.py!
+        if port_name == 'mac-wk2':
+            port_name = 'mac'
+            # FIXME: This may be wrong, since options is a global property, and the port_name is specific to this object?
+            self.set_option_default('webkit_test_runner', True)
+
         if port_name == 'mac':
             self._version = os_version(os_version_string)
             self._name = port_name + '-' + self._version
         else:
-            assert port_name.startswith('mac')
+            assert port_name in self.VERSION_FALLBACK_ORDER, "%s is not in %s" % (port_name, self.VERSION_FALLBACK_ORDER)
             self._version = port_name[len('mac-'):]
-            assert self._version in self.SUPPORTED_VERSIONS, "%s is not in %s" % (self._version, self.SUPPORTED_VERSIONS)
         self._operating_system = 'mac'
         self._leak_detector = LeakDetector(self)
         if self.get_option("leaks"):
@@ -210,11 +200,24 @@ class MacPort(WebKitPort):
             # with MallocStackLogging enabled.
             self.set_option_default("batch_size", 1000)
 
+    # FIXME: A more sophisitcated version of this function should move to WebKitPort and replace all calls to name().
+    def _port_name_with_version(self):
+        components = [self.port_name]
+        if self._version != 'future':  # FIXME: This is a hack, but TestConfiguration doesn't like self._version ever being None.
+            components.append(self._version)
+        return '-'.join(components)
+
     def baseline_search_path(self):
-        search_paths = self.FALLBACK_PATHS[self._version]
+        try:
+            fallback_index = self.VERSION_FALLBACK_ORDER.index(self._port_name_with_version())
+            fallback_names = list(self.VERSION_FALLBACK_ORDER[fallback_index:])
+        except ValueError:
+            # Unknown versions just fall back to the base port results.
+            fallback_names = [self.port_name]
         if self.get_option('webkit_test_runner'):
-            search_paths.insert(0, self._wk2_port_name())
-        return map(self._webkit_baseline_path, search_paths)
+            fallback_names.insert(0, self._wk2_port_name())
+            # Note we do not add 'wk2' here, even though it's included in _skipped_search_paths().
+        return map(self._webkit_baseline_path, fallback_names)
 
     def setup_environ_for_server(self, server_name=None):
         env = WebKitPort.setup_environ_for_server(self, server_name)
@@ -239,8 +242,12 @@ class MacPort(WebKitPort):
 
     def _generate_all_test_configurations(self):
         configurations = []
-        for version in self.SUPPORTED_VERSIONS:
-            for build_type in ('release', 'debug'):
+        for version in self.VERSION_FALLBACK_ORDER:
+            version = version.replace('mac-', '')
+            if version == 'mac':  # It's unclear what the "version" for 'mac' is?
+                continue
+            # This method is only used for test_expectations.txt, so shouldn't matter that it's wrong.
+            for build_type in self.ALL_BUILD_TYPES:
                 configurations.append(TestConfiguration(version=version, architecture='x86', build_type=build_type, graphics_type='cpu'))
         return configurations
 

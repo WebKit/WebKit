@@ -43,8 +43,7 @@ _log = logging.getLogger(__name__)
 
 
 class ChromiumMacPort(chromium.ChromiumPort):
-    """Chromium Mac implementation of the Port class."""
-    SUPPORTED_OS_VERSIONS = ('leopard', 'snowleopard', 'future')
+    SUPPORTED_OS_VERSIONS = ('leopard', 'snowleopard', 'lion', 'future')
 
     FALLBACK_PATHS = {
         'leopard': [
