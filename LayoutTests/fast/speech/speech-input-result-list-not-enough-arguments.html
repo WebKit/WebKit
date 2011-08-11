@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+description('Tests for SpeechInputResultList\' behavior with too few arguments.');
+
+var speechInputCreatedByScript = false;
+
+function onWebkitSpeechChange() {
+    shouldThrow('window.event.results.item()');
+    finishJSTest();
+}
+
+function run() {
+    if (!window.layoutTestController || !window.eventSender)
+        return;
+
+    layoutTestController.addMockSpeechInputResult('Pictures of the moon', 1.0, '');
+    var input = document.getElementById('speechInput');
+    input.addEventListener('webkitspeechchange', onWebkitSpeechChange);
+    var x = input.offsetLeft + input.offsetWidth - 8;
+    var y = input.offsetTop + input.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+window.onload = run;
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+<input id='speechInput' x-webkit-speech>
+</body>
+</html>

@@ -1,3 +1,21 @@
+2011-08-11  Adam Barth  <abarth@webkit.org>
+
+        Test how SpeechInputResultList behaves with not enough arguments
+        https://bugs.webkit.org/show_bug.cgi?id=65812
+
+        Reviewed by Sam Weinig.
+
+        SpeechInputResultList is only exposed via the x-webkit-speech
+        attribute, which means there is little compatibility risk in aligning
+        our too-few-arguments behavior with the specification.  There's a
+        question about whether all these "fake array" objects should work
+        consistently, but we'll probably want the "fake array" objects we
+        create in the future to match the spec, so even if we're consistent
+        now, we'll end up not being consistent in the future.
+
+        * fast/speech/speech-input-result-list-not-enough-arguments-expected.txt: Added.
+        * fast/speech/speech-input-result-list-not-enough-arguments.html: Added.
+
 2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip tests added by r92769 on WebKit2 because TestRunner doesn't support
