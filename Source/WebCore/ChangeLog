@@ -1,3 +1,21 @@
+2011-08-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        The PageSerializer should always use absolute URL
+        https://bugs.webkit.org/show_bug.cgi?id=66006
+
+        Reviewed by Adam Barth.
+
+        Page serializer resolves every URL for storing the resources.
+        The MarkupAccumulator used there should use the same rules in order to
+        create a valid file.
+
+        No new tests because the test infrastructure for this
+        does not exist with layout tests and the Chromium unit test for
+        the serializer are disabled.
+
+        * page/PageSerializer.cpp:
+        (WebCore::SerializerMarkupAccumulator::SerializerMarkupAccumulator):
+
 2011-08-01  Adrienne Walker  <enne@google.com>
 
         Enable fast path scrolling for composited iframes
