@@ -1194,7 +1194,6 @@ fast/forms/option-mouseevents.html
 fast/forms/text-control-intrinsic-widths.html
 fast/forms/textarea-metrics.html
 fast/history/window-open.html
-fast/dom/HTMLDocument/hasFocus.html
 fast/dom/Range/range-expand.html
 fast/encoding/char-decoding.html
 fast/encoding/frame-default-enc.html
