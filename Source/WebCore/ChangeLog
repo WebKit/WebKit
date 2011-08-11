@@ -1,3 +1,19 @@
+2011-08-10  Tim Horton  <timothy_horton@apple.com>
+
+        Crash when clicking an SVG <a> link to the local document
+        https://bugs.webkit.org/show_bug.cgi?id=66019
+        <rdar://problem/9933311>
+
+        Reviewed by Rob Buis.
+
+        Check if the target element of an internal link is valid before
+        making use of it.
+
+        Test: svg/custom/click-internal-anchor-with-use-crash.xhtml
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+
 2011-08-10  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         [Qt] Enable WebGL by default for QtWebKit

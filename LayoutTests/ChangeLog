@@ -1,3 +1,17 @@
+2011-08-10  Tim Horton  <timothy_horton@apple.com>
+
+        Crash when clicking an SVG <a> link to the local document
+        https://bugs.webkit.org/show_bug.cgi?id=66019
+        <rdar://problem/9933311>
+
+        Reviewed by Rob Buis.
+
+        Add a test which programmatically clicks a link referring to "#",
+        and should crash between r89745 and this commit.
+
+        * svg/custom/click-internal-anchor-with-use-crash-expected.txt: Added.
+        * svg/custom/click-internal-anchor-with-use-crash.xhtml: Added.
+
 2011-08-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSC should always throw when function arg list is too long
