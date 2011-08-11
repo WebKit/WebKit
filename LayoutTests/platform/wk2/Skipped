@@ -189,6 +189,7 @@ fast/dom/hidden-iframe-no-focus.html
 fast/dom/horizontal-scrollbar-in-rtl.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/dynamic/layer-hit-test-crash.html
+fast/encoding/mailto-always-utf-8.html
 fast/events/5056619.html
 fast/events/access-key-self-destruct.html
 fast/events/anchor-empty-focus.html

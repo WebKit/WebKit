@@ -1,3 +1,16 @@
+2011-08-11  Zsolt Fehér  <h490267@stud.u-szeged.hu>
+
+        WebKitTestRunner needs a more-complete implementation of eventSender
+        https://bugs.webkit.org/show_bug.cgi?id=42194
+
+        fast/encoding/mailto-always-utf-8.html needs eventSender
+        Move it to the common wk2 Skipped list from the qt-wk2.
+
+        Unreviewed gardening.
+
+        * platform/qt-wk2/Skipped:
+        * platform/wk2/Skipped:
+
 2011-08-11  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [Mac] search as you type does not work with the new indent in the script selector.

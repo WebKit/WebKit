@@ -76,7 +76,6 @@ editing/selection/drag-text-delay.html
 editing/selection/hit-test-anonymous.html
 editing/selection/mixed-editability-1.html
 fast/block/float/float-in-float-hit-testing.html
-fast/encoding/mailto-always-utf-8.html
 fast/events/updateLayoutForHitTest.html
 fast/files
 fast/forms/input-number-events.html
