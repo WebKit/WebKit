@@ -383,12 +383,6 @@ webarchive/loading/mainresource-null-mimetype-crash.html
 # New flexbox is not yet enabled. http://webkit.org/b/62048
 css3/flexbox
 
-# CSS Regions support not yet enabled. http://webkit.org/b/57312
-fast/regions
-
-# CSS Exclusions support not yet enabled. http://webkit.org/b/57311
-fast/exclusions
-
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 

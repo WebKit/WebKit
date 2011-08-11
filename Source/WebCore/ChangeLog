@@ -1,3 +1,14 @@
+2011-08-11  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66075
+
+        Turn on regions and exclusions by default. Fix one stray ifdef that I missed.
+
+        Reviewed by James Robinson.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::contentToCSSValue):
+
 2011-08-11  David Reveman  <reveman@chromium.org>
 
         [Chromium] Temporarily disable layer anti-aliasing on ChromeOS.

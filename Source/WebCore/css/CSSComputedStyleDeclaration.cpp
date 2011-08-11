@@ -772,10 +772,8 @@ static PassRefPtr<CSSValue> contentToCSSValue(const RenderStyle* style, CSSPrimi
         } else if (contentData->isText())
             list->append(primitiveValueCache->createValue(static_cast<const TextContentData*>(contentData)->text(), CSSPrimitiveValue::CSS_STRING));
     }
-#if ENABLE(CSS_REGIONS)
     if (!style->regionThread().isNull())
         list->append(primitiveValueCache->createValue(style->regionThread(), CSSPrimitiveValue::CSS_STRING));
-#endif
     return list.release();
 }
 

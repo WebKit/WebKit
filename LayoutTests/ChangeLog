@@ -1,3 +1,17 @@
+2011-08-11  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66075
+
+        Fix the broken test result for layer dumping, since at the moment flow threads don't collect
+        layers (this will be fixed eventually).
+
+        Unskip the regions and exclusions tests now that they are turned on by default.
+
+        Reviewed by James Robinson.
+
+        * fast/regions/webkit-flow-renderer-layer-expected.txt:
+        * platform/mac/Skipped:
+
 2011-08-11  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] fast/dom/HTMLDocument/hasFocus.html fails
