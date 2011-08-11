@@ -1,5 +1,20 @@
 2011-08-10  Adam Barth  <abarth@webkit.org>
 
+        Test how TouchList behaves with too few arguments
+        https://bugs.webkit.org/show_bug.cgi?id=65815
+
+        Reviewed by Sam Weinig.
+
+        This API is very new and the compatibility cost of making this API
+        match the specification is minimal.  We should align with the
+        specification and (future) implementations in other browsers by making
+        this argument required.
+
+        * fast/events/touch/document-create-touch-list-expected.txt:
+        * fast/events/touch/script-tests/document-create-touch-list.js:
+
+2011-08-10  Adam Barth  <abarth@webkit.org>
+
         Test how AudioBufferSourceNode reacts when given too few arguments
         https://bugs.webkit.org/show_bug.cgi?id=65816
 
