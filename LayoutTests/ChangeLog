@@ -1,3 +1,18 @@
+2011-08-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: use source-file-replaced instead of source-file-changed event.
+        https://bugs.webkit.org/show_bug.cgi?id=65551
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/scripts-panel-expected.txt:
+        * inspector/debugger/scripts-panel.html:
+        * inspector/debugger/source-file-expected.txt:
+        * inspector/debugger/source-file.html:
+        * inspector/debugger/source-frame-count-expected.txt: Added.
+        * inspector/debugger/source-frame-count.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-08-11  Andrei Popescu  <andreip@google.com>
 
         Master: Support CSS3 font feature properties

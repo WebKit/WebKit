@@ -58,7 +58,7 @@ WebInspector.DebuggerPresentationModel = function()
 
 WebInspector.DebuggerPresentationModel.Events = {
     SourceFileAdded: "source-file-added",
-    SourceFileChanged: "source-file-changed",
+    SourceFileReplaced: "source-file-replaced",
     ConsoleMessageAdded: "console-message-added",
     ConsoleMessagesCleared: "console-messages-cleared",
     BreakpointAdded: "breakpoint-added",
@@ -177,18 +177,26 @@ WebInspector.DebuggerPresentationModel.prototype = {
             return;
         }
 
-        function contentChanged(sourceFile)
-        {
-            if (this._sourceFiles[sourceFileId] === sourceFile)
-                this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, this._sourceFiles[sourceFileId]);
-        }
-        sourceFile = new WebInspector.RawSourceCode(sourceFileId, script, this._formatter, contentChanged.bind(this));
+        sourceFile = new WebInspector.RawSourceCode(sourceFileId, script, this._formatter);
         sourceFile.setFormatted(this._formatSourceFiles);
         this._sourceFiles[sourceFileId] = sourceFile;
+        sourceFile.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
 
         this._restoreBreakpoints(sourceFile);
 
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, sourceFile);
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, sourceFile.uiSourceCode);
+    },
+
+    _uiSourceCodeReplaced: function(event)
+    {
+        var oldUISourceCode = event.data.oldSourceCode;
+        var newUISourceCode = event.data.sourceCode;
+
+        delete this._sourceFiles[oldUISourceCode.id];
+        this._sourceFiles[newUISourceCode.id] = newUISourceCode;
+
+        // FIXME: restore breakpoints in new source code (currently we just recreate everything when switching to pretty-print mode).
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileReplaced, event.data);
     },
 
     _restoreBreakpoints: function(sourceFile)

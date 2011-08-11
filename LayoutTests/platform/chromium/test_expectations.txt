@@ -3411,7 +3411,6 @@ BUGCR83865 : fast/forms/color = PASS FAIL
 // New test added in r87324
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = CRASH
 
-BUGWK61519 LINUX WIN : inspector/debugger/scripts-panel.html = PASS TIMEOUT TEXT
 BUGCR84031 : storage/domstorage/sessionstorage/delete-removal.html = PASS TIMEOUT
 BUGCR84032 WIN CPU : fast/dom/object-plugin-hides-properties.html = PASS TIMEOUT
 

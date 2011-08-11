@@ -9,3 +9,5 @@ Running: testFormattedConvertLocation
 
 Running: testConcatenatedFormattedConvertLocation
 
+Running: testUISourceCodeAdded
+

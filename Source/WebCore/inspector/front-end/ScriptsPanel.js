@@ -24,11 +24,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ScriptsPanel = function()
+WebInspector.ScriptsPanel = function(presentationModel)
 {
     WebInspector.Panel.call(this, "scripts");
 
-    this._presentationModel = WebInspector.debuggerPresentationModel;
+    this._presentationModel = presentationModel;
 
     this.registerShortcuts();
 
@@ -157,7 +157,7 @@ WebInspector.ScriptsPanel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasDisabled, this._debuggerWasDisabled, this);
 
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, this._sourceFileAdded, this)
-    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, this._sourceFileChanged, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.SourceFileReplaced, this._sourceFileReplaced, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, this._breakpointAdded, this);
@@ -639,21 +639,30 @@ WebInspector.ScriptsPanel.prototype = {
         return sourceFrame;
     },
 
-    _sourceFileChanged: function(event)
+    _removeSourceFrame: function(sourceFileId)
     {
-        var sourceFileId = event.data.id;
-
-        var oldSourceFrame = this._sourceFileIdToSourceFrame[sourceFileId];
-        if (!oldSourceFrame)
+        var sourceFrame = this._sourceFileIdToSourceFrame[sourceFileId];
+        if (!sourceFrame)
             return;
-        oldSourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
         delete this._sourceFileIdToSourceFrame[sourceFileId];
-        if (this.visibleView !== oldSourceFrame)
-            return;
+        sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
+    },
 
-        var newSourceFrame = this._createSourceFrame(sourceFileId)
-        newSourceFrame.inheritScrollPositionsFromView(oldSourceFrame);
-        this.visibleView = newSourceFrame;
+    _sourceFileReplaced: function(event)
+    {
+        var oldSourceFile = event.data.oldSourceCode;
+        var newSourceFile = event.data.sourceCode;
+
+        // Re-bind file select option from old source file to new one.
+        var option = this._sourceFileIdToFilesSelectOption[oldSourceFile.id];
+        delete this._sourceFileIdToFilesSelectOption[oldSourceFile.id];
+        option.sourceFileId = newSourceFile.id;
+        this._sourceFileIdToFilesSelectOption[newSourceFile.id] = option;
+
+        // Remove old source frame and create new one if needed.
+        this._removeSourceFrame(oldSourceFile.id);
+        if (option === this._filesSelectElement[this._filesSelectElement.selectedIndex])
+            this._showSourceFrame(newSourceFile.id);
     },
 
     _sourceFrameLoaded: function(event)

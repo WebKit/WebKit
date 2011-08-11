@@ -109,6 +109,19 @@ function test()
                 next();
             }
             sourceFile.createSourceMappingIfNeeded(didCreateSourceMapping);
+        },
+
+        function testUISourceCodeAdded(next)
+        {
+            var script = new WebInspector.Script("1", "foo.js", 0, 0, 20, 80, undefined, undefined, false);
+            var sourceFile = new WebInspector.RawSourceCode("id", script);
+            function uiSourceCodeAdded(event)
+            {
+                InspectorTest.assertEquals("foo.js", event.data.url);
+            }
+            sourceFile.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeAdded, uiSourceCodeAdded, this);
+
+            next();
         }
     ]);
 };

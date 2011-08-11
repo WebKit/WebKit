@@ -1,3 +1,25 @@
+2011-08-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: use source-file-replaced instead of source-file-changed event.
+        https://bugs.webkit.org/show_bug.cgi?id=65551
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/source-frame-count.html
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype._uiSourceCodeReplaced):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._removeSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._sourceFileReplaced):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode):
+        (WebInspector.RawSourceCode.prototype.get uiSourceCode):
+        (WebInspector.RawSourceCode.prototype.reload):
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2011-08-11  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: [REGRESSION] Resources panel search fails when search result is found in a resource used in several frames.

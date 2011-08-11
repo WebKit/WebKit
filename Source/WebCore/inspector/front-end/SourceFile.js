@@ -30,12 +30,12 @@
 
 // RawSourceCode represents JavaScript resource or HTML resource with inlined scripts
 // as it came from network.
-WebInspector.RawSourceCode = function(id, script, formatter, contentChangedDelegate)
+WebInspector.RawSourceCode = function(id, script, formatter)
 {
     this._scripts = [script];
     this._formatter = formatter;
     this._formatted = false;
-    this._contentChangedDelegate = contentChangedDelegate;
+
     if (script.sourceURL)
         this._resource = WebInspector.networkManager.inflightResourceForURL(script.sourceURL) || WebInspector.resourceForURL(script.sourceURL);
     this._requestContentCallbacks = [];
@@ -50,10 +50,20 @@ WebInspector.RawSourceCode = function(id, script, formatter, contentChangedDeleg
         this._resource.addEventListener("finished", this.reload.bind(this));
 }
 
+WebInspector.RawSourceCode.Events = {
+    UISourceCodeReplaced: "ui-source-code-replaced"
+}
+
 WebInspector.RawSourceCode.prototype = {
     addScript: function(script)
     {
         this._scripts.push(script);
+    },
+
+    get uiSourceCode()
+    {
+        // FIXME: extract UISourceCode from RawSourceCode (currently RawSourceCode implements methods from both interfaces).
+        return this;
     },
 
     rawLocationToUILocation: function(rawLocation)
@@ -153,7 +163,8 @@ WebInspector.RawSourceCode.prototype = {
     {
         if (this._contentLoaded) {
             this._contentLoaded = false;
-            this._contentChangedDelegate(this);
+            // FIXME: create another UISourceCode instance here, UISourceCode should be immutable.
+            this.dispatchEventToListeners(WebInspector.RawSourceCode.Events.UISourceCodeReplaced, { oldSourceCode: this, sourceCode: this });
         } else if (this._contentRequested)
             this._reloadContent = true;
         else if (this._requestContentCallbacks.length)
@@ -291,3 +302,5 @@ WebInspector.RawSourceCode.prototype = {
         return this._resource && !this._resource.finished;
     }
 }
+
+WebInspector.RawSourceCode.prototype.__proto__ = WebInspector.Object.prototype;

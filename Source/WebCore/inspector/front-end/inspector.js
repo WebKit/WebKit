@@ -155,7 +155,7 @@ var WebInspector = {
     _createPanels: function()
     {
         if (WebInspector.WorkerManager.isWorkerFrontend()) {
-            this.panels.scripts = new WebInspector.ScriptsPanel();
+            this.panels.scripts = new WebInspector.ScriptsPanel(this.debuggerPresentationModel);
             this.panels.console = new WebInspector.ConsolePanel();
             return;
         }
@@ -167,7 +167,7 @@ var WebInspector = {
         if (hiddenPanels.indexOf("network") === -1)
             this.panels.network = new WebInspector.NetworkPanel();
         if (hiddenPanels.indexOf("scripts") === -1)
-            this.panels.scripts = new WebInspector.ScriptsPanel();
+            this.panels.scripts = new WebInspector.ScriptsPanel(this.debuggerPresentationModel);
         if (hiddenPanels.indexOf("timeline") === -1)
             this.panels.timeline = new WebInspector.TimelinePanel();
         if (hiddenPanels.indexOf("profiles") === -1)
