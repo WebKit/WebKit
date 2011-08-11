@@ -323,7 +323,7 @@ void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
 {
     const QuotesData* newQuotes = style()->quotes();
     const QuotesData* oldQuotes = oldStyle ? oldStyle->quotes() : 0;
-    if (!((newQuotes && oldQuotes && (*newQuotes == *oldQuotes)) || (!newQuotes && !oldQuotes)))
+    if (!QuotesData::equal(newQuotes, oldQuotes))
         setNeedsLayoutAndPrefWidthsRecalc();
     RenderText::styleDidChange(diff, oldStyle);
 }

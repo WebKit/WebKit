@@ -143,7 +143,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hyphenationString == o.hyphenationString
         && locale == o.locale
         && textEmphasisCustomMark == o.textEmphasisCustomMark
-        && *quotes == *o.quotes
+        && QuotesData::equal(quotes.get(), o.quotes.get())
         && m_imageRendering == o.m_imageRendering;
 }
 

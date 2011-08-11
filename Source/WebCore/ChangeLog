@@ -1,3 +1,25 @@
+2011-08-11  Yong Li  <yoli@rim.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=65944
+        Replace QuotesData::operator==() with QuotesData::equal(const QuotesData*
+        , const QuotesData*) because QuotesData::operator==() were using non-standard
+        C++ code that is not supported by all compilers.
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests because some existing test cases can show the issue,
+        for example, fast/css/content/content-quotes-01.html.
+
+        * rendering/RenderQuote.cpp:
+        (WebCore::RenderQuote::styleDidChange):
+        * rendering/style/QuotesData.cpp:
+        (WebCore::QuotesData::equal):
+        * rendering/style/QuotesData.h:
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::setQuotes):
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::operator==):
+
 2011-08-11  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66075
