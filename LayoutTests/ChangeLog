@@ -1,3 +1,12 @@
+2011-08-11  Adam Barth  <abarth@webkit.org>
+
+        pfeldman says we need to rebaseline this test.  The massively complex
+        baseline fallback graph confused him when he created a platform/mac
+        fallback.
+
+        * platform/chromium-win/inspector/debugger: Added.
+        * platform/chromium-win/inspector/debugger/scripts-panel-expected.txt: Added.
+
 2011-08-11  Anders Carlsson  <andersca@apple.com>
 
         Move some Snow Leopard test results to the right place.
