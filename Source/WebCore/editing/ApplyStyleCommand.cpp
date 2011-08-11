@@ -70,11 +70,9 @@ bool isStyleSpan(const Node *node)
     return elem->hasLocalName(spanAttr) && elem->getAttribute(classAttr) == styleSpanClassString();
 }
 
-bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element* element)
+enum ShouldStyleAttributeBeEmpty { AllowNonEmptyStyleAttribute, StyleAttributeShouldBeEmpty };
+static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
 {
-    if (!element || !element->hasTagName(spanTag))
-        return false;
-
     const bool readonly = true;
     NamedNodeMap* map = element->attributes(readonly);
     if (!map || map->isEmpty())
@@ -83,34 +81,31 @@ bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element* element)
     unsigned matchedAttributes = 0;
     if (element->fastGetAttribute(classAttr) == styleSpanClassString())
         matchedAttributes++;
-    if (element->hasAttribute(styleAttr))
+    if (element->hasAttribute(styleAttr) && (shouldStyleAttributeBeEmpty == AllowNonEmptyStyleAttribute
+        || !element->inlineStyleDecl() || element->inlineStyleDecl()->isEmpty()))
         matchedAttributes++;
 
     ASSERT(matchedAttributes <= map->length());
     return matchedAttributes == map->length();
 }
 
-static bool isUnstyledStyleSpan(const Node* node)
+bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element* element)
 {
-    if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
+    if (!element || !element->hasTagName(spanTag))
         return false;
-
-    const HTMLElement* elem = static_cast<const HTMLElement*>(node);
-    CSSMutableStyleDeclaration* inlineStyleDecl = elem->inlineStyleDecl();
-    return (!inlineStyleDecl || inlineStyleDecl->isEmpty()) && elem->getAttribute(classAttr) == styleSpanClassString();
+    return hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(element), AllowNonEmptyStyleAttribute);
 }
 
-static bool isSpanWithoutAttributesOrUnstyleStyleSpan(const Node* node)
+static inline bool isUnstyledStyleSpan(const Node* node)
+{
+    return isStyleSpan(node) && hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(node), StyleAttributeShouldBeEmpty);
+}
+
+static inline bool isSpanWithoutAttributesOrUnstyleStyleSpan(const Node* node)
 {
     if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
         return false;
-
-    const HTMLElement* elem = static_cast<const HTMLElement*>(node);
-    NamedNodeMap* attributes = elem->attributes(true); // readonly
-    if (attributes->isEmpty())
-        return true;
-
-    return isUnstyledStyleSpan(node);
+    return hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(node), StyleAttributeShouldBeEmpty);
 }
 
 static bool isEmptyFontTag(const Node *node)
@@ -855,20 +850,7 @@ bool ApplyStyleCommand::removeInlineStyleFromElement(EditingStyle* style, PassRe
     
 void ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes(HTMLElement*& elem)
 {
-    bool removeNode = false;
-
-    // Similar to isSpanWithoutAttributesOrUnstyleStyleSpan, but does not look for Apple-style-span.
-    NamedNodeMap* attributes = elem->attributes(true); // readonly
-    if (!attributes || attributes->isEmpty())
-        removeNode = true;
-    else if (attributes->length() == 1 && elem->hasAttribute(styleAttr)) {
-        // Remove the element even if it has just style='' (this might be redundantly checked later too)
-        CSSMutableStyleDeclaration* inlineStyleDecl = elem->inlineStyleDecl();
-        if (!inlineStyleDecl || inlineStyleDecl->isEmpty())
-            removeNode = true;
-    }
-
-    if (removeNode)
+    if (hasNoAttributeOrOnlyStyleAttribute(elem, StyleAttributeShouldBeEmpty))
         removeNodePreservingChildren(elem);
     else {
         HTMLElement* newSpanElement = replaceElementWithSpanPreservingChildrenAndAttributes(elem);

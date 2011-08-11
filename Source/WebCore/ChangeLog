@@ -1,3 +1,24 @@
+2011-08-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Share code between isStyleSpanOrSpanWithOnlyStyleAttribute, isUnstyledStyleSpan,
+        isSpanWithoutAttributesOrUnstyleStyleSpan and replaceWithSpanOrRemoveIfWithoutAttributes
+        https://bugs.webkit.org/show_bug.cgi?id=66091
+
+        Reviewed by Tony Chang.
+
+        Extracted common code as hasNoAttributeOrOnlyStyleAttribute. The only behavioral difference is that
+        replaceWithSpanOrRemoveIfWithoutAttributes will now remove elements with class="Apple-style-span",
+        for which I'm adding a test.
+
+        Test: editing/style/remove-styled-element-with-style-span.html
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::hasNoAttributeOrOnlyStyleAttribute):
+        (WebCore::isStyleSpanOrSpanWithOnlyStyleAttribute):
+        (WebCore::isUnstyledStyleSpan):
+        (WebCore::isSpanWithoutAttributesOrUnstyleStyleSpan):
+        (WebCore::ApplyStyleCommand::replaceWithSpanOrRemoveIfWithoutAttributes):
+
 2011-08-11  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Add HTMLUnknownElement interface as defined in
