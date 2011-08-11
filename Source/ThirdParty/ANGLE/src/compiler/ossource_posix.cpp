@@ -59,6 +59,5 @@ bool OS_FreeTLSIndex(OS_TLSIndex nIndex)
     //
     if (pthread_key_delete(nIndex) == 0)
         return true;
-    else
-        return false;
+    return false;
 }
