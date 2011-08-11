@@ -1,3 +1,13 @@
+2011-08-11  James Robinson  <jamesr@chromium.org>
+
+        nullptr can't be used for PassRefPtr
+        https://bugs.webkit.org/show_bug.cgi?id=66024
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/PassRefPtr.h:
+        (WTF::PassRefPtr::PassRefPtr):
+
 2011-08-11  Daniel Bates  <dbates@rim.com>
 
         Removed unused variable in StackBounds::initialize() to resolve
