@@ -94,13 +94,13 @@ def run(port, options, args, regular_output=sys.stderr,
         if options.lint_test_files:
             return manager.lint()
 
-        printer.print_update("Parsing expectations ...")
-        manager.parse_expectations()
-
         printer.print_update("Checking build ...")
         if not port.check_build(manager.needs_servers()):
             _log.error("Build check failed")
             return -1
+
+        printer.print_update("Parsing expectations ...")
+        manager.parse_expectations()
 
         result_summary = manager.set_up_run()
         if result_summary:

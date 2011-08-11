@@ -229,7 +229,12 @@ class WebKitPort(Port):
         """Return the supported features of DRT. If a port doesn't support
         this DRT switch, it has to override this method to return None"""
         supported_features_command = [self._path_to_driver(), '--print-supported-features']
-        output = self._executive.run_command(supported_features_command, error_handler=Executive.ignore_error)
+        try:
+            output = self._executive.run_command(supported_features_command, error_handler=Executive.ignore_error)
+        except OSError, e:
+            _log.warn("Exception runnig driver: %s, %s.  Driver must be built before calling WebKitPort.test_expectations()." % (supported_features_command, e))
+            return []
+
         # Note: win/DumpRenderTree.cpp does not print a leading space before the features_string.
         match_object = re.match("SupportedFeatures:\s*(?P<features_string>.*)\s*", output)
         if not match_object:

@@ -3,6 +3,26 @@
         new-run-webkit-test's WinPort has no fallback logic
         https://bugs.webkit.org/show_bug.cgi?id=64486
 
+        Unreviewed.
+
+        Turns out that we've long had a subtle bug whereby if you didn't
+        already have DumpRenderTree built, we might end up running unsupported tests
+        because the DumpRenderTree --print-supported-features check would silently fail.
+
+        When I moved the call from using popen to using Executive.run_command, this silent
+        failure became noisy.  (Breaking some bots.)
+
+        This re-orders our steps so that we always build DRT before collecting expectations,
+        as well as adds a warning message when DumpRenderTree can't be found.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
+2011-08-10  Eric Seidel  <eric@webkit.org>
+
+        new-run-webkit-test's WinPort has no fallback logic
+        https://bugs.webkit.org/show_bug.cgi?id=64486
+
         Unreviewed.  Fix test-webkitpy under Python 2.5.
 
         * Scripts/webkitpy/layout_tests/port/win.py:
