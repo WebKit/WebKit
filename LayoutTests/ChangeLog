@@ -1,3 +1,9 @@
+2011-08-11  Adam Barth  <abarth@webkit.org>
+
+        Merge expectations to mute flakiness.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-11  Qi Zhang  <qi.2.zhang@nokia.com>
 
         [Qt] fast/dom/HTMLDocument/hasFocus.html failed
