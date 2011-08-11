@@ -1,3 +1,18 @@
+2011-08-11  Pierre Rossi  <pierre.rossi@gmail.com>
+
+        [Qt] autotests shouldn't require config.h in the style check
+        https://bugs.webkit.org/show_bug.cgi?id=65986
+
+        Remove the include rules from the style-check for Qt tests.
+        Since for the most part it's just a matter of using the
+        API provided by QtWebKit, enforcing the WebCore set of rules
+        only seems to make sense in the case of MIMESniffing.
+
+        Reviewed by Benjamin Poulain.
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+
 2011-08-11  Zsolt Fehér  <h490267@stud.u-szeged.hu>
 
         [WK2] Implement waitForPolicyDelegate

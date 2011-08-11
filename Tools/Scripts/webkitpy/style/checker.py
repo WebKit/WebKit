@@ -124,11 +124,15 @@ _PATH_RULES_SPECIFIER = [
     ([# TestNetscapePlugIn has no config.h and uses funny names like
       # NPP_SetWindow.
       "Tools/DumpRenderTree/TestNetscapePlugIn/",
+    ([# The MIMESniffing test tests the code directly rather than the API,
+      # let's enable the include check for this one.
+      "Source/WebKit/qt/tests/MIMESniffing"],
+     ["+build/include"]),
       # The API test harnesses have no config.h and use funny macros like
       # TEST_CLASS_NAME.
       "Tools/WebKitAPITest/",
       "Tools/TestWebKitAPI/",
-      "Source/WebKit/qt/tests/qdeclarativewebview"],
+      "Source/WebKit/qt/tests/"],
      ["-build/include",
       "-readability/naming"]),
     ([# There is no clean way to avoid "yy_*" names used by flex.
@@ -137,7 +141,6 @@ _PATH_RULES_SPECIFIER = [
       # and on test xxx_data methos on tests)
       "Source/JavaScriptCore/qt/",
       "Source/WebKit/qt/Api/",
-      "Source/WebKit/qt/tests/",
       "Source/WebKit/qt/declarative/",
       "Source/WebKit/qt/examples/"],
      ["-readability/naming"]),

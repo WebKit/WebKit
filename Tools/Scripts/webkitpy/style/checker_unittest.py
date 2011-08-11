@@ -256,6 +256,10 @@ class GlobalVariablesTest(unittest.TestCase):
 
         assertNoCheck("Tools/MiniBrowser/qt/UrlLoader.cpp",
                     "build/include")
+        assertNoCheck("Source/WebKit/qt/tests/util.cpp",
+                    "build/include")
+        assertCheck("Source/WebKit/qt/tests/MIMESniffing/tst_MIMESniffing.cpp",
+                    "build/include")
 
         assertNoCheck("Source/WebCore/ForwardingHeaders/debugger/Debugger.h",
                       "build/header_guard")
