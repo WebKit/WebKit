@@ -999,6 +999,9 @@ void JITCodeGenerator::emitCall(Node& node)
     m_jit.storePtr(MacroAssembler::TrustedImmPtr(JSValue::encode(jsNumber(numArgs))), addressOfCallData(RegisterFile::ArgumentCount));
     m_jit.storePtr(GPRInfo::callFrameRegister, addressOfCallData(RegisterFile::CallerFrame));
     
+    if (node.op == Construct)
+        use(m_jit.graph().m_varArgChildren[node.firstChild() + 1]);
+    
     for (int argIdx = (node.op == Call ? 0 : 1); argIdx < numArgs; argIdx++) {
         NodeIndex argNodeIndex = m_jit.graph().m_varArgChildren[node.firstChild() + 1 + argIdx];
         JSValueOperand arg(this, argNodeIndex);

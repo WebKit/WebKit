@@ -1,3 +1,15 @@
+2011-08-10  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r92670-r92744): WebKit crashes when opening Gmail
+        https://bugs.webkit.org/show_bug.cgi?id=66010
+
+        Reviewed by Oliver Hunt.
+        
+        Made sure that Construct calls use() on the this argument.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::emitCall):
+
 2011-08-10  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         JSC should always throw when function arg list is too long
