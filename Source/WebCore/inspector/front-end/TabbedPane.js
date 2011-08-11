@@ -30,7 +30,7 @@
 
 WebInspector.TabbedPane = function(element)
 {
-    this.element = element || document.createElement("div");
+    WebInspector.View.call(this, element);
     this.element.addStyleClass("tabbed-pane");
     this._tabsElement = this.element.createChild("div", "tabbed-pane-header");
     this._contentElement = this.element.createChild("div", "tabbed-pane-content");
@@ -81,4 +81,4 @@ WebInspector.TabbedPane.prototype = {
     }
 }
 
-WebInspector.TabbedPane.prototype.__proto__ = WebInspector.Object.prototype;
+WebInspector.TabbedPane.prototype.__proto__ = WebInspector.View.prototype;

@@ -1,5 +1,21 @@
 2011-08-11  Andrey Kosyakov  <caseq@chromium.org>
 
+        Web Inspector: [refactoring] make tabbed pane a view
+        https://bugs.webkit.org/show_bug.cgi?id=66060
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView):
+        (WebInspector.NetworkItemView.prototype.show):
+        (WebInspector.NetworkItemView.prototype._selectTab.get if):
+        (WebInspector.NetworkItemView.prototype._selectTab):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane):
+        * inspector/front-end/inspector.html:
+
+2011-08-11  Andrey Kosyakov  <caseq@chromium.org>
+
         Web Inspector: source frame popover simetimes pops up after user switches from Scripts panel
         https://bugs.webkit.org/show_bug.cgi?id=66057
 

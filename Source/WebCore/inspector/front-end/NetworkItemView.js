@@ -30,37 +30,36 @@
 
 WebInspector.NetworkItemView = function(resource)
 {
-    WebInspector.View.call(this);
+    WebInspector.TabbedPane.call(this);
 
     this.element.addStyleClass("network-item-view");
-    this._tabbedPane = new WebInspector.TabbedPane(this.element);
 
     var headersView = new WebInspector.ResourceHeadersView(resource);
-    this._tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), headersView);
+    this.appendTab("headers", WebInspector.UIString("Headers"), headersView);
 
     var responseView = new WebInspector.ResourceResponseView(resource);
     var previewView = new WebInspector.ResourcePreviewView(resource, responseView);
 
-    this._tabbedPane.appendTab("preview", WebInspector.UIString("Preview"), previewView);
-    this._tabbedPane.appendTab("response", WebInspector.UIString("Response"), responseView);
+    this.appendTab("preview", WebInspector.UIString("Preview"), previewView);
+    this.appendTab("response", WebInspector.UIString("Response"), responseView);
 
     if (Preferences.showCookiesTab) {
         this._cookiesView = new WebInspector.ResourceCookiesView(resource);
-        this._tabbedPane.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView);
+        this.appendTab("cookies", WebInspector.UIString("Cookies"), this._cookiesView);
     }
 
     if (Preferences.showTimingTab) {
         var timingView = new WebInspector.ResourceTimingView(resource);
-        this._tabbedPane.appendTab("timing", WebInspector.UIString("Timing"), timingView);
+        this.appendTab("timing", WebInspector.UIString("Timing"), timingView);
     }
 
-    this._tabbedPane.addEventListener("tab-selected", this._tabSelected, this);
+    this.addEventListener("tab-selected", this._tabSelected, this);
 }
 
 WebInspector.NetworkItemView.prototype = {
     show: function(parentElement)
     {
-        WebInspector.View.prototype.show.call(this, parentElement);
+        WebInspector.TabbedPane.prototype.show.call(this, parentElement);
         this._selectTab();
     },
 
@@ -69,9 +68,9 @@ WebInspector.NetworkItemView.prototype = {
         if (!tabId)
             tabId = WebInspector.settings.resourceViewTab.get();
 
-        if (!this._tabbedPane.selectTab(tabId)) {
+        if (!this.selectTab(tabId)) {
             this._isInFallbackSelection = true;
-            this._tabbedPane.selectTab("headers");
+            this.selectTab("headers");
             delete this._isInFallbackSelection;
         }
     },
@@ -98,7 +97,7 @@ WebInspector.NetworkItemView.prototype = {
     }
 }
 
-WebInspector.NetworkItemView.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.NetworkItemView.prototype.__proto__ = WebInspector.TabbedPane.prototype;
 
 WebInspector.ResourceContentView = function(resource)
 {
