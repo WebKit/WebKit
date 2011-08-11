@@ -1,3 +1,16 @@
+2011-08-11  Anders Carlsson  <andersca@apple.com>
+
+        Move some Snow Leopard test results to the right place.
+
+        * platform/mac-snowleopard/fast/loader/file-url-mimetypes-2-expected.txt: Removed.
+        * platform/mac-snowleopard/fast/loader/file-url-mimetypes-expected.txt: Removed.
+        * platform/mac-snowleopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Removed.
+        * platform/mac-snowleopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html: Removed.
+        * platform/mac-snowleopard/platform/mac/fast/loader/file-url-mimetypes-expected.txt: Copied from platform/mac-snowleopard/fast/loader/file-url-mimetypes-expected.txt.
+        * platform/mac-snowleopard/platform/mac/fast/text/international: Added.
+        * platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Copied from platform/mac-snowleopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt.
+        * platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html: Copied from platform/mac-snowleopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html.
+
 2011-08-11  Adam Barth  <abarth@webkit.org>
 
         Record that these tests are now passing in these configurations.
