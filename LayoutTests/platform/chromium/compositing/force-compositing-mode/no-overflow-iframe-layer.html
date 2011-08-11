@@ -1,0 +1,27 @@
+<html>
+<head>
+  <style>
+    iframe {
+      height: 150px;
+      width: 150px;
+    }
+  </style>
+  <script>
+    function doTest()
+    {
+      if (window.layoutTestController) {
+        layoutTestController.dumpAsText(false);
+        document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
+      }
+    }
+    window.addEventListener("load", doTest, false);
+    if (window.internals)
+      internals.setForceCompositingMode(document, true);
+  </script>
+</head>
+<body>
+  <!-- this should not generate a layer and the layer tree should be empty -->
+  <iframe src="resources/subframe-small.html"></iframe>
+  <pre id="layertree"></pre>
+</body>
+</html>

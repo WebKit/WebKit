@@ -1,3 +1,23 @@
+2011-08-10  Adrienne Walker  <enne@google.com>
+
+        Support creating compositing layers for scrollable frames and iframes
+        https://bugs.webkit.org/show_bug.cgi?id=55257
+
+        Reviewed by James Robinson.
+
+        * platform/chromium/compositing/force-compositing-mode/no-overflow-iframe-layer-expected.txt: Added.
+        * platform/chromium/compositing/force-compositing-mode/no-overflow-iframe-layer.html: Added.
+        * platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer-expected.txt: Added.
+        * platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer.html: Added.
+        * platform/chromium/compositing/force-compositing-mode/overflow-iframe-enter-compositing-expected.txt: Added.
+        * platform/chromium/compositing/force-compositing-mode/overflow-iframe-enter-compositing.html: Added.
+        * platform/chromium/compositing/force-compositing-mode/overflow-iframe-layer-expected.txt: Added.
+        * platform/chromium/compositing/force-compositing-mode/overflow-iframe-layer.html: Added.
+        * platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing-expected.txt: Added.
+        * platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing.html: Added.
+        * platform/chromium/compositing/force-compositing-mode/resources/subframe-big.html: Added.
+        * platform/chromium/compositing/force-compositing-mode/resources/subframe-small.html: Added.
+
 2011-08-11  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66075

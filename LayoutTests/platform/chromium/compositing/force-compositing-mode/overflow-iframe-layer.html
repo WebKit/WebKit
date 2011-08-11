@@ -1,0 +1,27 @@
+<html>
+<head>
+  <style>
+    iframe {
+      height: 150px;
+      width: 150px;
+    }
+  </style>
+  <script>
+    if (window.internals)
+      internals.setForceCompositingMode(document, true);
+    function doTest()
+    {
+      if (window.layoutTestController) {
+        layoutTestController.dumpAsText(false);
+        document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
+      }
+    }
+    window.addEventListener("load", doTest, false);
+  </script>
+</head>
+<body>
+  <!-- this should generate a layer due to overflow -->
+  <iframe src="resources/subframe-big.html"></iframe>
+  <pre id="layertree"></pre>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<html>
+<head>
+  <style>
+    iframe {
+      height: 150px;
+      width: 150px;
+    }
+  </style>
+  <script>
+    if (window.internals)
+      internals.setForceCompositingMode(document, true);
+    function doTest()
+    {
+      if (window.layoutTestController)
+        layoutTestController.display();
+      var iframe = document.getElementById("parent-iframe");
+      iframe.contentDocument.body.setAttribute("style", "overflow:hidden");
+      iframe.contentDocument.body.offsetWidth; // See bug 41999
+      if (window.layoutTestController) {
+        layoutTestController.dumpAsText(false);
+        document.getElementById('layertree').innerText = layoutTestController.layerTreeAsText();
+      }
+    }
+    window.addEventListener("load", doTest, false);
+  </script>
+</head>
+<body>
+  <iframe id="parent-iframe" src="resources/subframe-big.html"></iframe>
+  <pre id="layertree"></pre>
+</body>
+</html>

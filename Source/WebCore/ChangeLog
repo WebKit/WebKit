@@ -1,3 +1,26 @@
+2011-08-10  Adrienne Walker  <enne@google.com>
+
+        Support creating compositing layers for scrollable frames and iframes
+        https://bugs.webkit.org/show_bug.cgi?id=55257
+
+        Reviewed by James Robinson.
+
+        When force compositing mode is turned on, iframes with overflow will
+        become composited (in order to enable faster scrolling).
+
+        This patch was originally by Daniel Sievers <sievers@chromium.org>.
+
+        Tests: platform/chromium/compositing/force-compositing-mode/no-overflow-iframe-layer.html
+               platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer.html
+               platform/chromium/compositing/force-compositing-mode/overflow-iframe-enter-compositing.html
+               platform/chromium/compositing/force-compositing-mode/overflow-iframe-layer.html
+               platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::cacheAcceleratedCompositingFlags):
+        (WebCore::RenderLayerCompositor::requiresCompositingForScrollableFrame):
+        * rendering/RenderLayerCompositor.h:
+
 2011-08-11  Yong Li  <yoli@rim.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=65944

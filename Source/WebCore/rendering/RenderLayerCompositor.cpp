@@ -139,9 +139,10 @@ void RenderLayerCompositor::cacheAcceleratedCompositingFlags()
         hasAcceleratedCompositing = settings->acceleratedCompositingEnabled();
         showDebugBorders = settings->showDebugBorders();
         showRepaintCounter = settings->showRepaintCounter();
+        forceCompositingMode = settings->forceCompositingMode() && hasAcceleratedCompositing;
 
-        if (!m_renderView->document()->frame()->tree()->parent())
-            forceCompositingMode = settings->forceCompositingMode() && hasAcceleratedCompositing;
+        if (forceCompositingMode && m_renderView->document()->ownerElement())
+            forceCompositingMode = requiresCompositingForScrollableFrame();
     }
 
     // We allow the chrome to override the settings, in case the page is rendered
@@ -1356,6 +1357,15 @@ bool RenderLayerCompositor::clipsCompositingDescendants(const RenderLayer* layer
 {
     return layer->hasCompositingDescendant() &&
            (layer->renderer()->hasOverflowClip() || layer->renderer()->hasClip());
+}
+
+bool RenderLayerCompositor::requiresCompositingForScrollableFrame() const
+{
+    // Need this done first to determine overflow.
+    ASSERT(!m_renderView->needsLayout());
+
+    ScrollView* scrollView = m_renderView->frameView();
+    return scrollView->verticalScrollbar() || scrollView->horizontalScrollbar();
 }
 
 bool RenderLayerCompositor::requiresCompositingForTransform(RenderObject* renderer) const
