@@ -1,5 +1,27 @@
 2011-08-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        New expectation entries should be placed next to existing ones.
+        https://bugs.webkit.org/show_bug.cgi?id=66066
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Added the notion of insertion point,
+            which is computed as the last found reference to the same test.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Added and adjusted unit tests.
+
+2011-08-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r92847.
+        http://trac.webkit.org/changeset/92847
+        https://bugs.webkit.org/show_bug.cgi?id=65986
+
+        Broke check-webkit-style
+
+        * Scripts/webkitpy/style/checker.py:
+        * Scripts/webkitpy/style/checker_unittest.py:
+
+2011-08-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, rolling out r92847.
         http://trac.webkit.org/changeset/92847
         https://bugs.webkit.org/show_bug.cgi?id=65986

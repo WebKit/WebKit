@@ -654,7 +654,9 @@ class TestExpectationsEditor(object):
         expectation_lines = self._test_to_expectation_lines.get(test, [])
         remaining_configurations = test_config_set.copy()
         bug_ids = self._get_valid_bug_ids(parsed_bug_modifiers)
+        new_expectation_line_insertion_point = len(self._expectation_lines)
         remove_expectations = expectation_set == set([PASS]) and test not in self._tests_with_directory_paths
+
         for expectation_line in expectation_lines:
             if expectation_line.matching_configurations == remaining_configurations:
                 # Tweak expectations on existing line.
@@ -675,6 +677,7 @@ class TestExpectationsEditor(object):
                 # 2) Finish looking, since there will be no more remaining configs to test for.
                 expectation_line.matching_configurations -= remaining_configurations
                 updated_expectations.append(expectation_line)
+                new_expectation_line_insertion_point = self._expectation_lines.index(expectation_line) + 1
                 break
             elif expectation_line.matching_configurations <= remaining_configurations:
                 # Remove existing expectation line.
@@ -686,11 +689,12 @@ class TestExpectationsEditor(object):
                 if intersection:
                     expectation_line.matching_configurations -= intersection
                     updated_expectations.append(expectation_line)
+            new_expectation_line_insertion_point = self._expectation_lines.index(expectation_line) + 1
 
         if not remove_expectations:
             new_expectation_line = self._create_new_line(test, bug_ids, remaining_configurations, expectation_set)
             updated_expectations.append(new_expectation_line)
-            self._expectation_lines.append(new_expectation_line)
+            self._expectation_lines.insert(new_expectation_line_insertion_point, new_expectation_line)
 
         return updated_expectations
 

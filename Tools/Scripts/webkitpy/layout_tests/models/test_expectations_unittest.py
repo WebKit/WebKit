@@ -878,6 +878,14 @@ BUGX1 MAC : failures/expected/keyboard.html = TEXT""", 'failures/expected/keyboa
 BUGX1 MAC : failures/expected/keyboard.html = TEXT
 BUG_NEWLY_CREATED WIN RELEASE CPU : failures/expected/keyboard.html = IMAGE""", 1, test_configs=self.WIN_RELEASE_CPU_CONFIGS)
 
+    def test_update_expectation_relative(self):
+        self.assert_update_roundtrip("""
+BUGX1 XP RELEASE : failures/expected/keyboard.html = TEXT
+BUGX2 MAC : failures/expected/audio.html = TEXT""", 'failures/expected/keyboard.html', set([IMAGE]), """
+BUGX1 XP RELEASE GPU : failures/expected/keyboard.html = TEXT
+BUGAWESOME XP RELEASE CPU : failures/expected/keyboard.html = IMAGE
+BUGX2 MAC : failures/expected/audio.html = TEXT""", 2, parsed_bug_modifiers=['BUGAWESOME'])
+
     def test_update_expectation_multiple(self):
         in_string = """
 BUGX1 WIN : failures/expected/keyboard.html = IMAGE
@@ -892,16 +900,16 @@ BUGX2 WIN : failures/expected/audio.html = IMAGE"""
 BUGX1 XP DEBUG CPU : failures/expected/keyboard.html = IMAGE
 BUGX1 XP GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
-BUGX2 WIN : failures/expected/audio.html = IMAGE
-BUG_UPDATE1 XP RELEASE CPU : failures/expected/keyboard.html = IMAGE+TEXT""")
+BUG_UPDATE1 XP RELEASE CPU : failures/expected/keyboard.html = IMAGE+TEXT
+BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.update_expectation(test, set([TestConfiguration('xp', 'x86', 'debug', 'cpu')]), set([TEXT]), ['BUG_UPDATE2'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 XP GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 : failures/expected/keyboard.html = IMAGE
-BUGX2 WIN : failures/expected/audio.html = IMAGE
+BUG_UPDATE2 XP DEBUG CPU : failures/expected/keyboard.html = TEXT
 BUG_UPDATE1 XP RELEASE CPU : failures/expected/keyboard.html = IMAGE+TEXT
-BUG_UPDATE2 XP DEBUG CPU : failures/expected/keyboard.html = TEXT""")
+BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.update_expectation(test, self.WIN_RELEASE_CPU_CONFIGS, set([CRASH]), ['BUG_UPDATE3'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
@@ -909,22 +917,22 @@ BUGX1 VISTA DEBUG CPU : failures/expected/keyboard.html = IMAGE
 BUGX1 WIN7 RELEASE GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA XP GPU : failures/expected/keyboard.html = IMAGE
-BUGX2 WIN : failures/expected/audio.html = IMAGE
 BUG_UPDATE2 XP DEBUG CPU : failures/expected/keyboard.html = TEXT
-BUG_UPDATE3 WIN RELEASE CPU : failures/expected/keyboard.html = CRASH""")
+BUG_UPDATE3 WIN RELEASE CPU : failures/expected/keyboard.html = CRASH
+BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.update_expectation(test, self.RELEASE_CONFIGS, set([FAIL]), ['BUG_UPDATE4'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
 BUGX1 XP DEBUG GPU : failures/expected/keyboard.html = IMAGE
 BUGX1 VISTA WIN7 DEBUG : failures/expected/keyboard.html = IMAGE
-BUGX2 WIN : failures/expected/audio.html = IMAGE
 BUG_UPDATE2 XP DEBUG CPU : failures/expected/keyboard.html = TEXT
-BUG_UPDATE4 RELEASE : failures/expected/keyboard.html = FAIL""")
+BUG_UPDATE4 RELEASE : failures/expected/keyboard.html = FAIL
+BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
         editor.update_expectation(test, set(self.test_port.all_test_configurations()), set([TIMEOUT]), ['BUG_UPDATE5'])
         self.assertEquals(TestExpectationSerializer.list_to_string(expectation_lines, converter), """
-BUGX2 WIN : failures/expected/audio.html = IMAGE
-BUG_UPDATE5 : failures/expected/keyboard.html = TIMEOUT""")
+BUG_UPDATE5 : failures/expected/keyboard.html = TIMEOUT
+BUGX2 WIN : failures/expected/audio.html = IMAGE""")
 
 
 if __name__ == '__main__':
