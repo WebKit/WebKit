@@ -398,6 +398,8 @@
                 'src/PlatformMessagePortChannel.cpp',
                 'src/PlatformMessagePortChannel.h',
                 'src/ResourceHandle.cpp',
+                'src/ScrollbarGroup.cpp',
+                'src/ScrollbarGroup.h',
                 'src/SharedWorkerRepository.cpp',
                 'src/SocketStreamHandle.cpp',
                 'src/SpeechInputClientImpl.cpp',

@@ -33,26 +33,32 @@
 
 #include "GraphicsContext.h"
 #include "KeyboardCodes.h"
-#include "painting/GraphicsContextBuilder.h"
-#include "Scrollbar.h"
-#include "ScrollbarTheme.h"
+#include "ScrollAnimator.h"
 #include "ScrollTypes.h"
+#include "Scrollbar.h"
+#include "ScrollbarGroup.h"
+#include "ScrollbarTheme.h"
 #include "WebCanvas.h"
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
+#include "WebPluginContainerImpl.h"
 #include "WebRect.h"
 #include "WebScrollbarClient.h"
 #include "WebVector.h"
 #include "WebViewImpl.h"
+#include "painting/GraphicsContextBuilder.h"
 
 using namespace std;
 using namespace WebCore;
 
 namespace WebKit {
 
-WebScrollbar* WebScrollbar::create(WebScrollbarClient* client, Orientation orientation)
+WebScrollbar* WebScrollbar::createForPlugin(Orientation orientation,
+                                            WebPluginContainer* pluginContainer,
+                                            WebScrollbarClient* client)
 {
-    return new WebScrollbarImpl(client, orientation);
+    WebPluginContainerImpl* plugin = static_cast<WebPluginContainerImpl*>(pluginContainer);
+    return new WebScrollbarImpl(orientation, plugin->scrollbarGroup(), client);
 }
 
 int WebScrollbar::defaultThickness()
@@ -60,18 +66,62 @@ int WebScrollbar::defaultThickness()
     return ScrollbarTheme::nativeTheme()->scrollbarThickness();
 }
 
-WebScrollbarImpl::WebScrollbarImpl(WebScrollbarClient* client, Orientation orientation)
-    : m_client(client)
+WebScrollbarImpl::WebScrollbarImpl(Orientation orientation,
+                                   ScrollbarGroup* group,
+                                   WebScrollbarClient* client)
+    : m_group(group)
+    , m_client(client)
     , m_scrollOffset(0)
 {
     m_scrollbar = Scrollbar::createNativeScrollbar(
-        static_cast<ScrollableArea*>(this),
+        static_cast<ScrollableArea*>(m_group),
         static_cast<ScrollbarOrientation>(orientation),
         RegularScrollbar);
+    m_group->scrollbarCreated(this);
 }
 
 WebScrollbarImpl::~WebScrollbarImpl()
 {
+    m_group->scrollbarDestroyed(this);
+}
+
+void WebScrollbarImpl::setScrollOffset(int scrollOffset)
+{
+    m_scrollOffset = scrollOffset;
+    m_client->valueChanged(this);
+}
+
+void WebScrollbarImpl::invalidateScrollbarRect(const IntRect& rect)
+{
+    WebRect webrect(rect);
+    webrect.x += m_scrollbar->x();
+    webrect.y += m_scrollbar->y();
+    m_client->invalidateScrollbarRect(this, webrect);
+}
+
+void WebScrollbarImpl::getTickmarks(Vector<IntRect>& tickmarks) const
+{
+    WebVector<WebRect> ticks;
+    m_client->getTickmarks(const_cast<WebScrollbarImpl*>(this), &ticks);
+    tickmarks.resize(ticks.size());
+    for (size_t i = 0; i < ticks.size(); ++i)
+        tickmarks[i] = ticks[i];
+}
+
+IntPoint WebScrollbarImpl::convertFromContainingViewToScrollbar(const IntPoint& parentPoint) const
+{
+    IntPoint offset(parentPoint.x() - m_scrollbar->x(), parentPoint.y() - m_scrollbar->y());
+    return m_scrollbar->Widget::convertFromContainingView(offset);
+}
+
+void WebScrollbarImpl::scrollbarStyleChanged()
+{
+    m_client->overlayChanged(this);
+}
+
+bool WebScrollbarImpl::isOverlay() const
+{
+    return m_scrollbar->isOverlayScrollbar();
 }
 
 void WebScrollbarImpl::setLocation(const WebRect& rect)
@@ -95,7 +145,7 @@ int WebScrollbarImpl::value() const
 
 void WebScrollbarImpl::setValue(int position)
 {
-    ScrollableArea::scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), static_cast<float>(position));
+    m_group->scrollToOffsetWithoutAnimation(m_scrollbar->orientation(), static_cast<float>(position));
 }
 
 void WebScrollbarImpl::setDocumentSize(int size)
@@ -114,7 +164,7 @@ void WebScrollbarImpl::scroll(ScrollDirection direction, ScrollGranularity granu
     else
         dir = horizontal ? ScrollLeft : ScrollUp;
 
-    WebCore::ScrollableArea::scroll(dir, static_cast<WebCore::ScrollGranularity>(granularity), multiplier);
+    m_group->scroll(dir, static_cast<WebCore::ScrollGranularity>(granularity), multiplier);
 }
 
 void WebScrollbarImpl::paint(WebCanvas* canvas, const WebRect& rect)
@@ -182,39 +232,26 @@ bool WebScrollbarImpl::onMouseMove(const WebInputEvent& event)
         return m_scrollbar->mouseMoved(PlatformMouseEventBuilder(m_scrollbar.get(), mousemove));
     }
 
-    if (m_scrollbar->hoveredPart() != NoPart)
+    if (m_scrollbar->hoveredPart() != NoPart && !m_scrollbar->isOverlayScrollbar())
         m_scrollbar->mouseExited();
     return false;
 }
 
 bool WebScrollbarImpl::onMouseLeave(const WebInputEvent& event)
 {
-    if (m_scrollbar->hoveredPart() == NoPart)
-        return false;
+    if (m_scrollbar->hoveredPart() != NoPart)
+        m_scrollbar->mouseExited();
 
-    return m_scrollbar->mouseExited();
+    return false;
 }
 
 bool WebScrollbarImpl::onMouseWheel(const WebInputEvent& event)
 {
-    // Same logic as in Scrollview.cpp.  If we can move at all, we'll accept the event.
     WebMouseWheelEvent mousewheel = *static_cast<const WebMouseWheelEvent*>(&event);
-    int maxScrollDelta = m_scrollbar->maximum() - m_scrollbar->value();
-    float delta = m_scrollbar->orientation() == HorizontalScrollbar ? mousewheel.deltaX : mousewheel.deltaY;
-    if ((delta < 0 && maxScrollDelta > 0) || (delta > 0 && m_scrollbar->value() > 0)) {
-        if (mousewheel.scrollByPage) {
-            ASSERT(m_scrollbar->orientation() == VerticalScrollbar);
-            bool negative = delta < 0;
-            delta = max(max(static_cast<float>(m_scrollbar->visibleSize()) * Scrollbar::minFractionToStepWhenPaging(), static_cast<float>(m_scrollbar->visibleSize() - Scrollbar::maxOverlapBetweenPages())), 1.0f);
-            if (negative)
-                delta *= -1;
-        }
-        ScrollableArea::scroll((m_scrollbar->orientation() == HorizontalScrollbar) ? WebCore::ScrollLeft : WebCore::ScrollUp, WebCore::ScrollByPixel, delta);
-        return true;
-    }
-
-    return false;
-    }
+    PlatformWheelEventBuilder platformEvent(m_scrollbar.get(), mousewheel);
+    m_group->handleWheelEvent(platformEvent);
+    return platformEvent.isAccepted();
+}
 
 bool WebScrollbarImpl::onKeyDown(const WebInputEvent& event)
 {
@@ -248,100 +285,9 @@ bool WebScrollbarImpl::onKeyDown(const WebInputEvent& event)
     WebCore::ScrollGranularity scrollGranularity;
     if (WebViewImpl::mapKeyCodeForScroll(keyCode, &scrollDirection, &scrollGranularity)) {
         // Will return false if scroll direction wasn't compatible with this scrollbar.
-        return ScrollableArea::scroll(scrollDirection, scrollGranularity);
+        return m_group->scroll(scrollDirection, scrollGranularity);
     }
     return false;
-}
-
-int WebScrollbarImpl::scrollSize(WebCore::ScrollbarOrientation orientation) const
-{
-    return (orientation == m_scrollbar->orientation()) ? (m_scrollbar->totalSize() - m_scrollbar->visibleSize()) : 0;
-}
-
-int WebScrollbarImpl::scrollPosition(Scrollbar*) const
-{
-    return m_scrollOffset;
-}
-
-void WebScrollbarImpl::setScrollOffset(const IntPoint& offset)
-{
-    if (m_scrollbar->orientation() == HorizontalScrollbar)
-        m_scrollOffset = offset.x();
-    else
-        m_scrollOffset = offset.y();
-
-    m_client->valueChanged(this);
-}
-
-void WebScrollbarImpl::invalidateScrollbarRect(Scrollbar*, const IntRect& rect)
-{
-    WebRect webrect(rect);
-    webrect.x += m_scrollbar->x();
-    webrect.y += m_scrollbar->y();
-    m_client->invalidateScrollbarRect(this, webrect);
-}
-
-void WebScrollbarImpl::invalidateScrollCornerRect(const IntRect&)
-{
-}
-
-bool WebScrollbarImpl::isActive() const
-{
-    return true;
-}
-
-ScrollableArea* WebScrollbarImpl::enclosingScrollableArea() const
-{
-    // FIXME: Return a parent scrollable area that can be scrolled.
-    return 0;
-}
-
-bool WebScrollbarImpl::isScrollCornerVisible() const
-{
-    return false;
-}
-
-void WebScrollbarImpl::getTickmarks(Vector<IntRect>& tickmarks) const
-{
-    WebVector<WebRect> ticks;
-    m_client->getTickmarks(const_cast<WebScrollbarImpl*>(this), &ticks);
-    tickmarks.resize(ticks.size());
-    for (size_t i = 0; i < ticks.size(); ++i)
-        tickmarks[i] = ticks[i];
-}
-
-Scrollbar* WebScrollbarImpl::horizontalScrollbar() const
-{
-    return m_scrollbar->orientation() == HorizontalScrollbar ? m_scrollbar.get() : 0;
-}
-
-Scrollbar* WebScrollbarImpl::verticalScrollbar() const
-{
-    return m_scrollbar->orientation() == VerticalScrollbar ? m_scrollbar.get() : 0;
-}
-
-int WebScrollbarImpl::visibleHeight() const
-{
-    return m_scrollbar->height();
-}
-
-int WebScrollbarImpl::visibleWidth() const
-{
-    return m_scrollbar->width();
-}
-
-IntSize WebScrollbarImpl::contentsSize() const
-{
-    // This isn't technically correct, since we don't have the contentSize. However it's good enough
-    // to make the ScrollAnimator code happy.
-    int thickness = defaultThickness();
-    int length = m_scrollbar->totalSize();
-    return m_scrollbar->orientation() == VerticalScrollbar ? IntSize(thickness, length) : IntSize(length, thickness);
-}
-
-IntSize WebScrollbarImpl::overhangAmount() const
-{
-    return IntSize();
 }
 
 } // namespace WebKit

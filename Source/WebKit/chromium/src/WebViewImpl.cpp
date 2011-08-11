@@ -1008,6 +1008,11 @@ void WebViewImpl::willStartLiveResize()
 {
     if (mainFrameImpl() && mainFrameImpl()->frameView())
         mainFrameImpl()->frameView()->willStartLiveResize();
+
+    Frame* frame = mainFrameImpl()->frame();
+    WebPluginContainerImpl* pluginContainer = WebFrameImpl::pluginContainerFromFrame(frame);
+    if (pluginContainer)
+        pluginContainer->willStartLiveResize();
 }
 
 void WebViewImpl::resize(const WebSize& newSize)
@@ -1037,6 +1042,11 @@ void WebViewImpl::willEndLiveResize()
 {
     if (mainFrameImpl() && mainFrameImpl()->frameView())
         mainFrameImpl()->frameView()->willEndLiveResize();
+
+    Frame* frame = mainFrameImpl()->frame();
+    WebPluginContainerImpl* pluginContainer = WebFrameImpl::pluginContainerFromFrame(frame);
+    if (pluginContainer)
+        pluginContainer->willEndLiveResize();
 }
 
 void WebViewImpl::animate(double frameBeginTime)

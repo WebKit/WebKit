@@ -35,6 +35,7 @@
 #include "WebPluginContainer.h"
 #include "Widget.h"
 
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -54,6 +55,7 @@ class WheelEvent;
 
 namespace WebKit {
 
+class ScrollbarGroup;
 class WebPlugin;
 class WebPluginLoadObserver;
 
@@ -127,6 +129,11 @@ public:
     virtual WebCore::LayerChromium* platformLayer() const;
 #endif
 
+    ScrollbarGroup* scrollbarGroup();
+
+    void willStartLiveResize();
+    void willEndLiveResize();
+
 private:
     WebPluginContainerImpl(WebCore::HTMLPlugInElement* element, WebPlugin* webPlugin);
     ~WebPluginContainerImpl();
@@ -150,6 +157,10 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<WebCore::PluginLayerChromium> m_platformLayer;
 #endif
+
+    // The associated scrollbar group object, created lazily. Used for Pepper
+    // scrollbars.
+    OwnPtr<ScrollbarGroup> m_scrollbarGroup;
 };
 
 } // namespace WebKit

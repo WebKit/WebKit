@@ -34,6 +34,7 @@
 #include "Chrome.h"
 #include "ChromeClientImpl.h"
 #include "PluginLayerChromium.h"
+#include "ScrollbarGroup.h"
 #include "WebClipboard.h"
 #include "WebCursorInfo.h"
 #include "WebDataSourceImpl.h"
@@ -69,7 +70,9 @@
 #include "MouseEvent.h"
 #include "Page.h"
 #include "RenderBox.h"
+#include "ScrollAnimator.h"
 #include "ScrollView.h"
+#include "ScrollbarTheme.h"
 #include "UserGestureIndicator.h"
 #include "WheelEvent.h"
 
@@ -91,6 +94,14 @@ void WebPluginContainerImpl::setFrameRect(const IntRect& frameRect)
 
 void WebPluginContainerImpl::paint(GraphicsContext* gc, const IntRect& damageRect)
 {
+    if (gc->updatingControlTints() && m_scrollbarGroup) {
+        // See comment in FrameView::updateControlTints().
+        if (m_scrollbarGroup->horizontalScrollbar())
+            m_scrollbarGroup->horizontalScrollbar()->invalidate();
+        if (m_scrollbarGroup->verticalScrollbar())
+            m_scrollbarGroup->verticalScrollbar()->invalidate();
+    }
+
     if (gc->paintingDisabled())
         return;
 
@@ -306,6 +317,9 @@ void WebPluginContainerImpl::reportGeometry()
     calculateGeometry(frameRect(), windowRect, clipRect, cutOutRects);
 
     m_webPlugin->updateGeometry(windowRect, clipRect, cutOutRects, isVisible());
+
+    if (m_scrollbarGroup)
+        m_scrollbarGroup->scrollAnimator()->contentsResized();
 }
 
 void WebPluginContainerImpl::setBackingTextureId(unsigned id)
@@ -437,6 +451,26 @@ WebCore::LayerChromium* WebPluginContainerImpl::platformLayer() const
 }
 #endif
 
+
+ScrollbarGroup* WebPluginContainerImpl::scrollbarGroup()
+{
+    if (!m_scrollbarGroup)
+        m_scrollbarGroup = adoptPtr(new ScrollbarGroup(m_element->document()->frame()->page()));
+    return m_scrollbarGroup.get();
+}
+
+void WebPluginContainerImpl::willStartLiveResize()
+{
+    if (m_scrollbarGroup)
+        m_scrollbarGroup->willStartLiveResize();
+}
+
+void WebPluginContainerImpl::willEndLiveResize()
+{
+    if (m_scrollbarGroup)
+        m_scrollbarGroup->willEndLiveResize();
+}
+
 // Private methods -------------------------------------------------------------
 
 WebPluginContainerImpl::WebPluginContainerImpl(WebCore::HTMLPlugInElement* element, WebPlugin* webPlugin)
@@ -474,6 +508,18 @@ void WebPluginContainerImpl::handleMouseEvent(MouseEvent* event)
             currentPage->focusController()->setFocusedNode(m_element, containingFrame);
         else
             containingFrame->document()->setFocusedNode(m_element);
+    }
+
+    if (m_scrollbarGroup) {
+        // This needs to be set before the other callbacks in this scope, since
+        // the scroll animator class might query the position in response.
+        m_scrollbarGroup->setLastMousePosition(IntPoint(event->x(), event->y()));
+        if (event->type() == eventNames().mousemoveEvent)
+            m_scrollbarGroup->scrollAnimator()->mouseMovedInContentArea();
+        else if (event->type() == eventNames().mouseoverEvent)
+            m_scrollbarGroup->scrollAnimator()->mouseEnteredContentArea();
+        else if (event->type() == eventNames().mouseoutEvent)
+            m_scrollbarGroup->scrollAnimator()->mouseExitedContentArea();
     }
 
     WebCursorInfo cursorInfo;

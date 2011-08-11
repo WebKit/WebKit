@@ -31,24 +31,39 @@
 #ifndef WebScrollbarImpl_h
 #define WebScrollbarImpl_h
 
-#include "ScrollableArea.h"
 #include "WebScrollbar.h"
 
 #include <wtf/RefPtr.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
+class IntPoint;
+class IntRect;
 class Scrollbar;
 }
 
 namespace WebKit {
 
-class WebScrollbarImpl : public WebScrollbar,
-                         public WebCore::ScrollableArea {
+class ScrollbarGroup;
+
+class WebScrollbarImpl : public WebScrollbar {
 public:
-    WebScrollbarImpl(WebScrollbarClient*, Orientation orientation);
+    WebScrollbarImpl(Orientation,
+                     ScrollbarGroup*,                     
+                     WebScrollbarClient*);
     ~WebScrollbarImpl();
 
+    void setScrollOffset(int);
+    void invalidateScrollbarRect(const WebCore::IntRect&);
+    void getTickmarks(Vector<WebCore::IntRect>&) const;
+    WebCore::IntPoint convertFromContainingViewToScrollbar(const WebCore::IntPoint& parentPoint) const;
+    void scrollbarStyleChanged();
+
+    int scrollOffset() { return m_scrollOffset; }
+    WebCore::Scrollbar* scrollbar() { return m_scrollbar.get(); }
+
     // WebKit::WebScrollbar methods
+    virtual bool isOverlay() const;
     virtual void setLocation(const WebRect&);
     virtual int value() const;
     virtual void setValue(int position);
@@ -56,24 +71,6 @@ public:
     virtual void scroll(ScrollDirection, ScrollGranularity, float multiplier);
     virtual void paint(WebCanvas*, const WebRect&);
     virtual bool handleInputEvent(const WebInputEvent&);
-
-    // WebCore::ScrollableArea methods
-    virtual int scrollSize(WebCore::ScrollbarOrientation) const;
-    virtual int scrollPosition(WebCore::Scrollbar*) const;
-    virtual void setScrollOffset(const WebCore::IntPoint&);
-    virtual void invalidateScrollbarRect(WebCore::Scrollbar*, const WebCore::IntRect&);
-    virtual void invalidateScrollCornerRect(const WebCore::IntRect&);
-    virtual bool isActive() const;
-    virtual ScrollableArea* enclosingScrollableArea() const;
-    virtual WebCore::IntRect scrollCornerRect() const { return WebCore::IntRect(); }
-    virtual bool isScrollCornerVisible() const;
-    virtual void getTickmarks(Vector<WebCore::IntRect>&) const;
-    virtual WebCore::Scrollbar* horizontalScrollbar() const;
-    virtual WebCore::Scrollbar* verticalScrollbar() const;
-    virtual int visibleHeight() const;
-    virtual int visibleWidth() const;
-    virtual WebCore::IntSize contentsSize() const;
-    virtual WebCore::IntSize overhangAmount() const;
 
 private:
     bool onMouseDown(const WebInputEvent& event);
@@ -83,6 +80,7 @@ private:
     bool onMouseWheel(const WebInputEvent& event);
     bool onKeyDown(const WebInputEvent& event);
 
+    ScrollbarGroup* m_group;
     WebScrollbarClient* m_client;
 
     int m_scrollOffset;

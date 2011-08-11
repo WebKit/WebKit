@@ -40,6 +40,7 @@ template <typename T> class WebVector;
 class WebScrollbarClient {
 public:
     virtual void valueChanged(WebScrollbar*) = 0;
+    virtual void overlayChanged(WebScrollbar*) = 0;
     virtual void invalidateScrollbarRect(WebScrollbar*, const WebRect&) = 0;
     virtual void getTickmarks(WebScrollbar*, WebVector<WebRect>*) const = 0;
 };

@@ -1,3 +1,75 @@
+2011-08-10  John Abd-El-Malek  <jam@chromium.org>
+
+        [chromium] Update WebScrollbar so that it works with overlay scrollbars on Lion
+        https://bugs.webkit.org/show_bug.cgi?id=66008
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * public/WebScrollbar.h:
+        * public/WebScrollbarClient.h:
+        * src/ScrollbarGroup.cpp: Added.
+        (WebKit::ScrollbarGroup::ScrollbarGroup):
+        (WebKit::ScrollbarGroup::~ScrollbarGroup):
+        (WebKit::ScrollbarGroup::scrollbarCreated):
+        (WebKit::ScrollbarGroup::scrollbarDestroyed):
+        (WebKit::ScrollbarGroup::setLastMousePosition):
+        (WebKit::ScrollbarGroup::scrollSize):
+        (WebKit::ScrollbarGroup::scrollPosition):
+        (WebKit::ScrollbarGroup::setScrollOffset):
+        (WebKit::ScrollbarGroup::invalidateScrollbarRect):
+        (WebKit::ScrollbarGroup::invalidateScrollCornerRect):
+        (WebKit::ScrollbarGroup::isActive):
+        (WebKit::ScrollbarGroup::enclosingScrollableArea):
+        (WebKit::ScrollbarGroup::isScrollCornerVisible):
+        (WebKit::ScrollbarGroup::getTickmarks):
+        (WebKit::ScrollbarGroup::convertFromContainingViewToScrollbar):
+        (WebKit::ScrollbarGroup::horizontalScrollbar):
+        (WebKit::ScrollbarGroup::verticalScrollbar):
+        (WebKit::ScrollbarGroup::minimumScrollPosition):
+        (WebKit::ScrollbarGroup::maximumScrollPosition):
+        (WebKit::ScrollbarGroup::visibleHeight):
+        (WebKit::ScrollbarGroup::visibleWidth):
+        (WebKit::ScrollbarGroup::contentsSize):
+        (WebKit::ScrollbarGroup::overhangAmount):
+        (WebKit::ScrollbarGroup::currentMousePosition):
+        (WebKit::ScrollbarGroup::shouldSuspendScrollAnimations):
+        (WebKit::ScrollbarGroup::scrollbarStyleChanged):
+        (WebKit::ScrollbarGroup::isOnActivePage):
+        (WebKit::ScrollbarGroup::disconnectFromPage):
+        * src/ScrollbarGroup.h: Added.
+        (WebKit::ScrollbarGroup::scrollCornerRect):
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::paint):
+        (WebKit::WebPluginContainerImpl::reportGeometry):
+        (WebKit::WebPluginContainerImpl::scrollbarGroup):
+        (WebKit::WebPluginContainerImpl::willStartLiveResize):
+        (WebKit::WebPluginContainerImpl::willEndLiveResize):
+        (WebKit::WebPluginContainerImpl::handleMouseEvent):
+        * src/WebPluginContainerImpl.h:
+        * src/WebScrollbarImpl.cpp:
+        (WebKit::WebScrollbar::createForPlugin):
+        (WebKit::WebScrollbarImpl::WebScrollbarImpl):
+        (WebKit::WebScrollbarImpl::~WebScrollbarImpl):
+        (WebKit::WebScrollbarImpl::setScrollOffset):
+        (WebKit::WebScrollbarImpl::invalidateScrollbarRect):
+        (WebKit::WebScrollbarImpl::getTickmarks):
+        (WebKit::WebScrollbarImpl::convertFromContainingViewToScrollbar):
+        (WebKit::WebScrollbarImpl::scrollbarStyleChanged):
+        (WebKit::WebScrollbarImpl::isOverlay):
+        (WebKit::WebScrollbarImpl::setValue):
+        (WebKit::WebScrollbarImpl::scroll):
+        (WebKit::WebScrollbarImpl::onMouseMove):
+        (WebKit::WebScrollbarImpl::onMouseLeave):
+        (WebKit::WebScrollbarImpl::onMouseWheel):
+        (WebKit::WebScrollbarImpl::onKeyDown):
+        * src/WebScrollbarImpl.h:
+        (WebKit::WebScrollbarImpl::scrollOffset):
+        (WebKit::WebScrollbarImpl::scrollbar):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::willStartLiveResize):
+        (WebKit::WebViewImpl::willEndLiveResize):
+
 2011-08-10  Dmitry Lomov  <dslomov@google.com>
         
         [Chromium] Decouple implementation of allowFileSystem, openFileSystem and allowDatabase from WebWorkerBase.
