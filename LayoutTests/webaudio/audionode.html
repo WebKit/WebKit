@@ -25,7 +25,11 @@ function runTest() {
     window.jsTestIsAsync = true;
 
     context = new webkitAudioContext();
-    var audioNode = context.createBufferSource();
+    window.audioNode = context.createBufferSource();
+
+    shouldThrow("audioNode.noteOn()");
+    shouldThrow("audioNode.noteGrainOn()");
+    shouldThrow("audioNode.noteOff()");
 
     // Check number of inputs and outputs.
     if (audioNode.numberOfInputs == 0)

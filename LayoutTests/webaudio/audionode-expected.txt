@@ -2,6 +2,9 @@ Basic tests for AudioNode API.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
+PASS audioNode.noteOn() threw exception TypeError: Not enough arguments.
+PASS audioNode.noteGrainOn() threw exception TypeError: Not enough arguments.
+PASS audioNode.noteOff() threw exception TypeError: Not enough arguments.
 PASS Source AudioNode has no inputs.
 PASS Source AudioNode has one output.
 PASS connect() exception thrown for illegal destination AudioNode.
