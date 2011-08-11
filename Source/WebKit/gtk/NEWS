@@ -1,4 +1,19 @@
 ================
+WebKitGTK+ 1.5.2
+================
+
+What's new in WebKitGTK+ 1.5.2?
+
+  - Remove G_CONST_RETURN usage througout WebKit, it's deprecated in
+    glib.
+  - Add plugin process support in WebKit2. Now (GTK+2) plugins can
+    work again with a GTK+3 build.
+  - Add API to set local storage database path.
+  - Further UA spoofing for Google Calendar, since it assumes
+    Linux+WebKit means mobile (ugh).
+  - Lots of bugfixes.
+
+================
 WebKitGTK+ 1.5.1
 ================
 

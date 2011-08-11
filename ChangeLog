@@ -1,3 +1,11 @@
+2011-08-11  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Update NEWS and configure.ac for 1.5.2 release
+
+        Reviewed by Gustavo Noronha.
+
+        * configure.ac: update for release.
+
 2011-08-10  Varun Jain  <varunjain@google.com>
 
         WebViewImpl::selectionRange should return false if there is no selection

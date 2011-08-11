@@ -1,3 +1,11 @@
+2011-08-11  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] Update NEWS and configure.ac for 1.5.2 release
+
+        Reviewed by Gustavo Noronha.
+
+        * NEWS: update for release.
+
 2011-08-10  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] wrong annotation for the return value of webkit_web_view_get_hit_test_results()
