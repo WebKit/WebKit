@@ -71,6 +71,9 @@ static void _ewk_view_tiled_smart_add(Evas_Object *o)
     _parent_sc.sc.add(o);
 
     sd = (Ewk_View_Smart_Data*)evas_object_smart_data_get(o);
+    if (!sd)
+        return;
+
     evas_object_smart_callback_add(
         sd->main_frame, "contents,size,changed",
         _ewk_view_tiled_contents_size_changed_cb, sd);

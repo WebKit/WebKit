@@ -707,10 +707,11 @@ static void _ewk_view_smart_add(Evas_Object *o)
 
     if (!sd) {
         sd = (Ewk_View_Smart_Data *)calloc(1, sizeof(Ewk_View_Smart_Data));
-        if (!sd)
+        if (!sd) {
             CRITICAL("could not allocate Ewk_View_Smart_Data");
-        else
-            evas_object_smart_data_set(o, sd);
+            return;
+        }
+        evas_object_smart_data_set(o, sd);
     }
 
     sd->bg_color.r = 255;
@@ -788,7 +789,7 @@ static void _ewk_view_smart_del(Evas_Object *o)
 
 static void _ewk_view_smart_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
 
     // these should be queued and processed in calculate as well!
     evas_object_resize(sd->backing_store, w, h);
@@ -799,7 +800,7 @@ static void _ewk_view_smart_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
 
 static void _ewk_view_smart_move(Evas_Object *o, Evas_Coord x, Evas_Coord y)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
     sd->changed.position = EINA_TRUE;
     _ewk_view_smart_changed(sd);
 }
@@ -870,7 +871,7 @@ static void _ewk_view_smart_calculate(Evas_Object *o)
 
 static void _ewk_view_smart_show(Evas_Object *o)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
 
     if (evas_object_clipees_get(sd->base.clipper))
         evas_object_show(sd->base.clipper);
@@ -879,7 +880,7 @@ static void _ewk_view_smart_show(Evas_Object *o)
 
 static void _ewk_view_smart_hide(Evas_Object *o)
 {
-    EWK_VIEW_SD_GET(o, sd);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd);
 
     evas_object_hide(sd->base.clipper);
     evas_object_hide(sd->backing_store);

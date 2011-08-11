@@ -43,6 +43,8 @@ static void _ewk_view_single_smart_add(Evas_Object *o)
     _parent_sc.sc.add(o);
 
     sd = (Ewk_View_Smart_Data *)evas_object_smart_data_get(o);
+    if (!sd)
+        return;
 
     Evas_Object *clip = evas_object_rectangle_add(sd->base.evas);
     evas_object_clip_set(sd->backing_store, clip);
@@ -66,6 +68,9 @@ static void _ewk_view_single_smart_resize(Evas_Object *o, Evas_Coord w, Evas_Coo
 {
     Ewk_View_Smart_Data *sd = (Ewk_View_Smart_Data*)evas_object_smart_data_get(o);
     _parent_sc.sc.resize(o, w, h);
+
+    if (!sd)
+        return;
 
     // these should be queued and processed in calculate as well!
     evas_object_image_size_set(sd->backing_store, w, h);
