@@ -463,9 +463,6 @@ public:
                            int angleSpan, BoxSide, Color, EBorderStyle, bool firstCorner);
 #endif
 
-    IntRect borderInnerRect(const IntRect&, unsigned short topWidth, unsigned short bottomWidth,
-                            unsigned short leftWidth, unsigned short rightWidth) const;
-
     // The pseudo element style can be cached or uncached.  Use the cached method if the pseudo element doesn't respect
     // any pseudo classes (and therefore has no concept of changing state).
     RenderStyle* getCachedPseudoStyle(PseudoId, RenderStyle* parentStyle = 0) const;

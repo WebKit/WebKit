@@ -914,15 +914,6 @@ void RenderObject::drawLineForBoxSide(GraphicsContext* graphicsContext, int x1, 
     }
 }
 
-IntRect RenderObject::borderInnerRect(const IntRect& borderRect, unsigned short topWidth, unsigned short bottomWidth, unsigned short leftWidth, unsigned short rightWidth) const
-{
-    return IntRect(
-            borderRect.x() + leftWidth, 
-            borderRect.y() + topWidth, 
-            borderRect.width() - leftWidth - rightWidth, 
-            borderRect.height() - topWidth - bottomWidth);
-}
-
 #if !HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
 void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, int y, float thickness, const IntSize& radius,
                                      int angleStart, int angleSpan, BoxSide s, Color color,

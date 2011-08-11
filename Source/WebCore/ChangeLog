@@ -1,3 +1,17 @@
+2011-08-11  Levi Weintraub  <leviw@chromium.org>
+
+        Remove dead code: borderInnerRect
+        https://bugs.webkit.org/show_bug.cgi?id=66087
+
+        Reviewed by Adam Barth.
+
+        Removing an old and currently unused function: RenderObject::borderInnerRect.
+
+        No new tests since I'm just pruning dead code.
+
+        * rendering/RenderObject.cpp:
+        * rendering/RenderObject.h:
+
 2011-08-11  Simon Fraser  <simon.fraser@apple.com>
 
         Avoid adding the visible wash layer twice
