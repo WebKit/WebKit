@@ -1,3 +1,10 @@
+2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK and Qt rebaselines after r92792.
+
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2011-08-10  Kent Tamura  <tkent@chromium.org>
 
         Move <input type=date> tests to fast/forms/date/

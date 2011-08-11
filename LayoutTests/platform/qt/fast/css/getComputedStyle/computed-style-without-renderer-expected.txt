@@ -185,6 +185,9 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-user-modify: read-only
     -webkit-user-select: text
     -webkit-writing-mode: horizontal-tb
+    -webkit-flow: auto
+    -webkit-content-order: 0
+    -webkit-region-overflow: auto
     clip-path: none
     clip-rule: nonzero
     mask: none
