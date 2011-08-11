@@ -1,3 +1,11 @@
+2011-08-11  Adam Barth  <abarth@webkit.org>
+
+        Rebaseline these tests, as requested by morrita.
+
+        * platform/chromium-mac/editing/pasteboard/paste-text-016-expected.png: Added.
+        * platform/chromium-mac/editing/selection/move-by-character-005-expected.png: Added.
+        * platform/chromium-mac/editing/spelling/inline_spelling_markers-expected.png: Added.
+
 2011-08-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Enable WebGL by default for QtWebKit
