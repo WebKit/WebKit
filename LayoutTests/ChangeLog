@@ -1,3 +1,9 @@
+2011-08-11  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: inspector's scripts-panel test baseline for mac added.
+
+        * platform/mac/inspector/debugger/scripts-panel-expected.txt: Added.
+
 2011-08-01  Adrienne Walker  <enne@google.com>
 
         Enable fast path scrolling for composited iframes

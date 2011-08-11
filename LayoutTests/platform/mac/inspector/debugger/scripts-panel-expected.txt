@@ -1,0 +1,38 @@
+Tests that scripts panel UI elements work as intended.
+
+
+Running: testInitialLoad
+Source requested for foo.js
+Dump files select:
+bar.js
+baz.js
+foo.js
+Source requested for baz.js
+
+Running: testHistory
+Source requested for index.html
+Source requested for script1.js
+Source requested for script2.js
+Source requested for script3.js
+
+Running: testFilesSelect
+?a=b(?a=b)
+...oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url(very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url)
+— example.com —
+?a=b(http://example.com/?a=b)
+— localhost —
+LayoutTests/inspector/debugger/foo/bar
+script.js(<root>/foo/bar/script.js)
+script.js?a=1(<root>/foo/bar/script.js?a=1)
+script.js?a=2(<root>/foo/bar/script.js?a=2)
+LayoutTests/inspector/debugger/foo/baz
+script.js(<root>/foo/baz/script.js)
+— Content scripts —
+contentScript.js?a=1(<root>/foo/bar/contentScript.js?a=1)
+contentScript.js?a=2(<root>/foo/bar/contentScript.js?a=2)
+contentScript2.js?a=1(<root>/foo/bar/contentScript2.js?a=1)
+
+Running: testSourceReplaced
+Source requested for foo.js
+Source requested for bar.js
+
