@@ -1,3 +1,15 @@
+2011-08-11  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [Mac] search as you type does not work with the new indent in the script selector.
+        https://bugs.webkit.org/show_bug.cgi?id=66039
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+        * inspector/front-end/inspector.css:
+        (select.status-bar-item):
+
 2011-08-11  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Qt.

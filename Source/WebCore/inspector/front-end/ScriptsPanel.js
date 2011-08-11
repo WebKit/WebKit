@@ -266,8 +266,8 @@ WebInspector.ScriptsPanel.prototype = {
         var parsedURL = sourceFile.url.asParsedURL();
 
         var names = this._folderAndDisplayNameForScriptURL(sourceFile.url);
-        const indent = "\u00a0\u00a0\u00a0\u00a0";
-        option.text = names.displayName ? indent + indent + names.displayName : WebInspector.UIString("(program)");
+        const indent = WebInspector.isMac() ? "" : "\u00a0\u00a0\u00a0\u00a0";
+        option.text = indent + (names.displayName ? names.displayName : WebInspector.UIString("(program)"));
         option.scriptNameForTest = names.displayName;
 
         var folderNameForSorting;
@@ -295,7 +295,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (sourceFile.isContentScript && !select.contentScriptSection) {
             var contentScriptSection = document.createElement("option");
-            contentScriptSection.text = WebInspector.UIString("Content scripts");
+            contentScriptSection.text = "\u2014 " + WebInspector.UIString("Content scripts") + " \u2014";
             contentScriptSection.disabled = true;
             contentScriptSection.nameForSorting = "1/ContentScriptSeparator";
             select.contentScriptSection = contentScriptSection;
@@ -304,7 +304,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (!sourceFile.isContentScript && names.domain && !select.domainOptions[names.domain]) {
             var domainOption = document.createElement("option");
-            domainOption.text = names.domain;
+            domainOption.text = "\u2014 " + names.domain + " \u2014";
             domainOption.nameForSorting = "0:" + names.domain;
             domainOption.disabled = true;
             select.domainOptions[names.domain] = domainOption;
@@ -313,7 +313,7 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (names.folderName && !select.folderOptions[names.folderName]) {
             var folderOption = document.createElement("option");
-            folderOption.text = indent + names.folderName;
+            folderOption.text = names.folderName;
             folderOption.nameForSorting = folderNameForSorting;
             folderOption.disabled = true;
             select.folderOptions[names.folderName] = folderOption;
