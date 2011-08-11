@@ -146,7 +146,8 @@ sub defaultParametersHash
         'namespaceURI' => '',
         'guardFactoryWith' => '',
         'tagsNullNamespace' => 0,
-        'attrsNullNamespace' => 0
+        'attrsNullNamespace' => 0,
+        'fallbackInterfaceName' => ''
     );
 }
 
@@ -268,14 +269,12 @@ sub usesDefaultWrapper
     return $tagName eq $parameters{namespace} . "Element";
 }
 
-# Build a direct mapping from the tags to the Element to create, excluding
-# Element that have not constructor.
+# Build a direct mapping from the tags to the Element to create.
 sub buildConstructorMap
 {
     my %tagConstructorMap = ();
     for my $tagName (keys %enabledTags) {
         my $interfaceName = $enabledTags{$tagName}{interfaceName};
-        next if (usesDefaultWrapper($interfaceName));
 
         if ($enabledTags{$tagName}{mapToTagName}) {
             die "Cannot handle multiple mapToTagName for $tagName\n" if $enabledTags{$enabledTags{$tagName}{mapToTagName}}{mapToTagName};
@@ -605,6 +604,7 @@ sub printJSElementIncludes
 
         print F "#include \"${wrapperFactoryType}${JSInterfaceName}.h\"\n";
     }
+    print F "#include \"${wrapperFactoryType}$parameters{fallbackInterfaceName}.h\"\n";
 }
 
 sub printElementIncludes
@@ -623,6 +623,7 @@ sub printElementIncludes
 
         print F "#include \"${interfaceName}.h\"\n";
     }
+    print F "#include \"$parameters{fallbackInterfaceName}.h\"\n";
 }
 
 sub printConditionalElementIncludes
@@ -762,6 +763,7 @@ printFunctionInits($F, \%tagConstructorMap);
 
 print F "}\n";
 
+
 print F "\nPassRefPtr<$parameters{namespace}Element> $parameters{namespace}ElementFactory::create$parameters{namespace}Element(const QualifiedName& qName, Document* document";
 print F ", HTMLFormElement* formElement" if $parameters{namespace} eq "HTML";
 print F ", bool createdByParser)\n{\n";
@@ -798,7 +800,7 @@ if ($parameters{namespace} eq "HTML") {
     print F "        return function(qName, document, createdByParser);\n";
 }
 
-print F "    return $parameters{namespace}Element::create(qName, document);\n";
+print F "    return $parameters{fallbackInterfaceName}::create(qName, document);\n";
 
 print F <<END
 }
@@ -885,7 +887,7 @@ sub printWrapperFunctions
     for my $tagName (sort keys %enabledTags) {
         # Avoid defining the same wrapper method twice.
         my $JSInterfaceName = $enabledTags{$tagName}{JSInterfaceName};
-        next if defined($tagsSeen{$JSInterfaceName}) || usesDefaultJSWrapper($tagName);
+        next if defined($tagsSeen{$JSInterfaceName}) || (usesDefaultJSWrapper($tagName) && ($parameters{fallbackInterfaceName} eq $parameters{namespace} . "Element"));
         $tagsSeen{$JSInterfaceName} = 1;
 
         my $conditional = $enabledTags{$tagName}{conditional};
@@ -932,7 +934,16 @@ static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespa
 
 END
 ;
-            } else {
+            } elsif (${JSInterfaceName} eq "HTMLElement") {
+                print F <<END
+static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element)
+{
+    return V8$parameters{namespace}Element::wrap(element);
+}
+
+END
+;
+             } else {
             print F <<END
 static v8::Handle<v8::Value> create${JSInterfaceName}Wrapper($parameters{namespace}Element* element)
 {
@@ -1046,7 +1057,7 @@ END
 
     for my $tag (sort keys %enabledTags) {
         # Do not add the name to the map if it does not have a JS wrapper constructor or uses the default wrapper.
-        next if usesDefaultJSWrapper($tag, \%enabledTags);
+        next if (usesDefaultJSWrapper($tag, \%enabledTags) && ($parameters{fallbackInterfaceName} eq $parameters{namespace} . "Element"));
 
         my $conditional = $enabledTags{$tag}{conditional};
         if ($conditional) {
@@ -1071,13 +1082,13 @@ END
     if ($wrapperFactoryType eq "JS") {
         print F <<END
         return createWrapperFunction(exec, globalObject, element);
-    return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{namespace}Element, element.get());
+    return CREATE_DOM_WRAPPER(exec, globalObject, $parameters{fallbackInterfaceName}, element.get());
 END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
         return createWrapperFunction(element);
-    return V8$parameters{namespace}Element::wrap(element, forceNewObject);
+    return V8$parameters{fallbackInterfaceName}::wrap(static_cast<$parameters{fallbackInterfaceName}*>(element), forceNewObject);
 END
 ;
     }

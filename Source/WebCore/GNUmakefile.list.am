@@ -325,6 +325,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSHTMLTitleElement.h \
 	DerivedSources/WebCore/JSHTMLTrackElement.cpp \
 	DerivedSources/WebCore/JSHTMLTrackElement.h \
+	DerivedSources/WebCore/JSHTMLUnknownElement.cpp \
+	DerivedSources/WebCore/JSHTMLUnknownElement.h \
 	DerivedSources/WebCore/JSHTMLUListElement.cpp \
 	DerivedSources/WebCore/JSHTMLUListElement.h \
 	DerivedSources/WebCore/JSHTMLVideoElement.cpp \
@@ -1789,6 +1791,7 @@ webcore_sources += \
 	Source/WebCore/html/HTMLTitleElement.h \
 	Source/WebCore/html/HTMLTrackElement.cpp \
 	Source/WebCore/html/HTMLTrackElement.h \
+	Source/WebCore/html/HTMLUnknownElement.h \
 	Source/WebCore/html/HTMLUListElement.cpp \
 	Source/WebCore/html/HTMLUListElement.h \
 	Source/WebCore/html/HTMLVideoElement.cpp \

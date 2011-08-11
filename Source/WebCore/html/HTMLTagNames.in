@@ -1,6 +1,7 @@
 namespace="HTML"
 namespacePrefix="xhtml"
 namespaceURI="http://www.w3.org/1999/xhtml"
+fallbackInterfaceName="HTMLUnknownElement"
 
 a interfaceName=HTMLAnchorElement
 abbr interfaceName=HTMLElement

@@ -1671,6 +1671,8 @@
 		6E21C6C21126339900A7BE02 /* GraphicsContext3DCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E21C6C11126339900A7BE02 /* GraphicsContext3DCG.cpp */; };
 		6E47E66010B7944B00B186C8 /* WebGLGetInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */; };
 		6E47E66110B7944B00B186C8 /* WebGLGetInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */; };
+		6E4ABCD4138EA0B70071D291 /* JSHTMLUnknownElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E4ABCD2138EA0B70071D291 /* JSHTMLUnknownElement.cpp */; };
+		6E4ABCD5138EA0B70071D291 /* JSHTMLUnknownElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */; };
 		6E4E91AC10F7FB3100A2779C /* CanvasContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */; };
 		6E4E91AD10F7FB3100A2779C /* CanvasContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E4E91A810F7FB3100A2779C /* CanvasContextAttributes.h */; };
 		6E4E91AE10F7FB3100A2779C /* WebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6E4E91A910F7FB3100A2779C /* WebGLContextAttributes.cpp */; };
@@ -8302,6 +8304,8 @@
 		6E21C6C11126339900A7BE02 /* GraphicsContext3DCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DCG.cpp; sourceTree = "<group>"; };
 		6E47E65E10B7944B00B186C8 /* WebGLGetInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLGetInfo.cpp; path = canvas/WebGLGetInfo.cpp; sourceTree = "<group>"; };
 		6E47E65F10B7944B00B186C8 /* WebGLGetInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebGLGetInfo.h; path = canvas/WebGLGetInfo.h; sourceTree = "<group>"; };
+		6E4ABCD2138EA0B70071D291 /* JSHTMLUnknownElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLUnknownElement.cpp; sourceTree = "<group>"; };
+		6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSHTMLUnknownElement.h; sourceTree = "<group>"; };
 		6E4E91A710F7FB3100A2779C /* CanvasContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CanvasContextAttributes.cpp; path = canvas/CanvasContextAttributes.cpp; sourceTree = "<group>"; };
 		6E4E91A810F7FB3100A2779C /* CanvasContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CanvasContextAttributes.h; path = canvas/CanvasContextAttributes.h; sourceTree = "<group>"; };
 		6E4E91A910F7FB3100A2779C /* WebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebGLContextAttributes.cpp; path = canvas/WebGLContextAttributes.cpp; sourceTree = "<group>"; };
@@ -16850,6 +16854,8 @@
 				A80E7B020A19D606007FB8C5 /* JSHTMLTitleElement.h */,
 				1A85B20E0A1B258700D8C87C /* JSHTMLUListElement.cpp */,
 				1A85B20F0A1B258700D8C87C /* JSHTMLUListElement.h */,
+				6E4ABCD2138EA0B70071D291 /* JSHTMLUnknownElement.cpp */,
+				6E4ABCD3138EA0B70071D291 /* JSHTMLUnknownElement.h */,
 				E446140E0CD6826900FADA75 /* JSHTMLVideoElement.cpp */,
 				E446140F0CD6826900FADA75 /* JSHTMLVideoElement.h */,
 				A77979240D6B9E64003851B9 /* JSImageData.cpp */,
@@ -21988,6 +21994,7 @@
 				A80E7E9D0A1A83E3007FB8C5 /* JSHTMLTextAreaElement.h in Headers */,
 				A80E7B0C0A19D606007FB8C5 /* JSHTMLTitleElement.h in Headers */,
 				1A85B2110A1B258700D8C87C /* JSHTMLUListElement.h in Headers */,
+				6E4ABCD5138EA0B70071D291 /* JSHTMLUnknownElement.h in Headers */,
 				E44614170CD6826900FADA75 /* JSHTMLVideoElement.h in Headers */,
 				C585A67D11D4FB08004C3E4B /* JSIDBAny.h in Headers */,
 				81BE20D311F4BC3200915DFA /* JSIDBCursor.h in Headers */,
@@ -24966,6 +24973,7 @@
 				A80E7E9E0A1A83E3007FB8C5 /* JSHTMLTextAreaElement.cpp in Sources */,
 				A80E7B130A19D606007FB8C5 /* JSHTMLTitleElement.cpp in Sources */,
 				1A85B2100A1B258700D8C87C /* JSHTMLUListElement.cpp in Sources */,
+				6E4ABCD4138EA0B70071D291 /* JSHTMLUnknownElement.cpp in Sources */,
 				E44614160CD6826900FADA75 /* JSHTMLVideoElement.cpp in Sources */,
 				C585A67C11D4FB08004C3E4B /* JSIDBAny.cpp in Sources */,
 				C585A65E11D4FAB2004C3E4B /* JSIDBAnyCustom.cpp in Sources */,

@@ -278,6 +278,7 @@ DOM_CLASSES = \
     HTMLTitleElement \
     HTMLTrackElement \
     HTMLUListElement \
+    HTMLUnknownElement \
     HTMLVideoElement \
     IDBAny \
     IDBCursor \

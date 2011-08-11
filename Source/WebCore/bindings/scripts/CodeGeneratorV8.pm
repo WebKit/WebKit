@@ -3180,6 +3180,7 @@ sub IsDOMNodeType
     return 1 if $type eq 'HTMLCanvasElement';
     return 1 if $type eq 'HTMLDocument';
     return 1 if $type eq 'HTMLElement';
+    return 1 if $type eq 'HTMLUnknownElement';
     return 1 if $type eq 'HTMLFormElement';
     return 1 if $type eq 'HTMLTableCaptionElement';
     return 1 if $type eq 'HTMLTableSectionElement';

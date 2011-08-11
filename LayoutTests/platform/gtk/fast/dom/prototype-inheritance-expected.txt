@@ -241,6 +241,8 @@ PASS inner.HTMLTitleElement.isInner is true
 PASS inner.HTMLTitleElement.constructor.isInner is true
 PASS inner.HTMLUListElement.isInner is true
 PASS inner.HTMLUListElement.constructor.isInner is true
+PASS inner.HTMLUnknownElement.isInner is true
+PASS inner.HTMLUnknownElement.constructor.isInner is true
 PASS inner.HTMLVideoElement.isInner is true
 PASS inner.HTMLVideoElement.constructor.isInner is true
 PASS inner.HashChangeEvent.isInner is true

@@ -204,6 +204,7 @@
 #include "JSHTMLTableSectionElement.cpp"
 #include "JSHTMLTextAreaElement.cpp"
 #include "JSHTMLTitleElement.cpp"
+#include "JSHTMLUnknownElement.cpp"
 #include "JSHTMLUListElement.cpp"
 #include "JSHTMLVideoElement.cpp"
 #include "JSIDBAny.cpp"
