@@ -48,10 +48,10 @@ MOFILES += $(shell echo $(POFILES) | tr ' ' '\n' | sed "s,^$(srcdir)/,,g" | sed 
 # if updating the $(CATALOGS) would always touch them; however, the rule for
 # $(POFILES) has been designed to not touch files that don't need to be
 # changed.
-stamp-po: $(srcdir)/Source/WebKit/gtk/po/$(DOMAIN).pot $(MOFILES)
-	test ! -f $(srcdir)/Source/WebKit/gtk/po/$(DOMAIN).pot || \
+stamp-po: $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot $(MOFILES)
+	test ! -f $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot || \
 	  test -z "$(MOFILES)" || $(MAKE) $(MOFILES)
-	@test ! -f $(srcdir)/Source/WebKit/gtk/po/$(DOMAIN).pot || { \
+	@test ! -f $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot || { \
 	  echo "touch stamp-po" && \
 	  echo timestamp > stamp-poT && \
 	  mv stamp-poT stamp-po; \
@@ -73,7 +73,7 @@ $(DOMAIN).pot-update: $(POTFILES) $(srcdir)/Source/WebKit/gtk/po/POTFILES
 	      --files-from=$(srcdir)/Source/WebKit/gtk/po/POTFILES \
 	      --copyright-holder='$(COPYRIGHT_HOLDER)' \
 	      --msgid-bugs-address="$$msgid_bugs_address" \
-	      --keyword=_ --keyword=N_ -o $(srcdir)/Source/WebKit/gtk/po/$(DOMAIN).pot \
+	      --keyword=_ --keyword=N_ -o $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot \
 	    ;; \
 	  *) \
 	    $(XGETTEXT) --default-domain=$(DOMAIN) --directory=$(srcdir) \
@@ -83,19 +83,19 @@ $(DOMAIN).pot-update: $(POTFILES) $(srcdir)/Source/WebKit/gtk/po/POTFILES
 	      --package-name="$${package_gnu}@PACKAGE@" \
 	      --package-version='@VERSION@' \
 	      --msgid-bugs-address="$$msgid_bugs_address" \
-	      --keyword=_ --keyword=N_ -o $(srcdir)/Source/WebKit/gtk/po/$(DOMAIN).pot \
+	      --keyword=_ --keyword=N_ -o $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot \
 	    ;; \
 	esac
 
 # This rule has no dependencies: we don't need to update $(DOMAIN).pot at
 # every "make" invocation, only create it when it is missing.
 # Only "make $(DOMAIN).pot-update" or "make dist" will force an update.
-$(srcdir)/Source/WebKit/gtk/po/$(DOMAIN).pot:
+$(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot:
 	$(MAKE) $(DOMAIN).pot-update
 
 # This target rebuilds a PO file if $(DOMAIN).pot has changed.
 # Note that a PO file is not touched if it doesn't need to be changed.
-update-po-files: $(srcdir)/Source/WebKit/gtk/po/$(DOMAIN).pot
+update-po-files: $(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot
 	@for pofile in $(POFILES); do \
 	  lang=`echo $$pofile | sed -e 's,.*/,,' -e 's/\.po$$//'`; \
 	  if test -f "$(srcdir)/Source/WebKit/gtk/po/$${lang}.po"; then \
@@ -123,10 +123,12 @@ CLEANFILES += \
 	$(top_builddir)/stamp-po
 
 MAINTAINERCLEANFILES += \
-	$(MOFILES)
+	$(MOFILES) \
+	$(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot
 
 DISTCLEANFILES += \
-	$(MOFILES)
+	$(MOFILES) \
+	$(top_builddir)/Source/WebKit/gtk/po/$(DOMAIN).pot
 
 po-install-data-local: all
 	$(mkdir_p) $(DESTDIR)$(datadir)

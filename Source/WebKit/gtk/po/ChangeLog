@@ -1,3 +1,12 @@
+2011-08-11  Xan Lopez  <xlopez@igalia.com>
+
+        [GTK] create pot files in builddir, not (read only) srcdir
+        https://bugs.webkit.org/show_bug.cgi?id=66059
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am: write and read pot files from the build dir.
+
 2011-07-11  Yuri Chornoivan  <yurchor@ukr.net>
 
         Ukrainian translation for WebKitGTK+
