@@ -142,6 +142,8 @@ namespace JSC {
         }
         
     public:
+        typedef JSVariableObject Base;
+
         static JSGlobalObject* create(JSGlobalData& globalData, Structure* structure)
         {
             return new (allocateCell<JSGlobalObject>(globalData.heap)) JSGlobalObject(globalData, structure);

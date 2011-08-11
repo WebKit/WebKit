@@ -56,10 +56,9 @@ namespace JSC {
     };
 
     class RegExpConstructor : public InternalFunction {
-    private:
-        RegExpConstructor(ExecState*, JSGlobalObject*, Structure*, RegExpPrototype*);
-
     public:
+        typedef InternalFunction Base;
+
         static RegExpConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, RegExpPrototype* regExpPrototype)
         {
             return new (allocateCell<RegExpConstructor>(*exec->heap())) RegExpConstructor(exec, globalObject, structure, regExpPrototype);
@@ -94,6 +93,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | InternalFunction::StructureFlags;
 
     private:
+        RegExpConstructor(ExecState*, JSGlobalObject*, Structure*, RegExpPrototype*);
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
 

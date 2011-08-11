@@ -1118,13 +1118,6 @@ void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
     stubCall.call(currentInstruction[2].u.operand);
 }
 
-void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_new_func_exp);
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->functionExpr(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_throw(Instruction* currentInstruction)
 {
     unsigned exception = currentInstruction[1].u.operand;

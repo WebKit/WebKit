@@ -44,6 +44,8 @@ namespace JSC {
         }
         
     public:
+        typedef JSNonFinalObject Base;
+
         static JSNotAnObject* create(ExecState* exec)
         {
             return new (allocateCell<JSNotAnObject>(*exec->heap())) JSNotAnObject(exec);

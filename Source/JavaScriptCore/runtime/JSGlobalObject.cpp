@@ -349,6 +349,7 @@ void JSGlobalObject::visitChildren(SlotVisitor& visitor)
     visitIfNeeded(visitor, &m_nullPrototypeObjectStructure);
     visitIfNeeded(visitor, &m_errorStructure);
     visitIfNeeded(visitor, &m_functionStructure);
+    visitIfNeeded(visitor, &m_namedFunctionStructure);
     visitIfNeeded(visitor, &m_numberObjectStructure);
     visitIfNeeded(visitor, &m_regExpMatchesArrayStructure);
     visitIfNeeded(visitor, &m_regExpStructure);

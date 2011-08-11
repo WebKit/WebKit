@@ -49,6 +49,7 @@
 namespace JSC {
 
     class CodeBlock;
+    class FunctionExecutable;
     class JIT;
     class JSPropertyNameIterator;
     class Interpreter;
@@ -299,9 +300,10 @@ namespace JSC {
         void testPrototype(JSValue, JumpList& failureCases);
 
         void emitWriteBarrier(RegisterID owner, RegisterID scratch);
-        
-        template<typename T>
-        void emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID scratch);
+
+        template<typename ClassType, typename StructureType> void emitAllocateBasicJSObject(StructureType, void* vtable, RegisterID result, RegisterID storagePtr);
+        template<typename T> void emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID storagePtr);
+        void emitAllocateJSFunction(FunctionExecutable*, RegisterID scopeChain, RegisterID result, RegisterID storagePtr);
 
 #if USE(JSVALUE32_64)
         bool getOperandConstantImmediateInt(unsigned op1, unsigned op2, unsigned& op, int32_t& constant);
@@ -528,6 +530,10 @@ namespace JSC {
         void emitGetVirtualRegister(int src, RegisterID dst);
         void emitGetVirtualRegisters(int src1, RegisterID dst1, int src2, RegisterID dst2);
         void emitPutVirtualRegister(unsigned dst, RegisterID from = regT0);
+        void emitStoreCell(unsigned dst, RegisterID payload, bool /* only used in JSValue32_64 */ = false)
+        {
+            emitPutVirtualRegister(dst, payload);
+        }
 
         int32_t getConstantOperandImmediateInt(unsigned src);
 
@@ -906,6 +912,8 @@ namespace JSC {
         void emitSlow_op_to_jsnumber(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_to_primitive(Instruction*, Vector<SlowCaseEntry>::iterator&);
         void emitSlow_op_urshift(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_new_func(Instruction*, Vector<SlowCaseEntry>::iterator&);
+        void emitSlow_op_new_func_exp(Instruction*, Vector<SlowCaseEntry>::iterator&);
 
         
         void emitRightShift(Instruction*, bool isUnsigned);

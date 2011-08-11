@@ -136,6 +136,10 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     
     if (node.hasLocal())
         printf("  predicting %s", predictionToString(getPrediction(node.local())));
+    if (node.hasVarNumber())
+        printf("  predicting %s", predictionToString(getGlobalVarPrediction(node.varNumber())));
+    if (node.hasPrediction())
+        printf("  predicting %s", predictionToString(node.getPrediction()));
     
     printf("\n");
 }

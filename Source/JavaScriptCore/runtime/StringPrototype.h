@@ -32,6 +32,8 @@ namespace JSC {
         StringPrototype(ExecState*, JSGlobalObject*, Structure*);
 
     public:
+        typedef StringObject Base;
+
         static StringPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             return new (allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, globalObject, structure);

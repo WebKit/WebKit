@@ -184,6 +184,59 @@ struct OpInfo {
     unsigned m_value;
 };
 
+typedef uint8_t PredictedType;
+static const PredictedType PredictNone   = 0;
+static const PredictedType PredictCell   = 0x01;
+static const PredictedType PredictArray  = 0x03;
+static const PredictedType PredictInt32  = 0x04;
+static const PredictedType PredictDouble = 0x08;
+static const PredictedType PredictNumber = 0x0c;
+
+inline bool isCellPrediction(PredictedType value)
+{
+    return (value & PredictCell) == PredictCell && !(value & ~PredictArray);
+}
+
+inline bool isArrayPrediction(PredictedType value)
+{
+    return value == PredictArray;
+}
+
+inline bool isInt32Prediction(PredictedType value)
+{
+    return value == PredictInt32;
+}
+
+inline bool isDoublePrediction(PredictedType value)
+{
+    return value == PredictDouble;
+}
+
+inline bool isNumberPrediction(PredictedType value)
+{
+    return !!(value & PredictNumber) && !(value & ~PredictNumber);
+}
+
+#ifndef NDEBUG
+inline const char* predictionToString(PredictedType value)
+{
+    switch (value) {
+    case PredictNone:
+        return "p-bottom";
+    case PredictCell:
+        return "p-cell";
+    case PredictArray:
+        return "p-array";
+    case PredictInt32:
+        return "p-int32";
+    case PredictNumber:
+        return "p-number";
+    default:
+        return "p-top";
+    }
+}
+#endif
+
 // === Node ===
 //
 // Node represents a single operation in the data flow graph.
@@ -232,12 +285,14 @@ struct Node {
         children.fixed.child3 = child3;
     }
     
-    // Construct a node with a variable number of children and no immediate values.
-    Node(VarArgTag, NodeType op, ExceptionInfo exceptionInfo, unsigned firstChild, unsigned numChildren)
+    // Construct a node with a variable number of children and two immediate values.
+    Node(VarArgTag, NodeType op, ExceptionInfo exceptionInfo, OpInfo imm1, OpInfo imm2, unsigned firstChild, unsigned numChildren)
         : op(op)
         , exceptionInfo(exceptionInfo)
         , m_virtualRegister(InvalidVirtualRegister)
         , m_refCount(0)
+        , m_opInfo(imm1.m_value)
+        , m_opInfo2(imm2.m_value)
     {
         ASSERT(op & NodeHasVarArgs);
         children.variable.firstChild = firstChild;
@@ -351,6 +406,32 @@ struct Node {
     {
         ASSERT(isBranch());
         return m_opInfo2;
+    }
+    
+    bool hasPrediction()
+    {
+        switch (op) {
+        case GetById:
+        case GetMethod:
+        case GetByVal:
+        case Call:
+        case Construct:
+            return true;
+        default:
+            return false;
+        }
+    }
+    
+    PredictedType getPrediction()
+    {
+        ASSERT(hasPrediction());
+        return static_cast<PredictedType>(m_opInfo2);
+    }
+    
+    void predict(PredictedType prediction)
+    {
+        ASSERT(hasPrediction());
+        m_opInfo2 |= prediction;
     }
 
     VirtualRegister virtualRegister()

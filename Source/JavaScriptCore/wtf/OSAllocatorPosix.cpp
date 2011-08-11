@@ -104,8 +104,12 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
             CRASH();
     }
     if (result && includesGuardPages) {
-        mprotect(result, pageSize(), PROT_NONE);
-        mprotect(static_cast<char*>(result) + bytes - pageSize(), pageSize(), PROT_NONE);
+        // We use mmap to remap the guardpages rather than using mprotect as
+        // mprotect results in multiple references to the code region.  This
+        // breaks the madvise based mechanism we use to return physical memory
+        // to the OS.
+        mmap(result, pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
+        mmap(static_cast<char*>(result) + bytes - pageSize(), pageSize(), PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, fd, 0);
     }
     return result;
 }

@@ -431,6 +431,8 @@ void JIT::privateCompileSlowCases()
 #endif
         DEFINE_SLOWCASE_OP(op_neq)
         DEFINE_SLOWCASE_OP(op_new_object)
+        DEFINE_SLOWCASE_OP(op_new_func)
+        DEFINE_SLOWCASE_OP(op_new_func_exp)
         DEFINE_SLOWCASE_OP(op_not)
         DEFINE_SLOWCASE_OP(op_nstricteq)
         DEFINE_SLOWCASE_OP(op_post_dec)

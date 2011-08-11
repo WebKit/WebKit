@@ -80,6 +80,8 @@ namespace JSC {
         friend void setUpStaticFunctionSlot(ExecState* exec, const HashEntry* entry, JSObject* thisObj, const Identifier& propertyName, PropertySlot& slot);
 
     public:
+        typedef JSCell Base;
+
         virtual void visitChildren(SlotVisitor&);
         ALWAYS_INLINE void visitChildrenDirect(SlotVisitor&);
 
@@ -332,6 +334,8 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
+        typedef JSObject Base;
+
         static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
         {
             return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
@@ -360,6 +364,8 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         friend class JSObject;
 
     public:
+        typedef JSObject Base;
+
         explicit JSFinalObject(VPtrStealingHackType)
             : JSObject(VPtrStealingHack, m_inlineStorage)
         {
@@ -534,6 +540,22 @@ ALWAYS_INLINE bool JSCell::fastGetOwnPropertySlot(ExecState* exec, const Identif
     if (!structure()->typeInfo().overridesGetOwnPropertySlot())
         return asObject(this)->inlineGetOwnPropertySlot(exec, propertyName, slot);
     return getOwnPropertySlot(exec, propertyName, slot);
+}
+
+// Fast call to get a property where we may not yet have converted the string to an
+// identifier. The first time we perform a property access with a given string, try
+// performing the property map lookup without forming an identifier. We detect this
+// case by checking whether the hash has yet been set for this string.
+ALWAYS_INLINE JSValue JSCell::fastGetOwnProperty(ExecState* exec, const UString& name)
+{
+    if (!m_structure->typeInfo().overridesGetOwnPropertySlot() && !m_structure->hasGetterSetterProperties()) {
+        size_t offset = name.impl()->hasHash()
+            ? m_structure->get(exec->globalData(), Identifier(exec, name))
+            : m_structure->get(exec->globalData(), name);
+        if (offset != WTF::notFound)
+            return asObject(this)->locationForOffset(offset)->get();
+    }
+    return JSValue();
 }
 
 // It may seem crazy to inline a function this large but it makes a big difference

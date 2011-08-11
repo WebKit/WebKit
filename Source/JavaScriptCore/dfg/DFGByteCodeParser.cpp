@@ -394,10 +394,10 @@ private:
         return resultIndex;
     }
     
-    NodeIndex addToGraph(Node::VarArgTag, NodeType op)
+    NodeIndex addToGraph(Node::VarArgTag, NodeType op, OpInfo info1, OpInfo info2)
     {
         NodeIndex resultIndex = (NodeIndex)m_graph.size();
-        m_graph.append(Node(Node::VarArg, op, m_currentIndex, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
+        m_graph.append(Node(Node::VarArg, op, m_currentIndex, info1, info2, m_graph.m_varArgChildren.size() - m_numPassedVarArgs, m_numPassedVarArgs));
         
         m_numPassedVarArgs = 0;
         
@@ -419,7 +419,7 @@ private:
         int firstArg = registerOffset - argCount - RegisterFile::CallFrameHeaderSize;
         for (int argIdx = firstArg; argIdx < firstArg + argCount; argIdx++)
             addVarArgChild(get(argIdx));
-        NodeIndex call = addToGraph(Node::VarArg, op);
+        NodeIndex call = addToGraph(Node::VarArg, op, OpInfo(0), OpInfo(PredictNone));
         Instruction* putInstruction = currentInstruction + OPCODE_LENGTH(op_call);
         if (interpreter->getOpcodeID(putInstruction->u.opcode) == op_call_put_result)
             set(putInstruction[1].u.operand, call);
@@ -430,24 +430,37 @@ private:
 
     void predictArray(NodeIndex nodeIndex)
     {
-        Node* nodePtr = &m_graph[nodeIndex];
-
-        if (nodePtr->op == GetLocal)
-            m_graph.predict(nodePtr->local(), PredictArray);
+        m_graph.predict(m_graph[nodeIndex], PredictArray);
     }
 
     void predictInt32(NodeIndex nodeIndex)
     {
-        Node* nodePtr = &m_graph[nodeIndex];
-
-        if (nodePtr->op == ValueToNumber)
-            nodePtr = &m_graph[nodePtr->child1()];
-
-        if (nodePtr->op == ValueToInt32)
-            nodePtr = &m_graph[nodePtr->child1()];
-
-        if (nodePtr->op == GetLocal)
-            m_graph.predict(nodePtr->local(), PredictInt32);
+        ASSERT(m_reusableNodeStack.isEmpty());
+        m_reusableNodeStack.append(&m_graph[nodeIndex]);
+        
+        do {
+            Node* nodePtr = m_reusableNodeStack.last();
+            m_reusableNodeStack.removeLast();
+            
+            if (nodePtr->op == ValueToNumber)
+                nodePtr = &m_graph[nodePtr->child1()];
+            
+            if (nodePtr->op == ValueToInt32)
+                nodePtr = &m_graph[nodePtr->child1()];
+            
+            switch (nodePtr->op) {
+            case ArithAdd:
+            case ArithSub:
+            case ArithMul:
+            case ValueAdd:
+                m_reusableNodeStack.append(&m_graph[nodePtr->child1()]);
+                m_reusableNodeStack.append(&m_graph[nodePtr->child2()]);
+                break;
+            default:
+                m_graph.predict(*nodePtr, PredictInt32);
+                break;
+            }
+        } while (!m_reusableNodeStack.isEmpty());
     }
 
     JSGlobalData* m_globalData;
@@ -520,6 +533,8 @@ private:
     };
     Vector<PhiStackEntry, 16> m_argumentPhiStack;
     Vector<PhiStackEntry, 16> m_localPhiStack;
+    
+    Vector<Node*, 16> m_reusableNodeStack;
 };
 
 #define NEXT_OPCODE(name) \
@@ -701,13 +716,13 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex op2 = get(currentInstruction[3].u.operand);
             // If both operands can statically be determined to the numbers, then this is an arithmetic add.
             // Otherwise, we must assume this may be performing a concatenation to a string.
-            if (m_graph[op1].hasNumericResult() && m_graph[op2].hasNumericResult()) {
-                if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
-                    predictInt32(op1);
-                    predictInt32(op2);
-                }
+            if (isSmallInt32Constant(op1) || isSmallInt32Constant(op2)) {
+                predictInt32(op1);
+                predictInt32(op2);
+            }
+            if (m_graph[op1].hasNumericResult() && m_graph[op2].hasNumericResult())
                 set(currentInstruction[1].u.operand, addToGraph(ArithAdd, toNumber(op1), toNumber(op2)));
-            } else
+            else
                 set(currentInstruction[1].u.operand, addToGraph(ValueAdd, op1, op2));
             NEXT_OPCODE(op_add);
         }
@@ -866,7 +881,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             predictArray(base);
             predictInt32(property);
 
-            NodeIndex getByVal = addToGraph(GetByVal, base, property, aliases.lookupGetByVal(base, property));
+            NodeIndex getByVal = addToGraph(GetByVal, OpInfo(0), OpInfo(PredictNone), base, property, aliases.lookupGetByVal(base, property));
             set(currentInstruction[1].u.operand, getByVal);
             aliases.recordGetByVal(getByVal);
 
@@ -895,7 +910,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = get(getInstruction[2].u.operand);
             unsigned identifier = getInstruction[3].u.operand;
             
-            NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), base);
+            NodeIndex getMethod = addToGraph(GetMethod, OpInfo(identifier), OpInfo(PredictNone), base);
             set(getInstruction[1].u.operand, getMethod);
             aliases.recordGetMethod(getMethod);
             
@@ -908,7 +923,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifier = currentInstruction[3].u.operand;
             
-            NodeIndex getById = addToGraph(GetById, OpInfo(identifier), base);
+            NodeIndex getById = addToGraph(GetById, OpInfo(identifier), OpInfo(PredictNone), base);
             set(currentInstruction[1].u.operand, getById);
             aliases.recordGetById(getById);
 

@@ -35,6 +35,8 @@
 
 class JSGlueGlobalObject : public JSGlobalObject {
     public:
+        typedef JSGlobalObject Base;
+
         static JSGlueGlobalObject* create(JSGlobalData& globalData, Structure* structure, JSFlags flags = kJSFlagNone)
         {
             return new (allocateCell<JSGlueGlobalObject>(globalData.heap)) JSGlueGlobalObject(globalData, structure, flags);

@@ -30,6 +30,8 @@ namespace JSC {
         MathObject(ExecState*, JSGlobalObject*, Structure*);
 
     public:
+        typedef JSObjectWithGlobalObject Base;
+
         static MathObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             return new (allocateCell<MathObject>(*exec->heap())) MathObject(exec, globalObject, structure);

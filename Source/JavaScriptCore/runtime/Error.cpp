@@ -174,6 +174,8 @@ private:
     }
 
 public:
+    typedef InternalFunction Base;
+
     static StrictModeTypeErrorFunction* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& message)
     {
         return new (allocateCell<StrictModeTypeErrorFunction>(*exec->heap())) StrictModeTypeErrorFunction(exec, globalObject, structure, message);

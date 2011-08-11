@@ -32,6 +32,8 @@ namespace JSC {
         DatePrototype(ExecState*, JSGlobalObject*, Structure*);
 
     public:
+        typedef DateInstance Base;
+
         static DatePrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             return new (allocateCell<DatePrototype>(*exec->heap())) DatePrototype(exec, globalObject, structure);

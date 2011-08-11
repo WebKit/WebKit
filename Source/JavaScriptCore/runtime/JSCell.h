@@ -137,6 +137,7 @@ namespace JSC {
         // call this function, not its slower virtual counterpart. (For integer
         // property names, we want a similar interface with appropriate optimizations.)
         bool fastGetOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
+        JSValue fastGetOwnProperty(ExecState*, const UString&);
 
         static ptrdiff_t structureOffset()
         {

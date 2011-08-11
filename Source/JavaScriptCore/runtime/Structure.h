@@ -59,6 +59,9 @@ namespace JSC {
     class Structure : public JSCell {
     public:
         friend class StructureTransitionTable;
+
+        typedef JSCell Base;
+
         static Structure* create(JSGlobalData& globalData, JSValue prototype, const TypeInfo& typeInfo, unsigned anonymousSlotCount, const ClassInfo* classInfo)
         {
             ASSERT(globalData.structureStructure);
@@ -112,6 +115,7 @@ namespace JSC {
         bool isUsingInlineStorage() const;
 
         size_t get(JSGlobalData&, const Identifier& propertyName);
+        size_t get(JSGlobalData&, const UString& name);
         size_t get(JSGlobalData&, StringImpl* propertyName, unsigned& attributes, JSCell*& specificValue);
         size_t get(JSGlobalData& globalData, const Identifier& propertyName, unsigned& attributes, JSCell*& specificValue)
         {
@@ -261,6 +265,18 @@ namespace JSC {
             return notFound;
 
         PropertyMapEntry* entry = m_propertyTable->find(propertyName.impl()).first;
+        ASSERT(!entry || entry->offset >= m_anonymousSlotCount);
+        return entry ? entry->offset : notFound;
+    }
+
+    inline size_t Structure::get(JSGlobalData& globalData, const UString& name)
+    {
+        ASSERT(structure()->classInfo() == &s_info);
+        materializePropertyMapIfNecessary(globalData);
+        if (!m_propertyTable)
+            return notFound;
+
+        PropertyMapEntry* entry = m_propertyTable->findWithString(name.impl()).first;
         ASSERT(!entry || entry->offset >= m_anonymousSlotCount);
         return entry ? entry->offset : notFound;
     }

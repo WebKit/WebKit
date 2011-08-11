@@ -38,6 +38,8 @@ namespace JSC {
 
     class RegExp : public JSCell {
     public:
+        typedef JSCell Base;
+
         static RegExp* create(JSGlobalData&, const UString& pattern, RegExpFlags);
         ~RegExp();
 

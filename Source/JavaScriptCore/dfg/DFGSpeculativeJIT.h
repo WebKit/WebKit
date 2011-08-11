@@ -155,8 +155,19 @@ private:
         return (info.registerFormat() | DataFormatJS) == DataFormatJSInteger
             || (info.spillFormat() | DataFormatJS) == DataFormatJSInteger;
     }
+    
+    bool shouldSpeculateInteger(NodeIndex nodeIndex)
+    {
+        if (isInteger(nodeIndex))
+            return true;
+        
+        if (isInt32Prediction(m_jit.graph().getPrediction(m_jit.graph()[nodeIndex])))
+            return true;
+        
+        return false;
+    }
 
-    bool isRegisterDataFormatDouble(NodeIndex nodeIndex)
+    bool shouldSpeculateDouble(NodeIndex nodeIndex)
     {
         Node& node = m_jit.graph()[nodeIndex];
         VirtualRegister virtualRegister = node.virtualRegister();
@@ -166,7 +177,7 @@ private:
             || (info.spillFormat() | DataFormatJS) == DataFormatJSDouble)
             return true;
         
-        if (node.op == GetLocal && isDoublePrediction(m_jit.graph().getPrediction(node.local())))
+        if (isDoublePrediction(m_jit.graph().getPrediction(node)))
             return true;
         
         return false;
@@ -174,7 +185,7 @@ private:
     
     bool shouldSpeculateInteger(NodeIndex op1, NodeIndex op2)
     {
-        return !(isRegisterDataFormatDouble(op1) || isRegisterDataFormatDouble(op2)) && (isInteger(op1) || isInteger(op2));
+        return !(shouldSpeculateDouble(op1) || shouldSpeculateDouble(op2)) && (shouldSpeculateInteger(op1) || shouldSpeculateInteger(op2));
     }
 
     bool compare(Node&, MacroAssembler::RelationalCondition, MacroAssembler::DoubleCondition, Z_DFGOperation_EJJ);

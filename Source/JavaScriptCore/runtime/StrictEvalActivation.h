@@ -32,6 +32,8 @@ namespace JSC {
 
 class StrictEvalActivation : public JSNonFinalObject {
 public:
+    typedef JSNonFinalObject Base;
+
     static StrictEvalActivation* create(ExecState* exec)
     {
         return new (allocateCell<StrictEvalActivation>(*exec->heap())) StrictEvalActivation(exec);

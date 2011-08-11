@@ -725,13 +725,6 @@ void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
     stubCall.call(currentInstruction[2].u.operand);
 }
 
-void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_new_func_exp);
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->functionExpr(currentInstruction[2].u.operand)));
-    stubCall.call(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_jtrue(Instruction* currentInstruction)
 {
     unsigned target = currentInstruction[2].u.operand;
@@ -1621,11 +1614,59 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
         lazyJump = branchTestPtr(NonZero, addressFor(dst));
 #endif
     }
+
+    FunctionExecutable* executable = m_codeBlock->functionDecl(currentInstruction[2].u.operand);
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2);
+    emitAllocateJSFunction(executable, regT2, regT0, regT1);
+
+    emitStoreCell(dst, regT0);
+
+    if (currentInstruction[3].u.operand) {
+#if USE(JSVALUE32_64)        
+        unmap();
+#else
+        killLastResultRegister();
+#endif
+        lazyJump.link(this);
+    }
+}
+
+void JIT::emitSlow_op_new_func(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    linkSlowCase(iter);
     JITStubCall stubCall(this, cti_op_new_func);
     stubCall.addArgument(TrustedImmPtr(m_codeBlock->functionDecl(currentInstruction[2].u.operand)));
     stubCall.call(currentInstruction[1].u.operand);
-    if (currentInstruction[3].u.operand)
-        lazyJump.link(this);
+}
+
+void JIT::emit_op_new_func_exp(Instruction* currentInstruction)
+{
+    FunctionExecutable* executable = m_codeBlock->functionExpr(currentInstruction[2].u.operand);
+
+    // We only inline the allocation of a anonymous function expressions
+    // If we want to be able to allocate a named function expression, we would
+    // need to be able to do inline allocation of a JSStaticScopeObject.
+    if (executable->name().isNull()) {
+        emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT2);
+        emitAllocateJSFunction(executable, regT2, regT0, regT1);
+        emitStoreCell(currentInstruction[1].u.operand, regT0);
+        return;
+    }
+
+    JITStubCall stubCall(this, cti_op_new_func_exp);
+    stubCall.addArgument(TrustedImmPtr(m_codeBlock->functionExpr(currentInstruction[2].u.operand)));
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emitSlow_op_new_func_exp(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    FunctionExecutable* executable = m_codeBlock->functionExpr(currentInstruction[2].u.operand);
+    if (!executable->name().isNull())
+        return;
+    linkSlowCase(iter);
+    JITStubCall stubCall(this, cti_op_new_func_exp);
+    stubCall.addArgument(TrustedImmPtr(executable));
+    stubCall.call(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_new_array(Instruction* currentInstruction)

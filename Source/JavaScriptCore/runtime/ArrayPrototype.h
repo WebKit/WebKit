@@ -31,6 +31,8 @@ namespace JSC {
         ArrayPrototype(JSGlobalObject*, Structure*);
 
     public:
+        typedef JSArray Base;
+
         static ArrayPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             return new (allocateCell<ArrayPrototype>(*exec->heap())) ArrayPrototype(globalObject, structure);

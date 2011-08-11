@@ -33,10 +33,9 @@ namespace JSC {
     class Stringifier;
 
     class JSONObject : public JSObjectWithGlobalObject {
-    private:
-        JSONObject(JSGlobalObject*, Structure*);
-
     public:
+        typedef JSObjectWithGlobalObject Base;
+
         static JSONObject* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
             return new (allocateCell<JSONObject>(*exec->heap())) JSONObject(globalObject, structure);
@@ -53,6 +52,7 @@ namespace JSC {
         static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
 
     private:
+        JSONObject(JSGlobalObject*, Structure*);
         virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
         virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
 

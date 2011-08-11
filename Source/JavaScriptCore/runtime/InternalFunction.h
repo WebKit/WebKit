@@ -33,6 +33,8 @@ namespace JSC {
 
     class InternalFunction : public JSObjectWithGlobalObject {
     public:
+        typedef JSObjectWithGlobalObject Base;
+
         static JS_EXPORTDATA const ClassInfo s_info;
 
         const UString& name(ExecState*);

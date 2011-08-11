@@ -1087,7 +1087,8 @@ static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame,
         ".set macro" "\n" \
         "la    $25," SYMBOL_STRING(JITStubThunked_##op) "\n" \
         ".set nomacro" "\n" \
-        "bal " SYMBOL_STRING(JITStubThunked_##op) "\n" \
+        ".reloc 1f,R_MIPS_JALR," SYMBOL_STRING(JITStubThunked_##op) "\n" \
+        "1: jalr $25" "\n" \
         "nop" "\n" \
         "lw    $31," STRINGIZE_VALUE_OF(THUNK_RETURN_ADDRESS_OFFSET) "($29)" "\n" \
         "jr    $31" "\n" \
@@ -2249,12 +2250,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_val)
     JSValue subscript = stackFrame.args[1].jsValue();
 
     if (LIKELY(baseValue.isCell() && subscript.isString())) {
-        Identifier propertyName(callFrame, asString(subscript)->value(callFrame));
-        PropertySlot slot(baseValue.asCell());
-        // JSString::value may have thrown, but we shouldn't find a property with a null identifier,
-        // so we should miss this case and wind up in the CHECK_FOR_EXCEPTION_AT_END, below.
-        if (baseValue.asCell()->fastGetOwnPropertySlot(callFrame, propertyName, slot)) {
-            JSValue result = slot.getValue(callFrame, propertyName);
+        if (JSValue result = baseValue.asCell()->fastGetOwnProperty(callFrame, asString(subscript)->value(callFrame))) {
             CHECK_FOR_EXCEPTION();
             return JSValue::encode(result);
         }
@@ -2506,7 +2502,10 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
     if (!arguments) {
         int providedParams = callFrame->registers()[RegisterFile::ArgumentCount].i() - 1;
         argCount = providedParams;
-        argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));
+        if (argCount > Arguments::MaxArguments) {
+            stackFrame.globalData->exception = createStackOverflowError(callFrame);
+            VM_THROW_EXCEPTION();
+        }
         int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
         Register* newEnd = callFrame->registers() + sizeDelta;
         if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -2540,7 +2539,10 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
         if (asObject(arguments)->classInfo() == &Arguments::s_info) {
             Arguments* argsObject = asArguments(arguments);
             argCount = argsObject->numProvidedArguments(callFrame);
-            argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));
+            if (argCount > Arguments::MaxArguments) {
+                stackFrame.globalData->exception = createStackOverflowError(callFrame);
+                VM_THROW_EXCEPTION();
+            }
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -2551,7 +2553,10 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
         } else if (isJSArray(&callFrame->globalData(), arguments)) {
             JSArray* array = asArray(arguments);
             argCount = array->length();
-            argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));
+            if (argCount > Arguments::MaxArguments) {
+                stackFrame.globalData->exception = createStackOverflowError(callFrame);
+                VM_THROW_EXCEPTION();
+            }
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {
@@ -2562,7 +2567,10 @@ DEFINE_STUB_FUNCTION(int, op_load_varargs)
         } else {
             JSObject* argObject = asObject(arguments);
             argCount = argObject->get(callFrame, callFrame->propertyNames().length).toUInt32(callFrame);
-            argCount = min(argCount, static_cast<uint32_t>(Arguments::MaxArguments));
+            if (argCount > Arguments::MaxArguments) {
+                stackFrame.globalData->exception = createStackOverflowError(callFrame);
+                VM_THROW_EXCEPTION();
+            }
             int32_t sizeDelta = argsOffset + argCount + RegisterFile::CallFrameHeaderSize;
             Register* newEnd = callFrame->registers() + sizeDelta;
             if (!registerFile->grow(newEnd) || ((newEnd - callFrame->registers()) != sizeDelta)) {

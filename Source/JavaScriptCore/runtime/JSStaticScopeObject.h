@@ -32,6 +32,8 @@ namespace JSC{
     
     class JSStaticScopeObject : public JSVariableObject {
     public:
+        typedef JSVariableObject Base;
+
         static JSStaticScopeObject* create(ExecState* exec, const Identifier& ident, JSValue value, unsigned attributes)
         {
             return new (allocateCell<JSStaticScopeObject>(*exec->heap())) JSStaticScopeObject(exec, ident, value, attributes);

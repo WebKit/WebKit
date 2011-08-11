@@ -34,6 +34,8 @@ namespace JSC {
 
     class DebuggerActivation : public JSNonFinalObject {
     public:
+        typedef JSNonFinalObject Base;
+
         static DebuggerActivation* create(JSGlobalData& globalData, JSObject* object)
         {
             return new (allocateCell<DebuggerActivation>(globalData.heap)) DebuggerActivation(globalData, object);

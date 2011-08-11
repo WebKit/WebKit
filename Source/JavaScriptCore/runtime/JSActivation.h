@@ -41,10 +41,11 @@ namespace JSC {
     
     class JSActivation : public JSVariableObject {
     private:
-        typedef JSVariableObject Base;
         JSActivation(CallFrame*, FunctionExecutable*);
     
     public:
+        typedef JSVariableObject Base;
+
         static JSActivation* create(JSGlobalData& globalData, CallFrame* callFrame, FunctionExecutable* funcExec)
         {
             return new (allocateCell<JSActivation>(globalData.heap)) JSActivation(callFrame, funcExec);

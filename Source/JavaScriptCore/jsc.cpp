@@ -148,6 +148,8 @@ private:
     GlobalObject(JSGlobalData&, Structure*, const Vector<UString>& arguments);
 
 public:
+    typedef JSGlobalObject Base;
+
     static GlobalObject* create(JSGlobalData& globalData, Structure* structure, const Vector<UString>& arguments)
     {
         return new (allocateCell<GlobalObject>(globalData.heap)) GlobalObject(globalData, structure, arguments);
@@ -340,7 +342,7 @@ EncodedJSValue JSC_HOST_CALL functionQuit(ExecState* exec)
 // be in a separate main function because the jscmain function requires object
 // unwinding.
 
-#if COMPILER(MSVC) && !defined(_DEBUG) && !OS(WINCE)
+#if COMPILER(MSVC) && !COMPILER(INTEL) && !defined(_DEBUG) && !OS(WINCE)
 #define TRY       __try {
 #define EXCEPT(x) } __except (EXCEPTION_EXECUTE_HANDLER) { x; }
 #else

@@ -113,8 +113,9 @@ private:
 
     void grow();
     
-#if !ASSERT_DISABLED
+#if ENABLE(GC_VALIDATION) || !ASSERT_DISABLED
     bool isValidWeakNode(Node*);
+    bool isLiveNode(Node*);
 #endif
 
     JSGlobalData* m_globalData;
@@ -149,6 +150,10 @@ inline HandleHeap::Node* HandleHeap::toNode(HandleSlot handle)
 
 inline HandleSlot HandleHeap::allocate()
 {
+    // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
+    // File a bug with stack trace if you hit this.
+    if (m_nextToFinalize)
+        CRASH();
     if (m_freeList.isEmpty())
         grow();
 
@@ -181,6 +186,10 @@ inline HandleSlot HandleHeap::copyWeak(HandleSlot other)
 
 inline void HandleHeap::makeWeak(HandleSlot handle, WeakHandleOwner* weakOwner, void* context)
 {
+    // Forbid assignment to handles during the finalization phase, since it would violate many GC invariants.
+    // File a bug with stack trace if you hit this.
+    if (m_nextToFinalize)
+        CRASH();
     Node* node = toNode(handle);
     node->makeWeak(weakOwner, context);
 
