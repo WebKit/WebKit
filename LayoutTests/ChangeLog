@@ -1,3 +1,12 @@
+2011-08-11  Andrei Popescu  <andreip@google.com>
+
+        [Chromium] Rebaseline these tests on Leopard.
+
+        Unreviewed gardening.
+
+        * platform/chromium-mac-leopard/editing/pasteboard/paste-text-016-expected.png: Added
+        * platform/chromium-mac-leopard/editing/spelling/inline_spelling_markers-expected.png: Added
+
 2011-08-11  Zsolt Fehér  <h490267@stud.u-szeged.hu>
 
         WebKitTestRunner needs a more-complete implementation of eventSender
