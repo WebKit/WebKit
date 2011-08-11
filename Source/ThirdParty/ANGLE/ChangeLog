@@ -1,5 +1,17 @@
 2011-08-11  Renata Hodovan  <reni@webkit.org>
 
+        [Qt]Fix warnings after r92805.
+
+        Reviewed by Csaba Osztrogonác.
+
+        Control reached the end non-void functions.
+
+        * src/compiler/ossource_posix.cpp:
+        (OS_AllocTLSIndex):
+        (OS_SetTLSValue):
+
+2011-08-11  Renata Hodovan  <reni@webkit.org>
+
         Build fix on Qt Windows 32-bit Release/Debug after r92805.
 
         Unreviewed.

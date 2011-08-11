@@ -27,9 +27,7 @@ OS_TLSIndex OS_AllocTLSIndex()
         assert(0 && "OS_AllocTLSIndex(): Unable to allocate Thread Local Storage");
         return false;
     }
-    else {
-        return pPoolIndex;
-    }
+    return pPoolIndex;
 }
 
 
@@ -42,8 +40,7 @@ bool OS_SetTLSValue(OS_TLSIndex nIndex, void *lpvValue)
 
     if (pthread_setspecific(nIndex, lpvValue) == 0)
         return true;
-    else
-        return false;
+    return false;
 }
 
 
