@@ -1,5 +1,12 @@
 2011-08-11  Anders Carlsson  <andersca@apple.com>
 
+        Add a FIXME.
+
+        * TestWebKitAPI/TestsController.cpp:
+        (TestWebKitAPI::TestsController::TestsController):
+
+2011-08-11  Anders Carlsson  <andersca@apple.com>
+
         Initialize threading before running any tests
         https://bugs.webkit.org/show_bug.cgi?id=66112
 
