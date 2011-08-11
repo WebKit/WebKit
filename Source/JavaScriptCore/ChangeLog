@@ -1,3 +1,14 @@
+2011-08-11  Daniel Bates  <dbates@rim.com>
+
+        Removed unused variable in StackBounds::initialize() to resolve
+        compiler warning when building on QNX.
+        https://bugs.webkit.org/show_bug.cgi?id=66072
+
+        Reviewed by Antonio Gomes.
+
+        * wtf/StackBounds.cpp:
+        (WTF::StackBounds::initialize):
+
 2011-08-11  Devdatta Deshpande  <pwjd73@motorola.com>
 
         Implementation of monotonically increasing clock on GTK

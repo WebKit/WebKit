@@ -92,7 +92,6 @@ void StackBounds::initialize()
 {
     void* stackBase = 0;
     size_t stackSize = 0;
-    pthread_t thread = pthread_self();
 
     struct _debug_thread_info threadInfo;
     memset(&threadInfo, 0, sizeof(threadInfo));
