@@ -1,3 +1,17 @@
+2011-08-11  Andrei Popescu  <andreip@google.com>
+
+        Master: Support CSS3 font feature properties
+        https://bugs.webkit.org/show_bug.cgi?id=63796
+
+        Unreviewed gardening.
+
+        css3/font-feature-settings-rendering.html is missing expectations. Looking at the
+        actual test output, it appears clearly wrong so we cannot rebaseline it either.
+        We'll therefore update the expectations file to mark this test as missing expected
+        results and update the bug to say it needs investigation and fixing.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-11  Adam Barth  <abarth@webkit.org>
 
         Rebaseline these tests, as requested by morrita.
