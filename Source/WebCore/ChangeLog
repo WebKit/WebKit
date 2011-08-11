@@ -1,3 +1,17 @@
+2011-08-11  Simon Fraser  <simon.fraser@apple.com>
+
+        Avoid adding the visible wash layer twice
+        https://bugs.webkit.org/show_bug.cgi?id=66098
+
+        Reviewed by Chris Marrin.
+
+        Fix two issues; only create a m_visibleTileWashLayer if we don't have one
+        already, and avoid adding multiple m_visibleTileWashLayers to the sublayers
+        array when flipping between tiled and non-tiled.
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+
 2011-08-11  Benjamin Poulain  <benjamin@webkit.org>
 
         The PageSerializer should always use absolute URL
