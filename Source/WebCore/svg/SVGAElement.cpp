@@ -161,19 +161,19 @@ void SVGAElement::defaultEventHandler(Event* event)
         if (isLinkClick(event)) {
             String url = stripLeadingAndTrailingHTMLSpaces(href());
 
-#if ENABLE(SVG_ANIMATION)
             if (url[0] == '#') {
                 Element* targetElement = treeScope()->getElementById(url.substring(1));
+#if ENABLE(SVG_ANIMATION)
                 if (SVGSMILElement::isSMILElement(targetElement)) {
                     static_cast<SVGSMILElement*>(targetElement)->beginByLinkActivation();
                     event->setDefaultHandled();
                     return;
                 }
+#endif
                 // Only allow navigation to internal <view> anchors.
                 if (targetElement && !targetElement->hasTagName(SVGNames::viewTag))
                     return;
             }
-#endif
 
             // FIXME: Why does the SVG anchor element have this special logic
             // for middle click that the HTML anchor element does not have?

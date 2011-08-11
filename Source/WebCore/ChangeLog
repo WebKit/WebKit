@@ -1,5 +1,19 @@
 2011-08-10  Tim Horton  <timothy_horton@apple.com>
 
+        SVGAElement check for internal non-view anchors is inside ENABLE(SVG_ANIMATION)
+        https://bugs.webkit.org/show_bug.cgi?id=66026
+
+        Reviewed by Rob Buis.
+        
+        Move only the SMIL-related code inside the ENABLE(SVG_ANIMATION) block.
+
+        No new tests, as it depends on the enabled features.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::defaultEventHandler):
+
+2011-08-10  Tim Horton  <timothy_horton@apple.com>
+
         Crash when clicking an SVG <a> link to the local document
         https://bugs.webkit.org/show_bug.cgi?id=66019
         <rdar://problem/9933311>
