@@ -1,5 +1,33 @@
 2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Copying can result in span around block elements on the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=34564
+
+        Reviewed by Tony Chang.
+
+        This patch overhauled the way we preserve styles when copying and pasting HTML contents. Many tests progressed
+        and lost wrapping spans while others are observing different markup on the clipboard as expected.
+
+        * editing/deleting/deleting-line-break-preserves-underline-color-expected.txt: span's style attribute now has
+        a trailing space.
+        * editing/execCommand/insert-list-with-noneditable-content-expected.txt: LightGray is now rgb(211, 211, 211).
+        * editing/pasteboard/data-transfer-items-expected.txt: Different serialization.
+        * editing/pasteboard/onpaste-text-html-expected.txt: Ditto.
+        * editing/pasteboard/paste-4039777-fix-expected.txt: No longer nests ul erroneously or aligns the inner list
+        to the right.
+        * editing/pasteboard/paste-code-in-pre-expected.txt: No longer produces erroneous wrapping span.
+        * editing/pasteboard/paste-pre-001-expected.txt: Ditto.
+        * editing/pasteboard/paste-pre-002-expected.txt: Ditto.
+        * editing/pasteboard/paste-text-012-expected.txt: Ditto.
+        * editing/pasteboard/paste-text-with-style-4-expected.txt: Ditto.
+        * fast/events/ondrop-text-html-expected.txt: Different serialization.
+        * platform/chromium-win/editing/pasteboard/paste-code-in-pre-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-pre-001-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-pre-002-expected.txt: Removed.
+        * platform/qt-mac/editing/pasteboard/paste-code-in-pre-expected.txt: Removed.
+
+2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip a test added by r92769 on Windows port since drag and drop won't work well on Windows port.
 
         * platform/win/Skipped:

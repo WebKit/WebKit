@@ -3,10 +3,7 @@ You should see markup in the editable region below. See <rdar://5027857>.
 | <pre>
 |   contenteditable="true"
 |   id="pre"
-|   <span>
-|     class="Apple-style-span"
-|     style="font-family: Times; white-space: normal; "
-|     <pre>
-|       contenteditable="true"
-|       id="pre"
-|       "<input type='button'>foo<br>bar<b>baz</b><#selection-caret>"
+|   <pre>
+|     contenteditable="true"
+|     id="pre"
+|     "<input type='button'>foo<br>bar<b>baz</b><#selection-caret>"

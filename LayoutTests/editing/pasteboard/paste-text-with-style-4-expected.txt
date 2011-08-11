@@ -9,9 +9,7 @@ Before copy:
 After paste:
 | <b>
 |   style="border: solid 5px blue;padding: 5px;"
-|   <span>
-|     class="Apple-style-span"
+|   <i>
 |     style="font-weight: normal; "
-|     <i>
-|       "hello<#selection-caret>"
+|     "hello<#selection-caret>"
 |   <br>

@@ -51,11 +51,10 @@ Actual result:
 "
 | <ul>
 |   style="text-align:right;"
-|   <ul>
-|     style="text-align: right; "
-|     <li>
-|       "A"
+|   <li>
+|     "A"
 |   <div>
+|     style="text-align: -webkit-auto; "
 |     <ul>
 |       <li>
 |         <a>

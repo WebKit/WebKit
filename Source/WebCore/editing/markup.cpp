@@ -120,12 +120,7 @@ class StyledMarkupAccumulator : public MarkupAccumulator {
 public:
     enum RangeFullySelectsNode { DoesFullySelectNode, DoesNotFullySelectNode };
 
-    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate, const Range* range)
-    : MarkupAccumulator(nodes, shouldResolveURLs, range)
-    , m_shouldAnnotate(shouldAnnotate)
-    {
-    }
-
+    StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs, EAnnotateForInterchange, const Range*, Node* highestNodeToBeSerialized = 0);
     Node* serializeNodes(Node* startNode, Node* pastEnd);
     virtual void appendString(const String& s) { return MarkupAccumulator::appendString(s); }
     void wrapWithNode(Node*, bool convertBlocksToInlines = false, RangeFullySelectsNode = DoesFullySelectNode);
@@ -133,17 +128,37 @@ public:
     String takeResults();
 
 private:
+    void appendStyleNodeOpenTag(Vector<UChar>&, CSSStyleDeclaration*, Document*, bool isBlock = false);
+    const String styleNodeCloseTag(bool isBlock = false);
     virtual void appendText(Vector<UChar>& out, Text*);
     String renderedText(const Node*, const Range*);
     String stringValueForRange(const Node*, const Range*);
     void appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode);
     void appendElement(Vector<UChar>& out, Element* element, Namespaces*) { appendElement(out, element, false, DoesFullySelectNode); }
 
+    enum NodeTraversalMode { EmitString, DoNotEmitString };
+    Node* traverseNodesForSerialization(Node* startNode, Node* pastEnd, NodeTraversalMode);
+
     bool shouldAnnotate() { return m_shouldAnnotate == AnnotateForInterchange; }
+    bool shouldApplyWrappingStyle(Node* node) const
+    {
+        return m_highestNodeToBeSerialized && m_highestNodeToBeSerialized->parentNode() == node->parentNode()
+            && m_wrappingStyle && m_wrappingStyle->style();
+    }
 
     Vector<String> m_reversedPrecedingMarkup;
     const EAnnotateForInterchange m_shouldAnnotate;
+    Node* m_highestNodeToBeSerialized;
+    RefPtr<EditingStyle> m_wrappingStyle;
 };
+
+inline StyledMarkupAccumulator::StyledMarkupAccumulator(Vector<Node*>* nodes, EAbsoluteURLs shouldResolveURLs, EAnnotateForInterchange shouldAnnotate,
+    const Range* range, Node* highestNodeToBeSerialized)
+    : MarkupAccumulator(nodes, shouldResolveURLs, range)
+    , m_shouldAnnotate(shouldAnnotate)
+    , m_highestNodeToBeSerialized(highestNodeToBeSerialized)
+{
+}
 
 void StyledMarkupAccumulator::wrapWithNode(Node* node, bool convertBlocksToInlines, RangeFullySelectsNode rangeFullySelectsNode)
 {
@@ -160,20 +175,30 @@ void StyledMarkupAccumulator::wrapWithNode(Node* node, bool convertBlocksToInlin
 
 void StyledMarkupAccumulator::wrapWithStyleNode(CSSStyleDeclaration* style, Document* document, bool isBlock)
 {
+    Vector<UChar> openTag;
+    appendStyleNodeOpenTag(openTag, style, document, isBlock);
+    m_reversedPrecedingMarkup.append(String::adopt(openTag));
+    appendString(styleNodeCloseTag(isBlock));
+}
+
+void StyledMarkupAccumulator::appendStyleNodeOpenTag(Vector<UChar>& out, CSSStyleDeclaration* style, Document* document, bool isBlock)
+{
     // All text-decoration-related elements should have been treated as special ancestors
     // If we ever hit this ASSERT, we should export StyleChange in ApplyStyleCommand and use it here
     ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyTextDecoration) && propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
     DEFINE_STATIC_LOCAL(const String, divStyle, ("<div style=\""));
-    DEFINE_STATIC_LOCAL(const String, divClose, ("</div>"));
     DEFINE_STATIC_LOCAL(const String, styleSpanOpen, ("<span class=\"" AppleStyleSpanClass "\" style=\""));
+    append(out, isBlock ? divStyle : styleSpanOpen);
+    appendAttributeValue(out, style->cssText(), document->isHTMLDocument());
+    out.append('\"');
+    out.append('>');
+}
+
+const String StyledMarkupAccumulator::styleNodeCloseTag(bool isBlock)
+{
+    DEFINE_STATIC_LOCAL(const String, divClose, ("</div>"));
     DEFINE_STATIC_LOCAL(const String, styleSpanClose, ("</span>"));
-    Vector<UChar> openTag;
-    append(openTag, isBlock ? divStyle : styleSpanOpen);
-    appendAttributeValue(openTag, style->cssText(), document->isHTMLDocument());
-    openTag.append('\"');
-    openTag.append('>');
-    m_reversedPrecedingMarkup.append(String::adopt(openTag));
-    appendString(isBlock ? divClose : styleSpanClose);
+    return isBlock ? divClose : styleSpanClose;
 }
 
 String StyledMarkupAccumulator::takeResults()
@@ -191,17 +216,34 @@ String StyledMarkupAccumulator::takeResults()
 }
 
 void StyledMarkupAccumulator::appendText(Vector<UChar>& out, Text* text)
-{
-    if (!shouldAnnotate() || (text->parentElement() && text->parentElement()->tagQName() == textareaTag)) {
-        MarkupAccumulator::appendText(out, text);
-        return;
+{    
+    const bool parentIsTextarea = text->parentElement() && text->parentElement()->tagQName() == textareaTag;
+    const bool wrappingSpan = shouldApplyWrappingStyle(text) && !parentIsTextarea;
+    if (wrappingSpan) {
+        RefPtr<EditingStyle> wrappingStyle = m_wrappingStyle->copy();
+        // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
+        // Make sure spans are inline style in paste side e.g. span { display: block }.
+        wrappingStyle->forceInline();
+        // FIXME: Should this be included in forceInline?
+        wrappingStyle->style()->setProperty(CSSPropertyFloat, CSSValueNone);
+
+        Vector<UChar> openTag;
+        appendStyleNodeOpenTag(openTag, wrappingStyle->style(), text->document());
+        append(out, String::adopt(openTag));
     }
 
-    bool useRenderedText = !enclosingNodeWithTag(firstPositionInNode(text), selectTag);
-    String content = useRenderedText ? renderedText(text, m_range) : stringValueForRange(text, m_range);
-    Vector<UChar> buffer;
-    appendCharactersReplacingEntities(buffer, content.characters(), content.length(), EntityMaskInPCDATA);
-    append(out, convertHTMLTextToInterchangeFormat(String::adopt(buffer), text));
+    if (!shouldAnnotate() || parentIsTextarea)
+        MarkupAccumulator::appendText(out, text);
+    else {
+        const bool useRenderedText = !enclosingNodeWithTag(firstPositionInNode(text), selectTag);
+        String content = useRenderedText ? renderedText(text, m_range) : stringValueForRange(text, m_range);
+        Vector<UChar> buffer;
+        appendCharactersReplacingEntities(buffer, content.characters(), content.length(), EntityMaskInPCDATA);
+        append(out, convertHTMLTextToInterchangeFormat(String::adopt(buffer), text));
+    }
+
+    if (wrappingSpan)
+        append(out, styleNodeCloseTag());
 }
     
 String StyledMarkupAccumulator::renderedText(const Node* node, const Range* range)
@@ -240,35 +282,51 @@ String StyledMarkupAccumulator::stringValueForRange(const Node* node, const Rang
 
 void StyledMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
 {
-    bool documentIsHTML = element->document()->isHTMLDocument();
+    const bool documentIsHTML = element->document()->isHTMLDocument();
     appendOpenTag(out, element, 0);
 
     NamedNodeMap* attributes = element->attributes();
-    unsigned length = attributes->length();
+    const unsigned length = attributes->length();
+    const bool shouldAnnotateOrForceInline = element->isHTMLElement() && (shouldAnnotate() || addDisplayInline);
+    const bool shouldOverrideStyleAttr = shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element);
     for (unsigned int i = 0; i < length; i++) {
         Attribute* attribute = attributes->attributeItem(i);
         // We'll handle the style attribute separately, below.
-        if (attribute->name() == styleAttr && element->isHTMLElement() && (shouldAnnotate() || addDisplayInline))
+        if (attribute->name() == styleAttr && shouldOverrideStyleAttr)
             continue;
         appendAttribute(out, element, *attribute, 0);
     }
 
-    if (element->isHTMLElement() && (shouldAnnotate() || addDisplayInline)) {
-        RefPtr<EditingStyle> style = EditingStyle::create(toHTMLElement(element)->getInlineStyleDecl());
-        if (shouldAnnotate())
-            style->mergeStyleFromRulesForSerialization(toHTMLElement(element));
-        if (addDisplayInline)
-            style->style()->setProperty(CSSPropertyDisplay, CSSValueInline, true);
+    if (shouldOverrideStyleAttr) {
+        RefPtr<EditingStyle> newInlineStyle;
 
-        // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
-        // only the ones that affect it and the nodes within it.
-        if (rangeFullySelectsNode == DoesNotFullySelectNode)
-            style->style()->removeProperty(CSSPropertyFloat);
+        if (shouldApplyWrappingStyle(element)) {
+            newInlineStyle = m_wrappingStyle->copy();
+            newInlineStyle->removePropertiesInElementDefaultStyle(element);
+            newInlineStyle->removeStyleConflictingWithStyleOfNode(element);
+        } else
+            newInlineStyle = EditingStyle::create();
 
-        if (!style->isEmpty()) {
+        if (element->isStyledElement() && static_cast<StyledElement*>(element)->inlineStyleDecl())
+            newInlineStyle->overrideWithStyle(static_cast<StyledElement*>(element)->inlineStyleDecl());
+
+        if (shouldAnnotateOrForceInline) {
+            if (shouldAnnotate())
+                newInlineStyle->mergeStyleFromRulesForSerialization(toHTMLElement(element));
+
+            if (addDisplayInline)
+                newInlineStyle->forceInline();
+
+            // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
+            // only the ones that affect it and the nodes within it.
+            if (rangeFullySelectsNode == DoesNotFullySelectNode && newInlineStyle->style())
+                newInlineStyle->style()->removeProperty(CSSPropertyFloat);
+        }
+
+        if (!newInlineStyle->isEmpty()) {
             DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
             append(out, stylePrefix);
-            appendAttributeValue(out, style->style()->cssText(), documentIsHTML);
+            appendAttributeValue(out, newInlineStyle->style()->cssText(), documentIsHTML);
             out.append('\"');
         }
     }
@@ -278,6 +336,30 @@ void StyledMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element
 
 Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
 {
+    if (!m_highestNodeToBeSerialized) {
+        Node* lastClosed = traverseNodesForSerialization(startNode, pastEnd, DoNotEmitString);
+        m_highestNodeToBeSerialized = lastClosed;
+    }
+
+    Node* parentOfHighestNode = m_highestNodeToBeSerialized ? m_highestNodeToBeSerialized->parentNode() : 0;
+    if (parentOfHighestNode) {
+        m_wrappingStyle = EditingStyle::create(parentOfHighestNode, EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
+
+        // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote,
+        // to help us differentiate those styles from ones that the user has applied.
+        // This helps us get the color of content pasted into blockquotes right.
+        m_wrappingStyle->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInOrBeforeNode(parentOfHighestNode), isMailBlockquote, CanCrossEditingBoundary));
+
+        // Call collapseTextDecorationProperties first or otherwise it'll copy the value over from in-effect to text-decorations.
+        m_wrappingStyle->collapseTextDecorationProperties();
+    }
+
+    return traverseNodesForSerialization(startNode, pastEnd, EmitString);
+}
+
+Node* StyledMarkupAccumulator::traverseNodesForSerialization(Node* startNode, Node* pastEnd, NodeTraversalMode traversalMode)
+{
+    const bool shouldEmit = traversalMode == EmitString;
     Vector<Node*> ancestorsToClose;
     Node* next;
     Node* lastClosed = 0;
@@ -304,11 +386,13 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
                 next = pastEnd;
         } else {
             // Add the node to the markup if we're not skipping the descendants
-            appendStartTag(n);
+            if (shouldEmit)
+                appendStartTag(n);
 
             // If node has no children, close the tag now.
             if (!n->childNodeCount()) {
-                appendEndTag(n);
+                if (shouldEmit)
+                    appendEndTag(n);
                 lastClosed = n;
             } else {
                 openedTag = true;
@@ -325,7 +409,8 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
                 if (next != pastEnd && next->isDescendantOf(ancestor))
                     break;
                 // Not at the end of the range, close ancestors up to sibling of next node.
-                appendEndTag(ancestor);
+                if (shouldEmit)
+                    appendEndTag(ancestor);
                 lastClosed = ancestor;
                 ancestorsToClose.removeLast();
             }
@@ -340,7 +425,8 @@ Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
                         continue;
                     // or b) ancestors that we never encountered during a pre-order traversal starting at startNode:
                     ASSERT(startNode->isDescendantOf(parent));
-                    wrapWithNode(parent);
+                    if (shouldEmit)
+                        wrapWithNode(parent);
                     lastClosed = parent;
                 }
             }
@@ -513,7 +599,13 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, updatedRange.get());
+    Node* body = enclosingNodeWithTag(firstPositionInNode(commonAncestor), bodyTag);
+    Node* fullySelectedRoot = 0;
+    // FIXME: Do this for all fully selected blocks, not just the body.
+    if (body && areRangesEqual(VisibleSelection::selectionFromContentsOfNode(body).toNormalizedRange().get(), range))
+        fullySelectedRoot = body;
+    Node* specialCommonAncestor = highestAncestorToWrapMarkup(updatedRange.get(), fullySelectedRoot, shouldAnnotate);
+    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, updatedRange.get(), specialCommonAncestor);
     Node* pastEnd = updatedRange->pastLastNode();
 
     Node* startNode = updatedRange->firstNode();
@@ -538,14 +630,6 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         }
         ASSERT(!ec);
     }
-
-    Node* body = enclosingNodeWithTag(firstPositionInNode(commonAncestor), bodyTag);
-    Node* fullySelectedRoot = 0;
-    // FIXME: Do this for all fully selected blocks, not just the body.
-    if (body && areRangesEqual(VisibleSelection::selectionFromContentsOfNode(body).toNormalizedRange().get(), range))
-        fullySelectedRoot = body;
-
-    Node* specialCommonAncestor = highestAncestorToWrapMarkup(updatedRange.get(), fullySelectedRoot, shouldAnnotate);
 
     Node* lastClosed = accumulator.serializeNodes(startNode, pastEnd);
 
@@ -584,20 +668,6 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
             if (ancestor == specialCommonAncestor)
                 break;
         }
-    }
-
-    // Add a wrapper span with the styles that all of the nodes in the markup inherit.
-    ContainerNode* parentOfLastClosed = lastClosed ? lastClosed->parentNode() : 0;
-    if (parentOfLastClosed && parentOfLastClosed->renderer()) {
-        RefPtr<EditingStyle> style = EditingStyle::create(parentOfLastClosed, EditingStyle::EditingInheritablePropertiesAndBackgroundColorInEffect);
-
-        // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
-        // us differentiate those styles from ones that the user has applied.  This helps us
-        // get the color of content pasted into blockquotes right.
-        style->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInNode(parentOfLastClosed), isMailBlockquote, CanCrossEditingBoundary));
-
-        if (!style->isEmpty())
-            accumulator.wrapWithStyleNode(style->style(), document);
     }
 
     // FIXME: The interchange newline should be placed in the block that it's in, not after all of the content, unconditionally.

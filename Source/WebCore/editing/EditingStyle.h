@@ -47,6 +47,7 @@ class CSSMutableStyleDeclaration;
 class CSSPrimitiveValue;
 class CSSValue;
 class Document;
+class Element;
 class HTMLElement;
 class Node;
 class Position;
@@ -126,6 +127,8 @@ public:
     void mergeStyleFromRules(StyledElement*);
     void mergeStyleFromRulesForSerialization(StyledElement*);
     void removeStyleFromRulesAndContext(StyledElement*, Node* context);
+    void removePropertiesInElementDefaultStyle(Element*);
+    void forceInline();
 
     float fontSizeDelta() const { return m_fontSizeDelta; }
     bool hasFontSizeDelta() const { return m_fontSizeDelta != NoFontDelta; }
@@ -144,7 +147,6 @@ private:
     void extractFontSizeDelta();
     bool conflictsWithInlineStyleOfElement(StyledElement*, EditingStyle* extractedStyle, Vector<CSSPropertyID>* conflictingProperties) const;
     void mergeStyle(CSSMutableStyleDeclaration*);
-    void removePropertiesInElementDefaultStyle(StyledElement*);
 
     RefPtr<CSSMutableStyleDeclaration> m_mutableStyle;
     bool m_shouldUseFixedDefaultFontSize;

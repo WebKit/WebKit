@@ -2,4 +2,4 @@ This is a layout test for rdar://problem/4370209 "Reproducible crash when pastin
 foo
 bar
 execCopyCommand: <div id="test" class="editing"> <pre>foo bar</pre> </div>
-execPasteCommand: <div id="test" class="editing"> <pre><span class="Apple-style-span" style="font-family: Times; white-space: normal; "><pre>foo bar</pre></span></pre> </div>
+execPasteCommand: <div id="test" class="editing"> <pre><pre>foo bar</pre></pre> </div>

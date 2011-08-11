@@ -4,7 +4,7 @@ This tests list creation in an editable context but across non-editable content.
 |     "Editabl<#selection-anchor>e paragraph containing a "
 |     <span>
 |       contenteditable="false"
-|       style="background-color: LightGray;"
+|       style="background-color: rgb(211, 211, 211); "
 |       "non-editable"
 |     " in the middle"
 |     <br>

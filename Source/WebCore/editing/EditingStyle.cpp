@@ -557,7 +557,10 @@ void EditingStyle::collapseTextDecorationProperties()
     if (!textDecorationsInEffect)
         return;
 
-    m_mutableStyle->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText(), m_mutableStyle->getPropertyPriority(CSSPropertyTextDecoration));
+    if (textDecorationsInEffect->isValueList())
+        m_mutableStyle->setProperty(CSSPropertyTextDecoration, textDecorationsInEffect->cssText(), m_mutableStyle->getPropertyPriority(CSSPropertyTextDecoration));
+    else
+        m_mutableStyle->removeProperty(CSSPropertyTextDecoration);
     m_mutableStyle->removeProperty(CSSPropertyWebkitTextDecorationsInEffect);
 }
 
@@ -957,9 +960,18 @@ void EditingStyle::removeStyleFromRulesAndContext(StyledElement* element, Node* 
         computedStyle->removePropertiesInElementDefaultStyle(element);
         m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), computedStyle->m_mutableStyle.get());
     }
+
+    // 3. If this element is a span and has display: inline or float: none, remove them unless they are overriden by rules.
+    // These rules are added by serialization code to wrap text nodes.
+    if (isStyleSpan(element)) {
+        if (!styleFromMatchedRules->getPropertyCSSValue(CSSPropertyDisplay) && getIdentifierValue(m_mutableStyle.get(), CSSPropertyDisplay) == CSSValueInline)
+            m_mutableStyle->removeProperty(CSSPropertyDisplay);
+        if (!styleFromMatchedRules->getPropertyCSSValue(CSSPropertyFloat) && getIdentifierValue(m_mutableStyle.get(), CSSPropertyFloat) == CSSValueNone)
+            m_mutableStyle->removeProperty(CSSPropertyFloat);
+    }
 }
 
-void EditingStyle::removePropertiesInElementDefaultStyle(StyledElement* element)
+void EditingStyle::removePropertiesInElementDefaultStyle(Element* element)
 {
     if (!m_mutableStyle || !m_mutableStyle->length())
         return;
@@ -973,6 +985,14 @@ void EditingStyle::removePropertiesInElementDefaultStyle(StyledElement* element)
         propertiesToRemove[i] = it->id();
 
     m_mutableStyle->removePropertiesInSet(propertiesToRemove.data(), propertiesToRemove.size());
+}
+
+void EditingStyle::forceInline()
+{
+    if (!m_mutableStyle)
+        m_mutableStyle = CSSMutableStyleDeclaration::create();
+    const bool propertyIsImportant = true;
+    m_mutableStyle->setProperty(CSSPropertyDisplay, CSSValueInline, propertyIsImportant);
 }
     
 
@@ -1178,13 +1198,13 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* style
     diffTextDecorations(result.get(), CSSPropertyTextDecoration, baseTextDecorationsInEffect.get());
     diffTextDecorations(result.get(), CSSPropertyWebkitTextDecorationsInEffect, baseTextDecorationsInEffect.get());
 
-    if (fontWeightIsBold(result.get()) == fontWeightIsBold(baseStyle))
+    if (baseStyle->getPropertyCSSValue(CSSPropertyFontSize) && fontWeightIsBold(result.get()) == fontWeightIsBold(baseStyle))
         result->removeProperty(CSSPropertyFontWeight);
 
-    if (getRGBAFontColor(result.get()) == getRGBAFontColor(baseStyle))
+    if (baseStyle->getPropertyCSSValue(CSSPropertyColor) && getRGBAFontColor(result.get()) == getRGBAFontColor(baseStyle))
         result->removeProperty(CSSPropertyColor);
 
-    if (getTextAlignment(result.get()) == getTextAlignment(baseStyle))
+    if (baseStyle->getPropertyCSSValue(CSSPropertyTextAlign) && getTextAlignment(result.get()) == getTextAlignment(baseStyle))
         result->removeProperty(CSSPropertyTextAlign);
 
     return result;

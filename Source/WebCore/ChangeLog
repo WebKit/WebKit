@@ -1,3 +1,42 @@
+2011-08-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Copying can result in span around block elements on the clipboard
+        https://bugs.webkit.org/show_bug.cgi?id=34564
+
+        Reviewed by Tony Chang.
+
+        Completely overhauled the way WebKit preserves style in copy and paste. Instead of wrapping the entire
+        serialized contents by a Apple style span, WebKit now adds inline style to the top level elements,
+        wrap top level text nodes by a style span.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::collapseTextDecorationProperties): Remove text-decoration property when the value
+        of -webkit-text-decorations-in-effect is none.
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext): Since display: inline and float: none are now
+        added on copy, remove these properties on paste.
+        (WebCore::EditingStyle::removePropertiesInElementDefaultStyle): Takes Element* instead of StyledElement*.
+        (WebCore::EditingStyle::forceInline): Added.
+        (WebCore::getPropertiesNotIn): Remove properties only when the base style has them.
+        * editing/EditingStyle.h:
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::shouldApplyWrappingStyle): Added.
+        (WebCore::StyledMarkupAccumulator::StyledMarkupAccumulator): Takes highestNodeToBeSerialized.
+        (WebCore::StyledMarkupAccumulator::wrapWithStyleNode): Calls appendStyleNodeOpenTag and styleNodeCloseTag.
+        (WebCore::StyledMarkupAccumulator::appendStyleNodeOpenTag): Extracted from wrapWithStyleNode.
+        (WebCore::StyledMarkupAccumulator::styleNodeCloseTag): Ditto.
+        (WebCore::StyledMarkupAccumulator::appendText): Wraps text node with a style span if needed.
+        Set display: inline and float: none so that it won't be converted to a block on paste side.
+        (WebCore::StyledMarkupAccumulator::appendElement): Add wrapping style if appropriate; Remove any properties
+        that are overridden by default style and any style that may conflict with the computed style of node to
+        avoid modifying the appearance of the serialized nodes.
+        (WebCore::StyledMarkupAccumulator::serializeNodes): Compute wrapping style; copies of this style are
+        modified as needed when serializing top-level elements or text nodes. We call traverseNodesForSerialization
+        with NodeTraversalMode set to DoNotEmitString first to compute the highest node to be serialized. The second
+        call to the function actually serialize the nodes.
+        (WebCore::StyledMarkupAccumulator::traverseNodesForSerialization): Extracted from serializeNodes.
+        Outputs string only if NodeTraversalMode is set to EmitString.
+        (WebCore::createMarkup): No longer adds wrapping spans.
+
 2011-08-10  Adam Barth  <abarth@webkit.org>
 
         Add tests of optional arguments for Geolocation
