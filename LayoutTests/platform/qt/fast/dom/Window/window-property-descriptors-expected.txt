@@ -124,6 +124,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLTableSectionElement') i
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLTextAreaElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLTitleElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLUListElement') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLUnknownElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLVideoElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HashChangeEvent') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'Image') is 'object'

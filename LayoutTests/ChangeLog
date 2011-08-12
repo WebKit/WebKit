@@ -1,3 +1,19 @@
+2011-08-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Source/WebCore: Add HTMLUnknownElement interface as defined in
+        http://www.w3.org/TR/html5/elements.html#elements-in-the-dom.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41841
+
+        Unreviewed gardening after r92890.
+
+        * fast/html/unknown-tag-expected.txt: Added.
+        * platform/qt/fast/dom/Window/window-properties-expected.txt: Updated.
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt: Updated.
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.png: Updated.
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.txt: Updated.
+        * platform/qt/fast/js/global-constructors-expected.txt: Updated.
+
 2011-08-11  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Object store records don't need to have keys in all indexes
