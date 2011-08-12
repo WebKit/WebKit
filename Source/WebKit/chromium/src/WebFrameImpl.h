@@ -72,10 +72,14 @@ public:
     virtual WebVector<WebIconURL> iconURLs(int iconTypes) const;
     virtual WebSize scrollOffset() const;
     virtual void setScrollOffset(const WebSize&);
+    virtual WebSize minimumScrollOffset() const;
+    virtual WebSize maximumScrollOffset() const;
     virtual WebSize contentsSize() const;
     virtual int contentsPreferredWidth() const;
     virtual int documentElementScrollHeight() const;
     virtual bool hasVisibleContent() const;
+    virtual bool hasHorizontalScrollbar() const;
+    virtual bool hasVerticalScrollbar() const;
     virtual WebView* view() const;
     virtual WebFrame* opener() const;
     virtual void clearOpener();

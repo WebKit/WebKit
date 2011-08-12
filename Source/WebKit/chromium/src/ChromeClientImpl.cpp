@@ -968,4 +968,10 @@ bool ChromeClientImpl::shouldRunModalDialogDuringPageDismissal(const DialogType&
     return false;
 }
 
+void ChromeClientImpl::numWheelEventHandlersChanged(unsigned numberOfWheelHandlers)
+{
+    if (m_webView->client())
+        m_webView->client()->numberOfWheelEventHandlersChanged(numberOfWheelHandlers);
+}
+
 } // namespace WebKit

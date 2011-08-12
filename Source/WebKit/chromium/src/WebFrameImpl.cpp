@@ -552,6 +552,24 @@ WebSize WebFrameImpl::scrollOffset() const
     return WebSize();
 }
 
+WebSize WebFrameImpl::minimumScrollOffset() const
+{
+    FrameView* view = frameView();
+    if (view)
+        return view->minimumScrollPosition() - IntPoint();
+
+    return WebSize();
+}
+
+WebSize WebFrameImpl::maximumScrollOffset() const
+{
+    FrameView* view = frameView();
+    if (view)
+        return view->maximumScrollPosition() - IntPoint();
+
+    return WebSize();
+}
+
 void WebFrameImpl::setScrollOffset(const WebSize& offset)
 {
     if (FrameView* view = frameView())
@@ -580,6 +598,16 @@ int WebFrameImpl::documentElementScrollHeight() const
 bool WebFrameImpl::hasVisibleContent() const
 {
     return frame()->view()->visibleWidth() > 0 && frame()->view()->visibleHeight() > 0;
+}
+
+bool WebFrameImpl::hasHorizontalScrollbar() const
+{
+    return m_frame && m_frame->view() && m_frame->view()->horizontalScrollbar();
+}
+
+bool WebFrameImpl::hasVerticalScrollbar() const
+{
+    return m_frame && m_frame->view() && m_frame->view()->verticalScrollbar();
 }
 
 WebView* WebFrameImpl::view() const

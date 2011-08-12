@@ -247,6 +247,7 @@ public:
     // Called when a new node gets focused.
     virtual void focusedNodeChanged(const WebNode&) { }
 
+    virtual void numberOfWheelEventHandlersChanged(unsigned) { }
 
     // Session history -----------------------------------------------------
 
