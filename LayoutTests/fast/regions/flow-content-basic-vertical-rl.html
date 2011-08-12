@@ -9,16 +9,14 @@
      result should be rejected. -->
 
     <style type="text/css">
+        html { -webkit-writing-mode: vertical-rl }
+
         #source{
             -webkit-flow: "main-thread";
         }
-        
-        .region{
-            content: -webkit-from-flow("main-thread");
-            height:100px;
-            width:300px;
-        }
-        
+
+        .region { width: 100px; height:300px; content: -webkit-from-flow("main-thread"); border:1px solid black; padding:5px }
+
         .pass{
             color: green;
         }
@@ -30,13 +28,17 @@
 </head>
 <body>
     <div id="source" class="pass">
-        <p>flow content</p>
+        <div style="width:100px;">first flow content</div>
+        <div style="width:100px;">second flow content</div>
     </div>
     <div>
-        The words "flow content" in green should display after this div, 
+        The words "flow content" in green should display twice after this div, 
         and there should be two copies of this content that match.
     </div>
     <div id="region1" class="region">
+        <div class="error">FAIL if this text is displayed.</div>
+    </div>
+   <div id="region2" class="region">
         <div class="error">FAIL if this text is displayed.</div>
     </div>
     <div>

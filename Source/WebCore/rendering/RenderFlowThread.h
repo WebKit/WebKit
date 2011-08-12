@@ -40,6 +40,9 @@
 namespace WebCore {
 
 class RenderStyle;
+class RenderRegion;
+
+typedef ListHashSet<RenderRegion*> RenderRegionList;
 
 // RenderFlowThread is used to collect all the render objects that participate in a
 // flow thread. It will also help in doing the layout. However, it will not render
@@ -53,6 +56,8 @@ public:
 
     virtual bool isRenderFlowThread() const { return true; }
 
+    virtual void layout();
+
     AtomicString flowThread() const { return m_flowThread; }
 
     // Always create a RenderLayer for the RenderFlowThread, so that we 
@@ -65,15 +70,32 @@ public:
     virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
     virtual void removeChild(RenderObject*);
 
+    void addRegionToThread(RenderRegion*);
+    void removeRegionFromThread(RenderRegion*);
+    const RenderRegionList& renderRegionList() const { return m_regionList; }
+
+    void computeLogicalWidth();
+    void computeLogicalHeight();
+
+    void paintIntoRegion(PaintInfo&, const LayoutRect&, const LayoutPoint&);
+
+    bool hasRegions() const { return m_regionList.size(); }
+
+    void invalidateRegions() { m_regionsInvalidated = true; setNeedsLayout(true); }
+
+    static PassRefPtr<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);
+
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
 private:
-    static PassRefPtr<RenderStyle> createFlowThreadStyle();
-    
     virtual const char* renderName() const { return "RenderFlowThread"; }
-    
+
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;
-    
+
     AtomicString m_flowThread;
+    RenderRegionList m_regionList;
+    bool m_regionsInvalidated;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)

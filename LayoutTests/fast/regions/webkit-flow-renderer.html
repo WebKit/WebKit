@@ -4,11 +4,24 @@
 #DIV1 { -webkit-flow:'flowA'; }
 #SPAN2 { -webkit-flow: 'flowB'; }
 #DIV3 { -webkit-flow: 'flowC'; }
+
+#REGION1, #REGION2, #REGION3 {
+    width: 100%;
+    height: 100px;
+}
+#REGION1 { content: -webkit-from-flow('flowA'); }
+#REGION2 { content: -webkit-from-flow('flowB'); }
+#REGION3 { content: -webkit-from-flow('flowC'); }
 </style>
 
 <div id="DIV1">DIV1 - flowA</div>
 <span id="SPAN2">SPAN2 - flowB</span>
 <div id="DIV3">DIV3 - flowC</div>
+
+<!-- Make some regions, so that the flow has a size and it's visible in the render tree. -->
+<div id="REGION1"></div>
+<div id="REGION2"></div>
+<div id="REGION3"></div>
 
 <script>
 function test(name, flow, before) {

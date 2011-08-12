@@ -31,20 +31,23 @@
 
 #include "RenderFlowThread.h"
 #include "Node.h"
+#include "PaintInfo.h"
+#include "RenderRegion.h"
 
 namespace WebCore {
 
 RenderFlowThread::RenderFlowThread(Node* node, const AtomicString& flowThread)
-      : RenderBlock(node)
-      , m_flowThread(flowThread)
+    : RenderBlock(node)
+    , m_flowThread(flowThread)
+    , m_regionsInvalidated(false)
 {
     setIsAnonymous(false);
-    setStyle(createFlowThreadStyle());
 }
 
-PassRefPtr<RenderStyle> RenderFlowThread::createFlowThreadStyle()
+PassRefPtr<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyle)
 {
     RefPtr<RenderStyle> newStyle(RenderStyle::create());
+    newStyle->inheritFrom(parentStyle);
     newStyle->setDisplay(BLOCK);
     newStyle->setPosition(AbsolutePosition);
     newStyle->setLeft(Length(0, Fixed));
@@ -56,6 +59,14 @@ PassRefPtr<RenderStyle> RenderFlowThread::createFlowThreadStyle()
     newStyle->font().update(0);
     
     return newStyle.release();
+}
+
+void RenderFlowThread::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+
+    if (oldStyle && oldStyle->writingMode() != style()->writingMode())
+        m_regionsInvalidated = true;
 }
 
 RenderObject* RenderFlowThread::nextRendererForNode(Node* node) const
@@ -108,6 +119,143 @@ void RenderFlowThread::removeChild(RenderObject* child)
 {
     m_flowThreadChildList.remove(child);
     RenderBlock::removeChild(child);
+}
+
+// Compare two regions to determine in which one the content should flow first.
+// The function returns true if the first passed region is "less" than the second passed region.
+// If the first region index < second region index, then the first region is "less" than the second region.
+// If the first region index == second region index and first region appears before second region in DOM, 
+// the first region is "less" than the second region.
+// If the first region is "less" than the second region, the first region receives content before second region.
+static bool compareRenderRegions(const RenderRegion* firstRegion, const RenderRegion* secondRegion)
+{
+    ASSERT(firstRegion);
+    ASSERT(secondRegion);
+
+    // First, compare only region-index properties.
+    if (firstRegion->style()->regionIndex() != secondRegion->style()->regionIndex())
+        return (firstRegion->style()->regionIndex() < secondRegion->style()->regionIndex());
+
+    // If the regions have the same region-index, compare their position in dom.
+    ASSERT(firstRegion->node());
+    ASSERT(secondRegion->node());
+
+    unsigned short position = firstRegion->node()->compareDocumentPosition(secondRegion->node());
+    return (position & Node::DOCUMENT_POSITION_FOLLOWING);
+}
+
+void RenderFlowThread::addRegionToThread(RenderRegion* renderRegion)
+{
+    ASSERT(renderRegion);
+    if (m_regionList.isEmpty())
+        m_regionList.add(renderRegion);
+    else {
+        // Find the first region "greater" than renderRegion.
+        RenderRegionList::iterator it = m_regionList.begin();
+        while (it != m_regionList.end() && !compareRenderRegions(renderRegion, *it))
+            ++it;
+        m_regionList.insertBefore(it, renderRegion);
+    }
+
+    invalidateRegions();
+}
+
+void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
+{
+    ASSERT(renderRegion);
+    m_regionList.remove(renderRegion);
+
+    invalidateRegions();
+}
+
+void RenderFlowThread::layout()
+{
+    if (m_regionsInvalidated) {
+        m_regionsInvalidated = false;
+        if (hasRegions()) {
+            int logicalHeight = 0;
+            for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+                RenderRegion* region = *iter;
+
+                ASSERT(!region->needsLayout());
+
+                IntRect regionRect;
+                if (isHorizontalWritingMode()) {
+                    regionRect = IntRect(0, logicalHeight, region->contentWidth(), region->contentHeight());
+                    logicalHeight += regionRect.height();
+                } else {
+                    regionRect = IntRect(logicalHeight, 0, region->contentWidth(), region->contentHeight());
+                    logicalHeight += regionRect.width();
+                }
+
+                region->setRegionRect(regionRect);                
+            }
+        }
+    }
+
+    RenderBlock::layout();
+}
+
+void RenderFlowThread::computeLogicalWidth()
+{
+    int logicalWidth = 0;
+
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        ASSERT(!region->needsLayout());
+        logicalWidth = max(isHorizontalWritingMode() ? region->contentWidth() : region->contentHeight(), logicalWidth);
+    }
+
+    setLogicalWidth(logicalWidth);
+}
+
+void RenderFlowThread::computeLogicalHeight()
+{
+    int logicalHeight = 0;
+
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        ASSERT(!region->needsLayout());
+        logicalHeight += isHorizontalWritingMode() ? region->contentHeight() : region->contentWidth();
+    }
+
+    setLogicalHeight(logicalHeight);
+}
+
+void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, const LayoutRect& regionRect, const LayoutPoint& paintOffset)
+{
+    GraphicsContext* context = paintInfo.context;
+    if (!context)
+        return;
+
+    // Adjust the clipping rect for the region.
+    // paintOffset contains the offset where the painting should occur
+    // adjusted with the region padding and border.
+    LayoutRect regionClippingRect(paintOffset, regionRect.size());
+
+    PaintInfo info(paintInfo);
+    info.rect.intersect(regionClippingRect);
+
+    if (!info.rect.isEmpty()) {
+        context->save();
+
+        context->clip(regionClippingRect);
+
+        // RenderFlowThread should start painting its content in a position that is offset
+        // from the region rect's current position. The amount of offset is equal to the location of
+        // region in flow coordinates.
+        LayoutPoint renderFlowThreadOffset;
+        if (style()->isFlippedBlocksWritingMode()) {
+            LayoutRect flippedRegionRect(regionRect);
+            flipForWritingMode(flippedRegionRect);
+            renderFlowThreadOffset = LayoutPoint(regionClippingRect.location() - flippedRegionRect.location());
+        } else
+            renderFlowThreadOffset = LayoutPoint(regionClippingRect.location() - regionRect.location());
+
+        RenderBlock::paint(paintInfo, renderFlowThreadOffset);
+
+        context->restore();
+    }
 }
 
 } // namespace WebCore

@@ -1,3 +1,61 @@
+2011-08-12  Alexandru Chiculita  <achicu@adobe.com>
+
+        Original patch by Mihnea Ovidenie <mihnea@adobe.com>.
+        Also contains some improvements done by Dave Hyatt <hyatt@apple.com>.
+
+        [CSSRegions]RenderFlowThread should display its content using RenderRegion
+        https://bugs.webkit.org/show_bug.cgi?id=65627
+
+        Also updated the old tests that expected an 100% by 100% RenderFlowThread. Those tests
+        require at least a region attached, otherwise the RenderFlowThread would have been 0/0 in size,
+        and no output would be generated for them in the render tree.
+
+        The attached regions are now printed in the render tree, so some tests required updated results.
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/content-flowed-into-regions-dynamically-added-expected.png: Added.
+        * fast/regions/content-flowed-into-regions-dynamically-added-expected.txt: Added.
+        * fast/regions/content-flowed-into-regions-dynamically-added.html: Added.
+        * fast/regions/content-flowed-into-regions-dynamically-removed-expected.png: Added.
+        * fast/regions/content-flowed-into-regions-dynamically-removed-expected.txt: Added.
+        * fast/regions/content-flowed-into-regions-dynamically-removed.html: Added.
+        * fast/regions/content-flowed-into-regions-expected.png: Added.
+        * fast/regions/content-flowed-into-regions-expected.txt: Added.
+        * fast/regions/content-flowed-into-regions-with-dyn-index-expected.png: Added.
+        * fast/regions/content-flowed-into-regions-with-dyn-index-expected.txt: Added.
+        * fast/regions/content-flowed-into-regions-with-dyn-index.html: Added.
+        * fast/regions/content-flowed-into-regions-with-index-dom-expected.png: Added.
+        * fast/regions/content-flowed-into-regions-with-index-dom-expected.txt: Added.
+        * fast/regions/content-flowed-into-regions-with-index-dom.html: Added.
+        * fast/regions/content-flowed-into-regions-with-index-expected.png: Added.
+        * fast/regions/content-flowed-into-regions-with-index-expected.txt: Added.
+        * fast/regions/content-flowed-into-regions-with-index.html: Added.
+        * fast/regions/content-flowed-into-regions.html: Added.
+        * fast/regions/flow-content-basic-vertical-rl.html: Copied from LayoutTests/fast/regions/flow-content-basic.html.
+        * fast/regions/flow-content-basic-vertical.html: Copied from LayoutTests/fast/regions/flow-content-basic.html.
+        * fast/regions/flow-content-basic.html:
+        * fast/regions/render-region-renderer-expected.txt:
+        * fast/regions/resources/region-style.css: Added.
+        (.greenBox):
+        (.blueBox):
+        (.orangeBox):
+        (.flowArticle):
+        (.regionArticle):
+        (.borderBox):
+        * fast/regions/webkit-flow-renderer-expected.txt:
+        * fast/regions/webkit-flow-renderer-layer-expected.txt:
+        * fast/regions/webkit-flow-renderer-layer.html:
+        * fast/regions/webkit-flow-renderer-nested-expected.txt:
+        * fast/regions/webkit-flow-renderer-nested.html:
+        * fast/regions/webkit-flow-renderer.html:
+        * platform/mac/fast/regions/flow-content-basic-expected.png: Added.
+        * platform/mac/fast/regions/flow-content-basic-expected.txt: Added.
+        * platform/mac/fast/regions/flow-content-basic-vertical-expected.png: Added.
+        * platform/mac/fast/regions/flow-content-basic-vertical-expected.txt: Added.
+        * platform/mac/fast/regions/flow-content-basic-vertical-rl-expected.png: Added.
+        * platform/mac/fast/regions/flow-content-basic-vertical-rl-expected.txt: Added.
+
 2011-08-12  Abhishek Arya  <inferno@chromium.org>
 
         Crash in WebCore::editingIgnoresContent

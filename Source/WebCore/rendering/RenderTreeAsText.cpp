@@ -44,6 +44,7 @@
 #include "RenderListItem.h"
 #include "RenderListMarker.h"
 #include "RenderPart.h"
+#include "RenderRegion.h"
 #include "RenderTableCell.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
@@ -722,6 +723,28 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
             ts << "Thread with flow-name '" << renderFlowThread->flowThread() << "'\n";
             RenderLayer* layer = renderFlowThread->layer();
             writeLayers(ts, rootLayer, layer, paintDirtyRect, indent + 2, behavior);
+
+            // Display the render regions attached to this flow thread
+            const RenderRegionList& flowThreadRegionList = renderFlowThread->renderRegionList();
+            if (!flowThreadRegionList.isEmpty()) {
+                writeIndent(ts, indent + 1);
+                ts << "Regions for flow '"<< renderFlowThread->flowThread() << "'\n";
+                for (RenderRegionList::const_iterator itRR = flowThreadRegionList.begin(); itRR != flowThreadRegionList.end(); ++itRR) {
+                    RenderRegion* renderRegion = *itRR;
+                    writeIndent(ts, indent + 2);
+                    ts << "RenderRegion";
+                    if (renderRegion->node()) {
+                        String tagName = getTagName(renderRegion->node());
+                        if (!tagName.isEmpty())
+                            ts << " {" << tagName << "}";
+                        if (renderRegion->node()->isElementNode() && renderRegion->node()->hasID()) {
+                            Element* element = static_cast<Element*>(renderRegion->node());
+                            ts << " #" << element->idForStyleResolution();
+                        }
+                    }
+                    ts << " with index " << renderRegion->style()->regionIndex() << "\n";
+                }
+            }
         }
     }
 }

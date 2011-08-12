@@ -1,3 +1,56 @@
+2011-08-12  Alexandru Chiculita  <achicu@adobe.com>
+
+        Original patch by Mihnea Ovidenie <mihnea@adobe.com>.
+        Also contains some improvements done by Dave Hyatt <hyatt@apple.com>.
+
+        [CSSRegions]RenderFlowThread should display its content using RenderRegion
+        https://bugs.webkit.org/show_bug.cgi?id=65627
+
+        RenderFlowThread collects RenderObjects from a flow. These objects are displayed by means
+        of RenderRegion objects that get the content from the same flow.
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/regions/content-flowed-into-regions-dynamically-added.html
+               fast/regions/content-flowed-into-regions-dynamically-removed.html
+               fast/regions/content-flowed-into-regions-with-dyn-index.html
+               fast/regions/content-flowed-into-regions-with-index-dom.html
+               fast/regions/content-flowed-into-regions-with-index.html
+               fast/regions/content-flowed-into-regions.html
+               fast/regions/flow-content-basic-vertical-rl.html
+               fast/regions/flow-content-basic-vertical.html
+
+        * dom/Node.cpp:
+        (WebCore::Node::diff):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::createFlowThreadStyle):
+        (WebCore::RenderFlowThread::styleDidChange):
+        (WebCore::compareRenderRegions):
+        (WebCore::RenderFlowThread::addRegionToThread):
+        (WebCore::RenderFlowThread::removeRegionFromThread):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::computeLogicalWidth):
+        (WebCore::RenderFlowThread::computeLogicalHeight):
+        (WebCore::RenderFlowThread::paintIntoRegion):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::~RenderRegion):
+        (WebCore::RenderRegion::paint):
+        (WebCore::RenderRegion::styleDidChange):
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::setRegionRect):
+        (WebCore::RenderRegion::regionRect):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeLayers):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::styleDidChange):
+        (WebCore::RenderView::renderFlowThreadWithName):
+        * rendering/RenderView.h:
+
 2011-08-12  Abhishek Arya  <inferno@chromium.org>
 
         Crash in WebCore::editingIgnoresContent

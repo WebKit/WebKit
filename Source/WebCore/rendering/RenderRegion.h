@@ -34,9 +34,11 @@
 
 namespace WebCore {
 
+class RenderFlowThread;
+
 class RenderRegion : public RenderBox {
 public:
-    explicit RenderRegion(Node*);
+    explicit RenderRegion(Node*, RenderFlowThread*);
     virtual ~RenderRegion();
 
     virtual bool isRenderRegion() const { return true; }
@@ -44,8 +46,16 @@ public:
     virtual void layout();
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
+    void setRegionRect(const IntRect& rect) { m_regionRect = rect; }
+    IntRect regionRect() const { return m_regionRect; }
+
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
+
+    void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
+
+    RenderFlowThread* m_flowThread;
+    IntRect m_regionRect;
 };
 
 inline RenderRegion* toRenderRegion(RenderObject* object)

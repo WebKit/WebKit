@@ -33,17 +33,23 @@
 #include "GraphicsContext.h"
 #include "IntRect.h"
 #include "PaintInfo.h"
+#include "RenderFlowThread.h"
 #include "RenderView.h"
 
 namespace WebCore {
 
-RenderRegion::RenderRegion(Node* node)
-: RenderBox(node)
+RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
+    : RenderBox(node)
+    , m_flowThread(flowThread)
 {
+    setReplaced(true);
 }
 
 RenderRegion::~RenderRegion()
 {
+    if (m_flowThread && view())
+        m_flowThread->removeRegionFromThread(this);
+    m_flowThread = 0;
 }
 
 void RenderRegion::layout()
@@ -58,10 +64,6 @@ void RenderRegion::layout()
 
 void RenderRegion::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseMask && paintInfo.phase != PaintPhaseOutline
-        && paintInfo.phase != PaintPhaseSelfOutline)
-        return;
-
     if (!paintInfo.shouldPaintWithinRoot(this))
         return;
 
@@ -81,6 +83,19 @@ void RenderRegion::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
     LayoutRect paintRect = LayoutRect(adjustedPaintOffset, size());
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
         paintOutline(paintInfo.context, paintRect);
+
+    // Delegate painting of content in region to RenderFlowThread.
+    adjustedPaintOffset.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
+    m_flowThread->paintIntoRegion(paintInfo, regionRect(), adjustedPaintOffset);
 }
 
-} // namespace WebCore
+void RenderRegion::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)
+{
+    RenderBox::styleDidChange(difference, oldStyle);
+    // This needs to be done here and not in the constructor, because RenderFlowThread 
+    // uses the style() property which is not yet initialized in the constructor.
+    if (!oldStyle && m_flowThread)
+        m_flowThread->addRegionToThread(this);
+}
+
+} // namespace WebCre

@@ -9,14 +9,15 @@
      result should be rejected. -->
 
     <style type="text/css">
+        html { -webkit-writing-mode: vertical-lr }
+
         #source{
             -webkit-flow: "main-thread";
         }
         
         .region{
             content: -webkit-from-flow("main-thread");
-            height:100px;
-            width:300px;
+            width:100px;
         }
         
         .pass{

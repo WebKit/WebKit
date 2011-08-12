@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+    <!--
+    Test that the content is properly reflowed into regions when -webkit-content-order is modified.
+    On success you should see that the colored boxes are displayed inside the 3 rectangles with black border.
+    The green box should be displayed in right region.
+    The blue box should be displayed in middle region.
+    The orange box should be displayed in the left region.
+    -->
+    <head>
+        <link rel="stylesheet" href="resources/region-style.css">
+        <style>
+            #region1
+            {
+                -webkit-content-order: 1;
+            }
+
+            #region2
+            {
+                -webkit-content-order: 2;
+            }
+
+            #region3
+            {
+                -webkit-content-order: 3;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="flowArticle">
+            <div class="greenBox"></div>
+            <div class="blueBox"></div>
+            <div class="orangeBox"></div>
+        </div>
+        <div id="region1" class="regionArticle borderBox"></div>
+        <div id="region2" class="regionArticle borderBox"></div>
+        <div id="region3" class="regionArticle borderBox"></div>
+        <script>
+            function setRegionContentOrder(regionId, contentOrder) {
+                var regionElement = document.getElementById(regionId);
+                regionElement.style.webkitContentOrder = contentOrder;
+            }
+
+            setRegionContentOrder("region1", 3);
+            setRegionContentOrder("region2", 2);
+            setRegionContentOrder("region3", 1);
+
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText(true);
+        </script>
+    </body>
+</html>

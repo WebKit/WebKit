@@ -3,6 +3,13 @@
 <style>
 #DIV1, #DIV3 { -webkit-flow:'flowA'; }
 #DIV2 { -webkit-flow:'flowB'; }
+
+#REGION1, #REGION2 {
+    width: 100%;
+    height: 100px;
+}
+#REGION1 { content: -webkit-from-flow('flowA'); }
+#REGION2 { content: -webkit-from-flow('flowB'); }
 </style>
 
 <div id="DIV1">
@@ -12,3 +19,7 @@
         <div id="DIV3">DIV3 - flowA</div>
     </p>
 </div>
+
+<!-- Make some regions, so that the flow has a size and it's visible in the render tree. -->
+<div id="REGION1"></div>
+<div id="REGION2"></div>

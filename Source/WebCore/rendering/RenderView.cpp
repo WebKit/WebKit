@@ -793,6 +793,18 @@ void RenderView::willMoveOffscreen()
 #endif
 }
 
+void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+    
+    for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
+        if (renderer->isRenderFlowThread()) {
+            RenderFlowThread* flowRenderer = toRenderFlowThread(renderer);
+            flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(style()));
+        }
+    }
+}
+
 RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowThread)
 {
     for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
@@ -804,6 +816,7 @@ RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowT
     }
 
     RenderFlowThread* flowRenderer = new (renderArena()) RenderFlowThread(document(), flowThread);
+    flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(style()));
     addChild(flowRenderer);
     
     return flowRenderer;
