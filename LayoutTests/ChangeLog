@@ -1,3 +1,16 @@
+2011-08-11  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Object store records don't need to have keys in all indexes
+        https://bugs.webkit.org/show_bug.cgi?id=66049
+
+        Reviewed by Tony Chang.
+
+        Update test to make sure it's possible to add an object store record
+        even though it doesn't yield keys in every index.
+
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics.html:
+
 2011-08-10  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Overwriting key in unique index should be possible

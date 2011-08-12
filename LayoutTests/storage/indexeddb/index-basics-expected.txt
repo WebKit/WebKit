@@ -30,6 +30,7 @@ store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')
 event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71, foobar: 12}, 'key2')
 store.createIndex('indexWhileAddIsInFlight', 'x')
 store.createIndex('indexWithWeirdKeyPath', 'foobar')
+event.target.source.add({x: 'value3', y: '456'}, 'key3')
 indexObject.getKey('value')
 PASS event.target.result is "key"
 indexObject2.getKey('zzz')
@@ -57,6 +58,10 @@ PASS event.target.result === null is false
 PASS event.target.result.key is "value2"
 PASS event.target.result.primaryKey is "key2"
 event.target.result.continue()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value3"
+PASS event.target.result.primaryKey is "key3"
+event.target.result.continue()
 PASS event.target.result === null is true
 indexObject.openCursor()
 PASS event.target.source is indexObject
@@ -69,6 +74,11 @@ PASS event.target.result === null is false
 PASS event.target.result.key is "value2"
 PASS event.target.result.value.x is "value2"
 PASS event.target.result.value.y is "zzz2"
+event.target.result.continue()
+PASS event.target.result === null is false
+PASS event.target.result.key is "value3"
+PASS event.target.result.value.x is "value3"
+PASS event.target.result.value.y is "456"
 event.target.result.continue()
 PASS event.target.result === null is true
 Passing an invalid key into indexObject.get().

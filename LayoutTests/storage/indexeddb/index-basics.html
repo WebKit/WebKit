@@ -62,17 +62,25 @@ function addData()
     shouldBeTrue("'get' in indexObject");
 
     request = evalAndLog("store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')");
-    request.onsuccess = addMore;
+    request.onsuccess = addData2;
     request.onerror = unexpectedErrorCallback;
 }
 
-function addMore()
+function addData2()
 {
     request = evalAndLog("event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71, foobar: 12}, 'key2')");
-    request.onsuccess = getData;
+    request.onsuccess = addData3;
     request.onerror = unexpectedErrorCallback;
     window.indexObject4 = evalAndLog("store.createIndex('indexWhileAddIsInFlight', 'x')");
     window.indexObject5 = evalAndLog("store.createIndex('indexWithWeirdKeyPath', 'foobar')");
+}
+
+function addData3()
+{
+    // Add data which doesn't have a key in the zIndex.
+    request = evalAndLog("event.target.source.add({x: 'value3', y: '456'}, 'key3')");
+    request.onsuccess = getData;
+    request.onerror = unexpectedErrorCallback;
 }
 
 function getData()
@@ -169,6 +177,17 @@ function cursor1Continue2()
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");
+    window.request.onsuccess = cursor1Continue3;
+}
+
+function cursor1Continue3()
+{
+    shouldBeFalse("event.target.result === null");
+    shouldBeEqualToString("event.target.result.key", "value3");
+    shouldBeEqualToString("event.target.result.primaryKey", "key3");
+
+    // We re-use the last request object.
+    evalAndLog("event.target.result.continue()");
     window.request.onsuccess = openObjectCursor;
 }
 
@@ -198,8 +217,20 @@ function cursor2Continue2()
 {
     shouldBeFalse("event.target.result === null");
     shouldBeEqualToString("event.target.result.key", "value2");
-    shouldBeEqualToString("event.target.result.value.x", "value2");    
+    shouldBeEqualToString("event.target.result.value.x", "value2");
     shouldBeEqualToString("event.target.result.value.y", "zzz2");
+
+    // We re-use the last request object.
+    evalAndLog("event.target.result.continue()");
+    window.request.onsuccess = cursor2Continue3;
+}
+
+function cursor2Continue3()
+{
+    shouldBeFalse("event.target.result === null");
+    shouldBeEqualToString("event.target.result.key", "value3");
+    shouldBeEqualToString("event.target.result.value.x", "value3");
+    shouldBeEqualToString("event.target.result.value.y", "456");
 
     // We re-use the last request object.
     evalAndLog("event.target.result.continue()");

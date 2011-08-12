@@ -230,8 +230,8 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
         RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(value.get(), index->keyPath());
         if (!indexKey) {
-            callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "The key could not be fetched from an index's keyPath."));
-            return;
+            indexKeys.append(indexKey.release());
+            continue;
         }
         if (indexKey->type() == IDBKey::NullType) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "One of the derived (from a keyPath) keys for an index is NULL."));
@@ -273,6 +273,8 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
             return;
         }
 
+        if (!indexKeys[i])
+            continue;
         if (!objectStore->m_backingStore->putIndexDataForRecord(objectStore->m_databaseId, objectStore->id(), it->second->id(), *indexKeys[i], recordIdentifier.get())) {
             // FIXME: The Indexed Database specification does not have an error code dedicated to I/O errors.
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Error writing data to stable storage."));
