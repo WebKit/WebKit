@@ -391,6 +391,14 @@ bool JITCodeGenerator::isKnownNotInteger(NodeIndex nodeIndex)
         || (node.isConstant() && !valueOfJSConstant(nodeIndex).isInt32());
 }
 
+template<typename To, typename From>
+inline To safeCast(From value)
+{
+    To result = static_cast<To>(value);
+    ASSERT(result == value);
+    return result;
+}
+
 JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget, NodeType nodeType)
 {
     JITCompiler::DataLabelPtr structureToCompare;
@@ -433,13 +441,13 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultG
     
     JITCompiler::Label doneLabel = m_jit.label();
 
-    int8_t checkImmToCall = static_cast<int8_t>(m_jit.differenceBetween(structureToCompare, functionCall));
-    int8_t callToCheck = static_cast<int8_t>(m_jit.differenceBetween(functionCall, structureCheck));
-    int8_t callToLoad = static_cast<int8_t>(m_jit.differenceBetween(functionCall, loadWithPatch));
-    int8_t callToSlowCase = static_cast<int8_t>(m_jit.differenceBetween(functionCall, slowCase));
-    int8_t callToDone = static_cast<int8_t>(m_jit.differenceBetween(functionCall, doneLabel));
+    int16_t checkImmToCall = safeCast<int16_t>(m_jit.differenceBetween(structureToCompare, functionCall));
+    int16_t callToCheck = safeCast<int16_t>(m_jit.differenceBetween(functionCall, structureCheck));
+    int16_t callToLoad = safeCast<int16_t>(m_jit.differenceBetween(functionCall, loadWithPatch));
+    int16_t callToSlowCase = safeCast<int16_t>(m_jit.differenceBetween(functionCall, slowCase));
+    int16_t callToDone = safeCast<int16_t>(m_jit.differenceBetween(functionCall, doneLabel));
     
-    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToLoad, callToSlowCase, callToDone, static_cast<int8_t>(baseGPR), static_cast<int8_t>(resultGPR), static_cast<int8_t>(scratchGPR));
+    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToLoad, callToSlowCase, callToDone, safeCast<int8_t>(baseGPR), safeCast<int8_t>(resultGPR), safeCast<int8_t>(scratchGPR));
     
     if (scratchGPR != resultGPR && scratchGPR != InvalidGPRReg)
         unlock(scratchGPR);
@@ -495,13 +503,13 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scr
     done.link(&m_jit);
     JITCompiler::Label doneLabel = m_jit.label();
 
-    int8_t checkImmToCall = static_cast<int8_t>(m_jit.differenceBetween(structureToCompare, functionCall));
-    int8_t callToCheck = static_cast<int8_t>(m_jit.differenceBetween(functionCall, structureCheck));
-    int8_t callToStore = static_cast<int8_t>(m_jit.differenceBetween(functionCall, storeWithPatch));
-    int8_t callToSlowCase = static_cast<int8_t>(m_jit.differenceBetween(functionCall, slowCase));
-    int8_t callToDone = static_cast<int8_t>(m_jit.differenceBetween(functionCall, doneLabel));
+    int16_t checkImmToCall = safeCast<int16_t>(m_jit.differenceBetween(structureToCompare, functionCall));
+    int16_t callToCheck = safeCast<int16_t>(m_jit.differenceBetween(functionCall, structureCheck));
+    int16_t callToStore = safeCast<int16_t>(m_jit.differenceBetween(functionCall, storeWithPatch));
+    int16_t callToSlowCase = safeCast<int16_t>(m_jit.differenceBetween(functionCall, slowCase));
+    int16_t callToDone = safeCast<int16_t>(m_jit.differenceBetween(functionCall, doneLabel));
 
-    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToStore, callToSlowCase, callToDone, static_cast<int8_t>(baseGPR), static_cast<int8_t>(valueGPR), static_cast<int8_t>(scratchGPR));
+    m_jit.addPropertyAccess(functionCall, checkImmToCall, callToCheck, callToStore, callToSlowCase, callToDone, safeCast<int8_t>(baseGPR), safeCast<int8_t>(valueGPR), safeCast<int8_t>(scratchGPR));
 }
 
 void JITCodeGenerator::cachedGetMethod(GPRReg baseGPR, GPRReg resultGPR, GPRReg scratchGPR, unsigned identifierNumber, JITCompiler::Jump slowPathTarget)

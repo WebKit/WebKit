@@ -309,7 +309,7 @@ private:
     unsigned m_exceptionCheckCount;
 
     struct PropertyAccessRecord {
-        PropertyAccessRecord(Call functionCall, int8_t deltaCheckImmToCall, int8_t deltaCallToStructCheck, int8_t deltaCallToLoadOrStore, int8_t deltaCallToSlowCase, int8_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
+        PropertyAccessRecord(Call functionCall, int16_t deltaCheckImmToCall, int16_t deltaCallToStructCheck, int16_t deltaCallToLoadOrStore, int16_t deltaCallToSlowCase, int16_t deltaCallToDone, int8_t baseGPR, int8_t valueGPR, int8_t scratchGPR)
             : m_functionCall(functionCall)
             , m_deltaCheckImmToCall(deltaCheckImmToCall)
             , m_deltaCallToStructCheck(deltaCallToStructCheck)
@@ -323,11 +323,11 @@ private:
         }
 
         JITCompiler::Call m_functionCall;
-        int8_t m_deltaCheckImmToCall;
-        int8_t m_deltaCallToStructCheck;
-        int8_t m_deltaCallToLoadOrStore;
-        int8_t m_deltaCallToSlowCase;
-        int8_t m_deltaCallToDone;
+        int16_t m_deltaCheckImmToCall;
+        int16_t m_deltaCallToStructCheck;
+        int16_t m_deltaCallToLoadOrStore;
+        int16_t m_deltaCallToSlowCase;
+        int16_t m_deltaCallToDone;
         int8_t m_baseGPR;
         int8_t m_valueGPR;
         int8_t m_scratchGPR;
