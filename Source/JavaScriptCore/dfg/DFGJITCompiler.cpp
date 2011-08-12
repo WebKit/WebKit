@@ -326,8 +326,10 @@ struct ShuffledRegister {
             if (cur->reg.isFPR()) {
                 if (scratchFPR1 == InvalidFPRReg)
                     scratchFPR1 = cur->reg.fpr();
-                else
+                else {
+                    ASSERT(scratchFPR1 != cur->reg.fpr());
                     scratchFPR2 = cur->reg.fpr();
+                }
             }
             cur = cur->previous;
         }
@@ -335,8 +337,10 @@ struct ShuffledRegister {
         if (cur->reg.isFPR()) {
             if (scratchFPR1 == InvalidFPRReg)
                 scratchFPR1 = cur->reg.fpr();
-            else
+            else {
+                ASSERT(scratchFPR1 != cur->reg.fpr());
                 scratchFPR2 = cur->reg.fpr();
+            }
         }
     }
     
@@ -568,10 +572,8 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
         NodeIndex nodeIndex = check.m_gprInfo[index].nodeIndex;
         
         // Bail out if this register isn't assigned to anything.
-        if (nodeIndex == NoNode) {
-            scratchGPR = GPRInfo::toRegister(index);
+        if (nodeIndex == NoNode)
             continue;
-        }
         
         // If the non-speculative path also has a register for the nodeIndex that this
         // register stores, link them together.
@@ -587,6 +589,12 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
             // part below regardless of whether or not the speculative path has spilled it.
             if (!mapIterator->second.findInEntryLocation(entry).isSpilled)
                 continue;
+        } else {
+            // If the non-speculative entry isn't using this register and it does not need
+            // the value in this register to be placed into any other register, then this
+            // register can be used for scratch.
+            if (entry.m_gprInfo[index].nodeIndex == NoNode)
+                scratchGPR = GPRInfo::toRegister(index);
         }
         
         // If the speculative path has already spilled the register then there is no need to
@@ -601,8 +609,6 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
         if (dataFormat == DataFormatInteger)
             orPtr(GPRInfo::tagTypeNumberRegister, GPRInfo::toRegister(index));
         storePtr(GPRInfo::toRegister(index), addressFor(virtualRegister));
-        
-        scratchGPR = GPRInfo::toRegister(index);
     }
     
     if (scratchGPR == InvalidGPRReg) {
@@ -625,6 +631,17 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
 
             if (!mapIterator->second.findInEntryLocation(entry).isSpilled)
                 continue;
+        } else {
+            // If the non-speculative entry isn't using this register and it does not need
+            // the value in this register to be placed into any other register, then this
+            // register can be used for scratch.
+            if (entry.m_fprInfo[index].nodeIndex == NoNode) {
+                if (scratchFPR1 == InvalidFPRReg)
+                    scratchFPR1 = FPRInfo::toRegister(index);
+                else if (scratchFPR2)
+                    scratchFPR2 = FPRInfo::toRegister(index);
+                ASSERT((scratchFPR1 == InvalidFPRReg && scratchFPR2 == InvalidFPRReg) || (scratchFPR1 != scratchFPR2));
+            }
         }
         
         if (check.m_fprInfo[index].isSpilled)
@@ -635,13 +652,26 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
         moveDoubleToPtr(FPRInfo::toRegister(index), scratchGPR);
         subPtr(GPRInfo::tagTypeNumberRegister, scratchGPR);
         storePtr(scratchGPR, addressFor(virtualRegister));
-
-        if (scratchFPR1 == InvalidFPRReg)
-            scratchFPR1 = FPRInfo::toRegister(index);
-        else if (scratchFPR2)
-            scratchFPR2 = FPRInfo::toRegister(index);
-        ASSERT((scratchFPR1 == InvalidFPRReg && scratchFPR2 == InvalidFPRReg) || (scratchFPR1 != scratchFPR2));
     }
+    
+#if !ASSERT_DISABLED
+    // Assert that we've not assigned a scratch register to something that we're going to shuffle.
+    ASSERT(scratchGPR != InvalidGPRReg);
+    if (scratchGPR != GPRInfo::tagMaskRegister) {
+        ASSERT(!gprs[GPRInfo::toIndex(scratchGPR)].hasTo);
+        ASSERT(!gprs[GPRInfo::toIndex(scratchGPR)].hasFrom);
+    }
+    if (scratchFPR1 != InvalidFPRReg) {
+        ASSERT(scratchFPR1 != scratchFPR2);
+        ASSERT(!fprs[FPRInfo::toIndex(scratchFPR1)].hasTo);
+        ASSERT(!fprs[FPRInfo::toIndex(scratchFPR1)].hasFrom);
+        if (scratchFPR2 != InvalidFPRReg) {
+            ASSERT(!fprs[FPRInfo::toIndex(scratchFPR2)].hasTo);
+            ASSERT(!fprs[FPRInfo::toIndex(scratchFPR2)].hasFrom);
+        }
+    } else
+        ASSERT(scratchFPR2 == InvalidFPRReg);
+#endif
     
     // Part 2: For the set of nodes that are in registers on both paths,
     //         perform a shuffling.

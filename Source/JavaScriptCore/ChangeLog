@@ -1,3 +1,19 @@
+2011-08-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT speculation failure code sometimes picks the wrong register
+        as a scratch register.
+        https://bugs.webkit.org/show_bug.cgi?id=66104
+
+        Reviewed by Gavin Barraclough.
+        
+        Hardened the code with more assertions and fixed the bug.  Now a
+        spilled register is only used for scratch if it also isn't being
+        used for shuffling.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::ShuffledRegister::handleNonCyclingPermutation):
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+
 2011-08-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92880.
