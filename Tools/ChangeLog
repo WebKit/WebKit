@@ -1,5 +1,16 @@
 2011-08-12  Andy Estes  <aestes@apple.com>
 
+        allowRoundingHacksCallback uses the wrong argument for 'thisObject'.
+        https://bugs.webkit.org/show_bug.cgi?id=66158
+
+        Reviewed by Dan Bernstein.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (allowRoundingHacksCallback): The third argument is the 'this'
+        JSObjectRef, not the second.
+
+2011-08-12  Andy Estes  <aestes@apple.com>
+
         Cancel in onbeforeunload dialog sometime causes a button to stop working.
         https://bugs.webkit.org/show_bug.cgi?id=26211
 

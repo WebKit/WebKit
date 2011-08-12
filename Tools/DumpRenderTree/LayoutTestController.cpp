@@ -2133,7 +2133,7 @@ static JSValueRef setSerializeHTTPLoadsCallback(JSContextRef context, JSObjectRe
     return JSValueMakeUndefined(context);
 }
 
-static JSValueRef allowRoundingHacksCallback(JSContextRef context, JSObjectRef thisObject, JSObjectRef, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+static JSValueRef allowRoundingHacksCallback(JSContextRef context, JSObjectRef, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
 
