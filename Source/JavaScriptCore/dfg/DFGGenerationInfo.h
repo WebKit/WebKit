@@ -238,6 +238,12 @@ public:
         ASSERT(m_canFill && m_registerFormat != DataFormatNone);
         m_registerFormat = DataFormatNone;
     }
+    
+    void killSpilled()
+    {
+        m_spillFormat = DataFormatNone;
+        m_canFill = false;
+    }
 
     // Record that this value is filled into machine registers,
     // tracking which registers, and what format the value has.

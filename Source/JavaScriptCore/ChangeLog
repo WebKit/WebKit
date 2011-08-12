@@ -1,3 +1,23 @@
+2011-08-12  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION (r91610?): Bing Maps fail to initialize (InvalidOperation:
+        Matrix3D.invert)
+        https://bugs.webkit.org/show_bug.cgi?id=66038
+
+        Reviewed by Gavin Barraclough.
+        
+        Simplest and lowest-impact fix for the case where the spilled format
+        of a DFG node differs from the register format: if the format is
+        converted then indicate that the spilled value is no longer valid
+        ("kill the spill").
+
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::GenerationInfo::killSpilled):
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+
 2011-08-12  Sam Weinig  <sam@webkit.org>
 
         Move compiler specific macros to their own header
