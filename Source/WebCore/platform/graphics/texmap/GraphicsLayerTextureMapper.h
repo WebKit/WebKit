@@ -74,7 +74,7 @@ public:
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsToCanvas(PlatformLayer* canvas) { setContentsToMedia(canvas); }
-    virtual void syncCompositingState();
+    virtual void syncCompositingState(const FloatRect&);
     virtual void syncCompositingStateForThisLayerOnly();
     virtual void setName(const String& name);
     virtual PlatformLayer* platformLayer() const;

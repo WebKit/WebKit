@@ -1288,7 +1288,7 @@ float GraphicsLayerQt::accumulatedOpacity() const
 
 /* \reimp (GraphicsLayer.h)
 */
-void GraphicsLayerQt::syncCompositingState()
+void GraphicsLayerQt::syncCompositingState(const FloatRect&)
 {
     m_impl->flushChanges();
     GraphicsLayer::syncCompositingState();

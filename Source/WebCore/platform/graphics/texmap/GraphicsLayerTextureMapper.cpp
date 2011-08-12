@@ -337,7 +337,7 @@ void GraphicsLayerTextureMapper::syncCompositingStateForThisLayerOnly()
 
 /* \reimp (GraphicsLayer.h)
 */
-void GraphicsLayerTextureMapper::syncCompositingState()
+void GraphicsLayerTextureMapper::syncCompositingState(const FloatRect&)
 {
     m_node->syncCompositingState(this, TextureMapperNode::TraverseDescendants);
 }

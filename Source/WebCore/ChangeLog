@@ -1,3 +1,19 @@
+2011-08-12  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        [Qt][REGRESSION] composited content doesn't render since r92651
+        https://bugs.webkit.org/show_bug.cgi?id=66108
+
+        Reviewed by Benjamin Poulain.
+
+        Changed the signature for GraphicsLayerTextureMapper::syncCompositingState to match
+        the new signature in GraphicsLayer.h.
+
+        No new tests. This is a regression that's covered by existing pixel tests.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayerTextureMapper::syncCompositingState):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.h:
+
 2011-08-12  Alexandru Chiculita  <achicu@adobe.com>
 
         Original patch by Mihnea Ovidenie <mihnea@adobe.com>.

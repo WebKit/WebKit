@@ -80,7 +80,7 @@ public:
     virtual void setContentsOrientation(CompositingCoordinatesOrientation orientation);
     virtual void distributeOpacity(float);
     virtual float accumulatedOpacity() const;
-    virtual void syncCompositingState();
+    virtual void syncCompositingState(const FloatRect&);
     virtual void syncCompositingStateForThisLayerOnly();
 
 private:
