@@ -64,7 +64,6 @@ namespace WTF {
     template<typename T> class PassRefPtr {
     public:
         PassRefPtr() : m_ptr(0) { }
-        PassRefPtr(std::nullptr_t) : m_ptr(0) { }
         PassRefPtr(T* ptr) : m_ptr(ptr) { refIfNotNull(ptr); }
         // It somewhat breaks the type system to allow transfer of ownership out of
         // a const PassRefPtr. However, it makes it much easier to work with PassRefPtr
