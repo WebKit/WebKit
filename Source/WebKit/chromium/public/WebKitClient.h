@@ -70,6 +70,7 @@ class WebSharedWorkerRepository;
 class WebSocketStreamHandle;
 class WebStorageNamespace;
 class WebThemeEngine;
+class WebThread;
 class WebURLLoader;
 
 class WebKitClient {
@@ -172,6 +173,12 @@ public:
 
     // Same as above, but always returns actual value, without any caches.
     virtual size_t actualMemoryUsageMB() { return 0; }
+
+
+    // Threads -------------------------------------------------------
+
+    // Creates an embedder-defined thread.
+    virtual WebThread* createThread(const char* name) { return 0; }
 
 
     // Message Ports -------------------------------------------------------

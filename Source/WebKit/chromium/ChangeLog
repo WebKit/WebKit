@@ -1,3 +1,15 @@
+2011-08-10  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Add WebThread to WebKitClient
+        https://bugs.webkit.org/show_bug.cgi?id=66013
+
+        Reviewed by Darin Fisher.
+
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::createThread):
+        * public/WebThread.h: Added.
+        (WebKit::WebThread::~WebThread):
+
 2011-08-11  John Bauman  <jbauman@chromium.org>
 
         Readback composited webgl results for printing
