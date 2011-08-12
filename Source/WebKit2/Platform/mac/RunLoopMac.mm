@@ -67,6 +67,11 @@ void RunLoop::run()
     }        
 }
 
+void RunLoop::runForDuration(double duration)
+{
+    CFRunLoopRunInMode(kCFRunLoopDefaultMode, duration, true);
+}
+
 void RunLoop::stop()
 {
     ASSERT(m_runLoop == CFRunLoopGetCurrent());
