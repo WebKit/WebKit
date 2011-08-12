@@ -142,6 +142,7 @@ WebInspector.ConsoleView.prototype = {
                     msg.totalRepeatCount = count;
                     msg._updateRepeatCount();
                     console._incrementErrorWarningCount(msg);
+                    console.dispatchEventToListeners(WebInspector.ConsoleView.Events.MessageAdded, msg);
                 } else {
                     var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._requestId);
                     msgCopy.totalRepeatCount = count;

@@ -1,3 +1,17 @@
+2011-08-11  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: properly update console message count in source frames and resources panel.
+        https://bugs.webkit.org/show_bug.cgi?id=57009
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.messageRepeatCountUpdated):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.show):
+        (WebInspector.SourceFrame.prototype.addMessageToSource):
+        (WebInspector.SourceFrame.prototype._updateMessageRepeatCount):
+
 2011-08-12  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: follow up to inspector test breakage.

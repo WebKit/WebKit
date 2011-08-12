@@ -82,7 +82,7 @@ WebInspector.SourceFrame.prototype = {
         WebInspector.View.prototype.show.call(this, parentElement);
 
         this._ensureContentLoaded();
-        
+
         this.restoreScrollPositions();
 
         // Resize after setting the initial scroll positions to avoid unnecessary rendering work.
@@ -452,21 +452,6 @@ WebInspector.SourceFrame.prototype = {
         return ranges;
     },
 
-    _incrementMessageRepeatCount: function(msg, repeatDelta)
-    {
-        if (!msg._resourceMessageLineElement)
-            return;
-
-        if (!msg._resourceMessageRepeatCountElement) {
-            var repeatedElement = document.createElement("span");
-            msg._resourceMessageLineElement.appendChild(repeatedElement);
-            msg._resourceMessageRepeatCountElement = repeatedElement;
-        }
-
-        msg.repeatCount += repeatDelta;
-        msg._resourceMessageRepeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", msg.repeatCount);
-    },
-
     setExecutionLine: function(lineNumber, skipRevealLine)
     {
         this._executionLineNumber = lineNumber;
@@ -540,13 +525,15 @@ WebInspector.SourceFrame.prototype = {
         }
 
         for (var i = 0; i < rowMessages.length; ++i) {
-            if (rowMessages[i].isEqual(msg)) {
-                this._incrementMessageRepeatCount(rowMessages[i], msg.repeatDelta);
+            if (rowMessages[i].consoleMessage.isEqual(msg)) {
+                rowMessages[i].repeatCount = msg.totalRepeatCount;
+                this._updateMessageRepeatCount(rowMessages[i]);
                 return;
             }
         }
 
-        rowMessages.push(msg);
+        var rowMessage = { consoleMessage: msg };
+        rowMessages.push(rowMessage);
 
         var imageURL;
         switch (msg.level) {
@@ -571,7 +558,23 @@ WebInspector.SourceFrame.prototype = {
         messageLineElement.appendChild(image);
         messageLineElement.appendChild(document.createTextNode(msg.message));
 
-        msg._resourceMessageLineElement = messageLineElement;
+        rowMessage.element = messageLineElement;
+        rowMessage.repeatCount = msg.totalRepeatCount;
+        this._updateMessageRepeatCount(rowMessage);
+    },
+
+    _updateMessageRepeatCount: function(rowMessage)
+    {
+        if (rowMessage.repeatCount < 2)
+            return;
+
+        if (!rowMessage.repeatCountElement) {
+            var repeatCountElement = document.createElement("span");
+            rowMessage.element.appendChild(repeatCountElement);
+            rowMessage.repeatCountElement = repeatCountElement;
+        }
+
+        rowMessage.repeatCountElement.textContent = WebInspector.UIString(" (repeated %d times)", rowMessage.repeatCount);
     },
 
     addBreakpoint: function(lineNumber, resolved, conditional, enabled)
