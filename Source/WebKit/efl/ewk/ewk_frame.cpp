@@ -31,6 +31,10 @@
 #include "FrameLoaderClientEfl.h"
 #include "FrameTree.h"
 #include "FrameView.h"
+#include "HTMLCollection.h"
+#include "HTMLHeadElement.h"
+#include "HTMLImageElement.h"
+#include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
@@ -1478,6 +1482,100 @@ void ewk_frame_view_create_for_view(Evas_Object *o, Evas_Object *view)
     const char *theme = ewk_view_theme_get(view);
     sd->frame->view()->setEdjeTheme(theme);
     sd->frame->view()->setEvasObject(o);
+}
+
+ssize_t ewk_frame_source_get(Evas_Object *o, char **frame_source)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(o, sd, -1);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, -1);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame->document(), -1);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(frame_source, -1);
+
+    WTF::String source;
+    *frame_source = 0; // Saves 0 to pointer until it's not allocated.
+
+    if (!sd->frame->document()->isHTMLDocument()) {
+        // FIXME: Support others documents.
+        WRN("Only HTML documents are supported");
+        return -1;
+    }
+
+    // Look for <html> tag. If it exists, the node contatins all document's source.
+    WebCore::Node *documentNode = sd->frame->document()->documentElement();
+    if (documentNode)
+        for (WebCore::Node *node = documentNode->firstChild(); node; node = node->parentElement()) {
+            if (node->hasTagName(WebCore::HTMLNames::htmlTag)) {
+                WebCore::HTMLElement *element = static_cast<WebCore::HTMLElement*>(node);
+                if (element)
+                    source = element->outerHTML();
+                break;
+            }
+        }
+
+    // Try to get <head> and <body> tags if <html> tag was not found.
+    if (source.isEmpty()) {
+        if (sd->frame->document()->head())
+            source = sd->frame->document()->head()->outerHTML();
+
+        if (sd->frame->document()->body())
+            source += sd->frame->document()->body()->outerHTML();
+    }
+
+    size_t source_length = strlen(source.utf8().data());
+    *frame_source = static_cast<char*>(malloc(source_length + 1));
+    if (!*frame_source) {
+        CRITICAL("Could not allocate memory.");
+        return -1;
+    }
+
+    strncpy(*frame_source, source.utf8().data(), source_length);
+    (*frame_source)[source_length] = '\0';
+
+    return source_length;
+}
+
+Eina_List *ewk_frame_resources_location_get(Evas_Object *o)
+{
+    EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame->document(), 0);
+
+    Eina_List *listOfImagesLocation = 0;
+
+    // Get src attibute of images and saves them to the Eina_List.
+    RefPtr<WebCore::HTMLCollection> images = sd->frame->document()->images();
+    for (size_t index = 0; index < images->length(); ++index) {
+        WebCore::HTMLImageElement *imageElement = static_cast<WebCore::HTMLImageElement*>(images->item(index));
+        if (!imageElement || imageElement->src().isNull() || imageElement->src().isEmpty())
+            continue;
+
+        WTF::String imageLocation = imageElement->src().string();
+        // Look for duplicated location.
+        Eina_List *listIterator = 0;
+        void *data = 0;
+        Eina_Bool found = EINA_FALSE;
+        EINA_LIST_FOREACH(listOfImagesLocation, listIterator, data)
+            if (found = !strcmp(static_cast<char*>(data), imageLocation.utf8().data()))
+                break;
+        if (found)
+            continue;
+
+        char *imageLocationCopy = strdup(imageLocation.utf8().data());
+        if (!imageLocationCopy)
+            goto out_of_memory_handler;
+        listOfImagesLocation = eina_list_append(listOfImagesLocation, imageLocationCopy);
+        if (eina_error_get())
+            goto out_of_memory_handler;
+    }
+    // FIXME: Get URL others resources (plugins, css, media files).
+    return listOfImagesLocation;
+
+out_of_memory_handler:
+    CRITICAL("Could not allocate memory.");
+    void *data;
+    EINA_LIST_FREE(listOfImagesLocation, data)
+        free(data);
+    return 0;
 }
 
 /**

@@ -765,6 +765,35 @@ EAPI Eina_Bool    ewk_frame_feed_key_up(Evas_Object *o, const Evas_Event_Key_Up 
  */
 EAPI Ewk_Text_Selection_Type ewk_frame_text_selection_type_get(Evas_Object *o);
 
+/**
+ * Gets the frame source.
+ *
+ * It's part of HTML saving feature. Currently only HTML documents are supported.
+ *
+ * @param o frame smart object to get the frame source
+ * @param frame_source a pointer to store the source of frame,
+ *        must @b not be @c 0, this value @b should be freed after use
+ *
+ * @return @c length of @a frame_source on success, or @c -1 on failure
+ *
+ * @see ewk_frame_resources_location_get()
+ */
+EAPI ssize_t ewk_frame_source_get(Evas_Object *o, char **frame_source);
+
+/**
+ * Gets the resource list of this frame.
+ *
+ * It's part of HTML saving feature. Currently only locations of images are supported.
+ * An application might find these values in frame source and
+ * replace them to the local paths. Values are not duplicated.
+ *
+ * @param o frame smart object to get the resources list
+ * @return @c Eina_List with location of resources on success, or @c 0 on failure,
+ *         the Eina_List should be freed after use
+ *
+ * @see ewk_frame_source_get()
+ */
+EAPI Eina_List *ewk_frame_resources_location_get(Evas_Object *o);
 
 #ifdef __cplusplus
 }
