@@ -216,4 +216,78 @@ test("filterTree", 2, function() {
     });
 });
 
+test("extends", 17, function() {
+
+    var LikeDiv = base.extends("div", {
+        init: function() {
+            this.textContent = "awesome";
+        },
+        method: function(msg) {
+            return 42;
+        }
+    });
+
+    var LikeLikeDiv = base.extends(LikeDiv, {
+        init: function() {
+            this.className = "like";
+        }
+    });
+
+    var LikeP = base.extends("p", {
+        init: function(content) {
+            this.textContent = content
+        }
+    });
+
+    var LikeProgress = base.extends("progress", {
+        init: function() {
+            this.max = 100;
+            this.value = 10;
+        }
+    });
+
+    var LikeLikeProgress = base.extends(LikeProgress, {
+        completed: function() {
+            this.value = 100;
+        }
+    });
+
+    document.body.appendChild(new LikeDiv());
+    equals(document.body.lastChild.tagName, "DIV");
+    equals(document.body.lastChild.innerHTML, "awesome");
+    equals(document.body.lastChild.method(), 42);
+    document.body.removeChild(document.body.lastChild);
+
+    document.body.appendChild(new LikeLikeDiv());
+    equals(document.body.lastChild.tagName, "DIV");
+    equals(document.body.lastChild.innerHTML, "awesome");
+    equals(document.body.lastChild.method(), 42);
+    equals(document.body.lastChild.className, "like");
+    document.body.removeChild(document.body.lastChild);
+
+    document.body.appendChild(new LikeP("super"));
+    equals(document.body.lastChild.tagName, "P");
+    equals(document.body.lastChild.innerHTML, "super");
+    raises(function() {
+        document.body.lastChild.method();
+    });
+    document.body.removeChild(document.body.lastChild);
+
+    document.body.appendChild(new LikeProgress());
+    equals(document.body.lastChild.tagName, "PROGRESS");
+    equals(document.body.lastChild.position, 0.1);
+    equals(document.body.lastChild.innerHTML, "");
+    raises(function() {
+        document.body.lastChild.method();
+    });
+    document.body.removeChild(document.body.lastChild);
+
+    document.body.appendChild(new LikeLikeProgress());
+    equals(document.body.lastChild.tagName, "PROGRESS");
+    equals(document.body.lastChild.position, 0.1);
+    document.body.lastChild.completed();
+    equals(document.body.lastChild.position, 1);
+    document.body.removeChild(document.body.lastChild);
+});
+
 })();

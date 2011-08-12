@@ -219,4 +219,19 @@ base.AsynchronousCache.prototype.get = function(key, callback)
     });
 };
 
+// Based on http://src.chromium.org/viewvc/chrome/trunk/src/chrome/browser/resources/shared/js/cr/ui.js
+base.extends = function(base, prototype)
+{
+    var extended = function() {
+        var element = typeof base == 'string' ? document.createElement(base) : base.call(this);
+        extended.prototype.__proto__ = element.__proto__;
+        element.__proto__ = extended.prototype;
+        element.init && element.init.apply(element, arguments);
+        return element;
+    }
+
+    extended.prototype = prototype;
+    return extended;
+}
+
 })();
