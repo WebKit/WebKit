@@ -1,3 +1,18 @@
+2011-08-12  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        Wire gesture tap events, add support for gesture events in the DRT and add a layout test for it.
+        https://bugs.webkit.org/show_bug.cgi?id=66105
+
+        Reviewed by Darin Fisher.
+
+        * public/WebInputEvent.h:
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleInputEvent):
+
 2011-08-12  Tommy Widenflycht  <tommyw@google.com>
 
         [Chromium] Implement the embedders for the HTML5 Track List objects

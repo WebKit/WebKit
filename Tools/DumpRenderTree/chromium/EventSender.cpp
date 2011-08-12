@@ -278,6 +278,9 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("touchMove", &EventSender::touchMove);
     bindMethod("touchStart", &EventSender::touchStart);
     bindMethod("updateTouchPoint", &EventSender::updateTouchPoint);
+    bindMethod("gestureScrollBegin", &EventSender::gestureScrollBegin);
+    bindMethod("gestureScrollEnd", &EventSender::gestureScrollEnd);
+    bindMethod("gestureTap", &EventSender::gestureTap);
     bindMethod("zoomPageIn", &EventSender::zoomPageIn);
     bindMethod("zoomPageOut", &EventSender::zoomPageOut);
     bindMethod("scalePageBy", &EventSender::scalePageBy);
@@ -1016,6 +1019,41 @@ void EventSender::touchCancel(const CppArgumentList&, CppVariant* result)
 {
     result->setNull();
     sendCurrentTouchEvent(WebInputEvent::TouchCancel);
+}
+
+void EventSender::gestureScrollBegin(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    gestureEvent(WebInputEvent::GestureScrollBegin, arguments);
+}
+
+void EventSender::gestureScrollEnd(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    gestureEvent(WebInputEvent::GestureScrollEnd, arguments);
+}
+
+void EventSender::gestureTap(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    gestureEvent(WebInputEvent::GestureTap, arguments);
+}
+
+void EventSender::gestureEvent(WebInputEvent::Type type, const CppArgumentList& arguments)
+{
+    if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
+        return;
+
+    WebPoint point(arguments[0].toInt32(), arguments[1].toInt32());
+
+    WebGestureEvent event;
+    event.type = type;
+    event.x = point.x;
+    event.y = point.y;
+    event.globalX = point.x;
+    event.globalY = point.y;
+    event.timeStampSeconds = getCurrentEventTimeSec();
+    webview()->handleInputEvent(event);
 }
 
 //

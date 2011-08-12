@@ -120,6 +120,9 @@ PlatformGestureEventBuilder::PlatformGestureEventBuilder(Widget* widget, const W
     case WebInputEvent::GestureScrollEnd:
         m_type = PlatformGestureEvent::ScrollEndType;
         break;
+    case WebInputEvent::GestureTap:
+        m_type = PlatformGestureEvent::TapType;
+        break;
     default:
         ASSERT_NOT_REACHED();
     }

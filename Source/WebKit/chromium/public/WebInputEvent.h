@@ -103,6 +103,7 @@ public:
         // WebGestureEvent
         GestureScrollBegin,
         GestureScrollEnd,
+        GestureTap,
 
         // WebTouchEvent
         TouchStart,

@@ -1,3 +1,18 @@
+2011-08-12  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        DRT: Add support for gesture events.
+        https://bugs.webkit.org/show_bug.cgi?id=66105
+
+        Reviewed by Darin Fisher.
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::gestureScrollBegin):
+        (EventSender::gestureScrollEnd):
+        (EventSender::gestureTap):
+        (EventSender::gestureEvent):
+        * DumpRenderTree/chromium/EventSender.h:
+
 2011-08-12  Andy Estes  <aestes@apple.com>
 
         allowRoundingHacksCallback uses the wrong argument for 'thisObject'.

@@ -1,3 +1,14 @@
+2011-08-12  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        DRT: Add support for gesture events.
+        https://bugs.webkit.org/show_bug.cgi?id=66105
+
+        Reviewed by Darin Fisher.
+
+        * fast/events/touch/gesture/gesture-click-expected.txt: Added.
+        * fast/events/touch/gesture/gesture-click.html: Added.
+        * platform/chromium/fast/events/touch/gesture/gesture-click-expected.txt: Added.
+
 2011-08-12  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66133
