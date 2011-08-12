@@ -1,3 +1,10 @@
+2011-08-12  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Fix comile warning on CCLayerTreeHost
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+
 2011-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Apple-style-span class seems unnecessary

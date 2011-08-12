@@ -44,10 +44,10 @@ PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* clien
 }
 
 CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)
-    : m_animating(false)
+    : m_recreatingGraphicsContext(false)
+    , m_animating(false)
     , m_client(client)
     , m_frameNumber(0)
-    , m_recreatingGraphicsContext(false)
     , m_settings(settings)
 {
 }
