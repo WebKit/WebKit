@@ -2,7 +2,6 @@ Test that WebKit does not add multiple span or font elements when applying font-
 
 You should see exactly one font element with size="7" and exactly one span:
 | <font>
-|   class="Apple-style-span"
 |   size="7"
 |   "
 <#selection-anchor>A man with 2

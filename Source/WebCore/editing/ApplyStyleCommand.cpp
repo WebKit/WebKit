@@ -61,7 +61,7 @@ static String& styleSpanClassString()
     return styleSpanClassString;
 }
 
-bool isStyleSpan(const Node *node)
+bool isLegacyAppleStyleSpan(const Node *node)
 {
     if (!node || !node->isHTMLElement())
         return false;
@@ -96,12 +96,7 @@ bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element* element)
     return hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(element), AllowNonEmptyStyleAttribute);
 }
 
-static inline bool isUnstyledStyleSpan(const Node* node)
-{
-    return isStyleSpan(node) && hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(node), StyleAttributeShouldBeEmpty);
-}
-
-static inline bool isSpanWithoutAttributesOrUnstyleStyleSpan(const Node* node)
+static inline bool isSpanWithoutAttributesOrUnstyledStyleSpan(const Node* node)
 {
     if (!node || !node->isHTMLElement() || !node->hasTagName(spanTag))
         return false;
@@ -123,14 +118,12 @@ static bool isEmptyFontTag(const Node *node)
 static PassRefPtr<Element> createFontElement(Document* document)
 {
     RefPtr<Element> fontNode = createHTMLElement(document, fontTag);
-    fontNode->setAttribute(classAttr, styleSpanClassString());
     return fontNode.release();
 }
 
 PassRefPtr<HTMLElement> createStyleSpanElement(Document* document)
 {
     RefPtr<HTMLElement> styleElement = createHTMLElement(document, spanTag);
-    styleElement->setAttribute(classAttr, styleSpanClassString());
     return styleElement.release();
 }
 
@@ -406,8 +399,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
         }
         if (inlineStyleDecl->isEmpty()) {
             removeNodeAttribute(element.get(), styleAttr);
-            // FIXME: should this be isSpanWithoutAttributesOrUnstyleStyleSpan?  Need a test.
-            if (isUnstyledStyleSpan(element.get()))
+            if (isSpanWithoutAttributesOrUnstyledStyleSpan(element.get()))
                 unstyledSpans.append(element.release());
         }
     }
@@ -419,7 +411,7 @@ void ApplyStyleCommand::applyRelativeFontStyleChange(EditingStyle* style)
 
 static Node* dummySpanAncestorForNode(const Node* node)
 {
-    while (node && !isStyleSpan(node))
+    while (node && (!node->isElementNode() || !isStyleSpanOrSpanWithOnlyStyleAttribute(toElement(node))))
         node = node->parentNode();
     
     return node ? node->parentNode() : 0;
@@ -437,7 +429,7 @@ void ApplyStyleCommand::cleanupUnstyledAppleStyleSpans(Node* dummySpanAncestor)
     Node* next;
     for (Node* node = dummySpanAncestor->firstChild(); node; node = next) {
         next = node->nextSibling();
-        if (isUnstyledStyleSpan(node))
+        if (isSpanWithoutAttributesOrUnstyledStyleSpan(node))
             removeNodePreservingChildren(node);
         node = next;
     }
@@ -524,8 +516,7 @@ void ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock(Node* node, Node* unsp
             inlineStyle->setProperty(CSSPropertyUnicodeBidi, CSSValueNormal);
             inlineStyle->removeProperty(CSSPropertyDirection);
             setNodeAttribute(element, styleAttr, inlineStyle->cssText());
-            // FIXME: should this be isSpanWithoutAttributesOrUnstyleStyleSpan?  Need a test.
-            if (isUnstyledStyleSpan(element))
+            if (isSpanWithoutAttributesOrUnstyledStyleSpan(element))
                 removeNodePreservingChildren(element);
         }
     }
@@ -882,7 +873,7 @@ bool ApplyStyleCommand::removeImplicitlyStyledElement(EditingStyle* style, HTMLE
     for (size_t i = 0; i < attributes.size(); i++)
         removeNodeAttribute(element, attributes[i]);
 
-    if (isEmptyFontTag(element) || isSpanWithoutAttributesOrUnstyleStyleSpan(element))
+    if (isEmptyFontTag(element) || isSpanWithoutAttributesOrUnstyledStyleSpan(element))
         removeNodePreservingChildren(element);
 
     return true;
@@ -910,7 +901,7 @@ bool ApplyStyleCommand::removeCSSStyle(EditingStyle* style, HTMLElement* element
     if (inlineStyle->isEmpty())
         removeNodeAttribute(element, styleAttr);
 
-    if (isSpanWithoutAttributesOrUnstyleStyleSpan(element))
+    if (isSpanWithoutAttributesOrUnstyledStyleSpan(element))
         removeNodePreservingChildren(element);
 
     return true;

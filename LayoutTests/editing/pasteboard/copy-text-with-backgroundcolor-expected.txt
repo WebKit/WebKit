@@ -57,7 +57,6 @@ Markup after:
 |   style="background-color: rgb(255, 0, 0);"
 |   "Red background"
 | <span>
-|   class="Apple-style-span"
 |   style="background-color: rgb(255, 0, 0); "
 |   "Red background"
 | <div>
@@ -66,7 +65,6 @@ Markup after:
 |     style="background-color: green;"
 |     "Green background"
 |   <span>
-|     class="Apple-style-span"
 |     style="background-color: rgb(0, 128, 0); "
 |     "Green background"
 | "

@@ -11,8 +11,8 @@ PASS one strikethrough command converted <u><b><strike>test</strike></b></u> to 
 PASS two strikethrough commands converted test to test
 PASS one strikethrough command converted <u>test</u> to <u><strike>test</strike></u>
 PASS one underline command converted <strike>test</strike> to <u><strike>test</strike></u>
-FAIL one strikethrough command converted <span style="text-decoration: overline;">test</span> to <span class="Apple-style-span" style="text-decoration: overline;"><strike>test</strike></span>, expected <span style="text-decoration: overline;"><strike>test</strike></span>
-FAIL one underline command converted <span style="text-decoration: overline;">test</span> to <span class="Apple-style-span" style="text-decoration: overline;"><u>test</u></span>, expected <span style="text-decoration: overline;"><u>test</u></span>
+PASS one strikethrough command converted <span style="text-decoration: overline;">test</span> to <span style="text-decoration: overline;"><strike>test</strike></span>
+PASS one underline command converted <span style="text-decoration: overline;">test</span> to <span style="text-decoration: overline;"><u>test</u></span>
 PASS successfullyParsed is true
 
 TEST COMPLETE

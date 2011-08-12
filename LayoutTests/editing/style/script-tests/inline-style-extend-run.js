@@ -17,8 +17,8 @@ function testSingleToggle(toggleCommand, value, initialContents, expectedContent
         testFailed(action + ', expected "' + expectedContents + '"');
 }
 
-testSingleToggle("fontSize", 4, 'hello <font size="4">world</font> WebKit', '<font class="Apple-style-span" size="4">hello world WebKit</font>');
-testSingleToggle("fontName", "Arial", 'hello <b><font face="Arial">world</font></b> WebKit', '<font class="Apple-style-span" face="Arial">hello <b>world</b> WebKit</font>');
+testSingleToggle("fontSize", 4, 'hello <font size="4">world</font> WebKit', '<font size="4">hello world WebKit</font>');
+testSingleToggle("fontName", "Arial", 'hello <b><font face="Arial">world</font></b> WebKit', '<font face="Arial">hello <b>world</b> WebKit</font>');
 testSingleToggle("italic", null, 'hello <u><i title="message">world </i><i>WebKit</i></u>', '<i>hello <u><span title="message">world </span>WebKit</u></i>');
 testSingleToggle("bold", null, 'hello <i><b>world</b> WebKit</i>', '<b>hello <i>world WebKit</i></b>');
 testSingleToggle("bold", null, 'hello <i><b class="test">world</b> WebKit</i>', '<b>hello <i><span class="test">world</span> WebKit</i></b>');

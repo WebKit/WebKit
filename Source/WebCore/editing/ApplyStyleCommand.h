@@ -129,7 +129,7 @@ private:
     IsInlineElementToRemoveFunction m_isInlineElementToRemoveFunction;
 };
 
-bool isStyleSpan(const Node*);
+bool isLegacyAppleStyleSpan(const Node*);
 bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element*);
 PassRefPtr<HTMLElement> createStyleSpanElement(Document*);
 

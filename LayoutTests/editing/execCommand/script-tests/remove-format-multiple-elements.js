@@ -71,7 +71,7 @@ testRemoveFormat('<font color="red"><b style="font-size: large;"><u>hello</u> wo
 testRemoveFormat('<font size="5"><i><u style="font-size: small;">hello</u> world</i><font size="3"> WebKit</font></font>',
     selectSecondWord, '<font size="5"><i><u style="font-size: small;">hello</u> </i></font>world<font size="5"><font size="3"> WebKit</font></font>');
 testRemoveFormat('<sup><div style="text-decoration: underline; font-size: large;">hello <dfn style="font-size: normal;">world</dfn></div> WebKit</sup>',
-    selectSecondWord, '<div><sup><font class="Apple-style-span" size="4"><u>hello </u></font></sup>world</div><sup> WebKit</sup>');
+    selectSecondWord, '<div><sup><font size="4"><u>hello </u></font></sup>world</div><sup> WebKit</sup>');
 
 document.body.removeChild(testContainer);
 

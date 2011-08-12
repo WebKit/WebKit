@@ -28,21 +28,17 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 This tests for a bug where text copied with Select All + Copy would lose its color.
 | <font>
-|   class="Apple-style-span"
 |   color="#ff0000"
 |   "This text should be red."
 | <div>
 |   <font>
-|     class="Apple-style-span"
 |     color="#ff0000"
 |     "This text should be red."
 | <div>
 |   <font>
-|     class="Apple-style-span"
 |     color="#ff0000"
 |     "This text should be red."
 |   <div>
 |     <font>
-|       class="Apple-style-span"
 |       color="#ff0000"
 |       "This text should be red.<#selection-caret>"

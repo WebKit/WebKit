@@ -14,7 +14,6 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
 | "<#selection-caret>The "
 | <span>
-|   class="Apple-style-span"
 |   style="background-color: red;"
 |   "second"
 | " word, and only the second word of this sentence should have a red background color."

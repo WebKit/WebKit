@@ -511,7 +511,9 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline()
         } else if (newInlineStyle->style()->length() != inlineStyle->length())
             setNodeAttribute(element, styleAttr, newInlineStyle->style()->cssText());
 
-        if (isStyleSpan(element)) {
+        // WebKit used to not add display: inline and float: none on copy.
+        // Keep this code around for backward compatibility
+        if (isLegacyAppleStyleSpan(element)) {
             if (!element->firstChild()) {
                 removeNodePreservingChildren(element);
                 continue;
@@ -616,7 +618,7 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
 
     // Either there are no style spans in the fragment or a WebKit client has added content to the fragment
     // before inserting it.  Look for and handle style spans after insertion.
-    if (!isStyleSpan(topNode))
+    if (!isLegacyAppleStyleSpan(topNode))
         return false;
 
     Node* wrappingStyleSpan = topNode;
@@ -647,7 +649,7 @@ void ReplaceSelectionCommand::handleStyleSpans()
     // the top of the fragment, but Mail sometimes adds a wrapper (for Paste As Quotation),
     // so search for the top level style span instead of assuming it's at the top.
     for (Node* node = m_firstNodeInserted.get(); node; node = node->traverseNextNode()) {
-        if (isStyleSpan(node)) {
+        if (isLegacyAppleStyleSpan(node)) {
             wrappingStyleSpan = toHTMLElement(node);
             break;
         }
@@ -991,7 +993,7 @@ void ReplaceSelectionCommand::doApply()
     fragment.removeNode(refNode);
 
     Node* blockStart = enclosingBlock(insertionPos.deprecatedNode());
-    if ((isListElement(refNode.get()) || (isStyleSpan(refNode.get()) && isListElement(refNode->firstChild())))
+    if ((isListElement(refNode.get()) || (isLegacyAppleStyleSpan(refNode.get()) && isListElement(refNode->firstChild())))
         && blockStart->renderer()->isListItem())
         refNode = insertAsListItems(refNode, blockStart, insertionPos);
     else

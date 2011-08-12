@@ -187,7 +187,7 @@ void StyledMarkupAccumulator::appendStyleNodeOpenTag(Vector<UChar>& out, CSSStyl
     // If we ever hit this ASSERT, we should export StyleChange in ApplyStyleCommand and use it here
     ASSERT(propertyMissingOrEqualToNone(style, CSSPropertyTextDecoration) && propertyMissingOrEqualToNone(style, CSSPropertyWebkitTextDecorationsInEffect));
     DEFINE_STATIC_LOCAL(const String, divStyle, ("<div style=\""));
-    DEFINE_STATIC_LOCAL(const String, styleSpanOpen, ("<span class=\"" AppleStyleSpanClass "\" style=\""));
+    DEFINE_STATIC_LOCAL(const String, styleSpanOpen, ("<span style=\""));
     append(out, isBlock ? divStyle : styleSpanOpen);
     appendAttributeValue(out, style->cssText(), document->isHTMLDocument());
     out.append('\"');

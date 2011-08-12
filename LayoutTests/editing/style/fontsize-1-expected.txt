@@ -8,47 +8,38 @@ fontsize 2:
 
 type small:
 | <font>
-|   class="Apple-style-span"
 |   size="2"
 |   "small<#selection-caret>"
 
 fontsize 4:
 | <font>
-|   class="Apple-style-span"
 |   size="2"
 |   "small<#selection-caret>"
 
 type medium:
 | <font>
-|   class="Apple-style-span"
 |   size="2"
 |   "small"
 | <font>
-|   class="Apple-style-span"
 |   size="4"
 |   "medium<#selection-caret>"
 
 fontsize 6:
 | <font>
-|   class="Apple-style-span"
 |   size="2"
 |   "small"
 | <font>
-|   class="Apple-style-span"
 |   size="4"
 |   "medium<#selection-caret>"
 
 type large:
 | <font>
-|   class="Apple-style-span"
 |   size="2"
 |   "small"
 | <font>
-|   class="Apple-style-span"
 |   size="4"
 |   "medium"
 | <font>
-|   class="Apple-style-span"
 |   size="6"
 |   "large<#selection-caret>"
 

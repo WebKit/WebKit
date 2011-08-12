@@ -19,7 +19,7 @@ PASS RemoveFormat on second word of "<q><b><div>hello world</div></b>WebKit</q>"
 PASS RemoveFormat on all of "<i style="font-weight:bold;">hello</i> <u>world</u>" yields "hello world"
 PASS RemoveFormat on second word of "<font color="red"><b style="font-size: large;"><u>hello</u> world</b> WebKit</font>" yields "<font color="red"><b style="font-size: large;"><u>hello</u> </b></font>world<font color="red"> WebKit</font>"
 PASS RemoveFormat on second word of "<font size="5"><i><u style="font-size: small;">hello</u> world</i><font size="3"> WebKit</font></font>" yields "<font size="5"><i><u style="font-size: small;">hello</u> </i></font>world<font size="5"><font size="3"> WebKit</font></font>"
-PASS RemoveFormat on second word of "<sup><div style="text-decoration: underline; font-size: large;">hello <dfn style="font-size: normal;">world</dfn></div> WebKit</sup>" yields "<div><sup><font class="Apple-style-span" size="4"><u>hello </u></font></sup>world</div><sup> WebKit</sup>"
+PASS RemoveFormat on second word of "<sup><div style="text-decoration: underline; font-size: large;">hello <dfn style="font-size: normal;">world</dfn></div> WebKit</sup>" yields "<div><sup><font size="4"><u>hello </u></font></sup>world</div><sup> WebKit</sup>"
 PASS successfullyParsed is true
 
 TEST COMPLETE

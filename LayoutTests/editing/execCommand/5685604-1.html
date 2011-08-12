@@ -25,7 +25,7 @@ else
 document.execCommand("styleWithCSS", false, true);
 document.execCommand("bold", false, "");
 
-expectedHTML = "The <b>second</b> and last words in this sentence should be <span class=\"Apple-style-span\" style=\"font-weight: bold;\">bold</span>.";
+expectedHTML = "The <b>second</b> and last words in this sentence should be <span style=\"font-weight: bold;\">bold</span>.";
 
 if (div.innerHTML == expectedHTML)
     log("Success. A legacy formatting tag was used for styling by default, and execCommand(\"styleWithCSS\", ..., true) activated the use of CSS styling.");

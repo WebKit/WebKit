@@ -17,7 +17,6 @@ After copy-paste:
 |         color="red"
 |         "hello world<#selection-caret>"
 | <font>
-|   class="Apple-style-span"
 |   color="#ff0000"
 |   <b>
 |     <i>

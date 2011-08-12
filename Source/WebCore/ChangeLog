@@ -1,3 +1,40 @@
+2011-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Apple-style-span class seems unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=12248
+
+        Reviewed by Justin Garcia.
+
+        Stop generating span or font elements with class="Apple-style-span" given WebKit's editing component
+        no longer depends on Apple-style-span since r92823 removed the dependency of copy and paste code on
+        style spans. WebKit continues to recognize Apple style spans to remove them.
+
+        Also renamed isSpanWithoutAttributesOrUnstyleStyleSpan to isSpanWithoutAttributesOrUnstyle*d*StyleSpan.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::isLegacyAppleStyleSpan): Renamed from isStyleSpan.
+        (WebCore::isSpanWithoutAttributesOrUnstyledStyleSpan): Renamed from isSpanWithoutAttributesOr*Unstyle*StyleSpan.
+        (WebCore::createFontElement): No longer adds class="Apple-style-span".
+        (WebCore::createStyleSpanElement): Ditto.
+        (WebCore::ApplyStyleCommand::applyRelativeFontStyleChange): Calls isSpanWithoutAttributesOrUnstyleStyleSpan
+        instead of isUnstyledStyleSpan since there won't be any Apple style spans.
+        (WebCore::dummySpanAncestorForNode):
+        (WebCore::ApplyStyleCommand::cleanupUnstyledAppleStyleSpans): Ditto.
+        (WebCore::ApplyStyleCommand::removeEmbeddingUpToEnclosingBlock): Ditto.
+        (WebCore::ApplyStyleCommand::removeImplicitlyStyledElement):
+        (WebCore::ApplyStyleCommand::removeCSSStyle):
+        * editing/ApplyStyleCommand.h:
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::removeStyleFromRulesAndContext): Ditto.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline): Calls isLegacyAppleStyleSpan instead
+        of isStyleSpan.
+        (WebCore::handleStyleSpansBeforeInsertion): Ditto.
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans): Ditto.
+        (WebCore::ReplaceSelectionCommand::doApply): Ditto.
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendStyleNodeOpenTag): No longer adds class="Apple-style-span".
+
 2011-08-12  Nat Duca  <nduca@chromium.org>
 
         [chromium] Fix compositor breakage due to duplicate context creation AND by context-lost
