@@ -1,3 +1,9 @@
+2011-08-12  Mark Rowe  <mrowe@apple.com>
+
+        Update some configuration settings that were missed back in r92432.
+
+        * Configurations/CompilerVersion.xcconfig:
+
 2011-08-12  Filip Pizlo  <fpizlo@apple.com>
 
         REGRESSION (r91610?): Bing Maps fail to initialize (InvalidOperation:
