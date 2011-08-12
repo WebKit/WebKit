@@ -220,13 +220,13 @@ void CSSStyleSheet::checkLoaded()
 {
     if (isLoading())
         return;
-    if (parent())
-        parent()->checkLoaded();
 
     // Avoid |this| being deleted by scripts that run via
     // ScriptableDocumentParser::executeScriptsWaitingForStylesheets().
     // See <rdar://problem/6622300>.
     RefPtr<CSSStyleSheet> protector(this);
+    if (parent())
+        parent()->checkLoaded();
     m_loadCompleted = ownerNode() ? ownerNode()->sheetLoaded() : true;
 }
 
