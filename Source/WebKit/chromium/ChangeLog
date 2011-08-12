@@ -1,3 +1,22 @@
+2011-08-12  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r92978.
+        http://trac.webkit.org/changeset/92978
+        https://bugs.webkit.org/show_bug.cgi?id=66155
+
+        This patch does not compile (Requested by abarth|gardener on
+        #webkit).
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::zoomLevel):
+        (WebKit::WebViewImpl::setZoomLevel):
+        (WebKit::WebViewImpl::zoomLimitsChanged):
+        (WebKit::WebViewImpl::fullFramePluginZoomLevelChanged):
+        (WebKit::WebView::zoomLevelToZoomFactor):
+        (WebKit::WebView::zoomFactorToZoomLevel):
+        * src/WebViewImpl.h:
+
 2011-08-12  Fady Samuel  <fsamuel@chromium.org>
 
         Chromium's WebKit API should use floats instead of doubles for zoom to match WebCore

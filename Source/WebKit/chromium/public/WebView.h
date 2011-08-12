@@ -182,7 +182,7 @@ public:
     // of 300% and 50% of original size, respectively.  Only plugins use
     // non whole-numbers, since they might choose to have specific zoom level so
     // that fixed-width content is fit-to-page-width, for example.
-    virtual float zoomLevel() const = 0;
+    virtual double zoomLevel() = 0;
 
     // Changes the zoom level to the specified level, clamping at the limits
     // noted above, and returns the current zoom level after applying the
@@ -192,16 +192,16 @@ public:
     // page will be zoomed. You can only have either text zoom or full page zoom
     // at one time.  Changing the mode while the page is zoomed will have odd
     // effects.
-    virtual float setZoomLevel(bool textOnly, float zoomLevel) = 0;
+    virtual double setZoomLevel(bool textOnly, double zoomLevel) = 0;
 
     // Updates the zoom limits for this view.
-    virtual void zoomLimitsChanged(float minimumZoomLevel,
-                                   float maximumZoomLevel) = 0;
+    virtual void zoomLimitsChanged(double minimumZoomLevel,
+                                   double maximumZoomLevel) = 0;
 
     // Helper functions to convert between zoom level and zoom factor.  zoom
     // factor is zoom percent / 100, so 300% = 3.0.
-    WEBKIT_EXPORT static float zoomLevelToZoomFactor(float zoomLevel);
-    WEBKIT_EXPORT static float zoomFactorToZoomLevel(float factor);
+    WEBKIT_EXPORT static double zoomLevelToZoomFactor(double zoomLevel);
+    WEBKIT_EXPORT static double zoomFactorToZoomLevel(double factor);
 
     // Scales a page by a factor of scaleFactor and then sets a scroll position to (x, y).
     // scalePage() magnifies and shrinks a page without affecting layout.
