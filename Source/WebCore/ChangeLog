@@ -1,3 +1,41 @@
+2011-08-12  Levi Weintraub  <leviw@chromium.org>
+
+        Switch RenderTable* to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66146
+
+        Reviewed by Eric Seidel.
+
+        Converting RenderTable* classes to new LayoutUnits from ints.
+
+        No new tests as no new functionality.
+
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::firstLineBoxBaseline):
+        (WebCore::RenderTable::overflowClipRect):
+        * rendering/RenderTable.h:
+        (WebCore::RenderTable::columnPositions):
+        * rendering/RenderTableCol.cpp:
+        (WebCore::RenderTableCol::clippedOverflowRectForRepaint):
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::clippedOverflowRectForRepaint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::setCellLogicalWidths):
+        (WebCore::RenderTableSection::calcRowLogicalHeight):
+        (WebCore::RenderTableSection::layoutRows):
+        (WebCore::RenderTableSection::calcOuterBorderBefore):
+        (WebCore::RenderTableSection::calcOuterBorderAfter):
+        (WebCore::RenderTableSection::calcOuterBorderStart):
+        (WebCore::RenderTableSection::calcOuterBorderEnd):
+        (WebCore::RenderTableSection::firstLineBoxBaseline):
+        (WebCore::RenderTableSection::paintObject):
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        (WebCore::RenderTableSection::outerBorderBefore):
+        (WebCore::RenderTableSection::outerBorderAfter):
+        (WebCore::RenderTableSection::outerBorderStart):
+        (WebCore::RenderTableSection::outerBorderEnd):
+        (WebCore::RenderTableSection::getBaseline):
+
 2011-08-12  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Alexey Proskuryakov.

@@ -43,13 +43,13 @@ public:
 
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
 
-    virtual int firstLineBoxBaseline() const;
+    virtual LayoutUnit firstLineBoxBaseline() const;
 
     void addCell(RenderTableCell*, RenderTableRow* row);
 
     void setCellLogicalWidths();
-    int calcRowLogicalHeight();
-    int layoutRows(int logicalHeight);
+    LayoutUnit calcRowLogicalHeight();
+    LayoutUnit layoutRows(LayoutUnit logicalHeight);
 
     RenderTable* table() const { return toRenderTable(parent()); }
 
@@ -78,7 +78,7 @@ public:
     struct RowStruct {
         Row* row;
         RenderTableRow* rowRenderer;
-        int baseline;
+        LayoutUnit baseline;
         Length logicalHeight;
     };
 
@@ -93,16 +93,16 @@ public:
     void appendColumn(int pos);
     void splitColumn(int pos, int first);
 
-    int calcOuterBorderBefore() const;
-    int calcOuterBorderAfter() const;
-    int calcOuterBorderStart() const;
-    int calcOuterBorderEnd() const;
+    LayoutUnit calcOuterBorderBefore() const;
+    LayoutUnit calcOuterBorderAfter() const;
+    LayoutUnit calcOuterBorderStart() const;
+    LayoutUnit calcOuterBorderEnd() const;
     void recalcOuterBorder();
 
-    int outerBorderBefore() const { return m_outerBorderBefore; }
-    int outerBorderAfter() const { return m_outerBorderAfter; }
-    int outerBorderStart() const { return m_outerBorderStart; }
-    int outerBorderEnd() const { return m_outerBorderEnd; }
+    LayoutUnit outerBorderBefore() const { return m_outerBorderBefore; }
+    LayoutUnit outerBorderAfter() const { return m_outerBorderAfter; }
+    LayoutUnit outerBorderStart() const { return m_outerBorderStart; }
+    LayoutUnit outerBorderEnd() const { return m_outerBorderEnd; }
 
     int numRows() const { return m_gridRows; }
     int numColumns() const;
@@ -116,7 +116,7 @@ public:
     bool needsCellRecalc() const { return m_needsCellRecalc; }
     void setNeedsCellRecalc();
 
-    int getBaseline(int row) { return m_grid[row].baseline; }
+    LayoutUnit getBaseline(int row) { return m_grid[row].baseline; }
 
 private:
     virtual RenderObjectChildList* virtualChildren() { return children(); }
@@ -146,7 +146,7 @@ private:
     RenderObjectChildList m_children;
 
     Vector<RowStruct> m_grid;
-    Vector<int> m_rowPos;
+    Vector<LayoutUnit> m_rowPos;
 
     int m_gridRows;
 
@@ -154,10 +154,10 @@ private:
     int m_cCol;
     int m_cRow;
 
-    int m_outerBorderStart;
-    int m_outerBorderEnd;
-    int m_outerBorderBefore;
-    int m_outerBorderAfter;
+    LayoutUnit m_outerBorderStart;
+    LayoutUnit m_outerBorderEnd;
+    LayoutUnit m_outerBorderBefore;
+    LayoutUnit m_outerBorderAfter;
 
     bool m_needsCellRecalc;
     bool m_hasOverflowingCell;

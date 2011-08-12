@@ -1144,7 +1144,7 @@ void RenderTable::updateFirstLetter()
 {
 }
 
-int RenderTable::firstLineBoxBaseline() const
+LayoutUnit RenderTable::firstLineBoxBaseline() const
 {
     if (isWritingModeRoot())
         return -1;
@@ -1161,9 +1161,9 @@ int RenderTable::firstLineBoxBaseline() const
     return firstNonEmptySection->logicalTop() + firstNonEmptySection->firstLineBoxBaseline();
 }
 
-IntRect RenderTable::overflowClipRect(const IntPoint& location, OverlayScrollbarSizeRelevancy relevancy)
+LayoutRect RenderTable::overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy relevancy)
 {
-    IntRect rect = RenderBlock::overflowClipRect(location, relevancy);
+    LayoutRect rect = RenderBlock::overflowClipRect(location, relevancy);
     
     // If we have a caption, expand the clip to include the caption.
     // FIXME: Technically this is wrong, but it's virtually impossible to fix this

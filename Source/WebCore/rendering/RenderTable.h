@@ -139,7 +139,7 @@ public:
     };
 
     Vector<ColumnStruct>& columns() { return m_columns; }
-    Vector<int>& columnPositions() { return m_columnPos; }
+    Vector<LayoutUnit>& columnPositions() { return m_columnPos; }
     RenderTableSection* header() const { return m_head; }
     RenderTableSection* footer() const { return m_foot; }
     RenderTableSection* firstBody() const { return m_firstBody; }
@@ -222,7 +222,7 @@ private:
     virtual void computePreferredLogicalWidths();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
     
-    virtual int firstLineBoxBaseline() const;
+    virtual LayoutUnit firstLineBoxBaseline() const;
 
     virtual RenderBlock* firstLineBlock() const;
     virtual void updateFirstLetter();
@@ -231,7 +231,7 @@ private:
 
     virtual void computeLogicalWidth();
 
-    virtual IntRect overflowClipRect(const IntPoint& location, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
+    virtual LayoutRect overflowClipRect(const LayoutPoint& location, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
 
     virtual void addOverflowFromChildren();
 
@@ -241,7 +241,7 @@ private:
     void recalcSections() const;
     void adjustLogicalHeightForCaption();
 
-    mutable Vector<int> m_columnPos;
+    mutable Vector<LayoutUnit> m_columnPos;
     mutable Vector<ColumnStruct> m_columns;
 
     mutable RenderBlock* m_caption;

@@ -78,7 +78,7 @@ IntRect RenderTableCol::clippedOverflowRectForRepaint(RenderBoxModelObject* repa
 
     RenderTable* parentTable = table();
     if (!parentTable)
-        return IntRect();
+        return LayoutRect();
     return parentTable->clippedOverflowRectForRepaint(repaintContainer);
 }
 
