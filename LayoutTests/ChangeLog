@@ -1,3 +1,14 @@
+2011-08-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Source/WebCore: Add HTMLUnknownElement interface as defined in
+        http://www.w3.org/TR/html5/elements.html#elements-in-the-dom.
+
+        https://bugs.webkit.org/show_bug.cgi?id=41841
+
+        Unreviewed gardening after r92890.
+
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt: Updated.
+
 2011-08-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Network resource identifier should have RequestId type and requestId name in protocol.
