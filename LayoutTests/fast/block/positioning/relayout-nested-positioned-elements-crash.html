@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>Test case for bug 64286</title>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+<p>This tests that we don't cause an assertion failure on relayout of nested positioned elements. This test PASSED if we don't cause an assertion failure.</p>
+<div style="position:absolute">
+    <span style="position:relative">
+        PASS
+        <div style="position:absolute">
+            <input id="hideMe"/>
+        </div>
+    </span>
+</div>
+<script>
+window.setTimeout(runTest, 0); // For some reason we need the setTimeout() for this test to work.
+function runTest()
+{
+    document.getElementById("hideMe").style.display = "none";
+}
+</script>
+</body>
+</html>
