@@ -155,6 +155,7 @@ public:
     virtual double setZoomLevel(bool textOnly, double zoomLevel);
     virtual void zoomLimitsChanged(double minimumZoomLevel,
                                    double maximumZoomLevel);
+    virtual float pageScaleFactor() const;
     virtual void scalePage(float scaleFactor, WebPoint origin);
     virtual void performMediaPlayerAction(
         const WebMediaPlayerAction& action,

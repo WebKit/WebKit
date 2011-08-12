@@ -1838,6 +1838,18 @@ double WebView::zoomFactorToZoomLevel(double factor)
     return log(factor) / log(textSizeMultiplierRatio);
 }
 
+float WebViewImpl::pageScaleFactor() const
+{
+    if (!page())
+        return 1.0;
+
+    Frame* frame = page()->mainFrame();
+    if (!frame)
+        return 1.0;
+
+    return frame->pageScaleFactor();
+}
+
 void WebViewImpl::scalePage(float scaleFactor, WebPoint origin)
 {
     if (!page())

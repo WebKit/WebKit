@@ -203,6 +203,10 @@ public:
     WEBKIT_EXPORT static double zoomLevelToZoomFactor(double zoomLevel);
     WEBKIT_EXPORT static double zoomFactorToZoomLevel(double factor);
 
+    // Gets the scale factor of the page, where 1.0 is the normal size, > 1.0
+    // is scaled up, < 1.0 is scaled down.
+    virtual float pageScaleFactor() const = 0;
+
     // Scales a page by a factor of scaleFactor and then sets a scroll position to (x, y).
     // scalePage() magnifies and shrinks a page without affecting layout.
     // On the other hand, zooming affects layout of the page.
