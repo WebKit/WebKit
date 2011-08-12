@@ -1,3 +1,15 @@
+2011-08-12  Fady Samuel  <fsamuel@chromium.org>
+
+        Expose pageScaleFactor in Chromium's WebHistoryItem
+        https://bugs.webkit.org/show_bug.cgi?id=66139
+
+        Reviewed by Darin Fisher.
+
+        * public/WebHistoryItem.h:
+        * src/WebHistoryItem.cpp:
+        (WebKit::WebHistoryItem::pageScaleFactor):
+        (WebKit::WebHistoryItem::setPageScaleFactor):
+
 2011-08-10  Nat Duca  <nduca@chromium.org>
 
         [chromium] Add WebThread to WebKitClient

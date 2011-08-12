@@ -93,6 +93,9 @@ public:
     WEBKIT_EXPORT WebPoint scrollOffset() const;
     WEBKIT_EXPORT void setScrollOffset(const WebPoint&);
 
+    WEBKIT_EXPORT float pageScaleFactor() const;
+    WEBKIT_EXPORT void setPageScaleFactor(float);
+
     WEBKIT_EXPORT bool isTargetItem() const;
     WEBKIT_EXPORT void setIsTargetItem(bool);
 

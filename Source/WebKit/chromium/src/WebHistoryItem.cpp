@@ -165,6 +165,17 @@ void WebHistoryItem::setScrollOffset(const WebPoint& scrollOffset)
     m_private->setScrollPoint(scrollOffset);
 }
 
+float WebHistoryItem::pageScaleFactor() const
+{
+    return m_private->pageScaleFactor();
+}
+
+void WebHistoryItem::setPageScaleFactor(float scale)
+{
+    ensureMutable();
+    return m_private->setPageScaleFactor(scale);
+}
+
 bool WebHistoryItem::isTargetItem() const
 {
     return m_private->isTargetItem();
