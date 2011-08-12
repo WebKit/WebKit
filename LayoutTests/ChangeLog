@@ -1,3 +1,13 @@
+2011-08-12  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: add space between error info and error message in source frame message bubble.
+        https://bugs.webkit.org/show_bug.cgi?id=65069
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector-enabled/console-log-before-frame-navigation-expected.txt:
+        * inspector/debugger/source-frame-expected.txt:
+
 2011-08-12  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: console loses focus upon reloading the page from the inspector.

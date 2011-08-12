@@ -922,7 +922,7 @@ WebInspector.ConsoleMessage.prototype = {
         }
 
         // This is used for inline message bubbles in SourceFrames, or other plain-text representations.
-        this.message = this._formattedMessage.textContent;
+        this.message = (urlElement ? urlElement.textContent + " " : "") + messageText.textContent;
     },
 
     _linkifyLocation: function(url, lineNumber, columnNumber)
