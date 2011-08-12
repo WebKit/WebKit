@@ -1,3 +1,25 @@
+2011-08-11  John Bauman  <jbauman@chromium.org>
+
+        Readback composited webgl results for printing
+        https://bugs.webkit.org/show_bug.cgi?id=65658
+
+        Reviewed by James Robinson.
+
+        The real composited results may be locked inside the compositor
+        context's version of a texture because the drawing buffer was
+        automatically cleared, so read from there to get the actual presented
+        version to draw.
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::paintRenderingResultsToCanvas):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/chromium/Extensions3DChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::paintRenderedResultsToCanvas):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::paintCompositedResultsToCanvas):
+
 2011-08-11  Andrew Wason  <rectalogic@rectalogic.com>
 
         REGRESSION: Qt JavaScript bridge signal connection fails

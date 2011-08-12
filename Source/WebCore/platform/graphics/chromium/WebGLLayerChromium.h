@@ -52,6 +52,7 @@ public:
     virtual bool drawsContent() const;
     virtual void updateCompositorResources();
     void setTextureUpdated();
+    bool paintRenderedResultsToCanvas(ImageBuffer*);
 
     void setContext(const GraphicsContext3D* context);
     GraphicsContext3D* context() { return m_context; }

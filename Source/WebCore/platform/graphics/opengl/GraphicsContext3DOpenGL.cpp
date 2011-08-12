@@ -151,6 +151,12 @@ void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* co
 }
 #endif
 
+bool GraphicsContext3D::paintCompositedResultsToCanvas(CanvasRenderingContext*)
+{
+    // Not needed at the moment, so return that nothing was done.
+    return false;
+}
+
 PassRefPtr<ImageData> GraphicsContext3D::paintRenderingResultsToImageData()
 {
     // Reading premultiplied alpha would involve unpremultiplying, which is

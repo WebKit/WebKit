@@ -99,6 +99,25 @@ void WebGLLayerChromium::updateCompositorResources()
     }
 }
 
+bool WebGLLayerChromium::paintRenderedResultsToCanvas(ImageBuffer* imageBuffer)
+{
+    if (m_textureUpdated || !layerRenderer() || !drawsContent())
+        return false;
+
+    IntSize framebufferSize = m_context->getInternalFramebufferSize();
+    ASSERT(layerRendererContext());
+
+    // This would ideally be done in the webgl context, but that isn't possible yet.
+    Platform3DObject framebuffer = layerRendererContext()->createFramebuffer();
+    layerRendererContext()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, framebuffer);
+    layerRendererContext()->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_textureId, 0);
+
+    Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(layerRendererContext()->getExtensions());
+    extensions->paintFramebufferToCanvas(framebuffer, framebufferSize.width(), framebufferSize.height(), !m_context->getContextAttributes().premultipliedAlpha, imageBuffer);
+    layerRendererContext()->deleteFramebuffer(framebuffer);
+    return true;
+}
+
 void WebGLLayerChromium::setTextureUpdated()
 {
     m_textureUpdated = true;

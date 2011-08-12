@@ -31,6 +31,7 @@
 namespace WebCore {
 
 class GraphicsContext3DInternal;
+class ImageBuffer;
 
 class Extensions3DChromium : public Extensions3D {
 public:
@@ -42,6 +43,7 @@ public:
     //   GL_CHROMIUM_map_sub
     //   GL_CHROMIUM_swapbuffers_complete_callback
     //   GL_CHROMIUM_rate_limit_offscreen_context
+    //   GL_CHROMIUM_paint_framebuffer_canvas
 
     // Extensions3D methods.
     virtual bool supports(const String&);
@@ -77,6 +79,9 @@ public:
 
     // GL_CHROMIUM_rate_limit_offscreen_context
     void rateLimitOffscreenContextCHROMIUM();
+
+    // GL_CHROMIUM_paint_framebuffer_canvas
+    void paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer*);
 
 private:
     // Instances of this class are strictly owned by the GraphicsContext3D implementation and do not

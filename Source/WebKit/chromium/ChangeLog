@@ -1,3 +1,24 @@
+2011-08-11  John Bauman  <jbauman@chromium.org>
+
+        Readback composited webgl results for printing
+        https://bugs.webkit.org/show_bug.cgi?id=65658
+
+        Reviewed by James Robinson.
+
+        Add support for reading from the composited version of a canvas.
+
+        * public/WebGraphicsContext3D.h:
+        * src/Extensions3DChromium.cpp:
+        (WebCore::Extensions3DChromium::paintFramebufferToCanvas):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::paintFramebufferToCanvas):
+        (WebCore::GraphicsContext3DInternal::paintRenderingResultsToCanvas):
+        (WebCore::GraphicsContext3DInternal::paintCompositedResultsToCanvas):
+        (WebCore::GraphicsContext3DInternal::paintRenderingResultsToImageData):
+        (WebCore::GraphicsContext3DInternal::reshape):
+        * src/GraphicsContext3DInternal.h:
+
 2011-08-05  Nat Duca  <nduca@chromium.org>
 
         [chromium] Make WebViewImpl point at CCLayerTreeHost and related separation

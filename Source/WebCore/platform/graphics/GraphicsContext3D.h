@@ -96,6 +96,7 @@ class Extensions3DQt;
 #endif
 class HostWindow;
 class Image;
+class ImageBuffer;
 class ImageData;
 #if USE(CAIRO)
 class PlatformContextCairo;
@@ -780,8 +781,8 @@ public:
     void reshape(int width, int height);
 
 #if USE(CG)
-    void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
-                       int canvasWidth, int canvasHeight, CGContextRef context);
+    static void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
+                              int canvasWidth, int canvasHeight, CGContextRef);
 #elif PLATFORM(GTK)
     void paintToCanvas(const unsigned char* imagePixels, int imageWidth, int imageHeight,
                        int canvasWidth, int canvasHeight, PlatformContextCairo* context);
@@ -791,8 +792,9 @@ public:
     void markLayerComposited();
     bool layerComposited() const;
 
-    void paintRenderingResultsToCanvas(CanvasRenderingContext* context);
+    void paintRenderingResultsToCanvas(CanvasRenderingContext*);
     PassRefPtr<ImageData> paintRenderingResultsToImageData();
+    bool paintCompositedResultsToCanvas(CanvasRenderingContext*);
 
 #if PLATFORM(QT)
     bool paintsIntoCanvasBuffer() const { return true; }

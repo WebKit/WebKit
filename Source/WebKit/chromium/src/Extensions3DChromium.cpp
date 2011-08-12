@@ -125,6 +125,11 @@ void Extensions3DChromium::rateLimitOffscreenContextCHROMIUM()
     m_internal->rateLimitOffscreenContextCHROMIUM();
 }
 
+void Extensions3DChromium::paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer* imageBuffer)
+{
+    m_internal->paintFramebufferToCanvas(framebuffer, width, height, premultiplyAlpha, imageBuffer);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(WEBGL)

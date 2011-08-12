@@ -138,7 +138,7 @@ public:
     // the memory region pointed to by "pixels" with size "bufferSize". It is
     // expected that the storage for "pixels" covers (4 * width * height) bytes.
     // Returns true on success.
-    virtual bool readBackFramebuffer(unsigned char* pixels, size_t bufferSize) = 0;
+    virtual bool readBackFramebuffer(unsigned char* pixels, size_t bufferSize, WebGLId framebuffer, int width, int height) = 0;
 
     // Returns the id of the texture which is used for storing the contents of
     // the framebuffer associated with this context. This texture is accessible

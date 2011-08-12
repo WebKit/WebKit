@@ -29,6 +29,7 @@
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
 #include <wtf/HashSet.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/OwnPtr.h>
 #if USE(SKIA)
 #include "SkBitmap.h"
@@ -80,8 +81,10 @@ public:
     void markLayerComposited();
 
     void paintRenderingResultsToCanvas(CanvasRenderingContext*);
+    void paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer*);
     PassRefPtr<ImageData> paintRenderingResultsToImageData();
     bool paintsIntoCanvasBuffer() const;
+    bool paintCompositedResultsToCanvas(CanvasRenderingContext*);
 
     void prepareTexture();
 
@@ -310,7 +313,8 @@ private:
 #endif
 
 #if USE(CG)
-    unsigned char* m_renderOutput;
+    OwnArrayPtr<unsigned char> m_renderOutput;
+    size_t m_renderOutputSize;
 #endif
 
     void initializeExtensions();

@@ -90,7 +90,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal()
 #if USE(SKIA)
     , m_grContext(0)
 #elif USE(CG)
-    , m_renderOutput(0)
+    , m_renderOutputSize(0)
 #else
 #error Must port to your platform
 #endif
@@ -99,10 +99,6 @@ GraphicsContext3DInternal::GraphicsContext3DInternal()
 
 GraphicsContext3DInternal::~GraphicsContext3DInternal()
 {
-#if USE(CG)
-    if (m_renderOutput)
-        delete[] m_renderOutput;
-#endif
 #if USE(SKIA)
     if (m_grContext) {
         m_grContext->contextDestroyed();
@@ -205,16 +201,15 @@ bool GraphicsContext3DInternal::layerComposited() const
     return m_layerComposited;
 }
 
-void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
+void GraphicsContext3DInternal::paintFramebufferToCanvas(int framebuffer, int width, int height, bool premultiplyAlpha, ImageBuffer* imageBuffer)
 {
-    HTMLCanvasElement* canvas = context->canvas();
-    ImageBuffer* imageBuffer = canvas->buffer();
     unsigned char* pixels = 0;
+    size_t bufferSize = 4 * width * height;
 #if USE(SKIA)
     const SkBitmap* canvasBitmap = imageBuffer->context()->platformContext()->bitmap();
     const SkBitmap* readbackBitmap = 0;
     ASSERT(canvasBitmap->config() == SkBitmap::kARGB_8888_Config);
-    if (canvasBitmap->width() == m_impl->width() && canvasBitmap->height() == m_impl->height()) {
+    if (canvasBitmap->width() == width && canvasBitmap->height() == height) {
         // This is the fastest and most common case. We read back
         // directly into the canvas's backing store.
         readbackBitmap = canvasBitmap;
@@ -223,10 +218,10 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
         // We need to allocate a temporary bitmap for reading back the
         // pixel data. We will then use Skia to rescale this bitmap to
         // the size of the canvas's backing store.
-        if (m_resizingBitmap.width() != m_impl->width() || m_resizingBitmap.height() != m_impl->height()) {
+        if (m_resizingBitmap.width() != width || m_resizingBitmap.height() != height) {
             m_resizingBitmap.setConfig(SkBitmap::kARGB_8888_Config,
-                                       m_impl->width(),
-                                       m_impl->height());
+                                       width,
+                                       height);
             if (!m_resizingBitmap.allocPixels())
                 return;
         }
@@ -237,17 +232,19 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
     SkAutoLockPixels bitmapLock(*readbackBitmap);
     pixels = static_cast<unsigned char*>(readbackBitmap->getPixels());
 #elif USE(CG)
-    if (m_renderOutput)
-        pixels = m_renderOutput;
+    if (!m_renderOutput || m_renderOutputSize != bufferSize) {
+        m_renderOutput = adoptArrayPtr(new unsigned char[bufferSize]);
+        m_renderOutputSize = bufferSize;
+    }
+
+    pixels = m_renderOutput.get();
 #else
 #error Must port to your platform
 #endif
 
-    m_impl->readBackFramebuffer(pixels, 4 * m_impl->width() * m_impl->height());
+    m_impl->readBackFramebuffer(pixels, 4 * width * height, framebuffer, width, height);
 
-    if (!m_impl->getContextAttributes().premultipliedAlpha) {
-        size_t bufferSize = 4 * m_impl->width() * m_impl->height();
-
+    if (premultiplyAlpha) {
         for (size_t i = 0; i < bufferSize; i += 4) {
             pixels[i + 0] = std::min(255, pixels[i + 0] * pixels[i + 3] / 255);
             pixels[i + 1] = std::min(255, pixels[i + 1] * pixels[i + 3] / 255);
@@ -265,13 +262,25 @@ void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingCon
         canvas.drawBitmapRect(m_resizingBitmap, 0, dst);
     }
 #elif USE(CG)
-    if (m_renderOutput && context->is3d()) {
-        WebGLRenderingContext* webGLContext = static_cast<WebGLRenderingContext*>(context);
-        webGLContext->graphicsContext3D()->paintToCanvas(m_renderOutput, m_impl->width(), m_impl->height(), canvas->width(), canvas->height(), imageBuffer->context()->platformContext());
-    }
+    GraphicsContext3D::paintToCanvas(pixels, width, height, imageBuffer->width(), imageBuffer->height(), imageBuffer->context()->platformContext());
 #else
 #error Must port to your platform
 #endif
+}
+
+void GraphicsContext3DInternal::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
+{
+    ImageBuffer* imageBuffer = context->canvas()->buffer();
+    paintFramebufferToCanvas(0, m_impl->width(), m_impl->height(), !m_impl->getContextAttributes().premultipliedAlpha, imageBuffer);
+}
+
+bool GraphicsContext3DInternal::paintCompositedResultsToCanvas(CanvasRenderingContext* context)
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (platformLayer())
+        return platformLayer()->paintRenderedResultsToCanvas(context->canvas()->buffer());
+#endif
+    return false;
 }
 
 PassRefPtr<ImageData> GraphicsContext3DInternal::paintRenderingResultsToImageData()
@@ -283,7 +292,7 @@ PassRefPtr<ImageData> GraphicsContext3DInternal::paintRenderingResultsToImageDat
     unsigned char* pixels = imageData->data()->data()->data();
     size_t bufferSize = 4 * m_impl->width() * m_impl->height();
 
-    m_impl->readBackFramebuffer(pixels, bufferSize);
+    m_impl->readBackFramebuffer(pixels, bufferSize, 0, m_impl->width(), m_impl->height());
 
     for (size_t i = 0; i < bufferSize; i += 4)
         std::swap(pixels[i], pixels[i + 2]);
@@ -303,17 +312,6 @@ void GraphicsContext3DInternal::reshape(int width, int height)
         return;
 
     m_impl->reshape(width, height);
-
-#if USE(CG)
-    // Need to reallocate the client-side backing store.
-    // FIXME: make this more efficient.
-    if (m_renderOutput) {
-        delete[] m_renderOutput;
-        m_renderOutput = 0;
-    }
-    int rowBytes = width * 4;
-    m_renderOutput = new unsigned char[height * rowBytes];
-#endif // USE(CG)
 }
 
 IntSize GraphicsContext3DInternal::getInternalFramebufferSize() const
@@ -1168,6 +1166,7 @@ bool GraphicsContext3D::layerComposited() const
 
 DELEGATE_TO_INTERNAL_1(paintRenderingResultsToCanvas, CanvasRenderingContext*)
 DELEGATE_TO_INTERNAL_R(paintRenderingResultsToImageData, PassRefPtr<ImageData>)
+DELEGATE_TO_INTERNAL_1R(paintCompositedResultsToCanvas, CanvasRenderingContext*, bool)
 
 bool GraphicsContext3D::paintsIntoCanvasBuffer() const
 {
