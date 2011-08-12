@@ -34,6 +34,7 @@ transaction.objectStore('store').delete('bar')
 deleteSuccess():
 transaction.objectStore('store').put({x: 1}, 'baz')
 finalAddSuccess():
+transaction.objectStore('store').put({x: 1}, 'baz')
 PASS successfullyParsed is true
 
 TEST COMPLETE

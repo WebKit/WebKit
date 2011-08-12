@@ -134,7 +134,11 @@ function deleteSuccess()
 
 function finalAddSuccess() {
     debug("finalAddSuccess():");
-    done();
+
+    // An overwrite should be ok.
+    request = evalAndLog("transaction.objectStore('store').put({x: 1}, 'baz')");
+    request.onerror = unexpectedErrorCallback;
+    request.onsuccess = done;
 }
 
 test();

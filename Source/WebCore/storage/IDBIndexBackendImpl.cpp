@@ -158,12 +158,18 @@ void IDBIndexBackendImpl::getKey(PassRefPtr<IDBKey> prpKey, PassRefPtr<IDBCallba
         ec = IDBDatabaseException::NOT_ALLOWED_ERR;
 }
 
-bool IDBIndexBackendImpl::addingKeyAllowed(IDBKey* key)
+bool IDBIndexBackendImpl::addingKeyAllowed(const IDBKey* indexKey, const IDBKey* primaryKey)
 {
     if (!m_unique)
         return true;
 
-    return !m_backingStore->keyExistsInIndex(m_databaseId, m_objectStoreBackend->id(), m_id, *key);
+    RefPtr<IDBKey> foundPrimaryKey;
+    bool found = m_backingStore->keyExistsInIndex(m_databaseId, m_objectStoreBackend->id(), m_id, *indexKey, foundPrimaryKey);
+    if (!found)
+        return true;
+    if (foundPrimaryKey->isEqual(primaryKey))
+        return true;
+    return false;
 }
 
 } // namespace WebCore

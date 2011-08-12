@@ -1,3 +1,16 @@
+2011-08-10  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Overwriting key in unique index should be possible
+        https://bugs.webkit.org/show_bug.cgi?id=65993
+
+        Reviewed by Tony Chang.
+
+        Test that it's possible to overwrite an object store record even if there
+        is a derived key for that record in an index with the unique flag set.
+
+        * storage/indexeddb/index-unique-expected.txt:
+        * storage/indexeddb/index-unique.html:
+
 2011-08-11  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Implement "protocol" attribute

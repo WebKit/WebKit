@@ -791,15 +791,16 @@ PassRefPtr<IDBKey> IDBLevelDBBackingStore::getPrimaryKeyViaIndex(int64_t databas
     return 0;
 }
 
-bool IDBLevelDBBackingStore::keyExistsInIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& key)
+bool IDBLevelDBBackingStore::keyExistsInIndex(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey)
 {
     ASSERT(m_currentTransaction);
 
     Vector<char> foundEncodedPrimaryKey;
-    if (findKeyInIndex(m_currentTransaction.get(), databaseId, objectStoreId, indexId, key, foundEncodedPrimaryKey))
-        return true;
+    if (!findKeyInIndex(m_currentTransaction.get(), databaseId, objectStoreId, indexId, indexKey, foundEncodedPrimaryKey))
+        return false;
 
-    return false;
+    decodeIDBKey(foundEncodedPrimaryKey.begin(), foundEncodedPrimaryKey.end(), foundPrimaryKey);
+    return true;
 }
 
 namespace {

@@ -1,3 +1,26 @@
+2011-08-10  Hans Wennborg  <hans@chromium.org>
+
+        IndexedDB: Overwriting key in unique index should be possible
+        https://bugs.webkit.org/show_bug.cgi?id=65993
+
+        Reviewed by Tony Chang.
+
+        It should be possible to overwrite an object store record even if
+        there is a derived key for that record in an index with the unique flag set.
+
+        * storage/IDBBackingStore.h:
+        * storage/IDBIndexBackendImpl.cpp:
+        (WebCore::IDBIndexBackendImpl::addingKeyAllowed):
+        * storage/IDBIndexBackendImpl.h:
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::keyExistsInIndex):
+        * storage/IDBLevelDBBackingStore.h:
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::putInternal):
+        * storage/IDBSQLiteBackingStore.cpp:
+        (WebCore::IDBSQLiteBackingStore::keyExistsInIndex):
+        * storage/IDBSQLiteBackingStore.h:
+
 2011-08-11  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Implement "protocol" attribute

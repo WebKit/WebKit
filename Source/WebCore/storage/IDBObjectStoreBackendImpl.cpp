@@ -226,20 +226,22 @@ void IDBObjectStoreBackendImpl::putInternal(ScriptExecutionContext*, PassRefPtr<
 
     Vector<RefPtr<IDBKey> > indexKeys;
     for (IndexMap::iterator it = objectStore->m_indexes.begin(); it != objectStore->m_indexes.end(); ++it) {
-        RefPtr<IDBKey> key = fetchKeyFromKeyPath(value.get(), it->second->keyPath());
-        if (!key) {
+        const RefPtr<IDBIndexBackendImpl>& index = it->second;
+
+        RefPtr<IDBKey> indexKey = fetchKeyFromKeyPath(value.get(), index->keyPath());
+        if (!indexKey) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "The key could not be fetched from an index's keyPath."));
             return;
         }
-        if (key->type() == IDBKey::NullType) {
+        if (indexKey->type() == IDBKey::NullType) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::DATA_ERR, "One of the derived (from a keyPath) keys for an index is NULL."));
             return;
         }
-        if (!it->second->addingKeyAllowed(key.get())) {
+        if (!index->addingKeyAllowed(indexKey.get(), key.get())) { // So problem is that if key() is the same as the old key for this record in this index, then we're not really *adding it*, just updating it...
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::CONSTRAINT_ERR, "One of the derived (from a keyPath) keys for an index does not satisfy its uniqueness requirements."));
             return;
         }
-        indexKeys.append(key.release());
+        indexKeys.append(indexKey.release());
     }
 
     RefPtr<IDBBackingStore::ObjectStoreRecordIdentifier> recordIdentifier = objectStore->m_backingStore->createInvalidRecordIdentifier();

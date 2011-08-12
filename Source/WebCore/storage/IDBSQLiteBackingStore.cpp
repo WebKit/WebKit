@@ -675,17 +675,22 @@ PassRefPtr<IDBKey> IDBSQLiteBackingStore::getPrimaryKeyViaIndex(int64_t, int64_t
     return foundKey.release();
 }
 
-bool IDBSQLiteBackingStore::keyExistsInIndex(int64_t, int64_t, int64_t indexId, const IDBKey& key)
+bool IDBSQLiteBackingStore::keyExistsInIndex(int64_t, int64_t, int64_t indexId, const IDBKey& indexKey, RefPtr<IDBKey>& foundPrimaryKey)
 {
-    String sql = String("SELECT id FROM IndexData WHERE indexId = ? AND ") + whereSyntaxForKey(key);
+    String sql = String("SELECT id FROM IndexData WHERE indexId = ? AND ") + whereSyntaxForKey(indexKey);
     SQLiteStatement query(m_db, sql);
     bool ok = query.prepare() == SQLResultOk;
     ASSERT_UNUSED(ok, ok); // FIXME: Better error handling?
 
     query.bindInt64(1, indexId);
-    bindKeyToQuery(query, 2, key);
+    bindKeyToQuery(query, 2, indexKey);
 
-    return query.step() == SQLResultRow;
+    if (query.step() != SQLResultRow)
+        return false;
+
+    foundPrimaryKey = getPrimaryKeyViaIndex(0, 0, indexId, indexKey);
+    ASSERT(foundPrimaryKey);
+    return true;
 }
 
 namespace {
