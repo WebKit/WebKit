@@ -39,7 +39,7 @@ my $usage = <<EOF;
 Usage: $programName --shell=[path] [options] FILE FILE
   --help        Show this help message
   --shell       Path to javascript shell
-  --suite           Select a specific benchmark suite. The default is sunspider-0.9.1
+  --suite           Select a specific benchmark suite. The default is sunspider-1.0
   --ubench          Use microbenchmark suite instead of regular tests. Same as --suite=ubench
   --v8-suite        Use the V8 benchmark suite. Same as --suite=v8-v4
   --parse-only  Compare the parse-only benchmark results
@@ -55,7 +55,7 @@ GetOptions('shell=s' => \$jsShellPath,
 $suite = "ubench" if ($ubench);
 $suite = "v8-v4" if ($v8suite);
 $suite = "parse-only" if ($parseOnly);
-$suite = "sunspider-0.9.1" if (!$suite);
+$suite = "sunspider-1.0" if (!$suite);
 
 my $resultDirectory = "${suite}-results";
 
