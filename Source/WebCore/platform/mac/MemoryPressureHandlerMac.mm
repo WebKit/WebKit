@@ -34,6 +34,7 @@
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 #import <dispatch/dispatch.h>
+#import <notify.h>
 
 #ifndef DISPATCH_SOURCE_TYPE_VM
 #define DISPATCH_SOURCE_TYPE_VM (&_dispatch_source_type_vm)
@@ -53,12 +54,11 @@ namespace WebCore {
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
 
 static dispatch_source_t _cache_event_source = 0;
-#ifndef NDEBUG
-static dispatch_source_t _cache_event_source2 = 0;
-#endif
 
 void MemoryPressureHandler::install()
 {
+    static int notifyToken;
+
     if (m_installed)
         return;
 
@@ -71,17 +71,8 @@ void MemoryPressureHandler::install()
         }
     });
 
-#ifndef NDEBUG
-    dispatch_async(dispatch_get_main_queue(), ^{
-        _cache_event_source2 = dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGUSR2, 0, dispatch_get_main_queue());
-        if (_cache_event_source2) {
-            dispatch_set_context(_cache_event_source2, this);
-            dispatch_source_set_event_handler(_cache_event_source2, ^{ memoryPressureHandler().respondToMemoryPressure();});
-            dispatch_resume(_cache_event_source2);
-            signal((int)SIGUSR2, SIG_IGN);
-        }
-    });
-#endif
+    notify_register_dispatch("org.WebKit.lowMemory", &notifyToken,
+         dispatch_get_main_queue(), ^(int) { memoryPressureHandler().respondToMemoryPressure();});
 
     m_installed = true;
 }
