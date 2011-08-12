@@ -44,18 +44,16 @@ PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* clien
 }
 
 CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)
-    : m_client(client)
+    : m_animating(false)
+    , m_client(client)
     , m_frameNumber(0)
+    , m_recreatingGraphicsContext(false)
     , m_settings(settings)
 {
 }
 
 bool CCLayerTreeHost::initialize()
 {
-    RefPtr<GraphicsContext3D> context = m_client->createLayerTreeHostContext3D();
-    if (!context)
-        return false;
-
     m_layerRenderer = createLayerRenderer();
     if (!m_layerRenderer)
         return false;

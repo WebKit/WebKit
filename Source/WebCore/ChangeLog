@@ -1,3 +1,12 @@
+2011-08-12  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Fix compositor breakage due to duplicate context creation AND by context-lost
+        https://bugs.webkit.org/show_bug.cgi?id=66168
+
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+
 2011-08-12  Levi Weintraub  <leviw@chromium.org>
 
         Switch RenderMenuList, RenderListBox, and RenderFieldSet to new layout units
