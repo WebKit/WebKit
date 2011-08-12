@@ -3654,6 +3654,7 @@ BUGJIANLI MAC : fast/gradients/gradient-after-transparent-border.html = IMAGE
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT IMAGE
+BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = PASS IMAGE+TEXT
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT IMAGE
 BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
@@ -3670,4 +3671,4 @@ BUGWK65874 : fast/js/preventExtensions.html = TEXT
 BUGWK65951 WIN DEBUG : webaudio/audiobuffersource.html = CRASH
 BUGWK65951 WIN DEBUG : webaudio/mixing.html = CRASH
 
-BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = FAIL MISSING
+BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = MISSING FAIL
