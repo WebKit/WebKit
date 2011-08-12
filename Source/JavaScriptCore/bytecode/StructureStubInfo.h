@@ -134,15 +134,15 @@ namespace JSC {
         int8_t baseGPR;
         int8_t valueGPR;
         int8_t scratchGPR;
-        int8_t deltaCallToDone;
-        int8_t deltaCallToStructCheck;
-        int8_t deltaCallToSlowCase;
+        int16_t deltaCallToDone;
+        int16_t deltaCallToStructCheck;
+        int16_t deltaCallToSlowCase;
 #endif
 
         union {
             struct {
-                int8_t deltaCheckImmToCall;
-                int8_t deltaCallToLoadOrStore;
+                int16_t deltaCheckImmToCall;
+                int16_t deltaCallToLoadOrStore;
             } unset;
             struct {
                 WriteBarrierBase<Structure> baseObjectStructure;

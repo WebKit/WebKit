@@ -1,5 +1,18 @@
 2011-08-11  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG JIT-specific structure stub info code offset fields are signed
+        8-bit, but it is possible for the offsets to be greater than 127
+        https://bugs.webkit.org/show_bug.cgi?id=66122
+
+        Reviewed by Gavin Barraclough.
+
+        * bytecode/StructureStubInfo.h:
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::cachedGetById):
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+
+2011-08-11  Filip Pizlo  <fpizlo@apple.com>
+
         DFG JIT speculation failure code sometimes picks the wrong register
         as a scratch register.
         https://bugs.webkit.org/show_bug.cgi?id=66104
