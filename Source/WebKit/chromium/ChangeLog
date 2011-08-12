@@ -1,3 +1,30 @@
+2011-08-12  Tommy Widenflycht  <tommyw@google.com>
+
+        [Chromium] Implement the embedders for the HTML5 Track List objects
+        https://bugs.webkit.org/show_bug.cgi?id=60260
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebMediaStreamTrack.h: Added.
+        (WebKit::WebMediaStreamTrack::WebMediaStreamTrack):
+        (WebKit::WebMediaStreamTrack::~WebMediaStreamTrack):
+        (WebKit::WebMediaStreamTrack::isNull):
+        * public/WebMediaStreamTrackList.h: Added.
+        (WebKit::WebMediaStreamTrackList::WebMediaStreamTrackList):
+        (WebKit::WebMediaStreamTrackList::~WebMediaStreamTrackList):
+        (WebKit::WebMediaStreamTrackList::isNull):
+        * src/WebMediaStreamTrack.cpp: Added.
+        (WebKit::WebMediaStreamTrack::initialize):
+        (WebKit::WebMediaStreamTrack::reset):
+        (WebKit::WebMediaStreamTrack::WebMediaStreamTrack):
+        (WebKit::WebMediaStreamTrack::operator WTF::PassRefPtr<WebCore::MediaStreamTrack>):
+        * src/WebMediaStreamTrackList.cpp: Added.
+        (WebKit::WebMediaStreamTrackList::initialize):
+        (WebKit::WebMediaStreamTrackList::reset):
+        (WebKit::WebMediaStreamTrackList::WebMediaStreamTrackList):
+        (WebKit::WebMediaStreamTrackList::operator WTF::PassRefPtr<MediaStreamTrackList>):
+
 2011-08-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r92976.
