@@ -116,6 +116,7 @@ void EventSource::connect()
     options.sendLoadCallbacks = true;
     options.sniffContent = false;
     options.allowCredentials = true;
+    options.shouldBufferData = false;
 
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, options);
 

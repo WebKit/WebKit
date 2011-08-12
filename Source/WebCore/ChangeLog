@@ -1,3 +1,19 @@
+2011-08-12  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        EventSource loader should not buffer data
+        https://bugs.webkit.org/show_bug.cgi?id=61863
+
+        Disabled buffering in the EventSource loader.
+
+        Added a manual test.
+
+        * manual-tests/eventsource/eventsource-loader-buffering.html: Added.
+        * manual-tests/eventsource/eventsource-loader-buffering.php: Added.
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect):
+
 2011-08-11  Pratik Solanki  <psolanki@apple.com>
 
         ResourceLoader::didReceiveDataArray() does not handle m_shouldBufferData correctly
