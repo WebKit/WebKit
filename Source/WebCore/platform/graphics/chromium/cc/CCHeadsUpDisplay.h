@@ -37,7 +37,7 @@ struct CCSettings;
 class GeometryBinding;
 class GraphicsContext3D;
 class LayerRendererChromium;
-class LayerTexture;
+class ManagedTexture;
 
 // Class that handles drawing of composited render layers using GL.
 class CCHeadsUpDisplay {
@@ -71,7 +71,7 @@ private:
 
     double m_filteredFrameTime;
 
-    OwnPtr<LayerTexture> m_hudTexture;
+    OwnPtr<ManagedTexture> m_hudTexture;
 
     LayerRendererChromium* m_layerRenderer;
 

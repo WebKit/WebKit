@@ -38,9 +38,8 @@ static size_t memoryUseBytes(IntSize size, unsigned textureFormat)
     return size.width() * size.height() * 4;
 }
 
-TextureManager::TextureManager(GraphicsContext3D* context, size_t memoryLimitBytes, int maxTextureSize)
-    : m_context(context)
-    , m_memoryLimitBytes(memoryLimitBytes)
+TextureManager::TextureManager(size_t memoryLimitBytes, int maxTextureSize)
+    : m_memoryLimitBytes(memoryLimitBytes)
     , m_memoryUseBytes(0)
     , m_maxTextureSize(maxTextureSize)
     , m_nextToken(1)
@@ -132,6 +131,14 @@ void TextureManager::addTexture(TextureToken token, TextureInfo info)
     m_textureLRUSet.add(token);
 }
 
+void TextureManager::deleteEvictedTextures(GraphicsContext3D* context)
+{
+    ASSERT(context == m_associatedContextDebugOnly);
+    for (size_t i = 0; i < m_evictedTextureIds.size(); ++i)
+        GLC(context, context->deleteTexture(m_evictedTextureIds[i]));
+    m_evictedTextureIds.clear();
+}
+
 void TextureManager::removeTexture(TextureToken token, TextureInfo info)
 {
     ASSERT(m_textureLRUSet.contains(token));
@@ -140,13 +147,35 @@ void TextureManager::removeTexture(TextureToken token, TextureInfo info)
     m_textures.remove(token);
     ASSERT(m_textureLRUSet.contains(token));
     m_textureLRUSet.remove(token);
-    GLC(m_context.get(), m_context->deleteTexture(info.textureId));
+    m_evictedTextureIds.append(info.textureId);
 }
 
-unsigned TextureManager::requestTexture(TextureToken token, IntSize size, unsigned format)
+unsigned TextureManager::allocateTexture(GraphicsContext3D* context, TextureToken token)
+{
+    ASSERT(context == m_associatedContextDebugOnly);
+    TextureMap::iterator it = m_textures.find(token);
+    ASSERT(it != m_textures.end());
+    TextureInfo* info = &it.get()->second;
+    ASSERT(info->isProtected);
+
+    unsigned textureId;
+    GLC(context, textureId = context->createTexture());
+    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
+    // Do basic linear filtering on resize.
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
+    // NPOT textures in GL ES only work when the wrap mode is set to GraphicsContext3D::CLAMP_TO_EDGE.
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
+    GLC(context, context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, info->format, info->size.width(), info->size.height(), 0, info->format, GraphicsContext3D::UNSIGNED_BYTE));
+    info->textureId = textureId;
+    return textureId;
+}
+
+bool TextureManager::requestTexture(TextureToken token, IntSize size, unsigned format)
 {
     if (size.width() > m_maxTextureSize || size.height() > m_maxTextureSize)
-        return 0;
+        return false;
 
     TextureMap::iterator it = m_textures.find(token);
     if (it != m_textures.end()) {
@@ -156,29 +185,19 @@ unsigned TextureManager::requestTexture(TextureToken token, IntSize size, unsign
 
     size_t memoryRequiredBytes = memoryUseBytes(size, format);
     if (memoryRequiredBytes > m_memoryLimitBytes)
-        return 0;
+        return false;
 
     reduceMemoryToLimit(m_memoryLimitBytes - memoryRequiredBytes);
     if (m_memoryUseBytes + memoryRequiredBytes > m_memoryLimitBytes)
-        return 0;
+        return false;
 
-    unsigned textureId;
-    GLC(m_context.get(), textureId = m_context->createTexture());
-    GLC(m_context.get(), m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
-    // Do basic linear filtering on resize.
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, GraphicsContext3D::LINEAR));
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, GraphicsContext3D::LINEAR));
-    // NPOT textures in GL ES only work when the wrap mode is set to GraphicsContext3D::CLAMP_TO_EDGE.
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
-    GLC(m_context.get(), m_context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
-    GLC(m_context.get(), m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, format, size.width(), size.height(), 0, format, GraphicsContext3D::UNSIGNED_BYTE));
     TextureInfo info;
     info.size = size;
     info.format = format;
-    info.textureId = textureId;
+    info.textureId = 0;
     info.isProtected = true;
     addTexture(token, info);
-    return textureId;
+    return true;
 }
 
 }

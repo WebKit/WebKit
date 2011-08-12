@@ -34,7 +34,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
-#include "LayerTexture.h"
+#include "ManagedTexture.h"
 #include "PlatformCanvas.h"
 #include "TextRun.h"
 #include "TextStream.h"
@@ -96,7 +96,7 @@ void CCHeadsUpDisplay::draw()
 {
     GraphicsContext3D* context = m_layerRenderer->context();
     if (!m_hudTexture)
-        m_hudTexture = LayerTexture::create(context, m_layerRenderer->renderSurfaceTextureManager());
+        m_hudTexture = ManagedTexture::create(m_layerRenderer->renderSurfaceTextureManager());
 
     // Use a fullscreen texture only if we need to...
     IntSize hudSize;
@@ -123,7 +123,7 @@ void CCHeadsUpDisplay::draw()
     {
         PlatformCanvas::AutoLocker locker(&canvas);
 
-        m_hudTexture->bindTexture();
+        m_hudTexture->bindTexture(context);
         bool uploadedViaMap = false;
         if (m_useMapSubForUploads) {
             Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
@@ -145,7 +145,7 @@ void CCHeadsUpDisplay::draw()
     const Program* program = m_layerRenderer->headsUpDisplayProgram();
     ASSERT(program && program->initialized());
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
-    m_hudTexture->bindTexture();
+    m_hudTexture->bindTexture(context);
     GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 

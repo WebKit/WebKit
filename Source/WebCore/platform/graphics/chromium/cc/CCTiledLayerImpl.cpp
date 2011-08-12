@@ -29,11 +29,13 @@
 
 #include "cc/CCTiledLayerImpl.h"
 
+#include "LayerRendererChromium.h"
+
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class LayerTexture;
+class ManagedTexture;
 
 CCTiledLayerImpl::CCTiledLayerImpl(int id)
     : CCLayerImpl(id)
@@ -57,10 +59,10 @@ void CCTiledLayerImpl::bindContentsTexture()
     // This function is only valid for single texture layers, e.g. masks.
     ASSERT(m_tiler);
 
-    LayerTexture* texture = m_tiler->getSingleTexture();
+    ManagedTexture* texture = m_tiler->getSingleTexture();
     ASSERT(texture);
 
-    texture->bindTexture();
+    texture->bindTexture(layerRenderer()->context());
 }
 
 void CCTiledLayerImpl::dumpLayerProperties(TextStream& ts, int indent) const

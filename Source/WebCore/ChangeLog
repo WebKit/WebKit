@@ -1,3 +1,82 @@
+2011-08-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Defer managed texture creation and destruction until updateCompositorResources
+        https://bugs.webkit.org/show_bug.cgi?id=64772
+
+        Reviewed by Kenneth Russell.
+
+        This adds support for deferring GraphicsContext3D calls for texture creation and destruction for managed
+        textures and defers these calls until updateCompositorResources() for contents textures.  The primary benefit of
+        this change is that it decouples managing the texture budget for the next frame (which has to happen before
+        painting layer contents) from the actual GL calls that create/destroy textures.  That way, in the threaded
+        compositing world we can continue to use textures from the previous frame while software painting contents for
+        the next frame into software buffers or SkPictures.
+
+        Also renames LayerTexture to ManagedTexture to better reflect what it is.  Not all ManagedTextures we create are
+        necessarily associated with layers, but they are all managed by a TextureManager.
+
+        Covered by compositing/ layout tests.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::releaseTextures):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::getOffscreenLayerTexture):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterBitmap::updateTextureRect):
+        (WebCore::LayerTextureUpdaterSkPicture::updateTextureRect):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::getSingleTexture):
+        (WebCore::LayerTilerChromium::createTile):
+        (WebCore::LayerTilerChromium::updateRect):
+        (WebCore::LayerTilerChromium::drawTiles):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        (WebCore::LayerTilerChromium::Tile::Tile):
+        (WebCore::LayerTilerChromium::Tile::texture):
+        * platform/graphics/chromium/ManagedTexture.cpp: Renamed from Source/WebCore/platform/graphics/chromium/LayerTexture.cpp.
+        (WebCore::ManagedTexture::ManagedTexture):
+        (WebCore::ManagedTexture::~ManagedTexture):
+        (WebCore::ManagedTexture::isValid):
+        (WebCore::ManagedTexture::reserve):
+        (WebCore::ManagedTexture::unreserve):
+        (WebCore::ManagedTexture::bindTexture):
+        (WebCore::ManagedTexture::framebufferTexture2D):
+        * platform/graphics/chromium/ManagedTexture.h: Renamed from Source/WebCore/platform/graphics/chromium/LayerTexture.h.
+        (WebCore::ManagedTexture::create):
+        (WebCore::ManagedTexture::format):
+        (WebCore::ManagedTexture::isReserved):
+        * platform/graphics/chromium/RenderSurfaceChromium.h:
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::TextureManager):
+        (WebCore::TextureManager::deleteEvictedTextures):
+        (WebCore::TextureManager::removeTexture):
+        (WebCore::TextureManager::allocateTexture):
+        (WebCore::TextureManager::requestTexture):
+        * platform/graphics/chromium/TextureManager.h:
+        (WebCore::TextureManager::create):
+        (WebCore::TextureManager::setAssociatedContextDebugOnly):
+        (WebCore::TextureManager::associatedContextDebugOnly):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+        * platform/graphics/chromium/cc/CCRenderSurface.cpp:
+        (WebCore::CCRenderSurface::prepareContentsTexture):
+        (WebCore::CCRenderSurface::drawSurface):
+        * platform/graphics/chromium/cc/CCRenderSurface.h:
+        (WebCore::CCRenderSurface::contentsTexture):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::bindContentsTexture):
+
 2011-08-11  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/66113> [CFNetwork] willCacheResponse() leaks CFCachedURLResponseRef if delegate changes CacheStoragePolicy

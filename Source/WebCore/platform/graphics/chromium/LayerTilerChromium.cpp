@@ -35,7 +35,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
-#include "LayerTexture.h"
+#include "ManagedTexture.h"
 #include "LayerTextureUpdater.h"
 #include "PlatformColor.h"
 #include "TraceEvent.h"
@@ -87,7 +87,7 @@ void LayerTilerChromium::setTileSize(const IntSize& size)
     m_tilingData.setMaxTextureSize(max(size.width(), size.height()));
 }
 
-LayerTexture* LayerTilerChromium::getSingleTexture()
+ManagedTexture* LayerTilerChromium::getSingleTexture()
 {
     if (m_tilingData.numTiles() != 1)
         return 0;
@@ -115,9 +115,8 @@ LayerTilerChromium::Tile* LayerTilerChromium::createTile(int i, int j)
         m_unusedTiles.removeLast();
         ASSERT(tile->refCount() == 1);
     } else {
-        GraphicsContext3D* context = layerRendererContext();
         TextureManager* manager = layerRenderer()->contentsTextureManager();
-        tile = adoptRef(new Tile(LayerTexture::create(context, manager)));
+        tile = adoptRef(new Tile(ManagedTexture::create(manager)));
     }
     m_tiles.add(make_pair(i, j), tile);
 
@@ -355,7 +354,7 @@ void LayerTilerChromium::updateRect(LayerTextureUpdater* textureUpdater)
             if (paintOffset.y() + destRect.height() > m_paintRect.height())
                 CRASH();
 
-            tile->texture()->bindTexture();
+            tile->texture()->bindTexture(context);
             const GC3Dint filter = m_tilingData.borderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
@@ -540,7 +539,7 @@ void LayerTilerChromium::drawTiles(const IntRect& contentRect, const Transformat
 
             ASSERT(tile->texture()->isReserved());
 
-            tile->texture()->bindTexture();
+            tile->texture()->bindTexture(context);
 
             // Don't use tileContentRect here, as that contains the full
             // rect with border texels which shouldn't be drawn.

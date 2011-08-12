@@ -37,7 +37,7 @@
 #include "cc/CCLayerImpl.h"
 #include "Image.h"
 #include "LayerRendererChromium.h"
-#include "LayerTexture.h"
+#include "ManagedTexture.h"
 #include "LayerTextureSubImage.h"
 #include "LayerTextureUpdater.h"
 #include "PlatformColor.h"
@@ -67,9 +67,9 @@ public:
         m_texSubImage.setSubImageSize(tileSize);
     }
 
-    virtual void updateTextureRect(LayerTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+    virtual void updateTextureRect(ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
     {
-        texture->bindTexture();
+        texture->bindTexture(context());
 
         // Source rect should never go outside the image pixels, even if this
         // is requested because the texture extends outside the image.

@@ -33,7 +33,7 @@
 #include "Extensions3D.h"
 #include "GraphicsContext.h"
 #include "LayerPainterChromium.h"
-#include "LayerTexture.h"
+#include "ManagedTexture.h"
 #include "PlatformColor.h"
 #include "TraceEvent.h"
 
@@ -94,11 +94,11 @@ void LayerTextureUpdaterBitmap::prepareToUpdate(const IntRect& contentRect, cons
     paintContents(*canvasPainter.context(), contentRect);
 }
 
-void LayerTextureUpdaterBitmap::updateTextureRect(LayerTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void LayerTextureUpdaterBitmap::updateTextureRect(ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     PlatformCanvas::AutoLocker locker(&m_canvas);
 
-    texture->bindTexture();
+    texture->bindTexture(context());
     m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, texture->format(), context());
 }
 
@@ -145,7 +145,7 @@ void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, c
     m_picture.endRecording();
 }
 
-void LayerTextureUpdaterSkPicture::updateTextureRect(LayerTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void LayerTextureUpdaterSkPicture::updateTextureRect(ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     if (m_createFrameBuffer) {
         deleteFrameBuffer();
@@ -157,7 +157,7 @@ void LayerTextureUpdaterSkPicture::updateTextureRect(LayerTexture* texture, cons
 
     // Bind texture.
     context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
-    texture->framebufferTexture2D();
+    texture->framebufferTexture2D(context());
     ASSERT(context()->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) == GraphicsContext3D::FRAMEBUFFER_COMPLETE);
 
     // Make sure SKIA uses the correct GL context.

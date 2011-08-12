@@ -30,7 +30,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerChromium.h"
-#include "LayerTexture.h"
+#include "ManagedTexture.h"
 #include "LayerTextureUpdater.h"
 #include "TilingData.h"
 #include <wtf/HashTraits.h>
@@ -85,7 +85,7 @@ public:
     typedef ProgramBinding<VertexShaderTile, FragmentShaderRGBATexSwizzleAlphaAA> ProgramSwizzleAA;
 
     // If this tiler has exactly one tile, return its texture. Otherwise, null.
-    LayerTexture* getSingleTexture();
+    ManagedTexture* getSingleTexture();
 
 private:
     LayerTilerChromium(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
@@ -93,9 +93,9 @@ private:
     class Tile : public RefCounted<Tile> {
         WTF_MAKE_NONCOPYABLE(Tile);
     public:
-        explicit Tile(PassOwnPtr<LayerTexture> tex) : m_tex(tex), m_i(-1), m_j(-1) { }
+        explicit Tile(PassOwnPtr<ManagedTexture> tex) : m_tex(tex), m_i(-1), m_j(-1) { }
 
-        LayerTexture* texture() { return m_tex.get(); }
+        ManagedTexture* texture() { return m_tex.get(); }
 
         bool dirty() const { return !m_dirtyLayerRect.isEmpty(); }
         void clearDirty() { m_dirtyLayerRect = IntRect(); }
@@ -107,7 +107,7 @@ private:
         // Layer-space dirty rectangle that needs to be repainted.
         IntRect m_dirtyLayerRect;
     private:
-        OwnPtr<LayerTexture> m_tex;
+        OwnPtr<ManagedTexture> m_tex;
         int m_i;
         int m_j;
     };

@@ -178,7 +178,7 @@ private:
     void drawLayer(CCLayerImpl*, CCRenderSurface*);
 
     void drawRootLayer();
-    LayerTexture* getOffscreenLayerTexture();
+    ManagedTexture* getOffscreenLayerTexture();
     void copyOffscreenTextureToDisplay();
 
     bool isLayerVisible(LayerChromium*, const TransformationMatrix&, const IntRect& visibleRect);

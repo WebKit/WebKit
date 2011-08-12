@@ -40,9 +40,9 @@ typedef int TextureToken;
 class TextureManager {
     WTF_MAKE_NONCOPYABLE(TextureManager);
 public:
-    static PassOwnPtr<TextureManager> create(GraphicsContext3D* context, size_t memoryLimitBytes, int maxTextureSize)
+    static PassOwnPtr<TextureManager> create(size_t memoryLimitBytes, int maxTextureSize)
     {
-        return adoptPtr(new TextureManager(context, memoryLimitBytes, maxTextureSize));
+        return adoptPtr(new TextureManager(memoryLimitBytes, maxTextureSize));
     }
 
     void setMemoryLimitBytes(size_t);
@@ -51,18 +51,26 @@ public:
     void releaseToken(TextureToken);
     bool hasTexture(TextureToken);
 
-    unsigned requestTexture(TextureToken, IntSize, unsigned textureFormat);
+    bool requestTexture(TextureToken, IntSize, unsigned textureFormat);
 
     void protectTexture(TextureToken);
     void unprotectTexture(TextureToken);
     void unprotectAllTextures();
     bool isProtected(TextureToken);
 
+    unsigned allocateTexture(GraphicsContext3D*, TextureToken);
+    void deleteEvictedTextures(GraphicsContext3D*);
+
     void reduceMemoryToLimit(size_t);
     size_t currentMemoryUseBytes() const { return m_memoryUseBytes; }
 
+#ifndef NDEBUG
+    void setAssociatedContextDebugOnly(GraphicsContext3D* context) { m_associatedContextDebugOnly = context; }
+    GraphicsContext3D* associatedContextDebugOnly() const { return m_associatedContextDebugOnly; }
+#endif
+
 private:
-    TextureManager(GraphicsContext3D*, size_t memoryLimitBytes, int maxTextureSize);
+    TextureManager(size_t memoryLimitBytes, int maxTextureSize);
 
     struct TextureInfo {
         IntSize size;
@@ -74,8 +82,6 @@ private:
     void addTexture(TextureToken, TextureInfo);
     void removeTexture(TextureToken, TextureInfo);
 
-    RefPtr<GraphicsContext3D> m_context;
-
     typedef HashMap<TextureToken, TextureInfo> TextureMap;
     TextureMap m_textures;
     ListHashSet<TextureToken> m_textureLRUSet;
@@ -84,6 +90,12 @@ private:
     size_t m_memoryUseBytes;
     int m_maxTextureSize;
     TextureToken m_nextToken;
+
+#ifndef NDEBUG
+    GraphicsContext3D* m_associatedContextDebugOnly;
+#endif
+
+    Vector<unsigned> m_evictedTextureIds;
 };
 
 }

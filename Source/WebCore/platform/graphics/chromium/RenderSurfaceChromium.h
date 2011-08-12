@@ -41,7 +41,7 @@ namespace WebCore {
 
 class LayerChromium;
 class LayerRendererChromium;
-class LayerTexture;
+class ManagedTexture;
 
 class RenderSurfaceChromium {
     WTF_MAKE_NONCOPYABLE(RenderSurfaceChromium);

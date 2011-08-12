@@ -32,7 +32,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
-#include "LayerTexture.h"
+#include "ManagedTexture.h"
 #include "TextStream.h"
 #include "cc/CCLayerImpl.h"
 #include <wtf/text/CString.h>
@@ -85,7 +85,7 @@ bool CCRenderSurface::prepareContentsTexture()
     TextureManager* textureManager = layerRenderer()->renderSurfaceTextureManager();
 
     if (!m_contentsTexture)
-        m_contentsTexture = LayerTexture::create(layerRenderer()->context(), textureManager);
+        m_contentsTexture = ManagedTexture::create(textureManager);
 
     if (m_contentsTexture->isReserved())
         return true;
@@ -123,7 +123,7 @@ void CCRenderSurface::drawSurface(CCLayerImpl* maskLayer, const TransformationMa
             GLC(context3D, context3D->useProgram(maskProgram->program()));
             GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
             GLC(context3D, context3D->uniform1i(maskProgram->fragmentShader().samplerLocation(), 0));
-            m_contentsTexture->bindTexture();
+            m_contentsTexture->bindTexture(context3D);
             GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE1));
             GLC(context3D, context3D->uniform1i(maskProgram->fragmentShader().maskSamplerLocation(), 1));
             maskLayer->bindContentsTexture();
@@ -136,7 +136,7 @@ void CCRenderSurface::drawSurface(CCLayerImpl* maskLayer, const TransformationMa
 
     if (!useMask) {
         GLC(context3D, context3D->useProgram(program->program()));
-        m_contentsTexture->bindTexture();
+        m_contentsTexture->bindTexture(context3D);
         GLC(context3D, context3D->uniform1i(program->fragmentShader().samplerLocation(), 0));
         shaderMatrixLocation = program->vertexShader().matrixLocation();
         shaderAlphaLocation = program->fragmentShader().alphaLocation();

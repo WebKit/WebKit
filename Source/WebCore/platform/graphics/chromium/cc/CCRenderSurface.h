@@ -41,7 +41,7 @@ namespace WebCore {
 
 class CCLayerImpl;
 class LayerRendererChromium;
-class LayerTexture;
+class ManagedTexture;
 
 class CCRenderSurface {
     WTF_MAKE_NONCOPYABLE(CCRenderSurface);
@@ -91,7 +91,7 @@ public:
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlpha> Program;
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexAlphaMask> MaskProgram;
 
-    LayerTexture* contentsTexture() const { return m_contentsTexture.get(); }
+    ManagedTexture* contentsTexture() const { return m_contentsTexture.get(); }
 
     int owningLayerId() const;
 private:
@@ -104,7 +104,7 @@ private:
     IntRect m_contentRect;
     bool m_skipsDraw;
 
-    OwnPtr<LayerTexture> m_contentsTexture;
+    OwnPtr<ManagedTexture> m_contentsTexture;
     float m_drawOpacity;
     TransformationMatrix m_drawTransform;
     TransformationMatrix m_replicaDrawTransform;

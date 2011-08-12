@@ -26,52 +26,53 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#include "LayerTexture.h"
+#include "ManagedTexture.h"
 
 #include "GraphicsContext3D.h"
 #include "TextureManager.h"
 
 namespace WebCore {
 
-LayerTexture::LayerTexture(GraphicsContext3D* context, TextureManager* manager)
-    : m_context(context)
-    , m_textureManager(manager)
+ManagedTexture::ManagedTexture(TextureManager* manager)
+    : m_textureManager(manager)
     , m_token(0)
     , m_format(0)
     , m_textureId(0)
 {
 }
 
-LayerTexture::~LayerTexture()
+ManagedTexture::~ManagedTexture()
 {
     if (m_token)
         m_textureManager->releaseToken(m_token);
 }
 
-bool LayerTexture::isValid(const IntSize& size, unsigned format)
+bool ManagedTexture::isValid(const IntSize& size, unsigned format)
 {
     return m_token && size == m_size && format == m_format && m_textureManager->hasTexture(m_token);
 }
 
-bool LayerTexture::reserve(const IntSize& size, unsigned format)
+bool ManagedTexture::reserve(const IntSize& size, unsigned format)
 {
     if (!m_token)
         m_token = m_textureManager->getToken();
 
+    bool reserved = true;
     if (size == m_size && format == m_format && m_textureManager->hasTexture(m_token))
         m_textureManager->protectTexture(m_token);
     else {
-        m_textureId = m_textureManager->requestTexture(m_token, size, format);
-        if (m_textureId) {
+        m_textureId = 0;
+        reserved = m_textureManager->requestTexture(m_token, size, format);
+        if (reserved) {
             m_size = size;
             m_format = format;
         }
     }
 
-    return m_textureId;
+    return reserved;
 }
 
-void LayerTexture::unreserve()
+void ManagedTexture::unreserve()
 {
     if (!m_token)
         return;
@@ -79,15 +80,22 @@ void LayerTexture::unreserve()
     m_textureManager->unprotectTexture(m_token);
 }
 
-void LayerTexture::bindTexture()
+void ManagedTexture::bindTexture(GraphicsContext3D* context)
 {
     ASSERT(m_textureManager->hasTexture(m_token));
-    m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
+    ASSERT(context == m_textureManager->associatedContextDebugOnly());
+    if (!m_textureId)
+        m_textureId = m_textureManager->allocateTexture(context, m_token);
+    context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
 }
 
-void LayerTexture::framebufferTexture2D()
+void ManagedTexture::framebufferTexture2D(GraphicsContext3D* context)
 {
-    m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_textureId, 0);
+    ASSERT(m_textureManager->hasTexture(m_token));
+    ASSERT(context == m_textureManager->associatedContextDebugOnly());
+    if (!m_textureId)
+        m_textureId = m_textureManager->allocateTexture(context, m_token);
+    context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_textureId, 0);
 }
 
 }

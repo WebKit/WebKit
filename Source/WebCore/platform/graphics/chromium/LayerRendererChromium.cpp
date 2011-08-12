@@ -41,7 +41,7 @@
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
 #include "LayerPainterChromium.h"
-#include "LayerTexture.h"
+#include "ManagedTexture.h"
 #include "LayerTextureUpdaterCanvas.h"
 #include "NotImplemented.h"
 #include "RenderSurfaceChromium.h"
@@ -520,9 +520,11 @@ void LayerRendererChromium::releaseTextures()
     m_rootLayerContentTiler->protectTileTextures(m_owner->viewportVisibleRect());
     m_contentsTextureManager->reduceMemoryToLimit(textureMemoryLowLimitBytes);
     m_contentsTextureManager->unprotectAllTextures();
+    m_contentsTextureManager->deleteEvictedTextures(m_context.get());
     // Evict all RenderSurface textures.
     m_renderSurfaceTextureManager->unprotectAllTextures();
     m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
+    m_renderSurfaceTextureManager->deleteEvictedTextures(m_context.get());
 }
 
 void LayerRendererChromium::updateRootLayerContents()
@@ -603,12 +605,12 @@ void LayerRendererChromium::drawLayers()
     drawLayersInternal();
 
     m_contentsTextureManager->unprotectAllTextures();
-    m_contentsTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes);
 
     if (textureMemoryReclaimLimitBytes > m_contentsTextureManager->currentMemoryUseBytes())
         m_renderSurfaceTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes - m_contentsTextureManager->currentMemoryUseBytes());
     else
         m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
+    m_renderSurfaceTextureManager->deleteEvictedTextures(m_context.get());
 
     if (settings().compositeOffscreen)
         copyOffscreenTextureToDisplay();
@@ -654,6 +656,7 @@ void LayerRendererChromium::updateLayers(LayerChromium* rootLayer)
     }
 
     m_contentsTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes);
+    m_contentsTextureManager->deleteEvictedTextures(m_context.get());
     updateCompositorResources(renderSurfaceLayerList);
 }
 
@@ -982,7 +985,7 @@ void LayerRendererChromium::updateCompositorResources(LayerChromium* layer)
         layer->updateCompositorResources();
 }
 
-LayerTexture* LayerRendererChromium::getOffscreenLayerTexture()
+ManagedTexture* LayerRendererChromium::getOffscreenLayerTexture()
 {
     return settings().compositeOffscreen && m_rootCCLayerImpl ? m_rootCCLayerImpl->renderSurface()->contentsTexture() : 0;
 }
@@ -1022,7 +1025,7 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
     if (!renderSurface->prepareContentsTexture())
         return false;
 
-    renderSurface->contentsTexture()->framebufferTexture2D();
+    renderSurface->contentsTexture()->framebufferTexture2D(m_context.get());
 
 #if !defined ( NDEBUG )
     if (m_context->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) != GraphicsContext3D::FRAMEBUFFER_COMPLETE) {
@@ -1159,8 +1162,12 @@ bool LayerRendererChromium::initializeSharedObjects()
 
     GLC(m_context.get(), m_context->flush());
 
-    m_contentsTextureManager = TextureManager::create(m_context.get(), textureMemoryHighLimitBytes, m_maxTextureSize);
-    m_renderSurfaceTextureManager = TextureManager::create(m_context.get(), textureMemoryHighLimitBytes, m_maxTextureSize);
+    m_contentsTextureManager = TextureManager::create(textureMemoryHighLimitBytes, m_maxTextureSize);
+    m_renderSurfaceTextureManager = TextureManager::create(textureMemoryHighLimitBytes, m_maxTextureSize);
+#ifndef NDEBUG
+    m_contentsTextureManager->setAssociatedContextDebugOnly(m_context.get());
+    m_renderSurfaceTextureManager->setAssociatedContextDebugOnly(m_context.get());
+#endif
     return true;
 }
 

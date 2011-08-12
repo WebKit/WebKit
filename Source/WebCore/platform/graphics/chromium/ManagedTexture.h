@@ -22,8 +22,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTexture_h
-#define LayerTexture_h
+#ifndef ManagedTexture_h
+#define ManagedTexture_h
 
 #include "IntSize.h"
 #include "TextureManager.h"
@@ -38,14 +38,14 @@ namespace WebCore {
 class GraphicsContext3D;
 class TextureManager;
 
-class LayerTexture {
-    WTF_MAKE_NONCOPYABLE(LayerTexture); WTF_MAKE_FAST_ALLOCATED;
+class ManagedTexture {
+    WTF_MAKE_NONCOPYABLE(ManagedTexture);
 public:
-    static PassOwnPtr<LayerTexture> create(GraphicsContext3D* context, TextureManager* manager)
+    static PassOwnPtr<ManagedTexture> create(TextureManager* manager)
     {
-        return adoptPtr(new LayerTexture(context, manager));
+        return adoptPtr(new ManagedTexture(manager));
     }
-    ~LayerTexture();
+    ~ManagedTexture();
 
     unsigned format() const { return m_format; }
     bool isValid(const IntSize&, unsigned format);
@@ -57,13 +57,12 @@ public:
         return m_textureManager->isProtected(m_token);
     }
 
-    void bindTexture();
-    void framebufferTexture2D();
+    void bindTexture(GraphicsContext3D*);
+    void framebufferTexture2D(GraphicsContext3D*);
 
 private:
-    LayerTexture(GraphicsContext3D*, TextureManager*);
+    explicit ManagedTexture(TextureManager*);
 
-    RefPtr<GraphicsContext3D> m_context;
     TextureManager* m_textureManager;
     TextureToken m_token;
     IntSize m_size;
@@ -73,5 +72,5 @@ private:
 
 }
 
-#endif
+#endif // ManagedTexture_h
 

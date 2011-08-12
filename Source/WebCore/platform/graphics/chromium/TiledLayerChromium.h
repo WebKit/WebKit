@@ -33,7 +33,6 @@
 
 namespace WebCore {
 
-class LayerTexture;
 class LayerTilerChromium;
 class LayerTextureUpdater;
 

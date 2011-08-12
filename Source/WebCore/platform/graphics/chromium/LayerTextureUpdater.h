@@ -36,7 +36,7 @@ namespace WebCore {
 class GraphicsContext3D;
 class IntRect;
 class IntSize;
-class LayerTexture;
+class ManagedTexture;
 
 class LayerTextureUpdater {
     WTF_MAKE_NONCOPYABLE(LayerTextureUpdater);
@@ -61,7 +61,7 @@ public:
     // If the format is TexelFormatBGRA, vec4.x is blue and vec4.z is red.
     virtual SampledTexelFormat sampledTexelFormat(GC3Denum textureFormat) = 0;
     virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels) = 0;
-    virtual void updateTextureRect(LayerTexture*, const IntRect& sourceRect, const IntRect& destRect) = 0;
+    virtual void updateTextureRect(ManagedTexture*, const IntRect& sourceRect, const IntRect& destRect) = 0;
 
 protected:
     explicit LayerTextureUpdater(GraphicsContext3D* context) : m_context(context) { }
