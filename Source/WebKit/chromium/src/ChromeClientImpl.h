@@ -143,6 +143,7 @@ public:
     virtual void enumerateChosenDirectory(const WTF::String&, WebCore::FileChooser*);
 #endif
     virtual void setCursor(const WebCore::Cursor&);
+    virtual void setCursorHiddenUntilMouseMoves(bool);
     virtual void formStateDidChange(const WebCore::Node*);
 #if ENABLE(TOUCH_EVENTS)
     // FIXME: All touch events are forwarded regardless of whether or not they are needed.

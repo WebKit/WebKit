@@ -800,6 +800,11 @@ void WebChromeClient::setCursor(const WebCore::Cursor& cursor)
     [platformCursor set];
 }
 
+void WebChromeClient::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
+{
+    [NSCursor setHiddenUntilMouseMoves:hiddenUntilMouseMoves];
+}
+
 KeyboardUIMode WebChromeClient::keyboardUIMode()
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;

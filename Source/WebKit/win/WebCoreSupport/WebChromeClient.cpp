@@ -815,6 +815,11 @@ void WebChromeClient::setCursor(const Cursor& cursor)
     setLastSetCursorToCurrentCursor();
 }
 
+void WebChromeClient::setCursorHiddenUntilMouseMoves(bool)
+{
+    notImplemented();
+}
+
 void WebChromeClient::setLastSetCursorToCurrentCursor()
 {
     m_webView->setLastCursor(::GetCursor());

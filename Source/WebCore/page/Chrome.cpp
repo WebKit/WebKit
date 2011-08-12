@@ -472,6 +472,11 @@ void Chrome::setCursor(const Cursor& cursor)
     m_client->setCursor(cursor);
 }
 
+void Chrome::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
+{
+    m_client->setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
+}
+
 #if ENABLE(REQUEST_ANIMATION_FRAME)
 void Chrome::scheduleAnimation()
 {

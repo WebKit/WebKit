@@ -737,6 +737,11 @@ void ChromeClientImpl::setCursor(const WebCore::Cursor& cursor)
     setCursor(WebCursorInfo(cursor));
 }
 
+void ChromeClientImpl::setCursorHiddenUntilMouseMoves(bool)
+{
+    notImplemented();
+}
+
 void ChromeClientImpl::setCursor(const WebCursorInfo& cursor)
 {
     if (m_webView->client())

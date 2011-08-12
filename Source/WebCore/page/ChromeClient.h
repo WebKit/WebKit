@@ -153,6 +153,7 @@ namespace WebCore {
         virtual PlatformPageClient platformPageClient() const = 0;
         virtual void scrollbarsModeDidChange() const = 0;
         virtual void setCursor(const Cursor&) = 0;
+        virtual void setCursorHiddenUntilMouseMoves(bool) = 0;
 #if ENABLE(REQUEST_ANIMATION_FRAME)
         virtual void scheduleAnimation() = 0;
 #endif

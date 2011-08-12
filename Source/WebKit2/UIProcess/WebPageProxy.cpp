@@ -2592,6 +2592,11 @@ void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
     m_pageClient->setCursor(cursor);
 }
 
+void WebPageProxy::setCursorHiddenUntilMouseMoves(bool hiddenUntilMouseMoves)
+{
+    m_pageClient->setCursorHiddenUntilMouseMoves(hiddenUntilMouseMoves);
+}
+
 #if MERGE_WHEEL_EVENTS
 static bool canCoalesce(const WebWheelEvent& a, const WebWheelEvent& b)
 {

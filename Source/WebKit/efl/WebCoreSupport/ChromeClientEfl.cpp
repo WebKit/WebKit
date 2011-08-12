@@ -467,6 +467,11 @@ void ChromeClientEfl::setCursor(const Cursor&)
     notImplemented();
 }
 
+void ChromeClientEfl::setCursorHiddenUntilMouseMoves(bool)
+{
+    notImplemented();
+}
+
 void ChromeClientEfl::requestGeolocationPermissionForFrame(Frame*, Geolocation*)
 {
     // See the comment in WebCore/page/ChromeClient.h

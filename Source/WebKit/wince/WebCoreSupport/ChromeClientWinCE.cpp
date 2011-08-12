@@ -360,6 +360,11 @@ void ChromeClientWinCE::setCursor(const Cursor&)
     notImplemented();
 }
 
+void ChromeClientWinCE::setCursorHiddenUntilMouseMoves(bool)
+{
+    notImplemented();
+}
+
 void ChromeClientWinCE::setLastSetCursorToCurrentCursor()
 {
     notImplemented();

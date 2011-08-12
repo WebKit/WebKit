@@ -139,6 +139,7 @@ public:
     virtual void chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*);
 
     virtual void setCursor(const WebCore::Cursor&);
+    virtual void setCursorHiddenUntilMouseMoves(bool);
     virtual void setLastSetCursorToCurrentCursor();
 
     virtual void formStateDidChange(const WebCore::Node*) { }

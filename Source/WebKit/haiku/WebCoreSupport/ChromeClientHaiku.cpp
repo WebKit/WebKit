@@ -381,7 +381,12 @@ void ChromeClientHaiku::setCursor(const Cursor&)
     notImplemented();
 }
 
-// Notification that the given form element has changed. This function
+/void ChromeClientHaiku::setCursorHiddenUntilMouseMoves(bool)
+{
+    notImplemented();
+}
+
+/ Notification that the given form element has changed. This function
 // will be called frequently, so handling should be very fast.
 void ChromeClientHaiku::formStateDidChange(const Node*)
 {

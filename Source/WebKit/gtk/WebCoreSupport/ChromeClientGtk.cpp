@@ -660,6 +660,11 @@ void ChromeClient::setCursor(const Cursor& cursor)
         gdk_window_set_cursor(window, newCursor);
 }
 
+void ChromeClient::setCursorHiddenUntilMouseMoves(bool)
+{
+    notImplemented();
+}
+
 void ChromeClient::requestGeolocationPermissionForFrame(Frame* frame, Geolocation* geolocation)
 {
     WebKitWebFrame* webFrame = kit(frame);

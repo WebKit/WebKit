@@ -708,6 +708,7 @@ private:
     void takeFocus(uint32_t direction);
     void setToolTip(const String&);
     void setCursor(const WebCore::Cursor&);
+    void setCursorHiddenUntilMouseMoves(bool);
 
     void didReceiveEvent(uint32_t opaqueType, bool handled);
     void stopResponsivenessTimer();
