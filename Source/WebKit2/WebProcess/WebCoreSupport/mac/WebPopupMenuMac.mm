@@ -37,6 +37,7 @@ namespace WebKit {
 
 void WebPopupMenu::setUpPlatformData(const IntRect&, PlatformPopupMenuData& data)
 {
+    // FIXME: font will be nil here for custom fonts, we should fix that.
     NSFont *font = m_popupClient->menuStyle().font().primaryFont()->getNSFont();
     if (!font)
         return;

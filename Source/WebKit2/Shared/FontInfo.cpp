@@ -37,13 +37,22 @@ namespace WebKit {
 void FontInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
 #if PLATFORM(MAC)
-    CoreIPC::encode(encoder, fontAttributeDictionary.get());
+    encoder->encode(static_cast<bool>(fontAttributeDictionary));
+    if (fontAttributeDictionary)
+        CoreIPC::encode(encoder, fontAttributeDictionary.get());
 #endif
 }
 
 bool FontInfo::decode(CoreIPC::ArgumentDecoder* decoder, FontInfo& fontInfo)
 {    
 #if PLATFORM(MAC)
+    bool hasFontAttributeDictionary;
+    if (!decoder->decode(hasFontAttributeDictionary))
+        return false;
+
+    if (!hasFontAttributeDictionary)
+        return true;
+
     if (!CoreIPC::decode(decoder, fontInfo.fontAttributeDictionary))
         return false;
 #endif
