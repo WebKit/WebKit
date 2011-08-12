@@ -1,3 +1,22 @@
+2011-08-11  Hayato Ito  <hayato@chromium.org>
+
+        Implement proper handling of events with a related target in regard to shadow DOM boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=65899
+
+        Reviewed by Dimitri Glazkov.
+
+        Fixes issues in the following corner cases:
+        1. When both a target node and a relatedTarget node are immediate children of
+        the same shadow root, an event is not dispatched.
+        2. If a target node is an ancestor of a relatedTarget node, crossing
+        shadow boundaries, or vice verse, an event is not dispatched or wrongly
+        dispatched.
+
+        Test: fast/dom/shadow/shadow-boundary-events.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::adjustToShadowBoundaries):
+
 2011-08-11  John Bauman  <jbauman@chromium.org>
 
         Readback composited webgl results for printing

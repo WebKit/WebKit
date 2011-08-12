@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/create-dom.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="sandbox"></div>
+<pre id="console"></pre>
+<script>
+description("Tests to ensure that shadow DOM boundary is not crossed during event propagation. Can only run within DRT.");
+
+function moveMouseOver(element)
+{
+    if (!window.eventSender || !window.internals)
+        return;
+
+    var defaultPaddingSize = 20;
+    var x = element.offsetLeft + element.offsetWidth / 2;
+    var y;
+    if (element.hasChildNodes() || window.internals.shadowRoot(element))
+        y = element.offsetTop + defaultPaddingSize;
+    else
+        y = element.offsetTop + element.offsetHeight / 2;
+    eventSender.mouseMoveTo(x, y);
+}
+
+var eventRecords = {};
+
+function clearEventRecords()
+{
+    eventRecords = {};
+}
+
+function dispatchedEvent(eventType)
+{
+    var events = eventRecords[eventType];
+    if (!events)
+        return [];
+    return events;
+}
+
+function recordEvent(event)
+{
+    var eventType = event.type
+    if (!eventRecords[eventType]) {
+        eventRecords[eventType] = []
+    }
+    // Records each event in the following format per event type:
+    //   eventRecords[eventType] = ['target.id(<-relatedTarget.id)(@currentTarget.id)',,,]
+    //   * RelatedTarget and currentTarget may be omitted if they are not defined.
+    // A new event is pushed back to the array of its event type.
+    var eventString = '';
+    eventString += event.target.id;
+    if (event.relatedTarget)
+        eventString += '(<-' + event.relatedTarget.id + ')';
+    if (event.currentTarget)
+        eventString += '(@' + event.currentTarget.id + ')';
+    eventRecords[eventType].push(eventString);
+}
+
+function getElementInShadow(path)
+{
+    var ids = path.split('/');
+    var element = document.getElementById(ids[0]);
+    for (var i = 1; element != null && i < ids.length; ++i) {
+        var shadowRoot = internals.shadowRoot(element);
+        element = internals.getElementByIdInShadowRoot(shadowRoot, ids[i]);
+    }
+    return element;
+}
+
+function prepareDomTree(parent)
+{
+    parent.appendChild(
+        createDom('div', {'id': 'divA', 'style': 'padding-top: 40px'},
+                  createDom('div', {'id': 'divB', 'style': 'width: 40px; height: 40px'}),
+                  createDom('div', {'id': 'divC', 'style': 'width: 40px; height: 40px'}),
+                  createShadow('div', {'id': 'shadowD', 'style': 'padding-top: 40px'},
+                               createDom('div', {'id': 'divE', 'style': 'padding-top: 40px'},
+                                         createShadow('div', {'id': 'shadowF', 'style': 'padding-top: 40px'},
+                                                      createShadow('div', {'id': 'shadowG', 'style': 'padding-top: 40px'},
+                                                                   createDom('div', {'id': 'divH', 'style': 'width: 40px; height: 40px'}),
+                                                                   createDom('div', {'id': 'divI', 'style': 'width: 40px; height: 40px'})))),
+                               createDom('div', {'id': 'divJ', 'style': 'padding-top: 40px'},
+                                         createShadow('div', {'id': 'shadowK', 'style': 'padding-top: 40px'},
+                                                      createDom('div', {'id': 'divL', 'style': 'width: 40px; height: 40px'}))))));
+
+    var ids = ['divA', 'divB', 'divC',
+               'shadowD', 'shadowD/divE', 'shadowD/shadowF', 'shadowD/shadowF/shadowG',
+               'shadowD/shadowF/shadowG/divH', 'shadowD/shadowF/shadowG/divI',
+               'shadowD/divJ', 'shadowD/shadowK', 'shadowD/shadowK/divL'];
+    for (var i = 0; i < ids.length; ++i) {
+        var element = getElementInShadow(ids[i]);
+        element.addEventListener('mouseover', recordEvent, false);
+        element.addEventListener('mouseout', recordEvent, false);
+    }
+}
+
+function moveMouse(oldElementId, newElementId, message)
+{
+    debug('\n' + message + '\n' + 'Moving mouse from ' + oldElementId + ' to ' + newElementId);
+    moveMouseOver(getElementInShadow(oldElementId));
+    clearEventRecords();
+    moveMouseOver(getElementInShadow(newElementId));
+}
+
+function test()
+{
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    prepareDomTree(document.getElementById('sandbox'));
+
+    moveMouse('divB', 'divC',
+              'Move mouse from a node to its sibling node. All nodes are outside of shadow boundary.');
+    shouldBe('dispatchedEvent("mouseover")', '["divC(<-divB)(@divC)", "divC(<-divB)(@divA)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divB(<-divC)(@divB)", "divB(<-divC)(@divA)"]');
+
+    moveMouse('divB', 'divA',
+              'Target is an ancestor of relatedTarget. All nodes are outside of shadow boundary.');
+    shouldBe('dispatchedEvent("mouseover")', '["divA(<-divB)(@divA)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divB(<-divA)(@divB)", "divB(<-divA)(@divA)"]');
+
+    moveMouse('divA', 'divB',
+              'RelatedTarget is an ancestor of target. All nodes are outside of shadow boundary.');
+    shouldBe('dispatchedEvent("mouseover")', '["divB(<-divA)(@divB)", "divB(<-divA)(@divA)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divA(<-divB)(@divA)"]');
+
+    moveMouse('shadowD/shadowF/shadowG/divH', 'shadowD/shadowF/shadowG/divI',
+              'Both target and relatedTarget are immediate children of the same shadow root.');
+    shouldBe('dispatchedEvent("mouseover")', '["divI(<-divH)(@divI)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divH(<-divI)(@divH)"]');
+
+    moveMouse('shadowD/shadowF/shadowG/divI', 'shadowD/divE',
+              'Target is an ancestor of relatedTarget.');
+    shouldBe('dispatchedEvent("mouseover")', '["divE(<-shadowF)(@divE)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divI(<-divE)(@divI)", "shadowG(<-divE)(@shadowG)", "shadowF(<-divE)(@shadowF)", "shadowF(<-divE)(@divE)"]');
+
+    moveMouse('shadowD/shadowF/shadowG/divI', 'shadowD/shadowF',
+              'Target (shadow host) is an ancestor of relatedTarget.');
+    shouldBe('dispatchedEvent("mouseover")', '[]');
+    shouldBe('dispatchedEvent("mouseout")', '["divI(<-shadowF)(@divI)", "shadowG(<-shadowF)(@shadowG)"]');
+
+    moveMouse('shadowD/shadowF/shadowG', 'shadowD',
+              'Target (shadow host) is an ancestor of relatedTarget (shadow host).');
+    shouldBe('dispatchedEvent("mouseover")', '[]');
+    shouldBe('dispatchedEvent("mouseout")', '["shadowG(<-shadowD)(@shadowG)", "shadowF(<-shadowD)(@shadowF)", "shadowF(<-shadowD)(@divE)"]');
+
+    moveMouse('shadowD/divE', 'shadowD/shadowF/shadowG/divI',
+              'RelatedTarget is ancestor of target.');
+    shouldBe('dispatchedEvent("mouseover")', '["divI(<-divE)(@divI)", "shadowG(<-divE)(@shadowG)", "shadowF(<-divE)(@shadowF)", "shadowF(<-divE)(@divE)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divE(<-shadowF)(@divE)"]');
+
+    moveMouse('shadowD/shadowF', 'shadowD/shadowF/shadowG/divI',
+              'RelatedTarget (shadow host) is ancestor of target.');
+    shouldBe('dispatchedEvent("mouseover")', '["divI(<-shadowF)(@divI)", "shadowG(<-shadowF)(@shadowG)"]');
+    shouldBe('dispatchedEvent("mouseout")', '[]');
+
+    moveMouse('shadowD', 'shadowD/shadowF/shadowG',
+              'RelatedTarget (shadow host) is an ancestor of target (shadow host).');
+    shouldBe('dispatchedEvent("mouseover")', '["shadowG(<-shadowD)(@shadowG)", "shadowF(<-shadowD)(@shadowF)", "shadowF(<-shadowD)(@divE)"]');
+    shouldBe('dispatchedEvent("mouseout")', '[]');
+
+    moveMouse('shadowD/shadowF/shadowG/divH', 'shadowD/shadowK/divL',
+              'Target and relatedTarget exist in separated subtree, crossing shadow boundaries. Making sure that event is not dispatched beyond the lowest common boundary.');
+    shouldBe('dispatchedEvent("mouseover")', '["divL(<-shadowF)(@divL)", "shadowK(<-shadowF)(@shadowK)", "shadowK(<-shadowF)(@divJ)"]');
+    shouldBe('dispatchedEvent("mouseout")', '["divH(<-shadowK)(@divH)", "shadowG(<-shadowK)(@shadowG)", "shadowF(<-shadowK)(@shadowF)", "shadowF(<-shadowK)(@divE)"]');
+}
+
+test();
+
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

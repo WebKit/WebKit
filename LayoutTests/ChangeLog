@@ -1,3 +1,22 @@
+2011-08-11  Hayato Ito  <hayato@chromium.org>
+
+        Implement proper handling of events with a related target in regard to shadow DOM boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=65899
+
+        Reviewed by Dimitri Glazkov.
+
+        Fixes issues in the following corner cases:
+        1. When both a target node and a relatedTarget node are immediate children of
+        the same shadow root, an event is not dispatched.
+        2. If a target node is an ancestor of a relatedTarget node, crossing
+        shadow boundaries, or vice verse, an event is not dispatched or wrongly
+        dispatched.
+
+        * fast/dom/shadow/shadow-boundary-crossing-expected.txt: Renamed from LayoutTests/fast/events/shadow-boundary-crossing-expected.txt.
+        * fast/dom/shadow/shadow-boundary-crossing.html: Renamed from LayoutTests/fast/events/shadow-boundary-crossing.html.
+        * fast/dom/shadow/shadow-boundary-events-expected.txt: Added.
+        * fast/dom/shadow/shadow-boundary-events.html: Added.
+
 2011-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Share code between isStyleSpanOrSpanWithOnlyStyleAttribute, isUnstyledStyleSpan,

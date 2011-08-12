@@ -164,20 +164,22 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
     if (!diverged) {
         // The relatedTarget is an ancestor or shadowHost of the target.
         // FIXME: Remove the first check once conversion to new shadow DOM is complete <http://webkit.org/b/48698>
-        if (m_node->shadowHost() == relatedTarget.get() || isShadowHost(relatedTarget.get()))
-            lowestCommonBoundary = m_ancestors.begin();
+        if (m_node->shadowHost() == relatedTarget.get() || isShadowHost(relatedTarget.get())) {
+            ASSERT(targetAncestor - 1 >= m_ancestors.begin());
+            lowestCommonBoundary = targetAncestor - 1;
+        }
     } else if ((*firstDivergentBoundary) == m_node.get()) {
         // Since ancestors does not contain target itself, we must account
         // for the possibility that target is a shadowHost of relatedTarget
         // and thus serves as the lowestCommonBoundary.
         // Luckily, in this case the firstDivergentBoundary is target.
         lowestCommonBoundary = m_ancestors.begin();
+        m_shouldPreventDispatch = true;
     }
 
     if (lowestCommonBoundary != m_ancestors.end()) {
         // Trim ancestors to lowestCommonBoundary to keep events inside of the common shadow DOM subtree.
         m_ancestors.shrink(lowestCommonBoundary - m_ancestors.begin());
-        m_shouldPreventDispatch = !m_ancestors.size();
     }
     // Set event's related target to the first encountered shadow DOM boundary in the divergent subtree.
     return firstDivergentBoundary != relatedTargetAncestors.begin() ? *firstDivergentBoundary : relatedTarget;
