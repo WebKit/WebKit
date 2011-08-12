@@ -1,3 +1,14 @@
+2011-08-12  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt] Make sure QtWebKit correctly compiles when building WebKit2 with Qt5.
+
+        In order to build correctly the QtQuick1 plugin we need to explicitly
+        link to the new library added in Qt5 "qtquick1".
+
+        Reviewed by Simon Hausmann.
+
+        * declarative/declarative.pro:
+
 2011-08-11  Andrew Wason  <rectalogic@rectalogic.com>
 
         REGRESSION: Qt JavaScript bridge signal connection fails

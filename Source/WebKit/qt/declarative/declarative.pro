@@ -41,6 +41,10 @@ include(../../../WebKit.pri)
 
 QT += declarative
 
+contains(QT_CONFIG, qtquick1): {
+    QT += qtquick1
+}
+
 !CONFIG(standalone_package) {
     linux-* {
         # From Creator's src/rpath.pri:
