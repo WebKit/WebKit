@@ -70,7 +70,7 @@ private:
     virtual void updateFromElement();
 
     virtual bool hasControlClip() const { return true; }
-    virtual IntRect controlClipRect(const IntPoint&) const;
+    virtual LayoutRect controlClipRect(const LayoutPoint&) const;
 
     virtual const char* renderName() const { return "RenderMenuList"; }
 

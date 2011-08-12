@@ -237,17 +237,17 @@ String RenderMenuList::text() const
     return m_buttonText ? m_buttonText->text() : 0;
 }
 
-IntRect RenderMenuList::controlClipRect(const IntPoint& additionalOffset) const
+LayoutRect RenderMenuList::controlClipRect(const LayoutPoint& additionalOffset) const
 {
     // Clip to the intersection of the content box and the content box for the inner box
     // This will leave room for the arrows which sit in the inner box padding,
     // and if the inner box ever spills out of the outer box, that will get clipped too.
-    IntRect outerBox(additionalOffset.x() + borderLeft() + paddingLeft(), 
+    LayoutRect outerBox(additionalOffset.x() + borderLeft() + paddingLeft(), 
                    additionalOffset.y() + borderTop() + paddingTop(),
                    contentWidth(), 
                    contentHeight());
     
-    IntRect innerBox(additionalOffset.x() + m_innerBlock->x() + m_innerBlock->paddingLeft(), 
+    LayoutRect innerBox(additionalOffset.x() + m_innerBlock->x() + m_innerBlock->paddingLeft(), 
                    additionalOffset.y() + m_innerBlock->y() + m_innerBlock->paddingTop(),
                    m_innerBlock->contentWidth(), 
                    m_innerBlock->contentHeight());
@@ -302,7 +302,7 @@ void RenderMenuList::showPopup()
     // Compute the top left taking transforms into account, but use
     // the actual width of the element to size the popup.
     FloatPoint absTopLeft = localToAbsolute(FloatPoint(), false, true);
-    IntRect absBounds = absoluteBoundingBoxRect();
+    LayoutRect absBounds = absoluteBoundingBoxRect();
     absBounds.setLocation(roundedIntPoint(absTopLeft));
     m_popup->show(absBounds, document()->view(),
         select->optionToListIndex(select->selectedIndex()));

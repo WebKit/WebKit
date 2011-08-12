@@ -1,3 +1,51 @@
+2011-08-12  Levi Weintraub  <leviw@chromium.org>
+
+        Switch RenderMenuList, RenderListBox, and RenderFieldSet to new layout units
+        https://bugs.webkit.org/show_bug.cgi?id=66149
+
+        Reviewed by Eric Seidel.
+
+        Changing RenderMenuList, RenderListBox, and RenderFieldSet to the LayoutUnit
+        abstraction from ints.
+
+        No tests as no change in functionality.
+
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::layoutSpecialExcludedChild):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::numVisibleItems):
+        (WebCore::RenderListBox::listHeight):
+        (WebCore::RenderListBox::baselinePosition):
+        (WebCore::RenderListBox::itemBoundingBoxRect):
+        (WebCore::itemOffsetForAlignment):
+        (WebCore::RenderListBox::panScroll):
+        (WebCore::RenderListBox::scrollToward):
+        (WebCore::RenderListBox::autoscroll):
+        (WebCore::RenderListBox::scrollSize):
+        (WebCore::RenderListBox::scrollPosition):
+        (WebCore::RenderListBox::setScrollOffset):
+        (WebCore::RenderListBox::itemHeight):
+        (WebCore::RenderListBox::verticalScrollbarWidth):
+        (WebCore::RenderListBox::scrollWidth):
+        (WebCore::RenderListBox::scrollHeight):
+        (WebCore::RenderListBox::scrollLeft):
+        (WebCore::RenderListBox::setScrollLeft):
+        (WebCore::RenderListBox::scrollTop):
+        (WebCore::RenderListBox::setScrollTop):
+        (WebCore::RenderListBox::controlClipRect):
+        (WebCore::RenderListBox::invalidateScrollbarRect):
+        (WebCore::RenderListBox::convertFromScrollbarToContainingView):
+        (WebCore::RenderListBox::convertFromContainingViewToScrollbar):
+        (WebCore::RenderListBox::contentsSize):
+        (WebCore::RenderListBox::currentMousePosition):
+        * rendering/RenderListBox.h:
+        (WebCore::RenderListBox::scrollCornerRect):
+        (WebCore::RenderListBox::invalidateScrollCornerRect):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::controlClipRect):
+        (WebCore::RenderMenuList::showPopup):
+        * rendering/RenderMenuList.h:
+
 2011-08-12  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66133

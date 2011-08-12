@@ -774,7 +774,7 @@ void SelectElement::listBoxDefaultEventHandler(SelectElementData& data, Element*
         // Convert to coords relative to the list box if needed.
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
         IntPoint localOffset = roundedIntPoint(element->renderer()->absoluteToLocal(mouseEvent->absoluteLocation(), false, true));
-        int listIndex = toRenderListBox(element->renderer())->listIndexAtOffset(localOffset.x(), localOffset.y());
+        int listIndex = toRenderListBox(element->renderer())->listIndexAtOffset(toSize(localOffset));
         if (listIndex >= 0) {
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
             updateSelectedState(data, element, listIndex, mouseEvent->metaKey(), mouseEvent->shiftKey());

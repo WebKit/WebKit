@@ -51,6 +51,11 @@ inline LayoutRect enclosingLayoutRect(const FloatRect& rect)
     return enclosingIntRect(rect);
 }
 
+inline LayoutSize roundedLayoutSize(const FloatSize& s)
+{
+    return roundedIntSize(s);
+}
+
 inline LayoutPoint roundedLayoutPoint(const FloatPoint& p)
 {
     return roundedIntPoint(p);

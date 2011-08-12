@@ -45,13 +45,13 @@ public:
 
     void setOptionsChanged(bool changed) { m_optionsChanged = changed; }
 
-    int listIndexAtOffset(int x, int y);
-    IntRect itemBoundingBoxRect(const LayoutPoint&, int index);
+    int listIndexAtOffset(const LayoutSize&);
+    LayoutRect itemBoundingBoxRect(const LayoutPoint&, int index);
 
     bool scrollToRevealElementAtListIndex(int index);
     bool listIndexIsVisible(int index);
 
-    int scrollToward(const IntPoint&); // Returns the new index or -1 if no scroll occurred
+    int scrollToward(const LayoutPoint&); // Returns the new index or -1 if no scroll occurred
 
     int size() const;
 
@@ -66,7 +66,7 @@ private:
 
     virtual bool hasControlClip() const { return true; }
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
-    virtual IntRect controlClipRect(const IntPoint&) const;
+    virtual LayoutRect controlClipRect(const LayoutPoint&) const;
 
     virtual bool isPointInOverflowControl(HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
@@ -74,7 +74,7 @@ private:
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
 
     virtual void computePreferredLogicalWidths();
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     virtual void computeLogicalHeight();
 
     virtual void layout();
@@ -88,34 +88,34 @@ private:
     virtual bool shouldPanScroll() const { return true; }
     virtual void panScroll(const IntPoint&);
 
-    virtual int verticalScrollbarWidth() const;
-    virtual int scrollLeft() const;
-    virtual int scrollTop() const;
-    virtual int scrollWidth() const;
-    virtual int scrollHeight() const;
-    virtual void setScrollLeft(int);
-    virtual void setScrollTop(int);
+    virtual LayoutUnit verticalScrollbarWidth() const;
+    virtual LayoutUnit scrollLeft() const;
+    virtual LayoutUnit scrollTop() const;
+    virtual LayoutUnit scrollWidth() const;
+    virtual LayoutUnit scrollHeight() const;
+    virtual void setScrollLeft(LayoutUnit);
+    virtual void setScrollTop(LayoutUnit);
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     // ScrollableArea interface.
-    virtual int scrollSize(ScrollbarOrientation orientation) const;
-    virtual int scrollPosition(Scrollbar*) const;
-    virtual void setScrollOffset(const IntPoint&);
-    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
+    virtual LayoutUnit scrollSize(ScrollbarOrientation) const;
+    virtual LayoutUnit scrollPosition(Scrollbar*) const;
+    virtual void setScrollOffset(const LayoutPoint&);
+    virtual void invalidateScrollbarRect(Scrollbar*, const LayoutRect&);
     virtual bool isActive() const;
     virtual bool isScrollCornerVisible() const { return false; } // We don't support resize on list boxes yet. If we did these would have to change.
-    virtual IntRect scrollCornerRect() const { return IntRect(); }
-    virtual void invalidateScrollCornerRect(const IntRect&) { }
-    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;
-    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
-    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
-    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
+    virtual LayoutRect scrollCornerRect() const { return LayoutRect(); }
+    virtual void invalidateScrollCornerRect(const LayoutRect&) { }
+    virtual LayoutRect convertFromScrollbarToContainingView(const Scrollbar*, const LayoutRect&) const;
+    virtual LayoutRect convertFromContainingViewToScrollbar(const Scrollbar*, const LayoutRect&) const;
+    virtual LayoutPoint convertFromScrollbarToContainingView(const Scrollbar*, const LayoutPoint&) const;
+    virtual LayoutPoint convertFromContainingViewToScrollbar(const Scrollbar*, const LayoutPoint&) const;
     virtual Scrollbar* verticalScrollbar() const { return m_vBar.get(); }
-    virtual IntSize contentsSize() const;
+    virtual LayoutSize contentsSize() const;
     virtual LayoutUnit visibleHeight() const;
     virtual LayoutUnit visibleWidth() const;
-    virtual IntPoint currentMousePosition() const;
+    virtual LayoutPoint currentMousePosition() const;
     virtual bool shouldSuspendScrollAnimations() const;
     virtual bool isOnActivePage() const;
 
@@ -130,11 +130,11 @@ private:
     PassRefPtr<Scrollbar> createScrollbar();
     void destroyScrollbar();
     
-    int itemHeight() const;
+    LayoutUnit itemHeight() const;
     void valueChanged(unsigned listIndex);
     int numVisibleItems() const;
     int numItems() const;
-    int listHeight() const;
+    LayoutUnit listHeight() const;
     void paintScrollbar(PaintInfo&, const LayoutPoint&);
     void paintItemForeground(PaintInfo&, const LayoutPoint&, int listIndex);
     void paintItemBackground(PaintInfo&, const LayoutPoint&, int listIndex);

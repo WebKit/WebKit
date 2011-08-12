@@ -68,7 +68,7 @@ RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
             legend->setNeedsLayout(true);
         legend->layoutIfNeeded();
 
-        int logicalLeft;
+        LayoutUnit logicalLeft;
         if (style()->isLeftToRightDirection()) {
             switch (legend->style()->textAlign()) {
             case CENTER:
@@ -89,7 +89,7 @@ RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
             case CENTER: {
                 // Make sure that the extra pixel goes to the end side in RTL (since it went to the end side
                 // in LTR).
-                int centeredWidth = logicalWidth() - logicalWidthForChild(legend);
+                LayoutUnit centeredWidth = logicalWidth() - logicalWidthForChild(legend);
                 logicalLeft = centeredWidth - centeredWidth / 2;
                 break;
             }
@@ -101,9 +101,9 @@ RenderObject* RenderFieldset::layoutSpecialExcludedChild(bool relayoutChildren)
 
         setLogicalLeftForChild(legend, logicalLeft);
 
-        int b = borderBefore();
-        int h = logicalHeightForChild(legend);
-        setLogicalTopForChild(legend, max((b - h) / 2, 0));
+        LayoutUnit b = borderBefore();
+        LayoutUnit h = logicalHeightForChild(legend);
+        setLogicalTopForChild(legend, max<LayoutUnit>((b - h) / 2, 0));
         setLogicalHeight(max(b, h) + paddingBefore());
     }
     return legend;
