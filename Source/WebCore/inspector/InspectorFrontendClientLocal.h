@@ -64,11 +64,11 @@ public:
     virtual void requestAttachWindow();
     virtual void requestDetachWindow();
     virtual void changeAttachedWindowHeight(unsigned);
+    virtual bool canAttachWindow();
     virtual void saveAs(const String&, const String&) { }
 
     virtual void attachWindow() = 0;
     virtual void detachWindow() = 0;
-    bool canAttachWindow();
 
     virtual void sendMessageToBackend(const String& message);
 

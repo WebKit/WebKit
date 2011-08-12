@@ -480,6 +480,22 @@ void InspectorController::resume()
 
 #endif
 
+void InspectorController::requestAttachWindow()
+{
+    if (!m_inspectorFrontendClient)
+        return;
+
+    m_inspectorFrontendClient->requestAttachWindow();
+}
+    
+bool InspectorController::canAttachWindow()
+{
+    if (!m_inspectorFrontendClient)
+        return false;
+    
+    return m_inspectorFrontendClient->canAttachWindow();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

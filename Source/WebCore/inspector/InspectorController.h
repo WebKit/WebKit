@@ -119,6 +119,11 @@ public:
     void resume();
 #endif
 
+    void setResourcesDataSizeLimitsFromInternals(int maximumResourcesContentSize, int maximumSingleResourceContentSize);
+    
+    void requestAttachWindow();
+    bool canAttachWindow();
+
 private:
     friend class PostWorkerNotificationToFrontendTask;
 

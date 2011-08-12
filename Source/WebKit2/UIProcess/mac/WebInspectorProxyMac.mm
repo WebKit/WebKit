@@ -109,13 +109,11 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     return toImpl(m_inspectorView.get().pageRef);
 }
 
-void WebInspectorProxy::platformOpen()
+void WebInspectorProxy::platformOpen(bool willOpenAttached)
 {
     ASSERT(!m_inspectorWindow);
 
     m_inspectorProxyObjCAdapter.adoptNS([[WebInspectorProxyObjCAdapter alloc] initWithWebInspectorProxy:this]);
-
-    // FIXME: support opening in docked mode here.
 
     NSUInteger styleMask = (NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSTexturedBackgroundWindowMask);
     NSWindow *window = [[NSWindow alloc] initWithContentRect:NSMakeRect(0, 0, initialWindowWidth, initialWindowHeight) styleMask:styleMask backing:NSBackingStoreBuffered defer:NO];
@@ -137,7 +135,8 @@ void WebInspectorProxy::platformOpen()
     [m_inspectorView.get() setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     [contentView addSubview:m_inspectorView.get()];
 
-    [window makeKeyAndOrderFront:nil];
+    if (!willOpenAttached)
+        [window makeKeyAndOrderFront:nil];
 
     m_inspectorWindow.adoptNS(window);
 }

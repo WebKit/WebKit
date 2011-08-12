@@ -114,7 +114,7 @@ private:
     virtual Type type() const { return APIType; }
 
     WebPageProxy* platformCreateInspectorPage();
-    void platformOpen();
+    void platformOpen(bool willOpenAttached);
     void platformDidClose();
     void platformBringToFront();
     void platformInspectedURLChanged(const String&);
@@ -127,7 +127,7 @@ private:
 
     // Called by WebInspectorProxy messages
     void createInspectorPage(uint64_t& inspectorPageID, WebPageCreationParameters&);
-    void didLoadInspectorPage();
+    void didLoadInspectorPage(bool canStartAttached);
     void didClose();
     void bringToFront();
     void inspectedURLChanged(const String&);

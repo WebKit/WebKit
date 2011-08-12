@@ -39,7 +39,7 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
     return 0;
 }
 
-void WebInspectorProxy::platformOpen()
+void WebInspectorProxy::platformOpen(bool)
 {
     notImplemented();
 }

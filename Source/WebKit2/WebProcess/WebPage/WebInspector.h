@@ -58,6 +58,9 @@ public:
 
     void startPageProfiling();
     void stopPageProfiling();
+    
+    bool canAttachWindow() const;
+    void requestAttachWindow();
 
 private:
     friend class WebInspectorClient;

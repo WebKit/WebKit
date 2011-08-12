@@ -32,6 +32,8 @@ messages -> WebInspector {
     StopJavaScriptProfiling()
     StartPageProfiling()
     StopPageProfiling()
+
+    RequestAttachWindow()
 }
 
 #endif
