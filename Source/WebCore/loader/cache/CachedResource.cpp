@@ -250,6 +250,8 @@ void CachedResource::setRequest(CachedResourceRequest* request)
         m_status = Pending;
     m_request = request;
 
+    CachedResourceHandle<CachedResource> protect(this);
+
     // All loads finish with data(allDataReceived = true) or error(), except for
     // canceled loads, which silently set our request to 0. Be sure to notify our
     // client in that case, so we don't seem to continue loading forever.
@@ -258,9 +260,6 @@ void CachedResource::setRequest(CachedResourceRequest* request)
         setStatus(Canceled);
         checkNotify();
     }
-
-    if (canDelete() && !inCache())
-        delete this;
 }
 
 void CachedResource::addClient(CachedResourceClient* client)
