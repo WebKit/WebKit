@@ -1,3 +1,15 @@
+2011-08-11  MORITA Hajime  <morrita@google.com>
+
+        [Chromium][DRT] editing/spelling/spelling-backspace-between-lines.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=45438
+
+        Reviewed by Kent Tamura.
+
+        Added a chromium specific expectation because chromium will use window's (wrong) expectation
+        unless chromium has its own.
+        
+        * platform/chromium/editing/spelling/spelling-backspace-between-lines-expected.txt: Added
+
 2011-08-11  Hayato Ito  <hayato@chromium.org>
 
         Implement proper handling of events with a related target in regard to shadow DOM boundaries.

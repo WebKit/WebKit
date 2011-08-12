@@ -59,35 +59,43 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
 
     // Convert to a String because we store String instances in
     // m_misspelledWords and WebString has no find().
-    const WTF::String stringText(text.data(), text.length());
+    WTF::String stringText(text.data(), text.length());
+    int skippedLength = 0;
 
-    // Extract the first possible English word from the given string.
-    // The given string may include non-ASCII characters or numbers. So, we
-    // should filter out such characters before start looking up our
-    // misspelled-word table.
-    // (This is a simple version of our SpellCheckWordIterator class.)
-    // If the given string doesn't include any ASCII characters, we can treat the
-    // string as valid one.
-    // Unfortunately, This implementation splits a contraction, i.e. "isn't" is
-    // split into two pieces "isn" and "t". This is OK because webkit tests
-    // don't have misspelled contractions.
-    int wordOffset = stringText.find(isASCIIAlpha);
-    if (wordOffset == -1)
-        return true;
-    int wordEnd = stringText.find(isNotASCIIAlpha, wordOffset);
-    int wordLength = wordEnd == -1 ? static_cast<int>(stringText.length()) - wordOffset : wordEnd - wordOffset;
+    while (!stringText.isEmpty()) {
+        // Extract the first possible English word from the given string.
+        // The given string may include non-ASCII characters or numbers. So, we
+        // should filter out such characters before start looking up our
+        // misspelled-word table.
+        // (This is a simple version of our SpellCheckWordIterator class.)
+        // If the given string doesn't include any ASCII characters, we can treat the
+        // string as valid one.
+        // Unfortunately, This implementation splits a contraction, i.e. "isn't" is
+        // split into two pieces "isn" and "t". This is OK because webkit tests
+        // don't have misspelled contractions.
+        int wordOffset = stringText.find(isASCIIAlpha);
+        if (wordOffset == -1)
+            return true;
+        int wordEnd = stringText.find(isNotASCIIAlpha, wordOffset);
+        int wordLength = wordEnd == -1 ? static_cast<int>(stringText.length()) - wordOffset : wordEnd - wordOffset;
 
-    // Look up our misspelled-word table to check if the extracted word is a
-    // known misspelled word, and return the offset and the length of the
-    // extracted word if this word is a known misspelled word.
-    // (See the comment in MockSpellCheck::initializeIfNeeded() why we use a
-    // misspelled-word table.)
-    WTF::String word = stringText.substring(wordOffset, wordLength);
-    if (!m_misspelledWords.contains(word))
-        return true;
+        // Look up our misspelled-word table to check if the extracted word is a
+        // known misspelled word, and return the offset and the length of the
+        // extracted word if this word is a known misspelled word.
+        // (See the comment in MockSpellCheck::initializeIfNeeded() why we use a
+        // misspelled-word table.)
+        WTF::String word = stringText.substring(wordOffset, wordLength);
+        if (m_misspelledWords.contains(word)) {
+            *misspelledOffset = wordOffset + skippedLength;
+            *misspelledLength = wordLength;
+            break;
+        }
 
-    *misspelledOffset = wordOffset;
-    *misspelledLength = wordLength;
+        ASSERT(0 < wordOffset + wordLength);
+        stringText = stringText.substring(wordOffset + wordLength);
+        skippedLength += wordOffset + wordLength;
+    }
+
     return false;
 }
 
