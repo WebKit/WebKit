@@ -1,3 +1,12 @@
+2011-08-11  Mark Rowe  <mrowe@apple.com>
+
+        Don't conditionalize the use of -fomit-frame-pointer on compiler version as
+        all of our supported compilers are now new enough to have the same, sane behavior.
+
+        Rubber-stamped by Sam Weinig.
+
+        * Configurations/JavaScriptCore.xcconfig:
+
 2011-08-11  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT verbose mode does not report the generated types of nodes
