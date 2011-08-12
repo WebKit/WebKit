@@ -1,0 +1,24 @@
+<html>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+function runTest()
+{
+    document.write("PASS");
+    
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+
+function select()
+{
+    document.execCommand("SelectAll");
+}
+
+window.addEventListener("selectstart", runTest, true);
+window.setInterval(select, 0);
+</script>
+</html>

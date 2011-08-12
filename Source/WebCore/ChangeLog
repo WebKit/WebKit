@@ -1,3 +1,20 @@
+2011-08-12  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in WebCore::editingIgnoresContent
+        https://bugs.webkit.org/show_bug.cgi?id=66125
+
+        Reviewed by Ryosuke Niwa.
+
+        RefPtr a few nodes in case they get blown away in
+        dispatchEvent calls.
+
+        Test: editing/selection/select-start-remove-root-crash.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectAll):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+
 2011-08-11  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: properly update console message count in source frames and resources panel.

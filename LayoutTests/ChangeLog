@@ -1,3 +1,16 @@
+2011-08-12  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in WebCore::editingIgnoresContent
+        https://bugs.webkit.org/show_bug.cgi?id=66125
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests that we do not crash when we blow away the root
+        during the firing of selectstart event in selection.
+
+        * editing/selection/select-start-remove-root-crash-expected.txt: Added.
+        * editing/selection/select-start-remove-root-crash.html: Added.
+
 2011-08-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: expand exception properties when wrapping it as object.
