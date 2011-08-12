@@ -85,7 +85,7 @@
 #include "PlatformMouseEvent.h"
 #include "PlatformThemeChromiumGtk.h"
 #include "PlatformWheelEvent.h"
-#include "PopupContainer.h"
+#include "PopupMenuChromium.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
 #include "RenderView.h"
