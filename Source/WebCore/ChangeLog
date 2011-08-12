@@ -1,3 +1,20 @@
+2011-08-11  Jeff Miller  <jeffm@apple.com>
+
+        WebCore::AVFWrapper fails to remove observer for kCACFContextNeedsFlushNotification
+        https://bugs.webkit.org/show_bug.cgi?id=66116
+
+        We need to pass 0 as the object parameter to CFNotificationCenterRemoveObserver() when removing
+        kCACFContextNeedsFlushNotification to match what we do when we registered for the same
+        notification with CFNotificationCenterAddObserver().
+
+        Reviewed by John Sullivan.
+
+        No new tests, uses existing media tests.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::disconnectAndDeleteAVFWrapper): Pass 0 as the object parameter to CFNotificationCenterRemoveObserver().
+        (WebCore::AVFWrapper::notificationCallback): Remove obsolete FIXME comment.
+
 2011-08-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Share code between isStyleSpanOrSpanWithOnlyStyleAttribute, isUnstyledStyleSpan,
