@@ -85,6 +85,7 @@ WebInspector.Settings = function()
     this.installApplicationSetting("xhrBreakpoints", []);
     this.installApplicationSetting("workerInspectionEnabled", []);
     this.installApplicationSetting("cacheDisabled", false);
+    this.installApplicationSetting("showScriptFolders", true);
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.

@@ -30,6 +30,21 @@ function test()
 
     function step1()
     {
+        try {
+            dumpScriptsList();
+            WebInspector.settings.showScriptFolders.set(false);
+            dumpScriptsList();
+        } finally {
+            WebInspector.settings.showScriptFolders.set(true);
+        }
+        dumpScriptsList();
+        InspectorTest.completeDebuggerTest();
+    }
+
+    function dumpScriptsList()
+    {
+        InspectorTest.addResult("");
+        InspectorTest.addResult("WebInspector.settings.showScriptFolders = " + WebInspector.settings.showScriptFolders.get());
         var select = WebInspector.panels.scripts._filesSelectElement;
         for (var i = 0; i < select.length; ++i) {
             var text = select[i].textContent.replace(/\u00a0/g, " ");
@@ -37,7 +52,6 @@ function test()
                 continue;
             InspectorTest.addResult(text);
         }
-        InspectorTest.completeDebuggerTest();
     }
 }
 </script>

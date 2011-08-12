@@ -1,5 +1,11 @@
 Tests scripts sorting in the scripts panel.
 
 Debugger was enabled.
+
+WebInspector.settings.showScriptFolders = true
+
+WebInspector.settings.showScriptFolders = false
+
+WebInspector.settings.showScriptFolders = true
 Debugger was disabled.
 

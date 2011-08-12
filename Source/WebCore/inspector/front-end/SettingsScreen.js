@@ -47,11 +47,14 @@ WebInspector.SettingsScreen = function()
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show user agent styles"), WebInspector.settings.showUserAgentStyles));
 
     if (Preferences.canDisableCache) {
-        p = this._appendSection(WebInspector.UIString("Network"));
+        p = this._appendSection(WebInspector.UIString("Network"), true);
         p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Disable cache"), WebInspector.settings.cacheDisabled));
     }
 
-    p = this._appendSection(WebInspector.UIString("Console"));
+    p = this._appendSection(WebInspector.UIString("Scripts"), true);
+    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show script folders"), WebInspector.settings.showScriptFolders));
+
+    p = this._appendSection(WebInspector.UIString("Console"), true);
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Log XMLHttpRequests"), WebInspector.settings.monitoringXHREnabled));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Preserve log upon navigation"), WebInspector.settings.preserveConsoleLog));
 

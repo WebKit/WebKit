@@ -169,6 +169,8 @@ WebInspector.ScriptsPanel = function(presentationModel)
     var enableDebugger = Preferences.debuggerAlwaysEnabled || WebInspector.settings.debuggerEnabled.get();
     if (enableDebugger)
         WebInspector.debuggerModel.enableDebugger();
+
+    WebInspector.settings.showScriptFolders.addChangeListener(this._showScriptFoldersSettingChanged.bind(this));
 }
 
 // Keep these in sync with WebCore::ScriptDebugServer
@@ -254,8 +256,28 @@ WebInspector.ScriptsPanel.prototype = {
             this._showSourceFrameAndAddToHistory(sourceFile.id);
     },
 
+    _showScriptFoldersSettingChanged: function()
+    {
+        var selectedOption = this._filesSelectElement[this._filesSelectElement.selectedIndex];
+        var sourceFileId = selectedOption._sourceFileId;
+
+        var options = Array.prototype.slice.call(this._filesSelectElement);
+        this._resetFilesSelect();
+        for (var i = 0; i < options.length; ++i) {
+            if (options[i]._sourceFile)
+                this._addOptionToFilesSelect(options[i]._sourceFile);
+        }
+
+        if (sourceFileId) {
+            var index = this._sourceFileIdToFilesSelectOption[sourceFileId].index;
+            this._filesSelectElement.selectedIndex = index;
+        }
+    },
+
     _addOptionToFilesSelect: function(sourceFile)
     {
+        var showScriptFolders = WebInspector.settings.showScriptFolders.get();
+
         var select = this._filesSelectElement;
         if (!select.domainOptions)
             select.domainOptions = {};
@@ -263,12 +285,13 @@ WebInspector.ScriptsPanel.prototype = {
             select.folderOptions = {};
 
         var option = document.createElement("option");
+        option._sourceFile = sourceFile;
         var parsedURL = sourceFile.url.asParsedURL();
 
         var names = this._folderAndDisplayNameForScriptURL(sourceFile.url);
-        const indent = WebInspector.isMac() ? "" : "\u00a0\u00a0\u00a0\u00a0";
+        const indent = (!showScriptFolders || WebInspector.isMac()) ? "" : "\u00a0\u00a0\u00a0\u00a0";
         option.text = indent + (names.displayName ? names.displayName : WebInspector.UIString("(program)"));
-        option.scriptNameForTest = names.displayName;
+        option.displayName = names.displayName;
 
         var folderNameForSorting;
         if (sourceFile.isContentScript)
@@ -285,7 +308,10 @@ WebInspector.ScriptsPanel.prototype = {
         {
             function optionCompare(a, b)
             {
-                return a.nameForSorting.localeCompare(b.nameForSorting);
+                if (showScriptFolders)
+                    return a.nameForSorting.localeCompare(b.nameForSorting);
+                else
+                    return a.displayName.localeCompare(b.displayName);
             }
             var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
             select.insertBefore(option, insertionIndex < 0 ? null : select.childNodes.item(insertionIndex));
@@ -302,7 +328,7 @@ WebInspector.ScriptsPanel.prototype = {
             insertOrdered(contentScriptSection);
         }
 
-        if (!sourceFile.isContentScript && names.domain && !select.domainOptions[names.domain]) {
+        if (showScriptFolders && !sourceFile.isContentScript && names.domain && !select.domainOptions[names.domain]) {
             var domainOption = document.createElement("option");
             domainOption.text = "\u2014 " + names.domain + " \u2014";
             domainOption.nameForSorting = "0:" + names.domain;
@@ -311,7 +337,7 @@ WebInspector.ScriptsPanel.prototype = {
             insertOrdered(domainOption);
         }
 
-        if (names.folderName && !select.folderOptions[names.folderName]) {
+        if (showScriptFolders && names.folderName && !select.folderOptions[names.folderName]) {
             var folderOption = document.createElement("option");
             folderOption.text = names.folderName;
             folderOption.nameForSorting = folderNameForSorting;
@@ -530,13 +556,9 @@ WebInspector.ScriptsPanel.prototype = {
         }
 
         this._sourceFileIdToSourceFrame = {};
-        this._sourceFileIdToFilesSelectOption = {};
-        this._filesSelectElement.removeChildren();
-        this._filesSelectElement.removeChildren();
-        this._filesSelectElement.domainOptions = {};
-        this._filesSelectElement.folderOptions = {};
+
+        this._resetFilesSelect();
         delete this._filesSelectElement.initialSelectionProcessed;
-        delete this._filesSelectElement.contentScriptSection;
 
         this.functionsSelectElement.removeChildren();
         this.viewsContainerElement.removeChildren();
@@ -545,6 +567,15 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarPanes.watchExpressions.reset();
         if (!preserveItems && this.sidebarPanes.workers)
             this.sidebarPanes.workers.reset();
+    },
+
+    _resetFilesSelect: function()
+    {
+        this._sourceFileIdToFilesSelectOption = {};
+        this._filesSelectElement.removeChildren();
+        this._filesSelectElement.domainOptions = {};
+        this._filesSelectElement.folderOptions = {};
+        delete this._filesSelectElement.contentScriptSection;
     },
 
     get visibleView()

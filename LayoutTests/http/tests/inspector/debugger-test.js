@@ -159,7 +159,7 @@ InspectorTest.showScriptSource = function(scriptName, callback)
 {
     var filesSelect = document.getElementById("scripts-files");
     for (var i = 0; i < filesSelect.length; ++i) {
-        if (filesSelect[i].scriptNameForTest === scriptName) {
+        if (filesSelect[i].displayName === scriptName) {
             filesSelect.selectedIndex = i;
             WebInspector.panels.scripts._filesSelectChanged();
             var sourceFrame = WebInspector.panels.scripts.visibleView;

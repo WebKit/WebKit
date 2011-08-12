@@ -1,3 +1,23 @@
+2011-08-12  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make folders optional in the Scripts' panel file selector.
+        https://bugs.webkit.org/show_bug.cgi?id=66100
+
+        Reviewed by Yury Semikhatsky.
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._showScriptFoldersSettingChanged):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.insertOrdered.optionCompare):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.insertOrdered):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+        (WebInspector.ScriptsPanel.prototype.reset):
+        (WebInspector.ScriptsPanel.prototype._resetFilesSelect):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/SettingsScreen.js:
+        (WebInspector.SettingsScreen):
+
 2011-08-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: add space between error info and error message in source frame message bubble.

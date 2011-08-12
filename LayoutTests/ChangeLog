@@ -1,3 +1,16 @@
+2011-08-12  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: make folders optional in the Scripts' panel file selector.
+        https://bugs.webkit.org/show_bug.cgi?id=66100
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/debugger-test.js:
+        (initialize_DebuggerTest):
+        * inspector/debugger/scripts-sorting-expected.txt:
+        * inspector/debugger/scripts-sorting.html:
+        * platform/chromium/inspector/debugger/scripts-sorting-expected.txt:
+
 2011-08-12  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: add space between error info and error message in source frame message bubble.
