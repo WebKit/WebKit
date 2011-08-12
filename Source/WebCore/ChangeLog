@@ -1,5 +1,21 @@
 2011-08-11  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 91152
+
+    2011-07-16  Sergey Glazunov  <serg.glazunov@gmail.com>
+
+            DOMWindow::open performs a security check on a wrong window
+            https://bugs.webkit.org/show_bug.cgi?id=64651
+
+            Reviewed by Adam Barth.
+
+            Test: http/tests/security/xss-DENIED-window-open-parent.html
+
+            * page/DOMWindow.cpp:
+            (WebCore::DOMWindow::open):
+
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
+
     Merged 91097
 
     2011-07-15  Dan Bernstein  <mitz@apple.com>
