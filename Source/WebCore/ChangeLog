@@ -1,5 +1,25 @@
 2011-08-11  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 91965
+
+    2011-07-28  Anders Carlsson  <andersca@apple.com>
+
+            Unreviewed, rolling out r88601. (Requested by Sam Weinig).
+            http://trac.webkit.org/changeset/88601
+            https://bugs.webkit.org/show_bug.cgi?id=62230
+
+            Caused a regression, see https://bugs.webkit.org/show_bug.cgi?id=64378
+
+            * dom/StyledElement.cpp:
+            * dom/StyledElement.h:
+            * html/HTMLBodyElement.cpp:
+            (WebCore::HTMLBodyElement::parseMappedAttribute):
+            (WebCore::HTMLBodyElement::insertedIntoDocument):
+            (WebCore::HTMLBodyElement::didMoveToNewOwnerDocument):
+            * html/HTMLBodyElement.h:
+
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
+
     Merged 91908
 
     2011-07-27  Ryosuke Niwa  <rniwa@webkit.org>
