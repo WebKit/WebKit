@@ -32,14 +32,14 @@ DUMPRENDERTREE=$(OUTPUT_DIR)/DumpRenderTree
 PERL=/usr/bin/perl
 
 OSX_VERSION = $(shell sw_vers -productVersion | cut -d. -f 2)
-ifeq "$(OSX_VERSION)" "4"
-GENERATE_WRAPPER = NO
+ifeq "$(OSX_VERSION)" "5"
+GENERATE_WRAPPER = YES
 endif
-ifeq "$(OSX_VERSION)" "7"
+ifeq "$(OSX_VERSION)" "6"
 GENERATE_WRAPPER = NO
 endif
 
-ifneq "$(GENERATE_WRAPPER)" "NO"
+ifeq "$(GENERATE_WRAPPER)" "YES"
 
 SWIG=/usr/bin/swig
 
