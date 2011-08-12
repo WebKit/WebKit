@@ -1,5 +1,23 @@
 2011-08-11  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 92132
+
+    2011-07-28  Abhishek Arya  <inferno@chromium.org>
+
+            Regression(82144): Crash in TrailingObjects::updateMidpointsForTrailingBoxes
+            https://bugs.webkit.org/show_bug.cgi?id=65137
+
+            Fix the looping condition to prevent trailingSpaceMidpoint from becoming negative.
+
+            Reviewed by Dave Hyatt.
+
+            Test: fast/block/update-midpoints-for-trailing-boxes-crash.html
+
+            * rendering/RenderBlockLineLayout.cpp:
+            (WebCore::TrailingObjects::updateMidpointsForTrailingBoxes):
+
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
+
     Merged 91965
 
     2011-07-28  Anders Carlsson  <andersca@apple.com>
