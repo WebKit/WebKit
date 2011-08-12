@@ -1,5 +1,12 @@
 2011-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip the test added by r92982 on Qt since it uses a new layoutTestController method
+        that hasn't been implemented by Qt DRT. The failure is tracked by the bug 66162.
+
+        * platform/qt/Skipped:
+
+2011-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK rebaselines after r92890.
 
         * platform/gtk/fast/dom/Window/window-properties-expected.txt:
