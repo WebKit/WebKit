@@ -201,7 +201,7 @@ void CCLayerTreeHostImplProxy::initImplOnCCThread(CCCompletionEvent* completion)
 {
     TRACE_EVENT("CCLayerTreeHostImplProxy::initImplOnCCThread", this, 0);
     ASSERT(isCCThread());
-    m_layerTreeHostImpl = createLayerTreeHostImpl();
+    m_layerTreeHostImpl = m_layerTreeHost->createLayerTreeHostImpl(this);
     completion->signal();
 }
 

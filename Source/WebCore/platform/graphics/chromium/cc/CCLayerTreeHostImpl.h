@@ -31,6 +31,9 @@
 
 namespace WebCore {
 
+class CCCompletionEvent;
+class LayerRendererChromium;
+
 // Provides scheduling infrastructure for a CCLayerTreeHostImpl
 class CCLayerTreeHostImplClient  {
 public:
@@ -45,14 +48,13 @@ protected:
 class CCLayerTreeHostImpl {
     WTF_MAKE_NONCOPYABLE(CCLayerTreeHostImpl);
 public:
-    explicit CCLayerTreeHostImpl(CCLayerTreeHostImplClient*);
+    static PassOwnPtr<CCLayerTreeHostImpl> create(CCLayerTreeHostImplClient*, PassRefPtr<LayerRendererChromium>);
     virtual ~CCLayerTreeHostImpl();
 
     virtual void beginCommit();
     virtual void commitComplete();
 
     void drawLayers();
-    virtual void drawLayersAndPresent() = 0;
 
     int frameNumber() const { return m_frameNumber; }
 
@@ -63,12 +65,15 @@ public:
     void setSourceFrameNumber(int frameNumber) { m_sourceFrameNumber = frameNumber; }
 
 protected:
+    CCLayerTreeHostImpl(CCLayerTreeHostImplClient*, PassRefPtr<LayerRendererChromium>);
+    void drawLayersOnMainThread(CCCompletionEvent*, bool* contextLost);
     int m_sourceFrameNumber;
     int m_frameNumber;
 
 private:
     CCLayerTreeHostImplClient* m_client;
     bool m_commitPending;
+    RefPtr<LayerRendererChromium> m_layerRenderer;
     bool m_redrawPending;
 };
 

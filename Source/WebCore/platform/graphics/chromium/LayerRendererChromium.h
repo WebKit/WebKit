@@ -38,7 +38,6 @@
 #include "IntRect.h"
 #include "LayerChromium.h"
 #include "LayerTilerChromium.h"
-#include "SkBitmap.h"
 #include "VideoLayerChromium.h"
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCHeadsUpDisplay.h"
@@ -69,51 +68,43 @@ class CCLayerTreeHostCommitter;
 class CCLayerTreeHostImpl;
 class GeometryBinding;
 class GraphicsContext3D;
-class LayerPainterChromium;
 
 // Class that handles drawing of composited render layers using GL.
-class LayerRendererChromium : public CCLayerTreeHost {
+class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
 public:
-    static PassRefPtr<LayerRendererChromium> create(CCLayerTreeHostClient*, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
+    static PassRefPtr<LayerRendererChromium> create(CCLayerTreeHost*, PassRefPtr<GraphicsContext3D>);
 
-    ~LayerRendererChromium();
+    virtual ~LayerRendererChromium();
+
+    const CCSettings& settings() const { return m_owner->settings(); }
+
+    CCLayerTreeHost* owner() { return m_owner; }
+    const CCLayerTreeHost* owner() const { return m_owner; }
+
+    LayerChromium* rootLayer() { return m_owner->rootLayer(); }
+    const LayerChromium* rootLayer() const { return m_owner->rootLayer(); }
 
     GraphicsContext3D* context();
     bool contextSupportsMapSub() const { return m_contextSupportsMapSub; }
+
 #if USE(SKIA)
-    GrContext* skiaContext();
+    GrContext* skiaContext() { return m_skiaContext.get(); }
 #endif
 
     void invalidateRootLayerRect(const IntRect& dirtyRect);
 
-    void setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
+    void rootLayerChanged();
+    void viewportChanged();
 
     // updates and draws the current layers onto the backbuffer
     void updateLayers();
     void drawLayers();
-
-    // Set by WebViewImpl when animation callbacks are running.
-    // FIXME: When we move scheduling into the compositor, we can remove this flag.
-    void setIsAnimating(bool animating) { m_animating = animating; }
-    bool isAnimating() const { return m_animating; }
 
     // waits for rendering to finish
     void finish();
 
     // puts backbuffer onscreen
     void present();
-
-    IntSize viewportSize() const { return m_viewportVisibleRect.size(); }
-
-    void setRootLayer(PassRefPtr<LayerChromium>);
-    LayerChromium* rootLayer() { return m_rootLayer.get(); }
-    void transferRootLayer(LayerRendererChromium* other);
-
-    bool hardwareCompositing() const { return m_hardwareCompositing; }
-    bool accelerateDrawing() const { return m_accelerateDrawing; } 
-
-    void setCompositeOffscreen(bool);
-    bool isCompositingOffscreen() const { return m_compositeOffscreen; }
 
     unsigned createLayerTexture();
     void deleteLayerTexture(unsigned);
@@ -159,14 +150,13 @@ public:
 
     void releaseTextures();
 
+    void setLayerRendererRecursive(LayerChromium*);
+
 #ifndef NDEBUG
     static bool s_inPaintLayerContents;
 #endif
     typedef Vector<RefPtr<LayerChromium> > LayerList;
     typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
-
-protected:
-    virtual PassOwnPtr<CCLayerTreeHostImplProxy> createLayerTreeHostImplProxy();
 
 private:
     typedef HashMap<GraphicsContext3D*, int> ChildContextMap;
@@ -174,7 +164,8 @@ private:
     // FIXME: This needs to be moved to the CCLayerTreeHostImpl when that class exists.
     RefPtr<CCLayerImpl> m_rootCCLayerImpl;
 
-    LayerRendererChromium(CCLayerTreeHostClient*, PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
+    LayerRendererChromium(CCLayerTreeHost*, PassRefPtr<GraphicsContext3D>);
+    bool initialize();
 
     void updateLayers(LayerChromium*);
     void updateRootLayerContents();
@@ -200,32 +191,26 @@ private:
 
     static bool compareLayerZ(const RefPtr<CCLayerImpl>&, const RefPtr<CCLayerImpl>&);
 
-    void dumpRenderSurfaces(TextStream&, int indent, LayerChromium*) const;
+    void dumpRenderSurfaces(TextStream&, int indent, const LayerChromium*) const;
 
     bool initializeSharedObjects();
     void cleanupSharedObjects();
 
-    void setLayerRendererRecursive(LayerChromium*);
-
-    IntRect m_viewportVisibleRect;
-    IntRect m_viewportContentRect;
-    IntPoint m_viewportScrollPosition;
+    // FIXME: Change this to CCLayerTreeHostImpl
+    CCLayerTreeHost* m_owner;
 
     TransformationMatrix m_projectionMatrix;
     TransformationMatrix m_windowMatrix;
 
-    RefPtr<LayerChromium> m_rootLayer;
+    // FIXME: split the texture updater and tiler into two parts. Then, keep the
+    // impl here and put the painting-side on the LayerTreeHost.
     OwnPtr<LayerTextureUpdater> m_rootLayerTextureUpdater;
     OwnPtr<LayerTilerChromium> m_rootLayerContentTiler;
-
-    bool m_hardwareCompositing;
-    bool m_accelerateDrawing;
 
     OwnPtr<LayerList> m_computedRenderSurfaceLayerList;
 
     CCRenderSurface* m_currentRenderSurface;
     unsigned m_offscreenFramebufferId;
-    bool m_compositeOffscreen;
 
     // Maximum texture dimensions supported.
     int m_maxTextureSize;
@@ -261,10 +246,6 @@ private:
     ChildContextMap m_childContexts;
 
     bool m_contextSupportsMapSub;
-    bool m_contextSupportsTextureFormatBGRA;
-    bool m_contextSupportsReadFormatBGRA;
-
-    bool m_animating;
 
     CCRenderSurface* m_defaultRenderSurface;
 

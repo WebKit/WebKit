@@ -1,3 +1,36 @@
+2011-08-05  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Make WebViewImpl point at CCLayerTreeHost and related separation
+        https://bugs.webkit.org/show_bug.cgi?id=65791
+
+        With this patch, LayerRendererChromium becomes increasingly responsible
+        for rendering, while render scheduling and tree hosting moves into the
+        CCLayerTreeHost.
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::resize):
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::doPixelReadbackToCanvas):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::composite):
+        (WebKit::WebViewImpl::setRootPlatformLayer):
+        (WebKit::WebViewImpl::setRootLayerNeedsDisplay):
+        (WebKit::WebViewImpl::scrollRootLayerRect):
+        (WebKit::WebViewImpl::invalidateRootLayerRect):
+        (WebKit::getCompositorSettings):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::createRootLayerPainter):
+        (WebKit::WebViewImpl::animateAndLayout):
+        (WebKit::WebViewImpl::didRecreateGraphicsContext):
+        (WebKit::WebViewImpl::scheduleComposite):
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        (WebKit::WebViewImpl::graphicsContext3D):
+        (WebKit::WebViewImpl::setVisibilityState):
+        * src/WebViewImpl.h:
+
 2011-08-11  Nico Weber  <thakis@chromium.org>
 
         [chromium] Expose "min/max scroll size", "has horizontal/vertical scrollbar", "number of wheel handlers" to clients

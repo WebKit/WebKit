@@ -149,6 +149,7 @@ public:
 
     // Derived types must override this method if they need to react to a change
     // in the LayerRendererChromium.
+    // FIXME, replace with CCLayerTreeHost.
     virtual void setLayerRenderer(LayerRendererChromium*);
 
     void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }

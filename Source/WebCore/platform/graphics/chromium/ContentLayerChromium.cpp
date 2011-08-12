@@ -123,7 +123,7 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
     if (m_textureUpdater)
         return;
 #if USE(SKIA)
-    if (layerRenderer()->accelerateDrawing()) {
+    if (layerRenderer()->settings().acceleratePainting) {
         m_textureUpdater = LayerTextureUpdaterSkPicture::create(layerRendererContext(), ContentLayerPainter::create(m_owner), layerRenderer()->skiaContext());
         return;
     }

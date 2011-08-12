@@ -26,18 +26,29 @@
 
 #include "cc/CCLayerTreeHostImpl.h"
 
+#include "Extensions3D.h"
+#include "GraphicsContext3D.h"
+#include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHost.h"
+#include "cc/CCMainThread.h"
+#include "cc/CCMainThreadTask.h"
 #include "cc/CCThreadTask.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
-CCLayerTreeHostImpl::CCLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
+PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHostImpl::create(CCLayerTreeHostImplClient* client, PassRefPtr<LayerRendererChromium> renderer)
+{
+    return adoptPtr(new CCLayerTreeHostImpl(client, renderer));
+}
+
+CCLayerTreeHostImpl::CCLayerTreeHostImpl(CCLayerTreeHostImplClient* client, PassRefPtr<LayerRendererChromium> renderer)
     : m_sourceFrameNumber(-1)
     , m_frameNumber(0)
     , m_client(client)
     , m_commitPending(false)
+    , m_layerRenderer(renderer)
     , m_redrawPending(false)
 {
 }
@@ -70,7 +81,16 @@ void CCLayerTreeHostImpl::drawLayers()
 
     {
         TRACE_EVENT("CCLayerTreeHostImpl::drawLayersAndPresent", this, 0);
-        drawLayersAndPresent();
+        CCCompletionEvent completion;
+        bool contextLost;
+        CCMainThread::postTask(createMainThreadTask(this, &CCLayerTreeHostImpl::drawLayersOnMainThread, AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&contextLost)));
+        completion.wait();
+
+        // FIXME: Send the "UpdateRect" message up to the RenderWidget [or moveplugin equivalents...]
+
+        // FIXME: handle context lost
+        if (contextLost)
+            FATAL("LayerRendererChromiumImpl does not handle context lost yet.");
     }
 
     ++m_frameNumber;
@@ -94,6 +114,21 @@ void CCLayerTreeHostImpl::setNeedsRedraw()
     TRACE_EVENT("CCLayerTreeHostImpl::setNeedsRedraw", this, 0);
     m_redrawPending = true;
     m_client->postDrawLayersTaskOnCCThread();
+}
+
+void CCLayerTreeHostImpl::drawLayersOnMainThread(CCCompletionEvent* completion, bool* contextLost)
+{
+    ASSERT(isMainThread());
+
+    if (m_layerRenderer->owner()->rootLayer()) {
+        m_layerRenderer->drawLayers();
+        m_layerRenderer->present();
+
+        GraphicsContext3D* context = m_layerRenderer->context();
+        *contextLost = context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
+    } else
+        *contextLost = false;
+    completion->signal();
 }
 
 }

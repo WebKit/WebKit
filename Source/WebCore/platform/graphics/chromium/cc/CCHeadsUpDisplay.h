@@ -33,6 +33,7 @@
 
 namespace WebCore {
 
+struct CCSettings;
 class GeometryBinding;
 class GraphicsContext3D;
 class LayerRendererChromium;
@@ -54,13 +55,7 @@ public:
     void onFrameBegin(double timestamp);
     void onPresent();
 
-    void setShowFPSCounter(bool enable);
-    bool showFPSCounter() const { return m_showFPSCounter; }
-
-    void setShowPlatformLayerTree(bool enable);
-    bool showPlatformLayerTree() const { return m_showPlatformLayerTree; }
-
-    bool enabled() const { return m_showPlatformLayerTree || m_showFPSCounter; }
+    bool enabled() const;
     void draw();
 
     typedef ProgramBinding<VertexShaderPosTex, FragmentShaderRGBATexSwizzleAlpha> Program;
@@ -70,7 +65,7 @@ private:
     void drawHudContents(GraphicsContext*, const IntSize& hudSize);
     void drawFPSCounter(GraphicsContext*, int top, int height);
     void drawPlatformLayerTree(GraphicsContext*, int top);
-
+    const CCSettings& settings() const;
 
     int m_currentFrameNumber;
 
@@ -82,9 +77,6 @@ private:
 
     static const int kBeginFrameHistorySize = 64;
     double m_beginTimeHistoryInSec[kBeginFrameHistorySize];
-
-    bool m_showFPSCounter;
-    bool m_showPlatformLayerTree;
 
     OwnPtr<Font> m_smallFont;
     OwnPtr<Font> m_mediumFont;

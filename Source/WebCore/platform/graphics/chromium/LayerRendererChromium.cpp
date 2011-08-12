@@ -51,7 +51,6 @@
 #include "TraceEvent.h"
 #include "WebGLLayerChromium.h"
 #include "cc/CCLayerImpl.h"
-#include "cc/CCLayerTreeHostImpl.h"
 #include "cc/CCMainThreadTask.h"
 #if USE(SKIA)
 #include "Extensions3D.h"
@@ -420,64 +419,80 @@ static TransformationMatrix screenMatrix(int x, int y, int width, int height)
     return screen;
 }
 
-PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHostClient* client, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing)
+#if USE(SKIA)
+bool contextSupportsAcceleratedPainting(GraphicsContext3D* context)
 {
-    RefPtr<GraphicsContext3D> context = client->createLayerTreeHostContext3D();
-    if (!context)
-        return 0;
+    WebCore::Extensions3D* extensions = context->getExtensions();
+    if (extensions->supports("GL_EXT_texture_format_BGRA8888"))
+        extensions->ensureEnabled("GL_EXT_texture_format_BGRA8888");
+    else
+        return false;
 
-    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(client, context, contentPaint, accelerateDrawing)));
-    layerRenderer->init();
-    if (!layerRenderer->hardwareCompositing())
+    if (extensions->supports("GL_EXT_read_format_bgra"))
+        extensions->ensureEnabled("GL_EXT_read_format_bgra");
+    else
+        return false;
+
+    return true;
+}
+#endif
+
+PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(CCLayerTreeHost* owner, PassRefPtr<GraphicsContext3D> context)
+{
+#if USE(SKIA)
+    if (owner->settings().acceleratePainting && !contextSupportsAcceleratedPainting(context.get()))
+        return 0;
+#endif
+    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(owner, context)));
+    if (!layerRenderer->initialize())
         return 0;
 
     return layerRenderer.release();
 }
 
-LayerRendererChromium::LayerRendererChromium(CCLayerTreeHostClient* client,
-                                             PassRefPtr<GraphicsContext3D> context,
-                                             PassOwnPtr<LayerPainterChromium> contentPaint,
-                                             bool accelerateDrawing)
-    : CCLayerTreeHost(client)
-    , m_viewportScrollPosition(IntPoint(-1, -1))
-    , m_rootLayer(0)
-    , m_accelerateDrawing(false)
+LayerRendererChromium::LayerRendererChromium(CCLayerTreeHost* owner,
+                                             PassRefPtr<GraphicsContext3D> context)
+    : m_owner(owner)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
-    , m_compositeOffscreen(false)
     , m_context(context)
-    , m_contextSupportsTextureFormatBGRA(false)
-    , m_contextSupportsReadFormatBGRA(false)
-    , m_animating(false)
     , m_defaultRenderSurface(0)
+{
+}
+
+bool LayerRendererChromium::initialize()
 {
     WebCore::Extensions3D* extensions = m_context->getExtensions();
     m_contextSupportsMapSub = extensions->supports("GL_CHROMIUM_map_sub");
     if (m_contextSupportsMapSub)
         extensions->ensureEnabled("GL_CHROMIUM_map_sub");
-    m_contextSupportsTextureFormatBGRA = extensions->supports("GL_EXT_texture_format_BGRA8888");
-    if (m_contextSupportsTextureFormatBGRA)
-        extensions->ensureEnabled("GL_EXT_texture_format_BGRA8888");
-    m_contextSupportsReadFormatBGRA = extensions->supports("GL_EXT_read_format_bgra");
-    if (m_contextSupportsReadFormatBGRA)
-        extensions->ensureEnabled("GL_EXT_read_format_bgra");
+
+    if (!initializeSharedObjects())
+        return false;
 
 #if USE(SKIA)
-    m_accelerateDrawing = accelerateDrawing && skiaContext();
-#endif
-    m_hardwareCompositing = initializeSharedObjects();
-
-#if USE(SKIA)
-    if (m_accelerateDrawing)
-        m_rootLayerTextureUpdater = LayerTextureUpdaterSkPicture::create(m_context.get(), contentPaint, skiaContext());
+    if (settings().acceleratePainting) {
+        m_context->makeContextCurrent();
+        m_skiaContext = adoptPtr(GrContext::CreateGLShaderContext());
+        // Limit the number of textures we hold in the bitmap->texture cache.
+        static const int maxTextureCacheCount = 512;
+        // Limit the bytes allocated toward textures in the bitmap->texture cache.
+        static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
+        m_skiaContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
+        m_rootLayerTextureUpdater = LayerTextureUpdaterSkPicture::create(m_context.get(), m_owner->createRootLayerPainter(), skiaContext());
+    }
     else
 #endif
-        m_rootLayerTextureUpdater = LayerTextureUpdaterBitmap::create(m_context.get(), contentPaint, m_contextSupportsMapSub);
+        m_rootLayerTextureUpdater = LayerTextureUpdaterBitmap::create(m_context.get(), m_owner->createRootLayerPainter(), m_contextSupportsMapSub);
 
     m_rootLayerContentTiler = LayerTilerChromium::create(this, IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
     ASSERT(m_rootLayerContentTiler);
 
     m_headsUpDisplay = CCHeadsUpDisplay::create(this);
+
+    // Make sure the viewport and context gets initialized, even if it is to zero.
+    viewportChanged();
+    return true;
 }
 
 LayerRendererChromium::~LayerRendererChromium()
@@ -491,22 +506,6 @@ GraphicsContext3D* LayerRendererChromium::context()
     return m_context.get();
 }
 
-#if USE(SKIA)
-GrContext* LayerRendererChromium::skiaContext()
-{
-    if (!m_skiaContext && m_contextSupportsTextureFormatBGRA && m_contextSupportsReadFormatBGRA) {
-        m_context->makeContextCurrent();
-        m_skiaContext = adoptPtr(GrContext::CreateGLShaderContext());
-        // Limit the number of textures we hold in the bitmap->texture cache.
-        static const int maxTextureCacheCount = 512;
-        // Limit the bytes allocated toward textures in the bitmap->texture cache.
-        static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
-        m_skiaContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
-    }
-    return m_skiaContext.get();
-}
-#endif
-
 void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* command, const char* file, int line)
 {
     unsigned long error = context->getError();
@@ -514,16 +513,11 @@ void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* 
         LOG_ERROR("GL command failed: File: %s\n\tLine %d\n\tcommand: %s, error %x\n", file, line, command, static_cast<int>(error));
 }
 
-void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect)
-{
-    m_rootLayerContentTiler->invalidateRect(dirtyRect);
-}
-
 void LayerRendererChromium::releaseTextures()
 {
     // Reduces texture memory usage to textureMemoryLowLimitBytes by deleting non root layer
     // textures.
-    m_rootLayerContentTiler->protectTileTextures(m_viewportVisibleRect);
+    m_rootLayerContentTiler->protectTileTextures(m_owner->viewportVisibleRect());
     m_contentsTextureManager->reduceMemoryToLimit(textureMemoryLowLimitBytes);
     m_contentsTextureManager->unprotectAllTextures();
     // Evict all RenderSurface textures.
@@ -534,79 +528,74 @@ void LayerRendererChromium::releaseTextures()
 void LayerRendererChromium::updateRootLayerContents()
 {
     TRACE_EVENT("LayerRendererChromium::updateRootLayerContents", this, 0);
-    m_rootLayerContentTiler->prepareToUpdate(m_viewportVisibleRect, m_rootLayerTextureUpdater.get());
+    m_rootLayerContentTiler->prepareToUpdate(m_owner->viewportVisibleRect(), m_rootLayerTextureUpdater.get());
 }
 
 void LayerRendererChromium::drawRootLayer()
 {
     TransformationMatrix scroll;
-    scroll.translate(-m_viewportVisibleRect.x(), -m_viewportVisibleRect.y());
+    scroll.translate(-m_owner->viewportVisibleRect().x(), -m_owner->viewportVisibleRect().y());
 
-    m_rootLayerContentTiler->draw(m_viewportVisibleRect, scroll, 1.0f);
+    m_rootLayerContentTiler->draw(m_owner->viewportVisibleRect(), scroll, 1.0f);
 }
 
-void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition)
+void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect)
 {
-    bool visibleRectChanged = m_viewportVisibleRect.size() != visibleRect.size();
+    m_rootLayerContentTiler->invalidateRect(dirtyRect);
+}
 
-    m_viewportVisibleRect = visibleRect;
-    m_viewportContentRect = contentRect;
-    m_viewportScrollPosition = scrollPosition;
+void LayerRendererChromium::rootLayerChanged()
+{
+    m_rootLayerContentTiler->invalidateEntireLayer();
+}
 
-    if (visibleRectChanged) {
-        if (m_context)
-            m_context->reshape(std::max(1, visibleRect.width()), std::max(1, visibleRect.height()));
-        // Reset the current render surface to force an update of the viewport and
-        // projection matrix next time useRenderSurface is called.
-        m_currentRenderSurface = 0;
-        m_rootLayerContentTiler->invalidateEntireLayer();
-    }
-    setNeedsCommitAndRedraw();
+void LayerRendererChromium::viewportChanged()
+{
+    if (m_context)
+        m_context->reshape(std::max(1, m_owner->viewportVisibleRect().width()), std::max(1, m_owner->viewportVisibleRect().height()));
+    m_rootLayerContentTiler->invalidateEntireLayer();
+
+    // Reset the current render surface to force an update of the viewport and
+    // projection matrix next time useRenderSurface is called.
+    m_currentRenderSurface = 0;
 }
 
 void LayerRendererChromium::updateLayers()
 {
-    if (m_viewportVisibleRect.isEmpty())
+    if (m_owner->viewportVisibleRect().isEmpty())
         return;
 
     // FIXME: use the frame begin time from the overall compositor scheduler.
     // This value is currently inaccessible because it is up in Chromium's
     // RenderWidget.
     m_headsUpDisplay->onFrameBegin(currentTime());
-    ASSERT(m_hardwareCompositing);
 
-    if (!m_rootLayer)
+    if (!rootLayer())
         return;
 
     updateRootLayerContents();
 
     // Recheck that we still have a root layer. This may become null if
     // compositing gets turned off during a paint operation.
-    if (!m_rootLayer)
+    if (!rootLayer()) {
+        m_rootCCLayerImpl.clear();
         return;
+    }
 
-    updateLayers(m_rootLayer.get());
+    updateLayers(rootLayer());
 }
 
 void LayerRendererChromium::drawLayers()
 {
-    ASSERT(m_hardwareCompositing);
     // Before drawLayers:
-    if (hardwareCompositing()) {
-        // FIXME: The multithreaded compositor case will not work as long as
-        // copyTexImage2D resolves to the parent texture, because the main
-        // thread can execute WebGL calls on the child context at any time,
-        // potentially clobbering the parent texture that is being renderered
-        // by the compositor thread.
-        ChildContextMap::iterator i = m_childContexts.begin();
-        for (; i != m_childContexts.end(); ++i) {
-            i->first->flush();
-        }
+    ChildContextMap::iterator i = m_childContexts.begin();
+    for (; i != m_childContexts.end(); ++i) {
+        i->first->flush();
     }
 
     {
         TRACE_EVENT("LayerRendererChromium::synchronizeTrees", this, 0);
-        m_rootCCLayerImpl = TreeSynchronizer::synchronizeTrees(m_rootLayer.get(), m_rootCCLayerImpl.get());
+        m_rootCCLayerImpl = TreeSynchronizer::synchronizeTrees(rootLayer(), m_rootCCLayerImpl.get());
     }
 
 
@@ -621,7 +610,7 @@ void LayerRendererChromium::drawLayers()
     else
         m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
 
-    if (isCompositingOffscreen())
+    if (settings().compositeOffscreen)
         copyOffscreenTextureToDisplay();
 }
 
@@ -631,11 +620,11 @@ void LayerRendererChromium::updateLayers(LayerChromium* rootLayer)
 
     if (!rootLayer->renderSurface())
         rootLayer->createRenderSurface();
-    rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), m_viewportVisibleRect.size()));
+    rootLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), m_owner->viewportVisibleRect().size()));
 
-    IntRect rootScissorRect(m_viewportVisibleRect);
+    IntRect rootScissorRect(m_owner->viewportVisibleRect());
     // The scissorRect should not include the scroll offset.
-    rootScissorRect.move(-m_viewportScrollPosition.x(), -m_viewportScrollPosition.y());
+    rootScissorRect.move(-m_owner->viewportScrollPosition().x(), -m_owner->viewportScrollPosition().y());
     rootLayer->setScissorRect(rootScissorRect);
 
     LayerList renderSurfaceLayerList;
@@ -761,7 +750,7 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
 
 void LayerRendererChromium::drawLayersInternal()
 {
-    if (m_viewportVisibleRect.isEmpty() || !m_rootLayer)
+    if (m_owner->viewportVisibleRect().isEmpty() || !rootLayer())
         return;
 
     TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
@@ -770,11 +759,11 @@ void LayerRendererChromium::drawLayersInternal()
 
     if (!rootDrawLayer->renderSurface())
         rootDrawLayer->createRenderSurface();
-    rootDrawLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), m_viewportVisibleRect.size()));
+    rootDrawLayer->renderSurface()->setContentRect(IntRect(IntPoint(0, 0), m_owner->viewportVisibleRect().size()));
 
-    IntRect rootScissorRect(m_viewportVisibleRect);
+    IntRect rootScissorRect(m_owner->viewportVisibleRect());
     // The scissorRect should not include the scroll offset.
-    rootScissorRect.move(-m_viewportScrollPosition.x(), -m_viewportScrollPosition.y());
+    rootScissorRect.move(-m_owner->viewportScrollPosition().x(), -m_owner->viewportScrollPosition().y());
     rootDrawLayer->setScissorRect(rootScissorRect);
 
     CCLayerList renderSurfaceLayerList;
@@ -790,8 +779,8 @@ void LayerRendererChromium::drawLayersInternal()
     }
 
     // The GL viewport covers the entire visible area, including the scrollbars.
-    GLC(m_context.get(), m_context->viewport(0, 0, m_viewportVisibleRect.width(), m_viewportVisibleRect.height()));
-    m_windowMatrix = screenMatrix(0, 0, m_viewportVisibleRect.width(), m_viewportVisibleRect.height());
+    GLC(m_context.get(), m_context->viewport(0, 0, m_owner->viewportVisibleRect().width(), m_owner->viewportVisibleRect().height()));
+    m_windowMatrix = screenMatrix(0, 0, m_owner->viewportVisibleRect().width(), m_owner->viewportVisibleRect().height());
 
     // Bind the common vertex attributes used for drawing all the layers.
     m_sharedGeometry->prepareForDraw();
@@ -887,14 +876,6 @@ void LayerRendererChromium::present()
     m_headsUpDisplay->onPresent();
 }
 
-void LayerRendererChromium::setRootLayer(PassRefPtr<LayerChromium> layer)
-{
-    m_rootLayer = layer;
-    if (m_rootLayer)
-        m_rootLayer->setLayerRenderer(this);
-    m_rootLayerContentTiler->invalidateEntireLayer();
-}
-
 void LayerRendererChromium::setLayerRendererRecursive(LayerChromium* layer)
 {
     const Vector<RefPtr<LayerChromium> >& children = layer->children();
@@ -909,15 +890,9 @@ void LayerRendererChromium::setLayerRendererRecursive(LayerChromium* layer)
     layer->setLayerRenderer(this);
 }
 
-void LayerRendererChromium::transferRootLayer(LayerRendererChromium* other)
-{
-    other->setLayerRendererRecursive(m_rootLayer.get());
-    other->m_rootLayer = m_rootLayer.release();
-}
-
 void LayerRendererChromium::getFramebufferPixels(void *pixels, const IntRect& rect)
 {
-    ASSERT(rect.maxX() <= m_viewportVisibleRect.width() && rect.maxY() <= m_viewportVisibleRect.height());
+    ASSERT(rect.maxX() <= m_owner->viewportVisibleRect().width() && rect.maxY() <= m_owner->viewportVisibleRect().height());
 
     if (!pixels)
         return;
@@ -1007,25 +982,14 @@ void LayerRendererChromium::updateCompositorResources(LayerChromium* layer)
         layer->updateCompositorResources();
 }
 
-void LayerRendererChromium::setCompositeOffscreen(bool compositeOffscreen)
-{
-    if (m_compositeOffscreen == compositeOffscreen)
-       return;
-
-    m_compositeOffscreen = compositeOffscreen;
-
-    if (!m_compositeOffscreen && m_rootCCLayerImpl)
-        m_rootCCLayerImpl->clearRenderSurface();
-}
-
 LayerTexture* LayerRendererChromium::getOffscreenLayerTexture()
 {
-    return m_compositeOffscreen && m_rootCCLayerImpl ? m_rootCCLayerImpl->renderSurface()->contentsTexture() : 0;
+    return settings().compositeOffscreen && m_rootCCLayerImpl ? m_rootCCLayerImpl->renderSurface()->contentsTexture() : 0;
 }
 
 void LayerRendererChromium::copyOffscreenTextureToDisplay()
 {
-    if (m_compositeOffscreen) {
+    if (settings().compositeOffscreen) {
         makeContextCurrent();
 
         useRenderSurface(0);
@@ -1044,7 +1008,7 @@ bool LayerRendererChromium::useRenderSurface(CCRenderSurface* renderSurface)
 
     m_currentRenderSurface = renderSurface;
 
-    if ((renderSurface == m_defaultRenderSurface && !m_compositeOffscreen) || (!renderSurface && m_compositeOffscreen)) {
+    if ((renderSurface == m_defaultRenderSurface && !settings().compositeOffscreen) || (!renderSurface && settings().compositeOffscreen)) {
         GLC(m_context.get(), m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0));
         if (renderSurface)
             setDrawViewportRect(renderSurface->contentRect(), true);
@@ -1140,7 +1104,7 @@ void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
     // of the GL scissor is the bottom of our layer.
     // But, if rendering to offscreen texture, we reverse our sense of 'upside down'.
     int scissorY;
-    if (m_currentRenderSurface == m_defaultRenderSurface && !m_compositeOffscreen)
+    if (m_currentRenderSurface == m_defaultRenderSurface && !settings().compositeOffscreen)
         scissorY = m_currentRenderSurface->contentRect().height() - (scissorRect.maxY() - m_currentRenderSurface->contentRect().y());
     else
         scissorY = scissorRect.y() - contentRect.y();
@@ -1359,10 +1323,10 @@ void LayerRendererChromium::cleanupSharedObjects()
 String LayerRendererChromium::layerTreeAsText() const
 {
     TextStream ts;
-    if (m_rootLayer.get()) {
-        ts << m_rootLayer->layerTreeAsText();
+    if (rootLayer()) {
+        ts << rootLayer()->layerTreeAsText();
         ts << "RenderSurfaces:\n";
-        dumpRenderSurfaces(ts, 1, m_rootLayer.get());
+        dumpRenderSurfaces(ts, 1, rootLayer());
     }
     return ts.release();
 }
@@ -1408,81 +1372,13 @@ bool LayerRendererChromium::isCompositorContextLost()
     return (m_context.get()->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR);
 }
 
-void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, LayerChromium* layer) const
+void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, const LayerChromium* layer) const
 {
     if (layer->renderSurface())
         layer->renderSurface()->dumpSurface(ts, indent);
 
     for (size_t i = 0; i < layer->children().size(); ++i)
         dumpRenderSurfaces(ts, indent, layer->children()[i].get());
-}
-
-class LayerRendererChromiumImpl : public CCLayerTreeHostImpl {
-public:
-    static PassOwnPtr<LayerRendererChromiumImpl> create(CCLayerTreeHostImplClient* client, LayerRendererChromium* layerRenderer)
-    {
-        return adoptPtr(new LayerRendererChromiumImpl(client, layerRenderer));
-    }
-
-    virtual void drawLayersAndPresent()
-    {
-        CCCompletionEvent completion;
-        bool contextLost;
-        CCMainThread::postTask(createMainThreadTask(this, &LayerRendererChromiumImpl::drawLayersOnMainThread, AllowCrossThreadAccess(&completion), AllowCrossThreadAccess(&contextLost)));
-        completion.wait();
-
-        // FIXME: Send the "UpdateRect" message up to the RenderWidget [or moveplugin equivalents...]
-
-        // FIXME: handle context lost
-        if (contextLost)
-            FATAL("LayerRendererChromiumImpl does not handle context lost yet.");
-    }
-
-private:
-    LayerRendererChromiumImpl(CCLayerTreeHostImplClient* client, LayerRendererChromium* layerRenderer)
-        : CCLayerTreeHostImpl(client)
-        , m_layerRenderer(layerRenderer) { }
-
-    void drawLayersOnMainThread(CCCompletionEvent* completion, bool* contextLost)
-    {
-        ASSERT(isMainThread());
-
-        if (m_layerRenderer->rootLayer()) {
-            m_layerRenderer->drawLayers();
-            m_layerRenderer->present();
-
-            GraphicsContext3D* context = m_layerRenderer->context();
-            *contextLost = context->getExtensions()->getGraphicsResetStatusARB() != GraphicsContext3D::NO_ERROR;
-        } else
-            *contextLost = false;
-        completion->signal();
-    }
-
-    LayerRendererChromium* m_layerRenderer;
-};
-
-class LayerRendererChromiumImplProxy : public CCLayerTreeHostImplProxy {
-public:
-    static PassOwnPtr<LayerRendererChromiumImplProxy> create(LayerRendererChromium* layerRenderer)
-    {
-        return adoptPtr(new LayerRendererChromiumImplProxy(layerRenderer));
-    }
-
-    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl()
-    {
-        return LayerRendererChromiumImpl::create(this, static_cast<LayerRendererChromium*>(host()));
-    }
-
-private:
-    LayerRendererChromiumImplProxy(LayerRendererChromium* layerRenderer)
-        : CCLayerTreeHostImplProxy(layerRenderer) { }
-};
-
-PassOwnPtr<CCLayerTreeHostImplProxy> LayerRendererChromium::createLayerTreeHostImplProxy()
-{
-    OwnPtr<CCLayerTreeHostImplProxy> proxy = LayerRendererChromiumImplProxy::create(this);
-    proxy->start();
-    return proxy.release();
 }
 
 } // namespace WebCore

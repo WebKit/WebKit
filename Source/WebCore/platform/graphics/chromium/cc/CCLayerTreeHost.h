@@ -25,8 +25,10 @@
 #ifndef CCLayerTreeHost_h
 #define CCLayerTreeHost_h
 
+#include "IntRect.h"
 #include "cc/CCLayerTreeHostCommitter.h"
 #include "cc/CCLayerTreeHostImplProxy.h"
+
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -36,39 +38,117 @@ namespace WebCore {
 class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
 class GraphicsContext3D;
+class LayerChromium;
+class LayerPainterChromium;
+class LayerRendererChromium;
 
 class CCLayerTreeHostClient {
 public:
     virtual void animateAndLayout(double frameBeginTime) = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
-
+    virtual PassOwnPtr<LayerPainterChromium> createRootLayerPainter() = 0;
+    virtual void didRecreateGraphicsContext(bool success) = 0;
+#if !USE(THREADED_COMPOSITING)
+    virtual void scheduleComposite() = 0;
+#endif
 protected:
     virtual ~CCLayerTreeHostClient() { }
 };
 
+struct CCSettings {
+    CCSettings()
+            : acceleratePainting(false)
+            , compositeOffscreen(false)
+            , showFPSCounter(false)
+            , showPlatformLayerTree(false) { }
+
+    bool acceleratePainting;
+    bool compositeOffscreen;
+    bool showFPSCounter;
+    bool showPlatformLayerTree;
+};
+
 class CCLayerTreeHost : public RefCounted<CCLayerTreeHost> {
 public:
-    explicit CCLayerTreeHost(CCLayerTreeHostClient*);
-    void init();
+    static PassRefPtr<CCLayerTreeHost> create(CCLayerTreeHostClient*, const CCSettings&);
     virtual ~CCLayerTreeHost();
 
     virtual void animateAndLayout(double frameBeginTime);
     virtual void beginCommit();
     virtual void commitComplete();
+
+    virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl(CCLayerTreeHostImplClient*);
     virtual PassOwnPtr<CCLayerTreeHostCommitter> createLayerTreeHostCommitter();
 
+    bool animating() const { return m_animating; }
+    void setAnimating(bool animating) { m_animating = animating; } // Can be removed when non-threaded scheduling moves inside.
+
+    GraphicsContext3D* context();
+
+    void compositeAndReadback(void *pixels, const IntRect&);
+
+    PassOwnPtr<LayerPainterChromium> createRootLayerPainter();
+
+    void finishAllRendering();
+
     int frameNumber() const { return m_frameNumber; }
+
+    void invalidateRootLayerRect(const IntRect& dirtyRect);
 
     void setNeedsCommitAndRedraw();
     void setNeedsRedraw();
 
+    void setRootLayer(LayerChromium*);
+    LayerChromium* rootLayer() { return m_rootLayer.get(); }
+    const LayerChromium* rootLayer() const { return m_rootLayer.get(); }
+
+    const CCSettings& settings() const { return m_settings; }
+
+    void setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
+
+    const IntRect& viewportContentRect() const { return m_viewportContentRect; }
+    const IntPoint& viewportScrollPosition() const { return m_viewportScrollPosition; }
+    const IntRect& viewportVisibleRect() const { return m_viewportVisibleRect; }
+
+    void setVisible(bool);
+
+    // Temporary home for the non-threaded rendering path.
+#if !USE(THREADED_COMPOSITING)
+    void composite(bool finish);
+#endif
+
+
 protected:
-    virtual PassOwnPtr<CCLayerTreeHostImplProxy> createLayerTreeHostImplProxy() = 0;
+    CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
 
 private:
+    bool initialize();
+
+    PassRefPtr<LayerRendererChromium> createLayerRenderer();
+
+    // Temporary home for the non-threaded rendering path.
+#if !USE(THREADED_COMPOSITING)
+    void doComposite();
+    void reallocateRenderer();
+
+    bool m_recreatingGraphicsContext;
+    RefPtr<LayerRendererChromium> m_layerRenderer;
+#endif
+
+    bool m_animating;
+
     CCLayerTreeHostClient* m_client;
+
     int m_frameNumber;
+
     OwnPtr<CCLayerTreeHostImplProxy> m_proxy;
+
+    RefPtr<LayerChromium> m_rootLayer;
+    CCSettings m_settings;
+
+    IntRect m_viewportVisibleRect;
+    IntRect m_viewportContentRect;
+    IntPoint m_viewportScrollPosition;
 };
 
 }

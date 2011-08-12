@@ -26,26 +26,47 @@
 
 #include "cc/CCLayerTreeHost.h"
 
+#include "LayerChromium.h"
+#include "LayerPainterChromium.h"
+#include "LayerRendererChromium.h"
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHostCommitter.h"
 #include "cc/CCLayerTreeHostImpl.h"
 
-
 namespace WebCore {
 
-CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client)
+PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* client, const CCSettings& settings)
+{
+    RefPtr<CCLayerTreeHost> layerTreeHost = adoptRef(new CCLayerTreeHost(client, settings));
+    if (!layerTreeHost->initialize())
+        return 0;
+    return layerTreeHost;
+}
+
+CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)
     : m_client(client)
     , m_frameNumber(0)
+    , m_settings(settings)
 {
 }
 
-void CCLayerTreeHost::init()
+bool CCLayerTreeHost::initialize()
 {
+    RefPtr<GraphicsContext3D> context = m_client->createLayerTreeHostContext3D();
+    if (!context)
+        return false;
+
+    m_layerRenderer = createLayerRenderer();
+    if (!m_layerRenderer)
+        return false;
+
 #if USE(THREADED_COMPOSITING)
-    m_proxy = createLayerTreeHostImplProxy();
+    m_proxy = CCLayerTreeHostImplProxy::create(this);
     ASSERT(m_proxy->isStarted());
     m_proxy->setNeedsCommitAndRedraw();
 #endif
+
+    return true;
 }
 
 CCLayerTreeHost::~CCLayerTreeHost()
@@ -68,27 +89,183 @@ void CCLayerTreeHost::commitComplete()
 
 void CCLayerTreeHost::animateAndLayout(double frameBeginTime)
 {
+    m_animating = true;
     m_client->animateAndLayout(frameBeginTime);
+    m_animating = false;
 }
 
 PassOwnPtr<CCLayerTreeHostCommitter> CCLayerTreeHost::createLayerTreeHostCommitter()
 {
-    return CCLayerTreeHostCommitter::create();
+    // FIXME: only called in threading case, fix when possible.
+    return nullptr;
+}
+
+PassOwnPtr<CCLayerTreeHostImpl> CCLayerTreeHost::createLayerTreeHostImpl(CCLayerTreeHostImplClient* client)
+{
+    RefPtr<LayerRendererChromium> renderer(m_layerRenderer);
+    return CCLayerTreeHostImpl::create(client, renderer);
+}
+
+GraphicsContext3D* CCLayerTreeHost::context()
+{
+    return m_layerRenderer->context();
+}
+
+void CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
+{
+#if USE(THREADED_COMPOSITING)
+    // FIXME: need to implement this.
+#else
+    doComposite();
+    m_layerRenderer->getFramebufferPixels(pixels, rect);
+#endif
+}
+
+PassOwnPtr<LayerPainterChromium> CCLayerTreeHost::createRootLayerPainter()
+{
+    return m_client->createRootLayerPainter();
+}
+
+void CCLayerTreeHost::finishAllRendering()
+{
+#if USE(THREADED_COMPOSITING)
+    // FIXME: need to implement this.
+#else
+    m_layerRenderer->finish();
+#endif
+}
+
+void CCLayerTreeHost::invalidateRootLayerRect(const IntRect& dirtyRect)
+{
+    if (m_layerRenderer)
+        m_layerRenderer->invalidateRootLayerRect(dirtyRect);
 }
 
 void CCLayerTreeHost::setNeedsCommitAndRedraw()
 {
 #if USE(THREADED_COMPOSITING)
+    TRACE_EVENT("CCLayerTreeHost::setNeedsRedraw", this, 0);
     m_proxy->setNeedsCommitAndRedraw();
+#else
+    m_client->scheduleComposite();
 #endif
 }
 
 void CCLayerTreeHost::setNeedsRedraw()
 {
-    TRACE_EVENT("CCLayerTreeHost::setNeedsRedraw", this, 0);
 #if USE(THREADED_COMPOSITING)
+    TRACE_EVENT("CCLayerTreeHost::setNeedsRedraw", this, 0);
     m_proxy->setNeedsRedraw();
+#else
+    m_client->scheduleComposite();
 #endif
 }
+
+void CCLayerTreeHost::setRootLayer(LayerChromium* layer)
+{
+    m_rootLayer = layer;
+    if (m_rootLayer)
+        m_rootLayer->setLayerRenderer(m_layerRenderer.get());
+    if (m_layerRenderer)
+        m_layerRenderer->rootLayerChanged();
+}
+
+void CCLayerTreeHost::setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition)
+{
+    bool visibleRectChanged = m_viewportVisibleRect.size() != visibleRect.size();
+
+    m_viewportVisibleRect = visibleRect;
+    m_viewportContentRect = contentRect;
+    m_viewportScrollPosition = scrollPosition;
+
+    if (visibleRectChanged && m_layerRenderer)
+        m_layerRenderer->viewportChanged();
+
+    setNeedsCommitAndRedraw();
+}
+
+void CCLayerTreeHost::setVisible(bool visible)
+{
+#if !USE(THREADED_COMPOSITING)
+    if (!visible)
+        m_layerRenderer->releaseTextures();
+#endif
+}
+
+PassRefPtr<LayerRendererChromium> CCLayerTreeHost::createLayerRenderer()
+{
+    // GraphicsContext3D::create might fail and return 0, in that case fall back to software.
+    RefPtr<GraphicsContext3D> context = m_client->createLayerTreeHostContext3D();
+    if (!context)
+        return 0;
+
+    // Actually create the renderer.
+    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(this, context);
+
+    // If creation failed, and we had asked for accelerated painting, disable accelerated painting
+    // and try creating the renderer again.
+    if (m_settings.acceleratePainting && !layerRenderer) {
+        m_settings.acceleratePainting = false;
+        layerRenderer = LayerRendererChromium::create(this, context);
+    }
+
+    return layerRenderer;
+}
+
+#if !USE(THREADED_COMPOSITING)
+void CCLayerTreeHost::doComposite()
+{
+    ASSERT(m_layerRenderer);
+    m_layerRenderer->updateLayers();
+    m_layerRenderer->drawLayers();
+}
+
+void CCLayerTreeHost::composite(bool finish)
+{
+    TRACE_EVENT("CCLayerTreeHost::composite", this, 0);
+
+    if (m_recreatingGraphicsContext) {
+        // reallocateRenderer will request a repaint whether or not it succeeded
+        // in creating a new context.
+        reallocateRenderer();
+        m_recreatingGraphicsContext = false;
+        return;
+    }
+
+    // Do not composite if the compositor context is already lost.
+    if (!m_layerRenderer->isCompositorContextLost()) {
+        doComposite();
+
+        // Put result onscreen.
+        m_layerRenderer->present();
+    }
+
+    if (m_layerRenderer->isCompositorContextLost()) {
+        // Trying to recover the context right here will not work if GPU process
+        // died. This is because GpuChannelHost::OnErrorMessage will only be
+        // called at the next iteration of the message loop, reverting our
+        // recovery attempts here. Instead, we detach the root layer from the
+        // renderer, recreate the renderer at the next message loop iteration
+        // and request a repaint yet again.
+        m_recreatingGraphicsContext = true;
+        setNeedsCommitAndRedraw();
+    }
+}
+
+void CCLayerTreeHost::reallocateRenderer()
+{
+    RefPtr<LayerRendererChromium> layerRenderer = createLayerRenderer();
+    if (!layerRenderer) {
+        m_client->didRecreateGraphicsContext(false);
+        return;
+    }
+
+    // Reattach the root layer. Child layers will get reattached as a side effect of updateLayersRecursive.
+    layerRenderer->setLayerRendererRecursive(m_rootLayer.get());
+    m_layerRenderer = layerRenderer;
+
+    m_client->didRecreateGraphicsContext(true);
+}
+#endif // !USE(THREADED_COMPOSITING)
 
 }

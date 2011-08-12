@@ -339,7 +339,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_tabsToLinks(false)
     , m_dragScrollTimer(adoptPtr(new DragScrollTimer))
 #if USE(ACCELERATED_COMPOSITING)
-    , m_layerRenderer(0)
     , m_rootGraphicsLayer(0)
     , m_isAcceleratedCompositingActive(false)
     , m_compositorCreationFailed(false)
@@ -1029,7 +1028,7 @@ void WebViewImpl::resize(const WebSize& newSize)
     if (m_client) {
         if (isAcceleratedCompositingActive()) {
 #if USE(ACCELERATED_COMPOSITING)
-            updateLayerRendererViewport();
+            updateLayerTreeViewport();
 #endif
         } else {
             WebRect damagedRect(0, 0, m_size.width, m_size.height);
@@ -1061,11 +1060,15 @@ void WebViewImpl::animate(double frameBeginTime)
     if (webframe) {
         FrameView* view = webframe->frameView();
         if (view) {
-            if (m_layerRenderer)
-                m_layerRenderer->setIsAnimating(true);
+#if !USE(THREADED_COMPOSITING)
+            if (m_layerTreeHost)
+                m_layerTreeHost->setAnimating(true);
+#endif
             view->serviceScriptedAnimations(convertSecondsToDOMTimeStamp(frameBeginTime));
-            if (m_layerRenderer)
-                m_layerRenderer->setIsAnimating(false);
+#if !USE(THREADED_COMPOSITING)
+            if (m_layerTreeHost)
+                m_layerTreeHost->setAnimating(false);
+#endif
         }
     }
 #endif
@@ -1115,7 +1118,7 @@ void WebViewImpl::doPixelReadbackToCanvas(WebCanvas* canvas, const IntRect& rect
     OwnPtr<ImageBuffer> imageBuffer(ImageBuffer::create(rect.size()));
     RefPtr<ByteArray> pixelArray(ByteArray::create(rect.width() * rect.height() * 4));
     if (imageBuffer.get() && pixelArray.get()) {
-        m_layerRenderer->getFramebufferPixels(pixelArray->data(), invertRect);
+        m_layerTreeHost->compositeAndReadback(pixelArray->data(), invertRect);
         imageBuffer->putPremultipliedImageData(pixelArray.get(), rect.size(), IntRect(IntPoint(), rect.size()), IntPoint());
         gc.save();
         gc.translate(IntSize(0, bitmapHeight));
@@ -1132,18 +1135,12 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
 {
     if (isAcceleratedCompositingActive()) {
 #if USE(ACCELERATED_COMPOSITING)
-#if USE(THREADED_COMPOSITING)
-        // FIXME: do readback in threaded compositing mode rather than returning nothing
-        return;
-#endif
-        doComposite();
-
         // If a canvas was passed in, we use it to grab a copy of the
         // freshly-rendered pixels.
         if (canvas) {
             // Clip rect to the confines of the rootLayerTexture.
             IntRect resizeRect(rect);
-            resizeRect.intersect(IntRect(IntPoint(), m_layerRenderer->viewportSize()));
+            resizeRect.intersect(IntRect(IntPoint(0, 0), m_layerTreeHost->viewportVisibleRect().size()));
             doPixelReadbackToCanvas(canvas, resizeRect);
         }
 #endif
@@ -1169,46 +1166,20 @@ void WebViewImpl::themeChanged()
     view->invalidateRect(damagedRect);
 }
 
-void WebViewImpl::animateAndLayout(double frameBeginTime)
-{
-    animate(frameBeginTime);
-    layout();
-}
-
 void WebViewImpl::composite(bool finish)
 {
 #if USE(ACCELERATED_COMPOSITING)
 #if USE(THREADED_COMPOSITING)
-    m_layerRenderer->setNeedsRedraw();
+    m_layerTreeHost->setNeedsRedraw();
 #else
-    TRACE_EVENT("WebViewImpl::composite", this, 0);
-
-    if (m_recreatingGraphicsContext) {
-        // reallocateRenderer will request a repaint whether or not it succeeded
-        // in creating a new context.
-        reallocateRenderer();
-        m_recreatingGraphicsContext = false;
+    ASSERT(isAcceleratedCompositingActive());
+    if (!page())
         return;
-    }
 
-    // Do not composite if the compositor context is already lost.
-    if (!m_layerRenderer->isCompositorContextLost()) {
-        doComposite();
+    if (m_pageOverlay)
+        m_pageOverlay->update();
 
-        // Put result onscreen.
-        m_layerRenderer->present();
-    }
-
-    if (m_layerRenderer->isCompositorContextLost()) {
-        // Trying to recover the context right here will not work if GPU process
-        // died. This is because GpuChannelHost::OnErrorMessage will only be
-        // called at the next iteration of the message loop, reverting our
-        // recovery attempts here. Instead, we detach the root layer from the
-        // renderer, recreate the renderer at the next message loop iteration
-        // and request a repaint yet again.
-        m_recreatingGraphicsContext = true;
-        setRootLayerNeedsDisplay();
-    }
+    m_layerTreeHost->composite(finish);
 #endif
 #endif
 }
@@ -2491,8 +2462,8 @@ void WebViewImpl::setRootGraphicsLayer(WebCore::GraphicsLayer* layer)
 void WebViewImpl::setRootPlatformLayer(WebCore::PlatformLayer* layer)
 {
     setIsAcceleratedCompositingActive(layer);
-    if (m_layerRenderer)
-        m_layerRenderer->setRootLayer(layer);
+    if (m_layerTreeHost)
+        m_layerTreeHost->setRootLayer(layer);
 
     IntRect damagedRect(0, 0, m_size.width, m_size.height);
     if (m_isAcceleratedCompositingActive)
@@ -2504,31 +2475,30 @@ void WebViewImpl::setRootPlatformLayer(WebCore::PlatformLayer* layer)
 void WebViewImpl::setRootLayerNeedsDisplay()
 {
 #if USE(THREADED_COMPOSITING)
-    if (m_layerRenderer)
-        m_layerRenderer->setNeedsCommitAndRedraw();
+    if (m_layerTreeHost)
+        m_layerTreeHost->setNeedsCommitAndRedraw();
 #else
     m_client->scheduleComposite();
 #endif
 }
 
-
 void WebViewImpl::scrollRootLayerRect(const IntSize& scrollDelta, const IntRect& clipRect)
 {
-    updateLayerRendererViewport();
+    updateLayerTreeViewport();
     setRootLayerNeedsDisplay();
 }
 
 void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
 {
-    ASSERT(m_layerRenderer);
+    ASSERT(m_layerTreeHost);
 
     if (!page())
         return;
 
     FrameView* view = page()->mainFrame()->view();
     IntRect dirtyRect = view->windowToContents(rect);
-    updateLayerRendererViewport();
-    m_layerRenderer->invalidateRootLayerRect(dirtyRect);
+    updateLayerTreeViewport();
+    m_layerTreeHost->invalidateRootLayerRect(dirtyRect);
     setRootLayerNeedsDisplay();
 }
 
@@ -2575,20 +2545,25 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         // We need to finish all GL rendering before sending
         // didActivateAcceleratedCompositing(false) to prevent
         // flickering when compositing turns off.
-        if (m_layerRenderer)
-            m_layerRenderer->finish();
+        if (m_layerTreeHost)
+            m_layerTreeHost->finishAllRendering();
         m_client->didActivateAcceleratedCompositing(false);
-    } else if (m_layerRenderer) {
+    } else if (m_layerTreeHost) {
         m_isAcceleratedCompositingActive = true;
-        updateLayerRendererViewport();
+        updateLayerTreeViewport();
 
         m_client->didActivateAcceleratedCompositing(true);
     } else {
         TRACE_EVENT("WebViewImpl::setIsAcceleratedCompositingActive(true)", this, 0);
 
-        m_layerRenderer = LayerRendererChromium::create(this, WebViewImplContentPainter::create(this), m_page->settings()->acceleratedDrawingEnabled());
-        if (m_layerRenderer) {
-            updateLayerRendererSettings();
+        WebCore::CCSettings ccSettings;
+        ccSettings.acceleratePainting = page()->settings()->acceleratedDrawingEnabled();
+        ccSettings.compositeOffscreen = settings()->compositeToTextureEnabled();
+        ccSettings.showFPSCounter = settings()->showFPSCounter();
+        ccSettings.showPlatformLayerTree = settings()->showPlatformLayerTree();
+
+        m_layerTreeHost = CCLayerTreeHost::create(this, ccSettings);
+        if (m_layerTreeHost) {
             m_client->didActivateAcceleratedCompositing(true);
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
@@ -2604,24 +2579,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         page()->mainFrame()->view()->setClipsRepaints(!m_isAcceleratedCompositingActive);
 }
 
-void WebViewImpl::doComposite()
-{
-    ASSERT(m_layerRenderer);
-    if (!m_layerRenderer) {
-        setIsAcceleratedCompositingActive(false);
-        return;
-    }
-
-    ASSERT(isAcceleratedCompositingActive());
-    if (!page())
-        return;
-
-    if (m_pageOverlay)
-        m_pageOverlay->update();
-
-    m_layerRenderer->updateLayers();
-    m_layerRenderer->drawLayers();
-}
+#endif
 
 PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
 {
@@ -2634,46 +2592,38 @@ PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
     return context;
 }
 
-void WebViewImpl::reallocateRenderer()
+PassOwnPtr<LayerPainterChromium> WebViewImpl::createRootLayerPainter()
 {
-    // GraphicsContext3D::create might fail and return 0, in that case LayerRendererChromium::create will also return 0.
-    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(this, WebViewImplContentPainter::create(this), m_page->settings()->acceleratedDrawingEnabled());
+    return WebViewImplContentPainter::create(this);
+}
 
-    // Reattach the root layer.  Child layers will get reattached as a side effect of updateLayersRecursive.
-    if (layerRenderer) {
-        m_layerRenderer->transferRootLayer(layerRenderer.get());
-        m_layerRenderer = layerRenderer;
-        updateLayerRendererSettings();
+void WebViewImpl::animateAndLayout(double frameBeginTime)
+{
+    animate(frameBeginTime);
+    layout();
+}
 
-        // FIXME: In MacOS newContext->reshape method needs to be called to
-        // allocate IOSurfaces. All calls to create a context followed by
-        // reshape should really be extracted into one function; it is not
-        // immediately obvious that GraphicsContext3D object will not
-        // function properly until its reshape method is called.
-        layerRenderer->context()->reshape(max(1, m_size.width), max(1, m_size.height));
-        setRootPlatformLayer(m_layerRenderer->rootLayer());
+void WebViewImpl::didRecreateGraphicsContext(bool success)
+{
+    setRootPlatformLayer(success ? m_layerTreeHost->rootLayer() : 0);
 
-        // Forces ViewHostMsg_DidActivateAcceleratedCompositing to be sent so
-        // that the browser process can reacquire surfaces.
-        m_client->didActivateAcceleratedCompositing(true);
-        if (m_pageOverlay)
-            m_pageOverlay->update();
-    } else
-        setRootPlatformLayer(0);
+    if (success) {
+      // Forces ViewHostMsg_DidActivateAcceleratedCompositing to be sent so
+      // that the browser process can reacquire surfaces.
+      m_client->didActivateAcceleratedCompositing(true);
+      if (m_pageOverlay)
+          m_pageOverlay->update();
+    }
+}
+
+#if !USE(THREADED_COMPOSITING)
+void WebViewImpl::scheduleComposite()
+{
+    m_client->scheduleComposite();
 }
 #endif
 
-void WebViewImpl::updateLayerRendererSettings()
-{
-    ASSERT(m_layerRenderer);
-    m_layerRenderer->setCompositeOffscreen(settings()->compositeToTextureEnabled());
-
-    CCHeadsUpDisplay* hud = m_layerRenderer->headsUpDisplay();
-    hud->setShowFPSCounter(settings()->showFPSCounter());
-    hud->setShowPlatformLayerTree(settings()->showPlatformLayerTree());
-}
-
-void WebViewImpl::updateLayerRendererViewport()
+void WebViewImpl::updateLayerTreeViewport()
 {
     if (!page())
         return;
@@ -2683,15 +2633,15 @@ void WebViewImpl::updateLayerRendererViewport()
     IntRect visibleRect = view->visibleContentRect(true);
     IntPoint scroll(view->scrollX(), view->scrollY());
 
-    m_layerRenderer->setViewport(visibleRect, contentRect, scroll);
+    m_layerTreeHost->setViewport(visibleRect, contentRect, scroll);
 }
 
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (m_page->settings()->acceleratedCompositingEnabled() && allowsAcceleratedCompositing()) {
-        if (m_layerRenderer) {
-            WebGraphicsContext3D* webContext = GraphicsContext3DInternal::extractWebGraphicsContext3D(m_layerRenderer->context());
+        if (m_layerTreeHost) {
+            WebGraphicsContext3D* webContext = GraphicsContext3DInternal::extractWebGraphicsContext3D(m_layerTreeHost->context());
             if (webContext && !webContext->isContextLost())
                 return webContext;
         }
@@ -2723,8 +2673,8 @@ void WebViewImpl::setVisibilityState(WebPageVisibilityState visibilityState,
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
-    if (isAcceleratedCompositingActive() && visibilityState == WebPageVisibilityStateHidden)
-        m_layerRenderer->releaseTextures();
+    if (isAcceleratedCompositingActive())
+        m_layerTreeHost->setVisible(visibilityState == WebPageVisibilityStateVisible);
 #endif
 }
 

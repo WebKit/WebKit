@@ -46,9 +46,9 @@
 #include "GraphicsLayer.h"
 #include "InspectorClientImpl.h"
 #include "IntRect.h"
-#include "LayerRendererChromium.h"
 #include "NotificationPresenterImpl.h"
 #include "PageOverlay.h"
+#include "cc/CCLayerTreeHost.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -211,6 +211,11 @@ public:
     // CCLayerTreeHostClient
     virtual void animateAndLayout(double frameBeginTime);
     virtual PassRefPtr<WebCore::GraphicsContext3D> createLayerTreeHostContext3D();
+    virtual PassOwnPtr<WebCore::LayerPainterChromium> createRootLayerPainter();
+    virtual void didRecreateGraphicsContext(bool success);
+#if !USE(THREADED_COMPOSITING)
+    virtual void scheduleComposite();
+#endif
 
     // WebViewImpl
 
@@ -436,11 +441,12 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     void setIsAcceleratedCompositingActive(bool);
+#if !USE(THREADED_COMPOSITING)
     void doComposite();
+#endif
     void doPixelReadbackToCanvas(WebCanvas*, const WebCore::IntRect&);
     void reallocateRenderer();
-    void updateLayerRendererSettings();
-    void updateLayerRendererViewport();
+    void updateLayerTreeViewport();
 #endif
 
     WebViewClient* m_client;
@@ -557,7 +563,7 @@ private:
 
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;
-    RefPtr<WebCore::LayerRendererChromium> m_layerRenderer;
+    RefPtr<WebCore::CCLayerTreeHost> m_layerTreeHost;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;
     bool m_compositorCreationFailed;

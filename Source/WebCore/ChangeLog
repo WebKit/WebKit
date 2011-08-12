@@ -1,3 +1,85 @@
+2011-08-05  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Make WebViewImpl point at CCLayerTreeHost and related separation
+        https://bugs.webkit.org/show_bug.cgi?id=65791
+
+        With this patch, LayerRendererChromium becomes increasingly responsible
+        for rendering, while render scheduling and tree hosting moves into the
+        CCLayerTreeHost.
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::createTextureUpdaterIfNeeded):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::releaseTextures):
+        (WebCore::LayerRendererChromium::updateRootLayerContents):
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::invalidateRootLayerRect):
+        (WebCore::LayerRendererChromium::rootLayerChanged):
+        (WebCore::LayerRendererChromium::viewportChanged):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        (WebCore::LayerRendererChromium::getOffscreenLayerTexture):
+        (WebCore::LayerRendererChromium::copyOffscreenTextureToDisplay):
+        (WebCore::LayerRendererChromium::useRenderSurface):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        (WebCore::LayerRendererChromium::layerTreeAsText):
+        (WebCore::LayerRendererChromium::dumpRenderSurfaces):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::settings):
+        (WebCore::LayerRendererChromium::owner):
+        (WebCore::LayerRendererChromium::rootLayer):
+        (WebCore::LayerRendererChromium::skiaContext):
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::setTextureUpdated):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        (WebCore::CCHeadsUpDisplay::enabled):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::create):
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::animateAndLayout):
+        (WebCore::CCLayerTreeHost::createLayerTreeHostCommitter):
+        (WebCore::CCLayerTreeHost::createLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHost::context):
+        (WebCore::CCLayerTreeHost::compositeAndReadback):
+        (WebCore::CCLayerTreeHost::createRootLayerPainter):
+        (WebCore::CCLayerTreeHost::finishAllRendering):
+        (WebCore::CCLayerTreeHost::invalidateRootLayerRect):
+        (WebCore::CCLayerTreeHost::setNeedsCommitAndRedraw):
+        (WebCore::CCLayerTreeHost::setNeedsRedraw):
+        (WebCore::CCLayerTreeHost::setRootLayer):
+        (WebCore::CCLayerTreeHost::setViewport):
+        (WebCore::CCLayerTreeHost::setVisible):
+        (WebCore::CCLayerTreeHost::doComposite):
+        (WebCore::CCLayerTreeHost::composite):
+        (WebCore::CCLayerTreeHost::reallocateRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::animating):
+        (WebCore::CCLayerTreeHost::setAnimating):
+        (WebCore::CCLayerTreeHost::rootLayer):
+        (WebCore::CCLayerTreeHost::settings):
+        (WebCore::CCLayerTreeHost::viewportContentRect):
+        (WebCore::CCLayerTreeHost::viewportScrollPosition):
+        (WebCore::CCLayerTreeHost::viewportVisibleRect):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.cpp:
+        (WebCore::CCLayerTreeHostImpl::create):
+        (WebCore::CCLayerTreeHostImpl::CCLayerTreeHostImpl):
+        (WebCore::CCLayerTreeHostImpl::drawLayers):
+        (WebCore::CCLayerTreeHostImpl::drawLayersOnMainThread):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.cpp:
+        (WebCore::CCLayerTreeHostImplProxy::initImplOnCCThread):
+
 2011-08-11  Jeff Miller  <jeffm@apple.com>
 
         WebCore::AVFWrapper fails to remove observer for kCACFContextNeedsFlushNotification

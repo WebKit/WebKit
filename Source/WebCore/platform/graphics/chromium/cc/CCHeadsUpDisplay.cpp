@@ -51,8 +51,6 @@ CCHeadsUpDisplay::CCHeadsUpDisplay(LayerRendererChromium* owner)
     : m_currentFrameNumber(1)
     , m_filteredFrameTime(0)
     , m_layerRenderer(owner)
-    , m_showFPSCounter(false)
-    , m_showPlatformLayerTree(false)
     , m_useMapSubForUploads(owner->contextSupportsMapSub())
 {
     m_beginTimeHistoryInSec[0] = currentTime();
@@ -79,6 +77,21 @@ CCHeadsUpDisplay::~CCHeadsUpDisplay()
 {
 }
 
+void CCHeadsUpDisplay::onFrameBegin(double timestamp)
+{
+    m_beginTimeHistoryInSec[m_currentFrameNumber % kBeginFrameHistorySize] = timestamp;
+}
+
+void CCHeadsUpDisplay::onPresent()
+{
+    m_currentFrameNumber += 1;
+}
+
+bool CCHeadsUpDisplay::enabled() const
+{
+    return settings().showPlatformLayerTree || settings().showFPSCounter;
+}
+
 void CCHeadsUpDisplay::draw()
 {
     GraphicsContext3D* context = m_layerRenderer->context();
@@ -87,9 +100,9 @@ void CCHeadsUpDisplay::draw()
 
     // Use a fullscreen texture only if we need to...
     IntSize hudSize;
-    if (m_showPlatformLayerTree) {
-        hudSize.setWidth(min(2048, m_layerRenderer->viewportSize().width()));
-        hudSize.setHeight(min(2048, m_layerRenderer->viewportSize().height()));
+    if (settings().showPlatformLayerTree) {
+        hudSize.setWidth(min(2048, m_layerRenderer->owner()->viewportVisibleRect().width()));
+        hudSize.setHeight(min(2048, m_layerRenderer->owner()->viewportVisibleRect().height()));
     } else {
         hudSize.setWidth(512);
         hudSize.setHeight(128);
@@ -149,7 +162,7 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* ctx, const IntSize& hudS
 {
     FontCachePurgePreventer fontCachePurgePreventer;
 
-    if (m_showPlatformLayerTree) {
+    if (settings().showPlatformLayerTree) {
         ctx->setFillColor(Color(0, 0, 0, 192), ColorSpaceDeviceRGB);
         ctx->fillRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));
     }
@@ -157,15 +170,15 @@ void CCHeadsUpDisplay::drawHudContents(GraphicsContext* ctx, const IntSize& hudS
     int fpsCounterHeight = m_mediumFont->fontMetrics().floatHeight() + 2;
     int fpsCounterTop = 2;
     int platformLayerTreeTop;
-    if (m_showFPSCounter)
+    if (settings().showFPSCounter)
         platformLayerTreeTop = fpsCounterTop + fpsCounterHeight + 2;
     else
         platformLayerTreeTop = 0;
 
-    if (m_showFPSCounter)
+    if (settings().showFPSCounter)
         drawFPSCounter(ctx, fpsCounterTop, fpsCounterHeight);
 
-    if (m_showPlatformLayerTree)
+    if (settings().showPlatformLayerTree)
         drawPlatformLayerTree(ctx, platformLayerTreeTop);
 }
 
@@ -238,26 +251,9 @@ void CCHeadsUpDisplay::drawPlatformLayerTree(GraphicsContext* ctx, int top)
     }
 }
 
-void CCHeadsUpDisplay::onFrameBegin(double timestamp)
+const CCSettings& CCHeadsUpDisplay::settings() const
 {
-    m_beginTimeHistoryInSec[m_currentFrameNumber % kBeginFrameHistorySize] = timestamp;
-}
-
-void CCHeadsUpDisplay::onPresent()
-{
-    m_currentFrameNumber += 1;
-}
-
-void CCHeadsUpDisplay::setShowFPSCounter(bool show)
-{
-    m_showFPSCounter = show;
-    m_layerRenderer->setNeedsRedraw();
-}
-
-void CCHeadsUpDisplay::setShowPlatformLayerTree(bool show)
-{
-    m_showPlatformLayerTree = show;
-    m_layerRenderer->setNeedsRedraw();
+    return m_layerRenderer->settings();
 }
 
 }
