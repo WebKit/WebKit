@@ -1454,7 +1454,6 @@ void tst_QWebFrame::connectAndDisconnect()
     QCOMPARE(evalJS("gotSignal"), sTrue);
     QCOMPARE(evalJS("signalArgs.length == 0"), sTrue);
     QCOMPARE(evalJS("signalSender"),evalJS("myObject"));
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65170", Continue);
     QCOMPARE(evalJS("slotThisObject == window"), sTrue);
 
     evalJS("gotSignal = false");
@@ -1560,7 +1559,6 @@ void tst_QWebFrame::connectAndDisconnect()
     // one argument
     QCOMPARE(evalJS("myObject.mySignalWithIntArg.connect(myObject.mySlotWithIntArg)"), sUndefined);
     m_myObject->resetQtFunctionInvoked();
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65170", Continue);
     QCOMPARE(evalJS("myObject.mySignalWithIntArg(123)"), sUndefined);
     QCOMPARE(m_myObject->qtFunctionInvoked(), 21);
     QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
@@ -1569,7 +1567,6 @@ void tst_QWebFrame::connectAndDisconnect()
 
     QCOMPARE(evalJS("myObject.mySignalWithIntArg.connect(myObject.mySlotWithDoubleArg)"), sUndefined);
     m_myObject->resetQtFunctionInvoked();
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65170", Continue);
     QCOMPARE(evalJS("myObject.mySignalWithIntArg(123)"), sUndefined);
     QCOMPARE(m_myObject->qtFunctionInvoked(), 22);
     QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
@@ -1578,7 +1575,6 @@ void tst_QWebFrame::connectAndDisconnect()
 
     QCOMPARE(evalJS("myObject.mySignalWithIntArg.connect(myObject.mySlotWithStringArg)"), sUndefined);
     m_myObject->resetQtFunctionInvoked();
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65170", Continue);
     QCOMPARE(evalJS("myObject.mySignalWithIntArg(123)"), sUndefined);
     QCOMPARE(m_myObject->qtFunctionInvoked(), 23);
     QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
@@ -1588,7 +1584,6 @@ void tst_QWebFrame::connectAndDisconnect()
     // connecting to overloaded slot
     QCOMPARE(evalJS("myObject.mySignalWithIntArg.connect(myObject.myOverloadedSlot)"), sUndefined);
     m_myObject->resetQtFunctionInvoked();
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65170", Continue);
     QCOMPARE(evalJS("myObject.mySignalWithIntArg(123)"), sUndefined);
     QCOMPARE(m_myObject->qtFunctionInvoked(), 26); // double overload
     QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);
@@ -1597,7 +1592,6 @@ void tst_QWebFrame::connectAndDisconnect()
 
     QCOMPARE(evalJS("myObject.mySignalWithIntArg.connect(myObject['myOverloadedSlot(int)'])"), sUndefined);
     m_myObject->resetQtFunctionInvoked();
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=65170", Continue);
     QCOMPARE(evalJS("myObject.mySignalWithIntArg(456)"), sUndefined);
     QCOMPARE(m_myObject->qtFunctionInvoked(), 28); // int overload
     QCOMPARE(m_myObject->qtFunctionActuals().size(), 1);

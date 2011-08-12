@@ -1584,7 +1584,7 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
 
     if (sender) {
 
-        JSObject* thisObject = exec->lexicalGlobalObject();
+        JSObject* thisObject = exec->lexicalGlobalObject()->toThisObject(exec);
         JSObject* funcObject = 0;
 
         // QtScript checks signalness first, arguments second
