@@ -255,6 +255,7 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(NodeIndex nodeIndex)
         m_gprs.unlock(tempGpr);
         m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
         info.fillDouble(fpr);
+        info.killSpilled();
         return fpr;
     }
 
