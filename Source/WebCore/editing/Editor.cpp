@@ -2851,6 +2851,7 @@ void Editor::textFieldDidBeginEditing(Element* e)
 
 void Editor::textFieldDidEndEditing(Element* e)
 {
+    dismissCorrectionPanelAsIgnored();
     if (client())
         client()->textFieldDidEndEditing(e);
 }
