@@ -1,5 +1,21 @@
 2011-08-11  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 92389
+
+    2011-08-03  Adam Roben  <aroben@apple.com>
+
+            Test that a 2^25x2^25 pixel layer doesn't cause a crash
+
+            Test for <http://webkit.org/b/65637> <rdar://problem/9784849> Crash beneath
+            PlatformCALayerWinInternal::updateTiles when zooming on Google Maps
+
+            Reviewed by Sam Weinig.
+
+            * compositing/tiling/crash-huge-layer-expected.txt: Added.
+            * compositing/tiling/crash-huge-layer.html: Added.
+
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
+
     Merged 92132
 
     2011-07-28  Abhishek Arya  <inferno@chromium.org>

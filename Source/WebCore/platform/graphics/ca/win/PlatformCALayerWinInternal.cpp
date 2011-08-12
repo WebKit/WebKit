@@ -347,13 +347,14 @@ CGSize PlatformCALayerWinInternal::constrainedSize(const CGSize& size) const
 
     int tileColumns = ceilf(constrainedSize.width / m_tileSize.width);
     int tileRows = ceilf(constrainedSize.height / m_tileSize.height);
-    int numTiles = tileColumns * tileRows;
+
+    bool tooManyTiles = tileColumns && numeric_limits<int>::max() / tileColumns < tileRows || tileColumns * tileRows > cMaxTileCount;
 
     // If number of tiles vertically or horizontally is < sqrt(cMaxTileCount)
     // just shorten the longer dimension. Otherwise shorten both dimensions
     // according to the ratio of width to height
 
-    if (numTiles > cMaxTileCount) {
+    if (tooManyTiles) {
         if (tileRows < cSqrtMaxTileCount)
             tileColumns = floorf(cMaxTileCount / tileRows);
         else if (tileColumns < cSqrtMaxTileCount)
@@ -420,6 +421,7 @@ void PlatformCALayerWinInternal::updateTiles()
     int numTilesHorizontal = ceil(m_constrainedSize.width / m_tileSize.width);
     int numTilesVertical = ceil(m_constrainedSize.height / m_tileSize.height);
     int numTilesTotal = numTilesHorizontal * numTilesVertical;
+    ASSERT(!m_constrainedSize.height || !m_constrainedSize.width || numTilesTotal > 0);
 
     int numTilesToChange = numTilesTotal - tileCount();
     if (numTilesToChange >= 0) {
