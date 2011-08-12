@@ -1,3 +1,18 @@
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
+
+    Merged 87863
+
+    2011-06-01  Abhishek Arya  <inferno@chromium.org>
+
+            Reviewed by Alexey Proskuryakov.
+
+            Tests setting document.body to non body elements, elements in other
+            documents.
+            https://bugs.webkit.org/show_bug.cgi?id=60831
+
+            * fast/dom/document-set-body-expected.txt: Added.
+            * fast/dom/document-set-body.html: Added.
+
 2011-08-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by nobody.
