@@ -3879,13 +3879,8 @@ void RenderLayer::collectLayers(Vector<RenderLayer*>*& posBuffer, Vector<RenderL
 {
     updateVisibilityStatus();
 
-    // Do not let the RenderFlowThread to render directly to screen. It will only render
-    // inside the RenderRegion objects, so avoid collecting it.
-    if (renderer()->isRenderFlowThread())
-        return;
-
     // Overflow layers are just painted by their enclosing layers, so they don't get put in zorder lists.
-    if ((m_hasVisibleContent || (m_hasVisibleDescendant && isStackingContext())) && !isNormalFlowOnly()) {
+    if ((m_hasVisibleContent || (m_hasVisibleDescendant && isStackingContext())) && !isNormalFlowOnly() && !renderer()->isRenderFlowThread()) {
         // Determine which buffer the child should be in.
         Vector<RenderLayer*>*& buffer = (zIndex() >= 0) ? posBuffer : negBuffer;
 

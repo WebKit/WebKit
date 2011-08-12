@@ -30,21 +30,20 @@
 #ifndef RenderRegion_h
 #define RenderRegion_h
 
-#include "RenderBox.h"
+#include "RenderReplaced.h"
 
 namespace WebCore {
 
 class RenderFlowThread;
 
-class RenderRegion : public RenderBox {
+class RenderRegion : public RenderReplaced {
 public:
     explicit RenderRegion(Node*, RenderFlowThread*);
     virtual ~RenderRegion();
 
     virtual bool isRenderRegion() const { return true; }
 
-    virtual void layout();
-    virtual void paint(PaintInfo&, const LayoutPoint&);
+    virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
 
     void setRegionRect(const IntRect& rect) { m_regionRect = rect; }
     IntRect regionRect() const { return m_regionRect; }

@@ -1,3 +1,30 @@
+2011-08-12  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66130
+        
+        RenderRegions need to paint the entire RenderFlowThread layer tree. Instead of just calling
+        paintBlock, make sure RenderRegions paint the flow thread's layer tree instead with the appropriate
+        offset.
+        
+        Fix RenderRegions to derive from RenderReplaced instead of RenderBox, since it simplifies the code.
+        They no longer have to subclass their own layout method or worry about all of the painting logic
+        for anything other than the content area.
+
+        Reviewed by Anders Carlsson.
+
+        Existing tests have a layer tree example, and so those results are updated to show the tree now.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::createFlowThreadStyle):
+        (WebCore::RenderFlowThread::paintIntoRegion):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::collectLayers):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::paintReplaced):
+        (WebCore::RenderRegion::styleDidChange):
+        * rendering/RenderRegion.h:
+
 2011-08-12  Chris Rogers  <crogers@google.com>
 
         Fix mac build when web audio is enabled

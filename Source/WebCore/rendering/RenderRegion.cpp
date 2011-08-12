@@ -39,10 +39,9 @@
 namespace WebCore {
 
 RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
-    : RenderBox(node)
+    : RenderReplaced(node, IntSize())
     , m_flowThread(flowThread)
 {
-    setReplaced(true);
 }
 
 RenderRegion::~RenderRegion()
@@ -52,50 +51,20 @@ RenderRegion::~RenderRegion()
     m_flowThread = 0;
 }
 
-void RenderRegion::layout()
+void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    ASSERT(needsLayout());
-
-    computeLogicalWidth();
-    computeLogicalHeight();
-
-    setNeedsLayout(false);
-}
-
-void RenderRegion::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
-{
-    if (!paintInfo.shouldPaintWithinRoot(this))
-        return;
-
-    if (style()->visibility() != VISIBLE)
-        return;
-
-    LayoutPoint adjustedPaintOffset = paintOffset + location();
-
-    if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection))
-        paintBoxDecorations(paintInfo, adjustedPaintOffset);
-
-    if (paintInfo.phase == PaintPhaseMask) {
-        paintMask(paintInfo, adjustedPaintOffset);
-        return;
-    }
-
-    LayoutRect paintRect = LayoutRect(adjustedPaintOffset, size());
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
-        paintOutline(paintInfo.context, paintRect);
-
     // Delegate painting of content in region to RenderFlowThread.
-    adjustedPaintOffset.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
-    m_flowThread->paintIntoRegion(paintInfo, regionRect(), adjustedPaintOffset);
+    m_flowThread->paintIntoRegion(paintInfo, regionRect(), LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
 }
 
 void RenderRegion::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)
 {
-    RenderBox::styleDidChange(difference, oldStyle);
+    RenderReplaced::styleDidChange(difference, oldStyle);
+
     // This needs to be done here and not in the constructor, because RenderFlowThread 
     // uses the style() property which is not yet initialized in the constructor.
     if (!oldStyle && m_flowThread)
         m_flowThread->addRegionToThread(this);
 }
 
-} // namespace WebCre
+} // namespace WebCore

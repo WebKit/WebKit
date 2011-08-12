@@ -32,6 +32,7 @@
 #include "RenderFlowThread.h"
 #include "Node.h"
 #include "PaintInfo.h"
+#include "RenderLayer.h"
 #include "RenderRegion.h"
 
 namespace WebCore {
@@ -50,6 +51,7 @@ PassRefPtr<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* par
     newStyle->inheritFrom(parentStyle);
     newStyle->setDisplay(BLOCK);
     newStyle->setPosition(AbsolutePosition);
+    newStyle->setZIndex(0);
     newStyle->setLeft(Length(0, Fixed));
     newStyle->setTop(Length(0, Fixed));
     newStyle->setWidth(Length(100, Percent));
@@ -252,7 +254,10 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, const LayoutRect& r
         } else
             renderFlowThreadOffset = LayoutPoint(regionClippingRect.location() - regionRect.location());
 
-        RenderBlock::paint(paintInfo, renderFlowThreadOffset);
+        context->translate(renderFlowThreadOffset.x(), renderFlowThreadOffset.y());
+        info.rect.moveBy(-renderFlowThreadOffset);
+        
+        layer()->paint(context, info.rect);
 
         context->restore();
     }
