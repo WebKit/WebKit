@@ -168,6 +168,8 @@ public:
 
     void setTextDirection(JSStringRef);
 
+    void setShouldStayOnPageAfterHandlingBeforeUnload(bool);
+
 private:
     static const double waitToDumpWatchdogTimerInterval;
 

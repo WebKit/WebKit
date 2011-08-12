@@ -493,5 +493,10 @@ void LayoutTestController::setTextDirection(JSStringRef direction)
     WKBundleFrameRef mainFrame = WKBundlePageGetMainFrame(InjectedBundle::shared().page()->page());
     return WKBundleFrameSetTextDirection(mainFrame, toWK(direction).get());
 }
+    
+void LayoutTestController::setShouldStayOnPageAfterHandlingBeforeUnload(bool shouldStayOnPage)
+{
+    InjectedBundle::shared().postNewBeforeUnloadReturnValue(!shouldStayOnPage);
+}
 
 } // namespace WTR

@@ -2732,6 +2732,9 @@ bool FrameLoader::shouldClose()
             shouldClose = true;
     }
 
+    if (!shouldClose)
+        m_submittedFormURL = KURL();
+
     return shouldClose;
 }
 

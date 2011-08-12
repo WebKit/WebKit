@@ -307,6 +307,9 @@ public:
     void evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script);
     void allowRoundingHacks();
 
+    bool shouldStayOnPageAfterHandlingBeforeUnload() const { return m_shouldStayOnPageAfterHandlingBeforeUnload; }
+    void setShouldStayOnPageAfterHandlingBeforeUnload(bool shouldStayOnPageAfterHandlingBeforeUnload) { m_shouldStayOnPageAfterHandlingBeforeUnload = shouldStayOnPageAfterHandlingBeforeUnload; }
+
     void setPOSIXLocale(JSStringRef locale);
 
     void setWebViewEditable(bool);
@@ -398,6 +401,7 @@ private:
     bool m_isPrinting;
     bool m_deferMainResourceDataLoad;
     bool m_shouldPaintBrokenImage;
+    bool m_shouldStayOnPageAfterHandlingBeforeUnload;
 
     std::string m_authenticationUsername;
     std::string m_authenticationPassword; 

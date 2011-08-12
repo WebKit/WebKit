@@ -107,7 +107,8 @@ DumpRenderTreeDraggingInfo *draggingInfo = nil;
 {
     if (!done)
         printf("CONFIRM NAVIGATION: %s\n", [message UTF8String]);
-    return YES;
+    
+    return !gLayoutTestController->shouldStayOnPageAfterHandlingBeforeUnload();
 }
 
 

@@ -1,3 +1,23 @@
+2011-08-12  Andy Estes  <aestes@apple.com>
+
+        Cancel in onbeforeunload dialog sometime causes a button to stop working.
+        https://bugs.webkit.org/show_bug.cgi?id=26211
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: fast/loader/form-submission-after-beforeunload-cancel.html
+
+        If an onbeforeunload handler cancels a navigation that was triggered by
+        a form submission, WebCore's multiple form submission protection
+        prevents the form from being submitted a second time even though no
+        first submission actually took place. Fix this by clearing
+        m_submittedFormURL if the onbeforeunload handler cancels the load. This
+        allows the submission to be retried.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::shouldClose): Set m_submittedFormURL to KURL()
+        if shouldClose() will return false.
+
 2011-08-12  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66130

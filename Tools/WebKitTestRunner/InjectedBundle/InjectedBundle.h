@@ -71,6 +71,8 @@ public:
     void setTopLoadingFrame(WKBundleFrameRef frame) { m_topLoadingFrame = frame; }
 
     bool shouldDumpPixels() const { return m_dumpPixels; }
+    
+    void postNewBeforeUnloadReturnValue(bool);
 
 private:
     InjectedBundle();

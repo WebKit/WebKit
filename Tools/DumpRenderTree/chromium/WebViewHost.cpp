@@ -481,9 +481,10 @@ bool WebViewHost::runModalPromptDialog(WebFrame* frame, const WebString& message
     return true;
 }
 
-bool WebViewHost::runModalBeforeUnloadDialog(WebFrame*, const WebString&)
+bool WebViewHost::runModalBeforeUnloadDialog(WebFrame*, const WebString& message)
 {
-    return true; // Allow window closure.
+    printf("CONFIRM NAVIGATION: %s\n", message.utf8().data());
+    return !layoutTestController()->shouldStayOnPageAfterHandlingBeforeUnload();
 }
 
 void WebViewHost::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)

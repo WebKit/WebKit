@@ -238,6 +238,13 @@ void TestInvocation::didReceiveMessageFromInjectedBundle(WKStringRef messageName
         TestController::shared().notifyDone();
         return;
     }
+    
+    if (WKStringIsEqualToUTF8CString(messageName, "BeforeUnloadReturnValue")) {
+        ASSERT(WKGetTypeID(messageBody) == WKBooleanGetTypeID());
+        WKBooleanRef beforeUnloadReturnValue = static_cast<WKBooleanRef>(messageBody);
+        TestController::shared().setBeforeUnloadReturnValue(WKBooleanGetValue(beforeUnloadReturnValue));
+        return;
+    }
 
     ASSERT_NOT_REACHED();
 }

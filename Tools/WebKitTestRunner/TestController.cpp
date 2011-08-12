@@ -68,6 +68,7 @@ TestController::TestController(int argc, const char* argv[])
     , m_shortTimeout(defaultShortTimeout)
     , m_didPrintWebProcessCrashedMessage(false)
     , m_shouldExitWhenWebProcessCrashes(true)
+    , m_beforeUnloadReturnValue(true)
 {
     initialize(argc, argv);
     controller = this;
@@ -105,8 +106,9 @@ static void setWindowFrameOtherPage(WKPageRef page, WKRect frame, const void* cl
 
 static bool runBeforeUnloadConfirmPanel(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo)
 {
-    printf("%s\n", toSTD(message).c_str());
-    return true;
+    TestController* testController = static_cast<TestController*>(const_cast<void*>(clientInfo));
+    printf("CONFIRM NAVIGATION: %s\n", toSTD(message).c_str());
+    return testController->beforeUnloadReturnValue();
 }
 
 static unsigned long long exceededDatabaseQuota(WKPageRef, WKFrameRef, WKSecurityOriginRef, WKStringRef, WKStringRef, unsigned long long, unsigned long long, unsigned long long, unsigned long long, const void*)
@@ -358,6 +360,8 @@ void TestController::initialize(int argc, const char* argv[])
 bool TestController::resetStateToConsistentValues()
 {
     m_state = Resetting;
+    
+    m_beforeUnloadReturnValue = true;
 
     WKRetainPtr<WKStringRef> messageName = adoptWK(WKStringCreateWithUTF8CString("Reset"));
     WKRetainPtr<WKMutableDictionaryRef> resetMessageBody = adoptWK(WKMutableDictionaryCreate());

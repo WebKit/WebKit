@@ -232,5 +232,12 @@ void InjectedBundle::dumpBackForwardListsForAllPages()
     for (size_t i = 0; i < size; ++i)
         m_pages[i]->dumpBackForwardList();
 }
+    
+void InjectedBundle::postNewBeforeUnloadReturnValue(bool value)
+{
+    WKRetainPtr<WKStringRef> messageName(AdoptWK, WKStringCreateWithUTF8CString("BeforeUnloadReturnValue"));
+    WKRetainPtr<WKBooleanRef> messageBody(AdoptWK, WKBooleanCreate(value));
+    WKBundlePostMessage(m_bundle, messageName.get(), messageBody.get());
+}
 
 } // namespace WTR

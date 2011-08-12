@@ -394,6 +394,8 @@ public:
     // Changes the direction of the focused element.
     void setTextDirection(const CppArgumentList&, CppVariant*);
 
+    void setShouldStayOnPageAfterHandlingBeforeUnload(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }
@@ -454,6 +456,8 @@ public:
     };
 
     TaskList* taskList() { return &m_taskList; }
+
+    bool shouldStayOnPageAfterHandlingBeforeUnload() const { return m_shouldStayOnPageAfterHandlingBeforeUnload; }
 
 private:
     friend class WorkItem;
@@ -623,6 +627,8 @@ private:
 
     // WAV audio data is stored here.
     WebKit::WebArrayBufferView m_audioData;
+
+    bool m_shouldStayOnPageAfterHandlingBeforeUnload;
 };
 
 #endif // LayoutTestController_h
