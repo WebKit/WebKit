@@ -57,6 +57,7 @@
 #include "NotificationPresenterImpl.h"
 #include "Page.h"
 #include "PlatformBridge.h"
+#include "PopupContainer.h"
 #include "PopupMenuChromium.h"
 #include "RenderWidget.h"
 #include "ScriptController.h"

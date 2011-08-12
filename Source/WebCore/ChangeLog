@@ -1,3 +1,103 @@
+2011-08-12  Fady Samuel  <fsamuel@chromium.org>
+
+        Refactoring of PopupMenuChromium For Readability and Maintainability
+        https://bugs.webkit.org/show_bug.cgi?id=66009
+
+        Reviewed by Darin Fisher.
+
+        Split PopupMenuChromium into three sets of files: PopupMenuChromium.{h|cpp}, PopupContainer.{h|cpp},
+        and PopupLisBox.{h|cpp}  for readability and maintainability.
+
+        No new tests as there's no change in functionality.
+
+        * WebCore.gypi:
+        * platform/chromium/PopupContainer.cpp: Added.
+        (WebCore::constructRelativeMouseEvent):
+        (WebCore::constructRelativeWheelEvent):
+        (WebCore::PopupContainer::create):
+        (WebCore::PopupContainer::PopupContainer):
+        (WebCore::PopupContainer::~PopupContainer):
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect):
+        (WebCore::PopupContainer::showPopup):
+        (WebCore::PopupContainer::hidePopup):
+        (WebCore::PopupContainer::notifyPopupHidden):
+        (WebCore::PopupContainer::layoutAndGetRTLOffset):
+        (WebCore::PopupContainer::handleMouseDownEvent):
+        (WebCore::PopupContainer::handleMouseMoveEvent):
+        (WebCore::PopupContainer::handleMouseReleaseEvent):
+        (WebCore::PopupContainer::handleWheelEvent):
+        (WebCore::PopupContainer::handleTouchEvent):
+        (WebCore::PopupContainer::handleGestureEvent):
+        (WebCore::PopupContainer::handleKeyEvent):
+        (WebCore::PopupContainer::hide):
+        (WebCore::PopupContainer::paint):
+        (WebCore::PopupContainer::paintBorder):
+        (WebCore::PopupContainer::isInterestedInEventForKey):
+        (WebCore::PopupContainer::chromeClientChromium):
+        (WebCore::PopupContainer::showInRect):
+        (WebCore::PopupContainer::refresh):
+        (WebCore::PopupContainer::isRTL):
+        (WebCore::PopupContainer::selectedIndex):
+        (WebCore::PopupContainer::menuItemHeight):
+        (WebCore::PopupContainer::menuItemFontSize):
+        (WebCore::PopupContainer::menuStyle):
+        (WebCore::popupData):
+        (WebCore::PopupContainer::getSelectedItemToolTip):
+        * platform/chromium/PopupContainer.h: Added.
+        (WebCore::PopupContainer::listBox):
+        (WebCore::PopupContainer::popupType):
+        * platform/chromium/PopupListBox.cpp: Added.
+        (WebCore::PopupListBox::PopupListBox):
+        (WebCore::PopupListBox::handleMouseDownEvent):
+        (WebCore::PopupListBox::handleMouseMoveEvent):
+        (WebCore::PopupListBox::handleMouseReleaseEvent):
+        (WebCore::PopupListBox::handleWheelEvent):
+        (WebCore::PopupListBox::isInterestedInEventForKey):
+        (WebCore::PopupListBox::handleTouchEvent):
+        (WebCore::PopupListBox::handleGestureEvent):
+        (WebCore::isCharacterTypeEvent):
+        (WebCore::PopupListBox::handleKeyEvent):
+        (WebCore::PopupListBox::hostWindow):
+        (WebCore::stripLeadingWhiteSpace):
+        (WebCore::PopupListBox::typeAheadFind):
+        (WebCore::PopupListBox::paint):
+        (WebCore::PopupListBox::paintRow):
+        (WebCore::PopupListBox::getRowFont):
+        (WebCore::PopupListBox::abandon):
+        (WebCore::PopupListBox::pointToRowIndex):
+        (WebCore::PopupListBox::acceptIndex):
+        (WebCore::PopupListBox::selectIndex):
+        (WebCore::PopupListBox::setOriginalIndex):
+        (WebCore::PopupListBox::getRowHeight):
+        (WebCore::PopupListBox::getRowBounds):
+        (WebCore::PopupListBox::invalidateRow):
+        (WebCore::PopupListBox::scrollToRevealRow):
+        (WebCore::PopupListBox::isSelectableItem):
+        (WebCore::PopupListBox::clearSelection):
+        (WebCore::PopupListBox::selectNextRow):
+        (WebCore::PopupListBox::selectPreviousRow):
+        (WebCore::PopupListBox::adjustSelectedIndex):
+        (WebCore::PopupListBox::hidePopup):
+        (WebCore::PopupListBox::updateFromElement):
+        (WebCore::PopupListBox::setMaxWidthAndLayout):
+        (WebCore::PopupListBox::layout):
+        (WebCore::PopupListBox::clear):
+        (WebCore::PopupListBox::isPointInBounds):
+        * platform/chromium/PopupListBox.h: Added.
+        (WebCore::PopupItem::PopupItem):
+        (WebCore::PopupListBox::create):
+        (WebCore::PopupListBox::selectedIndex):
+        (WebCore::PopupListBox::numItems):
+        (WebCore::PopupListBox::setBaseWidth):
+        (WebCore::PopupListBox::setMaxHeight):
+        (WebCore::PopupListBox::setMaxWidth):
+        (WebCore::PopupListBox::disconnectClient):
+        (WebCore::PopupListBox::items):
+        (WebCore::PopupListBox::~PopupListBox):
+        (WebCore::PopupListBox::scrollToRevealSelection):
+        * platform/chromium/PopupMenuChromium.cpp:
+        * platform/chromium/PopupMenuChromium.h:
+
 2011-08-12  Mark Rowe  <mrowe@apple.com>
 
         Be more forward-looking in the choice of compiler.

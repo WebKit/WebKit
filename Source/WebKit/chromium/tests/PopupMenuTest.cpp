@@ -37,6 +37,7 @@
 #include "Element.h"
 #include "FrameView.h"
 #include "KeyboardCodes.h"
+#include "PopupContainer.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "PopupMenuChromium.h"
