@@ -1393,10 +1393,9 @@ Eina_Bool ewk_view_execute_editor_command(Evas_Object *o, const Ewk_Editor_Comma
     }
 }
 
-#if ENABLE(CONTEXT_MENUS)
-
 Eina_Bool ewk_view_context_menu_forward_event(Evas_Object *o, const Evas_Event_Mouse_Down *ev)
 {
+#if ENABLE(CONTEXT_MENUS)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     Eina_Bool mouse_press_handled = EINA_FALSE;
@@ -1425,9 +1424,10 @@ Eina_Bool ewk_view_context_menu_forward_event(Evas_Object *o, const Evas_Event_M
     }
 
     return EINA_TRUE;
-}
-
+#else
+    return EINA_FALSE;
 #endif
+}
 
 double ewk_view_load_progress_get(const Evas_Object *o)
 {

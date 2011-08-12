@@ -1,5 +1,18 @@
 2011-08-12  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
+        [EFL] Fix after r91815 - restore changes from r91659.
+        https://bugs.webkit.org/show_bug.cgi?id=64682
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Restore patch for fix ewk_view_context_menu_forward_event which
+        has been overwrititen by mistake.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_context_menu_forward_event):
+
+2011-08-12  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
         [EFL] HTML Saving feature.
         https://bugs.webkit.org/show_bug.cgi?id=55455
 
