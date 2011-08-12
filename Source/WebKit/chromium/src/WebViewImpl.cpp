@@ -1781,12 +1781,12 @@ void WebViewImpl::scrollFocusedNodeIntoView()
     }
 }
 
-double WebViewImpl::zoomLevel()
+float WebViewImpl::zoomLevel() const
 {
     return m_zoomLevel;
 }
 
-double WebViewImpl::setZoomLevel(bool textOnly, double zoomLevel)
+float WebViewImpl::setZoomLevel(bool textOnly, float zoomLevel)
 {
     if (zoomLevel < m_minimumZoomLevel)
         m_zoomLevel = m_minimumZoomLevel;
@@ -1800,7 +1800,7 @@ double WebViewImpl::setZoomLevel(bool textOnly, double zoomLevel)
     if (pluginContainer)
         pluginContainer->plugin()->setZoomLevel(m_zoomLevel, textOnly);
     else {
-        float zoomFactor = static_cast<float>(zoomLevelToZoomFactor(m_zoomLevel));
+        float zoomFactor = zoomLevelToZoomFactor(m_zoomLevel);
         if (textOnly)
             frame->setPageAndTextZoomFactors(1, zoomFactor);
         else
@@ -1809,15 +1809,15 @@ double WebViewImpl::setZoomLevel(bool textOnly, double zoomLevel)
     return m_zoomLevel;
 }
 
-void WebViewImpl::zoomLimitsChanged(double minimumZoomLevel,
-                                    double maximumZoomLevel)
+void WebViewImpl::zoomLimitsChanged(float minimumZoomLevel,
+                                    float maximumZoomLevel)
 {
     m_minimumZoomLevel = minimumZoomLevel;
     m_maximumZoomLevel = maximumZoomLevel;
     m_client->zoomLimitsChanged(m_minimumZoomLevel, m_maximumZoomLevel);
 }
 
-void WebViewImpl::fullFramePluginZoomLevelChanged(double zoomLevel)
+void WebViewImpl::fullFramePluginZoomLevelChanged(float zoomLevel)
 {
     if (zoomLevel == m_zoomLevel)
         return;
@@ -1826,12 +1826,12 @@ void WebViewImpl::fullFramePluginZoomLevelChanged(double zoomLevel)
     m_client->zoomLevelChanged();
 }
 
-double WebView::zoomLevelToZoomFactor(double zoomLevel)
+float WebView::zoomLevelToZoomFactor(float zoomLevel)
 {
     return pow(textSizeMultiplierRatio, zoomLevel);
 }
 
-double WebView::zoomFactorToZoomLevel(double factor)
+float WebView::zoomFactorToZoomLevel(float factor)
 {
     // Since factor = 1.2^level, level = log(factor) / log(1.2)
     return log(factor) / log(textSizeMultiplierRatio);

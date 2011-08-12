@@ -151,10 +151,10 @@ public:
     virtual void setInitialFocus(bool reverse);
     virtual void clearFocusedNode();
     virtual void scrollFocusedNodeIntoView();
-    virtual double zoomLevel();
-    virtual double setZoomLevel(bool textOnly, double zoomLevel);
-    virtual void zoomLimitsChanged(double minimumZoomLevel,
-                                   double maximumZoomLevel);
+    virtual float zoomLevel() const;
+    virtual float setZoomLevel(bool textOnly, float zoomLevel);
+    virtual void zoomLimitsChanged(float minimumZoomLevel,
+                                   float maximumZoomLevel);
     virtual void scalePage(float scaleFactor, WebPoint origin);
     virtual void performMediaPlayerAction(
         const WebMediaPlayerAction& action,
@@ -394,7 +394,7 @@ public:
     // zoom level has been updated.  The plugin should only call this function
     // if the zoom change was triggered by the browser, it's only needed in case
     // a plugin can update its own zoom, say because of its own UI.
-    void fullFramePluginZoomLevelChanged(double zoomLevel);
+    void fullFramePluginZoomLevelChanged(float zoomLevel);
 
 #if ENABLE(GESTURE_RECOGNIZER)
     void resetGestureRecognizer();
@@ -493,11 +493,11 @@ private:
 
     // Keeps track of the current zoom level. 0 means no zoom, positive numbers
     // mean zoom in, negative numbers mean zoom out.
-    double m_zoomLevel;
+    float m_zoomLevel;
 
-    double m_minimumZoomLevel;
+    float m_minimumZoomLevel;
 
-    double m_maximumZoomLevel;
+    float m_maximumZoomLevel;
 
     bool m_contextMenuAllowed;
 
