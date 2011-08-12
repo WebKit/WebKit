@@ -33,7 +33,7 @@
 #if !USE(PTHREADS)
 
 #include "CurrentTime.h"
-#include "DateMap.h"
+#include "DateMath.h"
 #include "dtoa.h"
 #include "HashMap.h"
 #include "MainThread.h"
