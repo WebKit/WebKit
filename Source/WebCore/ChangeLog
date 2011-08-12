@@ -1,3 +1,9 @@
+2011-08-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Inspector clean-up: remove unused method declaration from InspectorAgent.h
+
+        * inspector/InspectorAgent.h:
+
 2011-08-12  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Network resource identifier should have RequestId type and requestId name in protocol.

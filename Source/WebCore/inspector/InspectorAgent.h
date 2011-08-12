@@ -63,7 +63,6 @@ public:
 
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;
-    void reloadPage(ErrorString*, bool ignoreCache);
     void showConsole();
 
     void setFrontend(InspectorFrontend*);
