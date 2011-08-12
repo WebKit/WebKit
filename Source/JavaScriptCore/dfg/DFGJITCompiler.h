@@ -256,6 +256,21 @@ public:
     void jitAssertIsCell(GPRReg) {}
 #endif
 
+    // These methods convert between doubles, and doubles boxed and JSValues.
+    GPRReg boxDouble(FPRReg fpr, GPRReg gpr)
+    {
+        moveDoubleToPtr(fpr, gpr);
+        subPtr(GPRInfo::tagTypeNumberRegister, gpr);
+        return gpr;
+    }
+    FPRReg unboxDouble(GPRReg gpr, FPRReg fpr)
+    {
+        jitAssertIsJSDouble(gpr);
+        addPtr(GPRInfo::tagTypeNumberRegister, gpr);
+        movePtrToDouble(gpr, fpr);
+        return fpr;
+    }
+
 #if ENABLE(SAMPLING_COUNTERS)
     // Debug profiling tool.
     void emitCount(AbstractSamplingCounter&, uint32_t increment = 1);

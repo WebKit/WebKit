@@ -357,15 +357,11 @@ protected:
     // These methods convert between doubles, and doubles boxed and JSValues.
     GPRReg boxDouble(FPRReg fpr, GPRReg gpr)
     {
-        m_jit.moveDoubleToPtr(fpr, gpr);
-        m_jit.subPtr(GPRInfo::tagTypeNumberRegister, gpr);
-        return gpr;
+        return m_jit.boxDouble(fpr, gpr);
     }
     FPRReg unboxDouble(GPRReg gpr, FPRReg fpr)
     {
-        m_jit.addPtr(GPRInfo::tagTypeNumberRegister, gpr);
-        m_jit.movePtrToDouble(gpr, fpr);
-        return fpr;
+        return m_jit.unboxDouble(gpr, fpr);
     }
     GPRReg boxDouble(FPRReg fpr)
     {

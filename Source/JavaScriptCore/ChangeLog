@@ -1,3 +1,36 @@
+2011-08-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT has inconsistent use of boxDouble and unboxDouble,
+        inconsistent use of assertions regarding doubles, and those
+        assertions are not turned on in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=66160
+
+        Reviewed by Gavin Barraclough.
+        
+        JIT assertions are now turned on in debug builds.  JIT
+        assertions are now used for boxing and unboxing doubles, and boxing
+        and unboxing no longer involves code duplication.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::fillDouble):
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::boxDouble):
+        (JSC::DFG::JITCodeGenerator::unboxDouble):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::fillNumericToDouble):
+        (JSC::DFG::GeneralizedRegister::moveTo):
+        (JSC::DFG::GeneralizedRegister::swapWith):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::boxDouble):
+        (JSC::DFG::JITCompiler::unboxDouble):
+        * dfg/DFGNode.h:
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::knownConstantArithOp):
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::convertToDouble):
+
 2011-08-12  Mark Rowe  <mrowe@apple.com>
 
         Be more forward-looking in the choice of compiler.

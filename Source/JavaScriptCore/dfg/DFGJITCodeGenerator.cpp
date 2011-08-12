@@ -168,8 +168,7 @@ FPRReg JITCodeGenerator::fillDouble(NodeIndex nodeIndex)
 
         // First, if we get here we have a double encoded as a JSValue
         m_jit.move(jsValueGpr, tempGpr);
-        m_jit.addPtr(GPRInfo::tagTypeNumberRegister, tempGpr);
-        m_jit.movePtrToDouble(tempGpr, fpr);
+        unboxDouble(tempGpr, fpr);
         JITCompiler::Jump hasUnboxedDouble = m_jit.jump();
 
         // Finally, handle integers.

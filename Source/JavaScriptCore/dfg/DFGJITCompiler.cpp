@@ -51,9 +51,7 @@ void JITCompiler::fillNumericToDouble(NodeIndex nodeIndex, FPRReg fpr, GPRReg te
     } else {
         loadPtr(addressFor(node.virtualRegister()), temporary);
         Jump isInteger = branchPtr(MacroAssembler::AboveOrEqual, temporary, GPRInfo::tagTypeNumberRegister);
-        jitAssertIsJSDouble(temporary);
-        addPtr(GPRInfo::tagTypeNumberRegister, temporary);
-        movePtrToDouble(temporary, fpr);
+        unboxDouble(temporary, fpr);
         Jump hasUnboxedDouble = jump();
         isInteger.link(this);
         convertInt32ToDouble(temporary, fpr);
@@ -197,8 +195,7 @@ public:
                 notInt.link(&jit);
             }
             
-            jit.moveDoubleToPtr(fpr(), other.gpr());
-            jit.subPtr(GPRInfo::tagTypeNumberRegister, other.gpr());
+            jit.boxDouble(fpr(), other.gpr());
             
             if (done.isSet())
                 done.link(&jit);
@@ -206,8 +203,7 @@ public:
         }
         
         if (UNLIKELY(other.isFPR())) {
-            jit.addPtr(GPRInfo::tagTypeNumberRegister, gpr());
-            jit.movePtrToDouble(gpr(), other.fpr());
+            jit.unboxDouble(gpr(), other.fpr());
             return;
         }
         
@@ -253,14 +249,12 @@ public:
                 notInt.link(&jit);
             }
             
-            jit.moveDoubleToPtr(fpr(), other.gpr());
-            jit.subPtr(GPRInfo::tagTypeNumberRegister, other.gpr());
+            jit.boxDouble(fpr(), other.gpr());
             
             if (done.isSet())
                 done.link(&jit);
             
-            jit.addPtr(GPRInfo::tagTypeNumberRegister, scratchGPR);
-            jit.movePtrToDouble(scratchGPR, fpr());
+            jit.unboxDouble(scratchGPR, fpr());
             return;
         }
         

@@ -29,7 +29,11 @@
 // Emit various logging information for debugging, including dumping the dataflow graphs.
 #define DFG_DEBUG_VERBOSE 0
 // Enable generation of dynamic checks into the instruction stream.
+#if !ASSERT_DISABLED
+#define DFG_JIT_ASSERT 1
+#else
 #define DFG_JIT_ASSERT 0
+#endif
 // Consistency check contents compiler data structures.
 #define DFG_CONSISTENCY_CHECK 0
 // Emit a breakpoint into the head of every generated function, to aid debugging in GDB.

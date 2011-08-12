@@ -201,8 +201,7 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
             notInt.link(&m_jit);
             
             m_jit.move(regArgGPR, resultGPR);
-            m_jit.addPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
-            m_jit.movePtrToDouble(resultGPR, tmp2FPR);
+            unboxDouble(resultGPR, tmp2FPR);
             
             haveValue.link(&m_jit);
         }
@@ -213,8 +212,7 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
             m_jit.addDouble(tmp1FPR, tmp2FPR);
         else
             m_jit.subDouble(tmp1FPR, tmp2FPR);
-        m_jit.moveDoubleToPtr(tmp2FPR, resultGPR);
-        m_jit.subPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
+        boxDouble(tmp2FPR, resultGPR);
         break;
         
     default:
@@ -480,8 +478,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         m_jit.convertInt32ToDouble(op1.gpr(), boxer.fpr());
         m_jit.addDouble(JITCompiler::AbsoluteAddress(&twoToThe32), boxer.fpr());
         
-        m_jit.moveDoubleToPtr(boxer.fpr(), result.gpr());
-        m_jit.subPtr(GPRInfo::tagTypeNumberRegister, result.gpr());
+        boxDouble(boxer.fpr(), result.gpr());
         
         JITCompiler::Jump done = m_jit.jump();
         
