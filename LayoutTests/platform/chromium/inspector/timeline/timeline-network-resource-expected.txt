@@ -8,7 +8,7 @@ ResourceSendRequest Properties:
     startTime : <number>
     stackTrace : <object>
     data : {
-        identifier : <string>
+        requestId : <string>
         url : <string>
         requestMethod : "GET"
     }
@@ -21,7 +21,7 @@ ResourceReceiveResponse Properties:
 {
     startTime : <number>
     data : {
-        identifier : <string>
+        requestId : <string>
         statusCode : 0
         mimeType : <string>
     }
@@ -36,7 +36,7 @@ ResourceFinish Properties:
 {
     startTime : <number>
     data : {
-        identifier : <string>
+        requestId : <string>
         didFail : false
     }
     type : "ResourceFinish"

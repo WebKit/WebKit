@@ -752,15 +752,15 @@ WebInspector.NetworkLogView.prototype = {
     {
         this._resources.push(resource);
         
-        // In case of redirect resource identifier is reassigned to a redirected 
+        // In case of redirect request id is reassigned to a redirected 
         // resource and we need to update _resourcesById ans search results. 
-        if (this._resourcesById[resource.identifier]) {
+        if (this._resourcesById[resource.requestId]) {
             var oldResource = resource.redirects[resource.redirects.length - 1];
-            this._resourcesById[oldResource.identifier] = oldResource;
+            this._resourcesById[oldResource.requestId] = oldResource;
             
-            this._updateSearchMatchedListAfterResourceIdentifierChanged(resource.identifier, oldResource.identifier);
+            this._updateSearchMatchedListAfterRequestIdChanged(resource.requestId, oldResource.requestId);
         }
-        this._resourcesById[resource.identifier] = resource;
+        this._resourcesById[resource.requestId] = resource;
         
         this._resourcesByURL[resource.url] = resource;
 
@@ -1118,12 +1118,12 @@ WebInspector.NetworkLogView.prototype = {
         if ((!resource.displayName || !resource.displayName.match(this._searchRegExp)) && !resource.folder.match(this._searchRegExp))
             return -1;
 
-        if (resource.identifier in this._matchedResourcesMap)
-            return this._matchedResourcesMap[resource.identifier];
+        if (resource.requestId in this._matchedResourcesMap)
+            return this._matchedResourcesMap[resource.requestId];
 
         var matchedResourceIndex = this._matchedResources.length;
-        this._matchedResourcesMap[resource.identifier] = matchedResourceIndex;
-        this._matchedResources.push(resource.identifier);
+        this._matchedResourcesMap[resource.requestId] = matchedResourceIndex;
+        this._matchedResources.push(resource.requestId);
 
         return matchedResourceIndex;
     },
@@ -1135,13 +1135,13 @@ WebInspector.NetworkLogView.prototype = {
         this._highlightNthMatchedResource(-1, false);
     },
 
-    _updateSearchMatchedListAfterResourceIdentifierChanged: function(oldIdentifier, newIdentifier)
+    _updateSearchMatchedListAfterRequestIdChanged: function(oldRequestId, newRequestId)
     {
-        var resourceIndex = this._matchedResourcesMap[oldIdentifier];
+        var resourceIndex = this._matchedResourcesMap[oldRequestId];
         if (resourceIndex) {
-            delete this._matchedResourcesMap[oldIdentifier];
-            this._matchedResourcesMap[newIdentifier] = resourceIndex;
-            this._matchedResources[resourceIndex] = newIdentifier;
+            delete this._matchedResourcesMap[oldRequestId];
+            this._matchedResourcesMap[newRequestId] = resourceIndex;
+            this._matchedResources[resourceIndex] = newRequestId;
         }
     },
 
@@ -1192,9 +1192,9 @@ WebInspector.NetworkLogView.prototype = {
     performSearch: function(searchQuery, sortOrFilterApplied)
     {
         var newMatchedResourceIndex = 0;
-        var currentMatchedResourceId;
+        var currentMatchedRequestId;
         if (this._currentMatchedResourceIndex !== -1)
-            currentMatchedResourceId = this._matchedResources[this._currentMatchedResourceIndex];
+            currentMatchedRequestId = this._matchedResources[this._currentMatchedResourceIndex];
 
         if (!sortOrFilterApplied)
             this._searchRegExp = createSearchRegex(searchQuery);
@@ -1209,7 +1209,7 @@ WebInspector.NetworkLogView.prototype = {
             if (dataGridNode.isFilteredOut())
                 continue;
 
-            if (this._matchResource(dataGridNode._resource) !== -1 && dataGridNode._resource.identifier === currentMatchedResourceId)
+            if (this._matchResource(dataGridNode._resource) !== -1 && dataGridNode._resource.requestId === currentMatchedRequestId)
                 newMatchedResourceIndex = this._matchedResources.length - 1;
         }
 

@@ -226,8 +226,8 @@ void InspectorConsoleAgent::didReceiveResponse(unsigned long identifier, const R
 
     if (response.httpStatusCode() >= 400) {
         String message = "Failed to load resource: the server responded with a status of " + String::number(response.httpStatusCode()) + " (" + response.httpStatusText() + ')';
-        String resourceId = IdentifiersFactory::resourceId(identifier);
-        addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), resourceId)));
+        String requestId = IdentifiersFactory::requestId(identifier);
+        addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), requestId)));
     }
 }
 
@@ -240,8 +240,8 @@ void InspectorConsoleAgent::didFailLoading(unsigned long identifier, const Resou
     String message = "Failed to load resource";
     if (!error.localizedDescription().isEmpty())
         message += ": " + error.localizedDescription();
-    String resourceId = IdentifiersFactory::resourceId(identifier);
-    addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), resourceId)));
+    String requestId = IdentifiersFactory::requestId(identifier);
+    addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, error.failingURL(), requestId)));
 }
 
 void InspectorConsoleAgent::setMonitoringXHREnabled(ErrorString*, bool enabled)

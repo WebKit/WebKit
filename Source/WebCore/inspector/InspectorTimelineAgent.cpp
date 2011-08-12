@@ -290,8 +290,8 @@ void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, c
 {
     pushGCEventRecords();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    String resourceId = IdentifiersFactory::resourceId(identifier);
-    record->setObject("data", TimelineRecordFactory::createResourceSendRequestData(resourceId, request));
+    String requestId = IdentifiersFactory::requestId(identifier);
+    record->setObject("data", TimelineRecordFactory::createResourceSendRequestData(requestId, request));
     record->setString("type", TimelineRecordType::ResourceSendRequest);
     setHeapSizeStatistic(record.get());
     m_frontend->eventRecorded(record.release());
@@ -299,8 +299,8 @@ void InspectorTimelineAgent::willSendResourceRequest(unsigned long identifier, c
 
 void InspectorTimelineAgent::willReceiveResourceData(unsigned long identifier)
 {
-    String resourceId = IdentifiersFactory::resourceId(identifier);
-    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(resourceId), TimelineRecordType::ResourceReceivedData);
+    String requestId = IdentifiersFactory::requestId(identifier);
+    pushCurrentRecord(TimelineRecordFactory::createReceiveResourceData(requestId), TimelineRecordType::ResourceReceivedData);
 }
 
 void InspectorTimelineAgent::didReceiveResourceData()
@@ -310,8 +310,8 @@ void InspectorTimelineAgent::didReceiveResourceData()
     
 void InspectorTimelineAgent::willReceiveResourceResponse(unsigned long identifier, const ResourceResponse& response)
 {
-    String resourceId = IdentifiersFactory::resourceId(identifier);
-    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(resourceId, response), TimelineRecordType::ResourceReceiveResponse);
+    String requestId = IdentifiersFactory::requestId(identifier);
+    pushCurrentRecord(TimelineRecordFactory::createResourceReceiveResponseData(requestId, response), TimelineRecordType::ResourceReceiveResponse);
 }
 
 void InspectorTimelineAgent::didReceiveResourceResponse()
@@ -321,7 +321,7 @@ void InspectorTimelineAgent::didReceiveResourceResponse()
 
 void InspectorTimelineAgent::didFinishLoadingResource(unsigned long identifier, bool didFail, double finishTime)
 {
-    appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::resourceId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish);
+    appendRecord(TimelineRecordFactory::createResourceFinishData(IdentifiersFactory::requestId(identifier), didFail, finishTime * 1000), TimelineRecordType::ResourceFinish);
 }
 
 void InspectorTimelineAgent::didTimeStamp(const String& message)

@@ -37,7 +37,7 @@ WebInspector.ExtensionServer = function()
     this._subscriptionStopHandlers = {};
     this._extraHeaders = {};
     this._resources = {};
-    this._lastResourceId = 0;
+    this._lastRequestId = 0;
     this._allowedOrigins = {};
     this._status = new WebInspector.ExtensionStatus();
 
@@ -126,7 +126,7 @@ WebInspector.ExtensionServer.prototype = {
     {
         var resource = event.data;
         if (this._hasSubscribers("resource-finished"))
-            this._postNotification("resource-finished", this._resourceId(resource), (new WebInspector.HAREntry(resource)).build());
+            this._postNotification("resource-finished", this._requestId(resource), (new WebInspector.HAREntry(resource)).build());
     },
 
     _hasSubscribers: function(type)
@@ -327,7 +327,7 @@ WebInspector.ExtensionServer.prototype = {
         var resources = WebInspector.networkLog.resources;
         var harLog = (new WebInspector.HARLog(resources)).build();
         for (var i = 0; i < harLog.entries.length; ++i)
-            harLog.entries[i]._resourceId = this._resourceId(resources[i]);
+            harLog.entries[i]._requestId = this._requestId(resources[i]);
         return harLog;
     },
 
@@ -347,13 +347,13 @@ WebInspector.ExtensionServer.prototype = {
         resource.requestContent(onContentAvailable.bind(this));
     },
 
-    _resourceId: function(resource)
+    _requestId: function(resource)
     {
-        if (!resource._extensionResourceId) {
-            resource._extensionResourceId = ++this._lastResourceId;
-            this._resources[resource._extensionResourceId] = resource;
+        if (!resource._extensionRequestId) {
+            resource._extensionRequestId = ++this._lastRequestId;
+            this._resources[resource._extensionRequestId] = resource;
         }
-        return resource._extensionResourceId;
+        return resource._extensionRequestId;
     },
 
     _resourceById: function(id)

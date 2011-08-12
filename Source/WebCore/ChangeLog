@@ -1,3 +1,105 @@
+2011-08-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Network resource identifier should have RequestId type and requestId name in protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=66061
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/ConsoleMessage.cpp:
+        (WebCore::ConsoleMessage::ConsoleMessage):
+        (WebCore::ConsoleMessage::addToFrontend):
+        * inspector/ConsoleMessage.h:
+        * inspector/IdentifiersFactory.cpp:
+        (WebCore::IdentifiersFactory::requestId):
+        * inspector/IdentifiersFactory.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::didReceiveResponse):
+        (WebCore::InspectorConsoleAgent::didFailLoading):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::markResourceAsCached):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::didReceiveData):
+        (WebCore::InspectorResourceAgent::didFinishLoading):
+        (WebCore::InspectorResourceAgent::didFailLoading):
+        (WebCore::InspectorResourceAgent::didLoadResourceFromMemoryCache):
+        (WebCore::InspectorResourceAgent::setInitialScriptContent):
+        (WebCore::InspectorResourceAgent::didReceiveScriptResponse):
+        (WebCore::InspectorResourceAgent::setInitialXHRContent):
+        (WebCore::InspectorResourceAgent::didReceiveXHRResponse):
+        (WebCore::InspectorResourceAgent::didCreateWebSocket):
+        (WebCore::InspectorResourceAgent::willSendWebSocketHandshakeRequest):
+        (WebCore::InspectorResourceAgent::didReceiveWebSocketHandshakeResponse):
+        (WebCore::InspectorResourceAgent::didCloseWebSocket):
+        (WebCore::InspectorResourceAgent::getResourceContent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willSendResourceRequest):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceData):
+        (WebCore::InspectorTimelineAgent::willReceiveResourceResponse):
+        (WebCore::InspectorTimelineAgent::didFinishLoadingResource):
+        * inspector/NetworkResourcesData.cpp:
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::resourceCreated):
+        (WebCore::NetworkResourcesData::responseReceived):
+        (WebCore::NetworkResourcesData::setResourceType):
+        (WebCore::NetworkResourcesData::resourceType):
+        (WebCore::NetworkResourcesData::setResourceContent):
+        (WebCore::NetworkResourcesData::maybeAddResourceData):
+        (WebCore::NetworkResourcesData::maybeDecodeDataToContent):
+        (WebCore::NetworkResourcesData::addCachedResource):
+        (WebCore::NetworkResourcesData::addResourceSharedBuffer):
+        (WebCore::NetworkResourcesData::data):
+        (WebCore::NetworkResourcesData::clear):
+        (WebCore::NetworkResourcesData::ensureNoDataForRequestId):
+        (WebCore::NetworkResourcesData::ensureFreeSpace):
+        * inspector/NetworkResourcesData.h:
+        (WebCore::NetworkResourcesData::ResourceData::requestId):
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createResourceSendRequestData):
+        (WebCore::TimelineRecordFactory::createResourceReceiveResponseData):
+        (WebCore::TimelineRecordFactory::createResourceFinishData):
+        (WebCore::TimelineRecordFactory::createReceiveResourceData):
+        * inspector/TimelineRecordFactory.h:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.messageAdded):
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.Resources.prototype.getHAR):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype._notifyResourceFinished):
+        (WebInspector.ExtensionServer.prototype._onGetHAR):
+        (WebInspector.ExtensionServer.prototype._requestId):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.requestContent):
+        (WebInspector.NetworkDispatcher.prototype.requestWillBeSent):
+        (WebInspector.NetworkDispatcher.prototype.resourceMarkedAsCached):
+        (WebInspector.NetworkDispatcher.prototype.responseReceived):
+        (WebInspector.NetworkDispatcher.prototype.dataReceived):
+        (WebInspector.NetworkDispatcher.prototype.loadingFinished):
+        (WebInspector.NetworkDispatcher.prototype.loadingFailed):
+        (WebInspector.NetworkDispatcher.prototype.resourceLoadedFromMemoryCache):
+        (WebInspector.NetworkDispatcher.prototype.webSocketCreated):
+        (WebInspector.NetworkDispatcher.prototype.webSocketWillSendHandshakeRequest):
+        (WebInspector.NetworkDispatcher.prototype.webSocketHandshakeResponseReceived):
+        (WebInspector.NetworkDispatcher.prototype.webSocketClosed):
+        (WebInspector.NetworkDispatcher.prototype._appendRedirect):
+        (WebInspector.NetworkDispatcher.prototype._startResource):
+        (WebInspector.NetworkDispatcher.prototype._finishResource):
+        (WebInspector.NetworkDispatcher.prototype._createResource):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView.prototype._appendResource):
+        (WebInspector.NetworkLogView.prototype._matchResource):
+        (WebInspector.NetworkLogView.prototype._updateSearchMatchedListAfterRequestIdChanged):
+        (WebInspector.NetworkLogView.prototype.performSearch):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._addRecordToTimeline):
+        (WebInspector.TimelinePanel.prototype._findParentRecord):
+        (WebInspector.TimelinePanel.FormattedRecord):
+
 2011-08-11  Hans Wennborg  <hans@chromium.org>
 
         IndexedDB: Object store records don't need to have keys in all indexes

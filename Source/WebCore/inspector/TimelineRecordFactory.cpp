@@ -129,38 +129,38 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createScheduleResourceRequest
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(const String& resourceId, const ResourceRequest& request)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceSendRequestData(const String& requestId, const ResourceRequest& request)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setString("identifier", resourceId);
+    data->setString("requestId", requestId);
     data->setString("url", request.url().string());
     data->setString("requestMethod", request.httpMethod());
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceReceiveResponseData(const String& resourceId, const ResourceResponse& response)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceReceiveResponseData(const String& requestId, const ResourceResponse& response)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setString("identifier", resourceId);
+    data->setString("requestId", requestId);
     data->setNumber("statusCode", response.httpStatusCode());
     data->setString("mimeType", response.mimeType());
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(const String& resourceId, bool didFail, double finishTime)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createResourceFinishData(const String& requestId, bool didFail, double finishTime)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setString("identifier", resourceId);
+    data->setString("requestId", requestId);
     data->setBoolean("didFail", didFail);
     if (finishTime)
         data->setNumber("networkTime", finishTime);
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(const String& resourceId)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(const String& requestId)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setString("identifier", resourceId);
+    data->setString("requestId", requestId);
     return data.release();
 }
     

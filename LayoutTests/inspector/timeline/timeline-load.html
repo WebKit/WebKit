@@ -10,15 +10,15 @@ function test()
     InspectorTest.addSniffer(WebInspector.TimelineModel.prototype, "_loadNextChunk", loadNextChunk);
     InspectorFrontendHost.saveAs = saveAs;
     var data = [
-        {"startTime":1310749854316.8408,"data":{"identifier":43,"url":"http://www.webkit.org/","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":1819936,"totalHeapSize":7629120},
-        {"startTime":1310749855118.9329,"data":{"identifier":43,"statusCode":200,"mimeType":"text/html"},"children":[],"endTime":1310749855118.968,"type":"ResourceReceiveResponse","usedHeapSize":1819936,"totalHeapSize":7629120},
-        {"startTime":1310749855136.245,"data":{"identifier":44,"url":"http://www.webkit.org/css/main.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855136.655,"data":{"identifier":45,"url":"http://www.webkit.org/css/green.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855137.023,"data":{"identifier":46,"url":"http://www.webkit.org/css/blue.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855137.342,"data":{"identifier":47,"url":"http://www.webkit.org/css/yellow.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855137.656,"data":{"identifier":48,"url":"http://www.webkit.org/css/pink.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855137.989,"data":{"identifier":49,"url":"http://www.webkit.org/css/purple.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
-        {"startTime":1310749855138.308,"data":{"identifier":50,"url":"http://www.webkit.org/css/gray.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120}];
+        {"startTime":1310749854316.8408,"data":{"requestId":43,"url":"http://www.webkit.org/","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":1819936,"totalHeapSize":7629120},
+        {"startTime":1310749855118.9329,"data":{"requestId":43,"statusCode":200,"mimeType":"text/html"},"children":[],"endTime":1310749855118.968,"type":"ResourceReceiveResponse","usedHeapSize":1819936,"totalHeapSize":7629120},
+        {"startTime":1310749855136.245,"data":{"requestId":44,"url":"http://www.webkit.org/css/main.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855136.655,"data":{"requestId":45,"url":"http://www.webkit.org/css/green.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855137.023,"data":{"requestId":46,"url":"http://www.webkit.org/css/blue.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855137.342,"data":{"requestId":47,"url":"http://www.webkit.org/css/yellow.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855137.656,"data":{"requestId":48,"url":"http://www.webkit.org/css/pink.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855137.989,"data":{"requestId":49,"url":"http://www.webkit.org/css/purple.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120},
+        {"startTime":1310749855138.308,"data":{"requestId":50,"url":"http://www.webkit.org/css/gray.css","requestMethod":"GET"},"type":"ResourceSendRequest","usedHeapSize":2367192,"totalHeapSize":7629120}];
 
     WebInspector.panels.timeline._model._loadNextChunk(data, 0);
 

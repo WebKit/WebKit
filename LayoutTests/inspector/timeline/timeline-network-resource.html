@@ -15,7 +15,7 @@ function performActions()
 
 function test()
 {
-    var resourceId;
+    var requestId;
     var scriptUrl = "timeline-network-resource.js";
 
     InspectorTest.startTimeline(step1);
@@ -55,7 +55,7 @@ function test()
     function printSend(record)
     {
         printRecord(record);
-        resourceId = record.data.identifier;
+        requestId = record.data.requestId;
         if (record.data.url === undefined) 
             InspectorTest.addResult("* No 'url' property in record");
         else if (record.data.url.indexOf(scriptUrl) === -1)
@@ -65,8 +65,8 @@ function test()
     function printReceive(record)
     {
         printRecord(record);
-        if (resourceId !== record.data.identifier)
-            InspectorTest.addResult("Didn't find matching resourceId: " + resourceId);
+        if (requestId !== record.data.requestId)
+            InspectorTest.addResult("Didn't find matching requestId: " + requestId);
         if (record.data.statusCode !== 0)
             InspectorTest.addResult("Response received status: " + record.data.statusCode);
     }
@@ -74,8 +74,8 @@ function test()
     function printFinish(record)
     {
         printRecord(record);
-        if (resourceId !== record.data.identifier)
-            InspectorTest.addResult("Didn't find matching resourceId: " + resourceId);
+        if (requestId !== record.data.requestId)
+            InspectorTest.addResult("Didn't find matching requestId: " + requestId);
         if (record.data.didFail)
             InspectorTest.addResult("Request failed.");
     }

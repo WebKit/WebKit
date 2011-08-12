@@ -68,7 +68,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
 {
 }
 
-ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& responseUrl, const String& resourceId)
+ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, const String& m, const String& responseUrl, const String& requestId)
     : m_source(s)
     , m_type(t)
     , m_level(l)
@@ -76,7 +76,7 @@ ConsoleMessage::ConsoleMessage(MessageSource s, MessageType t, MessageLevel l, c
     , m_line(0)
     , m_url(responseUrl)
     , m_repeatCount(1)
-    , m_requestId(resourceId)
+    , m_requestId(requestId)
 {
 }
 
@@ -136,7 +136,7 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
     jsonObj->setNumber("repeatCount", static_cast<int>(m_repeatCount));
     jsonObj->setString("text", m_message);
     if (m_type == NetworkErrorMessageType) 
-        jsonObj->setString("networkIdentifier", m_requestId);
+        jsonObj->setString("networkRequestId", m_requestId);
     if (m_arguments && m_arguments->argumentCount()) {
         InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(m_arguments->globalState());
         if (!injectedScript.hasNoValue()) {

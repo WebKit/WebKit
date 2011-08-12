@@ -127,7 +127,7 @@ WebInspector.ConsoleView.prototype = {
                     payload.text,
                     payload.parameters,
                     payload.stackTrace,
-                    payload.networkIdentifier);
+                    payload.networkRequestId);
                 console.addMessage(consoleMessage);
             },
 

@@ -57,8 +57,8 @@ WebInspector.NetworkManager.prototype = {
         }
         // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource) 
         // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
-        if (resource.identifier)
-            NetworkAgent.getResourceContent(resource.identifier, callbackWrapper);
+        if (resource.requestId)
+            NetworkAgent.getResourceContent(resource.requestId, callbackWrapper);
         else
             PageAgent.getResourceContent(resource.frameId, resource.url, callbackWrapper);
     },
@@ -131,17 +131,17 @@ WebInspector.NetworkDispatcher.prototype = {
         return response && !response.status && !response.mimeType && !Object.keys(response.headers).length;
     },
 
-    requestWillBeSent: function(identifier, frameId, loaderId, documentURL, request, time, initiator, stackTrace, redirectResponse)
+    requestWillBeSent: function(requestId, frameId, loaderId, documentURL, request, time, initiator, stackTrace, redirectResponse)
     {
-        var resource = this._inflightResourcesById[identifier];
+        var resource = this._inflightResourcesById[requestId];
         if (resource) {
             // FIXME: move this check to the backend.
             if (this._isNull(redirectResponse))
                 return;
-            this.responseReceived(identifier, time, "Other", redirectResponse);
-            resource = this._appendRedirect(identifier, time, request.url);
+            this.responseReceived(requestId, time, "Other", redirectResponse);
+            resource = this._appendRedirect(requestId, time, request.url);
         } else
-            resource = this._createResource(identifier, frameId, loaderId, request.url, documentURL, initiator, stackTrace);
+            resource = this._createResource(requestId, frameId, loaderId, request.url, documentURL, initiator, stackTrace);
         resource.hasNetworkData = true;
         this._updateResourceWithRequest(resource, request);
         resource.startTime = time;
@@ -149,9 +149,9 @@ WebInspector.NetworkDispatcher.prototype = {
         this._startResource(resource);
     },
 
-    resourceMarkedAsCached: function(identifier)
+    resourceMarkedAsCached: function(requestId)
     {
-        var resource = this._inflightResourcesById[identifier];
+        var resource = this._inflightResourcesById[requestId];
         if (!resource)
             return;
 
@@ -159,13 +159,13 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResource(resource);
     },
 
-    responseReceived: function(identifier, time, resourceType, response)
+    responseReceived: function(requestId, time, resourceType, response)
     {
         // FIXME: move this check to the backend.
         if (this._isNull(response))
             return;
 
-        var resource = this._inflightResourcesById[identifier];
+        var resource = this._inflightResourcesById[requestId];
         if (!resource)
             return;
 
@@ -177,9 +177,9 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResource(resource);
     },
 
-    dataReceived: function(identifier, time, dataLength, encodedDataLength)
+    dataReceived: function(requestId, time, dataLength, encodedDataLength)
     {
-        var resource = this._inflightResourcesById[identifier];
+        var resource = this._inflightResourcesById[requestId];
         if (!resource)
             return;
 
@@ -191,18 +191,18 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResource(resource);
     },
 
-    loadingFinished: function(identifier, finishTime)
+    loadingFinished: function(requestId, finishTime)
     {
-        var resource = this._inflightResourcesById[identifier];
+        var resource = this._inflightResourcesById[requestId];
         if (!resource)
             return;
 
         this._finishResource(resource, finishTime);
     },
 
-    loadingFailed: function(identifier, time, localizedDescription, canceled)
+    loadingFailed: function(requestId, time, localizedDescription, canceled)
     {
-        var resource = this._inflightResourcesById[identifier];
+        var resource = this._inflightResourcesById[requestId];
         if (!resource)
             return;
 
@@ -212,9 +212,9 @@ WebInspector.NetworkDispatcher.prototype = {
         this._finishResource(resource, time);
     },
 
-    resourceLoadedFromMemoryCache: function(identifier, frameId, loaderId, documentURL, time, initiator, cachedResource)
+    resourceLoadedFromMemoryCache: function(requestId, frameId, loaderId, documentURL, time, initiator, cachedResource)
     {
-        var resource = this._createResource(identifier, frameId, loaderId, cachedResource.url, documentURL, initiator);
+        var resource = this._createResource(requestId, frameId, loaderId, cachedResource.url, documentURL, initiator);
         this._updateResourceWithCachedResource(resource, cachedResource);
         resource.cached = true;
         resource.requestMethod = "GET";
@@ -223,16 +223,16 @@ WebInspector.NetworkDispatcher.prototype = {
         this._finishResource(resource, time);
     },
 
-    webSocketCreated: function(identifier, requestURL)
+    webSocketCreated: function(requestId, requestURL)
     {
-        var resource = this._createResource(identifier, null, null, requestURL);
+        var resource = this._createResource(requestId, null, null, requestURL);
         resource.type = WebInspector.Resource.Type.WebSocket;
         this._startResource(resource);
     },
 
-    webSocketWillSendHandshakeRequest: function(identifier, time, request)
+    webSocketWillSendHandshakeRequest: function(requestId, time, request)
     {
-        var resource = this._inflightResourcesById[identifier];
+        var resource = this._inflightResourcesById[requestId];
         if (!resource)
             return;
 
@@ -244,9 +244,9 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResource(resource);
     },
 
-    webSocketHandshakeResponseReceived: function(identifier, time, response)
+    webSocketHandshakeResponseReceived: function(requestId, time, response)
     {
-        var resource = this._inflightResourcesById[identifier];
+        var resource = this._inflightResourcesById[requestId];
         if (!resource)
             return;
 
@@ -259,22 +259,22 @@ WebInspector.NetworkDispatcher.prototype = {
         this._updateResource(resource);
     },
 
-    webSocketClosed: function(identifier, time)
+    webSocketClosed: function(requestId, time)
     {
-        var resource = this._inflightResourcesById[identifier];
+        var resource = this._inflightResourcesById[requestId];
         if (!resource)
             return;
         this._finishResource(resource, time);
     },
 
-    _appendRedirect: function(identifier, time, redirectURL)
+    _appendRedirect: function(requestId, time, redirectURL)
     {
-        var originalResource = this._inflightResourcesById[identifier];
+        var originalResource = this._inflightResourcesById[requestId];
         var previousRedirects = originalResource.redirects || [];
-        originalResource.identifier = "redirected:" + identifier + "." + previousRedirects.length;
+        originalResource.requestId = "redirected:" + requestId + "." + previousRedirects.length;
         delete originalResource.redirects;
         this._finishResource(originalResource, time);
-        var newResource = this._createResource(identifier, originalResource.frameId, originalResource.loaderId,
+        var newResource = this._createResource(requestId, originalResource.frameId, originalResource.loaderId,
              redirectURL, originalResource.documentURL, originalResource.initiator, originalResource.stackTrace);
         newResource.redirects = previousRedirects.concat(originalResource);
         return newResource;
@@ -282,7 +282,7 @@ WebInspector.NetworkDispatcher.prototype = {
 
     _startResource: function(resource)
     {
-        this._inflightResourcesById[resource.identifier] = resource;
+        this._inflightResourcesById[resource.requestId] = resource;
         this._inflightResourcesByURL[resource.url] = resource;
         this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceStarted, resource);
     },
@@ -297,7 +297,7 @@ WebInspector.NetworkDispatcher.prototype = {
         resource.endTime = finishTime;
         resource.finished = true;
         this._dispatchEventToListeners(WebInspector.NetworkManager.EventTypes.ResourceFinished, resource);
-        delete this._inflightResourcesById[resource.identifier];
+        delete this._inflightResourcesById[resource.requestId];
         delete this._inflightResourcesByURL[resource.url];
     },
 
@@ -306,9 +306,9 @@ WebInspector.NetworkDispatcher.prototype = {
         this._manager.dispatchEventToListeners(eventType, resource);
     },
 
-    _createResource: function(identifier, frameId, loaderId, url, documentURL, initiator, stackTrace)
+    _createResource: function(requestId, frameId, loaderId, url, documentURL, initiator, stackTrace)
     {
-        var resource = new WebInspector.Resource(identifier, url, loaderId);
+        var resource = new WebInspector.Resource(requestId, url, loaderId);
         resource.documentURL = documentURL;
         resource.frameId = frameId;
         resource.initiator = initiator;

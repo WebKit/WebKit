@@ -1,3 +1,18 @@
+2011-08-12  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Network resource identifier should have RequestId type and requestId name in protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=66061
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/network/download.html:
+        * http/tests/inspector/network/x-frame-options-deny.html:
+        * inspector/timeline/timeline-load.html:
+        * inspector/timeline/timeline-network-resource-expected.txt:
+        * inspector/timeline/timeline-network-resource.html:
+        * inspector/timeline/timeline-test.js:
+        * platform/chromium/inspector/timeline/timeline-network-resource-expected.txt:
+
 2011-08-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Source/WebCore: Add HTMLUnknownElement interface as defined in

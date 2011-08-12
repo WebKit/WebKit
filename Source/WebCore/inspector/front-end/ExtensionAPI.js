@@ -123,8 +123,8 @@ Resources.prototype = {
         {
             var entries = (result && result.entries) || [];
             for (var i = 0; i < entries.length; ++i) {
-                entries[i].__proto__ = new Resource(entries[i]._resourceId);
-                delete entries[i]._resourceId;
+                entries[i].__proto__ = new Resource(entries[i]._requestId);
+                delete entries[i]._requestId;
             }
             callback(result);
         }

@@ -5,7 +5,7 @@ InspectorTest.timelineNonDeterministicProps = {
     children : 1,
     endTime : 1, 
     height : 1,
-    identifier : 1,
+    requestId : 1,
     startTime : 1,
     width : 1,
     stackTrace: 1,

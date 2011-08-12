@@ -371,12 +371,12 @@ WebInspector.TimelinePanel.prototype = {
     _addRecordToTimeline: function(record)
     {
         if (record.type === WebInspector.TimelineAgent.RecordType.ResourceSendRequest) {
-            var isMainResource = (record.data.identifier === WebInspector.mainResource.identifier);
-            if (isMainResource && this._mainResourceIdentifier !== record.data.identifier) {
+            var isMainResource = (record.data.requestId === WebInspector.mainResource.requestId);
+            if (isMainResource && this._mainRequestId !== record.data.requestId) {
                 // We are loading new main resource -> clear the panel. Check above is necessary since
                 // there may be several resource loads with main resource marker upon redirects, redirects are reported with
-                // the original identifier.
-                this._mainResourceIdentifier = record.data.identifier;
+                // the original request id.
+                this._mainRequestId = record.data.requestId;
                 this._clearPanel();
             }
         }
@@ -392,7 +392,7 @@ WebInspector.TimelinePanel.prototype = {
         if (record.type === recordTypes.ResourceReceiveResponse ||
             record.type === recordTypes.ResourceFinish ||
             record.type === recordTypes.ResourceReceivedData)
-            parentRecord = this._sendRequestRecords[record.data.identifier];
+            parentRecord = this._sendRequestRecords[record.data.requestId];
         else if (record.type === recordTypes.TimerFire)
             parentRecord = this._timerRecords[record.data.timerId];
         else if (record.type === recordTypes.ResourceSendRequest)
@@ -972,11 +972,11 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, pane
     }
     // Make resource receive record last since request was sent; make finish record last since response received.
     if (record.type === recordTypes.ResourceSendRequest) {
-        panel._sendRequestRecords[record.data.identifier] = this;
+        panel._sendRequestRecords[record.data.requestId] = this;
     } else if (record.type === recordTypes.ScheduleResourceRequest) {
         panel._scheduledResourceRequests[record.data.url] = this;
     } else if (record.type === recordTypes.ResourceReceiveResponse) {
-        var sendRequestRecord = panel._sendRequestRecords[record.data.identifier];
+        var sendRequestRecord = panel._sendRequestRecords[record.data.requestId];
         if (sendRequestRecord) { // False if we started instrumentation in the middle of request.
             this.url = sendRequestRecord.url;
             // Now that we have resource in the collection, recalculate details in order to display short url.
@@ -985,7 +985,7 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, pane
                 sendRequestRecord.parent._refreshDetails();
         }
     } else if (record.type === recordTypes.ResourceReceivedData || record.type === recordTypes.ResourceFinish) {
-        var sendRequestRecord = panel._sendRequestRecords[record.data.identifier];
+        var sendRequestRecord = panel._sendRequestRecords[record.data.requestId];
         if (sendRequestRecord) // False for main resource.
             this.url = sendRequestRecord.url;
     } else if (record.type === recordTypes.TimerInstall) {
