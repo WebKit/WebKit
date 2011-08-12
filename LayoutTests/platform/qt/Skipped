@@ -2150,6 +2150,10 @@ fast/block/float/overhanging-float-remove-from-fixed-position-block.html
 fast/events/touch/touch-gesture-click.html
 fast/events/touch/touch-gesture-scroll.html
 
+# [Qt] Add eventSender.gestureTap
+# https://bugs.webkit.org/show_bug.cgi?id=66173
+fast/events/touch/gesture/gesture-click.html
+
 # new test introduced in r88958, but fail on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=62741
 http/tests/appcache/video.html

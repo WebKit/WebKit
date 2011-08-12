@@ -1,3 +1,10 @@
+2011-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the test added by r92997 on Qt port because it uses a method on EventSender that hasn't been
+        implemented by Qt port's DRT. The failure is tracked by the bug 66173.
+
+        * platform/qt/Skipped:
+
 2011-08-12  Adam Barth  <abarth@webkit.org>
 
         Update expectations to note flakiness.
