@@ -116,6 +116,7 @@ PASS HTMLTableSectionElement.toString() is '[object HTMLTableSectionElementConst
 PASS HTMLTextAreaElement.toString() is '[object HTMLTextAreaElementConstructor]'
 PASS HTMLTitleElement.toString() is '[object HTMLTitleElementConstructor]'
 PASS HTMLUListElement.toString() is '[object HTMLUListElementConstructor]'
+PASS HTMLUnknownElement.toString() is '[object HTMLUnknownElementConstructor]'
 PASS HTMLVideoElement.toString() is '[object HTMLVideoElementConstructor]'
 PASS HashChangeEvent.toString() is '[object HashChangeEventConstructor]'
 PASS Image.toString() is '[object ImageConstructor]'

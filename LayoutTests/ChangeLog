@@ -1,5 +1,14 @@
 2011-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
+        GTK rebaselines after r92890.
+
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+
+2011-08-12  Ryosuke Niwa  <rniwa@webkit.org>
+
         Mac rebaselines after r92890.
 
         * fast/dom/Window/window-properties-expected.txt:
