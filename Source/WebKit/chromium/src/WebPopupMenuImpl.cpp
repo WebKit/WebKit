@@ -40,6 +40,7 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
+#include "PopupContainer.h"
 #include "PopupMenuChromium.h"
 #include "SkiaUtils.h"
 
