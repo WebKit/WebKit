@@ -49,6 +49,32 @@ enum DataFormat {
     DataFormatJSCell = DataFormatJS | DataFormatCell,
 };
 
+#ifndef NDEBUG
+inline const char* dataFormatToString(DataFormat dataFormat)
+{
+    switch (dataFormat) {
+    case DataFormatNone:
+        return "None";
+    case DataFormatInteger:
+        return "Integer";
+    case DataFormatDouble:
+        return "Double";
+    case DataFormatCell:
+        return "Cell";
+    case DataFormatJS:
+        return "JS";
+    case DataFormatJSInteger:
+        return "JSInteger";
+    case DataFormatJSDouble:
+        return "JSDouble";
+    case DataFormatJSCell:
+        return "JSCell";
+    default:
+        return "Unknown";
+    }
+}
+#endif
+
 inline bool needDataFormatConversion(DataFormat from, DataFormat to)
 {
     ASSERT(from != DataFormatNone);

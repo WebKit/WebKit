@@ -1,3 +1,19 @@
+2011-08-11  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG JIT verbose mode does not report the generated types of nodes
+        https://bugs.webkit.org/show_bug.cgi?id=65830
+
+        Reviewed by Sam Weinig.
+        
+        Added code that prints the type selected for each node's result.
+
+        * dfg/DFGGenerationInfo.h:
+        (JSC::DFG::dataFormatToString):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2011-08-11  James Robinson  <jamesr@chromium.org>
 
         nullptr can't be used for PassRefPtr

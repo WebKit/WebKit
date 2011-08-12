@@ -1186,7 +1186,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
             continue;
 
 #if DFG_DEBUG_VERBOSE
-        fprintf(stderr, "NonSpeculativeJIT generating Node @%d at code offset 0x%x\n", (int)m_compileIndex, m_jit.debugOffset());
+        fprintf(stderr, "NonSpeculativeJIT generating Node @%d at code offset 0x%x   ", (int)m_compileIndex, m_jit.debugOffset());
 #endif
 #if DFG_JIT_BREAK_ON_EVERY_NODE
         m_jit.breakpoint();
@@ -1194,6 +1194,12 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, Ba
 
         checkConsistency();
         compile(checkIterator, node);
+#if DFG_DEBUG_VERBOSE
+        if (node.hasResult())
+            fprintf(stderr, "-> %s\n", dataFormatToString(m_generationInfo[node.virtualRegister()].registerFormat()));
+        else
+            fprintf(stderr, "\n");
+#endif
         checkConsistency();
     }
 }
