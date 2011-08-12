@@ -166,8 +166,7 @@ WebInspector.AuditsPanel.prototype = {
 
         var resultTreeElement = new WebInspector.AuditResultSidebarTreeElement(results, mainResourceURL, ordinal);
         this.auditResultsTreeElement.appendChild(resultTreeElement);
-        resultTreeElement.reveal();
-        resultTreeElement.select();
+        resultTreeElement.revealAndSelect();
         if (launcherCallback)
             launcherCallback();
     },
@@ -255,8 +254,7 @@ WebInspector.AuditsPanel.prototype = {
 
     _clearButtonClicked: function()
     {
-        this.auditsItemTreeElement.reveal();
-        this.auditsItemTreeElement.select();
+        this.auditsItemTreeElement.revealAndSelect();
         this.auditResultsTreeElement.removeChildren();
     }
 }

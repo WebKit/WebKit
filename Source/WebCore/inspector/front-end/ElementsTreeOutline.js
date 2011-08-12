@@ -45,7 +45,7 @@ WebInspector.ElementsTreeOutline = function() {
     this.selectEnabled = false;
     this.showInElementsPanelEnabled = false;
     this.rootDOMNode = null;
-    this.focusedDOMNode = null;
+    this._selectDOMNode = null;
     this.element.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
 }
 
@@ -77,28 +77,27 @@ WebInspector.ElementsTreeOutline.prototype = {
         return this.isXMLMimeType ? nodeName : nodeName.toLowerCase();
     },
 
-    get focusedDOMNode()
+    selectedDOMNode: function()
     {
-        return this._focusedDOMNode;
+        return this._selectedDOMNode;
     },
 
-    set focusedDOMNode(x)
+    selectDOMNode: function(node, focus)
     {
-        if (this._focusedDOMNode === x) {
-            this.revealAndSelectNode(x);
+        if (this._selectedDOMNode === node) {
+            this._revealAndSelectNode(node, !focus);
             return;
         }
 
-        this._focusedDOMNode = x;
+        this._selectedDOMNode = node;
+        this._revealAndSelectNode(node, !focus);
 
-        this.revealAndSelectNode(x);
-
-        // The revealAndSelectNode() method might find a different element if there is inlined text,
-        // and the select() call would change the focusedDOMNode and reenter this setter. So to
-        // avoid calling focusedNodeChanged() twice, first check if _focusedDOMNode is the same
+        // The _revealAndSelectNode() method might find a different element if there is inlined text,
+        // and the select() call would change the selectedDOMNode and reenter this setter. So to
+        // avoid calling selectedNodeChanged() twice, first check if _selectedDOMNode is the same
         // node as the one passed in.
-        if (this._focusedDOMNode === x)
-            this.focusedNodeChanged();
+        if (this._selectedDOMNode === node)
+            this.selectedNodeChanged();
     },
 
     get editing()
@@ -132,7 +131,7 @@ WebInspector.ElementsTreeOutline.prototype = {
         }
 
         if (selectedNode)
-            this.revealAndSelectNode(selectedNode);
+            this._revealAndSelectNode(selectedNode, true);
     },
 
     updateSelection: function()
@@ -143,7 +142,7 @@ WebInspector.ElementsTreeOutline.prototype = {
         element.updateSelection();
     },
 
-    focusedNodeChanged: function(forceUpdate) {},
+    selectedNodeChanged: function(forceUpdate) {},
 
     findTreeElement: function(node)
     {
@@ -178,7 +177,7 @@ WebInspector.ElementsTreeOutline.prototype = {
         this._suppressRevealAndSelect = x;
     },
 
-    revealAndSelectNode: function(node)
+    _revealAndSelectNode: function(node, omitFocus)
     {
         if (!node || this._suppressRevealAndSelect)
             return;
@@ -187,8 +186,7 @@ WebInspector.ElementsTreeOutline.prototype = {
         if (!treeElement)
             return;
 
-        treeElement.reveal();
-        treeElement.select();
+        treeElement.revealAndSelect(omitFocus);
     },
 
     _treeElementFromEvent: function(event)
@@ -356,7 +354,7 @@ WebInspector.ElementsTreeOutline.prototype = {
                 WebInspector.panels.elements.updateModifiedNodes();
                 var newNode = WebInspector.domAgent.nodeForId(newNodeId);
                 if (newNode)
-                    this.focusedDOMNode = newNode;
+                    this.selectDOMNode(newNode, true);
             }
             this._nodeBeingDragged.moveTo(parentNode, anchorNode, callback.bind(this));
         }
@@ -696,7 +694,7 @@ WebInspector.ElementsTreeElement.prototype = {
             return;
 
         this._updateChildrenInProgress = true;
-        var focusedNode = this.treeOutline.focusedDOMNode;
+        var selectedNode = this.treeOutline.selectedDOMNode();
         var originalScrollTop;
         if (fullRefresh) {
             var treeOutlineContainerElement = this.treeOutline.element.parentNode;
@@ -734,7 +732,7 @@ WebInspector.ElementsTreeElement.prototype = {
                         // No existing element found, insert a new element.
                         if (treeChildIndex < treeElement.expandedChildrenLimit) {
                             var newElement = treeElement.insertChildElement(child, treeChildIndex);
-                            if (child === focusedNode)
+                            if (child === selectedNode)
                                 elementToSelect = newElement;
                             if (treeElement.expandedChildCount > treeElement.expandedChildrenLimit)
                                 treeElement.expandedChildrenLimit++;
@@ -852,7 +850,7 @@ WebInspector.ElementsTreeElement.prototype = {
     onselect: function(treeElement, selectedByUser)
     {
         this.treeOutline.suppressRevealAndSelect = true;
-        this.treeOutline.focusedDOMNode = this.representedObject;
+        this.treeOutline.selectDOMNode(this.representedObject, selectedByUser);
         if (selectedByUser)
             WebInspector.highlightDOMNode(this.representedObject.id);
         this.updateSelection();
@@ -888,7 +886,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
         if (this.treeOutline.showInElementsPanelEnabled) {
             WebInspector.showPanel("elements");
-            WebInspector.panels.elements.focusedDOMNode = this.representedObject;
+            WebInspector.panels.elements.selectDOMNode(this.representedObject, true);
         }
 
         // Prevent selecting the nearest word on double click.
@@ -925,7 +923,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _startEditingTarget: function(eventTarget)
     {
-        if (this.treeOutline.focusedDOMNode != this.representedObject)
+        if (this.treeOutline.selectedDOMNode() != this.representedObject)
             return;
 
         if (this.representedObject.nodeType() != Node.ELEMENT_NODE && this.representedObject.nodeType() != Node.TEXT_NODE)
@@ -981,7 +979,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _startEditing: function()
     {
-        if (this.treeOutline.focusedDOMNode !== this.representedObject)
+        if (this.treeOutline.selectedDOMNode() !== this.representedObject)
             return;
 
         var listItem = this._listItemNode;

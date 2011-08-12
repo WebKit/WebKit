@@ -817,6 +817,11 @@ WebInspector.DataGrid.prototype = {
         // This is the root, do nothing.
     },
 
+    revealAndSelect: function()
+    {
+        // This is the root, do nothing.
+    },
+
     dataGridNodeFromNode: function(target)
     {
         var rowElement = target.enclosingNodeOrSelfWithNodeName("tr");
@@ -1353,6 +1358,12 @@ WebInspector.DataGridNode.prototype = {
 
         if (!supressSelectedEvent)
             this.dispatchEventToListeners("selected");
+    },
+
+    revealAndSelect: function()
+    {
+        this.reveal();
+        this.select();
     },
 
     deselect: function(supressDeselectedEvent)

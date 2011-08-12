@@ -317,10 +317,8 @@ WebInspector.ProfilesPanel.prototype = {
                 var selected = group[0]._profilesTreeElement.selected;
                 sidebarParent.removeChild(group[0]._profilesTreeElement);
                 group._profilesTreeElement.appendChild(group[0]._profilesTreeElement);
-                if (selected) {
-                    group[0]._profilesTreeElement.select();
-                    group[0]._profilesTreeElement.reveal();
-                }
+                if (selected)
+                    group[0]._profilesTreeElement.revealAndSelect();
 
                 group[0]._profilesTreeElement.small = true;
                 group[0]._profilesTreeElement.mainTitle = WebInspector.UIString("Run %d", 1);
@@ -391,8 +389,9 @@ WebInspector.ProfilesPanel.prototype = {
 
         view.show(this.profileViews);
 
-        profile._profilesTreeElement.select(true);
-        profile._profilesTreeElement.reveal();
+        profile._profilesTreeElement._suppressOnSelect = true;
+        profile._profilesTreeElement.revealAndSelect();
+        delete profile._profilesTreeElement._suppressOnSelect;
 
         this.visibleView = view;
 
@@ -776,7 +775,8 @@ WebInspector.ProfileSidebarTreeElement = function(profile, titleFormat, classNam
 WebInspector.ProfileSidebarTreeElement.prototype = {
     onselect: function()
     {
-        this.treeOutline.panel.showProfile(this.profile);
+        if (!this._suppressOnSelect)
+            this.treeOutline.panel.showProfile(this.profile);
     },
 
     ondelete: function()

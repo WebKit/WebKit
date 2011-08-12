@@ -844,8 +844,7 @@ WebInspector.DetailedHeapshotView.prototype = {
             return;
 
         var node = searchResult.node;
-        node.reveal();
-        node.select();
+        node.revealAndSelect();
     },
 
     refreshVisibleData: function()

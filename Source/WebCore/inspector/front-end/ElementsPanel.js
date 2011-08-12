@@ -46,11 +46,8 @@ WebInspector.ElementsPanel = function()
     this.treeOutline.includeRootDOMNode = false;
     this.treeOutline.selectEnabled = true;
 
-    this.treeOutline.focusedNodeChanged = function(forceUpdate)
+    this.treeOutline.selectedNodeChanged = function(forceUpdate)
     {
-        if (this.panel.visible && WebInspector.currentFocusElement !== document.getElementById("search"))
-            WebInspector.currentFocusElement = this.element;
-
         this.panel.updateBreadcrumb(forceUpdate);
 
         for (var pane in this.panel.sidebarPanes)
@@ -61,8 +58,8 @@ WebInspector.ElementsPanel = function()
         this.panel.updateProperties();
         this.panel.updateEventListeners();
 
-        if (this._focusedDOMNode) {
-            ConsoleAgent.addInspectedNode(this._focusedDOMNode.id);
+        if (this._selectedDOMNode) {
+            ConsoleAgent.addInspectedNode(this._selectedDOMNode.id);
             WebInspector.extensionServer.notifyObjectSelected(this.panel.name);
         }
     };
@@ -179,11 +176,11 @@ WebInspector.ElementsPanel.prototype = {
 
     _reset: function()
     {
-        if (this.focusedDOMNode)
-            this._selectedPathOnReset = this.focusedDOMNode.path();
+        if (this.selectedDOMNode())
+            this._selectedPathOnReset = this.selectedDOMNode().path();
 
         this.rootDOMNode = null;
-        this.focusedDOMNode = null;
+        this.selectDOMNode(null);
 
         WebInspector.highlightDOMNode(0);
 
@@ -218,14 +215,14 @@ WebInspector.ElementsPanel.prototype = {
             if (!candidateFocusNode)
                 return;
 
-            this.focusedDOMNode = candidateFocusNode;
+            this.selectDOMNode(candidateFocusNode);
             if (this.treeOutline.selectedTreeElement)
                 this.treeOutline.selectedTreeElement.expand();
         }
 
         function selectLastSelectedNode(nodeId)
         {
-            if (this.focusedDOMNode) {
+            if (this.selectedDOMNode()) {
                 // Focused node has been explicitly set while reaching out for the last selected node.
                 return;
             }
@@ -291,7 +288,7 @@ WebInspector.ElementsPanel.prototype = {
         else
             this.contentElement.addStyleClass("nowrap");
 
-        var treeElement = this.treeOutline.findTreeElement(this.focusedDOMNode);
+        var treeElement = this.treeOutline.findTreeElement(this.selectedDOMNode());
         if (treeElement)
             treeElement.updateSelection(); // Recalculate selection highlight dimensions.
     },
@@ -301,7 +298,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!anchorElement.href)
             return false;
 
-        var resourceURL = WebInspector.resourceURLForRelatedNode(this.focusedDOMNode, anchorElement.href);
+        var resourceURL = WebInspector.resourceURLForRelatedNode(this.selectedDOMNode(), anchorElement.href);
         if (!resourceURL)
             return false;
 
@@ -317,7 +314,7 @@ WebInspector.ElementsPanel.prototype = {
         // Reset search restore.
         WebInspector.searchController.cancelSearch();
         WebInspector.currentPanel = this;
-        this.focusedDOMNode = node;
+        this.selectDOMNode(node, true);
     },
 
     _updateMatchesCount: function()
@@ -415,14 +412,14 @@ WebInspector.ElementsPanel.prototype = {
         this.treeOutline.rootDOMNode = x;
     },
 
-    get focusedDOMNode()
+    selectedDOMNode: function()
     {
-        return this.treeOutline.focusedDOMNode;
+        return this.treeOutline.selectedDOMNode();
     },
 
-    set focusedDOMNode(x)
+    selectDOMNode: function(node, focus)
     {
-        this.treeOutline.focusedDOMNode = x;
+        this.treeOutline.selectDOMNode(node, focus);
     },
 
     _attributesUpdated: function(event)
@@ -498,7 +495,7 @@ WebInspector.ElementsPanel.prototype = {
                 updatedParentTreeElements.push(parentNodeItem);
             }
 
-            if (!updateBreadcrumbs && (this.focusedDOMNode === parent || isAncestorNode(this.focusedDOMNode, parent)))
+            if (!updateBreadcrumbs && (this.selectedDOMNode() === parent || isAncestorNode(this.selectedDOMNode(), parent)))
                 updateBreadcrumbs = true;
         }
 
@@ -568,7 +565,7 @@ WebInspector.ElementsPanel.prototype = {
             else
                 crumb.removeStyleClass("dimmed");
 
-            if (crumb.representedObject === this.focusedDOMNode) {
+            if (crumb.representedObject === this.selectedDOMNode()) {
                 crumb.addStyleClass("selected");
                 handled = true;
             } else {
@@ -614,14 +611,14 @@ WebInspector.ElementsPanel.prototype = {
                 // will change the root node in addition to the focused node.
                 if (event.detail >= 2 || crumb.hasStyleClass("dimmed"))
                     panel.rootDOMNode = crumb.representedObject.parentNode;
-                panel.focusedDOMNode = crumb.representedObject;
+                panel.selectDOMNode(crumb.representedObject, true);
             }
 
             event.preventDefault();
         }
 
         foundRoot = false;
-        for (var current = this.focusedDOMNode; current; current = current.parentNode) {
+        for (var current = this.selectedDOMNode(); current; current = current.parentNode) {
             if (current.nodeType() === Node.DOCUMENT_NODE)
                 continue;
 
@@ -667,7 +664,7 @@ WebInspector.ElementsPanel.prototype = {
 
             if (foundRoot)
                 crumb.addStyleClass("dimmed");
-            if (current === this.focusedDOMNode)
+            if (current === this.selectedDOMNode())
                 crumb.addStyleClass("selected");
             if (!crumbs.childNodes.length)
                 crumb.addStyleClass("end");
@@ -1000,7 +997,7 @@ WebInspector.ElementsPanel.prototype = {
         if ((!stylesSidebarPane.expanded && !computedStylePane.expanded) || !stylesSidebarPane.needsUpdate)
             return;
 
-        stylesSidebarPane.update(this.focusedDOMNode, forceUpdate);
+        stylesSidebarPane.update(this.selectedDOMNode(), forceUpdate);
         stylesSidebarPane.needsUpdate = false;
     },
 
@@ -1010,7 +1007,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!metricsSidebarPane.expanded || !metricsSidebarPane.needsUpdate)
             return;
 
-        metricsSidebarPane.update(this.focusedDOMNode);
+        metricsSidebarPane.update(this.selectedDOMNode());
         metricsSidebarPane.needsUpdate = false;
     },
 
@@ -1020,7 +1017,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!propertiesSidebarPane.expanded || !propertiesSidebarPane.needsUpdate)
             return;
 
-        propertiesSidebarPane.update(this.focusedDOMNode);
+        propertiesSidebarPane.update(this.selectedDOMNode());
         propertiesSidebarPane.needsUpdate = false;
     },
 
@@ -1030,7 +1027,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!eventListenersSidebarPane.expanded || !eventListenersSidebarPane.needsUpdate)
             return;
 
-        eventListenersSidebarPane.update(this.focusedDOMNode);
+        eventListenersSidebarPane.update(this.selectedDOMNode());
         eventListenersSidebarPane.needsUpdate = false;
     },
 
@@ -1078,7 +1075,7 @@ WebInspector.ElementsPanel.prototype = {
             return;
         event.clipboardData.clearData();
         event.preventDefault();
-        this.focusedDOMNode.copyNode();
+        this.selectedDOMNode().copyNode();
     },
 
     rightSidebarResizerDragStart: function(event)
@@ -1114,7 +1111,7 @@ WebInspector.ElementsPanel.prototype = {
         if (!node)
             return;
 
-        this.focusedDOMNode = node;
+        this.selectDOMNode(node, true);
         if (this.nodeSearchButton.toggled) {
             InspectorFrontendHost.bringToFront();
             this.nodeSearchButton.toggled = false;

@@ -1,3 +1,81 @@
+2011-08-12  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: console loses focus upon reloading the page from the inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=66068
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/front-end/AuditsPanel.js:
+        (WebInspector.AuditsPanel.prototype._auditFinishedCallback):
+        (WebInspector.AuditsPanel.prototype._clearButtonClicked):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype.revealAndSelect):
+        (WebInspector.DataGridNode.prototype.revealAndSelect):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype._jumpToSearchResult):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.this.treeOutline.selectedNodeChanged):
+        (WebInspector.ElementsPanel.get this):
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._reset):
+        (WebInspector.ElementsPanel.prototype._setDocument.selectNode):
+        (WebInspector.ElementsPanel.prototype._setDocument.selectLastSelectedNode):
+        (WebInspector.ElementsPanel.prototype._setDocument):
+        (WebInspector.ElementsPanel.prototype._domWordWrapSettingChanged):
+        (WebInspector.ElementsPanel.prototype.populateHrefContextMenu):
+        (WebInspector.ElementsPanel.prototype.switchToAndFocus):
+        (WebInspector.ElementsPanel.prototype.selectedDOMNode):
+        (WebInspector.ElementsPanel.prototype.selectDOMNode):
+        (WebInspector.ElementsPanel.prototype.updateModifiedNodes):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb.selectCrumbFunction):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        (WebInspector.ElementsPanel.prototype.updateStyles):
+        (WebInspector.ElementsPanel.prototype.updateMetrics):
+        (WebInspector.ElementsPanel.prototype.updateProperties):
+        (WebInspector.ElementsPanel.prototype.updateEventListeners):
+        (WebInspector.ElementsPanel.prototype.handleCopyEvent):
+        (WebInspector.ElementsPanel.prototype.updateFocusedNode):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline):
+        (WebInspector.ElementsTreeOutline.prototype.selectedDOMNode):
+        (WebInspector.ElementsTreeOutline.prototype.selectDOMNode):
+        (WebInspector.ElementsTreeOutline.prototype.update):
+        (WebInspector.ElementsTreeOutline.prototype._revealAndSelectNode):
+        (WebInspector.ElementsTreeOutline.prototype._ondrop.callback):
+        (WebInspector.ElementsTreeOutline.prototype._ondrop):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren.updateChildrenOfNode):
+        (WebInspector.ElementsTreeElement.prototype._updateChildren):
+        (WebInspector.ElementsTreeElement.prototype.onselect):
+        (WebInspector.ElementsTreeElement.prototype.selectOnMouseDown):
+        (WebInspector.ElementsTreeElement.prototype._startEditingTarget):
+        (WebInspector.ElementsTreeElement.prototype._startEditing):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.reset):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView.prototype._jumpToSearchResult):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype._addProfileHeader):
+        (WebInspector.ProfilesPanel.prototype.showProfile):
+        (WebInspector.ProfileSidebarTreeElement.prototype.onselect):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype._initDefaultSelection.get if):
+        (WebInspector.ResourcesPanel.prototype._initDefaultSelection):
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype.showResource):
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylePropertiesSection.prototype.editingSelectorCommitted):
+        (WebInspector.StylePropertyTreeElement.prototype.updateTitle.linkifyURL):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._createTopPane):
+        * inspector/front-end/inspector.js:
+        * inspector/front-end/inspectorCommon.css:
+        (body):
+        * inspector/front-end/treeoutline.js:
+        (TreeOutline.prototype.revealAndSelect):
+        (TreeElement.prototype.selectOnMouseDown):
+        (TreeElement.prototype.revealAndSelect):
+        (TreeElement.prototype.select):
+
 2011-08-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Inspector clean-up: remove unused method declaration from InspectorAgent.h

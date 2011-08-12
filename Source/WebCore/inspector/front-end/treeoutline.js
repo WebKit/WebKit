@@ -436,6 +436,11 @@ TreeOutline.prototype.select = function()
     // this is the root, do nothing
 }
 
+TreeOutline.prototype.revealAndSelect = function(omitFocus)
+{
+    // this is the root, do nothing
+}
+
 TreeOutline.prototype.appendChild = TreeOutline._appendChild;
 TreeOutline.prototype.insertChild = TreeOutline._insertChild;
 TreeOutline.prototype.removeChild = TreeOutline._removeChild;
@@ -816,7 +821,7 @@ TreeElement.prototype.selectOnMouseDown = function(event)
     this.select(false, true);
 }
 
-TreeElement.prototype.select = function(supressOnSelect, selectedByUser)
+TreeElement.prototype.select = function(omitFocus, selectedByUser)
 {
     if (!this.treeOutline || !this.selectable || this.selected)
         return;
@@ -825,7 +830,9 @@ TreeElement.prototype.select = function(supressOnSelect, selectedByUser)
         this.treeOutline.selectedTreeElement.deselect();
 
     this.selected = true;
-    this.treeOutline._childrenListNode.focus();
+
+    if(!omitFocus)
+        this.treeOutline._childrenListNode.focus();
 
     // Focusing on another node may detach "this" from tree.
     if (!this.treeOutline)
@@ -834,8 +841,14 @@ TreeElement.prototype.select = function(supressOnSelect, selectedByUser)
     if (this._listItemNode)
         this._listItemNode.addStyleClass("selected");
 
-    if (this.onselect && !supressOnSelect)
+    if (this.onselect)
         this.onselect(this, selectedByUser);
+}
+
+TreeElement.prototype.revealAndSelect = function(omitFocus)
+{
+    this.reveal();
+    this.select(omitFocus);
 }
 
 TreeElement.prototype.deselect = function(supressOnDeselect)

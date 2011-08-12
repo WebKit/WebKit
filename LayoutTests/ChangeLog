@@ -1,3 +1,12 @@
+2011-08-12  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: console loses focus upon reloading the page from the inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=66068
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/console/command-line-api-inspect.html:
+
 2011-08-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Source/WebCore: Add HTMLUnknownElement interface as defined in

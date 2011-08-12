@@ -113,12 +113,14 @@ WebInspector.ResourcesPanel.prototype = {
 
     _initDefaultSelection: function()
     {
+        if (!this._treeElementForFrameId)
+            return;
+
         var itemURL = WebInspector.settings.resourcesLastSelectedItem.get();
         if (itemURL) {
             for (var treeElement = this.sidebarTree.children[0]; treeElement; treeElement = treeElement.traverseNextTreeElement(false, this.sidebarTree, true)) {
                 if (treeElement.itemURL === itemURL) {
-                    treeElement.select();
-                    treeElement.reveal();
+                    treeElement.revealAndSelect(true);
                     return;
                 }
             }
@@ -130,7 +132,6 @@ WebInspector.ResourcesPanel.prototype = {
 
     reset: function()
     {
-        delete this._initializedDefaultSelection;
         this._origins = {};
         this._domains = {};
         for (var i = 0; i < this._databases.length; ++i) {
@@ -344,10 +345,8 @@ WebInspector.ResourcesPanel.prototype = {
     showResource: function(resource, line)
     {
         var resourceTreeElement = this._findTreeElementForResource(resource);
-        if (resourceTreeElement) {
-            resourceTreeElement.reveal();
-            resourceTreeElement.select();
-        }
+        if (resourceTreeElement)
+            resourceTreeElement.revealAndSelect();
 
         if (line !== undefined) {
             var view = this._resourceViewForResource(resource);

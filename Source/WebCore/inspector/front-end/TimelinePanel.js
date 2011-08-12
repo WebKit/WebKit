@@ -130,8 +130,8 @@ WebInspector.TimelinePanel.prototype = {
         var topPaneSidebarTree = new TreeOutline(overviewTreeElement);
         var timelinesOverviewItem = new WebInspector.SidebarTreeElement("resources-time-graph-sidebar-item", WebInspector.UIString("Timelines"));
         topPaneSidebarTree.appendChild(timelinesOverviewItem);
+        timelinesOverviewItem.revealAndSelect(false);
         timelinesOverviewItem.onselect = this._timelinesOverviewItemSelected.bind(this);
-        timelinesOverviewItem.select(true);
 
         var memoryOverviewItem = new WebInspector.SidebarTreeElement("resources-size-graph-sidebar-item", WebInspector.UIString("Memory"));
         topPaneSidebarTree.appendChild(memoryOverviewItem);

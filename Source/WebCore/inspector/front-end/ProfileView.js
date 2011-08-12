@@ -413,8 +413,7 @@ WebInspector.CPUProfileView.prototype = {
             return;
 
         var profileNode = searchResult.profileNode;
-        profileNode.reveal();
-        profileNode.select();
+        profileNode.revealAndSelect();
     },
 
     _changeView: function(event)

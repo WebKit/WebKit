@@ -37,7 +37,7 @@ function test()
 
             function step2()
             {
-                InspectorTest.addResult("Selected node id: '" + WebInspector.panels.elements.focusedDOMNode.getAttribute("id") + "'.");
+                InspectorTest.addResult("Selected node id: '" + WebInspector.panels.elements.selectedDOMNode().getAttribute("id") + "'.");
                 next();
             }
         },

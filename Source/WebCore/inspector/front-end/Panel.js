@@ -95,7 +95,6 @@ WebInspector.Panel.prototype = {
     reset: function()
     {
         this.searchCanceled();
-        WebInspector.resetFocusElement();
     },
 
     get defaultFocusedElement()
