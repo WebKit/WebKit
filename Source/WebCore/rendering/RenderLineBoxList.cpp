@@ -357,8 +357,21 @@ void RenderLineBoxList::dirtyLinesFromChangedChild(RenderObject* container, Rend
         if (box)
             break;
     }
-    if (!box)
+    if (!box) {
+        if (inlineContainer && !inlineContainer->alwaysCreateLineBoxes()) {
+            // https://bugs.webkit.org/show_bug.cgi?id=60778
+            // We may have just removed a <br> with no line box that was our first child. In this case
+            // we won't find a previous sibling, but firstBox can be pointing to a following sibling.
+            // This isn't good enough, since we won't locate the root line box that encloses the removed
+            // <br>. We have to just over-invalidate a bit and go up to our parent.
+            if (!inlineContainer->parent()->selfNeedsLayout()) {
+                inlineContainer->parent()->dirtyLinesFromChangedChild(inlineContainer);
+                inlineContainer->setNeedsLayout(true); // Mark the container as needing layout to avoid dirtying the same lines again across multiple destroy() calls of the same subtree.
+            }
+            return;
+        }
         box = firstBox->root();
+    }
 
     // If we found a line box, then dirty it.
     if (box) {

@@ -1,0 +1,29 @@
+<head>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function f() {
+    document.designMode="on";
+    document.execCommand("SelectAll");
+    document.execCommand("InsertImage",false);
+    document.execCommand("InsertImage",false);
+    document.execCommand("Indent");
+    document.execCommand("insertunorderedlist",false);
+    document.execCommand("InsertUnorderedList",false);
+    document.execCommand("Bold");
+    document.execCommand("InsertLineBreak");
+    document.execCommand("insertunorderedlist");
+    document.execCommand("insertimage",false);
+    document.execCommand("insertparagraph",false);
+    document.execCommand("insertunorderedlist");
+    document.execCommand("InsertUnorderedList");
+    document.execCommand("Outdent");
+    document.write("<p>Test for bug <a href=\"https://bugs.webkit.org/show_bug.cgi?id=60778\">REGRESSION (83075): Crash in line break after outdent</p>");
+    document.write("<p>This test PASSED!</p>");
+}
+ </script>
+</head>
+<body onload='f();'>
+    <pre id="x">x</pre>
+</body>
