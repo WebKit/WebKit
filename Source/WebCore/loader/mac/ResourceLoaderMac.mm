@@ -76,18 +76,16 @@ void ResourceLoader::didReceiveDataArray(CFArrayRef dataArray)
     // anything including possibly derefing this; one example of this is Radar 3266216.
     RefPtr<ResourceLoader> protector(this);
 
-    if (!m_shouldBufferData)
-        return;
-
-    if (!m_resourceData)
-        m_resourceData = SharedBuffer::create();
-
     CFIndex arrayCount = CFArrayGetCount(dataArray);
     for (CFIndex i = 0; i < arrayCount; ++i) {
         CFDataRef data = static_cast<CFDataRef>(CFArrayGetValueAtIndex(dataArray, i));
         int dataLen = static_cast<int>(CFDataGetLength(data));
 
-        m_resourceData->append(data);
+        if (m_shouldBufferData) {
+            if (!m_resourceData)
+                m_resourceData = SharedBuffer::create();
+            m_resourceData->append(data);
+        }
 
         // FIXME: If we get a resource with more than 2B bytes, this code won't do the right thing.
         // However, with today's computers and networking speeds, this won't happen in practice.
