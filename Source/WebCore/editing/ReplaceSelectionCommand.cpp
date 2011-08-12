@@ -288,7 +288,7 @@ void ReplacementFragment::restoreTestRenderingNodesToFragment(StyledElement* hol
 
 void ReplacementFragment::removeUnrenderedNodes(Node* holder)
 {
-    Vector<Node*> unrendered;
+    Vector<RefPtr<Node> > unrendered;
 
     for (Node* node = holder->firstChild(); node; node = node->traverseNextNode(holder))
         if (!isNodeRendered(node) && !isTableStructureNode(node))
