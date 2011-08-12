@@ -1,3 +1,40 @@
+2011-08-12  Jeff Miller  <jeffm@apple.com>
+
+        Need to handle kCACFContextNeedsFlushNotification notifications that arrive after the AVFWrapper has been disposed
+        https://bugs.webkit.org/show_bug.cgi?id=65724
+
+        Instead of using a pointer to the AVFWrapper object as the context for various callbacks, assign each object an
+        ID and use that instead. Keep track of the mapping between object IDs and AVFWrapper objects in a HashMap, and manage
+        access to this map using a Mutex since it can be accessed from multiple threads. This allows us to actually delete
+        AVFWrapper objects instead of leaking them (which we were doing before to prevent crashes).
+
+        Reviewed by Eric Carlson.
+
+        No new tests, uses existing media tests.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::AVFWrapper::callbackContext): Added.
+        (WebCore::AVFWrapper::AVFWrapper): Initialize m_objectID and add it to the HashMap.
+        (WebCore::AVFWrapper::~AVFWrapper): Log object ID and remove obsolete assert.
+        (WebCore::AVFWrapper::mapLock): Added.
+        (WebCore::AVFWrapper::map): Added.
+        (WebCore::AVFWrapper::addToMap): Added.
+        (WebCore::AVFWrapper::removeFromMap): Added.
+        (WebCore::AVFWrapper::avfWrapperForCallbackContext): Added.
+        (WebCore::AVFWrapper::scheduleDisconnectAndDelete): Remove AVFWrapper from HashMap instead of zeroing m_owner.
+        (WebCore::AVFWrapper::disconnectAndDeleteAVFWrapper): Use callbackContext(), delete the AVFWrapper here.
+        (WebCore::AVFWrapper::createPlayer): Use callbackContext().
+        (WebCore::AVFWrapper::createPlayerItem): Use callbackContext().
+        (WebCore::AVFWrapper::periodicTimeObserverCallback): Retrieve AVFWrapper using the HashMap.
+        (WebCore::AVFWrapper::notificationCallback): Retrieve AVFWrapper using the HashMap.
+        (WebCore::AVFWrapper::loadPlayableCompletionCallback): Retrieve AVFWrapper using the HashMap.
+        (WebCore::AVFWrapper::checkPlayability): Use callbackContext().
+        (WebCore::AVFWrapper::loadMetadataCompletionCallback): Retrieve AVFWrapper using the HashMap.
+        (WebCore::AVFWrapper::beginLoadingMetadata): Use callbackContext().
+        (WebCore::AVFWrapper::seekCompletedCallback): Retrieve AVFWrapper using the HashMap.
+        (WebCore::AVFWrapper::seekToTime): Use callbackContext().
+        (WebCore::AVFWrapper::platformLayer): Remove overly noisy LOG().
+
 2011-08-12  Fady Samuel  <fsamuel@chromium.org>
 
         Refactoring of PopupMenuChromium
