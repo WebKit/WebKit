@@ -33,7 +33,6 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
-#include "NotImplemented.h"
 #include "Region.h"
 #include "RunLoop.h"
 #include "WKAPICast.h"
@@ -52,6 +51,7 @@
 #include <WebCore/GraphicsContextCG.h>
 #endif
 #include <WebCore/IntRect.h>
+#include <WebCore/NotImplemented.h>
 #include <WebCore/SoftLinking.h>
 #include <WebCore/WebCoreInstanceHandle.h>
 #include <WebCore/WindowMessageBroadcaster.h>

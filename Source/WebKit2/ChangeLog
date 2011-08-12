@@ -1,5 +1,15 @@
 2011-08-11  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 91100
+
+    2011-07-15  Dan Bernstein  <mitz@apple.com>
+
+            Windows build fix.
+
+            * UIProcess/win/WebView.cpp:
+
+2011-08-11  Lucas Forschler  <lforschler@apple.com>
+
     Merged 91098
 
     2011-07-15  Dan Bernstein  <mitz@apple.com>
