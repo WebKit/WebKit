@@ -328,13 +328,14 @@ static CFCachedURLResponseRef willCacheResponse(CFURLConnectionRef, CFCachedURLR
     if (handle->client())
         handle->client()->willCacheResponse(handle, policy);
 
-    if (static_cast<CFURLCacheStoragePolicy>(policy) != CFCachedURLResponseGetStoragePolicy(cachedResponse))
+    if (static_cast<CFURLCacheStoragePolicy>(policy) != CFCachedURLResponseGetStoragePolicy(cachedResponse)) {
         cachedResponse = CFCachedURLResponseCreateWithUserInfo(kCFAllocatorDefault, 
                                                                CFCachedURLResponseGetWrappedResponse(cachedResponse),
                                                                CFCachedURLResponseGetReceiverData(cachedResponse),
                                                                CFCachedURLResponseGetUserInfo(cachedResponse), 
                                                                static_cast<CFURLCacheStoragePolicy>(policy));
-    CFRetain(cachedResponse);
+    } else
+        CFRetain(cachedResponse);
 
     return cachedResponse;
 }

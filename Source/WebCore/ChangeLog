@@ -1,3 +1,16 @@
+2011-08-11  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/66113> [CFNetwork] willCacheResponse() leaks CFCachedURLResponseRef if delegate changes CacheStoragePolicy
+
+        Reviewed by Joseph Pecoraro.
+
+        This first appeared in ToT WebKit r23462 (Windows merge).
+
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::willCacheResponse): Only retain cachedResponse if we
+        are returning the same object passed into the method, otherwise
+        we end up double-retaining the new object created.
+
 2011-08-05  Nat Duca  <nduca@chromium.org>
 
         [chromium] Make WebViewImpl point at CCLayerTreeHost and related separation
