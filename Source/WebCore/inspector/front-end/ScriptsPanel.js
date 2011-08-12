@@ -259,7 +259,7 @@ WebInspector.ScriptsPanel.prototype = {
     _showScriptFoldersSettingChanged: function()
     {
         var selectedOption = this._filesSelectElement[this._filesSelectElement.selectedIndex];
-        var sourceFileId = selectedOption._sourceFileId;
+        var sourceFileId = selectedOption ? selectedOption._sourceFileId : null;
 
         var options = Array.prototype.slice.call(this._filesSelectElement);
         this._resetFilesSelect();
@@ -270,7 +270,8 @@ WebInspector.ScriptsPanel.prototype = {
 
         if (sourceFileId) {
             var index = this._sourceFileIdToFilesSelectOption[sourceFileId].index;
-            this._filesSelectElement.selectedIndex = index;
+            if (typeof index === "number")
+                this._filesSelectElement.selectedIndex = index;
         }
     },
 

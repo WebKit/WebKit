@@ -1,3 +1,10 @@
+2011-08-12  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: follow up to inspector test breakage.
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._showScriptFoldersSettingChanged):
+
 2011-08-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Web Inspector: expand exception properties when wrapping it as object.
