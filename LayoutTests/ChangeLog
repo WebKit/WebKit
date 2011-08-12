@@ -1,3 +1,17 @@
+2011-08-12  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66133
+        
+        Make hit testing work on RenderRegions. Pass off the hit testing to the RenderFlowThread
+        layer tree (just as we did with painting).
+
+        Reviewed by Sam Weinig.
+
+        Added hit-test-float.html to demonstrate basic hit testing of content flowed into regions.
+
+        * fast/regions/hit-test-float-expected.txt: Added.
+        * fast/regions/hit-test-float.html: Added.
+
 2011-08-12  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip the test added by r92982 on Qt since it uses a new layoutTestController method

@@ -30,6 +30,8 @@
 #include "config.h"
 
 #include "RenderFlowThread.h"
+#include "HitTestRequest.h"
+#include "HitTestResult.h"
 #include "Node.h"
 #include "PaintInfo.h"
 #include "RenderLayer.h"
@@ -261,6 +263,36 @@ void RenderFlowThread::paintIntoRegion(PaintInfo& paintInfo, const LayoutRect& r
 
         context->restore();
     }
+}
+
+bool RenderFlowThread::hitTestRegion(const LayoutRect& regionRect, const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
+{
+    LayoutRect regionClippingRect(accumulatedOffset, regionRect.size());
+    if (!regionClippingRect.contains(pointInContainer))
+        return false;
+    
+    LayoutPoint renderFlowThreadOffset;
+    if (style()->isFlippedBlocksWritingMode()) {
+        LayoutRect flippedRegionRect(regionRect);
+        flipForWritingMode(flippedRegionRect);
+        renderFlowThreadOffset = LayoutPoint(regionClippingRect.location() - flippedRegionRect.location());
+    } else
+        renderFlowThreadOffset = LayoutPoint(regionClippingRect.location() - regionRect.location());
+
+    LayoutPoint transformedPoint(pointInContainer.x() - renderFlowThreadOffset.x(), pointInContainer.y() - renderFlowThreadOffset.y());
+    
+    // Always ignore clipping, since the RenderFlowThread has nothing to do with the bounds of the FrameView.
+    HitTestRequest newRequest(request.type() & HitTestRequest::IgnoreClipping);
+
+    LayoutPoint oldPoint = result.point();
+    result.setPoint(transformedPoint);
+    bool isPointInsideFlowThread = layer()->hitTest(newRequest, result);
+    result.setPoint(oldPoint);
+    
+    // FIXME: Should we set result.m_localPoint back to the RenderRegion's coordinate space or leave it in the RenderFlowThread's coordinate
+    // space? Right now it's staying in the RenderFlowThread's coordinate space, which may end up being ok. We will know more when we get around to
+    // patching positionForPoint.
+    return isPointInsideFlowThread;
 }
 
 } // namespace WebCore

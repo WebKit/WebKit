@@ -31,6 +31,7 @@
 #include "RenderRegion.h"
 
 #include "GraphicsContext.h"
+#include "HitTestResult.h"
 #include "IntRect.h"
 #include "PaintInfo.h"
 #include "RenderFlowThread.h"
@@ -54,7 +55,29 @@ RenderRegion::~RenderRegion()
 void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // Delegate painting of content in region to RenderFlowThread.
+    if (!m_flowThread)
+        return;
     m_flowThread->paintIntoRegion(paintInfo, regionRect(), LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
+}
+
+// Hit Testing
+bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
+{
+    LayoutPoint adjustedLocation = accumulatedOffset + location();
+
+    // Check our bounds next. For this purpose always assume that we can only be hit in the
+    // foreground phase (which is true for replaced elements like images).
+    LayoutRect boundsRect(adjustedLocation, size());
+    if (visibleToHitTesting() && action == HitTestForeground && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
+        // Check the contents of the RenderFlowThread.
+        if (m_flowThread && m_flowThread->hitTestRegion(regionRect(), request, result, pointInContainer, LayoutPoint(adjustedLocation.x() + borderLeft() + paddingLeft(), adjustedLocation.y() + borderTop() + paddingTop())))
+            return true;
+        updateHitTestResult(result, pointInContainer - toLayoutSize(adjustedLocation));
+        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
+            return true;
+    }
+
+    return false;
 }
 
 void RenderRegion::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)

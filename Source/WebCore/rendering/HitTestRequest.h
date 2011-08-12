@@ -49,6 +49,8 @@ public:
     bool ignoreClipping() const { return m_requestType & IgnoreClipping; }
     bool svgClipContent() const { return m_requestType & SVGClipContent; }
 
+    HitTestRequestType type() const { return m_requestType; }
+
 private:
     HitTestRequestType m_requestType;
 };

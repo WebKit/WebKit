@@ -44,6 +44,7 @@ public:
     virtual bool isRenderRegion() const { return true; }
 
     virtual void paintReplaced(PaintInfo&, const LayoutPoint&);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
     void setRegionRect(const IntRect& rect) { m_regionRect = rect; }
     IntRect regionRect() const { return m_regionRect; }
