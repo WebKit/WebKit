@@ -199,8 +199,8 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(double sampleRate, bool mixToMon
     AudioBufferList* bufferList = createAudioBufferList(numberOfChannels);
 
     if (mixToMono && numberOfChannels == 2) {
-        bufL.resize(numberOfFrames);
-        bufR.resize(numberOfFrames);
+        bufL.allocate(numberOfFrames);
+        bufR.allocate(numberOfFrames);
         bufferL = bufL.data();
         bufferR = bufR.data();
 
