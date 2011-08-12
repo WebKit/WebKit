@@ -1,17 +1,19 @@
-Test WebSocket subprotocol negotiation.
+WebSocket.protocol should not be modified.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 PASS ws.protocol is ""
+PASS ws.protocol is ""
 Connected
-PASS ws.protocol is "superchat"
-Received: superchat
-PASS receivedMessage is "superchat"
+PASS ws.protocol is "chat"
+PASS ws.protocol is "chat"
 Closed
-PASS ws.protocol is "superchat"
+PASS ws.protocol is "chat"
+PASS ws.protocol is "chat"
 PASS closeEvent.wasClean is true
 Exited onclose handler
-PASS ws.protocol is "superchat"
+PASS ws.protocol is "chat"
+PASS ws.protocol is "chat"
 PASS successfullyParsed is true
 
 TEST COMPLETE

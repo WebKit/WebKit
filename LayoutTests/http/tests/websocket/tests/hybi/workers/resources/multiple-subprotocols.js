@@ -1,19 +1,17 @@
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/workers/resources/protocol-test?protocol=superchat", ["chat", "superchat"]);
 
-// FIXME: Implement WebSocket.protocol.
-// if (ws.protocol === "")
-//     postMessage("PASS: ws.protocol is equal to \"\"");
-// else
-//     postMessage("FAIL: ws.protocol should be \"\" but was \"" + ws.protocol + "\"");
+if (ws.protocol === "")
+    postMessage("PASS: ws.protocol is equal to \"\"");
+else
+    postMessage("FAIL: ws.protocol should be \"\" but was \"" + ws.protocol + "\"");
 
 ws.onopen = function()
 {
     postMessage("INFO: Connected");
-    // FIXME: Ditto.
-    // if (ws.protocol === "superchat")
-    //     postMessage("PASS: ws.protocol is equal to \"superchat\"");
-    // else
-    //     postMessage("FAIL: ws.protocol should be \"superchat\" but was \"" + ws.protocol + "\"");
+    if (ws.protocol === "superchat")
+        postMessage("PASS: ws.protocol is equal to \"superchat\"");
+    else
+        postMessage("FAIL: ws.protocol should be \"superchat\" but was \"" + ws.protocol + "\"");
 };
 
 ws.onmessage = function(event)
@@ -29,10 +27,28 @@ ws.onmessage = function(event)
 ws.onclose = function(closeEvent)
 {
     postMessage("INFO: Closed");
+
+    if (ws.protocol === "superchat")
+        postMessage("PASS: ws.protocol is equal to \"superchat\"");
+    else
+        postMessage("FAIL: ws.protocol should be \"superchat\" but was \"" + ws.protocol + "\"");
+
     if (closeEvent.wasClean === true)
         postMessage("PASS: closeEvent.wasClean is true");
     else
         postMessage("FAIL: closeEvent.wasClean should be true but was \"" + closeEvent.wasClean + "\"");
 
-    postMessage("DONE");
+    setTimeout("checkAfterOnClose()", 0);
 };
+
+function checkAfterOnClose()
+{
+    postMessage("INFO: Exited onclose handler");
+
+    if (ws.protocol === "superchat")
+        postMessage("PASS: ws.protocol is equal to \"superchat\"");
+    else
+        postMessage("FAIL: ws.protocol should be \"superchat\" but was \"" + ws.protocol + "\"");
+
+    postMessage("DONE");
+}

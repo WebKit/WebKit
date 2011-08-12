@@ -74,6 +74,12 @@ void WorkerThreadableWebSocketChannel::connect(const KURL& url, const String& pr
         m_bridge->connect(url, protocol);
 }
 
+String WorkerThreadableWebSocketChannel::subprotocol()
+{
+    ASSERT(m_workerClientWrapper);
+    return m_workerClientWrapper->subprotocol();
+}
+
 bool WorkerThreadableWebSocketChannel::send(const String& message)
 {
     if (!m_bridge)
@@ -222,16 +228,17 @@ void WorkerThreadableWebSocketChannel::Peer::resume()
     m_mainWebSocketChannel->resume();
 }
 
-static void workerContextDidConnect(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
+static void workerContextDidConnect(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, const String& subprotocol)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
+    workerClientWrapper->setSubprotocol(subprotocol);
     workerClientWrapper->didConnect();
 }
 
 void WorkerThreadableWebSocketChannel::Peer::didConnect()
 {
     ASSERT(isMainThread());
-    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidConnect, m_workerClientWrapper), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidConnect, m_workerClientWrapper, m_mainWebSocketChannel->subprotocol()), m_taskMode);
 }
 
 static void workerContextDidReceiveMessage(ScriptExecutionContext* context, PassRefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, const String& message)

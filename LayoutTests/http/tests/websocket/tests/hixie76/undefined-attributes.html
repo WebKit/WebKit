@@ -13,6 +13,7 @@ description("Test WebSocket attributes which should not be defined when hixie-76
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hixie76/simple");
 
 shouldBeUndefined("ws.binaryType");
+shouldBeUndefined("ws.protocol");
 
 var successfullyParsed = true;
 </script>

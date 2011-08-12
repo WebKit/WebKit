@@ -8,35 +8,27 @@
 <div id="description"></div>
 <div id="console"></div>
 <script type="text/javascript">
-description("Test WebSocket subprotocol negotiation.");
+description("WebSocket's protocol attribute should be an empty string if the server did not provide Sec-WebSocket-Protocol header.");
 
 window.jsTestIsAsync = true;
 if (window.layoutTestController)
     layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/protocol-test?protocol=superchat", ["chat", "superchat"]);
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple");
 var closeEvent;
-var receivedMessage;
 
 shouldBeEqualToString("ws.protocol", "");
 
 ws.onopen = function()
 {
     debug("Connected");
-    shouldBeEqualToString("ws.protocol", "superchat");
-};
-
-ws.onmessage = function(event)
-{
-    receivedMessage = event.data;
-    debug("Received: " + receivedMessage);
-    shouldBeEqualToString("receivedMessage", "superchat");
+    shouldBeEqualToString("ws.protocol", "");
 };
 
 ws.onclose = function(event)
 {
     debug("Closed");
-    shouldBeEqualToString("ws.protocol", "superchat");
+    shouldBeEqualToString("ws.protocol", "");
     closeEvent = event;
     shouldBeTrue("closeEvent.wasClean");
     setTimeout("checkAfterOnClose()", 0);
@@ -45,7 +37,7 @@ ws.onclose = function(event)
 function checkAfterOnClose()
 {
     debug("Exited onclose handler");
-    shouldBeEqualToString("ws.protocol", "superchat");
+    shouldBeEqualToString("ws.protocol", "");
     finishJSTest();
 }
 

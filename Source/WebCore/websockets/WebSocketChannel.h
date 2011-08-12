@@ -56,6 +56,7 @@ namespace WebCore {
 
         virtual bool useHixie76Protocol();
         virtual void connect(const KURL&, const String& protocol);
+        virtual String subprotocol();
         virtual bool send(const String& message);
         virtual unsigned long bufferedAmount() const;
         virtual void close(); // Start closing handshake.

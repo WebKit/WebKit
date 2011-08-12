@@ -136,6 +136,8 @@ WebSocket::WebSocket(ScriptExecutionContext* context)
     , m_state(CONNECTING)
     , m_bufferedAmountAfterClose(0)
     , m_binaryType(BinaryTypeBlob)
+    , m_useHixie76Protocol(true)
+    , m_subprotocol("")
 {
 }
 
@@ -190,9 +192,10 @@ void WebSocket::connect(const String& url, const Vector<String>& protocols, Exce
     }
 
     m_channel = ThreadableWebSocketChannel::create(scriptExecutionContext(), this);
+    m_useHixie76Protocol = m_channel->useHixie76Protocol();
 
     String protocolString;
-    if (m_channel->useHixie76Protocol()) {
+    if (m_useHixie76Protocol) {
         if (!protocols.isEmpty()) {
             // Emulate JavaScript's Array.toString() behavior.
             protocolString = joinStrings(protocols, ",");
@@ -292,9 +295,16 @@ unsigned long WebSocket::bufferedAmount() const
     return m_bufferedAmountAfterClose;
 }
 
+String WebSocket::protocol() const
+{
+    if (m_useHixie76Protocol)
+        return String();
+    return m_subprotocol;
+}
+
 String WebSocket::binaryType() const
 {
-    if (m_channel->useHixie76Protocol())
+    if (m_useHixie76Protocol)
         return String();
     switch (m_binaryType) {
     case BinaryTypeBlob:
@@ -308,7 +318,7 @@ String WebSocket::binaryType() const
 
 void WebSocket::setBinaryType(const String& binaryType, ExceptionCode& ec)
 {
-    if (m_channel->useHixie76Protocol())
+    if (m_useHixie76Protocol)
         return;
     if (binaryType == "blob") {
         m_binaryType = BinaryTypeBlob;
@@ -373,6 +383,7 @@ void WebSocket::didConnect()
     }
     ASSERT(scriptExecutionContext());
     m_state = OPEN;
+    m_subprotocol = m_channel->subprotocol();
     dispatchEvent(Event::create(eventNames().openEvent, false, false));
 }
 

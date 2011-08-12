@@ -58,6 +58,10 @@ public:
     bool useHixie76Protocol() const;
     void setUseHixie76Protocol(bool);
 
+    // Subprotocol is cached too. Will be available when didConnect() callback is invoked.
+    String subprotocol() const;
+    void setSubprotocol(const String&);
+
     bool sent() const;
     void setSent(bool);
 
@@ -86,6 +90,7 @@ protected:
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;
     bool m_useHixie76Protocol;
+    String m_subprotocol;
     bool m_sent;
     unsigned long m_bufferedAmount;
     bool m_suspended;

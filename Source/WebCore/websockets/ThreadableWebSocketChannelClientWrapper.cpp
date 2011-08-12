@@ -44,6 +44,7 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
     : m_client(client)
     , m_syncMethodDone(false)
     , m_useHixie76Protocol(true)
+    , m_subprotocol("")
     , m_sent(false)
     , m_bufferedAmount(0)
     , m_suspended(false)
@@ -78,6 +79,16 @@ bool ThreadableWebSocketChannelClientWrapper::useHixie76Protocol() const
 void ThreadableWebSocketChannelClientWrapper::setUseHixie76Protocol(bool useHixie76Protocol)
 {
     m_useHixie76Protocol = useHixie76Protocol;
+}
+
+String ThreadableWebSocketChannelClientWrapper::subprotocol() const
+{
+    return m_subprotocol;
+}
+
+void ThreadableWebSocketChannelClientWrapper::setSubprotocol(const String& subprotocol)
+{
+    m_subprotocol = subprotocol;
 }
 
 bool ThreadableWebSocketChannelClientWrapper::sent() const

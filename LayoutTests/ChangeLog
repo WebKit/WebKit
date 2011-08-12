@@ -1,3 +1,33 @@
+2011-08-11  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Implement "protocol" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=65248
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hixie76/undefined-attributes-expected.txt:
+        * http/tests/websocket/tests/hixie76/undefined-attributes.html:
+        Added a test to check "protocol" attribute.
+        * http/tests/websocket/tests/hybi/multiple-subprotocols-expected.txt:
+        * http/tests/websocket/tests/hybi/multiple-subprotocols.html:
+        The attribute should return an empty string at first. After the connection is established,
+        it should return the value of Sec-WebSocket-Protocol header in the server's handshake response.
+        * http/tests/websocket/tests/hybi/no-subprotocol-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/no-subprotocol.html: Added.
+        * http/tests/websocket/tests/hybi/set-protocol-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/set-protocol.html: Added.
+        * http/tests/websocket/tests/hybi/workers/multiple-subprotocols-expected.txt:
+        * http/tests/websocket/tests/hybi/workers/no-subprotocol-expected.txt: Added.
+        * http/tests/websocket/tests/hybi/workers/no-subprotocol.html: Added.
+        * http/tests/websocket/tests/hybi/workers/resources/multiple-subprotocols.js:
+        (ws.onopen):
+        (ws.onclose):
+        (checkAfterOnClose):
+        * http/tests/websocket/tests/hybi/workers/resources/no-subprotocol.js: Added.
+        (ws.onopen):
+        (ws.onclose):
+        (checkAfterOnClose):
+
 2011-08-11  MORITA Hajime  <morrita@google.com>
 
         [Chromium][DRT] editing/spelling/spelling-backspace-between-lines.html fails

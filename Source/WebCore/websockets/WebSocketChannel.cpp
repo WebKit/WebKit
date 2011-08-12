@@ -131,6 +131,17 @@ void WebSocketChannel::connect(const KURL& url, const String& protocol)
     m_handle = SocketStreamHandle::create(m_handshake->url(), this);
 }
 
+String WebSocketChannel::subprotocol()
+{
+    LOG(Network, "WebSocketChannel %p subprotocol", this);
+    if (!m_handshake || m_handshake->mode() != WebSocketHandshake::Connected)
+        return "";
+    String serverProtocol = m_handshake->serverWebSocketProtocol();
+    if (serverProtocol.isNull())
+        return "";
+    return serverProtocol;
+}
+
 bool WebSocketChannel::send(const String& message)
 {
     LOG(Network, "WebSocketChannel %p send %s", this, message.utf8().data());

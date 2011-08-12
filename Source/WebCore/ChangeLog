@@ -1,3 +1,49 @@
+2011-08-11  Yuta Kitamura  <yutak@chromium.org>
+
+        WebSocket: Implement "protocol" attribute
+        https://bugs.webkit.org/show_bug.cgi?id=65248
+
+        Reviewed by Kent Tamura.
+
+        Tests: http/tests/websocket/tests/hybi/no-subprotocol.html (added)
+               http/tests/websocket/tests/hybi/set-protocol.html (added)
+               http/tests/websocket/tests/hybi/workers/no-subprotocol.html (added)
+               http/tests/websocket/tests/hixie76/undefined-attributes.html (updated)
+               http/tests/websocket/tests/hybi/multiple-subprotocols.html (updated)
+               http/tests/websocket/tests/hybi/workers/multiple-subprotocols.html (updated)
+
+        * websockets/ThreadableWebSocketChannel.h:
+        Added subprotocol() function. This function is named differently from the counterpart of
+        WebSocket class, because the name "protocol" can be confused with the WebSocket protocol.
+        Added m_useHixie76Protocol and m_subprotocol, because these value may be used after
+        m_channel has been released. Using bool should be fine, because boolean literals do not
+        appear in ambiguous context.
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::subprotocol):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setSubprotocol):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::WebSocket):
+        (WebCore::WebSocket::connect):
+        (WebCore::WebSocket::protocol):
+        The "protocol" attribute is available only when the hybi-10 protocol is chosen.
+        (WebCore::WebSocket::binaryType):
+        (WebCore::WebSocket::setBinaryType):
+        (WebCore::WebSocket::didConnect):
+        * websockets/WebSocket.h:
+        * websockets/WebSocket.idl:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::subprotocol):
+        * websockets/WebSocketChannel.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::subprotocol):
+        (WebCore::workerContextDidConnect):
+        Subprotocol value is saved in the client wrapper object after the WebSocket connection is
+        established.
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didConnect):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2011-08-11  Hayato Ito  <hayato@chromium.org>
 
         Implement proper handling of events with a related target in regard to shadow DOM boundaries.

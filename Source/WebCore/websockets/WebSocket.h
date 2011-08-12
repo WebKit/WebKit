@@ -74,6 +74,8 @@ namespace WebCore {
         State readyState() const;
         unsigned long bufferedAmount() const;
 
+        String protocol() const;
+
         String binaryType() const;
         void setBinaryType(const String& binaryType, ExceptionCode&);
 
@@ -122,6 +124,8 @@ namespace WebCore {
         EventTargetData m_eventTargetData;
         unsigned long m_bufferedAmountAfterClose;
         BinaryType m_binaryType;
+        bool m_useHixie76Protocol;
+        String m_subprotocol;
     };
 
 } // namespace WebCore
