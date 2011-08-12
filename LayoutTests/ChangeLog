@@ -1,3 +1,18 @@
+2011-08-12  Andrei Popescu  <andreip@google.com>
+
+        [Chromium] Rebaseline these tests on Leopard.
+
+        Unreviewed gardening.
+
+        * LayoutTests/platform/chromium-linux/platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png: Added.
+        * LayoutTests/platform/chromium-mac-leopard/platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png: Added.
+        * LayoutTests/platform/chromium-mac-leopard/platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Added.
+        * LayoutTests/platform/chromium-mac/platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png: Added.
+        * LayoutTests/platform/chromium-mac/platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Added.
+        * LayoutTests/platform/chromium-win-xp/platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png: Added.
+        * LayoutTests/platform/chromium-win/platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.png: Added.
+        * LayoutTests/platform/chromium-win/platform/mac-snowleopard/platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment-expected.txt: Added.
+
 2011-08-12  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: make folders optional in the Scripts' panel file selector.
