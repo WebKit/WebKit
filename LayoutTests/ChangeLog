@@ -1,3 +1,20 @@
+2011-08-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: expand exception properties when wrapping it as object.
+        https://bugs.webkit.org/show_bug.cgi?id=66035
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/console/console-eval-global-expected.txt:
+        * inspector/console/console-eval-syntax-error-expected.txt:
+        * inspector/console/console-eval-undefined-override-expected.txt:
+        * inspector/extensions/extensions-eval-expected.txt:
+        * inspector/runtime/runtime-setPropertyValue-expected.txt:
+        * platform/chromium/inspector/console/console-eval-global-expected.txt:
+        * platform/chromium/inspector/console/console-eval-syntax-error-expected.txt:
+        * platform/chromium/inspector/console/console-eval-undefined-override-expected.txt:
+        * platform/chromium/inspector/debugger/debugger-activation-crash2-expected.txt:
+
 2011-08-12  Andrei Popescu  <andreip@google.com>
 
         [Chromium] Rebaseline these tests on Leopard.

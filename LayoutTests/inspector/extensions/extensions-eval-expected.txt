@@ -7,7 +7,7 @@ Evaluate: "function" (exception: undefined)
 RUNNING TEST: extension_testEvalDefinesGlobalSymbols
 Evaluate: {"func":"function","variable":42} (exception: undefined)
 RUNNING TEST: extension_testEvalFailed
-Evaluate: "Error" (exception: true)
+Evaluate: "TypeError: JSON.stringify cannot serialize cyclic structures." (exception: true)
 RUNNING TEST: extension_testEvalOk
 Evaluate: {"str":"foo","num":42} (exception: undefined)
 RUNNING TEST: extension_testEvalStatement

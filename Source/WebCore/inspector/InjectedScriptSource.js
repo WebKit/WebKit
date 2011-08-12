@@ -1,4 +1,4 @@
-  /*
+/*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -284,8 +284,7 @@ InjectedScript.prototype = {
             return { wasThrown: false,
                      result: this._wrapObject(func.apply(object, resolvedArgs), objectGroup, returnByValue) };
         } catch (e) {
-            return { wasThrown: true,
-                     result: this._wrapObject(e, objectGroup) };
+            return this._createThrownValue(e, objectGroup);
         }
     },
 
@@ -295,9 +294,18 @@ InjectedScript.prototype = {
             return { wasThrown: false,
                      result: this._wrapObject(this._evaluateOn(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI), objectGroup, returnByValue) };
         } catch (e) {
-            return { wasThrown: true,
-                     result: this._wrapObject(e, objectGroup) };
+            return this._createThrownValue(e, objectGroup);
         }
+    },
+
+    _createThrownValue: function(value, objectGroup)
+    {
+        var remoteObject = this._wrapObject(value, objectGroup);
+        try {
+            remoteObject.description = this._toString(value);
+        } catch (e) {}
+        return { wasThrown: true,
+                 result: remoteObject };
     },
 
     _evaluateOn: function(evalFunction, object, expression, isEvalOnCallFrame, injectCommandLineAPI)

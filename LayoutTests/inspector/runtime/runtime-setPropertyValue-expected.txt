@@ -33,5 +33,6 @@ Running: testSetException
 {
     type : "string"
     value : "exception"
+    description : "exception"
 }
 

@@ -3,5 +3,5 @@ Tests that evaluating something in console won't crash the browser if undefined 
 var x = {a:1}; x.self = x; undefined = x;
 Object
 unknownVar
-Error
+ReferenceError: Can't find variable: unknownVar
 

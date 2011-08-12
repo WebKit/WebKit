@@ -1,3 +1,15 @@
+2011-08-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Web Inspector: expand exception properties when wrapping it as object.
+        https://bugs.webkit.org/show_bug.cgi?id=66035
+
+        Use toString() value as a description for value thrown during eval.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/InjectedScriptSource.js:
+        (.):
+
 2011-08-12  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: make folders optional in the Scripts' panel file selector.
