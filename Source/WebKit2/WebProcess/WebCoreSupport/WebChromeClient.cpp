@@ -407,10 +407,9 @@ void WebChromeClient::delegatedScrollRequested(const IntPoint& scrollOffset)
 }
 #endif
 
-IntPoint WebChromeClient::screenToWindow(const IntPoint&) const
+IntPoint WebChromeClient::screenToWindow(const IntPoint& point) const
 {
-    notImplemented();
-    return IntPoint();
+    return m_page->screenToWindow(point);
 }
 
 IntRect WebChromeClient::windowToScreen(const IntRect& rect) const
