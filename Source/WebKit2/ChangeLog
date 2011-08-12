@@ -1,3 +1,11 @@
+2011-08-12  Mark Rowe  <mrowe@apple.com>
+
+        Be more forward-looking in the choice of compiler.
+
+        Rubber-stamped by Jon Honeycutt.
+
+        * Configurations/CompilerVersion.xcconfig:
+
 2011-08-11  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         VectorArgumentCoder doesn't encode/decode enough data for more than one byte vector elements

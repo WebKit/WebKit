@@ -1,3 +1,11 @@
+2011-08-12  Mark Rowe  <mrowe@apple.com>
+
+        Be more forward-looking in the choice of compiler.
+
+        Rubber-stamped by Jon Honeycutt.
+
+        * Configurations/CompilerVersion.xcconfig:
+
 2011-08-12  Kalev Lember  <kalevlember@gmail.com>
 
         [GTK] Fix non-pthreads build after r91906.
