@@ -107,7 +107,7 @@ template<typename T> struct VectorArgumentCoder<true, T> {
     static void encode(ArgumentEncoder* encoder, const Vector<T>& vector)
     {
         encoder->encodeUInt64(vector.size());
-        encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size(), __alignof(T));
+        encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size() * sizeof(T), __alignof(T));
     }
     
     static bool decode(ArgumentDecoder* decoder, Vector<T>& vector)
@@ -127,7 +127,7 @@ template<typename T> struct VectorArgumentCoder<true, T> {
         Vector<T> temp;
         temp.resize(size);
 
-        decoder->decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size, __alignof(T));
+        decoder->decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size * sizeof(T), __alignof(T));
 
         vector.swap(temp);
         return true;

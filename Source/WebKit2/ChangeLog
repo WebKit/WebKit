@@ -1,3 +1,14 @@
+2011-08-11  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        VectorArgumentCoder doesn't encode/decode enough data for more than one byte vector elements
+        https://bugs.webkit.org/show_bug.cgi?id=66109
+
+        Reviewed by Anders Carlsson.
+
+        Multiply vector size by element size in encode/decode to get correct byte size of vector data.
+
+        * Platform/CoreIPC/ArgumentCoders.h:
+
 2011-08-11  Nico Weber  <thakis@chromium.org>
 
         Remove incorrect comment about m_wheelEventHandlerCount
