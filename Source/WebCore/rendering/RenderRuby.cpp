@@ -40,33 +40,53 @@ namespace WebCore {
 
 //=== generic helper functions to avoid excessive code duplication ===
 
-static inline bool isAnonymousRubyInlineBlock(RenderObject* object)
+static inline bool isAnonymousRubyInlineBlock(const RenderObject* object)
 {
-    ASSERT(!object->parent()->isRuby()
+    ASSERT(!object
+        || !object->parent()->isRuby()
         || object->isRubyRun()
         || (object->isInline() && (object->isBeforeContent() || object->isAfterContent()))
         || (object->isAnonymous() && object->isRenderBlock() && object->style()->display() == INLINE_BLOCK));
-    return object->parent()->isRuby() && object->isRenderBlock() && !object->isRubyRun();
+
+    return object
+        && object->parent()->isRuby()
+        && object->isRenderBlock()
+        && !object->isRubyRun();
+}
+
+static inline bool isRubyBeforeBlock(const RenderObject* object)
+{
+    return isAnonymousRubyInlineBlock(object)
+        && !object->previousSibling()
+        && object->firstChild()
+        && object->firstChild()->style()->styleType() == BEFORE;
+}
+
+static inline bool isRubyAfterBlock(const RenderObject* object)
+{
+    return isAnonymousRubyInlineBlock(object)
+        && !object->nextSibling()
+        && object->firstChild()
+        && object->firstChild()->style()->styleType() == AFTER;
 }
 
 static inline RenderBlock* rubyBeforeBlock(const RenderObject* ruby)
 {
     RenderObject* child = ruby->firstChild();
-    return child && !child->isRubyRun() && child->isRenderBlock() && child->style()->styleType() == BEFORE ? static_cast<RenderBlock*>(child) : 0;
+    return isRubyBeforeBlock(child) ? static_cast<RenderBlock*>(child) : 0;
 }
 
 static inline RenderBlock* rubyAfterBlock(const RenderObject* ruby)
 {
     RenderObject* child = ruby->lastChild();
-    return child && !child->isRubyRun() && child->isRenderBlock() && child->style()->styleType() == AFTER ? static_cast<RenderBlock*>(child) : 0;
+    return isRubyAfterBlock(child) ? static_cast<RenderBlock*>(child) : 0;
 }
 
-static RenderBlock* createAnonymousRubyInlineBlock(RenderObject* ruby, PseudoId styleType)
+static RenderBlock* createAnonymousRubyInlineBlock(RenderObject* ruby)
 {
     RefPtr<RenderStyle> newStyle = RenderStyle::createAnonymousStyle(ruby->style());
     newStyle->setDisplay(INLINE_BLOCK);
-    newStyle->setStyleType(styleType);
-    
+
     RenderBlock* newBlock = new (ruby->renderArena()) RenderBlock(ruby->document() /* anonymous box */);
     newBlock->setStyle(newStyle.release());
     return newBlock;
@@ -110,7 +130,7 @@ void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* beforeBlock = rubyBeforeBlock(this);
             if (!beforeBlock) {
-                beforeBlock = createAnonymousRubyInlineBlock(this, BEFORE);
+                beforeBlock = createAnonymousRubyInlineBlock(this);
                 RenderInline::addChild(beforeBlock, firstChild());
             }
             beforeBlock->addChild(child);
@@ -125,7 +145,7 @@ void RenderRubyAsInline::addChild(RenderObject* child, RenderObject* beforeChild
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* afterBlock = rubyAfterBlock(this);
             if (!afterBlock) {
-                afterBlock = createAnonymousRubyInlineBlock(this, AFTER);
+                afterBlock = createAnonymousRubyInlineBlock(this);
                 RenderInline::addChild(afterBlock);
             }
             afterBlock->addChild(child);
@@ -211,7 +231,7 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* beforeBlock = rubyBeforeBlock(this);
             if (!beforeBlock) {
-                beforeBlock = createAnonymousRubyInlineBlock(this, BEFORE);
+                beforeBlock = createAnonymousRubyInlineBlock(this);
                 RenderBlock::addChild(beforeBlock, firstChild());
             }
             beforeBlock->addChild(child);
@@ -226,7 +246,7 @@ void RenderRubyAsBlock::addChild(RenderObject* child, RenderObject* beforeChild)
             // Wrap non-inline content with an anonymous inline-block.
             RenderBlock* afterBlock = rubyAfterBlock(this);
             if (!afterBlock) {
-                afterBlock = createAnonymousRubyInlineBlock(this, AFTER);
+                afterBlock = createAnonymousRubyInlineBlock(this);
                 RenderBlock::addChild(afterBlock);
             }
             afterBlock->addChild(child);
