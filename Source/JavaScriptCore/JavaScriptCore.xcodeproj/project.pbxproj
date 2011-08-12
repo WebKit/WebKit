@@ -570,6 +570,7 @@
 		BC5F7BBE11823B590052C02C /* Atomics.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBB11823B590052C02C /* Atomics.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5F7BBF11823B590052C02C /* ThreadingPrimitives.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBC11823B590052C02C /* ThreadingPrimitives.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC5F7BC011823B590052C02C /* ThreadSafeRefCounted.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC66BAE413F492CC00C23FAE /* Compiler.h in Headers */ = {isa = PBXBuildFile; fileRef = BC66BAE213F4928F00C23FAE /* Compiler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC6AAAE50E1F426500AD87D8 /* ClassInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC756FC90E2031B200DE7D12 /* JSGlobalObjectFunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */; };
 		BC87CDB910712AD4000614CF /* JSONObject.lut.h in Headers */ = {isa = PBXBuildFile; fileRef = BC87CDB810712ACA000614CF /* JSONObject.lut.h */; };
@@ -1211,6 +1212,7 @@
 		BC5F7BBB11823B590052C02C /* Atomics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Atomics.h; sourceTree = "<group>"; };
 		BC5F7BBC11823B590052C02C /* ThreadingPrimitives.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadingPrimitives.h; sourceTree = "<group>"; };
 		BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadSafeRefCounted.h; sourceTree = "<group>"; };
+		BC66BAE213F4928F00C23FAE /* Compiler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Compiler.h; sourceTree = "<group>"; };
 		BC6AAAE40E1F426500AD87D8 /* ClassInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClassInfo.h; sourceTree = "<group>"; };
 		BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSGlobalObjectFunctions.cpp; sourceTree = "<group>"; };
 		BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObjectFunctions.h; sourceTree = "<group>"; };
@@ -1650,10 +1652,10 @@
 		65162EF108E6A21C007556CD /* wtf */ = {
 			isa = PBXGroup;
 			children = (
+				06D358A00DAAD9C4003B174E /* mac */,
+				8656573E115BE35200291F40 /* text */,
+				E195678D09E7CF1200B89D13 /* unicode */,
 				A1D764511354448B00C5C7C0 /* Alignment.h */,
-				A7C40C07130B057D00D002A1 /* BlockStack.h */,
-				5135FAD512D26856003C083B /* Decoder.h */,
-				5135FAD612D26856003C083B /* Encoder.h */,
 				93AA4F770957251F0084B3A7 /* AlwaysInline.h */,
 				938C4F690CA06BC700D9310A /* ASCIICType.h */,
 				65E217B808E7EECC0023E5F6 /* Assertions.cpp */,
@@ -1661,9 +1663,12 @@
 				BC5F7BBB11823B590052C02C /* Atomics.h */,
 				E1A596370DE3E1C300C17E37 /* AVLTree.h */,
 				DD377CBB12072C18006A2517 /* Bitmap.h */,
+				A7C40C07130B057D00D002A1 /* BlockStack.h */,
+				E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */,
 				86676D4D11FED55D004B6863 /* BumpPointerAllocator.h */,
 				A7A1F7AA0F252B3C00E184E2 /* ByteArray.cpp */,
 				A7A1F7AB0F252B3C00E184E2 /* ByteArray.h */,
+				BC66BAE213F4928F00C23FAE /* Compiler.h */,
 				FDA15C1612B03028003A583A /* Complex.h */,
 				0BDFFAD40FC6171000D69EF4 /* CrossThreadRefCounted.h */,
 				97941A7C1302A098004A3447 /* CryptographicallyRandomNumber.cpp */,
@@ -1674,6 +1679,7 @@
 				41359CF50FDD89CB00206180 /* DateMath.h */,
 				0F29479B126E698C00B3ABF5 /* DecimalNumber.cpp */,
 				862AF4B512239C7B0024E5B8 /* DecimalNumber.h */,
+				5135FAD512D26856003C083B /* Decoder.h */,
 				5186111D0CC824830081412B /* Deque.h */,
 				938C4F6B0CA06BCE00D9310A /* DisallowCType.h */,
 				14456A311314657800212CA3 /* DoublyLinkedList.h */,
@@ -1681,6 +1687,7 @@
 				651F6413039D5B5F0078395C /* dtoa.h */,
 				D75AF59512F8CB9500FC0ADF /* DynamicAnnotations.cpp */,
 				D75AF59612F8CB9500FC0ADF /* DynamicAnnotations.h */,
+				5135FAD612D26856003C083B /* Encoder.h */,
 				E48E0F2C0F82151700A8CA37 /* FastAllocBase.h */,
 				65E217B908E7EECC0023E5F6 /* FastMalloc.cpp */,
 				65E217BA08E7EECC0023E5F6 /* FastMalloc.h */,
@@ -1699,7 +1706,6 @@
 				657EB7450B708F540063461B /* ListHashSet.h */,
 				148A1626095D16BB00666D0D /* ListRefPtr.h */,
 				E1EE79270D6C964500FEA3BA /* Locker.h */,
-				06D358A00DAAD9C4003B174E /* mac */,
 				06D358A20DAAD9C4003B174E /* MainThread.cpp */,
 				06D358A30DAAD9C4003B174E /* MainThread.h */,
 				5DBD18AF0C5401A700C15EAE /* MallocZoneSupport.h */,
@@ -1726,18 +1732,17 @@
 				14B3EF0412BC24DD00D29EFF /* PageBlock.cpp */,
 				14B3EF0312BC24DD00D29EFF /* PageBlock.h */,
 				8690231412092D5C00630AF9 /* PageReservation.h */,
-				BCFBE695122560E800309E9D /* PassOwnArrayPtr.h */,
-				44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */,
-				6580F795094070560082C219 /* PassRefPtr.h */,
-				651DCA02136A6FAB00F74194 /* PassTraits.h */,
 				7934BB761361979300CB99A1 /* ParallelJobs.h */,
 				7934BB771361979300CB99A1 /* ParallelJobsGeneric.cpp */,
 				7934BB781361979300CB99A1 /* ParallelJobsGeneric.h */,
 				7934BB791361979300CB99A1 /* ParallelJobsLibdispatch.h */,
 				7934BB7A1361979300CB99A1 /* ParallelJobsOpenMP.h */,
+				BCFBE695122560E800309E9D /* PassOwnArrayPtr.h */,
+				44DD48520FAEA85000D6B4EB /* PassOwnPtr.h */,
+				6580F795094070560082C219 /* PassRefPtr.h */,
+				651DCA02136A6FAB00F74194 /* PassTraits.h */,
 				65D6D87E09B5A32E0002E4D7 /* Platform.h */,
 				A7D649A91015224E009B2E1B /* PossiblyNull.h */,
-				E4D8CE9B12FC42E100BC9F5A /* BloomFilter.h */,
 				088FA5B90EF76D4300578E6F /* RandomNumber.cpp */,
 				088FA5BA0EF76D4300578E6F /* RandomNumber.h */,
 				08E279E80EF83B10007DB523 /* RandomNumberSeed.h */,
@@ -1748,9 +1753,9 @@
 				148A1ECD0D10C23B0069A47C /* RefPtrHashMap.h */,
 				51F648D60BB4E2CA0033D760 /* RetainPtr.h */,
 				969A07290ED1CE6900F1F681 /* SegmentedVector.h */,
+				A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */,
 				76FB9F1012E851960051A2EB /* SHA1.cpp */,
 				76FB9F0E12E851860051A2EB /* SHA1.h */,
-				A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */,
 				A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */,
 				0BF28A2811A33DC300638F84 /* SizeLimits.cpp */,
 				86D87DA512BC4B14008E73A1 /* StackBounds.cpp */,
@@ -1764,19 +1769,17 @@
 				6541BD6F08E80A17002CBEE7 /* TCSpinLock.h */,
 				6541BD7008E80A17002CBEE7 /* TCSystemAlloc.cpp */,
 				6541BD7108E80A17002CBEE7 /* TCSystemAlloc.h */,
-				8656573E115BE35200291F40 /* text */,
 				18BAB52710DADFCD000D945B /* ThreadIdentifierDataPthreads.cpp */,
 				18BAB52810DADFCD000D945B /* ThreadIdentifierDataPthreads.h */,
 				5D6A566A0F05995500266145 /* Threading.cpp */,
 				E1EE79220D6C95CD00FEA3BA /* Threading.h */,
 				BC5F7BBC11823B590052C02C /* ThreadingPrimitives.h */,
 				E1EE793C0D6C9B9200FEA3BA /* ThreadingPthreads.cpp */,
+				0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */,
 				BC5F7BBD11823B590052C02C /* ThreadSafeRefCounted.h */,
 				E1B7C8BD0DA3A3360074B0DC /* ThreadSpecific.h */,
-				0BAC949E1338728400CF135B /* ThreadRestrictionVerifier.h */,
 				0B330C260F38C62300692DE3 /* TypeTraits.cpp */,
 				0B4D7E620F319AC800AD7E58 /* TypeTraits.h */,
-				E195678D09E7CF1200B89D13 /* unicode */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
 				E17FF770112131D200076A19 /* ValueCheck.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
@@ -2579,6 +2582,7 @@
 				A76F54A313B28AAB00EF2BCE /* JITWriteBarrier.h in Headers */,
 				866739D213BFDE710023D87C /* BigInteger.h in Headers */,
 				866739D313BFDE710023D87C /* Uint16WithFraction.h in Headers */,
+				BC66BAE413F492CC00C23FAE /* Compiler.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,6 +8,7 @@ SET(WTF_HEADERS
     Bitmap.h
     BumpPointerAllocator.h
     ByteArray.h
+    Compiler.h
     Complex.h
     CrossThreadRefCounted.h
     CryptographicallyRandomNumber.h

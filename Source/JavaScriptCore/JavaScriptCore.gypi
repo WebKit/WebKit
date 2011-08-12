@@ -140,6 +140,7 @@
             'wtf/BloomFilter.h',
             'wtf/BumpPointerAllocator.h',
             'wtf/ByteArray.h',
+            'wtf/Compiler.h',
             'wtf/Complex.h',
             'wtf/CrossThreadRefCounted.h',
             'wtf/CryptographicallyRandomNumber.h',
