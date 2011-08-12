@@ -917,8 +917,6 @@ private:
 
     bool m_mainFrameHasHorizontalScrollbar;
     bool m_mainFrameHasVerticalScrollbar;
-    // This aggregated count of wheel handlers only includes horizontal scrollbars
-    // and JS wheel event handlers.
     int m_wheelEventHandlerCount;
 
     bool m_mainFrameIsPinnedToLeftSide;

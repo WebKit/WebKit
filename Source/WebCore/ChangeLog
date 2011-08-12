@@ -1,3 +1,19 @@
+2011-08-11  Nico Weber  <thakis@chromium.org>
+
+        Remove incorrect comment about m_wheelEventHandlerCount
+        https://bugs.webkit.org/show_bug.cgi?id=66117
+
+        Reviewed by Simon Fraser.
+
+        From what I can tell, this number is changed only in
+        Frame::notifyChromeClientWheelEventHandlerCountChanged(),
+        and there it just reads the number modified in
+        Document::didAdd/RemoveWheelEventHandler(). So this is just the number
+        of event handlers (and not related to horizontal scrollbars), and the
+        variable name expresses that already.
+
+        * dom/Document.h:
+
 2011-08-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Defer managed texture creation and destruction until updateCompositorResources

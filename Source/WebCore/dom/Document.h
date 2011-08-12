@@ -1092,7 +1092,6 @@ public:
 
     ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
 
-    // Used to keep track of horizontal scrollbars and onmousewheel event handlers only.
     unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
     void didAddWheelEventHandler();
     void didRemoveWheelEventHandler();
