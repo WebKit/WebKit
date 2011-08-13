@@ -704,7 +704,7 @@ static ALWAYS_INLINE void d2b(BigInt& b, U* d, int* e, int* bits)
         *e = de - Bias - (P - 1) + k;
         *bits = P - k;
     } else {
-        *e = de - Bias - (P - 1) + 1 + k;
+        *e = 0 - Bias - (P - 1) + 1 + k;
         *bits = (32 * i) - hi0bits(x[i - 1]);
     }
 }

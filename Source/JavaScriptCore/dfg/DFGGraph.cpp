@@ -81,7 +81,7 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
     else
         printf("-");
     printf(">\t%s(", opName(op));
-    bool hasPrinted;
+    bool hasPrinted = false;
     if (op & NodeHasVarArgs) {
         for (unsigned childIdx = node.firstChild(); childIdx < node.firstChild() + node.numChildren(); childIdx++) {
             if (hasPrinted)
@@ -131,7 +131,8 @@ void Graph::dump(NodeIndex nodeIndex, CodeBlock* codeBlock)
         printf("%sF:#%u", hasPrinted ? ", " : "", blockIndexForBytecodeOffset(node.notTakenBytecodeOffset()));
         hasPrinted = true;
     }
-
+    (void)hasPrinted;
+    
     printf(")");
     
     if (node.hasLocal())

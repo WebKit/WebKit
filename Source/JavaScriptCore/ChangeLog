@@ -1,3 +1,27 @@
+2011-08-13  Sam Weinig  <sam@webkit.org>
+
+        Fix a bunch of minor bugs caught by the clang static analyzer in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=66182
+
+        Reviewed by Dan Bernstein.
+
+        Fixes 10 warnings in JavaScriptCore and 2 in testapi.
+
+        * API/tests/testapi.c:
+        (main):
+        Remove dead variables.
+
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::dump):
+        Initialize hasPrinted and silence an unused warning by casting to void (Ok here
+        since it is debug code and I want to keep it clear that if other cases are added,
+        the hasPrinted flag would be needed).
+
+        * wtf/dtoa.cpp:
+        (WTF::d2b):
+        The variable "de" in the else block is always zero, so there is no reason to
+        use it.
+
 2011-08-12  Sam Weinig  <sam@webkit.org>
 
         Use __builtin_trap() for CRASH when building with clang
