@@ -154,6 +154,7 @@ Settings::Settings(Page* page)
     , m_shrinksStandaloneImagesToFit(true)
     , m_usesPageCache(false)
     , m_showsURLsInToolTips(false)
+    , m_showsToolTipOverTruncatedText(false)
     , m_forceFTPDirectoryListings(false)
     , m_developerExtrasEnabled(false)
     , m_authorAndUserStylesEnabled(true)
@@ -557,6 +558,11 @@ void Settings::setShrinksStandaloneImagesToFit(bool shrinksStandaloneImagesToFit
 void Settings::setShowsURLsInToolTips(bool showsURLsInToolTips)
 {
     m_showsURLsInToolTips = showsURLsInToolTips;
+}
+
+void Settings::setShowsToolTipOverTruncatedText(bool showsToolTipForTruncatedText)
+{
+    m_showsToolTipOverTruncatedText = showsToolTipForTruncatedText;
 }
 
 void Settings::setFTPDirectoryTemplatePath(const String& path)

@@ -1,3 +1,26 @@
+2011-08-12  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/7337717> Add an option to automatically show tooltips (with the full text) over truncated text
+        https://bugs.webkit.org/show_bug.cgi?id=66178
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in: Export setShowsToolTipOverTruncatedText().
+        * page/Chrome.cpp:
+        (WebCore::Chrome::setToolTip): If no title is found, and the page is set to show tooltips over
+        truncated text, try to set the tooltip to the full text of the truncated text, if any.
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Initialize new member variable.
+        (WebCore::Settings::setShowsToolTipOverTruncatedText): Added this setter.
+        * page/Settings.h:
+        (WebCore::Settings::showsToolTipOverTruncatedText): Added this getter.
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::innerTextIfTruncated): Added. If the inner node or its nearest enclosing
+        block has text-overflow: ellipsis and has truncated lines, return the node’s (full) inner text.
+        * rendering/HitTestResult.h:
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::hasEllipsisBox): Made this public.
+
 2011-08-12  Stephen White  <senorblanco@chromium.org>
 
         Ownership of canvas's GraphicsContext3D should be moved to PlatformContextSkia

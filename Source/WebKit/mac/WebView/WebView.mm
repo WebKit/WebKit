@@ -1529,6 +1529,7 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setDOMPasteAllowed([preferences isDOMPasteAllowed]);
     settings->setUsesPageCache([self usesPageCache]);
     settings->setShowsURLsInToolTips([preferences showsURLsInToolTips]);
+    settings->setShowsToolTipOverTruncatedText([preferences showsToolTipOverTruncatedText]);
     settings->setDeveloperExtrasEnabled([preferences developerExtrasEnabled]);
     settings->setAuthorAndUserStylesEnabled([preferences authorAndUserStylesEnabled]);
     settings->setApplicationChromeMode([preferences applicationChromeModeEnabled]);

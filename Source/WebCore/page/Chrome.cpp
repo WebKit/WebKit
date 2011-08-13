@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2009, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008, 2010 Nokia Corporation and/or its subsidiary(-ies)
  *
  * This library is free software; you can redistribute it and/or
@@ -420,6 +420,9 @@ void Chrome::setToolTip(const HitTestResult& result)
     // Next we'll consider a tooltip for element with "title" attribute
     if (toolTip.isEmpty())
         toolTip = result.title(toolTipDirection);
+
+    if (toolTip.isEmpty() && m_page->settings()->showsToolTipOverTruncatedText())
+        toolTip = result.innerTextIfTruncated(toolTipDirection);
 
     // Lastly, for <input type="file"> that allow multiple files, we'll consider a tooltip for the selected filenames
     if (toolTip.isEmpty()) {

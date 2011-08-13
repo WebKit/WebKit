@@ -1,3 +1,21 @@
+2011-08-12  Dan Bernstein  <mitz@apple.com>
+
+        Add an option to automatically show tooltips (with the full text) over truncated text
+        https://bugs.webkit.org/show_bug.cgi?id=66178
+
+        Reviewed by Simon Fraser.
+
+        * Interfaces/IWebPreferencesPrivate.idl: Added accessors.
+        * WebPreferenceKeysPrivate.h: Defined a preference key.
+        * WebPreferences.cpp:
+        (WebPreferences::initializeDefaultSettings): Added a default value of
+        false for the ShowsToolTipOverTruncatedText preference.
+        (WebPreferences::showsToolTipOverTruncatedText): Added this getter.
+        (WebPreferences::setShowsToolTipOverTruncatedText): Added this setter.
+        * WebPreferences.h:
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged): Added call to Settings::setShowsToolTipOverTruncatedText().
+
 2011-08-05  Brent Fulgham  <bfulgham@webkit.org>
 
         WebView::performLayeredWindowUpdate() crashes with

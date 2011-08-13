@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple, Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple, Inc.  All rights reserved.
  * Copyright (C) 2009, 2010, 2011 Appcelerator, Inc. All rights reserved.
  * Copyright (C) 2011 Brent Fulgham. All rights reserved.
  *
@@ -4718,6 +4718,13 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         setZoomMultiplier(m_zoomMultiplier, enabled);
 
     settings->setShowsURLsInToolTips(false);
+
+    hr = preferences->showsToolTipOverTruncatedText(&enabled);
+    if (FAILED(hr))
+        return hr;
+
+    settings->setShowsToolTipOverTruncatedText(enabled);
+
     settings->setForceFTPDirectoryListings(true);
     settings->setDeveloperExtrasEnabled(developerExtrasEnabled());
     settings->setNeedsSiteSpecificQuirks(s_allowSiteSpecificHacks);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2008, 2011 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -32,6 +32,7 @@
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "RenderBlock.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "Scrollbar.h"
@@ -233,6 +234,32 @@ String HitTestResult::title(TextDirection& dir) const
             }
         }
     }
+    return String();
+}
+
+String HitTestResult::innerTextIfTruncated(TextDirection& dir) const
+{
+    for (Node* truncatedNode = m_innerNode.get(); truncatedNode; truncatedNode = truncatedNode->parentNode()) {
+        if (!truncatedNode->isElementNode())
+            continue;
+
+        if (RenderObject* renderer = truncatedNode->renderer()) {
+            if (renderer->isRenderBlock()) {
+                RenderBlock* block = toRenderBlock(renderer);
+                if (block->style()->textOverflow()) {
+                    for (RootInlineBox* line = block->firstRootBox(); line; line = line->nextRootBox()) {
+                        if (line->hasEllipsisBox()) {
+                            dir = block->style()->direction();
+                            return toElement(truncatedNode)->innerText();
+                        }
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    dir = LTR;
     return String();
 }
 

@@ -601,3 +601,13 @@ bool WKPreferencesGetMediaPlaybackAllowsInline(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->mediaPlaybackAllowsInline();
 }
+
+void WKPreferencesSetShowsToolTipOverTruncatedText(WKPreferencesRef preferencesRef, bool flag)
+{
+    toImpl(preferencesRef)->setShowsToolTipOverTruncatedText(flag);
+}
+
+bool WKPreferencesGetShowsToolTipOverTruncatedText(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->showsToolTipOverTruncatedText();
+}

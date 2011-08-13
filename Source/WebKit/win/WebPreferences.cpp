@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Apple Inc.  All rights reserved.
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -225,6 +225,7 @@ void WebPreferences::initializeDefaultSettings()
     CFDictionaryAddValue(defaults, CFSTR(WebKitPrivateBrowsingEnabledPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitRespectStandardStyleKeyEquivalentsPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitShowsURLsInToolTipsPreferenceKey), kCFBooleanFalse);
+    CFDictionaryAddValue(defaults, CFSTR(WebKitShowsToolTipOverTruncatedTextPreferenceKey), kCFBooleanFalse);
     CFDictionaryAddValue(defaults, CFSTR(WebKitPDFDisplayModePreferenceKey), CFSTR("1"));
     CFDictionaryAddValue(defaults, CFSTR(WebKitPDFScaleFactorPreferenceKey), CFSTR("0"));
 
@@ -1618,6 +1619,21 @@ HRESULT WebPreferences::setAVFoundationEnabled(BOOL enabled)
 #else
     return E_NOTIMPL;
 #endif
+}
+
+HRESULT WebPreferences::showsToolTipOverTruncatedText(BOOL* showsToolTip)
+{
+    if (!showsToolTip)
+        return E_POINTER;
+
+    *showsToolTip = boolValueForKey(CFSTR(WebKitShowsToolTipOverTruncatedTextPreferenceKey));
+    return S_OK;
+}
+
+HRESULT WebPreferences::setShowsToolTipOverTruncatedText(BOOL showsToolTip)
+{
+    setBoolValue(CFSTR(WebKitShowsToolTipOverTruncatedTextPreferenceKey), showsToolTip);
+    return S_OK;
 }
 
 void WebPreferences::willAddToWebView()

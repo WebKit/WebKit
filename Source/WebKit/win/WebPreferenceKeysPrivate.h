@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007, 2008, 2009 Apple Inc.  All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -75,6 +75,7 @@
 // cover methods themselves are private.
 #define WebKitRespectStandardStyleKeyEquivalentsPreferenceKey "WebKitRespectStandardStyleKeyEquivalents"
 #define WebKitShowsURLsInToolTipsPreferenceKey "WebKitShowsURLsInToolTips"
+#define WebKitShowsToolTipOverTruncatedTextPreferenceKey "WebKitShowsToolTipForTruncatedText"
 #define WebKitPDFDisplayModePreferenceKey "WebKitPDFDisplayMode"
 #define WebKitPDFScaleFactorPreferenceKey "WebKitPDFScaleFactor"
 #define WebKitEditableLinkBehaviorPreferenceKey "WebKitEditableLinkBehavior"

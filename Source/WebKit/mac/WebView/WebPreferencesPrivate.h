@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2007 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2005, 2007, 2011 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -77,6 +77,9 @@ extern NSString *WebPreferencesChangedInternalNotification;
 
 - (BOOL)showsURLsInToolTips;
 - (void)setShowsURLsInToolTips:(BOOL)flag;
+
+- (BOOL)showsToolTipOverTruncatedText;
+- (void)setShowsToolTipOverTruncatedText:(BOOL)flag;
 
 - (BOOL)textAreasAreResizable;
 - (void)setTextAreasAreResizable:(BOOL)flag;

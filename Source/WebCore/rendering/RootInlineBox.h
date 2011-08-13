@@ -87,6 +87,7 @@ public:
     void placeEllipsis(const AtomicString& ellipsisStr, bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, InlineBox* markupBox = 0);
     virtual float placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, bool& foundBox);
 
+    bool hasEllipsisBox() const { return m_hasEllipsisBoxOrHyphen; }
     EllipsisBox* ellipsisBox() const;
 
     void paintEllipsisBox(PaintInfo&, const LayoutPoint&, LayoutUnit lineTop, LayoutUnit lineBottom) const;
@@ -172,7 +173,6 @@ public:
     virtual const char* boxName() const;
 #endif
 private:
-    bool hasEllipsisBox() const { return m_hasEllipsisBoxOrHyphen; }
     void setHasEllipsisBox(bool hasEllipsisBox) { m_hasEllipsisBoxOrHyphen = hasEllipsisBox; }
 
     int beforeAnnotationsAdjustment() const;

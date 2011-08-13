@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2007, 2011 Apple Inc. All rights reserved.
  *           (C) 2006 Graham Dennis (graham.dennis@gmail.com)
  *
  * Redistribution and use in source and binary forms, with or without
@@ -337,6 +337,7 @@ static WebCacheModel cacheModelForMainBundle(void)
         [NSNumber numberWithBool:NO],   WebKitPrivateBrowsingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitRespectStandardStyleKeyEquivalentsPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShowsURLsInToolTipsPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitShowsToolTipOverTruncatedTextPreferenceKey,
         @"1",                           WebKitPDFDisplayModePreferenceKey,
         @"0",                           WebKitPDFScaleFactorPreferenceKey,
         @"0",                           WebKitUseSiteSpecificSpoofingPreferenceKey,
@@ -923,6 +924,16 @@ static WebCacheModel cacheModelForMainBundle(void)
 - (void)setShowsURLsInToolTips:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitShowsURLsInToolTipsPreferenceKey];
+}
+
+- (BOOL)showsToolTipOverTruncatedText
+{
+    return [self _boolValueForKey:WebKitShowsToolTipOverTruncatedTextPreferenceKey];
+}
+
+- (void)setShowsToolTipOverTruncatedText:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitShowsToolTipOverTruncatedTextPreferenceKey];
 }
 
 - (BOOL)textAreasAreResizable

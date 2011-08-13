@@ -241,6 +241,9 @@ namespace WebCore {
         void setShowsURLsInToolTips(bool);
         bool showsURLsInToolTips() const { return m_showsURLsInToolTips; }
 
+        void setShowsToolTipOverTruncatedText(bool);
+        bool showsToolTipOverTruncatedText() const { return m_showsToolTipOverTruncatedText; }
+
         void setFTPDirectoryTemplatePath(const String&);
         const String& ftpDirectoryTemplatePath() const { return m_ftpDirectoryTemplatePath; }
         
@@ -523,6 +526,7 @@ namespace WebCore {
         bool m_shrinksStandaloneImagesToFit : 1;
         bool m_usesPageCache: 1;
         bool m_showsURLsInToolTips : 1;
+        bool m_showsToolTipOverTruncatedText : 1;
         bool m_forceFTPDirectoryListings : 1;
         bool m_developerExtrasEnabled : 1;
         bool m_authorAndUserStylesEnabled : 1;

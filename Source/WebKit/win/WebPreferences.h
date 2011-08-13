@@ -450,6 +450,9 @@ public:
     virtual HRESULT STDMETHODCALLTYPE mediaPlaybackAllowsInline(BOOL*);
     virtual HRESULT STDMETHODCALLTYPE setMediaPlaybackAllowsInline(BOOL);
 
+    virtual HRESULT STDMETHODCALLTYPE showsToolTipOverTruncatedText(BOOL*);
+    virtual HRESULT STDMETHODCALLTYPE setShowsToolTipOverTruncatedText(BOOL);
+
     // WebPreferences
 
     // This method accesses a different preference key than developerExtrasEnabled.

@@ -136,4 +136,8 @@ interface IWebPreferencesPrivate : IUnknown
 
     HRESULT setMediaPlaybackAllowsInline([in] BOOL);
     HRESULT mediaPlaybackAllowsInline([out, retval] BOOL*);
+
+    HRESULT setShowsToolTipOverTruncatedText([in] BOOL);
+    HRESULT showsToolTipOverTruncatedText([out, retval] BOOL*);
+
 }
