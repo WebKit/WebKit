@@ -1,5 +1,13 @@
 2011-08-13  Dan Bernstein  <mitz@apple.com>
 
+        Changed the value of WebKitShowsToolTipOverTruncatedTextPreferenceKey to match the naming everywhere else.
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebPreferenceKeysPrivate.h:
+
+2011-08-13  Dan Bernstein  <mitz@apple.com>
+
         Build fix.
 
         * WebView.cpp:
