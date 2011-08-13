@@ -88,9 +88,10 @@ const double progressAnimationNumFrames = 256;
 
 - (id)initWithTheme:(WebCore::RenderTheme *)theme
 {
-    [super init];
-    _theme = theme;
-    
+    if (!(self = [super init]))
+        return nil;
+
+    _theme = theme;    
     return self;
 }
 

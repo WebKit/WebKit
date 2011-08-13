@@ -338,7 +338,8 @@ using namespace std;
 
 - (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
 {
-    [super init];
+    if (!(self = [super init]))
+        return nil;
 
     m_object = axObject;
     return self;
