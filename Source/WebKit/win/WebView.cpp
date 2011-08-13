@@ -4719,12 +4719,6 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
 
     settings->setShowsURLsInToolTips(false);
 
-    hr = preferences->showsToolTipOverTruncatedText(&enabled);
-    if (FAILED(hr))
-        return hr;
-
-    settings->setShowsToolTipOverTruncatedText(enabled);
-
     settings->setForceFTPDirectoryListings(true);
     settings->setDeveloperExtrasEnabled(developerExtrasEnabled());
     settings->setNeedsSiteSpecificQuirks(s_allowSiteSpecificHacks);
@@ -4870,6 +4864,12 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
         return hr;
     settings->setUseHixie76WebSocketProtocol(enabled);
 #endif
+
+    hr = prefsPrivate->showsToolTipOverTruncatedText(&enabled);
+    if (FAILED(hr))
+        return hr;
+
+    settings->setShowsToolTipOverTruncatedText(enabled);
 
     if (!m_closeWindowTimer)
         m_mainFrame->invalidate(); // FIXME

@@ -1,3 +1,10 @@
+2011-08-13  Dan Bernstein  <mitz@apple.com>
+
+        Build fix.
+
+        * WebView.cpp:
+        (WebView::notifyPreferencesChanged):
+
 2011-08-12  Dan Bernstein  <mitz@apple.com>
 
         Add an option to automatically show tooltips (with the full text) over truncated text
