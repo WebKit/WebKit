@@ -1,5 +1,11 @@
 2011-08-13  Sam Weinig  <sam@webkit.org>
 
+        Remove forward declaration of -[WebUndefined dealloc] to appease the bot gods.
+
+        * bindings/objc/WebScriptObject.mm:
+
+2011-08-13  Sam Weinig  <sam@webkit.org>
+
         Remove assertion from -[WebUndefined dealloc] to try to mollify the bots.
 
         * bindings/objc/WebScriptObject.mm:

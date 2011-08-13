@@ -603,11 +603,6 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 @end
 
-
-@interface WebUndefined (Overrides)
-- (void)dealloc NO_RETURN_DUE_TO_ASSERT;
-@end
-
 @implementation WebUndefined
 
 + (id)allocWithZone:(NSZone *)unusedZone
