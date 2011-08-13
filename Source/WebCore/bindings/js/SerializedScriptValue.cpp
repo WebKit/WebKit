@@ -197,6 +197,7 @@ protected:
         throwError(m_exec, createInterruptedExecutionException(&m_exec->globalData()));
     }
 
+    NO_RETURN_DUE_TO_ASSERT
     void fail()
     {
         ASSERT_NOT_REACHED();

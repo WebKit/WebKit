@@ -172,21 +172,33 @@ WTF_EXPORT_PRIVATE void WTFLogVerbose(const char* file, int line, const char* fu
 #define CRASH() do { \
     __DEBUGGER(); \
     User::Panic(_L("Webkit CRASH"),0); \
-    } while(false)
+} while (false)
 #elif PLATFORM(BREWMP)
 #define CRASH() do { \
     dbg_Message("WebKit CRASH", DBG_MSG_LEVEL_FATAL, __FILE__, __LINE__); \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
-} while(false)
+} while (false)
+#elif COMPILER(CLANG)
+#define CRASH() do { \
+    WTFReportBacktrace(); \
+    __builtin_trap(); \
+} while (false)
 #else
 #define CRASH() do { \
     WTFReportBacktrace(); \
     *(int *)(uintptr_t)0xbbadbeef = 0; \
     ((void(*)())0)(); /* More reliable, but doesn't say BBADBEEF */ \
-} while(false)
+} while (false)
 #endif
 #endif
+
+#if COMPILER(CLANG)
+#define NO_RETURN_DUE_TO_CRASH NO_RETURN
+#else
+#define NO_RETURN_DUE_TO_CRASH
+#endif
+
 
 /* BACKTRACE
 
@@ -237,6 +249,7 @@ WTF_EXPORT_PRIVATE void WTFLogVerbose(const char* file, int line, const char* fu
 #define ASSERT(assertion) ((void)0)
 #define ASSERT_AT(assertion, file, line, function) ((void)0)
 #define ASSERT_NOT_REACHED() ((void)0)
+#define NO_RETURN_DUE_TO_ASSERT
 
 #if COMPILER(INTEL) && !OS(WINDOWS) || COMPILER(RVCT)
 template<typename T>
@@ -268,6 +281,8 @@ while (0)
 } while (0)
 
 #define ASSERT_UNUSED(variable, assertion) ASSERT(assertion)
+
+#define NO_RETURN_DUE_TO_ASSERT NO_RETURN_DUE_TO_CRASH
 
 #endif
 

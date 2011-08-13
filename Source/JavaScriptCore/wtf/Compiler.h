@@ -31,9 +31,14 @@
 
 /* ==== COMPILER() - the compiler being used to build the project ==== */
 
-/* COMPILER(MSVC) Microsoft Visual C++ */
-/* COMPILER(MSVC7_OR_LOWER) Microsoft Visual C++ 2003 or lower*/
-/* COMPILER(MSVC9_OR_LOWER) Microsoft Visual C++ 2008 or lower*/
+/* COMPILER(CLANG) - Clang  */
+#if defined(__clang__)
+#define WTF_COMPILER_CLANG 1
+#endif
+
+/* COMPILER(MSVC) - Microsoft Visual C++ */
+/* COMPILER(MSVC7_OR_LOWER) - Microsoft Visual C++ 2003 or lower*/
+/* COMPILER(MSVC9_OR_LOWER) - Microsoft Visual C++ 2008 or lower*/
 #if defined(_MSC_VER)
 #define WTF_COMPILER_MSVC 1
 #if _MSC_VER < 1400
@@ -43,7 +48,7 @@
 #endif
 #endif
 
-/* COMPILER(RVCT)  - ARM RealView Compilation Tools */
+/* COMPILER(RVCT) - ARM RealView Compilation Tools */
 /* COMPILER(RVCT4_OR_GREATER) - ARM RealView Compilation Tools 4.0 or greater */
 #if defined(__CC_ARM) || defined(__ARMCC__)
 #define WTF_COMPILER_RVCT 1
@@ -100,7 +105,7 @@
 #endif
 
 
-/* ==== Comiler features ==== */
+/* ==== Compiler features ==== */
 
 
 /* ALWAYS_INLINE */

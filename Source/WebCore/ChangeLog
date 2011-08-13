@@ -1,3 +1,20 @@
+2011-08-12  Sam Weinig  <sam@webkit.org>
+
+        Use __builtin_trap() for CRASH when building with clang
+        https://bugs.webkit.org/show_bug.cgi?id=66152
+
+        Reviewed by Anders Carlsson.
+
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::CloneBase::fail):
+        * bindings/objc/WebScriptObject.mm:
+        * platform/mac/BlockExceptions.h:
+        * platform/text/cf/StringImplCF.cpp:
+        Add NO_RETURN_DUE_TO_ASSERT.
+
+        * bridge/IdentifierRep.h:
+        Don't define the destructor since it is never called,
+
 2011-08-12  Joseph Pecoraro  <joepeck@webkit.org>
 
         Abandoned Memory: Temporary CSS Fonts May Never Be Purged

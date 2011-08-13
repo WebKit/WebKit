@@ -1,3 +1,29 @@
+2011-08-12  Sam Weinig  <sam@webkit.org>
+
+        Use __builtin_trap() for CRASH when building with clang
+        https://bugs.webkit.org/show_bug.cgi?id=66152
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/WebBaseNetscapePluginView.mm:
+        (-[WebBaseNetscapePluginView setAttributeKeys:andValues:]):
+        (-[WebBaseNetscapePluginView handleMouseMoved:]):
+        (-[WebBaseNetscapePluginView handleMouseEntered:]):
+        (-[WebBaseNetscapePluginView handleMouseExited:]):
+        (-[WebBaseNetscapePluginView focusChanged]):
+        (-[WebBaseNetscapePluginView windowFocusChanged:]):
+        (-[WebBaseNetscapePluginView createPlugin]):
+        (-[WebBaseNetscapePluginView loadStream]):
+        (-[WebBaseNetscapePluginView shouldStop]):
+        (-[WebBaseNetscapePluginView destroyPlugin]):
+        (-[WebBaseNetscapePluginView updateAndSetWindow]):
+        (-[WebBaseNetscapePluginView sendModifierEventWithKeyCode:character:]):
+        (-[WebBaseNetscapePluginView pluginLayer]):
+        (-[WebBaseNetscapePluginView getFormValue:]):
+        Remove the ASSERT_NOT_REACHED from the base class methods. They were not
+        adding much value and were getting in the way of making the static analyzer
+        work. A better way to do this would be to use a formal protocol.
+
 2011-08-12  Mark Rowe  <mrowe@apple.com>
 
         Be more forward-looking in the choice of compiler.

@@ -211,8 +211,8 @@ private:
 
         // parseEscape() should never call these delegate methods when
         // invoked with inCharacterClass set.
-        void assertionWordBoundary(bool) { ASSERT_NOT_REACHED(); }
-        void atomBackReference(unsigned) { ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void assertionWordBoundary(bool) { ASSERT_NOT_REACHED(); }
+        NO_RETURN_DUE_TO_ASSERT void atomBackReference(unsigned) { ASSERT_NOT_REACHED(); }
 
     private:
         Delegate& m_delegate;

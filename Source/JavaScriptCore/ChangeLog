@@ -1,3 +1,30 @@
+2011-08-12  Sam Weinig  <sam@webkit.org>
+
+        Use __builtin_trap() for CRASH when building with clang
+        https://bugs.webkit.org/show_bug.cgi?id=66152
+
+        Reviewed by Anders Carlsson.
+
+        * wtf/Assertions.h:
+        Add Clang specific CRASH macro that calls __builtin_trap() instead
+        of silly techniques to crash. This allows the static analyzer to understand
+        that we are intentionally crashing. As a result, we need to mark some functions
+        as not returning.
+
+        Also adds a macros that annotates a function as never returning due to ASSERT or CRASH.
+
+        * wtf/Compiler.h:
+        Add COMPILIER(CLANG) and fix some formatting and spelling mistakes.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::Internal::fastMallocMatchFailed):
+        Add NO_RETURN_DUE_TO_CRASH.
+
+        * yarr/YarrParser.h:
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::assertionWordBoundary):
+        (JSC::Yarr::Parser::CharacterClassParserDelegate::atomBackReference):
+        Add NO_RETURN_DUE_TO_ASSERT.
+
 2011-08-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG JIT has inconsistent use of boxDouble and unboxDouble,

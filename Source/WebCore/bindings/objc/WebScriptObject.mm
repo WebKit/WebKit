@@ -603,6 +603,11 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 @end
 
+
+@interface WebUndefined (Overrides)
+- (void)dealloc NO_RETURN_DUE_TO_ASSERT;
+@end
+
 @implementation WebUndefined
 
 + (id)allocWithZone:(NSZone *)unusedZone
@@ -660,7 +665,7 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 - (void)dealloc
 {
-    ASSERT(false);
+    ASSERT_NOT_REACHED();
     return;
     [super dealloc]; // make -Wdealloc-check happy
 }
