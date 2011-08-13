@@ -185,11 +185,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         if (!m_loadStartTimer.isActive())
             m_loadStartTimer.startOneShot(0);
 
-        // FIXME: m_string is a URL so it makes no sense to pass it as a family name.
-        SimpleFontData* tempData = fontCache()->getCachedFontData(fontDescription, m_string);
-        if (!tempData)
-            tempData = fontCache()->getLastResortFallbackFont(fontDescription);
-
+        SimpleFontData* tempData = fontCache()->getLastResortFallbackFont(fontDescription);
         fontData = adoptPtr(new SimpleFontData(tempData->platformData(), true, true));
     }
 

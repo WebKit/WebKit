@@ -1,3 +1,19 @@
+2011-08-12  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Abandoned Memory: Temporary CSS Fonts May Never Be Purged
+        https://bugs.webkit.org/show_bug.cgi?id=66153
+
+        Reviewed by Dan Bernstein.
+
+        No new tests, this is not a functional change.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        If the CSS font-face is loading from a URL then immediately
+        fallback to a system font matching the description, since we
+        cannot determine a reasonable family name from the m_string
+        URL. The URL could be a dataURI.
+
 2011-08-12  Fady Samuel  <fsamuel@chromium.org>
 
         Refactoring of PopupMenuChromium For Readability and Maintainability
