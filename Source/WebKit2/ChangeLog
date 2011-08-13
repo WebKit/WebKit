@@ -1,3 +1,13 @@
+2011-08-13  Sam Weinig  <sam@webkit.org>
+
+        Remove unused variables from WKFullScreenWindowController.h
+        https://bugs.webkit.org/show_bug.cgi?id=66193
+
+        Reviewed by Dan Bernstein.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        Remove _layerViewPlaceholder, _isWindowLoaded and _initialFrame which were not used.
+
 2011-08-12  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/7337717> Add an option to automatically show tooltips (with the full text) over truncated text

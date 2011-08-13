@@ -42,16 +42,13 @@ class IntRect;
 @private
     WKView *_webView;
     RetainPtr<NSView> _webViewPlaceholder;
-    RetainPtr<NSView> _layerViewPlaceholder;
     RetainPtr<NSView> _layerHostingView;
     
     BOOL _isEnteringFullScreen;
     BOOL _isExitingFullScreen;
     BOOL _isFullScreen;
-    BOOL _isWindowLoaded;
     BOOL _forceDisableAnimation;
     BOOL _isPlaying;
-    CGRect _initialFrame;    
     uint32_t _idleDisplaySleepAssertion;
     uint32_t _idleSystemSleepAssertion;
     NSTimer *_tickleTimer;
