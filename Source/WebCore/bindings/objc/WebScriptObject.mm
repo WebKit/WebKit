@@ -665,7 +665,6 @@ static void getListFromNSArray(ExecState *exec, NSArray *array, RootObject* root
 
 - (void)dealloc
 {
-    ASSERT_NOT_REACHED();
     return;
     [super dealloc]; // make -Wdealloc-check happy
 }

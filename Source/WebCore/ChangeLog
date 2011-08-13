@@ -1,5 +1,12 @@
 2011-08-13  Sam Weinig  <sam@webkit.org>
 
+        Remove assertion from -[WebUndefined dealloc] to try to mollify the bots.
+
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebUndefined dealloc]):
+
+2011-08-13  Sam Weinig  <sam@webkit.org>
+
         Remove unused variables from WebVideoFullscreenController.h
         https://bugs.webkit.org/show_bug.cgi?id=66192
 
