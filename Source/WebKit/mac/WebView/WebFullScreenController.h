@@ -39,25 +39,16 @@ namespace WebCore {
 @private
     RefPtr<WebCore::Element> _element;
     WebCore::RenderBox* _renderer; // (set)
-    RefPtr<WebCore::Element> _replacementElement; 
-    NSWindow *_backgroundFullscreenWindow; // (retain)
-    WebWindowFadeAnimation *_fadeAnimation; // (retain)
     WebView *_webView;
     NSView* _placeholderView;
-    CALayer* _rendererLayer;
-    CALayer* _backgroundLayer;
     RefPtr<WebCore::EventListener> _mediaEventListener; 
 
     BOOL _isAnimating;
     BOOL _isFullscreen;
-    BOOL _isWindowLoaded;
     BOOL _forceDisableAnimation;
-    BOOL _isPlaying;
     uint32_t _idleDisplaySleepAssertion;
     uint32_t _idleSystemSleepAssertion;
     NSTimer *_tickleTimer;
-    SystemUIMode _savedUIMode;
-    SystemUIOptions _savedUIOptions;
     CGRect _initialFrame;
 }
 
