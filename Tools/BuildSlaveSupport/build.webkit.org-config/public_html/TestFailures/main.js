@@ -287,8 +287,7 @@ function update()
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
         showRecentCommits();
         showBuilderProgress();
-        model.analyzeUnexpectedFailures(showUnexpectedFailure);
-        dismissButterbar();
+        model.analyzeUnexpectedFailures(showUnexpectedFailure, dismissButterbar);
         checkForLocalServer();
     });
 }

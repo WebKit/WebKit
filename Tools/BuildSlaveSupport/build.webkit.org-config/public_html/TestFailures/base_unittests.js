@@ -113,7 +113,7 @@ test("callInSequence", 7, function() {
     })
 });
 
-test("RequestTracker", 3, function() {
+test("RequestTracker", 5, function() {
     var ready = false;
     var tracker = new base.RequestTracker(1, function() {
         ok(ready);
@@ -132,9 +132,14 @@ test("RequestTracker", 3, function() {
     ready = false;
 
     tracker = new base.RequestTracker(0, function() {
-        ok(false);
+        ok(true);
     });
     tracker.requestComplete();
+
+    tracker = new base.RequestTracker(0);
+    tracker.requestComplete();
+    // Should not barf.
+    ok(true);
 });
 
 test("CallbackIterator", 22, function() {

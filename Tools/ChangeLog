@@ -1,3 +1,19 @@
+2011-08-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic's analyzeUnexpectedFailures needs a completion callback.
+        https://bugs.webkit.org/show_bug.cgi?id=66166
+
+        Also changed base.RequestTracker to:
+        a) fire callback immediately if requestsInFlight is 0;
+        b) not barf if callback is not supplied.
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js: Started using completion callback.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model.js: Added completion callback.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js: Changed RequestTracker.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base_unittest.js: Added unit tests.
+
 2011-08-12  Mark Rowe  <mrowe@apple.com>
 
         Be more forward-looking in the choice of compiler.

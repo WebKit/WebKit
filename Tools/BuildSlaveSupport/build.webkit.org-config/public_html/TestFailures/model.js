@@ -114,7 +114,7 @@ model.updateResultsByBuilder = function(callback)
     });
 };
 
-model.analyzeUnexpectedFailures = function(callback)
+model.analyzeUnexpectedFailures = function(callback, completionCallback)
 {
     var unexpectedFailures = results.unexpectedFailuresByTest(model.state.resultsByBuilder);
 
@@ -123,6 +123,7 @@ model.analyzeUnexpectedFailures = function(callback)
             delete model.state.failureAnalysisByTest[testName];
     });
 
+    var tracker = new base.RequestTracker(Object.keys(unexpectedFailures).length, completionCallback);
     $.each(unexpectedFailures, function(testName, resultNodesByBuilder) {
         var builderNameList = base.keys(resultNodesByBuilder);
         results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
@@ -145,6 +146,7 @@ model.analyzeUnexpectedFailures = function(callback)
 
             model.state.failureAnalysisByTest[testName] = failureAnalysis;
             callback(failureAnalysis);
+            tracker.requestComplete();
         });
     });
 };

@@ -111,14 +111,21 @@ base.RequestTracker = function(requestsInFlight, callback, args)
     this._requestsInFlight = requestsInFlight;
     this._callback = callback;
     this._args = args || [];
+    this._tryCallback();
 };
 
-base.RequestTracker.prototype.requestComplete = function()
-{
-    --this._requestsInFlight;
-    if (!this._requestsInFlight)
-        this._callback.apply(null, this._args);
-};
+base.RequestTracker.prototype = {
+    _tryCallback: function()
+    {
+        if (!this._requestsInFlight && this._callback)
+            this._callback.apply(null, this._args);
+    },
+    requestComplete: function()
+    {
+        --this._requestsInFlight;
+        this._tryCallback();
+    }
+}
 
 base.callInParallel = function(functionList, callback)
 {
