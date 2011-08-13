@@ -1,3 +1,12 @@
+2011-08-13  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/66188> WebCore.xcodeproj has duplicate entries again
+
+        Reviewed by Dan Bernstein.
+
+        * WebCore.xcodeproj/project.pbxproj: Remove duplicate entries
+        by using uniq.  Originally noticed by Xcode 4.
+
 2011-08-12  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/7337717> Add an option to automatically show tooltips (with the full text) over truncated text
