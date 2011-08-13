@@ -1,3 +1,9 @@
+2011-08-13  Adam Barth  <abarth@webkit.org>
+
+        Fix clang build.
+
+        * platform/chromium/PopupMenuChromium.h:
+
 2011-08-13  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/66188> WebCore.xcodeproj has duplicate entries again
