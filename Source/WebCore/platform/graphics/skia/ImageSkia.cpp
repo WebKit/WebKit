@@ -265,7 +265,7 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
     SkCanvas* canvas = platformContext->canvas();
 
     ResamplingMode resampling;
-    if (platformContext->useSkiaGPU())
+    if (platformContext->isAccelerated())
         resampling = RESAMPLE_LINEAR;
     else
         resampling = platformContext->printing() ? RESAMPLE_NONE :
@@ -365,7 +365,7 @@ void Image::drawPattern(GraphicsContext* context,
 
     // Compute the resampling mode.
     ResamplingMode resampling;
-    if (context->platformContext()->useSkiaGPU())
+    if (context->platformContext()->isAccelerated())
         resampling = RESAMPLE_LINEAR;
     else {
         if (context->platformContext()->printing())

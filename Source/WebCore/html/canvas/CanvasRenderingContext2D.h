@@ -307,7 +307,6 @@ private:
 
 #if ENABLE(ACCELERATED_2D_CANVAS)
     RefPtr<DrawingBuffer> m_drawingBuffer;
-    RefPtr<SharedGraphicsContext3D> m_context3D;
 #endif
 };
 

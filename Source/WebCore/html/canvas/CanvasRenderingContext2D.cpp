@@ -183,7 +183,7 @@ bool CanvasRenderingContext2D::isAccelerated() const
     ImageBuffer* buffer = canvas()->buffer();
     return buffer ? buffer->isAccelerated() : false;
 #elif ENABLE(ACCELERATED_2D_CANVAS)
-    return m_context3D;
+    return drawingContext() && drawingContext()->isAcceleratedContext();
 #else
     return false;
 #endif
@@ -192,8 +192,8 @@ bool CanvasRenderingContext2D::isAccelerated() const
 bool CanvasRenderingContext2D::paintsIntoCanvasBuffer() const
 {
 #if ENABLE(ACCELERATED_2D_CANVAS)
-    if (m_context3D)
-        return m_context3D->context()->paintsIntoCanvasBuffer();
+    if (drawingContext())
+        return drawingContext()->paintsIntoImageBuffer();
 #endif
     return true;
 }
@@ -2029,7 +2029,6 @@ void CanvasRenderingContext2D::clearAcceleration()
         ctx->setGraphicsContext3D(0, 0, IntSize());
 
     m_drawingBuffer.clear();
-    m_context3D.clear();
 }
 
 void CanvasRenderingContext2D::resetAcceleration()
@@ -2046,13 +2045,11 @@ void CanvasRenderingContext2D::resetAcceleration()
         return;
     }
 
-    if (!m_context3D) {
-        Page* page = canvas()->document()->page();
-        m_context3D = SharedGraphicsContext3D::create(page->chrome());
-        if (!m_context3D) {
-            clearAcceleration();
-            return;
-        }
+    Page* page = canvas()->document()->page();
+    GraphicsContext3D* context3D = SharedGraphicsContext3D::create(page->chrome());
+    if (!context3D) {
+        clearAcceleration();
+        return;
     }
 
     if (m_drawingBuffer) {
@@ -2061,14 +2058,14 @@ void CanvasRenderingContext2D::resetAcceleration()
             return;
         }
     } else {
-        m_drawingBuffer = m_context3D->context()->createDrawingBuffer(canvas()->size());
+        m_drawingBuffer = context3D->createDrawingBuffer(canvas()->size());
         if (!m_drawingBuffer) {
             clearAcceleration();
             return;
         }
     }
 
-    ctx->setGraphicsContext3D(m_context3D->context(), m_drawingBuffer.get(), canvas()->size());
+    ctx->setGraphicsContext3D(context3D, m_drawingBuffer.get(), canvas()->size());
 }
 #endif
 

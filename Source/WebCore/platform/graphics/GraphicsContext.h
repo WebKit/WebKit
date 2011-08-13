@@ -273,8 +273,9 @@ namespace WebCore {
         bool isCALayerContext() const;
 
         void setIsAcceleratedContext(bool);
-        bool isAcceleratedContext() const;
 #endif
+        bool isAcceleratedContext() const;
+        bool paintsIntoImageBuffer() const;
 
         void save();
         void restore();

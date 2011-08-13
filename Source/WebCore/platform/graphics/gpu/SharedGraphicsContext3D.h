@@ -32,18 +32,9 @@
 
 namespace WebCore {
 
-class SharedGraphicsContext3D : public RefCounted<SharedGraphicsContext3D> {
+class SharedGraphicsContext3D {
 public:
-    static PassRefPtr<SharedGraphicsContext3D> create(HostWindow*);
-    ~SharedGraphicsContext3D();
-
-    GraphicsContext3D* context() const { return m_context.get(); }
-
-private:
-    explicit SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D>);
-
-    RefPtr<GraphicsContext3D> m_context;
-    static SharedGraphicsContext3D* s_instance;
+    static GraphicsContext3D* create(HostWindow*);
 };
 
 }

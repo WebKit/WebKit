@@ -1203,9 +1203,19 @@ void GraphicsContext::translate(float w, float h)
                                            WebCoreFloatToSkScalar(h));
 }
 
-void GraphicsContext::setGraphicsContext3D(GraphicsContext3D* context, DrawingBuffer* framebuffer, const IntSize& size)
+void GraphicsContext::setGraphicsContext3D(GraphicsContext3D* context, DrawingBuffer* drawingBuffer, const IntSize& size)
 {
-    platformContext()->setGraphicsContext3D(context, framebuffer, size);
+    platformContext()->setGraphicsContext3D(context, drawingBuffer, size);
+}
+
+bool GraphicsContext::isAcceleratedContext() const
+{
+    return platformContext()->isAccelerated();
+}
+
+bool GraphicsContext::paintsIntoImageBuffer() const
+{
+    return platformContext()->paintsIntoImageBuffer();
 }
 
 #if PLATFORM(CHROMIUM) && OS(DARWIN)

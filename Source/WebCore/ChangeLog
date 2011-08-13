@@ -1,3 +1,50 @@
+2011-08-12  Stephen White  <senorblanco@chromium.org>
+
+        Ownership of canvas's GraphicsContext3D should be moved to PlatformContextSkia
+        https://bugs.webkit.org/show_bug.cgi?id=66154
+
+        Reviewed by Kenneth Russell.
+
+        Covered by existing tests in fast/canvas and canvas/philip.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::isAccelerated):
+        Plumb this call through GraphicsContext::isAcceleratedContext().
+        (WebCore::CanvasRenderingContext2D::paintsIntoCanvasBuffer):
+        For the ACCELERATED_2D_CANVAS path, plumb this call through
+        (the new) GraphicsContext::paintsIntoCanvasBuffer().
+        (WebCore::CanvasRenderingContext2D::clearAcceleration):
+        (WebCore::CanvasRenderingContext2D::resetAcceleration):
+        Remove the use of the m_context3D member; use a temporary instead.
+        * html/canvas/CanvasRenderingContext2D.h:
+        Remove the m_context3D member.
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::isAcceleratedContext):
+        (WebCore::GraphicsContext::paintsIntoImageBuffer):
+        Implement stub versions of these functions for other platforms.
+        * platform/graphics/GraphicsContext.h:
+        Expose isAcceleratedContext() to all platforms.  Add
+        paintsIntoImageBuffer() member function.
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::create):
+        * platform/graphics/gpu/SharedGraphicsContext3D.h:
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::setGraphicsContext3D):
+        (WebCore::GraphicsContext::isAcceleratedContext):
+        (WebCore::GraphicsContext::paintsIntoImageBuffer):
+        Basically gut this class leaving only a static creation function.
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+        (WebCore::Image::drawPattern):
+        Use isAccelerated() in place of useSkiaGpu().
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::isNativeFontRenderingAllowed):
+        (WebCore::PlatformContextSkia::paintsIntoImageBuffer):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        (WebCore::PlatformContextSkia::isAccelerated):
+        Rename useSkiaGpu() to isAccelerated().  Plumb through 
+        paintsIntoImageBuffer() to GraphicsContext3D.
+
 2011-08-12  Sam Weinig  <sam@webkit.org>
 
         Use __builtin_trap() for CRASH when building with clang

@@ -177,8 +177,9 @@ public:
     void clearImageResamplingHint();
     bool hasImageResamplingHint() const;
 
-    bool useSkiaGPU() const { return m_gpuContext; }
+    bool isAccelerated() const { return m_gpuContext; }
     void setGraphicsContext3D(GraphicsContext3D*, DrawingBuffer*, const IntSize&);
+    bool paintsIntoImageBuffer() const;
     void makeGrContextCurrent();
 
 private:

@@ -690,6 +690,19 @@ void GraphicsContext::setGraphicsContext3D(GraphicsContext3D*, DrawingBuffer*, c
 }
 #endif
 
+#if !USE(SKIA) && !USE(CG)
+bool GraphicsContext::isAcceleratedContext() const
+{
+    return false;
+}
+#endif
+
+#if !USE(SKIA)
+bool GraphicsContext::paintsIntoImageBuffer() const
+{
+    return true;
+}
+#endif
 
 void GraphicsContext::adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle penStyle)
 {

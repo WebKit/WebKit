@@ -30,35 +30,15 @@
 
 namespace WebCore {
 
-SharedGraphicsContext3D* SharedGraphicsContext3D::s_instance = 0;
-
-PassRefPtr<SharedGraphicsContext3D> SharedGraphicsContext3D::create(HostWindow* window)
+GraphicsContext3D* SharedGraphicsContext3D::create(HostWindow* window)
 {
-    if (s_instance) {
-        s_instance->ref(); // Manually increment refcount for this caller since adoptRef() does not increase the refcount.
-        return adoptRef(s_instance);
-    }
     GraphicsContext3D::Attributes attributes;
     attributes.depth = false;
     attributes.stencil = true;
     attributes.antialias = false;
     attributes.canRecoverFromContextLoss = false; // Canvas contexts can not handle lost contexts.
-    RefPtr<GraphicsContext3D> context = GraphicsContext3D::create(attributes, window);
-    if (!context)
-        return PassRefPtr<SharedGraphicsContext3D>();
-    RefPtr<SharedGraphicsContext3D> sharedContext = adoptRef(new SharedGraphicsContext3D(context.release()));
-    s_instance = sharedContext.get();
-    return sharedContext;
-}
-
-SharedGraphicsContext3D::SharedGraphicsContext3D(PassRefPtr<GraphicsContext3D> context)
-    : m_context(context)
-{
-}
-
-SharedGraphicsContext3D::~SharedGraphicsContext3D()
-{
-    s_instance = 0;
+    static RefPtr<GraphicsContext3D> context = GraphicsContext3D::create(attributes, window);
+    return context.get();
 }
 
 }

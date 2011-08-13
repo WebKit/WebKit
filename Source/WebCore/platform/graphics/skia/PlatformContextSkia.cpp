@@ -575,7 +575,7 @@ bool PlatformContextSkia::isNativeFontRenderingAllowed()
 #if ENABLE(SKIA_TEXT)
     return false;
 #else
-    if (useSkiaGPU())
+    if (isAccelerated())
         return false;
     return skia::SupportsPlatformPaint(m_canvas);
 #endif
@@ -680,6 +680,11 @@ void PlatformContextSkia::makeGrContextCurrent()
 {
     if (m_gpuContext)
         m_gpuContext->makeContextCurrent();
+}
+
+bool PlatformContextSkia::paintsIntoImageBuffer() const
+{
+    return m_gpuContext ? m_gpuContext->paintsIntoCanvasBuffer() : true;
 }
 
 } // namespace WebCore
