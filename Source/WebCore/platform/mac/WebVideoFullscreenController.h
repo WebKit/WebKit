@@ -50,13 +50,10 @@ namespace WebCore {
     WebWindowFadeAnimation *_fadeAnimation; // (retain)
 
     BOOL _isEndingFullscreen;
-    BOOL _isWindowLoaded;
     BOOL _forceDisableAnimation;
     uint32_t _idleDisplaySleepAssertion;
     uint32_t _idleSystemSleepAssertion;
     NSTimer *_tickleTimer;
-    uint32_t _savedUIMode;
-    uint32_t _savedUIOptions;
 }
 
 - (id <WebVideoFullscreenControllerDelegate>)delegate;
