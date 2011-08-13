@@ -182,6 +182,7 @@ WTF_EXPORT_PRIVATE void WTFLogVerbose(const char* file, int line, const char* fu
 #elif COMPILER(CLANG)
 #define CRASH() do { \
     WTFReportBacktrace(); \
+    *(int *)(uintptr_t)0xbbadbeef = 0; \
     __builtin_trap(); \
 } while (false)
 #else

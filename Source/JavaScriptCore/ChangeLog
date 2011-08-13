@@ -1,5 +1,17 @@
 2011-08-13  Sam Weinig  <sam@webkit.org>
 
+        Add back 0xbbadbeef to CRASH to allow for old habits
+        https://bugs.webkit.org/show_bug.cgi?id=66190
+
+        Reviewed by David Kilzer.
+
+        * wtf/Assertions.h:
+        Add back the assignment to the memory address 0xbbadbeef in the CRASH
+        macro, as it does not cause issue in the clang static analyzer and many
+        people use its presence in crash reports to easily identify ASSERTs. 
+
+2011-08-13  Sam Weinig  <sam@webkit.org>
+
         Fix a bunch of minor bugs caught by the clang static analyzer in JavaScriptCore
         https://bugs.webkit.org/show_bug.cgi?id=66182
 
