@@ -1,3 +1,21 @@
+2011-08-14  Adam Barth  <abarth@webkit.org>
+
+        Switch results detail view over to new-style object-oriented UI widgets
+        https://bugs.webkit.org/show_bug.cgi?id=66200
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch replaces my goofy template-based UI for the results
+        comparison screen with new object-oriented UI widgets.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui/results.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui_unittests.js:
+
 2011-08-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic's analyzeUnexpectedFailures needs a completion callback.

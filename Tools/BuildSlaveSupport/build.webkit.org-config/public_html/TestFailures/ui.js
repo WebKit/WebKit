@@ -82,24 +82,6 @@ ui.failureDetailsStatus = function(failureInfo, builderNameList)
     return block;
 };
 
-ui.failureDetails = function(resultsURLs)
-{
-    var block = $('<table class="failure-details"><tbody><tr></tr></tbody></table>');
-
-    if (!resultsURLs.length)
-        $('tr', block).append($('<td><div class="missing-data">No data</div></td>'));
-
-    $.each(resultsURLs, function(index, resultURL) {
-        var kind = results.resultKind(resultURL);
-        var type = results.resultType(resultURL);
-        var fragment = (type == results.kImageType) ? '<img>' : '<iframe></iframe>';
-        var content = $(fragment).attr('src', resultURL).addClass(kind);
-        $('tr', block).append($('<td></td>').append(content));
-    });
-
-    return block;
-};
-
 function builderTableDataCells(resultNodesByBuilder)
 {
     if (!resultNodesByBuilder)

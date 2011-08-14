@@ -311,33 +311,18 @@ button.default:hover {
 }
 
 .results-detail .content {
-    height: 100%;
     background-color: white;
 }
 
-.results-detail .failure-details .missing-data {
-    font-style: italic;
-    text-align: center;
-    color: #555;
-}
-
-.results-detail .failure-details {
-    height: 100%;
-}
-
-.results-detail .failure-details iframe {
+.text-result {
     border: none;
     width: 100%;
-    height: 100%;
+    height: 400px; /* FIXME: How do we get a reasonable height here? */
 }
 
-.results-detail .failure-details img {
-  width: 100%;
-  height: auto;
-}
-
-.results-detail .failure-details td {
-    height: 100%;
+.image-result {
+    width: 100%;
+    height: auto;
 }
 
 /*** partytime ***/

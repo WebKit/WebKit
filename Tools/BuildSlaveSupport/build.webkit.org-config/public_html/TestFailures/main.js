@@ -118,7 +118,9 @@ function showResultsDetail(failureInfo)
 
         // FIXME: We should be passing the full list of failing builder names as the fourth argument.
         status.append(ui.failureDetailsStatus(failureInfo, [failureInfo.builderName]));
-        content.append(ui.failureDetails(resultsURLs));
+        var resultsGrid = new ui.results.ResultsGrid();
+        resultsGrid.addResults(resultsURLs);
+        content.append(resultsGrid);
 
         toggleButton($('.results-detail .actions .next'), g_resultsDetailsIterator.hasNext());
         toggleButton($('.results-detail .actions .previous'), g_resultsDetailsIterator.hasPrevious());

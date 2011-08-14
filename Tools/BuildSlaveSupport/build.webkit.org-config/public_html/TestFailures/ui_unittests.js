@@ -73,38 +73,59 @@ test("failureDetailsStatus", 1, function() {
         '</span>');
 });
 
-test("failureDetails", 1, function() {
-    var testResults = ui.failureDetails([
+test("results.ResultsGrid", 1, function() {
+    var grid = new ui.results.ResultsGrid()
+    grid.addResults([
         'http://example.com/layout-test-results/foo-bar-diff.txt',
         'http://example.com/layout-test-results/foo-bar-expected.png',
         'http://example.com/layout-test-results/foo-bar-actual.png',
         'http://example.com/layout-test-results/foo-bar-diff.png',
     ]);
-    testResults.wrap('<wrapper></wrapper>');
-    equal(testResults.parent().html(),
-        '<table class="failure-details">' +
+    equal(grid.innerHTML,
+        '<table class="comparison">' +
+            '<thead>' +
+                '<tr>' +
+                    '<th>Expected</th>' +
+                    '<th>Actual</th>' +
+                    '<th>Diff</th>' +
+                '</tr>' +
+            '</thead>' +
             '<tbody>' +
                 '<tr>' +
-                    '<td><iframe src="http://example.com/layout-test-results/foo-bar-diff.txt" class="diff"></iframe></td>' +
-                    '<td><img src="http://example.com/layout-test-results/foo-bar-expected.png" class="expected"></td>' +
-                    '<td><img src="http://example.com/layout-test-results/foo-bar-actual.png" class="actual"></td>' +
-                    '<td><img src="http://example.com/layout-test-results/foo-bar-diff.png" class="diff"></td>' +
+                    '<td class="expected"><img class="image-result" src="http://example.com/layout-test-results/foo-bar-expected.png"></td>' +
+                    '<td class="actual"><img class="image-result" src="http://example.com/layout-test-results/foo-bar-actual.png"></td>' +
+                    '<td class="diff"><img class="image-result" src="http://example.com/layout-test-results/foo-bar-diff.png"></td>' +
+                '</tr>' +
+            '</tbody>' +
+        '</table>' +
+        '<table class="comparison">' +
+            '<thead>' +
+                '<tr>' +
+                    '<th>Expected</th>' +
+                    '<th>Actual</th>' +
+                    '<th>Diff</th>' +
+                '</tr>' +
+            '</thead>' +
+            '<tbody>' +
+                '<tr>' +
+                    '<td class="expected"></td>' +
+                    '<td class="actual"></td>' +
+                    '<td class="diff"><iframe class="text-result" src="http://example.com/layout-test-results/foo-bar-diff.txt"></iframe></td>' +
                 '</tr>' +
             '</tbody>' +
         '</table>');
 });
 
-test("failureDetails (empty)", 1, function() {
-    var testResults = ui.failureDetails([]);
-    testResults.wrap('<wrapper></wrapper>');
-    equal(testResults.parent().html(),
-        '<table class="failure-details">' +
-            '<tbody>' +
-                '<tr>' +
-                    '<td><div class="missing-data">No data</div></td>' +
-                '</tr>' +
-            '</tbody>' +
-        '</table>');
+test("results.ResultsGrid (crashlog)", 1, function() {
+    var grid = new ui.results.ResultsGrid()
+    grid.addResults(['http://example.com/layout-test-results/foo-bar-crash-log.txt']);
+    equal(grid.innerHTML, '<iframe class="text-result" src="http://example.com/layout-test-results/foo-bar-crash-log.txt"></iframe>');
+});
+
+test("results.ResultsGrid (empty)", 1, function() {
+    var grid = new ui.results.ResultsGrid()
+    grid.addResults([]);
+    equal(grid.innerHTML, '');
 });
 
 test("summarizeFailure", 1, function() {
