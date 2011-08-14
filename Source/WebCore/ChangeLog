@@ -1,3 +1,19 @@
+2011-08-13  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in HTMLTreeBuilder::processAnyOtherEndTagForInBody
+        https://bugs.webkit.org/show_bug.cgi?id=66187
+
+        Reviewed by Adam Barth.
+
+        RefPtr a few ContainerNodes to prevent premature deletion.
+
+        Test: fast/html/process-end-tag-for-inbody-crash.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processCloseWhenNestedTag):
+        (WebCore::HTMLTreeBuilder::processAnyOtherEndTagForInBody):
+        (WebCore::HTMLTreeBuilder::callTheAdoptionAgency):
+
 2011-08-14  Kalev Lember  <kalevlember@gmail.com>
 
         Fix GTK Windows build after r92308.

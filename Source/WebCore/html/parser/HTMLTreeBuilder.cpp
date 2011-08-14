@@ -605,13 +605,13 @@ void HTMLTreeBuilder::processCloseWhenNestedTag(AtomicHTMLToken& token)
     m_framesetOk = false;
     HTMLElementStack::ElementRecord* nodeRecord = m_tree.openElements()->topRecord();
     while (1) {
-        ContainerNode* node = nodeRecord->node();
-        if (shouldClose(node)) {
+        RefPtr<ContainerNode> node = nodeRecord->node();
+        if (shouldClose(node.get())) {
             ASSERT(node->isElementNode());
-            processFakeEndTag(toElement(node)->tagQName());
+            processFakeEndTag(toElement(node.get())->tagQName());
             break;
         }
-        if (isSpecialNode(node) && !node->hasTagName(addressTag) && !node->hasTagName(divTag) && !node->hasTagName(pTag))
+        if (isSpecialNode(node.get()) && !node->hasTagName(addressTag) && !node->hasTagName(divTag) && !node->hasTagName(pTag))
             break;
         nodeRecord = nodeRecord->next();
     }
@@ -1556,7 +1556,7 @@ void HTMLTreeBuilder::processAnyOtherEndTagForInBody(AtomicHTMLToken& token)
     ASSERT(token.type() == HTMLTokenTypes::EndTag);
     HTMLElementStack::ElementRecord* record = m_tree.openElements()->topRecord();
     while (1) {
-        ContainerNode* node = record->node();
+        RefPtr<ContainerNode> node = record->node();
         if (node->hasLocalName(token.name())) {
             m_tree.generateImpliedEndTags();
             // FIXME: The ElementRecord pointed to by record might be deleted by
@@ -1570,13 +1570,13 @@ void HTMLTreeBuilder::processAnyOtherEndTagForInBody(AtomicHTMLToken& token)
                 // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10080
                 // We might have already popped the node for the token in
                 // generateImpliedEndTags, just abort.
-                if (!m_tree.openElements()->contains(toElement(node)))
+                if (!m_tree.openElements()->contains(toElement(node.get())))
                     return;
             }
-            m_tree.openElements()->popUntilPopped(toElement(node));
+            m_tree.openElements()->popUntilPopped(toElement(node.get()));
             return;
         }
-        if (isSpecialNode(node)) {
+        if (isSpecialNode(node.get())) {
             parseError(token);
             return;
         }
@@ -1633,7 +1633,7 @@ void HTMLTreeBuilder::callTheAdoptionAgency(AtomicHTMLToken& token)
         }
         // 4.
         ASSERT(furthestBlock->isAbove(formattingElementRecord));
-        ContainerNode* commonAncestor = formattingElementRecord->next()->node();
+        RefPtr<ContainerNode> commonAncestor = formattingElementRecord->next()->node();
         // 5.
         HTMLFormattingElementList::Bookmark bookmark = m_tree.activeFormattingElements()->bookmarkFor(formattingElement);
         // 6.
