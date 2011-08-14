@@ -1,3 +1,12 @@
+2011-08-14  Kalev Lember  <kalevlember@gmail.com>
+
+        Fix GTK Windows build after r92308.
+        https://bugs.webkit.org/show_bug.cgi?id=66140
+
+        Reviewed by Xan Lopez.
+
+        * config.h: Don't try to include WebCoreHeaderDetection.h for GTK.
+
 2011-08-13  Sam Weinig  <sam@webkit.org>
 
         Remove forward declaration of -[WebUndefined dealloc] to appease the bot gods.
