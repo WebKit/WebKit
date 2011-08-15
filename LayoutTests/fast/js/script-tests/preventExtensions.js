@@ -71,4 +71,7 @@ shouldBe('Object.preventExtensions(Math.sin)', 'Math.sin');
 shouldBeUndefined('var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; o.newProp;');
 shouldThrow('"use strict"; var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" };');
 
+// check that we can still access static properties on an object after calling preventExtensions.
+shouldBe('Object.preventExtensions(Math); Math.sqrt(4)', '2');
+
 successfullyParsed = true;

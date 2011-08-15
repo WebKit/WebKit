@@ -1,3 +1,14 @@
+2011-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Crash accessing static property on sealed object
+        https://bugs.webkit.org/show_bug.cgi?id=66242
+
+        Reviewed by Sam Weinig.
+
+        * runtime/JSObject.h:
+        (JSC::JSObject::putDirectInternal):
+            - should only check isExtensible if checkReadOnly.
+
 2011-08-15  Sam Weinig  <sam@webkit.org>
 
         Fix release build when building with Clang.

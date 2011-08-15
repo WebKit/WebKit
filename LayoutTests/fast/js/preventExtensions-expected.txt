@@ -13,6 +13,7 @@ PASS test(freeze(obj())) is "(a:1)(b:2)SF"
 PASS Object.preventExtensions(Math.sin) is Math.sin
 PASS var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; o.newProp; is undefined.
 PASS "use strict"; var o = {}; Object.preventExtensions(o); o.__proto__ = { newProp: "Should not see this" }; threw exception TypeError: Attempted to assign to readonly property..
+PASS Object.preventExtensions(Math); Math.sqrt(4) is 2
 PASS successfullyParsed is true
 
 TEST COMPLETE
