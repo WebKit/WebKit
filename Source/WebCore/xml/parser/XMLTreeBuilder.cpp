@@ -335,7 +335,8 @@ void XMLTreeBuilder::enterText()
         return;
     }
 
-    m_leafText = adoptPtr(new StringBuilder());
+    if (!m_leafText)
+        m_leafText = adoptPtr(new StringBuilder());
 }
 
 void XMLTreeBuilder::exitText()
