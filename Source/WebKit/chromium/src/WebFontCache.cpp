@@ -55,10 +55,4 @@ void WebFontCache::clear()
     fontCache()->invalidate();
 }
 
-// static
-void WebFontCache::prune()
-{
-    fontCache()->purgeInactiveFontData();
-}
-
 }  // namespace WebKit
