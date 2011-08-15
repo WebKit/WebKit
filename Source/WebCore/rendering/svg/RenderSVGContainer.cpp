@@ -91,7 +91,7 @@ bool RenderSVGContainer::selfWillPaint()
 #endif
 }
 
-void RenderSVGContainer::paint(PaintInfo& paintInfo, const IntPoint&)
+void RenderSVGContainer::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
     if (paintInfo.context->paintingDisabled())
         return;

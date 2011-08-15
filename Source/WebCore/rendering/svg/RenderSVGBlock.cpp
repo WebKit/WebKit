@@ -34,7 +34,7 @@ RenderSVGBlock::RenderSVGBlock(SVGElement* node)
 {
 }
 
-IntRect RenderSVGBlock::visualOverflowRect() const
+LayoutRect RenderSVGBlock::visualOverflowRect() const
 {
     LayoutRect borderRect = borderBoxRect();
 

@@ -52,13 +52,13 @@ public:
     virtual FloatRect objectBoundingBox() const { return FloatRect(); }
     virtual FloatRect repaintRectInLocalCoordinates() const { return FloatRect(); }
 
-    InlineBox* closestLeafChildForPosition(const IntPoint&);
+    InlineBox* closestLeafChildForPosition(const LayoutPoint&);
 
 private:
     void reorderValueLists(Vector<SVGTextLayoutAttributes>&);
     void layoutCharactersInTextBoxes(InlineFlowBox*, SVGTextLayoutEngine&);
-    void layoutChildBoxes(InlineFlowBox*, IntRect* = 0);
-    void layoutRootBox(const IntRect&);
+    void layoutChildBoxes(InlineFlowBox*, LayoutRect* = 0);
+    void layoutRootBox(const LayoutRect&);
 
 private:
     int m_logicalHeight;

@@ -32,7 +32,7 @@ class RenderSVGBlock : public RenderBlock {
 public:
     explicit RenderSVGBlock(SVGElement*);
 
-    virtual IntRect visualOverflowRect() const;
+    virtual LayoutRect visualOverflowRect() const;
 
 private:
     virtual void setStyle(PassRefPtr<RenderStyle>);

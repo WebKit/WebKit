@@ -60,7 +60,7 @@ private:
 
     virtual VisiblePosition positionForPoint(const LayoutPoint&);
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
-    virtual IntRect linesBoundingBox() const;
+    virtual LayoutRect linesBoundingBox() const;
     virtual InlineTextBox* createTextBox();
 
     float m_scalingFactor;

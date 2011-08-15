@@ -103,7 +103,7 @@ void RenderSVGImage::updateFromElement()
     RenderSVGModelObject::updateFromElement();
 }
 
-void RenderSVGImage::paint(PaintInfo& paintInfo, const IntPoint&)
+void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
     if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN || !m_imageResource->hasImage())
         return;

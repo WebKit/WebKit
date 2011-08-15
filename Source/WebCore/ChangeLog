@@ -1,3 +1,61 @@
+2011-08-15  Levi Weintraub  <leviw@chromium.org>
+
+        Switch remaining SVG Rendering methods to LayoutUnits
+        https://bugs.webkit.org/show_bug.cgi?id=66169
+
+        Reviewed by Eric Seidel.
+
+        Changing remaining integer SVG methods to use the LayoutUnits abstraction.
+
+        No tests as no change in functionality.
+
+        * rendering/svg/RenderSVGBlock.cpp:
+        (WebCore::RenderSVGBlock::visualOverflowRect):
+        * rendering/svg/RenderSVGBlock.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::paint):
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::paint):
+        (WebCore::RenderSVGForeignObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGForeignObject::computeRectForRepaint):
+        * rendering/svg/RenderSVGHiddenContainer.cpp:
+        (WebCore::RenderSVGHiddenContainer::paint):
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::paint):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::linesBoundingBox):
+        * rendering/svg/RenderSVGInlineText.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::outlineBoundsForRepaint):
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::paint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::localToBorderBoxTransform):
+        (WebCore::RenderSVGRoot::parentOriginToBorderBox):
+        (WebCore::RenderSVGRoot::borderOriginToContentBox):
+        (WebCore::RenderSVGRoot::localToRepaintContainerTransform):
+        (WebCore::RenderSVGRoot::localToParentTransform):
+        (WebCore::RenderSVGRoot::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGRoot::computeRectForRepaint):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::paint):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paint):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint):
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::clippedOverflowRectForRepaint):
+        (WebCore::SVGRenderSupport::computeRectForRepaint):
+        * rendering/svg/SVGRenderSupport.h:
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+        (WebCore::SVGRootInlineBox::layoutRootBox):
+        (WebCore::SVGRootInlineBox::closestLeafChildForPosition):
+        * rendering/svg/SVGRootInlineBox.h:
+
 2011-08-12  Jeff Miller  <jeffm@apple.com>
 
         MediaPlayerPrivateAVFoundationCF::playerItemStatus() should return MediaPlayerAVPlayerItemStatusDoesNotExist if there is no AVPlayerItem

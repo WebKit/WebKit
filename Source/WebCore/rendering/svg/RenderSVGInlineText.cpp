@@ -127,9 +127,9 @@ IntRect RenderSVGInlineText::localCaretRect(InlineBox* box, int caretOffset, int
     return IntRect(x, rect.y(), caretWidth, rect.height());
 }
 
-IntRect RenderSVGInlineText::linesBoundingBox() const
+LayoutRect RenderSVGInlineText::linesBoundingBox() const
 {
-    IntRect boundingBox;
+    LayoutRect boundingBox;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
         boundingBox.unite(box->calculateBoundaries());
     return boundingBox;

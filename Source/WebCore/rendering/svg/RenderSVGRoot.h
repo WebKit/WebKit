@@ -87,8 +87,8 @@ private:
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction);
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed) const;
+    virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& repaintRect, bool fixed) const;
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
 
@@ -97,9 +97,9 @@ private:
     bool selfWillPaint();
     void updateCachedBoundaries();
 
-    IntSize parentOriginToBorderBox() const;
-    IntSize borderOriginToContentBox() const;
-    AffineTransform localToRepaintContainerTransform(const IntPoint& parentOriginInContainer) const;
+    LayoutSize parentOriginToBorderBox() const;
+    LayoutSize borderOriginToContentBox() const;
+    AffineTransform localToRepaintContainerTransform(const LayoutPoint& parentOriginInContainer) const;
     AffineTransform localToBorderBoxTransform() const;
 
     RenderObjectChildList m_children;

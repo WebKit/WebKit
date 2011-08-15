@@ -45,20 +45,20 @@
 
 namespace WebCore {
 
-IntRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer)
+LayoutRect SVGRenderSupport::clippedOverflowRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer)
 {
     // Return early for any cases where we don't actually paint
     if (object->style()->visibility() != VISIBLE && !object->enclosingLayer()->hasVisibleContent())
-        return IntRect();
+        return LayoutRect();
 
     // Pass our local paint rect to computeRectForRepaint() which will
     // map to parent coords and recurse up the parent chain.
-    IntRect repaintRect = enclosingIntRect(object->repaintRectInLocalCoordinates());
+    LayoutRect repaintRect = enclosingLayoutRect(object->repaintRectInLocalCoordinates());
     object->computeRectForRepaint(repaintContainer, repaintRect);
     return repaintRect;
 }
 
-void SVGRenderSupport::computeRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed)
+void SVGRenderSupport::computeRectForRepaint(const RenderObject* object, RenderBoxModelObject* repaintContainer, LayoutRect& repaintRect, bool fixed)
 {
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())

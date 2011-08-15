@@ -229,7 +229,7 @@ void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads, bool* wasFixed)
     quads.append(localToAbsoluteQuad(strokeBoundingBox(), false, wasFixed));
 }
 
-void RenderSVGText::paint(PaintInfo& paintInfo, const IntPoint&)
+void RenderSVGText::paint(PaintInfo& paintInfo, const LayoutPoint&)
 {
     if (paintInfo.context->paintingDisabled())
         return;
