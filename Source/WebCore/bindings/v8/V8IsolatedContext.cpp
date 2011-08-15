@@ -48,8 +48,8 @@ void V8IsolatedContext::contextWeakReferenceCallback(v8::Persistent<v8::Value> o
     delete context;
 }
 
-V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup)
-    : m_world(IsolatedWorld::create())
+V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup, int worldId)
+    : m_world(IsolatedWorld::create(worldId))
 {
     v8::HandleScope scope;
     // FIXME: We should be creating a new V8DOMWindowShell here instead of riping out the context.
@@ -74,7 +74,7 @@ V8IsolatedContext::V8IsolatedContext(V8Proxy* proxy, int extensionGroup)
     //        changes.
     m_context->get()->UseDefaultSecurityToken();
 
-    proxy->frame()->loader()->client()->didCreateIsolatedScriptContext();
+    proxy->frame()->loader()->client()->didCreateIsolatedScriptContext(this);
 }
 
 void V8IsolatedContext::destroy()

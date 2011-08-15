@@ -46,6 +46,10 @@
 #include "ResourceError.h"
 #include "SearchPopupMenu.h"
 
+#if USE(V8)
+#include "V8IsolatedContext.h"
+#endif
+
 /*
  This file holds empty Client stubs for use by WebCore.
  Viewless element needs to create a dummy Page->Frame->FrameView tree for use in parsing or executing JavaScript.
@@ -397,7 +401,7 @@ public:
 #if USE(V8)
     virtual void didCreateScriptContextForFrame() { }
     virtual void didDestroyScriptContextForFrame() { }
-    virtual void didCreateIsolatedScriptContext() { }
+    virtual void didCreateIsolatedScriptContext(V8IsolatedContext*) { }
     virtual bool allowScriptExtension(const String& extensionName, int extensionGroup) { return false; }
 #endif
 

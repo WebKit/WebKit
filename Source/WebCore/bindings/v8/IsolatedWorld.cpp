@@ -35,9 +35,10 @@ namespace WebCore {
 
 int IsolatedWorld::isolatedWorldCount = 0;
 
-IsolatedWorld::IsolatedWorld()
+IsolatedWorld::IsolatedWorld(int id)
 {
     ++isolatedWorldCount;
+    m_id = id;
 }
 
 IsolatedWorld::~IsolatedWorld()

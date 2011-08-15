@@ -40,6 +40,10 @@
 #include "WebTextDirection.h"
 #include "WebURLError.h"
 
+#if WEBKIT_USING_V8
+#include <v8.h>
+#endif
+
 namespace WebKit {
 
 class WebApplicationCacheHost;
@@ -302,8 +306,11 @@ public:
 
     // Notifies that a garbage-collected context was created - content
     // scripts.
+    // FIXME: Remove this first overload when Chromium switches to the second.
     virtual void didCreateIsolatedScriptContext(WebFrame*) { }
-
+#if WEBKIT_USING_V8
+    virtual void didCreateIsolatedScriptContext(WebFrame*, int worldID, v8::Handle<v8::Context>) { }
+#endif
 
     // Geometry notifications ----------------------------------------------
 

@@ -39,16 +39,19 @@ namespace WebCore {
 // An DOMWrapperWorld other than the thread's normal world.
 class IsolatedWorld : public DOMWrapperWorld {
 public:
-    static PassRefPtr<IsolatedWorld> create() { return adoptRef(new IsolatedWorld()); }
+    static PassRefPtr<IsolatedWorld> create(int id) { return adoptRef(new IsolatedWorld(id)); }
     static int count() { return isolatedWorldCount; }
 
+    int id() const { return m_id; }
     DOMDataStore* domDataStore() const { return m_domDataStore.getStore(); }
 
 protected:
-    IsolatedWorld();
+    explicit IsolatedWorld(int id);
     ~IsolatedWorld();
 
 private:
+    int m_id;
+
     // The backing store for the isolated world's DOM wrappers.  This class
     // doesn't have visibility into the wrappers.  This handle simply helps
     // manage their lifetime.

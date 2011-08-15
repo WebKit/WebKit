@@ -65,10 +65,12 @@ public:
     virtual void didCreateScriptContextForFrame();
     virtual void didDestroyScriptContextForFrame();
 
+#if USE(V8)
     // A context untied to a frame was created (through evaluateInIsolatedWorld).
     // This context is not tied to the lifetime of its frame, and is destroyed
     // in garbage collection.
-    virtual void didCreateIsolatedScriptContext();
+    virtual void didCreateIsolatedScriptContext(WebCore::V8IsolatedContext*);
+#endif
 
     // Returns true if we should allow the given V8 extension to be added to
     // the script context at the currently loading page and given extension group.

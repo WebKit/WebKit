@@ -1,3 +1,24 @@
+2011-08-15  Aaron Boodman  <aa@chromium.org>
+
+        Pass additional details to client in didCreateIsolatedContext
+        https://bugs.webkit.org/show_bug.cgi?id=66037
+
+        Reviewed by Darin Fisher.
+
+        * bindings/v8/IsolatedWorld.cpp:
+        (WebCore::IsolatedWorld::IsolatedWorld):
+        * bindings/v8/IsolatedWorld.h:
+        (WebCore::IsolatedWorld::create):
+        (WebCore::IsolatedWorld::id):
+        * bindings/v8/V8IsolatedContext.cpp:
+        (WebCore::V8IsolatedContext::V8IsolatedContext):
+        * bindings/v8/V8IsolatedContext.h:
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluateInIsolatedWorld):
+        * loader/EmptyClients.h:
+        (WebCore::EmptyFrameLoaderClient::didCreateIsolatedScriptContext):
+        * loader/FrameLoaderClient.h:
+
 2011-08-15  Chris Rogers  <crogers@google.com>
 
         Add shell implementation for Web Audio API's MediaElementAudioSourceNode

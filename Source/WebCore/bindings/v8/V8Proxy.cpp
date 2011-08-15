@@ -256,7 +256,7 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
         if (iter != m_isolatedWorlds.end()) {
             isolatedContext = iter->second;
         } else {
-            isolatedContext = new V8IsolatedContext(this, extensionGroup);
+            isolatedContext = new V8IsolatedContext(this, extensionGroup, worldID);
             if (isolatedContext->context().IsEmpty()) {
                 delete isolatedContext;
                 return;
@@ -277,7 +277,7 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
         if (securityOriginIter != m_isolatedWorldSecurityOrigins.end())
             isolatedContext->setSecurityOrigin(securityOriginIter->second);
     } else {
-        isolatedContext = new V8IsolatedContext(this, extensionGroup);
+        isolatedContext = new V8IsolatedContext(this, extensionGroup, worldID);
         if (isolatedContext->context().IsEmpty()) {
             delete isolatedContext;
             return;

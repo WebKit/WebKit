@@ -1,3 +1,16 @@
+2011-08-10  Aaron Boodman  <aa@chromium.org>
+
+        Pass additional details to client in didCreateIsolatedContext
+        https://bugs.webkit.org/show_bug.cgi?id=66037
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didCreateIsolatedScriptContext):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didCreateIsolatedScriptContext):
+        * src/FrameLoaderClientImpl.h:
+
 2011-08-10  Adam Roben  <aroben@apple.com>
 
         Clear up scale factor terminology

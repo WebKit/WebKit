@@ -82,6 +82,10 @@
 #include "WrappedResourceResponse.h"
 #include <wtf/text/CString.h>
 
+#if USE(V8)
+#include "V8IsolatedContext.h"
+#endif
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -146,11 +150,15 @@ void FrameLoaderClientImpl::didDestroyScriptContextForFrame()
         m_webFrame->client()->didDestroyScriptContext(m_webFrame);
 }
 
-void FrameLoaderClientImpl::didCreateIsolatedScriptContext()
+#if USE(V8)
+void FrameLoaderClientImpl::didCreateIsolatedScriptContext(V8IsolatedContext* isolatedContext)
 {
-    if (m_webFrame->client())
+    if (m_webFrame->client()) {
         m_webFrame->client()->didCreateIsolatedScriptContext(m_webFrame);
+        m_webFrame->client()->didCreateIsolatedScriptContext(m_webFrame, isolatedContext->world()->id(), isolatedContext->context());
+    }
 }
+#endif
 
 bool FrameLoaderClientImpl::allowScriptExtension(const String& extensionName,
                                                  int extensionGroup)

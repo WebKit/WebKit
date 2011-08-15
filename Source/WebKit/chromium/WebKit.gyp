@@ -71,10 +71,12 @@
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
                 '<(chromium_src_dir)/third_party/angle/src/build_angle.gyp:translator_glsl',
+                '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
             ],
             'export_dependent_settings': [
                 '<(chromium_src_dir)/skia/skia.gyp:skia',
                 '<(chromium_src_dir)/third_party/npapi/npapi.gyp:npapi',
+                '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
             ],
             'include_dirs': [
                 'public',
