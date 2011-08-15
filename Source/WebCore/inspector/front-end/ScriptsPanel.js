@@ -950,6 +950,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     _stepOverClicked: function()
     {
+        if (!this._paused)
+            return;
+
         this._paused = false;
         this._stepping = true;
 
@@ -960,6 +963,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     _stepIntoClicked: function()
     {
+        if (!this._paused)
+            return;
+
         this._paused = false;
         this._stepping = true;
 
@@ -970,6 +976,9 @@ WebInspector.ScriptsPanel.prototype = {
 
     _stepOutClicked: function()
     {
+        if (!this._paused)
+            return;
+
         this._paused = false;
         this._stepping = true;
 

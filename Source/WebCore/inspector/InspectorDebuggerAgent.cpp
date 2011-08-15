@@ -356,24 +356,32 @@ void InspectorDebuggerAgent::pause(ErrorString*)
     m_javaScriptPauseScheduled = true;
 }
 
-void InspectorDebuggerAgent::resume(ErrorString*)
+void InspectorDebuggerAgent::resume(ErrorString* errorString)
 {
+    if (!assertPaused(errorString))
+        return;
     m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     scriptDebugServer().continueProgram();
 }
 
-void InspectorDebuggerAgent::stepOver(ErrorString*)
+void InspectorDebuggerAgent::stepOver(ErrorString* errorString)
 {
+    if (!assertPaused(errorString))
+        return;
     scriptDebugServer().stepOverStatement();
 }
 
-void InspectorDebuggerAgent::stepInto(ErrorString*)
+void InspectorDebuggerAgent::stepInto(ErrorString* errorString)
 {
+    if (!assertPaused(errorString))
+        return;
     scriptDebugServer().stepIntoStatement();
 }
 
-void InspectorDebuggerAgent::stepOut(ErrorString*)
+void InspectorDebuggerAgent::stepOut(ErrorString* errorString)
 {
+    if (!assertPaused(errorString))
+        return;
     scriptDebugServer().stepOutOfFunction();
 }
 
@@ -503,6 +511,15 @@ void InspectorDebuggerAgent::clear()
     m_continueToLocationBreakpointId = String();
     m_breakProgramDetails.clear();
     m_javaScriptPauseScheduled = false;
+}
+
+bool InspectorDebuggerAgent::assertPaused(ErrorString* errorString)
+{
+    if (!m_pausedScriptState) {
+        *errorString = "Can only perform operation while paused.";
+        return false;
+    }
+    return true;
 }
 
 } // namespace WebCore

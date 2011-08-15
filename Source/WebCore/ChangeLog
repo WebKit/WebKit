@@ -1,3 +1,22 @@
+2011-08-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: [V8] crash upon stepIn while not on pause.
+        https://bugs.webkit.org/show_bug.cgi?id=66221
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::resume):
+        (WebCore::InspectorDebuggerAgent::stepOver):
+        (WebCore::InspectorDebuggerAgent::stepInto):
+        (WebCore::InspectorDebuggerAgent::stepOut):
+        (WebCore::InspectorDebuggerAgent::assertPaused):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._stepOverClicked):
+        (WebInspector.ScriptsPanel.prototype._stepIntoClicked):
+        (WebInspector.ScriptsPanel.prototype._stepOutClicked):
+
 2011-08-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Network panel: display the current search match index in the toolbar.
