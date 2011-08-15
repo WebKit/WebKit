@@ -64,13 +64,12 @@
 #include <JavaScriptCore/InitializeThreading.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValue.h>
-#include <WebCore/AbstractDatabase.h>
 #include <WebCore/AXObjectCache.h>
+#include <WebCore/AbstractDatabase.h>
 #include <WebCore/ApplicationCacheStorage.h>
 #include <WebCore/BString.h>
 #include <WebCore/BackForwardListImpl.h>
 #include <WebCore/BitmapInfo.h>
-#include <WebCore/MemoryCache.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/ContextMenu.h>
 #include <WebCore/ContextMenuController.h>
@@ -103,6 +102,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Logging.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/MemoryCache.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/PageGroup.h>
