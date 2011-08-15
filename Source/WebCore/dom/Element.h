@@ -168,13 +168,13 @@ public:
     virtual int scrollWidth();
     virtual int scrollHeight();
 
-    IntRect boundsInWindowSpace();
+    LayoutRect boundsInWindowSpace();
 
     PassRefPtr<ClientRectList> getClientRects();
     PassRefPtr<ClientRect> getBoundingClientRect();
     
     // Returns the absolute bounding box translated into screen coordinates:
-    IntRect screenRect() const;
+    LayoutRect screenRect() const;
 
     void removeAttribute(const String& name, ExceptionCode&);
     void removeAttributeNS(const String& namespaceURI, const String& localName, ExceptionCode&);
@@ -272,8 +272,8 @@ public:
 
     void updateId(const AtomicString& oldId, const AtomicString& newId);
 
-    IntSize minimumSizeForResizing() const;
-    void setMinimumSizeForResizing(const IntSize&);
+    LayoutSize minimumSizeForResizing() const;
+    void setMinimumSizeForResizing(const LayoutSize&);
 
     // Use Document::registerForDocumentActivationCallbacks() to subscribe to these
     virtual void documentWillBecomeInactive() { }

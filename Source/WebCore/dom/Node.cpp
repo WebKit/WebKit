@@ -819,14 +819,14 @@ RenderBoxModelObject* Node::renderBoxModelObject() const
     return m_renderer && m_renderer->isBoxModelObject() ? toRenderBoxModelObject(m_renderer) : 0;
 }
 
-IntRect Node::getRect() const
+LayoutRect Node::getRect() const
 {
     if (renderer())
         return renderer()->absoluteBoundingBoxRect(true);
-    return IntRect();
+    return LayoutRect();
 }
     
-IntRect Node::renderRect(bool* isReplaced)
+LayoutRect Node::renderRect(bool* isReplaced)
 {    
     RenderObject* hitRenderer = this->renderer();
     ASSERT(hitRenderer);
@@ -838,7 +838,7 @@ IntRect Node::renderRect(bool* isReplaced)
         }
         renderer = renderer->parent();
     }
-    return IntRect();    
+    return LayoutRect();    
 }
 
 bool Node::hasNonEmptyBoundingBox() const
@@ -851,9 +851,9 @@ bool Node::hasNonEmptyBoundingBox() const
     if (!box->borderBoundingBox().isEmpty())
         return true;
 
-    Vector<IntRect> rects;
+    Vector<LayoutRect> rects;
     FloatPoint absPos = renderer()->localToAbsolute();
-    renderer()->absoluteRects(rects, flooredIntPoint(absPos));
+    renderer()->absoluteRects(rects, flooredLayoutPoint(absPos));
     size_t n = rects.size();
     for (size_t i = 0; i < n; ++i)
         if (!rects[i].isEmpty())

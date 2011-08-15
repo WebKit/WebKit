@@ -42,7 +42,7 @@ public:
     using NodeRareData::needsFocusAppearanceUpdateSoonAfterAttach;
     using NodeRareData::setNeedsFocusAppearanceUpdateSoonAfterAttach;
 
-    IntSize m_minimumSizeForResizing;
+    LayoutSize m_minimumSizeForResizing;
     RefPtr<RenderStyle> m_computedStyle;
     ShadowRoot* m_shadowRoot;
     AtomicString m_shadowPseudoId;

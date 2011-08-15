@@ -60,7 +60,7 @@ public:
     virtual void attach();
     virtual void detach();
     virtual void willRemove();
-    virtual IntRect getRect() const;
+    virtual LayoutRect getRect() const;
     virtual void setFocus(bool = true);
     virtual void setActive(bool active = true, bool pause = false);
     virtual void setHovered(bool = true);

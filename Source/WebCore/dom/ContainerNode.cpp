@@ -947,7 +947,7 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
             point = FloatPoint();
             if (o->isText()) {
                 RenderText* text = toRenderText(o);
-                IntRect linesBox = text->linesBoundingBox();
+                LayoutRect linesBox = text->linesBoundingBox();
                 if (!linesBox.maxX() && !linesBox.maxY())
                     continue;
                 point.moveBy(linesBox.maxXMaxYCorner());
@@ -962,7 +962,7 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
     return true;
 }
 
-IntRect ContainerNode::getRect() const
+LayoutRect ContainerNode::getRect() const
 {
     FloatPoint  upperLeft, lowerRight;
     bool foundUpperLeft = getUpperLeftCorner(upperLeft);
@@ -977,7 +977,7 @@ IntRect ContainerNode::getRect() const
             upperLeft = lowerRight;
     } 
 
-    return enclosingIntRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
+    return enclosingLayoutRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
 }
 
 void ContainerNode::setFocus(bool received)

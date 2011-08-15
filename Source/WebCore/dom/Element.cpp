@@ -281,7 +281,7 @@ void Element::scrollIntoView(bool alignToTop)
     if (!renderer())
         return;
 
-    IntRect bounds = getRect();    
+    LayoutRect bounds = getRect();
     // Align to the top / bottom and to the closest edge.
     if (alignToTop)
         renderer()->enclosingLayer()->scrollRectToVisible(bounds, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways);
@@ -296,7 +296,7 @@ void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
     if (!renderer())
         return;
 
-    IntRect bounds = getRect();    
+    LayoutRect bounds = getRect();
     if (centerIfNeeded)
         renderer()->enclosingLayer()->scrollRectToVisible(bounds, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded);
     else
@@ -354,7 +354,7 @@ static float localZoomForRenderer(RenderObject* renderer)
     return zoomFactor;
 }
 
-static int adjustForLocalZoom(int value, RenderObject* renderer)
+static LayoutUnit adjustForLocalZoom(LayoutUnit value, RenderObject* renderer)
 {
     float zoomFactor = localZoomForRenderer(renderer);
     if (zoomFactor == 1)
@@ -362,7 +362,7 @@ static int adjustForLocalZoom(int value, RenderObject* renderer)
     // Needed because computeLengthInt truncates (rather than rounds) when scaling up.
     if (zoomFactor > 1)
         value++;
-    return static_cast<int>(value / zoomFactor);
+    return static_cast<LayoutUnit>(value / zoomFactor);
 }
 
 int Element::offsetLeft()
@@ -511,13 +511,13 @@ int Element::scrollHeight()
     return 0;
 }
 
-IntRect Element::boundsInWindowSpace()
+LayoutRect Element::boundsInWindowSpace()
 {
     document()->updateLayoutIgnorePendingStylesheets();
 
     FrameView* view = document()->view();
     if (!view)
-        return IntRect();
+        return LayoutRect();
 
     Vector<FloatQuad> quads;
 #if ENABLE(SVG)
@@ -536,9 +536,9 @@ IntRect Element::boundsInWindowSpace()
     }
 
     if (quads.isEmpty())
-        return IntRect();
+        return LayoutRect();
 
-    IntRect result = quads[0].enclosingBoundingBox();
+    LayoutRect result = quads[0].enclosingBoundingBox();
     for (size_t i = 1; i < quads.size(); ++i)
         result.unite(quads[i].enclosingBoundingBox());
 
@@ -567,7 +567,7 @@ PassRefPtr<ClientRectList> Element::getClientRects()
     }
 
     if (FrameView* view = document()->view()) {
-        IntRect visibleContentRect = view->visibleContentRect();
+        LayoutRect visibleContentRect = view->visibleContentRect();
         for (size_t i = 0; i < quads.size(); ++i) {
             quads[i].move(-visibleContentRect.x(), -visibleContentRect.y());
             adjustFloatQuadForAbsoluteZoom(quads[i], renderBoxModelObject);
@@ -607,7 +607,7 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect()
         result.unite(quads[i].boundingBox());
 
     if (FrameView* view = document()->view()) {
-        IntRect visibleContentRect = view->visibleContentRect();
+        LayoutRect visibleContentRect = view->visibleContentRect();
         result.move(-visibleContentRect.x(), -visibleContentRect.y());
     }
 
@@ -620,10 +620,10 @@ PassRefPtr<ClientRect> Element::getBoundingClientRect()
     return ClientRect::create(result);
 }
     
-IntRect Element::screenRect() const
+LayoutRect Element::screenRect() const
 {
     if (!renderer())
-        return IntRect();
+        return LayoutRect();
     return renderer()->view()->frameView()->contentsToScreen(renderer()->absoluteBoundingBoxRect());
 }
 
@@ -1722,12 +1722,12 @@ String Element::title() const
     return String();
 }
 
-IntSize Element::minimumSizeForResizing() const
+LayoutSize Element::minimumSizeForResizing() const
 {
     return hasRareData() ? rareData()->m_minimumSizeForResizing : defaultMinimumSizeForResizing();
 }
 
-void Element::setMinimumSizeForResizing(const IntSize& size)
+void Element::setMinimumSizeForResizing(const LayoutSize& size)
 {
     if (size == defaultMinimumSizeForResizing() && !hasRareData())
         return;

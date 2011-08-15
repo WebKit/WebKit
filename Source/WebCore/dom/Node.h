@@ -27,6 +27,7 @@
 
 #include "EventTarget.h"
 #include "KURLHash.h"
+#include "LayoutTypes.h"
 #include "RenderStyleConstants.h"
 #include "ScriptWrappable.h"
 #include "TreeShared.h"
@@ -343,8 +344,8 @@ public:
     bool rendererIsEditable() const { return rendererIsEditable(Editable); }
     bool rendererIsRichlyEditable() const { return rendererIsEditable(RichlyEditable); }
     virtual bool shouldUseInputMethod();
-    virtual IntRect getRect() const;
-    IntRect renderRect(bool* isReplaced);
+    virtual LayoutRect getRect() const;
+    LayoutRect renderRect(bool* isReplaced);
 
     // Returns true if the node has a non-empty bounding box in layout.
     // This does not 100% guarantee the user can see it, but is pretty close.

@@ -1,3 +1,37 @@
+2011-08-15  Emil A Eklund  <eae@chromium.org>
+
+        Switch Element/Node to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66260
+
+        Reviewed by Eric Seidel.
+
+        Convert Element, Node, ElementRareData and ContainerNode to new layout
+        abstraction as a part of the ongoing conversion work.
+
+        No new tests, no new functionality.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::getLowerRightCorner):
+        (WebCore::ContainerNode::getRect):
+        * dom/ContainerNode.h:
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView):
+        (WebCore::Element::scrollIntoViewIfNeeded):
+        (WebCore::adjustForLocalZoom):
+        (WebCore::Element::boundsInWindowSpace):
+        (WebCore::Element::getClientRects):
+        (WebCore::Element::getBoundingClientRect):
+        (WebCore::Element::screenRect):
+        (WebCore::Element::minimumSizeForResizing):
+        (WebCore::Element::setMinimumSizeForResizing):
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        * dom/Node.cpp:
+        (WebCore::Node::getRect):
+        (WebCore::Node::renderRect):
+        (WebCore::Node::hasNonEmptyBoundingBox):
+        * dom/Node.h:
+
 2011-08-15  Alexey Proskuryakov  <ap@apple.com>
 
         Regional indicator symbols that are combined should behave as a single character when editing
