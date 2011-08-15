@@ -43,12 +43,9 @@
 
 namespace WebCore {
 
-// FIXME: Determine if the Mac port of Chromium using Skia can return fallback
-// fonts for complex text. (The Windows and Linux ports for Chromium do not.)
-// This issue is tracked in https://bugs.webkit.org/show_bug.cgi?id=62986
 bool Font::canReturnFallbackFontsForComplexText()
 {
-    return false;
+    return true;
 }
 
 // FIXME: Determine if the Mac port of Chromium using Skia can expand around
