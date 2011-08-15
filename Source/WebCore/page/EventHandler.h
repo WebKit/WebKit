@@ -114,10 +114,10 @@ public:
     void dispatchFakeMouseMoveEventSoon();
     void dispatchFakeMouseMoveEventSoonInQuad(const FloatQuad&);
 
-    HitTestResult hitTestResultAtPoint(const IntPoint&, bool allowShadowContent, bool ignoreClipping = false,
+    HitTestResult hitTestResultAtPoint(const LayoutPoint&, bool allowShadowContent, bool ignoreClipping = false,
                                        HitTestScrollbars scrollbars = DontHitTestScrollbars,
                                        HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active,
-                                       const IntSize& padding = IntSize());
+                                       const LayoutSize& padding = LayoutSize());
 
     bool mousePressed() const { return m_mousePressed; }
     void setMousePressed(bool pressed) { m_mousePressed = pressed; }
@@ -136,7 +136,7 @@ public:
 
     void resizeLayerDestroyed();
 
-    IntPoint currentMousePosition() const;
+    LayoutPoint currentMousePosition() const;
 
     static Frame* subframeForTargetNode(Node*);
     static Frame* subframeForHitTestResult(const MouseEventWithHitTestResults&);
@@ -353,7 +353,7 @@ private:
     SelectionInitiationState m_selectionInitiationState;
 
 #if ENABLE(DRAG_SUPPORT)
-    IntPoint m_dragStartPos;
+    LayoutPoint m_dragStartPos;
 #endif
 
     IntPoint m_panScrollStartPos;
@@ -398,10 +398,10 @@ private:
     
     RefPtr<HTMLFrameSetElement> m_frameSetBeingResized;
 
-    IntSize m_offsetFromResizeCorner;   // in the coords of m_resizeLayer
+    LayoutSize m_offsetFromResizeCorner; // In the coords of m_resizeLayer.
     
-    IntPoint m_currentMousePosition;
-    IntPoint m_mouseDownPos; // in our view's coords
+    LayoutPoint m_currentMousePosition;
+    LayoutPoint m_mouseDownPos; // In our view's coords.
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;
 

@@ -242,7 +242,7 @@ void EventHandler::clear()
     m_dragTarget = 0;
     m_shouldOnlyFireDragOverEvent = false;
 #endif
-    m_currentMousePosition = IntPoint();
+    m_currentMousePosition = LayoutPoint();
     m_mousePressNode = 0;
     m_mousePressed = false;
     m_capturesDragging = false;
@@ -396,7 +396,7 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
     // Don't restart the selection when the mouse is pressed on an
     // existing selection so we can allow for text dragging.
     if (FrameView* view = m_frame->view()) {
-        IntPoint vPoint = view->windowToContents(event.event().pos());
+        LayoutPoint vPoint = view->windowToContents(event.event().pos());
         if (!extendSelection && m_frame->selection()->contains(vPoint)) {
             m_mouseDownWasSingleClickInSelection = true;
             return false;
@@ -640,9 +640,9 @@ void EventHandler::updateSelectionForMouseDrag()
     updateSelectionForMouseDrag(result);
 }
 
-static VisiblePosition selectionExtentRespectingEditingBoundary(const VisibleSelection& selection, const IntPoint& localPoint, Node* targetNode)
+static VisiblePosition selectionExtentRespectingEditingBoundary(const VisibleSelection& selection, const LayoutPoint& localPoint, Node* targetNode)
 {
-    IntPoint selectionEndPoint = localPoint;
+    LayoutPoint selectionEndPoint = localPoint;
     Element* editableElement = selection.rootEditableElement();
 
     if (!targetNode->renderer())
@@ -653,7 +653,7 @@ static VisiblePosition selectionExtentRespectingEditingBoundary(const VisibleSel
             return VisiblePosition();
 
         FloatPoint absolutePoint = targetNode->renderer()->localToAbsolute(FloatPoint(selectionEndPoint));
-        selectionEndPoint = roundedIntPoint(editableElement->renderer()->absoluteToLocal(absolutePoint));
+        selectionEndPoint = roundedLayoutPoint(editableElement->renderer()->absoluteToLocal(absolutePoint));
         targetNode = editableElement;
     }
 
@@ -922,7 +922,7 @@ DragSourceAction EventHandler::updateDragSourceActionsAllowed() const
 }
 #endif // ENABLE(DRAG_SUPPORT)
     
-HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool allowShadowContent, bool ignoreClipping, HitTestScrollbars testScrollbars, HitTestRequest::HitTestRequestType hitType, const IntSize& padding)
+HitTestResult EventHandler::hitTestResultAtPoint(const LayoutPoint& point, bool allowShadowContent, bool ignoreClipping, HitTestScrollbars testScrollbars, HitTestRequest::HitTestRequestType hitType, const LayoutSize& padding)
 {
     HitTestResult result(point, padding.height(), padding.width(), padding.height(), padding.width());
     if (!m_frame->contentRenderer())
@@ -943,7 +943,7 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
         if (!frame || !frame->contentRenderer())
             break;
         FrameView* view = static_cast<FrameView*>(widget);
-        IntPoint widgetPoint(result.localPoint().x() + view->scrollX() - renderWidget->borderLeft() - renderWidget->paddingLeft(), 
+        LayoutPoint widgetPoint(result.localPoint().x() + view->scrollX() - renderWidget->borderLeft() - renderWidget->paddingLeft(), 
             result.localPoint().y() + view->scrollY() - renderWidget->borderTop() - renderWidget->paddingTop());
         HitTestResult widgetHitTestResult(widgetPoint, padding.height(), padding.width(), padding.height(), padding.width());
         frame->contentRenderer()->layer()->hitTest(HitTestRequest(hitType), widgetHitTestResult);
@@ -965,8 +965,8 @@ HitTestResult EventHandler::hitTestResultAtPoint(const IntPoint& point, bool all
             FrameView* resultView = resultFrame->view();
             FrameView* mainView = mainFrame->view();
             if (resultView && mainView) {
-                IntPoint windowPoint = resultView->contentsToWindow(result.point());
-                IntPoint mainFramePoint = mainView->windowToContents(windowPoint);
+                LayoutPoint windowPoint = resultView->contentsToWindow(result.point());
+                LayoutPoint mainFramePoint = mainView->windowToContents(windowPoint);
                 result = mainFrame->eventHandler()->hitTestResultAtPoint(mainFramePoint, allowShadowContent, ignoreClipping, testScrollbars, hitType, padding);
             }
         }
@@ -1122,7 +1122,7 @@ bool EventHandler::logicalScrollRecursively(ScrollLogicalDirection direction, Sc
     return frame->eventHandler()->logicalScrollRecursively(direction, granularity, m_frame->ownerElement());
 }
 
-IntPoint EventHandler::currentMousePosition() const
+LayoutPoint EventHandler::currentMousePosition() const
 {
     return m_currentMousePosition;
 }
@@ -1318,7 +1318,7 @@ Cursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scr
     return pointerCursor();
 }
     
-static IntPoint documentPointForWindowPoint(Frame* frame, const IntPoint& windowPoint)
+static LayoutPoint documentPointForWindowPoint(Frame* frame, const LayoutPoint& windowPoint)
 {
     FrameView* view = frame->view();
     // FIXME: Is it really OK to use the wrong coordinates here when view is 0?
@@ -1374,7 +1374,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
     HitTestRequest request(HitTestRequest::Active);
     // Save the document point we generate in case the window coordinate is invalidated by what happens 
     // when we dispatch the event.
-    IntPoint documentPoint = documentPointForWindowPoint(m_frame, mouseEvent.pos());
+    LayoutPoint documentPoint = documentPointForWindowPoint(m_frame, mouseEvent.pos());
     MouseEventWithHitTestResults mev = m_frame->document()->prepareMouseEvent(request, documentPoint, mouseEvent);
 
     if (!targetNode(mev)) {
@@ -1421,7 +1421,7 @@ bool EventHandler::handleMousePressEvent(const PlatformMouseEvent& mouseEvent)
 
     if (FrameView* view = m_frame->view()) {
         RenderLayer* layer = m_clickNode->renderer() ? m_clickNode->renderer()->enclosingLayer() : 0;
-        IntPoint p = view->windowToContents(mouseEvent.pos());
+        LayoutPoint p = view->windowToContents(mouseEvent.pos());
         if (layer && layer->isPointInResizeControl(p)) {
             layer->setInResizeMode(true);
             m_resizeLayer = layer;
@@ -1532,7 +1532,7 @@ static RenderLayer* layerForNode(Node* node)
 
 bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
 {
-    HitTestResult hoveredNode = HitTestResult(IntPoint());
+    HitTestResult hoveredNode = HitTestResult(LayoutPoint());
     bool result = handleMouseMoveEvent(event, &hoveredNode);
 
     Page* page = m_frame->page();
@@ -2128,7 +2128,7 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     if (!view)
         return false;
     setFrameWasScrolledByUser();
-    IntPoint vPoint = view->windowToContents(e.pos());
+    LayoutPoint vPoint = view->windowToContents(e.pos());
 
     Node* node;
     bool isOverWidget;
@@ -2260,7 +2260,7 @@ bool EventHandler::sendContextMenuEvent(const PlatformMouseEvent& event)
         return false;
     
     bool swallowEvent;
-    IntPoint viewportPos = v->windowToContents(event.pos());
+    LayoutPoint viewportPos = v->windowToContents(event.pos());
     HitTestRequest request(HitTestRequest::Active);
     MouseEventWithHitTestResults mev = doc->prepareMouseEvent(request, viewportPos, event);
 
@@ -2296,7 +2296,7 @@ bool EventHandler::sendContextMenuEventForKey()
 #else
     int rightAligned = 0;
 #endif
-    IntPoint location;
+    LayoutPoint location;
 
     Node* focusedNode = doc->focusedNode();
     FrameSelection* selection = m_frame->selection();
@@ -2304,26 +2304,26 @@ bool EventHandler::sendContextMenuEventForKey()
 
     if (start.deprecatedNode() && (selection->rootEditableElement() || selection->isRange())) {
         RefPtr<Range> selectionRange = selection->toNormalizedRange();
-        IntRect firstRect = m_frame->editor()->firstRectForRange(selectionRange.get());
+        LayoutRect firstRect = m_frame->editor()->firstRectForRange(selectionRange.get());
 
-        int x = rightAligned ? firstRect.maxX() : firstRect.x();
-        location = IntPoint(x, firstRect.maxY());
+        LayoutUnit x = rightAligned ? firstRect.maxX() : firstRect.x();
+        location = LayoutPoint(x, firstRect.maxY());
     } else if (focusedNode) {
         RenderBoxModelObject* box = focusedNode->renderBoxModelObject();
         if (!box)
             return false;
-        IntRect clippedRect = box->absoluteClippedOverflowRect();
-        location = IntPoint(clippedRect.x(), clippedRect.maxY() - 1);
+        LayoutRect clippedRect = box->absoluteClippedOverflowRect();
+        location = LayoutPoint(clippedRect.x(), clippedRect.maxY() - 1);
     } else {
-        location = IntPoint(
+        location = LayoutPoint(
             rightAligned ? view->contentsWidth() - kContextMenuMargin : kContextMenuMargin,
             kContextMenuMargin);
     }
 
     m_frame->view()->setCursor(pointerCursor());
 
-    IntPoint position = view->contentsToWindow(location);
-    IntPoint globalPosition = view->contentsToScreen(IntRect(location, IntSize())).location();
+    LayoutPoint position = view->contentsToWindow(location);
+    LayoutPoint globalPosition = view->contentsToScreen(LayoutRect(location, LayoutSize())).location();
 
     Node* targetNode = doc->focusedNode();
     if (!targetNode)
@@ -2399,7 +2399,7 @@ void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>* timer)
     bool altKey;
     bool metaKey;
     PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-    IntPoint globalPoint = view->contentsToScreen(IntRect(view->windowToContents(m_currentMousePosition), IntSize())).location();
+    LayoutPoint globalPoint = view->contentsToScreen(LayoutRect(view->windowToContents(m_currentMousePosition), LayoutSize())).location();
     PlatformMouseEvent fakeMouseMoveEvent(m_currentMousePosition, globalPoint, NoButton, MouseEventMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
     mouseMoved(fakeMouseMoveEvent);
 }
@@ -2697,19 +2697,19 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
 }
 
 #if ENABLE(DRAG_SUPPORT)
-bool EventHandler::dragHysteresisExceeded(const FloatPoint& floatDragViewportLocation) const
+bool EventHandler::dragHysteresisExceeded(const IntPoint& floatDragViewportLocation) const
 {
-    IntPoint dragViewportLocation((int)floatDragViewportLocation.x(), (int)floatDragViewportLocation.y());
+    FloatPoint dragViewportLocation(floatDragViewportLocation.x(), floatDragViewportLocation.y());
     return dragHysteresisExceeded(dragViewportLocation);
 }
-    
-bool EventHandler::dragHysteresisExceeded(const IntPoint& dragViewportLocation) const
+
+bool EventHandler::dragHysteresisExceeded(const FloatPoint& dragViewportLocation) const
 {
     FrameView* view = m_frame->view();
     if (!view)
         return false;
-    IntPoint dragLocation = view->windowToContents(dragViewportLocation);
-    IntSize delta = dragLocation - m_mouseDownPos;
+    LayoutPoint dragLocation = view->windowToContents(flooredLayoutPoint(dragViewportLocation));
+    LayoutSize delta = dragLocation - m_mouseDownPos;
     
     int threshold = GeneralDragHysteresis;
     switch (dragState().m_dragType) {
@@ -2861,7 +2861,7 @@ bool EventHandler::handleDrag(const MouseEventWithHitTestResults& event)
             if (RenderObject* renderer = dragState().m_dragSrc->renderer()) {
                 // FIXME: This doesn't work correctly with transforms.
                 FloatPoint absPos = renderer->localToAbsolute();
-                IntSize delta = m_mouseDownPos - roundedIntPoint(absPos);
+                LayoutSize delta = m_mouseDownPos - roundedLayoutPoint(absPos);
                 dragState().m_dragClipboard->setDragImageElement(dragState().m_dragSrc.get(), toPoint(delta));
             } else {
                 // The renderer has disappeared, this can happen if the onStartDrag handler has hidden
@@ -3179,7 +3179,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
     for (unsigned i = 0; i < points.size(); ++i) {
         const PlatformTouchPoint& point = points[i];
         PlatformTouchPoint::State pointState = point.state();
-        IntPoint pagePoint = documentPointForWindowPoint(m_frame, point.pos());
+        LayoutPoint pagePoint = documentPointForWindowPoint(m_frame, point.pos());
 
         HitTestRequest::HitTestRequestType hitType = HitTestRequest::Active | HitTestRequest::ReadOnly;
         // The HitTestRequest types used for mouse events map quite adequately

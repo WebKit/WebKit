@@ -38,29 +38,29 @@ MouseRelatedEvent::MouseRelatedEvent()
 {
 }
 
-static IntSize contentsScrollOffset(AbstractView* abstractView)
+static LayoutSize contentsScrollOffset(AbstractView* abstractView)
 {
     if (!abstractView)
-        return IntSize();
+        return LayoutSize();
     Frame* frame = abstractView->frame();
     if (!frame)
-        return IntSize();
+        return LayoutSize();
     FrameView* frameView = frame->view();
     if (!frameView)
-        return IntSize();
-    return IntSize(frameView->scrollX() / frame->pageZoomFactor(),
+        return LayoutSize();
+    return LayoutSize(frameView->scrollX() / frame->pageZoomFactor(),
         frameView->scrollY() / frame->pageZoomFactor());
 }
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> abstractView,
-                                     int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
+                                     int detail, const LayoutPoint& screenLocation, const LayoutPoint& windowLocation,
                                      bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
     : UIEventWithKeyState(eventType, canBubble, cancelable, abstractView, detail, ctrlKey, altKey, shiftKey, metaKey)
     , m_screenLocation(screenLocation)
     , m_isSimulated(isSimulated)
 {
-    IntPoint adjustedPageLocation;
-    IntPoint scrollPosition;
+    LayoutPoint adjustedPageLocation;
+    LayoutPoint scrollPosition;
 
     Frame* frame = view() ? view()->frame() : 0;
     if (frame && !isSimulated) {
@@ -73,7 +73,7 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubb
                 adjustedPageLocation.scale(1 / pageZoom, 1 / pageZoom);
 
                 // FIXME: Change this to use float math and proper rounding (or
-                // better yet, use IntPoint::scale).
+                // better yet, use LayoutPoint::scale).
                 scrollPosition.setX(scrollPosition.x() / pageZoom);
                 scrollPosition.setY(scrollPosition.y() / pageZoom);
             }
@@ -97,7 +97,7 @@ void MouseRelatedEvent::initCoordinates()
     m_hasCachedRelativePosition = false;
 }
 
-void MouseRelatedEvent::initCoordinates(const IntPoint& clientLocation)
+void MouseRelatedEvent::initCoordinates(const LayoutPoint& clientLocation)
 {
     // Set up initial values for coordinates.
     // Correct values are computed lazily, see computeRelativePosition.
@@ -125,7 +125,7 @@ static float pageZoomFactor(const UIEvent* event)
 void MouseRelatedEvent::computePageLocation()
 {
     float zoomFactor = pageZoomFactor(this);
-    setAbsoluteLocation(roundedIntPoint(FloatPoint(pageX() * zoomFactor, pageY() * zoomFactor)));
+    setAbsoluteLocation(roundedLayoutPoint(FloatPoint(pageX() * zoomFactor, pageY() * zoomFactor)));
 }
 
 void MouseRelatedEvent::receivedTarget()
@@ -150,7 +150,7 @@ void MouseRelatedEvent::computeRelativePosition()
     if (!isSimulated()) {
         if (RenderObject* r = targetNode->renderer()) {
             FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), false, true);
-            m_offsetLocation = roundedIntPoint(localPos);
+            m_offsetLocation = roundedLayoutPoint(localPos);
             float scaleFactor = 1 / pageZoomFactor(this);
             if (scaleFactor != 1.0f)
                 m_offsetLocation.scale(scaleFactor, scaleFactor);
@@ -215,7 +215,7 @@ int MouseRelatedEvent::pageY() const
     return m_pageLocation.y();
 }
 
-const IntPoint& MouseRelatedEvent::pageLocation() const
+const LayoutPoint& MouseRelatedEvent::pageLocation() const
 {
     return m_pageLocation;
 }

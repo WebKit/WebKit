@@ -68,12 +68,12 @@ static int clickCountForEvent(NSEvent *event)
     }
 }
 
-IntPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
+LayoutPoint globalPoint(const NSPoint& windowPoint, NSWindow *window)
 {
-    return IntPoint(flipScreenPoint([window convertBaseToScreen:windowPoint], screenForWindow(window)));
+    return LayoutPoint(flipScreenPoint([window convertBaseToScreen:windowPoint], screenForWindow(window)));
 }
 
-IntPoint pointForEvent(NSEvent *event, NSView *windowView)
+LayoutPoint pointForEvent(NSEvent *event, NSView *windowView)
 {
     switch ([event type]) {
         case NSLeftMouseDown:
@@ -92,14 +92,14 @@ IntPoint pointForEvent(NSEvent *event, NSView *windowView)
             NSPoint location = [event locationInWindow];
             if (windowView)
                 location = [windowView convertPoint:location fromView:nil];
-            return IntPoint(location);
+            return LayoutPoint(location);
         }
         default:
-            return IntPoint();
+            return LayoutPoint();
     }
 }
 
-IntPoint globalPointForEvent(NSEvent *event)
+LayoutPoint globalPointForEvent(NSEvent *event)
 {
     switch ([event type]) {
         case NSLeftMouseDown:
@@ -115,7 +115,7 @@ IntPoint globalPointForEvent(NSEvent *event)
         case NSScrollWheel:
             return globalPoint([event locationInWindow], [event window]);
         default:
-            return IntPoint();
+            return LayoutPoint();
     }
 }
 
