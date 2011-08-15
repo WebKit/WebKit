@@ -79,9 +79,8 @@ protected:
 
 private:
     QTouchWebPagePrivate* d;
-    friend class QTouchWebPagePrivate;
+    friend class QTouchWebViewPrivate;
     friend class WebKit::TouchViewInterface;
-    friend class TiledDrawingAreaProxy;
 };
 
 #endif /* qtouchwebpage_h */

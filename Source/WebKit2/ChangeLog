@@ -1,3 +1,22 @@
+2011-08-15  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt][WK2] Get rid of QTouchWebPagePrivate::getPageViewPrivate()
+        https://bugs.webkit.org/show_bug.cgi?id=66222
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        The function QTouchWebPagePrivate::getPageViewPrivate() exposed
+        the private QTouchWebPage to any object in WebKit.
+
+        Instead, use the friend keyword to list which objects can access
+        the internal of QTouchWebPage.
+
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::QTouchWebViewPrivate):
+        (QTouchWebViewPrivate::viewportRectUpdated):
+
 2011-08-15  Balazs Kelemen  <kbalazs@webkit.org>
 
         Unreviewed.

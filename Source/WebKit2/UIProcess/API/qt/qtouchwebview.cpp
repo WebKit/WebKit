@@ -35,7 +35,7 @@ QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
     , viewInterface(q, pageView.data())
     , page(&viewInterface, defaultWKContext())
 {
-    QTouchWebPagePrivate* const pageViewPrivate = QTouchWebPagePrivate::getPageViewPrivate(pageView.data());
+    QTouchWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     pageViewPrivate->setPage(&page);
 }
 
@@ -48,7 +48,7 @@ void QTouchWebViewPrivate::scroll(qreal deltaX, qreal deltaY)
 
 void QTouchWebViewPrivate::viewportRectUpdated()
 {
-    QTouchWebPagePrivate* const pageViewPrivate = QTouchWebPagePrivate::getPageViewPrivate(pageView.data());
+    QTouchWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     const QRectF viewportRectInPageViewCoordinate = q->mapRectToItem(pageView.data(), q->boundingRect());
     pageViewPrivate->setViewportRect(viewportRectInPageViewCoordinate);
 }

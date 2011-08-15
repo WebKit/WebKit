@@ -36,8 +36,6 @@ class QTouchWebPagePrivate {
 public:
     QTouchWebPagePrivate(QTouchWebPage* view);
 
-    static QTouchWebPagePrivate* getPageViewPrivate(QTouchWebPage* view) { return view->d; }
-
     void setPage(QTouchWebPageProxy*);
 
     void setViewportRect(const QRectF&);
