@@ -15,7 +15,6 @@ does not crash."
 |       "
 "
 |       <blockquote>
-|         class="webkit-indent-blockquote"
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         <pre>
 |           id="pre-basic"
@@ -25,7 +24,6 @@ does not crash."
 |         "line two
 "
 |       <blockquote>
-|         class="webkit-indent-blockquote"
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         <pre>
 |           "line three"
@@ -41,7 +39,6 @@ does not crash."
 |             "list one
 "
 |             <blockquote>
-|               class="webkit-indent-blockquote"
 |               style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |               "list two"
 |               <br>
@@ -62,7 +59,6 @@ does not crash."
 |                 "table one<#selection-anchor>
 "
 |               <blockquote>
-|                 class="webkit-indent-blockquote"
 |                 style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |                 <pre>
 |                   "table two"

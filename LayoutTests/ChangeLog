@@ -1,3 +1,27 @@
+2011-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkit-indent-blockquote is unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=66195
+
+        Reviewed by Tony Chang.
+
+        Rebaselined the tests since WebKit longer adds class="webkit-indent-blockquote" on blockquotes
+        created by execCommand('Indent') and execCommand('Outdent') after this patch.
+
+        * editing/execCommand/19653-1-expected.txt:
+        * editing/execCommand/5658933-2-expected.txt:
+        * editing/execCommand/5658933-3-expected.txt:
+        * editing/execCommand/indent-div-inside-list-expected.txt:
+        * editing/execCommand/indent-nested-blockquotes-expected.txt:
+        * editing/execCommand/indent-nested-div-expected.txt:
+        * editing/execCommand/indent-paragraphs-expected.txt:
+        * editing/execCommand/indent-pre-expected.txt:
+        * editing/execCommand/indent-pre-list-expected.txt:
+        * editing/execCommand/indent-pre-paragraphs-expected.txt:
+        * editing/execCommand/indent-second-paragraph-in-blockquote-expected.txt:
+        * editing/execCommand/indent-with-style-expected.txt:
+        * editing/execCommand/indent-with-style2-expected.txt:
+
 2011-08-15  Gavin Barraclough  <barraclough@apple.com>
 
         Crash accessing static property on sealed object

@@ -51,7 +51,7 @@ static bool isListOrIndentBlockquote(const Node* node)
 }
 
 IndentOutdentCommand::IndentOutdentCommand(Document* document, EIndentType typeOfAction, int marginInPixels)
-    : ApplyBlockElementCommand(document, blockquoteTag, "webkit-indent-blockquote", "margin: 0 0 0 40px; border: none; padding: 0px;")
+    : ApplyBlockElementCommand(document, blockquoteTag, "margin: 0 0 0 40px; border: none; padding: 0px;")
     , m_typeOfAction(typeOfAction)
     , m_marginInPixels(marginInPixels)
 {

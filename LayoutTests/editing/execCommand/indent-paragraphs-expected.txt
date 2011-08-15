@@ -13,4 +13,4 @@ Hello  world
 Hello  world
 
 Before indent: <div id="test"> <div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">Hello <img src="http://"> world</span></div> <div>Hello <img src="http://"> world</div> Hello <img src="http://"> world </div>
-After indent: <blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px; border: none; padding: 0px;"><div id="test"><div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">Hello <img src="http://"> world</span></div></div><div id="test"><div>Hello <img src="http://"> world</div></div><div id="test"> Hello <img src="http://"> world </div></blockquote>
+After indent: <blockquote style="margin: 0 0 0 40px; border: none; padding: 0px;"><div id="test"><div><span class="Apple-style-span" style="background-color: rgb(255, 0, 0);">Hello <img src="http://"> world</span></div></div><div id="test"><div>Hello <img src="http://"> world</div></div><div id="test"> Hello <img src="http://"> world </div></blockquote>

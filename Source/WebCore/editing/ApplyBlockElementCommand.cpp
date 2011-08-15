@@ -41,10 +41,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-ApplyBlockElementCommand::ApplyBlockElementCommand(Document* document, const QualifiedName& tagName, const AtomicString& className, const AtomicString& inlineStyle)
+ApplyBlockElementCommand::ApplyBlockElementCommand(Document* document, const QualifiedName& tagName, const AtomicString& inlineStyle)
     : CompositeEditCommand(document)
     , m_tagName(tagName)
-    , m_className(className)
     , m_inlineStyle(inlineStyle)
 {
 }
@@ -280,8 +279,6 @@ VisiblePosition ApplyBlockElementCommand::endOfNextParagrahSplittingTextNodesIfN
 PassRefPtr<Element> ApplyBlockElementCommand::createBlockElement() const
 {
     RefPtr<Element> element = createHTMLElement(document(), m_tagName);
-    if (m_className.length())
-        element->setAttribute(classAttr, m_className);
     if (m_inlineStyle.length())
         element->setAttribute(styleAttr, m_inlineStyle);
     return element.release();

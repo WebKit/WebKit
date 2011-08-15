@@ -68,7 +68,6 @@ yields:
 |   <li>
 |     <pre>
 |       <blockquote>
-|         class="webkit-indent-blockquote"
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         "hello"
 |         <br>
@@ -98,7 +97,6 @@ yields:
 |   <li>
 |     <pre>
 |       <blockquote>
-|         class="webkit-indent-blockquote"
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         "<#selection-anchor>hello<#selection-focus>"
 |       "world
@@ -129,7 +127,6 @@ yields:
 |       "hello
 "
 |       <blockquote>
-|         class="webkit-indent-blockquote"
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         "<#selection-anchor>world<#selection-focus>"
 |       "webkit
@@ -160,7 +157,6 @@ yields:
 world
 "
 |       <blockquote>
-|         class="webkit-indent-blockquote"
 |         style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |         "<#selection-anchor>webki<#selection-focus>t"
 | "

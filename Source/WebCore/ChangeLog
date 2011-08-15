@@ -1,3 +1,21 @@
+2011-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        webkit-indent-blockquote is unnecessary
+        https://bugs.webkit.org/show_bug.cgi?id=66195
+
+        Reviewed by Tony Chang.
+
+        Stop adding class="webkit-indent-blockquote" on blockquotes created by execCommand('Indent') and
+        execCommand('Outdent'). Also removed the code to add the class attribute in ApplyBlockElementCommand
+        since no other class inherited from ApplyBlockElementCommand uses this feature.
+
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::ApplyBlockElementCommand):
+        (WebCore::ApplyBlockElementCommand::createBlockElement):
+        * editing/ApplyBlockElementCommand.h:
+        * editing/IndentOutdentCommand.cpp:
+        (WebCore::IndentOutdentCommand::IndentOutdentCommand):
+
 2011-08-15  Levi Weintraub  <leviw@chromium.org>
 
         Switch remaining SVG Rendering methods to LayoutUnits

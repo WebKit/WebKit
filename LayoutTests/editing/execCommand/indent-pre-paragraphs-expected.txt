@@ -11,7 +11,6 @@ yields:
 | "
 "
 | <blockquote>
-|   class="webkit-indent-blockquote"
 |   style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |   <pre>
 |     "<#selection-anchor>hello<#selection-focus>"
@@ -35,7 +34,6 @@ yields:
 | "
 "
 | <blockquote>
-|   class="webkit-indent-blockquote"
 |   style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |   <pre>
 |     "<#selection-anchor>hello"
@@ -67,7 +65,6 @@ yields:
 | "
 "
 | <blockquote>
-|   class="webkit-indent-blockquote"
 |   style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |   <pre>
 |     "<#selection-anchor>hello"
@@ -93,7 +90,6 @@ yields:
 | "
 "
 | <blockquote>
-|   class="webkit-indent-blockquote"
 |   style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |   <pre>
 |     "<#selection-anchor>hello<#selection-focus>"
@@ -122,7 +118,6 @@ yields:
 |   "hello<#selection-caret>
 "
 | <blockquote>
-|   class="webkit-indent-blockquote"
 |   style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |   <pre>
 |     "
@@ -152,7 +147,6 @@ yields:
 <#selection-anchor>
 "
 | <blockquote>
-|   class="webkit-indent-blockquote"
 |   style="margin: 0 0 0 40px; border: none; padding: 0px;"
 |   <pre>
 |     "worl<#selection-focus>d"
