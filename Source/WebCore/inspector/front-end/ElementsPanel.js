@@ -293,22 +293,6 @@ WebInspector.ElementsPanel.prototype = {
             treeElement.updateSelection(); // Recalculate selection highlight dimensions.
     },
 
-    populateHrefContextMenu: function(contextMenu, event, anchorElement)
-    {
-        if (!anchorElement.href)
-            return false;
-
-        var resourceURL = WebInspector.resourceURLForRelatedNode(this.selectedDOMNode(), anchorElement.href);
-        if (!resourceURL)
-            return false;
-
-        // Add resource-related actions.
-        contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, resourceURL, false));
-        if (WebInspector.resourceForURL(resourceURL))
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open link in Resources panel" : "Open Link in Resources Panel"), WebInspector.openResource.bind(null, resourceURL, true));
-        return true;
-    },
-
     switchToAndFocus: function(node)
     {
         // Reset search restore.

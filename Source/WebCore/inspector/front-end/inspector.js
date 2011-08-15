@@ -425,6 +425,11 @@ var WebInspector = {
     openLinkExternallyLabel: function()
     {
         return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open link in new tab" : "Open Link in New Tab");
+    },
+
+    copyLinkAddressLabel: function()
+    {
+        return WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy link address" : "Copy Link Address");
     }
 }
 
@@ -1359,6 +1364,24 @@ WebInspector.resourceURLForRelatedNode = function(node, url)
     }
     WebInspector.forAllResources(callback);
     return resourceURL;
+}
+
+WebInspector.populateHrefContextMenu = function(contextMenu, contextNode, event)
+{
+    var anchorElement = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
+    if (!anchorElement)
+        return false;
+
+    var resourceURL = WebInspector.resourceURLForRelatedNode(contextNode, anchorElement.href);
+    if (!resourceURL)
+        return false;
+
+    // Add resource-related actions.
+    contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, resourceURL, false));
+    if (WebInspector.resourceForURL(resourceURL))
+        contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Open link in Resources panel" : "Open Link in Resources Panel"), WebInspector.openResource.bind(null, resourceURL, true));
+    contextMenu.appendItem(WebInspector.copyLinkAddressLabel(), InspectorFrontendHost.copyText.bind(InspectorFrontendHost, resourceURL));
+    return true;
 }
 
 WebInspector.completeURL = function(baseURL, href)

@@ -206,13 +206,9 @@ WebInspector.StylesSidebarPane.alteredHexNumber = function(hexString, event)
 WebInspector.StylesSidebarPane.prototype = {
     _contextMenuEventFired: function(event)
     {
-        var href = event.target.enclosingNodeOrSelfWithClass("webkit-html-resource-link") || event.target.enclosingNodeOrSelfWithClass("webkit-html-external-link");
-        if (href) {
-            var contextMenu = new WebInspector.ContextMenu();
-            var filled = WebInspector.panels.elements.populateHrefContextMenu(contextMenu, event, href);
-            if (filled)
-                contextMenu.show(event);
-        }
+        var contextMenu = new WebInspector.ContextMenu();
+        if (WebInspector.populateHrefContextMenu(contextMenu, this.node, event))
+            contextMenu.show(event);
     },
 
     update: function(node, forceUpdate)

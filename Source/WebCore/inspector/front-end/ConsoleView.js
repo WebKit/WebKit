@@ -530,6 +530,9 @@ WebInspector.ConsoleView.prototype = {
 
         var contextMenu = new WebInspector.ContextMenu();
 
+        if (WebInspector.populateHrefContextMenu(contextMenu, null, event))
+            contextMenu.appendSeparator();
+
         function monitoringXHRItemAction()
         {
             WebInspector.settings.monitoringXHREnabled.set(!WebInspector.settings.monitoringXHREnabled.get());

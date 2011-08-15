@@ -985,7 +985,7 @@ WebInspector.NetworkLogView.prototype = {
         if (resource) {
             contextMenu.appendItem(WebInspector.openLinkExternallyLabel(), WebInspector.openResource.bind(WebInspector, resource.url, false));
             contextMenu.appendSeparator();
-            contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy location" : "Copy Location"), this._copyLocation.bind(this, resource));
+            contextMenu.appendItem(WebInspector.copyLinkAddressLabel(), this._copyLocation.bind(this, resource));
             if (resource.requestHeadersText)
                 contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Copy request headers" : "Copy Request Headers"), this._copyRequestHeaders.bind(this, resource));
             if (resource.responseHeadersText)
