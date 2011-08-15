@@ -40,6 +40,8 @@
 #include "TouchViewInterface.h"
 #endif
 
+#include <WebCore/NotImplemented.h>
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -161,6 +163,11 @@ void TiledDrawingAreaProxy::sizeDidChange()
 
     page->process()->responsivenessTimer()->start();
     page->process()->send(Messages::DrawingArea::SetSize(m_size), page->pageID());
+}
+
+void TiledDrawingAreaProxy::deviceScaleFactorDidChange()
+{
+    notImplemented();
 }
 
 void TiledDrawingAreaProxy::setPageIsVisible(bool isVisible)

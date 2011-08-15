@@ -105,6 +105,7 @@ private:
     // DrawingAreaProxy
     virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
     virtual void sizeDidChange();
+    virtual void deviceScaleFactorDidChange();
     virtual void setPageIsVisible(bool isVisible);
 
     virtual void didSetSize(const WebCore::IntSize&);

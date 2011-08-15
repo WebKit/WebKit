@@ -1,3 +1,11 @@
+2011-08-15  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt][WK2] Unreviewed build fix after r93058.
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::deviceScaleFactorDidChange):
+        * UIProcess/TiledDrawingAreaProxy.h:
+
 2011-08-15  Adam Roben  <aroben@apple.com>
 
         Update pages' style and content scale when the window's backing scale factor changes
