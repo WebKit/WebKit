@@ -177,4 +177,33 @@ test("updateRecentCommits", 2, function() {
     });
 });
 
+test("commitDataListForRevisionRange", 6, function() {
+    var simulator = new NetworkSimulator();
+
+    simulator.get = function(url, callback)
+    {
+        simulator.scheduleCallback(function() {
+            var parser = new DOMParser();
+            var responseDOM = parser.parseFromString(kExampleCommitDataXML, "application/xml");
+            callback(responseDOM);
+        });
+    };
+
+    simulator.runTest(function() {
+        model.updateRecentCommits(function() {
+            function extractBugIDs(commitData)
+            {
+                return commitData.bugID;
+            }
+
+            deepEqual(model.commitDataListForRevisionRange(92259, 92259).map(extractBugIDs), [65593]);
+            deepEqual(model.commitDataListForRevisionRange(92256, 92259).map(extractBugIDs), [65657, 65593]);
+            deepEqual(model.commitDataListForRevisionRange(92259, 92256).map(extractBugIDs), []);
+            deepEqual(model.commitDataListForRevisionRange(0, 92256).map(extractBugIDs), [65657]);
+            deepEqual(model.commitDataListForRevisionRange(92256, 0).map(extractBugIDs), []);
+            delete model.state.recentCommits;
+        });
+    });
+});
+
 })();

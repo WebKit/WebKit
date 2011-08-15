@@ -97,13 +97,36 @@ model.takeExpectationUpdateQueue = function()
     return queue;
 };
 
+var g_commitIndex = {};
+
 model.updateRecentCommits = function(callback)
 {
     trac.recentCommitData('trunk', kCommitLogLength, function(commitDataList) {
         model.state.recentCommits = commitDataList;
+        updateCommitIndex();
         findAndMarkRevertedRevisions(model.state.recentCommits);
         callback();
     });
+};
+
+function updateCommitIndex() {
+    model.state.recentCommits.forEach(function(commitData) {
+        g_commitIndex[commitData.revision] = commitData;
+    });
+}
+
+/*
+    Assumes SVN-style, consecutive revision scheme.
+*/
+model.commitDataListForRevisionRange = function(fromRevision, toRevision)
+{
+    var result = [];
+    for (var revision = fromRevision; revision <= toRevision; ++revision) {
+        var commitData = g_commitIndex[revision];
+        if (commitData)
+            result.push(commitData);
+    }
+    return result;
 };
 
 model.updateResultsByBuilder = function(callback)
