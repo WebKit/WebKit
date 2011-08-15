@@ -78,6 +78,7 @@ public:
     virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
 
     virtual void sizeDidChange() = 0;
+    virtual void deviceScaleFactorDidChange() = 0;
 
     // FIXME: These should be pure virtual.
     virtual void visibilityDidChange() { }

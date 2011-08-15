@@ -150,6 +150,12 @@ void LayerTreeHostCA::sizeDidChange(const IntSize& newSize)
     flushPendingLayerChanges();
 }
 
+void LayerTreeHostCA::deviceScaleFactorDidChange()
+{
+    // Other layers learn of the scale factor change via WebPage::setDeviceScaleFactor.
+    m_nonCompositedContentLayer->deviceOrPageScaleFactorChanged();
+}
+
 void LayerTreeHostCA::forceRepaint()
 {
     scheduleLayerFlush();

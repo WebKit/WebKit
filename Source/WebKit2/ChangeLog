@@ -1,3 +1,64 @@
+2011-08-15  Adam Roben  <aroben@apple.com>
+
+        Update pages' style and content scale when the window's backing scale factor changes
+
+        Unfortunately, I couldn't think of a way to test this in an automated fashion.
+
+        Fixes <http://webkit.org/b/66229> <rdar://problem/9906269> WebKit doesn't react to device
+        scale factor changes
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView addWindowObserversForWindow:]):
+        (-[WKView removeWindowObservers]):
+        Listen for the notification that tells us the window's backing scale has changed.
+
+        (-[WKView _windowDidChangeResolution:]): Tell the WebPageProxy about the change.
+
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxyImpl.h:
+        Added deviceScaleFactorDidChange.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::deviceScaleFactorDidChange): Request a new backing store
+        since the current one is using an old device scale factor.
+        (WebKit::DrawingAreaProxyImpl::sendUpdateBackingStoreState): Send the device scale factor
+        along to the web process so it can render accordingly. This is how we tell the web process
+        about device scale factor changes.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::viewStateDidChange): Tell the DrawingAreaProxy when the device scale
+        factor changes.
+        (WebKit::WebPageProxy::deviceScaleFactor): Added this simple getter that calls through to
+        the PageClient. DrawingAreaProxy uses this function.
+
+        * UIProcess/WebPageProxy.h: Added new members.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::updateBackingStoreState):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Send the device scale factor in the UpdateBackingStoreState message.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updateBackingStoreState): Tell the WebPage and LayerTreeHost about
+        the new device scale factor.
+
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h:
+        Added deviceScaleFactorDidChange.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setDeviceScaleFactor): Store the new scale factor and tell the page about
+        it so that, e.g., scale-factor-dependent media queries will be reevaluated.
+
+        * WebProcess/WebPage/WebPage.h: Added setDeviceScaleFactor.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::deviceScaleFactorDidChange): Tell the layer for non-composited
+        content about the new scale factor.
+
 2011-08-15  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt][WK2] Get rid of QTouchWebPagePrivate::getPageViewPrivate()

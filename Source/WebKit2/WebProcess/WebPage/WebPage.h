@@ -409,6 +409,7 @@ public:
 
     void runModal();
 
+    void setDeviceScaleFactor(float);
     float deviceScaleFactor() const { return m_deviceScaleFactor; }
 
     void setMemoryCacheMessagesEnabled(bool);

@@ -164,8 +164,10 @@ namespace WebCore {
         float textZoomFactor() const { return m_textZoomFactor; }
         void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
 
+        // FIXME: These functions should move to Page.
         void scalePage(float scale, const IntPoint& origin);
         float pageScaleFactor() const { return m_pageScaleFactor; }
+        void deviceScaleFactorChanged();
 
 #if ENABLE(ORIENTATION_EVENTS)
         // Orientation is the interface orientation in degrees. Some examples are:

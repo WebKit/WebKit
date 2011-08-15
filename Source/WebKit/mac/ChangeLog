@@ -1,3 +1,22 @@
+2011-08-15  Adam Roben  <aroben@apple.com>
+
+        Update pages' style and content scale when the window's backing scale factor changes
+
+        Unfortunately, I couldn't think of a way to test this in an automated fashion.
+
+        Fixes <http://webkit.org/b/66229> <rdar://problem/9906269> WebKit doesn't react to device
+        scale factor changes
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebView.mm:
+        (-[WebView addWindowObserversForWindow:]):
+        (-[WebView removeWindowObservers]):
+        Listen for the notification that tells us the window's backing scale has changed.
+
+        (-[WebView _windowDidChangeResolution:]): Tell the page about the change to the device scale
+        factor so that, e.g., scale-factor-dependent media queries will be reevaluated.
+
 2011-08-10  Adam Roben  <aroben@apple.com>
 
         Clear up scale factor terminology

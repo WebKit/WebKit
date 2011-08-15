@@ -1700,6 +1700,9 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
     return ownsGrowBox;
 }
 
+// FIXME: Use an AppKit constant for this once one is available.
+static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidChangeResolutionNotification";
+
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
     if (window) {
@@ -1719,6 +1722,9 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
                                                      name:@"NSWindowDidOrderOffScreenNotification" object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidOrderOnScreen:) 
                                                      name:@"_NSWindowDidBecomeVisible" object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeResolution:)
+                                                     name:windowDidChangeResolutionNotification object:window];
+
     }
 }
 
@@ -1736,6 +1742,8 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowDidResizeNotification object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"NSWindowDidOrderOffScreenNotification" object:window];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:@"_NSWindowDidBecomeVisible" object:window];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:windowDidChangeResolutionNotification object:window];
+
 }
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
@@ -1826,6 +1834,11 @@ static void maybeCreateSandboxExtensionFromPasteboard(NSPasteboard *pasteboard, 
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+}
+
+- (void)_windowDidChangeResolution:(NSNotification *)notification
+{
+    _data->_page->viewStateDidChange(WebPageProxy::DeviceScaleFactor);
 }
 
 static void drawPageBackground(CGContextRef context, WebPageProxy* page, const IntRect& rect)

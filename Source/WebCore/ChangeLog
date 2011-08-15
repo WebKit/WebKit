@@ -1,3 +1,23 @@
+2011-08-15  Adam Roben  <aroben@apple.com>
+
+        Update pages' style and content scale when the window's backing scale factor changes
+
+        Unfortunately, I couldn't think of a way to test this in an automated fashion.
+
+        Fixes <http://webkit.org/b/66229> <rdar://problem/9906269> WebKit doesn't react to device
+        scale factor changes
+
+        Reviewed by Simon Fraser.
+
+        * WebCore.exp.in: Export Frame::deviceOrScaleFactorChanged.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::deviceScaleFactorChanged):
+        * page/Frame.h:
+        Added this new function. We recalc style so that, e.g., device-scale-factor-dependent media
+        queries will be reevaluated, and we tell compositing layers about the new scale factor so
+        they can rerender at the new resolution.
+
 2011-08-15  Cary Clark  <caryclark@google.com>
 
         Revise Skia on Chrome Mac to return fallback fonts.

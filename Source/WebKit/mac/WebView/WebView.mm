@@ -3283,6 +3283,9 @@ static bool needsWebViewInitThreadWorkaround()
     return _private->shouldCloseWithWindow;
 }
 
+// FIXME: Use an AppKit constant for this once one is available.
+static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidChangeResolutionNotification";
+
 - (void)addWindowObserversForWindow:(NSWindow *)window
 {
     if (window) {
@@ -3292,6 +3295,8 @@ static bool needsWebViewInitThreadWorkaround()
             name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowWillOrderOnScreen:)
             name:WKWindowWillOrderOnScreenNotification() object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_windowDidChangeResolution:)
+            name:windowDidChangeResolutionNotification object:window];
     }
 }
 
@@ -3305,6 +3310,8 @@ static bool needsWebViewInitThreadWorkaround()
             name:NSWindowDidResignKeyNotification object:nil];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:WKWindowWillOrderOnScreenNotification() object:window];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:windowDidChangeResolutionNotification object:window];
     }
 }
 
@@ -3379,6 +3386,11 @@ static bool needsWebViewInitThreadWorkaround()
 {
     if ([self shouldCloseWithWindow] && ([self window] == [self hostWindow] || ([self window] && ![self hostWindow]) || (![self window] && [self hostWindow])))
         [self close];
+}
+
+- (void)_windowDidChangeResolution:(NSNotification *)notification
+{
+    _private->page->mainFrame()->deviceScaleFactorChanged();
 }
 
 - (void)setPreferences:(WebPreferences *)prefs

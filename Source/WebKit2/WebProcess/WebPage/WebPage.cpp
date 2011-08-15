@@ -787,6 +787,15 @@ double WebPage::pageScaleFactor() const
     return frame->pageScaleFactor();
 }
 
+void WebPage::setDeviceScaleFactor(float scaleFactor)
+{
+    if (m_deviceScaleFactor == scaleFactor)
+        return;
+
+    m_deviceScaleFactor = scaleFactor;
+    m_page->mainFrame()->deviceScaleFactorChanged();
+}
+
 void WebPage::setUseFixedLayout(bool fixed)
 {
     Frame* frame = m_mainFrame->coreFrame();

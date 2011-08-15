@@ -301,7 +301,7 @@ void DrawingAreaImpl::syncCompositingLayers()
 {
 }
 
-void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
+void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, float deviceScaleFactor, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
     ASSERT(!m_inUpdateBackingStoreState);
     m_inUpdateBackingStoreState = true;
@@ -311,13 +311,15 @@ void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImme
         m_backingStoreStateID = stateID;
         m_shouldSendDidUpdateBackingStoreState = true;
 
+        m_webPage->setDeviceScaleFactor(deviceScaleFactor);
         m_webPage->setSize(size);
         m_webPage->layoutIfNeeded();
         m_webPage->scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
 
-        if (m_layerTreeHost)
+        if (m_layerTreeHost) {
+            m_layerTreeHost->deviceScaleFactorDidChange();
             m_layerTreeHost->sizeDidChange(size);
-        else
+        } else
             m_dirtyRegion = m_webPage->bounds();
     } else {
         ASSERT(size == m_webPage->size());
