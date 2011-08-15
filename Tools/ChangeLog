@@ -1,3 +1,13 @@
+2011-08-15  Eric Seidel  <eric@webkit.org>
+
+        Move the Leaks bot back to ORWT until I can fix LeaksViewer regressions filed by Adam Roben in bug 66227 and 66228.
+
+        Unreviewed.
+
+        * Scripts/run-webkit-tests:
+        (usingLeaks):
+        (useNewRunWebKitTests):
+
 2011-08-14  Adam Barth  <abarth@webkit.org>
 
         Switch results detail view over to new-style object-oriented UI widgets

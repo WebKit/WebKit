@@ -65,6 +65,14 @@ sub usingWebKit2()
     return grep(/(-2|--webkit-test-runner)/, @ARGV);
 }
 
+sub usingLeaks()
+{
+    # LeaksViewer gets confused by NRWT's --leaks output, see bugs:
+    # https://bugs.webkit.org/show_bug.cgi?id=66227
+    # https://bugs.webkit.org/show_bug.cgi?id=66228
+    return grep(/--leaks/, @ARGV);
+}
+
 sub useNewRunWebKitTests()
 {
     # Change this check to control which platforms use new-run-webkit-tests by default.
@@ -82,7 +90,7 @@ sub useNewRunWebKitTests()
         return (!isDarwin() and !isARM() and (getQtVersion() ne "4.8"));
     }
 
-    return ((isLeopard() or isSnowLeopard() or isGtk()) and !usingWebKit2());
+    return ((isLeopard() or isSnowLeopard() or isGtk()) and !usingWebKit2() and !usingLeaks());
 }
 
 my $harnessName = "old-run-webkit-tests";
