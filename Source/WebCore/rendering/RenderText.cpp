@@ -1499,6 +1499,12 @@ inline bool isMark(UChar32 c)
     return charType == U_NON_SPACING_MARK || charType == U_ENCLOSING_MARK || charType == U_COMBINING_SPACING_MARK;
 }
 
+inline bool isRegionalIndicator(UChar32 c)
+{
+    // National flag emoji each consists of a pair of regional indicator symbols.
+    return 0x1F1E6 <= c && c <= 0x1F1FF;
+}
+
 #endif
 
 int RenderText::previousOffsetForBackwardDeletion(int current) const
@@ -1507,6 +1513,7 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
     ASSERT(m_text);
     StringImpl& text = *m_text.impl();
     UChar32 character;
+    bool sawRegionalIndicator = false;
     while (current > 0) {
         if (U16_IS_TRAIL(text[--current]))
             --current;
@@ -1515,9 +1522,24 @@ int RenderText::previousOffsetForBackwardDeletion(int current) const
 
         UChar32 character = text.characterStartingAt(current);
 
+        if (sawRegionalIndicator) {
+            // We don't check if the pair of regional indicator symbols before current position can actually be combined
+            // into a flag, and just delete it. This may not agree with how the pair is rendered in edge cases,
+            // but is good enough in practice.
+            if (isRegionalIndicator(character))
+                break;
+            // Don't delete a preceding character that isn't a regional indicator symbol.
+            U16_FWD_1_UNSAFE(text, current);
+        }
+
         // We don't combine characters in Armenian ... Limbu range for backward deletion.
         if ((character >= 0x0530) && (character < 0x1950))
             break;
+
+        if (isRegionalIndicator(character)) {
+            sawRegionalIndicator = true;
+            continue;
+        }
 
         if (!isMark(character) && (character != 0xFF9E) && (character != 0xFF9F))
             break;

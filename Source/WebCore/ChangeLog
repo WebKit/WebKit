@@ -1,3 +1,19 @@
+2011-08-15  Alexey Proskuryakov  <ap@apple.com>
+
+        Regional indicator symbols that are combined should behave as a single character when editing
+        https://bugs.webkit.org/show_bug.cgi?id=65395
+
+        Reviewed by Dan Bernstein.
+
+        Part one: make backspace work.
+
+        Test: editing/deleting/regional-indicators.html
+
+        * rendering/RenderText.cpp:
+        (WebCore::isRegionalIndicator):
+        (WebCore::RenderText::previousOffsetForBackwardDeletion): Added a special case for regional
+        indicator symbols.
+
 2011-08-15  Jeffrey Pfau  <jpfau@apple.com>
 
         New XML parser: Re-entering a character node should not clobber the buffered characters
