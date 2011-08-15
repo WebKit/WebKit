@@ -1,5 +1,11 @@
 2011-08-15  Alexey Proskuryakov  <ap@apple.com>
 
+        Committed by accident, restoring the test.
+
+        * editing/deleting/delete-3928305-fix.html:
+
+2011-08-15  Alexey Proskuryakov  <ap@apple.com>
+
         Regional indicator symbols that are combined should behave as a single character when editing
         https://bugs.webkit.org/show_bug.cgi?id=65395
 
