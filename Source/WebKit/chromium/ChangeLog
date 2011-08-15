@@ -1,3 +1,17 @@
+2011-08-15  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Chromium: expose MemoryCache::prune and FontCache::purgeInactiveFontData.
+        https://bugs.webkit.org/show_bug.cgi?id=66132
+
+        Reviewed by Darin Fisher.
+
+        * public/WebCache.h:
+        * public/WebFontCache.h:
+        * src/WebCache.cpp:
+        (WebKit::WebCache::prune):
+        * src/WebFontCache.cpp:
+        (WebKit::WebFontCache::prune):
+
 2011-08-15  Nico Weber  <thakis@chromium.org>
 
         [chromium] Implement shouldRubberBandInDirection
