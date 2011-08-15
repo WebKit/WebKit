@@ -126,7 +126,7 @@ public:
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) { }
-    virtual float userSpaceScaleFactor() const { return 1; }
+    virtual float deviceScaleFactor() const { return 1; }
 
     virtual void didFindZoomableArea(const WebCore::IntPoint&, const WebCore::IntRect&);
 

@@ -1,3 +1,11 @@
+2011-08-15  Balazs Kelemen  <kbalazs@webkit.org>
+
+        Unreviewed.
+        Fix Qt-WK2 build after r93040.
+
+        * UIProcess/qt/QtWebPageProxy.h:
+        (QtWebPageProxy::deviceScaleFactor):
+
 2011-08-10  Adam Roben  <aroben@apple.com>
 
         Clear up scale factor terminology
