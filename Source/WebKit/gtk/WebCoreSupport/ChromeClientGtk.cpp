@@ -137,7 +137,7 @@ FloatRect ChromeClient::pageRect()
     return IntRect(allocation.x, allocation.y, allocation.width, allocation.height);
 }
 
-float ChromeClient::scaleFactor()
+float ChromeClient::deviceScaleFactor()
 {
     // Not implementable
     return 1.0;

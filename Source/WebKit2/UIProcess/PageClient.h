@@ -186,7 +186,7 @@ public:
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) = 0;
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) = 0;
 
-    virtual float userSpaceScaleFactor() const = 0;
+    virtual float deviceScaleFactor() const = 0;
 };
 
 } // namespace WebKit

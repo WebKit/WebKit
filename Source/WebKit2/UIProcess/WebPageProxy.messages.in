@@ -135,7 +135,7 @@ messages -> WebPageProxy {
     ComputedPagesCallback(Vector<WebCore::IntRect> pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
     ValidateCommandCallback(WTF::String command, bool isEnabled, int32_t state, uint64_t callbackID)
 
-    ViewScaleFactorDidChange(double scaleFactor)
+    PageScaleFactorDidChange(double scaleFactor)
 
 #if PLATFORM(GTK)
     # Support for GTK+ platform keybindings

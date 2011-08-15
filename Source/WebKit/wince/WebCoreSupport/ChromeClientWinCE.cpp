@@ -70,7 +70,7 @@ FloatRect ChromeClientWinCE::pageRect()
     return windowRect();
 }
 
-float ChromeClientWinCE::scaleFactor()
+float ChromeClientWinCE::deviceScaleFactor()
 {
     return 1.0;
 }

@@ -444,7 +444,7 @@ void WebFrameLoaderClient::dispatchDidCommitLoad()
     // Only restore the scale factor for standard frame loads (of the main frame).
     if (m_frame->isMainFrame() && m_frame->coreFrame()->loader()->loadType() == FrameLoadTypeStandard) {
         if (m_frame->coreFrame()->pageScaleFactor() != 1)
-            webPage->scaleWebView(1, IntPoint());
+            webPage->scalePage(1, IntPoint());
     }
 }
 
@@ -1060,7 +1060,7 @@ void WebFrameLoaderClient::restoreViewState()
 {
     // Inform the UI process of the scale factor.
     double scaleFactor = m_frame->coreFrame()->loader()->history()->currentItem()->pageScaleFactor();
-    m_frame->page()->send(Messages::WebPageProxy::ViewScaleFactorDidChange(scaleFactor));
+    m_frame->page()->send(Messages::WebPageProxy::PageScaleFactorDidChange(scaleFactor));
 
     // FIXME: This should not be necessary. WebCore should be correctly invalidating
     // the view on restores from the back/forward cache.

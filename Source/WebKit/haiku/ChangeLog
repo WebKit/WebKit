@@ -1,3 +1,20 @@
+2011-08-10  Adam Roben  <aroben@apple.com>
+
+        Clear up scale factor terminology
+
+        WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+        software is running, and one that is per-Page and can be controlled via API calls. This
+        patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+        code use those names. It should introduce no behavior changes.
+
+        Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+        device scale factor
+
+        Reviewed by Simon Fraser.
+
+        * WebCoreSupport/ChromeClientHaiku.cpp:
+        * WebCoreSupport/ChromeClientHaiku.h:
+
 2011-08-03  Pavel Feldman  <pfeldman@chromium.org>
 
         Web Inspector: remove Node parameter from the InspectorClient::highlight

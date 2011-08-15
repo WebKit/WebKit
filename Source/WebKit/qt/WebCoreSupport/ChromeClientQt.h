@@ -68,7 +68,7 @@ public:
 
     virtual FloatRect pageRect();
 
-    virtual float scaleFactor();
+    virtual float deviceScaleFactor();
 
     virtual void focus();
     virtual void unfocus();

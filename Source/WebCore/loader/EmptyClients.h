@@ -93,7 +93,7 @@ public:
 
     virtual FloatRect pageRect() { return FloatRect(); }
 
-    virtual float scaleFactor() { return 1.f; }
+    virtual float deviceScaleFactor() { return 1.f; }
 
     virtual void focus() { }
     virtual void unfocus() { }

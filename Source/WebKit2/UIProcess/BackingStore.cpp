@@ -33,14 +33,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-PassOwnPtr<BackingStore> BackingStore::create(const IntSize& size, float scaleFactor, WebPageProxy* webPageProxy)
+PassOwnPtr<BackingStore> BackingStore::create(const IntSize& size, float deviceScaleFactor, WebPageProxy* webPageProxy)
 {
-    return adoptPtr(new BackingStore(size, scaleFactor, webPageProxy));
+    return adoptPtr(new BackingStore(size, deviceScaleFactor, webPageProxy));
 }
 
-BackingStore::BackingStore(const IntSize& size, float scaleFactor, WebPageProxy* webPageProxy)
+BackingStore::BackingStore(const IntSize& size, float deviceScaleFactor, WebPageProxy* webPageProxy)
     : m_size(size)
-    , m_scaleFactor(scaleFactor)
+    , m_deviceScaleFactor(deviceScaleFactor)
     , m_webPageProxy(webPageProxy)
 {
     ASSERT(!m_size.isEmpty());
@@ -60,7 +60,7 @@ void BackingStore::incorporateUpdate(const UpdateInfo& updateInfo)
 
 #if !ASSERT_DISABLED
     IntSize updateSize = updateInfo.updateRectBounds.size();
-    updateSize.scale(m_scaleFactor);
+    updateSize.scale(m_deviceScaleFactor);
     ASSERT(bitmap->size() == updateSize);
 #endif
     

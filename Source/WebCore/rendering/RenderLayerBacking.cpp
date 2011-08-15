@@ -1253,9 +1253,9 @@ float RenderLayerBacking::pageScaleFactor() const
     return compositor()->pageScaleFactor();
 }
 
-float RenderLayerBacking::backingScaleFactor() const
+float RenderLayerBacking::deviceScaleFactor() const
 {
-    return compositor()->backingScaleFactor();
+    return compositor()->deviceScaleFactor();
 }
 
 void RenderLayerBacking::didCommitChangesForLayer(const GraphicsLayer*) const

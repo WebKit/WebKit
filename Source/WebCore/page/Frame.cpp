@@ -1064,14 +1064,14 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void Frame::pageScaleFactorChanged(float scale)
+void Frame::deviceOrPageScaleFactorChanged()
 {
     for (Frame* child = tree()->firstChild(); child; child = child->tree()->nextSibling())
-        child->pageScaleFactorChanged(scale);
+        child->deviceOrPageScaleFactorChanged();
 
     RenderView* root = contentRenderer();
     if (root && root->compositor())
-        root->compositor()->pageScaleFactorChanged();
+        root->compositor()->deviceOrPageScaleFactorChanged();
 }
 #endif
 
@@ -1090,7 +1090,7 @@ void Frame::scalePage(float scale, const IntPoint& origin)
         document->recalcStyle(Node::Force);
 
 #if USE(ACCELERATED_COMPOSITING)
-        pageScaleFactorChanged(scale);
+        deviceOrPageScaleFactorChanged();
 #endif
     }
 

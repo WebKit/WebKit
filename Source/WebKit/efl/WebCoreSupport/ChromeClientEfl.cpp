@@ -128,7 +128,7 @@ FloatRect ChromeClientEfl::pageRect()
     return ewk_view_page_rect_get(m_view);
 }
 
-float ChromeClientEfl::scaleFactor()
+float ChromeClientEfl::deviceScaleFactor()
 {
     notImplemented();
     return 1.0;

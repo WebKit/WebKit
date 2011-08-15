@@ -1,3 +1,42 @@
+2011-08-10  Adam Roben  <aroben@apple.com>
+
+        Clear up scale factor terminology
+
+        WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+        software is running, and one that is per-Page and can be controlled via API calls. This
+        patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+        code use those names. It should introduce no behavior changes.
+
+        Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+        device scale factor
+
+        Reviewed by Simon Fraser.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        Removed an unused member. This is unrelated to this patch.
+
+        * css/MediaQueryEvaluator.cpp:
+        * html/HTMLCanvasElement.cpp:
+        * html/HTMLCanvasElement.h:
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        * page/DOMWindow.cpp:
+        * page/Frame.cpp:
+        * page/Frame.h:
+        * platform/graphics/GraphicsLayer.cpp:
+        * platform/graphics/GraphicsLayer.h:
+        * platform/graphics/GraphicsLayerClient.h:
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        * rendering/RenderInline.cpp:
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderLayerCompositor.h:
+        * rendering/RenderObject.cpp:
+
 2011-08-15  Oliver Varga  <Varga.Oliver@stud.u-szeged.hu>
 
         Reviewed by Nikolas Zimmermann.

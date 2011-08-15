@@ -1553,7 +1553,7 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
     }
 }
 
-float RenderLayerCompositor::backingScaleFactor() const
+float RenderLayerCompositor::deviceScaleFactor() const
 {
     Frame* frame = m_renderView->frameView()->frame();
     if (!frame)
@@ -1561,7 +1561,7 @@ float RenderLayerCompositor::backingScaleFactor() const
     Page* page = frame->page();
     if (!page)
         return 1;
-    return page->chrome()->scaleFactor();
+    return page->chrome()->deviceScaleFactor();
 }
 
 float RenderLayerCompositor::pageScaleFactor() const
@@ -1901,7 +1901,7 @@ bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const
     return false;
 }
 
-void RenderLayerCompositor::pageScaleFactorChanged()
+void RenderLayerCompositor::deviceOrPageScaleFactorChanged()
 {
     // Start at the RenderView's layer, since that's where the scale is applied.
     RenderLayer* viewLayer = m_renderView->layer();
@@ -1909,7 +1909,7 @@ void RenderLayerCompositor::pageScaleFactorChanged()
         return;
 
     if (GraphicsLayer* rootLayer = viewLayer->backing()->graphicsLayer())
-        rootLayer->notePageScaleFactorChangedIncludingDescendants();
+        rootLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
 } // namespace WebCore

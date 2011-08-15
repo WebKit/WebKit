@@ -111,7 +111,7 @@ messages -> WebPage {
     SetPageZoomFactor(double zoomFactor)
     SetTextZoomFactor(double zoomFactor)
 
-    ScaleWebView(double scale, WebCore::IntPoint origin)
+    ScalePage(double scale, WebCore::IntPoint origin)
 
     SetUseFixedLayout(bool fixed)
     SetFixedLayoutSize(WebCore::IntSize size)

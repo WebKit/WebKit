@@ -98,7 +98,7 @@ private:
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned);
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned);
 
-    virtual float userSpaceScaleFactor() const;
+    virtual float deviceScaleFactor() const;
 
 private:
     RefPtr<WebPageProxy> m_page;

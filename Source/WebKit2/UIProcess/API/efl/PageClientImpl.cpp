@@ -255,7 +255,7 @@ void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, Fin
     notImplemented();
 }
 
-float PageClientImpl::userSpaceScaleFactor() const
+float PageClientImpl::deviceScaleFactor() const
 {
     return 0.0;
 }

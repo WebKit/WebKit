@@ -186,13 +186,13 @@ public:
     bool compositorShowDebugBorders() const { return m_showDebugBorders; }
     bool compositorShowRepaintCounter() const { return m_showRepaintCounter; }
 
-    virtual float backingScaleFactor() const;
+    virtual float deviceScaleFactor() const;
     virtual float pageScaleFactor() const;
     virtual void didCommitChangesForLayer(const GraphicsLayer*) const;
     
     bool keepLayersPixelAligned() const;
 
-    void pageScaleFactorChanged();
+    void deviceOrPageScaleFactorChanged();
 
     GraphicsLayer* layerForHorizontalScrollbar() const { return m_layerForHorizontalScrollbar.get(); }
     GraphicsLayer* layerForVerticalScrollbar() const { return m_layerForVerticalScrollbar.get(); }

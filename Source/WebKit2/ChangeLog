@@ -1,3 +1,56 @@
+2011-08-10  Adam Roben  <aroben@apple.com>
+
+        Clear up scale factor terminology
+
+        WebKit by and large deals with two scale factors: one intrinsic to the device on which the
+        software is running, and one that is per-Page and can be controlled via API calls. This
+        patch names the former "deviceScaleFactor" and the latter "pageScaleFactor", and makes the
+        code use those names. It should introduce no behavior changes.
+
+        Fixes <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to the
+        device scale factor
+
+        Reviewed by Simon Fraser.
+
+        * Shared/UpdateInfo.cpp:
+        * Shared/UpdateInfo.h:
+        * Shared/WebPageCreationParameters.cpp:
+        * Shared/WebPageCreationParameters.h:
+        * UIProcess/API/C/WKPage.cpp:
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        * UIProcess/API/efl/PageClientImpl.h:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/BackingStore.cpp:
+        * UIProcess/BackingStore.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/WebPopupMenuProxy.h:
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h:
+        * UIProcess/mac/BackingStoreMac.mm:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        * UIProcess/mac/WebPopupMenuProxyMac.h:
+        * UIProcess/mac/WebPopupMenuProxyMac.mm:
+        * UIProcess/qt/WebPopupMenuProxyQt.h:
+        * UIProcess/win/WebPopupMenuProxyWin.h:
+        * UIProcess/win/WebView.h:
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/FindController.cpp:
+        * WebProcess/WebPage/WebPage.cpp:
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/WebPage.messages.in:
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h:
+
 2011-08-13  Sam Weinig  <sam@webkit.org>
 
         Remove unused variables from WKFullScreenWindowController.h

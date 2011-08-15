@@ -357,10 +357,10 @@ public:
     bool appliesPageScale() const { return m_appliesPageScale; }
 
     float pageScaleFactor() const { return m_client ? m_client->pageScaleFactor() : 1; }
-    float backingScaleFactor() const { return m_client ? m_client->backingScaleFactor() : 1; }
+    float deviceScaleFactor() const { return m_client ? m_client->deviceScaleFactor() : 1; }
 
-    virtual void pageScaleFactorChanged() { }
-    void notePageScaleFactorChangedIncludingDescendants();
+    virtual void deviceOrPageScaleFactorChanged() { }
+    void noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
     // Some compositing systems may do internal batching to synchronize compositing updates
     // with updates drawn into the window. These methods flush internal batched state on this layer

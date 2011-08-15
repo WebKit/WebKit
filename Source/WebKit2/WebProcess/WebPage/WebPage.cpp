@@ -186,7 +186,7 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     , m_canRunBeforeUnloadConfirmPanel(parameters.canRunBeforeUnloadConfirmPanel)
     , m_canRunModal(parameters.canRunModal)
     , m_isRunningModal(false)
-    , m_userSpaceScaleFactor(parameters.userSpaceScaleFactor)
+    , m_deviceScaleFactor(parameters.deviceScaleFactor)
     , m_cachedMainFrameIsPinnedToLeftSide(false)
     , m_cachedMainFrameIsPinnedToRightSide(false)
     , m_isShowingContextMenu(false)
@@ -769,17 +769,17 @@ void WebPage::setPageAndTextZoomFactors(double pageZoomFactor, double textZoomFa
     return frame->setPageAndTextZoomFactors(static_cast<float>(pageZoomFactor), static_cast<float>(textZoomFactor));
 }
 
-void WebPage::scaleWebView(double scale, const IntPoint& origin)
+void WebPage::scalePage(double scale, const IntPoint& origin)
 {
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)
         return;
     frame->scalePage(scale, origin);
 
-    send(Messages::WebPageProxy::ViewScaleFactorDidChange(scale));
+    send(Messages::WebPageProxy::PageScaleFactorDidChange(scale));
 }
 
-double WebPage::viewScaleFactor() const
+double WebPage::pageScaleFactor() const
 {
     Frame* frame = m_mainFrame->coreFrame();
     if (!frame)

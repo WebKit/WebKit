@@ -205,7 +205,7 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
 #endif
 
     // If we have a backing store the right size, reuse it.
-    if (m_backingStore && (m_backingStore->size() != updateInfo.viewSize || m_backingStore->scaleFactor() != updateInfo.scaleFactor))
+    if (m_backingStore && (m_backingStore->size() != updateInfo.viewSize || m_backingStore->deviceScaleFactor() != updateInfo.deviceScaleFactor))
         m_backingStore = nullptr;
     incorporateUpdate(updateInfo);
 }
@@ -242,7 +242,7 @@ void DrawingAreaProxyImpl::incorporateUpdate(const UpdateInfo& updateInfo)
         return;
 
     if (!m_backingStore)
-        m_backingStore = BackingStore::create(updateInfo.viewSize, updateInfo.scaleFactor, m_webPageProxy);
+        m_backingStore = BackingStore::create(updateInfo.viewSize, updateInfo.deviceScaleFactor, m_webPageProxy);
 
     m_backingStore->incorporateUpdate(updateInfo);
 

@@ -88,7 +88,7 @@ namespace WebCore {
         
         virtual FloatRect pageRect() = 0;
         
-        virtual float scaleFactor() = 0;
+        virtual float deviceScaleFactor() = 0;
     
         virtual void focus() = 0;
         virtual void unfocus() = 0;

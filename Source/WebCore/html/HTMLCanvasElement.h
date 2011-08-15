@@ -153,7 +153,7 @@ private:
     bool m_ignoreReset;
     FloatRect m_dirtyRect;
 
-    float m_pageScaleFactor;
+    float m_deviceScaleFactor;
     bool m_originClean;
 
     // m_createdImageBuffer means we tried to malloc the buffer.  We didn't necessarily get it.

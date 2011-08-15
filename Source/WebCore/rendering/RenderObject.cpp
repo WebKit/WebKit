@@ -2369,10 +2369,10 @@ void RenderObject::addDashboardRegions(Vector<DashboardRegionValue>& regions)
         region.bounds.setY(absPos.y() + styleRegion.offset.top().value());
 
         if (frame()) {
-            float pageScaleFactor = frame()->page()->chrome()->scaleFactor();
-            if (pageScaleFactor != 1.0f) {
-                region.bounds.scale(pageScaleFactor);
-                region.clip.scale(pageScaleFactor);
+            float deviceScaleFactor = frame()->page()->chrome()->deviceScaleFactor();
+            if (deviceScaleFactor != 1.0f) {
+                region.bounds.scale(deviceScaleFactor);
+                region.clip.scale(deviceScaleFactor);
             }
         }
 

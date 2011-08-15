@@ -224,20 +224,20 @@ void GraphicsLayer::removeFromParent()
     }
 }
 
-void GraphicsLayer::notePageScaleFactorChangedIncludingDescendants()
+void GraphicsLayer::noteDeviceOrPageScaleFactorChangedIncludingDescendants()
 {
-    pageScaleFactorChanged();
+    deviceOrPageScaleFactorChanged();
 
     if (m_maskLayer)
-        m_maskLayer->pageScaleFactorChanged();
+        m_maskLayer->deviceOrPageScaleFactorChanged();
 
     if (m_replicaLayer)
-        m_replicaLayer->notePageScaleFactorChangedIncludingDescendants();
+        m_replicaLayer->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 
     const Vector<GraphicsLayer*>& childLayers = children();
     size_t numChildren = childLayers.size();
     for (size_t i = 0; i < numChildren; ++i)
-        childLayers[i]->notePageScaleFactorChangedIncludingDescendants();
+        childLayers[i]->noteDeviceOrPageScaleFactorChangedIncludingDescendants();
 }
 
 void GraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)

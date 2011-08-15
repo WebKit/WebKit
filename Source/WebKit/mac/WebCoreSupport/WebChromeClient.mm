@@ -176,7 +176,7 @@ FloatRect WebChromeClient::pageRect()
     return [m_webView frame];
 }
 
-float WebChromeClient::scaleFactor()
+float WebChromeClient::deviceScaleFactor()
 {
     NSWindow *window = [m_webView window];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)

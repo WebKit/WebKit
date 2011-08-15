@@ -64,7 +64,7 @@ GtkAction* WebPopupMenuProxyGtk::createGtkActionForMenuItem(const WebPopupItem& 
     return action;
 }
 
-void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection textDirection, double scaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& data, int32_t selectedIndex)
+void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData& data, int32_t selectedIndex)
 {
     if (m_popup)
         m_popup->clear();

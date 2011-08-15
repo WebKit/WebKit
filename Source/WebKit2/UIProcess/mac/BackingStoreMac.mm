@@ -109,7 +109,7 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
         IntRect srcRect = updateRect;
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
 
-        bitmap->paint(graphicsContext, updateInfo.scaleFactor, updateRect.location(), srcRect);
+        bitmap->paint(graphicsContext, updateInfo.deviceScaleFactor, updateRect.location(), srcRect);
     }
 }
 
