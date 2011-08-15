@@ -1,3 +1,20 @@
+2011-08-15  Oliver Varga  <Varga.Oliver@stud.u-szeged.hu>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Speed up SVGSMILElement::findInstanceTime.
+        https://bugs.webkit.org/show_bug.cgi?id=61025
+
+        Replace the linear search to binary search on ordered list because
+        the previous searches from the beginning was not efficient.
+        Out of index error fixed by Renata Hodovan.
+
+        No new tests this is only a performance tweak.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::extractTimeFromVector):
+        (WebCore::SVGSMILElement::findInstanceTime):
+
 2011-08-15  Hayato Ito  <hayato@chromium.org>
 
         Implement proper handling of focusin/focusout events in regard to shadow DOM boundaries.

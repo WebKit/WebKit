@@ -1,3 +1,17 @@
+2011-08-15  Oliver Varga  <Varga.Oliver@stud.u-szeged.hu>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Speed up SVGSMILElement::findInstanceTime.
+        https://bugs.webkit.org/show_bug.cgi?id=61025
+
+        Add a new parameter to StdlibExtras.h::binarySerarch function
+        to also handle cases when the array does not contain the key value.
+        This is needed for an svg function.
+
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearch):
+
 2011-08-13  Sam Weinig  <sam@webkit.org>
 
         Add back 0xbbadbeef to CRASH to allow for old habits

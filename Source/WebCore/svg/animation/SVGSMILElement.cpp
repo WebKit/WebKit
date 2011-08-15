@@ -616,25 +616,52 @@ void SVGSMILElement::addEndTime(SMILTime eventTime, SMILTime endTime)
     endListChanged(eventTime);
 }
     
+inline SMILTime extractTimeFromVector(const SMILTime* position)
+{
+    return *position;
+}
+
 SMILTime SVGSMILElement::findInstanceTime(BeginOrEnd beginOrEnd, SMILTime minimumTime, bool equalsMinimumOK) const
 {
-    // FIXME: This searches from the beginning which is inefficient. The list is usually not long
-    // (one entry in common cases) but you can construct a case where it does grow.
     const Vector<SMILTime>& list = beginOrEnd == Begin ? m_beginTimes : m_endTimes;
-    for (unsigned n = 0; n < list.size(); ++n) {
-        SMILTime time = list[n];
-        ASSERT(!time.isUnresolved());
-        if (time.isIndefinite() && beginOrEnd == Begin) {
-            // "The special value "indefinite" does not yield an instance time in the begin list."
-            continue;
-        }
-        if (equalsMinimumOK) {
-            if (time >= minimumTime)
-                return time;
-        } else if (time > minimumTime)
-            return time;
+    int sizeOfList = list.size();
+
+    if (!sizeOfList)
+        return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
+
+    const SMILTime* result = binarySearch<const SMILTime, SMILTime, extractTimeFromVector>(list.begin(), sizeOfList, minimumTime, WTF::KeyMustNotBePresentInArray);
+    int indexOfResult = result - list.begin();
+
+    if (sizeOfList - 1 > indexOfResult && list[indexOfResult] < minimumTime)
+        ++indexOfResult;
+
+    ASSERT(indexOfResult < sizeOfList);
+
+    // "The special value "indefinite" does not yield an instance time in the begin list."
+    if (list[indexOfResult].isIndefinite() && beginOrEnd == Begin)
+        return SMILTime::unresolved();
+
+    if (list[indexOfResult] < minimumTime)
+        return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
+
+    // If the equals is NOT accepted, we have to find a bigger one.
+    if (list[indexOfResult] == minimumTime && !equalsMinimumOK) {
+        if (indexOfResult + 1 >= sizeOfList)
+            return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
     }
-    return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
+
+    while (indexOfResult < sizeOfList - 1 && list[indexOfResult] == list[indexOfResult + 1])
+        ++indexOfResult;
+
+    if (list[indexOfResult] > minimumTime)
+        return list[indexOfResult];
+    if (list[indexOfResult] == minimumTime) {
+        if (indexOfResult + 1 < sizeOfList - 1)
+            return list[indexOfResult + 1];
+        return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
+    }
+
+    return list[indexOfResult];
 }
 
 SMILTime SVGSMILElement::repeatingDuration() const
