@@ -1,3 +1,18 @@
+2011-08-15  Adam Roben  <aroben@apple.com>
+
+        Rename an instance of pageScaleFactorChanged I missed in r93040
+
+        I tried to make a test for this but failed. It would probably have been easier if we dumped
+        layers' content scales in layerTreeAsText output.
+
+        Followup to <http://webkit.org/b/55787> WebKit uses multiple conflicting names to refer to
+        the device scale factor
+
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::deviceOrPageScaleFactorChanged):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        Renamed from pageScaleFactorChanged to match the base class.
+
 2011-08-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: [V8] crash upon stepIn while not on pause.
