@@ -75,17 +75,17 @@ function prepareDomTree(parent)
 {
     parent.appendChild(
         createDom('div', {'id': 'divA', 'style': 'padding-top: 40px'},
-                  createDom('div', {'id': 'divB', 'style': 'width: 40px; height: 40px'}),
-                  createDom('div', {'id': 'divC', 'style': 'width: 40px; height: 40px'}),
+                  createDom('div', {'id': 'divB', 'style': 'width: 40px; height: 40px', 'tabindex': 0}),
+                  createDom('div', {'id': 'divC', 'style': 'width: 40px; height: 40px', 'tabindex': 0}),
                   createShadow('div', {'id': 'shadowD', 'style': 'padding-top: 40px'},
                                createDom('div', {'id': 'divE', 'style': 'padding-top: 40px'},
                                          createShadow('div', {'id': 'shadowF', 'style': 'padding-top: 40px'},
                                                       createShadow('div', {'id': 'shadowG', 'style': 'padding-top: 40px'},
-                                                                   createDom('div', {'id': 'divH', 'style': 'width: 40px; height: 40px'}),
-                                                                   createDom('div', {'id': 'divI', 'style': 'width: 40px; height: 40px'})))),
+                                                                   createDom('div', {'id': 'divH', 'style': 'width: 40px; height: 40px', 'tabindex': 0}),
+                                                                   createDom('div', {'id': 'divI', 'style': 'width: 40px; height: 40px', 'tabindex': 0})))),
                                createDom('div', {'id': 'divJ', 'style': 'padding-top: 40px'},
                                          createShadow('div', {'id': 'shadowK', 'style': 'padding-top: 40px'},
-                                                      createDom('div', {'id': 'divL', 'style': 'width: 40px; height: 40px'}))))));
+                                                      createDom('div', {'id': 'divL', 'style': 'width: 40px; height: 40px', 'tabindex': 0}))))));
 
     var ids = ['divA', 'divB', 'divC',
                'shadowD', 'shadowD/divE', 'shadowD/shadowF', 'shadowD/shadowF/shadowG',
@@ -95,6 +95,8 @@ function prepareDomTree(parent)
         var element = getElementInShadow(ids[i]);
         element.addEventListener('mouseover', recordEvent, false);
         element.addEventListener('mouseout', recordEvent, false);
+        element.addEventListener('focusin', recordEvent, false);
+        element.addEventListener('focusout', recordEvent, false);
     }
 }
 
@@ -106,12 +108,21 @@ function moveMouse(oldElementId, newElementId, message)
     moveMouseOver(getElementInShadow(newElementId));
 }
 
+function moveFocus(oldElementId, newElementId, message)
+{
+    debug('\n' + message + '\n' + 'Moving focus from ' + oldElementId + ' to ' + newElementId);
+    getElementInShadow(oldElementId).focus();
+    clearEventRecords();
+    getElementInShadow(newElementId).focus();
+}
+
 function test()
 {
     if (window.layoutTestController)
         layoutTestController.dumpAsText();
     prepareDomTree(document.getElementById('sandbox'));
 
+    // Test for mouseover/mouseout events.
     moveMouse('divB', 'divC',
               'Move mouse from a node to its sibling node. All nodes are outside of shadow boundary.');
     shouldBe('dispatchedEvent("mouseover")', '["divC(<-divB)(@divC)", "divC(<-divB)(@divA)"]');
@@ -166,6 +177,20 @@ function test()
               'Target and relatedTarget exist in separated subtree, crossing shadow boundaries. Making sure that event is not dispatched beyond the lowest common boundary.');
     shouldBe('dispatchedEvent("mouseover")', '["divL(<-shadowF)(@divL)", "shadowK(<-shadowF)(@shadowK)", "shadowK(<-shadowF)(@divJ)"]');
     shouldBe('dispatchedEvent("mouseout")', '["divH(<-shadowK)(@divH)", "shadowG(<-shadowK)(@shadowG)", "shadowF(<-shadowK)(@shadowF)", "shadowF(<-shadowK)(@divE)"]');
+
+    // Test for focusin/focusout events.
+    moveFocus('divB', 'divC',
+              'Move focus from a node to its sibling node. All nodes are outside of shadow boundary.');
+    shouldBe('dispatchedEvent("focusin")', '["divC(@divC)", "divC(@divA)"]');
+    shouldBe('dispatchedEvent("focusout")', '["divB(@divB)", "divB(@divA)"]');
+
+    moveFocus('shadowD/shadowF/shadowG/divH', 'shadowD/shadowK/divL',
+              'Old focused node and new focused node exist in separated subtrees, crossing shadow boundaries. Making sure that an event is not dispatched beyond the lowest common boundary.');
+    shouldBe('dispatchedEvent("focusin")', '["divL(@divL)", "shadowK(@shadowK)", "shadowK(@divJ)"]');
+    shouldBe('dispatchedEvent("focusout")', '["divH(@divH)", "shadowG(@shadowG)", "shadowF(@shadowF)", "shadowF(@divE)"]');
+
+    // Omitted test cases where either a oldFocusedNode or newFocusedNode is an ancestor of the other.
+    // Due to a focus transfer mechanism on shadow hosts, a focused node should be a leaf node in general.
 }
 
 test();

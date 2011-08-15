@@ -552,7 +552,10 @@ public:
     virtual void handleLocalEvents(Event*);
 
     void dispatchSubtreeModifiedEvent();
-    void dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent);
+    void dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent);
+    void dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Node> oldFocusedNode);
+    void dispatchFocusOutEvent(const AtomicString& eventType, PassRefPtr<Node> newFocusedNode);
+
     bool dispatchKeyEvent(const PlatformKeyboardEvent&);
     bool dispatchWheelEvent(const PlatformWheelEvent&);
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);

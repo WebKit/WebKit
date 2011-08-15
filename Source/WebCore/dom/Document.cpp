@@ -3133,10 +3133,10 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
             newFocusedNode = 0;
         }
         
-        oldFocusedNode->dispatchUIEvent(eventNames().focusoutEvent, 0, 0); // DOM level 3 name for the bubbling blur event.
+        oldFocusedNode->dispatchFocusOutEvent(eventNames().focusoutEvent, newFocusedNode); // DOM level 3 name for the bubbling blur event.
         // FIXME: We should remove firing DOMFocusOutEvent event when we are sure no content depends
         // on it, probably when <rdar://problem/8503958> is resolved.
-        oldFocusedNode->dispatchUIEvent(eventNames().DOMFocusOutEvent, 0, 0); // DOM level 2 name for compatibility.
+        oldFocusedNode->dispatchFocusOutEvent(eventNames().DOMFocusOutEvent, newFocusedNode); // DOM level 2 name for compatibility.
 
         if (m_focusedNode) {
             // handler shifted focus
@@ -3177,10 +3177,10 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
             goto SetFocusedNodeDone;
         }
 
-        m_focusedNode->dispatchUIEvent(eventNames().focusinEvent, 0, 0); // DOM level 3 bubbling focus event.
+        m_focusedNode->dispatchFocusInEvent(eventNames().focusinEvent, oldFocusedNode); // DOM level 3 bubbling focus event.
         // FIXME: We should remove firing DOMFocusInEvent event when we are sure no content depends
-        // on it, probably when <rdar://problem/8503958> is resolved.
-        m_focusedNode->dispatchUIEvent(eventNames().DOMFocusInEvent, 0, 0); // DOM level 2 for compatibility.
+        // on it, probably when <rdar://problem/8503958> is m.
+        m_focusedNode->dispatchFocusInEvent(eventNames().DOMFocusInEvent, oldFocusedNode); // DOM level 2 for compatibility.
 
         if (m_focusedNode != newFocusedNode) { 
             // handler shifted focus

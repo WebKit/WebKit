@@ -2734,15 +2734,24 @@ void Node::dispatchSubtreeModifiedEvent()
     dispatchScopedEvent(MutationEvent::create(eventNames().DOMSubtreeModifiedEvent, true));
 }
 
-void Node::dispatchUIEvent(const AtomicString& eventType, int detail, PassRefPtr<Event> underlyingEvent)
+void Node::dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Node> oldFocusedNode)
 {
     ASSERT(!eventDispatchForbidden());
-    ASSERT(eventType == eventNames().focusinEvent || eventType == eventNames().focusoutEvent || 
-           eventType == eventNames().DOMFocusInEvent || eventType == eventNames().DOMFocusOutEvent || eventType == eventNames().DOMActivateEvent);
-    
-    bool cancelable = eventType == eventNames().DOMActivateEvent;
+    ASSERT(eventType == eventNames().focusinEvent || eventType == eventNames().DOMFocusInEvent);
+    dispatchScopedEventDispatchMediator(FocusInEventDispatchMediator::create(UIEvent::create(eventType, true, false, document()->defaultView(), 0), oldFocusedNode));
+}
 
-    RefPtr<UIEvent> event = UIEvent::create(eventType, true, cancelable, document()->defaultView(), detail);
+void Node::dispatchFocusOutEvent(const AtomicString& eventType, PassRefPtr<Node> newFocusedNode)
+{
+    ASSERT(!eventDispatchForbidden());
+    ASSERT(eventType == eventNames().focusoutEvent || eventType == eventNames().DOMFocusOutEvent);
+    dispatchScopedEventDispatchMediator(FocusOutEventDispatchMediator::create(UIEvent::create(eventType, true, false, document()->defaultView(), 0), newFocusedNode));
+}
+
+void Node::dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent)
+{
+    ASSERT(!eventDispatchForbidden());
+    RefPtr<UIEvent> event = UIEvent::create(eventNames().DOMActivateEvent, true, true, document()->defaultView(), detail);
     event->setUnderlyingEvent(underlyingEvent);
     dispatchScopedEvent(event.release());
 }
@@ -2814,7 +2823,7 @@ void Node::defaultEventHandler(Event* event)
                 frame->eventHandler()->defaultKeyboardEventHandler(static_cast<KeyboardEvent*>(event));
     } else if (eventType == eventNames().clickEvent) {
         int detail = event->isUIEvent() ? static_cast<UIEvent*>(event)->detail() : 0;
-        dispatchUIEvent(eventNames().DOMActivateEvent, detail, event);
+        dispatchDOMActivateEvent(detail, event);
 #if ENABLE(CONTEXT_MENUS)
     } else if (eventType == eventNames().contextmenuEvent) {
         if (Frame* frame = document()->frame())

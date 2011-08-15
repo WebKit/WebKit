@@ -1,3 +1,33 @@
+2011-08-15  Hayato Ito  <hayato@chromium.org>
+
+        Implement proper handling of focusin/focusout events in regard to shadow DOM boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=64249
+
+        Reviewed by Dimitri Glazkov.
+
+        Introduces FocusInEventDispatchMediator/FocusOutEventDispatchMediator so
+        that we can shrink ancestors of event target node considering shadow
+        DOM boundaries before dispatching focusin/focusout events.
+
+        Test: fast/dom/shadow/shadow-boundary-events.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchFocusInEvent):
+        (WebCore::Node::dispatchFocusOutEvent):
+        (WebCore::Node::dispatchDOMActivateEvent):
+        (WebCore::Node::defaultEventHandler):
+        * dom/Node.h:
+        * dom/UIEvent.cpp:
+        (WebCore::FocusInEventDispatchMediator::create):
+        (WebCore::FocusInEventDispatchMediator::FocusInEventDispatchMediator):
+        (WebCore::FocusInEventDispatchMediator::dispatchEvent):
+        (WebCore::FocusOutEventDispatchMediator::create):
+        (WebCore::FocusOutEventDispatchMediator::FocusOutEventDispatchMediator):
+        (WebCore::FocusOutEventDispatchMediator::dispatchEvent):
+        * dom/UIEvent.h:
+
 2011-08-15  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: not all of the properties have valid descriptors on all platforms.
