@@ -226,6 +226,65 @@ base.AsynchronousCache.prototype.get = function(key, callback)
     });
 };
 
+/*
+    Maintains a dictionary of items, tracking their updates and removing items that haven't been updated.
+    An "update" is a call to the "update" method.
+    To remove stale items, call the "remove" method. It will remove all
+    items that have not been been updated since the last call of "remove".
+*/
+base.UpdateTracker = function()
+{
+    this._items = {};
+    this._updated = {};
+}
+
+base.UpdateTracker.prototype = {
+    /*
+        Update an {key}/{item} pair. You can make the dictionary act as a set and
+        skip the {item}, in which case the {key} is also the {item}.
+    */
+    update: function(key, object)
+    {
+        object = object || key;
+        this._items[key] = object;
+        this._updated[key] = 1;
+    },
+    exists: function(key)
+    {
+        return !!this.get(key);
+    },
+    get: function(key)
+    {
+        return this._items[key];
+    },
+    /*
+        Callback parameters are:
+        - item
+        - key
+        - updated, which is true if the item was updated after last purge() call.
+    */
+    forEach: function(callback, thisObject)
+    {
+        if (!callback)
+            return;
+
+        Object.keys(this._items).forEach(function(key) {
+            var item = this._items[key];
+            callback.call(thisObject || item, item, key, !!this._updated[key]);
+        }, this);
+    },
+    purge: function(removeCallback, thisObject) {
+        removeCallback = removeCallback || function() {};
+        this.forEach(function(item, key, updated) {
+            if (updated)
+                return;
+            removeCallback.call(thisObject || item, item);
+            delete this._items[key];
+        }, this);
+        this._updated = {};
+    }
+}
+
 // Based on http://src.chromium.org/viewvc/chrome/trunk/src/chrome/browser/resources/shared/js/cr/ui.js
 base.extends = function(base, prototype)
 {

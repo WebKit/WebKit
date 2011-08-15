@@ -1,3 +1,13 @@
+2011-08-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic frontend needs a generic way to track updates.
+        https://bugs.webkit.org/show_bug.cgi?id=66245
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js: Added UpdateTracker.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base_unittests.js: Added tests.
+
 2011-08-15  Adam Roben  <aroben@apple.com>
 
         Teach TestWebKitAPI/gtest how to print JavaScript failures nicely

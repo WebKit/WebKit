@@ -221,6 +221,83 @@ test("filterTree", 2, function() {
     });
 });
 
+test("UpdateTracker", 20, function() {
+    var dict;
+
+    function dumpKeys()
+    {
+        var updates = []
+        dict.forEach(function(item, key, updated) {
+            updates.push(key);
+        });
+        return updates;
+    }
+
+    function dumpUpdatedKeys()
+    {
+        var updates = []
+        dict.forEach(function(item, key, updated) {
+            updated && updates.push(key);
+        });
+        return updates;
+    }
+
+
+    dict = new base.UpdateTracker();
+    dict.update("5", {});
+    deepEqual(dumpUpdatedKeys(), ["5"]);
+    dict.update("6", {});
+    dict.update("7", {});
+    deepEqual(dumpUpdatedKeys(), ["5", "6", "7"]);
+    deepEqual(dict.get("6"), {});
+    ok(dict.exists("7"));
+    dict.purge();
+    deepEqual(dumpUpdatedKeys(), []);
+    deepEqual(dumpKeys(), ["5", "6", "7"]);
+    dict.update("5", {});
+    deepEqual(dumpUpdatedKeys(), ["5"]);
+    dict.update("4", {});
+    deepEqual(dumpUpdatedKeys(), ["4", "5"]);
+    deepEqual(dumpKeys(), ["4", "5", "6", "7"]);
+    dict.purge();
+    deepEqual(dumpKeys(), ["4", "5"]);
+    deepEqual(dumpUpdatedKeys(), []);
+    dict.purge();
+    deepEqual(dumpKeys(), []);
+
+    var removeCount = 0;
+    dict.update("one");
+    deepEqual(dumpUpdatedKeys(), ["one"]);
+    dict.update("two");
+    deepEqual(dumpUpdatedKeys(), ["one", "two"]);
+    dict.update("three");
+    dict.purge();
+    deepEqual(dumpKeys(), ["one", "two", "three"]);
+    dict.update("two");
+    dict.purge(function() {
+        removeCount++;
+    });
+    deepEqual(dumpKeys(), ["two"]);
+    equal(removeCount, 2);
+    dict.update("four");
+    var removeCounter = { count: 0 };
+    dict.purge(function() {
+        this.count++;
+    }, removeCounter);
+    equal(removeCounter.count, 1);
+    dict.purge(function() {
+        equal(String(this), "four");
+    });
+
+    dict = new base.UpdateTracker();
+    dict.update("one");
+    var thisObject = {}
+    dict.forEach(function(item) {
+        equal(this, thisObject);
+    }, thisObject);
+
+});
+
 test("extends", 17, function() {
 
     var LikeDiv = base.extends("div", {
