@@ -1,3 +1,13 @@
+2011-08-15  Sam Weinig  <sam@webkit.org>
+
+        Fix release build when building with Clang.
+
+        Reviewed by Anders Carlsson.
+
+        * runtime/Identifier.cpp:
+        (JSC::Identifier::checkCurrentIdentifierTable):
+        Add NO_RETURN_DUE_TO_CRASH.
+
 2011-08-15  Oliver Varga  <Varga.Oliver@stud.u-szeged.hu>
 
         Reviewed by Nikolas Zimmermann.
