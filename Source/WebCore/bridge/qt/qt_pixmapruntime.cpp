@@ -23,6 +23,7 @@
 #include "HTMLImageElement.h"
 #include "ImageData.h"
 #include "IntSize.h"
+#include "JSDOMBinding.h"
 #include "JSGlobalObject.h"
 #include "JSHTMLImageElement.h"
 #include "JSImageData.h"
@@ -202,7 +203,8 @@ public:
 
     static QtPixmapRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<Instance> instance)
     {
-        return new (allocateCell<QtPixmapRuntimeObject>(*exec->heap())) QtPixmapRuntimeObject(exec, globalObject, instance);
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<QtPixmapRuntimeObject>(exec);
+        return new (allocateCell<QtPixmapRuntimeObject>(*exec->heap())) QtPixmapRuntimeObject(exec, globalObject, domStructure, instance);
     }
 
     static const ClassInfo s_info;
@@ -216,11 +218,11 @@ protected:
     static const unsigned StructureFlags = RuntimeObject::StructureFlags | OverridesVisitChildren;
 
 private:
-    QtPixmapRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<Instance>);
+    QtPixmapRuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<Instance>);
 };
 
-QtPixmapRuntimeObject::QtPixmapRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<Instance> instance)
-    : RuntimeObject(exec, globalObject, WebCore::deprecatedGetDOMStructure<QtPixmapRuntimeObject>(exec), instance)
+QtPixmapRuntimeObject::QtPixmapRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
+    : RuntimeObject(exec, globalObject, structure, instance)
 {
 }
 

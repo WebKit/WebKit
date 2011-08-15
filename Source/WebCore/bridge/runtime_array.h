@@ -27,6 +27,7 @@
 #define RUNTIME_ARRAY_H_
 
 #include "BridgeJSC.h"
+#include "JSDOMBinding.h"
 #include <runtime/ArrayPrototype.h>
 
 namespace JSC {
@@ -37,7 +38,8 @@ public:
 
     static RuntimeArray* create(ExecState* exec, Bindings::Array* array)
     {
-        return new (allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, array);
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<RuntimeArray>(exec);
+        return new (allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, domStructure, array);
     }
 
     typedef Bindings::Array BindingsArray;
@@ -73,7 +75,7 @@ protected:
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | OverridesGetPropertyNames | JSArray::StructureFlags;
 
 private:
-    RuntimeArray(ExecState*, Bindings::Array*);
+    RuntimeArray(ExecState*, Structure*, Bindings::Array*);
     static JSValue lengthGetter(ExecState*, JSValue, const Identifier&);
     static JSValue indexGetter(ExecState*, JSValue, unsigned);
 };

@@ -37,10 +37,8 @@ namespace Bindings {
 
 const ClassInfo CRuntimeObject::s_info = { "CRuntimeObject", &RuntimeObject::s_info, 0, 0 };
 
-CRuntimeObject::CRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<CInstance> instance)
-    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-    // We need to pass in the right global object for "i".
-    : RuntimeObject(exec, globalObject, WebCore::deprecatedGetDOMStructure<CRuntimeObject>(exec), instance)
+CRuntimeObject::CRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<CInstance> instance)
+    : RuntimeObject(exec, globalObject, structure, instance)
 {
     ASSERT(inherits(&s_info));
 }

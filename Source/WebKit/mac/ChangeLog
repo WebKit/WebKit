@@ -1,3 +1,17 @@
+2011-08-15  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Refactor JS objects to allocate in static create methods rather than constructors
+        https://bugs.webkit.org/show_bug.cgi?id=65347
+
+        Reviewed by Geoffrey Garen.
+
+        Removed all calls to deprecatedGetDOMObject from initialization lists as part of a 
+        larger refactoring to get rid of all allocation during initialization.
+
+        * Plugins/Hosted/ProxyInstance.mm:
+        (WebKit::ProxyRuntimeMethod::create):
+        (WebKit::ProxyRuntimeMethod::ProxyRuntimeMethod):
+
 2011-08-15  Adam Roben  <aroben@apple.com>
 
         Update pages' style and content scale when the window's backing scale factor changes

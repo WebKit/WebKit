@@ -1006,8 +1006,8 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
 
 const ClassInfo QtRuntimeMethod::s_info = { "QtRuntimeMethod", &InternalFunction::s_info, 0, 0 };
 
-QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, const Identifier& ident, PassRefPtr<QtInstance> inst)
-    : InternalFunction(&exec->globalData(), exec->lexicalGlobalObject(), deprecatedGetDOMStructure<QtRuntimeMethod>(exec), ident)
+QtRuntimeMethod::QtRuntimeMethod(QtRuntimeMethodData* dd, ExecState* exec, Structure* structure, const Identifier& ident, PassRefPtr<QtInstance> inst)
+    : InternalFunction(&exec->globalData(), exec->lexicalGlobalObject(), structure, ident)
     , d_ptr(dd)
 {
     QW_D(QtRuntimeMethod);
@@ -1420,8 +1420,8 @@ static int findSignalIndex(const QMetaObject* meta, int initialIndex, QByteArray
     return index;
 }
 
-QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, const Identifier& ident, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate)
-    : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, ident, inst)
+QtRuntimeMetaMethod::QtRuntimeMetaMethod(ExecState* exec, Structure* structure, const Identifier& ident, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature, bool allowPrivate)
+    : QtRuntimeMethod (new QtRuntimeMetaMethodData(), exec, structure, ident, inst)
 {
     QW_D(QtRuntimeMetaMethod);
     d->m_signature = signature;
@@ -1564,8 +1564,8 @@ JSValue QtRuntimeMetaMethod::disconnectGetter(ExecState* exec, JSValue slotBase,
 
 QMultiMap<QObject*, QtConnectionObject*> QtRuntimeConnectionMethod::connections;
 
-QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, const Identifier& ident, bool isConnect, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature)
-    : QtRuntimeMethod (new QtRuntimeConnectionMethodData(), exec, ident, inst)
+QtRuntimeConnectionMethod::QtRuntimeConnectionMethod(ExecState* exec, Structure* structure, const Identifier& ident, bool isConnect, PassRefPtr<QtInstance> inst, int index, const QByteArray& signature)
+    : QtRuntimeMethod (new QtRuntimeConnectionMethodData(), exec, structure, ident, inst)
 {
     QW_D(QtRuntimeConnectionMethod);
 

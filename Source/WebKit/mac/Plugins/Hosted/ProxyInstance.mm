@@ -183,7 +183,10 @@ public:
 
     static ProxyRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
-        return new (allocateCell<ProxyRuntimeMethod>(*exec->heap())) ProxyRuntimeMethod(exec, globalObject, name, list);
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // exec-globalData() is also likely wrong.
+        Structure* domStructure = deprecatedGetDOMStructure<ProxyRuntimeMethod>(exec);
+        return new (allocateCell<ProxyRuntimeMethod>(*exec->heap())) ProxyRuntimeMethod(exec, globalObject, domStructure, name, list);
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -194,10 +197,8 @@ public:
     static const ClassInfo s_info;
 
 private:
-    ProxyRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-        // exec-globalData() is also likely wrong.
-        : RuntimeMethod(exec, globalObject, deprecatedGetDOMStructure<ProxyRuntimeMethod>(exec), name, list)
+    ProxyRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& list)
+        : RuntimeMethod(exec, globalObject, structure, name, list)
     {
         ASSERT(inherits(&s_info));
     }

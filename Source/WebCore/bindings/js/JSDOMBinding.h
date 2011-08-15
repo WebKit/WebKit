@@ -29,7 +29,9 @@
 #include "Element.h"
 #include "StyleBase.h"
 #include <heap/Weak.h>
+#include <runtime/FunctionPrototype.h>
 #include <runtime/Lookup.h>
+#include <runtime/ObjectPrototype.h>
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 

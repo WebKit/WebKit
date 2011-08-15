@@ -33,10 +33,10 @@
 #include <JavaScriptCore/Completion.h>
 #include <JavaScriptCore/SourceCode.h>
 
-JSGlueGlobalObject::JSGlueGlobalObject(JSGlobalData& globalData, Structure* structure, JSFlags flags)
+JSGlueGlobalObject::JSGlueGlobalObject(JSGlobalData& globalData, Structure* structure, Structure* userObjectStructure, JSFlags flags)
     : JSGlobalObject(globalData, structure)
     , m_flags(flags)
-    , m_userObjectStructure(globalData, UserObjectImp::createStructure(globalData, jsNull()))
+    , m_userObjectStructure(globalData, userObjectStructure)
 {
 }
 

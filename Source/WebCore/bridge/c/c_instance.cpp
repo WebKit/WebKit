@@ -115,7 +115,10 @@ public:
 
     static CRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
-        return new (allocateCell<CRuntimeMethod>(*exec->heap())) CRuntimeMethod(exec, globalObject, name, list);
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<CRuntimeMethod>(exec);
+        return new (allocateCell<CRuntimeMethod>(*exec->heap())) CRuntimeMethod(exec, globalObject, domStructure, name, list);
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -126,10 +129,8 @@ public:
     static const ClassInfo s_info;
 
 private:
-    CRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-        // We need to pass in the right global object for "i".
-        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<CRuntimeMethod>(exec), name, list)
+    CRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& list)
+        : RuntimeMethod(exec, globalObject, structure, name, list)
     {
         ASSERT(inherits(&s_info));
     }

@@ -27,6 +27,7 @@
 #define KJS_BINDINGS_OBJC_RUNTIME_H
 
 #include "BridgeJSC.h"
+#include "JSDOMBinding.h"
 #include "objc_header.h"
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSObjectWithGlobalObject.h>
@@ -96,7 +97,9 @@ public:
 
     static ObjcFallbackObjectImp* create(ExecState* exec, JSGlobalObject* globalObject, ObjcInstance* instance, const Identifier& propertyName)
     {
-        return new (allocateCell<ObjcFallbackObjectImp>(*exec->heap())) ObjcFallbackObjectImp(exec, globalObject, instance, propertyName);
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<ObjcFallbackObjectImp>(exec);
+        return new (allocateCell<ObjcFallbackObjectImp>(*exec->heap())) ObjcFallbackObjectImp(globalObject, domStructure, instance, propertyName);
     }
 
     static const ClassInfo s_info;
@@ -114,7 +117,7 @@ public:
     }
 
 private:
-    ObjcFallbackObjectImp(ExecState*, JSGlobalObject*, ObjcInstance*, const Identifier& propertyName);
+    ObjcFallbackObjectImp(JSGlobalObject*, Structure*, ObjcInstance*, const Identifier& propertyName);
     static const unsigned StructureFlags = OverridesGetOwnPropertySlot | JSObject::StructureFlags;
     virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
     virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);

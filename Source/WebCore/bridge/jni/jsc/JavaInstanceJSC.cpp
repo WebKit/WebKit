@@ -120,7 +120,10 @@ public:
 
     static JavaRuntimeMethod* create(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
     {
-        return new (allocateCell<JavaRuntimeMethod>(*exec->heap())) JavaRuntimeMethod(exec, globalObject, name, list);
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<JavaRuntimeMethod>(exec);
+        return new (allocateCell<JavaRuntimeMethod>(*exec->heap())) JavaRuntimeMethod(exec, globalObject, domStructure, name, list);
     }
 
     static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
@@ -131,10 +134,8 @@ public:
     static const ClassInfo s_info;
 
 private:
-    JavaRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, const Identifier& name, Bindings::MethodList& list)
-        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-        // We need to pass in the right global object for "i".
-        : RuntimeMethod(exec, globalObject, WebCore::deprecatedGetDOMStructure<JavaRuntimeMethod>(exec), name, list)
+    JavaRuntimeMethod(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const Identifier& name, Bindings::MethodList& list)
+        : RuntimeMethod(exec, globalObject, structure, name, list)
     {
         ASSERT(inherits(&s_info));
     }

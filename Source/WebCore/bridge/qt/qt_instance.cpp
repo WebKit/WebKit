@@ -54,7 +54,8 @@ public:
 
     static QtRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<Instance> instance)
     {
-        return new (allocateCell<QtRuntimeObject>(*exec->heap())) QtRuntimeObject(exec, globalObject, instance);
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<QtRuntimeObject>(exec);
+        return new (allocateCell<QtRuntimeObject>(*exec->heap())) QtRuntimeObject(exec, globalObject, domStructure, instance);
     }
     
     static const ClassInfo s_info;
@@ -76,13 +77,13 @@ protected:
     static const unsigned StructureFlags = RuntimeObject::StructureFlags | OverridesVisitChildren;
 
 private:
-    QtRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<Instance>);
+    QtRuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<Instance>);
 };
 
 const ClassInfo QtRuntimeObject::s_info = { "QtRuntimeObject", &RuntimeObject::s_info, 0, 0 };
 
-QtRuntimeObject::QtRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<Instance> instance)
-    : RuntimeObject(exec, globalObject, WebCore::deprecatedGetDOMStructure<QtRuntimeObject>(exec), instance)
+QtRuntimeObject::QtRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, PassRefPtr<Instance> instance)
+    : RuntimeObject(exec, globalObject, structure, instance)
 {
 }
 

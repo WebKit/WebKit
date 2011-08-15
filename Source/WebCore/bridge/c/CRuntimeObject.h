@@ -28,6 +28,7 @@
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
 
+#include "JSDOMBinding.h"
 #include "runtime_object.h"
 
 namespace JSC {
@@ -41,7 +42,10 @@ public:
 
     static CRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<CInstance> instance)
     {
-        return new (allocateCell<CRuntimeObject>(*exec->heap())) CRuntimeObject(exec, globalObject, instance);
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<CRuntimeObject>(exec);
+        return new (allocateCell<CRuntimeObject>(*exec->heap())) CRuntimeObject(exec, globalObject, domStructure, instance);
     }
 
     virtual ~CRuntimeObject();
@@ -56,7 +60,7 @@ public:
     }
 
 private:
-    CRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<CInstance>);
+    CRuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<CInstance>);
 };
 
 }

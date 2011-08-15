@@ -35,7 +35,6 @@
 #include <runtime/Error.h>
 #include <runtime/JSGlobalObject.h>
 #include <runtime/JSLock.h>
-#include <runtime/ObjectPrototype.h>
 #include <wtf/RetainPtr.h>
 
 using namespace WebCore;
@@ -197,9 +196,8 @@ unsigned int ObjcArray::getLength() const
 
 const ClassInfo ObjcFallbackObjectImp::s_info = { "ObjcFallbackObject", &JSObjectWithGlobalObject::s_info, 0, 0 };
 
-ObjcFallbackObjectImp::ObjcFallbackObjectImp(ExecState* exec, JSGlobalObject* globalObject, ObjcInstance* i, const Identifier& propertyName)
-    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-    : JSObjectWithGlobalObject(globalObject, deprecatedGetDOMStructure<ObjcFallbackObjectImp>(exec))
+ObjcFallbackObjectImp::ObjcFallbackObjectImp(JSGlobalObject* globalObject, Structure* structure, ObjcInstance* i, const Identifier& propertyName)
+    : JSObjectWithGlobalObject(globalObject, structure)
     , _instance(i)
     , _item(propertyName)
 {

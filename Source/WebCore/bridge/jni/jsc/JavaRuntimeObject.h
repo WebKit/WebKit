@@ -26,6 +26,7 @@
 #ifndef JavaRuntimeObject_h
 #define JavaRuntimeObject_h
 
+#include "JSDOMBinding.h"
 #include "runtime_object.h"
 
 namespace JSC {
@@ -39,7 +40,10 @@ public:
 
     static JavaRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<JavaInstance> javaInst)
     {
-        return new (allocateCell<JavaRuntimeObject>(*exec->heap())) JavaRuntimeObject(exec, globalObject, javaInst);
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
+        Structure* domStructure = WebCore::deprecatedGetDOMStructure<JavaRuntimeObject>(exec);
+        return new (allocateCell<JavaRuntimeObject>(*exec->heap())) JavaRuntimeObject(exec, globalObject, domStructure, javaInst);
     }
 
     virtual ~JavaRuntimeObject();
@@ -54,7 +58,7 @@ public:
     }
 
 private:
-    JavaRuntimeObject(ExecState*, JSGlobalObject*, PassRefPtr<JavaInstance>);
+    JavaRuntimeObject(ExecState*, JSGlobalObject*, Structure*, PassRefPtr<JavaInstance>);
 };
 
 }
