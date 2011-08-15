@@ -1231,7 +1231,7 @@ void WebFrameLoaderClient::didTransferChildFrameToNewDocument(Page*)
     notImplemented();
 }
 
-void WebFrameLoaderClient::transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*)
+void WebFrameLoaderClient::transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*)
 {
     notImplemented();
 }

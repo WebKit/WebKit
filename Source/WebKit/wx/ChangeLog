@@ -1,3 +1,14 @@
+2011-08-15  Dmitry Titov  <dimich@chromium.org>
+
+        FrameLoaderClient::transferLoadingResourceFromPage does not have enough parameters
+        https://bugs.webkit.org/show_bug.cgi?id=66165
+
+        Reviewed by Darin Fisher.
+
+        * WebKitSupport/FrameLoaderClientWx.cpp:
+        (WebCore::FrameLoaderClientWx::transferLoadingResourceFromPage):
+        * WebKitSupport/FrameLoaderClientWx.h:
+
 2011-08-10  Adam Roben  <aroben@apple.com>
 
         Clear up scale factor terminology

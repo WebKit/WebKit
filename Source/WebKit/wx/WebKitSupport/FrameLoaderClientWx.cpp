@@ -878,7 +878,7 @@ void FrameLoaderClientWx::didTransferChildFrameToNewDocument(Page*)
 {
 }
 
-void FrameLoaderClientWx::transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*)
+void FrameLoaderClientWx::transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*)
 {
 }
 

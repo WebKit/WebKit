@@ -859,19 +859,14 @@ void DocumentLoader::transferLoadingResourcesFromPage(Page* oldPage)
     FrameLoader* loader = frameLoader();
     ASSERT(loader);
 
-    const ResourceRequest& request = originalRequest();
-    if (isLoadingMainResource()) {
-        loader->dispatchTransferLoadingResourceFromPage(
-            m_mainResourceLoader->identifier(), this, request, oldPage);
-    }
+    if (isLoadingMainResource())
+        loader->dispatchTransferLoadingResourceFromPage(m_mainResourceLoader.get(), originalRequest(), oldPage);
 
     if (isLoadingSubresources()) {
         ResourceLoaderSet::const_iterator it = m_subresourceLoaders.begin();
         ResourceLoaderSet::const_iterator end = m_subresourceLoaders.end();
-        for (; it != end; ++it) {
-            loader->dispatchTransferLoadingResourceFromPage(
-                (*it)->identifier(), this, request, oldPage);
-        }
+        for (; it != end; ++it)
+            loader->dispatchTransferLoadingResourceFromPage((*it).get(), (*it)->originalRequest(), oldPage);
     }
 }
 

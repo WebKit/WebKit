@@ -750,7 +750,7 @@ void FrameLoaderClientHaiku::didTransferChildFrameToNewDocument(Page*)
 {
 }
 
-void FrameLoaderClientHaiku::transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*)
+void FrameLoaderClientHaiku::transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*)
 {
 }
 

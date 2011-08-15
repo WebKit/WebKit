@@ -68,6 +68,7 @@
 #include <WebCore/PluginView.h>
 #include <WebCore/RenderPart.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/ResourceLoader.h>
 #include <WebCore/Settings.h>
 
 using namespace WebCore;
@@ -777,9 +778,9 @@ void WebFrameLoaderClient::didTransferChildFrameToNewDocument(Page*)
         m_webFrame->setWebView(webView);
 }
 
-void WebFrameLoaderClient::transferLoadingResourceFromPage(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request, Page* oldPage)
+void WebFrameLoaderClient::transferLoadingResourceFromPage(ResourceLoader* loader, const ResourceRequest& request, Page* oldPage)
 {
-    assignIdentifierToInitialRequest(identifier, loader, request);
+    assignIdentifierToInitialRequest(loader->identifier(), loader->documentLoader(), request);
 
     WebView* oldWebView = kit(oldPage);
     if (!oldWebView)
@@ -792,7 +793,7 @@ void WebFrameLoaderClient::transferLoadingResourceFromPage(unsigned long identif
     COMPtr<IWebResourceLoadDelegatePrivate2> oldResourceLoadDelegatePrivate2(Query, oldResourceLoadDelegate);
     if (!oldResourceLoadDelegatePrivate2)
         return;
-    oldResourceLoadDelegatePrivate2->removeIdentifierForRequest(oldWebView, identifier);
+    oldResourceLoadDelegatePrivate2->removeIdentifierForRequest(oldWebView, loader->identifier());
 }
 
 PassRefPtr<Frame> WebFrameLoaderClient::createFrame(const KURL& URL, const String& name, HTMLFrameOwnerElement* ownerElement, const String& referrer)

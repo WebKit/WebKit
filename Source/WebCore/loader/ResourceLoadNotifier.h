@@ -62,7 +62,7 @@ public:
     void dispatchDidReceiveResponse(DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     void dispatchDidReceiveData(DocumentLoader*, unsigned long identifier, const char* data, int dataLength, int encodedDataLength);
     void dispatchDidFinishLoading(DocumentLoader*, unsigned long identifier, double finishTime);
-    void dispatchTransferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*);
+    void dispatchTransferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*);
 
     void sendRemainingDelegateMessages(DocumentLoader*, unsigned long identifier, const ResourceResponse&, const char* data, int dataLength, int encodedDataLength, const ResourceError&);
 

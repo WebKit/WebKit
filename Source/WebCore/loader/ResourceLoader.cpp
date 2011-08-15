@@ -136,7 +136,7 @@ bool ResourceLoader::init(const ResourceRequest& r)
         return false;
     }
 
-    m_request = clientRequest;
+    m_originalRequest = m_request = clientRequest;
     return true;
 }
 

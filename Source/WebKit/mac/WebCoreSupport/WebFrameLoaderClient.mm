@@ -1463,12 +1463,14 @@ void WebFrameLoaderClient::didTransferChildFrameToNewDocument(Page* oldPage)
 {
 }
 
-void WebFrameLoaderClient::transferLoadingResourceFromPage(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request, Page* oldPage)
+void WebFrameLoaderClient::transferLoadingResourceFromPage(ResourceLoader* loader, const ResourceRequest& originalRequest, Page* oldPage)
 {
     ASSERT(oldPage != core(m_webFrame.get())->page());
+
+    unsigned long identifier = loader->identifier();
     ASSERT(![getWebView(m_webFrame.get()) _objectForIdentifier:identifier]);
 
-    assignIdentifierToInitialRequest(identifier, loader, request);
+    assignIdentifierToInitialRequest(identifier, loader->documentLoader(), originalRequest);
 
     [kit(oldPage) _removeObjectForIdentifier:identifier];
 }

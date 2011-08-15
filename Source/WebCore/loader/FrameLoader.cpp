@@ -1648,9 +1648,9 @@ void FrameLoader::transferLoadingResourcesFromPage(Page* oldPage)
     }
 }
 
-void FrameLoader::dispatchTransferLoadingResourceFromPage(unsigned long identifier, DocumentLoader* docLoader, const ResourceRequest& request, Page* oldPage)
+void FrameLoader::dispatchTransferLoadingResourceFromPage(ResourceLoader* loader, const ResourceRequest& request, Page* oldPage)
 {
-    notifier()->dispatchTransferLoadingResourceFromPage(identifier, docLoader, request, oldPage);
+    notifier()->dispatchTransferLoadingResourceFromPage(loader, request, oldPage);
 }
 
 void FrameLoader::setDocumentLoader(DocumentLoader* loader)

@@ -56,6 +56,7 @@ namespace WebCore {
 
         FrameLoader* frameLoader() const;
         DocumentLoader* documentLoader() const { return m_documentLoader.get(); }
+        const ResourceRequest& originalRequest() const { return m_originalRequest; }
         
         virtual void cancel(const ResourceError&);
         ResourceError cancelledError();
@@ -166,6 +167,7 @@ namespace WebCore {
         virtual void didCancel(const ResourceError&) = 0;
 
         ResourceRequest m_request;
+        ResourceRequest m_originalRequest; // Before redirects.
         RefPtr<SharedBuffer> m_resourceData;
         
         unsigned long m_identifier;

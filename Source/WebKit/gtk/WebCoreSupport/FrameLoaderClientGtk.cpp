@@ -60,6 +60,7 @@
 #include "RenderPart.h"
 #include "RenderView.h"
 #include "ResourceHandle.h"
+#include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "ScriptController.h"
 #include "Settings.h"
@@ -583,14 +584,14 @@ void FrameLoaderClient::didTransferChildFrameToNewDocument(WebCore::Page*)
     ASSERT(core(getViewFromFrame(m_frame)) == coreFrame->page());
 }
 
-void FrameLoaderClient::transferLoadingResourceFromPage(unsigned long identifier, WebCore::DocumentLoader* docLoader, const WebCore::ResourceRequest& request, WebCore::Page* oldPage)
+void FrameLoaderClient::transferLoadingResourceFromPage(WebCore::ResourceLoader* loader, const WebCore::ResourceRequest& request, WebCore::Page* oldPage)
 {
     ASSERT(oldPage != core(m_frame)->page());
 
-    GOwnPtr<gchar> identifierString(toString(identifier));
+    GOwnPtr<gchar> identifierString(toString(loader->identifier()));
     ASSERT(!webkit_web_view_get_resource(getViewFromFrame(m_frame), identifierString.get()));
 
-    assignIdentifierToInitialRequest(identifier, docLoader, request);
+    assignIdentifierToInitialRequest(loader->identifier(), loader->documentLoader(), request);
 
     webkit_web_view_remove_resource(kit(oldPage), identifierString.get());
 }

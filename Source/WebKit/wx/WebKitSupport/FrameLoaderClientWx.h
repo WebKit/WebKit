@@ -214,7 +214,7 @@ namespace WebCore {
         virtual PassRefPtr<Frame> createFrame(const KURL& url, const String& name, HTMLFrameOwnerElement* ownerElement,
                                    const String& referrer, bool allowsScrolling, int marginWidth, int marginHeight);
         virtual void didTransferChildFrameToNewDocument(Page*);
-        virtual void transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*);
+        virtual void transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*);
         virtual PassRefPtr<Widget> createPlugin(const IntSize&, HTMLPlugInElement*, const KURL&, const Vector<String>&, const Vector<String>&, const String&, bool loadManually) ;
         virtual void redirectDataToPlugin(Widget* pluginWidget);
         virtual ResourceError pluginWillHandleLoadError(const ResourceResponse&);

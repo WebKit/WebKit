@@ -144,12 +144,12 @@ void ResourceLoadNotifier::dispatchDidFinishLoading(DocumentLoader* loader, unsi
     InspectorInstrumentation::didFinishLoading(m_frame, loader, identifier, finishTime);
 }
 
-void ResourceLoadNotifier::dispatchTransferLoadingResourceFromPage(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request, Page* oldPage)
+void ResourceLoadNotifier::dispatchTransferLoadingResourceFromPage(ResourceLoader* loader, const ResourceRequest& request, Page* oldPage)
 {
     ASSERT(oldPage != m_frame->page());
-    m_frame->loader()->client()->transferLoadingResourceFromPage(identifier, loader, request, oldPage);
+    m_frame->loader()->client()->transferLoadingResourceFromPage(loader, request, oldPage);
 
-    oldPage->progress()->completeProgress(identifier);
+    oldPage->progress()->completeProgress(loader->identifier());
 }
 
 void ResourceLoadNotifier::sendRemainingDelegateMessages(DocumentLoader* loader, unsigned long identifier, const ResourceResponse& response, const char* data, int dataLength, int encodedDataLength, const ResourceError& error)

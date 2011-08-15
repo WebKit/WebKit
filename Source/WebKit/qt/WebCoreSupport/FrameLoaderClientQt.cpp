@@ -1355,7 +1355,7 @@ void FrameLoaderClientQt::didTransferChildFrameToNewDocument(Page*)
     }
 }
 
-void FrameLoaderClientQt::transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const ResourceRequest&, Page*)
+void FrameLoaderClientQt::transferLoadingResourceFromPage(ResourceLoader*, const ResourceRequest&, Page*)
 {
 }
 

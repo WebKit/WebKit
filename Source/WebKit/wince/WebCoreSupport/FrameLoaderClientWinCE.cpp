@@ -176,7 +176,7 @@ void FrameLoaderClientWinCE::didTransferChildFrameToNewDocument(Page*)
 {
 }
 
-void FrameLoaderClientWinCE::transferLoadingResourceFromPage(unsigned long, DocumentLoader*, const WebCore::ResourceRequest&, Page*)
+void FrameLoaderClientWinCE::transferLoadingResourceFromPage(ResourceLoader*, const WebCore::ResourceRequest&, Page*)
 {
 }
 

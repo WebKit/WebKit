@@ -54,6 +54,7 @@
 #include "PluginData.h"
 #include "PluginDataChromium.h"
 #include "ProgressTracker.h"
+#include "ResourceLoader.h"
 #include "Settings.h"
 #include "StringExtras.h"
 #include "WebDataSourceImpl.h"
@@ -1459,13 +1460,13 @@ void FrameLoaderClientImpl::didTransferChildFrameToNewDocument(Page*)
     m_webFrame->setClient(newParent->client());
 }
 
-void FrameLoaderClientImpl::transferLoadingResourceFromPage(unsigned long identifier, DocumentLoader* loader, const ResourceRequest& request, Page* oldPage)
+void FrameLoaderClientImpl::transferLoadingResourceFromPage(ResourceLoader* loader, const ResourceRequest& request, Page* oldPage)
 {
-    assignIdentifierToInitialRequest(identifier, loader, request);
+    assignIdentifierToInitialRequest(loader->identifier(), loader->documentLoader(), request);
 
     WebFrameImpl* oldWebFrame = WebFrameImpl::fromFrame(oldPage->mainFrame());
     if (oldWebFrame && oldWebFrame->client())
-        oldWebFrame->client()->removeIdentifierForRequest(identifier);
+        oldWebFrame->client()->removeIdentifierForRequest(loader->identifier());
 }
 
 PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(
