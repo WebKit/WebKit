@@ -12,7 +12,7 @@ Local
     this: DOMWindow
     x: 2010
 DOMWindowWith Block
-    No Properties
+    innerFunction: function innerFunction(x) {
 Closure
     arguments: Arguments[1]
     makeClosureLocalVar: "local.TextParam"

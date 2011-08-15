@@ -160,14 +160,14 @@ response:
 }
 
 -----------------------------------------------------------
-RuntimeAgent.getProperties(<string>,false)
+RuntimeAgent.getProperties(<string>,true)
 
 request:
 {
     method : "Runtime.getProperties"
     params : {
         objectId : <string>
-        ownProperties : false
+        ownProperties : true
     }
     id : <number>
 }
@@ -197,6 +197,18 @@ response:
                 enumerable : true
                 configurable : true
                 name : "self"
+            }
+            {
+                name : "__proto__"
+                value : {
+                    type : "object"
+                    objectId : <string>
+                    className : <string>
+                    description : "TestObject"
+                }
+                writable : true
+                configurable : true
+                enumerable : false
             }
         ]
     }

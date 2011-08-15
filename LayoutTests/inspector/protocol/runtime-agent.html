@@ -26,7 +26,7 @@ function test()
             ["RuntimeAgent", "evaluate", 'var x = {}; x.self = x; x', 'test', false, true, undefined, true],
             ["RuntimeAgent", "callFunctionOn", result.objectId, 'function() { this.self = this; return this; }', undefined, true],
 
-            ["RuntimeAgent", "getProperties", result.objectId, false],
+            ["RuntimeAgent", "getProperties", result.objectId, true],
             ["RuntimeAgent", "releaseObject", result.objectId],
             ["RuntimeAgent", "releaseObjectGroup", 'test']];
 

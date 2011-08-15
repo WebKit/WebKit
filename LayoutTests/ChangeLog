@@ -1,3 +1,16 @@
+2011-08-15  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: not all of the properties have valid descriptors on all platforms.
+        Includes PropertyDescriptor protocol documentation fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=66215
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/protocol/runtime-agent-expected.txt:
+        * inspector/protocol/runtime-agent.html:
+        * inspector/runtime/runtime-localStorage-getProperties-expected.txt: Added.
+        * inspector/runtime/runtime-localStorage-getProperties.html: Added.
+
 2011-08-14  Renata Hodovan  <reni@webkit.org>
 
        [QT]REGRESSION after r93011

@@ -221,8 +221,15 @@ InjectedScript.prototype = {
                 try {
                     nameProcessed[name] = true;
                     var descriptor = Object.getOwnPropertyDescriptor(object, name);
-                    if (!descriptor)
+                    if (!descriptor) {
+                        // Not all bindings provide proper descriptors. Fall back to the writable, configurable property.
+                        try {
+                            descriptors.push({ name: name, value: object[name], writable: false, configurable: false, enumerable: false});
+                        } catch (e) {
+                            // Silent catch.
+                        }
                         continue;
+                    }
                 } catch (e) {
                     var descriptor = {};
                     descriptor.value = e;

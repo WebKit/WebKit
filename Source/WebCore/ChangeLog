@@ -1,5 +1,20 @@
 2011-08-15  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: not all of the properties have valid descriptors on all platforms.
+        Includes PropertyDescriptor protocol documentation fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=66215
+
+        Activations, LocalStorage and some other properties potentially don't have
+        valid property descriptors. InjectedScript should use conservative getter in order to
+        mitigate this.
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json:
+
+2011-08-15  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: context menu on the link in the console does not have standard link options.
         https://bugs.webkit.org/show_bug.cgi?id=66214
 
