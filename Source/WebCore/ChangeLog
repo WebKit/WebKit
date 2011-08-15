@@ -1,3 +1,19 @@
+2011-08-12  Jeff Miller  <jeffm@apple.com>
+
+        MediaPlayerPrivateAVFoundationCF::playerItemStatus() should return MediaPlayerAVPlayerItemStatusDoesNotExist if there is no AVPlayerItem
+        https://bugs.webkit.org/show_bug.cgi?id=66171
+        
+        MediaPlayerPrivateAVFoundationCF::playerItemStatus() should return MediaPlayerAVPlayerItemStatusDoesNotExist if there is no AVPlayerItem
+        to match the Mac implementation in MediaPlayerPrivateAVFoundationObjC.  I also added better logging to notificationCallback().
+
+        Reviewed by Jon Honeycutt.
+
+        No new tests, uses existing media tests.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundationCF::playerItemStatus): Return MediaPlayerAVPlayerItemStatusDoesNotExist if no AVPlayerItem.
+        (WebCore::AVFWrapper::notificationCallback): Log the name of the received notification.
+
 2011-08-15  Adam Roben  <aroben@apple.com>
 
         Rename an instance of pageScaleFactorChanged I missed in r93040
