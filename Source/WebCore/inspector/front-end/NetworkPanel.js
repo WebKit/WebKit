@@ -1187,6 +1187,7 @@ WebInspector.NetworkLogView.prototype = {
                 node.reveal();
             this._currentMatchedResourceIndex = matchedResourceIndex;
         }
+        this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchIndexUpdated, this._currentMatchedResourceIndex + 1);
     },
 
     performSearch: function(searchQuery, sortOrFilterApplied)
@@ -1213,8 +1214,8 @@ WebInspector.NetworkLogView.prototype = {
                 newMatchedResourceIndex = this._matchedResources.length - 1;
         }
 
-        this._highlightNthMatchedResource(newMatchedResourceIndex, !sortOrFilterApplied);
         this.dispatchEventToListeners(WebInspector.NetworkLogView.EventTypes.SearchCountUpdated, this._matchedResources.length);
+        this._highlightNthMatchedResource(newMatchedResourceIndex, !sortOrFilterApplied);
     },
 
     jumpToPreviousSearchResult: function()
@@ -1244,7 +1245,8 @@ WebInspector.NetworkLogView.EventTypes = {
     ViewCleared: "ViewCleared",
     RowSizeChanged: "RowSizeChanged",
     ResourceSelected: "ResourceSelected",
-    SearchCountUpdated: "SearchCountUpdated"
+    SearchCountUpdated: "SearchCountUpdated",
+    SearchIndexUpdated: "SearchIndexUpdated"
 };
 
 WebInspector.NetworkPanel = function()
@@ -1266,6 +1268,7 @@ WebInspector.NetworkPanel = function()
     this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.RowSizeChanged, this._onRowSizeChanged, this);
     this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.ResourceSelected, this._onResourceSelected, this);
     this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.SearchCountUpdated, this._onSearchCountUpdated, this);
+    this._networkLogView.addEventListener(WebInspector.NetworkLogView.EventTypes.SearchIndexUpdated, this._onSearchIndexUpdated, this);
 
     this._closeButtonElement = document.createElement("button");
     this._closeButtonElement.id = "network-close-button";
@@ -1384,6 +1387,11 @@ WebInspector.NetworkPanel.prototype = {
     _onSearchCountUpdated: function(event)
     {
         WebInspector.searchController.updateSearchMatchesCount(event.data, this);
+    },
+
+    _onSearchIndexUpdated: function(event)
+    {
+        WebInspector.searchController.updateCurrentMatchIndex(event.data, this);
     },
 
     _onResourceSelected: function(event)
