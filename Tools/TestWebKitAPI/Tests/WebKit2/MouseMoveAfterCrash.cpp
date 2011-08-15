@@ -83,13 +83,13 @@ TEST(WebKit2, MouseMoveAfterCrash)
     // Wait until we load the page a second time (via reloading the page in processDidCrash).
     Util::run(&didFinishLoad);
 
-    EXPECT_TRUE(runJSTest(webView.page(), "didMoveMouse()", "false"));
+    EXPECT_JS_FALSE(webView.page(), "didMoveMouse()");
 
     // Once the page has reloaded, try moving the mouse to verify that we get mouse move events.
     webView.simulateMouseMove(10, 10);
     webView.simulateMouseMove(20, 20);
 
-    EXPECT_TRUE(runJSTest(webView.page(), "didMoveMouse()", "true"));
+    EXPECT_JS_TRUE(webView.page(), "didMoveMouse()");
 }
 
 } // namespace TestWebKitAPI

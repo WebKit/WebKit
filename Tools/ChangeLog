@@ -1,3 +1,38 @@
+2011-08-15  Adam Roben  <aroben@apple.com>
+
+        Teach TestWebKitAPI/gtest how to print JavaScript failures nicely
+
+        Failures now give output of the form: foo should be bar but is baz
+
+        Fixes <http://webkit.org/b/66240> It's hard to tell what the actual result of a failed JS
+        test is in TestWebKitAPI's output
+
+        Reviewed by David Levin.
+
+        * TestWebKitAPI/JavaScriptTest.cpp:
+        (TestWebKitAPI::JavaScriptCallbackContext::JavaScriptCallbackContext): Removed now-unused
+        members.
+        (TestWebKitAPI::javaScriptCallback): Changed to just store the result string in the context
+        object, rather than doing any testing of it here.
+        (TestWebKitAPI::runJSTest): Made this function a gtest predicate-formatter. This allows us
+        to use a pretty error message when the test fails.
+
+        * TestWebKitAPI/JavaScriptTest.h: Changed runJSTest to a predicate-formatter, and added nice
+        gtest-style macros that wrap it.
+
+        * TestWebKitAPI/Test.h: Removed now-unused TEST_ASSERT_RETURN.
+
+        * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp:
+        (TestWebKitAPI::TEST): Changed to use the new macros.
+
+        * TestWebKitAPI/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp:
+        (TestWebKitAPI::createSessionStateContainingFormData): Ditto. Note that this function no
+        longer returns 0 when the JS test fails. That shouldn't have any effect on whether or not
+        the test passes, though. Returning early seems to have been an unnecessary optimization.
+
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp:
+        (TestWebKitAPI::TEST): Changed to use the new macros.
+
 2011-08-15  Eric Seidel  <eric@webkit.org>
 
         Move the Leaks bot back to ORWT until I can fix LeaksViewer regressions filed by Adam Roben in bug 66227 and 66228.
