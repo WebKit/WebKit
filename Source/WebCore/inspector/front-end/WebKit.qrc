@@ -16,7 +16,6 @@
     <file>Color.js</file>
     <file>ConsolePanel.js</file>
     <file>ConsoleView.js</file>
-    <file>JavaScriptContextManager.js</file>
     <file>ContextMenu.js</file>
     <file>CookieItemsView.js</file>
     <file>CookieParser.js</file>
@@ -62,6 +61,7 @@
     <file>InjectedFakeWorker.js</file>
     <file>inspector.js</file>
     <file>InspectorFrontendHostStub.js</file>
+    <file>JavaScriptContextManager.js</file>
     <file>JavaScriptFormatter.js</file>
     <file>KeyboardShortcut.js</file>
     <file>MetricsSidebarPane.js</file>
@@ -105,6 +105,7 @@
     <file>ShowMoreDataGridNode.js</file>
     <file>SidebarPane.js</file>
     <file>SidebarTreeElement.js</file>
+    <file>SoftContextMenu.js</file>
     <file>SourceCSSTokenizer.js</file>
     <file>SourceFrame.js</file>
     <file>SourceHTMLTokenizer.js</file>

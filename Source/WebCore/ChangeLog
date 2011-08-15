@@ -1,3 +1,39 @@
+2011-08-14  Pavel Feldman  <pfeldman@chromium.org>
+
+        Web Inspector: showContextMenu missing in Remote DevTools
+        https://bugs.webkit.org/show_bug.cgi?id=63725
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/SoftContextMenu.js: Added.
+        (.WebInspector.SoftContextMenu):
+        (.WebInspector.SoftContextMenu.prototype.show):
+        (.WebInspector.SoftContextMenu.prototype._createMenuItem):
+        (.WebInspector.SoftContextMenu.prototype._createSeparator):
+        (.WebInspector.SoftContextMenu.prototype._menuItemMouseDown):
+        (.WebInspector.SoftContextMenu.prototype._menuItemMouseUp):
+        (.WebInspector.SoftContextMenu.prototype._triggerAction):
+        (.WebInspector.SoftContextMenu.prototype._menuItemMouseOver):
+        (.WebInspector.SoftContextMenu.prototype._menuItemMouseOut):
+        (.WebInspector.SoftContextMenu.prototype._highlightMenuItem):
+        (.WebInspector.SoftContextMenu.prototype._highlightPrevious):
+        (.WebInspector.SoftContextMenu.prototype._highlightNext):
+        (.WebInspector.SoftContextMenu.prototype._menuKeyDown):
+        (.WebInspector.SoftContextMenu.prototype._glassPaneMouseUp):
+        (.WebInspector.SoftContextMenu.prototype._discardMenu):
+        (.InspectorFrontendHost.showContextMenu):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.soft-context-menu-glass-pane):
+        (.soft-context-menu):
+        (.soft-context-menu-item):
+        (.soft-context-menu-separator):
+        (.soft-context-menu-item-mouse-over):
+        * inspector/front-end/inspector.html:
+
 2011-08-13  Abhishek Arya  <inferno@chromium.org>
 
         Crash in HTMLTreeBuilder::processAnyOtherEndTagForInBody

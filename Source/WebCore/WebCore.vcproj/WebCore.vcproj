@@ -69109,6 +69109,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SoftContextMenu.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SourceCSSTokenizer.js"
 					>
 				</File>

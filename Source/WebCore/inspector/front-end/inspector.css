@@ -4068,3 +4068,40 @@ a.worker-item:hover {
     height: 100%;
     position: absolute;
 }
+
+.soft-context-menu-glass-pane {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 20000;
+}
+
+.soft-context-menu {
+    position: absolute;
+    border: 1px solid rgb(180, 180, 180);
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.95);
+    -webkit-box-shadow: rgba(0, 0, 0, 0.5) 0 3px 10px;
+}
+
+.soft-context-menu-item {
+    width: 100%;
+    line-height: 13px;
+    font-size: 13px;
+    padding: 4px 7px;
+    margin: 3px 0;
+    white-space: nowrap;
+}
+
+.soft-context-menu-separator {
+    margin-top: 6px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgb(180, 180, 180);
+}
+
+.soft-context-menu-item-mouse-over {
+    background-color: rgb(56, 121, 217);
+    color: white;
+}

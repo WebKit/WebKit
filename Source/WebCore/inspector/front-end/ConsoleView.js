@@ -542,6 +542,7 @@ WebInspector.ConsoleView.prototype = {
         }
         contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Preserve log upon navigation" : "Preserve Log upon Navigation"), preserveLogItemAction.bind(this), WebInspector.settings.preserveConsoleLog.get());
 
+        contextMenu.appendSeparator();
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear console" : "Clear Console"), this.requestClearMessages.bind(this));
         contextMenu.show(event);
     },
