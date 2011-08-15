@@ -49,9 +49,11 @@
 #include "FFTFrame.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
+#include "HTMLMediaElement.h"
 #include "HighPass2FilterNode.h"
 #include "JavaScriptAudioNode.h"
 #include "LowPass2FilterNode.h"
+#include "MediaElementAudioSourceNode.h"
 #include "OfflineAudioCompletionEvent.h"
 #include "OfflineAudioDestinationNode.h"
 #include "PlatformString.h"
@@ -307,6 +309,16 @@ PassRefPtr<AudioBufferSourceNode> AudioContext::createBufferSource()
     RefPtr<AudioBufferSourceNode> node = AudioBufferSourceNode::create(this, m_destinationNode->sampleRate());
 
     refNode(node.get()); // context keeps reference until source has finished playing
+    return node;
+}
+
+PassRefPtr<MediaElementAudioSourceNode> AudioContext::createMediaElementSource(HTMLMediaElement* mediaElement)
+{
+    ASSERT(isMainThread());
+    lazyInitialize();
+    RefPtr<MediaElementAudioSourceNode> node = MediaElementAudioSourceNode::create(this, mediaElement);
+
+    refNode(node.get()); // context keeps reference until node is disconnected
     return node;
 }
 

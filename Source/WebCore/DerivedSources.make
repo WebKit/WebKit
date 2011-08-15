@@ -77,6 +77,7 @@ DOM_CLASSES = \
     HighPass2FilterNode \
     JavaScriptAudioNode \
     LowPass2FilterNode \
+    MediaElementAudioSourceNode \
     OfflineAudioCompletionEvent \
     RealtimeAnalyserNode \
     WaveShaperNode \

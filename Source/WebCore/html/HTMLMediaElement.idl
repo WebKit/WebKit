@@ -26,6 +26,7 @@
 module html {
     interface [
         Conditional=VIDEO,
+        GenerateNativeConverter
     ] HTMLMediaElement : HTMLElement {
 
     // error state

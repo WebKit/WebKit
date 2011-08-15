@@ -1,3 +1,30 @@
+2011-08-15  Chris Rogers  <crogers@google.com>
+
+        Add shell implementation for Web Audio API's MediaElementAudioSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=66175
+
+        Reviewed by Kenneth Russell.
+
+        Test: webaudio/mediaelementaudiosourcenode.html
+
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLMediaElement.idl:
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createMediaElementSource):
+        * webaudio/AudioContext.h:
+        * webaudio/AudioContext.idl:
+        * webaudio/AudioNode.h:
+        * webaudio/MediaElementAudioSourceNode.cpp: Added.
+        (WebCore::MediaElementAudioSourceNode::create):
+        (WebCore::MediaElementAudioSourceNode::MediaElementAudioSourceNode):
+        (WebCore::MediaElementAudioSourceNode::process):
+        (WebCore::MediaElementAudioSourceNode::reset):
+        * webaudio/MediaElementAudioSourceNode.h: Added.
+        (WebCore::MediaElementAudioSourceNode::mediaElement):
+        * webaudio/MediaElementAudioSourceNode.idl: Added.
+
 2011-08-15  Emil A Eklund  <eae@chromium.org>
 
         Switch mouse events to to new layout types

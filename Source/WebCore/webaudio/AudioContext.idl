@@ -57,8 +57,9 @@ module webaudio {
         void decodeAudioData(in ArrayBuffer audioData, in [Callback] AudioBufferCallback successCallback, in [Optional, Callback] AudioBufferCallback errorCallback)
             raises(DOMException);
 
-        // Source
+        // Sources
         AudioBufferSourceNode createBufferSource();
+        MediaElementAudioSourceNode createMediaElementSource(in HTMLMediaElement mediaElement);
 
         // Processing nodes
         AudioGainNode createGainNode();

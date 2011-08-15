@@ -49,6 +49,8 @@ class ArrayBuffer;
 class AudioBuffer;
 class AudioBufferCallback;
 class AudioBufferSourceNode;
+class MediaElementAudioSourceNode;
+class HTMLMediaElement;
 class AudioChannelMerger;
 class AudioChannelSplitter;
 class AudioGainNode;
@@ -108,6 +110,7 @@ public:
 
     // The AudioNode create methods are called on the main thread (from JavaScript).
     PassRefPtr<AudioBufferSourceNode> createBufferSource();
+    PassRefPtr<MediaElementAudioSourceNode> createMediaElementSource(HTMLMediaElement*);
     PassRefPtr<AudioGainNode> createGainNode();
     PassRefPtr<BiquadFilterNode> createBiquadFilter();
     PassRefPtr<WaveShaperNode> createWaveShaper();

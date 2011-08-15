@@ -1,3 +1,13 @@
+2011-08-15  Chris Rogers  <crogers@google.com>
+
+        Add shell implementation for Web Audio API's MediaElementAudioSourceNode
+        https://bugs.webkit.org/show_bug.cgi?id=66175
+
+        Reviewed by Kenneth Russell.
+
+        * webaudio/mediaelementaudiosourcenode-expected.txt: Added.
+        * webaudio/mediaelementaudiosourcenode.html: Added.
+
 2011-08-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         webkit-indent-blockquote is unnecessary

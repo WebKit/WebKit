@@ -57,6 +57,7 @@ public:
         NodeTypeUnknown,
         NodeTypeDestination,
         NodeTypeAudioBufferSource,
+        NodeTypeMediaElementAudioSource,
         NodeTypeJavaScript,
         NodeTypeBiquadFilter,
         NodeTypeLowPass2Filter,
