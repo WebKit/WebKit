@@ -1,3 +1,10 @@
+2011-08-16  Tony Chang  <tony@chromium.org>
+
+        [chromium] Mark new tests as failing.  Will pull results from the
+        bots when they cycle.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-16  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Unmatrix algorithm implementation is wrong
