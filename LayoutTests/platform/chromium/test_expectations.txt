@@ -3683,3 +3683,5 @@ BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
 BUGTONY : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE+TEXT IMAGE
 BUGTONY : fast/repaint/overflow-flipped-writing-mode-block-in-regions.html = IMAGE
 BUGTONY : fast/repaint/line-flow-with-floats-in-regions.html = IMAGE+TEXT IMAGE
+
+BUGWK66328 LINUX DEBUG : fast/css/custom-font-xheight.html = CRASH
