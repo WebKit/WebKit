@@ -44,7 +44,6 @@ public:
     virtual int trackLength(Scrollbar*);
 
     virtual void paintScrollCorner(ScrollView*, GraphicsContext*, const IntRect& cornerRect);
-    virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
 
 protected:
     virtual bool hasButtons(Scrollbar*) = 0;

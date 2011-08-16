@@ -315,15 +315,4 @@ void ScrollbarThemeComposite::paintScrollCorner(ScrollView* view, GraphicsContex
     context->fillRect(cornerRect, Color::white, ColorSpaceDeviceRGB);
 }
 
-void ScrollbarThemeComposite::paintOverhangAreas(ScrollView*, GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
-{    
-    context->setFillColor(Color::white, ColorSpaceDeviceRGB);
-    if (!horizontalOverhangRect.isEmpty())
-        context->fillRect(intersection(horizontalOverhangRect, dirtyRect));
-
-    context->setFillColor(Color::white, ColorSpaceDeviceRGB);
-    if (!verticalOverhangRect.isEmpty())
-        context->fillRect(intersection(verticalOverhangRect, dirtyRect));
-}
-
 }

@@ -1086,9 +1086,17 @@ void ScrollView::calculateOverhangAreasForPainting(IntRect& horizontalOverhangRe
     }
 }
 
-void ScrollView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
+void ScrollView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect&)
 {
-    ScrollbarTheme::nativeTheme()->paintOverhangAreas(this, context, horizontalOverhangRect, verticalOverhangRect, dirtyRect);
+    // FIXME: This should be checking the dirty rect.
+
+    context->setFillColor(Color::white, ColorSpaceDeviceRGB);
+    if (!horizontalOverhangRect.isEmpty())
+        context->fillRect(horizontalOverhangRect);
+
+    context->setFillColor(Color::white, ColorSpaceDeviceRGB);
+    if (!verticalOverhangRect.isEmpty())
+        context->fillRect(verticalOverhangRect);
 }
 
 bool ScrollView::isPointInScrollbarCorner(const IntPoint& windowPoint)

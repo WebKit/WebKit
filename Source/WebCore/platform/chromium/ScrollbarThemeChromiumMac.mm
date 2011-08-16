@@ -27,9 +27,7 @@
 #include "config.h"
 #include "ScrollbarThemeChromiumMac.h"
 
-#include "BitmapImage.h"
 #include "FrameView.h"
-#include "Gradient.h"
 #include "ImageBuffer.h"
 #include "LocalCurrentGraphicsContext.h"
 #include "PlatformBridge.h"
@@ -45,13 +43,6 @@
 #include "PlatformContextSkia.h"
 #include "skia/ext/skia_utils_mac.h"
 #endif
-
-
-// Undocumented Lion method to get the pattern for the over-scroll area.
-@interface NSColor (LionSekretAPI)
-+ (NSImage*)_linenPatternImage;
-@end
-
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
@@ -194,21 +185,6 @@ ScrollbarThemeChromiumMac::ScrollbarThemeChromiumMac()
     static bool initialized;
     if (!initialized) {
         initialized = true;
-
-        // Load the linen pattern image used for overhang drawing if available.
-        if ([NSColor respondsToSelector:@selector(_linenPatternImage)]) {
-            NSImage* image = [NSColor _linenPatternImage];
-            if (image) {
-                NSData* tiffData =  [image TIFFRepresentation];
-                if (tiffData) {
-                    CGImageSourceRef imageSource = CGImageSourceCreateWithData((CFDataRef)tiffData, NULL);
-                    CGImageRef cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, NULL);
-                    RefPtr<Image> patternImage = BitmapImage::create(cgImage);
-                    m_overhangPattern = Pattern::create(patternImage, true, true);
-                }
-            }
-        }
-
         [ScrollbarPrefsObserver registerAsObserver];
         preferencesChanged();
     }
@@ -460,8 +436,7 @@ static inline wkScrollerKnobStyle toScrollbarPainterKnobStyle(ScrollbarOverlaySt
     }
 }
 
-static PlatformBridge::ThemePaintState scrollbarStateToThemeState(Scrollbar* scrollbar)
-{
+static PlatformBridge::ThemePaintState scrollbarStateToThemeState(Scrollbar* scrollbar) {
     if (!scrollbar->enabled())
         return PlatformBridge::StateDisabled;
     if (!scrollbar->scrollableArea()->isActive())
@@ -623,8 +598,7 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     return true;
 }
 
-void ScrollbarThemeChromiumMac::paintTickmarks(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
-{
+void ScrollbarThemeChromiumMac::paintTickmarks(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect) {
     if (scrollbar->orientation() != VerticalScrollbar)
         return;
 
@@ -668,99 +642,5 @@ void ScrollbarThemeChromiumMac::paintTickmarks(GraphicsContext* context, Scrollb
 
     context->restore();
 }
-
-void ScrollbarThemeChromiumMac::paintOverhangAreas(ScrollView* view, GraphicsContext* context, const IntRect& horizontalOverhangRect, const IntRect& verticalOverhangRect, const IntRect& dirtyRect)
-{
-    const int kShadowSize = 5;
-    const struct {
-        float stop;
-        Color color;
-    } kShadowColors[] = {
-        { 0.0, Color(0, 0, 0, 141) },
-        { 0.2, Color(0, 0, 0, 89) },
-        { 0.6, Color(0, 0, 0, 30) },
-        { 1.0, Color(0, 0, 0, 0) }
-    };
-
-    bool hasHorizontalOverhang = !horizontalOverhangRect.isEmpty();
-    bool hasVerticalOverhang = !verticalOverhangRect.isEmpty();
-
-    context->save();
-
-    if (m_overhangPattern.get())
-        context->setFillPattern(m_overhangPattern);
-    else    
-        context->setFillColor(Color::darkGray, ColorSpaceDeviceRGB);
-
-    if (hasHorizontalOverhang)
-        context->fillRect(intersection(horizontalOverhangRect, dirtyRect));
-    if (hasVerticalOverhang)
-        context->fillRect(intersection(verticalOverhangRect, dirtyRect));
-
-    IntSize scrollOffset = view->scrollOffset();
-    FloatPoint shadowCornerOrigin;
-    FloatPoint shadowCornerOffset;
-
-    // Draw the shadow for the horizontal overhang.
-    if (hasHorizontalOverhang) {
-        RefPtr<Gradient> gradient;
-        IntRect shadowRect = horizontalOverhangRect;
-        if (scrollOffset.height() < 0) {
-            shadowRect.setY(shadowRect.maxY() - kShadowSize);
-            shadowRect.setHeight(kShadowSize);
-            gradient = Gradient::create(FloatPoint(0, shadowRect.maxY()), FloatPoint(0, shadowRect.y()));
-            shadowCornerOrigin.setY(shadowRect.maxY());
-            shadowCornerOffset.setY(-kShadowSize);
-        } else {
-            shadowRect.setHeight(kShadowSize);
-            gradient = Gradient::create(FloatPoint(0, shadowRect.y()), FloatPoint(0, shadowRect.maxY()));
-            shadowCornerOrigin.setY(shadowRect.y());
-        }
-        if (hasHorizontalOverhang) {
-            shadowRect.setWidth(shadowRect.width() - verticalOverhangRect.width());
-            if (scrollOffset.width() < 0) {
-                shadowRect.setX(shadowRect.x() + verticalOverhangRect.width());
-                shadowCornerOrigin.setX(shadowRect.x());
-                shadowCornerOffset.setX(-kShadowSize);
-            } else {
-                shadowCornerOrigin.setX(shadowRect.maxX());
-            }
-        }
-        for (unsigned i = 0; i < WTF_ARRAY_LENGTH(kShadowColors); i++)
-          gradient->addColorStop(kShadowColors[i].stop, kShadowColors[i].color);
-        context->setFillGradient(gradient);
-        context->fillRect(intersection(shadowRect, dirtyRect));
-    }
-
-    // Draw the shadow for the vertical overhang.
-    if (hasVerticalOverhang) {
-        RefPtr<Gradient> gradient;
-        IntRect shadowRect = verticalOverhangRect;
-        if (scrollOffset.width() < 0) {
-            shadowRect.setX(shadowRect.maxX() - kShadowSize);
-            shadowRect.setWidth(kShadowSize);
-            gradient = Gradient::create(FloatPoint(shadowRect.maxX(), 0), FloatPoint(shadowRect.x(), 0));
-        } else {
-            shadowRect.setWidth(kShadowSize);
-            gradient = Gradient::create(FloatPoint(shadowRect.x(), 0), FloatPoint(shadowRect.maxX(), 0));
-        }
-        for (unsigned i = 0; i < WTF_ARRAY_LENGTH(kShadowColors); i++)
-          gradient->addColorStop(kShadowColors[i].stop, kShadowColors[i].color);
-        context->setFillGradient(gradient);
-        context->fillRect(intersection(shadowRect, dirtyRect));
-    }
-
-    // If both rectangles present, draw a radial gradient for the corner.
-    if (hasHorizontalOverhang && hasVerticalOverhang) {
-      RefPtr<Gradient> gradient = Gradient::create(shadowCornerOrigin, 0, shadowCornerOrigin, kShadowSize);
-      for (unsigned i = 0; i < WTF_ARRAY_LENGTH(kShadowColors); i++)
-        gradient->addColorStop(kShadowColors[i].stop, kShadowColors[i].color);
-      context->setFillGradient(gradient);
-      context->fillRect(FloatRect(shadowCornerOrigin.x() + shadowCornerOffset.x(), shadowCornerOrigin.y() + shadowCornerOffset.y(), kShadowSize, kShadowSize));
-    }
-
-    context->restore();
-}
-
 
 }
