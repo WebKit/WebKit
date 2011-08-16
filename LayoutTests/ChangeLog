@@ -1,5 +1,19 @@
 2011-08-16  Adam Roben  <aroben@apple.com>
 
+        Update Windows Sputnik results for ICU 4.6
+
+        Windows now fails these tests due to changes in ICU. Mac fails these tests, too, though in a
+        different way. Alexey tells me that these tests are silly because they check compliance with
+        a particular version of Unicode. Given this, it doesn't seem that a bug is required to track
+        this change in behavior.
+
+        * platform/win/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt:
+        * platform/win/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt:
+        * platform/win/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt:
+        * platform/win/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt:
+
+2011-08-16  Adam Roben  <aroben@apple.com>
+
         Skip some tests that fail/time out on Windows with Safari 5.1's Apple Application Support (AAS)
 
         Since these failures are likely to be due to bugs in non-WebKit components, they are tracked
