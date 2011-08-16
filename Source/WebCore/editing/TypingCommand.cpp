@@ -446,7 +446,7 @@ bool TypingCommand::makeEditableRootEmpty()
         removeNode(child);
 
     addBlockPlaceholderIfNeeded(root);
-    setEndingSelection(VisibleSelection(firstPositionInNode(root), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(firstPositionInNode(root), DOWNSTREAM, endingSelection().isDirectional()));
 
     return true;
 }
@@ -504,7 +504,7 @@ void TypingCommand::deleteKeyPressed(TextGranularity granularity, bool killRing)
             selection.modify(FrameSelection::AlterationExtend, DirectionBackward, granularity);
         // If the caret is just after a table, select the table and don't delete anything.
         } else if (Node* table = isFirstPositionAfterTable(visibleStart)) {
-            setEndingSelection(VisibleSelection(positionBeforeNode(table), endingSelection().start(), DOWNSTREAM));
+            setEndingSelection(VisibleSelection(positionBeforeNode(table), endingSelection().start(), DOWNSTREAM, endingSelection().isDirectional()));
             typingAddedToOpenCommand(DeleteKey);
             return;
         }
@@ -581,7 +581,7 @@ void TypingCommand::forwardDeleteKeyPressed(TextGranularity granularity, bool ki
         // When deleting tables: Select the table first, then perform the deletion
         if (downstreamEnd.containerNode() && downstreamEnd.containerNode()->renderer() && downstreamEnd.containerNode()->renderer()->isTable()
             && downstreamEnd.computeOffsetInContainerNode() <= caretMinOffset(downstreamEnd.containerNode())) {
-            setEndingSelection(VisibleSelection(endingSelection().end(), positionAfterNode(downstreamEnd.containerNode()), DOWNSTREAM));
+            setEndingSelection(VisibleSelection(endingSelection().end(), positionAfterNode(downstreamEnd.containerNode()), DOWNSTREAM, endingSelection().isDirectional()));
             typingAddedToOpenCommand(ForwardDeleteKey);
             return;
         }

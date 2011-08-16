@@ -169,7 +169,7 @@ void DeleteSelectionCommand::setStartingSelectionOnSmartDelete(const Position& s
         newBase = end;
         newExtent = start;        
     }
-    setStartingSelection(VisibleSelection(newBase, newExtent));            
+    setStartingSelection(VisibleSelection(newBase, newExtent, startingSelection().isDirectional())); 
 }
     
 void DeleteSelectionCommand::initializePositionData()
@@ -821,7 +821,7 @@ void DeleteSelectionCommand::doApply()
     // want to replace it with a placeholder BR!
     if (handleSpecialCaseBRDelete()) {
         calculateTypingStyleAfterDelete();
-        setEndingSelection(VisibleSelection(m_endingPosition, affinity));
+        setEndingSelection(VisibleSelection(m_endingPosition, affinity, endingSelection().isDirectional()));
         clearTransientState();
         rebalanceWhitespace();
         return;
@@ -849,7 +849,7 @@ void DeleteSelectionCommand::doApply()
             frame->editor()->deletedAutocorrectionAtPosition(m_endingPosition, originalString);
     }
 
-    setEndingSelection(VisibleSelection(m_endingPosition, affinity));
+    setEndingSelection(VisibleSelection(m_endingPosition, affinity, endingSelection().isDirectional()));
     clearTransientState();
 }
 

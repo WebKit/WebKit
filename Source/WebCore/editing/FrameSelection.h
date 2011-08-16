@@ -223,6 +223,7 @@ public:
 
     bool shouldChangeSelection(const VisibleSelection&) const;
     bool shouldDeleteSelection(const VisibleSelection&) const;
+    void setNonDirectionalSelectionIfNeeded(FrameSelection*, const VisibleSelection&, TextGranularity);
     void setFocusedNodeIfNeeded();
     void notifyRendererOfSelectionChange(EUserTriggered);
 

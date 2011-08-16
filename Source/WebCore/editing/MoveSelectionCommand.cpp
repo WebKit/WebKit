@@ -65,7 +65,7 @@ void MoveSelectionCommand::doApply()
     if (!pos.anchorNode()->inDocument())
         pos = endingSelection().start();
 
-    setEndingSelection(VisibleSelection(pos, endingSelection().affinity()));
+    setEndingSelection(VisibleSelection(pos, endingSelection().affinity(), endingSelection().isDirectional()));
     if (!pos.anchorNode()->inDocument()) {
         // Document was modified out from under us.
         return;

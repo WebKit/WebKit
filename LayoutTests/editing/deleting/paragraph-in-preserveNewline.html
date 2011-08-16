@@ -7,18 +7,30 @@ bar</pre></div>
 
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
-var sel = window.getSelection();
-var e = document.getElementById("test");
+function runTestsOn(platform) {
+    var sel = window.getSelection();
+    var e = document.getElementById("test");
+    
+    if(window.layoutTestController)
+        layoutTestController.setEditingBehavior(platform);
+
+    sel.setPosition(e, 0);
+    sel.modify("extend", "forward", "character");
+    sel.modify("extend", "forward", "character");
+    sel.modify("extend", "forward", "character");
+    document.execCommand("Delete");
+    Markup.dump("test", "on " + platform);
+    document.execCommand("undo");
+    Markup.dump("test", "after undo on " + platform);
+}
 
 if (window.layoutTestController)
      layoutTestController.dumpEditingCallbacks();
-sel.setPosition(e, 0);
-sel.modify("extend", "forward", "character");
-sel.modify("extend", "forward", "character");
-sel.modify("extend", "forward", "character");
-document.execCommand("Delete");
 Markup.description(description.textContent);
-Markup.dump("test");
+Markup.dump("test", "initial state");
+runTestsOn("mac");
+runTestsOn("win");
+runTestsOn("unix");
 </script>
 </body>
 </html>

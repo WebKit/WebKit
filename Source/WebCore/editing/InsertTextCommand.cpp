@@ -86,10 +86,11 @@ bool InsertTextCommand::performTrivialReplace(const String& text, bool selectIns
     // <http://bugs.webkit.org/show_bug.cgi?id=15781>
     VisibleSelection forcedEndingSelection;
     forcedEndingSelection.setWithoutValidation(start, endPosition);
+    forcedEndingSelection.setIsDirectional(endingSelection().isDirectional());
     setEndingSelection(forcedEndingSelection);
 
     if (!selectInsertedText)
-        setEndingSelection(VisibleSelection(endingSelection().visibleEnd()));
+        setEndingSelection(VisibleSelection(endingSelection().visibleEnd(), endingSelection().isDirectional()));
     
     return true;
 }
@@ -180,6 +181,7 @@ void InsertTextCommand::doApply()
     // <http://bugs.webkit.org/show_bug.cgi?id=15781>
     VisibleSelection forcedEndingSelection;
     forcedEndingSelection.setWithoutValidation(startPosition, endPosition);
+    forcedEndingSelection.setIsDirectional(endingSelection().isDirectional());
     setEndingSelection(forcedEndingSelection);
 
     // Handle the case where there is a typing style.
@@ -190,7 +192,7 @@ void InsertTextCommand::doApply()
     }
 
     if (!m_selectInsertedText)
-        setEndingSelection(VisibleSelection(endingSelection().end(), endingSelection().affinity()));
+        setEndingSelection(VisibleSelection(endingSelection().end(), endingSelection().affinity(), endingSelection().isDirectional()));
 }
 
 Position InsertTextCommand::insertTab(const Position& pos)

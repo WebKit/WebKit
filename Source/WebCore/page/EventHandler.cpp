@@ -267,18 +267,6 @@ static void setSelectionIfNeeded(FrameSelection* selection, const VisibleSelecti
         selection->setSelection(newSelection);
 }
 
-static void setNonDirectionalSelectionIfNeeded(FrameSelection* selection, const VisibleSelection& newSelection, TextGranularity granularity)
-{
-    ASSERT(selection);
-    if (selection->selection() == newSelection || !selection->shouldChangeSelection(newSelection))
-        return;
-
-    VisibleSelection newNonDirectionalSelection = newSelection;
-    newNonDirectionalSelection.setIsDirectional(false);
-
-    selection->setSelection(newNonDirectionalSelection, granularity);
-}
-
 static inline bool dispatchSelectStart(Node* node)
 {
     if (!node || !node->renderer())
@@ -299,7 +287,7 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
         m_selectionInitiationState = PlacedCaret;
     }
 
-    setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
+    m_frame->selection()->setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
 
     return true;
 }
@@ -702,7 +690,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (m_frame->selection()->granularity() != CharacterGranularity)
         newSelection.expandUsingGranularity(m_frame->selection()->granularity());
 
-    setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, m_frame->selection()->granularity());
+    m_frame->selection()->setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, m_frame->selection()->granularity());
 }
 #endif // ENABLE(DRAG_SUPPORT)
 

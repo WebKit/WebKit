@@ -1,3 +1,75 @@
+2011-08-12  Wyatt Carss  <wcarss@chromium.org>
+
+        Programmatically set selection should not have direction on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=60529
+
+        Reviewed by Ryosuke Niwa.
+
+        Modified default value of VisibleSelection->m_isDirectional from 'true'
+        to 'false' by adding a defaulted argument to several VisibleSelection 
+        constructors to make programmatic selection be directionless by default 
+        on Mac. Also modified several calls to VisibleSelection's constructors
+        to correctly preserve directionality.
+        
+        Near the end of FrameSelection::modify (presently FrameSelection.cpp:869)
+        a call to setExtent triggers an editing delegate that uses the
+        FrameSelection. The direction here should have been preserved from before,
+        but setIsDirectional was not called until after FrameSelection.cpp:869. It
+        has been moved up to make things behave.
+
+        * WebCore.exp.in:
+        * editing/ApplyBlockElementCommand.cpp:
+        (WebCore::ApplyBlockElementCommand::doApply):
+        (WebCore::ApplyBlockElementCommand::formatSelection):
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::updateStartEnd):
+        * editing/BreakBlockquoteCommand.cpp:
+        (WebCore::BreakBlockquoteCommand::doApply):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::moveParagraphWithClones):
+        (WebCore::CompositeEditCommand::moveParagraphs):
+        (WebCore::CompositeEditCommand::breakOutOfEmptyListItem):
+        (WebCore::CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph):
+        * editing/CreateLinkCommand.cpp:
+        (WebCore::CreateLinkCommand::doApply):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::setStartingSelectionOnSmartDelete):
+        (WebCore::DeleteSelectionCommand::doApply):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionForCommand):
+        * editing/FrameSelection.cpp:
+        (WebCore::shouldAlwaysUseDirectionalSelection):
+        (WebCore::FrameSelection::FrameSelection):
+        (WebCore::FrameSelection::moveTo):
+        (WebCore::FrameSelection::setNonDirectionalSelectionIfNeeded):
+        (WebCore::FrameSelection::modify):
+        (WebCore::FrameSelection::setBase):
+        (WebCore::FrameSelection::setExtent):
+        * editing/FrameSelection.h:
+        * editing/InsertLineBreakCommand.cpp:
+        (WebCore::InsertLineBreakCommand::doApply):
+        * editing/InsertListCommand.cpp:
+        (WebCore::InsertListCommand::doApply):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::performTrivialReplace):
+        (WebCore::InsertTextCommand::doApply):
+        * editing/MoveSelectionCommand.cpp:
+        (WebCore::MoveSelectionCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::completeHTMLReplacement):
+        * editing/TypingCommand.cpp:
+        (WebCore::TypingCommand::makeEditableRootEmpty):
+        (WebCore::TypingCommand::deleteKeyPressed):
+        (WebCore::TypingCommand::forwardDeleteKeyPressed):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::VisibleSelection):
+        * editing/VisibleSelection.h:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::updateSelectionForMouseDownDispatchingSelectStart):
+        (WebCore::EventHandler::updateSelectionForMouseDrag):
+
 2011-08-16  Jeffrey Pfau  <jpfau@apple.com>
 
         New XML parser: Add document fragment parser

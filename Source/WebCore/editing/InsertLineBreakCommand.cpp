@@ -121,7 +121,7 @@ void InsertLineBreakCommand::doApply()
             insertNodeBefore(nodeToInsert->cloneNode(false), nodeToInsert);
         
         VisiblePosition endingPosition(positionBeforeNode(nodeToInsert.get()));
-        setEndingSelection(VisibleSelection(endingPosition));
+        setEndingSelection(VisibleSelection(endingPosition, endingSelection().isDirectional()));
     } else if (pos.deprecatedEditingOffset() <= caretMinOffset(pos.deprecatedNode())) {
         insertNodeAt(nodeToInsert.get(), pos);
         
@@ -129,12 +129,12 @@ void InsertLineBreakCommand::doApply()
         if (!isStartOfParagraph(positionBeforeNode(nodeToInsert.get())))
             insertNodeBefore(nodeToInsert->cloneNode(false).get(), nodeToInsert.get());
         
-        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM, endingSelection().isDirectional()));
     // If we're inserting after all of the rendered text in a text node, or into a non-text node,
     // a simple insertion is sufficient.
     } else if (pos.deprecatedEditingOffset() >= caretMaxOffset(pos.deprecatedNode()) || !pos.deprecatedNode()->isTextNode()) {
         insertNodeAt(nodeToInsert.get(), pos);
-        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionInParentAfterNode(nodeToInsert.get()), DOWNSTREAM, endingSelection().isDirectional()));
     } else if (pos.deprecatedNode()->isTextNode()) {
         // Split a text node
         Text* textNode = static_cast<Text*>(pos.deprecatedNode());
@@ -159,7 +159,7 @@ void InsertLineBreakCommand::doApply()
             }
         }
         
-        setEndingSelection(VisibleSelection(endingPosition, DOWNSTREAM));
+        setEndingSelection(VisibleSelection(endingPosition, DOWNSTREAM, endingSelection().isDirectional()));
     }
 
     // Handle the case where there is a typing style.

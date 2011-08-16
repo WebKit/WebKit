@@ -248,7 +248,7 @@ void InsertParagraphSeparatorCommand::doApply()
         
         appendBlockPlaceholder(parent);
 
-        setEndingSelection(VisibleSelection(firstPositionInNode(parent.get()), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(firstPositionInNode(parent.get()), DOWNSTREAM, endingSelection().isDirectional()));
         return;
     }
     
@@ -287,7 +287,7 @@ void InsertParagraphSeparatorCommand::doApply()
         appendBlockPlaceholder(cloneHierarchyUnderNewBlock(ancestors, blockToInsert));
         
         // In this case, we need to set the new ending selection.
-        setEndingSelection(VisibleSelection(insertionPosition, DOWNSTREAM));
+        setEndingSelection(VisibleSelection(insertionPosition, DOWNSTREAM, endingSelection().isDirectional()));
         return;
     }
 
@@ -305,7 +305,7 @@ void InsertParagraphSeparatorCommand::doApply()
         // If the insertion point is a break element, there is nothing else
         // we need to do.
         if (visiblePos.deepEquivalent().anchorNode()->renderer()->isBR()) {
-            setEndingSelection(VisibleSelection(insertionPosition, DOWNSTREAM));
+            setEndingSelection(VisibleSelection(insertionPosition, DOWNSTREAM, endingSelection().isDirectional()));
             return;
         }
     }
@@ -396,7 +396,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
     }
 
-    setEndingSelection(VisibleSelection(firstPositionInNode(blockToInsert.get()), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(firstPositionInNode(blockToInsert.get()), DOWNSTREAM, endingSelection().isDirectional()));
     applyStyleAfterInsertion(startBlock);
 }
 

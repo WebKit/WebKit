@@ -122,7 +122,7 @@ void InsertListCommand::doApply()
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd, CanSkipOverEditingBoundary))
-        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary)));
+        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary), endingSelection().isDirectional()));
 
     const QualifiedName& listTag = (m_type == OrderedList) ? olTag : ulTag;
     if (endingSelection().isRange()) {
@@ -178,7 +178,7 @@ void InsertListCommand::doApply()
             doApplyForSingleParagraph(forceCreateList, listTag, currentSelection.get());
             // Fetch the end of the selection, for the reason mentioned above.
             endOfSelection = endingSelection().visibleEnd();
-            setEndingSelection(VisibleSelection(startOfSelection, endOfSelection));
+            setEndingSelection(VisibleSelection(startOfSelection, endOfSelection, endingSelection().isDirectional()));
             return;
         }
     }

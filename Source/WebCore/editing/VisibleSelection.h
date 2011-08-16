@@ -42,13 +42,13 @@ public:
 
     VisibleSelection();
 
-    VisibleSelection(const Position&, EAffinity);
-    VisibleSelection(const Position&, const Position&, EAffinity = SEL_DEFAULT_AFFINITY);
+    VisibleSelection(const Position&, EAffinity, bool isDirectional = false);
+    VisibleSelection(const Position&, const Position&, EAffinity = SEL_DEFAULT_AFFINITY, bool isDirectional = false);
 
-    VisibleSelection(const Range*, EAffinity = SEL_DEFAULT_AFFINITY);
+    VisibleSelection(const Range*, EAffinity = SEL_DEFAULT_AFFINITY, bool isDirectional = false);
     
-    VisibleSelection(const VisiblePosition&);
-    VisibleSelection(const VisiblePosition&, const VisiblePosition&);
+    VisibleSelection(const VisiblePosition&, bool isDirectional = false);
+    VisibleSelection(const VisiblePosition&, const VisiblePosition&, bool isDirectional = false);
 
     static VisibleSelection selectionFromContentsOfNode(Node*);
 

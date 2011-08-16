@@ -1,3 +1,64 @@
+2011-08-12  Wyatt Carss  <wcarss@chromium.org>
+
+        Programmatically set selection should not have direction on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=60529
+
+        Reviewed by Ryosuke Niwa.
+
+        Added editing/selection/programmatic-selection-on-mac-is-directionless
+        to test selection direction in programmatically set selections on
+        windows, unix, and mac, in plain text, editable divs, text-input
+        fields, and textareas. Modified text baselines for many editing tests,
+        which had a delegate change as a result of the cpp patch.
+
+        * editing/deleting/delete-ligature-003-expected.txt:
+        * editing/deleting/paragraph-in-preserveNewline-expected.txt:
+        * editing/deleting/whitespace-pre-1-expected.txt:
+        * editing/selection/after-line-break-expected.txt:
+        * platform/mac/editing/deleting/delete-all-text-in-text-field-assertion-expected.txt:
+        * platform/mac/editing/deleting/delete-and-undo-expected.txt:
+        * platform/mac/editing/deleting/delete-at-paragraph-boundaries-008-expected.txt:
+        * platform/mac/editing/deleting/delete-br-002-expected.txt:
+        * platform/mac/editing/deleting/delete-br-004-expected.txt:
+        * platform/mac/editing/deleting/delete-br-005-expected.txt:
+        * platform/mac/editing/deleting/delete-br-006-expected.txt:
+        * platform/mac/editing/deleting/delete-br-009-expected.txt:
+        * platform/mac/editing/deleting/delete-br-010-expected.txt:
+        * platform/mac/editing/deleting/delete-br-011-expected.txt:
+        * platform/mac/editing/deleting/delete-ws-fixup-003-expected.txt:
+        * platform/mac/editing/deleting/delete-ws-fixup-004-expected.txt:
+        * platform/mac/editing/deleting/smart-delete-002-expected.txt:
+        * platform/mac/editing/inserting/insert-3800346-fix-expected.txt:
+        * platform/mac/editing/inserting/insert-at-end-01-expected.txt:
+        * platform/mac/editing/inserting/insert-at-end-02-expected.txt:
+        * platform/mac/editing/inserting/insert-div-010-expected.txt:
+        * platform/mac/editing/inserting/insert-div-013-expected.txt:
+        * platform/mac/editing/inserting/insert-div-015-expected.txt:
+        * platform/mac/editing/inserting/insert-div-019-expected.txt:
+        * platform/mac/editing/inserting/insert-paragraph-03-expected.txt:
+        * platform/mac/editing/pasteboard/3976872-expected.txt:
+        * platform/mac/editing/pasteboard/4076267-2-expected.txt:
+        * platform/mac/editing/pasteboard/4076267-expected.txt:
+        * platform/mac/editing/pasteboard/drag-selected-image-to-contenteditable-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-a-k-y-expected.txt:
+        * platform/mac/editing/pasteboard/emacs-ctrl-k-y-001-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-014-expected.txt:
+        * platform/mac/editing/pasteboard/paste-text-015-expected.txt:
+        * platform/mac/editing/pasteboard/smart-paste-008-expected.txt:
+        * platform/mac/editing/selection/4932260-1-expected.txt:
+        * platform/mac/editing/selection/anchor-focus2-expected.txt:
+        * platform/mac/editing/selection/anchor-focus3-expected.txt:
+        * platform/mac/editing/selection/expanding-selections-expected.txt:
+        * platform/mac/editing/selection/expanding-selections2-expected.txt:
+        * platform/mac/editing/selection/fake-drag-expected.txt:
+        * platform/mac/editing/selection/move-by-word-001-expected.txt:
+        * platform/mac/editing/selection/transformed-selection-rects-expected.txt:
+        * platform/mac/editing/selection/triple-click-in-pre-expected.txt:
+        * platform/mac/editing/style/create-block-for-style-008-expected.txt:
+        * platform/mac/editing/undo/4063751-expected.txt:
+        * platform/mac/editing/undo/undo-forward-delete-boundary-expected.txt:
+        * platform/mac/editing/undo/undo-forward-delete-expected.txt:
+
 2011-08-16  Tony Chang  <tony@chromium.org>
 
         [chromium] Mark svg/wicd/test-rightsizing-a.xhtml as flakey.

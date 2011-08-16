@@ -110,7 +110,7 @@ VisibleSelection Editor::selectionForCommand(Event* event)
     HTMLTextFormControlElement* textFromControlOfTarget = toTextFormControl(event->target()->toNode());
     if (textFromControlOfTarget && (selection.start().isNull() || textFromControlOfTarget != textFormControlOfSelectionStart)) {
         if (RefPtr<Range> range = textFromControlOfTarget->selection())
-            return VisibleSelection(range.get());
+            return VisibleSelection(range.get(), DOWNSTREAM, selection.isDirectional());
     }
     return selection;
 }

@@ -73,7 +73,7 @@ void ApplyBlockElementCommand::doApply()
     // margin/padding, but not others.  We should make the gap painting more consistent and 
     // then use a left margin/padding rule here.
     if (visibleEnd != visibleStart && isStartOfParagraph(visibleEnd))
-        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary)));
+        setEndingSelection(VisibleSelection(visibleStart, visibleEnd.previous(CannotCrossEditingBoundary), endingSelection().isDirectional()));
 
     VisibleSelection selection = selectionForParagraphIteration(endingSelection());
     VisiblePosition startOfSelection = selection.visibleStart();
@@ -96,7 +96,7 @@ void ApplyBlockElementCommand::doApply()
         VisiblePosition start(visiblePositionForIndex(startIndex, startScope));
         VisiblePosition end(visiblePositionForIndex(endIndex, endScope));
         if (start.isNotNull() && end.isNotNull())
-            setEndingSelection(VisibleSelection(start, end));
+            setEndingSelection(VisibleSelection(start, end, endingSelection().isDirectional()));
     }
 }
 
@@ -110,7 +110,7 @@ void ApplyBlockElementCommand::formatSelection(const VisiblePosition& startOfSel
         insertNodeAt(blockquote, start);
         RefPtr<Element> placeholder = createBreakElement(document());
         appendNode(placeholder, blockquote);
-        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.get()), DOWNSTREAM));
+        setEndingSelection(VisibleSelection(positionBeforeNode(placeholder.get()), DOWNSTREAM, endingSelection().isDirectional()));
         return;
     }
 

@@ -12,26 +12,34 @@
             if (window.eventSender)
                 eventSender.keyDown(String.fromCharCode(0x0008), null);
         }
-        function editingTest() {
-            if (window.layoutTestController)
-                layoutTestController.dumpAsText();
+        function runTestOn(platform) {
             var testarea = document.getElementById("test");
+            if(window.layoutTestController)
+                layoutTestController.setEditingBehavior(platform);
+
             testarea.focus();
             moveSelectionForwardByCharacterCommand();
             moveSelectionForwardByCharacterCommand();
             sendBackwardDeleteKey();
             execUndoCommand();
             if (testarea.textContent == "\u0E27\u0E31")
-                log("Succeeded.");
+                log("Succeeded for " + platform);
             else
                 log("Failed. Actual: \"" + testarea.value + "\", Expected: \"\u0E27\u0E31\"");
+        }
+        function editingTest() {
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+            runTestOn("mac");
+            runTestOn("win");
+            runTestOn("unix");
         }
         </script>
         <title>Editing Test (Undo deleting a ligature)</title> 
     </head> 
     <body>
         <p>This test tests whether the undo command works when the BackSpace key deletes the last character of a ligature "&#x0E27;&#x0E31;".</p>
-        <p>If this test succeeds, you can see "&#x0E27;&#x0E31;" (U+0E27,U+0E31) and a string "succeeded" below.</p>
+        <p>If this test succeeds, you can see "&#x0E27;&#x0E31;" (U+0E27,U+0E31) and a string "succeeded" for each platform below.</p>
         <div id="test" contenteditable>&#x0E27;&#x0E31;</div>
         <ul id="console"></ul>
         <script language="javascript" type="text/javascript">

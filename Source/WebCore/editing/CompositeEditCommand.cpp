@@ -949,6 +949,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     int startIndex = -1;
     int endIndex = -1;
     int destinationIndex = -1;
+    bool originalIsDirectional = endingSelection().isDirectional();
     if (preserveSelection && !endingSelection().isNone()) {
         VisiblePosition visibleStart = endingSelection().visibleStart();
         VisiblePosition visibleEnd = endingSelection().visibleEnd();
@@ -981,7 +982,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     // When we paste a fragment, spaces after the end and before the start are treated as though they were rendered.
     Position start = startOfParagraphToMove.deepEquivalent().downstream();
     Position end = endOfParagraphToMove.deepEquivalent().upstream();
-    
+     
     // start and end can't be used directly to create a Range; they are "editing positions"
     Position startRangeCompliant = start.parentAnchoredEquivalent();
     Position endRangeCompliant = end.parentAnchoredEquivalent();
@@ -1034,7 +1035,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
     RefPtr<Range> startToDestinationRange(Range::create(document(), firstPositionInNode(document()->documentElement()), destination.deepEquivalent().parentAnchoredEquivalent()));
     destinationIndex = TextIterator::rangeLength(startToDestinationRange.get(), true);
 
-    setEndingSelection(destination);
+    setEndingSelection(VisibleSelection(destination, originalIsDirectional));
     ASSERT(endingSelection().isCaretOrRange());
     ReplaceSelectionCommand::CommandOptions options = ReplaceSelectionCommand::SelectReplacement | ReplaceSelectionCommand::MovingParagraph;
     if (!preserveStyle)
@@ -1057,7 +1058,7 @@ void CompositeEditCommand::moveParagraphs(const VisiblePosition& startOfParagrap
         RefPtr<Range> start = TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + startIndex, 0, true);
         RefPtr<Range> end = TextIterator::rangeFromLocationAndLength(document()->documentElement(), destinationIndex + endIndex, 0, true);
         if (start && end)
-            setEndingSelection(VisibleSelection(start->startPosition(), end->startPosition(), DOWNSTREAM));
+            setEndingSelection(VisibleSelection(start->startPosition(), end->startPosition(), DOWNSTREAM, originalIsDirectional));
     }
 }
 
@@ -1116,7 +1117,7 @@ bool CompositeEditCommand::breakOutOfEmptyListItem()
     }
 
     appendBlockPlaceholder(newBlock);
-    setEndingSelection(VisibleSelection(firstPositionInNode(newBlock.get()), DOWNSTREAM));
+    setEndingSelection(VisibleSelection(firstPositionInNode(newBlock.get()), DOWNSTREAM, endingSelection().isDirectional()));
 
     style->prepareToApplyAt(endingSelection().start());
     if (!style->isEmpty())
@@ -1154,7 +1155,7 @@ bool CompositeEditCommand::breakOutOfEmptyMailBlockquotedParagraph()
     // a second one.
     if (!isStartOfParagraph(atBR))
         insertNodeBefore(createBreakElement(document()), br);
-    setEndingSelection(VisibleSelection(atBR));
+    setEndingSelection(VisibleSelection(atBR, endingSelection().isDirectional()));
     
     // If this is an empty paragraph there must be a line break here.
     if (!lineBreakExistsAtVisiblePosition(caret))

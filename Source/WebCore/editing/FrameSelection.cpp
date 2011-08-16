@@ -94,6 +94,11 @@ bool DragCaretController::isContentRichlyEditable() const
     return isRichlyEditablePosition(m_position.deepEquivalent());
 }
 
+static inline bool shouldAlwaysUseDirectionalSelection(Frame* frame)
+{
+    return !frame || frame->editor()->behavior().shouldConsiderSelectionAsDirectional();
+}
+
 FrameSelection::FrameSelection(Frame* frame)
     : m_frame(frame)
     , m_xPosForVerticalArrowNavigation(NoXPosForVerticalArrowNavigation())
@@ -104,24 +109,27 @@ FrameSelection::FrameSelection(Frame* frame)
     , m_isCaretBlinkingSuspended(false)
     , m_focused(frame && frame->page() && frame->page()->focusController()->focusedFrame() == frame)
 {
+    if (shouldAlwaysUseDirectionalSelection(m_frame))
+        m_selection.setIsDirectional(true);
 }
 
 void FrameSelection::moveTo(const VisiblePosition &pos, EUserTriggered userTriggered, CursorAlignOnScroll align)
 {
     SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
-    setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()), options, align);
+    setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity(), m_selection.isDirectional()), options, align);
 }
 
 void FrameSelection::moveTo(const VisiblePosition &base, const VisiblePosition &extent, EUserTriggered userTriggered)
 {
+    const bool selectionHasDirection = true;
     SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
-    setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()), options);
+    setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity(), selectionHasDirection), options);
 }
 
 void FrameSelection::moveTo(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
 {
     SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
-    setSelection(VisibleSelection(pos, affinity), options);
+    setSelection(VisibleSelection(pos, affinity, m_selection.isDirectional()), options);
 }
 
 void FrameSelection::moveTo(const Range *r, EAffinity affinity, EUserTriggered userTriggered)
@@ -133,8 +141,9 @@ void FrameSelection::moveTo(const Range *r, EAffinity affinity, EUserTriggered u
 
 void FrameSelection::moveTo(const Position &base, const Position &extent, EAffinity affinity, EUserTriggered userTriggered)
 {
+    const bool selectionHasDirection = true;
     SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
-    setSelection(VisibleSelection(base, extent, affinity), options);
+    setSelection(VisibleSelection(base, extent, affinity, selectionHasDirection), options);
 }
 
 void DragCaretController::setCaretPosition(const VisiblePosition& position)
@@ -154,9 +163,18 @@ void DragCaretController::setCaretPosition(const VisiblePosition& position)
         updateCaretRect(document, m_position);
 }
 
-static inline bool shouldAlwaysUseDirectionalSelection(Frame* frame)
+void FrameSelection::setNonDirectionalSelectionIfNeeded(FrameSelection* selection, const VisibleSelection& passedNewSelection, TextGranularity granularity)
 {
-    return !frame || frame->editor()->behavior().shouldConsiderSelectionAsDirectional();
+    ASSERT(selection);
+    VisibleSelection newSelection = passedNewSelection;
+
+    if (shouldAlwaysUseDirectionalSelection(m_frame))
+        newSelection.setIsDirectional(true);
+
+    if (selection->selection() == newSelection || !selection->shouldChangeSelection(newSelection))
+        return;
+
+    setSelection(newSelection, granularity);
 }
 
 void FrameSelection::setSelection(const VisibleSelection& newSelection, SetSelectionOptions options, CursorAlignOnScroll align, TextGranularity granularity)
@@ -838,6 +856,7 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     // Note: the START position type is arbitrary because it is unused, it would be
     // the requested position type if there were no xPosForVerticalArrowNavigation set.
     LayoutUnit x = lineDirectionPointForBlockDirectionNavigation(START);
+    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_frame) || alter == AlterationExtend);
 
     switch (alter) {
     case AlterationMove:
@@ -864,10 +883,7 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     if (userTriggered == UserTriggered)
         m_granularity = CharacterGranularity;
 
-
     setCaretRectNeedsUpdate();
-
-    m_selection.setIsDirectional(shouldAlwaysUseDirectionalSelection(m_frame) || alter == AlterationExtend);
 
     return true;
 }
@@ -1023,22 +1039,26 @@ void FrameSelection::setEnd(const VisiblePosition &pos, EUserTriggered trigger)
 
 void FrameSelection::setBase(const VisiblePosition &pos, EUserTriggered userTriggered)
 {
-    setSelection(VisibleSelection(pos.deepEquivalent(), m_selection.extent(), pos.affinity()), CloseTyping | ClearTypingStyle | userTriggered);
+    const bool selectionHasDirection = true;
+    setSelection(VisibleSelection(pos.deepEquivalent(), m_selection.extent(), pos.affinity(), selectionHasDirection), CloseTyping | ClearTypingStyle | userTriggered);
 }
 
 void FrameSelection::setExtent(const VisiblePosition &pos, EUserTriggered userTriggered)
 {
-    setSelection(VisibleSelection(m_selection.base(), pos.deepEquivalent(), pos.affinity()), CloseTyping | ClearTypingStyle | userTriggered);
+    const bool selectionHasDirection = true;
+    setSelection(VisibleSelection(m_selection.base(), pos.deepEquivalent(), pos.affinity(), selectionHasDirection), CloseTyping | ClearTypingStyle | userTriggered);
 }
 
 void FrameSelection::setBase(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
 {
-    setSelection(VisibleSelection(pos, m_selection.extent(), affinity), CloseTyping | ClearTypingStyle | userTriggered);
+    const bool selectionHasDirection = true;
+    setSelection(VisibleSelection(pos, m_selection.extent(), affinity, selectionHasDirection), CloseTyping | ClearTypingStyle | userTriggered);
 }
 
 void FrameSelection::setExtent(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
 {
-    setSelection(VisibleSelection(m_selection.base(), pos, affinity), CloseTyping | ClearTypingStyle | userTriggered);
+    const bool selectionHasDirection = true;
+    setSelection(VisibleSelection(m_selection.base(), pos, affinity, selectionHasDirection), CloseTyping | ClearTypingStyle | userTriggered);
 }
 
 void CaretBase::clearCaretRect()

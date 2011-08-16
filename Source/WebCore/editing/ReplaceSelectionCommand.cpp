@@ -1217,9 +1217,9 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositi
         return;
     
     if (m_selectReplacement)
-        setEndingSelection(VisibleSelection(start, end, SEL_DEFAULT_AFFINITY));
+        setEndingSelection(VisibleSelection(start, end, SEL_DEFAULT_AFFINITY, endingSelection().isDirectional()));
     else
-        setEndingSelection(VisibleSelection(end, SEL_DEFAULT_AFFINITY));
+        setEndingSelection(VisibleSelection(end, SEL_DEFAULT_AFFINITY, endingSelection().isDirectional()));
 }
 
 EditAction ReplaceSelectionCommand::editingAction() const

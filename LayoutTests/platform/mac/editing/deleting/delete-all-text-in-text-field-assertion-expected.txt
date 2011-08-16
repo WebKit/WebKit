@@ -1,6 +1,5 @@
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root toDOMRange:range from 0 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
-EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 0 of #text > DIV > #shadow-root to 1 of #text > DIV > #shadow-root
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification

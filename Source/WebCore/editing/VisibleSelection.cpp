@@ -44,51 +44,51 @@ VisibleSelection::VisibleSelection()
     : m_affinity(DOWNSTREAM)
     , m_selectionType(NoSelection)
     , m_baseIsFirst(true)
-    , m_isDirectional(true)
+    , m_isDirectional(false)
 {
 }
 
-VisibleSelection::VisibleSelection(const Position& pos, EAffinity affinity)
+VisibleSelection::VisibleSelection(const Position& pos, EAffinity affinity, bool isDirectional)
     : m_base(pos)
     , m_extent(pos)
     , m_affinity(affinity)
-    , m_isDirectional(true)
+    , m_isDirectional(isDirectional)
 {
     validate();
 }
 
-VisibleSelection::VisibleSelection(const Position& base, const Position& extent, EAffinity affinity)
+VisibleSelection::VisibleSelection(const Position& base, const Position& extent, EAffinity affinity, bool isDirectional)
     : m_base(base)
     , m_extent(extent)
     , m_affinity(affinity)
-    , m_isDirectional(true)
+    , m_isDirectional(isDirectional)
 {
     validate();
 }
 
-VisibleSelection::VisibleSelection(const VisiblePosition& pos)
+VisibleSelection::VisibleSelection(const VisiblePosition& pos, bool isDirectional)
     : m_base(pos.deepEquivalent())
     , m_extent(pos.deepEquivalent())
     , m_affinity(pos.affinity())
-    , m_isDirectional(true)
+    , m_isDirectional(isDirectional)
 {
     validate();
 }
 
-VisibleSelection::VisibleSelection(const VisiblePosition& base, const VisiblePosition& extent)
+VisibleSelection::VisibleSelection(const VisiblePosition& base, const VisiblePosition& extent, bool isDirectional)
     : m_base(base.deepEquivalent())
     , m_extent(extent.deepEquivalent())
     , m_affinity(base.affinity())
-    , m_isDirectional(true)
+    , m_isDirectional(isDirectional)
 {
     validate();
 }
 
-VisibleSelection::VisibleSelection(const Range* range, EAffinity affinity)
+VisibleSelection::VisibleSelection(const Range* range, EAffinity affinity, bool isDirectional)
     : m_base(range->startPosition())
     , m_extent(range->endPosition())
     , m_affinity(affinity)
-    , m_isDirectional(true)
+    , m_isDirectional(isDirectional)
 {
     validate();
 }
