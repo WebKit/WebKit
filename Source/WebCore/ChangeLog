@@ -17,6 +17,18 @@
 
         Unreviewed Chromium Windows build fix after r93140.
 
+        This just makes the troublesome enum public. If this
+        fixes the build I will file a follow-up bug to clean-up
+        these build issues and either keep the enum public and
+        cleanup other functions or restore the enum to private.
+        There is no harm in making the enum public right now.
+
+        * platform/graphics/FontCache.h:
+
+2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed Chromium Windows build fix after r93140.
+
         * platform/graphics/FontCache.h:
 
 2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>

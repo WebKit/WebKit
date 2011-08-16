@@ -53,11 +53,11 @@ class SimpleFontData;
 class FontCache {
     friend class FontCachePurgePreventer;
 
-    enum ShouldRetain { Retain, DoNotRetain };
-
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     friend FontCache* fontCache();
+
+    enum ShouldRetain { Retain, DoNotRetain };
 
     const FontData* getFontData(const Font&, int& familyIndex, FontSelector*);
     void releaseFontData(const SimpleFontData*);
