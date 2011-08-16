@@ -388,7 +388,7 @@ void MediaPlayerPrivateAVFoundationCF::beginLoadingMetadata()
 MediaPlayerPrivateAVFoundation::ItemStatus MediaPlayerPrivateAVFoundationCF::playerItemStatus() const
 {
     if (!avPlayerItem(m_avfWrapper))
-        return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusUnknown;
+        return MediaPlayerPrivateAVFoundation::MediaPlayerAVPlayerItemStatusDoesNotExist;
 
     AVCFPlayerItemStatus status = AVCFPlayerItemGetStatus(avPlayerItem(m_avfWrapper), 0);
     if (status == AVCFPlayerItemStatusUnknown)
@@ -1041,7 +1041,11 @@ void AVFWrapper::notificationCallback(CFNotificationCenterRef, void* observer, C
         return;
     }
 
-    LOG(Media, "AVFWrapper::notificationCallback(%p)", self);
+#if !LOG_DISABLED
+    char notificationName[256];
+    CFStringGetCString(propertyName, notificationName, sizeof(notificationName), kCFStringEncodingASCII);
+    LOG(Media, "AVFWrapper::notificationCallback(%p) %s", self, notificationName);
+#endif
 
     if (CFEqual(propertyName, AVCFPlayerItemDidPlayToEndTimeNotification))
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemDidPlayToEndTime);
