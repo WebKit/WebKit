@@ -98,12 +98,10 @@ public:
     void purgeInactiveFontData(int count = INT_MAX);
 
 #if PLATFORM(WIN)
-#if !PLATFORM(CHROMIUM)
     SimpleFontData* fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT& font, AtomicString& outFontFamilyName);
-#else
+#elif PLATFORM(CHROMIUM) && OS(WINDOWS)
     SimpleFontData* fontDataFromDescriptionAndLogFont(const FontDescription&, ShouldRetain, const LOGFONT& font, wchar_t* outFontFamilyName);
-#endif // PLATFORM(CHROMIUM)
-#endif // PLATFORM(WIN)
+#endif
 
 private:
     FontCache();

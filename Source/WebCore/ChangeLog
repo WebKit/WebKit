@@ -1,5 +1,11 @@
 2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
 
+        Unreviewed Chromium Windows build fix after r93140.
+
+        * platform/graphics/FontCache.h:
+
+2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
+
         Unreviewed Windows and Chromium Windows build fix after r93140.
 
         * platform/graphics/FontCache.h:
