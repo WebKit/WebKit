@@ -39,6 +39,8 @@ public:
     ScrollbarThemeMac();
     virtual ~ScrollbarThemeMac();
 
+    void preferencesChanged();
+
     virtual void updateEnabledState(Scrollbar*);
 
     virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
@@ -76,9 +78,6 @@ protected:
     
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
     virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent&);
-    
-public:
-    void preferencesChanged();
 };
 
 }
