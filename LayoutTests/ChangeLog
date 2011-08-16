@@ -1,3 +1,16 @@
+2011-08-16  Tony Chang  <tony@chromium.org>
+
+        Add placeholder directories so the chromium canary bots can update.
+
+        * platform/chromium-mac: Added.
+        * platform/chromium-mac/fast: Added.
+        * platform/chromium-mac/fast/events: Added.
+        * platform/chromium-mac/http: Added.
+        * platform/chromium-mac/http/tests: Added.
+        * platform/chromium-mac/http/tests/workers: Added.
+        * platform/chromium-mac/storage: Added.
+        * platform/chromium-mac/storage/domstorage: Added.
+
 2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed, unskipping the test.
