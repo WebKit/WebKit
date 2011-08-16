@@ -2362,3 +2362,7 @@ fast/dom/HTMLDocument/hasFocus.html
 # [Qt] Implement layouTestController.setShouldStayOnPageAfterHandlingBeforeUnload
 # https://bugs.webkit.org/show_bug.cgi?id=66162
 fast/loader/form-submission-after-beforeunload-cancel.html
+
+# [Qt] editing/deleting/regional-indicators.html after r93068
+# https://bugs.webkit.org/show_bug.cgi?id=66268
+editing/deleting/regional-indicators.html
