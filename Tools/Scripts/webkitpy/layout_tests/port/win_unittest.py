@@ -85,3 +85,12 @@ class WinPortTest(port_testcase.PortTestCase):
         self._assert_search_path(['win-wk2', 'win-vista', 'win-7sp0', 'win', 'mac-wk2', 'mac-lion', 'mac'], 'vista', use_webkit2=True)
         self._assert_search_path(['win-wk2', 'win-7sp0', 'win', 'mac-wk2', 'mac-lion', 'mac'], '7sp0', use_webkit2=True)
         self._assert_search_path(['win-wk2', 'win', 'mac-wk2', 'mac-lion', 'mac'], 'bogus', use_webkit2=True)
+
+    def _assert_version(self, port_name, expected_version):
+        port = WinPort(port_name=port_name, filesystem=MockFileSystem(), user=MockUser(), executive=MockExecutive())
+        self.assertEquals(port.version(), expected_version)
+
+    def test_versions(self):
+        self._assert_version('win-xp', 'xp')
+        self._assert_version('win-vista', 'vista')
+        self._assert_version('win-7sp0', '7sp0')

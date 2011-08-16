@@ -1,3 +1,32 @@
+2011-08-16  Eric Seidel  <eric@webkit.org>
+
+        REGRESSION(92717): WinPort needs to parse version information from port_name
+        https://bugs.webkit.org/show_bug.cgi?id=66325
+
+        Reviewed by Adam Barth.
+
+        WinPort didn't have any port_name parsing logic.
+        Seemed it was best to just share the logic from MacPort.
+        Sharing the logic from MacPort seemed easiest with a shared superclass.
+        Once I created ApplePort (the superclass) there was a bunch of logic to share.
+        I found LeakDetector was just in the way when switching back and forth
+        between win.py and mac.py so I moved it into its own file.
+
+        The only logic change here is that WinPort should now be
+        able to parse port_name values like MacPort (and other ports)
+        can.  The fact that ports do this in their constructors is
+        wrong and a source of many bugs.  But at least now WinPort
+        matches the status-quo.
+
+        * Scripts/webkitpy/layout_tests/port/apple.py: Added.
+        * Scripts/webkitpy/layout_tests/port/leakdetector.py: Added.
+        * Scripts/webkitpy/layout_tests/port/leakdetector_unittest.py: Added.
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+
 2011-08-16  Adam Barth  <abarth@webkit.org>
 
         Add webkit-patch analyze-baselines, as requested by jamesr.

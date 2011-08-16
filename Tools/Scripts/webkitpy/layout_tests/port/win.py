@@ -28,17 +28,15 @@
 
 import logging
 import re
-import sys
 
-from webkitpy.layout_tests.models.test_configuration import TestConfiguration
 from webkitpy.common.system.executive import ScriptError
-from webkitpy.layout_tests.port.webkit import WebKitPort
+from webkitpy.layout_tests.port.apple import ApplePort
 
 
 _log = logging.getLogger(__name__)
 
 
-class WinPort(WebKitPort):
+class WinPort(ApplePort):
     port_name = "win"
 
     # This is a list of all supported OS-VERSION pairs for the AppleWin port
@@ -54,7 +52,10 @@ class WinPort(WebKitPort):
             return 'xp'
         return None
 
-    def _detect_version(self):
+    def _detect_version(self, os_version_string=None):
+        # FIXME: os_version_string is for unit testing, but may eventually be provided by factory.py instead.
+        if os_version_string is not None:
+            return os_version_string
         # Note, this intentionally returns None to mean that it can't detect what the current version is.
         # Callers can then decide what version they want to pretend to be.
         try:
@@ -67,19 +68,9 @@ class WinPort(WebKitPort):
             version_tuple = tuple(map(int, match_object.groups()))
             return self._version_string_from_windows_version_tuple(version_tuple)
 
-    def __init__(self, os_version_string=None, **kwargs):
-        # FIXME: This will not create a properly versioned WinPort object when instantiated from a buildbot-name, like win-xp.
-        # We'll need to add port_name parsing of some kind (either here, or in factory.py).
-        WebKitPort.__init__(self, **kwargs)
-        self._version = os_version_string or self._detect_version() or 'future'  # FIXME: This is a hack, as TestConfiguration assumes that this value is never None even though the base "win" port has no "version".
+    def __init__(self, **kwargs):
+        ApplePort.__init__(self, **kwargs)
         self._operating_system = 'win'
-
-    # FIXME: A more sophisitcated version of this function should move to WebKitPort and replace all calls to name().
-    def _port_name_with_version(self):
-        components = [self.port_name]
-        if self._version != 'future':  # FIXME: This is a hack, but TestConfiguration doesn't like self._version ever being None.
-            components.append(self._version)
-        return '-'.join(components)
 
     def baseline_search_path(self):
         try:
@@ -96,16 +87,6 @@ class WinPort(WebKitPort):
         # FIXME: Perhaps we should get this list from MacPort?
         fallback_names.extend(['mac-lion', 'mac'])
         return map(self._webkit_baseline_path, fallback_names)
-
-    def _generate_all_test_configurations(self):
-        configurations = []
-        for version in self.VERSION_FALLBACK_ORDER:
-            version = version.replace('win-', '')
-            if version == 'win':  # It's unclear what the "version" for 'win' is?
-                continue
-            for build_type in self.ALL_BUILD_TYPES:
-                configurations.append(TestConfiguration(version=self._version, architecture='x86', build_type=build_type, graphics_type='cpu'))
-        return configurations
 
     # FIXME: webkitperl/httpd.pm installs /usr/lib/apache/libphp4.dll on cycwin automatically
     # as part of running old-run-webkit-tests.  That's bad design, but we may need some similar hack.
