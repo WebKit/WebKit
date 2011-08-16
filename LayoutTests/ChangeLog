@@ -1,3 +1,12 @@
+2011-08-16  Tony Chang  <tony@chromium.org>
+
+        Copy the results of http/tests/xmlhttprequest/web-apps/01[23].html
+        to the chromium platform dir.  The mac failing results (r93105) were
+        getting picked up by the chromium port.
+
+        * platform/chromium/http/tests/xmlhttprequest/web-apps/012-expected.txt: Added.
+        * platform/chromium/http/tests/xmlhttprequest/web-apps/013-expected.txt: Added.
+
 2011-08-16  Adam Roben  <aroben@apple.com>
 
         Add Lion/Windows expected results for an Inspector test
