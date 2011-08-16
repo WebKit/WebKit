@@ -290,6 +290,7 @@ void InspectorController::disconnectFrontend()
 #endif
     m_consoleAgent->clearFrontend();
     m_domAgent->clearFrontend();
+    m_cssAgent->clearFrontend();
     m_timelineAgent->clearFrontend();
     m_resourceAgent->clearFrontend();
 #if ENABLE(DATABASE)

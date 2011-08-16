@@ -25,6 +25,7 @@
 #ifndef InspectorCSSAgent_h
 #define InspectorCSSAgent_h
 
+#include "CSSSelector.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorStyleSheet.h"
 #include "InspectorValues.h"
@@ -60,7 +61,10 @@ public:
     InspectorCSSAgent(InstrumentingAgents*, InspectorDOMAgent*);
     ~InspectorCSSAgent();
 
+    bool forcePseudoState(Element*, CSSSelector::PseudoType);
+    void clearFrontend();
     void reset();
+
     void getStylesForNode(ErrorString*, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorObject>* result);
     void getInlineStyleForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* style);
     void getComputedStyleForNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* style);
@@ -99,8 +103,12 @@ private:
     virtual void didRemoveDOMNode(Node*);
     virtual void didModifyDOMAttr(Element*);
 
+    void clearPseudoState(bool recalcStyles);
+
     InstrumentingAgents* m_instrumentingAgents;
     InspectorDOMAgent* m_domAgent;
+    RefPtr<Element> m_lastElementWithPseudoState;
+    unsigned m_lastPseudoState;
 
     IdToInspectorStyleSheet m_idToInspectorStyleSheet;
     CSSStyleSheetToInspectorStyleSheet m_cssStyleSheetToInspectorStyleSheet;

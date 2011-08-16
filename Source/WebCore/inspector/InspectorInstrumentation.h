@@ -31,8 +31,10 @@
 #ifndef InspectorInstrumentation_h
 #define InspectorInstrumentation_h
 
+#include "CSSSelector.h"
 #include "ConsoleTypes.h"
 #include "Document.h"
+#include "Element.h"
 #include "Frame.h"
 #include "Page.h"
 #include "ScriptExecutionContext.h"
@@ -86,6 +88,7 @@ public:
 
     static void mouseDidMoveOverElement(Page*, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePress(Page*);
+    static bool forcePseudoState(Element*, CSSSelector::PseudoType);
 
     static void willSendXMLHttpRequest(ScriptExecutionContext*, const String& url);
     static void didScheduleResourceRequest(Document*, const String& url);
@@ -214,6 +217,7 @@ private:
 
     static void mouseDidMoveOverElementImpl(InstrumentingAgents*, const HitTestResult&, unsigned modifierFlags);
     static bool handleMousePressImpl(InstrumentingAgents*);
+    static bool forcePseudoStateImpl(InstrumentingAgents*, Element*, CSSSelector::PseudoType);
 
     static void willSendXMLHttpRequestImpl(InstrumentingAgents*, const String& url);
     static void didScheduleResourceRequestImpl(InstrumentingAgents*, const String& url);
@@ -424,6 +428,16 @@ inline bool InspectorInstrumentation::handleMousePress(Page* page)
     FAST_RETURN_IF_NO_FRONTENDS(false);
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         return handleMousePressImpl(instrumentingAgents);
+#endif
+    return false;
+}
+
+inline bool InspectorInstrumentation::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoState)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(false);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(element->document()))
+        return forcePseudoStateImpl(instrumentingAgents, element, pseudoState);
 #endif
     return false;
 }

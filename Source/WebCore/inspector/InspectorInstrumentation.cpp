@@ -181,6 +181,13 @@ bool InspectorInstrumentation::handleMousePressImpl(InstrumentingAgents* instrum
     return false;
 }
 
+bool InspectorInstrumentation::forcePseudoStateImpl(InstrumentingAgents* instrumentingAgents, Element* element, CSSSelector::PseudoType pseudoState)
+{
+    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
+        return cssAgent->forcePseudoState(element, pseudoState);
+    return false;
+}
+
 void InspectorInstrumentation::characterDataModifiedImpl(InstrumentingAgents* instrumentingAgents, CharacterData* characterData)
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())

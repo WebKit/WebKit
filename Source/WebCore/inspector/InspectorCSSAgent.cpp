@@ -130,6 +130,14 @@
 
 namespace WebCore {
 
+enum ForcePseudoClassFlags {
+    PseudoNone = 0,
+    PseudoHover = 1 << 0,
+    PseudoFocus = 1 << 1,
+    PseudoActive = 1 << 2,
+    PseudoVisited = 1 << 3
+};
+
 static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
 {
     DEFINE_STATIC_LOCAL(String, active, ("active"));
@@ -137,9 +145,9 @@ static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
     DEFINE_STATIC_LOCAL(String, focus, ("focus"));
     DEFINE_STATIC_LOCAL(String, visited, ("visited"));
     if (!pseudoClassArray || !pseudoClassArray->length())
-        return CSSStyleSelector::DoNotForcePseudoClassMask;
+        return PseudoNone;
 
-    unsigned result = CSSStyleSelector::ForceNone;
+    unsigned result = PseudoNone;
     for (size_t i = 0; i < pseudoClassArray->length(); ++i) {
         RefPtr<InspectorValue> pseudoClassValue = pseudoClassArray->get(i);
         String pseudoClass;
@@ -147,13 +155,13 @@ static unsigned computePseudoClassMask(InspectorArray* pseudoClassArray)
         if (!success)
             continue;
         if (pseudoClass == active)
-            result |= CSSStyleSelector::ForceActive;
+            result |= PseudoActive;
         else if (pseudoClass == hover)
-            result |= CSSStyleSelector::ForceHover;
+            result |= PseudoHover;
         else if (pseudoClass == focus)
-            result |= CSSStyleSelector::ForceFocus;
+            result |= PseudoFocus;
         else if (pseudoClass == visited)
-            result |= CSSStyleSelector::ForceVisited;
+            result |= PseudoVisited;
     }
 
     return result;
@@ -186,6 +194,7 @@ CSSStyleRule* InspectorCSSAgent::asCSSStyleRule(StyleBase* styleBase)
 InspectorCSSAgent::InspectorCSSAgent(InstrumentingAgents* instrumentingAgents, InspectorDOMAgent* domAgent)
     : m_instrumentingAgents(instrumentingAgents)
     , m_domAgent(domAgent)
+    , m_lastPseudoState(0)
     , m_lastStyleSheetId(1)
     , m_lastRuleId(1)
     , m_lastStyleId(1)
@@ -203,12 +212,36 @@ InspectorCSSAgent::~InspectorCSSAgent()
     reset();
 }
 
+void InspectorCSSAgent::clearFrontend()
+{
+    clearPseudoState(true);
+}
+
 void InspectorCSSAgent::reset()
 {
     m_idToInspectorStyleSheet.clear();
     m_cssStyleSheetToInspectorStyleSheet.clear();
     m_nodeToInspectorStyleSheet.clear();
     m_documentToInspectorStyleSheet.clear();
+}
+
+bool InspectorCSSAgent::forcePseudoState(Element* element, CSSSelector::PseudoType pseudoType)
+{
+    if (m_lastElementWithPseudoState != element)
+        return false;
+
+    switch (pseudoType) {
+    case CSSSelector::PseudoActive:
+        return m_lastPseudoState & PseudoActive;
+    case CSSSelector::PseudoFocus:
+        return m_lastPseudoState & PseudoFocus;
+    case CSSSelector::PseudoHover:
+        return m_lastPseudoState & PseudoHover;
+    case CSSSelector::PseudoVisited:
+        return m_lastPseudoState & PseudoVisited;
+    default:
+        return false;
+    }
 }
 
 void InspectorCSSAgent::getStylesForNode(ErrorString* errorString, int nodeId, const RefPtr<InspectorArray>* forcedPseudoClasses, RefPtr<InspectorObject>* result)
@@ -227,16 +260,22 @@ void InspectorCSSAgent::getStylesForNode(ErrorString* errorString, int nodeId, c
     RefPtr<InspectorStyle> computedInspectorStyle = InspectorStyle::create(InspectorCSSId(), computedStyleInfo, 0);
     resultObject->setObject("computedStyle", computedInspectorStyle->buildObjectForStyle());
 
-    unsigned forcePseudoClassMask = computePseudoClassMask(forcedPseudoClasses ? forcedPseudoClasses->get() : 0);
+    unsigned forcePseudoState = computePseudoClassMask(forcedPseudoClasses ? forcedPseudoClasses->get() : 0);
+    bool needStyleRecalc = element != m_lastElementWithPseudoState || forcePseudoState != m_lastPseudoState;
+    m_lastPseudoState = forcePseudoState;
+    m_lastElementWithPseudoState = element;
+    if (needStyleRecalc)
+        element->ownerDocument()->styleSelectorChanged(RecalcStyleImmediately);
+
     CSSStyleSelector* selector = element->ownerDocument()->styleSelector();
-    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, CSSStyleSelector::AllCSSRules, forcePseudoClassMask);
+    RefPtr<CSSRuleList> matchedRules = selector->styleRulesForElement(element, CSSStyleSelector::AllCSSRules);
     resultObject->setArray("matchedCSSRules", buildArrayForRuleList(matchedRules.get()));
 
     resultObject->setArray("styleAttributes", buildArrayForAttributeStyles(element));
 
     RefPtr<InspectorArray> pseudoElements = InspectorArray::create();
     for (PseudoId pseudoId = FIRST_PUBLIC_PSEUDOID; pseudoId < AFTER_LAST_INTERNAL_PSEUDOID; pseudoId = static_cast<PseudoId>(pseudoId + 1)) {
-        RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, CSSStyleSelector::AllCSSRules, forcePseudoClassMask);
+        RefPtr<CSSRuleList> matchedRules = selector->pseudoStyleRulesForElement(element, pseudoId, CSSStyleSelector::AllCSSRules);
         if (matchedRules && matchedRules->length()) {
             RefPtr<InspectorObject> pseudoStyles = InspectorObject::create();
             pseudoStyles->setNumber("pseudoId", static_cast<int>(pseudoId));
@@ -583,12 +622,18 @@ void InspectorCSSAgent::didRemoveDocument(Document* document)
 {
     if (document)
         m_documentToInspectorStyleSheet.remove(document);
+    clearPseudoState(false);
 }
 
 void InspectorCSSAgent::didRemoveDOMNode(Node* node)
 {
     if (!node)
         return;
+
+    if (m_lastElementWithPseudoState.get() == node) {
+        clearPseudoState(false);
+        return;
+    }
 
     NodeToInspectorStyleSheet::iterator it = m_nodeToInspectorStyleSheet.find(node);
     if (it == m_nodeToInspectorStyleSheet.end())
@@ -608,6 +653,18 @@ void InspectorCSSAgent::didModifyDOMAttr(Element* element)
         return;
 
     it->second->didModifyElementAttribute();
+}
+
+void InspectorCSSAgent::clearPseudoState(bool recalcStyles)
+{
+    Element* element = m_lastElementWithPseudoState.get();
+    m_lastElementWithPseudoState = 0;
+    m_lastPseudoState = 0;
+    if (recalcStyles && element) {
+        Document* document = element->ownerDocument();
+        if (document)
+            document->styleSelectorChanged(RecalcStyleImmediately);
+    }
 }
 
 } // namespace WebCore

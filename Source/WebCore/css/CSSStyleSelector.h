@@ -134,16 +134,6 @@ public:
         PassRefPtr<RenderStyle> styleForKeyframe(const RenderStyle*, const WebKitCSSKeyframeRule*, KeyframeValue&);
 
     public:
-        enum ForcePseudoClassFlags {
-            ForceNone = 0,
-            DoNotForcePseudoClassMask = 1 << 0,
-            ForceHover = 1 << 1,
-            ForceFocus = 1 << 2,
-            ForceActive = 1 << 3,
-            ForceLink = 1 << 4,
-            ForceVisited = 1 << 5
-        };
-
         // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
         enum CSSRuleFilter {
             UAAndUserCSSRules   = 1 << 1,
@@ -153,8 +143,8 @@ public:
             AllButEmptyCSSRules = UAAndUserCSSRules | AuthorCSSRules | CrossOriginCSSRules,
             AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
         };
-        PassRefPtr<CSSRuleList> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules, unsigned forcePseudoClassMask = DoNotForcePseudoClassMask);
-        PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules, unsigned forcePseudoClassMask = DoNotForcePseudoClassMask);
+        PassRefPtr<CSSRuleList> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
+        PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
 
         // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
         // the correct font size scaled relative to the user's default (medium).
@@ -285,8 +275,8 @@ public:
             SelectorChecker(Document*, bool strictParsing);
 
             bool checkSelector(CSSSelector*, Element*) const;
-            SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, unsigned forcePseudoClassMask = DoNotForcePseudoClassMask, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
-            bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, unsigned forcePseudoClassMask, RenderStyle*, RenderStyle* elementParentStyle) const;
+            SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
+            bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle*, RenderStyle* elementParentStyle) const;
             bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
             static bool fastCheckSelector(const CSSSelector*, const Element*);
 
@@ -383,7 +373,6 @@ public:
         CSSValue* m_lineHeightValue;
         bool m_fontDirty;
         bool m_matchAuthorAndUserStyles;
-        unsigned m_forcePseudoClassMask; // enum ForcePseudoClassFlags
         
         RefPtr<CSSFontSelector> m_fontSelector;
         Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
