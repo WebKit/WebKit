@@ -300,4 +300,53 @@ base.extends = function(base, prototype)
     return extended;
 }
 
+function createRelativeTimeDescriptor(divisorInMilliseconds, unit)
+{
+    return function(delta) {
+        var deltaInUnits = delta / divisorInMilliseconds;
+        return (deltaInUnits).toFixed(0) + ' ' + unit + (deltaInUnits >= 2 ? 's' : '') + ' ago';
+    }
+}
+
+var kMinuteInMilliseconds = 60 * 1000;
+var kRelativeTimeSlots = [
+    {
+        maxMilliseconds: kMinuteInMilliseconds,
+        describe: function(delta) { return 'Just now'; }
+    },
+    {
+        maxMilliseconds: 60 * kMinuteInMilliseconds,
+        describe: createRelativeTimeDescriptor(kMinuteInMilliseconds, 'minute')
+    },
+    {
+        maxMilliseconds: 24 * 60 * kMinuteInMilliseconds,
+        describe: createRelativeTimeDescriptor(60 * kMinuteInMilliseconds, 'hour')
+    },
+    {
+        maxMilliseconds: Number.MAX_VALUE,
+        describe: createRelativeTimeDescriptor(24 * 60 * kMinuteInMilliseconds, 'day')
+    }
+];
+
+/*
+    Represent time as descriptive text, relative to now and gradually decreasing in precision:
+        delta < 1 minutes => Just Now
+        delta < 60 minutes => X minute[s] ago
+        delta < 24 hours => X hour[s] ago
+        delta < inf => X day[s] ago
+*/
+base.relativizeTime = function(time)
+{
+    var result;
+    var delta = new Date().getTime() - time;
+    kRelativeTimeSlots.some(function(slot) {
+        if (delta >= slot.maxMilliseconds)
+            return false;
+
+        result = slot.describe(delta);
+        return true;
+    });
+    return result;
+}
+
 })();

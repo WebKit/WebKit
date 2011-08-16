@@ -67,13 +67,11 @@ ui.notifications.Info = base.extends(Notification, {
 var Time = base.extends('time', {
     init: function()
     {
-        this.updateTime("Just Now");
+        this.updateTime(new Date());
     },
     updateTime: function(time)
     {
-        // FIXME: Implement displaying actual time.
-        // FIXME: Implement relative time.
-        this.textContent = time;
+        this.textContent = base.relativizeTime(time);
     }
 });
 

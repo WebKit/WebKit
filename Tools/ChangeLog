@@ -1,5 +1,16 @@
 2011-08-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        garden-o-matic frontend needs a friendly relative time description method.
+        https://bugs.webkit.org/show_bug.cgi?id=66324
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js: Added base.relativizeTime method.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base_unittests.js: Added unit tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js: Wired up Time widget to use it.
+
+2011-08-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Summary view should not add multiple entries for the same test failure.
         https://bugs.webkit.org/show_bug.cgi?id=66318
 

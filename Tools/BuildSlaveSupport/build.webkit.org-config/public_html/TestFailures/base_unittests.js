@@ -372,4 +372,29 @@ test("extends", 17, function() {
     document.body.removeChild(document.body.lastChild);
 });
 
+test("relativizeTime", 11, function() {
+    var time = new Date();
+    equals(base.relativizeTime(time), "Just now");
+    time.setMinutes(time.getMinutes() - 1);
+    equals(base.relativizeTime(time), "1 minute ago");
+    time.setMinutes(time.getMinutes() - 1);
+    equals(base.relativizeTime(time), "2 minutes ago");
+    time.setMinutes(time.getMinutes() - 1);
+    equals(base.relativizeTime(time), "3 minutes ago");
+    time.setMinutes(time.getMinutes() - 56);
+    equals(base.relativizeTime(time), "59 minutes ago");
+    time.setMinutes(time.getMinutes() - 1);
+    equals(base.relativizeTime(time), "1 hour ago");
+    time.setHours(time.getHours() - 1);
+    equals(base.relativizeTime(time), "2 hours ago");
+    time.setHours(time.getHours() - 21);
+    equals(base.relativizeTime(time), "23 hours ago");
+    time.setHours(time.getHours() - 1);
+    equals(base.relativizeTime(time), "1 day ago");
+    time.setDate(time.getDate() - 1);
+    equals(base.relativizeTime(time), "2 days ago");
+    time.setTime(0);
+    equals(base.relativizeTime(time), "15203 days ago");
+})
+
 })();

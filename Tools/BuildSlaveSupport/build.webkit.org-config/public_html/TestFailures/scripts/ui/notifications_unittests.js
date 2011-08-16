@@ -63,15 +63,15 @@ test('ui.notifications.SuspiciousCommit', 2, function() {
 test('ui.notifications.TestFailures', 7, function() {
     var testFailures = new ui.notifications.TestFailures();
     equal(testFailures.tagName, 'LI');
-    equal(testFailures.innerHTML, '<time>Just Now</time><div class="what"><div class="problem"><ul class="effects"></ul><ul class="causes"></ul></div></div>');
+    equal(testFailures.innerHTML, '<time>Just now</time><div class="what"><div class="problem"><ul class="effects"></ul><ul class="causes"></ul></div></div>');
     testFailures.addFailureAnalysis({testName: 'test'});
-    equal(testFailures.innerHTML, '<time>Just Now</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"></ul></div></div>');
+    equal(testFailures.innerHTML, '<time>Just now</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"></ul></div></div>');
     ok(testFailures.containsFailureAnalysis({testName: 'test'}));
     ok(!testFailures.containsFailureAnalysis({testName: 'foo'}));
     testFailures.addFailureAnalysis({testName: 'test'});
-    equal(testFailures.innerHTML, '<time>Just Now</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"></ul></div></div>');
+    equal(testFailures.innerHTML, '<time>Just now</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"></ul></div></div>');
     testFailures.addCommitData({revision: 1, title: "title", author: "author", reviewer: "reviewer"});
-    equal(testFailures.innerHTML, '<time>Just Now</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"><li><div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul></li></ul></div></div>');
+    equal(testFailures.innerHTML, '<time>Just now</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"><li><div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul></li></ul></div></div>');
 });
 
 }());
