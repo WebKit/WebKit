@@ -1,3 +1,19 @@
+2011-08-16  Wyatt Carss  <wcarss@chromium.org>
+
+        win-wk2 needs updated baselines for some editing tests
+        https://bugs.webkit.org/show_bug.cgi?id=66344
+
+        win-wk2 didn't have some necessary baselines for an earlier patch;
+        they have been copied directly from LayoutTests/platform/chromium-win
+
+        Reviewed by Ryosuke Niwa.
+
+        * platform/win-wk2/editing/deleting: Added.
+        * platform/win-wk2/editing/deleting/delete-at-paragraph-boundaries-008-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-at-paragraph-boundaries-008-expected.txt.
+        * platform/win-wk2/editing/deleting/delete-ws-fixup-003-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-ws-fixup-003-expected.txt.
+        * platform/win-wk2/editing/deleting/delete-ws-fixup-004-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/deleting/delete-ws-fixup-004-expected.txt.
+        * platform/win-wk2/editing/selection/transformed-selection-rects-expected.txt: Copied from LayoutTests/platform/chromium-win/editing/selection/transformed-selection-rects-expected.txt.
+
 2011-08-16  Tony Chang  <tony@chromium.org>
 
         Add placeholder directories so the chromium canary bots can update.
