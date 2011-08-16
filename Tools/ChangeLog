@@ -1,3 +1,15 @@
+2011-08-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Summary view should not add multiple entries for the same test failure.
+        https://bugs.webkit.org/show_bug.cgi?id=66318
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/summary.js: Added a simplistic updating button.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js: Added ways to check for
+            equality of ui.notifications.FailingTest, and whether ui.notifications.TestFailures already contains a given failure analysis.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js: Added tests.
+
 2011-08-16  Adam Roben  <aroben@apple.com>
 
         Teach TestFailures that tests that have failed or passed many times in a row are not flaky

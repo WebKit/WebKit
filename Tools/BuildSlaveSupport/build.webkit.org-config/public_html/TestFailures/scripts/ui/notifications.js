@@ -82,6 +82,10 @@ ui.notifications.FailingTest = base.extends('li', {
     {
         // FIXME: Show type of failure and where it's failing.
         this.textContent = failureAnalysis.testName;
+    },
+    equals: function(failureAnalysis)
+    {
+        return this.textContent == failureAnalysis.testName;
     }
 })
 
@@ -121,11 +125,18 @@ ui.notifications.TestFailures = base.extends(Notification, {
         this._causes = problem.appendChild(document.createElement('ul'));
         this._causes.className = 'causes';
     },
+    containsFailureAnalysis: function(failureAnalysis)
+    {
+        return Array.prototype.some.call(this._tests.children, function(child) {
+            return child.equals(failureAnalysis);
+        });
+    },
     addFailureAnalysis: function(failureAnalysis)
     {
-        // FIXME: Add in order.
-        // FIXME: Don't add more than once.
+        if (this.containsFailureAnalysis(failureAnalysis))
+            return;
         // FIXME: Retrieve date from failureAnalysis and set this._time.
+        // FIXME: Add in order by time.
         return this._tests.appendChild(new ui.notifications.FailingTest(failureAnalysis));
     },
     addCommitData: function(commitData)

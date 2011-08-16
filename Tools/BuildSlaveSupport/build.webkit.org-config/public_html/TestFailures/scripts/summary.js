@@ -63,6 +63,12 @@ $(document).ready(function() {
     g_updateTimerId = window.setInterval(update, config.kUpdateFrequency);
     document.body.insertBefore(g_actions, document.body.firstChild);
     document.body.insertBefore(g_info, document.body.firstChild);
+    var button = document.body.insertBefore(document.createElement("button"), document.body.firstChild);
+    button.addEventListener("click", function()
+    {
+        update();
+    }, false);
+    button.textContent = 'update';
     update();
 });
 
