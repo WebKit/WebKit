@@ -95,6 +95,7 @@ private:
     void appendToText(const UChar* characters, size_t length);
     void enterText();
     void exitText();
+    bool failOnText();
 
     AtomicString namespaceForPrefix(AtomicString prefix, AtomicString fallback);
 

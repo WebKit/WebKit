@@ -1,3 +1,20 @@
+2011-08-16  Jeffrey Pfau  <jpfau@apple.com>
+
+        New XML parser: Replace assertions regarding character data in the prolog with proper checks
+        https://bugs.webkit.org/show_bug.cgi?id=66269
+
+        Reviewed by Adam Barth.
+
+        This patch checks for character data in the prolog (which is illegal in XML) and discards it, instead of failing an assertion.
+
+        * xml/parser/XMLTreeBuilder.cpp:
+        (WebCore::XMLTreeBuilder::processProcessingInstruction):
+        (WebCore::XMLTreeBuilder::processXMLDeclaration):
+        (WebCore::XMLTreeBuilder::processDOCTYPE):
+        (WebCore::XMLTreeBuilder::enterText):
+        (WebCore::XMLTreeBuilder::failOnText):
+        * xml/parser/XMLTreeBuilder.h:
+
 2011-08-16  Alexander Pavlov  <apavlov@chromium.org>
 
         Web Inspector: word wrap long edits

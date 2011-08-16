@@ -100,7 +100,9 @@ void XMLTreeBuilder::popCurrentNode()
 
 void XMLTreeBuilder::processProcessingInstruction(const AtomicXMLToken& token)
 {
-    ASSERT(!m_leafText);
+    if (!failOnText())
+        return;
+
     // FIXME: fall back if we can't handle the PI ourself.
 
     add(ProcessingInstruction::create(m_document, token.target(), token.data()));
@@ -108,7 +110,8 @@ void XMLTreeBuilder::processProcessingInstruction(const AtomicXMLToken& token)
 
 void XMLTreeBuilder::processXMLDeclaration(const AtomicXMLToken& token)
 {
-    ASSERT(!m_leafText);
+    if (!failOnText())
+        return;
 
     ExceptionCode ec = 0;
 
@@ -134,7 +137,8 @@ void XMLTreeBuilder::processDOCTYPE(const AtomicXMLToken& token)
     DEFINE_STATIC_LOCAL(AtomicString, xhtmlMathMLSVG, ("-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN"));
     DEFINE_STATIC_LOCAL(AtomicString, xhtmlMobile, ("-//WAPFORUM//DTD XHTML Mobile 1.0//EN"));
 
-    ASSERT(!m_leafText);
+    if (!failOnText())
+        return;
 
     AtomicString publicIdentifier(token.publicIdentifier().data(), token.publicIdentifier().size());
     AtomicString systemIdentifier(token.systemIdentifier().data(), token.systemIdentifier().size());
@@ -330,7 +334,7 @@ void XMLTreeBuilder::appendToText(const UChar* text, size_t length)
 void XMLTreeBuilder::enterText()
 {
     if (!m_sawFirstElement) {
-        // FIXME: ensure it's just whitespace
+        // FIXME: Guarantee the text is only whitespace.
         return;
     }
 
@@ -346,6 +350,17 @@ void XMLTreeBuilder::exitText()
     add(Text::create(m_document, m_leafText->toString()));
 
     m_leafText.clear();
+}
+
+bool XMLTreeBuilder::failOnText()
+{
+    if (!m_leafText)
+        return true;
+
+    // FIXME: Guarantee the text is only whitespace.
+
+    m_leafText.clear();
+    return true;
 }
 
 XMLTreeBuilder::NodeStackItem::NodeStackItem(PassRefPtr<ContainerNode> n, NodeStackItem* parent)
