@@ -138,6 +138,8 @@ protected:
     virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 #endif
 
+    virtual bool shouldShowPlaceholderWhenFocused() const { return true; }
+
 private:
     RenderThemeSafari();
     virtual ~RenderThemeSafari();

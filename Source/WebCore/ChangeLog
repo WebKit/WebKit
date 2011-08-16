@@ -1,3 +1,20 @@
+2011-08-16  Adam Roben  <aroben@apple.com>
+
+        Make placeholder text remain visible until a character is typed on Windows
+
+        Fixes <http://webkit.org/b/66319> Placeholder text in text fields disappears when the field
+        is focused on Windows, which doesn't match Lion or Windows native text fields
+
+        Covered by existing tests (which are currently failing on the bots until this patch lands).
+
+        Reviewed by Dave Hyatt.
+
+        * rendering/RenderThemeSafari.h:
+        (WebCore::RenderThemeSafari::shouldShowPlaceholderWhenFocused):
+        * rendering/RenderThemeWin.h:
+        (WebCore::RenderThemeWin::shouldShowPlaceholderWhenFocused):
+        Added overrides to return true.
+
 2011-08-16  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66254

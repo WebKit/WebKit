@@ -144,6 +144,8 @@ public:
     virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const;
 #endif
 
+    virtual bool shouldShowPlaceholderWhenFocused() const { return true; }
+
 private:
     enum ControlSubPart {
         None,
