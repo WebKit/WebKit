@@ -148,8 +148,6 @@ http/tests/media/video-play-stall.html
 http/tests/multipart/invalid-image-data-standalone.html
 http/tests/navigation/anchor-basic.html
 http/tests/xmlhttprequest/basic-auth-nopassword.html
-http/tests/xmlhttprequest/web-apps/012.html
-http/tests/xmlhttprequest/web-apps/013.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
 platform/mac/fast/overflow/overflow-scrollbar-hit-test.html
 

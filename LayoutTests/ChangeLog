@@ -1,5 +1,11 @@
 2011-08-16  Adam Roben  <aroben@apple.com>
 
+        Stop skipping the web-apps tests I just landed results for on Lion
+
+        * platform/mac-lion/Skipped:
+
+2011-08-16  Adam Roben  <aroben@apple.com>
+
         Check in expected failure results for some web-apps tests on Lion and Windows
 
         Since these failures are likely due to bugs in non-WebKit components, they are tracked by
