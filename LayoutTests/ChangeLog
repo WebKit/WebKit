@@ -1,5 +1,13 @@
 2011-08-16  Adam Roben  <aroben@apple.com>
 
+        Add Windows results for overlapped-iframe-iframe.html
+
+        The Windows results match the cross-platform results, not the Mac results.
+
+        * platform/win/compositing/iframes/overlapped-iframe-iframe-expected.txt: Copied from compositing/iframes/overlapped-iframe-iframe-expected.txt.
+
+2011-08-16  Adam Roben  <aroben@apple.com>
+
         Skip another test that relies on eventSender.scalePageBy on Windows
 
         * platform/win/Skipped: Added fast/repaint/background-scaling.html.
