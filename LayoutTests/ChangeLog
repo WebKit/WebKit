@@ -1,3 +1,10 @@
+2011-08-16  Tony Chang  <tony@chromium.org>
+
+        [chromium] fast/repaint/canvas-putImageData.html is now passing
+        because of the win baselines added in r93139.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-16  Adam Roben  <aroben@apple.com>
 
         Add Windows results for scripts-panel.html

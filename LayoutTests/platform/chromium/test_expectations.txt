@@ -3644,7 +3644,6 @@ BUGWK58013 LINUX GPU : compositing/scaling/tiled-layer-recursion.html = IMAGE
 
 
 // Might need rebaseline.
-BUGJIANLI LINUX WIN : fast/repaint/canvas-putImageData.html = TEXT
 BUGJIANLI MAC WIN : fast/preloader/script.html = PASS TEXT
 BUGJIANLI MAC : fast/gradients/gradient-after-transparent-border.html = IMAGE
 
