@@ -1,3 +1,12 @@
+2011-08-16  Adam Roben  <aroben@apple.com>
+
+        Add Windows expected results for some <canvas> tests
+
+        <canvas> doesn't use accelerated compositing on Windows like it does on Lion.
+
+        * platform/win/compositing/layer-creation/spanOverlapsCanvas-expected.txt: Copied from platform/mac-snowleopard/compositing/layer-creation/spanOverlapsCanvas-expected.txt.
+        * platform/win/fast/repaint/canvas-putImageData-expected.txt: Copied from platform/mac-snowleopard/fast/repaint/canvas-putImageData-expected.txt.
+
 2011-08-12  Wyatt Carss  <wcarss@chromium.org>
 
         Programmatically set selection should not have direction on Mac
