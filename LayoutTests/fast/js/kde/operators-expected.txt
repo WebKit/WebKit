@@ -11,6 +11,14 @@ PASS !!1 is true
 PASS !0 is true
 PASS !!'a' is true
 PASS !'' is true
+PASS nonSpeculativeNot(undefined) is true
+PASS nonSpeculativeNot(null) is true
+PASS nonSpeculativeNot(!true) is true
+PASS nonSpeculativeNot(false) is true
+PASS nonSpeculativeNot(!1) is true
+PASS nonSpeculativeNot(0) is true
+PASS nonSpeculativeNot(!'a') is true
+PASS nonSpeculativeNot('') is true
 PASS +9 is 9
 PASS var i = 10; +i is 10
 PASS -11 is -11
@@ -121,14 +129,24 @@ PASS 6 % 4 is 2
 PASS '-6' % 4 is -2
 PASS 2==2 is true
 PASS 1==2 is false
+PASS nonSpeculativeEqual(2,2) is true
+PASS nonSpeculativeEqual(1,2) is false
 PASS 1<2 is true
 PASS 1<=2 is true
 PASS 2<1 is false
 PASS 2<=1 is false
+PASS nonSpeculativeLess(1,2) is true
+PASS nonSpeculativeLessEq(1,2) is true
+PASS nonSpeculativeLess(2,1) is false
+PASS nonSpeculativeLessEq(2,1) is false
 PASS 2>1 is true
 PASS 2>=1 is true
 PASS 1>=2 is false
 PASS 1>2 is false
+PASS nonSpeculativeGreater(2,1) is true
+PASS nonSpeculativeGreaterEq(2,1) is true
+PASS nonSpeculativeGreaterEq(1,2) is false
+PASS nonSpeculativeGreater(1,2) is false
 PASS 'abc' == 'abc' is true
 PASS 'abc' != 'xyz' is true
 PASS true == true is true
@@ -154,27 +172,73 @@ PASS true != 2 is true
 PASS 1 == true is true
 PASS false == 0 is true
 PASS 0 == false is true
+PASS nonSpeculativeEqual('abc', 'abc') is true
+PASS nonSpeculativeNotEqual('abc', 'xyz') is true
+PASS nonSpeculativeEqual(true, true) is true
+PASS nonSpeculativeEqual(false, false) is true
+PASS nonSpeculativeNotEqual(true, false) is true
+PASS nonSpeculativeNotEqual('a', null) is true
+PASS nonSpeculativeNotEqual('a', undefined) is true
+PASS nonSpeculativeEqual(null, null) is true
+PASS nonSpeculativeEqual(null, undefined) is true
+PASS nonSpeculativeEqual(undefined, undefined) is true
+PASS nonSpeculativeNotEqual(NaN, NaN) is true
+PASS nonSpeculativeNotEqual(true, undefined) is true
+PASS nonSpeculativeNotEqual(true, null) is true
+PASS nonSpeculativeNotEqual(false, undefined) is true
+PASS nonSpeculativeNotEqual(false, null) is true
+PASS nonSpeculativeEqual('0', 0) is true
+PASS nonSpeculativeEqual(1, '1') is true
+PASS nonSpeculativeNotEqual(NaN, NaN) is true
+PASS nonSpeculativeNotEqual(NaN, 0) is true
+PASS nonSpeculativeNotEqual(NaN, undefined) is true
+PASS nonSpeculativeEqual(true, 1) is true
+PASS nonSpeculativeNotEqual(true, 2) is true
+PASS nonSpeculativeEqual(1, true) is true
+PASS nonSpeculativeEqual(false, 0) is true
+PASS nonSpeculativeEqual(0, false) is true
 PASS 'abc' < 'abx' is true
 PASS 'abc' < 'abcd' is true
 PASS 'abc' < 'abc' is false
 PASS 'abcd' < 'abcd' is false
 PASS 'abx' < 'abc' is false
+PASS nonSpeculativeLess('abc', 'abx') is true
+PASS nonSpeculativeLess('abc', 'abcd') is true
+PASS nonSpeculativeLess('abc', 'abc') is false
+PASS nonSpeculativeLess('abcd', 'abcd') is false
+PASS nonSpeculativeLess('abx', 'abc') is false
 PASS 'abc' <= 'abc' is true
 PASS 'abc' <= 'abx' is true
 PASS 'abx' <= 'abc' is false
 PASS 'abcd' <= 'abc' is false
 PASS 'abc' <= 'abcd' is true
+PASS nonSpeculativeLessEq('abc', 'abc') is true
+PASS nonSpeculativeLessEq('abc', 'abx') is true
+PASS nonSpeculativeLessEq('abx', 'abc') is false
+PASS nonSpeculativeLessEq('abcd', 'abc') is false
+PASS nonSpeculativeLessEq('abc', 'abcd') is true
 PASS 'abc' > 'abx' is false
 PASS 'abc' > 'abc' is false
 PASS 'abcd' > 'abc' is true
 PASS 'abx' > 'abc' is true
 PASS 'abc' > 'abcd' is false
+PASS nonSpeculativeGreater('abc', 'abx') is false
+PASS nonSpeculativeGreater('abc', 'abc') is false
+PASS nonSpeculativeGreater('abcd', 'abc') is true
+PASS nonSpeculativeGreater('abx', 'abc') is true
+PASS nonSpeculativeGreater('abc', 'abcd') is false
 PASS 'abc' >= 'abc' is true
 PASS 'abcd' >= 'abc' is true
 PASS 'abx' >= 'abc' is true
 PASS 'abc' >= 'abx' is false
 PASS 'abc' >= 'abx' is false
 PASS 'abc' >= 'abcd' is false
+PASS nonSpeculativeGreaterEq('abc', 'abc') is true
+PASS nonSpeculativeGreaterEq('abcd', 'abc') is true
+PASS nonSpeculativeGreaterEq('abx', 'abc') is true
+PASS nonSpeculativeGreaterEq('abc', 'abx') is false
+PASS nonSpeculativeGreaterEq('abc', 'abx') is false
+PASS nonSpeculativeGreaterEq('abc', 'abcd') is false
 PASS 'abc' <= 0 is false
 PASS '' <= 0 is true
 PASS ' ' <= 0 is true
@@ -189,6 +253,20 @@ PASS NaN < 0 is false
 PASS NaN <= 0 is false
 PASS NaN > 0 is false
 PASS NaN >= 0 is false
+PASS nonSpeculativeLessEq('abc', 0) is false
+PASS nonSpeculativeLessEq('', 0) is true
+PASS nonSpeculativeLessEq(' ', 0) is true
+PASS nonSpeculativeLessEq(null, 0) is true
+PASS nonSpeculativeLessEq(0, 'abc') is false
+PASS nonSpeculativeLessEq(0, '') is true
+PASS nonSpeculativeLessEq(0, null) is true
+PASS nonSpeculativeLessEq(null, null) is true
+PASS nonSpeculativeLess(6, '52') is true
+PASS nonSpeculativeLess(6, '72') is true
+PASS nonSpeculativeLess(NaN, 0) is false
+PASS nonSpeculativeLessEq(NaN, 0) is false
+PASS nonSpeculativeGreater(NaN, 0) is false
+PASS nonSpeculativeGreaterEq(NaN, 0) is false
 PASS 0 === false is false
 PASS null === null is true
 PASS NaN === NaN is false
@@ -203,8 +281,24 @@ PASS true === false is false
 PASS Math === Math is true
 PASS Math === Boolean is false
 PASS Infinity === Infinity is true
+PASS nonSpeculativeStrictEqual(0, false) is false
+PASS nonSpeculativeStrictEqual(null, null) is true
+PASS nonSpeculativeStrictEqual(NaN, NaN) is false
+PASS nonSpeculativeStrictEqual(0.0, 0) is true
+PASS nonSpeculativeStrictEqual('abc', 'abc') is true
+PASS nonSpeculativeStrictEqual('a', 'x') is false
+PASS nonSpeculativeStrictEqual(1, '1') is false
+PASS nonSpeculativeStrictEqual('1', 1) is false
+PASS nonSpeculativeStrictEqual(true, true) is true
+PASS nonSpeculativeStrictEqual(false, false) is true
+PASS nonSpeculativeStrictEqual(true, false) is false
+PASS nonSpeculativeStrictEqual(Math, Math) is true
+PASS nonSpeculativeStrictEqual(Math, Boolean) is false
+PASS nonSpeculativeStrictEqual(Infinity, Infinity) is true
 PASS 0 !== 0 is false
 PASS 0 !== 1 is true
+PASS nonSpeculativeStrictNotEqual(0, 0) is false
+PASS nonSpeculativeStrictNotEqual(0, 1) is true
 PASS typeof undefined is 'undefined'
 PASS typeof null is 'object'
 PASS typeof true is 'boolean'

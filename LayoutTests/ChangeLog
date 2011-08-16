@@ -1,3 +1,11 @@
+2011-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66263
+        DFG JIT does not always zero extend boolean result of DFG operations
+
+        * fast/js/kde/operators-expected.txt:
+            - erk! missed new expected results from last commit!
+
 2011-08-15  Hayato Ito  <hayato@chromium.org>
 
         Fix crash when mouse moves from <summary> element to parent <details> element.
