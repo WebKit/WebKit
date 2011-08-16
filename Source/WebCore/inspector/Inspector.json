@@ -77,7 +77,8 @@
                     { "name": "name", "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
                     { "name": "url", "type": "string", "description": "Frame document's URL." },
                     { "name": "mimeType", "type": "string", "description": "Frame document's mimeType as determined by the browser." }
-                ]
+                ],
+                "hidden": true
             },
             {
                 "id": "FrameResourceTree",
@@ -97,7 +98,8 @@
                         },
                         "description": "Information about frame resources."
                     }
-                ]
+                ],
+                "hidden": true
             },
             {
                 "id": "SearchResult",
@@ -107,7 +109,8 @@
 	                { "name": "url", "type": "string", "description": "Resource URL." },
                     { "name": "frameId", "type": "string", "description": "Resource frame id." },
                     { "name": "matchesCount", "type": "number", "description": "Number of matches in the resource content." }
-                ]
+                ],
+                "hidden": true
             }
         ],
         "commands": [
@@ -115,10 +118,12 @@
                 "name": "addScriptToEvaluateOnLoad",
                 "parameters": [
                     { "name": "scriptSource", "type": "string" }
-                ]
+                ],
+                "hidden": true
             },
             {
-                "name": "removeAllScriptsToEvaluateOnLoad"
+                "name": "removeAllScriptsToEvaluateOnLoad",
+                "hidden": true
             },
             {
                 "name": "reload",
@@ -141,7 +146,8 @@
                     { "name": "cookies", "type": "array", "items": { "$ref": "Cookie"}, "description": "Array of cookie objects." },
                     { "name": "cookiesString", "type": "string", "description": "document.cookie string representation of the cookies." }
                 ],
-                "description": "Returns all browser cookies. Depending on the backend support, will either return detailed cookie information in the <code>cookie</code> field or string cookie representation using <code>cookieString</code>."
+                "description": "Returns all browser cookies. Depending on the backend support, will either return detailed cookie information in the <code>cookie</code> field or string cookie representation using <code>cookieString</code>.",
+                "hidden": true
             },
             {
                 "name": "deleteCookie",
@@ -149,14 +155,16 @@
                     { "name": "cookieName", "type": "string", "description": "Name of the cookie to remove." },
                     { "name": "domain", "type": "string", "description": "Domain of the cookie to remove." }
                 ],
-                "description": "Deletes browser cookie with given name for the given domain."
+                "description": "Deletes browser cookie with given name for the given domain.",
+                "hidden": true
             },
             {
                 "name": "getResourceTree",
                 "description": "Returns present frame / resource tree structure.",
                 "returns": [
                     { "name": "frameTree", "$ref": "FrameResourceTree", "description": "Present frame / resource tree structure." }
-                ]
+                ],
+                "hidden": true
             },
             {
                 "name": "getResourceContent",
@@ -168,7 +176,8 @@
                 "returns": [
                     { "name": "content", "type": "string", "description": "Resource content." },
                     { "name": "base64Encoded", "type": "boolean", "description": "True, if content was served as base64." }
-                ]
+                ],
+                "hidden": true
             },
             {
                 "name": "searchInResources",
@@ -180,7 +189,8 @@
                 ],
                 "returns": [
                     { "name": "result", "type": "array", "items": { "$ref": "SearchResult" }, "description": "List of search results." }
-                ]
+                ],
+                "hidden": true
             }
         ],
         "events": [
@@ -202,14 +212,16 @@
                 "parameters": [
                     { "name": "frame", "$ref": "Frame", "description": "Frame object." },
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." }
-                ]
+                ],
+                "hidden": true
             },
             {
                 "name": "frameDetached",
                 "description": "Fired when frame has been detached from its parent.",
                 "parameters": [
                     { "name": "frameId", "type": "string", "description": "Id of the frame that has been detached." }
-                ]
+                ],
+                "hidden": true
             }
         ]
     },
@@ -241,12 +253,13 @@
                 "description": "Object property descriptor.",
                 "properties": [
                     { "name": "name", "type": "string", "description": "Property name." },
-                    { "name": "value", "$ref": "RemoteObject", "description": "The value associated with the property." },
+                    { "name": "value", "$ref": "RemoteObject", "optional": true, "description": "The value associated with the property." },
                     { "name": "writable", "type": "boolean", "description": "True iff the value associated with the property may be changed (data descriptors only)." },
                     { "name": "get", "$ref": "RemoteObject", "optional": true, "description": "A function which serves as a getter for the property, or <code>undefined</code> if there is no getter (accessor descriptors only)." },
                     { "name": "set", "$ref": "RemoteObject", "optional": true, "description": "A function which serves as a setter for the property, or <code>undefined</code> if there is no setter (accessor descriptors only)." },
                     { "name": "configurable", "type": "boolean", "description": "True iff the type of this property descriptor may be changed and if the property may be deleted from the corresponding object." },
-                    { "name": "enumerable", "type": "boolean", "description": "True iff this property shows up during enumeration of the properties on the corresponding object." }
+                    { "name": "enumerable", "type": "boolean", "description": "True iff this property shows up during enumeration of the properties on the corresponding object." },
+                    { "name": "wasThrown", "type": "boolean", "optional": true, "description": "True iff the result was thrown during the evaluation." }
                 ]
             },
             {
@@ -267,7 +280,7 @@
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." },
                     { "name": "includeCommandLineAPI", "type": "boolean", "optional": true, "description": "Determines whether Command Line API should be available during the evaluation." },
                     { "name": "doNotPauseOnExceptions", "type": "boolean", "optional": true, "description": "Specifies whether evaluation should stop on exceptions. Overrides setPauseOnException state." },
-                    { "name": "frameId", "type": "string", "optional": true, "description": "Specifies in which frame to perform evaluation." },
+                    { "name": "frameId", "type": "string", "optional": true, "description": "Specifies in which frame to perform evaluation.", "hidden": true },
                     { "name": "returnByValue", "type": "boolean", "optional": true, "description": "Whether the result is expected to be a JSON object that should be sent by value." }
                 ],
                 "returns": [
@@ -384,7 +397,8 @@
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "DOM node id to be accessible by means of $x command line API." }
                 ],
-                "description": "Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions)." 
+                "description": "Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions).",
+                "hidden": true
             }
         ],
         "events": [
@@ -483,7 +497,7 @@
                 "description": "Information about the resource load initiator.",
                 "properties": [
                     { "name": "type", "type": "string", "enum": ["parser", "script", "other"], "description": "Type of this initiator." },
-                    { "name": "stackTrace", "$ref": "Console.StackTrace", "description": "Initiator JavaScript stack trace, set for Script only." },
+                    { "name": "stackTrace", "$ref": "Console.StackTrace", "optional": true, "description": "Initiator JavaScript stack trace, set for Script only." },
                     { "name": "url", "type": "string", "optional": true, "description": "Initiator URL, set for Parser type only." },
                     { "name": "lineNumber", "type": "number", "optional": true, "description": "Initiator line number, set for Parser type only." }
                 ]
@@ -545,7 +559,7 @@
                 "description": "Fired when page is about to send HTTP request.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "frameId", "type": "string", "description": "Frame identifier." },
+                    { "name": "frameId", "type": "string", "description": "Frame identifier.", "hidden": true },
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
                     { "name": "request", "$ref": "ResourceRequest", "description": "Request data." },
@@ -605,7 +619,7 @@
                 "description": "Fired when HTTP request has been served from memory cache.",
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
-                    { "name": "frameId", "type": "string", "description": "Frame identifier." },
+                    { "name": "frameId", "type": "string", "description": "Frame identifier.", "hidden": true },
                     { "name": "loaderId", "type": "string", "description": "Loader identifier." },
                     { "name": "documentURL", "type": "string", "description": "URL of the document this resource is loaded for." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
@@ -620,7 +634,8 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "request", "type": "object", "description": "WebSocket request data." }
-                ]
+                ],
+                "hidden": true
             },
             {
                 "name": "webSocketHandshakeResponseReceived",
@@ -629,7 +644,8 @@
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." },
                     { "name": "response", "type": "object", "description": "WebSocket response data." }
-                ]
+                ],
+                "hidden": true
             },
             {
                 "name": "webSocketCreated",
@@ -637,7 +653,8 @@
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "url", "type": "string", "description": "WebSocket request URL." }
-                ]
+                ],
+                "hidden": true
             },
             {
                 "name": "webSocketClosed",
@@ -645,7 +662,8 @@
                 "parameters": [
                     { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
                     { "name": "timestamp", "type": "number", "description": "Timestamp." }
-                ]
+                ],
+                "hidden": true
             }
         ]
     },
@@ -942,7 +960,8 @@
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "Id of the node to copy." }
                 ],
-                "description": "Copies node's HTML markup into the clipboard."
+                "description": "Copies node's HTML markup into the clipboard.",
+                "hidden": true
             },
             {
                 "name": "getOuterHTML",
@@ -971,11 +990,13 @@
                     { "name": "query", "type": "string", "description": "Plain text or query selector or XPath search query." },
                     { "name": "runSynchronously", "type": "boolean", "optional": true, "description": "When set to true, performing search synchronously (can block user interaction)." }
                 ],
-                "description": "Starts asynchronous search for a given string in the DOM tree. Use <code>cancelSearch</code> to stop given asynchronous search task."
+                "description": "Starts asynchronous search for a given string in the DOM tree. Use <code>cancelSearch</code> to stop given asynchronous search task.",
+                "hidden": true
             },
             {
                 "name": "cancelSearch",
-                "description": "Cancels asynchronous search started with <code>performSearch</code>."
+                "description": "Cancels asynchronous search started with <code>performSearch</code>.",
+                "hidden": true
             },
             {
                 "name": "pushNodeToFrontend",
@@ -1021,7 +1042,8 @@
                 "parameters": [
                     { "name": "frameId", "type": "string", "description": "Identifier of the frame to highlight" }
                 ],
-                "description": "Highlights owner element of the frame with given id."
+                "description": "Highlights owner element of the frame with given id.",
+                "hidden": true
             },
             {
                 "name": "pushNodeByPathToFrontend",
@@ -1031,7 +1053,8 @@
                 "returns": [
                     { "name": "nodeId", "type": "integer", "description": "Id of the node for given path." }
                 ],
-                "description": "Requests that the node is sent to the caller given its path. // FIXME, use XPath"
+                "description": "Requests that the node is sent to the caller given its path. // FIXME, use XPath",
+                "hidden": true
             },
             {
                 "name": "resolveNode",
@@ -1132,7 +1155,8 @@
                 "parameters": [
                     { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Ids of the search result nodes." }
                 ],
-                "description": "Pushes search results initiated using <code>performSearch</code> to the client."
+                "description": "Pushes search results initiated using <code>performSearch</code> to the client.",
+                "hidden": true
             }
         ]
     },
@@ -1400,12 +1424,12 @@
         "description": "Timeline provides its clients with instrumentation records that are generated during the page runtime. Timeline instrumentation can be started and stopped using corresponding commands. While timeline is started, it is generating timeline event records.",
         "types": [
             {
-                "id": "TimelineRecord",
+                "id": "TimelineEvent",
                 "type": "object",
                 "properties": [
                     { "name": "type", "type": "string", "description": "Event type." },
                     { "name": "data", "type": "object", "description": "Event data." },
-                    { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineRecord" }, "description": "Nested records." }
+                    { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." }
                 ],
                 "description": "Timeline record contains information about the recorded activity."
             }
@@ -1435,7 +1459,7 @@
             {
                 "name": "eventRecorded",
                 "parameters": [
-                    { "name": "record", "$ref": "TimelineRecord", "description": "Timeline record data." }
+                    { "name": "record", "$ref": "TimelineEvent", "description": "Timeline event record data." }
                 ],
                 "description": "Fired for every instrumentation event while timeline is started."
             }
