@@ -52,6 +52,7 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_maximalOutlineSize(0)
     , m_pageLogicalHeight(0)
     , m_pageLogicalHeightChanged(false)
+    , m_hasRenderFlowThreads(false)
     , m_layoutState(0)
     , m_layoutStateDisableCount(0)
 {
@@ -818,7 +819,7 @@ RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowT
     RenderFlowThread* flowRenderer = new (renderArena()) RenderFlowThread(document(), flowThread);
     flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(style()));
     addChild(flowRenderer);
-    
+    m_hasRenderFlowThreads = true;
     return flowRenderer;
 }
 

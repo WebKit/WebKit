@@ -295,4 +295,27 @@ bool RenderFlowThread::hitTestRegion(const LayoutRect& regionRect, const HitTest
     return isPointInsideFlowThread;
 }
 
+void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, bool immediate)
+{
+    for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+
+        // We only have to issue a repaint in this region if the region rect intersects the repaint rect.
+        LayoutRect flippedRegionRect(region->regionRect());
+        flipForWritingMode(flippedRegionRect); // Put the region rect into physical coordinates.
+        
+        IntRect clippedRect(flippedRegionRect);
+        clippedRect.intersect(repaintRect);
+        if (clippedRect.isEmpty())
+            continue;
+        
+        // Put the region rect into the region's physical coordinate space.
+        clippedRect.setLocation(region->contentBoxRect().location() + (repaintRect.location() - flippedRegionRect.location()));
+        
+        // Now switch to the region's writing mode coordinate space and let it repaint itself.
+        region->flipForWritingMode(clippedRect);
+        region->repaintRectangle(clippedRect, immediate);
+    }
+}
+
 } // namespace WebCore

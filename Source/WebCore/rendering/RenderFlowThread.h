@@ -88,6 +88,8 @@ public:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
+    void repaintRectangleInRegions(const LayoutRect&, bool immediate);
+
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
 

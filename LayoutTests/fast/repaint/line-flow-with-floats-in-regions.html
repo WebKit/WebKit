@@ -1,0 +1,11 @@
+<body style="margin: 0;" onload="loaded()">
+    <script src="resources/line-flow-with-floats.js"></script>
+    <script>
+        function test(doc)
+        {
+            doc.getElementById("pinkFloat").style.height = "120px";
+        }
+    </script>
+    <iframe onload="loaded()" id="iframe" src="resources/line-flow-with-floats.html" style="border: none; width: 500px; height: 600px; -webkit-flow:'thread'"></iframe>
+    <div style="position:absolute;left:100px;top:0;width:500px;height:600px;content:-webkit-from-flow('thread')"></div>
+</body>

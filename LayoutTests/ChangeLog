@@ -1,3 +1,21 @@
+2011-08-16  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66254
+
+        Make regions repaint properly. Added new repaint tests.
+
+        Reviewed by Simon Fraser.
+
+        * fast/repaint/japanese-rl-selection-repaint-in-regions.html: Added.
+        * fast/repaint/line-flow-with-floats-in-regions.html: Added.
+        * fast/repaint/overflow-flipped-writing-mode-block-in-regions.html: Added.
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-in-regions-expected.png: Added.
+        * platform/mac/fast/repaint/line-flow-with-floats-in-regions-expected.txt: Added.
+        * platform/mac/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png: Added.
+        * platform/mac/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt: Added.
+
 2011-08-16  Adam Roben  <aroben@apple.com>
 
         Add Windows expected results for some <canvas> tests

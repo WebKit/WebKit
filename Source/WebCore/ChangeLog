@@ -1,3 +1,29 @@
+2011-08-16  David Hyatt  <hyatt@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66254
+
+        Make region invalidation and repainting work properly. We do this by making RenderFlowThreads into
+        repaint containers and then issuing new repaints in the regions that contain the invalidated flow thread
+        content.
+
+        Reviewed by Simon Fraser.
+
+        Added new tests in fast/repaint.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::enclosingRenderFlowThread):
+        (WebCore::RenderObject::containerForRepaint):
+        (WebCore::RenderObject::repaintUsingContainer):
+        * rendering/RenderObject.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::renderFlowThreadWithName):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::hasRenderFlowThreads):
+
 2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
 
         Abandoned Memory: Temporary CSS Fonts May Never Be Purged

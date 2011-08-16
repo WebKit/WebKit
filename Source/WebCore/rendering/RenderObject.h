@@ -55,7 +55,7 @@ class Position;
 class RenderBoxModelObject;
 class RenderInline;
 class RenderBlock;
-class RenderFlow;
+class RenderFlowThread;
 class RenderLayer;
 class RenderTheme;
 class TransformState;
@@ -184,6 +184,9 @@ public:
     // Convenience function for getting to the nearest enclosing box of a RenderObject.
     RenderBox* enclosingBox() const;
     RenderBoxModelObject* enclosingBoxModelObject() const;
+
+    // Function to return our enclosing flow thread if we are contained inside one.
+    RenderFlowThread* enclosingRenderFlowThread() const;
 
     virtual bool isEmpty() const { return firstChild() == 0; }
 

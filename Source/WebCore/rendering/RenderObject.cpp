@@ -45,6 +45,7 @@
 #include "RenderCounter.h"
 #include "RenderDeprecatedFlexibleBox.h"
 #include "RenderFlexibleBox.h"
+#include "RenderFlowThread.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
@@ -565,6 +566,17 @@ RenderBoxModelObject* RenderObject::enclosingBoxModelObject() const
     }
 
     ASSERT_NOT_REACHED();
+    return 0;
+}
+
+RenderFlowThread* RenderObject::enclosingRenderFlowThread() const
+{
+    RenderObject* curr = const_cast<RenderObject*>(this);
+    while (curr) {
+        if (curr->isRenderFlowThread())
+            return toRenderFlowThread(curr);
+        curr = curr->parent();
+    }
     return 0;
 }
 
@@ -1145,16 +1157,28 @@ void RenderObject::paint(PaintInfo&, const LayoutPoint&)
 
 RenderBoxModelObject* RenderObject::containerForRepaint() const
 {
+    RenderView* v = view();
+    if (!v)
+        return 0;
+    
+    RenderBoxModelObject* repaintContainer = 0;
+
 #if USE(ACCELERATED_COMPOSITING)
-    if (RenderView* v = view()) {
-        if (v->usesCompositing()) {
-            RenderLayer* compLayer = enclosingLayer()->enclosingCompositingLayer();
-            return compLayer ? compLayer->renderer() : 0;
-        }
+    if (v->usesCompositing()) {
+        RenderLayer* compLayer = enclosingLayer()->enclosingCompositingLayer();
+        if (compLayer)
+            repaintContainer = compLayer->renderer();
     }
 #endif
-    // Do root-relative repaint.
-    return 0;
+
+    // If we have a flow thread, then we need to do individual repaints within the RenderRegions instead.
+    // Return the flow thread as a repaint container in order to create a chokepoint that allows us to change
+    // repainting to do individual region repaints.
+    // FIXME: Composited layers inside a flow thread will bypass this mechanism and will malfunction. It's not
+    // clear how to address this problem for composited descendants of a RenderFlowThread.
+    if (!repaintContainer && v->hasRenderFlowThreads())
+        repaintContainer = enclosingRenderFlowThread();
+    return repaintContainer;
 }
 
 void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer, const LayoutRect& r, bool immediate)
@@ -1163,6 +1187,9 @@ void RenderObject::repaintUsingContainer(RenderBoxModelObject* repaintContainer,
         view()->repaintViewRectangle(r, immediate);
         return;
     }
+
+    if (repaintContainer->isRenderFlowThread())
+        return toRenderFlowThread(repaintContainer)->repaintRectangleInRegions(r, immediate);
 
 #if USE(ACCELERATED_COMPOSITING)
     RenderView* v = view();

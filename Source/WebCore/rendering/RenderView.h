@@ -167,6 +167,7 @@ public:
     IntRect documentRect() const;
 
     RenderFlowThread* renderFlowThreadWithName(const AtomicString& flowThread);
+    bool hasRenderFlowThreads() const { return m_hasRenderFlowThreads; }
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     
@@ -245,6 +246,7 @@ protected:
 private:
     unsigned m_pageLogicalHeight;
     bool m_pageLogicalHeightChanged;
+    bool m_hasRenderFlowThreads;
     LayoutState* m_layoutState;
     unsigned m_layoutStateDisableCount;
 #if USE(ACCELERATED_COMPOSITING)
