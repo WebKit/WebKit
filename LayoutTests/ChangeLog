@@ -1,5 +1,22 @@
 2011-08-16  Adam Roben  <aroben@apple.com>
 
+        Share Sputnik Unicode results between Lion and Windows
+
+        Both Lion and Windows use ICU 4.6, so they have the same behavior on these tests.
+
+        * platform/mac-lion/Skipped: Removed these tests.
+
+        * platform/mac-snowleopard/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt: Copied from LayoutTests/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt.
+        * platform/mac-snowleopard/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt: Copied from LayoutTests/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt.
+        * platform/mac-snowleopard/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt: Copied from LayoutTests/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt.
+        * platform/mac-snowleopard/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt: Copied from LayoutTests/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt.
+        * platform/mac/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt: Renamed from LayoutTests/platform/win/sputnik/Unicode/Unicode_510/S7.6_A3.1-expected.txt.
+        * platform/mac/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt: Renamed from LayoutTests/platform/win/sputnik/Unicode/Unicode_510/S7.6_A3.2-expected.txt.
+        * platform/mac/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt: Renamed from LayoutTests/platform/win/sputnik/Unicode/Unicode_510/S7.6_A5.3_T1-expected.txt.
+        * platform/mac/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt: Renamed from LayoutTests/platform/win/sputnik/Unicode/Unicode_510/S7.6_A5.3_T2-expected.txt.
+
+2011-08-16  Adam Roben  <aroben@apple.com>
+
         Update Windows Sputnik results for ICU 4.6
 
         Windows now fails these tests due to changes in ICU. Mac fails these tests, too, though in a

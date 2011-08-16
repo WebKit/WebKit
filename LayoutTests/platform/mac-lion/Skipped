@@ -159,11 +159,5 @@ storage/quota-tracking.html
 # Inserting the "hello " string prepends an extra space before the hello.
 platform/mac/accessibility/selection-value-changes-for-aria-textbox.html
 
-# These still fail, but with different error codes from the other platforms.
-sputnik/Unicode/Unicode_510/S7.6_A3.1.html
-sputnik/Unicode/Unicode_510/S7.6_A3.2.html
-sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html
-sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html
-
 # Most if not all Java tests fail when run in WebKit1.
 java/
