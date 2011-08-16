@@ -1,3 +1,11 @@
+2011-08-16  Adam Roben  <aroben@apple.com>
+
+        Remove Windows-specific hyphenation test results now that hyphenation works on Windows
+
+        * platform/win/fast/text/hyphenate-first-word-expected.txt: Removed.
+        * platform/win/fast/text/hyphenate-limit-before-after-expected.txt: Removed.
+        * platform/win/fast/text/hyphenate-locale-expected.txt: Removed.
+
 2011-08-16  Tony Chang  <tony@chromium.org>
 
         Copy the results of http/tests/xmlhttprequest/web-apps/01[23].html
