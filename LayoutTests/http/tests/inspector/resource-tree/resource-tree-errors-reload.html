@@ -11,7 +11,33 @@ console.error("Console error 2.");
 
 function test()
 {
-    InspectorTest.reloadPage(step1);
+    var resourcesWereFinished = false;
+    var pageWasReloaded = false;
+
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, frameDetached);
+    InspectorTest.reloadPage(pageReloaded);
+
+    function frameDetached()
+    {
+        InspectorTest.runAfterResourcesAreFinished(["resource-tree-errors-reload.html"], resourcesFinished);
+    }
+
+    function resourcesFinished()
+    {
+        if (pageWasReloaded)
+            step1();
+        else
+            resourcesWereFinished = true;
+    }
+
+    function pageReloaded()
+    {
+        if (resourcesWereFinished)
+            step1();
+        else
+            pageWasReloaded = true;
+
+    }
 
     function step1()
     {
