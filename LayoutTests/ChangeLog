@@ -1,3 +1,15 @@
+2011-08-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        A mousedown event is not dispatched when clicking on a disabled INPUT
+        https://bugs.webkit.org/show_bug.cgi?id=27795
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a regression test now that the bug no longer reproduces.
+
+        * fast/forms/disabled-mousedown-event-expected.txt: Added.
+        * fast/forms/disabled-mousedown-event.html: Added.
+
 2011-08-15  Adam Barth  <abarth@webkit.org>
 
         Note that this new test fails.
