@@ -1,3 +1,9 @@
+2011-08-16  Dean Jackson  <dino@apple.com>
+
+        Move me from contributor to reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-08-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic frontend needs model.commitDataForRevisionRange function.
