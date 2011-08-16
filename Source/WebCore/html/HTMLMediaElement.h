@@ -339,6 +339,7 @@ private:
 
     bool hasMediaControls();
     bool createMediaControls();
+    void configureMediaControls();
 
     virtual void* preDispatchEventHandler(Event*);
 

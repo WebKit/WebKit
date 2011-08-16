@@ -233,16 +233,7 @@ void HTMLMediaElement::attributeChanged(Attribute* attr, bool preserveDecls)
     }
     else if (attrName == controlsAttr) {
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-        if (controls()) {
-            if (!hasMediaControls()) {
-                if (!createMediaControls())
-                    return;
-
-                mediaControls()->reset();
-            }
-            mediaControls()->show();
-        } else if (hasMediaControls())
-            mediaControls()->hide();
+        configureMediaControls();
 #else
         if (m_player)
             m_player->setControls(controls());
@@ -584,6 +575,8 @@ void HTMLMediaElement::prepareForLoad()
     // algorithm, but do it now because we won't start that until after the timer fires and the 
     // event may have already fired by then.
     setShouldDelayLoadEvent(true);
+
+    configureMediaControls();
 }
 
 void HTMLMediaElement::loadInternal()
@@ -2784,20 +2777,27 @@ bool HTMLMediaElement::createMediaControls()
     return true;
 }
 
+void HTMLMediaElement::configureMediaControls()
+{
+    if (!controls()) {
+        if (hasMediaControls())
+            mediaControls()->hide();
+        return;
+    }
+
+    if (!hasMediaControls()) {
+        if (!createMediaControls())
+            return;
+        mediaControls()->reset();
+    }
+    mediaControls()->show();
+}
+
 void* HTMLMediaElement::preDispatchEventHandler(Event* event)
 {
-    if (event && event->type() == eventNames().webkitfullscreenchangeEvent) {
-        if (controls()) {
-            if (!hasMediaControls()) {
-                if (!createMediaControls())
-                    return 0;
+    if (event && event->type() == eventNames().webkitfullscreenchangeEvent)
+        configureMediaControls();
 
-                mediaControls()->reset();
-            }
-            mediaControls()->show();
-        } else if (hasMediaControls())
-            mediaControls()->hide();
-    }
     return 0;
 }
 

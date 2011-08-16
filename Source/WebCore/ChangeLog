@@ -1,3 +1,23 @@
+2011-08-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [REGRESSION] Media controls should always be enabled when scripting is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=66303
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests: media/video-controls-no-scripting-iframe.html
+               media/video-controls-no-scripting.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::attributeChanged): Move the controls enabling/disabling code
+            to configureMediaControls.
+        (WebCore::HTMLMediaElement::prepareForLoad): Call configureMediaControls.
+        (WebCore::HTMLMediaElement::configureMediaControls): New, move code duplicated in 
+            attributeChanged and preDispatchEventHandler here.
+        (WebCore::HTMLMediaElement::preDispatchEventHandler): Move the controls enabling/disabling code
+            to configureMediaControls.
+        * html/HTMLMediaElement.h:
+
 2011-08-16  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: hide non-conservative methods from the protocol documentation.

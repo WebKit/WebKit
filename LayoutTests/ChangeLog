@@ -1,3 +1,14 @@
+2011-08-16  Eric Carlson  <eric.carlson@apple.com>
+
+        [REGRESSION] Media controls should always be enabled when scripting is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=66303
+
+        Reviewed by Dimitri Glazkov.
+
+        * media/video-controls-no-scripting-expected.txt: Added.
+        * media/video-controls-no-scripting-iframe.html: Added.
+        * media/video-controls-no-scripting.html: Added.
+
 2011-08-16  Adam Roben  <aroben@apple.com>
 
         Stop skipping the web-apps tests I just landed results for on Lion
