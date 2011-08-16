@@ -1,3 +1,13 @@
+2011-08-16  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Unmatrix algorithm implementation is wrong
+        https://bugs.webkit.org/show_bug.cgi?id=66080
+
+        Reviewed by Dean Jackson.
+
+        * animations/animation-matrix-negative-scale-unmatrix-expected.txt: Added.
+        * animations/animation-matrix-negative-scale-unmatrix.html: Added.
+
 2011-08-16  Eric Carlson  <eric.carlson@apple.com>
 
         Make video-controls-no-scripting.html results platform independent.
