@@ -279,6 +279,7 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     --include=JSCore-@WEBKITGTK_API_VERSION@ \
 	     --include=Soup-2.4 \
 	     --library=webkitgtk-@WEBKITGTK_API_VERSION@ \
+	     --library=javascriptcoregtk-@WEBKITGTK_API_VERSION@ \
 	     --libtool="$(LIBTOOL)" \
 	     --pkg=gobject-2.0 \
 	     --pkg=gtk+-@GTK_API_VERSION@ \
