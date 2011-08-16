@@ -150,6 +150,10 @@ class BaselineOptimizer(object):
                 self._filesystem.write_binary_file(destination, data_for_result[result])
                 self._scm.add(destination)
 
+    def directories_by_result(self, baseline_name):
+        results_by_directory = self._read_results_by_directory(baseline_name)
+        return _invert_dictionary(results_by_directory)
+
     def optimize(self, baseline_name):
         results_by_directory, new_results_by_directory = self._find_optimal_result_placement(baseline_name)
         if self._results_by_port_name(results_by_directory) != self._results_by_port_name(new_results_by_directory):

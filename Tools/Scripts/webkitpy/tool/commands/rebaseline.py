@@ -30,6 +30,7 @@ import os.path
 import re
 import shutil
 import urllib
+import pprint
 
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
@@ -104,7 +105,7 @@ class RebaselineTest(AbstractDeclarativeCommand):
 
 class OptimizeBaselines(AbstractDeclarativeCommand):
     name = "optimize-baselines"
-    help_text = "Reshuffles the baselines for the given test to use as litte space on disk as possible."
+    help_text = "Reshuffles the baselines for the given tests to use as litte space on disk as possible."
     argument_names = "TEST_NAMES"
 
     def _optimize_baseline(self, test_name):
@@ -113,6 +114,9 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
             if not self._baseline_optimizer.optimize(baseline_name):
                 print "Hueristics failed to optimize %s" % baseline_name
 
+    def _to_test_name(self, file_name): 
+        return self._tool.filesystem.relpath(file_name, self._port.layout_tests_dir())
+
     def execute(self, options, args, tool):
         self._baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
         self._port = factory.get("chromium-win-win7")  # FIXME: This should be selectable.
@@ -120,6 +124,31 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
         for test_name in map(self._to_test_name, test_files.find(self._port, args)):
             print "Optimizing %s." % test_name
             self._optimize_baseline(test_name)
+
+
+class AnalyzeBaselines(AbstractDeclarativeCommand):
+    name = "analyze-baselines"
+    help_text = "Analyzes the baselines for the given tests and displays which ones have the same hash."
+    argument_names = "TEST_NAMES"
+
+    def _analyze_baseline(self, test_name):
+        for suffix in _baseline_suffix_list:
+            baseline_name = _baseline_name(self._tool.filesystem, test_name, suffix)
+            directories_by_result = self._baseline_optimizer.directories_by_result(baseline_name)
+            if directories_by_result:
+                print '== ', baseline_name, ' =='
+                pprint.pprint(directories_by_result)
+                print
+
+    def _to_test_name(self, file_name): 
+        return self._tool.filesystem.relpath(file_name, self._port.layout_tests_dir())
+
+    def execute(self, options, args, tool):
+        self._baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
+        self._port = factory.get("chromium-win-win7")  # FIXME: This should be selectable.
+
+        for test_name in map(self._to_test_name, test_files.find(self._port, args)):
+            self._analyze_baseline(test_name)
 
 
 class RebaselineExpectations(AbstractDeclarativeCommand):

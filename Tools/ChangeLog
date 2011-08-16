@@ -1,5 +1,12 @@
 2011-08-16  Adam Barth  <abarth@webkit.org>
 
+        Add webkit-patch analyze-baselines, as requested by jamesr.
+
+        * Scripts/webkitpy/common/checkout/baselineoptimizer.py:
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
+2011-08-16  Adam Barth  <abarth@webkit.org>
+
         Fold bulk-optimize-baselines into optimize-baselines
         https://bugs.webkit.org/show_bug.cgi?id=66345
 
