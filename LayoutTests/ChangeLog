@@ -1,5 +1,11 @@
 2011-08-16  Tony Chang  <tony@chromium.org>
 
+        [chromium] Mark svg/wicd/test-rightsizing-a.xhtml as flakey.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-16  Tony Chang  <tony@chromium.org>
+
         [chromium] Mark fast/css/last-of-type-pseudo-class.html as flaky in
         debug (not just snowleopard).
 

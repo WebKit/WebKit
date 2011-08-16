@@ -3423,7 +3423,8 @@ BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
 // Weird failures only on debug bots after r87526.
 BUGADAMK DEBUG : svg/custom/object-sizing-explicit-height.xhtml = PASS IMAGE+TEXT
 BUGADAMK DEBUG : svg/custom/object-sizing-explicit-width.xhtml = PASS IMAGE+TEXT
-BUGADAMK SNOWLEOPARD DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE+TEXT
+BUGWK66320 SNOWLEOPARD RELEASE : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE+TEXT
+BUGWK66320 DEBUG : svg/wicd/test-rightsizing-a.xhtml = PASS IMAGE+TEXT
 
 // After r87526, these all have extra scrollbars where the platform/mac expectations do not.
 BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
