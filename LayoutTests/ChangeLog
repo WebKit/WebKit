@@ -1,5 +1,17 @@
 2011-08-16  Adam Roben  <aroben@apple.com>
 
+        Check in expected failure results for some web-apps tests on Lion and Windows
+
+        Since these failures are likely due to bugs in non-WebKit components, they are tracked by
+        <rdar://problem/9313271>.
+
+        * platform/mac-snowleopard/http/tests/xmlhttprequest/web-apps/012-expected.txt: Copied from http/tests/xmlhttprequest/web-apps/012-expected.txt.
+        * platform/mac-snowleopard/http/tests/xmlhttprequest/web-apps/013-expected.txt: Copied from http/tests/xmlhttprequest/web-apps/013-expected.txt.
+        * platform/mac/http/tests/xmlhttprequest/web-apps/012-expected.txt: Added.
+        * platform/mac/http/tests/xmlhttprequest/web-apps/013-expected.txt: Added.
+
+2011-08-16  Adam Roben  <aroben@apple.com>
+
         Share Sputnik Unicode results between Lion and Windows
 
         Both Lion and Windows use ICU 4.6, so they have the same behavior on these tests.
