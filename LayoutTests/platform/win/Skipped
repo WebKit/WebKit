@@ -1297,6 +1297,7 @@ fast/dom/Element/scale-page-bounding-client-rect.html
 fast/dom/Element/scale-page-client-rects.html
 fast/dom/Range/scale-page-bounding-client-rect.html
 fast/dom/Range/scale-page-client-rects.html
+fast/repaint/background-scaling.html
 fast/repaint/scale-page-shrink.html
 fast/transforms/selection-bounds-in-transformed-view.html
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
