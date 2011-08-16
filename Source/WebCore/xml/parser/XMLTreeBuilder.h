@@ -47,10 +47,16 @@ public:
         return adoptPtr(new XMLTreeBuilder(parser, document));
     }
 
+    static PassOwnPtr<XMLTreeBuilder> create(NewXMLDocumentParser* parser, DocumentFragment* document, Element* parent)
+    {
+        return adoptPtr(new XMLTreeBuilder(parser, document, parent));
+    }
+
     void processToken(const AtomicXMLToken&);
 
 private:
     XMLTreeBuilder(NewXMLDocumentParser*, Document*);
+    XMLTreeBuilder(NewXMLDocumentParser*, DocumentFragment*, Element* parent);
 
     class NodeStackItem {
     public:
@@ -64,6 +70,7 @@ private:
         AtomicString namespaceForPrefix(AtomicString prefix, AtomicString fallback);
 
         PassRefPtr<ContainerNode> node() { return m_node; }
+        const ContainerNode* node() const { return m_node.get(); }
         void setNode(PassRefPtr<ContainerNode> node) { m_node = node; }
 
     private:

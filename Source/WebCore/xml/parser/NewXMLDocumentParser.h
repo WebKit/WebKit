@@ -47,6 +47,13 @@ public:
         return adoptRef(new NewXMLDocumentParser(document));
     }
 
+    static PassRefPtr<NewXMLDocumentParser> create(DocumentFragment* fragment, Element* parent, FragmentScriptingPermission scriptingPermission)
+    {
+        return adoptRef(new NewXMLDocumentParser(fragment, parent, scriptingPermission));
+    }
+
+    static bool parseDocumentFragment(const String&, DocumentFragment*, Element* parent = 0, FragmentScriptingPermission = FragmentScriptingAllowed);
+
     virtual TextPosition0 textPosition() const;
     virtual int lineNumber() const;
 
@@ -64,6 +71,7 @@ protected:
 
 private:
     NewXMLDocumentParser(Document*);
+    NewXMLDocumentParser(DocumentFragment*, Element* parent, FragmentScriptingPermission);
     virtual ~NewXMLDocumentParser();
 
     OwnPtr<XMLTokenizer> m_tokenizer;

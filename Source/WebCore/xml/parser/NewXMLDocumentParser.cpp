@@ -26,6 +26,7 @@
 #include "config.h"
 #include "NewXMLDocumentParser.h"
 
+#include "DocumentFragment.h"
 #include "SegmentedString.h"
 #include "XMLTreeBuilder.h"
 
@@ -37,6 +38,29 @@ NewXMLDocumentParser::NewXMLDocumentParser(Document* document)
     , m_finishWasCalled(false)
     , m_treeBuilder(XMLTreeBuilder::create(this, document))
 {
+}
+
+NewXMLDocumentParser::NewXMLDocumentParser(DocumentFragment* fragment, Element* parent, FragmentScriptingPermission)
+    : ScriptableDocumentParser(fragment->document())
+    , m_tokenizer(XMLTokenizer::create())
+    , m_finishWasCalled(false)
+    , m_treeBuilder(XMLTreeBuilder::create(this, fragment, parent))
+{
+}
+
+bool NewXMLDocumentParser::parseDocumentFragment(const String& chunk, DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission scriptingPermission)
+{
+    if (!chunk.length())
+        return true;
+
+    RefPtr<NewXMLDocumentParser> parser = NewXMLDocumentParser::create(fragment, contextElement, scriptingPermission);
+    parser->append(SegmentedString(chunk));
+    // Do not call finish(). Current finish() implementation touches the main Document/loader
+    // and can cause crashes in the fragment case.
+    parser->detach(); // Allows ~DocumentParser to assert it was detached before destruction.
+
+    // FIXME: return false if not well-formed
+    return true;
 }
 
 NewXMLDocumentParser::~NewXMLDocumentParser()

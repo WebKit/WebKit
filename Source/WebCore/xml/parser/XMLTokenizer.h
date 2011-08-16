@@ -97,7 +97,7 @@ public:
     };
 };
 
-class XMLTokenizer : MarkupTokenizerBase<XMLToken, XMLTokenizerState> {
+class XMLTokenizer : public MarkupTokenizerBase<XMLToken, XMLTokenizerState> {
     WTF_MAKE_NONCOPYABLE(XMLTokenizer);
     WTF_MAKE_FAST_ALLOCATED;
 public:

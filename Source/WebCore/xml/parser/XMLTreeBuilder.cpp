@@ -29,6 +29,7 @@
 #include "CDATASection.h"
 #include "Comment.h"
 #include "Document.h"
+#include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Frame.h"
 #include "HTMLEntitySearch.h"
@@ -45,6 +46,49 @@ XMLTreeBuilder::XMLTreeBuilder(NewXMLDocumentParser* parser, Document* document)
     , m_isXHTML(false)
 {
     m_currentNodeStack.append(NodeStackItem(document));
+}
+
+XMLTreeBuilder::XMLTreeBuilder(NewXMLDocumentParser* parser, DocumentFragment* fragment, Element* parent)
+    : m_document(fragment->document())
+    , m_parser(parser)
+    , m_isXHTML(false)
+{
+    NodeStackItem stackItem(fragment);
+
+    // Figure out namespaces
+    Vector<Element*> nodeStack;
+    while (parent) {
+        nodeStack.append(parent);
+
+        ContainerNode* node = parent->parentNode();
+        if (!node || !node->isElementNode())
+            break;
+        parent = static_cast<Element*>(node);
+    }
+
+    if (nodeStack.isEmpty()) {
+        m_currentNodeStack.append(stackItem);
+        return;
+    }
+
+    for (Element* element; !nodeStack.isEmpty(); nodeStack.removeLast()) {
+        element = nodeStack.last();
+        if (NamedNodeMap* attrs = element->attributes()) {
+            for (size_t i = 0; i < attrs->length(); ++i) {
+                Attribute* attr = attrs->attributeItem(i);
+                if (attr->localName() == xmlnsAtom)
+                    stackItem.setNamespaceURI(attr->value());
+                else if (attr->prefix() == xmlnsAtom)
+                    stackItem.setNamespaceURI(attr->localName(), attr->value());
+            }
+        }
+    }
+
+    // If the parent element is not in document tree, there may be no xmlns attribute; just default to the parent's namespace.
+    if (stackItem.namespaceURI().isNull() && !parent->inDocument())
+        stackItem.setNamespaceURI(parent->namespaceURI());
+
+    m_currentNodeStack.append(stackItem);
 }
 
 void XMLTreeBuilder::processToken(const AtomicXMLToken& token)
@@ -87,6 +131,7 @@ void XMLTreeBuilder::processToken(const AtomicXMLToken& token)
 
 void XMLTreeBuilder::pushCurrentNode(const NodeStackItem& stackItem)
 {
+    ASSERT(stackItem.node());
     m_currentNodeStack.append(stackItem);
     // FIXME: is there a maximum DOM depth?
 }

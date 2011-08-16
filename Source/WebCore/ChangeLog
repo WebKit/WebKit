@@ -1,5 +1,27 @@
 2011-08-16  Jeffrey Pfau  <jpfau@apple.com>
 
+        New XML parser: Add document fragment parser
+        https://bugs.webkit.org/show_bug.cgi?id=66317
+
+        Reviewed by Adam Barth.
+
+        * dom/DocumentFragment.cpp:
+        (WebCore::DocumentFragment::parseXML):
+        * xml/parser/NewXMLDocumentParser.cpp:
+        (WebCore::NewXMLDocumentParser::NewXMLDocumentParser):
+        (WebCore::NewXMLDocumentParser::parseDocumentFragment):
+        * xml/parser/NewXMLDocumentParser.h:
+        (WebCore::NewXMLDocumentParser::create):
+        * xml/parser/XMLTokenizer.h:
+        * xml/parser/XMLTreeBuilder.cpp:
+        (WebCore::XMLTreeBuilder::XMLTreeBuilder):
+        (WebCore::XMLTreeBuilder::pushCurrentNode):
+        * xml/parser/XMLTreeBuilder.h:
+        (WebCore::XMLTreeBuilder::create):
+        (WebCore::XMLTreeBuilder::NodeStackItem::node):
+
+2011-08-16  Jeffrey Pfau  <jpfau@apple.com>
+
         New XML parser: Replace assertions regarding character data in the prolog with proper checks
         https://bugs.webkit.org/show_bug.cgi?id=66269
 
