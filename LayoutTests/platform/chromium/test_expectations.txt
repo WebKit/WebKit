@@ -3671,3 +3671,6 @@ BUGWK65951 WIN DEBUG : webaudio/audiobuffersource.html = CRASH
 BUGWK65951 WIN DEBUG : webaudio/mixing.html = CRASH
 
 BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = MISSING FAIL
+
+// New test in r93068
+BUGWK66268 : editing/deleting/regional-indicators.html = TEXT

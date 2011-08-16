@@ -1,5 +1,11 @@
 2011-08-15  Adam Barth  <abarth@webkit.org>
 
+        Note that this new test fails.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-15  Adam Barth  <abarth@webkit.org>
+
         Remove expectation for this test, which no longer exists.
 
         * platform/chromium/test_expectations.txt:
