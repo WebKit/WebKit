@@ -59,8 +59,6 @@
 
 namespace WebCore {
 
-extern bool isPathSkiaSafe(const SkMatrix& transform, const SkPath& path);
-
 // State -----------------------------------------------------------------------
 
 // Encapsulates the additional painting state information we store for each
@@ -652,7 +650,7 @@ void PlatformContextSkia::applyAntiAliasedClipPaths(WTF::Vector<SkPath>& paths)
     m_canvas->restore();
 }
 
-void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context, DrawingBuffer* drawingBuffer, const WebCore::IntSize& size)
+void PlatformContextSkia::setGraphicsContext3D(GraphicsContext3D* context, DrawingBuffer* drawingBuffer)
 {
     m_gpuContext = context;
 #if ENABLE(ACCELERATED_2D_CANVAS)
@@ -680,11 +678,6 @@ void PlatformContextSkia::makeGrContextCurrent()
 {
     if (m_gpuContext)
         m_gpuContext->makeContextCurrent();
-}
-
-bool PlatformContextSkia::paintsIntoImageBuffer() const
-{
-    return m_gpuContext ? m_gpuContext->paintsIntoCanvasBuffer() : true;
 }
 
 } // namespace WebCore

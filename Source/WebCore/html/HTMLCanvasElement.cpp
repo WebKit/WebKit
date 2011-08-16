@@ -247,15 +247,7 @@ void HTMLCanvasElement::reset()
 
     if (m_context && m_context->is2d()) {
         CanvasRenderingContext2D* context2D = static_cast<CanvasRenderingContext2D*>(m_context.get());
-        bool wasAccelerated = context2D->isAccelerated();
         context2D->reset();
-#if USE(IOSURFACE_CANVAS_BACKING_STORE) || (ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING))
-        // Recalculate compositing requirements if acceleration state changed.
-        if (context2D->isAccelerated() != wasAccelerated)
-            setNeedsStyleRecalc(SyntheticStyleChange);
-#else
-        UNUSED_PARAM(wasAccelerated);
-#endif
     }
 
     if (RenderObject* renderer = this->renderer()) {
@@ -424,6 +416,30 @@ CSSStyleSelector* HTMLCanvasElement::styleSelector()
     return document()->styleSelector();
 }
 
+bool HTMLCanvasElement::shouldAccelerate(const IntSize& size) const
+{
+#if USE(IOSURFACE_CANVAS_BACKING_STORE)
+    UNUSED_PARAM(size);
+    return document()->settings()->canvasUsesAcceleratedDrawing();
+#elif ENABLE(ACCELERATED_2D_CANVAS)
+    if (m_context && !m_context->is2d())
+        return false;
+
+    Settings* settings = document()->settings();
+    if (!settings->accelerated2dCanvasEnabled())
+        return false;
+
+    // Do not use acceleration for small canvas.
+    if (size.width() * size.height() < settings->minimumAccelerated2dCanvasSize())
+        return false;
+
+    return true;
+#else
+    UNUSED_PARAM(size);
+    return false;
+#endif
+}
+
 void HTMLCanvasElement::createImageBuffer() const
 {
     ASSERT(!m_imageBuffer);
@@ -435,14 +451,8 @@ void HTMLCanvasElement::createImageBuffer() const
     if (!size.width() || !size.height())
         return;
 
-#if USE(IOSURFACE_CANVAS_BACKING_STORE)
-    if (document()->settings()->canvasUsesAcceleratedDrawing())
-        m_imageBuffer = ImageBuffer::create(size, ColorSpaceDeviceRGB, Accelerated);
-    else
-        m_imageBuffer = ImageBuffer::create(size, ColorSpaceDeviceRGB, Unaccelerated);
-#else
-    m_imageBuffer = ImageBuffer::create(size);
-#endif
+    RenderingMode renderingMode = shouldAccelerate(size) ? Accelerated : Unaccelerated;
+    m_imageBuffer = ImageBuffer::create(size, ColorSpaceDeviceRGB, renderingMode);
     // The convertLogicalToDevice MaxCanvasArea check should prevent common cases
     // where ImageBuffer::create() returns 0, however we could still be low on memory.
     if (!m_imageBuffer)
@@ -454,6 +464,12 @@ void HTMLCanvasElement::createImageBuffer() const
 #if USE(JSC)
     JSC::JSLock lock(JSC::SilenceAssertionsOnly);
     scriptExecutionContext()->globalData()->heap.reportExtraMemoryCost(m_imageBuffer->dataSize());
+#endif
+
+#if USE(IOSURFACE_CANVAS_BACKING_STORE) || (ENABLE(ACCELERATED_2D_CANVAS) && USE(ACCELERATED_COMPOSITING))
+    if (m_context && m_context->is2d())
+        // Recalculate compositing requirements if acceleration state changed.
+        const_cast<HTMLCanvasElement*>(this)->setNeedsStyleRecalc(SyntheticStyleChange);
 #endif
 }
 

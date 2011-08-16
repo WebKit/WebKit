@@ -31,6 +31,9 @@
 #include "AffineTransform.h"
 #include "ColorSpace.h"
 #include "FloatRect.h"
+#if USE(ACCELERATED_COMPOSITING)
+#include "GraphicsLayer.h"
+#endif
 #include "GraphicsTypes.h"
 #include "IntSize.h"
 #include "ImageBufferData.h"
@@ -105,6 +108,9 @@ namespace WebCore {
         void platformTransformColorSpace(const Vector<int>&);
 #else
         AffineTransform baseTransform() const { return AffineTransform(1, 0, 0, -1, 0, m_size.height()); }
+#endif
+#if USE(ACCELERATED_COMPOSITING)
+        PlatformLayer* platformLayer() const;
 #endif
 
     private:

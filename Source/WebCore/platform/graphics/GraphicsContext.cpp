@@ -684,23 +684,10 @@ void GraphicsContext::setPlatformShouldSmoothFonts(bool)
 }
 #endif
 
-#if !USE(SKIA)
-void GraphicsContext::setGraphicsContext3D(GraphicsContext3D*, DrawingBuffer*, const IntSize&)
-{
-}
-#endif
-
 #if !USE(SKIA) && !USE(CG)
 bool GraphicsContext::isAcceleratedContext() const
 {
     return false;
-}
-#endif
-
-#if !USE(SKIA)
-bool GraphicsContext::paintsIntoImageBuffer() const
-{
-    return true;
 }
 #endif
 

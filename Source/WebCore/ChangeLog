@@ -1,3 +1,94 @@
+2011-08-15  Stephen White  <senorblanco@chromium.org>
+
+        Canvas resizing can be slow
+        https://bugs.webkit.org/show_bug.cgi?id=66251
+
+        Canvas resizing was slow due to re-allocation of the ImageBuffer on
+        each size change (width or height).  This was introduced inadvertently
+        by calls to isAccelerated() during canvas reset().  Since we won't 
+        know if we have successfully accelerated until ImageBuffer creation,
+        move the compositor invalidation to createImageBuffer() as well.
+        This patch also attempts to unify the Skia and CG accelerated canvas
+        paths.  The DrawingBuffer used by the Skia path is now owned by 
+        ImageBuffer[Skia], similar to how the IOSurface is owned by
+        ImageBuffer[CG].  Some of the logic for when to accelerate was moved
+        into HTMLCanvasElement and unified with the CG path.  Acceleration is
+        also now enabled by the same "Accelerated" ImageBuffer create flag
+        used by the CG path.  DrawingBuffer is now re-created even for a 
+        same-size change (same as the memory buffer), but we speed it up
+        by calling GraphicsContext3D::texImage2D() with a NULL pixels ptr
+        instead of GraphicsContext3D::teximage2DResourceSafe() (no need to
+        clear it, since it's done with a glClear anyway).
+
+        Reviewed by Kenneth Russell.
+
+        Covered by existing tests in fast/canvas and canvas/philip.
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::reset):
+        Don't call isAccelerated() from reset(), since we don't want to
+        inadvertently create the ImageBuffer.  Also, since we won't know if
+        we have successfully accelerated until createImageBuffer() is
+        called, defer the compositor invalidation to createImageBuffer() as
+        well.
+        (WebCore::HTMLCanvasElement::shouldAccelerate):
+        Unify the CG and Skia ports' logic for when to accelerate (Skia
+        logic moved in from CanvasRenderingContext2D).
+        (WebCore::HTMLCanvasElement::createImageBuffer):
+        Use the unified shouldAccelerate() logic, and pass it as a flag
+        to ImageBuffer.  Do compositor invalidation as well.
+        * html/HTMLCanvasElement.h:
+        (WebCore::HTMLCanvasElement::hasCreatedImageBuffer):
+        Expose hasCreatedImageBuffer() publically, so
+        CanvasRenderingContext2D::isAccelerated() doesn't inadvertently create
+        it.
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::CanvasRenderingContext2D):
+        (WebCore::CanvasRenderingContext2D::~CanvasRenderingContext2D):
+        Remove all acceleration setting and resetting, since it's now done
+        during ImageBuffer creation.
+        (WebCore::CanvasRenderingContext2D::isAccelerated):
+        Check if the image buffer was created, so we don't inadvertently
+        create it here.
+        (WebCore::CanvasRenderingContext2D::paintsIntoCanvasBuffer):
+        Don't call GraphicsContext3D::paintsIntoCanvasBuffer(), since its
+        WebViewImpl may be null.  Ask the render tree instead.
+        (WebCore::CanvasRenderingContext2D::reset):
+        Don't reset acceleration here, since we don't own it anymore.
+        (WebCore::CanvasRenderingContext2D::platformLayer):
+        Call into the ImageBuffer to get our PlatformLayer.
+        * html/canvas/CanvasRenderingContext2D.h:
+        Remove m_drawingBuffer, and all acceleration-related calls.
+        * platform/graphics/GraphicsContext.cpp:
+        * platform/graphics/GraphicsContext.h:
+        Remove setGraphicsContext3D(), and paintsIntoImageBuffer().
+        * platform/graphics/ImageBuffer.cpp:
+        (WebCore::ImageBuffer::platformLayer):
+        Implement a dummy platformLayer() call for non-skia ports.
+        * platform/graphics/ImageBuffer.h:
+        Declare a platformLayer() call (USE(ACCELERATED_COMPOSITING) only).
+        * platform/graphics/chromium/ImageBufferDataSkia.h:
+        Add a DrawingBuffer data member.
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::reset):
+        Use texImage2D() with a NULL ptr, not texImage2DResourceSafe().
+        Since we immediately clear the framebuffer via glClear(), this whole
+        resource safe business is overkill.
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        Remove setGraphicsContext3D() and paintsIntoImageBuffer().  This
+        functionality is handled by ImageBuffer now.
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        Give the ImageBufferData ownership of the DrawingBuffer.
+        (WebCore::ImageBuffer::platformLayer):
+        Implement an accessor for the DrawingBuffer's PlatformLayer.
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setGraphicsContext3D):
+        * platform/graphics/skia/PlatformContextSkia.h:
+        Remove isPathSkiaSafe() extern (unused).
+        Remove paintsIntoImageBuffer() (now unused).  Remove IntSize param
+        from setGraphicsContext3D() (unused).
+
 2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
 
         Unreviewed Chromium Windows build fix after r93140. Take 3.

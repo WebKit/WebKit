@@ -128,6 +128,7 @@ public:
 #endif
 
     void makeRenderingResultsAvailable();
+    bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
 
 private:
     HTMLCanvasElement(const QualifiedName&, Document*);
@@ -137,10 +138,10 @@ private:
 
     void reset();
 
+    bool shouldAccelerate(const IntSize&) const;
     void createImageBuffer() const;
 
     void setSurfaceSize(const IntSize&);
-    bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
 
     HashSet<CanvasObserver*> m_observers;
 

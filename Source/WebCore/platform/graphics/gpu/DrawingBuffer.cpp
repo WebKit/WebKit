@@ -270,7 +270,7 @@ bool DrawingBuffer::reset(const IntSize& newSize)
 
         m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_colorBuffer);
         
-        m_context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE);
+        m_context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, internalColorFormat, m_size.width(), m_size.height(), 0, colorFormat, GraphicsContext3D::UNSIGNED_BYTE, 0);
 
         m_context->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, m_colorBuffer, 0);
         m_context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0);

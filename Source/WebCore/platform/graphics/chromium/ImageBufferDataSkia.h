@@ -28,6 +28,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "DrawingBuffer.h"
 #include "PlatformContextSkia.h"
 
 #include "skia/ext/platform_canvas.h"
@@ -40,6 +41,7 @@ public:
 
     OwnPtr<SkCanvas> m_canvas;
     PlatformContextSkia m_platformContext;
+    RefPtr<DrawingBuffer> m_drawingBuffer;
 };
 
 } // namespace WebCore

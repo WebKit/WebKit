@@ -53,11 +53,6 @@ class HTMLVideoElement;
 class ImageData;
 class TextMetrics;
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-class DrawingBuffer;
-class SharedGraphicsContext3D;
-#endif
-
 typedef int ExceptionCode;
 
 class CanvasRenderingContext2D : public CanvasRenderingContext {
@@ -294,19 +289,10 @@ private:
 
     void prepareGradientForDashboard(CanvasGradient* gradient) const;
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    void clearAcceleration();
-    void resetAcceleration();
-#endif
-
     Vector<State, 1> m_stateStack;
     bool m_usesCSSCompatibilityParseMode;
 #if ENABLE(DASHBOARD_SUPPORT)
     bool m_usesDashboardCompatibilityMode;
-#endif
-
-#if ENABLE(ACCELERATED_2D_CANVAS)
-    RefPtr<DrawingBuffer> m_drawingBuffer;
 #endif
 };
 

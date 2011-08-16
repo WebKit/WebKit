@@ -275,7 +275,6 @@ namespace WebCore {
         void setIsAcceleratedContext(bool);
 #endif
         bool isAcceleratedContext() const;
-        bool paintsIntoImageBuffer() const;
 
         void save();
         void restore();
@@ -508,8 +507,6 @@ namespace WebCore {
 #if PLATFORM(HAIKU)
         pattern getHaikuStrokeStyle();
 #endif
-
-        void setGraphicsContext3D(GraphicsContext3D*, DrawingBuffer*, const IntSize&);
 
         static void adjustLineToPixelBoundaries(FloatPoint& p1, FloatPoint& p2, float strokeWidth, StrokeStyle);
 

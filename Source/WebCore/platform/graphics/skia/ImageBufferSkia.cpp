@@ -43,6 +43,7 @@
 #include "MIMETypeRegistry.h"
 #include "PNGImageEncoder.h"
 #include "PlatformContextSkia.h"
+#include "SharedGraphicsContext3D.h"
 #include "SkColorPriv.h"
 #include "SkiaUtils.h"
 
@@ -61,7 +62,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 {
 }
 
-ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, bool& success)
+ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderingMode, bool& success)
     : m_data(size)
     , m_size(size)
 {
@@ -80,6 +81,15 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode, bool& s
     // required, but the canvas is currently filled with the magic transparency
     // color. Can we have another way to manage this?
     m_data.m_canvas->drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
+    if (renderingMode == Accelerated) {
+        GraphicsContext3D* context3D = SharedGraphicsContext3D::create(0);
+        if (context3D) {
+            m_data.m_drawingBuffer = context3D->createDrawingBuffer(size);
+            if (m_data.m_drawingBuffer)
+                m_data.m_platformContext.setGraphicsContext3D(context3D, m_data.m_drawingBuffer.get());
+        }
+    }
+
     success = true;
 }
 
@@ -364,6 +374,11 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
     m_context->platformContext()->makeGrContextCurrent();
     SkDevice* device = context()->platformContext()->canvas()->getDevice();
     return ImageToDataURL(device->accessBitmap(false), mimeType, quality);
+}
+
+PlatformLayer* ImageBuffer::platformLayer() const
+{
+    return m_data.m_drawingBuffer ? m_data.m_drawingBuffer->platformLayer() : 0;
 }
 
 String ImageDataToDataURL(const ImageData& source, const String& mimeType, const double* quality)
