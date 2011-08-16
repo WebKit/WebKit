@@ -55,7 +55,7 @@ class GetGoogleChromePortTest(unittest.TestCase):
         # we should be able to test for the files existing or not, and
         # be able to control the contents better.
 
-        chromium_port = factory.get("chromium-mac")
+        chromium_port = factory.get("chromium-cg-mac")
         chromium_base = chromium_port.path_from_chromium_base()
         fs = filesystem_mock.MockFileSystem()
         port = google_chrome.GetGoogleChromePort(port_name=port_name,

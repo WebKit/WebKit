@@ -134,7 +134,9 @@ def test_zip_factory():
 def test_archive(orig_archive_dict):
     new_archive_dict = {}
     for platform, dirname in orig_archive_dict.iteritems():
+        # This is a giant hack. :(
         platform = platform.replace('chromium', 'test')
+        platform = platform.replace('test-cg', 'test')
         new_archive_dict[platform] = dirname
     return new_archive_dict
 

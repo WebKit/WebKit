@@ -373,7 +373,7 @@ class Port(object):
             or '.png'.  This should not be None, but may be an empty string.
         platform: the most-specific directory name to use to build the
             search list of directories, e.g., 'chromium-win', or
-            'chromium-mac-leopard' (we follow the WebKit format)
+            'chromium-cg-mac-leopard' (we follow the WebKit format)
 
         This routine is generic but is implemented here to live alongside
         the other baseline and filename manipulation routines.

@@ -1,3 +1,38 @@
+2011-08-16  Adam Barth  <abarth@webkit.org>
+
+        Move chromium-mac to chromium-cg-mac to prepare for Skia switchover
+        https://bugs.webkit.org/show_bug.cgi?id=66334
+
+        Reviewed by Tony Chang.
+
+        This patch moves us closer to switching the Chromium port from
+        CoreGraphics to Skia.  This patch teaches our tools that the current
+        Chromium Mac configuration is actually chromium-cg-mac, which makes
+        room for a future chromium-mac configuration that uses Skia.
+
+        Shortly after this patch lands, I'll do a server-side move of the
+        chromium-mac and chromium-mac-leopard directories to chromium-cg-mac
+        and chromium-cg-mac-leopard.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+        * Scripts/webkitpy/common/checkout/baselineoptimizer_unittest.py:
+        * Scripts/webkitpy/common/config/build.py:
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_mac_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/dryrun.py:
+        * Scripts/webkitpy/layout_tests/port/factory.py:
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/google_chrome_unittest.py:
+        * Scripts/webkitpy/layout_tests/port/mock_drt_unittest.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests.py:
+        * Scripts/webkitpy/to_be_moved/rebaseline_chromium_webkit_tests_unittest.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+
 2011-08-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic frontend needs a friendly relative time description method.

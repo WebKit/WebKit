@@ -71,7 +71,7 @@ class ChromiumPort(Port):
     ALL_GRAPHICS_TYPES = ('cpu', 'gpu')
 
     ALL_BASELINE_VARIANTS = [
-        'chromium-mac-snowleopard', 'chromium-mac-leopard',
+        'chromium-cg-mac-snowleopard', 'chromium-cg-mac-leopard',
         'chromium-win-win7', 'chromium-win-vista', 'chromium-win-xp',
         'chromium-linux-x86_64', 'chromium-linux-x86',
         'chromium-gpu-mac-snowleopard', 'chromium-gpu-win-win7', 'chromium-gpu-linux-x86_64',

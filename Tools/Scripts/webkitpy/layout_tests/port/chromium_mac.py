@@ -47,21 +47,21 @@ class ChromiumMacPort(chromium.ChromiumPort):
 
     FALLBACK_PATHS = {
         'leopard': [
-            'chromium-mac-leopard',
-            'chromium-mac',
+            'chromium-cg-mac-leopard',
+            'chromium-cg-mac',
             'chromium',
             'mac-leopard',
             'mac-snowleopard',
             'mac',
         ],
         'snowleopard': [
-            'chromium-mac',
+            'chromium-cg-mac',
             'chromium',
             'mac-snowleopard',
             'mac',
         ],
         'future': [
-            'chromium-mac',
+            'chromium-cg-mac',
             'chromium',
             'mac',
         ],
@@ -70,7 +70,7 @@ class ChromiumMacPort(chromium.ChromiumPort):
     def __init__(self, port_name=None, os_version_string=None, **kwargs):
         # We're a little generic here because this code is reused by the
         # 'google-chrome' port as well as the 'mock-' and 'dryrun-' ports.
-        port_name = port_name or 'chromium-mac'
+        port_name = port_name or 'chromium-cg-mac'
         chromium.ChromiumPort.__init__(self, port_name=port_name, **kwargs)
         if port_name.endswith('-mac'):
             self._version = mac.os_version(os_version_string, self.SUPPORTED_OS_VERSIONS)
