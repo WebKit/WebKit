@@ -1,5 +1,15 @@
 2011-08-16  Steve Block  <steveblock@google.com>
 
+        Set TIMEOUT expectation for fast/canvas/webgl/uninitialized-test.html on Linux dbg
+
+        See http://code.google.com/p/chromium/issues/detail?id=93044
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-16  Steve Block  <steveblock@google.com>
+
         Add TIMEOUT expectation for editing/deleting/regional-indicators.html
         https://bugs.webkit.org/show_bug.cgi?id=66268
 
