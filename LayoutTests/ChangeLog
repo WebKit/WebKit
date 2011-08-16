@@ -1,5 +1,12 @@
 2011-08-16  Adam Roben  <aroben@apple.com>
 
+        Update Windows results after r92890
+
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
+2011-08-16  Adam Roben  <aroben@apple.com>
+
         Remove Windows-specific hyphenation test results now that hyphenation works on Windows
 
         * platform/win/fast/text/hyphenate-first-word-expected.txt: Removed.
