@@ -1,3 +1,13 @@
+2011-08-15  Jeffrey Pfau  <jpfau@apple.com>
+
+        New XML parser: add xml namespace to the default map of namespaces
+        https://bugs.webkit.org/show_bug.cgi?id=66266
+
+        Reviewed by Adam Barth.
+
+        * xml/parser/XMLTreeBuilder.cpp:
+        (WebCore::XMLTreeBuilder::NodeStackItem::NodeStackItem):
+
 2011-08-15  Hayato Ito  <hayato@chromium.org>
 
         Fix crash when mouse moves from <summary> element to parent <details> element.

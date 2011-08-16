@@ -35,6 +35,7 @@
 #include "NewXMLDocumentParser.h"
 #include "ProcessingInstruction.h"
 #include "XMLNSNames.h"
+#include "XMLNames.h"
 
 namespace WebCore {
 
@@ -350,11 +351,13 @@ void XMLTreeBuilder::exitText()
 XMLTreeBuilder::NodeStackItem::NodeStackItem(PassRefPtr<ContainerNode> n, NodeStackItem* parent)
     : m_node(n)
 {
-    if (!parent)
+    if (!parent) {
+        m_scopedNamespaces.set(xmlAtom, XMLNames::xmlNamespaceURI);
         return;
+    }
 
-        m_namespace = parent->m_namespace;
-        m_scopedNamespaces = parent->m_scopedNamespaces;
+    m_namespace = parent->m_namespace;
+    m_scopedNamespaces = parent->m_scopedNamespaces;
 }
 
 bool XMLTreeBuilder::NodeStackItem::hasNamespaceURI(AtomicString prefix)
