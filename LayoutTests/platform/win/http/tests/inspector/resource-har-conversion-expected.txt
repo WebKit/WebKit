@@ -1,0 +1,226 @@
+Tests conversion of Inspector's resource representation into HAR format.
+
+Page reloaded.
+{
+    version : <string>
+    creator : {
+        name : "WebInspector"
+        version : <string>
+    }
+    pages : [
+        {
+            startedDateTime : <object>
+            id : <string>
+            title : ""
+            pageTimings : {
+                onContentLoad : <number>
+                onLoad : <number>
+            }
+        }
+    ]
+    entries : [
+        {
+            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            startedDateTime : <object>
+            time : <number>
+            request : {
+                method : "GET"
+                url : "http://127.0.0.1:8000/inspector/inspector-test.js"
+                httpVersion : "HTTP/1.1"
+                headers : <object>
+                queryString : [
+                ]
+                cookies : [
+                    {
+                        name : "a"
+                        value : "b"
+                        path : "/path"
+                        domain : "example.com"
+                        expires : null
+                        httpOnly : false
+                        secure : false
+                    }
+                    {
+                        name : "a1"
+                        value : "b1"
+                        path : undefined
+                        domain : undefined
+                        expires : null
+                        httpOnly : false
+                        secure : false
+                    }
+                    {
+                        name : "c1"
+                        value : "d1"
+                        path : undefined
+                        domain : undefined
+                        expires : null
+                        httpOnly : false
+                        secure : false
+                    }
+                ]
+                headersSize : <number>
+                bodySize : <number>
+            }
+            response : {
+                status : 304
+                statusText : "Not Modified"
+                httpVersion : "HTTP/1.1"
+                headers : <object>
+                cookies : [
+                    {
+                        name : "x"
+                        value : "y"
+                        path : "/path"
+                        domain : "example.com"
+                        expires : null
+                        httpOnly : true
+                        secure : true
+                    }
+                    {
+                        name : "x1"
+                        value : "y1"
+                        path : undefined
+                        domain : undefined
+                        expires : null
+                        httpOnly : false
+                        secure : false
+                    }
+                    {
+                        name : "z2"
+                        value : "y2"
+                        path : undefined
+                        domain : undefined
+                        expires : null
+                        httpOnly : false
+                        secure : false
+                    }
+                ]
+                content : {
+                    size : <number>
+                    compression : <number>
+                    mimeType : "text/plain"
+                }
+                redirectURL : ""
+                headersSize : <number>
+                bodySize : <number>
+            }
+            cache : {
+            }
+            timings : <object>
+        }
+        {
+            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            startedDateTime : <object>
+            time : <number>
+            request : {
+                method : "GET"
+                url : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+                httpVersion : "HTTP/1.1"
+                headers : <object>
+                queryString : [
+                ]
+                cookies : [
+                ]
+                headersSize : <number>
+                bodySize : <number>
+            }
+            response : {
+                status : 200
+                statusText : "OK"
+                httpVersion : "HTTP/1.1"
+                headers : <object>
+                cookies : [
+                ]
+                content : {
+                    size : <number>
+                    compression : <number>
+                    mimeType : "text/html"
+                }
+                redirectURL : ""
+                headersSize : <number>
+                bodySize : <number>
+            }
+            cache : {
+            }
+            timings : <object>
+        }
+        {
+            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            startedDateTime : <object>
+            time : <number>
+            request : {
+                method : "GET"
+                url : "http://127.0.0.1:8000/inspector/resources-test.js"
+                httpVersion : "HTTP/1.1"
+                headers : <object>
+                queryString : [
+                ]
+                cookies : [
+                ]
+                headersSize : <number>
+                bodySize : <number>
+            }
+            response : {
+                status : 304
+                statusText : "Not Modified"
+                httpVersion : "HTTP/1.1"
+                headers : <object>
+                cookies : [
+                ]
+                content : {
+                    size : <number>
+                    compression : <number>
+                    mimeType : "text/plain"
+                }
+                redirectURL : ""
+                headersSize : <number>
+                bodySize : <number>
+            }
+            cache : {
+            }
+            timings : <object>
+        }
+        {
+            pageref : "http://127.0.0.1:8000/inspector/resource-har-conversion.html"
+            startedDateTime : <object>
+            time : <number>
+            request : {
+                method : "POST"
+                url : "http://127.0.0.1:8000/inspector/resources/post-target.cgi"
+                httpVersion : "HTTP/1.1"
+                headers : <object>
+                queryString : [
+                ]
+                cookies : [
+                ]
+                headersSize : <number>
+                bodySize : <number>
+                postData : {
+                    mimeType : "text/xml"
+                    text : "<xml></xml>"
+                }
+            }
+            response : {
+                status : 200
+                statusText : "OK"
+                httpVersion : "HTTP/1.1"
+                headers : <object>
+                cookies : [
+                ]
+                content : {
+                    size : <number>
+                    compression : <number>
+                    mimeType : "application/xml"
+                }
+                redirectURL : ""
+                headersSize : <number>
+                bodySize : <number>
+            }
+            cache : {
+            }
+            timings : <object>
+        }
+    ]
+}
+

@@ -1,3 +1,12 @@
+2011-08-16  Adam Roben  <aroben@apple.com>
+
+        Add Windows expected results for resource-har-conversion.html
+
+        While Windows and Lion both agree on the MIME type of the cached .js files, Windows has some
+        extra fields in the request objects.
+
+        * platform/win/http/tests/inspector/resource-har-conversion-expected.txt: Added.
+
 2011-08-16  Tony Chang  <tony@chromium.org>
 
         Copy the results of http/tests/inspector/resource-har-conversion.html
