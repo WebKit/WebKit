@@ -1,5 +1,20 @@
 2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
 
+        ASSERT in fast/css/custom-font-xheight.html
+        https://bugs.webkit.org/show_bug.cgi?id=66328
+
+        Reviewed by Dan Bernstein.
+
+        In r93140 the temporary font created for a remote CSS font face
+        was created without being retained. We need to protect the
+        font from being purged while we hold onto it, so add a font cache
+        purge preventer.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+
+2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
+
         Unreviewed Chromium Windows build fix after r93140. Take 4.
         Namespace the now public enum as FontCache::ShouldRetain.
 

@@ -1,3 +1,13 @@
+2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed, unskipping the test.
+
+        ASSERT in fast/css/custom-font-xheight.html
+        https://bugs.webkit.org/show_bug.cgi?id=66328
+
+        * platform/chromium/test_expectations.txt:
+        Test should no longer ASSERT.
+
 2011-08-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip tests modified by r93134 on WebKit2 since they now sets editing behavior explicitly,

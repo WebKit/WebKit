@@ -185,8 +185,10 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         if (!m_loadStartTimer.isActive())
             m_loadStartTimer.startOneShot(0);
 
-        SimpleFontData* tempData = fontCache()->getNonRetainedLastResortFallbackFont(fontDescription);
-        fontData = adoptPtr(new SimpleFontData(tempData->platformData(), true, true));
+        // This temporary font is not retained and should not be returned.
+        FontCachePurgePreventer fontCachePurgePreventer;
+        SimpleFontData* temporaryFont = fontCache()->getNonRetainedLastResortFallbackFont(fontDescription);
+        fontData = adoptPtr(new SimpleFontData(temporaryFont->platformData(), true, true));
     }
 
     SimpleFontData* fontDataRawPtr = fontData.leakPtr();
