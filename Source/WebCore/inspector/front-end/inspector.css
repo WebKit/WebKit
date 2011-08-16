@@ -3925,6 +3925,11 @@ a.worker-item {
     margin-left: 1px;
 }
 
+.styles-section .properties li.child-editing {
+    word-wrap: break-word !important;
+    white-space: normal !important;
+}
+
 .styles-section .properties ol {
     display: none;
     margin: 0;

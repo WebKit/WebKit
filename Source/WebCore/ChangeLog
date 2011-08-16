@@ -1,3 +1,13 @@
+2011-08-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: word wrap long edits
+        https://bugs.webkit.org/show_bug.cgi?id=65512
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/inspector.css:
+        (.styles-section .properties li.child-editing):
+
 2011-08-16  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: convert DOM breakpoint types to strings.
