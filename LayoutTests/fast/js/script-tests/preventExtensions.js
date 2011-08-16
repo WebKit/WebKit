@@ -65,4 +65,7 @@ shouldBe('test(preventExtensions(obj()))', '"(b:4)"'); // <nothing>, can delete 
 shouldBe('test(seal(obj()))', '"(a:1)(b:4)S"'); // sealed, CANNOT delete a, can modify b, and CANNOT add c
 shouldBe('test(freeze(obj()))', '"(a:1)(b:2)SF"'); // sealed and frozen, CANNOT delete a, CANNOT modify b, and CANNOT add c
 
+// check that we can still access static properties on an object after calling preventExtensions.
+shouldBe('Object.preventExtensions(Math); Math.sqrt(4)', '2');
+
 successfullyParsed = true;

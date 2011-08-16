@@ -633,7 +633,7 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
             return true;
         }
 
-        if (!isExtensible())
+        if (checkReadOnly && !isExtensible())
             return false;
 
         size_t currentCapacity = m_structure->propertyStorageCapacity();
@@ -697,7 +697,7 @@ inline bool JSObject::putDirectInternal(JSGlobalData& globalData, const Identifi
         return true;
     }
 
-    if (!isExtensible())
+    if (checkReadOnly && !isExtensible())
         return false;
 
     Structure* structure = Structure::addPropertyTransition(globalData, m_structure.get(), propertyName, attributes, specificFunction, offset);
