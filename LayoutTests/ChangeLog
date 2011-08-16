@@ -1,5 +1,14 @@
 2011-08-16  Tony Chang  <tony@chromium.org>
 
+        [chromium] fast/css/custom-font-xheight.html is asserting on all
+        chromium builds.
+
+        Also mark 2 repaint tests as failing on mac.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-16  Tony Chang  <tony@chromium.org>
+
         [chromium] fast/repaint/canvas-putImageData.html is now passing
         because of the win baselines added in r93139.
 

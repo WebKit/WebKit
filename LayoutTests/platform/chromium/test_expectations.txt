@@ -3384,7 +3384,7 @@ BUGCR83426 MAC : svg/filters/feLighting-crash.svg = PASS IMAGE
 BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = PASS IMAGE+TEXT IMAGE
 BUGCR83499 MAC : fast/box-shadow/box-shadow-transformed.html = PASS IMAGE+TEXT IMAGE
 
-BUGCR83504 WIN : fast/css/custom-font-xheight.html = PASS TIMEOUT
+BUGCR83504 WIN RELEASE : fast/css/custom-font-xheight.html = PASS TIMEOUT
 
 // New test from WK r87026
 BUGCR83555 LINUX WIN : fast/block/positioning/058.html = IMAGE+TEXT
@@ -3683,4 +3683,9 @@ BUGTONY : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE+TEX
 BUGTONY : fast/repaint/overflow-flipped-writing-mode-block-in-regions.html = IMAGE
 BUGTONY : fast/repaint/line-flow-with-floats-in-regions.html = IMAGE+TEXT IMAGE
 
-BUGWK66328 LINUX DEBUG : fast/css/custom-font-xheight.html = CRASH
+// When removing, make sure to update the WIN line to apply to debug and
+// release.
+BUGWK66328 DEBUG : fast/css/custom-font-xheight.html = CRASH
+
+BUGWK66338 MAC : fast/repaint/background-scaling.html = IMAGE
+BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
