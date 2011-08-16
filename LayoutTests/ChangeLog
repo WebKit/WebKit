@@ -1,3 +1,10 @@
+2011-08-16  Tony Chang  <tony@chromium.org>
+
+        [chromium] Mark fast/css/last-of-type-pseudo-class.html as flaky in
+        debug (not just snowleopard).
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-16  Adam Roben  <aroben@apple.com>
 
         Add Windows expected results for resource-har-conversion.html

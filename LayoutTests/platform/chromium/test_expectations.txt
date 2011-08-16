@@ -3212,7 +3212,6 @@ BUGCR86338 : fast/loader/file-protocol-fragment.html = TEXT
 BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = PASS CRASH TEXT
 
 // flakiness on deps bots (noted ~ r83108)
-BUGDPRANKE WIN DEBUG CPU : fast/css/last-of-type-pseudo-class.html = PASS TEXT
 BUGDPRANKE WIN DEBUG CPU : http/tests/eventsource/eventsource-reconnect.html = PASS TEXT
 BUGDPRANKE WIN : http/tests/navigation/ping-same-origin.html = PASS TIMEOUT TEXT
 BUGDPRANKE WIN DEBUG : http/tests/security/credentials-in-referer.html = PASS TIMEOUT
@@ -3529,7 +3528,7 @@ BUGCR88232 WIN DEBUG : fast/dom/non-numeric-values-numeric-parameters.html = PAS
 // Quota enforcement not yet implemented for LevelDB back-end.
 BUGCR83652 : storage/indexeddb/database-quota.html = TEXT
 
-BUGCR88311 SNOWLEOPARD DEBUG : fast/css/last-of-type-pseudo-class.html = TEXT
+BUGCR88311 DEBUG : fast/css/last-of-type-pseudo-class.html = PASS TEXT
 
 BUGWK63902 MAC WIN : svg/animations/svgtransform-animation-1.html = PASS TEXT
 
@@ -3673,8 +3672,8 @@ BUGWK65951 WIN DEBUG : webaudio/mixing.html = CRASH
 BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = MISSING FAIL
 
 // New test in r93068
-BUGWK66268 : editing/deleting/regional-indicators.html = TEXT TIMEOUT
+BUGWK66268 : editing/deleting/regional-indicators.html = TIMEOUT TEXT
 
 BUGCR93044 LINUX DEBUG : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 
-BUGWK66310 DEBUG : media/video-source-error.html = TEXT PASS
+BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
