@@ -179,11 +179,34 @@ void InspectorDOMDebuggerAgent::didRemoveDOMNode(Node* node)
     }
 }
 
-void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString*, int nodeId, int type)
+static int domTypeForName(const String& typeString)
+{
+    if (typeString == "subtree-modified")
+        return SubtreeModified;
+    if (typeString == "attribute-modified")
+        return AttributeModified;
+    if (typeString == "node-removed")
+        return NodeRemoved;
+    return SubtreeModified;
+}
+
+static String domTypeName(int type)
+{
+    switch (type) {
+    case SubtreeModified: return "subtree-modified";
+    case AttributeModified: return "attribute-modified";
+    case NodeRemoved: return "node-removed";
+    default: break;
+    }
+    return "";
+}
+
+void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString*, int nodeId, const String& typeString)
 {
     Node* node = m_domAgent->nodeForId(nodeId);
     if (!node)
         return;
+    int type = domTypeForName(typeString);
 
     uint32_t rootBit = 1 << type;
     m_domBreakpoints.set(node, m_domBreakpoints.get(node) | rootBit);
@@ -193,11 +216,12 @@ void InspectorDOMDebuggerAgent::setDOMBreakpoint(ErrorString*, int nodeId, int t
     }
 }
 
-void InspectorDOMDebuggerAgent::removeDOMBreakpoint(ErrorString*, int nodeId, int type)
+void InspectorDOMDebuggerAgent::removeDOMBreakpoint(ErrorString*, int nodeId, const String& typeString)
 {
     Node* node = m_domAgent->nodeForId(nodeId);
     if (!node)
         return;
+    int type = domTypeForName(typeString);
 
     uint32_t rootBit = 1 << type;
     uint32_t mask = m_domBreakpoints.get(node) & ~rootBit;
@@ -275,7 +299,7 @@ void InspectorDOMDebuggerAgent::descriptionForDOMEvent(Node* target, int breakpo
     int breakpointOwnerNodeId = m_domAgent->boundNodeId(breakpointOwner);
     ASSERT(breakpointOwnerNodeId);
     description->setNumber("nodeId", breakpointOwnerNodeId);
-    description->setNumber("type", breakpointType);
+    description->setString("type", domTypeName(breakpointType));
 }
 
 bool InspectorDOMDebuggerAgent::hasBreakpoint(Node* node, int type)

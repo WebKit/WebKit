@@ -35,20 +35,20 @@ WebInspector.DOMBreakpointsSidebarPane = function()
     this._breakpointElements = {};
 
     this._breakpointTypes = {
-        SubtreeModified: 0,
-        AttributeModified: 1,
-        NodeRemoved: 2
+        SubtreeModified: "subtree-modified",
+        AttributeModified: "attribute-modified",
+        NodeRemoved: "node-removed"
     };
-    this._breakpointTypeLabels = [
-        WebInspector.UIString("Subtree Modified"),
-        WebInspector.UIString("Attribute Modified"),
-        WebInspector.UIString("Node Removed")
-    ];
-    this._contextMenuLabels = [
-        WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on subtree modifications" : "Break on Subtree Modifications"),
-        WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on attributes modifications" : "Break on Attributes Modifications"),
-        WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on node removal" : "Break on Node Removal")
-    ];
+    this._breakpointTypeLabels = {};
+    this._breakpointTypeLabels[this._breakpointTypes.SubtreeModified] = WebInspector.UIString("Subtree Modified");
+    this._breakpointTypeLabels[this._breakpointTypes.AttributeModified] = WebInspector.UIString("Attribute Modified");
+    this._breakpointTypeLabels[this._breakpointTypes.NodeRemoved] = WebInspector.UIString("Node Removed");
+
+    this._contextMenuLabels = {};
+    this._contextMenuLabels[this._breakpointTypes.SubtreeModified] = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on subtree modifications" : "Break on Subtree Modifications");
+    this._contextMenuLabels[this._breakpointTypes.AttributeModified] = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on attributes modifications" : "Break on Attributes Modifications");
+    this._contextMenuLabels[this._breakpointTypes.NodeRemoved] = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on node removal" : "Break on Node Removal");
+
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
 }
 
@@ -78,7 +78,8 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
             this._saveBreakpoints();
         }
 
-        for (var type = 0; type < 3; ++type) {
+        for (var key in this._breakpointTypes) {
+            var type = this._breakpointTypes[key];
             var label = this._contextMenuLabels[type];
             contextMenu.appendCheckboxItem(label, toggleBreakpoint.bind(this, type), nodeBreakpoints[type]);
         }

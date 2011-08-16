@@ -1694,20 +1694,28 @@
     {
         "domain": "DOMDebugger",
         "description": "DOM debugging allows setting breakpoints on particular DOM operations and events. JavaScript execution will stop on these operations as if there was a regular breakpoint set.",
+        "types": [
+            {
+                "id": "DOMBreakpointType",
+                "type": "string",
+                "enum": ["subtree-modified", "attribute-modified", "node-removed"],
+                "description": "DOM breakpoint type."
+            }
+        ],
         "commands": [
             {
                 "name": "setDOMBreakpoint",
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "Identifier of the node to set breakpoint on." },
-                    { "name": "type", "type": "integer", "description": "Type of the operation to stop upon." }
+                    { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the operation to stop upon." }
                 ],
-                "description": "Sets breakpoint on particular operation with DOM. "
+                "description": "Sets breakpoint on particular operation with DOM."
             },
             {
                 "name": "removeDOMBreakpoint",
                 "parameters": [
                     { "name": "nodeId", "type": "integer", "description": "Identifier of the node to remove breakpoint from." },
-                    { "name": "type", "type": "integer", "description": "Type of the breakpoint to remove." }
+                    { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the breakpoint to remove." }
                 ],
                 "description": "Removes DOM breakpoint that was set using <code>setDOMBreakpoint</code>."
             },

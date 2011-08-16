@@ -67,8 +67,8 @@ public:
     void removeXHRBreakpoint(ErrorString*, const String& url);
     void setEventListenerBreakpoint(ErrorString*, const String& eventName);
     void removeEventListenerBreakpoint(ErrorString*, const String& eventName);
-    void setDOMBreakpoint(ErrorString*, int nodeId, int type);
-    void removeDOMBreakpoint(ErrorString*, int nodeId, int type);
+    void setDOMBreakpoint(ErrorString*, int nodeId, const String& type);
+    void removeDOMBreakpoint(ErrorString*, int nodeId, const String& type);
 
     // InspectorInstrumentation API
     void willInsertDOMNode(Node*, Node* parent);

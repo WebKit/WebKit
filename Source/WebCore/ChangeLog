@@ -1,5 +1,21 @@
 2011-08-16  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: convert DOM breakpoint types to strings.
+        https://bugs.webkit.org/show_bug.cgi?id=66304
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::domTypeForName):
+        (WebCore::InspectorDOMDebuggerAgent::setDOMBreakpoint):
+        (WebCore::InspectorDOMDebuggerAgent::removeDOMBreakpoint):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/front-end/DOMBreakpointsSidebarPane.js:
+        (WebInspector.DOMBreakpointsSidebarPane):
+
+2011-08-16  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: force pseudo element state when checking it in the styles sidebar.
         https://bugs.webkit.org/show_bug.cgi?id=66292
 
