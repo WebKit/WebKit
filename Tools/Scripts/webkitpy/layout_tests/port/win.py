@@ -94,7 +94,7 @@ class WinPort(WebKitPort):
             fallback_names.append('mac-wk2')
             # Note we do not add 'wk2' here, even though it's included in _skipped_search_paths().
         # FIXME: Perhaps we should get this list from MacPort?
-        fallback_names.extend(['mac-snowleopard', 'mac'])
+        fallback_names.extend(['mac-lion', 'mac'])
         return map(self._webkit_baseline_path, fallback_names)
 
     def _generate_all_test_configurations(self):

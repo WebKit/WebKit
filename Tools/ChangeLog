@@ -1,3 +1,32 @@
+2011-08-16  Adam Roben  <aroben@apple.com>
+
+        Make Apple's Windows port fall back to Lion results instead of SnowLeopard
+
+        Apple's Windows port now uses Lion-era versions of CoreFoundation, ICU, etc., so in theory
+        should match Lion's behavior.
+
+        Fixes <http://webkit.org/b/66302> Apple's Windows port matches Lion for some test results,
+        but doesn't use Lion results
+
+        Reviewed by David Kilzer.
+
+        * Scripts/old-run-webkit-tests:
+        (expectedDirectoryForTest):
+        * Scripts/webkitpy/layout_tests/port/win.py:
+        (WinPort.baseline_search_path):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest.test_baseline_search_path):
+        Replaced mac-snowleopard with mac-lion.
+
+        * Scripts/webkitpy/common/config/build.py:
+        (_should_file_trigger_build): Added an entry for the LayoutTests/platform/mac-lion
+        directory, which all Apple Mac platforms and Apple Win platforms could potentially use
+        results from. Removed Apple Win from being affected by mac-snowleopard changes, since it
+        will no longer look there for results.
+
+        * Scripts/webkitpy/common/config/build_unittest.py:
+        (ShouldBuildTest.test_should_build): Tests for the above changes.
+
 2011-08-16  Dean Jackson  <dino@apple.com>
 
         Move me from contributor to reviewer.
