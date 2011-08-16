@@ -25,6 +25,7 @@
 
 function FlakyLayoutTestDetector() {
     this._tests = {};
+    this._buildCount = 0;
 }
 
 FlakyLayoutTestDetector.prototype = {
@@ -37,11 +38,20 @@ FlakyLayoutTestDetector.prototype = {
             return newFlakyTests;
         }
 
+        ++this._buildCount;
+
         // Record failing tests.
         for (var testName in failingTests) {
             if (!(testName in this._tests)) {
+               if (this._buildCount > this._maximumFailOrPassCount) {
+                   // This test hasn't failed in the _maximumFailOrPassCount most recent builds, so
+                   // don't consider it to be flaky. In fact, we don't have to track it at all!
+                   continue;
+               }
+
                 this._tests[testName] = {
                     state: this._states.LastSeenFailing,
+                    count: 0,
                     history: [],
                 };
             }
@@ -49,7 +59,11 @@ FlakyLayoutTestDetector.prototype = {
             var testData = this._tests[testName];
             testData.history.push({ build: buildName, result: failingTests[testName] });
 
-            if (testData.state === this._states.LastSeenPassing) {
+            if (testData.state === this._states.LastSeenFailing) {
+                ++testData.count;
+                if (testData.count > this._maximumFailOrPassCount)
+                    testData.state = this._states.NotFlaky;
+            } else if (testData.state === this._states.LastSeenPassing) {
                 testData.state = this._states.PossiblyFlaky;
                 newFlakyTests.push(testName);
             }
@@ -63,8 +77,14 @@ FlakyLayoutTestDetector.prototype = {
             var testData = this._tests[testName];
             testData.history.push({ build: buildName, result: { failureType: 'pass' } });
 
-            if (testData.state === this._states.LastSeenFailing)
+            if (testData.state === this._states.LastSeenPassing) {
+                ++testData.count;
+                if (testData.count > this._maximumFailOrPassCount)
+                    testData.state = this._states.NotFlaky;
+            } else if (testData.state === this._states.LastSeenFailing) {
                 testData.state = this._states.LastSeenPassing;
+                testData.count = 1;
+            }
         }
 
         return newFlakyTests;
@@ -82,9 +102,14 @@ FlakyLayoutTestDetector.prototype = {
         return Object.keys(self._tests).filter(function(testName) { return self._tests[testName].state === self._states.PossiblyFlaky });
     },
 
+    // If a test has recently failed or passed more than this number of times in a row we don't
+    // consider it to be flaky.
+    _maximumFailOrPassCount: 9,
+
     _states: {
         LastSeenFailing: 0,
         LastSeenPassing: 1,
         PossiblyFlaky: 2,
+        NotFlaky: 3,
     },
 };

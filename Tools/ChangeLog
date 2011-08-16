@@ -1,3 +1,28 @@
+2011-08-16  Adam Roben  <aroben@apple.com>
+
+        Teach TestFailures that tests that have failed or passed many times in a row are not flaky
+
+        The basic strategy here is that once a test has failed or passed many times in a row we
+        never again consider it as a possibly flaky test. It's a simple strategy but seems to result
+        in many fewer false positives than our current behavior.
+
+        Fixes <http://webkit.org/b/66327> TestFailures page considers far too many tests to be
+        flaky, including tests that failed for a while but then were fixed
+
+        Reviewed by Dan Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector.js:
+        (FlakyLayoutTestDetector): Initialize new _buildCount property, which is used to track the
+        number of non-too-many-failure builds we've seen.
+        (FlakyLayoutTestDetector.prototype.incorporateTestResults): Don't track tests which haven't
+        failed in the _maximumFailOrPassCount most recent builds. For other not-yet-considered-flaky
+        tests, keep track of how many times they have passed or failed in a row. If they pass or
+        fail more than _maximumFailOrPassCount times, consider them to be non-flaky. (Once a test is
+        considered flaky it doesn't matter how many times it passes or fails.)
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector_unittests.js:
+        Added tests for the above.
+
 2011-08-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic needs a summary view with actions for each problem.

@@ -99,4 +99,70 @@ test('allFailures', 3, function() {
     equal(detector.allFailures('c'), null);
 });
 
+test('failing many times in a row should not count as flaky', 3, function() {
+    var detector = new FlakyLayoutTestDetector();
+    for (var i = 0; i < 10; ++i)
+        detector.incorporateTestResults('build', { a: 'fail' }, false);
+
+    deepEqual(detector.possiblyFlakyTests, []);
+
+    for (var i = 0; i < 3; ++i)
+        detector.incorporateTestResults('build', {}, false);
+
+    deepEqual(detector.possiblyFlakyTests, []);
+
+    detector.incorporateTestResults('build', { a: 'fail' }, false);
+
+    deepEqual(detector.possiblyFlakyTests, []);
+});
+
+test('failing after passing many times in a row should not count as flaky', 3, function() {
+    var detector = new FlakyLayoutTestDetector();
+    detector.incorporateTestResults('build', { a: 'fail' }, false);
+
+    deepEqual(detector.possiblyFlakyTests, []);
+
+    for (var i = 0; i < 10; ++i)
+        detector.incorporateTestResults('build', {}, false);
+
+    deepEqual(detector.possiblyFlakyTests, []);
+
+    detector.incorporateTestResults('build', { a: 'fail' }, false);
+
+    deepEqual(detector.possiblyFlakyTests, []);
+});
+
+test('flaking now should override many past failures', 1, function() {
+    var detector = new FlakyLayoutTestDetector();
+    detector.incorporateTestResults('build', { a: 'fail' }, false);
+    detector.incorporateTestResults('build', {}, false);
+    detector.incorporateTestResults('build', { a: 'fail' }, false);
+    detector.incorporateTestResults('build', {}, false);
+    for (var i = 0; i < 10; ++i)
+        detector.incorporateTestResults('build', { a: 'fail' }, false);
+    deepEqual(detector.possiblyFlakyTests, ['a']);
+});
+
+test('passing now should override past flakiness', 1, function() {
+    var detector = new FlakyLayoutTestDetector();
+    for (var i = 0; i < 10; ++i)
+        detector.incorporateTestResults('build', {}, false);
+    detector.incorporateTestResults('build', { a: 'fail' }, false);
+    detector.incorporateTestResults('build', {}, false);
+    detector.incorporateTestResults('build', { a: 'fail' }, false);
+    detector.incorporateTestResults('build', {}, false);
+    deepEqual(detector.possiblyFlakyTests, []);
+});
+
+test('too many failures now should not override past flakiness', 1, function() {
+    var detector = new FlakyLayoutTestDetector();
+    for (var i = 0; i < 10; ++i)
+        detector.incorporateTestResults('build', {}, true);
+    detector.incorporateTestResults('build', { a: 'fail' }, false);
+    detector.incorporateTestResults('build', {}, false);
+    detector.incorporateTestResults('build', { a: 'fail' }, false);
+    detector.incorporateTestResults('build', {}, false);
+    deepEqual(detector.possiblyFlakyTests, ['a']);
+});
+
 })();
