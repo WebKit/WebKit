@@ -1,3 +1,9 @@
+2011-08-15  Adam Barth  <abarth@webkit.org>
+
+        Add new passing expectations.
+
+        * platform/chromium/fast/js/kde/operators-expected.txt: Added.
+
 2011-08-15  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66263
