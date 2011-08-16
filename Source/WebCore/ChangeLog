@@ -1,3 +1,10 @@
+2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Unreviewed Chromium Windows build fix after r93140. Take 3.
+        Include the proper includes!
+
+        * platform/graphics/FontCache.h:
+
 2011-08-16  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Unmatrix algorithm implementation is wrong

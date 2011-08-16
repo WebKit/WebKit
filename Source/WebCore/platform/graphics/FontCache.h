@@ -35,7 +35,8 @@
 #include <wtf/Vector.h>
 #include <wtf/unicode/Unicode.h>
 
-#if PLATFORM(WIN)
+#if OS(WINDOWS)
+#include <windows.h>
 #include <objidl.h>
 #include <mlang.h>
 #endif
