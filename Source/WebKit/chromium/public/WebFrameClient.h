@@ -61,6 +61,7 @@ class WebSharedWorker;
 class WebStorageQuotaCallbacks;
 class WebString;
 class WebURL;
+class WebURLLoader;
 class WebURLRequest;
 class WebURLResponse;
 class WebWorker;
@@ -290,6 +291,9 @@ public:
     // spread to other frames in the same origin.
     virtual void didRunInsecureContent(WebFrame*, const WebSecurityOrigin&, const WebURL& insecureURL) { }
 
+    // This frame adopted the resource that is being loaded. This happens when
+    // an iframe, that is loading a subresource, is transferred between windows.
+    virtual void didAdoptURLLoader(WebURLLoader*) { }
 
     // Script notifications ------------------------------------------------
 

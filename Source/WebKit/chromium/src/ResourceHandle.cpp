@@ -33,6 +33,7 @@
 
 #include "PlatformBridge.h"
 #include "ResourceHandleClient.h"
+#include "ResourceHandleInternal.h"
 #include "ResourceRequest.h"
 #include "SharedBuffer.h"
 
@@ -51,54 +52,12 @@ using namespace WebKit;
 namespace WebCore {
 
 // ResourceHandleInternal -----------------------------------------------------
-
-class ResourceHandleInternal : public WebURLLoaderClient {
-public:
-    ResourceHandleInternal(const ResourceRequest& request, ResourceHandleClient* client)
-        : m_request(request)
-        , m_owner(0)
-        , m_client(client)
-        , m_state(ConnectionStateNew)
-    {
-    }
-
-    virtual ~ResourceHandleInternal() { }
-
-    void start();
-    void cancel();
-    void setDefersLoading(bool);
-    bool allowStoredCredentials() const;
-
-    // WebURLLoaderClient methods:
-    virtual void willSendRequest(WebURLLoader*, WebURLRequest&, const WebURLResponse&);
-    virtual void didSendData(
-        WebURLLoader*, unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
-    virtual void didReceiveResponse(WebURLLoader*, const WebURLResponse&);
-    virtual void didReceiveData(WebURLLoader*, const char* data, int dataLength, int encodedDataLength);
-
-    virtual void didReceiveCachedMetadata(WebURLLoader*, const char* data, int dataLength);
-    virtual void didFinishLoading(WebURLLoader*, double finishTime);
-    virtual void didFail(WebURLLoader*, const WebURLError&);
-
-    enum ConnectionState {
-        ConnectionStateNew,
-        ConnectionStateStarted,
-        ConnectionStateReceivedResponse,
-        ConnectionStateReceivingData,
-        ConnectionStateFinishedLoading,
-        ConnectionStateCanceled,
-        ConnectionStateFailed,
-    };
-
-    ResourceRequest m_request;
-    ResourceHandle* m_owner;
-    ResourceHandleClient* m_client;
-    OwnPtr<WebURLLoader> m_loader;
-
-    // Used for sanity checking to make sure we don't experience illegal state
-    // transitions.
-    ConnectionState m_state;
-};
+ResourceHandleInternal::ResourceHandleInternal(const ResourceRequest& request, ResourceHandleClient* client)
+    : m_request(request)
+    , m_owner(0)
+    , m_client(client)
+    , m_state(ConnectionStateNew)
+{ }
 
 void ResourceHandleInternal::start()
 {
@@ -197,6 +156,11 @@ void ResourceHandleInternal::didFail(WebURLLoader*, const WebURLError& error)
     m_client->didFail(m_owner, error);
 }
 
+ResourceHandleInternal* ResourceHandleInternal::FromResourceHandle(ResourceHandle* handle)
+{
+    return handle->d.get();
+}
+
 // ResourceHandle -------------------------------------------------------------
 
 ResourceHandle::ResourceHandle(const ResourceRequest& request,
@@ -205,7 +169,7 @@ ResourceHandle::ResourceHandle(const ResourceRequest& request,
                                bool shouldContentSniff)
     : d(adoptPtr(new ResourceHandleInternal(request, client)))
 {
-    d->m_owner = this;
+    d->setOwner(this);
 
     // FIXME: Figure out what to do with the bool params.
 }
@@ -227,17 +191,17 @@ PassRefPtr<ResourceHandle> ResourceHandle::create(NetworkingContext* context,
 
 ResourceRequest& ResourceHandle::firstRequest()
 {
-    return d->m_request;
+    return d->request();
 }
 
 ResourceHandleClient* ResourceHandle::client() const
 {
-    return d->m_client;
+    return d->client();
 }
 
 void ResourceHandle::setClient(ResourceHandleClient* client)
 {
-    d->m_client = client;
+    d->setClient(client);
 }
 
 void ResourceHandle::setDefersLoading(bool value)
@@ -267,7 +231,7 @@ void ResourceHandle::cancel()
 
 ResourceHandle::~ResourceHandle()
 {
-    d->m_owner = 0;
+    d->setOwner(0);
 }
 
 PassRefPtr<SharedBuffer> ResourceHandle::bufferedData()

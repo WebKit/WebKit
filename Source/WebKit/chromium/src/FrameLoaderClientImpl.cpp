@@ -54,6 +54,7 @@
 #include "PluginData.h"
 #include "PluginDataChromium.h"
 #include "ProgressTracker.h"
+#include "ResourceHandleInternal.h"
 #include "ResourceLoader.h"
 #include "Settings.h"
 #include "StringExtras.h"
@@ -1467,6 +1468,11 @@ void FrameLoaderClientImpl::transferLoadingResourceFromPage(ResourceLoader* load
     WebFrameImpl* oldWebFrame = WebFrameImpl::fromFrame(oldPage->mainFrame());
     if (oldWebFrame && oldWebFrame->client())
         oldWebFrame->client()->removeIdentifierForRequest(loader->identifier());
+
+    ResourceHandle* handle = loader->handle();
+    WebURLLoader* webURLLoader = ResourceHandleInternal::FromResourceHandle(handle)->loader();
+    if (webURLLoader && m_webFrame->client())
+        m_webFrame->client()->didAdoptURLLoader(webURLLoader);
 }
 
 PassRefPtr<Widget> FrameLoaderClientImpl::createPlugin(

@@ -1,5 +1,32 @@
 2011-08-15  Dmitry Titov  <dimich@chromium.org>
 
+        [Chromium] Add WebFrameClient::didAdoptURLLoader() notification
+        https://bugs.webkit.org/show_bug.cgi?id=66167
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didAdoptURLLoader):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::transferLoadingResourceFromPage):
+        * src/ResourceHandle.cpp:
+        (WebCore::ResourceHandleInternal::ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::FromResourceHandle):
+        (WebCore::ResourceHandle::ResourceHandle):
+        (WebCore::ResourceHandle::firstRequest):
+        (WebCore::ResourceHandle::client):
+        (WebCore::ResourceHandle::setClient):
+        (WebCore::ResourceHandle::~ResourceHandle):
+        * src/ResourceHandleInternal.h: Added.
+        (WebCore::ResourceHandleInternal::~ResourceHandleInternal):
+        (WebCore::ResourceHandleInternal::setOwner):
+        (WebCore::ResourceHandleInternal::request):
+        (WebCore::ResourceHandleInternal::client):
+        (WebCore::ResourceHandleInternal::setClient):
+        (WebCore::ResourceHandleInternal::loader):
+
+2011-08-15  Dmitry Titov  <dimich@chromium.org>
+
         FrameLoaderClient::transferLoadingResourceFromPage does not have enough parameters
         https://bugs.webkit.org/show_bug.cgi?id=66165
 
