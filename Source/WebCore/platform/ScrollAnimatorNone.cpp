@@ -335,7 +335,7 @@ void ScrollAnimatorNone::scrollToOffsetWithoutAnimation(const FloatPoint& offset
     *m_verticalData.m_currentPosition = offset.y();
     m_verticalData.m_desiredPosition = offset.y();
 
-    notityPositionChanged();
+    notifyPositionChanged();
 }
 
 void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
@@ -352,7 +352,7 @@ void ScrollAnimatorNone::animationTimerFired(Timer<ScrollAnimatorNone>* timer)
         double nextTimerInterval = max(kMinimumTimerInterval, deltaToNextFrame);
         timer->startOneShot(nextTimerInterval);
     }
-    notityPositionChanged();
+    notifyPositionChanged();
 }
 
 void ScrollAnimatorNone::stopAnimationTimerIfNeeded()

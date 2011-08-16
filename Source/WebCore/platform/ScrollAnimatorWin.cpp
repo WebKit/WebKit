@@ -193,7 +193,7 @@ void ScrollAnimatorWin::scrollToOffsetWithoutAnimation(const FloatPoint& offset)
     m_verticalData.m_currentVelocity = 0;
     m_verticalData.m_desiredVelocity = 0;
 
-    notityPositionChanged();
+    notifyPositionChanged();
 }
 
 double ScrollAnimatorWin::accelerationTime()
@@ -302,7 +302,7 @@ void ScrollAnimatorWin::animateScroll(PerAxisData* data)
         data->m_lastAnimationTime = WTF::currentTime();
     }
 
-    notityPositionChanged();
+    notifyPositionChanged();
 }
 
 } // namespace WebCore

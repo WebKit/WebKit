@@ -571,7 +571,7 @@ void ScrollAnimatorChromiumMac::immediateScrollToPoint(const FloatPoint& newPosi
     
     m_currentPosX = adjustedPosition.x();
     m_currentPosY = adjustedPosition.y();
-    notityPositionChanged();
+    notifyPositionChanged();
 }
 
 void ScrollAnimatorChromiumMac::immediateScrollByDeltaX(float deltaX)
@@ -582,7 +582,7 @@ void ScrollAnimatorChromiumMac::immediateScrollByDeltaX(float deltaX)
         return;
     
     m_currentPosX = newPosX;
-    notityPositionChanged();
+    notifyPositionChanged();
 }
 
 void ScrollAnimatorChromiumMac::immediateScrollByDeltaY(float deltaY)
@@ -593,7 +593,7 @@ void ScrollAnimatorChromiumMac::immediateScrollByDeltaY(float deltaY)
         return;
     
     m_currentPosY = newPosY;
-    notityPositionChanged();
+    notifyPositionChanged();
 }
 
 void ScrollAnimatorChromiumMac::immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition)
@@ -607,11 +607,11 @@ void ScrollAnimatorChromiumMac::immediateScrollToPointForScrollAnimation(const F
         m_scrollableArea->didCompleteAnimatedScroll();
 }
 
-void ScrollAnimatorChromiumMac::notityPositionChanged()
+void ScrollAnimatorChromiumMac::notifyPositionChanged()
 {
     if (isScrollbarOverlayAPIAvailable())
         wkContentAreaScrolled(m_scrollbarPainterController.get());
-    ScrollAnimator::notityPositionChanged();
+    ScrollAnimator::notifyPositionChanged();
 }
 
 void ScrollAnimatorChromiumMac::contentAreaWillPaint() const

@@ -103,7 +103,7 @@ private:
     Timer<ScrollAnimatorChromiumMac> m_initialScrollbarPaintTimer;
 #endif
     
-    virtual void notityPositionChanged();
+    virtual void notifyPositionChanged();
     virtual void contentAreaWillPaint() const;
     virtual void mouseEnteredContentArea() const;
     virtual void mouseExitedContentArea() const;

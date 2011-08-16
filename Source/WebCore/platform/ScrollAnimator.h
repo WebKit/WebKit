@@ -90,7 +90,7 @@ public:
 protected:
     ScrollAnimator(ScrollableArea*);
 
-    virtual void notityPositionChanged();
+    virtual void notifyPositionChanged();
 
     ScrollableArea* m_scrollableArea;
     float m_currentPosX; // We avoid using a FloatPoint in order to reduce
