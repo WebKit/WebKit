@@ -122,10 +122,8 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs, 
         return false;
 
     Chrome* chrome = static_cast<Chrome*>(hostWindow);
-    m_webViewImpl = static_cast<WebKit::WebViewImpl*>(chrome->client()->webView());
+    m_webViewImpl = chrome ? static_cast<WebKit::WebViewImpl*>(chrome->client()->webView()) : 0;
 
-    if (!m_webViewImpl)
-        return false;
     if (!webContext->initialize(webAttributes, m_webViewImpl, renderDirectlyToHostWindow))
         return false;
     m_impl = webContext.release();
@@ -150,6 +148,7 @@ PlatformGraphicsContext3D GraphicsContext3DInternal::platformGraphicsContext3D()
 
 Platform3DObject GraphicsContext3DInternal::platformTexture() const
 {
+    ASSERT(m_webViewImpl);
     m_impl->setParentContext(m_webViewImpl->graphicsContext3D());
     return m_impl->getPlatformTextureId();
 }
@@ -303,6 +302,7 @@ PassRefPtr<ImageData> GraphicsContext3DInternal::paintRenderingResultsToImageDat
 bool GraphicsContext3DInternal::paintsIntoCanvasBuffer() const
 {
     // If the gpu compositor is on then skip the readback and software rendering path.
+    ASSERT(m_webViewImpl);
     return !m_webViewImpl->isAcceleratedCompositingActive();
 }
 

@@ -32,7 +32,7 @@
 
 vars = {
   'chromium_svn': 'http://src.chromium.org/svn/trunk/src',
-  'chromium_rev': '96618'
+  'chromium_rev': '96940'
 }
 
 deps = {
@@ -127,8 +127,11 @@ deps = {
     From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
   'third_party/libjpeg_turbo':
     From('chromium_deps', 'src/third_party/libjpeg_turbo'),
+  # TODO(dgrogan): Remove third_party/leveldb after WebCore.gyp is updated.
   'third_party/leveldb':
     From('chromium_deps', 'src/third_party/leveldb'),
+  'third_party/leveldatabase/src':
+    From('chromium_deps', 'src/third_party/leveldatabase/src'),
   'third_party/snappy/src':
     From('chromium_deps', 'src/third_party/snappy/src'),
   'third_party/sfntly/src/sfntly':

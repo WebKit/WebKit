@@ -1,3 +1,23 @@
+2011-08-16  Stephen White  <senorblanco@chromium.org>
+
+        GraphicsContext3D should allow its hostWindow to be NULL
+        https://bugs.webkit.org/show_bug.cgi?id=66305
+
+        Allow the hostWindow param (and m_webViewImpl) to be NULL.  This
+        makes it much easier to enable GPU acceleration at a lower level
+        in WebKit's platform/graphics layer, without needing access to the
+        Page* or HostWindow*.  Also bump the chromium DEPS to chrome r96940,
+        which includes a similar change for the in-process GraphicsContext3D
+        implementations.
+
+        Reviewed by James Robinson.
+
+        * DEPS:
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::initialize):
+        (WebCore::GraphicsContext3DInternal::platformTexture):
+        (WebCore::GraphicsContext3DInternal::paintsIntoCanvasBuffer):
+
 2011-08-16  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Add deployment of NetworkPanel .css files to concatenated version
