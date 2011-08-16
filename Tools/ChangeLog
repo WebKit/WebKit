@@ -1,5 +1,27 @@
 2011-08-16  Adam Roben  <aroben@apple.com>
 
+        Teach TestFailures how to interpret unfinished test runs
+
+        Fixes <http://webkit.org/b/66309> TestFailures thinks all tests passed in
+        http://build.webkit.org/builders/Lion%20Intel%20Debug%20(Tests)/builds/136
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): Look for "isFinished" in the layout-test step
+        rather than "isStarted" so that we don't count builds for which the test run never finished.
+        Bumped the cache version to evict old, buggy cached data.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder_unittests.js:
+        Added a test for the above, and made a somewhat synthetic test more realistic by including
+        more of the actual JSON data from build.webkit.org.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Bumped the cache version to evict old, buggy
+        cached data.
+
+2011-08-16  Adam Roben  <aroben@apple.com>
+
         Make Apple's Windows port fall back to Lion results instead of SnowLeopard
 
         Apple's Windows port now uses Lion-era versions of CoreFoundation, ICU, etc., so in theory

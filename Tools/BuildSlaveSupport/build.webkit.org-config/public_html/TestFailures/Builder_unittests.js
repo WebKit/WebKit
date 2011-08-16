@@ -63,8 +63,9 @@ test("getNumberOfFailingTests shouldn't include leaks", 4, function() {
     const jsonData = {
         steps: [
             {
-                name: 'layout-test',
+                isFinished: true,
                 isStarted: true,
+                name: 'layout-test',
                 results: [
                     2,
                     [
@@ -170,6 +171,30 @@ test("getNumberOfFailingTests treats build step interruptions as errors", 4, fun
                     1310600152.973659,
                 ]
             },
+        ],
+    };
+
+    runGetNumberOfFailingTestsTest(jsonData, function(failureCount, tooManyFailures) {
+        equal(failureCount, -1);
+        equal(tooManyFailures, false);
+    });
+});
+
+test("getNumberOfFailingTests treats unfinished test runs as errors", 4, function() {
+    const jsonData = {
+        steps: [
+            {
+                isStarted: true, 
+                name: "layout-test", 
+                step_number: 5, 
+                text: [
+                    "layout-tests running"
+                ], 
+                times: [
+                    1312989295.518481, 
+                    null
+                ]
+            }, 
         ],
     };
 

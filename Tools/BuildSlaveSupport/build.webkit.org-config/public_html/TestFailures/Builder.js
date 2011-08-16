@@ -100,7 +100,7 @@ Builder.prototype = {
 
     getNumberOfFailingTests: function(buildNumber, callback) {
         var cacheKey = this.name + '_getNumberOfFailingTests_' + buildNumber;
-        const currentCachedDataVersion = 1;
+        const currentCachedDataVersion = 2;
         if (PersistentCache.contains(cacheKey)) {
             var cachedData = PersistentCache.get(cacheKey);
             if (cachedData.version === currentCachedDataVersion) {
@@ -120,8 +120,8 @@ Builder.prototype = {
                 return;
             }
 
-            if (!('isStarted' in layoutTestStep)) {
-                // run-webkit-tests never even ran.
+            if (!('isFinished' in layoutTestStep)) {
+                // run-webkit-tests never even ran, or didn't finish running.
                 PersistentCache.set(cacheKey, result);
                 callback(result.failureCount, result.tooManyFailures);
                 return;

@@ -30,7 +30,7 @@ function LayoutTestResultsLoader(builder) {
 LayoutTestResultsLoader.prototype = {
     start: function(buildName, callback, errorCallback) {
         var cacheKey = 'LayoutTestResultsLoader.' + this._builder.name + '.' + buildName;
-        const currentCachedDataVersion = 6;
+        const currentCachedDataVersion = 7;
         if (PersistentCache.contains(cacheKey)) {
             var cachedData = PersistentCache.get(cacheKey);
             if (cachedData.version === currentCachedDataVersion) {
