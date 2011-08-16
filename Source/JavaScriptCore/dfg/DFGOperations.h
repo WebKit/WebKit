@@ -34,6 +34,8 @@ namespace JSC { namespace DFG {
 
 enum PutKind { Direct, NotDirect };
 
+typedef intptr_t RegisterSizedBoolean;
+
 extern "C" {
 
 // These typedefs provide typechecking when generating calls out to helper routines;
@@ -44,8 +46,8 @@ typedef EncodedJSValue (*J_DFGOperation_EJP)(ExecState*, EncodedJSValue, void*);
 typedef EncodedJSValue (*J_DFGOperation_EJI)(ExecState*, EncodedJSValue, Identifier*);
 typedef EncodedJSValue (*J_DFGOperation_EP)(ExecState*, void*);
 typedef EncodedJSValue (*J_DFGOperation_EI)(ExecState*, Identifier*);
-typedef bool (*Z_DFGOperation_EJ)(ExecState*, EncodedJSValue);
-typedef bool (*Z_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
+typedef RegisterSizedBoolean (*Z_DFGOperation_EJ)(ExecState*, EncodedJSValue);
+typedef RegisterSizedBoolean (*Z_DFGOperation_EJJ)(ExecState*, EncodedJSValue, EncodedJSValue);
 typedef void (*V_DFGOperation_EJJJ)(ExecState*, EncodedJSValue, EncodedJSValue, EncodedJSValue);
 typedef void (*V_DFGOperation_EJJP)(ExecState*, EncodedJSValue, EncodedJSValue, void*);
 typedef void (*V_DFGOperation_EJJI)(ExecState*, EncodedJSValue, EncodedJSValue, Identifier*);
@@ -82,13 +84,13 @@ void operationPutByIdStrictOptimize(ExecState*, EncodedJSValue encodedValue, Enc
 void operationPutByIdNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 void operationPutByIdDirectStrictOptimize(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 void operationPutByIdDirectNonStrictOptimize(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
-bool operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-bool operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-bool operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-bool operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-bool operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-bool operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
-bool operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+RegisterSizedBoolean operationCompareLess(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+RegisterSizedBoolean operationCompareLessEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+RegisterSizedBoolean operationCompareGreater(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+RegisterSizedBoolean operationCompareGreaterEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+RegisterSizedBoolean operationCompareEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+RegisterSizedBoolean operationCompareStrictEqCell(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
+RegisterSizedBoolean operationCompareStrictEq(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 void* operationVirtualCall(ExecState*);
 void* operationLinkCall(ExecState*);
 void* operationVirtualConstruct(ExecState*);
@@ -111,7 +113,7 @@ DFGHandler lookupExceptionHandler(ExecState*, ReturnAddressPtr faultLocation);
 // These operations implement the implicitly called ToInt32, ToNumber, and ToBoolean conversions from ES5.
 double dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);
 int32_t dfgConvertJSValueToInt32(ExecState*, EncodedJSValue);
-bool dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
+RegisterSizedBoolean dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
 
 } // extern "C"
 } } // namespace JSC::DFG

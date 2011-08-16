@@ -1,5 +1,20 @@
 2011-08-16  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 93070
+
+    2011-08-15  Gavin Barraclough  <barraclough@apple.com>
+
+            https://bugs.webkit.org/show_bug.cgi?id=66263
+            DFG JIT does not always zero extend boolean result of DFG operations
+
+            Reviewed by Sam Weinig.
+
+            * dfg/DFGOperations.cpp:
+            * dfg/DFGOperations.h:
+                - Change bool return values to a 64-bit type.
+
+2011-08-16  Lucas Forschler  <lforschler@apple.com>
+
     Merged 93048
 
     2011-08-15  Gavin Barraclough  <barraclough@apple.com>

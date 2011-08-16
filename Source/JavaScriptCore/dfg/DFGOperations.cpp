@@ -397,32 +397,32 @@ void operationPutByIdDirectNonStrictOptimizeWithReturnAddress(ExecState* exec, E
         stubInfo.seen = true;
 }
 
-bool operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLess<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-bool operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean operationCompareLessEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLessEq<true>(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-bool operationCompareGreater(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean operationCompareGreater(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLess<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
 }
 
-bool operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean operationCompareGreaterEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return jsLessEq<false>(exec, JSValue::decode(encodedOp2), JSValue::decode(encodedOp1));
 }
 
-bool operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean operationCompareEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return JSValue::equalSlowCaseInline(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
 
-bool operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
@@ -433,7 +433,7 @@ bool operationCompareStrictEqCell(ExecState* exec, EncodedJSValue encodedOp1, En
     return JSValue::strictEqualSlowCaseInline(exec, op1, op2);
 }
 
-bool operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
+RegisterSizedBoolean operationCompareStrictEq(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
 {
     return JSValue::strictEqual(exec, JSValue::decode(encodedOp1), JSValue::decode(encodedOp2));
 }
@@ -684,7 +684,7 @@ int32_t dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)
     return JSValue::decode(value).toInt32(exec);
 }
 
-bool dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue encodedOp)
+RegisterSizedBoolean dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue encodedOp)
 {
     return JSValue::decode(encodedOp).toBoolean(exec);
 }
