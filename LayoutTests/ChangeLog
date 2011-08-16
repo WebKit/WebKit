@@ -1,5 +1,13 @@
 2011-08-16  Adam Roben  <aroben@apple.com>
 
+        Add Windows results for scripts-panel.html
+
+        The Windows results match the cross-platform results, not the Mac results.
+
+        * platform/win/inspector/debugger/scripts-panel-expected.txt: Added.
+
+2011-08-16  Adam Roben  <aroben@apple.com>
+
         Add Windows results for overlapped-iframe-iframe.html
 
         The Windows results match the cross-platform results, not the Mac results.
