@@ -40,6 +40,8 @@ public:
     ScrollbarThemeChromiumMac();
     virtual ~ScrollbarThemeChromiumMac();
 
+    void preferencesChanged();
+
     virtual bool paint(Scrollbar*, GraphicsContext* context, const IntRect& damageRect);
 
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
@@ -58,6 +60,8 @@ public:
     void setNewPainterForScrollbar(Scrollbar*, WKScrollbarPainterRef);
     WKScrollbarPainterRef painterForScrollbar(Scrollbar*);
 
+    virtual void paintOverhangAreas(ScrollView*, GraphicsContext*, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect);
+    
 protected:
     virtual bool hasButtons(Scrollbar*);
     virtual bool hasThumb(Scrollbar*);
@@ -73,8 +77,8 @@ protected:
 
     virtual void paintTickmarks(GraphicsContext*, Scrollbar*, const IntRect&);
 
-public:
-    void preferencesChanged();
+private:
+    RefPtr<Pattern> m_overhangPattern;
 };
 
 }
