@@ -1,3 +1,22 @@
+2011-08-15  Hayato Ito  <hayato@chromium.org>
+
+        Fix crash when mouse moves from <summary> element to parent <details> element.
+        https://bugs.webkit.org/show_bug.cgi?id=66210
+
+        Reviewed by Dimitri Glazkov.
+
+        This is a regression caused by r92922, which wrongly assumes that
+        a shadow host always has a shadow root as an immediate child in
+        ancestors chain. This assumption does not apply to <details>
+        element. <details> element is implemented as a shadow host, but
+        may have a <summary> element as an immediate child element in
+        ancestors chain.
+
+        Test: fast/dom/shadow/details-summary-mouseover.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::adjustToShadowBoundaries):
+
 2011-08-15  Jeffrey Pfau  <jpfau@apple.com>
 
         New XML parser: Use xmlnsAtom instead of redundant xmlnsPrefix

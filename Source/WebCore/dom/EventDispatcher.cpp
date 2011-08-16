@@ -165,8 +165,9 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
         // The relatedTarget is an ancestor or shadowHost of the target.
         // FIXME: Remove the first check once conversion to new shadow DOM is complete <http://webkit.org/b/48698>
         if (m_node->shadowHost() == relatedTarget.get() || isShadowHost(relatedTarget.get())) {
-            ASSERT(targetAncestor - 1 >= m_ancestors.begin());
-            lowestCommonBoundary = targetAncestor - 1;
+            lowestCommonBoundary = targetAncestor;
+            if (targetAncestor - 1 >= m_ancestors.begin() && isShadowRootOrSVGShadowRoot((targetAncestor - 1)->node()))
+                lowestCommonBoundary = targetAncestor - 1;
         }
     } else if ((*firstDivergentBoundary) == m_node.get()) {
         // Since ancestors does not contain target itself, we must account
