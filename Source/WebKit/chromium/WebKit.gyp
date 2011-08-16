@@ -742,6 +742,7 @@
             'conditions': [
                 ['debug_devtools==0', {
                     'dependencies': ['concatenated_devtools_js',
+                                     'concatenated_heap_snapshot_worker_js',
                                      'concatenated_script_formatter_worker_js',
                                      'concatenated_devtools_css'],
                 }],
