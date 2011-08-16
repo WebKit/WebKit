@@ -1,5 +1,23 @@
 2011-08-16  Luke Macpherson   <macpherson@chromium.org>
 
+        Support cast between CSSPrimitiveValue and ETransformStyle3D and use in CSSStyleSelector.
+        https://bugs.webkit.org/show_bug.cgi?id=66273
+
+        Reviewed by Simon Fraser.
+
+        No new tests - no functionality changed - refactoring only.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        Define cast from CSSPrimitiveValue to ETransformStyle3D.
+        (WebCore::CSSPrimitiveValue::operator ETransformStyle3D):
+        Define cast from ETransformStyle3D to CSSPrimitiveValue.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use appropriate macro to handle CSSPropertyWebkitTransformStyle.
+
+2011-08-16  Luke Macpherson   <macpherson@chromium.org>
+
         Use appropriate macro to handle CSSPropertyWebkitContentOrder in CSSStyleSelector::applyProperty()
         https://bugs.webkit.org/show_bug.cgi?id=66279
 

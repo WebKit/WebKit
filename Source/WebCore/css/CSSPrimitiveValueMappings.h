@@ -3099,7 +3099,34 @@ template<> inline CSSPrimitiveValue::operator EImageRendering() const
         return ImageRenderingAuto;
     }
 }
-    
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ETransformStyle3D e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case TransformStyle3DFlat:
+        m_value.ident = CSSValueFlat;
+        break;
+    case TransformStyle3DPreserve3D:
+        m_value.ident = CSSValuePreserve3d;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator ETransformStyle3D() const
+{
+    switch (m_value.ident) {
+    case CSSValueFlat:
+        return TransformStyle3DFlat;
+    case CSSValuePreserve3d:
+        return TransformStyle3DPreserve3D;
+    default:
+        ASSERT_NOT_REACHED();
+        return TransformStyle3DFlat;
+    }
+}
+
 #if ENABLE(SVG)
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EColorInterpolation e)

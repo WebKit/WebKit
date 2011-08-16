@@ -4848,9 +4848,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyWebkitTransformStyle:
-        HANDLE_INHERIT_AND_INITIAL(transformStyle3D, TransformStyle3D)
-        if (primitiveValue)
-            m_style->setTransformStyle3D((primitiveValue->getIdent() == CSSValuePreserve3d) ? TransformStyle3DPreserve3D : TransformStyle3DFlat);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(transformStyle3D, TransformStyle3D)
         return;
     case CSSPropertyWebkitPerspective: {
         HANDLE_INHERIT_AND_INITIAL(perspective, Perspective)
