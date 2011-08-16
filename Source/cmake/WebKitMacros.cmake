@@ -24,6 +24,19 @@ MACRO (ADD_SOURCE_DEPENDENCIES _source _deps)
 ENDMACRO ()
 
 
+MACRO (GENERATE_FONT_NAMES _infile)
+    SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)
+    SET(_arguments  --fonts ${_infile})
+    SET(_outputfiles ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitFontFamilyNames.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/WebKitFontFamilyNames.h)
+
+    ADD_CUSTOM_COMMAND(
+        OUTPUT  ${_outputfiles}
+        DEPENDS ${NAMES_GENERATOR} ${SCRIPTS_BINDINGS} ${_infile}
+        COMMAND ${PERL_EXECUTABLE} -I${WEBCORE_DIR}/bindings/scripts ${NAMES_GENERATOR} --outputDir ${DERIVED_SOURCES_WEBCORE_DIR} ${_arguments}
+        VERBATIM)
+ENDMACRO ()
+
+
 MACRO (GENERATE_DOM_NAMES _namespace _attrs)
     SET(NAMES_GENERATOR ${WEBCORE_DIR}/dom/make_names.pl)
     SET(_arguments  --attrs ${_attrs})

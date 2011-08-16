@@ -598,6 +598,8 @@ all : \
     SVGElementFactory.cpp \
     SVGNames.cpp \
     UserAgentStyleSheets.h \
+    WebKitFontFamilyNames.cpp \
+    WebKitFontFamilyNames.h \
     XLinkNames.cpp \
     XMLNSNames.cpp \
     XMLNames.cpp \
@@ -770,6 +772,9 @@ UserAgentStyleSheets.h : css/make-css-file-arrays.pl bindings/scripts/preprocess
 	perl -I$(WebCore)/bindings/scripts $< --defines "$(FEATURE_DEFINES)" $@ UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 # --------
+
+WebKitFontFamilyNames.cpp WebKitFontFamilyNames.h : dom/make_names.pl css/WebKitFontFamilyNames.in
+	perl -I $(WebCore)/bindings/scripts $< --fonts $(WebCore)/css/WebKitFontFamilyNames.in
 
 # HTML tag and attribute names
 

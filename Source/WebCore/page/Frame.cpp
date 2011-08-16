@@ -81,6 +81,7 @@
 #include "TextResourceDecoder.h"
 #include "UserContentURLPattern.h"
 #include "UserTypingGestureIndicator.h"
+#include "WebKitFontFamilyNames.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 #include "htmlediting.h"
@@ -180,6 +181,7 @@ inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoader
     MathMLNames::init();
     XMLNSNames::init();
     XMLNames::init();
+    WebKitFontFamilyNames::init();
 
     if (!ownerElement) {
 #if ENABLE(TILED_BACKING_STORE)

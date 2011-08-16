@@ -29,6 +29,8 @@ contains(DEFINES, ENABLE_XSLT=1) {
     }
 }
 
+FONT_NAMES = $$PWD/css/WebKitFontFamilyNames.in
+
 HTML_NAMES = $$PWD/html/HTMLTagNames.in
 
 XML_NAMES = $$PWD/xml/xmlattrs.in
@@ -761,6 +763,14 @@ xmlnames.input = XML_NAMES
 xmlnames.wkScript = $$PWD/dom/make_names.pl
 xmlnames.commands = perl -I$$PWD/bindings/scripts $$xmlnames.wkScript --attrs $$PWD/xml/xmlattrs.in --preprocessor \"$${QMAKE_MOC} -E\" --outputDir $$WC_GENERATED_SOURCES_DIR
 addExtraCompiler(xmlnames)
+
+# GENERATOR 5-D:
+fontnames.output = $${WC_GENERATED_SOURCES_DIR}/WebKitFontFamilyNames.cpp
+fontnames.input = FONT_NAMES
+fontnames.wkScript = $$PWD/dom/make_names.pl
+fontnames.commands = perl -I$$PWD/bindings/scripts $$fontnames.wkScript --fonts $$FONT_NAMES --outputDir $$WC_GENERATED_SOURCES_DIR
+entities.depends = $$PWD/dom/make_names.pl $$FONT_NAMES
+addExtraCompiler(fontnames)
 
 # GENERATOR 8-A:
 entities.output = $${WC_GENERATED_SOURCES_DIR}/HTMLEntityTable.cpp

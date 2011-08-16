@@ -583,6 +583,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/SVGNames.cpp \
 	DerivedSources/WebCore/UserAgentStyleSheetsData.cpp \
 	DerivedSources/WebCore/UserAgentStyleSheets.h \
+	DerivedSources/WebCore/WebKitFontFamilyNames.cpp \
+	DerivedSources/WebCore/WebKitFontFamilyNames.h \
 	DerivedSources/WebCore/XLinkNames.cpp \
 	DerivedSources/WebCore/XMLNames.cpp \
 	DerivedSources/WebCore/XMLNames.h \

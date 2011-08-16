@@ -47,6 +47,7 @@
 #include "RenderObject.h"
 #include "Settings.h"
 #include "SimpleFontData.h"
+#include "WebKitFontFamilyNames.h"
 #include <wtf/text/AtomicString.h>
 
 #if ENABLE(SVG)
@@ -296,22 +297,22 @@ void CSSFontSelector::addFontFaceRule(const CSSFontFaceRule* fontFaceRule)
             String familyName;
             switch (item->getIdent()) {
                 case CSSValueSerif:
-                    familyName = "-webkit-serif";
+                    familyName = serifFamily;
                     break;
                 case CSSValueSansSerif:
-                    familyName = "-webkit-sans-serif";
+                    familyName = sansSerifFamily;
                     break;
                 case CSSValueCursive:
-                    familyName = "-webkit-cursive";
+                    familyName = cursiveFamily;
                     break;
                 case CSSValueFantasy:
-                    familyName = "-webkit-fantasy";
+                    familyName = fantasyFamily;
                     break;
                 case CSSValueMonospace:
-                    familyName = "-webkit-monospace";
+                    familyName = monospaceFamily;
                     break;
                 case CSSValueWebkitPictograph:
-                    familyName = "-webkit-pictograph";
+                    familyName = pictographFamily;
                     break;
                 default:
                     break;
@@ -390,23 +391,24 @@ static FontData* fontDataForGenericFamily(Document* document, const FontDescript
     const Settings* settings = document->frame()->settings();
     if (!settings)
         return 0;
-    
+
     AtomicString genericFamily;
     UScriptCode script = fontDescription.script();
-    if (familyName == "-webkit-serif")
-        genericFamily = settings->serifFontFamily(script);
-    else if (familyName == "-webkit-sans-serif")
-        genericFamily = settings->sansSerifFontFamily(script);
-    else if (familyName == "-webkit-cursive")
-        genericFamily = settings->cursiveFontFamily(script);
-    else if (familyName == "-webkit-fantasy")
-        genericFamily = settings->fantasyFontFamily(script);
-    else if (familyName == "-webkit-monospace")
-        genericFamily = settings->fixedFontFamily(script);
-    else if (familyName == "-webkit-pictograph")
-        genericFamily = settings->pictographFontFamily(script);
-    else if (familyName == "-webkit-standard")
-        genericFamily = settings->standardFontFamily(script);
+
+    if (familyName == serifFamily)
+         genericFamily = settings->serifFontFamily(script);
+    else if (familyName == sansSerifFamily)
+         genericFamily = settings->sansSerifFontFamily(script);
+    else if (familyName == cursiveFamily)
+         genericFamily = settings->cursiveFontFamily(script);
+    else if (familyName == fantasyFamily)
+         genericFamily = settings->fantasyFontFamily(script);
+    else if (familyName == monospaceFamily)
+         genericFamily = settings->fixedFontFamily(script);
+    else if (familyName == pictographFamily)
+         genericFamily = settings->pictographFontFamily(script);
+    else if (familyName == standardFamily)
+         genericFamily = settings->standardFontFamily(script);
 
     if (!genericFamily.isEmpty())
         return fontCache()->getCachedFontData(fontDescription, genericFamily);

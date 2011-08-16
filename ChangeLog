@@ -1,3 +1,12 @@
+2011-08-16  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Need AtomicStrings for the various font family names
+        https://bugs.webkit.org/show_bug.cgi?id=28024
+
+        * Source/cmake/WebKitMacros.cmake: Add new macro.
+
 2011-08-11  Xan Lopez  <xlopez@igalia.com>
 
         [GTK] Update NEWS and configure.ac for 1.5.2 release

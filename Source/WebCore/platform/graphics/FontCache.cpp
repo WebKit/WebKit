@@ -35,6 +35,7 @@
 #include "FontPlatformData.h"
 #include "FontSelector.h"
 #include "GlyphPageTreeNode.h"
+#include "WebKitFontFamilyNames.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
@@ -428,7 +429,7 @@ const FontData* FontCache::getFontData(const Font& font, int& familyIndex, FontS
 
         if (fontSelector) {
             // Try the user's preferred standard font.
-            if (FontData* data = fontSelector->getFontData(font.fontDescription(), "-webkit-standard"))
+            if (FontData* data = fontSelector->getFontData(font.fontDescription(), standardFamily))
                 return data;
         }
 

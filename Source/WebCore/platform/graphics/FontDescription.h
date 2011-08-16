@@ -34,11 +34,14 @@
 #include "FontWidthVariant.h"
 #include "TextOrientation.h"
 #include "TextRenderingMode.h"
+#include "WebKitFontFamilyNames.h"
 #include <wtf/MathExtras.h>
 
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+using namespace WebKitFontFamilyNames;
 
 enum FontWeight {
     FontWeight100,
@@ -107,7 +110,7 @@ public:
     GenericFamilyType genericFamily() const { return static_cast<GenericFamilyType>(m_genericFamily); }
     bool usePrinterFont() const { return m_usePrinterFont; }
     // only use fixed default size when there is only one font family, and that family is "monospace"
-    bool useFixedDefaultSize() const { return genericFamily() == MonospaceFamily && !family().next() && family().family() == "-webkit-monospace"; }
+    bool useFixedDefaultSize() const { return genericFamily() == MonospaceFamily && !family().next() && family().family() == monospaceFamily; }
     FontRenderingMode renderingMode() const { return static_cast<FontRenderingMode>(m_renderingMode); }
     unsigned keywordSize() const { return m_keywordSize; }
     FontSmoothingMode fontSmoothing() const { return static_cast<FontSmoothingMode>(m_fontSmoothing); }

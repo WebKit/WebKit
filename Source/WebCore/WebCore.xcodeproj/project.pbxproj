@@ -320,6 +320,8 @@
 		1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D57350A5C77FE007EDD4C /* OverflowEvent.h */; };
 		1A0D57400A5C7867007EDD4C /* JSOverflowEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */; };
 		1A0D57410A5C7867007EDD4C /* JSOverflowEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */; };
+		1A1414B513A0F0500019996C /* WebKitFontFamilyNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A1414B313A0F0500019996C /* WebKitFontFamilyNames.cpp */; };
+		1A1414B613A0F0500019996C /* WebKitFontFamilyNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = 1A1414B413A0F0500019996C /* WebKitFontFamilyNames.h */; settings = {ATTRIBUTES = (); }; };
 		1A1D13800A5325520064BF5F /* DOMXPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A1D137E0A5325520064BF5F /* DOMXPath.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1A1D13810A5325520064BF5F /* DOMXPath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A1D137F0A5325520064BF5F /* DOMXPath.mm */; };
 		1A219B3B0DCA87AB0040E3A0 /* npfunctions.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A219B3A0DCA87AB0040E3A0 /* npfunctions.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -6479,6 +6481,7 @@
 				1403BA0F09EB18F900797C7F /* JSDOMWindow.h in Copy Generated Headers */,
 				14DC0D3809FED073007B0235 /* JSNode.h in Copy Generated Headers */,
 				08C7A2C710DC7462002D368B /* SVGNames.h in Copy Generated Headers */,
+				1A1414B613A0F0500019996C /* WebKitFontFamilyNames.h in Copy Generated Headers */,
 			);
 			name = "Copy Generated Headers";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6799,6 +6802,8 @@
 		1A0D57380A5C7812007EDD4C /* OverflowEvent.idl */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = OverflowEvent.idl; sourceTree = "<group>"; };
 		1A0D573E0A5C7867007EDD4C /* JSOverflowEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSOverflowEvent.cpp; sourceTree = "<group>"; };
 		1A0D573F0A5C7867007EDD4C /* JSOverflowEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSOverflowEvent.h; sourceTree = "<group>"; };
+		1A1414B313A0F0500019996C /* WebKitFontFamilyNames.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitFontFamilyNames.cpp; sourceTree = "<group>"; };
+		1A1414B413A0F0500019996C /* WebKitFontFamilyNames.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WebKitFontFamilyNames.h; sourceTree = "<group>"; };
 		1A1D137E0A5325520064BF5F /* DOMXPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMXPath.h; sourceTree = "<group>"; };
 		1A1D137F0A5325520064BF5F /* DOMXPath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMXPath.mm; sourceTree = "<group>"; };
 		1A219B3A0DCA87AB0040E3A0 /* npfunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = npfunctions.h; sourceTree = "<group>"; };
@@ -14322,6 +14327,8 @@
 		656580EC09D12B20000E61D7 /* Derived Sources */ = {
 			isa = PBXGroup;
 			children = (
+				1A1414B313A0F0500019996C /* WebKitFontFamilyNames.cpp */,
+				1A1414B413A0F0500019996C /* WebKitFontFamilyNames.h */,
 				656581AC09D14EE6000E61D7 /* CharsetData.cpp */,
 				E406F3FB1198307D009D59D6 /* ColorData.cpp */,
 				6565814409D13043000E61D7 /* CSSGrammar.cpp */,
@@ -26174,6 +26181,7 @@
 				59DE790413F16C7F0007FCDF /* JavaMethodJSC.cpp in Sources */,
 				FD6F252C13F5EF0E0065165F /* MediaElementAudioSourceNode.cpp in Sources */,
 				FD23A12513F5FA5900F67001 /* JSMediaElementAudioSourceNode.cpp in Sources */,
+				1A1414B513A0F0500019996C /* WebKitFontFamilyNames.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

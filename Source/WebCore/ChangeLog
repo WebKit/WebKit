@@ -1,3 +1,42 @@
+2011-08-16  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Need AtomicStrings for the various font family names
+        https://bugs.webkit.org/show_bug.cgi?id=28024
+
+        Unify the usage of '-webkit' prefixed font family names by using
+        global AtomicStrings.
+        Use a .in file to generate the needed sources through make_names.pl.
+
+        No new tests needed.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.make:
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gyp/scripts/action_makenames.py:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::identifierForFamily):
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        (WebCore::fontDataForGenericFamily):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/WebKitFontFamilyNames.in: Added.
+        * dom/make_names.pl:
+        * page/Frame.cpp:
+        (WebCore::Frame::Frame):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getFontData):
+        * platform/graphics/FontDescription.h:
+        (WebCore::FontDescription::useFixedDefaultSize):
+
 2011-08-16  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: nuke background events collection (dead feature)

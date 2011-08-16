@@ -49,6 +49,7 @@
 #include "RenderLayer.h"
 #include "ShadowValue.h"
 #include "WebKitCSSTransformValue.h"
+#include "WebKitFontFamilyNames.h"
 
 #if ENABLE(DASHBOARD_SUPPORT)
 #include "DashboardRegion.h"
@@ -681,12 +682,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
 
 static int identifierForFamily(const AtomicString& family)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, cursiveFamily, ("-webkit-cursive"));
-    DEFINE_STATIC_LOCAL(AtomicString, fantasyFamily, ("-webkit-fantasy"));
-    DEFINE_STATIC_LOCAL(AtomicString, monospaceFamily, ("-webkit-monospace"));
-    DEFINE_STATIC_LOCAL(AtomicString, pictographFamily, ("-webkit-pictograph"));
-    DEFINE_STATIC_LOCAL(AtomicString, sansSerifFamily, ("-webkit-sans-serif"));
-    DEFINE_STATIC_LOCAL(AtomicString, serifFamily, ("-webkit-serif"));
     if (family == cursiveFamily)
         return CSSValueCursive;
     if (family == fantasyFamily)

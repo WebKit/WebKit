@@ -34,6 +34,7 @@ use strict;
 use Config;
 use Getopt::Long;
 use File::Path;
+use File::Spec;
 use IO::File;
 use InFilesParser;
 
@@ -43,6 +44,7 @@ sub readAttrs($$);
 my $printFactory = 0; 
 my $printWrapperFactory = 0; 
 my $printWrapperFactoryV8 = 0; 
+my $fontNamesIn = "";
 my $tagsFile = "";
 my $attrsFile = "";
 my $outputDir = ".";
@@ -54,6 +56,7 @@ my %allTags = ();
 my %allAttrs = ();
 my %parameters = ();
 my $extraDefines = 0;
+my $initDefaults = 1;
 my %extensionAttrs = ();
 
 require Config;
@@ -76,8 +79,56 @@ GetOptions(
     'extraDefines=s' => \$extraDefines,
     'preprocessor=s' => \$preprocessor,
     'wrapperFactory' => \$printWrapperFactory,
-    'wrapperFactoryV8' => \$printWrapperFactoryV8
+    'wrapperFactoryV8' => \$printWrapperFactoryV8,
+    'fonts=s' => \$fontNamesIn
 );
+
+mkpath($outputDir);
+
+if (length($fontNamesIn)) {
+    my $names = new IO::File;
+    my $familyNamesFileBase = "WebKitFontFamily";
+
+    open($names, $fontNamesIn) or die "Failed to open file: $fontNamesIn";
+
+    $initDefaults = 0;
+    my $Parser = InFilesParser->new();
+    my $dummy;
+    $Parser->parse($names, \&parametersHandler, \&dummy);
+
+    my $F;
+    my $header = File::Spec->catfile($outputDir, "${familyNamesFileBase}Names.h");
+    open F, ">$header" or die "Unable to open $header for writing.";
+
+    printLicenseHeader($F);
+    printHeaderHead($F, "CSS", $familyNamesFileBase, "#include <wtf/text/AtomicString.h>");
+
+    printMacros($F, "extern const WTF::AtomicString", "", \%parameters);
+    print F "#endif\n\n";
+
+    printInit($F, 1);
+    close F;
+
+    my $source = File::Spec->catfile($outputDir, "${familyNamesFileBase}Names.cpp");
+    open F, ">$source" or die "Unable to open $source for writing.";
+
+    printLicenseHeader($F);
+    printCppHead($F, "CSS", $familyNamesFileBase, "WTF");
+
+    while ( my ($name, $identifier) = each %parameters ) {
+        print F "DEFINE_GLOBAL(AtomicString, $name, \"$identifier\")\n";
+    }
+
+    printInit($F, 0);
+
+    while ( my ($name, $identifier) = each %parameters ) {
+        print F "    new ((void*)&$name) AtomicString(\"$identifier\");\n";
+    }
+
+    print F "}\n}\n}\n";
+    close F;
+    exit 0;
+}
 
 die "You must specify at least one of --tags <file> or --attrs <file>" unless (length($tagsFile) || length($attrsFile));
 
@@ -96,7 +147,6 @@ die "You must specify a namespaceURI (e.g. http://www.w3.org/2000/svg)" unless $
 
 $parameters{namespacePrefix} = $parameters{namespace} unless $parameters{namespacePrefix};
 
-mkpath($outputDir);
 my $namesBasePath = "$outputDir/$parameters{namespace}Names";
 my $factoryBasePath = "$outputDir/$parameters{namespace}ElementFactory";
 my $wrapperFactoryFileName = "$parameters{namespace}ElementWrapperFactory";
@@ -206,9 +256,9 @@ sub parametersHandler
     my ($parameter, $value) = @_;
 
     # Initialize default properties' values.
-    %parameters = defaultParametersHash() if !(keys %parameters);
+    %parameters = defaultParametersHash() if (!(keys %parameters) && $initDefaults);
 
-    die "Unknown parameter $parameter for tags/attrs\n" if !defined($parameters{$parameter});
+    die "Unknown parameter $parameter for tags/attrs\n" if (!defined($parameters{$parameter}) && $initDefaults);
     $parameters{$parameter} = $value;
 }
 
@@ -258,7 +308,7 @@ sub printMacros
     my ($F, $macro, $suffix, $namesRef) = @_;
     my %names = %$namesRef;
 
-    for my $name (sort keys %$namesRef) {
+    for my $name (sort keys %names) {
         print F "$macro $name","$suffix;\n";
     }
 }
@@ -417,6 +467,63 @@ sub upperCaseName
     return ucfirst $name;
 }
 
+sub printHeaderHead
+{
+    my ($F, $prefix, $nsName, $includes) = @_;
+
+    print F "#ifndef ${prefix}_${nsName}Names_h\n";
+    print F "#define ${prefix}_${nsName}Names_h\n\n";
+    print F "$includes\n\n";
+
+    print F "namespace WebCore {\n\n";
+    print F "namespace ${nsName}Names {\n\n";
+
+    print F "#ifndef ${prefix}_${nsName}NAMES_HIDE_GLOBALS\n";
+}
+
+sub printCppHead
+{
+    my ($F, $prefix, $nsName, $usedNamespace) = @_;
+
+    print F "#include \"config.h\"\n\n";
+    print F "#ifdef SKIP_STATIC_CONSTRUCTORS_ON_GCC\n";
+    print F "#define ${prefix}_${nsName}NAMES_HIDE_GLOBALS 1\n";
+    print F "#else\n";
+    print F "#define QNAME_DEFAULT_CONSTRUCTOR 1\n";
+    print F "#endif\n\n";
+
+    print F "#include \"${nsName}Names.h\"\n\n";
+    print F "#include <wtf/StaticConstructors.h>\n";
+
+    print F "namespace WebCore {\n\n";
+    print F "namespace ${nsName}Names {\n\n";
+    print F "using namespace $usedNamespace;\n\n";
+}
+
+sub printInit
+{
+    my ($F, $isDefinition) = @_;
+
+    if ($isDefinition) {
+        print F "\nvoid init();\n\n";
+        print F "} }\n\n";
+        print F "#endif\n\n";
+        return;
+    }
+
+print F "\nvoid init()
+{
+    static bool initialized = false;
+    if (initialized)
+        return;
+    initialized = true;
+
+    // Use placement new to initialize the globals.
+
+    AtomicString::init();
+";
+}
+
 sub printLicenseHeader
 {
     my $F = shift;
@@ -459,14 +566,9 @@ sub printNamesHeaderFile
     open F, ">$headerPath";
 
     printLicenseHeader($F);
-    print F "#ifndef DOM_$parameters{namespace}NAMES_H\n";
-    print F "#define DOM_$parameters{namespace}NAMES_H\n\n";
-    print F "#include \"QualifiedName.h\"\n\n";
-
-    print F "namespace WebCore {\n\n namespace $parameters{namespace}Names {\n\n";
+    printHeaderHead($F, "DOM", $parameters{namespace}, "#include \"QualifiedName.h\"");
 
     my $lowerNamespace = lc($parameters{namespacePrefix});
-    print F "#ifndef DOM_$parameters{namespace}NAMES_HIDE_GLOBALS\n";
     print F "// Namespace\n";
     print F "extern const WTF::AtomicString ${lowerNamespace}NamespaceURI;\n\n";
 
@@ -489,10 +591,7 @@ sub printNamesHeaderFile
         print F "WebCore::QualifiedName** get$parameters{namespace}Attrs(size_t* size);\n";
     }
 
-    print F "\nvoid init();\n\n";
-    print F "} }\n\n";
-    print F "#endif\n\n";
-
+    printInit($F, 1);
     close F;
 }
 
@@ -503,27 +602,11 @@ sub printNamesCppFile
     open F, ">$cppPath";
     
     printLicenseHeader($F);
+    printCppHead($F, "DOM", $parameters{namespace}, "WebCore");
     
     my $lowerNamespace = lc($parameters{namespacePrefix});
 
-print F "#include \"config.h\"\n";
-
-print F "#ifdef SKIP_STATIC_CONSTRUCTORS_ON_GCC\n";
-print F "#define DOM_$parameters{namespace}NAMES_HIDE_GLOBALS 1\n";
-print F "#else\n";
-print F "#define QNAME_DEFAULT_CONSTRUCTOR 1\n";
-print F "#endif\n\n";
-
-
-print F "#include \"$parameters{namespace}Names.h\"\n\n";
-print F "#include <wtf/StaticConstructors.h>\n";
-
-print F "namespace WebCore {\n\n namespace $parameters{namespace}Names {
-
-using namespace WebCore;
-
-DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$parameters{namespaceURI}\")
-";
+    print F "DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$parameters{namespaceURI}\")";
 
     if (keys %allTags) {
         print F "// Tags\n";
@@ -558,17 +641,7 @@ DEFINE_GLOBAL(AtomicString, ${lowerNamespace}NamespaceURI, \"$parameters{namespa
         print F "}\n";
     }
 
-print F "\nvoid init()
-{
-    static bool initialized = false;
-    if (initialized)
-        return;
-    initialized = true;
-    
-    // Use placement new to initialize the globals.
-    
-    AtomicString::init();
-";
+    printInit($F, 0);
     
     print(F "    AtomicString ${lowerNamespace}NS(\"$parameters{namespaceURI}\");\n\n");
 

@@ -690,6 +690,11 @@ DerivedSources/WebCore/UserAgentStyleSheetsData.cpp: DerivedSources/WebCore/User
 DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS)
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $<  --defines "$(FEATURE_DEFINES)" $@ DerivedSources/WebCore/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
+DerivedSources/WebCore/WebKitFontFamilyNames.cpp: DerivedSources/WebCore/WebKitFontFamilyNames.h
+DerivedSources/WebCore/WebKitFontFamilyNames.h: $(WebCore)/dom/make_names.pl $(WebCore)/css/WebKitFontFamilyNames.in
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --fonts $(WebCore)/css/WebKitFontFamilyNames.in --outputDir "$(GENSOURCES_WEBCORE)"
+
+
 # HTML tag and attribute names
 DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp: DerivedSources/WebCore/HTMLElementFactory.cpp
 DerivedSources/WebCore/HTMLElementFactory.cpp: DerivedSources/WebCore/HTMLElementFactory.h

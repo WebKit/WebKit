@@ -104,6 +104,7 @@
 #include "WebKitCSSKeyframeRule.h"
 #include "WebKitCSSKeyframesRule.h"
 #include "WebKitCSSTransformValue.h"
+#include "WebKitFontFamilyNames.h"
 #include "XMLNames.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
@@ -4185,27 +4186,27 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                         face = settings->standardFontFamily();
                         break;
                     case CSSValueSerif:
-                        face = "-webkit-serif";
+                        face = serifFamily;
                         fontDescription.setGenericFamily(FontDescription::SerifFamily);
                         break;
                     case CSSValueSansSerif:
-                        face = "-webkit-sans-serif";
+                        face = sansSerifFamily;
                         fontDescription.setGenericFamily(FontDescription::SansSerifFamily);
                         break;
                     case CSSValueCursive:
-                        face = "-webkit-cursive";
+                        face = cursiveFamily;
                         fontDescription.setGenericFamily(FontDescription::CursiveFamily);
                         break;
                     case CSSValueFantasy:
-                        face = "-webkit-fantasy";
+                        face = fantasyFamily;
                         fontDescription.setGenericFamily(FontDescription::FantasyFamily);
                         break;
                     case CSSValueMonospace:
-                        face = "-webkit-monospace";
+                        face = monospaceFamily;
                         fontDescription.setGenericFamily(FontDescription::MonospaceFamily);
                         break;
                     case CSSValueWebkitPictograph:
-                        face = "-webkit-pictograph";
+                        face = pictographFamily;
                         fontDescription.setGenericFamily(FontDescription::PictographFamily);
                         break;
                 }

@@ -610,6 +610,26 @@
           ],
         },
         {
+          'action_name': 'WebKitFontFamilyNames',
+          'inputs': [
+            '../dom/make_names.pl',
+            '../css/WebKitFontFamilyNames.in',
+          ],
+          'outputs': [
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/WebKitFontFamilyNames.cpp',
+            '<(SHARED_INTERMEDIATE_DIR)/webkit/WebKitFontFamilyNames.h',
+          ],
+          'action': [
+            'python',
+            'scripts/action_makenames.py',
+            '<@(_outputs)',
+            '--',
+            '<@(_inputs)',
+            '--',
+            '--fonts',
+          ],
+        },
+        {
           'action_name': 'SVGNames',
           'inputs': [
             '../dom/make_names.pl',
@@ -959,6 +979,7 @@
         '<(SHARED_INTERMEDIATE_DIR)/webkit/SVGNames.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLElementFactory.cpp',
         '<(SHARED_INTERMEDIATE_DIR)/webkit/MathMLNames.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/WebKitFontFamilyNames.cpp',
 
         # Generated from HTMLEntityNames.in
         '<(SHARED_INTERMEDIATE_DIR)/webkit/HTMLEntityTable.cpp',

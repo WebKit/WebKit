@@ -127,11 +127,13 @@ def main(args):
              or inputBasename.endswith('attrs.in'):
             assert attrInput == None
             attrInput = inputAbsPosix
+        elif inputBasename.endswith('Names.in'):
+            options.append(inputAbsPosix)
         else:
             assert False
 
     assert makeNamesInput != None
-    assert tagInput != None or attrInput != None
+    assert tagInput != None or attrInput != None or ('--fonts' in options)
 
     # scriptsPath is a Perl include directory, located relative to
     # makeNamesInput.
