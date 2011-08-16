@@ -194,6 +194,7 @@ SOURCES += \
     $$PWD/WebCoreSupport/PopupMenuQt.cpp \
     $$PWD/WebCoreSupport/QtPlatformPlugin.cpp \
     $$PWD/WebCoreSupport/SearchPopupMenuQt.cpp \
+    $$PWD/WebCoreSupport/TextCheckerClientQt.cpp \
     $$PWD/WebCoreSupport/WebPlatformStrategies.cpp
 
 HEADERS += \
@@ -210,6 +211,7 @@ HEADERS += \
     $$PWD/WebCoreSupport/QtPlatformPlugin.h \
     $$PWD/WebCoreSupport/PopupMenuQt.h \
     $$PWD/WebCoreSupport/SearchPopupMenuQt.h \
+    $$PWD/WebCoreSupport/TextCheckerClientQt.h \
     $$PWD/WebCoreSupport/WebPlatformStrategies.h
 
 webkit2 {

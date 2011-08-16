@@ -1,3 +1,40 @@
+2011-08-16  Lindsay Mathieson   <lindsay.mathieson@gmail.com>
+
+        [Qt] Missing spell check support
+        https://bugs.webkit.org/show_bug.cgi?id=44114
+
+        Reviewed by Benjamin Poulain.
+
+        Added a platform plugin to allow spell and grammar check in QtWebKit.
+
+        * Api/qwebkitplatformplugin.h:
+        * QtWebKit.pro:
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::isContinuousSpellCheckingEnabled):
+        (WebCore::EditorClientQt::isGrammarCheckingEnabled):
+        (WebCore::EditorClientQt::toggleContinuousSpellChecking):
+        (WebCore::EditorClientQt::toggleGrammarChecking):
+        * WebCoreSupport/EditorClientQt.h:
+        (WebCore::EditorClientQt::textChecker):
+        * WebCoreSupport/QtPlatformPlugin.cpp:
+        (WebCore::QtPlatformPlugin::createSpellChecker):
+        * WebCoreSupport/QtPlatformPlugin.h:
+        * WebCoreSupport/TextCheckerClientQt.cpp: Added.
+        (convertToVectorList):
+        (WebCore::TextCheckerClientQt::ignoreWordInSpellDocument):
+        (WebCore::TextCheckerClientQt::learnWord):
+        (WebCore::TextCheckerClientQt::getAutoCorrectSuggestionForMisspelledWord):
+        (WebCore::TextCheckerClientQt::checkSpellingOfString):
+        (WebCore::TextCheckerClientQt::checkGrammarOfString):
+        (WebCore::TextCheckerClientQt::getGuessesForWord):
+        (WebCore::TextCheckerClientQt::isContinousSpellCheckingEnabled):
+        (WebCore::TextCheckerClientQt::toggleContinousSpellChecking):
+        (WebCore::TextCheckerClientQt::isGrammarCheckingEnabled):
+        (WebCore::TextCheckerClientQt::toggleGrammarChecking):
+        (WebCore::TextCheckerClientQt::loadSpellChecker):
+        * WebCoreSupport/TextCheckerClientQt.h: Added.
+        (WebCore::TextCheckerClientQt::requestCheckingOfString):
+
 2011-08-15  Dmitry Titov  <dimich@chromium.org>
 
         FrameLoaderClient::transferLoadingResourceFromPage does not have enough parameters

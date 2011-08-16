@@ -33,6 +33,7 @@ class QWebTouchModifier;
 #if ENABLE(VIDEO) && USE(QT_MULTIMEDIA)
 class QWebFullScreenVideoHandler;
 #endif
+class QWebSpellChecker;
 
 namespace WebCore {
 
@@ -53,6 +54,7 @@ public:
 #if ENABLE(VIDEO) && USE(QT_MULTIMEDIA)
     PassOwnPtr<QWebFullScreenVideoHandler> createFullScreenVideoHandler();
 #endif
+    PassOwnPtr<QWebSpellChecker> createSpellChecker();
 
     QWebKitPlatformPlugin* plugin();
 

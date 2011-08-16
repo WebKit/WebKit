@@ -134,4 +134,10 @@ PassOwnPtr<QWebFullScreenVideoHandler> QtPlatformPlugin::createFullScreenVideoHa
 }
 #endif
 
+PassOwnPtr<QWebSpellChecker> QtPlatformPlugin::createSpellChecker()
+{
+    QWebKitPlatformPlugin* p = plugin();
+    return adoptPtr(p ? static_cast<QWebSpellChecker*>(p->createExtension(QWebKitPlatformPlugin::SpellChecker)) : 0);
+}
+
 }

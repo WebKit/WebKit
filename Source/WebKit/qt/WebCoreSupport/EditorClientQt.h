@@ -31,16 +31,15 @@
 #define EditorClientQt_h
 
 #include "EditorClient.h"
-#include "TextCheckerClient.h"
 #include "RefCounted.h"
-
+#include "TextCheckerClientQt.h"
 #include <wtf/Forward.h>
 
 class QWebPage;
 
 namespace WebCore {
 
-class EditorClientQt : public EditorClient, public TextCheckerClient {
+class EditorClientQt : public EditorClient {
 public:
     EditorClientQt(QWebPage* page);
     
@@ -97,20 +96,13 @@ public:
     virtual void textWillBeDeletedInTextField(Element*);
     virtual void textDidChangeInTextArea(Element*);
 
-    virtual void ignoreWordInSpellDocument(const String&);
-    virtual void learnWord(const String&);
-    virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
-    virtual String getAutoCorrectSuggestionForMisspelledWord(const String& misspelledWord);
-    virtual void checkGrammarOfString(const UChar*, int length, Vector<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength);
     virtual void updateSpellingUIWithGrammarString(const String&, const GrammarDetail&);
     virtual void updateSpellingUIWithMisspelledWord(const String&);
     virtual void showSpellingUI(bool show);
     virtual bool spellingUIIsShowing();
-    virtual void getGuessesForWord(const String& word, const String& context, Vector<String>& guesses);
     virtual void willSetInputMethodState();
     virtual void setInputMethodState(bool enabled);
-    virtual void requestCheckingOfString(SpellChecker*, int, WebCore::TextCheckingTypeMask, const String&) {}
-    virtual TextCheckerClient* textChecker() { return this; }
+    virtual TextCheckerClient* textChecker() { return &m_textCheckerClient; }
 
     bool isEditing() const;
 
@@ -118,6 +110,7 @@ public:
     static bool acceptsEditing;
 
 private:
+    TextCheckerClientQt m_textCheckerClient;
     QWebPage* m_page;
     bool m_editing;
     bool m_inUndoRedo; // our undo stack works differently - don't re-enter!

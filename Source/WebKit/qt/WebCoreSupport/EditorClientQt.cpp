@@ -56,7 +56,6 @@
 #include <stdio.h>
 #include <wtf/OwnPtr.h>
 
-#define methodDebug() qDebug("EditorClientQt: %s", __FUNCTION__);
 
 static QString dumpPath(WebCore::Node *node)
 {
@@ -109,12 +108,12 @@ bool EditorClientQt::shouldShowDeleteInterface(HTMLElement* element)
 
 bool EditorClientQt::isContinuousSpellCheckingEnabled()
 {
-    return false;
+    return m_textCheckerClient.isContinousSpellCheckingEnabled();
 }
 
 bool EditorClientQt::isGrammarCheckingEnabled()
 {
-    return false;
+    return m_textCheckerClient.isGrammarCheckingEnabled();
 }
 
 int EditorClientQt::spellCheckerDocumentTag()
@@ -344,12 +343,12 @@ bool EditorClientQt::isSelectTrailingWhitespaceEnabled()
 
 void EditorClientQt::toggleContinuousSpellChecking()
 {
-    notImplemented();
+    m_textCheckerClient.toggleContinousSpellChecking();
 }
 
 void EditorClientQt::toggleGrammarChecking()
 {
-    notImplemented();
+    return m_textCheckerClient.toggleGrammarChecking();
 }
 
 static const unsigned CtrlKey = 1 << 0;
@@ -567,32 +566,6 @@ void EditorClientQt::textDidChangeInTextArea(Element*)
 {
 }
 
-void EditorClientQt::ignoreWordInSpellDocument(const String&)
-{
-    notImplemented();
-}
-
-void EditorClientQt::learnWord(const String&)
-{
-    notImplemented();
-}
-
-void EditorClientQt::checkSpellingOfString(const UChar*, int, int*, int*)
-{
-    notImplemented();
-}
-
-String EditorClientQt::getAutoCorrectSuggestionForMisspelledWord(const String&)
-{
-    notImplemented();
-    return String();
-}
-
-void EditorClientQt::checkGrammarOfString(const UChar*, int, Vector<GrammarDetail>&, int*, int*)
-{
-    notImplemented();
-}
-
 void EditorClientQt::updateSpellingUIWithGrammarString(const String&, const GrammarDetail&)
 {
     notImplemented();
@@ -612,11 +585,6 @@ bool EditorClientQt::spellingUIIsShowing()
 {
     notImplemented();
     return false;
-}
-
-void EditorClientQt::getGuessesForWord(const String& word, const String& context, Vector<String>& guesses)
-{
-    notImplemented();
 }
 
 bool EditorClientQt::isEditing() const

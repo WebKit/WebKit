@@ -21,6 +21,8 @@
 #ifndef QWEBKITPLATFORMPLUGIN_H
 #define QWEBKITPLATFORMPLUGIN_H
 
+#include "qwebkitglobal.h"
+
 /*
  *  Warning: The contents of this file is not  part of the public QtWebKit API
  *  and may be changed from version to version or even be completely removed.
@@ -134,6 +136,30 @@ public Q_SLOTS:
 };
 #endif
 
+class QWEBKIT_EXPORT QWebSpellChecker : public QObject {
+    Q_OBJECT
+public:
+    struct GrammarDetail {
+        int location;
+        int length;
+        QStringList guesses;
+        QString userDescription;
+    };
+
+    virtual bool isContinousSpellCheckingEnabled() const = 0;
+    virtual void toggleContinousSpellChecking() = 0;
+
+    virtual void learnWord(const QString& word) = 0;
+    virtual void ignoreWordInSpellDocument(const QString& word) = 0;
+    virtual void checkSpellingOfString(const QString& word, int* misspellingLocation, int* misspellingLength) = 0;
+    virtual QString autoCorrectSuggestionForMisspelledWord(const QString& word) = 0;
+    virtual void guessesForWord(const QString& word, const QString& context, QStringList& guesses) = 0;
+
+    virtual bool isGrammarCheckingEnabled() = 0;
+    virtual void toggleGrammarChecking() = 0;
+    virtual void checkGrammarOfString(const QString&, QList<GrammarDetail>&, int* badGrammarLocation, int* badGrammarLength) = 0;
+};
+
 class QWebKitPlatformPlugin {
 public:
     virtual ~QWebKitPlatformPlugin() {}
@@ -143,7 +169,8 @@ public:
         Notifications,
         Haptics,
         TouchInteraction,
-        FullScreenVideoPlayer
+        FullScreenVideoPlayer,
+        SpellChecker
     };
 
     virtual bool supportsExtension(Extension) const = 0;

@@ -1,3 +1,16 @@
+2011-08-16  Lindsay Mathieson   <lindsay.mathieson@gmail.com>
+
+        [Qt] Missing spell check support
+        https://bugs.webkit.org/show_bug.cgi?id=44114
+
+        Reviewed by Benjamin Poulain.
+
+        Add drawErrorUnderline() from Cairo to render the line for text checking on the Qt port.
+
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::drawErrorUnderline):
+        (WebCore::GraphicsContext::drawLineForTextChecking):
+
 2011-08-15  MORITA Hajime  <morrita@google.com>
 
         REGRESSION(r70598): [Chromium] Style changes in textInput event can prevent from updating <textarea> value.
