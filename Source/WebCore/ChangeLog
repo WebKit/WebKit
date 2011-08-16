@@ -1,3 +1,48 @@
+2011-08-16  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Abandoned Memory: Temporary CSS Fonts May Never Be Purged
+        https://bugs.webkit.org/show_bug.cgi?id=66153
+
+        Reviewed by Dan Bernstein.
+
+        While a remote CSS font face is loading we fallback to a
+        temporary font. We don't want to retain the fallback font
+        because noone takes ownership of the temporary font. This
+        patch adds a way to get an uncached fallback font, which
+        plumbs the ShouldRetain enum through the different platform
+        implementations of getLastResortFallbackFont.
+
+        No new tests, no functional change.
+
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::getNonRetainedLastResortFallbackFont):
+        * platform/graphics/FontCache.h:
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::fontDataFromDescriptionAndLogFont):
+        (WebCore::GetLastResortFallbackFontProcData::GetLastResortFallbackFontProcData):
+        (WebCore::getLastResortFallbackFontProc):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/haiku/FontCacheHaiku.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/pango/FontCachePango.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::fontDataFromDescriptionAndLogFont):
+        (WebCore::FontCache::getLastResortFallbackFont):
+        * platform/graphics/wince/FontCacheWinCE.cpp:
+        * platform/graphics/wx/FontCacheWx.cpp:
+        (WebCore::FontCache::getLastResortFallbackFont):
+
 2011-08-16  Alexei Svitkine  <asvitkine@chromium.org>
 
         Chromium Mac: Rubber banding gutter drawing

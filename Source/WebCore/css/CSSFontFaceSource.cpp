@@ -185,7 +185,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
         if (!m_loadStartTimer.isActive())
             m_loadStartTimer.startOneShot(0);
 
-        SimpleFontData* tempData = fontCache()->getLastResortFallbackFont(fontDescription);
+        SimpleFontData* tempData = fontCache()->getNonRetainedLastResortFallbackFont(fontDescription);
         fontData = adoptPtr(new SimpleFontData(tempData->platformData(), true, true));
     }
 

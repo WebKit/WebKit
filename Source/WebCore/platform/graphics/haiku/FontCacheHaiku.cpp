@@ -58,13 +58,13 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return 0;
 }
 
-SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     font_family family;
     font_style style;
     be_plain_font->GetFamilyAndStyle(&family, &style);
     AtomicString plainFontFamily(family);
-    return getCachedFontData(fontDescription, plainFontFamily);
+    return getCachedFontData(fontDescription, plainFontFamily, false, shouldRetain);
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)

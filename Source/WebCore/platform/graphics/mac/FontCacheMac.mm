@@ -177,13 +177,13 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return simpleFontData;
 }
 
-SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     DEFINE_STATIC_LOCAL(AtomicString, timesStr, ("Times"));
 
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    SimpleFontData* simpleFontData = getCachedFontData(fontDescription, timesStr);
+    SimpleFontData* simpleFontData = getCachedFontData(fontDescription, timesStr, false, shouldRetain);
     if (simpleFontData)
         return simpleFontData;
 
@@ -192,7 +192,7 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
     // guaranteed to be there, according to Nathan Taylor. This is good enough
     // to avoid a crash at least.
     DEFINE_STATIC_LOCAL(AtomicString, lucidaGrandeStr, ("Lucida Grande"));
-    return getCachedFontData(fontDescription, lucidaGrandeStr);
+    return getCachedFontData(fontDescription, lucidaGrandeStr, false, shouldRetain);
 }
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName, Vector<unsigned>& traitsMasks)

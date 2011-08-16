@@ -77,7 +77,7 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return simpleFontData;
 }
 
-SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDescription, ShouldRetain shouldRetain)
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
@@ -87,7 +87,7 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
 #else
     static AtomicString fallbackName("Times New Roman");
 #endif
-    fallback = getCachedFontData(fontDescription, fallbackName);
+    fallback = getCachedFontData(fontDescription, fallbackName, false, shouldRetain);
     ASSERT(fallback);
     
     return fallback;

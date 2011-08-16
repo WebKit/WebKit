@@ -310,6 +310,11 @@ SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformDat
     return result.get()->second.first;
 }
 
+SimpleFontData* FontCache::getNonRetainedLastResortFallbackFont(const FontDescription& fontDescription)
+{
+    return getLastResortFallbackFont(fontDescription, DoNotRetain);
+}
+
 void FontCache::releaseFontData(const SimpleFontData* fontData)
 {
     ASSERT(gFontDataCache);

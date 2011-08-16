@@ -72,7 +72,7 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return 0;
 }
 
-SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& description)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& description, ShouldRetain shouldRetain)
 {
     static const AtomicString sansStr("Sans");
     static const AtomicString serifStr("Serif");
@@ -93,7 +93,7 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& desc
     }
 
     ASSERT(fontPlatformData);
-    return getCachedFontData(fontPlatformData);
+    return getCachedFontData(fontPlatformData, shouldRetain);
 }
 
 void FontCache::getTraitsInFamily(const AtomicString& familyName,

@@ -84,7 +84,8 @@ public:
     void getTraitsInFamily(const AtomicString&, Vector<unsigned>&);
 
     SimpleFontData* getCachedFontData(const FontDescription&, const AtomicString&, bool checkingAlternateName = false, ShouldRetain = Retain);
-    SimpleFontData* getLastResortFallbackFont(const FontDescription&);
+    SimpleFontData* getLastResortFallbackFont(const FontDescription&, ShouldRetain = Retain);
+    SimpleFontData* getNonRetainedLastResortFallbackFont(const FontDescription&);
 
     void addClient(FontSelector*);
     void removeClient(FontSelector*);

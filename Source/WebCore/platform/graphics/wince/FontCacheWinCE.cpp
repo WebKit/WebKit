@@ -321,11 +321,11 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return 0;
 }
 
-SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDesc)
+SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& fontDesc, ShouldRetain shouldRetain)
 {
     // FIXME: Would be even better to somehow get the user's default font here.  For now we'll pick
     // the default that the user would get without changing any prefs.
-    return getCachedFontData(fontDesc, FontPlatformData::defaultFontFamily());
+    return getCachedFontData(fontDesc, FontPlatformData::defaultFontFamily(), false, shouldRetain);
 }
 
 FontPlatformData* FontCache::createFontPlatformData(const FontDescription& fontDescription, const AtomicString& family)
