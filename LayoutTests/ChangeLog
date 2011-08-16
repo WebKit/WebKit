@@ -1,5 +1,13 @@
 2011-08-16  Tony Chang  <tony@chromium.org>
 
+        Copy the results of http/tests/inspector/resource-har-conversion.html
+        to the chromium platform dir.  The mac result (r93112) was getting
+        picked up by the chromium port.
+
+        * platform/chromium/http/tests/inspector/resource-har-conversion-expected.txt: Added.
+
+2011-08-16  Tony Chang  <tony@chromium.org>
+
         Move media/video-controls-no-scripting-iframe.html into the resources
         subdir since it's not a standalone test.
         
