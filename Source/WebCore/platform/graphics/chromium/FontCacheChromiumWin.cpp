@@ -400,7 +400,7 @@ static int CALLBACK traitsInFamilyEnumProc(CONST LOGFONT* logFont, CONST TEXTMET
 }
 
 struct GetLastResortFallbackFontProcData {
-    GetLastResortFallbackFontProcData(FontCache* fontCache, const FontDescription* fontDescription, ShouldRetain shouldRetain, wchar_t* fontName)
+    GetLastResortFallbackFontProcData(FontCache* fontCache, const FontDescription* fontDescription, FontCache::ShouldRetain shouldRetain, wchar_t* fontName)
         : m_fontCache(fontCache)
         , m_fontDescription(fontDescription)
         , m_shouldRetain(shouldRetain)
@@ -411,7 +411,7 @@ struct GetLastResortFallbackFontProcData {
 
     FontCache* m_fontCache;
     const FontDescription* m_fontDescription;
-    ShouldRetain m_shouldRetain;
+    FontCache::ShouldRetain m_shouldRetain;
     wchar_t* m_fontName;
     SimpleFontData* m_fontData;
 };
