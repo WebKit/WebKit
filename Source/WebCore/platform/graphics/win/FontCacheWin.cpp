@@ -301,10 +301,10 @@ SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)
     return 0;
 }
 
-static SimpleFontData* fontDataFromDescriptionAndLogFont(FontCache* fontCache, const FontDescription& fontDescription, ShouldRetain shouldRetain, const LOGFONT& font, AtomicString& outFontFamilyName)
+SimpleFontData* FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, ShouldRetain shouldRetain, const LOGFONT& font, AtomicString& outFontFamilyName)
 {
     AtomicString familyName = String(font.lfFaceName, wcsnlen(font.lfFaceName, LF_FACESIZE));
-    SimpleFontData* fontData = fontCache->getCachedFontData(fontDescription, familyName, false, shouldRetain);
+    SimpleFontData* fontData = getCachedFontData(fontDescription, familyName, false, shouldRetain);
     if (fontData)
         outFontFamilyName = familyName;
     return fontData;
@@ -341,7 +341,7 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
     if (HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))) {
         LOGFONT defaultGUILogFont;
         GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, shouldRetain, defaultGUILogFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, defaultGUILogFont, fallbackFontName))
             return simpleFont;
     }
 
@@ -349,15 +349,15 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& font
     NONCLIENTMETRICS nonClientMetrics = {0};
     nonClientMetrics.cbSize = sizeof(nonClientMetrics);
     if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, shouldRetain, nonClientMetrics.lfMessageFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfMessageFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, shouldRetain, nonClientMetrics.lfMenuFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfMenuFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, shouldRetain, nonClientMetrics.lfStatusFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfStatusFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, shouldRetain, nonClientMetrics.lfCaptionFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfCaptionFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, fontDescription, shouldRetain, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(fontDescription, shouldRetain, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
             return simpleFont;
     }
     

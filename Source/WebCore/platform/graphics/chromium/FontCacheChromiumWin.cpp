@@ -325,9 +325,9 @@ static bool fontContainsCharacter(const FontPlatformData* fontData,
 }
 
 // Tries the given font and save it |outFontFamilyName| if it succeeds.
-static SimpleFontData* fontDataFromDescriptionAndLogFont(FontCache* fontCache, const FontDescription& fontDescription, ShouldRetain shouldRetain, const LOGFONT& font, wchar_t* outFontFamilyName)
+SimpleFontData* FontCache::fontDataFromDescriptionAndLogFont(const FontDescription& fontDescription, ShouldRetain shouldRetain, const LOGFONT& font, wchar_t* outFontFamilyName)
 {
-    SimpleFontData* fontData = fontCache->getCachedFontData(fontDescription, font.lfFaceName, false, shouldRetain);
+    SimpleFontData* fontData = getCachedFontData(fontDescription, font.lfFaceName, false, shouldRetain);
     if (fontData)
         memcpy(outFontFamilyName, font.lfFaceName, sizeof(font.lfFaceName));
     return fontData;
@@ -419,7 +419,7 @@ struct GetLastResortFallbackFontProcData {
 static int CALLBACK getLastResortFallbackFontProc(const LOGFONT* logFont, const TEXTMETRIC* metrics, DWORD fontType, LPARAM lParam)
 {
     GetLastResortFallbackFontProcData* procData = reinterpret_cast<GetLastResortFallbackFontProcData*>(lParam);
-    procData->m_fontData = fontDataFromDescriptionAndLogFont(procData->m_fontCache, *procData->m_fontDescription, procData->m_shouldRetain, *logFont, procData->m_fontName);
+    procData->m_fontData = procData->m_fontCache->fontDataFromDescriptionAndLogFont(*procData->m_fontDescription, procData->m_shouldRetain, *logFont, procData->m_fontName);
     return !procData->m_fontData;
 }
 
@@ -552,7 +552,7 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& desc
     if (HFONT defaultGUIFont = static_cast<HFONT>(GetStockObject(DEFAULT_GUI_FONT))) {
         LOGFONT defaultGUILogFont;
         GetObject(defaultGUIFont, sizeof(defaultGUILogFont), &defaultGUILogFont);
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, shouldRetain, defaultGUILogFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, defaultGUILogFont, fallbackFontName))
             return simpleFont;
     }
 
@@ -560,15 +560,15 @@ SimpleFontData* FontCache::getLastResortFallbackFont(const FontDescription& desc
     NONCLIENTMETRICS nonClientMetrics = {0};
     nonClientMetrics.cbSize = sizeof(nonClientMetrics);
     if (SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(nonClientMetrics), &nonClientMetrics, 0)) {
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, shouldRetain, nonClientMetrics.lfMessageFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfMessageFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, shouldRetain, nonClientMetrics.lfMenuFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfMenuFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, shouldRetain, nonClientMetrics.lfStatusFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfStatusFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, shouldRetain, nonClientMetrics.lfCaptionFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfCaptionFont, fallbackFontName))
             return simpleFont;
-        if (simpleFont = fontDataFromDescriptionAndLogFont(this, description, shouldRetain, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
+        if (simpleFont = fontDataFromDescriptionAndLogFont(description, shouldRetain, nonClientMetrics.lfSmCaptionFont, fallbackFontName))
             return simpleFont;
     }
 
