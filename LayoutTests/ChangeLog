@@ -1,3 +1,17 @@
+2011-08-16  Adam Roben  <aroben@apple.com>
+
+        Add Lion/Windows expected results for an Inspector test
+
+        The only difference from the cross-platform results is that the .js resources are now given
+        a MIME type of "text/plain".
+
+        This test reloads the page before dumping it in HAR format. In Lion (and Safari 5.1 on
+        Windows), CFNetwork no longer uses the file extension as a fallback when determining the
+        MIME type for 304 cached responses. This matches Chrome. See <rdar://problem/9313303>.
+
+        * platform/mac-snowleopard/http/tests/inspector/resource-har-conversion-expected.txt: Copied from http/tests/inspector/resource-har-conversion-expected.txt.
+        * platform/mac/http/tests/inspector/resource-har-conversion-expected.txt: Added.
+
 2011-08-16  Eric Carlson  <eric.carlson@apple.com>
 
         [REGRESSION] Media controls should always be enabled when scripting is disabled
