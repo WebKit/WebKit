@@ -30,7 +30,6 @@ import os.path
 import re
 import shutil
 import urllib
-import pprint
 
 import webkitpy.common.config.urls as config_urls
 from webkitpy.common.checkout.baselineoptimizer import BaselineOptimizer
@@ -128,17 +127,21 @@ class OptimizeBaselines(AbstractDeclarativeCommand):
 
 class AnalyzeBaselines(AbstractDeclarativeCommand):
     name = "analyze-baselines"
-    help_text = "Analyzes the baselines for the given tests and displays which ones have the same hash."
+    help_text = "Analyzes the baselines for the given tests and prints results that are identical."
     argument_names = "TEST_NAMES"
+
+    def _print(self, baseline_name, directories_by_result):
+        for result, directories in directories_by_result.items():
+            if len(directories) <= 1:
+                continue
+            results_names = [self._tool.filesystem.join(directory, baseline_name) for directory in directories]
+            print ' '.join(results_names)
 
     def _analyze_baseline(self, test_name):
         for suffix in _baseline_suffix_list:
             baseline_name = _baseline_name(self._tool.filesystem, test_name, suffix)
             directories_by_result = self._baseline_optimizer.directories_by_result(baseline_name)
-            if directories_by_result:
-                print '== ', baseline_name, ' =='
-                pprint.pprint(directories_by_result)
-                print
+            self._print(baseline_name, directories_by_result)
 
     def _to_test_name(self, file_name): 
         return self._tool.filesystem.relpath(file_name, self._port.layout_tests_dir())
