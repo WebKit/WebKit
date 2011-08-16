@@ -33,9 +33,12 @@
 
 #include "DOMWrapperWorld.h"
 #include "JSDedicatedWorkerContext.h"
-#include "JSSharedWorkerContext.h"
 #include "JSWorkerContext.h"
 #include "WorkerContext.h"
+
+#if ENABLE(SHARED_WORKERS)
+#include "JSSharedWorkerContext.h"
+#endif
 
 using namespace JSC;
 

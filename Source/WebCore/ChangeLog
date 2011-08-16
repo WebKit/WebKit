@@ -1,3 +1,20 @@
+2011-08-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [CMAKE] Wrap files of websocket and worker in each macro.
+        https://bugs.webkit.org/show_bug.cgi?id=65012
+
+        Move files of web socket and workers into each macro block in CMakeList.txt.
+        And, header files related to WORKER and SHARED_WORKER are wrapped by macro in cpp files.
+
+        Reviewed by Daniel Bates.
+
+        * CMakeLists.txt:
+        * UseJSC.cmake:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        * bindings/js/JSWorkerContextBase.cpp:
+        * bindings/js/ScriptState.cpp:
+        * bindings/js/WorkerScriptController.cpp:
+
 2011-08-15  Jeffrey Pfau  <jpfau@apple.com>
 
         New XML parser: add xml namespace to the default map of namespaces

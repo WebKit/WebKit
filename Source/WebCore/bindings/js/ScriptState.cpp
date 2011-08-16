@@ -33,13 +33,16 @@
 
 #include "Frame.h"
 #include "JSDOMWindowBase.h"
-#include "JSWorkerContext.h"
 #include "Node.h"
 #include "Page.h"
 #include "WorkerContext.h"
 #include "WorkerScriptController.h"
 #include <interpreter/CallFrame.h>
 #include <runtime/JSGlobalObject.h>
+
+#if ENABLE(WORKERS)
+#include "JSWorkerContext.h"
+#endif
 
 namespace WebCore {
 

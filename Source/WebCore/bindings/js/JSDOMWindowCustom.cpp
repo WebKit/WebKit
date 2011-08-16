@@ -47,7 +47,6 @@
 #include "JSUint8Array.h"
 #include "JSWebKitCSSMatrix.h"
 #include "JSWebKitPoint.h"
-#include "JSWorker.h"
 #include "JSXMLHttpRequest.h"
 #include "JSXSLTProcessor.h"
 #include "Location.h"
@@ -56,6 +55,10 @@
 #include "Settings.h"
 #include "SharedWorkerRepository.h"
 #include <runtime/JSFunction.h>
+
+#if ENABLE(WORKERS)
+#include "JSWorker.h"
+#endif
 
 #if ENABLE(SHARED_WORKERS)
 #include "JSSharedWorker.h"

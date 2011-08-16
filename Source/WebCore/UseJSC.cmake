@@ -45,7 +45,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSDOMWindowCustom.cpp
     bindings/js/JSDOMWindowShell.cpp
     bindings/js/JSDOMWrapper.cpp
-    bindings/js/JSDedicatedWorkerContextCustom.cpp
     bindings/js/JSDeviceMotionEventCustom.cpp
     bindings/js/JSDeviceOrientationEventCustom.cpp
     bindings/js/JSDocumentCustom.cpp
@@ -106,7 +105,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSProcessingInstructionCustom.cpp
     bindings/js/JSScriptProfileNodeCustom.cpp
-    bindings/js/JSSharedWorkerCustom.cpp
     bindings/js/JSStyleSheetCustom.cpp
     bindings/js/JSStyleSheetListCustom.cpp
     bindings/js/JSTextCustom.cpp
@@ -122,9 +120,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSWebKitCSSKeyframesRuleCustom.cpp
     bindings/js/JSWebKitCSSMatrixCustom.cpp
     bindings/js/JSWebKitPointCustom.cpp
-    bindings/js/JSWorkerContextBase.cpp
-    bindings/js/JSWorkerContextCustom.cpp
-    bindings/js/JSWorkerCustom.cpp
     bindings/js/JSXMLHttpRequestCustom.cpp
     bindings/js/JSXMLHttpRequestUploadCustom.cpp
     bindings/js/JSXSLTProcessorCustom.cpp
@@ -144,8 +139,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/ScriptState.cpp
     bindings/js/ScriptValue.cpp
     bindings/js/SerializedScriptValue.cpp
-    bindings/js/WorkerScriptController.cpp
-    bindings/js/WorkerScriptDebugServer.cpp
 
     bridge/IdentifierRep.cpp
     bridge/NP_jsobject.cpp
@@ -196,6 +189,23 @@ ENDIF ()
 IF (ENABLE_WEB_SOCKETS)
     LIST(APPEND WebCore_SOURCES
         bindings/js/JSWebSocketCustom.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_WORKERS)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSDedicatedWorkerContextCustom.cpp
+        bindings/js/JSWorkerContextBase.cpp
+        bindings/js/JSWorkerContextCustom.cpp
+        bindings/js/JSWorkerCustom.cpp
+        bindings/js/WorkerScriptController.cpp
+        bindings/js/WorkerScriptDebugServer.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_SHARED_WORKERS)
+    LIST(APPEND WebCore_SOURCES
+        bindings/js/JSSharedWorkerCustom.cpp
     )
 ENDIF ()
 

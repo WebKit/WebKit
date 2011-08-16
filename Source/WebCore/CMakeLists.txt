@@ -342,7 +342,6 @@ SET(WebCore_IDL_FILES
     page/WebKitAnimation.idl
     page/WebKitAnimationList.idl
     page/WebKitPoint.idl
-    page/WorkerNavigator.idl
 
     plugins/DOMMimeType.idl
     plugins/DOMMimeTypeArray.idl
@@ -374,14 +373,6 @@ SET(WebCore_IDL_FILES
     webaudio/JavaScriptAudioNode.idl
     webaudio/LowPass2FilterNode.idl
     webaudio/RealtimeAnalyserNode.idl
-
-    workers/AbstractWorker.idl
-    workers/DedicatedWorkerContext.idl
-    workers/SharedWorker.idl
-    workers/SharedWorkerContext.idl
-    workers/Worker.idl
-    workers/WorkerContext.idl
-    workers/WorkerLocation.idl
 
     xml/DOMParser.idl
     xml/XMLHttpRequest.idl
@@ -926,7 +917,6 @@ SET(WebCore_SOURCES
     loader/SubresourceLoader.cpp
     loader/TextResourceDecoder.cpp
     loader/ThreadableLoader.cpp
-    loader/WorkerThreadableLoader.cpp
 
     loader/appcache/ApplicationCache.cpp
     loader/appcache/ApplicationCacheGroup.cpp
@@ -1005,7 +995,6 @@ SET(WebCore_SOURCES
     page/WebKitAnimation.cpp
     page/WebKitAnimationList.cpp
     page/WindowFeatures.cpp
-    page/WorkerNavigator.cpp
 
     page/animation/AnimationBase.cpp
     page/animation/AnimationController.cpp
@@ -1341,30 +1330,6 @@ SET(WebCore_SOURCES
     storage/StorageNamespaceImpl.cpp
     storage/StorageSyncManager.cpp
     storage/StorageTracker.cpp
-
-    websockets/ThreadableWebSocketChannel.cpp
-    websockets/ThreadableWebSocketChannelClientWrapper.cpp
-    websockets/WebSocket.cpp
-    websockets/WebSocketChannel.cpp
-    websockets/WebSocketHandshake.cpp
-    websockets/WebSocketHandshakeRequest.cpp
-    websockets/WebSocketHandshakeResponse.cpp
-    websockets/WorkerThreadableWebSocketChannel.cpp
-
-    workers/AbstractWorker.cpp
-    workers/DedicatedWorkerContext.cpp
-    workers/DedicatedWorkerThread.cpp
-    workers/DefaultSharedWorkerRepository.cpp
-    workers/SharedWorker.cpp
-    workers/SharedWorkerContext.cpp
-    workers/SharedWorkerThread.cpp
-    workers/Worker.cpp
-    workers/WorkerContext.cpp
-    workers/WorkerLocation.cpp
-    workers/WorkerMessagingProxy.cpp
-    workers/WorkerRunLoop.cpp
-    workers/WorkerScriptLoader.cpp
-    workers/WorkerThread.cpp
 
     xml/DOMParser.cpp
     xml/NativeXPathNSResolver.cpp
@@ -1986,9 +1951,68 @@ IF (ENABLE_VIDEO)
 ENDIF()
 
 IF (ENABLE_WEB_SOCKETS)
+    LIST(APPEND WebCore_SOURCES
+        websockets/ThreadableWebSocketChannel.cpp
+        websockets/ThreadableWebSocketChannelClientWrapper.cpp
+        websockets/WebSocket.cpp
+        websockets/WebSocketChannel.cpp
+        websockets/WebSocketHandshake.cpp
+        websockets/WebSocketHandshakeRequest.cpp
+        websockets/WebSocketHandshakeResponse.cpp
+    )
+
     LIST(APPEND WebCore_IDL_FILES
         websockets/CloseEvent.idl
         websockets/WebSocket.idl
+    )
+ENDIF ()
+
+IF (ENABLE_WEB_SOCKETS AND ENABLE_WORKERS)
+    LIST(APPEND WebCore_SOURCES
+         websockets/WorkerThreadableWebSocketChannel.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_WORKERS)
+    LIST(APPEND WebCore_SOURCES
+        loader/WorkerThreadableLoader.cpp
+
+        page/WorkerNavigator.cpp
+
+        workers/AbstractWorker.cpp
+        workers/DedicatedWorkerContext.cpp
+        workers/DedicatedWorkerThread.cpp
+        workers/Worker.cpp
+        workers/WorkerContext.cpp
+        workers/WorkerLocation.cpp
+        workers/WorkerMessagingProxy.cpp
+        workers/WorkerRunLoop.cpp
+        workers/WorkerScriptLoader.cpp
+        workers/WorkerThread.cpp
+    )
+
+    LIST(APPEND WebCore_IDL_FILES
+        page/WorkerNavigator.idl
+
+        workers/AbstractWorker.idl
+        workers/DedicatedWorkerContext.idl
+        workers/Worker.idl
+        workers/WorkerContext.idl
+        workers/WorkerLocation.idl
+    )
+ENDIF ()
+
+IF (ENABLE_SHARED_WORKERS)
+    LIST(APPEND WebCore_SOURCES
+        workers/DefaultSharedWorkerRepository.cpp
+        workers/SharedWorker.cpp
+        workers/SharedWorkerContext.cpp
+        workers/SharedWorkerThread.cpp
+    )
+
+    LIST(APPEND WebCore_IDL_FILES
+        workers/SharedWorker.idl
+        workers/SharedWorkerContext.idl
     )
 ENDIF ()
 
