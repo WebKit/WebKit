@@ -1,3 +1,14 @@
+2011-08-16  Adam Roben  <aroben@apple.com>
+
+        Skip some tests that fail/time out on Windows with Safari 5.1's Apple Application Support (AAS)
+
+        Since these failures are likely to be due to bugs in non-WebKit components, they are tracked
+        by Radars.
+
+        * platform/win/Skipped: Added http/tests/multipart/invalid-image-data-standalone.html,
+        http/tests/cookies/simple-cookies-expired.html, and
+        http/tests/cookies/simple-cookies-max-age.html.
+
 2011-08-16  Steve Block  <steveblock@google.com>
 
         Set TIMEOUT expectation for fast/canvas/webgl/uninitialized-test.html on Linux dbg

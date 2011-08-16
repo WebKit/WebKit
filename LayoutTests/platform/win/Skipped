@@ -457,6 +457,13 @@ http/tests/cache/history-only-cached-subresource-loads-max-age-https.html
 # Asserts in FrameLoader::loadWithDocumentLoader http://webkit.org/b/63807
 fast/loader/create-frame-in-DOMContentLoaded.html
 
+# Times out <rdar://problem/9304941>
+http/tests/multipart/invalid-image-data-standalone.html
+
+# Sometimes fail <rdar://problem/9349921>
+http/tests/cookies/simple-cookies-expired.html
+http/tests/cookies/simple-cookies-max-age.html
+
 ################################################################################
 ####################### No bugs filed about the below yet#######################
 ################################################################################
