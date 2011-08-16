@@ -1,3 +1,14 @@
+2011-08-15  Jeffrey Pfau  <jpfau@apple.com>
+
+        New XML parser: Use xmlnsAtom instead of redundant xmlnsPrefix
+        https://bugs.webkit.org/show_bug.cgi?id=66264
+
+        Reviewed by Adam Barth.
+
+        * xml/parser/XMLTreeBuilder.cpp:
+        (WebCore::XMLTreeBuilder::processNamespaces):
+        (WebCore::XMLTreeBuilder::processAttributes):
+
 2011-08-15  Emil A Eklund  <eae@chromium.org>
 
         Switch Element/Node to to new layout types

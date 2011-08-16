@@ -226,31 +226,29 @@ void XMLTreeBuilder::processEntity(const AtomicXMLToken& token)
 
 void XMLTreeBuilder::processNamespaces(const AtomicXMLToken& token, NodeStackItem& stackItem)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, xmlnsPrefix, ("xmlns"));
     if (!token.attributes())
         return;
 
     for (size_t i = 0; i < token.attributes()->length(); ++i) {
         Attribute* attribute = token.attributes()->attributeItem(i);
-        if (attribute->name().prefix() == xmlnsPrefix)
+        if (attribute->name().prefix() == xmlnsAtom)
             stackItem.setNamespaceURI(attribute->name().localName(), attribute->value());
-        else if (attribute->name() == xmlnsPrefix)
+        else if (attribute->name() == xmlnsAtom)
             stackItem.setNamespaceURI(attribute->value());
     }
 }
 
 void XMLTreeBuilder::processAttributes(const AtomicXMLToken& token, NodeStackItem& stackItem, PassRefPtr<Element> newElement)
 {
-    DEFINE_STATIC_LOCAL(AtomicString, xmlnsPrefix, ("xmlns"));
     if (!token.attributes())
         return;
 
     for (size_t i = 0; i < token.attributes()->length(); ++i) {
         Attribute* attribute = token.attributes()->attributeItem(i);
         ExceptionCode ec = 0;
-        if (attribute->name().prefix() == xmlnsPrefix)
+        if (attribute->name().prefix() == xmlnsAtom)
             newElement->setAttributeNS(XMLNSNames::xmlnsNamespaceURI, "xmlns:" + attribute->name().localName(), attribute->value(), ec);
-        else if (attribute->name() == xmlnsPrefix)
+        else if (attribute->name() == xmlnsAtom)
             newElement->setAttributeNS(XMLNSNames::xmlnsNamespaceURI, xmlnsAtom, attribute->value(), ec);
         else {
             QualifiedName qName(attribute->prefix(), attribute->localName(), stackItem.namespaceForPrefix(attribute->prefix(), nullAtom));
