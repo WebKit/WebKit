@@ -1,3 +1,10 @@
+2011-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip tests modified by r93134 on WebKit2 since they now sets editing behavior explicitly,
+        which WebKitTestRunner does not support yet.
+
+        * platform/wk2/Skipped:
+
 2011-08-16  Tony Chang  <tony@chromium.org>
 
         [chromium] fast/css/custom-font-xheight.html is asserting on all
