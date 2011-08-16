@@ -13,7 +13,10 @@
             video = document.getElementById("fr").contentDocument.querySelector("video");
             testExpected("internals.shadowRoot(video)", null, "!=");
             controls =  internals.shadowRoot(video).firstChild.firstChild;
-            testExpected("controls.offsetTop + controls.offsetHeight", video.offsetHeight, "<=");
+
+            // Don't use "testExpected()" for the control location because not all ports use the same size controls.
+            reportExpected((controls.offsetTop + controls.offsetHeight) <= video.offsetHeight, "controls.offsetTop + controls.offsetHeight", "<=", "video.offsetHeight", controls.offsetTop + controls.offsetHeight);
+
             testExpected("getComputedStyle(controls).opacity", 1);
             
             consoleWrite("");

@@ -1,3 +1,11 @@
+2011-08-16  Eric Carlson  <eric.carlson@apple.com>
+
+        Make video-controls-no-scripting.html results platform independent.
+
+        * media/video-controls-no-scripting-expected.txt:
+        * media/video-controls-no-scripting.html:
+        * platform/chromium/media/video-controls-no-scripting-expected.txt: Removed.
+
 2011-08-16  David Hyatt  <hyatt@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66254
