@@ -34,9 +34,6 @@
 #include "WebCanvas.h"
 #include "WebCommon.h"
 
-// TODO(jam): take this out once Chrome rolls this revision of WebKit.
-#define WEBSCROLLBAR_SUPPORTS_OVERLAY
-
 namespace WebKit {
 
 class WebInputEvent;
