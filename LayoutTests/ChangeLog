@@ -1,3 +1,15 @@
+2011-08-16  Tony Chang  <tony@chromium.org>
+
+        Move media/video-controls-no-scripting-iframe.html into the resources
+        subdir since it's not a standalone test.
+        
+        Also add chromium baseline (the top of the video control is in a
+        different place).
+
+        * media/resources/video-controls-no-scripting-iframe.html: Renamed from LayoutTests/media/video-controls-no-scripting-iframe.html.
+        * media/video-controls-no-scripting.html:
+        * platform/chromium/media/video-controls-no-scripting-expected.txt: Added.
+
 2011-08-16  Adam Roben  <aroben@apple.com>
 
         Update Windows results for a fast/text test for Safari 5.1's AAS

@@ -1,0 +1,9 @@
+
+Tests that the built-in controls are always enabled when JavaScript is disabled.
+
+EXPECTED (internals.shadowRoot(video) != 'null') OK
+EXPECTED (controls.offsetTop + controls.offsetHeight <= '150') OK
+EXPECTED (getComputedStyle(controls).opacity == '1') OK
+
+END OF TEST
+
