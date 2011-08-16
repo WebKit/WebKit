@@ -105,26 +105,13 @@ class RebaselineTest(AbstractDeclarativeCommand):
 class OptimizeBaselines(AbstractDeclarativeCommand):
     name = "optimize-baselines"
     help_text = "Reshuffles the baselines for the given test to use as litte space on disk as possible."
-    argument_names = "TEST_NAME"
+    argument_names = "TEST_NAMES"
 
     def _optimize_baseline(self, test_name):
         for suffix in _baseline_suffix_list:
             baseline_name = _baseline_name(self._tool.filesystem, test_name, suffix)
             if not self._baseline_optimizer.optimize(baseline_name):
                 print "Hueristics failed to optimize %s" % baseline_name
-
-    def execute(self, options, args, tool):
-        self._baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)
-        self._optimize_baseline(args[0])
-
-
-class BulkOptimizeBaselines(OptimizeBaselines):
-    name = "bulk-optimize-baselines"
-    help_text = """Reshuffles the baselines for tests to use as litte space on disk as possible."""
-    argument_names = "TEST_NAMES"
-
-    def _to_test_name(self, file_name):
-        return self._tool.filesystem.relpath(file_name, self._port.layout_tests_dir())
 
     def execute(self, options, args, tool):
         self._baseline_optimizer = BaselineOptimizer(tool.scm(), tool.filesystem)

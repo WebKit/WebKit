@@ -1,5 +1,17 @@
 2011-08-16  Adam Barth  <abarth@webkit.org>
 
+        Fold bulk-optimize-baselines into optimize-baselines
+        https://bugs.webkit.org/show_bug.cgi?id=66345
+
+        Reviewed by James Robinson.
+
+        bulk-optimize-baselines is now a superset of optimize-baselines, so
+        they can be combined.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
+2011-08-16  Adam Barth  <abarth@webkit.org>
+
         Move chromium-mac to chromium-cg-mac to prepare for Skia switchover
         https://bugs.webkit.org/show_bug.cgi?id=66334
 
