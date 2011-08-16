@@ -1,3 +1,18 @@
+2011-08-16  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: nuke background events collection (dead feature)
+        https://bugs.webkit.org/show_bug.cgi?id=66296
+
+        Reviewed by Yury Semikhatsky.
+
+        * http/tests/inspector/network-test.js:
+        * http/tests/inspector/network/network-clear-after-disabled-expected.txt: Removed.
+        * http/tests/inspector/network/network-clear-after-disabled.html: Removed.
+        * http/tests/inspector/network/network-close-load-open-expected.txt: Removed.
+        * http/tests/inspector/network/network-close-load-open.html: Removed.
+        * http/tests/inspector/network/network-open-load-reopen-expected.txt: Removed.
+        * http/tests/inspector/network/network-open-load-reopen.html: Removed.
+
 2011-08-16  Steve Block  <steveblock@google.com>
 
         Set failing expectation for fast/canvas/webgl/uninitialized-test.html on Linux dbg

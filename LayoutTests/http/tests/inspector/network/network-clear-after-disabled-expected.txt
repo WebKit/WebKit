@@ -1,6 +1,0 @@
-Test that reopening clears network panel in background events collection disabled mode. Bug 58064 Bug 58652
-
-
-Reopened frontend 2 times
-resources count = 0
-

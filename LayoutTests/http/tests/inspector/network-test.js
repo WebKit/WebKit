@@ -1,19 +1,5 @@
 var initialize_NetworkTest = function() {
 
-InspectorTest.enableBackgroundEventCollection = function()
-{
-    if (!WebInspector.panels.network._networkLogView._backgroundCollectionEnabled)
-        WebInspector.panels.network._networkLogView._toggleBackgroundEventsCollection();
-    else
-        throw "BackgroundEventCollection already enabled.";
-}
-
-InspectorTest.disableBackgroundEventCollection = function ()
-{
-    if (WebInspector.panels.network._networkLogView._backgroundCollectionEnabled)
-        WebInspector.panels.network._networkLogView._toggleBackgroundEventsCollection();
-}
-
 InspectorTest.dumpNetworkResources = function()
 {
     var resources = WebInspector.panels.network.resources.slice();

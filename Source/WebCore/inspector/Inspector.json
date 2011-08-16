@@ -513,19 +513,6 @@
                 ]
             },
             {
-                "name": "setBackgroundEventsCollectionEnabled",
-                "description": "Toggles background network event collection.",
-                "parameters": [
-                    { "name": "enabled", "type": "boolean", "description": "true - enable collection, false - disable" }
-                ]
-            },
-            {
-                "name": "isBackgroundEventsCollectionEnabled",
-                "returns": [
-                    { "name": "enabled", "type": "boolean" }
-                ]
-            },
-            {
                 "name": "getResourceContent",
                 "description": "Returns content of the given resource.",
                 "parameters": [
@@ -572,7 +559,7 @@
                 "name": "resourceMarkedAsCached",
                 "description": "Fired when request is known to be served from disk cache.",
                 "parameters": [
-                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." },
+                    { "name": "requestId", "$ref": "RequestId", "description": "Request identifier." }
                 ]
             },
             {

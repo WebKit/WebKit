@@ -30,12 +30,6 @@
 
 WebInspector.NetworkLogView = function(parent)
 {
-    function eventsCollectionEnabled(error, enabled)
-    {
-        this._backgroundCollectionEnabled = enabled;
-    }
-    NetworkAgent.isBackgroundEventsCollectionEnabled(eventsCollectionEnabled.bind(this));
-
     // FIXME: some of the styles should be loaded on demand by components that need them.
     var styles = [
         "inspectorCommon.css",
@@ -1063,12 +1057,6 @@ WebInspector.NetworkLogView.prototype = {
     {
         if (confirm(WebInspector.UIString("Are you sure you want to clear browser cookies?")))
             NetworkAgent.clearBrowserCookies();
-    },
-
-    _toggleBackgroundEventsCollection: function(resource)
-    {
-        this._backgroundCollectionEnabled = !this._backgroundCollectionEnabled;
-        NetworkAgent.setBackgroundEventsCollectionEnabled(this._backgroundCollectionEnabled);
     },
 
     _updateOffscreenRows: function(e)
