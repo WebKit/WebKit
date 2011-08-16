@@ -4700,13 +4700,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setFlowThread(primitiveValue->getStringValue());
         return;
     case CSSPropertyWebkitContentOrder:
-        HANDLE_INHERIT_AND_INITIAL(regionIndex, RegionIndex);
-        m_style->setRegionIndex(primitiveValue->getIntValue());
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(regionIndex, RegionIndex);
         return;
     case CSSPropertyWebkitRegionOverflow:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(regionOverflow, RegionOverflow);
         return;
-
     case CSSPropertyWebkitMarqueeDirection:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(marqueeDirection, MarqueeDirection)
         return;
