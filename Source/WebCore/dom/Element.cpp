@@ -2003,10 +2003,9 @@ void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(boo
 
 SpellcheckAttributeState Element::spellcheckAttributeState() const
 {
-    if (!hasAttribute(HTMLNames::spellcheckAttr))
-        return SpellcheckAttributeDefault;
-
     const AtomicString& value = getAttribute(HTMLNames::spellcheckAttr);
+    if (value == nullAtom)
+        return SpellcheckAttributeDefault;
     if (equalIgnoringCase(value, "true") || equalIgnoringCase(value, ""))
         return SpellcheckAttributeTrue;
     if (equalIgnoringCase(value, "false"))

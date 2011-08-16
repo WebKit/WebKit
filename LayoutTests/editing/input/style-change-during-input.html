@@ -1,0 +1,36 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<style>
+body[style] { }
+</style>
+</head>
+<body>
+<textarea id="target"></textarea>
+<div>The text field should accept typed characters.</div>
+<pre id="console"></pre>
+<script>
+document.getElementById("target").addEventListener("textInput", function (evt) { evt.target.style.width = 100; });
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    window.target = document.getElementById("target");
+    window.setTimeout(function() {
+        window.target.focus();
+        eventSender.keyDown("h");
+        eventSender.keyDown("e");
+        eventSender.keyDown("l");
+        eventSender.keyDown("l");
+        eventSender.keyDown("o");
+        shouldBe("window.target.value", '"hello"');
+        finishJSTest();
+    }, 0);
+}
+
+window.jsTestIsAsync = true;
+successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

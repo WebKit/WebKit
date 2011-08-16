@@ -1,3 +1,25 @@
+2011-08-15  MORITA Hajime  <morrita@google.com>
+
+        REGRESSION(r70598): [Chromium] Style changes in textInput event can prevent from updating <textarea> value.
+        https://bugs.webkit.org/show_bug.cgi?id=66216
+
+        Reviewed by Ryosuke Niwa.
+
+        Element::spellcheckAttributeState() uses Element::hasAttribute(),
+        which calls updateStyleAttribute(), which potentially makes style
+        dirty. But that is problematic since Editor calls spellcheckAttributeState()
+        during the spell-checking phase and make the style dirty,
+        which can trigger re-layout, which wipes the shadow tree of a textarea
+        out by pre-committed "value" text.
+
+        This change removes the hasAttribute() call from
+        spellcheckAttributeState().
+
+        Test: editing/input/style-change-during-input.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::spellcheckAttributeState):
+
 2011-08-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         [CMAKE] Wrap files of websocket and worker in each macro.
