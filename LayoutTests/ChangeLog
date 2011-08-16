@@ -1,3 +1,9 @@
+2011-08-16  Tony Chang  <tony@chromium.org>
+
+        [chromium] Mark media/video-source-error.html as flaky in Debug.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-16  Adam Roben  <aroben@apple.com>
 
         Update Windows results after r92890
