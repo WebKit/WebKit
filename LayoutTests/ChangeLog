@@ -1,3 +1,13 @@
+2011-08-16  Steve Block  <steveblock@google.com>
+
+        Set failing expectation for fast/canvas/webgl/uninitialized-test.html on Linux dbg
+
+        See http://code.google.com/p/chromium/issues/detail?id=93044
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-16  Andras Becsi  <abecsi@webkit.org>
 
         WebKitTestRunner needs a more-complete implementation of eventSender
