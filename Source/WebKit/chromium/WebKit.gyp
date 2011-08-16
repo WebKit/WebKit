@@ -1343,6 +1343,12 @@
                         'outputs': ['<(PRODUCT_DIR)/resources/inspector/devTools.css'],
                         'action': ['python', '<@(_script_name)', '<@(_input_page)', '<@(_search_path)', '<@(_outputs)'],
                     }],
+                    'copies': [{
+                        'destination': '<(PRODUCT_DIR)/resources/inspector',
+                        'files': [
+                            '<@(webinspector_standalone_css_files)',
+                        ],
+                    }],
                 },
             ],
         }],
