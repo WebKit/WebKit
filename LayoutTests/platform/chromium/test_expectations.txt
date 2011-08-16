@@ -258,7 +258,6 @@ WONTFIX : platform/mac-leopard = FAIL PASS
 WONTFIX : platform/qt = FAIL PASS
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
 WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
-WONTFIX SKIP : platform/mac-snowleopard/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = MISSING
 WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
