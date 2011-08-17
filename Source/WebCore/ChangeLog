@@ -1,3 +1,19 @@
+2011-08-17  Jeff Miller  <jeffm@apple.com>
+
+        Work-in-progress on Soft link against AVFoundationCF and CoreMedia
+        https://bugs.webkit.org/show_bug.cgi?id=65725
+        
+        Don't bother with SOFT_LINK_LIBRARY(libdispatch), we're going to continue to statically link to it since
+        the DLL will have already been loaded by other parts of AAS and is guaranteed to be available if AVFoundation
+        is enabled.
+
+        Reviewed by Anders Carlsson.
+
+        No new tests; no functional change.
+
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Removed SOFT_LINK_DEBUG_LIBRARY(libdispatch) and SOFT_LINK_LIBRARY(libdispatch).
+        (WebCore::MediaPlayerPrivateAVFoundationCF::isAvailable): Don't check for libdispatch.
+
 2011-08-17  Brady Eidson  <beidson@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66354 and <rdar://problem/9965209>

@@ -61,7 +61,6 @@
 // FIXME: AVFoundationCF doesn't currently deliver a debug version.
 SOFT_LINK_LIBRARY(AVFoundationCF)
 SOFT_LINK_DEBUG_LIBRARY(CoreMedia)
-SOFT_LINK_DEBUG_LIBRARY(libdispatch)
 #else
 #pragma comment(lib, "AVFoundationCF.lib")
 #pragma comment(lib, "CoreMedia.lib")
@@ -70,7 +69,6 @@ SOFT_LINK_DEBUG_LIBRARY(libdispatch)
 // Use the soft link macros so we can easily test for the existence of the dlls.
 SOFT_LINK_LIBRARY(AVFoundationCF)
 SOFT_LINK_LIBRARY(CoreMedia)
-SOFT_LINK_LIBRARY(libdispatch)
 #endif // DEBUG_ALL
 
 using namespace std;
@@ -755,7 +753,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationCF::supportsType(const S
 
 bool MediaPlayerPrivateAVFoundationCF::isAvailable()
 {
-    return AVFoundationCFLibrary() && CoreMediaLibrary() && libdispatchLibrary();
+    return AVFoundationCFLibrary() && CoreMediaLibrary();
 }
 
 float MediaPlayerPrivateAVFoundationCF::mediaTimeForTimeValue(float timeValue) const
