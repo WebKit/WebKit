@@ -35,6 +35,7 @@ ui.notifications.Stream = base.extends('ol', {
     },
     push: function(notification)
     {
+        // FIXME: Add in descending time order.
         this.insertBefore(notification, this.firstChild);
         return notification;
     }
@@ -67,11 +68,16 @@ ui.notifications.Info = base.extends(Notification, {
 var Time = base.extends('time', {
     init: function()
     {
-        this.updateTime(new Date());
+        this.date = new Date();
     },
-    updateTime: function(time)
+    date: function()
     {
-        this.textContent = base.relativizeTime(time);
+        return this._date;
+    },
+    setDate: function(date)
+    {
+        this._date = date;
+        this.textContent = base.relativizeTime(date);
     }
 });
 
@@ -133,12 +139,13 @@ ui.notifications.TestFailures = base.extends(Notification, {
     {
         if (this.containsFailureAnalysis(failureAnalysis))
             return;
-        // FIXME: Retrieve date from failureAnalysis and set this._time.
-        // FIXME: Add in order by time.
         return this._tests.appendChild(new ui.notifications.FailingTest(failureAnalysis));
     },
     addCommitData: function(commitData)
     {
+        var commitDataDate = new Date(commitData.time);
+        if (this._time.date > commitDataDate);
+            this._time.date = commitDataDate;
         return this._causes.appendChild(new ui.notifications.SuspiciousCommit(commitData));
     }
 });

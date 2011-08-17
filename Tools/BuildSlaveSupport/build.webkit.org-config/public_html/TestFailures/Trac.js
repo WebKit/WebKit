@@ -91,6 +91,7 @@ function parseCommitData(responseXML)
     var commits = Array.prototype.map.call(responseXML.getElementsByTagName('item'), function(item) {
         var title = item.getElementsByTagName('title')[0].textContent;
         var author = item.getElementsByTagName('author')[0].textContent;
+        var time = item.getElementsByTagName('pubDate')[0].textContent;
 
         // FIXME: This isn't a very high-fidelity reproduction of the commit message,
         // but it's good enough for our purposes.
@@ -101,6 +102,7 @@ function parseCommitData(responseXML)
         return {
             'revision': findRevision(title),
             'title': title,
+            'time': time,
             'summary': findSummary(message),
             'author': findAuthor(message) || author,
             'reviewer': findReviewer(message),

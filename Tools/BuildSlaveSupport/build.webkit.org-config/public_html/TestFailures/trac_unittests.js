@@ -241,6 +241,7 @@ var kExampleCommitDataXML =
 var kExampleCommitDataList = [{
     "revision": 92342,
     "title": "Revision 92342: Support cast between CSSPrimitiveValue and EBoxSizing, use in ...",
+    "time": "Thu, 04 Aug 2011 02:09:19 GMT",
     "summary": "Support cast between CSSPrimitiveValue and EBoxSizing, use in CSSStyleSelector.",
     "author": "macpherson@chromium.org",
     "reviewer": "Simon Fraser",
@@ -249,6 +250,7 @@ var kExampleCommitDataList = [{
 }, {
     "revision": 92341,
     "title": "Revision 92341: Implement EventSender.scalePageBy() ...",
+    "time": "Thu, 04 Aug 2011 02:01:31 GMT",
     "summary": "Implement EventSender.scalePageBy()",
     "author": "Kentaro Hara",
     "reviewer": "Darin Fisher",
@@ -257,6 +259,7 @@ var kExampleCommitDataList = [{
 }, {
     "revision": 92338,
     "title": "Revision 92338: Revert an erroneous rebaseline from r92315.\n* ...",
+    "time": "Thu, 04 Aug 2011 01:41:29 GMT",
     "summary": "Revert an erroneous rebaseline from r92315.",
     "author": "rniwa@webkit.org",
     "reviewer": null,
@@ -265,6 +268,7 @@ var kExampleCommitDataList = [{
 }, {
     "revision": 92337,
     "title": "Revision 92337: [Qt][Texmap][REGRESSION] http://webkit.org/blog-files/transform-style.html ...",
+    "time": "Thu, 04 Aug 2011 00:22:21 GMT",
     "summary": "[Qt][Texmap][REGRESSION]  http://webkit.org/blog-files/transform-style.html doesn't show composited content",
     "author": "noam.rosenthal@nokia.com",
     "reviewer": "Benjamin Poulain",
@@ -273,6 +277,7 @@ var kExampleCommitDataList = [{
 }, {
     "revision": 92259,
     "title": "Revision 92259: Unreviewed, rolling out r92256.\nhttp://trac.webkit.org/changeset/92256 ...",
+    "time": "Wed, 03 Aug 2011 04:26:52 GMT",
     "summary": "Unreviewed, rolling out r92256.",
     "author": "Sheriff Bot",
     "reviewer": null,

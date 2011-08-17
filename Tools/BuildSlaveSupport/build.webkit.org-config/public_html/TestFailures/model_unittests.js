@@ -158,6 +158,7 @@ test("updateRecentCommits", 2, function() {
             deepEqual(recentCommits, [{
                 "revision": 92259,
                 "title": "Revision 92259: Unreviewed, rolling out r92256.\nhttp://trac.webkit.org/changeset/92256 ...",
+                "time": "Wed, 03 Aug 2011 04:26:52 GMT",
                 "summary": "Unreviewed, rolling out r92256.",
                 "author": "Sheriff Bot",
                 "reviewer": null,
@@ -166,6 +167,7 @@ test("updateRecentCommits", 2, function() {
              }, {
                 "revision": 92256,
                 "title": "Revision 92256: Support cast between CSSPrimitiveValue and EBoxSizing, use in ...",
+                "time": "Thu, 04 Aug 2011 02:09:19 GMT",
                 "summary": "Support cast between CSSPrimitiveValue and EBoxSizing, use in CSSStyleSelector.",
                 "author": "macpherson@chromium.org",
                 "reviewer": "Simon Fraser",

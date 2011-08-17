@@ -1,3 +1,16 @@
+2011-08-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Wire up relative time to garden-o-matic summary view.
+        https://bugs.webkit.org/show_bug.cgi?id=66343
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js: Add time to the commitData object. 
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model_unittests.js: Adjusted unit tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js: Wired up relative date.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js: Updated unit tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/trac_unittests.js: Adjusted unit tests.
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Make run-api-tests run tests in alphabetical order
