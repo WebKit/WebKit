@@ -58,6 +58,8 @@ OTHER_LDFLAGS = -Wl,-unexported_symbol -Wl,__ZTISt9bad_alloc -Wl,-unexported_sym
 
 REAL_PLATFORM_NAME = $(REAL_PLATFORM_NAME_$(PLATFORM_NAME));
 REAL_PLATFORM_NAME_ = $(REAL_PLATFORM_NAME_macosx);
+REAL_PLATFORM_NAME_iphoneos = iphoneos;
+REAL_PLATFORM_NAME_iphonesimulator = iphonesimulator;
 REAL_PLATFORM_NAME_macosx = macosx;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);

@@ -32,7 +32,13 @@ ALWAYS_SEARCH_USER_PATHS = NO
 // Turn on position dependent code for most cases (overridden where appropriate)
 GCC_DYNAMIC_NO_PIC = YES
 
-TARGET_MAC_OS_X_VERSION_MAJOR=MAC_OS_VERSION_MAJOR
+REAL_PLATFORM_NAME = $(REAL_PLATFORM_NAME_$(PLATFORM_NAME));
+REAL_PLATFORM_NAME_ = $(REAL_PLATFORM_NAME_macosx);
+REAL_PLATFORM_NAME_iphoneos = iphoneos;
+REAL_PLATFORM_NAME_iphonesimulator = iphonesimulator;
+REAL_PLATFORM_NAME_macosx = macosx;
+
+TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 
 // Use GCC 4.2 with Xcode 3.1, which includes GCC 4.2 but defaults to GCC 4.0.
 // Note that Xcode versions as new as 3.1.2 use XCODE_VERSION_ACTUAL for the minor version

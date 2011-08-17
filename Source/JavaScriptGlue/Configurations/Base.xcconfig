@@ -57,7 +57,15 @@ WARNING_CFLAGS_ppc64 = $(WARNING_CFLAGS_BASE);
 WARNING_CFLAGS_x86_64 = $(WARNING_CFLAGS_BASE);
 HEADER_SEARCH_PATHS = . icu $(HEADER_SEARCH_PATHS);
 
+
+REAL_PLATFORM_NAME = $(REAL_PLATFORM_NAME_$(PLATFORM_NAME));
+REAL_PLATFORM_NAME_ = $(REAL_PLATFORM_NAME_macosx);
+REAL_PLATFORM_NAME_iphoneos = iphoneos;
+REAL_PLATFORM_NAME_iphonesimulator = iphonesimulator;
+REAL_PLATFORM_NAME_macosx = macosx;
+
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
+
 
 // DEBUG_DEFINES, GCC_OPTIMIZATION_LEVEL and STRIP_INSTALLED_PRODUCT vary between the debug and normal variants.
 // We set up the values for each variant here, and have the Debug configuration in the Xcode project use the _debug variant.
