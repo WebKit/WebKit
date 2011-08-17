@@ -1,3 +1,14 @@
+2011-08-15  Aaron Boodman  <aa@chromium.org>
+
+        Remove support for old didCreateIsolatedContext() signature
+        https://bugs.webkit.org/show_bug.cgi?id=66249
+
+        Reviewed by Darin Fisher.
+
+        * public/WebFrameClient.h:
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didCreateIsolatedScriptContext):
+
 2011-08-17  Aaron Boodman  <aa@chromium.org>
 
         Remove support for old didCreateIsolatedContext() signature
