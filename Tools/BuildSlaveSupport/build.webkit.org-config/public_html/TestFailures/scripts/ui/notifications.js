@@ -68,7 +68,7 @@ ui.notifications.Info = base.extends(Notification, {
 var Time = base.extends('time', {
     init: function()
     {
-        this.date = new Date();
+        this.setDate(new Date());
     },
     date: function()
     {
@@ -145,7 +145,7 @@ ui.notifications.TestFailures = base.extends(Notification, {
     {
         var commitDataDate = new Date(commitData.time);
         if (this._time.date > commitDataDate);
-            this._time.date = commitDataDate;
+            this._time.setDate(commitDataDate);
         return this._causes.appendChild(new ui.notifications.SuspiciousCommit(commitData));
     }
 });

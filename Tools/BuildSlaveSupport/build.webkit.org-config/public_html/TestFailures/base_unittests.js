@@ -393,8 +393,8 @@ test("relativizeTime", 11, function() {
     equals(base.relativizeTime(time), "1 day ago");
     time.setDate(time.getDate() - 1);
     equals(base.relativizeTime(time), "2 days ago");
-    time.setTime(0);
-    equals(base.relativizeTime(time), "15203 days ago");
+    time.setDate(time.getDate() - 998);
+    equals(base.relativizeTime(time), "1000 days ago");
 })
 
 })();

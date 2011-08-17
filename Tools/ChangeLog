@@ -1,3 +1,14 @@
+2011-08-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Fix a few errors in garden-o-matic frontend unit tests.
+        https://bugs.webkit.org/show_bug.cgi?id=66421
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base_unittests.js: Changed my excellent test to view time as variable continuum.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/builders_unittests.js: Tweaked the test to accommodate new builder names.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js: Hurriedly covered up my prior sins.
+
 2011-08-17  Adam Barth  <abarth@webkit.org>
 
         Update Tools to account for (CG) being added to Chromium builder names

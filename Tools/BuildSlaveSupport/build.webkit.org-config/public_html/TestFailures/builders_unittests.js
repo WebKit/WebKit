@@ -325,7 +325,7 @@ test("buildersFailingStepRequredForTestCoverage", 3, function() {
                 callback(kExampleBuilderStatusJSON);
             else if (/Webkit%20Linux/.exec(url))
                 callback(kExampleBuildInfoJSON);
-            else if (/Webkit%20Mac10\.6%20(CG)/.exec(url))
+            else if (/Webkit%20Mac10\.6%20\(CG\)/.exec(url))
                 callback(failingBuildInfoJSON);
             else {
                 ok(false, "Unexpected URL: " + url);
@@ -336,7 +336,7 @@ test("buildersFailingStepRequredForTestCoverage", 3, function() {
 
     simulator.runTest(function() {
         builders.buildersFailingStepRequredForTestCoverage(function(builderNameList) {
-            deepEqual(builderNameList, ["Webkit Mac10.6 CG"]);
+            deepEqual(builderNameList, ["Webkit Mac10.6 (CG)"]);
         });
     });
 
