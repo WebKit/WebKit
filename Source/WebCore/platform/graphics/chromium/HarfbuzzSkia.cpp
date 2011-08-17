@@ -246,9 +246,8 @@ static HB_FaceRec_* getCachedHarfbuzzFace(FontPlatformData* platformData)
     return result.get()->second.first;
 }
 
-static void releaseCachedHarfbuzzFace(FontPlatformData* platformData)
+static void releaseCachedHarfbuzzFace(SkFontID uniqueID)
 {
-    SkFontID uniqueID = platformData->uniqueID();
     HarfbuzzFaceCache::iterator result = gHarfbuzzFaceCache->find(uniqueID);
     ASSERT(result != gHarfbuzzFaceCache->end());
     ASSERT(result.get()->second.second > 0);
@@ -260,14 +259,14 @@ static void releaseCachedHarfbuzzFace(FontPlatformData* platformData)
 }
 
 HarfbuzzFace::HarfbuzzFace(FontPlatformData* platformData)
-    : m_platformData(platformData)
+    : m_uniqueID(platformData->uniqueID())
 {
-    m_harfbuzzFace = getCachedHarfbuzzFace(m_platformData);
+    m_harfbuzzFace = getCachedHarfbuzzFace(platformData);
 }
 
 HarfbuzzFace::~HarfbuzzFace()
 {
-    releaseCachedHarfbuzzFace(m_platformData);
+    releaseCachedHarfbuzzFace(m_uniqueID);
 }
 
 }  // namespace WebCore

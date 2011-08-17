@@ -55,7 +55,7 @@ public:
 private:
     explicit HarfbuzzFace(FontPlatformData*);
 
-    FontPlatformData* m_platformData;
+    uint32_t m_uniqueID;
     HB_FaceRec_* m_harfbuzzFace;
 };
 
