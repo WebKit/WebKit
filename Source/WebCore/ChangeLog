@@ -1,3 +1,10 @@
+2011-08-17  Tony Chang  <tony@chromium.org>
+
+        Fix chromium mac compile.  MediaPlayerPrivateAVFoundationObjC.* moved
+        and the WebCore.gypi file wasn't updated.
+
+        * WebCore.gypi:
+
 2011-08-17  Abhishek Arya  <inferno@chromium.org>
 
         Crash in Document::recalcStyleSelector
