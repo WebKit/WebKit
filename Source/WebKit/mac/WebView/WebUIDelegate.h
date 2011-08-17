@@ -30,12 +30,6 @@
 #import <Foundation/NSURLRequest.h>
 #import <JavaScriptCore/WebKitAvailability.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSUInteger unsigned int
-#else
-#define WebNSUInteger NSUInteger
-#endif
-
 /*!
     @enum WebMenuItemTag
     @discussion Each menu item in the default menu items array passed in
@@ -429,7 +423,7 @@ typedef enum {
     @param elementInformation Dictionary that describes the element that the mouse is over, or nil.
     @param modifierFlags The modifier flags as in NSEvent.
 */
-- (void)webView:(WebView *)sender mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(WebNSUInteger)modifierFlags;
+- (void)webView:(WebView *)sender mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(NSUInteger)modifierFlags;
 
 /*!
     @method webView:contextMenuItemsForElement:defaultMenuItems:
@@ -475,7 +469,7 @@ typedef enum {
     indicating which drag destination actions can occur, WebDragDestinationActionAny to allow any kind of action or
     WebDragDestinationActionNone to not accept the drag.
 */
-- (WebNSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (NSUInteger)webView:(WebView *)webView dragDestinationActionMaskForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
 
 /*!
     @method webView:willPerformDragDestinationAction:forDraggingInfo:
@@ -496,7 +490,7 @@ typedef enum {
     @discussion This method is called after the user has begun a drag from a WebView. The UI delegate can return a mask indicating
     which drag source actions can occur, WebDragSourceActionAny to allow any kind of action or WebDragSourceActionNone to not begin a drag.
 */
-- (WebNSUInteger)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point;
+- (NSUInteger)webView:(WebView *)webView dragSourceActionMaskForPoint:(NSPoint)point;
 
 /*!
     @method webView:willPerformDragSourceAction:fromPoint:withPasteboard:
@@ -571,5 +565,3 @@ typedef enum {
 - (NSRect)webViewContentRect:(WebView *)sender WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_0_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
 
 @end
-
-#undef WebNSUInteger

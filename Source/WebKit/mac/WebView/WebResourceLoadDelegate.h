@@ -26,12 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSInteger int
-#else
-#define WebNSInteger NSInteger
-#endif
-
 @class WebView;
 @class WebDataSource;
 @class NSURLAuthenticationChallenge;
@@ -124,7 +118,7 @@
     @param length The amount of new data received.  This is not the total amount, just the new amount received.
     @param dataSource The dataSource that initiated the load.
 */
-- (void)webView:(WebView *)sender resource:(id)identifier didReceiveContentLength:(WebNSInteger)length fromDataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)sender resource:(id)identifier didReceiveContentLength:(NSInteger)length fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method webView:resource:didFinishLoadingFromDataSource:
@@ -162,5 +156,3 @@
 - (void)webView:(WebView *)sender plugInFailedWithError:(NSError *)error dataSource:(WebDataSource *)dataSource;
 
 @end
-
-#undef WebNSInteger

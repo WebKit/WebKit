@@ -30,12 +30,6 @@
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebViewPrivate.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSUInteger unsigned int
-#else
-#define WebNSUInteger NSUInteger
-#endif
-
 /*!
 @protocol _WebDocumentZooming
 @discussion Optional protocol for a view that wants to handle its own zoom.
@@ -62,7 +56,7 @@
 @protocol WebMultipleTextMatches <NSObject>
 - (void)setMarkedTextMatchesAreHighlighted:(BOOL)newValue;
 - (BOOL)markedTextMatchesAreHighlighted;
-- (WebNSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
+- (NSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options limit:(NSUInteger)limit markMatches:(BOOL)markMatches;
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;
 @end
@@ -82,5 +76,3 @@
 
 @interface WebHTMLView (WebDocumentInternalProtocols) <WebDocumentElement, WebMultipleTextMatches, WebDocumentOptionsSearching>
 @end
-
-#undef WebNSUInteger

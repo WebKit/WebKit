@@ -30,12 +30,6 @@
 
 #import <WebKit/WebDocumentPrivate.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSUInteger unsigned int
-#else
-#define WebNSUInteger NSUInteger
-#endif
-
 @class WebHTMLRepresentationPrivate;
 @class NSView;
 
@@ -67,12 +61,10 @@
 - (DOMElement *)formForElement:(DOMElement *)element;
 - (DOMElement *)currentForm;
 - (NSArray *)controlsInForm:(DOMElement *)form;
-- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element resultDistance:(WebNSUInteger*)outDistance resultIsInCellAbove:(BOOL*)outIsInCellAbove;
+- (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element resultDistance:(NSUInteger*)outDistance resultIsInCellAbove:(BOOL*)outIsInCellAbove;
 - (NSString *)matchLabels:(NSArray *)labels againstElement:(DOMElement *)element;
 
 // Deprecated SPI
 - (NSString *)searchForLabels:(NSArray *)labels beforeElement:(DOMElement *)element; // Use -searchForLabels:beforeElement:resultDistance:resultIsInCellAbove:
 
 @end
-
-#undef WebNSUInteger

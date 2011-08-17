@@ -26,12 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSInteger int
-#else
-#define WebNSInteger NSInteger
-#endif
-
 @class WebView;
 @class WebDataSource;
 @class NSURLAuthenticationChallenge;
@@ -40,7 +34,7 @@
 
 @interface NSObject (WebResourceLoadDelegatePrivate)
 
-- (void)webView:(WebView *)webView didLoadResourceFromMemoryCache:(NSURLRequest *)request response:(NSURLResponse *)response length:(WebNSInteger)length fromDataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)webView didLoadResourceFromMemoryCache:(NSURLRequest *)request response:(NSURLResponse *)response length:(NSInteger)length fromDataSource:(WebDataSource *)dataSource;
 - (BOOL)webView:(WebView *)webView resource:(id)identifier shouldUseCredentialStorageForDataSource:(WebDataSource *)dataSource;
 
 #if WEBKIT_VERSION_MAX_ALLOWED > WEBKIT_VERSION_4_0
@@ -61,5 +55,3 @@
  */
 - (BOOL)webView:(WebView*)sender shouldPaintBrokenImageForURL:(NSURL*)imageURL;
 @end
-
-#undef WebNSInteger

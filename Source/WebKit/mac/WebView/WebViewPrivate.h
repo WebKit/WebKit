@@ -34,14 +34,6 @@
 #define ENABLE_DASHBOARD_SUPPORT 1
 #endif
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSInteger int
-#define WebNSUInteger unsigned int
-#else
-#define WebNSInteger NSInteger
-#define WebNSUInteger NSUInteger
-#endif
-
 @class NSError;
 @class WebFrame;
 @class WebDeviceOrientation;
@@ -181,8 +173,8 @@ typedef NSUInteger WebFindOptions;
 // whether or not they implement the protocol. For now we'll just deal with HTML.
 // These methods are still in flux; don't rely on them yet.
 - (BOOL)canMarkAllTextMatches;
-- (WebNSUInteger)countMatchesForText:(NSString *)string options:(WebFindOptions)options highlight:(BOOL)highlight limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
-- (WebNSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options highlight:(BOOL)highlight limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
+- (NSUInteger)countMatchesForText:(NSString *)string options:(WebFindOptions)options highlight:(BOOL)highlight limit:(NSUInteger)limit markMatches:(BOOL)markMatches;
+- (NSUInteger)countMatchesForText:(NSString *)string inDOMRange:(DOMRange *)range options:(WebFindOptions)options highlight:(BOOL)highlight limit:(NSUInteger)limit markMatches:(BOOL)markMatches;
 - (void)unmarkAllTextMatches;
 - (NSArray *)rectsForTextMatches;
 
@@ -558,8 +550,8 @@ Could be worth adding to the API.
 - (NSSize)_fixedLayoutSize;
 
 // Deprecated. Use the methods in pending public above instead.
-- (WebNSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit;
-- (WebNSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(WebNSUInteger)limit markMatches:(BOOL)markMatches;
+- (NSUInteger)markAllMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit;
+- (NSUInteger)countMatchesForText:(NSString *)string caseSensitive:(BOOL)caseFlag highlight:(BOOL)highlight limit:(NSUInteger)limit markMatches:(BOOL)markMatches;
 
 /*!
  @method searchFor:direction:caseSensitive:wrap:startInSelection:
@@ -734,6 +726,3 @@ void WebInstallMemoryPressureHandler(void);
 #ifdef __cplusplus
 }
 #endif
-
-#undef WebNSInteger
-#undef WebNSUInteger

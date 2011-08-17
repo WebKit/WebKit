@@ -28,12 +28,6 @@
 
 #import <Foundation/Foundation.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSUInteger unsigned int
-#else
-#define WebNSUInteger NSUInteger
-#endif
-
 /*!
 @enum WebCacheModel
 
@@ -68,7 +62,7 @@ enum {
     WebCacheModelDocumentBrowser = 1,
     WebCacheModelPrimaryWebBrowser = 2
 };
-typedef WebNSUInteger WebCacheModel;
+typedef NSUInteger WebCacheModel;
 
 @class WebPreferencesPrivate;
 
@@ -438,5 +432,3 @@ caching behavior.
 - (WebCacheModel)cacheModel;
 
 @end
-
-#undef WebNSUInteger

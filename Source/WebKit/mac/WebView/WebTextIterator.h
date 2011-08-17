@@ -25,12 +25,6 @@
 
 #import <Foundation/Foundation.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSUInteger unsigned int
-#else
-#define WebNSUInteger NSUInteger
-#endif
-
 @class DOMRange;
 @class DOMNode;
 @class WebTextIteratorPrivate;
@@ -61,7 +55,7 @@
  @result Length of the current text. Length of zero means that the iterator is at a boundary,
  such as an image, that separates runs of text.
  */
-- (WebNSUInteger)currentTextLength;
+- (NSUInteger)currentTextLength;
 
 /*!
  @method currentTextPointer
@@ -101,5 +95,3 @@
 - (NSString *)currentText;
 
 @end
-
-#undef WebNSUInteger

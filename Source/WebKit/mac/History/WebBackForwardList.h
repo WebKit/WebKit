@@ -28,12 +28,6 @@
 
 #import <Foundation/Foundation.h>
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebNSUInteger unsigned int
-#else
-#define WebNSUInteger NSUInteger
-#endif
-
 @class WebHistoryItem;
 @class WebBackForwardListPrivate;
 
@@ -176,7 +170,7 @@
     @param size If size is 0, the WebView associated with this WebBackForwardList
     will not use the shared page cache. Otherwise, it will.
 */
-- (void)setPageCacheSize:(WebNSUInteger)size;
+- (void)setPageCacheSize:(NSUInteger)size;
 
 /*!
     @method pageCacheSize
@@ -184,7 +178,5 @@
     @result The size of the shared page cache (in pages), or 0 if the WebView 
     associated with this WebBackForwardList will not use the shared page cache.
 */
-- (WebNSUInteger)pageCacheSize;
+- (NSUInteger)pageCacheSize;
 @end
-
-#undef WebNSUInteger

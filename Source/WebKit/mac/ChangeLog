@@ -1,3 +1,22 @@
+2011-08-17  Dan Bernstein  <mitz@apple.com>
+
+        Eliminate the WebNSInteger and WebNSUInteger compatibility definitions that were
+        needed for Tiger.
+
+        Reviewed by Darin Adler.
+
+        * History/WebBackForwardList.h:
+        * WebView/WebDocumentInternal.h:
+        * WebView/WebHTMLRepresentation.h:
+        * WebView/WebPreferences.h:
+        * WebView/WebResourceLoadDelegate.h:
+        * WebView/WebResourceLoadDelegatePrivate.h:
+        * WebView/WebScriptDebugDelegate.h:
+        * WebView/WebTextIterator.h:
+        * WebView/WebUIDelegate.h:
+        * WebView/WebView.h:
+        * WebView/WebViewPrivate.h:
+
 2011-08-15  Dmitry Titov  <dimich@chromium.org>
 
         FrameLoaderClient::transferLoadingResourceFromPage does not have enough parameters
