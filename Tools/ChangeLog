@@ -1,5 +1,25 @@
 2011-08-17  Adam Roben  <aroben@apple.com>
 
+        Tell Trac logs always to display all specified revisions in a single page
+
+        Trac imposes a default limit of 100 revisions per log page. We need to tell it to allow more
+        revisions than that.
+
+        Fixes <http://webkit.org/b/66373> Links to Trac from TestFailures page don't always show all
+        relevant revisions
+
+        Reviewed by Daniel Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js:
+        (trac.logURL): Add a limit parameter to the log URL that allows all revisions to be seen in
+        a single page.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/trac_unittests.js:
+        Updated tests for the above.
+
+2011-08-17  Adam Roben  <aroben@apple.com>
+
         Fix TestFailures's link to file a bug about TestFailures itself
 
         Fixes <http://webkit.org/b/66387> REGRESSION (r92135): TestFailures page's link to file a

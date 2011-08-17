@@ -137,6 +137,9 @@ trac.logURL = function(path, startRevision, endRevision, showFullCommitLogs, for
     var queryParameters = {
         rev: endRevision,
         stop_rev: startRevision,
+        // Trac requires limit to be 1 more than the number of revisions we actually want to show.
+        // See <http://trac.edgewall.org/ticket/10317>.
+        limit: endRevision - startRevision + 2,
     };
 
     if (showFullCommitLogs)

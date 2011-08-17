@@ -285,10 +285,10 @@ test("changesetURL", 1, function() {
 });
 
 test("logURL", 4, function() {
-    equals(trac.logURL('trunk', 1234, 1236, false, false), "http://trac.webkit.org/log/trunk?rev=1236&stop_rev=1234");
-    equals(trac.logURL('trunk', 1234, 1234, true, false), "http://trac.webkit.org/log/trunk?rev=1234&stop_rev=1234&verbose=on");
-    equals(trac.logURL('trunk', 1236, 1236, false, true), "http://trac.webkit.org/log/trunk?rev=1236&stop_rev=1236&format=rss");
-    equals(trac.logURL('trunk', 1234, 1236, true, true), "http://trac.webkit.org/log/trunk?rev=1236&stop_rev=1234&verbose=on&format=rss");
+    equals(trac.logURL('trunk', 1234, 1236, false, false), "http://trac.webkit.org/log/trunk?rev=1236&stop_rev=1234&limit=4");
+    equals(trac.logURL('trunk', 1234, 1234, true, false), "http://trac.webkit.org/log/trunk?rev=1234&stop_rev=1234&limit=2&verbose=on");
+    equals(trac.logURL('trunk', 1236, 1236, false, true), "http://trac.webkit.org/log/trunk?rev=1236&stop_rev=1236&limit=2&format=rss");
+    equals(trac.logURL('trunk', 1234, 1236, true, true), "http://trac.webkit.org/log/trunk?rev=1236&stop_rev=1234&limit=4&verbose=on&format=rss");
 });
 
 test("recentCommitData", 3, function() {
@@ -318,7 +318,7 @@ test("commitDataForRevisionRange", 3, function() {
     var simulator = new NetworkSimulator();
     simulator.get = function(url, callback)
     {
-        equals(url, 'http://trac.webkit.org/log/trunk?rev=12365&stop_rev=12345&verbose=on&format=rss');
+        equals(url, 'http://trac.webkit.org/log/trunk?rev=12365&stop_rev=12345&limit=22&verbose=on&format=rss');
         simulator.scheduleCallback(function() {
             var parser = new DOMParser();
             var responseDOM = parser.parseFromString(kExampleCommitDataXML, "application/xml");

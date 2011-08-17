@@ -77,7 +77,7 @@ const testCases = [
         failingTests: [
             'css1/basic/class_as_selector.html',
         ],
-        expectedDescription: 'css1/basic/class_as_selector.html started failing on Windows 7 Release (Tests) between r9 and r10 (inclusive).\n\nhttp://trac.webkit.org/log/trunk?rev=10&stop_rev=9\n\n[RESULTS PAGE URL Windows 7 Release (Tests), r8 (2)] passed\n[RESULTS PAGE URL Windows 7 Release (Tests), r10 (5)] failed\n',
+        expectedDescription: 'css1/basic/class_as_selector.html started failing on Windows 7 Release (Tests) between r9 and r10 (inclusive).\n\nhttp://trac.webkit.org/log/trunk?rev=10&stop_rev=9&limit=3\n\n[RESULTS PAGE URL Windows 7 Release (Tests), r8 (2)] passed\n[RESULTS PAGE URL Windows 7 Release (Tests), r10 (5)] failed\n',
         expectedTitle: 'REGRESSION (r8-r10): css1/basic/class_as_selector.html failing on Windows 7 Release (Tests)',
     },
     {
@@ -87,7 +87,7 @@ const testCases = [
             'css1/basic/class_as_selector.html',
             'fast/css/ex-after-font-variant.html',
         ],
-        expectedDescription: 'css1/basic/class_as_selector.html and fast/css/ex-after-font-variant.html started failing on Windows 7 Release (Tests) between r9 and r10 (inclusive).\n\nhttp://trac.webkit.org/log/trunk?rev=10&stop_rev=9\n\n[RESULTS PAGE URL Windows 7 Release (Tests), r8 (2)] passed\n[RESULTS PAGE URL Windows 7 Release (Tests), r10 (5)] failed\n',
+        expectedDescription: 'css1/basic/class_as_selector.html and fast/css/ex-after-font-variant.html started failing on Windows 7 Release (Tests) between r9 and r10 (inclusive).\n\nhttp://trac.webkit.org/log/trunk?rev=10&stop_rev=9&limit=3\n\n[RESULTS PAGE URL Windows 7 Release (Tests), r8 (2)] passed\n[RESULTS PAGE URL Windows 7 Release (Tests), r10 (5)] failed\n',
         expectedTitle: 'REGRESSION (r8-r10): css1/basic/class_as_selector.html, fast/css/ex-after-font-variant.html failing on Windows 7 Release (Tests)',
     },
     {
@@ -103,7 +103,7 @@ const testCases = [
             'css1/basic/class_as_selector7.html',
             'css1/basic/class_as_selector8.html',
         ],
-        expectedDescription: 'The following tests started failing on Windows 7 Release (Tests) between r9 and r10 (inclusive):\n\n    css1/basic/class_as_selector1.html\n    css1/basic/class_as_selector2.html\n    css1/basic/class_as_selector3.html\n    css1/basic/class_as_selector4.html\n    css1/basic/class_as_selector5.html\n    css1/basic/class_as_selector6.html\n    css1/basic/class_as_selector7.html\n    css1/basic/class_as_selector8.html\n\nhttp://trac.webkit.org/log/trunk?rev=10&stop_rev=9\n\n[RESULTS PAGE URL Windows 7 Release (Tests), r8 (2)] passed\n[RESULTS PAGE URL Windows 7 Release (Tests), r10 (5)] failed\n',
+        expectedDescription: 'The following tests started failing on Windows 7 Release (Tests) between r9 and r10 (inclusive):\n\n    css1/basic/class_as_selector1.html\n    css1/basic/class_as_selector2.html\n    css1/basic/class_as_selector3.html\n    css1/basic/class_as_selector4.html\n    css1/basic/class_as_selector5.html\n    css1/basic/class_as_selector6.html\n    css1/basic/class_as_selector7.html\n    css1/basic/class_as_selector8.html\n\nhttp://trac.webkit.org/log/trunk?rev=10&stop_rev=9&limit=3\n\n[RESULTS PAGE URL Windows 7 Release (Tests), r8 (2)] passed\n[RESULTS PAGE URL Windows 7 Release (Tests), r10 (5)] failed\n',
         expectedTitle: 'REGRESSION (r8-r10): 8 css1/basic tests failing on Windows 7 Release (Tests)',
     },
     {
