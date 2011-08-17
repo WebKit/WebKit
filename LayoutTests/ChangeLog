@@ -1,3 +1,24 @@
+2011-08-16  Hayato Ito  <hayato@chromium.org>
+
+        Add two sample mismatch reftests to make sure that reftests work correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=66218
+
+        Reviewed by Tony Chang.
+
+        One mismatch reftest is expected to pass, the other is expected to
+        fail. The failed one is marked as 'WONTFIX' in test expectations
+        in chromium port and is skipped in other ports.
+
+        * fast/harness/sample-fail-mismatch-reftest-expected-mismatch.html: Added.
+        * fast/harness/sample-fail-mismatch-reftest.html: Added.
+        * fast/harness/sample-mismatch-reftest-expected-mismatch.html: Added.
+        * fast/harness/sample-mismatch-reftest.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-08-16  Shawn Singh  <shawnsingh@chromium.org>
 
         Computing screen-space transform for LayerChromium and CCLayerImpl

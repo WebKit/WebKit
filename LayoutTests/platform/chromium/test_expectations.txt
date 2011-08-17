@@ -462,6 +462,9 @@ WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 // data, so this test is not applicable.
 BUGWK55519 SKIP WONTFIX : compositing/video/video-background-color.html = FAIL
 
+// This test verifies that a mismatch reftest will fail if both results are same.
+WONTFIX : fast/harness/sample-fail-mismatch-reftest.html = IMAGE
+
 // -----------------------------------------------------------------
 // CHROME REWRITTEN TESTS
 // -----------------------------------------------------------------
