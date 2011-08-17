@@ -3,6 +3,18 @@
         Accessibility stack exhaustion using role attribute
         https://bugs.webkit.org/show_bug.cgi?id=65174
 
+        Reviewed by Darin Adler.
+
+        Forgot to commit review comments.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::remapAriaRoleDueToParent):
+
+2011-08-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Accessibility stack exhaustion using role attribute
+        https://bugs.webkit.org/show_bug.cgi?id=65174
+
         Make sure we do not call accessibilityIsIgnored() during the AccessibilityObject
         creation flow. That can lead to loops.
    
