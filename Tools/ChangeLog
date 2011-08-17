@@ -1,3 +1,126 @@
+2011-08-17  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic spring cleaning: move scripts, styles, and images in the respective directories.
+        https://bugs.webkit.org/show_bug.cgi?id=66427
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Bugzilla.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Buildbot.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Buildbot_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyTestBugForm.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyTestBugForm_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NRWTResultsParser.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NewBugForm.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NewBugForm_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ORWTResultsParser.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/PersistentCache.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestRelatedBugForm.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestRelatedBugForm_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/WebKitBugzilla.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/WebKitBuildbot.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/bugzilla_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/builders.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/builders_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/controllers: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/controllers.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/controllers/rebaseline.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/favicon-green.png: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/favicon-red.png: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/images: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/images/favicon-green.png: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/favicon-green.png.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/images/favicon-red.png: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/favicon-red.png.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/net.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/net_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/rebaseline.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Bugzilla.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Bugzilla.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Buildbot.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Buildbot.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Buildbot_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Buildbot_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Builder.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Builder_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/FailingTestsBugForm.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/FailingTestsBugForm_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FailingTestsBugForm_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/FlakyLayoutTestDetector.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/FlakyLayoutTestDetector_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyLayoutTestDetector_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/FlakyTestBugForm.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyTestBugForm.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/FlakyTestBugForm_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/FlakyTestBugForm_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/LayoutTestHistoryAnalyzer.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestHistoryAnalyzer.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/LayoutTestResultsLoader.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/NRWTResultsParser.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NRWTResultsParser.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/NewBugForm.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NewBugForm.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/NewBugForm_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/NewBugForm_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ORWTResultsParser.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ORWTResultsParser.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/PersistentCache.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/PersistentCache.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/TestRelatedBugForm.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestRelatedBugForm.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/TestRelatedBugForm_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestRelatedBugForm_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Trac.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Trac.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Utilities.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/Utilities_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ViewController.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/WebKitBugzilla.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/WebKitBugzilla.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/WebKitBuildbot.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/WebKitBuildbot.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/base_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/bugzilla_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/bugzilla_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/builders.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/builders_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/checkout_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/checkout_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/controllers.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/controllers.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/main.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js.
+        ():
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/model_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/net.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/net.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/net_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/net_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/results_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/trac_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/trac_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui/results.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui/results_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui_unittests.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui_unittests.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/unexpected-passes.js: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/unexpected-passes.js.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/TestFailures.css: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/main.css: Copied from Tools/BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/trac_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui/results.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui/results_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui_unittests.js: Removed.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/unexpected-passes.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/unexpected-passes.js: Removed.
+
 2011-08-17  Jochen Eisinger  <jochen@chromium.org>
 
         Make SVNTest.test_svn_apply use the same timezone logic as VCSUtils.pm

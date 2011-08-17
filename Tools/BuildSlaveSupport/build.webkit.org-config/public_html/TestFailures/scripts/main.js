@@ -73,7 +73,7 @@ function displayInfobar(message, type)
 
 function setIconState(hasFailures)
 {
-    var faviconURL = 'favicon-' + (hasFailures ? 'red' : 'green') + '.png';
+    var faviconURL = 'images/favicon-' + (hasFailures ? 'red' : 'green') + '.png';
     $('#favicon').attr('href', faviconURL);
 }
 
