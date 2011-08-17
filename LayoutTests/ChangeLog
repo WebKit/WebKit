@@ -1,5 +1,12 @@
 2011-08-17  Tony Chang  <tony@chromium.org>
 
+        [chromium] Mark svg/custom/repaint-shadow.svg and
+        media/media-blocked-by-beforeload.html as flaky.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-17  Tony Chang  <tony@chromium.org>
+
         [chromium] Fix typo in test_expectations.txt.
 
         * platform/chromium/test_expectations.txt:

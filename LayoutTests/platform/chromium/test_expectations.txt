@@ -973,6 +973,8 @@ BUGCR10306 LINUX : svg/carto.net/combobox.svg = FAIL
 // alpha in bottom group.
 BUGCR10310 LINUX : svg/W3C-SVG-1.1/masking-opacity-01-b.svg = FAIL
 
+BUGWK66386 : svg/custom/repaint-shadow.svg = PASS IMAGE
+
 // -----------------------------------------------------------------
 // Accessibility layout tests
 //
@@ -3679,6 +3681,7 @@ BUGWK66268 : editing/deleting/regional-indicators.html = TIMEOUT TEXT
 BUGCR93044 LINUX DEBUG : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 
 BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
+BUGWK66310 : media/media-blocked-by-beforeload.html = PASS TEXT
 
 // Three new tests in r93144.  Probably just needs new baselines.
 BUGTONY : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE+TEXT IMAGE
