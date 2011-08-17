@@ -1,3 +1,25 @@
+2011-08-16  Chang Shu  <cshu@webkit.org>
+
+        Support reset in WebCore::Internals
+        https://bugs.webkit.org/show_bug.cgi?id=66307
+
+        Reviewed by Dimitri Glazkov.
+
+        New tests will be added when function reset is implemented.
+
+        Added framework code in WebCoreTestSupport. The real implementation of
+        Internals::reset() depends on the need from the settings that require a reset.
+
+        * testing/Internals.cpp:
+        (WebCore::Internals::reset):
+        * testing/Internals.h:
+        * testing/js/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::resetInternalsObject):
+        * testing/js/WebCoreTestSupport.h:
+        * testing/v8/WebCoreTestSupport.cpp:
+        (WebCoreTestSupport::resetInternalsObject):
+        * testing/v8/WebCoreTestSupport.h:
+
 2011-08-17  Tony Chang  <tony@chromium.org>
 
         Fix chromium mac compile.  MediaPlayerPrivateAVFoundationObjC.* moved

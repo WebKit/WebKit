@@ -43,7 +43,9 @@ class Internals : public RefCounted<Internals> {
 public:
     static PassRefPtr<Internals> create();
     virtual ~Internals();
-    
+
+    void reset(Document*);
+
     String elementRenderTreeAsText(Element*, ExceptionCode&);
 
     bool isPreloaded(Document*, const String& url);
@@ -67,6 +69,7 @@ public:
 
     void setForceCompositingMode(Document*, bool enabled, ExceptionCode&);
 
+    static const char* internalsId;
 private:
     Internals();
 };

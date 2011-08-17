@@ -26,7 +26,9 @@
 #include "config.h"
 #include "WebCoreTestSupport.h"
 
+#include "Document.h"
 #include "Internals.h"
+#include "ScriptExecutionContext.h"
 #include "V8Internals.h"
 
 #include <v8.h>
@@ -40,7 +42,21 @@ void injectInternalsObject(v8::Local<v8::Context> context)
     v8::Context::Scope contextScope(context);
     v8::HandleScope scope;
 
-    context->Global()->Set(v8::String::New("internals"), toV8(Internals::create()));
+    context->Global()->Set(v8::String::New(Internals::internalsId), toV8(Internals::create()));
+}
+
+void resetInternalsObject(v8::Local<v8::Context> context)
+{
+    v8::Context::Scope contextScope(context);
+    v8::HandleScope scope;
+
+    v8::Handle<v8::Object> object = v8::Handle<v8::Object>::Cast(context->Global()->Get(v8::String::New(Internals::internalsId)));
+    Internals * internals = V8Internals::toNative(object);
+    if (internals) {
+        ScriptExecutionContext* scriptContext = getScriptExecutionContext();
+        if (scriptContext->isDocument())
+            internals->reset(static_cast<Document*>(scriptContext));
+    }
 }
 
 }

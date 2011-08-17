@@ -211,6 +211,8 @@ void WebPage::resetSettings()
 
     DumpRenderTreeSupportQt::setMinimumTimerInterval(this, DumpRenderTreeSupportQt::defaultMinimumTimerInterval());
 
+    DumpRenderTreeSupportQt::resetInternalsObject(mainFrame());
+
     m_pendingGeolocationRequests.clear();
 }
 

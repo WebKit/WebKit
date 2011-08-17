@@ -43,6 +43,8 @@
 
 namespace WebCore {
 
+const char* Internals::internalsId = "internals";
+
 PassRefPtr<Internals> Internals::create()
 {
     return adoptRef(new Internals);
@@ -187,6 +189,11 @@ void Internals::setForceCompositingMode(Document* document, bool enabled, Except
     }
 
     document->settings()->setForceCompositingMode(enabled);
+}
+
+void Internals::reset(Document*)
+{
+// FIXME: Implement
 }
 
 }

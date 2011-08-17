@@ -34,6 +34,7 @@ template <class T> class Local;
 namespace WebCoreTestSupport {
 
 void injectInternalsObject(v8::Local<v8::Context>);
+void resetInternalsObject(v8::Local<v8::Context>);
 
 } // namespace WebCore
 

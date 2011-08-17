@@ -1165,6 +1165,25 @@ void DumpRenderTreeSupportQt::injectInternalsObject(QWebFrame* frame)
 #endif
 }
 
+void DumpRenderTreeSupportQt::resetInternalsObject(QWebFrame* frame)
+{
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+#if USE(JSC)
+    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
+
+    JSDOMWindow* window = toJSDOMWindow(coreFrame, mainThreadNormalWorld());
+    Q_ASSERT(window);
+
+    JSC::ExecState* exec = window->globalExec();
+    Q_ASSERT(exec);
+
+    JSContextRef context = toRef(exec);
+    WebCoreTestSupport::resetInternalsObject(context);
+#elif USE(V8)
+    WebCoreTestSupport::resetInternalsObject(V8Proxy::mainWorldContext(coreFrame));
+#endif
+}
+
 // Provide a backward compatibility with previously exported private symbols as of QtWebKit 4.6 release
 
 void QWEBKIT_EXPORT qt_resumeActiveDOMObjects(QWebFrame* frame)

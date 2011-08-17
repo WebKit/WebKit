@@ -31,6 +31,7 @@ typedef const struct OpaqueJSContext* JSContextRef;
 namespace WebCoreTestSupport {
 
 void injectInternalsObject(JSContextRef);
+void resetInternalsObject(JSContextRef);
 
 } // namespace WebCore
 

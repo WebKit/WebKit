@@ -1,3 +1,19 @@
+2011-08-16  Chang Shu  <cshu@webkit.org>
+
+        Support reset in WebCore::Internals
+        https://bugs.webkit.org/show_bug.cgi?id=66307
+
+        Reviewed by Dimitri Glazkov.
+
+        Added call to resetInternalsObject in DRT.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController):
+        * DumpRenderTree/mac/DumpRenderTree.mm:
+        (resetWebViewToConsistentStateBeforeTesting):
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::resetSettings):
+
 2011-08-17  Alexis Menard  <alexis.menard@openbossa.org>
 
         Add a new build slave for the Qt port on Mac OS SnowLeopard.

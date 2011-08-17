@@ -38,4 +38,10 @@ void WebTestingSupport::injectInternalsObject(WebFrame* frame)
     WebCoreTestSupport::injectInternalsObject(frame->mainWorldScriptContext());
 }
 
+void WebTestingSupport::resetInternalsObject(WebFrame* frame)
+{
+    v8::HandleScope handleScope;
+    WebCoreTestSupport::resetInternalsObject(frame->mainWorldScriptContext());
+}
+
 }

@@ -28,6 +28,7 @@
 
 #include "Internals.h"
 #include "JSDOMGlobalObject.h"
+#include "JSDocument.h"
 #include "JSInternals.h"
 #include <JavaScriptCore/APICast.h>
 #include <interpreter/CallFrame.h>
@@ -42,7 +43,20 @@ void injectInternalsObject(JSContextRef context)
     JSLock lock(SilenceAssertionsOnly);
     ExecState* exec = toJS(context);
     JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
-    globalObject->putDirect(exec->globalData(), Identifier(exec, "internals"), toJS(exec, globalObject, Internals::create()));
+    globalObject->putDirect(exec->globalData(), Identifier(exec, Internals::internalsId), toJS(exec, globalObject, Internals::create()));
+}
+
+void resetInternalsObject(JSContextRef context)
+{
+    JSLock lock(SilenceAssertionsOnly);
+    ExecState* exec = toJS(context);
+    JSDOMGlobalObject* globalObject = static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject());
+    Internals * internals = toInternals(globalObject->getDirect(exec->globalData(), Identifier(exec, Internals::internalsId)));
+    if (internals) {
+        ScriptExecutionContext* scriptContext = globalObject->scriptExecutionContext();
+        if (scriptContext->isDocument())
+            internals->reset(static_cast<Document*>(scriptContext));
+    }
 }
 
 }

@@ -1,3 +1,16 @@
+2011-08-16  Chang Shu  <cshu@webkit.org>
+
+        Support reset in WebCore::Internals
+        https://bugs.webkit.org/show_bug.cgi?id=66307
+
+        Reviewed by Dimitri Glazkov.
+
+        Added framework code in WebKit.
+
+        * public/WebTestingSupport.h:
+        * src/WebTestingSupport.cpp:
+        (WebKit::WebTestingSupport::resetInternalsObject):
+
 2011-08-15  Aaron Boodman  <aa@chromium.org>
 
         Remove support for old didCreateIsolatedContext() signature
