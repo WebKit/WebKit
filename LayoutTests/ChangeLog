@@ -1,3 +1,18 @@
+2011-08-16  Hayato Ito  <hayato@chromium.org>
+
+        Implement proper handling of events which happen in children of shadow hosts.
+        https://bugs.webkit.org/show_bug.cgi?id=66285
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix the issue where a shadow host stops an event propagation if an
+        event happens at the children of shadow hosts, outside of the shadow root.
+
+        * fast/dom/shadow/details-summary-mouseover-expected.txt: Removed.
+        * fast/dom/shadow/details-summary-mouseover.html: Removed.
+        * fast/dom/shadow/shadow-contents-event-expected.txt: Added.
+        * fast/dom/shadow/shadow-contents-event.html: Added.
+
 2011-08-16  Wyatt Carss  <wcarss@chromium.org>
 
         win-wk2 needs updated baselines for some editing tests

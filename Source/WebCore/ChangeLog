@@ -1,3 +1,18 @@
+2011-08-16  Hayato Ito  <hayato@chromium.org>
+
+        Implement proper handling of events which happen in children of shadow hosts.
+        https://bugs.webkit.org/show_bug.cgi?id=66285
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix the issue where a shadow host stops an event propagation if an
+        event happens at the children of shadow hosts, outside of the shadow root.
+
+        Test: fast/dom/shadow/shadow-contents-event.html
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::adjustToShadowBoundaries):
+
 2011-08-16  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
 
         Make it possible to explicitly prevent a preflight via ThreadableLoaderOptions
