@@ -310,8 +310,6 @@ public:
 
     // Notifies that a garbage-collected context was created - content
     // scripts.
-    // FIXME: Remove this first overload when Chromium switches to the second.
-    virtual void didCreateIsolatedScriptContext(WebFrame*) { }
 #if WEBKIT_USING_V8
     virtual void didCreateIsolatedScriptContext(WebFrame*, int worldID, v8::Handle<v8::Context>) { }
 #endif

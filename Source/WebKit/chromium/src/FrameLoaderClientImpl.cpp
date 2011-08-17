@@ -155,10 +155,8 @@ void FrameLoaderClientImpl::didDestroyScriptContextForFrame()
 #if USE(V8)
 void FrameLoaderClientImpl::didCreateIsolatedScriptContext(V8IsolatedContext* isolatedContext)
 {
-    if (m_webFrame->client()) {
-        m_webFrame->client()->didCreateIsolatedScriptContext(m_webFrame);
+    if (m_webFrame->client())
         m_webFrame->client()->didCreateIsolatedScriptContext(m_webFrame, isolatedContext->world()->id(), isolatedContext->context());
-    }
 }
 #endif
 
