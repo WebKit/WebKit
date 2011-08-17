@@ -46,7 +46,8 @@ bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name, const Str
     if (equalIgnoringCase(name, "accept")
         || equalIgnoringCase(name, "accept-language")
         || equalIgnoringCase(name, "content-language")
-        || equalIgnoringCase(name, "origin"))
+        || equalIgnoringCase(name, "origin")
+        || equalIgnoringCase(name, "referer"))
         return true;
 
     // Preflight is required for MIME types that can not be sent via form submission.

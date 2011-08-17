@@ -1,3 +1,18 @@
+2011-08-16  David Levin  <levin@chromium.org>
+
+        REGRESSION (r89086): All worker xhr requests trigger preflight requests.
+        https://bugs.webkit.org/show_bug.cgi?id=66340
+
+        Reviewed by Adam Barth.
+
+        Test coming in a more comprehensive patch shortly. This is just a very targetted
+        patch to allow for easier merging.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isOnAccessControlSimpleRequestHeaderWhitelist): Add referer to the list
+        of whitelisted headers. It can't be set by xhr so it is ok to whitelist it, but it is
+        set before calling this function. This is similar to what is done for "origin" in here.
+
 2011-08-16  Shawn Singh  <shawnsingh@chromium.org>
 
         Computing screen-space transform for LayerChromium and CCLayerImpl
