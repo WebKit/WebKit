@@ -158,7 +158,7 @@ void ScrollAnimatorNone::PerAxisData::reset()
 }
 
 
-bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(ScrollbarOrientation orientation, float step, float multiplier, float scrollableSize, double currentTime, Parameters* parameters)
+bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(float step, float multiplier, float scrollableSize, double currentTime, Parameters* parameters)
 {
     if (parameters->m_animationTime > m_animationTime)
         m_animationTime = parameters->m_animationTime;
@@ -173,8 +173,6 @@ bool ScrollAnimatorNone::PerAxisData::updateDataFromParameters(ScrollbarOrientat
             m_releaseTime = m_animationTime;
         m_attackTime = m_animationTime - m_releaseTime;
     }
-
-    m_orientation = orientation;
 
     if (!m_startTime)
         m_desiredPosition = *m_currentPosition;
@@ -315,7 +313,7 @@ bool ScrollAnimatorNone::scroll(ScrollbarOrientation orientation, ScrollGranular
     float scrollableSize = static_cast<float>(m_scrollableArea->scrollSize(orientation));
 
     PerAxisData& data = (orientation == VerticalScrollbar) ? m_verticalData : m_horizontalData;
-    bool needToScroll = data.updateDataFromParameters(orientation, step, multiplier, scrollableSize, WTF::monotonicallyIncreasingTime(), &parameters);
+    bool needToScroll = data.updateDataFromParameters(step, multiplier, scrollableSize, WTF::monotonicallyIncreasingTime(), &parameters);
     if (needToScroll && !m_animationTimer.isActive()) {
         m_startTime = data.m_startTime;
         animationTimerFired(&m_animationTimer);

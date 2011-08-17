@@ -81,7 +81,7 @@ protected:
     struct PerAxisData {
         PerAxisData(ScrollAnimatorNone* parent, float* currentPos);
         void reset();
-        bool updateDataFromParameters(ScrollbarOrientation, float step, float multiplier, float scrollableSize, double currentTime, Parameters*);
+        bool updateDataFromParameters(float step, float multiplier, float scrollableSize, double currentTime, Parameters*);
         bool animateScroll(double currentTime);
 
         static double curveAt(Curve, double t);
@@ -110,8 +110,6 @@ protected:
         double m_releasePosition;
         double m_releaseTime;
         Curve m_releaseCurve;
-
-        ScrollbarOrientation m_orientation;
     };
 
     void animationTimerFired(Timer<ScrollAnimatorNone>*);
