@@ -1,3 +1,16 @@
+2011-08-17  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9971293> Mid-word breaks can occur in the middle of a surrogate pair
+        https://bugs.webkit.org/show_bug.cgi?id=66402
+
+        Reviewed by Dave Hyatt.
+
+        Test: fast/text/midword-break-before-surrogate-pair-2.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Just never allow a mid-word
+        break before a trailing surrogate.
+
 2011-08-16  Chang Shu  <cshu@webkit.org>
 
         Support reset in WebCore::Internals

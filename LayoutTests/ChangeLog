@@ -1,3 +1,12 @@
+2011-08-17  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9971293> Mid-word breaks can occur in the middle of a surrogate pair
+        https://bugs.webkit.org/show_bug.cgi?id=66402
+
+        Reviewed by Dave Hyatt.
+
+        * fast/text/midword-break-before-surrogate-pair-2.html: Added.
+
 2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rebaseline for Windows, Chromium Windows, and Chromium Linux after r93221.
