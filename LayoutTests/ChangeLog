@@ -1,3 +1,15 @@
+2011-08-17  Steve Block  <steveblock@google.com>
+
+        Unreviewed, rolling out r93186.
+        http://trac.webkit.org/changeset/93186
+        https://bugs.webkit.org/show_bug.cgi?id=66114
+
+        Breaks LayoutTests on Chromium canary bots
+
+        * compositing/backface-visibility-hierarchical-transform-expected.png: Removed.
+        * compositing/backface-visibility-hierarchical-transform-expected.txt: Removed.
+        * compositing/backface-visibility-hierarchical-transform.html: Removed.
+
 2011-08-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] REGRESSION after r93011
