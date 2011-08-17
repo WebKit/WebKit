@@ -1,3 +1,15 @@
+2011-08-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed gardening.
+
+        * platform/qt/Skipped:
+         - Unskip tests removed by r93095.
+         - Skip fast/repaint/japanese-rl-selection-repaint-in-regions.html introduced in r93144.
+        * platform/qt/fast/repaint/line-flow-with-floats-in-regions-expected.png: Added. (test introduced in r93144)
+        * platform/qt/fast/repaint/line-flow-with-floats-in-regions-expected.txt: Added. (test introduced in r93144)
+        * platform/qt/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png: Added. (test introduced in r93144)
+        * platform/qt/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.txt: Added. (test introduced in r93144)
+
 2011-08-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: maintain visible view hierarchy and dispatch common view events automatically
