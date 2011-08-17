@@ -1,3 +1,9 @@
+2011-08-17  Tony Chang  <tony@chromium.org>
+
+        [chromium] Fix typo in test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Skip another <progress> test on Windows

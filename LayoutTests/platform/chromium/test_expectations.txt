@@ -667,7 +667,7 @@ BUGWK62309 WIN : inspector/styles/styles-source-lines.html = PASS TEXT
 
 BUGPFELDMAN : inspector/debugger/debugger-activation-crash2.html = PASS TIMEOUT TEXT
 
-BUGWK65558 LINUX WIN : http/tests/inspector/network/disabled-cache-crash.html = PASS TIEMOUT MISSING TEXT
+BUGWK65558 LINUX WIN : http/tests/inspector/network/disabled-cache-crash.html = PASS TIMEOUT MISSING TEXT
 
 // -----------------------------------------------------------------
 // Other
