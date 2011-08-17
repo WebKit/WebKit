@@ -1,5 +1,18 @@
 2011-08-17  Adam Roben  <aroben@apple.com>
 
+        Fix TestFailures's link to file a bug about TestFailures itself
+
+        Fixes <http://webkit.org/b/66387> REGRESSION (r92135): TestFailures page's link to file a
+        bug about itself is broken
+
+        Reviewed by Dan Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForAuxiliaryUIElements): Added a path separator to separate
+        the host from the path.
+
+2011-08-17  Adam Roben  <aroben@apple.com>
+
         Teach TestFailures to ignore unbelievably short test runs
 
         Fixes <http://webkit.org/b/66385> TestFailures page thinks all tests passed in

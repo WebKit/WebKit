@@ -257,7 +257,7 @@ ViewController.prototype = {
             cc: 'aroben@apple.com',
             short_desc: 'TestFailures page needs more unicorns!',
         };
-        link.href = addQueryParametersToURL(config.kBugzillaURL + 'enter_bug.cgi', queryParameters);
+        link.href = addQueryParametersToURL(config.kBugzillaURL + '/enter_bug.cgi', queryParameters);
         link.target = '_blank';
 
         return aside;
