@@ -1,3 +1,16 @@
+2011-08-17  Anders Carlsson  <andersca@apple.com>
+
+        Remove unused Core Animation related classes
+        https://bugs.webkit.org/show_bug.cgi?id=66393
+
+        Reviewed by Darin Adler.
+
+        * Shared/mac/CoreAnimationRenderer.h: Removed.
+        * Shared/mac/CoreAnimationRenderer.mm: Removed.
+        * Shared/mac/ShareableSurface.cpp: Removed.
+        * Shared/mac/ShareableSurface.h: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-08-15  Dmitry Titov  <dimich@chromium.org>
 
         FrameLoaderClient::transferLoadingResourceFromPage does not have enough parameters

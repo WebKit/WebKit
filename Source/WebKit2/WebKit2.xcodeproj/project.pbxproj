@@ -174,10 +174,6 @@
 		1A91010B1268C8CA001842F5 /* FindIndicatorWindow.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */; };
 		1A92DC1112F8BA460017AF65 /* LayerTreeContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */; };
 		1A92DC1312F8BAB90017AF65 /* LayerTreeContextMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */; };
-		1A9636BC12F348490078A062 /* ShareableSurface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A9636BA12F348490078A062 /* ShareableSurface.cpp */; };
-		1A9636BD12F348490078A062 /* ShareableSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9636BB12F348490078A062 /* ShareableSurface.h */; };
-		1A9639F712F38ECD0078A062 /* CoreAnimationRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A9639F512F38ECD0078A062 /* CoreAnimationRenderer.h */; };
-		1A9639F812F38ECD0078A062 /* CoreAnimationRenderer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1A9639F612F38ECD0078A062 /* CoreAnimationRenderer.mm */; };
 		1AA1CC5D100FA1A10078DEBC /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1AA1CD07100FA1BA0078DEBC /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
 		1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA2E51B12E4C05E00BC4966 /* CGUtilities.h */; };
@@ -1090,10 +1086,6 @@
 		1A9101091268C8CA001842F5 /* FindIndicatorWindow.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = FindIndicatorWindow.mm; sourceTree = "<group>"; };
 		1A92DC1012F8BA460017AF65 /* LayerTreeContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LayerTreeContext.h; sourceTree = "<group>"; };
 		1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerTreeContextMac.mm; sourceTree = "<group>"; };
-		1A9636BA12F348490078A062 /* ShareableSurface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableSurface.cpp; sourceTree = "<group>"; };
-		1A9636BB12F348490078A062 /* ShareableSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableSurface.h; sourceTree = "<group>"; };
-		1A9639F512F38ECD0078A062 /* CoreAnimationRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreAnimationRenderer.h; sourceTree = "<group>"; };
-		1A9639F612F38ECD0078A062 /* CoreAnimationRenderer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreAnimationRenderer.mm; sourceTree = "<group>"; };
 		1AA1C79A100E7FC50078DEBC /* WebCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1C7DE100E846E0078DEBC /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = JavaScriptCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -2894,8 +2886,6 @@
 				E1A31731134CEA6C007C9A4F /* AttributedString.h */,
 				E1A31734134CEA80007C9A4F /* AttributedString.mm */,
 				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
-				1A9639F512F38ECD0078A062 /* CoreAnimationRenderer.h */,
-				1A9639F612F38ECD0078A062 /* CoreAnimationRenderer.mm */,
 				5112CB071385B97B0030867D /* KeychainAttribute.cpp */,
 				5112CB051385B8D90030867D /* KeychainAttribute.h */,
 				1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */,
@@ -2916,8 +2906,6 @@
 				5112CA4813858D4B0030867D /* SecKeychainItemRequestData.h */,
 				5112CA4913858D4B0030867D /* SecKeychainItemResponseData.cpp */,
 				5112CA4A13858D4B0030867D /* SecKeychainItemResponseData.h */,
-				1A9636BA12F348490078A062 /* ShareableSurface.cpp */,
-				1A9636BB12F348490078A062 /* ShareableSurface.h */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
 				BC111B5B112F629800337BAB /* WebEventFactory.h */,
 				BC111B5C112F629800337BAB /* WebEventFactory.mm */,
@@ -3752,8 +3740,6 @@
 				E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */,
 				1A186EEA12EF7618008E5F37 /* LayerTreeHost.h in Headers */,
 				BFA6179F12F0B99D0033E0CA /* WKViewPrivate.h in Headers */,
-				1A9636BD12F348490078A062 /* ShareableSurface.h in Headers */,
-				1A9639F712F38ECD0078A062 /* CoreAnimationRenderer.h in Headers */,
 				BC8147A912F64CDA007B2C32 /* InjectedBundlePagePolicyClient.h in Headers */,
 				BC8147D512F66D31007B2C32 /* InjectedBundleNavigationAction.h in Headers */,
 				BC7043CC12F75EE0006472B9 /* WKBundleNavigationAction.h in Headers */,
@@ -4406,8 +4392,6 @@
 				BC9585C812F095B800755821 /* WebGestureEvent.cpp in Sources */,
 				1A186EEB12EF7618008E5F37 /* LayerTreeHost.cpp in Sources */,
 				6501BD1A12F1243400E9F248 /* WKBundleInspector.cpp in Sources */,
-				1A9636BC12F348490078A062 /* ShareableSurface.cpp in Sources */,
-				1A9639F812F38ECD0078A062 /* CoreAnimationRenderer.mm in Sources */,
 				BC8147AA12F64CDA007B2C32 /* InjectedBundlePagePolicyClient.cpp in Sources */,
 				BC8147D612F66D31007B2C32 /* InjectedBundleNavigationAction.cpp in Sources */,
 				BC7043CD12F75EE0006472B9 /* WKBundleNavigationAction.cpp in Sources */,
