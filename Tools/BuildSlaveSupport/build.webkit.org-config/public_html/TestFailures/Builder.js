@@ -100,7 +100,7 @@ Builder.prototype = {
 
     getNumberOfFailingTests: function(buildNumber, callback) {
         var cacheKey = this.name + '_getNumberOfFailingTests_' + buildNumber;
-        const currentCachedDataVersion = 2;
+        const currentCachedDataVersion = 3;
         if (PersistentCache.contains(cacheKey)) {
             var cachedData = PersistentCache.get(cacheKey);
             if (cachedData.version === currentCachedDataVersion) {
@@ -128,6 +128,15 @@ Builder.prototype = {
             }
 
             if (!('results' in layoutTestStep) || layoutTestStep.results[0] === 0) {
+                if (!('times' in layoutTestStep) || layoutTestStep.times.length < 2 || layoutTestStep.times[1] - layoutTestStep.times[0] < self._minimumSuccessfulLayoutTestStepRunTime) {
+                    // Either something caused the start/stop times not to be recorded, or
+                    // run-webkit-tests ran so quickly that we can't believe there wasn't an error
+                    // (e.g., a bug in the script that made it not find any tests to run).
+                    PersistentCache.set(cacheKey, result);
+                    callback(result.failureCount, result.tooManyFailures);
+                    return;
+                }
+
                 // All tests passed.
                 result.failureCount = 0;
                 PersistentCache.set(cacheKey, result);
@@ -224,4 +233,8 @@ Builder.prototype = {
             callback(buildNames);
         });
     },
+
+    // Any successful runs of run-webkit-tests that took less than this number of seconds are
+    // assumed to be errors.
+    _minimumSuccessfulLayoutTestStepRunTime: 20,
 };

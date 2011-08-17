@@ -74,6 +74,10 @@ test("getNumberOfFailingTests shouldn't include leaks", 4, function() {
                         "2 test cases (<1%) crashed",
                     ],
                 ],
+                times: [
+                    1310599204.1231229,
+                    1310600152.973659,
+                ]
             },
         ],
     };
@@ -201,6 +205,64 @@ test("getNumberOfFailingTests treats unfinished test runs as errors", 4, functio
     runGetNumberOfFailingTestsTest(jsonData, function(failureCount, tooManyFailures) {
         equal(failureCount, -1);
         equal(tooManyFailures, false);
+    });
+});
+
+test("getNumberOfFailingTests treats successful but unbelievably short test runs as errors", 4, function() {
+    const jsonData = {
+        steps: [
+            {
+                isFinished: true, 
+                isStarted: true, 
+                name: "layout-test", 
+                step_number: 7, 
+                text: [
+                    "layout-test"
+                ], 
+                times: [
+                    1311288797.7207019, 
+                    1311288802.7791941
+                ]
+            }, 
+        ],
+    };
+
+    runGetNumberOfFailingTestsTest(jsonData, function(failureCount, tooManyFailures) {
+        equal(failureCount, -1);
+        equal(tooManyFailures, false);
+    });
+});
+
+test("getNumberOfFailingTests doesn't care if a failing run is unbelievably short", 4, function() {
+    const jsonData = {
+        steps: [
+            {
+                isFinished: true, 
+                isStarted: true, 
+                name: "layout-test", 
+                results: [
+                  2, 
+                  [
+                      "2011-07-13 04:38:46,315 11247 manager.py:780 WARNING Exiting early after 20 crashes and 0 timeouts. 2251 tests run.", 
+                      "20 failed"
+                  ]
+                ], 
+                step_number: 4, 
+                text: [
+                    "2011-07-13 04:38:46,315 11247 manager.py:780 WARNING Exiting early after 20 crashes and 0 timeouts. 2251 tests run.", 
+                    "20 failed"
+                ], 
+                times: [
+                    1310557115.793082, 
+                    1310557119.832104
+                ]
+            }, 
+        ],
+    };
+
+    runGetNumberOfFailingTestsTest(jsonData, function(failureCount, tooManyFailures) {
+        equal(failureCount, 20);
+        equal(tooManyFailures, true);
     });
 });
 

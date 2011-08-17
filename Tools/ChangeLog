@@ -1,3 +1,24 @@
+2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Teach TestFailures to ignore unbelievably short test runs
+
+        Fixes <http://webkit.org/b/66385> TestFailures page thinks all tests passed in
+        http://build.webkit.org/builders/Windows%207%20Release%20(Tests)/builds/14956
+
+        Reviewed by Dan Bates.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): If it looks like all tests passed, but
+        run-webkit-tests took less than 10 seconds to run, assume that some weird error occurred
+        that caused it not to run any tests at all (as happened for a while due to
+        <http://webkit.org/b/64988>). Bumped the cache version to evict old, buggy cached data.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder_unittests.js:
+        Test for the above.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/LayoutTestResultsLoader.js:
+        (LayoutTestResultsLoader.prototype.start): Bumped the cache version to evict old, buggy cached data.
+
 2011-08-16  Adam Barth  <abarth@webkit.org>
 
         Add a CG qualifier similar to the GPU qualifier
