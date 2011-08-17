@@ -1,3 +1,15 @@
+2011-08-17  Abhishek Arya  <inferno@chromium.org>
+
+        Tests that we do not crash when iterating through stylesheet
+        candidate list hashset.
+        https://bugs.webkit.org/show_bug.cgi?id=66335
+
+        Reviewed by Simon Fraser.
+
+        * svg/dom/resources/stylesheet-candidate-node-crash.svg: Added.
+        * svg/dom/stylesheet-candidate-node-crash-main-expected.txt: Added.
+        * svg/dom/stylesheet-candidate-node-crash-main.html: Added.
+
 2011-08-17  Sam White  <samuel.white@rochester.edu>
 
         AccessibilityObject levels are inconsistent

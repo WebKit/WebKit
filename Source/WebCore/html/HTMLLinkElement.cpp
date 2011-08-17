@@ -78,6 +78,9 @@ HTMLLinkElement::~HTMLLinkElement()
         m_cachedSheet->removeClient(this);
         removePendingSheet();
     }
+
+    if (inDocument())
+        document()->removeStyleSheetCandidateNode(this);
 }
 
 void HTMLLinkElement::setDisabled(bool disabled)

@@ -43,8 +43,7 @@ inline SVGStyleElement::SVGStyleElement(const QualifiedName& tagName, Document* 
 
 SVGStyleElement::~SVGStyleElement()
 {
-    if (m_sheet)
-        m_sheet->clearOwnerNode();
+    StyleElement::clearDocumentData(document(), this);
 }
 
 PassRefPtr<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName, Document* document, bool createdByParser)
