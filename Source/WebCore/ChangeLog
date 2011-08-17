@@ -1,3 +1,15 @@
+2011-08-17  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium Mac: Fix implementation of wkScrollbarMinimumTotalLengthNeededForThumb to match WebKitSystemInterface
+        https://bugs.webkit.org/show_bug.cgi?id=66311
+
+        Reviewed by Dimitri Glazkov.
+
+        Updated wkScrollbarMinimumTotalLengthNeededForThumb() based on the latest disassembly of libWebKitSystemInterfaceLion.a.
+
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm:
+        (wkScrollbarMinimumTotalLengthNeededForThumb):
+
 2011-08-17  Steve Block  <steveblock@google.com>
 
         Unreviewed, rolling out r93186.

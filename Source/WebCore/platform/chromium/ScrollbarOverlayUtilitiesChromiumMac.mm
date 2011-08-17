@@ -67,6 +67,10 @@
 @property(assign) id delegate;
 
 - (CGFloat)knobMinLength;
+- (CGFloat)trackOverlapEndInset;
+- (CGFloat)knobOverlapEndInset;
+- (CGFloat)trackEndInset;
+- (CGFloat)knobEndInset;
 - (CGFloat)trackBoxWidth;
 - (CGFloat)trackWidth;
 - (void)setBoundsSize:(NSSize)size;
@@ -205,8 +209,10 @@ int wkScrollbarThickness(int controlSize)
 
 int wkScrollbarMinimumTotalLengthNeededForThumb(WKScrollbarPainterRef painter)
 {
-    // TODO(sail): This doesn't match the implementation in WebKitSystemInterface.
-    return wkScrollbarMinimumThumbLength(painter);
+    return [painter knobMinLength] +
+           [painter trackOverlapEndInset] +
+           [painter knobOverlapEndInset] +
+           ([painter trackEndInset] + [painter knobEndInset]) * 2;
 }
 
 WKScrollbarPainterRef wkVerticalScrollbarPainterForController(WKScrollbarPainterControllerRef controller)
