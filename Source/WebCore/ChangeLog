@@ -1,3 +1,39 @@
+2011-08-17  Jeff Miller  <jeffm@apple.com>
+
+        Some AVFoundation source files should be in platform-specific directories
+        https://bugs.webkit.org/show_bug.cgi?id=66352
+        
+        Moved platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.* files to platform/graphics/avfoundation/cf,
+        and moved platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.* files to platform/graphics/avfoundation/objc/.
+        
+        While I was at it, added svn:eol-style property to the MediaPlayerPrivateAVFoundationObjC.* files.
+        
+        Also, for some reason, Visual Studio decided to re-sort a couple files in \inspector\front-end\ in WebCore.vcproj, even though
+        I just re-sorted the project in r93215.
+
+        Reviewed by Eric Carlson.
+
+        No new tests; no functional change.
+
+        * WebCore.vcproj/WebCore.vcproj: Moved platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.* files to platform/graphics/avfoundation/cf.
+
+        * WebCore.vcproj/WebCoreMediaQT.vsprops: Added $(ProjectDir)..\platform\graphics\avfoundation\cf to include paths.
+
+        * WebCore.xcodeproj/project.pbxproj: Moved platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.* files to platform/graphics/avfoundation/objc/.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.cpp: Removed.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.h: Removed.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h: Removed.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm: Removed.
+
+        * platform/graphics/avfoundation/cf: Added.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Copied from Source/WebCore/platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.cpp.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.h: Copied from Source/WebCore/platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationCF.h.
+
+        * platform/graphics/avfoundation/objc: Added.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.h: Copied from Source/WebCore/platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h.
+        * platform/graphics/avfoundation/objc/MediaPlayerPrivateAVFoundationObjC.mm: Copied from Source/WebCore/platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm.
+
 2011-08-17  Luke Macpherson   <macpherson@chromium.org>
 
         Only set m_fontDirty if TextSizeAdjust is actually changed.

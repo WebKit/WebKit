@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\include\CoreAudio&quot;;&quot;$(WebKitLibrariesDir)\include\AVFoundation&quot;;&quot;$(ProjectDir)..\platform\graphics\avfoundation&quot;"
+		AdditionalIncludeDirectories="&quot;$(WebKitLibrariesDir)\include\CoreAudio&quot;;&quot;$(WebKitLibrariesDir)\include\AVFoundation&quot;;&quot;$(ProjectDir)..\platform\graphics\avfoundation&quot;;&quot;$(ProjectDir)..\platform\graphics\avfoundation\cf&quot;"
 	/>
 	<Tool
 		Name="VCLinkerTool"
