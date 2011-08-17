@@ -1,5 +1,17 @@
 2011-08-17  Tony Chang  <tony@chromium.org>
 
+        [chromium] Add chromium baselines for tests added in r93144.
+
+        * platform/chromium-cg-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/repaint/line-flow-with-floats-in-regions-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/line-flow-with-floats-in-regions-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png: Added.
+        * platform/chromium-win/fast/repaint/overflow-flipped-writing-mode-block-in-regions-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-17  Tony Chang  <tony@chromium.org>
+
         [chromium] Mark svg/custom/repaint-shadow.svg and
         media/media-blocked-by-beforeload.html as flaky.
 

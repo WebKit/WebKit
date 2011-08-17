@@ -3683,10 +3683,8 @@ BUGCR93044 LINUX DEBUG : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
 BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
 BUGWK66310 : media/media-blocked-by-beforeload.html = PASS TEXT
 
-// Three new tests in r93144.  Probably just needs new baselines.
-BUGTONY : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE+TEXT IMAGE
-BUGTONY : fast/repaint/overflow-flipped-writing-mode-block-in-regions.html = IMAGE
-BUGTONY : fast/repaint/line-flow-with-floats-in-regions.html = IMAGE+TEXT IMAGE
+BUGWK66388 WIN LINUX : fast/repaint/japanese-rl-selection-repaint-in-regions.html = IMAGE+TEXT
+BUGWK66388 WIN LINUX : fast/repaint/line-flow-with-floats-in-regions.html = IMAGE+TEXT
 
 BUGWK66338 MAC : fast/repaint/background-scaling.html = IMAGE
 BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
