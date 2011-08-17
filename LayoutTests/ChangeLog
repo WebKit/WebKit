@@ -1,5 +1,12 @@
 2011-08-17  Adam Roben  <aroben@apple.com>
 
+        Add Windows results for new test added in r91777
+
+        * platform/win/fast/css/font-family-pictograph-expected.png: Added.
+        * platform/win/fast/css/font-family-pictograph-expected.txt: Added.
+
+2011-08-17  Adam Roben  <aroben@apple.com>
+
         Add Windows results for tests that differ from Lion due to font differences
 
         These tests started failing in r93107 when I made Windows fall back to Lion results instead
