@@ -1,3 +1,22 @@
+2011-08-17  Chris Fleizach  <cfleizach@apple.com>
+
+        Accessibility stack exhaustion using role attribute
+        https://bugs.webkit.org/show_bug.cgi?id=65174
+
+        Make sure we do not call accessibilityIsIgnored() during the AccessibilityObject
+        creation flow. That can lead to loops.
+   
+        Reviewed by Darin Adler.
+
+        Tests: accessibility/crash-determining-aria-role-when-label-present.html
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::createARIARoleMap):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::remapAriaRoleDueToParent):
+        (WebCore::AccessibilityRenderObject::determineAriaRoleAttribute):
+        * accessibility/AccessibilityRenderObject.h:
+
 2011-08-17  James Robinson  <jamesr@chromium.org>
 
         [chromium] Crash if compositing is disabled during updateLayers()

@@ -284,7 +284,8 @@ private:
     Element* menuItemElementForMenu() const;
     AccessibilityRole determineAccessibilityRole();
     AccessibilityRole determineAriaRoleAttribute() const;
-
+    AccessibilityRole remapAriaRoleDueToParent(AccessibilityRole) const;
+    
     bool isTabItemSelected() const;
     void alterSliderValue(bool increase);
     void changeValueByStep(bool increase);

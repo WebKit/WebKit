@@ -2980,6 +2980,35 @@ AccessibilityObject* AccessibilityRenderObject::observableObject() const
     return 0;
 }
 
+AccessibilityRole AccessibilityRenderObject::remapAriaRoleDueToParent(AccessibilityRole role) const
+{
+    // Some objects change their role based on their parent.
+    // However, asking for the unignoredParent calls accessibilityIsIgnored(), which can trigger a loop. 
+    // While inside the call stack of creating an element, we need to avoid accessibilityIsIgnored().
+    // https://bugs.webkit.org/show_bug.cgi?id=65174
+
+    if (role != ListBoxOptionRole && role != MenuItemRole)
+        return role;
+    
+    AccessibilityObject* parent;
+    for (parent = parentObject(); parent && !parent->accessibilityIsIgnored(); parent = parent->parentObject()) {
+        AccessibilityRole parentAriaRole = parent->ariaRoleAttribute();
+
+        // Selects and listboxes both have options as child roles, but they map to different roles within WebCore.
+        if (role == ListBoxOptionRole && parentAriaRole == MenuRole)
+            return MenuItemRole;
+        // An aria "menuitem" may map to MenuButton or MenuItem depending on its parent.
+        else if (role == MenuItemRole && parentAriaRole == GroupRole)
+            return MenuButtonRole;
+        
+        // If the parent had a different role, then we don't need to continue searching up the chain.
+        if (parentAriaRole)
+            break;
+    }
+    
+    return role;
+}
+    
 AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
 {
     const AtomicString& ariaRole = getAttribute(roleAttr);
@@ -2993,30 +3022,11 @@ AccessibilityRole AccessibilityRenderObject::determineAriaRoleAttribute() const
 
     if (role == TextAreaRole && !ariaIsMultiline())
         role = TextFieldRole;
+
+    role = remapAriaRoleDueToParent(role);
     
     if (role)
         return role;
-
-    AccessibilityObject* parentObject = parentObjectUnignored();
-    if (!parentObject)
-        return UnknownRole;
-
-    AccessibilityRole parentAriaRole = parentObject->ariaRoleAttribute();
-
-    // selects and listboxes both have options as child roles, but they map to different roles within WebCore
-    if (equalIgnoringCase(ariaRole, "option")) {
-        if (parentAriaRole == MenuRole)
-            return MenuItemRole;
-        if (parentAriaRole == ListBoxRole)
-            return ListBoxOptionRole;
-    }
-    // an aria "menuitem" may map to MenuButton or MenuItem depending on its parent
-    if (equalIgnoringCase(ariaRole, "menuitem")) {
-        if (parentAriaRole == GroupRole)
-            return MenuButtonRole;
-        if (parentAriaRole == MenuRole || parentAriaRole == MenuBarRole)
-            return MenuItemRole;
-    }
     
     return UnknownRole;
 }

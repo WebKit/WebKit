@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<label><q role=x><input id="test">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests a crashing scenario where an element with a role attribute is a child of a label that also has a corresponding control.");
+
+    if (window.accessibilityController) {
+          document.getElementById("test").focus();
+         
+          // This line should not crash.
+          var input = accessibilityController.focusedElement;
+
+          shouldBe("input.childrenCount", "0");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
