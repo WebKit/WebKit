@@ -470,8 +470,17 @@ void JIT::compileGetDirectOffset(JSObject* base, RegisterID resultTag, RegisterI
 
 void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure* oldStructure, Structure* newStructure, size_t cachedOffset, StructureChain* chain, ReturnAddressPtr returnAddress, bool direct)
 {
-    // It is assumed that regT0 contains the basePayload and regT1 contains the baseTag.  The value can be found on the stack.
-    
+    // The code below assumes that regT0 contains the basePayload and regT1 contains the baseTag. Restore them from the stack.
+#if CPU(MIPS) || CPU(SH4) || CPU(ARM)
+    // For MIPS, we don't add sizeof(void*) to the stack offset.
+    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+    // For MIPS, we don't add sizeof(void*) to the stack offset.
+    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+#else
+    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+    load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+#endif
+
     JumpList failureCases;
     failureCases.append(branch32(NotEqual, regT1, TrustedImm32(JSValue::CellTag)));
     failureCases.append(branchPtr(NotEqual, Address(regT0, JSCell::structureOffset()), TrustedImmPtr(oldStructure)));
@@ -498,14 +507,24 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
         stubCall.addArgument(TrustedImm32(oldStructure->propertyStorageCapacity()));
         stubCall.addArgument(TrustedImm32(newStructure->propertyStorageCapacity()));
         stubCall.call(regT0);
-        
+
         restoreReturnAddressBeforeReturn(regT3);
+
+#if CPU(MIPS) || CPU(SH4) || CPU(ARM)
+        // For MIPS, we don't add sizeof(void*) to the stack offset.
+        load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+        // For MIPS, we don't add sizeof(void*) to the stack offset.
+        load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+#else
+        load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0);
+        load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[0]) + sizeof(void*) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1);
+#endif
     }
 
     emitWriteBarrier(regT0, regT1);
 
     storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
-#if CPU(MIPS) || CPU(SH4)
+#if CPU(MIPS) || CPU(SH4) || CPU(ARM)
     // For MIPS, we don't add sizeof(void*) to the stack offset.
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT3);
     load32(Address(stackPointerRegister, OBJECT_OFFSETOF(JITStackFrame, args[2]) + OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT2);

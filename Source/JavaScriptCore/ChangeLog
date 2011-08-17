@@ -1,3 +1,25 @@
+2011-08-16  Michael Saboff  <msaboff@apple.com>
+
+        Crash in Structure::visitChildren running iAd.js regression test suite under memory pressure
+        https://bugs.webkit.org/show_bug.cgi?id=66351
+
+        JIT::privateCompilePutByIdTransition expects that regT0 and regT1
+        have the basePayload and baseTag respectively.  In some cases,
+        we may get to this generated code with one or both of these
+        registers trash.  One know case is that regT0 on ARM may be
+        trashed as regT0 (r0) is also arg0 and can be overrun with sp due
+        to calls to JIT::restoreReturnAddress().  This patch uses the
+        values on the stack.  A longer term solution is to work out all
+        cases so that the register entry assumptions can assured.
+
+        While fixing this, also determined that the additional stack offset
+        of sizeof(void*) is not needed for ARM.
+
+        Reviewed by Gavin Barraclough.
+
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::privateCompilePutByIdTransition):
+
 2011-08-15  Gavin Barraclough  <barraclough@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66263
