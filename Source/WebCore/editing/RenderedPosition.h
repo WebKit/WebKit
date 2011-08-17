@@ -68,6 +68,8 @@ inline RenderedPosition::RenderedPosition()
 {
 }
 
+bool renderObjectContainsPosition(RenderObject*, const Position&);
+
 };
 
 #endif // RenderedPosition_h

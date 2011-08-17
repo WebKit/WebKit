@@ -198,9 +198,9 @@ void InsertTextCommand::doApply()
 Position InsertTextCommand::insertTab(const Position& pos)
 {
     Position insertPos = VisiblePosition(pos, DOWNSTREAM).deepEquivalent();
-        
-    Node* node = insertPos.deprecatedNode();
-    unsigned int offset = insertPos.deprecatedEditingOffset();
+
+    Node* node = insertPos.containerNode();
+    unsigned int offset = node->isTextNode() ? insertPos.offsetInContainerNode() : 0;
 
     // keep tabs coalesced in tab span
     if (isTabSpanTextNode(node)) {

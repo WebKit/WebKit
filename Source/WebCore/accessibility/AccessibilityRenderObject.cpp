@@ -73,6 +73,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "RenderWidget.h"
+#include "RenderedPosition.h"
 #include "SelectElement.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -2517,13 +2518,13 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
         return 0;
     
     Position indexPosition = pos.deepEquivalent();
-    if (!indexPosition.anchorNode() || indexPosition.anchorNode()->rootEditableElement() != node)
+    if (indexPosition.isNull() || pos.rootEditableElement() != node)
         return 0;
     
     ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(m_renderer->document());
     range->setStart(node, 0, ec);
-    range->setEnd(indexPosition.anchorNode(), indexPosition.deprecatedEditingOffset(), ec);
+    range->setEnd(indexPosition, ec);
 
 #if PLATFORM(GTK)
     // We need to consider replaced elements for GTK, as they will be
@@ -2672,15 +2673,9 @@ int AccessibilityRenderObject::index(const VisiblePosition& position) const
 {
     if (!isTextControl())
         return -1;
-    
-    Node* node = position.deepEquivalent().deprecatedNode();
-    if (!node)
-        return -1;
-    
-    for (RenderObject* renderer = node->renderer(); renderer && renderer->node(); renderer = renderer->parent()) {
-        if (renderer == m_renderer)
-            return indexForVisiblePosition(position);
-    }
+
+    if (renderObjectContainsPosition(m_renderer, position.deepEquivalent()))
+        return indexForVisiblePosition(position);
     
     return -1;
 }

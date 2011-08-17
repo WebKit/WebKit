@@ -128,6 +128,11 @@ public:
     Node* deprecatedNode() const { return m_anchorNode.get(); }
 
     Document* document() const { return m_anchorNode ? m_anchorNode->document() : 0; }
+    Element* rootEditableElement() const
+    {
+        Node* container = containerNode();
+        return container ? container->rootEditableElement() : 0;
+    }
 
     // These should only be used for PositionIsOffsetInAnchor positions, unless
     // the position is a legacy editing position.

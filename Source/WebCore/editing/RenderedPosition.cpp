@@ -101,4 +101,13 @@ LayoutRect RenderedPosition::absoluteRect(int* extraWidthToEndOfLine) const
     return localRect == LayoutRect() ? LayoutRect() : m_renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
+bool renderObjectContainsPosition(RenderObject* target, const Position& position)
+{
+    for (RenderObject* renderer = rendererFromPosition(position); renderer && renderer->node(); renderer = renderer->parent()) {
+        if (renderer == target)
+            return true;
+    }
+    return false;
+}
+
 };

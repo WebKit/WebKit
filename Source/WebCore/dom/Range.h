@@ -103,6 +103,8 @@ public:
 
     const Position startPosition() const { return m_start.toPosition(); }
     const Position endPosition() const { return m_end.toPosition(); }
+    void setStart(const Position&, ExceptionCode&);
+    void setEnd(const Position&, ExceptionCode&);
 
     Node* firstNode() const;
     Node* pastLastNode() const;

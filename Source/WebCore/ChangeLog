@@ -1,3 +1,31 @@
+2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Get rid of calls to deprecatedNode and deprecatedEditingOffset in
+        AccessibilityRenderObject.cpp and InsertTextCommand.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=66014
+
+        Reviewed by Hajime Morita.
+
+        Removed calls to deprecatedNode and deprecatedEditingOffsets in the following files.
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition): Calls Position::rootEditableElement
+        and Range::setEnd(const Position&, ExceptionCode) instead of manually pulling deprecatedNode
+        and deprecatedEditingOffset.
+        (WebCore::AccessibilityRenderObject::index): Abstracted the logic to loop through render objects
+        from deprecatedNodes' renderer to m_renderer as renderObjectContainsPosition.
+        * dom/Position.h:
+        (WebCore::Position::rootEditableElement): Added.
+        * dom/Range.cpp:
+        (WebCore::Range::setStart): Added.
+        (WebCore::Range::setEnd): Added.
+        * dom/Range.h:
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::insertTab):
+        * editing/RenderedPosition.cpp:
+        (WebCore::renderObjectContainsPosition): Extracted from AccessibilityRenderObject::index.
+        * editing/RenderedPosition.h:
+
 2011-08-17  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium Mac: Fix issue where scrollbar wouldn't be drawn until page finished loading
