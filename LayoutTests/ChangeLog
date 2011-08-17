@@ -1,3 +1,10 @@
+2011-08-16  Adam Barth  <abarth@webkit.org>
+
+        Add new chromium-mac-leopard directory to match the chromium-mac that
+        tony^work added.  This directory will house Skia results for Chromium Mac.
+
+        * platform/chromium-mac-leopard: Added.
+
 2011-08-16  Hayato Ito  <hayato@chromium.org>
 
         Add two sample mismatch reftests to make sure that reftests work correctly.
