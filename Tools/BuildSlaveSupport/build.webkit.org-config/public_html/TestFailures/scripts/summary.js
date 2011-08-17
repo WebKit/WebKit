@@ -35,7 +35,7 @@ function update()
 {
     // FIXME: This should be a button with a progress element.
     var updating = new ui.notifications.Info("Updating ...");
-    g_info.push(updating);
+    g_info.add(updating);
 
     // FIXME: Also provide information on bot failures.
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
@@ -43,10 +43,11 @@ function update()
             var key = failureAnalysis.newestPassingRevision + "+" + failureAnalysis.oldestFailingRevision;
             var failure = g_testFailures.get(key);
             if (!failure) {
-                failure = g_actions.push(new ui.notifications.TestFailures());
+                failure = new ui.notifications.TestFailures();
                 model.commitDataListForRevisionRange(failureAnalysis.newestPassingRevision + 1, failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
                     failure.addCommitData(commitData);
                 });
+                g_actions.add(failure);
             }
             failure.addFailureAnalysis(failureAnalysis);
             g_testFailures.update(key, failure);
@@ -64,10 +65,7 @@ $(document).ready(function() {
     document.body.insertBefore(g_actions, document.body.firstChild);
     document.body.insertBefore(g_info, document.body.firstChild);
     var button = document.body.insertBefore(document.createElement("button"), document.body.firstChild);
-    button.addEventListener("click", function()
-    {
-        update();
-    }, false);
+    button.addEventListener("click", update);
     button.textContent = 'update';
     update();
 });

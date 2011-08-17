@@ -27,23 +27,53 @@
 
 module('ui.notifications');
 
-test('ui.notifications.Stream', 5, function() {
+test('ui.notifications.Notification', 5, function() {
+    var notification = new ui.notifications.Notification();
+    equal(notification.tagName, 'LI');
+    equal(notification.innerHTML, '<div class="what"></div>');
+    equal(notification.index(), 0);
+    notification.setIndex(1);
+    equal(notification.index(), 1);
+    // FIXME: Really need to figure out how to mock/test animated removal.
+    ok(notification.dismiss);
+});
+
+test('ui.notifications.Stream', 11, function() {
     var stream = new ui.notifications.Stream();
     equal(stream.tagName, 'OL');
     equal(stream.className, 'notifications');
-    stream.push(document.createElement('li')).textContent = 'o-matic';
+    equal(stream.childElementCount, 0);
+
+    var notification;
+
+    notification = new ui.notifications.Info('-o-matic');
+    notification.setIndex(2);
+    stream.add(notification);
     equal(stream.childElementCount, 1);
-    stream.push(document.createElement('li')).textContent = 'garden-';
+    equal(stream.textContent, '-o-matic');
+
+    notification = new ui.notifications.Info('garden');
+    notification.setIndex(3);
+    stream.add(notification);
     equal(stream.childElementCount, 2);
     equal(stream.textContent, 'garden-o-matic');
+
+    notification = new ui.notifications.Info(' is ');
+    notification.setIndex(1);
+    stream.add(notification);
+    equal(stream.childElementCount, 3);
+    equal(stream.textContent, 'garden-o-matic is ');
+
+    notification = new ui.notifications.Info('awesome!');
+    stream.add(notification);
+    equal(stream.childElementCount, 4);
+    equal(stream.textContent, 'garden-o-matic is awesome!');
 });
 
-test('ui.notifications.Info', 3, function() {
+test('ui.notifications.Info', 2, function() {
     var info = new ui.notifications.Info('info');
     equal(info.tagName, 'LI');
     equal(info.innerHTML, '<div class="what">info</div>');
-    // FIXME: Really need to figure out how to mock/test animated removal.
-    ok(info.dismiss);
 });
 
 test('ui.notifications.FailingTest', 4, function() {

@@ -33,20 +33,35 @@ ui.notifications.Stream = base.extends('ol', {
     {
         this.className = 'notifications';
     },
-    push: function(notification)
+    add: function(notification)
     {
-        // FIXME: Add in descending time order.
-        this.insertBefore(notification, this.firstChild);
+        var insertBefore = null;
+        Array.prototype.some.call(this.children, function(existingNotification) {
+            if (existingNotification.index() < notification.index()) {
+                insertBefore = existingNotification;
+                return true;
+            }
+        });
+        this.insertBefore(notification, insertBefore);
         return notification;
     }
 });
 
-var Notification = base.extends('li', {
+ui.notifications.Notification = base.extends('li', {
     init: function()
     {
         this._what = this.appendChild(document.createElement('div'));
         this._what.className = 'what';
+        this._index = 0;
         $(this).hide().fadeIn('fast');
+    },
+    index: function()
+    {
+        return this._index;
+    },
+    setIndex: function(index)
+    {
+        this._index = index;
     },
     dismiss: function()
     {
@@ -58,7 +73,7 @@ var Notification = base.extends('li', {
     }
 });
 
-ui.notifications.Info = base.extends(Notification, {
+ui.notifications.Info = base.extends(ui.notifications.Notification, {
     init: function(message)
     {
         this._what.textContent = message;
@@ -118,7 +133,7 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
     }
 });
 
-ui.notifications.TestFailures = base.extends(Notification, {
+ui.notifications.TestFailures = base.extends(ui.notifications.Notification, {
     init: function()
     {
         this._time = this.insertBefore(new Time(), this.firstChild);
@@ -128,6 +143,10 @@ ui.notifications.TestFailures = base.extends(Notification, {
         this._tests.className = 'effects';
         this._causes = problem.appendChild(document.createElement('ul'));
         this._causes.className = 'causes';
+    },
+    date: function()
+    {
+        return this._time.date;
     },
     containsFailureAnalysis: function(failureAnalysis)
     {
