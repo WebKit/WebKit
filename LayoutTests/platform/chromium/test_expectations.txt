@@ -3690,3 +3690,5 @@ BUGWK66338 MAC : fast/repaint/background-scaling.html = IMAGE
 BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
 
 BUGWK66394 LINUX DEBUG : fast/canvas/webgl/data-view-crash.html = PASS CRASH
+
+BUGWK66417 LINUX WIN : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
