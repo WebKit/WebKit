@@ -96,7 +96,7 @@ class MacPort(ApplePort):
         return map(self._webkit_baseline_path, fallback_names)
 
     def setup_environ_for_server(self, server_name=None):
-        env = super(MacPort, self).setup_environ_for_server(self, server_name)
+        env = super(MacPort, self).setup_environ_for_server(server_name)
         if server_name == self.driver_name():
             if self.get_option('leaks'):
                 env['MallocStackLogging'] = '1'

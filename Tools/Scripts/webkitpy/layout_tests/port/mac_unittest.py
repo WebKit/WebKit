@@ -111,6 +111,12 @@ svg/batik/text/smallFonts.svg
 
         self.assertRaises(AssertionError, self.assert_name, None, '10.3.1', 'should-raise-assertion-so-this-value-does-not-matter')
 
+    def test_setup_environ_for_server(self):
+        port = MacPort(options=MockOptions(leaks=True, guard_malloc=True))
+        env = port.setup_environ_for_server(port.driver_name())
+        self.assertEquals(env['MallocStackLogging'], '1')
+        self.assertEquals(env['DYLD_INSERT_LIBRARIES'], '/usr/lib/libgmalloc.dylib')
+
     def _assert_search_path(self, search_paths, version, use_webkit2=False):
         # FIXME: Port constructors should not "parse" the port name, but
         # rather be passed components (directly or via setters).  Once

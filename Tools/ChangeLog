@@ -1,3 +1,13 @@
+2011-08-16  Eric Seidel  <eric@webkit.org>
+
+        REGRESSION(92717): WinPort needs to parse version information from port_name
+        https://bugs.webkit.org/show_bug.cgi?id=66325
+
+        Unreviewed.  Fixing an exception/typo seen on the bots (and testing to make sure it works).
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        * Scripts/webkitpy/layout_tests/port/mac_unittest.py:
+
 2011-08-16  Adam Barth  <abarth@webkit.org>
 
         Change webkit-patch analyze-baselines to print in a more unix-friendly way
