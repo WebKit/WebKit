@@ -1,3 +1,34 @@
+2011-08-17  Adam Barth  <abarth@webkit.org>
+
+        garden-o-matic should be able to rebaseline expected failures
+        https://bugs.webkit.org/show_bug.cgi?id=66204
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch introduces a new view for displaying expect, actual, and
+        differences between results.  The new view also has a fledgling
+        controller that handles some basic operations.  The new view is
+        exercised by rebaseline.html, which lets you rebaselines expected
+        failures, but the new view is not fully integrated into
+        garden-o-matic.html
+
+        More patches will be required to make this stuff fully working, but
+        this patch was already somewhat spiraling out of control.  Hopefully
+        this patch will serve as a good starting point for further development.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/controllers: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/controllers.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/controllers/rebaseline.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.css:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/main.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/rebaseline.html: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui/results_unittests.js: Added.
+
 2011-08-16  Chang Shu  <cshu@webkit.org>
 
         Support reset in WebCore::Internals

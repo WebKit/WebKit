@@ -271,24 +271,28 @@ button.default:hover {
     border-radius: 4px;
 }
 
-/*** results-detail ***/
+/*** results-view ***/
 
-.results-detail {
+/* FIXME: Remove this once garden-o-matic switches to the new results view. */
+.old-results-view {
     display: none;
     position: fixed;
-    background-color: #f5f5f5;
-    top: 25%;
     left: 0px;
     right: 0px;
+    top: 25%;
     bottom: 0px;
 }
 
-.results-detail .toolbar {
+.results-view {
+    background-color: #f5f5f5;
+}
+
+.results-view .toolbar {
     border-top: 1px solid #c6c6c6;
     border-bottom: 1px solid #c6c6c6;
 }
 
-.results-detail .toolbar .status {
+.results-view .toolbar .selector {
     font-size: 11px;
     font-weight: bold;
     height: 29px;
@@ -297,20 +301,16 @@ button.default:hover {
     padding: 0 8px;
 }
 
-.results-detail .toolbar .status .builder-name {
-    font-weight: normal;
-    padding-left: 20px;
+.results-view .test-selector {
+    width: 400px;
+    margin-right: 6px;
 }
 
-.results-detail .toolbar .status .selected {
-    font-style: italic;
-}
-
-.results-detail .toolbar .actions {
+.results-view .toolbar .actions {
     float: right;
 }
 
-.results-detail .content {
+.results-detail td {
     background-color: white;
 }
 

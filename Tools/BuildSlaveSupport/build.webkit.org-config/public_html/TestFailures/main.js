@@ -171,7 +171,7 @@ function failureInfoFromResultsDetail()
     return {
         'builderName': failureDetails.attr(config.kBuilderNameAttr),
         'testName': failureDetails.attr(config.kTestNameAttr),
-        'failureTypeList': failureDetails.attr(config.kFailureTypesAttr).split(' '),
+        'failureTypeList': results.failureTypeList(failureDetails.attr(config.kFailureTypesAttr)),
     }
 }
 

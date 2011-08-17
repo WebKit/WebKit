@@ -163,6 +163,11 @@ results.failureTypeToExtensionList = function(failureType)
     }
 };
 
+results.failureTypeList = function(failureBlob)
+{
+    return failureBlob.split(' ');
+};
+
 results.canRebaseline = function(failureTypeList)
 {
     return failureTypeList.some(function(element) {
@@ -205,19 +210,29 @@ function addImpliedExpectations(resultsList)
 
 results.unexpectedResults = function(resultNode)
 {
-    var actualResults = resultNode.actual.split(' ');
-    var expectedResults = addImpliedExpectations(resultNode.expected.split(' '))
+    var actualResults = results.failureTypeList(resultNode.actual);
+    var expectedResults = addImpliedExpectations(results.failureTypeList(resultNode.expected))
 
     return $.grep(actualResults, function(result) {
         return expectedResults.indexOf(result) == -1;
     });
 };
 
+function isExpectedOrUnexpectedFailure(resultNode)
+{
+    if (!resultNode)
+        return false;
+    var actualResults = results.failureTypeList(resultNode.actual);
+    if (anyIsSuccess(actualResults))
+        return false;
+    return anyIsFailure(actualResults);
+}
+
 function isUnexpectedFailure(resultNode)
 {
     if (!resultNode)
         return false;
-    if (anyIsSuccess(resultNode.actual.split(' ')))
+    if (anyIsSuccess(results.failureTypeList(resultNode.actual)))
         return false;
     return anyIsFailure(results.unexpectedResults(resultNode));
 }
@@ -226,7 +241,7 @@ function isUnexpectedSuccesses(resultNode)
 {
     if (!resultNode)
         return false;
-    if (anyIsFailure(resultNode.actual.split(' ')))
+    if (anyIsFailure(results.failureTypeList(resultNode.actual)))
         return false;
     return anyIsSuccess(results.unexpectedResults(resultNode));
 }
@@ -235,6 +250,11 @@ function isResultNode(node)
 {
     return !!node.actual;
 }
+
+results.expectedOrUnexpectedFailures = function(resultsTree)
+{
+    return base.filterTree(resultsTree.tests, isResultNode, isExpectedOrUnexpectedFailure);
+};
 
 results.unexpectedFailures = function(resultsTree)
 {
@@ -259,6 +279,11 @@ function resultsByTest(resultsByBuilder, filter)
 
     return resultsByTest;
 }
+
+results.expectedOrUnexpectedFailuresByTest = function(resultsByBuilder)
+{
+    return resultsByTest(resultsByBuilder, results.expectedOrUnexpectedFailures);
+};
 
 results.unexpectedFailuresByTest = function(resultsByBuilder)
 {

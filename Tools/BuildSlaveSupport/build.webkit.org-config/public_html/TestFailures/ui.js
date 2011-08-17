@@ -27,14 +27,14 @@ var ui = ui || {};
 
 (function () {
 
-function displayURLForBuilder(builderName)
+ui.displayURLForBuilder = function(builderName)
 {
     return 'http://build.chromium.org/p/chromium.webkit/waterfall?' + $.param({
         'builder': builderName
     });
 }
 
-function displayNameForBuilder(builderName)
+ui.displayNameForBuilder = function(builderName)
 {
     return builderName.replace(/Webkit /, '');
 }
@@ -57,7 +57,7 @@ ui.infobarMessageForCompileErrors = function(builderNameList)
     $.each(builderNameList, function(index, builderName) {
         var listElement = $('<li><a target="_blank"></a></li>');
         list.append(listElement);
-        $('a', listElement).attr('href', displayURLForBuilder(builderName)).text(displayNameForBuilder(builderName));
+        $('a', listElement).attr('href', ui.displayURLForBuilder(builderName)).text(ui.displayNameForBuilder(builderName));
     });
 
     return block;
@@ -91,7 +91,7 @@ function builderTableDataCells(resultNodesByBuilder)
 
     $.each(config.kBuilders, function(index, builderName) {
         var block = $('<td class="builder"></td>');
-        block.attr('title', displayNameForBuilder(builderName));
+        block.attr('title', ui.displayNameForBuilder(builderName));
         block.attr(config.kBuilderNameAttr, builderName);
 
         if (builderName in resultNodesByBuilder) {
@@ -132,7 +132,7 @@ ui.failureInfoListForSummary = function(testSummary)
         var failureTypes = $(this).attr(config.kFailureTypesAttr);
         if (!failureTypes)
             return
-        var failureTypeList = failureTypes.split(' ');
+        var failureTypeList = results.failureTypeList(failureTypes);
         var builderName = $(this).attr(config.kBuilderNameAttr);
         failureInfoList.push({
             'testName': testName,
