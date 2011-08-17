@@ -1,3 +1,11 @@
+2011-08-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        More rebaselines for Windows WebKit2 port.
+
+        * platform/win-wk2/editing/deleting/delete-at-paragraph-boundaries-008-expected.txt:
+        * platform/win-wk2/editing/deleting/delete-ws-fixup-003-expected.txt:
+        * platform/win-wk2/editing/deleting/delete-ws-fixup-004-expected.txt:
+
 2011-08-16  Hayato Ito  <hayato@chromium.org>
 
         Implement proper handling of events which happen in children of shadow hosts.
