@@ -134,9 +134,10 @@ static void setDefaultMIMEType(CFURLResponseRef response)
     CFURLResponseSetMIMEType(response, defaultMIMETypeString);
 }
 
-static String encodeBasicAuthorization(const String& user, const String& password)
+static void applyBasicAuthorizationHeader(ResourceRequest& request, const Credential& credential)
 {
-    return base64Encode(String(user + ":" + password).utf8());
+    String authenticationHeader = "Basic " + base64Encode(String(credential.user() + ":" + credential.password()).utf8());
+    request.addHTTPHeaderField("Authorization", authenticationHeader);
 }
 
 static CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef cfRequest, CFURLResponseRef cfRedirectResponse, const void* clientInfo)
@@ -471,8 +472,8 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     }
         
     if (!d->m_initialCredential.isEmpty()) {
-        String authHeader = "Basic " + encodeBasicAuthorization(d->m_initialCredential.user(), d->m_initialCredential.password());
-        firstRequest().addHTTPHeaderField("Authorization", authHeader);
+        // FIXME: Support Digest authentication, and Proxy-Authorization.
+        applyBasicAuthorizationHeader(firstRequest(), d->m_initialCredential);
     }
 
     RetainPtr<CFURLRequestRef> request(AdoptCF, makeFinalRequest(firstRequest(), shouldContentSniff));
@@ -540,8 +541,24 @@ void ResourceHandle::willSendRequest(ResourceRequest& request, const ResourceRes
     d->m_pass = url.pass();
     d->m_lastHTTPMethod = request.httpMethod();
     request.removeCredentials();
-    if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url()))
+
+    if (!protocolHostAndPortAreEqual(request.url(), redirectResponse.url())) {
+        // If the network layer carries over authentication headers from the original request
+        // in a cross-origin redirect, we want to clear those headers here.
         request.clearHTTPAuthorization();
+    } else {
+        // Only consider applying authentication credentials if this is actually a redirect and the redirect
+        // URL didn't include credentials of its own.
+        if (d->m_user.isEmpty() && d->m_pass.isEmpty() && !redirectResponse.isNull()) {
+            Credential credential = CredentialStorage::get(request.url());
+            if (!credential.isEmpty()) {
+                d->m_initialCredential = credential;
+                
+                // FIXME: Support Digest authentication, and Proxy-Authorization.
+                applyBasicAuthorizationHeader(request, d->m_initialCredential);
+            }
+        }
+    }
 
 #if USE(CFURLSTORAGESESSIONS)
      request.setStorageSession(ResourceHandle::currentStorageSession());

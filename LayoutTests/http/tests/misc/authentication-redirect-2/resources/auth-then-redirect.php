@@ -12,7 +12,7 @@ if (!strlen($_SERVER["PHP_AUTH_USER"]) || !strlen($_SERVER["PHP_AUTH_PW"]))
 $redirect_codes=array("301", "302", "303", "307");
 if (in_array($_GET["redirect"], $redirect_codes))
 {
-    header("Location: http://127.0.0.1:8000/misc/resources/auth-echo.php", true, $_GET["redirect"]);
+    header("Location: http://127.0.0.1:8000/misc/authentication-redirect-2/resources/auth-echo.php", true, $_GET["redirect"]);
     exit;
 }
 

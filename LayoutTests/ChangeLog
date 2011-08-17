@@ -1,3 +1,37 @@
+2011-08-17  Brady Eidson  <beidson@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66354 and <rdar://problem/9965209>
+        Regression:  On Lion, redirects lose HTTP authentication headers
+
+        These have to be in different paths to prevent credentials from leaking over from test to test.
+        Sad sad sad...
+        
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/misc/authentication-redirect-1: Added.
+        * http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin-expected.txt: Copied from LayoutTests/http/tests/misc/authentication-sent-to-redirect-expected.txt.
+        * http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html: Copied from LayoutTests/http/tests/misc/authentication-sent-to-redirect.html.
+        * http/tests/misc/authentication-redirect-1/resources: Added.
+        * http/tests/misc/authentication-redirect-1/resources/auth-echo.php: Copied from LayoutTests/http/tests/misc/resources/auth-echo.php.
+        * http/tests/misc/authentication-redirect-1/resources/auth-then-redirect.php: Copied from LayoutTests/http/tests/misc/resources/auth-then-redirect.php.
+        * http/tests/misc/authentication-redirect-2: Added.
+        * http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin-expected.txt: Added.
+        * http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html: Added.
+        * http/tests/misc/authentication-redirect-2/resources: Added.
+        * http/tests/misc/authentication-redirect-2/resources/auth-echo.php: Copied from LayoutTests/http/tests/misc/resources/auth-echo.php.
+        * http/tests/misc/authentication-redirect-2/resources/auth-then-redirect.php: Copied from LayoutTests/http/tests/misc/resources/auth-then-redirect.php.
+        * http/tests/misc/authentication-redirect-3: Added.
+        * http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials-expected.txt: Added.
+        * http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html: Added.
+        * http/tests/misc/authentication-redirect-3/resources: Added.
+        * http/tests/misc/authentication-redirect-3/resources/auth-echo.php: Copied from LayoutTests/http/tests/misc/resources/auth-echo.php.
+        * http/tests/misc/authentication-redirect-3/resources/auth-then-redirect-with-url-credentials.php: Added.
+        * http/tests/misc/authentication-redirect-3/resources/auth-then-redirect.php: Copied from LayoutTests/http/tests/misc/resources/auth-then-redirect.php.
+        * http/tests/misc/authentication-sent-to-redirect-expected.txt: Removed.
+        * http/tests/misc/authentication-sent-to-redirect.html: Removed.
+        * http/tests/misc/resources/auth-echo.php: Removed.
+        * http/tests/misc/resources/auth-then-redirect.php: Removed.
+
 2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Dump-as-markup conversion: editing/inserting/insert-3786362-fix.html
