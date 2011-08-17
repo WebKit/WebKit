@@ -1,3 +1,14 @@
+2011-08-17  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Add a new build slave for the Qt port on Mac OS SnowLeopard.
+        https://bugs.webkit.org/show_bug.cgi?id=66392
+
+        Modify the config file to include the new build slave.
+
+        Reviewed by Adam Roben.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2011-08-17  Sam White  <samuel.white@rochester.edu>
 
         AccessibilityObject levels are inconsistent
