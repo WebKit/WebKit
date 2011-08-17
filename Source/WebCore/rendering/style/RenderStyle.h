@@ -1149,7 +1149,7 @@ public:
 
     void setLineBoxContain(LineBoxContain c) { SET_VAR(rareInheritedData, m_lineBoxContain, c); }
     void setLineClamp(LineClampValue c) { SET_VAR(rareNonInheritedData, lineClamp, c); }
-    void setTextSizeAdjust(bool b) { SET_VAR(rareInheritedData, textSizeAdjust, b); }
+    bool setTextSizeAdjust(bool);
     void setTextSecurity(ETextSecurity aTextSecurity) { SET_VAR(rareInheritedData, textSecurity, aTextSecurity); }
 
 #if ENABLE(SVG)
@@ -1438,6 +1438,14 @@ inline bool RenderStyle::setEffectiveZoom(float f)
     if (compareEqual(rareInheritedData->m_effectiveZoom, f))
         return false;
     rareInheritedData.access()->m_effectiveZoom = f;
+    return true;
+}
+
+inline bool RenderStyle::setTextSizeAdjust(bool b)
+{
+    if (compareEqual(rareInheritedData->textSizeAdjust, b))
+        return false;
+    rareInheritedData.access()->textSizeAdjust = b;
     return true;
 }
 

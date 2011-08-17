@@ -118,6 +118,7 @@ public:
         void setFontDescription(FontDescription fontDescription) { m_fontDirty |= style()->setFontDescription(fontDescription); }
         void setZoom(float f) { m_fontDirty |= style()->setZoom(f); }
         void setEffectiveZoom(float f) { m_fontDirty |= style()->setEffectiveZoom(f); }
+        void setTextSizeAdjust(bool b) { m_fontDirty |= style()->setTextSizeAdjust(b); }
 
     private:
         void initForStyleResolve(Element*, RenderStyle* parentStyle = 0, PseudoId = NOPSEUDO);

@@ -4747,9 +4747,9 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     case CSSPropertyWebkitTextSizeAdjust: {
         HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
-        if (!primitiveValue || !primitiveValue->getIdent()) return;
-        m_style->setTextSizeAdjust(primitiveValue->getIdent() == CSSValueAuto);
-        m_fontDirty = true;
+        if (!primitiveValue || !primitiveValue->getIdent())
+            return;
+        setTextSizeAdjust(primitiveValue->getIdent() == CSSValueAuto);
         return;
     }
     case CSSPropertyWebkitTextSecurity:
