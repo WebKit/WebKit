@@ -3687,3 +3687,5 @@ BUGTONY : fast/repaint/line-flow-with-floats-in-regions.html = IMAGE+TEXT IMAGE
 
 BUGWK66338 MAC : fast/repaint/background-scaling.html = IMAGE
 BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
+
+BUGWK66375 WIN DEBUG : http/tests/misc/font-face-in-multiple-segmented-faces.html = CRASH

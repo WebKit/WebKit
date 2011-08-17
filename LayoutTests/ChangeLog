@@ -1,5 +1,16 @@
 2011-08-17  Steve Block  <steveblock@google.com>
 
+        http/tests/misc/font-face-in-multiple-segmented-faces.html assertion failure on Chromium
+        https://bugs.webkit.org/show_bug.cgi?id=66375
+
+        Sets a CRASH expectation for Windows debug.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-17  Steve Block  <steveblock@google.com>
+
         Set failing TEXT expectation for http/tests/security/mixedContent/insecure-plugin-in-iframe.html for all build flavors
         http://crbug.com/26042
 
