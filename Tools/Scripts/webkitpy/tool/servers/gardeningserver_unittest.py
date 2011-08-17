@@ -92,9 +92,11 @@ class BuildCoverageExtrapolatorTest(unittest.TestCase):
         self.assertEquals(extrapolator.extrapolate_test_configurations("Webkit Win"), set([TestConfiguration(version='xp', architecture='x86', build_type='release', graphics_type='cpu')]))
         self.assertEquals(extrapolator.extrapolate_test_configurations("Webkit Vista"), set([
             TestConfiguration(version='vista', architecture='x86', build_type='debug', graphics_type='cpu'),
+            TestConfiguration(version='vista', architecture='x86', build_type='debug', graphics_type='cg'),
             TestConfiguration(version='vista', architecture='x86', build_type='debug', graphics_type='gpu'),
             TestConfiguration(version='vista', architecture='x86', build_type='release', graphics_type='gpu'),
-            TestConfiguration(version='vista', architecture='x86', build_type='release', graphics_type='cpu')]))
+            TestConfiguration(version='vista', architecture='x86', build_type='release', graphics_type='cpu'),
+            TestConfiguration(version='vista', architecture='x86', build_type='release', graphics_type='cg')]))
         self.assertRaises(KeyError, extrapolator.extrapolate_test_configurations, "Potato")
 
 

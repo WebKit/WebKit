@@ -68,7 +68,7 @@ class ChromiumPort(Port):
         ('lucid', 'x86'),
         ('lucid', 'x86_64'))
 
-    ALL_GRAPHICS_TYPES = ('cpu', 'gpu')
+    ALL_GRAPHICS_TYPES = ('cpu', 'gpu', 'cg')
 
     ALL_BASELINE_VARIANTS = [
         'chromium-cg-mac-snowleopard', 'chromium-cg-mac-leopard',
