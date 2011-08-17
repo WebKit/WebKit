@@ -1,3 +1,16 @@
+2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Make run-api-tests run tests in alphabetical order
+
+        Fixes <http://webkit.org/b/66401> run-api-tests runs tests in a semi-random order
+
+        Reviewed by David Kilzer.
+
+        * Scripts/run-api-tests:
+        (runAllTests):
+        (runAllTestsInSuite):
+        Sort the lists of tests and suites before iterating over them.
+
 2011-08-17  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic should be able to rebaseline expected failures
