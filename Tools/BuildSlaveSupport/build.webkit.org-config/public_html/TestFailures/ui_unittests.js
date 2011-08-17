@@ -132,11 +132,11 @@ test("summarizeFailure", 1, function() {
     var failureAnalysis = {
         "testName": "svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html",
         "resultNodesByBuilder": {
-            "Webkit Mac10.5": {
+            "Webkit Mac10.5 (CG)": {
                 "expected": "IMAGE",
                 "actual": "PASS"
             },
-            "Webkit Mac10.5 (dbg)(2)": {
+            "Webkit Mac10.5 (CG)(dbg)(2)": {
                 "expected": "IMAGE",
                 "actual":"PASS"
             }
@@ -148,13 +148,13 @@ test("summarizeFailure", 1, function() {
 
     deepEqual(failureInfoList, [{
         "testName": "svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html",
-        "builderName": "Webkit Mac10.5",
+        "builderName": "Webkit Mac10.5 (CG)",
         "failureTypeList": [
             "PASS"
         ]
       }, {
         "testName": "svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html",
-        "builderName": "Webkit Mac10.5 (dbg)(2)",
+        "builderName": "Webkit Mac10.5 (CG)(dbg)(2)",
         "failureTypeList": [
             "PASS"
         ]

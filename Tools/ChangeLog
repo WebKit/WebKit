@@ -1,3 +1,20 @@
+2011-08-17  Adam Barth  <abarth@webkit.org>
+
+        Update Tools to account for (CG) being added to Chromium builder names
+        https://bugs.webkit.org/show_bug.cgi?id=66410
+
+        Reviewed by Adam Barth.
+
+        Some of these names will change back once we turn on Skia bots.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/builders_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/config.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ui_unittests.js:
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py:
+        * TestResultServer/static-dashboards/builders.js:
+        * TestResultServer/static-dashboards/flakiness_dashboard_tests.js:
+
 2011-08-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Wire up relative time to garden-o-matic summary view.

@@ -37,7 +37,7 @@ var kExampleBuilderStatusJSON =  {
         "slaves": ["vm124-m1"],
         "state": "building"
     },
-    "Webkit Mac10.6": {
+    "Webkit Mac10.6 (CG)": {
         "basedir": "Webkit_Linux",
         "cachedBuilds": [11459, 11460, 11461, 11462],
         "category": "6webkit linux latest",
@@ -325,7 +325,7 @@ test("buildersFailingStepRequredForTestCoverage", 3, function() {
                 callback(kExampleBuilderStatusJSON);
             else if (/Webkit%20Linux/.exec(url))
                 callback(kExampleBuildInfoJSON);
-            else if (/Webkit%20Mac10\.6/.exec(url))
+            else if (/Webkit%20Mac10\.6%20(CG)/.exec(url))
                 callback(failingBuildInfoJSON);
             else {
                 ok(false, "Unexpected URL: " + url);
@@ -336,14 +336,14 @@ test("buildersFailingStepRequredForTestCoverage", 3, function() {
 
     simulator.runTest(function() {
         builders.buildersFailingStepRequredForTestCoverage(function(builderNameList) {
-            deepEqual(builderNameList, ["Webkit Mac10.6"]);
+            deepEqual(builderNameList, ["Webkit Mac10.6 CG"]);
         });
     });
 
     deepEqual(requestedURLs, [
       "http://build.chromium.org/p/chromium.webkit/json/builders",
       "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Linux/builds/11461",
-      "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Mac10.6/builds/11460",
+      "http://build.chromium.org/p/chromium.webkit/json/builders/Webkit%20Mac10.6%20(CG)/builds/11460",
     ]);
 });
 

@@ -37,11 +37,11 @@ config.kBuilders = [
     'Webkit Linux 32',
     'Webkit Linux (dbg)(1)',
     'Webkit Linux (dbg)(2)',
-    'Webkit Mac10.5',
-    'Webkit Mac10.5 (dbg)(1)',
-    'Webkit Mac10.5 (dbg)(2)',
-    'Webkit Mac10.6',
-    'Webkit Mac10.6 (dbg)',
+    'Webkit Mac10.5 (CG)',
+    'Webkit Mac10.5 (CG)(dbg)(1)',
+    'Webkit Mac10.5 (CG)(dbg)(2)',
+    'Webkit Mac10.6 (CG)',
+    'Webkit Mac10.6 (CG)(dbg)',
 ];
 
 config.kBuildersThatOnlyCompile = [
