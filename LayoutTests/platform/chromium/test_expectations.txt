@@ -3691,4 +3691,8 @@ BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
 
 BUGWK66394 LINUX DEBUG : fast/canvas/webgl/data-view-crash.html = PASS CRASH
 
-BUGWK66417 LINUX WIN : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
+BUGWK66417 : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
+
+BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = TEXT
+BUGWK66419 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = TEXT
+BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = TEXT

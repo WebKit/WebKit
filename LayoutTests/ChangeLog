@@ -1,5 +1,15 @@
 2011-08-17  Tony Chang  <tony@chromium.org>
 
+        [chromium] remove stale result and mark 3 new authentication tests as
+        failing because chromium drt is missing a function.  Also mark
+        midword-break-before-surrogate-pair-2.html as failing on mac.
+
+        * platform/chromium-cg-mac/http/tests/misc/authentication-sent-to-redirect-expected.txt: Removed.
+        * platform/chromium-win/http/tests/misc/authentication-sent-to-redirect-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-17  Tony Chang  <tony@chromium.org>
+
         [chromium] fast/text/midword-break-before-surrogate-pair-2.html is failing
         on win and linux due to missing glyph.
 
