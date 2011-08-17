@@ -1,3 +1,21 @@
+2011-08-17  Sam White  <samuel.white@rochester.edu>
+
+        AccessibilityObject levels are inconsistent
+        https://bugs.webkit.org/show_bug.cgi?id=66180
+        
+        Updated accessibilityTable to return level values consistent with other accessibilityObjects that
+        return level values. This means a value of 0 is now only returned when tableLevel() is called on a
+        non-table element.
+
+        Reviewed by Chris Fleizach.
+
+        Test: platform/mac/accessibility/element-level.html
+
+        * accessibility/AccessibilityTable.cpp:
+        (WebCore::AccessibilityTable::tableLevel):
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+
 2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         An arrow key collapses directionless selection range in the wrong direction in BiDi

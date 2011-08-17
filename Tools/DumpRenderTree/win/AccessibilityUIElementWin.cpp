@@ -513,6 +513,12 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
     return JSStringCreateWithCharacters(0, 0);
 }
 
+double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
+{
+    // FIXME: implement
+    return 0;
+}
+
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 {
     // FIXME: implement

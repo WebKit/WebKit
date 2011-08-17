@@ -480,6 +480,17 @@ JSStringRef AccessibilityUIElement::stringAttributeValue(JSStringRef attribute)
     return 0;
 }
 
+double AccessibilityUIElement::numberAttributeValue(JSStringRef attribute)
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    id value = [m_element accessibilityAttributeValue:[NSString stringWithJSStringRef:attribute]];
+    if ([value isKindOfClass:[NSNumber class]])
+        return [value doubleValue];
+    END_AX_OBJC_EXCEPTIONS
+    
+    return 0;
+}
+
 bool AccessibilityUIElement::boolAttributeValue(JSStringRef attribute)
 {
     BEGIN_AX_OBJC_EXCEPTIONS

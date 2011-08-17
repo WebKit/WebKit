@@ -1,3 +1,27 @@
+2011-08-17  Sam White  <samuel.white@rochester.edu>
+
+        AccessibilityObject levels are inconsistent
+        https://bugs.webkit.org/show_bug.cgi?id=66180
+        
+        Added the ability to get numeric attribute values using numberAttributeValue. This
+        function complements the existing stringAttributeValue and boolAttributeValue functions.
+        The addition of numberAttributeValue was necessary because the stringAttributeValue
+        function does a type check and will only return strings. This limitation made it
+        impossible to get values for attributes that returned an NSNumber.
+
+        Reviewed by Chris Fleizach.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (numberAttributeValueCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/AccessibilityUIElement.h:
+        * DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp:
+        (AccessibilityUIElement::numberAttributeValue):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::numberAttributeValue):
+        * DumpRenderTree/win/AccessibilityUIElementWin.cpp:
+        (AccessibilityUIElement::numberAttributeValue):
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Tell Trac logs always to display all specified revisions in a single page

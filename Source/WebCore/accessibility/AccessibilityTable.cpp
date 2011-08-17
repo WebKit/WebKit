@@ -450,7 +450,7 @@ unsigned AccessibilityTable::rowCount()
 int AccessibilityTable::tableLevel() const
 {
     int level = 0;
-    for (AccessibilityObject* obj = parentObject(); obj; obj = obj->parentObject()) {
+    for (AccessibilityObject* obj = static_cast<AccessibilityObject*>(const_cast<AccessibilityTable*>(this)); obj; obj = obj->parentObject()) {
         if (obj->isAccessibilityTable())
             ++level;
     }

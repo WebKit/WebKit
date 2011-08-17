@@ -2198,13 +2198,17 @@ static NSString* roleValueToNSString(AccessibilityRole value)
 
         if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
             return [NSNumber numberWithInt:m_object->blockquoteLevel()];
+        if ([attributeName isEqualToString:@"AXTableLevel"])
+            return [NSNumber numberWithInt:m_object->tableLevel()];
     } else {
-        if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute]) {
-            AccessibilityObject* parent = m_object->parentObjectUnignored();
-            if (!parent)
-                return [NSNumber numberWithInt:0];
-            return [parent->wrapper() accessibilityAttributeValue:NSAccessibilityBlockQuoteLevelAttribute];        
-        }
+        AccessibilityObject* parent = m_object->parentObjectUnignored();
+        if (!parent)
+            return [NSNumber numberWithInt:0];
+        
+        if ([attributeName isEqualToString:NSAccessibilityBlockQuoteLevelAttribute])
+            return [parent->wrapper() accessibilityAttributeValue:NSAccessibilityBlockQuoteLevelAttribute];
+        if ([attributeName isEqualToString:@"AXTableLevel"])
+            return [parent->wrapper() accessibilityAttributeValue:@"AXTableLevel"];
     }
     
     if ([attributeName isEqualToString: NSAccessibilityLinkedUIElementsAttribute]) {

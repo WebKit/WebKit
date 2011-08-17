@@ -1,3 +1,19 @@
+2011-08-17  Sam White  <samuel.white@rochester.edu>
+
+        AccessibilityObject levels are inconsistent
+        https://bugs.webkit.org/show_bug.cgi?id=66180
+        
+        This test ensures that all AccessibilityObjects that return a level value return consistent results.
+        For example, a level of 0 should only be returned by a level function when it is called on an
+        AccessibilityObject of the wrong type. It's especially important that we enforce this consistency
+        using layout tests because these level values are not defined by the W3C but are still used by
+        popular screen readers such as VoiceOver.
+
+        Reviewed by Chris Fleizach.
+
+        * platform/mac/accessibility/element-level-expected.txt: Added.
+        * platform/mac/accessibility/element-level.html: Added.
+
 2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         An arrow key collapses directionless selection range in the wrong direction in BiDi
