@@ -4698,10 +4698,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyTextOverflow: {
         // This property is supported by WinIE, and so we leave off the "-webkit-" in order to
         // work with WinIE-specific pages that use the property.
-        HANDLE_INHERIT_AND_INITIAL(textOverflow, TextOverflow)
-        if (!primitiveValue || !primitiveValue->getIdent())
-            return;
-        m_style->setTextOverflow(primitiveValue->getIdent() == CSSValueEllipsis);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(textOverflow, TextOverflow)
         return;
     }
     case CSSPropertyWebkitLineClamp: {

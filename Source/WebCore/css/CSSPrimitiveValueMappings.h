@@ -2321,6 +2321,33 @@ template<> inline CSSPrimitiveValue::operator TextEmphasisPosition() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextOverflow overflow)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (overflow) {
+    case TextOverflowClip:
+        m_value.ident = CSSValueClip;
+        break;
+    case TextOverflowEllipsis:
+        m_value.ident = CSSValueEllipsis;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator TextOverflow() const
+{
+    switch (m_value.ident) {
+    case CSSValueClip:
+        return TextOverflowClip;
+    case CSSValueEllipsis:
+        return TextOverflowEllipsis;
+    default:
+        ASSERT_NOT_REACHED();
+        return TextOverflowClip;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(TextEmphasisFill fill)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

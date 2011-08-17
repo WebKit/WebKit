@@ -1,3 +1,32 @@
+2011-08-16  Luke Macpherson   <macpherson@chromium.org>
+
+        Represent RenderStyle::textOverflow property using an enum instead of a bool.
+        https://bugs.webkit.org/show_bug.cgi?id=66356
+
+        Reviewed by Dan Bernstein.
+
+        No new tests - no behavioral changes.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        Support cast from TextOverflow to CSSPrimitiveValue.
+        (WebCore::CSSPrimitiveValue::operator TextOverflow):
+        Support cast from CSSPrimitiveValue to TextOverflow.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macro for text overflow.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::textOverflow):
+        Return TextOverflow enum.
+        (WebCore::InheritedFlags::setTextOverflow):
+        Accept TextOverflow enum parameter.
+        (WebCore::InheritedFlags::initialTextOverflow):
+        Return TextOverflowClip.
+        * rendering/style/RenderStyleConstants.h:
+        Define TextOverflow enum.
+        * rendering/style/StyleRareNonInheritedData.h:
+        Change representation of text overflow from bool to one-bit unsigned.
+
 2011-08-16  Jeff Miller  <jeffm@apple.com>
 
         Apple's Windows production build should fail to compile if AVFoundation is not enabled

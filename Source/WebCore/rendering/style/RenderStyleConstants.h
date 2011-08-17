@@ -434,6 +434,8 @@ enum TextEmphasisMark { TextEmphasisMarkNone, TextEmphasisMarkAuto, TextEmphasis
 
 enum TextEmphasisPosition { TextEmphasisPositionOver, TextEmphasisPositionUnder };
 
+enum TextOverflow { TextOverflowClip = 0, TextOverflowEllipsis };
+
 enum EImageRendering { ImageRenderingAuto, ImageRenderingOptimizeSpeed, ImageRenderingOptimizeQuality, ImageRenderingOptimizeContrast };
 
 enum Order { LogicalOrder = 0, VisualOrder };
