@@ -1,5 +1,14 @@
 2011-08-17  Adam Roben  <aroben@apple.com>
 
+        Add Windows expected failure results for text-combine-image-test.html
+
+        Failure is tracked by <http://webkit.org/b/66376>.
+
+        * platform/win/fast/text/international/text-combine-image-test-expected.png:
+        * platform/win/fast/text/international/text-combine-image-test-expected.txt:
+
+2011-08-17  Adam Roben  <aroben@apple.com>
+
         Add Windows expected failure results for new test added in r93068
 
         Failure is tracked by <http://webkit.org/b/66374>.
