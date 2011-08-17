@@ -205,6 +205,11 @@ public:
     {
         return m_code;
     }
+    
+    size_t debugSize()
+    {
+        return m_size;
+    }
 #endif
 
 private:

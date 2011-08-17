@@ -1,3 +1,23 @@
+2011-08-17  Filip Pizlo  <fpizlo@apple.com>
+
+        JSC verbose debugging output sometimes doesn't work as expected.
+        https://bugs.webkit.org/show_bug.cgi?id=66107
+
+        Reviewed by Gavin Barraclough.
+        
+        Hardened the CodeBlock::dump() code so that it no longer crashes.  Improved
+        the DFG verbose code so that it prints slightly more useful information.
+
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::debugSize):
+        * bytecode/CodeBlock.cpp:
+        (JSC::valueToSourceString):
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::numberOfRegExps):
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::link):
+
 2011-08-16  Michael Saboff  <msaboff@apple.com>
 
         Crash in Structure::visitChildren running iAd.js regression test suite under memory pressure

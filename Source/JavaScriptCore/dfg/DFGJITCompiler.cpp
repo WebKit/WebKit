@@ -867,7 +867,7 @@ void JITCompiler::link(LinkBuffer& linkBuffer)
 {
     // Link the code, populate data in CodeBlock data structures.
 #if DFG_DEBUG_VERBOSE
-    fprintf(stderr, "JIT code start at %p\n", linkBuffer.debugAddress());
+    fprintf(stderr, "JIT code start at [%p, %p)\n", linkBuffer.debugAddress(), static_cast<char*>(linkBuffer.debugAddress()) + linkBuffer.debugSize());
 #endif
 
     // Link all calls out from the JIT code to their respective functions.

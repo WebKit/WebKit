@@ -76,7 +76,7 @@ static UString valueToSourceString(ExecState* exec, JSValue val)
     if (val.isString())
         return makeUString("\"", escapeQuotes(val.toString(exec)), "\"");
 
-    return val.toString(exec);
+    return val.description();
 }
 
 static CString constantName(ExecState* exec, int k, JSValue value)
@@ -542,7 +542,11 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
         case op_new_regexp: {
             int r0 = (++it)->u.operand;
             int re0 = (++it)->u.operand;
-            printf("[%4d] new_regexp\t %s, %s\n", location, registerName(exec, r0).data(), regexpName(re0, regexp(re0)).data());
+            printf("[%4d] new_regexp\t %s, ", location, registerName(exec, r0).data());
+            if (r0 >=0 && r0 < (int)numberOfRegExps())
+                printf("%s\n", regexpName(re0, regexp(re0)).data());
+            else
+                printf("bad_regexp(%d)\n", re0);
             break;
         }
         case op_mov: {

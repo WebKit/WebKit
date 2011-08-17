@@ -471,6 +471,12 @@ namespace JSC {
             m_rareData->m_regexps.append(WriteBarrier<RegExp>(*m_globalData, ownerExecutable(), r));
             return size;
         }
+        unsigned numberOfRegExps() const
+        {
+            if (!m_rareData)
+                return 0;
+            return m_rareData->m_regexps.size();
+        }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
 
         unsigned addConstantBuffer(unsigned length)
