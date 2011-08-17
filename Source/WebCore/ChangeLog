@@ -1,3 +1,35 @@
+2011-08-16  Shawn Singh  <shawnsingh@chromium.org>
+
+        Computing screen-space transform for LayerChromium and CCLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=66114
+
+        Reviewed by James Robinson.
+
+        Test: compositing/backface-visibility-hierarchical-transform.html
+
+        Added a data member to LayerChromium and CCLayerImpl that holds
+        the screen-space transform.   The transform is computed in
+        calculateDrawTransformsAndVisibility(), which is used during
+        updating (LayerChromium) and drawing (CCLayerImpl).  This transform
+        will also be used for other things, such as HUD drawing, in upcoming
+        patches.
+
+        Also fixed a FIXME in LayerRendererChromium::drawLayer, which
+        was not computing the entire hierarchy of transforms to determine
+        back-face visibility.  Now it simply uses the screen space transform.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::screenSpaceDrawTransform):
+        (WebCore::LayerChromium::setScreenSpaceDrawTransform):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::calculateDrawTransformsAndVisibility):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::screenSpaceDrawTransform):
+        (WebCore::CCLayerImpl::setScreenSpaceDrawTransform):
+
 2011-08-16  Hayato Ito  <hayato@chromium.org>
 
         Implement proper handling of events which happen in children of shadow hosts.
