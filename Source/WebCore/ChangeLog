@@ -1,3 +1,24 @@
+2011-08-16  Per-Erik Brodin  <per-erik.brodin@ericsson.com>
+
+        Make it possible to explicitly prevent a preflight via ThreadableLoaderOptions
+        https://bugs.webkit.org/show_bug.cgi?id=65694
+
+        Reviewed by Alexey Proskuryakov.
+
+        No new tests since there is no change in behavior.
+
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::start):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        * loader/ThreadableLoader.h:
+        (WebCore::ThreadableLoaderOptions::ThreadableLoaderOptions):
+        * notifications/Notification.cpp:
+        (WebCore::Notification::startLoading):
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+
 2011-08-16  Scott Byer  <scottbyer@chromium.org>
 
         Fix spelling error.

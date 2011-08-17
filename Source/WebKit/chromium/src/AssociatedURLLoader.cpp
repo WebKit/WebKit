@@ -229,7 +229,7 @@ void AssociatedURLLoader::loadAsynchronously(const WebURLRequest& request, WebUR
     options.sendLoadCallbacks = true; // Always send callbacks.
     options.sniffContent = m_options.sniffContent;
     options.allowCredentials = m_options.allowCredentials;
-    options.forcePreflight = m_options.forcePreflight;
+    options.preflightPolicy = m_options.forcePreflight ? ForcePreflight : ConsiderPreflight;
     options.crossOriginRequestPolicy = static_cast<WebCore::CrossOriginRequestPolicy>(m_options.crossOriginRequestPolicy);
     options.shouldBufferData = false;
 

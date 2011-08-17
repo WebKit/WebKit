@@ -652,7 +652,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = true;
     options.sniffContent = false;
-    options.forcePreflight = uploadEvents;
+    options.preflightPolicy = uploadEvents ? ForcePreflight : ConsiderPreflight;
     options.allowCredentials = m_sameOriginRequest || m_includeCredentials;
     options.crossOriginRequestPolicy = UseAccessControl;
     options.securityOrigin = securityOrigin();

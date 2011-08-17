@@ -168,7 +168,7 @@ void Notification::startLoading()
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = false;
     options.sniffContent = false;
-    options.forcePreflight = false;
+    options.preflightPolicy = ConsiderPreflight;
     options.allowCredentials = AllowStoredCredentials;
     options.crossOriginRequestPolicy = AllowCrossOriginRequests;
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, ResourceRequest(iconURL()), options);

@@ -88,7 +88,7 @@ void FileReaderLoader::start(ScriptExecutionContext* scriptExecutionContext, Blo
     ThreadableLoaderOptions options;
     options.sendLoadCallbacks = true;
     options.sniffContent = false;
-    options.forcePreflight = false;
+    options.preflightPolicy = ConsiderPreflight;
     options.allowCredentials = true;
     options.crossOriginRequestPolicy = DenyCrossOriginRequests;
 

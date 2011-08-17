@@ -98,7 +98,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
     OwnPtr<ResourceRequest> crossOriginRequest = adoptPtr(new ResourceRequest(request));
     updateRequestForAccessControl(*crossOriginRequest, securityOrigin(), m_options.allowCredentials);
 
-    if (!m_options.forcePreflight && isSimpleCrossOriginAccessRequest(crossOriginRequest->httpMethod(), crossOriginRequest->httpHeaderFields()))
+    if ((m_options.preflightPolicy == ConsiderPreflight && isSimpleCrossOriginAccessRequest(crossOriginRequest->httpMethod(), crossOriginRequest->httpHeaderFields())) || m_options.preflightPolicy == PreventPreflight)
         makeSimpleCrossOriginAccessRequest(*crossOriginRequest);
     else {
         m_actualRequest = crossOriginRequest.release();
@@ -112,7 +112,8 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
 
 void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const ResourceRequest& request)
 {
-    ASSERT(isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields()));
+    ASSERT(m_options.preflightPolicy != ForcePreflight);
+    ASSERT(m_options.preflightPolicy == PreventPreflight || isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields()));
 
     // Cross-origin requests are only defined for HTTP. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
     // FIXME: Consider allowing simple CORS requests to non-HTTP URLs.

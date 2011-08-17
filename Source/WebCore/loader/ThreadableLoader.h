@@ -55,13 +55,19 @@ namespace WebCore {
         UseAccessControl,
         AllowCrossOriginRequests
     };
-    
+
+    enum PreflightPolicy {
+        ConsiderPreflight,
+        ForcePreflight,
+        PreventPreflight
+    };
+
     struct ThreadableLoaderOptions {
-        ThreadableLoaderOptions() : sendLoadCallbacks(false), sniffContent(false), allowCredentials(false), forcePreflight(false), crossOriginRequestPolicy(DenyCrossOriginRequests), shouldBufferData(true) { }
+        ThreadableLoaderOptions() : sendLoadCallbacks(false), sniffContent(false), allowCredentials(false), preflightPolicy(ConsiderPreflight), crossOriginRequestPolicy(DenyCrossOriginRequests), shouldBufferData(true) { }
         bool sendLoadCallbacks;
         bool sniffContent;
         bool allowCredentials;  // Whether HTTP credentials and cookies are sent with the request.
-        bool forcePreflight;  // If AccessControl is used, whether to force a preflight.
+        PreflightPolicy preflightPolicy; // If AccessControl is used, how to determine if a preflight is needed.
         CrossOriginRequestPolicy crossOriginRequestPolicy;
         bool shouldBufferData;
         RefPtr<SecurityOrigin> securityOrigin;
