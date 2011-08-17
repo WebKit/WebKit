@@ -1,3 +1,16 @@
+2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        An arrow key collapses directionless selection range in the wrong direction in BiDi
+        https://bugs.webkit.org/show_bug.cgi?id=64626
+
+        Reviewed by Darin Adler.
+
+        Added a test to ensure collapsing directionless selection respects the direction of text around
+        the selection's end points.
+
+        * editing/selection/collapse-selection-in-bidi-expected.txt: Added.
+        * editing/selection/collapse-selection-in-bidi.html: Added.
+
 2011-08-17  Steve Block  <steveblock@google.com>
 
         Unreviewed, rolling out r93204.

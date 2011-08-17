@@ -390,6 +390,21 @@ TextDirection FrameSelection::directionOfEnclosingBlock()
     return WebCore::directionOfEnclosingBlock(m_selection.extent());
 }
 
+TextDirection FrameSelection::directionOfSelection()
+{
+    InlineBox* startBox = 0;
+    InlineBox* endBox = 0;
+    int unusedOffset;
+    if (m_selection.start().isNotNull())
+        m_selection.visibleStart().getInlineBoxAndOffset(startBox, unusedOffset);
+    if (m_selection.end().isNotNull())
+        m_selection.visibleEnd().getInlineBoxAndOffset(endBox, unusedOffset);
+    if (startBox && endBox && startBox->direction() == endBox->direction())
+        return startBox->direction();
+
+    return directionOfEnclosingBlock();
+}
+
 void FrameSelection::willBeModified(EAlteration alter, SelectionDirection direction)
 {
     if (alter != AlterationExtend)
@@ -411,7 +426,7 @@ void FrameSelection::willBeModified(EAlteration alter, SelectionDirection direct
     } else {
         switch (direction) {
         case DirectionRight:
-            if (directionOfEnclosingBlock() == LTR)
+            if (directionOfSelection() == LTR)
                 baseIsStart = true;
             else
                 baseIsStart = false;
@@ -420,7 +435,7 @@ void FrameSelection::willBeModified(EAlteration alter, SelectionDirection direct
             baseIsStart = true;
             break;
         case DirectionLeft:
-            if (directionOfEnclosingBlock() == LTR)
+            if (directionOfSelection() == LTR)
                 baseIsStart = false;
             else
                 baseIsStart = true;
@@ -553,7 +568,7 @@ VisiblePosition FrameSelection::modifyMovingRight(TextGranularity granularity)
     switch (granularity) {
     case CharacterGranularity:
         if (isRange()) {
-            if (directionOfEnclosingBlock() == LTR)
+            if (directionOfSelection() == LTR)
                 pos = VisiblePosition(m_selection.end(), m_selection.affinity());
             else
                 pos = VisiblePosition(m_selection.start(), m_selection.affinity());
@@ -724,7 +739,7 @@ VisiblePosition FrameSelection::modifyMovingLeft(TextGranularity granularity)
     switch (granularity) {
     case CharacterGranularity:
         if (isRange())
-            if (directionOfEnclosingBlock() == LTR)
+            if (directionOfSelection() == LTR)
                 pos = VisiblePosition(m_selection.start(), m_selection.affinity());
             else
                 pos = VisiblePosition(m_selection.end(), m_selection.affinity());

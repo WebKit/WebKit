@@ -248,6 +248,7 @@ private:
 
     void respondToNodeModification(Node*, bool baseRemoved, bool extentRemoved, bool startRemoved, bool endRemoved);
     TextDirection directionOfEnclosingBlock();
+    TextDirection directionOfSelection();
 
     VisiblePosition positionForPlatform(bool isGetStart) const;
     VisiblePosition startForPlatform() const;

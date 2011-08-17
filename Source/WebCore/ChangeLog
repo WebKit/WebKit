@@ -1,3 +1,25 @@
+2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        An arrow key collapses directionless selection range in the wrong direction in BiDi
+        https://bugs.webkit.org/show_bug.cgi?id=64626
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by willBeModified's always using block direction to determine
+        the direction to which the selection is collapsed. Fixed the bug by calling directionOfSelection
+        in willBeModified, which will return the text direction of the surrounding context when
+        the start and the end have the same direction. When the text directions at the start and at the end
+        of selection do not match, it uses the block's text direction.
+
+        Test: editing/selection/collapse-selection-in-bidi.html
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::directionOfSelection): Added.
+        (WebCore::FrameSelection::willBeModified): Calls directionOfSelection.
+        (WebCore::FrameSelection::modifyMovingRight): Ditto.
+        (WebCore::FrameSelection::modifyMovingLeft): Ditto.
+        * editing/FrameSelection.h:
+
 2011-08-17  Jeff Miller  <jeffm@apple.com>
 
         Some AVFoundation source files should be in platform-specific directories
