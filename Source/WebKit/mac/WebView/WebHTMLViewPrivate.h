@@ -32,12 +32,6 @@
 #define ENABLE_NETSCAPE_PLUGIN_API 1
 #endif
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_4
-#define WebCGFloat float
-#else
-#define WebCGFloat CGFloat
-#endif
-
 @class DOMDocumentFragment;
 @class DOMNode;
 @class DOMRange;
@@ -127,12 +121,12 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 // directly, this method must be called before paginating, or the computed height might be incorrect.
 // Typically this would be called from inside an override of -[NSView knowsPageRange:].
 - (void)_layoutForPrinting;
-- (WebCGFloat)_adjustedBottomOfPageWithTop:(WebCGFloat)top bottom:(WebCGFloat)bottom limit:(WebCGFloat)bottomLimit;
+- (CGFloat)_adjustedBottomOfPageWithTop:(CGFloat)top bottom:(CGFloat)bottom limit:(CGFloat)bottomLimit;
 - (BOOL)_isInPrintMode;
 - (BOOL)_beginPrintModeWithPageWidth:(float)pageWidth height:(float)pageHeight shrinkToFit:(BOOL)shrinkToFit;
 // Lays out to pages of the given minimum width and height or more (increasing both dimensions proportionally)
 // as needed for the content to fit, but no more than the given maximum width.
-- (BOOL)_beginPrintModeWithMinimumPageWidth:(WebCGFloat)minimumPageWidth height:(WebCGFloat)minimumPageHeight maximumPageWidth:(WebCGFloat)maximumPageWidth;
+- (BOOL)_beginPrintModeWithMinimumPageWidth:(CGFloat)minimumPageWidth height:(CGFloat)minimumPageHeight maximumPageWidth:(CGFloat)maximumPageWidth;
 - (void)_endPrintMode;
 
 - (BOOL)_isInScreenPaginationMode;
@@ -142,5 +136,3 @@ extern const float _WebHTMLViewPrintingMaximumShrinkFactor;
 - (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 
 @end
-
-#undef WebCGFloat

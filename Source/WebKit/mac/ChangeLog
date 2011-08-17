@@ -1,5 +1,13 @@
 2011-08-17  Dan Bernstein  <mitz@apple.com>
 
+        Eliminate the WebCGFloat compatibility definition that was needed for Tiger.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * WebView/WebHTMLViewPrivate.h:
+
+2011-08-17  Dan Bernstein  <mitz@apple.com>
+
         Eliminate the WebNSInteger and WebNSUInteger compatibility definitions that were
         needed for Tiger.
 
