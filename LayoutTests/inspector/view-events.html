@@ -1,0 +1,70 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function test()
+{
+    function TestView(viewName)
+    {
+        this._viewName = viewName;
+        WebInspector.View.call(this);
+    }
+
+    TestView.prototype = {
+        wasShown: function()
+        {
+            InspectorTest.addResult("> " + this._viewName + ".wasShown()");
+            WebInspector.View.prototype.wasShown.call(this);
+        },
+
+        willHide: function()
+        {
+            InspectorTest.addResult("> " + this._viewName + ".willHide()");
+            WebInspector.View.prototype.willHide.call(this);
+        },
+
+        onResize: function()
+        {
+            InspectorTest.addResult("> " + this._viewName + ".onResize()");
+        }
+    };
+
+    TestView.prototype.__proto__ = WebInspector.View.prototype;
+
+    function traceEval(expressions)
+    {
+        for (var i = 0; i < expressions.length; ++i) {
+            InspectorTest.addResult(expressions[i]);
+            eval(expressions[i]);
+        }
+    }
+    var parentView = new TestView("ParentView");
+    var childView = new TestView("ChildView");
+    parentView.addChildView(childView);
+    var root = document.getElementById("main-panels");
+    traceEval([
+        "parentView.show(root)",
+        "parentView.doResize()",
+        "childView.show()",
+        "parentView.doResize()",
+        "parentView.hide(root)",
+        "parentView.show(root)",
+        "childView.hide()",
+        "parentView.hide(root)"
+    ]);
+    parentView.removeChildView(childView);
+    root.removeChild(parentView.element);
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+This tests that events are properly propagated through View hierarchy.
+</p>
+
+</body>
+</html>

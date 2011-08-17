@@ -249,7 +249,7 @@ WebInspector.ApplicationCacheItemsView.prototype = {
             this._dataGrid.children[0].selected = true;
     },
 
-    resize: function()
+    onResize: function()
     {
         if (this._dataGrid)
             this._dataGrid.updateWidths();

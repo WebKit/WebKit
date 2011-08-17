@@ -46,16 +46,18 @@ WebInspector.ResourceResponseView.prototype = {
         if (!this.resource.content || !this.sourceView) {
             if (!this._emptyView) {
                 this._emptyView = new WebInspector.EmptyView(WebInspector.UIString("This request has no response data available."));
-                this._emptyView.show(this.element);
-                this.innerView = this._emptyView; 
+                this.addChildView(this._emptyView);
+                this._emptyView.show();
+                this.innerView = this._emptyView;
             }
         } else {
             if (this._emptyView) {
-                this._emptyView.detach();
+                this.removeChildView(this._emptyView);
                 delete this._emptyView;
             }
-            this.sourceView.show(this.element);
-            this.innerView = this.sourceView; 
+            this.addChildView(this.sourceView);
+            this.sourceView.show();
+            this.innerView = this.sourceView;
         }
     }
 }

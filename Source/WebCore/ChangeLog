@@ -1,3 +1,128 @@
+2011-08-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: maintain visible view hierarchy and dispatch common view events automatically
+        https://bugs.webkit.org/show_bug.cgi?id=66131
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/view-events.html
+
+        - added a notion of an optional parent to a View
+        - maintain a list of View children
+        - dispatch common view events, such as show/hide/resize automatically through the hierarchy of visible views.
+        - promoted Panel's logic of (re)storing scroll positions to view
+        - demoted inheritScrollPositionFromView to a couple of views that need it.
+
+        * inspector/front-end/ApplicationCacheItemsView.js:
+        (WebInspector.ApplicationCacheItemsView.prototype.onResize):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.populateStatusBar):
+        (WebInspector.ConsoleView.prototype.elementsToRestoreScrollPositionsFor):
+        * inspector/front-end/CookieItemsView.js:
+        (WebInspector.CookieItemsView.prototype.onResize):
+        (WebInspector.SimpleCookiesTable.prototype.onResize):
+        * inspector/front-end/DOMStorageItemsView.js:
+        (WebInspector.DOMStorageItemsView.prototype.onResize):
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.onResize):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.set visibleView):
+        (WebInspector.Drawer.prototype.show):
+        (WebInspector.Drawer.prototype.hide):
+        (WebInspector.Drawer.prototype.onResize):
+        (WebInspector.Drawer.prototype._animateDrawerHeight.animationFinished):
+        (WebInspector.Drawer.prototype._animateDrawerHeight):
+        (WebInspector.Drawer.prototype._statusBarDragging):
+        (WebInspector.Drawer.prototype._endStatusBarDragging):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.onResize):
+        * inspector/front-end/ExtensionPanel.js:
+        * inspector/front-end/FontView.js:
+        (WebInspector.FontView.prototype.onResize):
+        * inspector/front-end/IFrameView.js:
+        (WebInspector.IFrameView):
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView.prototype._installHighlightSupport):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkLogView):
+        (WebInspector.NetworkLogView.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.NetworkLogView.prototype.onResize):
+        (WebInspector.NetworkLogView.prototype.wasShown):
+        (WebInspector.NetworkLogView.prototype.willHide):
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype.show):
+        (WebInspector.NetworkPanel.prototype._showResource):
+        (WebInspector.NetworkPanel.prototype._closeVisibleResource):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.show):
+        (WebInspector.Panel.prototype.hide):
+        (WebInspector.Panel.prototype.performSearch.processChunk):
+        (WebInspector.Panel.prototype.performSearch):
+        (WebInspector.Panel.prototype.updateSidebarWidth):
+        * inspector/front-end/PanelEnablerView.js:
+        (WebInspector.PanelEnablerView.prototype.show):
+        (WebInspector.PanelEnablerView.prototype.onResize):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView.prototype.onResize):
+        * inspector/front-end/ProfilesPanel.js:
+        (WebInspector.ProfilesPanel.prototype.updateMainViewWidth):
+        * inspector/front-end/ResourceCookiesView.js:
+        (WebInspector.ResourceCookiesView.prototype.onResize):
+        * inspector/front-end/ResourcePreviewView.js:
+        (WebInspector.ResourcePreviewView.prototype.contentLoaded):
+        * inspector/front-end/ResourceResponseView.js:
+        (WebInspector.ResourceResponseView.prototype.contentLoaded):
+        * inspector/front-end/ResourceTimingView.js:
+        (WebInspector.ResourceTimingView.prototype.show):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.show):
+        (WebInspector.ResourcesPanel.prototype._innerShowView):
+        (WebInspector.ResourcesPanel.prototype.closeVisibleView):
+        (WebInspector.ResourcesPanel.prototype.updateMainViewWidth):
+        (WebInspector.FrameResourceTreeElement.prototype._recreateSourceView):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.show):
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.ScriptsPanel.prototype._removeSourceFrame):
+        (WebInspector.ScriptsPanel.prototype.setSidebarWidth):
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame):
+        (WebInspector.SourceFrame.prototype.show):
+        (WebInspector.SourceFrame.prototype.willHide):
+        (WebInspector.SourceFrame.prototype.clearMessages):
+        (WebInspector.SourceFrame.prototype._setTextViewerDecorations):
+        (WebInspector.SourceFrame.prototype.inheritScrollPositions):
+        * inspector/front-end/TabbedPane.js:
+        (WebInspector.TabbedPane.prototype.appendTab):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.TextViewer.prototype.inheritScrollPositions):
+        (WebInspector.TextViewer.prototype.onResize):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype.onResize):
+        (WebInspector.TimelinePanel.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.TimelinePanel.prototype.show):
+        * inspector/front-end/View.js:
+        (WebInspector.View):
+        (WebInspector.View.prototype.wasShown):
+        (WebInspector.View.prototype.willHide):
+        (WebInspector.View.prototype._innerShow):
+        (WebInspector.View.prototype.show):
+        (WebInspector.View.prototype._innerHide):
+        (WebInspector.View.prototype.hide):
+        (WebInspector.View.prototype._detach):
+        (WebInspector.View.prototype.elementsToRestoreScrollPositionsFor):
+        (WebInspector.View.prototype.storeScrollPositions):
+        (WebInspector.View.prototype.restoreScrollPositions):
+        (WebInspector.View.prototype.addChildView):
+        (WebInspector.View.prototype.removeChildView):
+        (WebInspector.View.prototype.onResize):
+        (WebInspector.View.prototype.doResize):
+        (WebInspector.View.prototype.dispatchToSelfAndVisibleChildren):
+        (WebInspector.View.prototype.dispatchToVisibleChildren):
+        * inspector/front-end/inspector.js:
+        (WebInspector.windowResize):
+
 2011-08-16  Luke Macpherson   <macpherson@chromium.org>
 
         Represent RenderStyle::textOverflow property using an enum instead of a bool.

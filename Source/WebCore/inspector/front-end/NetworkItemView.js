@@ -88,12 +88,6 @@ WebInspector.NetworkItemView.prototype = {
             this.highlightLine = view.highlightLine.bind(view);
         else
             delete this.highlightLine;
-    },
-
-    resize: function()
-    {
-        if (this._cookiesView && this._cookiesView.visible)
-            this._cookiesView.resize();
     }
 }
 

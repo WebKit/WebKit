@@ -46,6 +46,7 @@ WebInspector.TabbedPane.prototype = {
 
         this._tabsElement.appendChild(tabElement);
         this._contentElement.appendChild(view.element);
+        this.addChildView(view);
 
         this._tabs[id] = { tabElement: tabElement, view: view };
     },

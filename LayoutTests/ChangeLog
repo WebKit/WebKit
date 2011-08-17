@@ -1,3 +1,13 @@
+2011-08-16  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: maintain visible view hierarchy and dispatch common view events automatically
+        https://bugs.webkit.org/show_bug.cgi?id=66131
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/view-events-expected.txt: Added.
+        * inspector/view-events.html: Added.
+
 2011-08-16  Adam Barth  <abarth@webkit.org>
 
         Add new chromium-mac-leopard directory to match the chromium-mac that

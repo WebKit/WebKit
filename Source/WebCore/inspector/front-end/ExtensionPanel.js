@@ -42,12 +42,6 @@ WebInspector.ExtensionPanel.prototype = {
         return this.sidebarTreeElement || this.element;
     },
 
-    updateMainViewWidth: function(width)
-    {
-        this.bodyElement.style.left = width + "px";
-        this.resize();
-    },
-
     searchCanceled: function(startingNewSearch)
     {
         WebInspector.extensionServer.notifySearchAction(this._id, "cancelSearch");

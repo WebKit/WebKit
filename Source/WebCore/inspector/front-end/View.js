@@ -28,6 +28,7 @@ WebInspector.View = function(element)
 {
     this.element = element || document.createElement("div");
     this._visible = false;
+    this._children = [];
 }
 
 WebInspector.View.prototype = {
@@ -47,58 +48,129 @@ WebInspector.View.prototype = {
             this.hide();
     },
 
+    wasShown: function()
+    {
+        this.restoreScrollPositions();
+        this.onResize();
+    },
+
+    willHide: function()
+    {
+        this.storeScrollPositions();
+    },
+
     _innerShow: function()
     {
         this.element.addStyleClass("visible");
-        this.restoreScrollPositions();
     },
 
     show: function(parentElement)
     {
         this._visible = true;
         if (parentElement && parentElement !== this.element.parentNode) {
-            this.detach();
+            this._detach();
             parentElement.appendChild(this.element);
         }
-        if (!this.element.parentNode && this.attach)
-            this.attach();
+        if (!this.element.parentNode) {
+            if (this.attach)
+                this.attach();
+            else if (this._parentView)
+                this._parentView.element.appendChild(this.element);
+        }
         this._innerShow();
+        this.dispatchToSelfAndVisibleChildren("wasShown");
     },
 
     _innerHide: function()
     {
-        this.storeScrollPositions();
         this.element.removeStyleClass("visible");
     },
 
     hide: function()
     {
+        this.dispatchToSelfAndVisibleChildren("willHide");
         this._innerHide();
         this._visible = false;
     },
 
-    detach: function()
+    _detach: function()
     {
         if (this.element.parentNode)
             this.element.parentNode.removeChild(this.element);
     },
 
+    elementsToRestoreScrollPositionsFor: function()
+    {
+        return [this.element];
+    },
+
     storeScrollPositions: function()
     {
-        this._scrollLeft = this.scrollLeft;
-        this._scrollTop = this.scrollTop;
-    },
-    
-    inheritScrollPositionsFromView: function(view)
-    {
-        this._scrollLeft = view._scrollLeft;
-        this._scrollTop = view._scrollTop;
+        var elements = this.elementsToRestoreScrollPositionsFor();
+        for (var i = 0; i < elements.length; ++i) {
+            var container = elements[i];
+            container._scrollTop = container.scrollTop;
+            container._scrollLeft = container.scrollLeft;
+        }
     },
 
     restoreScrollPositions: function()
     {
-        this.scrollLeft = this._scrollLeft;
-        this.scrollTop = this._scrollTop;
+        var elements = this.elementsToRestoreScrollPositionsFor();
+        for (var i = 0; i < elements.length; ++i) {
+            var container = elements[i];
+            if (container._scrollTop)
+                container.scrollTop = container._scrollTop;
+            if (container._scrollLeft)
+                container.scrollLeft = container._scrollLeft;
+        }
+    },
+
+    addChildView: function(view)
+    {
+        if (view._parentView === this)
+            return;
+        if (view._parentView)
+            view._parentView.removeChildView(view);
+        this._children.push(view);
+        view._parentView = this;
+    },
+
+    removeChildView: function(view)
+    {
+        var childIndex = this._children.indexOf(view);
+        if (childIndex < 0) 
+            return;
+
+        this._children.splice(childIndex, 1);
+        view._parentView = null;
+        view._detach();
+    },
+
+    onResize: function()
+    {
+    },
+
+    doResize: function()
+    {
+        this.dispatchToSelfAndVisibleChildren("onResize");
+    },
+
+    dispatchToSelfAndVisibleChildren: function(methodName)
+    {
+        if (!this.visible)
+            return;
+        if (typeof this[methodName] === "function")
+            this[methodName].call(this);
+        this.dispatchToVisibleChildren(methodName);
+    },
+
+    dispatchToVisibleChildren: function(methodName)
+    {
+        if (!this.visible)
+            return;
+        for (var i = 0; i < this._children.length; ++i)
+            this._children[i].dispatchToSelfAndVisibleChildren(methodName);
     }
 }
 

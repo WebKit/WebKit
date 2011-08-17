@@ -213,18 +213,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarResizeElement.style.right = (this.sidebarElement.offsetWidth - 3) + "px";
         if (Preferences.nativeInstrumentationEnabled)
             this.sidebarElement.insertBefore(this.sidebarPanes.domBreakpoints.element, this.sidebarPanes.xhrBreakpoints.element);
-
-        if (this.visibleView)
-            this.visibleView.show(this.viewsContainerElement);
         this.sidebarPanes.watchExpressions.show();
-    },
-
-    hide: function()
-    {
-        if (this.visibleView)
-            this.visibleView.hide();
-        WebInspector.Panel.prototype.hide.call(this);
-        this.sidebarPanes.watchExpressions.hide();
     },
 
     get breakpointsActivated()
@@ -665,6 +654,7 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFile = this._presentationModel.sourceFile(sourceFileId);
         var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, sourceFileId);
         var sourceFrame = new WebInspector.SourceFrame(delegate, sourceFile.url);
+        this.addChildView(sourceFrame);
         sourceFrame._sourceFileId = sourceFileId;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
         this._sourceFileIdToSourceFrame[sourceFileId] = sourceFrame;
@@ -677,6 +667,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (!sourceFrame)
             return;
         delete this._sourceFileIdToSourceFrame[sourceFileId];
+        this.removeChildView(sourceFrame);
         sourceFrame.removeEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
     },
 
@@ -795,7 +786,7 @@ WebInspector.ScriptsPanel.prototype = {
         this.sidebarResizeWidgetElement.style.right = newWidth + "px";
         this.sidebarResizeElement.style.right = (newWidth - 3) + "px";
 
-        this.resize();
+        this.doResize();
     },
 
     _setPauseOnExceptions: function(pauseOnExceptionsState)

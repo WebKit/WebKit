@@ -164,19 +164,13 @@ WebInspector.CPUProfileView.prototype = {
         return this._bottomUpTree;
     },
 
-    show: function(parentElement)
-    {
-        WebInspector.View.prototype.show.call(this, parentElement);
-        this.dataGrid.updateWidths();
-    },
-
     hide: function()
     {
         WebInspector.View.prototype.hide.call(this);
         this._currentSearchResultIndex = -1;
     },
 
-    resize: function()
+    onResize: function()
     {
         if (this.dataGrid)
             this.dataGrid.updateWidths();

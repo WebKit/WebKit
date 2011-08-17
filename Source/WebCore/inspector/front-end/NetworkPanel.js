@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.NetworkLogView = function(parent)
+WebInspector.NetworkLogView = function(parentElement)
 {
     // FIXME: some of the styles should be loaded on demand by components that need them.
     var styles = [
@@ -36,7 +36,7 @@ WebInspector.NetworkLogView = function(parent)
         "dataGrid.css",
         "networkLogView.css"
     ];
-    WebInspector.IFrameView.call(this, parent, styles);
+    WebInspector.IFrameView.call(this, parentElement, styles);
 
     this._allowResourceSelection = false;
     this._resources = [];
@@ -119,10 +119,10 @@ WebInspector.NetworkLogView.prototype = {
     {
         if (!this._dataGrid) // Not initialized yet.
             return [];
-        return [this.element, this._dataGrid.scrollContainer];
+        return [this._dataGrid.scrollContainer];
     },
 
-    resize: function()
+    onResize: function()
     {
         this._dataGrid.updateWidths();
         this._updateOffscreenRows();
@@ -634,15 +634,15 @@ WebInspector.NetworkLogView.prototype = {
         this._updateDividersIfNeeded(true);
     },
 
-    show: function()
+    wasShown: function()
     {
-        WebInspector.IFrameView.prototype.show.call(this);
+        WebInspector.IFrameView.prototype.wasShown.call(this);
         this._refreshIfNeeded();
-        this._dataGrid.updateWidths();
     },
 
-    hide: function()
+    willHide: function()
     {
+        WebInspector.IFrameView.prototype.willHide.call(this);
         this._popoverHelper.hidePopup();
     },
 
@@ -1243,6 +1243,7 @@ WebInspector.NetworkPanel = function()
 
     this.createSidebar();
     this._networkLogView = new WebInspector.NetworkLogView(this.sidebarElement);
+    this.addChildView(this._networkLogView);
 
     this._viewsContainerElement = document.createElement("div");
     this._viewsContainerElement.id = "network-views";
@@ -1282,12 +1283,6 @@ WebInspector.NetworkPanel.prototype = {
         return this._networkLogView.elementsToRestoreScrollPositionsFor();
     },
 
-    resize: function()
-    {
-        WebInspector.Panel.prototype.resize.call(this);
-        this._networkLogView.resize();
-    },
-
     // FIXME: only used by the layout tests, should not be exposed.
     _reset: function()
     {
@@ -1324,16 +1319,7 @@ WebInspector.NetworkPanel.prototype = {
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-
-        if (this.visibleView)
-            this.visibleView.show(this._viewsContainerElement);
         this._networkLogView.show();
-    },
-
-    hide: function()
-    {
-        WebInspector.Panel.prototype.hide.call(this);
-        this._networkLogView.hide();
     },
 
     get resources()
@@ -1395,11 +1381,12 @@ WebInspector.NetworkPanel.prototype = {
         this._toggleViewingResourceMode();
 
         if (this.visibleView) {
-            this.visibleView.detach();
+            this.removeChildView(this.visibleView);
             delete this.visibleView;
         }
 
         var view = new WebInspector.NetworkItemView(resource);
+        this.addChildView(view);
         view.show(this._viewsContainerElement);
         this.visibleView = view;
 
@@ -1411,7 +1398,7 @@ WebInspector.NetworkPanel.prototype = {
         this.element.removeStyleClass("viewing-resource");
 
         if (this.visibleView) {
-            this.visibleView.detach();
+            this.removeChildView(this.visibleView);
             delete this.visibleView;
         }
 

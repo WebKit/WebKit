@@ -67,7 +67,7 @@ WebInspector.CookieItemsView.prototype = {
         this._deleteButton.visible = false;
     },
 
-    resize: function()
+    onResize: function()
     {
         if (this._cookiesTable)
             this._cookiesTable.updateWidths();
@@ -202,7 +202,7 @@ WebInspector.SimpleCookiesTable.prototype = {
         this._dataGrid.children[0].selected = true;
     },
 
-    resize: function()
+    onResize: function()
     {
         if (this._dataGrid)
             this._dataGrid.updateWidths();

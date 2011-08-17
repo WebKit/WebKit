@@ -75,13 +75,11 @@ WebInspector.Panel.prototype = {
         WebInspector.currentFocusElement = this.defaultFocusedElement;
 
         this.restoreSidebarWidth();
-        this._restoreScrollPositions();
         WebInspector.extensionServer.notifyPanelShown(this.name);
     },
 
     hide: function()
     {
-        this._storeScrollPositions();
         WebInspector.View.prototype.hide.call(this);
 
         if (this._statusBarItemContainer && this._statusBarItemContainer.parentNode)
@@ -200,9 +198,6 @@ WebInspector.Panel.prototype = {
 
             if (!view)
                 return;
-
-            if (view.element.parentNode !== parentElement && view.element.parentNode && parentElement)
-                view.detach();
 
             view.currentQuery = query;
             view.performSearch(query, boundFinishedCallback);
@@ -355,8 +350,8 @@ WebInspector.Panel.prototype = {
 
         this._currentSidebarWidth = width;
         this.setSidebarWidth(width);
-
         this.updateMainViewWidth(width);
+        this.doResize();
     },
 
     setSidebarWidth: function(width)
@@ -387,13 +382,6 @@ WebInspector.Panel.prototype = {
         // Should be implemented by ancestors.
     },
 
-    resize: function()
-    {
-        var visibleView = this.visibleView;
-        if (visibleView && "resize" in visibleView)
-            visibleView.resize();
-    },
-
     canShowAnchorLocation: function(anchor)
     {
         return false;
@@ -407,25 +395,6 @@ WebInspector.Panel.prototype = {
     elementsToRestoreScrollPositionsFor: function()
     {
         return [];
-    },
-
-    _storeScrollPositions: function()
-    {
-        var elements = this.elementsToRestoreScrollPositionsFor();
-        for (var i = 0; i < elements.length; ++i) {
-            var container = elements[i];
-            container._scrollTop = container.scrollTop;
-        }
-    },
-
-    _restoreScrollPositions: function()
-    {
-        var elements = this.elementsToRestoreScrollPositionsFor();
-        for (var i = 0; i < elements.length; ++i) {
-            var container = elements[i];
-            if (container._scrollTop)
-                container.scrollTop = container._scrollTop;
-        }
     },
 
     handleShortcut: function(event)

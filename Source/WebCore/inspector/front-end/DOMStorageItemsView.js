@@ -75,7 +75,7 @@ WebInspector.DOMStorageItemsView.prototype = {
         this.deleteButton.visible = true;
     },
 
-    resize: function()
+    onResize: function()
     {
         if (this._dataGrid)
             this._dataGrid.updateWidths();

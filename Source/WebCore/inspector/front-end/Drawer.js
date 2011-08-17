@@ -61,14 +61,14 @@ WebInspector.Drawer.prototype = {
 
         var firstTime = !this._visibleView;
         if (this._visibleView)
-            this._visibleView.hide();
-
+            this.removeChildView(this._visibleView);
         this._visibleView = x;
+        this.addChildView(x);
 
         if (x && !firstTime) {
             this._safelyRemoveChildren();
             this._viewStatusBar.removeChildren(); // optimize this? call old.detach()
-            x.attach(this.element, this._viewStatusBar);
+            x.populateStatusBar(this._viewStatusBar);
             x.show();
             this.visible = true;
         }
@@ -134,7 +134,6 @@ WebInspector.Drawer.prototype = {
         }
 
         this._currentAnimation = WebInspector.animateStyle(animations, this._animationDuration(), animationFinished.bind(this));
-        this.restoreScrollPositions();
     },
 
     hide: function()
@@ -180,7 +179,7 @@ WebInspector.Drawer.prototype = {
 
         function animationFinished()
         {
-            WebInspector.currentPanel.resize();
+            WebInspector.currentPanel.doResize();
             this._mainStatusBar.insertBefore(anchoredItems, this._mainStatusBar.firstChild);
             this._mainStatusBar.style.removeProperty("padding-left");
 
@@ -199,7 +198,7 @@ WebInspector.Drawer.prototype = {
         this._currentAnimation = WebInspector.animateStyle(animations, this._animationDuration(), animationFinished.bind(this));
     },
 
-    resize: function()
+    onResize: function()
     {
         if (this.state === WebInspector.Drawer.State.Hidden)
             return;
@@ -294,7 +293,7 @@ WebInspector.Drawer.prototype = {
 
         function animationFinished()
         {
-            WebInspector.currentPanel.resize();
+            WebInspector.currentPanel.doResize();
             delete this._animating;
             delete this._currentAnimation;
             this.state = finalState;
@@ -345,7 +344,7 @@ WebInspector.Drawer.prototype = {
         this._mainElement.style.bottom = height + "px";
         this.element.style.height = height + "px";
         if (WebInspector.currentPanel)
-            WebInspector.currentPanel.resize();
+            WebInspector.currentPanel.doResize();
 
         event.preventDefault();
         event.stopPropagation();
@@ -359,28 +358,6 @@ WebInspector.Drawer.prototype = {
         delete this._statusBarDragOffset;
 
         event.stopPropagation();
-    },
-    
-    get scrollLeft()
-    {
-        return this.visibleView ? this.visibleView.scrollLeft : 0;
-    },
-
-    set scrollLeft(scrollLeft)
-    {
-        if (this.visibleView)
-            this.visibleView.scrollLeft = scrollLeft;
-    },
-
-    get scrollTop()
-    {
-        return this.visibleView ? this.visibleView.scrollTop : 0;
-    },
-
-    set scrollTop(scrollTop)
-    {
-        if (this.visibleView)
-            this.visibleView.scrollTop = scrollTop;
     }
 }
 

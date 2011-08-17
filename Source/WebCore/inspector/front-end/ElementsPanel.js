@@ -168,7 +168,7 @@ WebInspector.ElementsPanel.prototype = {
         this.setSearchingForNode(false);
     },
 
-    resize: function()
+    onResize: function()
     {
         this.treeOutline.updateSelection();
         this.updateBreadcrumbSizes();

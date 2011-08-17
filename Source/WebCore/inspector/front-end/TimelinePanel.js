@@ -486,7 +486,7 @@ WebInspector.TimelinePanel.prototype = {
         this._overviewPane.updateMainViewWidth(width);
     },
 
-    resize: function()
+    onResize: function()
     {
         this._closeRecordDetails();
         this._scheduleRefresh();
@@ -517,11 +517,14 @@ WebInspector.TimelinePanel.prototype = {
         this._model._reset();
     },
 
+    elementsToRestoreScrollPositionsFor: function()
+    {
+        return [this._containerElement];
+    },
+
     show: function()
     {
         WebInspector.Panel.prototype.show.call(this);
-        if (typeof this._scrollTop === "number")
-            this._containerElement.scrollTop = this._scrollTop;
         this._refresh();
         WebInspector.drawer.currentPanelCounters = this.recordsCounter;
     },

@@ -127,24 +127,15 @@ WebInspector.TextViewer.prototype = {
         this._gutterPanel.freeCachedElements();
     },
 
-    get scrollTop()
+    elementsToRestoreScrollPositionsFor: function()
     {
-        return this._mainPanel.element.scrollTop;
+        return [this._mainPanel.element];
     },
 
-    set scrollTop(scrollTop)
+    inheritScrollPositions: function(textViewer)
     {
-        this._mainPanel.element.scrollTop = scrollTop;
-    },
-
-    get scrollLeft()
-    {
-        return this._mainPanel.element.scrollLeft;
-    },
-
-    set scrollLeft(scrollLeft)
-    {
-        this._mainPanel.element.scrollLeft = scrollLeft;
+        this._mainPanel.element._scrollTop = textViewer._mainPanel.element.scrollTop;
+        this._mainPanel.element._scrollLeft = textViewer._mainPanel.element.scrollLeft;
     },
 
     beginUpdates: function()
@@ -160,7 +151,7 @@ WebInspector.TextViewer.prototype = {
         this._updatePanelOffsets();
     },
 
-    resize: function()
+    onResize: function()
     {
         this._mainPanel.resize();
         this._gutterPanel.resize();

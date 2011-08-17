@@ -57,7 +57,7 @@ WebInspector.ResourceCookiesView.prototype = {
         this._cookiesTable.updateWidths();
     },
 
-    resize: function()
+    onResize: function()
     {
         if (this._cookiesTable)
             this._cookiesTable.updateWidths();

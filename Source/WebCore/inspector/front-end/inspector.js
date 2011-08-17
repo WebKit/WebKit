@@ -627,8 +627,8 @@ WebInspector.dispatchMessageFromBackend = function(messageObject)
 WebInspector.windowResize = function(event)
 {
     if (this.currentPanel)
-        this.currentPanel.resize();
-    this.drawer.resize();
+        this.currentPanel.doResize();
+    this.drawer.doResize();
     this.toolbar.resize();
 }
 

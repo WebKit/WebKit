@@ -40,6 +40,7 @@ WebInspector.SourceFrame = function(delegate, url)
 
     var textViewerDelegate = new WebInspector.TextViewerDelegateForSourceFrame(this);
     this._textViewer = new WebInspector.TextViewer(this._textModel, WebInspector.platform, this._url, textViewerDelegate);
+    this.addChildView(this._textViewer);
     this.element.appendChild(this._textViewer.element);
 
     this._currentSearchResultIndex = -1;
@@ -80,23 +81,16 @@ WebInspector.SourceFrame.prototype = {
     show: function(parentElement)
     {
         WebInspector.View.prototype.show.call(this, parentElement);
-
         this._ensureContentLoaded();
-
-        this.restoreScrollPositions();
-
-        // Resize after setting the initial scroll positions to avoid unnecessary rendering work.
-        this._textViewer.resize();
+        this._textViewer.show();
     },
 
-    hide: function()
+    willHide: function()
     {
-        WebInspector.View.prototype.hide.call(this);
-
+        WebInspector.View.prototype.willHide.call(this);
         if (this.loaded)
             this._textViewer.freeCachedElements();
 
-        this._textViewer.hide();
         this._hidePopup();
         this._clearLineHighlight();
     },
@@ -152,34 +146,12 @@ WebInspector.SourceFrame.prototype = {
         this._rowMessages = {};
         this._messageBubbles = {};
 
-        this._textViewer.resize();
+        this._textViewer.doResize();
     },
 
     get textModel()
     {
         return this._textModel;
-    },
-
-    get scrollLeft()
-    {
-        return this.loaded ? this._textViewer.scrollLeft : 0;
-    },
-
-    set scrollLeft(scrollLeft)
-    {
-        if (this.loaded)
-            this._textViewer.scrollLeft = scrollLeft;
-    },
-
-    get scrollTop()
-    {
-        return this.loaded ? this._textViewer.scrollTop : 0;
-    },
-
-    set scrollTop(scrollTop)
-    {
-        if (this.loaded)
-            this._textViewer.scrollTop = scrollTop;
     },
 
     highlightLine: function(line)
@@ -345,7 +317,7 @@ WebInspector.SourceFrame.prototype = {
         this._addExistingMessagesToSource();
         this._updateDiffDecorations();
 
-        this._textViewer.resize();
+        this._textViewer.doResize();
 
         this._textViewer.endUpdates();
     },
@@ -877,9 +849,9 @@ WebInspector.SourceFrame.prototype = {
         return conditionElement;
     },
 
-    resize: function()
+    inheritScrollPositions: function(sourceFrame)
     {
-        this._textViewer.resize();
+        this._textViewer.inheritScrollPositions(sourceFrame._textViewer);
     },
 
     doubleClick: function(lineNumber)

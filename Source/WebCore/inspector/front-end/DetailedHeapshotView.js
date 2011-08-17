@@ -705,7 +705,7 @@ WebInspector.DetailedHeapshotView.prototype = {
         this._currentSearchResultIndex = -1;
     },
 
-    resize: function()
+    onResize: function()
     {
         if (this.dataGrid)
             this.dataGrid.updateWidths();

@@ -272,9 +272,8 @@ WebInspector.ConsoleView.prototype = {
         this.drawer.visibleView = this;
     },
 
-    attach: function(mainElement, statusBarElement)
+    populateStatusBar: function(statusBarElement)
     {
-        mainElement.appendChild(this.element);
         statusBarElement.appendChild(this.clearButton);
         statusBarElement.appendChild(this.filterBarElement);
     },
@@ -791,24 +790,9 @@ WebInspector.ConsoleView.prototype = {
         return this._format(output, output.subtype && output.subtype === "array");
     },
 
-    get scrollLeft()
+    elementsToRestoreScrollPositionsFor: function()
     {
-        return this.messagesElement.scrollLeft;
-    },
-
-    set scrollLeft(scrollLeft)
-    {
-        this.messagesElement.scrollLeft = scrollLeft;
-    },
-
-    get scrollTop()
-    {
-        return this.messagesElement.scrollTop;
-    },
-
-    set scrollTop(scrollTop)
-    {
-        this.messagesElement.scrollTop = scrollTop;
+        return [this.messagesElement];
     }
 }
 

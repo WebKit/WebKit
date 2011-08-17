@@ -642,7 +642,6 @@ WebInspector.ProfilesPanel.prototype = {
         this.profileViews.style.left = width + "px";
         // Min width = <number of buttons on the left> * 31
         this.profileViewStatusBarItemsContainer.style.left = Math.max(6 * 31, width) + "px";
-        this.resize();
     },
 
     _setRecordingProfile: function(isProfiling)
