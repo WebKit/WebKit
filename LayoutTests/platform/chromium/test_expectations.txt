@@ -1575,8 +1575,7 @@ BUGCR25202 LINUX WIN : svg/W3C-SVG-1.1/masking-path-02-b.svg = FAIL
 BUG_JEREMY MAC : fast/frames/onlyCommentInIFrame.html = FAIL
 
 // WebKit Roll 49684:49761
-BUGCR26042 DEBUG : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
-BUGCR26042 LINUX RELEASE : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
+BUGCR26042 : http/tests/security/mixedContent/insecure-plugin-in-iframe.html = PASS TEXT
 
 BUGWK65567 LINUX WIN DEBUG : http/tests/security/mixedContent/insecure-script-in-iframe.html = PASS TEXT
 

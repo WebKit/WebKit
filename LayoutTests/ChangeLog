@@ -1,5 +1,18 @@
 2011-08-17  Steve Block  <steveblock@google.com>
 
+        Set failing TEXT expectation for http/tests/security/mixedContent/insecure-plugin-in-iframe.html for all build flavors
+        http://crbug.com/26042
+
+        The test already has a failing TEXT expectation for DEBUG and for
+        LINUX RELEASE, but we're now seeing failures on Mac10.6. It looks like
+        it's generally flaky.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-17  Steve Block  <steveblock@google.com>
+
         Unreviewed, rolling out r93186.
         http://trac.webkit.org/changeset/93186
         https://bugs.webkit.org/show_bug.cgi?id=66114
