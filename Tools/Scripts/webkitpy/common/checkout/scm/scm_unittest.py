@@ -41,6 +41,7 @@ import stat
 import sys
 import subprocess
 import tempfile
+import time
 import unittest
 import urllib
 import shutil
@@ -545,14 +546,36 @@ OcmYex&reD$;sO8*F9L)B
     def _shared_test_head_svn_revision(self):
         self.assertEqual(self.scm.head_svn_revision(), '5')
 
+
+# Context manager that overrides the current timezone.
+class TimezoneOverride(object):
+    def __init__(self, timezone_string):
+        self._timezone_string = timezone_string
+
+    def __enter__(self):
+        if hasattr(time, 'tzset'):
+            self._saved_timezone = os.environ.get('TZ', None)
+            os.environ['TZ'] = self._timezone_string
+            time.tzset()
+
+    def __exit__(self, type, value, traceback):
+        if hasattr(time, 'tzset'):
+            if self._saved_timezone:
+                os.environ['TZ'] = self._saved_timezone
+            else:
+                del os.environ['TZ']
+            time.tzset()
+
+
 class SVNTest(SCMTest):
 
     @staticmethod
     def _set_date_and_reviewer(changelog_entry):
         # Joe Cool matches the reviewer set in SCMTest._create_patch
         changelog_entry = changelog_entry.replace('REVIEWER_HERE', 'Joe Cool')
-        # svn-apply will update ChangeLog entries with today's date.
-        return changelog_entry.replace('DATE_HERE', date.today().isoformat())
+        # svn-apply will update ChangeLog entries with today's date (as in Cupertino, CA, US)
+        with TimezoneOverride('PST8PDT'):
+            return changelog_entry.replace('DATE_HERE', date.today().isoformat())
 
     def test_svn_apply(self):
         first_entry = """2009-10-26  Eric Seidel  <eric@webkit.org>

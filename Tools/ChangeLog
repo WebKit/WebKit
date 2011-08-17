@@ -1,3 +1,12 @@
+2011-08-17  Jochen Eisinger  <jochen@chromium.org>
+
+        Make SVNTest.test_svn_apply use the same timezone logic as VCSUtils.pm
+        https://bugs.webkit.org/show_bug.cgi?id=65877
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+
 2011-08-17  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove base.keys and replace it with Object.keys.
