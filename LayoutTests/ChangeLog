@@ -1,3 +1,23 @@
+2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Update Windows results after r91493
+
+        * platform/win/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/win/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+
+2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Update Windows Results for svg/W3C-SVG-1.1-SE/text-intro-05-t.svg
+
+        * platform/win-xp/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png: Copied from LayoutTests/platform/win/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png.
+        * platform/win-xp/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt: Copied from LayoutTests/platform/win/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt.
+
+        These results were checked in to platform/win but were really XP-specific.
+
+        * platform/win/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.png:
+        * platform/win/svg/W3C-SVG-1.1-SE/text-intro-05-t-expected.txt:
+        Updated these results for Windows 7.
+
 2011-08-17  Tony Chang  <tony@chromium.org>
 
         [chromium] Mark fast/canvas/webgl/data-view-crash.html as flaky
