@@ -1,3 +1,9 @@
+2011-08-17  Jeff Miller  <jeffm@apple.com>
+
+        Re-sort the WebCore project with Visual Studio after recent changes that I assume were done by manually editing the XML.
+
+        * WebCore.vcproj/WebCore.vcproj:
+
 2011-08-17  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium Mac: Fix implementation of wkScrollbarMinimumTotalLengthNeededForThumb to match WebKitSystemInterface
