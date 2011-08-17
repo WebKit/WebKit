@@ -589,6 +589,9 @@ void LayerRendererChromium::updateLayers()
 
 void LayerRendererChromium::drawLayers()
 {
+    if (!rootLayer())
+        return;
+
     // Before drawLayers:
     ChildContextMap::iterator i = m_childContexts.begin();
     for (; i != m_childContexts.end(); ++i) {
