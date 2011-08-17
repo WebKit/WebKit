@@ -66,13 +66,6 @@ test("uniquifyArray", 5, function() {
     deepEqual(base.uniquifyArray(["a", "b", "b", "a"]), ["a", "b"]);
 });
 
-test("keys", 4, function() {
-    deepEqual(base.keys({}), []);
-    deepEqual(base.keys({"a": 1}), ["a"]);
-    deepEqual(base.keys({"a": 1, "b": 0}), ["a", "b"]);
-    deepEqual(base.keys({"a": 1, "b": { "c" : 1}}), ["a", "b"]);
-});
-
 test("callInParallel", 4, function() {
     var expectedCall = [true, true, true];
     var expectCompletionCallback = true;

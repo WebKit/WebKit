@@ -148,7 +148,7 @@ model.analyzeUnexpectedFailures = function(callback, completionCallback)
 
     var tracker = new base.RequestTracker(Object.keys(unexpectedFailures).length, completionCallback);
     $.each(unexpectedFailures, function(testName, resultNodesByBuilder) {
-        var builderNameList = base.keys(resultNodesByBuilder);
+        var builderNameList = Object.keys(resultNodesByBuilder);
         results.unifyRegressionRanges(builderNameList, testName, function(oldestFailingRevision, newestPassingRevision) {
             var failureAnalysis = {
                 'testName': testName,
