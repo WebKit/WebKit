@@ -1,5 +1,13 @@
 2011-08-17  Adam Roben  <aroben@apple.com>
 
+        Add Windows expected failure results for new test added in r93068
+
+        Failure is tracked by <http://webkit.org/b/66374>.
+
+        * platform/win/editing/deleting/regional-indicators-expected.txt: Added.
+
+2011-08-17  Adam Roben  <aroben@apple.com>
+
         Add Windows results for new test added in r91777
 
         * platform/win/fast/css/font-family-pictograph-expected.png: Added.
