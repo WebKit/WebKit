@@ -1289,10 +1289,7 @@ void ScrollAnimatorChromiumMac::stopScrollbarPaintTimer()
 
 void ScrollAnimatorChromiumMac::initialScrollbarPaintTimerFired(Timer<ScrollAnimatorChromiumMac>*)
 {
-    if (scrollableArea()->shouldSuspendScrollAnimations())
-        startScrollbarPaintTimer();
-    else
-        wkScrollbarPainterForceFlashScrollers(m_scrollbarPainterController.get());
+    wkScrollbarPainterForceFlashScrollers(m_scrollbarPainterController.get());
 }
 #endif
 

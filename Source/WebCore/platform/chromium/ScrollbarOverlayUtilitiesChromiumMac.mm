@@ -88,6 +88,7 @@
 @property(retain) NSScrollerImp *verticalScrollerImp;
 @property(assign) id delegate;
 
+- (void)hideOverlayScrollers;
 - (void)flashScrollers;
 - (void)contentAreaScrolled;
 - (void)contentAreaWillDraw;
@@ -338,6 +339,7 @@ void wkDidEndScrollGesture(WKScrollbarPainterControllerRef controller)
 
 void wkScrollbarPainterForceFlashScrollers(WKScrollbarPainterControllerRef controller)
 {
+    [controller hideOverlayScrollers];
     [controller flashScrollers];
 }
 

@@ -1,3 +1,24 @@
+2011-08-17  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium Mac: Fix issue where scrollbar wouldn't be drawn until page finished loading
+        https://bugs.webkit.org/show_bug.cgi?id=66238
+
+        Reviewed by Dimitri Glazkov.
+
+        Overlay scrollbars were not visible if the user scrolled a page while the page was loading. The sequence of events necessary to reproduce this bug were:
+          1. -[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:] is called
+          2. animation is delayed because shouldSuspendScrollAnimations() is true
+          3. ScrollAnimatorChromiumMac::scroll() is called before the ScrollAnimatorChromiumMac::m_initialScrollbarPaintTimer is fired.
+          4. At this point the scrollbar painter assumes the scrollbar is already visible (because of 1.) so the scrollbar's alpha stays at 0. Thus the scrollbar isn't visible until the page finishes loading.
+        It turns out that the root problem was that when the initialScrollbarPainterTimer fired I wasn't flashing the scrollbar correctly. My implementation of wkScrollbarPainterForceFlashScrollers() just called flashScrollers. The Safari implementation of this function also calls hideOverlayScrollers. Calling hideOverlayScrollers causes the alpha to change to 0 which prevents step 4 from happening.
+
+        Also, now that wkScrollbarPainterForceFlashScrollers is working correctly I don't need the extra logic I added to the initialScrollbarPainterTimer handler. That logic restarted the timer if shouldSuspendScrollAnimations() was true. But this isn't necessary since calling wkScrollbarPainterForceFlashScrollers() causes -[ScrollbarPainterDelegate setUpAnimation:...] to be called which does the exact same thing. Removing the extra logic reverts http://trac.webkit.org/changeset/92316.
+
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (WebCore::ScrollAnimatorChromiumMac::initialScrollbarPaintTimerFired):
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm:
+        (wkScrollbarPainterForceFlashScrollers):
+
 2011-08-16  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: maintain visible view hierarchy and dispatch common view events automatically
