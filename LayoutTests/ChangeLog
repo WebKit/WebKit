@@ -1,3 +1,12 @@
+2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Add Windows expected failures results for new test added in r93144
+
+        Failure is tracked by <http://webkit.org/b/56101>.
+
+        * platform/win/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.
+        * platform/win/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Added.
+
 2011-08-17  Steve Block  <steveblock@google.com>
 
         http/tests/misc/font-face-in-multiple-segmented-faces.html assertion failure on Chromium
