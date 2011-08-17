@@ -967,6 +967,7 @@ fast/multicol/hit-test-above-or-below.html
 # https://bugs.webkit.org/show_bug.cgi?id=49769
 fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html
 fast/dom/HTMLProgressElement
+fast/dom/shadow/tree-scope-crash.html
 fast/forms/form-attribute.html
 
 # view mode media feature

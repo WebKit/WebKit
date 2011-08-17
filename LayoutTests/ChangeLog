@@ -1,3 +1,9 @@
+2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Skip another <progress> test on Windows
+
+        * platform/win/Skipped: Added fast/dom/shadow/tree-scope-crash.html.
+
 2011-08-17  Steve Block  <steveblock@google.com>
 
         Web Inspector: http/tests/inspector/network/disabled-cache-crash.html flaky
