@@ -1,3 +1,14 @@
+2011-08-18  Nico Weber  <thakis@chromium.org>
+
+        Fix "missing return" gcc warning in ScrollAnimatorNone
+        https://bugs.webkit.org/show_bug.cgi?id=66480
+
+        Reviewed by Tony Chang.
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::PerAxisData::curveAt):
+        (WebCore::ScrollAnimatorNone::PerAxisData::curveDerivativeAt):
+
 2011-08-18  James Simonsen  <simonjam@chromium.org>
 
         Revalidate expired resources if they're requested after the initial document load

@@ -98,6 +98,7 @@ double ScrollAnimatorNone::PerAxisData::curveAt(Curve curve, double t)
         t -= 2.625 / 2.75;
         return 7.5625 * t * t + .984375;
     }
+    return 0;
 }
 
 double ScrollAnimatorNone::PerAxisData::attackCurve(Curve curve, double deltaTime, double curveT, double startPosition, double attackPosition)
@@ -126,6 +127,7 @@ double ScrollAnimatorNone::PerAxisData::curveDerivativeAt(Curve curve, double t)
     case Bounce:
         return t;
     }
+    return 0;
 }
 
 ScrollAnimatorNone::PerAxisData::PerAxisData(ScrollAnimatorNone* parent, float* currentPosition)
