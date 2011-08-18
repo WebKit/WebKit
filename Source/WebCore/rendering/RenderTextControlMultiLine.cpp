@@ -64,10 +64,10 @@ float RenderTextControlMultiLine::getAvgCharWidth(AtomicString family)
     return RenderTextControl::getAvgCharWidth(family);
 }
 
-int RenderTextControlMultiLine::preferredContentWidth(float charWidth) const
+LayoutUnit RenderTextControlMultiLine::preferredContentWidth(float charWidth) const
 {
     int factor = static_cast<HTMLTextAreaElement*>(node())->cols();
-    return static_cast<int>(ceilf(charWidth * factor)) + scrollbarThickness();
+    return static_cast<LayoutUnit>(ceilf(charWidth * factor)) + scrollbarThickness();
 }
 
 void RenderTextControlMultiLine::adjustControlHeightBasedOnLineHeight(LayoutUnit lineHeight)
@@ -75,7 +75,7 @@ void RenderTextControlMultiLine::adjustControlHeightBasedOnLineHeight(LayoutUnit
     setHeight(height() + lineHeight * static_cast<HTMLTextAreaElement*>(node())->rows());
 }
 
-int RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
+LayoutUnit RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool firstLine, LineDirectionMode direction, LinePositionMode linePositionMode) const
 {
     return RenderBox::baselinePosition(baselineType, firstLine, direction, linePositionMode);
 }

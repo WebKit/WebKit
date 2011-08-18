@@ -265,12 +265,12 @@ void RenderTextControlSingleLine::layout()
     currentHeight = innerTextRenderer->height();
     if (!container && currentHeight != contentHeight()) {
         LayoutUnit heightDiff = currentHeight - contentHeight();
-        innerTextRenderer->setY(innerTextRenderer->y() - (heightDiff / 2 + heightDiff % 2));
+        innerTextRenderer->setY(innerTextRenderer->y() - (heightDiff / 2 + layoutMod(heightDiff, 2)));
     } else if (inputElement()->isSearchField() && containerRenderer && containerRenderer->height() > contentHeight()) {
         // A quirk for find-in-page box on Safari Windows.
         // http://webkit.org/b/63157
         LayoutUnit heightDiff = containerRenderer->height() - contentHeight();
-        containerRenderer->setY(containerRenderer->y() - (heightDiff / 2 + heightDiff % 2));
+        containerRenderer->setY(containerRenderer->y() - (heightDiff / 2 + layoutMod(heightDiff, 2)));
     }
 
     // Ignores the paddings for the inner spin button.
@@ -370,10 +370,10 @@ bool RenderTextControlSingleLine::hasControlClip() const
     return !!containerElement();
 }
 
-IntRect RenderTextControlSingleLine::controlClipRect(const IntPoint& additionalOffset) const
+LayoutRect RenderTextControlSingleLine::controlClipRect(const LayoutPoint& additionalOffset) const
 {
     ASSERT(hasControlClip());
-    IntRect clipRect = IntRect(containerElement()->renderBox()->frameRect());
+    LayoutRect clipRect = LayoutRect(containerElement()->renderBox()->frameRect());
     clipRect.moveBy(additionalOffset);
     return clipRect;
 }
@@ -390,14 +390,14 @@ float RenderTextControlSingleLine::getAvgCharWidth(AtomicString family)
     return RenderTextControl::getAvgCharWidth(family);
 }
 
-int RenderTextControlSingleLine::preferredContentWidth(float charWidth) const
+LayoutUnit RenderTextControlSingleLine::preferredContentWidth(float charWidth) const
 {
     int factor;
     bool includesDecoration = inputElement()->sizeShouldIncludeDecoration(factor);
     if (factor <= 0)
         factor = 20;
 
-    int result = static_cast<int>(ceilf(charWidth * factor));
+    LayoutUnit result = static_cast<LayoutUnit>(ceiledLayoutUnit(charWidth * factor));
 
     float maxCharWidth = 0.f;
     AtomicString family = style()->font().family().family();
@@ -719,41 +719,41 @@ void RenderTextControlSingleLine::autoscroll()
         layer->autoscroll();
 }
 
-int RenderTextControlSingleLine::scrollWidth() const
+LayoutUnit RenderTextControlSingleLine::scrollWidth() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollWidth();
     return RenderBlock::scrollWidth();
 }
 
-int RenderTextControlSingleLine::scrollHeight() const
+LayoutUnit RenderTextControlSingleLine::scrollHeight() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollHeight();
     return RenderBlock::scrollHeight();
 }
 
-int RenderTextControlSingleLine::scrollLeft() const
+LayoutUnit RenderTextControlSingleLine::scrollLeft() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollLeft();
     return RenderBlock::scrollLeft();
 }
 
-int RenderTextControlSingleLine::scrollTop() const
+LayoutUnit RenderTextControlSingleLine::scrollTop() const
 {
     if (innerTextElement())
         return innerTextElement()->scrollTop();
     return RenderBlock::scrollTop();
 }
 
-void RenderTextControlSingleLine::setScrollLeft(int newLeft)
+void RenderTextControlSingleLine::setScrollLeft(LayoutUnit newLeft)
 {
     if (innerTextElement())
         innerTextElement()->setScrollLeft(newLeft);
 }
 
-void RenderTextControlSingleLine::setScrollTop(int newTop)
+void RenderTextControlSingleLine::setScrollTop(LayoutUnit newTop)
 {
     if (innerTextElement())
         innerTextElement()->setScrollTop(newTop);

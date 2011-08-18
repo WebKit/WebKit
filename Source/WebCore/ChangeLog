@@ -1,5 +1,37 @@
 2011-08-18  Levi Weintraub  <leviw@chromium.org>
 
+        Switch RenderTextControl* to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66250
+
+        Reviewed by Eric Seidel.
+
+        Convertikng the RenderTextControl* classes to use the LayoutUnit abstraction.
+
+        No new tests as no change in behavior.
+
+        * rendering/LayoutTypes.h:
+        (WebCore::layoutMod): Added a function to perform the modulo operation on LayoutUnits.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::hitInnerTextElement):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::preferredContentWidth):
+        (WebCore::RenderTextControlMultiLine::baselinePosition):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::controlClipRect):
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        (WebCore::RenderTextControlSingleLine::scrollWidth):
+        (WebCore::RenderTextControlSingleLine::scrollHeight):
+        (WebCore::RenderTextControlSingleLine::scrollLeft):
+        (WebCore::RenderTextControlSingleLine::scrollTop):
+        (WebCore::RenderTextControlSingleLine::setScrollLeft):
+        (WebCore::RenderTextControlSingleLine::setScrollTop):
+        * rendering/RenderTextControlSingleLine.h:
+
+2011-08-18  Levi Weintraub  <leviw@chromium.org>
+
         Switch Inline rendering classes to new layout types
         https://bugs.webkit.org/show_bug.cgi?id=66239
 

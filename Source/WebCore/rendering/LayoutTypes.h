@@ -91,6 +91,11 @@ inline LayoutPoint toLayoutPoint(const LayoutSize& p)
     return LayoutPoint(p.width(), p.height());
 }
 
+inline LayoutUnit layoutMod(const LayoutUnit& numerator, const LayoutUnit& denominator)
+{
+    return numerator % denominator;
+}
+
 } // namespace WebCore
 
 #endif // LayoutTypes_h

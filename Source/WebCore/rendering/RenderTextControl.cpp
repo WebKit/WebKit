@@ -299,7 +299,7 @@ void RenderTextControl::computeLogicalHeight()
 
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset)
 {
-    IntPoint adjustedLocation = accumulatedOffset + location();
+    LayoutPoint adjustedLocation = accumulatedOffset + location();
     HTMLElement* innerText = innerTextElement();
     result.setInnerNode(innerText);
     result.setInnerNonSharedNode(innerText);
