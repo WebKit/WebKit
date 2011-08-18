@@ -1,5 +1,19 @@
 2011-08-18  Alexey Proskuryakov  <ap@apple.com>
 
+        [Gtk] editing/selection/regional-indicators.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=66501
+
+        * platform/gtk/editing/selection/regional-indicators-expected.txt: Land failing results.
+
+2011-08-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Use a correct name for expected results.
+
+        * platform/qt/editing/selection/regional-indicators-actual.txt: Removed.
+        * platform/qt/editing/selection/regional-indicators-expected.txt: Copied from LayoutTests/platform/qt/editing/selection/regional-indicators-actual.txt.
+
+2011-08-18  Alexey Proskuryakov  <ap@apple.com>
+
         [Qt] editing/selection/regional-indicators.html fails
         https://bugs.webkit.org/show_bug.cgi?id=66500
 
