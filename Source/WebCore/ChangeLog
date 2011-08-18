@@ -1,3 +1,15 @@
+2011-08-18  Jing Zhao  <jingzhao@chromium.org>
+
+        When changing the size of a menulist from x (x>1) to 1, the first item should be selected.
+        https://bugs.webkit.org/show_bug.cgi?id=66282
+
+        Reviewed by Kent Tamura.
+
+        No new tests since it only changes the behavior in Android Browser.
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+
 2011-08-18  Adam Klein  <adamk@chromium.org>
 
         Handle "form" attribute updates in parseMappedAttribute() instead of attributeChanged() to better match HTMLElement practices

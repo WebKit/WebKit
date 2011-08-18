@@ -244,9 +244,8 @@ void HTMLSelectElement::restoreFormControlState(const String& state)
     setNeedsValidityCheck();
 }
 
-void HTMLSelectElement::parseMappedAttribute(Attribute* attr) 
+void HTMLSelectElement::parseMappedAttribute(Attribute* attr)
 {
-    bool oldUsesMenuList = m_data.usesMenuList();
     if (attr->name() == sizeAttr) {
         int oldSize = m_data.size();
         // Set the attribute value to a number.
@@ -263,7 +262,7 @@ void HTMLSelectElement::parseMappedAttribute(Attribute* attr)
 
         m_data.setSize(size);
         setNeedsValidityCheck();
-        if ((oldUsesMenuList != m_data.usesMenuList() || (!oldUsesMenuList && m_data.size() != oldSize)) && attached()) {
+        if (m_data.size() != oldSize && attached()) {
             reattach();
             setRecalcListItems();
         }
