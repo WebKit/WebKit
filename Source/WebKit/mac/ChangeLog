@@ -1,3 +1,22 @@
+2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Make WebCore keep track of the current device scale factor
+
+        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
+        device scale factor
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        Moved code to calculate the device scale factor from here...
+
+        * WebView/WebView.mm:
+        (-[WebView _deviceScaleFactor]):
+        ...to here.
+
+        (-[WebView _windowDidChangeResolution:]): Now calls Page::setDeviceScaleFactor.
+
 2011-08-17  Dan Bernstein  <mitz@apple.com>
 
         Removed some code that is not needed when building for Leopard or later.

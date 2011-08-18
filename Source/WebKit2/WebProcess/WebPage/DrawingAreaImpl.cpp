@@ -359,7 +359,7 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
 
     if (m_isPaintingSuspended || m_layerTreeHost) {
         updateInfo.viewSize = m_webPage->size();
-        updateInfo.deviceScaleFactor = m_webPage->deviceScaleFactor();
+        updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
 
         if (m_layerTreeHost) {
             layerTreeContext = m_layerTreeHost->layerTreeContext();
@@ -466,7 +466,7 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     UpdateInfo updateInfo;
     if (m_isPaintingSuspended) {
         updateInfo.viewSize = m_webPage->size();
-        updateInfo.deviceScaleFactor = m_webPage->deviceScaleFactor();
+        updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
     } else
         display(updateInfo);
 
@@ -617,13 +617,13 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
         return;
 
     updateInfo.viewSize = m_webPage->size();
-    updateInfo.deviceScaleFactor = m_webPage->deviceScaleFactor();
+    updateInfo.deviceScaleFactor = m_webPage->corePage()->deviceScaleFactor();
 
     IntRect bounds = m_dirtyRegion.bounds();
     ASSERT(m_webPage->bounds().contains(bounds));
 
     IntSize bitmapSize = bounds.size();
-    bitmapSize.scale(m_webPage->deviceScaleFactor());
+    bitmapSize.scale(m_webPage->corePage()->deviceScaleFactor());
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(bitmapSize, ShareableBitmap::SupportsAlpha);
     if (!bitmap)
         return;
@@ -646,7 +646,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_scrollOffset = IntSize();
 
     OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext(bitmap.get());
-    graphicsContext->scale(FloatSize(m_webPage->deviceScaleFactor(), m_webPage->deviceScaleFactor()));
+    graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
 
     updateInfo.updateRectBounds = bounds;
 

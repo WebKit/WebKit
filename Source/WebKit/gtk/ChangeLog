@@ -1,3 +1,16 @@
+2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Make WebCore keep track of the current device scale factor
+
+        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
+        device scale factor
+
+        Reviewed by Darin Adler.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        * WebCoreSupport/ChromeClientGtk.h:
+        Removed deviceScaleFactor.
+
 2011-08-16  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
 
         Add javascriptcoregtk to the introspection build, to fix it.

@@ -239,6 +239,9 @@ namespace WebCore {
         float mediaVolume() const { return m_mediaVolume; }
         void setMediaVolume(float volume);
 
+        float deviceScaleFactor() const { return m_deviceScaleFactor; }
+        void setDeviceScaleFactor(float);
+
         // Notifications when the Page starts and stops being presented via a native window.
         void didMoveOnscreen();
         void willMoveOffscreen();
@@ -361,6 +364,8 @@ namespace WebCore {
         bool m_cookieEnabled;
         bool m_areMemoryCacheClientCallsEnabled;
         float m_mediaVolume;
+
+        float m_deviceScaleFactor;
 
         bool m_javaScriptURLsAreAllowed;
 

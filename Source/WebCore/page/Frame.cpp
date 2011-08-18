@@ -1103,17 +1103,6 @@ void Frame::scalePage(float scale, const LayoutPoint& origin)
     }
 }
 
-void Frame::deviceScaleFactorChanged()
-{
-    if (!m_page)
-        return;
-    m_page->setNeedsRecalcStyleInAllFrames();
-
-#if USE(ACCELERATED_COMPOSITING)
-    deviceOrPageScaleFactorChanged();
-#endif
-}
-
 void Frame::notifyChromeClientWheelEventHandlerCountChanged() const
 {
     // Ensure that this method is being called on the main frame of the page.

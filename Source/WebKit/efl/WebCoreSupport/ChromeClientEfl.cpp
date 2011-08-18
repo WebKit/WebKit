@@ -128,12 +128,6 @@ FloatRect ChromeClientEfl::pageRect()
     return ewk_view_page_rect_get(m_view);
 }
 
-float ChromeClientEfl::deviceScaleFactor()
-{
-    notImplemented();
-    return 1.0;
-}
-
 void ChromeClientEfl::focus()
 {
     evas_object_focus_set(m_view, EINA_TRUE);

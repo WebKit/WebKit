@@ -1,3 +1,46 @@
+2011-08-17  Adam Roben  <aroben@apple.com>
+
+        Make WebCore keep track of the current device scale factor
+
+        Fixes <http://webkit.org/b/66413> WebCore requires every WebKit port to keep track of the
+        device scale factor
+
+        Reviewed by Darin Adler.
+
+        * WebCore.exp.in: Removed Frame::deviceScaleFactorChanged, added Page::setDeviceScaleFactor.
+
+        * css/MediaQueryEvaluator.cpp:
+        (WebCore::device_pixel_ratioMediaFeatureEval):
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::HTMLCanvasElement):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::devicePixelRatio):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addDashboardRegions):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::deviceScaleFactor):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::addDashboardRegions):
+        Changed to get the device scale factor from Page.
+
+        * loader/EmptyClients.h:
+        * page/Chrome.cpp:
+        * page/Chrome.h:
+        * page/ChromeClient.h:
+        Removed Chrome[Client]::deviceScaleFactor.
+
+        * page/Frame.cpp:
+        * page/Frame.h:
+        Removed deviceScaleFactorChanged. Made deviceOrPageScaleFactorChanged public.
+
+        * page/Page.cpp:
+        (WebCore::Page::Page): Initialize m_deviceScaleFactor.
+        (WebCore::Page::setDeviceScaleFactor): Added. Code came from
+        Frame::deviceScaleFactorChanged.
+
+        * page/Page.h: Added m_deviceScaleFactor.
+        (WebCore::Page::deviceScaleFactor): Added simple getter.
+
 2011-08-18  Darin Adler  <darin@apple.com>
 
         SVG and HTML editing have conflicting inline isWhitespace functions

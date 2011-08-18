@@ -214,7 +214,7 @@ bool LayerTreeHostCA::showRepaintCounter() const
 
 float LayerTreeHostCA::deviceScaleFactor() const
 {
-    return m_webPage->deviceScaleFactor();
+    return m_webPage->corePage()->deviceScaleFactor();
 }
 
 void LayerTreeHostCA::performScheduledLayerFlush()

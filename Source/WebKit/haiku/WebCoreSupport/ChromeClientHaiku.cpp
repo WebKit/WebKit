@@ -78,12 +78,6 @@ FloatRect ChromeClientHaiku::pageRect()
     return FloatRect(0, 0, 200, 200);
 }
 
-float ChromeClientHaiku::deviceScaleFactor()
-{
-    notImplemented();
-    return 1.0;
-}
-
 void ChromeClientHaiku::focus()
 {
     notImplemented();

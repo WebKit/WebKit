@@ -177,7 +177,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
     selectedFrame->selection()->getClippedVisibleTextRectangles(textRects);
 
     IntSize backingStoreSize = selectionRect.size();
-    backingStoreSize.scale(m_webPage->deviceScaleFactor());
+    backingStoreSize.scale(m_webPage->corePage()->deviceScaleFactor());
 
     // Create a backing store and paint the find indicator text into it.
     RefPtr<ShareableBitmap> findIndicatorTextBackingStore = ShareableBitmap::createShareable(backingStoreSize, ShareableBitmap::SupportsAlpha);
@@ -185,7 +185,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
         return false;
     
     OwnPtr<GraphicsContext> graphicsContext = findIndicatorTextBackingStore->createGraphicsContext();
-    graphicsContext->scale(FloatSize(m_webPage->deviceScaleFactor(), m_webPage->deviceScaleFactor()));
+    graphicsContext->scale(FloatSize(m_webPage->corePage()->deviceScaleFactor(), m_webPage->corePage()->deviceScaleFactor()));
 
     IntRect paintRect = selectionRect;
     paintRect.move(selectedFrame->view()->frameRect().x(), selectedFrame->view()->frameRect().y());
@@ -212,7 +212,7 @@ bool FindController::updateFindIndicator(Frame* selectedFrame, bool isShowingOve
         textRectsInSelectionRectCoordinates.append(textRectInSelectionRectCoordinates);
     }            
     
-    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, m_webPage->deviceScaleFactor(), handle, !isShowingOverlay));
+    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(selectionRectInWindowCoordinates, textRectsInSelectionRectCoordinates, m_webPage->corePage()->deviceScaleFactor(), handle, !isShowingOverlay));
     m_isShowingFindIndicator = true;
 
     return true;
@@ -224,7 +224,7 @@ void FindController::hideFindIndicator()
         return;
 
     ShareableBitmap::Handle handle;
-    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), m_webPage->deviceScaleFactor(), handle, false));
+    m_webPage->send(Messages::WebPageProxy::SetFindIndicator(FloatRect(), Vector<FloatRect>(), m_webPage->corePage()->deviceScaleFactor(), handle, false));
     m_isShowingFindIndicator = false;
 }
 

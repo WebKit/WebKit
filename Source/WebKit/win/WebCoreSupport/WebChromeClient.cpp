@@ -118,12 +118,6 @@ FloatRect WebChromeClient::pageRect()
     return rect;
 }
 
-float WebChromeClient::deviceScaleFactor()
-{
-    // Windows doesn't support UI scaling.
-    return 1.0;
-}
-
 void WebChromeClient::focus()
 {
     IWebUIDelegate* uiDelegate = 0;
