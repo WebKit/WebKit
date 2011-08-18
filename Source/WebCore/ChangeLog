@@ -1,3 +1,46 @@
+2011-08-17  Emil A Eklund  <eae@chromium.org>
+
+        Switch focus handling to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66331
+
+        Reviewed by Eric Seidel.
+
+        Convert FocusController and SpatialNavigation to new layout abstraction
+        as a part of the ongoing conversion work.
+
+        No new tests, no new functionality.
+
+        * page/FocusController.cpp:
+        (WebCore::updateFocusCandidateIfNeeded):
+        (WebCore::FocusController::findFocusCandidateInContainer):
+        (WebCore::FocusController::advanceFocusDirectionallyInContainer):
+        (WebCore::FocusController::advanceFocusDirectionally):
+        * page/FocusController.h:
+        * page/SpatialNavigation.cpp:
+        (WebCore::alignmentForRects):
+        (WebCore::start):
+        (WebCore::middle):
+        (WebCore::end):
+        (WebCore::areRectsFullyAligned):
+        (WebCore::areRectsPartiallyAligned):
+        (WebCore::areRectsMoreThanFullScreenApart):
+        (WebCore::below):
+        (WebCore::rightOf):
+        (WebCore::isRectInDirection):
+        (WebCore::hasOffscreenRect):
+        (WebCore::scrollInDirection):
+        (WebCore::deflateIfOverlapped):
+        (WebCore::canScrollInDirection):
+        (WebCore::rectToAbsoluteCoordinates):
+        (WebCore::nodeRectInAbsoluteCoordinates):
+        (WebCore::frameRectInAbsoluteCoordinates):
+        (WebCore::entryAndExitPointsForDirection):
+        (WebCore::distanceDataForNode):
+        (WebCore::canBeScrolledIntoView):
+        (WebCore::virtualRectForDirection):
+        (WebCore::virtualRectForAreaElementAndDirection):
+        * page/SpatialNavigation.h:
+
 2011-08-17  Levi Weintraub  <leviw@chromium.org>
 
         Switch Document, DocumentMarker, Clipboard, and Range to new layout types

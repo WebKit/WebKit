@@ -611,11 +611,11 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
         return;
     }
 
-    IntRect intersectionRect = intersection(candidate.rect, closest.rect);
+    LayoutRect intersectionRect = intersection(candidate.rect, closest.rect);
     if (!intersectionRect.isEmpty() && !areElementsOnSameLine(closest, candidate)) {
         // If 2 nodes are intersecting, do hit test to find which node in on top.
-        int x = intersectionRect.x() + intersectionRect.width() / 2;
-        int y = intersectionRect.y() + intersectionRect.height() / 2;
+        LayoutUnit x = intersectionRect.x() + intersectionRect.width() / 2;
+        LayoutUnit y = intersectionRect.y() + intersectionRect.height() / 2;
         HitTestResult result = candidate.visibleNode->document()->page()->mainFrame()->eventHandler()->hitTestResultAtPoint(IntPoint(x, y), false, true);
         if (candidate.visibleNode->contains(result.innerNode())) {
             closest = candidate;
@@ -635,7 +635,7 @@ static void updateFocusCandidateIfNeeded(FocusDirection direction, const FocusCa
         closest = candidate;
 }
 
-void FocusController::findFocusCandidateInContainer(Node* container, const IntRect& startingRect, FocusDirection direction, KeyboardEvent* event, FocusCandidate& closest)
+void FocusController::findFocusCandidateInContainer(Node* container, const LayoutRect& startingRect, FocusDirection direction, KeyboardEvent* event, FocusCandidate& closest)
 {
     ASSERT(container);
     Node* focusedNode = (focusedFrame() && focusedFrame()->document()) ? focusedFrame()->document()->focusedNode() : 0;
@@ -665,12 +665,12 @@ void FocusController::findFocusCandidateInContainer(Node* container, const IntRe
     }
 }
 
-bool FocusController::advanceFocusDirectionallyInContainer(Node* container, const IntRect& startingRect, FocusDirection direction, KeyboardEvent* event)
+bool FocusController::advanceFocusDirectionallyInContainer(Node* container, const LayoutRect& startingRect, FocusDirection direction, KeyboardEvent* event)
 {
     if (!container || !container->document())
         return false;
 
-    IntRect newStartingRect = startingRect;
+    LayoutRect newStartingRect = startingRect;
 
     if (startingRect.isEmpty())
         newStartingRect = virtualRectForDirection(direction, nodeRectInAbsoluteCoordinates(container));
@@ -697,7 +697,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
             return true;
         }
         // Navigate into a new frame.
-        IntRect rect;
+        LayoutRect rect;
         Node* focusedNode = focusedOrMainFrame()->document()->focusedNode();
         if (focusedNode && !hasOffscreenRect(focusedNode))
             rect = nodeRectInAbsoluteCoordinates(focusedNode, true /* ignore border */);
@@ -715,7 +715,7 @@ bool FocusController::advanceFocusDirectionallyInContainer(Node* container, cons
             return true;
         }
         // Navigate into a new scrollable container.
-        IntRect startingRect;
+        LayoutRect startingRect;
         Node* focusedNode = focusedOrMainFrame()->document()->focusedNode();
         if (focusedNode && !hasOffscreenRect(focusedNode))
             startingRect = nodeRectInAbsoluteCoordinates(focusedNode, true);
@@ -751,7 +751,7 @@ bool FocusController::advanceFocusDirectionally(FocusDirection direction, Keyboa
         static_cast<Document*>(container)->updateLayoutIgnorePendingStylesheets();
         
     // Figure out the starting rect.
-    IntRect startingRect;
+    LayoutRect startingRect;
     if (focusedNode) {
         if (!hasOffscreenRect(focusedNode)) {
             container = scrollableEnclosingBoxOrParentFrameForNodeInDirection(direction, focusedNode);

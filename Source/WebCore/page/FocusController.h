@@ -27,6 +27,7 @@
 #define FocusController_h
 
 #include "FocusDirection.h"
+#include "LayoutTypes.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/RefPtr.h>
@@ -85,8 +86,8 @@ private:
     Node* nextFocusableNode(TreeScope*, Node* start, KeyboardEvent*);
     Node* previousFocusableNode(TreeScope*, Node* start, KeyboardEvent*);
 
-    bool advanceFocusDirectionallyInContainer(Node* container, const IntRect& startingRect, FocusDirection, KeyboardEvent*);
-    void findFocusCandidateInContainer(Node* container, const IntRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);
+    bool advanceFocusDirectionallyInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*);
+    void findFocusCandidateInContainer(Node* container, const LayoutRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);
 
     Page* m_page;
     RefPtr<Frame> m_focusedFrame;

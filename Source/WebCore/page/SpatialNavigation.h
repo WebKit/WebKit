@@ -23,7 +23,7 @@
 
 #include "FocusDirection.h"
 #include "HTMLFrameOwnerElement.h"
-#include "IntRect.h"
+#include "LayoutTypes.h"
 #include "Node.h"
 
 #include <limits>
@@ -130,7 +130,7 @@ struct FocusCandidate {
     long long parentDistance;
     RectsAlignment alignment;
     RectsAlignment parentAlignment;
-    IntRect rect;
+    LayoutRect rect;
     bool isOffscreen;
     bool isOffscreenAfterScrolling;
 };
@@ -144,10 +144,10 @@ bool canBeScrolledIntoView(FocusDirection, const FocusCandidate&);
 bool areElementsOnSameLine(const FocusCandidate& firstCandidate, const FocusCandidate& secondCandidate);
 void distanceDataForNode(FocusDirection, const FocusCandidate& current, FocusCandidate& candidate);
 Node* scrollableEnclosingBoxOrParentFrameForNodeInDirection(FocusDirection, Node*);
-IntRect nodeRectInAbsoluteCoordinates(Node*, bool ignoreBorder = false);
-IntRect frameRectInAbsoluteCoordinates(Frame*);
-IntRect virtualRectForDirection(FocusDirection, const IntRect& startingRect, int width = 0);
-IntRect virtualRectForAreaElementAndDirection(HTMLAreaElement*, FocusDirection);
+LayoutRect nodeRectInAbsoluteCoordinates(Node*, bool ignoreBorder = false);
+LayoutRect frameRectInAbsoluteCoordinates(Frame*);
+LayoutRect virtualRectForDirection(FocusDirection, const LayoutRect& startingRect, LayoutUnit width = 0);
+LayoutRect virtualRectForAreaElementAndDirection(HTMLAreaElement*, FocusDirection);
 HTMLFrameOwnerElement* frameOwnerElement(FocusCandidate&);
 
 } // namspace WebCore
