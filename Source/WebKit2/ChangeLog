@@ -1,5 +1,22 @@
 2011-08-18  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 91998
+
+    2011-07-29  Anders Carlsson  <andersca@apple.com>
+
+            Pass the HTTP referrer header for URLs loaded by plug-ins
+            https://bugs.webkit.org/show_bug.cgi?id=65379
+            <rdar://problem/9822116>
+
+            Reviewed by Sam Weinig.
+
+            Set the HTTP referrer if necessary.
+
+            * WebProcess/Plugins/PluginView.cpp:
+            (WebKit::PluginView::loadURL):
+
+2011-08-18  Lucas Forschler  <lforschler@apple.com>
+
     Merged 92729
 
     2011-08-09  John Sullivan  <sullivan@apple.com>
