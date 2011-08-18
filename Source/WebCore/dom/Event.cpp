@@ -308,4 +308,39 @@ bool EventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
     return dispatcher->dispatchEvent(m_event.get());
 }
 
+PassRefPtr<FocusEventDispatchMediator> FocusEventDispatchMediator::create(PassRefPtr<Node> oldFocusedNode)
+{
+    return adoptRef(new FocusEventDispatchMediator(oldFocusedNode));
+}
+
+FocusEventDispatchMediator::FocusEventDispatchMediator(PassRefPtr<Node> oldFocusedNode)
+    : EventDispatchMediator(Event::create(eventNames().focusEvent, false, false))
+    , m_oldFocusedNode(oldFocusedNode)
+{
+}
+
+bool FocusEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+{
+    dispatcher->adjustRelatedTarget(event(), m_oldFocusedNode);
+    return EventDispatchMediator::dispatchEvent(dispatcher);
+}
+
+PassRefPtr<BlurEventDispatchMediator> BlurEventDispatchMediator::create(PassRefPtr<Node> newFocusedNode)
+{
+    return adoptRef(new BlurEventDispatchMediator(newFocusedNode));
+}
+
+BlurEventDispatchMediator::BlurEventDispatchMediator(PassRefPtr<Node> newFocusedNode)
+    : EventDispatchMediator(Event::create(eventNames().blurEvent, false, false))
+    , m_newFocusedNode(newFocusedNode)
+{
+}
+
+bool BlurEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
+{
+    dispatcher->adjustRelatedTarget(event(), m_newFocusedNode);
+    return EventDispatchMediator::dispatchEvent(dispatcher);
+}
+
+
 } // namespace WebCore

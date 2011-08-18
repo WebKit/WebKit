@@ -57,6 +57,8 @@ function recordEvent(event)
         eventString += '(<-' + event.relatedTarget.id + ')';
     if (event.currentTarget)
         eventString += '(@' + event.currentTarget.id + ')';
+    if (event.eventPhase == 1)
+        eventString += '(capturing phase)';
     eventRecords[eventType].push(eventString);
 }
 
@@ -97,6 +99,8 @@ function prepareDomTree(parent)
         element.addEventListener('mouseout', recordEvent, false);
         element.addEventListener('focusin', recordEvent, false);
         element.addEventListener('focusout', recordEvent, false);
+        element.addEventListener('focus', recordEvent, true);  // capturing phase
+        element.addEventListener('blur', recordEvent, true);  // capturing phase
     }
 }
 
@@ -191,6 +195,17 @@ function test()
 
     // Omitted test cases where either a oldFocusedNode or newFocusedNode is an ancestor of the other.
     // Due to a focus transfer mechanism on shadow hosts, a focused node should be a leaf node in general.
+
+    // Test for focus/blur events. Event listners should be registerd on captureing phase.
+    moveFocus('divB', 'divC',
+              'Move focus from a node to its sibling node. All nodes are outside of shadow boundary.');
+    shouldBe('dispatchedEvent("focus")', '["divC(@divA)(capturing phase)", "divC(@divC)"]');
+    shouldBe('dispatchedEvent("blur")', '["divB(@divA)(capturing phase)", "divB(@divB)"]');
+
+    moveFocus('shadowD/shadowF/shadowG/divH', 'shadowD/shadowK/divL',
+              'Old focused node and new focused node exist in separated subtrees, crossing shadow boundaries. Making sure that an event is not dispatched beyond the lowest common boundary.');
+    shouldBe('dispatchedEvent("focus")', '["shadowK(@divJ)(capturing phase)", "shadowK(@shadowK)(capturing phase)", "divL(@divL)"]');
+    shouldBe('dispatchedEvent("blur")', '["shadowF(@divE)(capturing phase)", "shadowF(@shadowF)(capturing phase)", "shadowG(@shadowG)(capturing phase)", "divH(@divH)"]');
 }
 
 test();

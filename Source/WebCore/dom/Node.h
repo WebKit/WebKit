@@ -562,9 +562,9 @@ public:
     bool dispatchMouseEvent(const PlatformMouseEvent&, const AtomicString& eventType, int clickCount = 0, Node* relatedTarget = 0);
     void dispatchSimulatedClick(PassRefPtr<Event> underlyingEvent, bool sendMouseEvents = false, bool showPressedLook = true);
 
-    virtual void dispatchFocusEvent();
+    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);
     virtual void willBlur();
-    virtual void dispatchBlurEvent();
+    virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
     virtual void dispatchChangeEvent();
     virtual void dispatchInputEvent();
 

@@ -3125,7 +3125,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
         }
 
         // Dispatch the blur event and let the node do any other blur related activities (important for text fields)
-        oldFocusedNode->dispatchBlurEvent();
+        oldFocusedNode->dispatchBlurEvent(newFocusedNode);
 
         if (m_focusedNode) {
             // handler shifted focus
@@ -3169,7 +3169,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
         m_focusedNode = newFocusedNode;
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
-        m_focusedNode->dispatchFocusEvent();
+        m_focusedNode->dispatchFocusEvent(oldFocusedNode);
 
         if (m_focusedNode != newFocusedNode) {
             // handler shifted focus

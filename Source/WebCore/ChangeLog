@@ -1,3 +1,41 @@
+2011-08-17  Hayato Ito  <hayato@chromium.org>
+
+        Implement proper handling of focus/blur events in regard to shadow DOM boundaries.
+        https://bugs.webkit.org/show_bug.cgi?id=61421
+
+        Reviewed by Dimitri Glazkov.
+
+        Introduces FocusEventDispatchMediator/BlurEventDispatchMediator so
+        that focus/blue events are stopped at the lowest common shadow boundary.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode):
+        * dom/Event.cpp:
+        (WebCore::FocusEventDispatchMediator::create):
+        (WebCore::FocusEventDispatchMediator::FocusEventDispatchMediator):
+        (WebCore::FocusEventDispatchMediator::dispatchEvent):
+        (WebCore::BlurEventDispatchMediator::create):
+        (WebCore::BlurEventDispatchMediator::BlurEventDispatchMediator):
+        (WebCore::BlurEventDispatchMediator::dispatchEvent):
+        * dom/Event.h:
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchFocusEvent):
+        (WebCore::Node::dispatchBlurEvent):
+        * dom/Node.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchBlurEvent):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::dispatchFocusEvent):
+        (WebCore::HTMLSelectElement::dispatchBlurEvent):
+        * html/HTMLSelectElement.h:
+        * html/HTMLTextFormControlElement.cpp:
+        (WebCore::HTMLTextFormControlElement::dispatchFocusEvent):
+        (WebCore::HTMLTextFormControlElement::dispatchBlurEvent):
+        * html/HTMLTextFormControlElement.h:
+        * page/FocusController.cpp:
+        (WebCore::dispatchEventsOnWindowAndFocusedNode):
+
 2011-08-17  Ben Wells  <benwells@chromium.org>
 
         Canvas fill and fillRect with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors

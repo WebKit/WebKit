@@ -121,7 +121,7 @@ protected:
 
     virtual void recalcStyle(StyleChange);
 
-    virtual void dispatchBlurEvent();
+    virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
     virtual void detach();
 
     // This must be called any time the result of willValidate() has changed.

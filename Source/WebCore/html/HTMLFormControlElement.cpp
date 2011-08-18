@@ -430,9 +430,9 @@ void HTMLFormControlElement::setCustomValidity(const String& error)
     validity()->setCustomErrorMessage(error);
 }
 
-void HTMLFormControlElement::dispatchBlurEvent()
+void HTMLFormControlElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
 {
-    HTMLElement::dispatchBlurEvent();
+    HTMLElement::dispatchBlurEvent(newFocusedNode);
     hideVisibleValidationMessage();
 }
 

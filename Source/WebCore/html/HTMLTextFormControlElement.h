@@ -101,8 +101,8 @@ private:
     int computeSelectionEnd() const;
     TextFieldSelectionDirection computeSelectionDirection() const;
 
-    virtual void dispatchFocusEvent();
-    virtual void dispatchBlurEvent();
+    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);
+    virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
 
     bool isPlaceholderEmpty() const;
 

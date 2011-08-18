@@ -2777,24 +2777,24 @@ bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
     return EventDispatcher::dispatchEvent(this, WheelEventDispatchMediator::create(event, document()->defaultView()));
 }
 
-void Node::dispatchFocusEvent()
+void Node::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)
 {
     if (document()->page())
         document()->page()->chrome()->client()->elementDidFocus(this);
     
-    dispatchEvent(Event::create(eventNames().focusEvent, false, false));
+    EventDispatcher::dispatchEvent(this, FocusEventDispatchMediator::create(oldFocusedNode));
 }
 
 void Node::willBlur()
 {
 }
 
-void Node::dispatchBlurEvent()
+void Node::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
 {
     if (document()->page())
         document()->page()->chrome()->client()->elementDidBlur(this);
-    
-    dispatchEvent(Event::create(eventNames().blurEvent, false, false));
+
+    EventDispatcher::dispatchEvent(this, BlurEventDispatchMediator::create(newFocusedNode));
 }
 
 void Node::dispatchChangeEvent()

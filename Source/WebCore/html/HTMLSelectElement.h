@@ -103,8 +103,8 @@ private:
 
     virtual void recalcStyle(StyleChange);
 
-    virtual void dispatchFocusEvent();
-    virtual void dispatchBlurEvent();
+    virtual void dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode);
+    virtual void dispatchBlurEvent(PassRefPtr<Node> newFocusedNode);
     
     virtual bool canStartSelection() const { return false; }
 

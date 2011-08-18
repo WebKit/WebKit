@@ -77,10 +77,10 @@ static inline void dispatchEventsOnWindowAndFocusedNode(Document* document, bool
     }
 
     if (!focused && document->focusedNode())
-        document->focusedNode()->dispatchBlurEvent();
+        document->focusedNode()->dispatchBlurEvent(0);
     document->dispatchWindowEvent(Event::create(focused ? eventNames().focusEvent : eventNames().blurEvent, false, false));
     if (focused && document->focusedNode())
-        document->focusedNode()->dispatchFocusEvent();
+        document->focusedNode()->dispatchFocusEvent(0);
 }
 
 FocusController::FocusController(Page* page)

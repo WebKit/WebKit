@@ -367,16 +367,16 @@ void HTMLSelectElement::reset()
     setNeedsValidityCheck();
 }
 
-void HTMLSelectElement::dispatchFocusEvent()
+void HTMLSelectElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)
 {
     SelectElement::dispatchFocusEvent(m_data, this);
-    HTMLFormControlElementWithState::dispatchFocusEvent();
+    HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedNode);
 }
 
-void HTMLSelectElement::dispatchBlurEvent()
+void HTMLSelectElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
 {
     SelectElement::dispatchBlurEvent(m_data, this);
-    HTMLFormControlElementWithState::dispatchBlurEvent();
+    HTMLFormControlElementWithState::dispatchBlurEvent(newFocusedNode);
 }
 
 void HTMLSelectElement::defaultEventHandler(Event* event)

@@ -230,6 +230,24 @@ inline void EventDispatchMediator::setEvent(PassRefPtr<Event> event)
     m_event = event;
 }
 
+class FocusEventDispatchMediator : public EventDispatchMediator {
+public:
+    static PassRefPtr<FocusEventDispatchMediator> create(PassRefPtr<Node> oldFocusedNode);
+private:
+    explicit FocusEventDispatchMediator(PassRefPtr<Node> oldFocusedNode);
+    virtual bool dispatchEvent(EventDispatcher*) const;
+    RefPtr<Node> m_oldFocusedNode;
+};
+
+class BlurEventDispatchMediator : public EventDispatchMediator {
+public:
+    static PassRefPtr<BlurEventDispatchMediator> create(PassRefPtr<Node> newFocusedNode);
+private:
+    explicit BlurEventDispatchMediator(PassRefPtr<Node> newFocusedNode);
+    virtual bool dispatchEvent(EventDispatcher*) const;
+    RefPtr<Node> m_newFocusedNode;
+};
+
 } // namespace WebCore
 
 #endif // Event_h

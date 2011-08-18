@@ -64,20 +64,20 @@ void HTMLTextFormControlElement::insertedIntoDocument()
     setTextAsOfLastFormControlChangeEvent(initialValue.isNull() ? emptyString() : initialValue);
 }
 
-void HTMLTextFormControlElement::dispatchFocusEvent()
+void HTMLTextFormControlElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode)
 {
     if (supportsPlaceholder())
         updatePlaceholderVisibility(false);
     handleFocusEvent();
-    HTMLFormControlElementWithState::dispatchFocusEvent();
+    HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedNode);
 }
 
-void HTMLTextFormControlElement::dispatchBlurEvent()
+void HTMLTextFormControlElement::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
 {
     if (supportsPlaceholder())
         updatePlaceholderVisibility(false);
     handleBlurEvent();
-    HTMLFormControlElementWithState::dispatchBlurEvent();
+    HTMLFormControlElementWithState::dispatchBlurEvent(newFocusedNode);
 }
 
 void HTMLTextFormControlElement::defaultEventHandler(Event* event)
