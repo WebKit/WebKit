@@ -1,3 +1,24 @@
+2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        dump-as-markup conversion: editing/pasteboard/testcase-9507.html
+        https://bugs.webkit.org/show_bug.cgi?id=66448
+
+        Reviewed by Kent Tamura.
+
+        Converted the test.
+
+        * editing/pasteboard/testcase-9507-expected.txt: Added.
+        * editing/pasteboard/testcase-9507.html:
+        * platform/chromium-linux/editing/pasteboard/testcase-9507-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/testcase-9507-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/testcase-9507-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/testcase-9507-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/testcase-9507-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/testcase-9507-expected.png: Removed.
+        * platform/mac/editing/pasteboard/testcase-9507-expected.png: Removed.
+        * platform/mac/editing/pasteboard/testcase-9507-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/testcase-9507-expected.txt: Removed.
+
 2011-08-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] rename webInspector.resources to webInspector.network

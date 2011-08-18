@@ -1,11 +1,5 @@
-<html> 
+<html>
 <head>
-<script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
-</script>
-
-
 <style>
 .editing { 
     border: 2px solid red; 
@@ -21,21 +15,12 @@ if (window.layoutTestController)
 .scenario:first-line { font-weight: bold; margin-bottom: 16px;}
 .expected-results:first-line { font-weight: bold }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
-<script>
-function editingTest() {
-    setSelectionCommand(document.getElementById("test"),0,document.getElementById("test"),5);
-    copyCommand();
-    pasteCommand();
-}
-
-</script>
-
-<title>Editing Test</title> 
-</head> 
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
+<title>Editing Test</title>
+</head>
 <body>
-When copying some text, under certain circumstances, empty style (or font) tags are created. This test checks that there is no empty &lt;font&gt; tag after 'foo' and before 'bar'.
+<p id="description">When copying some text, under certain circumstances, empty style (or font) tags are created. This test checks that there is no empty &lt;font&gt; tag after 'foo' and before 'bar'.</p>
 <div contenteditable id="root">
 <div id="test" class="editing">
 foo
@@ -44,10 +29,17 @@ foo
 </div>
 </div>
 </div>
-
 <script>
-editingTest();
-</script>
 
+Markup.description(document.getElementById('description').textContent);
+
+setSelectionCommand(document.getElementById("test"),0,document.getElementById("test"),5);
+copyCommand();
+Markup.dump('root', 'After copy');
+
+pasteCommand();
+Markup.dump('root', 'After paste');
+
+</script>
 </body>
 </html>
