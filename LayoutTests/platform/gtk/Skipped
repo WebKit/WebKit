@@ -1509,8 +1509,8 @@ fast/html/set-text-direction.html
 # textInputController.doCommand is not implemented.
 # https://bugs.webkit.org/show_bug.cgi?id=66496
 editing/input/password-echo-passnode.html
-editing/input/password-echo-passnode-2.html
-editing/input/password-echo-passnode-3.html
+editing/input/password-echo-passnode2.html
+editing/input/password-echo-passnode3.html
 editing/input/password-echo-textnode.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=57160 
