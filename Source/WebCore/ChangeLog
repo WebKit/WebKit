@@ -1,3 +1,23 @@
+2011-08-18  Jeff Miller  <jeffm@apple.com>
+
+        Soft link against AVFoundationCF and CoreMedia
+        https://bugs.webkit.org/show_bug.cgi?id=65725
+        
+        Add new macros to SoftLinking.h to support soft-linking to functions and variables decorated with __declspec(dllimport),
+        and use them to soft-link to AVFoundationCF and CoreMedia. I verified that the WebProcess doesn't load these DLLs
+        until a media element is used.
+
+        Reviewed by Eric Carlson.
+
+        No new tests as no change in functionality.
+
+        * WebCore.vcproj/WebCore.vcproj: Added AVFoundationCFSoftLinking.h and CoreMediaSoftLinking.h.
+        * WebCore.vcproj/WebCoreMediaQT.vsprops: Removed DelayLoadDLLs linker option which is no longer needed.
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h: Added.
+        * platform/graphics/avfoundation/cf/CoreMediaSoftLinking.h: Added.
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp: Stop linking against AVFoundationCF.lib and CoreMedia.lib and include AVFoundationCFSoftLinking.h and CoreMediaSoftLinking.h.
+        * platform/win/SoftLinking.h: Added SOFT_LINK_DLL_IMPORT() and SOFT_LINK_VARIABLE_DLL_IMPORT() macros.
+
 2011-08-18  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium Mac: Show scrollbar when doing search

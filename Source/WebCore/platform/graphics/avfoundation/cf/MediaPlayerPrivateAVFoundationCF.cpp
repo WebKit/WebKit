@@ -51,25 +51,12 @@
 #include <wtf/Threading.h>
 #include <wtf/UnusedParam.h>
 
-#ifdef DEBUG_ALL
-// FIXME: AVFoundationCF doesn't currently deliver a debug version.
-#pragma comment(lib, "AVFoundationCF.lib")
-#pragma comment(lib, "CoreMedia_debug.lib")
-#pragma comment(lib, "libdispatch_debug.lib")
+// The softlink header files must be included after the AVCF and CoreMedia header files.
+#include "AVFoundationCFSoftLinking.h"
+#include "CoreMediaSoftLinking.h"
 
-// Use the soft link macros so we can easily test for the existence of the dlls.
-// FIXME: AVFoundationCF doesn't currently deliver a debug version.
-SOFT_LINK_LIBRARY(AVFoundationCF)
-SOFT_LINK_DEBUG_LIBRARY(CoreMedia)
-#else
-#pragma comment(lib, "AVFoundationCF.lib")
-#pragma comment(lib, "CoreMedia.lib")
+// We don't bother softlinking against libdispatch since it's already been loaded by AAS.
 #pragma comment(lib, "libdispatch.lib")
-
-// Use the soft link macros so we can easily test for the existence of the dlls.
-SOFT_LINK_LIBRARY(AVFoundationCF)
-SOFT_LINK_LIBRARY(CoreMedia)
-#endif // DEBUG_ALL
 
 using namespace std;
 

@@ -79,4 +79,42 @@
         return ptr; \
     }\
 
+/*
+    In order to soft link against functions decorated with __declspec(dllimport), we prepend "softLink_" to the function names.
+    If you use SOFT_LINK_DLL_IMPORT(), you will also need to #define the function name to account for this, e.g.:
+    
+    SOFT_LINK_DLL_IMPORT(myLibrary, myFunction, ...)
+    #define myFunction softLink_myFunction
+*/ 
+#define SOFT_LINK_DLL_IMPORT(library, functionName, resultType, callingConvention, parameterDeclarations, parameterNames) \
+    static resultType callingConvention init##functionName parameterDeclarations; \
+    static resultType(callingConvention*softLink##functionName) parameterDeclarations = init##functionName; \
+    \
+    static resultType callingConvention init##functionName parameterDeclarations \
+    { \
+        softLink##functionName = reinterpret_cast<resultType (callingConvention*)parameterDeclarations>(SOFT_LINK_GETPROCADDRESS(library##Library(), #functionName)); \
+        ASSERT(softLink##functionName); \
+        return softLink##functionName parameterNames; \
+    }\
+    \
+    inline resultType softLink_##functionName parameterDeclarations \
+    {\
+        return softLink##functionName parameterNames; \
+    }
+
+/*
+    Variables exported by a DLL need to be accessed through a function.
+    If you use SOFT_LINK_VARIABLE_DLL_IMPORT(), you will also need to #define the variable name to account for this, e.g.:
+    
+    SOFT_LINK_VARIABLE_DLL_IMPORT(myLibrary, myVar, int)
+    #define myVar get_myVar()
+*/ 
+#define SOFT_LINK_VARIABLE_DLL_IMPORT(library, variableName, variableType) \
+    static variableType get_##variableName() \
+    { \
+        static variableType* ptr = reinterpret_cast<variableType*>(SOFT_LINK_GETPROCADDRESS(library##Library(), #variableName)); \
+        ASSERT(ptr); \
+        return *ptr; \
+    }\
+
 #endif // SoftLinking_h
