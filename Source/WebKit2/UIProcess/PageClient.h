@@ -185,8 +185,6 @@ public:
     virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects) = 0;
     virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) = 0;
     virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount) = 0;
-
-    virtual float deviceScaleFactor() const = 0;
 };
 
 } // namespace WebKit

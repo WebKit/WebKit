@@ -1836,9 +1836,23 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
 }
 
+- (float)_deviceScaleFactor
+{
+    NSWindow *window = [self window];
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (window)
+        return [window backingScaleFactor];
+    return [[NSScreen mainScreen] backingScaleFactor];
+#else
+    if (window)
+        return [window userSpaceScaleFactor];
+    return [[NSScreen mainScreen] userSpaceScaleFactor];
+#endif
+}
+
 - (void)_windowDidChangeResolution:(NSNotification *)notification
 {
-    _data->_page->viewStateDidChange(WebPageProxy::DeviceScaleFactor);
+    _data->_page->setDeviceScaleFactor([self _deviceScaleFactor]);
 }
 
 static void drawPageBackground(CGContextRef context, WebPageProxy* page, const IntRect& rect)

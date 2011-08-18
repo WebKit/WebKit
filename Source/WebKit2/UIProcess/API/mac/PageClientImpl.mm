@@ -462,20 +462,6 @@ void PageClientImpl::recordAutocorrectionResponse(EditorClient::AutocorrectionRe
 #endif
 }
 
-float PageClientImpl::deviceScaleFactor() const
-{
-    NSWindow *window = [m_wkView window];
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (window)
-        return [window backingScaleFactor];
-    return [[NSScreen mainScreen] backingScaleFactor];
-#else
-    if (window)
-        return [window userSpaceScaleFactor];
-    return [[NSScreen mainScreen] userSpaceScaleFactor];
-#endif
-}
-
 bool PageClientImpl::executeSavedCommandBySelector(const String& selectorString)
 {
     return [m_wkView _executeSavedCommandBySelector:NSSelectorFromString(selectorString)];

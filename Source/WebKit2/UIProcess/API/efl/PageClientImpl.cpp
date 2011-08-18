@@ -255,9 +255,4 @@ void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, Fin
     notImplemented();
 }
 
-float PageClientImpl::deviceScaleFactor() const
-{
-    return 0.0;
-}
-
 } // namespace WebKit

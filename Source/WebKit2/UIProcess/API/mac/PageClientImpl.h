@@ -120,8 +120,6 @@ private:
     virtual String dismissCorrectionPanelSoon(WebCore::ReasonForDismissingCorrectionPanel);
     virtual void recordAutocorrectionResponse(WebCore::EditorClient::AutocorrectionResponseType, const String& replacedString, const String& replacementString);
 
-    virtual float deviceScaleFactor() const;
-    
     virtual WKView* wkView() const { return m_wkView; }
 
     WKView* m_wkView;

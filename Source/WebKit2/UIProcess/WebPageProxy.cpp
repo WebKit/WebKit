@@ -153,6 +153,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_textZoomFactor(1)
     , m_pageZoomFactor(1)
     , m_pageScaleFactor(1)
+    , m_deviceScaleFactor(1)
     , m_drawsBackground(true)
     , m_drawsTransparentBackground(false)
     , m_areMemoryCacheClientCallsEnabled(true)
@@ -681,9 +682,6 @@ void WebPageProxy::viewStateDidChange(ViewStateFlags flags)
             process()->send(Messages::WebPage::SetIsInWindow(isInWindow), m_pageID);
         }
     }
-
-    if (flags & DeviceScaleFactor)
-        m_drawingArea->deviceScaleFactorDidChange();
 
     updateBackingStoreDiscardableState();
 }
@@ -1217,9 +1215,16 @@ void WebPageProxy::scalePage(double scale, const IntPoint& origin)
     process()->send(Messages::WebPage::ScalePage(scale, origin), m_pageID);
 }
 
-float WebPageProxy::deviceScaleFactor() const
+void WebPageProxy::setDeviceScaleFactor(float scaleFactor)
 {
-    return m_pageClient->deviceScaleFactor();
+    if (!isValid())
+        return;
+
+    if (m_deviceScaleFactor == scaleFactor)
+        return;
+
+    m_deviceScaleFactor = scaleFactor;
+    m_drawingArea->deviceScaleFactorDidChange();
 }
 
 void WebPageProxy::setUseFixedLayout(bool fixed)
@@ -3089,7 +3094,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.highestUsedBackForwardItemID = WebBackForwardListItem::highedUsedItemID();
     parameters.canRunBeforeUnloadConfirmPanel = m_uiClient.canRunBeforeUnloadConfirmPanel();
     parameters.canRunModal = m_uiClient.canRunModal();
-    parameters.deviceScaleFactor = m_pageClient->deviceScaleFactor();
+    parameters.deviceScaleFactor = m_deviceScaleFactor;
 
 #if PLATFORM(MAC)
     parameters.isSmartInsertDeleteEnabled = m_isSmartInsertDeleteEnabled;

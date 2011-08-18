@@ -1,3 +1,44 @@
+2011-08-18  Adam Roben  <aroben@apple.com>
+
+        Make WebPageProxy keep track of the current device scale factor
+
+        The device scale factor is no longer considered part of WebPageProxy's "view state". It now
+        has its own setter/getter. This made the code a little simpler and more similar to the page
+        scale factor. Each port-specific WebKit2 view is now responsible for calling
+        WebPageProxy::setDeviceScaleFactor whenever it thinks the device scale factor might have
+        changed.
+
+        Fixes <http://webkit.org/b/66466> WebKit2 requires every port-specific view to keep track of
+        the current device scale factor
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        * UIProcess/API/efl/PageClientImpl.h:
+        * UIProcess/API/gtk/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/win/WebView.h:
+        Removed deviceScaleFactor.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _deviceScaleFactor]): Added. Code came from PageClientImpl::deviceScaleFactor.
+        (-[WKView _windowDidChangeResolution:]): Changed to call WebPageProxy::setDeviceScaleFactor.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy): Initialize m_deviceScaleFactor.
+        (WebKit::WebPageProxy::viewStateDidChange): Removed device-scale-factor-related code.
+        (WebKit::WebPageProxy::setDeviceScaleFactor): Added. Records the new device scale factor and
+        tells the DrawingAreaProxy about it if it's actually changed.
+        (WebKit::WebPageProxy::creationParameters): Use m_deviceScaleFactor instead of calling out
+        to the PageClient.
+
+        * UIProcess/WebPageProxy.h: Added m_deviceScaleFactor and setDeviceScaleFactor, which
+        replaces the DeviceScaleFactor ViewStateFlag.
+        (WebKit::WebPageProxy::deviceScaleFactor): Inlined this now-simple getter.
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Make WebCore keep track of the current device scale factor
