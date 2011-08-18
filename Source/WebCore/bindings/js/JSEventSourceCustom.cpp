@@ -47,7 +47,7 @@ namespace WebCore {
 EncodedJSValue JSC_HOST_CALL JSEventSourceConstructor::constructJSEventSource(ExecState* exec)
 {
     if (exec->argumentCount() < 1)
-        return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
+        return throwVMError(exec, createTypeError(exec, "Not enough arguments"));
 
     UString url = exec->argument(0).toString(exec);
     if (exec->hadException())

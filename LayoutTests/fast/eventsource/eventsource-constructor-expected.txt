@@ -1,6 +1,6 @@
 Test EventSource constructor functionality. Should print a series of PASS messages followed by DONE.
 
-PASS: missing argument to EventSource constructor resulted in an exception (SyntaxError: Not enough arguments)
+PASS: missing argument to EventSource constructor resulted in an exception (TypeError: Not enough arguments)
 PASS: passing an empty string to the EventSource constructor resulted in an exception (Error: SYNTAX_ERR: DOM Exception 12)
 PASS: passing an invalid URL to the EventSource constructor resulted in an exception (Error: SYNTAX_ERR: DOM Exception 12)
 DONE

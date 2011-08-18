@@ -1,5 +1,21 @@
 2011-08-18  Kentaro Hara  <haraken@google.com>
 
+        An EventSource constructor should throw TypeError, when the number of arguments is not enough.
+        https://bugs.webkit.org/show_bug.cgi?id=66454
+
+        Reviewed by Adam Barth.
+
+        The spec is here: http://www.w3.org/TR/WebIDL/#es-operations.
+
+        Test: fast/eventsource/eventsource-constructor.html
+
+        * bindings/js/JSEventSourceCustom.cpp:
+        (WebCore::JSEventSourceConstructor::constructJSEventSource): Changed SyntaxError to TypeError.
+        * bindings/v8/custom/V8EventSourceConstructor.cpp:
+        (WebCore::V8EventSource::constructorCallback): Changed SyntaxError to TypeError.
+
+2011-08-18  Kentaro Hara  <haraken@google.com>
+
         A SharedWorker constructor should throw TypeError, when the number of arguments is not enough.
         https://bugs.webkit.org/show_bug.cgi?id=66455
 
