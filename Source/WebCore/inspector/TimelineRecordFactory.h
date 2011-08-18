@@ -31,6 +31,7 @@
 #ifndef TimelineRecordFactory_h
 #define TimelineRecordFactory_h
 
+#include "LayoutTypes.h"
 #include "PlatformString.h"
 
 namespace WebCore {
@@ -74,7 +75,7 @@ namespace WebCore {
 
         static PassRefPtr<InspectorObject> createResourceFinishData(const String& requestId, bool didFail, double finishTime);
 
-        static PassRefPtr<InspectorObject> createPaintData(const IntRect&);
+        static PassRefPtr<InspectorObject> createPaintData(const LayoutRect&);
 
         static PassRefPtr<InspectorObject> createParseHTMLData(unsigned int length, unsigned int startLine);
 

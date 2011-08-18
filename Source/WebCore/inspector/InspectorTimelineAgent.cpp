@@ -207,7 +207,7 @@ void InspectorTimelineAgent::didRecalculateStyle()
     didCompleteCurrentRecord(TimelineRecordType::RecalculateStyles);
 }
 
-void InspectorTimelineAgent::willPaint(const IntRect& rect)
+void InspectorTimelineAgent::willPaint(const LayoutRect& rect)
 {
     pushCurrentRecord(TimelineRecordFactory::createPaintData(rect), TimelineRecordType::Paint);
 }

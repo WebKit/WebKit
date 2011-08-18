@@ -111,7 +111,7 @@ public:
     static void didLayout(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLoadXHR(ScriptExecutionContext*, XMLHttpRequest*);
     static void didLoadXHR(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willPaint(Frame*, const IntRect& rect);
+    static InspectorInstrumentationCookie willPaint(Frame*, const LayoutRect&);
     static void didPaint(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyle(Document*);
     static void didRecalculateStyle(const InspectorInstrumentationCookie&);
@@ -240,7 +240,7 @@ private:
     static void didLayoutImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willLoadXHRImpl(InstrumentingAgents*, XMLHttpRequest*);
     static void didLoadXHRImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, const IntRect&);
+    static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, const LayoutRect&);
     static void didPaintImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
@@ -640,7 +640,7 @@ inline void InspectorInstrumentation::didLoadXHR(const InspectorInstrumentationC
 #endif
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willPaint(Frame* frame, const IntRect& rect)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willPaint(Frame* frame, const LayoutRect& rect)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());

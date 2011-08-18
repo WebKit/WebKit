@@ -1,3 +1,28 @@
+2011-08-17  Emil A Eklund  <eae@chromium.org>
+
+        Switch inspector to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66358
+
+        Reviewed by Eric Seidel.
+
+        Convert inspector code to new layout abstraction as a part of the ongoing
+        conversion work.
+
+        No new tests, no new functionality.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::drawNodeHighlight):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::willPaintImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willPaint):
+        * inspector/InspectorTimelineAgent.cpp:
+        (WebCore::InspectorTimelineAgent::willPaint):
+        * inspector/InspectorTimelineAgent.h:
+        * inspector/TimelineRecordFactory.cpp:
+        (WebCore::TimelineRecordFactory::createPaintData):
+        * inspector/TimelineRecordFactory.h:
+
 2011-08-17  Levi Weintraub  <leviw@chromium.org>
 
         Switch Editing code to new layout types

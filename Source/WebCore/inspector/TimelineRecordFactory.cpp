@@ -164,7 +164,7 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createReceiveResourceData(con
     return data.release();
 }
     
-PassRefPtr<InspectorObject> TimelineRecordFactory::createPaintData(const IntRect& rect)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createPaintData(const LayoutRect& rect)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
     data->setNumber("x", rect.x());

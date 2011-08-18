@@ -126,13 +126,13 @@ void drawHighlightForLineBoxesOrSVGRenderer(GraphicsContext& context, const Vect
         drawOutlinedQuad(context, lineBoxQuads[i], lineBoxColor);
 }
 
-inline IntSize frameToMainFrameOffset(Frame* frame)
+inline LayoutSize frameToMainFrameOffset(Frame* frame)
 {
-    IntPoint mainFramePoint = frame->page()->mainFrame()->view()->windowToContents(frame->view()->contentsToWindow(IntPoint()));
-    return mainFramePoint - IntPoint();
+    LayoutPoint mainFramePoint = frame->page()->mainFrame()->view()->windowToContents(frame->view()->contentsToWindow(LayoutPoint()));
+    return toLayoutSize(mainFramePoint);
 }
 
-void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& boundingBox, const IntRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings* settings)
+void drawElementTitle(GraphicsContext& context, Node* node, const LayoutRect& boundingBox, const LayoutRect& anchorBox, const FloatRect& overlayRect, WebCore::Settings* settings)
 {
     static const int rectInflatePx = 4;
     static const int fontHeightPx = 12;
@@ -181,14 +181,14 @@ void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& bound
     font.update(0);
 
     TextRun nodeTitleRun(nodeTitle);
-    IntPoint titleBasePoint = IntPoint(anchorBox.x(), anchorBox.maxY() - 1);
+    LayoutPoint titleBasePoint = LayoutPoint(anchorBox.x(), anchorBox.maxY() - 1);
     titleBasePoint.move(rectInflatePx, rectInflatePx);
-    IntRect titleRect = enclosingIntRect(font.selectionRectForText(nodeTitleRun, titleBasePoint, fontHeightPx));
+    LayoutRect titleRect = enclosingIntRect(font.selectionRectForText(nodeTitleRun, titleBasePoint, fontHeightPx));
     titleRect.inflate(rectInflatePx);
 
     // The initial offsets needed to compensate for a 1px-thick border stroke (which is not a part of the rectangle).
-    int dx = -borderWidthPx;
-    int dy = borderWidthPx;
+    LayoutUnit dx = -borderWidthPx;
+    LayoutUnit dy = borderWidthPx;
 
     // If the tip sticks beyond the right of overlayRect, right-align the tip with the said boundary.
     if (titleRect.maxX() > overlayRect.maxX())
@@ -216,7 +216,7 @@ void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& bound
     context.setFillColor(tooltipBackgroundColor, ColorSpaceDeviceRGB);
     context.drawRect(titleRect);
     context.setFillColor(tooltipFontColor, ColorSpaceDeviceRGB);
-    context.drawText(font, nodeTitleRun, IntPoint(titleRect.x() + rectInflatePx, titleRect.y() + font.fontMetrics().height()));
+    context.drawText(font, nodeTitleRun, LayoutPoint(titleRect.x() + rectInflatePx, titleRect.y() + font.fontMetrics().height()));
 }
 
 } // anonymous namespace
@@ -236,7 +236,7 @@ void drawNodeHighlight(GraphicsContext& context, Node* node, HighlightMode mode)
 
     boundingBox.move(mainFrameOffset);
 
-    IntRect titleAnchorBox = boundingBox;
+    LayoutRect titleAnchorBox = boundingBox;
 
     FrameView* view = containingFrame->page()->mainFrame()->view();
     FloatRect overlayRect = view->visibleContentRect();
