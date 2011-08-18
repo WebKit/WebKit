@@ -1,3 +1,14 @@
+2011-08-18  Tony Chang  <tony@chromium.org>
+
+        Add checksums to png results.  Still trying to find out why they
+        went missing in the first place.
+
+        * fast/frames/frame-set-scaling-3d-expected.png:
+        * fast/frames/frame-set-scaling-centered-expected.png:
+        * fast/frames/frame-set-scaling-expected.png:
+        * fast/frames/frame-set-scaling-rotate-expected.png:
+        * fast/frames/frame-set-scaling-skew-expected.png:
+
 2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         dump-as-markup conversion: editing/pasteboard/testcase-9507.html
