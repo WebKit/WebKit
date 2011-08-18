@@ -1,3 +1,28 @@
+2011-08-18  Adam Klein  <adamk@chromium.org>
+
+        Handle "form" attribute updates in parseMappedAttribute() instead of attributeChanged() to better match HTMLElement practices
+        https://bugs.webkit.org/show_bug.cgi?id=66321
+
+        Reviewed by Darin Adler.
+
+        This is simply a cleanup change: there's no need that I can see for
+        HTMLFormControlElement and HTMLObjectElement to override
+        Element::attributeChanged since they can properly handle form
+        attribute changes in parseMappedAttribute, which they also override.
+
+        Though no change in behavior, I've added test coverage of the moved
+        code to an existing test (fast/forms/form-attribute.html) and added
+        a new test.
+
+        Test: fast/forms/radio-remove-form-attr.html
+
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::parseMappedAttribute):
+        * html/HTMLFormControlElement.h:
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::parseMappedAttribute):
+        * html/HTMLObjectElement.h:
+
 2011-08-18  Chang Shu  <cshu@webkit.org>
 
         Add support of setPasswordEchoEnabled and setPasswordEchoDuration for password echo feature

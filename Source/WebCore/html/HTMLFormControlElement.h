@@ -99,8 +99,6 @@ public:
 
     bool readOnly() const { return m_readOnly; }
 
-    virtual void attributeChanged(Attribute*, bool preserveDecls = false);
-
     using TreeShared<ContainerNode>::ref;
     using TreeShared<ContainerNode>::deref;
 

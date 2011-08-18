@@ -85,7 +85,11 @@ bool HTMLFormControlElement::formNoValidate() const
 
 void HTMLFormControlElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == disabledAttr) {
+    if (attr->name() == formAttr) {
+        formAttributeChanged();
+        if (!form())
+            document()->checkedRadioButtons().addButton(this);
+    } else if (attr->name() == disabledAttr) {
         bool oldDisabled = m_disabled;
         m_disabled = !attr->isNull();
         if (oldDisabled != m_disabled) {
@@ -444,16 +448,6 @@ HTMLFormElement* HTMLFormControlElement::virtualForm() const
 bool HTMLFormControlElement::isDefaultButtonForForm() const
 {
     return isSuccessfulSubmitButton() && form() && form()->defaultButton() == this;
-}
-
-void HTMLFormControlElement::attributeChanged(Attribute* attr, bool preserveDecls)
-{
-    if (attr->name() == formAttr) {
-        formAttributeChanged();
-        if (!form())
-            document()->checkedRadioButtons().addButton(this);
-    } else
-        HTMLElement::attributeChanged(attr, preserveDecls);
 }
 
 bool HTMLFormControlElement::isLabelable() const

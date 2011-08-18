@@ -1,3 +1,23 @@
+2011-08-18  Adam Klein  <adamk@chromium.org>
+
+        Handle "form" attribute updates in parseMappedAttribute() instead of attributeChanged() to better match HTMLElement practices
+        https://bugs.webkit.org/show_bug.cgi?id=66321
+
+        Reviewed by Darin Adler.
+
+        Added new coverage to ensure that adding a radio button to a radio
+        group in the document by removing a form attribute leaves the group in
+        a valid state (no more than one button checked).
+
+        Beefed up coverage of form associated elements to better cover
+        HTMLObjectElement.
+
+        * fast/forms/form-attribute-expected.txt:
+        * fast/forms/radio-remove-form-attr-expected.txt: Added.
+        * fast/forms/radio-remove-form-attr.html: Added.
+        * fast/forms/script-tests/form-attribute.js:
+        Added coverage of <object form=""> behavior.
+
 2011-08-18  Chang Shu  <cshu@webkit.org>
 
         Add support of setPasswordEchoEnabled and setPasswordEchoDuration for password echo feature

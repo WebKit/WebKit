@@ -85,7 +85,9 @@ RenderWidget* HTMLObjectElement::renderWidgetForJSBindings()
 
 void HTMLObjectElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == typeAttr) {
+    if (attr->name() == formAttr)
+        formAttributeChanged();
+    else if (attr->name() == typeAttr) {
         m_serviceType = attr->value().lower();
         size_t pos = m_serviceType.find(";");
         if (pos != notFound)
@@ -371,14 +373,6 @@ void HTMLObjectElement::removedFromDocument()
 
     HTMLPlugInImageElement::removedFromDocument();
     FormAssociatedElement::removedFromDocument();
-}
-
-void HTMLObjectElement::attributeChanged(Attribute* attr, bool preserveDecls)
-{
-    if (attr->name() == formAttr)
-        formAttributeChanged();
-    else
-        HTMLPlugInImageElement::attributeChanged(attr, preserveDecls);
 }
 
 void HTMLObjectElement::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

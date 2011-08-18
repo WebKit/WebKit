@@ -12,7 +12,7 @@ container.innerHTML = '<form id=owner></form>' +
     '<keygen name=victim form=owner />' +
     '<label name=victim form=owner />' +
     '<meter name=victim form=owner />' +
-    '<object name=victim form=owner />' +
+    '<object name=victim form=owner></object>' +
     '<output name=victim form=owner />' +
     '<progress name=victim form=owner />' +
     '<select name=victim form=owner />' +
@@ -78,7 +78,8 @@ debug('');
 debug('- Ensures whether the form owner is set correctly when the value of form attribute of a form-associated element changed.');
 container.innerHTML = '<form id=form1></form>' +
     '<form id=form2></form>' +
-    '<input id=inputElement name=victim form=form1 />';
+    '<input id=inputElement name=victim form=form1 />' +
+    '<object id=objectElement name=victim form=form1></object>';
 var form1 = document.getElementById('form1');
 var form2 = document.getElementById('form2');
 inputElement = document.getElementById('inputElement');
@@ -86,10 +87,17 @@ shouldBe('inputElement.form', 'form1');
 inputElement.attributes['form'].value = 'form2';
 shouldBe('inputElement.form', 'form2');
 
+// HTMLObjectElement has its own implementation of formAttr processing and so needs its own test.
+objectElement = document.getElementById('objectElement');
+shouldBe('objectElement.form', 'form1');
+objectElement.attributes['form'].value = 'form2';
+shouldBe('objectElement.form', 'form2');
+
 debug('');
 debug('- Ensures whether the form owner is set correctly when the value of form attribute is added/removed.');
 container.innerHTML = '<form id=owner name=firstOwner></form>' +
-    '<input id=inputElement name=victim />';
+    '<input id=inputElement name=victim />' +
+    '<object id=objectElement name=victim></object>';
 owner = document.getElementById('owner');
 inputElement = document.getElementById('inputElement');
 shouldBe('inputElement.form', 'null');
@@ -98,6 +106,14 @@ inputElement.setAttribute('form', 'owner');
 shouldBe('inputElement.form', 'owner');
 inputElement.removeAttribute('form');
 shouldBe('inputElement.form', 'null');
+
+// HTMLObjectElement has its own implementation of formAttr processing and so needs its own test.
+objectElement = document.getElementById('objectElement');
+shouldBe('objectElement.form', 'null');
+objectElement.setAttribute('form', 'owner');
+shouldBe('objectElement.form', 'owner');
+objectElement.removeAttribute('form');
+shouldBe('objectElement.form', 'null');
 
 debug('');
 debug('- Ensures whether the form owner is set correctly when the form owner is added/removed.');

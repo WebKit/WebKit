@@ -34,11 +34,16 @@ PASS inputElement3.form is owner
 - Ensures whether the form owner is set correctly when the value of form attribute of a form-associated element changed.
 PASS inputElement.form is form1
 PASS inputElement.form is form2
+PASS objectElement.form is form1
+PASS objectElement.form is form2
 
 - Ensures whether the form owner is set correctly when the value of form attribute is added/removed.
 PASS inputElement.form is null
 PASS inputElement.form is owner
 PASS inputElement.form is null
+PASS objectElement.form is null
+PASS objectElement.form is owner
+PASS objectElement.form is null
 
 - Ensures whether the form owner is set correctly when the form owner is added/removed.
 PASS owner.name is "firstOwner"

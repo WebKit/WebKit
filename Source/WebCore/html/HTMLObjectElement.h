@@ -58,8 +58,6 @@ public:
     bool checkValidity() { return true; }
     void setCustomValidity(const String&) { }
 
-    virtual void attributeChanged(Attribute*, bool preserveDecls = false);
-
     using TreeShared<ContainerNode>::ref;
     using TreeShared<ContainerNode>::deref;
 
