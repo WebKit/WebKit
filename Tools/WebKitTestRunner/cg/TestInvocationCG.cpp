@@ -26,6 +26,7 @@
 #include "config.h"
 #include "TestInvocation.h"
 
+#include "PixelDumpSupport.h"
 #include "PlatformWebView.h"
 #include "TestController.h"
 #include <ImageIO/CGImageDestination.h>
@@ -99,7 +100,7 @@ void computeMD5HashStringForContext(CGContextRef bitmapContext, char hashString[
         snprintf(hashString, 33, "%s%02x", hashString, hash[i]);
 }
 
-static void dumpBitmap(CGContextRef bitmapContext)
+static void dumpBitmap(CGContextRef bitmapContext, const char* checksum)
 {
     RetainPtr<CGImageRef> image(AdoptCF, CGBitmapContextCreateImage(bitmapContext));
     RetainPtr<CFMutableDataRef> imageData(AdoptCF, CFDataCreateMutable(0, 0));
@@ -110,20 +111,7 @@ static void dumpBitmap(CGContextRef bitmapContext)
     const unsigned char* data = CFDataGetBytePtr(imageData.get());
     const size_t dataLength = CFDataGetLength(imageData.get());
 
-
-    fprintf(stdout, "Content-Type: %s\n", "image/png");
-    fprintf(stdout, "Content-Length: %lu\n", static_cast<unsigned long>(dataLength));
-    
-    const size_t bytesToWriteInOneChunk = 1 << 15;
-    size_t dataRemainingToWrite = dataLength;
-    while (dataRemainingToWrite) {
-        size_t bytesToWriteInThisChunk = std::min(dataRemainingToWrite, bytesToWriteInOneChunk);
-        size_t bytesWritten = fwrite(data, 1, bytesToWriteInThisChunk, stdout);
-        if (bytesWritten != bytesToWriteInThisChunk)
-            break;
-        dataRemainingToWrite -= bytesWritten;
-        data += bytesWritten;
-    }
+    printPNG(data, dataLength, checksum);
 }
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image)
@@ -133,7 +121,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef image)
     char actualHash[33];
     computeMD5HashStringForContext(context, actualHash);
     if (!compareActualHashToExpectedAndDumpResults(actualHash))
-        dumpBitmap(context);
+        dumpBitmap(context, actualHash);
 }
 
 } // namespace WTR

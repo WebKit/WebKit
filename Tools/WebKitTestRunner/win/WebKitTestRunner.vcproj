@@ -471,6 +471,22 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath="..\CyclicRedundancyCheck.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\CyclicRedundancyCheck.h"
+			>
+		</File>
+		<File
+			RelativePath="..\PixelDumpSupport.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\PixelDumpSupport.h"
+			>
+		</File>
+		<File
 			RelativePath="..\PlatformWebView.h"
 			>
 		</File>

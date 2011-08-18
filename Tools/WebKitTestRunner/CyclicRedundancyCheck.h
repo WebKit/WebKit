@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Robert Eisele <robert@xarg.org> All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,37 +28,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "CyclicRedundancyCheck.h"
+#ifndef CyclicRedundancyCheck_h
+#define CyclicRedundancyCheck_h
 
 #include <wtf/Vector.h>
 
-static void makeCrcTable(unsigned crcTable[256])
-{
-    for (unsigned i = 0; i < 256; i++) {
-        unsigned c = i;
-        for (int k = 0; k < 8; k++) {
-            if (c & 1)
-                c = -306674912 ^ ((c >> 1) & 0x7fffffff);
-            else
-                c = c >> 1;
-        }
-        crcTable[i] = c;
-    }
-}
+unsigned computeCrc(const Vector<unsigned char>&);
 
-unsigned computeCrc(const Vector<unsigned char>& buffer)
-{
-    static unsigned crcTable[256];
-    static bool crcTableComputed = false;
-    if (!crcTableComputed) {
-        makeCrcTable(crcTable);
-        crcTableComputed = true;
-    }
-
-    unsigned crc = 0xffffffffU;
-    for (size_t i = 0; i < buffer.size(); ++i)
-        crc = crcTable[(crc ^ buffer[i]) & 0xff] ^ ((crc >> 8) & 0x00ffffffU);
-    return crc ^ 0xffffffffU;
-}
-
+#endif

@@ -1,3 +1,27 @@
+2011-08-18  Tony Chang  <tony@chromium.org>
+
+        add embedded png checksums to WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=66494
+
+        Looks like WebKitTestRunner has never supported embedded checksums.  This copies
+        some code from DRT and adds it to the WebKitTestRunner.
+
+        Reviewed by Darin Adler.
+
+        * WebKitTestRunner/CyclicRedundancyCheck.cpp: Copied from Tools/DumpRenderTree
+        * WebKitTestRunner/CyclicRedundancyCheck.h: Copied from Tools/DumpRenderTree
+        * WebKitTestRunner/GNUmakefile.am: Add new files
+        * WebKitTestRunner/PixelDumpSupport.cpp: Copied from Tools/DumpRenderTree
+        * WebKitTestRunner/PixelDumpSupport.h: Copied from Tools/DumpRenderTree
+        * WebKitTestRunner/WebKitTestRunner.xcodeproj/project.pbxproj: Add new files
+        * WebKitTestRunner/cairo/TestInvocationCairo.cpp:
+        (WTR::dumpBitmap): Refactor to use PixelDumpSupport.
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        * WebKitTestRunner/cg/TestInvocationCG.cpp:
+        (WTR::dumpBitmap): Refactor to use PixelDumpSupport.
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        * WebKitTestRunner/win/WebKitTestRunner.vcproj: Add new files
+
 2011-08-18  Shawn Singh  <shawnsingh@chromium.org>
 
         https://bugs.webkit.org/show_bug.cgi?id=47240

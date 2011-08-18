@@ -28,6 +28,7 @@
 #include "config.h"
 #include "TestInvocation.h"
 
+#include "PixelDumpSupport.h"
 #include <WebKit2/WKImageCairo.h>
 #include <cairo/cairo.h>
 #include <cstdio>
@@ -66,26 +67,14 @@ static cairo_status_t writeFunction(void* closure, const unsigned char* data, un
     return CAIRO_STATUS_SUCCESS;
 }
 
-static void dumpBitmap(cairo_surface_t* surface)
+static void dumpBitmap(cairo_surface_t* surface, const char* checksum)
 {
     Vector<unsigned char> pixelData;
     cairo_surface_write_to_png_stream(surface, writeFunction, &pixelData);
     const size_t dataLength = pixelData.size();
     const unsigned char* data = pixelData.data();
 
-    printf("Content-Type: %s\n", "image/png");
-    printf("Content-Length: %lu\n", static_cast<unsigned long>(dataLength));
-
-    const size_t bytesToWriteInOneChunk = 1 << 15;
-    size_t dataRemainingToWrite = dataLength;
-    while (dataRemainingToWrite) {
-        size_t bytesToWriteInThisChunk = std::min(dataRemainingToWrite, bytesToWriteInOneChunk);
-        size_t bytesWritten = fwrite(data, 1, bytesToWriteInThisChunk, stdout);
-        if (bytesWritten != bytesToWriteInThisChunk)
-            break;
-        dataRemainingToWrite -= bytesWritten;
-        data += bytesWritten;
-    }
+    printPNG(data, dataLength, checksum);
 }
 
 void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage)
@@ -95,7 +84,7 @@ void TestInvocation::dumpPixelsAndCompareWithExpected(WKImageRef wkImage)
     char actualHash[33];
     computeMD5HashStringForCairoSurface(surface, actualHash);
     if (!compareActualHashToExpectedAndDumpResults(actualHash))
-        dumpBitmap(surface);
+        dumpBitmap(surface, actualHash);
 
     cairo_surface_destroy(surface);
 }

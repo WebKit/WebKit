@@ -13,6 +13,10 @@ Programs_WebKitTestRunner_SOURCES = \
 	Tools/WebKitTestRunner/gtk/PlatformWebViewGtk.cpp \
 	Tools/WebKitTestRunner/gtk/TestControllerGtk.cpp \
 	Tools/WebKitTestRunner/cairo/TestInvocationCairo.cpp \
+	Tools/WebKitTestRunner/CyclicRedundancyCheck.cpp \
+	Tools/WebKitTestRunner/CyclicRedundancyCheck.h \
+	Tools/WebKitTestRunner/PixelDumpSupport.cpp \
+	Tools/WebKitTestRunner/PixelDumpSupport.h \
 	Tools/WebKitTestRunner/PlatformWebView.h \
 	Tools/WebKitTestRunner/StringFunctions.h \
 	Tools/WebKitTestRunner/TestController.cpp \

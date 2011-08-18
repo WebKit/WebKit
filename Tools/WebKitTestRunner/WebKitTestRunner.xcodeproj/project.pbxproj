@@ -21,6 +21,8 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */; };
+		5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */; };
 		6510A78211EC643800410867 /* AHEM____.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77711EC643800410867 /* AHEM____.TTF */; };
 		6510A78311EC643800410867 /* ColorBits.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77811EC643800410867 /* ColorBits.ttf */; };
 		6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */; };
@@ -81,6 +83,10 @@
 		378D442213346D00006A777B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		41230E16138C78BF00BCCFCA /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
+		5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CyclicRedundancyCheck.cpp; sourceTree = "<group>"; };
+		5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyclicRedundancyCheck.h; sourceTree = "<group>"; };
+		5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PixelDumpSupport.cpp; sourceTree = "<group>"; };
+		5322FB4513FDA0EA0041ABCC /* PixelDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixelDumpSupport.h; sourceTree = "<group>"; };
 		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		6510A77811EC643800410867 /* ColorBits.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = ColorBits.ttf; path = fonts/ColorBits.ttf; sourceTree = "<group>"; };
 		6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
@@ -189,12 +195,16 @@
 			children = (
 				BC9192021333E4CD003011DC /* cg */,
 				BC7933FE118F7C74005EA8E2 /* mac */,
-				BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */,
+				5322FB4113FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp */,
+				5322FB4213FDA0CD0041ABCC /* CyclicRedundancyCheck.h */,
+				5322FB4413FDA0EA0041ABCC /* PixelDumpSupport.cpp */,
+				5322FB4513FDA0EA0041ABCC /* PixelDumpSupport.h */,
 				BC7934DD119066EC005EA8E2 /* PlatformWebView.h */,
 				BC79342F118F7F19005EA8E2 /* TestController.h */,
 				BC793430118F7F19005EA8E2 /* TestController.cpp */,
 				BCD7D2F611921278006DB7EE /* TestInvocation.h */,
 				BCD7D2F711921278006DB7EE /* TestInvocation.cpp */,
+				BC251A1711D16774002EBC01 /* WebKitTestRunnerPrefix.h */,
 			);
 			name = TestRunner;
 			sourceTree = "<group>";
@@ -453,10 +463,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC793400118F7C84005EA8E2 /* main.mm in Sources */,
-				BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */,
+				5322FB4313FDA0CD0041ABCC /* CyclicRedundancyCheck.cpp in Sources */,
+				5322FB4613FDA0EA0041ABCC /* PixelDumpSupport.cpp in Sources */,
 				BC7934E811906846005EA8E2 /* PlatformWebViewMac.mm in Sources */,
-				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
+				BC793431118F7F19005EA8E2 /* TestController.cpp in Sources */,
 				BC8C795C11D2785D004535A1 /* TestControllerMac.mm in Sources */,
+				BCD7D2F811921278006DB7EE /* TestInvocation.cpp in Sources */,
 				BC9192051333E4F8003011DC /* TestInvocationCG.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
