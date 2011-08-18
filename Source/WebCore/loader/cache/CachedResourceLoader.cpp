@@ -474,10 +474,10 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Reload;
     }
 
-    // Avoid loading the same resource multiple times for a single document, even if the cache policies would tell us to.
-    if (m_validatedURLs.contains(existingResource->url()))
+    // During the initial load, avoid loading the same resource multiple times for a single document, even if the cache policies would tell us to.
+    if (!document()->loadEventFinished() && m_validatedURLs.contains(existingResource->url()))
         return Use;
-    
+
     // CachePolicyReload always reloads
     if (cachePolicy() == CachePolicyReload) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to CachePolicyReload.");
