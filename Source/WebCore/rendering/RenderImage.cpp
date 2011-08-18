@@ -437,10 +437,11 @@ bool RenderImage::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if (tempResult.innerNode() && node()) {
         if (HTMLMapElement* map = imageMap()) {
             IntRect contentBox = contentBoxRect();
-            float zoom = style()->effectiveZoom();
-            LayoutUnit mapX = roundedLayoutUnit((pointInContainer.x() - accumulatedOffset.x() - this->x() - contentBox.x()) / zoom);
-            LayoutUnit mapY = roundedLayoutUnit((pointInContainer.y() - accumulatedOffset.y() - this->y() - contentBox.y()) / zoom);
-            if (map->mapMouseEvent(mapX, mapY, contentBox.size(), tempResult))
+            float scaleFactor = 1 / style()->effectiveZoom();
+            LayoutPoint mapLocation(pointInContainer.x() - accumulatedOffset.x() - this->x() - contentBox.x(), pointInContainer.y() - accumulatedOffset.y() - this->y() - contentBox.y());
+            mapLocation.scale(scaleFactor, scaleFactor);
+            
+            if (map->mapMouseEvent(mapLocation, contentBox.size(), tempResult))
                 tempResult.setInnerNonSharedNode(node());
         }
     }

@@ -52,7 +52,7 @@ public:
 
     void setPositionFromValue();
 
-    void dragFrom(const IntPoint&);
+    void dragFrom(const LayoutPoint&);
     virtual void defaultEventHandler(Event*);
     virtual void detach();
     virtual const AtomicString& shadowPseudoId() const;
@@ -67,7 +67,7 @@ private:
     virtual Node* focusDelegate();
     void startDragging();
     void stopDragging();
-    void setPositionFromPoint(const IntPoint&);
+    void setPositionFromPoint(const LayoutPoint&);
 
     bool m_inDragMode;
 };

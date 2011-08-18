@@ -122,7 +122,7 @@ const AtomicString& MediaControlPanelElement::shadowPseudoId() const
     return id;
 }
 
-void MediaControlPanelElement::startDrag(const IntPoint& eventLocation)
+void MediaControlPanelElement::startDrag(const LayoutPoint& eventLocation)
 {
     if (!m_canBeDragged)
         return;
@@ -146,12 +146,12 @@ void MediaControlPanelElement::startDrag(const IntPoint& eventLocation)
     m_isBeingDragged = true;
 }
 
-void MediaControlPanelElement::continueDrag(const IntPoint& eventLocation)
+void MediaControlPanelElement::continueDrag(const LayoutPoint& eventLocation)
 {
     if (!m_isBeingDragged)
         return;
 
-    IntSize distanceDragged = eventLocation - m_dragStartEventLocation;
+    LayoutSize distanceDragged = eventLocation - m_dragStartEventLocation;
     setPosition(m_dragStartPosition + distanceDragged);
 }
 
@@ -169,7 +169,7 @@ void MediaControlPanelElement::endDrag()
     frame->eventHandler()->setCapturingMouseEventsNode(0);
 }
 
-void MediaControlPanelElement::setPosition(const IntPoint& position)
+void MediaControlPanelElement::setPosition(const LayoutPoint& position)
 {
     CSSMutableStyleDeclaration* style = getInlineStyleDecl();
 
@@ -199,7 +199,7 @@ void MediaControlPanelElement::defaultEventHandler(Event* event)
     MediaControlElement::defaultEventHandler(event);
 
     if (event->isMouseEvent()) {
-        IntPoint location = static_cast<MouseEvent*>(event)->absoluteLocation();
+        LayoutPoint location = static_cast<MouseEvent*>(event)->absoluteLocation();
         if (event->type() == eventNames().mousedownEvent) {
             startDrag(location);
             event->setDefaultHandled();

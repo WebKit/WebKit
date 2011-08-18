@@ -27,7 +27,6 @@
 
 namespace WebCore {
 
-class IntSize;
 class HitTestResult;
 class HTMLImageElement;
     
@@ -39,7 +38,7 @@ public:
 
     const AtomicString& getName() const { return m_name; }
 
-    bool mapMouseEvent(int x, int y, const IntSize&, HitTestResult&);
+    bool mapMouseEvent(LayoutPoint location, const LayoutSize&, HitTestResult&);
     
     HTMLImageElement* imageElement();
     PassRefPtr<HTMLCollection> areas();

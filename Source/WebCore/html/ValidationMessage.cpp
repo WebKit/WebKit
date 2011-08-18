@@ -106,7 +106,7 @@ void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
     }
 }
 
-static void adjustBubblePosition(const IntRect& hostRect, HTMLElement* bubble)
+static void adjustBubblePosition(const LayoutRect& hostRect, HTMLElement* bubble)
 {
     ASSERT(bubble);
     if (hostRect.isEmpty())

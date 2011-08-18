@@ -108,16 +108,16 @@ private:
     virtual const AtomicString& shadowPseudoId() const;
     virtual void defaultEventHandler(Event*);
 
-    void startDrag(const IntPoint& eventLocation);
-    void continueDrag(const IntPoint& eventLocation);
+    void startDrag(const LayoutPoint& eventLocation);
+    void continueDrag(const LayoutPoint& eventLocation);
     void endDrag();
 
-    void setPosition(const IntPoint&);
+    void setPosition(const LayoutPoint&);
 
     bool m_canBeDragged;
     bool m_isBeingDragged;
-    IntPoint m_dragStartPosition;
-    IntPoint m_dragStartEventLocation;
+    LayoutPoint m_dragStartPosition;
+    LayoutPoint m_dragStartEventLocation;
 };
 
 // ----------------------------

@@ -58,7 +58,7 @@ HTMLMapElement::~HTMLMapElement()
 {
 }
 
-bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& result)
+bool HTMLMapElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size, HitTestResult& result)
 {
     HTMLAreaElement* defaultArea = 0;
     Node *node = this;
@@ -68,7 +68,7 @@ bool HTMLMapElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestRes
             if (areaElt->isDefault()) {
                 if (!defaultArea)
                     defaultArea = areaElt;
-            } else if (areaElt->mapMouseEvent(x, y, size, result))
+            } else if (areaElt->mapMouseEvent(location, size, result))
                 return true;
         }
     }

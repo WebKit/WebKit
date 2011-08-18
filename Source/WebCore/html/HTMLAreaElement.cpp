@@ -75,17 +75,17 @@ void HTMLAreaElement::parseMappedAttribute(Attribute* attr)
 
 void HTMLAreaElement::invalidateCachedRegion()
 {
-    m_lastSize = IntSize(-1, -1);
+    m_lastSize = LayoutSize(-1, -1);
 }
 
-bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& result)
+bool HTMLAreaElement::mapMouseEvent(LayoutPoint location, const LayoutSize& size, HitTestResult& result)
 {
     if (m_lastSize != size) {
         m_region = adoptPtr(new Path(getRegion(size)));
         m_lastSize = size;
     }
 
-    if (!m_region->contains(IntPoint(x, y)))
+    if (!m_region->contains(location))
         return false;
     
     result.setInnerNode(this);
@@ -102,7 +102,7 @@ Path HTMLAreaElement::computePath(RenderObject* obj) const
     FloatPoint absPos = obj->localToAbsolute();
 
     // Default should default to the size of the containing object.
-    IntSize size = m_lastSize;
+    LayoutSize size = m_lastSize;
     if (m_shape == Default)
         size = obj->absoluteOutlineBounds().size();
     
@@ -118,18 +118,18 @@ Path HTMLAreaElement::computePath(RenderObject* obj) const
     return p;
 }
     
-IntRect HTMLAreaElement::computeRect(RenderObject* obj) const
+LayoutRect HTMLAreaElement::computeRect(RenderObject* obj) const
 {
-    return enclosingIntRect(computePath(obj).boundingRect());
+    return enclosingLayoutRect(computePath(obj).boundingRect());
 }
 
-Path HTMLAreaElement::getRegion(const IntSize& size) const
+Path HTMLAreaElement::getRegion(const LayoutSize& size) const
 {
     if (!m_coords && m_shape != Default)
         return Path();
 
-    int width = size.width();
-    int height = size.height();
+    LayoutUnit width = size.width();
+    LayoutUnit height = size.height();
 
     // If element omits the shape attribute, select shape based on number of coordinates.
     Shape shape = m_shape;

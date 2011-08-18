@@ -97,7 +97,7 @@ public:
     // Used for rendering
     void didDraw(const FloatRect&);
 
-    void paint(GraphicsContext*, const IntRect&, bool useLowQualityScale = false);
+    void paint(GraphicsContext*, const LayoutRect&, bool useLowQualityScale = false);
 
     GraphicsContext* drawingContext() const;
     GraphicsContext* existingDrawingContext() const;

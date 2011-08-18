@@ -264,7 +264,7 @@ void HTMLCanvasElement::reset()
         (*it)->canvasResized(this);
 }
 
-void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r, bool useLowQualityScale)
+void HTMLCanvasElement::paint(GraphicsContext* context, const LayoutRect& r, bool useLowQualityScale)
 {
     // Clear the dirty rect
     m_dirtyRect = FloatRect();

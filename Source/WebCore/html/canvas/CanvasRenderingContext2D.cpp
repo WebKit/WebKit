@@ -1185,7 +1185,7 @@ void CanvasRenderingContext2D::applyShadow()
     c->setLegacyShadow(FloatSize(width, -height), state().m_shadowBlur, state().m_shadowColor, ColorSpaceDeviceRGB);
 }
 
-static IntSize size(HTMLImageElement* image)
+static LayoutSize size(HTMLImageElement* image)
 {
     if (CachedImage* cachedImage = image->cachedImage())
         return cachedImage->imageSize(1.0f); // FIXME: Not sure about this.
@@ -1215,7 +1215,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, float x, float
         ec = TYPE_MISMATCH_ERR;
         return;
     }
-    IntSize s = size(image);
+    LayoutSize s = size(image);
     drawImage(image, x, y, s.width(), s.height(), ec);
 }
 
@@ -1226,7 +1226,7 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image,
         ec = TYPE_MISMATCH_ERR;
         return;
     }
-    IntSize s = size(image);
+    LayoutSize s = size(image);
     drawImage(image, FloatRect(0, 0, s.width(), s.height()), FloatRect(x, y, width, height), ec);
 }
 

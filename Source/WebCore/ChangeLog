@@ -1,3 +1,51 @@
+2011-08-17  Emil A Eklund  <eae@chromium.org>
+
+        Switch html/* to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66347
+
+        Reviewed by Eric Seidel.
+
+        Convert HTML* and shadow element to new layout abstraction as a part of
+        the ongoing conversion work.
+
+        No new tests, no new functionality.
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::invalidateCachedRegion):
+        (WebCore::HTMLAreaElement::mapMouseEvent):
+        (WebCore::HTMLAreaElement::computePath):
+        (WebCore::HTMLAreaElement::computeRect):
+        (WebCore::HTMLAreaElement::getRegion):
+        * html/HTMLAreaElement.h:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLMapElement.cpp:
+        (WebCore::HTMLMapElement::mapMouseEvent):
+        * html/HTMLMapElement.h:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::finish):
+        (WebCore::ImageDocument::scale):
+        (WebCore::ImageDocument::resizeImageToFit):
+        (WebCore::ImageDocument::imageFitsInWindow):
+        * html/ValidationMessage.cpp:
+        (WebCore::adjustBubblePosition):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::size):
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::startDrag):
+        (WebCore::MediaControlPanelElement::continueDrag):
+        (WebCore::MediaControlPanelElement::setPosition):
+        (WebCore::MediaControlPanelElement::defaultEventHandler):
+        * html/shadow/MediaControlElements.h:
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::dragFrom):
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+        * html/shadow/SliderThumbElement.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint):
+
 2011-08-17  David Grogan  <dgrogan@chromium.org>
 
         Change references to leveldb.gyp to leveldatabase.gyp as part of the

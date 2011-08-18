@@ -195,29 +195,29 @@ Node* SliderThumbElement::focusDelegate()
     return hostInput();
 }
 
-void SliderThumbElement::dragFrom(const IntPoint& point)
+void SliderThumbElement::dragFrom(const LayoutPoint& point)
 {
     setPositionFromPoint(point);
     startDragging();
 }
 
-void SliderThumbElement::setPositionFromPoint(const IntPoint& point)
+void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
 {
     HTMLInputElement* input = hostInput();
 
     if (!input->renderer() || !renderer())
         return;
 
-    IntPoint offset = roundedIntPoint(input->renderer()->absoluteToLocal(point, false, true));
+    LayoutPoint offset = roundedLayoutPoint(input->renderer()->absoluteToLocal(point, false, true));
     bool isVertical = hasVerticalAppearance(input);
-    int trackSize;
-    int position;
-    int currentPosition;
+    LayoutUnit trackSize;
+    LayoutUnit position;
+    LayoutUnit currentPosition;
     // We need to calculate currentPosition from absolute points becaue the
     // renderer for this node is usually on a layer and renderBox()->x() and
     // y() are unusable.
-    IntPoint absoluteThumbOrigin = renderBox()->absoluteBoundingBoxRect().location();
-    IntPoint absoluteSliderContentOrigin = roundedIntPoint(input->renderer()->localToAbsolute());
+    LayoutPoint absoluteThumbOrigin = renderBox()->absoluteBoundingBoxRect().location();
+    LayoutPoint absoluteSliderContentOrigin = roundedLayoutPoint(input->renderer()->localToAbsolute());
     if (isVertical) {
         trackSize = input->renderBox()->contentHeight() - renderBox()->height();
         position = offset.y() - renderBox()->height() / 2;
@@ -227,7 +227,7 @@ void SliderThumbElement::setPositionFromPoint(const IntPoint& point)
         position = offset.x() - renderBox()->width() / 2;
         currentPosition = absoluteThumbOrigin.x() - absoluteSliderContentOrigin.x();
     }
-    position = max(0, min(position, trackSize));
+    position = max<LayoutUnit>(0, min(position, trackSize));
     if (position == currentPosition)
         return;
 
