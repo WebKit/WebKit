@@ -1,3 +1,12 @@
+2011-08-18  Tony Chang  <tony@chromium.org>
+
+        [chromium] Mark editing/selection/regional-indicators.html as timing
+        out on Linux debug and rebaseline 2 tests.
+
+        * platform/chromium-win/fast/frames/frame-set-scaling-rotate-expected.png: Added.
+        * platform/chromium-win/fast/frames/frame-set-scaling-skew-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         positionForPoint returns wrong VisiblePosition at bidi boundaries

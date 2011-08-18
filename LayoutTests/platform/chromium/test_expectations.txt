@@ -3693,6 +3693,4 @@ BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-re
 // Started failing after r93237.
 BUGVITALYR LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT TIMEOUT
 
-// Just need to rebaseline.
-BUGTONY LINUX WIN : fast/frames/frame-set-scaling-rotate.html = IMAGE
-BUGTONY LINUX WIN : fast/frames/frame-set-scaling-skew.html = IMAGE
+BUGWK66510 LINUX DEBUG : editing/selection/regional-indicators.html = TIMEOUT
