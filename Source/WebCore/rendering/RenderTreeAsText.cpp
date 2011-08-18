@@ -647,6 +647,51 @@ static void write(TextStream& ts, RenderLayer& l,
         write(ts, *l.renderer(), indent + 1, behavior);
 }
 
+static void writeRenderFlowThreads(TextStream& ts, RenderView* renderView, const RenderLayer* rootLayer,
+                        const IntRect& paintRect, int indent, RenderAsTextBehavior behavior)
+{
+    const RenderFlowThreadList* list = renderView->renderFlowThreadList();
+    if (!list || list->isEmpty())
+        return;
+
+    writeIndent(ts, indent);
+    ts << "Flow Threads\n";
+
+    for (RenderFlowThreadList::const_iterator iter = list->begin(); iter != list->end(); ++iter) {
+        const RenderFlowThread* renderFlowThread = *iter;
+
+        writeIndent(ts, indent + 1);
+        ts << "Thread with flow-name '" << renderFlowThread->flowThread() << "'\n";
+
+        RenderLayer* layer = renderFlowThread->layer();
+        writeLayers(ts, rootLayer, layer, paintRect, indent + 2, behavior);
+
+        // Display the render regions attached to this flow thread
+        const RenderRegionList& flowThreadRegionList = renderFlowThread->renderRegionList();
+        if (!flowThreadRegionList.isEmpty()) {
+            writeIndent(ts, indent + 1);
+            ts << "Regions for flow '"<< renderFlowThread->flowThread() << "'\n";
+            for (RenderRegionList::const_iterator itRR = flowThreadRegionList.begin(); itRR != flowThreadRegionList.end(); ++itRR) {
+                RenderRegion* renderRegion = *itRR;
+                writeIndent(ts, indent + 2);
+                ts << "RenderRegion";
+                if (renderRegion->node()) {
+                    String tagName = getTagName(renderRegion->node());
+                    if (!tagName.isEmpty())
+                        ts << " {" << tagName << "}";
+                    if (renderRegion->node()->isElementNode() && renderRegion->node()->hasID()) {
+                        Element* element = static_cast<Element*>(renderRegion->node());
+                        ts << " #" << element->idForStyleResolution();
+                    }
+                }
+                if (!renderRegion->isValid())
+                    ts << " invalid";
+                ts << " with index " << renderRegion->style()->regionIndex() << "\n";
+            }
+        }
+    }
+}
+
 static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLayer* l,
                         const IntRect& paintRect, int indent, RenderAsTextBehavior behavior)
 {
@@ -710,42 +755,9 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     
     // Altough the RenderFlowThread requires a layer, it is not collected by its parent,
     // so we have to treat it as a special case.
-    bool firstRenderFlowThread = true;
-    for (RenderObject* child = l->renderer()->firstChild(); child; child = child->nextSibling()) {
-        if (child->isRenderFlowThread()) {
-            if (firstRenderFlowThread) {
-                firstRenderFlowThread = false;
-                writeIndent(ts, indent);
-                ts << "Flow Threads\n";
-            }
-            const RenderFlowThread* renderFlowThread = toRenderFlowThread(child);
-            writeIndent(ts, indent + 1);
-            ts << "Thread with flow-name '" << renderFlowThread->flowThread() << "'\n";
-            RenderLayer* layer = renderFlowThread->layer();
-            writeLayers(ts, rootLayer, layer, paintDirtyRect, indent + 2, behavior);
-
-            // Display the render regions attached to this flow thread
-            const RenderRegionList& flowThreadRegionList = renderFlowThread->renderRegionList();
-            if (!flowThreadRegionList.isEmpty()) {
-                writeIndent(ts, indent + 1);
-                ts << "Regions for flow '"<< renderFlowThread->flowThread() << "'\n";
-                for (RenderRegionList::const_iterator itRR = flowThreadRegionList.begin(); itRR != flowThreadRegionList.end(); ++itRR) {
-                    RenderRegion* renderRegion = *itRR;
-                    writeIndent(ts, indent + 2);
-                    ts << "RenderRegion";
-                    if (renderRegion->node()) {
-                        String tagName = getTagName(renderRegion->node());
-                        if (!tagName.isEmpty())
-                            ts << " {" << tagName << "}";
-                        if (renderRegion->node()->isElementNode() && renderRegion->node()->hasID()) {
-                            Element* element = static_cast<Element*>(renderRegion->node());
-                            ts << " #" << element->idForStyleResolution();
-                        }
-                    }
-                    ts << " with index " << renderRegion->style()->regionIndex() << "\n";
-                }
-            }
-        }
+    if (l->renderer()->isRenderView()) {
+        RenderView* renderView = toRenderView(l->renderer());
+        writeRenderFlowThreads(ts, renderView, rootLayer, paintDirtyRect, indent, behavior);
     }
 }
 

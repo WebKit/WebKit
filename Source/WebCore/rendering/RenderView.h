@@ -25,6 +25,7 @@
 #include "FrameView.h"
 #include "LayoutState.h"
 #include "RenderBlock.h"
+#include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -35,6 +36,8 @@ class RenderWidget;
 #if USE(ACCELERATED_COMPOSITING)
 class RenderLayerCompositor;
 #endif
+
+typedef ListHashSet<RenderFlowThread*> RenderFlowThreadList;
 
 class RenderView : public RenderBlock {
 public:
@@ -167,7 +170,16 @@ public:
     IntRect documentRect() const;
 
     RenderFlowThread* renderFlowThreadWithName(const AtomicString& flowThread);
-    bool hasRenderFlowThreads() const { return m_hasRenderFlowThreads; }
+    bool hasRenderFlowThreads() const { return m_renderFlowThreadList && !m_renderFlowThreadList->isEmpty(); }
+    void layoutRenderFlowThreads();
+    bool isRenderFlowThreadOrderDirty() const { return m_isRenderFlowThreadOrderDirty; }
+    void setIsRenderFlowThreadOrderDirty(bool dirty)
+    {
+        m_isRenderFlowThreadOrderDirty = dirty;
+        if (dirty)
+            setNeedsLayout(true);
+    }
+    const RenderFlowThreadList* renderFlowThreadList() const { return m_renderFlowThreadList.get(); }
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     
@@ -246,12 +258,13 @@ protected:
 private:
     unsigned m_pageLogicalHeight;
     bool m_pageLogicalHeightChanged;
-    bool m_hasRenderFlowThreads;
+    bool m_isRenderFlowThreadOrderDirty;
     LayoutState* m_layoutState;
     unsigned m_layoutStateDisableCount;
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerCompositor> m_compositor;
 #endif
+    OwnPtr<RenderFlowThreadList> m_renderFlowThreadList;
 };
 
 inline RenderView* toRenderView(RenderObject* object)

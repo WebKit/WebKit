@@ -1,3 +1,15 @@
+2011-08-18  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] RenderRegion should not reference a parent RenderFlowThread
+        https://bugs.webkit.org/show_bug.cgi?id=66142
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/flows-dependency-dynamic-remove-expected.txt: Added.
+        * fast/regions/flows-dependency-dynamic-remove.html: Added.
+        * fast/regions/flows-dependency-same-flow-expected.txt: Added.
+        * fast/regions/flows-dependency-same-flow.html: Added.
+
 2011-08-18  Vitaly Repeshko  <vitalyr@chromium.org>
 
         [chromium] Updating test expectations.

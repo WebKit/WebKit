@@ -37,6 +37,7 @@
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderQuote.h"
+#include "RenderRegion.h"
 #include "RenderStyle.h"
 #include "RenderTextFragment.h"
 #include "RenderView.h"
@@ -100,6 +101,9 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
 
         if (oldChild->isPositioned() && owner->childrenInline())
             owner->dirtyLinesFromChangedChild(oldChild);
+
+        if (oldChild->isRenderRegion())
+            toRenderRegion(oldChild)->detachRegion();
 
 #if ENABLE(SVG)
         // Update cached boundaries in SVG renderers, if a child is removed.
@@ -177,6 +181,9 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
 
         if (!newChild->isFloatingOrPositioned() && owner->childrenInline())
             owner->dirtyLinesFromChangedChild(newChild);
+
+        if (newChild->isRenderRegion())
+            toRenderRegion(newChild)->attachRegion();
     }
     RenderCounter::rendererSubtreeAttached(newChild);
     RenderQuote::rendererSubtreeAttached(newChild);

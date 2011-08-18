@@ -3141,6 +3141,9 @@ LayoutUnit RenderBlock::logicalRightSelectionOffset(RenderBlock* rootBlock, Layo
 
 void RenderBlock::insertPositionedObject(RenderBox* o)
 {
+    if (o->isRenderFlowThread())
+        return;
+    
     // Create the list of special objects if we don't aleady have one
     if (!m_positionedObjects)
         m_positionedObjects = adoptPtr(new PositionedObjectsListHashSet);

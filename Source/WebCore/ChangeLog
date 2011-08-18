@@ -1,3 +1,68 @@
+2011-08-18  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] RenderRegion should not reference a parent RenderFlowThread
+        https://bugs.webkit.org/show_bug.cgi?id=66142
+
+        Added code that checks the parent RenderFlowThread of a RenderRegion and creates
+        a dependency for its referenced RenderFlowThread (from CSS style).
+
+        There are two cases:
+        1. A RenderRegion tries to display the flow thread that laid it out. In this case
+        the region will be ignored and will not participate in the flow threads regions list.
+        2. A RenderRegion tries to display a flow thread that contains another region that
+        tries to display the first region's flow thread. This one can be generalized with any
+        number of intermediate flow threads. In this case the recursion is detected and only the
+        first added region will actually be selected. The other region will be ignored. However,
+        when the recursion is removed the invalid regions will be recovered.
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/regions/flows-dependency-dynamic-remove.html
+               fast/regions/flows-dependency-same-flow.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::insertPositionedObject):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::dependsOn):
+        (WebCore::RenderFlowThread::addRegionToThread):
+        (WebCore::RenderFlowThread::removeRegionFromThread):
+        (WebCore::RenderFlowThread::checkInvalidRegions):
+        (WebCore::RenderFlowThread::addDependencyOnFlowThread):
+        (WebCore::RenderFlowThread::removeDependencyOnFlowThread):
+        (WebCore::RenderFlowThread::pushDependencies):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::computeLogicalWidth):
+        (WebCore::RenderFlowThread::computeLogicalHeight):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode):
+        (WebCore::RenderObjectChildList::appendChildNode):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::RenderRegion):
+        (WebCore::RenderRegion::~RenderRegion):
+        (WebCore::RenderRegion::paintReplaced):
+        (WebCore::RenderRegion::nodeAtPoint):
+        (WebCore::RenderRegion::attachRegion):
+        (WebCore::RenderRegion::detachRegion):
+        * rendering/RenderRegion.h:
+        (WebCore::RenderRegion::parentFlowThread):
+        (WebCore::RenderRegion::isValid):
+        (WebCore::RenderRegion::setIsValid):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeRenderFlowThreads):
+        (WebCore::writeLayers):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        (WebCore::RenderView::layout):
+        (WebCore::RenderView::renderFlowThreadWithName):
+        (WebCore::RenderView::layoutRenderFlowThreads):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::hasRenderFlowThreads):
+        (WebCore::RenderView::isRenderFlowThreadOrderDirty):
+        (WebCore::RenderView::setIsRenderFlowThreadOrderDirty):
+        (WebCore::RenderView::renderFlowThreadList):
+
 2011-08-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: add UISourceCode class.

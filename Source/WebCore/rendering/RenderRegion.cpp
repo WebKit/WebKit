@@ -42,20 +42,19 @@ namespace WebCore {
 RenderRegion::RenderRegion(Node* node, RenderFlowThread* flowThread)
     : RenderReplaced(node, IntSize())
     , m_flowThread(flowThread)
+    , m_parentFlowThread(0)
+    , m_isValid(false)
 {
 }
 
 RenderRegion::~RenderRegion()
 {
-    if (m_flowThread && view())
-        m_flowThread->removeRegionFromThread(this);
-    m_flowThread = 0;
 }
 
 void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // Delegate painting of content in region to RenderFlowThread.
-    if (!m_flowThread)
+    if (!m_flowThread || !isValid())
         return;
     m_flowThread->paintIntoRegion(paintInfo, regionRect(), LayoutPoint(paintOffset.x() + borderLeft() + paddingLeft(), paintOffset.y() + borderTop() + paddingTop()));
 }
@@ -63,6 +62,9 @@ void RenderRegion::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintO
 // Hit Testing
 bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset, HitTestAction action)
 {
+    if (!isValid())
+        return false;
+
     LayoutPoint adjustedLocation = accumulatedOffset + location();
 
     // Check our bounds next. For this purpose always assume that we can only be hit in the
@@ -80,14 +82,36 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return false;
 }
 
-void RenderRegion::styleDidChange(StyleDifference difference, const RenderStyle* oldStyle)
+void RenderRegion::attachRegion()
 {
-    RenderReplaced::styleDidChange(difference, oldStyle);
+    if (!m_flowThread)
+        return;
 
-    // This needs to be done here and not in the constructor, because RenderFlowThread 
-    // uses the style() property which is not yet initialized in the constructor.
-    if (!oldStyle && m_flowThread)
-        m_flowThread->addRegionToThread(this);
+    // By now the flow thread should already be added to the rendering tree,
+    // so we go up the rendering parents and check that this region is not part of the same
+    // flow that it actually needs to display. It would create a circular reference.
+    RenderObject* parentObject = parent();
+    m_parentFlowThread = 0;
+    for ( ; parentObject; parentObject = parentObject->parent()) {
+        if (parentObject->isRenderFlowThread()) {
+            m_parentFlowThread = toRenderFlowThread(parentObject);
+            // Do not take into account a region that links a flow with itself. The dependency
+            // cannot change, so it is not worth adding it to the list.
+            if (m_flowThread == m_parentFlowThread) {
+                m_flowThread = 0;
+                return;
+            }
+            break;
+        }
+    }
+
+    m_flowThread->addRegionToThread(this);
+}
+
+void RenderRegion::detachRegion()
+{
+    if (m_flowThread)
+        m_flowThread->removeRegionFromThread(this);
 }
 
 } // namespace WebCore

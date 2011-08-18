@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+
+<style>
+.flowA { -webkit-flow: 'flowA'; }
+.flowB { -webkit-flow: 'flowB'; }
+.flowC { -webkit-flow: 'flowC'; }
+
+.regionFlowA { content: -webkit-from-flow('flowA'); }
+.regionFlowB { content: -webkit-from-flow('flowB'); }
+.regionFlowC { content: -webkit-from-flow('flowC'); }
+
+.index1 { -webkit-content-order: 1; }
+.index2 { -webkit-content-order: 2; }
+.index3 { -webkit-content-order: 3; }
+</style>
+
+<div class="flowA">
+    <!-- The following region should be ignored. Direct circular reference. -->
+    <div class="regionFlowA index1"></div>
+</div>
+
+<div class="flowB">
+    <div class="regionFlowC index1"></div>
+    <!-- The following region should be ignored. Direct circular reference. -->
+    <div class="flowC regionFlowC index2"></div>
+</div>
+
+<div class="flowC">
+    <!-- The following region should be invalid. Circular reference through flowB which already has created a link to this flow
+         through the "regionFlowC index1" region. -->
+    <div class="regionFlowB index1"></div>
+    <div class="regionFlowA index2"></div>
+</div>
+
+<!-- Force the creation of the flows. In the future we might avoid creating flows if there are no reachable regions. -->
+<div class="regionFlowA index3"></div>
+<div class="regionFlowB index2"></div>
+<div class="regionFlowC index3"></div>

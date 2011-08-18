@@ -32,6 +32,7 @@
 
 
 #include "RenderBlock.h"
+#include <wtf/HashCountedSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/UnusedParam.h>
@@ -39,9 +40,12 @@
 
 namespace WebCore {
 
+class RenderFlowThread;
 class RenderStyle;
 class RenderRegion;
 
+typedef ListHashSet<RenderFlowThread*> RenderFlowThreadList;
+typedef HashCountedSet<RenderFlowThread*> RenderFlowThreadCountedSet;
 typedef ListHashSet<RenderRegion*> RenderRegionList;
 
 // RenderFlowThread is used to collect all the render objects that participate in a
@@ -88,16 +92,34 @@ public:
 
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
+    void pushDependencies(RenderFlowThreadList&);
+
     void repaintRectangleInRegions(const LayoutRect&, bool immediate);
 
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
+
+    bool dependsOn(RenderFlowThread* otherRenderFlowThread) const;
+    void addDependencyOnFlowThread(RenderFlowThread*);
+    void removeDependencyOnFlowThread(RenderFlowThread*);
+    void checkInvalidRegions();
 
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;
 
     AtomicString m_flowThread;
     RenderRegionList m_regionList;
+
+    // Observer flow threads have invalid regions that depend on the state of this thread
+    // to re-validate their regions. Keeping a set of observer threads make it easy
+    // to notify them when a region was removed from this flow.
+    RenderFlowThreadCountedSet m_observerThreadsSet;
+
+    // Some threads need to have a complete layout before we layout this flow.
+    // That's because they contain a RenderRegion that should display this thread. The set makes it
+    // easy to sort the order of threads layout.
+    RenderFlowThreadCountedSet m_layoutBeforeThreadsSet;
+
     bool m_regionsInvalidated;
 };
 

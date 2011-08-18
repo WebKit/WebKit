@@ -52,7 +52,7 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_maximalOutlineSize(0)
     , m_pageLogicalHeight(0)
     , m_pageLogicalHeightChanged(false)
-    , m_hasRenderFlowThreads(false)
+    , m_isRenderFlowThreadOrderDirty(false)
     , m_layoutState(0)
     , m_layoutStateDisableCount(0)
 {
@@ -128,8 +128,11 @@ void RenderView::layout()
     m_pageLogicalHeightChanged = false;
     m_layoutState = &state;
 
-    if (needsLayout())
+    if (needsLayout()) {
         RenderBlock::layout();
+        if (hasRenderFlowThreads())
+            layoutRenderFlowThreads();
+    }
 
     ASSERT(layoutDelta() == LayoutSize());
     ASSERT(m_layoutStateDisableCount == 0);
@@ -808,9 +811,11 @@ void RenderView::styleDidChange(StyleDifference diff, const RenderStyle* oldStyl
 
 RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowThread)
 {
-    for (RenderObject* renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
-        if (renderer->isRenderFlowThread()) {
-            RenderFlowThread* flowRenderer = toRenderFlowThread(renderer);
+    if (!m_renderFlowThreadList)
+        m_renderFlowThreadList = adoptPtr(new RenderFlowThreadList());
+    else {
+        for (RenderFlowThreadList::iterator iter = m_renderFlowThreadList->begin(); iter != m_renderFlowThreadList->end(); ++iter) {
+            RenderFlowThread* flowRenderer = *iter;
             if (flowRenderer->flowThread() == flowThread)
                 return flowRenderer;
         }
@@ -819,8 +824,35 @@ RenderFlowThread* RenderView::renderFlowThreadWithName(const AtomicString& flowT
     RenderFlowThread* flowRenderer = new (renderArena()) RenderFlowThread(document(), flowThread);
     flowRenderer->setStyle(RenderFlowThread::createFlowThreadStyle(style()));
     addChild(flowRenderer);
-    m_hasRenderFlowThreads = true;
+    
+    m_renderFlowThreadList->add(flowRenderer);
+    setIsRenderFlowThreadOrderDirty(true);
+
     return flowRenderer;
+}
+
+void RenderView::layoutRenderFlowThreads()
+{
+    ASSERT(m_renderFlowThreadList);
+
+    if (isRenderFlowThreadOrderDirty()) {
+        // Arrange the thread list according to dependencies.
+        RenderFlowThreadList sortedList;
+        for (RenderFlowThreadList::iterator iter = m_renderFlowThreadList->begin(); iter != m_renderFlowThreadList->end(); ++iter) {
+            RenderFlowThread* flowRenderer = *iter;
+            if (sortedList.contains(flowRenderer))
+                continue;
+            flowRenderer->pushDependencies(sortedList);
+            sortedList.add(flowRenderer);
+        }
+        m_renderFlowThreadList->swap(sortedList);
+        setIsRenderFlowThreadOrderDirty(false);
+    }
+
+    for (RenderFlowThreadList::iterator iter = m_renderFlowThreadList->begin(); iter != m_renderFlowThreadList->end(); ++iter) {
+        RenderFlowThread* flowRenderer = *iter;
+        flowRenderer->layoutIfNeeded();
+    }
 }
 
 } // namespace WebCore

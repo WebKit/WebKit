@@ -49,13 +49,27 @@ public:
     void setRegionRect(const IntRect& rect) { m_regionRect = rect; }
     IntRect regionRect() const { return m_regionRect; }
 
+    void attachRegion();
+    void detachRegion();
+
+    RenderFlowThread* parentFlowThread() const { return m_parentFlowThread; }
+
+    // Valid regions do not create circular dependencies with other flows.
+    bool isValid() const { return m_isValid; }
+    void setIsValid(bool valid) { m_isValid = valid; }
+
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 
-    void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
     RenderFlowThread* m_flowThread;
+
+    // If this RenderRegion is displayed as part of another flow,
+    // we need to create a dependency tree, so that layout of the
+    // regions is always done before the regions themselves.
+    RenderFlowThread* m_parentFlowThread;
     IntRect m_regionRect;
+
+    bool m_isValid;
 };
 
 inline RenderRegion* toRenderRegion(RenderObject* object)
