@@ -1,3 +1,29 @@
+2011-08-18  Wyatt Carss  <wcarss@chromium.org>
+
+        Selecting all and inserting text into a page with a frameset leads to a NULL ptr
+        https://bugs.webkit.org/show_bug.cgi?id=66288
+
+        Reviewed by Tony Chang.
+
+        VisibleSelection returns a NoSelection to InsertTextCommand::doApply as
+        a new endingSelection, which isn't a sane state to be in. The code
+        tries to get a position on a higher node for a better selection, but
+        cannot go above the frameset (which exists in place of the body tag),
+        which lacks a renderer, and therefore cannot have a non-NoSelection
+        VisibleSelection.
+
+        Because this is a rare corner case, it seemed more reasonable to bail
+        out in this circumstance than to change the way VisibleSelection
+        canonicalization works. The new behavior is to delete the content, but
+        insert nothing. I investigated the possibility of trying to move above
+        or below the frameset in this particular case, but there still isn't a
+        renderer, so it didn't prevent the crash.
+
+        Test: editing/inserting/insert-text-into-empty-frameset-crash.html
+
+        * editing/InsertTextCommand.cpp:
+        (WebCore::InsertTextCommand::doApply):
+
 2011-08-18  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Remove arguments from CloseEvent::create().

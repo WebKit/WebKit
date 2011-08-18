@@ -1,3 +1,16 @@
+2011-08-18  Wyatt Carss  <wcarss@chromium.org>
+
+        Selecting all and inserting text into a page with a frameset leads to a NULL ptr
+        https://bugs.webkit.org/show_bug.cgi?id=66288
+
+        This test selects all and inserts text in a page which contains a frameset.
+        It tests for a crash caused by a NULL ptr which can occur in InsertText::doApply.
+
+        Reviewed by Tony Chang.
+
+        * editing/inserting/insert-text-into-empty-frameset-crash-expected.txt: Added.
+        * editing/inserting/insert-text-into-empty-frameset-crash.html: Added.
+
 2011-08-18  Renata Hodovan  <reni@webkit.org>
 
         [Qt] Correct the path in the Skipped list after 93283.
