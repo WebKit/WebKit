@@ -1267,10 +1267,10 @@
         }],
         ['"ENABLE_LEVELDB=1" in feature_defines', {
           'dependencies': [
-            '<(chromium_src_dir)/third_party/leveldb/leveldb.gyp:leveldb',
+            '<(chromium_src_dir)/third_party/leveldatabase/leveldatabase.gyp:leveldatabase',
           ],
           'export_dependent_settings': [
-            '<(chromium_src_dir)/third_party/leveldb/leveldb.gyp:leveldb',
+            '<(chromium_src_dir)/third_party/leveldatabase/leveldatabase.gyp:leveldatabase',
           ],
         }],
       ],
