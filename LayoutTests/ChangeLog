@@ -1,5 +1,12 @@
 2011-08-18  Tony Chang  <tony@chromium.org>
 
+        Update chromium gpu expected results after r93275.
+
+        * platform/chromium-gpu-win/fast/canvas/canvas-composite-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-18  Tony Chang  <tony@chromium.org>
+
         Update baselines for mac and win after test changes/fixes in r93275.
 
         * platform/chromium-cg-mac/fast/canvas/canvas-composite-expected.png:
