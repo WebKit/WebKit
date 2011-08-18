@@ -58,7 +58,7 @@ GtkMenu* WebContextMenuProxyGtk::createGtkMenu(const Vector<WebContextMenuItemDa
         ContextMenuItem menuItem(item.type(), item.action(), item.title(), item.enabled(), item.checked());
         GtkAction* action = menuItem.gtkAction();
 
-        if (action) {
+        if (action && (item.type() == WebCore::ActionType || item.type() == WebCore::CheckableActionType)) {
             g_object_set_data(G_OBJECT(action), gContextMenuActionId, GINT_TO_POINTER(item.action()));
             g_signal_connect(action, "activate", G_CALLBACK(contextMenuItemActivatedCallback), m_page);
         }

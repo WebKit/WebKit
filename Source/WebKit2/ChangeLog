@@ -1,3 +1,13 @@
+2011-08-18  Amruth Raj  <amruthraj@motorola.com>
+
+        [GTK] [WK2] Activating sub menus cause the WebProcess to crash
+        https://bugs.webkit.org/show_bug.cgi?id=66471
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::createGtkMenu):
+
 2011-08-18  Adam Roben  <aroben@apple.com>
 
         Update the device scale factor when the WKView's window changes
