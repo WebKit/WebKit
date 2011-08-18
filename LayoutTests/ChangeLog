@@ -1,3 +1,10 @@
+2011-08-18  Tony Chang  <tony@chromium.org>
+
+        [chromium] Marking tests needing win/linux baselines as such in
+        test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Dump-as-markup conversion: editing/pasteboard/block-wrappers-necessary.html
