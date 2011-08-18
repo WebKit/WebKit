@@ -1,3 +1,9 @@
+2011-08-17  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [Qt] Unreviewed gardening
+
+        * platform/qt/Skipped: Skip new failures.
+
 2011-08-17  Hayato Ito  <hayato@chromium.org>
 
         Implement proper handling of focus/blur events in regard to shadow DOM boundaries.
