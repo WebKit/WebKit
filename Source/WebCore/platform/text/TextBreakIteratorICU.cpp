@@ -171,6 +171,7 @@ TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
     // * Removed rules that prevent a cursor from moving after prepend characters (Bug 24342);
     // * Added rules that prevent a cursor from moving after virama signs of Indic languages except Tamil (Bug 15790), and;
     // * Added rules that prevent a cursor from moving before Japanese half-width katakara voiced marks.
+    // * Added rules for regional indicator symbols.
     static const char* kRules =
         "$CR      = [\\p{Grapheme_Cluster_Break = CR}];"
         "$LF      = [\\p{Grapheme_Cluster_Break = LF}];"
@@ -207,6 +208,7 @@ TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
         "$Mal0    = [\\u0D05-\\u0D39];"    // Malayalam Letter A,...,Ha
         "$MalV    = \\u0D4D;"              // Malayalam Sign Virama
         "$Mal1    = [\\u0D15-\\u0D39];"    // Malayalam Letter A,...,Ha
+        "$RI      = [\\U0001F1E6-\\U0001F1FF];" // Emoji regional indicators
         "!!chain;"
         "!!forward;"
         "$CR $LF;"
@@ -215,6 +217,8 @@ TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
         "($LVT | $T) $T;"
         "[^$Control $CR $LF] $Extend;"
         "[^$Control $CR $LF] $SpacingMark;"
+        "$RI $RI / $RI;"
+        "$RI $RI;"
         "$Hin0 $HinV $Hin1;"               // Devanagari Virama (forward)
         "$Ben0 $BenV $Ben1;"               // Bengali Virama (forward)
         "$Pan0 $PanV $Pan1;"               // Gurmukhi Virama (forward)
@@ -230,6 +234,8 @@ TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
         "$T ($LVT | $T);"
         "$Extend      [^$Control $CR $LF];"
         "$SpacingMark [^$Control $CR $LF];"
+        "$RI $RI / $RI $RI;"
+        "$RI $RI;"
         "$Hin1 $HinV $Hin0;"               // Devanagari Virama (backward)
         "$Ben1 $BenV $Ben0;"               // Bengali Virama (backward)
         "$Pan1 $PanV $Pan0;"               // Gurmukhi Virama (backward)

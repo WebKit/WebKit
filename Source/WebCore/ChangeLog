@@ -1,3 +1,18 @@
+2011-08-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Regional indicator symbols that are combined should behave as a single character when editing
+        https://bugs.webkit.org/show_bug.cgi?id=65395
+
+        Reviewed by Dan Bernstein.
+
+        Part two: make cursor movement iterator work. This fixes the problem for strings that don't
+        contain more than two flags in a row, as fixing it completely doesn't seem possible with ICU.
+
+        Test: editing/selection/regional-indicators.html
+
+        * platform/text/TextBreakIteratorICU.cpp: (WebCore::cursorMovementIterator): Added custom
+        rules for regional indicator symbols.
+
 2011-08-18  Cary Clark  <caryclark@google.com>
 
         Fix rubber band gutter drawing for Skia on Chromium Mac

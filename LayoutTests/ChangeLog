@@ -1,3 +1,13 @@
+2011-08-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Regional indicator symbols that are combined should behave as a single character when editing
+        https://bugs.webkit.org/show_bug.cgi?id=65395
+
+        Reviewed by Dan Bernstein.
+
+        * editing/selection/regional-indicators-expected.txt: Added.
+        * editing/selection/regional-indicators.html: Added.
+
 2011-08-18  Kentaro Hara  <haraken@google.com>
 
         An EventSource constructor should throw TypeError, when the number of arguments is not enough.
