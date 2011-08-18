@@ -1,3 +1,20 @@
+2011-08-18  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [GTK] Change webview API tests to use "load-status" signal instead of "load-progress"
+        https://bugs.webkit.org/show_bug.cgi?id=66243
+
+        Reviewed by Martin Robinson.
+
+        The idle_quit_loop_cb() already checks the "load-status" flag, so it is enough to
+        call it only when the "load-status" change.
+
+        This change is important in the context of bug 28851, which aims to change the
+        order in which "progress finished" and "load finished" callbacks are called. In
+        this new scenario, at the progress callback the load will never be finished.
+
+        * tests/testwebview.c:
+        (test_webkit_web_view_grab_focus):
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Make WebCore keep track of the current device scale factor

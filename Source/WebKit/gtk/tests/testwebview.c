@@ -167,7 +167,7 @@ static void test_webkit_web_view_grab_focus()
 
     loop = g_main_loop_new(NULL, TRUE);
 
-    g_signal_connect(view, "notify::progress", G_CALLBACK (idle_quit_loop_cb), NULL);
+    g_signal_connect(view, "notify::load-status", G_CALLBACK(idle_quit_loop_cb), NULL);
 
     /* Wait for window to show up */
     gtk_widget_show_all(window);
@@ -235,7 +235,7 @@ static void do_test_webkit_web_view_adjustments(gboolean with_page_cache)
     loop = g_main_loop_new(NULL, TRUE);
 
     g_object_connect(G_OBJECT(view),
-                     "signal::notify::progress", idle_quit_loop_cb, NULL,
+                     "signal::notify::load-status", idle_quit_loop_cb, NULL,
                      NULL);
 
     /* Wait for window to show up */
