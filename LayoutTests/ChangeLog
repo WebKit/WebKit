@@ -1,5 +1,33 @@
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Dump-as-markup conversion: editing/pasteboard/paste-text-010.html and editing/pasteboard/paste-text-015.html
+        https://bugs.webkit.org/show_bug.cgi?id=66440
+
+        Reviewed by Kent Tamura.
+
+        Converted the tests.
+
+        * editing/pasteboard/paste-text-010-expected.txt: Added.
+        * editing/pasteboard/paste-text-010.html:
+        * editing/pasteboard/paste-text-015-expected.txt: Added.
+        * editing/pasteboard/paste-text-015.html:
+        * platform/chromium-linux/editing/pasteboard/paste-text-010-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-text-015-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-text-010-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-text-010-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-text-015-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-text-015-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/paste-text-010-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/paste-text-015-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/paste-text-010-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-text-010-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/paste-text-015-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-text-015-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-text-010-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-text-015-expected.txt: Removed.
+
+2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         Dump-as-markup conversion: editing/pasteboard/paste-text-017.html and editing/pasteboard/paste-text-018.html
         https://bugs.webkit.org/show_bug.cgi?id=66443
 

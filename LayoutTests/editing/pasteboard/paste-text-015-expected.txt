@@ -1,0 +1,19 @@
+This test copies, deletes, and paste back <div id="test" class="editing"><p>foo</p><p>bar</p></div>
+It then inserts the paragraph and pastes the contents again.
+| "
+"
+| <div>
+|   class="editing"
+|   id="test"
+|   <p>
+|     <p>
+|       "foo"
+|     <p>
+|       "bar"
+|     <p>
+|       <p>
+|         "foo"
+|       <p>
+|         "bar<#selection-caret>"
+| "
+"
