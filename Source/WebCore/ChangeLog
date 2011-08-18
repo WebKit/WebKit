@@ -1,3 +1,19 @@
+2011-08-18  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium Mac: Show scrollbar when doing search
+        https://bugs.webkit.org/show_bug.cgi?id=66209
+
+        Reviewed by James Robinson.
+
+        Updated the Lion scrollbar drawing code to force the scrollbar to be visible when we have tickmarks for search results.
+
+        No tests because there are no Mac 10.7 chromium bots yet.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.h:
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+        (WebCore::ScrollbarThemeChromiumMac::paintTickmarks):
+
 2011-08-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Draw the root/"non-composited content" in compositor side

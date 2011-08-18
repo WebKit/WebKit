@@ -498,6 +498,10 @@ void ScrollbarThemeChromiumMac::updateEnabledState(Scrollbar* scrollbar)
 
 bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* context, const IntRect& damageRect)
 {
+    // Get the tickmarks for the frameview.
+    Vector<IntRect> tickmarks;
+    scrollbar->scrollableArea()->getTickmarks(tickmarks);
+
     if (isScrollbarOverlayAPIAvailable()) {
         float value = 0;
         float overhang = 0;
@@ -526,6 +530,16 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
         scrollAnimator->setIsDrawingIntoLayer(false);
 #endif
 
+        CGFloat oldKnobAlpha = 0;
+        CGFloat oldTrackAlpha = 0;
+        bool hasTickmarks = tickmarks.size() > 0 && scrollbar->orientation() == VerticalScrollbar;
+        if (hasTickmarks) {
+          oldKnobAlpha = wkScrollbarPainterKnobAlpha(painterForScrollbar(scrollbar));
+          wkSetScrollbarPainterKnobAlpha(painterForScrollbar(scrollbar), 1.0);
+          oldTrackAlpha = wkScrollbarPainterTrackAlpha(painterForScrollbar(scrollbar));
+          wkSetScrollbarPainterTrackAlpha(painterForScrollbar(scrollbar), 1.0);
+        }
+
         GraphicsContextStateSaver stateSaver(*context);
         context->clip(damageRect);
         context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
@@ -547,11 +561,17 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
             tickmarkTrackRect.setX(tickmarkTrackRect.x() + 2);
             tickmarkTrackRect.setWidth(tickmarkTrackRect.width() - 5);
         }
-        paintTickmarks(context, scrollbar, tickmarkTrackRect);
+        paintGivenTickmarks(context, scrollbar, tickmarkTrackRect, tickmarks);
 
         wkScrollbarPainterPaintKnob(scrollbarPainter);
 
         scrollAnimator->setIsDrawingIntoLayer(false);
+
+        if (hasTickmarks) {
+          wkSetScrollbarPainterKnobAlpha(scrollbarPainter, oldKnobAlpha);
+          wkSetScrollbarPainterTrackAlpha(scrollbarPainter, oldTrackAlpha);
+        }
+
         return true;
     }
 
@@ -620,7 +640,7 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     // Inset by 2 on the left and 3 on the right.
     tickmarkTrackRect.setX(tickmarkTrackRect.x() + 2);
     tickmarkTrackRect.setWidth(tickmarkTrackRect.width() - 5);
-    paintTickmarks(drawingContext, scrollbar, tickmarkTrackRect);
+    paintGivenTickmarks(drawingContext, scrollbar, tickmarkTrackRect, tickmarks);
 
     if (hasThumb(scrollbar)) {
         PlatformBridge::ThemePaintScrollbarInfo scrollbarInfo;
@@ -645,7 +665,7 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     return true;
 }
 
-void ScrollbarThemeChromiumMac::paintTickmarks(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect)
+void ScrollbarThemeChromiumMac::paintGivenTickmarks(GraphicsContext* context, Scrollbar* scrollbar, const IntRect& rect, const Vector<IntRect>& tickmarks)
 {
     if (scrollbar->orientation() != VerticalScrollbar)
         return;
@@ -653,25 +673,13 @@ void ScrollbarThemeChromiumMac::paintTickmarks(GraphicsContext* context, Scrollb
     if (rect.height() <= 0 || rect.width() <= 0)
         return;  // nothing to draw on.
 
-    // Get the tickmarks for the frameview.
-    Vector<IntRect> tickmarks;
-    scrollbar->scrollableArea()->getTickmarks(tickmarks);
     if (!tickmarks.size())
-        return;
-
-    int alphaInt = 0xFF;
-    if (scrollbarMap()->contains(scrollbar)) {
-        WKScrollbarPainterRef scrollbarPainter = scrollbarMap()->get(scrollbar).get();
-        if (scrollbarPainter)
-            alphaInt = 0xFF * wkScrollbarPainterTrackAlpha(scrollbarPainter);
-    }
-    if (alphaInt == 0)
         return;
 
     context->save();
     context->setShouldAntialias(false);
-    context->setStrokeColor(Color(0xCC, 0xAA, 0x00, alphaInt), ColorSpaceDeviceRGB);
-    context->setFillColor(Color(0xFF, 0xDD, 0x00, alphaInt), ColorSpaceDeviceRGB);
+    context->setStrokeColor(Color(0xCC, 0xAA, 0x00, 0xFF), ColorSpaceDeviceRGB);
+    context->setFillColor(Color(0xFF, 0xDD, 0x00, 0xFF), ColorSpaceDeviceRGB);
 
     for (Vector<IntRect>::const_iterator i = tickmarks.begin(); i != tickmarks.end(); ++i) {
         // Calculate how far down (in %) the tick-mark should appear.

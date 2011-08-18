@@ -2167,13 +2167,9 @@ void WebFrameImpl::invalidateArea(AreaToInvalidate area)
 
         if ((area & InvalidateScrollbar) == InvalidateScrollbar) {
             // Invalidate the vertical scroll bar region for the view.
-            IntRect scrollBarVert(
-                view->x() + view->visibleWidth(), view->y(),
-                ScrollbarTheme::nativeTheme()->scrollbarThickness(),
-                view->visibleHeight());
-            IntRect frameRect = view->frameRect();
-            scrollBarVert.move(-frameRect.x(), -frameRect.y());
-            view->invalidateRect(scrollBarVert);
+            Scrollbar* scrollbar = view->verticalScrollbar();
+            if (scrollbar)
+                scrollbar->invalidate();
         }
     }
 }

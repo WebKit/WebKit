@@ -80,7 +80,8 @@ protected:
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
     virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent&);
 
-    virtual void paintTickmarks(GraphicsContext*, Scrollbar*, const IntRect&);
+private:
+    void paintGivenTickmarks(GraphicsContext*, Scrollbar*, const IntRect&, const Vector<IntRect>&);
 
 private:
     RefPtr<Pattern> m_overhangPattern;

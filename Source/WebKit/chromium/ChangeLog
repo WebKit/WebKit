@@ -1,3 +1,17 @@
+2011-08-18  Sailesh Agrawal  <sail@chromium.org>
+
+        Chromium Mac: Show scrollbar when doing search
+        https://bugs.webkit.org/show_bug.cgi?id=66209
+
+        Reviewed by James Robinson.
+
+        Fixed a bug in invalidateArea where it wouldn't properly invalidate overlay scrollbars. The problem was that it was assuming that the scrollbar was always to the right of the visible scrollbar. This isn't true for overlay scrollbars.
+
+        No tests because there are no Mac 10.7 chromium bots yet.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::invalidateArea):
+
 2011-08-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Draw the root/"non-composited content" in compositor side
