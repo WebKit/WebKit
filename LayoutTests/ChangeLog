@@ -1,5 +1,14 @@
 2011-08-18  Tony Chang  <tony@chromium.org>
 
+        Update baselines for mac and win after test changes/fixes in r93275.
+
+        * platform/chromium-cg-mac/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-win/fast/canvas/canvas-composite-transformclip-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-18  Tony Chang  <tony@chromium.org>
+
         Add checksums to png results.  Still trying to find out why they
         went missing in the first place.
 

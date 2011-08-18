@@ -3700,9 +3700,5 @@ BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-re
 BUGWK66419 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = TEXT
 
-// Started failing after r93275.
-BUGVITALYR MAC WIN CPU : fast/canvas/canvas-composite.html = IMAGE
-BUGVITALYR MAC WIN CPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
-
 // Started failing after r93237.
 BUGVITALYR LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT TIMEOUT
