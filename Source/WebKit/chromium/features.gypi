@@ -154,6 +154,8 @@
       ['OS=="mac"', {
         'feature_defines': [
           'ENABLE_RUBBER_BANDING=1',
+          # Unconditionally enable smooth scrolling on mac.
+          'ENABLE_SMOOTH_SCROLLING=1',
           'WTF_USE_SKIA_ON_MAC_CHROMIUM=<(use_skia)',
         ],
       }],
