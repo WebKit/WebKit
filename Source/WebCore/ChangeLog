@@ -1,3 +1,24 @@
+2011-08-17  Luke Macpherson   <macpherson@chromium.org>
+
+        Support cast from CSSPrimitiveValue to unsigned, and use in appropriate places in CSSStyleSelector::applyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=66281
+
+        Reviewed by Eric Seidel.
+
+        No new tests - refactoring only.
+
+        The return if type!=CSS_NUMBER case becomes an ASSERT because it is unreachable unless there is an error in the parser.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        Support cast from unsigned to CSSPrimitiveValue
+        (WebCore::CSSPrimitiveValue::operator unsigned):
+        Support cast from CSSPrimitiveValue to unsigned
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macro for CSSPropertyWebkitBoxFlex,
+        CSSPropertyWebkitBoxFlexGroup and CSSPropertyWebkitBoxOrdinalGroup properties.
+
 2011-08-17  Scott Byer  <scottbyer@chromium.org>
 
         ScrollAnimatorNone: Remove unused field

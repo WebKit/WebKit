@@ -101,6 +101,23 @@ template<> inline CSSPrimitiveValue::operator int() const
 }
 #endif
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(unsigned i)
+    : m_type(CSS_NUMBER)
+    , m_hasCachedCSSText(false)
+{
+    m_value.num = static_cast<double>(i);
+}
+
+template<> inline CSSPrimitiveValue::operator unsigned() const
+{
+    if (m_type == CSS_NUMBER)
+        return clampTo<unsigned>(m_value.num);
+
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(float i)
     : m_type(CSS_NUMBER)
     , m_hasCachedCSSText(false)

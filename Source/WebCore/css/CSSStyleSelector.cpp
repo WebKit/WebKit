@@ -4507,22 +4507,13 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyWebkitBoxFlex:
-        HANDLE_INHERIT_AND_INITIAL(boxFlex, BoxFlex)
-        if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
-            return; // Error case.
-        m_style->setBoxFlex(primitiveValue->getFloatValue());
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxFlex, BoxFlex)
         return;
     case CSSPropertyWebkitBoxFlexGroup:
-        HANDLE_INHERIT_AND_INITIAL(boxFlexGroup, BoxFlexGroup)
-        if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
-            return; // Error case.
-        m_style->setBoxFlexGroup(primitiveValue->getValue<unsigned>());
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxFlexGroup, BoxFlexGroup)
         return;
     case CSSPropertyWebkitBoxOrdinalGroup:
-        HANDLE_INHERIT_AND_INITIAL(boxOrdinalGroup, BoxOrdinalGroup)
-        if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
-            return; // Error case.
-        m_style->setBoxOrdinalGroup(primitiveValue->getValue<unsigned>());
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxOrdinalGroup, BoxOrdinalGroup)
         return;
     case CSSPropertyBoxSizing:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxSizing, BoxSizing);
