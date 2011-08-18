@@ -1,3 +1,20 @@
+2011-08-18  Cary Clark  <caryclark@google.com>
+
+        Fix rubber band gutter drawing for Skia on Chromium Mac
+        https://bugs.webkit.org/show_bug.cgi?id=66478
+
+        Reviewed by James Robinson.
+
+        No new tests. The Skia on Chromium Mac platform has
+        not been enabled.
+
+        This break was detected at compile time; there is no
+        behavior change.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::ScrollbarThemeChromiumMac):
+        Convert the CGImage into an SkBitmap if Skia is present.
+
 2011-08-18  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Implement a faster path for painting tables with overflowing cells

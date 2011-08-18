@@ -42,6 +42,7 @@
 #include <wtf/UnusedParam.h>
 
 #if USE(SKIA)
+#include "BitmapImageSingleFrameSkia.h"
 #include "PlatformContextSkia.h"
 #include "skia/ext/skia_utils_mac.h"
 #endif
@@ -203,7 +204,12 @@ ScrollbarThemeChromiumMac::ScrollbarThemeChromiumMac()
                 if (tiffData) {
                     CGImageSourceRef imageSource = CGImageSourceCreateWithData((CFDataRef)tiffData, NULL);
                     CGImageRef cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, NULL);
+#if USE(SKIA)
+                    SkBitmap bitmap = gfx::CGImageToSkBitmap(cgImage);
+                    RefPtr<Image> patternImage = BitmapImageSingleFrameSkia::create(bitmap, false);
+#else
                     RefPtr<Image> patternImage = BitmapImage::create(cgImage);
+#endif                    
                     m_overhangPattern = Pattern::create(patternImage, true, true);
                 }
             }
