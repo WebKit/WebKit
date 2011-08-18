@@ -3651,6 +3651,8 @@ BUGWK58013 LINUX GPU : compositing/scaling/tiled-layer-recursion.html = IMAGE
 // Need rebaselining after canvas composite mode fixes
 BUGWK66036 MAC WIN GPU : fast/canvas/canvas-composite.html = IMAGE
 BUGWK66036 MAC WIN GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
+BUGVITALYR MAC WIN CPU : fast/canvas/canvas-composite.html = IMAGE
+BUGVITALYR MAC WIN CPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
 
 // Might need rebaseline.
 BUGJIANLI MAC WIN : fast/preloader/script.html = PASS TEXT
