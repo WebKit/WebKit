@@ -36,7 +36,7 @@ WebInspector.ExtensionServer = function()
     this._subscriptionStartHandlers = {};
     this._subscriptionStopHandlers = {};
     this._extraHeaders = {};
-    this._resources = {};
+    this._requests = {};
     this._lastRequestId = 0;
     this._allowedOrigins = {};
     this._status = new WebInspector.ExtensionStatus();
@@ -91,7 +91,7 @@ WebInspector.ExtensionServer.prototype = {
 
     _inspectedURLChanged: function(event)
     {
-        this._resources = {};
+        this._requests = {};
         var url = event.data;
         this._postNotification("inspectedURLChanged", url);
     },
@@ -122,11 +122,11 @@ WebInspector.ExtensionServer.prototype = {
         this._postNotification("resource-content-edited", url, content);
     },
 
-    _notifyResourceFinished: function(event)
+    _notifyRequestFinished: function(event)
     {
-        var resource = event.data;
-        if (this._hasSubscribers("resource-finished"))
-            this._postNotification("resource-finished", this._requestId(resource), (new WebInspector.HAREntry(resource)).build());
+        var request = event.data;
+        if (this._hasSubscribers("network-request-finished"))
+            this._postNotification("network-request-finished", this._requestId(request), (new WebInspector.HAREntry(request)).build());
     },
 
     _hasSubscribers: function(type)
@@ -296,38 +296,17 @@ WebInspector.ExtensionServer.prototype = {
         RuntimeAgent.evaluate(evalExpression, "", true, callback.bind(this));
     },
 
-    _onRevealAndSelect: function(message)
-    {
-        if (message.panelId === "resources" && type === "resource")
-            return this._onRevealAndSelectResource(message);
-        else
-            return this._status.E_NOTSUPPORTED(message.panelId, message.type);
-    },
-
-    _onRevealAndSelectResource: function(message)
-    {
-        var id = message.id;
-        var resource = null;
-
-        resource = this._resourceById(id) || WebInspector.resourceForURL(id);
-        if (!resource)
-            return this._status.E_NOTFOUND(typeof id + ": " + id);
-
-        WebInspector.panels.resources.showResource(resource, message.line);
-        WebInspector.showPanel("resources");
-    },
-
     _dispatchCallback: function(requestId, port, result)
     {
         port.postMessage({ command: "callback", requestId: requestId, result: result });
     },
 
-    _onGetHAR: function(request)
+    _onGetHAR: function()
     {
-        var resources = WebInspector.networkLog.resources;
-        var harLog = (new WebInspector.HARLog(resources)).build();
+        var requests = WebInspector.networkLog.resources;
+        var harLog = (new WebInspector.HARLog(requests)).build();
         for (var i = 0; i < harLog.entries.length; ++i)
-            harLog.entries[i]._requestId = this._requestId(resources[i]);
+            harLog.entries[i]._requestId = this._requestId(requests[i]);
         return harLog;
     },
 
@@ -341,60 +320,60 @@ WebInspector.ExtensionServer.prototype = {
             };
             this._dispatchCallback(message.requestId, port, response);
         }
-        var resource = this._resourceById(message.id);
-        if (!resource)
+        var request = this._requestById(message.id);
+        if (!request)
             return this._status.E_NOTFOUND(message.id);
-        resource.requestContent(onContentAvailable.bind(this));
+        request.requestContent(onContentAvailable.bind(this));
     },
 
-    _requestId: function(resource)
+    _requestId: function(request)
     {
-        if (!resource._extensionRequestId) {
-            resource._extensionRequestId = ++this._lastRequestId;
-            this._resources[resource._extensionRequestId] = resource;
+        if (!request._extensionRequestId) {
+            request._extensionRequestId = ++this._lastRequestId;
+            this._requests[request._extensionRequestId] = request;
         }
-        return resource._extensionRequestId;
+        return request._extensionRequestId;
     },
 
-    _resourceById: function(id)
+    _requestById: function(id)
     {
-        return this._resources[id];
+        return this._requests[id];
     },
 
-    _onAddAuditCategory: function(request)
+    _onAddAuditCategory: function(message)
     {
-        var category = new WebInspector.ExtensionAuditCategory(request.id, request.displayName, request.resultCount);
+        var category = new WebInspector.ExtensionAuditCategory(message.id, message.displayName, message.resultCount);
         if (WebInspector.panels.audits.getCategory(category.id))
             return this._status.E_EXISTS(category.id);
-        this._clientObjects[request.id] = category;
+        this._clientObjects[message.id] = category;
         WebInspector.panels.audits.addCategory(category);
     },
 
-    _onAddAuditResult: function(request)
+    _onAddAuditResult: function(message)
     {
-        var auditResult = this._clientObjects[request.resultId];
+        var auditResult = this._clientObjects[message.resultId];
         if (!auditResult)
-            return this._status.E_NOTFOUND(request.resultId);
+            return this._status.E_NOTFOUND(message.resultId);
         try {
-            auditResult.addResult(request.displayName, request.description, request.severity, request.details);
+            auditResult.addResult(message.displayName, message.description, message.severity, message.details);
         } catch (e) {
             return e;
         }
         return this._status.OK();
     },
 
-    _onStopAuditCategoryRun: function(request)
+    _onStopAuditCategoryRun: function(message)
     {
-        var auditRun = this._clientObjects[request.resultId];
+        var auditRun = this._clientObjects[message.resultId];
         if (!auditRun)
-            return this._status.E_NOTFOUND(request.resultId);
+            return this._status.E_NOTFOUND(message.resultId);
         auditRun.cancel();
     },
 
     initExtensions: function()
     {
         // The networkManager is normally created after the ExtensionServer is constructed, but before initExtensions() is called.
-        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyResourceFinished, this);
+        WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyRequestFinished, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._addRecordToTimeline, this);
 
@@ -464,16 +443,16 @@ WebInspector.ExtensionServer.prototype = {
 
     _onmessage: function(event)
     {
-        var request = event.data;
+        var message = event.data;
         var result;
 
-        if (request.command in this._handlers)
-            result = this._handlers[request.command](request, event.target);
+        if (message.command in this._handlers)
+            result = this._handlers[message.command](message, event.target);
         else
-            result = this._status.E_NOTSUPPORTED(request.command);
+            result = this._status.E_NOTSUPPORTED(message.command);
 
-        if (result && request.requestId)
-            this._dispatchCallback(request.requestId, event.target, result);
+        if (result && message.requestId)
+            this._dispatchCallback(message.requestId, event.target, result);
     },
 
     _registerHandler: function(command, callback)

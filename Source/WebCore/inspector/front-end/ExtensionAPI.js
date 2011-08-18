@@ -90,7 +90,8 @@ function InspectorExtensionAPI()
     this.audits = new Audits();
     this.inspectedWindow = new InspectedWindow();
     this.panels = new Panels();
-    this.resources = new Resources();
+    this.network = new Network();
+    defineDeprecatedProperty(this, "webInspector", "resources", "network");
     this.timeline = new Timeline();
 
     this.onReset = new EventSink("reset");
@@ -103,27 +104,28 @@ InspectorExtensionAPI.prototype = {
     }
 }
 
-function Resources()
+function Network()
 {
-    function resourceDispatch(request)
+    function requestDispatch(message)
     {
-        var resource = request.arguments[1];
-        resource.__proto__ = new Resource(request.arguments[0]);
-        this._fire(resource);
+        var request = message.arguments[1];
+        request.__proto__ = new Request(message.arguments[0]);
+        this._fire(request);
     }
-    this.onFinished = new EventSink("resource-finished", resourceDispatch);
+    this.onRequestFinished = new EventSink("network-request-finished", requestDispatch);
+    defineDeprecatedProperty(this, "network", "onFinished", "onRequestFinished");
     this.onNavigated = new EventSink("inspectedURLChanged");
     this.onContentEdited = new EventSink("resource-content-edited");
 }
 
-Resources.prototype = {
+Network.prototype = {
     getHAR: function(callback)
     {
         function callbackWrapper(result)
         {
             var entries = (result && result.entries) || [];
             for (var i = 0; i < entries.length; ++i) {
-                entries[i].__proto__ = new Resource(entries[i]._requestId);
+                entries[i].__proto__ = new Request(entries[i]._requestId);
                 delete entries[i]._requestId;
             }
             callback(result);
@@ -137,12 +139,12 @@ Resources.prototype = {
     }
 }
 
-function ResourceImpl(id)
+function RequestImpl(id)
 {
     this._id = id;
 }
 
-ResourceImpl.prototype = {
+RequestImpl.prototype = {
     getContent: function(callback)
     {
         function callbackWrapper(response)
@@ -469,13 +471,27 @@ function declareInterfaceClass(implConstructor)
     }
 }
 
+function defineDeprecatedProperty(object, className, oldName, newName)
+{
+    var warningGiven = false;
+    function getter()
+    {
+        if (!warningGiven) {
+            console.warn(className + "." + oldName + " is deprecated. Use " + className + "." + newName + " instead");
+            warningGiven = true;
+        }
+        return object[newName];
+    }
+    object.__defineGetter__(oldName, getter);
+}
+
 var AuditCategory = declareInterfaceClass(AuditCategoryImpl);
 var AuditResult = declareInterfaceClass(AuditResultImpl);
 var EventSink = declareInterfaceClass(EventSinkImpl);
 var ExtensionSidebarPane = declareInterfaceClass(ExtensionSidebarPaneImpl);
 var Panel = declareInterfaceClass(PanelImpl);
 var PanelWithSidebar = declareInterfaceClass(PanelWithSidebarImpl);
-var Resource = declareInterfaceClass(ResourceImpl);
+var Request = declareInterfaceClass(RequestImpl);
 var Timeline = declareInterfaceClass(TimelineImpl);
 
 var extensionServer = new ExtensionServerClient();

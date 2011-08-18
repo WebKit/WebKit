@@ -1,4 +1,4 @@
-function extension_getResourceByUrl(urls, callback)
+function extension_getRequestByUrl(urls, callback)
 {
     function onHAR(response)
     {
@@ -12,5 +12,5 @@ function extension_getResourceByUrl(urls, callback)
             }
         }
     }
-    webInspector.resources.getHAR(onHAR);
+    webInspector.network.getHAR(onHAR);
 }

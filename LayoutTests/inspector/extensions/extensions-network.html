@@ -12,7 +12,7 @@ p { font-family: 'test'; }
 
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/extensions-test.js"></script>
-<script src="../../http/tests/inspector/extensions-resources-test.js"></script>
+<script src="../../http/tests/inspector/extensions-network-test.js"></script>
 <script type="text/javascript">
 
 function extension_testGetHAR(nextTest)
@@ -30,7 +30,7 @@ function extension_testGetHAR(nextTest)
             output("resource: " + result.entries[i].request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
     }
     extension_doXHR(function() {
-        webInspector.resources.getHAR(callbackAndNextTest(onHAR, nextTest));
+        webInspector.network.getHAR(callbackAndNextTest(onHAR, nextTest));
     });
 }
 
@@ -46,33 +46,33 @@ function extension_doXHR(callback)
     webInspector.inspectedWindow.eval("doXHR()", callback);
 }
 
-function extension_testResourceNotification(nextTest)
+function extension_testRequestNotification(nextTest)
 {
-    function onResourceFinished(resource)
+    function onRequestFinished(request)
     {
-        output("Resource finished: " + resource.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
+        output("Request finished: " + request.request.url.replace(/.*((\/[^/]*){3}$)/,"...$1"));
     }
 
-    webInspector.resources.onFinished.addListener(callbackAndNextTest(onResourceFinished, nextTest));
+    webInspector.network.onRequestFinished.addListener(callbackAndNextTest(onRequestFinished, nextTest));
     extension_doXHR();
 }
 
-function extension_onResourceBody(content, encoding)
+function extension_onRequestBody(content, encoding)
 {
     dumpObject(Array.prototype.slice.call(arguments));
 }
 
-function extension_testGetResourceContent(nextTest)
+function extension_testGetRequestContent(nextTest)
 {
-    extension_getResourceByUrl([/audits-style1.css$/], function(resource) {
-        resource.getContent(callbackAndNextTest(extension_onResourceBody, nextTest));
+    extension_getRequestByUrl([/audits-style1.css$/], function(request) {
+        request.getContent(callbackAndNextTest(extension_onRequestBody, nextTest));
     });
 }
 
 function extension_testGetResourceContentEncoded(nextTest)
 {
-    extension_getResourceByUrl([/abe.png$/ ], function(resource) {
-        resource.getContent(callbackAndNextTest(extension_onResourceBody, nextTest));
+    extension_getRequestByUrl([/abe.png$/ ], function(request) {
+        request.getContent(callbackAndNextTest(extension_onRequestBody, nextTest));
     });
 }
 
@@ -80,12 +80,12 @@ function extension_testResourceContentEdited(nextTest)
 {
     function onContentEdited(url, content)
     {
-        webInspector.resources.onContentEdited.removeListener(onContentEdited);
+        webInspector.network.onContentEdited.removeListener(onContentEdited);
         var urlTail = url.replace(/.*((\/[^/]*){3}$)/,"...$1");
         output("content for resource " + urlTail + " edited: " + content);
         nextTest();
     }   
-    webInspector.resources.onContentEdited.addListener(onContentEdited);
+    webInspector.network.onContentEdited.addListener(onContentEdited);
 
     function findAndEditResource()
     {

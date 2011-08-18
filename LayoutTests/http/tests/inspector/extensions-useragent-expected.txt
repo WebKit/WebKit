@@ -1,4 +1,4 @@
-Tests WebInspector extension API
+Tests overriding user agent via WebInspector extension API
 
 Started extension.
 Running tests...

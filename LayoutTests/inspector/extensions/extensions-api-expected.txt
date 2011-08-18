@@ -29,7 +29,31 @@ RUNNING TEST: extension_testAPI
         }
         create : <function>
     }
+    network : {
+        onRequestFinished : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        onFinished : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        onNavigated : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        onContentEdited : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        getHAR : <function>
+        addRequestHeaders : <function>
+    }
     resources : {
+        onRequestFinished : {
+            addListener : <function>
+            removeListener : <function>
+        }
         onFinished : {
             addListener : <function>
             removeListener : <function>

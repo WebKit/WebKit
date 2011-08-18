@@ -1,34 +1,34 @@
 <html>
 <head>
 <script src="inspector-test.js"></script>
-<script src="extensions-resources-test.js"></script>
+<script src="extensions-network-test.js"></script>
 <script src="extensions-test.js"></script>
 <script type="text/javascript">
 
-function extension_doRequest(force, callback, nextTest)
+function extension_doRequest(force, callback)
 {
-    function callbackWrapper(resource)
+    function callbackWrapper(request)
     {
-        var lastCallback = !resource || /\?redirected=true$/.test(resource.request.url);
+        var lastCallback = !request || /\?redirected=true$/.test(request.request.url);
         if (lastCallback)
-            webInspector.resources.onFinished.removeListener(callbackWrapper);
-        callback(resource, lastCallback);
+            webInspector.network.onRequestFinished.removeListener(callbackWrapper);
+        callback(request, lastCallback);
     }
-    webInspector.resources.onFinished.addListener(callbackWrapper);
+    webInspector.network.onRequestFinished.addListener(callbackWrapper);
     webInspector.inspectedWindow.eval("doRequest(" + force + ")", function(result) {
         if (result)
             callbackWrapper(null);
     });
 }
 
-function extension_testGetRedirectResourceContent(nextTest)
+function extension_testGetRedirectRequestContent(nextTest)
 {
-    function onFinished(resource, lastCallback)
+    function onRequestFinished(request, lastCallback)
     {
         if (!lastCallback)
             return;
-        extension_getResourceByUrl([ /redirect-methods-result.php\?status=302$/ ], function(resource) {
-            resource.getContent(onContent)
+        extension_getRequestByUrl([ /redirect-methods-result.php\?status=302$/ ], function(request) {
+            request.getContent(onContent);
         });
     }
     function onContent(content, encoding)
@@ -36,15 +36,15 @@ function extension_testGetRedirectResourceContent(nextTest)
         output("content: " + content + ", encoding: " + encoding);
         nextTest();
     }
-    extension_doRequest(false, onFinished);
+    extension_doRequest(false, onRequestFinished);
 }
 
-function extension_testRedirectResourcesInHAR(nextTest)
+function extension_testRedirectRequestInHAR(nextTest)
 {
-    function onFinished(resource, lastCallback)
+    function onRequestFinished(resource, lastCallback)
     {
         if (lastCallback)
-            webInspector.resources.getHAR(onHAR);
+            webInspector.network.getHAR(onHAR);
     }
     function onHAR(har)
     {
@@ -57,21 +57,21 @@ function extension_testRedirectResourcesInHAR(nextTest)
                 urls.push(url);
         }
         urls.sort();
-        output("Resources in HAR:\n" + urls.join("\n"));
+        output("Requests in HAR:\n" + urls.join("\n"));
         nextTest();
     }
-    extension_doRequest(false, onFinished);
+    extension_doRequest(false, onRequestFinished);
 }
 
-function extension_testRedirectResourceFinished(nextTest)
+function extension_testRedirectRequestFinished(nextTest)
 {
-    function onFinished(resource, lastCallback)
+    function onRequestFinished(request, lastCallback)
     {
-        output("Finished resource: " + resource.request.url);
+        output("Finished request: " + request.request.url);
         if (lastCallback)
             nextTest();
     }
-    extension_doRequest(true, onFinished);
+    extension_doRequest(true, onRequestFinished);
 }
 
 var requestDone = false;
@@ -98,6 +98,6 @@ var test = function()
 </script>
 </head>
 <body onload="runTest()">
-<p>Tests WebInspector extension API</p>
+<p>Tests WebInspector extension API returns valid data for redirected resources</p>
 </body>
 </html>

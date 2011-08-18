@@ -614,7 +614,7 @@ BUGWK58013 WIN : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
 // There is no message port harness to test extensions
 WONTFIX SKIP : inspector/extensions = FAIL
 WONTFIX SKIP : http/tests/inspector/extensions-headers.html = FAIL
-WONTFIX SKIP : http/tests/inspector/extensions-resources-redirect.html = FAIL
+WONTFIX SKIP : http/tests/inspector/extensions-network-redirect.html = FAIL
 WONTFIX SKIP : http/tests/inspector/extensions-useragent.html = FAIL
 
 // There is no enough plugins support in DRT

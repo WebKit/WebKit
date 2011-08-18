@@ -16,15 +16,15 @@ function extension_testOnSelectionChanged(nextTest)
     webInspector.inspectedWindow.eval("inspect(document.body.children[0])");
 }
 
-function extension_testOnResourceFinished(nextTest)
+function extension_testOnRequestFinished(nextTest)
 {
-    function onFinished()
+    function onRequestFinished()
     {
-        webInspector.resources.onFinished.removeListener(onFinished);
-        output("onFinished fired");
+        webInspector.network.onRequestFinished.removeListener(onRequestFinished);
+        output("onRequestFinished fired");
         nextTest();
     }
-    webInspector.resources.onFinished.addListener(onFinished);
+    webInspector.network.onRequestFinished.addListener(onRequestFinished);
     webInspector.inspectedWindow.eval("var xhr = new XMLHttpRequest(); xhr.open('GET', '" + location.href + "', false); xhr.send(null);");
 }
 
@@ -47,7 +47,7 @@ function extension_testOnNavigated(nextTest)
             webInspector.inspectedWindow.eval("location.href = location.origin + location.pathname");
         }
         else {
-            webInspector.resources.onNavigated.removeListener(onNavigated);
+            webInspector.network.onNavigated.removeListener(onNavigated);
             for (var i = 0; i < urls.length; ++i)
                 output("Navigated to: " + urls[i]);
             nextTest();
@@ -58,7 +58,7 @@ function extension_testOnNavigated(nextTest)
         urls.push(url.replace(/^(.*\/)*/, ""));
         processEvent();
     }
-    webInspector.resources.onNavigated.addListener(onNavigated);
+    webInspector.network.onNavigated.addListener(onNavigated);
     evaluateOnFrontend("InspectorTest.runWhenPageLoads(reply);", onLoad);
     webInspector.inspectedWindow.eval("location.href = location.href + '?navigated'");
 }

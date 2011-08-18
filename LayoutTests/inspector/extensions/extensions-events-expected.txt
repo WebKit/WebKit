@@ -7,8 +7,8 @@ Page reloaded.
 Page reloaded.
 Navigated to: extensions-events.html?navigated
 Navigated to: extensions-events.html
-RUNNING TEST: extension_testOnResourceFinished
-onFinished fired
+RUNNING TEST: extension_testOnRequestFinished
+onRequestFinished fired
 RUNNING TEST: extension_testOnSelectionChanged
 onSelectionChanged fired
 RUNNING TEST: extension_testPanelShowHide
