@@ -123,7 +123,7 @@ void WebGLLayerChromium::setTextureUpdated()
     m_textureUpdated = true;
     // If WebGL commands are issued outside of a the animation callbacks, then use
     // call rateLimitOffscreenContextCHROMIUM() to keep the context from getting too far ahead.
-    if (layerRenderer() && layerRenderer()->owner()->animating() && m_contextSupportsRateLimitingExtension && !m_rateLimitingTimer.isActive())
+    if (layerRenderer() && !layerRenderer()->owner()->animating() && m_contextSupportsRateLimitingExtension && !m_rateLimitingTimer.isActive())
         m_rateLimitingTimer.startOneShot(0);
 }
 

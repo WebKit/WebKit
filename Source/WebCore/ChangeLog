@@ -1,3 +1,13 @@
+2011-08-18  John Bates  <jbates@google.com>
+
+        Fix logic error causing reverse of desired WebGL rate limiting behavior
+        https://bugs.webkit.org/show_bug.cgi?id=66445
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::setTextureUpdated):
+
 2011-08-18  Levi Weintraub  <leviw@chromium.org>
 
         Switch RenderTextControl* to new layout types
