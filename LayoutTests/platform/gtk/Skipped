@@ -1506,6 +1506,13 @@ editing/spelling/grammar.html
 # layoutTestController::setTextDirection() is not implemented.
 fast/html/set-text-direction.html
 
+# textInputController.doCommand is not implemented.
+# https://bugs.webkit.org/show_bug.cgi?id=66496
+editing/input/password-echo-passnode.html
+editing/input/password-echo-passnode-2.html
+editing/input/password-echo-passnode-3.html
+editing/input/password-echo-textnode.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=57160 
 # [GTK] layoutTestController.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
 fast/harness/override-preferences-2.html

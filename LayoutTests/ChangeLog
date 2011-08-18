@@ -1,5 +1,12 @@
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip tests added by r93291 on GTK because GTK's DRT doesn't support textInputController.doCommand yet,
+        which is tracked by the bug 66496.
+
+        * platform/gtk/Skipped:
+
+2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK rebaseline after r93221.
 
         * platform/gtk/editing/selection/collapse-selection-in-bidi-expected.txt:
