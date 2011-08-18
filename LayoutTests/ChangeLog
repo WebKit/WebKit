@@ -1,3 +1,13 @@
+2011-08-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: add UISourceCode class.
+        https://bugs.webkit.org/show_bug.cgi?id=66233
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/ui-source-code-expected.txt: Added.
+        * inspector/debugger/ui-source-code.html: Added.
+
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Dump-as-markup conversion: editing/pasteboard/paste-text-010.html and editing/pasteboard/paste-text-015.html

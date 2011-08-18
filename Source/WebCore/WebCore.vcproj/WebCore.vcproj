@@ -69205,6 +69205,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\UISourceCode.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\UserMetrics.js"
 					>
 				</File>

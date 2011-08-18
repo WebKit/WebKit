@@ -1,3 +1,30 @@
+2011-08-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: add UISourceCode class.
+        https://bugs.webkit.org/show_bug.cgi?id=66233
+
+        This is a next step towards splitting SourceFile into RawSourceCode and UISourceCode.
+        UISourceCode is a part of SourceFile's interface that is visible to ScriptsPanel.
+        UISourceCode represents a single entry in scripts panel's files select.
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/ui-source-code.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/UISourceCode.js: Added.
+        (WebInspector.UISourceCode):
+        (WebInspector.UISourceCode.prototype.get id):
+        (WebInspector.UISourceCode.prototype.get url):
+        (WebInspector.UISourceCode.prototype.get isContentScript):
+        (WebInspector.UISourceCode.prototype.requestContent):
+        (WebInspector.UISourceCode.prototype._didRequestContent):
+        (WebInspector.ContentProvider):
+        (WebInspector.ContentProvider.prototype.requestContent):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Make WebCore keep track of the current device scale factor

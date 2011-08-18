@@ -6444,6 +6444,7 @@
             'inspector/front-end/Toolbar.js',
             'inspector/front-end/TopDownProfileDataGridTree.js',
             'inspector/front-end/treeoutline.js',
+            'inspector/front-end/UISourceCode.js',
             'inspector/front-end/UserMetrics.js',
             'inspector/front-end/utilities.js',
             'inspector/front-end/View.js',
