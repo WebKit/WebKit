@@ -1,3 +1,15 @@
+2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a test to ensure WebKit does not paste contents before
+        https://bugs.webkit.org/show_bug.cgi?id=66481
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a regression test since this bug has been fixed by r92695.
+
+        * editing/pasteboard/paste-delete-insertion-position-skip-paragraph-expected.txt: Added.
+        * editing/pasteboard/paste-delete-insertion-position-skip-paragraph.html: Added.
+
 2011-08-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Draw the root/"non-composited content" in compositor side
