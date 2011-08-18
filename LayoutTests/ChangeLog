@@ -1,3 +1,24 @@
+2011-08-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Dump-as-markup conversion: editing/pasteboard/5368833.html
+        https://bugs.webkit.org/show_bug.cgi?id=66416
+
+        Reviewed by Kent Tamura.
+
+        Converted the test and also renamed the test to a more descriptive name.
+
+        * editing/pasteboard/5368833.html: Removed.
+        * editing/pasteboard/paste-blockquote-and-paragraph-break-expected.txt: Added.
+        * editing/pasteboard/paste-blockquote-and-paragraph-break.html: Copied from LayoutTests/editing/pasteboard/5368833.html.
+        * platform/chromium-linux/editing/pasteboard/5368833-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5368833-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5368833-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/5368833-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/5368833-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5368833-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5368833-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/5368833-expected.txt: Removed.
+
 2011-08-18  Tony Chang  <tony@chromium.org>
 
         Update chromium gpu expected results after r93275.
