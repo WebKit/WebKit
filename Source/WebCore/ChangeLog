@@ -1,3 +1,78 @@
+2011-08-17  Emil A Eklund  <eae@chromium.org>
+
+        Switch RenderBox to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66156
+
+        Reviewed by Eric Seidel.
+
+        Convert RenderBox to new layout abstraction as a part of the ongoing
+        conversion work.
+
+        No new tests as no new functionality.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::scrollWidth):
+        (WebCore::RenderBox::scrollHeight):
+        (WebCore::RenderBox::scrollLeft):
+        (WebCore::RenderBox::scrollTop):
+        (WebCore::RenderBox::setScrollLeft):
+        (WebCore::RenderBox::setScrollTop):
+        (WebCore::RenderBox::absoluteRects):
+        (WebCore::RenderBox::absoluteContentBox):
+        (WebCore::RenderBox::absoluteContentQuad):
+        (WebCore::RenderBox::outlineBoundsForRepaint):
+        (WebCore::RenderBox::reflectionBox):
+        (WebCore::RenderBox::reflectedRect):
+        (WebCore::RenderBox::verticalScrollbarWidth):
+        (WebCore::RenderBox::horizontalScrollbarHeight):
+        (WebCore::RenderBox::computeContentBoxLogicalWidth):
+        (WebCore::RenderBox::computeContentBoxLogicalHeight):
+        (WebCore::RenderBox::maskClipRect):
+        (WebCore::RenderBox::repaintLayerRectsForImage):
+        (WebCore::RenderBox::pushContentsClip):
+        (WebCore::RenderBox::overflowClipRect):
+        (WebCore::RenderBox::clipRect):
+        (WebCore::RenderBox::containingBlockLogicalWidthForContent):
+        (WebCore::RenderBox::perpendicularContainingBlockLogicalHeight):
+        (WebCore::RenderBox::positionLineBox):
+        (WebCore::RenderBox::clippedOverflowRectForRepaint):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::computeLogicalWidth):
+        (WebCore::RenderBox::computeInlineDirectionMargins):
+        (WebCore::RenderBox::computeLogicalHeight):
+        (WebCore::RenderBox::computeLogicalHeightUsing):
+        (WebCore::RenderBox::computePercentageLogicalHeight):
+        (WebCore::RenderBox::computeBlockDirectionMargins):
+        (WebCore::RenderBox::containingBlockLogicalWidthForPositioned):
+        (WebCore::RenderBox::containingBlockLogicalHeightForPositioned):
+        (WebCore::computeInlineStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalWidth):
+        (WebCore::computeLogicalLeftPositionedOffset):
+        (WebCore::RenderBox::computePositionedLogicalWidthUsing):
+        (WebCore::computeBlockStaticDistance):
+        (WebCore::RenderBox::computePositionedLogicalHeight):
+        (WebCore::computeLogicalTopPositionedOffset):
+        (WebCore::RenderBox::computePositionedLogicalHeightUsing):
+        (WebCore::RenderBox::computePositionedLogicalWidthReplaced):
+        (WebCore::RenderBox::computePositionedLogicalHeightReplaced):
+        (WebCore::RenderBox::localCaretRect):
+        (WebCore::RenderBox::lineHeight):
+        (WebCore::RenderBox::baselinePosition):
+        (WebCore::RenderBox::logicalVisualOverflowRectForPropagation):
+        (WebCore::RenderBox::visualOverflowRectForPropagation):
+        (WebCore::RenderBox::logicalLayoutOverflowRectForPropagation):
+        (WebCore::RenderBox::layoutOverflowRectForPropagation):
+        (WebCore::RenderBox::locationOffsetIncludingFlipping):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::borderFitAdjust):
+        (WebCore::RenderBox::intrinsicSize):
+        (WebCore::RenderBox::intrinsicLogicalWidth):
+        (WebCore::RenderBox::intrinsicLogicalHeight):
+        (WebCore::RenderBox::scrollbarLogicalHeight):
+        (WebCore::RenderBox::controlClipRect):
+        (WebCore::RenderBox::firstLineBoxBaseline):
+        (WebCore::RenderBox::lastLineBoxBaseline):
+
 2011-08-17  Annie Sullivan  <sullivan@chromium.org>
 
         Reduce usages of String::createUninitialized
