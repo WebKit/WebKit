@@ -1,3 +1,16 @@
+2011-08-18  Chang Shu  <cshu@webkit.org>
+
+        [Windows] editing/input/password-echo-passnode2.html, editing/input/password-echo-passnode3.html,
+        editing/input/password-echo-passnode.html, editing/input/password-echo-textnode.html
+        failing on Windows since they were added
+        https://bugs.webkit.org/show_bug.cgi?id=66461
+
+        Reviewed by Adam Roben.
+
+        Skip the above tests as window.textInputController is not supported on windows.
+
+        * platform/win/Skipped:
+
 2011-08-18  Andras Becsi  <abecsi@webkit.org>
 
         iframe and frameset scaling is broken

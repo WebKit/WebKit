@@ -1010,6 +1010,10 @@ editing/pasteboard/copy-standalone-image-crash.html
 
 # https://webkit.org/b/32021 - DRT's textInputController is unimplemented on Windows
 editing/input/ime-composition-clearpreedit.html
+editing/input/password-echo-passnode2.html
+editing/input/password-echo-passnode3.html
+editing/input/password-echo-passnode.html
+editing/input/password-echo-textnode.html
 editing/input/setting-input-value-cancel-ime-composition.html
 editing/inserting/insert-composition-whitespace.html
 editing/selection/5825350-1.html
