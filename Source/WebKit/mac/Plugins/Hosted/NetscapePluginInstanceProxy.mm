@@ -150,7 +150,7 @@ uint32_t NetscapePluginInstanceProxy::LocalObjectMap::idForObject(JSGlobalData& 
     } while (!m_objectIDCounter || m_objectIDCounter == static_cast<uint32_t>(-1) || m_idToJSObjectMap.contains(objectID));
 
     m_idToJSObjectMap.set(objectID, Strong<JSObject>(globalData, object));
-    m_jsObjectToIDMap.set(object, make_pair<uint32_t, uint32_t>(objectID, 1));
+    m_jsObjectToIDMap.set(object, make_pair(objectID, 1));
 
     return objectID;
 }
