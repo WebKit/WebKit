@@ -1,3 +1,14 @@
+2011-08-18  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66425
+        check-webkit-style should detect incorrectly formatted file change descriptions.
+        Description, if present, should be separated from colon with a space.
+
+        Reviewed by David Levin.
+
+        * Scripts/webkitpy/style/checkers/changelog.py: Fix.
+        * Scripts/webkitpy/style/checkers/changelog_unittest.py: Unit tests.
+
 2011-08-18  Adam Barth  <abarth@webkit.org>
 
         webkit-patch pretty-diff should be shown in main help

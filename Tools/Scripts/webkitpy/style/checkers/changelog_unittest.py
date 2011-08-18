@@ -105,6 +105,23 @@ class ChangeLogCheckerTest(unittest.TestCase):
                           '\n'
                           '        No bug in this change.\n')
 
+    def test_file_descriptions(self):
+        self.assert_error(5, range(1, 20), 'changelog/filechangedescriptionwhitespace',
+                          '2011-01-01 Dmitry Lomov  <dslomov@google.com>\n'
+                          '        ExampleBug\n'
+                          '        http://bugs.webkit.org/show_bug.cgi?id=12345\n'
+                          '\n'
+                          '        *  Source/Tools/random-script.py:Fixed')
+        self.assert_error(6, range(1, 20), 'changelog/filechangedescriptionwhitespace',
+                          '2011-01-01 Dmitry Lomov  <dslomov@google.com>\n'
+                          '        ExampleBug\n'
+                          '        http://bugs.webkit.org/show_bug.cgi?id=12345\n'
+                          '\n'
+                          '        *  Source/Tools/another-file: Done\n'
+                          '        *  Source/Tools/random-script.py:Fixed\n'
+                          '        *  Source/Tools/one-morefile:\n')
+
+
     def test_no_error(self):
         self.assert_no_error([],
                              '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
@@ -150,6 +167,13 @@ class ChangeLogCheckerTest(unittest.TestCase):
                              '\n'
                              '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
                              '        No bug here!\n')
+        self.assert_no_error(range(1, 20),
+                             '2011-01-01  Patrick Gansterer  <paroga@paroga.com>\n'
+                             '        Example bug\n'
+                             '        https://bugs.webkit.org/show_bug.cgi?id=12345\n'
+                             '        * Source/WebKit/foo.cpp:    \n'
+                             '        * Source/WebKit/bar.cpp:\n'
+                             '        * Source/WebKit/foobar.cpp: Description\n')
 
 if __name__ == '__main__':
     unittest.main()

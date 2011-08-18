@@ -54,6 +54,19 @@ class ChangeLogChecker(object):
             self.handle_style_error(first_line_checked,
                                     "changelog/bugnumber", 5,
                                     "ChangeLog entry has no bug number")
+        # check file change descriptions for style violations
+        line_no = first_line_checked - 1
+        for line in entry_lines:
+            line_no = line_no + 1
+            # filter file change descriptions
+            if not re.match('\s*\*\s', line):
+                continue
+            if re.search(':\s*$', line) or re.search(':\s', line):
+                continue
+            self.handle_style_error(line_no,
+                                    "changelog/filechangedescriptionwhitespace", 5,
+                                    "Need whitespace between colon and description")
+
 
     def check(self, lines):
         self._tab_checker.check(lines)
