@@ -1,3 +1,49 @@
+2011-08-18  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Implement a faster path for painting tables with overflowing cells
+        https://bugs.webkit.org/show_bug.cgi?id=65491
+
+        This change introduces a smarter way of painting if the table is big enough and we have a small amount
+        of overflowing cells in the table. The new path does a binary search of the cells to repaint but adds
+        the overflowing cells to the repainting cells.
+
+        This saves ~50% when doing programmatic scrolling throught JS on a 500x100 table with some overflowing
+        cells. Also we cap the memory usage to a ratio of the total size of the table to avoid blowing up the
+        memory.
+
+        Reviewed by David Hyatt.
+
+        No new tests as the behavior should be the same.
+
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::RenderTableSection):
+        (WebCore::RenderTableSection::layoutRows): Added some code to accumulate the overflowing cells
+        in an internal HashSet (we don't need to keep them sorted and it makes it easier to use them during
+        painting). If we hit the cap, flip the boolean value and clear the HashSet as the slow path does not
+        care about the cell's information. Make sure that the "has overflowing cells" information is still
+        properly encoded on our 2 values.
+
+        (WebCore::compareCellPositionsWithOverflowingCells): Added this method as we are doing a more
+        complicated sort:
+            * the old path would sort one (mostly sorted) array by rows only as the stable sort would
+              take care of keeping the column ordering inside a row.
+            * the new path basically has to sort an unsorted array (taken partly from the HashSet).
+
+        (WebCore::RenderTableSection::paintObject): Tweaked the logic to account for difference between
+        m_forceSlowPaintPathWithOverflowingCell and has some overflowing cells. Also we make sure we don't
+        repaint the same cell twice.
+
+        (WebCore::RenderTableSection::nodeAtPoint): Changed to hasOverflowingCell(). We don't apply our
+        fast path optimization here.
+
+        * rendering/RenderTableSection.h: Transformed our original boolean into
+        a HashSet and a boolean. The HashSet holds up the CellStruct that are overflowing
+        until we reach the memory threshold. After this is hit, we just set the boolean
+        to avoid using too much memory.
+
+        (WebCore::RenderTableSection::hasOverflowingCell): This is the new way to determine
+        if we have any overflowing cell, used only for hit testing.
+
 2011-08-18  Kentaro Hara  <haraken@google.com>
 
         An EventSource constructor should throw TypeError, when the number of arguments is not enough.

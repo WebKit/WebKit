@@ -143,6 +143,8 @@ private:
     bool ensureRows(int);
     void clearGrid();
 
+    bool hasOverflowingCell() const { return m_overflowingCells.size() || m_forceSlowPaintPathWithOverflowingCell; }
+
     RenderObjectChildList m_children;
 
     Vector<RowStruct> m_grid;
@@ -160,7 +162,12 @@ private:
     LayoutUnit m_outerBorderAfter;
 
     bool m_needsCellRecalc;
-    bool m_hasOverflowingCell;
+
+    // This HashSet holds the overflowing cells for faster painting.
+    // If we have more than gMaxAllowedOverflowingCellRatio * total cells, it will be empty
+    // and m_forceSlowPaintPathWithOverflowingCell will be set to save memory.
+    HashSet<RenderTableCell*> m_overflowingCells;
+    bool m_forceSlowPaintPathWithOverflowingCell;
 
     bool m_hasMultipleCellLevels;
 };
