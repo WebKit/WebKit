@@ -1,5 +1,12 @@
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
+        GTK rebaseline after r93221.
+
+        * platform/gtk/editing/selection/collapse-selection-in-bidi-expected.txt:
+        Copied from LayoutTests/platform/win/editing/selection/collapse-selection-in-bidi-expected.txt.
+
+2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
         SimplifiedBackwardsTextIterator returns incorrect offset with first-letter rule
         https://bugs.webkit.org/show_bug.cgi?id=66086
 
