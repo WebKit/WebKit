@@ -189,6 +189,7 @@ void XMLTreeBuilder::processDOCTYPE(const AtomicXMLToken& token)
     AtomicString systemIdentifier(token.systemIdentifier().data(), token.systemIdentifier().size());
     RefPtr<DocumentType> doctype = DocumentType::create(m_document, token.name(), publicIdentifier, systemIdentifier);
     m_document->setDocType(doctype);
+    m_document->parserAddChild(doctype);
 
     if ((publicIdentifier == xhtmlTransitional)
         || (publicIdentifier == xhtml11)

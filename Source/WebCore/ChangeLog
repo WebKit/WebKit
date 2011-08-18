@@ -1,3 +1,13 @@
+2011-08-18  Jeffrey Pfau  <jpfau@apple.com>
+
+        New XML parser: add doctype to DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=66408
+
+        Reviewed by Adam Barth.
+
+        * xml/parser/XMLTreeBuilder.cpp:
+        (WebCore::XMLTreeBuilder::processDOCTYPE):
+
 2011-08-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Draw the root/"non-composited content" in compositor side
