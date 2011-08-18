@@ -64,7 +64,7 @@ using namespace std;
 
 extern "C" {
 // This API is not yet public.
-extern G_CONST_RETURN gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem*);
+extern const gchar* webkit_web_history_item_get_target(WebKitWebHistoryItem*);
 extern gboolean webkit_web_history_item_is_target_item(WebKitWebHistoryItem*);
 extern GList* webkit_web_history_item_get_children(WebKitWebHistoryItem*);
 extern void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* view, const gchar* directory);
@@ -1167,7 +1167,12 @@ int main(int argc, char* argv[])
     initializeFonts();
 
     window = gtk_window_new(GTK_WINDOW_POPUP);
+#ifdef GTK_API_VERSION_2
     container = gtk_hbox_new(TRUE, 0);
+#else
+    container = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+    gtk_box_set_homogeneous(GTK_BOX(container), TRUE);
+#endif
     gtk_container_add(GTK_CONTAINER(window), container);
     gtk_widget_show_all(window);
 

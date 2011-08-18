@@ -1,3 +1,19 @@
+2011-08-17  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Fix compilation problems with deprecations in gtk+
+        https://bugs.webkit.org/show_bug.cgi?id=66073
+
+        Reviewed by Martin Robinson.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (main): G_CONST_RETURN was deprecated
+        * GtkLauncher/main.c:
+        (createWindow): Added gtk_box_new conditional compilation for
+        gtk+-3.
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browser_window_init): Replaced gtk_vbox_new with gtk_box_new, we
+        are just supporting gtk+-3 for WebKit2.
+
 2011-08-18  Anders Carlsson  <andersca@apple.com>
 
         Fix libc++ C++0x build

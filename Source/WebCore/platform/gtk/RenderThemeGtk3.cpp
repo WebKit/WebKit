@@ -149,7 +149,7 @@ void RenderThemeGtk::adjustRepaintRect(const RenderObject* renderObject, IntRect
         return;
     case SliderVerticalPart:
     case SliderHorizontalPart:
-        context = getStyleContext(part == SliderThumbHorizontalPart ?  GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
+        context = getStyleContext(GTK_TYPE_SCALE);
         break;
     case ButtonPart:
     case MenulistButtonPart:
@@ -598,7 +598,7 @@ bool RenderThemeGtk::paintSliderTrack(RenderObject* renderObject, const PaintInf
     ControlPart part = renderObject->style()->appearance();
     ASSERT(part == SliderHorizontalPart || part == SliderVerticalPart || part == MediaVolumeSliderPart);
 
-    GtkStyleContext* context = getStyleContext(part == SliderThumbHorizontalPart ? GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_SCALE);
     gtk_style_context_save(context);
 
     gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style()->direction()));
@@ -633,7 +633,7 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInf
     ControlPart part = renderObject->style()->appearance();
     ASSERT(part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
 
-    GtkStyleContext* context = getStyleContext(part == SliderThumbHorizontalPart ? GTK_TYPE_HSCALE : GTK_TYPE_VSCALE);
+    GtkStyleContext* context = getStyleContext(GTK_TYPE_SCALE);
     gtk_style_context_save(context);
 
     gtk_style_context_set_direction(context, gtkTextDirection(renderObject->style()->direction()));
@@ -674,7 +674,7 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style) const
 #endif
 
     gint sliderWidth, sliderLength;
-    gtk_style_context_get_style(getStyleContext(part == SliderThumbHorizontalPart ? GTK_TYPE_HSCALE : GTK_TYPE_VSCALE),
+    gtk_style_context_get_style(getStyleContext(GTK_TYPE_SCALE),
                                 "slider-width", &sliderWidth,
                                 "slider-length", &sliderLength,
                                 NULL);

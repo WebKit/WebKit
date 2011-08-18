@@ -1,3 +1,20 @@
+2011-08-17  Alejandro G. Castro  <alex@igalia.com>
+
+        [GTK] Fix compilation problems with deprecations in gtk+
+        https://bugs.webkit.org/show_bug.cgi?id=66073
+
+        Reviewed by Martin Robinson.
+
+        * platform/gtk/GtkAuthenticationDialog.cpp:
+        (WebCore::GtkAuthenticationDialog::GtkAuthenticationDialog): Added
+        gtk_box_new conditional compilation for gtk+-3.
+        * platform/gtk/RenderThemeGtk3.cpp:
+        (WebCore::RenderThemeGtk::adjustRepaintRect):
+        (WebCore::RenderThemeGtk::paintSliderTrack):
+        (WebCore::RenderThemeGtk::paintSliderThumb):
+        (WebCore::RenderThemeGtk::adjustSliderThumbSize): Now we have have
+        GTK_TYPE_SCALE in gtk+3.
+
 2011-08-18  Kentaro Hara  <haraken@google.com>
 
         A Worker constructor should throw TypeError, when the number of arguments is not enough

@@ -87,7 +87,11 @@ GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, SoupSe
         gtk_window_set_transient_for(window, parentWindow);
 
     // Build contents.
+#ifdef GTK_API_VERSION_2
     GtkWidget* hBox = gtk_hbox_new(FALSE, 12);
+#else
+    GtkWidget* hBox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 12);
+#endif
     gtk_container_set_border_width(GTK_CONTAINER(hBox), 5);
     gtk_box_pack_start(GTK_BOX(gtk_dialog_get_content_area(dialog)), hBox, TRUE, TRUE, 0);
 
@@ -95,7 +99,11 @@ GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, SoupSe
     gtk_misc_set_alignment(GTK_MISC(icon), 0.5, 0.0);
     gtk_box_pack_start(GTK_BOX(hBox), icon, FALSE, FALSE, 0);
 
+#ifdef GTK_API_VERSION_2
     GtkWidget* mainVBox = gtk_vbox_new(FALSE, 18);
+#else
+    GtkWidget* mainVBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 18);
+#endif
     gtk_box_pack_start(GTK_BOX(hBox), mainVBox, TRUE, TRUE, 0);
 
     SoupURI* uri = soup_message_get_uri(m_message.get());
@@ -105,7 +113,11 @@ GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, SoupSe
     gtk_label_set_line_wrap(GTK_LABEL(descriptionLabel), TRUE);
     gtk_box_pack_start(GTK_BOX(mainVBox), GTK_WIDGET(descriptionLabel), FALSE, FALSE, 0);
 
+#ifdef GTK_API_VERSION_2
     GtkWidget* vBox = gtk_vbox_new(FALSE, 6);
+#else
+    GtkWidget* vBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+#endif
     gtk_box_pack_start(GTK_BOX(mainVBox), vBox, FALSE, FALSE, 0);
 
     // The table that holds the entries.
@@ -139,7 +151,11 @@ GtkAuthenticationDialog::GtkAuthenticationDialog(GtkWindow* parentWindow, SoupSe
     gtk_entry_set_visibility(GTK_ENTRY(m_passwordEntry), FALSE);
 
     if (sessionCanSavePasswords(m_session)) {
+#ifdef GTK_API_VERSION_2
         GtkWidget* rememberBox = gtk_vbox_new(FALSE, 6);
+#else
+        GtkWidget* rememberBox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 6);
+#endif
         gtk_box_pack_start(GTK_BOX(vBox), rememberBox, FALSE, FALSE, 0);
 
         m_rememberCheckButton = gtk_check_button_new_with_mnemonic(_("_Remember password"));
