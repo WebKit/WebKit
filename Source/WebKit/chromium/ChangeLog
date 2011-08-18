@@ -1,3 +1,18 @@
+2011-08-18  Gavin Peters  <gavinp@chromium.org>
+
+        Prepare frames for history navigation.
+
+        Before beginning an explicit history navigation in a newly initialized
+        frame, it's important to give a "previous" item to avoid crashes, and
+        give a state to the state machine to avoid extra validating loads.
+
+        https://bugs.webkit.org/show_bug.cgi?id=66322
+
+        Reviewed by Darin Fisher.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::loadHistoryItem):
+
 2011-08-18  Nico Weber  <thakis@chromium.org>
 
         [chromium/mac] Enable smooth scrolling

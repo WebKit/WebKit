@@ -1,3 +1,22 @@
+2011-08-18  Gavin Peters  <gavinp@chromium.org>
+
+        Prepare frames for history navigation.
+
+        Before beginning an explicit history navigation in a newly initialized
+        frame, it's important to give a "previous" item to avoid crashes, and
+        give a state to the state machine to avoid extra validating loads.
+
+        https://bugs.webkit.org/show_bug.cgi?id=66322
+
+        Reviewed by Darin Fisher.
+
+        No new tests, as history navigation is very difficult to test in
+        DumpRenderTree.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::prepareForHistoryNavigation):
+        * loader/FrameLoader.h:
+
 2011-08-18  Jing Zhao  <jingzhao@chromium.org>
 
         When changing the size of a menulist from x (x>1) to 1, the first item should be selected.

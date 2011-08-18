@@ -1090,6 +1090,25 @@ void FrameLoader::started()
         frame->loader()->m_isComplete = false;
 }
 
+void FrameLoader::prepareForHistoryNavigation()
+{
+    // If there is no currentItem, but we still want to engage in 
+    // history navigation we need to manufacture one, and update
+    // the state machine of this frame to impersonate having
+    // loaded it.
+    RefPtr<HistoryItem> currentItem = history()->currentItem();
+    if (!currentItem) {
+        currentItem = HistoryItem::create();
+        currentItem->setLastVisitWasFailure(true);
+        history()->setCurrentItem(currentItem.get());
+        frame()->page()->backForward()->setCurrentItem(currentItem.get());
+
+        ASSERT(stateMachine()->isDisplayingInitialEmptyDocument());
+        stateMachine()->advanceTo(FrameLoaderStateMachine::DisplayingInitialEmptyDocumentPostCommit);
+        stateMachine()->advanceTo(FrameLoaderStateMachine::CommittedFirstRealLoad);
+    }
+}
+
 void FrameLoader::prepareForLoadStart()
 {
     if (Page* page = m_frame->page())

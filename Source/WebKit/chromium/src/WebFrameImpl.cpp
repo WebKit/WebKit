@@ -889,17 +889,8 @@ void WebFrameImpl::loadHistoryItem(const WebHistoryItem& item)
     RefPtr<HistoryItem> historyItem = PassRefPtr<HistoryItem>(item);
     ASSERT(historyItem.get());
 
-    // If there is no currentItem, which happens when we are navigating in
-    // session history after a crash, we need to manufacture one otherwise WebKit
-    // hoarks. This is probably the wrong thing to do, but it seems to work.
+    m_frame->loader()->prepareForHistoryNavigation();
     RefPtr<HistoryItem> currentItem = m_frame->loader()->history()->currentItem();
-    if (!currentItem) {
-        currentItem = HistoryItem::create();
-        currentItem->setLastVisitWasFailure(true);
-        m_frame->loader()->history()->setCurrentItem(currentItem.get());
-        m_frame->page()->backForward()->setCurrentItem(currentItem.get());
-    }
-
     m_inSameDocumentHistoryLoad = currentItem->shouldDoSameDocumentNavigationTo(historyItem.get());
     m_frame->page()->goToItem(historyItem.get(),
                               FrameLoadTypeIndexedBackForward);

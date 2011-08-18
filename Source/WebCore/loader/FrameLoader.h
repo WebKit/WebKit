@@ -91,6 +91,7 @@ public:
     SubframeLoader* subframeLoader() const { return &m_subframeLoader; }
     IconController* icon() const { return &m_icon; }
 
+    void prepareForHistoryNavigation();
     void prepareForLoadStart();
     void setupForReplace();
 
