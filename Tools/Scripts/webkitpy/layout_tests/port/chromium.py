@@ -162,10 +162,14 @@ class ChromiumPort(Port):
 
     def diff_image(self, expected_contents, actual_contents):
         # FIXME: need unit tests for this.
+
+        # If only one of them exists, return that one.
         if not actual_contents and not expected_contents:
-            return False
-        if not actual_contents or not expected_contents:
-            return True
+            return None
+        if not actual_contents:
+            return expected_contents
+        if not expected_contents:
+            return actual_contents
 
         tempdir = self._filesystem.mkdtemp()
 
@@ -177,8 +181,12 @@ class ChromiumPort(Port):
 
         diff_filename = self._filesystem.join(str(tempdir), "diff.png")
 
+        native_expected_filename = self._convert_path(expected_filename)
+        native_actual_filename = self._convert_path(actual_filename)
+        native_diff_filename = self._convert_path(diff_filename)
+
         executable = self._path_to_image_diff()
-        comand = [executable, '--diff', expected_filename, actual_filename, diff_filename]
+        comand = [executable, '--diff', native_actual_filename, native_expected_filename, native_diff_filename]
 
         result = None
         try:
@@ -188,11 +196,10 @@ class ChromiumPort(Port):
                 result = None
             elif exit_code != 1:
                 _log.error("image diff returned an exit code of %s" % exit_code)
-                # Returning False here causes the script to think that we
-                # successfully created the diff even though we didn't.  If
-                # we return True, we think that the images match but the hashes
-                # don't match.
-                # FIXME: Figure out why image_diff returns other values.
+                # Returning None here causes the script to think that we
+                # successfully created the diff even though we didn't.
+                # FIXME: Consider raising an exception here, so that the error
+                # is not accidentally overlooked while the test passes.
                 result = None
         except OSError, e:
             if e.errno == errno.ENOENT or e.errno == errno.EACCES:

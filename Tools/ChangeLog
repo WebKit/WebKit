@@ -1,3 +1,14 @@
+2011-08-18  Shawn Singh  <shawnsingh@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=47240
+
+        Fixed a cygwin path problem in the chromium port of diff_image;
+        Also made the return values of the diff_image function more consistent.
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-08-17  Alejandro G. Castro  <alex@igalia.com>
 
         [GTK] Fix compilation problems with deprecations in gtk+
