@@ -223,9 +223,15 @@ PassRefPtr<LayerRendererChromium> CCLayerTreeHost::createLayerRenderer()
 #if !USE(THREADED_COMPOSITING)
 void CCLayerTreeHost::doComposite()
 {
+#ifndef NDEBUG
+    CCLayerTreeHostImplProxy::setImplThread(true);
+#endif
     ASSERT(m_layerRenderer);
     m_layerRenderer->updateLayers();
     m_layerRenderer->drawLayers();
+#ifndef NDEBUG
+    CCLayerTreeHostImplProxy::setImplThread(false);
+#endif
 }
 
 void CCLayerTreeHost::composite(bool finish)

@@ -30,7 +30,7 @@
 #include "cc/CCTiledLayerImpl.h"
 
 #include "LayerRendererChromium.h"
-
+#include "cc/CCLayerTreeHostImplProxy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -49,6 +49,7 @@ CCTiledLayerImpl::~CCTiledLayerImpl()
 
 void CCTiledLayerImpl::draw()
 {
+    ASSERT(CCLayerTreeHostImplProxy::isImplThread());
     const IntRect& layerRect = visibleLayerRect();
     if (!layerRect.isEmpty()) {
         GraphicsContext3D* context = layerRenderer()->context();

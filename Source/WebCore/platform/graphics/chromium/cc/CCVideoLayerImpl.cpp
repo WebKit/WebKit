@@ -33,6 +33,7 @@
 #include "LayerRendererChromium.h"
 #include "NotImplemented.h"
 #include "VideoLayerChromium.h"
+#include "cc/CCLayerTreeHostImplProxy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -77,6 +78,8 @@ void CCVideoLayerImpl::setTexture(size_t i, VideoLayerChromium::Texture texture)
 
 void CCVideoLayerImpl::draw()
 {
+    ASSERT(CCLayerTreeHostImplProxy::isImplThread());
+
     if (m_skipsDraw)
         return;
 

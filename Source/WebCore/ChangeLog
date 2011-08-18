@@ -1,3 +1,41 @@
+2011-08-18  Iain Merrick  <husky@google.com>
+
+        [chromium] Assert that main thread and compositor thread are used safely
+        https://bugs.webkit.org/show_bug.cgi?id=66145
+
+        CCLayerTreeHostImplProxy now has public static methods isMainThread()
+        and isImplThread(), and we ASSERT these in various places. If threaded
+        compositing is disabled, we fake isImplThread() by setting a flag for
+        the duration of compositing, so the assert is still valid.
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::doComposite):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.cpp:
+        (WebCore::CCLayerTreeHostImplProxy::postDrawLayersTaskOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::requestFrameAndCommitOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::isMainThread):
+        (WebCore::CCLayerTreeHostImplProxy::isImplThread):
+        (WebCore::CCLayerTreeHostImplProxy::setImplThread):
+        (WebCore::CCLayerTreeHostImplProxy::commitOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::drawLayersOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::setNeedsCommitAndRedrawOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::setNeedsRedrawOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::initImplOnCCThread):
+        (WebCore::CCLayerTreeHostImplProxy::layerTreeHostClosedOnCCThread):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.h:
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::draw):
+
 2011-08-18  Alexey Proskuryakov  <ap@apple.com>
 
         Regional indicator symbols that are combined should behave as a single character when editing

@@ -31,6 +31,7 @@
 
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "cc/CCLayerTreeHostImplProxy.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,6 +48,7 @@ CCPluginLayerImpl::~CCPluginLayerImpl()
 
 void CCPluginLayerImpl::draw()
 {
+    ASSERT(CCLayerTreeHostImplProxy::isImplThread());
     ASSERT(layerRenderer());
     const CCPluginLayerImpl::Program* program = layerRenderer()->pluginLayerProgram();
     ASSERT(program && program->initialized());

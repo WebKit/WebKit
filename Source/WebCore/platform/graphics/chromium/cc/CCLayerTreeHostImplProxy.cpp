@@ -111,7 +111,7 @@ void CCLayerTreeHostImplProxy::stop()
 
 void CCLayerTreeHostImplProxy::postDrawLayersTaskOnCCThread()
 {
-    ASSERT(isCCThread());
+    ASSERT(isImplThread());
     if (m_layerTreeHostImpl)
         ccThread->postTask(createCCThreadTask(this, &CCLayerTreeHostImplProxy::drawLayersOnCCThread));
 }
@@ -119,20 +119,39 @@ void CCLayerTreeHostImplProxy::postDrawLayersTaskOnCCThread()
 void CCLayerTreeHostImplProxy::requestFrameAndCommitOnCCThread(double frameBeginTime)
 {
     TRACE_EVENT("CCLayerTreeHostImplProxy::requestFrameAndCommitOnCCThread", this, 0);
-    ASSERT(isCCThread());
+    ASSERT(isImplThread());
     if (m_layerTreeHostImpl)
         CCMainThread::postTask(createMainThreadTask(this, &CCLayerTreeHostImplProxy::requestFrameAndCommit, frameBeginTime));
 }
 
-bool CCLayerTreeHostImplProxy::isMainThread() const
+#ifndef NDEBUG
+bool CCLayerTreeHostImplProxy::isMainThread()
 {
     return ::isMainThread();
 }
 
-bool CCLayerTreeHostImplProxy::isCCThread() const
+#if USE(THREADED_COMPOSITING)
+bool CCLayerTreeHostImplProxy::isImplThread()
 {
     return currentThread() == ccThread->threadID();
 }
+#else
+namespace {
+bool fakeImplThread = false;
+}
+
+bool CCLayerTreeHostImplProxy::isImplThread()
+{
+    return fakeImplThread;
+}
+
+void CCLayerTreeHostImplProxy::setImplThread(bool value)
+{
+    fakeImplThread = value;
+}
+#endif // USE(THREADED_COMPOSITING)
+
+#endif // !NDEBUG
 
 void CCLayerTreeHostImplProxy::requestFrameAndCommit(double frameBeginTime)
 {
@@ -163,7 +182,7 @@ void CCLayerTreeHostImplProxy::requestFrameAndCommit(double frameBeginTime)
 
 void CCLayerTreeHostImplProxy::commitOnCCThread(CCLayerTreeHostCommitter* committer, CCCompletionEvent* completion)
 {
-    ASSERT(isCCThread());
+    ASSERT(isImplThread());
     TRACE_EVENT("CCLayerTreeHostImplProxy::commitOnCCThread", this, 0);
     m_layerTreeHostImpl->beginCommit();
     {
@@ -178,7 +197,7 @@ void CCLayerTreeHostImplProxy::commitOnCCThread(CCLayerTreeHostCommitter* commit
 void CCLayerTreeHostImplProxy::drawLayersOnCCThread()
 {
     TRACE_EVENT("CCLayerTreeHostImplProxy::drawLayersOnCCThread", this, 0);
-    ASSERT(isCCThread());
+    ASSERT(isImplThread());
     if (m_layerTreeHostImpl)
         m_layerTreeHostImpl->drawLayers();
 }
@@ -186,21 +205,21 @@ void CCLayerTreeHostImplProxy::drawLayersOnCCThread()
 void CCLayerTreeHostImplProxy::setNeedsCommitAndRedrawOnCCThread()
 {
     TRACE_EVENT("CCLayerTreeHostImplProxy::setNeedsCommitAndRedrawOnCCThread", this, 0);
-    ASSERT(isCCThread() && m_layerTreeHostImpl);
+    ASSERT(isImplThread() && m_layerTreeHostImpl);
     m_layerTreeHostImpl->setNeedsCommitAndRedraw();
 }
 
 void CCLayerTreeHostImplProxy::setNeedsRedrawOnCCThread()
 {
     TRACE_EVENT("CCLayerTreeHostImplProxy::setNeedsRedrawOnCCThread", this, 0);
-    ASSERT(isCCThread() && m_layerTreeHostImpl);
+    ASSERT(isImplThread() && m_layerTreeHostImpl);
     m_layerTreeHostImpl->setNeedsRedraw();
 }
 
 void CCLayerTreeHostImplProxy::initImplOnCCThread(CCCompletionEvent* completion)
 {
     TRACE_EVENT("CCLayerTreeHostImplProxy::initImplOnCCThread", this, 0);
-    ASSERT(isCCThread());
+    ASSERT(isImplThread());
     m_layerTreeHostImpl = m_layerTreeHost->createLayerTreeHostImpl(this);
     completion->signal();
 }
@@ -208,7 +227,7 @@ void CCLayerTreeHostImplProxy::initImplOnCCThread(CCCompletionEvent* completion)
 void CCLayerTreeHostImplProxy::layerTreeHostClosedOnCCThread(CCCompletionEvent* completion)
 {
     TRACE_EVENT("CCLayerTreeHostImplProxy::layerTreeHostClosedOnCCThread", this, 0);
-    ASSERT(isCCThread());
+    ASSERT(isImplThread());
     m_layerTreeHostImpl.clear();
     completion->signal();
 }

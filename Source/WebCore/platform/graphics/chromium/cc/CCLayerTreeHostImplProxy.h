@@ -51,15 +51,21 @@ public:
     virtual void postDrawLayersTaskOnCCThread();
     virtual void requestFrameAndCommitOnCCThread(double frameBeginTime);
 
+#ifndef NDEBUG
+    static bool isMainThread();
+    static bool isImplThread();
+#if !USE(THREADED_COMPOSITING)
+    // Fake threaded compositing so we can catch incorrect usage.
+    static void setImplThread(bool);
+#endif
+#endif
+
 protected:
     explicit CCLayerTreeHostImplProxy(CCLayerTreeHost*);
     virtual PassOwnPtr<CCLayerTreeHostImpl> createLayerTreeHostImpl() = 0;
     CCLayerTreeHost* host() const { return m_layerTreeHost; }
 
 private:
-    bool isMainThread() const;
-    bool isCCThread() const;
-
     // Called on CCMainThread
     void requestFrameAndCommit(double frameBeginTime);
 
