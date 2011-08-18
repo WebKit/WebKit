@@ -1,3 +1,17 @@
+2011-08-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix clang libc++ C++0x build
+        https://bugs.webkit.org/show_bug.cgi?id=66475
+
+        Reviewed by Adam Roben.
+
+        Remove calls to isnan and isfinite with integer arguments.
+
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::viewport):
+
 2011-08-18  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API] rename webInspector.resources to webInspector.network

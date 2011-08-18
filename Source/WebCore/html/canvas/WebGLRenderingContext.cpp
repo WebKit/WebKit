@@ -3897,14 +3897,6 @@ void WebGLRenderingContext::viewport(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3D
 {
     if (isContextLost())
         return;
-    if (isnan(x))
-        x = 0;
-    if (isnan(y))
-        y = 0;
-    if (isnan(width))
-        width = 100;
-    if (isnan(height))
-        height = 100;
     if (!validateSize(width, height))
         return;
     m_context->viewport(x, y, width, height);

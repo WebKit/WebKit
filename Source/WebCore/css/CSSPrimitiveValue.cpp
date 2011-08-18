@@ -159,7 +159,6 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             break;
         case WebCore::Fixed:
             m_type = CSS_PX;
-            ASSERT(isfinite(length.value()));
             m_value.num = length.value();
             break;
         case Intrinsic:
