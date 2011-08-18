@@ -685,7 +685,7 @@ bool AccessibilityRenderObject::isReadOnly() const
 bool AccessibilityRenderObject::isOffScreen() const
 {
     ASSERT(m_renderer);
-    IntRect contentRect = m_renderer->absoluteClippedOverflowRect();
+    LayoutRect contentRect = m_renderer->absoluteClippedOverflowRect();
     FrameView* view = m_renderer->frame()->view();
     FloatRect viewRect = view->visibleContentRect();
     viewRect.intersect(contentRect);
@@ -1415,12 +1415,12 @@ String AccessibilityRenderObject::accessibilityDescription() const
     return String();
 }
 
-IntRect AccessibilityRenderObject::boundingBoxRect() const
+LayoutRect AccessibilityRenderObject::boundingBoxRect() const
 {
     RenderObject* obj = m_renderer;
     
     if (!obj)
-        return IntRect();
+        return LayoutRect();
     
     if (obj->node()) // If we are a continuation, we want to make sure to use the primary renderer.
         obj = obj->node()->renderer();
@@ -1436,11 +1436,11 @@ IntRect AccessibilityRenderObject::boundingBoxRect() const
         obj->absoluteFocusRingQuads(quads);
     const size_t n = quads.size();
     if (!n)
-        return IntRect();
+        return LayoutRect();
 
-    IntRect result;
+    LayoutRect result;
     for (size_t i = 0; i < n; ++i) {
-        IntRect r = quads[i].enclosingBoundingBox();
+        LayoutRect r = quads[i].enclosingBoundingBox();
         if (!r.isEmpty()) {
             if (obj->style()->hasAppearance())
                 obj->theme()->adjustRepaintRect(obj, r);
@@ -1455,21 +1455,21 @@ IntRect AccessibilityRenderObject::boundingBoxRect() const
     return result;
 }
     
-IntRect AccessibilityRenderObject::checkboxOrRadioRect() const
+LayoutRect AccessibilityRenderObject::checkboxOrRadioRect() const
 {
     if (!m_renderer)
-        return IntRect();
+        return LayoutRect();
     
     HTMLLabelElement* label = labelForElement(static_cast<Element*>(m_renderer->node()));
     if (!label || !label->renderer())
         return boundingBoxRect();
     
-    IntRect labelRect = axObjectCache()->getOrCreate(label->renderer())->elementRect();
+    LayoutRect labelRect = axObjectCache()->getOrCreate(label->renderer())->elementRect();
     labelRect.unite(boundingBoxRect());
     return labelRect;
 }
 
-IntRect AccessibilityRenderObject::elementRect() const
+LayoutRect AccessibilityRenderObject::elementRect() const
 {
     // a checkbox or radio button should encompass its label
     if (isCheckboxOrRadio())
@@ -1478,13 +1478,13 @@ IntRect AccessibilityRenderObject::elementRect() const
     return boundingBoxRect();
 }
 
-IntSize AccessibilityRenderObject::size() const
+LayoutSize AccessibilityRenderObject::size() const
 {
-    IntRect rect = elementRect();
+    LayoutRect rect = elementRect();
     return rect.size();
 }
 
-IntPoint AccessibilityRenderObject::clickPoint() const
+LayoutPoint AccessibilityRenderObject::clickPoint() const
 {
     // use the default position unless this is an editable web area, in which case we use the selection bounds.
     if (!isWebArea() || isReadOnly())
@@ -1492,11 +1492,11 @@ IntPoint AccessibilityRenderObject::clickPoint() const
     
     VisibleSelection visSelection = selection();
     VisiblePositionRange range = VisiblePositionRange(visSelection.visibleStart(), visSelection.visibleEnd());
-    IntRect bounds = boundsForVisiblePositionRange(range);
+    LayoutRect bounds = boundsForVisiblePositionRange(range);
 #if PLATFORM(MAC)
     bounds.setLocation(m_renderer->document()->view()->screenToContents(bounds.location()));
 #endif        
-    return IntPoint(bounds.x() + (bounds.width() / 2), bounds.y() - (bounds.height() / 2));
+    return LayoutPoint(bounds.x() + (bounds.width() / 2), bounds.y() - (bounds.height() / 2));
 }
     
 AccessibilityObject* AccessibilityRenderObject::internalLinkElement() const
@@ -1896,7 +1896,7 @@ bool AccessibilityRenderObject::accessibilityIsIgnored() const
             
             // check whether rendered image was stretched from one-dimensional file image
             if (image->cachedImage()) {
-                IntSize imageSize = image->cachedImage()->imageSize(image->view()->zoomFactor());
+                LayoutSize imageSize = image->cachedImage()->imageSize(image->view()->zoomFactor());
                 return imageSize.height() <= 1 || imageSize.width() <= 1;
             }
         }
@@ -2535,15 +2535,15 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
 #endif
 }
 
-IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
+LayoutRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const
 {
     if (visiblePositionRange.isNull())
-        return IntRect();
+        return LayoutRect();
     
     // Create a mutable VisiblePositionRange.
     VisiblePositionRange range(visiblePositionRange);
-    IntRect rect1 = range.start.absoluteCaretBounds();
-    IntRect rect2 = range.end.absoluteCaretBounds();
+    LayoutRect rect1 = range.start.absoluteCaretBounds();
+    LayoutRect rect2 = range.end.absoluteCaretBounds();
     
     // readjust for position at the edge of a line.  This is to exclude line rect that doesn't need to be accounted in the range bounds
     if (rect2.y() != rect1.y()) {
@@ -2558,13 +2558,13 @@ IntRect AccessibilityRenderObject::boundsForVisiblePositionRange(const VisiblePo
         }
     }
     
-    IntRect ourrect = rect1;
+    LayoutRect ourrect = rect1;
     ourrect.unite(rect2);
     
     // if the rectangle spans lines and contains multiple text chars, use the range's bounding box intead
     if (rect1.maxY() != rect2.maxY()) {
         RefPtr<Range> dataRange = makeRange(range.start, range.end);
-        IntRect boundingBox = dataRange->boundingBox();
+        LayoutRect boundingBox = dataRange->boundingBox();
         String rangeString = plainText(dataRange.get());
         if (rangeString.length() > 1 && !boundingBox.isEmpty())
             ourrect = boundingBox;
@@ -2591,7 +2591,7 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
     }    
 }
 
-VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoint& point) const
+VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const LayoutPoint& point) const
 {
     if (!m_renderer)
         return VisiblePosition();
@@ -2612,9 +2612,9 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForPoint(const IntPoin
     Node* innerNode = 0;
     
     // locate the node containing the point
-    IntPoint pointResult;
+    LayoutPoint pointResult;
     while (1) {
-        IntPoint ourpoint;
+        LayoutPoint ourpoint;
 #if PLATFORM(MAC)
         ourpoint = frameView->screenToContents(point);
 #else
@@ -2752,11 +2752,11 @@ String AccessibilityRenderObject::doAXStringForRange(const PlainTextRange& range
 // The bounding rectangle of the text associated with this accessibility object that is
 // specified by the given range. This is the bounding rectangle a sighted user would see
 // on the display screen, in pixels.
-IntRect AccessibilityRenderObject::doAXBoundsForRange(const PlainTextRange& range) const
+LayoutRect AccessibilityRenderObject::doAXBoundsForRange(const PlainTextRange& range) const
 {
     if (allowsTextRanges())
         return boundsForVisiblePositionRange(visiblePositionRangeForRange(range));
-    return IntRect();
+    return LayoutRect();
 }
 
 AccessibilityObject* AccessibilityRenderObject::accessibilityImageMapHitTest(HTMLAreaElement* area, const IntPoint& point) const

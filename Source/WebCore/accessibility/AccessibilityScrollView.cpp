@@ -138,7 +138,7 @@ AccessibilityObject* AccessibilityScrollView::webAreaObject() const
     return axObjectCache()->getOrCreate(doc->renderer());
 }
 
-AccessibilityObject* AccessibilityScrollView::accessibilityHitTest(const IntPoint& point) const
+AccessibilityObject* AccessibilityScrollView::accessibilityHitTest(const LayoutPoint& point) const
 {
     AccessibilityObject* webArea = webAreaObject();
     if (!webArea)
@@ -152,7 +152,7 @@ AccessibilityObject* AccessibilityScrollView::accessibilityHitTest(const IntPoin
     return webArea->accessibilityHitTest(point);
 }
 
-IntRect AccessibilityScrollView::elementRect() const
+LayoutRect AccessibilityScrollView::elementRect() const
 {
     return m_scrollView->frameRect();
 }

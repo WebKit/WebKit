@@ -30,7 +30,7 @@
 #ifndef AccessibilityObject_h
 #define AccessibilityObject_h
 
-#include "IntRect.h"
+#include "LayoutTypes.h"
 #include "VisiblePosition.h"
 #include "VisibleSelection.h"
 #include <wtf/Forward.h>
@@ -455,9 +455,9 @@ public:
     virtual void determineARIADropEffects(Vector<String>&) { }
     
     // Called on the root AX object to return the deepest available element.
-    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const { return 0; }
+    virtual AccessibilityObject* accessibilityHitTest(const LayoutPoint&) const { return 0; }
     // Called on the AX object after the render tree determines which is the right AccessibilityRenderObject.
-    virtual AccessibilityObject* elementAccessibilityHitTest(const IntPoint&) const;
+    virtual AccessibilityObject* elementAccessibilityHitTest(const LayoutPoint&) const;
 
     virtual AccessibilityObject* focusedUIElement() const;
 
@@ -496,10 +496,10 @@ public:
     static AccessibilityObject* anchorElementForNode(Node*);
     virtual Element* anchorElement() const { return 0; }
     virtual Element* actionElement() const { return 0; }
-    virtual IntRect boundingBoxRect() const { return IntRect(); }
-    virtual IntRect elementRect() const = 0;
-    virtual IntSize size() const { return elementRect().size(); }
-    virtual IntPoint clickPoint() const;
+    virtual LayoutRect boundingBoxRect() const { return LayoutRect(); }
+    virtual LayoutRect elementRect() const = 0;
+    virtual LayoutSize size() const { return elementRect().size(); }
+    virtual LayoutPoint clickPoint() const;
 
     virtual PlainTextRange selectedTextRange() const { return PlainTextRange(); }
     unsigned selectionStart() const { return selectedTextRange().start; }
@@ -573,7 +573,7 @@ public:
     VisiblePositionRange visiblePositionRangeForRange(const PlainTextRange&) const;
 
     String stringForVisiblePositionRange(const VisiblePositionRange&) const;
-    virtual IntRect boundsForVisiblePositionRange(const VisiblePositionRange&) const { return IntRect(); }
+    virtual LayoutRect boundsForVisiblePositionRange(const VisiblePositionRange&) const { return LayoutRect(); }
     int lengthForVisiblePositionRange(const VisiblePositionRange&) const;
     virtual void setSelectedVisiblePositionRange(const VisiblePositionRange&) const { }
 
@@ -604,7 +604,7 @@ public:
     PlainTextRange doAXStyleRangeForIndex(unsigned) const;
 
     virtual String doAXStringForRange(const PlainTextRange&) const { return String(); }
-    virtual IntRect doAXBoundsForRange(const PlainTextRange&) const { return IntRect(); }
+    virtual LayoutRect doAXBoundsForRange(const PlainTextRange&) const { return LayoutRect(); }
     String listMarkerTextForNodeAndPosition(Node*, const VisiblePosition&) const;
 
     unsigned doAXLineForIndex(unsigned);

@@ -51,12 +51,12 @@ private:
     
     virtual AccessibilityObject* scrollBar(AccessibilityOrientation) const;
     virtual void addChildren();
-    virtual AccessibilityObject* accessibilityHitTest(const IntPoint&) const;
+    virtual AccessibilityObject* accessibilityHitTest(const LayoutPoint&) const;
     virtual const AccessibilityChildrenVector& children();
     virtual void updateChildrenIfNecessary();
     
     virtual FrameView* documentFrameView() const;
-    virtual IntRect elementRect() const;
+    virtual LayoutRect elementRect() const;
     virtual AccessibilityObject* parentObject() const;
     
     AccessibilityObject* webAreaObject() const;

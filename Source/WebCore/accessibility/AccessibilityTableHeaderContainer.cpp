@@ -56,18 +56,18 @@ const AccessibilityObject::AccessibilityChildrenVector& AccessibilityTableHeader
         addChildren();
     return m_children;
 }
-   
-IntRect AccessibilityTableHeaderContainer::elementRect() const
+
+LayoutRect AccessibilityTableHeaderContainer::elementRect() const
 {
     // this will be filled in when addChildren is called
     return m_headerRect;
 }
-    
-IntSize AccessibilityTableHeaderContainer::size() const
+
+LayoutSize AccessibilityTableHeaderContainer::size() const
 {
     return elementRect().size();
 }
-    
+
 bool AccessibilityTableHeaderContainer::accessibilityIsIgnored() const
 {
     if (!m_parentTable)

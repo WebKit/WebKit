@@ -63,13 +63,13 @@ void AccessibilityTableColumn::setParentTable(AccessibilityTable* table)
     clearChildren();
 }
     
-IntRect AccessibilityTableColumn::elementRect() const
+LayoutRect AccessibilityTableColumn::elementRect() const
 {
     // this will be filled in when addChildren is called
     return m_columnRect;
 }
 
-IntSize AccessibilityTableColumn::size() const
+LayoutSize AccessibilityTableColumn::size() const
 {
     return elementRect().size();
 }

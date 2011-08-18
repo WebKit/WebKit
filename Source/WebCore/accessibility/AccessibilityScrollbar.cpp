@@ -48,10 +48,10 @@ PassRefPtr<AccessibilityScrollbar> AccessibilityScrollbar::create(Scrollbar* scr
     return adoptRef(new AccessibilityScrollbar(scrollbar));
 }
     
-IntRect AccessibilityScrollbar::elementRect() const
+LayoutRect AccessibilityScrollbar::elementRect() const
 {
     if (!m_scrollbar)
-        return IntRect();
+        return LayoutRect();
     
     return m_scrollbar->frameRect();
 }

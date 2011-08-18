@@ -51,12 +51,12 @@ public:
     virtual const AccessibilityChildrenVector& children();
     virtual void addChildren();
     
-    virtual IntSize size() const;
-    virtual IntRect elementRect() const;
+    virtual LayoutSize size() const;
+    virtual LayoutRect elementRect() const;
     
 private:
     AccessibilityTable* m_parentTable;
-    IntRect m_headerRect;
+    LayoutRect m_headerRect;
     
     virtual bool accessibilityIsIgnored() const;
 }; 

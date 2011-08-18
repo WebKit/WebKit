@@ -1,3 +1,76 @@
+2011-08-17  Levi Weintraub  <leviw@chromium.org>
+
+        Switch Accessibility code to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66348
+
+        Reviewed by Eric Seidel.
+
+        Converting remaining Accessibility code to the LayoutUnit abstraction.
+
+        No new tests, no change in functionality
+
+        * accessibility/AccessibilityImageMapLink.cpp:
+        (WebCore::AccessibilityImageMapLink::elementRect):
+        * accessibility/AccessibilityImageMapLink.h:
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::elementAccessibilityHitTest):
+        * accessibility/AccessibilityListBox.h:
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::elementRect):
+        * accessibility/AccessibilityListBoxOption.h:
+        * accessibility/AccessibilityMenuListOption.cpp:
+        (WebCore::AccessibilityMenuListOption::elementRect):
+        * accessibility/AccessibilityMenuListOption.h:
+        (WebCore::AccessibilityMenuListOption::size):
+        * accessibility/AccessibilityMenuListPopup.h:
+        (WebCore::AccessibilityMenuListPopup::elementRect):
+        (WebCore::AccessibilityMenuListPopup::size):
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::clickPoint):
+        (WebCore::AccessibilityObject::orientation):
+        (WebCore::AccessibilityObject::elementAccessibilityHitTest):
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::accessibilityHitTest):
+        (WebCore::AccessibilityObject::boundingBoxRect):
+        (WebCore::AccessibilityObject::size):
+        (WebCore::AccessibilityObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityObject::doAXBoundsForRange):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::isOffScreen):
+        (WebCore::AccessibilityRenderObject::boundingBoxRect):
+        (WebCore::AccessibilityRenderObject::checkboxOrRadioRect):
+        (WebCore::AccessibilityRenderObject::elementRect):
+        (WebCore::AccessibilityRenderObject::size):
+        (WebCore::AccessibilityRenderObject::clickPoint):
+        (WebCore::AccessibilityRenderObject::accessibilityIsIgnored):
+        (WebCore::AccessibilityRenderObject::boundsForVisiblePositionRange):
+        (WebCore::AccessibilityRenderObject::visiblePositionForPoint):
+        (WebCore::AccessibilityRenderObject::doAXBoundsForRange):
+        * accessibility/AccessibilityRenderObject.h:
+        * accessibility/AccessibilityScrollView.cpp:
+        (WebCore::AccessibilityScrollView::accessibilityHitTest):
+        (WebCore::AccessibilityScrollView::elementRect):
+        * accessibility/AccessibilityScrollView.h:
+        * accessibility/AccessibilityScrollbar.cpp:
+        (WebCore::AccessibilityScrollbar::elementRect):
+        * accessibility/AccessibilityScrollbar.h:
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySliderThumb::elementRect):
+        (WebCore::AccessibilitySliderThumb::size):
+        * accessibility/AccessibilitySlider.h:
+        * accessibility/AccessibilityTableColumn.cpp:
+        (WebCore::AccessibilityTableColumn::elementRect):
+        (WebCore::AccessibilityTableColumn::size):
+        * accessibility/AccessibilityTableColumn.h:
+        * accessibility/AccessibilityTableHeaderContainer.cpp:
+        (WebCore::AccessibilityTableHeaderContainer::elementRect):
+        (WebCore::AccessibilityTableHeaderContainer::size):
+        * accessibility/AccessibilityTableHeaderContainer.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper position]):
+        (-[AccessibilityObjectWrapper accessibilityAttributeValue:]):
+        (-[AccessibilityObjectWrapper accessibilityShowContextMenu]):
+
 2011-08-17  Emil A Eklund  <eae@chromium.org>
 
         Switch focus handling to to new layout types

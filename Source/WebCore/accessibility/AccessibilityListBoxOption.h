@@ -60,7 +60,7 @@ public:
     virtual void setSelected(bool);
     virtual bool canSetSelectedAttribute() const;
 
-    virtual IntRect elementRect() const;
+    virtual LayoutRect elementRect() const;
     virtual AccessibilityObject* parentObject() const;
     bool isListBoxOption() const { return true; }
     

@@ -59,13 +59,13 @@ public:
     virtual const AccessibilityChildrenVector& children();
     virtual void addChildren();
     
-    virtual IntSize size() const;
-    virtual IntRect elementRect() const;
+    virtual LayoutSize size() const;
+    virtual LayoutRect elementRect() const;
     
 private:    
     AccessibilityTable* m_parentTable;
     int m_columnIndex;
-    IntRect m_columnRect;
+    LayoutRect m_columnRect;
     
     AccessibilityObject* headerObjectForSection(RenderTableSection*, bool thTagRequired);
 };

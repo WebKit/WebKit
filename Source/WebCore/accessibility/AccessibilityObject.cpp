@@ -393,10 +393,10 @@ bool AccessibilityObject::isARIAControl(AccessibilityRole ariaRole)
     || ariaRole == ComboBoxRole || ariaRole == SliderRole; 
 }
 
-IntPoint AccessibilityObject::clickPoint() const
+LayoutPoint AccessibilityObject::clickPoint() const
 {
-    IntRect rect = elementRect();
-    return IntPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
+    LayoutRect rect = elementRect();
+    return LayoutPoint(rect.x() + rect.width() / 2, rect.y() + rect.height() / 2);
 }
 
 bool AccessibilityObject::press() const
@@ -1144,7 +1144,7 @@ const AtomicString& AccessibilityObject::getAttribute(const QualifiedName& attri
 // Lacking concrete evidence of orientation, horizontal means width > height. vertical is height > width;
 AccessibilityOrientation AccessibilityObject::orientation() const
 {
-    IntRect bounds = elementRect();
+    LayoutRect bounds = elementRect();
     if (bounds.size().width() > bounds.size().height())
         return AccessibilityOrientationHorizontal;
     if (bounds.size().height() > bounds.size().width())
@@ -1287,14 +1287,14 @@ bool AccessibilityObject::supportsARIALiveRegion() const
     return equalIgnoringCase(liveRegion, "polite") || equalIgnoringCase(liveRegion, "assertive");
 }
 
-AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const IntPoint& point) const
+AccessibilityObject* AccessibilityObject::elementAccessibilityHitTest(const LayoutPoint& point) const
 { 
     // Send the hit test back into the sub-frame if necessary.
     if (isAttachment()) {
         Widget* widget = widgetForAttachmentView();
         // Normalize the point for the widget's bounds.
         if (widget && widget->isFrameView())
-            return axObjectCache()->getOrCreate(widget)->accessibilityHitTest(IntPoint(point - widget->frameRect().location()));
+            return axObjectCache()->getOrCreate(widget)->accessibilityHitTest(toPoint(point - widget->frameRect().location()));
     }
 
     return const_cast<AccessibilityObject*>(this); 

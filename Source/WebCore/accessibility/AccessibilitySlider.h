@@ -77,8 +77,8 @@ public:
     void setParentObject(AccessibilitySlider* slider) { m_parentSlider = slider; }
     virtual AccessibilityObject* parentObject() const { return m_parentSlider; }
 
-    virtual IntSize size() const;
-    virtual IntRect elementRect() const;
+    virtual LayoutSize size() const;
+    virtual LayoutRect elementRect() const;
 
     virtual bool accessibilityIsIgnored() const;
 

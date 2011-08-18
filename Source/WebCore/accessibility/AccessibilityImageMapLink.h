@@ -68,7 +68,7 @@ public:
     virtual String stringValueForMSAA() const;
     virtual String nameForMSAA() const;
 
-    virtual IntRect elementRect() const;
+    virtual LayoutRect elementRect() const;
 
 private:    
     RefPtr<HTMLAreaElement> m_areaElement;

@@ -174,15 +174,15 @@ PassRefPtr<AccessibilitySliderThumb> AccessibilitySliderThumb::create()
     return adoptRef(new AccessibilitySliderThumb());
 }
     
-IntRect AccessibilitySliderThumb::elementRect() const
+LayoutRect AccessibilitySliderThumb::elementRect() const
 {
     RenderObject* sliderRenderer = m_parentSlider->renderer();
     if (!sliderRenderer || !sliderRenderer->isSlider())
-        return IntRect();
+        return LayoutRect();
     return sliderThumbElementOf(sliderRenderer->node())->getRect();
 }
 
-IntSize AccessibilitySliderThumb::size() const
+LayoutSize AccessibilitySliderThumb::size() const
 {
     return elementRect().size();
 }

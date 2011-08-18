@@ -51,7 +51,7 @@ private:
 
     virtual bool isAccessibilityScrollbar() const { return true; }
     virtual AccessibilityObject* parentObject() const { return m_parent; }
-    virtual IntRect elementRect() const;
+    virtual LayoutRect elementRect() const;
     
     virtual AccessibilityRole roleValue() const { return ScrollBarRole; }
     virtual AccessibilityOrientation orientation() const;

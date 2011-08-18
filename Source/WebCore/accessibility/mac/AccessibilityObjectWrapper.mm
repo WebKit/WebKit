@@ -1371,7 +1371,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
 
 - (NSValue *)position
 {
-    IntRect rect = m_object->elementRect();
+    LayoutRect rect = m_object->elementRect();
     NSPoint point;
     
     FrameView* frameView = m_object->documentFrameView();
@@ -1388,7 +1388,7 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
         
         NSPoint scrollPosition = NSMakePoint(0, 0);
         if (frameView && !m_object->isScrollbar() && !m_object->isScrollView()) {
-            IntPoint frameScrollPos = frameView->scrollPosition();
+            LayoutPoint frameScrollPos = frameView->scrollPosition();
             scrollPosition = NSMakePoint(frameScrollPos.x(), frameScrollPos.y());
         }
         
@@ -1957,7 +1957,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return [NSNumber numberWithBool: m_object->isEnabled()];
 
     if ([attributeName isEqualToString: NSAccessibilitySizeAttribute]) {
-        IntSize s = m_object->size();
+        LayoutSize s = m_object->size();
         return [NSValue valueWithSize: NSMakeSize(s.width(), s.height())];
     }
 
@@ -2569,7 +2569,7 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         return;
 
     // Simulate a click in the middle of the object.
-    IntPoint clickPoint = m_object->clickPoint();
+    LayoutPoint clickPoint = m_object->clickPoint();
     
     PlatformMouseEvent mouseEvent(clickPoint, clickPoint, RightButton, MouseEventPressed, 1, false, false, false, false, currentTime());
     bool handled = frame->eventHandler()->sendContextMenuEvent(mouseEvent);
