@@ -3683,8 +3683,6 @@ BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = MISSING FAIL
 // New test in r93068
 BUGWK66268 : editing/deleting/regional-indicators.html = TIMEOUT TEXT
 
-BUGCR93044 LINUX DEBUG : fast/canvas/webgl/uninitialized-test.html = TIMEOUT
-
 BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
 BUGWK66310 : media/media-blocked-by-beforeload.html = PASS TEXT
 

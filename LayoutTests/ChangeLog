@@ -1,3 +1,14 @@
+2011-08-18  Steve Block  <steveblock@google.com>
+
+        Remove TIMEOUT expectation for fast/canvas/webgl/uninitialized-test.html
+        http://code.google.com/p/chromium/issues/detail?id=93044
+
+        This test should now pass after Chromium rolled V8 to 3.5.6 in r97287.
+
+        Unreviewed gardening.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-18  Adam Klein  <adamk@chromium.org>
 
         Handle "form" attribute updates in parseMappedAttribute() instead of attributeChanged() to better match HTMLElement practices
