@@ -78,6 +78,7 @@ class BuildablePlatformTouchPoint : public WebCore::PlatformTouchPoint {
 public:
     BuildablePlatformTouchPoint();
     BuildablePlatformTouchPoint(int x, int y);
+    BuildablePlatformTouchPoint(int x, int y, PlatformTouchPoint::State);
 
     void setX(int x)
     {
@@ -108,6 +109,22 @@ BuildablePlatformTouchPoint::BuildablePlatformTouchPoint(int x, int y)
     m_screenPos = IntPoint(x, y);
 };
 
+BuildablePlatformTouchPoint::BuildablePlatformTouchPoint(int x, int y, PlatformTouchPoint::State state)
+{
+    m_id = 0;
+    m_state = state;
+    m_pos = IntPoint(x, y);
+    m_screenPos = IntPoint(x, y);
+}
+
+class BuildablePlatformTouchEvent : public WebCore::PlatformTouchEvent {
+public:
+    BuildablePlatformTouchEvent(WebCore::TouchEventType type, PlatformTouchPoint& point)
+    {
+        m_type = type;
+        m_touchPoints.append(point);
+    }
+};
 
 class TestGestureRecognizer : public testing::Test {
 public:
@@ -241,6 +258,56 @@ TEST_F(TestGestureRecognizer, updateValues)
     ASSERT_EQ(34, gm.firstTouchPosition().y());
     ASSERT_EQ(3.0, gm.firstTouchTime());
     ASSERT_EQ(0.0, gm.lastTouchTime() - gm.firstTouchTime());
+}
+
+TEST_F(TestGestureRecognizer, gestureScrollEvents)
+{
+    InspectableInnerGestureRecognizer gm;
+
+    ASSERT_EQ(InnerGestureRecognizer::NoGesture, gm.state());
+
+    BuildablePlatformTouchPoint press(10, 15, PlatformTouchPoint::TouchPressed);
+    BuildablePlatformTouchEvent pressEvent(WebCore::TouchStart, press);
+    gm.processTouchEventForGestures(pressEvent, false);
+
+    ASSERT_EQ(InnerGestureRecognizer::PendingSyntheticClick, gm.state());
+
+    BuildablePlatformTouchPoint move(10, 50, PlatformTouchPoint::TouchMoved);
+    BuildablePlatformTouchEvent moveEvent(WebCore::TouchMove, move);
+    OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureStart(gm.processTouchEventForGestures(moveEvent, false));
+    bool scrollStarted = false, scrollUpdated = false;
+    for (unsigned int i = 0; i < gestureStart->size(); i++) {
+        switch ((*gestureStart)[i].type()) {
+        case PlatformGestureEvent::ScrollBeginType:
+            scrollStarted = true;
+            break;
+        case PlatformGestureEvent::ScrollUpdateType:
+            scrollUpdated = true;
+            break;
+        default:
+            ASSERT_TRUE(false);
+        }
+    }
+
+    ASSERT_TRUE(scrollStarted);
+    ASSERT_TRUE(scrollUpdated);
+    ASSERT_EQ(InnerGestureRecognizer::Scroll, gm.state());
+
+    BuildablePlatformTouchPoint release(10, 50, PlatformTouchPoint::TouchReleased);
+    BuildablePlatformTouchEvent releaseEvent(WebCore::TouchEnd, release);
+    bool scrollEnd = false;
+    OwnPtr<Vector<WebCore::PlatformGestureEvent> > gestureEnd(gm.processTouchEventForGestures(releaseEvent, false));
+    for (unsigned int i = 0; i < gestureEnd->size(); i++) {
+        switch ((*gestureEnd)[i].type()) {
+        case PlatformGestureEvent::ScrollEndType:
+            scrollEnd = true;
+            break;
+        default:
+            ASSERT_TRUE(false);
+        }
+    }
+    ASSERT_TRUE(scrollEnd);
+    ASSERT_EQ(InnerGestureRecognizer::NoGesture, gm.state());
 }
 
 } // namespace

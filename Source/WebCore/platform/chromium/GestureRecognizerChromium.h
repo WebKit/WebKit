@@ -59,9 +59,13 @@ public:
     bool isInClickTimeWindow();
     bool isInsideManhattanSquare(const PlatformTouchPoint&);
     virtual PlatformGestureRecognizer::PassGestures  processTouchEventForGestures(const PlatformTouchEvent&, bool defaultPrevented);
-    void appendScrollGesture(const PlatformTouchPoint&, Gestures);
+    void appendScrollGestureBegin(const IntPoint&, Gestures);
+    void appendScrollGestureEnd(const IntPoint&, Gestures);
+    void appendScrollGestureUpdate(const IntPoint&, Gestures);
     void setState(State value) { m_state = value; }
     State state() { return m_state; }
+
+    IntPoint firstTouchPosition() { return m_firstTouchPosition; }
 protected:
     InnerGestureRecognizer();
     void addEdgeFunction(State, unsigned finger, PlatformTouchPoint::State, bool touchHandledByJavaScript, GestureTransitionFunction);
@@ -74,6 +78,7 @@ protected:
     IntPoint m_firstTouchPosition;
     double m_firstTouchTime;
     State m_state;
+    IntPoint m_lastTouchPosition;
     double m_lastTouchTime;
 
     bool m_ctrlKey;

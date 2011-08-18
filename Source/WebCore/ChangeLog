@@ -1,3 +1,27 @@
+2011-08-18  Sadrul Habib Chowdhury  <sadrul@chromium.org>
+
+        GestureRecognizer: Update how gesture-scroll works.
+
+        Instead of just sending a series of 'GestureUpdate' events, send a
+        single 'GestureBegin' event, followed by a series of 'GestureUpdate' events,
+        and end with a 'GestureEnd' event.
+        https://bugs.webkit.org/show_bug.cgi?id=66267
+
+        Reviewed by Adam Barth.
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleGestureEvent):
+        * platform/chromium/GestureRecognizerChromium.cpp:
+        (WebCore::InnerGestureRecognizer::InnerGestureRecognizer):
+        (WebCore::InnerGestureRecognizer::appendScrollGestureBegin):
+        (WebCore::InnerGestureRecognizer::appendScrollGestureEnd):
+        (WebCore::InnerGestureRecognizer::appendScrollGestureUpdate):
+        (WebCore::scrollEnd):
+        (WebCore::isClickOrScroll):
+        (WebCore::inScroll):
+        * platform/chromium/GestureRecognizerChromium.h:
+        (WebCore::InnerGestureRecognizer::firstTouchPosition):
+
 2011-08-18  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium: Update forked ScrollbarThemeChromiumMac.mm

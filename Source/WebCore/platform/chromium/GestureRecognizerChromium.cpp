@@ -40,6 +40,7 @@ namespace WebCore {
 static bool click(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
 static bool isClickOrScroll(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
 static bool inScroll(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
+static bool scrollEnd(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
 static bool noGesture(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
 static bool touchDown(InnerGestureRecognizer*, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures);
 
@@ -70,8 +71,8 @@ InnerGestureRecognizer::InnerGestureRecognizer()
     addEdgeFunction(PendingSyntheticClick, FirstFinger, Moved, false, isClickOrScroll);
     addEdgeFunction(PendingSyntheticClick, FirstFinger, Stationary, false, isClickOrScroll);
     addEdgeFunction(Scroll, FirstFinger, Moved, false, inScroll);
-    addEdgeFunction(Scroll, FirstFinger, Released, false, noGesture);
-    addEdgeFunction(Scroll, FirstFinger, Cancelled, false, noGesture);
+    addEdgeFunction(Scroll, FirstFinger, Released, false, scrollEnd);
+    addEdgeFunction(Scroll, FirstFinger, Cancelled, false, scrollEnd);
 }
 
 void InnerGestureRecognizer::reset()
@@ -126,13 +127,25 @@ PlatformGestureRecognizer::PassGestures InnerGestureRecognizer::processTouchEven
     return gestures.release();
 }
 
-void InnerGestureRecognizer::appendScrollGesture(const PlatformTouchPoint& touchPoint, Gestures gestures)
+void InnerGestureRecognizer::appendScrollGestureBegin(const IntPoint& touchPoint, Gestures gestures)
 {
-    float deltaX(touchPoint.pos().x() - m_firstTouchPosition.x());
-    float deltaY(touchPoint.pos().y() - m_firstTouchPosition.y());
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollBeginType, touchPoint, touchPoint, m_lastTouchTime, 0.0f, 0.0f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    m_firstTouchPosition = touchPoint;
+    m_lastTouchPosition = m_firstTouchPosition;
+}
 
-    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollUpdateType, touchPoint.pos(), touchPoint.screenPos(), m_lastTouchTime, deltaX, deltaY, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
-    m_firstTouchPosition = touchPoint.pos();
+void InnerGestureRecognizer::appendScrollGestureEnd(const IntPoint& touchPoint, Gestures gestures)
+{
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollEndType, m_firstTouchPosition, m_firstTouchPosition, m_lastTouchTime, 0.0f, 0.0f, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+}
+
+void InnerGestureRecognizer::appendScrollGestureUpdate(const IntPoint& touchPoint, Gestures gestures)
+{
+    float deltaX(touchPoint.x() - m_lastTouchPosition.x());
+    float deltaY(touchPoint.y() - m_lastTouchPosition.y());
+
+    gestures->append(PlatformGestureEvent(PlatformGestureEvent::ScrollUpdateType, m_firstTouchPosition, m_firstTouchPosition, m_lastTouchTime, deltaX, deltaY, m_shiftKey, m_ctrlKey, m_altKey, m_metaKey));
+    m_lastTouchPosition = touchPoint;
 }
 
 void InnerGestureRecognizer::updateValues(const double touchTime, const PlatformTouchPoint& touchPoint)
@@ -162,6 +175,13 @@ static bool touchDown(InnerGestureRecognizer* gestureRecognizer, const PlatformT
     return false;
 }
 
+static bool scrollEnd(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point, InnerGestureRecognizer::Gestures gestures)
+{
+    gestureRecognizer->appendScrollGestureEnd(point.pos(), gestures);
+    gestureRecognizer->setState(InnerGestureRecognizer::NoGesture);
+    return false;
+}
+
 static bool noGesture(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint&, InnerGestureRecognizer::Gestures gestures)
 {
     gestureRecognizer->reset();
@@ -186,7 +206,8 @@ static bool isClickOrScroll(InnerGestureRecognizer* gestureRecognizer, const Pla
     }
 
     if (point.state() == PlatformTouchPoint::TouchMoved && !gestureRecognizer->isInsideManhattanSquare(point)) {
-        gestureRecognizer->appendScrollGesture(point, gestures);
+        gestureRecognizer->appendScrollGestureBegin(gestureRecognizer->firstTouchPosition(), gestures);
+        gestureRecognizer->appendScrollGestureUpdate(point.pos(), gestures);
         gestureRecognizer->setState(InnerGestureRecognizer::Scroll);
         return true;
     }
@@ -195,7 +216,7 @@ static bool isClickOrScroll(InnerGestureRecognizer* gestureRecognizer, const Pla
 
 static bool inScroll(InnerGestureRecognizer* gestureRecognizer, const PlatformTouchPoint& point, InnerGestureRecognizer::Gestures gestures)
 {
-    gestureRecognizer->appendScrollGesture(point, gestures);
+    gestureRecognizer->appendScrollGestureUpdate(point.pos(), gestures);
     return true;
 }
 
