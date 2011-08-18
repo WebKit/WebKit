@@ -130,6 +130,8 @@ public:
     void makeRenderingResultsAvailable();
     bool hasCreatedImageBuffer() const { return m_hasCreatedImageBuffer; }
 
+    bool shouldAccelerate(const IntSize&) const;
+
 private:
     HTMLCanvasElement(const QualifiedName&, Document*);
 
@@ -138,7 +140,6 @@ private:
 
     void reset();
 
-    bool shouldAccelerate(const IntSize&) const;
     void createImageBuffer() const;
 
     void setSurfaceSize(const IntSize&);

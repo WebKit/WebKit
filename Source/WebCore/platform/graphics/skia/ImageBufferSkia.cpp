@@ -65,6 +65,7 @@ ImageBufferData::ImageBufferData(const IntSize& size)
 ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderingMode, bool& success)
     : m_data(size)
     , m_size(size)
+    , m_accelerateRendering(false)
 {
     OwnPtr<SkCanvas> canvas = adoptPtr(skia::CreateBitmapCanvas(size.width(), size.height(), false));
     if (!canvas) {
@@ -82,6 +83,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderin
     // color. Can we have another way to manage this?
     m_data.m_canvas->drawARGB(0, 0, 0, 0, SkXfermode::kClear_Mode);
     if (renderingMode == Accelerated) {
+        m_accelerateRendering = true;
         GraphicsContext3D* context3D = SharedGraphicsContext3D::create(0);
         if (context3D) {
             m_data.m_drawingBuffer = context3D->createDrawingBuffer(size);

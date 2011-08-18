@@ -1,3 +1,19 @@
+2011-08-17  Ben Wells  <benwells@chromium.org>
+
+        Canvas fill and fillRect with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
+        https://bugs.webkit.org/show_bug.cgi?id=66036
+
+        Reviewed by James Robinson.
+
+        * fast/canvas/canvas-composite-alpha.html:
+        * fast/canvas/canvas-composite-transformclip-expected.txt: Added.
+        * fast/canvas/canvas-composite-transformclip.html: Added.
+        * platform/chromium-linux/fast/canvas/canvas-composite-expected.png:
+        * platform/chromium-linux/fast/canvas/canvas-composite-transformclip-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/canvas/canvas-composite-expected.png:
+        * platform/mac/fast/canvas/canvas-composite-transformclip-expected.png: Added.
+
 2011-08-17  Tony Chang  <tony@chromium.org>
 
         [chromium] remove stale result and mark 3 new authentication tests as

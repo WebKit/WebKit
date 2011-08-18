@@ -1,3 +1,40 @@
+2011-08-17  Ben Wells  <benwells@chromium.org>
+
+        Canvas fill and fillRect with SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy have errors
+        https://bugs.webkit.org/show_bug.cgi?id=66036
+
+        These modes cannot be passed straight through to the underlying graphics context as the graphics context
+        and the HTML5 canvas spec have different interpretations to them. In the graphics context, the compositing
+        modes are applied just over the area being filled. In the HTML5 spec, the compositing modes are applied over
+        the entire canvas.
+
+        The SourceIn, DestinationIn, SourceOut, DestinationAtop and Copy modes all need some kind of extra action
+        to just performing the composited fill on the canvas, as they need t he canvas to be cleared outside of the 
+        area being filled.
+
+        Previous to this change the Copy mode did not do this clearing at all. The other modes did but if the
+        transformed path being filled contained anti-aliasing at its edges artifacts were introduced.
+
+        With this change, Copy now does a complete erase of the canvas before performing a fill as per normal.
+        The other modes use a temporary buffer just big enough for the transformed path (in device coordinates).
+        The fill is first done there in SourceOver mode. Then this is drawn into the canvas context using the
+        appropriate mode, with any areas outside the draw area being cleared.
+
+        Reviewed by James Robinson.
+
+        Test: fast/canvas/canvas-composite-transformclip.html
+
+        * html/HTMLCanvasElement.h:
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::fillRect):
+        (WebCore::CanvasRenderingContext2D::clearCanvas):
+        (WebCore::CanvasRenderingContext2D::transformAreaToDevice):
+        (WebCore::CanvasRenderingContext2D::fillAndDisplayTransparencyElsewhere):
+        * html/canvas/CanvasRenderingContext2D.h:
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+
 2011-08-17  Emil A Eklund  <eae@chromium.org>
 
         Switch inspector to to new layout types

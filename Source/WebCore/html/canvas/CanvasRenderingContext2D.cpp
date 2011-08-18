@@ -901,9 +901,12 @@ void CanvasRenderingContext2D::fill()
 
     if (!m_path.isEmpty()) {
         if (shouldDisplayTransparencyElsewhere())
-            displayTransparencyElsewhere<Path>(m_path);
-
-        c->fillPath(m_path);
+            fillAndDisplayTransparencyElsewhere(m_path);
+        else if (state().m_globalComposite == CompositeCopy) {
+            clearCanvas();
+            c->fillPath(m_path);
+        } else
+            c->fillPath(m_path);
         didDraw(m_path.boundingRect());
     }
 
@@ -1008,9 +1011,12 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
     FloatRect rect(x, y, width, height);
 
     if (shouldDisplayTransparencyElsewhere())
-        displayTransparencyElsewhere<IntRect>(enclosingIntRect(rect));
-
-    c->fillRect(rect);
+        fillAndDisplayTransparencyElsewhere(rect);
+    else if (state().m_globalComposite == CompositeCopy) {
+        clearCanvas();
+        c->fillRect(rect);
+    } else
+        c->fillRect(rect);
     didDraw(rect);
 }
 
@@ -1456,6 +1462,17 @@ void CanvasRenderingContext2D::setCompositeOperation(const String& operation)
     setGlobalCompositeOperation(operation);
 }
 
+void CanvasRenderingContext2D::clearCanvas()
+{
+    FloatRect canvasRect(0, 0, canvas()->width(), canvas()->height());
+    GraphicsContext* c = drawingContext();
+
+    c->save();
+    c->setCTM(canvas()->baseTransform());
+    c->clearRect(canvasRect);
+    c->restore();
+}
+
 bool CanvasRenderingContext2D::shouldDisplayTransparencyElsewhere() const
 {
     // See 4.8.11.1.3 Compositing
@@ -1465,18 +1482,48 @@ bool CanvasRenderingContext2D::shouldDisplayTransparencyElsewhere() const
            || state().m_globalComposite == CompositeDestinationIn || state().m_globalComposite == CompositeDestinationAtop;
 }
 
-template<class T> void CanvasRenderingContext2D::displayTransparencyElsewhere(const T& area)
+Path CanvasRenderingContext2D::transformAreaToDevice(const Path& path) const
+{
+    Path transformed(path);
+    transformed.transform(state().m_transform);
+    transformed.transform(canvas()->baseTransform());
+    return transformed;
+}
+
+Path CanvasRenderingContext2D::transformAreaToDevice(const FloatRect& rect) const
+{
+    Path path;
+    path.addRect(rect);
+    return transformAreaToDevice(path);
+}
+
+template<class T> void CanvasRenderingContext2D::fillAndDisplayTransparencyElsewhere(const T& area)
 {
     ASSERT(shouldDisplayTransparencyElsewhere());
 
+    Path path = transformAreaToDevice(area);
+    IntRect bufferRect = enclosingIntRect(path.boundingRect());
+    path.translate(FloatSize(-bufferRect.x(), -bufferRect.y()));
+
+    RenderingMode renderMode = canvas()->buffer()->isAccelerated() ? Accelerated : Unaccelerated;
+    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(bufferRect.size(), ColorSpaceDeviceRGB, renderMode);
+    buffer->context()->setCompositeOperation(CompositeSourceOver);
+    state().m_fillStyle->applyFillColor(buffer->context());
+    buffer->context()->fillPath(path);
+
     FloatRect canvasRect(0, 0, canvas()->width(), canvas()->height());
-    canvasRect = state().m_transform.inverse().mapRect(canvasRect);
+    canvasRect = canvas()->baseTransform().mapRect(canvasRect);
 
     GraphicsContext* c = drawingContext();
     c->save();
-    c->clipOut(area);
-    c->setCompositeOperation(CompositeClear);
-    c->fillRect(canvasRect);
+    c->setCTM(AffineTransform());
+
+    c->save();
+    c->clipOut(bufferRect);
+    c->clearRect(canvasRect);
+    c->restore();
+
+    c->drawImageBuffer(buffer.get(), ColorSpaceDeviceRGB, bufferRect.location(), state().m_globalComposite);
     c->restore();
 }
 

@@ -284,8 +284,11 @@ private:
     void clearPathForDashboardBackwardCompatibilityMode();
 #endif
 
+    void clearCanvas();
+    Path transformAreaToDevice(const Path&) const;
+    Path transformAreaToDevice(const FloatRect&) const;
     bool shouldDisplayTransparencyElsewhere() const;
-    template<class T> void displayTransparencyElsewhere(const T& area);
+    template<class T> void fillAndDisplayTransparencyElsewhere(const T& area);
 
     void prepareGradientForDashboard(CanvasGradient* gradient) const;
 
