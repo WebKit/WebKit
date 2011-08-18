@@ -45,7 +45,7 @@ public:
     static const RegisterID linkRegister = SH4Registers::pr;
     static const RegisterID scratchReg3 = SH4Registers::r13;
 
-    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
+    static const int MaximumCompactPtrAlignedAddressOffset = 60;
 
     enum RelationalCondition {
         Equal = SH4Assembler::EQ,
@@ -234,6 +234,13 @@ public:
     {
         if (imm.m_value & 0x1f)
             rshift32(imm.m_value & 0x1f, dest);
+    }
+
+    void rshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        if (src != dest)
+            move(src, dest);
+        rshift32(imm, dest);
     }
 
     void sub32(RegisterID src, RegisterID dest)
@@ -711,7 +718,7 @@ public:
         RegisterID scr1 = claimScratch();
         m_assembler.loadConstant((imm.m_value), scr);
         m_assembler.loadConstant(reinterpret_cast<uint32_t>(address), scr1);
-        m_assembler.movlMemReg(scr, scr1);
+        m_assembler.movlRegMem(scr, scr1);
         releaseScratch(scr);
         releaseScratch(scr1);
     }
@@ -720,7 +727,7 @@ public:
     {
         RegisterID scr = claimScratch();
         m_assembler.loadConstant(reinterpret_cast<uint32_t>(address), scr);
-        m_assembler.movlMemReg(src, scr);
+        m_assembler.movlRegMem(src, scr);
         releaseScratch(scr);
     }
 
@@ -735,17 +742,6 @@ public:
         return label;
     }
     
-    DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        RegisterID scr = claimScratch();
-        DataLabelCompact label(this);
-        m_assembler.loadConstantUnReusable(address.offset, scr);
-        m_assembler.addlRegReg(address.base, scr);
-        m_assembler.movlMemReg(scr, dest);
-        releaseScratch(scr);
-        return label;
-    }
-
     DataLabel32 store32WithAddressOffsetPatch(RegisterID src, Address address)
     {
         RegisterID scr = claimScratch();
@@ -755,6 +751,15 @@ public:
         m_assembler.movlRegMem(src, scr);
         releaseScratch(scr);
         return label;
+    }
+
+    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        DataLabelCompact dataLabel(this);
+        ASSERT(address.offset <= MaximumCompactPtrAlignedAddressOffset);
+        ASSERT(address.offset >= 0);
+        m_assembler.movlMemRegCompact(address.offset >> 2, address.base, dest);
+        return dataLabel;
     }
 
      // Floating-point operations
@@ -1194,8 +1199,9 @@ public:
 
     DataLabelPtr moveWithPatch(TrustedImmPtr initialValue, RegisterID dest)
     {
+        m_assembler.ensureSpace(m_assembler.maxInstructionSize, sizeof(uint32_t));
         DataLabelPtr dataLabel(this);
-        m_assembler.loadConstantUnReusable(reinterpret_cast<uint32_t>(initialValue.m_value), dest, true);
+        m_assembler.loadConstantUnReusable(reinterpret_cast<uint32_t>(initialValue.m_value), dest);
         return dataLabel;
     }
 

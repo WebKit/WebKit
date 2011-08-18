@@ -488,7 +488,7 @@ namespace JSC {
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdBranchToSlowCase = 10;
         static const int patchOffsetGetByIdPropertyMapOffset = 24;
-        static const int patchOffsetGetByIdPutResult = 32;
+        static const int patchOffsetGetByIdPutResult = 24;
 
         // sequenceOpCall
         static const int sequenceOpCallInstructionSpace = 12;
@@ -507,7 +507,7 @@ namespace JSC {
         static const int sequencePutByIdConstantSpace = 5;
 
         static const int patchOffsetGetByIdPropertyMapOffset1 = 20;
-        static const int patchOffsetGetByIdPropertyMapOffset2 = 26;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 22;
 
         static const int patchOffsetPutByIdPropertyMapOffset1 = 20;
         static const int patchOffsetPutByIdPropertyMapOffset2 = 26;

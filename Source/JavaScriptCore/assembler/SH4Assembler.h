@@ -33,6 +33,7 @@
 #include "AssemblerBufferWithConstantPool.h"
 #include <stdarg.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
@@ -1063,6 +1064,11 @@ public:
         oneShortOp(getOpcodeGroup4(MOVL_READ_OFFRM_OPCODE, dst, base, offset));
     }
 
+    void movlMemRegCompact(int offset, RegisterID base, RegisterID dst)
+    {
+        oneShortOp(getOpcodeGroup4(MOVL_READ_OFFRM_OPCODE, dst, base, offset));
+    }
+
     void movbMemReg(int offset, RegisterID base, RegisterID dst)
     {
         ASSERT(dst == SH4Registers::r0);
@@ -1232,7 +1238,7 @@ public:
         uint32_t address = (offset << 2) + ((reinterpret_cast<uint32_t>(instructionPtr) + 4) &(~0x3));
         *reinterpret_cast<uint32_t*>(address) = newAddress;
     }
-    
+
     static uint32_t readPCrelativeAddress(int offset, uint16_t* instructionPtr)
     {
         uint32_t address = (offset << 2) + ((reinterpret_cast<uint32_t>(instructionPtr) + 4) &(~0x3));
@@ -1354,7 +1360,7 @@ public:
 
     static void* readPointer(void* code)
     {
-        return static_cast<void*>(readInt32(code));
+        return reinterpret_cast<void*>(readInt32(code));
     }
 
     static void repatchInt32(void* where, int32_t value)
@@ -1365,7 +1371,10 @@ public:
 
     static void repatchCompact(void* where, int32_t value)
     {
-        repatchInt32(where, value);
+        ASSERT(value >= 0);
+        ASSERT(value <= 60);
+        *reinterpret_cast<uint16_t*>(where) = ((*reinterpret_cast<uint16_t*>(where) & 0xfff0) | (value >> 2));
+        ExecutableAllocator::cacheFlush(reinterpret_cast<uint16_t*>(where), sizeof(uint16_t));
     }
 
     static void relinkCall(void* from, void* to)

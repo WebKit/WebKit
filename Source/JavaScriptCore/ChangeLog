@@ -1,3 +1,22 @@
+2011-08-17  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66379
+        implements load32WithCompactAddressOffsetPatch function 
+        and fixes store32 and moveWithPatch functions for SH4 platforms.
+
+        Reviewed by Gavin Barraclough.
+
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::rshift32):
+        (JSC::MacroAssemblerSH4::store32):
+        (JSC::MacroAssemblerSH4::load32WithCompactAddressOffsetPatch):
+        (JSC::MacroAssemblerSH4::moveWithPatch):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::movlMemRegCompact):
+        (JSC::SH4Assembler::readPointer):
+        (JSC::SH4Assembler::repatchCompact):
+        * jit/JIT.h:
+
 2011-08-17  Filip Pizlo  <fpizlo@apple.com>
 
         JSC verbose debugging output sometimes doesn't work as expected.
