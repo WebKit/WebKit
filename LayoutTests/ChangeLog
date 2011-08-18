@@ -1,3 +1,14 @@
+2011-08-18  Kentaro Hara  <haraken@google.com>
+
+        A Worker constructor should throw TypeError, when the number of arguments is not enough
+        https://bugs.webkit.org/show_bug.cgi?id=66456
+
+        Reviewed by Adam Barth.
+
+        Spec is here: http://www.w3.org/TR/WebIDL/#es-operations.
+
+        * fast/workers/worker-constructor-expected.txt: Changed SyntaxError to TypeError.
+
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add a test to ensure WebKit does not paste contents before

@@ -55,7 +55,7 @@ v8::Handle<v8::Value> V8Worker::constructorCallback(const v8::Arguments& args)
         return throwError("DOM object constructor cannot be called as a function.");
 
     if (!args.Length())
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+        return throwError("Not enough arguments", V8Proxy::TypeError);
 
     v8::TryCatch tryCatch;
     v8::Handle<v8::String> scriptUrl = args[0]->ToString();

@@ -1,3 +1,19 @@
+2011-08-18  Kentaro Hara  <haraken@google.com>
+
+        A Worker constructor should throw TypeError, when the number of arguments is not enough
+        https://bugs.webkit.org/show_bug.cgi?id=66456
+
+        Reviewed by Adam Barth.
+
+        Spec is here: http://www.w3.org/TR/WebIDL/#es-operations.
+
+        Test: fast/workers/worker-constructor.html
+
+        * bindings/js/JSWorkerCustom.cpp:
+        (WebCore::JSWorkerConstructor::constructJSWorker): Changed SyntaxError to TypeError.
+        * bindings/v8/custom/V8WorkerCustom.cpp:
+        (WebCore::V8Worker::constructorCallback): Changed SyntaxError to TypeError.
+
 2011-08-18  John Bates  <jbates@google.com>
 
         Fix logic error causing reverse of desired WebGL rate limiting behavior
