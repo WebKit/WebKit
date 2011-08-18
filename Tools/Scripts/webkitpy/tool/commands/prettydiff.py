@@ -33,6 +33,7 @@ from webkitpy.tool import steps
 class PrettyDiff(AbstractSequencedCommand):
     name = "pretty-diff"
     help_text = "Shows the pretty diff in the default browser"
+    show_in_main_help = True
     steps = [
         steps.ConfirmDiff,
     ]

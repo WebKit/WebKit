@@ -1,3 +1,14 @@
+2011-08-18  Adam Barth  <abarth@webkit.org>
+
+        webkit-patch pretty-diff should be shown in main help
+        https://bugs.webkit.org/show_bug.cgi?id=66404
+
+        Reviewed by Dimitri Glazkov.
+
+        As requested by dglazkov.
+
+        * Scripts/webkitpy/tool/commands/prettydiff.py:
+
 2011-08-17  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66400
