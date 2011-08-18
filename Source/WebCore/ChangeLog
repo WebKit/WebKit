@@ -1,3 +1,36 @@
+2011-08-17  Levi Weintraub  <leviw@chromium.org>
+
+        Switch Document, DocumentMarker, Clipboard, and Range to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66330
+
+        Reviewed by Eric Seidel.
+
+        Converting the remaining DOM classes to use the LayoutUnit abstraction.
+
+        No new tests, no new behavior.
+
+        * dom/Clipboard.h:
+        (WebCore::Clipboard::dragLocation):
+        * dom/Document.cpp:
+        (WebCore::Document::nodesFromRect):
+        (WebCore::nodeFromPoint):
+        (WebCore::Document::caretRangeFromPoint):
+        (WebCore::Document::prepareMouseEvent):
+        * dom/Document.h:
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::markerContainingPoint):
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        (WebCore::DocumentMarkerController::invalidateRenderedRectsForMarkersInRect):
+        * dom/DocumentMarkerController.h:
+        * dom/Range.cpp:
+        (WebCore::adjustFloatQuadsForScrollAndAbsoluteZoomAndPageScale):
+        * dom/RenderedDocumentMarker.h:
+        (WebCore::RenderedDocumentMarker::contains):
+        (WebCore::RenderedDocumentMarker::setRenderedRect):
+        (WebCore::RenderedDocumentMarker::renderedRect):
+        (WebCore::RenderedDocumentMarker::invalidMarkerRect):
+        (WebCore::RenderedDocumentMarker::invalidate):
+
 2011-08-17  Dan Bernstein  <mitz@apple.com>
 
         Removed an unused setting.

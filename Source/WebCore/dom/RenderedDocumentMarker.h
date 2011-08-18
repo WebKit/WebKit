@@ -40,23 +40,23 @@ public:
     }
 
     bool isRendered() const { return invalidMarkerRect() != m_renderedRect; }
-    bool contains(const IntPoint& point) const { return isRendered() && m_renderedRect.contains(point); }
-    void setRenderedRect(const IntRect& r) { m_renderedRect = r; }
-    const IntRect& renderedRect() const { return m_renderedRect; }
-    void invalidate(const IntRect&);
+    bool contains(const LayoutPoint& point) const { return isRendered() && m_renderedRect.contains(point); }
+    void setRenderedRect(const LayoutRect& r) { m_renderedRect = r; }
+    const LayoutRect& renderedRect() const { return m_renderedRect; }
+    void invalidate(const LayoutRect&);
     void invalidate() { m_renderedRect = invalidMarkerRect(); }
 
 private:
-    static const IntRect& invalidMarkerRect()
+    static const LayoutRect& invalidMarkerRect()
     {
-        static const IntRect rect = IntRect(-1, -1, -1, -1);
+        static const LayoutRect rect = LayoutRect(-1, -1, -1, -1);
         return rect;
     }
 
-    IntRect m_renderedRect;
+    LayoutRect m_renderedRect;
 };
 
-inline void RenderedDocumentMarker::invalidate(const IntRect& r)
+inline void RenderedDocumentMarker::invalidate(const LayoutRect& r)
 {
     if (m_renderedRect.intersects(r))
         invalidate();

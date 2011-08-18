@@ -1127,7 +1127,7 @@ PassRefPtr<NodeList> Document::nodesFromRect(int centerX, int centerY, unsigned 
         return 0;
 
     float zoomFactor = frame->pageZoomFactor();
-    IntPoint point = roundedIntPoint(FloatPoint(centerX * zoomFactor + view()->scrollX(), centerY * zoomFactor + view()->scrollY()));
+    LayoutPoint point = roundedLayoutPoint(FloatPoint(centerX * zoomFactor + view()->scrollX(), centerY * zoomFactor + view()->scrollY()));
 
     int type = HitTestRequest::ReadOnly | HitTestRequest::Active;
 
@@ -1166,7 +1166,7 @@ PassRefPtr<NodeList> Document::handleZeroPadding(const HitTestRequest& request, 
     return StaticHashSetNodeList::adopt(list);
 }
 
-static Node* nodeFromPoint(Frame* frame, RenderView* renderView, int x, int y, IntPoint* localPoint = 0)
+static Node* nodeFromPoint(Frame* frame, RenderView* renderView, int x, int y, LayoutPoint* localPoint = 0)
 {
     if (!frame)
         return 0;
@@ -1206,7 +1206,7 @@ PassRefPtr<Range> Document::caretRangeFromPoint(int x, int y)
 {
     if (!renderer())
         return 0;
-    IntPoint localPoint;
+    LayoutPoint localPoint;
     Node* node = nodeFromPoint(frame(), renderView(), x, y, &localPoint);
     if (!node)
         return 0;
@@ -2636,12 +2636,12 @@ void Document::processViewport(const String& features)
     frame->page()->updateViewportArguments();
 }
 
-MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const IntPoint& documentPoint, const PlatformMouseEvent& event)
+MouseEventWithHitTestResults Document::prepareMouseEvent(const HitTestRequest& request, const LayoutPoint& documentPoint, const PlatformMouseEvent& event)
 {
     ASSERT(!renderer() || renderer()->isRenderView());
 
     if (!renderer())
-        return MouseEventWithHitTestResults(event, HitTestResult(IntPoint()));
+        return MouseEventWithHitTestResults(event, HitTestResult(LayoutPoint()));
 
     HitTestResult result(documentPoint);
     renderView()->layer()->hitTest(request, result);

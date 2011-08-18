@@ -291,7 +291,7 @@ void DocumentMarkerController::removeMarkers(Node* node, unsigned startOffset, i
         node->renderer()->repaint();
 }
 
-DocumentMarker* DocumentMarkerController::markerContainingPoint(const IntPoint& point, DocumentMarker::MarkerType markerType)
+DocumentMarker* DocumentMarkerController::markerContainingPoint(const LayoutPoint& point, DocumentMarker::MarkerType markerType)
 {
     if (!possiblyHasMarkers(markerType))
         return 0;
@@ -375,9 +375,9 @@ Vector<DocumentMarker*> DocumentMarkerController::markersInRange(Range* range, D
     return foundMarkers;
 }
 
-Vector<IntRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarker::MarkerType markerType)
+Vector<LayoutRect> DocumentMarkerController::renderedRectsForMarkers(DocumentMarker::MarkerType markerType)
 {
-    Vector<IntRect> result;
+    Vector<LayoutRect> result;
 
     if (!possiblyHasMarkers(markerType))
         return result;
@@ -507,7 +507,7 @@ void DocumentMarkerController::repaintMarkers(DocumentMarker::MarkerTypes marker
     }
 }
 
-void DocumentMarkerController::invalidateRenderedRectsForMarkersInRect(const IntRect& r)
+void DocumentMarkerController::invalidateRenderedRectsForMarkersInRect(const LayoutRect& r)
 {
     // outer loop: process each markered node in the document
     MarkerMap::iterator end = m_markers.end();

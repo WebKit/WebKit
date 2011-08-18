@@ -675,7 +675,7 @@ public:
     void resetVisitedLinkColor();
     void resetActiveLinkColor();
     
-    MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const IntPoint&, const PlatformMouseEvent&);
+    MouseEventWithHitTestResults prepareMouseEvent(const HitTestRequest&, const LayoutPoint&, const PlatformMouseEvent&);
 
     StyleSheetList* styleSheets();
 
