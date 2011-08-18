@@ -24,6 +24,7 @@
 
 #include "VideoFrameChromium.h"
 #include "VideoFrameChromiumImpl.h"
+#include "WebAudioSourceProvider.h"
 #include "WebCanvas.h"
 #include "WebCString.h"
 #include "WebFrameClient.h"
@@ -520,6 +521,16 @@ unsigned WebMediaPlayerClientImpl::videoDecodedByteCount() const
     return 0;
 }
 
+WebCore::AudioSourceProvider* WebMediaPlayerClientImpl::audioSourceProvider()
+{
+    if (m_webMediaPlayer.get()) {
+        // Wrap the WebAudioSourceProvider in the form of WebCore::AudioSourceProvider.
+        m_audioSourceProvider.initialize(m_webMediaPlayer->audioSourceProvider());
+        return &m_audioSourceProvider;
+    }
+    return 0;
+}
+
 #if USE(ACCELERATED_COMPOSITING)
 bool WebMediaPlayerClientImpl::supportsAcceleratedRendering() const
 {
@@ -618,6 +629,27 @@ WebMediaPlayerClientImpl::WebMediaPlayerClientImpl()
     , m_supportsAcceleratedCompositing(false)
 #endif
 {
+}
+
+void WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput(WebCore::AudioBus* bus, size_t framesToProcess)
+{
+    ASSERT(bus);
+    if (!bus)
+        return;
+
+    ASSERT(m_webAudioSourceProvider);
+    if (!m_webAudioSourceProvider) {
+        bus->zero();
+        return;
+    }
+
+    // Wrap the AudioBus channel data using WebVector.
+    size_t n = bus->numberOfChannels();
+    WebVector<float*> webAudioData(n);
+    for (size_t i = 0; i < n; ++i)
+        webAudioData[i] = bus->channel(i)->data();
+
+    m_webAudioSourceProvider->provideInput(webAudioData, framesToProcess);
 }
 
 } // namespace WebKit

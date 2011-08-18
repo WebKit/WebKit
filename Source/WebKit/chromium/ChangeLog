@@ -1,3 +1,22 @@
+2011-08-18  Chris Rogers  <crogers@google.com>
+
+        Implement WebMediaPlayerClientImpl::audioSourceProvider() and interface into chromium
+        https://bugs.webkit.org/show_bug.cgi?id=66441
+
+        Reviewed by Darin Fisher.
+
+        * public/WebAudioSourceProvider.h: Added.
+        (WebKit::WebAudioSourceProvider::~WebAudioSourceProvider):
+        * public/WebMediaPlayer.h:
+        (WebKit::WebMediaPlayer::audioSourceProvider):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::audioSourceProvider):
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::provideInput):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::AudioSourceProviderImpl):
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::~AudioSourceProviderImpl):
+        (WebKit::WebMediaPlayerClientImpl::AudioSourceProviderImpl::initialize):
+
 2011-08-18  Sailesh Agrawal  <sail@chromium.org>
 
         Chromium Mac: Show scrollbar when doing search

@@ -33,6 +33,7 @@
 
 #if ENABLE(VIDEO)
 
+#include "AudioSourceProvider.h"
 #include "MediaPlayerPrivate.h"
 #include "VideoFrameChromium.h"
 #include "VideoFrameProvider.h"
@@ -42,6 +43,7 @@
 
 namespace WebKit {
 
+class WebAudioSourceProvider;
 class WebMediaElement;
 class WebMediaPlayer;
 
@@ -122,6 +124,8 @@ public:
     virtual unsigned droppedFrameCount() const;
     virtual unsigned audioDecodedByteCount() const;
     virtual unsigned videoDecodedByteCount() const;
+    virtual WebCore::AudioSourceProvider* audioSourceProvider();
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool supportsAcceleratedRendering() const;
 
@@ -153,6 +157,26 @@ private:
     bool m_supportsAcceleratedCompositing;
 #endif
     static bool m_isEnabled;
+
+    // AudioSourceProviderImpl wraps a WebAudioSourceProvider.
+
+    class AudioSourceProviderImpl : public WebCore::AudioSourceProvider {
+    public:
+        AudioSourceProviderImpl()
+            : m_webAudioSourceProvider(0)
+        {
+        }
+
+        virtual ~AudioSourceProviderImpl() { }
+
+        virtual void provideInput(WebCore::AudioBus*, size_t framesToProcess);
+        void initialize(WebAudioSourceProvider* provider) { m_webAudioSourceProvider = provider; }
+
+    private:
+        WebAudioSourceProvider* m_webAudioSourceProvider;
+    };
+
+    AudioSourceProviderImpl m_audioSourceProvider;
 };
 
 } // namespace WebKit
