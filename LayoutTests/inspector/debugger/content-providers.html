@@ -1,0 +1,83 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+
+<script>
+
+function test()
+{
+    function createMockScript(id, source, range)
+    {
+        range = range || [0, 0, 100, 0];
+        return {
+            requestSource: function(callback)
+            {
+                InspectorTest.addResult("Request " + id + " source.");
+                callback(source);
+            },
+            get lineOffset() { return range[0]; },
+            get columnOffset() { return range[1]; }
+        };
+    }
+
+    InspectorTest.runTestSuite([
+        function testScriptContentProvider(next)
+        {
+            var mockScriptSource = "function foo() { return 0; }";
+            var mockScript = createMockScript("foo.js", mockScriptSource);
+            var contentProvider = new WebInspector.ScriptContentProvider(mockScript);
+            function didRequestContent(mimeType, content)
+            {
+                InspectorTest.assertEquals("text/javascript", mimeType);
+                InspectorTest.assertEquals(mockScriptSource, content);
+                next();
+            }
+            contentProvider.requestContent(didRequestContent);
+        },
+
+        function testConcatenatedScriptsContentProvider(next)
+        {
+            var scripts = [];
+            scripts.push(createMockScript("baz.js", "\nfunction baz()\n{\n  return 0;\n}\n", [3, 20]));
+            scripts.push(createMockScript("foo.js", "function foo() { return 0; }", [1, 10]));
+            scripts.push(createMockScript("bar.js", "function bar() { return 0; }", [1, 70]));
+            var contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(scripts);
+            function didRequestContent(mimeType, content)
+            {
+                InspectorTest.assertEquals("text/html", mimeType);
+                InspectorTest.addResult(content);
+                next();
+            }
+            contentProvider.requestContent(didRequestContent);
+        },
+
+        function testResourceContentProvider(next)
+        {
+            var mockResourceContent = "<script>var x = 0;</" + "script>";
+            var mockResource = {
+                requestContent: function(callback)
+                {
+                    InspectorTest.addResult("Request resource content.");
+                    callback(mockResourceContent);
+                }
+            };
+            var contentProvider = new WebInspector.ResourceContentProvider(mockResource);
+            function didRequestContent(mimeType, content)
+            {
+                InspectorTest.assertEquals("text/html", mimeType);
+                InspectorTest.assertEquals(mockResourceContent, content);
+                next();
+            }
+            contentProvider.requestContent(didRequestContent);
+        }
+    ]);
+};
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests ContentProvider implementations.</p>
+</body>
+</html>

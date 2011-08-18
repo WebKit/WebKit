@@ -189,82 +189,24 @@ WebInspector.RawSourceCode.prototype = {
 
     _loadResourceContent: function(resource)
     {
-        function didRequestContent(text)
-        {
-            if (!text) {
-                this._loadAndConcatenateScriptsContent();
-                return;
-            }
-
-            var mimeType = resource.type === WebInspector.Resource.Type.Script ? "text/javascript" : "text/html";
-            this._didRequestContent(mimeType, text);
-        }
-        resource.requestContent(didRequestContent.bind(this));
+        var contentProvider = new WebInspector.ResourceContentProvider(resource);
+        contentProvider.requestContent(this._didRequestContent.bind(this));
     },
 
     _loadScriptContent: function()
     {
-        this._scripts[0].requestSource(this._didRequestContent.bind(this, "text/javascript"));
+        var contentProvider = new WebInspector.ScriptContentProvider(this._scripts[0]);
+        contentProvider.requestContent(this._didRequestContent.bind(this));
     },
 
     _loadAndConcatenateScriptsContent: function()
     {
-        var scripts = this._scripts.slice();
-        scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
-        var sources = [];
-        function didRequestSource(source)
-        {
-            sources.push(source);
-            if (sources.length < scripts.length)
-                return;
-            if (scripts.length === 1 && !scripts[0].lineOffset && !scripts[0].columnOffset)
-                this._didRequestContent("text/javascript", source);
-            else
-                this._concatenateScriptsContent(scripts, sources);
-        }
-        for (var i = 0; i < scripts.length; ++i)
-            scripts[i].requestSource(didRequestSource.bind(this));
-    },
-
-    _concatenateScriptsContent: function(scripts, sources)
-    {
-        var content = "";
-        var lineNumber = 0;
-        var columnNumber = 0;
-        var scriptRanges = [];
-        function appendChunk(chunk, script)
-        {
-            var start = { lineNumber: lineNumber, columnNumber: columnNumber };
-            content += chunk;
-            var lineEndings = chunk.lineEndings();
-            var lineCount = lineEndings.length;
-            if (lineCount === 1)
-                columnNumber += chunk.length;
-            else {
-                lineNumber += lineCount - 1;
-                columnNumber = lineEndings[lineCount - 1] - lineEndings[lineCount - 2] - 1;
-            }
-            var end = { lineNumber: lineNumber, columnNumber: columnNumber };
-            if (script)
-                scriptRanges.push({ start: start, end: end, scriptId: script.scriptId });
-        }
-
-        var scriptOpenTag = "<script>";
-        var scriptCloseTag = "</script>";
-        for (var i = 0; i < scripts.length; ++i) {
-            // Fill the gap with whitespace characters.
-            while (lineNumber < scripts[i].lineOffset)
-                appendChunk("\n");
-            while (columnNumber < scripts[i].columnOffset - scriptOpenTag.length)
-                appendChunk(" ");
-
-            // Add script tag.
-            appendChunk(scriptOpenTag);
-            appendChunk(sources[i], scripts[i]);
-            appendChunk(scriptCloseTag);
-        }
-
-        this._didRequestContent("text/html", content);
+        var contentProvider;
+        if (this._scripts.length === 1 && !this._scripts[0].lineOffset && !this._scripts[0].columnOffset)
+            contentProvider = new WebInspector.ScriptContentProvider(this._scripts[0]);
+        else
+            contentProvider = new WebInspector.ConcatenatedScriptsContentProvider(this._scripts);
+        contentProvider.requestContent(this._didRequestContent.bind(this));
     },
 
     _didRequestContent: function(mimeType, content)
@@ -304,3 +246,110 @@ WebInspector.RawSourceCode.prototype = {
 }
 
 WebInspector.RawSourceCode.prototype.__proto__ = WebInspector.Object.prototype;
+
+
+WebInspector.ScriptContentProvider = function(script)
+{
+    this._mimeType = "text/javascript";
+    this._script = script;
+};
+
+WebInspector.ScriptContentProvider.prototype = {
+requestContent: function(callback)
+{
+    function didRequestSource(source)
+    {
+        callback(this._mimeType, source);
+    }
+    this._script.requestSource(didRequestSource.bind(this));
+}
+}
+
+WebInspector.ScriptContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
+
+
+WebInspector.ConcatenatedScriptsContentProvider = function(scripts)
+{
+    this._mimeType = "text/html";
+    this._scripts = scripts;
+};
+
+WebInspector.ConcatenatedScriptsContentProvider.prototype = {
+   requestContent: function(callback)
+   {
+       var scripts = this._scripts.slice();
+       scripts.sort(function(x, y) { return x.lineOffset - y.lineOffset || x.columnOffset - y.columnOffset; });
+       var sources = [];
+       function didRequestSource(source)
+       {
+           sources.push(source);
+           if (sources.length == scripts.length)
+               callback(this._mimeType, this._concatenateScriptsContent(scripts, sources));
+       }
+       for (var i = 0; i < scripts.length; ++i)
+           scripts[i].requestSource(didRequestSource.bind(this));
+   },
+
+   _concatenateScriptsContent: function(scripts, sources)
+   {
+       var content = "";
+       var lineNumber = 0;
+       var columnNumber = 0;
+       var scriptRanges = [];
+       function appendChunk(chunk, script)
+       {
+           var start = { lineNumber: lineNumber, columnNumber: columnNumber };
+           content += chunk;
+           var lineEndings = chunk.lineEndings();
+           var lineCount = lineEndings.length;
+           if (lineCount === 1)
+               columnNumber += chunk.length;
+           else {
+               lineNumber += lineCount - 1;
+               columnNumber = lineEndings[lineCount - 1] - lineEndings[lineCount - 2] - 1;
+           }
+           var end = { lineNumber: lineNumber, columnNumber: columnNumber };
+           if (script)
+               scriptRanges.push({ start: start, end: end, sourceId: script.sourceId });
+       }
+
+       var scriptOpenTag = "<script>";
+       var scriptCloseTag = "</script>";
+       for (var i = 0; i < scripts.length; ++i) {
+           // Fill the gap with whitespace characters.
+           while (lineNumber < scripts[i].lineOffset)
+               appendChunk("\n");
+           while (columnNumber < scripts[i].columnOffset - scriptOpenTag.length)
+               appendChunk(" ");
+
+           // Add script tag.
+           appendChunk(scriptOpenTag);
+           appendChunk(sources[i], scripts[i]);
+           appendChunk(scriptCloseTag);
+       }
+
+       return content;
+   }
+}
+
+WebInspector.ConcatenatedScriptsContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
+
+
+WebInspector.ResourceContentProvider = function(resource)
+{
+    this._mimeType = resource.type === WebInspector.Resource.Type.Script ? "text/javascript" : "text/html";
+    this._resource = resource;
+};
+
+WebInspector.ResourceContentProvider.prototype = {
+    requestContent: function(callback)
+    {
+        function didRequestContent(content)
+        {
+            callback(this._mimeType, content);
+        }
+        this._resource.requestContent(didRequestContent.bind(this));
+    }
+}
+
+WebInspector.ResourceContentProvider.prototype.__proto__ = WebInspector.ContentProvider.prototype;
