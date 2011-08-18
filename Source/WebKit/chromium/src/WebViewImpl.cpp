@@ -1140,7 +1140,7 @@ void WebViewImpl::paint(WebCanvas* canvas, const WebRect& rect)
         if (canvas) {
             // Clip rect to the confines of the rootLayerTexture.
             IntRect resizeRect(rect);
-            resizeRect.intersect(IntRect(IntPoint(0, 0), m_layerTreeHost->viewportVisibleRect().size()));
+            resizeRect.intersect(IntRect(IntPoint(0, 0), m_layerTreeHost->viewportSize()));
             doPixelReadbackToCanvas(canvas, resizeRect);
         }
 #endif
@@ -2466,14 +2466,10 @@ bool WebViewImpl::pageHasRTLStyle() const
     return (style->direction() == RTL);
 }
 
-void WebViewImpl::setRootGraphicsLayer(WebCore::GraphicsLayer* layer)
+void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     m_rootGraphicsLayer = layer;
-    setRootPlatformLayer(layer ? layer->platformLayer() : 0);
-}
 
-void WebViewImpl::setRootPlatformLayer(WebCore::PlatformLayer* layer)
-{
     setIsAcceleratedCompositingActive(layer);
     if (m_layerTreeHost)
         m_layerTreeHost->setRootLayer(layer);
@@ -2618,7 +2614,7 @@ void WebViewImpl::animateAndLayout(double frameBeginTime)
 
 void WebViewImpl::didRecreateGraphicsContext(bool success)
 {
-    setRootPlatformLayer(success ? m_layerTreeHost->rootLayer() : 0);
+    setRootGraphicsLayer(success ? m_layerTreeHost->rootLayer() : 0);
 
     if (success) {
       // Forces ViewHostMsg_DidActivateAcceleratedCompositing to be sent so
@@ -2642,11 +2638,10 @@ void WebViewImpl::updateLayerTreeViewport()
         return;
 
     FrameView* view = page()->mainFrame()->view();
-    IntRect contentRect = view->visibleContentRect(false);
-    IntRect visibleRect = view->visibleContentRect(true);
+    IntRect visibleRect = view->visibleContentRect(true /* include scrollbars */);
     IntPoint scroll(view->scrollX(), view->scrollY());
 
-    m_layerTreeHost->setViewport(visibleRect, contentRect, scroll);
+    m_layerTreeHost->setViewport(visibleRect.size(), view->contentsSize(), scroll);
 }
 
 WebGraphicsContext3D* WebViewImpl::graphicsContext3D()

@@ -1,3 +1,76 @@
+2011-08-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Draw the root/"non-composited content" in compositor side
+        https://bugs.webkit.org/show_bug.cgi?id=58834
+
+        Reviewed by Darin Fisher.
+
+        Handle the root or non-composited content with a GraphicsLayer rather than special case logic in
+        LayerRendererChromium. This layer's client is the NonCompositedContentHost, which routes the paint callbacks
+        through the LayerPainterChromium interface out to the WebView.  The root layer is special in two ways:
+        *) The root layer has a scroll offset, which changes how the visibleLayerRect maps to content space and applies a
+            draw-time transform.
+        *) The root layer masks the alpha channel when drawing because of concerns about subpixel AA trashing the alpha
+            channel.  The root layer is always opaque so this is fine.
+        *) The root layer does not have border texels and does have subpixel AA for text.
+
+        Covered by compositing/
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::scrollPosition):
+        (WebCore::LayerChromium::setScrollPosition):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::releaseTextures):
+        (WebCore::LayerRendererChromium::viewportChanged):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        (WebCore::LayerRendererChromium::layerTreeAsText):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::rootLayer):
+        (WebCore::LayerRendererChromium::viewportSize):
+        (WebCore::LayerRendererChromium::viewportWidth):
+        (WebCore::LayerRendererChromium::viewportHeight):
+        * platform/graphics/chromium/NonCompositedContentHost.cpp: Added.
+        (WebCore::NonCompositedContentHost::NonCompositedContentHost):
+        (WebCore::NonCompositedContentHost::~NonCompositedContentHost):
+        (WebCore::NonCompositedContentHost::invalidateRect):
+        (WebCore::NonCompositedContentHost::invalidateEntireLayer):
+        (WebCore::NonCompositedContentHost::setScrollPosition):
+        (WebCore::NonCompositedContentHost::notifyAnimationStarted):
+        (WebCore::NonCompositedContentHost::notifySyncRequired):
+        (WebCore::NonCompositedContentHost::paintContents):
+        (WebCore::NonCompositedContentHost::showDebugBorders):
+        (WebCore::NonCompositedContentHost::showRepaintCounter):
+        * platform/graphics/chromium/NonCompositedContentHost.h: Added.
+        (WebCore::NonCompositedContentHost::create):
+        (WebCore::NonCompositedContentHost::graphicsLayer):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::scrollPosition):
+        (WebCore::CCLayerImpl::setScrollPosition):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::invalidateRootLayerRect):
+        (WebCore::CCLayerTreeHost::setRootLayer):
+        (WebCore::CCLayerTreeHost::setViewport):
+        (WebCore::CCLayerTreeHost::reallocateRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::rootLayer):
+        (WebCore::CCLayerTreeHost::viewportSize):
+
 2011-08-18  Nico Weber  <thakis@chromium.org>
 
         Fix "missing return" gcc warning in ScrollAnimatorNone

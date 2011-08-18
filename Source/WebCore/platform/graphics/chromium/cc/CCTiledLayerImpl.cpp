@@ -50,8 +50,17 @@ CCTiledLayerImpl::~CCTiledLayerImpl()
 void CCTiledLayerImpl::draw()
 {
     const IntRect& layerRect = visibleLayerRect();
-    if (!layerRect.isEmpty())
+    if (!layerRect.isEmpty()) {
+        GraphicsContext3D* context = layerRenderer()->context();
+        // Mask out writes to the alpha channel for the root layer, subpixel antialiasing
+        // via Skia results in invalid zero alpha values on text glyphs. The root layer
+        // is always opaque so the alpha channel isn't meaningful anyway.
+        if (isRootLayer())
+            context->colorMask(true, true, true, false);
         m_tiler->draw(layerRect, m_tilingTransform, drawOpacity());
+        if (isRootLayer())
+            context->colorMask(true, true, true, true);
+    }
 }
 
 void CCTiledLayerImpl::bindContentsTexture()

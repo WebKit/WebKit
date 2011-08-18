@@ -3512,6 +3512,8 @@
             'platform/graphics/chromium/LayerTextureUpdaterCanvas.h',
             'platform/graphics/chromium/LayerTilerChromium.cpp',
             'platform/graphics/chromium/LayerTilerChromium.h',
+            'platform/graphics/chromium/NonCompositedContentHost.cpp',
+            'platform/graphics/chromium/NonCompositedContentHost.h',
             'platform/graphics/chromium/MediaPlayerPrivateChromium.h',
             'platform/graphics/chromium/PlatformCanvas.cpp',
             'platform/graphics/chromium/PlatformCanvas.h',

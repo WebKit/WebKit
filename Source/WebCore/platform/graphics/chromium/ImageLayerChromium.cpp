@@ -62,7 +62,7 @@ public:
                 LayerTextureUpdater::SampledTexelFormatRGBA : LayerTextureUpdater::SampledTexelFormatBGRA;
     }
 
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int /* borderTexels */)
     {
         m_texSubImage.setSubImageSize(tileSize);
     }
