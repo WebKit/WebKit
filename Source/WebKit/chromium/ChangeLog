@@ -1,3 +1,17 @@
+2011-08-18  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Draw the root/"non-composited content" in compositor side
+        https://bugs.webkit.org/show_bug.cgi?id=58834
+
+        Reviewed by Kenneth Russell.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::didRecreateGraphicsContext):
+        (WebKit::WebViewImpl::updateLayerTreeViewport):
+        * src/WebViewImpl.h:
+
 2011-08-18  Sadrul Habib Chowdhury  <sadrul@chromium.org>
 
         GestureRecognizer: Update how gesture-scroll works.

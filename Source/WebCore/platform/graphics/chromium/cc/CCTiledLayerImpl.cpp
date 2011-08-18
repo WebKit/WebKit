@@ -51,8 +51,21 @@ void CCTiledLayerImpl::draw()
 {
     ASSERT(CCLayerTreeHostImplProxy::isImplThread());
     const IntRect& layerRect = visibleLayerRect();
-    if (!layerRect.isEmpty())
+    if (!layerRect.isEmpty()) {
+        GraphicsContext3D* context = layerRenderer()->context();
+        // Mask out writes to the alpha channel and disable blending for the root layer,
+        // subpixel antialiasing on windows results in invalid zero alpha values on text
+        // glyphs. The root layer is always opaque so the alpha channel isn't meaningful anyway.
+        if (isRootLayer()) {
+            GLC(context, context->colorMask(true, true, true, false));
+            GLC(context, context->disable(GraphicsContext3D::BLEND));
+        }
         m_tiler->draw(layerRect, m_tilingTransform, drawOpacity());
+        if (isRootLayer()) {
+            context->colorMask(true, true, true, true);
+            GLC(context, context->enable(GraphicsContext3D::BLEND));
+        }
+    }
 }
 
 void CCTiledLayerImpl::bindContentsTexture()

@@ -41,6 +41,8 @@ class GraphicsContext3D;
 class LayerChromium;
 class LayerPainterChromium;
 class LayerRendererChromium;
+class GraphicsLayer;
+class NonCompositedContentHost;
 
 class CCLayerTreeHostClient {
 public:
@@ -87,8 +89,6 @@ public:
 
     void compositeAndReadback(void *pixels, const IntRect&);
 
-    PassOwnPtr<LayerPainterChromium> createRootLayerPainter();
-
     void finishAllRendering();
 
     int frameNumber() const { return m_frameNumber; }
@@ -98,17 +98,15 @@ public:
     void setNeedsCommitAndRedraw();
     void setNeedsRedraw();
 
-    void setRootLayer(LayerChromium*);
-    LayerChromium* rootLayer() { return m_rootLayer.get(); }
-    const LayerChromium* rootLayer() const { return m_rootLayer.get(); }
+    void setRootLayer(GraphicsLayer*);
+    GraphicsLayer* rootLayer() { return m_rootLayer.get(); }
+    const GraphicsLayer* rootLayer() const { return m_rootLayer.get(); }
 
     const CCSettings& settings() const { return m_settings; }
 
-    void setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition);
+    void setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition);
 
-    const IntRect& viewportContentRect() const { return m_viewportContentRect; }
-    const IntPoint& viewportScrollPosition() const { return m_viewportScrollPosition; }
-    const IntRect& viewportVisibleRect() const { return m_viewportVisibleRect; }
+    const IntSize& viewportSize() const { return m_viewportSize; }
 
     void setVisible(bool);
 
@@ -117,6 +115,7 @@ public:
     void composite(bool finish);
 #endif
 
+    NonCompositedContentHost* nonCompositedContentHost() const { return m_nonCompositedContentHost.get(); }
 
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
@@ -143,12 +142,12 @@ private:
 
     OwnPtr<CCLayerTreeHostImplProxy> m_proxy;
 
-    RefPtr<LayerChromium> m_rootLayer;
+    OwnPtr<GraphicsLayer> m_rootLayer;
+    OwnPtr<NonCompositedContentHost> m_nonCompositedContentHost;
+
     CCSettings m_settings;
 
-    IntRect m_viewportVisibleRect;
-    IntRect m_viewportContentRect;
-    IntPoint m_viewportScrollPosition;
+    IntSize m_viewportSize;
 };
 
 }

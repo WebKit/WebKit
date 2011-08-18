@@ -103,6 +103,9 @@ public:
     void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
     bool usesLayerScissor() const { return m_usesLayerScissor; }
 
+    void setIsRootLayer(bool isRootLayer) { m_isRootLayer = isRootLayer; }
+    bool isRootLayer() const { return m_isRootLayer; }
+
     void setSublayerTransform(const TransformationMatrix& sublayerTransform) { m_sublayerTransform = sublayerTransform; }
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
@@ -140,6 +143,9 @@ public:
 
     const IntSize& contentBounds() const { return m_contentBounds; }
     void setContentBounds(const IntSize& contentBounds) { m_contentBounds = contentBounds; }
+
+    const IntPoint& scrollPosition() const { return m_scrollPosition; }
+    void setScrollPosition(const IntPoint& scrollPosition) { m_scrollPosition = scrollPosition; }
 
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
@@ -179,6 +185,7 @@ private:
     float m_anchorPointZ;
     IntSize m_bounds;
     IntSize m_contentBounds;
+    IntPoint m_scrollPosition;
     IntRect m_visibleLayerRect;
 
     // Whether the "back" of this layer should draw.
@@ -191,6 +198,7 @@ private:
     TransformationMatrix m_sublayerTransform;
     TransformationMatrix m_transform;
     bool m_usesLayerScissor;
+    bool m_isRootLayer;
 
     bool m_drawsContent;
 

@@ -60,6 +60,7 @@ private:
     virtual bool drawsContent() const;
     virtual void createTextureUpdaterIfNeeded();
     virtual LayerTextureUpdater* textureUpdater() const { return m_textureUpdater.get(); }
+    virtual void protectVisibleTileTextures();
 
     OwnPtr<LayerTextureUpdater> m_textureUpdater;
 };

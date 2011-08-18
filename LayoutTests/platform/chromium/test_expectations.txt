@@ -2800,17 +2800,7 @@ BUGCR75109 LINUX WIN : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // Chromium GPU draws scrollbars slightly differently in debug vs. release.
-BUGWK58587 LINUX DEBUG GPU : compositing/direct-image-compositing.html = IMAGE
 BUGWK58587 LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
-BUGWK58587 LINUX DEBUG GPU : compositing/geometry/tall-page-composited.html = IMAGE
-BUGWK58587 LINUX DEBUG GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGWK58587 LINUX DEBUG GPU : media/video-zoom.html = IMAGE
-BUGWK58587 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
-BUGWK58587 LINUX DEBUG GPU : compositing/masks/masked-ancestor.html = IMAGE
-BUGWK58587 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
-BUGWK58587 LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
-BUGWK58587 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGWK58587 LINUX DEBUG GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 
 // introduced by Dave Hyatt in WK r80582
 BUGCR75561 LINUX WIN : fast/writing-mode/text-orientation-basic.html = IMAGE+TEXT

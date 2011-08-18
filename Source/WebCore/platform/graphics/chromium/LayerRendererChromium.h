@@ -68,6 +68,7 @@ class CCLayerTreeHostCommitter;
 class CCLayerTreeHostImpl;
 class GeometryBinding;
 class GraphicsContext3D;
+class NonCompositedContentHost;
 
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
@@ -81,8 +82,8 @@ public:
     CCLayerTreeHost* owner() { return m_owner; }
     const CCLayerTreeHost* owner() const { return m_owner; }
 
-    LayerChromium* rootLayer() { return m_owner->rootLayer(); }
-    const LayerChromium* rootLayer() const { return m_owner->rootLayer(); }
+    GraphicsLayer* rootLayer() { return m_owner->rootLayer(); }
+    const GraphicsLayer* rootLayer() const { return m_owner->rootLayer(); }
 
     GraphicsContext3D* context();
     bool contextSupportsMapSub() const { return m_contextSupportsMapSub; }
@@ -91,9 +92,10 @@ public:
     GrContext* skiaContext() { return m_skiaContext.get(); }
 #endif
 
-    void invalidateRootLayerRect(const IntRect& dirtyRect);
+    const IntSize& viewportSize() { return m_owner->viewportSize(); }
+    int viewportWidth() { return viewportSize().width(); }
+    int viewportHeight() { return viewportSize().height(); }
 
-    void rootLayerChanged();
     void viewportChanged();
 
     // updates and draws the current layers onto the backbuffer
@@ -177,7 +179,6 @@ private:
     void drawLayersInternal();
     void drawLayer(CCLayerImpl*, CCRenderSurface*);
 
-    void drawRootLayer();
     ManagedTexture* getOffscreenLayerTexture();
     void copyOffscreenTextureToDisplay();
 
@@ -201,11 +202,6 @@ private:
 
     TransformationMatrix m_projectionMatrix;
     TransformationMatrix m_windowMatrix;
-
-    // FIXME: split the texture updater and tiler into two parts. Then, keep the
-    // impl here and put the painting-side on the LayerTreeHost.
-    OwnPtr<LayerTextureUpdater> m_rootLayerTextureUpdater;
-    OwnPtr<LayerTilerChromium> m_rootLayerContentTiler;
 
     OwnPtr<LayerList> m_computedRenderSurfaceLayerList;
 
