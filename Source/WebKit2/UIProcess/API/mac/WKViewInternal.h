@@ -78,8 +78,6 @@ namespace WebKit {
 - (void)_updateTextInputStateIncludingSecureInputState:(BOOL)updateSecureInputState;
 - (void)_resetTextInputState;
 
-- (void)_setDrawingAreaSize:(NSSize)size;
-
 - (void)_didChangeScrollbarsForMainFrame;
 
 #if ENABLE(FULLSCREEN_API)

@@ -109,8 +109,9 @@ struct WKViewInterpretKeyEventsParameters {
     Vector<KeypressCommand>* commands;
 };
 
-@interface WKView (FileInternal)
+@interface WKView (WKFileInternal)
 - (float)_deviceScaleFactor;
+- (void)_setDrawingAreaSize:(NSSize)size;
 @end
 
 @interface WKViewData : NSObject {
@@ -2431,15 +2432,6 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 }
 
-- (void)_setDrawingAreaSize:(NSSize)size
-{
-    if (!_data->_page->drawingArea())
-        return;
-    
-    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(_data->_resizeScrollOffset));
-    _data->_resizeScrollOffset = NSZeroSize;
-}
-
 - (void)_didChangeScrollbarsForMainFrame
 {
     [self _updateGrowBoxForWindowFrameChange];
@@ -2592,7 +2584,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 @end
 
-@implementation WKView (FileInternal)
+@implementation WKView (WKFileInternal)
 
 - (float)_deviceScaleFactor
 {
@@ -2606,6 +2598,15 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         return [window userSpaceScaleFactor];
     return [[NSScreen mainScreen] userSpaceScaleFactor];
 #endif
+}
+
+- (void)_setDrawingAreaSize:(NSSize)size
+{
+    if (!_data->_page->drawingArea())
+        return;
+    
+    _data->_page->drawingArea()->setSize(IntSize(size), IntSize(_data->_resizeScrollOffset));
+    _data->_resizeScrollOffset = NSZeroSize;
 }
 
 @end

@@ -77,7 +77,6 @@ public:
     // Returns true if painting was successful, false otherwise.
     virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
 
-    virtual void sizeDidChange() = 0;
     virtual void deviceScaleFactorDidChange() = 0;
 
     // FIXME: These should be pure virtual.
@@ -101,6 +100,8 @@ protected:
     WebCore::IntSize m_scrollOffset;
 
 private:
+    virtual void sizeDidChange() = 0;
+
     // CoreIPC message handlers.
     // FIXME: These should be pure virtual.
     virtual void update(uint64_t backingStoreStateID, const UpdateInfo&) { }
