@@ -9,6 +9,10 @@
 table {border: 1px solid #080; border-spacing: 0; border-collapse:collapse;}
 td {border-bottom: 1px solid #070; padding:.5em 1em;}
 menu,li {margin:0;padding:0;}
+
+input.vertical {width:20px;height:100px;}
+.larger {font-size:1.25em;}
+.small {font-size:.6em;}
 </style>
 
 
@@ -38,13 +42,13 @@ Todos: -webkit-transform? changes to font size? required? autocomplete? more lis
         <li><a href="#section-textarea">Text area control</a></li>
         <li><a href="#section-label">Labels</a></li>
         <li><a href="#section-details">Details</a></li>
-        <li><a href="#section-menu">Menus</a></li>
-        <li><a href="#section-keygen">Keygen</a></li>
         <li><a href="#section-meter">Meter</a></li>
         <li><a href="#section-progress">Progress</a></li>
         <li><a href="#section-output">Output form element</a></li>
         <li><a href="#section-av">Audio and video controls</a></li>
         <li><a href="#section-anchor">Anchor</a></li>
+        <li><a href="#section-menu">Menus</a></li>
+        <li><a href="#section-keygen">Keygen</a></li>
         <li><a href="#section-object">Object</a></li>
         <li><a href="#section-embed">Embed</a></li>
         <li><a href="#section-iframe">Iframe</a></li>
@@ -283,7 +287,7 @@ ILLEGAL: usemap
             </td>
         </tr>
         <tr>
-            <td><code>&lt;input type="text|search" results /&gt;</code> [NOT STANDARD]
+            <td><code>&lt;input type="search" results /&gt;</code> [NOT STANDARD]
             </td>
             <td>
                 <input type="search" results=5 />
@@ -557,16 +561,21 @@ pattern (- number)
 <table>
     <tbody>
         <tr>
-            <td><code>&lt;input type="range" /&gt;</td>
-            <td><input type="range" /></td>
+            <td><code>&lt;input type="range" /&gt;</code><br/>
+                + <code>width=20px</code> + <code>height=100px</code> (vertical)</td>
+            <td><input type="range" /><input type="range" class="vertical" /></td>
         </tr>
         <tr>
-            <td>+ <code>max</code> + <code>min</code> + <code>step</code></td>
-            <td><input type="range" min="0" max="100" step="10"</td>
+            <td>+ <code>max</code> + <code>min</code> + <code>step</code><br/>
+                * (horizontal, vertical)</td>
+            <td><input type="range" min="0" max="100" step="10" />
+                <input type="range" min="0" max="100" step="10" class="vertical" /></td>
         </tr>
         <tr>
-            <td>+ <code>list</code></td>
+            <td>+ <code>list</code><br/>
+                * (horizontal, vertical)</td>
             <td><input type="range" list="slider-datalist" />
+                <input type="range" class="vertical" list="slider-datalist" />
                 <datalist id="slider-datalist">
                     <option value="0"></option>
                     <option value="20"></option>
@@ -577,8 +586,11 @@ pattern (- number)
             </td>
         </tr>
         <tr>
-            <td>+ <code>disabled</code></td>
-            <td><input type="range" disabled /></td>
+            <td>+ <code>disabled</code><br/>
+                * (horizontal, vertical)</td>
+            <td><input type="range" disabled />
+                <input type="range" class="vertical" disabled />
+            </td>
         </tr>
     </tbody>
 </table>
@@ -671,6 +683,36 @@ pattern (- number)
                 <input type="radio" name="radio-group" checked />
             </td>
         </tr>
+        <tr>
+            <td>Various sizes</td>
+            <td>
+                <input type="checkbox" class="larger" />
+                <input type="checkbox" checked class="larger" />
+                <input type="checkbox" id="checkbox-indeterminate-larger" class="larger" />
+                <input type="radio" class="larger"/>
+                <input type="radio" checked class="larger" />
+                <input type="checkbox" class="small" />
+                <input type="checkbox" checked class="small" />
+                <input type="checkbox" id="checkbox-indeterminate-small" class="small" />
+                <input type="radio" class="small" />
+                <input type="radio" checked class="small" /><br />
+                <input type="checkbox" class="larger" disabled />
+                <input type="checkbox" checked class="larger" disabled />
+                <input type="checkbox" id="checkbox-indeterminate-disabled-larger" class="larger" disabled />
+                <input type="radio" class="larger" disabled />
+                <input type="radio" checked class="larger" disabled />
+                <input type="checkbox" class="small" disabled />
+                <input type="checkbox" checked class="small" disabled />
+                <input type="checkbox" id="checkbox-indeterminate-disabled-small" class="small" disabled />
+                <input type="radio" class="small" disabled />
+                <input type="radio" checked class="small" disabled />
+                <script>
+                    document.getElementById("checkbox-indeterminate-larger").indeterminate = true;
+                    document.getElementById("checkbox-indeterminate-small").indeterminate = true;
+                    document.getElementById("checkbox-indeterminate-disabled-larger").indeterminate = true;
+                    document.getElementById("checkbox-indeterminate-disabled-small").indeterminate = true;
+                </script>
+            </td>
     </tbody>
 </table>
 
@@ -1242,89 +1284,9 @@ Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat p
 
 
 
-
-<h2 id="section-menu">Menus</h2>
-<p>WHATWG Spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/interactive-elements.html#the-menu-element"><code>&lt;menu&gt;</code></a></p>
-<p>Only toolbar menus are considered interactive.  <code>type</code> attribute set to <code>list</code> or <code>context</code> are not.</p>
-<table>
-    <tbody>
-        <tr>
-            <td><code>&lt;menu type="toolbar"&gt;</code><br/>
-                Includes commands with <code>&lt;button&gt;</code>, <code>&lt;input type="button"&gt;</code>, and <code>&lt;a&gt;</code><br/>
-                Includes inner menus with <code>&lt;menu label&gt;</code> and <code>&lt;optgroup&gt;</code><br/>
-                Includes <code>&lt;hr /&gt;</code> and <code>&lt;option /&gt;</code> separators<br/>
-                
-            </td>
-            <td><menu type="toolbar">
-             <li><menu label="File">
-               <button type="button">New...</button>
-               <button type="button">Open...</button>
-               <hr />
-               <input type="button" value="Save" />
-               <input type="button" value="Save as..." />
-              </menu>
-             </li>
-             <li>
-              <optgroup label="Edit">
-               <button type="button">Copy</button>
-               <button type="button">Cut</button>
-               <button type="button">Paste</button>
-               <option value="" disabled>-</option>
-               <button type="button">Characters</button>
-              </optgroup>
-             </li>
-             <li>
-              <menu label="Help">
-               <li><a href="help.html">Help</a></li>
-               <li><a href="about.html">About</a></li>
-              </menu>
-             </li>
-            </menu>
-            </td>
-        </tr>
-        <tr>
-            <td><code>&lt;menu type="toolbar"&gt;</code> with inner <code>&lt;input type="submit"&gt;</code> fallback if browser has no menu support</td>
-            <td><menu type="toolbar">
-              <label for="goto">Go to...</label>
-              <menu label="Go">
-               <select id="goto">
-                <option value="" selected="selected"> Select site: </option>
-                <option value="http://www.apple.com/"> Apple </option>
-                <option value="http://www.mozilla.org/"> Mozilla </option>
-                <option value="http://www.opera.com/"> Opera </option>
-               </select>
-               <span><input type="submit" value="Go"></span>
-              </menu>
-            </menu>
-            </td>
-        </tr>
-    </tbody>
-</table>
-
-<h2 id="section-keygen">Keygen</h2>
-<p>WHATWG Spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-keygen-element"><code>&lt;keygen&gt;</code></a></p>
-<table>
-    <tbody>
-        <tr>
-            <td><code>&lt;keygen /&gt;</code></td>
-            <td><keygen /></td>
-        </tr>
-        <tr>
-            <td>+ <code>disabled</code></td>
-            <td><keygen disabled /></td>
-        </tr>
-        <tr>
-            <td>+ invalid <code>keytype</code> attribute</td>
-            <td><keygen keytype="customKeyType" /></td>
-        </tr>
-    </tbody>
-</table>
-
-
-
 <h2 id="section-meter">Meter</h2>
 <p>WHATWG spec:
-    <a href=""><code>&lt;meter&gt;</code></a>
+    <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-meter-element"><code>&lt;meter&gt;</code></a>
 </p>
 <table>
     <tbody>
@@ -1361,20 +1323,26 @@ Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat p
 <table>
     <tbody>
         <tr>
-            <td><code>&lt;progress /&gt;</td>
-            <td><progress /></td>
+            <td><code>&lt;progress&gt;&lt;/progress&gt;</code><br/>
+                + small</td>
+            <td><progress></progress> <progress class="small"></progress></td>
         </tr>
         <tr>
-            <td>+ <code>value</code><br />
-                + <code>value</code> + content
+            <td>+ <code>value=.3</code><br />
+                + <code>value</code> + content<br />
+                * (regular, small)
             </td>
             <td><progress value=".3"></progress>
                 <progress value=".3"><span>30</span>% completed</progress>
+                <progress value=".3" class="small"></progress>
+                <progress value=".3" class="small"><span>30</span>% completed</progress>
             </td>
         </tr>
         <tr>
-            <td>+ <code>value</code> + <code>max</code></td>
-            <td><progress value="30" max="100"></progress></td>
+            <td>+ <code>value</code> + <code>max</code><br/>
+                * (regular, small)</td>
+            <td><progress value="30" max="100"></progress>
+                <progress value="30" max="100" class="small"></progress></td>
         </tr>
     </tbody>
 </table>
@@ -1470,6 +1438,84 @@ Nam porta, velit at consequat rutrum, lorem lacus fringilla nulla, a consequat p
     </tbody>
 </table>
 
+
+
+<h2 id="section-menu">Menus</h2>
+<p>WHATWG Spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/interactive-elements.html#the-menu-element"><code>&lt;menu&gt;</code></a></p>
+<p>Only toolbar menus are considered interactive.  <code>type</code> attribute set to <code>list</code> or <code>context</code> are not.</p>
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;menu type="toolbar"&gt;</code><br/>
+                Includes commands with <code>&lt;button&gt;</code>, <code>&lt;input type="button"&gt;</code>, and <code>&lt;a&gt;</code><br/>
+                Includes inner menus with <code>&lt;menu label&gt;</code> and <code>&lt;optgroup&gt;</code><br/>
+                Includes <code>&lt;hr /&gt;</code> and <code>&lt;option /&gt;</code> separators<br/>
+                
+            </td>
+            <td><menu type="toolbar">
+             <li><menu label="File">
+               <button type="button">New...</button>
+               <button type="button">Open...</button>
+               <hr />
+               <input type="button" value="Save" />
+               <input type="button" value="Save as..." />
+              </menu>
+             </li>
+             <li>
+              <optgroup label="Edit">
+               <button type="button">Copy</button>
+               <button type="button">Cut</button>
+               <button type="button">Paste</button>
+               <option value="" disabled>-</option>
+               <button type="button">Characters</button>
+              </optgroup>
+             </li>
+             <li>
+              <menu label="Help">
+               <li><a href="help.html">Help</a></li>
+               <li><a href="about.html">About</a></li>
+              </menu>
+             </li>
+            </menu>
+            </td>
+        </tr>
+        <tr>
+            <td><code>&lt;menu type="toolbar"&gt;</code> with inner <code>&lt;input type="submit"&gt;</code> fallback if browser has no menu support</td>
+            <td><menu type="toolbar">
+              <label for="goto">Go to...</label>
+              <menu label="Go">
+               <select id="goto">
+                <option value="" selected="selected"> Select site: </option>
+                <option value="http://www.apple.com/"> Apple </option>
+                <option value="http://www.mozilla.org/"> Mozilla </option>
+                <option value="http://www.opera.com/"> Opera </option>
+               </select>
+               <span><input type="submit" value="Go"></span>
+              </menu>
+            </menu>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="section-keygen">Keygen</h2>
+<p>WHATWG Spec: <a href="http://www.whatwg.org/specs/web-apps/current-work/multipage/the-button-element.html#the-keygen-element"><code>&lt;keygen&gt;</code></a></p>
+<table>
+    <tbody>
+        <tr>
+            <td><code>&lt;keygen /&gt;</code></td>
+            <td><keygen /></td>
+        </tr>
+        <tr>
+            <td>+ <code>disabled</code></td>
+            <td><keygen disabled /></td>
+        </tr>
+        <tr>
+            <td>+ invalid <code>keytype</code> attribute</td>
+            <td><keygen keytype="customKeyType" /></td>
+        </tr>
+    </tbody>
+</table>
 <h2 id="section-object"><del>Object</del></h2>
 If usemap attribute is present
 <h2 id="section-embed"><del>Embed</del></h2>

@@ -1,3 +1,9 @@
+2011-08-17  Jon Lee  <jonlee@apple.com>
+
+        Updating the forms survey to include various element sizes.
+
+        * projects/forms/survey.html:
+
 2011-08-16  Daniel Bates  <dbates@webkit.org>
 
         Add myself to the list of individual members in the WebKit Security Group.
