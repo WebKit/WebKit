@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "EventHandler.h"
 #include "FrameView.h"
+#include "HTMLNames.h"
 #include "Node.h"
 #include "PlatformKeyboardEvent.h"
 #include "RenderStyle.h"
@@ -212,6 +213,24 @@ bool WebAccessibilityObject::isAnchor() const
     return m_private->isAnchor();
 }
 
+bool WebAccessibilityObject::isAriaReadOnly() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return equalIgnoringCase(m_private->getAttribute(HTMLNames::aria_readonlyAttr), "true");
+}
+
+bool WebAccessibilityObject::isButtonStateMixed() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->checkboxOrRadioValue() == ButtonStateMixed;
+}
+
 bool WebAccessibilityObject::isChecked() const
 {
     if (m_private.isNull())
@@ -230,14 +249,13 @@ bool WebAccessibilityObject::isCollapsed() const
     return m_private->isCollapsed();
 }
 
-
-bool WebAccessibilityObject::isFocused() const
+bool WebAccessibilityObject::isControl() const
 {
     if (m_private.isNull())
         return 0;
 
     m_private->updateBackingStore();
-    return m_private->isFocused();
+    return m_private->isControl();
 }
 
 bool WebAccessibilityObject::isEnabled() const
@@ -247,6 +265,15 @@ bool WebAccessibilityObject::isEnabled() const
 
     m_private->updateBackingStore();
     return m_private->isEnabled();
+}
+
+bool WebAccessibilityObject::isFocused() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->isFocused();
 }
 
 bool WebAccessibilityObject::isHovered() const
@@ -274,6 +301,15 @@ bool WebAccessibilityObject::isLinked() const
 
     m_private->updateBackingStore();
     return m_private->isLinked();
+}
+
+bool WebAccessibilityObject::isLoaded() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->isLoaded();
 }
 
 bool WebAccessibilityObject::isMultiSelectable() const
@@ -321,6 +357,15 @@ bool WebAccessibilityObject::isReadOnly() const
     return m_private->isReadOnly();
 }
 
+bool WebAccessibilityObject::isRequired() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->isRequired();
+}
+
 bool WebAccessibilityObject::isSelected() const
 {
     if (m_private.isNull())
@@ -328,6 +373,15 @@ bool WebAccessibilityObject::isSelected() const
 
     m_private->updateBackingStore();
     return m_private->isSelected();
+}
+
+bool WebAccessibilityObject::isVertical() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->orientation() == AccessibilityOrientationVertical;
 }
 
 bool WebAccessibilityObject::isVisible() const
@@ -348,6 +402,60 @@ bool WebAccessibilityObject::isVisited() const
     return m_private->isVisited();
 }
 
+WebString WebAccessibilityObject::accessKey() const
+{
+    if (m_private.isNull())
+        return WebString();
+
+    m_private->updateBackingStore();
+    return WebString(m_private->accessKey());
+}
+
+bool WebAccessibilityObject::ariaHasPopup() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->ariaHasPopup();
+}
+
+bool WebAccessibilityObject::ariaLiveRegionAtomic() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->ariaLiveRegionAtomic();
+}
+
+bool WebAccessibilityObject::ariaLiveRegionBusy() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->ariaLiveRegionBusy();
+}
+
+WebString WebAccessibilityObject::ariaLiveRegionRelevant() const
+{
+    if (m_private.isNull())
+        return WebString();
+
+    m_private->updateBackingStore();
+    return m_private->ariaLiveRegionRelevant();
+}
+
+WebString WebAccessibilityObject::ariaLiveRegionStatus() const
+{
+    if (m_private.isNull())
+        return WebString();
+
+    m_private->updateBackingStore();
+    return m_private->ariaLiveRegionStatus();
+}
+
 WebRect WebAccessibilityObject::boundingBoxRect() const
 {
     if (m_private.isNull())
@@ -355,6 +463,15 @@ WebRect WebAccessibilityObject::boundingBoxRect() const
 
     m_private->updateBackingStore();
     return m_private->boundingBoxRect();
+}
+
+double WebAccessibilityObject::estimatedLoadingProgress() const
+{
+    if (m_private.isNull())
+        return 0.0;
+
+    m_private->updateBackingStore();
+    return m_private->estimatedLoadingProgress();
 }
 
 WebString WebAccessibilityObject::helpText() const
@@ -373,6 +490,15 @@ int WebAccessibilityObject::headingLevel() const
 
     m_private->updateBackingStore();
     return m_private->headingLevel();
+}
+
+int WebAccessibilityObject::hierarchicalLevel() const
+{
+    if (m_private.isNull())
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->hierarchicalLevel();
 }
 
 WebAccessibilityObject WebAccessibilityObject::hitTest(const WebPoint& point) const
@@ -491,6 +617,42 @@ WebURL WebAccessibilityObject::url() const
     
     m_private->updateBackingStore();
     return m_private->url();
+}
+
+WebString WebAccessibilityObject::valueDescription() const
+{
+    if (m_private.isNull())
+        return WebString();
+
+    m_private->updateBackingStore();
+    return m_private->valueDescription();
+}
+
+float WebAccessibilityObject::valueForRange() const
+{
+    if (m_private.isNull())
+        return 0.0;
+
+    m_private->updateBackingStore();
+    return m_private->valueForRange();
+}
+
+float WebAccessibilityObject::maxValueForRange() const
+{
+    if (m_private.isNull())
+        return 0.0;
+
+    m_private->updateBackingStore();
+    return m_private->maxValueForRange();
+}
+
+float WebAccessibilityObject::minValueForRange() const
+{
+    if (m_private.isNull())
+        return 0.0;
+
+    m_private->updateBackingStore();
+    return m_private->minValueForRange();
 }
 
 WebNode WebAccessibilityObject::node() const

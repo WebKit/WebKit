@@ -1,3 +1,36 @@
+2011-08-18  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Add a bunch of accessors to WebAccessibilityObject to expose more of
+        AccessibilityObject to Chromium, including range control values,
+        document load state, live region attributes, and a few other
+        ARIA attributes.
+
+        https://bugs.webkit.org/show_bug.cgi?id=66411
+
+        Reviewed by Dimitri Glazkov.
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::isAriaReadOnly):
+        (WebKit::WebAccessibilityObject::isButtonStateMixed):
+        (WebKit::WebAccessibilityObject::isControl):
+        (WebKit::WebAccessibilityObject::isFocused):
+        (WebKit::WebAccessibilityObject::isLoaded):
+        (WebKit::WebAccessibilityObject::isRequired):
+        (WebKit::WebAccessibilityObject::isVertical):
+        (WebKit::WebAccessibilityObject::accessKey):
+        (WebKit::WebAccessibilityObject::ariaHasPopup):
+        (WebKit::WebAccessibilityObject::ariaLiveRegionAtomic):
+        (WebKit::WebAccessibilityObject::ariaLiveRegionBusy):
+        (WebKit::WebAccessibilityObject::ariaLiveRegionRelevant):
+        (WebKit::WebAccessibilityObject::ariaLiveRegionStatus):
+        (WebKit::WebAccessibilityObject::estimatedLoadingProgress):
+        (WebKit::WebAccessibilityObject::hierarchicalLevel):
+        (WebKit::WebAccessibilityObject::valueDescription):
+        (WebKit::WebAccessibilityObject::valueForRange):
+        (WebKit::WebAccessibilityObject::maxValueForRange):
+        (WebKit::WebAccessibilityObject::minValueForRange):
+
 2011-08-15  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=61016
