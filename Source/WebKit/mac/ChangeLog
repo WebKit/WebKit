@@ -1,5 +1,19 @@
 2011-08-17  Dan Bernstein  <mitz@apple.com>
 
+        Removed some code that is not needed when building for Leopard or later.
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebContextMenuClient.mm:
+        (fixMenusToSendToOldClients): Removed check for Tiger Mail.
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::objectContentType):
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        (-[WebView _preferencesChanged:]):
+
+2011-08-17  Dan Bernstein  <mitz@apple.com>
+
         Eliminate the WebCGFloat compatibility definition that was needed for Tiger.
 
         Rubber-stamped by Anders Carlsson.

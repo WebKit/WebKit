@@ -220,9 +220,6 @@ namespace WebCore {
         void setNeedsLeopardMailQuirks(bool);
         bool needsLeopardMailQuirks() const { return m_needsLeopardMailQuirks; }
 
-        void setNeedsTigerMailQuirks(bool);
-        bool needsTigerMailQuirks() const { return m_needsTigerMailQuirks; }
-
         void setDOMPasteAllowed(bool);
         bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
         
@@ -521,7 +518,6 @@ namespace WebCore {
         bool m_needsKeyboardEventDisambiguationQuirks : 1;
         bool m_treatsAnyTextCSSLinkAsStylesheet : 1;
         bool m_needsLeopardMailQuirks : 1;
-        bool m_needsTigerMailQuirks : 1;
         bool m_isDOMPasteAllowed : 1;
         bool m_shrinksStandaloneImagesToFit : 1;
         bool m_usesPageCache: 1;

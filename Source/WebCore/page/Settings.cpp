@@ -149,7 +149,6 @@ Settings::Settings(Page* page)
     , m_needsKeyboardEventDisambiguationQuirks(false)
     , m_treatsAnyTextCSSLinkAsStylesheet(false)
     , m_needsLeopardMailQuirks(false)
-    , m_needsTigerMailQuirks(false)
     , m_isDOMPasteAllowed(false)
     , m_shrinksStandaloneImagesToFit(true)
     , m_usesPageCache(false)
@@ -505,11 +504,6 @@ void Settings::setNeedsLeopardMailQuirks(bool needsQuirks)
     m_needsLeopardMailQuirks = needsQuirks;
 }
 
-void Settings::setNeedsTigerMailQuirks(bool needsQuirks)
-{
-    m_needsTigerMailQuirks = needsQuirks;
-}
-    
 void Settings::setDOMPasteAllowed(bool DOMPasteAllowed)
 {
     m_isDOMPasteAllowed = DOMPasteAllowed;

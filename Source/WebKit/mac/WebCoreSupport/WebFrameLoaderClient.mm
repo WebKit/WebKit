@@ -1479,12 +1479,6 @@ ObjectContentType WebFrameLoaderClient::objectContentType(const KURL& url, const
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
-    // This is a quirk that ensures Tiger Mail's WebKit plug-in will load during layout
-    // and not attach time. (5520541)
-    static BOOL isTigerMail = WKAppVersionCheckLessThan(@"com.apple.mail", -1, 3.0);
-    if (isTigerMail && mimeType == "application/x-apple-msg-attachment")
-        return ObjectContentNetscapePlugin;
-
     String type = mimeType;
 
     if (type.isEmpty()) {

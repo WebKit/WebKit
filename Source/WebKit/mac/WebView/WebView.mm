@@ -591,11 +591,6 @@ static bool runningLeopardMail()
     return NO;
 }
 
-static bool runningTigerMail()
-{
-    return NO;    
-}
-
 static bool coreVideoHas7228836Fix()
 {
 #ifdef BUILDING_ON_LEOPARD
@@ -815,7 +810,7 @@ static NSString *leakSolarWalkQuirksUserScriptContents()
     [self _scheduleGlibContextIterations];
 #endif
 
-    if (runningTigerMail() || runningLeopardMail())
+    if (runningLeopardMail())
         [self _injectMailQuirksScript];
 }
 
@@ -1544,7 +1539,6 @@ static bool needsSelfRetainWhileLoadingQuirk()
     settings->setTreatsAnyTextCSSLinkAsStylesheet([self _needsLinkElementTextCSSQuirk]);
     settings->setNeedsKeyboardEventDisambiguationQuirks([self _needsKeyboardEventDisambiguationQuirks]);
     settings->setNeedsLeopardMailQuirks(runningLeopardMail());
-    settings->setNeedsTigerMailQuirks(runningTigerMail());
     settings->setNeedsSiteSpecificQuirks(_private->useSiteSpecificSpoofing);
     settings->setWebArchiveDebugModeEnabled([preferences webArchiveDebugModeEnabled]);
     settings->setLocalFileContentSniffingEnabled([preferences localFileContentSniffingEnabled]);
@@ -4572,13 +4566,6 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
     _private->mainFrameDocumentReady = mainFrameDocumentReady;
     [self _didChangeValueForKey:_WebMainFrameDocumentKey];
     // this will cause observers to call mainFrameDocument where this flag will be checked
-}
-
-// This method name is used by Mail on Tiger (but not post-Tiger), so we shouldn't delete it 
-// until the day comes when we're no longer supporting Mail on Tiger.
-- (WebFrame *)_frameForCurrentSelection
-{
-    return [self _selectedOrMainFrame];
 }
 
 - (void)setTabKeyCyclesThroughElements:(BOOL)cyclesElements

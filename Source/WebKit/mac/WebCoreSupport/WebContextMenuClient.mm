@@ -102,21 +102,11 @@ static NSMutableArray *fixMenusToSendToOldClients(NSMutableArray *defaultMenuIte
     if (!preVersion3Client)
         return savedItems;
         
-    BOOL isMail = applicationIsAppleMail();
     for (unsigned i = 0; i < defaultItemsCount; ++i) {
         NSMenuItem *item = [defaultMenuItems objectAtIndex:i];
         int tag = [item tag];
         int oldStyleTag = tag;
-        
-        if (preVersion3Client && isMail && tag == WebMenuItemTagOpenLink) {
-            // Tiger Mail changes our "Open Link in New Window" item to "Open Link"
-            // and doesn't expect us to include an "Open Link" item at all. (5011905)
-            [defaultMenuItems removeObjectAtIndex:i];
-            i--;
-            defaultItemsCount--;
-            continue;
-        }
-        
+
         if (tag >= WEBMENUITEMTAG_WEBKIT_3_0_SPI_START) {
             // Change all editing-related SPI tags listed in WebUIDelegatePrivate.h to WebMenuItemTagOther
             // to match our old WebKit context menu behavior.

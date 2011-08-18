@@ -1,3 +1,14 @@
+2011-08-17  Dan Bernstein  <mitz@apple.com>
+
+        Removed an unused setting.
+
+        Reviewed by Anders Carlsson.
+
+        * WebCore.exp.in:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings): Removed initializer for m_needsTigerMailQuirks.
+        * page/Settings.h: Removed accessors.
+
 2011-08-17  Oliver Hunt  <oliver@apple.com>
 
         Move towards supporting user controlled prototypes on CanvasPixelArray
