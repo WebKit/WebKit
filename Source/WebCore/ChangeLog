@@ -1,3 +1,15 @@
+2011-08-17  Oliver Hunt  <oliver@apple.com>
+
+        Move towards supporting user controlled prototypes on CanvasPixelArray
+        https://bugs.webkit.org/show_bug.cgi?id=66429
+
+        Reviewed by Gavin Barraclough.
+
+        Start using a per-global object structure for canvas pixel array.
+
+        * bindings/js/JSImageDataCustom.cpp:
+        (WebCore::toJS):
+
 2011-08-17  Luke Macpherson   <macpherson@chromium.org>
 
         Support cast from CSSPrimitiveValue to unsigned, and use in appropriate places in CSSStyleSelector::applyProperty
