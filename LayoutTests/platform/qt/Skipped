@@ -962,9 +962,9 @@ editing/selection/extend-to-line-boundary.html
 # https://bugs.webkit.org/show_bug.cgi?id=62821
 editing/selection/move-vertically-with-paddings-borders.html
 
-# [Qt] editing/selection/collapse/collapse-selection-in-bidi.html fails
+# [Qt] editing/selection/collapse-selection-in-bidi.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=66431
-editing/selection/collapse/collapse-selection-in-bidi.html
+editing/selection/collapse-selection-in-bidi.html
 
 # ============================================================================= #
 # Failing editing/spelling tests
