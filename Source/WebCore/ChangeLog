@@ -1,3 +1,10 @@
+2011-08-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r93268.
+
+        * dom/Document.cpp:
+        (WebCore::disableRangeMutation):
+
 2011-08-17  Emil A Eklund  <eae@chromium.org>
 
         Switch RenderBox to to new layout types

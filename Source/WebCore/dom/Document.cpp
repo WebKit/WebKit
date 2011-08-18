@@ -332,7 +332,7 @@ static bool disableRangeMutation(Page* page)
 #ifdef TARGETING_LEOPARD
     // Disable Range mutation on document modifications in Leopard Mail.
     // See <rdar://problem/5865171>
-    return page && (page->settings()->needsLeopardMailQuirks() || page->settings()->needsTigerMailQuirks());
+    return page && page->settings()->needsLeopardMailQuirks();
 #else
     UNUSED_PARAM(page);
     return false;
