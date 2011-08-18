@@ -3651,8 +3651,6 @@ BUGWK58013 LINUX GPU : compositing/scaling/tiled-layer-recursion.html = IMAGE
 // Need rebaselining after canvas composite mode fixes
 BUGWK66036 MAC WIN GPU : fast/canvas/canvas-composite.html = IMAGE
 BUGWK66036 MAC WIN GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
-BUGVITALYR MAC WIN CPU : fast/canvas/canvas-composite.html = IMAGE
-BUGVITALYR MAC WIN CPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
 
 // Might need rebaseline.
 BUGJIANLI MAC WIN : fast/preloader/script.html = PASS TEXT
@@ -3696,8 +3694,15 @@ BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
 
 BUGWK66394 LINUX DEBUG : fast/canvas/webgl/data-view-crash.html = PASS CRASH
 
-BUGWK66417 : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
+BUGWK66417 WIN MAC : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
 
 BUGWK66419 : http/tests/misc/authentication-redirect-1/authentication-sent-to-redirect-cross-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-2/authentication-sent-to-redirect-same-origin.html = TEXT
 BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html = TEXT
+
+// Started failing after r93275.
+BUGVITALYR MAC WIN CPU : fast/canvas/canvas-composite.html = IMAGE
+BUGVITALYR MAC WIN CPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
+
+// Started failing after r93237.
+BUGVITALYR LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT TIMEOUT
