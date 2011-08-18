@@ -33,37 +33,40 @@
 
 #if ENABLE(WORKERS)
 
-#include "WebFileSystem.h"
-#include "WebWorkerClient.h"
+#include "ScriptExecutionContext.h"
 #include "WorkerContextProxy.h"
+#include "WorkerLoaderProxy.h"
+#include "WorkerMessagingProxy.h"
+#include "WorkerObjectProxy.h"
+
+#include "WebFileSystem.h"
+#include "WebWorkerBase.h"
+#include "WebWorkerClient.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
-namespace WebCore {
-class ScriptExecutionContext;
-}
 
 namespace WebKit {
 class WebWorker;
+class WebFrameImpl;
 
-// The purpose of this class is to provide a WorkerContextProxy
-// implementation that we can give to WebKit.  Internally, it converts the
-// data types to Chrome compatible ones so that renderer code can use it over
-// IPC.
+// This class provides chromium implementation for WorkerContextProxt, WorkerObjectProxy amd WorkerLoaderProxy
+// for in-proc dedicated workers. It also acts as a bridge for workers to chromium implementation of file systems,
+// databases and other related functionality.
+//
+// In essence, this class wraps WorkerMessagingProxy.
 class WebWorkerClientImpl : public WebCore::WorkerContextProxy
-                          , public WebWorkerClient {
+                          , public WebCore::WorkerObjectProxy
+                          , public NewWebWorkerBase
+                          , public NewWebCommonWorkerClient {
 public:
-    WebWorkerClientImpl(WebCore::Worker*);
-
     // WebCore::WorkerContextProxy Factory.
     static WebCore::WorkerContextProxy* createWorkerContextProxy(WebCore::Worker*);
-    void setWebWorker(WebWorker*);
 
     // WebCore::WorkerContextProxy methods:
     // These are called on the thread that created the worker.  In the renderer
-    // process, this will be the main WebKit thread.  In the worker process, this
-    // will be the thread of the executing worker (not the main WebKit thread).
+    // process, this will be the main WebKit thread.
     virtual void startWorkerContext(const WebCore::KURL&,
                                     const WTF::String&,
                                     const WTF::String&);
@@ -74,103 +77,48 @@ public:
     virtual bool hasPendingActivity() const;
     virtual void workerObjectDestroyed();
 
-    virtual void connectToInspector(WorkerContextProxy::PageInspector*);
+#if ENABLE(INSPECTOR)
+    virtual void connectToInspector(WebCore::WorkerContextProxy::PageInspector*);
     virtual void disconnectFromInspector();
     virtual void sendMessageToInspector(const String&);
+    virtual void postMessageToPageInspector(const String&);
+#endif
+    // WebCore::WorkerLoaderProxy methods:
+    virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
+    virtual void postTaskForModeToWorkerContext(PassOwnPtr<WebCore::ScriptExecutionContext::Task>, const String& mode);
 
-    // WebWorkerClient methods:
-    // These are called on the main WebKit thread.
-    virtual void postMessageToWorkerObject(const WebString&, const WebMessagePortChannelArray&);
-    virtual void postExceptionToWorkerObject(const WebString&, int, const WebString&);
+    // WebCore::WorkerObjectProxy methods:
+    virtual void postMessageToWorkerObject(PassRefPtr<WebCore::SerializedScriptValue>, PassOwnPtr<WebCore::MessagePortChannelArray>);
+    virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
 
-    // FIXME: the below is for compatibility only and should be
-    // removed once Chromium is updated to remove message
-    // destination parameter <http://webkit.org/b/37155>.
-    virtual void postConsoleMessageToWorkerObject(int, int, int, int, const WebString&, int, const WebString&);
-    virtual void postConsoleMessageToWorkerObject(int, int, int, const WebString&, int, const WebString&);
+    virtual void postConsoleMessageToWorkerObject(WebCore::MessageSource, WebCore::MessageType, WebCore::MessageLevel,
+                                                  const String& message, int lineNumber, const String& sourceURL);
     virtual void confirmMessageFromWorkerObject(bool);
     virtual void reportPendingActivity(bool);
     virtual void workerContextClosed();
     virtual void workerContextDestroyed();
-    virtual WebWorker* createWorker(WebWorkerClient*) { return 0; }
-    virtual WebNotificationPresenter* notificationPresenter()
-    {
-        // FIXME: Notifications not yet supported in workers.
-        return 0;
-    }
-    virtual WebApplicationCacheHost* createApplicationCacheHost(WebApplicationCacheHostClient*) { return 0; }
-    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
-    {
-        ASSERT_NOT_REACHED();
-        return true;
-    }
-    virtual bool allowFileSystem()
-    {
-        ASSERT_NOT_REACHED();
-        return true;
-    }
+
+    // WebWorkerClientBase methods:
+    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize);
+    virtual bool allowFileSystem();
+    virtual void openFileSystem(WebFileSystem::Type, long long size, bool create,
+                                WebFileSystemCallbacks*);
 
     virtual void dispatchDevToolsMessage(const WebString&);
 
+    // WebCommentWorkerBase methods:
+    virtual NewWebCommonWorkerClient* newCommonClient() { return this; }
+    virtual WebView* view() const;
+
 private:
+    WebWorkerClientImpl(WebCore::Worker*, WebFrameImpl*);
     virtual ~WebWorkerClientImpl();
 
-    // Methods used to support WebWorkerClientImpl being constructed on worker
-    // threads.
-    // These tasks are dispatched on the WebKit thread.
-    static void startWorkerContextTask(WebCore::ScriptExecutionContext* context,
-                                       WebWorkerClientImpl* thisPtr,
-                                       const WTF::String& scriptURL,
-                                       const WTF::String& userAgent,
-                                       const WTF::String& sourceCode);
-    static void terminateWorkerContextTask(WebCore::ScriptExecutionContext* context,
-                                           WebWorkerClientImpl* thisPtr);
-    static void postMessageToWorkerContextTask(WebCore::ScriptExecutionContext* context,
-                                               WebWorkerClientImpl* thisPtr,
-                                               const WTF::String& message,
-                                               PassOwnPtr<WebCore::MessagePortChannelArray> channels);
-    static void workerObjectDestroyedTask(WebCore::ScriptExecutionContext* context,
-                                          WebWorkerClientImpl* thisPtr);
-
-    // These tasks are dispatched on the thread that created the worker (i.e.
-    // main WebKit thread in renderer process, and the worker thread in the
-    // worker process).
-    static void postMessageToWorkerObjectTask(WebCore::ScriptExecutionContext* context,
-                                              WebWorkerClientImpl* thisPtr,
-                                              const WTF::String& message,
-                                              PassOwnPtr<WebCore::MessagePortChannelArray> channels);
-    static void postExceptionToWorkerObjectTask(WebCore::ScriptExecutionContext* context,
-                                                WebWorkerClientImpl* thisPtr,
-                                                const WTF::String& message,
-                                                int lineNumber,
-                                                const WTF::String& sourceURL);
-    static void postConsoleMessageToWorkerObjectTask(WebCore::ScriptExecutionContext* context,
-                                                     WebWorkerClientImpl* thisPtr,
-                                                     int sourceId,
-                                                     int messageType,
-                                                     int messageLevel,
-                                                     const WTF::String& message,
-                                                     int lineNumber,
-                                                     const WTF::String& sourceURL);
-    static void confirmMessageFromWorkerObjectTask(WebCore::ScriptExecutionContext* context,
-                                                   WebWorkerClientImpl* thisPtr,
-                                                   bool hasPendingActivity);
-    static void reportPendingActivityTask(WebCore::ScriptExecutionContext* context,
-                                          WebWorkerClientImpl* thisPtr,
-                                          bool hasPendingActivity);
-
-    void startWorkerContextInternal(const WebCore::KURL& scriptURL, const WTF::String& userAgent, const WTF::String& sourceCode);
-
+    WebCore::WorkerMessagingProxy* m_proxy;
     // Guard against context from being destroyed before a worker exits.
     RefPtr<WebCore::ScriptExecutionContext> m_scriptExecutionContext;
-
-    WebCore::Worker* m_worker;
-    WebWorker* m_webWorker;
-    bool m_askedToTerminate;
-    unsigned m_unconfirmedMessageCount;
-    bool m_workerContextHadPendingActivity;
-    ThreadIdentifier m_workerThreadId;
-    WorkerContextProxy::PageInspector* m_pageInspector;
+    WebFrameImpl* m_webFrame;
+    WebCore::WorkerContextProxy::PageInspector* m_pageInspector;
 };
 
 } // namespace WebKit;

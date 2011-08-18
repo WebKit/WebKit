@@ -59,6 +59,7 @@
 #include "WebKit.h"
 #include "WebKitClient.h"
 #include "WebMessagePortChannel.h"
+#include "WebPermissionClient.h"
 #include "WebString.h"
 #include "WebURL.h"
 #include "WebViewImpl.h"
@@ -69,387 +70,164 @@ using namespace WebCore;
 
 namespace WebKit {
 
-// When WebKit creates a WorkerContextProxy object, we check if we're in the
-// renderer or worker process.  If the latter, then we just use
-// WorkerMessagingProxy.
-//
-// If we're in the renderer process, then we need use the glue provided
-// WebWorker object to talk to the worker process over IPC.  The worker process
-// talks to Worker* using WorkerObjectProxy, which we implement on
-// WebWorkerClientImpl.
-//
-// Note that if we're running each worker in a separate process, then nested
-// workers end up using the same codepath as the renderer process.
+// Chromium-specific wrapper over WorkerMessagingProxy.
+// Delegates implementation of Worker{Loader,Context,Object}Proxy to WorkerMessagingProxy.
 
 // static
 WorkerContextProxy* WebWorkerClientImpl::createWorkerContextProxy(Worker* worker)
 {
-    // Special behavior for multiple workers per process.
-    // FIXME: v8 doesn't support more than one workers per process.
-    // if (!worker->scriptExecutionContext()->isDocument())
-    //     return new WorkerMessagingProxy(worker);
-
-    WebWorker* webWorker = 0;
-    WebWorkerClientImpl* proxy = new WebWorkerClientImpl(worker);
-
     if (worker->scriptExecutionContext()->isDocument()) {
-        Document* document = static_cast<Document*>(
-            worker->scriptExecutionContext());
+        Document* document = static_cast<Document*>(worker->scriptExecutionContext());
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
-        webWorker = webFrame->client()->createWorker(webFrame, proxy);
-    } else {
-        WorkerScriptController* controller = WorkerScriptController::controllerForContext();
-        if (!controller) {
-            ASSERT_NOT_REACHED();
-            return 0;
-        }
-
-        DedicatedWorkerThread* thread = static_cast<DedicatedWorkerThread*>(controller->workerContext()->thread());
-        WorkerObjectProxy* workerObjectProxy = &thread->workerObjectProxy();
-        WebWorkerImpl* impl = reinterpret_cast<WebWorkerImpl*>(workerObjectProxy);
-        webWorker = impl->client()->createWorker(proxy);
-    }
-
-    proxy->setWebWorker(webWorker);
-    return proxy;
+        WebWorkerClientImpl* proxy = new WebWorkerClientImpl(worker, webFrame);
+        return proxy; 
+    } 
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
-WebWorkerClientImpl::WebWorkerClientImpl(Worker* worker)
-    : m_scriptExecutionContext(worker->scriptExecutionContext())
-    , m_worker(worker)
-    , m_askedToTerminate(false)
-    , m_unconfirmedMessageCount(0)
-    , m_workerContextHadPendingActivity(false)
-    , m_workerThreadId(currentThread())
-    , m_pageInspector(0)
+void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL, const String& userAgent, const String& sourceCode)
 {
-}
-
-WebWorkerClientImpl::~WebWorkerClientImpl()
-{
-}
-
-void WebWorkerClientImpl::setWebWorker(WebWorker* webWorker)
-{
-    m_webWorker = webWorker;
-}
-
-void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL,
-                                             const String& userAgent,
-                                             const String& sourceCode)
-{
-    // Worker.terminate() could be called from JS before the context is started.
-    if (m_askedToTerminate)
-        return;
-    if (!isMainThread()) {
-        WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(
-            &startWorkerContextTask,
-            AllowCrossThreadAccess(this),
-            scriptURL.string(),
-            userAgent,
-            sourceCode));
-        return;
-    }
-    startWorkerContextInternal(scriptURL, userAgent, sourceCode);
-}
-
-void WebWorkerClientImpl::startWorkerContextInternal(const KURL& scriptURL, const WTF::String& userAgent, const WTF::String& sourceCode)
-{
-    m_webWorker->startWorkerContext(scriptURL, userAgent, sourceCode);
-    m_workerContextHadPendingActivity = true; // Worker initialization means a pending activity.
+    RefPtr<DedicatedWorkerThread> thread = DedicatedWorkerThread::create(scriptURL, userAgent, sourceCode, *this, *this);
+    m_proxy->workerThreadCreated(thread);
+    thread->start();
 }
 
 void WebWorkerClientImpl::terminateWorkerContext()
 {
-    if (m_askedToTerminate)
-        return;
-    m_askedToTerminate = true;
-    if (!isMainThread()) {
-        WebWorkerBase::dispatchTaskToMainThread(
-            createCallbackTask(&terminateWorkerContextTask, AllowCrossThreadAccess(this)));
-        return;
-    }
-    m_webWorker->terminateWorkerContext();
+    m_proxy->terminateWorkerContext();
     InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
 }
 
 void WebWorkerClientImpl::postMessageToWorkerContext(
-    PassRefPtr<SerializedScriptValue> message,
-    PassOwnPtr<MessagePortChannelArray> channels)
+    PassRefPtr<SerializedScriptValue> value, 
+    PassOwnPtr<MessagePortChannelArray> ports)
 {
-    // Worker.terminate() could be called from JS before the context is started.
-    if (m_askedToTerminate)
-        return;
-    ++m_unconfirmedMessageCount;
-    if (!isMainThread()) {
-        WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&postMessageToWorkerContextTask,
-                                                                   AllowCrossThreadAccess(this),
-                                                                   message->toWireString(),
-                                                                   channels));
-        return;
-    }
-    WebMessagePortChannelArray webChannels(channels.get() ? channels->size() : 0);
-    for (size_t i = 0; i < webChannels.size(); ++i) {
-        WebMessagePortChannel* webchannel =
-                        (*channels)[i]->channel()->webChannelRelease();
-        webchannel->setClient(0);
-        webChannels[i] = webchannel;
-    }
-    m_webWorker->postMessageToWorkerContext(message->toWireString(), webChannels);
+    m_proxy->postMessageToWorkerContext(value, ports);
 }
 
 bool WebWorkerClientImpl::hasPendingActivity() const
 {
-    return !m_askedToTerminate
-           && (m_unconfirmedMessageCount || m_workerContextHadPendingActivity);
+    return m_proxy->hasPendingActivity();
 }
 
 void WebWorkerClientImpl::workerObjectDestroyed()
 {
-    if (isMainThread()) {
-        m_webWorker->workerObjectDestroyed();
-        m_worker = 0;
-    }
-    // Even if this is called on the main thread, there could be a queued task for
-    // this object, so don't delete it right away.
-    WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&workerObjectDestroyedTask,
-                                                               AllowCrossThreadAccess(this)));
+    m_proxy->workerObjectDestroyed();
 }
 
-void WebWorkerClientImpl::connectToInspector(WorkerContextProxy::PageInspector* pageInspector)
+#if ENABLE(INSPECTOR)
+void WebWorkerClientImpl::connectToInspector(PageInspector* inspector)
 {
+    m_proxy->connectToInspector(inspector);
     ASSERT(!m_pageInspector);
-    m_pageInspector = pageInspector;
-    m_webWorker->attachDevTools();
+    m_pageInspector = inspector;
 }
 
 void WebWorkerClientImpl::disconnectFromInspector()
 {
-    if (!m_askedToTerminate)
-        m_webWorker->detachDevTools();
     m_pageInspector = 0;
+    m_proxy->disconnectFromInspector();
 }
 
 void WebWorkerClientImpl::sendMessageToInspector(const String& message)
 {
-    m_webWorker->dispatchDevToolsMessage(message);
+    m_proxy->sendMessageToInspector(message);
 }
 
-void WebWorkerClientImpl::postMessageToWorkerObject(const WebString& message,
-                                                    const WebMessagePortChannelArray& channels)
+void WebWorkerClientImpl::postMessageToPageInspector(const String& message)
 {
-    OwnPtr<MessagePortChannelArray> channels2;
-    if (channels.size()) {
-        channels2 = adoptPtr(new MessagePortChannelArray(channels.size()));
-        for (size_t i = 0; i < channels.size(); ++i) {
-            RefPtr<PlatformMessagePortChannel> platform_channel =
-                            PlatformMessagePortChannel::create(channels[i]);
-            channels[i]->setClient(platform_channel.get());
-            (*channels2)[i] = MessagePortChannel::create(platform_channel);
-        }
-    }
+    m_proxy->postMessageToPageInspector(message);
+}
+#endif // ENABLE(INSPECTOR)
 
-    if (currentThread() != m_workerThreadId) {
-        m_scriptExecutionContext->postTask(createCallbackTask(&postMessageToWorkerObjectTask,
-                                                              AllowCrossThreadAccess(this),
-                                                              String(message),
-                                                              channels2.release()));
-        return;
-    }
 
-    postMessageToWorkerObjectTask(m_scriptExecutionContext.get(), this,
-                                  message, channels2.release());
+void WebWorkerClientImpl::postTaskToLoader(PassOwnPtr<ScriptExecutionContext::Task> task)
+{
+    m_proxy->postTaskToLoader(task);
 }
 
-void WebWorkerClientImpl::postExceptionToWorkerObject(const WebString& errorMessage,
-                                                      int lineNumber,
-                                                      const WebString& sourceURL)
+void WebWorkerClientImpl::postTaskForModeToWorkerContext(PassOwnPtr<ScriptExecutionContext::Task> task, const String& mode)
 {
-    if (currentThread() != m_workerThreadId) {
-        m_scriptExecutionContext->postTask(createCallbackTask(&postExceptionToWorkerObjectTask,
-                                                              AllowCrossThreadAccess(this),
-                                                              String(errorMessage),
-                                                              lineNumber,
-                                                              String(sourceURL)));
-        return;
-    }
-
-    bool unhandled = m_worker->dispatchEvent(ErrorEvent::create(errorMessage,
-                                                                sourceURL,
-                                                                lineNumber));
-    if (unhandled)
-        m_scriptExecutionContext->reportException(errorMessage, lineNumber, sourceURL, 0);
+    m_proxy->postTaskForModeToWorkerContext(task, mode);
 }
 
-void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int destination,
-                                                           int sourceId,
-                                                           int messageType,
-                                                           int messageLevel,
-                                                           const WebString& message,
-                                                           int lineNumber,
-                                                           const WebString& sourceURL)
+void WebWorkerClientImpl::postMessageToWorkerObject(PassRefPtr<SerializedScriptValue> value, PassOwnPtr<MessagePortChannelArray> ports)
 {
-    if (currentThread() != m_workerThreadId) {
-        m_scriptExecutionContext->postTask(createCallbackTask(&postConsoleMessageToWorkerObjectTask,
-                                                              AllowCrossThreadAccess(this),
-                                                              sourceId,
-                                                              messageType,
-                                                              messageLevel,
-                                                              String(message),
-                                                              lineNumber,
-                                                              String(sourceURL)));
-        return;
-    }
-
-    m_scriptExecutionContext->addMessage(static_cast<MessageSource>(sourceId),
-                                         static_cast<MessageType>(messageType),
-                                         static_cast<MessageLevel>(messageLevel),
-                                         String(message), lineNumber,
-                                         String(sourceURL), 0);
-}
-
-void WebWorkerClientImpl::postConsoleMessageToWorkerObject(int sourceId,
-                                                           int messageType,
-                                                           int messageLevel,
-                                                           const WebString& message,
-                                                           int lineNumber,
-                                                           const WebString& sourceURL)
-{
-    postConsoleMessageToWorkerObject(0, sourceId, messageType, messageLevel, message, lineNumber, sourceURL);
+    m_proxy->postMessageToWorkerObject(value, ports);
 }
 
 void WebWorkerClientImpl::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {
-    // unconfirmed_message_count_ can only be updated on the thread where it's
-    // accessed.  Otherwise there are race conditions with v8's garbage
-    // collection.
-    m_scriptExecutionContext->postTask(createCallbackTask(&confirmMessageFromWorkerObjectTask,
-                                                          AllowCrossThreadAccess(this),
-                                                          hasPendingActivity));
+    m_proxy->confirmMessageFromWorkerObject(hasPendingActivity);
 }
 
 void WebWorkerClientImpl::reportPendingActivity(bool hasPendingActivity)
 {
-    // See above comment in confirmMessageFromWorkerObject.
-    m_scriptExecutionContext->postTask(createCallbackTask(&reportPendingActivityTask,
-                                                          AllowCrossThreadAccess(this),
-                                                          hasPendingActivity));
-}
-
-void WebWorkerClientImpl::workerContextDestroyed()
-{
-    InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
+    m_proxy->reportPendingActivity(hasPendingActivity);
 }
 
 void WebWorkerClientImpl::workerContextClosed()
 {
+    m_proxy->workerContextClosed();
 }
 
+void WebWorkerClientImpl::postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL)
+{
+    m_proxy->postExceptionToWorkerObject(errorMessage, lineNumber, sourceURL);
+}
+
+void WebWorkerClientImpl::postConsoleMessageToWorkerObject(MessageSource source, MessageType type, MessageLevel level, const String& message, int lineNumber, const String& sourceURL)
+{
+    m_proxy->postConsoleMessageToWorkerObject(source, type, level, message, lineNumber, sourceURL);
+}
+
+void WebWorkerClientImpl::workerContextDestroyed()
+{
+    m_proxy->workerContextDestroyed();
+    InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
+}
+
+bool WebWorkerClientImpl::allowFileSystem() 
+{
+    WebKit::WebViewImpl* webView = m_webFrame->viewImpl();
+    return !webView->permissionClient() || webView->permissionClient()->allowFileSystem(m_webFrame);
+}
+
+void WebWorkerClientImpl::openFileSystem(WebFileSystem::Type type, long long size, bool create, 
+                                         WebFileSystemCallbacks* callbacks)
+{
+     m_webFrame->client()->openFileSystem(m_webFrame, type, size, create, callbacks);
+}
+
+bool WebWorkerClientImpl::allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) 
+{
+     WebKit::WebViewImpl* webView = m_webFrame->viewImpl();
+     return !webView->permissionClient() || webView->permissionClient()->allowDatabase(m_webFrame, name, displayName, estimatedSize);
+}
+ 
 void WebWorkerClientImpl::dispatchDevToolsMessage(const WebString& message)
 {
     if (m_pageInspector)
         m_pageInspector->dispatchMessageFromWorker(message);
 }
 
-void WebWorkerClientImpl::startWorkerContextTask(ScriptExecutionContext* context,
-                                                 WebWorkerClientImpl* thisPtr,
-                                                 const String& scriptURL,
-                                                 const String& userAgent,
-                                                 const String& sourceCode)
-{
-    thisPtr->startWorkerContextInternal(KURL(ParsedURLString, scriptURL), userAgent, sourceCode);
+WebView* WebWorkerClientImpl::view() const 
+{   
+    return m_webFrame->view(); 
 }
 
-void WebWorkerClientImpl::terminateWorkerContextTask(ScriptExecutionContext* context,
-                                                     WebWorkerClientImpl* thisPtr)
+WebWorkerClientImpl::WebWorkerClientImpl(Worker* worker, WebFrameImpl* webFrame)
+    : m_proxy(new WorkerMessagingProxy(worker))
+    , m_scriptExecutionContext(worker->scriptExecutionContext())
+    , m_webFrame(webFrame)    
+    , m_pageInspector(0)
+
 {
-    thisPtr->m_webWorker->terminateWorkerContext();
 }
 
-void WebWorkerClientImpl::postMessageToWorkerContextTask(ScriptExecutionContext* context,
-                                                         WebWorkerClientImpl* thisPtr,
-                                                         const String& message,
-                                                         PassOwnPtr<MessagePortChannelArray> channels)
+WebWorkerClientImpl::~WebWorkerClientImpl()
 {
-    WebMessagePortChannelArray webChannels(channels.get() ? channels->size() : 0);
-
-    for (size_t i = 0; i < webChannels.size(); ++i) {
-        webChannels[i] = (*channels)[i]->channel()->webChannelRelease();
-        webChannels[i]->setClient(0);
-    }
-
-    thisPtr->m_webWorker->postMessageToWorkerContext(message, webChannels);
-}
-
-void WebWorkerClientImpl::workerObjectDestroyedTask(ScriptExecutionContext* context,
-                                                    WebWorkerClientImpl* thisPtr)
-{
-    if (thisPtr->m_worker) // Check we haven't alread called this.
-        thisPtr->m_webWorker->workerObjectDestroyed();
-    delete thisPtr;
-}
-
-void WebWorkerClientImpl::postMessageToWorkerObjectTask(
-                                                        ScriptExecutionContext* context,
-                                                        WebWorkerClientImpl* thisPtr,
-                                                        const String& message,
-                                                        PassOwnPtr<MessagePortChannelArray> channels)
-{
-
-    if (thisPtr->m_worker) {
-        OwnPtr<MessagePortArray> ports =
-            MessagePort::entanglePorts(*context, channels);
-        RefPtr<SerializedScriptValue> serializedMessage =
-            SerializedScriptValue::createFromWire(message);
-        thisPtr->m_worker->dispatchEvent(MessageEvent::create(ports.release(),
-                                                              serializedMessage.release()));
-    }
-}
-
-void WebWorkerClientImpl::postExceptionToWorkerObjectTask(
-                                                          ScriptExecutionContext* context,
-                                                          WebWorkerClientImpl* thisPtr,
-                                                          const String& errorMessage,
-                                                          int lineNumber,
-                                                          const String& sourceURL)
-{
-    bool handled = false;
-    if (thisPtr->m_worker)
-        handled = thisPtr->m_worker->dispatchEvent(ErrorEvent::create(errorMessage,
-                                                                      sourceURL,
-                                                                      lineNumber));
-    if (!handled)
-        thisPtr->m_scriptExecutionContext->reportException(errorMessage, lineNumber, sourceURL, 0);
-}
-
-void WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask(ScriptExecutionContext* context,
-                                                               WebWorkerClientImpl* thisPtr,
-                                                               int sourceId,
-                                                               int messageType,
-                                                               int messageLevel,
-                                                               const String& message,
-                                                               int lineNumber,
-                                                               const String& sourceURL)
-{
-    thisPtr->m_scriptExecutionContext->addMessage(static_cast<MessageSource>(sourceId),
-                                                  static_cast<MessageType>(messageType),
-                                                  static_cast<MessageLevel>(messageLevel),
-                                                  message, lineNumber, sourceURL, 0);
-}
-
-void WebWorkerClientImpl::confirmMessageFromWorkerObjectTask(ScriptExecutionContext* context,
-                                                             WebWorkerClientImpl* thisPtr,
-                                                             bool hasPendingActivity)
-{
-    thisPtr->m_unconfirmedMessageCount--;
-    thisPtr->m_workerContextHadPendingActivity = hasPendingActivity;
-}
-
-void WebWorkerClientImpl::reportPendingActivityTask(ScriptExecutionContext* context,
-                                                    WebWorkerClientImpl* thisPtr,
-                                                    bool hasPendingActivity)
-{
-    thisPtr->m_workerContextHadPendingActivity = hasPendingActivity;
 }
 
 } // namespace WebKit

@@ -34,9 +34,11 @@
 #if ENABLE(WORKERS)
 
 #include "ScriptExecutionContext.h"
+#include "WebCommonWorkerClient.h"
 #include "WebFrameClient.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerObjectProxy.h"
+#include "WorkerThread.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -55,17 +57,27 @@ class WebView;
 class WebWorker;
 class WebWorkerClient;
 
+// Base class for WebSharedWorkerImpl, WebWorkerClientImpl and (defunct) WebWorkerImpl
+// containing common interface for shared workers and dedicated in-proc workers implementation.
+//
+// FIXME: Rename this class into WebWorkerBase, merge existing WebWorkerBase and WebSharedWorker.
+class NewWebWorkerBase : public WebCore::WorkerLoaderProxy {
+public:
+    virtual NewWebCommonWorkerClient* newCommonClient() = 0;
+    virtual WebView* view() const = 0;
+};
+
 // Base class for WebSharedWorkerImpl and WebWorkerImpl. It contains common
 // code used by both implementation classes, including implementations of the
 // WorkerObjectProxy and WorkerLoaderProxy interfaces.
 class WebWorkerBase : public WebCore::WorkerObjectProxy
-                    , public WebCore::WorkerLoaderProxy
+                    , public NewWebWorkerBase
                     , public WebFrameClient {
 public:
     WebWorkerBase();
     virtual ~WebWorkerBase();
 
-    // WebCore::WorkerObjectProxy methods:
+    // WebCommonWorkerBase methods:
     virtual void postMessageToWorkerObject(
         PassRefPtr<WebCore::SerializedScriptValue>,
         PassOwnPtr<WebCore::MessagePortChannelArray>);
@@ -79,6 +91,7 @@ public:
     virtual void reportPendingActivity(bool);
     virtual void workerContextClosed();
     virtual void workerContextDestroyed();
+    virtual WebView* view() const { return m_webView; }
 
     // WebCore::WorkerLoaderProxy methods:
     virtual void postTaskToLoader(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
@@ -92,11 +105,8 @@ public:
     // Executes the given task on the main thread.
     static void dispatchTaskToMainThread(PassOwnPtr<WebCore::ScriptExecutionContext::Task>);
 
-    WebView* webView() const { return m_webView; }
-
-    virtual WebCommonWorkerClient* commonClient() = 0;
-
 protected:
+    virtual WebCommonWorkerClient* commonClient() = 0;
     virtual WebWorkerClient* client() = 0;
 
     void setWorkerThread(PassRefPtr<WebCore::WorkerThread> thread) { m_workerThread = thread; }

@@ -65,6 +65,9 @@ public:
     virtual WebWorkerClient* client() { return m_client; }
     virtual WebCommonWorkerClient* commonClient();
 
+    // NewWebWorkerBase methods:
+    virtual NewWebCommonWorkerClient* newCommonClient();
+
 private:
     virtual ~WebWorkerImpl();
 

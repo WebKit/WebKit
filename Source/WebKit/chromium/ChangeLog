@@ -1,3 +1,72 @@
+2011-08-15  Dmitry Lomov  <dslomov@google.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=61016
+        [WebWorkers][Chromium] Use v8 Isolates for in-process implementation of WebWorkers.
+        This adds an implementation of in-process dedicated workers to chromium port.
+        The crux of the matter is the reimplementation of WebWorkerClientImpl. WebWorkerClientImpl now 
+        implements all three of Worker{Loader,Context,Object}Proxies and delegates the implementation to 
+        WebKit's standard WorkerMessagingProxy.
+        For now, we have 3 implementations of workers in chromium WebKit:
+          - In-process dedicated workers (this checkin)
+          - Inter-process shared workers
+          - Inter-process dedicated workers (defunct after this checkin)
+        This patch extracts some new common interfaces (NewWebWorkerBase and NewWebWorkerClient) for these 
+        three implementations. 
+        Removing the remainings of inter-process dedicated workers -related classes is left for a separate patch 
+        (it will require coordinated changes on chromuium side).
+
+        Reviewed by David Levin.
+
+        * public/WebCommonWorkerClient.h:
+        * src/DatabaseObserver.cpp:
+        (WebKit::AllowDatabaseMainThreadBridge::create):
+        (WebKit::AllowDatabaseMainThreadBridge::AllowDatabaseMainThreadBridge):
+        (WebKit::AllowDatabaseMainThreadBridge::allowDatabaseTask):
+        (WebKit::allowDatabaseForWorker):
+        (WebCore::DatabaseObserver::canEstablishDatabase):
+        * src/LocalFileSystemChromium.cpp:
+        (WebCore::openFileSystemHelper):
+        * src/WebSharedWorkerImpl.h:
+        (WebKit::WebSharedWorkerImpl::newCommonClient):
+        * src/WebWorkerBase.h:
+        (WebKit::WebWorkerBase::view):
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::createWorkerContextProxy):
+        (WebKit::WebWorkerClientImpl::startWorkerContext):
+        (WebKit::WebWorkerClientImpl::terminateWorkerContext):
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerContext):
+        (WebKit::WebWorkerClientImpl::hasPendingActivity):
+        (WebKit::WebWorkerClientImpl::workerObjectDestroyed):
+        (WebKit::WebWorkerClientImpl::connectToInspector):
+        (WebKit::WebWorkerClientImpl::disconnectFromInspector):
+        (WebKit::WebWorkerClientImpl::sendMessageToInspector):
+        (WebKit::WebWorkerClientImpl::postMessageToPageInspector):
+        (WebKit::WebWorkerClientImpl::postTaskToLoader):
+        (WebKit::WebWorkerClientImpl::postTaskForModeToWorkerContext):
+        (WebKit::WebWorkerClientImpl::postMessageToWorkerObject):
+        (WebKit::WebWorkerClientImpl::confirmMessageFromWorkerObject):
+        (WebKit::WebWorkerClientImpl::reportPendingActivity):
+        (WebKit::WebWorkerClientImpl::workerContextClosed):
+        (WebKit::WebWorkerClientImpl::postExceptionToWorkerObject):
+        (WebKit::WebWorkerClientImpl::postConsoleMessageToWorkerObject):
+        (WebKit::WebWorkerClientImpl::workerContextDestroyed):
+        (WebKit::WebWorkerClientImpl::allowFileSystem):
+        (WebKit::WebWorkerClientImpl::openFileSystem):
+        (WebKit::WebWorkerClientImpl::allowDatabase):
+        (WebKit::WebWorkerClientImpl::dispatchDevToolsMessage):
+        (WebKit::WebWorkerClientImpl::view):
+        (WebKit::WebWorkerClientImpl::WebWorkerClientImpl):
+        (WebKit::WebWorkerClientImpl::~WebWorkerClientImpl):
+        * src/WebWorkerClientImpl.h:
+        (WebKit::WebWorkerClientImpl::newCommonClient):
+        * src/WebWorkerImpl.cpp:
+        (WebKit::WebWorkerImpl::newCommonClient):
+        * src/WebWorkerImpl.h:
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        (WebKit::WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread):
+        (WebKit::WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread):
+        * src/WorkerFileSystemCallbacksBridge.h:
+
 2011-08-18  James Robinson  <jamesr@chromium.org>
 
         [chromium] Draw the root/"non-composited content" in compositor side

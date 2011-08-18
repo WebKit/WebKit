@@ -74,6 +74,11 @@ WebWorkerImpl::~WebWorkerImpl()
 {
 }
 
+NewWebCommonWorkerClient* WebWorkerImpl::newCommonClient()
+{
+    return m_client;
+}
+
 WebCommonWorkerClient* WebWorkerImpl::commonClient()
 {
     return m_client;

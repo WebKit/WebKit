@@ -46,7 +46,7 @@
 #include "WebPermissionClient.h"
 #include "WebSecurityOrigin.h"
 #include "WebViewImpl.h"
-#include "WebWorkerImpl.h"
+#include "WebWorkerBase.h"
 #include "WorkerContext.h"
 #include "WorkerLoaderProxy.h"
 #include "WorkerScriptController.h"
@@ -64,7 +64,7 @@ static const char allowDatabaseMode[] = "allowDatabaseMode";
 // call back to the worker context.
 class AllowDatabaseMainThreadBridge : public ThreadSafeRefCounted<AllowDatabaseMainThreadBridge> {
 public:
-    static PassRefPtr<AllowDatabaseMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, WebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String& name, const WTF::String& displayName, unsigned long estimatedSize)
+    static PassRefPtr<AllowDatabaseMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String& name, const WTF::String& displayName, unsigned long estimatedSize)
     {
         return adoptRef(new AllowDatabaseMainThreadBridge(workerLoaderProxy, mode, commonClient, frame, name, displayName, estimatedSize));
     }
@@ -92,7 +92,7 @@ public:
     }
 
 private:
-    AllowDatabaseMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, WebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String& name, const WTF::String& displayName, unsigned long estimatedSize)
+    AllowDatabaseMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String& name, const WTF::String& displayName, unsigned long estimatedSize)
         : m_workerLoaderProxy(workerLoaderProxy)
         , m_mode(mode)
     {
@@ -103,7 +103,7 @@ private:
                                WebCore::AllowCrossThreadAccess(this)));
     }
 
-    static void allowDatabaseTask(WebCore::ScriptExecutionContext* context, WebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String name, const WTF::String displayName, unsigned long estimatedSize, PassRefPtr<AllowDatabaseMainThreadBridge> bridge)
+    static void allowDatabaseTask(WebCore::ScriptExecutionContext* context, NewWebCommonWorkerClient* commonClient, WebFrame* frame, const WTF::String name, const WTF::String displayName, unsigned long estimatedSize, PassRefPtr<AllowDatabaseMainThreadBridge> bridge)
     {
         if (commonClient)
             bridge->signalCompleted(commonClient->allowDatabase(frame, name, displayName, estimatedSize));
@@ -122,7 +122,7 @@ private:
     WTF::String m_mode;
 };
 
-bool allowDatabaseForWorker(WebCommonWorkerClient* commonClient, WebFrame* frame, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
+bool allowDatabaseForWorker(NewWebCommonWorkerClient* commonClient, WebFrame* frame, const WebString& name, const WebString& displayName, unsigned long estimatedSize)
 {
     WebCore::WorkerScriptController* controller = WebCore::WorkerScriptController::controllerForContext();
     WebCore::WorkerContext* workerContext = controller->workerContext();
@@ -165,8 +165,8 @@ bool DatabaseObserver::canEstablishDatabase(ScriptExecutionContext* scriptExecut
 #if ENABLE(WORKERS)
         WorkerContext* workerContext = static_cast<WorkerContext*>(scriptExecutionContext);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
-        WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-        return allowDatabaseForWorker(webWorker->commonClient(), webWorker->webView()->mainFrame(), name, displayName, estimatedSize);
+        NewWebWorkerBase* webWorker = static_cast<NewWebWorkerBase*>(workerLoaderProxy);
+        return allowDatabaseForWorker(webWorker->newCommonClient(), webWorker->view()->mainFrame(), name, displayName, estimatedSize);
 #else
         ASSERT_NOT_REACHED();
 #endif

@@ -44,12 +44,24 @@ class WebString;
 class WebWorker;
 class WebWorkerClient;
 
+class NewWebCommonWorkerClient {
+public:
+    // Called on the main webkit thread before opening a web database.
+    virtual bool allowDatabase(WebFrame*, const WebString& name, const WebString& displayName, unsigned long estimatedSize) = 0;
+
+    // Called on the main webkit thread before opening a file system.
+    virtual bool allowFileSystem() = 0;
+
+    // Called on the main webkit thread before opening a file system.
+    virtual void openFileSystem(WebFileSystem::Type, long long size, bool create, WebFileSystemCallbacks*) = 0;
+};
+
 // Provides an interface back to the in-page script object for a worker.
 // This interface contains common APIs used by both shared and dedicated
 // workers.
 // All functions are expected to be called back on the thread that created
 // the Worker object, unless noted.
-class WebCommonWorkerClient {
+class WebCommonWorkerClient : public NewWebCommonWorkerClient {
 public:
     virtual void postExceptionToWorkerObject(
         const WebString& errorString, int lineNumber,

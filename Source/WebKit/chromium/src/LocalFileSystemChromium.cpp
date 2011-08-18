@@ -40,7 +40,6 @@
 #include "FileSystemCallback.h"
 #include "FileSystemCallbacks.h"
 #include "PlatformString.h"
-#include "WebCommonWorkerClient.h"
 #include "WebFileError.h"
 #include "WebFileSystem.h"
 #include "WebFileSystemCallbacksImpl.h"
@@ -48,7 +47,7 @@
 #include "WebFrameImpl.h"
 #include "WebPermissionClient.h"
 #include "WebViewImpl.h"
-#include "WebWorkerImpl.h"
+#include "WebWorkerBase.h"
 #include "WorkerContext.h"
 #include "WorkerFileSystemCallbacksBridge.h"
 #include "WorkerThread.h"
@@ -80,7 +79,7 @@ static const char openFileSystemMode[] = "openFileSystemMode";
 // call back to the worker context.
 class AllowFileSystemMainThreadBridge : public ThreadSafeRefCounted<AllowFileSystemMainThreadBridge> {
 public:
-    static PassRefPtr<AllowFileSystemMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, WebCommonWorkerClient* commonClient)
+    static PassRefPtr<AllowFileSystemMainThreadBridge> create(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, NewWebCommonWorkerClient* commonClient)
     {
         return adoptRef(new AllowFileSystemMainThreadBridge(workerLoaderProxy, mode, commonClient));
     }
@@ -107,7 +106,7 @@ public:
     }
 
 private:
-    AllowFileSystemMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, WebCommonWorkerClient* commonClient)
+    AllowFileSystemMainThreadBridge(WebCore::WorkerLoaderProxy* workerLoaderProxy, const WTF::String& mode, NewWebCommonWorkerClient* commonClient)
         : m_workerLoaderProxy(workerLoaderProxy)
         , m_mode(mode)
     {
@@ -116,7 +115,7 @@ private:
                                AllowCrossThreadAccess(this)));
     }
 
-    static void allowFileSystemTask(WebCore::ScriptExecutionContext* context, WebCommonWorkerClient* commonClient, PassRefPtr<AllowFileSystemMainThreadBridge> bridge)
+    static void allowFileSystemTask(WebCore::ScriptExecutionContext* context, NewWebCommonWorkerClient* commonClient, PassRefPtr<AllowFileSystemMainThreadBridge> bridge)
     {
         if (commonClient)
             bridge->signalCompleted(commonClient->allowFileSystem());
@@ -135,7 +134,7 @@ private:
     WTF::String m_mode;
 };
 
-bool allowFileSystemForWorker(WebCommonWorkerClient* commonClient)
+bool allowFileSystemForWorker(NewWebCommonWorkerClient* commonClient)
 {
     WorkerScriptController* controller = WorkerScriptController::controllerForContext();
     WorkerContext* workerContext = controller->workerContext();
@@ -158,7 +157,7 @@ bool allowFileSystemForWorker(WebCommonWorkerClient* commonClient)
     return bridge->result();
 }
 
-void openFileSystemForWorker(WebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks, bool synchronous)
+void openFileSystemForWorker(NewWebCommonWorkerClient* commonClient, WebFileSystem::Type type, long long size, bool create, WebFileSystemCallbacks* callbacks, bool synchronous)
 {
     WorkerScriptController* controller = WorkerScriptController::controllerForContext();
     WorkerContext* workerContext = controller->workerContext();
@@ -204,11 +203,12 @@ static void openFileSystemHelper(ScriptExecutionContext* context, AsyncFileSyste
 #if ENABLE(WORKERS)
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
-        WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
-        if (!allowFileSystemForWorker(webWorker->commonClient()))
+        NewWebWorkerBase* webWorker = static_cast<NewWebWorkerBase*>(workerLoaderProxy);
+        if (!allowFileSystemForWorker(webWorker->newCommonClient()))
             allowed = false;
         else
-            openFileSystemForWorker(webWorker->commonClient(), static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronous), synchronous);
+            openFileSystemForWorker(webWorker->newCommonClient(), static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronous), synchronous);
+
 #else
         ASSERT_NOT_REACHED();
 #endif
