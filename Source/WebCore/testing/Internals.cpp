@@ -55,6 +55,8 @@ Internals::~Internals()
 }
 
 Internals::Internals()
+    : passwordEchoDurationInSecondsBackedUp(false)
+    , passwordEchoEnabledBackedUp(false)
 {
 }
 
@@ -191,9 +193,44 @@ void Internals::setForceCompositingMode(Document* document, bool enabled, Except
     document->settings()->setForceCompositingMode(enabled);
 }
 
-void Internals::reset(Document*)
+void Internals::setPasswordEchoEnabled(Document* document, bool enabled, ExceptionCode& ec)
 {
-// FIXME: Implement
+    if (!document || !document->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (!passwordEchoEnabledBackedUp) {
+        passwordEchoEnabledBackup = enabled;
+        passwordEchoEnabledBackedUp = true;
+    }
+    document->settings()->setPasswordEchoEnabled(enabled);
+}
+
+void Internals::setPasswordEchoDurationInSeconds(Document* document, double durationInSeconds, ExceptionCode& ec)
+{
+    if (!document || !document->settings()) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
+    if (!passwordEchoDurationInSecondsBackedUp) {
+        passwordEchoDurationInSecondsBackup = durationInSeconds;
+        passwordEchoDurationInSecondsBackedUp = true;
+    }
+    document->settings()->setPasswordEchoDurationInSeconds(durationInSeconds);
+}
+
+void Internals::reset(Document* document)
+{
+    if (!document || !document->settings())
+        return;
+
+    if (passwordEchoDurationInSecondsBackedUp)
+        document->settings()->setPasswordEchoDurationInSeconds(passwordEchoDurationInSecondsBackup);
+
+    if (passwordEchoEnabledBackedUp)
+        document->settings()->setPasswordEchoDurationInSeconds(passwordEchoEnabledBackup);
 }
 
 }

@@ -1,3 +1,15 @@
+2011-08-18  Chang Shu  <cshu@webkit.org>
+
+        Add support of setPasswordEchoEnabled and setPasswordEchoDuration for password echo feature
+        https://bugs.webkit.org/show_bug.cgi?id=66052
+
+        Reviewed by Alexey Proskuryakov.
+
+        Enable password echo under the build flag.
+
+        * Api/qwebsettings.cpp:
+        (QWebSettingsPrivate::apply):
+
 2011-08-16  Chang Shu  <cshu@webkit.org>
 
         Support reset in WebCore::Internals

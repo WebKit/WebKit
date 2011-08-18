@@ -44,6 +44,9 @@ module window {
         ClientRect boundingBox(in Element element) raises(DOMException);
 
         void setForceCompositingMode(in Document document, in boolean enabled) raises(DOMException);
+
+        void setPasswordEchoEnabled(in Document document, in boolean enabled) raises(DOMException);
+        void setPasswordEchoDurationInSeconds(in Document document, in double durationInSeconds) raises(DOMException);
     };
 }
 

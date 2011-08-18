@@ -1850,6 +1850,13 @@ editing/spelling/spellcheck-input-search-crash.html
 # missing window.internals.createShadowContentElement
 fast/dom/shadow/create-content-element.html
 
+# WebKitTestRunner needs layoutTestController.setPasswordEchoEnabled
+# WebKitTestRunner needs layoutTestController.setPasswordEchoDuration
+editing/input/password-echo-passnode.html
+editing/input/password-echo-passnode2.html
+editing/input/password-echo-passnode3.html
+editing/input/password-echo-textnode.html
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

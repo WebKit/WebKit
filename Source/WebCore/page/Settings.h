@@ -461,6 +461,12 @@ namespace WebCore {
         void setMediaPlaybackAllowsInline(bool flag) { m_mediaPlaybackAllowsInline = flag; };
         bool mediaPlaybackAllowsInline() const { return m_mediaPlaybackAllowsInline; }
 
+        void setPasswordEchoEnabled(bool flag) { m_passwordEchoEnabled = flag; }
+        bool passwordEchoEnabled() const { return m_passwordEchoEnabled; }
+
+        void setPasswordEchoDurationInSeconds(double durationInSeconds) { m_passwordEchoDurationInSeconds = durationInSeconds; }
+        double passwordEchoDurationInSeconds() const { return m_passwordEchoDurationInSeconds; }
+
     private:
         Page* m_page;
 
@@ -477,6 +483,7 @@ namespace WebCore {
         ScriptFontFamilyMap m_pictographFontFamilyMap;
         EditableLinkBehavior m_editableLinkBehavior;
         TextDirectionSubmenuInclusionBehavior m_textDirectionSubmenuInclusionBehavior;
+        double m_passwordEchoDurationInSeconds;
         int m_minimumFontSize;
         int m_minimumLogicalFontSize;
         int m_defaultFontSize;
@@ -580,6 +587,7 @@ namespace WebCore {
 #endif
         bool m_mediaPlaybackRequiresUserGesture : 1;
         bool m_mediaPlaybackAllowsInline : 1;
+        bool m_passwordEchoEnabled : 1;
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);

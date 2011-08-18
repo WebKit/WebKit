@@ -108,6 +108,7 @@ Settings::Settings(Page* page)
     : m_page(page)
     , m_editableLinkBehavior(EditableLinkDefaultBehavior)
     , m_textDirectionSubmenuInclusionBehavior(TextDirectionSubmenuAutomaticallyIncluded)
+    , m_passwordEchoDurationInSeconds(1)
     , m_minimumFontSize(0)
     , m_minimumLogicalFontSize(0)
     , m_defaultFontSize(0)
@@ -213,6 +214,7 @@ Settings::Settings(Page* page)
 #endif
     , m_mediaPlaybackRequiresUserGesture(false)
     , m_mediaPlaybackAllowsInline(true)
+    , m_passwordEchoEnabled(false)
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 

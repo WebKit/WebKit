@@ -69,9 +69,18 @@ public:
 
     void setForceCompositingMode(Document*, bool enabled, ExceptionCode&);
 
+    void setPasswordEchoEnabled(Document*, bool enabled, ExceptionCode&);
+    void setPasswordEchoDurationInSeconds(Document*, double durationInSeconds, ExceptionCode&);
+
     static const char* internalsId;
+
 private:
     Internals();
+
+    double passwordEchoDurationInSecondsBackup;
+    bool passwordEchoEnabledBackup : 1;
+    bool passwordEchoDurationInSecondsBackedUp : 1;
+    bool passwordEchoEnabledBackedUp : 1;
 };
 
 } // namespace WebCore
