@@ -1,3 +1,10 @@
+2011-08-18  Alexey Proskuryakov  <ap@apple.com>
+
+        [Qt] editing/selection/regional-indicators.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=66500
+
+        * platform/qt/editing/selection/regional-indicators-actual.txt: Land failing results.
+
 2011-08-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r93329.
