@@ -1,38 +1,43 @@
-<html> 
+<!DOCTYPE html>
+<html>
 <head>
-
 <style>
-.editing { 
-    border: 2px solid red; 
-    font-size: 18px; 
+.editing {
+    border: 2px solid red;
+    font-size: 18px;
 }
 .explanation { 
-    border: 2px solid blue; 
-    padding: 12px; 
-    font-size: 18px; 
+    border: 2px solid blue;
+    padding: 12px;
+    font-size: 18px;
     margin-bottom: 24px;
 }
 .scenario { margin-bottom: 16px;}
 .scenario:first-line { font-weight: bold; margin-bottom: 16px;}
 .expected-results:first-line { font-weight: bold }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-
+<script src="../editing.js"></script>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 
+Markup.waitUntilDone();
+
 function editingTest() {
+    Markup.description(document.getElementsByClassName('explanation')[0].textContent);
     for (var i = 0; i < 10; i++)
         extendSelectionForwardByLineCommand();
+    Markup.dump('root', 'Before cut');
     cutCommand();
+    Markup.dump('root', 'After cut');
     pasteCommand();
+    Markup.dump('root', 'After paste (this should be identical to before cut)');
+    Markup.notifyDone();
 }
 
 </script>
-
 <title>Editing Test</title> 
 </head> 
 <body onload="runEditingTest()">
-
 <div class="explanation">
 <div class="scenario">
 Tests: 
@@ -41,9 +46,7 @@ Bug fix for <a href="rdar://problem/4180820">&lt;rdar://problem/4180820&gt;</a> 
 </div>
 Applying block styles, like text-align, used to wrap paragraphs that needed block style changes in clones of other paragraphs in the document.  This would almost always introduce unwanted styles.
 </div>
-
 <div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
-
 <div id="test" class="editing">
 <center>
 <p>
@@ -56,6 +59,5 @@ Start browsing the topics below, or use the search field at the bottom of every 
 </center>
 </div>
 </div>
-
 </body>
 </html>
