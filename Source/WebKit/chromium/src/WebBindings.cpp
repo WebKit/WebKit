@@ -52,10 +52,6 @@
 #include "WebElement.h"
 #include "WebRange.h"
 
-#if USE(JAVASCRIPTCORE_BINDINGS)
-using JSC::Bindings::PrivateIdentifier;
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
