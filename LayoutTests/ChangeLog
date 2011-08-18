@@ -1,5 +1,16 @@
 2011-08-18  Kentaro Hara  <haraken@google.com>
 
+        A SharedWorker constructor should throw TypeError, when the number of arguments is not enough.
+        https://bugs.webkit.org/show_bug.cgi?id=66455
+
+        Reviewed by Adam Barth.
+
+        The spec is here: http://www.w3.org/TR/WebIDL/#es-operations.
+
+        * fast/workers/shared-worker-constructor-expected.txt: Changed SyntaxError to TypeError.
+
+2011-08-18  Kentaro Hara  <haraken@google.com>
+
         A Worker constructor should throw TypeError, when the number of arguments is not enough
         https://bugs.webkit.org/show_bug.cgi?id=66456
 
