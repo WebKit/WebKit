@@ -1228,26 +1228,17 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
     if (isLineBreak())
         return 0;
 
-    int leftOffset = isLeftToRightDirection() ? 0 : m_len;
-    int rightOffset = isLeftToRightDirection() ? m_len : 0;
-    bool blockIsInOppositeDirection = renderer()->containingBlock()->style()->isLeftToRightDirection() != isLeftToRightDirection();
-    if (blockIsInOppositeDirection)
-        swap(leftOffset, rightOffset);
-
     if (lineOffset - logicalLeft() > logicalWidth())
-        return rightOffset;
+        return isLeftToRightDirection() ? len() : 0;
     if (lineOffset - logicalLeft() < 0)
-        return leftOffset;
+        return isLeftToRightDirection() ? 0 : len();
 
     FontCachePurgePreventer fontCachePurgePreventer;
 
     RenderText* text = toRenderText(renderer());
     RenderStyle* style = text->style(m_firstLine);
     const Font& font = style->font();
-    int offset = font.offsetForPosition(constructTextRun(style, font), lineOffset - logicalLeft(), includePartialGlyphs);
-    if (blockIsInOppositeDirection && (!offset || offset == m_len))
-        return !offset ? m_len : 0;
-    return offset;
+    return font.offsetForPosition(constructTextRun(style, font), lineOffset - logicalLeft(), includePartialGlyphs);
 }
 
 float InlineTextBox::positionForOffset(int offset) const

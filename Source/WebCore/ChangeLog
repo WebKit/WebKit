@@ -1,3 +1,33 @@
+2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        positionForPoint returns wrong VisiblePosition at bidi boundaries
+        https://bugs.webkit.org/show_bug.cgi?id=65356
+
+        Reviewed by David Hyatt.
+
+        The bug was caused by RenderText::positionForPoint's assuming that the position will always reside
+        inside the inline box that contains the point, which is not true at the boundaries of bidi-runs.
+
+        For example, in aDC12BAb where AB12CD is a RTL text, the offset on the right of A is 7 even though
+        the inline box for "BA" only contains offsets 1, 2, and 3. We must traverse the bidi-run "DC12BA"
+        until the end to obtain the offset 7 from the inline box for "DC".
+
+        Fixed the bug by introducing createVisiblePositionAfterAdjustingOffsetForBiDi which traverses runs
+        on the left or the right of the position to compute the appropriate offset following the NSTextView convention.
+
+        This patch also fixes a regression from r74971 that caret is placed incorrectly between inline boxes of
+        LTR or RTL text in a RTL or LTR block respectively.
+
+        Test: editing/selection/caret-at-bidi-boundary.html
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::offsetForPosition):
+        * rendering/RenderText.cpp:
+        (WebCore::lineDirectionPointFitsInBox): Takes ShouldAffinityBeDownstream instead of EAfinity.
+        (WebCore::createVisiblePositionForBox):
+        (WebCore::createVisiblePositionAfterAdjustingOffsetForBiDi):
+        (WebCore::RenderText::positionForPoint):
+
 2011-08-18  Xiaomei Ji  <xji@chromium.org>
 
         --webkit-visual-word renaming right/leftWordPositionAcrossBoundary

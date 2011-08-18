@@ -431,9 +431,11 @@ InlineTextBox* RenderText::findNextInlineTextBox(int offset, int& pos) const
     return s;
 }
 
-static bool lineDirectionPointFitsInBox(int pointLineDirection, InlineTextBox* box, int offset, EAffinity& affinity)
+enum ShouldAffinityBeDownstream { AlwaysDownstream, AlwaysUpstream, UpstreamIfPositionIsNotAtStart };
+
+static bool lineDirectionPointFitsInBox(int pointLineDirection, InlineTextBox* box, ShouldAffinityBeDownstream& shouldAffinityBeDownstream)
 {
-    affinity = DOWNSTREAM;
+    shouldAffinityBeDownstream = AlwaysDownstream;
 
     // the x coordinate is equal to the left edge of this box
     // the affinity must be downstream so the position doesn't jump back to the previous line
@@ -443,7 +445,7 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, InlineTextBox* b
     // and the x coordinate is to the left of the right edge of this box
     // check to see if position goes in this box
     if (pointLineDirection < box->logicalRight()) {
-        affinity = offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM;
+        shouldAffinityBeDownstream = UpstreamIfPositionIsNotAtStart;
         return true;
     }
 
@@ -456,11 +458,102 @@ static bool lineDirectionPointFitsInBox(int pointLineDirection, InlineTextBox* b
         // box is last on line
         // and the x coordinate is to the right of the last text box right edge
         // generate VisiblePosition, use UPSTREAM affinity if possible
-        affinity = offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM;
+        shouldAffinityBeDownstream = UpstreamIfPositionIsNotAtStart;
         return true;
     }
 
     return false;
+}
+
+static VisiblePosition createVisiblePositionForBox(const InlineBox* box, int offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
+{
+    EAffinity affinity = VP_DEFAULT_AFFINITY;
+    switch (shouldAffinityBeDownstream) {
+    case AlwaysDownstream:
+        affinity = DOWNSTREAM;
+        break;
+    case AlwaysUpstream:
+        affinity = VP_UPSTREAM_IF_POSSIBLE;
+        break;
+    case UpstreamIfPositionIsNotAtStart:
+        affinity = offset > box->caretMinOffset() ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM;
+        break;
+    }
+    return box->renderer()->createVisiblePosition(offset, affinity);
+}
+
+static VisiblePosition createVisiblePositionAfterAdjustingOffsetForBiDi(const InlineTextBox* box, int offset, ShouldAffinityBeDownstream shouldAffinityBeDownstream)
+{
+    ASSERT(box);
+    ASSERT(box->renderer());
+    ASSERT(offset >= 0);
+
+    if (offset && static_cast<unsigned>(offset) < box->len())
+        return createVisiblePositionForBox(box, box->start() + offset, shouldAffinityBeDownstream);
+
+    bool positionIsAtStartOfBox = !offset;
+    if (positionIsAtStartOfBox == box->isLeftToRightDirection()) {
+        // offset is on the left edge
+
+        const InlineBox* prevBox = box->prevLeafChild();
+        if ((prevBox && prevBox->bidiLevel() == box->bidiLevel())
+            || box->renderer()->containingBlock()->style()->direction() == box->direction()) // FIXME: left on 12CBA
+            return createVisiblePositionForBox(box, box->caretLeftmostOffset(), shouldAffinityBeDownstream);
+
+        if (prevBox && prevBox->bidiLevel() > box->bidiLevel()) {
+            // e.g. left of B in aDC12BAb
+            const InlineBox* leftmostBox;
+            do {
+                leftmostBox = prevBox;
+                prevBox = leftmostBox->prevLeafChild();
+            } while (prevBox && prevBox->bidiLevel() > box->bidiLevel());
+            return createVisiblePositionForBox(leftmostBox, leftmostBox->caretRightmostOffset(), shouldAffinityBeDownstream);
+        }
+
+        if (!prevBox || prevBox->bidiLevel() < box->bidiLevel()) {
+            // e.g. left of D in aDC12BAb
+            const InlineBox* rightmostBox;
+            const InlineBox* nextBox = box;
+            do {
+                rightmostBox = nextBox;
+                nextBox = rightmostBox->nextLeafChild();
+            } while (nextBox && nextBox->bidiLevel() >= box->bidiLevel());
+            return createVisiblePositionForBox(rightmostBox,
+                box->isLeftToRightDirection() ? rightmostBox->caretMaxOffset() : rightmostBox->caretMinOffset(), shouldAffinityBeDownstream);
+        }
+
+        return createVisiblePositionForBox(box, box->caretRightmostOffset(), shouldAffinityBeDownstream);
+    }
+
+    const InlineBox* nextBox = box->nextLeafChild();
+    if ((nextBox && nextBox->bidiLevel() == box->bidiLevel())
+        || box->renderer()->containingBlock()->style()->direction() == box->direction())
+        return createVisiblePositionForBox(box, box->caretRightmostOffset(), shouldAffinityBeDownstream);
+
+    // offset is on the right edge
+    if (nextBox && nextBox->bidiLevel() > box->bidiLevel()) {
+        // e.g. right of C in aDC12BAb
+        const InlineBox* rightmostBox;
+        do {
+            rightmostBox = nextBox;
+            nextBox = rightmostBox->nextLeafChild();
+        } while (nextBox && nextBox->bidiLevel() > box->bidiLevel());
+        return createVisiblePositionForBox(rightmostBox, rightmostBox->caretLeftmostOffset(), shouldAffinityBeDownstream);
+    }
+
+    if (!nextBox || nextBox->bidiLevel() < box->bidiLevel()) {
+        // e.g. right of A in aDC12BAb
+        const InlineBox* leftmostBox;
+        const InlineBox* prevBox = box;
+        do {
+            leftmostBox = prevBox;
+            prevBox = leftmostBox->prevLeafChild();
+        } while (prevBox && prevBox->bidiLevel() >= box->bidiLevel());
+        return createVisiblePositionForBox(leftmostBox,
+            box->isLeftToRightDirection() ? leftmostBox->caretMinOffset() : leftmostBox->caretMaxOffset(), shouldAffinityBeDownstream);
+    }
+
+    return createVisiblePositionForBox(box, box->caretLeftmostOffset(), shouldAffinityBeDownstream);
 }
 
 VisiblePosition RenderText::positionForPoint(const LayoutPoint& point)
@@ -479,13 +572,13 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point)
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left of the first text box left edge
         offset = firstTextBox()->offsetForPosition(pointLineDirection);
-        return createVisiblePosition(offset + firstTextBox()->start(), offset > 0 ? VP_UPSTREAM_IF_POSSIBLE : DOWNSTREAM);
+        return createVisiblePositionAfterAdjustingOffsetForBiDi(firstTextBox(), offset, UpstreamIfPositionIsNotAtStart);
     }
     if (lastTextBox() && pointBlockDirection >= lastTextBox()->root()->selectionTop() && pointLineDirection >= lastTextBox()->logicalRight()) {
         // at the y coordinate of the last line or below
         // and the x coordinate is to the right of the last text box right edge
         offset = lastTextBox()->offsetForPosition(pointLineDirection);
-        return createVisiblePosition(offset + lastTextBox()->start(), VP_UPSTREAM_IF_POSSIBLE);
+        return createVisiblePositionAfterAdjustingOffsetForBiDi(lastTextBox(), offset, AlwaysUpstream);
     }
 
     InlineTextBox* lastBoxAbove = 0;
@@ -497,10 +590,10 @@ VisiblePosition RenderText::positionForPoint(const LayoutPoint& point)
                 bottom = min(bottom, rootBox->nextRootBox()->lineTop());
 
             if (pointBlockDirection < bottom) {
-                EAffinity affinity;
-                int offset = box->offsetForPosition(pointLineDirection);
-                if (lineDirectionPointFitsInBox(pointLineDirection, box, offset, affinity))
-                    return createVisiblePosition(offset + box->start(), affinity);
+                ShouldAffinityBeDownstream shouldAffinityBeDownstream;
+                offset = box->offsetForPosition(pointLineDirection);
+                if (lineDirectionPointFitsInBox(pointLineDirection, box, shouldAffinityBeDownstream))
+                    return createVisiblePositionAfterAdjustingOffsetForBiDi(box, offset, shouldAffinityBeDownstream);
             }
             lastBoxAbove = box;
         }
