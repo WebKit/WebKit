@@ -37,7 +37,7 @@ void SVGLengthList::parse(const String& value, SVGLengthMode mode)
     const UChar* end = ptr + value.length();
     while (ptr < end) {
         const UChar* start = ptr;
-        while (ptr < end && *ptr != ',' && !isWhitespace(*ptr))
+        while (ptr < end && *ptr != ',' && !isSVGSpace(*ptr))
             ptr++;
         if (ptr == start)
             break;
@@ -50,7 +50,7 @@ void SVGLengthList::parse(const String& value, SVGLengthMode mode)
         if (ec)
             return;
         append(length);
-        skipOptionalSpacesOrDelimiter(ptr, end);
+        skipOptionalSVGSpacesOrDelimiter(ptr, end);
     }
 }
 

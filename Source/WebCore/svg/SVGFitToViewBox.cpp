@@ -46,7 +46,7 @@ bool SVGFitToViewBox::parseViewBox(Document* doc, const UChar*& c, const UChar* 
 {
     String str(c, end - c);
 
-    skipOptionalSpaces(c, end);
+    skipOptionalSVGSpaces(c, end);
 
     float x = 0.0f;
     float y = 0.0f;
@@ -70,7 +70,7 @@ bool SVGFitToViewBox::parseViewBox(Document* doc, const UChar*& c, const UChar* 
         doc->accessSVGExtensions()->reportError("A negative value for ViewBox height is not allowed");
         return false;
     }
-    skipOptionalSpaces(c, end);
+    skipOptionalSVGSpaces(c, end);
     if (c < end) { // nothing should come after the last, fourth number
         doc->accessSVGExtensions()->reportWarning("Problem parsing viewBox=\"" + str + "\"");
         return false;

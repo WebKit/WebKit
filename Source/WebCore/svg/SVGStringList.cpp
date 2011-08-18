@@ -54,12 +54,12 @@ void SVGStringList::parse(const String& data, UChar delimiter)
     const UChar* end = ptr + data.length();
     while (ptr < end) {
         const UChar* start = ptr;
-        while (ptr < end && *ptr != delimiter && !isWhitespace(*ptr))
+        while (ptr < end && *ptr != delimiter && !isSVGSpace(*ptr))
             ptr++;
         if (ptr == start)
             break;
         append(String(start, ptr - start));
-        skipOptionalSpacesOrDelimiter(ptr, end, delimiter);
+        skipOptionalSVGSpacesOrDelimiter(ptr, end, delimiter);
     }
 }
 

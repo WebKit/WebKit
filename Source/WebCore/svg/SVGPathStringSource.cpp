@@ -41,7 +41,7 @@ bool SVGPathStringSource::hasMoreData() const
 
 bool SVGPathStringSource::moveToNextToken()
 {
-    return skipOptionalSpaces(m_current, m_end);
+    return skipOptionalSVGSpaces(m_current, m_end);
 }
 
 bool SVGPathStringSource::parseSVGSegmentType(SVGPathSegType& pathSegType)

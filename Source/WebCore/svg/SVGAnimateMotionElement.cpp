@@ -150,7 +150,7 @@ static bool parsePoint(const String& s, FloatPoint& point)
     const UChar* cur = s.characters();
     const UChar* end = cur + s.length();
     
-    if (!skipOptionalSpaces(cur, end))
+    if (!skipOptionalSVGSpaces(cur, end))
         return false;
     
     float x = 0;
@@ -164,7 +164,7 @@ static bool parsePoint(const String& s, FloatPoint& point)
     point = FloatPoint(x, y);
     
     // disallow anything except spaces at the end
-    return !skipOptionalSpaces(cur, end);
+    return !skipOptionalSVGSpaces(cur, end);
 }
     
 void SVGAnimateMotionElement::resetToBaseValue(const String&)

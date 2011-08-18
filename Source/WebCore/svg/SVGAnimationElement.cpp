@@ -100,7 +100,7 @@ static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
     const UChar* cur = parse.characters();
     const UChar* end = cur + parse.length();
 
-    skipOptionalSpaces(cur, end);
+    skipOptionalSVGSpaces(cur, end);
 
     bool delimParsed = false;
     while (cur < end) {
@@ -129,13 +129,13 @@ static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
             return;
         }
 
-        skipOptionalSpaces(cur, end);
+        skipOptionalSVGSpaces(cur, end);
 
         if (cur < end && *cur == ';') {
             delimParsed = true;
             cur++;
         }
-        skipOptionalSpaces(cur, end);
+        skipOptionalSVGSpaces(cur, end);
 
         result.append(UnitBezier(posA, posB, posC, posD));
     }

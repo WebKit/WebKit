@@ -65,21 +65,21 @@ SVGPreserveAspectRatio SVGPreserveAspectRatio::parsePreserveAspectRatio(const UC
     result = false;
 
     // FIXME: Rewrite this parser, without gotos!
-    if (!skipOptionalSpaces(currParam, end))
+    if (!skipOptionalSVGSpaces(currParam, end))
         goto bailOut;
 
     if (*currParam == 'd') {
         if (!skipString(currParam, end, "defer"))
             goto bailOut;
         // FIXME: We just ignore the "defer" here.
-        if (!skipOptionalSpaces(currParam, end))
+        if (!skipOptionalSVGSpaces(currParam, end))
             goto bailOut;
     }
 
     if (*currParam == 'n') {
         if (!skipString(currParam, end, "none"))
             goto bailOut;
-        skipOptionalSpaces(currParam, end);
+        skipOptionalSVGSpaces(currParam, end);
     } else if (*currParam == 'x') {
         if ((end - currParam) < 8)
             goto bailOut;
@@ -127,7 +127,7 @@ SVGPreserveAspectRatio SVGPreserveAspectRatio::parsePreserveAspectRatio(const UC
         } else
             goto bailOut;
         currParam += 8;
-        skipOptionalSpaces(currParam, end);
+        skipOptionalSVGSpaces(currParam, end);
     } else
         goto bailOut;
 
@@ -135,11 +135,11 @@ SVGPreserveAspectRatio SVGPreserveAspectRatio::parsePreserveAspectRatio(const UC
         if (*currParam == 'm') {
             if (!skipString(currParam, end, "meet"))
                 goto bailOut;
-            skipOptionalSpaces(currParam, end);
+            skipOptionalSVGSpaces(currParam, end);
         } else if (*currParam == 's') {
             if (!skipString(currParam, end, "slice"))
                 goto bailOut;
-            skipOptionalSpaces(currParam, end);
+            skipOptionalSVGSpaces(currParam, end);
             if (aspectRatio.m_align != SVG_PRESERVEASPECTRATIO_NONE)
                 aspectRatio.m_meetOrSlice = SVG_MEETORSLICE_SLICE;    
         }

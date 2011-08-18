@@ -1,3 +1,52 @@
+2011-08-18  Darin Adler  <darin@apple.com>
+
+        SVG and HTML editing have conflicting inline isWhitespace functions
+        https://bugs.webkit.org/show_bug.cgi?id=65145
+
+        Reviewed by Nikolas Zimmermann.
+
+        Renamed the SVG-specific whitespace functions to call it "SVG space"
+        rather than just "whitespace". An alternative would have been to put
+        the functions into an SVG namespace instead of the top level WebCore
+        namespace.
+
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::parsePoint): Call skipOptionalSVGSpaces.
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::parseKeySplines): Ditto.
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseViewBox): Ditto.
+        * svg/SVGLengthList.cpp:
+        (WebCore::SVGLengthList::parse): Call isSVGSpace and
+        skipOptionalSVGSpacesOrDelimiter.
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::genericParseNumber): Call skipOptionalSVGSpacesOrDelimiter.
+        (WebCore::parseArcFlag): Ditto.
+        (WebCore::parseRect): Call skipOptionalSVGSpaces.
+        (WebCore::pointsListFromSVGData): Ditto.
+        (WebCore::parseGlyphName): Call skipOptionalSVGSpaces, isSVGSpace,
+        and skipOptionalSVGSpacesOrDelimiter.
+        (WebCore::parseDelimitedString): Call skipOptionalSVGSpaces.
+
+        * svg/SVGParserUtilities.h:
+        (WebCore::isSVGSpace): Renamed from isWhitespace. This better matches
+        the comment which specifically talks about SVG.
+        (WebCore::skipOptionalSVGSpaces): Renamed from skipOptionalSpaces.
+        (WebCore::skipOptionalSVGSpacesOrDelimiter): Renamed from
+        skipOptionalSVGSpacesOrDelimiter.
+
+        * svg/SVGPathStringSource.cpp:
+        (WebCore::SVGPathStringSource::moveToNextToken): Call skipOptionalSVGSpaces.
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::parsePreserveAspectRatio): Ditto.
+        * svg/SVGStringList.cpp:
+        (WebCore::SVGStringList::parse): Call isSVGSpace and
+        skipOptionalSVGSpacesOrDelimiter.
+        * svg/SVGTransformable.cpp:
+        (WebCore::parseTransformParamList): Call skipOptionalSVGSpaces and
+        skipOptionalSVGSpacesOrDelimiter.
+        (WebCore::SVGTransformable::parseTransformAttribute): Call skipOptionalSVGSpaces.
+
 2011-08-18  Gavin Peters  <gavinp@chromium.org>
 
         Prepare frames for history navigation.
