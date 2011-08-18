@@ -2415,7 +2415,7 @@ void Editor::deletedAutocorrectionAtPosition(const Position& position, const Str
     m_spellingCorrector->deletedAutocorrectionAtPosition(position, originalString);
 }
 
-PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
+PassRefPtr<Range> Editor::rangeForPoint(const LayoutPoint& windowPoint)
 {
     Document* document = m_frame->documentAtPoint(windowPoint);
     if (!document)
@@ -2426,7 +2426,7 @@ PassRefPtr<Range> Editor::rangeForPoint(const IntPoint& windowPoint)
     FrameView* frameView = frame->view();
     if (!frameView)
         return 0;
-    IntPoint framePoint = frameView->windowToContents(windowPoint);
+    LayoutPoint framePoint = frameView->windowToContents(windowPoint);
     VisibleSelection selection(frame->visiblePositionForPoint(framePoint));
     return avoidIntersectionWithNode(selection.toNormalizedRange().get(), m_deleteButtonController->containerElement());
 }
@@ -2553,7 +2553,7 @@ void Editor::dismissCorrectionPanelAsIgnored()
     m_spellingCorrector->dismiss(ReasonForDismissingCorrectionPanelIgnored);
 }
 
-bool Editor::insideVisibleArea(const IntPoint& point) const
+bool Editor::insideVisibleArea(const LayoutPoint& point) const
 {
     if (m_frame->excludeFromTextSearch())
         return false;
@@ -2572,9 +2572,9 @@ bool Editor::insideVisibleArea(const IntPoint& point) const
     if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
         return true;
 
-    IntRect rectInPageCoords = container->overflowClipRect(IntPoint());
-    IntRect rectInFrameCoords = IntRect(renderer->x() * -1, renderer->y() * -1,
-                                    rectInPageCoords.width(), rectInPageCoords.height());
+    LayoutRect rectInPageCoords = container->overflowClipRect(IntPoint());
+    LayoutRect rectInFrameCoords = LayoutRect(renderer->x() * -1, renderer->y() * -1,
+                                              rectInPageCoords.width(), rectInPageCoords.height());
 
     return rectInFrameCoords.contains(point);
 }
@@ -2601,10 +2601,10 @@ bool Editor::insideVisibleArea(Range* range) const
     if (!(container->style()->overflowX() == OHIDDEN || container->style()->overflowY() == OHIDDEN))
         return true;
 
-    IntRect rectInPageCoords = container->overflowClipRect(IntPoint());
-    IntRect rectInFrameCoords = IntRect(renderer->x() * -1, renderer->y() * -1,
+    LayoutRect rectInPageCoords = container->overflowClipRect(LayoutPoint());
+    LayoutRect rectInFrameCoords = LayoutRect(renderer->x() * -1, renderer->y() * -1,
                                     rectInPageCoords.width(), rectInPageCoords.height());
-    IntRect resultRect = range->boundingBox();
+    LayoutRect resultRect = range->boundingBox();
     
     return rectInFrameCoords.contains(resultRect);
 }
@@ -3083,7 +3083,7 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
         // Do a "fake" paint in order to execute the code that computes the rendered rect for each text match.
         if (m_frame->view() && m_frame->contentRenderer()) {
             m_frame->document()->updateLayout(); // Ensure layout is up to date.
-            IntRect visibleRect = m_frame->view()->visibleContentRect();
+            LayoutRect visibleRect = m_frame->view()->visibleContentRect();
             if (!visibleRect.isEmpty()) {
                 GraphicsContext context((PlatformGraphicsContext*)0);
                 context.setPaintingDisabled(true);

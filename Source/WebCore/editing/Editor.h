@@ -295,7 +295,7 @@ public:
 
     void setStartNewKillRingSequence(bool);
 
-    PassRefPtr<Range> rangeForPoint(const IntPoint& windowPoint);
+    PassRefPtr<Range> rangeForPoint(const LayoutPoint& windowPoint);
 
     void clear();
 
@@ -309,7 +309,7 @@ public:
     PassRefPtr<Range> selectedRange();
     
     // We should make these functions private when their callers in Frame are moved over here to Editor
-    bool insideVisibleArea(const IntPoint&) const;
+    bool insideVisibleArea(const LayoutPoint&) const;
     bool insideVisibleArea(Range*) const;
 
     void addToKillRing(Range*, bool prepend);

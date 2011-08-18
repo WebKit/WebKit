@@ -1,5 +1,24 @@
 2011-08-17  Levi Weintraub  <leviw@chromium.org>
 
+        Switch Editing code to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66355
+
+        Reviewed by Eric Seidel.
+
+        Converting remaining editing code to the LayoutUnit abstraction.
+
+        No new tests, no change in functionality.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::rangeForPoint):
+        (WebCore::Editor::insideVisibleArea):
+        (WebCore::Editor::countMatchesForText):
+        * editing/Editor.h:
+        * editing/mac/FrameSelectionMac.mm:
+        (WebCore::FrameSelection::notifyAccessibilityForSelectionChange):
+
+2011-08-17  Levi Weintraub  <leviw@chromium.org>
+
         Switch Accessibility code to new layout types
         https://bugs.webkit.org/show_bug.cgi?id=66348
 
