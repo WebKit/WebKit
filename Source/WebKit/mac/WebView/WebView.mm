@@ -375,6 +375,7 @@ static const char webViewIsOpen[] = "At least one WebView is still open.";
 @end
 
 @interface WebView (WebFileInternal)
+- (float)_deviceScaleFactor;
 - (BOOL)_isLoading;
 - (WebFrameView *)_frameViewAtWindowPoint:(NSPoint)point;
 - (WebFrame *)_focusedFrame;
@@ -3353,6 +3354,8 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
         _private->page->didMoveOnscreen();
     }
     
+    _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);
+
     [self _updateActiveState];
 }
 
@@ -3380,20 +3383,6 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 {
     if ([self shouldCloseWithWindow] && ([self window] == [self hostWindow] || ([self window] && ![self hostWindow]) || (![self window] && [self hostWindow])))
         [self close];
-}
-
-- (float)_deviceScaleFactor
-{
-    NSWindow *window = [self window];
-#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (window)
-        return [window backingScaleFactor];
-    return [[NSScreen mainScreen] backingScaleFactor];
-#else
-    if (window)
-        return [window userSpaceScaleFactor];
-    return [[NSScreen mainScreen] userSpaceScaleFactor];
-#endif
 }
 
 - (void)_windowDidChangeResolution:(NSNotification *)notification
@@ -5521,6 +5510,20 @@ static WebFrameView *containingFrameView(NSView *view)
 }
 
 @implementation WebView (WebFileInternal)
+
+- (float)_deviceScaleFactor
+{
+    NSWindow *window = [self window];
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (window)
+        return [window backingScaleFactor];
+    return [[NSScreen mainScreen] backingScaleFactor];
+#else
+    if (window)
+        return [window userSpaceScaleFactor];
+    return [[NSScreen mainScreen] userSpaceScaleFactor];
+#endif
+}
 
 static inline uint64_t roundUpToPowerOf2(uint64_t num)
 {

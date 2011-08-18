@@ -1,3 +1,53 @@
+2011-08-18  Adam Roben  <aroben@apple.com>
+
+        Test that WebKit updates style when a WebView is moved between differently-scaled windows
+
+        Test for <http://webkit.org/b/66412> <rdar://problem/9971958> WebKit doesn't react when a
+        WebView is moved between windows with different backing scale factors
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/JavaScriptTest.cpp:
+        (TestWebKitAPI::runJSTest): Moved a little bit of code from here...
+        (TestWebKitAPI::compareJSResult): ...to here. Also made the error message more similar to
+        gtest's built-in error messages.
+
+        * TestWebKitAPI/JavaScriptTest.h: Added overloads of runJSTest that take a WebView * and
+        WKView * for convenience on Mac. Added compareJSResult helper function for implementing
+        those overloads.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added new files.
+
+        * TestWebKitAPI/Tests/mac/DynamicDeviceScaleFactor.mm: Added.
+        (-[FrameLoadDelegate initWithDidFinishLoadBoolean:]): Simple initializer.
+        (-[FrameLoadDelegate webView:didFinishLoadForFrame:]): Record that the load finished.
+        (TestWebKitAPI::didFinishLoadForFrame): Record that the load finished.
+        (TestWebKitAPI::setPageLoaderClient): Set up the client.
+        (TestWebKitAPI::DynamicDeviceScaleFactor::DynamicDeviceScaleFactor): Simple constructor.
+        (TestWebKitAPI::DynamicDeviceScaleFactor::createWindow): Creates a
+        SyntheticBackingScaleFactorWindow and returns it.
+        (TestWebKitAPI::DynamicDeviceScaleFactor::runTest): Loads devicePixelRatio.html and checks
+        that WebKit uses the correct scale factor when the WebView is not in a window, is put in a
+        window, is moved to a differently-scaled window, and is taken out of the window.
+        (TestWebKitAPI::DynamicDeviceScaleFactor::loadURL): Helper function with overloads for
+        WebKit1 and WebKit2.
+        (TestWebKitAPI::TEST_F): Runs the test, with overloads for WebKit1 and WebKit2.
+
+        * TestWebKitAPI/Tests/mac/devicePixelRatio.html: Added.
+
+        * TestWebKitAPI/mac/JavaScriptTestMac.mm: Added.
+        (TestWebKitAPI::runJSTest): Fairly simple overloads for WebView * and WKView *.
+
+        * TestWebKitAPI/mac/SyntheticBackingScaleFactorWindow.h: Added.
+        * TestWebKitAPI/mac/SyntheticBackingScaleFactorWindow.m: Added.
+        (-[SyntheticBackingScaleFactorWindow initWithContentRect:styleMask:backing:defer:]): Simple
+        initializer.
+        (-[SyntheticBackingScaleFactorWindow setBackingScaleFactor:]): Simple setter.
+
+        (-[SyntheticBackingScaleFactorWindow backingScaleFactor]):
+        (-[SyntheticBackingScaleFactorWindow userSpaceScaleFactor]):
+        Overrides of NSWindow methods that WebKit uses to determine the device scale factor.
+
 2011-08-18  Dmitry Lomov  <dslomov@google.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66425

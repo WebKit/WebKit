@@ -70,14 +70,22 @@ static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScript
     WKPageRunJavaScriptInMainFrame(page, Util::toWK(script).get(), &context, javaScriptCallback);
     Util::run(&context.didFinish);
 
-    if (JSStringIsEqualToUTF8CString(context.actualString.get(), expectedResult))
-        return ::testing::AssertionSuccess();
-
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(context.actualString.get());
     OwnArrayPtr<char> buffer = adoptArrayPtr(new char[bufferSize]);
     JSStringGetUTF8CString(context.actualString.get(), buffer.get(), bufferSize);
+    
+    return compareJSResult(script, buffer.get(), expectedResult);
+}
+    
+::testing::AssertionResult compareJSResult(const char* script, const char* actualResult, const char* expectedResult)
+{
+    if (!strcmp(actualResult, expectedResult))
+        return ::testing::AssertionSuccess();
 
-    return ::testing::AssertionFailure() << script << " should be " << expectedResult << " but is " << buffer.get();
+    return ::testing::AssertionFailure()
+        << "JS expression: " << script << "\n"
+        << "       Actual: " << actualResult << "\n"
+        << "     Expected: " << expectedResult;
 }
 
 } // namespace TestWebKitAPI

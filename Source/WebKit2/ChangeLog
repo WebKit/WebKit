@@ -1,5 +1,19 @@
 2011-08-18  Adam Roben  <aroben@apple.com>
 
+        Update the device scale factor when the WKView's window changes
+
+        Fixes <http://webkit.org/b/66412> <rdar://problem/9971958> WebKit doesn't react when a
+        WebView is moved between windows with different backing scale factors
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView viewDidMoveToWindow]): Call setDeviceScaleFactor because our new window (or no
+        window at all) might have a different backing scale factor than the previous one.
+        (-[WKView _deviceScaleFactor]): Moved to the new FileInternal category.
+
+2011-08-18  Adam Roben  <aroben@apple.com>
+
         Make WebPageProxy keep track of the current device scale factor
 
         The device scale factor is no longer considered part of WebPageProxy's "view state". It now

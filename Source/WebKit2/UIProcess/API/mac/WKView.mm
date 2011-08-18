@@ -109,6 +109,10 @@ struct WKViewInterpretKeyEventsParameters {
     Vector<KeypressCommand>* commands;
 };
 
+@interface WKView (FileInternal)
+- (float)_deviceScaleFactor;
+@end
+
 @interface WKViewData : NSObject {
 @public
     OwnPtr<PageClientImpl> _pageClient;
@@ -1791,6 +1795,8 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
         WKHideWordDefinitionWindow();
 #endif
     }
+
+    _data->_page->setDeviceScaleFactor([self _deviceScaleFactor]);
 }
 
 - (void)_windowDidBecomeKey:(NSNotification *)notification
@@ -1834,20 +1840,6 @@ static NSString * const windowDidChangeResolutionNotification = @"NSWindowDidCha
 - (void)_windowDidOrderOnScreen:(NSNotification *)notification
 {
     _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
-}
-
-- (float)_deviceScaleFactor
-{
-    NSWindow *window = [self window];
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-    if (window)
-        return [window backingScaleFactor];
-    return [[NSScreen mainScreen] backingScaleFactor];
-#else
-    if (window)
-        return [window userSpaceScaleFactor];
-    return [[NSScreen mainScreen] userSpaceScaleFactor];
-#endif
 }
 
 - (void)_windowDidChangeResolution:(NSNotification *)notification
@@ -2596,6 +2588,24 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 {
     _didReceiveUnhandledCommand = true;
     return YES;
+}
+
+@end
+
+@implementation WKView (FileInternal)
+
+- (float)_deviceScaleFactor
+{
+    NSWindow *window = [self window];
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    if (window)
+        return [window backingScaleFactor];
+    return [[NSScreen mainScreen] backingScaleFactor];
+#else
+    if (window)
+        return [window userSpaceScaleFactor];
+    return [[NSScreen mainScreen] userSpaceScaleFactor];
+#endif
 }
 
 @end

@@ -60,6 +60,11 @@
 		C02B77F2126612140026BF0F /* SpacebarScrolling.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C02B77F1126612140026BF0F /* SpacebarScrolling.cpp */; };
 		C02B7854126613AE0026BF0F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C02B7853126613AE0026BF0F /* Carbon.framework */; };
 		C045F9451385C2EA00C0F3CD /* DownloadDecideDestinationCrash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C045F9441385C2E900C0F3CD /* DownloadDecideDestinationCrash.cpp */; };
+		C07E6CAF13FD67650038B22B /* DynamicDeviceScaleFactor.mm in Sources */ = {isa = PBXBuildFile; fileRef = C07E6CAE13FD67650038B22B /* DynamicDeviceScaleFactor.mm */; };
+		C07E6CB213FD73930038B22B /* devicePixelRatio.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C07E6CB113FD738A0038B22B /* devicePixelRatio.html */; };
+		C081224213FC172400DC39AE /* JavaScriptTestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C081224013FC172400DC39AE /* JavaScriptTestMac.mm */; };
+		C081224513FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */; };
+		C081224913FC1B0300DC39AE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
 		C0ADBE7C12FCA4D000D2C129 /* JavaScriptTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */; };
 		C0ADBE8312FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */; };
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
@@ -96,6 +101,7 @@
 			dstSubfolderSpec = 7;
 			files = (
 				1A9E52C913E65EF4006917F5 /* 18-characters.html in Copy Resources */,
+				C07E6CB213FD73930038B22B /* devicePixelRatio.html in Copy Resources */,
 				33E79E06137B5FD900E32D99 /* mouse-move-listener.html in Copy Resources */,
 				BCBD3737125ABBEB00D2C29F /* icon.png in Copy Resources */,
 				1A02C870125D4CFD00E3F4BD /* find.html in Copy Resources */,
@@ -174,6 +180,12 @@
 		C02B7882126615410026BF0F /* spacebar-scrolling.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "spacebar-scrolling.html"; sourceTree = "<group>"; };
 		C045F9441385C2E900C0F3CD /* DownloadDecideDestinationCrash.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadDecideDestinationCrash.cpp; sourceTree = "<group>"; };
 		C045F9461385C2F800C0F3CD /* 18-characters.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = "18-characters.html"; sourceTree = "<group>"; };
+		C07E6CAE13FD67650038B22B /* DynamicDeviceScaleFactor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicDeviceScaleFactor.mm; sourceTree = "<group>"; };
+		C07E6CB113FD738A0038B22B /* devicePixelRatio.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = devicePixelRatio.html; sourceTree = "<group>"; };
+		C081224013FC172400DC39AE /* JavaScriptTestMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JavaScriptTestMac.mm; sourceTree = "<group>"; };
+		C081224313FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyntheticBackingScaleFactorWindow.h; sourceTree = "<group>"; };
+		C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyntheticBackingScaleFactorWindow.m; sourceTree = "<group>"; };
+		C081224813FC1B0300DC39AE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptTest.cpp; sourceTree = "<group>"; };
 		C0ADBE7B12FCA4D000D2C129 /* JavaScriptTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptTest.h; sourceTree = "<group>"; };
 		C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSessionStateContainingFormData.cpp; sourceTree = "<group>"; };
@@ -190,6 +202,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCB9E9F111235BDE00A137E0 /* Cocoa.framework in Frameworks */,
+				C081224913FC1B0300DC39AE /* WebKit.framework in Frameworks */,
 				BCA61DB511700EFD00460D1E /* WebKit2.framework in Frameworks */,
 				BC90964E1255620C00083756 /* JavaScriptCore.framework in Frameworks */,
 				C02B7854126613AE0026BF0F /* Carbon.framework in Frameworks */,
@@ -246,6 +259,7 @@
 				F3FC3EE213678B7300126A65 /* libgtest.a */,
 				BCB9E9F011235BDE00A137E0 /* Cocoa.framework */,
 				BC90964D1255620C00083756 /* JavaScriptCore.framework */,
+				C081224813FC1B0300DC39AE /* WebKit.framework */,
 				BCA61DB411700EFD00460D1E /* WebKit2.framework */,
 				C02B7853126613AE0026BF0F /* Carbon.framework */,
 			);
@@ -352,9 +366,12 @@
 			isa = PBXGroup;
 			children = (
 				1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */,
+				C081224013FC172400DC39AE /* JavaScriptTestMac.mm */,
 				BC131A9A1171316900B69727 /* main.mm */,
 				BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */,
 				BC90955C125548AA00083756 /* PlatformWebViewMac.mm */,
+				C081224313FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.h */,
+				C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -362,10 +379,28 @@
 		BCB9EB66112366D800A137E0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C07E6CAD13FD67650038B22B /* mac */,
 				BC9096411255616000083756 /* WebKit2 */,
 				BC9096461255618900083756 /* WTF */,
 			);
 			path = Tests;
+			sourceTree = "<group>";
+		};
+		C07E6CAD13FD67650038B22B /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				C07E6CB013FD737C0038B22B /* Resources */,
+				C07E6CAE13FD67650038B22B /* DynamicDeviceScaleFactor.mm */,
+			);
+			path = mac;
+			sourceTree = "<group>";
+		};
+		C07E6CB013FD737C0038B22B /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C07E6CB113FD738A0038B22B /* devicePixelRatio.html */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -480,6 +515,9 @@
 				C045F9451385C2EA00C0F3CD /* DownloadDecideDestinationCrash.cpp in Sources */,
 				37200B9213A16230007A4FAD /* VectorReverse.cpp in Sources */,
 				C01363C813C3997300EF3964 /* StringOperators.cpp in Sources */,
+				C081224213FC172400DC39AE /* JavaScriptTestMac.mm in Sources */,
+				C081224513FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m in Sources */,
+				C07E6CAF13FD67650038B22B /* DynamicDeviceScaleFactor.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
