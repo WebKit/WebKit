@@ -20,7 +20,8 @@ if (window.layoutTestController)
     layoutTestController.dumpAsText();
 
 function runTest(actor, expectedOffset) {
-    var action = actor() + ' put caret at offset ';
+    window.getSelection().setPosition(test.firstChild, 4);
+    var action = actor() + ' from offset ' + 4 + ' put caret at offset ';
     var startOffset = window.getSelection().getRangeAt(0).startOffset;
     action += startOffset;
     if (startOffset == expectedOffset)
@@ -31,16 +32,15 @@ function runTest(actor, expectedOffset) {
 
 var test = document.getElementById('test');
 var console = document.getElementById('console');
-window.getSelection().setPosition(test, 0);
 
 console.innerHTML += 'white-space: normal;\n';
 runTest(function () {window.getSelection().modify('move', 'forward', 'word'); return 'moving forward by word';}, 6);
-runTest(function () {window.getSelection().modify('move', 'backward', 'word'); return 'moving backward by word';}, 0);
+runTest(function () {window.getSelection().modify('move', 'backward', 'word'); return 'moving backward by word';}, 1);
 
 console.innerHTML += 'white-space: pre;\n';
 test.style.whiteSpace = 'pre';
 runTest(function () {window.getSelection().modify('move', 'forward', 'word'); return 'moving forward by word';}, 6);
-runTest(function () {window.getSelection().modify('move', 'backward', 'word'); return 'moving backward by word';}, 0);
+runTest(function () {window.getSelection().modify('move', 'backward', 'word'); return 'moving backward by word';}, 1);
 
 </script>
 </body>

@@ -1,3 +1,19 @@
+2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SimplifiedBackwardsTextIterator returns incorrect offset with first-letter rule
+        https://bugs.webkit.org/show_bug.cgi?id=66086
+
+        Reviewed by Darin Adler.
+
+        Added a test to ensure WebKit does not hit assertions in SimplifiedBackwardsTextIterator.
+        Also fixed a bug in first-letter-word-boundary.html and updated expected offsets for move backward by word
+        from 0 to 1 because there is unrendered space before "hello".
+
+        * editing/text-iterator/backward-textiterator-first-letter-crash-expected.txt: Added.
+        * editing/text-iterator/backward-textiterator-first-letter-crash.html: Added.
+        * editing/text-iterator/first-letter-word-boundary-expected.txt:
+        * editing/text-iterator/first-letter-word-boundary.html:
+
 2011-08-18  Alexey Proskuryakov  <ap@apple.com>
 
         Regional indicator symbols that are combined should behave as a single character when editing

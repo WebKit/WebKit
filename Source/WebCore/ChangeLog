@@ -1,3 +1,26 @@
+2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
+
+        SimplifiedBackwardsTextIterator returns incorrect offset with first-letter rule
+        https://bugs.webkit.org/show_bug.cgi?id=66086
+
+        Reviewed by Darin Adler.
+
+        The bug was caused by SimplifiedBackwardsTextIterator's not taking care of first-letter at all.
+        Fixing the bug by detecting RenderTextFragment in handleTextNode.
+
+        Also added m_shouldHandleFirstLetter to SimplifiedBackwardsTextIterator to keep track of whether or not
+        the next call to handleTextNode needs to process the first-letter part of the text fragment.
+
+        Test: editing/text-iterator/backward-textiterator-first-letter-crash.html
+
+        * editing/TextIterator.cpp:
+        (WebCore::firstRenderTextInFirstLetter): Extracted from handleTextNodeFirstLetter.
+        (WebCore::TextIterator::handleTextNodeFirstLetter): Calls firstRenderTextInFirstLetter.
+        (WebCore::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        (WebCore::SimplifiedBackwardsTextIterator::handleTextNode):
+        (WebCore::SimplifiedBackwardsTextIterator::handleFirstLetter): Added.
+        * editing/TextIterator.h:
+
 2011-08-18  Iain Merrick  <husky@google.com>
 
         [chromium] Assert that main thread and compositor thread are used safely
