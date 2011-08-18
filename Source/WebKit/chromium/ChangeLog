@@ -1,3 +1,9 @@
+2011-08-18  Tony Chang  <tony@chromium.org>
+
+        Revert r93294, doesn't compile on Chromium Mac.
+
+        * features.gypi:
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Make WebCore keep track of the current device scale factor
