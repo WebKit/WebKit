@@ -36,6 +36,7 @@
 #include "WidthIterator.h"
 #include <wtf/MainThread.h>
 #include <wtf/MathExtras.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/UnusedParam.h>
 
 using namespace WTF;
@@ -223,13 +224,13 @@ int Font::offsetForPosition(const TextRun& run, float x, bool includePartialGlyp
 
 String Font::normalizeSpaces(const UChar* characters, unsigned length)
 {
-    UChar* buffer;
-    String normalized = String::createUninitialized(length, buffer);
+    StringBuilder normalized;
+    normalized.reserveCapacity(length);
 
     for (unsigned i = 0; i < length; ++i)
-        buffer[i] = normalizeSpaces(characters[i]);
+        normalized.append(normalizeSpaces(characters[i]));
 
-    return normalized;
+    return normalized.toString();
 }
 
 static bool shouldUseFontSmoothing = true;

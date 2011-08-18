@@ -1,3 +1,25 @@
+2011-08-17  Annie Sullivan  <sullivan@chromium.org>
+
+        Reduce usages of String::createUninitialized
+        https://bugs.webkit.org/show_bug.cgi?id=66399
+
+        Constructs Strings with StringBuilder instead of calling createUninitialized.
+
+        Reviewed by Adam Barth.
+
+        No new tests; no functional change.
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::process):
+        * dom/Text.cpp:
+        (WebCore::Text::wholeText):
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::sourceForToken):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::normalizeSpaces):
+        * platform/text/TextCodecUserDefined.cpp:
+        (WebCore::TextCodecUserDefined::decode):
+
 2011-08-17  Emil A Eklund  <eae@chromium.org>
 
         Switch FrameView to to new layout types

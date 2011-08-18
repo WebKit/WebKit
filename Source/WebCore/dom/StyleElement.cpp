@@ -28,6 +28,7 @@
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 #include "ScriptableDocumentParser.h"
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -125,21 +126,17 @@ void StyleElement::process(Element* e)
             resultLength += length;
         }
     }
-    UChar* text;
-    String sheetText = String::createUninitialized(resultLength, text);
+    StringBuilder sheetText;
+    sheetText.reserveCapacity(resultLength);
 
-    UChar* p = text;
     for (Node* c = e->firstChild(); c; c = c->nextSibling()) {
         if (isValidStyleChild(c)) {
-            String nodeValue = c->nodeValue();
-            unsigned nodeLength = nodeValue.length();
-            memcpy(p, nodeValue.characters(), nodeLength * sizeof(UChar));
-            p += nodeLength;
+            sheetText.append(c->nodeValue());
         }
     }
-    ASSERT(p == text + resultLength);
+    ASSERT(sheetText.length() == resultLength);
 
-    createSheet(e, m_startLineNumber, sheetText);
+    createSheet(e, m_startLineNumber, sheetText.toString());
 }
 
 void StyleElement::createSheet(Element* e, int startLineNumber, const String& text)

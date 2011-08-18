@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuffer.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -51,15 +52,15 @@ void TextCodecUserDefined::registerCodecs(TextCodecRegistrar registrar)
 
 String TextCodecUserDefined::decode(const char* bytes, size_t length, bool, bool, bool&)
 {
-    UChar* buffer;
-    String result = String::createUninitialized(length, buffer);
+    StringBuilder result;
+    result.reserveCapacity(length);
 
     for (size_t i = 0; i < length; ++i) {
         signed char c = bytes[i];
-        buffer[i] = c & 0xF7FF;
+        result.append(static_cast<UChar>(c & 0xF7FF));
     }
 
-    return result;
+    return result.toString();
 }
 
 static CString encodeComplexUserDefined(const UChar* characters, size_t length, UnencodableHandling handling)
