@@ -114,63 +114,63 @@
         }
         try{
             ctx.drawImage(myImage, -10, 0, 52, 64, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: imageRect does not contain sourceRect on the left side");
         } catch (e) {
-            print("PASS: imageRect does not contain sourceRect on the left side, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 10, 0, 52, 64, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: imageRect does not contain sourceRect on the right side");
         } catch (e) {
-            print("PASS: imageRect does not contain sourceRect on the right side, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 0, -10, 52, 64, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: imageRect does not contain sourceRect on top");
         } catch (e) {
-            print("PASS: imageRect does not contain sourceRect on top, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 0, 10, 52, 64, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: imageRect does not contain sourceRect on bottom");
         } catch (e) {
-            print("PASS: imageRect does not contain sourceRect on bottom, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, -10, -10, 72, 84, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: sourceRect is bigger than imageSource on every side");
         } catch (e) {
-            print("PASS: sourceRect is bigger than imageSource on every side, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 42, 64, -52, -64, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: negative size of source, imageRect does not contain sourceRect on the left side");
         } catch (e) {
-            print("PASS: negative size of source, imageRect does not contain sourceRect on the left side, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 62, 64, -52, -64, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: negative size of source, imageRect does not contain sourceRect on the right side");
         } catch (e) {
-            print("PASS: negative size of source, imageRect does not contain sourceRect on the right side, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 52, 54, -52, -64, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: negative size of source, imageRect does not contain sourceRect on top");
         } catch (e) {
-            print("PASS: negative size of source, imageRect does not contain sourceRect on top, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 52, 74, -52, -64, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: negative size of source, imageRect does not contain sourceRect on bottom");
         } catch (e) {
-            print("PASS: negative size of source, imageRect does not contain sourceRect on bottom, got exception as expected");
+            print("FAIL");
         }
         try{
             ctx.drawImage(myImage, 62, 74, -72, -84, 0, 0, 20, 20);
-            print("FAIL");
+            print("PASS: negative size of source, imageRect does not contain sourceRect on every side");
         } catch (e) {
-            print("PASS: negative size of source, imageRect does not contain sourceRect on every side, got exception as expected");
+            print("FAIL");
         }
         ctx.fillStyle = 'green';
         ctx.fillRect(0,0,150,150);

@@ -1,3 +1,32 @@
+2011-08-18  Justin Novosad  <junov@chromium.org>
+
+        Unwarranted DOM Exception when when canvas2D drawImage is called with src
+        rect out of bounds
+        https://bugs.webkit.org/show_bug.cgi?id=65709
+
+        Reviewed by Stephen White.
+
+        Test: fast/canvas/drawImage-clipped-source.html
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::drawImage):
+        Removed the unnecessary dom exceptions for out of bounds source rectangles
+        The overloads that receive video and image elements as source images
+        now use the normalized versions of the source rectangle, which
+        GraphicsContext (and its various platform flavors) can handle correctly.
+        The normalized rectangle is the equivalent rectangle with width and height
+        greater than 0.  The canvas version of this method, which had better layout 
+        test coverage, was already correctly using the normalized rectangle. The
+        newly added layout test verifies correct behavior with negative
+        source rectangle dimensions.
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::drawNativeImage):
+        Fixed algorithm that adjusts the destination rectangle to match the clipping
+        applied to the source rect. The case of scaled filtered images with source
+        rectangles that overlap the edge of the image was not being handled
+        correctly. This use case was previously unsupported and used to trigger
+        a DOM exception.
+
 2011-08-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r93329.

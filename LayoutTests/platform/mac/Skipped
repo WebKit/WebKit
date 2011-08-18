@@ -166,6 +166,12 @@ canvas/philip/tests/2d.composite.uncovered.pattern.copy.html
 canvas/philip/tests/2d.imageData.object.round.html
 canvas/philip/tests/2d.imageData.object.wrap.html
 
+# This canvas test is skipped because it is out of date with respect to
+# the current spec, and the fix for https://bugs.webkit.org/show_bug.cgi?id=65709
+# which complies with the current spec, makes this test fail by no longer throwing
+# exceptions that were previously expected
+canvas/philip/tests/2d.drawImage.outsidesource.html
+
 # IndexedDB is not yet enabled.
 storage/indexeddb
 
