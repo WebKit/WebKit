@@ -35,6 +35,7 @@
 #import <mach/mach_vm.h>
 #import <mach/vm_region.h>
 #import <malloc/malloc.h>
+#import <unistd.h>
 
 static void* (*savedMalloc)(malloc_zone_t*, size_t);
 static void* (*savedRealloc)(malloc_zone_t*, void*, size_t);

@@ -1,3 +1,15 @@
+2011-08-18  Anders Carlsson  <andersca@apple.com>
+
+        Fix libc++ C++0x build
+        https://bugs.webkit.org/show_bug.cgi?id=66479
+
+        Reviewed by Adam Roben.
+
+        Add missing includes.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        * DumpRenderTree/mac/CheckedMalloc.cpp:
+
 2011-08-18  Adam Roben  <aroben@apple.com>
 
         Test that WebKit updates style when a WebView is moved between differently-scaled windows

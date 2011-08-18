@@ -36,6 +36,7 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSObjectRef.h>
 #include <JavaScriptCore/JSRetainPtr.h>
+#include <locale.h>
 #include <stdio.h>
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
