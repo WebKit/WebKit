@@ -1,3 +1,18 @@
+2011-08-18  Filip Pizlo  <fpizlo@apple.com>
+
+        [jsfunfuzz] DFG speculative JIT does divide-by-zero checks incorrectly
+        https://bugs.webkit.org/show_bug.cgi?id=66426
+
+        Reviewed by Oliver Hunt.
+        
+        Added a trivial test of mod-by-zero, which fails with the previous version
+        of the DFG speculative JIT.
+
+        * fast/js/mod-by-zero-expected.txt: Added.
+        * fast/js/mod-by-zero.html: Added.
+        * fast/js/script-tests/mod-by-zero.js: Added.
+        (mod):
+
 2011-08-18  Steve Block  <steveblock@google.com>
 
         Remove TIMEOUT expectation for fast/canvas/webgl/uninitialized-test.html

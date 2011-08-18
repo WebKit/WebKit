@@ -812,7 +812,7 @@ void SpeculativeJIT::compile(Node& node)
         GPRReg op1Gpr = op1.gpr();
         GPRReg op2Gpr = op2.gpr();
 
-        speculationCheck(m_jit.branchTestPtr(JITCompiler::Zero, op2Gpr));
+        speculationCheck(m_jit.branchTest32(JITCompiler::Zero, op2Gpr));
 
         GPRReg temp2 = InvalidGPRReg;
         if (op2Gpr == X86Registers::eax || op2Gpr == X86Registers::edx) {
