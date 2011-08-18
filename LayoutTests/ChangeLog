@@ -1,3 +1,15 @@
+2011-08-18  Andras Becsi  <abecsi@webkit.org>
+
+        iframe and frameset scaling is broken
+        https://bugs.webkit.org/show_bug.cgi?id=57785
+
+        Add missing Qt results for tests added in r93287.
+
+        Unreviewed gardening.
+
+        * platform/qt/fast/frames/iframe-scaling-with-scroll-expected.txt: Added.
+        * platform/qt/fast/text/midword-break-before-surrogate-pair-2-expected.txt: Added.
+
 2011-08-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: extract content loading functions from RawSourceCode to ContentProvider implementations.
