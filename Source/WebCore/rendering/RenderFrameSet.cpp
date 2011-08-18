@@ -36,6 +36,7 @@
 #include "MouseEvent.h"
 #include "PaintInfo.h"
 #include "RenderFrame.h"
+#include "RenderLayer.h"
 #include "RenderView.h"
 #include "Settings.h"
 
@@ -497,6 +498,12 @@ void RenderFrameSet::layout()
         if (newBounds != oldBounds)
             view()->repaintViewRectangle(newBounds);
     }
+
+    // If this FrameSet has a transform matrix then we need to recompute it
+    // because the transform origin is a function the size of the RenderFrameSet
+    // which may not be computed until it is attached to the render tree.
+    if (layer() && hasTransform())
+        layer()->updateTransform();
 
     setNeedsLayout(false);
 }

@@ -1,3 +1,32 @@
+2011-08-18  Fady Samuel  <fsamuel@chromium.org>
+
+        iframe and frameset scaling is broken
+        https://bugs.webkit.org/show_bug.cgi?id=57785
+
+        Reviewed by Simon Fraser.
+
+        Fixed two iframe and frameset scaling bugs:
+          #1 iframes and frameset backgrounds and scroll areas are doubly scaled when they are styled with -webkit-transform.
+          #2 frameset does not respect -webkit-transform-origin when scaled
+
+        Tests: fast/frames/frame-set-scaling-3d.html
+               fast/frames/frame-set-scaling-centered.html
+               fast/frames/frame-set-scaling-rotate.html
+               fast/frames/frame-set-scaling-skew.html
+               fast/frames/frame-set-scaling.html
+               fast/frames/iframe-scaling-with-scroll.html
+
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::layout):
+        Update the FrameSet's layer transform after we've computed size to correctly account for the transform origin.
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::childrenClipRect):
+        The dirty rect should be the document's unscaled size.
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::setWidget):
+        (WebCore::RenderWidget::updateWidgetPosition):
+        Don't scale the FrameView rect here. Scaling is done within the FrameView.
+
 2011-08-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed buildfix after r93268.

@@ -185,8 +185,15 @@ void RenderWidget::setWidget(PassRefPtr<Widget> widget)
         // widget immediately, but we have to have really been fully constructed (with a non-null
         // style pointer).
         if (style()) {
-            if (!needsLayout())
-                setWidgetGeometry(IntRect(localToAbsoluteQuad(FloatQuad(contentBoxRect())).boundingBox()), contentBoxRect().size());
+            if (!needsLayout()) {
+                IntRect contentBox = contentBoxRect();
+                IntRect absoluteContentBox = IntRect(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
+                if (m_widget->isFrameView()) {
+                    contentBox.setLocation(absoluteContentBox.location());
+                    setWidgetGeometry(contentBox, contentBox.size());
+                } else
+                    setWidgetGeometry(absoluteContentBox, contentBox.size());
+            }
             if (style()->visibility() != VISIBLE)
                 m_widget->hide();
             else {
@@ -318,8 +325,13 @@ void RenderWidget::updateWidgetPosition()
 
     IntRect contentBox = contentBoxRect();
     IntRect absoluteContentBox = IntRect(localToAbsoluteQuad(FloatQuad(contentBox)).boundingBox());
-    bool boundsChanged = setWidgetGeometry(absoluteContentBox, contentBox.size());
-
+    bool boundsChanged;
+    if (m_widget->isFrameView()) {
+        contentBox.setLocation(absoluteContentBox.location());
+        boundsChanged = setWidgetGeometry(contentBox, contentBox.size());
+    } else
+        boundsChanged = setWidgetGeometry(absoluteContentBox, contentBox.size());
+    
     // if the frame bounds got changed, or if view needs layout (possibly indicating
     // content size is wrong) we have to do a layout to set the right widget size
     if (m_widget && m_widget->isFrameView()) {

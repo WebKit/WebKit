@@ -1,3 +1,34 @@
+2011-08-18  Fady Samuel  <fsamuel@chromium.org>
+
+        iframe and frameset scaling is broken
+        https://bugs.webkit.org/show_bug.cgi?id=57785
+
+        Added tests to verify that framesets and iframes are scaled and positioned correctly.
+
+        Reviewed by Simon Fraser.
+
+        * fast/frames/frame-set-scaling-3d-expected.png: Added.
+        * fast/frames/frame-set-scaling-3d-expected.txt: Added.
+        * fast/frames/frame-set-scaling-3d.html: Added.
+        * fast/frames/frame-set-scaling-centered-expected.png: Added.
+        * fast/frames/frame-set-scaling-centered-expected.txt: Added.
+        * fast/frames/frame-set-scaling-centered.html: Added.
+        * fast/frames/frame-set-scaling-expected.png: Added.
+        * fast/frames/frame-set-scaling-expected.txt: Added.
+        * fast/frames/frame-set-scaling-rotate-expected.png: Added.
+        * fast/frames/frame-set-scaling-rotate-expected.txt: Added.
+        * fast/frames/frame-set-scaling-rotate.html: Added.
+        * fast/frames/frame-set-scaling-skew-expected.png: Added.
+        * fast/frames/frame-set-scaling-skew-expected.txt: Added.
+        * fast/frames/frame-set-scaling-skew.html: Added.
+        * fast/frames/frame-set-scaling.html: Added.
+        * fast/frames/iframe-scaling-with-scroll.html: Added.
+        * platform/chromium-linux/fast/frames/iframe-scaling-with-scroll-expected.png: Added.
+        * platform/chromium-linux/fast/frames/iframe-scaling-with-scroll-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/frames/iframe-scaling-with-scroll-expected.png: Added.
+        * platform/mac/fast/frames/iframe-scaling-with-scroll-expected.txt: Added.
+
 2011-08-17  Balazs Kelemen  <kbalazs@webkit.org>
 
         [Qt] Unreviewed gardening

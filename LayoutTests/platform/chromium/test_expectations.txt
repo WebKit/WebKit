@@ -2968,6 +2968,9 @@ BUGCR78996 DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
 // The merged test is flaky on Chromium since then.
 BUGCR78998 DEBUG : fast/frames/frame-element-name.html = PASS TEXT
 
+// Temporarily ignore fails until we generate a new baseline.
+BUGWK57785 WIN MAC : fast/frames/iframe-scaling-with-scroll.html = MISSING
+
 BUGWK58193 WIN7 : http/tests/local/fileapi/send-sliced-dragged-file.html = PASS TIMEOUT TEXT
 
 
