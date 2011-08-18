@@ -82,9 +82,7 @@ void RenderSurfaceChromium::dumpSurface(TextStream& ts, int indent) const
     ts << name() << "\n";
 
     writeIndent(ts, indent+1);
-    ts << "contentRect: (" << m_contentRect.x() << ", " << m_contentRect.y() << ", " << m_contentRect.width() << ", " << m_contentRect.height()
-        << " scissorRect: (" << m_scissorRect.x() << ", " << m_scissorRect.y() << ", " << m_scissorRect.width() << ", " << m_scissorRect.height() << ")"
-        << "\n";
+    ts << "contentRect: (" << m_contentRect.x() << ", " << m_contentRect.y() << ", " << m_contentRect.width() << ", " << m_contentRect.height() << "\n";
 }
 
 }

@@ -135,9 +135,6 @@ public:
     const IntRect& visibleLayerRect() const { return m_visibleLayerRect; }
     void setVisibleLayerRect(const IntRect& visibleLayerRect) { m_visibleLayerRect = visibleLayerRect; }
 
-    const IntPoint& scrollPosition() const { return m_scrollPosition; }
-    void setScrollPosition(const IntPoint& scrollPosition) { m_scrollPosition = scrollPosition; }
-
     bool doubleSided() const { return m_doubleSided; }
     void setDoubleSided(bool doubleSided) { m_doubleSided = doubleSided; setNeedsCommit(); }
 
@@ -149,9 +146,6 @@ public:
 
     void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
     bool usesLayerScissor() const { return m_usesLayerScissor; }
-
-    void setIsRootLayer(bool isRootLayer) { m_isRootLayer = isRootLayer; }
-    bool isRootLayer() const { return m_isRootLayer; }
 
     // Derived types must override this method if they need to react to a change
     // in the LayerRendererChromium.
@@ -170,7 +164,6 @@ public:
     virtual void setIsMask(bool) {}
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }
-    virtual void protectVisibleTileTextures() { }
 
     // These exists just for debugging (via drawDebugBorder()).
     void setBorderColor(const Color&);
@@ -265,7 +258,6 @@ private:
     // Layer properties.
     IntSize m_bounds;
     IntRect m_visibleLayerRect;
-    IntPoint m_scrollPosition;
     FloatPoint m_position;
     FloatPoint m_anchorPoint;
     Color m_backgroundColor;
@@ -282,7 +274,6 @@ private:
     bool m_needsDisplayOnBoundsChange;
     bool m_doubleSided;
     bool m_usesLayerScissor;
-    bool m_isRootLayer;
 
     TransformationMatrix m_transform;
     TransformationMatrix m_sublayerTransform;

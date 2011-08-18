@@ -131,10 +131,5 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
     m_textureUpdater = LayerTextureUpdaterBitmap::create(layerRendererContext(), ContentLayerPainter::create(m_owner), layerRenderer()->contextSupportsMapSub());
 }
 
-void ContentLayerChromium::protectVisibleTileTextures()
-{
-    m_tiler->protectTileTextures(IntRect(IntPoint::zero(), contentBounds()));
-}
-
 }
 #endif // USE(ACCELERATED_COMPOSITING)

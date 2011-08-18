@@ -1,3 +1,68 @@
+2011-08-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r93329.
+        http://trac.webkit.org/changeset/93329
+        https://bugs.webkit.org/show_bug.cgi?id=66497
+
+        Turned text on chromium win blue (Requested by jamesr_ on
+        #webkit).
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::prepareToUpdate):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::pushPropertiesTo):
+        (WebCore::LayerChromium::dumpLayerProperties):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+        (WebCore::LayerRendererChromium::releaseTextures):
+        (WebCore::LayerRendererChromium::updateRootLayerContents):
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::invalidateRootLayerRect):
+        (WebCore::LayerRendererChromium::rootLayerChanged):
+        (WebCore::LayerRendererChromium::viewportChanged):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        (WebCore::LayerRendererChromium::paintLayerContents):
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        (WebCore::LayerRendererChromium::getFramebufferPixels):
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+        (WebCore::LayerRendererChromium::layerTreeAsText):
+        (WebCore::LayerRendererChromium::dumpRenderSurfaces):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::rootLayer):
+        * platform/graphics/chromium/NonCompositedContentHost.cpp: Removed.
+        * platform/graphics/chromium/NonCompositedContentHost.h: Removed.
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::dumpSurface):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::createTilerIfNeeded):
+        (WebCore::TiledLayerChromium::tilingTransform):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+        (WebCore::CCLayerTreeHost::createRootLayerPainter):
+        (WebCore::CCLayerTreeHost::invalidateRootLayerRect):
+        (WebCore::CCLayerTreeHost::setRootLayer):
+        (WebCore::CCLayerTreeHost::setViewport):
+        (WebCore::CCLayerTreeHost::reallocateRenderer):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::rootLayer):
+        (WebCore::CCLayerTreeHost::viewportContentRect):
+        (WebCore::CCLayerTreeHost::viewportScrollPosition):
+        (WebCore::CCLayerTreeHost::viewportVisibleRect):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::draw):
+
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         SimplifiedBackwardsTextIterator returns incorrect offset with first-letter rule

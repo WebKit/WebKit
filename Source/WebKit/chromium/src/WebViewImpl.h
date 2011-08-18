@@ -369,6 +369,7 @@ public:
     bool allowsAcceleratedCompositing();
     bool pageHasRTLStyle() const;
     void setRootGraphicsLayer(WebCore::GraphicsLayer*);
+    void setRootPlatformLayer(WebCore::PlatformLayer*);
     void setRootLayerNeedsDisplay();
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
     void invalidateRootLayerRect(const WebCore::IntRect&);

@@ -75,7 +75,6 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_needsDisplayOnBoundsChange(false)
     , m_doubleSided(true)
     , m_usesLayerScissor(false)
-    , m_isRootLayer(false)
     , m_replicaLayer(0)
     , m_drawOpacity(0)
     , m_targetRenderSurface(0)
@@ -297,14 +296,12 @@ void LayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     layer->setDebugBorderWidth(m_debugBorderWidth);
     layer->setDoubleSided(m_doubleSided);
     layer->setDrawsContent(drawsContent());
-    layer->setIsRootLayer(m_isRootLayer);
     layer->setLayerRenderer(m_layerRenderer.get());
     layer->setMasksToBounds(m_masksToBounds);
     layer->setName(m_name);
     layer->setOpacity(m_opacity);
     layer->setPosition(m_position);
     layer->setPreserves3D(preserves3D());
-    layer->setScrollPosition(m_scrollPosition);
     layer->setSublayerTransform(m_sublayerTransform);
     layer->setTransform(m_transform);
     layer->setVisibleLayerRect(m_visibleLayerRect);
@@ -378,10 +375,7 @@ void LayerChromium::dumpLayer(TextStream& ts, int indent) const
 void LayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
 {
     writeIndent(ts, indent);
-    ts << "id: " << id() << " drawsContent: " << drawsContent() << " bounds " << m_bounds.width() << "x" << m_bounds.height() << " usesLayerScissor: " << usesLayerScissor()
-        << " scissorRect: (" << m_scissorRect.x() << ", " << m_scissorRect.y() << ", " << m_scissorRect.width() << ", " << m_scissorRect.height() << ")"
-        << " visibleLayerRect: (" << m_visibleLayerRect.x() << ", " << m_visibleLayerRect.y() << ", " << m_visibleLayerRect.width() << ", " << m_visibleLayerRect.height() << ")"
-        << "\n";
+    ts << "id: " << id() << " drawsContent: " << drawsContent() << " bounds " << m_bounds.width() << "x" << m_bounds.height() << "\n";
 
 }
 

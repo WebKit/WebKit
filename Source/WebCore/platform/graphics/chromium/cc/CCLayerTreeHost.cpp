@@ -29,7 +29,6 @@
 #include "LayerChromium.h"
 #include "LayerPainterChromium.h"
 #include "LayerRendererChromium.h"
-#include "NonCompositedContentHost.h"
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHostCommitter.h"
 #include "cc/CCLayerTreeHostImpl.h"
@@ -49,7 +48,6 @@ CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings
     , m_animating(false)
     , m_client(client)
     , m_frameNumber(0)
-    , m_nonCompositedContentHost(NonCompositedContentHost::create(m_client->createRootLayerPainter()))
     , m_settings(settings)
 {
 }
@@ -59,15 +57,6 @@ bool CCLayerTreeHost::initialize()
     m_layerRenderer = createLayerRenderer();
     if (!m_layerRenderer)
         return false;
-
-    m_rootLayer = GraphicsLayer::create(0);
-#ifndef NDEBUG
-    m_rootLayer->setName("root layer");
-#endif
-    m_rootLayer->setDrawsContent(false);
-
-    m_rootLayer->addChild(m_nonCompositedContentHost->graphicsLayer());
-
 
 #if USE(THREADED_COMPOSITING)
     m_proxy = CCLayerTreeHostImplProxy::create(this);
@@ -130,6 +119,11 @@ void CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 #endif
 }
 
+PassOwnPtr<LayerPainterChromium> CCLayerTreeHost::createRootLayerPainter()
+{
+    return m_client->createRootLayerPainter();
+}
+
 void CCLayerTreeHost::finishAllRendering()
 {
 #if USE(THREADED_COMPOSITING)
@@ -141,7 +135,8 @@ void CCLayerTreeHost::finishAllRendering()
 
 void CCLayerTreeHost::invalidateRootLayerRect(const IntRect& dirtyRect)
 {
-    m_nonCompositedContentHost->invalidateRect(dirtyRect);
+    if (m_layerRenderer)
+        m_layerRenderer->invalidateRootLayerRect(dirtyRect);
 }
 
 void CCLayerTreeHost::setNeedsCommitAndRedraw()
@@ -164,30 +159,25 @@ void CCLayerTreeHost::setNeedsRedraw()
 #endif
 }
 
-void CCLayerTreeHost::setRootLayer(GraphicsLayer* layer)
+void CCLayerTreeHost::setRootLayer(LayerChromium* layer)
 {
-    m_nonCompositedContentHost->graphicsLayer()->removeAllChildren();
-    m_nonCompositedContentHost->invalidateEntireLayer();
-    if (layer) {
-        m_nonCompositedContentHost->graphicsLayer()->addChild(layer);
-        layer->platformLayer()->setLayerRenderer(m_layerRenderer.get());
-    }
-
+    m_rootLayer = layer;
+    if (m_rootLayer)
+        m_rootLayer->setLayerRenderer(m_layerRenderer.get());
+    if (m_layerRenderer)
+        m_layerRenderer->rootLayerChanged();
 }
 
-void CCLayerTreeHost::setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition)
+void CCLayerTreeHost::setViewport(const IntRect& visibleRect, const IntRect& contentRect, const IntPoint& scrollPosition)
 {
-    bool visibleRectChanged = m_viewportSize != viewportSize;
+    bool visibleRectChanged = m_viewportVisibleRect.size() != visibleRect.size();
 
-    m_viewportSize = viewportSize;
-    m_nonCompositedContentHost->setScrollPosition(scrollPosition);
-    m_nonCompositedContentHost->graphicsLayer()->setSize(contentsSize);
+    m_viewportVisibleRect = visibleRect;
+    m_viewportContentRect = contentRect;
+    m_viewportScrollPosition = scrollPosition;
 
-    if (visibleRectChanged) {
-        m_nonCompositedContentHost->invalidateEntireLayer();
-        if (m_layerRenderer)
-            m_layerRenderer->viewportChanged();
-    }
+    if (visibleRectChanged && m_layerRenderer)
+        m_layerRenderer->viewportChanged();
 
     setNeedsCommitAndRedraw();
 }
@@ -274,7 +264,8 @@ void CCLayerTreeHost::reallocateRenderer()
         return;
     }
 
-    layerRenderer->setLayerRendererRecursive(m_rootLayer->platformLayer());
+    // Reattach the root layer. Child layers will get reattached as a side effect of updateLayersRecursive.
+    layerRenderer->setLayerRendererRecursive(m_rootLayer.get());
     m_layerRenderer = layerRenderer;
 
     m_client->didRecreateGraphicsContext(true);
