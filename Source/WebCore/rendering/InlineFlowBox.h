@@ -248,7 +248,7 @@ public:
         return result;
     }
 
-    void setOverflowFromLogicalRects(const LayoutRect& logicalLayoutOverflow, const IntRect& logicalVisualOverflow, LayoutUnit lineTop, LayoutUnit lineBottom);
+    void setOverflowFromLogicalRects(const LayoutRect& logicalLayoutOverflow, const LayoutRect& logicalVisualOverflow, LayoutUnit lineTop, LayoutUnit lineBottom);
     void setLayoutOverflow(const LayoutRect&, LayoutUnit lineTop, LayoutUnit lineBottom);
     void setVisualOverflow(const LayoutRect&, LayoutUnit lineTop, LayoutUnit lineBottom);
 

@@ -52,7 +52,7 @@ public:
     virtual LayoutSize offsetFromContainer(RenderObject*, const LayoutPoint&) const;
 
     LayoutRect linesBoundingBox() const;
-    IntRect linesVisualOverflowBoundingBox() const;
+    LayoutRect linesVisualOverflowBoundingBox() const;
 
     InlineFlowBox* createAndAppendInlineFlowBox();
 
@@ -99,10 +99,10 @@ private:
     virtual bool isRenderInline() const { return true; }
 
     FloatRect culledInlineBoundingBox(const RenderInline* container) const;
-    IntRect culledInlineVisualOverflowBoundingBox() const;
+    LayoutRect culledInlineVisualOverflowBoundingBox() const;
     InlineBox* culledInlineFirstLineBox() const;
     InlineBox* culledInlineLastLineBox() const;
-    void culledInlineAbsoluteRects(const RenderInline* container, Vector<IntRect>&, const IntSize&);
+    void culledInlineAbsoluteRects(const RenderInline* container, Vector<LayoutRect>&, const LayoutSize&);
     void culledInlineAbsoluteQuads(const RenderInline* container, Vector<FloatQuad>&);
 
     void addChildToContinuation(RenderObject* newChild, RenderObject* beforeChild);
@@ -126,9 +126,9 @@ private:
     virtual LayoutUnit offsetWidth() const { return linesBoundingBox().width(); }
     virtual LayoutUnit offsetHeight() const { return linesBoundingBox().height(); }
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
-    virtual IntRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, int outlineWidth) const;
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed) const;
+    virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual LayoutRect rectWithOutlineForRepaint(RenderBoxModelObject* repaintContainer, LayoutUnit outlineWidth) const;
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed) const;
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool fixed, bool useTransforms, TransformState&, bool* wasFixed = 0) const;
     virtual void mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, TransformState&) const;
@@ -145,8 +145,8 @@ private:
 
     virtual void dirtyLinesFromChangedChild(RenderObject* child) { m_lineBoxes.dirtyLinesFromChangedChild(this, child); }
 
-    virtual int lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
-    virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual LayoutUnit lineHeight(bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
+    virtual LayoutUnit baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
     
     virtual void childBecameNonInline(RenderObject* child);
 
@@ -169,7 +169,7 @@ private:
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the line boxes created for this inline flow.  For example, <i>Hello<br>world.</i> will have two <i> line boxes.
 
-    mutable int m_lineHeight : 31;
+    mutable LayoutUnit m_lineHeight;
     bool m_alwaysCreateLineBoxes : 1;
 };
 

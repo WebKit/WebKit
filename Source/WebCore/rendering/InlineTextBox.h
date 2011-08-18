@@ -78,17 +78,17 @@ public:
 
     static inline bool compareByStart(const InlineTextBox* first, const InlineTextBox* second) { return first->start() < second->start(); }
 
-    virtual int baselinePosition(FontBaseline) const;
-    virtual int lineHeight() const;
+    virtual LayoutUnit baselinePosition(FontBaseline) const;
+    virtual LayoutUnit lineHeight() const;
 
     bool getEmphasisMarkPosition(RenderStyle*, TextEmphasisPosition&) const;
 
-    IntRect logicalOverflowRect() const;
-    void setLogicalOverflowRect(const IntRect&);
-    int logicalTopVisualOverflow() const { return logicalOverflowRect().y(); }
-    int logicalBottomVisualOverflow() const { return logicalOverflowRect().maxY(); }
-    int logicalLeftVisualOverflow() const { return logicalOverflowRect().x(); }
-    int logicalRightVisualOverflow() const { return logicalOverflowRect().maxX(); }
+    LayoutRect logicalOverflowRect() const;
+    void setLogicalOverflowRect(const LayoutRect&);
+    LayoutUnit logicalTopVisualOverflow() const { return logicalOverflowRect().y(); }
+    LayoutUnit logicalBottomVisualOverflow() const { return logicalOverflowRect().maxY(); }
+    LayoutUnit logicalLeftVisualOverflow() const { return logicalOverflowRect().x(); }
+    LayoutUnit logicalRightVisualOverflow() const { return logicalOverflowRect().maxX(); }
 
 #ifndef NDEBUG
     virtual void showBox(int = 0) const;

@@ -1,3 +1,44 @@
+2011-08-18  Levi Weintraub  <leviw@chromium.org>
+
+        Switch Inline rendering classes to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66239
+
+        Reviewed by Eric Seidel.
+
+        Converting inline rendering classes to use the LayoutUnit abstraction from ints.
+
+        No new tests as no change in functionality.
+
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::logicalFrameRect):
+        (WebCore::InlineBox::baselinePosition):
+        (WebCore::InlineBox::lineHeight):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::logicalOverflowRect):
+        (WebCore::InlineTextBox::setLogicalOverflowRect):
+        (WebCore::InlineTextBox::baselinePosition):
+        (WebCore::InlineTextBox::lineHeight):
+        * rendering/InlineTextBox.h:
+        (WebCore::InlineTextBox::logicalTopVisualOverflow):
+        (WebCore::InlineTextBox::logicalBottomVisualOverflow):
+        (WebCore::InlineTextBox::logicalLeftVisualOverflow):
+        (WebCore::InlineTextBox::logicalRightVisualOverflow):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::culledInlineAbsoluteRects):
+        (WebCore::computeMargin):
+        (WebCore::RenderInline::culledInlineBoundingBox):
+        (WebCore::RenderInline::culledInlineVisualOverflowBoundingBox):
+        (WebCore::RenderInline::linesVisualOverflowBoundingBox):
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::rectWithOutlineForRepaint):
+        (WebCore::RenderInline::computeRectForRepaint):
+        (WebCore::RenderInline::mapLocalToContainer):
+        (WebCore::RenderInline::lineHeight):
+        (WebCore::RenderInline::baselinePosition):
+        (WebCore::RenderInline::addDashboardRegions):
+        * rendering/RenderInline.h:
+
 2011-08-18  Jeffrey Pfau  <jpfau@apple.com>
 
         New XML parser: add doctype to DOM tree

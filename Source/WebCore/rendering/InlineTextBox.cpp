@@ -53,7 +53,7 @@ using namespace std;
 
 namespace WebCore {
 
-typedef WTF::HashMap<const InlineTextBox*, IntRect> InlineTextBoxOverflowMap;
+typedef WTF::HashMap<const InlineTextBox*, LayoutRect> InlineTextBoxOverflowMap;
 static InlineTextBoxOverflowMap* gTextBoxesWithOverflow;
 
 void InlineTextBox::destroy(RenderArena* arena)
@@ -63,14 +63,14 @@ void InlineTextBox::destroy(RenderArena* arena)
     InlineBox::destroy(arena);
 }
 
-IntRect InlineTextBox::logicalOverflowRect() const
+LayoutRect InlineTextBox::logicalOverflowRect() const
 {
     if (m_knownToHaveNoOverflow || !gTextBoxesWithOverflow)
         return enclosingIntRect(logicalFrameRect());
     return gTextBoxesWithOverflow->get(this);
 }
 
-void InlineTextBox::setLogicalOverflowRect(const IntRect& rect)
+void InlineTextBox::setLogicalOverflowRect(const LayoutRect& rect)
 {
     ASSERT(!m_knownToHaveNoOverflow);
     if (!gTextBoxesWithOverflow)
@@ -78,7 +78,7 @@ void InlineTextBox::setLogicalOverflowRect(const IntRect& rect)
     gTextBoxesWithOverflow->add(this, rect);
 }
 
-int InlineTextBox::baselinePosition(FontBaseline baselineType) const
+LayoutUnit InlineTextBox::baselinePosition(FontBaseline baselineType) const
 {
     if (!isText() || !parent())
         return 0;
@@ -86,8 +86,8 @@ int InlineTextBox::baselinePosition(FontBaseline baselineType) const
         return parent()->baselinePosition(baselineType);
     return toRenderBoxModelObject(renderer()->parent())->baselinePosition(baselineType, m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine);
 }
-    
-int InlineTextBox::lineHeight() const
+
+LayoutUnit InlineTextBox::lineHeight() const
 {
     if (!isText() || !renderer()->parent())
         return 0;
