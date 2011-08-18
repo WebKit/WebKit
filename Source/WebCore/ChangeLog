@@ -1,5 +1,66 @@
 2011-08-17  Emil A Eklund  <eae@chromium.org>
 
+        Switch FrameView to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66147
+
+        Reviewed by Eric Seidel.
+
+        Convert Frame & FrameView to new layout abstraction as a part of the
+        ongoing conversion work.
+
+        No new tests, no new functionality.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::visiblePositionForPoint):
+        (WebCore::Frame::documentAtPoint):
+        (WebCore::Frame::rangeForPoint):
+        (WebCore::Frame::setPageAndTextZoomFactors):
+        (WebCore::Frame::scalePage):
+        * page/Frame.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::create):
+        (WebCore::FrameView::reset):
+        (WebCore::FrameView::init):
+        (WebCore::FrameView::invalidateRect):
+        (WebCore::FrameView::setFrameRect):
+        (WebCore::FrameView::setMarginWidth):
+        (WebCore::FrameView::setMarginHeight):
+        (WebCore::FrameView::setContentsSize):
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::scrollXForFixedPosition):
+        (WebCore::FrameView::scrollYForFixedPosition):
+        (WebCore::FrameView::scrollOffsetForFixedPosition):
+        (WebCore::FrameView::currentMousePosition):
+        (WebCore::FrameView::scrollContentsFastPath):
+        (WebCore::FrameView::scrollContentsSlowPath):
+        (WebCore::FrameView::setScrollPosition):
+        (WebCore::FrameView::repaintContentRectangle):
+        (WebCore::FrameView::scrollToAnchor):
+        (WebCore::FrameView::performPostLayoutTasks):
+        (WebCore::FrameView::windowClipRect):
+        (WebCore::FrameView::windowClipRectForLayer):
+        (WebCore::FrameView::scrollTo):
+        (WebCore::FrameView::invalidateScrollbarRect):
+        (WebCore::FrameView::getTickmarks):
+        (WebCore::FrameView::windowResizerRect):
+        (WebCore::FrameView::setVisibleScrollerThumbRect):
+        (WebCore::FrameView::paintScrollCorner):
+        (WebCore::FrameView::paintContents):
+        (WebCore::FrameView::paintOverhangAreas):
+        (WebCore::FrameView::forceLayoutForPagination):
+        (WebCore::FrameView::convertFromRenderer):
+        (WebCore::FrameView::convertToRenderer):
+        (WebCore::FrameView::convertToContainingView):
+        (WebCore::FrameView::convertFromContainingView):
+        * page/FrameView.h:
+        (WebCore::FrameView::marginWidth):
+        (WebCore::FrameView::marginHeight):
+        * page/mac/FrameMac.mm:
+        (WebCore::Frame::snapshotDragImage):
+        (WebCore::Frame::nodeImage):
+
+2011-08-17  Emil A Eklund  <eae@chromium.org>
+
         Switch html/* to to new layout types
         https://bugs.webkit.org/show_bug.cgi?id=66347
 

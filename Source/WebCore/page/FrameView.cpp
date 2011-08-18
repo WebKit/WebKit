@@ -158,7 +158,7 @@ PassRefPtr<FrameView> FrameView::create(Frame* frame)
 PassRefPtr<FrameView> FrameView::create(Frame* frame, const IntSize& initialSize)
 {
     RefPtr<FrameView> view = adoptRef(new FrameView(frame));
-    view->Widget::setFrameRect(IntRect(view->location(), initialSize));
+    view->Widget::setFrameRect(LayoutRect(view->location(), initialSize));
     view->setInitialBoundsSize(initialSize);
     view->show();
     return view.release();
@@ -218,7 +218,7 @@ void FrameView::reset()
     m_firstLayout = true;
     m_firstLayoutCallbackPending = false;
     m_wasScrolledByUser = false;
-    m_lastLayoutSize = IntSize();
+    m_lastLayoutSize = LayoutSize();
     m_lastZoomFactor = 1.0f;
     m_deferringRepaints = 0;
     m_repaintCount = 0;
@@ -270,8 +270,8 @@ void FrameView::init()
 {
     reset();
 
-    m_margins = IntSize(-1, -1); // undefined
-    m_size = IntSize();
+    m_margins = LayoutSize(-1, -1); // undefined
+    m_size = LayoutSize();
 
     // Propagate the marginwidth/height and scrolling modes to the view.
     Element* ownerElement = m_frame ? m_frame->ownerElement() : 0;
@@ -279,8 +279,10 @@ void FrameView::init()
         HTMLFrameElement* frameElt = static_cast<HTMLFrameElement*>(ownerElement);
         if (frameElt->scrollingMode() == ScrollbarAlwaysOff)
             setCanHaveScrollbars(false);
-        int marginWidth = frameElt->marginWidth();
-        int marginHeight = frameElt->marginHeight();
+        LayoutUnit marginWidth = frameElt->marginWidth();
+        LayoutUnit marginHeight = frameElt->marginHeight();
+        // FIXME: Change to roughlyEquals or >= 0 when we move to floats. 
+        // See https://bugs.webkit.org/show_bug.cgi?id=66148
         if (marginWidth != -1)
             setMarginWidth(marginWidth);
         if (marginHeight != -1)
@@ -361,7 +363,7 @@ bool FrameView::didFirstLayout() const
     return !m_firstLayout;
 }
 
-void FrameView::invalidateRect(const IntRect& rect)
+void FrameView::invalidateRect(const LayoutRect& rect)
 {
     if (!parent()) {
         if (hostWindow())
@@ -376,15 +378,15 @@ void FrameView::invalidateRect(const IntRect& rect)
     if (!renderer)
         return;
 
-    IntRect repaintRect = rect;
+    LayoutRect repaintRect = rect;
     repaintRect.move(renderer->borderLeft() + renderer->paddingLeft(),
                      renderer->borderTop() + renderer->paddingTop());
     renderer->repaintRectangle(repaintRect);
 }
 
-void FrameView::setFrameRect(const IntRect& newRect)
+void FrameView::setFrameRect(const LayoutRect& newRect)
 {
-    IntRect oldRect = frameRect();
+    LayoutRect oldRect = frameRect();
     if (newRect == oldRect)
         return;
 
@@ -406,13 +408,13 @@ void FrameView::scheduleAnimation()
 }
 #endif
 
-void FrameView::setMarginWidth(int w)
+void FrameView::setMarginWidth(LayoutUnit w)
 {
     // make it update the rendering area when set
     m_margins.setWidth(w);
 }
 
-void FrameView::setMarginHeight(int h)
+void FrameView::setMarginHeight(LayoutUnit h)
 {
     // make it update the rendering area when set
     m_margins.setHeight(h);
@@ -476,7 +478,7 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
     return ScrollView::createScrollbar(orientation);
 }
 
-void FrameView::setContentsSize(const IntSize& size)
+void FrameView::setContentsSize(const LayoutSize& size)
 {
     if (size == contentsSize())
         return;
@@ -505,9 +507,9 @@ void FrameView::adjustViewSize()
     if (!root)
         return;
 
-    const IntRect& rect = root->documentRect();
-    const IntSize& size = rect.size();
-    ScrollView::setScrollOrigin(IntPoint(-rect.x(), -rect.y()), !m_frame->document()->printing(), size == contentsSize());
+    const LayoutRect& rect = root->documentRect();
+    const LayoutSize& size = rect.size();
+    ScrollView::setScrollOrigin(LayoutPoint(-rect.x(), -rect.y()), !m_frame->document()->printing(), size == contentsSize());
     
     setContentsSize(size);
 }
@@ -1282,15 +1284,15 @@ void FrameView::removeFixedObject()
         updateCanBlitOnScrollRecursively();
 }
 
-int FrameView::scrollXForFixedPosition() const
+LayoutUnit FrameView::scrollXForFixedPosition() const
 {
-    int visibleContentWidth = visibleContentRect().width();
-    int maxX = contentsWidth() - visibleContentWidth;
+    LayoutUnit visibleContentWidth = visibleContentRect().width();
+    LayoutUnit maxX = contentsWidth() - visibleContentWidth;
 
     if (maxX == 0)
         return 0;
 
-    int x = scrollX();
+    LayoutUnit x = scrollX();
 
     if (!ScrollView::scrollOrigin().x()) {
         if (x < 0)
@@ -1317,15 +1319,15 @@ int FrameView::scrollXForFixedPosition() const
     return x * dragFactor / pageScaleFactor;
 }
 
-int FrameView::scrollYForFixedPosition() const
+LayoutUnit FrameView::scrollYForFixedPosition() const
 {
-    int visibleContentHeight = visibleContentRect().height();
+    LayoutUnit visibleContentHeight = visibleContentRect().height();
 
-    int maxY = contentsHeight() - visibleContentHeight;
+    LayoutUnit maxY = contentsHeight() - visibleContentHeight;
     if (maxY == 0)
         return 0;
 
-    int y = scrollY();
+    LayoutUnit y = scrollY();
 
     if (!ScrollView::scrollOrigin().y()) {
         if (y < 0)
@@ -1348,17 +1350,17 @@ int FrameView::scrollYForFixedPosition() const
     return y * dragFactor / pageScaleFactor;
 }
 
-IntSize FrameView::scrollOffsetForFixedPosition() const
+LayoutSize FrameView::scrollOffsetForFixedPosition() const
 {
-    return IntSize(scrollXForFixedPosition(), scrollYForFixedPosition());
+    return LayoutSize(scrollXForFixedPosition(), scrollYForFixedPosition());
 }
 
-IntPoint FrameView::currentMousePosition() const
+LayoutPoint FrameView::currentMousePosition() const
 {
     return m_frame ? m_frame->eventHandler()->currentMousePosition() : IntPoint();
 }
 
-bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect)
+bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const LayoutRect& rectToScroll, const LayoutRect& clipRect)
 {
     const size_t fixedObjectThreshold = 5;
 
@@ -1374,14 +1376,14 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
     const bool isCompositedContentLayer = contentsInCompositedLayer();
 
     // Get the rects of the fixed objects visible in the rectToScroll
-    Vector<IntRect, fixedObjectThreshold> subRectToUpdate;
+    Vector<LayoutRect, fixedObjectThreshold> subRectToUpdate;
     bool updateInvalidatedSubRect = true;
     RenderBlock::PositionedObjectsListHashSet::const_iterator end = positionedObjects->end();
     for (RenderBlock::PositionedObjectsListHashSet::const_iterator it = positionedObjects->begin(); it != end; ++it) {
         RenderBox* renderBox = *it;
         if (renderBox->style()->position() != FixedPosition)
             continue;
-        IntRect updateRect = renderBox->layer()->repaintRectIncludingDescendants();
+        LayoutRect updateRect = renderBox->layer()->repaintRectIncludingDescendants();
         updateRect = contentsToWindow(updateRect);
         if (!isCompositedContentLayer && clipsRepaints())
             updateRect.intersect(rectToScroll);
@@ -1402,8 +1404,8 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
         // 2) update the area of fixed objects that has been invalidated
         size_t fixObjectsCount = subRectToUpdate.size();
         for (size_t i = 0; i < fixObjectsCount; ++i) {
-            IntRect updateRect = subRectToUpdate[i];
-            IntRect scrolledRect = updateRect;
+            LayoutRect updateRect = subRectToUpdate[i];
+            LayoutRect scrolledRect = updateRect;
             scrolledRect.move(scrollDelta);
             updateRect.unite(scrolledRect);
 #if USE(ACCELERATED_COMPOSITING)
@@ -1426,7 +1428,7 @@ bool FrameView::scrollContentsFastPath(const IntSize& scrollDelta, const IntRect
     return false;
 }
 
-void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
+void FrameView::scrollContentsSlowPath(const LayoutRect& updateRect)
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (contentsInCompositedLayer()) {
@@ -1436,9 +1438,9 @@ void FrameView::scrollContentsSlowPath(const IntRect& updateRect)
     }
     if (RenderPart* frameRenderer = m_frame->ownerRenderer()) {
         if (frameRenderer->containerForRepaint()) {
-            IntRect rect(frameRenderer->borderLeft() + frameRenderer->paddingLeft(),
-                         frameRenderer->borderTop() + frameRenderer->paddingTop(),
-                         visibleWidth(), visibleHeight());
+            LayoutRect rect(frameRenderer->borderLeft() + frameRenderer->paddingLeft(),
+                            frameRenderer->borderTop() + frameRenderer->paddingTop(),
+                            visibleWidth(), visibleHeight());
             frameRenderer->repaintRectangle(rect);
             return;
         }
@@ -1581,7 +1583,7 @@ void FrameView::maintainScrollPositionAtAnchor(Node* anchorNode)
         scrollToAnchor();
 }
 
-void FrameView::setScrollPosition(const IntPoint& scrollPoint)
+void FrameView::setScrollPosition(const LayoutPoint& scrollPoint)
 {
     bool wasInProgrammaticScroll = m_inProgrammaticScroll;
     m_inProgrammaticScroll = true;
@@ -1641,19 +1643,19 @@ HostWindow* FrameView::hostWindow() const
 
 const unsigned cRepaintRectUnionThreshold = 25;
 
-void FrameView::repaintContentRectangle(const IntRect& r, bool immediate)
+void FrameView::repaintContentRectangle(const LayoutRect& r, bool immediate)
 {
     ASSERT(!m_frame->ownerElement());
 
     double delay = m_deferringRepaints ? 0 : adjustedDeferredRepaintDelay();
     if ((m_deferringRepaints || m_deferredRepaintTimer.isActive() || delay) && !immediate) {
-        IntRect paintRect = r;
+        LayoutRect paintRect = r;
         if (clipsRepaints() && !paintsEntireContents())
             paintRect.intersect(visibleContentRect());
         if (paintRect.isEmpty())
             return;
         if (m_repaintCount == cRepaintRectUnionThreshold) {
-            IntRect unionedRect;
+            LayoutRect unionedRect;
             for (unsigned i = 0; i < cRepaintRectUnionThreshold; ++i)
                 unionedRect.unite(m_repaintRects[i]);
             m_repaintRects.clear();
@@ -2042,7 +2044,7 @@ void FrameView::scrollToAnchor()
     if (!anchorNode->renderer())
         return;
 
-    IntRect rect;
+    LayoutRect rect;
     if (anchorNode != m_frame->document())
         rect = anchorNode->getRect();
 
@@ -2166,7 +2168,7 @@ void FrameView::performPostLayoutTasks()
     m_actionScheduler->resume();
 
     if (!root->printing()) {
-        IntSize currentSize = IntSize(width(), height());
+        LayoutSize currentSize = LayoutSize(width(), height());
         float currentZoomFactor = root->style()->zoom();
         bool resized = !m_firstLayout && (currentSize != m_lastLayoutSize || currentZoomFactor != m_lastZoomFactor);
         m_lastLayoutSize = currentSize;
@@ -2207,15 +2209,15 @@ void FrameView::updateOverflowStatus(bool horizontalOverflow, bool verticalOverf
     
 }
 
-IntRect FrameView::windowClipRect(bool clipToContents) const
+LayoutRect FrameView::windowClipRect(bool clipToContents) const
 {
     ASSERT(m_frame->view() == this);
 
     if (paintsEntireContents())
-        return IntRect(IntPoint(0, 0), contentsSize());
+        return LayoutRect(LayoutPoint(), contentsSize());
 
     // Set our clip rect to be our contents.
-    IntRect clipRect = contentsToWindow(visibleContentRect(!clipToContents));
+    LayoutRect clipRect = contentsToWindow(visibleContentRect(!clipToContents));
     if (!m_frame || !m_frame->ownerElement())
         return clipRect;
 
@@ -2231,14 +2233,14 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
     return clipRect;
 }
 
-IntRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToLayerContents) const
+LayoutRect FrameView::windowClipRectForLayer(const RenderLayer* layer, bool clipToLayerContents) const
 {
     // If we have no layer, just return our window clip rect.
     if (!layer)
         return windowClipRect();
 
     // Apply the clip from the layer.
-    IntRect clipRect;
+    LayoutRect clipRect;
     if (clipToLayerContents)
         clipRect = layer->childrenClipRect();
     else
@@ -2253,33 +2255,33 @@ bool FrameView::isActive() const
     return page && page->focusController()->isActive();
 }
 
-void FrameView::scrollTo(const IntSize& newOffset)
+void FrameView::scrollTo(const LayoutSize& newOffset)
 {
-    IntSize offset = scrollOffset();
+    LayoutSize offset = scrollOffset();
     ScrollView::scrollTo(newOffset);
     if (offset != scrollOffset())
         scrollPositionChanged();
     frame()->loader()->client()->didChangeScrollOffset();
 }
 
-void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rect)
+void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const LayoutRect& rect)
 {
     // Add in our offset within the FrameView.
-    IntRect dirtyRect = rect;
+    LayoutRect dirtyRect = rect;
     dirtyRect.moveBy(scrollbar->location());
     invalidateRect(dirtyRect);
 }
 
-void FrameView::getTickmarks(Vector<IntRect>& tickmarks) const
+void FrameView::getTickmarks(Vector<LayoutRect>& tickmarks) const
 {
     tickmarks = frame()->document()->markers()->renderedRectsForMarkers(DocumentMarker::TextMatch);
 }
 
-IntRect FrameView::windowResizerRect() const
+LayoutRect FrameView::windowResizerRect() const
 {
     Page* page = frame() ? frame()->page() : 0;
     if (!page)
-        return IntRect();
+        return LayoutRect();
     return page->chrome()->windowResizerRect();
 }
 
@@ -2315,7 +2317,7 @@ void FrameView::didCompleteAnimatedScroll() const
     return page->chrome()->client()->didCompleteAnimatedScroll();
 }
 
-void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
+void FrameView::setVisibleScrollerThumbRect(const LayoutRect& scrollerThumb)
 {
     Page* page = m_frame->page();
     if (!page)
@@ -2446,7 +2448,7 @@ void FrameView::updateScrollCorner()
     ScrollView::updateScrollCorner();
 }
 
-void FrameView::paintScrollCorner(GraphicsContext* context, const IntRect& cornerRect)
+void FrameView::paintScrollCorner(GraphicsContext* context, const LayoutRect& cornerRect)
 {
     if (context->updatingControlTints()) {
         updateScrollCorner();
@@ -2566,7 +2568,7 @@ void FrameView::setWasScrolledByUser(bool wasScrolledByUser)
     m_wasScrolledByUser = wasScrolledByUser;
 }
 
-void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
+void FrameView::paintContents(GraphicsContext* p, const LayoutRect& rect)
 {
     if (!frame())
         return;
@@ -2685,7 +2687,7 @@ void FrameView::setNodeToDraw(Node* node)
     m_nodeToDraw = node;
 }
 
-void FrameView::paintOverhangAreas(GraphicsContext* context, const IntRect& horizontalOverhangArea, const IntRect& verticalOverhangArea, const IntRect& dirtyRect)
+void FrameView::paintOverhangAreas(GraphicsContext* context, const LayoutRect& horizontalOverhangArea, const LayoutRect& verticalOverhangArea, const LayoutRect& dirtyRect)
 {
     if (context->paintingDisabled())
         return;
@@ -2753,7 +2755,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
         float pageLogicalWidth = root->style()->isHorizontalWritingMode() ? pageSize.width() : pageSize.height();
         float pageLogicalHeight = root->style()->isHorizontalWritingMode() ? pageSize.height() : pageSize.width();
 
-        int flooredPageLogicalWidth = static_cast<int>(pageLogicalWidth);
+        LayoutUnit flooredPageLogicalWidth = static_cast<LayoutUnit>(pageLogicalWidth);
         root->setLogicalWidth(flooredPageLogicalWidth);
         root->setPageLogicalHeight(pageLogicalHeight);
         root->setNeedsLayoutAndPrefWidthsRecalc();
@@ -2764,7 +2766,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
         // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
         // implementation should not do this!
         bool horizontalWritingMode = root->style()->isHorizontalWritingMode();
-        int docLogicalWidth = horizontalWritingMode ? root->documentRect().width() : root->documentRect().height();
+        LayoutUnit docLogicalWidth = horizontalWritingMode ? root->documentRect().width() : root->documentRect().height();
         if (docLogicalWidth > pageLogicalWidth) {
             flooredPageLogicalWidth = std::min<float>(docLogicalWidth, pageLogicalWidth * maximumShrinkFactor);
             if (pageLogicalHeight)
@@ -2772,14 +2774,14 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
             root->setLogicalWidth(flooredPageLogicalWidth);
             root->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();
-            const IntRect& documentRect = root->documentRect();
-            int docLogicalHeight = horizontalWritingMode ? documentRect.height() : documentRect.width();
-            int docLogicalTop = horizontalWritingMode ? documentRect.y() : documentRect.x();
-            int docLogicalRight = horizontalWritingMode ? documentRect.maxX() : documentRect.maxY();
-            int clippedLogicalLeft = 0;
+            const LayoutRect& documentRect = root->documentRect();
+            LayoutUnit docLogicalHeight = horizontalWritingMode ? documentRect.height() : documentRect.width();
+            LayoutUnit docLogicalTop = horizontalWritingMode ? documentRect.y() : documentRect.x();
+            LayoutUnit docLogicalRight = horizontalWritingMode ? documentRect.maxX() : documentRect.maxY();
+            LayoutUnit clippedLogicalLeft = 0;
             if (!root->style()->isLeftToRightDirection())
                 clippedLogicalLeft = docLogicalRight - flooredPageLogicalWidth;
-            IntRect overflow(clippedLogicalLeft, docLogicalTop, flooredPageLogicalWidth, docLogicalHeight);
+            LayoutRect overflow(clippedLogicalLeft, docLogicalTop, flooredPageLogicalWidth, docLogicalHeight);
             if (!horizontalWritingMode)
                 overflow = overflow.transposedRect();
             root->clearLayoutOverflow();
@@ -2809,9 +2811,9 @@ void FrameView::adjustPageHeightDeprecated(float *newBottom, float oldTop, float
         *newBottom = oldBottom;
 }
 
-IntRect FrameView::convertFromRenderer(const RenderObject* renderer, const IntRect& rendererRect) const
+LayoutRect FrameView::convertFromRenderer(const RenderObject* renderer, const LayoutRect& rendererRect) const
 {
-    IntRect rect = renderer->localToAbsoluteQuad(FloatRect(rendererRect)).enclosingBoundingBox();
+    LayoutRect rect = renderer->localToAbsoluteQuad(FloatRect(rendererRect)).enclosingBoundingBox();
 
     // Convert from page ("absolute") to FrameView coordinates.
     rect.moveBy(-scrollPosition());
@@ -2819,31 +2821,31 @@ IntRect FrameView::convertFromRenderer(const RenderObject* renderer, const IntRe
     return rect;
 }
 
-IntRect FrameView::convertToRenderer(const RenderObject* renderer, const IntRect& viewRect) const
+LayoutRect FrameView::convertToRenderer(const RenderObject* renderer, const LayoutRect& viewRect) const
 {
-    IntRect rect = viewRect;
+    LayoutRect rect = viewRect;
     
     // Convert from FrameView coords into page ("absolute") coordinates.
     rect.moveBy(scrollPosition());
 
     // FIXME: we don't have a way to map an absolute rect down to a local quad, so just
     // move the rect for now.
-    rect.setLocation(roundedIntPoint(renderer->absoluteToLocal(rect.location(), false, true /* use transforms */)));
+    rect.setLocation(roundedLayoutPoint(renderer->absoluteToLocal(rect.location(), false, true /* use transforms */)));
     return rect;
 }
 
-IntPoint FrameView::convertFromRenderer(const RenderObject* renderer, const IntPoint& rendererPoint) const
+LayoutPoint FrameView::convertFromRenderer(const RenderObject* renderer, const LayoutPoint& rendererPoint) const
 {
-    IntPoint point = roundedIntPoint(renderer->localToAbsolute(rendererPoint, false, true /* use transforms */));
+    LayoutPoint point = roundedLayoutPoint(renderer->localToAbsolute(rendererPoint, false, true /* use transforms */));
 
     // Convert from page ("absolute") to FrameView coordinates.
     point.moveBy(-scrollPosition());
     return point;
 }
 
-IntPoint FrameView::convertToRenderer(const RenderObject* renderer, const IntPoint& viewPoint) const
+LayoutPoint FrameView::convertToRenderer(const RenderObject* renderer, const LayoutPoint& viewPoint) const
 {
-    IntPoint point = viewPoint;
+    LayoutPoint point = viewPoint;
     
     // Convert from FrameView coords into page ("absolute") coordinates.
     point += IntSize(scrollX(), scrollY());
@@ -2851,7 +2853,7 @@ IntPoint FrameView::convertToRenderer(const RenderObject* renderer, const IntPoi
     return roundedIntPoint(renderer->absoluteToLocal(point, false, true /* use transforms */));
 }
 
-IntRect FrameView::convertToContainingView(const IntRect& localRect) const
+LayoutRect FrameView::convertToContainingView(const LayoutRect& localRect) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
@@ -2861,7 +2863,7 @@ IntRect FrameView::convertToContainingView(const IntRect& localRect) const
             if (!renderer)
                 return localRect;
                 
-            IntRect rect(localRect);
+            LayoutRect rect(localRect);
             // Add borders and padding??
             rect.move(renderer->borderLeft() + renderer->paddingLeft(),
                       renderer->borderTop() + renderer->paddingTop());
@@ -2874,7 +2876,7 @@ IntRect FrameView::convertToContainingView(const IntRect& localRect) const
     return localRect;
 }
 
-IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
+LayoutRect FrameView::convertFromContainingView(const LayoutRect& parentRect) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
@@ -2885,7 +2887,7 @@ IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
             if (!renderer)
                 return parentRect;
 
-            IntRect rect = parentView->convertToRenderer(renderer, parentRect);
+            LayoutRect rect = parentView->convertToRenderer(renderer, parentRect);
             // Subtract borders and padding
             rect.move(-renderer->borderLeft() - renderer->paddingLeft(),
                       -renderer->borderTop() - renderer->paddingTop());
@@ -2898,7 +2900,7 @@ IntRect FrameView::convertFromContainingView(const IntRect& parentRect) const
     return parentRect;
 }
 
-IntPoint FrameView::convertToContainingView(const IntPoint& localPoint) const
+LayoutPoint FrameView::convertToContainingView(const LayoutPoint& localPoint) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
@@ -2909,7 +2911,7 @@ IntPoint FrameView::convertToContainingView(const IntPoint& localPoint) const
             if (!renderer)
                 return localPoint;
                 
-            IntPoint point(localPoint);
+            LayoutPoint point(localPoint);
 
             // Add borders and padding
             point.move(renderer->borderLeft() + renderer->paddingLeft(),
@@ -2923,7 +2925,7 @@ IntPoint FrameView::convertToContainingView(const IntPoint& localPoint) const
     return localPoint;
 }
 
-IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
+LayoutPoint FrameView::convertFromContainingView(const LayoutPoint& parentPoint) const
 {
     if (const ScrollView* parentScrollView = parent()) {
         if (parentScrollView->isFrameView()) {
@@ -2934,7 +2936,7 @@ IntPoint FrameView::convertFromContainingView(const IntPoint& parentPoint) const
             if (!renderer)
                 return parentPoint;
 
-            IntPoint point = parentView->convertToRenderer(renderer, parentPoint);
+            LayoutPoint point = parentView->convertToRenderer(renderer, parentPoint);
             // Subtract borders and padding
             point.move(-renderer->borderLeft() - renderer->paddingLeft(),
                        -renderer->borderTop() - renderer->paddingTop());

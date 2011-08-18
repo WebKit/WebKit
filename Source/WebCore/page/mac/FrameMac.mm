@@ -303,7 +303,7 @@ NSImage* Frame::snapshotDragImage(Node* node, NSRect* imageRect, NSRect* element
     renderer->updateDragState(true);    // mark dragged nodes (so they pick up the right CSS)
     m_doc->updateLayout();        // forces style recalc - needed since changing the drag state might
                                         // imply new styles, plus JS could have changed other things
-    IntRect topLevelRect;
+    LayoutRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
     m_view->setNodeToDraw(node);              // invoke special sub-tree drawing mode
@@ -327,7 +327,7 @@ DragImageRef Frame::nodeImage(Node* node)
 
     m_doc->updateLayout(); // forces style recalc
 
-    IntRect topLevelRect;
+    LayoutRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
 
     m_view->setNodeToDraw(node); // invoke special sub-tree drawing mode

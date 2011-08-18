@@ -165,7 +165,7 @@ namespace WebCore {
         void setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor);
 
         // FIXME: These functions should move to Page.
-        void scalePage(float scale, const IntPoint& origin);
+        void scalePage(float scale, const LayoutPoint& origin);
         float pageScaleFactor() const { return m_pageScaleFactor; }
         void deviceScaleFactorChanged();
 
@@ -187,9 +187,9 @@ namespace WebCore {
         DragImageRef nodeImage(Node*);
         DragImageRef dragImageForSelection();
 
-        VisiblePosition visiblePositionForPoint(const IntPoint& framePoint);
-        Document* documentAtPoint(const IntPoint& windowPoint);
-        PassRefPtr<Range> rangeForPoint(const IntPoint& framePoint);
+        VisiblePosition visiblePositionForPoint(const LayoutPoint& framePoint);
+        Document* documentAtPoint(const LayoutPoint& windowPoint);
+        PassRefPtr<Range> rangeForPoint(const LayoutPoint& framePoint);
 
         String searchForLabelsAboveCell(RegularExpression*, HTMLTableCellElement*, size_t* resultDistanceFromStartOfCell);
         String searchForLabelsBeforeElement(const Vector<String>& labels, Element*, size_t* resultDistance, bool* resultIsInCellAbove);

@@ -838,7 +838,7 @@ String Frame::displayStringModifiedByEncoding(const String& str) const
     return document() ? document()->displayStringModifiedByEncoding(str) : str;
 }
 
-VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint)
+VisiblePosition Frame::visiblePositionForPoint(const LayoutPoint& framePoint)
 {
     HitTestResult result = eventHandler()->hitTestResultAtPoint(framePoint, true);
     Node* node = result.innerNonSharedNode();
@@ -853,12 +853,12 @@ VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint)
     return visiblePos;
 }
 
-Document* Frame::documentAtPoint(const IntPoint& point)
+Document* Frame::documentAtPoint(const LayoutPoint& point)
 {
     if (!view())
         return 0;
 
-    IntPoint pt = view()->windowToContents(point);
+    LayoutPoint pt = view()->windowToContents(point);
     HitTestResult result = HitTestResult(pt);
 
     if (contentRenderer())
@@ -866,7 +866,7 @@ Document* Frame::documentAtPoint(const IntPoint& point)
     return result.innerNode() ? result.innerNode()->document() : 0;
 }
 
-PassRefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
+PassRefPtr<Range> Frame::rangeForPoint(const LayoutPoint& framePoint)
 {
     VisiblePosition position = visiblePositionForPoint(framePoint);
     if (position.isNull())
@@ -875,14 +875,14 @@ PassRefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
     VisiblePosition previous = position.previous();
     if (previous.isNotNull()) {
         RefPtr<Range> previousCharacterRange = makeRange(previous, position);
-        IntRect rect = editor()->firstRectForRange(previousCharacterRange.get());
+        LayoutRect rect = editor()->firstRectForRange(previousCharacterRange.get());
         if (rect.contains(framePoint))
             return previousCharacterRange.release();
     }
 
     VisiblePosition next = position.next();
     if (RefPtr<Range> nextCharacterRange = makeRange(position, next)) {
-        IntRect rect = editor()->firstRectForRange(nextCharacterRange.get());
+        LayoutRect rect = editor()->firstRectForRange(nextCharacterRange.get());
         if (rect.contains(framePoint))
             return nextCharacterRange.release();
     }
@@ -1045,7 +1045,7 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
     if (m_pageZoomFactor != pageZoomFactor) {
         if (FrameView* view = this->view()) {
             // Update the scroll position when doing a full page zoom, so the content stays in relatively the same position.
-            IntPoint scrollPosition = view->scrollPosition();
+            LayoutPoint scrollPosition = view->scrollPosition();
             float percentDifference = (pageZoomFactor / m_pageZoomFactor);
             view->setScrollPosition(IntPoint(scrollPosition.x() * percentDifference, scrollPosition.y() * percentDifference));
         }
@@ -1077,7 +1077,7 @@ void Frame::deviceOrPageScaleFactorChanged()
 }
 #endif
 
-void Frame::scalePage(float scale, const IntPoint& origin)
+void Frame::scalePage(float scale, const LayoutPoint& origin)
 {
     Document* document = this->document();
     if (!document)
