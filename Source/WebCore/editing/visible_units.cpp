@@ -1595,7 +1595,7 @@ static bool positionIsInBoxButNotOnBoundary(const VisiblePosition& wordBreak, co
         && offsetOfWordBreak != box->caretMaxOffset() && offsetOfWordBreak != box->caretMinOffset();
 }
 
-static VisiblePosition leftWordPositionAcrossBoundary(const VisiblePosition& visiblePosition)
+static VisiblePosition leftWordPositionIgnoringEditingBoundary(const VisiblePosition& visiblePosition)
 {
     InlineBox* box;
     int offset;
@@ -1636,7 +1636,7 @@ static VisiblePosition leftWordPositionAcrossBoundary(const VisiblePosition& vis
     return leftWordBoundary(leftInlineBox(box, blockDirection), invalidOffset, blockDirection);
 }
 
-static VisiblePosition rightWordPositionAcrossBoundary(const VisiblePosition& visiblePosition)
+static VisiblePosition rightWordPositionIgnoringEditingBoundary(const VisiblePosition& visiblePosition)
 {
     InlineBox* box;
     int offset;
@@ -1678,7 +1678,7 @@ VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
     if (visiblePosition.isNull())
         return VisiblePosition();
 
-    VisiblePosition leftWordBreak = leftWordPositionAcrossBoundary(visiblePosition);
+    VisiblePosition leftWordBreak = leftWordPositionIgnoringEditingBoundary(visiblePosition);
     return visiblePosition.honorEditableBoundaryAtOrBefore(leftWordBreak);
 }
 
@@ -1687,7 +1687,7 @@ VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
     if (visiblePosition.isNull())
         return VisiblePosition();
 
-    VisiblePosition rightWordBreak = rightWordPositionAcrossBoundary(visiblePosition);
+    VisiblePosition rightWordBreak = rightWordPositionIgnoringEditingBoundary(visiblePosition);
     return visiblePosition.honorEditableBoundaryAtOrBefore(rightWordBreak);
 }
 
