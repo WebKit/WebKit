@@ -1269,12 +1269,10 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
     FloatRect normalizedDstRect = normalizeRect(dstRect);
 
     FloatRect imageRect = FloatRect(FloatPoint(), size(image));
-    if (!srcRect.width() || !srcRect.height()) {
+    if (!imageRect.contains(normalizedSrcRect) || !srcRect.width() || !srcRect.height()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
-    if (!imageRect.intersects(normalizedSrcRect))
-        return;
 
     GraphicsContext* c = drawingContext();
     if (!c)
@@ -1333,15 +1331,14 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
         return;
     }
 
-    if (!srcRect.width() || !srcRect.height()) {
+    if (!srcCanvasRect.contains(normalizeRect(srcRect)) || !srcRect.width() || !srcRect.height()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
     ec = 0;
 
-    FloatRect normalizedSrcRect = normalizeRect(srcRect);
-    if (!srcCanvasRect.intersects(normalizedSrcRect) || !dstRect.width() || !dstRect.height())
+    if (!dstRect.width() || !dstRect.height())
         return;
 
     GraphicsContext* c = drawingContext();
@@ -1368,7 +1365,7 @@ void CanvasRenderingContext2D::drawImage(HTMLCanvasElement* sourceCanvas, const 
     sourceCanvas->makeRenderingResultsAvailable();
 #endif
 
-    c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, normalizeRect(dstRect), normalizedSrcRect, state().m_globalComposite);
+    c->drawImageBuffer(buffer, ColorSpaceDeviceRGB, dstRect, srcRect, state().m_globalComposite);
     didDraw(dstRect);
 }
 
@@ -1415,14 +1412,12 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
         return;
 
     FloatRect videoRect = FloatRect(FloatPoint(), size(video));
-    if (!srcRect.width() || !srcRect.height()) {
+    if (!videoRect.contains(normalizeRect(srcRect)) || !srcRect.width() || !srcRect.height()) {
         ec = INDEX_SIZE_ERR;
         return;
     }
 
-    FloatRect normalizedSrcRect = normalizeRect(srcRect);
-    FloatRect normalizedDstRect = normalizeRect(dstRect);
-    if (!videoRect.intersects(normalizedSrcRect) || !dstRect.width() || !dstRect.height())
+    if (!dstRect.width() || !dstRect.height())
         return;
 
     GraphicsContext* c = drawingContext();
@@ -1434,13 +1429,13 @@ void CanvasRenderingContext2D::drawImage(HTMLVideoElement* video, const FloatRec
     checkOrigin(video);
 
     GraphicsContextStateSaver stateSaver(*c);
-    c->clip(normalizedDstRect);
-    c->translate(normalizedDstRect.x(), normalizedDstRect.y());
-    c->scale(FloatSize(normalizedDstRect.width() / normalizedSrcRect.width(), normalizedDstRect.height() / normalizedSrcRect.height()));
-    c->translate(-normalizedSrcRect.x(), -normalizedSrcRect.y());
+    c->clip(dstRect);
+    c->translate(dstRect.x(), dstRect.y());
+    c->scale(FloatSize(dstRect.width() / srcRect.width(), dstRect.height() / srcRect.height()));
+    c->translate(-srcRect.x(), -srcRect.y());
     video->paintCurrentFrameInContext(c, IntRect(IntPoint(), size(video)));
     stateSaver.restore();
-    didDraw(normalizedDstRect);
+    didDraw(dstRect);
 }
 #endif
 

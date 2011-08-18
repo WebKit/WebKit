@@ -180,20 +180,23 @@ void GraphicsContext::drawNativeImage(NativeImagePtr imagePtr, const FloatSize& 
         float yScale = srcRect.height() / destRect.height();
         if (shouldUseSubimage) {
             FloatRect subimageRect = srcRect;
-            float leftPadding = (srcRect.x() >= 0) ? (srcRect.x() - floorf(srcRect.x())) : srcRect.x();
-            float topPadding = (srcRect.y() >= 0) ? (srcRect.y() - floorf(srcRect.y())) : srcRect.y();
+            float leftPadding = srcRect.x() - floorf(srcRect.x());
+            float topPadding = srcRect.y() - floorf(srcRect.y());
 
             subimageRect.move(-leftPadding, -topPadding);
             adjustedDestRect.move(-leftPadding / xScale, -topPadding / yScale);
 
-            subimageRect.setWidth(min(ceilf(subimageRect.width() + leftPadding), CGImageGetWidth(image.get()) - subimageRect.x()));
+            subimageRect.setWidth(ceilf(subimageRect.width() + leftPadding));
             adjustedDestRect.setWidth(subimageRect.width() / xScale);
 
-            subimageRect.setHeight(min(ceilf(subimageRect.height() + topPadding), currHeight - subimageRect.y() ));
+            subimageRect.setHeight(ceilf(subimageRect.height() + topPadding));
             adjustedDestRect.setHeight(subimageRect.height() / yScale);
 
-            ASSERT(CGRectContainsRect(CGRectMake(0, 0, CGImageGetWidth(image.get()), currHeight), subimageRect));
             image.adoptCF(CGImageCreateWithImageInRect(image.get(), subimageRect));
+            if (currHeight < srcRect.maxY()) {
+                ASSERT(CGImageGetHeight(image.get()) == currHeight - CGRectIntegral(srcRect).origin.y);
+                adjustedDestRect.setHeight(CGImageGetHeight(image.get()) / yScale);
+            }
         } else {
             adjustedDestRect.setLocation(FloatPoint(destRect.x() - srcRect.x() / xScale, destRect.y() - srcRect.y() / yScale));
             adjustedDestRect.setSize(FloatSize(imageSize.width() / xScale, imageSize.height() / yScale));

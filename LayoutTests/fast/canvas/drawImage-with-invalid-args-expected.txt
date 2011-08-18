@@ -15,16 +15,16 @@ PASS: null image, got exception as expected
 PASS: null image, got exception as expected
 PASS: null image, got exception as expected
 PASS: null image, got exception as expected
-PASS: imageRect does not contain sourceRect on the left side
-PASS: imageRect does not contain sourceRect on the right side
-PASS: imageRect does not contain sourceRect on top
-PASS: imageRect does not contain sourceRect on bottom
-PASS: sourceRect is bigger than imageSource on every side
-PASS: negative size of source, imageRect does not contain sourceRect on the left side
-PASS: negative size of source, imageRect does not contain sourceRect on the right side
-PASS: negative size of source, imageRect does not contain sourceRect on top
-PASS: negative size of source, imageRect does not contain sourceRect on bottom
-PASS: negative size of source, imageRect does not contain sourceRect on every side
+PASS: imageRect does not contain sourceRect on the left side, got exception as expected
+PASS: imageRect does not contain sourceRect on the right side, got exception as expected
+PASS: imageRect does not contain sourceRect on top, got exception as expected
+PASS: imageRect does not contain sourceRect on bottom, got exception as expected
+PASS: sourceRect is bigger than imageSource on every side, got exception as expected
+PASS: negative size of source, imageRect does not contain sourceRect on the left side, got exception as expected
+PASS: negative size of source, imageRect does not contain sourceRect on the right side, got exception as expected
+PASS: negative size of source, imageRect does not contain sourceRect on top, got exception as expected
+PASS: negative size of source, imageRect does not contain sourceRect on bottom, got exception as expected
+PASS: negative size of source, imageRect does not contain sourceRect on every side, got exception as expected
 Test complete.
 
 

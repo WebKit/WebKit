@@ -1,3 +1,20 @@
+2011-08-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r93354.
+        http://trac.webkit.org/changeset/93354
+        https://bugs.webkit.org/show_bug.cgi?id=66503
+
+        "consensus was not reached" (Requested by senorblanco on
+        #webkit).
+
+        * fast/canvas/drawImage-clipped-source-expected.txt: Removed.
+        * fast/canvas/drawImage-clipped-source.html: Removed.
+        * fast/canvas/drawImage-clipped-source.js: Removed.
+        * fast/canvas/drawImage-with-invalid-args-expected.txt:
+        * fast/canvas/drawImage-with-invalid-args.html:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/Skipped:
+
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix r93349.
