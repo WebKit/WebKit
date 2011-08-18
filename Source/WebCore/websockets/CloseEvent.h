@@ -40,9 +40,9 @@ class CloseEvent : public Event {
 public:
     virtual bool isCloseEvent() const { return true; }
 
-    static PassRefPtr<CloseEvent> create(bool wasClean)
+    static PassRefPtr<CloseEvent> create()
     {
-        return adoptRef(new CloseEvent(wasClean));
+        return adoptRef(new CloseEvent());
     }
 
     void initCloseEvent(const AtomicString& type, bool canBubble, bool cancelable, bool wasClean)
@@ -58,9 +58,9 @@ public:
     bool wasClean() const { return m_wasClean; }
 
 private:
-    CloseEvent(bool wasClean)
+    CloseEvent()
         : Event(eventNames().closeEvent, false, false)
-        , m_wasClean(wasClean)
+        , m_wasClean(false)
     { }
 
     bool m_wasClean;

@@ -422,7 +422,7 @@ void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshake
     m_state = CLOSED;
     m_bufferedAmountAfterClose += unhandledBufferedAmount;
     ASSERT(scriptExecutionContext());
-    RefPtr<CloseEvent> event = CloseEvent::create(false);
+    RefPtr<CloseEvent> event = CloseEvent::create();
     event->initCloseEvent(eventNames().closeEvent, false, false, wasClean);
     dispatchEvent(event);
     if (m_channel) {
