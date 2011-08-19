@@ -43,12 +43,12 @@ RenderSVGModelObject::RenderSVGModelObject(SVGStyledElement* node)
 {
 }
 
-IntRect RenderSVGModelObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
+LayoutRect RenderSVGModelObject::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-void RenderSVGModelObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed) const
+void RenderSVGModelObject::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& repaintRect, bool fixed) const
 {
     SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }

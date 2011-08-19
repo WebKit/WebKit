@@ -62,8 +62,8 @@ private:
 
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed);
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false) const;
+    virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;
 
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&, bool* wasFixed = 0) const;
 

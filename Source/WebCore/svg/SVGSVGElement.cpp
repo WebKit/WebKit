@@ -492,7 +492,7 @@ AffineTransform SVGSVGElement::localCoordinateSpaceTransform(SVGLocatable::CTMSc
 
             // Respect scroll offset.
             if (FrameView* view = document()->view()) {
-                IntSize scrollOffset = view->scrollOffset();
+                LayoutSize scrollOffset = view->scrollOffset();
                 transform.translate(-scrollOffset.width(), -scrollOffset.height());
             }
         }

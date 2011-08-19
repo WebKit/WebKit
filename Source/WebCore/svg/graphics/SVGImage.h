@@ -30,6 +30,7 @@
 #if ENABLE(SVG)
 
 #include "Image.h"
+#include "LayoutTypes.h"
 
 namespace WebCore {
 
@@ -48,7 +49,7 @@ private:
 
     virtual String filenameExtension() const;
 
-    virtual void setContainerSize(const IntSize&);
+    virtual void setContainerSize(const LayoutSize&);
     virtual bool usesContainerSize() const;
     virtual bool hasRelativeWidth() const;
     virtual bool hasRelativeHeight() const;

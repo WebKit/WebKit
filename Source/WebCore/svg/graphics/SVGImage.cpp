@@ -72,7 +72,7 @@ private:
         m_image = 0;
     }
 
-    virtual void invalidateContentsAndWindow(const IntRect& r, bool)
+    virtual void invalidateContentsAndWindow(const LayoutRect& r, bool)
     {
         if (m_image && m_image->imageObserver())
             m_image->imageObserver()->changedInRect(m_image, r);
@@ -101,7 +101,7 @@ SVGImage::~SVGImage()
     ASSERT(!m_chromeClient || !m_chromeClient->image());
 }
 
-void SVGImage::setContainerSize(const IntSize& containerSize)
+void SVGImage::setContainerSize(const LayoutSize& containerSize)
 {
     if (containerSize.isEmpty())
         return;

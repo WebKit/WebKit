@@ -1,3 +1,39 @@
+2011-08-19  Emil A Eklund  <eae@chromium.org>
+
+        Switch clipping for svg to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66586
+
+        Reviewed by Eric Seidel.
+
+        No new tests as no new functionality.
+
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGGradientStop.h:
+        (WebCore::RenderSVGGradientStop::clippedOverflowRectForRepaint):
+        * rendering/svg/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::clippedOverflowRectForRepaint):
+        * rendering/svg/RenderSVGInline.cpp:
+        (WebCore::RenderSVGInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGInline::computeRectForRepaint):
+        * rendering/svg/RenderSVGInline.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGModelObject::computeRectForRepaint):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::clippedOverflowRectForRepaint):
+        (WebCore::RenderSVGText::computeRectForRepaint):
+        * rendering/svg/RenderSVGText.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::localCoordinateSpaceTransform):
+        * svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::setContainerSize):
+        (WebCore::SVGSVGElement::containerSize):
+        * svg/graphics/SVGImage.cpp:
+        (WebCore::SVGImageChromeClient::invalidateContentsAndWindow):
+        (WebCore::SVGImage::setContainerSize):
+        * svg/graphics/SVGImage.h:
+
 2011-08-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r93425.

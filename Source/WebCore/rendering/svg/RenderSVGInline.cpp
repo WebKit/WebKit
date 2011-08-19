@@ -67,12 +67,12 @@ FloatRect RenderSVGInline::repaintRectInLocalCoordinates() const
     return FloatRect();
 }
 
-IntRect RenderSVGInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
+LayoutRect RenderSVGInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const
 {
     return SVGRenderSupport::clippedOverflowRectForRepaint(this, repaintContainer);
 }
 
-void RenderSVGInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect& repaintRect, bool fixed) const
+void RenderSVGInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect& repaintRect, bool fixed) const
 {
     SVGRenderSupport::computeRectForRepaint(this, repaintContainer, repaintRect, fixed);
 }

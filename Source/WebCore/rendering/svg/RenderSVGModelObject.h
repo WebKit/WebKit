@@ -51,9 +51,9 @@ public:
 
     virtual bool requiresLayer() const { return false; }
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false) const;
-    virtual IntRect outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer, IntPoint*) const;
+    virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;
+    virtual LayoutRect outlineBoundsForRepaint(RenderBoxModelObject* repaintContainer, LayoutPoint*) const;
 
     virtual void absoluteRects(Vector<LayoutRect>&, const LayoutPoint& accumulatedOffset);
     virtual void absoluteQuads(Vector<FloatQuad>&, bool* wasFixed);

@@ -39,8 +39,8 @@ public:
 
     virtual void paint(PaintInfo&, const LayoutPoint&);
 
-    virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
-    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, IntRect&, bool fixed = false) const;
+    virtual LayoutRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer) const;
+    virtual void computeRectForRepaint(RenderBoxModelObject* repaintContainer, LayoutRect&, bool fixed = false) const;
 
     virtual bool requiresLayer() const { return false; }
     virtual void layout();
