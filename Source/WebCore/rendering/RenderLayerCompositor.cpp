@@ -439,12 +439,12 @@ void RenderLayerCompositor::repaintOnCompositingChange(RenderLayer* layer)
 
 // The bounds of the GraphicsLayer created for a compositing layer is the union of the bounds of all the descendant
 // RenderLayers that are rendered by the composited RenderLayer.
-IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer)
+LayoutRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer)
 {
     if (!canBeComposited(layer))
-        return IntRect();
+        return LayoutRect();
 
-    IntRect boundingBoxRect = layer->localBoundingBox();
+    LayoutRect boundingBoxRect = layer->localBoundingBox();
     if (layer->renderer()->isRoot()) {
         // If the root layer becomes composited (e.g. because some descendant with negative z-index is composited),
         // then it has to be big enough to cover the viewport in order to display the background. This is akin
@@ -458,10 +458,10 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
         }
     }
     
-    IntRect unionBounds = boundingBoxRect;
+    LayoutRect unionBounds = boundingBoxRect;
     
     if (layer->renderer()->hasOverflowClip() || layer->renderer()->hasMask()) {
-        IntPoint ancestorRelOffset;
+        LayoutPoint ancestorRelOffset;
         layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
         boundingBoxRect.moveBy(ancestorRelOffset);
         return boundingBoxRect;
@@ -469,7 +469,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
 
     if (RenderLayer* reflection = layer->reflectionLayer()) {
         if (!reflection->isComposited()) {
-            IntRect childUnionBounds = calculateCompositedBounds(reflection, layer);
+            LayoutRect childUnionBounds = calculateCompositedBounds(reflection, layer);
             unionBounds.unite(childUnionBounds);
         }
     }
@@ -481,7 +481,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = negZOrderList->at(i);
             if (!curLayer->isComposited()) {
-                IntRect childUnionBounds = calculateCompositedBounds(curLayer, layer);
+                LayoutRect childUnionBounds = calculateCompositedBounds(curLayer, layer);
                 unionBounds.unite(childUnionBounds);
             }
         }
@@ -492,7 +492,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = posZOrderList->at(i);
             if (!curLayer->isComposited()) {
-                IntRect childUnionBounds = calculateCompositedBounds(curLayer, layer);
+                LayoutRect childUnionBounds = calculateCompositedBounds(curLayer, layer);
                 unionBounds.unite(childUnionBounds);
             }
         }
@@ -503,7 +503,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
             if (!curLayer->isComposited()) {
-                IntRect curAbsBounds = calculateCompositedBounds(curLayer, layer);
+                LayoutRect curAbsBounds = calculateCompositedBounds(curLayer, layer);
                 unionBounds.unite(curAbsBounds);
             }
         }
@@ -515,7 +515,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
         unionBounds = affineTrans->mapRect(unionBounds);
     }
 
-    IntPoint ancestorRelOffset;
+    LayoutPoint ancestorRelOffset;
     layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
     unionBounds.moveBy(ancestorRelOffset);
 
@@ -537,9 +537,9 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer* parent, RenderLayer*
     RenderLayer* compLayer = parent->enclosingCompositingLayer();
     if (compLayer) {
         ASSERT(compLayer->backing());
-        IntRect compBounds = child->backing()->compositedBounds();
+        LayoutRect compBounds = child->backing()->compositedBounds();
 
-        IntPoint offset;
+        LayoutPoint offset;
         child->convertToLayerCoords(compLayer, offset);
         compBounds.moveBy(offset);
 
@@ -565,7 +565,7 @@ RenderLayer* RenderLayerCompositor::enclosingNonStackingClippingLayer(const Rend
     return 0;
 }
 
-void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer* layer, IntRect& layerBounds, bool& boundsComputed)
+void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer* layer, LayoutRect& layerBounds, bool& boundsComputed)
 {
     if (layer->isRootLayer())
         return;
@@ -574,11 +574,11 @@ void RenderLayerCompositor::addToOverlapMap(OverlapMap& overlapMap, RenderLayer*
         layerBounds = layer->renderer()->localToAbsoluteQuad(FloatRect(layer->localBoundingBox())).enclosingBoundingBox();
         // Empty rects never intersect, but we need them to for the purposes of overlap testing.
         if (layerBounds.isEmpty())
-            layerBounds.setSize(IntSize(1, 1));
+            layerBounds.setSize(LayoutSize(1, 1));
         boundsComputed = true;
     }
 
-    IntRect clipRect = layer->backgroundClipRect(rootRenderLayer(), true);
+    LayoutRect clipRect = layer->backgroundClipRect(rootRenderLayer(), true);
     clipRect.intersect(layerBounds);
     overlapMap.add(layer, clipRect);
 }
@@ -588,7 +588,7 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
     if (!canBeComposited(layer) || overlapMap.contains(layer))
         return;
 
-    IntRect bounds;
+    LayoutRect bounds;
     bool haveComputedBounds = false;
     addToOverlapMap(overlapMap, layer, bounds, haveComputedBounds);
 
@@ -622,11 +622,11 @@ void RenderLayerCompositor::addToOverlapMapRecursive(OverlapMap& overlapMap, Ren
     }
 }
 
-bool RenderLayerCompositor::overlapsCompositedLayers(OverlapMap& overlapMap, const IntRect& layerBounds)
+bool RenderLayerCompositor::overlapsCompositedLayers(OverlapMap& overlapMap, const LayoutRect& layerBounds)
 {
     RenderLayerCompositor::OverlapMap::const_iterator end = overlapMap.end();
     for (RenderLayerCompositor::OverlapMap::const_iterator it = overlapMap.begin(); it != end; ++it) {
-        const IntRect& bounds = it->second;
+        const LayoutRect& bounds = it->second;
         if (layerBounds.intersects(bounds))
             return true;
     }
@@ -655,13 +655,13 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
     bool mustOverlapCompositedLayers = compositingState.m_subtreeIsCompositing;
 
     bool haveComputedBounds = false;
-    IntRect absBounds;
+    LayoutRect absBounds;
     if (overlapMap && !overlapMap->isEmpty()) {
         // If we're testing for overlap, we only need to composite if we overlap something that is already composited.
         absBounds = layer->renderer()->localToAbsoluteQuad(FloatRect(layer->localBoundingBox())).enclosingBoundingBox();
         // Empty rects never intersect, but we need them to for the purposes of overlap testing.
         if (absBounds.isEmpty())
-            absBounds.setSize(IntSize(1, 1));
+            absBounds.setSize(LayoutSize(1, 1));
         haveComputedBounds = true;
         mustOverlapCompositedLayers = overlapsCompositedLayers(*overlapMap, absBounds);
     }
@@ -946,7 +946,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
     }
 }
 
-void RenderLayerCompositor::frameViewDidChangeLocation(const IntPoint& contentsOffset)
+void RenderLayerCompositor::frameViewDidChangeLocation(const LayoutPoint& contentsOffset)
 {
     if (m_overflowControlsHostLayer)
         m_overflowControlsHostLayer->setPosition(contentsOffset);
@@ -958,13 +958,13 @@ void RenderLayerCompositor::frameViewDidChangeSize()
         FrameView* frameView = m_renderView->frameView();
         m_clipLayer->setSize(frameView->visibleContentRect(false /* exclude scrollbars */).size());
 
-        IntPoint scrollPosition = frameView->scrollPosition();
+        LayoutPoint scrollPosition = frameView->scrollPosition();
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
         updateOverflowControlsLayers();
     }
 }
 
-void RenderLayerCompositor::frameViewDidScroll(const IntPoint& scrollPosition)
+void RenderLayerCompositor::frameViewDidScroll(const LayoutPoint& scrollPosition)
 {
     if (m_scrollLayer)
         m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
@@ -1110,12 +1110,12 @@ void RenderLayerCompositor::updateCompositingDescendantGeometry(RenderLayer* com
 }
 
 
-void RenderLayerCompositor::repaintCompositedLayersAbsoluteRect(const IntRect& absRect)
+void RenderLayerCompositor::repaintCompositedLayersAbsoluteRect(const LayoutRect& absRect)
 {
     recursiveRepaintLayerRect(rootRenderLayer(), absRect);
 }
 
-void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const IntRect& rect)
+void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const LayoutRect& rect)
 {
     // FIXME: This method does not work correctly with transforms.
     if (layer->isComposited())
@@ -1126,7 +1126,7 @@ void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const 
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = negZOrderList->at(i);
-                IntRect childRect(rect);
+                LayoutRect childRect(rect);
                 curLayer->convertToLayerCoords(layer, childRect);
                 recursiveRepaintLayerRect(curLayer, childRect);
             }
@@ -1136,7 +1136,7 @@ void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const 
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = posZOrderList->at(i);
-                IntRect childRect(rect);
+                LayoutRect childRect(rect);
                 curLayer->convertToLayerCoords(layer, childRect);
                 recursiveRepaintLayerRect(curLayer, childRect);
             }
@@ -1146,7 +1146,7 @@ void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const 
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
-            IntRect childRect(rect);
+            LayoutRect childRect(rect);
             curLayer->convertToLayerCoords(layer, childRect);
             recursiveRepaintLayerRect(curLayer, childRect);
         }
@@ -1202,7 +1202,7 @@ void RenderLayerCompositor::clearBackingForAllLayers()
 void RenderLayerCompositor::updateRootLayerPosition()
 {
     if (m_rootContentLayer) {
-        const IntRect& documentRect = m_renderView->documentRect();
+        const LayoutRect& documentRect = m_renderView->documentRect();
         m_rootContentLayer->setSize(documentRect.size());
         m_rootContentLayer->setPosition(documentRect.location());
     }
@@ -1346,7 +1346,7 @@ bool RenderLayerCompositor::clippedByAncestor(RenderLayer* layer) const
     if (!computeClipRoot || computeClipRoot == layer)
         return false;
 
-    IntRect backgroundRect = layer->backgroundClipRect(computeClipRoot, true);
+    LayoutRect backgroundRect = layer->backgroundClipRect(computeClipRoot, true);
     return backgroundRect != PaintInfo::infiniteRect();
 }
 
@@ -1437,7 +1437,7 @@ bool RenderLayerCompositor::requiresCompositingForPlugin(RenderObject* renderer)
         return pluginRenderer->hasLayer() && pluginRenderer->layer()->isComposited();
 
     // Don't go into compositing mode if height or width are zero, or size is 1x1.
-    IntRect contentBox = pluginRenderer->contentBoxRect();
+    LayoutRect contentBox = pluginRenderer->contentBoxRect();
     return contentBox.height() * contentBox.width() > 1;
 }
 
@@ -1462,7 +1462,7 @@ bool RenderLayerCompositor::requiresCompositingForFrame(RenderObject* renderer) 
         return frameRenderer->hasLayer() && frameRenderer->layer()->isComposited();
     
     // Don't go into compositing mode if height or width are zero.
-    IntRect contentBox = frameRenderer->contentBoxRect();
+    LayoutRect contentBox = frameRenderer->contentBoxRect();
     return contentBox.height() * contentBox.width() > 0;
 }
 
@@ -1522,31 +1522,31 @@ bool RenderLayerCompositor::requiresScrollLayer(RootLayerAttachment attachment) 
         || attachment == RootLayerAttachedViaEnclosingFrame; // a composited frame on Mac
 }
 
-static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const IntRect& clip)
+static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const LayoutRect& clip)
 {
     if (!scrollbar)
         return;
 
     context.save();
-    const IntRect& scrollbarRect = scrollbar->frameRect();
+    const LayoutRect& scrollbarRect = scrollbar->frameRect();
     context.translate(-scrollbarRect.x(), -scrollbarRect.y());
-    IntRect transformedClip = clip;
+    LayoutRect transformedClip = clip;
     transformedClip.moveBy(scrollbarRect.location());
     scrollbar->paint(&context, transformedClip);
     context.restore();
 }
 
-void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase, const IntRect& clip)
+void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, GraphicsContext& context, GraphicsLayerPaintingPhase, const LayoutRect& clip)
 {
     if (graphicsLayer == layerForHorizontalScrollbar())
         paintScrollbar(m_renderView->frameView()->horizontalScrollbar(), context, clip);
     else if (graphicsLayer == layerForVerticalScrollbar())
         paintScrollbar(m_renderView->frameView()->verticalScrollbar(), context, clip);
     else if (graphicsLayer == layerForScrollCorner()) {
-        const IntRect& scrollCorner = m_renderView->frameView()->scrollCornerRect();
+        const LayoutRect& scrollCorner = m_renderView->frameView()->scrollCornerRect();
         context.save();
         context.translate(-scrollCorner.x(), -scrollCorner.y());
-        IntRect transformedClip = clip;
+        LayoutRect transformedClip = clip;
         transformedClip.moveBy(scrollCorner.location());
         m_renderView->frameView()->paintScrollCorner(&context, transformedClip);
         context.restore();
@@ -1737,14 +1737,14 @@ void RenderLayerCompositor::destroyRootLayer()
         m_layerForHorizontalScrollbar->removeFromParent();
         m_layerForHorizontalScrollbar = nullptr;
         if (Scrollbar* horizontalScrollbar = m_renderView->frameView()->verticalScrollbar())
-            m_renderView->frameView()->invalidateScrollbar(horizontalScrollbar, IntRect(IntPoint(0, 0), horizontalScrollbar->frameRect().size()));
+            m_renderView->frameView()->invalidateScrollbar(horizontalScrollbar, LayoutRect(LayoutPoint(0, 0), horizontalScrollbar->frameRect().size()));
     }
 
     if (m_layerForVerticalScrollbar) {
         m_layerForVerticalScrollbar->removeFromParent();
         m_layerForVerticalScrollbar = nullptr;
         if (Scrollbar* verticalScrollbar = m_renderView->frameView()->verticalScrollbar())
-            m_renderView->frameView()->invalidateScrollbar(verticalScrollbar, IntRect(IntPoint(0, 0), verticalScrollbar->frameRect().size()));
+            m_renderView->frameView()->invalidateScrollbar(verticalScrollbar, LayoutRect(LayoutPoint(0, 0), verticalScrollbar->frameRect().size()));
     }
 
     if (m_layerForScrollCorner) {

@@ -119,7 +119,7 @@ public:
     bool needsContentsCompositingLayer(const RenderLayer*) const;
     // Return the bounding box required for compositing layer and its childern, relative to ancestorLayer.
     // If layerBoundingBox is not 0, on return it contains the bounding box of this layer only.
-    IntRect calculateCompositedBounds(const RenderLayer* layer, const RenderLayer* ancestorLayer);
+    LayoutRect calculateCompositedBounds(const RenderLayer*, const RenderLayer* ancestorLayer);
 
     // Repaint the appropriate layers when the given RenderLayer starts or stops being composited.
     void repaintOnCompositingChange(RenderLayer*);
@@ -132,7 +132,7 @@ public:
     RenderLayer* enclosingNonStackingClippingLayer(const RenderLayer* layer) const;
 
     // Repaint parts of all composited layers that intersect the given absolute rectangle.
-    void repaintCompositedLayersAbsoluteRect(const IntRect&);
+    void repaintCompositedLayersAbsoluteRect(const LayoutRect&);
 
     RenderLayer* rootRenderLayer() const;
     GraphicsLayer* rootGraphicsLayer() const;
@@ -175,9 +175,9 @@ public:
     static bool parentFrameContentLayers(RenderPart*);
 
     // Update the geometry of the layers used for clipping and scrolling in frames.
-    void frameViewDidChangeLocation(const IntPoint& contentsOffset);
+    void frameViewDidChangeLocation(const LayoutPoint& contentsOffset);
     void frameViewDidChangeSize();
-    void frameViewDidScroll(const IntPoint& = IntPoint());
+    void frameViewDidScroll(const LayoutPoint& = LayoutPoint());
 
     String layerTreeAsText(bool showDebugInfo = false);
 
@@ -202,7 +202,7 @@ private:
     // GraphicsLayerClient Implementation
     virtual void notifyAnimationStarted(const GraphicsLayer*, double) { }
     virtual void notifySyncRequired(const GraphicsLayer*) { scheduleLayerFlush(); }
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect&);
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const LayoutRect&);
 
     // These calls return false always. They are saying that the layers associated with this client
     // (the clipLayer and scrollLayer) should never show debugging info.
@@ -222,12 +222,12 @@ private:
     void clearBackingForLayerIncludingDescendants(RenderLayer*);
 
     // Repaint the given rect (which is layer's coords), and regions of child layers that intersect that rect.
-    void recursiveRepaintLayerRect(RenderLayer* layer, const IntRect& rect);
+    void recursiveRepaintLayerRect(RenderLayer*, const LayoutRect&);
 
-    typedef HashMap<RenderLayer*, IntRect> OverlapMap;
-    void addToOverlapMap(OverlapMap&, RenderLayer*, IntRect& layerBounds, bool& boundsComputed);
+    typedef HashMap<RenderLayer*, LayoutRect> OverlapMap;
+    void addToOverlapMap(OverlapMap&, RenderLayer*, LayoutRect& layerBounds, bool& boundsComputed);
     void addToOverlapMapRecursive(OverlapMap&, RenderLayer*);
-    static bool overlapsCompositedLayers(OverlapMap&, const IntRect& layerBounds);
+    static bool overlapsCompositedLayers(OverlapMap&, const LayoutRect& layerBounds);
 
     void updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>*);
 

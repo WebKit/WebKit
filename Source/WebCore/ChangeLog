@@ -1,3 +1,23 @@
+2011-08-19  Emil A Eklund  <eae@chromium.org>
+
+        Switch RenderLayer to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66507
+
+        Reviewed by Eric Seidel.
+
+        Convert RenderLayer to new layout abstraction.
+
+        No new tests as no new functionality.
+
+        * rendering/LayoutTypes.h:
+        (WebCore::flooredLayoutSize):
+        * rendering/RenderLayer.cpp:
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        * rendering/RenderLayerBacking.h:
+        * rendering/RenderLayerCompositor.cpp:
+        * rendering/RenderLayerCompositor.h:
+
 2011-08-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Content displayed in regions should not be scrollable

@@ -76,7 +76,7 @@ public:
     {
     }
 
-    ClipRects(const IntRect& r)
+    ClipRects(const LayoutRect& r)
         : m_overflowClipRect(r)
         , m_fixedClipRect(r)
         , m_posClipRect(r)
@@ -94,7 +94,7 @@ public:
     {
     }
 
-    void reset(const IntRect& r)
+    void reset(const LayoutRect& r)
     {
         m_overflowClipRect = r;
         m_fixedClipRect = r;
@@ -102,14 +102,14 @@ public:
         m_fixed = false;
     }
     
-    const IntRect& overflowClipRect() const { return m_overflowClipRect; }
-    void setOverflowClipRect(const IntRect& r) { m_overflowClipRect = r; }
+    const LayoutRect& overflowClipRect() const { return m_overflowClipRect; }
+    void setOverflowClipRect(const LayoutRect& r) { m_overflowClipRect = r; }
 
-    const IntRect& fixedClipRect() const { return m_fixedClipRect; }
-    void setFixedClipRect(const IntRect&r) { m_fixedClipRect = r; }
+    const LayoutRect& fixedClipRect() const { return m_fixedClipRect; }
+    void setFixedClipRect(const LayoutRect&r) { m_fixedClipRect = r; }
 
-    const IntRect& posClipRect() const { return m_posClipRect; }
-    void setPosClipRect(const IntRect& r) { m_posClipRect = r; }
+    const LayoutRect& posClipRect() const { return m_posClipRect; }
+    void setPosClipRect(const LayoutRect& r) { m_posClipRect = r; }
 
     bool fixed() const { return m_fixed; }
     void setFixed(bool fixed) { m_fixed = fixed; }
@@ -147,9 +147,9 @@ private:
     void* operator new(size_t) throw();
 
 private:
-    IntRect m_overflowClipRect;
-    IntRect m_fixedClipRect;
-    IntRect m_posClipRect;
+    LayoutRect m_overflowClipRect;
+    LayoutRect m_fixedClipRect;
+    LayoutRect m_posClipRect;
     unsigned m_refCnt : 31;
     bool m_fixed : 1;
 };
@@ -181,7 +181,7 @@ public:
     // Indicate that the layer contents need to be repainted. Only has an effect
     // if layer compositing is being used,
     void setBackingNeedsRepaint();
-    void setBackingNeedsRepaintInRect(const IntRect& r); // r is in the coordinate space of the layer's render object
+    void setBackingNeedsRepaintInRect(const LayoutRect&); // r is in the coordinate space of the layer's render object
     void repaintIncludingNonCompositingDescendants(RenderBoxModelObject* repaintContainer);
 #endif
 
@@ -219,31 +219,31 @@ public:
 
     LayoutRect rect() const { return LayoutRect(location(), size()); }
 
-    int scrollWidth();
-    int scrollHeight();
+    LayoutUnit scrollWidth();
+    LayoutUnit scrollHeight();
 
-    void panScrollFromPoint(const IntPoint&);
+    void panScrollFromPoint(const LayoutPoint&);
 
     // Scrolling methods for layers that can scroll their overflow.
-    void scrollByRecursively(int xDelta, int yDelta);
+    void scrollByRecursively(LayoutUnit xDelta, LayoutUnit yDelta);
 
-    IntSize scrolledContentOffset() const { return scrollOffset() + m_scrollOverflow; }
+    LayoutSize scrolledContentOffset() const { return scrollOffset() + m_scrollOverflow; }
 
-    int scrollXOffset() const { return m_scrollOffset.width() + m_scrollOrigin.x(); }
-    int scrollYOffset() const { return m_scrollOffset.height() + m_scrollOrigin.y(); }
-    IntSize scrollOffset() const { return IntSize(scrollXOffset(), scrollYOffset()); }
+    LayoutUnit scrollXOffset() const { return m_scrollOffset.width() + m_scrollOrigin.x(); }
+    LayoutUnit scrollYOffset() const { return m_scrollOffset.height() + m_scrollOrigin.y(); }
+    LayoutSize scrollOffset() const { return LayoutSize(scrollXOffset(), scrollYOffset()); }
 
     enum ScrollOffsetClamping {
         ScrollOffsetUnclamped,
         ScrollOffsetClamped
     };
-    void scrollToOffset(int x, int y, ScrollOffsetClamping = ScrollOffsetUnclamped);
-    void scrollToXOffset(int x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(x, scrollYOffset(), clamp); }
-    void scrollToYOffset(int y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(scrollXOffset(), y, clamp); }
+    void scrollToOffset(LayoutUnit, LayoutUnit, ScrollOffsetClamping = ScrollOffsetUnclamped);
+    void scrollToXOffset(LayoutUnit x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(x, scrollYOffset(), clamp); }
+    void scrollToYOffset(LayoutUnit y, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(scrollXOffset(), y, clamp); }
 
-    void scrollRectToVisible(const IntRect&, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
+    void scrollRectToVisible(const LayoutRect&, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
 
-    IntRect getRectToExpose(const IntRect& visibleRect, const IntRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
+    LayoutRect getRectToExpose(const LayoutRect& visibleRect, const LayoutRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
 
     bool scrollsOverflow() const;
     bool allowsScrolling() const; // Returns true if at least one scrollbar is visible and enabled.
@@ -265,8 +265,8 @@ public:
     int horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
 
     bool hasOverflowControls() const;
-    bool isPointInResizeControl(const IntPoint& absolutePoint) const;
-    bool hitTestOverflowControls(HitTestResult&, const IntPoint& localPoint);
+    bool isPointInResizeControl(const LayoutPoint& absolutePoint) const;
+    bool hitTestOverflowControls(HitTestResult&, const LayoutPoint& localPoint);
     LayoutSize offsetFromResizeCorner(const LayoutPoint& absolutePoint) const;
 
     void paintOverflowControls(GraphicsContext*, const LayoutPoint&, const LayoutRect& damageRect, bool paintingOverlayControls = false);
@@ -307,17 +307,17 @@ public:
         UpdatePagination = 1 << 3
     };
     typedef unsigned UpdateLayerPositionsFlags;
-    void updateLayerPositions(UpdateLayerPositionsFlags = CheckForRepaint | IsCompositingUpdateRoot | UpdateCompositingLayers, IntPoint* cachedOffset = 0);
+    void updateLayerPositions(UpdateLayerPositionsFlags = CheckForRepaint | IsCompositingUpdateRoot | UpdateCompositingLayers, LayoutPoint* cachedOffset = 0);
 
     void updateTransform();
 
-    void relativePositionOffset(int& relX, int& relY) const { relX += m_relativeOffset.width(); relY += m_relativeOffset.height(); }
-    const IntSize& relativePositionOffset() const { return m_relativeOffset; }
+    void relativePositionOffset(LayoutUnit& relX, LayoutUnit& relY) const { relX += m_relativeOffset.width(); relY += m_relativeOffset.height(); }
+    const LayoutSize& relativePositionOffset() const { return m_relativeOffset; }
 
     void clearClipRectsIncludingDescendants();
     void clearClipRects();
 
-    void addBlockSelectionGapsBounds(const IntRect&);
+    void addBlockSelectionGapsBounds(const LayoutRect&);
     void clearBlockSelectionGapsBounds();
     void repaintBlockSelectionGaps();
 
@@ -358,8 +358,8 @@ public:
     RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(false); }
 #endif
 
-    void convertToLayerCoords(const RenderLayer* ancestorLayer, IntPoint& location) const;
-    void convertToLayerCoords(const RenderLayer* ancestorLayer, IntRect& rect) const;
+    void convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutPoint& location) const;
+    void convertToLayerCoords(const RenderLayer* ancestorLayer, LayoutRect&) const;
 
     bool hasAutoZIndex() const { return renderer()->style()->hasAutoZIndex(); }
     int zIndex() const { return renderer()->style()->zIndex(); }
@@ -368,9 +368,9 @@ public:
     // paints the layers that intersect the damage rect from back to
     // front.  The hitTest method looks for mouse events by walking
     // layers that intersect the point from front to back.
-    void paint(GraphicsContext*, const IntRect& damageRect, PaintBehavior = PaintBehaviorNormal, RenderObject* paintingRoot = 0);
+    void paint(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior = PaintBehaviorNormal, RenderObject* paintingRoot = 0);
     bool hitTest(const HitTestRequest&, HitTestResult&);
-    void paintOverlayScrollbars(GraphicsContext*, const IntRect& damageRect, PaintBehavior, RenderObject* paintingRoot);
+    void paintOverlayScrollbars(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior, RenderObject* paintingRoot);
 
     // This method figures out our layerBounds in coordinates relative to
     // |rootLayer}.  It also computes our background and foreground clip rects
@@ -386,23 +386,23 @@ public:
     void calculateClipRects(const RenderLayer* rootLayer, ClipRects&, bool useCached = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
     ClipRects* clipRects() const { return m_clipRects; }
 
-    IntRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
-    IntRect selfClipRect() const; // Returns the background clip rect of the layer in the document's coordinate space.
+    LayoutRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
+    LayoutRect selfClipRect() const; // Returns the background clip rect of the layer in the document's coordinate space.
 
-    bool intersectsDamageRect(const IntRect& layerBounds, const IntRect& damageRect, const RenderLayer* rootLayer) const;
+    bool intersectsDamageRect(const LayoutRect& layerBounds, const LayoutRect& damageRect, const RenderLayer* rootLayer) const;
 
     // Bounding box relative to some ancestor layer.
-    IntRect boundingBox(const RenderLayer* rootLayer) const;
+    LayoutRect boundingBox(const RenderLayer* rootLayer) const;
     // Bounding box in the coordinates of this layer.
-    IntRect localBoundingBox() const;
+    LayoutRect localBoundingBox() const;
     // Bounding box relative to the root.
-    IntRect absoluteBoundingBox() const;
+    LayoutRect absoluteBoundingBox() const;
 
     void updateHoverActiveState(const HitTestRequest&, HitTestResult&);
 
     // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
-    IntRect repaintRect() const { return m_repaintRect; }
-    IntRect repaintRectIncludingDescendants() const;
+    LayoutRect repaintRect() const { return m_repaintRect; }
+    LayoutRect repaintRectIncludingDescendants() const;
     void computeRepaintRects();
     void updateRepaintRectsAfterScroll(bool fixed = false);
     void setNeedsFullRepaint(bool f = true) { m_needsFullRepaint = f; }
@@ -489,19 +489,19 @@ private:
     
     typedef unsigned PaintLayerFlags;
 
-    void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect,
+    void paintLayer(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect,
                     PaintBehavior, RenderObject* paintingRoot, OverlapTestRequestMap* = 0,
                     PaintLayerFlags = 0);
     void paintList(Vector<RenderLayer*>*, RenderLayer* rootLayer, GraphicsContext* p,
-                   const IntRect& paintDirtyRect, PaintBehavior,
+                   const LayoutRect& paintDirtyRect, PaintBehavior,
                    RenderObject* paintingRoot, OverlapTestRequestMap*,
                    PaintLayerFlags);
     void paintPaginatedChildLayer(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext*,
-                                  const IntRect& paintDirtyRect, PaintBehavior,
+                                  const LayoutRect& paintDirtyRect, PaintBehavior,
                                   RenderObject* paintingRoot, OverlapTestRequestMap*,
                                   PaintLayerFlags);
     void paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLayer* rootLayer, GraphicsContext*,
-                                    const IntRect& paintDirtyRect, PaintBehavior,
+                                    const LayoutRect& paintDirtyRect, PaintBehavior,
                                     RenderObject* paintingRoot, OverlapTestRequestMap*,
                                     PaintLayerFlags, const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
 
@@ -530,42 +530,42 @@ private:
 
     bool shouldBeNormalFlowOnly() const; 
 
-    int scrollPosition(Scrollbar*) const;
+    LayoutUnit scrollPosition(Scrollbar*) const;
     
     // ScrollableArea interface
-    virtual void invalidateScrollbarRect(Scrollbar*, const IntRect&);
-    virtual void invalidateScrollCornerRect(const IntRect&);
+    virtual void invalidateScrollbarRect(Scrollbar*, const LayoutRect&);
+    virtual void invalidateScrollCornerRect(const LayoutRect&);
     virtual bool isActive() const;
     virtual bool isScrollCornerVisible() const;
-    virtual IntRect scrollCornerRect() const;
-    virtual IntRect convertFromScrollbarToContainingView(const Scrollbar*, const IntRect&) const;
-    virtual IntRect convertFromContainingViewToScrollbar(const Scrollbar*, const IntRect&) const;
-    virtual IntPoint convertFromScrollbarToContainingView(const Scrollbar*, const IntPoint&) const;
-    virtual IntPoint convertFromContainingViewToScrollbar(const Scrollbar*, const IntPoint&) const;
-    virtual int scrollSize(ScrollbarOrientation) const;
-    virtual void setScrollOffset(const IntPoint&);
-    virtual IntPoint scrollPosition() const;
-    virtual IntPoint minimumScrollPosition() const;
-    virtual IntPoint maximumScrollPosition() const;
-    virtual IntRect visibleContentRect(bool includeScrollbars) const;
+    virtual LayoutRect scrollCornerRect() const;
+    virtual LayoutRect convertFromScrollbarToContainingView(const Scrollbar*, const LayoutRect&) const;
+    virtual LayoutRect convertFromContainingViewToScrollbar(const Scrollbar*, const LayoutRect&) const;
+    virtual LayoutPoint convertFromScrollbarToContainingView(const Scrollbar*, const LayoutPoint&) const;
+    virtual LayoutPoint convertFromContainingViewToScrollbar(const Scrollbar*, const LayoutPoint&) const;
+    virtual LayoutUnit scrollSize(ScrollbarOrientation) const;
+    virtual void setScrollOffset(const LayoutPoint&);
+    virtual LayoutPoint scrollPosition() const;
+    virtual LayoutPoint minimumScrollPosition() const;
+    virtual LayoutPoint maximumScrollPosition() const;
+    virtual LayoutRect visibleContentRect(bool includeScrollbars) const;
     virtual LayoutUnit visibleHeight() const;
     virtual LayoutUnit visibleWidth() const;
-    virtual IntSize contentsSize() const;
-    virtual IntSize overhangAmount() const;
-    virtual IntPoint currentMousePosition() const;
-    virtual void didCompleteRubberBand(const IntSize&) const;
+    virtual LayoutSize contentsSize() const;
+    virtual LayoutSize overhangAmount() const;
+    virtual LayoutPoint currentMousePosition() const;
+    virtual void didCompleteRubberBand(const LayoutSize&) const;
     virtual bool shouldSuspendScrollAnimations() const;
     virtual bool isOnActivePage() const;
 
     // Rectangle encompassing the scroll corner and resizer rect.
-    IntRect scrollCornerAndResizerRect() const;
+    LayoutRect scrollCornerAndResizerRect() const;
 
     virtual void disconnectFromPage() { m_scrollableAreaPage = 0; }
 
     // NOTE: This should only be called by the overriden setScrollOffset from ScrollableArea.
-    void scrollTo(int x, int y);
+    void scrollTo(LayoutUnit, LayoutUnit);
 
-    IntSize scrollbarOffset(const Scrollbar*) const;
+    LayoutSize scrollbarOffset(const Scrollbar*) const;
     
     void updateOverflowStatus(bool horizontalOverflow, bool verticalOverflow);
 
@@ -591,14 +591,14 @@ private:
     void setPaintingInsideReflection(bool b) { m_paintingInsideReflection = b; }
     
     void parentClipRects(const RenderLayer* rootLayer, ClipRects&, bool temporaryClipRects = false, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
-    IntRect backgroundClipRect(const RenderLayer* rootLayer, bool temporaryClipRects, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
+    LayoutRect backgroundClipRect(const RenderLayer* rootLayer, bool temporaryClipRects, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize) const;
 
     RenderLayer* enclosingTransformedAncestor() const;
 
     // Convert a point in absolute coords into layer coords, taking transforms into account
-    IntPoint absoluteToContents(const IntPoint&) const;
+    LayoutPoint absoluteToContents(const LayoutPoint&) const;
 
-    void positionOverflowControls(const IntSize&);
+    void positionOverflowControls(const LayoutSize&);
     void updateScrollCornerStyle();
     void updateResizerStyle();
 
@@ -620,10 +620,10 @@ private:
     // Only safe to call from RenderBoxModelObject::destroyLayer(RenderArena*)
     void destroy(RenderArena*);
 
-    int overflowTop() const;
-    int overflowBottom() const;
-    int overflowLeft() const;
-    int overflowRight() const;
+    LayoutUnit overflowTop() const;
+    LayoutUnit overflowBottom() const;
+    LayoutUnit overflowLeft() const;
+    LayoutUnit overflowRight() const;
 
 protected:
     RenderBoxModelObject* m_renderer;
@@ -634,11 +634,11 @@ protected:
     RenderLayer* m_first;
     RenderLayer* m_last;
 
-    IntRect m_repaintRect; // Cached repaint rects. Used by layout.
-    IntRect m_outlineBox;
+    LayoutRect m_repaintRect; // Cached repaint rects. Used by layout.
+    LayoutRect m_outlineBox;
 
     // Our current relative position offset.
-    IntSize m_relativeOffset;
+    LayoutSize m_relativeOffset;
 
     // Our (x,y) coordinates are in our parent layer's coordinate space.
     LayoutPoint m_topLeft;
@@ -647,12 +647,12 @@ protected:
     LayoutSize m_layerSize;
 
     // Our scroll offsets if the view is scrolled.
-    IntSize m_scrollOffset;
+    LayoutSize m_scrollOffset;
 
-    IntSize m_scrollOverflow;
+    LayoutSize m_scrollOverflow;
     
     // The width/height of our scrolled area.
-    IntSize m_scrollSize;
+    LayoutSize m_scrollSize;
 
     // For layers with overflow, we have a pair of scrollbars.
     RefPtr<Scrollbar> m_hBar;
@@ -709,7 +709,7 @@ protected:
 
     bool m_containsDirtyOverlayScrollbars : 1;
 
-    IntPoint m_cachedOverlayScrollbarOffset;
+    LayoutPoint m_cachedOverlayScrollbarOffset;
 
     RenderMarquee* m_marquee; // Used by layers with overflow:marquee
     
@@ -727,7 +727,7 @@ protected:
     RenderScrollbarPart* m_resizer;
 
 private:
-    IntRect m_blockSelectionGapsBounds;
+    LayoutRect m_blockSelectionGapsBounds;
 
 #if USE(ACCELERATED_COMPOSITING)
     OwnPtr<RenderLayerBacking> m_backing;

@@ -99,7 +99,7 @@ public:
 
     void setContentsNeedDisplay();
     // r is in the coordinate space of the layer's render object
-    void setContentsNeedDisplayInRect(const IntRect& r);
+    void setContentsNeedDisplayInRect(const LayoutRect&);
 
     // Notification from the renderer that its content changed.
     void contentChanged(RenderLayer::ContentChangeType);
@@ -116,8 +116,8 @@ public:
     void suspendAnimations(double time = 0);
     void resumeAnimations();
 
-    IntRect compositedBounds() const;
-    void setCompositedBounds(const IntRect&);
+    LayoutRect compositedBounds() const;
+    void setCompositedBounds(const LayoutRect&);
     void updateCompositedBounds();
     
     void updateAfterWidgetResize();
@@ -126,7 +126,7 @@ public:
     virtual void notifyAnimationStarted(const GraphicsLayer*, double startTime);
     virtual void notifySyncRequired(const GraphicsLayer*);
 
-    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const IntRect& clip);
+    virtual void paintContents(const GraphicsLayer*, GraphicsContext&, GraphicsLayerPaintingPhase, const LayoutRect& clip);
 
     virtual float deviceScaleFactor() const;
     virtual float pageScaleFactor() const;
@@ -135,7 +135,7 @@ public:
     virtual bool showDebugBorders() const;
     virtual bool showRepaintCounter() const;
 
-    IntRect contentsBox() const;
+    LayoutRect contentsBox() const;
     
     // For informative purposes only.
     CompositingLayerType compositingLayerType() const;
@@ -164,11 +164,11 @@ private:
 
     GraphicsLayerPaintingPhase paintingPhaseForPrimaryLayer() const;
     
-    IntSize contentOffsetInCompostingLayer() const;
+    LayoutSize contentOffsetInCompostingLayer() const;
     // Result is transform origin in pixels.
-    FloatPoint3D computeTransformOrigin(const IntRect& borderBox) const;
+    FloatPoint3D computeTransformOrigin(const LayoutRect& borderBox) const;
     // Result is perspective origin in pixels.
-    FloatPoint computePerspectiveOrigin(const IntRect& borderBox) const;
+    FloatPoint computePerspectiveOrigin(const LayoutRect& borderBox) const;
 
     void updateLayerOpacity(const RenderStyle*);
     void updateLayerTransform(const RenderStyle*);
@@ -190,7 +190,7 @@ private:
 
     bool hasNonCompositingDescendants() const;
     
-    void paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*, const IntRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase, RenderObject* paintingRoot);
+    void paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*, const LayoutRect& paintDirtyRect, PaintBehavior, GraphicsLayerPaintingPhase, RenderObject* paintingRoot);
 
     static int graphicsLayerToCSSProperty(AnimatedPropertyID);
     static AnimatedPropertyID cssToGraphicsLayerProperty(int);
@@ -211,7 +211,7 @@ private:
     OwnPtr<GraphicsLayer> m_layerForVerticalScrollbar;
     OwnPtr<GraphicsLayer> m_layerForScrollCorner;
 
-    IntRect m_compositedBounds;
+    LayoutRect m_compositedBounds;
 
     bool m_artificiallyInflatedBounds;      // bounds had to be made non-zero to make transform-origin work
 };

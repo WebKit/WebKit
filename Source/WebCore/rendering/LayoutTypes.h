@@ -71,6 +71,11 @@ inline LayoutPoint flooredLayoutPoint(const FloatSize& s)
     return flooredIntPoint(s);
 }
 
+inline LayoutSize flooredLayoutSize(const FloatPoint& p)
+{
+    return LayoutSize(static_cast<int>(p.x()), static_cast<int>(p.y()));
+}
+
 inline LayoutUnit roundedLayoutUnit(float value)
 {
     return lroundf(value);
