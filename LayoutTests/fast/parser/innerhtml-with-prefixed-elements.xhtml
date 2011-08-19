@@ -1,0 +1,14 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Namespace chaining</title>
+	</head>
+	<body>
+		<div id="d" xmlns:math="http://www.w3.org/1998/Math/MathML">
+			TEST FAILED
+		</div>
+		<script type="text/javascript"><![CDATA[
+			var div = document.getElementById("d");
+			div.innerHTML = "<math:math><math:msup><math:mtext>a</math:mtext><math:mtext>b</math:mtext></math:msup></math:math>";
+		]]></script>
+	</body>
+</html>

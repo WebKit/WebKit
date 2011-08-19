@@ -610,7 +610,8 @@ XMLDocumentParser::XMLDocumentParser(DocumentFragment* fragment, Element* parent
     if (elemStack.isEmpty())
         return;
 
-    for (Element* element = elemStack.last(); !elemStack.isEmpty(); elemStack.removeLast()) {
+    for (; !elemStack.isEmpty(); elemStack.removeLast()) {
+        Element* element = elemStack.last();
         if (NamedNodeMap* attrs = element->attributes()) {
             for (unsigned i = 0; i < attrs->length(); i++) {
                 Attribute* attr = attrs->attributeItem(i);

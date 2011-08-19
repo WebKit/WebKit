@@ -3568,6 +3568,9 @@ BUGCR89474 : fast/js/call-base-resolution.html = PASS TEXT
 
 BUGWK64675 LINUX WIN : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
 
+// New test added for bug 66423, needs rebaselining
+BUGWK66423 : fast/parser/innerhtml-with-prefixed-elements.xhtml = FAIL
+
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
 //BUGCR75424 LEOPARD : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE

@@ -1,3 +1,17 @@
+2011-08-19  Jeffrey Pfau  <jpfau@apple.com>
+
+        libxml2 fragment parser loses prefix namespaces
+        https://bugs.webkit.org/show_bug.cgi?id=66423
+
+        This makes the loop over the elements outside of the context actually update the element it's processing.
+
+        Reviewed by Darin Adler.
+
+        Test: fast/parser/innerhtml-with-prefixed-elements.xhtml
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2011-08-19  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66590
