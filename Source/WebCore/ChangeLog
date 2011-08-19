@@ -1,3 +1,33 @@
+2011-08-19  Van Lam  <vanlam@google.com>
+
+        Rename VisiblePosition::honorEditableBoundary* to VisiblePosition::honorEditingBoundary*
+        https://bugs.webkit.org/show_bug.cgi?id=66499
+
+        Reviewed by Ryosuke Niwa.
+
+        Renamed VisiblePosition::honorEditableBoundary* to
+        honorEditingBoundary.
+
+        * editing/VisiblePosition.cpp:
+        (WebCore::VisiblePosition::next):
+        (WebCore::VisiblePosition::previous):
+        (WebCore::VisiblePosition::left):
+        (WebCore::VisiblePosition::right):
+        (WebCore::VisiblePosition::honorEditingBoundaryAtOrBefore):
+        (WebCore::VisiblePosition::honorEditingBoundaryAtOrAfter):
+        * editing/VisiblePosition.h:
+        * editing/visible_units.cpp:
+        (WebCore::previousWordPosition):
+        (WebCore::nextWordPosition):
+        (WebCore::startOfLine):
+        (WebCore::endOfLine):
+        (WebCore::previousSentencePosition):
+        (WebCore::nextSentencePosition):
+        (WebCore::logicalStartOfLine):
+        (WebCore::logicalEndOfLine):
+        (WebCore::leftWordPosition):
+        (WebCore::rightWordPosition):
+
 2011-08-19  James Robinson  <jamesr@chromium.org>
 
         REGRESSION(r91628): 3 canvas tests crash on Chromium Linux and one test fail on Chromium Mac

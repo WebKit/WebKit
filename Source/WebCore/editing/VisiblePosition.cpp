@@ -70,7 +70,7 @@ VisiblePosition VisiblePosition::next(EditingBoundaryCrossingRule rule) const
     if (rule == CanCrossEditingBoundary)
         return next;
 
-    return honorEditableBoundaryAtOrAfter(next);
+    return honorEditingBoundaryAtOrAfter(next);
 }
 
 VisiblePosition VisiblePosition::previous(EditingBoundaryCrossingRule rule) const
@@ -100,7 +100,7 @@ VisiblePosition VisiblePosition::previous(EditingBoundaryCrossingRule rule) cons
     if (rule == CanCrossEditingBoundary)
         return prev;
     
-    return honorEditableBoundaryAtOrBefore(prev);
+    return honorEditingBoundaryAtOrBefore(prev);
 }
 
 Position VisiblePosition::leftVisuallyDistinctCandidate() const
@@ -251,7 +251,7 @@ VisiblePosition VisiblePosition::left(bool stayInEditableContent) const
         return left;
 
     // FIXME: This may need to do something different from "before".
-    return honorEditableBoundaryAtOrBefore(left);
+    return honorEditingBoundaryAtOrBefore(left);
 }
 
 Position VisiblePosition::rightVisuallyDistinctCandidate() const
@@ -403,10 +403,10 @@ VisiblePosition VisiblePosition::right(bool stayInEditableContent) const
         return right;
 
     // FIXME: This may need to do something different from "after".
-    return honorEditableBoundaryAtOrAfter(right);
+    return honorEditingBoundaryAtOrAfter(right);
 }
 
-VisiblePosition VisiblePosition::honorEditableBoundaryAtOrBefore(const VisiblePosition &pos) const
+VisiblePosition VisiblePosition::honorEditingBoundaryAtOrBefore(const VisiblePosition &pos) const
 {
     if (pos.isNull())
         return pos;
@@ -432,7 +432,7 @@ VisiblePosition VisiblePosition::honorEditableBoundaryAtOrBefore(const VisiblePo
     return lastEditablePositionBeforePositionInRoot(pos.deepEquivalent(), highestRoot);
 }
 
-VisiblePosition VisiblePosition::honorEditableBoundaryAtOrAfter(const VisiblePosition &pos) const
+VisiblePosition VisiblePosition::honorEditingBoundaryAtOrAfter(const VisiblePosition &pos) const
 {
     if (pos.isNull())
         return pos;

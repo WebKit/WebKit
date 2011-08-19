@@ -292,7 +292,7 @@ static unsigned previousWordPositionBoundary(const UChar* characters, unsigned l
 VisiblePosition previousWordPosition(const VisiblePosition &c)
 {
     VisiblePosition prev = previousBoundary(c, previousWordPositionBoundary);
-    return c.honorEditableBoundaryAtOrBefore(prev);
+    return c.honorEditingBoundaryAtOrBefore(prev);
 }
 
 static unsigned nextWordPositionBoundary(const UChar* characters, unsigned length, unsigned offset, BoundarySearchContextAvailability mayHaveMoreContext, bool& needMoreContext)
@@ -308,7 +308,7 @@ static unsigned nextWordPositionBoundary(const UChar* characters, unsigned lengt
 VisiblePosition nextWordPosition(const VisiblePosition &c)
 {
     VisiblePosition next = nextBoundary(c, nextWordPositionBoundary);    
-    return c.honorEditableBoundaryAtOrAfter(next);
+    return c.honorEditingBoundaryAtOrAfter(next);
 }
 
 bool isStartOfWord(const VisiblePosition& p)
@@ -373,7 +373,7 @@ VisiblePosition startOfLine(const VisiblePosition& c)
 {
     VisiblePosition visPos = startPositionForLine(c);
 
-    return c.honorEditableBoundaryAtOrBefore(visPos);
+    return c.honorEditingBoundaryAtOrBefore(visPos);
 }
 
 static VisiblePosition endPositionForLine(const VisiblePosition& c)
@@ -442,7 +442,7 @@ VisiblePosition endOfLine(const VisiblePosition& c)
         visPos = endPositionForLine(visPos);
     }
     
-    return c.honorEditableBoundaryAtOrAfter(visPos);
+    return c.honorEditingBoundaryAtOrAfter(visPos);
 }
 
 bool inSameLine(const VisiblePosition &a, const VisiblePosition &b)
@@ -705,7 +705,7 @@ static unsigned previousSentencePositionBoundary(const UChar* characters, unsign
 VisiblePosition previousSentencePosition(const VisiblePosition &c)
 {
     VisiblePosition prev = previousBoundary(c, previousSentencePositionBoundary);
-    return c.honorEditableBoundaryAtOrBefore(prev);
+    return c.honorEditingBoundaryAtOrBefore(prev);
 }
 
 static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned length, unsigned, BoundarySearchContextAvailability, bool&)
@@ -719,7 +719,7 @@ static unsigned nextSentencePositionBoundary(const UChar* characters, unsigned l
 VisiblePosition nextSentencePosition(const VisiblePosition &c)
 {
     VisiblePosition next = nextBoundary(c, nextSentencePositionBoundary);    
-    return c.honorEditableBoundaryAtOrAfter(next);
+    return c.honorEditingBoundaryAtOrAfter(next);
 }
 
 VisiblePosition startOfParagraph(const VisiblePosition& c, EditingBoundaryCrossingRule boundaryCrossingRule)
@@ -1067,7 +1067,7 @@ VisiblePosition logicalStartOfLine(const VisiblePosition& c)
         if (!editableRoot->contains(visPos.deepEquivalent().containerNode()))
             return firstPositionInNode(editableRoot);
     }
-    return c.honorEditableBoundaryAtOrBefore(visPos);
+    return c.honorEditingBoundaryAtOrBefore(visPos);
 }
 
 static VisiblePosition logicalEndPositionForLine(const VisiblePosition& c)
@@ -1130,7 +1130,7 @@ VisiblePosition logicalEndOfLine(const VisiblePosition& c)
         if (!editableRoot->contains(visPos.deepEquivalent().containerNode()))
             return lastPositionInNode(editableRoot);
     }
-    return c.honorEditableBoundaryAtOrAfter(visPos);
+    return c.honorEditingBoundaryAtOrAfter(visPos);
 }
 
 VisiblePosition leftBoundaryOfLine(const VisiblePosition& c, TextDirection direction)
@@ -1679,7 +1679,7 @@ VisiblePosition leftWordPosition(const VisiblePosition& visiblePosition)
         return VisiblePosition();
 
     VisiblePosition leftWordBreak = leftWordPositionIgnoringEditingBoundary(visiblePosition);
-    return visiblePosition.honorEditableBoundaryAtOrBefore(leftWordBreak);
+    return visiblePosition.honorEditingBoundaryAtOrBefore(leftWordBreak);
 }
 
 VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
@@ -1688,7 +1688,7 @@ VisiblePosition rightWordPosition(const VisiblePosition& visiblePosition)
         return VisiblePosition();
 
     VisiblePosition rightWordBreak = rightWordPositionIgnoringEditingBoundary(visiblePosition);
-    return visiblePosition.honorEditableBoundaryAtOrBefore(rightWordBreak);
+    return visiblePosition.honorEditingBoundaryAtOrBefore(rightWordBreak);
 }
 
 }

@@ -70,8 +70,8 @@ public:
     // next() and previous() will increment/decrement by a character cluster.
     VisiblePosition next(EditingBoundaryCrossingRule = CanCrossEditingBoundary) const;
     VisiblePosition previous(EditingBoundaryCrossingRule = CanCrossEditingBoundary) const;
-    VisiblePosition honorEditableBoundaryAtOrBefore(const VisiblePosition&) const;
-    VisiblePosition honorEditableBoundaryAtOrAfter(const VisiblePosition&) const;
+    VisiblePosition honorEditingBoundaryAtOrBefore(const VisiblePosition&) const;
+    VisiblePosition honorEditingBoundaryAtOrAfter(const VisiblePosition&) const;
 
     VisiblePosition left(bool stayInEditableContent = false) const;
     VisiblePosition right(bool stayInEditableContent = false) const;
