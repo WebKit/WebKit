@@ -1,3 +1,14 @@
+2011-08-18  Dmitry Lomov  <dslomov@google.com>
+
+        TestWebKitAPI breaks on Windows due to fast malloc incompatibility.
+        https://bugs.webkit.org/show_bug.cgi?id=66521
+
+        This patch ensures that gtest uses new and delete operators that are defined in JavaScriptCore.
+
+        Reviewed by David Levin.
+
+        * TestWebKitAPI/Tests/WTF/StringOperators.cpp: Removed redefinition of JS_EXPORTDATA.
+
 2011-08-19  Adam Roben  <aroben@apple.com>
 
         Add project file changes I left out in r93417
