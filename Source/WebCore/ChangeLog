@@ -1,3 +1,50 @@
+2011-08-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION (r84327-r84329): CSS stylesheets fail to load on www.flagstar.com login page
+        https://bugs.webkit.org/show_bug.cgi?id=65140
+        <rdar://problem/9835905>
+
+        Reviewed by Antti Koivisto.
+
+        Tests: fast/css/stylesheet-enable-first-alternate-on-load.html
+               fast/css/stylesheet-enable-first-alternate.html
+               fast/css/stylesheet-enable-second-alternate-on-load.html
+               fast/css/stylesheet-enable-second-alternate.html
+               http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html
+               http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html
+
+        The gist of the issue is that we were ignoring calls to HTMLLinkElement::setDisabled that would enable a
+        style sheet when we were loading a stylesheet (m_sheet was 0 and thus ignored the call per the spec).
+
+        FF goes against the CSS OM spec in this case and always keep an associated sheet as long as 'rel' hints
+        at a stylesheet link and href is present. Instead of siding with FF, I continued to follow the
+        specification and store the enabled via javascript state into m_scriptState (renamed from
+        m_isEnabledViaScript). This information gets merged back into the style sheet disabled state when it is
+        available.
+
+        While debugging the case at hand, I found some cases that were not properly handled and were fixed as
+        part of this change.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement): Updated after m_isEnabledViaScript rename.
+        (WebCore::HTMLLinkElement::setDisabled): Always call setIsEnabledViaScript so that
+        the information is properly stored (either for recalcStyleSelector or just to store
+        the state during loading).
+
+        (WebCore::HTMLLinkElement::sheetLoaded): Merge back the state from m_scriptState to
+        the sheet's disabled state.
+
+        (WebCore::HTMLLinkElement::disabled): Account for the temporary state and return the
+        right value. It matches FF and what people would expect.
+
+        (WebCore::HTMLLinkElement::areDisabledAndScriptStatesConsistent): Debug only method
+        that checks that disabled() and isEnabledViaScript() are consistent with each other
+        (under some circumstances).
+
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::isEnabledViaScript): Updated after m_isEnabledViaScript rename.
+        (WebCore::HTMLLinkElement::setIsEnabledViaScript): Added setter.
+
 2011-08-17  Adrienne Walker  <enne@google.com>
 
         [chromium] Split tiler into main thread / compositor thread versions

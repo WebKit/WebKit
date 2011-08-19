@@ -1,3 +1,40 @@
+2011-08-19  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        REGRESSION (r84327-r84329): CSS stylesheets fail to load on www.flagstar.com login page
+        https://bugs.webkit.org/show_bug.cgi?id=65140
+        <rdar://problem/9835905>
+
+        Reviewed by Antti Koivisto.
+
+        * fast/css/link-disabled-attr-expected.txt: This change is a progression, but we are still
+        not handling updates to the selected style set properly (already covered by bug 62407).
+
+        * fast/css/stylesheet-enable-first-alternate-expected.txt: Added.
+        * fast/css/stylesheet-enable-first-alternate-on-load-expected.txt: Added.
+        * fast/css/stylesheet-enable-first-alternate-on-load.html: Added.
+        * fast/css/stylesheet-enable-first-alternate.html: Added.
+        * fast/css/stylesheet-enable-second-alternate-expected.txt: Added.
+        * fast/css/stylesheet-enable-second-alternate-on-load-expected.txt: Added.
+        * fast/css/stylesheet-enable-second-alternate-on-load.html: Added.
+        * fast/css/stylesheet-enable-second-alternate.html: Added.
+        Those are a variation on the same theme: we disable some stylesheet and enable others,
+        either directly or later.
+
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet-expected.txt: Added.
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error-expected.txt: Added.
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet-in-error.html: Added.
+        * http/tests/css/link-css-disabled-value-with-slow-loading-sheet.html: Added.
+        * http/tests/css/resources/link-css-disabled-value-with-slow-loading-sheet-in-error.js: Added.
+        (onSheetLoaded):
+        (testWhenLoaded):
+        * http/tests/css/resources/link-css-disabled-value-with-slow-loading-sheet.js: Added.
+        (onSheetLoaded):
+        (testWhenLoaded):
+        * http/tests/css/resources/slow-loading-sheet-in-error.php: Added.
+        * http/tests/css/resources/slow-loading-sheet.php: Added.
+        Those 2 test cases relies on a slow loading stylesheet so that we can test the disabled() value while the alternate
+        sheet is asynchronously loading and then check them again once the sheet is loaded.
+
 2011-08-19  Vitaly Repeshko  <vitalyr@chromium.org>
 
         [chromium] Cleaning up test expectations.
