@@ -1,3 +1,12 @@
+2011-08-19  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] editing/selection/caret-at-bidi-boundary.html times out after r93369
+        https://bugs.webkit.org/show_bug.cgi?id=66514
+
+        Skip it.
+
+        * platform/qt/Skipped:
+
 2011-08-19  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] CloseEvent's code and reason properties support.
