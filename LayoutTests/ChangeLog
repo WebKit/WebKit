@@ -1,3 +1,13 @@
+2011-08-19  Victoria Kirst  <vrk@chromium.org>
+
+        Tell media player to prepareToPlay() at end of HTMLMediaElement::load()
+        https://bugs.webkit.org/show_bug.cgi?id=66414
+
+        Reviewed by Eric Carlson.
+
+        * media/video-load-preload-none-expected.txt: Added.
+        * media/video-load-preload-none.html: Added.
+
 2011-08-19  Tony Chang  <tony@chromium.org>
 
         [chromium] Mark touch tests as failing on OSX 10.5.

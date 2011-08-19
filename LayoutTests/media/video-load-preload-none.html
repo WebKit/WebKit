@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <script src="media-file.js"></script>
+        <script src="video-test.js"></script>
+        <script>
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile("video", "content/test");
+
+                testExpected("video.preload", "none");
+                testExpected("video.readyState", HTMLMediaElement.HAVE_NOTHING);
+                waitForEventAndEnd('loadedmetadata');
+
+                // Wait 250ms before load()ing to make sure setting src does not kick off the load
+                // (i.e. preload=none should still be respected).
+                setTimeout(load, 250);
+            }
+            function load()
+            {
+                testExpected("video.readyState", HTMLMediaElement.HAVE_NOTHING);
+                run("video.load()");
+            }
+        </script>
+    </head>
+
+    <body>
+        <video preload="none"></video>
+        <p>Test that an explicit load() to a media element whose preload is set to "none" still loads the video.</p>
+        <script>start();</script>
+    </body>
+</html>

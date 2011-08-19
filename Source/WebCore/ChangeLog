@@ -1,3 +1,15 @@
+2011-08-19  Victoria Kirst  <vrk@chromium.org>
+
+        Tell media player to prepareToPlay() at end of HTMLMediaElement::load()
+        https://bugs.webkit.org/show_bug.cgi?id=66414
+
+        Reviewed by Eric Carlson.
+
+        Test: media/video-load-preload-none.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::load):
+
 2011-08-19  Emil A Eklund  <eae@chromium.org>
 
         Switch RenderBlock to to new layout types

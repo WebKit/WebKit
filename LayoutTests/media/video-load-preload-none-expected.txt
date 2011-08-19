@@ -1,0 +1,9 @@
+Test that an explicit load() to a media element whose preload is set to "none" still loads the video.
+
+EXPECTED (video.preload == 'none') OK
+EXPECTED (video.readyState == '0') OK
+EXPECTED (video.readyState == '0') OK
+RUN(video.load())
+EVENT(loadedmetadata)
+END OF TEST
+

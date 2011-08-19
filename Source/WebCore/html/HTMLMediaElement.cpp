@@ -500,6 +500,7 @@ void HTMLMediaElement::load(ExceptionCode& ec)
         prepareForLoad();
         loadInternal();
     }
+    prepareToPlay();
 }
 
 void HTMLMediaElement::prepareForLoad()
