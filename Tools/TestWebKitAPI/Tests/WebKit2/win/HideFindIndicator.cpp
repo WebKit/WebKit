@@ -25,6 +25,7 @@
 
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
+#include "Test.h"
 
 namespace TestWebKitAPI {
 
