@@ -73,6 +73,12 @@ static const size_t EWK_VIEW_SCROLLS_SIZE_INITIAL = 8;
 static const size_t EWK_VIEW_SCROLLS_SIZE_STEP = 2;
 static const size_t EWK_VIEW_SCROLLS_SIZE_MAX_FREE = 32;
 
+/**
+ * @brief Private data that is used internally by EFL WebKit
+ * and should never be modified from outside.
+ *
+ * @internal
+ */
 struct _Ewk_View_Private_Data {
     WebCore::Page *page;
     WebCore::Settings *page_settings;
@@ -2447,6 +2453,14 @@ void ewk_view_scrolls_process(Ewk_View_Smart_Data *sd)
     _ewk_view_scrolls_flush(priv);
 }
 
+/**
+ * @brief Structure that keeps the paint context.
+ *
+ * @internal
+ *
+ * @note This is not for general use but just for subclasses that want
+ *       to define their own backing store.
+ */
 struct _Ewk_View_Paint_Context {
     WebCore::GraphicsContext *gc;
     WebCore::FrameView *view;
