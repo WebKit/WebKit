@@ -95,9 +95,6 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
         return (map(self._webkit_baseline_path, ['chromium-gpu-linux', 'chromium-gpu-win', 'chromium-gpu']) +
                 chromium_linux.ChromiumLinuxPort.baseline_search_path(self))
 
-    def default_child_processes(self):
-        return 1
-
     def tests(self, paths):
         return _tests(self, paths)
 
@@ -111,9 +108,6 @@ class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
         return (map(self._webkit_baseline_path, ['chromium-gpu-mac', 'chromium-gpu']) +
                 chromium_mac.ChromiumMacPort.baseline_search_path(self))
 
-    def default_child_processes(self):
-        return 1
-
     def tests(self, paths):
         return _tests(self, paths)
 
@@ -126,9 +120,6 @@ class ChromiumGpuWinPort(chromium_win.ChromiumWinPort):
     def baseline_search_path(self):
         return (map(self._webkit_baseline_path, ['chromium-gpu-win', 'chromium-gpu']) +
                 chromium_win.ChromiumWinPort.baseline_search_path(self))
-
-    def default_child_processes(self):
-        return 1
 
     def tests(self, paths):
         return _tests(self, paths)

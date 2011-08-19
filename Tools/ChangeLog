@@ -1,3 +1,17 @@
+2011-08-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Chromium GPU layout tests should use the normal process number selection, not force 1 worker
+        https://bugs.webkit.org/show_bug.cgi?id=66603
+
+        Reviewed by Dirk Pranke.
+
+        The various ChromiumGpu ports should use the same child worker
+        selection logic as other ports so they can run with full
+        parallelization on multicore systems.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+
 2011-08-19  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Remove dependency of WebThemeControlDRTWin on skia::PlatformCanvas
