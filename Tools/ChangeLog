@@ -1,5 +1,36 @@
 2011-08-19  Adam Roben  <aroben@apple.com>
 
+        Pull some of DynamicDeviceScaleFactor's code up into a shareable base class
+
+        This will make it easier to write other WebKit-agnostic tests
+
+        Fixes <http://webkit.org/b/66558> Would like to be able to reuse DynamicDeviceScaleFactor's
+        code in other WebKit-agnostic tests
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added new files.
+
+        * TestWebKitAPI/Tests/mac/DynamicDeviceScaleFactor.mm: Fixed copyright. Moved a bunch of
+        code to WebKitAgnosticTest.h/mm. Changed to inherit from WebKitAgnosticTest.
+        (TestWebKitAPI::DynamicDeviceScaleFactor::url): Simple getter.
+        (TestWebKitAPI::DynamicDeviceScaleFactor::didLoadURL): Calls through to runTest.
+        (TestWebKitAPI::DynamicDeviceScaleFactor::runTest): Removed loading code which
+        WebKitAgnosticTest handles for us.
+        (TestWebKitAPI::TEST_F): Removed view-creation code which WebKitAgnosticTest handles for us.
+
+        * TestWebKitAPI/mac/WebKitAgnosticTest.h: Added. Code came from DynamicDeviceScaleFactor.
+        (TestWebKitAPI::WebKitAgnosticTest::loadAndWaitUntilDone): Code came from
+        DynamicDeviceScaleFactor::runTest.
+
+        * TestWebKitAPI/mac/WebKitAgnosticTest.mm: Copied from Tools/TestWebKitAPI/Tests/mac/DynamicDeviceScaleFactor.mm.
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit1Test): Code came from
+        DynamicDeviceScaleFactor.WebKit.
+        (TestWebKitAPI::WebKitAgnosticTest::runWebKit2Test): Code came from
+        DynamicDeviceScaleFactor.WebKit2.
+
+2011-08-19  Adam Roben  <aroben@apple.com>
+
         Clean up #includes in TestWebKitAPI
 
         Fixes <http://webkit.org/b/66556> TestWebKitAPI's prefix header isn't very helpful

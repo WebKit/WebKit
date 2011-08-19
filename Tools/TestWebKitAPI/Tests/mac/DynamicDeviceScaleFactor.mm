@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,78 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "WebKitAgnosticTest.h"
+
 #include "JavaScriptTest.h"
 #include "PlatformUtilities.h"
 #include "SyntheticBackingScaleFactorWindow.h"
-#include <WebKit2/WKURLCF.h>
 #include <wtf/RetainPtr.h>
-
-@interface FrameLoadDelegate : NSObject {
-    bool* _didFinishLoad;
-}
-
-- (id)initWithDidFinishLoadBoolean:(bool*)didFinishLoad;
-
-@end
-
-@implementation FrameLoadDelegate
-
-- (id)initWithDidFinishLoadBoolean:(bool*)didFinishLoad
-{
-    self = [super init];
-    if (!self)
-        return nil;
-
-    _didFinishLoad = didFinishLoad;
-    return self;
-}
-
-- (void)webView:(WebView *)webView didFinishLoadForFrame:(WebFrame *)webFrame
-{
-    *_didFinishLoad = true;
-}
-
-@end
 
 namespace TestWebKitAPI {
 
-static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void* context)
-{
-    *static_cast<bool*>(const_cast<void*>(context)) = true;
-}
-
-static void setPageLoaderClient(WKPageRef page, bool* didFinishLoad)
-{
-    WKPageLoaderClient loaderClient;
-    memset(&loaderClient, 0, sizeof(loaderClient));
-    loaderClient.version = 0;
-    loaderClient.clientInfo = didFinishLoad;
-    loaderClient.didFinishLoadForFrame = didFinishLoadForFrame;
-
-    WKPageSetPageLoaderClient(page, &loaderClient);
-}
-
-class DynamicDeviceScaleFactor : public ::testing::Test {
+class DynamicDeviceScaleFactor : public WebKitAgnosticTest {
 public:
-    DynamicDeviceScaleFactor();
+    RetainPtr<SyntheticBackingScaleFactorWindow> createWindow();
 
     template <typename View> void runTest(View);
 
-    bool didFinishLoad;
-    NSRect viewFrame;
-
-private:
-    RetainPtr<SyntheticBackingScaleFactorWindow> createWindow();
-
-    void loadURL(WebView *, NSURL *);
-    void loadURL(WKView *, NSURL *);
+    // WebKitAgnosticTest
+    virtual NSURL *url() const { return [[NSBundle mainBundle] URLForResource:@"devicePixelRatio" withExtension:@"html"]; }
+    virtual void didLoadURL(WebView *webView) { runTest(webView); }
+    virtual void didLoadURL(WKView *wkView) { runTest(wkView); }
 };
-
-DynamicDeviceScaleFactor::DynamicDeviceScaleFactor()
-    : didFinishLoad(false)
-    , viewFrame(NSMakeRect(0, 0, 800, 600))
-{
-}
 
 RetainPtr<SyntheticBackingScaleFactorWindow> DynamicDeviceScaleFactor::createWindow()
 {
@@ -106,11 +54,6 @@ RetainPtr<SyntheticBackingScaleFactorWindow> DynamicDeviceScaleFactor::createWin
 template <typename View>
 void DynamicDeviceScaleFactor::runTest(View view)
 {
-    EXPECT_FALSE(didFinishLoad);
-    loadURL(view, [[NSBundle mainBundle] URLForResource:@"devicePixelRatio" withExtension:@"html"]);
-    Util::run(&didFinishLoad);
-    didFinishLoad = false;
-
     EXPECT_JS_EQ(view, "window.devicePixelRatio", "1");
     EXPECT_JS_EQ(view, "devicePixelRatioFromStyle()", "1");
 
@@ -133,32 +76,14 @@ void DynamicDeviceScaleFactor::runTest(View view)
     EXPECT_JS_EQ(view, "devicePixelRatioFromStyle()", "1");
 }
 
-void DynamicDeviceScaleFactor::loadURL(WebView *webView, NSURL *url)
-{
-    [[webView mainFrame] loadRequest:[NSURLRequest requestWithURL:url]];
-}
-
-void DynamicDeviceScaleFactor::loadURL(WKView *view, NSURL *url)
-{
-    WKPageLoadURL([view pageRef], adoptWK(WKURLCreateWithCFURL((CFURLRef)url)).get());
-}
-
 TEST_F(DynamicDeviceScaleFactor, WebKit)
 {
-    RetainPtr<WebView> webView(AdoptNS, [[WebView alloc] initWithFrame:viewFrame]);
-    RetainPtr<FrameLoadDelegate> delegate(AdoptNS, [[FrameLoadDelegate alloc] initWithDidFinishLoadBoolean:&didFinishLoad]);
-    [webView.get() setFrameLoadDelegate:delegate.get()];
-
-    runTest(webView.get());
+    runWebKit1Test();
 }
 
 TEST_F(DynamicDeviceScaleFactor, WebKit2)
 {
-    WKRetainPtr<WKContextRef> context = adoptWK(WKContextCreate());
-    RetainPtr<WKView> view(AdoptNS, [[WKView alloc] initWithFrame:viewFrame contextRef:context.get()]);
-    setPageLoaderClient([view.get() pageRef], &didFinishLoad);
-
-    runTest(view.get());
+    runWebKit2Test();
 }
 
 } // namespace TestWebKitAPI

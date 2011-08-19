@@ -65,6 +65,7 @@
 		C081224213FC172400DC39AE /* JavaScriptTestMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = C081224013FC172400DC39AE /* JavaScriptTestMac.mm */; };
 		C081224513FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */; };
 		C081224913FC1B0300DC39AE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
+		C08587BF13FE956C001EF4E5 /* WebKitAgnosticTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */; };
 		C0ADBE7C12FCA4D000D2C129 /* JavaScriptTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */; };
 		C0ADBE8312FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */; };
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
@@ -186,6 +187,8 @@
 		C081224313FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyntheticBackingScaleFactorWindow.h; sourceTree = "<group>"; };
 		C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyntheticBackingScaleFactorWindow.m; sourceTree = "<group>"; };
 		C081224813FC1B0300DC39AE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitAgnosticTest.mm; sourceTree = "<group>"; };
+		C08587BE13FE956C001EF4E5 /* WebKitAgnosticTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAgnosticTest.h; sourceTree = "<group>"; };
 		C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptTest.cpp; sourceTree = "<group>"; };
 		C0ADBE7B12FCA4D000D2C129 /* JavaScriptTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptTest.h; sourceTree = "<group>"; };
 		C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSessionStateContainingFormData.cpp; sourceTree = "<group>"; };
@@ -372,6 +375,8 @@
 				BC90955C125548AA00083756 /* PlatformWebViewMac.mm */,
 				C081224313FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.h */,
 				C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */,
+				C08587BE13FE956C001EF4E5 /* WebKitAgnosticTest.h */,
+				C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -518,6 +523,7 @@
 				C081224213FC172400DC39AE /* JavaScriptTestMac.mm in Sources */,
 				C081224513FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m in Sources */,
 				C07E6CAF13FD67650038B22B /* DynamicDeviceScaleFactor.mm in Sources */,
+				C08587BF13FE956C001EF4E5 /* WebKitAgnosticTest.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
