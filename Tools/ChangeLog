@@ -1,3 +1,29 @@
+2011-08-19  Adam Roben  <aroben@apple.com>
+
+        Add a helper class for swizzling ObjC instance methods to TestWebKitAPI
+
+        Fixes <http://webkit.org/b/66565> TestWebKitAPI needs a way to override instance methods of
+        NSScreen
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj: Added new files.
+
+        * TestWebKitAPI/Tests/TestWebKitAPI/mac/InstanceMethodSwizzler.mm: Added.
+        (-[SimpleObject setValue:]): Original implementation.
+
+        (TestWebKitAPI::setValue2):
+        (TestWebKitAPI::setValue3):
+        Swizzled implementations.
+
+        (TestWebKitAPI::TEST): Test that we can swizzle and re-swizzle and un-swizzle an ObjC
+        instance method.
+
+        * TestWebKitAPI/mac/InstanceMethodSwizzler.h: Added.
+        * TestWebKitAPI/mac/InstanceMethodSwizzler.mm: Added.
+        (TestWebKitAPI::InstanceMethodSwizzler::InstanceMethodSwizzler): Swizzle the method.
+        (TestWebKitAPI::InstanceMethodSwizzler::~InstanceMethodSwizzler): Unswizzle the method.
+
 2011-08-19  Tom Zakrajsek  <tomz@codeaurora.org>
 
         Fix _path_to_apache() error reporting
