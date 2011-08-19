@@ -2299,7 +2299,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                         breakWords = false;
                     }
 
-                    if (midWordBreak && !U16_IS_TRAIL(c)) {
+                    if (midWordBreak && !U16_IS_TRAIL(c) && !(U_GET_GC_MASK(c) & U_GC_M_MASK)) {
                         // Remember this as a breakable position in case
                         // adding the end width forces a break.
                         lBreak.moveTo(current.m_obj, current.m_pos, current.m_nextBreakablePosition);

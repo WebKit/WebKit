@@ -1,3 +1,17 @@
+2011-08-18  Dan Bernstein  <mitz@apple.com>
+
+        Mid-word break can occur between a character and a combining mark
+        https://bugs.webkit.org/show_bug.cgi?id=66529
+
+        Reviewed by Simon Fraser.
+
+        No test added because I could not find a combining mark with a non-zero advance in
+        any of the system fonts and tests fonts. 
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Disallow a mid-word break before a
+        combining mark.
+
 2011-08-18  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r90971): Null pointer dereference with placeholder and webkit-scrollbar-corner
