@@ -1080,21 +1080,13 @@ void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, const String
     *result = resolveNode(node, objectGroupName);
 }
 
-void InspectorDOMAgent::getAttributes(ErrorString*, const RefPtr<InspectorArray>& nodeIds, RefPtr<InspectorArray>* result)
+void InspectorDOMAgent::getAttributes(ErrorString* errorString, int nodeId, RefPtr<InspectorArray>* result)
 {
-    for (unsigned i = 0, size = nodeIds->length(); i < size; ++i) {
-        RefPtr<InspectorValue> nodeIdValue = nodeIds->get(i);
-        int nodeId;
-        if (!nodeIdValue->asNumber(&nodeId))
-            continue;
-        Node* node = nodeForId(nodeId);
-        if (node && node->isElementNode()) {
-            RefPtr<InspectorObject> entry = InspectorObject::create();
-            entry->setNumber("nodeId", nodeId);
-            entry->setArray("attributes", buildArrayForElementAttributes(static_cast<Element*>(node)));
-            (*result)->pushObject(entry.release());
-        }
-    }
+    Element* element = assertElement(errorString, nodeId);
+    if (!element)
+        return;
+
+    *result = buildArrayForElementAttributes(element);
 }
 
 void InspectorDOMAgent::requestNode(ErrorString*, const String& objectId, int* nodeId)

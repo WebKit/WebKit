@@ -1,3 +1,17 @@
+2011-08-19  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: getAttributes should work on a single node, not array.
+        https://bugs.webkit.org/show_bug.cgi?id=66544
+
+        Reviewed by Adam Roben.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::getAttributes):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._loadNodeAttributes):
+
 2011-08-19  Anton Muhin  <antonm@chromium.org>
 
         [v8] CSS wrapper objects retention

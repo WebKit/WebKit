@@ -128,7 +128,7 @@ public:
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, const bool* const runSynchronously);
     void cancelSearch(ErrorString*);
     void resolveNode(ErrorString*, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>* result);
-    void getAttributes(ErrorString*, const RefPtr<InspectorArray>& nodeIds, RefPtr<InspectorArray>* result);
+    void getAttributes(ErrorString*, int nodeId, RefPtr<InspectorArray>* result);
     void setInspectModeEnabled(ErrorString*, bool enabled);
     void requestNode(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);

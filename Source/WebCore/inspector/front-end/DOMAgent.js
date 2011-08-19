@@ -446,24 +446,21 @@ WebInspector.DOMAgent.prototype = {
 
     _loadNodeAttributes: function()
     {
-        function callback(nodeAttributes)
+        function callback(nodeId, attributes)
         {
-            if (!nodeAttributes)
+            if (!attributes)
                 return;
-            for (var i = 0; i < nodeAttributes.length; ++i) {
-                var entry = nodeAttributes[i];
-                var node = this._idToDOMNode[entry.nodeId];
-                node._setAttributesPayload(entry.attributes);
+            var node = this._idToDOMNode[nodeId];
+            if (node) {
+                node._setAttributesPayload(attributes);
                 this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, node);
             }
         }
 
         delete this._loadNodeAttributesTimeout;
 
-        var nodeIds = [];
         for (var nodeId in this._attributeLoadNodeIds)
-            nodeIds.push(Number(nodeId));
-        DOMAgent.getAttributes(nodeIds, this._wrapClientCallback(callback.bind(this)));
+            DOMAgent.getAttributes(parseInt(nodeId), this._wrapClientCallback(callback.bind(this, nodeId)));
         this._attributeLoadNodeIds = {};
     },
 

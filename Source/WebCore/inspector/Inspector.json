@@ -871,15 +871,6 @@
                     { "name": "location", "$ref": "Debugger.Location", "optional": true, "description": "Handler code location." }
                 ],
                 "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
-            },
-            {
-                "id": "Attributes",
-                "type": "object",
-                "properties": [
-                    { "name": "id", "$ref": "NodeId", "description": "Element id to get attributes for." },
-                    { "name": "attributes", "type": "array", "items": { "type": "string" }, "description": "An interleaved array of node attribute names and values." }
-                ],
-                "description": "A holder structure for all attributes of a single node."
             }
         ],
         "commands": [
@@ -1098,10 +1089,10 @@
             {
                 "name": "getAttributes",
                 "parameters": [
-                    { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the nodes to retrieve attibutes for." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to retrieve attibutes for." }
                 ],
                 "returns": [
-                    { "name": "attributes", "type": "array", "items": { "type": "Attributes" }, "description": "Attribute holders for the requested nodes." }
+                    { "name": "attributes", "type": "array", "items": { "type": "string" }, "description": "An interleaved array of node attribute names and values." }
                 ],
                 "description": "Returns attributes for the specified nodes."
             },
