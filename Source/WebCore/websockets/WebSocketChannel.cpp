@@ -98,6 +98,7 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     , m_identifier(0)
     , m_useHixie76Protocol(true)
     , m_hasContinuousFrame(false)
+    , m_closeEventCode(CloseEventCodeAbnormalClosure)
 {
     ASSERT(m_context->isDocument());
     Document* document = static_cast<Document*>(m_context);
@@ -246,7 +247,7 @@ void WebSocketChannel::didCloseSocketStream(SocketStreamHandle* handle)
         m_context = 0;
         m_handle = 0;
         if (client)
-            client->didClose(m_unhandledBufferedAmount, m_receivedClosingHandshake ? WebSocketChannelClient::ClosingHandshakeComplete : WebSocketChannelClient::ClosingHandshakeIncomplete);
+            client->didClose(m_unhandledBufferedAmount, m_receivedClosingHandshake ? WebSocketChannelClient::ClosingHandshakeComplete : WebSocketChannelClient::ClosingHandshakeIncomplete, m_closeEventCode, m_closeEventReason);
     }
     deref();
 }
@@ -623,7 +624,16 @@ bool WebSocketChannel::processFrame()
         break;
 
     case OpCodeClose:
-        // FIXME: Handle payload.
+        if (frame.payloadLength >= 2) {
+            unsigned char highByte = static_cast<unsigned char>(frame.payload[0]);
+            unsigned char lowByte = static_cast<unsigned char>(frame.payload[1]);
+            m_closeEventCode = highByte << 8 | lowByte;
+        } else
+            m_closeEventCode = CloseEventCodeNoStatusRcvd;
+        if (frame.payloadLength >= 3)
+            m_closeEventReason = String::fromUTF8(&frame.payload[2], frame.payloadLength - 2);
+        else
+            m_closeEventReason = "";
         skipBuffer(frame.frameEnd - m_buffer);
         m_receivedClosingHandshake = true;
         startClosingHandshake();

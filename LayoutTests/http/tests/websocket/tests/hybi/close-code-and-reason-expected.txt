@@ -1,0 +1,34 @@
+CONSOLE MESSAGE: line 0: WebSocket is closed before the connection is established.
+Test CloseEvent code and reason property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+ws.onclose() was called.
+PASS closeEvent.wasClean is false
+PASS closeEvent.code is codeAbnormalClosure
+PASS closeEvent.reason is emptyString
+WebSocketTest.onopen() was called with testId = 0.
+WebSocketTest.onclose() was called with testId = 0.
+PASS closeEvent.wasClean is true
+PASS closeEvent.code is expectedCode[testId]
+PASS closeEvent.reason is expectedReason[testId]
+PASS closeEvent.code is expectedCode[testId]
+PASS closeEvent.reason is expectedReason[testId]
+WebSocketTest.onopen() was called with testId = 1.
+WebSocketTest.onclose() was called with testId = 1.
+PASS closeEvent.wasClean is true
+PASS closeEvent.code is expectedCode[testId]
+PASS closeEvent.reason is expectedReason[testId]
+PASS closeEvent.code is expectedCode[testId]
+PASS closeEvent.reason is expectedReason[testId]
+WebSocketTest.onopen() was called with testId = 2.
+WebSocketTest.onclose() was called with testId = 2.
+PASS closeEvent.wasClean is true
+PASS closeEvent.code is expectedCode[testId]
+PASS closeEvent.reason is expectedReason[testId]
+PASS closeEvent.code is expectedCode[testId]
+PASS closeEvent.reason is expectedReason[testId]
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

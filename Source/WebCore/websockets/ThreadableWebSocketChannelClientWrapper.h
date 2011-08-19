@@ -73,7 +73,7 @@ public:
     void didConnect();
     void didReceiveMessage(const String& message);
     void didStartClosingHandshake();
-    void didClose(unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus);
+    void didClose(unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
 
     void suspend();
     void resume();
@@ -85,7 +85,7 @@ protected:
     static void didConnectCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*);
     static void didReceiveMessageCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, const String& message);
     static void didStartClosingHandshakeCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*);
-    static void didCloseCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus);
+    static void didCloseCallback(ScriptExecutionContext*, ThreadableWebSocketChannelClientWrapper*, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
 
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;

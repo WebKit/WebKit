@@ -102,7 +102,7 @@ namespace WebCore {
         virtual void didReceiveMessage(const String& message);
         virtual void didReceiveMessageError();
         virtual void didStartClosingHandshake();
-        virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus);
+        virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus, unsigned short code, const String& reason);
 
     private:
         WebSocket(ScriptExecutionContext*);

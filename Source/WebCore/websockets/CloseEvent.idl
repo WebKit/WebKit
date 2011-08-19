@@ -34,10 +34,14 @@ module events {
         NoStaticTables
     ] CloseEvent : Event {
         readonly attribute boolean wasClean;
+        readonly attribute unsigned short code;
+        readonly attribute [ConvertingNullStringTo=Undefined] DOMString reason;
         void initCloseEvent(in [Optional=CallWithDefaultValue] DOMString typeArg,
                             in [Optional=CallWithDefaultValue] boolean canBubbleArg,
                             in [Optional=CallWithDefaultValue] boolean cancelableArg,
-                            in [Optional=CallWithDefaultValue] boolean wasCleanArg);
+                            in [Optional=CallWithDefaultValue] boolean wasCleanArg,
+                            in [Optional=CallWithDefaultValue] unsigned short codeArg,
+                            in [Optional=CallWithDefaultValue] DOMString reasonArg);
     };
 
 }

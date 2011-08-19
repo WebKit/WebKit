@@ -74,6 +74,17 @@ namespace WebCore {
         virtual void didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
         virtual void didCancelAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&);
 
+        enum CloseEventCode {
+            CloseEventCodeNormalClosure = 1000,
+            CloseEventCodeGoingAway = 1001,
+            CloseEventCodeProtocolError = 1002,
+            CloseEventCodeUnsupportedData = 1003,
+            CloseEventCodeFrameTooLarge = 1004,
+            CloseEventCodeNoStatusRcvd = 1005,
+            CloseEventCodeAbnormalClosure = 1006,
+            CloseEventCodeInvalidUTF8 = 1007
+        };
+
         using RefCounted<WebSocketChannel>::ref;
         using RefCounted<WebSocketChannel>::deref;
 
@@ -154,6 +165,8 @@ namespace WebCore {
         bool m_hasContinuousFrame;
         OpCode m_continuousFrameOpCode;
         Vector<char> m_continuousFrameData;
+        unsigned short m_closeEventCode;
+        String m_closeEventReason;
     };
 
 } // namespace WebCore

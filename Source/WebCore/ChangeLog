@@ -1,3 +1,47 @@
+2011-08-19  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [WebSocket] CloseEvent's code and reason properties support.
+        https://bugs.webkit.org/show_bug.cgi?id=66362
+
+        Reviewed by Kent Tamura.
+
+        Current WebSocket implementation miss code and reason properties
+        in CloseEvent. This change expose incoming closing frame's code
+        and reason to JavaScript API.
+
+        Tests: http/tests/websocket/tests/hybi/close-code-and-reason.html
+               http/tests/websocket/tests/hybi/workers/close-code-and-reason.html
+
+        * websockets/CloseEvent.h:
+        (WebCore::CloseEvent::initCloseEvent):
+        (WebCore::CloseEvent::code):
+        (WebCore::CloseEvent::reason):
+        (WebCore::CloseEvent::CloseEvent):
+        * websockets/CloseEvent.idl:
+        Add code and reason properies.
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCloseCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::didConnect):
+        (WebCore::WebSocket::didClose):
+        * websockets/WebSocket.h:
+        Add implement to handle code and reason.
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::didCloseSocketStream):
+        (WebCore::WebSocketChannel::processFrame):
+        * websockets/WebSocketChannel.h:
+        Add closing frame payload parser.
+        * websockets/WebSocketChannelClient.h:
+        (WebCore::WebSocketChannelClient::didClose):
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::workerContextDidClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+        Add implement to handle code and reason.
+
 2011-08-19  MORITA Hajime  <morrita@google.com>
 
         Spell-checking doesn't recognize word boundaries on contests inserted by execCommand('insertHTML')

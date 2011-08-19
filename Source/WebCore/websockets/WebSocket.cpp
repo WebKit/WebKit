@@ -378,7 +378,7 @@ void WebSocket::didConnect()
 {
     LOG(Network, "WebSocket %p didConnect", this);
     if (m_state != CONNECTING) {
-        didClose(0, ClosingHandshakeIncomplete);
+        didClose(0, ClosingHandshakeIncomplete, WebSocketChannel::CloseEventCodeAbnormalClosure, "");
         return;
     }
     ASSERT(scriptExecutionContext());
@@ -413,7 +413,7 @@ void WebSocket::didStartClosingHandshake()
     m_state = CLOSING;
 }
 
-void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion)
+void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion, unsigned short code, const String& reason)
 {
     LOG(Network, "WebSocket %p didClose", this);
     if (!m_channel)
@@ -423,7 +423,7 @@ void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshake
     m_bufferedAmountAfterClose += unhandledBufferedAmount;
     ASSERT(scriptExecutionContext());
     RefPtr<CloseEvent> event = CloseEvent::create();
-    event->initCloseEvent(eventNames().closeEvent, false, false, wasClean);
+    event->initCloseEvent(eventNames().closeEvent, false, false, wasClean, code, reason);
     dispatchEvent(event);
     if (m_channel) {
         m_channel->disconnect();
