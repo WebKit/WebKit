@@ -1,3 +1,26 @@
+2011-08-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG non-speculative JIT does not inline the double case of ValueAdd
+        https://bugs.webkit.org/show_bug.cgi?id=66025
+
+        Reviewed by Gavin Barraclough.
+        
+        This is a 1.3% win on Kraken overall, with >=8% speed-ups on a few
+        benchmarks (imaging-darkroom, stanford-crypto-pbkdf2,
+        stanford-crypto-sha256-iterative).  It looks like it might have
+        a speed-up in SunSpider (though not statistically significant or
+        particularly reproducible) and a slight slow-down in V8 (0.14%,
+        not statistically significant).  It does slow down v8-crypto by
+        1.5%.
+
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::isKnownInteger):
+        (JSC::DFG::JITCodeGenerator::isKnownNumeric):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::knownConstantArithOp):
+        (JSC::DFG::NonSpeculativeJIT::basicArithOp):
+        * dfg/DFGOperations.cpp:
+
 2011-08-18  Filip Pizlo  <fpizlo@apple.com>
 
         [jsfunfuzz] DFG speculative JIT does divide-by-zero checks incorrectly

@@ -169,12 +169,68 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
     
     overflow.link(&m_jit);
     
+    JITCompiler::Jump notNumber;
+    
+    // first deal with overflow case
+    m_jit.convertInt32ToDouble(regArgGPR, tmp2FPR);
+    
+    // now deal with not-int case, if applicable
+    if (!isKnownInteger(regChild)) {
+        JITCompiler::Jump haveValue = m_jit.jump();
+        
+        notInt.link(&m_jit);
+        
+        if (!isKnownNumeric(regChild)) {
+            ASSERT(op == ValueAdd);
+            notNumber = m_jit.branchTestPtr(MacroAssembler::Zero, regArgGPR, GPRInfo::tagTypeNumberRegister);
+        }
+        
+        m_jit.move(regArgGPR, resultGPR);
+        m_jit.addPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
+        m_jit.movePtrToDouble(resultGPR, tmp2FPR);
+        
+        haveValue.link(&m_jit);
+    }
+    
+    m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(immChild)))), resultGPR);
+    m_jit.movePtrToDouble(resultGPR, tmp1FPR);
     switch (op) {
     case ValueAdd:
-        // overflow and not-int are the same
-        if (!isKnownInteger(regChild))
-            notInt.link(&m_jit);
+    case ArithAdd:
+        m_jit.addDouble(tmp1FPR, tmp2FPR);
+        break;
         
+    case ArithSub:
+        m_jit.subDouble(tmp1FPR, tmp2FPR);
+        break;
+            
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    
+    JITCompiler::Jump doneCaseConvertedToInt;
+    
+    if (op == ValueAdd) {
+        JITCompiler::JumpList failureCases;
+        m_jit.branchConvertDoubleToInt32(tmp2FPR, resultGPR, failureCases, tmp1FPR);
+        m_jit.orPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
+        
+        doneCaseConvertedToInt = m_jit.jump();
+        
+        failureCases.link(&m_jit);
+    }
+    
+    m_jit.moveDoubleToPtr(tmp2FPR, resultGPR);
+    m_jit.subPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
+        
+    if (!isKnownNumeric(regChild)) {
+        ASSERT(notNumber.isSet());
+        ASSERT(op == ValueAdd);
+            
+        JITCompiler::Jump doneCaseWasNumber = m_jit.jump();
+            
+        notNumber.link(&m_jit);
+            
         silentSpillAllRegisters(resultGPR);
         if (commute) {
             m_jit.move(regArgGPR, GPRInfo::argumentGPR2);
@@ -187,39 +243,13 @@ void NonSpeculativeJIT::knownConstantArithOp(NodeType op, NodeIndex regChild, No
         appendCallWithExceptionCheck(operationValueAdd);
         m_jit.move(GPRInfo::returnValueGPR, resultGPR);
         silentFillAllRegisters(resultGPR);
-        break;
-
-    case ArithAdd:
-    case ArithSub:
-        // first deal with overflow case
-        m_jit.convertInt32ToDouble(regArgGPR, tmp2FPR);
-        
-        // now deal with not-int case, if applicable
-        if (!isKnownInteger(regChild)) {
-            JITCompiler::Jump haveValue = m_jit.jump();
             
-            notInt.link(&m_jit);
-            
-            m_jit.move(regArgGPR, resultGPR);
-            unboxDouble(resultGPR, tmp2FPR);
-            
-            haveValue.link(&m_jit);
-        }
-        
-        m_jit.move(MacroAssembler::ImmPtr(reinterpret_cast<void*>(reinterpretDoubleToIntptr(valueOfDoubleConstant(immChild)))), resultGPR);
-        m_jit.movePtrToDouble(resultGPR, tmp1FPR);
-        if (op == ArithAdd)
-            m_jit.addDouble(tmp1FPR, tmp2FPR);
-        else
-            m_jit.subDouble(tmp1FPR, tmp2FPR);
-        boxDouble(tmp2FPR, resultGPR);
-        break;
-        
-    default:
-        ASSERT_NOT_REACHED();
+        doneCaseWasNumber.link(&m_jit);
     }
     
     done.link(&m_jit);
+    if (doneCaseConvertedToInt.isSet())
+        doneCaseConvertedToInt.link(&m_jit);
         
     jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
 }
@@ -279,86 +309,125 @@ void NonSpeculativeJIT::basicArithOp(NodeType op, Node &node)
         
     JITCompiler::Jump done = m_jit.jump();
     
-    if (op == ValueAdd) {
-        if (child1NotInt.isSet())
-            child1NotInt.link(&m_jit);
-        if (child2NotInt.isSet())
-            child2NotInt.link(&m_jit);
-        overflow.link(&m_jit);
+    JITCompiler::JumpList haveFPRArguments;
+
+    overflow.link(&m_jit);
         
+    // both arguments are integers
+    m_jit.convertInt32ToDouble(arg1GPR, tmp1FPR);
+    m_jit.convertInt32ToDouble(arg2GPR, tmp2FPR);
+        
+    haveFPRArguments.append(m_jit.jump());
+        
+    JITCompiler::JumpList notNumbers;
+        
+    JITCompiler::Jump child2NotInt2;
+        
+    if (!isKnownInteger(node.child1())) {
+        child1NotInt.link(&m_jit);
+            
+        if (!isKnownNumeric(node.child1())) {
+            ASSERT(op == ValueAdd);
+            notNumbers.append(m_jit.branchTestPtr(MacroAssembler::Zero, arg1GPR, GPRInfo::tagTypeNumberRegister));
+        }
+            
+        m_jit.move(arg1GPR, resultGPR);
+        unboxDouble(resultGPR, tmp1FPR);
+            
+        // child1 is converted to a double; child2 may either be an int or
+        // a boxed double
+            
+        if (!isKnownInteger(node.child2())) {
+            if (isKnownNumeric(node.child2()))
+                child2NotInt2 = m_jit.branchPtr(MacroAssembler::Below, arg2GPR, GPRInfo::tagTypeNumberRegister);
+            else {
+                ASSERT(op == ValueAdd);
+                JITCompiler::Jump child2IsInt = m_jit.branchPtr(MacroAssembler::AboveOrEqual, arg2GPR, GPRInfo::tagTypeNumberRegister);
+                notNumbers.append(m_jit.branchTestPtr(MacroAssembler::Zero, arg2GPR, GPRInfo::tagTypeNumberRegister));
+                child2NotInt2 = m_jit.jump();
+                child2IsInt.link(&m_jit);
+            }
+        }
+            
+        // child 2 is definitely an integer
+        m_jit.convertInt32ToDouble(arg2GPR, tmp2FPR);
+            
+        haveFPRArguments.append(m_jit.jump());
+    }
+        
+    if (!isKnownInteger(node.child2())) {
+        child2NotInt.link(&m_jit);
+            
+        if (!isKnownNumeric(node.child2())) {
+            ASSERT(op == ValueAdd);
+            notNumbers.append(m_jit.branchTestPtr(MacroAssembler::Zero, arg2GPR, GPRInfo::tagTypeNumberRegister));
+        }
+            
+        // child1 is definitely an integer, and child 2 is definitely not
+            
+        m_jit.convertInt32ToDouble(arg1GPR, tmp1FPR);
+            
+        if (child2NotInt2.isSet())
+            child2NotInt2.link(&m_jit);
+            
+        m_jit.move(arg2GPR, resultGPR);
+        unboxDouble(resultGPR, tmp2FPR);
+    }
+        
+    haveFPRArguments.link(&m_jit);
+        
+    switch (op) {
+    case ValueAdd:
+    case ArithAdd:
+        m_jit.addDouble(tmp2FPR, tmp1FPR);
+        break;
+            
+    case ArithSub:
+        m_jit.subDouble(tmp2FPR, tmp1FPR);
+        break;
+            
+    case ArithMul:
+        m_jit.mulDouble(tmp2FPR, tmp1FPR);
+        break;
+            
+    default:
+        ASSERT_NOT_REACHED();
+    }
+    
+    JITCompiler::Jump doneCaseConvertedToInt;
+    
+    if (op == ValueAdd) {
+        JITCompiler::JumpList failureCases;
+        m_jit.branchConvertDoubleToInt32(tmp1FPR, resultGPR, failureCases, tmp2FPR);
+        m_jit.orPtr(GPRInfo::tagTypeNumberRegister, resultGPR);
+        
+        doneCaseConvertedToInt = m_jit.jump();
+        
+        failureCases.link(&m_jit);
+    }
+        
+    boxDouble(tmp1FPR, resultGPR);
+        
+    if (!notNumbers.empty()) {
+        ASSERT(op == ValueAdd);
+            
+        JITCompiler::Jump doneCaseWasNumber = m_jit.jump();
+            
+        notNumbers.link(&m_jit);
+            
         silentSpillAllRegisters(resultGPR);
         setupStubArguments(arg1GPR, arg2GPR);
         m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
         appendCallWithExceptionCheck(operationValueAdd);
         m_jit.move(GPRInfo::returnValueGPR, resultGPR);
         silentFillAllRegisters(resultGPR);
-    } else {
-        JITCompiler::JumpList haveFPRArguments;
 
-        overflow.link(&m_jit);
-        
-        // both arguments are integers
-        m_jit.convertInt32ToDouble(arg1GPR, tmp1FPR);
-        m_jit.convertInt32ToDouble(arg2GPR, tmp2FPR);
-        
-        haveFPRArguments.append(m_jit.jump());
-        
-        JITCompiler::Jump child2NotInt2;
-        
-        if (!isKnownInteger(node.child1())) {
-            child1NotInt.link(&m_jit);
-            
-            m_jit.move(arg1GPR, resultGPR);
-            unboxDouble(resultGPR, tmp1FPR);
-            
-            // child1 is converted to a double; child2 may either be an int or
-            // a boxed double
-            
-            if (!isKnownInteger(node.child2()))
-                child2NotInt2 = m_jit.branchPtr(MacroAssembler::Below, arg2GPR, GPRInfo::tagTypeNumberRegister);
-            
-            // child 2 is definitely an integer
-            m_jit.convertInt32ToDouble(arg2GPR, tmp2FPR);
-            
-            haveFPRArguments.append(m_jit.jump());
-        }
-        
-        if (!isKnownInteger(node.child2())) {
-            child2NotInt.link(&m_jit);
-            // child1 is definitely an integer, and child 2 is definitely not
-            
-            m_jit.convertInt32ToDouble(arg1GPR, tmp1FPR);
-            
-            if (child2NotInt2.isSet())
-                child2NotInt2.link(&m_jit);
-            
-            m_jit.move(arg2GPR, resultGPR);
-            unboxDouble(resultGPR, tmp2FPR);
-        }
-        
-        haveFPRArguments.link(&m_jit);
-        
-        switch (op) {
-        case ArithAdd:
-            m_jit.addDouble(tmp2FPR, tmp1FPR);
-            break;
-            
-        case ArithSub:
-            m_jit.subDouble(tmp2FPR, tmp1FPR);
-            break;
-            
-        case ArithMul:
-            m_jit.mulDouble(tmp2FPR, tmp1FPR);
-            break;
-            
-        default:
-            ASSERT_NOT_REACHED();
-        }
-        
-        boxDouble(tmp1FPR, resultGPR);
+        doneCaseWasNumber.link(&m_jit);
     }
     
     done.link(&m_jit);
+    if (doneCaseConvertedToInt.isSet())
+        doneCaseConvertedToInt.link(&m_jit);
         
     jsValueResult(resultGPR, m_compileIndex, UseChildrenCalledExplicitly);
 }

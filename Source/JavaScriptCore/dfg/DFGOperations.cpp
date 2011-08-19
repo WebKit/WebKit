@@ -123,19 +123,8 @@ EncodedJSValue operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, Enc
 {
     JSValue op1 = JSValue::decode(encodedOp1);
     JSValue op2 = JSValue::decode(encodedOp2);
-
-    if (op1.isInt32() && op2.isInt32()) {
-        int64_t result64 = static_cast<int64_t>(op1.asInt32()) + static_cast<int64_t>(op2.asInt32());
-        int32_t result32 = static_cast<int32_t>(result64);
-        if (LIKELY(result32 == result64))
-            return JSValue::encode(jsNumber(result32));
-        return JSValue::encode(jsNumber((double)result64));
-    }
     
-    double number1;
-    double number2;
-    if (op1.getNumber(number1) && op2.getNumber(number2))
-        return JSValue::encode(jsNumber(number1 + number2));
+    ASSERT(!op1.isNumber() || !op2.isNumber());
 
     return JSValue::encode(jsAddSlowCase(exec, op1, op2));
 }

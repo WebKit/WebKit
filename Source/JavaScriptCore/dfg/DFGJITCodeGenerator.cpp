@@ -330,7 +330,12 @@ bool JITCodeGenerator::isKnownInteger(NodeIndex nodeIndex)
     if (isInt32Constant(nodeIndex))
         return true;
 
-    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()];
+    Node& node = m_jit.graph()[nodeIndex];
+    
+    if (node.hasInt32Result())
+        return true;
+    
+    GenerationInfo& info = m_generationInfo[node.virtualRegister()];
 
     DataFormat registerFormat = info.registerFormat();
     if (registerFormat != DataFormatNone)
@@ -349,7 +354,12 @@ bool JITCodeGenerator::isKnownNumeric(NodeIndex nodeIndex)
     if (isInt32Constant(nodeIndex) || isDoubleConstant(nodeIndex))
         return true;
 
-    GenerationInfo& info = m_generationInfo[m_jit.graph()[nodeIndex].virtualRegister()];
+    Node& node = m_jit.graph()[nodeIndex];
+    
+    if (node.hasNumericResult())
+        return true;
+    
+    GenerationInfo& info = m_generationInfo[node.virtualRegister()];
 
     DataFormat registerFormat = info.registerFormat();
     if (registerFormat != DataFormatNone)
