@@ -30,6 +30,7 @@
 #include "PixelDumpSupport.h"
 
 #include "CyclicRedundancyCheck.h"
+#include <cstdio>
 
 static void appendIntToVector(unsigned number, Vector<unsigned char>& vector)
 {
