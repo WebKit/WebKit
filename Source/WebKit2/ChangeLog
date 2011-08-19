@@ -1,3 +1,14 @@
+2011-08-19  Lars Knudsen  <lars.knudsen@nokia.com>
+
+        [Qt][WK2] Change the rect argument of QtWebPageProxy::paint() to const ref
+        https://bugs.webkit.org/show_bug.cgi?id=66549
+
+        Reviewed by Benjamin Poulain.
+
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::paint):
+        * UIProcess/qt/QtWebPageProxy.h:
+
 2011-08-19  MORITA Hajime  <morrita@google.com>
 
         Spell-checking against execCommand() inserted HTML doesn't care word boundary.

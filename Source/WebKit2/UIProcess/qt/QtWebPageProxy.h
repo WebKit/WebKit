@@ -138,7 +138,7 @@ public:
     void didChangeLoadProgress(int);
     int loadProgress() const { return m_loadProgress; }
 
-    void paint(QPainter* painter, QRect);
+    void paint(QPainter*, const QRect&);
 
     void updateAction(QtWebPageProxy::WebAction action);
     void updateNavigationActions();

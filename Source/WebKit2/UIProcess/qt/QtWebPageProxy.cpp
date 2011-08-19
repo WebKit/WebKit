@@ -436,7 +436,7 @@ void QtWebPageProxy::didChangeLoadProgress(int newLoadProgress)
     m_viewInterface->didChangeLoadProgress(newLoadProgress);
 }
 
-void QtWebPageProxy::paint(QPainter* painter, QRect area)
+void QtWebPageProxy::paint(QPainter* painter, const QRect& area)
 {
     if (m_webPageProxy->isValid())
         paintContent(painter, area);
