@@ -18,9 +18,7 @@ function test()
     InspectorTest.runDebuggerTestSuite([
         function testSetNoneOfURLAndRegex(next)
         {
-            var url = "debugger-set-breakpoint.js";
-            var urlRegex = "debugger-set-breakpoint.*";
-            DebuggerAgent.setBreakpointByUrl(undefined, undefined, 1, step2);
+            DebuggerAgent.setBreakpointByUrl.invoke({lineNumber: 1}, step2);
 
             function step2(result)
             {
@@ -44,11 +42,7 @@ function test()
 
         function testSetByRegex(next)
         {
-            var url = undefined;
-            var urlRegex = "debugger-set-breakpoint.*";
-            var columnNumber = undefined;
-            var condition = undefined;
-            DebuggerAgent.setBreakpointByUrl(url, urlRegex, 8, columnNumber, condition, step2);
+            DebuggerAgent.setBreakpointByUrl.invoke({urlRegex: "debugger-set-breakpoint.*", lineNumber:8}, step2);
 
             function step2(result)
             {

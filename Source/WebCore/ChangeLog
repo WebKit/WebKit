@@ -1,3 +1,17 @@
+2011-08-19  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: backend js api: an ability to skip optional arguments in the middle of the argument list is required.
+        https://bugs.webkit.org/show_bug.cgi?id=66482
+
+        There are functions in the API with multiple optional arguments.
+        When we call it we have to specify an optional argument as 'undefined' if we want to pass non default value for the next one.
+        This can be solved with passing the arguments as an object.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/front-end/RemoteObject.js:
+
 2011-08-19  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] Build fix after r93384.

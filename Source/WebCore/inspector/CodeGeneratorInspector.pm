@@ -786,6 +786,14 @@ InspectorBackendStub.prototype = {
         if (!window[agentName])
             window[agentName] = {};
         window[agentName][domainAndFunction[1]] = this.sendMessageToBackend.bind(this, requestString);
+        window[agentName][domainAndFunction[1]]["invoke"] = this._invoke.bind(this, requestString)
+    },
+
+    _invoke: function(requestString, args, callback)
+    {
+        var request = JSON.parse(requestString);
+        request.params = args;
+        this.sendMessageObjectToBackend(request, callback);
     },
 
     sendMessageToBackend: function()
@@ -831,18 +839,18 @@ InspectorBackendStub.prototype = {
                 return;
             }
         }
-        request.id = this._wrap(callback || function() {});
 
-        if (window.dumpInspectorProtocolMessages)
-            console.log("frontend: " + JSON.stringify(request));
-
-        ++this._pendingResponsesCount;
-        this.sendMessageObjectToBackend(request);
+        this.sendMessageObjectToBackend(request, callback);
     },
 
-    sendMessageObjectToBackend: function(messageObject)
+    sendMessageObjectToBackend: function(messageObject, callback)
     {
+        messageObject.id = this._wrap(callback || function() {});
         var message = JSON.stringify(messageObject);
+        if (window.dumpInspectorProtocolMessages)
+            console.log("frontend: " + message);
+
+        ++this._pendingResponsesCount;
         InspectorFrontendHost.sendMessageToBackend(message);
     },
 

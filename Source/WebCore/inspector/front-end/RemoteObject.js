@@ -160,7 +160,7 @@ WebInspector.RemoteObject.prototype = {
             return;
         }
 
-        RuntimeAgent.evaluate(value, undefined, false, true, evaluatedCallback.bind(this));
+        RuntimeAgent.evaluate.invoke({expression:value, doNotPauseOnExceptions:true}, evaluatedCallback.bind(this));
 
         function evaluatedCallback(error, result, wasThrown)
         {
