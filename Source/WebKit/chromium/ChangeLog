@@ -1,3 +1,13 @@
+2011-08-19  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API][chromium] webInspector.resources deprecation warning is given even for extensions that don't use webInspector.resources
+        https://bugs.webkit.org/show_bug.cgi?id=66553
+
+        Reviewed by Pavel Feldman.
+
+        * src/js/DevTools.js:
+        (WebInspector.platformExtensionAPI):
+
 2011-08-18  James Kozianski  <koz@chromium.org>
 
         Chromium plumbing for webkitRequestFullScreen

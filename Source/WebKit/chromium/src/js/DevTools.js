@@ -168,8 +168,12 @@ WebInspector.platformExtensionAPI = function(tabId)
     chrome = window.chrome || {};
     chrome.experimental = chrome.experimental || {};
     chrome.experimental.devtools = chrome.experimental.devtools || {};
-    for (var property in webInspector)
-        chrome.experimental.devtools[property] = webInspector[property];
+
+    var properties = Object.getOwnPropertyNames(webInspector);
+    for (var i = 0; i < properties.length; ++i) {
+        var descriptor = Object.getOwnPropertyDescriptor(webInspector, properties[i]);
+        Object.defineProperty(chrome.experimental.devtools, properties[i], descriptor);
+    }
 }
 
 WebInspector.buildPlatformExtensionAPI = function()
