@@ -63,25 +63,19 @@ JSFunction::JSFunction(VPtrStealingHackType)
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& name, NativeExecutable* thunk)
     : Base(globalObject, structure)
-    , m_executable(exec->globalData(), this, thunk)
+    , m_executable()
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
 {
-    ASSERT(inherits(&s_info));
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+    constructorBody(exec, length, name, thunk);
 }
 
 JSFunction::JSFunction(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, int length, const Identifier& name, NativeFunction func)
     : Base(globalObject, structure)
+    , m_executable()
     , m_scopeChain(exec->globalData(), this, globalObject->globalScopeChain())
 {
-    ASSERT(inherits(&s_info));
-    
     // Can't do this during initialization because getHostFunction might do a GC allocation.
-    m_executable.set(exec->globalData(), this, exec->globalData().getHostFunction(func));
-    
-    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
+    constructorBody(exec, length, name,  exec->globalData().getHostFunction(func));
 }
 
 JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeChainNode* scopeChainNode)
@@ -92,6 +86,14 @@ JSFunction::JSFunction(ExecState* exec, FunctionExecutable* executable, ScopeCha
     ASSERT(inherits(&s_info));
     setStructure(exec->globalData(), scopeChainNode->globalObject->namedFunctionStructure());
     putDirectOffset(exec->globalData(), scopeChainNode->globalObject->functionNameOffset(), executable->nameValue());
+}
+
+inline void JSFunction::constructorBody(ExecState* exec, int length, const Identifier& name, ExecutableBase* executable)
+{
+    ASSERT(inherits(&s_info));
+    m_executable.set(exec->globalData(), this, executable);
+    putDirect(exec->globalData(), exec->globalData().propertyNames->name, jsString(exec, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(length), DontDelete | ReadOnly | DontEnum);
 }
 
 JSFunction::~JSFunction()

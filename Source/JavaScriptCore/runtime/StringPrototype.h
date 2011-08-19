@@ -29,14 +29,15 @@ namespace JSC {
 
     class StringPrototype : public StringObject {
     private:
-        StringPrototype(ExecState*, JSGlobalObject*, Structure*);
+        StringPrototype(ExecState*, JSGlobalObject*, Structure*, JSString*);
 
     public:
         typedef StringObject Base;
 
         static StringPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            return new (allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, globalObject, structure);
+            JSString* nameAndMessage = jsEmptyString(exec);
+            return new (allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, globalObject, structure, nameAndMessage);
         }
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);

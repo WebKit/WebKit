@@ -37,6 +37,9 @@ namespace JSC {
         {
             return new (allocateCell<NativeErrorPrototype>(*exec->heap())) NativeErrorPrototype(exec, globalObject, structure, nameAndMessage, constructor);
         }
+
+    protected:
+        void constructorBody(ExecState*, const UString& nameAndMessage, NativeErrorConstructor*);
     };
 
 } // namespace JSC

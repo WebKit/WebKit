@@ -36,8 +36,6 @@ namespace Bindings {
 const ClassInfo ObjCRuntimeObject::s_info = { "ObjCRuntimeObject", &RuntimeObject::s_info, 0, 0 };
 
 ObjCRuntimeObject::ObjCRuntimeObject(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<ObjcInstance> instance, Structure* structure)
-    // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
-    // We need to pass in the right global object for "i".
     : RuntimeObject(exec, globalObject, structure, instance)
 {
     ASSERT(inherits(&s_info));

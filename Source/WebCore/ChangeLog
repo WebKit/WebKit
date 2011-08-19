@@ -1,3 +1,27 @@
+2011-08-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Move allocation in constructors into separate constructorBody() methods
+        https://bugs.webkit.org/show_bug.cgi?id=66265
+
+        Reviewed by Oliver Hunt.
+
+        No new tests.
+
+        Refactoring to put all allocations that need to be done after the object's 
+        initialization list has executed but before the object is ready for use 
+        into a separate constructorBody() method.  This method is still called by the constructor, 
+        so the patch doesn't resolve any potential issues, it's just to set up the code for further refactoring.
+
+        * bridge/objc/ObjCRuntimeObject.h:
+        (JSC::Bindings::ObjCRuntimeObject::create):
+        * bridge/objc/ObjCRuntimeObject.mm:
+        * bridge/objc/objc_instance.mm:
+        (ObjCRuntimeMethod::create):
+        (ObjCRuntimeMethod::ObjCRuntimeMethod):
+        * bridge/runtime_array.cpp:
+        * bridge/runtime_array.h:
+        (JSC::RuntimeArray::create):
+
 2011-08-18  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66495

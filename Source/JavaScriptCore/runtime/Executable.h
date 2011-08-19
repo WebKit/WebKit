@@ -504,6 +504,14 @@ namespace JSC {
         
         static const ClassInfo s_info;
 
+    protected:
+        void constructorBody(JSGlobalData& globalData, const Identifier& name, int firstLine, int lastLine)
+        {
+            m_firstLine = firstLine;
+            m_lastLine = lastLine;
+            m_nameValue.set(globalData, this, jsString(&globalData, name.ustring()));
+        }
+
     private:
         FunctionExecutable(JSGlobalData&, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);
         FunctionExecutable(ExecState*, const Identifier& name, const SourceCode&, bool forceUsesArguments, FunctionParameters*, bool, int firstLine, int lastLine);

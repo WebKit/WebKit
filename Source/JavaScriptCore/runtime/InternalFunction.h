@@ -54,6 +54,12 @@ namespace JSC {
 
         InternalFunction(JSGlobalData*, JSGlobalObject*, Structure*, const Identifier&);
 
+        void constructorBody(JSGlobalData& globalData, const Identifier& name)
+        {
+            ASSERT(inherits(&s_info));
+            putDirect(globalData, globalData.propertyNames->name, jsString(&globalData, name.isNull() ? "" : name.ustring()), DontDelete | ReadOnly | DontEnum);
+        }
+
     private:
         virtual CallType getCallData(CallData&) = 0;
 

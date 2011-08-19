@@ -1,3 +1,73 @@
+2011-08-18  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Move allocation in constructors into separate constructorBody() methods
+        https://bugs.webkit.org/show_bug.cgi?id=66265
+
+        Reviewed by Oliver Hunt.
+
+        Refactoring to put all allocations that need to be done after the object's 
+        initialization list has executed but before the object is ready for use 
+        into a separate constructorBody() method.  This method is still called by the constructor, 
+        so the patch doesn't resolve any potential issues, it's just to set up the code for further refactoring.
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * jsc.cpp:
+        (GlobalObject::constructorBody):
+        (GlobalObject::GlobalObject):
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        * runtime/ErrorInstance.h:
+        (JSC::ErrorInstance::constructorBody):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        (JSC::ErrorPrototype::constructorBody):
+        * runtime/ErrorPrototype.h:
+        * runtime/Executable.cpp:
+        (JSC::FunctionExecutable::FunctionExecutable):
+        * runtime/Executable.h:
+        (JSC::FunctionExecutable::constructorBody):
+        * runtime/InternalFunction.cpp:
+        (JSC::InternalFunction::InternalFunction):
+        * runtime/InternalFunction.h:
+        (JSC::InternalFunction::constructorBody):
+        * runtime/JSByteArray.cpp:
+        (JSC::JSByteArray::JSByteArray):
+        * runtime/JSByteArray.h:
+        (JSC::JSByteArray::constructorBody):
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::JSFunction):
+        (JSC::JSFunction::constructorBody):
+        * runtime/JSFunction.h:
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::JSGlobalObject):
+        (JSC::JSGlobalObject::constructorBody):
+        * runtime/JSPropertyNameIterator.cpp:
+        (JSC::JSPropertyNameIterator::JSPropertyNameIterator):
+        * runtime/JSPropertyNameIterator.h:
+        (JSC::JSPropertyNameIterator::constructorBody):
+        * runtime/JSString.h:
+        (JSC::RopeBuilder::JSString):
+        (JSC::RopeBuilder::constructorBody):
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::constructorBody):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        (JSC::NativeErrorPrototype::constructorBody):
+        * runtime/NativeErrorPrototype.h:
+        * runtime/StringObject.cpp:
+        * runtime/StringObject.h:
+        (JSC::StringObject::create):
+        * runtime/StringObjectThatMasqueradesAsUndefined.h:
+        (JSC::StringObjectThatMasqueradesAsUndefined::create):
+        (JSC::StringObjectThatMasqueradesAsUndefined::StringObjectThatMasqueradesAsUndefined):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * runtime/StringPrototype.h:
+        (JSC::StringPrototype::create):
+
 2011-08-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG non-speculative JIT does not inline the double case of ValueAdd

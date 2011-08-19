@@ -39,7 +39,7 @@ JSByteArray::JSByteArray(ExecState* exec, Structure* structure, ByteArray* stora
     : JSNonFinalObject(exec->globalData(), structure)
     , m_storage(storage)
 {
-    putDirect(exec->globalData(), exec->globalData().propertyNames->length, jsNumber(m_storage->length()), ReadOnly | DontDelete);
+    constructorBody(exec);
 }
         
 JSByteArray* JSByteArray::create(ExecState* exec, Structure* structure, ByteArray* storage)

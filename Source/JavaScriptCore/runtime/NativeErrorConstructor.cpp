@@ -35,15 +35,7 @@ const ClassInfo NativeErrorConstructor::s_info = { "Function", &InternalFunction
 NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& nameAndMessage)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, nameAndMessage))
 {
-    ASSERT(inherits(&s_info));
-
-    NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, nameAndMessage, this);
-
-    putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
-    putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
-    m_errorStructure.set(exec->globalData(), this, ErrorInstance::createStructure(exec->globalData(), prototype));
-    ASSERT(m_errorStructure);
-    ASSERT(m_errorStructure->typeInfo().type() == ObjectType);
+    constructorBody(exec, globalObject, prototypeStructure, nameAndMessage);
 }
 
 void NativeErrorConstructor::visitChildren(SlotVisitor& visitor)

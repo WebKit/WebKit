@@ -39,6 +39,8 @@ public:
 
     static ObjCRuntimeObject* create(ExecState* exec, JSGlobalObject* globalObject, PassRefPtr<ObjcInstance> inst)
     {
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "i".
         Structure* structure = WebCore::deprecatedGetDOMStructure<ObjCRuntimeObject>(exec);
         return new (allocateCell<ObjCRuntimeObject>(*exec->heap())) ObjCRuntimeObject(exec, globalObject, inst, structure);
     }

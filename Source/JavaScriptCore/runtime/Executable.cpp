@@ -142,9 +142,7 @@ FunctionExecutable::FunctionExecutable(JSGlobalData& globalData, const Identifie
     , m_name(name)
     , m_symbolTable(0)
 {
-    m_firstLine = firstLine;
-    m_lastLine = lastLine;
-    m_nameValue.set(globalData, this, jsString(&globalData, name.ustring()));
+    constructorBody(globalData, name, firstLine, lastLine);
 }
 
 FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, const SourceCode& source, bool forceUsesArguments, FunctionParameters* parameters, bool inStrictContext, int firstLine, int lastLine)
@@ -157,7 +155,7 @@ FunctionExecutable::FunctionExecutable(ExecState* exec, const Identifier& name, 
 {
     m_firstLine = firstLine;
     m_lastLine = lastLine;
-    m_nameValue.set(exec->globalData(), this, jsString(&exec->globalData(), name.ustring()));
+    constructorBody(exec->globalData(), name, firstLine, lastLine);
 }
 
 

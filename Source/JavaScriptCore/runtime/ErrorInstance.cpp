@@ -29,8 +29,7 @@ ErrorInstance::ErrorInstance(JSGlobalData& globalData, Structure* structure)
     : JSNonFinalObject(globalData, structure)
     , m_appendSourceToMessage(false)
 {
-    ASSERT(inherits(&s_info));
-    putDirect(globalData, globalData.propertyNames->message, jsString(&globalData, ""), DontEnum);
+    constructorBody(globalData);
 }
 
 ErrorInstance::ErrorInstance(JSGlobalData& globalData, Structure* structure, const UString& message)

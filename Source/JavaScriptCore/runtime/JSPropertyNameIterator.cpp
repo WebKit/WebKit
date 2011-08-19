@@ -43,9 +43,7 @@ inline JSPropertyNameIterator::JSPropertyNameIterator(ExecState* exec, PropertyN
     , m_jsStringsSize(propertyNameArrayData->propertyNameVector().size())
     , m_jsStrings(adoptArrayPtr(new WriteBarrier<Unknown>[m_jsStringsSize]))
 {
-    PropertyNameArrayData::PropertyNameVector& propertyNameVector = propertyNameArrayData->propertyNameVector();
-    for (size_t i = 0; i < m_jsStringsSize; ++i)
-        m_jsStrings[i].set(exec->globalData(), this, jsOwnedString(exec, propertyNameVector[i].ustring()));
+    constructorBody(exec, propertyNameArrayData);
 }
 
 JSPropertyNameIterator* JSPropertyNameIterator::create(ExecState* exec, JSObject* o)

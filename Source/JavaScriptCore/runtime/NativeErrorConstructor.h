@@ -22,6 +22,7 @@
 #define NativeErrorConstructor_h
 
 #include "InternalFunction.h"
+#include "NativeErrorPrototype.h"
 
 namespace JSC {
 
@@ -46,6 +47,20 @@ namespace JSC {
         }
 
         Structure* errorStructure() { return m_errorStructure.get(); }
+
+    protected:
+        void constructorBody(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const UString& nameAndMessage)
+        {
+            ASSERT(inherits(&s_info));
+
+            NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, nameAndMessage, this);
+
+            putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
+            putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
+            m_errorStructure.set(exec->globalData(), this, ErrorInstance::createStructure(exec->globalData(), prototype));
+            ASSERT(m_errorStructure);
+            ASSERT(m_errorStructure->typeInfo().type() == ObjectType);
+        }
 
     private:
         NativeErrorConstructor(ExecState*, JSGlobalObject*, Structure*, Structure* prototypeStructure, const UString&);

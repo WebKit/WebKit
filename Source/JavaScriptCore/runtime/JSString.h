@@ -267,11 +267,7 @@ namespace JSC {
             , m_length(0)
             , m_fiberCount(s_maxInternalRopeLength)
         {
-            unsigned index = 0;
-            appendValueInConstructAndIncrementLength(exec, index, v1);
-            appendValueInConstructAndIncrementLength(exec, index, v2);
-            appendValueInConstructAndIncrementLength(exec, index, v3);
-            ASSERT(index == s_maxInternalRopeLength);
+            constructorBody(exec, v1, v2, v3);
         }
 
         // This constructor constructs a new string by concatenating u1 & u2.
@@ -297,6 +293,16 @@ namespace JSC {
             appendStringInConstruct(index, u2);
             appendStringInConstruct(index, u3);
             ASSERT(index <= s_maxInternalRopeLength);
+        }
+
+    protected:
+        void constructorBody(ExecState* exec, JSValue v1, JSValue v2, JSValue v3)
+        {
+            unsigned index = 0;
+            appendValueInConstructAndIncrementLength(exec, index, v1);
+            appendValueInConstructAndIncrementLength(exec, index, v2);
+            appendValueInConstructAndIncrementLength(exec, index, v3);
+            ASSERT(index == s_maxInternalRopeLength);
         }
 
     public:

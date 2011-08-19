@@ -123,6 +123,8 @@ namespace JSC {
     protected:
         const static unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | JSObject::StructureFlags;
 
+        void constructorBody(ExecState*, int length, const Identifier& name, ExecutableBase*);
+
     private:
         explicit JSFunction(VPtrStealingHackType);
 

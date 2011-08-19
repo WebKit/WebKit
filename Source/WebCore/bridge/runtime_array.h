@@ -38,6 +38,8 @@ public:
 
     static RuntimeArray* create(ExecState* exec, Bindings::Array* array)
     {
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object
+        // We need to pass in the right global object for "array".
         Structure* domStructure = WebCore::deprecatedGetDOMStructure<RuntimeArray>(exec);
         return new (allocateCell<RuntimeArray>(*exec->heap())) RuntimeArray(exec, domStructure, array);
     }
