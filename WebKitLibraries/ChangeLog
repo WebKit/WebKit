@@ -1,3 +1,16 @@
+2011-08-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=66495
+        Lion-specific scroller SPIs can use forward declaration instead of 
+        WebKitSystemInterface
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
 2011-07-28  Dan Bernstein  <mitz@apple.com>
 
         WebKitSystemInterface support for

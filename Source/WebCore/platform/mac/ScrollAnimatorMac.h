@@ -48,7 +48,7 @@ class ScrollbarPainterDelegate;
 #endif
 
 #if USE(WK_SCROLLBAR_PAINTER)
-typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
+typedef id WKScrollbarPainterControllerRef;
 #endif
 
 namespace WebCore {

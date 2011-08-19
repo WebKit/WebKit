@@ -3014,6 +3014,7 @@
 		934F713C0D5A6F1900018D69 /* ResourceErrorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 934F713B0D5A6F1900018D69 /* ResourceErrorBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		934F713E0D5A6F2800018D69 /* ResourceErrorBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934F713D0D5A6F2800018D69 /* ResourceErrorBase.cpp */; };
 		934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 934FE9E40B5CA539003E4A73 /* FileChooser.cpp */; };
+		93500F3213FDE3BE0099EC24 /* NSScrollerImpDetails.h in Headers */ = {isa = PBXBuildFile; fileRef = 93500F3113FDE3BE0099EC24 /* NSScrollerImpDetails.h */; };
 		935207BE09BD410A00F2038D /* LocalizedStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 935207BD09BD410A00F2038D /* LocalizedStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9352084509BD43B900F2038D /* Language.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352084409BD43B900F2038D /* Language.mm */; };
 		9352087709BD453400F2038D /* CookieJar.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9352087609BD453400F2038D /* CookieJar.mm */; };
@@ -9625,6 +9626,7 @@
 		934F713B0D5A6F1900018D69 /* ResourceErrorBase.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ResourceErrorBase.h; sourceTree = "<group>"; };
 		934F713D0D5A6F2800018D69 /* ResourceErrorBase.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceErrorBase.cpp; sourceTree = "<group>"; };
 		934FE9E40B5CA539003E4A73 /* FileChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileChooser.cpp; sourceTree = "<group>"; };
+		93500F3113FDE3BE0099EC24 /* NSScrollerImpDetails.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScrollerImpDetails.h; sourceTree = "<group>"; };
 		935207BD09BD410A00F2038D /* LocalizedStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalizedStrings.h; sourceTree = "<group>"; };
 		9352084409BD43B900F2038D /* Language.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Language.mm; sourceTree = "<group>"; };
 		9352087609BD453400F2038D /* CookieJar.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CookieJar.mm; sourceTree = "<group>"; };
@@ -14461,6 +14463,7 @@
 		6582A14809999D6C00BEEB6D /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				93500F3113FDE3BE0099EC24 /* NSScrollerImpDetails.h */,
 				51E1ECAD0C91C54600DC255B /* AutodrainedPool.mm */,
 				65A640F00533BB1F0085E777 /* BlockExceptions.h */,
 				65F80697054D9F86008BF776 /* BlockExceptions.mm */,
@@ -23387,6 +23390,7 @@
 				FD6F252D13F5EF0E0065165F /* MediaElementAudioSourceNode.h in Headers */,
 				FD23A12613F5FA5900F67001 /* JSMediaElementAudioSourceNode.h in Headers */,
 				DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */,
+				93500F3213FDE3BE0099EC24 /* NSScrollerImpDetails.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

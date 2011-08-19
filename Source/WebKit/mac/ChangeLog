@@ -1,3 +1,14 @@
+2011-08-18  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=66495
+        Lion-specific scroller SPIs can use forward declaration instead of 
+        WebKitSystemInterface
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-08-18  Anders Carlsson  <andersca@apple.com>
 
         More C++0x libc++ build fixes

@@ -29,7 +29,7 @@
 #include "ScrollbarThemeComposite.h"
 
 #if USE(WK_SCROLLBAR_PAINTER)
-typedef struct __WKScrollbarPainter *WKScrollbarPainterRef;
+typedef id WKScrollbarPainterRef;
 #endif
 
 namespace WebCore {

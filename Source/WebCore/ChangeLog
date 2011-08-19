@@ -1,3 +1,57 @@
+2011-08-18  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66495
+        Lion-specific scroller SPIs can use forward declaration instead of 
+        WebKitSystemInterface
+
+        Reviewed by Sam Weinig.
+
+        * WebCore.exp.in:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/mac/NSScrollerImpDetails.h: Added.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (-[ScrollbarPartAnimation initWithScrollbarPainter:part:WebCore::scrollAnimator:WebCore::animateAlphaTo:duration:]):
+        (-[ScrollbarPartAnimation setCurrentProgress:]):
+        (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+        (WebCore::ScrollAnimatorMac::contentAreaWillPaint):
+        (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorMac::willStartLiveResize):
+        (WebCore::ScrollAnimatorMac::contentsResized):
+        (WebCore::ScrollAnimatorMac::willEndLiveResize):
+        (WebCore::ScrollAnimatorMac::contentAreaDidShow):
+        (WebCore::ScrollAnimatorMac::contentAreaDidHide):
+        (WebCore::ScrollAnimatorMac::didBeginScrollGesture):
+        (WebCore::ScrollAnimatorMac::didEndScrollGesture):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        (WebCore::ScrollAnimatorMac::initialScrollbarPaintTimerFired):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeMac::usesOverlayScrollbars):
+        (WebCore::ScrollbarThemeMac::updateScrollbarOverlayStyle):
+        (WebCore::ScrollbarThemeMac::hasThumb):
+        (WebCore::ScrollbarThemeMac::minimumThumbLength):
+        (WebCore::ScrollbarThemeMac::updateEnabledState):
+        (WebCore::scrollbarPainterPaint):
+        (WebCore::ScrollbarThemeMac::paint):
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/mac/WebCoreSystemInterface.mm:
+
 2011-08-18  Dan Bernstein  <mitz@apple.com>
 
         <rdar://problem/9973194> Fonts that specify a positive descender value are treated as having descenders ending above the baseline

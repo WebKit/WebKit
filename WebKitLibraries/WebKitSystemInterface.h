@@ -419,57 +419,7 @@ bool WKSandboxExtensionInvalidate(WKSandboxExtensionRef sandboxExtension);
 const char* WKSandboxExtensionGetSerializedFormat(WKSandboxExtensionRef sandboxExtension, size_t* length);
 WKSandboxExtensionRef WKSandboxExtensionCreateFromSerializedFormat(const char* serializationFormat, size_t length);
 
-typedef struct __WKScrollbarPainter *WKScrollbarPainterRef;
-typedef struct __WKScrollbarPainterController *WKScrollbarPainterControllerRef;
-
-WKScrollbarPainterRef WKMakeScrollbarPainter(int controlSize, bool isHorizontal);
-WKScrollbarPainterRef WKMakeScrollbarReplacementPainter(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal);
-void WKScrollbarPainterSetDelegate(WKScrollbarPainterRef, id scrollbarPainterDelegate);
-void WKScrollbarPainterSetEnabled(WKScrollbarPainterRef scrollbarPainter, bool enabled);
-void WKScrollbarPainterPaint(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, CGRect frameRect);
-void WKScrollbarPainterForceFlashScrollers(WKScrollbarPainterControllerRef);
-int WKScrollbarThickness(int controlSize);
-int WKScrollbarMinimumThumbLength(WKScrollbarPainterRef);
-int WKScrollbarMinimumTotalLengthNeededForThumb(WKScrollbarPainterRef);
-CGFloat WKScrollbarPainterKnobAlpha(WKScrollbarPainterRef);
-void WKSetScrollbarPainterKnobAlpha(WKScrollbarPainterRef, CGFloat);
-CGFloat WKScrollbarPainterTrackAlpha(WKScrollbarPainterRef);
-void WKSetScrollbarPainterTrackAlpha(WKScrollbarPainterRef, CGFloat);
-bool WKScrollbarPainterIsHorizontal(WKScrollbarPainterRef);
-CGRect WKScrollbarPainterKnobRect(WKScrollbarPainterRef);
-void WKScrollbarPainterSetOverlayState(WKScrollbarPainterRef, int overlayScrollerState);
-
-// The wk* to WK* renaming does not apply to enums. The way to
-// circumvent this is to define the enum anonymously twice using
-// the two prefixes. (See WebCoreSystemInterface.h)
-enum {
-    WKScrollerKnobStyleDefault = 0,
-    WKScrollerKnobStyleDark = 1,
-    WKScrollerKnobStyleLight = 2
-};
-typedef uint32 WKScrollerKnobStyle;
-void WKSetScrollbarPainterKnobStyle(WKScrollbarPainterRef, WKScrollerKnobStyle);
-
-WKScrollbarPainterControllerRef WKMakeScrollbarPainterController(id painterControllerDelegate);
-void WKSetPainterForPainterController(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
-WKScrollbarPainterRef WKVerticalScrollbarPainterForController(WKScrollbarPainterControllerRef);
-WKScrollbarPainterRef WKHorizontalScrollbarPainterForController(WKScrollbarPainterControllerRef);
-int WKScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef);
-void WKSetScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef, int newStyle);
-void WKContentAreaScrolled(WKScrollbarPainterControllerRef);
-void WKContentAreaWillPaint(WKScrollbarPainterControllerRef);
-void WKMouseEnteredContentArea(WKScrollbarPainterControllerRef);
-void WKMouseExitedContentArea(WKScrollbarPainterControllerRef);
-void WKMouseMovedInContentArea(WKScrollbarPainterControllerRef);
-void WKWillStartLiveResize(WKScrollbarPainterControllerRef);
-void WKContentAreaResized(WKScrollbarPainterControllerRef);
-void WKWillEndLiveResize(WKScrollbarPainterControllerRef);
-void WKContentAreaDidShow(WKScrollbarPainterControllerRef);
-void WKContentAreaDidHide(WKScrollbarPainterControllerRef);
-void WKDidBeginScrollGesture(WKScrollbarPainterControllerRef);
-void WKDidEndScrollGesture(WKScrollbarPainterControllerRef);
-
-bool WKScrollbarPainterUsesOverlayScrollers(void);
+int WKRecommendedScrollerStyle(void);
 
 bool WKExecutableWasLinkedOnOrBeforeSnowLeopard(void);
 
