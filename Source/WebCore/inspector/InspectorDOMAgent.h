@@ -115,7 +115,7 @@ public:
     void querySelector(ErrorString*, int nodeId, const String& selectors, int* elementId);
     void querySelectorAll(ErrorString*, int nodeId, const String& selectors, RefPtr<InspectorArray>* result);
     void getDocument(ErrorString*, RefPtr<InspectorObject>* root);
-    void getChildNodes(ErrorString*, int nodeId);
+    void requestChildNodes(ErrorString*, int nodeId);
     void setAttributeValue(ErrorString*, int elementId, const String& name, const String& value);
     void setAttributesText(ErrorString*, int elementId, const String* const name, const String& text);
     void removeAttribute(ErrorString*, int elementId, const String& name);
@@ -130,7 +130,7 @@ public:
     void resolveNode(ErrorString*, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>* result);
     void getAttributes(ErrorString*, const RefPtr<InspectorArray>& nodeIds, RefPtr<InspectorArray>* result);
     void setInspectModeEnabled(ErrorString*, bool enabled);
-    void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
+    void requestNode(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
     void hideHighlight(ErrorString*);
     void highlightRect(ErrorString*, int x, int y, int width, int height);

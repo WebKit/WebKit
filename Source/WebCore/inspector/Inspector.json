@@ -395,7 +395,7 @@
             {
                 "name": "addInspectedNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "DOM node id to be accessible by means of $x command line API." }
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "DOM node id to be accessible by means of $x command line API." }
                 ],
                 "description": "Enables console to refer to the node with given id via $x (see Command Line API for more details $x functions).",
                 "hidden": true
@@ -669,7 +669,19 @@
     },
     {
         "domain": "Database",
-        "types": [],
+        "hidden": true,
+        "types": [
+            {
+                "id": "Database",
+                "type": "object",
+                "description": "Database object."
+            },
+            {
+                "id": "Error",
+                "type": "object",
+                "description": "Database error."
+            }
+        ],
         "commands": [
             {
                 "name": "enable",
@@ -704,7 +716,7 @@
             {
                 "name": "addDatabase",
                 "parameters": [
-                    { "name": "database", "$ref": "DatabaseDatabase" }
+                    { "name": "database", "$ref": "Database" }
                 ]
             },
             {
@@ -719,13 +731,14 @@
                 "name": "sqlTransactionFailed",
                 "parameters": [
                     { "name": "transactionId", "type": "integer" },
-                    { "name": "sqlError", "$ref": "DatabaseError" }
+                    { "name": "sqlError", "$ref": "Error" }
                 ]
             }
         ]
     },
     {
         "domain": "DOMStorage",
+        "hidden": true,
         "types": [],
         "commands": [
             {
@@ -784,7 +797,14 @@
     },
     {
         "domain": "ApplicationCache",
-        "types": [],
+        "hidden": true,
+        "types": [
+            {
+                "id": "AppCache",
+                "type": "object",
+                "description": "AppCache."
+            }
+        ],
         "commands": [
             {
                 "name": "getApplicationCaches",
@@ -813,10 +833,15 @@
         "description": "This domain exposes DOM read/write operations. Each DOM Node is represented with its mirror object that has an <code>id</code>. This <code>id</code> can be used to get additional information on the Node, convert it into the JavaScript object, etc. It is important that client receives DOM events only for the nodes that are known to the client. Backend keeps track of the nodes that were sent to the client and never sends the same node twice. It is client's responsibility to collect information about the nodes that were sent to the client.",
         "types": [
             {
+                "id": "NodeId",
+                "type": "integer",
+                "description": "Unique DOM node identifier."
+            },
+            {
                 "id": "Node",
                 "type": "object",
                 "properties": [
-                    { "name": "id", "type": "integer", "description": "Node identifier that is passed into the rest of the DOM messages as the <code>nodeId</code>. Backend will only push node with given <code>id</code> once. It is aware of all requested nodes and will only fire DOM events for nodes known to the client." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Node identifier that is passed into the rest of the DOM messages as the <code>nodeId</code>. Backend will only push node with given <code>id</code> once. It is aware of all requested nodes and will only fire DOM events for nodes known to the client." },
                     { "name": "nodeType", "type": "integer", "description": "<code>Node</code>'s nodeType." },
                     { "name": "nodeName", "type": "string", "description": "<code>Node</code>'s nodeName." },
                     { "name": "localName", "type": "string", "description": "<code>Node</code>'s localName." },
@@ -836,11 +861,12 @@
             {
                 "id": "EventListener",
                 "type": "object",
+                "hidden": true,
                 "properties": [
                     { "name": "type", "type": "string", "description": "<code>EventListener</code>'s type." },
                     { "name": "useCapture", "type": "boolean", "description": "<code>EventListener</code>'s useCapture." },
                     { "name": "isAttribute", "type": "boolean", "description": "<code>EventListener</code>'s isAttribute." },
-                    { "name": "nodeId", "type": "integer", "description": "Target <code>DOMNode</code> id." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Target <code>DOMNode</code> id." },
                     { "name": "handlerBody", "type": "string", "description": "Event handler function body." },
                     { "name": "location", "$ref": "Debugger.Location", "optional": true, "description": "Handler code location." }
                 ],
@@ -850,7 +876,7 @@
                 "id": "Attributes",
                 "type": "object",
                 "properties": [
-                    { "name": "id", "type": "integer", "description": "Element id to get attributes for." },
+                    { "name": "id", "$ref": "NodeId", "description": "Element id to get attributes for." },
                     { "name": "attributes", "type": "array", "items": { "type": "string" }, "description": "An interleaved array of node attribute names and values." }
                 ],
                 "description": "A holder structure for all attributes of a single node."
@@ -865,49 +891,49 @@
                 "description": "Returns the root DOM node to the caller."
             },
             {
-                "name": "getChildNodes",
+                "name": "requestChildNodes",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to get children for." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get children for." }
                 ],
                 "description": "Requests that children of the node with given id are returned to the caller in form of <code>setChildNodes</code> events."
             },
             {
                 "name": "querySelector",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to query upon." },
-                    { "name": "selectors", "type": "string", "description": "Selector string." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to query upon." },
+                    { "name": "selector", "type": "string", "description": "Selector string." }
                 ],
                 "returns": [
-                    { "name": "nodeId", "type": "integer", "description": "Query selector result." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Query selector result." }
                 ],
                 "description": "Executes <code>querySelector</code> on a given node. Setting <code>documentWide</code> to true starts selecting from the document node."
             },
             {
                 "name": "querySelectorAll",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to query upon." },
-                    { "name": "selectors", "type": "string", "description": "Selector string." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to query upon." },
+                    { "name": "selector", "type": "string", "description": "Selector string." }
                 ],
                 "returns": [
-                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Query selector result." }
+                    { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Query selector result." }
                 ],
                 "description": "Executes <code>querySelectorAll</code> on a given node. Setting <code>documentWide</code> to true starts selecting from the document node."
             },
             {
                 "name": "setNodeName",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to set name for." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to set name for." },
                     { "name": "name", "type": "string", "description": "New node's name." }
                 ],
                 "returns": [
-                    { "name": "outNodeId", "type": "integer", "description": "New node's id." }
+                    { "name": "outNodeId", "$ref": "NodeId", "description": "New node's id." }
                 ],
                 "description": "Sets node name for a node with given id."
             },
             {
                 "name": "setNodeValue",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to set value for." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to set value for." },
                     { "name": "value", "type": "string", "description": "New node's value." }
                 ],
                 "description": "Sets node value for a node with given id."
@@ -915,14 +941,14 @@
             {
                 "name": "removeNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to remove." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to remove." }
                 ],
                 "description": "Removes node with given id."
             },
             {
                 "name": "setAttributeValue",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the element to set attribute for." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the element to set attribute for." },
                     { "name": "name", "type": "string", "description": "Attribute name." },
                     { "name": "value", "type": "string", "description": "Attribute value." }
                 ],
@@ -931,7 +957,7 @@
             {
                 "name": "setAttributesText",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the element to set attributes for." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the element to set attributes for." },
                     { "name": "name", "type": "string", "optional": true, "description": "Attribute name to replace with new attributes derived from text in case text parsed successfully." },
                     { "name": "text", "type": "string", "description": "Text with a number of attributes. Will parse this text using HTML parser." }
                 ],
@@ -940,7 +966,7 @@
             {
                 "name": "removeAttribute",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the element to remove attribute from." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the element to remove attribute from." },
                     { "name": "name", "type": "string", "description": "Name of the attribute to remove." }
                 ],
                 "description": "Removes attribute with given name from an element with given id."
@@ -948,17 +974,18 @@
             {
                 "name": "getEventListenersForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to get listeners for." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get listeners for." }
                 ],
                 "returns": [
                     { "name": "listeners", "type": "array", "items": { "$ref": "EventListener"}, "description": "Array of relevant listeners." }
                 ],
-                "description": "Returns event listeners relevant to the node."
+                "description": "Returns event listeners relevant to the node.",
+                "hidden": true
             },
             {
                 "name": "copyNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to copy." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to copy." }
                 ],
                 "description": "Copies node's HTML markup into the clipboard.",
                 "hidden": true
@@ -966,7 +993,7 @@
             {
                 "name": "getOuterHTML",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to get markup for." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to get markup for." }
                 ],
                 "returns": [
                     { "name": "outerHTML", "type": "string", "description": "Outer HTML markup." }
@@ -976,11 +1003,11 @@
             {
                 "name": "setOuterHTML",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to set markup for." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to set markup for." },
                     { "name": "outerHTML", "type": "string", "description": "Outer HTML markup to set." }
                 ],
                 "returns": [
-                    { "name": "newNodeId", "type": "integer", "description": "Setting outer HTML can change node's id." }
+                    { "name": "newNodeId", "$ref": "NodeId", "description": "Setting outer HTML can change node's id." }
                 ],
                 "description": "Sets node HTML markup, returns new node id."
             },
@@ -999,17 +1026,18 @@
                 "hidden": true
             },
             {
-                "name": "pushNodeToFrontend",
+                "name": "requestNode",
                 "parameters": [
                     { "name": "objectId", "$ref": "Runtime.RemoteObjectId", "description": "JavaScript object id to convert into node." }
                 ],
                 "returns": [
-                    { "name": "nodeId", "type": "integer", "description": "Node id for given object." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Node id for given object." }
                 ],
                 "description": "Requests that the node is sent to the caller given the JavaScript node object reference."
             },
             {
                 "name": "setInspectModeEnabled",
+                "hidden": true,
                 "parameters": [
                     { "name": "enabled", "type": "boolean", "description": "True to enable inspection mode, false to disable it." }
                 ],
@@ -1028,7 +1056,7 @@
             {
                 "name": "highlightNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Identifier of the node to highlight" },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Identifier of the node to highlight" },
                     { "name": "mode", "type": "string", "enum": ["all", "content", "padding", "border", "margin"], "optional": true, "description": "The box model component(s) to highlight (default: \"all\")." }
                 ],
                 "description": "Highlights DOM node with given id."
@@ -1051,7 +1079,7 @@
                     { "name": "path", "type": "string", "description": "Path to node in the proprietary format." }
                 ],
                 "returns": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node for given path." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node for given path." }
                 ],
                 "description": "Requests that the node is sent to the caller given its path. // FIXME, use XPath",
                 "hidden": true
@@ -1059,7 +1087,7 @@
             {
                 "name": "resolveNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to resolve." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to resolve." },
                     { "name": "objectGroup", "type": "string", "optional": true, "description": "Symbolic group name that can be used to release multiple objects." }
                 ],
                 "returns": [
@@ -1070,7 +1098,7 @@
             {
                 "name": "getAttributes",
                 "parameters": [
-                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Ids of the nodes to retrieve attibutes for." }
+                    { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the nodes to retrieve attibutes for." }
                 ],
                 "returns": [
                     { "name": "attributes", "type": "array", "items": { "type": "Attributes" }, "description": "Attribute holders for the requested nodes." }
@@ -1080,12 +1108,12 @@
             {
                 "name": "moveTo",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node to drop." },
-                    { "name": "targetElementId", "type": "integer", "description": "Id of the element to drop into." },
-                    { "name": "anchorNodeId", "type": "integer", "optional": true, "description": "Drop node before given one." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node to drop." },
+                    { "name": "targetNodeId", "$ref": "NodeId", "description": "Id of the element to drop into." },
+                    { "name": "anchorNodeId", "$ref": "NodeId", "optional": true, "description": "Drop node before given one." }
                 ],
                 "returns": [
-                    { "name": "nodeId", "type": "integer", "description": "New id of the moved node." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "New id of the moved node." }
                 ],
                 "description": "Moves node into the new container, places it before the given anchor."
             }
@@ -1098,7 +1126,7 @@
             {
                 "name": "setChildNodes",
                 "parameters": [
-                    { "name": "parentId", "type": "integer", "description": "Parent node id to populate with children." },
+                    { "name": "parentId", "$ref": "NodeId", "description": "Parent node id to populate with children." },
                     { "name": "nodes", "type": "array", "items": { "$ref": "Node"}, "description": "Child nodes array." }
                 ],
                 "description": "Fired when backend wants to provide client with the missing DOM structure. This happens upon most of the calls requesting node ids."
@@ -1106,21 +1134,21 @@
             {
                 "name": "attributesUpdated",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Id of the node that has changed." }
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." }
                 ],
                 "description": "Fired when <code>Element</code>'s attributes are updated."
             },
             {
                 "name": "inlineStyleInvalidated",
                 "parameters": [
-                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Ids of the nodes for which the inline styles have been invalidated." }
+                    { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the nodes for which the inline styles have been invalidated." }
                 ],
                 "description": "Fired when <code>Element</code>'s inline style is modified via a CSS property modification."
             },
             {
                 "name": "characterDataModified",
                 "parameters": [
-                    { "name": "id", "type": "integer", "description": "Id of the node that has changed." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
                     { "name": "newValue", "type": "string", "description": "New text value." }
                 ],
                 "description": "Mirrors <code>DOMCharacterDataModified</code> event."
@@ -1128,7 +1156,7 @@
             {
                 "name": "childNodeCountUpdated",
                 "parameters": [
-                    { "name": "id", "type": "integer", "description": "Id of the node that has changed." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
                     { "name": "newValue", "type": "integer", "description": "New node count." }
                 ],
                 "description": "Fired when <code>Container</code>'s child node count has changed."
@@ -1136,8 +1164,8 @@
             {
                 "name": "childNodeInserted",
                 "parameters": [
-                    { "name": "parentId", "type": "integer", "description": "Id of the node that has changed." },
-                    { "name": "prevId", "type": "integer", "description": "If of the previous siblint." },
+                    { "name": "parentNodeId", "$ref": "NodeId", "description": "Id of the node that has changed." },
+                    { "name": "previousNodeId", "$ref": "NodeId", "description": "If of the previous siblint." },
                     { "name": "node", "$ref": "Node", "description": "Inserted node data." }
                 ],
                 "description": "Mirrors <code>DOMNodeInserted</code> event."
@@ -1145,15 +1173,15 @@
             {
                 "name": "childNodeRemoved",
                 "parameters": [
-                    { "name": "parentId", "type": "integer", "description": "Parent id." },
-                    { "name": "id", "type": "integer", "description": "Id of the node that has been removed." }
+                    { "name": "parentNodeId", "$ref": "NodeId", "description": "Parent id." },
+                    { "name": "nodeId", "$ref": "NodeId", "description": "Id of the node that has been removed." }
                 ],
                 "description": "Mirrors <code>DOMNodeRemoved</code> event."
             },
             {
                 "name": "searchResults",
                 "parameters": [
-                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Ids of the search result nodes." }
+                    { "name": "nodeIds", "type": "array", "items": { "$ref": "NodeId" }, "description": "Ids of the search result nodes." }
                 ],
                 "description": "Pushes search results initiated using <code>performSearch</code> to the client.",
                 "hidden": true
@@ -1300,7 +1328,7 @@
             {
                 "name": "getStylesForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" },
+                    { "name": "nodeId", "$ref": "DOM.NodeId" },
                     { "name": "forcedPseudoClasses", "type": "array", "items": { "type": "string", "enum": ["active", "focus", "hover", "visited"] }, "optional": true, "description": "Element pseudo classes to force when computing applicable style rules." }
                 ],
                 "returns": [
@@ -1311,7 +1339,7 @@
             {
                 "name": "getComputedStyleForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
+                    { "name": "nodeId", "$ref": "DOM.NodeId" }
                 ],
                 "returns": [
                     { "name": "style", "$ref": "CSSStyle", "description": "Computed style for the specified DOM node." }
@@ -1321,7 +1349,7 @@
             {
                 "name": "getInlineStyleForNode",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer" }
+                    { "name": "nodeId", "$ref": "DOM.NodeId" }
                 ],
                 "returns": [
                     { "name": "style", "$ref": "CSSStyle", "description": "Inline style for the specified DOM node." }
@@ -1402,7 +1430,7 @@
             {
                 "name": "addRule",
                 "parameters": [
-                    { "name": "contextNodeId", "type": "integer" },
+                    { "name": "contextNodeId", "$ref": "DOM.NodeId" },
                     { "name": "selector", "type": "string" }
                 ],
                 "returns": [
@@ -1706,7 +1734,7 @@
             {
                 "name": "setDOMBreakpoint",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Identifier of the node to set breakpoint on." },
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to set breakpoint on." },
                     { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the operation to stop upon." }
                 ],
                 "description": "Sets breakpoint on particular operation with DOM."
@@ -1714,7 +1742,7 @@
             {
                 "name": "removeDOMBreakpoint",
                 "parameters": [
-                    { "name": "nodeId", "type": "integer", "description": "Identifier of the node to remove breakpoint from." },
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Identifier of the node to remove breakpoint from." },
                     { "name": "type", "$ref": "DOMBreakpointType", "description": "Type of the breakpoint to remove." }
                 ],
                 "description": "Removes DOM breakpoint that was set using <code>setDOMBreakpoint</code>."
@@ -1751,7 +1779,19 @@
     },
     {
         "domain": "Profiler",
-        "types": [],
+        "hidden": true,
+        "types": [
+            {
+                "id": "Profile",
+                "type": "object",
+                "description": "Profile."
+            },
+            {
+                "id": "ProfileHeader",
+                "type": "object",
+                "description": "Profile header."
+            }
+        ],
         "commands": [
             {
                 "name": "enable"

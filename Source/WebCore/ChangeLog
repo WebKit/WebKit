@@ -1,3 +1,28 @@
+2011-08-19  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: introduce NodeId inherited from integer in the DOM domain description.
+        https://bugs.webkit.org/show_bug.cgi?id=66491
+
+        Drive-by rename of couple of DOM domain protocol methods.
+
+        Reviewed by Adam Roben.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::requestChildNodes):
+        (WebCore::InspectorDOMAgent::getAttributes):
+        (WebCore::InspectorDOMAgent::requestNode):
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        (WebInspector.DOMNode.prototype.getChildNodes):
+        (WebInspector.DOMAgent.prototype.pushNodeToFrontend):
+        (WebInspector.DOMAgent.prototype._loadNodeAttributes):
+        (WebInspector.DOMAgent.prototype._setDocument):
+        (WebInspector.DOMAgent.prototype._setDetachedRoot):
+        * inspector/generate-inspector-idl:
+
 2011-08-19  Jochen Eisinger  <jochen@chromium.org>
 
         IDBSQLiteBackingStore::deleteObjectStore should maintain referential integrity.

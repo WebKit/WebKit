@@ -32,7 +32,7 @@
 WebInspector.DOMNode = function(doc, payload) {
     this.ownerDocument = doc;
 
-    this.id = payload.id;
+    this.id = payload.nodeId;
     this._nodeType = payload.nodeType;
     this._nodeName = payload.nodeName;
     this._localName = payload.localName;
@@ -174,7 +174,7 @@ WebInspector.DOMNode.prototype = {
             if (!error && callback)
                 callback(this.children);
         }
-        DOMAgent.getChildNodes(this.id, mycallback.bind(this));
+        DOMAgent.requestChildNodes(this.id, mycallback.bind(this));
     },
 
     getOuterHTML: function(callback)
@@ -382,7 +382,7 @@ WebInspector.DOMAgent.prototype = {
 
     pushNodeToFrontend: function(objectId, callback)
     {
-        this._dispatchWhenDocumentAvailable(DOMAgent.pushNodeToFrontend.bind(DOMAgent), objectId, callback);
+        this._dispatchWhenDocumentAvailable(DOMAgent.requestNode.bind(DOMAgent), objectId, callback);
     },
 
     pushNodeByPathToFrontend: function(path, callback)
@@ -452,7 +452,7 @@ WebInspector.DOMAgent.prototype = {
                 return;
             for (var i = 0; i < nodeAttributes.length; ++i) {
                 var entry = nodeAttributes[i];
-                var node = this._idToDOMNode[entry.id];
+                var node = this._idToDOMNode[entry.nodeId];
                 node._setAttributesPayload(entry.attributes);
                 this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, node);
             }
@@ -488,9 +488,9 @@ WebInspector.DOMAgent.prototype = {
     _setDocument: function(payload)
     {
         this._idToDOMNode = {};
-        if (payload && "id" in payload) {
+        if (payload && "nodeId" in payload) {
             this._document = new WebInspector.DOMDocument(this, payload);
-            this._idToDOMNode[payload.id] = this._document;
+            this._idToDOMNode[payload.nodeId] = this._document;
             if (this._document.children)
                 this._bindNodes(this._document.children);
         } else
@@ -501,7 +501,7 @@ WebInspector.DOMAgent.prototype = {
     _setDetachedRoot: function(payload)
     {
         var root = new WebInspector.DOMNode(this._document, payload);
-        this._idToDOMNode[payload.id] = root;
+        this._idToDOMNode[payload.nodeId] = root;
     },
 
     _setChildNodes: function(parentId, payloads)

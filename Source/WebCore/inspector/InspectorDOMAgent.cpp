@@ -482,7 +482,7 @@ Node* InspectorDOMAgent::nodeForId(int id)
     return 0;
 }
 
-void InspectorDOMAgent::getChildNodes(ErrorString*, int nodeId)
+void InspectorDOMAgent::requestChildNodes(ErrorString*, int nodeId)
 {
     pushChildNodesToFrontend(nodeId);
 }
@@ -1090,14 +1090,14 @@ void InspectorDOMAgent::getAttributes(ErrorString*, const RefPtr<InspectorArray>
         Node* node = nodeForId(nodeId);
         if (node && node->isElementNode()) {
             RefPtr<InspectorObject> entry = InspectorObject::create();
-            entry->setNumber("id", nodeId);
+            entry->setNumber("nodeId", nodeId);
             entry->setArray("attributes", buildArrayForElementAttributes(static_cast<Element*>(node)));
             (*result)->pushObject(entry.release());
         }
     }
 }
 
-void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId)
+void InspectorDOMAgent::requestNode(ErrorString*, const String& objectId, int* nodeId)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
     Node* node = injectedScript.nodeForObjectId(objectId);
@@ -1142,7 +1142,7 @@ PassRefPtr<InspectorObject> InspectorDOMAgent::buildObjectForNode(Node* node, in
             break;
     }
 
-    value->setNumber("id", id);
+    value->setNumber("nodeId", id);
     value->setNumber("nodeType", node->nodeType());
     value->setString("nodeName", nodeName);
     value->setString("localName", localName);

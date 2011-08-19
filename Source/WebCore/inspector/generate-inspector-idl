@@ -108,18 +108,21 @@ def param_type(domain_name, param):
             ref_type = ref_types[type_id]
             return type_traits[ref_type["type"]]
         else:
-            return "Object"
+            print "Type not found: " + type_id
+            return "!! Type not found: " + type_id
+
+for domain in json_api:
+    domain_name = domain["domain"]
+    if "types" in domain:
+        for type in domain["types"]:
+            type_id = full_qualified_type_id(domain_name, type["id"])
+            ref_types[type_id] = type;
 
 for domain in json_api:
     domain_name = domain["domain"]
     if domain_name in macro_traits:
         output_file.write("\n#if defined(ENABLE_%s) && ENABLE_%s" % (macro_traits[domain_name], macro_traits[domain_name]))
     output_file.write("\n    interface [Conditional=INSPECTOR] %s {" % domain_name)
-
-    if "types" in domain:
-        for type in domain["types"]:
-            type_id = full_qualified_type_id(domain_name, type["id"])
-            ref_types[type_id] = type;
 
     if "commands" in domain:
         for command in domain["commands"]:
