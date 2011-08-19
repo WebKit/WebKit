@@ -1,3 +1,13 @@
+2011-08-19  Jochen Eisinger  <jochen@chromium.org>
+
+        IDBSQLiteBackingStore::deleteObjectStore should maintain referential integrity.
+        https://bugs.webkit.org/show_bug.cgi?id=66470
+
+        Reviewed by Tony Gentilcore.
+
+        * storage/IDBSQLiteBackingStore.cpp:
+        (WebCore::IDBSQLiteBackingStore::deleteObjectStore):
+
 2011-08-19  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [WebSocket] CloseEvent's code and reason properties support.

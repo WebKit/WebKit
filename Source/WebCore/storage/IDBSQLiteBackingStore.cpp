@@ -293,10 +293,10 @@ static void doDelete(SQLiteDatabase& db, const char* sql, int64_t id)
 
 void IDBSQLiteBackingStore::deleteObjectStore(int64_t, int64_t objectStoreId)
 {
-    doDelete(m_db, "DELETE FROM ObjectStores WHERE id = ?", objectStoreId);
-    doDelete(m_db, "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStoreId);
     doDelete(m_db, "DELETE FROM IndexData WHERE indexId IN (SELECT id FROM Indexes WHERE objectStoreId = ?)", objectStoreId);
     doDelete(m_db, "DELETE FROM Indexes WHERE objectStoreId = ?", objectStoreId);
+    doDelete(m_db, "DELETE FROM ObjectStoreData WHERE objectStoreId = ?", objectStoreId);
+    doDelete(m_db, "DELETE FROM ObjectStores WHERE id = ?", objectStoreId);
 }
 
 namespace {
