@@ -58,7 +58,7 @@ messages -> PluginProxy {
 
 #if PLATFORM(MAC)
     # Change whether complext text input is enabled for this plug-in.
-    SetComplexTextInputEnabled(bool complexTextInputEnabled)
+    SetComplexTextInputState(uint64_t complexTextInputState)
 #endif
 }
 

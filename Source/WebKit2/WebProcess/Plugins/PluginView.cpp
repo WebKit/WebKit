@@ -287,7 +287,7 @@ PluginView::~PluginView()
         m_plugin->destroyPlugin();
         m_isBeingDestroyed = false;
 #if PLATFORM(MAC)
-        setComplexTextInputEnabled(false);
+        setComplexTextInputState(PluginComplexTextInputDisabled);
 #endif
     }
 
@@ -1067,16 +1067,15 @@ void PluginView::scheduleWindowedPluginGeometryUpdate(const WindowGeometry& geom
 #endif
 
 #if PLATFORM(MAC)
-void PluginView::setComplexTextInputEnabled(bool complexTextInputEnabled)
+void PluginView::setComplexTextInputState(PluginComplexTextInputState pluginComplexTextInputState)
 {
-    m_webPage->send(Messages::WebPageProxy::SetComplexTextInputEnabled(m_plugin->pluginComplexTextInputIdentifier(), complexTextInputEnabled));
+    m_webPage->send(Messages::WebPageProxy::SetPluginComplexTextInputState(m_plugin->pluginComplexTextInputIdentifier(), pluginComplexTextInputState));
 }
 
 mach_port_t PluginView::compositingRenderServerPort()
 {
     return WebProcess::shared().compositingRenderServerPort();
 }
-
 #endif
     
 String PluginView::proxiesForURL(const String& urlString)

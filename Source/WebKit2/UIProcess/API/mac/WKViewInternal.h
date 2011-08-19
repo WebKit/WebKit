@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "PluginComplexTextInputState.h"
 #import "WKView.h"
 #import "WebFindOptions.h"
 #import <wtf/Forward.h>
@@ -65,7 +66,7 @@ namespace WebKit {
 - (void)_exitAcceleratedCompositingMode;
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
-- (void)_setComplexTextInputEnabled:(BOOL)complexTextInputEnabled pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
+- (void)_setPluginComplexTextInputState:(WebKit::PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation;
 - (void)_didFinishLoadingDataForCustomRepresentationWithSuggestedFilename:(const String&)suggestedFilename dataReference:(const CoreIPC::DataReference&)dataReference;

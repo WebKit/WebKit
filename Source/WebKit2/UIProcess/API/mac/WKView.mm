@@ -2285,9 +2285,10 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [self _updateRemoteAccessibilityRegistration:YES];
 }
 
-- (void)_setComplexTextInputEnabled:(BOOL)complexTextInputEnabled pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
+- (void)_setPluginComplexTextInputState:(WebKit::PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
 {
     BOOL inputSourceChanged = _data->_pluginComplexTextInputIdentifier;
+    BOOL complexTextInputEnabled = (pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy);
 
     if (complexTextInputEnabled) {
         // Check if we're already allowing text input for this plug-in.

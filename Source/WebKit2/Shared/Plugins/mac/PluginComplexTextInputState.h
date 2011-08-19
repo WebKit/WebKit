@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,43 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "config.h"
-#import "PluginProxy.h"
-
-#if ENABLE(PLUGIN_PROCESS)
-
-#import "PluginController.h"
-#import <WebKitSystemInterface.h>
+#ifndef PluginComplexTextInputState_h
+#define PluginComplexTextInputState_h
 
 namespace WebKit {
 
-PlatformLayer* PluginProxy::pluginLayer()
-{
-    if (!m_pluginLayer && m_remoteLayerClientID) {
-        CALayer *renderLayer = WKMakeRenderLayer(m_remoteLayerClientID);
+enum PluginComplexTextInputState {
+    // Complex text input is disabled.
+    PluginComplexTextInputDisabled,
 
-        // Create a layer with flipped geometry and add the real plug-in layer as a sublayer
-        // so the coordinate system will match the event coordinate system.
-        m_pluginLayer.adoptNS([[CALayer alloc] init]);
-        [m_pluginLayer.get() setGeometryFlipped:YES];
-        
-        [renderLayer setAutoresizingMask:kCALayerWidthSizable | kCALayerHeightSizable];
-        [m_pluginLayer.get() addSublayer:renderLayer];
+    // Complex text input is enabled using the updated Cocoa event model text
+    // input handling specification described at https://wiki.mozilla.org/NPAPI:CocoaEventModel#Text_Input
+    PluginComplexTextInputEnabled,
+
+    // Complex text input is enabled using the legacy Cocoa/Carbon event model text
+    // input handling that matches WebKit1.
+    PluginComplexTextInputEnabledLegacy
+};
+
+static inline bool isValidPluginComplexTextInputState(uint64_t value)
+{
+    switch (value) {
+    case PluginComplexTextInputDisabled:
+    case PluginComplexTextInputEnabled:
+    case PluginComplexTextInputEnabledLegacy:
+        return true;
     }
 
-    return m_pluginLayer.get();
-}
-
-bool PluginProxy::needsBackingStore() const
-{
-    return !m_remoteLayerClientID;
-}
-
-void PluginProxy::setComplexTextInputState(uint64_t complexTextInputState)
-{
-    controller()->setComplexTextInputState(static_cast<PluginComplexTextInputState>(complexTextInputState));
+    return false;
 }
 
 } // namespace WebKit
 
-#endif // ENABLE(PLUGIN_PROCESS)
+#endif // PluginComplexTextInputState_h

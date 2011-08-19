@@ -470,13 +470,6 @@ void PluginProxy::setStatusbarText(const String& statusbarText)
     controller()->setStatusbarText(statusbarText);
 }
 
-#if PLATFORM(MAC)
-void PluginProxy::setComplexTextInputEnabled(bool complexTextInputEnabled)
-{
-    controller()->setComplexTextInputEnabled(complexTextInputEnabled);
-}
-#endif
-    
 void PluginProxy::update(const IntRect& paintedRect)
 {
     if (paintedRect == m_frameRect)

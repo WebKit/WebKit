@@ -94,7 +94,7 @@ private:
     virtual void exitAcceleratedCompositingMode();
 
     virtual void accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&);    
-    virtual void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
+    virtual void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState);
 
     virtual void makeFirstResponder();
     

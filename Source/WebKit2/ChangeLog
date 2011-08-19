@@ -1,3 +1,51 @@
+2011-08-19  Anders Carlsson  <andersca@apple.com>
+
+        Make the complex text input state a tri-state enum instead of a boolean
+        https://bugs.webkit.org/show_bug.cgi?id=62245
+
+        Reviewed by Sam Weinig.
+
+        This is to prepare the infrastructure for supporting the updated Cocoa text input model for plug-ins.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::setComplexTextInputState):
+        (WebKit::PluginControllerProxy::compositingRenderServerPort):
+        * Shared/Plugins/mac: Added.
+        * Shared/Plugins/mac/PluginComplexTextInputState.h: Added.
+        (WebKit::isValidPluginComplexTextInputState):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::setPluginComplexTextInputState):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPluginComplexTextInputState:WebKit::pluginComplexTextInputIdentifier:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::setPluginComplexTextInputState):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformSetFocus):
+        (WebKit::NetscapePlugin::windowFocusChanged):
+        (WebKit::NetscapePlugin::setComplexTextInputEnabled):
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::PluginProxy::setComplexTextInputState):
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.cpp:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::~PluginView):
+        (WebKit::PluginView::setComplexTextInputState):
+        (WebKit::PluginView::compositingRenderServerPort):
+        * WebProcess/Plugins/PluginView.h:
+
 2011-08-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] [WK2] Provide API for intercept (and possible ignore) links clicked in QDesktopWebView

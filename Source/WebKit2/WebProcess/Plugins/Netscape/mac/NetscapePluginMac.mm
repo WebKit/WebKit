@@ -787,7 +787,7 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
 void NetscapePlugin::platformSetFocus(bool hasFocus)
 {
     m_pluginHasFocus = hasFocus;
-    controller()->setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
+    setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
 
     switch (m_eventModel) {
         case NPEventModelCocoa: {
@@ -815,7 +815,7 @@ void NetscapePlugin::platformSetFocus(bool hasFocus)
 void NetscapePlugin::windowFocusChanged(bool hasFocus)
 {
     m_windowHasFocus = hasFocus;
-    controller()->setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
+    setComplexTextInputEnabled(m_pluginHasFocus && m_windowHasFocus);
 
     switch (m_eventModel) {
         case NPEventModelCocoa: {
@@ -973,6 +973,15 @@ void NetscapePlugin::sendComplexTextInput(const String& textInput)
     default:
         ASSERT_NOT_REACHED();
     }
+}
+
+void NetscapePlugin::setComplexTextInputEnabled(bool complexTextInputEnabled)
+{
+    if (m_isComplexTextInputEnabled == complexTextInputEnabled)
+        return;
+
+    m_isComplexTextInputEnabled = complexTextInputEnabled;
+    controller()->setComplexTextInputState(complexTextInputEnabled ? PluginComplexTextInputEnabledLegacy : PluginComplexTextInputDisabled);
 }
 
 PlatformLayer* NetscapePlugin::pluginLayer()

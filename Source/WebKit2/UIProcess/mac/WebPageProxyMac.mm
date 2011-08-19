@@ -31,6 +31,7 @@
 #import "DictionaryPopupInfo.h"
 #import "EditorState.h"
 #import "NativeWebKeyboardEvent.h"
+#import "PluginComplexTextInputState.h"
 #import "PageClient.h"
 #import "PageClientImpl.h"
 #import "TextChecker.h"
@@ -41,6 +42,8 @@
 @interface NSApplication (Details)
 - (void)speakString:(NSString *)string;
 @end
+
+#define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process()->connection())
 
 using namespace WebCore;
 
@@ -339,9 +342,11 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataRefer
     process()->send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), m_pageID);
 }
 
-void WebPageProxy::setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled)
+void WebPageProxy::setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t pluginComplexTextInputState)
 {
-    m_pageClient->setComplexTextInputEnabled(pluginComplexTextInputIdentifier, complexTextInputEnabled);
+    MESSAGE_CHECK(isValidPluginComplexTextInputState(pluginComplexTextInputState));
+
+    m_pageClient->setPluginComplexTextInputState(pluginComplexTextInputIdentifier, static_cast<PluginComplexTextInputState>(pluginComplexTextInputState));
 }
 
 void WebPageProxy::executeSavedCommandBySelector(const String& selector, bool& handled)

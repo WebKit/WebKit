@@ -141,7 +141,7 @@ private:
     virtual void scheduleWindowedPluginGeometryUpdate(const WindowGeometry&);
 #endif
 #if PLATFORM(MAC)
-    virtual void setComplexTextInputEnabled(bool);
+    virtual void setComplexTextInputState(PluginComplexTextInputState);
     virtual mach_port_t compositingRenderServerPort();
 #endif
     virtual String proxiesForURL(const String&);

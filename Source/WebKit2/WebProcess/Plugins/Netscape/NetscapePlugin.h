@@ -190,6 +190,8 @@ private:
 
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
+
+    void setComplexTextInputEnabled(bool);
 #endif
 
     virtual void privateBrowsingStateChanged(bool);
@@ -238,6 +240,9 @@ private:
 
     bool m_pluginHasFocus;
     bool m_windowHasFocus;
+
+    // Whether complex text input is enabled.
+    bool m_isComplexTextInputEnabled;
 
     WebCore::IntRect m_windowFrameInScreenCoordinates;
     WebCore::IntRect m_viewFrameInWindowCoordinates;
