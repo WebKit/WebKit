@@ -839,6 +839,8 @@ static void _ewk_view_smart_calculate(Evas_Object *o)
         sd->view.w = w;
         sd->view.h = h;
 
+        _ewk_view_repaint_add(priv, 0, 0, w, h);
+
         // This callback is a good place e.g. to change fixed layout size (ewk_view_fixed_layout_size_set).
         evas_object_smart_callback_call(o, "view,resized", 0);
     }

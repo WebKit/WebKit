@@ -1,3 +1,17 @@
+2011-08-18  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Broken rendering occured when resized in ewk_view_single.
+        https://bugs.webkit.org/show_bug.cgi?id=66271
+
+        Force rendering when ewk_view resized.
+        It's because Evas_Object doesn't generate any rendering request although
+        it was changed.
+
+        Reviewed by Tony Chang.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_smart_calculate):
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Make WebCore keep track of the current device scale factor
