@@ -1,3 +1,10 @@
+2011-08-19  Dan Bernstein  <mitz@apple.com>
+
+        Better build fix after r93384.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): Use WTF::Unicode wrapper instead of ICU.
+
 2011-08-19  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: update scope variables upon value changes via console.
