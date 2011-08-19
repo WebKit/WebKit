@@ -2,7 +2,7 @@ Name: WebKit Test PlugIn
 
 Description: Simple Netscape plug-in that handles test content for WebKit
 
-Filename: npapi_layout_test_plugin.dll
+Filename: npTestNetscapePlugIn.dll
 
 Mime Types:
 

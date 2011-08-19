@@ -1,3 +1,12 @@
+2011-08-19  Tony Chang  <tony@chromium.org>
+
+        [chromium] Cleanup some old plugin tests.  Rebase plugin-javascript-access.html
+        on win and run plugin-initiate-popup-window on mac/linux to get results.
+
+        * platform/chromium-win/plugins/plugin-initiate-popup-window-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/win/plugins/plugin-javascript-access-expected.txt: Renamed from LayoutTests/platform/chromium-win/plugins/plugin-javascript-access-expected.txt.
+
 2011-08-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update chromium test expectations

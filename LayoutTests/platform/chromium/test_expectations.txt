@@ -754,8 +754,7 @@ BUGCR38353 LINUX MAC : plugins/keyboard-events.html = TEXT
 BUGCR21901 : plugins/npruntime/enumerate.html = TEXT
 BUGCR50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT
 BUGCR50910 : plugins/npruntime/remove-property.html = TEXT
-// NPP_HandleEvent doesn't be implemented/work on mac/linux.
-BUGCR48033 SKIP LINUX MAC : plugins/plugin-initiate-popup-window.html = PASS TIMEOUT
+BUGCR48033 : plugins/plugin-initiate-popup-window.html = PASS TEXT
 BUGCR35387 MAC : plugins/reentrant-update-widget-positions.html = TIMEOUT
 BUGCR38392 : plugins/resize-from-plugin.html = TEXT
 // Times out after http://trac.webkit.org/changeset/62739/
@@ -767,10 +766,6 @@ BUGCR38353 : http/tests/plugins/plugin-document-has-focus.html = TIMEOUT TEXT
 // switch.
 BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
 BUGWK48655 : plugins/js-from-destroy.html = PASS CRASH
-BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TEXT
-// This test is failing because the plugin has changed names on Windows to
-// match the name of the plugin upstream.
-BUG_TONY WIN : plugins/plugin-javascript-access.html = TEXT
 
 // Expectations for this test changed upstream. We should fix this test, but
 // it doesn't need to block the current release
