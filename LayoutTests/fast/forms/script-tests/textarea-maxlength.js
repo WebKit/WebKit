@@ -42,60 +42,60 @@ textArea.value = 'abcde';
 shouldBe('textArea.value', '"abcde"');
 
 // Set up for user-input tests
-function createFocusedTextAreaWithMaxLength3() {
+function createFocusedTextAreaWithMaxLength(maxLength) {
     if (textArea)
         document.body.removeChild(textArea);
     textArea = document.createElement('textarea');
-    textArea.setAttribute('maxlength', '3');
+    textArea.setAttribute('maxlength', maxLength);
     document.body.appendChild(textArea);
     textArea.focus();
 }
 
 // Insert text of which length is maxLength.
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 document.execCommand('insertText', false, 'abc');
 shouldBe('textArea.value', '"abc"');
 
 // Try to add characters to maxLength characters.
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 textArea.value = 'abc';
 document.execCommand('insertText', false, 'def');
 shouldBe('textArea.value', '"abc"');
 
 // Replace text
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 textArea.value = 'abc';
 document.execCommand('selectAll');
 document.execCommand('insertText', false, 'def');
 shouldBe('textArea.value', '"def"');
 
 // Existing value is longer than maxLength.  We can't add text.
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 textArea.value = 'abcdef';
 document.execCommand('insertText', false, 'ghi');
 shouldBe('textArea.value', '"abcdef"');
 
 // We can delete a character in the longer value.
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 textArea.value = 'abcdef';
 document.execCommand('delete');
 shouldBe('textArea.value', '"abcde"');
 
 // A linebreak is 1 character.
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 document.execCommand('insertText', false, 'A');
 document.execCommand('insertLineBreak');
 document.execCommand('insertText', false, 'B');
 shouldBe('textArea.value', '"A\\nB"');
 
 // Confirms correct count for close linebreaks inputs.
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 textArea.innerHTML = 'a\n\n';
 document.execCommand('insertLineBreak');
 shouldBe('textArea.value', '"a\\n\\n"');
 
 // Confirms correct count for open consecutive linebreaks inputs.
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 document.execCommand('insertLineBreak');
 document.execCommand('insertLineBreak');
 document.execCommand('insertLineBreak');
@@ -111,27 +111,33 @@ var fancyX = "x\u0305\u0332";// + String.fromCharCode(0x305) + String.fromCharCo
 var u10000 = "\ud800\udc00";
 
 // Inserts 5 code-points in UTF-16
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 document.execCommand('insertText', false, 'AB' + fancyX);
 shouldBe('textArea.value', '"AB" + fancyX');
 shouldBe('textArea.value.length', '5');
 
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 textArea.value = 'AB' + fancyX;
 textArea.setSelectionRange(2, 5);  // Select fancyX
 document.execCommand('insertText', false, 'CDE');
 shouldBe('textArea.value', '"ABC"');
 
 // Inserts 4 code-points in UTF-16
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 document.execCommand('insertText', false, 'AB' + u10000);
 shouldBe('textArea.value', '"AB" + u10000');
 shouldBe('textArea.value.length', '4');
 
-createFocusedTextAreaWithMaxLength3();
+createFocusedTextAreaWithMaxLength(3);
 textArea.value = 'AB' + u10000;
 textArea.setSelectionRange(2, 4);  // Select u10000
 document.execCommand('insertText', false, 'CDE');
 shouldBe('textArea.value', '"ABC"');
+
+// In the case maxlength=0
+createFocusedTextAreaWithMaxLength(0);
+textArea.value = '';
+document.execCommand('insertText', false, 'ABC');
+shouldBe('textArea.value', '""');
 
 var successfullyParsed = true;

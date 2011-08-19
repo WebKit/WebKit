@@ -1,3 +1,17 @@
+2011-08-19  Shinya Kawanaka  <shinyak@google.com>
+
+        input[maxlength=0] should ignore text input.
+        https://bugs.webkit.org/show_bug.cgi?id=65497
+
+        Reviewed by Kent Tamura.
+
+        * fast/forms/input-text-paste-maxlength-expected.txt:
+          Added a case that maxlength=0
+        * fast/forms/input-text-paste-maxlength.html: ditto.
+        * fast/forms/script-tests/textarea-maxlength.js: ditto.
+        (createFocusedTextAreaWithMaxLength):
+        * fast/forms/textarea-maxlength-expected.txt: ditto.
+
 2011-08-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: backend js api: an ability to skip optional arguments in the middle of the argument list is required.

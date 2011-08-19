@@ -1,3 +1,16 @@
+2011-08-19  Shinya Kawanaka  <shinyak@google.com>
+
+        input[maxlength=0] should ignore text input.
+        https://bugs.webkit.org/show_bug.cgi?id=65497
+
+        Reviewed by Kent Tamura.
+
+        Changed the valid range of maxlength.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMaxLengthAttribute):
+          Changed maxlength check condition.
+
 2011-08-19  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: backend js api: an ability to skip optional arguments in the middle of the argument list is required.

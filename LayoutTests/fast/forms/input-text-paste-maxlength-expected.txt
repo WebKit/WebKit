@@ -25,7 +25,10 @@ PASS visibleValueOf('g') is '12' + fancyX + '45'
 pasting too much text
 PASS domValueOf('k') is '12' + fancyX + '4'
 PASS visibleValueOf('k') is '12' + fancyX + '4'
+pasting too much text with maxlength=0
+PASS domValueOf('l') is ''
+PASS visibleValueOf('l') is ''
 PASS successfullyParsed is true
 
 TEST COMPLETE
-        
+         

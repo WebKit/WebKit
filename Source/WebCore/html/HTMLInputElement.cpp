@@ -1922,7 +1922,7 @@ void HTMLInputElement::notifyFormStateChanged()
 void HTMLInputElement::parseMaxLengthAttribute(Attribute* attribute)
 {
     int maxLength = attribute->isNull() ? maximumLength : attribute->value().toInt();
-    if (maxLength <= 0 || maxLength > maximumLength)
+    if (maxLength < 0 || maxLength > maximumLength)
         maxLength = maximumLength;
     int oldMaxLength = m_maxLength;
     m_maxLength = maxLength;
