@@ -24,6 +24,7 @@
 #ifndef KeyboardEvent_h
 #define KeyboardEvent_h
 
+#include "EventDispatchMediator.h"
 #include "UIEventWithKeyState.h"
 #include <wtf/Vector.h>
 

@@ -199,55 +199,6 @@ namespace WebCore {
         RefPtr<Event> m_underlyingEvent;
     };
 
-class EventDispatchMediator : public RefCounted<EventDispatchMediator> {
-public:
-    static PassRefPtr<EventDispatchMediator> create(PassRefPtr<Event>);
-    virtual ~EventDispatchMediator();
-
-    virtual bool dispatchEvent(EventDispatcher*) const;
-    Event* event() const;
-
-protected:
-    explicit EventDispatchMediator(PassRefPtr<Event>);
-    EventDispatchMediator();
-    void setEvent(PassRefPtr<Event>);
-
-private:
-    RefPtr<Event> m_event;
-};
-
-inline EventDispatchMediator::EventDispatchMediator()
-{
-}
-
-inline Event* EventDispatchMediator::event() const
-{
-    return m_event.get();
-}
-
-inline void EventDispatchMediator::setEvent(PassRefPtr<Event> event)
-{
-    m_event = event;
-}
-
-class FocusEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<FocusEventDispatchMediator> create(PassRefPtr<Node> oldFocusedNode);
-private:
-    explicit FocusEventDispatchMediator(PassRefPtr<Node> oldFocusedNode);
-    virtual bool dispatchEvent(EventDispatcher*) const;
-    RefPtr<Node> m_oldFocusedNode;
-};
-
-class BlurEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<BlurEventDispatchMediator> create(PassRefPtr<Node> newFocusedNode);
-private:
-    explicit BlurEventDispatchMediator(PassRefPtr<Node> newFocusedNode);
-    virtual bool dispatchEvent(EventDispatcher*) const;
-    RefPtr<Node> m_newFocusedNode;
-};
-
 } // namespace WebCore
 
 #endif // Event_h

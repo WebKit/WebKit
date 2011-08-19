@@ -495,6 +495,7 @@ SOURCES += \
     dom/ErrorEvent.cpp \
     dom/Event.cpp \
     dom/EventContext.cpp \
+    dom/EventDispatchMediator.cpp \
     dom/EventDispatcher.cpp \
     dom/EventNames.cpp \
     dom/EventTarget.cpp \
@@ -1495,6 +1496,7 @@ HEADERS += \
     dom/Entity.h \
     dom/EntityReference.h \
     dom/Event.h \
+    dom/EventDispatchMediator.h \
     dom/EventNames.h \
     dom/EventTarget.h \
     dom/ExceptionBase.h \

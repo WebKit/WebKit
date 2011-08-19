@@ -1,3 +1,48 @@
+2011-08-18  Hayato Ito  <hayato@chromium.org>
+
+        Isolate EventDispatchMediator into a separate file.
+        https://bugs.webkit.org/show_bug.cgi?id=66458
+
+        Reviewed by Ryosuke Niwa.
+
+        Extracted EventDispatchMediator.h and EventDispatchMediator.cpp
+        out of Event.h and Event.cpp Also moved FocusEventDispatchMediator
+        and BlurEventDispatchMediator from Event.{h|cpp} to
+        EventDispatchMediator.{h|cpp}.
+
+        No new tests since this is just refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Event.cpp:
+        * dom/Event.h:
+        * dom/EventDispatchMediator.cpp: Added.
+        (WebCore::EventDispatchMediator::create):
+        (WebCore::EventDispatchMediator::EventDispatchMediator):
+        (WebCore::EventDispatchMediator::dispatchEvent):
+        (WebCore::FocusEventDispatchMediator::create):
+        (WebCore::FocusEventDispatchMediator::FocusEventDispatchMediator):
+        (WebCore::FocusEventDispatchMediator::dispatchEvent):
+        (WebCore::BlurEventDispatchMediator::create):
+        (WebCore::BlurEventDispatchMediator::BlurEventDispatchMediator):
+        (WebCore::BlurEventDispatchMediator::dispatchEvent):
+        * dom/EventDispatchMediator.h: Added.
+        (WebCore::EventDispatchMediator::~EventDispatchMediator):
+        (WebCore::EventDispatchMediator::event):
+        (WebCore::EventDispatchMediator::EventDispatchMediator):
+        (WebCore::EventDispatchMediator::setEvent):
+        * dom/EventDispatcher.cpp:
+        * dom/KeyboardEvent.h:
+        * dom/MouseEvent.h:
+        * dom/Node.cpp:
+        * dom/ScopedEventQueue.cpp:
+        * dom/UIEvent.h:
+        * dom/WheelEvent.h:
+
 2011-08-18  Dan Bernstein  <mitz@apple.com>
 
         Mid-word break can occur between a character and a combining mark

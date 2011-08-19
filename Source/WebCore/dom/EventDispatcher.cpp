@@ -27,6 +27,7 @@
 #include "EventDispatcher.h"
 
 #include "EventContext.h"
+#include "EventDispatchMediator.h"
 #include "FrameView.h"
 #include "HTMLMediaElement.h"
 #include "InspectorInstrumentation.h"

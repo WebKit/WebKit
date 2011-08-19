@@ -32,6 +32,7 @@
 #include "ScopedEventQueue.h"
 
 #include "Event.h"
+#include "EventDispatchMediator.h"
 #include "EventDispatcher.h"
 #include "EventTarget.h"
 #include <wtf/OwnPtr.h>

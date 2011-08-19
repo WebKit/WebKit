@@ -25,6 +25,7 @@
 #define MouseEvent_h
 
 #include "Clipboard.h"
+#include "EventDispatchMediator.h"
 #include "MouseRelatedEvent.h"
 
 namespace WebCore {

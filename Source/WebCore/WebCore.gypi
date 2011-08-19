@@ -5298,6 +5298,8 @@
             'dom/Event.cpp',
             'dom/EventContext.cpp',
             'dom/EventContext.h',
+            'dom/EventDispatchMediator.cpp',
+            'dom/EventDispatchMediator.h',
             'dom/EventDispatcher.cpp',
             'dom/EventDispatcher.h',
             'dom/EventException.h',

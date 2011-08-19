@@ -48,6 +48,7 @@
 #include "Element.h"
 #include "Event.h"
 #include "EventContext.h"
+#include "EventDispatchMediator.h"
 #include "EventDispatcher.h"
 #include "EventException.h"
 #include "EventHandler.h"
