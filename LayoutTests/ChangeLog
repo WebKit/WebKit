@@ -1,3 +1,9 @@
+2011-08-19  Tony Chang  <tony@chromium.org>
+
+        [chromium] Mark touch tests as failing on OSX 10.5.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Parse -webkit-region-break(after, before, inside)

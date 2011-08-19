@@ -3702,3 +3702,9 @@ BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-re
 BUGWK66510 LINUX DEBUG : editing/selection/regional-indicators.html = TIMEOUT
 
 BUGWK66569 WIN LINUX : http/tests/inspector/network/network-iframe-load-and-delete.html = TEXT TIMEOUT
+
+BUGWK66577 LEOPARD : fast/events/touch/basic-single-touch-events.html = TIMEOUT
+BUGWK66577 LEOPARD : fast/events/touch/multi-touch-grouped-targets.html = TIMEOUT
+BUGWK66577 LEOPARD : fast/events/touch/touch-gesture-scroll.html = TIMEOUT
+BUGWK66577 LEOPARD : fast/events/touch/touch-target-limited.html = TIMEOUT
+BUGWK66577 LEOPARD : fast/events/touch/touch-target.html = TIMEOUT
