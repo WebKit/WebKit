@@ -1862,6 +1862,54 @@ void WebViewImpl::scalePage(float scaleFactor, WebPoint origin)
     frame->scalePage(scaleFactor, origin);
 }
 
+bool WebViewImpl::isFixedLayoutModeEnabled() const
+{
+    if (!page())
+        return false;
+
+    Frame* frame = page()->mainFrame();
+    if (!frame)
+        return false;
+
+    return frame->view()->useFixedLayout();
+}
+
+void WebViewImpl::enableFixedLayoutMode(bool enable)
+{
+    if (!page())
+        return;
+
+    Frame* frame = page()->mainFrame();
+    if (!frame)
+        return;
+
+    frame->view()->setUseFixedLayout(enable);
+}
+
+WebSize WebViewImpl::fixedLayoutSize() const
+{
+    if (!page())
+        return WebSize();
+
+    Frame* frame = page()->mainFrame();
+    if (!frame)
+        return WebSize();
+
+    return frame->view()->fixedLayoutSize();
+}
+
+void WebViewImpl::setFixedLayoutSize(const WebSize& layoutSize)
+{
+    if (!page())
+        return;
+
+    Frame* frame = page()->mainFrame();
+    if (!frame)
+        return;
+
+    frame->view()->setFixedLayoutSize(layoutSize);
+}
+
 void WebViewImpl::performMediaPlayerAction(const WebMediaPlayerAction& action,
                                            const WebPoint& location)
 {

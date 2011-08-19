@@ -157,6 +157,10 @@ public:
                                    double maximumZoomLevel);
     virtual float pageScaleFactor() const;
     virtual void scalePage(float scaleFactor, WebPoint origin);
+    virtual bool isFixedLayoutModeEnabled() const;
+    virtual void enableFixedLayoutMode(bool enable);
+    virtual WebSize fixedLayoutSize() const;
+    virtual void setFixedLayoutSize(const WebSize&);
     virtual void performMediaPlayerAction(
         const WebMediaPlayerAction& action,
         const WebPoint& location);

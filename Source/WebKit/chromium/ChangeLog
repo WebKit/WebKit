@@ -1,3 +1,18 @@
+2011-08-19  Fady Samuel  <fsamuel@chromium.org>
+
+        Expose Fixed Layout Size mode to Chromium's WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=66568
+
+        Reviewed by Darin Fisher.
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::isFixedLayoutModeEnabled):
+        (WebKit::WebViewImpl::enableFixedLayoutMode):
+        (WebKit::WebViewImpl::fixedLayoutSize):
+        (WebKit::WebViewImpl::setFixedLayoutSize):
+        * src/WebViewImpl.h:
+
 2011-08-17  Adrienne Walker  <enne@google.com>
 
         [chromium] Split tiler into main thread / compositor thread versions

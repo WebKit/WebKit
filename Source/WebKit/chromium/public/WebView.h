@@ -213,6 +213,18 @@ public:
     virtual void scalePage(float scaleFactor, WebPoint origin) = 0;
 
 
+    // Fixed Layout --------------------------------------------------------
+
+    // In fixed layout mode, the layout of the page is independent of the
+    // view port size, given by WebWidget::size().
+
+    virtual bool isFixedLayoutModeEnabled() const = 0;
+    virtual void enableFixedLayoutMode(bool enable) = 0;
+
+    virtual WebSize fixedLayoutSize() const = 0;
+    virtual void setFixedLayoutSize(const WebSize&) = 0;
+
+
     // Media ---------------------------------------------------------------
 
     // Performs the specified action on the node at the given location.
