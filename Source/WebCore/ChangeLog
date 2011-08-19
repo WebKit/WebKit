@@ -1,3 +1,10 @@
+2011-08-19  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt] Build fix after r93384.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2011-08-18  Shawn Singh  <shawnsingh@chromium.org>
 
         Computing screen-space transform for LayerChromium and CCLayerImpl
