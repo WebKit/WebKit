@@ -56,7 +56,7 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* 
     , m_linkLoader(this)
     , m_sizes(DOMSettableTokenList::create())
     , m_loading(false)
-    , m_scriptState(Unset)
+    , m_isEnabledViaScript(false)
     , m_createdByParser(createdByParser)
     , m_isInShadowTree(false)
     , m_pendingSheetType(None)
@@ -85,20 +85,15 @@ HTMLLinkElement::~HTMLLinkElement()
 
 void HTMLLinkElement::setDisabled(bool disabled)
 {
-    bool wasEnabledViaScript = isEnabledViaScript();
-    setIsEnabledViaScript(!disabled);
-
     if (!m_sheet)
         return;
 
     bool wasDisabled = m_sheet->disabled();
-    if (wasDisabled == disabled) {
-        if (wasEnabledViaScript != isEnabledViaScript())
-            document()->styleSelectorChanged(DeferRecalcStyle);
+    if (wasDisabled == disabled)
         return;
-    }
 
     m_sheet->setDisabled(disabled);
+    m_isEnabledViaScript = !disabled;
 
     // If we change the disabled state while the sheet is still loading, then we have to
     // perform three checks:
@@ -125,8 +120,6 @@ void HTMLLinkElement::setDisabled(bool disabled)
 
     if (!disabled)
         process();
-
-    ASSERT(areDisabledAndScriptStatesConsistent());
 }
 
 StyleSheet* HTMLLinkElement::sheet() const
@@ -366,20 +359,10 @@ void HTMLLinkElement::linkLoadingErrored()
 
 bool HTMLLinkElement::sheetLoaded()
 {
-    // Migrate the disabled information before removePendingSheet is called
-    // as it will start a recalStyleSelector which needs this information.
-    if (m_scriptState != Unset) {
-        ASSERT(!m_loading);
-        // FIXME: We should ASSERT that it was set for stylesheets only, but
-        // currently we allow setDisabled to be called regardless of the <link> rel.
-        setDisabled(m_scriptState == DisabledViaScript);
-    }
-
     if (!isLoading()) {
         removePendingSheet();
         return true;
     }
-
     return false;
 }
 
@@ -462,20 +445,7 @@ void HTMLLinkElement::removePendingSheet()
 
 bool HTMLLinkElement::disabled() const
 {
-    ASSERT(areDisabledAndScriptStatesConsistent());
-
-    if (!m_sheet) {
-        // FF disagrees with the CSS OM spec and always has an associated stylesheet for alternate sheet (regardless of whether
-        // the resource is fetched). As we store the enabled state in m_scriptState while loading, return this information to be
-        // consistent with FF. sheetLoaded() is called at the end of any transfer (whether it was in error or not) so m_scriptState
-        // will be transfered back into our stylesheet and the disabled() value should always be consistent.
-        if (isLoading() && m_scriptState != Unset)
-            return m_scriptState == DisabledViaScript;
-
-        return false;
-    }
-
-    return m_sheet->disabled();
+    return m_sheet && m_sheet->disabled();
 }
 
 DOMSettableTokenList* HTMLLinkElement::sizes() const
@@ -487,24 +457,5 @@ void HTMLLinkElement::setSizes(const String& value)
 {
     m_sizes->setValue(value);
 }
-
-#ifndef NDEBUG
-bool HTMLLinkElement::areDisabledAndScriptStatesConsistent() const
-{
-    if (!m_relAttribute.m_isStyleSheet)
-        return true;
-
-    // During loading, m_scriptState holds the temporary value for sheet()->disabled()
-    // so it can have any values (same for sheet()->disabled()).
-    if (isLoading())
-        return true;
-
-    if (m_scriptState == Unset)
-        return true;
-
-    bool isDisabledViaScript = m_scriptState == DisabledViaScript;
-    return isDisabledViaScript == sheet()->disabled();
-}
-#endif
 
 } // namespace WebCore

@@ -57,7 +57,7 @@ public:
 
     // FIXME: This should be renamed isStyleSheetLoading as this is only used for stylesheets.
     bool isLoading() const;
-    bool isEnabledViaScript() const { return m_scriptState == EnabledViaScript; }
+    bool isEnabledViaScript() const { return m_isEnabledViaScript; }
     bool disabled() const;
     void setDisabled(bool);
     void setSizes(const String&);
@@ -85,6 +85,7 @@ private:
     
     virtual bool isURLAttribute(Attribute*) const;
 
+private:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 
     virtual void finishParsingChildren();
@@ -96,11 +97,6 @@ private:
 private:
     HTMLLinkElement(const QualifiedName&, Document*, bool createdByParser);
 
-    void setIsEnabledViaScript(bool enabled) { m_scriptState = enabled ? EnabledViaScript : DisabledViaScript; }
-#ifndef NDEBUG
-    bool areDisabledAndScriptStatesConsistent() const;
-#endif
-
     LinkLoader m_linkLoader;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;
@@ -110,11 +106,10 @@ private:
     RefPtr<DOMSettableTokenList> m_sizes;
     LinkRelAttribute m_relAttribute;
     bool m_loading;
-    enum EnabledViaScriptState { Unset, EnabledViaScript, DisabledViaScript };
-    EnabledViaScriptState m_scriptState;
+    bool m_isEnabledViaScript;
     bool m_createdByParser;
     bool m_isInShadowTree;
-
+    
     PendingSheetType m_pendingSheetType;
 };
 

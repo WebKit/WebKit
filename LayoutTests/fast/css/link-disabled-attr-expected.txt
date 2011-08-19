@@ -15,11 +15,11 @@ PASS getComputedStyle(console).whiteSpace is 'pre-wrap'
 altsheet
 FAIL link.disabled should be true. Was false.
 PASS link.sheet is non-null.
-PASS getComputedStyle(console).backgroundColor is 'rgb(0, 128, 0)'
+FAIL getComputedStyle(console).backgroundColor should be rgb(0, 128, 0). Was rgba(0, 0, 0, 0).
 FAIL link.disabled should be true. Was false.
-FAIL getComputedStyle(console).backgroundColor should be rgba(0, 0, 0, 0). Was rgb(0, 128, 0).
+PASS getComputedStyle(console).backgroundColor is originalBG
 PASS link.disabled is false
-PASS getComputedStyle(console).backgroundColor is 'rgb(0, 128, 0)'
+FAIL getComputedStyle(console).backgroundColor should be rgb(0, 128, 0). Was rgba(0, 0, 0, 0).
 PASS getComputedStyle(console).backgroundColor is originalBG
 PASS successfullyParsed is true
 
