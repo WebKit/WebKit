@@ -1,3 +1,16 @@
+2011-08-18  Dan Bernstein  <mitz@apple.com>
+
+        <rdar://problem/9973194> Fonts that specify a positive descender value are treated as having descenders ending above the baseline
+        https://bugs.webkit.org/show_bug.cgi?id=66515
+
+        Reviewed by Darin Adler.
+
+        No test because none of the system fonts and test fonts have an incorrectly-specified descender value.
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::SimpleFontData::platformInit): If the font specifies a positive descender, assume that it meant
+        the same amount, but negative. This is consistent with what Core Text does.
+
 2011-08-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         positionForPoint returns wrong VisiblePosition at bidi boundaries
