@@ -130,7 +130,7 @@ void sortLayers(Vector<RefPtr<CCLayerImpl> >::iterator first, Vector<RefPtr<CCLa
 // Recursively walks the layer tree starting at the given node and computes all the
 // necessary transformations, scissor rectangles, render surfaces, etc.
 template<typename LayerType, typename RenderSurfaceType, typename LayerSorter>
-void calculateDrawTransformsAndVisibility(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
+void calculateDrawTransformsAndVisibility(LayerType* layer, LayerType* rootLayer, const TransformationMatrix& parentMatrix, const TransformationMatrix& fullHierarchyMatrix, Vector<RefPtr<LayerType> >& renderSurfaceLayerList, Vector<RefPtr<LayerType> >& layerList, LayerSorter* layerSorter, int maxTextureSize)
 {
     typedef Vector<RefPtr<LayerType> > LayerList;
     // Compute the new matrix transformation that will be applied to this layer and
@@ -173,6 +173,10 @@ void calculateDrawTransformsAndVisibility(LayerType* layer, LayerType* rootLayer
     FloatRect layerRect(-0.5 * layer->bounds().width(), -0.5 * layer->bounds().height(), layer->bounds().width(), layer->bounds().height());
     IntRect transformedLayerRect;
 
+    // fullHierarchyMatrix is the matrix that transforms objects between screen space (except projection matrix) and the most recent RenderSurface's space.
+    // nextHierarchyMatrix will only change if this layer uses a new RenderSurface, otherwise remains the same.
+    TransformationMatrix nextHierarchyMatrix = fullHierarchyMatrix;
+
     // FIXME: This seems like the wrong place to set this
     layer->setUsesLayerScissor(false);
 
@@ -213,6 +217,9 @@ void calculateDrawTransformsAndVisibility(LayerType* layer, LayerType* rootLayer
         TransformationMatrix layerOriginTransform = combinedTransform;
         layerOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
         renderSurface->setOriginTransform(layerOriginTransform);
+
+        // Update the aggregate hierarchy matrix to include the transform of the newly created RenderSurface.
+        nextHierarchyMatrix.multiply(layerOriginTransform);
 
         // The render surface scissor rect is the scissor rect that needs to
         // be applied before drawing the render surface onto its containing
@@ -262,6 +269,14 @@ void calculateDrawTransformsAndVisibility(LayerType* layer, LayerType* rootLayer
         }
     }
 
+    // Note that at this point, layer->drawTransform() is not necessarily the same as local variable drawTransform.
+    // layerScreenSpaceTransform represents the transform between layer space (in pixels) and screen space.
+    // So we do not include projection P or scaling transform S (see comments above that describe P*M*S).
+    TransformationMatrix layerScreenSpaceTransform = nextHierarchyMatrix;
+    layerScreenSpaceTransform.multiply(layer->drawTransform());
+    layerScreenSpaceTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
+    layer->setScreenSpaceTransform(layerScreenSpaceTransform);
+
     if (layer->renderSurface())
         layer->setTargetRenderSurface(layer->renderSurface());
     else {
@@ -307,7 +322,7 @@ void calculateDrawTransformsAndVisibility(LayerType* layer, LayerType* rootLayer
 
     for (size_t i = 0; i < layer->children().size(); ++i) {
         LayerType* child = layer->children()[i].get();
-        calculateDrawTransformsAndVisibility<LayerType, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, renderSurfaceLayerList, descendants, layerSorter, maxTextureSize);
+        calculateDrawTransformsAndVisibility<LayerType, RenderSurfaceType, LayerSorter>(child, rootLayer, sublayerMatrix, nextHierarchyMatrix, renderSurfaceLayerList, descendants, layerSorter, maxTextureSize);
 
         if (child->renderSurface()) {
             RenderSurfaceType* childRenderSurface = child->renderSurface();
@@ -605,7 +620,7 @@ void LayerRendererChromium::updateLayers(LayerChromium* rootLayer)
 
     {
         TRACE_EVENT("LayerRendererChromium::updateLayers::calcDrawEtc", this, 0);
-        calculateDrawTransformsAndVisibility<LayerChromium, RenderSurfaceChromium, void*>(rootLayer, rootLayer, identityMatrix, renderSurfaceLayerList, rootRenderSurface->layerList(), 0, m_maxTextureSize);
+        calculateDrawTransformsAndVisibility<LayerChromium, RenderSurfaceChromium, void*>(rootLayer, rootLayer, identityMatrix, identityMatrix, renderSurfaceLayerList, rootRenderSurface->layerList(), 0, m_maxTextureSize);
     }
 
 #ifndef NDEBUG
@@ -737,7 +752,7 @@ void LayerRendererChromium::drawLayersInternal()
 
     {
         TRACE_EVENT("LayerRendererChromium::drawLayersInternal::calcDrawEtc", this, 0);
-        calculateDrawTransformsAndVisibility<CCLayerImpl, CCRenderSurface, CCLayerSorter>(rootDrawLayer, rootDrawLayer, identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->layerList(), &m_layerSorter, m_maxTextureSize);
+        calculateDrawTransformsAndVisibility<CCLayerImpl, CCRenderSurface, CCLayerSorter>(rootDrawLayer, rootDrawLayer, identityMatrix, identityMatrix, renderSurfaceLayerList, m_defaultRenderSurface->layerList(), &m_layerSorter, m_maxTextureSize);
     }
 
     // The GL viewport covers the entire visible area, including the scrollbars.
@@ -1013,18 +1028,11 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, CCRenderSurface* targe
     } else
         GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
 
+    // The layer should not be drawn if (1) it is not double-sided and (2) the back of the layer is facing the screen.
+    // This second condition is checked by computing the transformed normal of the layer.
     if (!layer->doubleSided()) {
-        // FIXME: Need to take into account the cumulative render surface transforms all the way from
-        //        the default render surface in order to determine visibility.
-        TransformationMatrix combinedDrawMatrix;
-        if (layer->targetRenderSurface()) {
-            combinedDrawMatrix = layer->targetRenderSurface()->drawTransform();
-            combinedDrawMatrix.multiply(layer->drawTransform());
-        } else
-            combinedDrawMatrix = layer->drawTransform();
-
         FloatRect layerRect(FloatPoint(0, 0), FloatSize(layer->bounds()));
-        FloatQuad mappedLayer = combinedDrawMatrix.mapQuad(FloatQuad(layerRect));
+        FloatQuad mappedLayer = layer->screenSpaceTransform().mapQuad(FloatQuad(layerRect));
         FloatSize horizontalDir = mappedLayer.p2() - mappedLayer.p1();
         FloatSize verticalDir = mappedLayer.p4() - mappedLayer.p1();
         FloatPoint3D xAxis(horizontalDir.width(), horizontalDir.height(), 0);

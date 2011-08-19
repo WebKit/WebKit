@@ -158,6 +158,8 @@ public:
 
     const TransformationMatrix& drawTransform() const { return m_drawTransform; }
     void setDrawTransform(const TransformationMatrix& matrix) { m_drawTransform = matrix; }
+    const TransformationMatrix& screenSpaceTransform() const { return m_screenSpaceTransform; }
+    void setScreenSpaceTransform(const TransformationMatrix& matrix) { m_screenSpaceTransform = matrix; }
     const IntRect& drawableContentRect() const { return m_drawableContentRect; }
     void setDrawableContentRect(const IntRect& rect) { m_drawableContentRect = rect; }
 
@@ -226,6 +228,7 @@ private:
     float m_debugBorderWidth;
 
     TransformationMatrix m_drawTransform;
+    TransformationMatrix m_screenSpaceTransform;
 
     // The scissor rectangle that should be used when this layer is drawn.
     // Inherited by the parent layer and further restricted if this layer masks

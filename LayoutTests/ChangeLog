@@ -1,3 +1,18 @@
+2011-08-18  Shawn Singh  <shawnsingh@chromium.org>
+
+        Computing screen-space transform for LayerChromium and CCLayerImpl
+        https://bugs.webkit.org/show_bug.cgi?id=66114
+
+        This case tests if backface visibility properly accounts for a hierarchy
+        of transforms.  In particular, this test forces Chromium to create a
+        hierarchy of RenderSurfaces.
+
+        Reviewed by James Robinson.
+
+        * compositing/backface-visibility-hierarchical-transform-expected.png: Added.
+        * compositing/backface-visibility-hierarchical-transform-expected.txt: Added.
+        * compositing/backface-visibility-hierarchical-transform.html: Added.
+
 2011-08-18  Ben Wells  <benwells@chromium.org>
 
         [skia] -webkit-transform breaks -webkit-mask
