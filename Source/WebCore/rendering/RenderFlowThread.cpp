@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "RenderFlowThread.h"
+
 #include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "Node.h"
@@ -399,8 +400,19 @@ bool RenderFlowThread::hitTestRegion(const LayoutRect& regionRect, const HitTest
     return isPointInsideFlowThread;
 }
 
+bool RenderFlowThread::shouldRepaint(const LayoutRect& r) const
+{
+    if (view()->printing() || r.isEmpty())
+        return false;
+
+    return true;
+}
+
 void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, bool immediate)
 {
+    if (!shouldRepaint(repaintRect))
+        return;
+
     for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;
         if (!region->isValid())

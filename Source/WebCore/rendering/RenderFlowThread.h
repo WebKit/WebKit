@@ -104,6 +104,8 @@ private:
     void removeDependencyOnFlowThread(RenderFlowThread*);
     void checkInvalidRegions();
 
+    bool shouldRepaint(const LayoutRect&) const;
+
     typedef ListHashSet<RenderObject*> FlowThreadChildList;
     FlowThreadChildList m_flowThreadChildList;
 

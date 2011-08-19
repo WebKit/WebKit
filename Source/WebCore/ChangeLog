@@ -1,5 +1,21 @@
 2011-08-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
+        [CSSRegions]Speed up RenderFlowThread repaint of regions
+        https://bugs.webkit.org/show_bug.cgi?id=66566
+
+        Reviewed by David Hyatt.
+
+        When in printing or the repaint rectangle is empty, there is no need to iterate
+        the render flow regions in order to repaint.
+        Covered by existing tests.
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::shouldRepaint):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        * rendering/RenderFlowThread.h:
+
+2011-08-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
         [CSSRegions]Parse -webkit-region-break(after, before, inside)
         https://bugs.webkit.org/show_bug.cgi?id=66559
 
