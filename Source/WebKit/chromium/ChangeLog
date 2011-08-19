@@ -1,3 +1,17 @@
+2011-08-19  Adam Klein  <adamk@chromium.org>
+
+        [chromium] Remove various unreferenced bits from Chromium API headers
+        https://bugs.webkit.org/show_bug.cgi?id=66575
+
+        Reviewed by Tony Chang.
+
+        * public/WebApplicationCacheHost.h:
+        (WebKit::WebApplicationCacheHost::willStartMainResourceRequest):
+        * public/WebFrame.h:
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didReceiveTitle):
+        * public/WebVideoFrame.h:
+
 2011-08-19  Fady Samuel  <fsamuel@chromium.org>
 
         Expose Fixed Layout Size mode to Chromium's WebKit API

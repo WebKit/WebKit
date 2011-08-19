@@ -51,12 +51,6 @@ public:
         FormatASCII,
     };
 
-    // FIXME: delete once Chromium has updated to remove references.
-    enum SurfaceType {
-        SurfaceTypeSystemMemory,
-        SurfaceTypeTexture,
-    };
-
     virtual ~WebVideoFrame() { }
     virtual Format format() const = 0;
     virtual unsigned width() const = 0;

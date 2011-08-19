@@ -37,8 +37,6 @@
 #include "WebNode.h"
 #include "WebURL.h"
 #include "WebURLLoaderOptions.h"
-// FIXME : Remove this file when transient done.
-#include "WebVector.h"
 
 struct NPObject;
 

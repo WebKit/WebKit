@@ -209,12 +209,7 @@ public:
     virtual void didCreateDocumentElement(WebFrame*) { }
 
     // The page title is available.
-    // FIXME: remove override once Chrome is updated to new API.
-    virtual void didReceiveTitle(WebFrame*, const WebString& title) { }
-    virtual void didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection direction)
-    {
-        didReceiveTitle(frame, title);
-    }
+    virtual void didReceiveTitle(WebFrame* frame, const WebString& title, WebTextDirection direction) { }
 
     // The icon for the page have changed.
     virtual void didChangeIcon(WebFrame*, WebIconURL::Type) { }
