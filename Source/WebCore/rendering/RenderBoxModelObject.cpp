@@ -51,7 +51,7 @@ bool RenderBoxModelObject::s_layerWasSelfPainting = false;
 static const double cInterpolationCutoff = 800. * 800.;
 static const double cLowQualityTimeThreshold = 0.500; // 500 ms
 
-typedef HashMap<const void*, IntSize> LayerSizeMap;
+typedef HashMap<const void*, LayoutSize> LayerSizeMap;
 typedef HashMap<RenderBoxModelObject*, LayerSizeMap> ObjectLayerSizeMap;
 
 // The HashMap for storing continuation pointers.
@@ -68,9 +68,9 @@ class ImageQualityController {
     WTF_MAKE_NONCOPYABLE(ImageQualityController); WTF_MAKE_FAST_ALLOCATED;
 public:
     ImageQualityController();
-    bool shouldPaintAtLowQuality(GraphicsContext*, RenderBoxModelObject*, Image*, const void* layer, const IntSize&);
+    bool shouldPaintAtLowQuality(GraphicsContext*, RenderBoxModelObject*, Image*, const void* layer, const LayoutSize&);
     void removeLayer(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer);
-    void set(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer, const IntSize&);
+    void set(RenderBoxModelObject*, LayerSizeMap* innerMap, const void* layer, const LayoutSize&);
     void objectDestroyed(RenderBoxModelObject*);
     bool isEmpty() { return m_objectLayerSizeMap.isEmpty(); }
 
@@ -98,7 +98,7 @@ void ImageQualityController::removeLayer(RenderBoxModelObject* object, LayerSize
     }
 }
     
-void ImageQualityController::set(RenderBoxModelObject* object, LayerSizeMap* innerMap, const void* layer, const IntSize& size)
+void ImageQualityController::set(RenderBoxModelObject* object, LayerSizeMap* innerMap, const void* layer, const LayoutSize& size)
 {
     if (innerMap)
         innerMap->set(layer, size);
@@ -132,7 +132,7 @@ void ImageQualityController::restartTimer()
     m_timer.startOneShot(cLowQualityTimeThreshold);
 }
 
-bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, RenderBoxModelObject* object, Image* image, const void *layer, const IntSize& size)
+bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, RenderBoxModelObject* object, Image* image, const void *layer, const LayoutSize& size)
 {
     // If the image is not a bitmap image, then none of this is relevant and we just paint at high
     // quality.
@@ -149,7 +149,7 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
     // Look ourselves up in the hashtables.
     ObjectLayerSizeMap::iterator i = m_objectLayerSizeMap.find(object);
     LayerSizeMap* innerMap = i != m_objectLayerSizeMap.end() ? &i->second : 0;
-    IntSize oldSize;
+    LayoutSize oldSize;
     bool isFirstResize = true;
     if (innerMap) {
         LayerSizeMap::iterator j = innerMap->find(layer);
@@ -161,7 +161,9 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
 
     const AffineTransform& currentTransform = context->getCTM();
     bool contextIsScaled = !currentTransform.isIdentityOrTranslationOrFlipped();
-    if (!contextIsScaled && imageSize == size) {
+    // FIXME: Change to use roughlyEquals when we move to float.
+    // See https://bugs.webkit.org/show_bug.cgi?id=66148
+    if (!contextIsScaled && size == imageSize) {
         // There is no scale in effect. If we had a scale in effect before, we can just remove this object from the list.
         removeLayer(object, innerMap, layer);
         return false;
@@ -183,6 +185,8 @@ bool ImageQualityController::shouldPaintAtLowQuality(GraphicsContext* context, R
     // If this is the first time resizing this image, or its size is the
     // same as the last resize, draw at high res, but record the paint
     // size and set the timer.
+    // FIXME: Change to use roughlyEquals when we move to float.
+    // See https://bugs.webkit.org/show_bug.cgi?id=66148
     if (isFirstResize || oldSize == size) {
         restartTimer();
         set(object, innerMap, layer, size);
@@ -235,7 +239,7 @@ void RenderBoxModelObject::setSelectionState(SelectionState s)
         cb->setSelectionState(s);
 }
 
-bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Image* image, const void* layer, const IntSize& size)
+bool RenderBoxModelObject::shouldPaintAtLowQuality(GraphicsContext* context, Image* image, const void* layer, const LayoutSize& size)
 {
     return imageQualityController()->shouldPaintAtLowQuality(context, this, image, layer, size);
 }
@@ -575,12 +579,12 @@ RoundedRect RenderBoxModelObject::getBackgroundRoundedRect(const LayoutRect& bor
     return border;
 }
 
-static IntRect backgroundRectAdjustedForBleedAvoidance(GraphicsContext* context, const IntRect& borderRect, BackgroundBleedAvoidance bleedAvoidance)
+static LayoutRect backgroundRectAdjustedForBleedAvoidance(GraphicsContext* context, const LayoutRect& borderRect, BackgroundBleedAvoidance bleedAvoidance)
 {
     if (bleedAvoidance != BackgroundBleedShrinkBackground)
         return borderRect;
 
-    IntRect adjustedRect = borderRect;
+    LayoutRect adjustedRect = borderRect;
     // We need to shrink the border by one device pixel on each side.
     AffineTransform ctm = context->getCTM();
     FloatSize contextScale(static_cast<float>(ctm.xScale()), static_cast<float>(ctm.yScale()));
@@ -777,7 +781,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
     }
 }
 
-IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, IntSize positioningAreaSize) const
+LayoutSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, LayoutSize positioningAreaSize) const
 {
     StyleImage* image = fillLayer->image();
     image->setImageContainerSize(positioningAreaSize); // Use the box established by background-origin.
@@ -786,8 +790,8 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
 
     switch (type) {
         case SizeLength: {
-            int w = positioningAreaSize.width();
-            int h = positioningAreaSize.height();
+            LayoutUnit w = positioningAreaSize.width();
+            LayoutUnit h = positioningAreaSize.height();
 
             Length layerWidth = fillLayer->size().size.width();
             Length layerHeight = fillLayer->size().size.height();
@@ -805,31 +809,31 @@ IntSize RenderBoxModelObject::calculateFillTileSize(const FillLayer* fillLayer, 
             // If one of the values is auto we have to use the appropriate
             // scale to maintain our aspect ratio.
             if (layerWidth.isAuto() && !layerHeight.isAuto()) {
-                IntSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
+                LayoutSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
                 if (imageIntrinsicSize.height())
                     w = imageIntrinsicSize.width() * h / imageIntrinsicSize.height();        
             } else if (!layerWidth.isAuto() && layerHeight.isAuto()) {
-                IntSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
+                LayoutSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
                 if (imageIntrinsicSize.width())
                     h = imageIntrinsicSize.height() * w / imageIntrinsicSize.width();
             } else if (layerWidth.isAuto() && layerHeight.isAuto()) {
                 // If both width and height are auto, use the image's intrinsic size.
-                IntSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
+                LayoutSize imageIntrinsicSize = image->imageSize(this, style()->effectiveZoom());
                 w = imageIntrinsicSize.width();
                 h = imageIntrinsicSize.height();
             }
             
-            return IntSize(max(1, w), max(1, h));
+            return LayoutSize(max<LayoutUnit>(1, w), max<LayoutUnit>(1, h));
         }
         case Contain:
         case Cover: {
-            IntSize imageIntrinsicSize = image->imageSize(this, 1);
+            LayoutSize imageIntrinsicSize = image->imageSize(this, 1);
             float horizontalScaleFactor = imageIntrinsicSize.width()
                 ? static_cast<float>(positioningAreaSize.width()) / imageIntrinsicSize.width() : 1;
             float verticalScaleFactor = imageIntrinsicSize.height()
                 ? static_cast<float>(positioningAreaSize.height()) / imageIntrinsicSize.height() : 1;
             float scaleFactor = type == Contain ? min(horizontalScaleFactor, verticalScaleFactor) : max(horizontalScaleFactor, verticalScaleFactor);
-            return IntSize(max<int>(1, imageIntrinsicSize.width() * scaleFactor), max<int>(1, imageIntrinsicSize.height() * scaleFactor));
+            return LayoutSize(max<LayoutUnit>(1, imageIntrinsicSize.width() * scaleFactor), max<LayoutUnit>(1, imageIntrinsicSize.height() * scaleFactor));
         }
         case SizeNone:
             break;
@@ -853,7 +857,7 @@ void RenderBoxModelObject::BackgroundImageGeometry::setNoRepeatY(int yOffset)
 
 void RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment(const LayoutPoint& attachmentPoint)
 {
-    m_phase.move(max(attachmentPoint.x() - m_destRect.x(), 0), max(attachmentPoint.y() - m_destRect.y(), 0));
+    m_phase.move(max<LayoutUnit>(attachmentPoint.x() - m_destRect.x(), 0), max<LayoutUnit>(attachmentPoint.y() - m_destRect.y(), 0));
 }
 
 void RenderBoxModelObject::BackgroundImageGeometry::clip(const LayoutRect& clipRect)
@@ -868,12 +872,12 @@ LayoutPoint RenderBoxModelObject::BackgroundImageGeometry::relativePhase() const
     return phase;
 }
 
-void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, const IntRect& paintRect, 
+void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fillLayer, const LayoutRect& paintRect, 
                                                             BackgroundImageGeometry& geometry)
 {
-    int left = 0;
-    int top = 0;
-    IntSize positioningAreaSize;
+    LayoutUnit left = 0;
+    LayoutUnit top = 0;
+    LayoutSize positioningAreaSize;
 
     // Determine the background positioning area and set destRect to the background painting area.
     // destRect will be adjusted later if the background is non-repeating.
@@ -892,8 +896,8 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     if (!fixedAttachment) {
         geometry.setDestRect(paintRect);
 
-        int right = 0;
-        int bottom = 0;
+        LayoutUnit right = 0;
+        LayoutUnit bottom = 0;
         // Scroll and Local.
         if (fillLayer->origin() != BorderFillBox) {
             left = borderLeft();
@@ -912,11 +916,11 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
         // its margins. Since those were added in already, we have to factor them out when computing
         // the background positioning area.
         if (isRoot()) {
-            positioningAreaSize = IntSize(toRenderBox(this)->width() - left - right, toRenderBox(this)->height() - top - bottom);
+            positioningAreaSize = LayoutSize(toRenderBox(this)->width() - left - right, toRenderBox(this)->height() - top - bottom);
             left += marginLeft();
             top += marginTop();
         } else
-            positioningAreaSize = IntSize(paintRect.width() - left - right, paintRect.height() - top - bottom);
+            positioningAreaSize = LayoutSize(paintRect.width() - left - right, paintRect.height() - top - bottom);
     } else {
         geometry.setDestRect(viewRect());
         positioningAreaSize = geometry.destRect().size();
@@ -927,15 +931,15 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     EFillRepeat backgroundRepeatX = fillLayer->repeatX();
     EFillRepeat backgroundRepeatY = fillLayer->repeatY();
 
-    int xPosition = fillLayer->xPosition().calcMinValue(positioningAreaSize.width() - geometry.tileSize().width(), true);
+    LayoutUnit xPosition = fillLayer->xPosition().calcMinValue(positioningAreaSize.width() - geometry.tileSize().width(), true);
     if (backgroundRepeatX == RepeatFill)
-        geometry.setPhaseX(geometry.tileSize().width() ? geometry.tileSize().width() - (xPosition + left) % geometry.tileSize().width() : 0);
+        geometry.setPhaseX(geometry.tileSize().width() ? layoutMod(geometry.tileSize().width() - (xPosition + left), geometry.tileSize().width()) : 0);
     else
         geometry.setNoRepeatX(xPosition + left);
 
-    int yPosition = fillLayer->yPosition().calcMinValue(positioningAreaSize.height() - geometry.tileSize().height(), true);
+    LayoutUnit yPosition = fillLayer->yPosition().calcMinValue(positioningAreaSize.height() - geometry.tileSize().height(), true);
     if (backgroundRepeatY == RepeatFill)
-        geometry.setPhaseY(geometry.tileSize().height() ? geometry.tileSize().height() - (yPosition + top) % geometry.tileSize().height() : 0);
+        geometry.setPhaseY(geometry.tileSize().height() ? layoutMod(geometry.tileSize().height() - (yPosition + top), geometry.tileSize().height()) : 0);
     else 
         geometry.setNoRepeatY(yPosition + top);
 
@@ -946,7 +950,7 @@ void RenderBoxModelObject::calculateBackgroundImageGeometry(const FillLayer* fil
     geometry.setDestOrigin(geometry.destRect().location());
 }
 
-bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, const IntRect& rect, const RenderStyle* style,
+bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext, const LayoutRect& rect, const RenderStyle* style,
                                                const NinePieceImage& ninePieceImage, CompositeOperator op)
 {
     StyleImage* styleImage = ninePieceImage.image();
@@ -962,24 +966,24 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     // FIXME: border-image is broken with full page zooming when tiling has to happen, since the tiling function
     // doesn't have any understanding of the zoom that is in effect on the tile.
     styleImage->setImageContainerSize(rect.size());
-    IntSize imageSize = styleImage->imageSize(this, 1.0f);
-    int imageWidth = imageSize.width();
-    int imageHeight = imageSize.height();
+    LayoutSize imageSize = styleImage->imageSize(this, 1.0f);
+    LayoutUnit imageWidth = imageSize.width();
+    LayoutUnit imageHeight = imageSize.height();
 
-    int topSlice = min(imageHeight, ninePieceImage.slices().top().calcValue(imageHeight));
-    int bottomSlice = min(imageHeight, ninePieceImage.slices().bottom().calcValue(imageHeight));
-    int leftSlice = min(imageWidth, ninePieceImage.slices().left().calcValue(imageWidth));
-    int rightSlice = min(imageWidth, ninePieceImage.slices().right().calcValue(imageWidth));
+    LayoutUnit topSlice = min<LayoutUnit>(imageHeight, ninePieceImage.slices().top().calcValue(imageHeight));
+    LayoutUnit bottomSlice = min<LayoutUnit>(imageHeight, ninePieceImage.slices().bottom().calcValue(imageHeight));
+    LayoutUnit leftSlice = min<LayoutUnit>(imageWidth, ninePieceImage.slices().left().calcValue(imageWidth));
+    LayoutUnit rightSlice = min<LayoutUnit>(imageWidth, ninePieceImage.slices().right().calcValue(imageWidth));
 
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();
 
     bool fitToBorder = style->borderImage() == ninePieceImage;
     
-    int leftWidth = fitToBorder ? style->borderLeftWidth() : leftSlice;
-    int topWidth = fitToBorder ? style->borderTopWidth() : topSlice;
-    int rightWidth = fitToBorder ? style->borderRightWidth() : rightSlice;
-    int bottomWidth = fitToBorder ? style->borderBottomWidth() : bottomSlice;
+    LayoutUnit leftWidth = fitToBorder ? style->borderLeftWidth() : leftSlice;
+    LayoutUnit topWidth = fitToBorder ? style->borderTopWidth() : topSlice;
+    LayoutUnit rightWidth = fitToBorder ? style->borderRightWidth() : rightSlice;
+    LayoutUnit bottomWidth = fitToBorder ? style->borderBottomWidth() : bottomSlice;
 
     bool drawLeft = leftSlice > 0 && leftWidth > 0;
     bool drawTop = topSlice > 0 && topWidth > 0;
@@ -997,20 +1001,20 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
         // The top left corner rect is (tx, ty, leftWidth, topWidth)
         // The rect to use from within the image is obtained from our slice, and is (0, 0, leftSlice, topSlice)
         if (drawTop)
-            graphicsContext->drawImage(image.get(), colorSpace, IntRect(rect.location(), IntSize(leftWidth, topWidth)),
-                                       IntRect(0, 0, leftSlice, topSlice), op);
+            graphicsContext->drawImage(image.get(), colorSpace, LayoutRect(rect.location(), LayoutSize(leftWidth, topWidth)),
+                                       LayoutRect(0, 0, leftSlice, topSlice), op);
 
         // The bottom left corner rect is (tx, ty + h - bottomWidth, leftWidth, bottomWidth)
         // The rect to use from within the image is (0, imageHeight - bottomSlice, leftSlice, botomSlice)
         if (drawBottom)
-            graphicsContext->drawImage(image.get(), colorSpace, IntRect(rect.x(), rect.y() + rect.height() - bottomWidth, leftWidth, bottomWidth),
-                                       IntRect(0, imageHeight - bottomSlice, leftSlice, bottomSlice), op);
+            graphicsContext->drawImage(image.get(), colorSpace, LayoutRect(rect.x(), rect.y() + rect.height() - bottomWidth, leftWidth, bottomWidth),
+                                       LayoutRect(0, imageHeight - bottomSlice, leftSlice, bottomSlice), op);
 
         // Paint the left edge.
         // Have to scale and tile into the border rect.
-        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(rect.x(), rect.y() + topWidth, leftWidth,
+        graphicsContext->drawTiledImage(image.get(), colorSpace, LayoutRect(rect.x(), rect.y() + topWidth, leftWidth,
                                         rect.height() - topWidth - bottomWidth),
-                                        IntRect(0, topSlice, leftSlice, imageHeight - topSlice - bottomSlice),
+                                        LayoutRect(0, topSlice, leftSlice, imageHeight - topSlice - bottomSlice),
                                         Image::StretchTile, (Image::TileRule)vRule, op);
     }
 
@@ -1019,40 +1023,40 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
         // The top right corner rect is (tx + w - rightWidth, ty, rightWidth, topWidth)
         // The rect to use from within the image is obtained from our slice, and is (imageWidth - rightSlice, 0, rightSlice, topSlice)
         if (drawTop)
-            graphicsContext->drawImage(image.get(), colorSpace, IntRect(rect.x() + rect.width() - rightWidth, rect.y(), rightWidth, topWidth),
-                                       IntRect(imageWidth - rightSlice, 0, rightSlice, topSlice), op);
+            graphicsContext->drawImage(image.get(), colorSpace, LayoutRect(rect.x() + rect.width() - rightWidth, rect.y(), rightWidth, topWidth),
+                                       LayoutRect(imageWidth - rightSlice, 0, rightSlice, topSlice), op);
 
         // The bottom right corner rect is (tx + w - rightWidth, ty + h - bottomWidth, rightWidth, bottomWidth)
         // The rect to use from within the image is (imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice)
         if (drawBottom)
-            graphicsContext->drawImage(image.get(), colorSpace, IntRect(rect.x() + rect.width() - rightWidth, rect.y() + rect.height() - bottomWidth, rightWidth, bottomWidth),
-                                       IntRect(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice), op);
+            graphicsContext->drawImage(image.get(), colorSpace, LayoutRect(rect.x() + rect.width() - rightWidth, rect.y() + rect.height() - bottomWidth, rightWidth, bottomWidth),
+                                       LayoutRect(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice), op);
 
         // Paint the right edge.
-        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(rect.x() + rect.width() - rightWidth, rect.y() + topWidth, rightWidth,
+        graphicsContext->drawTiledImage(image.get(), colorSpace, LayoutRect(rect.x() + rect.width() - rightWidth, rect.y() + topWidth, rightWidth,
                                         rect.height() - topWidth - bottomWidth),
-                                        IntRect(imageWidth - rightSlice, topSlice, rightSlice, imageHeight - topSlice - bottomSlice),
+                                        LayoutRect(imageWidth - rightSlice, topSlice, rightSlice, imageHeight - topSlice - bottomSlice),
                                         Image::StretchTile, (Image::TileRule)vRule, op);
     }
 
     // Paint the top edge.
     if (drawTop)
-        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(rect.x() + leftWidth, rect.y(), rect.width() - leftWidth - rightWidth, topWidth),
-                                        IntRect(leftSlice, 0, imageWidth - rightSlice - leftSlice, topSlice),
+        graphicsContext->drawTiledImage(image.get(), colorSpace, LayoutRect(rect.x() + leftWidth, rect.y(), rect.width() - leftWidth - rightWidth, topWidth),
+                                        LayoutRect(leftSlice, 0, imageWidth - rightSlice - leftSlice, topSlice),
                                         (Image::TileRule)hRule, Image::StretchTile, op);
 
     // Paint the bottom edge.
     if (drawBottom)
-        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(rect.x() + leftWidth, rect.y() + rect.height() - bottomWidth,
+        graphicsContext->drawTiledImage(image.get(), colorSpace, LayoutRect(rect.x() + leftWidth, rect.y() + rect.height() - bottomWidth,
                                         rect.width() - leftWidth - rightWidth, bottomWidth),
-                                        IntRect(leftSlice, imageHeight - bottomSlice, imageWidth - rightSlice - leftSlice, bottomSlice),
+                                        LayoutRect(leftSlice, imageHeight - bottomSlice, imageWidth - rightSlice - leftSlice, bottomSlice),
                                         (Image::TileRule)hRule, Image::StretchTile, op);
 
     // Paint the middle.
     if (drawMiddle)
-        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(rect.x() + leftWidth, rect.y() + topWidth, rect.width() - leftWidth - rightWidth,
+        graphicsContext->drawTiledImage(image.get(), colorSpace, LayoutRect(rect.x() + leftWidth, rect.y() + topWidth, rect.width() - leftWidth - rightWidth,
                                         rect.height() - topWidth - bottomWidth),
-                                        IntRect(leftSlice, topSlice, imageWidth - rightSlice - leftSlice, imageHeight - topSlice - bottomSlice),
+                                        LayoutRect(leftSlice, topSlice, imageWidth - rightSlice - leftSlice, imageHeight - topSlice - bottomSlice),
                                         (Image::TileRule)hRule, (Image::TileRule)vRule, op);
 
     return true;
@@ -1161,7 +1165,7 @@ static bool allCornersClippedOut(const RoundedRect& border, const LayoutRect& cl
 }
 
 #if HAVE(PATH_BASED_BORDER_RADIUS_DRAWING)
-static bool borderWillArcInnerEdge(const IntSize& firstRadius, const IntSize& secondRadius)
+static bool borderWillArcInnerEdge(const LayoutSize& firstRadius, const FloatSize& secondRadius)
 {
     return !firstRadius.isZero() || !secondRadius.isZero();
 }
@@ -1292,7 +1296,7 @@ static bool joinRequiresMitre(BoxSide side, BoxSide adjacentSide, const BorderEd
 }
 
 void RenderBoxModelObject::paintOneBorderSide(GraphicsContext* graphicsContext, const RenderStyle* style, const RoundedRect& outerBorder, const RoundedRect& innerBorder,
-    const IntRect& sideRect, BoxSide side, BoxSide adjacentSide1, BoxSide adjacentSide2, const BorderEdge edges[], const Path* path, 
+    const LayoutRect& sideRect, BoxSide side, BoxSide adjacentSide1, BoxSide adjacentSide2, const BorderEdge edges[], const Path* path,
     BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge, bool antialias, const Color* overrideColor)
 {
     const BorderEdge& edgeToRender = edges[side];
@@ -1357,28 +1361,32 @@ void RenderBoxModelObject::paintBorderSides(GraphicsContext* graphicsContext, co
         roundedPath.addRoundedRect(outerBorder);
     
     if (edges[BSTop].shouldRender() && includesEdge(edgeSet, BSTop)) {
-        LayoutRect sideRect = calculateSideRect(outerBorder, edges, BSTop);
+        LayoutRect sideRect = outerBorder.rect();
+        sideRect.setHeight(edges[BSTop].width);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSTop].style) || borderWillArcInnerEdge(innerBorder.radii().topLeft(), innerBorder.radii().topRight()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSTop, BSLeft, BSRight, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 
     if (edges[BSBottom].shouldRender() && includesEdge(edgeSet, BSBottom)) {
-        LayoutRect sideRect = calculateSideRect(outerBorder, edges, BSBottom);
+        LayoutRect sideRect = outerBorder.rect();
+        sideRect.shiftYEdgeTo(sideRect.maxY() - edges[BSBottom].width);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSBottom].style) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().bottomRight()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSBottom, BSLeft, BSRight, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 
     if (edges[BSLeft].shouldRender() && includesEdge(edgeSet, BSLeft)) {
-        LayoutRect sideRect = calculateSideRect(outerBorder, edges, BSLeft);
+        LayoutRect sideRect = outerBorder.rect();
+        sideRect.setWidth(edges[BSLeft].width);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSLeft].style) || borderWillArcInnerEdge(innerBorder.radii().bottomLeft(), innerBorder.radii().topLeft()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSLeft, BSTop, BSBottom, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
     }
 
     if (edges[BSRight].shouldRender() && includesEdge(edgeSet, BSRight)) {
-        LayoutRect sideRect = calculateSideRect(outerBorder, edges, BSRight);
+        LayoutRect sideRect = outerBorder.rect();
+        sideRect.shiftXEdgeTo(sideRect.maxX() - edges[BSRight].width);
 
         bool usePath = renderRadii && (borderStyleHasInnerDetail(edges[BSRight].style) || borderWillArcInnerEdge(innerBorder.radii().bottomRight(), innerBorder.radii().topRight()));
         paintOneBorderSide(graphicsContext, style, outerBorder, innerBorder, sideRect, BSRight, BSTop, BSBottom, edges, usePath ? &roundedPath : 0, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias, overrideColor);
@@ -1425,7 +1433,7 @@ void RenderBoxModelObject::paintTranslucentBorderSides(GraphicsContext* graphics
     }
 }
 
-void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rect, const RenderStyle* style,
+void RenderBoxModelObject::paintBorder(const PaintInfo& info, const LayoutRect& rect, const RenderStyle* style,
                                        BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     GraphicsContext* graphicsContext = info.context;
@@ -1537,7 +1545,7 @@ void RenderBoxModelObject::paintBorder(const PaintInfo& info, const IntRect& rec
         paintBorderSides(graphicsContext, style, outerBorder, innerBorder, edges, AllBorderEdges, bleedAvoidance, includeLogicalLeftEdge, includeLogicalRightEdge, antialias);
 }
 
-void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, const IntRect& borderRect, const Path& borderPath, const BorderEdge edges[],
+void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext, const LayoutRect& borderRect, const Path& borderPath, const BorderEdge edges[],
                                     float thickness, float drawThickness, BoxSide side, const RenderStyle* style, 
                                     Color color, EBorderStyle borderStyle, BackgroundBleedAvoidance bleedAvoidance, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
@@ -1624,7 +1632,7 @@ void RenderBoxModelObject::drawBoxSideFromPath(GraphicsContext* graphicsContext,
         // Draw outer border line
         {
             GraphicsContextStateSaver stateSaver(*graphicsContext);
-            IntRect outerRect = borderRect;
+            LayoutRect outerRect = borderRect;
             if (bleedAvoidance == BackgroundBleedUseTransparencyLayer) {
                 outerRect.inflate(1);
                 ++outerBorderTopWidth;
@@ -2029,8 +2037,8 @@ void RenderBoxModelObject::clipBorderSidePolygon(GraphicsContext* graphicsContex
 {
     FloatPoint quad[4];
 
-    const IntRect& outerRect = outerBorder.rect();
-    const IntRect& innerRect = innerBorder.rect();
+    const LayoutRect& outerRect = outerBorder.rect();
+    const LayoutRect& innerRect = innerBorder.rect();
 
     FloatPoint centerPoint(innerRect.location().x() + static_cast<float>(innerRect.width()) / 2, innerRect.location().y() + static_cast<float>(innerRect.height()) / 2);
 
@@ -2195,16 +2203,16 @@ bool RenderBoxModelObject::borderObscuresBackground() const
     return true;
 }
 
-static inline IntRect areaCastingShadowInHole(const IntRect& holeRect, int shadowBlur, int shadowSpread, const IntSize& shadowOffset)
+static inline LayoutRect areaCastingShadowInHole(const LayoutRect& holeRect, int shadowBlur, int shadowSpread, const LayoutSize& shadowOffset)
 {
-    IntRect bounds(holeRect);
+    LayoutRect bounds(holeRect);
     
     bounds.inflate(shadowBlur);
 
     if (shadowSpread < 0)
         bounds.inflate(-shadowSpread);
     
-    IntRect offsetBounds = bounds;
+    LayoutRect offsetBounds = bounds;
     offsetBounds.move(-shadowOffset);
     return unionRect(bounds, offsetBounds);
 }
@@ -2242,7 +2250,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
             if (fillRect.isEmpty())
                 continue;
 
-            LayoutRect shadowRect = border.rect();
+            LayoutRect shadowRect(border.rect());
             shadowRect.inflate(shadowBlur + shadowSpread);
             shadowRect.move(shadowOffset);
 
@@ -2356,7 +2364,7 @@ void RenderBoxModelObject::paintBoxShadow(const PaintInfo& info, const LayoutRec
     }
 }
 
-int RenderBoxModelObject::containingBlockLogicalWidthForContent() const
+LayoutUnit RenderBoxModelObject::containingBlockLogicalWidthForContent() const
 {
     return containingBlock()->availableLogicalWidth();
 }

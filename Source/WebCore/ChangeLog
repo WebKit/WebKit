@@ -1,3 +1,35 @@
+2011-08-19  Emil A Eklund  <eae@chromium.org>
+
+        Switch RenderBoxModelObject to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66534
+
+        Reviewed by Eric Seidel.
+
+        Convert RenderBoxModelObject to new layout abstraction.
+
+        No new tests as no new functionality.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::ImageQualityController::set):
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+        (WebCore::RenderBoxModelObject::shouldPaintAtLowQuality):
+        (WebCore::backgroundRectAdjustedForBleedAvoidance):
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        (WebCore::RenderBoxModelObject::calculateFillTileSize):
+        (WebCore::RenderBoxModelObject::BackgroundImageGeometry::useFixedAttachment):
+        (WebCore::RenderBoxModelObject::calculateBackgroundImageGeometry):
+        (WebCore::RenderBoxModelObject::paintNinePieceImage):
+        (WebCore::borderWillArcInnerEdge):
+        (WebCore::RenderBoxModelObject::paintOneBorderSide):
+        (WebCore::RenderBoxModelObject::paintBorderSides):
+        (WebCore::RenderBoxModelObject::paintBorder):
+        (WebCore::RenderBoxModelObject::drawBoxSideFromPath):
+        (WebCore::RenderBoxModelObject::clipBorderSidePolygon):
+        (WebCore::areaCastingShadowInHole):
+        (WebCore::RenderBoxModelObject::paintBoxShadow):
+        (WebCore::RenderBoxModelObject::containingBlockLogicalWidthForContent):
+        * rendering/RenderBoxModelObject.h:
+
 2011-08-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
         [CSSRegions]Speed up RenderFlowThread repaint of regions
