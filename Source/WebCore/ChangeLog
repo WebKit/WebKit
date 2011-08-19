@@ -1,3 +1,29 @@
+2011-08-18  Adrienne Walker  <enne@google.com>
+
+        [chromium] Refactor updateCompositorResources to take an explicit GraphicsContext3D
+        https://bugs.webkit.org/show_bug.cgi?id=66432
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateCompositorResources):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+
 2011-08-19  Victoria Kirst  <vrk@chromium.org>
 
         Tell media player to prepareToPlay() at end of HTMLMediaElement::load()

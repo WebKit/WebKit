@@ -56,7 +56,7 @@ public:
 
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
 
-    virtual void updateCompositorResources();
+    virtual void updateCompositorResources(GraphicsContext3D*);
     virtual bool drawsContent() const { return true; }
 
     // This function is called by VideoFrameProvider. When this method is called

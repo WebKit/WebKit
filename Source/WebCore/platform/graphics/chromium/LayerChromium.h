@@ -166,7 +166,7 @@ public:
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return false; }
     virtual void paintContentsIfDirty() { }
-    virtual void updateCompositorResources() { }
+    virtual void updateCompositorResources(GraphicsContext3D*) { }
     virtual void setIsMask(bool) {}
     virtual void unreserveContentsTexture() { }
     virtual void bindContentsTexture() { }

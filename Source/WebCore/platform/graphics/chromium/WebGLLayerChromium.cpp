@@ -68,7 +68,7 @@ bool WebGLLayerChromium::drawsContent() const
     return (m_context && m_context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR);
 }
 
-void WebGLLayerChromium::updateCompositorResources()
+void WebGLLayerChromium::updateCompositorResources(GraphicsContext3D* rendererContext)
 {
     if (!drawsContent())
         return;
@@ -76,7 +76,6 @@ void WebGLLayerChromium::updateCompositorResources()
     if (!m_contentsDirty)
         return;
 
-    GraphicsContext3D* rendererContext = layerRendererContext();
     if (m_textureChanged) {
         rendererContext->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId);
         // Set the min-mag filters to linear and wrap modes to GL_CLAMP_TO_EDGE

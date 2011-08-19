@@ -66,7 +66,7 @@ bool Canvas2DLayerChromium::drawsContent() const
             && (context->getExtensions()->getGraphicsResetStatusARB() == GraphicsContext3D::NO_ERROR));
 }
 
-void Canvas2DLayerChromium::updateCompositorResources()
+void Canvas2DLayerChromium::updateCompositorResources(GraphicsContext3D*)
 {
     if (!m_contentsDirty || !drawsContent())
         return;

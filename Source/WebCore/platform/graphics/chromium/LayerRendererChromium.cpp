@@ -951,7 +951,7 @@ void LayerRendererChromium::updateCompositorResources(LayerChromium* layer)
         updateCompositorResources(layer->replicaLayer());
 
     if (layer->drawsContent())
-        layer->updateCompositorResources();
+        layer->updateCompositorResources(context());
 }
 
 ManagedTexture* LayerRendererChromium::getOffscreenLayerTexture()

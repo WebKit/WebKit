@@ -156,13 +156,12 @@ void TiledLayerChromium::createTilerIfNeeded()
         isRootLayer() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels);
 }
 
-void TiledLayerChromium::updateCompositorResources()
+void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
     if (m_skipsDraw || m_updateRect.isEmpty() || !m_tiler->numTiles())
         return;
 
-    GraphicsContext3D* context = layerRenderer()->context();
     int left, top, right, bottom;
     m_tiler->contentRectToTileIndices(m_updateRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {

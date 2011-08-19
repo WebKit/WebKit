@@ -94,7 +94,7 @@ void VideoLayerChromium::cleanupResources()
         resetFrameParameters();
 }
 
-void VideoLayerChromium::updateCompositorResources()
+void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
 {
     if (!m_contentsDirty || !m_owner)
         return;
@@ -125,7 +125,6 @@ void VideoLayerChromium::updateCompositorResources()
 
     // Allocate textures for planes if they are not allocated already, or
     // reallocate textures that are the wrong size for the frame.
-    GraphicsContext3D* context = layerRendererContext();
     bool texturesAllocated = allocateTexturesIfNeeded(context, frame, textureFormat);
     if (!texturesAllocated) {
         m_skipsDraw = true;
