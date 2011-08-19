@@ -1,3 +1,9 @@
+2011-08-19  Adam Roben  <aroben@apple.com>
+
+        Windows build fix after r93385
+
+        * dom/DOMAllInOne.cpp: Added EventDispatcMediator.cpp.
+
 2011-08-19  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: getAttributes should work on a single node, not array.
