@@ -255,7 +255,7 @@ void Cursor::ensurePlatformCursor() const
         m_platformCursor = createNamedCursor("noneCursor", 7, 7);
         break;
     case Cursor::NotAllowed:
-        m_platformCursor = createNamedCursor("notAllowedCursor", 11, 11);
+        m_platformCursor = [NSCursor operationNotAllowedCursor];
         break;
     case Cursor::ZoomIn:
         m_platformCursor = createNamedCursor("zoomInCursor", 7, 7);

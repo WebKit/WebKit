@@ -1,5 +1,10 @@
 2011-08-18  Lucas Forschler  <lforschler@apple.com>
 
+    <rdar://problem/9750868>
+    Manual fix of previous merge mistake.
+
+2011-08-18  Lucas Forschler  <lforschler@apple.com>
+
     Merged 91998
 
     2011-07-29  Anders Carlsson  <andersca@apple.com>
