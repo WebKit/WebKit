@@ -511,6 +511,11 @@ int PlatformContextSkia::getNormalizedAlpha() const
     return alpha;
 }
 
+SkXfermode::Mode PlatformContextSkia::getXfermodeMode() const
+{
+    return m_state->m_xferMode;
+}
+
 void PlatformContextSkia::setTextDrawingMode(TextDrawingModeFlags mode)
 {
     // TextModeClip is never used, so we assert that it isn't set:

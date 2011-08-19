@@ -1,3 +1,27 @@
+2011-08-18  Ben Wells  <benwells@chromium.org>
+
+        [skia] -webkit-transform breaks -webkit-mask
+        https://bugs.webkit.org/show_bug.cgi?id=66442
+
+        The problem here is that in RenderBox::paintMaskImages, if we are in
+        a transform with a rotation, scale or skew we set the composite mode to
+        be DestinationIn and then create a transparency layer, then paint the
+        mask with SourceOver and end the transparency layer. (The normal case
+        is just to use DestinationIn to paint the mask.)
+
+        In skia when we create transparency layers we don't pass on the composite
+        mode, so when we end the transparency layer it is composited back using
+        SourceOver. The fix is to pass on the composite mode when creating
+        transparency layers in skia.
+
+        Reviewed by Stephen White.
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::beginTransparencyLayer):
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::getXfermodeMode):
+        * platform/graphics/skia/PlatformContextSkia.h:
+
 2011-08-18  Hayato Ito  <hayato@chromium.org>
 
         Isolate EventDispatchMediator into a separate file.

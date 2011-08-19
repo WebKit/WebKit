@@ -2285,9 +2285,6 @@ BUGCR58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TIMEOUT TEXT
 BUGCR10479 MAC WIN : svg/hixie/perf/001.xml = PASS IMAGE
 BUGCR10479 MAC WIN : svg/hixie/perf/002.xml = PASS IMAGE
 
-// From r69334. Mask seems broken on the reflected image.
-BUGCR58358 LINUX WIN : fast/css/transformed-mask.html = IMAGE+TEXT
-
 // FileWriter isn't in TestShell yet.
 BUGCR58587 SKIP : fast/filesystem/file-writer-gc-blob.html = FAIL
 
@@ -2971,6 +2968,8 @@ BUGJIANLI : fast/multicol/huge-column-count.html = MISSING
 BUGCR79110 LINUX WIN : fast/block/float/021.html = TEXT
 BUGCR79110 LINUX WIN : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
 
+// Needs rebaseline after fix for wk66442 lands
+BUGWK66442 WIN : fast/css/transformed-mask.html = IMAGE+TEXT
 
 BUGWK58308 LINUX WIN DEBUG GPU : compositing/z-order/negative-z-index.html = PASS CRASH
 

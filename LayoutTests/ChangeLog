@@ -1,3 +1,14 @@
+2011-08-18  Ben Wells  <benwells@chromium.org>
+
+        [skia] -webkit-transform breaks -webkit-mask
+        https://bugs.webkit.org/show_bug.cgi?id=66442
+
+        Reviewed by Stephen White.
+
+        * platform/chromium-linux/fast/css/transformed-mask-expected.png: Added.
+        * platform/chromium-linux/fast/css/transformed-mask-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-08-18  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r90971): Null pointer dereference with placeholder and webkit-scrollbar-corner

@@ -136,6 +136,7 @@ public:
     TextDrawingModeFlags getTextDrawingMode() const;
     float getAlpha() const;
     int getNormalizedAlpha() const;
+    SkXfermode::Mode getXfermodeMode() const;
 
     void canvasClipPath(const SkPath&);
 
