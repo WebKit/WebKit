@@ -1,3 +1,14 @@
+2011-08-19  Daniel Bates  <dbates@webkit.org>
+
+        Implement WTF::atomic{Increment, Decrement}() for QNX
+        https://bugs.webkit.org/show_bug.cgi?id=66605
+
+        Reviewed by Darin Adler.
+
+        * wtf/Atomics.h:
+        (WTF::atomicIncrement):
+        (WTF::atomicDecrement):
+
 2011-08-19  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66590
