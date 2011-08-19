@@ -883,6 +883,8 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyPageBreakBefore:
     case CSSPropertyWebkitColumnBreakAfter:
     case CSSPropertyWebkitColumnBreakBefore:
+    case CSSPropertyWebkitRegionBreakAfter:
+    case CSSPropertyWebkitRegionBreakBefore:
         if (id == CSSValueAuto ||
              id == CSSValueAlways ||
              id == CSSValueAvoid ||
@@ -893,6 +895,7 @@ bool CSSParser::parseValue(int propId, bool important)
 
     case CSSPropertyPageBreakInside:    // avoid | auto | inherit
     case CSSPropertyWebkitColumnBreakInside:
+    case CSSPropertyWebkitRegionBreakInside:
         if (id == CSSValueAuto || id == CSSValueAvoid)
             validPrimitive = true;
         break;

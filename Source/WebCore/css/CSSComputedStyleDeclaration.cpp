@@ -251,7 +251,10 @@ static const int computedProperties[] = {
     CSSPropertyWebkitWritingMode,
     CSSPropertyWebkitFlow,
     CSSPropertyWebkitContentOrder,
-    CSSPropertyWebkitRegionOverflow
+    CSSPropertyWebkitRegionOverflow,
+    CSSPropertyWebkitRegionBreakAfter,
+    CSSPropertyWebkitRegionBreakBefore,
+    CSSPropertyWebkitRegionBreakInside
 #if ENABLE(SVG)
     ,
     CSSPropertyClipPath,
@@ -1068,6 +1071,12 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->hasAutoColumnWidth())
                 return primitiveValueCache->createIdentifierValue(CSSValueAuto);
             return zoomAdjustedPixelValue(style->columnWidth(), style.get(), primitiveValueCache);
+        case CSSPropertyWebkitRegionBreakAfter:
+            return primitiveValueCache->createValue(style->regionBreakAfter());
+        case CSSPropertyWebkitRegionBreakBefore:
+            return primitiveValueCache->createValue(style->regionBreakBefore());
+        case CSSPropertyWebkitRegionBreakInside:
+            return primitiveValueCache->createValue(style->regionBreakInside());
         case CSSPropertyCursor: {
             RefPtr<CSSValueList> list;
             CursorList* cursors = style->cursors();

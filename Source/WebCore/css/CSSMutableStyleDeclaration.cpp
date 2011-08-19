@@ -802,6 +802,9 @@ static const int blockProperties[] = {
     CSSPropertyPageBreakAfter,
     CSSPropertyPageBreakBefore,
     CSSPropertyPageBreakInside,
+    CSSPropertyWebkitRegionBreakAfter,
+    CSSPropertyWebkitRegionBreakBefore,
+    CSSPropertyWebkitRegionBreakInside,
     CSSPropertyTextAlign,
     CSSPropertyTextIndent,
     CSSPropertyWidows

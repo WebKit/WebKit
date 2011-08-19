@@ -188,6 +188,9 @@ Computed style of an element whose parent's 'display' value is 'none':
     -webkit-flow: auto
     -webkit-content-order: 0
     -webkit-region-overflow: auto
+    -webkit-region-break-after: auto
+    -webkit-region-break-before: auto
+    -webkit-region-break-inside: auto
     clip-path: none
     clip-rule: nonzero
     mask: none

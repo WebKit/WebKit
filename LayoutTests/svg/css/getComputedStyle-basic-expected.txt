@@ -376,6 +376,12 @@ rect: style.getPropertyValue(-webkit-content-order) : 0
 rect: style.getPropertyCSSValue(-webkit-content-order) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(-webkit-region-overflow) : auto
 rect: style.getPropertyCSSValue(-webkit-region-overflow) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-region-break-after) : auto
+rect: style.getPropertyCSSValue(-webkit-region-break-after) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-region-break-before) : auto
+rect: style.getPropertyCSSValue(-webkit-region-break-before) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(-webkit-region-break-inside) : auto
+rect: style.getPropertyCSSValue(-webkit-region-break-inside) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-path) : none
 rect: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(clip-rule) : nonzero
@@ -828,6 +834,12 @@ g: style.getPropertyValue(-webkit-content-order) : 0
 g: style.getPropertyCSSValue(-webkit-content-order) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(-webkit-region-overflow) : auto
 g: style.getPropertyCSSValue(-webkit-region-overflow) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-region-break-after) : auto
+g: style.getPropertyCSSValue(-webkit-region-break-after) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-region-break-before) : auto
+g: style.getPropertyCSSValue(-webkit-region-break-before) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(-webkit-region-break-inside) : auto
+g: style.getPropertyCSSValue(-webkit-region-break-inside) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-path) : none
 g: style.getPropertyCSSValue(clip-path) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(clip-rule) : nonzero

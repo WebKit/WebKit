@@ -60,6 +60,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData()
     , m_regionIndex(RenderStyle::initialRegionIndex())
     , m_regionOverflow(RenderStyle::initialRegionOverflow())
     , m_wrapShape(RenderStyle::initialWrapShape())
+    , m_regionBreakAfter(RenderStyle::initialPageBreak())
+    , m_regionBreakBefore(RenderStyle::initialPageBreak())
+    , m_regionBreakInside(RenderStyle::initialPageBreak())
 {
 }
 
@@ -107,6 +110,9 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , m_regionIndex(o.m_regionIndex)
     , m_regionOverflow(o.m_regionOverflow)
     , m_wrapShape(o.m_wrapShape)
+    , m_regionBreakAfter(o.m_regionBreakAfter)
+    , m_regionBreakBefore(o.m_regionBreakBefore)
+    , m_regionBreakInside(o.m_regionBreakInside)
 {
 }
 
@@ -160,7 +166,10 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && (m_regionThread == o.m_regionThread)
         && (m_regionIndex == o.m_regionIndex)
         && (m_regionOverflow == o.m_regionOverflow)
-        && (m_wrapShape == o.m_wrapShape);
+        && (m_wrapShape == o.m_wrapShape)
+        && (m_regionBreakAfter == o.m_regionBreakAfter)
+        && (m_regionBreakBefore == o.m_regionBreakBefore)
+        && (m_regionBreakInside == o.m_regionBreakInside);
 }
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& o) const

@@ -143,6 +143,10 @@ public:
 
     RefPtr<CSSWrapShape> m_wrapShape;
 
+    unsigned m_regionBreakAfter : 2; // EPageBreak
+    unsigned m_regionBreakBefore : 2; // EPageBreak
+    unsigned m_regionBreakInside : 2; // EPageBreak
+
 private:
     StyleRareNonInheritedData();
     StyleRareNonInheritedData(const StyleRareNonInheritedData&);

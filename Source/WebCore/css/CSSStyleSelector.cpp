@@ -4556,6 +4556,15 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setColumnCount(RenderStyle::initialColumnCount());
         }
         return;
+    case CSSPropertyWebkitRegionBreakBefore:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakBefore, RegionBreakBefore, PageBreak)
+        return;
+    case CSSPropertyWebkitRegionBreakAfter:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakAfter, RegionBreakAfter, PageBreak)
+        return;
+    case CSSPropertyWebkitRegionBreakInside:
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE_WITH_VALUE(regionBreakInside, RegionBreakInside, PageBreak)
+        return;
     case CSSPropertyWebkitMarquee:
         if (valueType != CSSValue::CSS_INHERIT || !m_parentNode) return;
         m_style->setMarqueeDirection(m_parentStyle->marqueeDirection());
