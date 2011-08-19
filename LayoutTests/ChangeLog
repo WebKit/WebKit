@@ -1,3 +1,13 @@
+2011-08-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: extract breakpoint management code to a separate class and add tests.
+        https://bugs.webkit.org/show_bug.cgi?id=66224
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/debugger/breakpoint-manager-expected.txt: Added.
+        * inspector/debugger/breakpoint-manager.html: Added.
+
 2011-08-19  Vitaly Repeshko  <vitalyr@chromium.org>
 
         [chromium] Updating test expectations.
