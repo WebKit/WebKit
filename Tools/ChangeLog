@@ -1,3 +1,14 @@
+2011-08-19  Tony Gentilcore  <tonyg@chromium.org>
+
+        Add leandrogracia to the committers list
+        https://bugs.webkit.org/show_bug.cgi?id=66552
+
+        Also fix line endings in file.
+
+        No reviewed required.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-08-19  Amruth Raj  <amruthraj@motorola.com>
 
         Fix compilation issue in WebKitTestRunner
