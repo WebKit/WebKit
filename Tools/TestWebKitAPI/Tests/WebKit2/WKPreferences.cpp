@@ -23,14 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Test.h"
-
 #include "PlatformUtilities.h"
-#include <WebKit2/WKPreferences.h>
 #include <WebKit2/WKPreferencesPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WKString.h>
-#include <wtf/Platform.h>
 
 namespace TestWebKitAPI {
 

@@ -26,8 +26,6 @@
 #ifndef Test_h
 #define Test_h
 
-#include <gtest/gtest.h>
-
 namespace TestWebKitAPI {
 
 #define EXPECT_NOT_NULL(expression) \

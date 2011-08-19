@@ -25,7 +25,6 @@
 
 #include "TestsController.h"
 
-#include <gtest/gtest.h>
 #include <wtf/Threading.h>
 
 namespace TestWebKitAPI {

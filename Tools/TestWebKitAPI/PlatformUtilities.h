@@ -27,10 +27,7 @@
 #define PlatformUtilities_h
 
 #include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WebKit2.h>
-#include <gtest/gtest.h>
 #include <string>
-#include <wtf/Platform.h>
 
 namespace TestWebKitAPI {
 namespace Util {

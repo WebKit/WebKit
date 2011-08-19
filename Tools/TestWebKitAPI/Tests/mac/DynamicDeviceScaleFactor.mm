@@ -23,13 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Test.h"
-
 #include "JavaScriptTest.h"
 #include "PlatformUtilities.h"
 #include "SyntheticBackingScaleFactorWindow.h"
-#include <WebKit/WebFrame.h>
-#include <WebKit/WebView.h>
 #include <WebKit2/WKURLCF.h>
 #include <wtf/RetainPtr.h>
 

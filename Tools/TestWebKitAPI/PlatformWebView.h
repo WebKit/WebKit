@@ -26,8 +26,6 @@
 #ifndef PlatformWebView_h
 #define PlatformWebView_h
 
-#include <wtf/Platform.h>
-
 #if USE(CG)
 #include <CoreGraphics/CGGeometry.h>
 #endif

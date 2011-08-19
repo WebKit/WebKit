@@ -23,11 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Test.h"
-
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
-#include <WebKit2/WebKit2.h>
 #include <WebKit2/WKRetainPtr.h>
 
 namespace TestWebKitAPI {

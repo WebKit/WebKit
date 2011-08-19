@@ -23,9 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <gtest/gtest.h>
-#include <wtf/Platform.h>
-
 #if PLATFORM(MAC)
 #ifdef __OBJC__
 @class WKView;

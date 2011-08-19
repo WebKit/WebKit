@@ -23,6 +23,7 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <wtf/Platform.h>
 
 #if __APPLE__
 
@@ -41,5 +42,12 @@
 #define WTF_EXPORT_PRIVATE
 
 #include <stdint.h>
-
 #include <WebKit2/WebKit2.h>
+
+#ifdef __cplusplus
+#include <gtest/gtest.h>
+#endif
+
+#if PLATFORM(MAC) && defined(__OBJC__)
+#import <WebKit/WebKit.h>
+#endif

@@ -24,7 +24,6 @@
  */
 
 #include "InjectedBundleTest.h"
-#include <WebKit2/WebKit2.h>
 #include <WebKit2/WKRetainPtr.h>
 
 namespace TestWebKitAPI {

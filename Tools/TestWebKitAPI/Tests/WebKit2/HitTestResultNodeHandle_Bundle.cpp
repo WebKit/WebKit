@@ -29,7 +29,6 @@
 #include <WebKit2/WKBundlePage.h>
 #include <WebKit2/WKBundleHitTestResult.h>
 #include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WebKit2.h>
 
 namespace TestWebKitAPI {
 

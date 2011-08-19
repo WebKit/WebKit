@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Test.h"
-
 #include <JavaScriptCore/Vector.h>
 
 namespace TestWebKitAPI {

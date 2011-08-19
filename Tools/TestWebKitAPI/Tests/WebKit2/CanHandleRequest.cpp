@@ -23,12 +23,9 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Test.h"
-
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit2/WKContextPrivate.h>
-#include <WebKit2/WKNumber.h>
 
 namespace TestWebKitAPI {
 

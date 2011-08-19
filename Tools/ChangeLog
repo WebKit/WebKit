@@ -1,3 +1,61 @@
+2011-08-19  Adam Roben  <aroben@apple.com>
+
+        Clean up #includes in TestWebKitAPI
+
+        Fixes <http://webkit.org/b/66556> TestWebKitAPI's prefix header isn't very helpful
+
+        Reviewed by Anders Carlsson.
+
+        * TestWebKitAPI/TestWebKitAPIPrefix.h: Added wtf/Platform.h. Added gtest/gtest.h for C++
+        files and WebKit/WebKit.h for ObjC files.
+
+        * TestWebKitAPI/InjectedBundleController.cpp:
+        * TestWebKitAPI/JavaScriptTest.h:
+        * TestWebKitAPI/PlatformUtilities.h:
+        * TestWebKitAPI/PlatformWebView.h:
+        * TestWebKitAPI/Test.h:
+        * TestWebKitAPI/Tests/WTF/StringOperators.cpp:
+        * TestWebKitAPI/Tests/WTF/VectorBasic.cpp:
+        * TestWebKitAPI/Tests/WTF/VectorReverse.cpp:
+        * TestWebKitAPI/Tests/WebKit2/AboutBlankLoad.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CanHandleRequest.cpp:
+        * TestWebKitAPI/Tests/WebKit2/CookieManager.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DocumentStartUserScriptAlertCrash_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/DownloadDecideDestinationCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/EvaluateJavaScript.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FailedLoad.cpp:
+        * TestWebKitAPI/Tests/WebKit2/Find.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ForceRepaint.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypeHTML.cpp:
+        * TestWebKitAPI/Tests/WebKit2/FrameMIMETypePNG.cpp:
+        * TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/HitTestResultNodeHandle_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic.cpp:
+        * TestWebKitAPI/Tests/WebKit2/InjectedBundleBasic_Bundle.cpp:
+        * TestWebKitAPI/Tests/WebKit2/MouseMoveAfterCrash.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadBasic.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        * TestWebKitAPI/Tests/WebKit2/PreventEmptyUserAgent.cpp:
+        * TestWebKitAPI/Tests/WebKit2/ResponsivenessTimerDoesntFireEarly.cpp:
+        * TestWebKitAPI/Tests/WebKit2/RestoreSessionStateContainingFormData.cpp:
+        * TestWebKitAPI/Tests/WebKit2/SpacebarScrolling.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WKPreferences.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WKString.cpp:
+        * TestWebKitAPI/Tests/WebKit2/WKStringJSString.cpp:
+        * TestWebKitAPI/Tests/WebKit2/win/AltKeyGeneratesWMSysCommand.cpp:
+        * TestWebKitAPI/Tests/WebKit2/win/DoNotCopyANullCFURLResponse.cpp:
+        * TestWebKitAPI/Tests/WebKit2/win/HideFindIndicator.cpp:
+        * TestWebKitAPI/Tests/WebKit2/win/ResizeViewWhileHidden.cpp:
+        * TestWebKitAPI/Tests/WebKit2/win/TranslateMessageGeneratesWMChar.cpp:
+        * TestWebKitAPI/Tests/WebKit2/win/WMCloseCallsUIClientClose.cpp:
+        * TestWebKitAPI/Tests/WebKit2/win/WMPrint.cpp:
+        * TestWebKitAPI/Tests/mac/DynamicDeviceScaleFactor.mm:
+        * TestWebKitAPI/TestsController.cpp:
+        * TestWebKitAPI/mac/PlatformUtilitiesMac.mm:
+        Removed now-unnecessary #includes. Moved #includes of Test.h in with the rest of the
+        #includes since it is no longer a special header.
+
 2011-08-18  Dirk Pranke  <dpranke@chromium.org>
 
         new-run-webkit-tests hung while acquiring http lock on snow leopard bots

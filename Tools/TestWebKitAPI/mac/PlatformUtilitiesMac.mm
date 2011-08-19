@@ -29,7 +29,6 @@
 #include <WebKit2/WKStringCF.h>
 #include <WebKit2/WKURLCF.h>
 #include <WebKit2/WKURLResponseNS.h>
-#include <WebKit2/WebKit2.h>
 #include <wtf/RetainPtr.h>
 
 namespace TestWebKitAPI {

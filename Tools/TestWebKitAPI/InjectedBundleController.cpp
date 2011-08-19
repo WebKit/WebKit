@@ -27,7 +27,6 @@
 
 #include "InjectedBundleTest.h"
 #include "PlatformUtilities.h"
-#include <WebKit2/WebKit2.h>
 #include <algorithm>
 #include <assert.h>
 

@@ -23,8 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Test.h"
-
 #include "PlatformUtilities.h"
 #include "PlatformWebView.h"
 #include <WebKit2/WKDownload.h>

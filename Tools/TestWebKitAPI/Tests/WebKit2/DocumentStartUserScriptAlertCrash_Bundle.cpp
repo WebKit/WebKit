@@ -28,7 +28,6 @@
 #include <WebKit2/WKBundlePrivate.h>
 #include <WebKit2/WKBundleScriptWorld.h>
 #include <WebKit2/WKRetainPtr.h>
-#include <WebKit2/WebKit2.h>
 #include <assert.h>
 
 namespace TestWebKitAPI {
