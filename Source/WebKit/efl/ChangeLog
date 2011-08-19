@@ -1,3 +1,17 @@
+2011-08-19  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Modify type of both col and row parameters for backing store's internal api.
+        https://bugs.webkit.org/show_bug.cgi?id=65302
+
+        As both col and row parameter's type for both _ewk_tiled_backing_store_item_fill
+        and ewk_tiled_backing_store_item_add are different from each other, I modify type of them.
+
+        Reviewed by Adam Roben.
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_item_fill):
+        (_ewk_tiled_backing_store_item_add):
+
 2011-08-18  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Broken rendering occured when resized in ewk_view_single.

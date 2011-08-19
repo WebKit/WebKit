@@ -424,16 +424,13 @@ static Eina_Bool _ewk_tiled_backing_store_enable_render(Ewk_Tiled_Backing_Store_
     return EINA_TRUE;
 }
 
-static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Store_Data *priv, Ewk_Tiled_Backing_Store_Item *it, long col, int row)
+static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Store_Data *priv, Ewk_Tiled_Backing_Store_Item *it, unsigned long col, unsigned long row)
 {
-    long m_col = priv->model.base.col + col;
-    long m_row = priv->model.base.row + row;
+    unsigned long m_col = priv->model.base.col + col;
+    unsigned long m_row = priv->model.base.row + row;
     double last_used = ecore_loop_time_get();
 
-    if (m_col < 0 || m_row < 0
-        || (unsigned long)(m_col) >= priv->model.cur.cols
-        || (unsigned long)(m_row) >= priv->model.cur.rows) {
-
+    if (m_col >= priv->model.cur.cols || m_row >= priv->model.cur.rows) {
         if (it->tile)
             _ewk_tiled_backing_store_tile_dissociate(priv, it, last_used);
     } else {
@@ -442,20 +439,14 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
 
         if (it->tile) {
             Ewk_Tile *old = it->tile;
-            if (old->row != (unsigned long)(m_row)
-                || old->col != (unsigned long)(m_col)
-                || old->zoom != zoom) {
-                _ewk_tiled_backing_store_tile_dissociate(priv, it,
-                                                         last_used);
-
-            } else if (old->row == (unsigned long)(m_row)
-                       && old->col == (unsigned long)(m_col)
-                       && old->zoom == zoom)
+            if (old->row != m_row || old->col != m_col || old->zoom != zoom)
+                _ewk_tiled_backing_store_tile_dissociate(priv, it, last_used);
+            else if (old->row == m_row && old->col == m_col && old->zoom == zoom)
                 goto end;
         }
 
-        t = ewk_tile_matrix_tile_exact_get
-            (priv->model.matrix, m_col, m_row, zoom);
+        t = ewk_tile_matrix_tile_exact_get(priv->model.matrix, m_col, m_row, zoom);
+
         if (!t) {
             /* NOTE: it never returns NULL if it->tile was set! */
             if (it->tile) {
@@ -486,7 +477,7 @@ static inline Eina_Bool _ewk_tiled_backing_store_item_fill(Ewk_Tiled_Backing_Sto
     return EINA_TRUE;
 }
 
-static Ewk_Tiled_Backing_Store_Item *_ewk_tiled_backing_store_item_add(Ewk_Tiled_Backing_Store_Data *priv, long col, int row)
+static Ewk_Tiled_Backing_Store_Item *_ewk_tiled_backing_store_item_add(Ewk_Tiled_Backing_Store_Data *priv, unsigned long col, unsigned long row)
 {
     Ewk_Tiled_Backing_Store_Item *it;
     Evas_Coord x, y, tw, th;
