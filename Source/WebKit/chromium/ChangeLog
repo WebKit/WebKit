@@ -1,3 +1,21 @@
+2011-08-18  James Kozianski  <koz@chromium.org>
+
+        Chromium plumbing for webkitRequestFullScreen
+        https://bugs.webkit.org/show_bug.cgi?id=66031
+
+        Reviewed by Darin Fisher.
+
+        * public/WebView.h:
+        * public/WebViewClient.h:
+        (WebKit::WebViewClient::enterFullscreenForElement):
+        (WebKit::WebViewClient::exitFullscreenForElement):
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::enterFullScreenForElement):
+        (WebKit::ChromeClientImpl::exitFullScreenForElement):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::exitFullscreen):
+        * src/WebViewImpl.h:
+
 2011-08-18  Chris Rogers  <crogers@google.com>
 
         Implement WebMediaPlayerClientImpl::audioSourceProvider() and interface into chromium

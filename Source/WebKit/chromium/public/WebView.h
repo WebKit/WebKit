@@ -373,6 +373,12 @@ public:
     virtual void setVisibilityState(WebPageVisibilityState visibilityState,
                                     bool isInitialState) { }
 
+
+    // Fullscreen -----------------------------------------------------------
+
+    virtual void exitFullscreen() = 0;
+
+
 protected:
     ~WebView() {}
 };

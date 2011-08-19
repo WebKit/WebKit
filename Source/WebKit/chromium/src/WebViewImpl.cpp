@@ -2693,5 +2693,16 @@ void WebViewImpl::resetGestureRecognizer()
 }
 #endif
 
+void WebViewImpl::exitFullscreen()
+{
+#if ENABLE(FULLSCREEN_API)
+    Document* document = page()->mainFrame()->document();
+    Element* fullscreenElement = document->webkitCurrentFullScreenElement();
+    if (!fullscreenElement)
+        return;
+    document->webkitWillExitFullScreenForElement(fullscreenElement);
+    document->webkitDidExitFullScreenForElement(fullscreenElement);
+#endif
+}
 
 } // namespace WebKit

@@ -208,6 +208,7 @@ public:
                                     unsigned inactiveBackgroundColor,
                                     unsigned inactiveForegroundColor);
     virtual void performCustomContextMenuAction(unsigned action);
+    virtual void exitFullscreen();
 
     // CCLayerTreeHostClient
     virtual void animateAndLayout(double frameBeginTime);

@@ -215,6 +215,8 @@ public:
     virtual bool supportsFullscreen() { return false; }
     virtual void enterFullscreenForNode(const WebNode&) { }
     virtual void exitFullscreenForNode(const WebNode&) { }
+    virtual void enterFullscreen() { }
+    virtual void exitFullscreen() { }
 
     // UI ------------------------------------------------------------------
 

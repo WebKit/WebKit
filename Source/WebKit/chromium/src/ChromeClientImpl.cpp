@@ -899,8 +899,12 @@ bool ChromeClientImpl::supportsFullScreenForElement(const WebCore::Element* elem
 
 void ChromeClientImpl::enterFullScreenForElement(WebCore::Element* element)
 {
+    // FIXME: Make this code support asynchronous embedder implementations of
+    // enterFullscreenForElement() by restructuring this code to wait for an
+    // ACK.
     // FIXME: We may need to call these someplace else when window resizes.
     element->document()->webkitWillEnterFullScreenForElement(element);
+    m_webView->client()->enterFullscreen();
     element->document()->webkitDidEnterFullScreenForElement(element);
 }
 
@@ -908,6 +912,7 @@ void ChromeClientImpl::exitFullScreenForElement(WebCore::Element* element)
 {
     // FIXME: We may need to call these someplace else when window resizes.
     element->document()->webkitWillExitFullScreenForElement(element);
+    m_webView->client()->exitFullscreen();
     element->document()->webkitDidExitFullScreenForElement(element);
 }
 
