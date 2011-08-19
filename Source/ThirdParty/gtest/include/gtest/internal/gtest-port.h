@@ -177,24 +177,6 @@
 #include <sys/stat.h>
 #endif  // !_WIN32_WCE
 
-#include <wtf/Platform.h>
-
-#if !PLATFORM(CHROMIUM) && OS(WINDOWS) && !defined(BUILDING_WX__) && !COMPILER(GCC)
-#define JS_EXPORTDATA __declspec(dllimport)
-#define WEBKIT_EXPORTDATA __declspec(dllimport)
-#define WTF_EXPORT_PRIVATE
-#define JS_EXPORT_PRIVATE
-#define JS_EXPORTCLASS JS_EXPORTDATA
-#else
-#define JS_EXPORTDATA
-#define JS_EXPORTCLASS
-#define WEBKIT_EXPORTDATA
-#define WTF_EXPORT_PRIVATE
-#define JS_EXPORT_PRIVATE
-#endif
-
-#include <wtf/FastMalloc.h>
-
 #include <iostream>  // NOLINT
 #include <sstream>  // NOLINT
 #include <string>  // NOLINT

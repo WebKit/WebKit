@@ -10,8 +10,6 @@
 // Build for PPC and Intel, 32- and 64-bit
 ARCHS = i386 x86_64
 
-HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/WebCore.framework/PrivateHeaders/ForwardingHeaders ../ ../include/
-
 // Zerolink prevents link warnings so turn it off
 ZERO_LINK = NO
 
