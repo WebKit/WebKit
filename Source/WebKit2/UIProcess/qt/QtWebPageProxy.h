@@ -133,6 +133,7 @@ public:
     void didChangeTitle(const QString&);
 
     void loadDidBegin();
+    void loadDidCommit();
     void loadDidSucceed();
     void loadDidFail(const QWebError&);
     void didChangeLoadProgress(int);

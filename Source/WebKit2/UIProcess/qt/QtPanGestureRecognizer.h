@@ -41,7 +41,7 @@ const qreal panningInitialTriggerDistanceThreshold = 5.;
 
 class QtPanGestureRecognizer : private QtGestureRecognizer {
 public:
-    QtPanGestureRecognizer(TouchViewInterface*);
+    QtPanGestureRecognizer(ViewportInteractionEngine*);
     bool recognize(const QTouchEvent*);
     void reset();
 

@@ -30,12 +30,16 @@
 #include "TouchViewInterface.h"
 #include <wtf/PassOwnPtr.h>
 
+namespace WebKit {
+class ViewportInteractionEngine;
+}
+
 using namespace WebKit;
 
 class QTouchWebPageProxy : public QtWebPageProxy
 {
 public:
-    QTouchWebPageProxy(TouchViewInterface*, QWKContext*, WKPageGroupRef = 0);
+    QTouchWebPageProxy(TouchViewInterface*, ViewportInteractionEngine*, QWKContext*, WKPageGroupRef = 0);
 
     virtual bool handleEvent(QEvent*);
 

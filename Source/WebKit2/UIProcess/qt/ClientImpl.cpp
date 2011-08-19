@@ -95,6 +95,7 @@ void qt_wk_didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef use
     QUrl qUrl = urlStr;
     toQtWebPageProxy(clientInfo)->updateNavigationActions();
     toQtWebPageProxy(clientInfo)->didChangeUrl(qUrl);
+    toQtWebPageProxy(clientInfo)->loadDidCommit();
 }
 
 void qt_wk_didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)

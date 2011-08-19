@@ -67,6 +67,7 @@ public:
     virtual void didChangeStatusText(const QString&) = 0;
     virtual void didChangeCursor(const QCursor&) = 0;
     virtual void loadDidBegin() = 0;
+    virtual void loadDidCommit() = 0;
     virtual void loadDidSucceed() = 0;
     virtual void loadDidFail(const QWebError&) = 0;
     virtual void didChangeLoadProgress(int) = 0;

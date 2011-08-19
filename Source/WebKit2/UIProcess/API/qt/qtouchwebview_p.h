@@ -24,6 +24,7 @@
 #include <QScopedPointer>
 #include "qtouchwebpageproxy.h"
 #include "TouchViewInterface.h"
+#include "ViewportInteractionEngine.h"
 
 class QTouchWebPage;
 class QTouchWebView;
@@ -33,31 +34,16 @@ class QTouchWebViewPrivate
 public:
     QTouchWebViewPrivate(QTouchWebView* q);
 
-    void scroll(qreal deltaX, qreal deltaY);
-    void viewportRectUpdated();
-    void updateViewportState();
+    void loadDidCommit();
+    void _q_viewportRectUpdated();
+    void updateViewportConstraints();
 
     void setViewportArguments(const WebCore::ViewportArguments& args);
-
-    struct ViewportState {
-        ViewportState()
-            : initialScale(1.0)
-            , minimumScale(0.25)
-            , maximumScale(1.8)
-            , pixelRatio(1.0)
-            , isUserScalable(true)
-        { }
-
-        qreal initialScale;
-        qreal minimumScale;
-        qreal maximumScale;
-        qreal pixelRatio;
-        bool isUserScalable;
-    } viewport;
 
     QTouchWebView* const q;
     QScopedPointer<QTouchWebPage> pageView;
     WebKit::TouchViewInterface viewInterface;
+    ViewportInteractionEngine interactionEngine;
     QTouchWebPageProxy page;
 
     WebCore::ViewportArguments viewportArguments;

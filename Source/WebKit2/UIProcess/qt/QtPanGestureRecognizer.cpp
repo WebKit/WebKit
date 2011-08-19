@@ -23,15 +23,16 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 #include "config.h"
+
 #include "QtPanGestureRecognizer.h"
 
-#include "TouchViewInterface.h"
+#include "ViewportInteractionEngine.h"
 #include <QTouchEvent>
 
 namespace WebKit {
 
-QtPanGestureRecognizer::QtPanGestureRecognizer(TouchViewInterface* touchViewInterface)
-    : QtGestureRecognizer(touchViewInterface)
+QtPanGestureRecognizer::QtPanGestureRecognizer(ViewportInteractionEngine* interactionEngine)
+    : QtGestureRecognizer(interactionEngine)
 {
     reset();
 }
@@ -45,7 +46,7 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
     // Having multiple touch points cancel the panning gesture.
     if (event->touchPoints().size() > 1) {
         if (m_state == GestureRecognized)
-            m_touchViewInterface->panGestureCancelled();
+            m_viewportInteractionEngine->panGestureCancelled();
         reset();
         return false;
     }
@@ -68,18 +69,18 @@ bool QtPanGestureRecognizer::recognize(const QTouchEvent* event)
                 return false;
 
             m_state = GestureRecognized;
-            m_touchViewInterface->panGestureStarted();
+            m_viewportInteractionEngine->panGestureStarted();
         }
 
         ASSERT(m_state == GestureRecognized);
         // Offset sent to the views must be in page view coordinate space.
         QPointF offsetSinceLastEvent(touchPoint.pos() - touchPoint.lastPos());
-        m_touchViewInterface->panGestureRequestScroll(offsetSinceLastEvent.x(), offsetSinceLastEvent.y());
+        m_viewportInteractionEngine->panGestureRequestUpdate(offsetSinceLastEvent.x(), offsetSinceLastEvent.y());
         return true;
     }
     case QEvent::TouchEnd:
         if (m_state == GestureRecognized) {
-            m_touchViewInterface->panGestureEnded();
+            m_viewportInteractionEngine->panGestureEnded();
             reset();
             return true;
         }

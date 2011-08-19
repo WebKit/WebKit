@@ -28,11 +28,11 @@
 
 namespace WebKit {
 
-QtGestureRecognizer::QtGestureRecognizer(TouchViewInterface* touchViewInterface)
-    : m_touchViewInterface(touchViewInterface)
+QtGestureRecognizer::QtGestureRecognizer(ViewportInteractionEngine* viewportInteractionEngine)
+    : m_viewportInteractionEngine(viewportInteractionEngine)
     , m_state(NoGesture)
 {
-    ASSERT(touchViewInterface);
+    ASSERT(viewportInteractionEngine);
 }
 
 void QtGestureRecognizer::reset()

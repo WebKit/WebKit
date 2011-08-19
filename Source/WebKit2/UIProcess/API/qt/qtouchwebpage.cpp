@@ -34,6 +34,10 @@ QTouchWebPage::QTouchWebPage(QSGItem* parent)
     , d(new QTouchWebPagePrivate(this))
 {
     setFlag(ItemHasContents);
+
+    // We do the transform from the top left so the viewport can assume the position 0, 0
+    // is always where rendering starts.
+    setTransformOrigin(TopLeft);
 }
 
 QTouchWebPage::~QTouchWebPage()
@@ -143,6 +147,11 @@ QTouchWebPagePrivate::QTouchWebPagePrivate(QTouchWebPage* view)
     , navigationController(0)
     , sgAgent(view)
 {
+}
+
+void QTouchWebPagePrivate::_q_commitScaleChange()
+{
+    commitScaleChange();
 }
 
 void QTouchWebPagePrivate::commitScaleChange()

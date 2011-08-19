@@ -420,6 +420,11 @@ void QtWebPageProxy::loadDidBegin()
     m_viewInterface->loadDidBegin();
 }
 
+void QtWebPageProxy::loadDidCommit()
+{
+    m_viewInterface->loadDidCommit();
+}
+
 void QtWebPageProxy::loadDidSucceed()
 {
     m_viewInterface->loadDidSucceed();

@@ -28,14 +28,14 @@
 
 namespace WebKit {
 
-class TouchViewInterface;
+class ViewportInteractionEngine;
 
 class QtGestureRecognizer {
 protected:
-    QtGestureRecognizer(TouchViewInterface*);
+    QtGestureRecognizer(ViewportInteractionEngine*);
     void reset();
 
-    TouchViewInterface* const m_touchViewInterface;
+    ViewportInteractionEngine* const m_viewportInteractionEngine;
     enum State {
         NoGesture,
         GestureRecognitionStarted,

@@ -1,3 +1,88 @@
+2011-08-19  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt][WK2] Add a basic engine to control the content of the viewport
+        https://bugs.webkit.org/show_bug.cgi?id=66383
+
+        Reviewed by Andreas Kling.
+
+        Add ViewportInteractionEngine to handle the content of the viewport. The class make
+        sure the QTouchWebPage stays in the viewport and in the boundaries.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::loadDidCommit):
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::QTouchWebPage): Set the transform origin to the top left so
+        we can asume the position 0, 0 is always the top left of the page.
+        (QTouchWebPagePrivate::_q_commitScaleChange): Make commitScaleChange a slot
+        in order to completely decouple the ViewportInteractionEngine and the WebKit classes.
+        * UIProcess/API/qt/qtouchwebpage.h:
+        * UIProcess/API/qt/qtouchwebpage_p.h:
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::QTouchWebViewPrivate):
+        (QTouchWebViewPrivate::loadDidCommit):
+        (QTouchWebViewPrivate::_q_viewportRectUpdated): Make _q_viewportRectUpdated() a slot
+        for reducing coupling.
+        (QTouchWebViewPrivate::updateViewportConstraints):
+        (QTouchWebViewPrivate::setViewportArguments):
+        (QTouchWebView::geometryChanged):
+        * UIProcess/API/qt/qtouchwebview.h:
+        * UIProcess/API/qt/qtouchwebview_p.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        (qt_wk_didCommitLoadForFrame):
+        * UIProcess/qt/QtGestureRecognizer.cpp:
+        (WebKit::QtGestureRecognizer::QtGestureRecognizer):
+        * UIProcess/qt/QtGestureRecognizer.h: Change the gesture recognizer to talk directly
+        to the ViewportInteractionEngine instead of interacting through TouchViewInterface.
+        * UIProcess/qt/QtPanGestureRecognizer.cpp:
+        (WebKit::QtPanGestureRecognizer::QtPanGestureRecognizer):
+        (WebKit::QtPanGestureRecognizer::recognize):
+        * UIProcess/qt/QtPanGestureRecognizer.h:
+        * UIProcess/qt/QtPinchGestureRecognizer.cpp:
+        (WebKit::QtPinchGestureRecognizer::QtPinchGestureRecognizer):
+        (WebKit::QtPinchGestureRecognizer::recognize):
+        * UIProcess/qt/QtPinchGestureRecognizer.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::loadDidCommit): Add the loadCommited callback in order
+        to reset the viewport state when the page change.
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/TouchViewInterface.cpp:
+        (WebKit::TouchViewInterface::TouchViewInterface):
+        (WebKit::TouchViewInterface::contentSizeChanged):
+        (WebKit::TouchViewInterface::loadDidCommit):
+        * UIProcess/qt/TouchViewInterface.h:
+        * UIProcess/qt/ViewInterface.h:
+        * UIProcess/qt/ViewportInteractionEngine.cpp: Added.
+        (WebKit::visibleRectInContentCoordinate):
+        (WebKit::contentRectInViewportCoordinate):
+        (WebKit::ViewportUpdateGuard::ViewportUpdateGuard):
+        (WebKit::ViewportUpdateGuard::~ViewportUpdateGuard):
+        (WebKit::ViewportInteractionEngine::ViewportInteractionEngine):
+        (WebKit::ViewportInteractionEngine::reset):
+        (WebKit::ViewportInteractionEngine::setConstraints):
+        (WebKit::ViewportInteractionEngine::panGestureStarted):
+        (WebKit::ViewportInteractionEngine::panGestureRequestScroll):
+        (WebKit::ViewportInteractionEngine::panGestureCancelled):
+        (WebKit::ViewportInteractionEngine::panGestureEnded):
+        (WebKit::ViewportInteractionEngine::pinchGestureStarted):
+        (WebKit::ViewportInteractionEngine::pinchGestureRequestUpdate):
+        (WebKit::ViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::ViewportInteractionEngine::contentGeometryChanged):
+        (WebKit::ViewportInteractionEngine::contentScaleChanged):
+        (WebKit::ViewportInteractionEngine::updateContentIfNeeded):
+        (WebKit::ViewportInteractionEngine::updateContentScaleIfNeeded):
+        (WebKit::ViewportInteractionEngine::updateContentPositionIfNeeded):
+        (WebKit::ViewportInteractionEngine::animateContentPositionToBoundaries):
+        (WebKit::ViewportInteractionEngine::animateContentScaleToBoundaries):
+        (WebKit::ViewportInteractionEngine::scaleContent):
+        * UIProcess/qt/ViewportInteractionEngine.h: Added.
+        (WebKit::ViewportInteractionEngine::Constraints::Constraints):
+        (WebKit::operator==):
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::QTouchWebPageProxy):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        * WebKit2.pro:
+
 2011-08-19  Lars Knudsen  <lars.knudsen@nokia.com>
 
         [Qt][WK2] Change the rect argument of QtWebPageProxy::paint() to const ref

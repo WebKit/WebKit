@@ -252,6 +252,7 @@ HEADERS += \
     UIProcess/qt/SGAgent.h \
     UIProcess/qt/SGTileNode.h \
     UIProcess/qt/ViewInterface.h \
+    UIProcess/qt/ViewportInteractionEngine.h \
     UIProcess/qt/WebUndoCommandQt.h \
     UIProcess/qt/WebContextMenuProxyQt.h \
     UIProcess/qt/WebPopupMenuProxyQt.h \
@@ -483,6 +484,7 @@ SOURCES += \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
     UIProcess/qt/TiledDrawingAreaTileQt.cpp \
     UIProcess/qt/TextCheckerQt.cpp \
+    UIProcess/qt/ViewportInteractionEngine.cpp \
     UIProcess/qt/WebContextMenuProxyQt.cpp \
     UIProcess/qt/WebContextQt.cpp \
     UIProcess/qt/WebInspectorProxyQt.cpp \

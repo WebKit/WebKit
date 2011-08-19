@@ -131,6 +131,11 @@ void QDesktopWebViewPrivate::loadDidBegin()
     emit q->loadStarted();
 }
 
+void QDesktopWebViewPrivate::loadDidCommit()
+{
+    // Not used for QDesktopWebView.
+}
+
 void QDesktopWebViewPrivate::loadDidSucceed()
 {
     emit q->loadSucceeded();

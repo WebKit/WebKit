@@ -33,27 +33,29 @@ QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
     : q(q)
     , pageView(new QTouchWebPage(q))
     , viewInterface(q, pageView.data())
-    , page(&viewInterface, defaultWKContext())
+    , interactionEngine(q, pageView.data())
+    , page(&viewInterface, &interactionEngine, defaultWKContext())
 {
     QTouchWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     pageViewPrivate->setPage(&page);
+
+    QObject::connect(&interactionEngine, SIGNAL(viewportUpdateRequested()), q, SLOT(_q_viewportRectUpdated()));
+    QObject::connect(&interactionEngine, SIGNAL(commitScaleChange()), pageView.data(), SLOT(_q_commitScaleChange()));
 }
 
-void QTouchWebViewPrivate::scroll(qreal deltaX, qreal deltaY)
+void QTouchWebViewPrivate::loadDidCommit()
 {
-    pageView->setX(pageView->x() + deltaX);
-    pageView->setY(pageView->y() + deltaY);
-    viewportRectUpdated();
+    interactionEngine.reset();
 }
 
-void QTouchWebViewPrivate::viewportRectUpdated()
+void QTouchWebViewPrivate::_q_viewportRectUpdated()
 {
     QTouchWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     const QRectF viewportRectInPageViewCoordinate = q->mapRectToItem(pageView.data(), q->boundingRect());
     pageViewPrivate->setViewportRect(viewportRectInPageViewCoordinate);
 }
 
-void QTouchWebViewPrivate::updateViewportState()
+void QTouchWebViewPrivate::updateViewportConstraints()
 {
     QSize availableSize = q->boundingRect().size().toSize();
 
@@ -62,11 +64,12 @@ void QTouchWebViewPrivate::updateViewportState()
 
     WebCore::ViewportAttributes attr = WebCore::computeViewportAttributes(viewportArguments, wkPrefs->layoutFallbackWidth(), wkPrefs->deviceWidth(), wkPrefs->deviceHeight(), wkPrefs->deviceDPI(), availableSize);
 
-    viewport.initialScale = attr.initialScale;
-    viewport.minimumScale = attr.minimumScale;
-    viewport.maximumScale = attr.maximumScale;
-    viewport.pixelRatio = attr.devicePixelRatio;
-    viewport.isUserScalable = !!attr.userScalable;
+    ViewportInteractionEngine::Constraints newConstraints;
+    newConstraints.initialScale = attr.initialScale;
+    newConstraints.minimumScale = attr.minimumScale;
+    newConstraints.maximumScale = attr.maximumScale;
+    newConstraints.isUserScalable = !!attr.userScalable;
+    interactionEngine.setConstraints(newConstraints);
 
     // Overwrite minimum scale value with fit-to-view value, unless the the content author
     // explicitly says no. NB: We can only do this when we know we have a valid size, ie.
@@ -79,7 +82,7 @@ void QTouchWebViewPrivate::updateViewportState()
 void QTouchWebViewPrivate::setViewportArguments(const WebCore::ViewportArguments& args)
 {
     viewportArguments = args;
-    updateViewportState();
+    updateViewportConstraints();
 }
 
 QTouchWebView::QTouchWebView(QSGItem* parent)
@@ -103,8 +106,8 @@ void QTouchWebView::geometryChanged(const QRectF& newGeometry, const QRectF& old
 {
     QSGItem::geometryChanged(newGeometry, oldGeometry);
     if (newGeometry.size() != oldGeometry.size()) {
-        d->updateViewportState();
-        d->viewportRectUpdated();
+        d->updateViewportConstraints();
+        d->_q_viewportRectUpdated();
     }
 }
 

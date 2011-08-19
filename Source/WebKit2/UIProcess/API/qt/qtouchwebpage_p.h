@@ -39,6 +39,7 @@ public:
     void setPage(QTouchWebPageProxy*);
 
     void setViewportRect(const QRectF&);
+    void _q_commitScaleChange();
     void commitScaleChange();
 
     QTouchWebPage* const q;
