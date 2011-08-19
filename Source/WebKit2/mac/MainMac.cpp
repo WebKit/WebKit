@@ -24,8 +24,9 @@
  */
 
 #include <dlfcn.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <sys/event.h>
 #include <unistd.h>
 
 static void closeUnusedFileDescriptors()
@@ -33,8 +34,15 @@ static void closeUnusedFileDescriptors()
     int numFDs = getdtablesize();
 
     // Close all file descriptors except stdin, stdout and stderr.
-    for (int fd = 3; fd < numFDs; ++fd)
+    for (int fd = 3; fd < numFDs; ++fd) {
+        // Check if this is a kqueue file descriptor. If it is, we don't want to close it because it has
+        // been created by initializing libdispatch from a global initializer. See <rdar://problem/9828476> for more details.
+        struct timespec timeSpec = { 0, 0 };
+        if (!kevent(fd, 0, 0, 0, 0, &timeSpec))
+            continue;
+
         close(fd);
+    }
 }
 
 int main(int argc, char** argv)

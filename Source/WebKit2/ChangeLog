@@ -1,3 +1,18 @@
+2011-08-18  Anders Carlsson  <andersca@apple.com>
+
+        WebProcess crashes during startup if libdispatch is initialized by WebProcessShim.dylib
+        https://bugs.webkit.org/show_bug.cgi?id=66508
+        <rdar://problem/9828476>
+
+        Reviewed by Mark Rowe.
+
+        * mac/MainMac.cpp:
+        (closeUnusedFileDescriptors):
+        Check if a file descriptor is a kqueue and don't close it if that is the case. While this
+        isn't a complete fix, (it won't work if other initializers end up creating non-kqueue file descriptors)
+        it's good enough for Snow Leopard. For Lion, we should use the new posix_spawn API that lets you whitelist
+        file descriptors from the parent process.
+
 2011-08-19  Benjamin Poulain  <benjamin@webkit.org>
 
         [Qt][WK2] Add a basic engine to control the content of the viewport
