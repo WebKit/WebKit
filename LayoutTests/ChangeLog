@@ -1,5 +1,13 @@
 2011-08-19  Vitaly Repeshko  <vitalyr@chromium.org>
 
+        [chromium] Updating test expectations.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-19  Vitaly Repeshko  <vitalyr@chromium.org>
+
         [chromium] Updating baselines.
 
         Unreviewed.

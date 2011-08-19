@@ -3702,3 +3702,5 @@ BUGWK66419 : http/tests/misc/authentication-redirect-3/authentication-sent-to-re
 BUGVITALYR LINUX : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT TIMEOUT
 
 BUGWK66510 LINUX DEBUG : editing/selection/regional-indicators.html = TIMEOUT
+
+BUGVITALYR WIN LINUX : http/tests/inspector/network/network-iframe-load-and-delete.html = TEXT TIMEOUT
