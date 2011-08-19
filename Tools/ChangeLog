@@ -1,3 +1,16 @@
+2011-08-19  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] Remove dependency of WebThemeControlDRTWin on skia::PlatformCanvas
+        https://bugs.webkit.org/show_bug.cgi?id=66570
+
+        Reviewed by Mihai Parparita.
+
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.cpp:
+        (WebThemeControlDRTWin::draw):
+        (WebThemeControlDRTWin::drawTextField):
+        (WebThemeControlDRTWin::drawProgressBar):
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.h:
+
 2011-08-18  Dmitry Lomov  <dslomov@google.com>
 
         TestWebKitAPI breaks on Windows due to fast malloc incompatibility.

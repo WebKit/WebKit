@@ -39,12 +39,12 @@
 #ifndef WebThemeControlDRTWin_h
 #define WebThemeControlDRTWin_h
 
-#include "skia/ext/platform_canvas.h"
 #include "third_party/skia/include/core/SkColor.h"
+#include "third_party/skia/include/core/SkRect.h"
 #include <wtf/Noncopyable.h>
 
 // Skia forward declarations
-struct SkIRect;
+class SkCanvas;
 
 class WebThemeControlDRTWin {
     WTF_MAKE_NONCOPYABLE(WebThemeControlDRTWin);
