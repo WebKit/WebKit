@@ -1,3 +1,16 @@
+2011-08-18  Dirk Pranke  <dpranke@chromium.org>
+
+        new-run-webkit-tests hung while acquiring http lock on snow leopard bots
+        https://bugs.webkit.org/show_bug.cgi?id=64886
+
+        Temporarily disable the http locking to work around the issue.
+        I'm not actually sure if this is going to work or improve things
+        much.
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+
 2011-08-18  Tony Chang  <tony@chromium.org>
 
         add embedded png checksums to WebKitTestRunner

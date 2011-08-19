@@ -155,3 +155,20 @@ class MacPort(ApplePort):
 
     def show_results_html_file(self, results_filename):
         self._run_script('run-safari', ['-NSOpen', results_filename])
+
+    # FIXME: The next two routines turn off the http locking in order
+    # to work around failures on the bots caused when the slave restarts.
+    # See https://bugs.webkit.org/show_bug.cgi?id=64886 for more info.
+    # The proper fix is to make sure the slave is actually stopping NRWT
+    # properly on restart. Note that by removing the lock file and not waiting,
+    # the result should be that if there is a web server already running,
+    # it'll be killed and this one will be started in its place; this
+    # may lead to weird things happening in the other run. However, I don't
+    # think we're (intentionally) actually running multiple runs concurrently
+    # on any Mac bots.
+
+    def acquire_http_lock(self):
+        pass
+
+    def release_http_lock(self):
+        pass
