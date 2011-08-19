@@ -1,5 +1,17 @@
 2011-08-19  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
+        [EFL] Add "return" statement corresponding to abnormal condition on _ewk_frame_smart_add.
+        https://bugs.webkit.org/show_bug.cgi?id=65408
+
+        Bail out when we fail to allocate an Ewk_Frame_Smart_Data object rather than continuing on as if the allocation had succeeded.
+
+        Reviewed by Adam Roben.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_smart_add):
+
+2011-08-19  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
         [EFL] Change condition checking logic related with both change of position and offset for backing store.
         https://bugs.webkit.org/show_bug.cgi?id=66028
 

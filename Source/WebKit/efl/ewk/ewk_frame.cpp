@@ -182,10 +182,11 @@ static void _ewk_frame_smart_add(Evas_Object *o)
 
     if (!sd) {
         sd = (Ewk_Frame_Smart_Data*)calloc(1, sizeof(Ewk_Frame_Smart_Data));
-        if (!sd)
+        if (!sd) {
             CRITICAL("could not allocate Ewk_Frame_Smart_Data");
-        else
-            evas_object_smart_data_set(o, sd);
+            return;
+        }
+        evas_object_smart_data_set(o, sd);
     }
 
     sd->self = o;
