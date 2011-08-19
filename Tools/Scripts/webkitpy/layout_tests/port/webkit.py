@@ -384,7 +384,7 @@ class WebKitPort(Port):
         for path in ["/usr/sbin/httpd", "/usr/sbin/apache2"]:
             if self._filesystem.exists(path):
                 return path
-            _log.error("Could not find apache. Not installed or unknown path.")
+        _log.error("Could not find apache. Not installed or unknown path.")
         return None
 
     # FIXME: This belongs on some platform abstraction instead of Port.

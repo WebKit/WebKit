@@ -1,3 +1,12 @@
+2011-08-19  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        Fix _path_to_apache() error reporting
+        https://bugs.webkit.org/show_bug.cgi?id=66486
+
+        Reviewed by Ryosuke Niwa.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-08-19  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r93404
