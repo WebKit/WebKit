@@ -88,6 +88,7 @@ public:
     static bool supportsType(const String&); 
 
     virtual bool isBitmapImage() const { return false; }
+    virtual bool currentFrameHasAlpha() { return false; }
 
     // Derived classes should override this if they can assure that 
     // the image contains only resources from its own security origin.
@@ -156,6 +157,10 @@ public:
 
     virtual void drawPattern(GraphicsContext*, const FloatRect& srcRect, const AffineTransform& patternTransform,
                              const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator, const FloatRect& destRect);
+
+#if !ASSERT_DISABLED
+    virtual bool notSolidColor() { return true; }
+#endif
 
 protected:
     Image(ImageObserver* = 0);

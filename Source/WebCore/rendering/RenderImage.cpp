@@ -408,13 +408,9 @@ bool RenderImage::backgroundIsObscured() const
 
     // Check for bitmap image with alpha.
     Image* image = m_imageResource->image().get();
-    if (!image || !image->isBitmapImage())
+    if (!image || !image->isBitmapImage() || image->currentFrameHasAlpha())
         return false;
         
-    BitmapImage* bitmapImage = static_cast<BitmapImage*>(image);
-    if (bitmapImage->currentFrameHasAlpha())
-        return false;
-
     return true;
 }
 

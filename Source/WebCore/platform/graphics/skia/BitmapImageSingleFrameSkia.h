@@ -53,6 +53,8 @@ public:
 
     virtual bool isBitmapImage() const { return true; }
 
+    virtual bool currentFrameHasAlpha() { return !m_nativeImage.isOpaque(); }
+
     virtual IntSize size() const
     {
         return IntSize(m_nativeImage.width(), m_nativeImage.height());
@@ -71,6 +73,13 @@ public:
     {
         return &m_nativeImage;
     }
+
+#if !ASSERT_DISABLED
+    virtual bool notSolidColor()
+    {
+        return m_nativeImage.width() != 1 || m_nativeImage.height() != 1;
+    }
+#endif
 
 protected:
     virtual void draw(GraphicsContext*, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace styleColorSpace, CompositeOperator);

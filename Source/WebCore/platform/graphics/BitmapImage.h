@@ -159,10 +159,10 @@ public:
 
     virtual NativeImagePtr nativeImageForCurrentFrame() { return frameAtIndex(currentFrame()); }
     bool frameHasAlphaAtIndex(size_t);
-    bool currentFrameHasAlpha() { return frameHasAlphaAtIndex(currentFrame()); }
+    virtual bool currentFrameHasAlpha() { return frameHasAlphaAtIndex(currentFrame()); }
 
 #if !ASSERT_DISABLED
-    bool notSolidColor()
+    virtual bool notSolidColor()
     {
         return size().width() != 1 || size().height() != 1 || frameCount() > 1;
     }

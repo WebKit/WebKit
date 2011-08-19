@@ -115,7 +115,7 @@ void Image::drawTiled(GraphicsContext* ctxt, const FloatRect& destRect, const Fl
 
     // See <https://webkit.org/b/59043>.
 #if !PLATFORM(WX)
-    ASSERT(!isBitmapImage() || static_cast<BitmapImage*>(this)->notSolidColor());
+    ASSERT(!isBitmapImage() || notSolidColor());
 #endif
 
     FloatSize intrinsicTileSize = size();

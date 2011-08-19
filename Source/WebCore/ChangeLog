@@ -1,3 +1,34 @@
+2011-08-19  James Robinson  <jamesr@chromium.org>
+
+        REGRESSION(r91628): 3 canvas tests crash on Chromium Linux and one test fail on Chromium Mac
+        https://bugs.webkit.org/show_bug.cgi?id=65063
+
+        Reviewed by Darin Fisher.
+
+        Fixes crashes due to a bad cast from Image to BitmapImage on skia ports
+        that use BitmapImageSingleFrameSkia. In the skia port
+        Image::isBitmapImage() returning true does not necessarily mean that
+        Image is of type BitmapImage.
+
+        Covered by fast/canvas/canvas-as-image.html and many other canvas
+        tests.
+
+        Patch originally by Tom Hudson.
+
+        * platform/graphics/BitmapImage.h:
+        (WebCore::BitmapImage::currentFrameHasAlpha):
+        (WebCore::BitmapImage::notSolidColor):
+        * platform/graphics/Image.cpp:
+        (WebCore::Image::drawTiled):
+        * platform/graphics/Image.h:
+        (WebCore::Image::currentFrameHasAlpha):
+        (WebCore::Image::notSolidColor):
+        * platform/graphics/skia/BitmapImageSingleFrameSkia.h:
+        (WebCore::BitmapImageSingleFrameSkia::currentFrameHasAlpha):
+        (WebCore::BitmapImageSingleFrameSkia::notSolidColor):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::backgroundIsObscured):
+
 2011-08-19  Emil A Eklund  <eae@chromium.org>
 
         Switch clipping for svg to to new layout types
