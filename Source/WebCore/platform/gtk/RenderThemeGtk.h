@@ -85,10 +85,10 @@ public:
 #if ENABLE(VIDEO)
     virtual String extraMediaControlsStyleSheet();
     virtual String formatMediaControlsCurrentTime(float currentTime, float duration) const;
-#endif
 
 #if ENABLE(FULLSCREEN_API)
     virtual String extraFullScreenStyleSheet();
+#endif
 #endif
 
 #ifdef GTK_API_VERSION_2

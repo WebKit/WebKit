@@ -1,3 +1,18 @@
+2011-08-19  Nayan Kumar K  <nayankk@motorola.com>
+
+        Run-time error fix in WebKit-GTK with video support disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=66541
+
+        Definition of the function extraFullScreenStyleSheet() in webkit-gtk
+        lies outside ENABLE(VIDEO) guard, resulting in runtime error while
+        trying to launch GtkLauncher with video support disabled.
+
+        Reviewed by Philippe Normand.
+
+        Run-time error fix. No test cases were added.
+
+        * platform/gtk/RenderThemeGtk.h:
+
 2011-08-19  Shinya Kawanaka  <shinyak@google.com>
 
         input[maxlength=0] should ignore text input.
