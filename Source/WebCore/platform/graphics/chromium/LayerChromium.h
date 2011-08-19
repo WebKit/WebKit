@@ -108,7 +108,6 @@ public:
 
     void setNeedsDisplay(const FloatRect& dirtyRect);
     void setNeedsDisplay();
-    virtual void invalidateRect(const FloatRect& dirtyRect) {}
     const FloatRect& dirtyRect() const { return m_dirtyRect; }
     void resetNeedsDisplay();
 
