@@ -1,3 +1,13 @@
+2011-08-18  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r90971): Null pointer dereference with placeholder and webkit-scrollbar-corner
+        https://bugs.webkit.org/show_bug.cgi?id=66453
+
+        Reviewed by Simon Fraser.
+
+        * fast/forms/placeholder-crash-with-scrollbar-corner-expected.txt: Added.
+        * fast/forms/placeholder-crash-with-scrollbar-corner.html: Added.
+
 2011-08-18  Tony Chang  <tony@chromium.org>
 
         [chromium] Fix results.  Just copy over the platform independent results.

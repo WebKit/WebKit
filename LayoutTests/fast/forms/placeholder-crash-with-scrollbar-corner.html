@@ -1,0 +1,26 @@
+<style>
+::-webkit-scrollbar-corner {
+    color: Red;
+}
+</style>
+<p>Focus on the input and hit Escape and see if the browser crashes.</p>
+<input placeholder="foo" id=i>
+<div id=console></div>
+<script>
+document.getElementById('i').addEventListener("keydown", function() {
+    this.style.display = "none";
+    document.getElementById('console').innerText = 'PASS (not crashed)';
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+});
+
+if (window.layoutTestController && window.eventSender) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    setTimeout(function() {
+        document.getElementById('i').focus();
+        eventSender.keyDown('a');
+    }, 0);
+}
+
+</script>

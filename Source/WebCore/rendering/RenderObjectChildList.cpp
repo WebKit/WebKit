@@ -85,8 +85,8 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
         // if we remove visible child from an invisible parent, we don't know the layer visibility any more
         RenderLayer* layer = 0;
         if (owner->style()->visibility() != VISIBLE && oldChild->style()->visibility() == VISIBLE && !oldChild->hasLayer()) {
-            layer = owner->enclosingLayer();
-            layer->dirtyVisibleContentStatus();
+            if ((layer = owner->enclosingLayer()))
+                layer->dirtyVisibleContentStatus();
         }
 
          // Keep our layer hierarchy updated.

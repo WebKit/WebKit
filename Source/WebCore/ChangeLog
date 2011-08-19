@@ -1,3 +1,15 @@
+2011-08-18  Kent Tamura  <tkent@chromium.org>
+
+        REGRESSION(r90971): Null pointer dereference with placeholder and webkit-scrollbar-corner
+        https://bugs.webkit.org/show_bug.cgi?id=66453
+
+        Reviewed by Simon Fraser.
+
+        Test: fast/forms/placeholder-crash-with-scrollbar-corner.html
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::removeChildNode): Add a NULL check for owner's layer.
+
 2011-08-18  Jeffrey Pfau  <jpfau@apple.com>
 
         New XML parser: scripting support
