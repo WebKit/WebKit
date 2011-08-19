@@ -26,8 +26,11 @@
 #ifndef PluginController_h
 #define PluginController_h
 
-#include "PluginComplexTextInputState.h"
 #include <wtf/Forward.h>
+
+#if PLATFORM(MAC)
+#include "PluginComplexTextInputState.h"
+#endif
 
 struct NPObject;
 typedef struct _NPVariant NPVariant;
