@@ -1,5 +1,20 @@
 2011-08-19  Emil A Eklund  <eae@chromium.org>
 
+        Switch RenderBlock to to new layout types
+        https://bugs.webkit.org/show_bug.cgi?id=66502
+
+        Reviewed by Eric Seidel.
+
+        Convert RenderBlock to new layout abstraction. Leave m_lineHight as a 30
+        bit int for now to avoid unnecessarily increasing the memory usage.
+
+        No new tests as no new functionality.
+
+        * rendering/RenderBlock.cpp:
+        * rendering/RenderBlock.h:
+
+2011-08-19  Emil A Eklund  <eae@chromium.org>
+
         Switch RenderBoxModelObject to to new layout types
         https://bugs.webkit.org/show_bug.cgi?id=66534
 
