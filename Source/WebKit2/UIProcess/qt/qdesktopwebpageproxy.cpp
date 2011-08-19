@@ -47,8 +47,8 @@ static inline Qt::DropAction dragOperationToDropAction(unsigned dragOperation)
     return result;
 }
 
-QDesktopWebPageProxy::QDesktopWebPageProxy(QDesktopWebViewPrivate* viewInterface, QWKContext* context, WKPageGroupRef pageGroup)
-    : QtWebPageProxy(viewInterface, context, pageGroup)
+QDesktopWebPageProxy::QDesktopWebPageProxy(QDesktopWebViewPrivate* desktopWebView, QWKContext* context, WKPageGroupRef pageGroup)
+    : QtWebPageProxy(desktopWebView, desktopWebView, context, pageGroup)
 {
     init();
 }

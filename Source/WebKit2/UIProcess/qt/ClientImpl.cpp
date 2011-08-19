@@ -26,11 +26,14 @@
 #include "WKURLQt.h"
 #include "qweberror.h"
 #include "qweberror_p.h"
+#include <PolicyInterface.h>
 #include <qwkcontext.h>
 #include <QtWebPageProxy.h>
 #include <ViewInterface.h>
 #include <WKFrame.h>
+#include <WKFramePolicyListener.h>
 #include <WKType.h>
+#include <WKURLRequest.h>
 
 using namespace WebKit;
 
@@ -52,6 +55,12 @@ static inline ViewInterface* toViewInterface(const void* clientInfo)
 {
     ASSERT(clientInfo);
     return reinterpret_cast<ViewInterface*>(const_cast<void*>(clientInfo));
+}
+
+static inline PolicyInterface* toPolicyInterface(const void* clientInfo)
+{
+    ASSERT(clientInfo);
+    return reinterpret_cast<PolicyInterface*>(const_cast<void*>(clientInfo));
 }
 
 static void dispatchLoadSucceeded(WKFrameRef frame, const void* clientInfo)
@@ -154,4 +163,52 @@ void qt_wk_didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef page
 
 void qt_wk_didRemoveAllIcons(WKIconDatabaseRef iconDatabase, const void* clientInfo)
 {
+}
+
+static Qt::MouseButton toQtMouseButton(WKEventMouseButton button)
+{
+    switch (button) {
+    case kWKEventMouseButtonLeftButton:
+        return Qt::LeftButton;
+    case kWKEventMouseButtonMiddleButton:
+        return Qt::MiddleButton;
+    case kWKEventMouseButtonRightButton:
+        return Qt::RightButton;
+    }
+    return Qt::NoButton;
+}
+
+static Qt::KeyboardModifiers toQtKeyboardModifiers(WKEventModifiers modifiers)
+{
+    Qt::KeyboardModifiers qtModifiers = Qt::NoModifier;
+    if (modifiers & kWKEventModifiersShiftKey)
+        qtModifiers |= Qt::ShiftModifier;
+    if (modifiers & kWKEventModifiersControlKey)
+        qtModifiers |= Qt::ControlModifier;
+    if (modifiers & kWKEventModifiersAltKey)
+        qtModifiers |= Qt::AltModifier;
+    if (modifiers & kWKEventModifiersMetaKey)
+        qtModifiers |= Qt::MetaModifier;
+    return qtModifiers;
+}
+
+void qt_wk_decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
+{
+    PolicyInterface* policyInterface = toPolicyInterface(clientInfo);
+    WKURLRef requestURL = WKURLRequestCopyURL(request);
+    QUrl qUrl = WKURLCopyQUrl(requestURL);
+    WKRelease(requestURL);
+
+    PolicyInterface::PolicyAction action = policyInterface->navigationPolicyForURL(qUrl, toQtMouseButton(mouseButton), toQtKeyboardModifiers(modifiers));
+    switch (action) {
+    case PolicyInterface::Use:
+        WKFramePolicyListenerUse(listener);
+        break;
+    case PolicyInterface::Download:
+        WKFramePolicyListenerDownload(listener);
+        break;
+    case PolicyInterface::Ignore:
+        WKFramePolicyListenerIgnore(listener);
+        break;
+    }
 }

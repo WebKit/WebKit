@@ -33,6 +33,7 @@
 #include "LocalizedStrings.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
+#include "PolicyInterface.h"
 #include "WebBackForwardList.h"
 #include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
@@ -94,8 +95,9 @@ WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions)
     return (DragOperation)result;
 }
 
-QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, QWKContext* c, WKPageGroupRef pageGroupRef)
+QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, PolicyInterface* policyInterface, QWKContext* c, WKPageGroupRef pageGroupRef)
     : m_viewInterface(viewInterface)
+    , m_policyInterface(policyInterface)
     , m_context(c)
     , m_preferences(0)
     , m_undoStack(adoptPtr(new QUndoStack(this)))
@@ -185,6 +187,18 @@ void QtWebPageProxy::init()
         0,  /* shouldInterruptJavaScript */
     };
     WKPageSetPageUIClient(toAPI(m_webPageProxy.get()), &uiClient);
+
+    if (m_policyInterface) {
+        WKPagePolicyClient policyClient = {
+            0,
+            m_policyInterface,
+            qt_wk_decidePolicyForNavigationAction,
+            0,  /* decidePolicyForNewWindowAction */
+            0,  /* decidePolicyForResponse */
+            0,  /* unableToImplementPolicy */
+        };
+        WKPageSetPagePolicyClient(toAPI(m_webPageProxy.get()), &policyClient);
+    }
 }
 
 QtWebPageProxy::~QtWebPageProxy()

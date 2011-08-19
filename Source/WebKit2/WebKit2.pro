@@ -237,6 +237,7 @@ HEADERS += \
     UIProcess/WebUIClient.h \
     UIProcess/qt/ClientImpl.h \
     UIProcess/qt/TouchViewInterface.h \
+    UIProcess/qt/PolicyInterface.h \
     UIProcess/qt/QtGestureRecognizer.h \
     UIProcess/qt/QtPanGestureRecognizer.h \
     UIProcess/qt/QtPinchGestureRecognizer.h \

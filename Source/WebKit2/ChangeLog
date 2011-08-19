@@ -1,3 +1,67 @@
+2011-08-19  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        [Qt] [WK2] Provide API for intercept (and possible ignore) links clicked in QDesktopWebView
+        https://bugs.webkit.org/show_bug.cgi?id=65920
+
+        Reviewed by Benjamin Poulain.
+
+        This patch makes QDesktopWebView delegate the decision of whether a navigation
+        should proceed to a slot in QML. The user of the DesktopWebView must implement a
+        'navigationPolicyForUrl()' if it wants to use the feature.
+
+        Such feature is useful for implementing opening links in "new tab" by using a
+        specific mouse button or mouse button plus keyboard modifiers.
+
+        The patch introduces a internal Qt-level interface called PolicyInterface, that
+        is used by QtWebPageProxy to delegate policy calls. A concrete implementation is
+        provided for QDesktopWebView.
+
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        Implement the serialization of the Request URL, which is the only data
+        we exposing from the Request.
+
+        * WebKit2.pro:
+        * UIProcess/qt/PolicyInterface.h: Added.
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::init):
+        * UIProcess/qt/QtWebPageProxy.h:
+        Register a Policy Client in the WK2 C API only if there's a PolicyInterface available.
+
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/ClientImpl.cpp:
+        (toPolicyInterface):
+        (toQtMouseButton):
+        (toQtKeyboardModifiers):
+        (qt_wk_decidePolicyForNavigationAction):
+        Implement the callback for the Page Policy Client. It will translate the
+        arguments to Qt jargon and call PolicyInterface.
+
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::QDesktopWebPageProxy):
+        * UIProcess/API/qt/qdesktopwebview.h:
+        * UIProcess/API/qt/qdesktopwebview_p.h:
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (toPolicyAction):
+        (hasMetaMethod):
+        (QDesktopWebViewPrivate::navigationPolicyForURL):
+        The concrete implementation for QDesktopWebView. Its private object implements
+        the PolicyInterface and try to call a possible function defined in QML (so return
+        value and arguments all QVariants). If there's no such a function, returns the
+        default UsePolicy, like if we haven't registered a PolicyClient in WK2 C API.
+
+        * UIProcess/API/qt/tests/qmltests/DesktopWebView/tst_navigationPolicyForUrl.qml: Added.
+        * UIProcess/API/qt/tests/qmltests/common/test2.html: Added.
+        * UIProcess/API/qt/tests/qmltests/qmltests.pro:
+        Add a test for DesktopWebView QML element making use of a button and a modifier to
+        ignore a navigation.
+
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::QTouchWebPageProxy):
+        For now, we don't have a PolicyInterface for QTouchWebView.
+
 2011-08-18  Anders Carlsson  <andersca@apple.com>
 
         WebProcess crashes during startup if libdispatch is initialized by WebProcessShim.dylib

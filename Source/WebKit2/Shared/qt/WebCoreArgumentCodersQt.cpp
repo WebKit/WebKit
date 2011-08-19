@@ -37,16 +37,21 @@ namespace CoreIPC {
 
 void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
 {
-    notImplemented();
+    encoder->encode(resourceRequest.url().string());
 }
 
 bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
 {
-    notImplemented();
-
-    // FIXME: Add real implementation when we want to implement something that
+    // FIXME: Add *more* coding implementation when we want to implement something that
     // depends on this like the policy client.
-    resourceRequest = WebCore::ResourceRequest();
+
+    ResourceRequest request;
+    String url;
+    if (!decoder->decode(url))
+        return false;
+    request.setURL(KURL(WebCore::ParsedURLString, url));
+
+    resourceRequest = request;
     return true;
 }
 

@@ -381,4 +381,44 @@ void QDesktopWebViewPrivate::didRelaunchProcess()
     q->update();
 }
 
+static PolicyInterface::PolicyAction toPolicyAction(QDesktopWebView::NavigationPolicy policy)
+{
+    switch (policy) {
+    case QDesktopWebView::UsePolicy:
+        return PolicyInterface::Use;
+    case QDesktopWebView::DownloadPolicy:
+        return PolicyInterface::Download;
+    case QDesktopWebView::IgnorePolicy:
+        return PolicyInterface::Ignore;
+    }
+    ASSERT_NOT_REACHED();
+    return PolicyInterface::Ignore;
+}
+
+static bool hasMetaMethod(QObject* object, const char* methodName)
+{
+    int methodIndex = object->metaObject()->indexOfMethod(QMetaObject::normalizedSignature(methodName));
+    return methodIndex >= 0 && methodIndex < object->metaObject()->methodCount();
+}
+
+/*!
+    \qmlmethod NavigationPolicy DesktopWebView::navigationPolicyForUrl(url, button, modifiers)
+
+    This method should be implemented by the user of DesktopWebView element.
+
+    It will be called to decide the policy for a navigation: whether the WebView should ignore the navigation,
+    continue it or start a download. The return value must be one of the policies in the NavigationPolicy enumeration.
+*/
+PolicyInterface::PolicyAction QDesktopWebViewPrivate::navigationPolicyForURL(const QUrl& url, Qt::MouseButton button, Qt::KeyboardModifiers modifiers)
+{
+    // We need to check this first because invokeMethod() warns if the method doesn't exist for the object.
+    if (!hasMetaMethod(q, "navigationPolicyForUrl(QVariant,QVariant,QVariant)"))
+        return PolicyInterface::Use;
+
+    QVariant ret;
+    if (QMetaObject::invokeMethod(q, "navigationPolicyForUrl", Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, url), Q_ARG(QVariant, button), Q_ARG(QVariant, QVariant(modifiers))))
+        return toPolicyAction(static_cast<QDesktopWebView::NavigationPolicy>(ret.toInt()));
+    return PolicyInterface::Use;
+}
+
 #include "moc_qdesktopwebview.cpp"

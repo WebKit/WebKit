@@ -27,7 +27,7 @@
 
 class QDesktopWebView;
 
-class QDesktopWebViewPrivate : public WebKit::ViewInterface
+class QDesktopWebViewPrivate : public WebKit::ViewInterface, public WebKit::PolicyInterface
 {
 public:
     QDesktopWebViewPrivate(QDesktopWebView*, WKContextRef = 0, WKPageGroupRef = 0);
@@ -71,6 +71,9 @@ private:
 
     virtual void processDidCrash();
     virtual void didRelaunchProcess();
+
+    // PolicyInterface.
+    virtual PolicyInterface::PolicyAction navigationPolicyForURL(const QUrl&, Qt::MouseButton, Qt::KeyboardModifiers);
 
     QSharedPointer<QMenu> activeMenu;
 };

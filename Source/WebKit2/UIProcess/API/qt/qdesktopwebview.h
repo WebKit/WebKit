@@ -54,8 +54,15 @@ class QWEBKIT_EXPORT QDesktopWebView : public QSGPaintedItem {
     Q_PROPERTY(QUrl url READ url NOTIFY urlChanged)
     Q_PROPERTY(int loadProgress READ loadProgress NOTIFY loadProgressChanged)
     Q_PROPERTY(QWebNavigationController* navigation READ navigationController CONSTANT)
+    Q_ENUMS(NavigationPolicy)
 
 public:
+    enum NavigationPolicy {
+        UsePolicy,
+        DownloadPolicy,
+        IgnorePolicy
+    };
+
     QDesktopWebView(QSGItem* parent = 0);
     virtual ~QDesktopWebView();
 
@@ -111,4 +118,7 @@ private:
     friend class QDesktopWebViewPrivate;
     QDesktopWebViewPrivate *d;
 };
+
+Q_DECLARE_METATYPE(QDesktopWebView::NavigationPolicy)
+
 #endif /* qdesktopwebview_h */
