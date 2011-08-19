@@ -1,3 +1,16 @@
+2011-08-19  Anton Muhin  <antonm@chromium.org>
+
+        [v8] CSS wrapper objects retention
+        https://bugs.webkit.org/show_bug.cgi?id=66377
+
+        Reviewed by Pavel Feldman.
+
+        Disable object grouping for CSS object wrappers.
+        This logic leads to hard to debug use-after-free problems.
+
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::GrouperVisitor::visitDOMWrapper):
+
 2011-08-19  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: introduce NodeId inherited from integer in the DOM domain description.

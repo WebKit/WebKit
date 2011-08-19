@@ -1,3 +1,15 @@
+2011-08-19  Anton Muhin  <antonm@chromium.org>
+
+        [v8] CSS wrapper objects retention
+        https://bugs.webkit.org/show_bug.cgi?id=66377
+
+        Reviewed by Pavel Feldman.
+
+        Disable object grouping for CSS object wrappers.
+        This logic leads to hard to debug use-after-free problems.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-19  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt] editing/selection/caret-at-bidi-boundary.html times out after r93369

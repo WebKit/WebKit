@@ -287,40 +287,6 @@ static GroupId calculateGroupId(Node* node)
     return GroupId(root);
 }
 
-static GroupId calculateGroupId(StyleBase* styleBase)
-{
-    ASSERT(styleBase);
-    StyleBase* current = styleBase;
-    StyleSheet* styleSheet = 0;
-    while (true) {
-        // Special case: CSSStyleDeclarations might be either inline and in this case
-        // we need to group them with their node or regular ones.
-        if (current->isMutableStyleDeclaration()) {
-            CSSMutableStyleDeclaration* cssMutableStyleDeclaration = static_cast<CSSMutableStyleDeclaration*>(current);
-            if (cssMutableStyleDeclaration->isInlineStyleDeclaration())
-                return calculateGroupId(cssMutableStyleDeclaration->node());
-            // Either we have no parent, or this parent is a CSSRule.
-            ASSERT(cssMutableStyleDeclaration->parent() == cssMutableStyleDeclaration->parentRule());
-        }
-
-        if (current->isStyleSheet())
-            styleSheet = static_cast<StyleSheet*>(current);
-
-        StyleBase* parent = current->parent();
-        if (!parent)
-            break;
-        current = parent;
-    }
-
-    if (styleSheet) {
-        if (Node* ownerNode = styleSheet->ownerNode())
-            return calculateGroupId(ownerNode);
-        return GroupId(styleSheet);
-    }
-
-    return GroupId(current);
-}
-
 class GrouperVisitor : public DOMWrapperMap<Node>::Visitor, public DOMWrapperMap<void>::Visitor {
 public:
     void visitDOMWrapper(DOMDataStore* store, Node* node, v8::Persistent<v8::Object> wrapper)
@@ -348,49 +314,6 @@ public:
 
     void visitDOMWrapper(DOMDataStore* store, void* object, v8::Persistent<v8::Object> wrapper)
     {
-        WrapperTypeInfo* typeInfo = V8DOMWrapper::domWrapperType(wrapper);
-
-        if (typeInfo->isSubclass(&V8StyleSheetList::info)) {
-            StyleSheetList* styleSheetList = static_cast<StyleSheetList*>(object);
-            GroupId groupId(styleSheetList);
-            if (Document* document = styleSheetList->document())
-                groupId = GroupId(document);
-            m_grouper.append(GrouperItem(groupId, wrapper));
-
-        } else if (typeInfo->isSubclass(&V8DOMImplementation::info)) {
-            DOMImplementation* domImplementation = static_cast<DOMImplementation*>(object);
-            GroupId groupId(domImplementation);
-            if (Document* document = domImplementation->document())
-                groupId = GroupId(document);
-            m_grouper.append(GrouperItem(groupId, wrapper));
-
-        } else if (typeInfo->isSubclass(&V8StyleSheet::info) || typeInfo->isSubclass(&V8CSSRule::info)) {
-            m_grouper.append(GrouperItem(calculateGroupId(static_cast<StyleBase*>(object)), wrapper));
-
-        } else if (typeInfo->isSubclass(&V8CSSStyleDeclaration::info)) {
-            CSSStyleDeclaration* cssStyleDeclaration = static_cast<CSSStyleDeclaration*>(object);
-
-            GroupId groupId = calculateGroupId(cssStyleDeclaration);
-            m_grouper.append(GrouperItem(groupId, wrapper));
-
-            // Keep alive "dirty" primitive values (i.e. the ones that
-            // have user-added properties) by creating implicit
-            // references between the style declaration and the values
-            // in it.
-            if (cssStyleDeclaration->isMutableStyleDeclaration()) {
-                CSSMutableStyleDeclaration* cssMutableStyleDeclaration = static_cast<CSSMutableStyleDeclaration*>(cssStyleDeclaration);
-                Vector<v8::Persistent<v8::Value> > values;
-                values.reserveCapacity(cssMutableStyleDeclaration->length());
-                CSSMutableStyleDeclaration::const_iterator end = cssMutableStyleDeclaration->end();
-                for (CSSMutableStyleDeclaration::const_iterator it = cssMutableStyleDeclaration->begin(); it != end; ++it) {
-                    v8::Persistent<v8::Object> value = store->domObjectMap().get(it->value());
-                    if (!value.IsEmpty() && value->IsDirty())
-                        values.append(value);
-                }
-                if (!values.isEmpty())
-                    v8::V8::AddImplicitReferences(wrapper, values.data(), values.size());
-            }
-        }
     }
 
     void applyGrouping()

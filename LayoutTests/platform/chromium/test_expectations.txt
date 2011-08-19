@@ -204,6 +204,15 @@ WONTFIX : editing/input/emacs-ctrl-o.html = FAIL
 // Would have to be implemented much differently to work in v8.
 WONTFIX : fast/dom/gc-10.html = FAIL
 
+// Proper retention of CSS objects is tricky.  Disable the tests for now.
+
+BUGWK66377 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
+
 // This fails because we're missing various useless apple-specific
 // properties on the window object.
 // This test also timeouts in Debug mode.
