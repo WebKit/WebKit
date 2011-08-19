@@ -1,3 +1,13 @@
+2011-08-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] GPU test expectation baseline update
+
+        Update pixel baselines for this test on mac and linux.
+
+        * platform/chromium-gpu-linux/compositing/scaling/tiled-layer-recursion-expected.png: Added.
+        * platform/chromium-gpu-mac/compositing/scaling/tiled-layer-recursion-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-08-19  Jeffrey Pfau  <jpfau@apple.com>
 
         libxml2 fragment parser loses prefix namespaces

@@ -3632,10 +3632,6 @@ BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
 
 BUGWK65666 LINUX WIN : fast/box-shadow/box-shadow-clipped-slices.html = IMAGE
 
-// This test fails with GPU
-BUGWK58013 MAC GPU : compositing/scaling/tiled-layer-recursion.html = CRASH
-BUGWK58013 LINUX GPU : compositing/scaling/tiled-layer-recursion.html = IMAGE
-
 // Looks like the overlapping regions are not properly anti-aliased.
 BUGWK66036 WIN LINUX GPU : fast/canvas/canvas-composite.html = IMAGE
 BUGWK66036 WIN LINUX GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
