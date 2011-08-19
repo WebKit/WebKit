@@ -27,6 +27,8 @@
 #include "NewXMLDocumentParser.h"
 
 #include "DocumentFragment.h"
+#include "ScriptElement.h"
+#include "ScriptSourceCode.h"
 #include "SegmentedString.h"
 #include "XMLTreeBuilder.h"
 
@@ -35,7 +37,10 @@ namespace WebCore {
 NewXMLDocumentParser::NewXMLDocumentParser(Document* document)
     : ScriptableDocumentParser(document)
     , m_tokenizer(XMLTokenizer::create())
+    , m_parserPaused(false)
     , m_finishWasCalled(false)
+    , m_pendingScript(0)
+    , m_scriptElement(0)
     , m_treeBuilder(XMLTreeBuilder::create(this, document))
 {
 }
@@ -43,7 +48,10 @@ NewXMLDocumentParser::NewXMLDocumentParser(Document* document)
 NewXMLDocumentParser::NewXMLDocumentParser(DocumentFragment* fragment, Element* parent, FragmentScriptingPermission)
     : ScriptableDocumentParser(fragment->document())
     , m_tokenizer(XMLTokenizer::create())
+    , m_parserPaused(false)
     , m_finishWasCalled(false)
+    , m_pendingScript(0)
+    , m_scriptElement(0)
     , m_treeBuilder(XMLTreeBuilder::create(this, fragment, parent))
 {
 }
@@ -67,6 +75,30 @@ NewXMLDocumentParser::~NewXMLDocumentParser()
 {
 }
 
+void NewXMLDocumentParser::resumeParsing()
+{
+    m_parserPaused = false;
+    append(m_input);
+}
+
+void NewXMLDocumentParser::processScript(ScriptElement* scriptElement)
+{
+    if (scriptElement->prepareScript(TextPosition1(), ScriptElement::AllowLegacyTypeInTypeAttribute)) {
+        if (scriptElement->readyToBeParserExecuted())
+            scriptElement->executeScript(ScriptSourceCode(scriptElement->scriptContent(), document()->url(), TextPosition1()));
+        else if (scriptElement->willBeParserExecuted()) {
+            m_pendingScript = scriptElement->cachedScript();
+            m_scriptElement = scriptElement->element();
+            m_pendingScript->addClient(this);
+
+            // m_pendingScript will be 0 if script was already loaded and addClient() executed it.
+            if (m_pendingScript)
+                pauseParsing();
+        } else
+            m_scriptElement = 0;
+    }
+}
+
 TextPosition0 NewXMLDocumentParser::textPosition() const
 {
     return TextPosition0(WTF::ZeroBasedNumber::fromZeroBasedInt(0),
@@ -85,9 +117,9 @@ void NewXMLDocumentParser::insert(const SegmentedString&)
 
 void NewXMLDocumentParser::append(const SegmentedString& string)
 {
-    SegmentedString input = string;
-    while (!input.isEmpty()) {
-        if (!m_tokenizer->nextToken(input, m_token))
+    m_input = string;
+    while (!m_input.isEmpty() && isParsing() && !m_parserPaused) {
+        if (!m_tokenizer->nextToken(m_input, m_token))
             continue;
 
 #ifndef NDEBUG
@@ -97,7 +129,7 @@ void NewXMLDocumentParser::append(const SegmentedString& string)
         AtomicXMLToken token(m_token);
         m_treeBuilder->processToken(token);
 
-        if (m_token.type() == XMLTokenTypes::EndOfFile || !isParsing())
+        if (m_token.type() == XMLTokenTypes::EndOfFile)
             break;
 
         m_token.clear();
@@ -108,8 +140,11 @@ void NewXMLDocumentParser::append(const SegmentedString& string)
 void NewXMLDocumentParser::finish()
 {
     ASSERT(!m_finishWasCalled);
-    m_finishWasCalled = true;
 
+    if (m_parserPaused)
+        return;
+
+    m_finishWasCalled = true;
     if (isParsing())
         prepareToStopParsing();
     document()->setReadyState(Document::Interactive);
@@ -138,6 +173,38 @@ bool NewXMLDocumentParser::isExecutingScript() const
 
 void NewXMLDocumentParser::executeScriptsWaitingForStylesheets()
 {
+}
+
+void NewXMLDocumentParser::notifyFinished(CachedResource* unusedResource)
+{
+    ASSERT_UNUSED(unusedResource, unusedResource == m_pendingScript);
+    ASSERT(m_pendingScript->accessCount() > 0);
+
+    ScriptSourceCode sourceCode(m_pendingScript.get());
+    bool errorOccurred = m_pendingScript->errorOccurred();
+    bool wasCanceled = m_pendingScript->wasCanceled();
+
+    m_pendingScript->removeClient(this);
+    m_pendingScript = 0;
+
+    RefPtr<Element> element = m_scriptElement;
+    ScriptElement* scriptElement = toScriptElement(m_scriptElement.get());
+    m_scriptElement = 0;
+
+    ASSERT(scriptElement);
+
+    // JavaScript can detach this parser, make sure it's kept alive even if detached.
+    RefPtr<NewXMLDocumentParser> protect(this);
+
+    if (errorOccurred)
+        scriptElement->dispatchErrorEvent();
+    else if (!wasCanceled) {
+        scriptElement->executeScript(sourceCode);
+        scriptElement->dispatchLoadEvent();
+    }
+
+    if (!isDetached() && m_parserPaused)
+        resumeParsing();
 }
 
 }

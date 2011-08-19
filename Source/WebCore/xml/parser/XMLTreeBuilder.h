@@ -81,6 +81,7 @@ private:
 
     void pushCurrentNode(const NodeStackItem&);
     void popCurrentNode();
+    void closeElement(PassRefPtr<Element>);
 
     void processProcessingInstruction(const AtomicXMLToken&);
     void processXMLDeclaration(const AtomicXMLToken&);

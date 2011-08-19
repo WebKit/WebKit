@@ -1,3 +1,25 @@
+2011-08-18  Jeffrey Pfau  <jpfau@apple.com>
+
+        New XML parser: scripting support
+        https://bugs.webkit.org/show_bug.cgi?id=66406
+
+        Reviewed by Adam Barth.
+
+        * xml/parser/NewXMLDocumentParser.cpp:
+        (WebCore::NewXMLDocumentParser::NewXMLDocumentParser):
+        (WebCore::NewXMLDocumentParser::resumeParsing):
+        (WebCore::NewXMLDocumentParser::processScript):
+        (WebCore::NewXMLDocumentParser::append): Add support for pausing the parsing
+        (WebCore::NewXMLDocumentParser::finish): Add support for pausing the parsing
+        (WebCore::NewXMLDocumentParser::notifyFinished):
+        * xml/parser/NewXMLDocumentParser.h:
+        (WebCore::NewXMLDocumentParser::pauseParsing):
+        * xml/parser/XMLTreeBuilder.cpp: Add a shared function between self-closing and end tags
+        (WebCore::XMLTreeBuilder::closeElement): Registers scripts and pops the stack
+        (WebCore::XMLTreeBuilder::processStartTag):
+        (WebCore::XMLTreeBuilder::processEndTag):
+        * xml/parser/XMLTreeBuilder.h:
+
 2011-08-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Move allocation in constructors into separate constructorBody() methods

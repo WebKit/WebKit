@@ -26,6 +26,7 @@
 #include "config.h"
 #include "XMLTreeBuilder.h"
 
+#include "CachedScript.h"
 #include "CDATASection.h"
 #include "Comment.h"
 #include "Document.h"
@@ -35,6 +36,8 @@
 #include "HTMLEntitySearch.h"
 #include "NewXMLDocumentParser.h"
 #include "ProcessingInstruction.h"
+#include "ScriptElement.h"
+#include "ScriptSourceCode.h"
 #include "XMLNSNames.h"
 #include "XMLNames.h"
 
@@ -143,6 +146,17 @@ void XMLTreeBuilder::popCurrentNode()
     m_currentNodeStack.removeLast();
 }
 
+void XMLTreeBuilder::closeElement(PassRefPtr<Element> element)
+{
+    element->finishParsingChildren();
+
+    ScriptElement* scriptElement = toScriptElement(element.get());
+    if (scriptElement)
+        m_parser->processScript(scriptElement);
+
+    popCurrentNode();
+}
+
 void XMLTreeBuilder::processProcessingInstruction(const AtomicXMLToken& token)
 {
     if (!failOnText())
@@ -230,10 +244,8 @@ void XMLTreeBuilder::processStartTag(const AtomicXMLToken& token)
     if (isFirstElement && m_document->frame())
         m_document->frame()->loader()->dispatchDocumentElementAvailable();
 
-    if (token.selfClosing()) {
-        popCurrentNode();
-        newElement->finishParsingChildren();
-    }
+    if (token.selfClosing())
+        closeElement(newElement);
 }
 
 void XMLTreeBuilder::processEndTag(const AtomicXMLToken& token)
@@ -245,8 +257,7 @@ void XMLTreeBuilder::processEndTag(const AtomicXMLToken& token)
     if (!node->hasTagName(QualifiedName(token.prefix(), token.name(), m_currentNodeStack.last().namespaceForPrefix(token.prefix(), m_currentNodeStack.last().namespaceURI()))))
         m_parser->stopParsing();
 
-    popCurrentNode();
-    node->finishParsingChildren();
+    closeElement(toElement(node.get()));
 }
 
 void XMLTreeBuilder::processCharacter(const AtomicXMLToken& token)
