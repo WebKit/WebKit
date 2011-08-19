@@ -1,5 +1,11 @@
 2011-08-19  Adam Roben  <aroben@apple.com>
 
+        Fix typo
+
+        * dom/DOMAllInOne.cpp:
+
+2011-08-19  Adam Roben  <aroben@apple.com>
+
         Windows build fix after r93385
 
         * dom/DOMAllInOne.cpp: Added EventDispatcMediator.cpp.

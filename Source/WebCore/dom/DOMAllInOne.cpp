@@ -70,7 +70,7 @@
 #include "ErrorEvent.cpp"
 #include "Event.cpp"
 #include "EventContext.cpp"
-#include "EventDispatcMediator.cpp"
+#include "EventDispatchMediator.cpp"
 #include "EventDispatcher.cpp"
 #include "EventNames.cpp"
 #include "EventQueue.cpp"
