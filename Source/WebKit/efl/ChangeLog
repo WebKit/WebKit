@@ -1,3 +1,16 @@
+2011-08-19  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Change condition checking logic related with both change of position and offset for backing store.
+        https://bugs.webkit.org/show_bug.cgi?id=66028
+
+        As backing store's position and offset change can occur at the same time,
+        the checking of offset change shouldn't be "else if" statement.
+
+        Reviewed by Adam Roben.
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_smart_calculate):
+
 2011-08-19  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Fix and update doxygen documentation for ewk_view.

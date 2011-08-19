@@ -1329,7 +1329,8 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object *o)
     if (priv->changed.pos && (priv->view.x != x || priv->view.y != y)) {
         _ewk_tiled_backing_store_smart_calculate_pos(priv, x, y);
         priv->changed.pos = EINA_FALSE;
-    } else if (priv->changed.offset) {
+    }
+    if (priv->changed.offset) {
         _ewk_tiled_backing_store_smart_calculate_offset(priv, x, y);
         priv->changed.offset = EINA_FALSE;
     }
