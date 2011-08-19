@@ -1,5 +1,11 @@
 2011-08-19  Adam Roben  <aroben@apple.com>
 
+        Add project file changes I left out in r93417
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+
+2011-08-19  Adam Roben  <aroben@apple.com>
+
         Add a helper class for swizzling ObjC instance methods to TestWebKitAPI
 
         Fixes <http://webkit.org/b/66565> TestWebKitAPI needs a way to override instance methods of

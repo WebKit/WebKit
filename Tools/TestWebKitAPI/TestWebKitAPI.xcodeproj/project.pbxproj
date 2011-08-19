@@ -66,6 +66,8 @@
 		C081224513FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = C081224413FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m */; };
 		C081224913FC1B0300DC39AE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C081224813FC1B0300DC39AE /* WebKit.framework */; };
 		C08587BF13FE956C001EF4E5 /* WebKitAgnosticTest.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */; };
+		C08587FC13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587FB13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm */; };
+		C085880013FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm in Sources */ = {isa = PBXBuildFile; fileRef = C08587FF13FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm */; };
 		C0ADBE7C12FCA4D000D2C129 /* JavaScriptTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */; };
 		C0ADBE8312FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */; };
 		C0ADBE9612FCA79B00D2C129 /* simple-form.html in Copy Resources */ = {isa = PBXBuildFile; fileRef = C0ADBE8412FCA6B600D2C129 /* simple-form.html */; };
@@ -189,6 +191,9 @@
 		C081224813FC1B0300DC39AE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WebKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C08587BD13FE956C001EF4E5 /* WebKitAgnosticTest.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebKitAgnosticTest.mm; sourceTree = "<group>"; };
 		C08587BE13FE956C001EF4E5 /* WebKitAgnosticTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitAgnosticTest.h; sourceTree = "<group>"; };
+		C08587FB13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InstanceMethodSwizzler.mm; sourceTree = "<group>"; };
+		C08587FE13FEC3A6001EF4E5 /* InstanceMethodSwizzler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InstanceMethodSwizzler.h; sourceTree = "<group>"; };
+		C08587FF13FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InstanceMethodSwizzler.mm; sourceTree = "<group>"; };
 		C0ADBE7A12FCA4D000D2C129 /* JavaScriptTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JavaScriptTest.cpp; sourceTree = "<group>"; };
 		C0ADBE7B12FCA4D000D2C129 /* JavaScriptTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JavaScriptTest.h; sourceTree = "<group>"; };
 		C0ADBE8212FCA6AA00D2C129 /* RestoreSessionStateContainingFormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreSessionStateContainingFormData.cpp; sourceTree = "<group>"; };
@@ -369,6 +374,8 @@
 			isa = PBXGroup;
 			children = (
 				1AEDE22413E5E7A000E62FE8 /* InjectedBundleControllerMac.mm */,
+				C08587FE13FEC3A6001EF4E5 /* InstanceMethodSwizzler.h */,
+				C08587FF13FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm */,
 				C081224013FC172400DC39AE /* JavaScriptTestMac.mm */,
 				BC131A9A1171316900B69727 /* main.mm */,
 				BC131884117114B600B69727 /* PlatformUtilitiesMac.mm */,
@@ -384,6 +391,7 @@
 		BCB9EB66112366D800A137E0 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				C08587F913FEC39B001EF4E5 /* TestWebKitAPI */,
 				C07E6CAD13FD67650038B22B /* mac */,
 				BC9096411255616000083756 /* WebKit2 */,
 				BC9096461255618900083756 /* WTF */,
@@ -406,6 +414,22 @@
 				C07E6CB113FD738A0038B22B /* devicePixelRatio.html */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		C08587F913FEC39B001EF4E5 /* TestWebKitAPI */ = {
+			isa = PBXGroup;
+			children = (
+				C08587FA13FEC39B001EF4E5 /* mac */,
+			);
+			path = TestWebKitAPI;
+			sourceTree = "<group>";
+		};
+		C08587FA13FEC39B001EF4E5 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				C08587FB13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm */,
+			);
+			path = mac;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -524,6 +548,8 @@
 				C081224513FC19EC00DC39AE /* SyntheticBackingScaleFactorWindow.m in Sources */,
 				C07E6CAF13FD67650038B22B /* DynamicDeviceScaleFactor.mm in Sources */,
 				C08587BF13FE956C001EF4E5 /* WebKitAgnosticTest.mm in Sources */,
+				C08587FC13FEC39B001EF4E5 /* InstanceMethodSwizzler.mm in Sources */,
+				C085880013FEC3A6001EF4E5 /* InstanceMethodSwizzler.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
