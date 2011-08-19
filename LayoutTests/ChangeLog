@@ -1,3 +1,11 @@
+2011-08-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update chromium test expectations
+
+        Remove = CRASH expectations for tests fixed by r93441.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-19  Tony Chang  <tony@chromium.org>
 
         [chromium] Update results for japanese-rl-selection-repaint-in-regions.html that
