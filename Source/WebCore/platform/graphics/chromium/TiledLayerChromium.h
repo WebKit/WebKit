@@ -29,12 +29,13 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerChromium.h"
+#include "cc/CCLayerTilingData.h"
 #include "cc/CCTiledLayerImpl.h"
 
 namespace WebCore {
 
-class LayerTilerChromium;
 class LayerTextureUpdater;
+class UpdatableTile;
 
 class TiledLayerChromium : public LayerChromium {
 public:
@@ -49,6 +50,10 @@ public:
 
     virtual bool drawsContent() const;
 
+    // Reserves all existing and valid tile textures to protect them from being
+    // recycled by the texture manager.
+    void protectTileTextures(const IntRect& contentRect);
+
 protected:
     explicit TiledLayerChromium(GraphicsLayerChromium*);
 
@@ -58,7 +63,13 @@ protected:
     virtual void createTextureUpdaterIfNeeded() = 0;
     virtual LayerTextureUpdater* textureUpdater() const = 0;
 
-    OwnPtr<LayerTilerChromium> m_tiler;
+    // Set invalidations to be potentially repainted during update().
+    void invalidateRect(const IntRect& contentRect);
+    // Prepare data needed to update textures that intersect with contentRect.
+    void prepareToUpdate(const IntRect& contentRect);
+    // Update invalid textures that intersect with contentRect provided in prepareToUpdate().
+    void updateRect(GraphicsContext3D*, LayerTextureUpdater*);
+    virtual void protectVisibleTileTextures();
 
 private:
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
@@ -71,7 +82,26 @@ private:
     void setTilingOption(TilingOption);
     TransformationMatrix tilingTransform() const;
 
+    UpdatableTile* tileAt(int, int) const;
+    UpdatableTile* createTile(int, int);
+    void invalidateTiles(const IntRect& contentRect);
+
+    TextureManager* textureManager() const;
+
+    // State held between update and upload.
+    IntRect m_paintRect;
+    IntRect m_updateRect;
+
+    // Tightly packed set of unused tiles.
+    Vector<RefPtr<UpdatableTile> > m_unusedTiles;
+
     TilingOption m_tilingOption;
+    GC3Denum m_textureFormat;
+    bool m_skipsDraw;
+    LayerTextureUpdater::Orientation m_textureOrientation;
+    LayerTextureUpdater::SampledTexelFormat m_sampledTexelFormat;
+
+    OwnPtr<CCLayerTilingData> m_tiler;
 };
 
 }

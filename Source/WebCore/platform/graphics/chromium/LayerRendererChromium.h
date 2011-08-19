@@ -37,7 +37,6 @@
 #include "ContentLayerChromium.h"
 #include "IntRect.h"
 #include "LayerChromium.h"
-#include "LayerTilerChromium.h"
 #include "VideoLayerChromium.h"
 #include "cc/CCCanvasLayerImpl.h"
 #include "cc/CCHeadsUpDisplay.h"
@@ -124,10 +123,10 @@ public:
     const CCHeadsUpDisplay::Program* headsUpDisplayProgram();
     const CCRenderSurface::Program* renderSurfaceProgram();
     const CCRenderSurface::MaskProgram* renderSurfaceMaskProgram();
-    const LayerTilerChromium::Program* tilerProgram();
-    const LayerTilerChromium::ProgramSwizzle* tilerProgramSwizzle();
-    const LayerTilerChromium::ProgramAA* tilerProgramAA();
-    const LayerTilerChromium::ProgramSwizzleAA* tilerProgramSwizzleAA();
+    const CCTiledLayerImpl::Program* tilerProgram();
+    const CCTiledLayerImpl::ProgramSwizzle* tilerProgramSwizzle();
+    const CCTiledLayerImpl::ProgramAA* tilerProgramAA();
+    const CCTiledLayerImpl::ProgramSwizzleAA* tilerProgramSwizzleAA();
     const CCCanvasLayerImpl::Program* canvasLayerProgram();
     const CCPluginLayerImpl::Program* pluginLayerProgram();
     const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
@@ -153,6 +152,8 @@ public:
     void releaseTextures();
 
     void setLayerRendererRecursive(LayerChromium*);
+
+    GC3Denum bestTextureFormat();
 
 #ifndef NDEBUG
     static bool s_inPaintLayerContents;
@@ -218,10 +219,10 @@ private:
     OwnPtr<GeometryBinding> m_sharedGeometry;
     OwnPtr<LayerChromium::BorderProgram> m_borderProgram;
     OwnPtr<CCHeadsUpDisplay::Program> m_headsUpDisplayProgram;
-    OwnPtr<LayerTilerChromium::Program> m_tilerProgram;
-    OwnPtr<LayerTilerChromium::ProgramSwizzle> m_tilerProgramSwizzle;
-    OwnPtr<LayerTilerChromium::ProgramAA> m_tilerProgramAA;
-    OwnPtr<LayerTilerChromium::ProgramSwizzleAA> m_tilerProgramSwizzleAA;
+    OwnPtr<CCTiledLayerImpl::Program> m_tilerProgram;
+    OwnPtr<CCTiledLayerImpl::ProgramSwizzle> m_tilerProgramSwizzle;
+    OwnPtr<CCTiledLayerImpl::ProgramAA> m_tilerProgramAA;
+    OwnPtr<CCTiledLayerImpl::ProgramSwizzleAA> m_tilerProgramSwizzleAA;
     OwnPtr<CCCanvasLayerImpl::Program> m_canvasLayerProgram;
     OwnPtr<CCPluginLayerImpl::Program> m_pluginLayerProgram;
     OwnPtr<CCRenderSurface::MaskProgram> m_renderSurfaceMaskProgram;

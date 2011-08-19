@@ -60,6 +60,8 @@ public:
     void bindTexture(GraphicsContext3D*);
     void framebufferTexture2D(GraphicsContext3D*);
 
+    unsigned textureId() const { return m_textureId; }
+
 private:
     explicit ManagedTexture(TextureManager*);
 
@@ -73,4 +75,3 @@ private:
 }
 
 #endif // ManagedTexture_h
-

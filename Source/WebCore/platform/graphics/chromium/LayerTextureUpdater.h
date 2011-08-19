@@ -30,6 +30,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "GraphicsTypes3D.h"
+#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
@@ -78,4 +79,3 @@ private:
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)
 #endif // LayerTextureUpdater_h
-

@@ -40,7 +40,6 @@ class IntRect;
 class IntPoint;
 
 class TilingData {
-    WTF_MAKE_NONCOPYABLE(TilingData);
 public:
     TilingData(int maxTextureSize, int totalSizeX, int totalSizeY, bool hasBorderTexels);
     void setTotalSize(int totalSizeX, int totalSizeY);

@@ -488,4 +488,28 @@ TEST(TilingDataTest, setMaxTextureSizeBorders)
     EXPECT_EQ(10, data.numTilesY());
 }
 
+TEST(TilingDataTest, assignment)
+{
+    {
+        TilingData source(8, 16, 32, true);
+        TilingData dest = source;
+        EXPECT_EQ(source.borderTexels(), dest.borderTexels());
+        EXPECT_EQ(source.maxTextureSize(), dest.maxTextureSize());
+        EXPECT_EQ(source.numTilesX(), dest.numTilesX());
+        EXPECT_EQ(source.numTilesY(), dest.numTilesY());
+        EXPECT_EQ(source.totalSizeX(), dest.totalSizeX());
+        EXPECT_EQ(source.totalSizeY(), dest.totalSizeY());
+    }
+    {
+        TilingData source(3, 6, 100, false);
+        TilingData dest(source);
+        EXPECT_EQ(source.borderTexels(), dest.borderTexels());
+        EXPECT_EQ(source.maxTextureSize(), dest.maxTextureSize());
+        EXPECT_EQ(source.numTilesX(), dest.numTilesX());
+        EXPECT_EQ(source.numTilesY(), dest.numTilesY());
+        EXPECT_EQ(source.totalSizeX(), dest.totalSizeX());
+        EXPECT_EQ(source.totalSizeY(), dest.totalSizeY());
+    }
+}
+
 } // namespace

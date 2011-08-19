@@ -1,3 +1,112 @@
+2011-08-17  Adrienne Walker  <enne@google.com>
+
+        [chromium] Split tiler into main thread / compositor thread versions
+        https://bugs.webkit.org/show_bug.cgi?id=66065
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests.
+
+        LayerTilerChromium is renamed to be CCLayerTilingData. Invalidation
+        and paint functionality is pushed into TiledLayerChromium and drawing
+        with GL is pushed into CCTiledLayerImpl. During tree synchronization,
+        the tiler properties and texture IDs are synchronized into
+        CCTiledLayerImpl.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::createTextureUpdaterIfNeeded):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::bestTextureFormat):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::tilerProgram):
+        (WebCore::LayerRendererChromium::tilerProgramSwizzle):
+        (WebCore::LayerRendererChromium::tilerProgramAA):
+        (WebCore::LayerRendererChromium::tilerProgramSwizzleAA):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp: Removed.
+        * platform/graphics/chromium/ManagedTexture.h:
+        (WebCore::ManagedTexture::textureId):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::UpdatableTile::UpdatableTile):
+        (WebCore::UpdatableTile::texture):
+        (WebCore::UpdatableTile::dirty):
+        (WebCore::UpdatableTile::clearDirty):
+        (WebCore::TiledLayerChromium::TiledLayerChromium):
+        (WebCore::TiledLayerChromium::cleanupResources):
+        (WebCore::TiledLayerChromium::drawsContent):
+        (WebCore::TiledLayerChromium::createTilerIfNeeded):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        (WebCore::TiledLayerChromium::dumpLayerProperties):
+        (WebCore::TiledLayerChromium::textureManager):
+        (WebCore::TiledLayerChromium::tileAt):
+        (WebCore::TiledLayerChromium::createTile):
+        (WebCore::TiledLayerChromium::invalidateTiles):
+        (WebCore::TiledLayerChromium::invalidateRect):
+        (WebCore::TiledLayerChromium::protectVisibleTileTextures):
+        (WebCore::TiledLayerChromium::protectTileTextures):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTilingData.cpp: Added.
+        (WebCore::CCLayerTilingData::create):
+        (WebCore::CCLayerTilingData::CCLayerTilingData):
+        (WebCore::CCLayerTilingData::setTileSize):
+        (WebCore::CCLayerTilingData::operator=):
+        (WebCore::CCLayerTilingData::addTile):
+        (WebCore::CCLayerTilingData::takeTile):
+        (WebCore::CCLayerTilingData::tileAt):
+        (WebCore::CCLayerTilingData::reset):
+        (WebCore::CCLayerTilingData::contentRectToTileIndices):
+        (WebCore::CCLayerTilingData::contentRectToLayerRect):
+        (WebCore::CCLayerTilingData::layerRectToContentRect):
+        (WebCore::CCLayerTilingData::tileContentRect):
+        (WebCore::CCLayerTilingData::tileLayerRect):
+        (WebCore::CCLayerTilingData::setLayerPosition):
+        (WebCore::CCLayerTilingData::growLayerToContain):
+        * platform/graphics/chromium/cc/CCLayerTilingData.h: Renamed from Source/WebCore/platform/graphics/chromium/LayerTilerChromium.h.
+        (WebCore::CCLayerTilingData::numTiles):
+        (WebCore::CCLayerTilingData::numTilesX):
+        (WebCore::CCLayerTilingData::numTilesY):
+        (WebCore::CCLayerTilingData::tileBounds):
+        (WebCore::CCLayerTilingData::textureOffset):
+        (WebCore::CCLayerTilingData::tileSize):
+        (WebCore::CCLayerTilingData::hasBorderTexels):
+        (WebCore::CCLayerTilingData::isEmpty):
+        (WebCore::CCLayerTilingData::Tile::Tile):
+        (WebCore::CCLayerTilingData::Tile::i):
+        (WebCore::CCLayerTilingData::Tile::j):
+        (WebCore::CCLayerTilingData::Tile::moveTo):
+        (WebCore::CCLayerTilingData::TileMapKeyTraits::emptyValue):
+        (WebCore::CCLayerTilingData::TileMapKeyTraits::constructDeletedValue):
+        (WebCore::CCLayerTilingData::TileMapKeyTraits::isDeletedValue):
+        (WebCore::CCLayerTilingData::tiles):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::DrawableTile::DrawableTile):
+        (WebCore::DrawableTile::textureId):
+        (WebCore::DrawableTile::setTextureId):
+        (WebCore::CCTiledLayerImpl::CCTiledLayerImpl):
+        (WebCore::CCTiledLayerImpl::bindContentsTexture):
+        (WebCore::CCTiledLayerImpl::tileAt):
+        (WebCore::CCTiledLayerImpl::createTile):
+        (WebCore::CCTiledLayerImpl::draw):
+        (WebCore::CCTiledLayerImpl::setTilingData):
+        (WebCore::CCTiledLayerImpl::syncTextureId):
+        (WebCore::isCCW):
+        (WebCore::computeEdge):
+        (WebCore::intersect):
+        (WebCore::CCTiledLayerImpl::drawTiles):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.h:
+        (WebCore::CCTiledLayerImpl::setSkipsDraw):
+        (WebCore::CCTiledLayerImpl::setTextureOrientation):
+        (WebCore::CCTiledLayerImpl::setSampledTexelFormat):
+        * platform/graphics/gpu/TilingData.h:
+
 2011-08-19  Dan Bernstein  <mitz@apple.com>
 
         Better build fix after r93384.

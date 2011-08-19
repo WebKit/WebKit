@@ -104,12 +104,12 @@ void ContentLayerChromium::paintContentsIfDirty()
 
     IntRect dirty = enclosingIntRect(m_dirtyRect);
     dirty.intersect(IntRect(IntPoint(), contentBounds()));
-    m_tiler->invalidateRect(dirty);
+    invalidateRect(dirty);
 
     if (!drawsContent())
         return;
 
-    m_tiler->prepareToUpdate(layerRect, textureUpdater());
+    prepareToUpdate(layerRect);
     m_dirtyRect = FloatRect();
 }
 
@@ -122,6 +122,7 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
 {
     if (m_textureUpdater)
         return;
+
 #if USE(SKIA)
     if (layerRenderer()->settings().acceleratePainting) {
         m_textureUpdater = LayerTextureUpdaterSkPicture::create(layerRendererContext(), ContentLayerPainter::create(m_owner), layerRenderer()->skiaContext());
@@ -129,11 +130,6 @@ void ContentLayerChromium::createTextureUpdaterIfNeeded()
     }
 #endif
     m_textureUpdater = LayerTextureUpdaterBitmap::create(layerRendererContext(), ContentLayerPainter::create(m_owner), layerRenderer()->contextSupportsMapSub());
-}
-
-void ContentLayerChromium::protectVisibleTileTextures()
-{
-    m_tiler->protectTileTextures(IntRect(IntPoint::zero(), contentBounds()));
 }
 
 }

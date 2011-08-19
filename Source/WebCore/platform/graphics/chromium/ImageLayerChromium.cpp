@@ -154,7 +154,7 @@ void ImageLayerChromium::paintContentsIfDirty()
         updateTileSizeAndTilingOption();
         IntRect paintRect(IntPoint(), contentBounds());
         if (!m_dirtyRect.isEmpty()) {
-            m_tiler->invalidateRect(paintRect);
+            invalidateRect(paintRect);
             m_dirtyRect = IntRect();
         }
     }
@@ -162,7 +162,7 @@ void ImageLayerChromium::paintContentsIfDirty()
     if (visibleLayerRect().isEmpty())
         return;
 
-    m_tiler->prepareToUpdate(visibleLayerRect(), m_textureUpdater.get());
+    prepareToUpdate(visibleLayerRect());
 }
 
 LayerTextureUpdater* ImageLayerChromium::textureUpdater() const

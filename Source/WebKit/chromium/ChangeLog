@@ -1,3 +1,15 @@
+2011-08-17  Adrienne Walker  <enne@google.com>
+
+        [chromium] Split tiler into main thread / compositor thread versions
+        https://bugs.webkit.org/show_bug.cgi?id=66065
+
+        Reviewed by James Robinson.
+
+        Add a test for assignment and copy constructor for TilingData.
+
+        * tests/TilingDataTest.cpp:
+        (WebCore::TEST):
+
 2011-08-19  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Extensions API][chromium] webInspector.resources deprecation warning is given even for extensions that don't use webInspector.resources

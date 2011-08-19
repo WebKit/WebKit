@@ -45,6 +45,7 @@
 #include "LayerTextureUpdaterCanvas.h"
 #include "NonCompositedContentHost.h"
 #include "NotImplemented.h"
+#include "PlatformColor.h"
 #include "RenderSurfaceChromium.h"
 #include "TextStream.h"
 #include "TextureManager.h"
@@ -535,6 +536,11 @@ void LayerRendererChromium::releaseTextures()
     m_renderSurfaceTextureManager->unprotectAllTextures();
     m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
     m_renderSurfaceTextureManager->deleteEvictedTextures(m_context.get());
+}
+
+GC3Denum LayerRendererChromium::bestTextureFormat()
+{
+    return PlatformColor::bestTextureFormat(context());
 }
 
 void LayerRendererChromium::viewportChanged()
@@ -1114,7 +1120,7 @@ bool LayerRendererChromium::initializeSharedObjects()
     // start while we do other work. Other programs are created lazily on first access.
     m_sharedGeometry = adoptPtr(new GeometryBinding(m_context.get()));
     m_renderSurfaceProgram = adoptPtr(new CCRenderSurface::Program(m_context.get()));
-    m_tilerProgram = adoptPtr(new LayerTilerChromium::Program(m_context.get()));
+    m_tilerProgram = adoptPtr(new CCTiledLayerImpl::Program(m_context.get()));
 
     GLC(m_context.get(), m_context->flush());
 
@@ -1170,7 +1176,7 @@ const CCRenderSurface::MaskProgram* LayerRendererChromium::renderSurfaceMaskProg
     return m_renderSurfaceMaskProgram.get();
 }
 
-const LayerTilerChromium::Program* LayerRendererChromium::tilerProgram()
+const CCTiledLayerImpl::Program* LayerRendererChromium::tilerProgram()
 {
     ASSERT(m_tilerProgram);
     if (!m_tilerProgram->initialized()) {
@@ -1180,10 +1186,10 @@ const LayerTilerChromium::Program* LayerRendererChromium::tilerProgram()
     return m_tilerProgram.get();
 }
 
-const LayerTilerChromium::ProgramSwizzle* LayerRendererChromium::tilerProgramSwizzle()
+const CCTiledLayerImpl::ProgramSwizzle* LayerRendererChromium::tilerProgramSwizzle()
 {
     if (!m_tilerProgramSwizzle)
-        m_tilerProgramSwizzle = adoptPtr(new LayerTilerChromium::ProgramSwizzle(m_context.get()));
+        m_tilerProgramSwizzle = adoptPtr(new CCTiledLayerImpl::ProgramSwizzle(m_context.get()));
     if (!m_tilerProgramSwizzle->initialized()) {
         TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzle::initialize", this, 0);
         m_tilerProgramSwizzle->initialize();
@@ -1191,10 +1197,10 @@ const LayerTilerChromium::ProgramSwizzle* LayerRendererChromium::tilerProgramSwi
     return m_tilerProgramSwizzle.get();
 }
 
-const LayerTilerChromium::ProgramAA* LayerRendererChromium::tilerProgramAA()
+const CCTiledLayerImpl::ProgramAA* LayerRendererChromium::tilerProgramAA()
 {
     if (!m_tilerProgramAA)
-        m_tilerProgramAA = adoptPtr(new LayerTilerChromium::ProgramAA(m_context.get()));
+        m_tilerProgramAA = adoptPtr(new CCTiledLayerImpl::ProgramAA(m_context.get()));
     if (!m_tilerProgramAA->initialized()) {
         TRACE_EVENT("LayerRendererChromium::tilerProgramAA::initialize", this, 0);
         m_tilerProgramAA->initialize();
@@ -1202,10 +1208,10 @@ const LayerTilerChromium::ProgramAA* LayerRendererChromium::tilerProgramAA()
     return m_tilerProgramAA.get();
 }
 
-const LayerTilerChromium::ProgramSwizzleAA* LayerRendererChromium::tilerProgramSwizzleAA()
+const CCTiledLayerImpl::ProgramSwizzleAA* LayerRendererChromium::tilerProgramSwizzleAA()
 {
     if (!m_tilerProgramSwizzleAA)
-        m_tilerProgramSwizzleAA = adoptPtr(new LayerTilerChromium::ProgramSwizzleAA(m_context.get()));
+        m_tilerProgramSwizzleAA = adoptPtr(new CCTiledLayerImpl::ProgramSwizzleAA(m_context.get()));
     if (!m_tilerProgramSwizzleAA->initialized()) {
         TRACE_EVENT("LayerRendererChromium::tilerProgramSwizzleAA::initialize", this, 0);
         m_tilerProgramSwizzleAA->initialize();
