@@ -414,8 +414,14 @@ WebInspector.ScriptsPanel.prototype = {
 
     evaluateInSelectedCallFrame: function(code, objectGroup, includeCommandLineAPI, returnByValue, callback)
     {
+        function didEvaluate()
+        {
+            if (objectGroup === "console")
+                this.sidebarPanes.scopechain.update(this._presentationModel.selectedCallFrame);
+            callback.apply(null, arguments);
+        }
         var selectedCallFrame = this._presentationModel.selectedCallFrame;
-        selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, callback);
+        selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, returnByValue, didEvaluate.bind(this));
     },
 
     getSelectedCallFrameVariables: function(callback)
