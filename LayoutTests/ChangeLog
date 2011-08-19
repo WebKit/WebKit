@@ -1,3 +1,12 @@
+2011-08-19  Tony Chang  <tony@chromium.org>
+
+        [chromium] Update results for japanese-rl-selection-repaint-in-regions.html that
+        changed after r93428.
+
+        * platform/chromium-cg-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/chromium-cg-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png:
+        * platform/mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt:
+
 2011-08-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r93425.

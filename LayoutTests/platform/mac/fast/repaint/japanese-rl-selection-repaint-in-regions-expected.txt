@@ -7,7 +7,7 @@ layer at (296,100) size 404x404
   RenderRegion {DIV} at (100,100) size 404x404 [border: (2px solid #000000)]
 Flow Threads
   Thread with flow-name 'thread'
-    layer at (400,0) size 400x400 scrollX 80 scrollWidth 480
+    layer at (400,0) size 400x400
       RenderFlowThread at (0,0) size 400x400
         RenderBlock {DIV} at (0,0) size 480x400
           RenderText {#text} at (5,0) size 469x388
