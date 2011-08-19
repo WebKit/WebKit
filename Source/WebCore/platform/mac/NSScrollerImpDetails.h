@@ -28,7 +28,7 @@
 
 #include "config.h"
 
-#if USE(WK_SCROLLBAR_PAINTER)
+#if USE(SCROLLBAR_PAINTER)
 @interface NSObject (ScrollbarPainter)
 + (id)scrollerImpWithStyle:(NSScrollerStyle)newScrollerStyle controlSize:(NSControlSize)newControlSize horizontal:(BOOL)horizontal replacingScrollerImp:(id)previous;
 - (CGFloat)knobAlpha;

@@ -1,3 +1,63 @@
+2011-08-19  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66590
+        Re-name scrollbar painter types
+
+        Reviewed by Sam Weinig.
+
+        Names changed to remove references to WebKitSystemInterface since the 
+        implementation is now in WebCore. And the type names changed to be more Objective-
+        Cish instead of C++ish
+        WTF_USE_WK_SCROLLBAR_PAINTER -> WTF_USE_SCROLLBAR_PAINTER
+        WKScrollbarPainterRef -> ScrollbarPainter
+        WKScrollbarPainterControllerRef -> ScrollbarPainterController
+
+        * platform/mac/NSScrollerImpDetails.h:
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollbarPartAnimation initWithScrollbarPainter:part:WebCore::scrollAnimator:WebCore::animateAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (WebCore::ScrollAnimatorMac::ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::~ScrollAnimatorMac):
+        (WebCore::ScrollAnimatorMac::notifyPositionChanged):
+        (WebCore::ScrollAnimatorMac::contentAreaWillPaint):
+        (WebCore::ScrollAnimatorMac::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorMac::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorMac::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorMac::willStartLiveResize):
+        (WebCore::ScrollAnimatorMac::contentsResized):
+        (WebCore::ScrollAnimatorMac::willEndLiveResize):
+        (WebCore::ScrollAnimatorMac::contentAreaDidShow):
+        (WebCore::ScrollAnimatorMac::contentAreaDidHide):
+        (WebCore::ScrollAnimatorMac::didBeginScrollGesture):
+        (WebCore::ScrollAnimatorMac::didEndScrollGesture):
+        (WebCore::ScrollAnimatorMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorMac::cancelAnimations):
+        (WebCore::ScrollAnimatorMac::setIsActive):
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+        * platform/mac/ScrollViewMac.mm:
+        (WebCore::ScrollView::platformSetScrollbarOverlayStyle):
+        * platform/mac/ScrollbarThemeMac.h:
+        * platform/mac/ScrollbarThemeMac.mm:
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+        (WebCore::updateArrowPlacement):
+        (WebCore::ScrollbarThemeMac::registerScrollbar):
+        (WebCore::ScrollbarThemeMac::setNewPainterForScrollbar):
+        (WebCore::ScrollbarThemeMac::painterForScrollbar):
+        (WebCore::ScrollbarThemeMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeMac::usesOverlayScrollbars):
+        (WebCore::ScrollbarThemeMac::updateScrollbarOverlayStyle):
+        (WebCore::ScrollbarThemeMac::hasThumb):
+        (WebCore::ScrollbarThemeMac::minimumThumbLength):
+        (WebCore::ScrollbarThemeMac::updateEnabledState):
+        (WebCore::scrollbarPainterPaint):
+        (WebCore::ScrollbarThemeMac::paint):
+
 2011-08-19  Van Lam  <vanlam@google.com>
 
         Rename VisiblePosition::honorEditableBoundary* to VisiblePosition::honorEditingBoundary*

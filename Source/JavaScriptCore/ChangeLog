@@ -1,3 +1,14 @@
+2011-08-19  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66590
+        Re-name scrollbar painter types
+
+        Reviewed by Sam Weinig.
+
+        WTF_USE_WK_SCROLLBAR_PAINTER is now WTF_USE_SCROLLBAR_PAINTER since WK no longer 
+        applies.
+        * wtf/Platform.h:
+
 2011-08-18  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Move allocation in constructors into separate constructorBody() methods
