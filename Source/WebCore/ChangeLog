@@ -1,3 +1,22 @@
+2011-08-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        [CSSRegions]Content displayed in regions should not be scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=66459
+
+        Reviewed by Darin Adler.
+
+        Initially, when creating the style for the RenderFlowThread, overflowX and overflowY were both set to hidden,
+        so that RenderView did not display scrollbars when a RenderFlowThread exists. However, this allowed the possibility
+        of scrolling the content displayed in region.
+
+        Now, the RenderFlowThread objects are ignored in RenderBlock::insertPositionedObject and the style of the RenderFlowThread
+        can be set to visible, thus preventing scrolling of the content displayed in regions.
+
+        Test: fast/regions/content-flowed-into-regions-no-scroll.html
+
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::createFlowThreadStyle):
+
 2011-08-19  Julien Chaffraix  <jchaffraix@webkit.org>
 
         REGRESSION (r84327-r84329): CSS stylesheets fail to load on www.flagstar.com login page
