@@ -38,6 +38,7 @@ class ClientRect;
 class Document;
 class Element;
 class Node;
+class Range;
 
 class Internals : public RefCounted<Internals> {
 public:
@@ -66,6 +67,9 @@ public:
 #endif
 
     PassRefPtr<ClientRect> boundingBox(Element*, ExceptionCode&);
+
+    unsigned markerCountForNode(Node*, ExceptionCode&);
+    PassRefPtr<Range> markerRangeForNode(Node*, unsigned, ExceptionCode&);
 
     void setForceCompositingMode(Document*, bool enabled, ExceptionCode&);
 

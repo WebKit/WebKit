@@ -1,3 +1,14 @@
+2011-08-19  MORITA Hajime  <morrita@google.com>
+
+        Spell-checking doesn't recognize word boundaries on contests inserted by execCommand('insertHTML')
+        https://bugs.webkit.org/show_bug.cgi?id=65902
+
+        Reviewed by Ryosuke Niwa.
+        
+        Add export for window.internals object.
+
+        * Source/autotools/symbols.filter:
+
 2011-08-16  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

@@ -1941,16 +1941,7 @@ void Editor::clearMisspellingsAndBadGrammar(const VisibleSelection &movingSelect
 
 void Editor::markMisspellingsAndBadGrammar(const VisibleSelection &movingSelection)
 {
-    bool markSpelling = isContinuousSpellCheckingEnabled();
-    bool markGrammar = markSpelling && isGrammarCheckingEnabled();
-
-    if (markSpelling) {
-        RefPtr<Range> unusedFirstMisspellingRange;
-        markMisspellings(movingSelection, unusedFirstMisspellingRange);
-    }
-
-    if (markGrammar)
-        markBadGrammar(movingSelection);
+    markMisspellingsAndBadGrammar(movingSelection, isContinuousSpellCheckingEnabled() && isGrammarCheckingEnabled(), movingSelection);
 }
 
 void Editor::markMisspellingsAfterTypingToWord(const VisiblePosition &wordStart, const VisibleSelection& selectionAfterTyping, bool doReplacement)

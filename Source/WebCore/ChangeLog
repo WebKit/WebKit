@@ -1,3 +1,26 @@
+2011-08-19  MORITA Hajime  <morrita@google.com>
+
+        Spell-checking doesn't recognize word boundaries on contests inserted by execCommand('insertHTML')
+        https://bugs.webkit.org/show_bug.cgi?id=65902
+
+        Reviewed by Ryosuke Niwa.
+        
+        markMisspellingsAndBadGrammar() was using markSpelling() and markBadGrammar().
+        But these are low-level API and caller should take care of word boundary.
+        This change replaced these call with overloaded version of markMisspellingsAndBadGrammar(),
+        which handles word boundary correctly.
+        
+        Test: editing/spelling/spelling-insert-html.html
+
+        * WebCore.exp.in:
+        * editing/Editor.cpp:
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        * testing/Internals.cpp:
+        (WebCore::Internals::markerCountOf): Added.
+        (WebCore::Internals::markedRangeAt): Added.
+        * testing/Internals.h:
+        * testing/Internals.idl:
+
 2011-08-19  Nayan Kumar K  <nayankk@motorola.com>
 
         Run-time error fix in WebKit-GTK with video support disabled.

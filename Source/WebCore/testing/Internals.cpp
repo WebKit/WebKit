@@ -29,12 +29,14 @@
 #include "CachedResourceLoader.h"
 #include "ClientRect.h"
 #include "Document.h"
+#include "DocumentMarkerController.h"
 #include "Element.h"
 #include "ExceptionCode.h"
 #include "InspectorController.h"
 #include "MemoryCache.h"
 #include "NodeRenderingContext.h"
 #include "Page.h"
+#include "Range.h"
 #include "RenderObject.h"
 #include "RenderTreeAsText.h"
 #include "Settings.h"
@@ -183,6 +185,29 @@ PassRefPtr<ClientRect> Internals::boundingBox(Element* element, ExceptionCode& e
     return ClientRect::create(renderer->absoluteBoundingBoxRect());
 }
 
+unsigned Internals::markerCountForNode(Node* node, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return node->document()->markers()->markersFor(node).size();
+}
+
+PassRefPtr<Range> Internals::markerRangeForNode(Node* node, unsigned index, ExceptionCode& ec)
+{
+    if (!node) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+    
+    Vector<DocumentMarker*> markers = node->document()->markers()->markersFor(node);
+    if (markers.size() <= index)
+        return 0;
+    return Range::create(node->document(), node, markers[index]->startOffset(), node, markers[index]->endOffset());
+}
+
 void Internals::setForceCompositingMode(Document* document, bool enabled, ExceptionCode& ec)
 {
     if (!document || !document->settings()) {
@@ -232,5 +257,6 @@ void Internals::reset(Document* document)
     if (passwordEchoEnabledBackedUp)
         document->settings()->setPasswordEchoDurationInSeconds(passwordEchoEnabledBackup);
 }
+
 
 }

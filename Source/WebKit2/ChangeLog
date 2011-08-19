@@ -1,3 +1,15 @@
+2011-08-19  MORITA Hajime  <morrita@google.com>
+
+        Spell-checking against execCommand() inserted HTML doesn't care word boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=65902
+
+        Reviewed by Ryosuke Niwa.
+        
+        Add exports for window.internals object.
+
+        * win/WebKit2.def:
+        * win/WebKit2CFLite.def:
+
 2011-08-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

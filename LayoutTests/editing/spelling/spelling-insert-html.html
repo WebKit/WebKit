@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<pre id="description"></pre>
+<pre id="console"></pre>
+<div id="container">
+  <div id="destination" contentEditable>food.</div>
+</div>
+
+<script>
+description("The spellchecker shouldn't mark substrings of words after pasting.");
+
+var sel = window.getSelection();
+var destination = document.getElementById("destination");
+var destinationText = destination.firstChild;
+sel.setBaseAndExtent(destinationText, 2, destinationText, 2);
+
+document.execCommand("InsertHTML", false, "<div>o zz</div><div>fo</div>");
+
+if (window.internals) {
+    // The destination node has multiple text nodes, 
+    // so we need concatenate the marked text.
+    var texts = destination.childNodes;
+    var markedText = "";
+    for (var i = 0; i < texts.length; ++i) {
+        var marked = internals.markerRangeForNode(texts[i], 0);
+        if (marked)
+            markedText += marked.toString()
+    }
+
+    // The first "foo" isn't checked because it crosses the pasted and base html.
+    // See http://webkit.org/b/66450.
+    shouldBeEqualToString("markedText", "zz");
+}
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+var successfullyParsed = true;
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
