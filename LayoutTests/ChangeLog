@@ -1,3 +1,13 @@
+2011-08-19  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        [chromium] Updating baselines.
+
+        Unreviewed.
+
+        * platform/chromium-cg-mac-leopard/editing/pasteboard/paste-text-008-expected.png: Added.
+        * platform/chromium-cg-mac/editing/pasteboard/merge-end-list-expected.png: Added.
+        * platform/chromium-cg-mac/editing/pasteboard/paste-text-008-expected.png: Added.
+
 2011-08-19  Anton Muhin  <antonm@chromium.org>
 
         [v8] CSS wrapper objects retention
