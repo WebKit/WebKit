@@ -1,3 +1,21 @@
+2011-08-19  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Default to experimental-fully-parallel mode for chromium gpu port
+        https://bugs.webkit.org/show_bug.cgi?id=66606
+
+        Reviewed by Dirk Pranke.
+
+        The chromium GPU configuration does not (currently) contain any tests
+        incompatible with --experimental-fully-parallel, and this flag is a
+        significan speedup because of the directory canvas/philip/tests which
+        contains 802 tests in the same directory. Setting this option by
+        default on this configuration is a 2x speed in release, 44s to 22s,
+        and a 3x speedup in debug, 223s to 77s, on linux on a 16 core machine.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_gpu_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-08-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r93426.

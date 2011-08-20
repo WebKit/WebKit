@@ -67,6 +67,7 @@ class ChromiumGpuTest(unittest.TestCase):
             port = chromium_gpu.get(port_name=port_name, options=mock_options)
         self.assertTrue(port._options.accelerated_compositing)
         self.assertTrue(port._options.accelerated_2d_canvas)
+        self.assertTrue(port._options.experimental_fully_parallel)
         self.assertEqual(port._options.builder_name, 'foo - GPU')
 
         self.assertTrue(port.name().startswith(port_name))

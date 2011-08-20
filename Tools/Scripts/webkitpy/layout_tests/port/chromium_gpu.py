@@ -65,6 +65,8 @@ def _set_gpu_options(port):
         port._options.accelerated_compositing = True
     if port.get_option('accelerated_2d_canvas') is None:
         port._options.accelerated_2d_canvas = True
+    if port.get_option('experimental_fully_parallel') is None:
+        port._options.experimental_fully_parallel = True
 
     # FIXME: Remove this after http://codereview.chromium.org/5133001/ is enabled
     # on the bots.
