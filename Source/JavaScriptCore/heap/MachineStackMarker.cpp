@@ -76,7 +76,7 @@
 #include <errno.h>
 #endif
 
-#if USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
+#if ENABLE(JSC_MULTIPLE_THREADS) && USE(PTHREADS) && !OS(WINDOWS) && !OS(DARWIN)
 #include <signal.h>
 #ifndef SA_RESTART
 #error MachineThreads requires SA_RESTART

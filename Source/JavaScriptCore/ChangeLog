@@ -1,3 +1,17 @@
+2011-08-19  Daniel Bates  <dbates@webkit.org>
+
+        Only #include <signal.h> and require SA_RESTART when building with JSC_MULTIPLE_THREADS
+        https://bugs.webkit.org/show_bug.cgi?id=66617
+
+        Both <signal.h> and SA_RESTART usage are guarded behind ENABLE(JSC_MULTIPLE_THREADS).
+        But we cause a compile error if the platform doesn't support SA_RESTART regardless of
+        whether JSC_MULTIPLE_THREADS is enabled for the port. Instead, we shouldn't require
+        SA_RESTART support unless we are building with JSC_MULTIPLE_THREADS enabled.
+
+        Reviewed by Antonio Gomes.
+
+        * heap/MachineStackMarker.cpp:
+
 2011-08-19  Filip Pizlo  <fpizlo@apple.com>
 
         The JSC JIT currently has no facility to profile and report
