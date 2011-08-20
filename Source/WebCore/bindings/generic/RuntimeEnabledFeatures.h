@@ -85,6 +85,7 @@ public:
     static bool htmlMediaElementEnabled();
     static bool htmlAudioElementEnabled();
     static bool htmlVideoElementEnabled();
+    static bool htmlSourceElementEnabled();
     static bool mediaErrorEnabled();
     static bool timeRangesEnabled();
 #endif

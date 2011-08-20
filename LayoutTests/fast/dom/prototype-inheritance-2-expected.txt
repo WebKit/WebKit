@@ -276,6 +276,7 @@ Never found HTMLPreElement
 Never found HTMLQuoteElement
 Never found HTMLScriptElement
 Never found HTMLSelectElement
+Never found HTMLSourceElement
 Never found HTMLTableCaptionElement
 Never found HTMLTableCellElement
 Never found HTMLTableColElement

@@ -1,3 +1,18 @@
+2011-08-20  Tom Zakrajsek  <tomz@codeaurora.org>
+
+        instanceof HTMLSourceElement Fails
+        https://bugs.webkit.org/show_bug.cgi?id=65013
+
+        Reviewed by Eric Carlson.
+
+        Add HTMLSourceElement to DOMWindow.idl for consistency.  Constructors for
+        all elements should be available on DOMWindow.
+
+         * bindings/generic/RuntimeEnabledFeatures.cpp:
+        (WebCore::RuntimeEnabledFeatures::htmlSourceElementEnabled):
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        * page/DOMWindow.idl:
+
 2011-08-20  Darin Adler  <darin@apple.com>
 
         If Range::insertNode is passed an empty document fragment, it creates a broken DOM tree

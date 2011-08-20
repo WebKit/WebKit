@@ -221,6 +221,8 @@ PASS inner.HTMLScriptElement.isInner is true
 PASS inner.HTMLScriptElement.constructor.isInner is true
 PASS inner.HTMLSelectElement.isInner is true
 PASS inner.HTMLSelectElement.constructor.isInner is true
+PASS inner.HTMLSourceElement.isInner is true
+PASS inner.HTMLSourceElement.constructor.isInner is true
 PASS inner.HTMLStyleElement.isInner is true
 PASS inner.HTMLStyleElement.constructor.isInner is true
 PASS inner.HTMLTableCaptionElement.isInner is true
