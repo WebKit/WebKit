@@ -144,6 +144,8 @@ void NewXMLDocumentParser::finish()
     if (m_parserPaused)
         return;
 
+    m_treeBuilder->finish();
+
     m_finishWasCalled = true;
     if (isParsing())
         prepareToStopParsing();

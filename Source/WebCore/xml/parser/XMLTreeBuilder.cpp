@@ -47,6 +47,7 @@ XMLTreeBuilder::XMLTreeBuilder(NewXMLDocumentParser* parser, Document* document)
     : m_document(document)
     , m_parser(parser)
     , m_isXHTML(false)
+    , m_sawFirstElement(false)
 {
     m_currentNodeStack.append(NodeStackItem(document));
 }
@@ -55,6 +56,7 @@ XMLTreeBuilder::XMLTreeBuilder(NewXMLDocumentParser* parser, DocumentFragment* f
     : m_document(fragment->document())
     , m_parser(parser)
     , m_isXHTML(false)
+    , m_sawFirstElement(true)
 {
     NodeStackItem stackItem(fragment);
 
@@ -128,8 +130,14 @@ void XMLTreeBuilder::processToken(const AtomicXMLToken& token)
         processEntity(token);
         break;
     case XMLTokenTypes::EndOfFile:
+        exitText();
         return;
     }
+}
+
+void XMLTreeBuilder::finish()
+{
+    exitText();
 }
 
 void XMLTreeBuilder::pushCurrentNode(const NodeStackItem& stackItem)

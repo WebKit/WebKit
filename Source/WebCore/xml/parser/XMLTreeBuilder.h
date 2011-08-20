@@ -53,6 +53,7 @@ public:
     }
 
     void processToken(const AtomicXMLToken&);
+    void finish();
 
 private:
     XMLTreeBuilder(NewXMLDocumentParser*, Document*);
