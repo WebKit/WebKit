@@ -1,3 +1,14 @@
+2011-08-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r93415.
+        http://trac.webkit.org/changeset/93415
+        https://bugs.webkit.org/show_bug.cgi?id=66623
+
+        Introduces failing test (Requested by pfeldman on #webkit).
+
+        * inspector/debugger/breakpoint-manager-expected.txt: Removed.
+        * inspector/debugger/breakpoint-manager.html: Removed.
+
 2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Windows and Linux rebaselines. These baselines were so wrong.

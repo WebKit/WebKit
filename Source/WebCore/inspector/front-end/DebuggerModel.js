@@ -73,15 +73,6 @@ WebInspector.DebuggerModel.prototype = {
         DebuggerAgent.continueToLocation(location);
     },
 
-    setBreakpointByScriptLocation: function(location, condition, callback)
-    {
-        var script = this.scriptForSourceID(location.scriptId);
-        if (script.sourceURL)
-            this.setBreakpoint(script.sourceURL, location.lineNumber, location.columnNumber, condition, callback);
-        else
-            this.setBreakpointBySourceId(location, condition, callback);
-    },
-
     setBreakpoint: function(url, lineNumber, columnNumber, condition, callback)
     {
         // Adjust column if needed.

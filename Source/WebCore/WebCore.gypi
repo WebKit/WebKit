@@ -6330,7 +6330,6 @@
             'inspector/front-end/AuditsPanel.js',
             'inspector/front-end/BinarySearch.js',
             'inspector/front-end/BottomUpProfileDataGridTree.js',
-            'inspector/front-end/BreakpointManager.js',
             'inspector/front-end/BreakpointsSidebarPane.js',
             'inspector/front-end/CallStackSidebarPane.js',
             'inspector/front-end/Checkbox.js',
