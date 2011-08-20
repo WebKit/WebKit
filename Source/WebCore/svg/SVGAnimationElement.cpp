@@ -413,7 +413,10 @@ unsigned SVGAnimationElement::calculateKeyTimesIndex(float percent) const
 {
     unsigned index;
     unsigned keyTimesCount = m_keyTimes.size();
-    for (index = 1; index < keyTimesCount; ++index) {
+    // Compare index + 1 to keyTimesCount because the last keyTimes entry is
+    // required to be 1, and percent can never exceed 1; i.e., the second last
+    // keyTimes entry defines the beginning of the final interval
+    for (index = 1; index + 1 < keyTimesCount; ++index) {
         if (m_keyTimes[index] > percent)
             break;
     }
@@ -551,7 +554,8 @@ void SVGAnimationElement::startedActiveInterval()
     if (calcMode == CalcModeSpline) {
         unsigned splinesCount = m_keySplines.size() + 1;
         if ((fastHasAttribute(SVGNames::keyPointsAttr) && m_keyPoints.size() != splinesCount)
-            || (animationMode == ValuesAnimation && m_values.size() != splinesCount))
+            || (animationMode == ValuesAnimation && m_values.size() != splinesCount)
+            || (fastHasAttribute(SVGNames::keyTimesAttr) && m_keyTimes.size() != splinesCount))
             return;
     }
 
