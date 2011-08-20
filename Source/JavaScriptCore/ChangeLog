@@ -1,5 +1,14 @@
 2011-08-19  Daniel Bates  <dbates@webkit.org>
 
+        Don't include DisallowCType.h when building on QNX
+        https://bugs.webkit.org/show_bug.cgi?id=66616
+
+        Reviewed by Antonio Gomes.
+
+        * config.h:
+
+2011-08-19  Daniel Bates  <dbates@webkit.org>
+
         Implement ExecutableAllocator::cacheFlush() for QNX
         https://bugs.webkit.org/show_bug.cgi?id=66611
 

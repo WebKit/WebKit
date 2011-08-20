@@ -108,9 +108,9 @@
 #endif
 
 // this breaks compilation of <QFontDatabase>, at least, so turn it off for now
-// Also generates errors on wx on Windows, because these functions
-// are used from wx headers. 
-#if !PLATFORM(QT) && !PLATFORM(WX)
+// Also generates errors on wx on Windows and QNX, because these functions
+// are used from wx and QNX headers. 
+#if !PLATFORM(QT) && !PLATFORM(WX) && !OS(QNX)
 #include <wtf/DisallowCType.h>
 #endif
 
