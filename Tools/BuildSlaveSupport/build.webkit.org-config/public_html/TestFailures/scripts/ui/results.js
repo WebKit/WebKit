@@ -207,24 +207,6 @@ ui.results.BuilderSelector = base.extends('select', {
     }
 });
 
-ui.results.Actions = base.extends('div', {
-    init: function()
-    {
-        this.className = 'actions';
-        this.innerHTML = '<button class="rebaseline default">Rebaseline</button>' +
-                         '<button class="previous">&#9664;</button>' +
-                         '<button class="next">&#9654;</button>';
-        this._routeClickEvent('.rebaseline', 'rebaseline');
-        this._routeClickEvent('.previous', 'previous');
-        this._routeClickEvent('.next', 'next');
-    },
-    _routeClickEvent: function(selector, eventName) {
-        $(selector, this).bind('click', function() {
-            $(this).trigger(eventName);
-        }.bind(this));
-    }
-});
-
 ui.results.View = base.extends('div', {
     init: function(delegate)
     {
@@ -235,7 +217,11 @@ ui.results.View = base.extends('div', {
         this._builderSelector = new ui.results.BuilderSelector();
         this._resultsDetails = new ui.results.ResultsDetails(delegate);
 
-        $('.toolbar', this).prepend(new ui.results.Actions())
+        $('.toolbar', this).prepend(new ui.actions.List([
+            new ui.actions.Rebaseline().makeDefault(),
+            new ui.actions.Previous(),
+            new ui.actions.Next(),
+        ]));
         $('.selector', this).append(this._testSelector).append(this._builderSelector);
         $('.content', this).append(this._resultsDetails);
     },

@@ -1,5 +1,27 @@
 2011-08-20  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic summary.html should have UI for examining failures
+        https://bugs.webkit.org/show_bug.cgi?id=66625
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch introduces the notion of UI actions and converts our
+        existing manual <button> manipulation with this new abstraction.  The
+        patch also adds an Examine button to failure notifications.  In a
+        future patch, I'll add a controller that wires this button up to
+        something useful.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/garden-o-matic.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/actions.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/actions_unittests.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary.html:
+
+2011-08-20  Adam Barth  <abarth@webkit.org>
+
         garden-o-matic summary page should indiciate compile failures
         https://bugs.webkit.org/show_bug.cgi?id=66624
 

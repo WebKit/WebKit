@@ -93,17 +93,72 @@ test('SuspiciousCommit', 2, function() {
 test('TestFailures', 7, function() {
     var testFailures = new ui.notifications.TestFailures();
     equal(testFailures.tagName, 'LI');
-    equal(testFailures.innerHTML, '<time>Just now</time><div class="what"><div class="problem"><ul class="effects"></ul><ul class="causes"></ul></div></div>');
+    equal(testFailures.innerHTML,
+        '<time>Just now</time>' +
+        '<div class="what">' +
+            '<div class="problem">' +
+                '<ul class="effects"></ul>' +
+                '<ul class="causes"></ul>' +
+            '</div>' +
+        '</div>' +
+        '<ul class="actions">' +
+            '<li><button>Examine</button></li>' +
+        '</ul>');
     testFailures.addFailureAnalysis({testName: 'test'});
-    equal(testFailures.innerHTML, '<time>Just now</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"></ul></div></div>');
+    equal(testFailures.innerHTML,
+        '<time>Just now</time>' +
+        '<div class="what">' +
+            '<div class="problem">' +
+                '<ul class="effects">' +
+                    '<li>test</li>' +
+                '</ul>' +
+                '<ul class="causes"></ul>' +
+            '</div>' +
+        '</div>' +
+        '<ul class="actions">' +
+            '<li><button>Examine</button></li>' +
+        '</ul>');
     ok(testFailures.containsFailureAnalysis({testName: 'test'}));
     ok(!testFailures.containsFailureAnalysis({testName: 'foo'}));
     testFailures.addFailureAnalysis({testName: 'test'});
-    equal(testFailures.innerHTML, '<time>Just now</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"></ul></div></div>');
+    equal(testFailures.innerHTML,
+        '<time>Just now</time>' +
+        '<div class="what">' +
+            '<div class="problem">' +
+                '<ul class="effects">' +
+                    '<li>test</li>' +
+                '</ul>' +
+                '<ul class="causes"></ul>' +
+            '</div>' +
+        '</div>' +
+        '<ul class="actions">' +
+            '<li><button>Examine</button></li>' +
+        '</ul>');
     var time = new Date();
     time.setMinutes(time.getMinutes() - 10);
     testFailures.addCommitData({revision: 1, time: time, title: "title", author: "author", reviewer: "reviewer"});
-    equal(testFailures.innerHTML, '<time>10 minutes ago</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"><li><div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul></li></ul></div></div>');
+    equal(testFailures.innerHTML,
+        '<time>10 minutes ago</time>' +
+        '<div class="what">' +
+            '<div class="problem">' +
+                '<ul class="effects">' +
+                    '<li>test</li>' +
+                '</ul>' +
+                '<ul class="causes">' +
+                    '<li>' +
+                        '<div class="description">' +
+                            '<a href="">1</a>title author (reviewer)'+
+                        '</div>' +
+                        '<ul class="actions">' +
+                            '<li><button>Roll out</button></li>' +
+                        '</ul>' +
+                    '</li>' +
+                '</ul>' +
+            '</div>' +
+        '</div>' +
+        '<ul class="actions">' +
+            '<li><button>Examine</button></li>' +
+        '</ul>');
 });
 
 test('BuildersFailing', 1, function() {

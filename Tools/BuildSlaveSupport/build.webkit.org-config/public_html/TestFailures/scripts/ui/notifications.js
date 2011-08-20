@@ -113,10 +113,9 @@ var Cause = base.extends('li', {
     {
         this._description = this.appendChild(document.createElement('div'));
         this._description.className = 'description';
-        var actions = this.appendChild(document.createElement('ul'));
-        actions.className = 'actions';
-        // FIXME: Actions should do something.
-        actions.appendChild(document.createElement('li')).innerHTML = '<button>Roll out</button>';
+        this.appendChild(new ui.actions.List([
+            new ui.actions.Rollout()
+        ]));
     }
 });
 
@@ -151,7 +150,11 @@ ui.notifications.Failure = base.extends(ui.notifications.Notification, {
 });
 
 ui.notifications.TestFailures = base.extends(ui.notifications.Failure, {
-    init: function() { },
+    init: function() {
+        this.appendChild(new ui.actions.List([
+            new ui.actions.Examine()
+        ]));
+    },
     containsFailureAnalysis: function(failureAnalysis)
     {
         return Array.prototype.some.call(this._effects.children, function(child) {
