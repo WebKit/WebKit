@@ -1,3 +1,10 @@
+2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the test added by r93369 because Window's DRT actually sleeps for
+        the amount of time leapForward is called upon. The failure is tracked by the bug 66551.
+
+        * platform/win/Skipped:
+
 2011-08-19  James Robinson  <jamesr@chromium.org>
 
         [chromium] GPU test expectation baseline update
