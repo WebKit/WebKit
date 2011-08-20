@@ -36,6 +36,9 @@
 
 #if OS(IOS)
 #include <libkern/OSCacheControl.h>
+#endif
+
+#if OS(IOS) || OS(QNX)
 #include <sys/mman.h>
 #endif
 
@@ -323,6 +326,16 @@ public:
         syscall(__NR_cacheflush, reinterpret_cast<unsigned>(code), size, CACHEFLUSH_D_WB | CACHEFLUSH_I | CACHEFLUSH_D_L2);
 #else
         syscall(__NR_cacheflush, reinterpret_cast<unsigned>(code), size, CACHEFLUSH_D_WB | CACHEFLUSH_I);
+#endif
+    }
+#elif OS(QNX)
+    static void cacheFlush(void* code, size_t size)
+    {
+#if !ENABLE(ASSEMBLER_WX_EXCLUSIVE)
+        msync(code, size, MS_INVALIDATE_ICACHE);
+#else
+        UNUSED_PARAM(code);
+        UNUSED_PARAM(size);
 #endif
     }
 #else
