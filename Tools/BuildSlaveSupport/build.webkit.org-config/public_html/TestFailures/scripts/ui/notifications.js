@@ -133,24 +133,28 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
     }
 });
 
-ui.notifications.TestFailures = base.extends(ui.notifications.Notification, {
+ui.notifications.Failure = base.extends(ui.notifications.Notification, {
     init: function()
     {
         this._time = this.insertBefore(new Time(), this.firstChild);
-        var problem = this._what.appendChild(document.createElement('div'));
-        problem.className = 'problem';
-        this._tests = problem.appendChild(document.createElement('ul'));
-        this._tests.className = 'effects';
-        this._causes = problem.appendChild(document.createElement('ul'));
+        this._problem = this._what.appendChild(document.createElement('div'));
+        this._problem.className = 'problem';
+        this._effects = this._problem.appendChild(document.createElement('ul'));
+        this._effects.className = 'effects';
+        this._causes = this._problem.appendChild(document.createElement('ul'));
         this._causes.className = 'causes';
     },
     date: function()
     {
         return this._time.date;
-    },
+    }
+});
+
+ui.notifications.TestFailures = base.extends(ui.notifications.Failure, {
+    init: function() { },
     containsFailureAnalysis: function(failureAnalysis)
     {
-        return Array.prototype.some.call(this._tests.children, function(child) {
+        return Array.prototype.some.call(this._effects.children, function(child) {
             return child.equals(failureAnalysis);
         });
     },
@@ -158,7 +162,7 @@ ui.notifications.TestFailures = base.extends(ui.notifications.Notification, {
     {
         if (this.containsFailureAnalysis(failureAnalysis))
             return;
-        return this._tests.appendChild(new ui.notifications.FailingTest(failureAnalysis));
+        return this._effects.appendChild(new ui.notifications.FailingTest(failureAnalysis));
     },
     addCommitData: function(commitData)
     {
@@ -166,6 +170,25 @@ ui.notifications.TestFailures = base.extends(ui.notifications.Notification, {
         if (this._time.date > commitDataDate);
             this._time.setDate(commitDataDate);
         return this._causes.appendChild(new ui.notifications.SuspiciousCommit(commitData));
+    }
+});
+
+ui.notifications.BuildersFailing = base.extends(ui.notifications.Failure, {
+    init: function()
+    {
+        this._problem.insertBefore(document.createTextNode('Build Failed:'), this._effects);
+    },
+    setFailingBuilders: function(builderNameList)
+    {
+        $(this._effects).empty().append(builderNameList.map(function(builderName) {
+            var effect = document.createElement('li');
+            effect.className = 'builder-name';
+            var link = effect.appendChild(document.createElement('a'));
+            link.target = '_blank';
+            link.href = ui.displayURLForBuilder(builderName);
+            link.textContent = ui.displayNameForBuilder(builderName);
+            return effect;
+        }));
     }
 });
 

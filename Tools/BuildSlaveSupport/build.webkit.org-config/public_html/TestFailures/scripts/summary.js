@@ -30,6 +30,7 @@ var g_info = new ui.notifications.Stream();
 
 var g_updateTimerId = 0;
 var g_testFailures = new base.UpdateTracker();
+var g_buildersFailing = null;
 
 function update()
 {
@@ -37,7 +38,23 @@ function update()
     var updating = new ui.notifications.Info("Updating ...");
     g_info.add(updating);
 
-    // FIXME: Also provide information on bot failures.
+    builders.buildersFailingStepRequredForTestCoverage(function(builderNameList) {
+        if (builderNameList.length == 0) {
+            if (g_buildersFailing) {
+                g_buildersFailing.dismiss();
+                g_buildersFailing = null;
+            }
+            return;
+        }
+        if (!g_buildersFailing) {
+            g_buildersFailing = new ui.notifications.BuildersFailing();
+            g_info.add(g_buildersFailing);
+        }
+        // FIXME: We should provide regression ranges for the failing builders.
+        // This doesn't seem to happen often enough to worry too much about that, however.
+        g_buildersFailing.setFailingBuilders(builderNameList);
+    });
+
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
         model.analyzeUnexpectedFailures(function(failureAnalysis) {
             var key = failureAnalysis.newestPassingRevision + "+" + failureAnalysis.oldestFailingRevision;

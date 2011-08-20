@@ -27,7 +27,7 @@
 
 module('ui.notifications');
 
-test('ui.notifications.Notification', 5, function() {
+test('Notification', 5, function() {
     var notification = new ui.notifications.Notification();
     equal(notification.tagName, 'LI');
     equal(notification.innerHTML, '<div class="what"></div>');
@@ -38,7 +38,7 @@ test('ui.notifications.Notification', 5, function() {
     ok(notification.dismiss);
 });
 
-test('ui.notifications.Stream', 11, function() {
+test('Stream', 11, function() {
     var stream = new ui.notifications.Stream();
     equal(stream.tagName, 'OL');
     equal(stream.className, 'notifications');
@@ -70,13 +70,13 @@ test('ui.notifications.Stream', 11, function() {
     equal(stream.textContent, 'garden-o-matic is awesome!');
 });
 
-test('ui.notifications.Info', 2, function() {
+test('Info', 2, function() {
     var info = new ui.notifications.Info('info');
     equal(info.tagName, 'LI');
     equal(info.innerHTML, '<div class="what">info</div>');
 });
 
-test('ui.notifications.FailingTest', 4, function() {
+test('FailingTest', 4, function() {
     var failingTest = new ui.notifications.FailingTest({testName: 'test'});
     equal(failingTest.tagName, 'LI');
     equal(failingTest.innerHTML, 'test');
@@ -84,13 +84,13 @@ test('ui.notifications.FailingTest', 4, function() {
     ok(!failingTest.equals({testName: 'foo'}));
 });
 
-test('ui.notifications.SuspiciousCommit', 2, function() {
+test('SuspiciousCommit', 2, function() {
     var suspiciousCommit = new ui.notifications.SuspiciousCommit({revision: 1, title: "title", author: "author", reviewer: "reviewer"});
     equal(suspiciousCommit.tagName, 'LI');
     equal(suspiciousCommit.innerHTML, '<div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul>');
 });
 
-test('ui.notifications.TestFailures', 7, function() {
+test('TestFailures', 7, function() {
     var testFailures = new ui.notifications.TestFailures();
     equal(testFailures.tagName, 'LI');
     equal(testFailures.innerHTML, '<time>Just now</time><div class="what"><div class="problem"><ul class="effects"></ul><ul class="causes"></ul></div></div>');
@@ -104,6 +104,22 @@ test('ui.notifications.TestFailures', 7, function() {
     time.setMinutes(time.getMinutes() - 10);
     testFailures.addCommitData({revision: 1, time: time, title: "title", author: "author", reviewer: "reviewer"});
     equal(testFailures.innerHTML, '<time>10 minutes ago</time><div class="what"><div class="problem"><ul class="effects"><li>test</li></ul><ul class="causes"><li><div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul></li></ul></div></div>');
+});
+
+test('BuildersFailing', 1, function() {
+    var builderFailing = new ui.notifications.BuildersFailing();
+    builderFailing.setFailingBuilders(['WebKit Linux', 'Webkit Vista']);
+    equal(builderFailing.innerHTML,
+        '<time>Just now</time>' +
+        '<div class="what">' +
+            '<div class="problem">Build Failed:' +
+                '<ul class="effects">' +
+                    '<li class="builder-name"><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=WebKit+Linux">WebKit Linux</a></li>' +
+                    '<li class="builder-name"><a target="_blank" href="http://build.chromium.org/p/chromium.webkit/waterfall?builder=Webkit+Vista">Vista</a></li>' +
+                '</ul>' +
+                '<ul class="causes"></ul>' +
+            '</div>' +
+        '</div>');
 });
 
 }());
