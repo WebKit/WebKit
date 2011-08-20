@@ -675,7 +675,7 @@ private:
     virtual void refEventTarget();
     virtual void derefEventTarget();
 
-    virtual NodeRareData* createRareData();
+    virtual OwnPtr<NodeRareData> createRareData();
     bool rareDataFocused() const;
 
     virtual RenderStyle* nonRendererRenderStyle() const;

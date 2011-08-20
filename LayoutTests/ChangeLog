@@ -1,3 +1,13 @@
+2011-08-20  Darin Adler  <darin@apple.com>
+
+        If Range::insertNode is passed an empty document fragment, it creates a broken DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=65015
+
+        Reviewed by Alexey Proskuryakov.
+
+        * fast/dom/Range/insertNode-empty-fragment-crash-expected.txt: Added.
+        * fast/dom/Range/insertNode-empty-fragment-crash.html: Added.
+
 2011-08-20  Balazs Kelemen  <kbalazs@webkit.org>
 
         eventSender.keyDown is unimplemented (WKTR)

@@ -1,3 +1,16 @@
+2011-08-20  Darin Adler  <darin@apple.com>
+
+        If Range::insertNode is passed an empty document fragment, it creates a broken DOM tree
+        https://bugs.webkit.org/show_bug.cgi?id=65015
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: fast/dom/Range/insertNode-empty-fragment-crash.html
+
+        * dom/Range.cpp: (WebCore::Range::insertNode): Don't adjust the range after insertion
+        if we didn't add anything. Otherwise the code will put a wrong "child before" value into
+        the range end boundary point.
+
 2011-08-20  Ken Buchanan  <kenrb@chromium.org>
 
         OOB Read in WebCore::SVGAnimationElement

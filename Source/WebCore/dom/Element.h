@@ -427,7 +427,7 @@ private:
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren();
 
     QualifiedName m_tagName;
-    virtual NodeRareData* createRareData();
+    virtual OwnPtr<NodeRareData> createRareData();
 
     ElementRareData* rareData() const;
     ElementRareData* ensureRareData();

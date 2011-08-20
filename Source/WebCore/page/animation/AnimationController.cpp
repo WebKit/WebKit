@@ -455,13 +455,12 @@ PassRefPtr<WebKitAnimationList> AnimationControllerPrivate::animationsForRendere
 }
 
 AnimationController::AnimationController(Frame* frame)
-    : m_data(new AnimationControllerPrivate(frame))
+    : m_data(adoptPtr(new AnimationControllerPrivate(frame)))
 {
 }
 
 AnimationController::~AnimationController()
 {
-    delete m_data;
 }
 
 void AnimationController::cancelAnimations(RenderObject* renderer)

@@ -536,15 +536,15 @@ NodeRareData* Node::ensureRareData()
         return rareData();
     
     ASSERT(!NodeRareData::rareDataMap().contains(this));
-    NodeRareData* data = createRareData();
+    NodeRareData* data = createRareData().leakPtr();
     NodeRareData::rareDataMap().set(this, data);
     setFlag(HasRareDataFlag);
     return data;
 }
     
-NodeRareData* Node::createRareData()
+OwnPtr<NodeRareData> Node::createRareData()
 {
-    return new NodeRareData;
+    return adoptPtr(new NodeRareData);
 }
 
 void Node::clearRareData()

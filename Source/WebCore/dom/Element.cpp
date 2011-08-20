@@ -130,9 +130,9 @@ inline ElementRareData* Element::ensureRareData()
     return static_cast<ElementRareData*>(Node::ensureRareData());
 }
     
-NodeRareData* Element::createRareData()
+OwnPtr<NodeRareData> Element::createRareData()
 {
-    return new ElementRareData;
+    return adoptPtr(new ElementRareData);
 }
 
 DEFINE_VIRTUAL_ATTRIBUTE_EVENT_LISTENER(Element, blur);

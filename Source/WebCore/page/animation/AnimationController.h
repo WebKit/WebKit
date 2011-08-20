@@ -31,6 +31,7 @@
 
 #include "CSSPropertyNames.h"
 #include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
@@ -77,7 +78,7 @@ public:
     PassRefPtr<WebKitAnimationList> animationsForRenderer(RenderObject*) const;
 
 private:
-    AnimationControllerPrivate* m_data;
+    OwnPtr<AnimationControllerPrivate> m_data;
 };
 
 } // namespace WebCore
