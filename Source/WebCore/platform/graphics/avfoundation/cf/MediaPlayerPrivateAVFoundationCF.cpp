@@ -704,20 +704,16 @@ static HashSet<String> mimeTypeCache()
     if (typeListInitialized)
         return cache;
     typeListInitialized = true;
+    
+    RetainPtr<CFArrayRef> supportedTypes(AdoptCF, AVCFURLAssetCopyAudiovisualMIMETypes());
+    
+    ASSERT(supportedTypes);
+    if (!supportedTypes)
+        return cache;
 
-    // Not possible to query AVFoundation for supported MIME types, <rdar://problem/8721693>, so
-    // hard code some types for now.
-    cache.add("video/quicktime");
-    cache.add("video/mp4");
-    cache.add("video/mpeg");
-    cache.add("audio/3gpp");
-    cache.add("audio/mp3");
-    cache.add("audio/mp4");
-    cache.add("audio/mp4");
-    cache.add("audio/m4a");
-    cache.add("audio/aac");
-    cache.add("audio/wav");
-    cache.add("application/vnd.apple.mpegurl");
+    CFIndex typeCount = CFArrayGetCount(supportedTypes.get());
+    for (CFIndex i = 0; i < typeCount; i++)
+        cache.add(static_cast<CFStringRef>(CFArrayGetValueAtIndex(supportedTypes.get(), i)));
 
     return cache;
 } 

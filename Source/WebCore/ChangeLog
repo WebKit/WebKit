@@ -1,3 +1,16 @@
+2011-08-19  Jeff Miller  <jeffm@apple.com>
+
+        MediaPlayerPrivateAVFoundationCF should use AVCFURLAssetCopyAudiovisualMIMETypes() to get list of supported MIME types
+        https://bugs.webkit.org/show_bug.cgi?id=66612
+
+        Reviewed by Darin Adler.
+
+        No new tests, should be covered by existing media tests.
+
+        * platform/graphics/avfoundation/cf/AVFoundationCFSoftLinking.h: Added AVCFURLAssetCopyAudiovisualMIMETypes().
+        * platform/graphics/avfoundation/cf/MediaPlayerPrivateAVFoundationCF.cpp:
+        (WebCore::mimeTypeCache): Use AVCFURLAssetCopyAudiovisualMIMETypes() to build the cache of supported MIME types.
+
 2011-08-19  Adrienne Walker  <enne@google.com>
 
         [chromium] Regression: Fix clang errors from r93424
