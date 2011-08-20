@@ -1,5 +1,11 @@
 2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip the test added by r93369 on GTK; the failure is tracked by the bug 66621.
+
+        * platform/gtk/Skipped:
+
+2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove the left over from r93468; also fix Chromium Windows expectation
         (Copied it over from fast/css/getComputedStyle/ and replaced Times with 'times new roman')
 
