@@ -1,5 +1,14 @@
 2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Remove the left over from r93468; also fix Chromium Windows expectation
+        (Copied it over from fast/css/getComputedStyle/ and replaced Times with 'times new roman')
+
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        Replaced with LayoutTests/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt.
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+
+2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip the test added by r93392 on Windows; the failure is tracked by the bug 66620.
 
         * platform/win/Skipped:
