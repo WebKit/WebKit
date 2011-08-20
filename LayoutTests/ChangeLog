@@ -1,5 +1,16 @@
 2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Redo the rebaseline done by r93353. The test that has been failing on GTK is
+        editing/deleting/regional-indicators.html, not editing/selection/regional-indicators.
+
+        The failure is still tracked by the bug 66501.
+
+        * platform/gtk/editing/deleting/regional-indicators-expected.txt: Copied from
+        LayoutTests/platform/gtk/editing/selection/regional-indicators-expected.txt.
+        * platform/gtk/editing/selection/regional-indicators-expected.txt: Removed.
+
+2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip the test added by r93392 on Qt. The failure is tracked by the bug 66619.
 
         * platform/qt/Skipped:
