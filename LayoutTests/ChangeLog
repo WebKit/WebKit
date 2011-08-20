@@ -1,5 +1,16 @@
 2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Rebaseline after r93430. Also removed superfluous expected result from Chromium directories.
+
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Replaced with
+        LayoutTests/platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt.
+        * platform/chromium-cg-mac/fast/css/computed-style-without-renderer-expected.txt: Removed.
+        * platform/chromium-win/fast/css/computed-style-without-renderer-expected.txt: Removed.
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt: Removed.
+
+2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip the test added by r93369 because Window's DRT actually sleeps for
         the amount of time leapForward is called upon. The failure is tracked by the bug 66551.
 
