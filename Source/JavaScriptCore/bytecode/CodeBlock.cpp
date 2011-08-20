@@ -1432,6 +1432,23 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, CodeType codeType, JSGlo
 
 CodeBlock::~CodeBlock()
 {
+#if ENABLE(VERBOSE_VALUE_PROFILE)
+    printf("ValueProfile for %p:\n", this);
+    for (unsigned i = 0; i < numberOfValueProfiles(); ++i) {
+        ValueProfile* profile = valueProfile(i);
+        if (profile->bytecodeOffset < 0) {
+            ASSERT(profile->bytecodeOffset == -1);
+            printf("   arg = %u: ", i + 1);
+        } else
+            printf("   bc = %d: ", profile->bytecodeOffset);
+        printf("samples = %u, int32 = %u, double = %u, cell = %u\n",
+               profile->numberOfSamples(),
+               profile->probabilityOfInt32(),
+               profile->probabilityOfDouble(),
+               profile->probabilityOfCell());
+    }
+#endif
+
 #if ENABLE(JIT)
     for (size_t size = m_structureStubInfos.size(), i = 0; i < size; ++i)
         m_structureStubInfos[i].deref();

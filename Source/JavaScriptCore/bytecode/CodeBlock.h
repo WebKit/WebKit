@@ -39,9 +39,11 @@
 #include "Nodes.h"
 #include "RegExpObject.h"
 #include "UString.h"
+#include "ValueProfile.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
 
 #if ENABLE(JIT)
@@ -381,6 +383,21 @@ namespace JSC {
         void addMethodCallLinkInfos(unsigned n) { ASSERT(m_globalData->canUseJIT()); m_methodCallLinkInfos.grow(n); }
         MethodCallLinkInfo& methodCallLinkInfo(int index) { return m_methodCallLinkInfos[index]; }
 #endif
+        
+#if ENABLE(VALUE_PROFILER)
+        ValueProfile* addValueProfile(int bytecodeOffset)
+        {
+            m_valueProfiles.append(ValueProfile(bytecodeOffset));
+            return &m_valueProfiles.last();
+        }
+        unsigned numberOfValueProfiles() { return m_valueProfiles.size(); }
+        ValueProfile* valueProfile(int index) { return &m_valueProfiles[index]; }
+        ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset)
+        {
+            return WTF::genericBinarySearch<ValueProfile, int, getValueProfileBytecodeOffset>(m_valueProfiles, m_valueProfiles.size(), bytecodeOffset);
+        }
+#endif
+
         unsigned globalResolveInfoCount() const
         {
 #if ENABLE(JIT)    
@@ -575,6 +592,9 @@ namespace JSC {
         Vector<GlobalResolveInfo> m_globalResolveInfos;
         Vector<CallLinkInfo> m_callLinkInfos;
         Vector<MethodCallLinkInfo> m_methodCallLinkInfos;
+#endif
+#if ENABLE(VALUE_PROFILER)
+        SegmentedVector<ValueProfile, 8> m_valueProfiles;
 #endif
 
         Vector<unsigned> m_jumpTargets;

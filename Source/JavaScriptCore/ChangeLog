@@ -1,3 +1,68 @@
+2011-08-19  Filip Pizlo  <fpizlo@apple.com>
+
+        The JSC JIT currently has no facility to profile and report
+        the types of values
+        https://bugs.webkit.org/show_bug.cgi?id=65901
+
+        Reviewed by Gavin Barraclough.
+        
+        Added the ability to profile the values seen at function calls (both
+        arguments and results) and heap loads.  This is done with emphasis
+        on performance.  A value profiling site consists of: add, and,
+        move, and store; no branching is necessary.  Each value profiling
+        site (called a ValueProfile) has a ring buffer of 8 recently-seen
+        values.  ValueProfiles are stored in the CodeBlock; there will be
+        one for each argument (excluding this) and each heap load or callsite.
+        Each time a value profiling site executes, it stores the value into
+        a pseudo-random element in the ValueProfile buffer.  The point is
+        that for frequently executed code, we will have 8 somewhat recent
+        values in the buffer and will be able to not only figure out what
+        type it is, but also to be able to reason about the actual values
+        if we wish to do so.
+        
+        This feature is currently disabled by default.  When enabled, it
+        results in a 3.7% slow-down on SunSpider.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::~CodeBlock):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addValueProfile):
+        (JSC::CodeBlock::numberOfValueProfiles):
+        (JSC::CodeBlock::valueProfile):
+        (JSC::CodeBlock::valueProfileForBytecodeOffset):
+        * bytecode/ValueProfile.h: Added.
+        (JSC::ValueProfile::ValueProfile):
+        (JSC::ValueProfile::numberOfSamples):
+        (JSC::ValueProfile::computeProbability):
+        (JSC::ValueProfile::numberOfInt32s):
+        (JSC::ValueProfile::numberOfDoubles):
+        (JSC::ValueProfile::numberOfCells):
+        (JSC::ValueProfile::probabilityOfInt32):
+        (JSC::ValueProfile::probabilityOfDouble):
+        (JSC::ValueProfile::probabilityOfCell):
+        (JSC::getValueProfileBytecodeOffset):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_call_put_result):
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::emitValueProfilingSite):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_val):
+        (JSC::JIT::emitSlow_op_get_by_val):
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        * jit/JSInterfaceJIT.h:
+        * wtf/Platform.h:
+        * wtf/StdLibExtras.h:
+        (WTF::binarySearch):
+        (WTF::genericBinarySearch):
+
 2011-08-19  Daniel Bates  <dbates@webkit.org>
 
         Don't include DisallowCType.h when building on QNX

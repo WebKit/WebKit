@@ -430,6 +430,32 @@ inline void JIT::emitAllocateJSFunction(FunctionExecutable* executable, Register
 #endif
 }
 
+#if ENABLE(VALUE_PROFILER)
+inline void JIT::emitValueProfilingSite(ValueProfilingSiteKind siteKind)
+{
+    const RegisterID value = regT0;
+    const RegisterID scratch = regT3;
+    
+    ValueProfile* valueProfile;
+    if (siteKind == FirstProfilingSite)
+        valueProfile = m_codeBlock->addValueProfile(m_bytecodeOffset);
+    else {
+        ASSERT(siteKind == SubsequentProfilingSite);
+        valueProfile = m_codeBlock->valueProfileForBytecodeOffset(m_bytecodeOffset);
+    }
+    
+    ASSERT(valueProfile);
+    
+    if (m_randomGenerator.getUint32() & 1)
+        add32(Imm32(1), bucketCounterRegister);
+    else
+        add32(Imm32(3), bucketCounterRegister);
+    and32(Imm32(ValueProfile::bucketIndexMask), bucketCounterRegister);
+    move(ImmPtr(valueProfile->buckets), scratch);
+    storePtr(value, BaseIndex(scratch, bucketCounterRegister, TimesEight));
+}
+#endif
+
 #if USE(JSVALUE32_64)
 
 inline void JIT::emitLoadTag(unsigned index, RegisterID tag)

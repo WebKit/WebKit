@@ -55,6 +55,10 @@ namespace JSC {
         static const RegisterID cachedResultRegister = X86Registers::eax;
         static const RegisterID firstArgumentRegister = X86Registers::edi;
         
+#if ENABLE(VALUE_PROFILER)
+        static const RegisterID bucketCounterRegister = X86Registers::r10;
+#endif
+        
         static const RegisterID timeoutCheckRegister = X86Registers::r12;
         static const RegisterID callFrameRegister = X86Registers::r13;
         static const RegisterID tagTypeNumberRegister = X86Registers::r14;

@@ -130,8 +130,8 @@ enum BinarySearchMode {
 
 // Binary search algorithm, calls extractKey on pre-sorted elements in array,
 // compares result with key (KeyTypes should be comparable with '--', '<', '>').
-template<typename ArrayType, typename KeyType, KeyType(*extractKey)(ArrayType*)>
-inline ArrayType* binarySearch(ArrayType* array, size_t size, KeyType key, BinarySearchMode mode = KeyMustBePresentInArray)
+template<typename ArrayElementType, typename KeyType, KeyType(*extractKey)(ArrayElementType*)>
+inline ArrayElementType* binarySearch(ArrayElementType* array, size_t size, KeyType key, BinarySearchMode mode = KeyMustBePresentInArray)
 {
     // The array must contain at least one element (pre-condition, array does contain key).
     // If the array contains only one element, no need to do the comparison.
@@ -166,6 +166,43 @@ inline ArrayType* binarySearch(ArrayType* array, size_t size, KeyType key, Binar
     }
 
     return &array[0];
+}
+
+// Modified binarySearch() algorithm designed for array-like classes that support
+// operator[] but not operator+=. One example of a class that qualifies is
+// SegmentedVector.
+template<typename ArrayElementType, typename KeyType, KeyType(*extractKey)(ArrayElementType*), typename ArrayType>
+inline ArrayElementType* genericBinarySearch(ArrayType& array, size_t size, KeyType key)
+{
+    // The array must contain at least one element (pre-condition, array does conatin key).
+    // If the array only contains one element, no need to do the comparison.
+    size_t offset = 0;
+    while (size > 1) {
+        // Pick an element to check, half way through the array, and read the value.
+        int pos = (size - 1) >> 1;
+        KeyType val = extractKey(&array[offset + pos]);
+        
+        // If the key matches, success!
+        if (val == key)
+            return &array[offset + pos];
+        // The item we are looking for is smaller than the item being check; reduce the value of 'size',
+        // chopping off the right hand half of the array.
+        if (key < val)
+            size = pos;
+        // Discard all values in the left hand half of the array, up to and including the item at pos.
+        else {
+            size -= (pos + 1);
+            offset += (pos + 1);
+        }
+
+        // 'size' should never reach zero.
+        ASSERT(size);
+    }
+    
+    // If we reach this point we've chopped down to one element, no need to check it matches
+    ASSERT(size == 1);
+    ASSERT(key == extractKey(&array[offset]));
+    return &array[offset];
 }
 
 } // namespace WTF

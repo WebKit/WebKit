@@ -107,6 +107,7 @@ void JIT::emit_op_get_by_val(Instruction* currentInstruction)
     loadPtr(BaseIndex(regT2, regT1, ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])), regT0);
     addSlowCase(branchTestPtr(Zero, regT0));
 
+    emitValueProfilingSite(FirstProfilingSite);
     emitPutVirtualRegister(dst);
 }
 
@@ -136,6 +137,8 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
     stubCall.addArgument(base, regT2);
     stubCall.addArgument(property, regT2);
     stubCall.call(dst);
+
+    emitValueProfilingSite(SubsequentProfilingSite);
 }
 
 void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch)
@@ -318,6 +321,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     compileGetByIdHotPath(baseVReg, ident);
 
     match.link(this);
+    emitValueProfilingSite(FirstProfilingSite);
     emitPutVirtualRegister(resultVReg);
 
     // We've already generated the following get_by_id, so make sure it's skipped over.
@@ -345,6 +349,7 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
 
     emitGetVirtualRegister(baseVReg, regT0);
     compileGetByIdHotPath(baseVReg, ident);
+    emitValueProfilingSite(FirstProfilingSite);
     emitPutVirtualRegister(resultVReg);
 }
 
@@ -387,6 +392,7 @@ void JIT::emitSlow_op_get_by_id(Instruction* currentInstruction, Vector<SlowCase
     Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
 
     compileGetByIdSlowCase(resultVReg, baseVReg, ident, iter, false);
+    emitValueProfilingSite(SubsequentProfilingSite);
 }
 
 void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck)

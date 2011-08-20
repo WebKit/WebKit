@@ -968,6 +968,15 @@
 #define ENABLE_DFG_JIT 1
 #endif
 
+/* Currently only implemented for JSVALUE64, only tested on PLATFORM(MAC) */
+#if !defined(ENABLE_VALUE_PROFILER) && ENABLE(JIT) && USE(JSVALUE64) && PLATFORM(MAC)
+#define ENABLE_VALUE_PROFILER 0
+#endif
+
+#if !defined(ENABLE_VERBOSE_VALUE_PROFILE) && ENABLE(VALUE_PROFILER)
+#define ENABLE_VERBOSE_VALUE_PROFILE 0
+#endif
+
 /* Ensure that either the JIT or the interpreter has been enabled. */
 #if !defined(ENABLE_INTERPRETER) && !ENABLE(JIT)
 #define ENABLE_INTERPRETER 1

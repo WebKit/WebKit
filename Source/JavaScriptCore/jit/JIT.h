@@ -304,6 +304,15 @@ namespace JSC {
         template<typename ClassType, typename StructureType> void emitAllocateBasicJSObject(StructureType, void* vtable, RegisterID result, RegisterID storagePtr);
         template<typename T> void emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID storagePtr);
         void emitAllocateJSFunction(FunctionExecutable*, RegisterID scopeChain, RegisterID result, RegisterID storagePtr);
+        
+        enum ValueProfilingSiteKind { FirstProfilingSite, SubsequentProfilingSite };
+#if ENABLE(VALUE_PROFILER)
+        // This assumes that the value to profile is in regT0 and that regT3 is available for
+        // scratch.
+        void emitValueProfilingSite(ValueProfilingSiteKind);
+#else
+        void emitValueProfilingSite(ValueProfilingSiteKind) { }
+#endif
 
 #if USE(JSVALUE32_64)
         bool getOperandConstantImmediateInt(unsigned op1, unsigned op2, unsigned& op, int32_t& constant);

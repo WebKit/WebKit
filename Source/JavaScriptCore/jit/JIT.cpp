@@ -372,6 +372,16 @@ void JIT::privateCompileSlowCases()
     m_propertyAccessInstructionIndex = 0;
     m_globalResolveInfoIndex = 0;
     m_callLinkInfoIndex = 0;
+    
+#if !ASSERT_DISABLED && ENABLE(VALUE_PROFILER)
+    // Use this to assert that slow-path code associates new profiling sites with existing
+    // ValueProfiles rather than creating new ones. This ensures that for a given instruction
+    // (say, get_by_id) we get combined statistics for both the fast-path executions of that
+    // instructions and the slow-path executions. Furthermore, if the slow-path code created
+    // new ValueProfiles then the ValueProfiles would no longer be sorted by bytecode offset,
+    // which would break the invariant necessary to use CodeBlock::valueProfileForBytecodeOffset().
+    unsigned numberOfValueProfiles = m_codeBlock->numberOfValueProfiles();
+#endif
 
     for (Vector<SlowCaseEntry>::iterator iter = m_slowCases.begin(); iter != m_slowCases.end();) {
 #if USE(JSVALUE64)
@@ -461,6 +471,9 @@ void JIT::privateCompileSlowCases()
 
     ASSERT(m_propertyAccessInstructionIndex == m_propertyAccessCompilationInfo.size());
     ASSERT(m_callLinkInfoIndex == m_callStructureStubCompilationInfo.size());
+#if ENABLE(VALUE_PROFILER)
+    ASSERT(numberOfValueProfiles == m_codeBlock->numberOfValueProfiles());
+#endif
 
 #ifndef NDEBUG
     // Reset this, in order to guard its use with ASSERTs.
@@ -490,6 +503,14 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 #if DFG_SUCCESS_STATS
         static SamplingCounter counter("orignalJIT");
         emitCount(counter);
+#endif
+
+#if ENABLE(VALUE_PROFILER)
+        ASSERT(m_bytecodeOffset == (unsigned)-1);
+        for (int argumentRegister = -RegisterFile::CallFrameHeaderSize - m_codeBlock->m_numParameters + 1; argumentRegister < -RegisterFile::CallFrameHeaderSize; ++argumentRegister) {
+            loadPtr(Address(callFrameRegister, argumentRegister * sizeof(Register)), regT0);
+            emitValueProfilingSite(FirstProfilingSite);
+        }
 #endif
 
         // In the case of a fast linked call, we do not set this up in the caller.
