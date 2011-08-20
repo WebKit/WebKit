@@ -1839,6 +1839,7 @@ fast/dom/shadow/tab-order-iframe-and-shadow.html
 fast/events/onchange-setvalue.html
 fast/forms/focus-with-display-block.html
 fast/forms/input-search-press-escape-key.html
+fast/forms/placeholder-crash-with-scrollbar-corner.html
 fast/forms/radio-group-keyboard-change-event.html
 fast/forms/search-disabled-readonly.html
 fast/forms/ValidityState-valueMissing-002.html
