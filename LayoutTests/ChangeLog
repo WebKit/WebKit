@@ -1,5 +1,13 @@
 2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        More rebaseline after r93068. Apparently Windows XP needs a separate baseline.
+
+        * platform/win-xp/editing: Added.
+        * platform/win-xp/editing/deleting: Added.
+        * platform/win-xp/editing/deleting/regional-indicators-expected.txt: Added.
+
+2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Redo the rebaseline done by r93353. The test that has been failing on GTK is
         editing/deleting/regional-indicators.html, not editing/selection/regional-indicators.
 
