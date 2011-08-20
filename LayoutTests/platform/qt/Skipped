@@ -2376,3 +2376,7 @@ fast/harness/sample-fail-mismatch-reftest.html
 # [Qt] editing/selection/caret-at-bidi-boundary.html times out after r93369
 # https://bugs.webkit.org/show_bug.cgi?id=66514
 editing/selection/caret-at-bidi-boundary.html
+
+# [Qt] editing/spelling/spelling-insert-html.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=66619
+editing/spelling/spelling-insert-html.html
