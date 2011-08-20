@@ -26,7 +26,6 @@
 #ifndef PageClient_h
 #define PageClient_h
 
-#include "PluginComplexTextInputState.h"
 #include "ShareableBitmap.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxy.h"
@@ -35,11 +34,9 @@
 #include <wtf/Forward.h>
 
 #if PLATFORM(MAC)
-#ifdef __OBJC__
-@class WKView;
-#else
-class WKView;
-#endif
+#include "PluginComplexTextInputState.h"
+
+OBJC_CLASS WKView;
 #endif
 
 namespace WebCore {

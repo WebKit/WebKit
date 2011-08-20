@@ -1,5 +1,11 @@
 2011-08-19  Anders Carlsson  <andersca@apple.com>
 
+        Another attempt at fixing the Windows build.
+
+        * UIProcess/PageClient.h:
+
+2011-08-19  Anders Carlsson  <andersca@apple.com>
+
         Fix Windows build.
 
         * WebProcess/Plugins/PluginController.h:
