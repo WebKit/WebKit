@@ -1,3 +1,19 @@
+2011-08-19  Chris Fleizach  <cfleizach@apple.com>
+
+        AX WK2 Regression: WebKit outputs incorrect AX position in frames/iframes
+        https://bugs.webkit.org/show_bug.cgi?id=61289
+
+        Update the code to determine the position of accessibility elements on Mac for WK2,
+        so that elements within iframes are positioned correctly.
+
+        Reviewed by Darin Adler..
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::page):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/mac/AccessibilityObjectWrapper.mm:
+        (-[AccessibilityObjectWrapper position]):
+
 2011-08-19  Jeffrey Pfau  <jpfau@apple.com>
 
         New XML parser: text nodes outside of root element not created for document fragments

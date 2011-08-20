@@ -85,6 +85,7 @@ class HTMLAreaElement;
 class IntPoint;
 class IntSize;
 class Node;
+class Page;
 class RenderObject;
 class RenderListItem;
 class VisibleSelection;
@@ -518,6 +519,7 @@ public:
     const String& actionVerb() const;
     virtual Widget* widget() const { return 0; }
     virtual Widget* widgetForAttachmentView() const { return 0; }
+    Page* page() const;
     virtual Document* document() const;
     virtual FrameView* topDocumentFrameView() const { return 0; }
     virtual FrameView* documentFrameView() const;

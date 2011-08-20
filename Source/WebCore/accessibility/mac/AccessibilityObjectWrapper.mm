@@ -1375,27 +1375,10 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
     NSPoint point;
     
     FrameView* frameView = m_object->documentFrameView();
-    id remoteParent = [self remoteAccessibilityParentObject];
-    if (remoteParent) {
-        point = NSMakePoint(rect.x(), rect.y());
-        
-        NSPoint remotePosition = [[remoteParent accessibilityAttributeValue:NSAccessibilityPositionAttribute] pointValue];
-        NSSize remoteSize = [[remoteParent accessibilityAttributeValue:NSAccessibilitySizeAttribute] sizeValue];
 
-        // Get the y position of the WKView (we have to screen-flip and go from bottom left to top left).
-        CGFloat screenHeight = [(NSScreen *)[[NSScreen screens] objectAtIndex:0] frame].size.height;
-        remotePosition.y = (screenHeight - remotePosition.y) - remoteSize.height;
-        
-        NSPoint scrollPosition = NSMakePoint(0, 0);
-        if (frameView && !m_object->isScrollbar() && !m_object->isScrollView()) {
-            LayoutPoint frameScrollPos = frameView->scrollPosition();
-            scrollPosition = NSMakePoint(frameScrollPos.x(), frameScrollPos.y());
-        }
-        
-        point.x += remotePosition.x - scrollPosition.x;
-        // Set the new position, which means getting bottom y, and then flipping to screen coordinates.
-        point.y = screenHeight - (point.y + remotePosition.y + rect.height() - scrollPosition.y);
-    } else {
+    // WebKit1 code path... platformWidget() exists.
+    if (frameView && frameView->platformWidget()) {
+    
         // The Cocoa accessibility API wants the lower-left corner.
         point = NSMakePoint(rect.x(), rect.maxY());
         
@@ -1403,8 +1386,26 @@ static NSMutableArray* convertToNSArray(const AccessibilityObject::Accessibility
             NSView* view = frameView->documentView();
             point = [[view window] convertBaseToScreen:[view convertPoint: point toView:nil]];
         }
-    }
+    } else {
+        
+        // Find the appropriate scroll view to use to convert the contents to the window.
+        ScrollView* scrollView = 0;
+        for (AccessibilityObject* parent = m_object->parentObject(); parent; parent = parent->parentObject()) {
+            if (parent->isAccessibilityScrollView()) {
+                scrollView = toAccessibilityScrollView(parent)->scrollView();
+                break;
+            }
+        }
 
+        if (scrollView)
+            rect = scrollView->contentsToWindow(rect);
+        
+        if (m_object->page())
+            point = m_object->page()->chrome()->windowToScreen(rect).location();
+        else
+            point = rect.location();
+    }
+    
     return [NSValue valueWithPoint:point];
 }
 

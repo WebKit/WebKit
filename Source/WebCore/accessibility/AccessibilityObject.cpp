@@ -984,6 +984,14 @@ Document* AccessibilityObject::document() const
     
     return frameView->frame()->document();
 }
+    
+Page* AccessibilityObject::page() const
+{
+    Document* document = this->document();
+    if (!document)
+        return 0;
+    return document->page();
+}
 
 FrameView* AccessibilityObject::documentFrameView() const 
 { 
