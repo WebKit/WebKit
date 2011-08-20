@@ -1,5 +1,17 @@
 2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium Windows and Linux rebaselines. These baselines were so wrong.
+
+        * platform/chromium-cg-mac/fast/css/computed-style-expected.txt: Removed.
+        * platform/chromium-win/fast/css/computed-style-expected.txt: Removed.
+        * platform/chromium-win/fast/css/getComputedStyle/computed-style-expected.txt:
+        Replaced with LayoutTests/fast/css/getComputedStyle/computed-style-expected.txt.
+        * platform/chromium-win/svg/css/getComputedStyle-basic-expected.txt:
+        Replaced with LayoutTests/svg/css/getComputedStyle-basic-expected.txt.
+        * platform/chromium/test_expectations.txt:
+
+2011-08-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip the test added by r93369 on GTK; the failure is tracked by the bug 66621.
 
         * platform/gtk/Skipped:

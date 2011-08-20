@@ -2795,9 +2795,6 @@ BUGCR74710 LINUX MAC : svg/text/font-size-below-point-five.svg = PASS TEXT
 
 BUGCR74766 WIN DEBUG : http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-sub-frame-to-javascript-url-sub-frame.html = PASS CRASH
 
-BUGCR75109 LINUX WIN : fast/css/getComputedStyle/computed-style-without-renderer.html = TEXT
-BUGCR75109 LINUX WIN : fast/css/getComputedStyle/computed-style.html = CRASH TEXT
-BUGCR75109 LINUX WIN : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 : fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // Chromium GPU draws scrollbars slightly differently in debug vs. release.
