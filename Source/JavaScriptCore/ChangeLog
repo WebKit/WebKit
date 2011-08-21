@@ -1,3 +1,16 @@
+2011-08-20  Filip Pizlo  <fpizlo@apple.com>
+
+        JavaScriptCore bytecompiler does not compute scope depth correctly
+        in the case of constant declarations
+        https://bugs.webkit.org/show_bug.cgi?id=66572
+
+        Reviewed by Oliver Hunt.
+        
+        Changed the handling of const to add the dynamic scope depth.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ConstDeclNode::emitCodeSingle):
+
 2011-08-19  Daniel Bates  <dbates@webkit.org>
 
         Only #include <signal.h> and require SA_RESTART when building with JSC_MULTIPLE_THREADS

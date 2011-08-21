@@ -51,6 +51,10 @@ PASS f() is f
 PASS const a; is undefined
 PASS bodyId is document.getElementById('bodyId')
 PASS ranConstInitialiser is true
+PASS tryCatch1Result is 5
+PASS tryCatch2Result is 5
+PASS with1Result is 5
+PASS with2Result is 5
 PASS successfullyParsed is true
 
 TEST COMPLETE
