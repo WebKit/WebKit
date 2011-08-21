@@ -5,6 +5,18 @@
 
         Reviewed by Kent Tamura.
 
+        Fixes description of methods, parameters and returned value of API
+        related to cache of unused tiles, text searching and zoom matter.
+
+        * ewk/ewk_view.h:
+
+2011-08-20  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [EFL] Fix and update doxygen documentation for ewk_view.
+        https://bugs.webkit.org/show_bug.cgi?id=66293
+
+        Reviewed by Kent Tamura.
+
         Adds doxygen documentation for typedefs, defines and structures in ewk_view.h.
         Moves includes and defines below a brief of file.
 

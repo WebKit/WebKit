@@ -326,25 +326,37 @@ typedef enum _Ewk_View_Mode Ewk_View_Mode;
 typedef struct _Ewk_Tile_Unused_Cache Ewk_Tile_Unused_Cache;
 
 /**
- * Change cache capacity, in bytes.
+ * Changes cache capacity of unused tiles.
  *
- * This will not flush cache, use ewk_tile_unused_cache_flush() or
+ * @param tuc cache of unused tiles to set a new capacity of unused tiles
+ *
+ * @param max a new capacity of cache, in bytes
+ *
+ * @note This will not flush cache, use ewk_tile_unused_cache_flush() or
  * ewk_tile_unused_cache_auto_flush() to do so.
  */
 EAPI void   ewk_tile_unused_cache_max_set(Ewk_Tile_Unused_Cache *tuc, size_t max);
 
 /**
- * Retrieve maximum cache capacity, in bytes.
+ * Retrieves maximum cache capacity of unused tiles.
+ *
+ * @param tuc cache of unused tiles to get maximum cache capacity of unused tiles
+ *
+ * @return maximum cache capacity, in bytes on success or @c 0 on failure
  */
 EAPI size_t ewk_tile_unused_cache_max_get(const Ewk_Tile_Unused_Cache *tuc);
 
 /**
- * Retrieve the used cache capacity, in bytes.
+ * Retrieves the used cache capacity of unused tiles.
+ *
+ * @param tuc cache of unused tiles to get used cache capacity of unused tiles
+ *
+ * @return used cache capacity, in bytes on success or @c 0 on failure
  */
 EAPI size_t ewk_tile_unused_cache_used_get(const Ewk_Tile_Unused_Cache *tuc);
 
 /**
- * Flush given amount of bytes from cache.
+ * Flushes given amount of bytes from cache of unused tiles.
  *
  * After calling this function, near @a bytes are freed from cache. It
  * may be less if cache did not contain that amount of bytes (ie: an
@@ -352,17 +364,17 @@ EAPI size_t ewk_tile_unused_cache_used_get(const Ewk_Tile_Unused_Cache *tuc);
  * contained objects that were larger than the requested amount (this
  * is usually the case).
  *
- * @param tuc cache of unused tiles.
- * @param bytes amount to free.
+ * @param tuc cache of unused tiles to flush @bytes from cache
+ * @param bytes amount bytes to free
  *
- * @return amount really freed.
+ * @return amount really freed bytes
  *
  * @see ewk_tile_unused_cache_used_get()
  */
 EAPI size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache *tuc, size_t bytes);
 
 /**
- * Flush enough bytes to make cache usage lower than maximum.
+ * Flushes enough bytes to make cache of unused tiles usage lower than maximum.
  *
  * Just like ewk_tile_unused_cache_flush(), but this will make the cache
  * free enough tiles to respect maximum cache size as defined with
@@ -371,6 +383,8 @@ EAPI size_t ewk_tile_unused_cache_flush(Ewk_Tile_Unused_Cache *tuc, size_t bytes
  * This function is usually called when system becomes idle. This way
  * we keep memory low but do not impact performance when
  * creating/deleting tiles.
+ *
+ * @param tuc cache of unused tiles to flush cache of unused tiles
  */
 EAPI void   ewk_tile_unused_cache_auto_flush(Ewk_Tile_Unused_Cache *tuc);
 
@@ -378,17 +392,17 @@ EAPI void   ewk_tile_unused_cache_auto_flush(Ewk_Tile_Unused_Cache *tuc);
  * Sets the smart class api without any backing store, enabling view
  * to be inherited.
  *
- * @param api class definition to be set, all members with the
- *        exception of Evas_Smart_Class->data may be overridden. Must
- *        @b not be @c 0.
+ * @param api class definition to set, all members with the
+ *        exception of @a Evas_Smart_Class->data may be overridden, must
+ *        @b not be @c 0
  *
- * @note Evas_Smart_Class->data is used to implement type checking and
+ * @note @a Evas_Smart_Class->data is used to implement type checking and
  *       is not supposed to be changed/overridden. If you need extra
  *       data for your smart class to work, just extend
  *       Ewk_View_Smart_Class instead.
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
- *         version mismatch).
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure (probably
+ *         version mismatch)
  *
  * @see ewk_view_single_smart_set()
  * @see ewk_view_tiled_smart_set()
@@ -399,17 +413,17 @@ EAPI Eina_Bool    ewk_view_base_smart_set(Ewk_View_Smart_Class *api);
  * Sets the smart class api using single backing store, enabling view
  * to be inherited.
  *
- * @param api class definition to be set, all members with the
- *        exception of Evas_Smart_Class->data may be overridden. Must
- *        @b not be @c NULL.
+ * @param api class definition to set, all members with the
+ *        exception of @a Evas_Smart_Class->data may be overridden, must
+ *        @b not be @c 0
  *
- * @note Evas_Smart_Class->data is used to implement type checking and
+ * @note @a Evas_Smart_Class->data is used to implement type checking and
  *       is not supposed to be changed/overridden. If you need extra
  *       data for your smart class to work, just extend
- *       Ewk_View_Smart_Class instead.
+ *       @a Ewk_View_Smart_Class instead.
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
- *         version mismatch).
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure (probably
+ *         version mismatch)
  *
  * @see ewk_view_base_smart_set()
  */
@@ -419,17 +433,17 @@ EAPI Eina_Bool    ewk_view_single_smart_set(Ewk_View_Smart_Class *api);
  * Sets the smart class api using tiled backing store, enabling view
  * to be inherited.
  *
- * @param api class definition to be set, all members with the
- *        exception of Evas_Smart_Class->data may be overridden. Must
- *        @b not be @c NULL.
+ * @param api class definition to set, all members with the
+ *        exception of @a Evas_Smart_Class->data may be overridden, must
+ *        @b not be @c 0
  *
- * @note Evas_Smart_Class->data is used to implement type checking and
+ * @note @a Evas_Smart_Class->data is used to implement type checking and
  *       is not supposed to be changed/overridden. If you need extra
  *       data for your smart class to work, just extend
  *       Ewk_View_Smart_Class instead.
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE on failure (probably
- *         version mismatch).
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure (probably
+ *         version mismatch)
  *
  * @see ewk_view_base_smart_set()
  */
@@ -445,9 +459,9 @@ EAPI Eina_Bool    ewk_view_tiled_smart_set(Ewk_View_Smart_Class *api);
  * frame, called 'main_frame'. See ewk_view_frame_main_get() and
  * ewk_view_frame_focused_get().
  *
- * @param e canvas where to create the view object.
+ * @param e canvas object where to create the view object
  *
- * @return view object or @c NULL if errors.
+ * @return view object on success or @c 0 on failure
  *
  * @see ewk_view_uri_set()
  */
@@ -459,48 +473,52 @@ EAPI Evas_Object *ewk_view_single_add(Evas *e);
  * View objects are the recommended way to deal with EFL WebKit as it
  * abstracts the complex pieces of the process.
  *
- * This object is almost the same as the one returned by the ewk_view_add()
+ * This object is almost the same as the one returned by the ewk_view_single_add()
  * function, but it uses the tiled backing store instead of the default
  * backing store.
  *
- * @param e canvas where to create the view object.
+ * @param e canvas object where to create the view object
  *
- * @return view object or @c NULL if errors.
+ * @return the view object on success or @c 0 on failure
  *
  * @see ewk_view_uri_set()
  */
 EAPI Evas_Object *ewk_view_tiled_add(Evas *e);
 
 /**
- * Get the cache of unused tiles used by this view.
+ * Gets the cache object of unused tiles used by this view.
  *
- * @param o view object to get cache.
- * @return instance of "cache of unused tiles" or @c NULL on errors.
+ * @param o the view object to get the cache object
+ *
+ * @return the cache object of unused tiles or @c 0 on failure
  */
 EAPI Ewk_Tile_Unused_Cache *ewk_view_tiled_unused_cache_get(const Evas_Object *o);
 
 /**
- * Set the cache of unused tiles used by this view.
+ * Sets the cache object of unused tiles used by this view.
  *
- * @param o view object to get cache.
- * @param cache instance of "cache of unused tiles". This can be used
- *        to share a single cache amongst different views. The tiles
- *        from one view will not be used by the other! This is just to
- *        limit the group with amount of unused memory.
- *        If @c NULL is provided, then a new cache is created.
+ * It can be used to share a single cache amongst different views.
+ * The tiles from one view will not be used by the other!
+ * This is just to limit the group with amount of unused memory.
+ *
+ * @note If @c 0 is provided as a @a cache, then a new one is created.
+ *
+ * @param o the view object to set the cache object
+ * @param the cache object of unused tiles
  */
 EAPI void                   ewk_view_tiled_unused_cache_set(Evas_Object *o, Ewk_Tile_Unused_Cache *cache);
 
 // FIXME: this function should be removed later, when we find the best flag to use.
 /**
- * Set the function with the same name of the tiled backing store.
- * @param o the tiled backing store object.
- * @param flag value of the tiled backing store flag to set.
+ * Sets if all the requests of the queue should be processed.
+ *
+ * @param o the view object
+ * @param flag @c EINA_TRUE if all the request of queue should be processed, @c EINA_FALSE if not
  */
 EAPI void                   ewk_view_tiled_process_entire_queue_set(Evas_Object *o, Eina_Bool flag);
 
 /**
- * Set a fixed layout size to be used, dissociating it from viewport size.
+ * Sets a fixed layout size to be used, dissociating it from viewport size.
  *
  * Setting a width different than zero enables fixed layout on that
  * size. It's automatically scaled based on zoom, but will not change
@@ -508,117 +526,121 @@ EAPI void                   ewk_view_tiled_process_entire_queue_set(Evas_Object 
  *
  * Setting both @a w and @a h to zero will disable fixed layout.
  *
- * @param o view object to change fixed layout.
- * @param w fixed width to use. This size will be automatically scaled
- *        based on zoom level.
- * @param h fixed height to use. This size will be automatically scaled
- *        based on zoom level.
+ * @param o view object to change fixed layout
+ * @param w fixed width to use, this size will be automatically scaled
+ *        based on zoom level
+ * @param h fixed height to use, this size will be automatically scaled
+ *        based on zoom level
  */
 EAPI void         ewk_view_fixed_layout_size_set(Evas_Object *o, Evas_Coord w, Evas_Coord h);
 
 /**
- * Get fixed layout size in use.
+ * Gets fixed layout size.
  *
- * @param o view object to query fixed layout size.
- * @param w where to return width. Returns 0 on error or if no fixed
- *        layout in use.
- * @param h where to return height. Returns 0 on error or if no fixed
- *        layout in use.
+ * @param o view object to get fixed layout size
+ * @param w the pointer to store fixed width, returns @c 0 on failure or if there is no
+ *        fixed layout in use
+ * @param h the pointer to store fixed height, returns @c 0 on failure or if there is no
+ *        fixed layout in use
  */
 EAPI void         ewk_view_fixed_layout_size_get(Evas_Object *o, Evas_Coord *w, Evas_Coord *h);
 
 /**
- * Set the theme path to be used by this view.
+ * Sets the theme path that will be used by this view.
  *
  * This also sets the theme on the main frame. As frames inherit theme
  * from their parent, this will have all frames with unset theme to
  * use this one.
  *
- * @param o view object to change theme.
- * @param path theme path, may be @c 0 to reset to default.
+ * @param o view object to change theme
+ * @param path theme path, may be @c 0 to reset to the default theme
  */
 EAPI void         ewk_view_theme_set(Evas_Object *o, const char *path);
 
 /**
- * Gets the theme set on this frame.
+ * Gets the theme set on this view.
  *
  * This returns the value set by ewk_view_theme_set().
  *
- * @param o view object to get theme path.
+ * @param o view object to get theme path
  *
- * @return theme path, may be @c 0 if not set.
+ * @return the theme path, may be @c 0 if not set
  */
 EAPI const char  *ewk_view_theme_get(Evas_Object *o);
 
 /**
- * Get the object that represents the main frame.
+ * Gets the object that represents the main frame.
  *
- * @param o view object to get main frame.
+ * @param o view object to get main frame
  *
- * @return ewk_frame object or @c 0 if none yet.
+ * @return frame smart object or @c 0 if none yet
  */
 EAPI Evas_Object *ewk_view_frame_main_get(const Evas_Object *o);
 
 /**
- * Get the currently focused frame object.
+ * Gets the currently focused frame object.
  *
- * @param o view object to get focused frame.
+ * @param o view object to get focused frame
  *
- * @return ewk_frame object or @c 0 if none yet.
+ * @return frame smart object or @c 0 if none yet
  */
 EAPI Evas_Object *ewk_view_frame_focused_get(const Evas_Object *o);
 
 /**
- * Ask main frame to load the given URI.
+ * Asks the main frame to load the given URI.
  *
- * @param o view object to load uri.
- * @param uri uniform resource identifier to load.
+ * @param o view object to load @a uri
+ * @param uri uniform resource identifier to load
  *
- * @return @c EINA_TRUE on successful request, @c EINA_FALSE on failure.
- *         Note that it means the request was done, not that it was
- *         satisfied.
+ * @return @c EINA_TRUE on successful request or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_uri_set(Evas_Object *o, const char *uri);
 
 /**
- * Get the current uri loaded by main frame.
+ * Gets the current uri loaded by main frame.
+ *
+ * It returns a internal string and should not
+ * be modified. The string is guaranteed to be stringshared.
  *
  * @param o view object to get current uri.
  *
- * @return current uri reference or @c 0. It's internal, don't change.
+ * @return current uri on success or @c 0 on failure
  */
 EAPI const char  *ewk_view_uri_get(const Evas_Object *o);
 
 /**
- * Get the current title of main frame.
+ * Gets the current title of the main frame.
  *
- * @param o view object to get current title.
+ * It returns a internal string and should not
+ * be modified. The string is guaranteed to be stringshared.
  *
- * @return current title reference or @c 0. It's internal, don't change.
+ * @param o view object to get current title
+ *
+ * @return current title on success or @c 0 on failure
  */
 EAPI const char  *ewk_view_title_get(const Evas_Object *o);
 
 /**
- * Gets if main frame is editable.
+ * Queries if the main frame is editable.
  *
- * @param o view object to get editable state.
+ * @param o view object to query editable state
  *
- * @return @c EINA_TRUE if editable, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the main frame is editable, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_editable_get(const Evas_Object *o);
 
 /**
  * Sets if main frame is editable.
  *
- * @param o view object to set editable state.
- * @param editable new state.
+ * @param o view object to set editable state
+ * @param editable a new state to set
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_editable_set(Evas_Object *o, Eina_Bool editable);
 
 /**
- * Set background color and transparency
+ * Sets the background color and transparency of the view.
  *
  * Just as in Evas, colors are pre-multiplied, so 50% red is
  * (128, 0, 0, 128) and not (255, 0, 0, 128)!
@@ -630,47 +652,50 @@ EAPI Eina_Bool    ewk_view_editable_set(Evas_Object *o, Eina_Bool editable);
  *          scrolling/panning and zooming will be likely slower than
  *          if transparency is off.
  *
- * @param o view object to change.
- * @param r red component.
- * @param g green component.
- * @param b blue component.
- * @param a transparency.
+ * @param o view object to change the background color
+ * @param r red color component
+ * @param g green color component
+ * @param b blue color component
+ * @param a transparency
  */
 EAPI void         ewk_view_bg_color_set(Evas_Object *o, int r, int g, int b, int a);
 
 /**
- * Query if view object background color.
+ * Gets the background color of the view.
  *
  * Just as in Evas, colors are pre-multiplied, so 50% red is
  * (128, 0, 0, 128) and not (255, 0, 0, 128)!
  *
- * @param o view object to query.
- * @param r where to return red color component.
- * @param g where to return green color component.
- * @param b where to return blue color component.
- * @param a where to return alpha value.
+ * @param o view object to get the background color
+ * @param r the pointer to store red color component
+ * @param g the pointer to store green color component
+ * @param b the pointer to store blue color component
+ * @param a the pointer to store alpha value
  */
 EAPI void         ewk_view_bg_color_get(const Evas_Object *o, int *r, int *g, int *b, int *a);
 
 /**
- * Get the copy of the selection text.
+ * Gets the copy of the selected text.
  *
- * @param o view object to get selection text.
+ * The returned string @b should be freed after use.
  *
- * @return newly allocated string or @c 0 if nothing is selected or failure.
+ * @param o view object to get selected text
+ *
+ * @return a newly allocated string or @c 0 if nothing is selected or on failure
  */
 EAPI char        *ewk_view_selection_get(const Evas_Object *o);
 
 /**
- * Forwards a request of new Context Menu to WebCore.
+ * Forwards a request of a new Context Menu to WebCore.
  *
- * @param o View.
- * @param ev Event data.
+ * @param o view object to forward a request of a new Context Menu
+ * @param ev mouse down event data
  *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_context_menu_forward_event(Evas_Object *o, const Evas_Event_Mouse_Down *ev);
 
+/// Contains commands to execute.
 enum _Ewk_Editor_Command {
     EWK_EDITOR_COMMAND_INSERT_IMAGE = 0,
     EWK_EDITOR_COMMAND_INSERT_TEXT,
@@ -681,16 +706,17 @@ enum _Ewk_Editor_Command {
     EWK_EDITOR_COMMAND_SELECT_LINE,
     EWK_EDITOR_COMMAND_SELECT_WORD
 };
+/// Creates a type name for @a _Ewk_Editor_Command.
 typedef enum _Ewk_Editor_Command Ewk_Editor_Command;
 
 /**
  * Executes editor command.
  *
- * @param o view object to execute command.
- * @param command editor command to be executed.
- * @param value value to be passed into command.
+ * @param o view object to execute command
+ * @param command editor command to execute
+ * @param value the value to be passed into command
  *
- * @return @c EINA_TRUE if operation was executed, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_execute_editor_command(Evas_Object *o, const Ewk_Editor_Command command, const char *value);
 
@@ -701,244 +727,273 @@ EAPI Eina_Bool    ewk_view_execute_editor_command(Evas_Object *o, const Ewk_Edit
  * whenever user has chosen a different item. Most likely after calling this, a
  * call to ewk_view_popup_destroy might be made in order to close the popup.
  *
- * @param o View.
- * @index Index of selected item.
- *
+ * @param o view object to change currently selected item
+ * @index index a new index to set
  */
 EAPI void         ewk_view_popup_selected_set(Evas_Object *o, int index);
 
 /**
- * Destroy a previously created menu.
+ * Destroys a previously created menu.
  *
  * Before destroying, it informs client that menu's data is ready to be
  * destroyed by sending a "popup,willdelete" with a list of menu items. Then it
  * removes any reference to menu inside webkit. It's safe to call this
  * function either from inside webkit or from browser.
  *
- * @param o View.
+ * @param o view object
  *
- * @returns EINA_TRUE in case menu was successfully destroyed or EINA_TRUE in
- * case there wasn't any menu to be destroyed.
+ * @return @c EINA_TRUE in case menu was successfully destroyed or @c EINA_TRUE in
+ * case there wasn't any menu to be destroyed
  */
 EAPI Eina_Bool    ewk_view_popup_destroy(Evas_Object *o);
 
 /**
- * Search the given text string in document.
+ * Searches the given string in a document.
  *
- * @param o view object where to search text.
- * @param string reference string to search.
- * @param case_sensitive if search should be case sensitive or not.
- * @param forward if search is from cursor and on or backwards.
- * @param wrap if search should wrap at end.
+ * @param o view object where to search the text
+ * @param string reference string to search
+ * @param case_sensitive if search should be case sensitive or not
+ * @param forward if search is from cursor and on or backwards
+ * @param wrap if search should wrap at the end
  *
- * @return @c EINA_TRUE if found, @c EINA_FALSE if not or failure.
+ * @return @c EINA_TRUE if the given string was found, @c EINA_FALSE if not or failure
  */
 EAPI Eina_Bool    ewk_view_text_search(const Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
 
 /**
- * Get if should highlight matches marked with ewk_view_text_matches_mark().
+ * Marks matches the given string in a document.
  *
- * @param o view object to query if matches are highlighted or not.
+ * @param o view object where to search text
+ * @param string reference string to match
+ * @param case_sensitive if match should be case sensitive or not
+ * @param highlight if matches should be highlighted
+ * @param limit maximum amount of matches, or zero to unlimited
  *
- * @return @c EINA_TRUE if they are highlighted, @c EINA_FALSE otherwise.
+ * @return number of matched @a string
  */
 EAPI unsigned int ewk_view_text_matches_mark(Evas_Object *o, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
 
 /**
- * Reverses the effect of ewk_view_text_matches_mark()
+ * Unmarks all marked matches in a document.
  *
- * @param o view object where to search text.
+ * Reverses the effect of ewk_frame_text_matches_mark().
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE for failure.
+ * @param o view object where to unmark matches
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_text_matches_unmark_all(Evas_Object *o);
 
 /**
- * Set if should highlight matches marked with ewk_view_text_matches_mark().
+ * Sets if should highlight matches marked with ewk_frame_text_matches_mark().
  *
- * @param o view object where to set if matches are highlighted or not.
- * @param highlight if @c EINA_TRUE, matches will be highlighted.
+ * @param o view object where to set if matches are highlighted or not
+ * @param highlight @c EINA_TRUE if matches are highlighted, @c EINA_FALSE if not
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE for failure.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_text_matches_highlight_set(Evas_Object *o, Eina_Bool highlight);
 
+/**
+ * Gets if should highlight matches marked with ewk_frame_text_matches_mark().
+ *
+ * @param o view object to query if matches are highlighted or not
+ *
+ * @return @c EINA_TRUE if matches are highlighted, @c EINA_FALSE otherwise
+ */
 EAPI Eina_Bool    ewk_view_text_matches_highlight_get(const Evas_Object *o);
 
 /**
- * Get current load progress estimate from 0.0 to 1.0.
+ * Gets the current load progress of page.
  *
- * @param o view object to get current progress.
+ * The progress estimates from 0.0 to 1.0.
  *
- * @return progres value from 0.0 to 1.0 or -1.0 on error.
+ * @param o view object to get the current progress
+ *
+ * @return the load progres of page, value from 0.0 to 1.0 on success
+ *       or -1.0 on failure
  */
 EAPI double       ewk_view_load_progress_get(const Evas_Object *o);
 
 /**
- * Ask main frame to stop loading.
+ * Asks the main frame to stop loading.
  *
- * @param o view object to stop loading.
+ * @param o view object to stop loading
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see ewk_frame_stop()
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool    ewk_view_stop(Evas_Object *o);
 
 /**
- * Ask main frame to reload current document.
+ * Asks the main frame to reload the current document.
  *
- * @param o view object to reload.
+ * @param o view object to reload current document
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  *
- * @see ewk_frame_reload()
+ * @see ewk_view_reload_full()
  */
 EAPI Eina_Bool    ewk_view_reload(Evas_Object *o);
 
 /**
- * Ask main frame to fully reload current document, using no caches.
+ * Asks the main frame to fully reload the current document, using no caches.
  *
- * @param o view object to reload.
+ * @param o view object to reload current document
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success o r@c EINA_FALSE otherwise
  *
- * @see ewk_frame_reload_full()
+ * @see ewk_view_reload()
  */
 EAPI Eina_Bool    ewk_view_reload_full(Evas_Object *o);
 
 /**
- * Ask main frame to navigate back in history.
+ * Asks the frame to navigate back in the history.
  *
- * @param o view object to navigate back.
+ * @param o view object to navigate back
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  *
  * @see ewk_frame_back()
  */
 EAPI Eina_Bool    ewk_view_back(Evas_Object *o);
 
 /**
- * Ask main frame to navigate forward in history.
+ * Asks frame to navigate forward in the history.
  *
- * @param o view object to navigate forward.
+ * @param o view object to navigate forward
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  *
  * @see ewk_frame_forward()
  */
 EAPI Eina_Bool    ewk_view_forward(Evas_Object *o);
 
 /**
- * Navigate back or forward in history.
+ * Navigates back or forward in the history.
  *
- * @param o view object to navigate.
+ * @param o view object to navigate in the history
  * @param steps if positive navigates that amount forwards, if negative
- *        does backwards.
+ *        does backwards
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  *
  * @see ewk_frame_navigate()
  */
 EAPI Eina_Bool    ewk_view_navigate(Evas_Object *o, int steps);
 
 /**
- * Check if it is possible to navigate backwards one item in history.
+ * Queries if it's possible to navigate backwards one item in the history.
  *
- * @param o view object to check if backward navigation is possible.
+ * @param o view object to query if backward navigation is possible
  *
- * @return @c EINA_TRUE if possible, @c EINA_FALSE otherwise.
- *
+ * @return @c EINA_TRUE if it's possible to navigate backward one item in the history, @c EINA_FALSE otherwise
  * @see ewk_view_navigate_possible()
  */
 EAPI Eina_Bool    ewk_view_back_possible(Evas_Object *o);
 
 /**
- * Check if it is possible to navigate forwards one item in history.
+ * Queries if it's possible to navigate forwards one item in the history.
  *
- * @param o view object to check if forward navigation is possible.
+ * @param o view object to query if forward navigation is possible
  *
- * @return @c EINA_TRUE if possible, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if it's possible to navigate forwards in the history, @c EINA_FALSE otherwise
  *
  * @see ewk_view_navigate_possible()
  */
 EAPI Eina_Bool    ewk_view_forward_possible(Evas_Object *o);
 
 /**
- * Check if it is possible to navigate given @a steps in history.
+ * Queries if it's possible to navigate given @a steps in the history.
  *
- * @param o view object to navigate.
+ * @param o view object to query if it's possible to navigate @a steps in the history
  * @param steps if positive navigates that amount forwards, if negative
- *        does backwards.
+ *        does backwards
  *
- * @return @c EINA_TRUE if possible, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if it's possible to navigate @a steps in the history, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_navigate_possible(Evas_Object *o, int steps);
 
 /**
- * Check if navigation history (back-forward lists) is enabled.
+ * Queries if navigation in the history (back-forward lists) is enabled.
  *
- * @param o view object to check if navigation history is enabled.
+ * @param o view object to query if navigation history is enabled
  *
- * @return @c EINA_TRUE if view keeps history, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if view keeps history, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_history_enable_get(const Evas_Object *o);
 
 /**
- * Sets if navigation history (back-forward lists) is enabled.
+ * Enables/disables navigation in the history (back-forward lists).
  *
- * @param o view object to set if navigation history is enabled.
- * @param enable @c EINA_TRUE if we want to enable navigation history;
- * @c EINA_FALSE otherwise.
+ * @param o view object to enable/disable navigation in the history
+ * @param enable @c EINA_TRUE to enable navigation in the history,
+ *        @c EINA_FALSE to disable
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_history_enable_set(Evas_Object *o, Eina_Bool enable);
 
 /**
  * Gets the history (back-forward list) associated with this view.
  *
- * @param o view object to get navigation history from.
+ * The returned instance is unique for this view and thus multiple calls
+ * to this function with the same view as parameter returns the same
+ * handle. This handle is alive while view is alive, thus one
+ * might want to listen for EVAS_CALLBACK_DEL on given view
+ * (@a o) to know when to stop using returned handle.
  *
- * @return returns the history instance handle associated with this
- *         view or @c 0 on errors (including when history is not
- *         enabled with ewk_view_history_enable_set()). This instance
- *         is unique for this view and thus multiple calls to this
- *         function with the same view as parameter returns the same
- *         handle. This handle is alive while view is alive, thus one
- *         might want to listen for EVAS_CALLBACK_DEL on given view
- *         (@a o) to know when to stop using returned handle.
+ * @param o view object to get navigation history
+ *
+ * @return the history instance handle associated with this
+ *         view on succes or @c 0 on failure (including when the history
+ *         navigation is not enabled with ewk_view_history_enable_set())
  *
  * @see ewk_view_history_enable_set()
  */
 EAPI Ewk_History *ewk_view_history_get(const Evas_Object *o);
 
 /**
- * Get the current zoom level of main frame.
+ * Gets the current zoom level of the main frame.
  *
- * @param o view object to query zoom level.
+ * @param o view object to get the zoom level
  *
- * @return current zoom level in use or -1.0 on error.
+ * @return current zoom level in use on success or @c -1.0 on failure
  */
 EAPI float        ewk_view_zoom_get(const Evas_Object *o);
 
 /**
- * Set the current zoom level of main frame.
+ * Sets the current zoom level of the main frame, centered at the given point.
  *
- * @param o view object to set zoom level.
- * @param zoom new level to use.
+ * @param o view object to set the zoom level
+ * @param zoom a new level to set
  * @param cx x of center coordinate
  * @param cy y of center coordinate
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_zoom_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas_Coord cy);
 
+/**
+ * Queries if the smooth scale is enabled while the weak zoom.
+ *
+ * @param o view object to query if the smooth scale is enabled while the weak zoom
+ *
+ * @return @c EINA_TRUE if the smooth scale is enabled while the weak zoom, or
+ *         @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool    ewk_view_zoom_weak_smooth_scale_get(const Evas_Object *o);
+
+/**
+ * Enables/disables the smooth scale while the weak zoom.
+ *
+ * @param o view object to set the smooth scale while the weak zoom
+ * @param smooth_scale @c EINA_TRUE to enable the smooth scale
+ *        @c EINA_FALSE to disable
+ */
 EAPI void         ewk_view_zoom_weak_smooth_scale_set(Evas_Object *o, Eina_Bool smooth_scale);
 
 /**
- * Set the current zoom level of backing store, centered at given point.
+ * Sets the current zoom level of backing store, centered at given point.
  *
  * Unlike ewk_view_zoom_set(), this call do not ask WebKit to render
  * at new size, but scale what is already rendered, being much faster
@@ -956,26 +1011,26 @@ EAPI void         ewk_view_zoom_weak_smooth_scale_set(Evas_Object *o, Eina_Bool 
  *       level, ewk_view_zoom_animated_mark_end() and
  *       ewk_view_zoom_animated_mark_current() to given zoom level.
  *
- * @param o view object to set weak zoom level.
- * @param zoom level to scale backing store.
- * @param cx horizontal center offset, relative to object (w/2 is middle).
- * @param cy vertical center offset, relative to object (h/2 is middle).
+ * @param o view object to set the weak zoom level
+ * @param zoom a new level to scale backing store
+ * @param cx horizontal center offset, relative to object (w/2 is middle)
+ * @param cy vertical center offset, relative to object (h/2 is middle)
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_zoom_weak_set(Evas_Object *o, float zoom, Evas_Coord cx, Evas_Coord cy);
 
 /**
- * Mark internal zoom animation state to given zoom.
+ * Sets start of an internal zoom animation state to the given zoom.
  *
  * This does not modify any actual zoom in WebKit or backing store,
- * just set the Ewk_View_Smart_Data->animated_zoom.zoom.start so
- * sub-classes will know they should not reset their internal state.
+ * just set needed flag so sub-classes knows they should not reset
+ * their an internal state.
  *
- * @param o view object to change value.
- * @param zoom new start value.
+ * @param o view object to set start of an internal zoom animation
+ * @param zoom a new start value
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  *
  * @see ewk_view_zoom_animated_set()
  * @see ewk_view_zoom_weak_set()
@@ -986,16 +1041,16 @@ EAPI Eina_Bool    ewk_view_zoom_weak_set(Evas_Object *o, float zoom, Evas_Coord 
 EAPI Eina_Bool    ewk_view_zoom_animated_mark_start(Evas_Object *o, float zoom);
 
 /**
- * Mark internal zoom animation state to given zoom.
+ * Sets end of an internal zoom animation state to given zoom.
  *
  * This does not modify any actual zoom in WebKit or backing store,
- * just set the Ewk_View_Smart_Data->animated_zoom.zoom.end so
- * sub-classes will know they should not reset their internal state.
+ * just set needed flag so sub-classes knows they should not reset
+ * their an internal state.
  *
- * @param o view object to change value.
- * @param zoom new end value.
+ * @param o view object to set end of an internal zoom animation
+ * @param zoom a new end value
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  *
  * @see ewk_view_zoom_animated_set()
  * @see ewk_view_zoom_weak_set()
@@ -1006,16 +1061,16 @@ EAPI Eina_Bool    ewk_view_zoom_animated_mark_start(Evas_Object *o, float zoom);
 EAPI Eina_Bool    ewk_view_zoom_animated_mark_end(Evas_Object *o, float zoom);
 
 /**
- * Mark internal zoom animation state to given zoom.
+ * Sets an internal current zoom animation state to given zoom.
  *
  * This does not modify any actual zoom in WebKit or backing store,
- * just set the Ewk_View_Smart_Data->animated_zoom.zoom.current so
- * sub-classes will know they should not reset their internal state.
+ * just set needed flag so sub-classes knows they should not reset
+ * their an internal state.
  *
- * @param o view object to change value.
- * @param zoom new current value.
+ * @param o view object to set an internal current zoom animation
+ * @param zoom a new current value
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  *
  * @see ewk_view_zoom_animated_set()
  * @see ewk_view_zoom_weak_set()
@@ -1026,11 +1081,11 @@ EAPI Eina_Bool    ewk_view_zoom_animated_mark_end(Evas_Object *o, float zoom);
 EAPI Eina_Bool    ewk_view_zoom_animated_mark_current(Evas_Object *o, float zoom);
 
 /**
- * Unmark internal zoom animation state.
+ * Unmarks an internal zoom animation state.
  *
- * This zero all start, end and current values.
+ * The start, end and current values of an internal zoom animation are zeroed.
  *
- * @param o view object to mark as animated is stopped.
+ * @param o view object to unmark an internal zoom animation state
  *
  * @see ewk_view_zoom_animated_mark_start()
  * @see ewk_view_zoom_animated_mark_end()
@@ -1040,7 +1095,7 @@ EAPI Eina_Bool    ewk_view_zoom_animated_mark_current(Evas_Object *o, float zoom
 EAPI Eina_Bool    ewk_view_zoom_animated_mark_stop(Evas_Object *o);
 
 /**
- * Set the current zoom level while animating.
+ * Sets the current zoom level while animating.
  *
  * If the view was already animating to another zoom, it will start
  * from current point to the next provided zoom (@a zoom parameter)
@@ -1053,37 +1108,37 @@ EAPI Eina_Bool    ewk_view_zoom_animated_mark_stop(Evas_Object *o);
  * ewk_view_zoom_animated_mark_end() and
  * ewk_view_zoom_animated_mark_stop().
  *
- * @param o view object to animate.
- * @param zoom final zoom level to use.
+ * @param o view object to animate
+ * @param zoom final zoom level to use
  * @param duration time in seconds the animation should take.
- * @param cx offset inside object that defines zoom center. 0 is left side.
- * @param cy offset inside object that defines zoom center. 0 is top side.
+ * @param cx offset inside object that defines zoom center. 0 is left side
+ * @param cy offset inside object that defines zoom center. 0 is top side
  * @return @c EINA_TRUE if animation will be started, @c EINA_FALSE if not
- *            because zoom is too small/big.
+ *            because zoom is too small/big
  */
 EAPI Eina_Bool    ewk_view_zoom_animated_set(Evas_Object *o, float zoom, float duration, Evas_Coord cx, Evas_Coord cy);
 
 /**
- * Query if zoom level just applies to text and not other elements.
+ * Queries if zoom level just applies to text only and not other elements.
  *
- * @param o view to query setting.
+ * @param o view to query zoom level for text only
  *
- * @return @c EINA_TRUE if just text are scaled, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if zoom level is applied to text only, @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool    ewk_view_zoom_text_only_get(const Evas_Object *o);
 
 /**
- * Set if zoom level just applies to text and not other elements.
+ * Sets if zoom level just applies to text only and not other elements.
  *
- * @param o view to change setting.
- * @param setting @c EINA_TRUE if zoom should just be applied to text.
+ * @param o view to apply zoom level for text only
+ * @param setting @c EINA_TRUE if zoom level should be applied to text only, @c EINA_FALSE if not
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_zoom_text_only_set(Evas_Object *o, Eina_Bool setting);
 
 /**
- * Hint engine to pre-render region.
+ * Asks engine to pre-render region.
  *
  * Engines and backing store might be able to pre-render regions in
  * order to speed up zooming or scrolling to that region. Not all
