@@ -1762,7 +1762,7 @@
         }],
         ['javascript_engine=="v8"', {
           'dependencies': [
-            '<(chromium_src_dir)/v8/src/extensions/experimental/experimental.gyp:i18n_api',
+            '<(chromium_src_dir)/third_party/v8-i18n/build/all.gyp:v8-i18n',
           ],
         }],
       ],

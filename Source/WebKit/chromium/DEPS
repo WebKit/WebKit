@@ -136,6 +136,8 @@ deps = {
     From('chromium_deps', 'src/third_party/snappy/src'),
   'third_party/sfntly/src/sfntly':
     From('chromium_deps', 'src/third_party/sfntly/src/sfntly'),
+  'third_party/v8-i18n':
+    From('chromium_deps', 'src/third_party/v8-i18n'),
   'third_party':
     Var('chromium_svn')+'/third_party@'+Var('chromium_rev'),
 }

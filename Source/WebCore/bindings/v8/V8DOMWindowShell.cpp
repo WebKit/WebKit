@@ -66,7 +66,7 @@
 #include <v8.h>
 
 #if ENABLE(JAVASCRIPT_I18N_API)
-#include <v8/src/extensions/experimental/i18n-extension.h>
+#include <v8-i18n/include/extension.h>
 #endif
 
 #include <wtf/Assertions.h>
@@ -368,8 +368,8 @@ v8::Persistent<v8::Context> V8DOMWindowShell::createNewContext(v8::Handle<v8::Ob
 
 #if ENABLE(JAVASCRIPT_I18N_API)
     // Enables experimental i18n API in V8.
-    if (RuntimeEnabledFeatures::javaScriptI18NAPIEnabled() && !V8Proxy::registeredExtensionWithV8(v8::internal::I18NExtension::get()))
-        V8Proxy::registerExtension(v8::internal::I18NExtension::get());
+    if (RuntimeEnabledFeatures::javaScriptI18NAPIEnabled() && !V8Proxy::registeredExtensionWithV8(v8_i18n::Extension::get()))
+        V8Proxy::registerExtension(v8_i18n::Extension::get());
 #endif
 
     // Dynamically tell v8 about our extensions now.

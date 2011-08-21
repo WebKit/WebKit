@@ -1,3 +1,13 @@
+2011-08-20  Nebojsa Ciric  <cira@chromium.org>
+
+        Add dependency on v8-i18n library. We used v8 repository before.
+        Chromium DEPS change was already submited (http://codereview.chromium.org/7583050).
+        https://bugs.webkit.org/show_bug.cgi?id=66573
+
+        Reviewed by Kent Tamura.
+
+        * DEPS:
+
 2011-08-19  Adam Klein  <adamk@chromium.org>
 
         [chromium] Remove various unreferenced bits from Chromium API headers
