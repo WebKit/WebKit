@@ -1153,596 +1153,1026 @@ EAPI Eina_Bool    ewk_view_zoom_text_only_set(Evas_Object *o, Eina_Bool setting)
  * Multiple requests might be queued by engines. One can clear/forget
  * about them with ewk_view_pre_render_cancel().
  *
- * @param o view to ask pre-render of given region.
- * @param x absolute coordinate (0=left) to pre-render at zoom.
- * @param y absolute coordinate (0=top) to pre-render at zoom.
- * @param w width to pre-render starting from @a x at zoom.
- * @param h height to pre-render starting from @a y at zoom.
- * @param zoom desired zoom.
+ * @param o view to ask pre-render of given region
+ * @param x absolute coordinate (0=left) to pre-render at zoom
+ * @param y absolute coordinate (0=top) to pre-render at zoom
+ * @param w width to pre-render starting from @a x at zoom
+ * @param h height to pre-render starting from @a y at zoom
+ * @param zoom desired zoom
  *
  * @return @c EINA_TRUE if request was accepted, @c EINA_FALSE
- *         otherwise (errors, pre-render not supported, etc).
+ *         otherwise (errors, pre-render feature not supported, etc)
  *
  * @see ewk_view_pre_render_cancel()
  */
 EAPI Eina_Bool    ewk_view_pre_render_region(Evas_Object *o, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float zoom);
 
 /**
- * Hint engine to pre-render region, given n extra cols/rows
+ * Asks engine to pre-render region, given @a n extra cols/rows.
  *
  * This is an alternative method to ewk_view_pre_render_region(). It does not
  * make sense in all engines and therefore it might not be implemented at all.
  *
  * It's only useful if engine divide the area being rendered in smaller tiles,
- * forming a grid. Then, browser could call this function to pre-render @param n
+ * forming a grid. Then, browser could call this function to pre-render @a n
  * rows/cols involving the current viewport.
  *
- * @param o view to ask pre-render on.
+ * @param o view to ask pre-render
  * @param n number of cols/rows that must be part of the region pre-rendered
+ *
+ * @return @c EINA_TRUE if request was accepted, @c EINA_FALSE
+ *         otherwise (errors, pre-render feature not supported, etc)
  *
  * @see ewk_view_pre_render_region()
  */
 EAPI Eina_Bool    ewk_view_pre_render_relative_radius(Evas_Object *o, unsigned int n);
 
 /**
- * Cancel (clear) previous pre-render requests.
+ * Cancels and clears previous the pre-render requests.
  *
- * @param o view to clear pre-render requests.
+ * @param o view to clear pre-render requests
  */
 EAPI void         ewk_view_pre_render_cancel(Evas_Object *o);
 
 /**
-  * Enable processing of update requests.
-  *
-  * @param o view to enable rendering.
-  *
-  * @return @c EINA_TRUE if render was enabled, @c EINA_FALSE
-            otherwise (errors, rendering suspension not supported).
-  */
+ * Enables (resumes) rendering.
+ *
+ * @param o view object to enable rendering
+ *
+ * @return @c EINA_TRUE if rendering was enabled, @c EINA_FALSE
+ *         otherwise (errors, rendering suspension feature not supported)
+ *
+ * @see ewk_view_disable_render()
+ */
 EAPI Eina_Bool    ewk_view_enable_render(const Evas_Object *o);
 
 /**
-  * Disable processing of update requests.
+  * Disables (suspends) rendering.
   *
-  * @param o view to disable rendering.
+  * @param o view object to disable rendering
   *
-  * @return @c EINA_TRUE if render was disabled, @c EINA_FALSE
-            otherwise (errors, rendering suspension not supported).
+  * @return @c EINA_TRUE if rendering was disabled, @c EINA_FALSE
+  *         otherwise (errors, rendering suspension not supported)
   */
 EAPI Eina_Bool    ewk_view_disable_render(const Evas_Object *o);
 
 /**
- * Get input method hints
+ * Gets the input method hints.
  *
- * @param o View.
+ * @param o view object to get the input method hints
  *
- * @return input method hints
+ * @see Ewk_Imh
+ *
+ * @return the input method hints as @a Ewk_Imh bits-field
  */
 EAPI unsigned int ewk_view_imh_get(Evas_Object *o);
 
-/* settings */
+/**
+ * Gets the user agent string.
+ *
+ * @param o view object to get the user agent string
+ *
+ * @return the user agent string
+ */
 EAPI const char  *ewk_view_setting_user_agent_get(const Evas_Object *o);
+
+/**
+ * Sets the user agent string.
+ *
+ * @param o view object to set the user agent string
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_user_agent_set(Evas_Object *o, const char *user_agent);
 
+/**
+ * Queries if the images are loaded automatically.
+ *
+ * @param o view object to query if the images are loaded automatically
+ *
+ * @return @c EINA_TRUE if the images are loaded automatically,
+ *         @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_auto_load_images_get(const Evas_Object *o);
+
+/**
+ * Enables/disables auto loading of the images.
+ *
+ * @param o view object to set auto loading of the images
+ * @param automatic @c EINA_TRUE to enable auto loading of the images,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_auto_load_images_set(Evas_Object *o, Eina_Bool automatic);
 
+/**
+ * Queries if the images are shrinked automatically
+ *
+ * @param o view object to query if the images are shrinked automatically
+ *
+ * @return @c EINA_TRUE if the images are shrinked automatically,
+ *         @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_auto_shrink_images_get(const Evas_Object *o);
+
+/**
+ * Enables/disables auto shrinking of the images.
+ *
+ * @param o view object to set auto shrinking of the images
+ * @param automatic @c EINA_TRUE to enable auto shrinking of the images,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_auto_shrink_images_set(Evas_Object *o, Eina_Bool automatic);
 
 /**
- * Gets if view can be resized automatically.
+ * Queries if the view can be resized automatically.
  *
- * @param o view to check status
+ * @param o view object to query if the view can be resized automatically
  *
- * @return EINA_TRUE if view can be resized, EINA_FALSE
- *         otherwise (errors, cannot be resized).
+ * @return @c EINA_TRUE if view can be resized automatically,
+ *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool    ewk_view_setting_enable_auto_resize_window_get(const Evas_Object *o);
 
 /**
- * Sets if view can be resized automatically.
+ * Enables/disables if the view can be resized automatically.
  *
- * @param o View.
- * @param resizable @c EINA_TRUE if we want to resize automatically;
- * @c EINA_FALSE otherwise. It defaults to @c EINA_TRUE
+ * @param o view object to set if the view can be resized automatically
+ * @param resizable @c EINA_TRUE if view can be resizable automatically,
+ *        @c EINA_TRUE if not
  *
- * @return EINA_TRUE if auto_resize_window status set, EINA_FALSE
- *         otherwise (errors).
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_setting_enable_auto_resize_window_set(Evas_Object *o, Eina_Bool resizable);
+
+/**
+ * Queries if the scripts can be executed.
+ *
+ * @param o view object to query if the scripts can be executed
+ *
+ * @return @c EINA_TRUE if the scripts can be executed
+ *         @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_enable_scripts_get(const Evas_Object *o);
+
+/**
+ * Enables/disables scripts executing.
+ *
+ * @param o view object to set script executing
+ * @param enable @c EINA_TRUE to enable scripts executing
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_enable_scripts_set(Evas_Object *o, Eina_Bool enable);
 
+/**
+ * Queries if the plug-ins are enabled.
+ *
+ * @param o view object to query if the plug-ins are enabled
+ *
+ * @return @c EINA_TRUE if the plugins are enabled
+ *         @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_enable_plugins_get(const Evas_Object *o);
+
+/**
+ * Enables/disables the plug-ins.
+ *
+ * @param o view object to set the plug-ins
+ * @param enable @c EINA_TRUE to enable the plug-ins
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_enable_plugins_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Get status of frame flattening.
+ * Queries if the frame flattening feature is enabled.
  *
- * @param o view to check status
+ * @param o view object to query if the frame flattening feature is enabled
  *
- * @return EINA_TRUE if flattening is enabled, EINA_FALSE
- *         otherwise (errors, flattening disabled).
+ * @return @c EINA_TRUE if the frame flattening feature is enabled,
+ *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_get(const Evas_Object* o);
 
 /**
- * Set frame flattening.
+ * Enables/disables the frame flattening feature.
  *
- * @param o view to set flattening
+ * @param o view object to set the frame flattening feature
+ * @param enable @c EINA_TRUE to enable the frame flattening feature
+ *        @c EINA_FALSE to disable
  *
- * @return EINA_TRUE if flattening status set, EINA_FALSE
- *         otherwise (errors).
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_setting_enable_frame_flattening_set(Evas_Object* o, Eina_Bool enable);
 
+/**
+ * Queries if the scripts can open the new windows.
+ *
+ * @param o view object to query if the scripts can open the new windows
+ *
+ * @return @c EINA_TRUE if the scripts can open the new windows
+ *         @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_scripts_window_open_get(const Evas_Object *o);
+
+/**
+ * Enables/disables if the scripts can open the new windows.
+ *
+ * @param o view object to set if the scripts can open the new windows
+ * @param allow @c EINA_TRUE if the scripts can open the new windows
+ *        @c EINA_FALSE if not
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure (scripts are disabled)
+ *
+ * @see ewk_view_setting_enable_scripts_set
+ */
 EAPI Eina_Bool    ewk_view_setting_scripts_window_open_set(Evas_Object *o, Eina_Bool allow);
 
+/**
+ * Queries if HTML elements @c textarea can be resizable.
+ *
+ * @param o view object to query if the textarea elements can be resizable
+ *
+ * @return @c EINA_TRUE if the textarea elements can be resizable
+ *         @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_resizable_textareas_get(const Evas_Object *o);
+
+/**
+ * Enables/disables if HTML elements @c textarea can be resizable.
+ *
+ * @param o view object to set if the textarea elements can be resizable
+ * @param enable @c EINA_TRUE if the textarea elements can be resizable
+ *        @c EINA_FALSE if not
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_resizable_textareas_set(Evas_Object *o, Eina_Bool enable);
 
+/**
+ * Gets the user style sheet.
+ *
+ * @param o view object to get the user style sheet
+ *
+ * @return the user style sheet
+ */
 EAPI const char  *ewk_view_setting_user_stylesheet_get(const Evas_Object *o);
+
+/**
+ * Sets the user style sheet.
+ *
+ * @param o view object to set the user style sheet
+ * @param uri uniform resource identifier to user style sheet
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_user_stylesheet_set(Evas_Object *o, const char *uri);
 
+/**
+ * Queries if the private browsing feature is enabled.
+ *
+ * @param o view object to query if the private browsing feature is enabled
+ *
+ * @return @c EINA_TRUE if the private browsing feature is enabled, or
+ *         @c EINA_FALSE if not or on failure
+ *
+ * @see ewk_view_setting_private_browsing_set
+ */
 EAPI Eina_Bool    ewk_view_setting_private_browsing_get(const Evas_Object *o);
+
+/**
+ * Enables/disables the private browsing feature.
+ *
+ * When this option is set, WebCore will avoid storing any record of browsing
+ * activity  that may persist on disk or remain displayed when the
+ * option is reset.
+ *
+ * This option does not affect the storage of such information in RAM.
+ *
+ * The following functions respect this setting:
+ *  - HTML5/DOM Storage
+ *  - Icon Database
+ *  - Console Messages
+ *  - MemoryCache
+ *  - Application Cache
+ *  - Back/Forward Page History
+ *  - Page Search Results
+ *  - HTTP Cookies
+ *  - Plug-ins (that support NPNVprivateModeBool)
+ *
+ * @param o view object to set the private browsing feature
+ * @param enable @c EINA_TRUE to enable the private browsing feature
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_private_browsing_set(Evas_Object *o, Eina_Bool enable);
+
+/**
+ * Queries if the cache for offline application is enabled.
+ *
+ * @param o view object to query if the cache for offline application is enabled
+ *
+ * @return @c EINA_TRUE if the cache for offline application is enabled,
+ *         @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_offline_app_cache_get(const Evas_Object *o);
+
+/**
+ * Enables/disables the cache for offline application.
+ *
+ * @param o view object to set if the cache for offline application
+ * @param enable @c EINA_TRUE to enable the cache for offline application
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_offline_app_cache_set(Evas_Object *o, Eina_Bool enable);
 
+/**
+ * Queries if the caret browsing feature is enabled.
+ *
+ * @param o view object to query if the caret browsing feature is enabled
+ *
+ * @return @c EINA_TRUE if the caret browsing feature is enabled,
+ *         @c EINA_FALSE if not or on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_caret_browsing_get(const Evas_Object *o);
+
+/**
+ * Enables/disables the caret browsing feature.
+ *
+ * @param o view object to set caret browsing feature
+ * @param enable @c EINA_TRUE to enable the caret browsing feature
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_caret_browsing_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Get current encoding of this View.
+ * Gets the current encoding.
  *
- * @param o View.
+ * @param o view object to get the current encoding
  *
- * @return A pointer to an eina_strinshare containing the current custom
- * encoding for View object @param o, or @c 0 if it's not set.
+ * @return @c eina_strinshare containing the current encoding, or
+ *         @c 0 if it's not set
  */
 EAPI const char  *ewk_view_setting_encoding_custom_get(const Evas_Object *o);
 
 /**
- * Set encoding of this View and reload page.
+ * Sets the encoding and reloads the page.
  *
- * @param o View.
- * @param encoding The new encoding or @c 0 to restore the default encoding.
+ * @param o view to set the encoding
+ * @param encoding the new encoding to set or @c 0 to restore the default one
  *
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_setting_encoding_custom_set(Evas_Object *o, const char *encoding);
+
+/**
+ * Gets the default encoding.
+ *
+ * @param o view object to get the default encoding
+ *
+ * @return @c eina_strinshare containing the default encoding, or
+ *         @c 0 if it's not set
+ */
 EAPI const char  *ewk_view_setting_encoding_default_get(const Evas_Object *o);
+
+/**
+ * Sets the default encoding.
+ *
+ * @param o view to set the default encoding
+ * @param encoding the new encoding to set
+ *
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
+ */
 EAPI Eina_Bool    ewk_view_setting_encoding_default_set(Evas_Object *o, const char *encoding);
 
+/**
+ * Gets the minimum font size.
+ *
+ * @param o view object to get the minimum font size
+ *
+ * @return the minimum font size, or @c 0 on failure
+ */
 EAPI int          ewk_view_setting_font_minimum_size_get(const Evas_Object *o);
+
+/**
+ * Sets the minimum font size.
+ *
+ * @param o view object to set the minimum font size
+ * @param size a new minimum font size to set
+ *
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
+ */
 EAPI Eina_Bool    ewk_view_setting_font_minimum_size_set(Evas_Object *o, int size);
+
+/**
+ * Gets the minimum logical font size.
+ *
+ * @param o view object to get the minimum logical font size
+ *
+ * @return the minimum logical font size, or @c 0 on failure
+ */
 EAPI int          ewk_view_setting_font_minimum_logical_size_get(const Evas_Object *o);
+
+/**
+ * Sets the minimum logical font size.
+ *
+ * @param o view object to set the minimum font size
+ * @param size a new minimum logical font size to set
+ *
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
+ */
 EAPI Eina_Bool    ewk_view_setting_font_minimum_logical_size_set(Evas_Object *o, int size);
+
+/**
+ * Gets the default font size.
+ *
+ * @param o view object to get the default font size
+ *
+ * @return the default font size, or @c 0 on failure
+ */
 EAPI int          ewk_view_setting_font_default_size_get(const Evas_Object *o);
+
+/**
+ * Sets the default font size.
+ *
+ * @param o view object to set the default font size
+ * @param size a new default font size to set
+ *
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
+ */
 EAPI Eina_Bool    ewk_view_setting_font_default_size_set(Evas_Object *o, int size);
+
+/**
+ * Gets the Monospace font size.
+ *
+ * @param o view object to get the Monospace font size
+ *
+ * @return the Monospace font size, or @c 0 on failure
+ */
 EAPI int          ewk_view_setting_font_monospace_size_get(const Evas_Object *o);
+
+/**
+ * Sets the Monospace font size.
+ *
+ * @param o view object to set the Monospace font size
+ * @param size a new Monospace font size to set
+ *
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise
+ */
 EAPI Eina_Bool    ewk_view_setting_font_monospace_size_set(Evas_Object *o, int size);
 
+/**
+ * Gets the font standard family.
+ *
+ * @param o view object to get the font standard family
+ *
+ * @return the font standard family on success or @c 0 on failure
+ */
 EAPI const char  *ewk_view_setting_font_standard_get(const Evas_Object *o);
+
+/**
+ * Sets the font standard family.
+ *
+ * @param o view object to set the font standard family
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_font_standard_set(Evas_Object *o, const char *family);
 
+/**
+ * Gets the font cursive family.
+ *
+ * @param o view object to get the font cursive family
+ *
+ * @return the font cursive family on success or @c 0 on failure
+ */
 EAPI const char  *ewk_view_setting_font_cursive_get(const Evas_Object *o);
+
+/**
+ * Sets the font standard family.
+ *
+ * @param o view object to set the font standard family
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_font_cursive_set(Evas_Object *o, const char *family);
 
+/**
+ * Gets the font monospace family.
+ *
+ * @param o view object to get the font monospace family
+ *
+ * @return the font monospace family on success or @c 0 on failure
+ */
 EAPI const char  *ewk_view_setting_font_monospace_get(const Evas_Object *o);
+
+/**
+ * Sets the font monospace family.
+ *
+ * @param o view object to set the font monospace family
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_font_monospace_set(Evas_Object *o, const char *family);
 
+/**
+ * Gets the font fantasy family.
+ *
+ * @param o view object to get the font fantasy family
+ *
+ * @return the font fantasy family on success or @c 0 on failure
+ */
 EAPI const char  *ewk_view_setting_font_fantasy_get(const Evas_Object *o);
+
+/**
+ * Sets the font monospace family.
+ *
+ * @param o view object to set the font monospace family
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_font_fantasy_set(Evas_Object *o, const char *family);
 
+/**
+ * Gets the font serif family.
+ *
+ * @param o view object to get the font serif family
+ *
+ * @return the font serif family on success or @c 0 on failure
+ */
 EAPI const char  *ewk_view_setting_font_serif_get(const Evas_Object *o);
+
+/**
+ * Sets the font serif family.
+ *
+ * @param o view object to set the font serif family
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_font_serif_set(Evas_Object *o, const char *family);
 
+/**
+ * Gets the font sans serif family.
+ *
+ * @param o view object to get the font sans serif family
+ *
+ * @return the font sans serif family on success or @c 0 on failure
+ */
 EAPI const char  *ewk_view_setting_font_sans_serif_get(const Evas_Object *o);
+
+/**
+ * Sets the font sans serif family.
+ *
+ * @param o view object to set the font serif family
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
+ */
 EAPI Eina_Bool    ewk_view_setting_font_sans_serif_set(Evas_Object *o, const char *family);
 
 /**
- * Gets if the spatial naviagtion is enabled.
+ * Queries if the spatial naviagtion feature is enabled.
  *
- * @param o view object to get spatial navigation setting.
- * @return @c EINA_TRUE if spatial navigation is enabled, @c EINA_FALSE if not or on errors.
+ * @param o view object to query if spatial navigation feature is enabled
+ *
+ * @return @c EINA_TRUE if spatial navigation is enabled,
+ *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool    ewk_view_setting_spatial_navigation_get(Evas_Object *o);
 
 /**
- * Sets the spatial navigation.
+ * Enables/disables the spatial navigation feature.
  *
- * @param o view object to set spatial navigation setting.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
+ * @param o view object to set spatial navigation feature
+ * @param enable @c EINA_TRUE to enable the spatial navigation feature,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_setting_spatial_navigation_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Gets if the local storage is enabled.
+ * Queries if the local storage feature of HTML5 is enabled.
  *
- * @param o view object to get if local storage is enabled.
- * @return @c EINA_TRUE if local storage is enabled, @c EINA_FALSE if not or on errors.
+ * @param o view object to query if the local storage feature is enabled
+ *
+ * @return @c EINA_TRUE if local storage is enabled,
+ *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool    ewk_view_setting_local_storage_get(Evas_Object *o);
 
 /**
- * Sets the local storage of HTML5.
+ * Enables/disable the local storage feature of HTML5.
  *
- * @param o view object to set if local storage is enabled.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
+ * @param o view object to set if local storage is enabled
+ * @param enable @c EINA_TRUE to enable the local storage feature,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_setting_local_storage_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Gets the local storage database path.
+ * Gets the database path to the local storage feature of HTML5.
  *
- * @param o view object to get the local storage database path.
- * @return the local storage database path.
+ * @param o view object to get the database path to the local storage feature
+ *
+ * @return @c eina_strinshare containing the database path to the local storage feature, or
+ *         @c 0 if it's not set
  */
 EAPI const char  *ewk_view_setting_local_storage_database_path_get(const Evas_Object *o);
 
 /**
- * Sets the local storage database path.
+ * Sets the database path to the local storage feature of HTML5.
  *
- * @param o view object to set the local storage database path.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
+ * @param o view object to set the database path to the local storage feature
+ * @param path a new database path to the local storage feature
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_setting_local_storage_database_path_set(Evas_Object *o, const char *path);
 
 /**
- * Gets if the page cache is enabled.
+ * Queries if the page cache feature is enabled.
  *
- * @param o view object to set if page cache is enabled.
- * @return @c EINA_TRUE if page cache is enabled, @c EINA_FALSE if not.
+ * @param o view object to query if page cache feature is enabled
+ *
+ * @return @c EINA_TRUE if page cache is enabled,
+ *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool    ewk_view_setting_page_cache_get(Evas_Object *o);
 
 /**
- * Sets the page cache.
+ * Enables/disables the page cache feature.
  *
- * @param o view object to set if page cache is enabled.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
+ * @param o view object to set page cache feature
+ * @param enable @c EINA_TRUE to enable the page cache feature,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_setting_page_cache_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Gets if the encoding detector is enabled.
+ * Queries if the encoding detector is enabled.
  *
- * @param o view object to get if encoding detector is enabled.
- * @return @c EINA_TRUE if encoding detector is enabled, @c EINA_FALSE if not or on errors.
+ * @param o view object to query if the encoding detector is enabled
+ *
+ * @return @c EINA_TRUE if the encoding feature is enabled,
+ *         @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool    ewk_view_setting_encoding_detector_get(Evas_Object *o);
 
 /**
- * Sets the encoding detector.
+ * Enables/disables the encoding detector.
  *
- * @param o view object to set if encoding detector is enabled.
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure
+ * @param o view object to set the encoding detector
+ * @param enable @c EINA_TRUE to enable the encoding detector,
+ *        @c EINA_FALSE to disable
+ *
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    ewk_view_setting_encoding_detector_set(Evas_Object *o, Eina_Bool enable);
 
 /**
- * Returns whether developer extensions are enabled for the given view.
+ * Queries if developer extensions are enabled.
  *
  * Currently, this is used to know whether the Web Inspector is enabled for a
  * given view.
  *
- * @param o view object to check.
+ * @param o view object to query if developer extensions are enabled
  *
  * @return @c EINA_TRUE if developer extensions are enabled, @c EINA_FALSE
- *         otherwise.
+ *         otherwise
  */
 EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_get(Evas_Object *o);
 
 /**
- * Enables/disables developer extensions for the given view.
+ * Enables/disables developer extensions.
  *
  * This currently controls whether the Web Inspector should be enabled.
  *
- * @param o The view whose setting will be changed.
+ * @param o view object to set developer extensions
  * @param enable @c EINA_TRUE to enable developer extras, @c EINA_FALSE to
- *               disable.
+ *               disable
  *
- * @return @c EINA_TRUE on success, @EINA_FALSE on failure.
+ * @return @c EINA_TRUE on success or @EINA_FALSE on failure
  */
 EAPI Eina_Bool    ewk_view_setting_enable_developer_extras_set(Evas_Object *o, Eina_Bool enable);
 
-/* to be used by subclass implementations */
 /**
- * Similar to evas_object_smart_data_get(), but does type checking.
+ * Gets the internal data of @a o.
  *
- * @param o view object to query internal data.
- * @return internal data or @c 0 on errors (ie: incorrect type of @a o).
+ * This is similar to evas_object_smart_data_get(), but additionally does type checking.
+ *
+ * @param o view object to get the internal data
+ *
+ * @return the internal data of @a o, or @c 0 on failure
  */
 EAPI Ewk_View_Smart_Data *ewk_view_smart_data_get(const Evas_Object *o);
 
-EAPI void ewk_view_scrolls_process(Ewk_View_Smart_Data *sd);
-
 /**
- * Structure that keeps paint context.
+ * Process scrolls.
  *
- * @note this is not for general use but just for subclasses that want
+ * @param priv the pointer to the private data of the view to process scrolls
+ *
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
+EAPI void ewk_view_scrolls_process(Ewk_View_Smart_Data *sd);
+
+/// Creates a type name for @a _Ewk_View_Paint_Context.
 typedef struct _Ewk_View_Paint_Context Ewk_View_Paint_Context;
 
 /**
- * Create a new paint context using the view as source and cairo as output.
+ * Creates a new paint context using the view as source and cairo as output.
  *
- * @param priv private handle pointer of the view to use as paint source.
- * @param cr cairo context to use as paint destination. A new
- *        reference is taken, so it's safe to call cairo_destroy()
+ * @param priv the pointer to the private data of the view to use as paint source
+ * @param cr cairo context to use as paint destination, a new
+ *        reference is taken, so it's safe to call @c cairo_destroy()
  *        after this function returns.
  *
- * @return newly allocated instance or @c 0 on errors.
+ * @return a newly allocated instance of @c Ewk_View_Paint_Context on success,
+ *         or @c 0 on failure
  *
- * @note this is not for general use but just for subclasses that want
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
 EAPI Ewk_View_Paint_Context *ewk_view_paint_context_new(Ewk_View_Private_Data *priv, cairo_t *cr);
 
 /**
- * Destroy previously created paint context.
+ * Destroys the previously created the paint context.
  *
- * @param ctxt paint context to destroy. Must @b not be @c 0.
+ * @param ctxt the paint context to destroy, must @b not be @c 0
  *
- * @note this is not for general use but just for subclasses that want
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
 EAPI void ewk_view_paint_context_free(Ewk_View_Paint_Context *ctxt);
 
 /**
- * Save (push to stack) paint context status.
+ * Saves (push to stack) the paint context status.
  *
- * @param ctxt paint context to save. Must @b not be @c 0.
+ * @param ctxt the paint context to save, must @b not be @c 0
  *
  * @see ewk_view_paint_context_restore()
  *
- * @note this is not for general use but just for subclasses that want
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
 EAPI void ewk_view_paint_context_save(Ewk_View_Paint_Context *ctxt);
 
 /**
- * Restore (pop from stack) paint context status.
+ * Restores (pop from stack) the paint context status.
  *
- * @param ctxt paint context to restore. Must @b not be @c 0.
+ * @param ctxt the paint context to restore, must @b not be @c 0
  *
  * @see ewk_view_paint_context_save()
  *
- * @note this is not for general use but just for subclasses that want
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
 EAPI void ewk_view_paint_context_restore(Ewk_View_Paint_Context *ctxt);
 
 /**
- * Clip paint context drawings to given area.
+ * Clips the paint context drawings to the given area.
  *
- * @param ctxt paint context to clip. Must @b not be @c 0.
- * @param area clip area to use.
+ * @param ctxt the paint context to clip, must @b not be @c 0
+ * @param area clip area to use, must @b not be @c 0
  *
  * @see ewk_view_paint_context_save()
  * @see ewk_view_paint_context_restore()
  *
- * @note this is not for general use but just for subclasses that want
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
 EAPI void ewk_view_paint_context_clip(Ewk_View_Paint_Context *ctxt, const Eina_Rectangle *area);
 
 /**
- * Paint using context using given area.
+ * Paints the context using given area.
  *
- * @param ctxt paint context to paint. Must @b not be @c 0.
- * @param area paint area to use. Coordinates are relative to current viewport,
- *        thus "scrolled".
+ * @param ctxt the paint context to paint, must @b not be @c 0
+ * @param area the paint area to use, coordinates are relative to current viewport,
+ *        thus "scrolled", must @b not be @c 0
  *
- * @note one may use cairo functions on the cairo context to
+ * @note One may use cairo functions on the cairo context to
  *       translate, scale or any modification that may fit his desires.
  *
  * @see ewk_view_paint_context_clip()
  * @see ewk_view_paint_context_paint_contents()
  *
- * @note this is not for general use but just for subclasses that want
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
 EAPI void ewk_view_paint_context_paint(Ewk_View_Paint_Context *ctxt, const Eina_Rectangle *area);
 
 /**
- * Paint just contents using context using given area.
+ * Paints just contents using context using given area.
  *
  * Unlike ewk_view_paint_context_paint(), this function paint just
  * bare contents and ignores any scrolling, scrollbars and extras. It
  * will walk the rendering tree and paint contents inside the given
  * area to the cairo context specified in @a ctxt.
  *
- * @param ctxt paint context to paint. Must @b not be @c 0.
- * @param area paint area to use. Coordinates are absolute to page.
+ * @param ctxt the paint context to paint, must @b not be @c 0.
+ * @param area the paint area to use, coordinates are absolute to page, must @b not be @c 0
  *
- * @note one may use cairo functions on the cairo context to
+ * @note One may use cairo functions on the cairo context to
  *       translate, scale or any modification that may fit his desires.
  *
  * @see ewk_view_paint_context_clip()
  * @see ewk_view_paint_context_paint()
  *
- * @note this is not for general use but just for subclasses that want
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
 EAPI void ewk_view_paint_context_paint_contents(Ewk_View_Paint_Context *ctxt, const Eina_Rectangle *area);
 
 /**
- * Scale the contents by the given factors.
+ * Scales the contents by the given factors.
  *
  * This function applies a scaling transformation using Cairo.
  *
- * @param ctxt    paint context to paint. Must @b not be @c 0.
- * @param scale_x scale factor for the X dimension.
- * @param scale_y scale factor for the Y dimension.
+ * @param ctxt the paint context to scale, must @b not be @c 0
+ * @param scale_x the scale factor for the X dimension
+ * @param scale_y the scale factor for the Y dimension
  */
 EAPI void ewk_view_paint_context_scale(Ewk_View_Paint_Context *ctxt, float scale_x, float scale_y);
 
 /**
  * Performs a translation of the origin coordinates.
  *
- * This function moves the origin coordinates by @p x and @p y pixels.
+ * This function moves the origin coordinates by @a x and @a y pixels.
  *
- * @param ctxt paint context to paint. Must @b not be @c 0.
- * @param x    amount of pixels to translate in the X dimension.
- * @param y    amount of pixels to translate in the Y dimension.
+ * @param ctxt the paint context to translate, must @b not be @c 0
+ * @param x amount of pixels to translate in the X dimension
+ * @param y amount of pixels to translate in the Y dimension
  */
 EAPI void ewk_view_paint_context_translate(Ewk_View_Paint_Context *ctxt, float x, float y);
 
 /**
- * Paint using given graphics context the given area.
+ * Paints using given graphics context the given area.
  *
  * This uses viewport relative area and will also handle scrollbars
  * and other extra elements. See ewk_view_paint_contents() for the
  * alternative function.
  *
- * @param priv private handle pointer of view to use as paint source.
- * @param cr cairo context to use as paint destination. Its state will
- *        be saved before operation and restored afterwards.
- * @param area viewport relative geometry to paint.
+ * @param priv the pointer to the private data of the view to use as paint source
+ * @param cr the cairo context to use as paint destination, its state will
+ *        be saved before operation and restored afterwards
+ * @param area viewport relative geometry to paint
  *
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure, like
- *         incorrect parameters.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  *
- * @note this is an easy to use version, but internal structures are
+ * @note This is an easy to use version, but internal structures are
  *       always created, then graphics context is clipped, then
  *       painted, restored and destroyed. This might not be optimum,
- *       so using #Ewk_View_Paint_Context may be a better solutions
+ *       so using @a Ewk_View_Paint_Context may be a better solutions
  *       for large number of operations.
  *
  * @see ewk_view_paint_contents()
  * @see ewk_view_paint_context_paint()
  *
- * @note this is not for general use but just for subclasses that want
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
 EAPI Eina_Bool ewk_view_paint(Ewk_View_Private_Data *priv, cairo_t *cr, const Eina_Rectangle *area);
 
 /**
- * Paint just contents using given graphics context the given area.
+ * Paints just contents using given graphics context the given area.
  *
  * This uses absolute coordinates for area and will just handle
  * contents, no scrollbars or extras. See ewk_view_paint() for the
  * alternative solution.
  *
- * @param priv private handle pointer of view to use as paint source.
- * @param cr cairo context to use as paint destination. Its state will
- *        be saved before operation and restored afterwards.
- * @param area absolute geometry to paint.
+ * @param priv the pointer to the private data of the view to use as paint source
+ * @param cr the cairo context to use as paint destination, its state will
+ *        be saved before operation and restored afterwards
+ * @param area absolute geometry to paint
  *
- * @return @c EINA_TRUE on success and @c EINA_FALSE on failure, like
- *         incorrect parameters.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  *
- * @note this is an easy to use version, but internal structures are
+ * @note This is an easy to use version, but internal structures are
  *       always created, then graphics context is clipped, then
  *       painted, restored and destroyed. This might not be optimum,
- *       so using #Ewk_View_Paint_Context may be a better solutions
+ *       so using @a Ewk_View_Paint_Context may be a better solutions
  *       for large number of operations.
  *
  * @see ewk_view_paint()
  * @see ewk_view_paint_context_paint_contents()
  *
- * @note this is not for general use but just for subclasses that want
+ * @note This is not for general use but just for subclasses that want
  *       to define their own backing store.
  */
 EAPI Eina_Bool ewk_view_paint_contents(Ewk_View_Private_Data *priv, cairo_t *cr, const Eina_Rectangle *area);
 
 /**
- * Gets attributes of viewport meta tag.
+ * Gets the attributes of the viewport meta tag.
  *
- * @param o view.
- * @param w width.
- * @param h height.
- * @param init_scale initial Scale value.
- * @param max_scale maximum Scale value.
- * @param min_scale minimum Scale value.
- * @param device_pixel_ratio value.
- * @param user_scalable user Scalable value.
+ * Properties are returned in the respective pointers. Passing @c 0 to any of
+ * these pointers will make that property to not be returned.
+ *
+ * @param o view object to get the viewport attributes
+ * @param w the pointer to store the width of the viewport
+ * @param h the pointer to store the height of the viewport
+ * @param init_scale the pointer to store the initial scale value
+ * @param max_scale the pointer to store the maximum scale value
+ * @param min_scale the pointer to store the minimum scale value
+ * @param device_pixel_ratio the pointer to store the device pixel ratio value
+ * @param user_scalable the pointer to store if user can scale viewport
  */
 EAPI void ewk_view_viewport_attributes_get(Evas_Object *o, float *w, float *h, float *init_scale, float *max_scale, float *min_scale, float *device_pixel_ratio , Eina_Bool *user_scalable);
 
 /**
  * Sets the zoom range.
  *
- * @param o view.
- * @param min_scale minimum value of zoom range.
- * @param max_scale maximum value of zoom range.
+ * @param o view object to set the zoom range
+ * @param min_scale the minimum value of the zoom range
+ * @param max_scale the maximum value of the zoom range
  *
- * @return @c EINA_TRUE if zoom range is changed, @c EINA_FALSE if not or failure.
+ * @return @c EINA_TRUE if zoom range is changed, @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool ewk_view_zoom_range_set(Evas_Object *o, float min_scale, float max_scale);
 
 /**
- * Gets the minimum value of zoom range.
+ * Gets the minimum value of the zoom range.
  *
- * @param o view.
+ * @param o view object to get the minimum value of the zoom range
  *
- * @return minimum value of zoom range, or @c -1.0 on failure.
+ * @return the minimum value of the zoom range on success, or
+ *         @c -1 on failure
  */
 EAPI float ewk_view_zoom_range_min_get(Evas_Object *o);
 
 /**
- * Gets the maximum value of zoom range.
+ * Gets the maximum value of the zoom range.
  *
- * @param o view.
+ * @param o view object to get the maximum value of the zoom range
  *
- * @return maximum value of zoom range, or @c -1.0 on failure.
+ * @return the maximum value of the zoom range on success, or
+ *         @c -1.0 on failure
  */
 EAPI float ewk_view_zoom_range_max_get(Evas_Object *o);
 
 /**
- * Sets if zoom is enabled.
+ * Enables/disables the zoom.
  *
- * @param o view.
- * @param user_scalable boolean pointer in which to enable zoom. It defaults
- * to @c EINA_TRUE.
+ * @param o view to set zoom
+ * @param user_scalable @c EINA_TRUE to enable zoom, @c EINA_FALSE to disable
  *
- * @return @c EINA_TRUE on success, or @c EINA_FALSE on failure
+ * @return @c EINA_TRUE on success or @c EINA_FALSE on failure
  */
 EAPI Eina_Bool ewk_view_user_scalable_set(Evas_Object *o, Eina_Bool user_scalable);
 
 /**
- * Gets if zoom is enabled.
+ * Queries if the zoom is enabled.
  *
- * @param o view.
- * @param user_scalable where to return the current user scalable value.
+ * @param o view to query if zoom is enabled
  *
- * @return @c EINA_TRUE if zoom is enabled, @c EINA_FALSE if not or on failure.
+ * @return @c EINA_TRUE if the zoom is enabled, @c EINA_FALSE if not or on failure
  */
 EAPI Eina_Bool ewk_view_user_scalable_get(Evas_Object *o);
 
 /**
- * Gets device pixel ratio value.
+ * Gets the device pixel ratio value.
  *
- * @param o view.
- * @param user_scalable where to return the current user scalable value.
+ * @param o view to get the device pixel ratio value
  *
- * @return device pixel ratio or @c -1.0 on failure.
+ * @return the device pixel ratio value on success or @c -1.0 on failure
  */
 EAPI float ewk_view_device_pixel_ratio_get(Evas_Object *o);
 
 /**
- * Sets view mode. The view-mode media feature describes the mode in which the
+ * Sets the view mode.
+ *
+ * The view-mode media feature describes the mode in which the
  * Web application is being shown as a running application.
  *
- * @param o view object to change view mode.
- * @param view_mode page view mode to be set
+ * @param o view object to change the view mode
+ * @param view_mode page view mode to set
  *
- * @return @c EINA_TRUE if view mode is set as view_mode, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool ewk_view_mode_set(Evas_Object *o, Ewk_View_Mode view_mode);
 
 /**
- * Gets view mode. The view-mode media feature describes the mode in which the
- * Web application is being shown as a running application.
+ * Gets the view mode.
  *
- * @param o view object to query view mode.
+ * @param o view object to get the view mode
  *
- * @return enum value of Ewk_View_Mode that indicates current view mode.
+ * @return enum value of @a Ewk_View_Mode that indicates current view mode
+ *
+ * @see ewk_view_mode_set()
  */
 EAPI Ewk_View_Mode ewk_view_mode_get(Evas_Object *o);
 #ifdef __cplusplus
