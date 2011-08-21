@@ -1,3 +1,22 @@
+2011-08-21  Darin Adler  <darin@apple.com>
+
+        Update results for more tests affected by the addition of the
+        HTMLSourceElement class.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt:
+        * platform/gtk/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/gtk/fast/js/global-constructors-expected.txt:
+        * platform/mac/fast/js/global-constructors-expected.txt:
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt-wk2/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+        * platform/win/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/win/fast/js/global-constructors-expected.txt:
+
 2011-08-20  Filip Pizlo  <fpizlo@apple.com>
 
         JavaScriptCore bytecompiler does not compute scope depth correctly

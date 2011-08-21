@@ -114,6 +114,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLProgressElement') is 'o
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLQuoteElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLScriptElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLSelectElement') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLSourceElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLStyleElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLTableCaptionElement') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'HTMLTableCellElement') is 'object'
