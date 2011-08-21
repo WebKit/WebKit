@@ -18,26 +18,12 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef ewk_view_h
-#define ewk_view_h
-
-#include "ewk_frame.h"
-#include "ewk_history.h"
-#include "ewk_window_features.h"
-
-#include <Evas.h>
-#include <cairo.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
- * @file  ewk_view.h
- * @brief WebKit main smart object.
+ * @file    ewk_view.h
+ * @brief   WebKit main smart object.
  *
- * This object is the high level access to WebKit-EFL browser
- * component. It is responsible for managing the main frame and other
+ * This object allows the high level access to WebKit-EFL component.
+ * It is responsible for managing the main frame and other
  * critical resources.
  *
  * Every ewk_view has at least one frame, called "main frame" and
@@ -94,18 +80,32 @@ extern "C" {
  *  - "zoom,animated,end", void: requested animated zoom is finished.
  */
 
+#ifndef ewk_view_h
+#define ewk_view_h
+
+#include "ewk_frame.h"
+#include "ewk_history.h"
+#include "ewk_window_features.h"
+
+#include <Evas.h>
+#include <cairo.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/// Creates a type name for @a _Ewk_View_Smart_Data.
 typedef struct _Ewk_View_Smart_Data Ewk_View_Smart_Data;
 
-/**
- * Ewk view's class, to be overridden by sub-classes.
- */
+/// Creates a type name for @a _Ewk_View_Smart_Class.
 typedef struct _Ewk_View_Smart_Class Ewk_View_Smart_Class;
+/// Ewk view's class, to be overridden by sub-classes.
 struct _Ewk_View_Smart_Class {
-    Evas_Smart_Class sc; /**< all but 'data' is free to be changed. */
+    Evas_Smart_Class sc; /**< All but 'data' is free to be changed. */
     unsigned long version;
 
     Evas_Object *(*window_create)(Ewk_View_Smart_Data *sd, Eina_Bool javascript, const Ewk_Window_Features *window_features); /**< creates a new window, requested by webkit */
-    void (*window_close)(Ewk_View_Smart_Data *sd); /**< creates a new window, requested by webkit */
+    void (*window_close)(Ewk_View_Smart_Data *sd); /**< closes a window */
     // hooks to allow different backing stores
     Evas_Object *(*backing_store_add)(Ewk_View_Smart_Data *sd); /**< must be defined */
     Eina_Bool (*scrolls_process)(Ewk_View_Smart_Data *sd); /**< must be defined */
@@ -146,13 +146,17 @@ struct _Ewk_View_Smart_Class {
     Eina_Bool (*navigation_policy_decision)(Ewk_View_Smart_Data *sd, Ewk_Frame_Resource_Request *request);
 };
 
-#define EWK_VIEW_SMART_CLASS_VERSION 1UL /** the version you have to put into the version field in the Ewk_View_Smart_Class structure */
+/**
+ * The version you have to put into the version field
+ * in the @a Ewk_View_Smart_Class structure.
+ */
+#define EWK_VIEW_SMART_CLASS_VERSION 1UL
 
 /**
- * Initializer for whole Ewk_View_Smart_Class structure.
+ * Initializes a whole @a Ewk_View_Smart_Class structure.
  *
  * @param smart_class_init initializer to use for the "base" field
- * (Evas_Smart_Class).
+ * @a Evas_Smart_Class
  *
  * @see EWK_VIEW_SMART_CLASS_INIT_NULL
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
@@ -161,7 +165,7 @@ struct _Ewk_View_Smart_Class {
 #define EWK_VIEW_SMART_CLASS_INIT(smart_class_init) {smart_class_init, EWK_VIEW_SMART_CLASS_VERSION, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 /**
- * Initializer to zero a whole Ewk_View_Smart_Class structure.
+ * Initializes to zero a whole @a Ewk_View_Smart_Class structure.
  *
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
@@ -170,10 +174,11 @@ struct _Ewk_View_Smart_Class {
 #define EWK_VIEW_SMART_CLASS_INIT_NULL EWK_VIEW_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NULL)
 
 /**
- * Initializer to zero a whole Ewk_View_Smart_Class structure and set version.
+ * Initializes to zero a whole @a Ewk_View_Smart_Class structure
+ * and sets the version.
  *
- * Similar to EWK_VIEW_SMART_CLASS_INIT_NULL, but will set version field of
- * Evas_Smart_Class (base field) to latest EVAS_SMART_CLASS_VERSION
+ * Similar to @a EWK_VIEW_SMART_CLASS_INIT_NULL, but it sets the version field of
+ * @a Evas_Smart_Class (base field) to latest @a EVAS_SMART_CLASS_VERSION.
  *
  * @see EWK_VIEW_SMART_CLASS_INIT_NULL
  * @see EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION
@@ -182,16 +187,16 @@ struct _Ewk_View_Smart_Class {
 #define EWK_VIEW_SMART_CLASS_INIT_VERSION EWK_VIEW_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_VERSION)
 
 /**
- * Initializer to zero a whole Ewk_View_Smart_Class structure and set
- * name and version.
+ * Initializes to zero a whole @a Ewk_View_Smart_Class structure
+ * and sets the name and version.
  *
- * Similar to EWK_VIEW_SMART_CLASS_INIT_NULL, but will set version field of
- * Evas_Smart_Class (base field) to latest EVAS_SMART_CLASS_VERSION and name
- * to the specific value.
+ * Similar to @a EWK_VIEW_SMART_CLASS_INIT_NULL, but it sets the version field of
+ * @a Evas_Smart_Class (base field) to latest @a EVAS_SMART_CLASS_VERSION
+ * and the name to the specific value.
  *
- * It will keep a reference to name field as a "const char *", that is,
+ * It will keep a reference to the name field as a "const char *", that is,
  * name must be available while the structure is used (hint: static or global!)
- * and will not be modified.
+ * and it will not be modified.
  *
  * @see EWK_VIEW_SMART_CLASS_INIT_NULL
  * @see EWK_VIEW_SMART_CLASS_INIT_VERSION
@@ -199,6 +204,7 @@ struct _Ewk_View_Smart_Class {
  */
 #define EWK_VIEW_SMART_CLASS_INIT_NAME_VERSION(name) EWK_VIEW_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
 
+/// Defines the input method hints.
 enum _Ewk_Imh {
     EWK_IMH_TELEPHONE = (1 << 0),
     EWK_IMH_NUMBER = (1 << 1),
@@ -206,58 +212,51 @@ enum _Ewk_Imh {
     EWK_IMH_URL = (1 << 3),
     EWK_IMH_PASSWORD = (1 << 4)
 };
+/// Creates a type name for @a _Ewk_Imh.
 typedef enum _Ewk_Imh Ewk_Imh;
 
-/**
- * @internal
- *
- * private data that is used internally by EFL WebKit and should never
- * be modified from outside.
- */
+/// Creates a type name for @a _Ewk_View_Private_Data.
 typedef struct _Ewk_View_Private_Data Ewk_View_Private_Data;
 
+/// Defines the types of the items for the context menu.
 enum _Ewk_Menu_Item_Type {
     EWK_MENU_SEPARATOR,
     EWK_MENU_GROUP,
     EWK_MENU_OPTION
 };
+/// Creates a type name for @a _Ewk_Menu_Item_Type.
 typedef enum _Ewk_Menu_Item_Type Ewk_Menu_Item_Type;
 
-
-/**
- * Structure do contain data of each menu item
- */
+/// Creates a type name for @a _Ewk_Menu_Item.
 typedef struct _Ewk_Menu_Item Ewk_Menu_Item;
+/// Contains data of each menu item.
 struct _Ewk_Menu_Item {
-    const char *text; /**< Item's text */
-    Ewk_Menu_Item_Type type; /** Item's type */
+    const char *text; /**< Text of the item. */
+    Ewk_Menu_Item_Type type; /** Type of the item. */
 };
 
-/**
- * Structure to contain Popup menu data.
- */
+/// Creates a type name for @a _Ewk_Menu.
 typedef struct _Ewk_Menu Ewk_Menu;
+/// Contains Popup menu data.
 struct _Ewk_Menu {
-        Eina_List *items;
-        int x;
-        int y;
-        int width;
-        int height;
+        Eina_List *items; /**< List of items. */
+        int x; /**< The horizontal position of Popup menu. */
+        int y; /**< The vertical position of Popup menu. */
+        int width; /**< Popup menu width. */
+        int height; /**< Popup menu height. */
 };
 
-/**
- * Structure to contain Download data
- */
+/// Creates a type name for @a _Ewk_Download.
 typedef struct _Ewk_Download Ewk_Download;
+/// Contains Download data.
 struct _Ewk_Download {
-    const char *url;
+    const char *url; /**< URL of resource. */
     /* to be extended */
 };
 
-/**
- * Scroll request that should be processed by subclass implementations.
- */
+/// Creates a type name for @a _Ewk_Scroll_Request.
 typedef struct _Ewk_Scroll_Request Ewk_Scroll_Request;
+/// Contains the scroll request that should be processed by subclass implementations.
 struct _Ewk_Scroll_Request {
     Evas_Coord dx, dy;
     Evas_Coord x, y, w, h, x2, y2;
@@ -265,21 +264,22 @@ struct _Ewk_Scroll_Request {
 };
 
 /**
- * Structure to contain internal View data, it is to be considered
- * private by users, but may be extended or changed by sub-classes
- * (that's why it's in public header file).
+ * @brief Contains an internal View data.
+ *
+ * It is to be considered private by users, but may be extended or
+ * changed by sub-classes (that's why it's in the public header file).
  */
 struct _Ewk_View_Smart_Data {
     Evas_Object_Smart_Clipped_Data base;
-    const Ewk_View_Smart_Class *api; /**< reference to casted class instance */
-    Evas_Object *self; /**< reference to owner object */
-    Evas_Object *main_frame; /**< reference to main frame object */
-    Evas_Object *backing_store; /**< reference to backing store */
-    Evas_Object *events_rect; /**< rectangle that should receive mouse events */
-    Ewk_View_Private_Data *_priv; /**< should never be accessed, c++ stuff */
+    const Ewk_View_Smart_Class *api; /**< Reference to casted class instance. */
+    Evas_Object *self; /**< Reference to owner object. */
+    Evas_Object *main_frame; /**< Reference to main frame object. */
+    Evas_Object *backing_store; /**< Reference to backing store. */
+    Evas_Object *events_rect; /**< The rectangle that receives mouse events. */
+    Ewk_View_Private_Data *_priv; /**< Should @b never be accessed, c++ stuff. */
     struct {
-        Evas_Coord x, y, w, h; /**< last used viewport */
-    } view;
+        Evas_Coord x, y, w, h;
+    } view; /**< Contains the position and size of last used viewport. */
     struct {
         struct {
             float start;
@@ -289,16 +289,17 @@ struct _Ewk_View_Smart_Data {
     } animated_zoom;
     struct {
         unsigned char r, g, b, a;
-    } bg_color;
+    } bg_color; /**< Keeps the background color. */
     Eina_Bool zoom_weak_smooth_scale:1;
-    struct { /**< what changed since last smart_calculate */
+    struct {
         Eina_Bool any:1;
         Eina_Bool size:1;
         Eina_Bool position:1;
         Eina_Bool frame_rect:1;
-    } changed;
+    } changed; /**< Keeps what changed since last smart_calculate. */
 };
 
+/// Defines the modes of view.
 enum _Ewk_View_Mode {
     EWK_VIEW_MODE_WINDOWED,
     EWK_VIEW_MODE_FLOATING,
@@ -306,9 +307,12 @@ enum _Ewk_View_Mode {
     EWK_VIEW_MODE_MAXIMIZED,
     EWK_VIEW_MODE_MINIMIZED
 };
+/// Creates a type name for @a _Ewk_View_Mode.
 typedef enum _Ewk_View_Mode Ewk_View_Mode;
 
 /**
+ * @brief Creates a type name for @a _Ewk_Tile_Unused_Cache.
+ *
  * Cache (pool) that contains unused tiles for ewk_view_tiled.
  *
  * This cache will maintain unused tiles and flush them when the total
