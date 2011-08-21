@@ -29,6 +29,7 @@
 #ifndef TextCheckerClientQt_h
 #define TextCheckerClientQt_h
 
+#include "QtPlatformPlugin.h"
 #include "TextCheckerClient.h"
 #include "qwebkitplatformplugin.h"
 
@@ -58,6 +59,7 @@ private:
     bool loadSpellChecker();
 
 private:
+    QtPlatformPlugin m_platformPlugin;
     OwnPtr<QWebSpellChecker> m_spellChecker;
 };
 

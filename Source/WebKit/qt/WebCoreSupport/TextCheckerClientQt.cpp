@@ -152,8 +152,7 @@ bool TextCheckerClientQt::loadSpellChecker()
     if (m_spellChecker)
         return true;
 
-    QtPlatformPlugin platformPlugin;
-    if ((m_spellChecker = platformPlugin.createSpellChecker()))
+    if ((m_spellChecker = m_platformPlugin.createSpellChecker()))
         return true;
 
     return false;

@@ -1,3 +1,19 @@
+2011-08-21  Lindsay Mathieson  <lindsay.mathieson@gmail.com>
+
+        [Qt] Fixes premature plugin unload bug
+        https://bugs.webkit.org/show_bug.cgi?id=66628
+        
+        Reviewed by Benjamin Poulain.
+
+        The QtPlatformPlugin was allocated on the stack, so its destructor is unloading the
+        plugin at the end of the scope. This patch moves the local creation of QtPlatformPlugin
+        to class member (TextCheckerClientQt::m_platformPlugin), preventing premature unloading
+        of plugin.            
+        
+        * WebCoreSupport/TextCheckerClientQt.cpp:
+        (WebCore::TextCheckerClientQt::loadSpellChecker):
+        * WebCoreSupport/TextCheckerClientQt.h:
+
 2011-08-17  Adam Roben  <aroben@apple.com>
 
         Make WebCore keep track of the current device scale factor
