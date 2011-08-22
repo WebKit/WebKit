@@ -578,6 +578,7 @@ if (isChromium()) {
     @options = @ARGV;
     # Chromium doesn't build by project directories.
     @projects = ();
+    push @options, "--makeargs=" . $makeArgs if $makeArgs;
     my $result = buildChromium($clean, @options);
     exit exitStatus($result) if exitStatus($result);
 }
