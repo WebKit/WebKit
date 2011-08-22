@@ -1,3 +1,12 @@
+2011-08-22  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
+
+        [NRWT] Fix "Only unexpected results" option of results.html
+        https://bugs.webkit.org/show_bug.cgi?id=66657
+
+        Reviewed by Csaba Osztrogonác.
+
+        * fast/harness/results.html:
+
 2011-08-22  Vitaly Repeshko  <vitalyr@chromium.org>
 
         [chromium] Updating test expectations.

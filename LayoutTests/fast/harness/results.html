@@ -871,7 +871,7 @@ function handleUnexpectedResultsChange()
 
 function updateExpectedFailures()
 {
-    document.getElementById('unexpected-style').innerText = onlyShowUnexpectedFailures() ?
+    document.getElementById('unexpected-style').textContent = onlyShowUnexpectedFailures() ?
         '.expected { display: none; }' : '';
 }
 
