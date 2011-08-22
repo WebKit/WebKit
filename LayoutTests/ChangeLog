@@ -1,3 +1,19 @@
+2011-08-22  David Levin  <levin@chromium.org>
+
+        REGRESSION (r89086): All worker xhr requests trigger preflight requests.
+        https://bugs.webkit.org/show_bug.cgi?id=66340
+
+        Reviewed by Darin Adler.
+
+        Added tests which are similar to the non worker test with the same name.
+
+        * http/tests/xmlhttprequest/workers/access-control-basic-get-fail-non-simple-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/access-control-basic-get-fail-non-simple.html: Added.
+        * http/tests/xmlhttprequest/workers/resources/access-control-basic-get-fail-non-simple-test.js: Added.
+        * http/tests/xmlhttprequest/workers/resources/access-control-basic-get-fail-non-simple.js: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple-expected.txt: Added.
+        * http/tests/xmlhttprequest/workers/shared-worker-access-control-basic-get-fail-non-simple.html: Added.
+
 2011-08-22  James Robinson  <jamesr@chromium.org>
 
         [chromium] Rename chromium-gpu-mac to chromium-gpu-cg-mac
