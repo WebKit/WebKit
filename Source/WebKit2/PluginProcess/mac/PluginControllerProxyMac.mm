@@ -38,6 +38,11 @@ using namespace WebCore;
 
 namespace WebKit {
 
+void PluginControllerProxy::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus)
+{
+    m_connection->connection()->send(Messages::PluginProxy::PluginFocusOrWindowFocusChanged(pluginHasFocusAndWindowHasFocus), m_pluginInstanceID);
+}
+
 void PluginControllerProxy::setComplexTextInputState(PluginComplexTextInputState pluginComplexTextInputState)
 {
     m_connection->connection()->send(Messages::PluginProxy::SetComplexTextInputState(pluginComplexTextInputState), m_pluginInstanceID);

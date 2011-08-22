@@ -119,6 +119,7 @@ private:
     void cancelManualStreamLoad();
     void setStatusbarText(const String& statusbarText);
 #if PLATFORM(MAC)
+    void pluginFocusOrWindowFocusChanged(bool);
     void setComplexTextInputState(uint64_t);
 #endif
 

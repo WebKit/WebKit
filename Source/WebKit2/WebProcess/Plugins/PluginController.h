@@ -112,6 +112,9 @@ public:
 #endif
 
 #if PLATFORM(MAC)
+    // Tells the controller that the plug-in focus or window focus did change.
+    virtual void pluginFocusOrWindowFocusChanged(bool) = 0;
+
     // Tells the controller that complex text input be enabled or disabled for the plug-in.
     virtual void setComplexTextInputState(PluginComplexTextInputState) = 0;
 

@@ -1067,6 +1067,11 @@ void PluginView::scheduleWindowedPluginGeometryUpdate(const WindowGeometry& geom
 #endif
 
 #if PLATFORM(MAC)
+void PluginView::pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus)
+{
+    m_webPage->send(Messages::WebPageProxy::PluginFocusOrWindowFocusChanged(m_plugin->pluginComplexTextInputIdentifier(), pluginHasFocusAndWindowHasFocus));
+}
+
 void PluginView::setComplexTextInputState(PluginComplexTextInputState pluginComplexTextInputState)
 {
     m_webPage->send(Messages::WebPageProxy::SetPluginComplexTextInputState(m_plugin->pluginComplexTextInputIdentifier(), pluginComplexTextInputState));

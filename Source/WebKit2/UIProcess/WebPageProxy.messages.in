@@ -229,6 +229,7 @@ messages -> WebPageProxy {
     RegisterWebProcessAccessibilityToken(CoreIPC::DataReference data)
 
     # Plug-in complex text input support messages
+    PluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
     SetPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t complexTextInputState)
 
     # Speech messages

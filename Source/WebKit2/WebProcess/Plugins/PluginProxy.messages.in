@@ -57,6 +57,9 @@ messages -> PluginProxy {
     SetStatusbarText(WTF::String statusbarText)
 
 #if PLATFORM(MAC)
+    # Called when the plug-in's focus or its containing window focus changes.
+    PluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus)
+
     # Change whether complext text input is enabled for this plug-in.
     SetComplexTextInputState(uint64_t complexTextInputState)
 #endif

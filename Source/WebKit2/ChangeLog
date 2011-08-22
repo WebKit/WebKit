@@ -1,5 +1,45 @@
 2011-08-22  Anders Carlsson  <andersca@apple.com>
 
+        The UI process should keep track of whether a plug-in has focus or not
+        https://bugs.webkit.org/show_bug.cgi?id=66712
+
+        Reviewed by Darin Adler.
+
+        This is in preparation for implementing the updated Cocoa text input model.
+
+        Pipe through whether a plug-in and its containing window has focus or not, from the
+        plug-in process and all the way to the UI process.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/mac/PluginControllerProxyMac.mm:
+        (WebKit::PluginControllerProxy::pluginFocusOrWindowFocusChanged):
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::pluginFocusOrWindowFocusChanged):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _pluginFocusOrWindowFocusChanged:pluginComplexTextInputIdentifier:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::pluginFocusOrWindowFocusChanged):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformSetFocus):
+        (WebKit::NetscapePlugin::windowFocusChanged):
+        (WebKit::NetscapePlugin::pluginFocusOrWindowFocusChanged):
+        * WebProcess/Plugins/Netscape/mac/PluginProxyMac.mm:
+        (WebKit::PluginProxy::pluginFocusOrWindowFocusChanged):
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginFocusOrWindowFocusChanged):
+        * WebProcess/Plugins/PluginView.h:
+
+2011-08-22  Anders Carlsson  <andersca@apple.com>
+
         Update the current NSTextInputContext whenever the plug-in complex text input state changes
         https://bugs.webkit.org/show_bug.cgi?id=66709
 

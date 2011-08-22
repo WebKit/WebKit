@@ -66,6 +66,8 @@ namespace WebKit {
 - (void)_exitAcceleratedCompositingMode;
 
 - (void)_setAccessibilityWebProcessToken:(NSData *)data;
+
+- (void)_pluginFocusOrWindowFocusChanged:(BOOL)pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
 - (void)_setPluginComplexTextInputState:(WebKit::PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier;
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation;

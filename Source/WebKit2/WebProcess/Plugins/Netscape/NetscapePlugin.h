@@ -191,6 +191,7 @@ private:
     virtual uint64_t pluginComplexTextInputIdentifier() const;
     virtual void sendComplexTextInput(const String& textInput);
 
+    void pluginFocusOrWindowFocusChanged();
     void setComplexTextInputEnabled(bool);
 #endif
 

@@ -342,6 +342,11 @@ void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataRefer
     process()->send(Messages::WebPage::RegisterUIProcessAccessibilityTokens(elementToken, windowToken), m_pageID);
 }
 
+void WebPageProxy::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
+{
+    m_pageClient->pluginFocusOrWindowFocusChanged(pluginComplexTextInputIdentifier, pluginHasFocusAndWindowHasFocus);
+}
+
 void WebPageProxy::setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, uint64_t pluginComplexTextInputState)
 {
     MESSAGE_CHECK(isValidPluginComplexTextInputState(pluginComplexTextInputState));

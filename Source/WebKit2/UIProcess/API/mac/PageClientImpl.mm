@@ -342,6 +342,11 @@ void PageClientImpl::exitAcceleratedCompositingMode()
 }
 #endif // USE(ACCELERATED_COMPOSITING)
 
+void PageClientImpl::pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus)
+{
+    [m_wkView _pluginFocusOrWindowFocusChanged:pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];
+}
+
 void PageClientImpl::setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState pluginComplexTextInputState)
 {
     [m_wkView _setPluginComplexTextInputState:pluginComplexTextInputState pluginComplexTextInputIdentifier:pluginComplexTextInputIdentifier];

@@ -141,6 +141,7 @@ private:
     virtual void scheduleWindowedPluginGeometryUpdate(const WindowGeometry&);
 #endif
 #if PLATFORM(MAC)
+    virtual void pluginFocusOrWindowFocusChanged(bool pluginHasFocusAndWindowHasFocus);
     virtual void setComplexTextInputState(PluginComplexTextInputState);
     virtual mach_port_t compositingRenderServerPort();
 #endif

@@ -160,6 +160,7 @@ public:
 #endif
 
 #if PLATFORM(MAC)
+    virtual void pluginFocusOrWindowFocusChanged(uint64_t pluginComplexTextInputIdentifier, bool pluginHasFocusAndWindowHasFocus) = 0;
     virtual void setPluginComplexTextInputState(uint64_t pluginComplexTextInputIdentifier, PluginComplexTextInputState) = 0;
     virtual CGContextRef containingWindowGraphicsContext() = 0;
     virtual void didPerformDictionaryLookup(const String&, double scaleFactor, const DictionaryPopupInfo&) = 0;

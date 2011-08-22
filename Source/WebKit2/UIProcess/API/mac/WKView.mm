@@ -2285,6 +2285,11 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     [self _updateRemoteAccessibilityRegistration:YES];
 }
 
+- (void)_pluginFocusOrWindowFocusChanged:(BOOL)pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
+{
+    // FIXME: Implement.
+}
+
 - (void)_setPluginComplexTextInputState:(WebKit::PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
 {
     BOOL inputSourceChanged = _data->_pluginComplexTextInputIdentifier;
