@@ -68,7 +68,9 @@ class ChromiumPort(Port):
         ('lucid', 'x86'),
         ('lucid', 'x86_64'))
 
-    ALL_GRAPHICS_TYPES = ('cpu', 'gpu', 'cg')
+    ALL_GRAPHICS_TYPES = ('cpu', 'gpu')
+    CORE_GRAPHICS_VERSIONS = ('leopard', 'snowleopard')
+    CORE_GRAPHICS_TYPES = ('cpu-cg', 'gpu-cg')
 
     ALL_BASELINE_VARIANTS = [
         'chromium-cg-mac-snowleopard', 'chromium-cg-mac-leopard',
@@ -291,11 +293,10 @@ class ChromiumPort(Port):
         for version, architecture in self.ALL_SYSTEMS:
             for build_type in self.ALL_BUILD_TYPES:
                 for graphics_type in self.ALL_GRAPHICS_TYPES:
-                    test_configurations.append(TestConfiguration(
-                        version=version,
-                        architecture=architecture,
-                        build_type=build_type,
-                        graphics_type=graphics_type))
+                    test_configurations.append(TestConfiguration(version, architecture, build_type, graphics_type))
+                if version in self.CORE_GRAPHICS_VERSIONS:
+                    for graphics_type in self.CORE_GRAPHICS_TYPES:
+                        test_configurations.append(TestConfiguration(version, architecture, build_type, graphics_type))
         return test_configurations
 
     try_builder_names = frozenset([
