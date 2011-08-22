@@ -856,11 +856,6 @@ float SVGSMILElement::calculateAnimationPercentAndRepeat(SMILTime elapsed, unsig
         repeat = static_cast<unsigned>(repeatingDuration.value() / simpleDuration.value());
         if (fmod(repeatingDuration.value(), !simpleDuration.value()))
             repeat--;
-
-        SMILTime simpleEndTime = fmod(m_intervalEnd.value() - m_intervalBegin.value(), simpleDuration.value());
-        if (simpleEndTime.value())
-            return narrowPrecisionToFloat(simpleEndTime.value() / simpleDuration.value());
-
         return 1.f;
     }
     repeat = static_cast<unsigned>(activeTime.value() / simpleDuration.value());
