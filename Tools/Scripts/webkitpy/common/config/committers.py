@@ -72,6 +72,7 @@ class Reviewer(Committer):
 contributors_who_are_not_committers = [
     Contributor("Alexey Marinichev", ["amarinichev@chromium.org", "amarinichev@google.com"], "amarinichev"),
     Contributor("Ami Fischman", "fischman@chromium.org", "amifischman0"),
+    Contributor("Andras Piroska", "pandras@inf.u-szeged.hu", "andris88"),
     Contributor("Anna Cavender", "annacc@chromium.org", "annacc"),
     Contributor("Anne van Kesteren", "annevankesteren+webkit@gmail.com", "annevk"),
     Contributor("Annie Sullivan", "sullivan@chromium.org", "annie"),
@@ -79,15 +80,21 @@ contributors_who_are_not_committers = [
     Contributor("David Grogan", "dgrogan@chromium.org", "dgrogan"),
     Contributor("Douglas Davidson", "ddavidso@apple.com"),
     Contributor("Edward O'Connor", "eoconnor@apple.com", "hober"),
+    Contributor("Felician Marton", "felician@inf.u-szeged.hu", "Felician"),
     Contributor("Finnur Thorarinsson", "finnur@chromium.org", "finnur"),
     Contributor("Greg Simon", "gregsimon@chromium.org", "gregsimon"),
     Contributor("Gregg Tavares", ["gman@google.com", "gman@chromium.org"], "gman"),
     Contributor("Ian Hickson", "ian@hixie.ch", "hixie"),
     Contributor("John Bates", ["jbates@google.com", "jbates@chromium.org"], "jbates"),
     Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
+    Contributor("Kristof Kosztyo", "kkristof@inf.u-szeged.hu", "kkristof"),
+    Contributor("Oliver Varga", "voliver@inf.u-szeged.hu", "TwistO"),
+    Contributor("Peter Gal", "galpeter@inf.u-szeged.hu", "elecro"),
     Contributor("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
+    Contributor("Tamas Czene", "tczene@inf.u-szeged.hu", "tczene"),
     Contributor("Wyatt Carss", "wcarss@chromium.org", "wcarss"),
+    Contributor("Zsolt Feher", "feherzs@inf.u-szeged.hu", "Smith"),
 ]
 
 

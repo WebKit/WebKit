@@ -1,3 +1,11 @@
+2011-08-22  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Update contributor list.
+
+        Reviewed by Zoltan Herczeg.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-08-22  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         [ORWT] Fix --reset-results --add-platform-exceptions combo
