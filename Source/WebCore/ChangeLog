@@ -1,3 +1,13 @@
+2011-08-22  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Make compositor context current before querying for extensions
+        https://bugs.webkit.org/show_bug.cgi?id=66696
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::initialize):
+
 2011-08-22  Cary Clark  <caryclark@google.com>
 
         Webkit Mac10.6 Builder-Tester (Skia)(deps)(dbg) has compile failures

@@ -479,9 +479,9 @@ LayerRendererChromium::LayerRendererChromium(CCLayerTreeHost* owner,
 
 bool LayerRendererChromium::initialize()
 {
+    m_context->makeContextCurrent();
 #if USE(SKIA)
     if (settings().acceleratePainting) {
-        m_context->makeContextCurrent();
         m_skiaContext = adoptPtr(GrContext::CreateGLShaderContext());
         // Limit the number of textures we hold in the bitmap->texture cache.
         static const int maxTextureCacheCount = 512;
