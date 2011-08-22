@@ -53,7 +53,6 @@ private:
     virtual String fallbackValue();
     virtual String sanitizeValue(const String&);
     virtual Color valueAsColor() const;
-    virtual void setValueAsColor(const Color&) const;
     virtual void createShadowSubtree();
     virtual void valueChanged();
     virtual void handleClickEvent(MouseEvent*);

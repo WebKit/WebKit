@@ -105,11 +105,6 @@ Color ColorInputType::valueAsColor() const
     return Color(element()->value());
 }
 
-void ColorInputType::setValueAsColor(const Color& color) const
-{
-    element()->setValue(color.serialized(), true);
-}
-
 void ColorInputType::createShadowSubtree()
 {
     Document* document = element()->document();
@@ -174,7 +169,8 @@ void ColorInputType::colorSelected(const Color& color)
 {
     if (element()->disabled() || element()->readOnly())
         return;
-    setValueAsColor(color);
+    element()->setValueFromRenderer(color.serialized());
+    updateColorSwatch();
 }
 
 bool ColorInputType::isColorInputType() const
