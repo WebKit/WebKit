@@ -54,6 +54,14 @@ void deallocateNPObject(NPObject*);
 
 void retainNPObject(NPObject*);
 void releaseNPObject(NPObject*);
+    
+// This function decrements the refcount of the specified object. If the
+// refcount reaches 0 it will attempt to destroy the object. If the object has
+// a custom deallocate function it will fail and return false, so it will be
+// up to the caller to call deallocateNPObject.
+// This function is used to implement the delayed finalization of NPObjects
+// released during GC.
+bool trySafeReleaseNPObject(NPObject*);
 
 void releaseNPVariantValue(NPVariant*);
 

@@ -77,6 +77,16 @@ void JSNPObject::invalidate()
     m_npObject = 0;
 }
 
+NPObject* JSNPObject::leakNPObject()
+{
+    ASSERT(m_npObject);
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
+
+    NPObject* object = m_npObject;
+    m_npObject = 0;
+    return object;
+}
+
 JSValue JSNPObject::callMethod(ExecState* exec, NPIdentifier methodName)
 {
     ASSERT_GC_OBJECT_INHERITS(this, &s_info);

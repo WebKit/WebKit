@@ -50,6 +50,9 @@ public:
 
     void invalidate();
 
+    // Used to invalidate an NPObject asynchronously.
+    NPObject* leakNPObject();
+
     JSC::JSValue callMethod(JSC::ExecState*, NPIdentifier methodName);
     JSC::JSValue callObject(JSC::ExecState*);
     JSC::JSValue callConstructor(JSC::ExecState*);

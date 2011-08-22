@@ -93,6 +93,23 @@ void retainNPObject(NPObject* npObject)
     npObject->referenceCount++;
 }
 
+bool trySafeReleaseNPObject(NPObject* npObject)
+{
+    ASSERT(npObject);
+    if (!npObject)
+        return true;
+    
+    ASSERT(npObject->referenceCount >= 1);
+
+    npObject->referenceCount--;
+    if (npObject->referenceCount)
+        return true;
+    if (npObject->_class->deallocate)
+        return false;
+    deallocateNPObject(npObject);
+    return true;
+}
+
 void releaseNPObject(NPObject* npObject)
 {
     ASSERT(npObject);

@@ -1,3 +1,29 @@
+2011-08-22  Oliver Hunt  <oliver@apple.com>
+
+        Delay GC triggered NP object destruction to the next runloop cycle
+        https://bugs.webkit.org/show_bug.cgi?id=66717
+
+        Reviewed by Anders Carlsson.
+
+        Delay destruction of plugin objects caused by GC until the next
+        runloop cycle so that they can execute JS in their finalizers.
+        We do this using a zero delay timer coupled with a queue of
+        objects to be finalised.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::releaseObject):
+        * WebProcess/Plugins/Netscape/JSNPObject.h:
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::NPRuntimeObjectMap):
+        (WebKit::NPRuntimeObjectMap::invalidate):
+        (WebKit::NPRuntimeObjectMap::invalidateQueuedObjects):
+        (WebKit::NPRuntimeObjectMap::addToInvalidationQueue):
+        (WebKit::NPRuntimeObjectMap::finalize):
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h:
+        * WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp:
+        (WebKit::trySafeReleaseNPObject):
+        * WebProcess/Plugins/Netscape/NPRuntimeUtilities.h:
+
 2011-08-22  Anders Carlsson  <andersca@apple.com>
 
         Move code from PageClientImpl::doneWithKeyEvent to WKView
