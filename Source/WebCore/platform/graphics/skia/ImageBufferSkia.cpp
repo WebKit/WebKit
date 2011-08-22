@@ -67,7 +67,7 @@ ImageBuffer::ImageBuffer(const IntSize& size, ColorSpace, RenderingMode renderin
     , m_size(size)
     , m_accelerateRendering(false)
 {
-    OwnPtr<SkCanvas> canvas = adoptPtr(skia::CreateBitmapCanvas(size.width(), size.height(), false));
+    OwnPtr<SkCanvas> canvas = adoptPtr(skia::TryCreateBitmapCanvas(size.width(), size.height(), false));
     if (!canvas) {
         success = false;
         return;

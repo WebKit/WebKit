@@ -1,3 +1,19 @@
+2011-08-22  Justin Novosad  <junov@chromium.org>
+
+        [Chromium] Crash when allocation of very large canvas fails
+        https://bugs.webkit.org/show_bug.cgi?id=66563
+        Replacing the crash with a more graceful failure: canvas
+        will not render.
+
+        Reviewed by Stephen White.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageBuffer::ImageBuffer):
+        Invoking TryCreateBitmapCanvas instead of CreateBitmapCanvas
+        This is the non-crashing version of the factory function.
+        It returns NULL if allocation fails.  Code for handling
+        NULL pointer was already in place.
+
 2011-08-22  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: bind registerDomainDispatcher to domain names.
