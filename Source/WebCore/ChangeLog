@@ -1,3 +1,44 @@
+2011-08-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: extract breakpoint management code to a separate class and add tests.
+        https://bugs.webkit.org/show_bug.cgi?id=66224
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/debugger/breakpoint-manager.html
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/BreakpointManager.js: Added.
+        (WebInspector.BreakpointManager):
+        (WebInspector.BreakpointManager.prototype.uiSourceCodeAdded):
+        (WebInspector.BreakpointManager.prototype.breakpointsForUISourceCode):
+        (WebInspector.BreakpointManager.prototype.setBreakpoint):
+        (WebInspector.BreakpointManager.prototype.removeBreakpoint):
+        (WebInspector.BreakpointManager.prototype._materializeBreakpoint):
+        (WebInspector.BreakpointManager.prototype._breakpointDebuggerLocationChanged):
+        (WebInspector.BreakpointManager.prototype._addBreakpointToUI):
+        (WebInspector.BreakpointManager.prototype._deleteBreakpointFromUI):
+        (WebInspector.BreakpointManager.prototype._moveBreakpointInUI):
+        (WebInspector.BreakpointManager.prototype._breakpoints):
+        (WebInspector.BreakpointManager.prototype._breakpoint):
+        (WebInspector.BreakpointManager.prototype._forEachBreakpoint):
+        (WebInspector.BreakpointManager.prototype._setBreakpointInDebugger):
+        (WebInspector.BreakpointManager.prototype._removeBreakpointFromDebugger):
+        (WebInspector.BreakpointManager.prototype._breakpointResolved):
+        (WebInspector.BreakpointManager.prototype.serializeBreakpoints):
+        (WebInspector.BreakpointManager.prototype.reset):
+        (WebInspector.BreakpointManager.prototype.debuggerReset):
+        (WebInspector.Breakpoint):
+        (WebInspector.Breakpoint.prototype.serialize):
+        (WebInspector.Breakpoint.deserialize):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpointByScriptLocation):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode.prototype.get rawSourceCode):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-08-21  Martin Robinson  <mrobinson@igalia.com>
 
         Fix 'make dist' for WebKitGTK+.

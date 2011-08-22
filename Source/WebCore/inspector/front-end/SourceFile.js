@@ -66,6 +66,12 @@ WebInspector.RawSourceCode.prototype = {
         return this;
     },
 
+    get rawSourceCode()
+    {
+        // FIXME: extract UISourceCode from RawSourceCode (currently RawSourceCode implements methods from both interfaces).
+        return this;
+    },
+
     rawLocationToUILocation: function(rawLocation)
     {
         var uiLocation = this._mapping ? this._mapping.originalToFormatted(rawLocation) : rawLocation;

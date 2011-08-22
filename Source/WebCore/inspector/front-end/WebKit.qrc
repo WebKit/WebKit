@@ -10,6 +10,7 @@
     <file>AuditsPanel.js</file>
     <file>BinarySearch.js</file>
     <file>BottomUpProfileDataGridTree.js</file>
+    <file>BreakpointManager.js</file>
     <file>BreakpointsSidebarPane.js</file>
     <file>CallStackSidebarPane.js</file>
     <file>Checkbox.js</file>

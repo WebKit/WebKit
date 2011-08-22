@@ -1,0 +1,64 @@
+Tests BreakpointManager class.
+
+
+Running: uiSourceCodeAdded
+breakpointAdded(a.js, 10, foo == bar, true)
+breakpointAdded(a.js, 20, , false)
+breakpointAdded(b.js, 3, , true)
+debuggerModel.setBreakpoint(a.js:10:0)
+
+Running: setAndRemoveBreakpoints
+breakpointAdded(a.js, 10, foo == bar, true)
+breakpointAdded(a.js, 20, , false)
+breakpointAdded(b.js, 3, , true)
+debuggerModel.setBreakpoint(a.js:10:0)
+breakpointAdded(a.js, 30, , true)
+debuggerModel.setBreakpoint(a.js:30:0)
+breakpointRemoved(a.js, 30)
+breakpointRemoved(a.js, 10)
+debuggerModel.removeBreakpoint(a.js:10:0)
+breakpointRemoved(a.js, 20)
+debuggerModel.removeBreakpoint(a.js:30:0)
+
+Running: setBreakpointOnComment
+breakpointAdded(a.js, 15, , true)
+debuggerModel.setBreakpoint(a.js:15:0)
+breakpointRemoved(a.js, 15)
+breakpointAdded(a.js, 16, , true)
+
+Running: setBreakpointOutsideOfScript
+breakpointAdded(a.js, 15, , true)
+debuggerModel.setBreakpoint(a.js:15:0)
+
+Running: testNavigation
+breakpointAdded(a.js, 10, foo == bar, true)
+breakpointAdded(a.js, 20, , false)
+breakpointAdded(b.js, 3, , true)
+debuggerModel.setBreakpoint(a.js:10:0)
+
+Navigate to B.
+debuggerModel.setBreakpoint(b.js:3:0)
+
+Navigate back to A.
+breakpointRemoved(a.js, 10)
+breakpointAdded(a.js, 11, foo == bar, true)
+
+Running: testFormatting
+breakpointAdded(c.js, 4, , true)
+debuggerModel.setBreakpoint(c.js:4:0)
+
+Format source.
+debuggerModel.removeBreakpoint(c.js:4:0)
+breakpointAdded(deobfuscated:c.js, 4, , true)
+debuggerModel.setBreakpoint(c.js:2:0)
+breakpointAdded(deobfuscated:c.js, 8, , false)
+
+Change breakpoints.
+breakpointRemoved(deobfuscated:c.js, 8)
+breakpointAdded(deobfuscated:c.js, 12, , true)
+debuggerModel.setBreakpoint(c.js:6:0)
+
+Reload.
+breakpointRemoved(deobfuscated:c.js, 4)
+breakpointAdded(deobfuscated:c.js, 6, , true)
+

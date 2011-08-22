@@ -68737,6 +68737,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\BreakpointManager.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\BreakpointsSidebarPane.js"
 					>
 				</File>
