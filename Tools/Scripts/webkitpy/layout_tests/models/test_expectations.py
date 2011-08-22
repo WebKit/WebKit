@@ -121,7 +121,7 @@ class ParseError(Exception):
 
 class TestExpectationSerializer(object):
     """Provides means of serializing TestExpectationLine instances."""
-    def __init__(self, test_configuration_converter):
+    def __init__(self, test_configuration_converter=None):
         self._test_configuration_converter = test_configuration_converter
         self._parsed_expectation_to_string = dict([[parsed_expectation, expectation_string] for expectation_string, parsed_expectation in TestExpectations.EXPECTATIONS.items()])
 
@@ -132,7 +132,7 @@ class TestExpectationSerializer(object):
         if expectation_line.name is None:
             return '' if expectation_line.comment is None else "//%s" % expectation_line.comment
 
-        if expectation_line.parsed_bug_modifiers:
+        if self._test_configuration_converter and expectation_line.parsed_bug_modifiers:
             specifiers_list = self._test_configuration_converter.to_specifiers_list(expectation_line.matching_configurations)
             result = []
             for specifiers in specifiers_list:
@@ -151,6 +151,7 @@ class TestExpectationSerializer(object):
         return ' '.join(result)
 
     def _parsed_modifier_string(self, expectation_line, specifiers):
+        assert(self._test_configuration_converter)
         result = []
         if expectation_line.parsed_bug_modifiers:
             result.extend(sorted(expectation_line.parsed_bug_modifiers))
@@ -166,7 +167,7 @@ class TestExpectationSerializer(object):
         return result
 
     @classmethod
-    def list_to_string(cls, expectation_lines, test_configuration_converter, reconstitute_only_these=None):
+    def list_to_string(cls, expectation_lines, test_configuration_converter=None, reconstitute_only_these=None):
         serializer = cls(test_configuration_converter)
 
         def serialize(expectation_line):
@@ -930,12 +931,12 @@ class TestExpectations(object):
     def has_warnings(self):
         return self._has_warnings
 
-    def remove_rebaselined_tests(self, tests):
+    def remove_rebaselined_tests(self, except_these_tests):
         """Returns a copy of the expectations with the tests removed."""
         def without_rebaseline_modifier(expectation):
-            return not (not expectation.is_malformed() and expectation.name in tests and "rebaseline" in expectation.modifiers)
+            return not (not expectation.is_malformed() and expectation.name in except_these_tests and "rebaseline" in expectation.modifiers)
 
-        return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations), self._test_configuration_converter)
+        return TestExpectationSerializer.list_to_string(filter(without_rebaseline_modifier, self._expectations))
 
     def _add_expectations(self, expectation_list, overrides_allowed):
         for expectation_line in expectation_list:

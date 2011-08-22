@@ -1,5 +1,16 @@
 2011-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        webkit-patch rebaseline-expectations command should not rearrange the entire test_expectations.txt file.
+        https://bugs.webkit.org/show_bug.cgi?id=66727
+
+        Reviewed by Adam Barth.
+
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py: Made it possible to run TestExpectationSerializer without a TestConfigurationConverter,
+            in which case the serializer treats all expectations as unparsed.
+        * Scripts/webkitpy/layout_tests/models/test_expectations_unittest.py: Added unit tests.
+
+2011-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Update unit test expectations after r93530.
 
         * Scripts/webkitpy/layout_tests/port/factory_unittest.py: Updated.

@@ -482,24 +482,33 @@ class TestExpectationSerializerTests(unittest.TestCase):
 
     def test_unparsed_to_string(self):
         expectation = TestExpectationLine()
+        serializer = TestExpectationSerializer()
 
-        self.assertEqual(self._serializer.to_string(expectation), '')
+        self.assertEqual(serializer.to_string(expectation), '')
         expectation.comment = 'Qux.'
-        self.assertEqual(self._serializer.to_string(expectation), '//Qux.')
+        self.assertEqual(serializer.to_string(expectation), '//Qux.')
         expectation.name = 'bar'
-        self.assertEqual(self._serializer.to_string(expectation), ' : bar =  //Qux.')
+        self.assertEqual(serializer.to_string(expectation), ' : bar =  //Qux.')
         expectation.modifiers = ['foo']
-        self.assertEqual(self._serializer.to_string(expectation), 'FOO : bar =  //Qux.')
+        self.assertEqual(serializer.to_string(expectation), 'FOO : bar =  //Qux.')
         expectation.expectations = ['bAz']
-        self.assertEqual(self._serializer.to_string(expectation), 'FOO : bar = BAZ //Qux.')
+        self.assertEqual(serializer.to_string(expectation), 'FOO : bar = BAZ //Qux.')
         expectation.expectations = ['bAz1', 'baZ2']
-        self.assertEqual(self._serializer.to_string(expectation), 'FOO : bar = BAZ1 BAZ2 //Qux.')
+        self.assertEqual(serializer.to_string(expectation), 'FOO : bar = BAZ1 BAZ2 //Qux.')
         expectation.modifiers = ['foo1', 'foO2']
-        self.assertEqual(self._serializer.to_string(expectation), 'FOO1 FOO2 : bar = BAZ1 BAZ2 //Qux.')
+        self.assertEqual(serializer.to_string(expectation), 'FOO1 FOO2 : bar = BAZ1 BAZ2 //Qux.')
         expectation.errors.append('Oh the horror.')
-        self.assertEqual(self._serializer.to_string(expectation), '')
+        self.assertEqual(serializer.to_string(expectation), '')
         expectation.original_string = 'Yes it is!'
-        self.assertEqual(self._serializer.to_string(expectation), 'Yes it is!')
+        self.assertEqual(serializer.to_string(expectation), 'Yes it is!')
+
+    def test_unparsed_list_to_string(self):
+        expectation = TestExpectationLine()
+        expectation.comment = 'Qux.'
+        expectation.name = 'bar'
+        expectation.modifiers = ['foo']
+        expectation.expectations = ['bAz1', 'baZ2']
+        self.assertEqual(TestExpectationSerializer.list_to_string([expectation]), 'FOO : bar = BAZ1 BAZ2 //Qux.')
 
     def test_parsed_to_string(self):
         expectation_line = TestExpectationLine()
