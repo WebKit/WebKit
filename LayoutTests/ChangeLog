@@ -1,5 +1,16 @@
 2011-08-22  Tony Chang  <tony@chromium.org>
 
+        Move chromium-mac/plugins/keyboard-events-expected.txt to
+        chromium-cg-mac/plugins/keyboard-events-expected.txt since the results
+        for chromium-mac are currently in chromium-cg-mac.  This result was
+        added in r93519 and put in the wrong place.
+
+        * platform/chromium-cg-mac/plugins/keyboard-events-expected.txt: Copied from LayoutTests/platform/chromium-mac/plugins/keyboard-events-expected.txt.
+        * platform/chromium-mac/plugins: Removed.
+        * platform/chromium-mac/plugins/keyboard-events-expected.txt: Removed.
+
+2011-08-22  Tony Chang  <tony@chromium.org>
+
         Add CSS parsing of -webkit-flex-pack
         https://bugs.webkit.org/show_bug.cgi?id=66701
 
