@@ -16,9 +16,17 @@ function checkHorizontalBoxen()
           var expectedWidth = child.getAttribute && child.getAttribute("data-expected-width");
           if (child.offsetWidth && expectedWidth) {
               if (child.offsetWidth != parseInt(expectedWidth)) {
-                  failures += "Expected " + expectedWidth + " but got " + child.offsetWidth + ". ";
+                  failures += "Expected " + expectedWidth + " for width, but got " + child.offsetWidth + ". ";
               }
           }
+
+          var expectedOffset = child.getAttribute && child.getAttribute("data-offset-x");
+          if (child.offsetLeft && expectedOffset) {
+              if (child.offsetLeft != parseInt(expectedOffset)) {
+                  failures += "Expected " + expectedOffset + " for offsetLeft, but got " + child.offsetLeft + ". ";
+              }
+          }
+
           child = child.nextSibling;
       }
 

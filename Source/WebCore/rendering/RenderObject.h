@@ -753,6 +753,15 @@ public:
     virtual bool isFlexibleBox() const { return false; }
 #endif
 
+    bool isFlexibleBoxIncludingDeprecated() const
+    {
+#if ENABLE(CSS3_FLEXBOX)
+        return isFlexibleBox() || isDeprecatedFlexibleBox();
+#else
+        return isDeprecatedFlexibleBox();
+#endif
+    }
+
     virtual bool isCombineText() const { return false; }
 
     virtual int caretMinOffset() const;

@@ -1630,7 +1630,7 @@ void RenderBox::computeLogicalWidth()
         computeInlineDirectionMargins(cb, containerLogicalWidth, logicalWidth());
 
     if (!hasPerpendicularContainingBlock && containerLogicalWidth && containerLogicalWidth != (logicalWidth() + marginStart() + marginEnd())
-            && !isFloating() && !isInline() && !cb->isDeprecatedFlexibleBox())
+            && !isFloating() && !isInline() && !cb->isFlexibleBoxIncludingDeprecated())
         cb->setMarginEndForChild(this, containerLogicalWidth - logicalWidth() - cb->marginStartForChild(this));
 }
 

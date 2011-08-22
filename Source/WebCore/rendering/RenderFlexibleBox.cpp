@@ -148,9 +148,14 @@ void RenderFlexibleBox::layoutHorizontalBlock(bool relayoutChildren)
 
         setHeight(std::max(height(), borderTop() + paddingTop() + child->marginTop() + child->height() + child->marginBottom() + paddingBottom() + borderBottom() + horizontalScrollbarHeight()));
 
-        // FIXME: Handle child margins.
+        if (child->style()->marginLeft().isAuto())
+            child->setMarginLeft(availableFreeSpace > 0 ? lroundf(availableFreeSpace / totalPositiveFlexibility) : 0);
+        if (child->style()->marginRight().isAuto())
+            child->setMarginRight(availableFreeSpace > 0 ? lroundf(availableFreeSpace / totalPositiveFlexibility) : 0);
+
+        xOffset += child->marginLeft();
         child->setLocation(IntPoint(xOffset, yOffset));
-        xOffset += child->width();
+        xOffset += child->width() + child->marginRight();
     }
 
     // FIXME: Distribute leftover space to the packing space (second distribution round).
@@ -176,11 +181,15 @@ void RenderFlexibleBox::computePreferredSize(bool relayoutChildren, FlexibleBoxI
             child->setChildNeedsLayout(true);
         child->layoutIfNeeded();
 
-        // FIXME: Margins and paddings set to auto have a positive flexibility of 1.
         preferredSize += preferredSizeForMarginsAndPadding(child->style()->marginLeft(), flexboxAvailableLogicalWidth);
         preferredSize += preferredSizeForMarginsAndPadding(child->style()->marginRight(), flexboxAvailableLogicalWidth);
         preferredSize += preferredSizeForMarginsAndPadding(child->style()->paddingLeft(), flexboxAvailableLogicalWidth);
         preferredSize += preferredSizeForMarginsAndPadding(child->style()->paddingRight(), flexboxAvailableLogicalWidth);
+
+        if (child->style()->marginLeft().isAuto())
+            totalPositiveFlexibility += 1;
+        if (child->style()->marginRight().isAuto())
+            totalPositiveFlexibility += 1;
 
         preferredSize += child->borderLeft() + child->borderRight();
 
