@@ -1,5 +1,12 @@
 2011-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Update unit test expectations after r93530.
+
+        * Scripts/webkitpy/layout_tests/port/factory_unittest.py: Updated.
+        * Scripts/webkitpy/tool/commands/rebaseline_unittest.py: Ditto.
+
+2011-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Expand CPU/GPU/Skia/CG into a matrix in graphics_type.
         https://bugs.webkit.org/show_bug.cgi?id=66705
 

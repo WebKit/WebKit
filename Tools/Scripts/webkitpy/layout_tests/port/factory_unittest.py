@@ -119,7 +119,7 @@ class FactoryTest(unittest.TestCase):
         self.assert_port("chromium-gpu-linux", chromium_gpu.ChromiumGpuLinuxPort)
 
     def test_chromium_gpu_mac(self):
-        self.assert_port("chromium-gpu-mac", chromium_gpu.ChromiumGpuMacPort)
+        self.assert_port("chromium-gpu-cg-mac", chromium_gpu.ChromiumGpuMacPort)
 
     def test_chromium_gpu_win(self):
         self.assert_port("chromium-gpu-win", chromium_gpu.ChromiumGpuWinPort)
