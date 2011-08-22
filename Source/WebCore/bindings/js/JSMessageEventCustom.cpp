@@ -59,7 +59,7 @@ JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
     const UString& typeArg = exec->argument(0).toString(exec);
     bool canBubbleArg = exec->argument(1).toBoolean(exec);
     bool cancelableArg = exec->argument(2).toBoolean(exec);
-    PassRefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(exec, exec->argument(3));
+    RefPtr<SerializedScriptValue> dataArg = SerializedScriptValue::create(exec, exec->argument(3));
     if (exec->hadException())
         return jsUndefined();
     const UString& originArg = exec->argument(4).toString(exec);
@@ -74,7 +74,7 @@ JSC::JSValue JSMessageEvent::initMessageEvent(JSC::ExecState* exec)
     }
 
     MessageEvent* event = static_cast<MessageEvent*>(this->impl());
-    event->initMessageEvent(ustringToAtomicString(typeArg), canBubbleArg, cancelableArg, dataArg, ustringToString(originArg), ustringToString(lastEventIdArg), sourceArg, messagePorts.release());
+    event->initMessageEvent(ustringToAtomicString(typeArg), canBubbleArg, cancelableArg, dataArg.release(), ustringToString(originArg), ustringToString(lastEventIdArg), sourceArg, messagePorts.release());
     return jsUndefined();
 }
 

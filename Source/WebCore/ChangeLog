@@ -1,3 +1,23 @@
+2011-08-22  David Levin  <levin@chromium.org>
+
+        Fix usage of PassRefPtr in postMessage and structured clone code.
+        https://bugs.webkit.org/show_bug.cgi?id=66725
+
+        Reviewed by Darin Adler.
+
+        No new functionality exposed so no new tests.
+
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::postMessage): Changed PassRefPtr to RefPtr and added release when handed off.
+        * bindings/js/JSMessageEventCustom.cpp:
+        (WebCore::JSMessageEvent::initMessageEvent): Ditto.
+        * bindings/js/JSMessagePortCustom.h:
+        (WebCore::handlePostMessage): Ditto.
+        * bindings/js/SerializedScriptValue.cpp:
+        (WebCore::SerializedScriptValue::create): Ditto.
+        * workers/SharedWorkerContext.cpp:
+        (WebCore::createConnectEvent): Added release() when a RefPtr is returned.
+
 2011-08-22  Luke Macpherson   <macpherson@chromium.org>
 
         Implement cast between CSSPrimitiveValue and EBackfaceVisibility, use in CSSStyleSelector::applyProperty.

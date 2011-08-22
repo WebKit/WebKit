@@ -699,7 +699,7 @@ JSValue JSDOMWindow::showModalDialog(ExecState* exec)
 
 JSValue JSDOMWindow::postMessage(ExecState* exec)
 {
-    PassRefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, exec->argument(0));
+    RefPtr<SerializedScriptValue> message = SerializedScriptValue::create(exec, exec->argument(0));
 
     if (exec->hadException())
         return jsUndefined();
@@ -715,7 +715,7 @@ JSValue JSDOMWindow::postMessage(ExecState* exec)
         return jsUndefined();
 
     ExceptionCode ec = 0;
-    impl()->postMessage(message, &messagePorts, targetOrigin, activeDOMWindow(exec), ec);
+    impl()->postMessage(message.release(), &messagePorts, targetOrigin, activeDOMWindow(exec), ec);
     setDOMException(exec, ec);
 
     return jsUndefined();

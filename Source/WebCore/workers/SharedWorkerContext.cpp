@@ -46,7 +46,7 @@ PassRefPtr<MessageEvent> createConnectEvent(PassRefPtr<MessagePort> port)
 {
     RefPtr<MessageEvent> event = MessageEvent::create(adoptPtr(new MessagePortArray(1, port)));
     event->initEvent(eventNames().connectEvent, false, false);
-    return event;
+    return event.release();
 }
 
 SharedWorkerContext::SharedWorkerContext(const String& name, const KURL& url, const String& userAgent, SharedWorkerThread* thread)

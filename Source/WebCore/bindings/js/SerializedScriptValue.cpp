@@ -1371,7 +1371,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef ori
     ExecState* exec = toJS(originContext);
     APIEntryShim entryShim(exec);
     JSValue value = toJS(exec, apiValue);
-    PassRefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(exec, value);
+    RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::create(exec, value);
     if (exec->hadException()) {
         if (exception)
             *exception = toRef(exec, exec->exception());
@@ -1379,7 +1379,7 @@ PassRefPtr<SerializedScriptValue> SerializedScriptValue::create(JSContextRef ori
         return 0;
     }
     ASSERT(serializedValue);
-    return serializedValue;
+    return serializedValue.release();
 }
 
 String SerializedScriptValue::toString()
