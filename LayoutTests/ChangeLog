@@ -1,3 +1,10 @@
+2011-08-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Rename chromium-gpu-mac to chromium-gpu-cg-mac
+
+        * platform/chromium-gpu-cg-mac: Copied from LayoutTests/platform/chromium-gpu-mac.
+        * platform/chromium-gpu-mac: Removed.
+
 2011-08-22  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, rolling out r93517.
