@@ -907,6 +907,7 @@ EXTRA_DIST += \
 	Source/WebCore/css/SVGCSSValueKeywords.in \
 	Source/WebCore/css/tokenizer.flex \
 	Source/WebCore/css/view-source.css \
+	Source/WebCore/css/WebKitFontFamilyNames.in \
 	Source/WebCore/dom/make_names.pl \
 	Source/WebCore/html/DocTypeStrings.gperf \
 	Source/WebCore/html/HTMLAttributeNames.in \

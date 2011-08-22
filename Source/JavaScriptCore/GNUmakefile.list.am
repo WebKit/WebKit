@@ -453,6 +453,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/wtf/BumpPointerAllocator.h \
 	Source/JavaScriptCore/wtf/ByteArray.cpp \
 	Source/JavaScriptCore/wtf/ByteArray.h \
+	Source/JavaScriptCore/wtf/Compiler.h \
 	Source/JavaScriptCore/wtf/CrossThreadRefCounted.h \
 	Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.cpp \
 	Source/JavaScriptCore/wtf/CryptographicallyRandomNumber.h \

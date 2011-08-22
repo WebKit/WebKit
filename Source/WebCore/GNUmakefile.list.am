@@ -2407,6 +2407,7 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/Color.h \
 	Source/WebCore/platform/graphics/ColorSpace.h \
 	Source/WebCore/platform/graphics/DashArray.h \
+	Source/WebCore/platform/graphics/Extensions3D.h \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.cpp \
 	Source/WebCore/platform/graphics/cairo/CairoUtilities.h \
 	Source/WebCore/platform/graphics/cairo/FloatRectCairo.cpp \
@@ -4684,8 +4685,10 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/ConstantUnion.h \
 	Source/ThirdParty/ANGLE/src/compiler/debug.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/debug.h \
+	Source/ThirdParty/ANGLE/src/compiler/ExtensionBehavior.h \
 	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/ForLoopUnroll.h \
+	Source/ThirdParty/ANGLE/src/compiler/glslang.h \
 	Source/ThirdParty/ANGLE/src/compiler/InfoSink.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/InfoSink.h \
 	Source/ThirdParty/ANGLE/src/compiler/Initialize.cpp \
@@ -4717,7 +4720,6 @@ webcore_sources += \
 	Source/ThirdParty/ANGLE/src/compiler/ParseHelper.h \
 	Source/ThirdParty/ANGLE/src/compiler/PoolAlloc.cpp \
 	Source/ThirdParty/ANGLE/src/compiler/PoolAlloc.h \
-	Source/ThirdParty/ANGLE/src/compiler/preprocessor \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/atom.c \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/atom.h \
 	Source/ThirdParty/ANGLE/src/compiler/preprocessor/compile.h \
