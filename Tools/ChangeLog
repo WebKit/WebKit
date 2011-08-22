@@ -1,3 +1,15 @@
+2011-08-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update builder names for chromium gpu bots due to CG switchover
+        https://bugs.webkit.org/show_bug.cgi?id=66693
+
+        Reviewed by Dirk Pranke.
+
+        Update the port and builder names for the chromium mac gpu bots to
+        account for the CG transition.
+
+        * Scripts/webkitpy/layout_tests/port/builders.py:
+
 2011-08-22  Dirk Pranke  <dpranke@chromium.org>
 
         fix the GPU bot names on the layout test dashboard

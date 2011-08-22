@@ -44,8 +44,8 @@ class ChromiumGpuTest(unittest.TestCase):
     def integration_test_chromium_gpu_mac(self):
         if sys.platform != 'darwin':
             return
-        self.assert_port_works('chromium-gpu-mac')
-        self.assert_port_works('chromium-gpu-mac', 'chromium-gpu', 'darwin')
+        self.assert_port_works('chromium-gpu-cg-mac')
+        self.assert_port_works('chromium-gpu-cg-mac', 'chromium-gpu', 'darwin')
 
     def integration_test_chromium_gpu_win(self):
         if sys.platform not in ('cygwin', 'win32'):
@@ -95,7 +95,7 @@ class ChromiumGpuTest(unittest.TestCase):
         path = 'fast/html/keygen.html'
         self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))
         self.assertFalse(path in files)
-        if port_name.startswith('chromium-gpu-mac'):
+        if port_name.startswith('chromium-gpu-cg-mac'):
             path = 'fast/canvas/set-colors.html'
             self.assertTrue(port._filesystem.exists(port.abspath_for_test(path)))
             self.assertFalse(path in files)
@@ -116,14 +116,14 @@ class ChromiumGpuTest(unittest.TestCase):
         self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-win'))
 
     def test_chromium_gpu__leopard(self):
-        port = factory.get('chromium-gpu-mac-leopard')
-        self.assertEquals(port.name(), 'chromium-gpu-mac-leopard')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-mac'))
+        port = factory.get('chromium-gpu-cg-mac-leopard')
+        self.assertEquals(port.name(), 'chromium-gpu-cg-mac-leopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-cg-mac'))
 
     def test_chromium_gpu__snowleopard(self):
-        port = factory.get('chromium-gpu-mac-snowleopard')
-        self.assertEquals(port.name(), 'chromium-gpu-mac-snowleopard')
-        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-mac'))
+        port = factory.get('chromium-gpu-cg-mac-snowleopard')
+        self.assertEquals(port.name(), 'chromium-gpu-cg-mac-snowleopard')
+        self.assertEquals(port.baseline_path(), port._webkit_baseline_path('chromium-gpu-cg-mac'))
 
 
 if __name__ == '__main__':

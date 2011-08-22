@@ -44,13 +44,13 @@ def get(platform=None, port_name='chromium-gpu', **kwargs):
         elif platform.startswith('linux'):
             port_name = 'chromium-gpu-linux'
         elif platform == 'darwin':
-            port_name = 'chromium-gpu-mac'
+            port_name = 'chromium-gpu-cg-mac'
         else:
             raise NotImplementedError('unsupported platform: %s' % platform)
 
     if port_name.startswith('chromium-gpu-linux'):
         return ChromiumGpuLinuxPort(port_name=port_name, **kwargs)
-    if port_name.startswith('chromium-gpu-mac'):
+    if port_name.startswith('chromium-gpu-cg-mac'):
         return ChromiumGpuMacPort(port_name=port_name, **kwargs)
     if port_name.startswith('chromium-gpu-win'):
         return ChromiumGpuWinPort(port_name=port_name, **kwargs)
@@ -77,7 +77,7 @@ def _set_gpu_options(port):
 def _tests(port, paths):
     if not paths:
         paths = ['compositing', 'platform/chromium/compositing', 'media', 'animations/3d']
-        if not port.name().startswith('chromium-gpu-mac'):
+        if not port.name().startswith('chromium-gpu-cg-mac'):
             # Canvas is not yet accelerated on the Mac, so there's no point
             # in running the tests there.
             paths += ['fast/canvas', 'canvas/philip']
@@ -102,12 +102,12 @@ class ChromiumGpuLinuxPort(chromium_linux.ChromiumLinuxPort):
 
 
 class ChromiumGpuMacPort(chromium_mac.ChromiumMacPort):
-    def __init__(self, port_name='chromium-gpu-mac', **kwargs):
+    def __init__(self, port_name='chromium-gpu-cg-mac', **kwargs):
         chromium_mac.ChromiumMacPort.__init__(self, port_name=port_name, **kwargs)
         _set_gpu_options(self)
 
     def baseline_search_path(self):
-        return (map(self._webkit_baseline_path, ['chromium-gpu-mac', 'chromium-gpu']) +
+        return (map(self._webkit_baseline_path, ['chromium-gpu-cg-mac', 'chromium-gpu']) +
                 chromium_mac.ChromiumMacPort.baseline_search_path(self))
 
     def tests(self, paths):
