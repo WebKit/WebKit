@@ -2309,6 +2309,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         // Inform the out of line window that the input source changed.
         [[WKTextInputWindowController sharedTextInputWindowController] keyboardInputSourceChanged];
     }
+
+    // This will force the current input context to be updated to its correct value.
+    [NSTextInputContext currentInputContext];
 }
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation

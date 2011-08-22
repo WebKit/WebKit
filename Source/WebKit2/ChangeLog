@@ -1,3 +1,16 @@
+2011-08-22  Anders Carlsson  <andersca@apple.com>
+
+        Update the current NSTextInputContext whenever the plug-in complex text input state changes
+        https://bugs.webkit.org/show_bug.cgi?id=66709
+
+        Reviewed by Sam Weinig.
+
+        Call [NSTextInputContext currentInputContext] which will force AppKit to update the current input
+        context. Fixes a rare case when the out-of-line editing window wouldn't appear.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPluginComplexTextInputState:WebKit::pluginComplexTextInputIdentifier:]):
+
 2011-08-19  Anders Carlsson  <andersca@apple.com>
 
         Another attempt at fixing the Windows build.
