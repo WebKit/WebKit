@@ -143,4 +143,4 @@ WebInspector.DatabaseDispatcher.prototype = {
     }
 }
 
-InspectorBackend.registerDomainDispatcher("Database", new WebInspector.DatabaseDispatcher());
+InspectorBackend.registerDatabaseDispatcher(new WebInspector.DatabaseDispatcher());

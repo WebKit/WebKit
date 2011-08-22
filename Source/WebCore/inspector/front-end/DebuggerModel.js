@@ -33,7 +33,7 @@ WebInspector.DebuggerModel = function()
     this._debuggerPausedDetails = {};
     this._scripts = {};
 
-    InspectorBackend.registerDomainDispatcher("Debugger", new WebInspector.DebuggerDispatcher(this));
+    InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerDispatcher(this));
 }
 
 WebInspector.DebuggerModel.Events = {

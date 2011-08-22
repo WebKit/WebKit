@@ -31,7 +31,7 @@
 WebInspector.WorkerManager = function()
 {
     this._workerIdToWindow = {};
-    InspectorBackend.registerDomainDispatcher("Worker", new WebInspector.DedicatedWorkerMessageForwarder(this));
+    InspectorBackend.registerWorkerDispatcher(new WebInspector.DedicatedWorkerMessageForwarder(this));
 }
 
 WebInspector.WorkerManager.isWorkerFrontend = function()

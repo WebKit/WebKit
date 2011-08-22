@@ -245,6 +245,7 @@ my $frontendConstructor;
 my @frontendConstantDeclarations;
 my @frontendConstantDefinitions;
 my @frontendFooter;
+my @frontendDomains;
 
 # Default constructor
 sub new
@@ -304,6 +305,7 @@ sub GenerateInterface
     );
     generateFunctions($interface, \%agent);
     if (@{$agent{methodDeclarations}}) {
+        push(@frontendDomains, $interface->name);
         generateAgentDeclaration($interface, \%agent);
     }
 }
@@ -755,6 +757,7 @@ sub collectBackendJSStubEvents
 
 sub generateBackendStubJS
 {
+    my $JSRegisterDomainDispatchers = join("\n", map("    this.register" . $_ . "Dispatcher = this._registerDomainDispatcher.bind(this, \"" . $_ ."\");", @frontendDomains));
     my $JSStubs = join("\n", @backendJSStubs);
     my $JSEvents = join("\n", @backendJSEvents);
     my $inspectorBackendStubJS = << "EOF";
@@ -769,6 +772,7 @@ InspectorBackendStub = function()
     this._eventArgs = {};
 $JSStubs
 $JSEvents
+$JSRegisterDomainDispatchers
 }
 
 InspectorBackendStub.prototype = {
@@ -854,7 +858,7 @@ InspectorBackendStub.prototype = {
         InspectorFrontendHost.sendMessageToBackend(message);
     },
 
-    registerDomainDispatcher: function(domain, dispatcher)
+    _registerDomainDispatcher: function(domain, dispatcher)
     {
         this._domainDispatchers[domain] = dispatcher;
     },

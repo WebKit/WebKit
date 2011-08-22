@@ -129,7 +129,7 @@ WebInspector.ProfilesPanel = function()
     if (Preferences.heapProfilerPresent)
         this._registerProfileType(new WebInspector.DetailedHeapshotProfileType());
 
-    InspectorBackend.registerDomainDispatcher("Profiler", new WebInspector.ProfilerDispatcher(this));
+    InspectorBackend.registerProfilerDispatcher(new WebInspector.ProfilerDispatcher(this));
 
     if (Preferences.profilerAlwaysEnabled || WebInspector.settings.profilerEnabled.get())
         ProfilerAgent.enable();

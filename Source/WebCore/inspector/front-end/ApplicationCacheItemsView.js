@@ -308,4 +308,4 @@ WebInspector.ApplicationCacheDispatcher.prototype = {
     }
 }
 
-InspectorBackend.registerDomainDispatcher("ApplicationCache", new WebInspector.ApplicationCacheDispatcher());
+InspectorBackend.registerApplicationCacheDispatcher(new WebInspector.ApplicationCacheDispatcher());

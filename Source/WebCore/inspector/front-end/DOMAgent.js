@@ -336,7 +336,7 @@ WebInspector.DOMAgent = function() {
     this._idToDOMNode = null;
     this._document = null;
     this._attributeLoadNodeIds = {};
-    InspectorBackend.registerDomainDispatcher("DOM", new WebInspector.DOMDispatcher(this));
+    InspectorBackend.registerDOMDispatcher(new WebInspector.DOMDispatcher(this));
 }
 
 WebInspector.DOMAgent.Events = {

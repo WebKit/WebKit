@@ -39,7 +39,7 @@ WebInspector.ResourceTreeModel = function(networkManager)
     WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.ConsoleCleared, this._consoleCleared, this);
 
     this.frontendReused();
-    InspectorBackend.registerDomainDispatcher("Page", new WebInspector.PageDispatcher(this));
+    InspectorBackend.registerPageDispatcher(new WebInspector.PageDispatcher(this));
     
     this._pendingConsoleMessages = {};
 }

@@ -503,7 +503,7 @@ WebInspector.doLoadedDone = function()
     this.domAgent = new WebInspector.DOMAgent();
     new WebInspector.JavaScriptContextManager(this.resourceTreeModel, this.console);
 
-    InspectorBackend.registerDomainDispatcher("Inspector", this);
+    InspectorBackend.registerInspectorDispatcher(this);
 
     this.resourceCategories = {
         documents: new WebInspector.ResourceCategory("documents", WebInspector.UIString("Documents"), "rgb(47,102,236)"),

@@ -157,7 +157,7 @@ WebInspector.ConsoleView.prototype = {
                     console.clearMessages();
             },
         }
-        InspectorBackend.registerDomainDispatcher("Console", dispatcher);
+        InspectorBackend.registerConsoleDispatcher(dispatcher);
     },
 
     setConsoleMessageExpiredCount: function(count)

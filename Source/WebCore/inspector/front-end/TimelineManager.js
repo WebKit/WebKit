@@ -66,7 +66,7 @@ WebInspector.TimelineManager.prototype.__proto__ = WebInspector.Object.prototype
 WebInspector.TimelineDispatcher = function(manager)
 {
     this._manager = manager;
-    InspectorBackend.registerDomainDispatcher("Timeline", this);
+    InspectorBackend.registerTimelineDispatcher(this);
 }
 
 WebInspector.TimelineDispatcher.prototype = {

@@ -81,7 +81,7 @@ WebInspector.NetworkDispatcher = function(manager)
     this._manager = manager;
     this._inflightResourcesById = {};
     this._inflightResourcesByURL = {};
-    InspectorBackend.registerDomainDispatcher("Network", this);
+    InspectorBackend.registerNetworkDispatcher(this);
 }
 
 WebInspector.NetworkDispatcher.prototype = {

@@ -86,4 +86,4 @@ WebInspector.DOMStorageDispatcher.prototype = {
     }
 }
 
-InspectorBackend.registerDomainDispatcher("DOMStorage", new WebInspector.DOMStorageDispatcher());
+InspectorBackend.registerDOMStorageDispatcher(new WebInspector.DOMStorageDispatcher());
