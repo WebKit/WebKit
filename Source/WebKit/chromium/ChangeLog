@@ -1,3 +1,21 @@
+2011-08-22  Adam Klein  <adamk@chromium.org>
+
+        [chromium] Remove deprecated and unused bits of WebIDB* headers
+        https://bugs.webkit.org/show_bug.cgi?id=66711
+
+        Reviewed by Tony Chang.
+
+        The Chromium side of this patch was submitted as
+        http://crrev.com/97687.
+
+        * public/WebIDBCallbacks.h:
+        * public/WebIDBCursor.h:
+        (WebKit::WebIDBCursor::primaryKey):
+        (WebKit::WebIDBCursor::value):
+        (WebKit::WebIDBCursor::deleteFunction):
+        * public/WebIDBDatabase.h:
+        (WebKit::WebIDBDatabase::transaction):
+
 2011-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove third_party/leveldb, because it's no longer used and doesn't exist downstream.

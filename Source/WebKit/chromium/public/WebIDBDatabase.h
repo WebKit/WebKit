@@ -68,12 +68,8 @@ public:
     // Transfers ownership of the WebIDBTransaction to the caller.
     virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, WebExceptionCode& ec)
     {
-        return transaction(names, mode, 0, ec);
-    }
-    // FIXME: Remove.
-    virtual WebIDBTransaction* transaction(const WebDOMStringList& names, unsigned short mode, unsigned long, WebExceptionCode& ec)
-    {
-        return transaction(names, mode, ec);
+        WEBKIT_ASSERT_NOT_REACHED();
+        return 0;
     }
     virtual void close() { WEBKIT_ASSERT_NOT_REACHED(); }
 

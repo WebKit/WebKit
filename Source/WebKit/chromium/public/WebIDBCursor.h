@@ -55,29 +55,15 @@ public:
         WEBKIT_ASSERT_NOT_REACHED();
         return WebIDBKey::createInvalid();
     }
-    // FIXME: Remove the following 2 methods and uncomment third after roll.
     virtual WebSerializedScriptValue value() const
     {
-        WebSerializedScriptValue serializedScriptValue;
-        WebIDBKey key;
-        value(serializedScriptValue, key);
-        return serializedScriptValue;        
+        WEBKIT_ASSERT_NOT_REACHED();
+        return WebSerializedScriptValue();
     }
-    virtual void value(WebSerializedScriptValue& serializedScriptValue, WebIDBKey& key) const
-    {
-        serializedScriptValue = value();
-    }
-    // virtual WebSerializedScriptValue value() const
-    // {
-    //     WEBKIT_ASSERT_NOT_REACHED();
-    //     return WebSerializedScriptValue();
-    // }
 
     virtual void update(const WebSerializedScriptValue&, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
     virtual void continueFunction(const WebIDBKey&, WebIDBCallbacks*, WebExceptionCode&) { WEBKIT_ASSERT_NOT_REACHED(); }
-    // FIXME: Remove after WK roll.
-    virtual void remove(WebIDBCallbacks* callbacks, WebExceptionCode& ec) { deleteFunction(callbacks, ec); }
-    virtual void deleteFunction(WebIDBCallbacks* callbacks, WebExceptionCode& ec) { remove(callbacks, ec); }
+    virtual void deleteFunction(WebIDBCallbacks* callbacks, WebExceptionCode& ec) { WEBKIT_ASSERT_NOT_REACHED(); }
 
 protected:
     WebIDBCursor() { }
