@@ -357,7 +357,7 @@ void TiledLayerChromium::protectVisibleTileTextures()
 
 void TiledLayerChromium::protectTileTextures(const IntRect& contentRect)
 {
-    if (contentRect.isEmpty())
+    if (!m_tiler || contentRect.isEmpty())
         return;
 
     int left, top, right, bottom;
