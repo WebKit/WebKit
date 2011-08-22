@@ -287,7 +287,7 @@ bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targe
         m_selectionInitiationState = PlacedCaret;
     }
 
-    m_frame->selection()->setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
+    m_frame->selection()->setNonDirectionalSelectionIfNeeded(newSelection, granularity);
 
     return true;
 }
@@ -690,7 +690,7 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (m_frame->selection()->granularity() != CharacterGranularity)
         newSelection.expandUsingGranularity(m_frame->selection()->granularity());
 
-    m_frame->selection()->setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, m_frame->selection()->granularity());
+    m_frame->selection()->setNonDirectionalSelectionIfNeeded(newSelection, m_frame->selection()->granularity());
 }
 #endif // ENABLE(DRAG_SUPPORT)
 

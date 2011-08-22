@@ -163,15 +163,14 @@ void DragCaretController::setCaretPosition(const VisiblePosition& position)
         updateCaretRect(document, m_position);
 }
 
-void FrameSelection::setNonDirectionalSelectionIfNeeded(FrameSelection* selection, const VisibleSelection& passedNewSelection, TextGranularity granularity)
+void FrameSelection::setNonDirectionalSelectionIfNeeded(const VisibleSelection& passedNewSelection, TextGranularity granularity)
 {
-    ASSERT(selection);
     VisibleSelection newSelection = passedNewSelection;
 
     if (shouldAlwaysUseDirectionalSelection(m_frame))
         newSelection.setIsDirectional(true);
 
-    if (selection->selection() == newSelection || !selection->shouldChangeSelection(newSelection))
+    if (m_selection == newSelection || !shouldChangeSelection(newSelection))
         return;
 
     setSelection(newSelection, granularity);

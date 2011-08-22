@@ -1,3 +1,16 @@
+2011-08-22  Wyatt Carss  <wcarss@chromium.org>
+
+        FrameSelection::setNonDirectionalSelectionIfNeeded should not have a FrameSelection passed to it
+        https://bugs.webkit.org/show_bug.cgi?id=66636
+
+        Reviewed by Darin Adler.
+
+        setNonDirectionalSelection was moved into FrameSelection in r93134 for 
+        bug 60529, and still took a FrameSelection as an argument, which has been removed.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::setNonDirectionalSelectionIfNeeded):
+
 2011-08-22  Tony Chang  <tony@chromium.org>
 
         Add CSS parsing of -webkit-flex-order
@@ -261,7 +274,7 @@
         Add HTMLSourceElement to DOMWindow.idl for consistency.  Constructors for
         all elements should be available on DOMWindow.
 
-         * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
         (WebCore::RuntimeEnabledFeatures::htmlSourceElementEnabled):
         * bindings/generic/RuntimeEnabledFeatures.h:
         * page/DOMWindow.idl:
