@@ -1,3 +1,22 @@
+2011-08-22  Young Han Lee  <joybro@company100.net>
+
+        Reviewed by Dirk Schulze.
+
+        SVG animation fill="freeze" doesn't set baseVal to current animVal if animation stops before reaching the end
+        https://bugs.webkit.org/show_bug.cgi?id=63553
+
+        calculateAnimationPercentAndRepeat() is returning 1, which means 100%, whenever
+        elapsed >= m_intervalEnd, but this is wrong because m_intervalEnd can be in the middle
+        of the animation duration. (e.g. begin="0s" end="2s" dur="3s")
+
+        This change makes the function return the animations's true progress instead of 100%
+        when the animation ends.
+
+        Test: svg/animations/animate-end-attribute.html
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::calculateAnimationPercentAndRepeat):
+
 2011-08-22  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Fix build error when inspector is disabled.
