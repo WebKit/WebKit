@@ -1035,6 +1035,43 @@ template<> inline CSSPrimitiveValue::operator EEmptyCell() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFlexPack e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case PackStart:
+        m_value.ident = CSSValueStart;
+        break;
+    case PackEnd:
+        m_value.ident = CSSValueEnd;
+        break;
+    case PackCenter:
+        m_value.ident = CSSValueCenter;
+        break;
+    case PackJustify:
+        m_value.ident = CSSValueJustify;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EFlexPack() const
+{
+    switch (m_value.ident) {
+    case CSSValueStart:
+        return PackStart;
+    case CSSValueEnd:
+        return PackEnd;
+    case CSSValueCenter:
+        return PackCenter;
+    case CSSValueJustify:
+        return PackJustify;
+    default:
+        ASSERT_NOT_REACHED();
+        return PackStart;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFloat e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

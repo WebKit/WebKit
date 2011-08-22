@@ -51,6 +51,8 @@ public:
 
     int m_flexOrder;
 
+    unsigned m_flexPack : 2; // EFlexPack
+
 private:
     StyleFlexibleBoxData();
     StyleFlexibleBoxData(const StyleFlexibleBoxData&);

@@ -1540,6 +1540,9 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitFlexOrder:
         validPrimitive = validUnit(value, FInteger, true);
         break;
+    case CSSPropertyWebkitFlexPack:
+        validPrimitive = id == CSSValueStart || id == CSSValueEnd || id == CSSValueCenter || id == CSSValueJustify;
+        break;
 #endif
     case CSSPropertyWebkitMarquee: {
         const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,

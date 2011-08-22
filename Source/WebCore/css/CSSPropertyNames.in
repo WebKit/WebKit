@@ -244,6 +244,7 @@ z-index
 -webkit-columns
 #if defined(ENABLE_CSS3_FLEXBOX) && ENABLE_CSS3_FLEXBOX
 -webkit-flex-order
+-webkit-flex-pack
 #endif
 -webkit-font-size-delta
 -webkit-highlight

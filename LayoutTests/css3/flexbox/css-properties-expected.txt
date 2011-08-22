@@ -3,11 +3,11 @@ Tests being able to set the display to -webkit-flexbox and -webkit-inline-flexbo
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS div.style.display is "-webkit-flexbox"
-PASS div.style.display is "inline"
-PASS div.style.display is "-webkit-inline-flexbox"
-PASS div.style.display is "-webkit-inline-flexbox"
-PASS div.style.display is "block"
+PASS flexbox.style.display is "-webkit-flexbox"
+PASS flexbox.style.display is "inline"
+PASS flexbox.style.display is "-webkit-inline-flexbox"
+PASS flexbox.style.display is "-webkit-inline-flexbox"
+PASS flexbox.style.display is "block"
 PASS flexitem.style.webkitFlexOrder is ""
 PASS flexitem.style.webkitFlexOrder is "2"
 PASS flexitem.style.webkitFlexOrder is "-1"
@@ -15,6 +15,19 @@ PASS flexitem.style.webkitFlexOrder is "0"
 PASS flexitem.style.webkitFlexOrder is "0"
 PASS flexitem.style.webkitFlexOrder is "0"
 PASS flexitem.style.webkitFlexOrder is ""
+PASS flexbox.style.webkitFlexPack is ""
+PASS window.getComputedStyle(flexbox, null).webkitFlexPack is "start"
+PASS flexbox.style.webkitFlexPack is ""
+PASS flexbox.style.webkitFlexPack is "start"
+PASS window.getComputedStyle(flexbox, null).webkitFlexPack is "start"
+PASS flexbox.style.webkitFlexPack is "end"
+PASS window.getComputedStyle(flexbox, null).webkitFlexPack is "end"
+PASS flexbox.style.webkitFlexPack is "center"
+PASS window.getComputedStyle(flexbox, null).webkitFlexPack is "center"
+PASS flexbox.style.webkitFlexPack is "justify"
+PASS window.getComputedStyle(flexbox, null).webkitFlexPack is "justify"
+PASS flexbox.style.webkitFlexPack is ""
+PASS window.getComputedStyle(flexbox, null).webkitFlexPack is "start"
 PASS successfullyParsed is true
 
 TEST COMPLETE

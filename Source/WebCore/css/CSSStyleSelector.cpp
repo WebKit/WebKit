@@ -5112,6 +5112,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWordSpacing:
 #if ENABLE(CSS3_FLEXBOX)
     case CSSPropertyWebkitFlexOrder:
+    case CSSPropertyWebkitFlexPack:
 #endif
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:

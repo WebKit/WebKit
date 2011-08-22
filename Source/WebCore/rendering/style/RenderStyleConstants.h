@@ -159,12 +159,16 @@ enum EFillSizeType { Contain, Cover, SizeLength, SizeNone };
 enum EMarqueeBehavior { MNONE, MSCROLL, MSLIDE, MALTERNATE };
 enum EMarqueeDirection { MAUTO = 0, MLEFT = 1, MRIGHT = -1, MUP = 2, MDOWN = -2, MFORWARD = 3, MBACKWARD = -3 };
 
-// CSS3 Flexible Box Properties
+// Deprecated Flexible Box Properties
 
 enum EBoxAlignment { BSTRETCH, BSTART, BCENTER, BEND, BJUSTIFY, BBASELINE };
 enum EBoxOrient { HORIZONTAL, VERTICAL };
 enum EBoxLines { SINGLE, MULTIPLE };
 enum EBoxDirection { BNORMAL, BREVERSE };
+
+// CSS3 Flexbox Properties
+
+enum EFlexPack { PackStart, PackEnd, PackCenter, PackJustify };
 
 enum ETextSecurity {
     TSNONE, TSDISC, TSCIRCLE, TSSQUARE

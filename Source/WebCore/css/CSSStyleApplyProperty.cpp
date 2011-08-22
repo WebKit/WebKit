@@ -891,6 +891,7 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
 
 #if ENABLE(CSS3_FLEXBOX)
     setPropertyHandler(CSSPropertyWebkitFlexOrder, new ApplyPropertyDefault<int>(&RenderStyle::flexOrder, &RenderStyle::setFlexOrder, &RenderStyle::initialFlexOrder));
+    setPropertyHandler(CSSPropertyWebkitFlexPack, new ApplyPropertyDefault<EFlexPack>(&RenderStyle::flexPack, &RenderStyle::setFlexPack, &RenderStyle::initialFlexPack));
 #endif
 
     setPropertyHandler(CSSPropertyFontStyle, new ApplyPropertyFont<FontItalic>(&FontDescription::italic, &FontDescription::setItalic, FontItalicOff));
