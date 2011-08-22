@@ -1427,10 +1427,12 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
         resolver.setStatus(last->lineBreakBidiStatus());
     } else {
         TextDirection direction = style()->direction();
-        if (style()->unicodeBidi() == Plaintext)
-            determineParagraphDirection(direction, InlineIterator(this, bidiFirstNotSkippingInlines(this), 0));
+        if (style()->unicodeBidi() == Plaintext) {
+            // FIXME: Why does "unicode-bidi: plaintext" bidiFirstIncludingEmptyInlines when all other line layout code uses bidiFirstSkippingEmptyInlines?
+            determineParagraphDirection(direction, InlineIterator(this, bidiFirstIncludingEmptyInlines(this), 0));
+        }
         resolver.setStatus(BidiStatus(direction, style()->unicodeBidi() == Override));
-        resolver.setPosition(InlineIterator(this, bidiFirstSkippingInlines(this, &resolver), 0));
+        resolver.setPosition(InlineIterator(this, bidiFirstSkippingEmptyInlines(this, &resolver), 0));
     }
     return curr;
 }
@@ -1646,7 +1648,7 @@ void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolve
 // have an effect on whitespace at the start of the line.
 static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObject* o, LineMidpointState& lineMidpointState)
 {
-    RenderObject* next = bidiNext(block, o);
+    RenderObject* next = bidiNextSkippingEmptyInlines(block, o);
     if (next && !next->isBR() && next->isText() && toRenderText(next)->textLength() > 0) {
         RenderText* nextText = toRenderText(next);
         UChar nextChar = nextText->characters()[0];
@@ -1983,7 +1985,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
     EWhiteSpace currWS = m_block->style()->whiteSpace();
     EWhiteSpace lastWS = currWS;
     while (current.m_obj) {
-        RenderObject* next = bidiNext(m_block, current.m_obj);
+        RenderObject* next = bidiNextSkippingEmptyInlines(m_block, current.m_obj);
         if (next && next->parent() && !next->parent()->isDescendantOf(current.m_obj->parent()))
             includeEndWidth = true;
 

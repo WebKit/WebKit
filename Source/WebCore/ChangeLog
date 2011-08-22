@@ -1,3 +1,45 @@
+2011-08-22  Eric Seidel  <eric@webkit.org>
+
+        Attempt to clean up bidiNext usage
+        https://bugs.webkit.org/show_bug.cgi?id=66721
+
+        Reviewed by Ryosuke Niwa.
+
+        bidiNext and bidiFirst are horribly confusing.
+        Even worse is that bidiNext takes a bunch of mutually exclusive options.
+        It appears that there is a "return me every inline, even if its empty"
+        mode which is only used for simplified inline layout in RenderBlock.cpp.
+        To support that mode, there is a endOfInline pointer which keeps track
+        of if we just returned at the end of an inline to so we don't get stuck in
+        and empty inline (unable to distinguish the start from the finish).
+
+        The actual bidi/line-layout code uses bidiNext/bidiFirst in a "skip empty inlines"
+        mode.  (Since empty inlines do not participate in the Unicode Bidi Algorithm.)
+
+        This change renames bidiNext to bidiNextShared (still a horrible name) and moves
+        all callers to explicitly calling bidiNextSkippingEmptyInlines or bidiNextIncludingEmptyInlines.
+        It becomes obvious which code uses which.
+
+        In reviewing this code be aware that the previous bidiNext default was to "skip empty inlines" (skipInlines = true).
+        Thus any caller who didn't pass true/false should now be calling bidiNextSkippingEmptyInlines instead.
+
+        No functional change, thus no tests.
+
+        * rendering/InlineIterator.h:
+        (WebCore::bidiNextShared):
+        (WebCore::bidiNextSkippingEmptyInlines):
+        (WebCore::bidiNextIncludingEmptyInlines):
+        (WebCore::bidiFirstSkippingEmptyInlines):
+        (WebCore::bidiFirstIncludingEmptyInlines):
+        (WebCore::InlineWalker::InlineWalker):
+        (WebCore::InlineWalker::advance):
+        (WebCore::InlineIterator::increment):
+        (WebCore::InlineBidiResolver::appendRun):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::shouldSkipWhitespaceAfterStartObject):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2011-08-22  David Levin  <levin@chromium.org>
 
         Fix usage of PassRefPtr in postMessage and structured clone code.
