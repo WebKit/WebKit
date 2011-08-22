@@ -1,3 +1,13 @@
+2011-08-22  Abhishek Arya  <inferno@chromium.org>
+
+        Crash in FocusController::advanceFocusInDocumentOrder
+        https://bugs.webkit.org/show_bug.cgi?id=66678
+
+        Reviewed by Dave Hyatt.
+
+        * fast/frames/focus-controller-crash-change-event-expected.txt: Added.
+        * fast/frames/focus-controller-crash-change-event.html: Added.
+
 2011-08-22  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Some GTK+-specific font-face tests fail on the bots

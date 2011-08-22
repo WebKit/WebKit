@@ -1,0 +1,32 @@
+<html>
+<div id="b">
+    Press a key!
+    <input id="a">
+    <iframe></iframe>
+</div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+	layoutTestController.waitUntilDone();
+}
+
+a.addEventListener("change", function() { 
+    b.innerHTML = "PASS";
+
+	if (window.layoutTestController)
+	    layoutTestController.notifyDone();
+});
+
+a.addEventListener("keyup", function() {
+    var e = document.createEvent("KeyboardEvent");
+    e.initKeyboardEvent('keydown', true, true, document.defaultView, 'U+0009', 0, false, false, false, false, false);
+    a.dispatchEvent(e);
+})
+
+document.body.offsetTop;
+a.focus();
+
+if (window.layoutTestController)
+    eventSender.keyDown('a');
+</script>
+</html>

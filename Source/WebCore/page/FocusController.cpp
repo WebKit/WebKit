@@ -246,7 +246,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
     document->updateLayoutIgnorePendingStylesheets();
 
-    Node* node = findFocusableNodeAcrossTreeScope(direction, currentNode ? currentNode->treeScope() : document, currentNode, event);
+    RefPtr<Node> node = findFocusableNodeAcrossTreeScope(direction, currentNode ? currentNode->treeScope() : document, currentNode, event);
 
     if (!node) {
         // We didn't find a node to focus, so we should try to pass focus to Chrome.
@@ -259,7 +259,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
         // Chrome doesn't want focus, so we should wrap focus.
         node = findFocusableNode(direction, m_page->mainFrame()->document(), 0, event);
-        node = findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(direction, node, event);
+        node = findFocusableNodeDecendingDownIntoFrameDocumentOrShadowRoot(direction, node.get(), event);
 
         if (!node)
             return false;
@@ -278,7 +278,7 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     if (node->isFrameOwnerElement()) {
         // We focus frames rather than frame owners.
         // FIXME: We should not focus frames that have no scrollbars, as focusing them isn't useful to the user.
-        HTMLFrameOwnerElement* owner = static_cast<HTMLFrameOwnerElement*>(node);
+        HTMLFrameOwnerElement* owner = static_cast<HTMLFrameOwnerElement*>(node.get());
         if (!owner->contentFrame())
             return false;
 
@@ -301,13 +301,13 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         setFocusedFrame(newDocument->frame());
 
     if (caretBrowsing) {
-        Position position = firstPositionInOrBeforeNode(node);
+        Position position = firstPositionInOrBeforeNode(node.get());
         VisibleSelection newSelection(position, position, DOWNSTREAM);
         if (frame->selection()->shouldChangeSelection(newSelection))
             frame->selection()->setSelection(newSelection);
     }
 
-    static_cast<Element*>(node)->focus(false);
+    static_cast<Element*>(node.get())->focus(false);
     return true;
 }
 
