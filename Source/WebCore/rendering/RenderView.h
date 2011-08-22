@@ -181,6 +181,10 @@ public:
     }
     const RenderFlowThreadList* renderFlowThreadList() const { return m_renderFlowThreadList.get(); }
 
+    bool hasRenderFlowThread() const { return m_currentRenderFlowThread; }
+    RenderFlowThread* currentRenderFlowThread() const { return m_currentRenderFlowThread; }
+    void setCurrentRenderFlowThread(RenderFlowThread* flowThread) { m_currentRenderFlowThread = flowThread; }
+
     void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
     
 protected:
@@ -196,7 +200,7 @@ private:
     bool pushLayoutState(RenderBox* renderer, const LayoutSize& offset, LayoutUnit pageHeight = 0, bool pageHeightChanged = false, ColumnInfo* colInfo = 0)
     {
         // We push LayoutState even if layoutState is disabled because it stores layoutDelta too.
-        if (!doingFullRepaint() || renderer->hasColumns() || m_layoutState->isPaginated()) {
+        if (!doingFullRepaint() || renderer->hasColumns() || m_layoutState->isPaginated() || hasRenderFlowThread()) {
             m_layoutState = new (renderArena()) LayoutState(m_layoutState, renderer, offset, pageHeight, pageHeightChanged, colInfo);
             return true;
         }
@@ -265,6 +269,7 @@ private:
     OwnPtr<RenderLayerCompositor> m_compositor;
 #endif
     OwnPtr<RenderFlowThreadList> m_renderFlowThreadList;
+    RenderFlowThread* m_currentRenderFlowThread;
 };
 
 inline RenderView* toRenderView(RenderObject* object)

@@ -82,7 +82,7 @@ LayoutState::LayoutState(LayoutState* prev, RenderBox* renderer, const LayoutSiz
 
     // If we establish a new page height, then cache the offset to the top of the first page.
     // We can compare this later on to figure out what part of the page we're actually on,
-    if (pageLogicalHeight || m_columnInfo) {
+    if (pageLogicalHeight || m_columnInfo || renderer->isRenderFlowThread()) {
         m_pageLogicalHeight = pageLogicalHeight;
         m_pageOffset = LayoutSize(m_layoutOffset.width() + renderer->borderLeft() + renderer->paddingLeft(),
                                m_layoutOffset.height() + renderer->borderTop() + renderer->paddingTop());

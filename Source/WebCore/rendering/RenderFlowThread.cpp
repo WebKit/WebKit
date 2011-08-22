@@ -45,6 +45,7 @@ RenderFlowThread::RenderFlowThread(Node* node, const AtomicString& flowThread)
     : RenderBlock(node)
     , m_flowThread(flowThread)
     , m_regionsInvalidated(false)
+    , m_regionFittingDisableCount(0)
 {
     setIsAnonymous(false);
 }
@@ -270,8 +271,30 @@ void RenderFlowThread::pushDependencies(RenderFlowThreadList& list)
     }
 }
 
+class CurrentRenderFlowThreadMaintainer {
+    WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadMaintainer);
+public:
+    CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
+        : m_renderFlowThread(renderFlowThread)
+    {
+        RenderView* view = m_renderFlowThread->view();
+        ASSERT(!view->currentRenderFlowThread());
+        view->setCurrentRenderFlowThread(m_renderFlowThread);
+    }
+    ~CurrentRenderFlowThreadMaintainer()
+    {
+        RenderView* view = m_renderFlowThread->view();
+        ASSERT(view->currentRenderFlowThread() == m_renderFlowThread);
+        view->setCurrentRenderFlowThread(0);
+    }
+private:
+    RenderFlowThread* m_renderFlowThread;
+};
+
 void RenderFlowThread::layout()
 {
+    CurrentRenderFlowThreadMaintainer currentFlowThreadSetter(this);
+
     if (m_regionsInvalidated) {
         m_regionsInvalidated = false;
         if (hasRegions()) {
@@ -435,5 +458,41 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
         region->repaintRectangle(clippedRect, immediate);
     }
 }
+
+RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position) const
+{
+    ASSERT(!m_regionsInvalidated);
+
+    // FIXME: The regions are always in order, optimize this search.
+    bool useHorizontalWritingMode = isHorizontalWritingMode();
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+
+        LayoutRect regionRect = region->regionRect();
+
+        if (useHorizontalWritingMode) {
+            if (regionRect.y() <= position && position < regionRect.maxY())
+                return region;
+            continue;
+        }
+
+        if (regionRect.x() <= position && position < regionRect.maxX())
+            return region;
+    }
+
+    return 0;
+}
+
+LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) const
+{
+    RenderRegion* region = renderRegionForLine(position);
+    if (!region)
+        return 0;
+
+    return isHorizontalWritingMode() ? region->regionRect().width() : region->regionRect().height();
+}
+
 
 } // namespace WebCore

@@ -58,6 +58,8 @@ public:
     bool isValid() const { return m_isValid; }
     void setIsValid(bool valid) { m_isValid = valid; }
 
+    virtual void layout();
+
 private:
     virtual const char* renderName() const { return "RenderRegion"; }
 

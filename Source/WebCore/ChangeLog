@@ -1,3 +1,49 @@
+2011-08-22  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] RenderFlowThread layout should use the attached region sizes
+        https://bugs.webkit.org/show_bug.cgi?id=66143
+
+        When RenderFlowThread is doing the layout it also sets the current RenderFlowThread on
+        the RenderView. RenderFlowThread cannot be nested inside a single RenderView, so there's no 
+        need to put that on the LayoutState.
+
+        The right offset used to layout the inlines inside a RenderFlowThread
+        is now adjusted to fit inside the current region.
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/regions/webkit-flow-floats-inside-regions-bounds.html
+               fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-lr.html
+               fast/regions/webkit-flow-inlines-inside-regions-bounds.html
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::adjustForRegionFittingIfNeeded):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer):
+        (WebCore::CurrentRenderFlowThreadMaintainer::~CurrentRenderFlowThreadMaintainer):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::renderRegionForLine):
+        (WebCore::RenderFlowThread::regionLogicalWidthForLine):
+        * rendering/RenderFlowThread.h:
+        (WebCore::RegionFittingDisabler::RegionFittingDisabler):
+        (WebCore::RegionFittingDisabler::~RegionFittingDisabler):
+        * rendering/RenderRegion.cpp:
+        (WebCore::RenderRegion::layout):
+        * rendering/RenderRegion.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::hasRenderFlowThread):
+        (WebCore::RenderView::currentRenderFlowThread):
+        (WebCore::RenderView::setCurrentRenderFlowThread):
+        (WebCore::RenderView::pushLayoutState):
+
 2011-08-22  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, rolling out r93517.

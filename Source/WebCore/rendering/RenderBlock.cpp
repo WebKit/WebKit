@@ -41,6 +41,7 @@
 #include "PaintInfo.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
+#include "RenderFlowThread.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -1222,7 +1223,11 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
             colInfo->clearForcedBreaks();
     }
 
-    LayoutStateMaintainer statePusher(view(), this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
+    RenderView* renderView = view();
+    LayoutStateMaintainer statePusher(renderView, this, locationOffset(), hasColumns() || hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode(), pageLogicalHeight, pageLogicalHeightChanged, colInfo);
+
+    bool disableRegionFitting = renderView->hasRenderFlowThread() && (hasColumns() || (isPositioned() && !isRenderFlowThread()) || isFloating());
+    RegionFittingDisabler regionFittingDisabler(renderView->currentRenderFlowThread(), disableRegionFitting);
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we
@@ -1305,8 +1310,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     
     statePusher.pop();
 
-    if (view()->layoutState()->m_pageLogicalHeight)
-        setPageLogicalOffset(view()->layoutState()->pageLogicalOffset(logicalTop()));
+    if (renderView->layoutState()->m_pageLogicalHeight)
+        setPageLogicalOffset(renderView->layoutState()->pageLogicalOffset(logicalTop()));
 
     updateLayerTransform();
 
@@ -3556,16 +3561,36 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
     return left;
 }
 
+void RenderBlock::adjustForRegionFittingIfNeeded(LayoutUnit logicalTop, LayoutUnit& rightOffset) const
+{
+    RenderView* renderView = view();
+    if (!renderView->hasRenderFlowThread())
+        return;
+    
+    RenderFlowThread* flowThread = renderView->currentRenderFlowThread();
+    if (!flowThread->isRegionFittingEnabled())
+        return;
+
+    LayoutState* layoutState = renderView->layoutState();
+    IntSize delta = layoutState->m_layoutOffset - layoutState->m_pageOffset;
+    int offset = isHorizontalWritingMode() ? delta.height() : delta.width();
+    LayoutUnit regionWidth = flowThread->regionLogicalWidthForLine(offset + logicalTop);
+    rightOffset -= flowThread->logicalWidth() - regionWidth;
+}
+
 LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const
 {
     LayoutUnit right = fixedOffset;
+    adjustForRegionFittingIfNeeded(logicalTop, right);
 
     if (m_floatingObjects && m_floatingObjects->hasRightObjects()) {
         if (heightRemaining)
             *heightRemaining = 1;
 
-        FloatIntervalSearchAdapter<FloatingObject::FloatRight> adapter(this, logicalTop, right, heightRemaining);
+        LayoutUnit rightFloatOffset = fixedOffset;
+        FloatIntervalSearchAdapter<FloatingObject::FloatRight> adapter(this, logicalTop, rightFloatOffset, heightRemaining);
         m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
+        right = min(right, rightFloatOffset);
     }
     
     if (applyTextIndent && !style()->isLeftToRightDirection()) {

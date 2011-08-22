@@ -311,6 +311,8 @@ protected:
     virtual void paint(PaintInfo&, const LayoutPoint&);
     virtual void paintObject(PaintInfo&, const LayoutPoint&);
 
+    void adjustForRegionFittingIfNeeded(LayoutUnit logicalTop, LayoutUnit& rightOffset) const;
+
     LayoutUnit logicalRightOffsetForLine(LayoutUnit position, LayoutUnit fixedOffset, bool applyTextIndent = true, LayoutUnit* logicalHeightRemaining = 0) const;
     LayoutUnit logicalLeftOffsetForLine(LayoutUnit position, LayoutUnit fixedOffset, bool applyTextIndent = true, LayoutUnit* logicalHeightRemaining = 0) const;
 

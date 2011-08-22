@@ -82,6 +82,13 @@ bool RenderRegion::nodeAtPoint(const HitTestRequest& request, HitTestResult& res
     return false;
 }
 
+void RenderRegion::layout()
+{
+    RenderReplaced::layout();
+    if (m_flowThread && isValid())
+        m_flowThread->invalidateRegions();
+}
+
 void RenderRegion::attachRegion()
 {
     if (!m_flowThread)
