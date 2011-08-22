@@ -1,3 +1,11 @@
+2011-08-22  Adrienne Walker  <enne@google.com>
+
+        [chromium] Skip rtl-composited, as it causes other tests to crash.
+
+        Unreviewed expectation change.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-22  Noel Gordon  <noel.gordon@gmail.com>
 
         [Chromium] plugins/keyboard-events.html should pass on linux/mac

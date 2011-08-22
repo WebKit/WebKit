@@ -168,6 +168,8 @@ BUGCR89468 : css3/selectors3 = PASS FAIL
 // Tests for WebVTT parser for <track>.  Feature is not yet functional.
 BUGWK43668 SKIP : media/track/ = TIMEOUT
 
+BUGCR86239 MAC GPU SKIP : compositing/geometry/rtl-composited.html = PASS
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------
