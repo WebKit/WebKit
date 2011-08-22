@@ -1,3 +1,14 @@
+2011-08-22  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [Chromium] [WebSocket] Add a test to reproduce chromium bug on close before open.
+        https://bugs.webkit.org/show_bug.cgi?id=66649
+
+        Reviewed by Kent Tamura.
+
+        * http/tests/websocket/tests/hybi/close-before-open-expected.txt:
+        * http/tests/websocket/tests/hybi/close-before-open.html:
+        Add new URL to reproduce the problem.
+
 2011-08-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: extract breakpoint management code to a separate class and add tests.

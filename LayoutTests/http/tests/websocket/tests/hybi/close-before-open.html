@@ -14,13 +14,28 @@ window.jsTestIsAsync = true;
 if (window.layoutTestController)
     layoutTestController.overridePreference("WebKitHixie76WebSocketProtocolEnabled", 0);
 
-var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/hanging-handshake");
-ws.onclose = function() {
-    debug("closed");
-    finishJSTest();
+var urls = [
+    "ws://127.0.0.1:8880/websocket/tests/hybi/hanging-handshake",
+    "ws://127.0.0.1:8880/websocket/tests/hybi/close-code-and-reason"
+];
+
+var testId = 0;
+
+var test = function() {
+    if (0 != testId)
+        debug("closed on test " + testId);
+    if (2 == testId)
+        finishJSTest();
+    else {
+        ws = new WebSocket(urls[testId++]);
+        ws.onclose = test;
+        ws.close();
+    }
 };
+
+test();
+
 var successfullyParsed = true;
-ws.close();
 </script>
 <script src="../../../../js-test-resources/js-test-post.js"></script>
 </body>
