@@ -1,3 +1,11 @@
+2011-08-22  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        [chromium] Updating test expectations.
+
+        Unreviewed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-22  Takashi Toyoshima  <toyoshim@chromium.org>
 
         [Chromium] [WebSocket] Add a test to reproduce chromium bug on close before open.

@@ -3691,3 +3691,5 @@ BUGWK66577 LEOPARD : fast/events/touch/multi-touch-grouped-targets.html = TIMEOU
 BUGWK66577 LEOPARD : fast/events/touch/touch-gesture-scroll.html = TIMEOUT
 BUGWK66577 LEOPARD : fast/events/touch/touch-target-limited.html = TIMEOUT
 BUGWK66577 LEOPARD : fast/events/touch/touch-target.html = TIMEOUT
+
+BUGV8_1634 : fast/js/const.html = TEXT
