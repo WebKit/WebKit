@@ -89,6 +89,7 @@ contributors_who_are_not_committers = [
     Contributor("John Bauman", ["jbauman@chromium.org", "jbauman@google.com"], "jbauman"),
     Contributor("Kristof Kosztyo", "kkristof@inf.u-szeged.hu", "kkristof"),
     Contributor("Oliver Varga", "voliver@inf.u-szeged.hu", "TwistO"),
+    Contributor("Peter Beverloo", "peter@chromium.org", "beverloo"),
     Contributor("Peter Gal", "galpeter@inf.u-szeged.hu", "elecro"),
     Contributor("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),
     Contributor("Tab Atkins", ["tabatkins@google.com", "jackalmage@gmail.com"], "tabatkins"),
