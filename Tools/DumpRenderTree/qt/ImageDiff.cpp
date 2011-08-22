@@ -123,9 +123,9 @@ int main(int argc, char* argv[])
                     difference = qMax(difference, qreal(0.01));
                 }
 
-                if (!count) {
+                if (!difference)
                     fprintf(stdout, "diff: %01.2f%% passed\n", difference);
-                } else {
+                else {
                     QBuffer buffer;
                     buffer.open(QBuffer::WriteOnly);
                     diffImage.save(&buffer, "PNG");
