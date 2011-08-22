@@ -199,6 +199,9 @@ static const int computedProperties[] = {
 #if ENABLE(DASHBOARD_SUPPORT)
     CSSPropertyWebkitDashboardRegion,
 #endif
+#if ENABLE(CSS3_FLEXBOX)
+    CSSPropertyWebkitFlexOrder,
+#endif
     CSSPropertyWebkitFontSmoothing,
     CSSPropertyWebkitHighlight,
     CSSPropertyWebkitHyphenateCharacter,
@@ -1099,6 +1102,10 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return primitiveValueCache->createValue(style->display());
         case CSSPropertyEmptyCells:
             return primitiveValueCache->createValue(style->emptyCells());
+#if ENABLE(CSS3_FLEXBOX)
+        case CSSPropertyWebkitFlexOrder:
+            return primitiveValueCache->createValue(style->flexOrder(), CSSPrimitiveValue::CSS_NUMBER);
+#endif
         case CSSPropertyFloat:
             return primitiveValueCache->createValue(style->floating());
         case CSSPropertyFontFamily: {

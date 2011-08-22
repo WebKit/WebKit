@@ -889,6 +889,10 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyCounterIncrement, new ApplyPropertyCounter<Increment>());
     setPropertyHandler(CSSPropertyCounterReset, new ApplyPropertyCounter<Reset>());
 
+#if ENABLE(CSS3_FLEXBOX)
+    setPropertyHandler(CSSPropertyWebkitFlexOrder, new ApplyPropertyDefault<int>(&RenderStyle::flexOrder, &RenderStyle::setFlexOrder, &RenderStyle::initialFlexOrder));
+#endif
+
     setPropertyHandler(CSSPropertyFontStyle, new ApplyPropertyFont<FontItalic>(&FontDescription::italic, &FontDescription::setItalic, FontItalicOff));
     setPropertyHandler(CSSPropertyFontVariant, new ApplyPropertyFont<FontSmallCaps>(&FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff));
     setPropertyHandler(CSSPropertyTextRendering, new ApplyPropertyFont<TextRenderingMode>(&FontDescription::textRenderingMode, &FontDescription::setTextRenderingMode, AutoTextRendering));

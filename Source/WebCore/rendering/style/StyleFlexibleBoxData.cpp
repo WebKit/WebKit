@@ -37,6 +37,7 @@ StyleFlexibleBoxData::StyleFlexibleBoxData()
     , m_widthNegativeFlex(RenderStyle::initialFlexboxWidthNegativeFlex())
     , m_heightPositiveFlex(RenderStyle::initialFlexboxHeightPositiveFlex())
     , m_heightNegativeFlex(RenderStyle::initialFlexboxHeightNegativeFlex())
+    , m_flexOrder(RenderStyle::initialFlexOrder())
 {
 }
 
@@ -46,13 +47,15 @@ StyleFlexibleBoxData::StyleFlexibleBoxData(const StyleFlexibleBoxData& o)
     , m_widthNegativeFlex(o.m_widthNegativeFlex)
     , m_heightPositiveFlex(o.m_heightPositiveFlex)
     , m_heightNegativeFlex(o.m_heightNegativeFlex)
+    , m_flexOrder(o.m_flexOrder)
 {
 }
 
 bool StyleFlexibleBoxData::operator==(const StyleFlexibleBoxData& o) const
 {
     return m_widthPositiveFlex == o.m_widthPositiveFlex && m_widthNegativeFlex == o.m_widthNegativeFlex
-        && m_heightPositiveFlex == o.m_heightPositiveFlex && m_heightNegativeFlex == o.m_heightNegativeFlex;
+        && m_heightPositiveFlex == o.m_heightPositiveFlex && m_heightNegativeFlex == o.m_heightNegativeFlex
+        && m_flexOrder == o.m_flexOrder;
 }
 
 }

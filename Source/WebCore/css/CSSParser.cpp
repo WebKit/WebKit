@@ -1536,6 +1536,11 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyWebkitColorCorrection:
         validPrimitive = id == CSSValueSrgb || id == CSSValueDefault;
         break;
+#if ENABLE(CSS3_FLEXBOX)
+    case CSSPropertyWebkitFlexOrder:
+        validPrimitive = validUnit(value, FInteger, true);
+        break;
+#endif
     case CSSPropertyWebkitMarquee: {
         const int properties[5] = { CSSPropertyWebkitMarqueeDirection, CSSPropertyWebkitMarqueeIncrement,
                                     CSSPropertyWebkitMarqueeRepetition,

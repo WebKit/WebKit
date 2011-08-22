@@ -8,6 +8,13 @@ PASS div.style.display is "inline"
 PASS div.style.display is "-webkit-inline-flexbox"
 PASS div.style.display is "-webkit-inline-flexbox"
 PASS div.style.display is "block"
+PASS flexitem.style.webkitFlexOrder is ""
+PASS flexitem.style.webkitFlexOrder is "2"
+PASS flexitem.style.webkitFlexOrder is "-1"
+PASS flexitem.style.webkitFlexOrder is "0"
+PASS flexitem.style.webkitFlexOrder is "0"
+PASS flexitem.style.webkitFlexOrder is "0"
+PASS flexitem.style.webkitFlexOrder is ""
 PASS successfullyParsed is true
 
 TEST COMPLETE

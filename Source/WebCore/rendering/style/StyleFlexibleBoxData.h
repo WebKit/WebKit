@@ -49,6 +49,8 @@ public:
     float m_heightPositiveFlex;
     float m_heightNegativeFlex;
 
+    int m_flexOrder;
+
 private:
     StyleFlexibleBoxData();
     StyleFlexibleBoxData(const StyleFlexibleBoxData&);

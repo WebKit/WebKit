@@ -1,3 +1,33 @@
+2011-08-22  Tony Chang  <tony@chromium.org>
+
+        Add CSS parsing of -webkit-flex-order
+        https://bugs.webkit.org/show_bug.cgi?id=65384
+
+        The property is an int described here:
+        http://dev.w3.org/csswg/css3-flexbox/#flex-order
+
+        Doesn't do anything yet, just hooking it up.
+
+        Reviewed by Ojan Vafai.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::flexOrder):
+        (WebCore::InheritedFlags::setFlexOrder):
+        (WebCore::InheritedFlags::initialFlexOrder):
+        * rendering/style/StyleFlexibleBoxData.cpp:
+        (WebCore::StyleFlexibleBoxData::StyleFlexibleBoxData):
+        (WebCore::StyleFlexibleBoxData::operator==):
+        * rendering/style/StyleFlexibleBoxData.h:
+
 2011-08-22  Adrienne Walker  <enne@google.com>
 
         [chromium] Fix nullptr deref when switching composited tabs
