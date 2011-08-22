@@ -60,6 +60,7 @@ String HTMLSourceTracker::sourceForToken(const HTMLToken& token)
     StringBuilder source;
     source.reserveCapacity(length);
     source.append(m_sourceFromPreviousSegments);
+    length -= m_sourceFromPreviousSegments.length();
     for (int i = 0; i < length; ++i) {
         source.append(*m_source);
         m_source.advance();

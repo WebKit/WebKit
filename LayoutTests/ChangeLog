@@ -1,3 +1,16 @@
+2011-08-22  Adam Barth  <abarth@webkit.org>
+
+        HTMLSourceTracker crashes when network packets break poorly
+        https://bugs.webkit.org/show_bug.cgi?id=66728
+
+        Reviewed by Darin Adler.
+
+        Test that we don't crash when we get a bad network packet boundary.
+
+        * http/tests/security/xssAuditor/crash-while-loading-tag-with-pause-expected.txt: Added.
+        * http/tests/security/xssAuditor/crash-while-loading-tag-with-pause.html: Added.
+        * http/tests/security/xssAuditor/resources/tag-with-pause.php: Added.
+
 2011-08-22  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, rolling out r93538.

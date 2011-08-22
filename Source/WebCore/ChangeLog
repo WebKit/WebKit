@@ -1,3 +1,21 @@
+2011-08-22  Adam Barth  <abarth@webkit.org>
+
+        HTMLSourceTracker crashes when network packets break poorly
+        https://bugs.webkit.org/show_bug.cgi?id=66728
+
+        Reviewed by Darin Adler.
+
+        If there is a network packet boundary in the middle of an attribute
+        that begins with the letters "on", then the HTMLSourceTracker will get
+        confused and try to extract too many characters from future input.  If
+        the future input is small enough, that will walk off the end of the
+        input and crash.
+
+        Test: http/tests/security/xssAuditor/crash-while-loading-tag-with-pause.html
+
+        * html/parser/HTMLSourceTracker.cpp:
+        (WebCore::HTMLSourceTracker::sourceForToken):
+
 2011-08-22  Eric Seidel  <eric@webkit.org>
 
         Attempt to clean up bidiNext usage
