@@ -1,3 +1,29 @@
+2011-08-22  Filip Pizlo  <fpizlo@apple.com>
+
+        Sampling counter support is in the bytecode directory
+        https://bugs.webkit.org/show_bug.cgi?id=66724
+
+        Reviewed by Darin Adler.
+        
+        Moved SamplingCounter to a separate header in runtime/.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/SamplingTool.cpp:
+        * bytecode/SamplingTool.h:
+        * runtime/SamplingCounter.cpp: Added.
+        (JSC::AbstractSamplingCounter::dump):
+        * runtime/SamplingCounter.h: Added.
+        (JSC::AbstractSamplingCounter::count):
+        (JSC::AbstractSamplingCounter::addressOfCounter):
+        (JSC::AbstractSamplingCounter::init):
+        (JSC::SamplingCounter::SamplingCounter):
+        (JSC::GlobalSamplingCounter::name):
+        (JSC::DeletableSamplingCounter::DeletableSamplingCounter):
+        (JSC::DeletableSamplingCounter::~DeletableSamplingCounter):
+
 2011-08-21  Martin Robinson  <mrobinson@igalia.com>
 
         Fix 'make dist' for WebKitGTK+.

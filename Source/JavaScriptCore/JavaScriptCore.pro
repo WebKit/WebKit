@@ -183,6 +183,7 @@ SOURCES += \
     runtime/RegExpPrototype.cpp \
     runtime/RegExpCache.cpp \
     runtime/RopeImpl.cpp \
+    runtime/SamplingCounter.cpp \
     runtime/ScopeChain.cpp \
     runtime/SmallStrings.cpp \
     runtime/StrictEvalActivation.cpp \

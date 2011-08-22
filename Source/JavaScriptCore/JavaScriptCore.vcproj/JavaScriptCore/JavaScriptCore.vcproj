@@ -1113,6 +1113,14 @@
 				RelativePath="..\..\runtime\ScopeChainMark.h"
 				>
 			</File>
+                        <File
+                                RelativePath="..\..\runtime\SamplingCounter.cpp"
+                                >
+                        </File>
+                        <File
+                                RelativePath="..\..\runtime\SamplingCounter.h"
+                                >
+                        </File>
 			<File
 				RelativePath="..\..\runtime\SmallStrings.cpp"
 				>
