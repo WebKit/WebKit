@@ -6,6 +6,15 @@
         font-family: MostlyEmptyFont;
     }
 </style> 
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    document.onreadystatechange = function() {
+        if (document.readyState === 'complete')
+            setTimeout(function() {layoutTestController.notifyDone();}, 100);
+    };
+}
+</script>
 <body> 
 <div style="font-family: MostlyEmptyFont;">A B C D E F G H I J K L M N O P Q R S T U V W X Y Z</div> 
 </body> 

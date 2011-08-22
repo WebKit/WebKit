@@ -1,3 +1,16 @@
+2011-08-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Some GTK+-specific font-face tests fail on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=65820
+
+        Fix the timing issues in this test.
+
+        Reviewed by Philippe Normand.
+
+        * platform/gtk/fonts/custom-font-missing-glyphs.html: Delay the test completion until
+        after document.readyState moves to "complete" and a short timeout.
+        * platform/gtk/fonts/font-face-with-complex-text.html: Ditto.
+
 2011-08-22  Kristóf Kosztyó  <kkristof@inf.u-szeged.hu>
 
         [NRWT] Fix "Only unexpected results" option of results.html
