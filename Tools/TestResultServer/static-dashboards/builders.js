@@ -144,11 +144,11 @@ var CHROMIUM_GPU_MESA_BUILDERS = [
     ['Webkit Linux 32 - GPU'],
     ['Webkit Linux (dbg)(1) - GPU'],
     ['Webkit Linux (dbg)(2) - GPU'],
-    ['Webkit Mac10.5 - GPU'],
-    ['Webkit Mac10.5 (dbg)(1) - GPU'],
-    ['Webkit Mac10.5 (dbg)(2) - GPU'],
-    ['Webkit Mac10.6 - GPU'],
-    ['Webkit Mac10.6 (dbg) - GPU']
+    ['Webkit Mac10.5 (CG) - GPU'],
+    ['Webkit Mac10.5 (CG)(dbg)(1) - GPU'],
+    ['Webkit Mac10.5 (CG)(dbg)(2) - GPU'],
+    ['Webkit Mac10.6 (CG) - GPU'],
+    ['Webkit Mac10.6 (CG)(dbg) - GPU']
 ];
 associateBuildersWithMaster(CHROMIUM_GPU_MESA_BUILDERS, CHROMIUM_WEBKIT_BUILDER_MASTER);
 

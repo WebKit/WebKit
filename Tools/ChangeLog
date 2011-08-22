@@ -1,3 +1,12 @@
+2011-08-22  Dirk Pranke  <dpranke@chromium.org>
+
+        fix the GPU bot names on the layout test dashboard
+        https://bugs.webkit.org/show_bug.cgi?id=66697
+
+        Reviewed by Dimitri Glazkov.
+
+        * TestResultServer/static-dashboards/builders.js:
+
 2011-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic's relative time display should be updated regularly.
