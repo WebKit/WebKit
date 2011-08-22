@@ -1,3 +1,9 @@
+2011-08-22  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt][ARM] Skip flaky tests.
+
+        * platform/qt-arm/Skipped:
+
 2011-08-21  Darin Adler  <darin@apple.com>
 
         Update results for more tests affected by the addition of the

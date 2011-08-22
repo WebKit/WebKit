@@ -47,6 +47,8 @@ fast/workers/wrapper-map-gc.html
 # Flakey tests
 svg/animations/animate-mpath-insert.html
 svg/dom/SVGScriptElement/script-load-and-error-events.svg
+http/tests/cache/subresource-multiple-instances.html
+http/tests/inspector/resource-tree/resource-tree-errors-reload.html
 
 # Flakey timed out tests
 fast/js/nested-object-gc.html
