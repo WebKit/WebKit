@@ -177,4 +177,31 @@ ui.changelog = function(commitDataList)
     return block;
 };
 
+setInterval(function() {
+    Array.prototype.forEach.call(document.querySelectorAll("time.relative"), function(time) {
+        time.update && time.update();
+    });
+}, config.kRelativeTimeUpdateFrequency);
+
+ui.RelativeTime = base.extends('time', {
+    init: function()
+    {
+        this.setDate(new Date());
+        this.className = 'relative';
+    },
+    date: function()
+    {
+        return this._date;
+    },
+    update: function()
+    {
+        this.textContent = base.relativizeTime(this._date);
+    },
+    setDate: function(date)
+    {
+        this._date = date;
+        this.textContent = base.relativizeTime(date);
+    }
+});
+
 })();

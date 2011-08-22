@@ -162,4 +162,17 @@ test("summarizeFailure", 1, function() {
     ]);
 });
 
+test("time", 6, function() {
+    var time = new ui.RelativeTime();
+    equal(time.tagName, 'TIME');
+    equal(time.className, 'relative');
+    deepEqual(Object.getOwnPropertyNames(time.__proto__), ['init', 'date', 'setDate', 'update']);
+    equal(time.outerHTML, '<time class="relative">Just now</time>');
+    var tenMinutesAgo = new Date();
+    tenMinutesAgo.setMinutes(tenMinutesAgo.getMinutes() - 10);
+    time.setDate(tenMinutesAgo);
+    equal(time.outerHTML, '<time class="relative">10 minutes ago</time>');
+    equal(time.date().getTime(), tenMinutesAgo.getTime());
+});
+
 })();

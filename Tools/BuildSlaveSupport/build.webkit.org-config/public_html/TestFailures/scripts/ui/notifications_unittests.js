@@ -94,7 +94,7 @@ test('TestFailures', 7, function() {
     var testFailures = new ui.notifications.TestFailures();
     equal(testFailures.tagName, 'LI');
     equal(testFailures.innerHTML,
-        '<time>Just now</time>' +
+        '<time class="relative">Just now</time>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects"></ul>' +
@@ -106,7 +106,7 @@ test('TestFailures', 7, function() {
         '</ul>');
     testFailures.addFailureAnalysis({testName: 'test'});
     equal(testFailures.innerHTML,
-        '<time>Just now</time>' +
+        '<time class="relative">Just now</time>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
@@ -122,7 +122,7 @@ test('TestFailures', 7, function() {
     ok(!testFailures.containsFailureAnalysis({testName: 'foo'}));
     testFailures.addFailureAnalysis({testName: 'test'});
     equal(testFailures.innerHTML,
-        '<time>Just now</time>' +
+        '<time class="relative">Just now</time>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
@@ -138,7 +138,7 @@ test('TestFailures', 7, function() {
     time.setMinutes(time.getMinutes() - 10);
     testFailures.addCommitData({revision: 1, time: time, title: "title", author: "author", reviewer: "reviewer"});
     equal(testFailures.innerHTML,
-        '<time>10 minutes ago</time>' +
+        '<time class="relative">10 minutes ago</time>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
@@ -165,7 +165,7 @@ test('BuildersFailing', 1, function() {
     var builderFailing = new ui.notifications.BuildersFailing();
     builderFailing.setFailingBuilders(['WebKit Linux', 'Webkit Vista']);
     equal(builderFailing.innerHTML,
-        '<time>Just now</time>' +
+        '<time class="relative">Just now</time>' +
         '<div class="what">' +
             '<div class="problem">Build Failed:' +
                 '<ul class="effects">' +

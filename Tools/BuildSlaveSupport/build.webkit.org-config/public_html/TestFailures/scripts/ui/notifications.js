@@ -80,22 +80,6 @@ ui.notifications.Info = base.extends(ui.notifications.Notification, {
     }
 });
 
-var Time = base.extends('time', {
-    init: function()
-    {
-        this.setDate(new Date());
-    },
-    date: function()
-    {
-        return this._date;
-    },
-    setDate: function(date)
-    {
-        this._date = date;
-        this.textContent = base.relativizeTime(date);
-    }
-});
-
 ui.notifications.FailingTest = base.extends('li', {
     init: function(failureAnalysis)
     {
@@ -135,7 +119,7 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
 ui.notifications.Failure = base.extends(ui.notifications.Notification, {
     init: function()
     {
-        this._time = this.insertBefore(new Time(), this.firstChild);
+        this._time = this.insertBefore(new ui.RelativeTime(), this.firstChild);
         this._problem = this._what.appendChild(document.createElement('div'));
         this._problem.className = 'problem';
         this._effects = this._problem.appendChild(document.createElement('ul'));
