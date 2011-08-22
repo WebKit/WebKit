@@ -127,9 +127,6 @@ deps = {
     From('chromium_deps', 'src/third_party/yasm/source/patched-yasm'),
   'third_party/libjpeg_turbo':
     From('chromium_deps', 'src/third_party/libjpeg_turbo'),
-  # TODO(dgrogan): Remove third_party/leveldb after WebCore.gyp is updated.
-  'third_party/leveldb':
-    From('chromium_deps', 'src/third_party/leveldb'),
   'third_party/leveldatabase/src':
     From('chromium_deps', 'src/third_party/leveldatabase/src'),
   'third_party/snappy/src':

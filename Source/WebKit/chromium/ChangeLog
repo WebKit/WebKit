@@ -1,5 +1,11 @@
 2011-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Remove third_party/leveldb, because it's no longer used and doesn't exist downstream.
+
+        * DEPS: Done it.
+
+2011-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Roll Chromium DEPS to 97698.
 
         * DEPS: Rolled.
