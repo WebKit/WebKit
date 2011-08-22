@@ -747,9 +747,6 @@ BUGCR61799 BUGWK64319 SKIP : plugins/evaluate-js-after-removing-plugin-element.h
 BUGCR37962 MAC : plugins/iframe-shims.html = PASS TIMEOUT TEXT
 BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
 BUGWK48164 : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
-// Need to implement NPP_HandleEvent in the layout_test_plugin
-// WIN started failing during webkit roll 62670 -> 62844.
-BUGCR38353 LINUX MAC : plugins/keyboard-events.html = TEXT
 // Object.keys on an NPObject produces the wrong output.
 BUGCR21901 : plugins/npruntime/enumerate.html = TEXT
 BUGCR50787 : plugins/npruntime/plugin-scriptable-object-invoke-default.html = TEXT

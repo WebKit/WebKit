@@ -1,3 +1,21 @@
+2011-08-22  Noel Gordon  <noel.gordon@gmail.com>
+
+        [Chromium] plugins/keyboard-events.html should pass on linux/mac
+        https://bugs.webkit.org/show_bug.cgi?id=65964
+
+        Reviewed by Tony Chang.
+
+        Update the Chromium Linux test results following r88712.  Also rebaseline test results
+        for Chromium Mac.  Note the WebKit Mac and Win ports both report 0 for the line number
+        for all console.log() events.  The Chromium port reports the actual line number, hence
+        the need for separate test results for Chromium.  The test now runs, and passes on all
+        the Chromium ports, following r87855.  The test confirms user-plugin interactivity, so
+        we don't regress sites like youtube.com.  Refer to bug 34936.
+
+        * platform/chromium-linux/plugins/keyboard-events-expected.txt: Added.
+        * platform/chromium-mac/plugins/keyboard-events-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-08-22  Ben Wells  <benwells@chromium.org>
 
         Rebaseline for webkit bug 65295
