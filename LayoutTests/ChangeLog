@@ -1,3 +1,17 @@
+2011-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        editing/selection/caret-at-bidi-boundary.html timing out on Windows since it was added
+        https://bugs.webkit.org/show_bug.cgi?id=66551
+
+        Reviewed by Adam Roben.
+
+        Replaced leapForward by dummy clicks to make it work on Windows and other ports.
+
+        * editing/selection/caret-at-bidi-boundary.html:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-08-22  Tony Chang  <tony@chromium.org>
 
         Add CSS parsing of -webkit-flex-order
