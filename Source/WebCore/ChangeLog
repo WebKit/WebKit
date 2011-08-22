@@ -1,3 +1,29 @@
+2011-08-22  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, rolling out r93538.
+        http://trac.webkit.org/changeset/93538
+        https://bugs.webkit.org/show_bug.cgi?id=66143
+
+        Broke Leopard, SnowLeopard, and Chromium Mac bots
+
+        * rendering/LayoutState.cpp:
+        (WebCore::LayoutState::LayoutState):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        * rendering/RenderBlock.h:
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::RenderFlowThread):
+        (WebCore::RenderFlowThread::layout):
+        (WebCore::RenderFlowThread::repaintRectangleInRegions):
+        * rendering/RenderFlowThread.h:
+        * rendering/RenderRegion.cpp:
+        * rendering/RenderRegion.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::RenderView):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::pushLayoutState):
+
 2011-08-22  Tony Chang  <tony@chromium.org>
 
         Add CSS parsing of -webkit-flex-pack

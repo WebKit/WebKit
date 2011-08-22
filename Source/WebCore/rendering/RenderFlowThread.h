@@ -96,16 +96,8 @@ public:
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate);
 
-    LayoutUnit regionLogicalWidthForLine(LayoutUnit position) const;
-
-    bool isRegionFittingEnabled() const { return !m_regionFittingDisableCount; }
-    void disableRegionFitting() { m_regionFittingDisableCount++; }
-    void enableRegionFitting() { ASSERT(m_regionFittingDisableCount > 0); m_regionFittingDisableCount--; }
-
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
-
-    RenderRegion* renderRegionForLine(LayoutUnit position) const;
 
     bool dependsOn(RenderFlowThread* otherRenderFlowThread) const;
     void addDependencyOnFlowThread(RenderFlowThread*);
@@ -131,7 +123,6 @@ private:
     RenderFlowThreadCountedSet m_layoutBeforeThreadsSet;
 
     bool m_regionsInvalidated;
-    unsigned m_regionFittingDisableCount;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)
@@ -148,28 +139,6 @@ inline const RenderFlowThread* toRenderFlowThread(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderFlowThread(const RenderFlowThread*);
-
-class RegionFittingDisabler {
-    WTF_MAKE_NONCOPYABLE(RegionFittingDisabler);
-public:
-    RegionFittingDisabler(RenderFlowThread* flowThread, bool disable)
-    {
-        if (flowThread && disable) {
-            m_flowThread = flowThread;
-            m_flowThread->disableRegionFitting();
-        } else
-            m_flowThread = 0;
-    }
-
-    ~RegionFittingDisabler()
-    {
-        if (m_flowThread)
-            m_flowThread->enableRegionFitting();
-    }
-private:
-    RenderFlowThread* m_flowThread;
-};
-
 
 } // namespace WebCore
 

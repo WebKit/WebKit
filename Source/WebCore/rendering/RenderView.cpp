@@ -55,7 +55,6 @@ RenderView::RenderView(Node* node, FrameView* view)
     , m_isRenderFlowThreadOrderDirty(false)
     , m_layoutState(0)
     , m_layoutStateDisableCount(0)
-    , m_currentRenderFlowThread(0)
 {
     // Clear our anonymous bit, set because RenderObject assumes
     // any renderer with document as the node is anonymous.

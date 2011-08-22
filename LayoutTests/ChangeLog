@@ -1,3 +1,18 @@
+2011-08-22  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, rolling out r93538.
+        http://trac.webkit.org/changeset/93538
+        https://bugs.webkit.org/show_bug.cgi?id=66143
+
+        Broke Leopard, SnowLeopard, and Chromium Mac bots
+
+        * fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt: Removed.
+        * fast/regions/webkit-flow-floats-inside-regions-bounds.html: Removed.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.txt: Removed.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-lr-expected.txt: Removed.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-lr.html: Removed.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds.html: Removed.
+
 2011-08-22  Tony Chang  <tony@chromium.org>
 
         Move chromium-mac/plugins/keyboard-events-expected.txt to
