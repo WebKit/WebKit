@@ -41,6 +41,7 @@ namespace WebKit {
     class DrawingAreaProxy;
     class FindIndicator;
     class LayerTreeContext;
+    class NativeWebKeyboardEvent;
     struct EditorState;
 }
 
@@ -56,7 +57,7 @@ namespace WebKit {
 - (void)_setCursor:(NSCursor *)cursor;
 - (void)_setUserInterfaceItemState:(NSString *)commandName enabled:(BOOL)isEnabled state:(int)newState;
 - (BOOL)_interpretKeyEvent:(NSEvent *)theEvent savingCommandsTo:(Vector<WebCore::KeypressCommand>&)commands;
-- (void)_resendKeyDownEvent:(NSEvent *)event;
+- (void)_doneWithKeyEvent:(const WebKit::NativeWebKeyboardEvent&)event eventWasHandled:(BOOL)eventWasHandled;
 - (bool)_executeSavedCommandBySelector:(SEL)selector;
 - (NSRect)_convertToDeviceSpace:(NSRect)rect;
 - (NSRect)_convertToUserSpace:(NSRect)rect;

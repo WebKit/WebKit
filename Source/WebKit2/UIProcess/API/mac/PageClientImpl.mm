@@ -298,15 +298,9 @@ IntRect PageClientImpl::windowToScreen(const IntRect& rect)
     return enclosingIntRect(tempRect);
 }
 
-void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool wasEventHandled)
+void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool eventWasHandled)
 {
-    NSEvent* nativeEvent = event.nativeEvent();
-    if ([nativeEvent type] != NSKeyDown)
-        return;
-    if (wasEventHandled)
-        [NSCursor setHiddenUntilMouseMoves:YES];
-    else
-        [m_wkView _resendKeyDownEvent:nativeEvent];
+    [m_wkView _doneWithKeyEvent:event eventWasHandled:eventWasHandled];
 }
 
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)

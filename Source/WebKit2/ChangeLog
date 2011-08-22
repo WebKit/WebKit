@@ -1,5 +1,18 @@
 2011-08-22  Anders Carlsson  <andersca@apple.com>
 
+        Move code from PageClientImpl::doneWithKeyEvent to WKView
+        https://bugs.webkit.org/show_bug.cgi?id=66722
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _doneWithKeyEvent:WebKit::eventWasHandled:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+
+2011-08-22  Anders Carlsson  <andersca@apple.com>
+
         Update the text input context when the plug-in focus changes and not when the complex text input state changes
         https://bugs.webkit.org/show_bug.cgi?id=66716
 

@@ -2057,15 +2057,24 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 }
 
-- (void)_resendKeyDownEvent:(NSEvent *)event
+- (void)_doneWithKeyEvent:(const WebKit::NativeWebKeyboardEvent&)event eventWasHandled:(BOOL)eventWasHandled
 {
+    NSEvent* nativeEvent = event.nativeEvent();
+    if ([nativeEvent type] != NSKeyDown)
+        return;
+
+    if (eventWasHandled) {
+        [NSCursor setHiddenUntilMouseMoves:YES];
+        return;
+    }
+
     // resending the event may destroy this WKView
     RetainPtr<WKView> protector(self);
 
     ASSERT(!_data->_keyDownEventBeingResent);
-    _data->_keyDownEventBeingResent = event;
-    [NSApp _setCurrentEvent:event];
-    [NSApp sendEvent:event];
+    _data->_keyDownEventBeingResent = nativeEvent;
+    [NSApp _setCurrentEvent:nativeEvent];
+    [NSApp sendEvent:nativeEvent];
 
     _data->_keyDownEventBeingResent = nullptr;
 }
