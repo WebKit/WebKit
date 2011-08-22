@@ -1,3 +1,22 @@
+2011-08-22  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Content and render surface textures not freed when compositor context destroyed
+        https://bugs.webkit.org/show_bug.cgi?id=66589
+
+        Reviewed by Kenneth Russell.
+
+        Explicitly delete all managed textures when destroying the compositor
+        context.  This regressed due to a combination of using share groups
+        (so destroying a context no longer implicitly releases all resources
+        in that context) and switching the TextureManager over to support
+        deferred texture destruction.
+
+        We sadly don't have a way to construct automated tests for resource
+        leaks currently.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::cleanupSharedObjects):
+
 2011-08-22  Nate Chapin  <japhet@chromium.org>
 
         Unload events can crash us when they blank out

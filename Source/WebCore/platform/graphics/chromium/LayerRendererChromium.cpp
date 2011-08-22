@@ -1283,7 +1283,13 @@ void LayerRendererChromium::cleanupSharedObjects()
         GLC(m_context.get(), m_context->deleteFramebuffer(m_offscreenFramebufferId));
 
     // Clear tilers before the texture manager, as they have references to textures.
+    m_contentsTextureManager->unprotectAllTextures();
+    m_contentsTextureManager->reduceMemoryToLimit(0);
+    m_contentsTextureManager->deleteEvictedTextures(m_context.get());
     m_contentsTextureManager.clear();
+    m_renderSurfaceTextureManager->unprotectAllTextures();
+    m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
+    m_renderSurfaceTextureManager->deleteEvictedTextures(m_context.get());
     m_renderSurfaceTextureManager.clear();
 }
 
