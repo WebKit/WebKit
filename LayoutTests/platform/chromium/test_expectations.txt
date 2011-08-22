@@ -257,9 +257,14 @@ BUGCR10395 SKIP WONTFIX : http/tests/webarchive = PASS FAIL
 
 // Compositing tests will never pass in the non-accelerated GPU code
 // paths.
-BUGCR15733 SKIP WONTFIX CPU : compositing = PASS TIMEOUT FAIL
-BUGCR15733 SKIP WONTFIX CPU : platform/chromium/compositing = PASS TIMEOUT FAIL
-BUGCR15733 SKIP WONTFIX CPU : animations/3d = PASS TIMEOUT FAIL
+SKIP WONTFIX CPU : compositing = PASS TIMEOUT FAIL
+SKIP WONTFIX CPU : platform/chromium/compositing = PASS TIMEOUT FAIL
+SKIP WONTFIX CPU : animations/3d = PASS TIMEOUT FAIL
+
+// We don't ship compositing on Leopard.
+SKIP WONTFIX GPU LEOPARD : compositing = PASS TIMEOUT FAIL
+SKIP WONTFIX GPU LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
+SKIP WONTFIX GPU LEOPARD : animations/3d = PASS TIMEOUT FAIL
 
 // Run the Mac-specific platform tests, but only to check for crashes.
 WONTFIX : platform/gtk = FAIL PASS
@@ -2648,10 +2653,7 @@ BUGCR90669 LINUX : svg/as-background-image/svg-as-background-5.html = IMAGE
 //
 
 // We only maintain pixel GPU baselines for Snow Leopard
-WONTFIX GPU LEOPARD : compositing = IMAGE PASS
-WONTFIX GPU LEOPARD : platform/chromium/compositing = IMAGE PASS
 WONTFIX GPU LEOPARD : media = IMAGE PASS
-WONTFIX GPU LEOPARD : animations/3d = IMAGE PASS
 
 // Will need windows and linux baselines
 BUGWK58182 GPU : compositing/images/content-image-change.html = PASS FAIL
