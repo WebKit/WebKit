@@ -2287,15 +2287,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)_pluginFocusOrWindowFocusChanged:(BOOL)pluginHasFocusAndWindowHasFocus pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
 {
-    // FIXME: Implement.
-}
-
-- (void)_setPluginComplexTextInputState:(WebKit::PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
-{
     BOOL inputSourceChanged = _data->_pluginComplexTextInputIdentifier;
-    BOOL complexTextInputEnabled = (pluginComplexTextInputState == PluginComplexTextInputEnabledLegacy);
 
-    if (complexTextInputEnabled) {
+    if (pluginHasFocusAndWindowHasFocus) {
         // Check if we're already allowing text input for this plug-in.
         if (pluginComplexTextInputIdentifier == _data->_pluginComplexTextInputIdentifier)
             return;
@@ -2303,7 +2297,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         _data->_pluginComplexTextInputIdentifier = pluginComplexTextInputIdentifier;
 
     } else {
-        // Check if we got a request to disable complex text input for a plug-in that is not the current plug-in.
+        // Check if we got a request to unfocus a plug-in that isn't focused.
         if (pluginComplexTextInputIdentifier != _data->_pluginComplexTextInputIdentifier)
             return;
 
@@ -2317,6 +2311,16 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
     // This will force the current input context to be updated to its correct value.
     [NSApp updateWindows];
+}
+
+- (void)_setPluginComplexTextInputState:(WebKit::PluginComplexTextInputState)pluginComplexTextInputState pluginComplexTextInputIdentifier:(uint64_t)pluginComplexTextInputIdentifier
+{
+    if (pluginComplexTextInputIdentifier != _data->_pluginComplexTextInputIdentifier) {
+        // We're asked to update the state for a plug-in that doesn't have focus.
+        return;
+    }
+
+    // FIXME: Actually update the state here when using the new Cocoa text input model.
 }
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation

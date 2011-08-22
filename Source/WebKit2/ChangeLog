@@ -1,4 +1,15 @@
-2011-08-21  Michael Saboff  <msaboff@apple.com>
+2011-08-22  Anders Carlsson  <andersca@apple.com>
+
+        Update the text input context when the plug-in focus changes and not when the complex text input state changes
+        https://bugs.webkit.org/show_bug.cgi?id=66716
+
+        Reviewed by Darin Adler.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _pluginFocusOrWindowFocusChanged:pluginComplexTextInputIdentifier:]):
+        (-[WKView _setPluginComplexTextInputState:WebKit::pluginComplexTextInputIdentifier:]):
+
+2011-08-22  Michael Saboff  <msaboff@apple.com>
 
         REGRESSION (r92231): Apple campus proposal PDF doesn't display in Safari
         https://bugs.webkit.org/show_bug.cgi?id=66464
