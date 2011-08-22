@@ -1,3 +1,21 @@
+2011-08-22  Luke Macpherson   <macpherson@chromium.org>
+
+        Implement cast between CSSPrimitiveValue and EBackfaceVisibility, use in CSSStyleSelector::applyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=66648
+
+        Reviewed by Dan Bernstein.
+
+        No new tests / no functionality changed.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        Support cast from EBackfaceVisibility.
+        (WebCore::CSSPrimitiveValue::operator EBackfaceVisibility):
+        Support cast from EBackfaceVisibility.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Use HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE macro.
+
 2011-08-22  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, rolling out r93538.

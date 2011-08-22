@@ -4483,9 +4483,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyUnicodeRange: // Only used in @font-face rules.
         return;
     case CSSPropertyWebkitBackfaceVisibility:
-        HANDLE_INHERIT_AND_INITIAL(backfaceVisibility, BackfaceVisibility)
-        if (primitiveValue)
-            m_style->setBackfaceVisibility((primitiveValue->getIdent() == CSSValueVisible) ? BackfaceVisibilityVisible : BackfaceVisibilityHidden);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(backfaceVisibility, BackfaceVisibility)
         return;
     case CSSPropertyWebkitBoxDirection:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(boxDirection, BoxDirection)

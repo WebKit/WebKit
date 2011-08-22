@@ -457,6 +457,34 @@ template<> inline CSSPrimitiveValue::operator ControlPart() const
         return ControlPart(m_value.ident - CSSValueCheckbox + 1);
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBackfaceVisibility e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case BackfaceVisibilityVisible:
+        m_value.ident = CSSValueVisible;
+        break;
+    case BackfaceVisibilityHidden:
+        m_value.ident = CSSValueHidden;
+        break;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EBackfaceVisibility() const
+{
+    switch (m_value.ident) {
+    case CSSValueVisible:
+        return BackfaceVisibilityVisible;
+    case CSSValueHidden:
+        return BackfaceVisibilityHidden;
+    default:
+        ASSERT_NOT_REACHED();
+        return BackfaceVisibilityHidden;
+    }
+}
+
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EFillAttachment e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)
