@@ -954,8 +954,13 @@ for my $test (@tests) {
         }
 
         if ($resetResults || !-f $expectedPNGPath) {
-            mkpath catfile($expectedPixelDir, dirname($base)) if $testDirectory ne $expectedPixelDir;
-            writeToFile($expectedPNGPath, $actualPNG);
+            if (!$addPlatformExceptions) {
+                mkpath catfile($expectedPixelDir, dirname($base)) if $testDirectory ne $expectedPixelDir;
+                writeToFile($expectedPNGPath, $actualPNG);
+            } else {
+                mkpath catfile($platformTestDirectory, dirname($base));
+                writeToFile("$platformTestDirectory/$base-$expectedTag.png", $actualPNG);
+            }
         }
     }
 
@@ -969,8 +974,13 @@ for my $test (@tests) {
         $result = "new";
 
         if ($generateNewResults || $resetResults) {
-            mkpath catfile($expectedDir, dirname($base)) if $testDirectory ne $expectedDir;
-            writeToFile("$expectedDir/$expectedFileName", $actual);
+            if (!$addPlatformExceptions) {
+                mkpath catfile($expectedDir, dirname($base)) if $testDirectory ne $expectedDir;
+                writeToFile("$expectedDir/$expectedFileName", $actual);
+            } else {
+                mkpath catfile($platformTestDirectory, dirname($base));
+                writeToFile("$platformTestDirectory/$expectedFileName", $actual);
+            }
         }
         deleteExpectedAndActualResults($base);
         recordActualResultsAndDiff($base, $actual);
