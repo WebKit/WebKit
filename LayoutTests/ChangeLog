@@ -1,3 +1,10 @@
+2011-08-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add editing/selection/caret-at-bidi-boundary.html back to the Qt's skipped list
+        because r93529 didn't fix it. The failure is still tracked by the bug 66514.
+
+        * platform/qt/Skipped:
+
 2011-08-22  Tony Chang  <tony@chromium.org>
 
         handle child margin values when flexing
