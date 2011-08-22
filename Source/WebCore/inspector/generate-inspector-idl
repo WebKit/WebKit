@@ -108,7 +108,7 @@ def param_type(domain_name, param):
             ref_type = ref_types[type_id]
             return type_traits[ref_type["type"]]
         else:
-            print "Type not found: " + type_id
+            print("Type not found: " + type_id)
             return "!! Type not found: " + type_id
 
 for domain in json_api:
