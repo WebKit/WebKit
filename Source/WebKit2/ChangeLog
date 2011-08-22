@@ -1,5 +1,15 @@
 2011-08-22  Anders Carlsson  <andersca@apple.com>
 
+        Use -[NSApplication updateWindows] to update the current input context
+        https://bugs.webkit.org/show_bug.cgi?id=66715
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _setPluginComplexTextInputState:WebKit::pluginComplexTextInputIdentifier:]):
+
+2011-08-22  Anders Carlsson  <andersca@apple.com>
+
         The UI process should keep track of whether a plug-in has focus or not
         https://bugs.webkit.org/show_bug.cgi?id=66712
 

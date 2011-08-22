@@ -2316,7 +2316,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 
     // This will force the current input context to be updated to its correct value.
-    [NSTextInputContext currentInputContext];
+    [NSApp updateWindows];
 }
 
 - (void)_setPageHasCustomRepresentation:(BOOL)pageHasCustomRepresentation
