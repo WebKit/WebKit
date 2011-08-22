@@ -34,7 +34,7 @@ typedef UInt32 ATSFontContainerRef;
 typedef UInt32 ATSFontRef;
 
 #if USE(SKIA_ON_MAC_CHROMIUM)
-struct SkTypeface;
+class SkTypeface;
 #endif
 
 namespace WebCore {

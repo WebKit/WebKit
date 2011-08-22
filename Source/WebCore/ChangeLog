@@ -1,3 +1,19 @@
+2011-08-22  Cary Clark  <caryclark@google.com>
+
+        Webkit Mac10.6 Builder-Tester (Skia)(deps)(dbg) has compile failures
+        https://bugs.webkit.org/show_bug.cgi?id=66703
+
+        This error was detected by the debug build of the Chromium WebKit
+        Canary.
+
+        Reviewed by James Robinson.
+
+        No new tests. This change suppresses a compile-time warning
+        but does not affect the generated code. 
+
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        Replaced struct with class in a forward reference.
+
 2011-08-22  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSSRegions] RenderFlowThread layout should use the attached region sizes
