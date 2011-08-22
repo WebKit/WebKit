@@ -3611,11 +3611,6 @@ BUGWK65219 WIN : webaudio/test-basic.html = PASS CRASH
 BUGWK65219 LINUX WIN : webaudio/gain.html = PASS CRASH
 BUGWK65219 WIN : webaudio/audionode.html = PASS CRASH
 
-// Needs new baseline for slight pixel value changes due to changes in
-// how alpha blended outlines are drawn.
-BUGWK65295 LINUX WIN : fast/box-shadow/box-shadow-radius.html = IMAGE
-BUGWK65295 LINUX WIN : fast/layers/self-painting-outline.html = IMAGE
-
 BUGWK65366 : fast/js/parseInt.html = TEXT
 
 BUGCR91061 LINUX DEBUG : fast/text/regional-indicator-symobls.html = TIMEOUT
