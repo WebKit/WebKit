@@ -31,7 +31,7 @@
 #ifndef InspectorDatabaseResource_h
 #define InspectorDatabaseResource_h
 
-#if ENABLE(DATABASE)
+#if ENABLE(DATABASE) && ENABLE(INSPECTOR)
 #include "InspectorFrontend.h"
 #include "PlatformString.h"
 #include <wtf/PassRefPtr.h>
