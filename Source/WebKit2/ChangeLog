@@ -1,3 +1,23 @@
+2011-08-21  Michael Saboff  <msaboff@apple.com>
+
+        REGRESSION (r92231): Apple campus proposal PDF doesn't display in Safari
+        https://bugs.webkit.org/show_bug.cgi?id=66464
+
+        Changed ArgumentEncoder to use system malloc instead of fastMalloc.
+        FastMalloc uses madvise(MADV_FREE_REUSABLE) which is incompatible with
+        mach message Out Of Line (OOL) messages that use MACH_MSG_VIRTUAL_COPY.
+        The system malloc has no such limitation.
+        Changed sendOutgoingMessage to use MACH_MSG_VIRTUAL_COPY again as it 
+        doesn't have size limitations that MACH_MSG_PHYSICAL_COPY.
+        
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::~ArgumentEncoder):
+        (CoreIPC::ArgumentEncoder::grow):
+        * Platform/CoreIPC/mac/ConnectionMac.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+
 2011-08-22  Anders Carlsson  <andersca@apple.com>
 
         Use -[NSApplication updateWindows] to update the current input context

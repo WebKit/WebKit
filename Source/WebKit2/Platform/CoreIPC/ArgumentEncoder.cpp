@@ -50,7 +50,7 @@ ArgumentEncoder::ArgumentEncoder(uint64_t destinationID)
 ArgumentEncoder::~ArgumentEncoder()
 {
     if (m_buffer)
-        fastFree(m_buffer);
+        free(m_buffer);
 #if !USE(UNIX_DOMAIN_SOCKETS)
     // FIXME: We need to dispose of the attachments in cases of failure.
 #else
@@ -70,10 +70,13 @@ uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
     
     if (alignedSize + size > m_bufferCapacity) {
         size_t newCapacity = std::max(alignedSize + size, std::max(static_cast<size_t>(32), m_bufferCapacity + m_bufferCapacity / 4 + 1));
+        // Use system malloc / realloc instead of fastMalloc due to 
+        // fastMalloc using MADV_FREE_REUSABLE doesn't work with
+        // mach messages with OOL message and MACH_MSG_VIRTUAL_COPY.
         if (!m_buffer)
-            m_buffer = static_cast<uint8_t*>(fastMalloc(newCapacity));
+            m_buffer = static_cast<uint8_t*>(malloc(newCapacity));
         else
-            m_buffer = static_cast<uint8_t*>(fastRealloc(m_buffer, newCapacity));
+            m_buffer = static_cast<uint8_t*>(realloc(m_buffer, newCapacity));
         
         // FIXME: What should we do if allocating memory fails?
 
