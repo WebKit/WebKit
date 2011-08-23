@@ -380,7 +380,7 @@ test("extends", 17, function() {
     document.body.removeChild(document.body.lastChild);
 });
 
-test("relativizeTime", 11, function() {
+test("relativizeTime", 14, function() {
     var time = new Date();
     equals(base.relativizeTime(time), "Just now");
     time.setMinutes(time.getMinutes() - 1);
@@ -393,9 +393,15 @@ test("relativizeTime", 11, function() {
     equals(base.relativizeTime(time), "59 minutes ago");
     time.setMinutes(time.getMinutes() - 1);
     equals(base.relativizeTime(time), "1 hour ago");
-    time.setHours(time.getHours() - 1);
+    time.setMinutes(time.getMinutes() - 29);
+    equals(base.relativizeTime(time), "1 hour ago");
+    time.setMinutes(time.getMinutes() - 2);
     equals(base.relativizeTime(time), "2 hours ago");
-    time.setHours(time.getHours() - 21);
+    time.setMinutes(time.getMinutes() - 29);
+    equals(base.relativizeTime(time), "2 hours ago");
+    time.setHours(time.getHours() - 1);
+    equals(base.relativizeTime(time), "3 hours ago");
+    time.setHours(time.getHours() - 20);
     equals(base.relativizeTime(time), "23 hours ago");
     time.setHours(time.getHours() - 1);
     equals(base.relativizeTime(time), "1 day ago");

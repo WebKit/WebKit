@@ -67,7 +67,7 @@ config.kInfobarTypeAttr = 'data-infobar-type';
 
 var kTenMinutesInMilliseconds = 10 * 60 * 1000;
 config.kUpdateFrequency = kTenMinutesInMilliseconds;
-config.kRelativeTimeUpdateFrequency = 1000;
+config.kRelativeTimeUpdateFrequency = 1000 * 60;
 
 
 

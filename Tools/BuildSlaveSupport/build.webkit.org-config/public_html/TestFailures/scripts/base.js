@@ -307,7 +307,7 @@ function createRelativeTimeDescriptor(divisorInMilliseconds, unit)
 {
     return function(delta) {
         var deltaInUnits = delta / divisorInMilliseconds;
-        return (deltaInUnits).toFixed(0) + ' ' + unit + (deltaInUnits >= 2 ? 's' : '') + ' ago';
+        return (deltaInUnits).toFixed(0) + ' ' + unit + (deltaInUnits >= 1.5 ? 's' : '') + ' ago';
     }
 }
 

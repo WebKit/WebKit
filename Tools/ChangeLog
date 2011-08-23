@@ -1,3 +1,14 @@
+2011-08-23  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic relative time is wrong and updates too frequently.
+        https://bugs.webkit.org/show_bug.cgi?id=66802
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js: Changed to account for rounding correctly.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js: Updated tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js: Upped the interval to 1 minute.
+
 2011-08-23  Patrick Gansterer  <paroga@webkit.org>
 
         Add missing quotes around filenames in mergeChangeLogs
