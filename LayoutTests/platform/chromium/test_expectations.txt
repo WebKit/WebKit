@@ -729,8 +729,6 @@ BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline
 BUGCR31803 LINUX MAC : editing/inserting/12882.html = PASS IMAGE
 BUGCR31803 MAC WIN : editing/pasteboard/copy-standalone-image.html = PASS TEXT
 
-BUGWK45438 MAC : editing/spelling/spelling-backspace-between-lines.html = TEXT
-
 // Tests added in r69269.
 // Apple-Mac port corrects "notationl" to "notational" automatically?
 BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-delete.html = IMAGE+TEXT
@@ -1604,7 +1602,8 @@ BUGWK45957 LEOPARD : fast/multicol/column-rules-stacking.html = IMAGE
 BUGCR26291 : transforms/2d/hindi-rotated.html = IMAGE+TEXT IMAGE
 
 // I don't think we've ever passed this test correctly.
-BUG_SENORBLANCO : fast/text/international/hindi-whitespace.html = FAIL
+BUG_SENORBLANCO WIN LINUX : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
+BUG_SENORBLANCO LEOPARD : fast/text/international/hindi-whitespace.html = IMAGE PASS
 
 // The following upstream patches add -Webkit-color-correction support:
 // http://trac.webkit.org/changeset/50760
@@ -2369,7 +2368,8 @@ BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 // Failures after WebKit roll 70949:71000
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
-BUGCR61406 : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+BUGCR61406 LINUX WIN : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+BUGCR61406 SNOWLEOPARD : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE+TEXT
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
 BUGCR32153AND61406 LINUX WIN : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
 
@@ -3218,8 +3218,8 @@ BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
 // These seem to be minor debug-only differences.
 BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-05-b.html = PASS IMAGE+TEXT
 BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-10-c.html = PASS IMAGE+TEXT
-BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-line-breaks.html = IMAGE
-BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-baht-space.html = IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-line-breaks.html = PASS IMAGE
+BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-baht-space.html = PASS IMAGE+TEXT
 BUGWK60135 SNOWLEOPARD : css1/font_properties/font.html = PASS IMAGE+TEXT
 
 BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = PASS TIMEOUT
@@ -3620,10 +3620,10 @@ BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
 
-// Needs new baselines for change to image resize caching code.
-BUGWK65587 : svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html = IMAGE
-BUGWK65587 : svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
-BUGWK65587 : svg/custom/image-small-width-height.svg = IMAGE
+// May need rebaseline,
+BUGWK66798 WIN LINUX : svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html = IMAGE
+BUGWK66798 WIN LINUX : svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
+BUGWK66798 WIN LINUX : svg/custom/image-small-width-height.svg = IMAGE
 
 // Introduced in r92298, which might cause another test crashing.
 BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
@@ -3640,18 +3640,28 @@ BUGJIANLI MAC : fast/gradients/gradient-after-transparent-border.html = IMAGE
 
 // These tests were disabled and re-enabled in r92545 and r92550.
 // Unfortunately they are failing for us.
-BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT IMAGE
-BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = PASS IMAGE+TEXT
-BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT IMAGE
-BUGWK63186 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK63186 : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE+TEXT IMAGE
-BUGWK63186 : svg/as-object/embedded-svg-size-changes.html = IMAGE+TEXT IMAGE
-BUGWK63186 : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE+TEXT IMAGE
-
-BUGWK65862 MAC DEBUG : storage/indexeddb/index-cursor.html = PASS TIMEOUT
+BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT
+BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = PASS IMAGE+TEXT IMAGE
+BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT
+BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = PASS IMAGE+TEXT IMAGE
+BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT
+BUGWK63186 SNOWLEOPARD DEBUG : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = PASS IMAGE+TEXT
+BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
+BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS IMAGE+TEXT IMAGE
+BUGWK63186 SNOWLEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS IMAGE+TEXT
+BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
+BUGWK63186  : svg/zoom/page/zoom-svg-through-object-with-override-size.html = PASS IMAGE+TEXT IMAGE
+BUGWK63186 WIN : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
+BUGWK63186 LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
+BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
+BUGWK63186 SNOWLEOPARD : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE
+BUGWK63186 LINUX WIN : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE+TEXT IMAGE
+BUGWK63186 LEOPARD : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = IMAGE
+BUGWK63186 SNOWLEOPARD : svg/as-object/embedded-svg-immediate-offsetWidth-query.html = PASS IMAGE+TEXT
+BUGWK63186 LEOPARD LINUX WIN : svg/as-object/embedded-svg-size-changes.html = IMAGE
+BUGWK63186 SNOWLEOPARD DEBUG : svg/as-object/embedded-svg-size-changes.html = PASS IMAGE+TEXT
+BUGWK63186 LEOPARD LINUX WIN : svg/as-object/nested-embedded-svg-size-changes.html = IMAGE
+BUGWK65862 MAC DEBUG SLOW : storage/indexeddb/index-cursor.html = PASS
 
 // Caused by r92618
 BUGWK65874 : fast/js/preventExtensions.html = TEXT
@@ -3712,3 +3722,7 @@ BUGWK66738 SLOW WIN RELEASE : http/tests/inspector/network/download.html = PASS
 
 BUGWK66740 MAC SNOWLEOPARD GPU : compositing/geometry/ancestor-overflow-change.html = PASS CRASH
 BUGWK66740 MAC SNOWLEOPARD GPU : compositing/scaling/tiled-layer-recursion.html = PASS CRASH
+BUGWK66740 MAC SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing.html = PASS CRASH
+BUGWK66740 MAC SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer.html = PASS CRASH
+
+BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS

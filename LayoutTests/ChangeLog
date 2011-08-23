@@ -1,3 +1,11 @@
+2011-08-23  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Attempt to make test expectations more accurate.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-23  Alexandru Chiculita  <achicu@adobe.com>
 
         Text overlaps with the floats
