@@ -972,7 +972,7 @@ WebInspector.BaseStorageTreeElement.prototype = {
         // Hence we need to take padding into consideration. This all is needed for leading
         // icons in the tree.
         const paddingLeft = 14;
-        var left = this.listItemElement.totalOffsetLeft + paddingLeft;
+        var left = this.listItemElement.totalOffsetLeft() + paddingLeft;
         return event.pageX >= left && event.pageX <= left + this.arrowToggleWidth && this.hasChildren;
     }
 }

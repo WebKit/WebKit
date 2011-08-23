@@ -216,7 +216,7 @@ WebInspector.DOMNode.prototype = {
 
     appropriateSelectorFor: function(justSelector)
     {
-        var lowerCaseName = this.localName() || node.nodeName().toLowerCase();
+        var lowerCaseName = this.localName() || this.nodeName().toLowerCase();
 
         var id = this.getAttribute("id");
         if (id) {
@@ -234,6 +234,34 @@ WebInspector.DOMNode.prototype = {
             return lowerCaseName + "[type=\"" + this.getAttribute("type") + "\"]";
 
         return lowerCaseName;
+    },
+
+    isAncestor: function(node)
+    {
+        if (!node)
+            return false;
+    
+        var currentNode = node.parentNode;
+        while (currentNode) {
+            if (this === currentNode)
+                return true;
+            currentNode = currentNode.parentNode;
+        }
+        return false;
+    },
+
+    isDescendant: function(descendant)
+    {
+        return descendant !== null && descendant.isAncestor(this);
+    },
+
+    isWhitespace: function()
+    {
+        if (this.nodeType !== Node.TEXT_NODE)
+            return false;
+        if (!this.nodeValue.length)
+            return true;
+        return this.nodeValue.match(/^[\s\xA0]+$/);
     },
 
     _setAttributesPayload: function(attrs)

@@ -764,7 +764,7 @@ WebInspector.ScriptsPanel.prototype = {
         WebInspector.elementDragStart(this.sidebarElement, this._sidebarResizeDrag.bind(this), this._endSidebarResizeDrag.bind(this), event, "ew-resize");
 
         if (event.target === this.sidebarResizeWidgetElement)
-            this._dragOffset = (event.target.offsetWidth - (event.pageX - event.target.totalOffsetLeft));
+            this._dragOffset = (event.target.offsetWidth - (event.pageX - event.target.totalOffsetLeft()));
         else
             this._dragOffset = 0;
     },

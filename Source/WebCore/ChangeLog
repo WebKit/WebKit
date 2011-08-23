@@ -1,3 +1,63 @@
+2011-08-22  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: Prepare utilities.js for compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=66656
+
+        Removes "this" usage in functions, does not define getters for offsets.
+
+        Reviewed by Tony Gentilcore.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleMessage.prototype._format):
+        (WebInspector.ConsoleMessage.prototype._formatWithSubstitutionString.valueFormatter):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.appropriateSelectorFor):
+        (WebInspector.DOMNode.prototype.isAncestor):
+        (WebInspector.DOMNode.prototype.isDescendant):
+        (WebInspector.DOMNode.prototype.isWhitespace):
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype._resizerDragging):
+        (WebInspector.DataGridNode.prototype.isEventWithinDisclosureTriangle):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.get savedHeight):
+        (WebInspector.Drawer.prototype.onResize):
+        (WebInspector.Drawer.prototype._startStatusBarDragging):
+        (WebInspector.Drawer.prototype._statusBarDragging):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.updateModifiedNodes):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumb):
+        (WebInspector.ElementsPanel.prototype.updateBreadcrumbSizes.crumbsAreSmallerThanContainer):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.findTreeElement):
+        (WebInspector.ElementsTreeOutline.prototype._treeElementFromEvent):
+        ():
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject):
+        * inspector/front-end/ResourceTimingView.js:
+        (WebInspector.ResourceTimingView.createTimingTable):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.BaseStorageTreeElement.prototype.isEventWithinDisclosureTriangle):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._startSidebarResizeDrag):
+        * inspector/front-end/SoftContextMenu.js:
+        (.WebInspector.SoftContextMenu.prototype.show):
+        * inspector/front-end/Toolbar.js:
+        (WebInspector.ToolbarDropdown.prototype.show):
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSection.prototype._updateHoveredElement):
+        * inspector/front-end/inspector.js:
+        (Number.secondsToString):
+        (Number.bytesToString):
+        * inspector/front-end/treeoutline.js:
+        (TreeElement.prototype.isEventWithinDisclosureTriangle):
+        * inspector/front-end/utilities.js:
+        (setupPrototypeUtilities.Element.prototype.totalOffsetLeft):
+        (setupPrototypeUtilities.Element.prototype.totalOffsetTop):
+        (setupPrototypeUtilities.Element.prototype.offsetRelativeToWindow):
+        (setupPrototypeUtilities):
+        (setupPrototypeUtilities.):
+        ():
+
 2011-08-22  John Bates  <jbates@google.com>
 
         Implemented skia support for caching resizes of cropped images.

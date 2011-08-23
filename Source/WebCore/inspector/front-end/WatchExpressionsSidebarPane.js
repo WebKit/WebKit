@@ -259,7 +259,7 @@ WebInspector.WatchExpressionsSection.prototype = {
             var next = this._hoveredElement.nextSibling;
             while(next && !next.clientHeight)
                 next = next.nextSibling;
-            if (!next || next.totalOffsetTop > pageY)
+            if (!next || next.totalOffsetTop() > pageY)
                 break;
             this._hoveredElement = next;
         }

@@ -980,8 +980,6 @@ WebInspector.ConsoleMessage.prototype = {
     _formatWithSubstitutionString: function(parameters, formattedResult)
     {
         var formatters = {}
-        for (var i in String.standardFormatters)
-            formatters[i] = String.standardFormatters[i];
 
         function consoleFormatWrapper(force)
         {
@@ -990,10 +988,19 @@ WebInspector.ConsoleMessage.prototype = {
             };
         }
 
+        function valueFormatter(obj)
+        {
+            return obj.description;
+        }
+
         // Firebug uses %o for formatting objects.
         formatters.o = consoleFormatWrapper();
+        formatters.s = valueFormatter;
+        formatters.f = valueFormatter;
         // Firebug allows both %i and %d for formatting integers.
-        formatters.i = formatters.d;
+        formatters.i = valueFormatter;
+        formatters.d = valueFormatter;
+
         // Support %O to force object formatting, instead of the type-based %o formatting.
         formatters.O = consoleFormatWrapper(true);
 

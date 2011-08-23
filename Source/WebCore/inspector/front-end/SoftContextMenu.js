@@ -43,8 +43,8 @@ WebInspector.SoftContextMenu.prototype = {
         var targetElement = event.target;
         while (targetElement && window !== targetElement.ownerDocument.defaultView) {
             var frameElement = targetElement.ownerDocument.defaultView.frameElement;
-            absoluteY += frameElement.totalOffsetTop;
-            absoluteX += frameElement.totalOffsetLeft;
+            absoluteY += frameElement.totalOffsetTop();
+            absoluteX += frameElement.totalOffsetLeft();
             targetElement = frameElement;
         }
 

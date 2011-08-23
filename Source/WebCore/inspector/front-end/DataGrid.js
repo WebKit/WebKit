@@ -965,7 +965,7 @@ WebInspector.DataGrid.prototype = {
         
         // Constrain the dragpoint to be within the containing div of the
         // datagrid.
-        var dragPoint = event.clientX - this.element.totalOffsetLeft;
+        var dragPoint = event.clientX - this.element.totalOffsetLeft();
         // Constrain the dragpoint to be within the space made up by the
         // column directly to the left and the column directly to the right.
         var leftCellIndex = resizer.leftNeighboringColumnID;
@@ -1445,7 +1445,7 @@ WebInspector.DataGridNode.prototype = {
         if (!cell.hasStyleClass("disclosure"))
             return false;
         var computedLeftPadding = window.getComputedStyle(cell).getPropertyCSSValue("padding-left").getFloatValue(CSSPrimitiveValue.CSS_PX);
-        var left = cell.totalOffsetLeft + computedLeftPadding;
+        var left = cell.totalOffsetLeft() + computedLeftPadding;
         return event.pageX >= left && event.pageX <= left + this.disclosureToggleWidth;
     },
 

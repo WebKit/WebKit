@@ -479,7 +479,7 @@ WebInspector.ElementsPanel.prototype = {
                 updatedParentTreeElements.push(parentNodeItem);
             }
 
-            if (!updateBreadcrumbs && (this.selectedDOMNode() === parent || isAncestorNode(this.selectedDOMNode(), parent)))
+            if (!updateBreadcrumbs && (this.selectedDOMNode() === parent || (this.selectedDOMNode() && this.selectedDOMNode().isAncestor(parent))))
                 updateBreadcrumbs = true;
         }
 
@@ -621,7 +621,7 @@ WebInspector.ElementsPanel.prototype = {
                     break;
 
                 case Node.TEXT_NODE:
-                    if (isNodeWhitespace.call(current))
+                    if (current.isWhitespace())
                         crumbTitle = WebInspector.UIString("(whitespace)");
                     else
                         crumbTitle = WebInspector.UIString("(text)");
@@ -783,7 +783,7 @@ WebInspector.ElementsPanel.prototype = {
             var errorWarningElement = document.getElementById("error-warning-count");
             if (!WebInspector.drawer.visible && errorWarningElement)
                 rightPadding += errorWarningElement.offsetWidth;
-            return ((crumbs.totalOffsetLeft + crumbs.offsetWidth + rightPadding) < window.innerWidth);
+            return ((crumbs.totalOffsetLeft() + crumbs.offsetWidth + rightPadding) < window.innerWidth);
         }
 
         if (crumbsAreSmallerThanContainer())

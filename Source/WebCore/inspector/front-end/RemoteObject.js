@@ -42,6 +42,7 @@ WebInspector.RemoteObject = function(objectId, type, subtype, value, description
         console.assert(type !== "object" || value === null);
         this._description = description || (value + "");
         this._hasChildren = false;
+        this.value = value;
     }
 }
 

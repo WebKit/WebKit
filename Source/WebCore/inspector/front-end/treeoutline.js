@@ -26,8 +26,14 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 function TreeOutline(listNode)
 {
+    /**
+     * @type {Array.<TreeElement>}
+     */
     this.children = [];
     this.selectedTreeElement = null;
     this._childrenListNode = listNode;
@@ -47,7 +53,7 @@ function TreeOutline(listNode)
 
 TreeOutline._knownTreeElementNextIdentifier = 1;
 
-TreeOutline._appendChild = function(child)
+TreeOutline.prototype.appendChild = function(child)
 {
     if (!child)
         throw("child can't be undefined or null");
@@ -88,7 +94,7 @@ TreeOutline._appendChild = function(child)
     child._attach();
 }
 
-TreeOutline._insertChild = function(child, index)
+TreeOutline.prototype.insertChild = function(child, index)
 {
     if (!child)
         throw("child can't be undefined or null");
@@ -136,7 +142,7 @@ TreeOutline._insertChild = function(child, index)
     child._attach();
 }
 
-TreeOutline._removeChildAtIndex = function(childIndex)
+TreeOutline.prototype.removeChildAtIndex = function(childIndex)
 {
     if (childIndex < 0 || childIndex >= this.children.length)
         throw("childIndex out of range");
@@ -171,7 +177,7 @@ TreeOutline._removeChildAtIndex = function(childIndex)
     child.previousSibling = null;
 }
 
-TreeOutline._removeChild = function(child)
+TreeOutline.prototype.removeChild = function(child)
 {
     if (!child)
         throw("child can't be undefined or null");
@@ -180,10 +186,10 @@ TreeOutline._removeChild = function(child)
     if (childIndex === -1)
         throw("child not found in this node's children");
 
-    TreeOutline._removeChildAtIndex.call(this, childIndex);
+    this.removeChildAtIndex.call(this, childIndex);
 }
 
-TreeOutline._removeChildren = function()
+TreeOutline.prototype.removeChildren = function()
 {
     for (var i = 0; i < this.children.length; ++i) {
         var child = this.children[i];
@@ -204,7 +210,7 @@ TreeOutline._removeChildren = function()
     this.children = [];
 }
 
-TreeOutline._removeChildrenRecursive = function()
+TreeOutline.prototype.removeChildrenRecursive = function()
 {
     var childrenToRemove = this.children;
 
@@ -216,7 +222,7 @@ TreeOutline._removeChildrenRecursive = function()
     }
 
     for (var i = 0; i < childrenToRemove.length; ++i) {
-        var child = childrenToRemove[i];
+        child = childrenToRemove[i];
         child.deselect();
         if (child.treeOutline)
             child.treeOutline._forgetTreeElement(child);
@@ -322,8 +328,8 @@ TreeOutline.prototype.findTreeElement = function(representedObject, isAncestor, 
         // FIXME: we could do something faster than findTreeElement since we will know the next
         // ancestor exists in the tree.
         item = this.findTreeElement(ancestors[i], isAncestor, getParent);
-        if (item && item.onpopulate)
-            item.onpopulate(item);
+        if (item)
+            item.onpopulate();
     }
 
     return this.getCachedTreeElement(representedObject);
@@ -392,7 +398,7 @@ TreeOutline.prototype._treeKeyDown = function(event)
                     this.selectedTreeElement.expand();
             }
         }
-    } else if (event.keyCode === WebInspector.KeyboardShortcut.Keys.Backspace.code || event.keyCode === WebInspector.KeyboardShortcut.Keys.Delete.code) {
+    } else if (event.keyCode === 27 /* Esc */ || event.keyCode === 46 /* Delete */) {
         if (this.selectedTreeElement.ondelete)
             handled = this.selectedTreeElement.ondelete();
     } else if (isEnterKey(event)) {
@@ -441,13 +447,9 @@ TreeOutline.prototype.revealAndSelect = function(omitFocus)
     // this is the root, do nothing
 }
 
-TreeOutline.prototype.appendChild = TreeOutline._appendChild;
-TreeOutline.prototype.insertChild = TreeOutline._insertChild;
-TreeOutline.prototype.removeChild = TreeOutline._removeChild;
-TreeOutline.prototype.removeChildAtIndex = TreeOutline._removeChildAtIndex;
-TreeOutline.prototype.removeChildren = TreeOutline._removeChildren;
-TreeOutline.prototype.removeChildrenRecursive = TreeOutline._removeChildrenRecursive;
-
+/**
+ * @constructor
+ */
 function TreeElement(title, representedObject, hasChildren)
 {
     this._title = title;
@@ -586,12 +588,12 @@ TreeElement.prototype = {
     }
 }
 
-TreeElement.prototype.appendChild = TreeOutline._appendChild;
-TreeElement.prototype.insertChild = TreeOutline._insertChild;
-TreeElement.prototype.removeChild = TreeOutline._removeChild;
-TreeElement.prototype.removeChildAtIndex = TreeOutline._removeChildAtIndex;
-TreeElement.prototype.removeChildren = TreeOutline._removeChildren;
-TreeElement.prototype.removeChildrenRecursive = TreeOutline._removeChildrenRecursive;
+TreeElement.prototype.appendChild = TreeOutline.prototype.appendChild;
+TreeElement.prototype.insertChild = TreeOutline.prototype.insertChild;
+TreeElement.prototype.removeChild = TreeOutline.prototype.removeChild;
+TreeElement.prototype.removeChildAtIndex = TreeOutline.prototype.removeChildAtIndex;
+TreeElement.prototype.removeChildren = TreeOutline.prototype.removeChildren;
+TreeElement.prototype.removeChildrenRecursive = TreeOutline.prototype.removeChildrenRecursive;
 
 TreeElement.prototype._attach = function()
 {
@@ -731,8 +733,7 @@ TreeElement.prototype.expand = function()
         if (this.hidden)
             this._childrenListNode.addStyleClass("hidden");
 
-        if (this.onpopulate)
-            this.onpopulate(this);
+        this.onpopulate();
 
         for (var i = 0; i < this.children.length; ++i)
             this.children[i]._attach();
@@ -821,6 +822,10 @@ TreeElement.prototype.selectOnMouseDown = function(event)
     this.select(false, true);
 }
 
+/**
+ * @param {boolean=} omitFocus
+ * @param {boolean=} selectedByUser
+ */
 TreeElement.prototype.select = function(omitFocus, selectedByUser)
 {
     if (!this.treeOutline || !this.selectable || this.selected)
@@ -851,6 +856,9 @@ TreeElement.prototype.revealAndSelect = function(omitFocus)
     this.select(omitFocus);
 }
 
+/**
+ * @param {boolean=} supressOnDeselect
+ */
 TreeElement.prototype.deselect = function(supressOnDeselect)
 {
     if (!this.treeOutline || this.treeOutline.selectedTreeElement !== this || !this.selected)
@@ -866,10 +874,15 @@ TreeElement.prototype.deselect = function(supressOnDeselect)
     return true;
 }
 
+TreeElement.prototype.onpopulate = function()
+{
+    // Overriden by subclasses.
+}
+
 TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin, dontPopulate, info)
 {
-    if (!dontPopulate && this.hasChildren && this.onpopulate)
-        this.onpopulate(this);
+    if (!dontPopulate && this.hasChildren)
+        this.onpopulate();
 
     if (info)
         info.depthChange = 0;
@@ -904,12 +917,12 @@ TreeElement.prototype.traverseNextTreeElement = function(skipHidden, stayWithin,
 TreeElement.prototype.traversePreviousTreeElement = function(skipHidden, dontPopulate)
 {
     var element = skipHidden ? (this.revealed() ? this.previousSibling : null) : this.previousSibling;
-    if (!dontPopulate && element && element.hasChildren && element.onpopulate)
-        element.onpopulate(element);
+    if (!dontPopulate && element && element.hasChildren)
+        element.onpopulate();
 
     while (element && (skipHidden ? (element.revealed() && element.expanded ? element.children[element.children.length - 1] : null) : element.children[element.children.length - 1])) {
-        if (!dontPopulate && element.hasChildren && element.onpopulate)
-            element.onpopulate(element);
+        if (!dontPopulate && element.hasChildren)
+            element.onpopulate();
         element = (skipHidden ? (element.revealed() && element.expanded ? element.children[element.children.length - 1] : null) : element.children[element.children.length - 1]);
     }
 
@@ -924,6 +937,6 @@ TreeElement.prototype.traversePreviousTreeElement = function(skipHidden, dontPop
 
 TreeElement.prototype.isEventWithinDisclosureTriangle = function(event)
 {
-    var left = this._listItemNode.totalOffsetLeft;
+    var left = this._listItemNode.totalOffsetLeft();
     return event.pageX >= left && event.pageX <= left + this.arrowToggleWidth && this.hasChildren;
 }

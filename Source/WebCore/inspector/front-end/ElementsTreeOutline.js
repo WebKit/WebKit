@@ -146,6 +146,10 @@ WebInspector.ElementsTreeOutline.prototype = {
 
     findTreeElement: function(node)
     {
+        function isAncestorNode(ancestor, node)
+        {
+            return ancestor.isAncestor(node);
+        }
         var treeElement = TreeOutline.prototype.findTreeElement.call(this, node, isAncestorNode, parentNode);
         if (!treeElement && node.nodeType() === Node.TEXT_NODE) {
             // The text node might have been inlined if it was short, so try to find the parent element.
@@ -197,7 +201,7 @@ WebInspector.ElementsTreeOutline.prototype = {
         // items extend at least to the right edge of the outer <ol> container.
         // In the no-word-wrap mode the outer <ol> may be wider than the tree container
         // (and partially hidden), in which case we are left to use only its right boundary.
-        var x = scrollContainer.totalOffsetLeft + scrollContainer.offsetWidth - 36;
+        var x = scrollContainer.totalOffsetLeft() + scrollContainer.offsetWidth - 36;
 
         var y = event.pageY;
 
@@ -1466,7 +1470,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 break;
 
             case Node.TEXT_NODE:
-                if (isNodeWhitespace.call(node))
+                if (node.isWhitespace())
                     info.titleDOM.appendChild(document.createTextNode("(whitespace)"));
                 else {
                     if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "script") {

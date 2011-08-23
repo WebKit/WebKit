@@ -77,7 +77,7 @@ WebInspector.Drawer.prototype = {
     get savedHeight()
     {
         var height = this._savedHeight || this.element.offsetHeight;
-        return Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - this._mainElement.totalOffsetTop - Preferences.minConsoleHeight);
+        return Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - this._mainElement.totalOffsetTop() - Preferences.minConsoleHeight);
     },
 
     showView: function(view)
@@ -206,7 +206,7 @@ WebInspector.Drawer.prototype = {
         var height;
         if (this.state === WebInspector.Drawer.State.Variable) {
             height = parseInt(this.element.style.height);
-            height = Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - this._mainElement.totalOffsetTop - Preferences.minConsoleHeight);
+            height = Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - this._mainElement.totalOffsetTop() - Preferences.minConsoleHeight);
         } else
             height = window.innerHeight - this._toolbarElement.offsetHeight;
 
@@ -331,7 +331,7 @@ WebInspector.Drawer.prototype = {
 
         WebInspector.elementDragStart(this._mainStatusBar, this._statusBarDragging.bind(this), this._endStatusBarDragging.bind(this), event, "row-resize");
 
-        this._statusBarDragOffset = event.pageY - this.element.totalOffsetTop;
+        this._statusBarDragOffset = event.pageY - this.element.totalOffsetTop();
 
         event.stopPropagation();
     },
@@ -339,7 +339,7 @@ WebInspector.Drawer.prototype = {
     _statusBarDragging: function(event)
     {
         var height = window.innerHeight - event.pageY + this._statusBarDragOffset;
-        height = Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - this._mainElement.totalOffsetTop - Preferences.minConsoleHeight);
+        height = Number.constrain(height, Preferences.minConsoleHeight, window.innerHeight - this._mainElement.totalOffsetTop() - Preferences.minConsoleHeight);
 
         this._mainElement.style.bottom = height + "px";
         this.element.style.height = height + "px";

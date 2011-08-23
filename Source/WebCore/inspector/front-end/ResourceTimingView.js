@@ -148,7 +148,7 @@ WebInspector.ResourceTimingView.createTimingTable = function(resource)
             title.style.right = (scale * (total - rows[i].end) + 3) + "px";
         else
             title.style.left = (scale * rows[i].start + 3) + "px";
-        title.textContent = Number.millisToString(rows[i].end - rows[i].start);
+        title.textContent = Number.secondsToString((rows[i].end - rows[i].start) / 1000);
         row.appendChild(title);
 
         tr.appendChild(td);

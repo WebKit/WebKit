@@ -187,10 +187,10 @@ WebInspector.ToolbarDropdown.prototype = {
             return;
         var style = this.element.style;
         this._populate();
-        var top = this._arrow.totalOffsetTop + this._arrow.clientHeight;
+        var top = this._arrow.totalOffsetTop() + this._arrow.clientHeight;
         this._arrow.addStyleClass("dropdown-visible");
         this.element.style.top = top + "px";
-        this.element.style.left = this._arrow.totalOffsetLeft + "px";
+        this.element.style.left = this._arrow.totalOffsetLeft() + "px";
         this._contentElement.style.maxHeight = window.innerHeight - top - 20 + "px";
         this._toolbar.appendChild(this.element);
         WebInspector.currentFocusElement = this.contentElement;
