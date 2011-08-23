@@ -1,3 +1,16 @@
+2011-08-23  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
+
+        [Qt] Unnecessary folders in WebKit2.
+        https://bugs.webkit.org/show_bug.cgi?id=66583
+
+        Reviewed by Benjamin Poulain.
+
+        Remove empty autotest folders that were left over from QGraphicsWKView times.
+
+        * UIProcess/API/qt/tests/qgraphicswkview: Removed.
+        * UIProcess/API/qt/tests/qwkhistory: Removed.
+        * UIProcess/API/qt/tests/qwkpage: Removed.
+
 2011-08-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt][WK2] Fix an awful memory leak introduced in r92376.
