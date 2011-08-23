@@ -2385,3 +2385,9 @@ fast/parser/innerhtml-with-prefixed-elements.xhtml
 # [Qt] editing/selection/caret-at-bidi-boundary.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=66514
 editing/selection/caret-at-bidi-boundary.html
+
+# [Qt] Three tests are failed after r93567
+# https://bugs.webkit.org/show_bug.cgi?id=66749
+fast/frames/iframe-onload-remove-self-no-crash.html
+fast/loader/create-frame-in-DOMContentLoaded.html
+fast/loader/frame-creation-removal.html
