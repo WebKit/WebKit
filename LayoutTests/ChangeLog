@@ -1,5 +1,21 @@
 2011-08-23  Alexandru Chiculita  <achicu@adobe.com>
 
+        [CSSRegions] RenderFlowThread layout should use the attached region sizes
+        https://bugs.webkit.org/show_bug.cgi?id=66143
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/webkit-flow-floats-inside-regions-bounds-expected.txt: Added.
+        * fast/regions/webkit-flow-floats-inside-regions-bounds.html: Added.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-expected.txt: Added.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-expected.txt: Added.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl-expected.txt: Added.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical-rl.html: Added.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds-vertical.html: Added.
+        * fast/regions/webkit-flow-inlines-inside-regions-bounds.html: Added.
+
+2011-08-23  Alexandru Chiculita  <achicu@adobe.com>
+
         Text-indent and floats push the text out of the container box
         https://bugs.webkit.org/show_bug.cgi?id=66662
 

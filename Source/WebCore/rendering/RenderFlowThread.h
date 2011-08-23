@@ -85,6 +85,7 @@ public:
     bool hitTestRegion(const LayoutRect& regionRect, const HitTestRequest&, HitTestResult&, const LayoutPoint& pointInContainer, const LayoutPoint& accumulatedOffset);
 
     bool hasRegions() const { return m_regionList.size(); }
+    bool hasValidRegions() const { ASSERT(!m_regionsInvalidated); return m_hasValidRegions; }
 
     void invalidateRegions() { m_regionsInvalidated = true; setNeedsLayout(true); }
 
@@ -96,8 +97,16 @@ public:
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate);
 
+    LayoutUnit regionLogicalWidthForLine(LayoutUnit position) const;
+
+    bool isRegionFittingEnabled() const { return !m_regionFittingDisableCount; }
+    void disableRegionFitting() { m_regionFittingDisableCount++; }
+    void enableRegionFitting() { ASSERT(m_regionFittingDisableCount > 0); m_regionFittingDisableCount--; }
+
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
+
+    RenderRegion* renderRegionForLine(LayoutUnit position, bool extendLastRegion = false) const;
 
     bool dependsOn(RenderFlowThread* otherRenderFlowThread) const;
     void addDependencyOnFlowThread(RenderFlowThread*);
@@ -122,7 +131,9 @@ private:
     // easy to sort the order of threads layout.
     RenderFlowThreadCountedSet m_layoutBeforeThreadsSet;
 
+    bool m_hasValidRegions;
     bool m_regionsInvalidated;
+    unsigned m_regionFittingDisableCount;
 };
 
 inline RenderFlowThread* toRenderFlowThread(RenderObject* object)
@@ -139,6 +150,28 @@ inline const RenderFlowThread* toRenderFlowThread(const RenderObject* object)
 
 // This will catch anyone doing an unnecessary cast.
 void toRenderFlowThread(const RenderFlowThread*);
+
+class RegionFittingDisabler {
+    WTF_MAKE_NONCOPYABLE(RegionFittingDisabler);
+public:
+    RegionFittingDisabler(RenderFlowThread* flowThread, bool disable)
+    {
+        if (flowThread && disable) {
+            m_flowThread = flowThread;
+            m_flowThread->disableRegionFitting();
+        } else
+            m_flowThread = 0;
+    }
+
+    ~RegionFittingDisabler()
+    {
+        if (m_flowThread)
+            m_flowThread->enableRegionFitting();
+    }
+private:
+    RenderFlowThread* m_flowThread;
+};
+
 
 } // namespace WebCore
 

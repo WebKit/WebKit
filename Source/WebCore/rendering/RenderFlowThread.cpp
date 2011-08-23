@@ -44,7 +44,9 @@ namespace WebCore {
 RenderFlowThread::RenderFlowThread(Node* node, const AtomicString& flowThread)
     : RenderBlock(node)
     , m_flowThread(flowThread)
+    , m_hasValidRegions(false)
     , m_regionsInvalidated(false)
+    , m_regionFittingDisableCount(0)
 {
     setIsAnonymous(false);
 }
@@ -270,8 +272,30 @@ void RenderFlowThread::pushDependencies(RenderFlowThreadList& list)
     }
 }
 
+class CurrentRenderFlowThreadMaintainer {
+    WTF_MAKE_NONCOPYABLE(CurrentRenderFlowThreadMaintainer);
+public:
+    CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
+        : m_renderFlowThread(renderFlowThread)
+    {
+        RenderView* view = m_renderFlowThread->view();
+        ASSERT(!view->currentRenderFlowThread());
+        view->setCurrentRenderFlowThread(m_renderFlowThread);
+    }
+    ~CurrentRenderFlowThreadMaintainer()
+    {
+        RenderView* view = m_renderFlowThread->view();
+        ASSERT(view->currentRenderFlowThread() == m_renderFlowThread);
+        view->setCurrentRenderFlowThread(0);
+    }
+private:
+    RenderFlowThread* m_renderFlowThread;
+};
+
 void RenderFlowThread::layout()
 {
+    CurrentRenderFlowThreadMaintainer currentFlowThreadSetter(this);
+
     if (m_regionsInvalidated) {
         m_regionsInvalidated = false;
         if (hasRegions()) {
@@ -283,6 +307,8 @@ void RenderFlowThread::layout()
                     continue;
 
                 ASSERT(!region->needsLayout());
+                
+                m_hasValidRegions = true;
 
                 IntRect regionRect;
                 if (isHorizontalWritingMode()) {
@@ -435,5 +461,52 @@ void RenderFlowThread::repaintRectangleInRegions(const LayoutRect& repaintRect, 
         region->repaintRectangle(clippedRect, immediate);
     }
 }
+
+RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool extendLastRegion) const
+{
+    ASSERT(!m_regionsInvalidated);
+    
+    // All the regions should start at 0.
+    ASSERT(position >= 0);
+    
+    // If no region matches the position and extendLastRegion is true, it will return
+    // the last valid region. It is similar to auto extending the size of the last region. 
+    RenderRegion* lastValidRegion = 0;
+    
+    // FIXME: The regions are always in order, optimize this search.
+    bool useHorizontalWritingMode = isHorizontalWritingMode();
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        if (!region->isValid())
+            continue;
+
+        LayoutRect regionRect = region->regionRect();
+
+        if (useHorizontalWritingMode) {
+            if (regionRect.y() <= position && position < regionRect.maxY())
+                return region;
+            continue;
+        }
+
+        if (regionRect.x() <= position && position < regionRect.maxX())
+            return region;
+        
+        if (extendLastRegion)
+            lastValidRegion = region;
+    }
+
+    return lastValidRegion;
+}
+
+LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) const
+{
+    const bool extendLastRegion = true;
+    RenderRegion* region = renderRegionForLine(position, extendLastRegion);
+    if (!region)
+        return 0;
+
+    return isHorizontalWritingMode() ? region->regionRect().width() : region->regionRect().height();
+}
+
 
 } // namespace WebCore
