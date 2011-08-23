@@ -32,10 +32,10 @@ ASSERT_CLASS_FITS_IN_CELL(NativeErrorConstructor);
 
 const ClassInfo NativeErrorConstructor::s_info = { "Function", &InternalFunction::s_info, 0, 0 };
 
-NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& nameAndMessage)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, nameAndMessage))
+NativeErrorConstructor::NativeErrorConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& name)
+    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, name))
 {
-    constructorBody(exec, globalObject, prototypeStructure, nameAndMessage);
+    constructorBody(exec, globalObject, prototypeStructure, name);
 }
 
 void NativeErrorConstructor::visitChildren(SlotVisitor& visitor)

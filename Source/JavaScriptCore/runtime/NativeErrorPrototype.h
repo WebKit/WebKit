@@ -33,13 +33,13 @@ namespace JSC {
     public:
         typedef ErrorPrototype Base;
 
-        static NativeErrorPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& nameAndMessage, NativeErrorConstructor* constructor)
+        static NativeErrorPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& name, NativeErrorConstructor* constructor)
         {
-            return new (allocateCell<NativeErrorPrototype>(*exec->heap())) NativeErrorPrototype(exec, globalObject, structure, nameAndMessage, constructor);
+            return new (allocateCell<NativeErrorPrototype>(*exec->heap())) NativeErrorPrototype(exec, globalObject, structure, name, constructor);
         }
 
     protected:
-        void constructorBody(ExecState*, const UString& nameAndMessage, NativeErrorConstructor*);
+        void constructorBody(ExecState*, const UString& name, NativeErrorConstructor*);
     };
 
 } // namespace JSC

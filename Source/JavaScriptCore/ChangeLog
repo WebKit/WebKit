@@ -1,3 +1,28 @@
+2011-08-23  Gavin Barraclough  <barraclough@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=55347
+        "name" and "message" enumerable on *Error.prototype
+
+        Reviewed by Sam Weinig.
+
+        The default value of a NativeErrorPrototype's message
+        property is "", not the name of the error.
+
+        * runtime/NativeErrorConstructor.cpp:
+        (JSC::NativeErrorConstructor::NativeErrorConstructor):
+        * runtime/NativeErrorConstructor.h:
+        (JSC::NativeErrorConstructor::create):
+        (JSC::NativeErrorConstructor::constructorBody):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+        (JSC::NativeErrorPrototype::constructorBody):
+        * runtime/NativeErrorPrototype.h:
+        (JSC::NativeErrorPrototype::create):
+        * runtime/StringPrototype.cpp:
+        (JSC::StringPrototype::StringPrototype):
+        * runtime/StringPrototype.h:
+        (JSC::StringPrototype::create):
+
 2011-08-23  Steve Block  <steveblock@google.com>
 
         Remove last occurrences of PLATFORM(ANDROID)

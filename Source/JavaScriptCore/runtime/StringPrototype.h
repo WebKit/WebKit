@@ -36,8 +36,7 @@ namespace JSC {
 
         static StringPrototype* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
         {
-            JSString* nameAndMessage = jsEmptyString(exec);
-            return new (allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, globalObject, structure, nameAndMessage);
+            return new (allocateCell<StringPrototype>(*exec->heap())) StringPrototype(exec, globalObject, structure, jsEmptyString(exec));
         }
 
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);

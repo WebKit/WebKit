@@ -30,16 +30,16 @@ namespace JSC {
 
 ASSERT_CLASS_FITS_IN_CELL(NativeErrorPrototype);
 
-NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& nameAndMessage, NativeErrorConstructor* constructor)
+NativeErrorPrototype::NativeErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, const UString& name, NativeErrorConstructor* constructor)
     : ErrorPrototype(exec, globalObject, structure)
 {
-    constructorBody(exec, nameAndMessage, constructor);
+    constructorBody(exec, name, constructor);
 }
 
-inline void NativeErrorPrototype::constructorBody(ExecState* exec, const UString& nameAndMessage, NativeErrorConstructor* constructor)
+inline void NativeErrorPrototype::constructorBody(ExecState* exec, const UString& name, NativeErrorConstructor* constructor)
 {
-    putDirect(exec->globalData(), exec->propertyNames().name, jsString(exec, nameAndMessage), DontEnum);
-    putDirect(exec->globalData(), exec->propertyNames().message, jsString(exec, nameAndMessage), DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().name, jsString(exec, name), DontEnum);
+    putDirect(exec->globalData(), exec->propertyNames().message, jsEmptyString(exec), DontEnum);
     putDirect(exec->globalData(), exec->propertyNames().constructor, constructor, DontEnum);
 }
 

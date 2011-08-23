@@ -34,9 +34,9 @@ namespace JSC {
     public:
         typedef InternalFunction Base;
 
-        static NativeErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& nameAndMessage)
+        static NativeErrorConstructor* create(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* prototypeStructure, const UString& name)
         {
-            return new (allocateCell<NativeErrorConstructor>(*exec->heap())) NativeErrorConstructor(exec, globalObject, structure, prototypeStructure, nameAndMessage);
+            return new (allocateCell<NativeErrorConstructor>(*exec->heap())) NativeErrorConstructor(exec, globalObject, structure, prototypeStructure, name);
         }
         
         static const ClassInfo s_info;
@@ -49,11 +49,11 @@ namespace JSC {
         Structure* errorStructure() { return m_errorStructure.get(); }
 
     protected:
-        void constructorBody(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const UString& nameAndMessage)
+        void constructorBody(ExecState* exec, JSGlobalObject* globalObject, Structure* prototypeStructure, const UString& name)
         {
             ASSERT(inherits(&s_info));
 
-            NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, nameAndMessage, this);
+            NativeErrorPrototype* prototype = NativeErrorPrototype::create(exec, globalObject, prototypeStructure, name, this);
 
             putDirect(exec->globalData(), exec->propertyNames().length, jsNumber(1), DontDelete | ReadOnly | DontEnum); // ECMA 15.11.7.5
             putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | ReadOnly | DontEnum);
