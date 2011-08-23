@@ -29323,6 +29323,14 @@
 						Name="cf"
 						>
 						<File
+							RelativePath="..\platform\graphics\avfoundation\cf\AVFoundationCFSoftLinking.h"
+							>
+						</File>
+						<File
+							RelativePath="..\platform\graphics\avfoundation\cf\CoreMediaSoftLinking.h"
+							>
+						</File>
+						<File
 							RelativePath="..\platform\graphics\avfoundation\cf\MediaPlayerPrivateAVFoundationCF.cpp"
 							>
 						</File>
