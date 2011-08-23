@@ -1,3 +1,21 @@
+2011-08-23  Misha Tyutyunik  <michael.tyutyunik@nokia.com>
+
+        [Qt] Button text is invisible when mobile theme is in use and application palette set to use light text color.
+        https://bugs.webkit.org/show_bug.cgi?id=66635
+
+        When mobile theme is in use and application palette is using light 
+        color to display text button text becomes invisible. The reason for 
+        that is that in RenderThemeQt::systemFont() we are using application 
+        pallete while when are painting buttons lightGrayPalette is used.
+        Calling setPaletteFromPageClientIfExists() takes care of the issue.
+        
+        Reviewed by Andreas Kling.
+
+        Covered by existing tests.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::systemColor):
+
 2011-08-23  Tony Chang  <tony@chromium.org>
 
         Add handling of mix-width and max-width for flexitems

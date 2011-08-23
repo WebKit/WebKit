@@ -438,6 +438,7 @@ void RenderThemeQt::systemFont(int, FontDescription&) const
 Color RenderThemeQt::systemColor(int cssValueId) const
 {
     QPalette pal = QApplication::palette();
+    setPaletteFromPageClientIfExists(pal);
     switch (cssValueId) {
     case CSSValueButtontext:
         return pal.brush(QPalette::Active, QPalette::ButtonText).color();
