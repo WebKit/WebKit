@@ -1,3 +1,43 @@
+2011-08-23  Adam Barth  <abarth@webkit.org>
+
+        Remove WebCore/platform/android
+        https://bugs.webkit.org/show_bug.cgi?id=66734
+
+        Reviewed by Steve Block.
+
+        This directory is not needed now that Android shares more code with
+        Chromium.
+
+        * platform/android: Removed.
+        * platform/android/ClipboardAndroid.cpp: Removed.
+        * platform/android/ClipboardAndroid.h: Removed.
+        * platform/android/CursorAndroid.cpp: Removed.
+        * platform/android/DragDataAndroid.cpp: Removed.
+        * platform/android/EventLoopAndroid.cpp: Removed.
+        * platform/android/FileSystemAndroid.cpp: Removed.
+        * platform/android/GeolocationServiceAndroid.cpp: Removed.
+        * platform/android/GeolocationServiceAndroid.h: Removed.
+        * platform/android/GeolocationServiceBridge.cpp: Removed.
+        * platform/android/GeolocationServiceBridge.h: Removed.
+        * platform/android/KeyEventAndroid.cpp: Removed.
+        * platform/android/LanguageAndroid.cpp: Removed.
+        * platform/android/LocalizedStringsAndroid.cpp: Removed.
+        * platform/android/PlatformBridge.h: Removed.
+        * platform/android/PlatformTouchEventAndroid.cpp: Removed.
+        * platform/android/PlatformTouchPointAndroid.cpp: Removed.
+        * platform/android/PopupMenuAndroid.cpp: Removed.
+        * platform/android/RenderThemeAndroid.cpp: Removed.
+        * platform/android/RenderThemeAndroid.h: Removed.
+        * platform/android/SSLKeyGeneratorAndroid.cpp: Removed.
+        * platform/android/ScreenAndroid.cpp: Removed.
+        * platform/android/ScrollViewAndroid.cpp: Removed.
+        * platform/android/SearchPopupMenuAndroid.cpp: Removed.
+        * platform/android/SharedTimerAndroid.cpp: Removed.
+        * platform/android/SoundAndroid.cpp: Removed.
+        * platform/android/SystemTimeAndroid.cpp: Removed.
+        * platform/android/TemporaryLinkStubs.cpp: Removed.
+        * platform/android/WidgetAndroid.cpp: Removed.
+
 2011-08-23  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed. Adding a file that slipped from r93586.
