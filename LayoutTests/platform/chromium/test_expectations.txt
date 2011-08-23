@@ -3315,12 +3315,8 @@ BUGCR82950 WIN : http/tests/navigation/post-303-response.html = TEXT
 // See also BUGWK59172
 BUGWK61087 : fast/multicol/span/clone-anonymous-block-non-inline-child-crash.html = TEXT
 
-// New test added for bug 60028, needs rebaselining
-
 // Random crashes started between: http://trac.webkit.org/log/?verbose=on&rev=86756&stop_rev=86755
 BUGWK61103 MAC : fast/canvas/canvas-putImageData.html = PASS CRASH
-
-// New pixel tests added for bug 38788, rebaseline when webkit 38788 rolls.
 
 // Crashes after CSP changes landed in WebKit 86837
 BUGCR83268 : inspector/debugger/event-listener-breakpoints.html = PASS CRASH TIMEOUT
@@ -3373,8 +3369,6 @@ BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = PASS IMAGE+TEXT IMAGE
 BUGCR83499 MAC : fast/box-shadow/box-shadow-transformed.html = PASS IMAGE+TEXT IMAGE
 
 BUGCR83504 WIN : fast/css/custom-font-xheight.html = PASS TIMEOUT
-
-// New test from WK r87026
 
 // New tests added in r87121
 BUGWK61169 LINUX WIN : css3/images/optimize-contrast-canvas.html = IMAGE
@@ -3607,8 +3601,6 @@ BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
 
-// May need rebaseline, 
-
 // Introduced in r92298, which might cause another test crashing.
 BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
 
@@ -3657,7 +3649,9 @@ BUGWK65951 WIN DEBUG : webaudio/mixing.html = CRASH
 BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = MISSING FAIL
 
 // New test in r93068
-BUGWK66268 : editing/deleting/regional-indicators.html = TIMEOUT TEXT
+BUGWK66268 WIN MAC : editing/deleting/regional-indicators.html = TEXT
+BUGWK66268 LINUX RELEASE : editing/deleting/regional-indicators.html = TEXT
+BUGWK66268 LINUX DEBUG : editing/deleting/regional-indicators.html = TIMEOUT
 
 BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
 BUGWK66310 : media/media-blocked-by-beforeload.html = PASS TEXT
@@ -3667,8 +3661,6 @@ BUGWK66388 WIN LINUX : fast/repaint/line-flow-with-floats-in-regions.html = IMAG
 
 BUGWK66338 MAC : fast/repaint/background-scaling.html = IMAGE
 BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
-
-// Needs new baseline.
 
 BUGWK66394 LINUX DEBUG : fast/canvas/webgl/data-view-crash.html = PASS CRASH
 
@@ -3690,8 +3682,6 @@ BUGWK66577 LEOPARD : fast/events/touch/touch-target-limited.html = TIMEOUT
 BUGWK66577 LEOPARD : fast/events/touch/touch-target.html = TIMEOUT
 
 BUGV8_1634 : fast/js/const.html = TEXT
-
-// Needs new baseline.
 
 BUGWK66730 WIN : http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header.html = PASS TEXT
 BUGWK66730 WIN : http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header.html = PASS TEXT
