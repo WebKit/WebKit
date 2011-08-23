@@ -1,3 +1,11 @@
+2011-08-23  Leandro Pereira  <leandro@profusion.mobi>
+
+        Unreviewed build fix after r66685.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld):
+        Assert using the right variable name.
+
 2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Treat the case of WebCore::History->currentItem() returning NULL.

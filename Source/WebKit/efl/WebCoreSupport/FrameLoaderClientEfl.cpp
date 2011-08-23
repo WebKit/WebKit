@@ -428,7 +428,7 @@ void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
         return;
 
     Frame* coreFrame = ewk_frame_core_get(m_frame);
-    ASSERT(f);
+    ASSERT(coreFrame);
 
     Settings* settings = coreFrame->settings();
     if (!settings || !settings->isJavaScriptEnabled())
