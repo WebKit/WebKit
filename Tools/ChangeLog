@@ -1,3 +1,15 @@
+2011-08-23  Adam Barth  <abarth@webkit.org>
+
+        webkitpy/common/config/build.py shouldn't mention non-existant Android directory
+        https://bugs.webkit.org/show_bug.cgi?id=66737
+
+        Reviewed by Steve Block.
+
+        This directory doesn't exist anymore now that the Android port shares
+        more code with Chromium.
+
+        * Scripts/webkitpy/common/config/build.py:
+
 2011-08-22  Eric Seidel  <eric@webkit.org>
 
         Hack start-queue.sh in an attempt to resurrect the cr-jail-1 cr-mac-ews bot.

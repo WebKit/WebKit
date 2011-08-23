@@ -46,7 +46,6 @@ def _should_file_trigger_build(target_platform, file):
         ("Source/WebCore/manual-tests", []),
         ("Tools/BuildSlaveSupport/build.webkit.org-config/public_html", []),
         ("Websites", []),
-        ("android", []),
         ("brew", []),
         ("efl", []),
         ("haiku", []),
