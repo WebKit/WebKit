@@ -80,12 +80,10 @@ LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     , m_drawOpacity(0)
     , m_targetRenderSurface(0)
 {
-    ASSERT(!LayerRendererChromium::s_inPaintLayerContents);
 }
 
 LayerChromium::~LayerChromium()
 {
-    ASSERT(!LayerRendererChromium::s_inPaintLayerContents);
     // Our parent should be holding a reference to us so there should be no
     // way for us to be destroyed while we still have a parent.
     ASSERT(!parent());

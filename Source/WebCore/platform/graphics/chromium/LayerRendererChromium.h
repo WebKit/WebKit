@@ -155,9 +155,6 @@ public:
 
     GC3Denum bestTextureFormat();
 
-#ifndef NDEBUG
-    static bool s_inPaintLayerContents;
-#endif
     typedef Vector<RefPtr<LayerChromium> > LayerList;
     typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
 

@@ -78,10 +78,6 @@ static size_t textureMemoryReclaimLimitBytes = 64 * 1024 * 1024;
 // The maximum texture memory usage when asked to release textures.
 static size_t textureMemoryLowLimitBytes = 3 * 1024 * 1024;
 
-#ifndef NDEBUG
-bool LayerRendererChromium::s_inPaintLayerContents = false;
-#endif
-
 namespace {
 
 IntRect calculateVisibleRect(const IntRect& targetSurfaceRect, const IntRect& layerBoundRect, const TransformationMatrix& transform)
@@ -629,13 +625,7 @@ void LayerRendererChromium::updateLayers(LayerChromium* rootLayer)
         calculateDrawTransformsAndVisibility<LayerChromium, RenderSurfaceChromium, void*>(rootLayer, rootLayer, identityMatrix, identityMatrix, renderSurfaceLayerList, rootRenderSurface->layerList(), 0, m_maxTextureSize);
     }
 
-#ifndef NDEBUG
-    s_inPaintLayerContents = true;
-#endif
     paintLayerContents(renderSurfaceLayerList);
-#ifndef NDEBUG
-    s_inPaintLayerContents = false;
-#endif
 
     m_contentsTextureManager->reduceMemoryToLimit(textureMemoryReclaimLimitBytes);
     m_contentsTextureManager->deleteEvictedTextures(m_context.get());
