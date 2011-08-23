@@ -2643,8 +2643,6 @@ PassRefPtr<GraphicsContext3D> WebViewImpl::createLayerTreeHostContext3D()
     RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
     if (!context) {
         context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-        if (context)
-            context->reshape(max(1, m_size.width), max(1, m_size.height));
     }
     return context;
 }
@@ -2707,8 +2705,6 @@ WebGraphicsContext3D* WebViewImpl::graphicsContext3D()
                 return webContext;
         }
         m_temporaryOnscreenGraphicsContext3D = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
-        if (m_temporaryOnscreenGraphicsContext3D)
-            m_temporaryOnscreenGraphicsContext3D->reshape(max(1, m_size.width), max(1, m_size.height));
         return GraphicsContext3DInternal::extractWebGraphicsContext3D(m_temporaryOnscreenGraphicsContext3D.get());
     }
 #endif

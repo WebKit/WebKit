@@ -1,3 +1,14 @@
+2011-08-22  Iain Merrick  <husky@google.com>
+
+        [chromium] WebViewImpl should not reshape the 3D context
+        https://bugs.webkit.org/show_bug.cgi?id=66704
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::createLayerTreeHostContext3D):
+        (WebKit::WebViewImpl::graphicsContext3D):
+
 2011-08-22  Nat Duca  <nduca@chromium.org>
 
         Make GraphicsContext3D::isResourceSafe a function and, on Chromium, determine its value lazily
