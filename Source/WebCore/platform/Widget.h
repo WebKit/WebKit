@@ -94,11 +94,6 @@ typedef struct _Ecore_Evas Ecore_Evas;
 typedef Evas_Object* PlatformWidget;
 #endif
 
-#if PLATFORM(ANDROID)
-class WebCoreViewBridge;
-typedef WebCoreViewBridge* PlatformWidget;
-#endif
-
 #if PLATFORM(QT)
 class QWebPageClient;
 typedef QWebPageClient* PlatformPageClient;

@@ -46,7 +46,7 @@ void NetworkStateNotifier::setNetworkStateChangedFunction(void(*function)())
     m_networkStateChangedFunction = function;
 }
 
-#if PLATFORM(ANDROID) || PLATFORM(CHROMIUM) || PLATFORM(EFL)
+#if PLATFORM(CHROMIUM) || PLATFORM(EFL)
 void NetworkStateNotifier::setOnLine(bool onLine)
 {
     if (m_isOnLine == onLine)
@@ -57,6 +57,6 @@ void NetworkStateNotifier::setOnLine(bool onLine)
     if (m_networkStateChangedFunction)
         m_networkStateChangedFunction();
 }
-#endif // PLATFORM(ANDROID) || PLATFORM(CHROMIM)
+#endif // PLATFORM(CHROMIUM) || PLATFORM(EFL)
 
 }

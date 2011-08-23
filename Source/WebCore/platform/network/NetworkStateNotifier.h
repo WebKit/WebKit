@@ -68,12 +68,8 @@ public:
 
 #if (PLATFORM(QT) && USE(QT_BEARER))
     void setNetworkAccessAllowed(bool);
-#elif PLATFORM(ANDROID) || PLATFORM(CHROMIUM) || PLATFORM(EFL)
+#elif PLATFORM(CHROMIUM) || PLATFORM(EFL)
     void setOnLine(bool);
-#endif
-
-#if PLATFORM(ANDROID)
-    void networkStateChange(bool online) { setOnLine(online); }
 #endif
 
 private:

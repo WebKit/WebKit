@@ -1,3 +1,41 @@
+2011-08-22  Adam Barth  <abarth@webkit.org>
+
+        Remove PLATFORM(ANDROID)
+        https://bugs.webkit.org/show_bug.cgi?id=66741
+
+        Reviewed by Darin Adler.
+
+        PLATFORM(CHROMIUM) && OS(ANDROID) is the new hotness.  These special
+        cases can be removed now that Android shares more code with Chromium.
+
+        * bindings/js/JSDOMWindowBase.cpp:
+        (WebCore::JSDOMWindowBase::supportsRichSourceInfo):
+        * bindings/v8/ScriptCachedFrameData.cpp:
+        * bindings/v8/ScriptCachedFrameData.h:
+        * bindings/v8/V8GCController.cpp:
+        * bridge/jni/jsc/JavaInstanceJSC.cpp:
+        (JavaInstance::invokeMethod):
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::~HistoryItem):
+        (WebCore::HistoryItem::setDocumentState):
+        (WebCore::HistoryItem::clearDocumentState):
+        (WebCore::HistoryItem::setIsTargetItem):
+        (WebCore::HistoryItem::addChildItem):
+        (WebCore::HistoryItem::setFormInfoFromRequest):
+        * history/HistoryItem.h:
+        * loader/cache/CachedFont.cpp:
+        * platform/DragImage.h:
+        * platform/PlatformTouchEvent.h:
+        * platform/PlatformTouchPoint.h:
+        (WebCore::PlatformTouchPoint::PlatformTouchPoint):
+        * platform/Widget.h:
+        * platform/network/NetworkStateNotifier.cpp:
+        * platform/network/NetworkStateNotifier.h:
+        * platform/network/NetworkingContext.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/ResourceHandleInternal.h:
+        * platform/network/ResourceRequestBase.cpp:
+
 2011-08-22  Adrienne Walker  <enne@google.com>
 
         [chromium] Remove compositing assertions about creating layers when painting

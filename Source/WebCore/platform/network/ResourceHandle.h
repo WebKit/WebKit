@@ -167,7 +167,7 @@ public:
     static void CALLBACK internetStatusCallback(HINTERNET, DWORD_PTR, DWORD, LPVOID, DWORD);
 #endif
 
-#if PLATFORM(QT) || USE(CURL) || USE(SOUP) || PLATFORM(ANDROID)
+#if PLATFORM(QT) || USE(CURL) || USE(SOUP)
     ResourceHandleInternal* getInternal() { return d.get(); }
 #endif
 

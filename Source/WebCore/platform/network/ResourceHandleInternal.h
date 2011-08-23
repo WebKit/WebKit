@@ -70,10 +70,6 @@ class NSURLConnection;
 #endif
 #endif
 
-#if PLATFORM(ANDROID)
-#include "ResourceLoaderAndroid.h"
-#endif
-
 // The allocations and releases in ResourceHandleInternal are
 // Cocoa-exception-free (either simple Foundation classes or
 // WebCoreResourceLoaderImp which avoids doing work in dealloc).
@@ -213,9 +209,6 @@ namespace WebCore {
         // We need to keep a reference to the original challenge to be able to cancel it.
         // It is almost identical to m_currentWebChallenge.nsURLAuthenticationChallenge(), but has a different sender.
         NSURLAuthenticationChallenge *m_currentMacChallenge;
-#endif
-#if PLATFORM(ANDROID)
-        RefPtr<ResourceLoaderAndroid> m_loader;
 #endif
         AuthenticationChallenge m_currentWebChallenge;
 

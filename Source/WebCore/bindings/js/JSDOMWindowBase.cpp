@@ -108,9 +108,7 @@ bool JSDOMWindowBase::supportsProfiling() const
 
 bool JSDOMWindowBase::supportsRichSourceInfo() const
 {
-#if PLATFORM(ANDROID)
-    return true;
-#elif !ENABLE(JAVASCRIPT_DEBUGGER) || !ENABLE(INSPECTOR)
+#if !ENABLE(JAVASCRIPT_DEBUGGER) || !ENABLE(INSPECTOR)
     return false;
 #else
     Frame* frame = impl()->frame();

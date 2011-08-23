@@ -213,13 +213,6 @@ JSValue JavaInstance::invokeMethod(ExecState* exec, RuntimeMethod* runtimeMethod
         }
     }
 
-// This is a deprecated code path which should not be required on Android.
-// Remove this guard once Bug 39476 is fixed.
-#if PLATFORM(ANDROID)
-    if (!handled)
-        result = callJNIMethod(m_instance->instance(), jMethod->returnType(), jMethod->name().utf8().data(), jMethod->signature(), jArgs.data());
-#endif
-
     switch (jMethod->returnType()) {
     case JavaTypeVoid:
         {

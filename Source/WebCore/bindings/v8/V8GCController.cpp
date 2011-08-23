@@ -420,7 +420,7 @@ namespace {
 
 int getMemoryUsageInMB()
 {
-#if PLATFORM(CHROMIUM) || PLATFORM(ANDROID)
+#if PLATFORM(CHROMIUM)
     return PlatformBridge::memoryUsageMB();
 #else
     return 0;
@@ -429,7 +429,7 @@ int getMemoryUsageInMB()
 
 int getActualMemoryUsageInMB()
 {
-#if PLATFORM(CHROMIUM) || PLATFORM(ANDROID)
+#if PLATFORM(CHROMIUM)
     return PlatformBridge::actualMemoryUsageMB();
 #else
     return 0;

@@ -47,8 +47,6 @@ public:
 #if PLATFORM(QT)
     PlatformTouchPoint(const QTouchEvent::TouchPoint&);
     PlatformTouchPoint() {};
-#elif PLATFORM(ANDROID)
-    PlatformTouchPoint(unsigned id, const IntPoint& windowPos, State);
 #elif PLATFORM(BREWMP)
     PlatformTouchPoint(int id, const IntPoint& windowPos, State);
 #elif PLATFORM(EFL)
