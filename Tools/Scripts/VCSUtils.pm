@@ -1696,7 +1696,7 @@ sub mergeChangeLogs($$$)
         rename($fileMine, "$fileMine.save");
         rename($fileOlder, "$fileOlder.save");
     } else {
-        open(DIFF, "-|", qw(diff -u -a --binary), $fileOlder, $fileMine) or die $!;
+        open(DIFF, "diff -u -a --binary \"$fileOlder\" \"$fileMine\" |") or die $!;
         $patch = <DIFF>;
         close(DIFF);
     }

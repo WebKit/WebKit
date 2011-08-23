@@ -1,3 +1,15 @@
+2011-08-23  Patrick Gansterer  <paroga@webkit.org>
+
+        webkit-perl tests fail on win32 Perl due to lack of list form of pipe open implementation
+        https://bugs.webkit.org/show_bug.cgi?id=49080
+
+        Reviewed by Adam Roben.
+
+        Use the string form of pipe open instead (like we do at all other places).
+
+        * Scripts/VCSUtils.pm:
+        (mergeChangeLogs):
+
 2011-08-23  Adam Barth  <abarth@webkit.org>
 
         garden-o-matic summary should be able to examine failures
