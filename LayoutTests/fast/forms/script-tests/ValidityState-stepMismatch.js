@@ -1,4 +1,4 @@
-description('Check stepMismatch results for number, range, and unsupported types.');
+description('Check stepMismatch results for number, and unsupported types.');
 
 var input = document.createElement('input');
 document.body.appendChild(input);
@@ -41,39 +41,6 @@ shouldBe('stepMismatchFor("0.9", "0.1000000000000001", "")', 'false');
 shouldBe('stepMismatchFor("1.0", "0.3333333333333333", "")', 'false');
 debug('Rounding');
 shouldBe('stepMismatchFor("5.005", "0.005", "4")', 'false');
-debug('Disabled');
-shouldBe('stepMismatchFor("1", "2", "0", true)', 'false');
-
-debug('');
-debug('Range type');
-input.type = 'range';
-// The following test inputs are the same as inputs for type=numbe,
-// but all expected results should be 'false'.
-debug('Empty values');
-shouldBe('stepMismatchFor("", null, null)', 'false');
-shouldBe('stepMismatchFor("", "1.0", "0.1")', 'false');
-debug('Integers');
-shouldBe('stepMismatchFor("1", "2", "0")', 'false');
-shouldBe('stepMismatchFor("-3", "2", "-4")', 'false');
-shouldBe('input.max = "5"; stepMismatchFor("5", "3", "0")', 'false');
-shouldBe('input.value', '"3"'); // Different from type=number.
-debug('Invalid step values');
-input.max = '';
-shouldBe('stepMismatchFor("-3", "-2", "-4")', 'false');
-shouldBe('stepMismatchFor("-3", null, "-4")', 'false');
-shouldBe('stepMismatchFor("-3", undefined, "-4")', 'false');
-debug('Huge numbers and small step; uncomparable');
-shouldBe('stepMismatchFor("3.40282347e+38", "3", "")', 'false');
-shouldBe('stepMismatchFor("3.40282346e+38", "3", "")', 'false');
-shouldBe('stepMismatchFor("3.40282345e+38", "3", "")', 'false');
-debug('Huge numbers and huge step');
-shouldBe('stepMismatchFor("3.20e+38", "0.20e+38", "")', 'false');
-shouldBe('stepMismatchFor("3.20e+38", "0.22e+38", "")', 'false');
-debug('Fractional numbers');
-shouldBe('stepMismatchFor("0.9", "0.1", "")', 'false');
-shouldBe('stepMismatchFor("0.9", "0.1000001", "")', 'false');
-shouldBe('stepMismatchFor("0.9", "0.1000000000000001", "")', 'false');
-shouldBe('stepMismatchFor("1.0", "0.3333333333333333", "")', 'false');
 debug('Disabled');
 shouldBe('stepMismatchFor("1", "2", "0", true)', 'false');
 

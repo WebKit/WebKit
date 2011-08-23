@@ -1776,7 +1776,6 @@ fast/forms/radio-attr-order.html
 fast/forms/radio-nested-labels.html
 fast/forms/radio_checked.html
 fast/forms/radio_checked_dynamic.html
-fast/forms/range-thumb-height-percentage.html
 fast/forms/search-cancel-button-style-sharing.html
 fast/forms/search-display-none-cancel-button.html
 fast/forms/search-placeholder-value-changed.html
@@ -1811,10 +1810,11 @@ fast/forms/textarea-placeholder-set-attribute.html
 fast/forms/textarea-placeholder-set-value.html
 fast/forms/textfield-outline.html
 fast/forms/textfield-overflow.html
-fast/forms/thumbslider-crash.html
-fast/forms/thumbslider-no-parent-slider.html
 fast/forms/mailto/advanced-get.html
 fast/forms/mailto/advanced-put.html
+fast/forms/range/range-thumb-height-percentage.html
+fast/forms/range/thumbslider-crash.html
+fast/forms/range/thumbslider-no-parent-slider.html
 fast/frames/frame-navigation.html
 fast/frames/frame-scrolling-attribute.html
 fast/frames/frameElement-frame.html

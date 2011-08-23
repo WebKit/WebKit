@@ -1037,8 +1037,8 @@ fast/dom/Geolocation/disconnected-frame-permission-denied.html
 
 # Some input type=range tests fail because of the size 
 # of the slider thumb in GTK+ themes.
-fast/forms/slider-mouse-events.html
-fast/forms/slider-zoomed.html
+fast/forms/range/slider-mouse-events.html
+fast/forms/range/slider-zoomed.html
 
 # Link prefetch is disabled by default
 fast/dom/HTMLLinkElement/link-and-subresource-test.html

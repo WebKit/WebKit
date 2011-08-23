@@ -270,7 +270,7 @@ editing/pasteboard/data-transfer-items.html
 editing/pasteboard/drop-inputtext-acquires-style.html
 fast/css/user-drag-none.html
 svg/as-image/drag-svg-as-image.html
-fast/forms/slider-delete-while-dragging-thumb.html
+fast/forms/range/slider-delete-while-dragging-thumb.html
 
 # EventSender::dumpFilenameBeingDragged not implemented.
 # https://bugs.webkit.org/show_bug.cgi?id=61828
@@ -1080,11 +1080,11 @@ fast/loader/api-test-new-window-data-load-base-url.html
 fast/loader/api-test-go-to-current-back-forward-item.html
 
 # Slider tests that need new results
-fast/forms/slider-padding.html
-fast/forms/slider-thumb-shared-style.html
-fast/forms/slider-thumb-stylability.html
-fast/forms/slider-zoomed.html
-fast/forms/slider-mouse-events.html
+fast/forms/range/slider-padding.html
+fast/forms/range/slider-thumb-shared-style.html
+fast/forms/range/slider-thumb-stylability.html
+fast/forms/range/slider-zoomed.html
+fast/forms/range/slider-mouse-events.html
 
 # For some reason crashes when run with all tests. Passes individually.
 fast/forms/multiple-form-submission-protection-mouse.html
@@ -2127,7 +2127,7 @@ svg/filters/feConvolveFilter-y-bounds.svg
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
 
 # failing new tests
-fast/forms/input-appearance-range.html
+fast/forms/range/input-appearance-range.html
 fast/text/midword-break-before-surrogate-pair.html
 printing/page-count-relayout-shrink.html
 svg/custom/svg-fonts-fallback.xhtml

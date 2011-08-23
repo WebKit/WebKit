@@ -1410,7 +1410,7 @@ BUGCR10458 LINUX : fast/forms/textarea-width.html = FAIL
 
 // New failures from merge
 BUGCR27486 LINUX WIN : fast/forms/listbox-hit-test-zoomed.html = IMAGE+TEXT
-BUGCR27486 LINUX WIN : fast/forms/slider-zoomed.html = TEXT
+BUGCR27486 LINUX WIN : fast/forms/range/slider-zoomed.html = TEXT
 
 // Mac flaky failures.
 BUGCR10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = PASS FAIL
@@ -3503,7 +3503,7 @@ BUGCR86974 : svg/css/composite-shadow-with-opacity.html = PASS TEXT
 
 BUGCR87009 : fast/filesystem/async-operations.html = PASS CRASH
 
-BUGCR89282 SNOWLEOPARD : fast/forms/input-appearance-range.html = IMAGE
+BUGCR89282 SNOWLEOPARD : fast/forms/range/input-appearance-range.html = IMAGE
 
 // Strange scrollbar.
 BUGWK63115 : fast/css/font-face-in-shadow-DOM.html = PASS IMAGE+TEXT

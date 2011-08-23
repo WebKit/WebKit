@@ -1,3 +1,215 @@
+2011-08-23  Kent Tamura  <tkent@chromium.org>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66651
+        Move <input type=range> tests to fast/forms/range/
+
+        Reviewed by Tony Chang.
+
+        * fast/forms/ValidityState-stepMismatch-expected.txt: Removed 'range' part.
+        * fast/forms/input-appearance-range-rtl-expected.html: Removed.
+        * fast/forms/input-appearance-range-rtl.html: Removed.
+        * fast/forms/input-appearance-range.html: Removed.
+        * fast/forms/input-stepup-stepdown-expected.txt: Removed 'range' part.
+        * fast/forms/input-stepup-stepdown-from-renderer-expected.txt: Removed 'range' part.
+        * fast/forms/input-valueasnumber-range-expected.txt: Removed.
+        * fast/forms/input-valueasnumber-range.html: Removed.
+        * fast/forms/range: Added.
+        * fast/forms/range-default-value-expected.txt: Removed.
+        * fast/forms/range-default-value.html: Removed.
+        * fast/forms/range-drag-expected.txt: Removed.
+        * fast/forms/range-drag.html: Removed.
+        * fast/forms/range-input-dynamic-oninput-expected.txt: Removed.
+        * fast/forms/range-input-dynamic-oninput.html: Removed.
+        * fast/forms/range-keyoperation-expected.txt: Removed.
+        * fast/forms/range-keyoperation.html: Removed.
+        * fast/forms/range-reset-expected.txt: Removed.
+        * fast/forms/range-reset.html: Removed.
+        * fast/forms/range-set-attribute-expected.txt: Removed.
+        * fast/forms/range-set-attribute.html: Removed.
+        * fast/forms/range-thumb-height-percentage.html: Removed.
+        * fast/forms/range/ValidityState-stepMismatch-range-expected.txt: Copied from LayoutTests/fast/forms/ValidityState-stepMismatch-expected.txt.
+        * fast/forms/range/ValidityState-stepMismatch-range.html: Copied from LayoutTests/fast/forms/script-tests/ValidityState-stepMismatch.js.
+        * fast/forms/range/input-appearance-range-rtl-expected.html: Copied from LayoutTests/fast/forms/input-appearance-range-rtl-expected.html.
+        * fast/forms/range/input-appearance-range-rtl.html: Copied from LayoutTests/fast/forms/input-appearance-range-rtl.html.
+        * fast/forms/range/input-appearance-range.html: Copied from LayoutTests/fast/forms/input-appearance-range.html.
+        * fast/forms/range/input-valueasnumber-range-expected.txt: Copied from LayoutTests/fast/forms/input-valueasnumber-range-expected.txt.
+        * fast/forms/range/input-valueasnumber-range.html: Copied from LayoutTests/fast/forms/script-tests/input-valueasnumber-range.js.
+        * fast/forms/range/range-default-value-expected.txt: Copied from LayoutTests/fast/forms/range-default-value-expected.txt.
+        * fast/forms/range/range-default-value.html: Copied from LayoutTests/fast/forms/range-default-value.html.
+        * fast/forms/range/range-drag-expected.txt: Copied from LayoutTests/fast/forms/range-drag-expected.txt.
+        * fast/forms/range/range-drag.html: Copied from LayoutTests/fast/forms/range-drag.html.
+        * fast/forms/range/range-input-dynamic-oninput-expected.txt: Copied from LayoutTests/fast/forms/range-input-dynamic-oninput-expected.txt.
+        * fast/forms/range/range-input-dynamic-oninput.html: Copied from LayoutTests/fast/forms/range-input-dynamic-oninput.html.
+        * fast/forms/range/range-keyoperation-expected.txt: Copied from LayoutTests/fast/forms/range-keyoperation-expected.txt.
+        * fast/forms/range/range-keyoperation.html: Copied from LayoutTests/fast/forms/range-keyoperation.html.
+        * fast/forms/range/range-reset-expected.txt: Copied from LayoutTests/fast/forms/range-reset-expected.txt.
+        * fast/forms/range/range-reset.html: Copied from LayoutTests/fast/forms/range-reset.html.
+        * fast/forms/range/range-set-attribute-expected.txt: Copied from LayoutTests/fast/forms/range-set-attribute-expected.txt.
+        * fast/forms/range/range-set-attribute.html: Copied from LayoutTests/fast/forms/range-set-attribute.html.
+        * fast/forms/range/range-stepup-stepdown-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-expected.txt.
+        * fast/forms/range/range-stepup-stepdown-from-renderer-expected.txt: Copied from LayoutTests/fast/forms/input-stepup-stepdown-from-renderer-expected.txt.
+        * fast/forms/range/range-stepup-stepdown-from-renderer.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown-from-renderer.js.
+        * fast/forms/range/range-stepup-stepdown.html: Copied from LayoutTests/fast/forms/script-tests/input-stepup-stepdown.js.
+        * fast/forms/range/range-thumb-height-percentage.html: Copied from LayoutTests/fast/forms/range-thumb-height-percentage.html.
+        * fast/forms/range/slider-delete-while-dragging-thumb-expected.txt: Copied from LayoutTests/fast/forms/slider-delete-while-dragging-thumb-expected.txt.
+        * fast/forms/range/slider-delete-while-dragging-thumb.html: Copied from LayoutTests/fast/forms/slider-delete-while-dragging-thumb.html.
+        * fast/forms/range/slider-hit-testing-expected.txt: Copied from LayoutTests/fast/forms/slider-hit-testing-expected.txt.
+        * fast/forms/range/slider-hit-testing.html: Copied from LayoutTests/fast/forms/slider-hit-testing.html.
+        * fast/forms/range/slider-mouse-events-expected.txt: Copied from LayoutTests/fast/forms/slider-mouse-events-expected.txt.
+        * fast/forms/range/slider-mouse-events.html: Copied from LayoutTests/fast/forms/slider-mouse-events.html.
+        * fast/forms/range/slider-onchange-event-expected.txt: Copied from LayoutTests/fast/forms/slider-onchange-event-expected.txt.
+        * fast/forms/range/slider-onchange-event.html: Copied from LayoutTests/fast/forms/slider-onchange-event.html.
+        * fast/forms/range/slider-padding.html: Copied from LayoutTests/fast/forms/slider-padding.html.
+        * fast/forms/range/slider-thumb-shared-style.html: Copied from LayoutTests/fast/forms/slider-thumb-shared-style.html.
+        * fast/forms/range/slider-thumb-stylability.html: Copied from LayoutTests/fast/forms/slider-thumb-stylability.html.
+        * fast/forms/range/slider-transformed-expected.txt: Copied from LayoutTests/fast/forms/slider-transformed-expected.txt.
+        * fast/forms/range/slider-transformed.html: Copied from LayoutTests/fast/forms/slider-transformed.html.
+        * fast/forms/range/slider-zoomed-expected.txt: Copied from LayoutTests/fast/forms/slider-zoomed-expected.txt.
+        * fast/forms/range/slider-zoomed.html: Copied from LayoutTests/fast/forms/slider-zoomed.html.
+        * fast/forms/range/thumbslider-crash-expected.txt: Copied from LayoutTests/fast/forms/thumbslider-crash-expected.txt.
+        * fast/forms/range/thumbslider-crash.html: Copied from LayoutTests/fast/forms/thumbslider-crash.html.
+        * fast/forms/range/thumbslider-no-parent-slider.html: Copied from LayoutTests/fast/forms/thumbslider-no-parent-slider.html.
+        * fast/forms/script-tests/ValidityState-stepMismatch.js: Removed 'range' part.
+        * fast/forms/script-tests/input-stepup-stepdown-from-renderer.js: Removed 'range' part.
+        * fast/forms/script-tests/input-stepup-stepdown.js: Removed 'range' part.
+        * fast/forms/script-tests/input-valueasnumber-range.js: Removed.
+        * fast/forms/slider-delete-while-dragging-thumb-expected.txt: Removed.
+        * fast/forms/slider-delete-while-dragging-thumb.html: Removed.
+        * fast/forms/slider-hit-testing-expected.txt: Removed.
+        * fast/forms/slider-hit-testing.html: Removed.
+        * fast/forms/slider-mouse-events-expected.txt: Removed.
+        * fast/forms/slider-mouse-events.html: Removed.
+        * fast/forms/slider-onchange-event-expected.txt: Removed.
+        * fast/forms/slider-onchange-event.html: Removed.
+        * fast/forms/slider-padding.html: Removed.
+        * fast/forms/slider-thumb-shared-style.html: Removed.
+        * fast/forms/slider-thumb-stylability.html: Removed.
+        * fast/forms/slider-transformed-expected.txt: Removed.
+        * fast/forms/slider-transformed.html: Removed.
+        * fast/forms/slider-zoomed-expected.txt: Removed.
+        * fast/forms/slider-zoomed.html: Removed.
+        * fast/forms/thumbslider-crash-expected.txt: Removed.
+        * fast/forms/thumbslider-crash.html: Removed.
+        * fast/forms/thumbslider-no-parent-slider.html: Removed.
+        * platform/chromium-cg-mac-leopard/fast/forms/input-appearance-range-expected.png: Removed.
+        * platform/chromium-cg-mac-leopard/fast/forms/range: Added.
+        * platform/chromium-cg-mac-leopard/fast/forms/range/input-appearance-range-expected.png: Copied from LayoutTests/platform/chromium-cg-mac-leopard/fast/forms/input-appearance-range-expected.png.
+        * platform/chromium-cg-mac-leopard/fast/forms/range/slider-padding-expected.png: Copied from LayoutTests/platform/chromium-cg-mac-leopard/fast/forms/slider-padding-expected.png.
+        * platform/chromium-cg-mac-leopard/fast/forms/range/slider-thumb-shared-style-expected.png: Copied from LayoutTests/platform/chromium-cg-mac-leopard/fast/forms/slider-thumb-shared-style-expected.png.
+        * platform/chromium-cg-mac-leopard/fast/forms/range/slider-thumb-stylability-expected.png: Copied from LayoutTests/platform/chromium-cg-mac-leopard/fast/forms/slider-thumb-stylability-expected.png.
+        * platform/chromium-cg-mac-leopard/fast/forms/range/thumbslider-no-parent-slider-expected.png: Copied from LayoutTests/platform/chromium-cg-mac-leopard/fast/forms/thumbslider-no-parent-slider-expected.png.
+        * platform/chromium-cg-mac-leopard/fast/forms/slider-padding-expected.png: Removed.
+        * platform/chromium-cg-mac-leopard/fast/forms/slider-thumb-shared-style-expected.png: Removed.
+        * platform/chromium-cg-mac-leopard/fast/forms/slider-thumb-stylability-expected.png: Removed.
+        * platform/chromium-cg-mac-leopard/fast/forms/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/input-appearance-range-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/input-appearance-range-expected.txt: Removed.
+        * platform/chromium-linux/fast/forms/range: Added.
+        * platform/chromium-linux/fast/forms/range-thumb-height-percentage-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/range/input-appearance-range-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/input-appearance-range-expected.png.
+        * platform/chromium-linux/fast/forms/range/input-appearance-range-expected.txt: Copied from LayoutTests/platform/chromium-linux/fast/forms/input-appearance-range-expected.txt.
+        * platform/chromium-linux/fast/forms/range/range-thumb-height-percentage-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/range-thumb-height-percentage-expected.png.
+        * platform/chromium-linux/fast/forms/range/slider-padding-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/slider-padding-expected.png.
+        * platform/chromium-linux/fast/forms/range/slider-thumb-shared-style-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/slider-thumb-shared-style-expected.png.
+        * platform/chromium-linux/fast/forms/range/thumbslider-no-parent-slider-expected.png: Copied from LayoutTests/platform/chromium-linux/fast/forms/thumbslider-no-parent-slider-expected.png.
+        * platform/chromium-linux/fast/forms/slider-padding-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/slider-thumb-shared-style-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-appearance-range-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-appearance-range-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/range: Added.
+        * platform/chromium-win/fast/forms/range-thumb-height-percentage-expected.png: Removed.
+        * platform/chromium-win/fast/forms/range-thumb-height-percentage-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/range/input-appearance-range-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/input-appearance-range-expected.png.
+        * platform/chromium-win/fast/forms/range/input-appearance-range-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/input-appearance-range-expected.txt.
+        * platform/chromium-win/fast/forms/range/range-thumb-height-percentage-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/range-thumb-height-percentage-expected.png.
+        * platform/chromium-win/fast/forms/range/range-thumb-height-percentage-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/range-thumb-height-percentage-expected.txt.
+        * platform/chromium-win/fast/forms/range/slider-padding-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/slider-padding-expected.png.
+        * platform/chromium-win/fast/forms/range/slider-padding-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/slider-padding-expected.txt.
+        * platform/chromium-win/fast/forms/range/slider-thumb-shared-style-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/slider-thumb-shared-style-expected.png.
+        * platform/chromium-win/fast/forms/range/slider-thumb-shared-style-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/slider-thumb-shared-style-expected.txt.
+        * platform/chromium-win/fast/forms/range/slider-thumb-stylability-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/slider-thumb-stylability-expected.png.
+        * platform/chromium-win/fast/forms/range/thumbslider-no-parent-slider-expected.png: Copied from LayoutTests/platform/chromium-win/fast/forms/thumbslider-no-parent-slider-expected.png.
+        * platform/chromium-win/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/forms/thumbslider-no-parent-slider-expected.txt.
+        * platform/chromium-win/fast/forms/slider-padding-expected.png: Removed.
+        * platform/chromium-win/fast/forms/slider-padding-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/slider-thumb-shared-style-expected.png: Removed.
+        * platform/chromium-win/fast/forms/slider-thumb-shared-style-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/slider-thumb-stylability-expected.png: Removed.
+        * platform/chromium-win/fast/forms/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/chromium-win/fast/forms/thumbslider-no-parent-slider-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/forms/input-appearance-range-expected.txt: Removed.
+        * platform/gtk/fast/forms/range: Added.
+        * platform/gtk/fast/forms/range-thumb-height-percentage-expected.png: Removed.
+        * platform/gtk/fast/forms/range-thumb-height-percentage-expected.txt: Removed.
+        * platform/gtk/fast/forms/range/input-appearance-range-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/input-appearance-range-expected.txt.
+        * platform/gtk/fast/forms/range/range-thumb-height-percentage-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/range-thumb-height-percentage-expected.png.
+        * platform/gtk/fast/forms/range/range-thumb-height-percentage-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/range-thumb-height-percentage-expected.txt.
+        * platform/gtk/fast/forms/range/slider-padding-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/slider-padding-expected.png.
+        * platform/gtk/fast/forms/range/slider-padding-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/slider-padding-expected.txt.
+        * platform/gtk/fast/forms/range/slider-thumb-shared-style-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/slider-thumb-shared-style-expected.png.
+        * platform/gtk/fast/forms/range/slider-thumb-shared-style-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/slider-thumb-shared-style-expected.txt.
+        * platform/gtk/fast/forms/range/slider-thumb-stylability-expected.png: Copied from LayoutTests/platform/gtk/fast/forms/slider-thumb-stylability-expected.png.
+        * platform/gtk/fast/forms/range/slider-thumb-stylability-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/slider-thumb-stylability-expected.txt.
+        * platform/gtk/fast/forms/range/slider-transformed-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/slider-transformed-expected.txt.
+        * platform/gtk/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Copied from LayoutTests/platform/gtk/fast/forms/thumbslider-no-parent-slider-expected.txt.
+        * platform/gtk/fast/forms/slider-padding-expected.png: Removed.
+        * platform/gtk/fast/forms/slider-padding-expected.txt: Removed.
+        * platform/gtk/fast/forms/slider-thumb-shared-style-expected.png: Removed.
+        * platform/gtk/fast/forms/slider-thumb-shared-style-expected.txt: Removed.
+        * platform/gtk/fast/forms/slider-thumb-stylability-expected.png: Removed.
+        * platform/gtk/fast/forms/slider-thumb-stylability-expected.txt: Removed.
+        * platform/gtk/fast/forms/slider-transformed-expected.txt: Removed.
+        * platform/gtk/fast/forms/thumbslider-no-parent-slider-expected.txt: Removed.
+        * platform/mac-leopard/fast/forms/range: Added.
+        * platform/mac-leopard/fast/forms/range-thumb-height-percentage-expected.png: Removed.
+        * platform/mac-leopard/fast/forms/range/range-thumb-height-percentage-expected.png: Copied from LayoutTests/platform/mac-leopard/fast/forms/range-thumb-height-percentage-expected.png.
+        * platform/mac-leopard/fast/forms/range/slider-padding-expected.png: Copied from LayoutTests/platform/mac-leopard/fast/forms/slider-padding-expected.png.
+        * platform/mac-leopard/fast/forms/range/slider-thumb-shared-style-expected.png: Copied from LayoutTests/platform/mac-leopard/fast/forms/slider-thumb-shared-style-expected.png.
+        * platform/mac-leopard/fast/forms/range/slider-thumb-stylability-expected.png: Copied from LayoutTests/platform/mac-leopard/fast/forms/slider-thumb-stylability-expected.png.
+        * platform/mac-leopard/fast/forms/slider-padding-expected.png: Removed.
+        * platform/mac-leopard/fast/forms/slider-thumb-shared-style-expected.png: Removed.
+        * platform/mac-leopard/fast/forms/slider-thumb-stylability-expected.png: Removed.
+        * platform/mac/fast/forms/input-appearance-range-expected.png: Removed.
+        * platform/mac/fast/forms/input-appearance-range-expected.txt: Removed.
+        * platform/mac/fast/forms/range: Added.
+        * platform/mac/fast/forms/range-thumb-height-percentage-expected.png: Removed.
+        * platform/mac/fast/forms/range-thumb-height-percentage-expected.txt: Removed.
+        * platform/mac/fast/forms/range/input-appearance-range-expected.png: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-range-expected.png.
+        * platform/mac/fast/forms/range/input-appearance-range-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/input-appearance-range-expected.txt.
+        * platform/mac/fast/forms/range/range-thumb-height-percentage-expected.png: Copied from LayoutTests/platform/mac/fast/forms/range-thumb-height-percentage-expected.png.
+        * platform/mac/fast/forms/range/range-thumb-height-percentage-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/range-thumb-height-percentage-expected.txt.
+        * platform/mac/fast/forms/range/slider-padding-expected.png: Copied from LayoutTests/platform/mac/fast/forms/slider-padding-expected.png.
+        * platform/mac/fast/forms/range/slider-padding-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/slider-padding-expected.txt.
+        * platform/mac/fast/forms/range/slider-thumb-shared-style-expected.png: Copied from LayoutTests/platform/mac/fast/forms/slider-thumb-shared-style-expected.png.
+        * platform/mac/fast/forms/range/slider-thumb-shared-style-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/slider-thumb-shared-style-expected.txt.
+        * platform/mac/fast/forms/range/slider-thumb-stylability-expected.png: Copied from LayoutTests/platform/mac/fast/forms/slider-thumb-stylability-expected.png.
+        * platform/mac/fast/forms/range/slider-thumb-stylability-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/slider-thumb-stylability-expected.txt.
+        * platform/mac/fast/forms/range/thumbslider-no-parent-slider-expected.png: Copied from LayoutTests/platform/mac/fast/forms/thumbslider-no-parent-slider-expected.png.
+        * platform/mac/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Copied from LayoutTests/platform/mac/fast/forms/thumbslider-no-parent-slider-expected.txt.
+        * platform/mac/fast/forms/slider-padding-expected.png: Removed.
+        * platform/mac/fast/forms/slider-padding-expected.txt: Removed.
+        * platform/mac/fast/forms/slider-thumb-shared-style-expected.png: Removed.
+        * platform/mac/fast/forms/slider-thumb-shared-style-expected.txt: Removed.
+        * platform/mac/fast/forms/slider-thumb-stylability-expected.png: Removed.
+        * platform/mac/fast/forms/slider-thumb-stylability-expected.txt: Removed.
+        * platform/mac/fast/forms/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/mac/fast/forms/thumbslider-no-parent-slider-expected.txt: Removed.
+        * platform/qt-mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/fast/forms/range: Added.
+        * platform/qt/fast/forms/range-thumb-height-percentage-expected.txt: Removed.
+        * platform/qt/fast/forms/range/range-thumb-height-percentage-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/range-thumb-height-percentage-expected.txt.
+        * platform/qt/fast/forms/range/slider-thumb-shared-style-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/slider-thumb-shared-style-expected.txt.
+        * platform/qt/fast/forms/range/slider-thumb-stylability-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/slider-thumb-stylability-expected.txt.
+        * platform/qt/fast/forms/range/thumbslider-no-parent-slider-expected.txt: Copied from LayoutTests/platform/qt/fast/forms/thumbslider-no-parent-slider-expected.txt.
+        * platform/qt/fast/forms/slider-thumb-shared-style-expected.txt: Removed.
+        * platform/qt/fast/forms/slider-thumb-stylability-expected.txt: Removed.
+        * platform/qt/fast/forms/thumbslider-no-parent-slider-expected.txt: Removed.
+        * platform/wk2/Skipped:
+
 2011-08-22  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: generate protocol externs API for the front-end compilation.

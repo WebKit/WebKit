@@ -327,6 +327,9 @@ fast/forms/onselect-textarea.html
 fast/forms/onselect-textfield.html
 fast/forms/option-mouseevents.html
 fast/forms/radio_checked_name.html
+fast/forms/range/slider-delete-while-dragging-thumb.html
+fast/forms/range/slider-mouse-events.html
+fast/forms/range/slider-onchange-event.html
 fast/forms/render-text-crash.html
 fast/forms/restore-selection-after-layout.html
 fast/forms/search-event-delay.html
@@ -341,9 +344,6 @@ fast/forms/select-popup-pagekeys.html
 fast/forms/select-script-onchange.html
 fast/forms/select-type-ahead-list-box-no-selection.html
 fast/forms/select-type-ahead-non-latin.html
-fast/forms/slider-delete-while-dragging-thumb.html
-fast/forms/slider-mouse-events.html
-fast/forms/slider-onchange-event.html
 fast/forms/tabbing-input-iframe.html
 fast/forms/text-input-event.html
 fast/forms/textarea-arrow-navigation.html
