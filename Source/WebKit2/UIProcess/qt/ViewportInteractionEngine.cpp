@@ -148,7 +148,7 @@ void ViewportInteractionEngine::panGestureCancelled()
 void ViewportInteractionEngine::panGestureEnded()
 {
     ViewportUpdateGuard guard(this);
-    animateContentPositionToBoundaries();
+    animateContentIntoBoundariesIfNeeded();
 }
 
 void ViewportInteractionEngine::pinchGestureStarted()
@@ -185,7 +185,7 @@ void ViewportInteractionEngine::pinchGestureEnded()
     {
         ViewportUpdateGuard guard(this);
         // FIXME: resume the engine after the animation.
-        animateContentScaleToBoundaries();
+        animateContentIntoBoundariesIfNeeded();
     }
     if (m_pinchStartScale != m_content->scale())
         emit commitScaleChange();
@@ -248,7 +248,13 @@ void ViewportInteractionEngine::updateContentPositionIfNeeded()
     // FIXME: if the item cannot be fully in viewport, and is not covering the viewport, push it back in view
 }
 
-void ViewportInteractionEngine::animateContentPositionToBoundaries()
+void ViewportInteractionEngine::animateContentIntoBoundariesIfNeeded()
+{
+    animateContentScaleIntoBoundariesIfNeeded();
+    animateContentPositionIntoBoundariesIfNeeded();
+}
+
+void ViewportInteractionEngine::animateContentPositionIntoBoundariesIfNeeded()
 {
     const QRectF contentGeometry = m_viewport->mapRectFromItem(m_content, m_content->boundingRect());
     QPointF newPos = contentGeometry.topLeft();
@@ -278,7 +284,7 @@ void ViewportInteractionEngine::animateContentPositionToBoundaries()
         m_content->setPos(newPos);
 }
 
-void ViewportInteractionEngine::animateContentScaleToBoundaries()
+void ViewportInteractionEngine::animateContentScaleIntoBoundariesIfNeeded()
 {
     const qreal currentScale = m_content->scale();
     const qreal boundedScale = qBound(m_constraints.minimumScale, currentScale, m_constraints.maximumScale);

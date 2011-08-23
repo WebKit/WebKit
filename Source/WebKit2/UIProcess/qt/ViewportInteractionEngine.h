@@ -78,8 +78,9 @@ private:
     void updateContentScaleIfNeeded();
     void updateContentPositionIfNeeded();
 
-    void animateContentPositionToBoundaries();
-    void animateContentScaleToBoundaries();
+    void animateContentIntoBoundariesIfNeeded();
+    void animateContentPositionIntoBoundariesIfNeeded();
+    void animateContentScaleIntoBoundariesIfNeeded();
 
     void scaleContent(const QPointF& centerInContentCoordinate, qreal scale);
 

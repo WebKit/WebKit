@@ -1,3 +1,23 @@
+2011-08-23  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Qt][WK2] ViewportInteractionEngine: the position of the content is not corrected when scaling the page manually
+        https://bugs.webkit.org/show_bug.cgi?id=66672
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add the method animateContentIntoBoundariesIfNeeded() to move the content back into both scale and position boundaries.
+        This method is now used as the entry point for animations in order to avoid bugs regarding scale or position.
+
+        The existing animation methods were renamed accordingly for clarity and consistency with the updateContent methods.
+
+        * UIProcess/qt/ViewportInteractionEngine.cpp:
+        (WebKit::ViewportInteractionEngine::panGestureEnded):
+        (WebKit::ViewportInteractionEngine::pinchGestureEnded):
+        (WebKit::ViewportInteractionEngine::animateContentIntoBoundariesIfNeeded):
+        (WebKit::ViewportInteractionEngine::animateContentPositionIntoBoundariesIfNeeded):
+        (WebKit::ViewportInteractionEngine::animateContentScaleIntoBoundariesIfNeeded):
+        * UIProcess/qt/ViewportInteractionEngine.h:
+
 2011-08-22  Oliver Hunt  <oliver@apple.com>
 
         Delay GC triggered NP object destruction to the next runloop cycle
