@@ -1,5 +1,19 @@
 2011-08-23  Alexandru Chiculita  <achicu@adobe.com>
 
+        Text overlaps with the floats
+        https://bugs.webkit.org/show_bug.cgi?id=66671
+
+        Reviewed by David Hyatt.
+
+        * fast/block/float/fit_line_below_floats.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/fast/block/float/fit_line_below_floats-expected.png: Added.
+        * platform/mac/fast/block/float/fit_line_below_floats-expected.txt: Added.
+        * platform/qt/Skipped:
+
+2011-08-23  Alexandru Chiculita  <achicu@adobe.com>
+
         [CSSRegions] RenderFlowThread layout should use the attached region sizes
         https://bugs.webkit.org/show_bug.cgi?id=66143
 

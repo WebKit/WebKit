@@ -1829,12 +1829,16 @@ void LineWidth::fitBelowFloats()
     int floatLogicalBottom;
     int lastFloatLogicalBottom = m_block->logicalHeight();
     float newLineWidth = m_availableWidth;
+    float newLineLeft = m_left;
+    float newLineRight = m_right;
     while (true) {
         floatLogicalBottom = m_block->nextFloatLogicalBottomBelow(lastFloatLogicalBottom);
         if (!floatLogicalBottom)
             break;
 
-        newLineWidth = m_block->availableLogicalWidthForLine(floatLogicalBottom, m_isFirstLine);
+        newLineLeft = m_block->logicalLeftOffsetForLine(floatLogicalBottom, m_isFirstLine);
+        newLineRight = m_block->logicalRightOffsetForLine(floatLogicalBottom, m_isFirstLine);
+        newLineWidth = max(0.0f, newLineRight - newLineLeft);
         lastFloatLogicalBottom = floatLogicalBottom;
         if (newLineWidth >= m_uncommittedWidth)
             break;
@@ -1843,6 +1847,8 @@ void LineWidth::fitBelowFloats()
     if (newLineWidth > m_availableWidth) {
         m_block->setLogicalHeight(lastFloatLogicalBottom);
         m_availableWidth = newLineWidth + m_overhangWidth;
+        m_left = newLineLeft;
+        m_right = newLineRight;
     }
 }
 

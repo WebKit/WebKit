@@ -1,5 +1,21 @@
 2011-08-23  Alexandru Chiculita  <achicu@adobe.com>
 
+        Text overlaps with the floats
+        https://bugs.webkit.org/show_bug.cgi?id=66671
+
+        The problem was that LineWidth::fitBelowFloats is not updating the m_left and m_right fields. 
+        Next time LineWidth::shrinkAvailableWidthForNewFloatIfNeeded was called the width was recalculated 
+        using the old values, making the line bigger.
+
+        Reviewed by David Hyatt.
+
+        Test: fast/block/float/fit_line_below_floats.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::fitBelowFloats):
+
+2011-08-23  Alexandru Chiculita  <achicu@adobe.com>
+
         [CSSRegions] RenderFlowThread layout should use the attached region sizes
         https://bugs.webkit.org/show_bug.cgi?id=66143
 

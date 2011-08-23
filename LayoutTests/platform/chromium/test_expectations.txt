@@ -3674,6 +3674,9 @@ BUGWK66388 WIN LINUX : fast/repaint/line-flow-with-floats-in-regions.html = IMAG
 BUGWK66338 MAC : fast/repaint/background-scaling.html = IMAGE
 BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
 
+// Needs new baseline.
+BUGWK66671 : fast/block/float/fit_line_below_floats.html = IMAGE+TEXT
+
 BUGWK66394 LINUX DEBUG : fast/canvas/webgl/data-view-crash.html = PASS CRASH
 
 BUGWK66417 WIN MAC : fast/text/midword-break-before-surrogate-pair-2.html = IMAGE+TEXT
