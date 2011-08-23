@@ -40,9 +40,6 @@ class WebFileSystemCallbacks;
 class WebFileWriter;
 class WebFileWriterClient;
 
-// FIXME(zelidrag): Remove this define once Chromium side catches up.
-#define WEB_FILE_SYSTEM_TYPE_EXTERNAL
-
 class WebFileSystem {
 public:
     enum Type {

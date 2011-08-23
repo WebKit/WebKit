@@ -47,9 +47,6 @@
 typedef void *HANDLE;
 #endif
 
-// FIXME: remove after rolling deps
-#define WEBKIT_USE_MONOTONIC_CLOCK_FOR_TIMER_SCHEDULING
-
 namespace WebKit {
 
 class WebApplicationCacheHost;
