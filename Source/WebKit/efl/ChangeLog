@@ -1,3 +1,23 @@
+2011-08-22  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Implement FrameLoaderClient::dispatchDidClearWindowObjectInWorld
+        https://bugs.webkit.org/show_bug.cgi?id=66685
+
+        Reviewed by Kent Tamura.
+
+        Implement dispatchDidClearWindowObjectInWorld, as it is needed by
+        DumpRenderTree to, among other things, properly install the event
+        sender in the window object.
+
+        This implementation works by emitting a "window,object,cleared" signal
+        with a private struct containing the required information (context,
+        window object and frame).
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld):
+        * WebCoreSupport/FrameLoaderClientEfl.h:
+        * ewk/ewk_private.h:
+
 2011-08-20  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [EFL] Fix and update doxygen documentation for ewk_view.

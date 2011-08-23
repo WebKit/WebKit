@@ -26,6 +26,7 @@
 #ifndef ewk_private_h
 #define ewk_private_h
 
+#include "APICast.h"
 #include "BackForwardListImpl.h"
 #include "EWebKit.h"
 #include "Frame.h"
@@ -52,6 +53,12 @@ struct PopupMenuClient;
 struct ContextMenu;
 struct ContextMenuItem;
 }
+
+struct Ewk_Window_Object_Cleared_Event {
+    JSContextRef context;
+    JSObjectRef windowObject;
+    Evas_Object* frame;
+};
 
 void ewk_view_ready(Evas_Object *o);
 void ewk_view_input_method_state_set(Evas_Object *o, Eina_Bool active);

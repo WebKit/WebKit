@@ -142,7 +142,6 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual void redirectDataToPlugin(Widget* pluginWidget);
     virtual PassRefPtr<Widget> createJavaAppletWidget(const IntSize&, HTMLAppletElement*, const KURL& baseURL, const WTF::Vector<String>& paramNames, const WTF::Vector<String>& paramValues);
     virtual String overrideMediaType() const;
-    virtual void windowObjectCleared();
     virtual void documentElementAvailable();
 
     virtual void didPerformFirstNavigation() const;

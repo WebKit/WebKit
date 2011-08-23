@@ -35,6 +35,7 @@
 #include "config.h"
 #include "FrameLoaderClientEfl.h"
 
+#include "APICast.h"
 #include "DocumentLoader.h"
 #include "EWebKit.h"
 #include "FormState.h"
@@ -189,11 +190,6 @@ void FrameLoaderClientEfl::dispatchDidChangeBackForwardIndex() const
 }
 
 void FrameLoaderClientEfl::dispatchDidAddBackForwardItem(WebCore::HistoryItem*) const
-{
-    notImplemented();
-}
-
-void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld*)
 {
     notImplemented();
 }
@@ -426,9 +422,24 @@ String FrameLoaderClientEfl::overrideMediaType() const
     return String();
 }
 
-void FrameLoaderClientEfl::windowObjectCleared()
+void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* world)
 {
-    notImplemented();
+    if (world != mainThreadNormalWorld())
+        return;
+
+    Frame* coreFrame = ewk_frame_core_get(m_frame);
+    ASSERT(f);
+
+    Settings* settings = coreFrame->settings();
+    if (!settings || !settings->isJavaScriptEnabled())
+        return;
+
+    Ewk_Window_Object_Cleared_Event event;
+    event.context = toGlobalRef(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
+    event.windowObject = toRef(coreFrame->script()->globalObject(mainThreadNormalWorld()));
+    event.frame = m_frame;
+
+    evas_object_smart_callback_call(m_view, "window,object,cleared", &event);
 }
 
 void FrameLoaderClientEfl::documentElementAvailable()
