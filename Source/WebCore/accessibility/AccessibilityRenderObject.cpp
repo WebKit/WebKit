@@ -1241,17 +1241,17 @@ void AccessibilityRenderObject::elementsFromAttribute(Vector<Element*>& elements
     }
 }
     
-void AccessibilityRenderObject::ariaLabelledByElements(Vector<Element*>& elements) const
+void AccessibilityRenderObject::ariaLabeledByElements(Vector<Element*>& elements) const
 {
-    elementsFromAttribute(elements, aria_labelledbyAttr);
+    elementsFromAttribute(elements, aria_labeledbyAttr);
     if (!elements.size())
-        elementsFromAttribute(elements, aria_labeledbyAttr);
+        elementsFromAttribute(elements, aria_labelledbyAttr);
 }
    
-String AccessibilityRenderObject::ariaLabelledByAttribute() const
+String AccessibilityRenderObject::ariaLabeledByAttribute() const
 {
     Vector<Element*> elements;
-    ariaLabelledByElements(elements);
+    ariaLabeledByElements(elements);
     
     return accessibilityDescriptionForElements(elements);
 }
@@ -1300,7 +1300,6 @@ String AccessibilityRenderObject::title() const
     if (!node)
         return String();
     
-
     const AtomicString& title = getAttribute(titleAttr);
     if (!title.isEmpty())
         return title;
@@ -1591,9 +1590,9 @@ void AccessibilityRenderObject::linkedUIElements(AccessibilityChildrenVector& li
 
 bool AccessibilityRenderObject::hasTextAlternative() const
 {
-    // ARIA: section 2A, bullet #3 says if aria-labelledby or aria-label appears, it should
+    // ARIA: section 2A, bullet #3 says if aria-labeledby or aria-label appears, it should
     // override the "label" element association.
-    if (!ariaLabelledByAttribute().isEmpty() || !getAttribute(aria_labelAttr).isEmpty())
+    if (!ariaLabeledByAttribute().isEmpty() || !getAttribute(aria_labelAttr).isEmpty())
         return true;
         
     return false;   

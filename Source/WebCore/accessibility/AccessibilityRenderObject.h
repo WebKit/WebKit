@@ -185,7 +185,7 @@ public:
     virtual PlainTextRange selectedTextRange() const;
     virtual VisibleSelection selection() const;
     virtual String stringValue() const;
-    virtual String ariaLabelledByAttribute() const;
+    virtual String ariaLabeledByAttribute() const;
     virtual String title() const;
     virtual String ariaDescribedByAttribute() const;
     virtual String accessibilityDescription() const;
@@ -266,7 +266,7 @@ protected:
     mutable bool m_childrenDirty;
     
     void setRenderObject(RenderObject* renderer) { m_renderer = renderer; }
-    void ariaLabelledByElements(Vector<Element*>& elements) const;
+    void ariaLabeledByElements(Vector<Element*>& elements) const;
     bool needsToUpdateChildren() const { return m_childrenDirty; }
     
     virtual bool isDetached() const { return !m_renderer; }
