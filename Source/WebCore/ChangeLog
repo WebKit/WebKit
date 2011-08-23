@@ -1,3 +1,30 @@
+2011-08-23  Chang Shu  <cshu@webkit.org>
+
+        Added support for momentarily revealing last typed character in password input.
+        Code change was partially based on Apple's iOS code and Samuel Nevala's work.
+        https://bugs.webkit.org/show_bug.cgi?id=32509
+
+        Reviewed by Alexey Proskuryakov.
+
+        * editing/InsertIntoTextNodeCommand.cpp:
+        (WebCore::InsertIntoTextNodeCommand::doApply):
+        * rendering/RenderText.cpp:
+        (WebCore::SecureTextTimer::SecureTextTimer):
+        (WebCore::SecureTextTimer::restartWithNewText):
+        (WebCore::SecureTextTimer::invalidate):
+        (WebCore::SecureTextTimer::lastTypedCharacterOffset):
+        (WebCore::SecureTextTimer::fired):
+        (WebCore::RenderText::willBeDestroyed):
+        (WebCore::RenderText::setTextInternal):
+        (WebCore::RenderText::secureText):
+        (WebCore::RenderText::momentarilyRevealLastTypedCharacter):
+        * rendering/RenderText.h:
+        (WebCore::RenderText::isSecure):
+        * testing/Internals.cpp:
+        (WebCore::Internals::setPasswordEchoEnabled): Fixed some silly coding in Internals.
+        (WebCore::Internals::setPasswordEchoDurationInSeconds):
+        (WebCore::Internals::reset):
+
 2011-08-23  Dmitry Lomov  <Dmitry Lomov (dslomov@google.com)>
 
         https://bugs.webkit.org/show_bug.cgi?id=66751 

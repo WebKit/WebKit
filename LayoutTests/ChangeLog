@@ -1,3 +1,16 @@
+2011-08-23  Chang Shu  <cshu@webkit.org>
+
+        Added support for momentarily revealing last typed character in password input.
+        Code change was partially based on Apple's iOS code and Samuel Nevala's work.
+        https://bugs.webkit.org/show_bug.cgi?id=32509
+
+        Reviewed by Alexey Proskuryakov.
+
+        Updated failed expected files.
+
+        * editing/input/password-echo-passnode-expected.txt:
+        * editing/input/password-echo-passnode2-expected.txt:
+
 2011-08-23  Ben Wells  <benwells@chromium.org>
 
         Rebaselines for bug 66442 (skia webkit-transform breaks webkit-mask)

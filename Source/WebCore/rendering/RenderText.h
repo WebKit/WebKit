@@ -115,6 +115,9 @@ public:
 
     bool containsReversedText() const { return m_containsReversedText; }
 
+    bool isSecure() const { return style()->textSecurity() != TSNONE; }
+    void momentarilyRevealLastTypedCharacter(unsigned lastTypedCharacterOffset);
+
     InlineTextBox* findNextInlineTextBox(int offset, int& pos) const;
 
     bool allowTabs() const { return !style()->collapseWhiteSpace(); }
@@ -158,6 +161,7 @@ private:
     void updateNeedsTranscoding();
 
     inline void transformText(String&) const;
+    void secureText(UChar mask);
 
     float m_minWidth; // here to minimize padding in 64-bit.
 
