@@ -57,6 +57,9 @@ JSDOMWindowShell::~JSDOMWindowShell()
 
 void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)
 {
+    // Replacing JSDOMWindow via telling JSDOMWindowShell to use the same DOMWindow it already uses makes no sense,
+    // so we'd better never try to.
+    ASSERT(!m_window || domWindow.get() != m_window->impl());
     // Explicitly protect the global object's prototype so it isn't collected
     // when we allocate the global object. (Once the global object is fully
     // constructed, it can mark its own prototype.)

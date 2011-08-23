@@ -1,3 +1,32 @@
+2011-08-22  Alexey Proskuryakov  <ap@apple.com>
+
+        showModalDialog does not correctly return the defined returnValue in case domain relaxing is used
+        https://bugs.webkit.org/show_bug.cgi?id=53191
+        <rdar://problem/8629478>
+
+        Reviewed by Geoff Garen.
+
+        Cannot test domain relaxing, we only have 127.0.0.1 and localhost.
+
+        * bindings/js/JSDOMWindowCustom.cpp: (WebCore::JSDOMWindow::getOwnPropertySlot):
+        Added a FIXME about a difference with Firefox.
+
+        (WebCore::DialogHandler::DialogHandler):
+        (WebCore::DialogHandler::dialogCreated):
+        (WebCore::DialogHandler::returnValue):
+        Changed to fetch returnValue from the global object that's in the frame when the dialog is
+        dismissed. A dialog can navigate itself, and it also creates a new JSDOMWindow on first load
+        if the origin doesn't match opener origin (which the case with domain relaxing).
+        Re-added a security check for returnValue that got lost in r73829, so that we don't send the
+        result across origins. This matches Firefox.
+
+        * bindings/js/JSDOMWindowShell.cpp: (WebCore::JSDOMWindowShell::setWindow): Added an assertion
+        against a very confusing case that should no longer occur.
+
+        * page/Frame.cpp: (WebCore::Frame::pageDestroyed): Don't clear the window shell, it doesn't
+        seem necessary, but prevents DialogHandler from fetching the return value. Added a keepAlive
+        call to avoid changing life support timer behavior in this patch.
+
 2011-08-22  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Chris Fleizach.

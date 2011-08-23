@@ -731,6 +731,9 @@ void Frame::clearFormerDOMWindow(DOMWindow* window)
 
 void Frame::pageDestroyed()
 {
+    // FIXME: Rename this function, since it's called not only from Page destructor, but in several other cases.
+    // This cleanup is needed whenever we remove a frame from page.
+
     if (Frame* parent = tree()->parent())
         parent->loader()->checkLoadComplete();
 
@@ -749,7 +752,10 @@ void Frame::pageDestroyed()
     if (page() && page()->focusController()->focusedFrame() == this)
         page()->focusController()->setFocusedFrame(0);
 
-    script()->clearWindowShell();
+    // FIXME: Removing keepalive will make behavior better match Firefox.
+    // Some code that used to be here indirectly triggered keepalive, and we don't want to change behavior at the moment.
+    keepAlive();
+
     script()->clearScriptObjects();
     script()->updatePlatformScriptObjects();
 

@@ -127,7 +127,9 @@ bool JSDOMWindow::getOwnPropertySlot(ExecState* exec, const Identifier& property
 
     const HashEntry* entry;
 
-    // We don't want any properties other than "close" and "closed" on a closed window.
+    // We don't want any properties other than "close" and "closed" on a frameless window (i.e. one whose page got closed,
+    // or whose iframe got removed).
+    // FIXME: This doesn't fully match Firefox, which allows at least toString in addition to those.
     if (!impl()->frame()) {
         // The following code is safe for cross-domain and same domain use.
         // It ignores any custom properties that might be set on the DOMWindow (including a custom prototype).
@@ -644,7 +646,6 @@ class DialogHandler {
 public:
     explicit DialogHandler(ExecState* exec)
         : m_exec(exec)
-        , m_globalObject(0)
     {
     }
 
@@ -653,25 +654,27 @@ public:
 
 private:
     ExecState* m_exec;
-    JSDOMWindow* m_globalObject;
+    RefPtr<Frame> m_frame;
 };
 
 inline void DialogHandler::dialogCreated(DOMWindow* dialog)
 {
+    m_frame = dialog->frame();
     // FIXME: This looks like a leak between the normal world and an isolated
     //        world if dialogArguments comes from an isolated world.
-    m_globalObject = toJSDOMWindow(dialog->frame(), normalWorld(m_exec->globalData()));
+    JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(m_exec->globalData()));
     if (JSValue dialogArguments = m_exec->argument(1))
-        m_globalObject->putDirect(m_exec->globalData(), Identifier(m_exec, "dialogArguments"), dialogArguments);
+        globalObject->putDirect(m_exec->globalData(), Identifier(m_exec, "dialogArguments"), dialogArguments);
 }
 
 inline JSValue DialogHandler::returnValue() const
 {
-    if (!m_globalObject)
+    JSDOMWindow* globalObject = toJSDOMWindow(m_frame.get(), normalWorld(m_exec->globalData()));
+    if (!globalObject)
         return jsUndefined();
     Identifier identifier(m_exec, "returnValue");
     PropertySlot slot;
-    if (!m_globalObject->JSGlobalObject::getOwnPropertySlot(m_exec, identifier, slot))
+    if (!globalObject->getOwnPropertySlot(m_exec, identifier, slot))
         return jsUndefined();
     return slot.getValue(m_exec, identifier);
 }
