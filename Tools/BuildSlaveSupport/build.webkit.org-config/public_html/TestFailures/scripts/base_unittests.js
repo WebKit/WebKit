@@ -167,6 +167,21 @@ test("CallbackIterator", 22, function() {
     ok(!iterator.hasPrevious())
 });
 
+test("filterDictionary", 3, function() {
+    var dictionary = {
+        'foo': 43,
+        'bar': 11
+    }
+    deepEqual(base.filterDictionary(dictionary, function() { return true; }), {
+        "foo": 43,
+        "bar": 11
+    });
+    deepEqual(base.filterDictionary(dictionary, function() { return false; }), { });
+    deepEqual(base.filterDictionary(dictionary, function(key) { return key == 'foo'; }), {
+        "foo": 43
+    });
+});
+
 test("filterTree", 2, function() {
     var tree = {
         'path': {

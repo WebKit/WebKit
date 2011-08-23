@@ -31,8 +31,8 @@ $(function() {
             fetchResultsURLs: results.fetchResultsURLs
         });
 
-        var failureByTest = results.expectedOrUnexpectedFailuresByTest(model.state.resultsByBuilder);
-        var controller = new contollers.ResultsDetails(resultsView, failureByTest);
+        var failuresByTest = results.expectedOrUnexpectedFailuresByTest(model.state.resultsByBuilder);
+        var controller = new controllers.ResultsDetails(resultsView, failuresByTest);
         document.body.appendChild(resultsView);
     });
 });

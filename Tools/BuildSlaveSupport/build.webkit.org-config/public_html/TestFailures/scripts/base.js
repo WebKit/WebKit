@@ -75,6 +75,18 @@ base.uniquifyArray = function(array)
     return result;
 };
 
+base.filterDictionary = function(dictionary, predicate)
+{
+    var result = {};
+
+    for (var key in dictionary) {
+        if (predicate(key))
+            result[key] = dictionary[key];
+    }
+
+    return result;
+};
+
 base.filterTree = function(tree, isLeaf, predicate)
 {
     var filteredTree = {};

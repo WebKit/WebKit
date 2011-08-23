@@ -138,6 +138,11 @@ ui.notifications.TestFailures = base.extends(ui.notifications.Failure, {
         this.appendChild(new ui.actions.List([
             new ui.actions.Examine()
         ]));
+        this._testNameList = [];
+    },
+    testNameList: function()
+    {
+        return this._testNameList;
     },
     containsFailureAnalysis: function(failureAnalysis)
     {
@@ -149,6 +154,7 @@ ui.notifications.TestFailures = base.extends(ui.notifications.Failure, {
     {
         if (this.containsFailureAnalysis(failureAnalysis))
             return;
+        this._testNameList.push(failureAnalysis.testName);
         return this._effects.appendChild(new ui.notifications.FailingTest(failureAnalysis));
     },
     addCommitData: function(commitData)

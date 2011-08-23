@@ -23,11 +23,11 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-var contollers = contollers || {};
+var controllers = controllers || {};
 
 (function(){
 
-contollers.ResultsDetails = base.extends(Object, {
+controllers.ResultsDetails = base.extends(Object, {
     init: function(view, resultsByTest)
     {
         this._view = view;
@@ -71,6 +71,76 @@ contollers.ResultsDetails = base.extends(Object, {
             'testName': testName,
             'builderName': builderName
         });
+    }
+});
+
+controllers.UnexpectedFailures = base.extends(Object, {
+    init: function(view)
+    {
+        this._view = view;
+        this._testFailures = new base.UpdateTracker();
+    },
+    update: function(failureAnalysis)
+    {
+        var key = failureAnalysis.newestPassingRevision + "+" + failureAnalysis.oldestFailingRevision;
+        var failure = this._testFailures.get(key);
+        if (!failure) {
+            failure = new ui.notifications.TestFailures();
+            model.commitDataListForRevisionRange(failureAnalysis.newestPassingRevision + 1, failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
+                failure.addCommitData(commitData);
+            });
+            this._view.add(failure);
+            $(failure).bind('examine', function() {
+                this.onExamine(failure);
+            }.bind(this));
+        }
+        failure.addFailureAnalysis(failureAnalysis);
+        this._testFailures.update(key, failure);
+    },
+    purge: function() {
+        this._testFailures.purge(function(failure) {
+            failure.dismiss();
+        });
+    },
+    onExamine: function(failures)
+    {
+        var resultsView = new ui.results.View({
+            fetchResultsURLs: results.fetchResultsURLs
+        });
+
+        var testNameList = failures.testNameList();
+        var failuresByTest = results.unexpectedFailuresByTest(model.state.resultsByBuilder)
+        var controller = new controllers.ResultsDetails(resultsView, base.filterDictionary(failuresByTest, function(key) {
+            return testNameList.indexOf(testNameList) != -1;
+        }));
+
+        // FIXME: This doesn't belong here. Also, we need some way to call controller.dismiss().
+        document.body.appendChild(resultsView);
+    }
+});
+
+controllers.FailingBuilders = base.extends(Object, {
+    init: function(view)
+    {
+        this._view = view;
+        this._notification = null;
+    },
+    update: function(builderNameList)
+    {
+        if (builderNameList.length == 0) {
+            if (this._notification) {
+                this._notification.dismiss();
+                this._notification = null;
+            }
+            return;
+        }
+        if (!this._notification) {
+            this._notification = new ui.notifications.BuildersFailing();
+            this._view.add(this._notification);
+        }
+        // FIXME: We should provide regression ranges for the failing builders.
+        // This doesn't seem to happen often enough to worry too much about that, however.
+        this._notification.setFailingBuilders(builderNameList);
     }
 });
 

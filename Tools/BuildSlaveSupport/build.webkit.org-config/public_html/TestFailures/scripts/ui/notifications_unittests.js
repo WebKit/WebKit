@@ -90,7 +90,7 @@ test('SuspiciousCommit', 2, function() {
     equal(suspiciousCommit.innerHTML, '<div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul>');
 });
 
-test('TestFailures', 7, function() {
+test('TestFailures', 8, function() {
     var testFailures = new ui.notifications.TestFailures();
     equal(testFailures.tagName, 'LI');
     equal(testFailures.innerHTML,
@@ -134,6 +134,7 @@ test('TestFailures', 7, function() {
         '<ul class="actions">' +
             '<li><button>Examine</button></li>' +
         '</ul>');
+    deepEqual(testFailures.testNameList(), ['test']);
     var time = new Date();
     time.setMinutes(time.getMinutes() - 10);
     testFailures.addCommitData({revision: 1, time: time, title: "title", author: "author", reviewer: "reviewer"});

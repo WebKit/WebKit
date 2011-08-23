@@ -50,7 +50,7 @@ test("View", 6, function() {
     var resultsView = new ui.results.View({
         fetchResultsURLs: $.noop
     });
-    var controller = new contollers.ResultsDetails(resultsView, kExampleResultsByTest);
+    var controller = new controllers.ResultsDetails(resultsView, kExampleResultsByTest);
     controller.showTest("scrollbars/custom-scrollbar-with-incomplete-style.html");
     equal(resultsView.currentTestName(), "scrollbars/custom-scrollbar-with-incomplete-style.html");
     equal(resultsView.currentBuilderName(), "Mock Builder");

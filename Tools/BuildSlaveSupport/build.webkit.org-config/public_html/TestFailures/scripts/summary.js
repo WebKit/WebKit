@@ -25,53 +25,26 @@
 
 (function() {
 
-var g_actions = new ui.notifications.Stream();
-var g_info = new ui.notifications.Stream();
+var g_info = null;
 
 var g_updateTimerId = 0;
-var g_testFailures = new base.UpdateTracker();
 var g_buildersFailing = null;
+
+var g_unexpectedFailures = null;
+var g_failingBuilders = null;
 
 function update()
 {
     // FIXME: This should be a button with a progress element.
-    var updating = new ui.notifications.Info("Updating ...");
+    var updating = new ui.notifications.Info('Updating ...');
+
     g_info.add(updating);
 
-    builders.buildersFailingStepRequredForTestCoverage(function(builderNameList) {
-        if (builderNameList.length == 0) {
-            if (g_buildersFailing) {
-                g_buildersFailing.dismiss();
-                g_buildersFailing = null;
-            }
-            return;
-        }
-        if (!g_buildersFailing) {
-            g_buildersFailing = new ui.notifications.BuildersFailing();
-            g_info.add(g_buildersFailing);
-        }
-        // FIXME: We should provide regression ranges for the failing builders.
-        // This doesn't seem to happen often enough to worry too much about that, however.
-        g_buildersFailing.setFailingBuilders(builderNameList);
-    });
+    builders.buildersFailingStepRequredForTestCoverage(g_failingBuilders.update.bind(g_failingBuilders));
 
     base.callInParallel([model.updateRecentCommits, model.updateResultsByBuilder], function() {
-        model.analyzeUnexpectedFailures(function(failureAnalysis) {
-            var key = failureAnalysis.newestPassingRevision + "+" + failureAnalysis.oldestFailingRevision;
-            var failure = g_testFailures.get(key);
-            if (!failure) {
-                failure = new ui.notifications.TestFailures();
-                model.commitDataListForRevisionRange(failureAnalysis.newestPassingRevision + 1, failureAnalysis.oldestFailingRevision).forEach(function(commitData) {
-                    failure.addCommitData(commitData);
-                });
-                g_actions.add(failure);
-            }
-            failure.addFailureAnalysis(failureAnalysis);
-            g_testFailures.update(key, failure);
-        }, function() {
-            g_testFailures.purge(function(failure) {
-                failure.dismiss();
-            });
+        model.analyzeUnexpectedFailures(g_unexpectedFailures.update.bind(g_unexpectedFailures), function() {
+            g_unexpectedFailures.purge();
             updating.dismiss();
         });
     });
@@ -79,11 +52,21 @@ function update()
 
 $(document).ready(function() {
     g_updateTimerId = window.setInterval(update, config.kUpdateFrequency);
-    document.body.insertBefore(g_actions, document.body.firstChild);
+
+    var actions = new ui.notifications.Stream();
+    g_unexpectedFailures = new controllers.UnexpectedFailures(actions);
+
+    g_info = new ui.notifications.Stream();
+    g_failingBuilders = new controllers.FailingBuilders(g_info);
+
+    document.body.insertBefore(actions, document.body.firstChild);
     document.body.insertBefore(g_info, document.body.firstChild);
-    var button = document.body.insertBefore(document.createElement("button"), document.body.firstChild);
+
+    // FIXME: This should be an Action object.
+    var button = document.body.insertBefore(document.createElement('button'), document.body.firstChild);
     button.addEventListener("click", update);
     button.textContent = 'update';
+
     update();
 });
 

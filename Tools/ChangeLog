@@ -1,5 +1,28 @@
 2011-08-23  Adam Barth  <abarth@webkit.org>
 
+        garden-o-matic summary should be able to examine failures
+        https://bugs.webkit.org/show_bug.cgi?id=66748
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch refactors a bunch of code from summary.js to independent
+        controllers in controllers.js.  This patch also contains the first
+        iteration of binding the "examine" event to a the behavior showing the
+        details view for the tests.  There's more work to do here to make this
+        work properly (and elegantly), but this patch is a start.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/base_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers/rebaseline.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/summary.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/results_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary.html:
+
+2011-08-23  Adam Barth  <abarth@webkit.org>
+
         webkitpy/common/config/build.py shouldn't mention non-existant Android directory
         https://bugs.webkit.org/show_bug.cgi?id=66737
 
