@@ -1,4 +1,3 @@
-CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: application
 Tests resource-related methods of WebInspector extension API
 
 
@@ -9,38 +8,38 @@ page resources:
 {
     0 : {
         0 : {
-            url : .../extensions-resources.html
-            type : "document"
+            url : .../abe.png
+            type : "image"
             getContent : <function>
             setContent : <function>
         }
         1 : {
-            url : .../extensions-test.js
-            type : "script"
-            getContent : <function>
-            setContent : <function>
-        }
-        2 : {
-            url : .../test-script.js
-            type : "script"
-            getContent : <function>
-            setContent : <function>
-        }
-        3 : {
-            url : .../inspector-test.js
-            type : "script"
-            getContent : <function>
-            setContent : <function>
-        }
-        4 : {
             url : .../audits-style1.css
             type : "stylesheet"
             getContent : <function>
             setContent : <function>
         }
+        2 : {
+            url : .../extensions-resources.html
+            type : "document"
+            getContent : <function>
+            setContent : <function>
+        }
+        3 : {
+            url : .../extensions-test.js
+            type : "script"
+            getContent : <function>
+            setContent : <function>
+        }
+        4 : {
+            url : .../inspector-test.js
+            type : "script"
+            getContent : <function>
+            setContent : <function>
+        }
         5 : {
-            url : .../abe.png
-            type : "image"
+            url : .../test-script.js
+            type : "script"
             getContent : <function>
             setContent : <function>
         }
@@ -57,7 +56,7 @@ RUNNING TEST: extension_testGetResourceContent
 }
 RUNNING TEST: extension_testOnContentCommitted
 log: Extension server error: Operation failed: Resource is not editable
-content committed for resource file:///usr/local/google/home/caseq/src/chromium/src/third_party/WebKit/LayoutTests/inspector/extensions/resources/audits-style1.css (type: stylesheet), new content: div.test { width: 220px; height: 42px; }
+content committed for resource .../audits-style1.css (type: stylesheet), new content: div.test { width: 220px; height: 42px; }
 RUNNING TEST: extension_testOnResourceAdded
 resource added:
 {

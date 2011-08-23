@@ -1,7 +1,7 @@
 function trimURL(url)
 {
     if (/^data:/.test(url))
-        return url.replace(/;.*$/, "...");
+        return url.replace(/,.*$/, "...");
     return url.replace(/.*\//, ".../");
 }
 

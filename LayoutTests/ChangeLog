@@ -1,5 +1,14 @@
 2011-08-23  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed test fix following r93605.
+
+        * http/tests/inspector/resources/extension-main.js:
+        (trimURL):
+        * inspector/extensions/extensions-resources-expected.txt:
+        * inspector/extensions/extensions-resources.html:
+
+2011-08-23  Andrey Kosyakov  <caseq@chromium.org>
+
         Web Inspector: [Extensions API] provide access to page resources
         https://bugs.webkit.org/show_bug.cgi?id=66767
 

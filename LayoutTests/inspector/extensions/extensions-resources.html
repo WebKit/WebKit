@@ -106,7 +106,7 @@ function extension_testOnResourceAdded(nextTest)
 function addResource()
 {
     var script = document.createElement("script");
-    script.src = "data:application/javascript;function test_func(){}";
+    script.src = "data:application/javascript,function test_func(){}";
     document.head.appendChild(script);
 }
 
