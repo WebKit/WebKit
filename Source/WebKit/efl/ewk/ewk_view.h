@@ -40,6 +40,7 @@
  *  - "icon,received", void: main frame received an icon.
  *  - "inputmethod,changed", Eina_Bool: reports that input method was changed and
  *    it gives a boolean value whether it's enabled or not as an argument.
+ *  - "js,windowobject,clear", void: Report that the JS window object has been cleared.
  *  - "link,hover,in", const char *link[2]: reports mouse is over a link.
  *    It gives the url in link[0] and link's title in link[1] as an argument.
  *  - "link,hover,out", void: reports mouse moved out from a link.
@@ -85,6 +86,7 @@
 
 #include "ewk_frame.h"
 #include "ewk_history.h"
+#include "ewk_js.h"
 #include "ewk_window_features.h"
 
 #include <Evas.h>
@@ -2175,6 +2177,18 @@ EAPI Eina_Bool ewk_view_mode_set(Evas_Object *o, Ewk_View_Mode view_mode);
  * @see ewk_view_mode_set()
  */
 EAPI Ewk_View_Mode ewk_view_mode_get(Evas_Object *o);
+
+/**
+ * Creates a JS object named @a obj_name as property of the window object. This should be called on a callback connectedto the
+ * js,windowobject,clear signal.
+ *
+ * @param o view.
+ * @param obj object that will be added(see: @a ewk_js_object_new).
+ * @param obj_name name of the object.
+ *
+ * @return @c EINA_TRUE if object was added, @c EINA_FALSE if not.
+ */
+EAPI Eina_Bool ewk_view_js_object_add(Evas_Object *o, Ewk_JS_Object *obj, const char *obj_name);
 #ifdef __cplusplus
 }
 #endif

@@ -440,6 +440,10 @@ void FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
     event.frame = m_frame;
 
     evas_object_smart_callback_call(m_view, "window,object,cleared", &event);
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    ewk_view_js_window_object_clear(m_view, m_frame);
+#endif
 }
 
 void FrameLoaderClientEfl::documentElementAvailable()

@@ -34,6 +34,7 @@
 #include "ewk_cookies.h"
 #include "ewk_frame.h"
 #include "ewk_history.h"
+#include "ewk_js.h"
 #include "ewk_main.h"
 #include "ewk_network.h"
 #include "ewk_settings.h"

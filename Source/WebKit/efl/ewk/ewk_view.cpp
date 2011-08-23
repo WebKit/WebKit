@@ -23,6 +23,7 @@
 #include "ewk_view.h"
 
 #include "BackForwardListImpl.h"
+#include "Bridge.h"
 #include "Chrome.h"
 #include "ChromeClientEfl.h"
 #include "ContextMenuController.h"
@@ -40,10 +41,14 @@
 #include "HTMLNames.h"
 #include "InspectorClientEfl.h"
 #include "IntSize.h"
+#include "JSDOMBinding.h"
+#include "JSDOMWindow.h"
+#include "JSLock.h"
 #include "PlatformMouseEvent.h"
 #include "PopupMenuClient.h"
 #include "ProgressTracker.h"
 #include "RenderTheme.h"
+#include "c_instance.h"
 #include "ewk_private.h"
 
 #include <Ecore.h>
@@ -3390,6 +3395,18 @@ void ewk_view_download_request(Evas_Object *o, Ewk_Download *download)
 
 /**
  * @internal
+ * Reports the JS window object was cleared.
+ *
+ * @param o view.
+ * @param frame the frame.
+ */
+void ewk_view_js_window_object_clear(Evas_Object *o, Evas_Object *frame)
+{
+    evas_object_smart_callback_call(o, "js,windowobject,clear", frame);
+}
+
+/**
+ * @internal
  * Reports the viewport has changed.
  *
  * @param arguments viewport argument.
@@ -3538,6 +3555,40 @@ Eina_Bool ewk_view_navigation_policy_decision(Evas_Object *o, Ewk_Frame_Resource
 
     return sd->api->navigation_policy_decision(sd, request);
 }
+
+Eina_Bool ewk_view_js_object_add(Evas_Object *o, Ewk_JS_Object *obj, const char *obj_name)
+{
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    if (obj->view) // object has already been added to another ewk_view
+        return EINA_FALSE;
+    obj->name = eina_stringshare_add(obj_name);
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+
+    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
+    WebCore::JSDOMWindow *window = toJSDOMWindow(priv->main_frame, WebCore::mainThreadNormalWorld());
+    JSC::Bindings::RootObject *root;
+    root = priv->main_frame->script()->bindingRootObject();
+
+    if (!window) {
+        ERR("Warning: couldn't get window object");
+        return EINA_FALSE;
+    }
+
+    JSC::ExecState* exec = window->globalExec();
+
+    obj->view = o;
+    JSC::JSObject *runtimeObject = (JSC::JSObject*)JSC::Bindings::CInstance::create((NPObject*)obj, root)->createRuntimeObject(exec);
+    JSC::Identifier id = JSC::Identifier(exec, obj_name);
+
+    JSC::PutPropertySlot slot;
+    window->put(exec, id, runtimeObject, slot);
+    return EINA_TRUE;
+#else
+    return EINA_FALSE;
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
+}
+
 
 /**
  * @internal

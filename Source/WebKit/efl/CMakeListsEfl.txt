@@ -80,6 +80,7 @@ LIST(APPEND WebKit_SOURCES
     efl/ewk/ewk_view_single.c
     efl/ewk/ewk_view_tiled.c
     efl/ewk/ewk_window_features.cpp
+    efl/ewk/ewk_js.cpp
 )
 
 LIST(APPEND WebKit_LIBRARIES

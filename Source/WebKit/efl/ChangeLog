@@ -1,3 +1,44 @@
+2011-08-23  Jonas M. Gastal <jgastal@profusion.mobi>
+
+        [EFL] Exporting JavaScript objects for EFL port
+        https://bugs.webkit.org/show_bug.cgi?id=43446
+
+        Reviewed by Antonio Gomes.
+
+        This patch allows to export objects to JavaScript API,
+        just like qt does, but it uses the netscape api
+        to do the convertion to javascript object.
+
+        * CMakeLists.txt:
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchDidClearWindowObjectInWorld):
+        * ewk/EWebKit.h:
+        * ewk/ewk_js.cpp: Added.
+        (ewk_js_variant_to_npvariant):
+        (ewk_js_npvariant_to_variant):
+        (ewk_js_property_has):
+        (ewk_js_property_get):
+        (ewk_js_property_set):
+        (ewk_js_property_remove):
+        (ewk_js_properties_enumerate):
+        (ewk_js_method_has):
+        (ewk_js_method_invoke):
+        (ewk_js_class_new):
+        (ewk_js_class_free):
+        (ewk_js_object_new):
+        (ewk_js_object_free):
+        (ewk_js_object_properties_get):
+        (ewk_js_object_name_get):
+        (ewk_js_variant_free):
+        * ewk/ewk_js.h: Added.
+        * ewk/ewk_main.cpp:
+        (ewk_init):
+        * ewk/ewk_private.h:
+        * ewk/ewk_view.cpp:
+        (ewk_view_js_window_object_clear):
+        (ewk_view_js_object_add):
+        * ewk/ewk_view.h:
+
 2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Do not treat valid cases in ewk_frame_child_add() as failures.

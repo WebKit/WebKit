@@ -30,9 +30,11 @@
 #include "BackForwardListImpl.h"
 #include "EWebKit.h"
 #include "Frame.h"
+#include "NP_jsobject.h"
 #include "Page.h"
 #include "Settings.h"
 #include "Widget.h"
+#include "ewk_js.h"
 #include "ewk_logging.h"
 #include "ewk_util.h"
 
@@ -46,6 +48,21 @@ extern "C" {
 
 // If defined, ewk will do type checking to ensure objects are of correct type
 #define EWK_TYPE_CHECK 1
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+#define EWK_JS_OBJECT_MAGIC 0x696969
+
+typedef struct _Ewk_JS_Class Ewk_JS_Class;
+struct _Ewk_JS_Object {
+    JavaScriptObject base;
+    const char *name;
+    const Ewk_JS_Class *cls;
+    Eina_Hash *properties;
+    Evas_Object *view; // ewk_view: check if this object has already been added to another ewk_view
+    Ewk_JS_Object_Type type;
+    EINA_MAGIC;
+};
+#endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 // forward declarations
 namespace WebCore {
@@ -120,6 +137,10 @@ void ewk_view_download_request(Evas_Object *o, Ewk_Download *download);
 
 void ewk_view_editor_client_contents_changed(Evas_Object *o);
 void ewk_view_editor_client_selection_changed(Evas_Object *o);
+
+#if ENABLE(NETSCAPE_PLUGIN_API)
+void ewk_view_js_window_object_clear(Evas_Object *o, Evas_Object *frame);
+#endif
 
 int ewk_util_dpi_get(void);
 void ewk_util_javascript_gc_collect();
