@@ -38,9 +38,6 @@ namespace WebCore {
         virtual bool startUpdating(PositionOptions*);
         virtual void stopUpdating();
 
-        virtual void suspend();
-        virtual void resume();
-
         Geoposition* lastPosition() const;
         PositionError* lastError() const;
 

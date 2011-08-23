@@ -137,18 +137,6 @@ void GeolocationServiceGtk::stopUpdating()
     m_geoclueClient = 0;
 }
 
-void GeolocationServiceGtk::suspend()
-{
-    // not available with geoclue
-    notImplemented();
-}
-
-void GeolocationServiceGtk::resume()
-{
-    // not available with geoclue
-    notImplemented();
-}
-
 Geoposition* GeolocationServiceGtk::lastPosition() const
 {
     return m_lastPosition.get();

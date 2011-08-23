@@ -1,3 +1,20 @@
+2011-08-23  Steve Block  <steveblock@google.com>
+
+        Remove Android-specific modifications to non-client-based Geolocation
+        https://bugs.webkit.org/show_bug.cgi?id=66759
+
+        Reviewed by Tony Gentilcore.
+
+        No new tests, removing dead code only.
+
+        * page/Geolocation.cpp:
+        * page/Geolocation.h:
+        * platform/GeolocationService.h:
+        * platform/efl/GeolocationServiceEfl.cpp:
+        * platform/efl/GeolocationServiceEfl.h:
+        * platform/gtk/GeolocationServiceGtk.cpp:
+        * platform/gtk/GeolocationServiceGtk.h:
+
 2011-08-19  Pavel Podivilov  <podivilov@chromium.org>
 
         Web Inspector: switch to using BreakpointManager.

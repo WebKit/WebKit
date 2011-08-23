@@ -56,16 +56,6 @@ void GeolocationServiceEfl::stopUpdating()
     notImplemented();
 }
 
-void GeolocationServiceEfl::suspend()
-{
-    notImplemented();
-}
-
-void GeolocationServiceEfl::resume()
-{
-    notImplemented();
-}
-
 Geoposition* GeolocationServiceEfl::lastPosition() const
 {
     return m_lastPosition.get();

@@ -64,10 +64,6 @@ public:
     int watchPosition(PassRefPtr<PositionCallback>, PassRefPtr<PositionErrorCallback>, PassRefPtr<PositionOptions>);
     void clearWatch(int watchId);
 
-    // These methods are used by Android.
-    void suspend();
-    void resume();
-
     void setIsAllowed(bool);
     Frame* frame() const { return m_frame; }
 

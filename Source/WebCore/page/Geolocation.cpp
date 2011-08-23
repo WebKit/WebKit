@@ -424,22 +424,6 @@ void Geolocation::clearWatch(int watchId)
         stopUpdating();
 }
 
-void Geolocation::suspend()
-{
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-    if (hasListeners())
-        m_service->suspend();
-#endif
-}
-
-void Geolocation::resume()
-{
-#if !ENABLE(CLIENT_BASED_GEOLOCATION)
-    if (hasListeners())
-        m_service->resume();
-#endif
-}
-
 void Geolocation::setIsAllowed(bool allowed)
 {
     // Protect the Geolocation object from garbage collection during a callback.
