@@ -1,3 +1,11 @@
+2011-08-22  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Mark some tests on Windows as flaky.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-22  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Chris Fleizach.
