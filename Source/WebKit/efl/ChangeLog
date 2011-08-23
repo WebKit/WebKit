@@ -1,3 +1,22 @@
+2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Add auxiliary ewk_util functions for DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=66702
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add some auxiliary functions needed by EFL's DRT implementation. They
+        all revolve around talking to the garbage collector and counting the
+        worker threads.
+
+        * ewk/ewk_private.h:
+        * ewk/ewk_util.cpp:
+        (ewk_util_javascript_gc_collect):
+        (ewk_util_javascript_gc_alternate_thread_collect):
+        (ewk_util_javascript_gc_object_count_get):
+        (ewk_util_worker_thread_count):
+        (ewk_util_dpi_get):
+
 2011-08-22  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Implement FrameLoaderClient::dispatchDidClearWindowObjectInWorld

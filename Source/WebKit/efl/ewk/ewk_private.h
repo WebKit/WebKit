@@ -122,6 +122,10 @@ void ewk_view_editor_client_contents_changed(Evas_Object *o);
 void ewk_view_editor_client_selection_changed(Evas_Object *o);
 
 int ewk_util_dpi_get(void);
+void ewk_util_javascript_gc_collect();
+void ewk_util_javascript_gc_alternate_thread_collect(Eina_Bool waitUntilDone);
+unsigned ewk_util_javascript_gc_object_count_get();
+unsigned ewk_util_worker_thread_count();
 
 #if ENABLE(TOUCH_EVENTS)
 void ewk_view_need_touch_events_set(Evas_Object*, bool needed);
