@@ -55,10 +55,8 @@
 		06E81EEC0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 06E81EEB0AB5DA9700C87837 /* LocalCurrentGraphicsContext.mm */; };
 		0709FC4E1025DEE30059CDBA /* AccessibilitySlider.h in Headers */ = {isa = PBXBuildFile; fileRef = 0709FC4D1025DEE30059CDBA /* AccessibilitySlider.h */; };
 		072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */; };
-		072C8B12131C518B00A4FCE9 /* MediaPlayerPrivateAVFoundationObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = 076F0D0C12B8192700C26AA4 /* MediaPlayerPrivateAVFoundationObjC.mm */; };
 		0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */; };
-		076F0D0F12B8192700C26AA4 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = 076F0D0B12B8192700C26AA4 /* MediaPlayerPrivateAVFoundationObjC.h */; };
 		07B0113F1032242200FBDC33 /* AccessibilityMediaControls.h in Headers */ = {isa = PBXBuildFile; fileRef = 07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */; };
 		0806E57A12893045007CED32 /* SVGMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 0806E57912893045007CED32 /* SVGMatrix.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		080E49261255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h in Headers */ = {isa = PBXBuildFile; fileRef = 080E49221255F3BD00EFCA27 /* SVGTextLayoutEngineBaseline.h */; };
@@ -5451,6 +5449,8 @@
 		DD763BB20992C2C900740B8E /* libxml2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = DD763BB10992C2C900740B8E /* libxml2.dylib */; };
 		DD7CDF250A23CF9800069928 /* CSSUnknownRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A80E6CCE0A1989CA007FB8C5 /* CSSUnknownRule.h */; };
 		DDE63ED50B7D45A800226998 /* DOMTextEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 933A14750B7D1BAF00A53FFD /* DOMTextEvent.h */; };
+		DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */ = {isa = PBXBuildFile; fileRef = DF9AFD7013FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h */; };
+		DF9AFD7313FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm in Sources */ = {isa = PBXBuildFile; fileRef = DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */; };
 		E0FEF372B17C53EAC1C1FBEE /* EventSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E0FEF371B17C53EAC1C1FBEE /* EventSource.h */; };
 		E0FEF372B27C53EAC1C1FBEE /* EventSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E0FEF371B27C53EAC1C1FBEE /* EventSource.cpp */; };
 		E0FEF372B37C53EAC1C1FBEE /* JSEventSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E0FEF371B37C53EAC1C1FBEE /* JSEventSource.h */; };
@@ -6425,8 +6425,6 @@
 		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
 		076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaPlayerPrivateAVFoundation.cpp; sourceTree = "<group>"; };
 		076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundation.h; sourceTree = "<group>"; };
-		076F0D0B12B8192700C26AA4 /* MediaPlayerPrivateAVFoundationObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivateAVFoundationObjC.h; sourceTree = "<group>"; };
-		076F0D0C12B8192700C26AA4 /* MediaPlayerPrivateAVFoundationObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MediaPlayerPrivateAVFoundationObjC.mm; sourceTree = "<group>"; };
 		079F5E4B0F3BEBEA005E0782 /* MediaPlayerPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerPrivate.h; sourceTree = "<group>"; };
 		07AFE5900F1446BD00841617 /* mediaControlsQuickTime.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = mediaControlsQuickTime.css; sourceTree = "<group>"; };
 		07B0113E1032242200FBDC33 /* AccessibilityMediaControls.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityMediaControls.h; sourceTree = "<group>"; };
@@ -11927,6 +11925,8 @@
 		DB23C2CA0A508D29002489EB /* IndentOutdentCommand.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = IndentOutdentCommand.h; sourceTree = "<group>"; };
 		DD05FE0B0B8BA3C6009ACDFE /* WebCoreObjCExtras.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebCoreObjCExtras.h; sourceTree = "<group>"; };
 		DD763BB10992C2C900740B8E /* libxml2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libxml2.dylib; path = /usr/lib/libxml2.dylib; sourceTree = "<absolute>"; };
+		DF9AFD7013FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MediaPlayerPrivateAVFoundationObjC.h; path = objc/MediaPlayerPrivateAVFoundationObjC.h; sourceTree = "<group>"; };
+		DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = MediaPlayerPrivateAVFoundationObjC.mm; path = objc/MediaPlayerPrivateAVFoundationObjC.mm; sourceTree = "<group>"; };
 		E0FEF371B07C53EAC1C1FBEE /* EventSource.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EventSource.idl; sourceTree = "<group>"; };
 		E0FEF371B17C53EAC1C1FBEE /* EventSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventSource.h; sourceTree = "<group>"; };
 		E0FEF371B27C53EAC1C1FBEE /* EventSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventSource.cpp; sourceTree = "<group>"; };
@@ -12545,10 +12545,9 @@
 		076F0D0812B8192700C26AA4 /* avfoundation */ = {
 			isa = PBXGroup;
 			children = (
+				DF9AFD6F13FC31B00015FEB7 /* objc */,
 				076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */,
 				076F0D0A12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h */,
-				076F0D0B12B8192700C26AA4 /* MediaPlayerPrivateAVFoundationObjC.h */,
-				076F0D0C12B8192700C26AA4 /* MediaPlayerPrivateAVFoundationObjC.mm */,
 			);
 			path = avfoundation;
 			sourceTree = "<group>";
@@ -18617,6 +18616,15 @@
 			tabWidth = 4;
 			usesTabs = 0;
 		};
+		DF9AFD6F13FC31B00015FEB7 /* objc */ = {
+			isa = PBXGroup;
+			children = (
+				DF9AFD7013FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h */,
+				DF9AFD7113FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm */,
+			);
+			name = objc;
+			sourceTree = "<group>";
+		};
 		E1C8BE4B0E8BD0D10064CB7D /* Threads */ = {
 			isa = PBXGroup;
 			children = (
@@ -21852,7 +21860,6 @@
 				A8EA800E0A19516E00A8EF5F /* MediaList.h in Headers */,
 				E44613E40CD681A200FADA75 /* MediaPlayer.h in Headers */,
 				076F0D0E12B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.h in Headers */,
-				076F0D0F12B8192700C26AA4 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */,
 				E44613E60CD681A900FADA75 /* MediaPlayerPrivateQTKit.h in Headers */,
 				0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */,
 				4E19592A0A39DACC00220FE5 /* MediaQuery.h in Headers */,
@@ -22821,6 +22828,7 @@
 				BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */,
 				B1E54593134629C10092A545 /* CallbackTask.h in Headers */,
 				6571DCC81385E6A400702DD0 /* MemoryPressureHandler.h in Headers */,
+				DF9AFD7213FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24752,7 +24760,6 @@
 				A8EA80090A19516E00A8EF5F /* MediaList.cpp in Sources */,
 				E44613E30CD6819F00FADA75 /* MediaPlayer.cpp in Sources */,
 				072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */,
-				072C8B12131C518B00A4FCE9 /* MediaPlayerPrivateAVFoundationObjC.mm in Sources */,
 				E44613E50CD681A600FADA75 /* MediaPlayerPrivateQTKit.mm in Sources */,
 				4E1959290A39DACC00220FE5 /* MediaQuery.cpp in Sources */,
 				4E19592B0A39DACC00220FE5 /* MediaQueryEvaluator.cpp in Sources */,
@@ -25494,6 +25501,7 @@
 				FD537356137B653B00008DCE /* DynamicsCompressorKernel.cpp in Sources */,
 				657EDA081385CB97004E0645 /* MemoryPressureHandler.cpp in Sources */,
 				657EDA0B1385CBD8004E0645 /* MemoryPressureHandlerMac.mm in Sources */,
+				DF9AFD7313FC31D80015FEB7 /* MediaPlayerPrivateAVFoundationObjC.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
