@@ -1979,8 +1979,15 @@ void WebFrameImpl::createFrameView()
     ASSERT(page->mainFrame());
 
     bool isMainFrame = m_frame == page->mainFrame();
-    if (isMainFrame && m_frame->view())
+    bool useFixedLayout = false;
+    IntSize fixedLayoutSize;
+    if (isMainFrame && m_frame->view()) {
         m_frame->view()->setParentVisible(false);
+        // Save the fixed layout information before destroying the
+        // existing FrameView of this frame.
+        useFixedLayout = m_frame->view()->useFixedLayout();
+        fixedLayoutSize = m_frame->view()->fixedLayoutSize();
+    }
 
     m_frame->setView(0);
 
@@ -2011,6 +2018,10 @@ void WebFrameImpl::createFrameView()
 #if ENABLE(GESTURE_RECOGNIZER)
     webView->resetGestureRecognizer();
 #endif
+
+    // Restore the saved fixed layout information.
+    view->setUseFixedLayout(useFixedLayout);
+    view->setFixedLayoutSize(fixedLayoutSize);
 }
 
 WebFrameImpl* WebFrameImpl::fromFrame(Frame* frame)

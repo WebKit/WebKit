@@ -1,3 +1,16 @@
+2011-08-23  Fady Samuel  <fsamuel@chromium.org>
+
+        New MainFrame views should inherit fixed layout settings from existing MainFrame view in Chromium.
+        https://bugs.webkit.org/show_bug.cgi?id=66780
+
+        Fixed layout mode is set from WebViewImpl, but new main FrameViews are created on loading new pages. The new page's FrameView should get its
+        fixed layout settings from the current page.
+
+        Reviewed by Darin Fisher.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::createFrameView):
+
 2011-08-23  Matt Falkenhagen  <falken@chromium.org>
 
         [chromium] Update WebSettings to support per-script font settings
