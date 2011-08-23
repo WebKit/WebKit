@@ -1,3 +1,25 @@
+2011-08-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
+
+        [Qt] Fix build on Lion
+
+        https://bugs.webkit.org/show_bug.cgi?id=66770
+
+        Reviewed by Andreas Kling.
+
+        We were mistakenly picking up mac/WebCoreSystemInterface.h instead of
+        the Qt one, and building on Lion revealed this when a typedef for
+        IOSurfaceRef was wrapped in PLATFORM(MAC).
+
+        For now we fix this by including WebCoreSystemInterface using
+        brackets, so that we'll pick up the right file based on the
+        include paths. This also means exposing a few missing enums
+        in our own version of the file, so those were added.
+
+        Lasty, we need to link against the right system interface library
+        on Lion.
+
+        * QtWebKit.pro:
+
 2011-08-21  Lindsay Mathieson  <lindsay.mathieson@gmail.com>
 
         [Qt] Fixes premature plugin unload bug

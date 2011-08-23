@@ -29,7 +29,7 @@
 #import "WebVideoFullscreenHUDWindowController.h"
 
 #import "FloatConversion.h"
-#import "WebCoreSystemInterface.h"
+#import <WebCoreSystemInterface.h>
 #import <WebCore/HTMLMediaElement.h>
 #import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>

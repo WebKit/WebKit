@@ -79,6 +79,17 @@ extern void (*wkQTClearMediaDownloadCache)();
 extern void (*wkWindowSetAlpha)(NSWindow *, float);
 extern void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 
+typedef enum {
+    wkMediaUIControlTimeline,
+    wkMediaUIControlSlider,
+    wkMediaUIControlPlayPauseButton,
+    wkMediaUIControlExitFullscreenButton,
+    wkMediaUIControlRewindButton,
+    wkMediaUIControlFastForwardButton,
+    wkMediaUIControlVolumeUpButton,
+    wkMediaUIControlVolumeDownButton
+} wkMediaUIControlType;
+
 }
 
 #endif
