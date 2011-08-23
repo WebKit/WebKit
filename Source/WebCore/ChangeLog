@@ -1,3 +1,15 @@
+2011-08-23  Tatiana Meshkova  <tatiana.meshkova@nokia.com>
+
+        Prepare to paint slider thumb separately.
+        Provide proper size values for vertical SliderThumb.
+        https://bugs.webkit.org/show_bug.cgi?id=66732
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::adjustSliderThumbSize):
+        Swap length and thickness for sliderthumb-vertical.
+
 2011-08-23  Adrienne Walker  <enne@google.com>
 
         [chromium] Fix potential nullptr deref in TiledLayerChromium::pushPropertiesTo

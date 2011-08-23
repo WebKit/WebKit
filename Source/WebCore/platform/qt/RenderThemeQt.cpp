@@ -1491,10 +1491,15 @@ void RenderThemeQt::adjustSliderThumbSize(RenderStyle* style) const
 
         QStyle* qstyle = qStyle();
 
-        int width = qstyle->pixelMetric(QStyle::PM_SliderLength, &option);
-        int height = qstyle->pixelMetric(QStyle::PM_SliderThickness, &option);
-        style->setWidth(Length(width, Fixed));
-        style->setHeight(Length(height, Fixed));
+        int length = qstyle->pixelMetric(QStyle::PM_SliderLength, &option);
+        int thickness = qstyle->pixelMetric(QStyle::PM_SliderThickness, &option);
+        if (option.orientation == Qt::Vertical) {
+            style->setWidth(Length(thickness, Fixed));
+            style->setHeight(Length(length, Fixed));
+        } else {
+            style->setWidth(Length(length, Fixed));
+            style->setHeight(Length(thickness, Fixed));
+        }
     }
 }
 
