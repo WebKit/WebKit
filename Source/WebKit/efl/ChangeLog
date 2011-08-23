@@ -1,3 +1,25 @@
+2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Do not treat valid cases in ewk_frame_child_add() as failures.
+        https://bugs.webkit.org/show_bug.cgi?id=66692
+
+        Rubber-stamped by Kenneth Rohde Christiansen.
+
+        Frame::page() and FrameTree::parent() returning 0 were being considered
+        failure cases, however it is possible for them to return 0 when some
+        arbitrary JavaScript is run.
+
+        The function's return type has been changed to make it easier to convey
+        these cases to the caller (which is only ewk_view_frame_create).
+
+        This should make tests like
+        fast/dom/null-page-show-modal-dialog-crash.html stop outputting
+        erroneous messages to stderr.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_child_add):
+        * ewk/ewk_private.h:
+
 2011-08-23  Leandro Pereira  <leandro@profusion.mobi>
 
         Unreviewed build fix after r66685.

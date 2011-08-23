@@ -1131,7 +1131,7 @@ Eina_Bool ewk_frame_init(Evas_Object *o, Evas_Object *view, WebCore::Frame *fram
  *
  * Adds child to the frame.
  */
-Evas_Object *ewk_frame_child_add(Evas_Object *o, WTF::PassRefPtr<WebCore::Frame> child, const WTF::String &name, const WebCore::KURL &url, const WTF::String &referrer)
+Eina_Bool ewk_frame_child_add(Evas_Object *o, WTF::PassRefPtr<WebCore::Frame> child, const WTF::String &name, const WebCore::KURL &url, const WTF::String &referrer)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, 0);
     char buf[256];
@@ -1141,7 +1141,7 @@ Evas_Object *ewk_frame_child_add(Evas_Object *o, WTF::PassRefPtr<WebCore::Frame>
     frame = ewk_frame_add(sd->base.evas);
     if (!frame) {
         ERR("Could not create ewk_frame object.");
-        return 0;
+        return EINA_FALSE;
     }
 
     cf = child.get();
@@ -1153,29 +1153,30 @@ Evas_Object *ewk_frame_child_add(Evas_Object *o, WTF::PassRefPtr<WebCore::Frame>
 
     if (!ewk_frame_init(frame, sd->view, cf)) {
         evas_object_del(frame);
-        return 0;
+        return EINA_FALSE;
     }
     snprintf(buf, sizeof(buf), "EWK_Frame:child/%s", name.utf8().data());
     evas_object_name_set(frame, buf);
     evas_object_smart_member_add(frame, o);
     evas_object_show(frame);
 
-    if (!cf->page())
-        goto died;
+    // The creation of the frame may have run arbitrary JavaScript that removed it from the page already.
+    if (!cf->page()) {
+        evas_object_del(frame);
+        return EINA_TRUE;
+    }
 
     sd->frame->loader()->loadURLIntoChildFrame(url, referrer, cf);
-    if (!cf->tree()->parent())
-        goto died;
+
+    // The frame's onload handler may have removed it from the document.
+    // See fast/dom/null-page-show-modal-dialog-crash.html for an example.
+    if (!cf->tree()->parent()) {
+        evas_object_del(frame);
+        return EINA_TRUE;
+    }
 
     // TODO: announce frame was created?
-    return frame;
-
-died:
-    CRITICAL("does this work: BEGIN");
-    ewk_frame_core_gone(frame); // CONFIRM
-    evas_object_del(frame); // CONFIRM
-    CRITICAL("does this work: END");
-    return 0;
+    return EINA_TRUE;
 }
 
 /**
