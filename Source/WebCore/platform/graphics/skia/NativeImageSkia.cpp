@@ -40,7 +40,6 @@ namespace WebCore {
 
 NativeImageSkia::NativeImageSkia()
     : m_isDataComplete(false),
-      m_lastRequestSize(0, 0),
       m_resizeRequests(0)
 {
 }
@@ -48,11 +47,9 @@ NativeImageSkia::NativeImageSkia()
 NativeImageSkia::NativeImageSkia(const SkBitmap& other)
     : SkBitmap(other),
       m_isDataComplete(false),
-      m_lastRequestSize(0, 0),
       m_resizeRequests(0)
 {
 }
-
 
 NativeImageSkia::~NativeImageSkia()
 {
@@ -63,33 +60,53 @@ int NativeImageSkia::decodedSize() const
     return getSize() + m_resizedImage.getSize();
 }
 
-bool NativeImageSkia::hasResizedBitmap(int w, int h) const
+bool NativeImageSkia::hasResizedBitmap(const SkIRect& srcSubset, int destWidth, int destHeight) const
 {
-    if (m_lastRequestSize.width() == w && m_lastRequestSize.height() == h)
-        m_resizeRequests++;
-    else {
-        m_lastRequestSize = IntSize(w, h);
-        m_resizeRequests = 0;
+    return m_cachedImageInfo.isEqual(srcSubset, destWidth, destHeight) && !m_resizedImage.empty();
+}
+
+SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
+                                        int destWidth,
+                                        int destHeight,
+                                        const SkIRect& destVisibleSubset) const
+{
+    if (!hasResizedBitmap(srcSubset, destWidth, destHeight)) {
+        bool shouldCache = m_isDataComplete
+            && shouldCacheResampling(srcSubset, destWidth, destHeight, destVisibleSubset);
+
+        SkBitmap subset;
+        extractSubset(&subset, srcSubset);
+        if (!shouldCache) {
+            // Just resize the visible subset and return it.
+            SkBitmap resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight, destVisibleSubset);
+            return resizedImage;
+        }
+
+        m_resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight);
     }
 
-    return m_resizedImage.width() == w && m_resizedImage.height() == h;
+    SkBitmap visibleBitmap;
+    m_resizedImage.extractSubset(&visibleBitmap, destVisibleSubset);
+    return visibleBitmap;
 }
 
-// FIXME: don't cache when image is in-progress.
-
-SkBitmap NativeImageSkia::resizedBitmap(int w, int h) const
-{
-    if (m_resizedImage.width() != w || m_resizedImage.height() != h)
-        m_resizedImage = skia::ImageOperations::Resize(*this, skia::ImageOperations::RESIZE_LANCZOS3, w, h);
-
-    return m_resizedImage;
-}
-
-bool NativeImageSkia::shouldCacheResampling(int destWidth,
+bool NativeImageSkia::shouldCacheResampling(const SkIRect& srcSubset,
+                                            int destWidth,
                                             int destHeight,
-                                            int destSubsetWidth,
-                                            int destSubsetHeight) const
+                                            const SkIRect& destVisibleSubset) const
 {
+    // Check whether the requested dimensions match previous request.
+    bool matchesPreviousRequest = m_cachedImageInfo.isEqual(srcSubset, destWidth, destHeight);
+    if (matchesPreviousRequest)
+        ++m_resizeRequests;
+    else {
+        m_cachedImageInfo.set(srcSubset, destWidth, destHeight);
+        m_resizeRequests = 0;
+        // Reset m_resizedImage now, because we don't distinguish between the
+        // last requested resize info and m_resizedImage's resize info.
+        m_resizedImage.reset();
+    }
+
     // We can not cache incomplete frames. This might be a good optimization in
     // the future, were we know how much of the frame has been decoded, so when
     // we incrementally draw more of the image, we only have to resample the
@@ -106,22 +123,31 @@ bool NativeImageSkia::shouldCacheResampling(int destWidth,
     // If "too many" requests have been made for this bitmap, we assume that
     // many more will be made as well, and we'll go ahead and cache it.
     static const int kManyRequestThreshold = 4;
-    if (m_lastRequestSize.width() == destWidth &&
-        m_lastRequestSize.height() == destHeight) {
-        if (m_resizeRequests >= kManyRequestThreshold)
-            return true;
-    } else {
-        // When a different size is being requested, count this as a query
-        // (hasResizedBitmap) and reset the counter.
-        m_lastRequestSize = IntSize(destWidth, destHeight);
-        m_resizeRequests = 0;
-    }
+    if (m_resizeRequests >= kManyRequestThreshold)
+        return true;
 
-    // Otherwise, use the heuristic that if more than 1/4 of the image is
-    // requested, it's worth caching.
-    int destSize = destWidth * destHeight;
-    int destSubsetSize = destSubsetWidth * destSubsetHeight;
-    return destSize / 4 < destSubsetSize;
+    // If more than 1/4 of the resized image is visible, it's worth caching.
+    int destVisibleSize = destVisibleSubset.width() * destVisibleSubset.height();
+    return (destVisibleSize > (destWidth * destHeight) / 4);
+}
+
+NativeImageSkia::CachedImageInfo::CachedImageInfo()
+{
+    srcSubset.setEmpty();
+}
+
+bool NativeImageSkia::CachedImageInfo::isEqual(const SkIRect& otherSrcSubset, int width, int height) const
+{
+    return srcSubset == otherSrcSubset
+        && requestSize.width() == width
+        && requestSize.height() == height;
+}
+
+void NativeImageSkia::CachedImageInfo::set(const SkIRect& otherSrcSubset, int width, int height)
+{
+    srcSubset = otherSrcSubset;
+    requestSize.setWidth(width);
+    requestSize.setHeight(height);
 }
 
 } // namespace WebCore

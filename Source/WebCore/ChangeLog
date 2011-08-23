@@ -1,3 +1,26 @@
+2011-08-22  John Bates  <jbates@google.com>
+
+        Implemented skia support for caching resizes of cropped images.
+        https://bugs.webkit.org/show_bug.cgi?id=65587
+
+        Reviewed by Darin Fisher.
+
+        Previously, resizes of cropped images would not be cached. This causes various websites to have janky CSS animations in software compositing mode.
+
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::drawResampledBitmap): Changed to use new APIs for subset caching.
+        (WebCore::Image::drawPattern): Added allowCaching parameter.
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::NativeImageSkia):
+        (WebCore::NativeImageSkia::CachedImageInfo::CachedImageInfo):
+        (WebCore::NativeImageSkia::CachedImageInfo::isEqual):
+        (WebCore::NativeImageSkia::CachedImageInfo::set):
+        (WebCore::NativeImageSkia::hasResizedBitmap): Changed this method so that it does not modify caching data. Added a second version used for cropped image resizes.
+        (WebCore::NativeImageSkia::resizedBitmap): Added parameter to let caller specify whether caching is allowed.
+        (WebCore::NativeImageSkia::shouldCacheResampling): Added a second version used for cropped image resizes.
+        (WebCore::NativeImageSkia::shouldCacheResamplingInternal): Both shouldCacheResampling methods call down to this for the shared logic.
+        * platform/graphics/skia/NativeImageSkia.h: Added CachedImageInfo to uniquely identify the cached or requested image resize operation.
+
 2011-08-22  Tony Gentilcore  <tonyg@chromium.org>
 
         [chromium] Fonts returned by FontCache::getFontDataForCharacters() are never released
