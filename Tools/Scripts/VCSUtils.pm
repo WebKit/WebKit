@@ -1704,7 +1704,7 @@ sub mergeChangeLogs($$$)
     unlink("${fileNewer}.orig");
     unlink("${fileNewer}.rej");
 
-    open(PATCH, "| patch --force --fuzz=3 --binary $fileNewer > " . File::Spec->devnull()) or die $!;
+    open(PATCH, "| patch --force --fuzz=3 --binary \"$fileNewer\" > " . File::Spec->devnull()) or die $!;
     if ($traditionalReject) {
         print PATCH $patch;
     } else {
