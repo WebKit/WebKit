@@ -153,7 +153,10 @@ Ewk_History_Item* ewk_history_history_item_back_get(const Ewk_History* history)
 Ewk_History_Item* ewk_history_history_item_current_get(const Ewk_History* history)
 {
     EWK_HISTORY_CORE_GET_OR_RETURN(history, core, 0);
-    return _ewk_history_item_new(core->currentItem());
+    WebCore::HistoryItem *currentItem = core->currentItem();
+    if (currentItem)
+        return _ewk_history_item_new(currentItem);
+    return 0;
 }
 
 Ewk_History_Item* ewk_history_history_item_forward_get(const Ewk_History* history)

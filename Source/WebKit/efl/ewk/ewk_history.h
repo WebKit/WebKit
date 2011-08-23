@@ -110,8 +110,8 @@ EAPI Ewk_History_Item *ewk_history_history_item_back_get(const Ewk_History *hist
  *
  * @param history which history instance to query.
  *
- * @return the @b newly allocated item instance. This memory must be
- *         released with ewk_history_item_free() after use.
+ * @return the @b newly allocated item instance or @c NULL on error. This memory
+ *         must be released with ewk_history_item_free() after use.
  */
 EAPI Ewk_History_Item *ewk_history_history_item_current_get(const Ewk_History *history);
 

@@ -1,5 +1,20 @@
 2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Treat the case of WebCore::History->currentItem() returning NULL.
+        https://bugs.webkit.org/show_bug.cgi?id=66698
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebCore::History->currentItem() may return NULL, and we'd better treat
+        it in ewk_history_history_item_current_get itself than propagate the
+        issue to _ewk_history_item_new.
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_history_item_current_get):
+        * ewk/ewk_history.h:
+
+2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Add auxiliary history functions for DRT
         https://bugs.webkit.org/show_bug.cgi?id=66700
 
