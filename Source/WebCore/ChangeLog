@@ -1,3 +1,25 @@
+2011-08-23  Lucas Forschler  <lforschler@apple.com>
+
+    Merged patch for:  https://bugs.webkit.org/attachment.cgi?id=98041
+
+    2011-06-21  Jer Noble  <jer.noble@apple.com>
+    
+            Playing video from the manifest crashes on Windows
+            https://bugs.webkit.org/show_bug.cgi?id=62901
+    
+            No new tests. This will be covered by existing App Cache tests.
+            
+            Two related fixes. 1) Null-check the CFStringRef and CFURLRef created in QTMovie::load() before
+            passing them to CFRelease(). 2) Call QTMovie::loadPath() instead of QTMovie::load() when loading
+            from the app cache.
+    
+            * platform/graphics/win/MediaPlayerPrivateQuickTimeVisualContext.cpp:
+            (WebCore::MediaPlayerPrivateQuickTimeVisualContext::loadInternal):
+            * platform/graphics/win/QTMovie.cpp:
+            (QTMovie::loadPath):
+            (QTMovie::load):
+    
+
 2011-08-18  Lucas Forschler  <lforschler@apple.com>
 
     <rdar://problem/9750868>

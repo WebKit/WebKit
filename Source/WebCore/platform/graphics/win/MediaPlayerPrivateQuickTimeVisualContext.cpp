@@ -379,7 +379,7 @@ void MediaPlayerPrivateQuickTimeVisualContext::loadInternal(const String& url)
     ApplicationCacheHost* cacheHost = frame ? frame->loader()->documentLoader()->applicationCacheHost() : 0;
     ApplicationCacheResource* resource = 0;
     if (cacheHost && cacheHost->shouldLoadResourceFromApplicationCache(ResourceRequest(url), resource) && resource && !resource->path().isEmpty())
-        m_movie->load(resource->path().characters(), resource->path().length(), m_player->preservesPitch());
+        m_movie->loadPath(resource->path().characters(), resource->path().length(), m_player->preservesPitch());
     else
 #endif
         m_movie->load(url.characters(), url.length(), m_player->preservesPitch());
