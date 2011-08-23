@@ -1,3 +1,13 @@
+2011-08-23  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Web Inspector: [Chromium] Fix handling of aggregate names in profiler.
+        https://bugs.webkit.org/show_bug.cgi?id=66753
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshot.prototype._buildAggregates):
+
 2011-08-23  Adam Barth  <abarth@webkit.org>
 
         Remove WebCore/editing/android and other Android-specific directories

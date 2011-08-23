@@ -832,11 +832,11 @@ WebInspector.HeapSnapshot.prototype = {
         this._aggregates = {};
         for (var iter = this._allNodes; iter.hasNext(); iter.next()) {
             var node = iter.node;
-            var className = node.className;
-            var nameMatters = node.type === "object" || node.type === "native";
             if (node.type !== "native" && node.selfSize === 0)
                 continue;
-            if (!(className in this._aggregates))
+            var nameMatters = node.type === "object" || node.type === "native";
+            var className = node.className;
+            if (!this._aggregates.hasOwnProperty(className))
                 this._aggregates[className] = { count: 0, self: 0, maxRet: 0, type: node.type, name: nameMatters ? node.name : null, idxs: [] };
             var clss = this._aggregates[className];
             ++clss.count;
