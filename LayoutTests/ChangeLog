@@ -1,5 +1,12 @@
 2011-08-23  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed gardening. Remove Windows style new lines from the test introduced in r93521.
+
+        * fast/loader/document-destruction-within-unload-expected.txt:
+        * fast/loader/document-destruction-within-unload.html:
+
+2011-08-23  Csaba Osztrogonác  <ossy@webkit.org>
+
         [WK2] Unreviewed gardening.
 
         * platform/wk2/Skipped: Skip fast/frames/focus-controller-crash-change-event.html, because eventSender.keyDown is unimplemented.
