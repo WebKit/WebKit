@@ -1,5 +1,13 @@
 2011-08-22  Peter Kasting  <pkasting@google.com>
 
+        [chromium] Mark some tests on Mac as flakily crashing.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-22  Peter Kasting  <pkasting@google.com>
+
         [chromium] Mark some tests on Windows as flaky.
 
         Unreviewed, test expectations update.

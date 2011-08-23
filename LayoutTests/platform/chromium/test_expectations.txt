@@ -3697,3 +3697,6 @@ BUGWK66730 WIN : http/tests/websocket/tests/hybi/masked-frames.html = PASS TEXT
 BUGWK66217 WIN : http/tests/inspector/resource-tree/resource-tree-errors-reload.html = PASS TEXT
 
 BUGWK66738 SLOW WIN RELEASE : http/tests/inspector/network/download.html = PASS
+
+BUGWK66740 MAC SNOWLEOPARD GPU : compositing/geometry/ancestor-overflow-change.html = PASS CRASH
+BUGWK66740 MAC SNOWLEOPARD GPU : compositing/scaling/tiled-layer-recursion.html = PASS CRASH
