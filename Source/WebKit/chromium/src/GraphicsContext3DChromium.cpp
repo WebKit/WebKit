@@ -118,6 +118,7 @@ bool GraphicsContext3DInternal::initialize(GraphicsContext3D::Attributes attrs, 
     webAttributes.premultipliedAlpha = attrs.premultipliedAlpha;
     webAttributes.canRecoverFromContextLoss = attrs.canRecoverFromContextLoss;
     webAttributes.noExtensions = attrs.noExtensions;
+    webAttributes.shareResources = attrs.shareResources;
     OwnPtr<WebKit::WebGraphicsContext3D> webContext = adoptPtr(WebKit::webKitClient()->createGraphicsContext3D());
     if (!webContext)
         return false;

@@ -176,6 +176,7 @@ GraphicsContext3D::Attributes getCompositorContextAttributes()
     // disparities we explicitly disable antialiasing.
     GraphicsContext3D::Attributes attributes;
     attributes.antialias = false;
+    attributes.shareResources = true;
     return attributes;
 }
 

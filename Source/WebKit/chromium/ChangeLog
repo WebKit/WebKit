@@ -1,3 +1,17 @@
+2011-08-23  Al Patrick  <apatrick@chromium.org>
+
+        Add shareResources flag to 3D graphics context attributes
+        https://bugs.webkit.org/show_bug.cgi?id=66516
+
+        Reviewed by James Robinson.
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::Attributes::Attributes):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::initialize):
+        * src/WebViewImpl.cpp:
+        (std::getCompositorContextAttributes):
+
 2011-08-23  Fady Samuel  <fsamuel@chromium.org>
 
         New MainFrame views should inherit fixed layout settings from existing MainFrame view in Chromium.

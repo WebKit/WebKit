@@ -436,6 +436,7 @@ public:
             , canRecoverFromContextLoss(true)
             , preserveDrawingBuffer(false)
             , noExtensions(false)
+            , shareResources(true)
         {
         }
 
@@ -447,6 +448,7 @@ public:
         bool canRecoverFromContextLoss;
         bool preserveDrawingBuffer;
         bool noExtensions;
+        bool shareResources;
     };
 
     enum RenderStyle {

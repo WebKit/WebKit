@@ -37,6 +37,7 @@ GraphicsContext3D* SharedGraphicsContext3D::create(HostWindow* window)
     attributes.stencil = true;
     attributes.antialias = false;
     attributes.canRecoverFromContextLoss = false; // Canvas contexts can not handle lost contexts.
+    attributes.shareResources = true;
     static RefPtr<GraphicsContext3D> context = GraphicsContext3D::create(attributes, window);
     return context.get();
 }

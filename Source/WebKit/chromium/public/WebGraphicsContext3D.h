@@ -86,6 +86,7 @@ public:
             , premultipliedAlpha(true)
             , canRecoverFromContextLoss(true)
             , noExtensions(false)
+            , shareResources(true)
         {
         }
 
@@ -96,6 +97,7 @@ public:
         bool premultipliedAlpha;
         bool canRecoverFromContextLoss;
         bool noExtensions;
+        bool shareResources;
     };
 
     class WebGraphicsContextLostCallback {
