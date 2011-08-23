@@ -283,7 +283,7 @@ void Range::setStart(const Position& start, ExceptionCode& ec)
 void Range::setEnd(const Position& end, ExceptionCode& ec)
 {
     Position parentAnchored = end.parentAnchoredEquivalent();
-    setStart(parentAnchored.containerNode(), parentAnchored.offsetInContainerNode(), ec);
+    setEnd(parentAnchored.containerNode(), parentAnchored.offsetInContainerNode(), ec);
 }
 
 void Range::collapse(bool toStart, ExceptionCode& ec)

@@ -1,3 +1,15 @@
+2011-08-22  Alice Boxhall  <aboxhall@chromium.org>
+
+        Range::setEnd(const Position&, ExceptionCode) calls setStart() instead of setEnd()
+        https://bugs.webkit.org/show_bug.cgi?id=66638
+
+        Reviewed by Ryosuke Niwa.
+
+        Relevant layout test coming in a future patch (see https://bugs.webkit.org/show_bug.cgi?id=65900)
+
+        * dom/Range.cpp:
+        (WebCore::Range::setEnd):
+
 2011-08-22  Adam Barth  <abarth@webkit.org>
 
         Remove PLATFORM(ANDROID)
