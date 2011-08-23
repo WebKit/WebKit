@@ -1,3 +1,15 @@
+2011-08-23  Adrienne Walker  <enne@google.com>
+
+        [chromium] Fix potential nullptr deref in TiledLayerChromium::pushPropertiesTo
+        https://bugs.webkit.org/show_bug.cgi?id=66808
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::draw):
+
 2011-08-23  Peter Kasting  <pkasting@google.com>
 
         Unreviewed, rolling out r93452.

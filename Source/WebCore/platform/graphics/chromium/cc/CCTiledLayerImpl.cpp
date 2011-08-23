@@ -96,7 +96,7 @@ void CCTiledLayerImpl::draw()
 {
     const IntRect& layerRect = visibleLayerRect();
 
-    if (m_skipsDraw || m_tiler->isEmpty() || layerRect.isEmpty() || !layerRenderer())
+    if (m_skipsDraw || !m_tiler || m_tiler->isEmpty() || layerRect.isEmpty() || !layerRenderer())
         return;
 
 #if defined(OS_CHROMEOS)

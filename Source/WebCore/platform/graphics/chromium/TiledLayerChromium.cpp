@@ -241,6 +241,11 @@ void TiledLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     LayerChromium::pushPropertiesTo(layer);
 
     CCTiledLayerImpl* tiledLayer = static_cast<CCTiledLayerImpl*>(layer);
+    if (!m_tiler) {
+        tiledLayer->setSkipsDraw(true);
+        return;
+    }
+
     tiledLayer->setTilingTransform(tilingTransform());
     tiledLayer->setSkipsDraw(m_skipsDraw);
     tiledLayer->setTextureOrientation(m_textureOrientation);
