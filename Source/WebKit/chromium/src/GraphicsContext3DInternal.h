@@ -75,6 +75,7 @@ public:
 
     void reshape(int width, int height);
     IntSize getInternalFramebufferSize() const;
+    bool isResourceSafe();
 
     void markContextChanged();
     bool layerComposited() const;
@@ -298,6 +299,14 @@ private:
     HashSet<String> m_enabledExtensions;
     HashSet<String> m_requestableExtensions;
     bool m_layerComposited;
+
+    enum ResourceSafety {
+        ResourceSafetyUnknown,
+        ResourceSafe,
+        ResourceUnsafe
+    };
+    ResourceSafety m_resourceSafety;
+
 #if USE(ACCELERATED_COMPOSITING)
     RefPtr<WebGLLayerChromium> m_compositingLayer;
 #endif

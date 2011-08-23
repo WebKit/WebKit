@@ -1,3 +1,22 @@
+2011-08-22  Nat Duca  <nduca@chromium.org>
+
+        Make GraphicsContext3D::isResourceSafe a function and, on Chromium, determine its value lazily
+        https://bugs.webkit.org/show_bug.cgi?id=66708
+
+        Reviewed by Kenneth Russell.
+
+        * platform/graphics/GraphicsContext3D.cpp:
+        (WebCore::GraphicsContext3D::texImage2DResourceSafe):
+        * platform/graphics/GraphicsContext3D.h:
+        * platform/graphics/gtk/GraphicsContext3DGtk.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/mac/GraphicsContext3DMac.mm:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+        * platform/graphics/opengl/GraphicsContext3DOpenGL.cpp:
+        (WebCore::GraphicsContext3D::isResourceSafe):
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+
 2011-08-22  Adam Barth  <abarth@webkit.org>
 
         HTMLSourceTracker crashes when network packets break poorly

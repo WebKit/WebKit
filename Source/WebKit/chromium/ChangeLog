@@ -1,3 +1,17 @@
+2011-08-22  Nat Duca  <nduca@chromium.org>
+
+        Make GraphicsContext3D::isResourceSafe a function and, on Chromium, determine its value lazily
+        https://bugs.webkit.org/show_bug.cgi?id=66708
+
+        Reviewed by Kenneth Russell.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+        (WebCore::GraphicsContext3DInternal::isResourceSafe):
+        (WebCore::GraphicsContext3D::create):
+        (WebCore::GraphicsContext3D::isResourceSafe):
+        * src/GraphicsContext3DInternal.h:
+
 2011-08-22  Adam Klein  <adamk@chromium.org>
 
         [chromium] Remove deprecated and unused bits of WebIDB* headers

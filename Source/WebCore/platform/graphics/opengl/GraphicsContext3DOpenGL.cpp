@@ -122,6 +122,11 @@ void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSi
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_boundFBO);
 }
 
+bool GraphicsContext3D::isResourceSafe()
+{
+    return false;
+}
+
 #if !PLATFORM(QT)
 void GraphicsContext3D::paintRenderingResultsToCanvas(CanvasRenderingContext* context)
 {

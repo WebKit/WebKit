@@ -87,6 +87,7 @@ GraphicsContext3DInternal::GraphicsContext3DInternal()
     : m_webViewImpl(0)
     , m_initializedAvailableExtensions(false)
     , m_layerComposited(false)
+    , m_resourceSafety(ResourceSafetyUnknown)
 #if USE(SKIA)
     , m_grContext(0)
 #elif USE(CG)
@@ -758,6 +759,13 @@ Extensions3D* GraphicsContext3DInternal::getExtensions()
     return m_extensions.get();
 }
 
+bool GraphicsContext3DInternal::isResourceSafe()
+{
+    if (m_resourceSafety == ResourceSafetyUnknown)
+        m_resourceSafety = getExtensions()->isEnabled("GL_CHROMIUM_resource_safe") ? ResourceSafe : ResourceUnsafe;
+    return m_resourceSafety == ResourceSafe;
+}
+
 namespace {
 
 void splitStringHelper(const String& str, HashSet<String>& set)
@@ -972,7 +980,6 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     }
     RefPtr<GraphicsContext3D> result = adoptRef(new GraphicsContext3D(attrs, hostWindow, renderStyle == RenderDirectlyToHostWindow));
     result->m_internal = internal.release();
-    result->m_isResourceSafe = result->getExtensions()->isEnabled("GL_CHROMIUM_resource_safe");
     return result.release();
 }
 
@@ -1001,6 +1008,11 @@ void GraphicsContext3D::prepareTexture()
 IntSize GraphicsContext3D::getInternalFramebufferSize() const
 {
     return m_internal->getInternalFramebufferSize();
+}
+
+bool GraphicsContext3D::isResourceSafe()
+{
+    return m_internal->isResourceSafe();
 }
 
 #if USE(ACCELERATED_COMPOSITING)

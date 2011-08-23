@@ -905,7 +905,7 @@ public:
 #endif
 
     int m_currentWidth, m_currentHeight;
-    bool m_isResourceSafe;
+    bool isResourceSafe();
 
 #if PLATFORM(MAC)
     CGLContextObj m_contextObj;
