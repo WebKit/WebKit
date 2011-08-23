@@ -1,5 +1,37 @@
 2011-08-23  Adam Barth  <abarth@webkit.org>
 
+        Remove WebCore/editing/android and other Android-specific directories
+        https://bugs.webkit.org/show_bug.cgi?id=66739
+
+        Reviewed by Steve Block.
+
+        Now that Android shares more code with Chromium, we don't need these
+        Android-specific files.
+
+        * editing/android: Removed.
+        * editing/android/EditorAndroid.cpp: Removed.
+        * history/android: Removed.
+        * history/android/AndroidWebHistoryBridge.h: Removed.
+        * history/android/HistoryItemAndroid.cpp: Removed.
+        * page/android: Removed.
+        * page/android/DragControllerAndroid.cpp: Removed.
+        * page/android/EventHandlerAndroid.cpp: Removed.
+        * platform/network/android: Removed.
+        * platform/network/android/AuthenticationChallenge.h: Removed.
+        * platform/network/android/CookieJarAndroid.cpp: Removed.
+        * platform/network/android/ProxyServerAndroid.cpp: Removed.
+        * platform/network/android/ResourceError.h: Removed.
+        * platform/network/android/ResourceHandleAndroid.cpp: Removed.
+        * platform/network/android/ResourceLoaderAndroid.h: Removed.
+        * platform/network/android/ResourceRequest.h: Removed.
+        * platform/network/android/ResourceRequestAndroid.cpp: Removed.
+        * platform/network/android/ResourceResponse.h: Removed.
+        * platform/text/android: Removed.
+        * platform/text/android/HyphenationAndroid.cpp: Removed.
+        * platform/text/android/TextBreakIteratorInternalICU.cpp: Removed.
+
+2011-08-23  Adam Barth  <abarth@webkit.org>
+
         Remove WebCore/platform/android
         https://bugs.webkit.org/show_bug.cgi?id=66734
 
