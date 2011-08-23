@@ -3647,7 +3647,7 @@ BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtm
 BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK63186 SNOWLEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = PASS IMAGE+TEXT
 BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
-BUGWK63186  : svg/zoom/page/zoom-svg-through-object-with-override-size.html = PASS IMAGE+TEXT IMAGE
+BUGWK63186 MAC : svg/zoom/page/zoom-svg-through-object-with-override-size.html = PASS IMAGE+TEXT IMAGE
 BUGWK63186 WIN : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT IMAGE
 BUGWK63186 LINUX : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE
 BUGWK63186 LEOPARD : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE

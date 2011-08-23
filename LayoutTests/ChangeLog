@@ -1,5 +1,13 @@
 2011-08-23  Peter Kasting  <pkasting@google.com>
 
+        [chromium] Typo fix.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-23  Peter Kasting  <pkasting@google.com>
+
         [chromium] Revert unintentional changes to test expectations in r93638.
 
         Unreviewed, test expectations update.
