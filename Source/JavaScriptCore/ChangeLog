@@ -1,3 +1,9 @@
+2011-08-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for compile error on Windows for r93560.
+
+        * runtime/SamplingCounter.h:
+
 2011-08-22  Filip Pizlo  <fpizlo@apple.com>
 
         Sampling counter support is in the bytecode directory

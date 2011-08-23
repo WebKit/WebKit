@@ -29,6 +29,7 @@
 #ifndef SamplingCounter_h
 #define SamplingCounter_h
 
+#include <stdint.h>
 #include <wtf/Assertions.h>
 
 namespace JSC {
