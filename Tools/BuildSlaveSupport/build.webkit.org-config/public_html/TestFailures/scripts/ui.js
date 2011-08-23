@@ -89,7 +89,7 @@ function builderTableDataCells(resultNodesByBuilder)
 
     var list = [];
 
-    $.each(config.kBuilders, function(index, builderName) {
+    $.each(Object.keys(config.kBuilders), function(index, builderName) {
         var block = $('<td class="builder"></td>');
         block.attr('title', ui.displayNameForBuilder(builderName));
         block.attr(config.kBuilderNameAttr, builderName);

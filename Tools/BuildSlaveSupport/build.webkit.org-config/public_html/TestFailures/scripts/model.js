@@ -131,7 +131,7 @@ model.commitDataListForRevisionRange = function(fromRevision, toRevision)
 
 model.updateResultsByBuilder = function(callback)
 {
-    results.fetchResultsByBuilder(config.kBuilders, function(resultsByBuilder) {
+    results.fetchResultsByBuilder(Object.keys(config.kBuilders), function(resultsByBuilder) {
         model.state.resultsByBuilder = resultsByBuilder;
         callback();
     });

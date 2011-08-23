@@ -27,22 +27,22 @@ var config = config || {};
 
 (function() {
 
-config.kBuilders = [
-    'Webkit Win',
-    'Webkit Vista',
-    'Webkit Win7',
-    'Webkit Win (dbg)(1)',
-    'Webkit Win (dbg)(2)',
-    'Webkit Linux',
-    'Webkit Linux 32',
-    'Webkit Linux (dbg)(1)',
-    'Webkit Linux (dbg)(2)',
-    'Webkit Mac10.5 (CG)',
-    'Webkit Mac10.5 (CG)(dbg)(1)',
-    'Webkit Mac10.5 (CG)(dbg)(2)',
-    'Webkit Mac10.6 (CG)',
-    'Webkit Mac10.6 (CG)(dbg)',
-];
+config.kBuilders = {
+    'Webkit Win': {version: 'xp'},
+    'Webkit Vista': {version: 'vista'},
+    'Webkit Win7': {version: 'win7'},
+    'Webkit Win (dbg)(1)': {version: 'xp', debug: true},
+    'Webkit Win (dbg)(2)': {version: 'xp', debug: true},
+    'Webkit Linux': {version: 'lucid', is64bit: true},
+    'Webkit Linux 32': {version: 'lucid'},
+    'Webkit Linux (dbg)(1)': {version: 'lucid', is64bit: true, debug: true},
+    'Webkit Linux (dbg)(2)': {version: 'lucid', is64bit: true, debug: true},
+    'Webkit Mac10.5 (CG)': {version: 'leopard'},
+    'Webkit Mac10.5 (CG)(dbg)(1)': {version: 'leopard', debug: true},
+    'Webkit Mac10.5 (CG)(dbg)(2)': {version: 'leopard', debug: true},
+    'Webkit Mac10.6 (CG)': {version: 'snowleopard'},
+    'Webkit Mac10.6 (CG)(dbg)': {version: 'snowleopard', debug: true},
+};
 
 config.kBuildersThatOnlyCompile = [
     'Webkit Win Builder',

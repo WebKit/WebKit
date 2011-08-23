@@ -83,9 +83,10 @@ var g_buildInfoCache = new base.AsynchronousCache(function(key, callback) {
 function fetchMostRecentBuildInfoByBuilder(callback)
 {
     var buildInfoByBuilder = {};
-    var requestTracker = new base.RequestTracker(config.kBuilders.length, callback, [buildInfoByBuilder]);
+    var builderNames = Object.keys(config.kBuilders);
+    var requestTracker = new base.RequestTracker(builderNames.length, callback, [buildInfoByBuilder]);
     net.get(kChromiumBuildBotURL + '/json/builders', function(builderStatus) {
-        $.each(config.kBuilders, function(index, builderName) {
+        $.each(builderNames, function(index, builderName) {
             var buildNumber = mostRecentCompletedBuildNumber(builderStatus[builderName]);
             if (!buildNumber) {
                 buildInfoByBuilder[builderName] = null;

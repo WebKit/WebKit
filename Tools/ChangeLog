@@ -1,3 +1,16 @@
+2011-08-23  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Change garden-o-matic frontend builder array to be a configuration map.
+        https://bugs.webkit.org/show_bug.cgi?id=66816
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/builders.js: Made kBuilders a map, with value being a configuration object.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/config.js: Adjusted callsites to expect a map.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/main.js: Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/model.js: Ditto.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui.js: Ditto.
+
 2011-08-23  Cary Clark  <caryclark@google.com>
 
         Turn WebCanvas into CGContext before drawing scrollbar (DRT using Skia on Mac)

@@ -245,7 +245,7 @@ function showRecentCommits()
 function showBuilderProgress()
 {
     $.each(model.state.resultsByBuilder, function(builderName, resultsTree) {
-        var builderIndex = config.kBuilders.indexOf(builderName);
+        var builderIndex = Object.keys(config.kBuilders).indexOf(builderName);
         rowsBeforeRevision(resultsTree.revision).each(function() {
             $($(this).children()[builderIndex]).addClass('built');
         });
