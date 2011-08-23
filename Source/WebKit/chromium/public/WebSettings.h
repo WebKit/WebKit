@@ -32,6 +32,12 @@
 #define WebSettings_h
 
 #include "WebCommon.h"
+#if WEBKIT_IMPLEMENTATION
+#include <wtf/unicode/Unicode.h>
+#else
+#include <unicode/uchar.h>
+#include <unicode/uscript.h>
+#endif
 
 #define HAS_WEBAUDIO_FEATURE_ENABLE 1
 
@@ -51,12 +57,12 @@ public:
         EditingBehaviorUnix
     };
 
-    virtual void setStandardFontFamily(const WebString&) = 0;
-    virtual void setFixedFontFamily(const WebString&) = 0;
-    virtual void setSerifFontFamily(const WebString&) = 0;
-    virtual void setSansSerifFontFamily(const WebString&) = 0;
-    virtual void setCursiveFontFamily(const WebString&) = 0;
-    virtual void setFantasyFontFamily(const WebString&) = 0;
+    virtual void setStandardFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
+    virtual void setFixedFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
+    virtual void setSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
+    virtual void setSansSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
+    virtual void setCursiveFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
+    virtual void setFantasyFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON) = 0;
     virtual void setDefaultFontSize(int) = 0;
     virtual void setDefaultFixedFontSize(int) = 0;
     virtual void setMinimumFontSize(int) = 0;

@@ -54,34 +54,34 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     ASSERT(settings);
 }
 
-void WebSettingsImpl::setStandardFontFamily(const WebString& font)
+void WebSettingsImpl::setStandardFontFamily(const WebString& font, UScriptCode script)
 {
-    m_settings->setStandardFontFamily(font);
+    m_settings->setStandardFontFamily(font, script);
 }
 
-void WebSettingsImpl::setFixedFontFamily(const WebString& font)
+void WebSettingsImpl::setFixedFontFamily(const WebString& font, UScriptCode script)
 {
-    m_settings->setFixedFontFamily((String)font);
+    m_settings->setFixedFontFamily(font, script);
 }
 
-void WebSettingsImpl::setSerifFontFamily(const WebString& font)
+void WebSettingsImpl::setSerifFontFamily(const WebString& font, UScriptCode script)
 {
-    m_settings->setSerifFontFamily((String)font);
+    m_settings->setSerifFontFamily(font, script);
 }
 
-void WebSettingsImpl::setSansSerifFontFamily(const WebString& font)
+void WebSettingsImpl::setSansSerifFontFamily(const WebString& font, UScriptCode script)
 {
-    m_settings->setSansSerifFontFamily((String)font);
+    m_settings->setSansSerifFontFamily(font, script);
 }
 
-void WebSettingsImpl::setCursiveFontFamily(const WebString& font)
+void WebSettingsImpl::setCursiveFontFamily(const WebString& font, UScriptCode script)
 {
-    m_settings->setCursiveFontFamily((String)font);
+    m_settings->setCursiveFontFamily(font, script);
 }
 
-void WebSettingsImpl::setFantasyFontFamily(const WebString& font)
+void WebSettingsImpl::setFantasyFontFamily(const WebString& font, UScriptCode script)
 {
-    m_settings->setFantasyFontFamily((String)font);
+    m_settings->setFantasyFontFamily(font, script);
 }
 
 void WebSettingsImpl::setDefaultFontSize(int size)
