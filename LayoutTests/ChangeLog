@@ -1,5 +1,29 @@
 2011-08-23  Peter Kasting  <pkasting@google.com>
 
+        [chromium] Move result images into correct subdirectory.
+        https://bugs.webkit.org/show_bug.cgi?id=66618
+
+        Unreviewed, file misplacement fix.
+
+        * platform/chromium-cg-mac/fast/repaint/scroll-absolute-layer-with-reflection-expected.png: Copied from platform/chromium-cg-mac/scroll-absolute-layer-with-reflection-expected.png.
+        * platform/chromium-cg-mac/fast/repaint/scroll-fixed-layer-with-reflection-expected.png: Copied from platform/chromium-cg-mac/scroll-fixed-layer-with-reflection-expected.png.
+        * platform/chromium-cg-mac/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png: Copied from platform/chromium-cg-mac/scroll-fixed-layer-with-transformed-parent-layer-expected.png.
+        * platform/chromium-cg-mac/fast/repaint/scroll-fixed-reflected-layer-expected.png: Copied from platform/chromium-cg-mac/scroll-fixed-reflected-layer-expected.png.
+        * platform/chromium-cg-mac/fast/repaint/scroll-in-clipped-layer-expected.png: Copied from platform/chromium-cg-mac/scroll-in-clipped-layer-expected.png.
+        * platform/chromium-cg-mac/fast/repaint/scroll-in-fixed-layer-expected.png: Copied from platform/chromium-cg-mac/scroll-in-fixed-layer-expected.png.
+        * platform/chromium-cg-mac/fast/repaint/scroll-in-transformed-layer-expected.png: Copied from platform/chromium-cg-mac/scroll-in-transformed-layer-expected.png.
+        * platform/chromium-cg-mac/fast/repaint/scroll-with-transformed-parent-layer-expected.png: Copied from platform/chromium-cg-mac/scroll-with-transformed-parent-layer-expected.png.
+        * platform/chromium-cg-mac/scroll-absolute-layer-with-reflection-expected.png: Removed.
+        * platform/chromium-cg-mac/scroll-fixed-layer-with-reflection-expected.png: Removed.
+        * platform/chromium-cg-mac/scroll-fixed-layer-with-transformed-parent-layer-expected.png: Removed.
+        * platform/chromium-cg-mac/scroll-fixed-reflected-layer-expected.png: Removed.
+        * platform/chromium-cg-mac/scroll-in-clipped-layer-expected.png: Removed.
+        * platform/chromium-cg-mac/scroll-in-fixed-layer-expected.png: Removed.
+        * platform/chromium-cg-mac/scroll-in-transformed-layer-expected.png: Removed.
+        * platform/chromium-cg-mac/scroll-with-transformed-parent-layer-expected.png: Removed.
+
+2011-08-23  Peter Kasting  <pkasting@google.com>
+
         [chromium] Attempt to make test expectations more accurate.
 
         Unreviewed, test expectations update.
