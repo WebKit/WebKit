@@ -48,9 +48,12 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("createSidebarPane", this._onCreateSidebarPane.bind(this));
     this._registerHandler("evaluateOnInspectedPage", this._onEvaluateOnInspectedPage.bind(this));
     this._registerHandler("getHAR", this._onGetHAR.bind(this));
+    this._registerHandler("getPageResources", this._onGetPageResources.bind(this));
+    this._registerHandler("getRequestContent", this._onGetRequestContent.bind(this));
     this._registerHandler("getResourceContent", this._onGetResourceContent.bind(this));
     this._registerHandler("log", this._onLog.bind(this));
     this._registerHandler("reload", this._onReload.bind(this));
+    this._registerHandler("setResourceContent", this._onSetResourceContent.bind(this));
     this._registerHandler("setSidebarHeight", this._onSetSidebarHeight.bind(this));
     this._registerHandler("setSidebarContent", this._onSetSidebarContent.bind(this));
     this._registerHandler("setSidebarPage", this._onSetSidebarPage.bind(this));
@@ -117,9 +120,15 @@ WebInspector.ExtensionServer.prototype = {
         delete this._clientObjects[auditRun.id];
     },
 
-    notifyResourceContentEdited: function(url, content)
+    _notifyResourceAdded: function(event)
     {
-        this._postNotification("resource-content-edited", url, content);
+        var resource = event.data;
+        this._postNotification("resource-added", this._makeResource(resource));
+    },
+
+    notifyResourceContentCommitted: function(resource, content)
+    {
+        this._postNotification("resource-content-committed", this._makeResource(resource), content);
     },
 
     _notifyRequestFinished: function(event)
@@ -310,7 +319,26 @@ WebInspector.ExtensionServer.prototype = {
         return harLog;
     },
 
-    _onGetResourceContent: function(message, port)
+    _makeResource: function(resource)
+    {
+        return {
+            url: resource.url,
+            type: WebInspector.Resource.Type.toString(resource.type)
+        };
+    },
+
+    _onGetPageResources: function()
+    {
+        var resources = [];
+        function pushResourceData(resource)
+        {
+            resources.push(this._makeResource(resource));
+        }
+        WebInspector.resourceTreeModel.forAllResources(pushResourceData.bind(this));
+        return resources;
+    },
+
+    _getResourceContent: function(resource, message, port)
     {
         function onContentAvailable(content, encoded)
         {
@@ -320,10 +348,36 @@ WebInspector.ExtensionServer.prototype = {
             };
             this._dispatchCallback(message.requestId, port, response);
         }
+        resource.requestContent(onContentAvailable.bind(this));
+    },
+
+    _onGetRequestContent: function(message, port)
+    {
         var request = this._requestById(message.id);
         if (!request)
             return this._status.E_NOTFOUND(message.id);
-        request.requestContent(onContentAvailable.bind(this));
+        this._getResourceContent(request, message, port);
+    },
+
+    _onGetResourceContent: function(message, port)
+    {
+        var resource = WebInspector.resourceTreeModel.resourceForURL(message.url);
+        if (!resource)
+            return this._status.E_NOTFOUND(message.url);
+        this._getResourceContent(resource, message, port);
+    },
+
+    _onSetResourceContent: function(message, port)
+    {
+        function callbackWrapper(error)
+        {
+            var response = error ? this._status.E_FAILED(error) : this._status.OK();
+            this._dispatchCallback(message.requestId, port, response);
+        }
+        var resource = WebInspector.resourceTreeModel.resourceForURL(message.url);
+        if (!resource)
+            return this._status.E_NOTFOUND(message.url);
+        resource.setContent(message.content, message.commit, callbackWrapper.bind(this));
     },
 
     _requestId: function(request)
@@ -375,6 +429,7 @@ WebInspector.ExtensionServer.prototype = {
         // The networkManager is normally created after the ExtensionServer is constructed, but before initExtensions() is called.
         WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._notifyRequestFinished, this);
         WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
+        WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, this._notifyResourceAdded, this);
         WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._addRecordToTimeline, this);
 
         InspectorExtensionRegistry.getExtensionsAsync();
@@ -501,6 +556,7 @@ WebInspector.ExtensionServer._statuses =
     E_BADARGTYPE: "Invalid type for argument %s: got %s, expected %s",
     E_NOTFOUND: "Object not found: %s",
     E_NOTSUPPORTED: "Object does not support requested operation: %s",
+    E_FAILED: "Operation failed: %s"
 }
 
 WebInspector.ExtensionStatus = function()

@@ -48,7 +48,7 @@ EventSinkImpl.prototype = {
     addListener: function(callback)
     {
         if (typeof callback != "function")
-            throw new "addListener: callback is not a function";
+            throw "addListener: callback is not a function";
         if (this._listeners.length === 0)
             extensionServer.sendRequest({ command: "subscribe", type: this._type });
         this._listeners.push(callback);
@@ -115,7 +115,6 @@ function Network()
     this.onRequestFinished = new EventSink("network-request-finished", requestDispatch);
     defineDeprecatedProperty(this, "network", "onFinished", "onRequestFinished");
     this.onNavigated = new EventSink("inspectedURLChanged");
-    this.onContentEdited = new EventSink("resource-content-edited");
 }
 
 Network.prototype = {
@@ -151,7 +150,7 @@ RequestImpl.prototype = {
         {
             callback(response.content, response.encoding);
         }
-        extensionServer.sendRequest({ command: "getResourceContent", id: this._id }, callback && callbackWrapper);
+        extensionServer.sendRequest({ command: "getRequestContent", id: this._id }, callback && callbackWrapper);
     }
 };
 
@@ -358,6 +357,16 @@ AuditResultNode.prototype = {
 
 function InspectedWindow()
 {
+    function resourceDispatch(message)
+    {
+        this._fire(new Resource(message.arguments[0]));
+    }
+    function resourceContentDispatch(message)
+    {
+        this._fire(new Resource(message.arguments[0]), message.arguments[1]);
+    }
+    this.onResourceAdded = new EventSink("resource-added", resourceDispatch);
+    this.onResourceContentCommitted = new EventSink("resource-content-committed", resourceContentDispatch);
 }
 
 InspectedWindow.prototype = {
@@ -376,8 +385,54 @@ InspectedWindow.prototype = {
             callback(value, result.isException);
         }
         return extensionServer.sendRequest({ command: "evaluateOnInspectedPage", expression: expression }, callback && callbackWrapper);
+    },
+
+    getResources: function(callback)
+    {
+        function wrapResource(resourceData)
+        {
+            return new Resource(resourceData);
+        }
+        function callbackWrapper(resources)
+        {
+            callback(resources.map(wrapResource));
+        }
+        return extensionServer.sendRequest({ command: "getPageResources" }, callback && callbackWrapper);
     }
 }
+
+function ResourceImpl(resourceData)
+{
+    this._url = resourceData.url
+    this._type = resourceData.type;
+}
+
+ResourceImpl.prototype = {
+    get url()
+    {
+        return this._url;
+    },
+
+    get type()
+    {
+        return this._type;
+    },
+
+    getContent: function(callback)
+    {
+        function callbackWrapper(response)
+        {
+            callback(response.content, response.encoding);
+        }
+
+        return extensionServer.sendRequest({ command: "getResourceContent", url: this._url }, callback && callbackWrapper);
+    },
+
+    setContent: function(content, commit, callback)
+    {
+        return extensionServer.sendRequest({ command: "setResourceContent", url: this._url, content: content, commit: commit }, callback);
+    }
+};
 
 function TimelineImpl()
 {
@@ -455,9 +510,18 @@ function populateInterfaceClass(interface, implementation)
     for (var member in implementation) {
         if (member.charAt(0) === "_")
             continue;
-        var value = implementation[member];
-        interface[member] = typeof value === "function" ? bind(value, implementation)
-            : interface[member] = implementation[member];
+        var descriptor = null;
+        // Traverse prototype chain until we find the owner.
+        for (var owner = implementation; owner && !descriptor; owner = owner.__proto__)
+            descriptor = Object.getOwnPropertyDescriptor(owner, member);
+        if (!descriptor)
+            continue;
+        if (typeof descriptor.value === "function")
+            interface[member] = bind(descriptor.value, implementation);
+        else if (typeof descriptor.get === "function")
+            interface.__defineGetter__(member, bind(descriptor.get, implementation));
+        else
+            Object.defineProperty(interface, member, descriptor);
     }
 }
 
@@ -492,6 +556,7 @@ var ExtensionSidebarPane = declareInterfaceClass(ExtensionSidebarPaneImpl);
 var Panel = declareInterfaceClass(PanelImpl);
 var PanelWithSidebar = declareInterfaceClass(PanelWithSidebarImpl);
 var Request = declareInterfaceClass(RequestImpl);
+var Resource = declareInterfaceClass(ResourceImpl);
 var Timeline = declareInterfaceClass(TimelineImpl);
 
 var extensionServer = new ExtensionServerClient();

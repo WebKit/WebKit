@@ -1,3 +1,10 @@
+function trimURL(url)
+{
+    if (/^data:/.test(url))
+        return url.replace(/;.*$/, "...");
+    return url.replace(/.*\//, ".../");
+}
+
 function dumpObject(object, nondeterministicProps, prefix, firstLinePrefix)
 {
     prefix = prefix || "";
@@ -6,9 +13,10 @@ function dumpObject(object, nondeterministicProps, prefix, firstLinePrefix)
     for (var prop in object) {
         var prefixWithName = prefix + "    " + prop + " : ";
         var propValue = object[prop];
-        if (nondeterministicProps && prop in nondeterministicProps)
-            output(prefixWithName + "<" + typeof propValue + ">");
-        else if (propValue === null)
+        if (nondeterministicProps && prop in nondeterministicProps) {
+            var value = nondeterministicProps[prop] === "url" ? trimURL(propValue) : "<" + typeof propValue + ">";
+            output(prefixWithName + value);
+        } else if (propValue === null)
             output(prefixWithName + "null");
         else if (typeof propValue === "object")
             dumpObject(propValue, nondeterministicProps, prefix + "    ", prefixWithName);

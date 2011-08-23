@@ -833,7 +833,7 @@ WebInspector.Resource.prototype = {
 
         if (!restoringHistory)
             this._persistRevision();
-        WebInspector.extensionServer.notifyResourceContentEdited(this.url, newContent);
+        WebInspector.extensionServer.notifyResourceContentCommitted(this, newContent);
     },
 
     _persistRevision: function()

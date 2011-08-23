@@ -28,7 +28,5 @@ RUNNING TEST: extension_testGetResourceContentEncoded
 }
 RUNNING TEST: extension_testRequestNotification
 Request finished: .../inspector/extensions/extensions-network.html
-RUNNING TEST: extension_testResourceContentEdited
-content for resource .../extensions/resources/audits-style1.css edited: body { background-color: black; }
 All tests done.
 

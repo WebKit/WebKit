@@ -1,3 +1,40 @@
+2011-08-23  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] provide access to page resources
+        https://bugs.webkit.org/show_bug.cgi?id=66767
+
+        Reviewed by Pavel Feldman.
+
+        Test: inspector/extensions/extensions-resources.html
+
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.EventSinkImpl.prototype.addListener):
+        (WebInspector.injectedExtensionAPI):
+        (WebInspector.injectedExtensionAPI.RequestImpl.prototype.getContent):
+        (WebInspector.injectedExtensionAPI.InspectedWindow.resourceDispatch):
+        (WebInspector.injectedExtensionAPI.InspectedWindow.resourceContentDispatch):
+        (WebInspector.injectedExtensionAPI.InspectedWindow):
+        (WebInspector.injectedExtensionAPI.InspectedWindow.prototype.eval):
+        (WebInspector.injectedExtensionAPI.InspectedWindow.prototype.getResources):
+        (WebInspector.injectedExtensionAPI.InspectedWindow.prototype.getResources.callbackWrapper):
+        (WebInspector.injectedExtensionAPI.ResourceImpl.prototype.get url):
+        (WebInspector.injectedExtensionAPI.ResourceImpl.prototype.get type):
+        (WebInspector.injectedExtensionAPI.ResourceImpl.prototype.getContent):
+        (WebInspector.injectedExtensionAPI.ResourceImpl.prototype.setContent):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype._notifyResourceAdded):
+        (WebInspector.ExtensionServer.prototype.notifyResourceContentCommitted):
+        (WebInspector.ExtensionServer.prototype._makeResource):
+        (WebInspector.ExtensionServer.prototype._onGetPageResources):
+        (WebInspector.ExtensionServer.prototype._getResourceContent):
+        (WebInspector.ExtensionServer.prototype._onGetRequestContent):
+        (WebInspector.ExtensionServer.prototype._onGetResourceContent):
+        (WebInspector.ExtensionServer.prototype._onSetResourceContent):
+        (WebInspector.ExtensionServer.prototype.initExtensions):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.addRevision):
+
 2011-08-23  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: fixing build. One line drive-by typo fix in the inspector shortcut (Esc -> Backspace).

@@ -1,0 +1,74 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: application
+Tests resource-related methods of WebInspector extension API
+
+
+Started extension.
+Running tests...
+RUNNING TEST: extension_testGetAllResources
+page resources:
+{
+    0 : {
+        0 : {
+            url : .../extensions-resources.html
+            type : "document"
+            getContent : <function>
+            setContent : <function>
+        }
+        1 : {
+            url : .../extensions-test.js
+            type : "script"
+            getContent : <function>
+            setContent : <function>
+        }
+        2 : {
+            url : .../test-script.js
+            type : "script"
+            getContent : <function>
+            setContent : <function>
+        }
+        3 : {
+            url : .../inspector-test.js
+            type : "script"
+            getContent : <function>
+            setContent : <function>
+        }
+        4 : {
+            url : .../audits-style1.css
+            type : "stylesheet"
+            getContent : <function>
+            setContent : <function>
+        }
+        5 : {
+            url : .../abe.png
+            type : "image"
+            getContent : <function>
+            setContent : <function>
+        }
+    }
+}
+RUNNING TEST: extension_testGetResourceContent
+{
+    0 : "function __test_function()
+{
+}
+
+"
+    1 : ""
+}
+RUNNING TEST: extension_testOnContentCommitted
+log: Extension server error: Operation failed: Resource is not editable
+content committed for resource file:///usr/local/google/home/caseq/src/chromium/src/third_party/WebKit/LayoutTests/inspector/extensions/resources/audits-style1.css (type: stylesheet), new content: div.test { width: 220px; height: 42px; }
+RUNNING TEST: extension_testOnResourceAdded
+resource added:
+{
+    0 : {
+        url : data:application/javascript...
+        type : "script"
+        getContent : <function>
+        setContent : <function>
+    }
+}
+RUNNING TEST: extension_testSetResourceContent
+div.test width after stylesheet edited (should be 126): 126
+All tests done.
+

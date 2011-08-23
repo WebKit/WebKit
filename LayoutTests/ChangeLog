@@ -1,3 +1,21 @@
+2011-08-23  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Extensions API] provide access to page resources
+        https://bugs.webkit.org/show_bug.cgi?id=66767
+
+        Reviewed by Pavel Feldman.
+
+        * http/tests/inspector/resources/extension-main.js:
+        (trimURL):
+        * inspector/extensions/extensions-api-expected.txt:
+        * inspector/extensions/extensions-network-expected.txt:
+        * inspector/extensions/extensions-network.html:
+        * inspector/extensions/extensions-resources-expected.txt: Added.
+        * inspector/extensions/extensions-resources.html: Added.
+        * inspector/extensions/resources/Ahem.ttf:
+        * inspector/extensions/resources/test-script.js: Added.
+        (__test_function):
+
 2011-08-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed gardening. Remove a non-existent test from the skipped list.

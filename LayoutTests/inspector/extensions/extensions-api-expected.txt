@@ -8,8 +8,17 @@ RUNNING TEST: extension_testAPI
         addCategory : <function>
     }
     inspectedWindow : {
+        onResourceAdded : {
+            addListener : <function>
+            removeListener : <function>
+        }
+        onResourceContentCommitted : {
+            addListener : <function>
+            removeListener : <function>
+        }
         reload : <function>
         eval : <function>
+        getResources : <function>
     }
     panels : {
         elements : {
@@ -42,10 +51,6 @@ RUNNING TEST: extension_testAPI
             addListener : <function>
             removeListener : <function>
         }
-        onContentEdited : {
-            addListener : <function>
-            removeListener : <function>
-        }
         getHAR : <function>
         addRequestHeaders : <function>
     }
@@ -59,10 +64,6 @@ RUNNING TEST: extension_testAPI
             removeListener : <function>
         }
         onNavigated : {
-            addListener : <function>
-            removeListener : <function>
-        }
-        onContentEdited : {
             addListener : <function>
             removeListener : <function>
         }

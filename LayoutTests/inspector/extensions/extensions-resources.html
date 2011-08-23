@@ -1,0 +1,120 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/extensions-test.js"></script>
+<link rel="stylesheet" href="resources/audits-style1.css" type="text/css">
+<script type="text/javascript" src="resources/test-script.js"></script>
+
+<script type="text/javascript">
+
+function extension_testGetAllResources(nextTest)
+{
+    function callback(resources)
+    {
+        function compareResources(a, b)
+        {
+            return trimURL(a.url).localeCompare(trimURL(b.url));
+        }
+        resources.sort(compareResources);
+        output("page resources:");
+        dumpObject(Array.prototype.slice.call(arguments), { url: "url" });
+    }
+    webInspector.inspectedWindow.getResources(callbackAndNextTest(callback, nextTest));
+}
+
+function extension_runWithResource(regexp, callback)
+{
+    function onResources(resources)
+    {
+       for (var i = 0; i < resources.length; ++i) {
+           if (regexp.test(resources[i].url)) {
+               callback(resources[i])
+               return;
+           }
+       }
+       throw "Failed to find a resource: " + regexp.toString();
+    }
+    webInspector.inspectedWindow.getResources(onResources);
+}
+
+function extension_testGetResourceContent(nextTest)
+{
+    function onContent()
+    {
+        dumpObject(Array.prototype.slice.call(arguments));
+    }
+    extension_runWithResource(/test-script\.js$/, function(resource) {
+        resource.getContent(callbackAndNextTest(onContent, nextTest));
+    });
+}
+
+function extension_testSetResourceContent(nextTest)
+{
+    function callback()
+    {
+        webInspector.inspectedWindow.eval("document.getElementById('test-div').clientWidth", function(result) {
+            output("div.test width after stylesheet edited (should be 126): " + result);
+            nextTest();
+        });
+    }
+    extension_runWithResource(/audits-style1\.css$/, function(resource) {
+        resource.setContent("div.test { width: 126px; height: 42px; }", false, callback);
+    });
+}
+
+function extension_testOnContentCommitted(nextTest)
+{
+    var expected_content = "div.test { width: 220px; height: 42px; }";
+
+    function onContentCommitted(resource, content)
+    {
+        output("content committed for resource " + trimURL(resource.url) + " (type: " + resource.type + "), new content: " + content);
+        if (!/audits-style1\.css$/.test(resource.url) || content !== expected_content)
+            output("FAIL: stray onContentEdited event");
+        webInspector.inspectedWindow.onResourceContentCommitted.removeListener(onContentCommitted);
+        nextTest();
+    }
+    webInspector.inspectedWindow.onResourceContentCommitted.addListener(onContentCommitted);
+    extension_runWithResource(/audits-style1\.css$/, function(resource) {
+        resource.setContent("div.test { width: 140px; height: 42px; }", false);
+    });
+    // The next step is going to produce a console message that will be logged, so synchronize the output now.
+    evaluateOnFrontend("InspectorTest.runAfterPendingDispatches(reply)", function() {
+        extension_runWithResource(/test-script\.js$/, function(resource) {
+            resource.setContent("function function1(){}", true);
+        });
+        extension_runWithResource(/audits-style1\.css$/, function(resource) {
+            resource.setContent(expected_content, true);
+        });
+    });
+}
+
+function extension_testOnResourceAdded(nextTest)
+{
+    function onResourceAdded(resource)
+    {
+        output("resource added:");
+        dumpObject(Array.prototype.slice.call(arguments), { url: "url" });
+        webInspector.inspectedWindow.onResourceAdded.removeListener(onResourceAdded);
+
+        nextTest();
+    }
+    webInspector.inspectedWindow.onResourceAdded.addListener(onResourceAdded);
+    webInspector.inspectedWindow.eval("addResource()");
+}
+
+function addResource()
+{
+    var script = document.createElement("script");
+    script.src = "data:application/javascript;function test_func(){}";
+    document.head.appendChild(script);
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests resource-related methods of WebInspector extension API</p>
+<img src="resources/abe.png">
+<div id="test-div" class="test"></div>
+</body>
+</html>

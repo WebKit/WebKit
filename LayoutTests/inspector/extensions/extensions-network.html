@@ -76,30 +76,6 @@ function extension_testGetResourceContentEncoded(nextTest)
     });
 }
 
-function extension_testResourceContentEdited(nextTest)
-{
-    function onContentEdited(url, content)
-    {
-        webInspector.network.onContentEdited.removeListener(onContentEdited);
-        var urlTail = url.replace(/.*((\/[^/]*){3}$)/,"...$1");
-        output("content for resource " + urlTail + " edited: " + content);
-        nextTest();
-    }   
-    webInspector.network.onContentEdited.addListener(onContentEdited);
-
-    function findAndEditResource()
-    {
-        var resources = WebInspector.networkLog.resources;
-        for (var i = 0; i < resources.length; ++i) {
-            if (/audits-style1.css$/.test(resources[i].url)) {
-                resources[i].setContent("body { background-color: black; }", true);
-                break;
-            }
-        }
-    }
-    evaluateOnFrontend("(" + findAndEditResource + ")()");
-}
-
 var test = function()
 {
     InspectorTest.reloadPage(InspectorTest.runExtensionTests);
