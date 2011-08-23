@@ -1,3 +1,24 @@
+2011-08-23  Tony Chang  <tony@chromium.org>
+
+        Add handling of mix-width and max-width for flexitems
+        https://bugs.webkit.org/show_bug.cgi?id=66723
+
+        Reviewed by David Hyatt.
+
+        If we flex past a min/max width value, we need to mark the flexitem as
+        a fixed width and re-start the flexing algorithm.  We use a HashMap to
+        keep track of fixed width items.
+
+        This patch also split out the size computation from the actual layout
+        to avoid unnecessary layouts caused by restarting the flexing algorithm.
+
+        Test: css3/flexbox/003.html
+
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::layoutHorizontalBlock):
+        (WebCore::RenderFlexibleBox::runFreeSpaceAllocationAlgorithm):
+        * rendering/RenderFlexibleBox.h:
+
 2011-08-23  Pratik Solanki  <psolanki@apple.com>
 
         ResourceRequest::setStorageSession should update NSURLRequest as well

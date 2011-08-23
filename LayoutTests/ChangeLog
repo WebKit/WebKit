@@ -1,3 +1,13 @@
+2011-08-23  Tony Chang  <tony@chromium.org>
+
+        Add handling of mix-width and max-width for flexitems
+        https://bugs.webkit.org/show_bug.cgi?id=66723
+
+        Reviewed by David Hyatt.
+
+        * css3/flexbox/003-expected.txt: Added.
+        * css3/flexbox/003.html: Added.
+
 2011-08-23  Adam Barth  <abarth@webkit.org>
 
         Update expectations for pkasting.  The rebaseline script is having

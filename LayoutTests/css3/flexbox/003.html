@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<style>
+body {
+    margin: 0;
+}
+.horizontal-box {
+    width: 600px;
+    display: -webkit-flexbox;
+    background-color: #aaa;
+    position: relative;
+}
+.horizontal-box div {
+    height: 20px;
+    border: 0;
+}
+
+.horizontal-box :nth-child(1) {
+    background-color: blue;
+}
+.horizontal-box :nth-child(2) {
+    background-color: green;
+}
+.horizontal-box :nth-child(3) {
+    background-color: red;
+}
+</style>
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<script src="resources/flexbox.js"></script>
+<body onload="checkHorizontalBoxen()">
+<div class="horizontal-box">
+  <div data-expected-width="100" style="width: -webkit-flex(1 0 0); max-width: 100px;"></div>
+  <div data-expected-width="250" style="width: -webkit-flex(1 0 0);"></div>
+  <div data-expected-width="250" style="width: -webkit-flex(1 0 0);"></div>
+</div>
+
+<!-- The first two flexitems should hit their max width and the third item fills the remaining space. -->
+<div class="horizontal-box">
+  <div data-expected-width="50" style="width: -webkit-flex(1 0 0); max-width: 50px;"></div>
+  <div data-expected-width="300" style="width: -webkit-flex(4 0 0); max-width: 300px;"></div>
+  <div data-expected-width="250" style="width: -webkit-flex(1 0 0);"></div>
+</div>
+
+<div class="horizontal-box">
+  <div data-expected-width="100" style="width: -webkit-flex(1 0 0); max-width: 100px;"></div>
+  <div data-expected-width="300" style="width: -webkit-flex(1 0 200px); max-width: 300px;"></div>
+  <div data-expected-width="200" style="width: -webkit-flex(1 0 0);"></div>
+</div>
+
+<!-- Test min-width. -->
+<div class="horizontal-box">
+  <div data-expected-width="350" style="width: -webkit-flex(1 1 400px); min-width: 350px;"></div>
+  <div data-expected-width="250" style="width: -webkit-flex(1 1 400px);"></div>
+</div>
+
+<!-- The flex items can overflow the flexbox. -->
+<div class="horizontal-box">
+  <div data-expected-width="350" style="width: -webkit-flex(1 1 400px); min-width: 350px;"></div>
+  <div data-expected-width="300" style="width: -webkit-flex(2 0 300px); max-width: 300px;"></div>
+  <div data-expected-width="0" style="width: -webkit-flex(1 0 0);"></div>
+</div>
+
+<div class="horizontal-box">
+  <div data-expected-width="100" data-offset-x="100" style="width: -webkit-flex(1 0 0); margin: 0 auto; max-width: 100px;"></div>
+  <div data-expected-width="200" data-offset-x="300" style="width: -webkit-flex(2 0 0);"></div>
+  <div data-expected-width="100" data-offset-x="500" style="width: -webkit-flex(1 0 0);"></div>
+</div>
+
+<!-- min-width and max-width take priority over the preferred size. -->
+<div class="horizontal-box">
+  <div data-expected-width="500" style="width: -webkit-flex(1 0 0); min-width: 300px"></div>
+  <div data-expected-width="100" style="width: -webkit-flex(1 0 50%); max-width: 100px"></div>
+</div>
+
+</body>
+</html>

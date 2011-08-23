@@ -50,10 +50,12 @@ public:
 
 private:
     class FlexibleBoxIterator;
+    typedef WTF::HashMap<const RenderBox*, LayoutUnit> InflexibleFlexItemSize;
 
     void layoutHorizontalBlock(bool relayoutChildren);
 
-    void computePreferredSize(bool relayoutChildren, FlexibleBoxIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
+    void computePreferredSizeHorizontal(bool relayoutChildren, FlexibleBoxIterator&, LayoutUnit&, float& totalPositiveFlexibility, float& totalNegativeFlexibility);
+    bool runFreeSpaceAllocationAlgorithmHorizontal(LayoutUnit& availableFreeSpace, float& totalPositiveFlexibility, float& totalNegativeFlexibility, InflexibleFlexItemSize&);
 };
 
 } // namespace WebCore
