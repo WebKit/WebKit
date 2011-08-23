@@ -64,6 +64,10 @@ do
   git fetch
   git svn rebase
 
+  # Hack to fix cr-jail-1 (cr-mac-ews).  gclient seems to be failing to update third_party/leveldatabase.
+  # FIXME: This can be removed at any point in the future.
+  svn cleanup Source/WebKit/chromium/third_party/leveldatabase
+
   # test-webkitpy has code to remove orphaned .pyc files, so we
   # run it before running webkit-patch to avoid stale .pyc files
   # preventing webkit-patch from launching.

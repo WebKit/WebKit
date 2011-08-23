@@ -1,3 +1,14 @@
+2011-08-22  Eric Seidel  <eric@webkit.org>
+
+        Hack start-queue.sh in an attempt to resurrect the cr-jail-1 cr-mac-ews bot.
+        I won't have ssh access to the bot again for a couple days, so
+        attempting to fix by changing this script.  If this doesn't
+        work we'll just live with the it hung for now.
+
+        Unreviewed.
+
+        * EWSTools/start-queue.sh:
+
 2011-08-22  Dimitri Glazkov  <dglazkov@chromium.org>
 
         webkit-patch rebaseline-expectations command should not rearrange the entire test_expectations.txt file.
