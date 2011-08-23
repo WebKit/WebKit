@@ -44,7 +44,6 @@ WebInspector.RawSourceCode = function(id, script, formatter)
     this.url = script.sourceURL;
     this.isContentScript = script.isContentScript;
     this.messages = [];
-    this.breakpoints = {};
 
     if (this._hasPendingResource())
         this._resource.addEventListener("finished", this.reload.bind(this));

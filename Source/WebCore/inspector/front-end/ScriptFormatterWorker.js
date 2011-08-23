@@ -94,6 +94,8 @@ HTMLScriptFormatter.prototype = {
             return;
 
         var scriptContent = this._content.substring(this._position, cursor);
+        this._mapping.original.push(this._position);
+        this._mapping.formatted.push(this._formattedContent.length);
         var formattedScriptContent = formatScript(scriptContent, this._mapping, this._position, this._formattedContent.length);
 
         this._formattedContent += formattedScriptContent;

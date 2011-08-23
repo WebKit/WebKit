@@ -36,16 +36,14 @@ WebInspector.DebuggerPresentationModel = function()
     this._messages = [];
     // FIXME: move this to RawSourceCode when it's not re-created in pretty-print mode.
     this._sourceMappingListeners = [];
-    this._breakpointsByDebuggerId = {};
-    this._breakpointsWithoutSourceFile = {};
 
     this._presentationCallFrames = [];
     this._selectedCallFrameIndex = 0;
 
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerWasEnabled, this._debuggerWasEnabled, this);
+    this._breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this._breakpointAdded.bind(this), this._breakpointRemoved.bind(this), WebInspector.debuggerModel);
+
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.ParsedScriptSource, this._parsedScriptSource, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.FailedToParseScriptSource, this._failedToParseScriptSource, this);
-    WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.BreakpointResolved, this._breakpointResolved, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerPaused, this._debuggerPaused, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.Reset, this._debuggerReset, this);
@@ -69,14 +67,6 @@ WebInspector.DebuggerPresentationModel.Events = {
 }
 
 WebInspector.DebuggerPresentationModel.prototype = {
-    _debuggerWasEnabled: function()
-    {
-        if (this._breakpointsRestored)
-            return;
-        this._restoreBreakpointsFromSettings();
-        this._breakpointsRestored = true;
-    },
-
     sourceFile: function(sourceFileId)
     {
         return this._sourceFiles[sourceFileId];
@@ -182,7 +172,18 @@ WebInspector.DebuggerPresentationModel.prototype = {
         this._sourceFiles[sourceFileId] = sourceFile;
         sourceFile.addEventListener(WebInspector.RawSourceCode.Events.UISourceCodeReplaced, this._uiSourceCodeReplaced, this);
 
-        this._restoreBreakpoints(sourceFile);
+        function didCreateSourceMapping()
+        {
+            this._breakpointManager.uiSourceCodeAdded(sourceFile);
+            var breakpoints = this._breakpointManager.breakpointsForUISourceCode(sourceFileId);
+            for (var lineNumber in breakpoints) {
+                var breakpoint = breakpoints[lineNumber];
+                this._breakpointAdded(breakpoint.uiSourceCodeId, breakpoint.lineNumber, breakpoint.condition, breakpoint.enabled);
+            }
+        }
+        // FIXME: force source formatting if needed. This will go away once formatting
+        // is fully encapsulated in RawSourceCode class.
+        sourceFile.createSourceMappingIfNeeded(didCreateSourceMapping.bind(this));
 
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, sourceFile.uiSourceCode);
     },
@@ -197,23 +198,6 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         // FIXME: restore breakpoints in new source code (currently we just recreate everything when switching to pretty-print mode).
         this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.SourceFileReplaced, event.data);
-    },
-
-    _restoreBreakpoints: function(sourceFile)
-    {
-        var pendingBreakpoints = this._breakpointsWithoutSourceFile[sourceFile.id];
-        if (!pendingBreakpoints)
-            return;
-        for (var lineNumber in pendingBreakpoints) {
-            var breakpointData = pendingBreakpoints[lineNumber];
-            if ("debuggerId" in breakpointData) {
-                var breakpoint = new WebInspector.PresentationBreakpoint(sourceFile, breakpointData.lineNumber, breakpointData.condition, breakpointData.enabled);
-                this._bindDebuggerId(breakpoint, breakpointData.debuggerId);
-                this._breakpointAdded(breakpoint);
-            } else
-                this.setBreakpoint(sourceFile.id, breakpointData.lineNumber, breakpointData.condition, breakpointData.enabled, true);
-        }
-        delete this._breakpointsWithoutSourceFile[sourceFile.id];
     },
 
     canEditScriptSource: function(sourceFileId)
@@ -290,20 +274,10 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         this._formatSourceFiles = formatSourceFiles;
 
-        for (var id in this._sourceFiles) {
-            var sourceFile = this._sourceFiles[id];
-            for (var line in sourceFile.breakpoints)
-                this._removeBreakpointFromDebugger(sourceFile.breakpoints[line]);
-        }
-
-        for (var id in this._breakpointsWithoutSourceFile) {
-            var breakpoints = this._breakpointsWithoutSourceFile[id];
-            for (var lineNumber in breakpoints)
-                this._removeBreakpointFromDebugger(breakpoints[lineNumber]);
-        }
-
+        this._breakpointManager.reset();
+        this._sourceFiles = {};
         var messages = this._messages;
-        this._reset();
+        this._messages = [];
 
         var scripts = WebInspector.debuggerModel.scripts;
         for (var id in scripts)
@@ -369,84 +343,16 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     breakpointsForSourceFileId: function(sourceFileId)
     {
-        var sourceFile = this.sourceFile(sourceFileId);
-        if (!sourceFile)
-            return [];
-        var breakpoints = [];
-        for (var lineNumber in sourceFile.breakpoints)
-            breakpoints.push(sourceFile.breakpoints[lineNumber]);
-        return breakpoints;
+        var breakpointsMap = this._breakpointManager.breakpointsForUISourceCode(sourceFileId);
+        var breakpointsList = [];
+        for (var lineNumber in breakpointsMap)
+            breakpointsList.push(breakpointsMap[lineNumber]);
+        return breakpointsList;
     },
 
-    setBreakpoint: function(sourceFileId, lineNumber, condition, enabled, dontSaveBreakpoints)
+    setBreakpoint: function(sourceFileId, lineNumber, condition, enabled)
     {
-        var sourceFile = this._sourceFiles[sourceFileId];
-        if (!sourceFile)
-            return;
-
-        var breakpoint = new WebInspector.PresentationBreakpoint(sourceFile, lineNumber, condition, enabled);
-        if (!enabled) {
-            this._breakpointAdded(breakpoint);
-            if (!dontSaveBreakpoints)
-                this._saveBreakpoints();
-            return;
-        }
-
-        function callback()
-        {
-            this._breakpointAdded(breakpoint);
-            if (!dontSaveBreakpoints)
-                this._saveBreakpoints();
-        }
-        this._setBreakpointInDebugger(breakpoint, callback.bind(this));
-    },
-
-    _setBreakpointInDebugger: function(breakpoint, callback)
-    {
-        function didSetBreakpoint(breakpointId, locations)
-        {
-            if (!breakpointId)
-                return;
-
-            this._bindDebuggerId(breakpoint, breakpointId);
-            breakpoint.location = locations[0];
-            callback();
-        }
-
-        function didGetScriptLocation(location)
-        {
-            var script = WebInspector.debuggerModel.scriptForSourceID(location.scriptId);
-            if (script.sourceURL)
-                WebInspector.debuggerModel.setBreakpoint(script.sourceURL, location.lineNumber, location.columnNumber, breakpoint.condition, didSetBreakpoint.bind(this));
-            else {
-                location.scriptId = script.scriptId;
-                WebInspector.debuggerModel.setBreakpointBySourceId(location, breakpoint.condition, didSetBreakpoint.bind(this));
-            }
-        }
-        this._uiLocationToScriptLocation(breakpoint.sourceFile.id, breakpoint.lineNumber, didGetScriptLocation.bind(this));
-    },
-
-    _removeBreakpointFromDebugger: function(breakpoint, callback)
-    {
-        if ("debuggerId" in breakpoint) {
-            WebInspector.debuggerModel.removeBreakpoint(breakpoint.debuggerId);
-            this._unbindDebuggerId(breakpoint);
-        }
-
-        if (callback)
-            callback();
-    },
-
-    _bindDebuggerId: function(breakpoint, debuggerId)
-    {
-        breakpoint.debuggerId = debuggerId;
-        this._breakpointsByDebuggerId[debuggerId] = breakpoint;
-    },
-
-    _unbindDebuggerId: function(breakpoint)
-    {
-        delete this._breakpointsByDebuggerId[breakpoint.debuggerId];
-        delete breakpoint.debuggerId;
+        this._breakpointManager.setBreakpoint(this._sourceFiles[sourceFileId], lineNumber, condition, enabled);
     },
 
     setBreakpointEnabled: function(sourceFileId, lineNumber, enabled)
@@ -454,159 +360,38 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var breakpoint = this.findBreakpoint(sourceFileId, lineNumber);
         if (!breakpoint)
             return;
-
-        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, breakpoint);
-
-        breakpoint.enabled = enabled;
-
-        function afterUpdate()
-        {
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, breakpoint);
-            this._saveBreakpoints();
-        }
-
-        if (!enabled)
-            this._removeBreakpointFromDebugger(breakpoint, afterUpdate.call(this));
-        else
-            this._setBreakpointInDebugger(breakpoint, afterUpdate.bind(this));
+        this._breakpointManager.removeBreakpoint(sourceFileId, lineNumber);
+        this._breakpointManager.setBreakpoint(this._sourceFiles[sourceFileId], lineNumber, breakpoint.condition, enabled);
     },
 
     updateBreakpoint: function(sourceFileId, lineNumber, condition, enabled)
     {
-        this.removeBreakpoint(sourceFileId, lineNumber);
-        this.setBreakpoint(sourceFileId, lineNumber, condition, enabled);
+        this._breakpointManager.removeBreakpoint(sourceFileId, lineNumber);
+        this._breakpointManager.setBreakpoint(this._sourceFiles[sourceFileId], lineNumber, condition, enabled);
     },
 
     removeBreakpoint: function(sourceFileId, lineNumber)
     {
-        var breakpoint = this.findBreakpoint(sourceFileId, lineNumber);
-        if (!breakpoint)
-            return;
-
-        function callback()
-        {
-            this._breakpointRemoved(breakpoint);
-            this._saveBreakpoints();
-        }
-        this._removeBreakpointFromDebugger(breakpoint, callback.bind(this));
+        this._breakpointManager.removeBreakpoint(sourceFileId, lineNumber);
     },
 
     findBreakpoint: function(sourceFileId, lineNumber)
     {
-        var sourceFile = this.sourceFile(sourceFileId);
-        if (sourceFile)
-            return sourceFile.breakpoints[lineNumber];
+        return this._breakpointManager.breakpointsForUISourceCode(sourceFileId)[lineNumber];
     },
 
-    _breakpointAdded: function(breakpoint)
+    _breakpointAdded: function(sourceFileId, lineNumber, condition, enabled)
     {
-        var sourceFile = breakpoint.sourceFile;
+        var sourceFile = this._sourceFiles[sourceFileId];
         if (!sourceFile)
             return;
-
-        function updateSourceFileBreakpointsAndDispatchEvent()
-        {
-            var existingBreakpoint = this.findBreakpoint(sourceFile.id, breakpoint.lineNumber);
-            if (existingBreakpoint) {
-                // We can't show more than one breakpoint on a single source file line.
-                this._removeBreakpointFromDebugger(breakpoint);
-                return;
-            }
-            sourceFile.breakpoints[breakpoint.lineNumber] = breakpoint;
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, breakpoint);
-        }
-
-        function didGetUILocation(sourceFileId, lineNumber)
-        {
-            breakpoint.lineNumber = lineNumber;
-            updateSourceFileBreakpointsAndDispatchEvent.call(this);
-        }
-        // Refine line number based on resolved location.
-        if (breakpoint.location)
-            this._scriptLocationToUILocation(null, breakpoint.location.scriptId, breakpoint.location.lineNumber, breakpoint.location.columnNumber, didGetUILocation.bind(this));
-        else
-            updateSourceFileBreakpointsAndDispatchEvent.call(this);
+        var presentationBreakpoint = new WebInspector.PresentationBreakpoint(sourceFile, lineNumber, condition, enabled);
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, presentationBreakpoint);
     },
 
-    _breakpointRemoved: function(breakpoint)
+    _breakpointRemoved: function(sourceFileId, lineNumber)
     {
-        var sourceFile = breakpoint.sourceFile;
-        if (sourceFile.breakpoints[breakpoint.lineNumber] === breakpoint) {
-            // There can already be a newer breakpoint;
-            delete sourceFile.breakpoints[breakpoint.lineNumber];
-            this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, breakpoint);
-        }
-    },
-
-    _breakpointResolved: function(event)
-    {
-        var debuggerId = event.data.breakpointId;
-        if (!(debuggerId in this._breakpointsByDebuggerId))
-            return;
-        var breakpoint = this._breakpointsByDebuggerId[debuggerId];
-
-        this._breakpointRemoved(breakpoint);
-        breakpoint.location = event.data.location;
-        this._breakpointAdded(breakpoint);
-    },
-
-    _restoreBreakpointsFromSettings: function()
-    {
-        var breakpoints = WebInspector.settings.breakpoints.get();
-        for (var i = 0; i < breakpoints.length; ++i) {
-            var breakpointData = breakpoints[i];
-            var sourceFileId = breakpointData.sourceFileId;
-            if (!sourceFileId)
-                continue;
-            var sourceFile = this._sourceFiles[sourceFileId];
-            if (sourceFile) {
-                this.setBreakpoint(sourceFileId, breakpointData.lineNumber, breakpointData.condition, breakpointData.enabled);
-                continue;
-            }
-
-            // Add breakpoint once source file becomes available.
-            var pendingBreakpoints = this._breakpointsWithoutSourceFile[sourceFileId];
-            if (!pendingBreakpoints) {
-                pendingBreakpoints = {};
-                this._breakpointsWithoutSourceFile[sourceFileId] = pendingBreakpoints;
-            }
-            pendingBreakpoints[breakpointData.lineNumber] = breakpointData;
-        }
-    },
-
-    _saveBreakpoints: function()
-    {
-        var serializedBreakpoints = [];
-
-        // Store added breakpoints.
-        for (var sourceFileId in this._sourceFiles) {
-            var sourceFile = this._sourceFiles[sourceFileId];
-            if (!sourceFile.url)
-                continue;
-
-            for (var lineNumber in sourceFile.breakpoints)
-                serializedBreakpoints.push(sourceFile.breakpoints[lineNumber].serialize());
-        }
-
-        // Store not added breakpoints.
-        for (var sourceFileId in this._breakpointsWithoutSourceFile) {
-            var breakpoints = this._breakpointsWithoutSourceFile[sourceFileId];
-            for (var lineNumber in breakpoints)
-                serializedBreakpoints.push(breakpoints[lineNumber]);
-        }
-
-        // Sanitize debugger ids.
-        for (var i = 0; i < serializedBreakpoints.length; ++i) {
-            var breakpoint = serializedBreakpoints[i];
-            var breakpointCopy = {};
-            for (var property in breakpoint) {
-                if (property !== "debuggerId")
-                    breakpointCopy[property] = breakpoint[property];
-            }
-            serializedBreakpoints[i] = breakpointCopy;
-        }
-
-        WebInspector.settings.breakpoints.set(serializedBreakpoints);
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, { sourceFileId: sourceFileId, lineNumber: lineNumber });
     },
 
     _debuggerPaused: function()
@@ -672,31 +457,14 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return prefix + (sourceURL || scriptId);
     },
 
-    _reset: function()
-    {
-        for (var id in this._sourceFiles) {
-            var sourceFile = this._sourceFiles[id];
-            for (var line in sourceFile.breakpoints) {
-                var breakpoints = this._breakpointsWithoutSourceFile[sourceFile.id];
-                if (!breakpoints) {
-                    breakpoints = {};
-                    this._breakpointsWithoutSourceFile[sourceFile.id] = breakpoints;
-                }
-                breakpoints[line] = sourceFile.breakpoints[line].serialize();
-            }
-        }
-
-        this._sourceFiles = {};
-        this._messages = [];
-        this._breakpointsByDebuggerId = {};
-    },
-
     _debuggerReset: function()
     {
-        this._reset();
+        this._sourceFiles = {};
+        this._messages = [];
         this._sourceMappingListeners = [];
         this._presentationCallFrames = [];
         this._selectedCallFrameIndex = 0;
+        this._breakpointManager.debuggerReset();
     }
 }
 
@@ -737,18 +505,6 @@ WebInspector.PresentationBreakpoint.prototype = {
             return;
         }
         this.sourceFile.requestContent(didRequestContent.bind(this));
-    },
-
-    serialize: function()
-    {
-        var serializedBreakpoint = {};
-        serializedBreakpoint.sourceFileId = this.sourceFile.id;
-        serializedBreakpoint.lineNumber = this.lineNumber;
-        serializedBreakpoint.condition = this.condition;
-        serializedBreakpoint.enabled = this.enabled;
-        if ("debuggerId" in this)
-            serializedBreakpoint.debuggerId = this.debuggerId;
-        return serializedBreakpoint;
     }
 }
 

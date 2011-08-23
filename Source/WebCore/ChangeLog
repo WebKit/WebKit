@@ -1,3 +1,28 @@
+2011-08-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Web Inspector: switch to using BreakpointManager.
+        https://bugs.webkit.org/show_bug.cgi?id=66225
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript.didCreateSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._addScript):
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype.breakpointsForSourceFileId):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.setBreakpointEnabled):
+        (WebInspector.DebuggerPresentationModel.prototype.updateBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.removeBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype.findBreakpoint):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointAdded):
+        (WebInspector.DebuggerPresentationModel.prototype._breakpointRemoved):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerReset):
+        (WebInspector.PresentationBreakpoint.prototype.loadSnippet):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.RawSourceCode):
+
 2011-08-23  Steve Block  <steveblock@google.com>
 
         Remove all mention of removed Android files from build scripts
