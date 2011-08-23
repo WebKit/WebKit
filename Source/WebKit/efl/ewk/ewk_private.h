@@ -134,6 +134,9 @@ Eina_Bool ewk_view_need_touch_events_get(Evas_Object*);
 
 Ewk_History *ewk_history_new(WebCore::BackForwardListImpl *history);
 void ewk_history_free(Ewk_History *history);
+char *ewk_history_item_target_get(const Ewk_History_Item *item);
+Eina_Bool ewk_history_item_target_is(const Ewk_History_Item *item);
+Eina_List *ewk_history_item_children_get(const Ewk_History_Item *item);
 
 #if ENABLE(CONTEXT_MENUS)
 Ewk_Context_Menu *ewk_context_menu_new(Evas_Object *view, WebCore::ContextMenuController *controller);

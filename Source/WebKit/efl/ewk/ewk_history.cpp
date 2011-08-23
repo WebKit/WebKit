@@ -406,3 +406,52 @@ void ewk_history_free(Ewk_History* history)
     history->core->deref();
     free(history);
 }
+
+/**
+ * @internal
+ *
+ * Returns a newly-allocated string with the item's target name.
+ * Callers are responsible for freeing the allocated memory with free(3).
+ *
+ * @param item instance to operate upon.
+ */
+char* ewk_history_item_target_get(const Ewk_History_Item* item)
+{
+    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
+    return strdup(core->target().utf8().data());
+}
+
+/**
+ * @internal
+ *
+ * Returns whether the given item is currently a target.
+ *
+ * @param item instance to check.
+ */
+Eina_Bool ewk_history_item_target_is(const Ewk_History_Item* item)
+{
+    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
+    return core->isTargetItem();
+}
+
+/**
+ * @internal
+ *
+ * Returns a list of child history items relative to the given item,
+ * or @c NULL if there are none.
+ *
+ * @param item instance to operate upon.
+ */
+Eina_List* ewk_history_item_children_get(const Ewk_History_Item* item)
+{
+    EWK_HISTORY_ITEM_CORE_GET_OR_RETURN(item, core, 0);
+    const WebCore::HistoryItemVector& children = core->children();
+    if (!children.size())
+        return 0;
+
+    Eina_List* kids = 0;
+    const unsigned size = children.size();
+    for (unsigned i = 0; i < size; ++i)
+        kids = eina_list_append(kids, _ewk_history_item_new(children[i].get()));
+    return kids;
+}

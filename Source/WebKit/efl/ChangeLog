@@ -1,5 +1,22 @@
 2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Add auxiliary history functions for DRT
+        https://bugs.webkit.org/show_bug.cgi?id=66700
+
+        Reviewed by Kent Tamura.
+
+        EFL's DumpRenderTree implementation needs some private, auxiliary
+        functions in ewk in order to iterate and dump the history tree when
+        necessary.
+
+        * ewk/ewk_history.cpp:
+        (ewk_history_item_target_get):
+        (ewk_history_item_target_is):
+        (ewk_history_item_children_get):
+        * ewk/ewk_private.h:
+
+2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Add auxiliary ewk_util functions for DRT.
         https://bugs.webkit.org/show_bug.cgi?id=66702
 
