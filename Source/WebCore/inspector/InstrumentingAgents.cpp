@@ -37,6 +37,7 @@
 #include "Page.h"
 #include "WorkerContext.h"
 #include "WorkerInspectorController.h"
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 

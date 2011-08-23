@@ -1,3 +1,9 @@
+2011-08-23  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * inspector/InstrumentingAgents.cpp:
+
 2011-08-23  Chang Shu  <cshu@webkit.org>
 
         Added support for momentarily revealing last typed character in password input.
