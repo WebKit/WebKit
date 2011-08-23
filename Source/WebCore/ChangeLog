@@ -1,3 +1,14 @@
+2011-08-23  Peter Kasting  <pkasting@google.com>
+
+        Unreviewed, rolling out r93452.
+        http://trac.webkit.org/changeset/93452
+        https://bugs.webkit.org/show_bug.cgi?id=66423
+
+        Broke Leopard, Snowleopard, and Chromium bots
+
+        * xml/parser/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::XMLDocumentParser):
+
 2011-08-23  Ahmad Sharif  <asharif@chromium.org>
 
         Fixed warnings produced by gcc-4.6.0.

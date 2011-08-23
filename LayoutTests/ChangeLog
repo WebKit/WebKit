@@ -1,5 +1,18 @@
 2011-08-23  Peter Kasting  <pkasting@google.com>
 
+        Unreviewed, rolling out r93452.
+        http://trac.webkit.org/changeset/93452
+        https://bugs.webkit.org/show_bug.cgi?id=66423
+
+        Broke Leopard, Snowleopard, and Chromium bots
+
+        * fast/parser/innerhtml-with-prefixed-elements.xhtml: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/parser/innerhtml-with-prefixed-elements-expected.png: Removed.
+        * platform/mac/fast/parser/innerhtml-with-prefixed-elements-expected.txt: Removed.
+
+2011-08-23  Peter Kasting  <pkasting@google.com>
+
         [chromium] Move result images into correct subdirectory.
         https://bugs.webkit.org/show_bug.cgi?id=66618
 
