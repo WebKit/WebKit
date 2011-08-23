@@ -1099,7 +1099,7 @@ void InspectorDOMAgent::highlightNode(
 }
 
 void InspectorDOMAgent::highlightFrame(
-    ErrorString* error,
+    ErrorString*,
     const String& frameId,
     const RefPtr<InspectorObject>* color,
     const RefPtr<InspectorObject>* outlineColor)

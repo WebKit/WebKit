@@ -1,4 +1,4 @@
-/*
+  /*
  * Copyright (C) 2007 Apple Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -398,7 +398,7 @@ TreeOutline.prototype._treeKeyDown = function(event)
                     this.selectedTreeElement.expand();
             }
         }
-    } else if (event.keyCode === 27 /* Esc */ || event.keyCode === 46 /* Delete */) {
+    } else if (event.keyCode === 8 /* Backspace */ || event.keyCode === 46 /* Delete */) {
         if (this.selectedTreeElement.ondelete)
             handled = this.selectedTreeElement.ondelete();
     } else if (isEnterKey(event)) {
