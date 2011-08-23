@@ -1,3 +1,43 @@
+2011-07-25  Robert Hogan  <robert@webkit.org>
+
+        div align="center" rendering problem
+        https://bugs.webkit.org/show_bug.cgi?id=4860
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/inline/absolute-positioned-block-in-centred-block.html
+               fast/inline/absolute-positioned-inline-in-centred-block.html
+
+        When an element with absolute position was the sole or first child of a render block with
+        centred alignment, it wasn't obeying its parent's alignment. However it would obey the
+        alignment if it was preceded by some text. The problem was that the element's render object
+        was getting skipped as leading white space, so it was not included in a normal line block in
+        a bidi run. Instead, its position was getting set by RenderBlockLineLayout::setStaticPositions()
+        which does not pay attention to alignment. Preceding the element with some text allowed the object
+        to get included in a Bidi run and so get a linebox which would get properly aligned.
+
+        The fix is to get RenderBlockLineLayout::setStaticPositions() to obey the alignment specified by
+        the object's container. This allows WebKit to get the same result on the test as Firefox and IE.
+        Opera has the same bug as unpatched WebKit.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::adjustPositionedBlock): use startAlignedOffsetForBlock
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::updateLogicalWidthForAlignment):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Move the alignment check to updateLogicalWidthForAlignment.
+        (WebCore::setStaticPositions): use startAlignedOffsetForLine and use startAlignedOffsetForBlock
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): use startAlignedOffsetForLine
+        (WebCore::RenderBlock::startAlignedOffsetForBlock): New function, find the aligned offset using updateLogicalWidthForAlignment
+        (WebCore::RenderBlock::startAlignedOffsetForLine): ditto
+
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::updateLogicalWidthForAlignment):
+        (WebCore::RenderBlock::computeInlineDirectionPositionsForLine): Move the alignment check to updateLogicalWidthForAlignment.
+        (WebCore::setStaticPositions): use startAlignedOffsetForLine.
+        (WebCore::RenderBlock::startAlignedOffsetForLine): New function, find the aligned offset using updateLogicalWidthForAlignment
+
 2011-08-23  Adrienne Walker  <enne@google.com>
 
         [chromium] Remove LayerRendererChromium references from TiledLayerChromium
