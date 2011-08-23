@@ -25,6 +25,7 @@
 #ifndef CCLayerTreeHost_h
 #define CCLayerTreeHost_h
 
+#include "GraphicsTypes3D.h"
 #include "IntRect.h"
 #include "cc/CCLayerTreeHostCommitter.h"
 #include "cc/CCLayerTreeHostImplProxy.h"
@@ -113,9 +114,14 @@ public:
     // Temporary home for the non-threaded rendering path.
 #if !USE(THREADED_COMPOSITING)
     void composite(bool finish);
+    LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
 #endif
 
     NonCompositedContentHost* nonCompositedContentHost() const { return m_nonCompositedContentHost.get(); }
+
+    bool contextSupportsMapSub() const { return m_contextSupportsMapSub; }
+    int maxTextureSize() const { return m_maxTextureSize; }
+    GC3Denum bestTextureFormat() { return m_bestTextureFormat; }
 
 protected:
     CCLayerTreeHost(CCLayerTreeHostClient*, const CCSettings&);
@@ -133,6 +139,10 @@ private:
     bool m_recreatingGraphicsContext;
     RefPtr<LayerRendererChromium> m_layerRenderer;
 #endif
+
+    int m_maxTextureSize;
+    GC3Denum m_bestTextureFormat;
+    bool m_contextSupportsMapSub;
 
     bool m_animating;
 

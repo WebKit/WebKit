@@ -38,6 +38,7 @@
 #include "LayerRendererChromium.h"
 #include "LayerTextureUpdaterCanvas.h"
 #include "PlatformBridge.h"
+#include "cc/CCLayerTreeHost.h"
 #include <wtf/CurrentTime.h>
 
 namespace WebCore {
@@ -94,7 +95,6 @@ void ContentLayerChromium::cleanupResources()
 void ContentLayerChromium::paintContentsIfDirty()
 {
     ASSERT(drawsContent());
-    ASSERT(layerRenderer());
 
     updateTileSizeAndTilingOption();
 
@@ -118,18 +118,18 @@ bool ContentLayerChromium::drawsContent() const
     return m_owner && m_owner->drawsContent() && TiledLayerChromium::drawsContent();
 }
 
-void ContentLayerChromium::createTextureUpdaterIfNeeded()
+void ContentLayerChromium::createTextureUpdater(const CCLayerTreeHost* host)
 {
-    if (m_textureUpdater)
-        return;
-
+#if !USE(THREADED_COMPOSITING)
 #if USE(SKIA)
-    if (layerRenderer()->settings().acceleratePainting) {
-        m_textureUpdater = LayerTextureUpdaterSkPicture::create(layerRendererContext(), ContentLayerPainter::create(m_owner), layerRenderer()->skiaContext());
+    if (host->settings().acceleratePainting) {
+        m_textureUpdater = LayerTextureUpdaterSkPicture::create(ContentLayerPainter::create(m_owner), host->layerRenderer()->skiaContext());
         return;
     }
-#endif
-    m_textureUpdater = LayerTextureUpdaterBitmap::create(layerRendererContext(), ContentLayerPainter::create(m_owner), layerRenderer()->contextSupportsMapSub());
+#endif // SKIA
+#endif // !THREADED_COMPOSITING
+
+    m_textureUpdater = LayerTextureUpdaterBitmap::create(ContentLayerPainter::create(m_owner), host->contextSupportsMapSub());
 }
 
 }

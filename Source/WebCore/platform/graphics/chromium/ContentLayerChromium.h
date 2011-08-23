@@ -58,7 +58,7 @@ private:
 
     virtual void cleanupResources();
     virtual bool drawsContent() const;
-    virtual void createTextureUpdaterIfNeeded();
+    virtual void createTextureUpdater(const CCLayerTreeHost*);
     virtual LayerTextureUpdater* textureUpdater() const { return m_textureUpdater.get(); }
 
     OwnPtr<LayerTextureUpdater> m_textureUpdater;

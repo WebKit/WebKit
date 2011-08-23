@@ -60,7 +60,7 @@ protected:
     virtual void cleanupResources();
     void updateTileSizeAndTilingOption();
 
-    virtual void createTextureUpdaterIfNeeded() = 0;
+    virtual void createTextureUpdater(const CCLayerTreeHost*) = 0;
     virtual LayerTextureUpdater* textureUpdater() const = 0;
 
     // Set invalidations to be potentially repainted during update().
@@ -76,7 +76,7 @@ private:
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
-    virtual void setLayerRenderer(LayerRendererChromium*);
+    virtual void setLayerTreeHost(CCLayerTreeHost*);
 
     void createTilerIfNeeded();
     void setTilingOption(TilingOption);

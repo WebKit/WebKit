@@ -45,7 +45,6 @@
 #include "LayerTextureUpdaterCanvas.h"
 #include "NonCompositedContentHost.h"
 #include "NotImplemented.h"
-#include "PlatformColor.h"
 #include "RenderSurfaceChromium.h"
 #include "TextStream.h"
 #include "TextureManager.h"
@@ -532,11 +531,6 @@ void LayerRendererChromium::releaseTextures()
     m_renderSurfaceTextureManager->unprotectAllTextures();
     m_renderSurfaceTextureManager->reduceMemoryToLimit(0);
     m_renderSurfaceTextureManager->deleteEvictedTextures(m_context.get());
-}
-
-GC3Denum LayerRendererChromium::bestTextureFormat()
-{
-    return PlatformColor::bestTextureFormat(context());
 }
 
 void LayerRendererChromium::viewportChanged()

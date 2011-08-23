@@ -53,6 +53,7 @@
 namespace WebCore {
 
 class CCLayerImpl;
+class CCLayerTreeHost;
 class GraphicsContext3D;
 class LayerRendererChromium;
 
@@ -156,6 +157,8 @@ public:
     // in the LayerRendererChromium.
     // FIXME, replace with CCLayerTreeHost.
     virtual void setLayerRenderer(LayerRendererChromium*);
+
+    virtual void setLayerTreeHost(CCLayerTreeHost*);
 
     void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
 

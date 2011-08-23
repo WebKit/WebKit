@@ -64,7 +64,7 @@ private:
     ImageLayerChromium(GraphicsLayerChromium* owner);
 
     virtual void cleanupResources();
-    virtual void createTextureUpdaterIfNeeded();
+    virtual void createTextureUpdater(const CCLayerTreeHost*);
     void setTilingOption(TilingOption);
 
     virtual LayerTextureUpdater* textureUpdater() const;

@@ -1,3 +1,65 @@
+2011-08-23  Adrienne Walker  <enne@google.com>
+
+        [chromium] Remove LayerRendererChromium references from TiledLayerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=66433
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests.
+
+        Updated TiledLayerChromium and the texture updater classes to not
+        access LayerRendererChromium or cache GraphicsContext3D. Some settings
+        like max texture size were moved from LayerRendererChromium to
+        CCLayerTreeHost in order to facilitate this refactoring.
+
+        LayerTextureUpdaterSkPicture has been #ifdef'd to only work when the
+        compositor is not threaded. It will need to be refactored more in
+        order to not own graphics resources from the main thread.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::create):
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+        (WebCore::ImageLayerTextureUpdater::ImageLayerTextureUpdater):
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::setLayerRenderer):
+        (WebCore::LayerChromium::setLayerTreeHost):
+        * platform/graphics/chromium/LayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTextureUpdater.h:
+        (WebCore::LayerTextureUpdater::LayerTextureUpdater):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterCanvas::LayerTextureUpdaterCanvas):
+        (WebCore::LayerTextureUpdaterBitmap::create):
+        (WebCore::LayerTextureUpdaterBitmap::LayerTextureUpdaterBitmap):
+        (WebCore::LayerTextureUpdaterBitmap::updateTextureRect):
+        (WebCore::LayerTextureUpdaterSkPicture::create):
+        (WebCore::LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture):
+        (WebCore::LayerTextureUpdaterSkPicture::updateTextureRect):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h:
+        (WebCore::LayerTextureUpdaterSkPicture::context):
+        * platform/graphics/chromium/TiledLayerChromium.cpp:
+        (WebCore::TiledLayerChromium::setLayerTreeHost):
+        (WebCore::TiledLayerChromium::updateCompositorResources):
+        (WebCore::TiledLayerChromium::invalidateRect):
+        (WebCore::TiledLayerChromium::prepareToUpdate):
+        * platform/graphics/chromium/TiledLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::CCLayerTreeHost):
+        (WebCore::CCLayerTreeHost::initialize):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::layerRenderer):
+        (WebCore::CCLayerTreeHost::contextSupportsMapSub):
+        (WebCore::CCLayerTreeHost::maxTextureSize):
+        (WebCore::CCLayerTreeHost::bestTextureFormat):
+
 2011-08-23  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reduce the amount of RenderLayer rectangles' update when scrolling

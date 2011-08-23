@@ -92,12 +92,6 @@ void TiledLayerChromium::cleanupResources()
     m_updateRect = IntRect();
 }
 
-void TiledLayerChromium::setLayerRenderer(LayerRendererChromium* layerRenderer)
-{
-    LayerChromium::setLayerRenderer(layerRenderer);
-    createTilerIfNeeded();
-}
-
 void TiledLayerChromium::updateTileSizeAndTilingOption()
 {
     if (!m_tiler)
@@ -140,17 +134,16 @@ bool TiledLayerChromium::drawsContent() const
     return !m_skipsDraw;
 }
 
-void TiledLayerChromium::createTilerIfNeeded()
+void TiledLayerChromium::setLayerTreeHost(CCLayerTreeHost* host)
 {
     if (m_tiler)
         return;
 
-    createTextureUpdaterIfNeeded();
+    createTextureUpdater(host);
 
-    m_textureFormat = layerRenderer()->bestTextureFormat();
+    m_textureFormat = host->bestTextureFormat();
     m_textureOrientation = textureUpdater()->orientation();
     m_sampledTexelFormat = textureUpdater()->sampledTexelFormat(m_textureFormat);
-
     m_tiler = CCLayerTilingData::create(
         IntSize(defaultTileSize, defaultTileSize),
         isRootLayer() ? CCLayerTilingData::NoBorderTexels : CCLayerTilingData::HasBorderTexels);
@@ -208,7 +201,7 @@ void TiledLayerChromium::updateCompositorResources(GraphicsContext3D* context)
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
             GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0));
 
-            textureUpdater()->updateTextureRect(tile->texture(), sourceRect, destRect);
+            textureUpdater()->updateTextureRect(context, tile->texture(), sourceRect, destRect);
             tile->clearDirty();
         }
     }
@@ -327,7 +320,7 @@ void TiledLayerChromium::invalidateTiles(const IntRect& contentRect)
 
 void TiledLayerChromium::invalidateRect(const IntRect& contentRect)
 {
-    if (contentRect.isEmpty() || m_skipsDraw)
+    if (!m_tiler || contentRect.isEmpty() || m_skipsDraw)
         return;
 
     m_tiler->growLayerToContain(contentRect);
@@ -376,6 +369,8 @@ void TiledLayerChromium::protectTileTextures(const IntRect& contentRect)
 
 void TiledLayerChromium::prepareToUpdate(const IntRect& contentRect)
 {
+    ASSERT(m_tiler);
+
     m_skipsDraw = false;
 
     if (contentRect.isEmpty()) {

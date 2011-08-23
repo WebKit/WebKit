@@ -46,9 +46,8 @@
 
 namespace WebCore {
 
-LayerTextureUpdaterCanvas::LayerTextureUpdaterCanvas(GraphicsContext3D* context, PassOwnPtr<LayerPainterChromium> painter)
-    : LayerTextureUpdater(context)
-    , m_painter(painter)
+LayerTextureUpdaterCanvas::LayerTextureUpdaterCanvas(PassOwnPtr<LayerPainterChromium> painter)
+    : m_painter(painter)
 {
 }
 
@@ -62,13 +61,13 @@ void LayerTextureUpdaterCanvas::paintContents(GraphicsContext& context, const In
     m_contentRect = contentRect;
 }
 
-PassOwnPtr<LayerTextureUpdaterBitmap> LayerTextureUpdaterBitmap::create(GraphicsContext3D* context, PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
+PassOwnPtr<LayerTextureUpdaterBitmap> LayerTextureUpdaterBitmap::create(PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
 {
-    return adoptPtr(new LayerTextureUpdaterBitmap(context, painter, useMapTexSubImage));
+    return adoptPtr(new LayerTextureUpdaterBitmap(painter, useMapTexSubImage));
 }
 
-LayerTextureUpdaterBitmap::LayerTextureUpdaterBitmap(GraphicsContext3D* context, PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
-    : LayerTextureUpdaterCanvas(context, painter)
+LayerTextureUpdaterBitmap::LayerTextureUpdaterBitmap(PassOwnPtr<LayerPainterChromium> painter, bool useMapTexSubImage)
+    : LayerTextureUpdaterCanvas(painter)
     , m_texSubImage(useMapTexSubImage)
 {
 }
@@ -94,23 +93,25 @@ void LayerTextureUpdaterBitmap::prepareToUpdate(const IntRect& contentRect, cons
     paintContents(*canvasPainter.context(), contentRect);
 }
 
-void LayerTextureUpdaterBitmap::updateTextureRect(ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void LayerTextureUpdaterBitmap::updateTextureRect(GraphicsContext3D* context, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
     PlatformCanvas::AutoLocker locker(&m_canvas);
 
-    texture->bindTexture(context());
-    m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, texture->format(), context());
+    texture->bindTexture(context);
+    m_texSubImage.upload(locker.pixels(), contentRect(), sourceRect, destRect, texture->format(), context);
 }
 
+#if !USE(THREADED_COMPOSITING)
 #if USE(SKIA)
-PassOwnPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(GraphicsContext3D* context, PassOwnPtr<LayerPainterChromium> painter, GrContext* skiaContext)
+PassOwnPtr<LayerTextureUpdaterSkPicture> LayerTextureUpdaterSkPicture::create(PassOwnPtr<LayerPainterChromium> painter, GrContext* skiaContext)
 {
-    return adoptPtr(new LayerTextureUpdaterSkPicture(context, painter, skiaContext));
+    return adoptPtr(new LayerTextureUpdaterSkPicture(painter, skiaContext));
 }
 
-LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(GraphicsContext3D* context, PassOwnPtr<LayerPainterChromium> painter, GrContext* skiaContext)
-    : LayerTextureUpdaterCanvas(context, painter)
+LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(PassOwnPtr<LayerPainterChromium> painter, GrContext* skiaContext)
+    : LayerTextureUpdaterCanvas(painter)
     , m_skiaContext(skiaContext)
+    , m_context(0)
     , m_createFrameBuffer(false)
     , m_fbo(0)
     , m_depthStencilBuffer(0)
@@ -145,8 +146,11 @@ void LayerTextureUpdaterSkPicture::prepareToUpdate(const IntRect& contentRect, c
     m_picture.endRecording();
 }
 
-void LayerTextureUpdaterSkPicture::updateTextureRect(ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
+void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* compositorContext, ManagedTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
 {
+    ASSERT(!m_context || m_context == compositorContext);
+    m_context = compositorContext;
+
     if (m_createFrameBuffer) {
         deleteFrameBuffer();
         createFrameBuffer();
@@ -250,7 +254,7 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
     return true;
 }
 #endif // SKIA
+#endif // !THREADED_COMPOSITING
 
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)
-

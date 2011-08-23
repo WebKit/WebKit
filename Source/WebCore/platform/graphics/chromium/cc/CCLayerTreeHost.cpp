@@ -30,6 +30,7 @@
 #include "LayerPainterChromium.h"
 #include "LayerRendererChromium.h"
 #include "NonCompositedContentHost.h"
+#include "PlatformColor.h"
 #include "TraceEvent.h"
 #include "cc/CCLayerTreeHostCommitter.h"
 #include "cc/CCLayerTreeHostImpl.h"
@@ -46,6 +47,8 @@ PassRefPtr<CCLayerTreeHost> CCLayerTreeHost::create(CCLayerTreeHostClient* clien
 
 CCLayerTreeHost::CCLayerTreeHost(CCLayerTreeHostClient* client, const CCSettings& settings)
     : m_recreatingGraphicsContext(false)
+    , m_maxTextureSize(0)
+    , m_contextSupportsMapSub(false)
     , m_animating(false)
     , m_client(client)
     , m_frameNumber(0)
@@ -59,6 +62,12 @@ bool CCLayerTreeHost::initialize()
     m_layerRenderer = createLayerRenderer();
     if (!m_layerRenderer)
         return false;
+
+    // FIXME: In the threaded case, these values will need to be initialized
+    // by something other than m_layerRenderer.
+    m_maxTextureSize = m_layerRenderer->maxTextureSize();
+    m_bestTextureFormat = PlatformColor::bestTextureFormat(m_layerRenderer->context());
+    m_contextSupportsMapSub = m_layerRenderer->contextSupportsMapSub();
 
     m_rootLayer = GraphicsLayer::create(0);
 #ifndef NDEBUG

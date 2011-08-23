@@ -105,6 +105,14 @@ void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
         setNeedsDisplay();
     }
     m_layerRenderer = renderer;
+
+    // FIXME: Once setLayerRenderer is no longer needed on the LayerChromium
+    // tree, move this call to LayerRendererChromium::paintLayerContents.
+    setLayerTreeHost(renderer->owner());
+}
+
+void LayerChromium::setLayerTreeHost(CCLayerTreeHost*)
+{
 }
 
 void LayerChromium::setNeedsCommit()
