@@ -1,3 +1,19 @@
+2011-08-23  Cary Clark  <caryclark@google.com>
+
+        Turn WebCanvas into CGContext before drawing scrollbar (DRT using Skia on Mac)
+        https://bugs.webkit.org/show_bug.cgi?id=66803
+
+        This fixes the WebKit Canaries, in particular avoids a crash on tests
+        like css1/basic/comments.html.
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.mm:
+        (WebThemeEngineDRTMac::paintNSScrollerScrollbarThumb):
+        The NSGraphicsContext call graphicsContextWithGraphicsPort takes a void*
+        parameter, so it took a WebCanvas* (mapped to SkCanvas* in Skia-land)
+        and treated it as if it were a CGContextRef.
+
 2011-08-23  Patrick Gansterer  <paroga@webkit.org>
 
         Fix mergeChangeLogs test on native windows

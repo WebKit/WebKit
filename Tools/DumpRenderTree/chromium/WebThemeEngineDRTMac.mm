@@ -176,7 +176,13 @@ void WebThemeEngineDRTMac::paintNSScrollerScrollbarThumb(
     [scroller setKnobProportion: knobProportion];
 
     NSGraphicsContext* previousGraphicsContext = [NSGraphicsContext currentContext];
-    NSGraphicsContext* nsGraphicsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:canvas flipped:YES];
+#if WEBKIT_USING_SKIA
+    gfx::SkiaBitLocker bitLocker(canvas);
+    CGContextRef cgContext = bitLocker.cgContext();
+#else
+    CGContextRef cgContext = canvas;
+#endif
+    NSGraphicsContext* nsGraphicsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
     [NSGraphicsContext setCurrentContext:nsGraphicsContext];
 
     // Despite passing in frameRect() to the scroller, it always draws at (0, 0).
