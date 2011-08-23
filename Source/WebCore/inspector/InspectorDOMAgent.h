@@ -62,7 +62,7 @@ class IntRect;
 class HitTestResult;
 class MatchJob;
 class HTMLElement;
-class HighlightData;
+struct HighlightData;
 class InspectorState;
 class InstrumentingAgents;
 class NameNodeMap;
