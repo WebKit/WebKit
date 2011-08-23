@@ -1,3 +1,20 @@
+2011-08-22  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Chris Fleizach.
+
+        aria-labelledby should be used in preference to aria-labeledby
+        https://bugs.webkit.org/show_bug.cgi?id=62351
+
+        Test: accessibility/aria-labelledby-overrides-aria-labeledby.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::ariaLabelledByElements): Renamed from ariaLabeledByElements.
+        (WebCore::AccessibilityRenderObject::ariaLabelledByAttribute): Renamed from ariaLabeledByAttribute,
+        and re-ordered to prefer the standard spelling.
+        (WebCore::AccessibilityRenderObject::title):
+        (WebCore::AccessibilityRenderObject::hasTextAlternative):
+        * accessibility/AccessibilityRenderObject.h:
+
 2011-08-22  Nat Duca  <nduca@chromium.org>
 
         Make GraphicsContext3D::isResourceSafe a function and, on Chromium, determine its value lazily

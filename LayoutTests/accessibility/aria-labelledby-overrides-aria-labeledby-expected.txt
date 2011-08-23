@@ -1,0 +1,12 @@
+Alpha Beta Gamma Delta Epsilon
+This tests that if aria-labelledby is used, then non-standard aria-labeledby attributes are ignored.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS obj.title is "AXTitle: Gamma"
+PASS obj.title is "AXTitle: Epsilon"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
