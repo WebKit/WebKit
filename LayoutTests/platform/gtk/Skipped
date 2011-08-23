@@ -1612,6 +1612,10 @@ http/tests/websocket/tests/hybi/
 # For now, Web Audio API is disabled
 webaudio/
 
+# Need new baseline http://webkit.org/b/66662
+fast/block/float/floats-and-text-indent.html
+fast/block/float/floats-and-text-indent-rl.html
+
 # Text shadow extents are calculated incorrectly
 # https://bugs.webkit.org/show_bug.cgi?id=65035
 fast/canvas/fillText-shadow.html

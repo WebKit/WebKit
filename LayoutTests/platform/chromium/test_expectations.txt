@@ -3695,6 +3695,10 @@ BUGWK66577 LEOPARD : fast/events/touch/touch-target.html = TIMEOUT
 
 BUGV8_1634 : fast/js/const.html = TEXT
 
+// Needs new baseline.
+BUGWK66662 : fast/block/float/floats-and-text-indent.html = IMAGE+TEXT
+BUGWK66662 : fast/block/float/floats-and-text-indent-rl.html = IMAGE+TEXT
+
 BUGWK66730 WIN : http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header.html = PASS TEXT
 BUGWK66730 WIN : http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header.html = PASS TEXT
 BUGWK66730 WIN : http/tests/websocket/tests/hybi/masked-frames.html = PASS TEXT

@@ -1,3 +1,26 @@
+2011-08-23  Alexandru Chiculita  <achicu@adobe.com>
+
+        Text-indent and floats push the text out of the container box
+        https://bugs.webkit.org/show_bug.cgi?id=66662
+
+        Text indent was not propagated when a new float was pushed on the line.
+        It was only calculated when the logicalLeft/RightOffsetForLine was called.
+        Because of that RenderBlock::LineBreaker::nextLineBreak used a bigger width
+        than actually available and made the line render on top of the borders.
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/block/float/floats-and-text-indent-rl.html
+               fast/block/float/floats-and-text-indent.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::textIndentOffset):
+        (WebCore::RenderBlock::logicalLeftOffsetForLine):
+        (WebCore::RenderBlock::logicalRightOffsetForLine):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineWidth::shrinkAvailableWidthForNewFloatIfNeeded):
+
 2011-08-23  Al Patrick  <apatrick@chromium.org>
 
         Add shareResources flag to 3D graphics context attributes

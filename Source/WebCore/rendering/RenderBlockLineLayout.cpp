@@ -1794,10 +1794,15 @@ inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::Floa
     if (height < m_block->logicalTopForFloat(newFloat) || height >= m_block->logicalBottomForFloat(newFloat))
         return;
 
-    if (newFloat->type() == RenderBlock::FloatingObject::FloatLeft)
+    if (newFloat->type() == RenderBlock::FloatingObject::FloatLeft) {
         m_left = m_block->logicalRightForFloat(newFloat);
-    else
+        if (m_isFirstLine && m_block->style()->isLeftToRightDirection())
+            m_left += m_block->textIndentOffset();
+    } else {
         m_right = m_block->logicalLeftForFloat(newFloat);
+        if (m_isFirstLine && !m_block->style()->isLeftToRightDirection())
+            m_right -= m_block->textIndentOffset();
+    }
 
     computeAvailableWidthFromLeftAndRight();
 }

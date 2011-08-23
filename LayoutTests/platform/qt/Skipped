@@ -2379,6 +2379,10 @@ editing/spelling/spelling-insert-html.html
 # https://bugs.webkit.org/show_bug.cgi?id=66626
 fast/parser/innerhtml-with-prefixed-elements.xhtml
 
+# Need new baseline http://webkit.org/b/66662
+fast/block/float/floats-and-text-indent.html
+fast/block/float/floats-and-text-indent-rl.html
+
 # [Qt] editing/selection/caret-at-bidi-boundary.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=66514
 editing/selection/caret-at-bidi-boundary.html

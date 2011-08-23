@@ -3535,6 +3535,14 @@ inline void RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::collectIfNe
     }
 }
 
+LayoutUnit RenderBlock::textIndentOffset() const
+{
+    LayoutUnit cw = 0;
+    if (style()->textIndent().isPercent())
+        cw = containingBlock()->availableLogicalWidth();
+    return style()->textIndent().calcMinValue(cw);
+}
+
 LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUnit fixedOffset, bool applyTextIndent, LayoutUnit* heightRemaining) const
 {
     LayoutUnit left = fixedOffset;
@@ -3546,12 +3554,8 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
         m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
     }
 
-    if (applyTextIndent && style()->isLeftToRightDirection()) {
-        LayoutUnit cw = 0;
-        if (style()->textIndent().isPercent())
-            cw = containingBlock()->availableLogicalWidth();
-        left += style()->textIndent().calcMinValue(cw);
-    }
+    if (applyTextIndent && style()->isLeftToRightDirection())
+        left += textIndentOffset();
 
     return left;
 }
@@ -3568,12 +3572,8 @@ LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutU
         m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
     }
     
-    if (applyTextIndent && !style()->isLeftToRightDirection()) {
-        LayoutUnit cw = 0;
-        if (style()->textIndent().isPercent())
-            cw = containingBlock()->availableLogicalWidth();
-        right -= style()->textIndent().calcMinValue(cw);
-    }
+    if (applyTextIndent && !style()->isLeftToRightDirection())
+        right -= textIndentOffset();
     
     return right;
 }
