@@ -3566,9 +3566,6 @@ BUGCR89474 : fast/js/call-base-resolution.html = PASS TEXT
 
 BUGWK64675 LINUX WIN : svg/custom/zero-path-square-cap-rendering.svg = IMAGE+TEXT
 
-// New test added for bug 66423, needs rebaselining
-BUGWK66423 : fast/parser/innerhtml-with-prefixed-elements.xhtml = FAIL
-
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
 //BUGCR75424 LEOPARD : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
@@ -3620,9 +3617,10 @@ BUGWK65453 MAC : fast/css/outline-auto-empty-rects.html = IMAGE
 
 BUGWK65462 VISTA : http/tests/cache/history-only-cached-subresource-loads-max-age-https.html = PASS TIMEOUT
 
-BUGWK66798 REBASELINE WIN LINUX : svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html = IMAGE
-BUGWK66798 REBASELINE WIN LINUX : svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
-BUGWK66798 REBASELINE WIN LINUX : svg/custom/image-small-width-height.svg = IMAGE
+// May need rebaseline, 
+BUGWK66798 WIN LINUX : svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html = IMAGE
+BUGWK66798 WIN LINUX : svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html = IMAGE
+BUGWK66798 WIN LINUX : svg/custom/image-small-width-height.svg = IMAGE
 
 // Introduced in r92298, which might cause another test crashing.
 BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
@@ -3672,9 +3670,7 @@ BUGWK65951 WIN DEBUG : webaudio/mixing.html = CRASH
 BUGWK63796 MAC WIN : css3/font-feature-settings-rendering.html = MISSING FAIL
 
 // New test in r93068
-BUGWK66268 WIN MAC : editing/deleting/regional-indicators.html = TEXT
-BUGWK66268 LINUX RELEASE : editing/deleting/regional-indicators.html = TEXT
-BUGWK66268 LINUX DEBUG : editing/deleting/regional-indicators.html = TIMEOUT
+BUGWK66268 : editing/deleting/regional-indicators.html = TIMEOUT TEXT
 
 BUGWK66310 DEBUG : media/video-source-error.html = PASS TEXT
 BUGWK66310 : media/media-blocked-by-beforeload.html = PASS TEXT
@@ -3685,7 +3681,8 @@ BUGWK66388 WIN LINUX : fast/repaint/line-flow-with-floats-in-regions.html = IMAG
 BUGWK66338 MAC : fast/repaint/background-scaling.html = IMAGE
 BUGWK66338 MAC : fast/repaint/scale-page-shrink.html = IMAGE
 
-BUGWK66671 REBASELINE WIN LINUX : fast/block/float/fit_line_below_floats.html = IMAGE+TEXT
+// Needs new baseline.
+BUGWK66671 : fast/block/float/fit_line_below_floats.html = IMAGE+TEXT
 
 BUGWK66394 LINUX DEBUG : fast/canvas/webgl/data-view-crash.html = PASS CRASH
 
@@ -3708,8 +3705,9 @@ BUGWK66577 LEOPARD : fast/events/touch/touch-target.html = TIMEOUT
 
 BUGV8_1634 : fast/js/const.html = TEXT
 
-BUGWK66662 REBASELINE WIN LINUX : fast/block/float/floats-and-text-indent.html = IMAGE+TEXT
-BUGWK66662 REBASELINE WIN LINUX : fast/block/float/floats-and-text-indent-rl.html = IMAGE+TEXT
+// Needs new baseline.
+BUGWK66662 : fast/block/float/floats-and-text-indent.html = IMAGE+TEXT
+BUGWK66662 : fast/block/float/floats-and-text-indent-rl.html = IMAGE+TEXT
 
 BUGWK66730 WIN : http/tests/websocket/tests/hixie76/handshake-fail-by-no-connection-header.html = PASS TEXT
 BUGWK66730 WIN : http/tests/websocket/tests/hybi/handshake-fail-by-no-upgrade-header.html = PASS TEXT

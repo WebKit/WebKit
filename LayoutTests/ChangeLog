@@ -1,5 +1,13 @@
 2011-08-23  Peter Kasting  <pkasting@google.com>
 
+        [chromium] Revert unintentional changes to test expectations in r93638.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-23  Peter Kasting  <pkasting@google.com>
+
         Unreviewed, rolling out r93452.
         http://trac.webkit.org/changeset/93452
         https://bugs.webkit.org/show_bug.cgi?id=66423
