@@ -1,3 +1,15 @@
+2011-08-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r93579.
+        http://trac.webkit.org/changeset/93579
+        https://bugs.webkit.org/show_bug.cgi?id=66774
+
+        "ASSERTION FAILED: m_purgePreventCount" (Requested by tonyg-cr
+        on #webkit).
+
+        * platform/graphics/chromium/FontCacheLinux.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2011-08-23  Tor Arne Vestbø  <tor.arne.vestbo@nokia.com>
 
         [Qt] Fix build on Lion
