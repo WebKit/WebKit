@@ -52,8 +52,6 @@ public:
     virtual unsigned textureId() const;
     void setDrawingBuffer(DrawingBuffer*);
 
-    virtual void setLayerRenderer(LayerRendererChromium*);
-
 private:
     explicit Canvas2DLayerChromium(DrawingBuffer*, GraphicsLayerChromium* owner);
     DrawingBuffer* m_drawingBuffer;

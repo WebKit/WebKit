@@ -59,8 +59,6 @@ WebGLLayerChromium::WebGLLayerChromium(GraphicsLayerChromium* owner)
 
 WebGLLayerChromium::~WebGLLayerChromium()
 {
-    if (m_context && layerRenderer())
-        layerRenderer()->removeChildContext(m_context);
 }
 
 bool WebGLLayerChromium::drawsContent() const
@@ -129,12 +127,6 @@ void WebGLLayerChromium::setTextureUpdated()
 void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
 {
     bool contextChanged = (m_context != context);
-    if (contextChanged && layerRenderer()) {
-        if (m_context)
-            layerRenderer()->removeChildContext(m_context);
-        if (context)
-            layerRenderer()->addChildContext(const_cast<GraphicsContext3D*>(context));
-    }
 
     m_context = const_cast<GraphicsContext3D*>(context);
 
@@ -151,20 +143,6 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
     m_hasAlpha = attributes.alpha;
     m_premultipliedAlpha = attributes.premultipliedAlpha;
     m_contextSupportsRateLimitingExtension = m_context->getExtensions()->supports("GL_CHROMIUM_rate_limit_offscreen_context");
-}
-
-void WebGLLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRenderer)
-{
-    if (layerRenderer() != newLayerRenderer) {
-        if (m_context) {
-            if (layerRenderer())
-                layerRenderer()->removeChildContext(m_context);
-            if (newLayerRenderer)
-                newLayerRenderer->addChildContext(m_context);
-        }
-
-        LayerChromium::setLayerRenderer(newLayerRenderer);
-    }
 }
 
 void WebGLLayerChromium::rateLimitContext(Timer<WebGLLayerChromium>*)

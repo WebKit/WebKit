@@ -143,9 +143,6 @@ public:
 
     String layerTreeAsText() const;
 
-    void addChildContext(GraphicsContext3D*);
-    void removeChildContext(GraphicsContext3D*);
-
     // Return true if the compositor context has an error.
     bool isCompositorContextLost();
 
@@ -159,8 +156,6 @@ public:
     typedef Vector<RefPtr<CCLayerImpl> > CCLayerList;
 
 private:
-    typedef HashMap<GraphicsContext3D*, int> ChildContextMap;
-
     // FIXME: This needs to be moved to the CCLayerTreeHostImpl when that class exists.
     RefPtr<CCLayerImpl> m_rootCCLayerImpl;
 
@@ -236,8 +231,6 @@ private:
 #if USE(SKIA)
     OwnPtr<GrContext> m_skiaContext;
 #endif
-
-    ChildContextMap m_childContexts;
 
     bool m_contextSupportsMapSub;
 

@@ -1,3 +1,34 @@
+2011-08-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove obsolete child context list from LayerRendererChromium
+        https://bugs.webkit.org/show_bug.cgi?id=66743
+
+        Reviewed by Kenneth Russell.
+
+        Before we had proper semantics for flush() in the command buffer, we
+        used a scheme of latches across contexts to ensure consistent frames
+        were presented for WebGL and canvas. We no longer have latches and
+        flush is a proper synchronization primative, so the child context list
+        no longer does anything. Canvas2DLayerChromium and
+        WebGLLayerChromium's implementations of updateCompositorResources() do
+        flushes on the appropriate context already - canvas layers via
+        DrawingBuffer::publishToPlatformLayer(), and WebGL layers via the call
+        to prepareTexture().
+
+        No new tests since the code being removed doesn't do anything.
+
+        * platform/graphics/chromium/Canvas2DLayerChromium.cpp:
+        (WebCore::Canvas2DLayerChromium::~Canvas2DLayerChromium):
+        (WebCore::Canvas2DLayerChromium::setDrawingBuffer):
+        * platform/graphics/chromium/Canvas2DLayerChromium.h:
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayers):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::~WebGLLayerChromium):
+        (WebCore::WebGLLayerChromium::setContext):
+        * platform/graphics/chromium/WebGLLayerChromium.h:
+
 2011-08-23  Alexei Svitkine  <asvitkine@chromium.org>
 
         Chromium Mac: Use a custom pattern image for rubber banding overhang area

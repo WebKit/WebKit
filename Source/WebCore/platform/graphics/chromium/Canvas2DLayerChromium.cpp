@@ -54,8 +54,6 @@ Canvas2DLayerChromium::Canvas2DLayerChromium(DrawingBuffer* drawingBuffer, Graph
 
 Canvas2DLayerChromium::~Canvas2DLayerChromium()
 {
-    if (m_drawingBuffer && layerRenderer())
-        layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());
 }
 
 bool Canvas2DLayerChromium::drawsContent() const
@@ -84,29 +82,7 @@ unsigned Canvas2DLayerChromium::textureId() const
 
 void Canvas2DLayerChromium::setDrawingBuffer(DrawingBuffer* drawingBuffer)
 {
-    if (drawingBuffer != m_drawingBuffer) {
-        if (m_drawingBuffer && layerRenderer())
-            layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());
-
-        m_drawingBuffer = drawingBuffer;
-
-        if (drawingBuffer && layerRenderer())
-            layerRenderer()->addChildContext(m_drawingBuffer->graphicsContext3D().get());
-    }
-}
-
-void Canvas2DLayerChromium::setLayerRenderer(LayerRendererChromium* newLayerRenderer)
-{
-    if (layerRenderer() != newLayerRenderer && m_drawingBuffer) {
-        if (m_drawingBuffer->graphicsContext3D()) {
-            if (layerRenderer())
-                layerRenderer()->removeChildContext(m_drawingBuffer->graphicsContext3D().get());
-            if (newLayerRenderer)
-                newLayerRenderer->addChildContext(m_drawingBuffer->graphicsContext3D().get());
-        }
-
-        LayerChromium::setLayerRenderer(newLayerRenderer);
-    }
+    m_drawingBuffer = drawingBuffer;
 }
 
 }

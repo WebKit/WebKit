@@ -568,12 +568,6 @@ void LayerRendererChromium::drawLayers()
     if (!rootLayer())
         return;
 
-    // Before drawLayers:
-    ChildContextMap::iterator i = m_childContexts.begin();
-    for (; i != m_childContexts.end(); ++i) {
-        i->first->flush();
-    }
-
     {
         TRACE_EVENT("LayerRendererChromium::synchronizeTrees", this, 0);
         m_rootCCLayerImpl = TreeSynchronizer::synchronizeTrees(rootLayer()->platformLayer(), m_rootCCLayerImpl.get());
@@ -1295,43 +1289,6 @@ void LayerRendererChromium::dumpRenderSurfaces(TextStream& ts, int indent, const
 
     for (size_t i = 0; i < layer->children().size(); ++i)
         dumpRenderSurfaces(ts, indent, layer->children()[i].get());
-}
-
-
-void LayerRendererChromium::addChildContext(GraphicsContext3D* ctx)
-{
-    // This is a ref-counting map, because some contexts are shared by multiple
-    // layers (specifically, Canvas2DLayerChromium).
-
-    // Insert the ctx with a count of 1, or return the existing iterator.
-    std::pair<ChildContextMap::iterator, bool> insert_result = m_childContexts.add(ctx, 1);
-    if (!insert_result.second) {
-        // Already present in map, so increment.
-        ++insert_result.first->second;
-    } else {
-// FIXME(jbates): when compositor is multithreaded and copyTexImage2D bug is fixed,
-// uncomment this block:
-//      // This is a new child context - set the parentToChild latch so that it
-//      // can continue past its first wait latch.
-//      Extensions3DChromium* ext = static_cast<Extensions3DChromium*>(ctx->getExtensions());
-//      GC3Duint latchId;
-//      ext->getParentToChildLatchCHROMIUM(&latchId);
-//      ext->setLatchCHROMIUM(0, latchId);
-    }
-}
-
-void LayerRendererChromium::removeChildContext(GraphicsContext3D* ctx)
-{
-    ChildContextMap::iterator i = m_childContexts.find(ctx);
-    if (i != m_childContexts.end()) {
-        if (--i->second <= 0) {
-            // Count reached zero, so remove from map.
-            m_childContexts.remove(i);
-        }
-    } else {
-        // error
-        ASSERT(0 && "m_childContexts map has mismatched add/remove calls");
-    }
 }
 
 bool LayerRendererChromium::isCompositorContextLost()

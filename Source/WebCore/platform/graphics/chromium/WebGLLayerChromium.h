@@ -57,8 +57,6 @@ public:
     void setContext(const GraphicsContext3D* context);
     GraphicsContext3D* context() { return m_context; }
 
-    virtual void setLayerRenderer(LayerRendererChromium*);
-
 protected:
     virtual const char* layerTypeAsString() const { return "WebGLLayer"; }
 
