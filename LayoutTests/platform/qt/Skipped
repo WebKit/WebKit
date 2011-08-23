@@ -2388,3 +2388,6 @@ editing/selection/caret-at-bidi-boundary.html
 fast/frames/iframe-onload-remove-self-no-crash.html
 fast/loader/create-frame-in-DOMContentLoaded.html
 fast/loader/frame-creation-removal.html
+
+# Web Inspector: LayoutTests/inspector/extensions/extensions-resources.html fails on Qt
+inspector/extensions/extensions-resources.html

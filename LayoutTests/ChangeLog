@@ -1,5 +1,12 @@
 2011-08-23  Andrey Kosyakov  <caseq@chromium.org>
 
+        Unreviewed. Disabled inspector/extensions/extensions-resources.html.
+        https://bugs.webkit.org/show_bug.cgi?id=66786
+
+        * platform/qt/Skipped:
+
+2011-08-23  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed test fix following r93605.
 
         * http/tests/inspector/resources/extension-main.js:
