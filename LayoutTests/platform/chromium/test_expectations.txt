@@ -954,7 +954,6 @@ BUGCR3244 SLOW WIN RELEASE : fast/backgrounds/animated-svg-as-mask.html = FAIL
 BUGCR3244 LINUX : fast/backgrounds/animated-svg-as-mask.html = FAIL
 // More tests that fail because of masks not working properly.
 // New tests. We should fix these, but they don't need to block the current release
-BUGCR3244 LINUX WIN : fast/backgrounds/mask-composite.html = FAIL
 BUGCR3244 LINUX WIN : fast/backgrounds/repeat/mask-negative-offset-repeat.html = FAIL
 // Marking this again as failed. This test failed even after rebaseline due to
 // the fact that the font is not specified in the test and it seems that the
@@ -2672,9 +2671,6 @@ BUGWK47925 MAC GPU : compositing/plugins/small-to-large-composited-plugin.html =
 BUGWK47925 MAC GPU : compositing/plugins/1x1-composited-plugin.html = CRASH
 BUGWK47925 MAC GPU : compositing/plugins/large-to-small-composited-plugin.html = CRASH
 
-// Skia does not handle multiple masks correctly
-BUGWK47947 LINUX WIN GPU : compositing/masks/multiple-masks.html = IMAGE+TEXT
-
 BUGWK47949 LINUX WIN GPU : compositing/reflections/nested-reflection-anchor-point.html = IMAGE+TEXT
 BUGWK47949 MAC GPU : compositing/reflections/nested-reflection-anchor-point.html = IMAGE
 BUGWK47949 LINUX WIN GPU : compositing/reflections/reflection-opacity.html = IMAGE+TEXT
@@ -2969,9 +2965,6 @@ BUGJIANLI : fast/multicol/huge-column-count.html = MISSING
 // Regression caused by r83514.
 BUGCR79110 LINUX WIN : fast/block/float/021.html = TEXT
 BUGCR79110 LINUX WIN : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
-
-// Needs rebaseline after fix for wk66442 lands
-BUGWK66442 WIN : fast/css/transformed-mask.html = IMAGE+TEXT
 
 BUGWK58308 LINUX WIN DEBUG GPU : compositing/z-order/negative-z-index.html = PASS CRASH
 
