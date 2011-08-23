@@ -1,3 +1,9 @@
+2011-08-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Unreviewed gardening.
+
+        * platform/wk2/Skipped: Skip fast/frames/focus-controller-crash-change-event.html, because eventSender.keyDown is unimplemented.
+
 2011-08-23  Renata Hodovan  <reni@webkit.org>
 
         [Qt] REGRESSION after r93567.

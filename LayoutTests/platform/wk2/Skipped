@@ -1843,6 +1843,7 @@ fast/forms/placeholder-crash-with-scrollbar-corner.html
 fast/forms/radio-group-keyboard-change-event.html
 fast/forms/search-disabled-readonly.html
 fast/forms/ValidityState-valueMissing-002.html
+fast/frames/focus-controller-crash-change-event.html
 svg/custom/focus-event-handling-keyboard.xhtml
 
 # eventSender.contextClick() is unimplemented
