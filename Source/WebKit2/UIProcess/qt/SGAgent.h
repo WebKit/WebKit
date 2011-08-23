@@ -66,6 +66,7 @@ struct NodeUpdate {
     NodeUpdate(Type type)
         : type(type)
     { }
+    virtual ~NodeUpdate() { }
     Type type;
 };
 
