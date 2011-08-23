@@ -128,15 +128,38 @@ WebInspector.MetricsSidebarPane.prototype = {
         if (fromElement === toElement)
             return;
 
+        function handleMouseOver(element)
+        {
+            element.addStyleClass("hovered");
+
+            var bgColor;
+            if (element.hasStyleClass("margin"))
+                bgColor = WebInspector.Color.PageHighlight.Margin.toString("original");
+            else if (element.hasStyleClass("border"))
+                bgColor = WebInspector.Color.PageHighlight.Border.toString("original");
+            else if (element.hasStyleClass("padding"))
+                bgColor = WebInspector.Color.PageHighlight.Padding.toString("original");
+            else if (element.hasStyleClass("content"))
+                bgColor = WebInspector.Color.PageHighlight.Content.toString("original");
+            if (bgColor)
+                element.style.backgroundColor = bgColor;
+        }
+
+        function handleMouseOut(element)
+        {
+            element.style.backgroundColor = "";
+            element.removeStyleClass("hovered");
+        }
+
         if (showHighlight) {
             // Into element.
             if (this.node && toElement)
-                toElement.addStyleClass("hovered");
+                handleMouseOver(toElement);
             var nodeId = this.node ? this.node.id : 0;
         } else {
             // Out of element.
             if (fromElement)
-                fromElement.removeStyleClass("hovered");
+                handleMouseOut(fromElement);
             var nodeId = 0;
         }
         if (nodeId) {

@@ -33,6 +33,11 @@ WebInspector.Color = function(str)
     this._parse();
 }
 
+WebInspector.Color.fromRGBA = function(r, g, b, a)
+{
+    return new WebInspector.Color("rgba(" + r + "," + g + "," + b + "," + (typeof a === "undefined" ? 1 : a) + ")");
+}
+
 WebInspector.Color.prototype = {
     get shorthex()
     {
@@ -164,6 +169,21 @@ WebInspector.Color.prototype = {
         }
 
         throw "invalid color format";
+    },
+
+    toProtocolRGBA: function()
+    {
+        if (this._protocolRGBA)
+            return this._protocolRGBA;
+
+        var components = this.rgba;
+        if (components)
+            this._protocolRGBA = { r: Number(components[0]), g: Number(components[1]), b: Number(components[2]), a: Number(components[3]) };
+        else {
+            components = this.rgb;
+            this._protocolRGBA = { r: Number(components[0]), g: Number(components[1]), b: Number(components[2]) };
+        }
+        return this._protocolRGBA;
     },
 
     _rgbToHex: function(rgb)
@@ -661,3 +681,14 @@ WebInspector.Color.AdvancedNickNames = {
     "rgba(0,0,0,0)": [[0, 0, 0, 0], [0, 0, 0, 0], "transparent"],
     "hsla(0,0,0,0)": [[0, 0, 0, 0], [0, 0, 0, 0], "transparent"],
 };
+
+WebInspector.Color.PageHighlight = {
+    Content: WebInspector.Color.fromRGBA(111, 168, 220, .66),
+    ContentOutline: WebInspector.Color.fromRGBA(9, 83, 148),
+    Padding: WebInspector.Color.fromRGBA(147, 196, 125, .55),
+    PaddingOutline: WebInspector.Color.fromRGBA(55, 118, 28),
+    Border: WebInspector.Color.fromRGBA(255, 229, 153, .66),
+    BorderOutline: WebInspector.Color.fromRGBA(127, 96, 0),
+    Margin: WebInspector.Color.fromRGBA(246, 178, 107, .66),
+    MarginOutline: WebInspector.Color.fromRGBA(180, 95, 4)
+}

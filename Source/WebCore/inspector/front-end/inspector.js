@@ -371,6 +371,33 @@ var WebInspector = {
             errorWarningElement.title = null;
     },
 
+    buildHighlightConfig: function(mode)
+    {
+        mode = mode || "all";
+        var highlightConfig = { showInfo: mode === "all" };
+        if (mode === "all" || mode === "content") {
+            highlightConfig.contentColor = WebInspector.Color.PageHighlight.Content.toProtocolRGBA();
+            highlightConfig.contentOutlineColor = WebInspector.Color.PageHighlight.ContentOutline.toProtocolRGBA();
+        }
+
+        if (mode === "all" || mode === "padding") {
+            highlightConfig.paddingColor = WebInspector.Color.PageHighlight.Padding.toProtocolRGBA();
+            highlightConfig.paddingOutlineColor = WebInspector.Color.PageHighlight.PaddingOutline.toProtocolRGBA();
+        }
+
+        if (mode === "all" || mode === "border") {
+            highlightConfig.borderColor = WebInspector.Color.PageHighlight.Border.toProtocolRGBA();
+            highlightConfig.borderOutlineColor = WebInspector.Color.PageHighlight.BorderOutline.toProtocolRGBA();
+        }
+
+        if (mode === "all" || mode === "margin") {
+            highlightConfig.marginColor = WebInspector.Color.PageHighlight.Margin.toProtocolRGBA();
+            highlightConfig.marginOutlineColor = WebInspector.Color.PageHighlight.MarginOutline.toProtocolRGBA();
+        }
+
+        return highlightConfig;
+    },
+
     highlightDOMNode: function(nodeId, mode)
     {
         if ("_hideDOMNodeHighlightTimeout" in this) {
@@ -383,7 +410,7 @@ var WebInspector = {
 
         this._highlightedDOMNodeId = nodeId;
         if (nodeId)
-            DOMAgent.highlightNode(nodeId, mode || "all");
+            DOMAgent.highlightNode(nodeId, this.buildHighlightConfig(mode));
         else
             DOMAgent.hideHighlight();
     },

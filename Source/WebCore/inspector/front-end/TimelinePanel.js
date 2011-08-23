@@ -737,7 +737,7 @@ WebInspector.TimelinePanel.prototype = {
         if (this._highlightedRect === record.data)
             return;
         this._highlightedRect = record.data;
-        DOMAgent.highlightRect(this._highlightedRect.x, this._highlightedRect.y, this._highlightedRect.width, this._highlightedRect.height);
+        DOMAgent.highlightRect(this._highlightedRect.x, this._highlightedRect.y, this._highlightedRect.width, this._highlightedRect.height, WebInspector.Color.PageHighlight.Content.toProtocolRGBA(), WebInspector.Color.PageHighlight.ContentOutline.toProtocolRGBA());
     },
 
     _hideRectHighlight: function()

@@ -1095,7 +1095,7 @@ WebInspector.FrameTreeElement.prototype = {
     {
         if (hovered) {
             this.listItemElement.addStyleClass("hovered");
-            DOMAgent.highlightFrame(this._frameId);
+            DOMAgent.highlightFrame(this._frameId, WebInspector.Color.PageHighlight.Content.toProtocolRGBA(), WebInspector.Color.PageHighlight.ContentOutline.toProtocolRGBA());
         } else {
             this.listItemElement.removeStyleClass("hovered");
             DOMAgent.hideHighlight();

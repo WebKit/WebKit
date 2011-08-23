@@ -1109,7 +1109,7 @@ WebInspector.ElementsPanel.prototype = {
 
     setSearchingForNode: function(enabled)
     {
-        DOMAgent.setInspectModeEnabled(enabled, this._setSearchingForNode.bind(this, enabled));
+        DOMAgent.setInspectModeEnabled(enabled, WebInspector.buildHighlightConfig(), this._setSearchingForNode.bind(this, enabled));
     },
 
     toggleSearchingForNode: function()

@@ -1888,10 +1888,6 @@ body.platform-windows .sidebar-pane-subtitle {
     margin: 3px;
 }
 
-.metrics .margin.hovered {
-    background-color: rgb(139, 182, 221);
-}
-
 .metrics .border {
     border: 1px black solid;
     background-color: white;
@@ -1902,10 +1898,6 @@ body.platform-windows .sidebar-pane-subtitle {
     margin: 3px;
 }
 
-.metrics .border.hovered {
-    background-color: rgb(157, 193, 226);
-}
-
 .metrics .padding {
     border: 1px grey dashed;
     background-color: white;
@@ -1914,10 +1906,6 @@ body.platform-windows .sidebar-pane-subtitle {
     vertical-align: middle;
     padding: 3px;
     margin: 3px;
-}
-
-.metrics .padding.hovered {
-    background-color: rgb(173, 204, 231);
 }
 
 .metrics .content {
@@ -1932,10 +1920,6 @@ body.platform-windows .sidebar-pane-subtitle {
     min-width: 80px;
     text-align: center;
     overflow: visible;
-}
-
-.metrics .content.hovered {
-    background-color: rgb(190, 214, 236);
 }
 
 .metrics .content span {

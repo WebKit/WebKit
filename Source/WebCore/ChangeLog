@@ -1,3 +1,56 @@
+2011-08-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Web Inspector: differentiate element highlight colors for margin and padding
+        https://bugs.webkit.org/show_bug.cgi?id=37768
+
+        The highlighting WIP API is slightly changed: clients will specify colors for certain elements of the highlighted objects,
+        rather than a generic "highlighting mode". This allows to:
+        - use entirely custom colors for highlighting (and vary them over time);
+        - display any combination of fill/outline for the highlighted area;
+        - highlight any combinations of element parts.
+
+        Reviewed by Pavel Feldman.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        (WebCore::DOMNodeHighlighter::drawHighlight):
+        * inspector/DOMNodeHighlighter.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::parseColor):
+        (WebCore::parseConfigColor):
+        (WebCore::InspectorDOMAgent::~InspectorDOMAgent):
+        (WebCore::InspectorDOMAgent::clearFrontend):
+        (WebCore::InspectorDOMAgent::highlightedNode):
+        (WebCore::InspectorDOMAgent::handleMousePress):
+        (WebCore::InspectorDOMAgent::mouseDidMoveOverElement):
+        (WebCore::InspectorDOMAgent::setSearchingForNode):
+        (WebCore::InspectorDOMAgent::setInspectModeEnabled):
+        (WebCore::InspectorDOMAgent::setHighlightDataFromConfig):
+        (WebCore::InspectorDOMAgent::highlight):
+        (WebCore::InspectorDOMAgent::highlightRect):
+        (WebCore::InspectorDOMAgent::highlightNode):
+        (WebCore::InspectorDOMAgent::highlightFrame):
+        (WebCore::InspectorDOMAgent::hideHighlight):
+        (WebCore::InspectorDOMAgent::drawHighlight):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/front-end/Color.js:
+        (WebInspector.Color.fromRGBA):
+        (WebInspector.Color.prototype.toProtocolRGBA):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.setSearchingForNode):
+        * inspector/front-end/MetricsSidebarPane.js:
+        (WebInspector.MetricsSidebarPane.prototype._highlightDOMNode.handleMouseOver):
+        (WebInspector.MetricsSidebarPane.prototype._highlightDOMNode.handleMouseOut):
+        (WebInspector.MetricsSidebarPane.prototype._highlightDOMNode):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.FrameTreeElement.prototype.set hovered):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._highlightRect):
+        * inspector/front-end/inspector.css:
+        * inspector/front-end/inspector.js:
+        (WebInspector.buildHighlightConfig):
+        (WebInspector.highlightDOMNode):
+
 2011-08-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r93579.

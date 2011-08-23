@@ -29,26 +29,38 @@
 #ifndef DOMNodeHighlighter_h
 #define DOMNodeHighlighter_h
 
+#include "Color.h"
+
+#include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
+
 namespace WebCore {
 
+class Color;
 class Document;
 class GraphicsContext;
 class IntRect;
 class Node;
 
-namespace DOMNodeHighlighter {
+struct HighlightData {
+    Color content;
+    Color contentOutline;
+    Color padding;
+    Color paddingOutline;
+    Color border;
+    Color borderOutline;
+    Color margin;
+    Color marginOutline;
+    bool showInfo;
 
-enum HighlightMode {
-    HighlightAll,
-    HighlightContent,
-    HighlightPadding,
-    HighlightBorder,
-    HighlightMargin
+    // Either of these must be 0.
+    RefPtr<Node> node;
+    OwnPtr<IntRect> rect;
 };
 
-void drawNodeHighlight(GraphicsContext&, Node*, HighlightMode);
+namespace DOMNodeHighlighter {
 
-void drawRectHighlight(GraphicsContext&, Document*, IntRect*);
+void drawHighlight(GraphicsContext&, Document*, HighlightData*);
 
 } // namespace DOMNodeHighlighter
 

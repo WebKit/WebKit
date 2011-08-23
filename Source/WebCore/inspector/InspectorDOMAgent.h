@@ -62,6 +62,7 @@ class IntRect;
 class HitTestResult;
 class MatchJob;
 class HTMLElement;
+class HighlightData;
 class InspectorState;
 class InstrumentingAgents;
 class NameNodeMap;
@@ -129,16 +130,16 @@ public:
     void cancelSearch(ErrorString*);
     void resolveNode(ErrorString*, int nodeId, const String* const objectGroup, RefPtr<InspectorObject>* result);
     void getAttributes(ErrorString*, int nodeId, RefPtr<InspectorArray>* result);
-    void setInspectModeEnabled(ErrorString*, bool enabled);
+    void setInspectModeEnabled(ErrorString*, bool enabled, const RefPtr<InspectorObject>* highlightConfig);
     void requestNode(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
     void hideHighlight(ErrorString*);
-    void highlightRect(ErrorString*, int x, int y, int width, int height);
-    void highlightNode(ErrorString*, int nodeId, String* mode);
-    void highlightFrame(ErrorString*, const String& frameId);
+    void highlightRect(ErrorString*, int x, int y, int width, int height, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor);
+    void highlightNode(ErrorString*, int nodeId, const RefPtr<InspectorObject> highlightConfig);
+    void highlightFrame(ErrorString*, const String& frameId, const RefPtr<InspectorObject>* color, const RefPtr<InspectorObject>* outlineColor);
     void moveTo(ErrorString*, int nodeId, int targetNodeId, const int* const anchorNodeId, int* newNodeId);
 
-    Node* highlightedNode() const { return m_highlightedNode.get(); }
+    Node* highlightedNode() const;
 
     // Methods called from the InspectorInstrumentation.
     void setDocument(Document*);
@@ -182,8 +183,9 @@ public:
 private:
     InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorClient*, InspectorState*, InjectedScriptManager*);
 
-    void setSearchingForNode(bool enabled);
-    void highlight(ErrorString*, Node*, const String& mode);
+    void setSearchingForNode(bool enabled, InspectorObject* highlightConfig);
+    bool setHighlightDataFromConfig(InspectorObject* highlightConfig);
+    void highlight();
 
     // Node-related methods.
     typedef HashMap<RefPtr<Node>, int> NodeToIdMap;
@@ -231,9 +233,7 @@ private:
     Timer<InspectorDOMAgent> m_matchJobsTimer;
     HashSet<RefPtr<Node> > m_searchResults;
     OwnPtr<RevalidateStyleAttributeTask> m_revalidateStyleAttrTask;
-    RefPtr<Node> m_highlightedNode;
-    OwnPtr<IntRect> m_highlightedRect;
-    String m_highlightMode;
+    OwnPtr<HighlightData> m_highlightData;
     RefPtr<Node> m_nodeToFocus;
     bool m_searchingForNode;
 };
