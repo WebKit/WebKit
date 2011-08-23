@@ -1,3 +1,16 @@
+2011-08-23  Steve Block  <steveblock@google.com>
+
+        Remove all mention of removed Android files from build scripts
+        https://bugs.webkit.org/show_bug.cgi?id=66755
+
+        Reviewed by Tony Gentilcore.
+
+        No new tests, removing dead code only.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * gyp/WebCore.gyp:
+
 2011-08-23  Mikhail Naganov  <mnaganov@chromium.org>
 
         Web Inspector: [Chromium] Fix handling of aggregate names in profiler.

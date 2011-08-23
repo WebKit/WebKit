@@ -108,7 +108,6 @@ IF(NOT DEFINED CPACK_SOURCE_IGNORE_FILES)
 
     # File and Directory patterns that no CMake-ified port uses
     SET(FILE_PATTERNS_UNKNOWN_PORTS
-      "/android/" "/Android/" "android\\\\." "Android\\\\."
       "/brew/" "/Brew/" "brew\\\\." "Brew\\\\."
       "/carbon/" "/Carbon/" "carbon\\\\." "Carbon\\\\."
       "/cf/" "/Cf/" "cf\\\\." "Cf\\\\."

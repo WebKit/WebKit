@@ -1,3 +1,12 @@
+2011-08-23  Steve Block  <steveblock@google.com>
+
+        Remove all mention of removed Android files from build scripts
+        https://bugs.webkit.org/show_bug.cgi?id=66755
+
+        Reviewed by Tony Gentilcore.
+
+        * Source/cmake/WebKitPackaging.cmake:
+
 2011-08-19  MORITA Hajime  <morrita@google.com>
 
         Spell-checking doesn't recognize word boundaries on contests inserted by execCommand('insertHTML')

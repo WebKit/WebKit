@@ -125,7 +125,6 @@
         # ... Then include what we want.
         ['include', '../wtf/'],
         # FIXME: This is clearly not sustainable. 
-        ['exclude', '../wtf/android'], 
         ['exclude', '../wtf/brew'], 
         ['exclude', '../wtf/efl'], 
         ['exclude', '../wtf/gobject'], 

@@ -622,8 +622,6 @@
             'wtf/ThreadingWin.cpp',
             'wtf/TypeTraits.cpp',
             'wtf/WTFThreadData.cpp',
-            'wtf/android/AndroidThreading.h',
-            'wtf/android/MainThreadAndroid.cpp',
             'wtf/brew/MainThreadBrew.cpp',
             'wtf/brew/OwnPtrBrew.cpp',
             'wtf/brew/RefPtrBrew.h',

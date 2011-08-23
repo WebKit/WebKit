@@ -1,3 +1,14 @@
+2011-08-23  Steve Block  <steveblock@google.com>
+
+        Remove all mention of removed Android files from build scripts
+        https://bugs.webkit.org/show_bug.cgi?id=66755
+
+        Reviewed by Tony Gentilcore.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * JavaScriptCore.gypi:
+        * gyp/JavaScriptCore.gyp:
+
 2011-08-23  Adam Barth  <abarth@webkit.org>
 
         Remove WebCore/editing/android and other Android-specific directories
