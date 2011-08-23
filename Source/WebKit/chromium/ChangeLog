@@ -1,3 +1,21 @@
+2011-08-23  Matt Falkenhagen  <falken@chromium.org>
+
+        [chromium] Update WebSettings to support per-script font settings
+        https://bugs.webkit.org/show_bug.cgi?id=66220
+
+        Reviewed by Tony Chang.
+
+        * WebKit.gyp:
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setStandardFontFamily):
+        (WebKit::WebSettingsImpl::setFixedFontFamily):
+        (WebKit::WebSettingsImpl::setSerifFontFamily):
+        (WebKit::WebSettingsImpl::setSansSerifFontFamily):
+        (WebKit::WebSettingsImpl::setCursiveFontFamily):
+        (WebKit::WebSettingsImpl::setFantasyFontFamily):
+        * src/WebSettingsImpl.h:
+
 2011-08-23  Nat Duca  <nduca@chromium.org>
 
         Unreviewd, roll chromium reverse DEPS 97698:97834
