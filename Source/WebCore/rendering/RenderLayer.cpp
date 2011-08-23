@@ -377,8 +377,10 @@ void RenderLayer::computeRepaintRects()
     m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer);
 }
 
-void RenderLayer::updateRepaintRectsAfterScroll(bool fixed)
+void RenderLayer::updateLayerPositionsAfterScroll(bool fixed)
 {
+    updateLayerPosition();
+
     if (fixed || renderer()->style()->position() == FixedPosition) {
         computeRepaintRects();
         fixed = true;
@@ -390,7 +392,14 @@ void RenderLayer::updateRepaintRectsAfterScroll(bool fixed)
     }
 
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->updateRepaintRectsAfterScroll(fixed);
+        child->updateLayerPositionsAfterScroll(fixed);
+
+    // We don't update our reflection as scrolling is a translation which does not change the size()
+    // of an object, thus RenderReplica will still repaint itself properly as the layer position was
+    // updated above.
+
+    if (m_marquee)
+        m_marquee->updateMarqueePosition();
 }
 
 void RenderLayer::updateTransform()
@@ -1323,10 +1332,9 @@ void RenderLayer::scrollTo(LayoutUnit x, LayoutUnit y)
         return;
     m_scrollOffset = newScrollOffset;
 
-    // Update the positions of our child layers. Don't have updateLayerPositions() update
-    // compositing layers, because we need to do a deep update from the compositing ancestor.
-    for (RenderLayer* child = firstChild(); child; child = child->nextSibling())
-        child->updateLayerPositions(0);
+    // Update the positions of our child layers (if needed as only fixed layers should be impacted by a scroll).
+    // We don't update compositing layers, because we need to do a deep update from the compositing ancestor.
+    updateLayerPositionsAfterScroll();
 
     RenderView* view = renderer()->view();
     
@@ -1358,14 +1366,13 @@ void RenderLayer::scrollTo(LayoutUnit x, LayoutUnit y)
 #endif
 
     RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
-    LayoutRect rectForRepaint = renderer()->clippedOverflowRectForRepaint(repaintContainer);
 
     Frame* frame = renderer()->frame();
     if (frame) {
         // The caret rect needs to be invalidated after scrolling
         frame->selection()->setCaretRectNeedsUpdate();
 
-        FloatQuad quadForFakeMouseMoveEvent = FloatQuad(rectForRepaint);
+        FloatQuad quadForFakeMouseMoveEvent = FloatQuad(m_repaintRect);
         if (repaintContainer)
             quadForFakeMouseMoveEvent = repaintContainer->localToAbsoluteQuad(quadForFakeMouseMoveEvent);
         frame->eventHandler()->dispatchFakeMouseMoveEventSoonInQuad(quadForFakeMouseMoveEvent);
@@ -1373,7 +1380,7 @@ void RenderLayer::scrollTo(LayoutUnit x, LayoutUnit y)
 
     // Just schedule a full repaint of our object.
     if (view)
-        renderer()->repaintUsingContainer(repaintContainer, rectForRepaint);
+        renderer()->repaintUsingContainer(repaintContainer, m_repaintRect);
 
     // Schedule the scroll DOM event.
     if (renderer()->node())

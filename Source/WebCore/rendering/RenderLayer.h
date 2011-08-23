@@ -404,7 +404,7 @@ public:
     LayoutRect repaintRect() const { return m_repaintRect; }
     LayoutRect repaintRectIncludingDescendants() const;
     void computeRepaintRects();
-    void updateRepaintRectsAfterScroll(bool fixed = false);
+    void updateLayerPositionsAfterScroll(bool fixed = false);
     void setNeedsFullRepaint(bool f = true) { m_needsFullRepaint = f; }
     
     int staticInlinePosition() const { return m_staticInlinePosition; }

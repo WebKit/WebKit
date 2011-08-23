@@ -1,3 +1,44 @@
+2011-08-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reduce the amount of RenderLayer rectangles' update when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=66618
+
+        Reviewed by David Hyatt.
+
+        This patch avoids recomputing the RenderLayers rectangles if not needed.
+
+        The current code path for scrolling would update RenderLayers' repaint rectangles
+        twice. However we do need to update only children of a fixed element as they are
+        the only type of layers that move during a scroll.
+
+        We just change a call to updateLayerPositions for a call to updateLayerPositionsAfterScroll.
+        updateLayerPositions being pessimist about the layer's state - because it is called after layout -
+        it is missing some optimization that can be done during scrolling.
+
+        Tests: fast/repaint/scroll-absolute-layer-with-reflection.html
+               fast/repaint/scroll-fixed-layer-with-reflection.html
+               fast/repaint/scroll-fixed-layer-with-transformed-parent-layer.html
+               fast/repaint/scroll-fixed-reflected-layer.html
+               fast/repaint/scroll-in-clipped-layer.html
+               fast/repaint/scroll-in-fixed-layer.html
+               fast/repaint/scroll-in-transformed-layer.html
+               fast/repaint/scroll-with-transformed-parent-layer.html
+
+        * rendering/RenderLayer.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::repaintFixedElementsAfterScrolling):
+        Updated those 2 call sites after updateRepaintRectsAfterScroll renaming.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositionsAfterScroll): Beefed up the method
+        to take care of also updating the layer's position (that sounded like a bug in
+        the previous code that is covered by the tests above). Note that we don't care
+        if one of our ancestor has a fixed position as we are scrolling *inside* this
+        ancestor.
+
+        (WebCore::RenderLayer::scrollTo): Call updateLayerPositionsAfterScroll instead of
+        updateLayerPositions.
+
 2011-08-23  Jeffrey Pfau  <jpfau@apple.com>
 
         New XML parser: pretty XML tree viewer

@@ -1617,7 +1617,7 @@ void FrameView::repaintFixedElementsAfterScrolling()
     if (!m_nestedLayoutCount && hasFixedObjects()) {
         if (RenderView* root = m_frame->contentRenderer()) {
             root->updateWidgetPositions();
-            root->layer()->updateRepaintRectsAfterScroll();
+            root->layer()->updateLayerPositionsAfterScroll();
 #if USE(ACCELERATED_COMPOSITING)
             root->compositor()->updateCompositingLayers(CompositingUpdateOnScroll);
 #endif

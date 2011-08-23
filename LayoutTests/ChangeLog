@@ -1,3 +1,58 @@
+2011-08-23  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reduce the amount of RenderLayer rectangles' update when scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=66618
+
+        Reviewed by David Hyatt.
+
+        * fast/repaint/resources/default.css:
+        Added more shortcuts.
+
+        * fast/repaint/scroll-absolute-layer-with-reflection-expected.txt: Added.
+        * fast/repaint/scroll-absolute-layer-with-reflection.html: Added.
+        * fast/repaint/scroll-fixed-layer-with-reflection-expected.txt: Added.
+        * fast/repaint/scroll-fixed-layer-with-reflection.html: Added.
+        * fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.txt: Added.
+        * fast/repaint/scroll-fixed-layer-with-transformed-parent-layer.html: Added.
+        * fast/repaint/scroll-fixed-reflected-layer-expected.txt: Added.
+        * fast/repaint/scroll-fixed-reflected-layer.html: Added.
+        * fast/repaint/scroll-in-clipped-layer-expected.txt: Added.
+        * fast/repaint/scroll-in-clipped-layer.html: Added.
+        * fast/repaint/scroll-in-fixed-layer-expected.txt: Added.
+        * fast/repaint/scroll-in-fixed-layer.html: Added.
+        * fast/repaint/scroll-in-transformed-layer-expected.txt: Added.
+        * fast/repaint/scroll-in-transformed-layer.html: Added.
+        * fast/repaint/scroll-with-transformed-parent-layer-expected.txt: Added.
+        * fast/repaint/scroll-with-transformed-parent-layer.html: Added.
+        Those are a variation on the same theme: scrolling inside a layers (sometimes the layer is itself scrolled)
+        to show that we are still doing the right thing.
+
+        * platform/chromium-cg-mac/scroll-absolute-layer-with-reflection-expected.png: Added.
+        * platform/chromium-cg-mac/scroll-fixed-layer-with-reflection-expected.png: Added.
+        * platform/chromium-cg-mac/scroll-fixed-layer-with-transformed-parent-layer-expected.png: Added.
+        * platform/chromium-cg-mac/scroll-fixed-reflected-layer-expected.png: Added.
+        * platform/chromium-cg-mac/scroll-in-clipped-layer-expected.png: Added.
+        * platform/chromium-cg-mac/scroll-in-fixed-layer-expected.png: Added.
+        * platform/chromium-cg-mac/scroll-in-transformed-layer-expected.png: Added.
+        * platform/chromium-cg-mac/scroll-with-transformed-parent-layer-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scroll-absolute-layer-with-reflection-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scroll-fixed-layer-with-reflection-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scroll-fixed-reflected-layer-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scroll-in-clipped-layer-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scroll-in-fixed-layer-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scroll-in-transformed-layer-expected.png: Added.
+        * platform/chromium-win/fast/repaint/scroll-with-transformed-parent-layer-expected.png: Added.
+        * platform/mac/fast/repaint/scroll-absolute-layer-with-reflection-expected.png: Added.
+        * platform/mac/fast/repaint/scroll-fixed-layer-with-reflection-expected.png: Added.
+        * platform/mac/fast/repaint/scroll-fixed-layer-with-transformed-parent-layer-expected.png: Added.
+        * platform/mac/fast/repaint/scroll-fixed-reflected-layer-expected.png: Added.
+        * platform/mac/fast/repaint/scroll-in-clipped-layer-expected.png: Added.
+        * platform/mac/fast/repaint/scroll-in-fixed-layer-expected.png: Added.
+        * platform/mac/fast/repaint/scroll-in-transformed-layer-expected.png: Added.
+        * platform/mac/fast/repaint/scroll-with-transformed-parent-layer-expected.png: Added.
+        Baseline for Chromium and Mac.
+
 2011-08-23  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Disabled inspector/extensions/extensions-resources.html.
