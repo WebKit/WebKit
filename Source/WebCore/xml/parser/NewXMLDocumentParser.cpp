@@ -31,6 +31,7 @@
 #include "ScriptSourceCode.h"
 #include "SegmentedString.h"
 #include "XMLTreeBuilder.h"
+#include "XMLTreeViewer.h"
 
 namespace WebCore {
 
@@ -147,8 +148,15 @@ void NewXMLDocumentParser::finish()
     m_treeBuilder->finish();
 
     m_finishWasCalled = true;
-    if (isParsing())
+    if (isParsing()) {
+#if ENABLE(XSLT)
+        XMLTreeViewer xmlTreeViewer(document());
+        if (xmlTreeViewer.hasNoStyleInformation())
+            xmlTreeViewer.transformDocumentToTreeView();
+#endif // ENABLE(XSLT)
+
         prepareToStopParsing();
+    }
     document()->setReadyState(Document::Interactive);
     document()->finishedParsing();
 }

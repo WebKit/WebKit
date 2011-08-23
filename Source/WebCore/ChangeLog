@@ -1,3 +1,13 @@
+2011-08-23  Jeffrey Pfau  <jpfau@apple.com>
+
+        New XML parser: pretty XML tree viewer
+        https://bugs.webkit.org/show_bug.cgi?id=66489
+
+        Reviewed by Adam Barth.
+
+        * xml/parser/NewXMLDocumentParser.cpp:
+        (WebCore::NewXMLDocumentParser::finish):
+
 2011-08-23  Jessie Berlin  <jberlin@apple.com>
 
         Build fix.
