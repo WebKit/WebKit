@@ -129,7 +129,7 @@ WebInspector.DOMNode.prototype = {
 
     setAttribute: function(name, text, callback)
     {
-        DOMAgent.setAttributesText(this.id, name, text, callback);
+        DOMAgent.setAttributesText(this.id, text, name, callback);
     },
 
     setAttributeValue: function(name, value, callback)

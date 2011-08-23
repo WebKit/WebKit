@@ -98,7 +98,7 @@ WebInspector.DebuggerModel.prototype = {
             if (callback)
                 callback(error ? null : breakpointId, locations);
         }
-        DebuggerAgent.setBreakpointByUrl(url, undefined, lineNumber, columnNumber, condition, didSetBreakpoint.bind(this));
+        DebuggerAgent.setBreakpointByUrl(lineNumber, url, undefined, columnNumber, condition, didSetBreakpoint.bind(this));
         WebInspector.userMetrics.ScriptsBreakpointSet.record();
     },
 

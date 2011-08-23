@@ -585,7 +585,7 @@ void InspectorDOMAgent::setAttributeValue(ErrorString* errorString, int elementI
         *errorString = "Internal error: could not set attribute value.";
 }
 
-void InspectorDOMAgent::setAttributesText(ErrorString* errorString, int elementId, const String* const name, const String& text)
+void InspectorDOMAgent::setAttributesText(ErrorString* errorString, int elementId, const String& text, const String* const name)
 {
     Element* element = assertElement(errorString, elementId);
     if (!element)

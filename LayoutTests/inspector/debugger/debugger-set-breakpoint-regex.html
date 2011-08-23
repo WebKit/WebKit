@@ -31,7 +31,7 @@ function test()
         {
             var url = "debugger-set-breakpoint.js";
             var urlRegex = "debugger-set-breakpoint.*";
-            DebuggerAgent.setBreakpointByUrl(url, urlRegex, 1, step2);
+            DebuggerAgent.setBreakpointByUrl(1, url, urlRegex, step2);
 
             function step2(result)
             {

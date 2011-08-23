@@ -1,5 +1,27 @@
 2011-08-22  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: generate protocol externs API for the front-end compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=66677
+
+        Reviewed by Tony Gentilcore.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttributesText):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/compile-front-end.sh: Added.
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.setAttribute):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.setBreakpoint):
+        * inspector/front-end/externs.js: Added.
+        (console.warn):
+
+2011-08-22  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: Prepare utilities.js for compilation.
         https://bugs.webkit.org/show_bug.cgi?id=66656
 
