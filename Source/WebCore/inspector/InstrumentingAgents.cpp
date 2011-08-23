@@ -42,6 +42,7 @@ namespace WebCore {
 
 InstrumentingAgents* instrumentationForPage(Page* page)
 {
+    ASSERT(isMainThread());
     if (InspectorController* controller = page->inspectorController())
         return controller->m_instrumentingAgents.get();
     return 0;

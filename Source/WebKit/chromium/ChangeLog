@@ -1,3 +1,17 @@
+2011-08-23  Dmitry Lomov  <Dmitry Lomov (dslomov@google.com)>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66751 
+        [Chromium]WebWorkerClientImpl should always invoke
+        InspectorIntrumentation on main thread.
+        The fix moves calls to InspectorInstrumentation from
+        WebWorkerClientImpl to unedrlying WorkerMessagingProxy.
+
+        Reviewed by Pavel Feldman.
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::terminateWorkerContext):
+        (WebKit::WebWorkerClientImpl::workerContextDestroyed):
+
 2011-08-23  Adam Klein  <adamk@chromium.org>
 
         [chromium] Remove a few FIXME #defines in API headers

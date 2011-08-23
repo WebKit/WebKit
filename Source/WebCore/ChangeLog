@@ -1,3 +1,21 @@
+2011-08-23  Dmitry Lomov  <Dmitry Lomov (dslomov@google.com)>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66751 
+        [Chromium]WebWorkerClientImpl should always invoke
+        InspectorIntrumentation on main thread.
+        The fix moves calls to InspectorInstrumentation from
+        WebWorkerClientImpl to unedrlying WorkerMessagingProxy.
+
+        Reviewed by Pavel Feldman.
+
+        Covered by existing tests.
+
+        * inspector/InstrumentingAgents.cpp:
+        (WebCore::instrumentationForPage):
+        * workers/WorkerMessagingProxy.cpp:
+        (WebCore::WorkerMessagingProxy::workerContextDestroyedInternal):
+        (WebCore::WorkerMessagingProxy::terminateWorkerContext):
+
 2011-08-23  Misha Tyutyunik  <michael.tyutyunik@nokia.com>
 
         [Qt] Button text is invisible when mobile theme is in use and application palette set to use light text color.

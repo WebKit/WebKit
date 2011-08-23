@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "ErrorEvent.h"
 #include "ExceptionCode.h"
+#include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
@@ -340,6 +341,9 @@ void WorkerMessagingProxy::workerContextDestroyedInternal()
     // in either side any more. However, the Worker object may still exist, and it assumes that the proxy exists, too.
     m_askedToTerminate = true;
     m_workerThread = 0;
+
+    InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
+
     if (!m_workerObject)
         delete this;
 }
@@ -352,6 +356,8 @@ void WorkerMessagingProxy::terminateWorkerContext()
 
     if (m_workerThread)
         m_workerThread->stop();
+
+    InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
 }
 
 #if ENABLE(INSPECTOR)

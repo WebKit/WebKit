@@ -39,7 +39,6 @@
 #include "ErrorEvent.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
-#include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "MessagePortChannel.h"
@@ -96,7 +95,6 @@ void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL, const String
 void WebWorkerClientImpl::terminateWorkerContext()
 {
     m_proxy->terminateWorkerContext();
-    InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
 }
 
 void WebWorkerClientImpl::postMessageToWorkerContext(
@@ -185,7 +183,6 @@ void WebWorkerClientImpl::postConsoleMessageToWorkerObject(MessageSource source,
 void WebWorkerClientImpl::workerContextDestroyed()
 {
     m_proxy->workerContextDestroyed();
-    InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
 }
 
 bool WebWorkerClientImpl::allowFileSystem() 
