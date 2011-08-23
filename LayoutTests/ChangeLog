@@ -1,3 +1,42 @@
+2011-08-23  Adam Barth  <abarth@webkit.org>
+
+        Update expectations for pkasting.  The rebaseline script is having
+        trouble on Cygwin, so I ran the script as instructed by Peter.
+
+        * platform/chromium-cg-mac-leopard/fast/block/float/fit_line_below_floats-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/block/float/floats-and-text-indent-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/block/float/floats-and-text-indent-rl-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/multicol/span/span-as-nested-inline-block-child-expected.png: Added.
+        * platform/chromium-cg-mac/fast/multicol/span/span-as-nested-inline-block-child-expected.png: Added.
+        * platform/chromium-linux-x86/fast/css: Removed.
+        * platform/chromium-linux-x86/svg/dynamic-updates: Removed.
+        * platform/chromium-linux/fast/block/float/fit_line_below_floats-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/fit_line_below_floats-expected.txt: Added.
+        * platform/chromium-linux/fast/block/float/floats-and-text-indent-expected.png: Added.
+        * platform/chromium-linux/fast/block/float/floats-and-text-indent-rl-expected.png: Added.
+        * platform/chromium-linux/fast/block/positioning/058-expected.png:
+        * platform/chromium-linux/fast/multicol/span/span-as-nested-inline-block-child-expected.png: Added.
+        * platform/chromium-linux/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium-win-vista/svg/dynamic-updates: Removed.
+        * platform/chromium-win/fast/block/float/floats-and-text-indent-expected.png: Added.
+        * platform/chromium-win/fast/block/float/floats-and-text-indent-expected.txt: Added.
+        * platform/chromium-win/fast/block/float/floats-and-text-indent-rl-expected.png: Added.
+        * platform/chromium-win/fast/block/float/floats-and-text-indent-rl-expected.txt: Added.
+        * platform/chromium-win/fast/block/positioning/058-expected.png:
+        * platform/chromium-win/fast/block/positioning/058-expected.txt:
+        * platform/chromium-win/fast/css/border-radius-non-negative-expected.png: Added.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-inline-block-child-expected.png: Added.
+        * platform/chromium-win/fast/multicol/span/span-as-nested-inline-block-child-expected.txt: Added.
+        * platform/chromium-win/svg/custom/image-small-width-height-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/svg/custom/image-small-width-height-expected.txt: Removed.
+        * platform/qt/svg/custom/image-small-width-height-expected.txt: Removed.
+        * svg/custom/image-small-width-height-expected.txt: Added.
+
 2011-08-23  Tatiana Meshkova  <tatiana.meshkova@nokia.com>
 
         Swap width and height for sliderthumb-vertical.
