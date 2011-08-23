@@ -44,12 +44,12 @@ public:
     explicit WebSettingsImpl(WebCore::Settings*);
     virtual ~WebSettingsImpl() { }
 
-    virtual void setStandardFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
-    virtual void setFixedFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
-    virtual void setSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
-    virtual void setSansSerifFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
-    virtual void setCursiveFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
-    virtual void setFantasyFontFamily(const WebString&, UScriptCode = USCRIPT_COMMON);
+    virtual void setStandardFontFamily(const WebString&);
+    virtual void setFixedFontFamily(const WebString&);
+    virtual void setSerifFontFamily(const WebString&);
+    virtual void setSansSerifFontFamily(const WebString&);
+    virtual void setCursiveFontFamily(const WebString&);
+    virtual void setFantasyFontFamily(const WebString&);
     virtual void setDefaultFontSize(int);
     virtual void setDefaultFixedFontSize(int);
     virtual void setMinimumFontSize(int);
