@@ -1,3 +1,16 @@
+2011-08-23  Patrick Gansterer  <paroga@webkit.org>
+
+        Fix mergeChangeLogs test on native windows
+        https://bugs.webkit.org/show_bug.cgi?id=66797
+
+        Reviewed by Adam Roben.
+
+        Windows has no /tmp/ directory and the "TMPDIR" environment variable isn't set in the default setup.
+        Add the "TEMP" environment variable as additional source for the temporary directory used in writeTempFile.
+
+        * Scripts/webkitperl/VCSUtils_unittest/mergeChangeLogs.pl:
+        (writeTempFile):
+
 2011-08-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic relative time is wrong and updates too frequently.

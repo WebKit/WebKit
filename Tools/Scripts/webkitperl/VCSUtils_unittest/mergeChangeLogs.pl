@@ -50,7 +50,7 @@ sub writeTempFile($$$)
 
     my ($FH, $fileName) = tempfile(
         $name . "-XXXXXXXX",
-        DIR => ($ENV{'TMPDIR'} || "/tmp"),
+        DIR => ($ENV{'TMPDIR'} || $ENV{'TEMP'} || "/tmp"),
         UNLINK => 0,
     );
     print $FH $content;
