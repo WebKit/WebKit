@@ -3287,9 +3287,6 @@ BUGCR82419 LINUX WIN : svg/custom/fill-opacity-update.svg = IMAGE
 BUGWK58999 LINUX WIN : fast/borders/outline-alpha-block.html = IMAGE
 BUGWK58999 LINUX WIN : fast/borders/outline-alpha-inline.html = IMAGE
 
-// Likely rebaseline needed.
-BUGATWILSON LINUX WIN : svg/custom/stroke-opacity-update.svg = IMAGE
-
 // New test at r86442 exposed this crash.
 BUGWK60414 WIN : platform/win/plugins/iframe-inside-overflow.html = CRASH
 

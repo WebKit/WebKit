@@ -1,3 +1,14 @@
+2011-08-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, update test expectations for svg/custom/stroke-opacity-update.
+
+        * platform/chromium-linux/svg/custom/stroke-opacity-update-expected.png: Added.
+        * platform/chromium-win/svg/custom/stroke-opacity-update-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/svg/custom/stroke-opacity-update-expected.txt: Removed.
+        * platform/qt/svg/custom/stroke-opacity-update-expected.txt: Removed.
+        * svg/custom/stroke-opacity-update-expected.txt: Renamed from LayoutTests/platform/gtk/svg/custom/stroke-opacity-update-expected.txt.
+
 2011-08-24  Tatiana Meshkova  <tatiana.meshkova@nokia.com>
 
         Pixel crash test for RenderThemeQt::paintSliderTrack.
