@@ -1,3 +1,37 @@
+2011-08-24  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: add createObjectURL functionality
+        https://bugs.webkit.org/show_bug.cgi?id=65925
+
+        This patch introduces the functionality for generating the url associated with a MediaStream,
+        which can then be assigned to the src attribute of the <video> tag for example.
+
+        Reviewed by Adam Barth.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/ScriptExecutionContext.cpp:
+        (WebCore::ScriptExecutionContext::~ScriptExecutionContext):
+        (WebCore::ScriptExecutionContext::createPublicBlobURL):
+        (WebCore::ScriptExecutionContext::revokePublicBlobURL):
+        * dom/ScriptExecutionContext.h:
+        * html/DOMURL.cpp:
+        (WebCore::DOMURL::createObjectURL):
+        * html/DOMURL.h:
+        * html/DOMURL.idl:
+        * platform/MediaStreamRegistry.cpp: Added.
+        (WebCore::MediaStreamRegistry::registry):
+        (WebCore::MediaStreamRegistry::registerMediaStreamURL):
+        (WebCore::MediaStreamRegistry::unregisterMediaStreamURL):
+        (WebCore::MediaStreamRegistry::mediaStream):
+        * platform/MediaStreamRegistry.h: Copied from Source/WebCore/html/DOMURL.h.
+
+        Tests for the Media Stream API will be provided by the bug 56587, pending enough landed code.
+
 2011-08-23  David Levin  <levin@chromium.org>
 
         MessageEvent.ports shouldn't ever be null.

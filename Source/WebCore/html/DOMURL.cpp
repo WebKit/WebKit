@@ -53,6 +53,15 @@ void DOMURL::contextDestroyed()
     m_scriptExecutionContext = 0;
 }
 
+#if ENABLE(MEDIA_STREAM)
+String DOMURL::createObjectURL(MediaStream* stream)
+{
+    if (!m_scriptExecutionContext)
+        return String();
+    return m_scriptExecutionContext->createPublicBlobURL(stream).string();
+}
+#endif
+
 String DOMURL::createObjectURL(Blob* blob)
 {
     if (!m_scriptExecutionContext)

@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class Blob;
+class MediaStream;
 class ScriptExecutionContext;
 
 class DOMURL : public RefCounted<DOMURL> {
@@ -42,6 +43,9 @@ public:
     static PassRefPtr<DOMURL> create(ScriptExecutionContext* scriptExecutionContext) { return adoptRef(new DOMURL(scriptExecutionContext)); }
     ~DOMURL();
 
+#if ENABLE(MEDIA_STREAM)
+    String createObjectURL(MediaStream*);
+#endif
     String createObjectURL(Blob*);
     void revokeObjectURL(const String&);
 

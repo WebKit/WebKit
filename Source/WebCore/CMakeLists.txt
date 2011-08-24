@@ -2047,6 +2047,7 @@ IF (ENABLE_MEDIA_STREAM)
         p2p/PeerConnection.cpp
         page/MediaStreamController.cpp
         page/MediaStreamFrameController.cpp
+        platform/MediaStreamRegistry.cpp
     )
 
     LIST(APPEND WebCore_IDL_FILES

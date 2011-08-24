@@ -26862,6 +26862,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\MediaStreamRegistry.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\MediaStreamRegistry.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\MemoryPressureHandler.cpp"
 				>
 			</File>

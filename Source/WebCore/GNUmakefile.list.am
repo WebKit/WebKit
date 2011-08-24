@@ -2644,6 +2644,8 @@ webcore_sources += \
 	Source/WebCore/platform/Logging.h \
 	Source/WebCore/platform/MIMETypeRegistry.cpp \
 	Source/WebCore/platform/MIMETypeRegistry.h \
+	Source/WebCore/platform/MediaStreamRegistry.cpp \
+	Source/WebCore/platform/MediaStreamRegistry.h \
 	Source/WebCore/platform/MemoryPressureHandler.cpp \
 	Source/WebCore/platform/MemoryPressureHandler.h \
 	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \

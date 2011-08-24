@@ -3022,6 +3022,8 @@
             'platform/LinkHash.cpp',
             'platform/LocalizedStrings.cpp',
             'platform/Logging.cpp',
+            'platform/MediaStreamRegistry.cpp',
+            'platform/MediaStreamRegistry.h',
             'platform/MemoryPressureHandler.cpp',
             'platform/MIMETypeRegistry.cpp',
             'platform/Pasteboard.h',

@@ -3260,7 +3260,8 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
         page/MediaStreamFrameController.h \
         page/NavigatorUserMediaError.h \
         page/NavigatorUserMediaErrorCallback.h \
-        page/NavigatorUserMediaSuccessCallback.h
+        page/NavigatorUserMediaSuccessCallback.h \
+        platform/MediaStreamRegistry.h
 
     SOURCES += \
         dom/LocalMediaStream.cpp \
@@ -3271,7 +3272,8 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
         p2p/MediaStreamEvent.cpp \
         p2p/PeerConnection.cpp \
         page/MediaStreamController.cpp \
-        page/MediaStreamFrameController.cpp
+        page/MediaStreamFrameController.cpp \
+        platform/MediaStreamRegistry.cpp
 
     v8 {
         SOURCES += \

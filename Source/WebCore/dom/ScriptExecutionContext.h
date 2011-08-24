@@ -66,6 +66,10 @@ namespace WebCore {
     class FileThread;
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+    class MediaStream;
+#endif
+
     class ScriptExecutionContext {
     public:
         ScriptExecutionContext();
@@ -144,9 +148,12 @@ namespace WebCore {
         DOMTimer* findTimeout(int timeoutId);
 
 #if ENABLE(BLOB)
+#if ENABLE(MEDIA_STREAM)
+        KURL createPublicBlobURL(MediaStream*);
+#endif // ENABLE(MEDIA_STREAM)
         KURL createPublicBlobURL(Blob*);
         void revokePublicBlobURL(const KURL&);
-#endif
+#endif // ENABLE(BLOB)
 
 #if USE(JSC)
         JSC::JSGlobalData* globalData();
@@ -190,6 +197,7 @@ namespace WebCore {
 
 #if ENABLE(BLOB)
         HashSet<String> m_publicBlobURLs;
+        HashSet<String> m_publicStreamURLs;
         HashSet<DOMURL*> m_domUrls;
 #endif
 

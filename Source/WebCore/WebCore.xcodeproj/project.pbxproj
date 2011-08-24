@@ -1121,6 +1121,8 @@
 		4958782212A57DDF007238AC /* PlatformCALayerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4958782012A57DDF007238AC /* PlatformCALayerMac.mm */; };
 		4969B0F213D0B33F00DF3521 /* HitTestingTransformState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */; };
 		4969B0F313D0B33F00DF3521 /* HitTestingTransformState.h in Headers */ = {isa = PBXBuildFile; fileRef = 4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */; };
+		49785EE013F192F000A795AD /* MediaStreamRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49785EDE13F192F000A795AD /* MediaStreamRegistry.cpp */; };
+		49785EE113F192F000A795AD /* MediaStreamRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 49785EDF13F192F000A795AD /* MediaStreamRegistry.h */; };
 		4983913F0F1E767500C23782 /* JSWebKitCSSMatrix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */; };
 		498391400F1E767500C23782 /* JSWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */; };
 		498391500F1E76B400C23782 /* DOMWebKitCSSMatrix.h in Headers */ = {isa = PBXBuildFile; fileRef = 4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */; };
@@ -7708,6 +7710,8 @@
 		4958782012A57DDF007238AC /* PlatformCALayerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PlatformCALayerMac.mm; path = ca/mac/PlatformCALayerMac.mm; sourceTree = "<group>"; };
 		4969B0F013D0B33F00DF3521 /* HitTestingTransformState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HitTestingTransformState.cpp; sourceTree = "<group>"; };
 		4969B0F113D0B33F00DF3521 /* HitTestingTransformState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HitTestingTransformState.h; sourceTree = "<group>"; };
+		49785EDE13F192F000A795AD /* MediaStreamRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamRegistry.cpp; sourceTree = "<group>"; };
+		49785EDF13F192F000A795AD /* MediaStreamRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamRegistry.h; sourceTree = "<group>"; };
 		4983913D0F1E767500C23782 /* JSWebKitCSSMatrix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSMatrix.cpp; sourceTree = "<group>"; };
 		4983913E0F1E767500C23782 /* JSWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebKitCSSMatrix.h; sourceTree = "<group>"; };
 		4983914D0F1E76B400C23782 /* DOMWebKitCSSMatrix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWebKitCSSMatrix.h; sourceTree = "<group>"; };
@@ -19108,6 +19112,8 @@
 				935207BD09BD410A00F2038D /* LocalizedStrings.h */,
 				A8239DFE09B3CF8A00B60641 /* Logging.cpp */,
 				A8239DFF09B3CF8A00B60641 /* Logging.h */,
+				49785EDE13F192F000A795AD /* MediaStreamRegistry.cpp */,
+				49785EDF13F192F000A795AD /* MediaStreamRegistry.h */,
 				657EDA061385CB97004E0645 /* MemoryPressureHandler.cpp */,
 				657EDA071385CB97004E0645 /* MemoryPressureHandler.h */,
 				BC772C4C0C4EB3040083285F /* MIMETypeRegistry.cpp */,
@@ -22405,6 +22411,7 @@
 				49A2CFDA13E9787E00579F13 /* MediaStreamEvent.h in Headers */,
 				B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */,
 				B14353D6138EA8ED00D53276 /* MediaStreamList.h in Headers */,
+				49785EE113F192F000A795AD /* MediaStreamRegistry.h in Headers */,
 				49C9F32613D574F90052600A /* MediaStreamTrack.h in Headers */,
 				49C9F32313D574F90052600A /* MediaStreamTrackList.h in Headers */,
 				BCB16C180979C3BD00467741 /* MemoryCache.h in Headers */,
@@ -25422,6 +25429,7 @@
 				49A2CFD913E9787E00579F13 /* MediaStreamEvent.cpp in Sources */,
 				B1E54595134629C10092A545 /* MediaStreamFrameController.cpp in Sources */,
 				B14353D5138EA8ED00D53276 /* MediaStreamList.cpp in Sources */,
+				49785EE013F192F000A795AD /* MediaStreamRegistry.cpp in Sources */,
 				49C9F32713D574F90052600A /* MediaStreamTrack.cpp in Sources */,
 				49C9F32413D574F90052600A /* MediaStreamTrackList.cpp in Sources */,
 				BCB16C170979C3BD00467741 /* MemoryCache.cpp in Sources */,
