@@ -1,3 +1,13 @@
+2011-08-24  Nate Chapin  <japhet@chromium.org>
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=45202.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * http/tests/eventsource/eventsource-reconnect-during-navigate-crash-expected.txt: Added.
+        * http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html: Added.
+        * http/tests/eventsource/resources/wait-then-notify-done.php: Added.
+
 2011-08-23  Peter Kasting  <pkasting@google.com>
 
         [chromium] Test expectation updates.

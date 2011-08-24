@@ -1,3 +1,18 @@
+2011-08-24  Nate Chapin  <japhet@chromium.org>
+
+        Fix an intermittent crash in EventSource, when a
+        reconnect timer triggers after a navigation
+        away from the current page begins.
+        https://bugs.webkit.org/show_bug.cgi?id=45202
+
+        Reviewed by Alexey Proskuryakov.
+
+        Test: http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html
+
+        * page/EventSource.cpp:
+        (WebCore::EventSource::connect): Don't set m_requestInFlight
+            to true if ThreadableLoader::create() failed.
+
 2011-08-24  Mike Reed  <reed@google.com>
 
         Change clip routine to promote the clipbounds up to (local) floats and then perform the intersection,

@@ -120,7 +120,8 @@ void EventSource::connect()
 
     m_loader = ThreadableLoader::create(scriptExecutionContext(), this, request, options);
 
-    m_requestInFlight = true;
+    if (m_loader)
+        m_requestInFlight = true;
 }
 
 void EventSource::endRequest()

@@ -1,0 +1,20 @@
+<html>
+<body>
+<p>Navigate while an EventSource reconnect timer is waiting, then have the reconnect timer trigger before the page unloads. We pass if we don't crash.
+<script>
+if (window.layoutTestController) {
+    layoutTestController.waitUntilDone();
+    layoutTestController.dumpAsText();
+}
+
+function navigate() {
+    window.location = "resources/wait-then-notify-done.php";
+}
+
+var es = new EventSource("resources/reconnect.php");
+es.onerror = function() {
+    setTimeout(navigate, 0);
+};
+</script>
+</body>
+</html>
