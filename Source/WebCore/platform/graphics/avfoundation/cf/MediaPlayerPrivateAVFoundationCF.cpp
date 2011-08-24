@@ -1055,11 +1055,9 @@ void AVFWrapper::notificationCallback(CFNotificationCenterRef, void* observer, C
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ItemIsPlaybackBufferFullChanged);
     else if (CFEqual(propertyName, AVCFPlayerRateChangedNotification))
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::PlayerRateChanged);
-    else if (CFEqual(propertyName, CACFContextNeedsFlushNotification())) {
-        // FIXME: Note that until <rdar://problem/9885505> is fixed, we can get a kCACFContextNeedsFlushNotification after
-        // the AVFWrapper has gone away. We work around this for now by never actually deleting the underlying AVFWrapper object. 
+    else if (CFEqual(propertyName, CACFContextNeedsFlushNotification()))
         self->m_owner->scheduleMainThreadNotification(MediaPlayerPrivateAVFoundation::Notification::ContentsNeedsDisplay);
-    } else
+    else
         ASSERT_NOT_REACHED();
 }
 
