@@ -1,3 +1,19 @@
+2011-08-24  Andreas Kling  <kling@webkit.org>
+
+        SelectElementData: Reorder members to reduce memory usage.
+        https://bugs.webkit.org/show_bug.cgi?id=66787
+
+        Reviewed by Darin Adler.
+
+        Reduced the size of SelectElementData by 24 bytes on 64-bit by rearranging
+        its data members.
+
+        Also added missing initialization of m_userDrivenChange.
+
+        * dom/SelectElement.cpp:
+        (WebCore::SelectElementData::SelectElementData):
+        * dom/SelectElement.h:
+
 2011-08-24  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: clearPseudoState should retain Element while clearing

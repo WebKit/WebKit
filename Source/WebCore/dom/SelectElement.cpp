@@ -1050,15 +1050,16 @@ unsigned SelectElement::optionCount(const SelectElementData& data, const Element
 
 // SelectElementData
 SelectElementData::SelectElementData()
-    : m_multiple(false) 
+    : m_lastCharTime(0)
+    , m_repeatingChar(0)
     , m_size(0)
     , m_lastOnChangeIndex(-1)
-    , m_activeSelectionState(false)
     , m_activeSelectionAnchorIndex(-1)
     , m_activeSelectionEndIndex(-1)
+    , m_userDrivenChange(false)
+    , m_multiple(false)
+    , m_activeSelectionState(false)
     , m_recalcListItems(false)
-    , m_repeatingChar(0)
-    , m_lastCharTime(0)
 {
 }
 

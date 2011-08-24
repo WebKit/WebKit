@@ -171,25 +171,24 @@ public:
 private:
     void checkListItems(const Element*) const;
 
-    bool m_multiple;
-    int m_size;
-
-    int m_lastOnChangeIndex;
+    Vector<Element*> m_listItems;
     Vector<bool> m_lastOnChangeSelection;
-    bool m_userDrivenChange;
-
-    bool m_activeSelectionState;
-    int m_activeSelectionAnchorIndex;
-    int m_activeSelectionEndIndex;
     Vector<bool> m_cachedStateForActiveSelection;
 
-    bool m_recalcListItems;
-    Vector<Element*> m_listItems;
-
     // Instance variables for type-ahead find
-    UChar m_repeatingChar;
     DOMTimeStamp m_lastCharTime;
     String m_typedString;
+    UChar m_repeatingChar;
+
+    int m_size;
+    int m_lastOnChangeIndex;
+    int m_activeSelectionAnchorIndex;
+    int m_activeSelectionEndIndex;
+
+    bool m_userDrivenChange;
+    bool m_multiple;
+    bool m_activeSelectionState;
+    bool m_recalcListItems;
 };
 
 SelectElement* toSelectElement(Element*);
