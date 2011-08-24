@@ -25,6 +25,9 @@
 
 if (!InspectorFrontendHost.showContextMenu) {
 
+/**
+ * @constructor
+ */
 WebInspector.SoftContextMenu = function(items)
 {
     this._items = items;
@@ -127,10 +130,10 @@ WebInspector.SoftContextMenu.prototype = {
 
     _menuItemMouseUp: function(event)
     {
-        this._triggerAction(event.target);
+        this._triggerAction(event.target, event);
     },
 
-    _triggerAction: function(menuItemElement)
+    _triggerAction: function(menuItemElement, event)
     {
         this._discardMenu(event);
         if (typeof menuItemElement._actionId !== "undefined") {
@@ -191,7 +194,7 @@ WebInspector.SoftContextMenu.prototype = {
             // Fall through
         case "U+0020": // Space
             if (this._highlightedMenuItemElement)
-                this._triggerAction(this._highlightedMenuItemElement);
+                this._triggerAction(this._highlightedMenuItemElement, event);
             break;
         }
         event.stopPropagation();

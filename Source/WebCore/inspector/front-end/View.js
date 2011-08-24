@@ -24,6 +24,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @param {Element=} element
+ */
 WebInspector.View = function(element)
 {
     this.element = element || document.createElement("div");

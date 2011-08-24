@@ -460,14 +460,7 @@ var WebInspector = {
     }
 }
 
-WebInspector.PlatformFlavor = {
-    WindowsVista: "windows-vista",
-    MacTiger: "mac-tiger",
-    MacLeopard: "mac-leopard",
-    MacSnowLeopard: "mac-snowleopard"
-};
-
-(function parseQueryParameters()
+{(function parseQueryParameters()
 {
     WebInspector.queryParamsObject = {};
     var queryParams = window.location.search;
@@ -478,7 +471,7 @@ WebInspector.PlatformFlavor = {
         var pair = params[i].split("=");
         WebInspector.queryParamsObject[pair[0]] = pair[1];
     }
-})();
+})();}
 
 WebInspector.loaded = function()
 {
@@ -511,9 +504,6 @@ WebInspector.doLoadedDone = function()
     document.body.addStyleClass("port-" + port);
     if (WebInspector.socket)
         document.body.addStyleClass("remote");
-
-    WebInspector.settings = new WebInspector.Settings();
-    WebInspector.userMetrics = new WebInspector.UserMetrics();
 
     this._registerShortcuts();
 
@@ -548,7 +538,9 @@ WebInspector.doLoadedDone = function()
     this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
 
     this.searchController = new WebInspector.SearchController();
-    this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
+    
+    if (Preferences.nativeInstrumentationEnabled)
+        this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
 
     this.panels = {};
     this._createPanels();

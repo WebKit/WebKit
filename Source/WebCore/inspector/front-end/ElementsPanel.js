@@ -119,7 +119,7 @@ WebInspector.ElementsPanel = function()
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.CharacterDataModified, this._characterDataModified, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.DocumentUpdated, this._documentUpdated, this);
     WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.ChildNodeCountUpdated, this._childNodeCountUpdated, this);
-
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.InspectElementRequested, this._inspectElementRequested, this);
     this.recentlyModifiedNodes = [];
 }
 
@@ -439,6 +439,11 @@ WebInspector.ElementsPanel.prototype = {
         var treeElement = this.treeOutline.findTreeElement(event.data);
         if (treeElement)
             treeElement.hasChildren = event.data.hasChildNodes();
+    },
+
+    _inspectElementRequested: function(node)
+    {
+        WebInspector.updateFocusedNode(node.id);
     },
 
     _updateModifiedNodesSoon: function()

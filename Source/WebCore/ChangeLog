@@ -1,3 +1,57 @@
+2011-08-23  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: annotate and prepare for compilation first 14 JavaScript files within 4 modules.
+        https://bugs.webkit.org/show_bug.cgi?id=66776
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/ContextMenu.js:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent.prototype._loadNodeAttributes):
+        (WebInspector.DOMAgent.prototype._childNodeRemoved):
+        (WebInspector.DOMAgent.prototype._inspectElementRequested):
+        (WebInspector.DOMDispatcher.prototype.inspectElementRequested):
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.Location):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel):
+        (WebInspector.ElementsPanel.prototype._inspectElementRequested):
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        * inspector/front-end/KeyboardShortcut.js:
+        * inspector/front-end/Object.js:
+        (WebInspector.Object.prototype.addEventListener):
+        (WebInspector.Object.prototype.removeEventListener):
+        (WebInspector.Object.prototype.hasEventListeners):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel):
+        * inspector/front-end/Placard.js:
+        * inspector/front-end/Popover.js:
+        (WebInspector.Popover.prototype.show):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel):
+        (WebInspector.StorageCategoryTreeElement):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script.prototype.editSource):
+        * inspector/front-end/ScriptsPanel.js:
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        (WebInspector.Settings.prototype.createSetting):
+        * inspector/front-end/SoftContextMenu.js:
+        (.WebInspector.SoftContextMenu.prototype._menuItemMouseUp):
+        (.WebInspector.SoftContextMenu.prototype._triggerAction):
+        (.WebInspector.SoftContextMenu.prototype._menuKeyDown):
+        * inspector/front-end/TabbedPane.js:
+        * inspector/front-end/TextPrompt.js:
+        * inspector/front-end/UserMetrics.js:
+        * inspector/front-end/View.js:
+        * inspector/front-end/externs.js:
+        (JSON.parse):
+        (JSON.stringify):
+        * inspector/front-end/inspector.js:
+        ():
+        * inspector/generate-protocol-externs:
+
 2011-08-24  Andreas Kling  <kling@webkit.org>
 
         SelectElementData: Reorder members to reduce memory usage.

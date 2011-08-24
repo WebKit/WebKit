@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @param {Element} contentElement
+ */
 WebInspector.Popover = function(contentElement)
 {
     this.element = document.createElement("div");
@@ -54,8 +58,8 @@ WebInspector.Popover.prototype = {
         // Temporarily attach in order to measure preferred dimensions.
         this.contentElement.positionAt(0, 0);
         document.body.appendChild(this.contentElement);
-        var preferredWidth = preferredWidth || this.contentElement.offsetWidth;
-        var preferredHeight = preferredHeight || this.contentElement.offsetHeight;
+        preferredWidth = preferredWidth || this.contentElement.offsetWidth;
+        preferredHeight = preferredHeight || this.contentElement.offsetHeight;
 
         this._contentDiv.appendChild(this.contentElement);
         this.element.appendChild(this._contentDiv);
@@ -156,6 +160,9 @@ WebInspector.Popover.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.PopoverHelper = function(panelElement, getAnchor, showPopup, showOnClick, onHide)
 {
     this._panelElement = panelElement;

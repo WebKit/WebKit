@@ -28,8 +28,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+WebInspector.PlatformFlavor = {
+    WindowsVista: "windows-vista",
+    MacTiger: "mac-tiger",
+    MacLeopard: "mac-leopard",
+    MacSnowLeopard: "mac-snowleopard"
+}
+
 if (!window.InspectorFrontendHost) {
 
+/**
+ * @constructor
+ */
 WebInspector.InspectorFrontendHostStub = function()
 {
     this._attachedWindowHeight = 0;
@@ -151,6 +161,6 @@ WebInspector.InspectorFrontendHostStub.prototype = {
     }
 }
 
-InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub();
+var InspectorFrontendHost = new WebInspector.InspectorFrontendHostStub();
 
 }

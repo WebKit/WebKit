@@ -422,6 +422,10 @@ WebInspector.ElementsTreeOutline.prototype = {
         }
 
         return populated;
+    },
+
+    adjustCollapsedRange: function()
+    {
     }
 }
 
@@ -763,7 +767,7 @@ WebInspector.ElementsTreeElement.prototype = {
         }
 
         updateChildrenOfNode(this.representedObject);
-        this.adjustCollapsedRange(false);
+        this.adjustCollapsedRange();
 
         var lastChild = this.children[this.children.length - 1];
         if (this.representedObject.nodeType() == Node.ELEMENT_NODE && (!lastChild || !lastChild._elementCloseTag))
@@ -1562,7 +1566,7 @@ WebInspector.ElementsTreeElement.prototype = {
                 return;
 
             parentElement.removeChild(self);
-            parentElement.adjustCollapsedRange(true);
+            parentElement.adjustCollapsedRange();
         }
 
         this.representedObject.removeNode(removeNodeCallback);

@@ -50,6 +50,7 @@ WebInspector.DOMBreakpointsSidebarPane = function()
     this._contextMenuLabels[this._breakpointTypes.NodeRemoved] = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Break on node removal" : "Break on Node Removal");
 
     WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.InspectedURLChanged, this._inspectedURLChanged, this);
+    WebInspector.domAgent.addEventListener(WebInspector.DOMAgent.Events.NodeRemoved, this._nodeRemoved, this);
 }
 
 WebInspector.DOMBreakpointsSidebarPane.prototype = {
@@ -142,9 +143,10 @@ WebInspector.DOMBreakpointsSidebarPane.prototype = {
         callback(element);
     },
 
-    nodeRemoved: function(node)
+    _nodeRemoved: function(event)
     {
-        this._removeBreakpointsForNode(node);
+        var node = event.data.node;
+        this._removeBreakpointsForNode(event.data.node);
         if (!node.children)
             return;
         for (var i = 0; i < node.children.length; ++i)

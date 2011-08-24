@@ -36,7 +36,7 @@ WebInspector.Panel = function(name)
 
     this._shortcuts = {};
 
-    WebInspector.settings.installApplicationSetting(this._sidebarWidthSettingName(), undefined);
+    WebInspector.settings[this._sidebarWidthSettingName()] = WebInspector.settings.createSetting(this._sidebarWidthSettingName(), undefined);
 }
 
 // Should by in sync with style declarations.

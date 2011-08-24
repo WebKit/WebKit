@@ -33,3 +33,11 @@ console.warn = function(message) {}
 
 var WebInspector = {}
 var InspectorBackend = {}
+
+var JSON = {}
+/** @param {string} str */
+JSON.parse = function(str) {}
+
+/** @param {Object} obj */
+/** @return {string} */
+JSON.stringify = function(str) {}

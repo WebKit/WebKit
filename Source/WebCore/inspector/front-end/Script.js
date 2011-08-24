@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endLine, endColumn, errorLine, errorMessage, isContentScript)
 {
     this.scriptId = scriptId;
@@ -60,6 +63,6 @@ WebInspector.Script.prototype = {
                 this._source = newSource;
             callback(error, callFrames);
         }
-        DebuggerAgent.setScriptSource(this.scriptId, newSource, didEditScriptSource.bind(this));
+        DebuggerAgent.setScriptSource(this.scriptId, newSource, undefined, didEditScriptSource.bind(this));
     }
 }

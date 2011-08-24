@@ -58,34 +58,36 @@ var Preferences = {
     showNetworkPanelInitiatorColumn: false
 }
 
+/**
+ * @constructor
+ */
 WebInspector.Settings = function()
 {
     this._eventSupport = new WebInspector.Object();
 
-    this.installApplicationSetting("colorFormat", "hex");
-    this.installApplicationSetting("consoleHistory", []);
-    this.installApplicationSetting("debuggerEnabled", false);
-    this.installApplicationSetting("domWordWrap", true);
-    this.installApplicationSetting("profilerEnabled", false);
-    this.installApplicationSetting("eventListenersFilter", "all");
-    this.installApplicationSetting("lastActivePanel", "elements");
-    this.installApplicationSetting("lastViewedScriptFile", "application");
-    this.installApplicationSetting("monitoringXHREnabled", false);
-    this.installApplicationSetting("preserveConsoleLog", false);
-    this.installApplicationSetting("pauseOnExceptionStateString", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
-    this.installApplicationSetting("resourcesLargeRows", true);
-    this.installApplicationSetting("resourcesSortOptions", {timeOption: "responseTime", sizeOption: "transferSize"});
-    this.installApplicationSetting("resourceViewTab", "preview");
-    this.installApplicationSetting("showInheritedComputedStyleProperties", false);
-    this.installApplicationSetting("showUserAgentStyles", true);
-    this.installApplicationSetting("watchExpressions", []);
-    this.installApplicationSetting("breakpoints", []);
-    this.installApplicationSetting("eventListenerBreakpoints", []);
-    this.installApplicationSetting("domBreakpoints", []);
-    this.installApplicationSetting("xhrBreakpoints", []);
-    this.installApplicationSetting("workerInspectionEnabled", []);
-    this.installApplicationSetting("cacheDisabled", false);
-    this.installApplicationSetting("showScriptFolders", true);
+    this.colorFormat = this.createSetting("colorFormat", "hex");
+    this.consoleHistory = this.createSetting("consoleHistory", []);
+    this.debuggerEnabled = this.createSetting("debuggerEnabled", false);
+    this.domWordWrap = this.createSetting("domWordWrap", true);
+    this.profilerEnabled = this.createSetting("profilerEnabled", false);
+    this.eventListenersFilter = this.createSetting("eventListenersFilter", "all");
+    this.lastActivePanel = this.createSetting("lastActivePanel", "elements");
+    this.lastViewedScriptFile = this.createSetting("lastViewedScriptFile", "application");
+    this.monitoringXHREnabled = this.createSetting("monitoringXHREnabled", false);
+    this.preserveConsoleLog = this.createSetting("preserveConsoleLog", false);
+    this.resourcesLargeRows = this.createSetting("resourcesLargeRows", true);
+    this.resourcesSortOptions = this.createSetting("resourcesSortOptions", {timeOption: "responseTime", sizeOption: "transferSize"});
+    this.resourceViewTab = this.createSetting("resourceViewTab", "preview");
+    this.showInheritedComputedStyleProperties = this.createSetting("showInheritedComputedStyleProperties", false);
+    this.showUserAgentStyles = this.createSetting("showUserAgentStyles", true);
+    this.watchExpressions = this.createSetting("watchExpressions", []);
+    this.breakpoints = this.createSetting("breakpoints", []);
+    this.eventListenerBreakpoints = this.createSetting("eventListenerBreakpoints", []);
+    this.domBreakpoints = this.createSetting("domBreakpoints", []);
+    this.xhrBreakpoints = this.createSetting("xhrBreakpoints", []);
+    this.workerInspectionEnabled = this.createSetting("workerInspectionEnabled", []);
+    this.cacheDisabled = this.createSetting("cacheDisabled", false);
+    this.showScriptFolders = this.createSetting("showScriptFolders", true);
 
     // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
     // periodical breakpoints duplication leading to inspector slowness.
@@ -94,14 +96,18 @@ WebInspector.Settings = function()
 }
 
 WebInspector.Settings.prototype = {
-    installApplicationSetting: function(key, defaultValue)
+    /**
+     * @return {WebInspector.Setting}
+     */
+    createSetting: function(key, defaultValue)
     {
-        if (key in this)
-            return;
-        this[key] = new WebInspector.Setting(key, defaultValue, this._eventSupport);
+        return new WebInspector.Setting(key, defaultValue, this._eventSupport);
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.Setting = function(name, defaultValue, eventSupport)
 {
     this._name = name;
@@ -150,3 +156,5 @@ WebInspector.Setting.prototype = {
         this._eventSupport.dispatchEventToListeners(this._name, value);
     }
 }
+
+WebInspector.settings = new WebInspector.Settings();

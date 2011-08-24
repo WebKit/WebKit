@@ -29,6 +29,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.DOMNode = function(doc, payload) {
     this.ownerDocument = doc;
 
@@ -351,6 +354,10 @@ WebInspector.DOMNode.prototype = {
     }
 }
 
+/**
+ * @extends {WebInspector.DOMNode}
+ * @constructor
+ */
 WebInspector.DOMDocument = function(domAgent, payload)
 {
     WebInspector.DOMNode.call(this, this, payload);
@@ -360,6 +367,10 @@ WebInspector.DOMDocument = function(domAgent, payload)
 
 WebInspector.DOMDocument.prototype.__proto__ = WebInspector.DOMNode.prototype;
 
+/**
+ * @extends {WebInspector.Object}
+ * @constructor
+ */
 WebInspector.DOMAgent = function() {
     this._idToDOMNode = null;
     this._document = null;
@@ -373,7 +384,8 @@ WebInspector.DOMAgent.Events = {
     NodeInserted: "NodeInserted",
     NodeRemoved: "NodeRemoved",
     DocumentUpdated: "DocumentUpdated",
-    ChildNodeCountUpdated: "ChildNodeCountUpdated"
+    ChildNodeCountUpdated: "ChildNodeCountUpdated",
+    InspectElementRequested: "InspectElementRequested"
 }
 
 WebInspector.DOMAgent.prototype = {
@@ -488,7 +500,7 @@ WebInspector.DOMAgent.prototype = {
         delete this._loadNodeAttributesTimeout;
 
         for (var nodeId in this._attributeLoadNodeIds)
-            DOMAgent.getAttributes(parseInt(nodeId), this._wrapClientCallback(callback.bind(this, nodeId)));
+            DOMAgent.getAttributes(parseInt(nodeId, 10), this._wrapClientCallback(callback.bind(this, nodeId)));
         this._attributeLoadNodeIds = {};
     },
 
@@ -510,6 +522,9 @@ WebInspector.DOMAgent.prototype = {
         this.requestDocument();
     },
 
+    /**
+     * @param {*} payload
+     */
     _setDocument: function(payload)
     {
         this._idToDOMNode = {};
@@ -523,6 +538,9 @@ WebInspector.DOMAgent.prototype = {
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.DocumentUpdated, this._document);
     },
 
+    /**
+     * @param {*} payload
+     */
     _setDetachedRoot: function(payload)
     {
         var root = new WebInspector.DOMNode(this._document, payload);
@@ -574,10 +592,15 @@ WebInspector.DOMAgent.prototype = {
         parent._removeChild(node);
         this.dispatchEventToListeners(WebInspector.DOMAgent.Events.NodeRemoved, {node:node, parent:parent});
         delete this._idToDOMNode[nodeId];
-        if (Preferences.nativeInstrumentationEnabled)
-            WebInspector.panels.elements.sidebarPanes.domBreakpoints.nodeRemoved(node);
     },
 
+    _inspectElementRequested: function(nodeId)
+    {
+        var node = this._idToDOMNode[nodeId];
+        if (node)
+            this.dispatchEventToListeners(WebInspector.DOMAgent.Events.InspectElementRequested, node);
+    },
+     
     performSearch: function(query, searchResultCollector, searchSynchronously)
     {
         this._searchResultCollector = searchResultCollector;
@@ -603,6 +626,10 @@ WebInspector.DOMAgent.prototype = {
 
 WebInspector.DOMAgent.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ * @implements {DOMAgent.Dispatcher}
+ */
 WebInspector.DOMDispatcher = function(domAgent)
 {
     this._domAgent = domAgent;
@@ -651,7 +678,7 @@ WebInspector.DOMDispatcher.prototype = {
 
     inspectElementRequested: function(nodeId)
     {
-        WebInspector.updateFocusedNode(nodeId);
+        this._domAgent._inspectElementRequested(nodeId);
     },
 
     searchResults: function(nodeIds)

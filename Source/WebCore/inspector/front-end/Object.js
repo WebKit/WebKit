@@ -23,22 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.Object = function() {
 }
 
 WebInspector.Object.prototype = {
     addEventListener: function(eventType, listener, thisObject)
     {
-        if (!("_listeners" in this))
+        if (!this._listeners)
             this._listeners = {};
-        if (!(eventType in this._listeners))
+        if (!this._listeners[eventType])
             this._listeners[eventType] = [];
         this._listeners[eventType].push({ thisObject: thisObject, listener: listener });
     },
 
     removeEventListener: function(eventType, listener, thisObject)
     {
-        if (!("_listeners" in this) || !(eventType in this._listeners))
+        if (!this._listeners || !this._listeners[eventType])
             return;
         var listeners = this._listeners[eventType];
         for (var i = 0; i < listeners.length; ++i) {
@@ -59,14 +62,14 @@ WebInspector.Object.prototype = {
 
     hasEventListeners: function(eventType)
     {
-        if (!("_listeners" in this) || !(eventType in this._listeners))
+        if (!this._listeners || !this._listeners[eventType])
             return false;
         return true;
     },
 
     dispatchEventToListeners: function(eventType, eventData)
     {
-        if (!("_listeners" in this) || !(eventType in this._listeners))
+        if (!this._listeners || !this._listeners[eventType])
             return;
 
         var stoppedPropagation = false;

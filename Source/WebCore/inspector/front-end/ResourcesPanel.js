@@ -31,7 +31,7 @@ WebInspector.ResourcesPanel = function(database)
 {
     WebInspector.Panel.call(this, "resources");
 
-    WebInspector.settings.installApplicationSetting("resourcesLastSelectedItem", {});
+    WebInspector.settings.resourcesLastSelectedItem = WebInspector.settings.createSetting("resourcesLastSelectedItem", {});
 
     this.createSidebar();
     this.sidebarElement.addStyleClass("outline-disclosure");
@@ -983,7 +983,7 @@ WebInspector.StorageCategoryTreeElement = function(storagePanel, categoryName, s
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, categoryName, iconClasses, true, noIcon);
     this._expandedSettingKey = "resources" + settingsKey + "Expanded";
-    WebInspector.settings.installApplicationSetting(this._expandedSettingKey, settingsKey === "Frames");
+    WebInspector.settings[this._expandedSettingKey] = WebInspector.settings.createSetting(this._expandedSettingKey, settingsKey === "Frames");
     this._categoryName = categoryName;
 }
 

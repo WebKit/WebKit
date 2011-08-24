@@ -30,8 +30,25 @@
 # Compiles WebKit Web Inspector front-end.
 
 python Source/WebCore/inspector/generate-protocol-externs -o Source/WebCore/inspector/front-end/protocol-externs.js Source/WebCore/inspector/Inspector.json
+
 java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warning_level VERBOSE --language_in ECMASCRIPT5 --accept_const_keyword \
-   --externs Source/WebCore/inspector/front-end/externs.js \
-   --externs Source/WebCore/inspector/front-end/protocol-externs.js \
-   --js Source/WebCore/inspector/front-end/utilities.js \
-   --js Source/WebCore/inspector/front-end/treeoutline.js
+    --externs Source/WebCore/inspector/front-end/externs.js \
+    --externs Source/WebCore/inspector/front-end/protocol-externs.js \
+    --module jsmodule_core:2 \
+        --js Source/WebCore/inspector/front-end/utilities.js \
+        --js Source/WebCore/inspector/front-end/treeoutline.js \
+    --module jsmodule_env:3 \
+        --js Source/WebCore/inspector/front-end/Settings.js \
+        --js Source/WebCore/inspector/front-end/UserMetrics.js \
+        --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
+    --module jsmodule_sdk:4:jsmodule_core,jsmodule_env \
+        --js Source/WebCore/inspector/front-end/Object.js \
+        --js Source/WebCore/inspector/front-end/DOMAgent.js \
+        --js Source/WebCore/inspector/front-end/Script.js \
+        --js Source/WebCore/inspector/front-end/DebuggerModel.js \
+    --module jsmodule_ui:5:jsmodule_sdk \
+        --js Source/WebCore/inspector/front-end/View.js \
+        --js Source/WebCore/inspector/front-end/Placard.js \
+        --js Source/WebCore/inspector/front-end/Popover.js \
+        --js Source/WebCore/inspector/front-end/ContextMenu.js \
+        --js Source/WebCore/inspector/front-end/SoftContextMenu.js

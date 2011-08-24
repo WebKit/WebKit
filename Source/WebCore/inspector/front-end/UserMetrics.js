@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.UserMetrics = function()
 {
     for (var actionName in WebInspector.UserMetrics._ActionCodes) {
@@ -93,6 +96,9 @@ WebInspector.UserMetrics.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.UserMetrics._Recorder = function(actionCode)
 {
     this._actionCode = actionCode;
@@ -104,3 +110,5 @@ WebInspector.UserMetrics._Recorder.prototype = {
         InspectorFrontendHost.recordActionTaken(this._actionCode);
     }
 }
+
+WebInspector.userMetrics = new WebInspector.UserMetrics();

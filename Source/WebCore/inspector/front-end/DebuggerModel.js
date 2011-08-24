@@ -28,12 +28,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.DebuggerModel = function()
 {
     this._debuggerPausedDetails = {};
     this._scripts = {};
 
     InspectorBackend.registerDebuggerDispatcher(new WebInspector.DebuggerDispatcher(this));
+}
+
+/**
+ * @constructor
+ */
+WebInspector.DebuggerModel.Location = function()
+{
+    this.scriptId = null;
 }
 
 WebInspector.DebuggerModel.Events = {
@@ -212,6 +223,10 @@ WebInspector.DebuggerEventTypes = {
     NativeBreakpoint: 2
 };
 
+/**
+ * @constructor
+ * @implements {DebuggerAgent.Dispatcher}
+ */
 WebInspector.DebuggerDispatcher = function(debuggerModel)
 {
     this._debuggerModel = debuggerModel;
