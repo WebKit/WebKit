@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.DOMStorage = function(id, domain, isLocalStorage)
 {
     this._id = id;
@@ -65,7 +68,10 @@ WebInspector.DOMStorage.prototype = {
     }
 }
 
-
+/**
+ * @constructor
+ * @implements {DOMStorageAgent.Dispatcher} 
+ */
 WebInspector.DOMStorageDispatcher = function()
 {
 }

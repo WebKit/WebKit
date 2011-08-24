@@ -449,6 +449,8 @@ TreeOutline.prototype.revealAndSelect = function(omitFocus)
 
 /**
  * @constructor
+ * @param {Object=} representedObject
+ * @param {boolean=} hasChildren
  */
 function TreeElement(title, representedObject, hasChildren)
 {

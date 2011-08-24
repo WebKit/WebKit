@@ -26,6 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.Database = function(id, domain, name, version)
 {
     this._id = id;
@@ -103,6 +106,10 @@ WebInspector.Database.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @implements {DatabaseAgent.Dispatcher} 
+ */
 WebInspector.DatabaseDispatcher = function()
 {
 }

@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.NetworkManager = function()
 {
     WebInspector.Object.call(this);
@@ -76,6 +79,10 @@ WebInspector.NetworkManager.prototype = {
 
 WebInspector.NetworkManager.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ * @implements {NetworkAgent.Dispatcher}
+ */
 WebInspector.NetworkDispatcher = function(manager)
 {
     this._manager = manager;
@@ -317,6 +324,9 @@ WebInspector.NetworkDispatcher.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.NetworkLog = function()
 {
     this._resources = [];

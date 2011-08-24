@@ -25,6 +25,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+// This table maps MIME types to the Resource.Types which are valid for them.
+// The following line:
+//    "text/html":                {0: 1},
+// means that text/html is a valid MIME type for resources that have type
+// WebInspector.Resource.Type.Document (which has a value of 0).
+WebInspector.MIMETypes = {
+    "text/html":                   {0: true},
+    "text/xml":                    {0: true},
+    "text/plain":                  {0: true},
+    "application/xhtml+xml":       {0: true},
+    "text/css":                    {1: true},
+    "text/xsl":                    {1: true},
+    "image/jpeg":                  {2: true},
+    "image/png":                   {2: true},
+    "image/gif":                   {2: true},
+    "image/bmp":                   {2: true},
+    "image/svg+xml":               {2: true},
+    "image/vnd.microsoft.icon":    {2: true},
+    "image/x-icon":                {2: true},
+    "image/x-xbitmap":             {2: true},
+    "font/ttf":                    {3: true},
+    "font/opentype":               {3: true},
+    "application/x-font-type1":    {3: true},
+    "application/x-font-ttf":      {3: true},
+    "application/x-font-woff":     {3: true},
+    "application/x-truetype-font": {3: true},
+    "text/javascript":             {4: true},
+    "text/ecmascript":             {4: true},
+    "application/javascript":      {4: true},
+    "application/ecmascript":      {4: true},
+    "application/x-javascript":    {4: true},
+    "application/json":            {4: true},
+    "text/javascript1.1":          {4: true},
+    "text/javascript1.2":          {4: true},
+    "text/javascript1.3":          {4: true},
+    "text/jscript":                {4: true},
+    "text/livescript":             {4: true},
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.Resource = function(requestId, url, loaderId)
 {
     this.requestId = requestId;
@@ -35,6 +79,11 @@ WebInspector.Resource = function(requestId, url, loaderId)
     this._category = WebInspector.resourceCategories.other;
     this._pendingContentCallbacks = [];
     this.history = [];
+    /** @type {number} */
+    this.statusCode = 0;
+    this.requestMethod = "";
+    this.requestTime = 0;
+    this.receiveHeadersEnd = 0;
 }
 
 // Keep these in sync with WebCore::InspectorResource::Type
@@ -50,27 +99,27 @@ WebInspector.Resource.Type = {
 
     isTextType: function(type)
     {
-        return (type === this.Document) || (type === this.Stylesheet) || (type === this.Script) || (type === this.XHR);
+        return (type === WebInspector.Resource.Type.Document) || (type === WebInspector.Resource.Type.Stylesheet) || (type === WebInspector.Resource.Type.Script) || (type === WebInspector.Resource.Type.XHR);
     },
 
     toUIString: function(type)
     {
         switch (type) {
-            case this.Document:
+            case WebInspector.Resource.Type.Document:
                 return WebInspector.UIString("Document");
-            case this.Stylesheet:
+            case WebInspector.Resource.Type.Stylesheet:
                 return WebInspector.UIString("Stylesheet");
-            case this.Image:
+            case WebInspector.Resource.Type.Image:
                 return WebInspector.UIString("Image");
-            case this.Font:
+            case WebInspector.Resource.Type.Font:
                 return WebInspector.UIString("Font");
-            case this.Script:
+            case WebInspector.Resource.Type.Script:
                 return WebInspector.UIString("Script");
-            case this.XHR:
+            case WebInspector.Resource.Type.XHR:
                 return WebInspector.UIString("XHR");
-            case this.WebSocket:
+            case WebInspector.Resource.Type.WebSocket:
                 return WebInspector.UIString("WebSocket");
-            case this.Other:
+            case WebInspector.Resource.Type.Other:
             default:
                 return WebInspector.UIString("Other");
         }
@@ -81,21 +130,21 @@ WebInspector.Resource.Type = {
     toString: function(type)
     {
         switch (type) {
-            case this.Document:
+            case WebInspector.Resource.Type.Document:
                 return "document";
-            case this.Stylesheet:
+            case WebInspector.Resource.Type.Stylesheet:
                 return "stylesheet";
-            case this.Image:
+            case WebInspector.Resource.Type.Image:
                 return "image";
-            case this.Font:
+            case WebInspector.Resource.Type.Font:
                 return "font";
-            case this.Script:
+            case WebInspector.Resource.Type.Script:
                 return "script";
-            case this.XHR:
+            case WebInspector.Resource.Type.XHR:
                 return "xhr";
-            case this.WebSocket:
+            case WebInspector.Resource.Type.WebSocket:
                 return "websocket";
-            case this.Other:
+            case WebInspector.Resource.Type.Other:
             default:
                 return "other";
         }
@@ -761,30 +810,18 @@ WebInspector.Resource.prototype = {
 
     _checkWarnings: function()
     {
-        for (var warning in WebInspector.Warnings)
-            this._checkWarning(WebInspector.Warnings[warning]);
-    },
+        if (this._mimeTypeIsConsistentWithType())
+            return;
 
-    _checkWarning: function(warning)
-    {
-        var msg;
-        switch (warning.id) {
-            case WebInspector.Warnings.IncorrectMIMEType.id:
-                if (!this._mimeTypeIsConsistentWithType())
-                    msg = new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
-                        WebInspector.ConsoleMessage.MessageType.Log,
-                        WebInspector.ConsoleMessage.MessageLevel.Warning,
-                        -1,
-                        this.url,
-                        1,
-                        String.sprintf(WebInspector.Warnings.IncorrectMIMEType.message, WebInspector.Resource.Type.toUIString(this.type), this.mimeType),
-                        null,
-                        null);
-                break;
-        }
-
-        if (msg)
-            WebInspector.console.addMessage(msg);
+        WebInspector.console.addMessage(new WebInspector.ConsoleMessage(WebInspector.ConsoleMessage.MessageSource.Other,
+            WebInspector.ConsoleMessage.MessageType.Log,
+            WebInspector.ConsoleMessage.MessageLevel.Warning,
+            -1,
+            this.url,
+            1,
+            WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.", WebInspector.Resource.Type.toUIString(this.type), this.mimeType),
+            null,
+            null));
     },
 
     get content()
@@ -925,6 +962,9 @@ WebInspector.Resource.prototype = {
 
 WebInspector.Resource.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.ResourceRevision = function(resource, content, timestamp)
 {
     this._resource = resource;
@@ -981,19 +1021,11 @@ WebInspector.ResourceRevision.prototype = {
     }
 }
 
-WebInspector.ResourceDomainModelBinding = function()
-{
-}
-
+/**
+ * @interface
+ */
+WebInspector.ResourceDomainModelBinding = function() { }
 WebInspector.ResourceDomainModelBinding.prototype = {
-    canSetContent: function()
-    {
-        // Implemented by the domains.
-        return true;
-    },
-
-    setContent: function(resource, content, majorChange, callback)
-    {
-        // Implemented by the domains.
-    }
+    canSetContent: function() { return true; },
+    setContent: function(resource, content, majorChange, callback) { }
 }

@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.ScriptFormatter = function()
 {
     this._tasks = [];
@@ -64,7 +67,8 @@ WebInspector.ScriptFormatter.prototype = {
         var task = this._tasks.shift();
         var originalContent = task.data.content;
         var formattedContent = event.data.content;
-        var sourceMapping = new WebInspector.FormattedSourceMapping(originalContent.lineEndings(), formattedContent.lineEndings(), event.data.mapping);
+        var mapping = event.data.mapping;
+        var sourceMapping = new WebInspector.FormattedSourceMapping(originalContent.lineEndings(), formattedContent.lineEndings(), mapping);
         task.callback(formattedContent, sourceMapping);
     },
 
@@ -78,6 +82,19 @@ WebInspector.ScriptFormatter.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
+WebInspector.FormatterMappingPayload = function()
+{
+    this.original = [];
+    this.formatted = [];
+}
+
+/**
+ * @constructor
+ * @param {WebInspector.FormatterMappingPayload} mapping
+ */
 WebInspector.FormattedSourceMapping = function(originalLineEndings, formattedLineEndings, mapping)
 {
     this._originalLineEndings = originalLineEndings;

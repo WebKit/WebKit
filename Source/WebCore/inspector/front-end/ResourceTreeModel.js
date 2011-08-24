@@ -28,7 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.ResourceTreeModel = function(networkManager)
 {
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceStarted, this._onResourceStarted, this);
@@ -393,6 +396,10 @@ WebInspector.ResourceTreeModel.prototype = {
 
 WebInspector.ResourceTreeModel.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ * @implements {PageAgent.Dispatcher}
+ */
 WebInspector.PageDispatcher = function(resourceTreeModel)
 {
     this._resourceTreeModel = resourceTreeModel;

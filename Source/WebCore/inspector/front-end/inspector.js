@@ -522,17 +522,6 @@ WebInspector.doLoadedDone = function()
 
     InspectorBackend.registerInspectorDispatcher(this);
 
-    this.resourceCategories = {
-        documents: new WebInspector.ResourceCategory("documents", WebInspector.UIString("Documents"), "rgb(47,102,236)"),
-        stylesheets: new WebInspector.ResourceCategory("stylesheets", WebInspector.UIString("Stylesheets"), "rgb(157,231,119)"),
-        images: new WebInspector.ResourceCategory("images", WebInspector.UIString("Images"), "rgb(164,60,255)"),
-        scripts: new WebInspector.ResourceCategory("scripts", WebInspector.UIString("Scripts"), "rgb(255,121,0)"),
-        xhr: new WebInspector.ResourceCategory("xhr", WebInspector.UIString("XHR"), "rgb(231,231,10)"),
-        fonts: new WebInspector.ResourceCategory("fonts", WebInspector.UIString("Fonts"), "rgb(255,82,62)"),
-        websockets: new WebInspector.ResourceCategory("websockets", WebInspector.UIString("WebSockets"), "rgb(186,186,186)"), // FIXME: Decide the color.
-        other: new WebInspector.ResourceCategory("other", WebInspector.UIString("Other"), "rgb(186,186,186)")
-    };
-
     this.cssModel = new WebInspector.CSSStyleModel();
     this.debuggerModel = new WebInspector.DebuggerModel();
     this.debuggerPresentationModel = new WebInspector.DebuggerPresentationModel();
@@ -553,14 +542,6 @@ WebInspector.doLoadedDone = function()
     this.panelOrder = [];
     for (var panelName in this.panels)
         this.addPanel(this.panels[panelName]);
-
-    this.Tips = {
-        ResourceNotCompressed: {id: 0, message: WebInspector.UIString("You could save bandwidth by having your web server compress this transfer with gzip or zlib.")}
-    };
-
-    this.Warnings = {
-        IncorrectMIMEType: {id: 0, message: WebInspector.UIString("Resource interpreted as %s but transferred with MIME type %s.")}
-    };
 
     this.addMainEventListeners(document);
 
@@ -1481,14 +1462,6 @@ WebInspector.formatLocalized = function(format, substitutions, formatters, initi
     return String.format(WebInspector.UIString(format), substitutions, formatters, initialValue, append);
 }
 
-WebInspector.isMac = function()
-{
-    if (!("_isMac" in this))
-        this._isMac = WebInspector.platform === "mac";
-
-    return this._isMac;
-}
-
 WebInspector.useLowerCaseMenuTitles = function()
 {
     return WebInspector.platform === "windows" && Preferences.useLowerCaseMenuTitlesOnWindows;
@@ -1652,45 +1625,6 @@ WebInspector._toolbarItemClicked = function(event)
 {
     var toolbarItem = event.currentTarget;
     this.currentPanel = toolbarItem.panel;
-}
-
-// This table maps MIME types to the Resource.Types which are valid for them.
-// The following line:
-//    "text/html":                {0: 1},
-// means that text/html is a valid MIME type for resources that have type
-// WebInspector.Resource.Type.Document (which has a value of 0).
-WebInspector.MIMETypes = {
-    "text/html":                   {0: true},
-    "text/xml":                    {0: true},
-    "text/plain":                  {0: true},
-    "application/xhtml+xml":       {0: true},
-    "text/css":                    {1: true},
-    "text/xsl":                    {1: true},
-    "image/jpeg":                  {2: true},
-    "image/png":                   {2: true},
-    "image/gif":                   {2: true},
-    "image/bmp":                   {2: true},
-    "image/svg+xml":               {2: true},
-    "image/vnd.microsoft.icon":    {2: true},
-    "image/x-icon":                {2: true},
-    "image/x-xbitmap":             {2: true},
-    "font/ttf":                    {3: true},
-    "font/opentype":               {3: true},
-    "application/x-font-type1":    {3: true},
-    "application/x-font-ttf":      {3: true},
-    "application/x-font-woff":     {3: true},
-    "application/x-truetype-font": {3: true},
-    "text/javascript":             {4: true},
-    "text/ecmascript":             {4: true},
-    "application/javascript":      {4: true},
-    "application/ecmascript":      {4: true},
-    "application/x-javascript":    {4: true},
-    "application/json":            {4: true},
-    "text/javascript1.1":          {4: true},
-    "text/javascript1.2":          {4: true},
-    "text/javascript1.3":          {4: true},
-    "text/jscript":                {4: true},
-    "text/livescript":             {4: true},
 }
 
 WebInspector.PanelHistory = function()

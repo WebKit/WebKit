@@ -1,5 +1,69 @@
 2011-08-24  Pavel Feldman  <pfeldman@google.com>
 
+        Web Inspector: Add 9 more javascript files to the compilation.
+        https://bugs.webkit.org/show_bug.cgi?id=66847
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/compile-front-end.sh:
+        * inspector/front-end/BreakpointManager.js:
+        * inspector/front-end/CSSStyleModel.js:
+        * inspector/front-end/Checkbox.js:
+        * inspector/front-end/ConsoleMessage.js: Added.
+        (WebInspector.ConsoleStackFrame):
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.createTextMessage):
+        (WebInspector.ConsoleMessage.prototype.get stackTrace):
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.messageAdded):
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.messageRepeatCountUpdated):
+        * inspector/front-end/CookieParser.js:
+        * inspector/front-end/DOMAgent.js:
+        * inspector/front-end/DOMStorage.js:
+        * inspector/front-end/Database.js:
+        * inspector/front-end/DebuggerModel.js:
+        * inspector/front-end/DebuggerPresentationModel.js:
+        * inspector/front-end/InspectorFrontendHostStub.js:
+        (WebInspector.isMac):
+        * inspector/front-end/NetworkManager.js:
+        * inspector/front-end/RemoteObject.js:
+        (WebInspector.RemoteObject.prototype.setPropertyValue):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource):
+        (WebInspector.Resource.Type.Document.0.Stylesheet.1.Image.2.Font.3.Script.4.XHR.5.WebSocket.7.Other.8.isTextType):
+        (WebInspector.Resource.Type.toUIString):
+        (WebInspector.Resource.Type.toString):
+        (WebInspector.Resource.prototype._checkWarnings):
+        (WebInspector.ResourceDomainModelBinding):
+        (WebInspector.ResourceDomainModelBinding.prototype.canSetContent):
+        (WebInspector.ResourceDomainModelBinding.prototype.setContent):
+        * inspector/front-end/ResourceCategory.js:
+        (WebInspector.ResourceCategory):
+        (WebInspector.ResourceCategory.prototype.toString):
+        (WebInspector.ResourceCategory.prototype.get title):
+        * inspector/front-end/ResourceTreeModel.js:
+        * inspector/front-end/ScriptFormatter.js:
+        (WebInspector.ScriptFormatter.prototype._didFormatContent):
+        (WebInspector.FormatterMappingPayload):
+        * inspector/front-end/TimelineManager.js:
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/externs.js:
+        (console.assert):
+        (WebInspector.linkifyURLAsNode):
+        (WebInspector.linkifyStringAsFragment):
+        (WebInspector.UIString):
+        (Element.prototype.scrollIntoViewIfNeeded):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector.UIString):
+        * inspector/front-end/treeoutline.js:
+        * inspector/front-end/utilities.js:
+        * inspector/generate-protocol-externs:
+
+2011-08-24  Pavel Feldman  <pfeldman@google.com>
+
         Web Inspector: extract ConsoleMessage into a separate file.
         https://bugs.webkit.org/show_bug.cgi?id=66853
 

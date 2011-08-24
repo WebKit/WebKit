@@ -687,3 +687,8 @@ WebInspector.DOMDispatcher.prototype = {
             this._domAgent._searchResultCollector(nodeIds);
     }
 }
+
+/**
+ * @type {?WebInspector.DOMAgent}
+ */
+WebInspector.domAgent = null;

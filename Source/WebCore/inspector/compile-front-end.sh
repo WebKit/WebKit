@@ -41,14 +41,23 @@ java -jar ~/closure/compiler.jar --compilation_level SIMPLE_OPTIMIZATIONS --warn
         --js Source/WebCore/inspector/front-end/Settings.js \
         --js Source/WebCore/inspector/front-end/UserMetrics.js \
         --js Source/WebCore/inspector/front-end/InspectorFrontendHostStub.js \
-    --module jsmodule_sdk:4:jsmodule_core,jsmodule_env \
-        --js Source/WebCore/inspector/front-end/Object.js \
+    --module jsmodule_sdk:8:jsmodule_core,jsmodule_env \
+        --js Source/WebCore/inspector/front-end/BinarySearch.js \
+        --js Source/WebCore/inspector/front-end/CookieParser.js \
         --js Source/WebCore/inspector/front-end/DOMAgent.js \
-        --js Source/WebCore/inspector/front-end/Script.js \
         --js Source/WebCore/inspector/front-end/DebuggerModel.js \
-    --module jsmodule_ui:5:jsmodule_sdk \
+        --js Source/WebCore/inspector/front-end/Object.js \
+        --js Source/WebCore/inspector/front-end/Script.js \
+        --js Source/WebCore/inspector/front-end/RemoteObject.js \
+        --js Source/WebCore/inspector/front-end/ResourceCategory.js \
+    --module jsmodule_misc:10:jsmodule_sdk \
+        --js Source/WebCore/inspector/front-end/Checkbox.js \
+        --js Source/WebCore/inspector/front-end/ContextMenu.js \
+        --js Source/WebCore/inspector/front-end/KeyboardShortcut.js \
         --js Source/WebCore/inspector/front-end/View.js \
         --js Source/WebCore/inspector/front-end/Placard.js \
         --js Source/WebCore/inspector/front-end/Popover.js \
-        --js Source/WebCore/inspector/front-end/ContextMenu.js \
-        --js Source/WebCore/inspector/front-end/SoftContextMenu.js
+        --js Source/WebCore/inspector/front-end/SoftContextMenu.js \
+        --js Source/WebCore/inspector/front-end/TabbedPane.js \
+        --js Source/WebCore/inspector/front-end/TextPrompt.js \
+        --js Source/WebCore/inspector/front-end/TimelineManager.js

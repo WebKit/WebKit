@@ -127,7 +127,7 @@ WebInspector.ConsoleView.prototype = {
                     payload.text,
                     payload.parameters,
                     payload.stackTrace,
-                    payload.networkRequestId);
+                    payload.networkRequestId ? WebInspector.networkResourceById(payload.networkRequestId) : undefined);
                 console.addMessage(consoleMessage);
             },
 
@@ -144,7 +144,7 @@ WebInspector.ConsoleView.prototype = {
                     console._incrementErrorWarningCount(msg);
                     console.dispatchEventToListeners(WebInspector.ConsoleView.Events.MessageAdded, msg);
                 } else {
-                    var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._requestId);
+                    var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._request);
                     msgCopy.totalRepeatCount = count;
                     msgCopy._formatMessage();
                     console.addMessage(msgCopy);

@@ -28,6 +28,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @extends {WebInspector.Object}
+ */
 WebInspector.CSSStyleModel = function()
 {
     new WebInspector.CSSStyleModelResourceBinding(this);
@@ -219,6 +223,10 @@ WebInspector.CSSStyleModel.prototype = {
 
 WebInspector.CSSStyleModel.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ * @param {*} payload
+ */
 WebInspector.CSSStyleDeclaration = function(payload)
 {
     this.id = payload.styleId;
@@ -405,6 +413,9 @@ WebInspector.CSSStyleDeclaration.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.CSSRule = function(payload)
 {
     this.id = payload.ruleId;
@@ -444,6 +455,9 @@ WebInspector.CSSRule.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.CSSProperty = function(ownerStyle, index, name, value, priority, status, parsedOk, implicit, shorthand, text)
 {
     this.ownerStyle = ownerStyle;
@@ -575,6 +589,9 @@ WebInspector.CSSProperty.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.CSSStyleSheet = function(payload)
 {
     this.id = payload.styleSheetId;
@@ -622,6 +639,10 @@ WebInspector.CSSStyleSheet.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @implements {WebInspector.ResourceDomainModelBinding}
+ */
 WebInspector.CSSStyleModelResourceBinding = function(cssModel)
 {
     this._cssModel = cssModel;

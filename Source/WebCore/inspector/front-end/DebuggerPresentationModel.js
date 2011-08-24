@@ -28,6 +28,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.DebuggerPresentationModel = function()
 {
     // FIXME: apply formatter from outside as a generic mapping.
@@ -470,6 +473,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
 WebInspector.DebuggerPresentationModel.prototype.__proto__ = WebInspector.Object.prototype;
 
+/**
+ * @constructor
+ */
 WebInspector.PresentationBreakpoint = function(sourceFile, lineNumber, condition, enabled)
 {
     this.sourceFile = sourceFile;
@@ -508,6 +514,9 @@ WebInspector.PresentationBreakpoint.prototype = {
     }
 }
 
+/**
+ * @constructor
+ */
 WebInspector.PresenationCallFrame = function(callFrame, index, model, sourceFile)
 {
     this._callFrame = callFrame;
@@ -588,6 +597,10 @@ WebInspector.PresenationCallFrame.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @extends {WebInspector.ResourceDomainModelBinding}
+ */
 WebInspector.DebuggerPresentationModelResourceBinding = function(model)
 {
     this._presentationModel = model;
@@ -633,3 +646,8 @@ WebInspector.DebuggerPresentationModelResourceBinding.prototype = {
 }
 
 WebInspector.DebuggerPresentationModelResourceBinding.prototype.__proto__ = WebInspector.ResourceDomainModelBinding.prototype;
+
+/**
+ * @type {?WebInspector.DebuggerPresentationModel}
+ */
+WebInspector.debuggerPresentationModel = null;

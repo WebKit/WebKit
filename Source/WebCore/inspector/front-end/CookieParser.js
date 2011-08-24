@@ -35,6 +35,9 @@
 // which is in a format slightly different from Set-Cookie and is normally 
 // only required on the server side.
 
+/**
+ * @constructor
+ */
 WebInspector.CookieParser = function()
 {
 }
@@ -151,6 +154,9 @@ WebInspector.CookieParser.parseSetCookie = function(header)
     return (new WebInspector.CookieParser()).parseSetCookie(header);
 }
 
+/**
+ * @constructor
+ */
 WebInspector.Cookie = function(name, value, type)
 {
     this.name = name;

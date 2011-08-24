@@ -28,6 +28,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ * @param {?string} objectId
+ * @param {string} type
+ * @param {?string} subtype
+ * @param {*} value
+ * @param {string=} description
+ */
 WebInspector.RemoteObject = function(objectId, type, subtype, value, description)
 {
     this._type = type;
@@ -176,7 +184,7 @@ WebInspector.RemoteObject.prototype = {
             }
 
             delete result.description; // Optimize on traffic.
-            RuntimeAgent.callFunctionOn(this._objectId, setPropertyValue.toString(), [{ value:name }, result], propertySetCallback.bind(this));
+            RuntimeAgent.callFunctionOn(this._objectId, setPropertyValue.toString(), [{ value:name }, result], undefined, propertySetCallback.bind(this));
             if (result._objectId)
                 RuntimeAgent.releaseObject(result._objectId);
         }
@@ -224,6 +232,10 @@ WebInspector.RemoteObject.prototype = {
     }
 }
 
+/**
+ * @constructor
+ * @param {Object=} descriptor
+ */
 WebInspector.RemoteObjectProperty = function(name, value, descriptor)
 {
     this.name = name;
@@ -245,6 +257,9 @@ WebInspector.RemoteObjectProperty.fromPrimitiveValue = function(name, value)
 // for traversing prototypes, extracting class names via constuctor, handling properties
 // or functions.
 
+/**
+ * @constructor
+ */
 WebInspector.LocalJSONObject = function(value)
 {
     this._value = value;

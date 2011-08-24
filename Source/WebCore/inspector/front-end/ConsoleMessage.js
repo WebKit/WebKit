@@ -28,7 +28,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, requestId)
+/**
+ * @constructor
+ */
+WebInspector.ConsoleStackFrame = function()
+{
+    this.url = undefined;
+    this.functionName = undefined;
+    this.lineNumber = undefined;
+    this.columnNumber = undefined;
+}
+                    
+/**
+ * @constructor
+ * @param {Array.<WebInspector.ConsoleStackFrame>=} stackTrace
+ * @param {number=} request
+ */
+WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, request)
 {
     this.source = source;
     this.type = type;
@@ -41,7 +57,7 @@ WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCou
     this._messageText = message;
     this._parameters = parameters;
     this._stackTrace = stackTrace;
-    this._requestId = requestId;
+    this._request = request;
 
     if (stackTrace && stackTrace.length) {
         var topCallFrame = stackTrace[0];
@@ -73,17 +89,16 @@ WebInspector.ConsoleMessage.prototype = {
                 messageText = document.createTextNode(this._messageText);
                 break;
             case WebInspector.ConsoleMessage.MessageType.NetworkError:
-                var resource = this._requestId && WebInspector.networkResourceById(this._requestId);
-                if (resource) {
-                    stackTrace = resource.stackTrace;
+                if (this._request) {
+                    stackTrace = this._request.stackTrace;
 
                     messageText = document.createElement("span");
-                    messageText.appendChild(document.createTextNode(resource.requestMethod + " "));
-                    messageText.appendChild(WebInspector.linkifyURLAsNode(resource.url));
-                    if (resource.failed)
-                        messageText.appendChild(document.createTextNode(" " + resource.localizedFailDescription));
+                    messageText.appendChild(document.createTextNode(this._request.requestMethod + " "));
+                    messageText.appendChild(WebInspector.linkifyURLAsNode(this._request.url));
+                    if (this._request.failed)
+                        messageText.appendChild(document.createTextNode(" " + this._request.localizedFailDescription));
                     else
-                        messageText.appendChild(document.createTextNode(" " + resource.statusCode + " (" + resource.statusText + ")"));
+                        messageText.appendChild(document.createTextNode(" " + this._request.statusCode + " (" + this._request.statusText + ")"));
                 } else
                     messageText = this._format([this._messageText]);
                 break;
@@ -224,7 +239,7 @@ WebInspector.ConsoleMessage.prototype = {
         }
 
         // Firebug uses %o for formatting objects.
-        formatters.o = consoleFormatWrapper();
+        formatters.o = consoleFormatWrapper(false);
         formatters.s = valueFormatter;
         formatters.f = valueFormatter;
         // Firebug allows both %i and %d for formatting integers.
@@ -444,7 +459,7 @@ WebInspector.ConsoleMessage.prototype = {
             && (this.line === msg.line)
             && (this.url === msg.url)
             && (this.message === msg.message)
-            && (this._requestId === msg._requestId);
+            && (this._request === msg._request);
     },
 
     get stackTrace()

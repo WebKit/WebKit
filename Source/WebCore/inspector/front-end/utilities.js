@@ -840,6 +840,9 @@ function highlightSearchResult(element, offset, length, domChanges)
     return result.length ? result[0] : null;
 }
 
+/**
+ * @param {Array.<Object>=} changes
+ */
 function highlightSearchResults(element, resultRanges, changes)
 {
     changes = changes || [];

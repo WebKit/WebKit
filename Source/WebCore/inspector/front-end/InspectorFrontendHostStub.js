@@ -35,6 +35,14 @@ WebInspector.PlatformFlavor = {
     MacSnowLeopard: "mac-snowleopard"
 }
 
+WebInspector.isMac = function()
+{
+    if (typeof WebInspector._isMac === "undefined")
+        WebInspector._isMac = WebInspector.platform === "mac";
+
+    return WebInspector._isMac;
+}
+
 if (!window.InspectorFrontendHost) {
 
 /**

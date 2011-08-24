@@ -108,6 +108,8 @@ for domain in json_api:
             output_file.write(" */\n")
             params.append("opt_callback");
             output_file.write("%sAgent.%s = function(%s) {}\n" % (domain_name, command["name"], ", ".join(params)))
+            output_file.write("/** @param {function(%s):void=} opt_callback */\n" % ", ".join(returns))
+            output_file.write("%sAgent.%s.invoke = function(obj, opt_callback) {}\n" % (domain_name, command["name"]))
 
     output_file.write("/** @interface */\n")
     output_file.write("%sAgent.Dispatcher = function() {};\n" % domain_name)

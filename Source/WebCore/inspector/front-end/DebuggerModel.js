@@ -268,3 +268,8 @@ WebInspector.DebuggerDispatcher.prototype = {
         this._debuggerModel._breakpointResolved(breakpointId, scriptId, lineNumber, columnNumber);
     }
 }
+
+/**
+ * @type {?WebInspector.DebuggerModel}
+ */
+WebInspector.debuggerModel = null;

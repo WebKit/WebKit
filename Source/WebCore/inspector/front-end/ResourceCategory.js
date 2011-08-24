@@ -26,10 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @constructor
+ */
 WebInspector.ResourceCategory = function(name, title, color)
 {
     this.name = name;
-    this.title = title;
+    this._title = title;
     this.color = color;
 }
 
@@ -37,5 +40,21 @@ WebInspector.ResourceCategory.prototype = {
     toString: function()
     {
         return this.title;
+    },
+
+    get title()
+    {
+        return WebInspector.UIString(this._title);
     }
+}
+
+WebInspector.resourceCategories = {
+    documents: new WebInspector.ResourceCategory("documents", "Documents", "rgb(47,102,236)"),
+    stylesheets: new WebInspector.ResourceCategory("stylesheets", "Stylesheets", "rgb(157,231,119)"),
+    images: new WebInspector.ResourceCategory("images", "Images", "rgb(164,60,255)"),
+    scripts: new WebInspector.ResourceCategory("scripts", "Scripts", "rgb(255,121,0)"),
+    xhr: new WebInspector.ResourceCategory("xhr", "XHR", "rgb(231,231,10)"),
+    fonts: new WebInspector.ResourceCategory("fonts", "Fonts", "rgb(255,82,62)"),
+    websockets: new WebInspector.ResourceCategory("websockets", "WebSockets", "rgb(186,186,186)"), // FIXME: Decide the color.
+    other: new WebInspector.ResourceCategory("other", "Other", "rgb(186,186,186)")
 }

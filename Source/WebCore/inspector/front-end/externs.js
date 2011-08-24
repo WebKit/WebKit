@@ -30,8 +30,20 @@
 
 var console = {}
 console.warn = function(message) {}
+/** @param {string=} message */
+console.assert = function(expr, message) {}
 
 var WebInspector = {}
+/** @param {string} url */
+WebInspector.linkifyURLAsNode = function(url) {}
+/** @param {string} url */
+WebInspector.linkifyStringAsFragment = function(url) {}
+
+/**
+ * @param {string} str
+ * @param {...*} varArgs
+ */
+WebInspector.UIString = function(str, varArgs) {}
 var InspectorBackend = {}
 
 var JSON = {}
@@ -41,3 +53,5 @@ JSON.parse = function(str) {}
 /** @param {Object} obj */
 /** @return {string} */
 JSON.stringify = function(str) {}
+
+Element.prototype.scrollIntoViewIfNeeded = function() {}
