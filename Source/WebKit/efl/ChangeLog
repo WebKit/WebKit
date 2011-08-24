@@ -1,3 +1,18 @@
+2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [EFL] Get the default value for `scripts_window_open' from the right method.
+        https://bugs.webkit.org/show_bug.cgi?id=66775
+
+        Reviewed by Kent Tamura.
+
+        For some unknown reason, the default value for this setting was being
+        obtained from Settings::allowScriptsToCloseWindows() instead of
+        Settings::javaScriptCanOpenWindowsAutomatically(), which makes no
+        sense at all.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2011-08-23  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Change the tiled backing store to use constant size of tile.

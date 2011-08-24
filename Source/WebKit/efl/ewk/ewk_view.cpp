@@ -633,7 +633,7 @@ static Ewk_View_Private_Data *_ewk_view_priv_new(Ewk_View_Smart_Data *sd)
     priv->settings.enable_scripts = priv->page_settings->isJavaScriptEnabled();
     priv->settings.enable_plugins = priv->page_settings->arePluginsEnabled();
     priv->settings.enable_frame_flattening = priv->page_settings->frameFlatteningEnabled();
-    priv->settings.scripts_window_open = priv->page_settings->allowScriptsToCloseWindows();
+    priv->settings.scripts_window_open = priv->page_settings->javaScriptCanOpenWindowsAutomatically();
     priv->settings.resizable_textareas = priv->page_settings->textAreasAreResizable();
     priv->settings.private_browsing = priv->page_settings->privateBrowsingEnabled();
     priv->settings.caret_browsing = priv->page_settings->caretBrowsingEnabled();
