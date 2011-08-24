@@ -103,6 +103,8 @@ public:
     void disableRegionFitting() { m_regionFittingDisableCount++; }
     void enableRegionFitting() { ASSERT(m_regionFittingDisableCount > 0); m_regionFittingDisableCount--; }
 
+    RenderRegion* mapFromFlowToRegion(TransformState&) const;
+
 private:
     virtual const char* renderName() const { return "RenderFlowThread"; }
 

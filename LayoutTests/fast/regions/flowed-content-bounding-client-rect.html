@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="resources/region-style.css"></link>
+<script type="text/javascript" charset="utf-8" src="resources/helper.js"></script>
+
+<style>
+    body { margin: 10px; }
+
+    .box {
+        width: 50px;
+        height: 50px;
+        float: left;
+    }
+
+    #region1 {
+        position: absolute;
+        padding: 10px;
+    }
+
+    #region2 {
+        position: absolute;
+        left: 100px;
+        border: 10px solid black;
+    }
+
+    #region3 {
+        position: absolute;
+        left: 200px;
+        padding: 10px;
+        border: 10px solid black;
+    }
+    
+    .finished #region1, .finished #region2, .finished #region3 {
+        display: none;
+    }
+</style>
+
+<div class="flowArticle">
+    <div id="green" class="greenBox"></div>
+    <div id="blue" class="blueBox"></div>
+    <div id="orange" class="orangeBox"></div>
+</div>
+
+<div id="region1" class="regionArticle box"></div>
+<div id="region2" class="regionArticle box"></div>
+<div id="region3" class="regionArticle box"></div>
+
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+    
+    var expectedBoundingRects = {
+        green: [20, 20, 70, 70, 50, 50],
+        blue: [20, 110, 70, 160, 50, 50],
+        orange: [30, 220, 80, 270, 50, 50]
+    };
+    
+    if (testBoundingRects(expectedBoundingRects))
+        document.body.className = "finished";
+</script>

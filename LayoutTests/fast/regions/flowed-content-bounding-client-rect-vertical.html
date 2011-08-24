@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<link rel="stylesheet" href="resources/region-style.css"></link>
+<script type="text/javascript" charset="utf-8" src="resources/helper.js"></script>
+
+<style>
+    html { -webkit-writing-mode: vertical-lr; }
+
+    body { margin: 10px; }
+
+    #region1 {
+        position: absolute;
+        left: 100px;
+        width: 100px;
+        height: 50px;
+    }
+
+    #region2 {
+        position: absolute;
+        left: 240px;
+        width: 60px;
+        height: 70px;
+        padding: 10px 20px 30px 40px;
+        border: 1px solid black;
+    }
+    
+    .finished #region1, .finished #region2 {
+        display: none;
+    }
+</style>
+
+<div id="flow" class="flowArticle">
+    <div id="green" class="greenBox"></div>
+    <div id="blue" class="blueBox"></div>
+    <div id="orange" class="orangeBox"></div>
+</div>
+
+<div id="region1" class="regionArticle"></div>
+<div id="region2" class="regionArticle"></div>
+
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+    var expectedBoundingRects = {
+        green: [10, 100, 60, 150, 50, 50],
+        blue: [10, 150, 60, 200, 50, 50],
+        orange: [21, 281, 71, 331, 50, 50]
+    };
+    
+    if (testBoundingRects(expectedBoundingRects))
+        document.body.className = "finished";
+</script>

@@ -38,6 +38,7 @@
 #include "RenderLayer.h"
 #include "RenderRegion.h"
 #include "RenderView.h"
+#include "TransformState.h"
 
 namespace WebCore {
 
@@ -471,9 +472,6 @@ RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool ex
 {
     ASSERT(!m_regionsInvalidated);
     
-    // All the regions should start at 0.
-    ASSERT(position >= 0);
-    
     // If no region matches the position and extendLastRegion is true, it will return
     // the last valid region. It is similar to auto extending the size of the last region. 
     RenderRegion* lastValidRegion = 0;
@@ -484,6 +482,9 @@ RenderRegion* RenderFlowThread::renderRegionForLine(LayoutUnit position, bool ex
         RenderRegion* region = *iter;
         if (!region->isValid())
             continue;
+
+        if (position <= 0)
+            return region;
 
         LayoutRect regionRect = region->regionRect();
 
@@ -513,5 +514,31 @@ LayoutUnit RenderFlowThread::regionLogicalWidthForLine(LayoutUnit position) cons
     return isHorizontalWritingMode() ? region->regionRect().width() : region->regionRect().height();
 }
 
+
+RenderRegion* RenderFlowThread::mapFromFlowToRegion(TransformState& transformState) const
+{
+    if (!hasValidRegions())
+        return 0;
+
+    LayoutRect boxRect = transformState.mappedQuad().enclosingBoundingBox();
+    flipForWritingMode(boxRect);
+
+    // FIXME: We need to refactor RenderObject::absoluteQuads to be able to split the quads across regions,
+    // for now we just take the center of the mapped enclosing box and map it to a region.
+    // Note: Using the center in order to avoid rounding errors.
+
+    const bool extendLastRegion = true;
+    LayoutPoint center = boxRect.center();
+    RenderRegion* renderRegion = renderRegionForLine(isHorizontalWritingMode() ? center.y() : center.x(), extendLastRegion);
+    if (!renderRegion)
+        return 0;
+
+    LayoutRect flippedRegionRect(renderRegion->regionRect());
+    flipForWritingMode(flippedRegionRect);
+
+    transformState.move(renderRegion->contentBoxRect().location() - flippedRegionRect.location());
+
+    return renderRegion;
+}
 
 } // namespace WebCore

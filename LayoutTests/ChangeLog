@@ -1,3 +1,29 @@
+2011-08-24  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] Fix Element::getBoundingClientRect and Element::getClientRects for content flow
+        https://bugs.webkit.org/show_bug.cgi?id=66641
+
+        Original author of the patch is Mihnea Ovidenie <mihnea@adobe.com>.
+
+        Reviewed by David Hyatt.
+
+        * fast/regions/flowed-content-bounding-client-rect-expected.txt: Added.
+        * fast/regions/flowed-content-bounding-client-rect-horizontal-bt-expected.txt: Added.
+        * fast/regions/flowed-content-bounding-client-rect-horizontal-bt.html: Added.
+        * fast/regions/flowed-content-bounding-client-rect-vertical-expected.txt: Added.
+        * fast/regions/flowed-content-bounding-client-rect-vertical-rl-expected.txt: Added.
+        * fast/regions/flowed-content-bounding-client-rect-vertical-rl.html: Added.
+        * fast/regions/flowed-content-bounding-client-rect-vertical.html: Added.
+        * fast/regions/flowed-content-bounding-client-rect.html: Added.
+        * fast/regions/flowed-content-transform-bounding-client-rect-expected.txt: Added.
+        * fast/regions/flowed-content-transform-bounding-client-rect.html: Added.
+        * fast/regions/resources/helper.js: Added.
+        (rectToArray):
+        (areEqualNumbers):
+        (areEqualRects):
+        (assertEqualRects):
+        (testBoundingRects):
+
 2011-08-24  Nate Chapin  <japhet@chromium.org>
 
         Test for https://bugs.webkit.org/show_bug.cgi?id=45202.

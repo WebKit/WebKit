@@ -1,3 +1,30 @@
+2011-08-24  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] Fix Element::getBoundingClientRect and Element::getClientRects for content flow
+        https://bugs.webkit.org/show_bug.cgi?id=66641
+
+        Original author of the patch is Mihnea Ovidenie <mihnea@adobe.com>.
+
+        Redirected the mapLocalToContainer method to the appropriate RenderRegion.
+
+        Note: RenderObject::absoluteQuads method needs some refactor to support multiple regions,
+        will do that in a separate bug.
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/regions/flowed-content-bounding-client-rect-horizontal-bt.html
+               fast/regions/flowed-content-bounding-client-rect-vertical-rl.html
+               fast/regions/flowed-content-bounding-client-rect-vertical.html
+               fast/regions/flowed-content-bounding-client-rect.html
+               fast/regions/flowed-content-transform-bounding-client-rect.html
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::mapLocalToContainer):
+        * rendering/RenderFlowThread.cpp:
+        (WebCore::RenderFlowThread::renderRegionForLine):
+        (WebCore::RenderFlowThread::mapFromFlowToRegion):
+        * rendering/RenderFlowThread.h:
+
 2011-08-24  Alok Priyadarshi  <alokp@chromium.org>
 
         [chromium] Root layer is not updated when only a portion of tile is updated

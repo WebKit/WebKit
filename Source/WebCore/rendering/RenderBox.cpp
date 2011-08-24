@@ -41,9 +41,11 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderArena.h"
+#include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderPart.h"
+#include "RenderRegion.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -1258,7 +1260,15 @@ void RenderBox::mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool
         transformState.move(-containerOffset.width(), -containerOffset.height(), preserve3D ? TransformState::AccumulateTransform : TransformState::FlattenTransform);
         return;
     }
-    
+
+    if (o->isRenderFlowThread()) {
+        // Transform from render flow coordinates into region coordinates.
+        RenderRegion* region = toRenderFlowThread(o)->mapFromFlowToRegion(transformState);
+        if (region)
+            region->mapLocalToContainer(region->containerForRepaint(), fixed, useTransforms, transformState, wasFixed);
+        return;
+    }
+
     o->mapLocalToContainer(repaintContainer, fixed, useTransforms, transformState, wasFixed);
 }
 
