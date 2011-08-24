@@ -1,3 +1,9 @@
+2011-08-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, fix chromium expectations for fast/preloader/script.html.
+
+        * platform/chromium/fast/preloader/script-expected.txt: Added.
+
 2011-08-23  Ben Wells  <benwells@chromium.org>
 
         Extra baseline for bug 66036 (canvas fill composite modes)
