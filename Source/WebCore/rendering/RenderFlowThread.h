@@ -71,8 +71,8 @@ public:
     RenderObject* nextRendererForNode(Node*) const;
     RenderObject* previousRendererForNode(Node*) const;
     
-    virtual void addChild(RenderObject* newChild, RenderObject* beforeChild = 0);
-    virtual void removeChild(RenderObject*);
+    void addFlowChild(RenderObject* newChild, RenderObject* beforeChild = 0);
+    void removeFlowChild(RenderObject*);
 
     void addRegionToThread(RenderRegion*);
     void removeRegionFromThread(RenderRegion*);

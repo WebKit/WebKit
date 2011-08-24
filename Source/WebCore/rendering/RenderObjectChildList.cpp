@@ -31,6 +31,7 @@
 #include "ContentData.h"
 #include "RenderBlock.h"
 #include "RenderCounter.h"
+#include "RenderFlowThread.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
@@ -60,6 +61,14 @@ void RenderObjectChildList::destroyLeftoverChildren()
             firstChild()->destroy();
         }
     }
+}
+
+static RenderFlowThread* renderFlowThreadContainer(RenderObject* object)
+{
+    while (object && object->isAnonymousBlock() && !object->isRenderFlowThread())
+        object = object->parent();
+
+    return object && object->isRenderFlowThread() ? toRenderFlowThread(object) : 0;
 }
 
 RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, RenderObject* oldChild, bool fullRemove)
@@ -104,6 +113,9 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
 
         if (oldChild->isRenderRegion())
             toRenderRegion(oldChild)->detachRegion();
+
+        if (RenderFlowThread* containerFlowThread = renderFlowThreadContainer(owner))
+            containerFlowThread->removeFlowChild(oldChild);
 
 #if ENABLE(SVG)
         // Update cached boundaries in SVG renderers, if a child is removed.
@@ -184,6 +196,9 @@ void RenderObjectChildList::appendChildNode(RenderObject* owner, RenderObject* n
 
         if (newChild->isRenderRegion())
             toRenderRegion(newChild)->attachRegion();
+
+        if (RenderFlowThread* containerFlowThread = renderFlowThreadContainer(owner))
+            containerFlowThread->addFlowChild(newChild);
     }
     RenderCounter::rendererSubtreeAttached(newChild);
     RenderQuote::rendererSubtreeAttached(newChild);
@@ -244,6 +259,9 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
 
         if (!child->isFloating() && owner->childrenInline())
             owner->dirtyLinesFromChangedChild(child);
+        
+        if (RenderFlowThread* containerFlowThread = renderFlowThreadContainer(owner))
+            containerFlowThread->addFlowChild(child, beforeChild);
     }
 
     RenderCounter::rendererSubtreeAttached(child);
