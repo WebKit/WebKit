@@ -175,7 +175,9 @@ void SimpleFontData::platformInit()
     int iLineGap;
     unsigned unitsPerEm;
     iAscent = CGFontGetAscent(m_platformData.cgFont());
-    iDescent = CGFontGetDescent(m_platformData.cgFont());
+    // Some fonts erroneously specify a positive descender value. We follow Core Text in assuming that
+    // such fonts meant the same distance, but in the reverse direction.
+    iDescent = -abs(CGFontGetDescent(m_platformData.cgFont()));
     iLineGap = CGFontGetLeading(m_platformData.cgFont());
     unitsPerEm = CGFontGetUnitsPerEm(m_platformData.cgFont());
 
