@@ -2743,7 +2743,7 @@ BUGWK55117 : fast/js/i18n-bindings-locale.html = TEXT
 BUG_ANTONM LINUX WIN : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 BUG_ANTONM LEOPARD : svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html = IMAGE
 
-BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = CRASH
+BUGCR74497 : platform/win/plugins/windowless-paint-rect-coordinates.html = TEXT
 
 BUGWK55300 : fast/images/support-broken-image-delegate.html = TEXT
 
@@ -2780,7 +2780,7 @@ BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html 
 BUG_ANTONM LEOPARD : http/tests/security/xss-DENIED-xml-external-entity.xhtml = TEXT
 BUG_ANTONM LEOPARD : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
 
-BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CRASH
+BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = TEXT
 
 // Slow
 BUGCR76550 SLOW LINUX WIN DEBUG : fast/dom/Window/window-function-frame-getter-precedence.html = PASS
@@ -2908,7 +2908,7 @@ BUGCR78638 WIN : fast/frames/set-unloaded-frame-location.html = PASS CRASH
 BUGWK58005 LEOPARD : editing/inserting/editable-inline-element.html = IMAGE
 BUGCR780807 : http/tests/misc/webtiming-origins.html = PASS TEXT
 
-BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = CRASH
+BUGCR78835 : plugins/npp-set-window-called-during-destruction.html = TEXT
 BUGCR78988 LINUX : svg/zoom/text/absolute-sized-document-no-scrollbars.svg = PASS CRASH
 BUGCR78996 DEBUG : fast/css/first-of-type-pseudo-class.html = PASS TEXT
 // http://trac.webkit.org/changeset/83411/ merged some frame tests into one.
@@ -3411,9 +3411,6 @@ BUGWK62754 LINUX WIN : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+
 // Probably related to the above, but just flaky (esp. in debug)
 BUGWK63937 MAC : css2.1/20110323/replaced-intrinsic-ratio-001.htm = PASS IMAGE+TEXT TEXT
 
-// Has been crashing since WebKit r88279-88297.
-BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
-
 // Has been timing out since r88913.
 BUGWK62754 LINUX MAC RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT IMAGE+TEXT
 BUGWK62754 SLOW LEOPARD LINUX DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
@@ -3459,8 +3456,8 @@ BUGCR87732 : fast/regex/toString.html = TEXT
 // Discovered after a skia roll r1814:r1832, but likely needs more investigation.
 BUGCR88801 WIN : svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr.html = PASS CRASH
 
-// Added in http://trac.webkit.org/changeset/90148, null-derefing in TestNetscapgePlugin.
-BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = CRASH
+// Test fails because it's trying to load a plugin we don't have. We probably don't need to fix this.
+BUGJAPHET : platform/gtk/plugins/invalidate-rect-with-null-npp-argument.html = TEXT
 
 BUGWK63509 : editing/style/smoosh-styles-003.html = PASS IMAGE
 BUGCR88230 VISTA : fast/dom/dom-parse-serialize-display.html = PASS TIMEOUT

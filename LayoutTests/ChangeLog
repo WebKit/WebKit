@@ -1,5 +1,11 @@
 2011-08-24  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Update expectations for tests that no longer crash.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-24  James Robinson  <jamesr@chromium.org>
+
         Some compositing LayoutTests flakily crashing on Mac 10.6
         https://bugs.webkit.org/show_bug.cgi?id=66740
 
