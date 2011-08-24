@@ -1,3 +1,34 @@
+2011-08-24  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: extract ConsoleMessage into a separate file.
+        https://bugs.webkit.org/show_bug.cgi?id=66853
+
+        Reviewed by Yury Semikhatsky.
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ConsoleMessage.js: Added.
+        (WebInspector.ConsoleMessage):
+        (WebInspector.ConsoleMessage.createTextMessage):
+        (WebInspector.ConsoleMessage.prototype._formatMessage):
+        (WebInspector.ConsoleMessage.prototype._linkifyLocation):
+        (WebInspector.ConsoleMessage.prototype._linkifyCallFrame):
+        (WebInspector.ConsoleMessage.prototype.isErrorOrWarning):
+        (WebInspector.ConsoleMessage.prototype._format):
+        (WebInspector.ConsoleMessage.prototype._formatWithSubstitutionString.valueFormatter):
+        (WebInspector.ConsoleMessage.prototype._formatWithSubstitutionString.append):
+        (WebInspector.ConsoleMessage.prototype.clearHighlight):
+        (WebInspector.ConsoleMessage.prototype.highlightSearchResults):
+        (WebInspector.ConsoleMessage.prototype.matchesRegex):
+        (WebInspector.ConsoleMessage.prototype.toMessageElement):
+        (WebInspector.ConsoleMessage.prototype._populateStackTraceTreeElement):
+        (WebInspector.ConsoleMessage.prototype._updateRepeatCount):
+        (WebInspector.ConsoleMessage.prototype.toString):
+        (WebInspector.ConsoleMessage.prototype.isEqual):
+        (WebInspector.ConsoleMessage.prototype.get stackTrace):
+        * inspector/front-end/ConsoleView.js:
+        * inspector/front-end/WebKit.qrc:
+
 2011-08-24  Tatiana Meshkova  <tatiana.meshkova@nokia.com>
 
         Paint SliderTrack and SliderThumb independently.
