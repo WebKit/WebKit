@@ -92,6 +92,12 @@ GraphicsLayer::~GraphicsLayer()
     removeFromParent();
 }
 
+void GraphicsLayer::setParent(GraphicsLayer* layer)
+{
+    ASSERT(!layer || !layer->hasAncestor(this));
+    m_parent = layer;
+}
+
 bool GraphicsLayer::hasAncestor(GraphicsLayer* ancestor) const
 {
     for (GraphicsLayer* curr = parent(); curr; curr = curr->parent()) {

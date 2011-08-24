@@ -125,6 +125,21 @@ void LayerChromium::setNeedsCommit()
         m_owner->notifySyncRequired();
 }
 
+void LayerChromium::setParent(LayerChromium* layer)
+{
+    ASSERT(!layer || !layer->hasAncestor(this));
+    m_parent = layer;
+}
+
+bool LayerChromium::hasAncestor(LayerChromium* ancestor) const
+{
+    for (LayerChromium* layer = parent(); layer; layer = layer->parent()) {
+        if (layer == ancestor)
+            return true;
+    }
+    return false;
+}
+
 void LayerChromium::addChild(PassRefPtr<LayerChromium> child)
 {
     insertChild(child, numChildren());

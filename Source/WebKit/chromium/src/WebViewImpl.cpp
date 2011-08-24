@@ -2661,15 +2661,12 @@ void WebViewImpl::animateAndLayout(double frameBeginTime)
 
 void WebViewImpl::didRecreateGraphicsContext(bool success)
 {
-    setRootGraphicsLayer(success ? m_layerTreeHost->rootLayer() : 0);
-
-    if (success) {
-      // Forces ViewHostMsg_DidActivateAcceleratedCompositing to be sent so
-      // that the browser process can reacquire surfaces.
-      m_client->didActivateAcceleratedCompositing(true);
-      if (m_pageOverlay)
-          m_pageOverlay->update();
-    }
+    // Force ViewHostMsg_DidActivateAcceleratedCompositing to be sent so
+    // that the browser process can reacquire surfaces.
+    m_isAcceleratedCompositingActive = false;
+    setIsAcceleratedCompositingActive(success);
+    if (success && m_pageOverlay)
+        m_pageOverlay->update();
 }
 
 #if !USE(THREADED_COMPOSITING)

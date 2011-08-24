@@ -196,7 +196,7 @@ public:
     virtual void setName(const String& name) { m_name = name; }
 
     GraphicsLayer* parent() const { return m_parent; };
-    void setParent(GraphicsLayer* layer) { m_parent = layer; } // Internal use only.
+    void setParent(GraphicsLayer*); // Internal use only.
     
     // Returns true if the layer has the given layer as an ancestor (excluding self).
     bool hasAncestor(GraphicsLayer*) const;

@@ -1,3 +1,19 @@
+2011-08-23  Iain Merrick  <husky@google.com>
+
+        [chromium] Renderer crashes when about:gpucrash is loaded
+        https://bugs.webkit.org/show_bug.cgi?id=66814
+
+        WebViewImpl::didRecreateGraphicsContext() was calling
+        setRootLayer() on the CC layer tree, but the root layer
+        doesn't actually change and the code wasn't defensive
+        against this. This CL adds some asserts to catch tree
+        corruption and removes the unnecessary calls.
+
+        Reviewed by James Robinson.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::didRecreateGraphicsContext):
+
 2011-08-23  Dmitry Lomov  <Dmitry Lomov (dslomov@google.com)>
 
         https://bugs.webkit.org/show_bug.cgi?id=66751 

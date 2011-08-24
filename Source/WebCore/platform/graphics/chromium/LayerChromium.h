@@ -248,7 +248,8 @@ protected:
 private:
     void setNeedsCommit();
 
-    void setParent(LayerChromium* parent) { m_parent = parent; }
+    void setParent(LayerChromium*);
+    bool hasAncestor(LayerChromium*) const;
 
     size_t numChildren() const
     {
