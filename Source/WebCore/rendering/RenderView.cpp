@@ -653,10 +653,17 @@ IntRect RenderView::viewRect() const
     return IntRect();
 }
 
-IntRect RenderView::documentRect() const
+
+IntRect RenderView::unscaledDocumentRect() const
 {
     IntRect overflowRect(layoutOverflowRect());
     flipForWritingMode(overflowRect);
+    return overflowRect;
+}
+
+IntRect RenderView::documentRect() const
+{
+    IntRect overflowRect(unscaledDocumentRect());
     if (hasTransform())
         overflowRect = layer()->currentTransform().mapRect(overflowRect);
     return overflowRect;

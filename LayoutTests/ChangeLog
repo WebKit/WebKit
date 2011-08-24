@@ -1,5 +1,25 @@
 2011-08-23  Mark Rowe  <mrowe@apple.com>
 
+        Merge r92417.
+
+    2011-08-04  Fady Samuel  <fsamuel@chromium.org>
+
+        Background Does Not Scale Correctly with Page
+
+        Scaling is applied twice to the background (the paint area is doubly scaled).
+        This patch fixes this issue by passing the unscaled document rect to paintFillLayers
+        in paintRootBoxFillLayers.
+
+        https://bugs.webkit.org/show_bug.cgi?id=65690
+
+        Reviewed by Simon Fraser.
+
+        * fast/repaint/background-scaling-expected.png: Added.
+        * fast/repaint/background-scaling-expected.txt: Added.
+        * fast/repaint/background-scaling.html: Added.
+
+2011-08-23  Mark Rowe  <mrowe@apple.com>
+
         Merge r93487.
 
     2011-08-20  Filip Pizlo  <fpizlo@apple.com>
