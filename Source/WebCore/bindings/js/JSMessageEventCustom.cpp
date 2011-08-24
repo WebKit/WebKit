@@ -45,8 +45,8 @@ namespace WebCore {
 JSValue JSMessageEvent::ports(ExecState* exec) const
 {
     MessagePortArray* ports = static_cast<MessageEvent*>(impl())->ports();
-    if (!ports || ports->isEmpty())
-        return jsNull();
+    if (!ports)
+        return constructEmptyArray(exec, globalObject());
 
     MarkedArgumentBuffer list;
     for (size_t i = 0; i < ports->size(); i++)

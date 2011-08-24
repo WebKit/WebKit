@@ -8,10 +8,10 @@ onmessage = function(evt) {
             postMessage("FAIL: Did not receive expected MessagePort");
         }
     } else if (evt.data == "noport") {
-        if (evt.ports) {
-            postMessage("FAIL: Received message port");
+        if (!evt.ports || evt.ports.length) {
+            postMessage("FAIL: Received message port or null ports array");
         } else {
-            postMessage("PASS: evt.ports = null as expected");
+            postMessage("PASS: evt.ports = [] as expected");
         }
     } else if (evt.data == "spam") {
         for (var i = 0 ; i < 1000 ; i++) {

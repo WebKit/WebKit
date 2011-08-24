@@ -1,3 +1,30 @@
+2011-08-23  David Levin  <levin@chromium.org>
+
+        MessageEvent.ports shouldn't ever be null.
+        https://bugs.webkit.org/show_bug.cgi?id=66789
+
+        Reviewed by Darin Adler.
+
+        Fix all tests which verified that MessageEvents.ports was null in various cases.
+
+        * fast/dom/Window/window-postmessage-args-expected.txt:
+        * fast/events/message-port-multi-expected.txt:
+        * fast/events/resources/message-port-multi.js:
+        (channel.port2.onmessage):
+        * fast/workers/resources/worker-context-multi-port.js:
+        (worker.onmessage):
+        * fast/workers/resources/worker-messageport.js:
+        (onmessage):
+        * fast/workers/resources/worker-thread-multi-port.js:
+        (onmessage):
+        * fast/workers/worker-context-multi-port-expected.txt:
+        * fast/workers/worker-messageport-expected.txt:
+        * fast/workers/worker-multi-port-expected.txt:
+        * platform/chromium-win/fast/events/message-port-multi-expected.txt:
+        * platform/chromium-win/fast/workers/worker-context-multi-port-expected.txt:
+        * platform/chromium-win/fast/workers/worker-multi-port-expected.txt:
+        * platform/chromium/fast/dom/Window/window-postmessage-args-expected.txt:
+
 2011-08-24  Alexandru Chiculita  <achicu@adobe.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66799

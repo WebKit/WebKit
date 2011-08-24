@@ -7,8 +7,8 @@ PASS worker.postMessage("null port", [channel3.port1, null, channel3.port2]) thr
 PASS worker.postMessage("notAPort", [channel3.port1, {}, channel3.port2]) threw exception TypeError: MessagePortArray argument must contain only MessagePorts.
 PASS worker.postMessage("notAnArray", channel3.port1) threw exception TypeError: MessagePortArray argument has no length attribute.
 PASS worker.postMessage("notASequence", [{length: 3}]) threw exception TypeError: MessagePortArray argument must contain only MessagePorts.
-PASS event.ports is null when no port sent
-PASS event.ports is null when empty array sent
+PASS event.ports is non-null and zero length when no port sent
+PASS event.ports is non-null and zero length when empty array sent
 PASS event.ports contains two ports when two ports sent
 PASS event.ports contains two ports when two ports re-sent after error
 

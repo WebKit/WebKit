@@ -1,14 +1,14 @@
 onmessage = function(event) {
     if (event.data == "noport") {
-        if (!event.ports)
-            testPassed("event.ports is null when no port sent");
+        if (event.ports && !event.ports.length)
+            testPassed("event.ports is non-null and zero length when no port sent");
         else
-            testFailed("event.ports should be null when no port sent");
+            testFailed("event.ports is null or non-zero length when no port sent");
     } else if (event.data == "zero ports") {
-        if (!event.ports)
-            testPassed("event.ports is null when empty array sent");
+        if (event.ports && !event.ports.length)
+            testPassed("event.ports is non-null and zero length when empty array sent");
         else
-            testFailed("event.ports should be null when empty array sent");
+            testFailed("event.ports is null or non-zero length when empty array sent");
     } else if (event.data == "two ports") {
         if (!event.ports) {
             testFailed("event.ports should be non-null when ports sent");

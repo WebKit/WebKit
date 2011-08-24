@@ -1,6 +1,6 @@
 Test that pages and workers can send MessagePorts to one another. Should print "DONE" when done.
 
-PASS: evt.ports = null as expected
+PASS: evt.ports = [] as expected
 PASS: Received message port
 PASS: Received response from Worker via MessagePort
 PASS: Got port from worker
