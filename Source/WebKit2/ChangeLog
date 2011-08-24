@@ -1,3 +1,17 @@
+2011-08-24  Anders Carlsson  <andersca@apple.com>
+
+        Rename -[WKTextInputWindowController keyboardInputSourceChanged] to unmarkText to indicate what the method does
+        https://bugs.webkit.org/show_bug.cgi?id=66883
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/mac/WKTextInputWindowController.h:
+        * UIProcess/API/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputPanel _unmarkText]):
+        (-[WKTextInputWindowController unmarkText]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _pluginFocusOrWindowFocusChanged:pluginComplexTextInputIdentifier:]):
+
 2011-08-24  Oliver Hunt  <oliver@apple.com>
 
         JSNPObject and JSNPMethod create their structure in their constructors

@@ -2331,8 +2331,8 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 
     if (inputSourceChanged) {
-        // Inform the out of line window that the input source changed.
-        [[WKTextInputWindowController sharedTextInputWindowController] keyboardInputSourceChanged];
+        // The input source changed, go ahead and discard any entered text.
+        [[WKTextInputWindowController sharedTextInputWindowController] unmarkText];
     }
 
     // This will force the current input context to be updated to its correct value.

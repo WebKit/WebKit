@@ -33,8 +33,10 @@
 }
 
 - (NSTextInputContext *)_inputContext;
-- (BOOL)_hasMarkedText;
 - (BOOL)_interpretKeyEvent:(NSEvent *)event usingLegacyCocoaTextInput:(BOOL)usingLegacyCocoaTextInput string:(NSString **)string;
+
+- (BOOL)_hasMarkedText;
+- (void)_unmarkText;
 
 @end
 
@@ -76,7 +78,7 @@
     return self;
 }
 
-- (void)_keyboardInputSourceChanged
+- (void)_unmarkText
 {
     [_inputTextView setString:@""];
     [self orderOut:nil];
@@ -167,9 +169,9 @@
     return [_panel _interpretKeyEvent:event usingLegacyCocoaTextInput:usingLegacyCocoaTextInput string:string];
 }
 
-- (void)keyboardInputSourceChanged
+- (void)unmarkText
 {
-    [_panel _keyboardInputSourceChanged];
+    [_panel _unmarkText];
 }
 
 @end

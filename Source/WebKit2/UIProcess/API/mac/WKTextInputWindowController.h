@@ -35,10 +35,10 @@
 + (WKTextInputWindowController *)sharedTextInputWindowController;
 
 - (NSTextInputContext *)inputContext;
-- (BOOL)hasMarkedText;
 - (BOOL)interpretKeyEvent:(NSEvent *)event usingLegacyCocoaTextInput:(BOOL)usingLegacyCocoaTextInput string:(NSString **)string;
 
-- (void)keyboardInputSourceChanged;
+- (BOOL)hasMarkedText;
+- (void)unmarkText;
 
 @end
 
