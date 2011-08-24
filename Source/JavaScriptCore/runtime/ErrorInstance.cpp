@@ -49,7 +49,7 @@ ErrorInstance* ErrorInstance::create(ExecState* exec, Structure* structure, JSVa
 {
     if (message.isUndefined())
         return new (allocateCell<ErrorInstance>(*exec->heap())) ErrorInstance(exec->globalData(), structure);
-    return new (allocateCell<ErrorInstance>(*exec->heap())) ErrorInstance(exec->globalData(), structure, message.toString(exec));
+    return create(exec->globalData(), structure, message.toString(exec));
 }
 
 } // namespace JSC
