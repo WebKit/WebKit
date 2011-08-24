@@ -789,7 +789,9 @@ String mapExtensionName(const String& name)
 
 void GraphicsContext3DInternal::initializeExtensions()
 {
-    if (!m_initializedAvailableExtensions) {
+    bool success = makeContextCurrent();
+    ASSERT(success);
+    if (success && !m_initializedAvailableExtensions) {
         String extensionsString = getString(GraphicsContext3D::EXTENSIONS);
         splitStringHelper(extensionsString, m_enabledExtensions);
 

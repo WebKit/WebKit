@@ -1,3 +1,20 @@
+2011-08-23  Iain Merrick  <husky@google.com>
+
+        [chromium] Make WebGL context current before querying for extensions
+        https://bugs.webkit.org/show_bug.cgi?id=66788
+
+        We're making changes on the Chromium side for threaded compositing that
+        will require makeContextCurrent to be called on the appropriate thread
+        before any other GL calls.
+
+        In line with other GraphicsContext3D implementations, we do this
+        implicitly. This is the minimum change that makes WebGL compliant.
+
+        Reviewed by Kenneth Russell.
+
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::initializeExtensions):
+
 2011-08-23  Scott Byer  <scottbyer@chromium.org>
 
         ScrollAnimatorNone coasting implementation
