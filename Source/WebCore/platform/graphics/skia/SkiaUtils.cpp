@@ -106,44 +106,10 @@ Color SkPMColorToWebCoreColor(SkPMColor pm)
     return SkPMColorToColor(pm);
 }
 
-void IntersectRectAndRegion(const SkRegion& region, const SkRect& srcRect, SkRect* destRect) {
-    // The cliperator requires an int rect, so we round out.
-    SkIRect srcRectRounded;
-    srcRect.roundOut(&srcRectRounded);
-
-    // The Cliperator will iterate over a bunch of rects where our transformed
-    // rect and the clipping region (which may be non-square) overlap.
-    SkRegion::Cliperator cliperator(region, srcRectRounded);
-    if (cliperator.done()) {
+void ClipRectToCanvas(const SkCanvas& canvas, const SkRect& srcRect, SkRect* destRect)
+{
+    if (!canvas.getClipBounds(destRect) || !destRect->intersect(srcRect))
         destRect->setEmpty();
-        return;
-    }
-
-    // Get the union of all visible rects in the clip that overlap our bitmap.
-    SkIRect currentVisibleRect = cliperator.rect();
-    cliperator.next();
-    while (!cliperator.done()) {
-        currentVisibleRect.join(cliperator.rect());
-        cliperator.next();
-    }
-
-    destRect->set(currentVisibleRect);
-}
-
-void ClipRectToCanvas(const SkCanvas& canvas, const SkRect& srcRect, SkRect* destRect) {
-    // Translate into the canvas' coordinate space. This is where the clipping
-    // region applies.
-    SkRect transformedSrc;
-    canvas.getTotalMatrix().mapRect(&transformedSrc, srcRect);
-
-    // Do the intersection.
-    SkRect transformedDest;
-    IntersectRectAndRegion(canvas.getTotalClip(), transformedSrc, &transformedDest);
-
-    // Now transform it back into world space.
-    SkMatrix inverseTransform;
-    canvas.getTotalMatrix().invert(&inverseTransform);
-    inverseTransform.mapRect(destRect, transformedDest);
 }
 
 bool SkPathContainsPoint(SkPath* originalPath, const FloatPoint& point, SkPath::FillType ft)

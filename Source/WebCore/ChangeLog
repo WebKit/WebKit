@@ -1,3 +1,16 @@
+2011-08-24  Mike Reed  <reed@google.com>
+
+        Change clip routine to promote the clipbounds up to (local) floats and then perform the intersection,
+        rather than rounding the srcRect down to integers.
+        https://bugs.webkit.org/show_bug.cgi?id=66810
+
+        Reviewed by Kenneth Russell.
+
+        No new tests. Existing tests that resize images will exercise this code path
+
+        * platform/graphics/skia/SkiaUtils.cpp:
+        (WebCore::ClipRectToCanvas):
+
 2011-08-24  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSSRegions] RenderRegion is not used if there's another renderer after it
