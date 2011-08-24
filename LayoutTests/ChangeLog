@@ -1,3 +1,11 @@
+2011-08-23  Adam Barth  <abarth@webkit.org>
+
+        Fix baselines for fast/block/float/fit_line_below_floats.html.  I forgot Windows in my previous patch.
+
+        * platform/chromium-linux/fast/block/float/fit_line_below_floats-expected.txt: Removed.
+        * platform/chromium-win/fast/block/float/fit_line_below_floats-expected.png: Added.
+        * platform/chromium-win/fast/block/float/fit_line_below_floats-expected.txt: Added.
+
 2011-08-23  Peter Kasting  <pkasting@google.com>
 
         [chromium] Remove comments formerly associated with now-rebaselined tests.
