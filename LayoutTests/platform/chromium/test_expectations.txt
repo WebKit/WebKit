@@ -3607,10 +3607,6 @@ BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
 
 BUGWK65666 LINUX WIN : fast/box-shadow/box-shadow-clipped-slices.html = IMAGE
 
-// Looks like the overlapping regions are not properly anti-aliased.
-BUGWK66036 WIN LINUX GPU : fast/canvas/canvas-composite.html = IMAGE
-BUGWK66036 WIN LINUX GPU : fast/canvas/canvas-composite-transformclip.html = IMAGE
-
 // Might need rebaseline.
 BUGJIANLI MAC WIN : fast/preloader/script.html = PASS TEXT
 BUGJIANLI MAC : fast/gradients/gradient-after-transparent-border.html = IMAGE
