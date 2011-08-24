@@ -9,7 +9,7 @@
 BUGCR24182 SLOW LINUX MAC DEBUG : fast/forms/form-associated-element-crash3.html = PASS
 BUGCR24182 SLOW LINUX WIN : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : fast/js/toString-and-valueOf-override.html = PASS
-BUGCR24182 SLOW LINUX WIN DEBUG : html5lib/webkit-resumer.html = PASS
+BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/loading/redirect-methods.html = PASS
 BUGCR24182 SLOW WIN : http/tests/local/file-url-sent-as-referer.html = PASS
@@ -18,14 +18,14 @@ BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOU
 BUGCR24182 SLOW WIN DEBUG : http/tests/websocket/tests/hixie76/simple-stress.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS
-BUGCR24182 SLOW LINUX WIN DEBUG : jquery/attributes.html = PASS
-BUGCR24182 LINUX WIN DEBUG : jquery/core.html = PASS TIMEOUT
+BUGCR24182 SLOW DEBUG : jquery/attributes.html = PASS
+BUGCR24182 DEBUG : jquery/core.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/data.html = PASS
 BUGCR24182 SLOW DEBUG : jquery/dimensions.html = PASS
 BUGCR24182 DEBUG : jquery/event.html = PASS TIMEOUT
-BUGCR24182 SLOW DEBUG : jquery/manipulation.html = PASS
-BUGCR24182 SLOW LINUX WIN DEBUG : jquery/offset.html = PASS
-BUGCR24182 SLOW LINUX WIN DEBUG : jquery/traversing.html = PASS
+BUGCR24182 DEBUG : jquery/manipulation.html = PASS TIMEOUT
+BUGCR24182 SLOW DEBUG : jquery/offset.html = PASS
+BUGCR24182 SLOW DEBUG : jquery/traversing.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-push-pop.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
 
@@ -3651,9 +3651,13 @@ BUGWK66740 SNOWLEOPARD GPU : compositing/geometry/limit-layer-bounds-transformed
 BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/connect-compositing-iframe-delayed.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/connect-compositing-iframe3.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/iframe-resize.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/become-composited-nested-iframes.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/overlapped-iframe.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/overlapped-nested-iframes.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/repaint-after-losing-scrollbars.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : compositing/overflow/fixed-position-ancestor-clip.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : compositing/scaling/tiled-layer-recursion.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD DEBUG : fast/ruby/text-emphasis.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/layout-width-change.html = PASS CRASH
@@ -3661,3 +3665,6 @@ BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/layout-width-change.h
 BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
 
 BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TEXT
+
+BUGWK66882 WIN : svg/W3C-SVG-1.1-SE/text-intro-09-b.svg = PASS IMAGE+TEXT
+BUGWK66882 LINUX MAC : svg/W3C-SVG-1.1-SE/text-intro-09-b.svg = PASS IMAGE
