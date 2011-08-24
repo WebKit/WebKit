@@ -35,6 +35,7 @@
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebSearchableFormData.h"
+#include "WebSecurityPolicy.h"
 #include "WebSettings.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -53,7 +54,8 @@ namespace {
 class WebFrameTest : public testing::Test {
 public:
     WebFrameTest()
-        : baseURL("http://www.test.com/")
+        : baseURL("http://www.test.com/"),
+          chromeURL("chrome://")
     {
     }
 
@@ -62,7 +64,32 @@ public:
         webkit_support::UnregisterAllMockedURLs();
     }
 
-    void registerMockedURLLoad(const std::string& fileName)
+    void registerMockedHttpURLLoad(const std::string& fileName)
+    {
+        registerMockedURLLoad(baseURL, fileName);
+    }
+
+    void registerMockedChromeURLLoad(const std::string& fileName)
+    {
+        registerMockedURLLoad(chromeURL, fileName);
+    }
+
+    void serveRequests()
+    {
+        webkit_support::ServeAsynchronousMockedRequests();
+    }
+
+    void loadHttpFrame(WebFrame* frame, const std::string& fileName)
+    {
+        loadFrame(frame, baseURL, fileName);
+    }
+
+    void loadChromeFrame(WebFrame* frame, const std::string& fileName)
+    {
+        loadFrame(frame, chromeURL, fileName);
+    }
+
+    void registerMockedURLLoad(const std::string& base, const std::string& fileName)
     {
         WebURLResponse response;
         response.initialize();
@@ -72,24 +99,20 @@ public:
         filePath += "/Source/WebKit/chromium/tests/data/";
         filePath += fileName;
 
-        webkit_support::RegisterMockedURL(WebURL(GURL(baseURL + fileName)), response, WebString::fromUTF8(filePath));
+        webkit_support::RegisterMockedURL(WebURL(GURL(base + fileName)), response, WebString::fromUTF8(filePath));
     }
 
-    void serveRequests()
-    {
-        webkit_support::ServeAsynchronousMockedRequests();
-    }
-
-    void loadFrame(WebFrame* frame, const std::string& fileName)
+    void loadFrame(WebFrame* frame, const std::string& base, const std::string& fileName)
     {
         WebURLRequest urlRequest;
         urlRequest.initialize();
-        urlRequest.setURL(WebURL(GURL(baseURL + fileName)));
+        urlRequest.setURL(WebURL(GURL(base + fileName)));
         frame->loadRequest(urlRequest);
     }
 
 protected:
     std::string baseURL;
+    std::string chromeURL;
 };
 
 class TestWebFrameClient : public WebFrameClient {
@@ -97,17 +120,17 @@ class TestWebFrameClient : public WebFrameClient {
 
 TEST_F(WebFrameTest, ContentText)
 {
-    registerMockedURLLoad("iframes_test.html");
-    registerMockedURLLoad("visible_iframe.html");
-    registerMockedURLLoad("invisible_iframe.html");
-    registerMockedURLLoad("zero_sized_iframe.html");
+    registerMockedHttpURLLoad("iframes_test.html");
+    registerMockedHttpURLLoad("visible_iframe.html");
+    registerMockedHttpURLLoad("invisible_iframe.html");
+    registerMockedHttpURLLoad("zero_sized_iframe.html");
 
     // Create and initialize the WebView.
     TestWebFrameClient webFrameClient;
     WebView* webView = WebView::create(0);
     webView->initializeMainFrame(&webFrameClient);
 
-    loadFrame(webView->mainFrame(), "iframes_test.html");
+    loadHttpFrame(webView->mainFrame(), "iframes_test.html");
     serveRequests();
 
     // Now retrieve the frames text and test it only includes visible elements.
@@ -123,18 +146,18 @@ TEST_F(WebFrameTest, ContentText)
 
 TEST_F(WebFrameTest, FrameForEnteredContext)
 {
-    registerMockedURLLoad("iframes_test.html");
-    registerMockedURLLoad("visible_iframe.html");
-    registerMockedURLLoad("invisible_iframe.html");
-    registerMockedURLLoad("zero_sized_iframe.html");
+    registerMockedHttpURLLoad("iframes_test.html");
+    registerMockedHttpURLLoad("visible_iframe.html");
+    registerMockedHttpURLLoad("invisible_iframe.html");
+    registerMockedHttpURLLoad("zero_sized_iframe.html");
 
     // Create and initialize the WebView.
-    TestWebFrameClient webFrameClient;
+     TestWebFrameClient webFrameClient;
     WebView* webView = WebView::create(0);
     webView->settings()->setJavaScriptEnabled(true);
     webView->initializeMainFrame(&webFrameClient);
 
-    loadFrame(webView->mainFrame(), "iframes_test.html");
+    loadHttpFrame(webView->mainFrame(), "iframes_test.html");
     serveRequests();
 
     v8::HandleScope scope;
@@ -150,13 +173,13 @@ TEST_F(WebFrameTest, FrameForEnteredContext)
 
 TEST_F(WebFrameTest, FormWithNullFrame)
 {
-    registerMockedURLLoad("form.html");
+    registerMockedHttpURLLoad("form.html");
 
     TestWebFrameClient webFrameClient;
     WebView* webView = WebView::create(0);
     webView->initializeMainFrame(&webFrameClient);
 
-    loadFrame(webView->mainFrame(), "form.html");
+    loadHttpFrame(webView->mainFrame(), "form.html");
     serveRequests();
 
     WebVector<WebFormElement> forms;
@@ -169,4 +192,27 @@ TEST_F(WebFrameTest, FormWithNullFrame)
     WebSearchableFormData searchableDataForm(forms[0]);
 }
 
+TEST_F(WebFrameTest, ChromePageNoJavascript)
+{
+    registerMockedChromeURLLoad("history.html");
+
+    // Create and initialize the WebView.
+    TestWebFrameClient webFrameClient;
+    WebView* webView = WebView::create(0);
+    webView->settings()->setJavaScriptEnabled(true);
+    webView->initializeMainFrame(&webFrameClient);
+
+    loadChromeFrame(webView->mainFrame(), "history.html");
+    serveRequests();
+
+    // Try to run JS against the chrome-style URL.
+    WebSecurityPolicy::registerURLSchemeAsNotAllowingJavascriptURLs("chrome");
+    loadFrame(webView->mainFrame(), "javascript:", "document.body.appendChild(document.createTextNode('Clobbered'))");
+
+    // Now retrieve the frames text and see if it was clobbered.
+    std::string content = webView->mainFrame()->contentAsText(1024).utf8();
+    EXPECT_NE(std::string::npos, content.find("Simulated Chromium History Page"));
+    EXPECT_EQ(std::string::npos, content.find("Clobbered"));
 }
+
+} // namespace

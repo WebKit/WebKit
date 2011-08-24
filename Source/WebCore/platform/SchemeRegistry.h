@@ -63,6 +63,11 @@ public:
     // passed to SecurityOrigin::canDisplay.
     static bool canDisplayOnlyIfCanRequest(const String& scheme);
     static void registerAsCanDisplayOnlyIfCanRequest(const String& scheme);
+
+    // Schemes against which javascript: URLs should not be allowed to run (stop
+    // bookmarklets from running on sensitive pages). 
+    static void registerURLSchemeAsNotAllowingJavascriptURLs(const String& scheme);
+    static bool shouldTreatURLSchemeAsNotAllowingJavascriptURLs(const String& scheme);
 };
 
 } // namespace WebCore

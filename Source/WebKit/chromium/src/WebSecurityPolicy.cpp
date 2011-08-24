@@ -94,4 +94,9 @@ bool WebSecurityPolicy::shouldHideReferrer(const WebURL& url, const WebString& r
     return SecurityOrigin::shouldHideReferrer(url, referrer);
 }
 
+void WebSecurityPolicy::registerURLSchemeAsNotAllowingJavascriptURLs(const WebString& scheme)
+{
+    SchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(scheme);
+}
+
 } // namespace WebKit

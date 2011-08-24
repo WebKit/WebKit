@@ -104,6 +104,12 @@ static URLSchemesMap& canDisplayOnlyIfCanRequestSchemes()
     return canDisplayOnlyIfCanRequestSchemes;
 }
 
+static URLSchemesMap& notAllowingJavascriptURLsSchemes()
+{
+    DEFINE_STATIC_LOCAL(URLSchemesMap, notAllowingJavascriptURLsSchemes, ());
+    return notAllowingJavascriptURLsSchemes;
+}
+
 void SchemeRegistry::registerURLSchemeAsLocal(const String& scheme)
 {
     localURLSchemes().add(scheme);
@@ -190,6 +196,18 @@ bool SchemeRegistry::canDisplayOnlyIfCanRequest(const String& scheme)
 void SchemeRegistry::registerAsCanDisplayOnlyIfCanRequest(const String& scheme)
 {
     canDisplayOnlyIfCanRequestSchemes().add(scheme);
+}
+
+void SchemeRegistry::registerURLSchemeAsNotAllowingJavascriptURLs(const String& scheme) 
+{
+    notAllowingJavascriptURLsSchemes().add(scheme);
+}
+
+bool SchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(const String& scheme)
+{
+    if (scheme.isEmpty())
+        return false;
+    return notAllowingJavascriptURLsSchemes().contains(scheme);
 }
 
 } // namespace WebCore

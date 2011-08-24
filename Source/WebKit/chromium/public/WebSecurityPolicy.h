@@ -73,6 +73,10 @@ public:
     // based on their respective protocols.
     WEBKIT_EXPORT static bool shouldHideReferrer(const WebURL& url, const WebString& referrer);
 
+    // Registers an URL scheme to not allow manipulation of the loaded page
+    // by bookmarklets or javascript: URLs typed in the omnibox.
+    WEBKIT_EXPORT static void registerURLSchemeAsNotAllowingJavascriptURLs(const WebString&);
+
 private:
     WebSecurityPolicy();
 };

@@ -122,6 +122,7 @@
 #include "ResourceRequest.h"
 #include "SVGDocumentExtensions.h"
 #include "SVGSMILElement.h"
+#include "SchemeRegistry.h"
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
@@ -2293,6 +2294,10 @@ void WebFrameImpl::loadJavaScriptURL(const KURL& url)
     // the page are otherwise disabled.
 
     if (!m_frame->document() || !m_frame->page())
+        return;
+
+    // Protect privileged pages against bookmarklets and other javascript manipulations.
+    if (SchemeRegistry::shouldTreatURLSchemeAsNotAllowingJavascriptURLs(m_frame->document()->url().protocol()))
         return;
 
     String script = decodeURLEscapeSequences(url.string().substring(strlen("javascript:")));
