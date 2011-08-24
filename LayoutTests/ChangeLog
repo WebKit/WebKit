@@ -1,3 +1,13 @@
+2011-08-24  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Update expectations after r93728 and r93737.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium-cg-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Removed.
+        * platform/chromium-cg-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-08-24  Daniel Bates  <dbates@webkit.org>
 
         XSS filter bypass via document.write(location.href) and fragments
