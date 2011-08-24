@@ -167,7 +167,12 @@ DOMWindow* JSDOMWindowShell::impl() const
 
 void* JSDOMWindowShell::operator new(size_t size)
 {
-    return JSDOMWindow::commonJSGlobalData()->heap.allocate(size);
+    Heap& heap = JSDOMWindow::commonJSGlobalData()->heap;
+#if ENABLE(GC_VALIDATION)
+    ASSERT(!heap.globalData()->isInitializingObject());
+    heap.globalData()->setInitializingObject(true);
+#endif
+    return heap.allocate(size);
 }
 
 // ----

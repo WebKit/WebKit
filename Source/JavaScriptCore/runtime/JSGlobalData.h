@@ -279,6 +279,11 @@ namespace JSC {
         bool isCollectorBusy() { return heap.isBusy(); }
         void releaseExecutableMemory();
 
+#if ENABLE(GC_VALIDATION)
+        bool isInitializingObject() const; 
+        void setInitializingObject(bool);
+#endif
+
     private:
         JSGlobalData(GlobalDataType, ThreadStackType, HeapSize);
         static JSGlobalData*& sharedInstanceInternal();
@@ -287,12 +292,27 @@ namespace JSC {
         bool m_canUseJIT;
 #endif
         StackBounds m_stack;
+#if ENABLE(GC_VALIDATION)
+        bool m_isInitializingObject;
+#endif
     };
 
     inline HandleSlot allocateGlobalHandle(JSGlobalData& globalData)
     {
         return globalData.allocateGlobalHandle();
     }
+
+#if ENABLE(GC_VALIDATION)
+    inline bool JSGlobalData::isInitializingObject() const
+    {
+        return m_isInitializingObject;
+    }
+
+    inline void JSGlobalData::setInitializingObject(bool initializingObject)
+    {
+        m_isInitializingObject = initializingObject;
+    }
+#endif
 
 } // namespace JSC
 

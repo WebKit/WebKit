@@ -1,3 +1,21 @@
+2011-08-23  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Add checks to ensure allocation does not take place during initialization of GC-managed objects
+        https://bugs.webkit.org/show_bug.cgi?id=65288
+
+        Reviewed by Darin Adler.
+
+        Adding the new validation functionality.  In its current state, it will performs checks, 
+        but they don't fail unless you do allocation in the arguments to the parent constructor in the 
+        initialization list of a class.  The allocateCell() method turns on the global flag disallowing any new 
+        allocations, and the constructorBody() method in JSCell turns it off.  This way, allocation is still 
+        allowed in constructor bodies while other refactoring efforts continue.
+
+        * Plugins/Hosted/ProxyRuntimeObject.h:
+        (WebKit::ProxyRuntimeObject::create):
+        * Plugins/Hosted/ProxyRuntimeObject.mm:
+        (WebKit::ProxyRuntimeObject::ProxyRuntimeObject):
+
 2011-08-18  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Sam Weinig.

@@ -28,6 +28,7 @@
 #ifndef ProxyRuntimeObject_h
 #define ProxyRuntimeObject_h
 
+#include <WebCore/JSDOMBinding.h>
 #include <WebCore/runtime_object.h>
 
 namespace WebKit {
@@ -40,7 +41,10 @@ public:
 
     static ProxyRuntimeObject* create(JSC::ExecState* exec, JSC::JSGlobalObject* globalObject, PassRefPtr<ProxyInstance> instance)
     {
-        return new (JSC::allocateCell<ProxyRuntimeObject>(*exec->heap())) ProxyRuntimeObject(exec, globalObject, instance);
+        // FIXME: deprecatedGetDOMStructure uses the prototype off of the wrong global object.
+        // exec->globalData() is also likely wrong.
+        JSC::Structure* structure = WebCore::deprecatedGetDOMStructure<ProxyRuntimeObject>(exec);
+        return new (JSC::allocateCell<ProxyRuntimeObject>(*exec->heap())) ProxyRuntimeObject(exec, globalObject, structure, instance);
     }
 
     virtual ~ProxyRuntimeObject();
@@ -54,7 +58,7 @@ public:
 
     static const JSC::ClassInfo s_info;
 private:
-    ProxyRuntimeObject(JSC::ExecState*, JSC::JSGlobalObject*, PassRefPtr<ProxyInstance>);
+    ProxyRuntimeObject(JSC::ExecState*, JSC::JSGlobalObject*, JSC::Structure*, PassRefPtr<ProxyInstance>);
 };
 
 }

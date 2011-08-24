@@ -151,6 +151,9 @@ namespace JSC {
     protected:
         static const unsigned AnonymousSlotCount = 0;
 
+        void constructorBody(JSGlobalData&);
+        void constructorBody(JSGlobalData&, Structure*, CreatingEarlyCellTag);
+
     private:
         // Base implementation; for non-object classes implements getPropertySlot.
         virtual bool getOwnPropertySlot(ExecState*, const Identifier& propertyName, PropertySlot&);
@@ -167,12 +170,29 @@ namespace JSC {
     inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure)
         : m_structure(globalData, this, structure)
     {
-        ASSERT(m_structure);
+        constructorBody(globalData);
     }
 
     inline JSCell::JSCell(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
     {
+        constructorBody(globalData, structure, CreatingEarlyCell); 
+    }
+
+    inline void JSCell::constructorBody(JSGlobalData& globalData)
+    {
 #if ENABLE(GC_VALIDATION)
+        ASSERT(globalData.isInitializingObject());
+        globalData.setInitializingObject(false);
+#else
+        UNUSED_PARAM(globalData);
+#endif
+        ASSERT(m_structure);
+    }
+
+    inline void JSCell::constructorBody(JSGlobalData& globalData, Structure* structure, CreatingEarlyCellTag)
+    {
+#if ENABLE(GC_VALIDATION)
+        globalData.setInitializingObject(false);
         if (structure)
 #endif
             m_structure.setEarlyValue(globalData, this, structure);
@@ -349,6 +369,10 @@ namespace JSC {
 
     template <typename T> void* allocateCell(Heap& heap)
     {
+#if ENABLE(GC_VALIDATION)
+        ASSERT(!heap.globalData()->isInitializingObject());
+        heap.globalData()->setInitializingObject(true);
+#endif
         return heap.allocate(sizeof(T));
     }
         

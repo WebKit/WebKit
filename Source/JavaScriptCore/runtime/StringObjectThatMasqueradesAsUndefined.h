@@ -35,8 +35,8 @@ namespace JSC {
         static StringObjectThatMasqueradesAsUndefined* create(ExecState* exec, const UString& string)
         {
             JSString* newString = jsString(exec, string);
-            return new (allocateCell<StringObjectThatMasqueradesAsUndefined>(*exec->heap())) StringObjectThatMasqueradesAsUndefined(exec,
-                createStructure(exec->globalData(), exec->lexicalGlobalObject()->stringPrototype()), newString);
+            Structure* structure = createStructure(exec->globalData(), exec->lexicalGlobalObject()->stringPrototype());
+            return new (allocateCell<StringObjectThatMasqueradesAsUndefined>(*exec->heap())) StringObjectThatMasqueradesAsUndefined(exec, structure, newString);
         }
 
     private:

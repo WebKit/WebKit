@@ -201,6 +201,9 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 #ifndef NDEBUG
     , exclusiveThread(0)
 #endif
+#if ENABLE(GC_VALIDATION)
+    , m_isInitializingObject(false)
+#endif
 {
     interpreter = new Interpreter;
     if (globalDataType == Default)
