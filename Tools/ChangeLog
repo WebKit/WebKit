@@ -1,3 +1,11 @@
+2011-08-24  Anton D'Auria  <adauria@apple.com>
+
+        No review necessary.
+
+        Adding myself to list of committers.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-08-24  Avi Drissman  <avi@google.com>
 
         Crash when restoring NSGraphicsContext when running the Chromium GPU layout tests on Mac
