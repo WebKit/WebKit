@@ -90,7 +90,7 @@ test('SuspiciousCommit', 2, function() {
     equal(suspiciousCommit.innerHTML, '<div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul>');
 });
 
-test('TestFailures', 8, function() {
+test('TestFailures', 10, function() {
     var testFailures = new ui.notifications.TestFailures();
     equal(testFailures.tagName, 'LI');
     equal(testFailures.innerHTML,
@@ -105,6 +105,7 @@ test('TestFailures', 8, function() {
             '<li><button>Examine</button></li>' +
         '</ul>');
     testFailures.addFailureAnalysis({testName: 'test'});
+    equal(testFailures.index(), 0);
     equal(testFailures.innerHTML,
         '<time class="relative">Just now</time>' +
         '<div class="what">' +
@@ -138,6 +139,7 @@ test('TestFailures', 8, function() {
     var time = new Date();
     time.setMinutes(time.getMinutes() - 10);
     testFailures.addCommitData({revision: 1, time: time, title: "title", author: "author", reviewer: "reviewer"});
+    equal(testFailures.index(), time.getTime());
     equal(testFailures.innerHTML,
         '<time class="relative">10 minutes ago</time>' +
         '<div class="what">' +

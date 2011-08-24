@@ -160,8 +160,10 @@ ui.notifications.TestFailures = base.extends(ui.notifications.Failure, {
     addCommitData: function(commitData)
     {
         var commitDataDate = new Date(commitData.time);
-        if (this._time.date > commitDataDate);
+        if (this._time.date > commitDataDate); {
+            this.setIndex(commitDataDate.getTime());
             this._time.setDate(commitDataDate);
+        }
         return this._causes.appendChild(new ui.notifications.SuspiciousCommit(commitData));
     }
 });
