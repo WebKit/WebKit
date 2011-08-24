@@ -33,7 +33,8 @@
 }
 
 - (NSTextInputContext *)_inputContext;
-- (BOOL)_interpretKeyEvent:(NSEvent *)event string:(NSString **)string;
+- (BOOL)_hasMarkedText;
+- (BOOL)_interpretKeyEvent:(NSEvent *)event usingLegacyCocoaTextInput:(BOOL)usingLegacyCocoaTextInput string:(NSString **)string;
 
 @end
 
@@ -81,7 +82,7 @@
     [self orderOut:nil];
 }
 
-- (BOOL)_interpretKeyEvent:(NSEvent *)event string:(NSString **)string
+- (BOOL)_interpretKeyEvent:(NSEvent *)event usingLegacyCocoaTextInput:(BOOL)usingLegacyCocoaTextInput string:(NSString **)string
 {
     BOOL hadMarkedText = [_inputTextView hasMarkedText];
  
@@ -122,6 +123,11 @@
     return [_inputTextView inputContext];
 }
 
+- (BOOL)_hasMarkedText
+{
+    return [_inputTextView hasMarkedText];
+}
+
 @end
 
 @implementation WKTextInputWindowController
@@ -151,9 +157,14 @@
     return [_panel _inputContext];
 }
 
-- (BOOL)interpretKeyEvent:(NSEvent *)event string:(NSString **)string
+- (BOOL)hasMarkedText
 {
-    return [_panel _interpretKeyEvent:event string:string];
+    return [_panel _hasMarkedText];
+}
+
+- (BOOL)interpretKeyEvent:(NSEvent *)event usingLegacyCocoaTextInput:(BOOL)usingLegacyCocoaTextInput string:(NSString **)string
+{
+    return [_panel _interpretKeyEvent:event usingLegacyCocoaTextInput:usingLegacyCocoaTextInput string:string];
 }
 
 - (void)keyboardInputSourceChanged

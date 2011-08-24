@@ -1,3 +1,22 @@
+2011-08-23  Anders Carlsson  <andersca@apple.com>
+
+        Prepare WKTextInputWindowController for the new text input model
+        https://bugs.webkit.org/show_bug.cgi?id=66826
+
+        Reviewed by Sam Weinig.
+
+        Add -[WKTextInputWindowController hasMarkedText] and make interpretKeyEvent take an
+        additional usingLegacyCocoaTextInput flag. No functionality change.
+
+        * UIProcess/API/mac/WKTextInputWindowController.h:
+        * UIProcess/API/mac/WKTextInputWindowController.mm:
+        (-[WKTextInputPanel _interpretKeyEvent:usingLegacyCocoaTextInput:string:]):
+        (-[WKTextInputPanel _hasMarkedText]):
+        (-[WKTextInputWindowController hasMarkedText]):
+        (-[WKTextInputWindowController interpretKeyEvent:usingLegacyCocoaTextInput:string:]):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView keyDown:]):
+
 2011-08-23  Gopal Raghavan  <gopal.1.raghavan@nokia.com>
 
         [Qt] Unnecessary folders in WebKit2.

@@ -1252,7 +1252,7 @@ static const short kIOHIDEventTypeScroll = 6;
     if (_data->_pluginComplexTextInputIdentifier) {
         // Try feeding the keyboard event directly to the plug-in.
         NSString *string = nil;
-        if ([[WKTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:theEvent string:&string]) {
+        if ([[WKTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:theEvent usingLegacyCocoaTextInput:NO string:&string]) {
             if (string)
                 _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, string);
             return;
