@@ -910,47 +910,25 @@ bool RenderThemeQt::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
 {
     StylePainter p(this, pi);
     if (!p.isValid())
-       return true;
+        return true;
 
     QStyleOptionSlider option;
     initStyleOption(p.widget, option);
-    option.subControls = QStyle::SC_SliderGroove | QStyle::SC_SliderHandle;
+    option.subControls = QStyle::SC_SliderGroove;
     ControlPart appearance = initializeCommonQStyleOptions(option, o);
-
-    RenderSlider* renderSlider = toRenderSlider(o);
-    HTMLInputElement* input = renderSlider->node()->toInputElement();
-    IntRect thumbRect = sliderThumbElementOf(input)->getRect();
-
     option.rect = r;
-
-    int value;
-    if (appearance == SliderVerticalPart) {
-        option.maximum = r.height() - thumbRect.height();
-        value = thumbRect.y() - r.y();
-    } else {
-        option.maximum = r.width() - thumbRect.width();
-        value = thumbRect.x() - r.x();
-    }
-
-    value = QStyle::sliderValueFromPosition(0, option.maximum, value, option.maximum);
-
-    option.sliderValue = value;
-    option.sliderPosition = value;
     if (appearance == SliderVerticalPart)
         option.orientation = Qt::Vertical;
-
-    if (renderSlider->inDragMode()) {
-        option.activeSubControls = QStyle::SC_SliderHandle;
+    if (isPressed(o))
         option.state |= QStyle::State_Sunken;
-    }
-
-    const QPoint topLeft = r.location();
-    p.painter->translate(topLeft);
-    option.rect.moveTo(QPoint(0, 0));
-    option.rect.setSize(r.size());
 
     p.drawComplexControl(QStyle::CC_Slider, option);
-    p.painter->translate(-topLeft);
+
+    if (option.state & QStyle::State_HasFocus) {
+        QStyleOptionFocusRect focusOption;
+        focusOption.rect = r;
+        p.drawPrimitive(QStyle::PE_FrameFocusRect, focusOption);
+    }
 
     return false;
 }
@@ -963,7 +941,24 @@ void RenderThemeQt::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style
 bool RenderThemeQt::paintSliderThumb(RenderObject* o, const PaintInfo& pi,
                                      const IntRect& r)
 {
-    // We've already painted it in paintSliderTrack(), no need to do anything here.
+    StylePainter p(this, pi);
+    if (!p.isValid())
+        return true;
+
+    QStyleOptionSlider option;
+    initStyleOption(p.widget, option);
+    option.subControls = QStyle::SC_SliderHandle;
+    ControlPart appearance = initializeCommonQStyleOptions(option, o);
+    option.rect = r;
+    if (appearance == SliderThumbVerticalPart)
+        option.orientation = Qt::Vertical;
+    if (isPressed(o)) {
+        option.activeSubControls = QStyle::SC_SliderHandle;
+        option.state |= QStyle::State_Sunken;
+    }
+
+    p.drawComplexControl(QStyle::CC_Slider, option);
+
     return false;
 }
 

@@ -1,3 +1,27 @@
+2011-08-24  Tatiana Meshkova  <tatiana.meshkova@nokia.com>
+
+        Paint SliderTrack and SliderThumb independently.
+        https://bugs.webkit.org/show_bug.cgi?id=50453
+        Also fixes https://bugs.webkit.org/show_bug.cgi?id=65456 crash.
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        RenderSlider works only with <input type=range>. Nowadays RenderTheme
+        supports painting of SliderTrack and SliderThumb without range input.
+        In order to be in sync with other platforms this patch gets rid of
+        upcasting in RenderThemeQt::paintSliderTrack and allows to paint
+        SliderTrack and SliderThumb independently.
+
+        Test: platform/qt/fast/forms/range/slider-crash.html
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintSliderTrack): Draw SC_SliderGroove.
+        Allow paintSliderThumb() to care about SC_SliderHandle. We don't need
+        to setup value and position anymore, since handle is drawn separately.
+        Draw focus explicitly, since QStyleOptionSlider doesn't allow to focus
+        on CC_Slider without handle subcontrol.
+        (WebCore::RenderThemeQt::paintSliderThumb): Draw SC_SliderHandle.
+
 2011-08-23  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: annotate and prepare for compilation first 14 JavaScript files within 4 modules.

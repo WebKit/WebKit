@@ -1,3 +1,17 @@
+2011-08-24  Tatiana Meshkova  <tatiana.meshkova@nokia.com>
+
+        Pixel crash test for RenderThemeQt::paintSliderTrack.
+        https://bugs.webkit.org/show_bug.cgi?id=50453
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Support -webkit-appearance: slider-horizontal/vertical
+        painting without range input.
+
+        * platform/qt/fast/forms/range/slider-crash-expected.png: Added.
+        * platform/qt/fast/forms/range/slider-crash-expected.txt: Added.
+        * platform/qt/fast/forms/range/slider-crash.html: Added.
+
 2011-08-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Unreviewed, fix chromium expectations for fast/preloader/script.html.
