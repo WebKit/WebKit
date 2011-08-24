@@ -238,6 +238,9 @@ public:
 
     RenderStyle* computedStyle(PseudoId = NOPSEUDO);
 
+    void setStyleAffectedByEmpty();
+    bool styleAffectedByEmpty() const;
+
     AtomicString computeInheritedLanguage() const;
 
     void dispatchAttrRemovalEvent(Attribute*);
