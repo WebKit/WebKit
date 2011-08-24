@@ -1,5 +1,13 @@
 2011-08-24  Pavel Podivilov  <podivilov@chromium.org>
 
+         Unreviewed, chromium rebaseline for gradient-after-transparent-border.
+
+        * platform/chromium-cg-mac-leopard/fast/gradients/gradient-after-transparent-border-expected.png:
+        * platform/chromium-cg-mac/fast/gradients/gradient-after-transparent-border-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-08-24  Pavel Podivilov  <podivilov@chromium.org>
+
         Unreviewed, update test expectations for svg/custom/stroke-opacity-update.
 
         * platform/chromium-linux/svg/custom/stroke-opacity-update-expected.png: Added.

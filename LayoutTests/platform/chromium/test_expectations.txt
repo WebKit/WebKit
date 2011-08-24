@@ -3604,10 +3604,6 @@ BUGZMO SKIP : fast/loader/reload-zero-byte-plugin.html = FAIL
 
 BUGWK65666 LINUX WIN : fast/box-shadow/box-shadow-clipped-slices.html = IMAGE
 
-// Might need rebaseline.
-BUGJIANLI MAC WIN : fast/preloader/script.html = PASS TEXT
-BUGJIANLI MAC : fast/gradients/gradient-after-transparent-border.html = IMAGE
-
 // These tests were disabled and re-enabled in r92545 and r92550.
 // Unfortunately they are failing for us.
 BUGWK63186 LINUX WIN : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT
