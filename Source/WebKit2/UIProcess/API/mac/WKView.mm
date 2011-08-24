@@ -1242,6 +1242,22 @@ static const short kIOHIDEventTypeScroll = 6;
     _data->_page->handleKeyboardEvent(NativeWebKeyboardEvent(theEvent, self));
 }
 
+- (BOOL)_tryHandlePluginComplexTextInputKeyDown:(NSEvent *)event
+{
+    if (!_data->_pluginComplexTextInputIdentifier)
+        return NO;
+
+    // Try feeding the keyboard event directly to the plug-in.
+    NSString *string = nil;
+    if ([[WKTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:event usingLegacyCocoaTextInput:YES string:&string]) {
+        if (string)
+            _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, string);
+        return YES;
+    }
+
+    return NO;
+}
+
 - (void)keyDown:(NSEvent *)theEvent
 {
     // There's a chance that responding to this event will run a nested event loop, and
@@ -1249,15 +1265,8 @@ static const short kIOHIDEventTypeScroll = 6;
     // the current event prevents that from causing a problem inside WebKit or AppKit code.
     [[theEvent retain] autorelease];
 
-    if (_data->_pluginComplexTextInputIdentifier) {
-        // Try feeding the keyboard event directly to the plug-in.
-        NSString *string = nil;
-        if ([[WKTextInputWindowController sharedTextInputWindowController] interpretKeyEvent:theEvent usingLegacyCocoaTextInput:NO string:&string]) {
-            if (string)
-                _data->_page->sendComplexTextInputToPlugin(_data->_pluginComplexTextInputIdentifier, string);
-            return;
-        }
-    }
+    if ([self _tryHandlePluginComplexTextInputKeyDown:theEvent])
+        return;
 
     // We could be receiving a key down from AppKit if we have re-sent an event
     // that maps to an action that is currently unavailable (for example a copy when
@@ -2057,12 +2066,20 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
 }
 
-- (void)_doneWithKeyEvent:(const WebKit::NativeWebKeyboardEvent&)event eventWasHandled:(BOOL)eventWasHandled
+- (BOOL)_tryPostProcessPluginComplexTextInputKeyDown:(NSEvent *)event
 {
-    NSEvent* nativeEvent = event.nativeEvent();
-    if ([nativeEvent type] != NSKeyDown)
+    // FIXME: Implement.
+    return NO;
+}
+
+- (void)_doneWithKeyEvent:(NSEvent *)event eventWasHandled:(BOOL)eventWasHandled
+{
+    if ([event type] != NSKeyDown)
         return;
 
+    if ([self _tryPostProcessPluginComplexTextInputKeyDown:event])
+        return;
+    
     if (eventWasHandled) {
         [NSCursor setHiddenUntilMouseMoves:YES];
         return;
@@ -2072,9 +2089,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     RetainPtr<WKView> protector(self);
 
     ASSERT(!_data->_keyDownEventBeingResent);
-    _data->_keyDownEventBeingResent = nativeEvent;
-    [NSApp _setCurrentEvent:nativeEvent];
-    [NSApp sendEvent:nativeEvent];
+    _data->_keyDownEventBeingResent = event;
+    [NSApp _setCurrentEvent:event];
+    [NSApp sendEvent:event];
 
     _data->_keyDownEventBeingResent = nullptr;
 }

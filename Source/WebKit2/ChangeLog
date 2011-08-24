@@ -1,3 +1,22 @@
+2011-08-24  Anders Carlsson  <andersca@apple.com>
+
+        More plug-in complex text input scaffolding
+        https://bugs.webkit.org/show_bug.cgi?id=66865
+
+        Reviewed by Sam Weinig.
+
+        Make -[WKView _doneWithKeyEvent:eventWasHandled:] take an NSEvent * directly. Also
+        add methods for handling plug-in text input key-down events.
+
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView _tryHandlePluginComplexTextInputKeyDown:]):
+        (-[WKView keyDown:]):
+        (-[WKView _tryPostProcessPluginComplexTextInputKeyDown:]):
+        (-[WKView _doneWithKeyEvent:eventWasHandled:]):
+        * UIProcess/API/mac/WKViewInternal.h:
+
 2011-08-24  Amruth Raj  <amruthraj@motorola.com>
 
         [GTK] WebProcess crash on hitting assertion m_isWaitingForDidUpdate in DrawingAreaImpl

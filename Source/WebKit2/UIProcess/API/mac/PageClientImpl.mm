@@ -300,7 +300,7 @@ IntRect PageClientImpl::windowToScreen(const IntRect& rect)
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent& event, bool eventWasHandled)
 {
-    [m_wkView _doneWithKeyEvent:event eventWasHandled:eventWasHandled];
+    [m_wkView _doneWithKeyEvent:event.nativeEvent() eventWasHandled:eventWasHandled];
 }
 
 PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
