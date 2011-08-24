@@ -1,3 +1,11 @@
+2011-08-23  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Organize SLOW section of expectations.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-24  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, rebaselining media/video-currentTime-set.html due to

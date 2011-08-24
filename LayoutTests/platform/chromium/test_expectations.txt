@@ -6,63 +6,28 @@
 // SLOW TESTS
 // -----------------------------------------------------------------
 
-BUGCR24182 SLOW : fast/js/regexp-overflow.html = PASS
-BUGCR24182 SLOW RELEASE : http/tests/misc/DOMContentLoaded-event.html = PASS
-BUGCR24182 SLOW LINUX WIN : http/tests/local/file-url-sent-as-referer.html = PASS
-BUGCR24182 SLOW LINUX DEBUG : http/tests/misc/DOMContentLoaded-event.html = PASS
-BUGCR24182 SLOW : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
-BUGCR24182 SLOW : tables/mozilla/other/slashlogo.html = PASS
-BUGCR24182 SLOW WIN RELEASE : tables/mozilla/bugs/bug113235-1.html = PASS
-BUGCR24182 SLOW DEBUG : fast/js/toString-and-valueOf-override.html = PASS
-
-// This tests is normally <1 second, but occasionally takes >20s.
-BUGCR24182 SLOW WIN RELEASE : fast/dom/Window/webkitConvertPoint.html = PASS
-
-BUGCR24182 WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TIMEOUT
-BUGCR24182 SLOW MAC RELEASE : dom/html/level2/html/HTMLImageElement01.html = PASS
-BUGCR24182 SLOW LINUX DEBUG : fast/xpath/4XPath/Borrowed/cz_20030217.html = PASS
-//BUGCR24852 started failing since webkit 49583
-BUGCR24182 SLOW WIN : http/tests/security/xssAuditor/meta-tag-http-refresh-javascript-url.html = PASS
-BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
-BUGCR24182 SLOW WIN RELEASE : fast/loader/local-CSS-from-local.html = PASS
-BUGCR24182 SLOW WIN RELEASE : http/tests/incremental/split-hex-entities.pl = PASS
-BUGCR24182 SLOW WIN RELEASE : http/tests/xmlhttprequest/XMLHttpRequestException.html = PASS
-BUGCR24182 SLOW WIN RELEASE : http/tests/xmlhttprequest/connection-error-sync.html = PASS
+BUGCR24182 SLOW LINUX MAC DEBUG : fast/forms/form-associated-element-crash3.html = PASS
+BUGCR24182 SLOW LINUX WIN : fast/js/regexp-overflow.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : fast/js/toString-and-valueOf-override.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : html5lib/webkit-resumer.html = PASS
 BUGCR24182 SLOW WIN RELEASE : http/tests/loading/onload-vs-immediate-refresh.pl = PASS
-BUGCR24182 SLOW : http/tests/cache/subresource-failover-to-network.html = PASS
-BUGCR24182 SLOW WIN DEBUG : fast/parser/block-nesting-cap.html = PASS
-
-BUGCR24182 SLOW DEBUG : perf/array-push-pop.html = PASS
-BUGCR24182 SLOW : perf/array-reverse.html = PASS
-
-// Usually <1s in release, ~1s in debug, but occasionally >5s in release.
-BUGCR27335 XP RELEASE : plugins/embed-attributes-setting.html = PASS TIMEOUT
-BUGCR27335 SLOW XP DEBUG : plugins/embed-attributes-setting.html = PASS
-
-// --- collecting results for supported-xml-content-types.html ---
-// was slow, started to timeout
-BUGCR18702 WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS TIMEOUT
-
-BUGCR36539 SLOW : http/tests/misc/uncacheable-script-repeated.html = PASS
-
-BUGCR32018 SLOW : http/tests/websocket/tests/hixie76/frame-lengths.html = PASS
-BUGCR32018 SLOW : http/tests/websocket/tests/hybi/frame-lengths.html = PASS
-BUGCR69513 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
-
-BUGWK55913 SLOW RELEASE : jquery/effects.html = PASS
-BUGWK55913 DEBUG : jquery/effects.html = TIMEOUT
-BUGWK55913 SLOW DEBUG : jquery/attributes.html = PASS
-BUGWK55913 SLOW DEBUG : jquery/core.html = PASS
-BUGWK55913 SLOW DEBUG : jquery/event.html = PASS
-BUGWK55913 DEBUG : jquery/manipulation.html = PASS TIMEOUT
-BUGWK55913 SLOW DEBUG : jquery/offset.html = PASS
-BUGWK55913 SLOW DEBUG : jquery/traversing.html = PASS
-BUGWK55913 DEBUG : jquery/dimensions.html = PASS TIMEOUT
-BUGWK55913 LINUX MAC DEBUG : jquery/data.html = PASS TIMEOUT
-
-BUGWK64498 SLOW DEBUG : fast/encoding/parser-tests-40.html = PASS
-BUGWK64502 SLOW DEBUG : fast/forms/form-associated-element-crash3.html = PASS
-WONTFIX SLOW : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
+BUGCR24182 SLOW WIN DEBUG : http/tests/loading/redirect-methods.html = PASS
+BUGCR24182 SLOW WIN : http/tests/local/file-url-sent-as-referer.html = PASS
+BUGCR24182 SLOW WIN DEBUG : http/tests/misc/uncacheable-script-repeated.html = PASS
+BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
+BUGCR24182 SLOW WIN DEBUG : http/tests/websocket/tests/hixie76/simple-stress.html = PASS
+BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
+BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : jquery/attributes.html = PASS
+BUGCR24182 LINUX WIN DEBUG : jquery/core.html = PASS TIMEOUT
+BUGCR24182 SLOW DEBUG : jquery/data.html = PASS
+BUGCR24182 SLOW DEBUG : jquery/dimensions.html = PASS
+BUGCR24182 DEBUG : jquery/event.html = PASS TIMEOUT
+BUGCR24182 SLOW DEBUG : jquery/manipulation.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : jquery/offset.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : jquery/traversing.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-push-pop.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
 
 // -----------------------------------------------------------------
 // SKIPPED TESTS
@@ -668,10 +633,14 @@ BUGJAMESR LINUX WIN : inspector/styles/styles-disable-then-delete.html = PASS TI
 
 BUGCR77630 SLOW LINUX WIN DEBUG : inspector/debugger/debugger-activation-crash.html = PASS TEXT
 
-BUGWK60107 LINUX WIN : inspector/console/console-object-constructor-name.html = PASS TIMEOUT TEXT
-BUGWK60107 LINUX WIN : inspector/console/console-log-before-inspector-open.html = PASS TIMEOUT TEXT
-BUGWK60107 LINUX WIN : inspector/console/console-tests.html = PASS TIMEOUT TEXT
-BUGWK60107 LINUX WIN : inspector/console/console-clear.html = PASS TEXT
+BUGWK60107 LINUX WIN RELEASE : inspector/console/console-object-constructor-name.html = PASS TEXT
+BUGWK60107 LINUX WIN RELEASE : inspector/console/console-log-before-inspector-open.html = PASS TEXT
+BUGWK60107 LINUX WIN RELEASE : inspector/console/console-tests.html = PASS TEXT
+BUGWK60107 LINUX WIN RELEASE : inspector/console/console-clear.html = PASS TEXT
+BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-object-constructor-name.html = PASS TEXT
+BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-log-before-inspector-open.html = PASS TEXT
+BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-tests.html = PASS TEXT
+BUGWK60107 SLOW LINUX WIN DEBUG : inspector/console/console-clear.html = PASS TEXT
 
 BUGWK60109 LINUX WIN RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
 BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
@@ -1455,8 +1424,6 @@ BUGCR9798 SLOW LINUX RELEASE : transitions/transition-timing-function.html = PAS
 BUGCR9798 WIN RELEASE : http/tests/xmlhttprequest/small-chunks-response-text.html = PASS TIMEOUT
 BUGCR9798 LINUX : svg/custom/use-property-changes-through-svg-dom.svg = FAIL
 BUGCR9798 LINUX : svg/custom/js-update-transform-changes.svg = FAIL
-// Occasionally times out. Not just slow.
-BUGCR76018 BUGCR9798 WIN DEBUG : http/tests/loading/redirect-methods.html = PASS CRASH TIMEOUT
 
 // New tests or failures from WebKit merge 42324:42364. Re-baselined on
 // Windows. Probably just need the same on other platforms.
@@ -1724,10 +1691,6 @@ BUGCR31991 LINUX WIN : fast/text/international/bidi-layout-across-linebreak.html
 BUGCR31252 : http/tests/security/listener/xss-inactive-closure.html = TEXT
 
 BUGCR31623 WIN : http/tests/appcache/remove-cache.html = PASS TIMEOUT TEXT
-
-// WebKit roll 52852 -> 52867
-BUGCR32018 DEBUG : http/tests/websocket/tests/hixie76/simple-stress.html = PASS TIMEOUT TEXT
-BUGCR32018 DEBUG : http/tests/websocket/tests/hybi/simple-stress.html = PASS TIMEOUT TEXT
 
 // V8's implementation of getOwnPropertyNames has different results for built-in
 // functions.
@@ -2914,6 +2877,7 @@ BUGWK60094 : fast/encoding/parser-tests.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-10.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-20.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-30.html = PASS TIMEOUT
+BUGWK60094 DEBUG : fast/encoding/parser-tests-40.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-50.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-60.html = PASS TIMEOUT
 BUGWK60094 : fast/encoding/parser-tests-70.html = PASS TIMEOUT
@@ -3688,9 +3652,12 @@ BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/connect-compositing-iframe-dela
 BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/connect-compositing-iframe3.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/iframe-resize.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/repaint-after-losing-scrollbars.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/overflow/fixed-position-ancestor-clip.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : compositing/scaling/tiled-layer-recursion.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/layout-width-change.html = PASS CRASH
 
 BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
+
+BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TEXT
