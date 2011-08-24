@@ -2701,7 +2701,9 @@ BUGCR72223 : media/video-frame-accurate-seek.html = PASS IMAGE
 
 BUGWK53868 : fast/notifications/notifications-document-close-crash.html = PASS TEXT
 
-BUGWK54051 MAC : plugins/invalidate_rect.html = TEXT
+BUGWK54051 MAC CPU : plugins/invalidate_rect.html = TEXT
+BUGWK54051 LEOPARD GPU : plugins/invalidate_rect.html = TEXT
+BUGWK54051 SNOWLEOPARD GPU : plugins/invalidate_rect.html = TEXT CRASH
 BUGWK54051 MAC : plugins/windowless_plugin_paint_test.html = TIMEOUT
 
 // Snow Leopard-only failures (generally just need updated pixel results)
@@ -3690,9 +3692,16 @@ BUGWK66217 WIN : http/tests/inspector/resource-tree/resource-tree-errors-reload.
 
 BUGWK66738 SLOW WIN RELEASE : http/tests/inspector/network/download.html = PASS
 
-BUGWK66740 MAC SNOWLEOPARD GPU : compositing/geometry/ancestor-overflow-change.html = PASS CRASH
-BUGWK66740 MAC SNOWLEOPARD GPU : compositing/scaling/tiled-layer-recursion.html = PASS CRASH
-BUGWK66740 MAC SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing.html = PASS CRASH
-BUGWK66740 MAC SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/geometry/ancestor-overflow-change.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/geometry/fixed-in-composited.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/geometry/limit-layer-bounds-transformed-overflow.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/connect-compositing-iframe-delayed.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/connect-compositing-iframe3.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/iframe-resize.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/iframes/repaint-after-losing-scrollbars.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : compositing/scaling/tiled-layer-recursion.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/layout-width-change.html = PASS CRASH
 
 BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
