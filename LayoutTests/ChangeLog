@@ -1,5 +1,14 @@
 2011-08-23  Ben Wells  <benwells@chromium.org>
 
+        Extra baseline for bug 66442 (skia webkit-transform breaks webkit-mask)
+        https://bugs.webkit.org/show_bug.cgi?id=66833
+
+        Reviewed by Kenneth Russell.
+
+        * platform/chromium-gpu-linux/compositing/masks/multiple-masks-expected.png: Added.
+
+2011-08-23  Ben Wells  <benwells@chromium.org>
+
         Rebaselines for bug 66036 (fills with various canvas compositing modes)
         https://bugs.webkit.org/show_bug.cgi?id=66824
 
