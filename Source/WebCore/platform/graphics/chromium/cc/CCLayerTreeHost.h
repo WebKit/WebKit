@@ -118,6 +118,9 @@ public:
     // Temporary home for the non-threaded rendering path.
 #if !USE(THREADED_COMPOSITING)
     void composite(bool finish);
+
+    void loseCompositorContext();
+
     LayerRendererChromium* layerRenderer() const { return m_layerRenderer.get(); }
 #endif
 

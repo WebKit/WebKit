@@ -1,3 +1,17 @@
+2011-08-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Need a way to test lost compositor context recovery
+        https://bugs.webkit.org/show_bug.cgi?id=66820
+
+        Reviewed by Kenneth Russell.
+
+        Adds a testing-only API to simulate a lost compositor context.
+
+        * public/WebView.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::loseCompositorContext):
+        * src/WebViewImpl.h:
+
 2011-08-23  Nat Duca  <nduca@chromium.org>
 
         [chromium] Implement CCThread in terms of WebThread

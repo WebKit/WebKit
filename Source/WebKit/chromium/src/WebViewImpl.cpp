@@ -1186,6 +1186,14 @@ void WebViewImpl::composite(bool finish)
 #endif
 }
 
+void WebViewImpl::loseCompositorContext()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_layerTreeHost)
+        m_layerTreeHost->loseCompositorContext();
+#endif
+}
+
 const WebInputEvent* WebViewImpl::m_currentInputEvent = 0;
 
 bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)

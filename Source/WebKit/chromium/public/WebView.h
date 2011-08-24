@@ -390,6 +390,11 @@ public:
 
     virtual void exitFullscreen() = 0;
 
+    // Testing functionality for LayoutTestController -----------------------
+
+    // Simulates a compositor lost context.
+    virtual void loseCompositorContext() = 0;
+
 
 protected:
     ~WebView() {}

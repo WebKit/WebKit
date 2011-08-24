@@ -1,3 +1,18 @@
+2011-08-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Need a way to test lost compositor context recovery
+        https://bugs.webkit.org/show_bug.cgi?id=66820
+
+        Reviewed by Kenneth Russell.
+
+        Exposes a LayoutTestController interface in chromium to simulate a
+        lost compositor context.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::loseCompositorContext):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-08-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Change garden-o-matic frontend builder array to be a configuration map.

@@ -1,3 +1,16 @@
+2011-08-23  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Need a way to test lost compositor context recovery
+        https://bugs.webkit.org/show_bug.cgi?id=66820
+
+        Reviewed by Kenneth Russell.
+
+        Adds a simple test for losing the compositor context in a recoverable
+        way on a composited page. Tests that we recover without crashing and
+        render the updated content on the next frame.
+
+        * platform/chromium/compositing/lost-compositor-context.html: Added.
+
 2011-08-23  Adam Barth  <abarth@webkit.org>
 
         Fix baselines for fast/block/float/fit_line_below_floats.html.  I forgot Windows in my previous patch.

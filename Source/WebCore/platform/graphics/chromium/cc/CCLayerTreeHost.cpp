@@ -134,7 +134,7 @@ void CCLayerTreeHost::compositeAndReadback(void *pixels, const IntRect& rect)
 #if USE(THREADED_COMPOSITING)
     // FIXME: need to implement this.
 #else
-    doComposite();
+    composite(false);
     m_layerRenderer->getFramebufferPixels(pixels, rect);
 #endif
 }
@@ -273,6 +273,11 @@ void CCLayerTreeHost::composite(bool finish)
         m_recreatingGraphicsContext = true;
         setNeedsCommitAndRedraw();
     }
+}
+
+void CCLayerTreeHost::loseCompositorContext()
+{
+    m_recreatingGraphicsContext = true;
 }
 
 void CCLayerTreeHost::reallocateRenderer()

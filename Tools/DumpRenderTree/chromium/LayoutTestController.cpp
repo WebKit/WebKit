@@ -118,6 +118,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("hasSpellingMarker", &LayoutTestController::hasSpellingMarker);
     bindMethod("isCommandEnabled", &LayoutTestController::isCommandEnabled);
     bindMethod("layerTreeAsText", &LayoutTestController::layerTreeAsText);
+    bindMethod("loseCompositorContext", &LayoutTestController::loseCompositorContext);
     bindMethod("markerTextForListItem", &LayoutTestController::markerTextForListItem);
     bindMethod("notifyDone", &LayoutTestController::notifyDone);
     bindMethod("numberOfActiveAnimations", &LayoutTestController::numberOfActiveAnimations);
@@ -1719,6 +1720,11 @@ void LayoutTestController::addMockSpeechInputResult(const CppArgumentList& argum
 void LayoutTestController::layerTreeAsText(const CppArgumentList& args, CppVariant* result)
 {
     result->set(m_shell->webView()->mainFrame()->layerTreeAsText(m_showDebugLayerTree).utf8());
+}
+
+void LayoutTestController::loseCompositorContext(const CppArgumentList&, CppVariant*)
+{
+    m_shell->webView()->loseCompositorContext();
 }
 
 void LayoutTestController::markerTextForListItem(const CppArgumentList& args, CppVariant* result)

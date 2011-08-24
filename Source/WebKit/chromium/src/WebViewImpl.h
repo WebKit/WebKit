@@ -406,6 +406,8 @@ public:
     void resetGestureRecognizer();
 #endif
 
+    void loseCompositorContext();
+
 private:
     friend class WebView;  // So WebView::Create can call our constructor
     friend class WTF::RefCounted<WebViewImpl>;
