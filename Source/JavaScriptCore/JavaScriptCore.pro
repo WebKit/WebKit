@@ -79,6 +79,7 @@ SOURCES += \
     heap/MarkedBlock.cpp \
     heap/NewSpace.cpp \
     heap/OldSpace.cpp \
+    heap/WriteBarrierSupport.cpp \
     debugger/DebuggerActivation.cpp \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \

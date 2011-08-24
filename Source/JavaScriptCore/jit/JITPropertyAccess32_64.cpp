@@ -259,7 +259,7 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     
     addSlowCase(branch32(NotEqual, regT3, TrustedImm32(JSValue::Int32Tag)));
     emitJumpSlowCaseIfNotJSCell(base, regT1);
-    emitWriteBarrier(regT0, regT1);
+    emitWriteBarrier(regT0, regT1, WriteBarrierForPropertyAccess);
     addSlowCase(branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsArrayVPtr)));
     addSlowCase(branch32(AboveOrEqual, regT2, Address(regT0, JSArray::vectorLengthOffset())));
     
@@ -395,7 +395,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     
     emitJumpSlowCaseIfNotJSCell(base, regT1);
     
-    emitWriteBarrier(regT0, regT1);
+    emitWriteBarrier(regT0, regT1, WriteBarrierForPropertyAccess);
     
     BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
     
@@ -521,7 +521,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
 #endif
     }
 
-    emitWriteBarrier(regT0, regT1);
+    emitWriteBarrier(regT0, regT1, WriteBarrierForPropertyAccess);
 
     storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
 #if CPU(MIPS) || CPU(SH4) || CPU(ARM)
@@ -1051,7 +1051,7 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, next)), regT2);
     loadPtr(Address(regT2, OBJECT_OFFSETOF(ScopeChainNode, object)), regT2);
 
-    emitWriteBarrier(regT2, regT3);
+    emitWriteBarrier(regT2, regT3, WriteBarrierForVariableAccess);
 
     loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
     emitStore(index, regT1, regT0, regT2);
@@ -1082,18 +1082,23 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
     emitLoad(value, regT1, regT0);
     move(TrustedImmPtr(globalObject), regT2);
 
-    emitWriteBarrier(regT2, regT3);
+    emitWriteBarrier(regT2, regT3, WriteBarrierForVariableAccess);
 
     loadPtr(Address(regT2, JSVariableObject::offsetOfRegisters()), regT2);
     emitStore(index, regT1, regT0, regT2);
     map(m_bytecodeOffset + OPCODE_LENGTH(op_put_global_var), value, regT1, regT0);
 }
 
-void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch)
+void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch, WriteBarrierUseKind useKind)
 {
     UNUSED_PARAM(owner);
     UNUSED_PARAM(scratch);
+    UNUSED_PARAM(useKind);
     ASSERT(owner != scratch);
+    
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    emitCount(WriteBarrierCounters::jitCounterFor(useKind));
+#endif
 }
 
 } // namespace JSC

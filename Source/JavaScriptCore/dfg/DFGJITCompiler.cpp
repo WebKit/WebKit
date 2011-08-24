@@ -1041,18 +1041,18 @@ void JITCompiler::jitAssertIsCell(GPRReg gpr)
 #endif
 
 #if ENABLE(SAMPLING_COUNTERS) && CPU(X86_64) // Or any other 64-bit platform!
-void JITCompiler::emitCount(AbstractSamplingCounter& counter, uint32_t increment)
+void JITCompiler::emitCount(MacroAssembler& jit, AbstractSamplingCounter& counter, uint32_t increment)
 {
-    addPtr(TrustedImm32(increment), AbsoluteAddress(counter.addressOfCounter()));
+    jit.addPtr(TrustedImm32(increment), AbsoluteAddress(counter.addressOfCounter()));
 }
 #endif
 
 #if ENABLE(SAMPLING_COUNTERS) && CPU(X86) // Or any other little-endian 32-bit platform!
-void JITCompiler::emitCount(AbstractSamplingCounter& counter, uint32_t increment)
+void JITCompiler::emitCount(MacroAsembler& jit, AbstractSamplingCounter& counter, uint32_t increment)
 {
     intptr_t hiWord = reinterpret_cast<intptr_t>(counter.addressOfCounter()) + sizeof(int32_t);
-    add32(TrustedImm32(increment), AbsoluteAddress(counter.addressOfCounter()));
-    addWithCarry32(TrustedImm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
+    jit.add32(TrustedImm32(increment), AbsoluteAddress(counter.addressOfCounter()));
+    jit.addWithCarry32(TrustedImm32(0), AbsoluteAddress(reinterpret_cast<void*>(hiWord)));
 }
 #endif
 

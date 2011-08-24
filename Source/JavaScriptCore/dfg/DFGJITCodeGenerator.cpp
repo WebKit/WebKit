@@ -465,11 +465,17 @@ JITCompiler::Call JITCodeGenerator::cachedGetById(GPRReg baseGPR, GPRReg resultG
     return functionCall;
 }
 
-void JITCodeGenerator::writeBarrier(MacroAssembler&, GPRReg owner, GPRReg scratch)
+void JITCodeGenerator::writeBarrier(MacroAssembler& jit, GPRReg owner, GPRReg scratch, WriteBarrierUseKind useKind)
 {
+    UNUSED_PARAM(jit);
     UNUSED_PARAM(owner);
     UNUSED_PARAM(scratch);
+    UNUSED_PARAM(useKind);
     ASSERT(owner != scratch);
+
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    JITCompiler::emitCount(jit, WriteBarrierCounters::jitCounterFor(useKind));
+#endif
 }
 
 void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scratchGPR, unsigned identifierNumber, PutKind putKind, JITCompiler::Jump slowPathTarget)
@@ -477,7 +483,7 @@ void JITCodeGenerator::cachedPutById(GPRReg baseGPR, GPRReg valueGPR, GPRReg scr
     JITCompiler::DataLabelPtr structureToCompare;
     JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::NotEqual, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
     
-    writeBarrier(m_jit, baseGPR, scratchGPR);
+    writeBarrier(m_jit, baseGPR, scratchGPR, WriteBarrierForPropertyAccess);
 
     m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), scratchGPR);
     JITCompiler::DataLabel32 storeWithPatch = m_jit.storePtrWithAddressOffsetPatch(valueGPR, JITCompiler::Address(scratchGPR, 0));

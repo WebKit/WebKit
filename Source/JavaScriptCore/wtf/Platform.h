@@ -963,6 +963,12 @@
 #define ENABLE_VERBOSE_VALUE_PROFILE 0
 #endif
 
+/* Counts uses of write barriers using sampling counters. Be sure to also
+   set ENABLE_SAMPLING_COUNTERS to 1. */
+#if !defined(ENABLE_WRITE_BARRIER_PROFILING)
+#define ENABLE_WRITE_BARRIER_PROFILING 0
+#endif
+
 /* Ensure that either the JIT or the interpreter has been enabled. */
 #if !defined(ENABLE_INTERPRETER) && !ENABLE(JIT)
 #define ENABLE_INTERPRETER 1

@@ -1,3 +1,60 @@
+2011-08-24  Filip Pizlo  <fpizlo@apple.com>
+
+        There is no facility for profiling how the write barrier is used
+        https://bugs.webkit.org/show_bug.cgi?id=66747
+
+        Reviewed by Geoffrey Garen.
+        
+        Added facilities for the JIT to specify the kind of write barrier
+        being executed.  Added code for profiling the number of each kind
+        of barrier encountered.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * dfg/DFGJITCodeGenerator.cpp:
+        (JSC::DFG::JITCodeGenerator::writeBarrier):
+        (JSC::DFG::JITCodeGenerator::cachedPutById):
+        * dfg/DFGJITCodeGenerator.h:
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::emitCount):
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::emitCount):
+        * dfg/DFGNonSpeculativeJIT.cpp:
+        (JSC::DFG::NonSpeculativeJIT::compile):
+        * dfg/DFGRepatch.cpp:
+        (JSC::DFG::tryCachePutByID):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * heap/Heap.h:
+        (JSC::Heap::writeBarrier):
+        * heap/WriteBarrierSupport.cpp: Added.
+        (JSC::WriteBarrierCounters::initialize):
+        * heap/WriteBarrierSupport.h: Added.
+        (JSC::WriteBarrierCounters::WriteBarrierCounters):
+        (JSC::WriteBarrierCounters::jitCounterFor):
+        (JSC::WriteBarrierCounters::countWriteBarrier):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emitWriteBarrier):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_put_by_val):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_put_global_var):
+        (JSC::JIT::emitWriteBarrier):
+        * runtime/InitializeThreading.cpp:
+        (JSC::initializeThreadingOnce):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::setWithoutWriteBarrier):
+
 2011-08-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add checks to ensure allocation does not take place during initialization of GC-managed objects

@@ -1969,6 +1969,14 @@
                                     RelativePath="..\..\heap\Weak.h"
                                     >
                             </File>
+			    <File
+				    RelativePath="..\..\heap\WriteBarrierSupport.cpp"
+				    >
+			    </File>
+			    <File
+				    RelativePath="..\..\heap\WriteBarrierSupport.h"
+				    >
+			    </File>
 		</Filter>
 		<File
 			RelativePath="..\..\config.h"

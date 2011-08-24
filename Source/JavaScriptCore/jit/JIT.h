@@ -299,7 +299,7 @@ namespace JSC {
 
         void testPrototype(JSValue, JumpList& failureCases);
 
-        void emitWriteBarrier(RegisterID owner, RegisterID scratch);
+        void emitWriteBarrier(RegisterID owner, RegisterID scratch, WriteBarrierUseKind);
 
         template<typename ClassType, typename StructureType> void emitAllocateBasicJSObject(StructureType, void* vtable, RegisterID result, RegisterID storagePtr);
         template<typename T> void emitAllocateJSFinalObject(T structure, RegisterID result, RegisterID storagePtr);

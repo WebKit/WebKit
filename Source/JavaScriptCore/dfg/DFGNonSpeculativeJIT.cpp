@@ -903,7 +903,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
         property.use();
         value.use();
         
-        writeBarrier(m_jit, baseGPR, storageGPR);
+        writeBarrier(m_jit, baseGPR, storageGPR, WriteBarrierForPropertyAccess);
         
         JITCompiler::Jump baseNotCell = m_jit.branchTestPtr(MacroAssembler::NonZero, baseGPR, GPRInfo::tagMaskRegister);
 
@@ -1050,7 +1050,7 @@ void NonSpeculativeJIT::compile(SpeculationCheckIndexIterator& checkIterator, No
 
         m_jit.move(MacroAssembler::TrustedImmPtr(m_jit.codeBlock()->globalObject()), globalObjectReg);
 
-        writeBarrier(m_jit, globalObjectReg, scratchReg);
+        writeBarrier(m_jit, globalObjectReg, scratchReg, WriteBarrierForVariableAccess);
 
         m_jit.loadPtr(MacroAssembler::Address(globalObjectReg, JSVariableObject::offsetOfRegisters()), scratchReg);
         m_jit.storePtr(value.gpr(), JITCompiler::addressForGlobalVar(scratchReg, node.varNumber()));

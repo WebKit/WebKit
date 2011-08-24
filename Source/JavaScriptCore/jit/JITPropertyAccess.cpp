@@ -438,7 +438,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     // Jump to a slow case if either the base object is an immediate, or if the Structure does not match.
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
 
-    emitWriteBarrier(regT0, regT2);
+    emitWriteBarrier(regT0, regT2, WriteBarrierForPropertyAccess);
 
     BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
 
@@ -543,7 +543,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
         restoreReturnAddressBeforeReturn(regT3);
     }
     
-    emitWriteBarrier(regT0, regT2);
+    emitWriteBarrier(regT0, regT2, WriteBarrierForPropertyAccess);
 
     storePtr(TrustedImmPtr(newStructure), Address(regT0, JSCell::structureOffset()));
     compilePutDirectOffset(regT0, regT1, newStructure, cachedOffset);
@@ -996,7 +996,7 @@ void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
         loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
     loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, object)), regT1);
 
-    emitWriteBarrier(regT1, regT2);
+    emitWriteBarrier(regT1, regT2, WriteBarrierForVariableAccess);
 
     loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
     storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
@@ -1017,17 +1017,22 @@ void JIT::emit_op_put_global_var(Instruction* currentInstruction)
     emitGetVirtualRegister(currentInstruction[2].u.operand, regT0);
     move(TrustedImmPtr(globalObject), regT1);
     
-    emitWriteBarrier(regT1, regT2);
+    emitWriteBarrier(regT1, regT2, WriteBarrierForVariableAccess);
 
     loadPtr(Address(regT1, JSVariableObject::offsetOfRegisters()), regT1);
     storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
 }
 
-void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch)
+void JIT::emitWriteBarrier(RegisterID owner, RegisterID scratch, WriteBarrierUseKind useKind)
 {
     UNUSED_PARAM(owner);
     UNUSED_PARAM(scratch);
+    UNUSED_PARAM(useKind);
     ASSERT(owner != scratch);
+    
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    emitCount(WriteBarrierCounters::jitCounterFor(useKind));
+#endif
 }
 
 #endif // USE(JSVALUE64)

@@ -176,7 +176,7 @@ public:
             m_gprs.release(info.gpr());
     }
 
-    static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR);
+    static void writeBarrier(MacroAssembler&, GPRReg ownerGPR, GPRReg scratchGPR, WriteBarrierUseKind);
 
     static GPRReg selectScratchGPR(GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg)
     {

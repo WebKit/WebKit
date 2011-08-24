@@ -525,7 +525,7 @@ static bool tryCachePutByID(ExecState* exec, JSValue baseValue, const Identifier
                     testPrototype(stubJit, scratchGPR, (*it)->storedPrototype(), failureCases);
             }
             
-            JITCodeGenerator::writeBarrier(stubJit, baseGPR, scratchGPR);
+            JITCodeGenerator::writeBarrier(stubJit, baseGPR, scratchGPR, WriteBarrierForPropertyAccess);
             
             stubJit.storePtr(MacroAssembler::TrustedImmPtr(structure), MacroAssembler::Address(baseGPR, JSCell::structureOffset()));
             if (structure->isUsingInlineStorage())

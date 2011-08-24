@@ -28,6 +28,7 @@
 
 #include "HandleTypes.h"
 #include "Heap.h"
+#include "SamplingCounter.h"
 #include "TypeTraits.h"
 
 namespace JSC {
@@ -120,6 +121,9 @@ public:
 
     void setWithoutWriteBarrier(T* value)
     {
+#if ENABLE(WRITE_BARRIER_PROFILING)
+        WriteBarrierCounters::usesWithoutBarrierFromCpp.count();
+#endif
         this->m_cell = reinterpret_cast<JSCell*>(value);
     }
 

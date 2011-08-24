@@ -34,6 +34,7 @@
 #include "Identifier.h"
 #include "JSGlobalObject.h"
 #include "UString.h"
+#include "WriteBarrier.h"
 #include <wtf/DateMath.h>
 #include <wtf/Threading.h>
 
@@ -48,6 +49,9 @@ static pthread_once_t initializeThreadingKeyOnce = PTHREAD_ONCE_INIT;
 static void initializeThreadingOnce()
 {
     WTF::initializeThreading();
+#if ENABLE(WRITE_BARRIER_PROFILING)
+    WriteBarrierCounters::initialize();
+#endif
     JSGlobalData::storeVPtrs();
 #if ENABLE(JSC_MULTIPLE_THREADS)
     RegisterFile::initializeThreading();

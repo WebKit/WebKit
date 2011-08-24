@@ -273,7 +273,11 @@ public:
 
 #if ENABLE(SAMPLING_COUNTERS)
     // Debug profiling tool.
-    void emitCount(AbstractSamplingCounter&, uint32_t increment = 1);
+    static void emitCount(MacroAssembler&, AbstractSamplingCounter&, uint32_t increment = 1);
+    void emitCount(AbstractSamplingCounter& counter, uint32_t increment = 1)
+    {
+        emitCount(*this, counter, increment);
+    }
 #endif
 
 #if ENABLE(SAMPLING_FLAGS)

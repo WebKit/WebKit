@@ -28,6 +28,7 @@
 #include "MarkedBlockSet.h"
 #include "NewSpace.h"
 #include "SlotVisitor.h"
+#include "WriteBarrierSupport.h"
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -129,6 +130,10 @@ namespace JSC {
         static const size_t maxExtraCost = 1024 * 1024;
         
         enum AllocationEffort { AllocationMustSucceed, AllocationCanFail };
+        
+#if ENABLE(GGC)
+        static void writeBarrierFastCase(const JSCell* owner, JSCell*);
+#endif
 
         bool isValidAllocation(size_t);
         void reportExtraMemoryCostSlowCase(size_t);
@@ -236,30 +241,38 @@ namespace JSC {
     }
 
 #if ENABLE(GGC)
-    inline void Heap::writeBarrier(const JSCell* owner, JSCell* cell)
+    inline void Heap::writeBarrierFastCase(const JSCell* owner, JSCell* cell)
     {
         if (MarkedBlock::blockFor(owner)->inNewSpace())
             return;
         writeBarrierSlowCase(owner, cell);
     }
 
+    inline void Heap::writeBarrier(const JSCell* owner, JSCell* cell)
+    {
+        WriteBarrierCounters::countWriteBarrier();
+        writeBarrierFastCase(owner, cell);
+    }
+
     inline void Heap::writeBarrier(const JSCell* owner, JSValue value)
     {
+        WriteBarrierCounters::countWriteBarrier();
         if (!value)
             return;
         if (!value.isCell())
             return;
-        writeBarrier(owner, value.asCell());
+        writeBarrierFastCase(owner, value.asCell());
     }
-
 #else
 
     inline void Heap::writeBarrier(const JSCell*, JSCell*)
     {
+        WriteBarrierCounters::countWriteBarrier();
     }
 
     inline void Heap::writeBarrier(const JSCell*, JSValue)
     {
+        WriteBarrierCounters::countWriteBarrier();
     }
 #endif
 
