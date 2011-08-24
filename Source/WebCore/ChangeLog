@@ -1,3 +1,20 @@
+2011-08-23  Jessie Berlin  <jberlin@apple.com>
+
+        Frequent crashes due to null frame below ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache.
+        https://bugs.webkit.org/show_bug.cgi?id=62764
+
+        Reviewed by Alexey Proskuryakov.
+
+        It is still unclear in what scenario the ResourceLoader could have a non-null DocumentLoader
+        without a Frame, since all loads should be stopped before the DocumentLoader is detached
+        from its Frame.
+
+        Until a reproducible case is found, bail early to prevent crashes.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::didFail):
+        Add an early return if the DocumentLoader does not have a Frame.
+
 2011-08-23  Mark Rowe  <mrowe@apple.com>
 
         Merge r92788.

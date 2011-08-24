@@ -451,6 +451,12 @@ void ResourceLoader::didFinishLoading(ResourceHandle*, double finishTime)
 
 void ResourceLoader::didFail(ResourceHandle*, const ResourceError& error)
 {
+    // Frequent crashes have been reported attempting to access a null frame on the DocumentLoader.
+    // It is unclear what is causing this (https://bugs.webkit.org/show_bug.cgi?id=62764), but bail
+    // early until a reproducible case is found.
+    if (!documentLoader()->frame())
+        return;
+
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     if (documentLoader()->applicationCacheHost()->maybeLoadFallbackForError(this, error))
         return;
