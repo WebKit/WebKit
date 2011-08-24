@@ -1,3 +1,11 @@
+2011-08-24  Peter Kasting  <pkasting@google.com>
+
+        [chromium] More test expectation updates.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-24  Alexey Proskuryakov  <ap@apple.com>
 
         Plug-in tests are flaky on Mac
@@ -43,7 +51,7 @@
         * http/tests/eventsource/eventsource-reconnect-during-navigate-crash.html: Added.
         * http/tests/eventsource/resources/wait-then-notify-done.php: Added.
 
-2011-08-23  Peter Kasting  <pkasting@google.com>
+2011-08-24  Peter Kasting  <pkasting@google.com>
 
         [chromium] Test expectation updates.
 
@@ -62,7 +70,7 @@
         * fast/regions/content-flowed-into-regions-dynamically-inserted-expected.txt: Added.
         * fast/regions/content-flowed-into-regions-dynamically-inserted.html: Added.
 
-2011-08-23  Peter Kasting  <pkasting@google.com>
+2011-08-24  Peter Kasting  <pkasting@google.com>
 
         [chromium] Organize SLOW section of expectations.
 

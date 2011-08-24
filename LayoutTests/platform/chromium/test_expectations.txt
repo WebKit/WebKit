@@ -15,6 +15,7 @@ BUGCR24182 SLOW WIN DEBUG : http/tests/loading/redirect-methods.html = PASS
 BUGCR24182 SLOW WIN : http/tests/local/file-url-sent-as-referer.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/misc/uncacheable-script-repeated.html = PASS
 BUGCR24182 WIN RELEASE : http/tests/security/cross-origin-css.html = PASS TIMEOUT
+BUGCR24182 SLOW : http/tests/websocket/tests/hixie76/frame-lengths.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/websocket/tests/hixie76/simple-stress.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS
@@ -3661,6 +3662,7 @@ BUGWK66740 SNOWLEOPARD DEBUG : fast/ruby/text-emphasis.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-iframe-leave-compositing.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/force-compositing-mode/overflow-hidden-iframe-layer.html = PASS CRASH
 BUGWK66740 SNOWLEOPARD GPU : platform/chromium/compositing/layout-width-change.html = PASS CRASH
+BUGWK66740 SNOWLEOPARD DEBUG : svg/animations/svginteger-animation-1.html = PASS CRASH TEXT
 
 BUGWK66795 LINUX MAC SLOW : fast/js/reentrant-caching.html = PASS
 
@@ -3668,3 +3670,5 @@ BUGWK66873 SLOW WIN RELEASE : http/tests/loading/redirect-methods.html = PASS TE
 
 BUGWK66882 WIN : svg/W3C-SVG-1.1-SE/text-intro-09-b.svg = PASS IMAGE+TEXT
 BUGWK66882 LINUX MAC : svg/W3C-SVG-1.1-SE/text-intro-09-b.svg = PASS IMAGE
+
+BUGWK66888 WIN LINUX LEOPARD DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT
