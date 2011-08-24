@@ -241,7 +241,6 @@ static inline void _ewk_tile_paint(Ewk_Tile *t, uint8_t r, uint8_t g, uint8_t b)
  */
 Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_Colorspace cspace)
 {
-    Eina_Inlist *l;
     Evas_Coord *ec;
     Evas_Colorspace *ecs;
     float *f;
@@ -270,8 +269,7 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
         return NULL;
     }
 
-    DBG("size: %dx%d (%d), zoom: %f, cspace=%d",
-        w, h, area, (double)zoom, cspace);
+    DBG("size: %dx%d (%d), zoom: %f, cspace=%d", w, h, area, (double)zoom, cspace);
 
     MALLOC_OR_OOM_RET(t, sizeof(Ewk_Tile), NULL);
     t->image = evas_object_image_add(evas);
@@ -280,10 +278,6 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
     engine = ecore_evas_engine_name_get(ee);
     if (engine && !strcmp(engine, "opengl_x11"))
         evas_object_image_content_hint_set(t->image, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
-
-    l = EINA_INLIST_GET(t);
-    l->prev = NULL;
-    l->next = NULL;
 
     t->visible = 0;
     t->updates = NULL;
@@ -310,8 +304,7 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
     evas_object_image_size_set(t->image, t->w, t->h);
     evas_object_image_colorspace_set(t->image, t->cspace);
     t->pixels = evas_object_image_data_get(t->image, EINA_TRUE);
-    t->surface = cairo_image_surface_create_for_data
-        (t->pixels, format, w, h, stride);
+    t->surface = cairo_image_surface_create_for_data(t->pixels, format, w, h, stride);
     status = cairo_surface_status(t->surface);
     if (status != CAIRO_STATUS_SUCCESS) {
         ERR("failed to create cairo surface: %s",

@@ -33,14 +33,14 @@
  */
 #undef DEBUG_MEM_LEAKS
 
-#define TILE_W (256)
-#define TILE_H (256)
+#define DEFAULT_TILE_W (256)
+#define DEFAULT_TILE_H (256)
 
 #define ZOOM_STEP_MIN (0.01)
 
 #define TILE_SIZE_AT_ZOOM(SIZE, ZOOM) ((int)roundf((SIZE) * (ZOOM)))
-#define TILE_W_ZOOM_AT_SIZE(SIZE) ((float)SIZE / (float)TILE_W)
-#define TILE_H_ZOOM_AT_SIZE(SIZE) ((float)SIZE / (float)TILE_H)
+#define TILE_ZOOM_AT_SIZE(SIZE, ORIG_TILE) ((float)(SIZE) / (float)(ORIG_TILE))
+#define ROUNDED_ZOOM(SIZE, ZOOM) ((float)(SIZE) / (float)(((int)roundf((SIZE) / (ZOOM)))))
 
 #ifdef __cplusplus
 extern "C" {
@@ -66,7 +66,6 @@ struct _Ewk_Tile_Stats {
 };
 
 struct _Ewk_Tile {
-    EINA_INLIST;            /**< sibling tiles at same (i, j) but other zoom */
     Eina_Tiler *updates;    /**< updated/dirty areas */
     Ewk_Tile_Stats stats;       /**< tile usage statistics */
     unsigned long col, row; /**< tile tile position */

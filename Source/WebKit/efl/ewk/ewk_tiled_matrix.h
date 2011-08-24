@@ -26,7 +26,7 @@
 #include <Evas.h>
 
 /* matrix of tiles */
-Ewk_Tile_Matrix *ewk_tile_matrix_new(Ewk_Tile_Unused_Cache *tuc, unsigned long cols, unsigned long rows, Evas_Colorspace cspace, void (*render_cb)(void *data, Ewk_Tile *t, const Eina_Rectangle *update), const void *data);
+Ewk_Tile_Matrix *ewk_tile_matrix_new(Ewk_Tile_Unused_Cache *tuc, unsigned long cols, unsigned long rows, Evas_Colorspace cspace, void (*render_cb)(void *data, Ewk_Tile *t, const Eina_Rectangle *update), const void *render_data);
 void ewk_tile_matrix_free(Ewk_Tile_Matrix *tm);
 
 void ewk_tile_matrix_resize(Ewk_Tile_Matrix *tm, unsigned long cols, unsigned long rows);

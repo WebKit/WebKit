@@ -1,3 +1,41 @@
+2011-08-23  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Change the tiled backing store to use constant size of tile.
+        https://bugs.webkit.org/show_bug.cgi?id=65848
+
+        As current tiled backing store in Webkit EFL is using variable tile size according to the zoom level,
+        the number of tiles in viewport is not same always and the speed of panning is also not consistent
+        whenever zoom level is changed.
+        Therefore, tile size should be constant size in order to make sure the consistent panning speed.
+
+        Reviewed by Anders Carlsson.
+
+        * ewk/ewk_tiled_backing_store.c:
+        (_ewk_tiled_backing_store_model_matrix_create):
+        (_ewk_tiled_backing_store_smart_add):
+        (_ewk_tiled_backing_store_smart_calculate):
+        (_ewk_tiled_backing_store_zoom_set_internal):
+        (ewk_tiled_backing_store_zoom_weak_set):
+        (ewk_tiled_backing_store_flush):
+        (ewk_tiled_backing_store_pre_render_region):
+        (ewk_tiled_backing_store_pre_render_relative_radius):
+        * ewk/ewk_tiled_backing_store.h:
+        * ewk/ewk_tiled_matrix.c:
+        (_ewk_tile_matrix_cell_free):
+        (_ewk_tile_matrix_tile_free):
+        (ewk_tile_matrix_new):
+        (ewk_tile_matrix_tile_exact_get):
+        (ewk_tile_matrix_tile_exact_exists):
+        (ewk_tile_matrix_tile_new):
+        (ewk_tile_matrix_tile_update):
+        (ewk_tile_matrix_tile_update_full):
+        (_ewk_tile_matrix_slicer_setup):
+        (ewk_tile_matrix_update):
+        (ewk_tile_matrix_dbg):
+        * ewk/ewk_tiled_matrix.h:
+        * ewk/ewk_tiled_model.c:
+        (ewk_tile_new):
+
 2011-08-23  Jonas M. Gastal <jgastal@profusion.mobi>
 
         [EFL] Exporting JavaScript objects for EFL port

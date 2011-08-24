@@ -633,9 +633,7 @@ static inline void _ewk_tiled_backing_store_model_matrix_create(Ewk_Tiled_Backin
         ewk_tile_matrix_free(priv->model.matrix);
     }
 
-    priv->model.matrix = ewk_tile_matrix_new
-        (tuc, priv->model.cur.cols, priv->model.cur.rows, priv->cspace,
-         _ewk_tiled_backing_store_render, priv);
+    priv->model.matrix = ewk_tile_matrix_new(tuc, priv->model.cur.cols, priv->model.cur.rows, priv->cspace, _ewk_tiled_backing_store_render, priv);
 }
 
 static void _ewk_tiled_backing_store_smart_member_del(Evas_Object *o, Evas_Object *member)
@@ -703,8 +701,8 @@ static void _ewk_tiled_backing_store_smart_add(Evas_Object *o)
 
     priv->self = o;
     priv->view.tile.zoom = 1.0;
-    priv->view.tile.w = TILE_W;
-    priv->view.tile.h = TILE_H;
+    priv->view.tile.w = DEFAULT_TILE_W;
+    priv->view.tile.h = DEFAULT_TILE_H;
     priv->view.offset.cur.x = 0;
     priv->view.offset.cur.y = 0;
     priv->view.offset.old.x = 0;
@@ -1351,8 +1349,7 @@ static void _ewk_tiled_backing_store_smart_calculate(Evas_Object *o)
                            priv->model.cur.cols,
                            priv->model.cur.rows);
         priv->changed.model = EINA_FALSE;
-        evas_object_resize(priv->contents_clipper,
-                           priv->model.width, priv->model.height);
+        evas_object_resize(priv->contents_clipper, priv->model.width, priv->model.height);
         _ewk_tiled_backing_store_smart_calculate_offset_force(priv);
 
         /* Make sure we do not miss any important repaint by
@@ -1481,11 +1478,11 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
 
     _ewk_tiled_backing_store_pre_render_request_flush(priv);
     Evas_Coord tw, th;
-    tw = TILE_SIZE_AT_ZOOM(TILE_W, *zoom);
-    tw = (tw >> 1) << 1;
-    *zoom = TILE_W_ZOOM_AT_SIZE(tw);
-    /* WARNING: assume reverse zoom is the same for both axis */
-    th = TILE_SIZE_AT_ZOOM(TILE_H, *zoom);
+
+    *zoom = ROUNDED_ZOOM(priv->view.tile.w, *zoom);
+
+    tw = priv->view.tile.w;
+    th = priv->view.tile.h;
 
     float scale = *zoom / priv->view.tile.zoom;
 
@@ -1494,8 +1491,6 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
     priv->view.offset.zoom_center.x = cx;
     priv->view.offset.zoom_center.y = cy;
 
-    priv->view.tile.w = tw;
-    priv->view.tile.h = th;
 
     if (!priv->view.w || !priv->view.h) {
         priv->view.offset.base.x = 0;
@@ -1529,6 +1524,7 @@ static Eina_Bool _ewk_tiled_backing_store_zoom_set_internal(Ewk_Tiled_Backing_St
     priv->model.base.row = - new_y / th;
 
     priv->changed.size = EINA_TRUE;
+    priv->changed.model = EINA_TRUE;
     _ewk_tiled_backing_store_changed(priv);
 
     priv->view.offset.cur.x = new_x;
@@ -1589,18 +1585,17 @@ Eina_Bool ewk_tiled_backing_store_zoom_weak_set(Evas_Object *o, float zoom, Evas
     Evas_Coord tw, th;
     Eina_Bool recalc = EINA_FALSE;
 
-    tw = TILE_SIZE_AT_ZOOM(TILE_W, zoom);
-    zoom = TILE_W_ZOOM_AT_SIZE(tw);
-    /* WARNING: assume reverse zoom is the same for both axis */
-    th = TILE_SIZE_AT_ZOOM(TILE_H, zoom);
-
     float scale = zoom / priv->view.tile.zoom;
+
+    tw = TILE_SIZE_AT_ZOOM(priv->view.tile.w, scale);
+    scale = TILE_ZOOM_AT_SIZE(tw, priv->view.tile.w);
+    th = TILE_SIZE_AT_ZOOM(priv->view.tile.h, scale);
+    zoom = scale * priv->view.tile.zoom;
 
     Evas_Coord model_width = priv->model.width * scale;
     Evas_Coord model_height = priv->model.height * scale;
 
-    evas_object_resize(priv->contents_clipper,
-                       model_width, model_height);
+    evas_object_resize(priv->contents_clipper, model_width, model_height);
 
     int vrows = ceil((float)priv->view.h / (float)th) + 1;
     int vcols = ceil((float)priv->view.w / (float)tw) + 1;
@@ -1808,6 +1803,10 @@ void ewk_tiled_backing_store_flush(Evas_Object *o)
     priv->view.offset.base.y = 0;
     priv->model.base.col = 0;
     priv->model.base.row = 0;
+    priv->model.cur.cols = 1;
+    priv->model.cur.rows = 1;
+    priv->model.old.cols = 0;
+    priv->model.old.rows = 0;
     priv->changed.size = EINA_TRUE;
 
 #ifdef DEBUG_MEM_LEAKS
@@ -1834,11 +1833,9 @@ Eina_Bool ewk_tiled_backing_store_pre_render_region(Evas_Object *o, Evas_Coord x
     Evas_Coord tw, th;
     Ewk_Tile_Unused_Cache *tuc;
 
-    tw = TILE_SIZE_AT_ZOOM(TILE_W, zoom);
-    tw = (tw >> 1) << 1;
-    zoom = TILE_W_ZOOM_AT_SIZE(tw);
-    /* WARNING: assume reverse zoom is the same for both axis */
-    th = TILE_SIZE_AT_ZOOM(TILE_H, zoom);
+    tw = priv->view.tile.w;
+    th = priv->view.tile.h;
+    zoom = ROUNDED_ZOOM(priv->view.tile.w, zoom);
 
     if (!eina_tile_grid_slicer_setup(&slicer, x, y, w, h, tw, th)) {
         ERR("could not setup grid slicer for %d,%d+%dx%d tile=%dx%d",
@@ -1878,6 +1875,8 @@ Eina_Bool ewk_tiled_backing_store_pre_render_relative_radius(Evas_Object *o, uns
     INF("start_row=%lu, end_row=%lu, start_col=%lu, end_col=%lu",
          start_row, end_row, start_col, end_col);
 
+    zoom = ROUNDED_ZOOM(priv->view.tile.w, zoom);
+
     for (i = start_row; i <= end_row; i++)
         for (j = start_col; j <= end_col; j++)
             if (!_ewk_tiled_backing_store_pre_render_request_add(priv, j, i, zoom, PRE_RENDER_PRIORITY_LOW))
@@ -1887,11 +1886,11 @@ start_processing:
     _ewk_tiled_backing_store_item_process_idler_start(priv);
 
     tuc = ewk_tile_matrix_unused_cache_get(priv->model.matrix);
-    h = (end_row - start_row + 1) * TILE_SIZE_AT_ZOOM(TILE_H, zoom);
-    w = (end_col - start_col + 1) * TILE_SIZE_AT_ZOOM(TILE_W, zoom);
+    h = (end_row - start_row + 1) * TILE_SIZE_AT_ZOOM(priv->view.tile.h, zoom);
+    w = (end_col - start_col + 1) * TILE_SIZE_AT_ZOOM(priv->view.tile.w, zoom);
     ewk_tile_unused_cache_lock_area(tuc,
-            start_col * TILE_SIZE_AT_ZOOM(TILE_W, zoom),
-            start_row * TILE_SIZE_AT_ZOOM(TILE_H, zoom), w, h, zoom);
+            start_col * TILE_SIZE_AT_ZOOM(priv->view.tile.w, zoom),
+            start_row * TILE_SIZE_AT_ZOOM(priv->view.tile.h, zoom), w, h, zoom);
 
     return EINA_TRUE;
 }
