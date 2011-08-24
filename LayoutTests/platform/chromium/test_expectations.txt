@@ -2367,8 +2367,7 @@ BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 // Failures after WebKit roll 70949:71000
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
-BUGCR61406 LINUX WIN : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
-BUGCR61406 SNOWLEOPARD : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE+TEXT
+BUGCR61406 LINUX WIN SNOWLEOPARD : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
 BUGCR32153AND61406 LINUX WIN : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
 

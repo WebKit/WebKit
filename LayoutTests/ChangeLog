@@ -1,3 +1,11 @@
+2011-08-23  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Fix erroneous test expectation.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Need a way to test lost compositor context recovery
