@@ -1,3 +1,23 @@
+2011-08-24  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        [EFL] Add dummy IconDatabaseClientEfl.
+        http://bugs.webkit.org/show_bug.cgi?id=65596
+
+        Implements a dummy IconDatabaseClientEfl class.
+        Adds two files, IconDatabaseClientEfl.h | .cpp.
+
+        Reviewed by Kent Tamura.
+
+        * CMakeListsEfl.txt:
+        * WebCoreSupport/IconDatabaseClientEfl.cpp: Added.
+        (WebCore::IconDatabaseClientEfl::performImport):
+        (WebCore::IconDatabaseClientEfl::didRemoveAllIcons):
+        (WebCore::IconDatabaseClientEfl::didImportIconURLForPageURL):
+        (WebCore::IconDatabaseClientEfl::didImportIconDataForPageURL):
+        (WebCore::IconDatabaseClientEfl::didChangeIconForPageURL):
+        (WebCore::IconDatabaseClientEfl::didFinishURLImport):
+        * WebCoreSupport/IconDatabaseClientEfl.h: Added.
+
 2011-08-23  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         [EFL] Change parameter type for some APIs in ewk_tile_matrix.
