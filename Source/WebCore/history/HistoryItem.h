@@ -207,6 +207,8 @@ public:
     const Vector<int>& dailyVisitCounts() const { return m_dailyVisitCounts; }
     const Vector<int>& weeklyVisitCounts() const { return m_weeklyVisitCounts; }
 
+    void markForFullStyleRecalc();
+
 private:
     HistoryItem();
     HistoryItem(const String& urlString, const String& title, double lastVisited);

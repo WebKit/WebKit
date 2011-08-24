@@ -1,3 +1,49 @@
+2011-08-23  Beth Dakin  <bdakin@apple.com>
+
+        https://bugs.webkit.org/show_bug.cgi?id=66244
+        Cached pages don't fully update when going back after changing the display scale 
+        factor
+        -and corresponding-
+        <rdar://problem/9955656>
+
+        Reviewed by Darin Adler.
+
+        This patch adds a generalized concept of needing a full style recalc to the 
+        BackForwardController. So when the display scale factor is changed, the 
+        BackForwardController can be informed that all pages will need a full style recalc 
+        when they come out of the cache. This same mechanism is also used to fix a long-
+        standing bug with full-page/text zoom.
+
+        Iterate through the HistoryItems and mark all CachedPages as needing a full style 
+        recalc.
+        * history/BackForwardController.cpp:
+        (WebCore::BackForwardController::markPagesForFullStyleRecalc):
+        * history/BackForwardController.h:
+
+        ChachedPage has a new bool -- m_needsFullStyleRecalc -- to track whether a full 
+        style recalc is needed when the CachedPage is restored.
+        * history/CachedPage.cpp:
+        (WebCore::CachedPage::CachedPage):
+        (WebCore::CachedPage::restore):
+        (WebCore::CachedPage::clear):
+        * history/CachedPage.h:
+        (WebCore::CachedPage::markForFullStyleRecalc):
+
+        HistoryItem actually takes care of calling into CachedPage.
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::markForFullStyleRecalc):
+        * history/HistoryItem.h:
+
+        Fix style recalc issues for full-page/text zoom by calling our new function on 
+        PageCache.
+        * page/Frame.cpp:
+        (WebCore::Frame::setPageAndTextZoomFactors):
+
+        Fix style recalc issues for display scale factor changes by calling our new 
+        function on PageCache.
+        * page/Page.cpp:
+        (WebCore::Page::setDeviceScaleFactor):
+
 2011-08-23  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

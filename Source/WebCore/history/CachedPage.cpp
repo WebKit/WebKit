@@ -54,6 +54,7 @@ CachedPage::CachedPage(Page* page)
     : m_timeStamp(currentTime())
     , m_cachedMainFrame(CachedFrame::create(page->mainFrame()))
     , m_needStyleRecalcForVisitedLinks(false)
+    , m_needsFullStyleRecalc(false)
 {
 #ifndef NDEBUG
     cachedPageCounter.increment();
@@ -93,6 +94,9 @@ void CachedPage::restore(Page* page)
         }
     }
 
+    if (m_needsFullStyleRecalc)
+        page->setNeedsRecalcStyleInAllFrames();
+
     clear();
 }
 
@@ -102,6 +106,7 @@ void CachedPage::clear()
     m_cachedMainFrame->clear();
     m_cachedMainFrame = 0;
     m_needStyleRecalcForVisitedLinks = false;
+    m_needsFullStyleRecalc = false;
 }
 
 void CachedPage::destroy()

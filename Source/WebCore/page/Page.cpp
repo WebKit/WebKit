@@ -596,6 +596,8 @@ void Page::setDeviceScaleFactor(float scaleFactor)
 #if USE(ACCELERATED_COMPOSITING)
     m_mainFrame->deviceOrPageScaleFactorChanged();
 #endif
+
+    backForward()->markPagesForFullStyleRecalc();
 }
 
 void Page::didMoveOnscreen()

@@ -104,4 +104,15 @@ void BackForwardController::close()
     m_client->close();
 }
 
+void BackForwardController::markPagesForFullStyleRecalc()
+{
+    int first = -backCount();
+    int last = forwardCount();
+    for (int i = first; i <= last; i++) {
+        if (!i)
+            continue;
+        itemAtIndex(i)->markForFullStyleRecalc();
+    }
+}
+
 } // namespace WebCore

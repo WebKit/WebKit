@@ -30,6 +30,7 @@
 #include "Frame.h"
 
 #include "ApplyStyleCommand.h"
+#include "BackForwardController.h"
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSProperty.h"
@@ -1069,6 +1070,9 @@ void Frame::setPageAndTextZoomFactors(float pageZoomFactor, float textZoomFactor
         if (document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
             view->layout();
     }
+
+    if (page->mainFrame() == this)
+        page->backForward()->markPagesForFullStyleRecalc();
 }
 
 #if USE(ACCELERATED_COMPOSITING)
