@@ -30,6 +30,7 @@
 #include "NPJSObject.h"
 #include "NPRuntimeUtilities.h"
 #include "PluginView.h"
+#include "WebProcess.h"
 #include <JavaScriptCore/Error.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/SourceCode.h>
@@ -45,6 +46,7 @@ namespace WebKit {
 
 NPRuntimeObjectMap::NPRuntimeObjectMap(PluginView* pluginView)
     : m_pluginView(pluginView)
+    , m_finalizationTimer(WebProcess::shared().runLoop(), this, &NPRuntimeObjectMap::invalidateQueuedObjects)
 {
 }
 
@@ -218,9 +220,19 @@ void NPRuntimeObjectMap::invalidate()
     ASSERT(m_npJSObjects.isEmpty());
 
     HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator end = m_jsNPObjects.end();
+    Vector<Strong<JSNPObject> > objects;
     for (HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator ptr = m_jsNPObjects.begin(); ptr != end; ++ptr)
-        ptr->second.get()->invalidate();
+        objects.append(Strong<JSNPObject>(globalObject()->globalData(), ptr->second));
     m_jsNPObjects.clear();
+    for (size_t i = 0; i < objects.size(); ++i)
+        objects[i]->invalidate();
+    
+    // Deal with any objects that were scheduled for delayed destruction
+    if (m_npObjectsToFinalize.isEmpty())
+        return;
+    ASSERT(m_finalizationTimer.isActive());
+    m_finalizationTimer.stop();
+    invalidateQueuedObjects();
 }
 
 JSGlobalObject* NPRuntimeObjectMap::globalObject() const
@@ -265,14 +277,34 @@ void NPRuntimeObjectMap::moveGlobalExceptionToExecState(ExecState* exec)
     globalExceptionString() = String();
 }
 
+void NPRuntimeObjectMap::invalidateQueuedObjects()
+{
+    ASSERT(m_npObjectsToFinalize.size());
+    // We deliberately re-request m_npObjectsToFinalize.size() as custom dealloc
+    // functions may execute JS and so get more objects added to the dealloc queue
+    for (size_t i = 0; i < m_npObjectsToFinalize.size(); ++i)
+        deallocateNPObject(m_npObjectsToFinalize[i]);
+    m_npObjectsToFinalize.clear();
+}
+
+void NPRuntimeObjectMap::addToInvalidationQueue(NPObject* npObject)
+{
+    if (trySafeReleaseNPObject(npObject))
+        return;
+    if (m_npObjectsToFinalize.isEmpty())
+        m_finalizationTimer.startOneShot(0);
+    ASSERT(m_finalizationTimer.isActive());
+    m_npObjectsToFinalize.append(npObject);
+}
+
 void NPRuntimeObjectMap::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
 {
     HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator found = m_jsNPObjects.find(static_cast<NPObject*>(context));
     ASSERT(found != m_jsNPObjects.end());
     ASSERT_UNUSED(handle, asObject(handle.get()) == found->second);
-
-    found->second.get()->invalidate();
+    JSNPObject* object = found->second.get();
     m_jsNPObjects.remove(found);
+    addToInvalidationQueue(object->leakNPObject());
 }
 
 } // namespace WebKit
