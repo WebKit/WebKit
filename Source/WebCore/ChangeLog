@@ -1,3 +1,18 @@
+2011-08-24  Alexandru Chiculita  <achicu@adobe.com>
+
+        [CSSRegions] RenderRegion is not used if there's another renderer after it
+        https://bugs.webkit.org/show_bug.cgi?id=66844
+
+        There was no call to attachRegion in RenderObjectChildList::insertChildNode, so
+        the region was not added to the RenderFlowThread.
+
+        Reviewed by David Hyatt.
+
+        Test: fast/regions/content-flowed-into-regions-dynamically-inserted.html
+
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::insertChildNode):
+
 2011-08-24  Sam Weinig  <sam@webkit.org>
 
         JSHTMLImageElement (and associated Node) is abandoned when image load is canceled

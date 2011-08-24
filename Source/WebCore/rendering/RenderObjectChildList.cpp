@@ -259,7 +259,10 @@ void RenderObjectChildList::insertChildNode(RenderObject* owner, RenderObject* c
 
         if (!child->isFloating() && owner->childrenInline())
             owner->dirtyLinesFromChangedChild(child);
-        
+
+        if (child->isRenderRegion())
+            toRenderRegion(child)->attachRegion();
+
         if (RenderFlowThread* containerFlowThread = renderFlowThreadContainer(owner))
             containerFlowThread->addFlowChild(child, beforeChild);
     }
