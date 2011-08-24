@@ -27,8 +27,8 @@
 #include "config.h"
 #include "RunLoop.h"
 
-#include "WorkItem.h"
 #include "WKBase.h"
+#include "WorkItem.h"
 #include <glib.h>
 
 RunLoop::RunLoop()
@@ -98,15 +98,15 @@ void RunLoop::TimerBase::clearTimerSource()
     m_timerSource = 0;
 }
 
-void RunLoop::TimerBase::destroyNotifyCallback(RunLoop::TimerBase* timer)
-{
-    timer->clearTimerSource();
-}
-
 gboolean RunLoop::TimerBase::timerFiredCallback(RunLoop::TimerBase* timer)
 {
+    GSource* currentTimerSource = timer->m_timerSource.get();
+    bool isRepeating = timer->isRepeating();
+    // This can change the timerSource by starting a new timer within the callback.
     timer->fired();
-    return timer->isRepeating();
+    if (!isRepeating && currentTimerSource == timer->m_timerSource.get())
+        timer->clearTimerSource();
+    return isRepeating;
 }
 
 void RunLoop::TimerBase::start(double fireInterval, bool repeat)
@@ -116,8 +116,7 @@ void RunLoop::TimerBase::start(double fireInterval, bool repeat)
 
     m_timerSource = adoptGRef(g_timeout_source_new(static_cast<guint>(fireInterval * 1000)));
     m_isRepeating = repeat;
-    g_source_set_callback(m_timerSource.get(), reinterpret_cast<GSourceFunc>(&RunLoop::TimerBase::timerFiredCallback), this,
-                          reinterpret_cast<GDestroyNotify>(&RunLoop::TimerBase::destroyNotifyCallback));
+    g_source_set_callback(m_timerSource.get(), reinterpret_cast<GSourceFunc>(&RunLoop::TimerBase::timerFiredCallback), this, 0);
     g_source_attach(m_timerSource.get(), m_runLoop->m_runLoopContext);
 }
 

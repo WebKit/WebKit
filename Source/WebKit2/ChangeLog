@@ -1,3 +1,22 @@
+2011-08-24  Amruth Raj  <amruthraj@motorola.com>
+
+        [GTK] WebProcess crash on hitting assertion m_isWaitingForDidUpdate in DrawingAreaImpl
+        https://bugs.webkit.org/show_bug.cgi?id=66640
+
+        Reviewed by Martin Robinson.
+
+        The crash happens when a new timer is created in an existing timer callback. Since 
+        TimerBase has a single GSource* it gets overridden and the old timer can never get
+        stopped. To handle this, keep a copy of the old timer and use it for destruction.
+
+        * Platform/RunLoop.h:
+        * Platform/gtk/RunLoopGtk.cpp:
+        (RunLoop::TimerBase::timerFiredCallback):
+        Store the timerSource so that even if it is modified by the timer callback,
+        it can be restored for freeing it.
+        (RunLoop::TimerBase::start):
+        Remove destroyNotifyCallback. Destruction is now handled in timerFiredCallback itself.
+
 2011-08-23  Anders Carlsson  <andersca@apple.com>
 
         Prepare WKTextInputWindowController for the new text input model
