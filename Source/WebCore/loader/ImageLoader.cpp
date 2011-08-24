@@ -234,8 +234,10 @@ void ImageLoader::notifyFinished(CachedResource* resource)
     if (m_firedLoad)
         return;
 
-    if (resource->wasCanceled())
+    if (resource->wasCanceled()) {
+        m_firedLoad = true;
         return;
+    }
 
     loadEventSender().dispatchEventSoon(this);
 }

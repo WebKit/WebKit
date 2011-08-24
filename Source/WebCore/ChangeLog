@@ -1,3 +1,22 @@
+2011-08-24  Sam Weinig  <sam@webkit.org>
+
+        JSHTMLImageElement (and associated Node) is abandoned when image load is canceled
+        <rdar://problem/9925630>
+        https://bugs.webkit.org/show_bug.cgi?id=66864
+
+        Reviewed by Anders Carlsson.
+
+        In the JSC bindings, we use HTMLImageElement::hasPendingActivity() (which in turn calls
+        HTMLImageLoader::haveFiredLoadEvent()) to reason about the liveness of JSHTMLImageElements.
+        In the case that an image load is canceled, the haveFiredLoadEvent never true, so the
+        JSHTMLImageElement is kept alive forever (and since it references the global object, it
+        keeps the entire graph alive as well).
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::notifyFinished):
+        Set m_firedLoad to true in the case of a canceled load, to reset the state back to
+        its initial values.
+
 2011-08-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: add createObjectURL functionality
