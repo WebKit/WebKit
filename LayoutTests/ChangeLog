@@ -1,3 +1,15 @@
+2011-08-24  Daniel Bates  <dbates@webkit.org>
+
+        XSS filter bypass via document.write(location.href) and fragments
+        https://bugs.webkit.org/show_bug.cgi?id=66585
+
+        Reviewed by Darin Adler.
+
+        Add a test case for a variation of a DOM-based XSS attack using an anchor URL.
+
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location2-expected.txt: Added.
+        * http/tests/security/xssAuditor/anchor-url-dom-write-location2.html: Added.
+
 2011-08-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update expectations for tests that no longer crash.
