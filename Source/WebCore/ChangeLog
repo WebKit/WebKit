@@ -1,3 +1,14 @@
+2011-08-24  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        [CMake] Fix build with ENABLE_BLOB or ENABLE_FILE_SYSTEM.
+        https://bugs.webkit.org/show_bug.cgi?id=66880
+
+        Generate and build some additional files required by these options.
+
+        No new tests, as this is a build fix for some build options.
+
+        * CMakeLists.txt:
+
 2011-08-24  Iain Merrick  <husky@google.com>
 
         [chromium] Don't call glDeleteTexture(0) in TextureManager

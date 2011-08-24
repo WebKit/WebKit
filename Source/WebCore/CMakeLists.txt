@@ -1386,9 +1386,14 @@ IF (ENABLE_BLOB)
     LIST(APPEND WebCore_SOURCES
         fileapi/FileReader.cpp
         fileapi/FileReaderLoader.cpp
+        fileapi/FileReaderSync.cpp
         fileapi/FileThread.cpp
         fileapi/FileStreamProxy.cpp
         platform/FileStream.cpp
+    )
+
+    LIST(APPEND WebCore_IDL_FILES
+        fileapi/FileReaderSync.idl
     )
 ENDIF ()
 
@@ -1549,6 +1554,13 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/WebKitFlags.idl
         fileapi/Metadata.idl
         fileapi/MetadataCallback.idl
+    )
+ENDIF ()
+
+IF (ENABLE_BLOB OR ENABLE_FILE_SYSTEM)
+    LIST(APPEND WebCore_IDL_FILES
+        fileapi/FileException.idl
+        fileapi/OperationNotAllowedException.idl
     )
 ENDIF ()
 
