@@ -54,6 +54,7 @@ private:
 
 CCTiledLayerImpl::CCTiledLayerImpl(int id)
     : CCLayerImpl(id)
+    , m_skipsDraw(true)
 {
 }
 

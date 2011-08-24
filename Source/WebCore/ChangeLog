@@ -1,3 +1,13 @@
+2011-08-24  Adrienne Walker  <enne@google.com>
+
+        [chromium] Properly initialize CCTiledLayerImpl::m_skipsDraw
+        https://bugs.webkit.org/show_bug.cgi?id=66889
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/cc/CCTiledLayerImpl.cpp:
+        (WebCore::CCTiledLayerImpl::CCTiledLayerImpl):
+
 2011-08-24  Tom Sepez  <tsepez@chromium.org>
 
         chromium WebFrameImpl - don't load javascript URLs against chrome internal
