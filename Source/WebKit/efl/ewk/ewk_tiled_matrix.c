@@ -269,7 +269,7 @@ Ewk_Tile_Unused_Cache *ewk_tile_matrix_unused_cache_get(const Ewk_Tile_Matrix *t
  *
  * @see ewk_tile_matrix_tile_exact_get()
  */
-Ewk_Tile *ewk_tile_matrix_tile_exact_get(Ewk_Tile_Matrix *tm, unsigned long col, unsigned int row, float zoom)
+Ewk_Tile *ewk_tile_matrix_tile_exact_get(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row, float zoom)
 {
     Ewk_Tile *t;
     t = eina_matrixsparse_data_idx_get(tm->matrix, row, col);
@@ -300,7 +300,7 @@ Ewk_Tile *ewk_tile_matrix_tile_exact_get(Ewk_Tile_Matrix *tm, unsigned long col,
  *
  * @see ewk_tile_matrix_tile_exact_get()
  */
-Eina_Bool ewk_tile_matrix_tile_exact_exists(Ewk_Tile_Matrix *tm, unsigned long col, unsigned int row, float zoom)
+Eina_Bool ewk_tile_matrix_tile_exact_exists(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row, float zoom)
 {
     Ewk_Tile *t;
 
@@ -323,7 +323,7 @@ Eina_Bool ewk_tile_matrix_tile_exact_exists(Ewk_Tile_Matrix *tm, unsigned long c
  * @param row the row number.
  * @param zoom the level to create tile, used to determine tile size.
  */
-Ewk_Tile *ewk_tile_matrix_tile_new(Ewk_Tile_Matrix *tm, Evas *evas, unsigned long col, unsigned int row, float zoom)
+Ewk_Tile *ewk_tile_matrix_tile_new(Ewk_Tile_Matrix *tm, Evas *evas, unsigned long col, unsigned long row, float zoom)
 {
     Evas_Coord tw, th;
     Ewk_Tile *t;
@@ -393,7 +393,7 @@ Eina_Bool ewk_tile_matrix_tile_put(Ewk_Tile_Matrix *tm, Ewk_Tile *t, double last
     return ewk_tile_unused_cache_tile_put(tm->tuc, t, _ewk_tile_matrix_tile_free, tm);
 }
 
-Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix *tm, unsigned long col, unsigned int row, const Eina_Rectangle *update)
+Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row, const Eina_Rectangle *update)
 {
     Ewk_Tile *t;
     Eina_Rectangle new_update;
@@ -424,7 +424,7 @@ Eina_Bool ewk_tile_matrix_tile_update(Ewk_Tile_Matrix *tm, unsigned long col, un
     return EINA_TRUE;
 }
 
-Eina_Bool ewk_tile_matrix_tile_update_full(Ewk_Tile_Matrix *tm, unsigned long col, unsigned int row)
+Eina_Bool ewk_tile_matrix_tile_update_full(Ewk_Tile_Matrix *tm, unsigned long col, unsigned long row)
 {
     Ewk_Tile *t;
     Eina_Matrixsparse_Cell *cell;

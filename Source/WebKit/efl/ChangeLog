@@ -1,3 +1,23 @@
+2011-08-23  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        [EFL] Change parameter type for some APIs in ewk_tile_matrix.
+        https://bugs.webkit.org/show_bug.cgi?id=66639
+
+        As type of both col and row parameter for ewk_tile_matrix's some APIs listed by this patch
+        are different from each other and eina_matrixsparse associated with ewk_tile_matrix is now
+        using unsigned long type for both col and row parameter, row parameter for ewk_tile_matrix
+        is also better to be specified as unsigned long type.
+
+        Reviewed by Anders Carlsson.
+
+        * ewk/ewk_tiled_matrix.c:
+        (ewk_tile_matrix_tile_exact_get):
+        (ewk_tile_matrix_tile_exact_exists):
+        (ewk_tile_matrix_tile_new):
+        (ewk_tile_matrix_tile_update):
+        (ewk_tile_matrix_tile_update_full):
+        * ewk/ewk_tiled_matrix.h:
+
 2011-08-23  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         [EFL] Get the default value for `scripts_window_open' from the right method.
