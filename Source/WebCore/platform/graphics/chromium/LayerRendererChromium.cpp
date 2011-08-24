@@ -746,7 +746,7 @@ void LayerRendererChromium::drawLayersInternal()
     // Bind the common vertex attributes used for drawing all the layers.
     m_sharedGeometry->prepareForDraw();
 
-    // FIXME: These calls can be made once, when the compositor context is initialized.
+    GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::DEPTH_TEST));
     GLC(m_context.get(), m_context->disable(GraphicsContext3D::CULL_FACE));
 

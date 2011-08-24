@@ -178,7 +178,7 @@ void LayerTextureUpdaterSkPicture::updateTextureRect(GraphicsContext3D* composit
     m_canvas->drawPicture(m_picture);
     m_canvas->restore();
     // Flush SKIA context so that all the rendered stuff appears on the texture.
-    m_skiaContext->flush(GrContext::kForceCurrentRenderTarget_FlushBit);
+    m_skiaContext->flush();
 
     // Unbind texture.
     context()->framebufferTexture2D(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::COLOR_ATTACHMENT0, GraphicsContext3D::TEXTURE_2D, 0, 0);

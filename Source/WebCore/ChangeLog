@@ -1,3 +1,20 @@
+2011-08-24  Alok Priyadarshi  <alokp@chromium.org>
+
+        [chromium] Root layer is not updated when only a portion of tile is updated
+        https://bugs.webkit.org/show_bug.cgi?id=66506
+
+        This only happened in the accelerated path which changes stencil state.
+        Incorrect stencil state was used to draw the root layer.
+
+        Reviewed by James Robinson.
+
+        Test: compositing/overflow/overflow-scroll.html (existing)
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::drawLayersInternal):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterSkPicture::updateTextureRect):
+
 2011-08-24  Nate Chapin  <japhet@chromium.org>
 
         Fix an intermittent crash in EventSource, when a
