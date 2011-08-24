@@ -1503,7 +1503,6 @@ plugins/get-url-with-iframe-target.html
 plugins/netscape-plugin-setwindow-size.html
 plugins/nested-plugin-objects.html
 plugins/pass-different-npp-struct.html
-plugins/plugin-remove-subframe.html
 plugins/reentrant-update-widget-positions.html
 plugins/reloadplugins-no-pages.html
 plugins/return-negative-one-from-write.html

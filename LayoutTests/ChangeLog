@@ -1,3 +1,12 @@
+2011-08-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Plug-in tests are flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=66822
+
+        Reviewed by Anders Carlsson.
+
+        * platform/wk2/Skipped: Removed a test that was already passing in WK2 (but flaky in WK1).
+
 2011-08-24  Alexandru Chiculita  <achicu@adobe.com>
 
         [CSSRegions] Fix Element::getBoundingClientRect and Element::getClientRects for content flow

@@ -691,7 +691,9 @@ void NetscapePluginInstanceProxy::evaluateJavaScript(PluginRequest* pluginReques
     NSURL *URL = [pluginRequest->request() URL];
     NSString *JSString = [URL _webkit_scriptIfJavaScriptURL];
     ASSERT(JSString);
-    
+
+    RefPtr<NetscapePluginInstanceProxy> protect(this); // Executing arbitrary JavaScript can destroy the proxy.
+
     NSString *result = [[m_pluginView webFrame] _stringByEvaluatingJavaScriptFromString:JSString forceUserGesture:pluginRequest->allowPopups()];
     
     // Don't continue if stringByEvaluatingJavaScriptFromString caused the plug-in to stop.

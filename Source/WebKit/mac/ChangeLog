@@ -1,3 +1,19 @@
+2011-08-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Plug-in tests are flaky on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=66822
+
+        Reviewed by Anders Carlsson.
+
+        * Plugins/Hosted/NetscapePluginInstanceProxy.mm:
+        (WebKit::NetscapePluginInstanceProxy::evaluateJavaScript):
+        Protect objects that can be removed by a script.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:forceUserGesture:]): Ditto.
+        (-[WebFrame _stringByEvaluatingJavaScriptFromString:withGlobalObject:inScriptWorld:]): Ditto.
+        Also fixed some nonsense code.
+
 2011-08-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add checks to ensure allocation does not take place during initialization of GC-managed objects
