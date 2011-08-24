@@ -23,6 +23,78 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+table {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td, th {
+    overflow: hidden;
+    vertical-align: top;
+}
+
+button {
+    border-radius: 2px;
+    background-image: -webkit-linear-gradient(top,#f5f5f5,#f1f1f1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    color: #666;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: bold;
+    height: 29px;
+    line-height: 27px;
+    margin: 11px 6px;
+    min-width: 54px;
+    padding: 0 8px;
+    text-align: center
+}
+
+button.next {
+    margin-left: 0px;
+}
+
+button.previous {
+    margin-right: 0px;
+}
+
+button[disabled] {
+    visibility: hidden;
+}
+
+button:hover {
+    background-image: -webkit-linear-gradient(top,#f8f8f8,#f1f1f1);
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    background-color: #f8f8f8;
+    background-image: linear-gradient(top,#f8f8f8,#f1f1f1);
+    border: 1px solid #c6c6c6;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    color: #333
+}
+
+button:focus {
+    border: 1px solid #4d90fe;
+    outline: none
+}
+
+button.default {
+    border: 1px solid #3079ED;
+    color: white;
+    background-image: -webkit-linear-gradient(top,#4d90fe,#4787ed);
+}
+
+button.default:hover {
+    border: 1px solid #2f5bb7;
+    color: white;
+    background-color: #357ae8;
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#4d90fe),to(#357ae8));
+}
+
+.clear {
+    clear: both;
+}
+
 ol.notifications {
     list-style: none;
     padding: 0;
@@ -65,4 +137,59 @@ ol.notifications>li ul.causes>li ul.actions {
 ol.notifications>li ul.causes>li li {
     padding: 10px 0 0 0;
     display: inline;
+}
+
+/*** results-view ***/
+
+.results-view {
+    background-color: #f5f5f5;
+}
+
+.results-view .toolbar {
+    border-top: 1px solid #c6c6c6;
+    border-bottom: 1px solid #c6c6c6;
+}
+
+.results-view .toolbar .selector {
+    font-size: 11px;
+    font-weight: bold;
+    height: 29px;
+    line-height: 27px;
+    margin: 11px 6px;
+    padding: 0 8px;
+}
+
+.results-view .test-selector {
+    width: 400px;
+    margin-right: 6px;
+}
+
+.results-view .toolbar .actions {
+    float: right;
+}
+
+.results-view .toolbar ul.actions {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: inline-block;
+}
+
+.results-view .toolbar ul.actions li {
+    display: inline-block;
+}
+
+.results-view td {
+    background-color: white;
+}
+
+.text-result {
+    border: none;
+    width: 100%;
+    height: 400px; /* FIXME: How do we get a reasonable height here? */
+}
+
+.image-result {
+    width: 100%;
+    height: auto;
 }

@@ -65,7 +65,7 @@ ui.actions.Rebaseline = base.extends(Action, {
 
 ui.actions.Next = base.extends(Action, {
     init: function() {
-        this.textContent = '&#9654;';
+        this.innerHTML = '&#9654;';
         this._eventName = 'next';
         this.className = 'next';
     }
@@ -73,7 +73,7 @@ ui.actions.Next = base.extends(Action, {
 
 ui.actions.Previous = base.extends(Action, {
     init: function() {
-        this.textContent = '&#9664;';
+        this.innerHTML = '&#9664;';
         this._eventName = 'previous';
         this.className = 'previous';
     }

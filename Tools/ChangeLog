@@ -1,3 +1,19 @@
+2011-08-24  Adam Barth  <abarth@webkit.org>
+
+        Finish writing up details-view in garden-o-matic
+        https://bugs.webkit.org/show_bug.cgi?id=66891
+
+        Reviewed by Dimitri Glazkov.
+
+        This patch mostly just copies a bunch of CSS from main.css to
+        summary.css.  Presumably we'll delete main.css soon.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/controllers.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/actions.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/actions_unittests.js:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/summary.css:
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary.html:
+
 2011-08-24  James Robinson  <jamesr@chromium.org>
 
         Some compositing LayoutTests flakily crashing on Mac 10.6

@@ -109,10 +109,14 @@ controllers.UnexpectedFailures = base.extends(Object, {
         });
 
         var testNameList = failures.testNameList();
-        var failuresByTest = results.unexpectedFailuresByTest(model.state.resultsByBuilder)
-        var controller = new controllers.ResultsDetails(resultsView, base.filterDictionary(failuresByTest, function(key) {
-            return testNameList.indexOf(testNameList) != -1;
-        }));
+        var failuresByTest = base.filterDictionary(
+            results.unexpectedFailuresByTest(model.state.resultsByBuilder),
+            function(key) {
+                return testNameList.indexOf(key) != -1;
+            });
+
+        var controller = new controllers.ResultsDetails(resultsView, failuresByTest);
+        controller.showTest(testNameList[0]);
 
         // FIXME: This doesn't belong here. Also, we need some way to call controller.dismiss().
         document.body.appendChild(resultsView);
