@@ -134,8 +134,10 @@ void TextureManager::addTexture(TextureToken token, TextureInfo info)
 void TextureManager::deleteEvictedTextures(GraphicsContext3D* context)
 {
     ASSERT(context == m_associatedContextDebugOnly);
-    for (size_t i = 0; i < m_evictedTextureIds.size(); ++i)
-        GLC(context, context->deleteTexture(m_evictedTextureIds[i]));
+    for (size_t i = 0; i < m_evictedTextureIds.size(); ++i) {
+        if (m_evictedTextureIds[i])
+            GLC(context, context->deleteTexture(m_evictedTextureIds[i]));
+    }
     m_evictedTextureIds.clear();
 }
 

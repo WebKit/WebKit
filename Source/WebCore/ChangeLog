@@ -1,3 +1,16 @@
+2011-08-24  Iain Merrick  <husky@google.com>
+
+        [chromium] Don't call glDeleteTexture(0) in TextureManager
+        https://bugs.webkit.org/show_bug.cgi?id=66862
+
+        Delete(0) is allowed in standard OpenGL, but not in Chrome.
+        See http://code.google.com/p/chromium/issues/detail?id=85268
+
+        Reviewed by James Robinson.
+
+        * platform/graphics/chromium/TextureManager.cpp:
+        (WebCore::TextureManager::deleteEvictedTextures):
+
 2011-08-24  Adrienne Walker  <enne@google.com>
 
         [chromium] Properly initialize CCTiledLayerImpl::m_skipsDraw
