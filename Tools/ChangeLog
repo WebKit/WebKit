@@ -1,3 +1,17 @@
+2011-08-24  James Robinson  <jamesr@chromium.org>
+
+        Some compositing LayoutTests flakily crashing on Mac 10.6
+        https://bugs.webkit.org/show_bug.cgi?id=66740
+
+        Reviewed by Adam Barth.
+
+        Null-check obj->pluginTest before dereferencing it. This can be null in chromium if the plugin load fails, for
+        example if the test attempts to load a PDF plugin the load will fail since we don't have such a thing in the
+        chromium configuration.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_Destroy):
+
 2011-08-24  Anton D'Auria  <adauria@apple.com>
 
         No review necessary.
