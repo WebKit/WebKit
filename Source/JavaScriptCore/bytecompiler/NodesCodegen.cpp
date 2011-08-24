@@ -1308,7 +1308,7 @@ RegisterID* ConstDeclNode::emitCodeSingle(BytecodeGenerator& generator)
         if (entry.isNull())
             continue;
 
-        return generator.emitPutScopedVar(depth, entry.getIndex(), value.get(), currentVariableObject->isGlobalObject() ? currentVariableObject : 0);
+        return generator.emitPutScopedVar(generator.scopeDepth() + depth, entry.getIndex(), value.get(), currentVariableObject->isGlobalObject() ? currentVariableObject : 0);
     }
 
     if (generator.codeType() != EvalCode)

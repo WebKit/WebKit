@@ -117,4 +117,50 @@ var ranConstInitialiser = false;
 const bodyId = (ranConstInitialiser = true, "Const initialiser overwrote existing property");
 shouldBe("bodyId", "document.getElementById('bodyId')");
 shouldBeTrue("ranConstInitialiser");
+
+// Make sure that dynamic scopes (catch, with) don't break const declarations
+function tryCatch1() {
+    var bar;
+    eval("try {\
+        stuff();\
+    } catch (e) {\
+        print(\"here.\");\
+        const bar = 5;\
+    }");
+    return bar;
+}
+
+function tryCatch2() {
+    var bar;
+    try {
+        stuff();
+    } catch (e) {
+        print("here.");
+        const bar = 5;
+    }
+    return bar;
+}
+
+tryCatch1Result = tryCatch1();
+shouldBe("tryCatch1Result", "5");
+tryCatch2Result = tryCatch2();
+shouldBe("tryCatch2Result", "5");
+
+function with1() {
+    var bar;
+    eval("with({foo:42}) const bar = 5;");
+    return bar;
+}
+
+function with2() {
+    var bar;
+    with({foo:42}) const bar = 5;
+    return bar;
+}
+
+with1Result = with1();
+shouldBe("with1Result", "5");
+with2Result = with2();
+shouldBe("with2Result", "5");
+
 var successfullyParsed = true;
