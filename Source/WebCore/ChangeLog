@@ -1,3 +1,14 @@
+2011-08-24  Pavel Feldman  <pfeldman@google.com>
+
+        Web Inspector: clearPseudoState should retain Element while clearing
+        its state.
+        https://bugs.webkit.org/show_bug.cgi?id=66790
+
+        Reviewed by Yury Semikhatsky.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::clearPseudoState):
+
 2011-08-23  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add checks to ensure allocation does not take place during initialization of GC-managed objects

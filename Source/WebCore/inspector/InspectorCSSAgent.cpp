@@ -657,7 +657,7 @@ void InspectorCSSAgent::didModifyDOMAttr(Element* element)
 
 void InspectorCSSAgent::clearPseudoState(bool recalcStyles)
 {
-    Element* element = m_lastElementWithPseudoState.get();
+    RefPtr<Element> element = m_lastElementWithPseudoState;
     m_lastElementWithPseudoState = 0;
     m_lastPseudoState = 0;
     if (recalcStyles && element) {
