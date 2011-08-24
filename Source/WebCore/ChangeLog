@@ -1,5 +1,16 @@
 2011-08-24  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Fix build with ENABLE_GEOLOCATION.
+        https://bugs.webkit.org/show_bug.cgi?id=66881
+
+        Use adoptPtr() to create a new GeolocationService instance, otherwise
+        the build will fail when creating the PassOwnPtr object.
+
+        * platform/efl/GeolocationServiceEfl.cpp:
+        (WebCore::GeolocationServiceEfl::create):
+
+2011-08-24  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [CMake] Fix build with ENABLE_BLOB or ENABLE_FILE_SYSTEM.
         https://bugs.webkit.org/show_bug.cgi?id=66880
 
