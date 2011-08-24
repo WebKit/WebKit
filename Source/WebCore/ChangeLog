@@ -1,3 +1,37 @@
+2011-08-23  Scott Byer  <scottbyer@chromium.org>
+
+        ScrollAnimatorNone coasting implementation
+        https://bugs.webkit.org/show_bug.cgi?id=66258
+
+        Increase the animation time based on the velocity of the scroll, up to a
+        maximum amount. Fix bugs found by additional unit testing.
+
+        Reviewed by James Robinson.
+
+        Additional tests in ScrollAnimatorNoneTest: CurveMathQuartic, CurveMathCoast,
+        ScrollOnceQuartic, ScrollTwiceCubic, ScrollLotsCubic, ScrollLotsCubicSmoothed,
+        ScrollUpToBumperCoast, ScrollDownToBumperCoast, VaryingInputsEquivalency,
+        VaryingInputsEquivalencyCoast, VaryingInputsEquivalencyCoastLarge,
+        VaryingInputsEquivalencyCoastSteep
+
+        * platform/ScrollAnimatorNone.cpp:
+        (WebCore::ScrollAnimatorNone::Parameters::Parameters):
+        (WebCore::ScrollAnimatorNone::PerAxisData::curveAt):
+        (WebCore::ScrollAnimatorNone::PerAxisData::coastCurve):
+        (WebCore::ScrollAnimatorNone::PerAxisData::curveIntegralAt):
+        (WebCore::ScrollAnimatorNone::PerAxisData::attackArea):
+        (WebCore::ScrollAnimatorNone::PerAxisData::releaseArea):
+        (WebCore::ScrollAnimatorNone::PerAxisData::PerAxisData):
+        (WebCore::ScrollAnimatorNone::PerAxisData::updateDataFromParameters):
+        (WebCore::ScrollAnimatorNone::PerAxisData::updateVisibleLength):
+        (WebCore::ScrollAnimatorNone::ScrollAnimatorNone):
+        (WebCore::ScrollAnimatorNone::scroll):
+        (WebCore::ScrollAnimatorNone::willEndLiveResize):
+        (WebCore::ScrollAnimatorNone::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorNone::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorNone::updateVisibleLengths):
+        * platform/ScrollAnimatorNone.h:
+
 2011-08-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Need a way to test lost compositor context recovery

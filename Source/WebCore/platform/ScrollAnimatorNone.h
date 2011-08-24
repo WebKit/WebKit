@@ -33,6 +33,7 @@
 
 #if ENABLE(SMOOTH_SCROLLING)
 
+#include "LayoutTypes.h"
 #include "ScrollAnimator.h"
 #include "Timer.h"
 
@@ -50,16 +51,21 @@ public:
     virtual bool scroll(ScrollbarOrientation, ScrollGranularity, float step, float multiplier);
     virtual void scrollToOffsetWithoutAnimation(const FloatPoint&);
 
+    virtual void willEndLiveResize();
+    virtual void didAddVerticalScrollbar(Scrollbar*);
+    virtual void didAddHorizontalScrollbar(Scrollbar*);
+
     enum Curve {
         Linear,
         Quadratic,
         Cubic,
+        Quartic,
         Bounce
     };
 
     struct Parameters {
         Parameters();
-        Parameters(bool isEnabled, double animationTime, double repeatMinimumSustainTime, Curve attackCurve, double attackTime, Curve releaseCurve, double releaseTime);
+        Parameters(bool isEnabled, double animationTime, double repeatMinimumSustainTime, Curve attackCurve, double attackTime, Curve releaseCurve, double releaseTime, Curve coastTimeCurve, double maximumCoastTime);
 
         // Note that the times can be overspecified such that releaseTime or releaseTime and attackTime are greater
         // than animationTime. animationTime takes priority over releaseTime, capping it. attackTime is capped at
@@ -73,22 +79,29 @@ public:
 
         Curve m_releaseCurve;
         double m_releaseTime;
+
+        Curve m_coastTimeCurve;
+        double m_maximumCoastTime;
     };
 
 protected:
     friend class ::ScrollAnimatorNoneTest;
 
     struct PerAxisData {
-        PerAxisData(ScrollAnimatorNone* parent, float* currentPos);
+        PerAxisData(ScrollAnimatorNone* parent, float* currentPos, LayoutUnit visibleLength);
         void reset();
         bool updateDataFromParameters(float step, float multiplier, float scrollableSize, double currentTime, Parameters*);
         bool animateScroll(double currentTime);
+        void updateVisibleLength(LayoutUnit visibleLength);
 
         static double curveAt(Curve, double t);
-        static double curveDerivativeAt(Curve, double t);
-
         static double attackCurve(Curve, double deltaT, double curveT, double startPos, double attackPos);
         static double releaseCurve(Curve, double deltaT, double curveT, double releasePos, double desiredPos);
+        static double coastCurve(Curve, double factor);
+
+        static double curveIntegralAt(Curve, double t);
+        static double attackArea(Curve, double startT, double endT);
+        static double releaseArea(Curve, double startT, double endT);
 
         float* m_currentPosition;
         double m_currentVelocity;
@@ -110,10 +123,13 @@ protected:
         double m_releasePosition;
         double m_releaseTime;
         Curve m_releaseCurve;
+
+        LayoutUnit m_visibleLength;
     };
 
     void animationTimerFired(Timer<ScrollAnimatorNone>*);
     void stopAnimationTimerIfNeeded();
+    void updateVisibleLengths();
 
     PerAxisData m_horizontalData;
     PerAxisData m_verticalData;

@@ -1,3 +1,24 @@
+2011-08-23  Scott Byer  <scottbyer@chromium.org>
+
+        ScrollAnimatorNone coasting implementation
+        https://bugs.webkit.org/show_bug.cgi?id=66258
+
+        Reviewed by James Robinson.
+
+        * tests/ScrollAnimatorNoneTest.cpp:
+        (MockScrollableArea::visibleHeight):
+        (MockScrollableArea::visibleWidth):
+        (ScrollAnimatorNoneTest::SavePerAxisData::SavePerAxisData):
+        (ScrollAnimatorNoneTest::SavePerAxisData::operator==):
+        (ScrollAnimatorNoneTest::SetUp):
+        (ScrollAnimatorNoneTest::updateDataFromParameters):
+        (ScrollAnimatorNoneTest::animateScroll):
+        (ScrollAnimatorNoneTest::attackArea):
+        (ScrollAnimatorNoneTest::releaseArea):
+        (ScrollAnimatorNoneTest::coastCurve):
+        (ScrollAnimatorNoneTest::curveTestInner):
+        (TEST_F):
+
 2011-08-23  James Robinson  <jamesr@chromium.org>
 
         [chromium] Need a way to test lost compositor context recovery
