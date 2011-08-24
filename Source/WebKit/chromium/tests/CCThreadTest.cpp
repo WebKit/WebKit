@@ -26,10 +26,12 @@
 
 #include "cc/CCThread.h"
 
+#include "CCThreadImpl.h"
 #include "cc/CCCompletionEvent.h"
 #include "cc/CCMainThreadTask.h"
 #include "cc/CCThreadTask.h"
 #include <gtest/gtest.h>
+
 #include <webkit/support/webkit_support.h>
 #include <wtf/MainThread.h>
 
@@ -51,7 +53,7 @@ public:
 
 TEST(CCThreadTest, pingPongUsingCondition)
 {
-    OwnPtr<CCThread> thread = CCThread::create();
+    OwnPtr<CCThread> thread = WebKit::CCThreadImpl::create();
     PingPongUsingCondition target;
     CCCompletionEvent completion;
     thread->postTask(createCCThreadTask(&target, &PingPongUsingCondition::ping,
@@ -80,7 +82,7 @@ public:
 
 TEST(CCThreadTest, DISABLED_startPostAndWaitOnCondition)
 {
-    OwnPtr<CCThread> thread = CCThread::create();
+    OwnPtr<CCThread> thread = WebKit::CCThreadImpl::create();
 
     PingPongTestUsingTasks target;
     thread->postTask(createCCThreadTask(&target, &PingPongTestUsingTasks::ping));

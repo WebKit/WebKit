@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
@@ -30,6 +29,10 @@
 
 namespace WebCore {
 
+// Used for making blocking calls from one thread to another. Use only when
+// absolutely certain that doing-so will not lead to a livelock.
+//
+// It is safe to destroy this object as soon as wait() returns.
 class CCCompletionEvent {
 public:
     CCCompletionEvent()

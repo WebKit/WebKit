@@ -49,7 +49,7 @@ CCLayerTreeHostImplProxy::CCLayerTreeHostImplProxy(CCLayerTreeHost* layerTreeHos
     ASSERT(isMainThread());
     numProxies++;
     if (!ccThread)
-        ccThread = CCThread::create().leakPtr();
+        ccThread = layerTreeHost->client()->createCompositorThread().leakPtr();
 }
 
 

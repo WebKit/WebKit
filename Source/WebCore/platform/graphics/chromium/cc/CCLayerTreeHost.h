@@ -38,6 +38,7 @@ namespace WebCore {
 
 class CCLayerTreeHostImpl;
 class CCLayerTreeHostImplClient;
+class CCThread;
 class GraphicsContext3D;
 class LayerChromium;
 class LayerPainterChromium;
@@ -48,6 +49,7 @@ class NonCompositedContentHost;
 class CCLayerTreeHostClient {
 public:
     virtual void animateAndLayout(double frameBeginTime) = 0;
+    virtual PassOwnPtr<CCThread> createCompositorThread() = 0;
     virtual PassRefPtr<GraphicsContext3D> createLayerTreeHostContext3D() = 0;
     virtual PassOwnPtr<LayerPainterChromium> createRootLayerPainter() = 0;
     virtual void didRecreateGraphicsContext(bool success) = 0;
@@ -85,6 +87,8 @@ public:
 
     bool animating() const { return m_animating; }
     void setAnimating(bool animating) { m_animating = animating; } // Can be removed when non-threaded scheduling moves inside.
+
+    CCLayerTreeHostClient* client() { return m_client; }
 
     GraphicsContext3D* context();
 

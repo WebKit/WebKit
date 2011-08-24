@@ -1,3 +1,19 @@
+2011-08-23  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Implement CCThread in terms of WebThread
+        https://bugs.webkit.org/show_bug.cgi?id=66610
+
+        Reviewed by Darin Fisher.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/cc/CCCompletionEvent.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        (WebCore::CCLayerTreeHost::client):
+        * platform/graphics/chromium/cc/CCLayerTreeHostImplProxy.cpp:
+        (WebCore::CCLayerTreeHostImplProxy::CCLayerTreeHostImplProxy):
+        * platform/graphics/chromium/cc/CCThread.h:
+        (WebCore::CCThread::~CCThread):
+
 2011-08-23  Iain Merrick  <husky@google.com>
 
         [chromium] Renderer crashes when about:gpucrash is loaded

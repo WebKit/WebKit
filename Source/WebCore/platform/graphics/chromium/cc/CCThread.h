@@ -25,23 +25,16 @@
 #ifndef CCThread_h
 #define CCThread_h
 
-#include <wtf/MessageQueue.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {
 
-// The CCThread singleton owns the compositor thread and provides
-// basic infrastructure for messaging between the two threads.
+// CCThread provides basic infrastructure for messaging with the compositor in a
+// platform-neutral way.
 class CCThread {
 public:
-    static PassOwnPtr<CCThread> create()
-    {
-        return adoptPtr(new CCThread());
-    }
-
-    virtual ~CCThread();
+    virtual ~CCThread() { }
 
     class Task {
         WTF_MAKE_NONCOPYABLE(Task);
@@ -54,20 +47,9 @@ public:
         void* m_instance;
     };
 
-    void postTask(PassOwnPtr<Task>); // Executes the task on context's thread asynchronously.
+    virtual void postTask(PassOwnPtr<Task>) = 0; // Executes the task on context's thread asynchronously.
 
-    WTF::ThreadIdentifier threadID() const { return m_threadID; }
-
-protected:
-    explicit CCThread();
-
-    static void* compositorThreadStart(void*);
-    void* runLoop();
-
-    WTF::ThreadIdentifier m_threadID;
-    MessageQueue<Task> m_queue;
-
-    Mutex m_threadCreationMutex;
+    virtual WTF::ThreadIdentifier threadID() const = 0;
 };
 
 }

@@ -1,3 +1,31 @@
+2011-08-23  Nat Duca  <nduca@chromium.org>
+
+        [chromium] Implement CCThread in terms of WebThread
+        https://bugs.webkit.org/show_bug.cgi?id=66610
+
+        Reviewed by Darin Fisher.
+
+        * WebKit.gyp:
+        * public/WebThread.h:
+        (WebKit::WebThread::~WebThread):
+        * src/CCThreadImpl.cpp: Added.
+        (WebKit::GetThreadIDTask::GetThreadIDTask):
+        (WebKit::GetThreadIDTask::~GetThreadIDTask):
+        (WebKit::GetThreadIDTask::run):
+        (WebKit::CCThreadTaskAdapter::CCThreadTaskAdapter):
+        (WebKit::CCThreadTaskAdapter::~CCThreadTaskAdapter):
+        (WebKit::CCThreadTaskAdapter::run):
+        (WebKit::CCThreadImpl::create):
+        (WebKit::CCThreadImpl::~CCThreadImpl):
+        (WebKit::CCThreadImpl::postTask):
+        (WebKit::CCThreadImpl::threadID):
+        (WebKit::CCThreadImpl::CCThreadImpl):
+        * src/CCThreadImpl.h: Renamed from Source/WebCore/platform/graphics/chromium/cc/CCThread.cpp.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::createCompositorThread):
+        * src/WebViewImpl.h:
+        * tests/CCThreadTest.cpp:
+
 2011-08-23  Iain Merrick  <husky@google.com>
 
         [chromium] Renderer crashes when about:gpucrash is loaded

@@ -29,6 +29,8 @@
 
 namespace WebKit {
 
+#define WEBTHREAD_HAS_LONGLONG_CHANGE
+
 // Provides an interface to an embedder-defined thread implementation.
 //
 // Deleting the thread blocks until all pending, non-delayed tasks have been
@@ -42,10 +44,9 @@ public:
     };
 
     virtual void postTask(Task*) = 0;
-    virtual void postDelayedTask(Task*, int64 delayMs) = 0;
+    virtual void postDelayedTask(Task*, long long delayMs) = 0;
 
-protected:
-    ~WebThread() { }
+    virtual ~WebThread() { }
 };
 
 } // namespace WebKit

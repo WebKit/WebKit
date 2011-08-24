@@ -22,60 +22,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#include "cc/CCThread.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/Threading.h>
 
-#include "CCThread.h"
 
-#include "LayerRendererChromium.h"
-#include "TraceEvent.h"
-#include <wtf/CurrentTime.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/ThreadingPrimitives.h>
+#ifndef CCThreadImpl_h
+#define CCThreadImpl_h
 
-namespace WebCore {
+namespace WebKit {
 
-using namespace WTF;
+class WebThread;
 
-CCThread::CCThread()
-{
-    MutexLocker lock(m_threadCreationMutex);
-    m_threadID = createThread(CCThread::compositorThreadStart, this, "Chromium Compositor");
-}
+// Implements CCThread in terms of WebThread.
+class CCThreadImpl : public WebCore::CCThread {
+public:
+    static PassOwnPtr<WebCore::CCThread> create();
+    virtual ~CCThreadImpl();
+    void postTask(PassOwnPtr<WebCore::CCThread::Task>);
+    WTF::ThreadIdentifier threadID() const;
 
-CCThread::~CCThread()
-{
-    m_queue.kill();
+private:
+    CCThreadImpl();
 
-    // Stop thread.
-    void* exitCode;
-    waitForThreadCompletion(m_threadID, &exitCode);
-    m_threadID = 0;
-}
+    OwnPtr<WebThread> m_thread;
+    WTF::ThreadIdentifier m_threadID;
+};
 
-void CCThread::postTask(PassOwnPtr<Task> task)
-{
-    m_queue.append(task);
-}
+} // namespace WebKit
 
-void* CCThread::compositorThreadStart(void* userdata)
-{
-    CCThread* ccThread = static_cast<CCThread*>(userdata);
-    return ccThread->runLoop();
-}
-
-void* CCThread::runLoop()
-{
-    TRACE_EVENT("CCThread::runLoop", this, 0);
-    {
-        // Wait for CCThread::start() to complete to have m_threadID
-        // established before starting the main loop.
-        MutexLocker lock(m_threadCreationMutex);
-    }
-
-    while (OwnPtr<Task> task = m_queue.waitForMessage())
-        task->performTask();
-
-    return 0;
-}
-
-}
+#endif
