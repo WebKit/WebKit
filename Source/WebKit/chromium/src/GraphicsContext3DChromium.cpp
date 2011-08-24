@@ -164,7 +164,8 @@ GrContext* GraphicsContext3DInternal::grContext()
     static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
 
     if (!m_grContext) {
-        m_grContext = GrContext::CreateGLShaderContext();
+        GrPlatform3DContext glinterface = reinterpret_cast<GrPlatform3DContext>(m_impl->grGLInterface());
+        m_grContext = GrContext::Create(kOpenGL_Shaders_GrEngine, glinterface);
         if (m_grContext)
             m_grContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
     }

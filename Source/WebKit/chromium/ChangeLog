@@ -1,3 +1,15 @@
+2011-08-24  Brian Salomon  <bsalomon@google.com>
+
+        [SKIA] Allow WebKitGraphicsContext3D implementation to provide a compatible GrGLInterface
+        https://bugs.webkit.org/show_bug.cgi?id=66809
+
+        Reviewed by Stephen White.
+
+        * public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::grGLInterface):
+        * src/GraphicsContext3DChromium.cpp:
+        (WebCore::GraphicsContext3DInternal::grContext):
+
 2011-08-23  Adam Barth  <abarth@webkit.org>
 
         WebSearchableFormData crashes when given a detached HTMLFormElement

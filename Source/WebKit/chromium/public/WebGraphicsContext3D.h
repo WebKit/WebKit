@@ -60,6 +60,10 @@ typedef signed long int WGC3Dsizeiptr;
 // Typedef for server-side objects like OpenGL textures and program objects.
 typedef WGC3Duint WebGLId;
 
+#if WEBKIT_USING_SKIA
+struct GrGLInterface;
+#endif
+
 class WebView;
 
 // This interface abstracts the operations performed by the
@@ -355,6 +359,10 @@ public:
     // the GL_ARB_robustness extension; specifically, the lost context
     // state is sticky, rather than reported only once.
     virtual WGC3Denum getGraphicsResetStatusARB() { return 0; /* GL_NO_ERROR */ }
+
+#if WEBKIT_USING_SKIA
+    virtual GrGLInterface* grGLInterface() { return 0; }
+#endif
 };
 
 } // namespace WebKit
