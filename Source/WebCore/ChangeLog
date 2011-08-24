@@ -1,3 +1,16 @@
+2011-08-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r93645.
+        http://trac.webkit.org/changeset/93645
+        https://bugs.webkit.org/show_bug.cgi?id=66828
+
+        Broke webkit_unit_tests on chromium mac (Requested by jamesr
+        on #webkit).
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::ScrollbarThemeChromiumMac):
+        (WebCore::ScrollbarThemeChromiumMac::paintOverhangAreas):
+
 2011-08-23  Beth Dakin  <bdakin@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=66244

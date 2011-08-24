@@ -42,10 +42,16 @@
 #include <wtf/UnusedParam.h>
 
 #if USE(SKIA)
+#include "BitmapImageSingleFrameSkia.h"
 #include "PlatformContextSkia.h"
 #include "skia/ext/skia_utils_mac.h"
 #endif
 
+
+// Undocumented Lion method to get the pattern for the over-scroll area.
+@interface NSColor (LionSekretAPI)
++ (NSImage*)_linenPatternImage;
+@end
 
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
@@ -194,9 +200,24 @@ ScrollbarThemeChromiumMac::ScrollbarThemeChromiumMac()
     if (!initialized) {
         initialized = true;
 
-        // Load the linen pattern image used for overhang drawing.
-        RefPtr<Image> patternImage = Image::loadPlatformResource("overhangPattern");
-        m_overhangPattern = Pattern::create(patternImage, true, true);
+        // Load the linen pattern image used for overhang drawing if available.
+        if ([NSColor respondsToSelector:@selector(_linenPatternImage)]) {
+            NSImage* image = [NSColor _linenPatternImage];
+            if (image) {
+                NSData* tiffData =  [image TIFFRepresentation];
+                if (tiffData) {
+                    CGImageSourceRef imageSource = CGImageSourceCreateWithData((CFDataRef)tiffData, NULL);
+                    CGImageRef cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, NULL);
+#if USE(SKIA)
+                    SkBitmap bitmap = gfx::CGImageToSkBitmap(cgImage);
+                    RefPtr<Image> patternImage = BitmapImageSingleFrameSkia::create(bitmap, false);
+#else
+                    RefPtr<Image> patternImage = BitmapImage::create(cgImage);
+#endif                    
+                    m_overhangPattern = Pattern::create(patternImage, true, true);
+                }
+            }
+        }
 
         [ScrollbarPrefsObserver registerAsObserver];
         preferencesChanged();
@@ -697,7 +718,11 @@ void ScrollbarThemeChromiumMac::paintOverhangAreas(ScrollView* view, GraphicsCon
 
     context->save();
 
-    context->setFillPattern(m_overhangPattern);
+    if (m_overhangPattern.get())
+        context->setFillPattern(m_overhangPattern);
+    else    
+        context->setFillColor(Color::darkGray, ColorSpaceDeviceRGB);
+
     if (hasHorizontalOverhang)
         context->fillRect(intersection(horizontalOverhangRect, dirtyRect));
     if (hasVerticalOverhang)
