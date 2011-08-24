@@ -58,6 +58,8 @@ class WebNamedNodeMap;
         WEBKIT_EXPORT bool setAttribute(const WebString& name, const WebString& value);
         WEBKIT_EXPORT WebNamedNodeMap attributes() const;
         WEBKIT_EXPORT WebString innerText();
+        WEBKIT_EXPORT WebDocument document() const;
+        WEBKIT_EXPORT void requestFullScreen();
 
         // Returns the language code specified for this element.  This attribute
         // is inherited, so the returned value is drawn from the closest parent

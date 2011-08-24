@@ -1,3 +1,15 @@
+2011-08-24  Jeremy Apthorp  <jeremya@google.com>
+
+        Expose fullscreen API on WebElement/WebDocument
+        https://bugs.webkit.org/show_bug.cgi?id=66746
+
+        Reviewed by Darin Fisher.
+
+        * public/WebPluginContainer.h:
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::setFullscreen):
+        * src/WebPluginContainerImpl.h:
+
 2011-08-24  Brian Salomon  <bsalomon@google.com>
 
         [SKIA] Allow WebKitGraphicsContext3D implementation to provide a compatible GrGLInterface

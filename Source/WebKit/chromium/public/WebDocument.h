@@ -99,6 +99,7 @@ public:
     WEBKIT_EXPORT WebNode focusedNode() const;
     WEBKIT_EXPORT WebDocumentType doctype() const;
     WEBKIT_EXPORT WebAccessibilityObject accessibilityObject() const;
+    WEBKIT_EXPORT void cancelFullScreen();
 
     // Inserts the given CSS source code as a user stylesheet in the document.
     // Meant for programatic/one-off injection, as opposed to

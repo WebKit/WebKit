@@ -189,6 +189,13 @@ void WebDocument::insertUserStyleSheet(const WebString& sourceCode, UserStyleLev
     document->addUserSheet(parsedSheet.release());
 }
 
+void WebDocument::cancelFullScreen()
+{
+#if ENABLE(FULLSCREEN_API)
+    unwrap<Document>()->webkitCancelFullScreen();
+#endif
+}
+
 WebDocument::WebDocument(const PassRefPtr<Document>& elem)
     : WebNode(elem)
 {

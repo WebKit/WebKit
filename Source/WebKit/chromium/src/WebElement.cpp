@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "WebElement.h"
+#include "WebDocument.h"
 
 #include "Element.h"
 #include "RenderBoxModelObject.h"
@@ -93,6 +94,18 @@ WebString WebElement::innerText()
 WebString WebElement::computeInheritedLanguage() const
 {
     return WebString(constUnwrap<Element>()->computeInheritedLanguage());
+}
+
+void WebElement::requestFullScreen()
+{
+#if ENABLE(FULLSCREEN_API)
+    unwrap<Element>()->webkitRequestFullScreen(Element::ALLOW_KEYBOARD_INPUT);
+#endif
+}
+
+WebDocument WebElement::document() const
+{
+    return WebDocument(constUnwrap<Element>()->document());
 }
 
 WebElement::WebElement(const PassRefPtr<Element>& elem)
