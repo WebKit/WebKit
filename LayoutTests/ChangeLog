@@ -1,3 +1,11 @@
+2011-08-24  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, rebaselining media/video-currentTime-set.html due to
+        FFmpeg udpate.
+
+        * platform/chromium-cg-mac/media/video-currentTime-set-expected.txt:
+        * platform/chromium-win/media/video-currentTime-set-expected.txt:
+
 2011-08-24  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: add createObjectURL functionality

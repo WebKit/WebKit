@@ -4,7 +4,7 @@ EVENT(canplaythrough)
 EXPECTED (video.currentTime == '0') OK
 RUN(video.currentTime = video.duration - 0.2)
 EVENT(seeked)
-EXPECTED (video.currentTime.toFixed(2) == '5.81') OK
+EXPECTED (video.currentTime.toFixed(2) == '5.82') OK
 RUN(video.play())
 
 EVENT(ended)
