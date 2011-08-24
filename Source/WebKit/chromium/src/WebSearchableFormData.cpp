@@ -64,6 +64,8 @@ void GetFormEncoding(const HTMLFormElement* form, TextEncoding* encoding)
         if (encoding->isValid())
             return;
     }
+    if (!form->document()->frame())
+         return;
     *encoding = TextEncoding(form->document()->loader()->writer()->encoding());
 }
 

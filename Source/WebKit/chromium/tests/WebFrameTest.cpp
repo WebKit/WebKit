@@ -30,11 +30,11 @@
 
 #include "config.h"
 
-#include <googleurl/src/gurl.h>
-#include <gtest/gtest.h>
-#include <webkit/support/webkit_support.h>
+#include "WebDocument.h"
+#include "WebFormElement.h"
 #include "WebFrame.h"
 #include "WebFrameClient.h"
+#include "WebSearchableFormData.h"
 #include "WebSettings.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -42,6 +42,9 @@
 #include "WebURLResponse.h"
 #include "WebView.h"
 #include "v8.h"
+#include <googleurl/src/gurl.h>
+#include <gtest/gtest.h>
+#include <webkit/support/webkit_support.h>
 
 using namespace WebKit;
 
@@ -143,6 +146,27 @@ TEST_F(WebFrameTest, FrameForEnteredContext)
                   webView->mainFrame()->firstChild()->mainWorldScriptContext()));
 
     webView->close();
+}
+
+TEST_F(WebFrameTest, FormWithNullFrame)
+{
+    registerMockedURLLoad("form.html");
+
+    TestWebFrameClient webFrameClient;
+    WebView* webView = WebView::create(0);
+    webView->initializeMainFrame(&webFrameClient);
+
+    loadFrame(webView->mainFrame(), "form.html");
+    serveRequests();
+
+    WebVector<WebFormElement> forms;
+    webView->mainFrame()->document().forms(forms);
+    webView->close();
+
+    EXPECT_EQ(forms.size(), 1U);
+
+    // This test passes if this doesn't crash.
+    WebSearchableFormData searchableDataForm(forms[0]);
 }
 
 }

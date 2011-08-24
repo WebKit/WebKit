@@ -1,3 +1,18 @@
+2011-08-23  Adam Barth  <abarth@webkit.org>
+
+        WebSearchableFormData crashes when given a detached HTMLFormElement
+        https://bugs.webkit.org/show_bug.cgi?id=66831
+
+        Reviewed by Dimitri Glazkov.
+
+        We need to null-check the Frame.
+
+        * src/WebSearchableFormData.cpp:
+        (HTMLNames::GetFormEncoding):
+        * tests/WebFrameTest.cpp:
+        (WebKit::TEST_F):
+        * tests/data/form.html: Added.
+
 2011-08-23  Iain Merrick  <husky@google.com>
 
         [chromium] Make WebGL context current before querying for extensions
