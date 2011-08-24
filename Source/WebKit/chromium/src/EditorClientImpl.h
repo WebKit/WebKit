@@ -118,37 +118,8 @@ public:
 
     virtual WebCore::TextCheckerClient* textChecker() { return this; }
 
-    // Shows the form autofill popup for |node| if it is an HTMLInputElement and
-    // it is empty.  This is called when you press the up or down arrow in a
-    // text-field or when clicking an already focused text-field.
-    // Returns true if the autofill popup has been scheduled to be shown, false
-    // otherwise.
-    virtual bool showFormAutofillForNode(WebCore::Node*);
-
 private:
     void modifySelection(WebCore::Frame*, WebCore::KeyboardEvent*);
-
-    // Triggers autofill for an input element if applicable.  This can be form
-    // autofill (via a popup-menu) or password autofill depending on the
-    // input element.  If |formAutofillOnly| is true, password autofill is not
-    // triggered.
-    // |autofillOnEmptyValue| indicates whether the autofill should be shown
-    // when the text-field is empty.
-    // If |requiresCaretAtEnd| is true, the autofill popup is only shown if the
-    // caret is located at the end of the entered text.
-    // Returns true if the autofill popup has been scheduled to be shown, false
-    // otherwise.
-    bool autofill(WebCore::HTMLInputElement*,
-                  bool formAutofillOnly, bool autofillOnEmptyValue,
-                  bool requiresCaretAtEnd);
-
-    // Called to process the autofill described by m_autofillArgs.
-    // This method is invoked asynchronously if the caret position is not
-    // reflecting the last text change yet, and we need it to decide whether or
-    // not to show the autofill popup.
-    void doAutofill(WebCore::Timer<EditorClientImpl>*);
-
-    void cancelPendingAutofill();
 
     // Returns whether or not the focused control needs spell-checking.
     // Currently, this function just retrieves the focused node and determines
@@ -166,9 +137,6 @@ private:
     EditCommandStack m_undoStack;
     EditCommandStack m_redoStack;
 
-    // Whether the last entered key was a backspace.
-    bool m_backspaceOrDeletePressed;
-
     // This flag is set to false if spell check for this editor is manually
     // turned off. The default setting is SpellCheckAutomatic.
     enum {
@@ -177,18 +145,6 @@ private:
         SpellCheckForcedOff
     };
     int m_spellCheckThisFieldStatus;
-
-    // Used to delay autofill processing.
-    WebCore::Timer<EditorClientImpl> m_autofillTimer;
-
-    struct AutofillArgs {
-        RefPtr<WebCore::HTMLInputElement> inputElement;
-        bool autofillFormOnly;
-        bool autofillOnEmptyValue;
-        bool requireCaretAtEnd;
-        bool backspaceOrDeletePressed;
-    };
-    OwnPtr<AutofillArgs> m_autofillArgs;
 };
 
 } // namespace WebKit

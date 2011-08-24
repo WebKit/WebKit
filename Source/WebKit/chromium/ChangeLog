@@ -1,3 +1,33 @@
+2011-08-24  Ilya Sherman  <isherman@chromium.org>
+
+        Remove some dead Autofill code
+        https://bugs.webkit.org/show_bug.cgi?id=66899
+        http://code.google.com/p/chromium/issues/detail?id=51644
+
+        Reviewed by James Robinson.
+
+        * WebKit.gyp:
+        * public/WebAutofillClient.h:
+        * public/WebFrame.h:
+        * public/WebPasswordAutocompleteListener.h: Removed.
+        * src/EditorClientImpl.cpp:
+        (WebKit::EditorClientImpl::EditorClientImpl):
+        (WebKit::EditorClientImpl::handleKeyboardEvent):
+        (WebKit::EditorClientImpl::textFieldDidBeginEditing):
+        (WebKit::EditorClientImpl::textFieldDidEndEditing):
+        (WebKit::EditorClientImpl::textDidChangeInTextField):
+        (WebKit::EditorClientImpl::doTextFieldCommandFromEvent):
+        * src/EditorClientImpl.h:
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidFinishDocumentLoad):
+        * src/WebFrameImpl.cpp:
+        (WebKit::frameContentAsPlainText):
+        (WebKit::WebFrameImpl::scopeStringMatches):
+        (WebKit::WebFrameImpl::~WebFrameImpl):
+        * src/WebFrameImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::mouseDown):
+
 2011-08-24  Tom Sepez  <tsepez@chromium.org>
 
         chromium WebFrameImpl - don't load javascript URLs against chrome internal pages.

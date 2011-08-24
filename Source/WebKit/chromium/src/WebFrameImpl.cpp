@@ -145,7 +145,6 @@
 #include "WebIconURL.h"
 #include "WebInputElement.h"
 #include "WebNode.h"
-#include "WebPasswordAutocompleteListener.h"
 #include "WebPerformance.h"
 #include "WebPlugin.h"
 #include "WebPluginContainerImpl.h"
@@ -258,7 +257,7 @@ static void frameContentAsPlainText(size_t maxChars, Frame* frame,
     for (Frame* curChild = frameTree->firstChild(); curChild; curChild = curChild->tree()->nextSibling()) {
         // Ignore the text of non-visible frames.
         RenderView* contentRenderer = curChild->contentRenderer();
-        RenderPart* ownerRenderer = curChild->ownerRenderer();        
+        RenderPart* ownerRenderer = curChild->ownerRenderer();
         if (!contentRenderer || !contentRenderer->width() || !contentRenderer->height()
             || (contentRenderer->x() + contentRenderer->width() <= 0) || (contentRenderer->y() + contentRenderer->height() <= 0)
             || (ownerRenderer && ownerRenderer->style() && ownerRenderer->style()->visibility() != VISIBLE)) {
@@ -1655,7 +1654,7 @@ void WebFrameImpl::scopeStringMatches(int identifier,
         // Set the new start for the search range to be the end of the previous
         // result range. There is no need to use a VisiblePosition here,
         // since findPlainText will use a TextIterator to go over the visible
-        // text nodes. 
+        // text nodes.
         searchRange->setStart(resultRange->endContainer(ec), resultRange->endOffset(ec), ec);
 
         Node* shadowTreeRoot = searchRange->shadowTreeRootNode();
@@ -1880,7 +1879,6 @@ WebFrameImpl::~WebFrameImpl()
     frameCount--;
 
     cancelPendingScopingEffort();
-    clearPasswordListeners();
 }
 
 void WebFrameImpl::initializeAsMainFrame(WebViewImpl* webViewImpl)
@@ -2125,35 +2123,6 @@ void WebFrameImpl::setCanHaveScrollbars(bool canHaveScrollbars)
     m_frame->view()->setCanHaveScrollbars(canHaveScrollbars);
 }
 
-bool WebFrameImpl::registerPasswordListener(
-    WebInputElement inputElement,
-    WebPasswordAutocompleteListener* listener)
-{
-    RefPtr<HTMLInputElement> element(inputElement.unwrap<HTMLInputElement>());
-    if (!m_passwordListeners.add(element, listener).second) {
-        delete listener;
-        return false;
-    }
-    return true;
-}
-
-void WebFrameImpl::notifiyPasswordListenerOfAutocomplete(
-    const WebInputElement& inputElement)
-{
-    const HTMLInputElement* element = inputElement.constUnwrap<HTMLInputElement>();
-    WebPasswordAutocompleteListener* listener = getPasswordListener(element);
-    // Password listeners need to autocomplete other fields that depend on the
-    // input element with autofill suggestions.
-    if (listener)
-        listener->performInlineAutocomplete(element->value(), false, false);
-}
-
-WebPasswordAutocompleteListener* WebFrameImpl::getPasswordListener(
-    const HTMLInputElement* inputElement)
-{
-    return m_passwordListeners.get(RefPtr<HTMLInputElement>(const_cast<HTMLInputElement*>(inputElement)));
-}
-
 // WebFrameImpl private --------------------------------------------------------
 
 void WebFrameImpl::closing()
@@ -2275,12 +2244,6 @@ void WebFrameImpl::invalidateIfNecessary()
 
         invalidateArea(InvalidateScrollbar);
     }
-}
-
-void WebFrameImpl::clearPasswordListeners()
-{
-    deleteAllValues(m_passwordListeners);
-    m_passwordListeners.clear();
 }
 
 void WebFrameImpl::loadJavaScriptURL(const KURL& url)

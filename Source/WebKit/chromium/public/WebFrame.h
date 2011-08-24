@@ -59,7 +59,6 @@ class WebElement;
 class WebFormElement;
 class WebHistoryItem;
 class WebInputElement;
-class WebPasswordAutocompleteListener;
 class WebPerformance;
 class WebRange;
 class WebSecurityOrigin;
@@ -520,24 +519,6 @@ public:
     // This function is called on the main frame to reset the total number
     // of matches found during the scoping effort.
     virtual void resetMatchCount() = 0;
-
-
-    // Password autocompletion ---------------------------------------------
-
-    // Registers a listener for the specified user name input element. The
-    // listener will receive notifications for blur and when autocomplete
-    // should be triggered.
-    // An element can have only one listener. If a listener already exists,
-    // this method returns false and does not add the new one.
-    // Either way, the WebFrame becomes the owner of the passed listener.
-    virtual bool registerPasswordListener(
-        WebInputElement,
-        WebPasswordAutocompleteListener*) = 0;
-
-    // Dispatches an Autocompletion notification to registered listener if one
-    // exists that is registered against the WebInputElement specified.
-    virtual void notifiyPasswordListenerOfAutocomplete(
-        const WebInputElement&) = 0;
 
 
     // Utility -------------------------------------------------------------

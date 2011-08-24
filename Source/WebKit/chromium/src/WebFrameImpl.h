@@ -56,7 +56,6 @@ class ChromePrintContext;
 class WebDataSourceImpl;
 class WebInputElement;
 class WebFrameClient;
-class WebPasswordAutocompleteListener;
 class WebPerformance;
 class WebPluginContainerImpl;
 class WebView;
@@ -186,10 +185,6 @@ public:
     virtual void cancelPendingScopingEffort();
     virtual void increaseMatchCount(int count, int identifier);
     virtual void resetMatchCount();
-    virtual bool registerPasswordListener(
-        WebInputElement, WebPasswordAutocompleteListener*);
-    virtual void notifiyPasswordListenerOfAutocomplete(
-        const WebInputElement&);
 
     virtual WebString contentAsText(size_t maxChars) const;
     virtual WebString contentAsMarkup() const;
@@ -258,12 +253,6 @@ public:
     // Otherwise, disallow scrolling.
     void setCanHaveScrollbars(bool);
 
-    // Returns the password autocomplete listener associated with the passed
-    // user name input element, or 0 if none available.
-    // Note that the returned listener is owner by the WebFrameImpl and should not
-    // be kept around as it is deleted when the page goes away.
-    WebPasswordAutocompleteListener* getPasswordListener(const WebCore::HTMLInputElement*);
-
     WebFrameClient* client() const { return m_client; }
     void setClient(WebFrameClient* client) { m_client = client; }
 
@@ -325,9 +314,6 @@ private:
 
     // Determines whether to invalidate the content area and scrollbar.
     void invalidateIfNecessary();
-
-    // Clears the map of password listeners.
-    void clearPasswordListeners();
 
     void loadJavaScriptURL(const WebCore::KURL&);
 
@@ -397,12 +383,6 @@ private:
     // Valid between calls to BeginPrint() and EndPrint(). Containts the print
     // information. Is used by PrintPage().
     OwnPtr<ChromePrintContext> m_printContext;
-
-    // The input fields that are interested in edit events and their associated
-    // listeners.
-    typedef HashMap<RefPtr<WebCore::HTMLInputElement>,
-                    WebPasswordAutocompleteListener*> PasswordListenerMap;
-    PasswordListenerMap m_passwordListeners;
 
     // Keeps a reference to the frame's WebAnimationController.
     WebAnimationControllerImpl m_animationController;

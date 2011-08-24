@@ -52,7 +52,6 @@
 #include "WebInputElement.h"
 #include "WebInputEventConversion.h"
 #include "WebNode.h"
-#include "WebPasswordAutocompleteListener.h"
 #include "WebPermissionClient.h"
 #include "WebRange.h"
 #include "WebSpellCheckClient.h"
@@ -71,16 +70,10 @@ namespace WebKit {
 // into a single action.
 static const size_t maximumUndoStackDepth = 1000;
 
-// The size above which we stop triggering autofill for an input text field
-// (so to avoid sending long strings through IPC).
-static const size_t maximumTextSizeForAutofill = 1000;
-
 EditorClientImpl::EditorClientImpl(WebViewImpl* webview)
     : m_webView(webview)
     , m_inRedo(false)
-    , m_backspaceOrDeletePressed(false)
     , m_spellCheckThisFieldStatus(SpellCheckAutomatic)
-    , m_autofillTimer(this, &EditorClientImpl::doAutofill)
 {
 }
 
@@ -643,12 +636,6 @@ bool EditorClientImpl::handleEditingKeyboardEvent(KeyboardEvent* evt)
 
 void EditorClientImpl::handleKeyboardEvent(KeyboardEvent* evt)
 {
-    if (evt->keyCode() == VKEY_DOWN
-        || evt->keyCode() == VKEY_UP) {
-        ASSERT(evt->target()->toNode());
-        showFormAutofillForNode(evt->target()->toNode());
-    }
-
     // Give the embedder a chance to handle the keyboard event.
     if ((m_webView->client()
          && m_webView->client()->handleCurrentKeyboardEvent())
@@ -663,9 +650,6 @@ void EditorClientImpl::handleInputMethodKeydown(KeyboardEvent* keyEvent)
 
 void EditorClientImpl::textFieldDidBeginEditing(Element* element)
 {
-    HTMLInputElement* inputElement = toHTMLInputElement(element);
-    if (m_webView->autofillClient() && inputElement)
-        m_webView->autofillClient()->textFieldDidBeginEditing(WebInputElement(inputElement));
 }
 
 void EditorClientImpl::textFieldDidEndEditing(Element* element)
@@ -677,29 +661,8 @@ void EditorClientImpl::textFieldDidEndEditing(Element* element)
     // Notification that focus was lost.  Be careful with this, it's also sent
     // when the page is being closed.
 
-    // Cancel any pending DoAutofill call.
-    m_autofillArgs.clear();
-    m_autofillTimer.stop();
-
     // Hide any showing popup.
     m_webView->hideAutofillPopup();
-
-    if (!m_webView->client())
-        return; // The page is getting closed, don't fill the password.
-
-    // Notify any password-listener of the focus change.
-    if (!inputElement)
-        return;
-
-    WebFrameImpl* webframe = WebFrameImpl::fromFrame(inputElement->document()->frame());
-    if (!webframe)
-        return;
-
-    WebPasswordAutocompleteListener* listener = webframe->getPasswordListener(inputElement);
-    if (!listener)
-        return;
-
-    listener->didBlurInputElement(inputElement->value());
 }
 
 void EditorClientImpl::textDidChangeInTextField(Element* element)
@@ -708,102 +671,6 @@ void EditorClientImpl::textDidChangeInTextField(Element* element)
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(element);
     if (m_webView->autofillClient())
         m_webView->autofillClient()->textFieldDidChange(WebInputElement(inputElement));
-
-    // Note that we only show the autofill popup in this case if the caret is at
-    // the end.  This matches FireFox and Safari but not IE.
-    autofill(inputElement, false, false, true);
-}
-
-bool EditorClientImpl::showFormAutofillForNode(Node* node)
-{
-    HTMLInputElement* inputElement = toHTMLInputElement(node);
-    if (inputElement)
-        return autofill(inputElement, true, true, false);
-    return false;
-}
-
-bool EditorClientImpl::autofill(HTMLInputElement* inputElement,
-                                bool autofillFormOnly,
-                                bool autofillOnEmptyValue,
-                                bool requireCaretAtEnd)
-{
-    // Cancel any pending DoAutofill call.
-    m_autofillArgs.clear();
-    m_autofillTimer.stop();
-
-    // Let's try to trigger autofill for that field, if applicable.
-    if (!inputElement->isEnabledFormControl() || !inputElement->isTextField()
-        || inputElement->isPasswordField() || !inputElement->shouldAutocomplete()
-        || inputElement->isReadOnlyFormControl())
-        return false;
-
-    WebString name = WebInputElement(inputElement).nameForAutofill();
-    if (name.isEmpty()) // If the field has no name, then we won't have values.
-        return false;
-
-    // Don't attempt to autofill with values that are too large.
-    if (inputElement->value().length() > maximumTextSizeForAutofill)
-        return false;
-
-    m_autofillArgs = adoptPtr(new AutofillArgs);
-    m_autofillArgs->inputElement = inputElement;
-    m_autofillArgs->autofillFormOnly = autofillFormOnly;
-    m_autofillArgs->autofillOnEmptyValue = autofillOnEmptyValue;
-    m_autofillArgs->requireCaretAtEnd = requireCaretAtEnd;
-    m_autofillArgs->backspaceOrDeletePressed = m_backspaceOrDeletePressed;
-
-    if (!requireCaretAtEnd)
-        doAutofill(0);
-    else {
-        // We post a task for doing the autofill as the caret position is not set
-        // properly at this point (http://bugs.webkit.org/show_bug.cgi?id=16976)
-        // and we need it to determine whether or not to trigger autofill.
-        m_autofillTimer.startOneShot(0.0);
-    }
-    return true;
-}
-
-void EditorClientImpl::doAutofill(Timer<EditorClientImpl>* timer)
-{
-    OwnPtr<AutofillArgs> args(m_autofillArgs.release());
-    HTMLInputElement* inputElement = args->inputElement.get();
-
-    const String& value = inputElement->value();
-
-    // Enforce autofill_on_empty_value and caret_at_end.
-
-    bool isCaretAtEnd = true;
-    if (args->requireCaretAtEnd)
-        isCaretAtEnd = inputElement->selectionStart() == inputElement->selectionEnd()
-                       && inputElement->selectionEnd() == static_cast<int>(value.length());
-
-    if ((!args->autofillOnEmptyValue && value.isEmpty()) || !isCaretAtEnd) {
-        m_webView->hideAutofillPopup();
-        return;
-    }
-
-    // First let's see if there is a password listener for that element.
-    // We won't trigger form autofill in that case, as having both behavior on
-    // a node would be confusing.
-    WebFrameImpl* webframe = WebFrameImpl::fromFrame(inputElement->document()->frame());
-    if (!webframe)
-        return;
-    WebPasswordAutocompleteListener* listener = webframe->getPasswordListener(inputElement);
-    if (listener) {
-        if (args->autofillFormOnly)
-            return;
-
-        listener->performInlineAutocomplete(value,
-                                            args->backspaceOrDeletePressed,
-                                            true);
-        return;
-    }
-}
-
-void EditorClientImpl::cancelPendingAutofill()
-{
-    m_autofillArgs.clear();
-    m_autofillTimer.stop();
 }
 
 bool EditorClientImpl::doTextFieldCommandFromEvent(Element* element,
@@ -814,12 +681,6 @@ bool EditorClientImpl::doTextFieldCommandFromEvent(Element* element,
         m_webView->autofillClient()->textFieldDidReceiveKeyDown(WebInputElement(inputElement),
                                                                 WebKeyboardEventBuilder(*event));
     }
-
-    // Remember if backspace was pressed for the autofill.  It is not clear how to
-    // find if backspace was pressed from textFieldDidBeginEditing and
-    // textDidChangeInTextField as when these methods are called the value of the
-    // input element already contains the type character.
-    m_backspaceOrDeletePressed = event->keyCode() == VKEY_BACK || event->keyCode() == VKEY_DELETE;
 
     // The Mac code appears to use this method as a hook to implement special
     // keyboard commands specific to Safari's auto-fill implementation.  We

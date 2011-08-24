@@ -462,7 +462,6 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
 
     m_lastMouseDownPoint = WebPoint(event.x, event.y);
 
-    RefPtr<Node> clickedNode;
     if (event.button == WebMouseEvent::ButtonLeft) {
         IntPoint point(event.x, event.y);
         point = m_page->mainFrame()->view()->windowToContents(point);
@@ -472,18 +471,6 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
         // Take capture on a mouse down on a plugin so we can send it mouse events.
         if (hitNode && hitNode->renderer() && hitNode->renderer()->isEmbeddedObject())
             m_mouseCaptureNode = hitNode;
-
-        // If a text field that has focus is clicked again, we should display the
-        // Autofill popup.
-        RefPtr<Node> focusedNode = focusedWebCoreNode();
-        if (focusedNode.get() && toHTMLInputElement(focusedNode.get())) {
-            if (hitNode == focusedNode) {
-                // Already focused text field was clicked, let's remember this.  If
-                // focus has not changed after the mouse event is processed, we'll
-                // trigger the autocomplete.
-                clickedNode = focusedNode;
-            }
-        }
     }
 
     mainFrameImpl()->frame()->loader()->resetMultipleFormSubmissionProtection();
@@ -491,11 +478,6 @@ void WebViewImpl::mouseDown(const WebMouseEvent& event)
     mainFrameImpl()->frame()->eventHandler()->handleMousePressEvent(
         PlatformMouseEventBuilder(mainFrameImpl()->frameView(), event));
 
-    if (clickedNode.get() && clickedNode == focusedWebCoreNode()) {
-        // Focus has not changed, show the Autofill popup.
-        static_cast<EditorClientImpl*>(m_page->editorClient())->
-            showFormAutofillForNode(clickedNode.get());
-    }
     if (m_selectPopup && m_selectPopup == selectPopup) {
         // That click triggered a select popup which is the same as the one that
         // was showing before the click.  It means the user clicked the select

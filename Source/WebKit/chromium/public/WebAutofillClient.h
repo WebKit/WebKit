@@ -71,7 +71,6 @@ public:
                                               const WebString& value) { }
 
     // These methods are called when the users edits a text-field.
-    virtual void textFieldDidBeginEditing(const WebInputElement&) { }
     virtual void textFieldDidEndEditing(const WebInputElement&) { }
     virtual void textFieldDidChange(const WebInputElement&) { }
     virtual void textFieldDidReceiveKeyDown(const WebInputElement&, const WebKeyboardEvent&) { }

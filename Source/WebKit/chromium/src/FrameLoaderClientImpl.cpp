@@ -438,10 +438,6 @@ void FrameLoaderClientImpl::dispatchDidFailLoading(DocumentLoader* loader,
 
 void FrameLoaderClientImpl::dispatchDidFinishDocumentLoad()
 {
-    // A frame may be reused.  This call ensures we don't hold on to our password
-    // listeners and their associated HTMLInputElements.
-    m_webFrame->clearPasswordListeners();
-
     if (m_webFrame->client())
         m_webFrame->client()->didFinishDocumentLoad(m_webFrame);
 }

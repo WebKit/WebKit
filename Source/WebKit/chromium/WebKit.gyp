@@ -234,7 +234,6 @@
                 'public/WebPageSerializer.h',
                 'public/WebPageSerializerClient.h',
                 'public/WebPageVisibilityState.h',
-                'public/WebPasswordAutocompleteListener.h',
                 'public/WebPasswordFormData.h',
                 'public/WebPerformance.h',
                 'public/WebPermissionClient.h',
