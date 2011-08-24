@@ -1,3 +1,13 @@
+2011-08-24  Avi Drissman  <avi@google.com>
+
+        Crash when restoring NSGraphicsContext when running the Chromium GPU layout tests on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=66875
+
+        Reviewed by James Robinson.
+
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.mm:
+        (WebThemeEngineDRTMac::paintNSScrollerScrollbarThumb):
+
 2011-08-23  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Make notifications appear in time order again.
