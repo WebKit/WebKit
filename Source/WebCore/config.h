@@ -166,6 +166,7 @@
 
 #if OS(SYMBIAN)
 #define USE_SYSTEM_MALLOC 1
+#define ENABLE_PASSWORD_ECHO 1
 #endif
 
 #if OS(UNIX) || OS(WINDOWS)
