@@ -1,3 +1,10 @@
+2011-08-25  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Rollout r93799: Caused bad clipping on the bottom of tall glyphs inside a button label
+
+        * fast/css/button-overflow-ellipsis.html: Removed.
+        * platform/qt/fast/css/button-overflow-ellipsis-expected.txt: Removed.
+
 2011-08-25  Anders Carlsson  <andersca@apple.com>
 
         Return the correct value for NPNVsupportsCarbonBool

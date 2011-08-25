@@ -1221,7 +1221,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
     // FIXME: CSS3 says that descendants that are clipped must also know how to truncate.  This is insanely
     // difficult to figure out (especially in the middle of doing layout), and is really an esoteric pile of nonsense
     // anyway, so we won't worry about following the draft here.
-    bool hasTextOverflow = style()->textOverflow() && (hasOverflowClip() || hasControlClip());
+    bool hasTextOverflow = style()->textOverflow() && hasOverflowClip();
 
     // Walk all the lines and delete our ellipsis line boxes if they exist.
     if (hasTextOverflow)

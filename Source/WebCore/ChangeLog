@@ -1,3 +1,16 @@
+2011-08-25  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Rollout r93799: Caused bad clipping on the bottom of tall glyphs inside a button label
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderBox.cpp:
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::hasControlClip):
+        (WebCore::RenderBox::controlClipRect):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setupInnerStyle):
+
 2011-08-25  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         [Qt] Enable password echo on Symbian builds
