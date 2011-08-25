@@ -1,3 +1,12 @@
+2011-08-24  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Further attempts to clean up the test expectations by being
+        more consistent about handling SKIPped and WONTFIXed tests.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-25  Dean Jackson  <dino@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21586

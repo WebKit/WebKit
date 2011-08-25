@@ -23,6 +23,11 @@ BUGCR24182 SLOW : http/tests/websocket/tests/hixie76/frame-lengths.html = PASS
 BUGCR24182 SLOW WIN DEBUG : http/tests/websocket/tests/hixie76/simple-stress.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/simple-cross-origin-progress-events.html = PASS
 BUGCR24182 SLOW WIN : http/tests/xmlhttprequest/supported-xml-content-types.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : ietestcenter/Javascript/15.4.4.16-7-c-ii-2.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : ietestcenter/Javascript/15.4.4.17-7-c-ii-2.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : ietestcenter/Javascript/15.4.4.18-7-c-ii-1.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : ietestcenter/Javascript/15.4.4.19-8-c-ii-1.html = PASS
+BUGCR24182 SLOW LINUX WIN DEBUG : ietestcenter/Javascript/15.4.4.20-9-c-ii-1.html = PASS
 BUGCR24182 SLOW DEBUG : jquery/attributes.html = PASS
 BUGCR24182 DEBUG : jquery/core.html = PASS TIMEOUT
 BUGCR24182 SLOW DEBUG : jquery/data.html = PASS
@@ -35,8 +40,79 @@ BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-push-pop.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : perf/array-reverse.html = PASS
 
 // -----------------------------------------------------------------
-// SKIPPED TESTS
+// TEMPORARILY SKIPPED TESTS
 // -----------------------------------------------------------------
+
+// Fails due to different window.close() rules.  We need to decide whether we
+// ever expect to pass this.
+BUGCR24189 SKIP : fast/dom/open-and-close-by-DOM.html = FAIL
+
+// Implement java testing harness.
+BUGCR36681 SKIP : java = TEXT
+
+// Quota API is not supported in DRT yet.
+BUGCR84572 SKIP : storage/storageinfo-query-usage.html = FAIL
+BUGCR84572 SKIP : storage/storageinfo-request-quota.html = FAIL
+BUGCR84572 SKIP : storage/storageinfo-no-callbacks.html = FAIL
+
+// Animation API is disabled
+SKIP : animations/animation-api-1.html = FAIL
+
+// Unskip after implementing DRT support for setDefersLoading and goBack.
+BUGWK60877 SKIP : loader/navigation-while-deferring-loads.html = FAIL
+BUGWK60877 SKIP : loader/load-defer-resume-crash.html = FAIL
+
+// CSS3 Selectors3 test suite
+BUGCR89468 : css3/selectors3 = PASS FAIL
+
+// Tests for WebVTT parser for <track>.  Feature is not yet functional.
+BUGWK43668 SKIP : media/track/ = TIMEOUT
+
+// Chrome does not support WebArchives.
+BUGCR10395 SKIP : webarchive = PASS FAIL
+BUGCR10395 SKIP : svg/webarchive = PASS FAIL
+BUGCR10395 SKIP : svg/custom/image-with-prefix-in-webarchive.svg = PASS FAIL
+BUGCR10395 SKIP : http/tests/webarchive = PASS FAIL
+
+// DataGrid was pulled from HTML5 spec, unlikely to re-emerge in the current form.
+// Unskip if/when this is respecified and the tests are useful.
+SKIP : fast/dom/HTMLDataGridElement = FAIL
+
+// This test requires LayoutTestController.setCacheModel, which we don't implement
+// because we can't emulate the caching behaviors it expects.
+// TODO(pkasting): Can this be implemented in DRT?
+SKIP : fast/dom/HTMLScriptElement/nested-execution.html = FAIL
+
+// Pre-HTML5 parser quirks only apply to the mac port for now.
+// TODO(pkasting): Is this still true?
+SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
+
+// This test verifies that a mismatch reftest will fail if both results are same.
+// TODO(pkasting): What's stopping us from fixing this?
+SKIP : fast/harness/sample-fail-mismatch-reftest.html = IMAGE
+
+// These tests relate to transform/3d which is a work in progress and is not
+// even run by the WebKit folk. They should be enabled whenever WebKit begins
+// testing them by default.
+SKIP : transforms/3d = FAIL
+
+// Copying with no selection is sometimes supposed to work
+// Also skipped by Apple on Windows (rdar://problem/5015941)
+BUGCR20404 : editing/execCommand/copy-without-selection.html = FAIL
+
+// -----------------------------------------------------------------
+// WONTFIX TESTS
+// -----------------------------------------------------------------
+
+// Run the Mac-specific platform tests, but only to check for crashes.
+WONTFIX : platform/gtk = FAIL PASS
+WONTFIX : platform/mac = FAIL PASS TIMEOUT
+WONTFIX : platform/mac-wk2 = FAIL PASS TIMEOUT
+WONTFIX : platform/mac-leopard = FAIL PASS
+WONTFIX : platform/qt = FAIL PASS
+WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
+WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
+WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
 
 // Since V8 is more interruptible than other engines, they use the standard
 // long-running-script mechanism to handle very-long-running regexps too.
@@ -48,16 +124,11 @@ WONTFIX SKIP : fast/js/regexp-overflow-too-big.html = TIMEOUT
 // these tests, because they are giving us a false sense of testing that isn't
 // really happening.  Furthermore, since they appear to pass if we do try to
 // run them, we can't even list them as permanently expected to fail.
-BUGCR24185 SKIP WONTFIX : dom/xhtml = PASS
+WONTFIX SKIP : dom/xhtml = PASS
 
 // We do not want to support Legacy mac encodings on Windows/Linux.
-// On Mac, we can support them by building platform/text/mac, but
-// probably we don't want there, either.
+WONTFIX SKIP WIN LINUX : fast/encoding/char-decoding-mac.html = FAIL
 WONTFIX SKIP WIN LINUX : fast/encoding/char-encoding-mac.html = FAIL
-
-// Fails due to different window.close() rules.  We need to decide whether we
-// ever expect to pass this.  Now also timing out.
-BUGCR24189 SKIP WONTFIX : fast/dom/open-and-close-by-DOM.html = FAIL
 
 // These tests are based on the JSC JavaScript profiler. The V8 JavaScript
 // profiler is in development and will use a different approach than JSC and
@@ -87,16 +158,16 @@ WONTFIX SKIP : http/tests/inspector/network/network-worker.html = PASS TIMEOUT F
 // loaded pages alive in memory to be able to quickly substitute them when user clicks History buttons.
 // Chromium wants those to be separate navigations made via browser process to be able to make decision
 // on which renderer process to use for each of them.
-BUGCR19635 SKIP WONTFIX : fast/harness/use-page-cache.html = TIMEOUT FAIL
-BUGCR19635 SKIP WONTFIX : fast/dom/Window/timer-resume-on-navigation-back.html = TIMEOUT FAIL
-BUGCR19635 SKIP WONTFIX : fast/events/pagehide-timeout.html = TIMEOUT
-BUGCR19635 SKIP WONTFIX : fast/events/pageshow-pagehide-on-back-cached.html = TIMEOUT FAIL
-BUGCR19635 SKIP WONTFIX : fast/events/pageshow-pagehide-on-back-cached-with-frames.html = TIMEOUT
-BUGCR19635 SKIP WONTFIX : media/restore-from-page-cache.html = TIMEOUT
-BUGCR19635 SKIP WONTFIX : loader/go-back-to-different-window-size.html = TIMEOUT TEXT
-BUGCR19635 SKIP WONTFIX : fast/loader/crash-copying-backforwardlist.html = TEXT
-BUGCR19635 SKIP WONTFIX : fast/harness/page-cache-crash-on-data-urls.html = TEXT
-BUGCR19635 SKIP WONTFIX : fast/overflow/horizontal-scroll-after-back.html = TIMEOUT
+WONTFIX SKIP : fast/harness/use-page-cache.html = TIMEOUT FAIL
+WONTFIX SKIP : fast/dom/Window/timer-resume-on-navigation-back.html = TIMEOUT FAIL
+WONTFIX SKIP : fast/events/pagehide-timeout.html = TIMEOUT
+WONTFIX SKIP : fast/events/pageshow-pagehide-on-back-cached.html = TIMEOUT FAIL
+WONTFIX SKIP : fast/events/pageshow-pagehide-on-back-cached-with-frames.html = TIMEOUT
+WONTFIX SKIP : media/restore-from-page-cache.html = TIMEOUT
+WONTFIX SKIP : loader/go-back-to-different-window-size.html = TIMEOUT TEXT
+WONTFIX SKIP : fast/loader/crash-copying-backforwardlist.html = TEXT
+WONTFIX SKIP : fast/harness/page-cache-crash-on-data-urls.html = TEXT
+WONTFIX SKIP : fast/overflow/horizontal-scroll-after-back.html = TIMEOUT
 
 // Tests that rely on cross-process MessagePorts.  No point in running them in
 // test_shell, since we'd have to use a completely different implementation from
@@ -115,134 +186,65 @@ WONTFIX SKIP : fast/events/message-port.html = FAIL
 WONTFIX SKIP : fast/events/message-port-multi.html = FAIL
 WONTFIX SKIP : http/tests/security/MessagePort/event-listener-context.html = FAIL
 
-// Implement java testing harness.
-BUGCR36681 SKIP : java = TEXT
 // Chrome does not support Java LiveConnect.
 WONTFIX SKIP : java/lc3 = TEXT
-
-// Quota API is not supported in DRT yet.
-BUGCR84572 SKIP : storage/storageinfo-query-usage.html = FAIL
-BUGCR84572 SKIP : storage/storageinfo-request-quota.html = FAIL
-BUGCR84572 SKIP : storage/storageinfo-no-callbacks.html = FAIL
-
-// Animation API is disabled
-WONTFIX SKIP : animations/animation-api-1.html = FAIL
-
-// Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
-BUGWK60877 SKIP : loader/navigation-while-deferring-loads.html = FAIL
-BUGWK60877 SKIP : loader/load-defer-resume-crash.html = FAIL
-
-// CSS3 Selectors3 test suite
-BUGCR89468 : css3/selectors3 = PASS FAIL
-
-// Tests for WebVTT parser for <track>.  Feature is not yet functional.
-BUGWK43668 SKIP : media/track/ = TIMEOUT
-
-// -----------------------------------------------------------------
-// WONTFIX TESTS
-// -----------------------------------------------------------------
-
-// These tests pass but require a bit more then 12 seconds which is current
-// timeout in Chromium DRT for non-SLOW tests. They are slow in DEBUG because
-// there is a lot of ASSERTS, but they are very fast in RELEASE.
-WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.16-7-c-ii-2.html = PASS
-WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.17-7-c-ii-2.html = PASS
-WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.18-7-c-ii-1.html = PASS
-WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.19-8-c-ii-1.html = PASS
-WONTFIX SLOW DEBUG : ietestcenter/Javascript/15.4.4.20-9-c-ii-1.html = PASS
 
 // This test is completely timing dependent.  It is testing the time
 // between a key event and a search event.  You cannot count on this
 // always being exactly the same.
-WONTFIX DEBUG : fast/forms/search-event-delay.html = PASS TEXT
-WONTFIX SLOW WIN RELEASE : fast/forms/search-event-delay.html = FAIL PASS
-WONTFIX SLOW MAC RELEASE : fast/forms/search-event-delay.html = FAIL PASS CRASH
-WONTFIX LINUX RELEASE : fast/forms/search-event-delay.html = FAIL PASS
+WONTFIX SKIP : fast/forms/search-event-delay.html = PASS TEXT
 
 // Chrome uses different keyboard accelerators from those used by Safari, so
 // these tests will always fail.
 // TODO(pinkerton): these should probably pass on Mac since we want Emacs
 // keybindings but they currently do not.
-WONTFIX LINUX WIN DEBUG : editing/pasteboard/emacs-cntl-y-001.html = FAIL
-WONTFIX LINUX RELEASE : editing/pasteboard/emacs-cntl-y-001.html = FAIL
-WONTFIX SLOW WIN RELEASE : editing/pasteboard/emacs-cntl-y-001.html = FAIL
-WONTFIX : editing/pasteboard/emacs-ctrl-a-k-y.html = FAIL
-WONTFIX : editing/pasteboard/emacs-ctrl-k-y-001.html = FAIL
-WONTFIX : editing/input/emacs-ctrl-o.html = FAIL
+WONTFIX SKIP : editing/pasteboard/emacs-cntl-y-001.html = FAIL
+WONTFIX SKIP : editing/pasteboard/emacs-ctrl-a-k-y.html = FAIL
+WONTFIX SKIP : editing/pasteboard/emacs-ctrl-k-y-001.html = FAIL
+WONTFIX SKIP : editing/input/emacs-ctrl-o.html = FAIL
 
 // Checks for very kjs-specific garbage collector behavior.
 // Would have to be implemented much differently to work in v8.
-WONTFIX : fast/dom/gc-10.html = FAIL
-
-// Proper retention of CSS objects is tricky.  Disable the tests for now.
-
-BUGWK66377 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
-BUGWK66377 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
-BUGWK66377 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
-BUGWK66377 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
-BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
-BUGWK66377 : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
+WONTFIX SKIP : fast/dom/gc-10.html = FAIL
 
 // This fails because we're missing various useless apple-specific
 // properties on the window object.
-// This test also timeouts in Debug mode.
-BUGCR24187 SLOW WONTFIX DEBUG : fast/dom/Window/window-properties.html = FAIL
-BUGCR24187 SLOW WONTFIX WIN RELEASE : fast/dom/Window/window-properties.html = FAIL
-BUGCR24187 WONTFIX LINUX MAC RELEASE : fast/dom/Window/window-properties.html = FAIL
+WONTFIX SKIP : fast/dom/Window/window-properties.html = FAIL
 
-// Safari specific test to ensure that JavaScript errors aren't logged when in
-// private browsing mode.
-WONTFIX : http/tests/security/cross-frame-access-private-browsing.html = FAIL
-
-// Chromium doesn't implement private browsing in the renderer.
-WONTFIX : plugins/private-browsing-mode.html = FAIL
-WONTFIX : plugins/private-browsing-mode-2.html = TEXT
+// We do not use Safari's private browsing mode.
+WONTFIX SKIP : http/tests/security/cross-frame-access-private-browsing.html = FAIL
+WONTFIX SKIP : plugins/private-browsing-mode.html = FAIL
+WONTFIX SKIP : plugins/private-browsing-mode-2.html = TEXT
+WONTFIX SKIP : storage/domstorage/localstorage/private-browsing-affects-storage.html = FAIL
+WONTFIX SKIP : storage/domstorage/sessionstorage/private-browsing-affects-storage.html = FAIL
+WONTFIX SKIP : storage/private-browsing-noread-nowrite.html = PASS
 
 // We don't let anyone set status in the browser.
-WONTFIX : plugins/set-status.html = TEXT
+WONTFIX SKIP : plugins/set-status.html = TEXT
 
 // We don't care about dashboard compatibility mode.
 WONTFIX SKIP : http/tests/xmlhttprequest/default-content-type-dashboard.html = FAIL
 WONTFIX SKIP : http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html = FAIL
-WONTFIX : svg/custom/embedded-svg-disallowed-in-dashboard.xml = FAIL
-WONTFIX : svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html = FAIL
-WONTFIX : svg/custom/manually-parsed-svg-disallowed-in-dashboard.html = FAIL
+WONTFIX SKIP : svg/custom/embedded-svg-disallowed-in-dashboard.xml = FAIL
+WONTFIX SKIP : svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html = FAIL
+WONTFIX SKIP : svg/custom/manually-parsed-svg-disallowed-in-dashboard.html = FAIL
 WONTFIX SKIP : svg/custom/svg-disallowed-in-dashboard-object.html = FAIL
-WONTFIX : fast/canvas/canvas-gradient-addStop-error.html = FAIL
-
+WONTFIX SKIP : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 
 // Chrome uses different keyboard accelerators from those used by Safari, so
-// these tests will always fail.
-// TODO(ericroman): can the following 2 tests be removed from this list, since they pass?
-WONTFIX : fast/events/keydown-1.html = PASS FAIL TIMEOUT
-WONTFIX LINUX WIN : fast/events/option-tab.html = FAIL
-
-// Chrome does not support WebArchives.
-BUGCR10395 SKIP WONTFIX : webarchive = PASS FAIL
-BUGCR10395 SKIP WONTFIX : svg/webarchive = PASS FAIL
-BUGCR10395 SKIP WONTFIX : svg/custom/image-with-prefix-in-webarchive.svg = PASS FAIL
-BUGCR10395 SKIP WONTFIX : http/tests/webarchive = PASS FAIL
+// this test will always fail.
+WONTFIX SKIP LINUX WIN : fast/events/option-tab.html = FAIL
 
 // Compositing tests will never pass in the non-accelerated GPU code
 // paths.
-SKIP WONTFIX CPU : compositing = PASS TIMEOUT FAIL
-SKIP WONTFIX CPU : platform/chromium/compositing = PASS TIMEOUT FAIL
-SKIP WONTFIX CPU : animations/3d = PASS TIMEOUT FAIL
+WONTFIX SKIP CPU : compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP CPU : platform/chromium/compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP CPU : animations/3d = PASS TIMEOUT FAIL
 
 // We don't ship compositing on Leopard.
-SKIP WONTFIX GPU LEOPARD : compositing = PASS TIMEOUT FAIL
-SKIP WONTFIX GPU LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
-SKIP WONTFIX GPU LEOPARD : animations/3d = PASS TIMEOUT FAIL
-
-// Run the Mac-specific platform tests, but only to check for crashes.
-WONTFIX : platform/gtk = FAIL PASS
-WONTFIX : platform/mac = FAIL PASS TIMEOUT
-WONTFIX : platform/mac-wk2 = FAIL PASS TIMEOUT
-WONTFIX : platform/mac-leopard = FAIL PASS
-WONTFIX : platform/qt = FAIL PASS
-WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
-WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
-WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
+WONTFIX SKIP GPU LEOPARD : compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP GPU LEOPARD : platform/chromium/compositing = PASS TIMEOUT FAIL
+WONTFIX SKIP GPU LEOPARD : animations/3d = PASS TIMEOUT FAIL
 
 WONTFIX MAC WIN : platform/chromium-linux = FAIL
 WONTFIX SKIP LINUX MAC : platform/win = FAIL CRASH PASS
@@ -258,9 +260,9 @@ WONTFIX SKIP : platform/mac/plugins/root-object-premature-delete-crash.html = FA
 WONTFIX SKIP : platform/mac/plugins/undefined-property-crash.html = FAIL
 
 // Ignore test because it tries to load .pdf files in <img> tags.
-WONTFIX : fast/images/pdf-as-image-landscape.html = FAIL
-WONTFIX : fast/images/pdf-as-image.html = FAIL
-WONTFIX : fast/replaced/pdf-as-image.html = FAIL
+WONTFIX SKIP : fast/images/pdf-as-image-landscape.html = FAIL
+WONTFIX SKIP : fast/images/pdf-as-image.html = FAIL
+WONTFIX SKIP : fast/replaced/pdf-as-image.html = FAIL
 
 // These tests try to print a PDF file as the expected result.  I don't think
 // we plan on supporting this anytime soon.
@@ -275,24 +277,24 @@ WONTFIX SKIP : http/tests/misc/willCacheResponse-delegate-callback.html = FAIL
 // Checks for very kjs-specific garbage collector
 // behavior. Gc-9 is completely braindamaged; it tests that certain
 // properties are reset by the garbage collector. It looks to pass recently.
-WONTFIX : fast/dom/gc-9.html = FAIL
+WONTFIX SKIP : fast/dom/gc-9.html = FAIL
 
 // This test checks that properties of arguments arrays are non-enumerable
 // which is incorrect according to the ES5 spec.
-WONTFIX : fast/js/kde/function.html = FAIL
+WONTFIX SKIP : fast/js/kde/function.html = FAIL
 
 // This test is broken.  The regular expression used contains an error
 // which kjs swallows and returns false, which is the expected result,
 // but for which we issue a syntax error.
-WONTFIX : fast/js/code-serialize-paren.html = FAIL
+WONTFIX SKIP : fast/js/code-serialize-paren.html = FAIL
 
 // These tests check for a kjs-specific extension, that source file
 // name and line numbers are available as properties on exception
 // objects.  We handle error positions differently.
-WONTFIX : fast/js/exception-linenums-in-html-1.html = FAIL
-WONTFIX : fast/js/exception-linenums-in-html-2.html = FAIL
-WONTFIX : fast/js/exception-linenums.html = FAIL
-WONTFIX : fast/js/exception-expression-offset.html = FAIL
+WONTFIX SKIP : fast/js/exception-linenums-in-html-1.html = FAIL
+WONTFIX SKIP : fast/js/exception-linenums-in-html-2.html = FAIL
+WONTFIX SKIP : fast/js/exception-linenums.html = FAIL
+WONTFIX SKIP : fast/js/exception-expression-offset.html = FAIL
 
 // These tests rely on specific details of decompilation of
 // functions. V8 always returns the source code as written; there's
@@ -300,7 +302,7 @@ WONTFIX : fast/js/exception-expression-offset.html = FAIL
 // certain "native" functions where the V8 output does not include
 // newline characters. This is working as intended and we don't care
 // if the tests pass or fail. (It should probably simply be re-baselined.)
-WONTFIX : fast/js/function-names.html = FAIL
+WONTFIX SKIP : fast/js/function-names.html = FAIL
 
 // This test relies on KJS specific implementation
 // (window.GCController.getJSObjectCount), which we have no intention of
@@ -314,7 +316,7 @@ WONTFIX LINUX WIN : fast/images/object-image.html = FAIL
 // Safari has a unique handling of the BOM characters among browsers.
 // There is a strong suspicion that this is a security problem, so we
 // follow the rest of the browsers on this one.
-WONTFIX : fast/js/removing-Cf-characters.html = FAIL
+WONTFIX SKIP : fast/js/removing-Cf-characters.html = FAIL
 
 // These tests fail in all but the PST/PDT time zone.
 // Another reason for failure is that, for compatability, we don't obey
@@ -334,32 +336,26 @@ WONTFIX SKIP : fast/js/date-big-setdate.html = PASS FAIL
 // the current algorithm used for sorting small arrays. If larger
 // arrays were used in the tests, they would fail.
 // It is tracked by: http://code.google.com/p/v8/issues/detail?id=90
-WONTFIX : fast/js/comparefn-sort-stability.html = PASS
-WONTFIX : fast/js/sort-stability.html = PASS
+WONTFIX SKIP : fast/js/comparefn-sort-stability.html = PASS
+WONTFIX SKIP : fast/js/sort-stability.html = PASS
 
 // We have no indication that anyone misses this and have currently no
 // intention of implementing it.
-WONTFIX : fast/js/function-dot-arguments.html = FAIL
+WONTFIX SKIP : fast/js/function-dot-arguments.html = FAIL
 
 // This is a Safari specific test used to document the set of global
 // constructors they expose and the exact way they are printed.  Not
 // important.
-WONTFIX : fast/js/global-constructors.html = FAIL
+WONTFIX SKIP : fast/js/global-constructors.html = FAIL
 
 // This test is not reliable.  The behavior depends on exactly how the
 // stack limit is reached.  We're happy with our behavior on this test
 // as long as we don't crash.
-WONTFIX : fast/js/global-recursion-on-full-stack.html = FAIL
-
-// Our DOM Storage implementation doesn't use WebKit's private browsing feature (even for incognito mode).
-WONTFIX : storage/domstorage/localstorage/private-browsing-affects-storage.html = FAIL
-WONTFIX : storage/domstorage/sessionstorage/private-browsing-affects-storage.html = FAIL
+WONTFIX SKIP : fast/js/global-recursion-on-full-stack.html = FAIL
 
 // These tests propagate auth credentials back to the renderer, which we
 // don't want to do.
-BUGCR21840 WONTFIX LINUX MAC : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
-BUGCR21840 WONTFIX WIN : http/tests/loading/basic-auth-resend-wrong-credentials.html = TIMEOUT FAIL
-BUGCR21840 WONTFIX : http/tests/loading/basic-credentials-sent-automatically.html = FAIL
+WONTFIX SKIP : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
 
 // This test relies on code in the test plugin that only exists in Apple's Mac port.
 WONTFIX SKIP : platform/mac/plugins/convert-point.html = CRASH
@@ -367,38 +363,29 @@ WONTFIX SKIP : platform/mac/plugins/convert-point.html = CRASH
 // This checks the IDN behavior of WebKit/WebKit on Mac, not WebKit/WebCore or
 // WebKit/JavaScriptCore. Chrome doesn't use WebKit/WebKit, and Chrome's IDN
 // security model is different from it.
-BUGCR21814 SKIP WONTFIX : fast/encoding/idn-security.html = FAIL
+WONTFIX SKIP : fast/encoding/idn-security.html = FAIL
 
 // Our implementation of global history is completely different, and
 // these tests are irrelevant.
-BUGCR23748 WONTFIX : http/tests/globalhistory = FAIL
-
-// DataGrid was pulled from HTML5 spec, unlikely to re-emerge in the current form.
-BUGCR17585 WONTFIX : fast/dom/HTMLDataGridElement = FAIL
+WONTFIX SKIP : http/tests/globalhistory = FAIL
 
 // We are not going to support submitting a form to about:* pages.
 // For more details, see discussions at issue 20570.
-BUGCR20570 WONTFIX : fast/forms/get-forms-to-about-blank.html = FAIL
+WONTFIX SKIP : fast/forms/get-forms-to-about-blank.html = FAIL
 
 // xhtml mp tests were added in http://trac.webkit.org/changeset/43865 and are
 // skipped on all platforms upstream.
 // We are not planning to support these.
-BUGCR12254 SKIP WONTFIX : fast/xhtmlmp = FAIL
-BUGCR12254 SKIP WONTFIX : http/tests/xhtmlmp = FAIL
-
-// This test requires LayoutTestController.setCacheModel, which we don't implement
-// because we can't emulate the cahcing behaviors it expects.
-WONTFIX : fast/dom/HTMLScriptElement/nested-execution.html = FAIL
+WONTFIX SKIP : fast/xhtmlmp = FAIL
+WONTFIX SKIP : http/tests/xhtmlmp = FAIL
 
 // Deletion UI is a Mail-ism. We don't need to worry about this.
 WONTFIX SKIP : editing/deleting/deletionUI-single-instance.html = FAIL IMAGE
 WONTFIX SKIP : fast/dom/Element/id-in-deletebutton.html = TEXT
 
 // Tests for FAST_MOBILE_SCROLLING. We don't use it.
-BUGCR32663 WONTFIX LINUX WIN : fast/fast-mobile-scrolling/fixed-position-element.html = IMAGE+TEXT
-BUGCR32663 WONTFIX LINUX WIN : fast/fast-mobile-scrolling/no-fixed-position-elements.html = IMAGE+TEXT
-BUGCR32663 WONTFIX MAC : fast/fast-mobile-scrolling/fixed-position-element.html = PASS IMAGE
-BUGCR32663 WONTFIX MAC : fast/fast-mobile-scrolling/no-fixed-position-elements.html = PASS IMAGE
+WONTFIX SKIP : fast/fast-mobile-scrolling/fixed-position-element.html = IMAGE+TEXT
+WONTFIX SKIP : fast/fast-mobile-scrolling/no-fixed-position-elements.html = IMAGE+TEXT
 
 // Tests for frameset flattening. Relevant only on mobile browsers.
 WONTFIX SKIP : fast/frames/flattening = TIMEOUT
@@ -411,24 +398,21 @@ WONTFIX SKIP : fast/loader/api-test-go-to-current-back-forward-item.html = TIMEO
 WONTFIX SKIP : fast/spatial-navigation = FAIL
 
 // We're not planning to relax third-party cookie rules any time soon.
-BUGCR37684 SKIP WONTFIX : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
+WONTFIX SKIP : http/tests/cookies/third-party-cookie-relaxing.html = FAIL
 
 // <progress> on Mac is always animated.
-WONTFIX MAC : fast/dom/HTMLProgressElement/progress-element.html = FAIL PASS
-
-// We do not use Safari's private browsing
-WONTFIX SKIP : storage/private-browsing-noread-nowrite.html = PASS
+WONTFIX SKIP MAC : fast/dom/HTMLProgressElement/progress-element.html = TEXT
 
 // These tests are WONTFIX because they use codecs Chromium doesn't support.
-BUGCR16779 SKIP WONTFIX : media/audio-mpeg-supported.html = TIMEOUT FAIL
-BUGCR16779 SKIP WONTFIX : media/audio-data-url.html = TIMEOUT FAIL
-BUGCR16779 SKIP WONTFIX : media/media-can-play-mpeg-audio.html = TEXT
-BUGCR16779 SKIP WONTFIX : media/video-can-play-type.html = TIMEOUT FAIL
-BUGCR16779 SKIP WONTFIX : media/video-document-types.html = TIMEOUT FAIL
-BUGCR16779 SKIP WONTFIX : media/video-size-intrinsic-scale.html = TIMEOUT FAIL
-BUGWK45102 SKIP WONTFIX : media/media-can-play-mpeg4-video.html = TEXT
-BUGCR68289 SKIP WONTFIX : media/video-element-other-namespace-crash.html = TIMEOUT
-BUGCR16779 SKIP WONTFIX : media/audio-mpeg4-supported.html = TIMEOUT FAIL
+WONTFIX SKIP : media/audio-data-url.html = TIMEOUT FAIL
+WONTFIX SKIP : media/audio-mpeg-supported.html = TIMEOUT FAIL
+WONTFIX SKIP : media/audio-mpeg4-supported.html = TIMEOUT FAIL
+WONTFIX SKIP : media/media-can-play-mpeg-audio.html = TEXT
+WONTFIX SKIP : media/media-can-play-mpeg4-video.html = TEXT
+WONTFIX SKIP : media/video-can-play-type.html = TIMEOUT FAIL
+WONTFIX SKIP : media/video-document-types.html = TIMEOUT FAIL
+WONTFIX SKIP : media/video-element-other-namespace-crash.html = TIMEOUT
+WONTFIX SKIP : media/video-size-intrinsic-scale.html = TIMEOUT FAIL
 
 // Chromium does not use the icon loader in WebCore for loading notifications.
 WONTFIX SKIP : http/tests/notifications = FAIL
@@ -439,28 +423,18 @@ WONTFIX SKIP : media/video-does-not-loop.html = TIMEOUT
 // QuickTime reference movies not supported.
 WONTFIX SKIP : http/tests/media/video-cross-site.html = PASS FAIL TIMEOUT
 
-// Pre-HTML5 parser quirks only apply to the mac port for now.
-WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
-
 // Chromium's video codecs don't support alpha information encoded in the video
 // data, so this test is not applicable.
-BUGWK55519 SKIP WONTFIX : compositing/video/video-background-color.html = FAIL
-
-// This test verifies that a mismatch reftest will fail if both results are same.
-WONTFIX : fast/harness/sample-fail-mismatch-reftest.html = IMAGE
-
-// -----------------------------------------------------------------
-// CHROME REWRITTEN TESTS
-// -----------------------------------------------------------------
+WONTFIX SKIP : compositing/video/video-background-color.html = FAIL
 
 // These tests have been rewritten, with the original being ignored,
 // because they rely on being able to shadow the 'top' variable on the
 // global object.  For security we disallow shadowing of top.
-WONTFIX : editing/selection/click-before-and-after-table.html = FAIL
+WONTFIX SKIP : editing/selection/click-before-and-after-table.html = FAIL
 
 // We're taking a different approach on this test than Webkit does, related to
 // whether we create a window via a plugin when target is _blank.
-BUGCR24186 SKIP WONTFIX : plugins/get-url-with-blank-target.html = FAIL
+WONTFIX SKIP : plugins/get-url-with-blank-target.html = FAIL
 
 // Dashboard-related test
 WONTFIX SKIP : platform/mac/fast/css/dashboard-region-parser.html = FAIL
@@ -473,11 +447,7 @@ WONTFIX SKIP : http/tests/incremental/pause-in-script-element.pl = FAIL
 // regular expression engine can be preempted from the outside, we do not
 // need to limit the execution this way.  Firefox also keeps running
 // on this one.
-WONTFIX : fast/regex/slow.html = TIMEOUT
-
-// Test to verify legacy MAC encodings. We don't want to support them and
-// have to skip this test.
-WONTFIX SKIP : fast/encoding/char-decoding-mac.html = FAIL
+WONTFIX SKIP : fast/regex/slow.html = TIMEOUT
 
 // WebKit QT Build-specific tests
 WONTFIX SKIP : platform/qt/view/fixed-layout-size.html = FAIL
@@ -489,22 +459,12 @@ WONTFIX SKIP : http/tests/security/dataTransfer-set-data-file-url.html = FAIL
 // The issue is which global object to use as the implicit
 // receiver for cross-frame calls.  Currently, IE, Firefox and Chrome
 // agree and only Safari is doing it this way.
-BUGCR5053 WONTFIX : fast/frames/cross-site-this.html = FAIL
+WONTFIX SKIP : fast/frames/cross-site-this.html = FAIL
 
 // This tests a Safari incompatibility.  This test should fail since
 // it contains syntax errors that JSC for some reason choose not to
 // throw.  V8 follows the spec.
-WONTFIX : fast/js/reparsing-semicolon-insertion.html = FAIL
-
-// These tests relate to transform/3d which is a work in progress and is not
-// even run by the WebKit folk. They should be enabled whenever WebKit begins
-// testing them by default. The bug to re-enable is:
-// http://code.google.com/p/chromium/issues/detail?id=8455
-WONTFIX SKIP : transforms/3d = FAIL
-
-// Copying with no selection is sometimes supposed to work
-// Also skipped by Apple on Windows (rdar://problem/5015941)
-BUGCR20404 : editing/execCommand/copy-without-selection.html = FAIL
+WONTFIX SKIP : fast/js/reparsing-semicolon-insertion.html = FAIL
 
 // -----------------------------------------------------------------
 // LIGHTTPD
@@ -548,6 +508,13 @@ BUGCR20547 WIN : fast/text/capitalize-boundaries.html = FAIL
 BUGCR20551 LINUX WIN : fast/replaced/table-percent-height.html = FAIL
 BUGCR20551 LINUX WIN : fast/replaced/table-percent-height-text-controls.html = FAIL
 
+// Proper retention of CSS objects is tricky.  Disable the tests for now.
+BUGWK66377 : fast/dom/StyleSheet/gc-declaration-parent-rule.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-inline-style-cssvalues.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-parent-rule.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-parent-stylesheet.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-rule-children-wrappers.html = TEXT
+BUGWK66377 : fast/dom/StyleSheet/gc-styleheet-wrapper.xhtml = TEXT
 
 // -----------------------------------------------------------------
 // PENDING TESTS (forked to pending/, need to be sent upstream)
@@ -1123,8 +1090,8 @@ BUGCR8729 WIN : http/tests/multipart/invalid-image-data.html = IMAGE+TEXT
 BUGCR10363 MAC : tables/mozilla/bugs/bug53690-1.html = FAIL
 BUGCR10363 MAC : tables/mozilla/bugs/bug9024.html = FAIL
 
-// bad key event handling
-BUGCR10366 MAC : fast/events/option-tab.html = TEXT
+// We ignore tab/option-tab distinctions (may be other problems too).
+BUGCR94274 MAC : fast/events/option-tab.html = TEXT
 
 // These two have a different object type in the dom dump. Plugin-related.
 // Ignored on Win/Linux because they rely on QT to provide a TIFF decoder.
@@ -1139,6 +1106,9 @@ BUGCR10378 MAC : fast/images/object-image.html = TIMEOUT FAIL
 // the file, but they were left there as the comments in those areas are valid.)
 BUGCR10384 MAC : fast/dom/Window/new-window-opener.html = TEXT
 
+// We can support legacy Mac encodings by building platform/text/mac, but we may
+// not want to.
+BUGCR10399 MAC : fast/encoding/char-decoding-mac.html = FAIL
 BUGCR10399 MAC : fast/encoding/char-encoding-mac.html = FAIL
 
 // Broken pixel tests
@@ -3645,3 +3615,5 @@ BUGWK66908 WIN LINUX GPU DEBUG : canvas/philip/tests/2d.text.draw.fontface.notin
 BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
 
 BUGWK66953 SNOWLEOPARD DEBUG : animations/negative-delay.html = PASS TEXT
+
+DEBUG : fast/events/keydown-1.html = PASS TIMEOUT
