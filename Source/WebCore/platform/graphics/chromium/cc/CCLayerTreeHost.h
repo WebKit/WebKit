@@ -45,6 +45,7 @@ class LayerPainterChromium;
 class LayerRendererChromium;
 class GraphicsLayer;
 class NonCompositedContentHost;
+class TextureManager;
 
 class CCLayerTreeHostClient {
 public:
@@ -112,6 +113,7 @@ public:
     void setViewport(const IntSize& viewportSize, const IntSize& contentsSize, const IntPoint& scrollPosition);
 
     const IntSize& viewportSize() const { return m_viewportSize; }
+    TextureManager* contentsTextureManager() const;
 
     void setVisible(bool);
 

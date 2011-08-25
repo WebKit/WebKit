@@ -229,6 +229,14 @@ PassRefPtr<LayerRendererChromium> CCLayerTreeHost::createLayerRenderer()
     return layerRenderer;
 }
 
+TextureManager* CCLayerTreeHost::contentsTextureManager() const
+{
+    // FIXME: this class should own the contents texture manager
+    if (!m_layerRenderer)
+        return 0;
+    return m_layerRenderer->contentsTextureManager();
+}
+
 #if !USE(THREADED_COMPOSITING)
 void CCLayerTreeHost::doComposite()
 {

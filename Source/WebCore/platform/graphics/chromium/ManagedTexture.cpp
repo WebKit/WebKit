@@ -101,4 +101,3 @@ void ManagedTexture::framebufferTexture2D(GraphicsContext3D* context)
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
-

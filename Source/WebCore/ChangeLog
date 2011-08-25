@@ -1,3 +1,46 @@
+2011-08-24  Adrienne Walker  <enne@google.com>
+
+        [chromium] Update VideoLayerChromium to not access GC3D on the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=66434
+
+        Reviewed by James Robinson.
+
+        Covered by existing tests.
+
+        This change allows the main thread VideoLayerChromium to not depend on
+        compositor thread resources (GC3D, LayerRendererChromium). The texture
+        allocation in VideoLayerChromium was changed to use ManagedTexture so
+        that textures can now be evicted when there is texture memory pressure
+        and so that destruction can be automatically deferred until a GC3D is
+        available.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/ManagedTexture.cpp:
+        * platform/graphics/chromium/ManagedTexture.h:
+        (WebCore::ManagedTexture::size):
+        (WebCore::ManagedTexture::format):
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::VideoLayerChromium):
+        (WebCore::VideoLayerChromium::~VideoLayerChromium):
+        (WebCore::VideoLayerChromium::cleanupResources):
+        (WebCore::VideoLayerChromium::updateCompositorResources):
+        (WebCore::VideoLayerChromium::pushPropertiesTo):
+        (WebCore::VideoLayerChromium::setLayerTreeHost):
+        (WebCore::VideoLayerChromium::determineTextureFormat):
+        (WebCore::VideoLayerChromium::reserveTextures):
+        (WebCore::VideoLayerChromium::updateTexture):
+        (WebCore::VideoLayerChromium::releaseCurrentFrame):
+        * platform/graphics/chromium/VideoLayerChromium.h:
+        * platform/graphics/chromium/cc/CCLayerTreeHost.cpp:
+        (WebCore::CCLayerTreeHost::contentsTextureManager):
+        * platform/graphics/chromium/cc/CCLayerTreeHost.h:
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::setTexture):
+        (WebCore::CCVideoLayerImpl::drawYUV):
+        (WebCore::CCVideoLayerImpl::drawRGBA):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+
 2011-08-25  Abhishek Arya  <inferno@chromium.org>
 
         Incorrect layout of :before and :after content, with display

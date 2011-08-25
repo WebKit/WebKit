@@ -47,7 +47,6 @@ public:
     }
     ~ManagedTexture();
 
-    unsigned format() const { return m_format; }
     bool isValid(const IntSize&, unsigned format);
     bool reserve(const IntSize&, unsigned format);
     void unreserve();
@@ -60,6 +59,8 @@ public:
     void bindTexture(GraphicsContext3D*);
     void framebufferTexture2D(GraphicsContext3D*);
 
+    IntSize size() const { return m_size; }
+    unsigned format() const { return m_format; }
     unsigned textureId() const { return m_textureId; }
 
 private:

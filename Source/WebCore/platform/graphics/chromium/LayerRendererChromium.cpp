@@ -1060,14 +1060,6 @@ bool LayerRendererChromium::makeContextCurrent()
     return true;
 }
 
-// Checks whether a given size is within the maximum allowed texture size range.
-bool LayerRendererChromium::checkTextureSize(const IntSize& textureSize)
-{
-    if (textureSize.width() > m_maxTextureSize || textureSize.height() > m_maxTextureSize)
-        return false;
-    return true;
-}
-
 // Sets the coordinate range of content that ends being drawn onto the target render surface.
 // The target render surface is assumed to have an origin at 0, 0 and the width and height of
 // of the drawRect.

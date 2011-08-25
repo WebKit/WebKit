@@ -56,15 +56,14 @@ VideoLayerChromium::VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameP
     , m_skipsDraw(true)
     , m_frameFormat(VideoFrameChromium::Invalid)
     , m_provider(provider)
+    , m_layerTreeHost(0)
     , m_currentFrame(0)
 {
-    resetFrameParameters();
 }
 
 VideoLayerChromium::~VideoLayerChromium()
 {
     cleanupResources();
-    deleteTexturesInUse();
 }
 
 PassRefPtr<CCLayerImpl> VideoLayerChromium::createCCLayerImpl()
@@ -72,26 +71,10 @@ PassRefPtr<CCLayerImpl> VideoLayerChromium::createCCLayerImpl()
     return CCVideoLayerImpl::create(m_layerId);
 }
 
-void VideoLayerChromium::deleteTexturesInUse()
-{
-    if (!layerRenderer())
-        return;
-
-    GraphicsContext3D* context = layerRendererContext();
-    for (unsigned plane = 0; plane < VideoFrameChromium::maxPlanes; plane++) {
-        Texture texture = m_textures[plane];
-        if (!texture.isEmpty && texture.ownedByLayerRenderer)
-            GLC(context, context->deleteTexture(texture.id));
-    }
-}
-
 void VideoLayerChromium::cleanupResources()
 {
     LayerChromium::cleanupResources();
-    if (m_currentFrame)
-        releaseCurrentFrame();
-    else
-        resetFrameParameters();
+    releaseCurrentFrame();
 }
 
 void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
@@ -114,7 +97,7 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
     }
 
     m_frameFormat = frame->format();
-    unsigned textureFormat = determineTextureFormat(frame);
+    GC3Denum textureFormat = determineTextureFormat(frame);
     if (textureFormat == GraphicsContext3D::INVALID_VALUE) {
         // FIXME: Implement other paths.
         notImplemented();
@@ -125,8 +108,8 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
 
     // Allocate textures for planes if they are not allocated already, or
     // reallocate textures that are the wrong size for the frame.
-    bool texturesAllocated = allocateTexturesIfNeeded(context, frame, textureFormat);
-    if (!texturesAllocated) {
+    bool texturesReserved = reserveTextures(frame, textureFormat);
+    if (!texturesReserved) {
         m_skipsDraw = true;
         m_provider->putCurrentFrame(frame);
         return;
@@ -134,9 +117,10 @@ void VideoLayerChromium::updateCompositorResources(GraphicsContext3D* context)
 
     // Update texture planes.
     for (unsigned plane = 0; plane < frame->planes(); plane++) {
-        Texture texture = m_textures[plane];
-        ASSERT(frame->requiredTextureSize(plane) == texture.size);
-        updateTexture(context, texture.id, texture.size, textureFormat, frame->data(plane));
+        Texture& texture = m_textures[plane];
+        ASSERT(texture.m_texture);
+        ASSERT(frame->requiredTextureSize(plane) == texture.m_texture->size());
+        updateTexture(context, texture, frame->data(plane));
     }
 
     m_dirtyRect.setSize(FloatSize());
@@ -152,12 +136,29 @@ void VideoLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
     CCVideoLayerImpl* videoLayer = static_cast<CCVideoLayerImpl*>(layer);
     videoLayer->setSkipsDraw(m_skipsDraw);
     videoLayer->setFrameFormat(m_frameFormat);
-    for (size_t i = 0; i < 3; ++i)
-        videoLayer->setTexture(i, m_textures[i]);
+    for (size_t i = 0; i < 3; ++i) {
+        if (!m_textures[i].m_texture) {
+            videoLayer->setSkipsDraw(true);
+            break;
+        }
+        videoLayer->setTexture(i, m_textures[i].m_texture->textureId(), m_textures[i].m_texture->size(), m_textures[i].m_visibleSize);
+    }
 }
 
+void VideoLayerChromium::setLayerTreeHost(CCLayerTreeHost* layerTreeHost)
+{
+    if (m_layerTreeHost == layerTreeHost)
+        return;
 
-unsigned VideoLayerChromium::determineTextureFormat(const VideoFrameChromium* frame)
+    m_layerTreeHost = layerTreeHost;
+
+    for (size_t i = 0; i < 3; ++i) {
+        m_textures[i].m_visibleSize = IntSize();
+        m_textures[i].m_texture = ManagedTexture::create(layerTreeHost->contentsTextureManager());
+    }
+}
+
+GC3Denum VideoLayerChromium::determineTextureFormat(const VideoFrameChromium* frame)
 {
     switch (frame->format()) {
     case VideoFrameChromium::YV12:
@@ -171,32 +172,29 @@ unsigned VideoLayerChromium::determineTextureFormat(const VideoFrameChromium* fr
     return GraphicsContext3D::INVALID_VALUE;
 }
 
-bool VideoLayerChromium::allocateTexturesIfNeeded(GraphicsContext3D* context, const VideoFrameChromium* frame, unsigned textureFormat)
+bool VideoLayerChromium::reserveTextures(const VideoFrameChromium* frame, GC3Denum textureFormat)
 {
-    ASSERT(context);
+    ASSERT(m_layerTreeHost);
     ASSERT(frame);
+    ASSERT(textureFormat != GraphicsContext3D::INVALID_VALUE);
+
+    int maxTextureSize = m_layerTreeHost->maxTextureSize();
 
     for (unsigned plane = 0; plane < frame->planes(); plane++) {
         IntSize requiredTextureSize = frame->requiredTextureSize(plane);
-        Texture texture = m_textures[plane];
 
         // If the renderer cannot handle this large of a texture, return false.
         // FIXME: Remove this test when tiled layers are implemented.
-        if (!layerRenderer()->checkTextureSize(requiredTextureSize))
+        if (requiredTextureSize.isZero() || requiredTextureSize.width() > maxTextureSize || requiredTextureSize.height() > maxTextureSize)
             return false;
 
-        if (texture.isEmpty) {
-            texture.id = layerRenderer()->createLayerTexture();
-            texture.ownedByLayerRenderer = true;
-            texture.isEmpty = false;
-        }
+        if (!m_textures[plane].m_texture)
+            return false;
 
-        if (!requiredTextureSize.isZero() && requiredTextureSize != texture.size) {
-            allocateTexture(context, texture.id, requiredTextureSize, textureFormat);
-            texture.size = requiredTextureSize;
-            texture.visibleSize = computeVisibleSize(frame, plane);
-        }
-        m_textures[plane] = texture;
+        if (m_textures[plane].m_texture->size() != requiredTextureSize)
+            m_textures[plane].m_visibleSize = computeVisibleSize(frame, plane);
+
+        m_textures[plane].m_texture->reserve(requiredTextureSize, textureFormat);
     }
 
     return true;
@@ -226,16 +224,16 @@ IntSize VideoLayerChromium::computeVisibleSize(const VideoFrameChromium* frame, 
     return IntSize(visibleWidth, visibleHeight);
 }
 
-void VideoLayerChromium::allocateTexture(GraphicsContext3D* context, unsigned textureId, const IntSize& dimensions, unsigned textureFormat) const
-{
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
-    GLC(context, context->texImage2DResourceSafe(GraphicsContext3D::TEXTURE_2D, 0, textureFormat, dimensions.width(), dimensions.height(), 0, textureFormat, GraphicsContext3D::UNSIGNED_BYTE));
-}
-
-void VideoLayerChromium::updateTexture(GraphicsContext3D* context, unsigned textureId, const IntSize& dimensions, unsigned format, const void* data) const
+void VideoLayerChromium::updateTexture(GraphicsContext3D* context, Texture& texture, const void* data) const
 {
     ASSERT(context);
-    GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, textureId));
+    ASSERT(texture.m_texture);
+
+    texture.m_texture->bindTexture(context);
+
+    GC3Denum format = texture.m_texture->format();
+    IntSize dimensions = texture.m_texture->size();
+
     void* mem = static_cast<Extensions3DChromium*>(context->getExtensions())->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, dimensions.width(), dimensions.height(), format, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY);
     if (mem) {
         memcpy(mem, data, dimensions.width() * dimensions.height());
@@ -255,19 +253,6 @@ void VideoLayerChromium::releaseCurrentFrame()
 
     m_provider->putCurrentFrame(m_currentFrame);
     m_currentFrame = 0;
-    resetFrameParameters();
-}
-
-void VideoLayerChromium::resetFrameParameters()
-{
-    deleteTexturesInUse();
-    for (unsigned plane = 0; plane < VideoFrameChromium::maxPlanes; plane++) {
-        m_textures[plane].id = 0;
-        m_textures[plane].size = IntSize();
-        m_textures[plane].visibleSize = IntSize();
-        m_textures[plane].ownedByLayerRenderer = false;
-        m_textures[plane].isEmpty = true;
-    }
 }
 
 } // namespace WebCore

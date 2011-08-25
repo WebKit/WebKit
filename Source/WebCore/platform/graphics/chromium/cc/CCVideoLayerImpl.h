@@ -53,10 +53,16 @@ public:
 
     void setSkipsDraw(bool skipsDraw) { m_skipsDraw = skipsDraw; }
     void setFrameFormat(VideoFrameChromium::Format format) { m_frameFormat = format; }
-    void setTexture(size_t, VideoLayerChromium::Texture);
+    void setTexture(size_t, Platform3DObject textureId, const IntSize&, const IntSize& visibleSize);
 
 private:
     explicit CCVideoLayerImpl(int);
+
+    struct Texture {
+        Platform3DObject id;
+        IntSize size;
+        IntSize visibleSize;
+    };
 
     void drawYUV(const YUVProgram*) const;
     void drawRGBA(const RGBAProgram*) const;
@@ -66,7 +72,7 @@ private:
 
     bool m_skipsDraw;
     VideoFrameChromium::Format m_frameFormat;
-    VideoLayerChromium::Texture m_textures[3];
+    Texture m_textures[3];
 };
 
 }

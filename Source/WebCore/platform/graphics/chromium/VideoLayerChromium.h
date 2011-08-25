@@ -35,6 +35,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerChromium.h"
+#include "ManagedTexture.h"
 #include "VideoFrameProvider.h"
 
 namespace WebCore {
@@ -42,13 +43,6 @@ namespace WebCore {
 // A Layer that contains a Video element.
 class VideoLayerChromium : public LayerChromium {
 public:
-    struct Texture {
-        unsigned id;
-        IntSize size;
-        IntSize visibleSize;
-        bool ownedByLayerRenderer;
-        bool isEmpty;
-    };
 
     static PassRefPtr<VideoLayerChromium> create(GraphicsLayerChromium* owner = 0,
                                                  VideoFrameProvider* = 0);
@@ -65,27 +59,31 @@ public:
 
     virtual void pushPropertiesTo(CCLayerImpl*);
 
+    virtual void setLayerTreeHost(CCLayerTreeHost*);
+
 protected:
     virtual void cleanupResources();
     virtual const char* layerTypeAsString() const { return "VideoLayer"; }
 
 private:
+    struct Texture {
+        IntSize m_visibleSize;
+        OwnPtr<ManagedTexture> m_texture;
+    };
+
     VideoLayerChromium(GraphicsLayerChromium* owner, VideoFrameProvider*);
 
-    static unsigned determineTextureFormat(const VideoFrameChromium*);
+    static GC3Denum determineTextureFormat(const VideoFrameChromium*);
     static IntSize computeVisibleSize(const VideoFrameChromium*, unsigned plane);
-    void deleteTexturesInUse();
-
-    bool allocateTexturesIfNeeded(GraphicsContext3D*, const VideoFrameChromium*, unsigned textureFormat);
-    void allocateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat) const;
-
-    void updateTexture(GraphicsContext3D*, unsigned textureId, const IntSize& dimensions, unsigned textureFormat, const void* data) const;
+    bool reserveTextures(const VideoFrameChromium*, GC3Denum textureFormat);
+    void updateTexture(GraphicsContext3D*, Texture&, const void*) const;
 
     void resetFrameParameters();
 
     bool m_skipsDraw;
     VideoFrameChromium::Format m_frameFormat;
     VideoFrameProvider* m_provider;
+    CCLayerTreeHost* m_layerTreeHost;
 
     Texture m_textures[3];
 

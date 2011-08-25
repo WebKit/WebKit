@@ -115,7 +115,6 @@ public:
     const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
     const TransformationMatrix& windowMatrix() const { return m_windowMatrix; }
 
-    bool checkTextureSize(const IntSize&);
     int maxTextureSize() const { return m_maxTextureSize; }
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
