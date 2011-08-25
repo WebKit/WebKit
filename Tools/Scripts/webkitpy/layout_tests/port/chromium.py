@@ -576,8 +576,15 @@ class ChromiumDriver(Driver):
             if not text:
                 text = None
 
+        error = ''.join(error)
+        # Currently the stacktrace is in the text output, not error, so append the two together so
+        # that we can see stack in the output. See http://webkit.org/b/66806
+        # FIXME: We really should properly handle the stderr output separately.
+        if crash:
+            error = error + str(text)
+
         return DriverOutput(text, output_image, actual_checksum, audio=audio_bytes,
-            crash=crash, test_time=run_time, timeout=timeout, error=''.join(error))
+            crash=crash, test_time=run_time, timeout=timeout, error=error)
 
     def stop(self):
         if not self._proc:

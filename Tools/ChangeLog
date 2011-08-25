@@ -1,3 +1,15 @@
+2011-08-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Stacktrace not in test output when a test crashes
+        https://bugs.webkit.org/show_bug.cgi?id=66806
+
+        Reviewed by Dirk Pranke.
+
+        Appends the .error and .text output when a test crashes since on chromium the .text contains the actual stack
+        trace.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+
 2011-08-24  Adam Barth  <abarth@webkit.org>
 
         Remove empty directory.
