@@ -1,3 +1,15 @@
+2011-08-25  Anders Carlsson  <andersca@apple.com>
+
+        Return the correct value for NPNVsupportsCarbonBool
+        https://bugs.webkit.org/show_bug.cgi?id=66964
+
+        Reviewed by Adam Roben.
+
+        Add test.
+
+        * platform/mac/plugins/supports-carbon-event-model-expected.txt: Added.
+        * platform/mac/plugins/supports-carbon-event-model.html: Added.
+
 2011-08-24  Peter Kasting  <pkasting@google.com>
 
         [chromium] Further attempts to clean up the test expectations by being

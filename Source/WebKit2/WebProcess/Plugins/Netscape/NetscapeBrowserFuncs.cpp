@@ -489,8 +489,7 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
 #endif
 #ifndef NP_NO_CARBON
        case NPNVsupportsCarbonBool:
-            // FIXME: We should support the Carbon event model.
-            *(NPBool*)value = false;
+            *(NPBool*)value = true;
             break;
 #endif
 #elif PLATFORM(WIN)

@@ -1,3 +1,19 @@
+2011-08-25  Anders Carlsson  <andersca@apple.com>
+
+        Return the correct value for NPNVsupportsCarbonBool
+        https://bugs.webkit.org/show_bug.cgi?id=66964
+
+        Add a test.
+
+        Reviewed by Adam Roben.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/TestNetscapePlugIn/Tests/mac/SupportsCarbonEventModel.cpp: Added.
+        (SupportsCarbonEventModel::SupportsCarbonEventModel):
+        (SupportsCarbonEventModel::testConvert):
+        (SupportsCarbonEventModel::runTest):
+        (SupportsCarbonEventModel::NPP_New):
+
 2011-08-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic summary view should not be broken.

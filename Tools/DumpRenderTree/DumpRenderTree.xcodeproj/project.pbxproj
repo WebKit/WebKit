@@ -32,6 +32,7 @@
 		141BF439096A455900E0753C /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		141BF453096A45EB00E0753C /* PluginObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 141BF447096A45C800E0753C /* PluginObject.h */; };
 		14770FE20A22ADF7009342EE /* GCController.h in Headers */ = {isa = PBXBuildFile; fileRef = 14770FE00A22ADF7009342EE /* GCController.h */; };
+		1A14C8A51406DE0400B254F7 /* SupportsCarbonEventModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A14C8A31406DE0400B254F7 /* SupportsCarbonEventModel.cpp */; };
 		1A215A8111F2609C008AD0F5 /* PluginTest.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */; };
 		1A215A8211F2609C008AD0F5 /* PluginTest.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A215A8011F2609C008AD0F5 /* PluginTest.h */; };
 		1A215BE711F27658008AD0F5 /* DocumentOpenInDestroyStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */; };
@@ -214,6 +215,7 @@
 		141BF447096A45C800E0753C /* PluginObject.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PluginObject.h; sourceTree = "<group>"; };
 		141BF448096A45C800E0753C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; name = Info.plist; path = mac/Info.plist; sourceTree = "<group>"; };
 		14770FE00A22ADF7009342EE /* GCController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GCController.h; sourceTree = "<group>"; };
+		1A14C8A31406DE0400B254F7 /* SupportsCarbonEventModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SupportsCarbonEventModel.cpp; sourceTree = "<group>"; };
 		1A215A7511F26072008AD0F5 /* DocumentOpenInDestroyStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DocumentOpenInDestroyStream.cpp; sourceTree = "<group>"; };
 		1A215A7F11F2609C008AD0F5 /* PluginTest.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginTest.cpp; sourceTree = "<group>"; };
 		1A215A8011F2609C008AD0F5 /* PluginTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginTest.h; sourceTree = "<group>"; };
@@ -519,6 +521,7 @@
 			isa = PBXGroup;
 			children = (
 				1A31EB3713466AC100017372 /* ConvertPoint.cpp */,
+				1A14C8A31406DE0400B254F7 /* SupportsCarbonEventModel.cpp */,
 			);
 			path = mac;
 			sourceTree = "<group>";
@@ -827,6 +830,7 @@
 				1A5CC1F5137DD2EC00A5D7E7 /* GetURLWithJavaScriptURL.cpp in Sources */,
 				1AFF66BC137DEFD200791696 /* GetURLNotifyWithURLThatFailsToLoad.cpp in Sources */,
 				4AD6A11413C8124000EA9737 /* FormValue.cpp in Sources */,
+				1A14C8A51406DE0400B254F7 /* SupportsCarbonEventModel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
