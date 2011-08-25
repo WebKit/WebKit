@@ -139,8 +139,8 @@ class AutoinstallImportHook(object):
     def _install_pywebsocket(self):
         pywebsocket_dir = self._fs.join(_AUTOINSTALLED_DIR, "pywebsocket")
         installer = AutoInstaller(target_dir=pywebsocket_dir)
-        installer.install(url="http://pywebsocket.googlecode.com/files/mod_pywebsocket-0.6b2.tar.gz",
-                          url_subpath="pywebsocket-0.6b2/src/mod_pywebsocket")
+        installer.install(url="http://pywebsocket.googlecode.com/files/mod_pywebsocket-0.6b3.tar.gz",
+                          url_subpath="pywebsocket-0.6b3/src/mod_pywebsocket")
 
     def _install(self, url, url_subpath):
         installer = AutoInstaller(target_dir=_AUTOINSTALLED_DIR)

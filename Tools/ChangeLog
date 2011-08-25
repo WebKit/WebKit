@@ -1,3 +1,12 @@
+2011-08-25  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        [WebSocket] update pywebsocket to 0.6b3 which supports closing handshake test
+        https://bugs.webkit.org/show_bug.cgi?id=66924
+
+        Reviewed by Kent Tamura.
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+
 2011-08-24  Adam Barth  <abarth@webkit.org>
 
         The user can't close the details view in garden-o-matic
