@@ -1,6 +1,6 @@
 2011-08-25  Peter Kasting  <pkasting@google.com>
 
-        [chromium] Apparently, expectations without WONTFIX or BUGxxx are ignored.
+        [chromium] Test expectation updates.
 
         Unreviewed, test expectations update.
 

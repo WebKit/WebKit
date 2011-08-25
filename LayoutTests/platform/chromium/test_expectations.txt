@@ -341,6 +341,7 @@ WONTFIX SKIP : fast/js/global-recursion-on-full-stack.html = FAIL
 // These tests propagate auth credentials back to the renderer, which we
 // don't want to do.
 WONTFIX SKIP : http/tests/loading/basic-auth-resend-wrong-credentials.html = FAIL
+WONTFIX SKIP : http/tests/loading/basic-credentials-sent-automatically.html = FAIL
 
 // This test relies on code in the test plugin that only exists in Apple's Mac port.
 WONTFIX SKIP : platform/mac/plugins/convert-point.html = CRASH
@@ -995,7 +996,7 @@ BUGCR10323 WIN : http/tests/xmlhttprequest/xmlhttprequest-no-content-length-onPr
 BUGCR7386 : http/tests/security/postMessage/invalid-origin-throws-exception.html = FAIL
 
 // On Linux, we don't seem to be getting Helvetica Bold for all cases.
-BUGCR10328 LINUX : fast/css/font-face-multiple-faces.html = FAIL
+BUGCR10328 LINUX : fast/css/font-face-multiple-faces.html = IMAGE+TEXT
 
 // Got flakey (both debug and release) around r3581 (ananta).
 BUGCR10329 LINUX WIN : http/tests/plugins/geturlnotify-from-npp-destroystream.html = PASS TEXT
@@ -2296,7 +2297,10 @@ BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
 // Failures after WebKit roll 70949:71000
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-values-prop.html = IMAGE+TEXT
 BUGCR61406 : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-type-prop.html = IMAGE
-BUGCR61406 LINUX WIN SNOWLEOPARD : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+BUGCR61406 LINUX WIN : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+// I have no idea why this seems to pass on the 10.6 (deps)(dbg) bot and nowhere else.
+BUGCR61406 SNOWLEOPARD RELEASE : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE
+BUGCR61406 SNOWLEOPARD DEBUG : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html = IMAGE PASS
 // from http://trac.webkit.org/changeset/53086 (expectation changed in above WK roll, was IMAGE+TEXT)
 BUGCR32153AND61406 LINUX WIN : svg/dynamic-updates/SVGTextElement-svgdom-rotate-prop.html = IMAGE
 
@@ -3286,7 +3290,8 @@ BUGCR83426 MAC : svg/filters/feLighting-crash.svg = PASS IMAGE
 BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = PASS IMAGE+TEXT IMAGE
 BUGCR83499 MAC : fast/box-shadow/box-shadow-transformed.html = PASS IMAGE+TEXT IMAGE
 
-BUGCR83504 WIN : fast/css/custom-font-xheight.html = PASS TIMEOUT
+BUGCR83504 SLOW WIN : fast/css/custom-font-xheight.html = PASS TEXT
+BUGCR83504 MAC : fast/css/custom-font-xheight.html = PASS TEXT
 
 // New tests added in r87121
 BUGWK61169 LINUX WIN : css3/images/optimize-contrast-canvas.html = IMAGE
@@ -3607,6 +3612,7 @@ BUGWK66900 LINUX SNOWLEOPARD DEBUG : fast/writing-mode/japanese-rl-text-with-bro
 BUGWK66908 WIN LINUX GPU DEBUG : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
 BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
 BUGWK66908 : svg/custom/svg-fonts-fallback.xhtml = PASS IMAGE+TEXT
+BUGWK66908 WIN SNOWLEOPARD : fast/css/font-face-multiple-faces.html = PASS IMAGE+TEXT
 
 BUGWK66953 SNOWLEOPARD DEBUG : animations/negative-delay.html = PASS TEXT
 
