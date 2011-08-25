@@ -1,3 +1,16 @@
+2011-08-24  Michael Saboff  <msaboff@apple.com>
+
+        Improper comment in CoreIPC/ArgumentEncoder.cpp from 66464
+        https://bugs.webkit.org/show_bug.cgi?id=66912
+
+        Updated the comment in ArgumentEncoder::grow to reflect that system malloc
+        currently checks to see if a MADV_FREE_REUSABLE will fail before calling it.
+
+        Reviewed by Mark Rowe.
+
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::grow):
+
 2011-08-24  Anders Carlsson  <andersca@apple.com>
 
         Rename -[WKTextInputWindowController keyboardInputSourceChanged] to unmarkText to indicate what the method does
