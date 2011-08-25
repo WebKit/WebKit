@@ -1,3 +1,14 @@
+2011-08-25  Gabor Loki  <loki@webkit.org>
+
+        REGRESSION(r93755): It made 14 jsc test and ~500 layout test fail on Qt-ARM bot
+        https://bugs.webkit.org/show_bug.cgi?id=66956
+
+        Rebaseline constants for patching GetByIdSlowCaseCall on ARM.
+
+        Reviewed by Oliver Hunt.
+
+        * jit/JIT.h:
+
 2011-08-24  Juan C. Montemayor  <jmont@apple.com>
 
         Keep track of topCallFrame for Stack traces

@@ -391,7 +391,7 @@ namespace JSC {
 #if ENABLE(OPCODE_SAMPLING)
         #error "OPCODE_SAMPLING is not yet supported"
 #else
-        static const int patchOffsetGetByIdSlowCaseCall = 32;
+        static const int patchOffsetGetByIdSlowCaseCall = 40;
 #endif
         static const int patchOffsetOpCallCompareToJump = 12;
 
@@ -410,7 +410,7 @@ namespace JSC {
         static const int sequenceGetByIdHotPathConstantSpace = 4;
         // sequenceGetByIdSlowCase
         static const int sequenceGetByIdSlowCaseInstructionSpace = 56;
-        static const int sequenceGetByIdSlowCaseConstantSpace = 2;
+        static const int sequenceGetByIdSlowCaseConstantSpace = 3;
         // sequencePutById
         static const int sequencePutByIdInstructionSpace = 36;
         static const int sequencePutByIdConstantSpace = 4;
