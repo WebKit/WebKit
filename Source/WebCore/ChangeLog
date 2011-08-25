@@ -1,3 +1,18 @@
+2011-08-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r93771.
+        http://trac.webkit.org/changeset/93771
+        https://bugs.webkit.org/show_bug.cgi?id=66933
+
+        Broke css3/font-feature-settings-rendering.html on chromium
+        mac 10.5 (Requested by podivilov on #webkit).
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        (WebCore::createFontCustomPlatformData):
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+
 2011-08-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt][WK2] Drive tiling from the WebProcess and reuse TiledBackingStore.
