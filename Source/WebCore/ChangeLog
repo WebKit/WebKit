@@ -1,3 +1,20 @@
+2011-08-24  James Robinson  <jamesr@chromium.org>
+
+        Some layerTreeAsText compositing tests are flaky
+        https://bugs.webkit.org/show_bug.cgi?id=66913
+
+        Reviewed by Simon Fraser.
+
+        Remove compositingLayerUpdatePending() and unconditionally update compositing layers when
+        RenderLayerCompositor::layerTreeAsText().  compositingLayerUpdatePending() was only used by test code and is
+        unreliable.
+
+        Covered by compositing/ layerTreeAsText tests.
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::layerTreeAsText):
+        * rendering/RenderLayerCompositor.h:
+
 2011-08-24  Kentaro Hara  <haraken@google.com>
 
         Implement a keypath parser strictly following the specification

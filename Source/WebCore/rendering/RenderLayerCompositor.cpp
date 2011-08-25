@@ -236,11 +236,6 @@ void RenderLayerCompositor::scheduleCompositingLayerUpdate()
         m_updateCompositingLayersTimer.startOneShot(0);
 }
 
-bool RenderLayerCompositor::compositingLayerUpdatePending() const
-{
-    return m_updateCompositingLayersTimer.isActive();
-}
-
 void RenderLayerCompositor::updateCompositingLayersTimerFired(Timer<RenderLayerCompositor>*)
 {
     updateCompositingLayers();
@@ -972,8 +967,7 @@ void RenderLayerCompositor::frameViewDidScroll(const LayoutPoint& scrollPosition
 
 String RenderLayerCompositor::layerTreeAsText(bool showDebugInfo)
 {
-    if (compositingLayerUpdatePending())
-        updateCompositingLayers();
+    updateCompositingLayers();
 
     if (!m_rootContentLayer)
         return String();
