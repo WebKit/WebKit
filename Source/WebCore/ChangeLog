@@ -1,3 +1,34 @@
+2011-08-25  Abhishek Arya  <inferno@chromium.org>
+
+        Incorrect layout of :before and :after content, with display
+        table, table-row and table-cell.
+        https://bugs.webkit.org/show_bug.cgi?id=66699
+
+        Reviewed by David Hyatt.
+
+        Tests: fast/table/table-after-child-in-table.html
+               fast/table/table-before-child-in-table.html
+               fast/table/table-cell-after-child-in-block.html
+               fast/table/table-cell-after-child-in-table.html
+               fast/table/table-cell-before-child-in-block.html
+               fast/table/table-cell-before-child-in-table.html
+               fast/table/table-row-after-child-in-block.html
+               fast/table/table-row-after-child-in-table.html
+               fast/table/table-row-before-child-in-block.html
+               fast/table/table-row-before-child-in-table.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addChildIgnoringAnonymousColumnBlocks):
+        Fix the looping condition to detect :after child correctly.
+        isAnonymousBlock() does not apply to tables, instead
+        using isAnonymous().
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::addChild): Don't add the new child
+        in the generatedContainer with :before, :after content.
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::addChild): Don't add the new child
+        in the generatedContainer with :before, :after content.
+
 2011-08-25  Sam Weinig  <sam@webkit.org>
 
         JSHTMLImageElement (and associated Node) is abandoned when image load is canceled via beforeload

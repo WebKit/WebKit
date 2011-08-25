@@ -669,10 +669,10 @@ void RenderBlock::addChildIgnoringAnonymousColumnBlocks(RenderObject* newChild, 
     // Make sure we don't append things after :after-generated content if we have it.
     if (!beforeChild) {
         RenderObject* lastRenderer = lastChild();
-        if (isAfterContent(lastRenderer))
+        while (lastRenderer && lastRenderer->isAnonymous() && !isAfterContent(lastRenderer))
+            lastRenderer = lastRenderer->lastChild();
+        if (lastRenderer && isAfterContent(lastRenderer))
             beforeChild = lastRenderer;
-        else if (lastRenderer && lastRenderer->isAnonymousBlock() && isAfterContent(lastRenderer->lastChild()))
-            beforeChild = lastRenderer->lastChild();
     }
 
     // If the requested beforeChild is not one of our children, then this is because

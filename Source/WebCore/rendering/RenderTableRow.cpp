@@ -90,7 +90,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
         RenderObject* last = beforeChild;
         if (!last)
             last = lastChild();
-        if (last && last->isAnonymous() && last->isTableCell()) {
+        if (last && last->isAnonymous() && last->isTableCell() && !isAfterContent(last) && !isBeforeContent(last)) {
             if (beforeChild == last)
                 beforeChild = last->firstChild();
             last->addChild(child, beforeChild);
@@ -98,7 +98,7 @@ void RenderTableRow::addChild(RenderObject* child, RenderObject* beforeChild)
         }
 
         // If beforeChild is inside an anonymous cell, insert into the cell.
-        if (last && !last->isTableCell() && last->parent() && last->parent()->isAnonymous()) {
+        if (last && !last->isTableCell() && last->parent() && last->parent()->isAnonymous() && !isAfterContent(last->parent()) && !isBeforeContent(last->parent())) {
             last->parent()->addChild(child, beforeChild);
             return;
         }
