@@ -1,3 +1,35 @@
+2011-08-25  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Concentrate RenderLayer repaint rects updates
+        https://bugs.webkit.org/show_bug.cgi?id=64993
+
+        Reviewed by David Hyatt.
+
+        The change moves the update of the repaint rects to 2 methods
+        (computeRepaintRects and clearRepaintRects) to better track
+        those changes.
+
+        No new test, refactoring covered by the existing test cases.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions): Reverse the logic and
+        calculate the new bounds upfront. This should have no impact as none
+        of the methods rely on the internal value.
+
+        (WebCore::RenderLayer::computeRepaintRects): Added the cachedOffset parameter
+        to avoid breaking the performance optimization in updateLayerPositions. Added
+        some ASSERTS.
+
+        (WebCore::RenderLayer::clearRepaintRects): Added some ASSERTs here.
+        (WebCore::RenderLayer::updateRepaintRectsAfterScroll): Added a FIXME as this
+        method could use the cachedOffset trick too.
+
+        (WebCore::RenderLayer::setHasVisibleContent): Changed the code to use
+        computeRepaintRects.
+
+        * rendering/RenderLayer.h: Updated the signature of computeRepaintRects and moved
+        those 2 methods into the private section of the class.
+
 2011-08-25  Van Lam  <vanlam@google.com>
 
         Remove use of magic number -1 in WebCore/editing/visible_units.cpp

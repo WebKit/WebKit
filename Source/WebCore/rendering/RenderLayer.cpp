@@ -309,26 +309,23 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, LayoutPo
         ASSERT(!view->layoutStateEnabled());
 
         RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
-        LayoutRect newRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
-        LayoutRect newOutlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, cachedOffset);
-        // FIXME: Should ASSERT that value calculated for newOutlineBox using the cached offset is the same
+        IntRect oldRepaintRect = m_repaintRect;
+        IntRect oldOutlineBox = m_outlineBox;
+        computeRepaintRects();
+        // FIXME: Should ASSERT that value calculated for m_outlineBox using the cached offset is the same
         // as the value not using the cached offset, but we can't due to https://bugs.webkit.org/show_bug.cgi?id=37048
         if (flags & CheckForRepaint) {
             if (view && !view->printing()) {
                 if (m_needsFullRepaint) {
-                    renderer()->repaintUsingContainer(repaintContainer, m_repaintRect);
-                    if (newRect != m_repaintRect)
-                        renderer()->repaintUsingContainer(repaintContainer, newRect);
+                    renderer()->repaintUsingContainer(repaintContainer, oldRepaintRect);
+                    if (m_repaintRect != oldRepaintRect)
+                        renderer()->repaintUsingContainer(repaintContainer, m_repaintRect);
                 } else
-                    renderer()->repaintAfterLayoutIfNeeded(repaintContainer, m_repaintRect, m_outlineBox, &newRect, &newOutlineBox);
+                    renderer()->repaintAfterLayoutIfNeeded(repaintContainer, oldRepaintRect, oldOutlineBox, &m_repaintRect, &m_outlineBox);
             }
         }
-        m_repaintRect = newRect;
-        m_outlineBox = newOutlineBox;
-    } else {
-        m_repaintRect = LayoutRect();
-        m_outlineBox = LayoutRect();
-    }
+    } else
+        clearRepaintRects();
 
     m_needsFullRepaint = false;
 
@@ -370,11 +367,23 @@ LayoutRect RenderLayer::repaintRectIncludingDescendants() const
     return repaintRect;
 }
 
-void RenderLayer::computeRepaintRects()
+void RenderLayer::computeRepaintRects(IntPoint* cachedOffset)
 {
-    RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
-    m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
-    m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer);
+    ASSERT(m_hasVisibleContent);
+    ASSERT(!m_visibleContentStatusDirty);
+
+     RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
+     m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
+    m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer, cachedOffset);
+}
+
+void RenderLayer::clearRepaintRects()
+{
+    ASSERT(!m_hasVisibleContent);
+    ASSERT(!m_visibleContentStatusDirty);
+
+    m_repaintRect = IntRect();
+    m_outlineBox = IntRect();
 }
 
 void RenderLayer::updateLayerPositionsAfterScroll(bool fixed)
@@ -382,6 +391,7 @@ void RenderLayer::updateLayerPositionsAfterScroll(bool fixed)
     updateLayerPosition();
 
     if (fixed || renderer()->style()->position() == FixedPosition) {
+        // FIXME: Is it worth passing the cachedOffset around like in updateLayerPositions?
         computeRepaintRects();
         fixed = true;
     } else if (renderer()->hasTransform() && !renderer()->isRenderView()) {
@@ -514,9 +524,7 @@ void RenderLayer::setHasVisibleContent(bool b)
     m_visibleContentStatusDirty = false; 
     m_hasVisibleContent = b;
     if (m_hasVisibleContent) {
-        RenderBoxModelObject* repaintContainer = renderer()->containerForRepaint();
-        m_repaintRect = renderer()->clippedOverflowRectForRepaint(repaintContainer);
-        m_outlineBox = renderer()->outlineBoundsForRepaint(repaintContainer);
+        computeRepaintRects();
         if (!isNormalFlowOnly()) {
             for (RenderLayer* sc = stackingContext(); sc; sc = sc->stackingContext()) {
                 sc->dirtyZOrderLists();

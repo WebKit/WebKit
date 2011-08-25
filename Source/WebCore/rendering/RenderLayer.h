@@ -403,7 +403,6 @@ public:
     // Return a cached repaint rect, computed relative to the layer renderer's containerForRepaint.
     LayoutRect repaintRect() const { return m_repaintRect; }
     LayoutRect repaintRectIncludingDescendants() const;
-    void computeRepaintRects();
     void updateLayerPositionsAfterScroll(bool fixed = false);
     void setNeedsFullRepaint(bool f = true) { m_needsFullRepaint = f; }
     
@@ -461,6 +460,9 @@ public:
     void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
 
 private:
+    void computeRepaintRects(IntPoint* cachedOffset = 0);
+    void clearRepaintRects();
+
     // The normal operator new is disallowed on all render objects.
     void* operator new(size_t) throw();
 
