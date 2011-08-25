@@ -1,3 +1,9 @@
+2011-08-25 Zsolt Fehér <h490267@stud.u-szeged.hu>
+
+    Unreviewed Qt gardening.
+
+    * platform/qt/Skipped:
+
 2011-08-24  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: split ConsoleView into the View and the Model.
