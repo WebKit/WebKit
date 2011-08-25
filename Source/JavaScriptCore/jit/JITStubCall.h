@@ -172,6 +172,7 @@ namespace JSC {
 #endif
 
             m_jit->restoreArgumentReference();
+            m_jit->updateTopCallFrame();
             JIT::Call call = m_jit->call();
             m_jit->m_calls.append(CallRecord(call, m_jit->m_bytecodeOffset, m_stub.value()));
 

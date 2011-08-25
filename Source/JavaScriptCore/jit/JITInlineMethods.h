@@ -253,6 +253,11 @@ ALWAYS_INLINE void JIT::restoreArgumentReference()
     poke(callFrameRegister, OBJECT_OFFSETOF(struct JITStackFrame, callFrame) / sizeof(void*));
 }
 
+ALWAYS_INLINE void JIT::updateTopCallFrame()
+{
+    storePtr(callFrameRegister, &m_globalData->topCallFrame);
+}
+
 ALWAYS_INLINE void JIT::restoreArgumentReferenceForTrampoline()
 {
 #if CPU(X86)

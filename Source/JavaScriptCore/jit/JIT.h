@@ -370,7 +370,7 @@ namespace JSC {
 #if ENABLE(OPCODE_SAMPLING)
         static const int patchOffsetGetByIdSlowCaseCall = 37;
 #else
-        static const int patchOffsetGetByIdSlowCaseCall = 27;
+        static const int patchOffsetGetByIdSlowCaseCall = 33;
 #endif
         static const int patchOffsetOpCallCompareToJump = 6;
 
@@ -428,7 +428,7 @@ namespace JSC {
 #if ENABLE(OPCODE_SAMPLING)
         #error "OPCODE_SAMPLING is not yet supported"
 #else
-        static const int patchOffsetGetByIdSlowCaseCall = 30;
+        static const int patchOffsetGetByIdSlowCaseCall = 40;
 #endif
         static const int patchOffsetOpCallCompareToJump = 16;
 
@@ -606,7 +606,7 @@ namespace JSC {
 #if ENABLE(OPCODE_SAMPLING)
         static const int patchOffsetGetByIdSlowCaseCall = 64;
 #else
-        static const int patchOffsetGetByIdSlowCaseCall = 41;
+        static const int patchOffsetGetByIdSlowCaseCall = 54;
 #endif
         static const int patchOffsetOpCallCompareToJump = 9;
 
@@ -961,6 +961,7 @@ namespace JSC {
 
         void restoreArgumentReference();
         void restoreArgumentReferenceForTrampoline();
+        void updateTopCallFrame();
 
         Call emitNakedCall(CodePtr function = CodePtr());
 

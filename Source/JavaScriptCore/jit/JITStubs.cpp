@@ -1046,6 +1046,15 @@ static ExceptionHandler jitThrow(JSGlobalData* globalData, CallFrame* callFrame,
     return exceptionHandler;
 }
 
+// Helper function for JIT stubs that may throw an exception in the middle of
+// processing a function call. This function rolls back the register file to
+// our caller, so exception processing can proceed from a valid state.
+static ALWAYS_INLINE ExceptionHandler throwExceptionFromOpCall(CallFrame* oldCallFrame, CallFrame* newCallFrame)
+{
+    oldCallFrame->globalData().topCallFrame = oldCallFrame;
+    return jitThrow(&oldCallFrame->globalData(), oldCallFrame, createStackOverflowError(oldCallFrame), ReturnAddressPtr(newCallFrame->returnPC()));
+}
+
 #if CPU(ARM_THUMB2) && COMPILER(GCC)
 
 #define DEFINE_STUB_FUNCTION(rtype, op) \
@@ -1350,10 +1359,7 @@ DEFINE_STUB_FUNCTION(void*, register_file_check)
     CallFrame* callFrame = stackFrame.callFrame;
 
     if (UNLIKELY(!stackFrame.registerFile->grow(&callFrame->registers()[callFrame->codeBlock()->m_numCalleeRegisters]))) {
-        // Rewind to the previous call frame because op_call already optimistically
-        // moved the call frame forward.
-        CallFrame* oldCallFrame = callFrame->callerFrame();
-        ExceptionHandler handler = jitThrow(stackFrame.globalData, oldCallFrame, createStackOverflowError(oldCallFrame), ReturnAddressPtr(callFrame->returnPC()));
+        ExceptionHandler handler = throwExceptionFromOpCall(callFrame->callerFrame(), callFrame);
         STUB_SET_RETURN_ADDRESS(handler.catchRoutine);
         callFrame = handler.callFrame;
     }
@@ -1950,9 +1956,7 @@ inline void* arityCheckFor(JITStackFrame& stackFrame, CodeSpecializationKind kin
         r = callFrame->registers() + numParameters;
         Register* newEnd = r + newCodeBlock->m_numCalleeRegisters;
         if (!stackFrame.registerFile->grow(newEnd)) {
-            // Rewind to the previous call frame because op_call already optimistically
-            // moved the call frame forward.
-            ExceptionHandler handler = jitThrow(stackFrame.globalData, oldCallFrame, createStackOverflowError(oldCallFrame), pc);
+            ExceptionHandler handler = throwExceptionFromOpCall(oldCallFrame, callFrame);
             stubReturnAddress = ReturnAddressPtr(handler.catchRoutine);
             return handler.callFrame;
         }
@@ -1965,9 +1969,7 @@ inline void* arityCheckFor(JITStackFrame& stackFrame, CodeSpecializationKind kin
         r = callFrame->registers() + omittedArgCount;
         Register* newEnd = r + newCodeBlock->m_numCalleeRegisters;
         if (!stackFrame.registerFile->grow(newEnd)) {
-            // Rewind to the previous call frame because op_call already optimistically
-            // moved the call frame forward.
-            ExceptionHandler handler = jitThrow(stackFrame.globalData, oldCallFrame, createStackOverflowError(oldCallFrame), pc);
+            ExceptionHandler handler = throwExceptionFromOpCall(oldCallFrame, callFrame);
             stubReturnAddress = ReturnAddressPtr(handler.catchRoutine);
             return handler.callFrame;
         }

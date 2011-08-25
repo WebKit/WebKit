@@ -608,6 +608,7 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
     }
 
     CallFrame* callerFrame = callFrame->callerFrame();
+    callFrame->globalData().topCallFrame = callerFrame;
     if (callerFrame->hasHostCallFrameFlag())
         return false;
 
@@ -881,6 +882,7 @@ failedJSONP:
     ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
     newCallFrame->init(codeBlock, 0, scopeChain, CallFrame::noCaller(), codeBlock->m_numParameters, 0);
     newCallFrame->uncheckedR(newCallFrame->hostThisRegister()) = JSValue(thisObj);
+    TopCallFrameSetter topCallFrame(callFrame->globalData(), newCallFrame);
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -954,6 +956,8 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
 
         newCallFrame->init(newCodeBlock, 0, callDataScopeChain, callFrame->addHostCallFrameFlag(), argCount, function);
 
+        TopCallFrameSetter topCallFrame(callFrame->globalData(), newCallFrame);
+
         Profiler** profiler = Profiler::enabledProfilerReference();
         if (*profiler)
             (*profiler)->willExecute(callFrame, function);
@@ -983,6 +987,8 @@ JSValue Interpreter::executeCall(CallFrame* callFrame, JSObject* function, CallT
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     newCallFrame = CallFrame::create(newCallFrame->registers() + registerOffset);
     newCallFrame->init(0, 0, scopeChain, callFrame->addHostCallFrameFlag(), argCount, function);
+
+    TopCallFrameSetter topCallFrame(callFrame->globalData(), newCallFrame);
 
     DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
 
@@ -1048,6 +1054,8 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
 
         newCallFrame->init(newCodeBlock, 0, constructDataScopeChain, callFrame->addHostCallFrameFlag(), argCount, constructor);
 
+        TopCallFrameSetter topCallFrame(callFrame->globalData(), newCallFrame);
+
         Profiler** profiler = Profiler::enabledProfilerReference();
         if (*profiler)
             (*profiler)->willExecute(callFrame, constructor);
@@ -1080,6 +1088,8 @@ JSObject* Interpreter::executeConstruct(CallFrame* callFrame, JSObject* construc
     ScopeChainNode* scopeChain = callFrame->scopeChain();
     newCallFrame = CallFrame::create(newCallFrame->registers() + registerOffset);
     newCallFrame->init(0, 0, scopeChain, callFrame->addHostCallFrameFlag(), argCount, constructor);
+
+    TopCallFrameSetter topCallFrame(callFrame->globalData(), newCallFrame);
 
     DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
 
@@ -1143,6 +1153,7 @@ CallFrameClosure Interpreter::prepareForRepeatCall(FunctionExecutable* FunctionE
         return CallFrameClosure();
     }
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), argc, function);  
+    scopeChain->globalData->topCallFrame = newCallFrame;
     CallFrameClosure result = { callFrame, newCallFrame, function, FunctionExecutable, scopeChain->globalData, oldEnd, scopeChain, codeBlock->m_numParameters, argc };
     return result;
 }
@@ -1156,7 +1167,9 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
         (*profiler)->willExecute(closure.oldCallFrame, closure.function);
-    
+
+    TopCallFrameSetter topCallFrame(*closure.globalData, closure.newCallFrame);
+
     JSValue result;
     {
         SamplingTool::CallRecord callRecord(m_sampler.get());
@@ -1176,7 +1189,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 #endif
         m_reentryDepth--;
     }
-    
+
     if (*profiler)
         (*profiler)->didExecute(closure.oldCallFrame, closure.function);
     return checkedReturn(result);
@@ -1184,6 +1197,7 @@ JSValue Interpreter::execute(CallFrameClosure& closure)
 
 void Interpreter::endRepeatCall(CallFrameClosure& closure)
 {
+    closure.globalData->topCallFrame = closure.oldCallFrame;
     m_registerFile.shrink(closure.oldEnd);
 }
 
@@ -1262,6 +1276,8 @@ JSValue Interpreter::execute(EvalExecutable* eval, CallFrame* callFrame, JSValue
     ASSERT(codeBlock->m_numParameters == 1); // 1 parameter for 'this'.
     newCallFrame->init(codeBlock, 0, scopeChain, callFrame->addHostCallFrameFlag(), codeBlock->m_numParameters, 0);
     newCallFrame->uncheckedR(newCallFrame->hostThisRegister()) = thisValue;
+
+    TopCallFrameSetter topCallFrame(callFrame->globalData(), newCallFrame);
 
     Profiler** profiler = Profiler::enabledProfilerReference();
     if (*profiler)
@@ -1589,9 +1605,12 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
     return JSValue();
 #else
 
+    ASSERT(callFrame->globalData().topCallFrame == callFrame);
+
     JSGlobalData* globalData = &callFrame->globalData();
     JSValue exceptionValue;
     HandlerInfo* handler = 0;
+    CallFrame** topCallFrameSlot = &globalData->topCallFrame;
 
     CodeBlock* codeBlock = callFrame->codeBlock();
     Instruction* vPC = codeBlock->instructions().begin();
@@ -4205,6 +4224,7 @@ skip_id_custom_self:
             callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_call), callDataScopeChain, previousCallFrame, argCount, asFunction(v));
             codeBlock = newCodeBlock;
             ASSERT(codeBlock == callFrame->codeBlock());
+            *topCallFrameSlot = callFrame;
             vPC = newCodeBlock->instructions().begin();
 
 #if ENABLE(OPCODE_STATS)
@@ -4223,11 +4243,12 @@ skip_id_custom_self:
             }
 
             newCallFrame->init(0, vPC + OPCODE_LENGTH(op_call), scopeChain, callFrame, argCount, asObject(v));
-
             JSValue returnValue;
             {
+                *topCallFrameSlot = newCallFrame;
                 SamplingTool::HostCallRecord callRecord(m_sampler.get());
                 returnValue = JSValue::decode(callData.native.function(newCallFrame));
+                *topCallFrameSlot = callFrame;
             }
             CHECK_FOR_EXCEPTION();
 
@@ -4373,6 +4394,7 @@ skip_id_custom_self:
             callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_call_varargs), callDataScopeChain, previousCallFrame, argCount, asFunction(v));
             codeBlock = newCodeBlock;
             ASSERT(codeBlock == callFrame->codeBlock());
+            *topCallFrameSlot = callFrame;
             vPC = newCodeBlock->instructions().begin();
             
 #if ENABLE(OPCODE_STATS)
@@ -4393,8 +4415,10 @@ skip_id_custom_self:
             
             JSValue returnValue;
             {
+                *topCallFrameSlot = newCallFrame;
                 SamplingTool::HostCallRecord callRecord(m_sampler.get());
                 returnValue = JSValue::decode(callData.native.function(newCallFrame));
+                *topCallFrameSlot = callFrame;
             }
             CHECK_FOR_EXCEPTION();
             
@@ -4476,10 +4500,11 @@ skip_id_custom_self:
 
         vPC = callFrame->returnVPC();
         callFrame = callFrame->callerFrame();
-        
+
         if (callFrame->hasHostCallFrameFlag())
             return returnValue;
 
+        *topCallFrameSlot = callFrame;
         functionReturnValue = returnValue;
         codeBlock = callFrame->codeBlock();
         ASSERT(codeBlock == callFrame->codeBlock());
@@ -4521,6 +4546,7 @@ skip_id_custom_self:
         if (callFrame->hasHostCallFrameFlag())
             return returnValue;
 
+        *topCallFrameSlot = callFrame;
         functionReturnValue = returnValue;
         codeBlock = callFrame->codeBlock();
         ASSERT(codeBlock == callFrame->codeBlock());
@@ -4694,6 +4720,7 @@ skip_id_custom_self:
 
             callFrame->init(newCodeBlock, vPC + OPCODE_LENGTH(op_construct), callDataScopeChain, previousCallFrame, argCount, asFunction(v));
             codeBlock = newCodeBlock;
+            *topCallFrameSlot = callFrame;
             vPC = newCodeBlock->instructions().begin();
 #if ENABLE(OPCODE_STATS)
             OpcodeStats::resetLastInstruction();
@@ -4713,8 +4740,10 @@ skip_id_custom_self:
 
             JSValue returnValue;
             {
+                *topCallFrameSlot = newCallFrame;
                 SamplingTool::HostCallRecord callRecord(m_sampler.get());
                 returnValue = JSValue::decode(constructData.native.function(newCallFrame));
+                *topCallFrameSlot = callFrame;
             }
             CHECK_FOR_EXCEPTION();
             functionReturnValue = returnValue;

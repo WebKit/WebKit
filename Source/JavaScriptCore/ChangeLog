@@ -1,3 +1,37 @@
+2011-08-24  Juan C. Montemayor  <jmont@apple.com>
+
+        Keep track of topCallFrame for Stack traces
+        https://bugs.webkit.org/show_bug.cgi?id=66571
+
+        Reviewed by Geoffrey Garen.
+
+        This patch adds a TopCallFrame to JSC in order to have that information
+        when an error is thrown to create a stack trace. The TopCallFrame is
+        updated throughout select points in the Interpreter and the JSC.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+        (JSC::Interpreter::throwException):
+        (JSC::Interpreter::execute):
+        (JSC::Interpreter::executeCall):
+        (JSC::Interpreter::executeConstruct):
+        (JSC::Interpreter::privateExecute):
+        * interpreter/Interpreter.h:
+        (JSC::TopCallFrameSetter::TopCallFrameSetter):
+        (JSC::TopCallFrameSetter::~TopCallFrameSetter):
+        * jit/JIT.h:
+        * jit/JITInlineMethods.h:
+        (JSC::JIT::updateTopCallFrame):
+        * jit/JITStubCall.h:
+        (JSC::JITStubCall::call):
+        * jit/JITStubs.cpp:
+        (JSC::throwExceptionFromOpCall):
+        (JSC::DEFINE_STUB_FUNCTION):
+        (JSC::arityCheckFor):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+
 2011-08-24  Filip Pizlo  <fpizlo@apple.com>
 
         ErrorInstance::create sometimes has two heap object constructions

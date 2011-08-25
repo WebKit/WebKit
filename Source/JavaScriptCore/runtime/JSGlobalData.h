@@ -135,6 +135,7 @@ namespace JSC {
 
         GlobalDataType globalDataType;
         ClientData* clientData;
+        CallFrame* topCallFrame;
 
         const HashTable* arrayConstructorTable;
         const HashTable* arrayPrototypeTable;
