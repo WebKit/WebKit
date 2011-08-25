@@ -30,6 +30,7 @@
 #include "ShareableBitmap.h"
 #include "ViewportArguments.h"
 #include "ViewInterface.h"
+#include "WebContext.h"
 #include "WebPageProxy.h"
 #include <wtf/RefPtr.h>
 #include <QBasicTimer>
@@ -42,13 +43,10 @@ QT_BEGIN_NAMESPACE
 class QUndoStack;
 QT_END_NAMESPACE
 
-class QWKContext;
 class QWKHistory;
 class QWKPreferences;
 
 using namespace WebKit;
-
-QWKContext *defaultWKContext();
 
 WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions);
 
@@ -71,7 +69,7 @@ public:
         WebActionCount
     };
 
-    QtWebPageProxy(WebKit::ViewInterface*, WebKit::PolicyInterface*, QWKContext*, WKPageGroupRef = 0);
+    QtWebPageProxy(WebKit::ViewInterface*, WebKit::PolicyInterface* = 0, WKContextRef = 0, WKPageGroupRef = 0);
     ~QtWebPageProxy();
 
     virtual bool handleEvent(QEvent*);
@@ -196,7 +194,11 @@ private:
     bool handleFocusInEvent(QFocusEvent*);
     bool handleFocusOutEvent(QFocusEvent*);
 
-    QWKContext* m_context;
+    static PassRefPtr<WebContext> defaultWKContext();
+    static RefPtr<WebContext> s_defaultContext;
+    static unsigned s_defaultPageProxyCount;
+
+    RefPtr<WebContext> m_context;
     QWKHistory* m_history;
 
     mutable QAction* m_actions[QtWebPageProxy::WebActionCount];

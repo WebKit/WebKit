@@ -24,8 +24,6 @@
 #include "qwkpreferences_p.h"
 
 #include "ClientImpl.h"
-#include "qwkcontext.h"
-#include "qwkcontext_p.h"
 #include "qwkhistory.h"
 #include "qwkhistory_p.h"
 #include "ViewInterface.h"
@@ -61,10 +59,16 @@
 using namespace WebKit;
 using namespace WebCore;
 
-QWKContext* defaultWKContext()
+
+RefPtr<WebContext> QtWebPageProxy::s_defaultContext;
+
+unsigned QtWebPageProxy::s_defaultPageProxyCount = 0;
+
+PassRefPtr<WebContext> QtWebPageProxy::defaultWKContext()
 {
-    static QWKContext* defaultContext = new QWKContext();
-    return defaultContext;
+    if (!s_defaultContext)
+        s_defaultContext = WebContext::create(String());
+    return s_defaultContext;
 }
 
 static inline Qt::DropActions dragOperationToDropActions(unsigned dragOperations)
@@ -95,18 +99,20 @@ WebCore::DragOperation dropActionToDragOperation(Qt::DropActions actions)
     return (DragOperation)result;
 }
 
-QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, PolicyInterface* policyInterface, QWKContext* c, WKPageGroupRef pageGroupRef)
+QtWebPageProxy::QtWebPageProxy(ViewInterface* viewInterface, PolicyInterface* policyInterface, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : m_viewInterface(viewInterface)
     , m_policyInterface(policyInterface)
-    , m_context(c)
+    , m_context(contextRef ? toImpl(contextRef) : defaultWKContext())
     , m_preferences(0)
     , m_undoStack(adoptPtr(new QUndoStack(this)))
     , m_loadProgress(0)
 {
     ASSERT(viewInterface);
     memset(m_actions, 0, sizeof(m_actions));
-    m_webPageProxy = m_context->d->context->createWebPage(this, toImpl(pageGroupRef));
+    m_webPageProxy = m_context->createWebPage(this, toImpl(pageGroupRef));
     m_history = QWKHistoryPrivate::createHistory(this, m_webPageProxy->backForwardList());
+    if (!contextRef)
+        s_defaultPageProxyCount++;
 }
 
 void QtWebPageProxy::init()
@@ -204,6 +210,14 @@ void QtWebPageProxy::init()
 QtWebPageProxy::~QtWebPageProxy()
 {
     m_webPageProxy->close();
+    m_context->disconnectProcess(m_context->process());
+    // The context is the default one and we're deleting the last QtWebPageProxy.
+    if (m_context == s_defaultContext) {
+        ASSERT(s_defaultPageProxyCount > 0);
+        s_defaultPageProxyCount--;
+        if (!s_defaultPageProxyCount)
+            s_defaultContext.clear();
+    }
     delete m_history;
 }
 

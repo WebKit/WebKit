@@ -32,7 +32,7 @@ using namespace WebKit;
 class QDesktopWebPageProxy : public QtWebPageProxy
 {
 public:
-    QDesktopWebPageProxy(QDesktopWebViewPrivate*, QWKContext*, WKPageGroupRef = 0);
+    QDesktopWebPageProxy(QDesktopWebViewPrivate*, WKContextRef, WKPageGroupRef = 0);
 
     virtual bool handleEvent(QEvent*);
 

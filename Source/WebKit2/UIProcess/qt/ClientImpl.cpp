@@ -27,7 +27,6 @@
 #include "qweberror.h"
 #include "qweberror_p.h"
 #include <PolicyInterface.h>
-#include <qwkcontext.h>
 #include <QtWebPageProxy.h>
 #include <ViewInterface.h>
 #include <WKFrame.h>
@@ -36,13 +35,6 @@
 #include <WKURLRequest.h>
 
 using namespace WebKit;
-
-static QWKContext* toQWKContext(const void* clientInfo)
-{
-    if (clientInfo)
-        return reinterpret_cast<QWKContext*>(const_cast<void*>(clientInfo));
-    return 0;
-}
 
 static QtWebPageProxy* toQtWebPageProxy(const void* clientInfo)
 {
@@ -153,16 +145,6 @@ void qt_wk_setStatusText(WKPageRef, WKStringRef text, const void *clientInfo)
 {
     QString qText = WKStringCopyQString(text);
     toViewInterface(clientInfo)->didChangeStatusText(qText);
-}
-
-void qt_wk_didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo)
-{
-    QUrl qUrl = WKURLCopyQUrl(pageURL);
-    emit toQWKContext(clientInfo)->iconChangedForPageURL(qUrl);
-}
-
-void qt_wk_didRemoveAllIcons(WKIconDatabaseRef iconDatabase, const void* clientInfo)
-{
 }
 
 static Qt::MouseButton toQtMouseButton(WKEventMouseButton button)

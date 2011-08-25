@@ -39,7 +39,7 @@ using namespace WebKit;
 class QTouchWebPageProxy : public QtWebPageProxy
 {
 public:
-    QTouchWebPageProxy(TouchViewInterface*, ViewportInteractionEngine*, QWKContext*, WKPageGroupRef = 0);
+    QTouchWebPageProxy(TouchViewInterface*, ViewportInteractionEngine*);
 
     virtual bool handleEvent(QEvent*);
 

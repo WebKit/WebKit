@@ -244,8 +244,6 @@ HEADERS += \
     UIProcess/qt/qdesktopwebpageproxy.h \
     UIProcess/qt/qtouchwebpageproxy.h \
     UIProcess/qt/QtWebPageProxy.h \
-    UIProcess/qt/qwkcontext.h \
-    UIProcess/qt/qwkcontext_p.h \
     UIProcess/qt/qwkhistory.h \
     UIProcess/qt/qwkhistory_p.h \
     UIProcess/qt/qwkpreferences.h \
@@ -477,7 +475,6 @@ SOURCES += \
     UIProcess/qt/qdesktopwebpageproxy.cpp \
     UIProcess/qt/qtouchwebpageproxy.cpp \
     UIProcess/qt/QtWebPageProxy.cpp \
-    UIProcess/qt/qwkcontext.cpp \
     UIProcess/qt/qwkhistory.cpp \
     UIProcess/qt/qwkpreferences.cpp \
     UIProcess/qt/SGAgent.cpp \

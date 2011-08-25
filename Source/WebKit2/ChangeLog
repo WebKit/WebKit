@@ -1,3 +1,39 @@
+2011-08-25  Alexis Menard  <alexis.menard@openbossa.org>
+
+        [Qt][WK2] Remove QWKContext class and make sure the WebProcessProxy life is correctly managed.
+        https://bugs.webkit.org/show_bug.cgi?id=66886
+
+        Reviewed by Benjamin Poulain.
+
+        Remove QWKContext class from Qt APIs as it is too low level for the vision
+        of the Qt5 API. QtWebPageProxy now holds directly a WebContext which can be a custom one
+        or default created one. This patch also ensure that the WebProcessProxy is correctly
+        destroyed at application exit by removing the circular references between the WebContext,
+        WebProcessProxy, and WebPageProxy.
+
+        * UIProcess/API/qt/qdesktopwebview.cpp:
+        (QDesktopWebViewPrivate::QDesktopWebViewPrivate):
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::QTouchWebViewPrivate):
+        * UIProcess/qt/ClientImpl.cpp:
+        (qt_wk_setStatusText):
+        * UIProcess/qt/ClientImpl.h:
+        * UIProcess/qt/QtWebPageProxy.cpp:
+        (QtWebPageProxy::defaultWKContext):
+        (QtWebPageProxy::QtWebPageProxy):
+        (QtWebPageProxy::~QtWebPageProxy):
+        * UIProcess/qt/QtWebPageProxy.h:
+        * UIProcess/qt/qdesktopwebpageproxy.cpp:
+        (QDesktopWebPageProxy::QDesktopWebPageProxy):
+        * UIProcess/qt/qdesktopwebpageproxy.h:
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::QTouchWebPageProxy):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        * UIProcess/qt/qwkcontext.cpp: Removed.
+        * UIProcess/qt/qwkcontext.h: Removed.
+        * UIProcess/qt/qwkcontext_p.h: Removed.
+        * WebKit2.pro:
+
 2011-08-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
         [Qt][WK2] Drive tiling from the WebProcess and reuse TiledBackingStore.

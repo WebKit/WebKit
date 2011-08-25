@@ -27,8 +27,8 @@
 
 using namespace WebCore;
 
-QTouchWebPageProxy::QTouchWebPageProxy(TouchViewInterface* viewInterface, ViewportInteractionEngine* viewportInteractionEngine, QWKContext* context, WKPageGroupRef pageGroupRef)
-    : QtWebPageProxy(viewInterface, 0, context, pageGroupRef)
+QTouchWebPageProxy::QTouchWebPageProxy(TouchViewInterface* viewInterface, ViewportInteractionEngine* viewportInteractionEngine)
+    : QtWebPageProxy(viewInterface, 0)
     , m_panGestureRecognizer(viewportInteractionEngine)
     , m_pinchGestureRecognizer(viewportInteractionEngine)
 {

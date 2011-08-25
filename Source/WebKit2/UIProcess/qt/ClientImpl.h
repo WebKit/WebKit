@@ -41,10 +41,6 @@ void qt_wk_didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocume
 // ui client
 void qt_wk_setStatusText(WKPageRef page, WKStringRef text, const void *clientInfo);
 
-// IconDatabase client.
-void qt_wk_didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef, const void* clientInfo);
-void qt_wk_didRemoveAllIcons(WKIconDatabaseRef, const void* clientInfo);
-
 // Policy client.
 void qt_wk_decidePolicyForNavigationAction(WKPageRef, WKFrameRef, WKFrameNavigationType, WKEventModifiers, WKEventMouseButton, WKURLRequestRef, WKFramePolicyListenerRef, WKTypeRef userData, const void* clientInfo);
 

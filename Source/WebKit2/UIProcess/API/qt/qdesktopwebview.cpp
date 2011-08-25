@@ -21,7 +21,6 @@
 #include "config.h"
 #include "qdesktopwebview.h"
 #include "qdesktopwebview_p.h"
-#include "qwkcontext.h"
 
 #include <QGraphicsSceneResizeEvent>
 #include <QStyleOptionGraphicsItem>
@@ -39,7 +38,7 @@
 
 QDesktopWebViewPrivate::QDesktopWebViewPrivate(QDesktopWebView* q, WKContextRef contextRef, WKPageGroupRef pageGroupRef)
     : q(q)
-    , page(this, contextRef ? new QWKContext(contextRef) : defaultWKContext(), pageGroupRef)
+    , page(this, contextRef, pageGroupRef)
     , isCrashed(false)
     , navigationController(0)
 {

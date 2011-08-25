@@ -34,7 +34,7 @@ QTouchWebViewPrivate::QTouchWebViewPrivate(QTouchWebView* q)
     , pageView(new QTouchWebPage(q))
     , viewInterface(q, pageView.data())
     , interactionEngine(q, pageView.data())
-    , page(&viewInterface, &interactionEngine, defaultWKContext())
+    , page(&viewInterface, &interactionEngine)
 {
     QTouchWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     pageViewPrivate->setPage(&page);
