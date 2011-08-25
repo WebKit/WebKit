@@ -1175,8 +1175,8 @@ WebInspector.FrameResourceTreeElement = function(storagePanel, resource)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, resource, resource.displayName, ["resource-sidebar-tree-item", "resources-category-" + resource.category.name]);
     this._resource = resource;
-    this._resource.addEventListener("errors-warnings-cleared", this._errorsWarningsCleared, this);
-    this._resource.addEventListener("errors-warnings-message-added", this._errorsWarningsMessageAdded, this);
+    this._resource.addEventListener(WebInspector.Resource.Events.MessageAdded, this._consoleMessageAdded, this);
+    this._resource.addEventListener(WebInspector.Resource.Events.MessagesCleared, this._consoleMessagesCleared, this);
     this._resource.addEventListener(WebInspector.Resource.Events.RevisionAdded, this._revisionAdded, this);
     this.tooltip = resource.url;
 }
@@ -1325,7 +1325,7 @@ WebInspector.FrameResourceTreeElement.prototype = {
             this._bubbleElement.addStyleClass("error");
     },
     
-    _errorsWarningsCleared: function()
+    _consoleMessagesCleared: function()
     {
         // FIXME: move to the SourceFrame.
         if (this._sourceView)
@@ -1334,13 +1334,11 @@ WebInspector.FrameResourceTreeElement.prototype = {
         this._updateErrorsAndWarningsBubbles();
     },
     
-    _errorsWarningsMessageAdded: function(event)
+    _consoleMessageAdded: function(event)
     {
         var msg = event.data;
-
         if (this._sourceView)
             this._sourceView.addMessage(msg);
-        
         this._updateErrorsAndWarningsBubbles();
     },
 

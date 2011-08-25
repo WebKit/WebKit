@@ -235,7 +235,9 @@ WebInspector.Resource.persistRevision = function(resource)
 }
 
 WebInspector.Resource.Events = {
-    RevisionAdded: 0
+    RevisionAdded: "revision-added",
+    MessageAdded: "message-added",
+    MessagesCleared: "messages-cleared"
 }
 
 WebInspector.Resource.prototype = {
@@ -750,7 +752,7 @@ WebInspector.Resource.prototype = {
         if (!this._messages)
             this._messages = [];
         this._messages.push(msg);
-        this.dispatchEventToListeners("errors-warnings-message-added", msg);
+        this.dispatchEventToListeners(WebInspector.Resource.Events.MessageAdded, msg);
     },
 
     get errors()
@@ -778,7 +780,7 @@ WebInspector.Resource.prototype = {
         this._messages = [];
         this._warnings = 0;
         this._errors = 0;
-        this.dispatchEventToListeners("errors-warnings-cleared");
+        this.dispatchEventToListeners(WebInspector.Resource.Events.MessagesCleared);
     },
 
     get content()

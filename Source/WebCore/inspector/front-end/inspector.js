@@ -486,6 +486,7 @@ WebInspector.doLoadedDone = function()
     this.console = new WebInspector.ConsoleModel();
     this.console.addEventListener(WebInspector.ConsoleModel.Events.ConsoleCleared, this._updateErrorAndWarningCounts, this);
     this.console.addEventListener(WebInspector.ConsoleModel.Events.MessageAdded, this._updateErrorAndWarningCounts, this);
+    this.console.addEventListener(WebInspector.ConsoleModel.Events.RepeatCountUpdated, this._updateErrorAndWarningCounts, this);
 
     this.drawer = new WebInspector.Drawer();
     this.consoleView = new WebInspector.ConsoleView(this.drawer);

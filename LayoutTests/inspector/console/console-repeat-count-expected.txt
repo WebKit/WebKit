@@ -1,0 +1,17 @@
+CONSOLE MESSAGE: line 10: Same message
+CONSOLE MESSAGE: line 10: Same message
+CONSOLE MESSAGE: line 10: Same message
+CONSOLE MESSAGE: line 10: Same message
+CONSOLE MESSAGE: line 10: Same message
+CONSOLE MESSAGE: line 10: Same message
+CONSOLE MESSAGE: line 10: Same message
+CONSOLE MESSAGE: line 10: Same message
+CONSOLE MESSAGE: line 10: Same message
+CONSOLE MESSAGE: line 10: Same message
+Tests that repeat count is properly updated.
+
+5console-repeat-count.html:10Same message
+"Different message"
+"Different message"
+5console-repeat-count.html:10Same message
+

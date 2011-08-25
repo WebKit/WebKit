@@ -256,21 +256,7 @@ WebInspector.ConsoleView.prototype = {
 
     _consoleMessageAdded: function(event)
     {
-        this.commandSincePreviousMessage = false;
-        this.previousMessage = event.data;
         this._appendConsoleMessage(event.data);
-    },
-
-    _appendConsoleCommand: function(msg)
-    {
-        if (this.previousMessage)
-            this.commandSincePreviousMessage = true;
-        this._appendConsoleMessage(msg);
-    },
-
-    _appendConsoleCommandResult: function(msg)
-    {
-        this._appendConsoleMessage(msg);
     },
 
     _appendConsoleMessage: function(msg)
@@ -598,7 +584,8 @@ WebInspector.ConsoleView.prototype = {
             return;
 
         var commandMessage = new WebInspector.ConsoleCommand(str);
-        this._appendConsoleCommand(commandMessage);
+        WebInspector.console.interruptRepeatCount();
+        this._appendConsoleMessage(commandMessage);
 
         function printResult(result, wasThrown)
         {
@@ -611,7 +598,7 @@ WebInspector.ConsoleView.prototype = {
 
             WebInspector.settings.consoleHistory.set(this.prompt.history.slice(-30));
 
-            this._appendConsoleCommandResult(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
+            this._appendConsoleMessage(new WebInspector.ConsoleCommandResult(result, wasThrown, commandMessage));
         }
         this.evalInInspectedWindow(str, "console", true, undefined, undefined, printResult.bind(this));
 

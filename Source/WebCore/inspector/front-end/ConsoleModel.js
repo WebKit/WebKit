@@ -36,12 +36,14 @@ WebInspector.ConsoleModel = function(drawer)
     this.messages = [];
     this.warnings = 0;
     this.errors = 0;
+    this._interruptRepeatCount = false;
     InspectorBackend.registerConsoleDispatcher(new WebInspector.ConsoleDispatcher(this));
 }
 
 WebInspector.ConsoleModel.Events = {
     ConsoleCleared: "console-cleared",
     MessageAdded: "console-message-added",
+    RepeatCountUpdated: "repeat-count-updated"
 }
 
 WebInspector.ConsoleModel.prototype = {
@@ -66,8 +68,10 @@ WebInspector.ConsoleModel.prototype = {
     addMessage: function(msg)
     {
         this.messages.push(msg);
+        this._previousMessage = msg;
         this._incrementErrorWarningCount(msg);
         this.dispatchEventToListeners(WebInspector.ConsoleModel.Events.MessageAdded, msg);
+        this._interruptRepeatCount = false;
     },
 
     _incrementErrorWarningCount: function(msg)
@@ -96,6 +100,35 @@ WebInspector.ConsoleModel.prototype = {
         this.warnings = 0;
 
         this.dispatchEventToListeners(WebInspector.ConsoleModel.Events.ConsoleCleared);
+    },
+
+    interruptRepeatCount: function()
+    {
+        this._interruptRepeatCount = true;
+    },
+
+    _messageRepeatCountUpdated: function(count)
+    {
+        var msg = this._previousMessage;
+        if (!msg)
+            return;
+
+        var prevRepeatCount = msg.totalRepeatCount;
+
+        if (!this._interruptRepeatCount) {
+            msg.repeatDelta = count - prevRepeatCount;
+            msg.repeatCount = msg.repeatCount + msg.repeatDelta;
+            msg.totalRepeatCount = count;
+            msg._updateRepeatCount();
+
+            this._incrementErrorWarningCount(msg);
+            this.dispatchEventToListeners(WebInspector.ConsoleModel.Events.RepeatCountUpdated, msg);
+        } else {
+            var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._request);
+            msgCopy.totalRepeatCount = count;
+            msgCopy._formatMessage();
+            this.addMessage(msgCopy);
+        }
     }
 }
 
@@ -130,25 +163,7 @@ WebInspector.ConsoleDispatcher.prototype = {
 
     messageRepeatCountUpdated: function(count)
     {
-        var msg = this._console.previousMessage;
-        if (!msg)
-            return;
-
-        var prevRepeatCount = msg.totalRepeatCount;
-
-        if (!this._console.commandSincePreviousMessage) {
-            msg.repeatDelta = count - prevRepeatCount;
-            msg.repeatCount = msg.repeatCount + msg.repeatDelta;
-            msg.totalRepeatCount = count;
-            msg._updateRepeatCount();
-            this._console._incrementErrorWarningCount(msg);
-            this._console.dispatchEventToListeners(WebInspector.ConsoleModel.Events.MessageAdded, msg);
-        } else {
-            var msgCopy = new WebInspector.ConsoleMessage(msg.source, msg.type, msg.level, msg.line, msg.url, count - prevRepeatCount, msg._messageText, msg._parameters, msg._stackTrace, msg._request);
-            msgCopy.totalRepeatCount = count;
-            msgCopy._formatMessage();
-            this._console.addMessage(msgCopy);
-        }
+        this._console._messageRepeatCountUpdated(count);
     },
 
     messagesCleared: function()
