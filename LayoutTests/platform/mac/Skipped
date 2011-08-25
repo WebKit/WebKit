@@ -88,10 +88,6 @@ fast/events/touch
 # No button tracked
 fast/events/mouseover-button.html
 
-# These tests require the JSC implementation of Event constructors.
-# https://bugs.webkit.org/show_bug.cgi?id=63878
-fast/events/event-constructors.html
-
 # Skipped until https://bugs.webkit.org/show_bug.cgi?id=33923 is resolved.
 platform/mac/accessibility/change-notification-on-scroll.html
 

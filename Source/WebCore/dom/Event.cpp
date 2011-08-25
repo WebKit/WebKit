@@ -31,14 +31,6 @@
 
 namespace WebCore {
 
-EventConfiguration::EventConfiguration()
-    : bubbles(false)
-    , cancelable(false)
-    , defaultPrevented(false)
-    , timeStamp(0)
-{
-}
-
 Event::Event()
     : m_canBubble(false)
     , m_cancelable(false)
@@ -65,21 +57,6 @@ Event::Event(const AtomicString& eventType, bool canBubbleArg, bool cancelableAr
     , m_eventPhase(0)
     , m_currentTarget(0)
     , m_createTime(convertSecondsToDOMTimeStamp(currentTime()))
-{
-}
-
-Event::Event(const AtomicString& eventType, const EventConfiguration& eventConfiguration)
-    : m_type(eventType)
-    , m_canBubble(eventConfiguration.bubbles)
-    , m_cancelable(eventConfiguration.cancelable)
-    , m_propagationStopped(false)
-    , m_immediatePropagationStopped(false)
-    , m_defaultPrevented(eventConfiguration.defaultPrevented)
-    , m_defaultHandled(false)
-    , m_cancelBubble(false)
-    , m_eventPhase(0)
-    , m_currentTarget(0)
-    , m_createTime(static_cast<DOMTimeStamp>(eventConfiguration.timeStamp))
 {
 }
 

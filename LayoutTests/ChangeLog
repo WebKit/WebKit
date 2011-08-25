@@ -1,3 +1,19 @@
+2011-08-25  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r93762.
+        http://trac.webkit.org/changeset/93762
+        https://bugs.webkit.org/show_bug.cgi?id=66756
+
+        IndexedDb tests crash
+
+        * fast/events/event-constructors-expected.txt: Removed.
+        * fast/events/event-constructors.html: Removed.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * platform/wk2/Skipped:
+
 2011-08-25  Zoltan Herczeg  <zherczeg@webkit.org>
 
         [Qt] Add Qt specific expected after r93713 since ENABLE_MEDIA_STREAM is disabled.

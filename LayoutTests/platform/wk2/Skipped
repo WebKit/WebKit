@@ -1595,10 +1595,6 @@ plugins/plugin-initiate-popup-window.html
 platform/mac/fast/text/rounding-hacks.html
 platform/mac/fast/text/rounding-hacks-expansion.html
 
-# These tests require the implementation of Event constructors.
-# https://bugs.webkit.org/show_bug.cgi?id=63878
-fast/events/event-constructors.html
-
 # Sometimes fails
 # http://webkit.org/b/58990
 editing/undo/undo-iframe-location-change.html

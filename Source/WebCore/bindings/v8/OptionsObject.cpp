@@ -89,19 +89,6 @@ bool OptionsObject::getKeyInt32(const String& key, int32_t& value) const
     return true;
 }
 
-bool OptionsObject::getKeyDouble(const String& key, double& value) const
-{
-    v8::Local<v8::Value> v8Value;
-    if (!getKey(key, v8Value))
-        return false;
-
-    v8::Local<v8::Number> v8Number = v8Value->ToNumber();
-    if (v8Number.IsEmpty())
-        return false;
-    value = v8Number->Value();
-    return true;
-}
-
 bool OptionsObject::getKeyString(const String& key, String& value) const
 {
     v8::Local<v8::Value> v8Value;

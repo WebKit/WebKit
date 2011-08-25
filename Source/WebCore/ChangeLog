@@ -1,3 +1,22 @@
+2011-08-25  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r93762.
+        http://trac.webkit.org/changeset/93762
+        https://bugs.webkit.org/show_bug.cgi?id=66756
+
+        IndexedDb tests crash
+
+        * WebCore.gypi:
+        * WebCore.pro:
+        * bindings/generic/EventConstructors.h: Removed.
+        * bindings/v8/OptionsObject.cpp:
+        * bindings/v8/OptionsObject.h:
+        * bindings/v8/custom/V8EventConstructors.cpp: Removed.
+        * dom/Event.cpp:
+        * dom/Event.h:
+        (WebCore::Event::create):
+        * dom/Event.idl:
+
 2011-08-24  Kentaro Hara  <haraken@google.com>
 
         Implement an Event constructor.

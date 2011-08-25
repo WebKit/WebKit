@@ -202,10 +202,6 @@ media/track/
 # Font feature settings is not implemented.
 css3/font-feature-settings-rendering.html
 
-# These tests require the JSC implementation of Event constructors.
-# https://bugs.webkit.org/show_bug.cgi?id=63878
-fast/events/event-constructors.html
-
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #
