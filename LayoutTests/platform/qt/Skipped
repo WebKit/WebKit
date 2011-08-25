@@ -2398,12 +2398,3 @@ fast/loader/frame-creation-removal.html
 
 # Web Inspector: LayoutTests/inspector/extensions/extensions-resources.html fails on Qt
 inspector/extensions/extensions-resources.html
-
-# [Qt] Failing after http://trac.webkit.org/changeset/93767
-# https://bugs.webkit.org/show_bug.cgi?id=66929
-http/tests/websocket/tests/hixie76/close-before-open.html
-http/tests/websocket/tests/hixie76/close-unref-websocket.html
-
-# [Qt] Failing after http://trac.webkit.org/changeset/93769
-# https://bugs.webkit.org/show_bug.cgi?id=66930
-inspector/console/console-tests.html
