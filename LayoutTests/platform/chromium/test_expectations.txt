@@ -6,7 +6,10 @@
 // SLOW TESTS
 // -----------------------------------------------------------------
 
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/css/large-list-of-rules-crash.html = PASS
+BUGCR24182 SLOW LINUX MAC DEBUG : fast/dom/Window/window-postmessage-clone-really-deep-array.html = PASS
 BUGCR24182 SLOW LINUX MAC DEBUG : fast/forms/form-associated-element-crash3.html = PASS
+BUGCR24182 SLOW SNOWLEOPARD DEBUG : fast/forms/select-set-length-with-mutation-remove.html = PASS
 BUGCR24182 SLOW LINUX WIN : fast/js/regexp-overflow.html = PASS
 BUGCR24182 SLOW LINUX WIN DEBUG : fast/js/toString-and-valueOf-override.html = PASS
 BUGCR24182 SLOW DEBUG : html5lib/webkit-resumer.html = PASS
@@ -2534,7 +2537,7 @@ BUGWK52082 LINUX WIN : fast/text/basic/014.html = IMAGE+TEXT
 BUGWK52082 LINUX WIN : fast/text/midword-break-after-breakable-char.html = IMAGE+TEXT
 
 // These have been flaky for as long as we have test history.
-BUGWK52064 WIN DEBUG : fast/events/overflow-events.html = PASS TEXT
+BUGWK52064 DEBUG : fast/events/overflow-events.html = PASS TEXT
 BUGWK52063 WIN : http/tests/navigation/ping-cross-origin.html = PASS TIMEOUT TEXT
 BUGWK52063 SLOW MAC : http/tests/navigation/ping-cross-origin.html = PASS
 
@@ -3115,7 +3118,7 @@ BUGDPRANKE : fast/repaint/moving-shadow-on-path.html = PASS TEXT
 
 BUGDPRANKE WIN DEBUG : http/tests/misc/empty-file-formdata.html = PASS TIMEOUT
 BUGDPRANKE WIN DEBUG : http/tests/xmlhttprequest/access-control-preflight-headers-async.html = PASS TIMEOUT
-BUGDPRANKE LINUX MAC DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
+BUGDPRANKE DEBUG : fast/css/only-of-type-pseudo-class.html = PASS TEXT
 
 // Introduced in r84443
 BUGWK59063 : fast/images/animated-gif-restored-from-bfcache.html = TEXT
@@ -3639,3 +3642,6 @@ BUGWK66888 DEBUG : svg/animations/svginteger-animation-1.html = PASS TEXT
 BUGWK66900 LINUX SNOWLEOPARD DEBUG : fast/writing-mode/japanese-rl-text-with-broken-font.html = PASS IMAGE+TEXT
 
 BUGWK66908 WIN LINUX GPU DEBUG : canvas/philip/tests/2d.text.draw.fontface.notinpage.html = PASS TEXT
+BUGWK66908 : fast/css/font-face-woff.html = PASS IMAGE+TEXT
+
+BUGWK66953 SNOWLEOPARD DEBUG : animations/negative-delay.html = PASS TEXT

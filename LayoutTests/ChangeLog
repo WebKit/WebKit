@@ -1,3 +1,11 @@
+2011-08-24  Peter Kasting  <pkasting@google.com>
+
+        [chromium] Several test expectation updates.
+
+        Unreviewed, test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-08-25  Abhishek Arya  <inferno@chromium.org>
 
         Incorrect layout of :before and :after content, with display
