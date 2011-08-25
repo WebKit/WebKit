@@ -90,11 +90,15 @@ test('SuspiciousCommit', 2, function() {
     equal(suspiciousCommit.innerHTML, '<div class="description"><a href="">1</a>title author (reviewer)</div><ul class="actions"><li><button>Roll out</button></li></ul>');
 });
 
-test('TestFailures', 10, function() {
+test('TestFailures', 11, function() {
     var testFailures = new ui.notifications.TestFailures();
     equal(testFailures.tagName, 'LI');
     equal(testFailures.innerHTML,
         '<time class="relative">Just now</time>' +
+        '<table class="failures">' +
+            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+            '<tbody></tbody>' +
+        '</table>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects"></ul>' +
@@ -104,10 +108,14 @@ test('TestFailures', 10, function() {
         '<ul class="actions">' +
             '<li><button>Examine</button></li>' +
         '</ul>');
-    testFailures.addFailureAnalysis({testName: 'test'});
+    testFailures.addFailureAnalysis({testName: 'test', resultNodesByBuilder: {}});
     equal(testFailures.index(), 0);
     equal(testFailures.innerHTML,
         '<time class="relative">Just now</time>' +
+        '<table class="failures">' +
+            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+            '<tbody></tbody>' +
+        '</table>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
@@ -124,6 +132,10 @@ test('TestFailures', 10, function() {
     testFailures.addFailureAnalysis({testName: 'test'});
     equal(testFailures.innerHTML,
         '<time class="relative">Just now</time>' +
+        '<table class="failures">' +
+            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+            '<tbody></tbody>' +
+        '</table>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
@@ -142,6 +154,10 @@ test('TestFailures', 10, function() {
     equal(testFailures.index(), time.getTime());
     equal(testFailures.innerHTML,
         '<time class="relative">10 minutes ago</time>' +
+        '<table class="failures">' +
+            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+            '<tbody></tbody>' +
+        '</table>' +
         '<div class="what">' +
             '<div class="problem">' +
                 '<ul class="effects">' +
@@ -162,6 +178,42 @@ test('TestFailures', 10, function() {
         '<ul class="actions">' +
             '<li><button>Examine</button></li>' +
         '</ul>');
+
+    testFailures.addFailureAnalysis({testName: 'foo', resultNodesByBuilder: {'Webkit Linux (dbg)(1)': { actual: 'TEXT'}}});
+    equal(testFailures.innerHTML,
+        '<time class="relative">10 minutes ago</time>' +
+        '<table class="failures">' +
+            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+            '<tbody>' +
+                '<tr>' +
+                    '<td>TEXT</td>' +
+                    '<td></td>' +
+                    '<td><div><span class="build-type">64-bit</span><span class="version">lucid</span></div></td>' +
+                '</tr>' +
+            '</tbody>' +
+        '</table>' +
+        '<div class="what">' +
+            '<div class="problem">' +
+                '<ul class="effects">' +
+                    '<li>test</li>' +
+                    '<li>foo</li>' +
+                '</ul>' +
+                '<ul class="causes">' +
+                    '<li>' +
+                        '<div class="description">' +
+                            '<a href="">1</a>title author (reviewer)'+
+                        '</div>' +
+                        '<ul class="actions">' +
+                            '<li><button>Roll out</button></li>' +
+                        '</ul>' +
+                    '</li>' +
+                '</ul>' +
+            '</div>' +
+        '</div>' +
+        '<ul class="actions">' +
+            '<li><button>Examine</button></li>' +
+        '</ul>');
+
 });
 
 test('BuildersFailing', 1, function() {
@@ -169,6 +221,10 @@ test('BuildersFailing', 1, function() {
     builderFailing.setFailingBuilders(['WebKit Linux', 'Webkit Vista']);
     equal(builderFailing.innerHTML,
         '<time class="relative">Just now</time>' +
+        '<table class="failures">' +
+            '<thead><tr><td>type</td><td>release</td><td>debug</td></tr></thead>' +
+            '<tbody></tbody>' +
+        '</table>' +
         '<div class="what">' +
             '<div class="problem">Build Failed:' +
                 '<ul class="effects">' +

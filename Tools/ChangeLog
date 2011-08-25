@@ -1,3 +1,19 @@
+2011-08-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic needs a way to report where and how tests are failing in the summary view.
+        https://bugs.webkit.org/show_bug.cgi?id=66955
+
+        Introduce FailureGrid, your one-stop failure-indicating destination. 
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/run-unittests.html: Added new scripts.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/failures_unittests.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications.js: Updated to use FailureGrid.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/ui/notifications_unittests.js: Updated tests.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary.html: Added new scripts.
+
 2011-08-25  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Add myself to the committers list

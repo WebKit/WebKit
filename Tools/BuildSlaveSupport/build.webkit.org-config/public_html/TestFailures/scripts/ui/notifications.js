@@ -83,12 +83,12 @@ ui.notifications.Info = base.extends(ui.notifications.Notification, {
 ui.notifications.FailingTest = base.extends('li', {
     init: function(failureAnalysis)
     {
-        // FIXME: Show type of failure and where it's failing.
+        this._failureAnalysis = failureAnalysis;
         this.textContent = failureAnalysis.testName;
     },
     equals: function(failureAnalysis)
     {
-        return this.textContent == failureAnalysis.testName;
+        return this._failureAnalysis.testName == failureAnalysis.testName;
     }
 })
 
@@ -119,6 +119,7 @@ ui.notifications.SuspiciousCommit = base.extends(Cause, {
 ui.notifications.Failure = base.extends(ui.notifications.Notification, {
     init: function()
     {
+        this._where = this.insertBefore(new ui.failures.FailureGrid(), this.firstChild);
         this._time = this.insertBefore(new ui.RelativeTime(), this.firstChild);
         this._problem = this._what.appendChild(document.createElement('div'));
         this._problem.className = 'problem';
@@ -155,6 +156,7 @@ ui.notifications.TestFailures = base.extends(ui.notifications.Failure, {
         if (this.containsFailureAnalysis(failureAnalysis))
             return;
         this._testNameList.push(failureAnalysis.testName);
+        this._where.add(failureAnalysis.resultNodesByBuilder);
         return this._effects.appendChild(new ui.notifications.FailingTest(failureAnalysis));
     },
     addCommitData: function(commitData)
@@ -175,6 +177,7 @@ ui.notifications.BuildersFailing = base.extends(ui.notifications.Failure, {
     },
     setFailingBuilders: function(builderNameList)
     {
+        // FIXME: Populate this._where with failing builders.
         $(this._effects).empty().append(builderNameList.map(function(builderName) {
             var effect = document.createElement('li');
             effect.className = 'builder-name';
