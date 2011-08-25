@@ -428,8 +428,7 @@ void QWebView::setPage(QWebPage* page)
 */
 void QWebView::load(const QUrl &url)
 {
-    if (url.isValid() && !url.scheme().isEmpty())
-        page()->mainFrame()->load(url);
+    page()->mainFrame()->load(url);
 }
 
 /*!
@@ -474,10 +473,7 @@ void QWebView::load(const QNetworkRequest &request,
 */
 void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
 {
-    if (baseUrl.isValid() && !baseUrl.scheme().isEmpty())
-        page()->mainFrame()->setHtml(html, baseUrl);
-    else
-        page()->mainFrame()->setHtml(html, QUrl());
+    page()->mainFrame()->setHtml(html, baseUrl);
 }
 
 /*!
@@ -493,10 +489,7 @@ void QWebView::setHtml(const QString &html, const QUrl &baseUrl)
 */
 void QWebView::setContent(const QByteArray &data, const QString &mimeType, const QUrl &baseUrl)
 {
-    if (baseUrl.isValid() && !baseUrl.scheme().isEmpty())
-        page()->mainFrame()->setContent(data, mimeType, baseUrl);
-    else
-        page()->mainFrame()->setContent(data, mimeType, QUrl());
+    page()->mainFrame()->setContent(data, mimeType, baseUrl);
 }
 
 /*!
@@ -553,8 +546,7 @@ QString QWebView::title() const
 
 void QWebView::setUrl(const QUrl &url)
 {
-    if (url.isValid() && !url.scheme().isEmpty())
-        page()->mainFrame()->setUrl(url);
+    page()->mainFrame()->setUrl(url);
 }
 
 QUrl QWebView::url() const

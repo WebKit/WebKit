@@ -51,6 +51,10 @@ win32*:!win32-msvc* {
     contains(DEFINES, ENABLE_WEBGL=1)|contains(CONFIG, texmap): LIBS += $$QMAKE_LIBS_OPENGL
 }
 
+moduleFile=$$PWD/qt_webkit_version.pri
+isEmpty(QT_BUILD_TREE):include($$moduleFile)
+VERSION = $${QT_WEBKIT_MAJOR_VERSION}.$${QT_WEBKIT_MINOR_VERSION}.$${QT_WEBKIT_PATCH_VERSION}
+
 include_webinspector: RESOURCES += $$SOURCE_DIR/WebCore/inspector/front-end/WebKit.qrc $$WC_GENERATED_SOURCES_DIR/InspectorBackendStub.qrc
 
 # Extract sources to build from the generator definitions
@@ -92,9 +96,6 @@ CONFIG(QTDIR_build) {
     symbian: TARGET =$$TARGET$${QT_LIBINFIX}
 }
 
-moduleFile=$$PWD/qt_webkit_version.pri
-isEmpty(QT_BUILD_TREE):include($$moduleFile)
-VERSION = $${QT_WEBKIT_MAJOR_VERSION}.$${QT_WEBKIT_MINOR_VERSION}.$${QT_WEBKIT_PATCH_VERSION}
 
 symbian {
     TARGET.EPOCALLOWDLLDATA=1
@@ -157,7 +158,7 @@ symbian {
         $$SOURCE_DIR/WebCore/plugins/symbian/npinterface.h
 }
 
-!static: DEFINES += QT_MAKEDLL QT_SHARED
+!static: DEFINES += QT_MAKEDLL
 
 SOURCES += \
     $$PWD/Api/qwebframe.cpp \

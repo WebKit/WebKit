@@ -1,3 +1,19 @@
+2011-08-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r93783.
+        http://trac.webkit.org/changeset/93783
+        https://bugs.webkit.org/show_bug.cgi?id=66943
+
+        Commited wrong stuff by accident. (Requested by ademar on
+        #webkit).
+
+        * Api/qwebview.cpp:
+        (QWebView::load):
+        (QWebView::setHtml):
+        (QWebView::setContent):
+        (QWebView::setUrl):
+        * QtWebKit.pro:
+
 2011-08-25  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         Unreviewed QtWebKit.pro fix for when building inside Qt
