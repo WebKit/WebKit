@@ -53,11 +53,11 @@ public:
 
     virtual bool isBitmapImage() const { return true; }
 
-    virtual bool currentFrameHasAlpha() { return !m_nativeImage.isOpaque(); }
+    virtual bool currentFrameHasAlpha() { return !m_nativeImage.bitmap().isOpaque(); }
 
     virtual IntSize size() const
     {
-        return IntSize(m_nativeImage.width(), m_nativeImage.height());
+        return IntSize(m_nativeImage.bitmap().width(), m_nativeImage.bitmap().height());
     }
 
     // Do nothing, as we only have the one representation of data (decoded).
@@ -77,7 +77,7 @@ public:
 #if !ASSERT_DISABLED
     virtual bool notSolidColor()
     {
-        return m_nativeImage.width() != 1 || m_nativeImage.height() != 1;
+        return m_nativeImage.bitmap().width() != 1 || m_nativeImage.bitmap().height() != 1;
     }
 #endif
 

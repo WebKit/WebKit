@@ -101,7 +101,7 @@ DragImageRef createDragImageFromImage(Image* image)
         return 0;
 
     SkBitmap* dragImage = new SkBitmap();
-    bitmap->copyTo(dragImage, SkBitmap::kARGB_8888_Config);
+    bitmap->bitmap().copyTo(dragImage, SkBitmap::kARGB_8888_Config);
     return dragImage;
 }
 

@@ -38,9 +38,9 @@
 namespace WebCore {
 
 // This object is used as the "native image" in our port. When WebKit uses
-// "NativeImagePtr", it is a pointer to this type. It is an SkBitmap, but also
+// "NativeImagePtr", it is a pointer to this type. It has an SkBitmap, and also
 // stores a cached resized image.
-class NativeImageSkia : public SkBitmap {
+class NativeImageSkia {
 public:
     NativeImageSkia();
     ~NativeImageSkia();
@@ -61,6 +61,10 @@ public:
 
     // Returns true if the entire image has been decoded.
     bool isDataComplete() const { return m_isDataComplete; }
+
+    // Get reference to the internal SkBitmap representing this image.
+    const SkBitmap& bitmap() const { return m_image; }
+    SkBitmap& bitmap() { return m_image; }
 
     // We can keep a resized version of the bitmap cached on this object.
     // This function will return true if there is a cached version of the
@@ -116,9 +120,8 @@ private:
                                int destHeight,
                                const SkIRect& destSubset) const;
 
-    // Set to true when the data is complete. Before the entire image has
-    // loaded, we do not want to cache a resize.
-    bool m_isDataComplete;
+    // The original image.
+    SkBitmap m_image;
 
     // The cached bitmap. This will be empty() if there is no cached image.
     mutable SkBitmap m_resizedImage;
@@ -138,6 +141,10 @@ private:
     // image resizes.
     mutable CachedImageInfo m_cachedImageInfo;
     mutable int m_resizeRequests;
+
+    // Set to true when the data is complete. Before the entire image has
+    // loaded, we do not want to cache a resize.
+    bool m_isDataComplete;
 };
 
 }

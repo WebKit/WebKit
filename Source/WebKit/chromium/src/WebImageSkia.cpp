@@ -81,7 +81,7 @@ WebImage WebImage::fromData(const WebData& data, const WebSize& desiredSize)
     if (!frame)
         return WebImage();
 
-    return WebImage(*frame);
+    return WebImage(frame->bitmap());
 }
 
 void WebImage::reset()
@@ -113,7 +113,7 @@ WebImage& WebImage::operator=(const PassRefPtr<Image>& image)
 {
     NativeImagePtr p;
     if (image.get() && (p = image->nativeImageForCurrentFrame()))
-        assign(*p);
+        assign(p->bitmap());
     else
         reset();
     return *this;

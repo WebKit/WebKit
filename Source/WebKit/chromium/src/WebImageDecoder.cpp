@@ -113,7 +113,7 @@ WebImage WebImageDecoder::getFrameAtIndex(int index = 0) const
         return WebImage();
 #if WEBKIT_USING_SKIA
     OwnPtr<NativeImageSkia> image = adoptPtr(frameBuffer->asNewNativeImage());
-    return WebImage(*image);
+    return WebImage(image->bitmap());
 #elif WEBKIT_USING_CG
     // FIXME: Implement CG side of this.
     return WebImage(frameBuffer->asNewNativeImage());

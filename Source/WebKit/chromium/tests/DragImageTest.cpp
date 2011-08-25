@@ -53,9 +53,9 @@ public:
         , m_size(size)
     {
         m_nativeImage = new NativeImageSkia();
-        m_nativeImage->setConfig(SkBitmap::kARGB_8888_Config,
-                                 size.width(), size.height(), 0);
-        m_nativeImage->allocPixels();
+        m_nativeImage->bitmap().setConfig(SkBitmap::kARGB_8888_Config,
+                                          size.width(), size.height(), 0);
+        m_nativeImage->bitmap().allocPixels();
     }
 
     virtual ~TestImage()
@@ -143,8 +143,8 @@ TEST(DragImageTest, CreateDragImage)
         RefPtr<TestImage> testImage(TestImage::create(IntSize(1, 1)));
         DragImageRef dragImage = createDragImageFromImage(testImage.get());
         ASSERT_TRUE(dragImage);
-        SkAutoLockPixels lock1(*dragImage), lock2(*(testImage->nativeImageForCurrentFrame()));
-        EXPECT_NE(dragImage->getPixels(), testImage->nativeImageForCurrentFrame()->getPixels());
+        SkAutoLockPixels lock1(*dragImage), lock2(testImage->nativeImageForCurrentFrame()->bitmap());
+        EXPECT_NE(dragImage->getPixels(), testImage->nativeImageForCurrentFrame()->bitmap().getPixels());
     }
 }
 

@@ -39,15 +39,15 @@
 namespace WebCore {
 
 NativeImageSkia::NativeImageSkia()
-    : m_isDataComplete(false),
-      m_resizeRequests(0)
+    : m_resizeRequests(0),
+      m_isDataComplete(false)
 {
 }
 
 NativeImageSkia::NativeImageSkia(const SkBitmap& other)
-    : SkBitmap(other),
-      m_isDataComplete(false),
-      m_resizeRequests(0)
+    : m_image(other),
+      m_resizeRequests(0),
+      m_isDataComplete(false)
 {
 }
 
@@ -57,7 +57,7 @@ NativeImageSkia::~NativeImageSkia()
 
 int NativeImageSkia::decodedSize() const
 {
-    return getSize() + m_resizedImage.getSize();
+    return m_image.getSize() + m_resizedImage.getSize();
 }
 
 bool NativeImageSkia::hasResizedBitmap(const SkIRect& srcSubset, int destWidth, int destHeight) const
@@ -75,7 +75,7 @@ SkBitmap NativeImageSkia::resizedBitmap(const SkIRect& srcSubset,
             && shouldCacheResampling(srcSubset, destWidth, destHeight, destVisibleSubset);
 
         SkBitmap subset;
-        extractSubset(&subset, srcSubset);
+        m_image.extractSubset(&subset, srcSubset);
         if (!shouldCache) {
             // Just resize the visible subset and return it.
             SkBitmap resizedImage = skia::ImageOperations::Resize(subset, skia::ImageOperations::RESIZE_LANCZOS3, destWidth, destHeight, destVisibleSubset);

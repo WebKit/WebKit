@@ -1,3 +1,51 @@
+2011-08-25  John Bates  <jbates@google.com>
+
+        [chromium] Leaking SkBitmaps for background images
+        https://bugs.webkit.org/show_bug.cgi?id=66488
+
+        Reviewed by Stephen White.
+
+        This patch simply changes NativeImageSkia to have a SkBitmap instead of
+        deriving from SkBitmap. All dependent code updated to access the member
+        instead of calling SkBitmap methods on NativeImageSkia objects. This
+        may or may not fix the memory leak, but it's definitely a bug that could
+        cause memory leaks.
+
+        * platform/chromium/DragImageChromiumSkia.cpp:
+        (WebCore::createDragImageFromImage):
+        * platform/graphics/chromium/PlatformImage.cpp:
+        (WebCore::PlatformImage::updateFromImage):
+        * platform/graphics/skia/BitmapImageSingleFrameSkia.h:
+        (WebCore::BitmapImageSingleFrameSkia::currentFrameHasAlpha):
+        (WebCore::BitmapImageSingleFrameSkia::size):
+        (WebCore::BitmapImageSingleFrameSkia::notSolidColor):
+        * platform/graphics/skia/GraphicsContext3DSkia.cpp:
+        (WebCore::GraphicsContext3D::getImageData):
+        * platform/graphics/skia/ImageSkia.cpp:
+        (WebCore::paintSkBitmap):
+        (WebCore::Image::drawPattern):
+        (WebCore::BitmapImage::checkForSolidColor):
+        * platform/graphics/skia/NativeImageSkia.cpp:
+        (WebCore::NativeImageSkia::NativeImageSkia):
+        (WebCore::NativeImageSkia::decodedSize):
+        (WebCore::NativeImageSkia::resizedBitmap):
+        * platform/graphics/skia/NativeImageSkia.h:
+        (WebCore::NativeImageSkia::bitmap):
+        * platform/graphics/skia/PatternSkia.cpp:
+        (WebCore::Pattern::platformPattern):
+        * platform/image-decoders/ImageDecoder.h:
+        (WebCore::ImageFrame::getAddr):
+        * platform/image-decoders/skia/ImageDecoderSkia.cpp:
+        (WebCore::ImageFrame::operator=):
+        (WebCore::ImageFrame::clearPixelData):
+        (WebCore::ImageFrame::zeroFillPixelData):
+        (WebCore::ImageFrame::copyBitmapData):
+        (WebCore::ImageFrame::setSize):
+        (WebCore::ImageFrame::hasAlpha):
+        (WebCore::ImageFrame::setHasAlpha):
+        (WebCore::ImageFrame::width):
+        (WebCore::ImageFrame::height):
+
 2011-08-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r93774.

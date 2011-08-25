@@ -54,7 +54,7 @@ bool GraphicsContext3D::getImageData(Image* image,
     OwnPtr<NativeImageSkia> pixels;
     NativeImageSkia* skiaImage = image->nativeImageForCurrentFrame();
     AlphaOp neededAlphaOp = AlphaDoNothing;
-    bool hasAlpha = skiaImage ? !skiaImage->isOpaque() : true;
+    bool hasAlpha = skiaImage ? !skiaImage->bitmap().isOpaque() : true;
     if ((!skiaImage || ignoreGammaAndColorProfile || (hasAlpha && !premultiplyAlpha)) && image->data()) {
         ImageSource decoder(ImageSource::AlphaNotPremultiplied,
                             ignoreGammaAndColorProfile ? ImageSource::GammaAndColorProfileIgnored : ImageSource::GammaAndColorProfileApplied);
@@ -64,9 +64,9 @@ bool GraphicsContext3D::getImageData(Image* image,
             return false;
         hasAlpha = decoder.frameHasAlphaAtIndex(0);
         pixels = adoptPtr(decoder.createFrameAtIndex(0));
-        if (!pixels.get() || !pixels->isDataComplete() || !pixels->width() || !pixels->height())
+        if (!pixels.get() || !pixels->isDataComplete() || !pixels->bitmap().width() || !pixels->bitmap().height())
             return false;
-        SkBitmap::Config skiaConfig = pixels->config();
+        SkBitmap::Config skiaConfig = pixels->bitmap().config();
         if (skiaConfig != SkBitmap::kARGB_8888_Config)
             return false;
         skiaImage = pixels.get();
@@ -76,13 +76,13 @@ bool GraphicsContext3D::getImageData(Image* image,
         neededAlphaOp = AlphaDoUnmultiply;
     if (!skiaImage)
         return false;
-    SkBitmap& skiaImageRef = *skiaImage;
+    const SkBitmap& skiaImageRef = skiaImage->bitmap();
     SkAutoLockPixels lock(skiaImageRef);
-    ASSERT(skiaImage->rowBytes() == skiaImage->width() * 4);
-    outputVector.resize(skiaImage->rowBytes() * skiaImage->height());
-    return packPixels(reinterpret_cast<const uint8_t*>(skiaImage->getPixels()),
+    ASSERT(skiaImageRef.rowBytes() == skiaImageRef.width() * 4);
+    outputVector.resize(skiaImageRef.rowBytes() * skiaImageRef.height());
+    return packPixels(reinterpret_cast<const uint8_t*>(skiaImageRef.getPixels()),
                       SK_B32_SHIFT ? SourceFormatRGBA8 : SourceFormatBGRA8,
-                      skiaImage->width(), skiaImage->height(), 0,
+                      skiaImageRef.width(), skiaImageRef.height(), 0,
                       format, type, neededAlphaOp, outputVector.data());
 }
 

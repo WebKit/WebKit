@@ -209,7 +209,7 @@ void PlatformBridge::clipboardWriteImage(NativeImagePtr image,
                                          const String& title)
 {
 #if WEBKIT_USING_SKIA
-    WebImage webImage(*image);
+    WebImage webImage(image->bitmap());
 #else
     WebImage webImage(image);
 #endif

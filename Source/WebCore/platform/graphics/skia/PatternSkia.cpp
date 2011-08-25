@@ -59,13 +59,13 @@ PlatformPatternPtr Pattern::platformPattern(const AffineTransform& patternTransf
     // and expanded scale and skew in:
     // LayoutTests/svg/W3C-SVG-1.1/pservers-grad-06-b.svg
 
-    SkBitmap* bm = m_tileImage->nativeImageForCurrentFrame();
+    const NativeImageSkia* image = m_tileImage->nativeImageForCurrentFrame();
     // If we don't have a bitmap, return a transparent shader.
-    if (!bm)
+    if (!image)
         m_pattern = new SkColorShader(SkColorSetARGB(0, 0, 0, 0));
 
     else if (m_repeatX && m_repeatY)
-        m_pattern = SkShader::CreateBitmapShader(*bm, SkShader::kRepeat_TileMode, SkShader::kRepeat_TileMode);
+        m_pattern = SkShader::CreateBitmapShader(image->bitmap(), SkShader::kRepeat_TileMode, SkShader::kRepeat_TileMode);
 
     else {
 
@@ -83,11 +83,11 @@ PlatformPatternPtr Pattern::platformPattern(const AffineTransform& patternTransf
         // original, then copy the orignal into it.
         // FIXME: Is there a better way to pad (not scale) an image in skia?
         SkBitmap bm2;
-        bm2.setConfig(bm->config(), bm->width() + expandW, bm->height() + expandH);
+        bm2.setConfig(image->bitmap().config(), image->bitmap().width() + expandW, image->bitmap().height() + expandH);
         bm2.allocPixels();
         bm2.eraseARGB(0x00, 0x00, 0x00, 0x00);
         SkCanvas canvas(bm2);
-        canvas.drawBitmap(*bm, 0, 0);
+        canvas.drawBitmap(image->bitmap(), 0, 0);
         m_pattern = SkShader::CreateBitmapShader(bm2, tileModeX, tileModeY);
     }
     m_pattern->setLocalMatrix(m_patternSpaceTransformation);

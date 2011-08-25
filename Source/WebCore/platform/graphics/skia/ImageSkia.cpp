@@ -229,7 +229,7 @@ static void paintSkBitmap(PlatformContextSkia* platformContext, const NativeImag
         // is something interesting going on with the matrix (like a rotation).
         // Note: for serialization, we will want to subset the bitmap first so
         // we don't send extra pixels.
-        canvas->drawBitmapRect(bitmap, &srcRect, destRect, &paint);
+        canvas->drawBitmapRect(bitmap.bitmap(), &srcRect, destRect, &paint);
     }
 }
 
@@ -331,7 +331,7 @@ void Image::drawPattern(GraphicsContext* context,
     } else {
         // No need to do nice resampling.
         SkBitmap srcSubset;
-        bitmap->extractSubset(&srcSubset, srcRect);
+        bitmap->bitmap().extractSubset(&srcSubset, srcRect);
         shader = SkShader::CreateBitmapShader(srcSubset, SkShader::kRepeat_TileMode, SkShader::kRepeat_TileMode);
     }
 
@@ -385,12 +385,12 @@ void BitmapImage::checkForSolidColor()
     WebCore::NativeImageSkia* frame = frameAtIndex(0);
 
     if (frame && size().width() == 1 && size().height() == 1) {
-        SkAutoLockPixels lock(*frame);
-        if (!frame->getPixels())
+        SkAutoLockPixels lock(frame->bitmap());
+        if (!frame->bitmap().getPixels())
             return;
 
         m_isSolidColor = true;
-        m_solidColor = Color(frame->getColor(0, 0));
+        m_solidColor = Color(frame->bitmap().getColor(0, 0));
     }
 }
 

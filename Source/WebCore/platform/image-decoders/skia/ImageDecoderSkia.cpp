@@ -47,7 +47,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
     m_bitmap = other.m_bitmap;
     // Keep the pixels locked since we will be writing directly into the
     // bitmap throughout this object's lifetime.
-    m_bitmap.lockPixels();
+    m_bitmap.bitmap().lockPixels();
     setOriginalFrameRect(other.originalFrameRect());
     setStatus(other.status());
     setDuration(other.duration());
@@ -58,7 +58,7 @@ ImageFrame& ImageFrame::operator=(const ImageFrame& other)
 
 void ImageFrame::clearPixelData()
 {
-    m_bitmap.reset();
+    m_bitmap.bitmap().reset();
     m_status = FrameEmpty;
     // NOTE: Do not reset other members here; clearFrameBufferCache()
     // calls this to free the bitmap data, but other functions like
@@ -68,7 +68,7 @@ void ImageFrame::clearPixelData()
 
 void ImageFrame::zeroFillPixelData()
 {
-    m_bitmap.eraseARGB(0, 0, 0, 0);
+    m_bitmap.bitmap().eraseARGB(0, 0, 0, 0);
 }
 
 bool ImageFrame::copyBitmapData(const ImageFrame& other)
@@ -76,9 +76,9 @@ bool ImageFrame::copyBitmapData(const ImageFrame& other)
     if (this == &other)
         return true;
 
-    m_bitmap.reset();
+    m_bitmap.bitmap().reset();
     const NativeImageSkia& otherBitmap = other.m_bitmap;
-    return otherBitmap.copyTo(&m_bitmap, otherBitmap.config());
+    return otherBitmap.bitmap().copyTo(&m_bitmap.bitmap(), otherBitmap.bitmap().config());
 }
 
 bool ImageFrame::setSize(int newWidth, int newHeight)
@@ -86,8 +86,8 @@ bool ImageFrame::setSize(int newWidth, int newHeight)
     // This function should only be called once, it will leak memory
     // otherwise.
     ASSERT(width() == 0 && height() == 0);
-    m_bitmap.setConfig(SkBitmap::kARGB_8888_Config, newWidth, newHeight);
-    if (!m_bitmap.allocPixels())
+    m_bitmap.bitmap().setConfig(SkBitmap::kARGB_8888_Config, newWidth, newHeight);
+    if (!m_bitmap.bitmap().allocPixels())
         return false;
 
     zeroFillPixelData();
@@ -102,12 +102,12 @@ NativeImagePtr ImageFrame::asNewNativeImage() const
 
 bool ImageFrame::hasAlpha() const
 {
-    return !m_bitmap.isOpaque();
+    return !m_bitmap.bitmap().isOpaque();
 }
 
 void ImageFrame::setHasAlpha(bool alpha)
 {
-    m_bitmap.setIsOpaque(!alpha);
+    m_bitmap.bitmap().setIsOpaque(!alpha);
 }
 
 void ImageFrame::setColorProfile(const ColorProfile& colorProfile)
@@ -124,12 +124,12 @@ void ImageFrame::setStatus(FrameStatus status)
 
 int ImageFrame::width() const
 {
-    return m_bitmap.width();
+    return m_bitmap.bitmap().width();
 }
 
 int ImageFrame::height() const
 {
-    return m_bitmap.height();
+    return m_bitmap.bitmap().height();
 }
 
 } // namespace WebCore

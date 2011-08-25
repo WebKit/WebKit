@@ -50,10 +50,10 @@ void PlatformImage::updateFromImage(NativeImagePtr nativeImage)
 #if USE(SKIA)
     // The layer contains an Image.
     NativeImageSkia* skiaImage = static_cast<NativeImageSkia*>(nativeImage);
-    const SkBitmap* skiaBitmap = skiaImage;
+    ASSERT(skiaImage);
+    const SkBitmap& skiaBitmap = skiaImage->bitmap();
 
-    IntSize bitmapSize(skiaBitmap->width(), skiaBitmap->height());
-    ASSERT(skiaBitmap);
+    IntSize bitmapSize(skiaBitmap.width(), skiaBitmap.height());
 #elif USE(CG)
     // NativeImagePtr is a CGImageRef on Mac OS X.
     int width = CGImageGetWidth(nativeImage);
@@ -69,10 +69,10 @@ void PlatformImage::updateFromImage(NativeImagePtr nativeImage)
     }
 
 #if USE(SKIA)
-    SkAutoLockPixels lock(*skiaBitmap);
+    SkAutoLockPixels lock(skiaBitmap);
     // FIXME: do we need to support more image configurations?
-    ASSERT(skiaBitmap->config()== SkBitmap::kARGB_8888_Config);
-    skiaBitmap->copyPixelsTo(m_pixelData.get(), bufferSize);
+    ASSERT(skiaBitmap.config()== SkBitmap::kARGB_8888_Config);
+    skiaBitmap.copyPixelsTo(m_pixelData.get(), bufferSize);
 #elif USE(CG)
     // FIXME: we should get rid of this temporary copy where possible.
     int tempRowBytes = width * 4;
