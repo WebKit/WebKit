@@ -1,3 +1,35 @@
+2011-08-25  Adam Klein  <adamk@chromium.org>
+
+        use strict in CodeGeneratorJS and CodeGeneratorV8
+        https://bugs.webkit.org/show_bug.cgi?id=66915
+
+        Reviewed by Darin Adler.
+
+        Making these files "use strict" makes changing them less
+        time-consuming and error-prone, and helps avoid accidentally
+        adding dead code (added a FIXME for one such case).
+
+        No expected change in behavior.
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        (AddIncludesForType):
+        (GenerateParametersCheckExpression):
+        (GenerateFunctionParametersCheck):
+        (GenerateImplementation):
+        (GenerateImplementationFunctionCall):
+        (NativeToJSValue):
+        (GenerateHashValue):
+        * bindings/scripts/CodeGeneratorV8.pm:
+        (AddIncludesForType):
+        (GenerateHeaderNamedAndIndexedPropertyAccessors):
+        (GenerateNormalAttrSetter):
+        (GetFunctionTemplateCallbackName):
+        (GenerateNewFunctionTemplate):
+        (GenerateParametersCheckExpression):
+        (GenerateFunctionParametersCheck):
+        (GenerateImplementation):
+        ():
+
 2011-08-25  Dean Jackson  <dino@apple.com>
 
         https://bugs.webkit.org/show_bug.cgi?id=21586

@@ -26,6 +26,10 @@
 
 package CodeGeneratorJS;
 
+use strict;
+
+my ($codeGenerator, $IMPL, $HEADER, $DEPS);
+
 my $module = "";
 my $outputDir = "";
 my $writeDependencies = 0;
@@ -281,7 +285,7 @@ sub AddIncludesForType
     if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->AvoidInclusionOfType($type)
         or $type eq "DOMString" or $type eq "DOMObject" or $type eq "Array") {
     } elsif ($type =~ /SVGPathSeg/) {
-        $joinedName = $type;
+        my $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
         $includesRef->{"${joinedName}.h"} = 1;
     } elsif ($type eq "XPathNSResolver") {
@@ -1182,7 +1186,7 @@ sub GenerateParametersCheckExpression
     push(@andExpression, "argsCount == $numParameters");
     my $parameterIndex = 0;
     my %usedArguments = ();
-    foreach $parameter (@{$function->parameters}) {
+    foreach my $parameter (@{$function->parameters}) {
         last if $parameterIndex >= $numParameters;
         my $value = "arg$parameterIndex";
         my $type = $codeGenerator->StripModule($parameter->type);
@@ -1217,7 +1221,7 @@ sub GenerateFunctionParametersCheck
     my $numParameters = 0;
     my @neededArguments = ();
 
-    foreach $parameter (@{$function->parameters}) {
+    foreach my $parameter (@{$function->parameters}) {
         if ($parameter->extendedAttributes->{"Optional"}) {
             my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
             push(@orExpression, $expression);
@@ -1312,13 +1316,13 @@ sub GenerateImplementation
 
     # - Add all constants
     if (!($dataNode->extendedAttributes->{"OmitConstructor"} || $dataNode->extendedAttributes->{"CustomConstructor"})) {
-        $hashSize = $numConstants;
-        $hashName = $className . "ConstructorTable";
+        my $hashSize = $numConstants;
+        my $hashName = $className . "ConstructorTable";
 
-        @hashKeys = ();
-        @hashValue1 = ();
-        @hashValue2 = ();
-        @hashSpecials = ();
+        my @hashKeys = ();
+        my @hashValue1 = ();
+        my @hashValue2 = ();
+        my @hashSpecials = ();
 
         # FIXME: we should not need a function for every constant.
         foreach my $constant (@{$dataNode->constants}) {
@@ -1342,13 +1346,13 @@ sub GenerateImplementation
     }
 
     # - Add functions and constants to a hashtable definition
-    $hashSize = $numFunctions + $numConstants;
-    $hashName = $className . "PrototypeTable";
+    my $hashSize = $numFunctions + $numConstants;
+    my $hashName = $className . "PrototypeTable";
 
-    @hashKeys = ();
-    @hashValue1 = ();
-    @hashValue2 = ();
-    @hashSpecials = ();
+    my @hashKeys = ();
+    my @hashValue1 = ();
+    my @hashValue2 = ();
+    my @hashSpecials = ();
 
     # FIXME: we should not need a function for every constant.
     foreach my $constant (@{$dataNode->constants}) {
@@ -1801,6 +1805,7 @@ sub GenerateImplementation
                             }
                             push(@implContent, "    // Shadowing a built-in constructor\n");
                             if ($interfaceName eq "DOMWindow" && $className eq "JSblah") {
+                                # FIXME: This branch never executes and should be removed.
                                 push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), exec->propertyNames().constructor, value);\n");
                             } else {
                                 push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
@@ -1892,7 +1897,7 @@ sub GenerateImplementation
                 if ($interfaceName eq "DOMWindow") {
                     push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), exec->propertyNames().constructor, value);\n");
                 } else {
-                    push(@implContent, "    static_cast<$className*>(thisObject)->putDirect(exec->globalData(), Identifier(exec, \"$name\"), value);\n");
+                    die "No way to handle interface with ReplaceableConstructor extended attribute: $interfaceName";
                 }
                 push(@implContent, "}\n\n");
             }        
@@ -2519,7 +2524,7 @@ sub GenerateImplementationFunctionCall()
         push(@implContent, "\n" . $indent . "JSC::JSValue result = " . NativeToJSValue($function->signature, 1, $implClassName, $functionString, "castedThis") . ";\n");
         push(@implContent, $indent . "setDOMException(exec, ec);\n") if @{$function->raisesExceptions};
 
-        $callWith = $function->signature->extendedAttributes->{"CallWith"};
+        my $callWith = $function->signature->extendedAttributes->{"CallWith"};
         if ($callWith and $callWith eq "ScriptState") {
             push(@implContent, $indent . "if (exec->hadException())\n");
             push(@implContent, $indent . "    return JSValue::encode(jsUndefined());\n");
@@ -2736,7 +2741,7 @@ sub NativeToJSValue
         }
     } elsif ($type =~ /SVGPathSeg/) {
         $implIncludes{"JS$type.h"} = 1;
-        $joinedName = $type;
+        my $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
         $implIncludes{"$joinedName.h"} = 1;
     } elsif ($type eq "SerializedScriptValue" or $type eq "any") {
@@ -2916,7 +2921,7 @@ sub GenerateHashValue
 {
     my $object = shift;
 
-    @chars = split(/ */, $_[0]);
+    my @chars = split(/ */, $_[0]);
 
     # This hash is designed to work on 16-bit chunks at a time. But since the normal case
     # (above) is to hash UTF-16 characters, we just treat the 8-bit chars as if they

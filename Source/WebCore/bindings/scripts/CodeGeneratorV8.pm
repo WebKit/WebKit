@@ -26,7 +26,11 @@
 
 package CodeGeneratorV8;
 
+use strict;
+
 use Digest::MD5;
+
+my ($codeGenerator, $IMPL, $HEADER);
 
 my $module = "";
 my $outputDir = "";
@@ -35,6 +39,7 @@ my $outputHeadersDir = "";
 my @headerContent = ();
 my @implContentHeader = ();
 my @implFixedHeader = ();
+my @implHeaderContent = ();
 my @implContent = ();
 my @implContentDecls = ();
 my %implIncludes = ();
@@ -133,7 +138,7 @@ sub AddIncludesForType
         $implIncludes{GetV8HeaderName(${type})} = 1;
 
         if ($type =~ /SVGPathSeg/) {
-            $joinedName = $type;
+            my $joinedName = $type;
             $joinedName =~ s/Abs|Rel//;
             $implIncludes{"${joinedName}.h"} = 1;
         }
@@ -534,8 +539,8 @@ sub GenerateHeaderNamedAndIndexedPropertyAccessors
         $hasCustomNamedGetter = 1;
     }
     if ($interfaceName eq "DOMWindow") {
-        $hasCustomDeleterr = 0;
-        $hasEnumerator = 0;
+        $hasCustomDeleters = 0;
+        $hasCustomEnumerator = 0;
     }
     if ($interfaceName eq "HTMLAppletElement" || $interfaceName eq "HTMLEmbedElement" || $interfaceName eq "HTMLObjectElement") {
         $hasCustomNamedGetter = 1;
@@ -925,6 +930,7 @@ sub GenerateNormalAttrSetter
 
     $implIncludes{"V8BindingMacros.h"} = 1;
 
+    my $attrName = $attribute->signature->name;
     my $attrExt = $attribute->signature->extendedAttributes;
 
     my $conditionalString = GenerateConditionalString($attribute->signature);
@@ -1077,8 +1083,8 @@ END
 
 sub GetFunctionTemplateCallbackName
 {
-    $function = shift;
-    $interfaceName = shift;
+    my $function = shift;
+    my $interfaceName = shift;
 
     my $name = $function->signature->name;
 
@@ -1096,9 +1102,9 @@ sub GetFunctionTemplateCallbackName
 
 sub GenerateNewFunctionTemplate
 {
-    $function = shift;
-    $interfaceName = shift;
-    $signature = shift;
+    my $function = shift;
+    my $interfaceName = shift;
+    my $signature = shift;
 
     my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
     return "v8::FunctionTemplate::New($callback, v8::Handle<v8::Value>(), $signature)";
@@ -1142,7 +1148,7 @@ sub GenerateParametersCheckExpression
     my @andExpression = ();
     push(@andExpression, "args.Length() == $numParameters");
     my $parameterIndex = 0;
-    foreach $parameter (@{$function->parameters}) {
+    foreach my $parameter (@{$function->parameters}) {
         last if $parameterIndex >= $numParameters;
         my $value = "args[$parameterIndex]";
         my $type = GetTypeFromSignature($parameter);
@@ -1173,7 +1179,7 @@ sub GenerateFunctionParametersCheck
 
     my @orExpression = ();
     my $numParameters = 0;
-    foreach $parameter (@{$function->parameters}) {
+    foreach my $parameter (@{$function->parameters}) {
         if ($parameter->extendedAttributes->{"Optional"}) {
             push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
         }
@@ -1790,10 +1796,9 @@ sub GenerateImplementation
     my $hasConstructors = 0;
     my $serializedAttribute;
     # Generate property accessors for attributes.
-    for ($index = 0; $index < @{$dataNode->attributes}; $index++) {
-        $attribute = @{$dataNode->attributes}[$index];
-        $attrName = $attribute->signature->name;
-        $attrType = $attribute->signature->type;
+    for (my $index = 0; $index < @{$dataNode->attributes}; $index++) {
+        my $attribute = @{$dataNode->attributes}[$index];
+        my $attrType = $attribute->signature->type;
 
         # Generate special code for the constructor attributes.
         if ($attrType =~ /Constructor$/) {
@@ -1908,8 +1913,8 @@ sub GenerateImplementation
     }
 
     # Setup table of standard callback functions
-    $num_callbacks = 0;
-    $has_callbacks = 0;
+    my $num_callbacks = 0;
+    my $has_callbacks = 0;
     foreach my $function (@{$dataNode->functions}) {
         # Only one table entry is needed for overloaded methods:
         next if $function->{overloadIndex} > 1;
@@ -2078,7 +2083,7 @@ END
     GenerateImplementationMasqueradesAsUndefined($dataNode);
 
     # Define our functions with Set() or SetAccessor()
-    $total_functions = 0;
+    my $total_functions = 0;
     foreach my $function (@{$dataNode->functions}) {
         # Only one accessor is needed for overloaded methods:
         next if $function->{overloadIndex} > 1;
@@ -2108,7 +2113,7 @@ END
         my $conditional = "";
         if ($attrExt->{"EnabledAtRuntime"}) {
             # Only call Set()/SetAccessor() if this method should be enabled
-            $enable_function = GetRuntimeEnableFunctionName($function->signature);
+            my $enable_function = GetRuntimeEnableFunctionName($function->signature);
             $conditional = "if (${enable_function}())\n        ";
         }
 
@@ -2616,8 +2621,8 @@ END
 
 sub HasCustomToV8Implementation {
     # FIXME: This subroutine is lame. Probably should be an .idl attribute (CustomToV8)?
-    $dataNode = shift;
-    $interfaceName = shift;
+    my $dataNode = shift;
+    my $interfaceName = shift;
 
     # We generate a custom converter (but JSC doesn't) for the following:
     return 1 if $interfaceName eq "CSSStyleSheet";
