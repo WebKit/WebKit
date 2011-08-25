@@ -1,3 +1,10 @@
+2011-08-25  Adam Barth  <abarth@webkit.org>
+
+        This command has been broken for a while.  This patch updates the
+        callsite to the new API.
+
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+
 2011-08-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic needs a way to report where and how tests are failing in the summary view.

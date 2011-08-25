@@ -237,7 +237,7 @@ class Rebaseline(AbstractDeclarativeCommand):
     def execute(self, options, args, tool):
         builder, build_number = self._builder_to_pull_from()
         build = builder.build(build_number)
-        port = builder_name_for_port_name.port_for_builder(builder.name())
+        port = factory.get_from_builder_name(builder.name())
 
         for test in self._tests_to_update(build):
             results_url = self._results_url_for_test(build, test)
