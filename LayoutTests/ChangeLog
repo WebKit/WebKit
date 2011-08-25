@@ -1,5 +1,11 @@
 2011-08-24  James Robinson  <jamesr@chromium.org>
 
+        [chromium] Remove expected failure lines from tests that work now.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-08-24  James Robinson  <jamesr@chromium.org>
+
         [chromium] Update chromium mac baselines for fast/repaint/japanese-rl-selection-repaint-in-regions.html
 
         * platform/chromium-cg-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.

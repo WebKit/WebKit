@@ -135,8 +135,6 @@ BUGCR89468 : css3/selectors3 = PASS FAIL
 // Tests for WebVTT parser for <track>.  Feature is not yet functional.
 BUGWK43668 SKIP : media/track/ = TIMEOUT
 
-BUGCR86239 MAC GPU SKIP : compositing/geometry/rtl-composited.html = PASS
-
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------
@@ -3427,10 +3425,6 @@ BUGWK56591 GPU : compositing/rtl/rtl-fixed-overflow-scrolled.html = TEXT
 BUGWK56591 GPU : compositing/rtl/rtl-fixed-overflow.html = TEXT
 BUGWK56591 GPU : compositing/rtl/rtl-fixed.html = TEXT
 BUGWK56591 GPU : compositing/rtl/rtl-relative.html = TEXT
-
-BUGCR86714 MAC GPU : compositing/tiling/huge-layer-resize.html = CRASH
-BUGCR86714 MAC GPU : media/video-controls-rendering.html = CRASH IMAGE
-BUGCR86714 MAC GPU : media/video-zoom.html = CRASH IMAGE
 
 BUGWK63033 : svg/custom/absolute-root-position-masking.xhtml = IMAGE
 BUGWK63036 MAC : svg/dom/SVGTransformList-basics.xhtml = IMAGE
