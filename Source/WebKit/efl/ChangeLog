@@ -1,5 +1,23 @@
 2011-08-25  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
+        [EFL] Add API to allow scripts to close windows automatically via JavaScript.
+        https://bugs.webkit.org/show_bug.cgi?id=66777
+
+        Reviewed by Antonio Gomes.
+
+        Make it possible to allow or prevent scripts from closing windows
+        automatically (via window.close, for example).
+
+        Besides being useful in general, this is required by DRT.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_scripts_can_close_windows_get):
+        (ewk_view_setting_scripts_can_close_windows_set):
+        * ewk/ewk_view.h:
+
+2011-08-25  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
         [EFL] Implement FrameLoaderClient::didTransferChildFrameToNewDocument
         https://bugs.webkit.org/show_bug.cgi?id=66690
 

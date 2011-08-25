@@ -135,6 +135,7 @@ struct _Ewk_View_Private_Data {
         Eina_Bool enable_frame_flattening:1;
         Eina_Bool encoding_detector:1;
         Eina_Bool scripts_window_open:1;
+        Eina_Bool scripts_can_close_windows:1;
         Eina_Bool resizable_textareas:1;
         Eina_Bool private_browsing:1;
         Eina_Bool caret_browsing:1;
@@ -634,6 +635,7 @@ static Ewk_View_Private_Data *_ewk_view_priv_new(Ewk_View_Smart_Data *sd)
     priv->settings.enable_plugins = priv->page_settings->arePluginsEnabled();
     priv->settings.enable_frame_flattening = priv->page_settings->frameFlatteningEnabled();
     priv->settings.scripts_window_open = priv->page_settings->javaScriptCanOpenWindowsAutomatically();
+    priv->settings.scripts_can_close_windows = priv->page_settings->allowScriptsToCloseWindows();
     priv->settings.resizable_textareas = priv->page_settings->textAreasAreResizable();
     priv->settings.private_browsing = priv->page_settings->privateBrowsingEnabled();
     priv->settings.caret_browsing = priv->page_settings->caretBrowsingEnabled();
@@ -1942,6 +1944,25 @@ Eina_Bool ewk_view_setting_scripts_window_open_set(Evas_Object *o, Eina_Bool all
     if (priv->settings.scripts_window_open != allow) {
         priv->page_settings->setJavaScriptCanOpenWindowsAutomatically(allow);
         priv->settings.scripts_window_open = allow;
+    }
+    return EINA_TRUE;
+}
+
+Eina_Bool ewk_view_setting_scripts_can_close_windows_get(const Evas_Object *o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    return priv->settings.scripts_can_close_windows;
+}
+
+Eina_Bool ewk_view_setting_scripts_can_close_windows_set(Evas_Object *o, Eina_Bool allow)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    allow = !!allow;
+    if (priv->settings.scripts_can_close_windows != allow) {
+        priv->page_settings->setAllowScriptsToCloseWindows(allow);
+        priv->settings.scripts_can_close_windows = allow;
     }
     return EINA_TRUE;
 }

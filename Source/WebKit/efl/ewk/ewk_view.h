@@ -1397,6 +1397,27 @@ EAPI Eina_Bool    ewk_view_setting_scripts_window_open_get(const Evas_Object *o)
 EAPI Eina_Bool    ewk_view_setting_scripts_window_open_set(Evas_Object *o, Eina_Bool allow);
 
 /**
+ * Returns whether scripts can close windows automatically.
+ *
+ * @param o View whose settings to check.
+ *
+ * @return @c EINA_TRUE if scripts can close windows, @c EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool    ewk_view_setting_scripts_can_close_windows_get(const Evas_Object *o);
+
+/**
+ * Sets whether scripts are allowed to close windows automatically.
+ *
+ * @param o View whose settings to change.
+ * @param allow @c EINA_TRUE to allow scripts to close windows,
+ *              @c EINA_FALSE otherwise.
+ *
+ * @return @c EINA_TRUE if the setting could be changed successfully,
+ *         @c EINA_FALSE in case an error occurred.
+ */
+EAPI Eina_Bool    ewk_view_setting_scripts_can_close_windows_set(Evas_Object *o, Eina_Bool allow);
+
+/**
  * Queries if HTML elements @c textarea can be resizable.
  *
  * @param o view object to query if the textarea elements can be resizable
