@@ -1,3 +1,13 @@
+2011-08-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic summary needs a mock view that could be used for working on styling
+        https://bugs.webkit.org/show_bug.cgi?id=66971
+
+        Reviewed by Adam Barth.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/scripts/summary-mock.js: Added.
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/summary-mock.html: Added.
+
 2011-08-25  Anders Carlsson  <andersca@apple.com>
 
         Return the correct value for NPNVsupportsCarbonBool
