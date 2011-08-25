@@ -23,6 +23,14 @@ result = objectStore.openCursor();
 cursor = event.target.result;
 PASS cursor.key is testData[nextToOpen].key
 
+testing simple identifiers
+Deleted all object stores.
+objectStore = db.createObjectStore(testData[nextToOpen].name, {keyPath: testData[nextToOpen].keyPath});
+result = objectStore.add(testData[nextToOpen].value);
+result = objectStore.openCursor();
+cursor = event.target.result;
+PASS cursor.key is testData[nextToOpen].key
+
 testing nested identifiers
 Deleted all object stores.
 objectStore = db.createObjectStore(testData[nextToOpen].name, {keyPath: testData[nextToOpen].keyPath});
@@ -32,38 +40,6 @@ cursor = event.target.result;
 PASS cursor.key is testData[nextToOpen].key
 
 testing nested identifiers with distractions
-Deleted all object stores.
-objectStore = db.createObjectStore(testData[nextToOpen].name, {keyPath: testData[nextToOpen].keyPath});
-result = objectStore.add(testData[nextToOpen].value);
-result = objectStore.openCursor();
-cursor = event.target.result;
-PASS cursor.key is testData[nextToOpen].key
-
-testing simple array
-Deleted all object stores.
-objectStore = db.createObjectStore(testData[nextToOpen].name, {keyPath: testData[nextToOpen].keyPath});
-result = objectStore.add(testData[nextToOpen].value);
-result = objectStore.openCursor();
-cursor = event.target.result;
-PASS cursor.key is testData[nextToOpen].key
-
-testing nested array
-Deleted all object stores.
-objectStore = db.createObjectStore(testData[nextToOpen].name, {keyPath: testData[nextToOpen].keyPath});
-result = objectStore.add(testData[nextToOpen].value);
-result = objectStore.openCursor();
-cursor = event.target.result;
-PASS cursor.key is testData[nextToOpen].key
-
-testing array with distractions
-Deleted all object stores.
-objectStore = db.createObjectStore(testData[nextToOpen].name, {keyPath: testData[nextToOpen].keyPath});
-result = objectStore.add(testData[nextToOpen].value);
-result = objectStore.openCursor();
-cursor = event.target.result;
-PASS cursor.key is testData[nextToOpen].key
-
-testing mixed identifiers and arrays
 Deleted all object stores.
 objectStore = db.createObjectStore(testData[nextToOpen].name, {keyPath: testData[nextToOpen].keyPath});
 result = objectStore.add(testData[nextToOpen].value);

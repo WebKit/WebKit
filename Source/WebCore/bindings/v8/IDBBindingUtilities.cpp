@@ -72,33 +72,17 @@ bool setValue(v8::Handle<v8::Value>& v8Object, T indexOrName, const v8::Handle<v
     return object->Set(indexOrName, v8Value);
 }
 
-bool get(v8::Handle<v8::Value>& object, const IDBKeyPathElement& keyPathElement)
+bool get(v8::Handle<v8::Value>& object, const String& keyPathElement)
 {
-    switch (keyPathElement.type) {
-    case IDBKeyPathElement::IsIndexed:
-        return object->IsArray() && getValueFrom(keyPathElement.index, object);
-    case IDBKeyPathElement::IsNamed:
-        return object->IsObject() && getValueFrom(v8String(keyPathElement.identifier), object);
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    return false;
+    return object->IsObject() && getValueFrom(v8String(keyPathElement), object);
 }
 
-bool set(v8::Handle<v8::Value>& object, const IDBKeyPathElement& keyPathElement, const v8::Handle<v8::Value>& v8Value)
+bool set(v8::Handle<v8::Value>& object, const String& keyPathElement, const v8::Handle<v8::Value>& v8Value)
 {
-    switch (keyPathElement.type) {
-    case IDBKeyPathElement::IsIndexed:
-        return object->IsArray() && setValue(object, keyPathElement.index, v8Value);
-    case IDBKeyPathElement::IsNamed:
-        return object->IsObject() && setValue(object, v8String(keyPathElement.identifier), v8Value);
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    return false;
+    return object->IsObject() && setValue(object, v8String(keyPathElement), v8Value);
 }
 
-v8::Handle<v8::Value> getNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, const Vector<IDBKeyPathElement>& keyPathElements, size_t index)
+v8::Handle<v8::Value> getNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, const Vector<String>& keyPathElements, size_t index)
 {
     v8::Handle<v8::Value> currentValue(rootValue);
 
@@ -113,7 +97,7 @@ v8::Handle<v8::Value> getNthValueOnKeyPath(v8::Handle<v8::Value>& rootValue, con
 
 } // anonymous namespace
 
-PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value, const Vector<IDBKeyPathElement>& keyPath)
+PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value, const Vector<String>& keyPath)
 {
     V8LocalContext localContext;
     v8::Handle<v8::Value> v8Value(value->deserialize());
@@ -123,7 +107,7 @@ PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<Serializ
     return createIDBKeyFromValue(v8Key);
 }
 
-PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const Vector<IDBKeyPathElement>& keyPath)
+PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const Vector<String>& keyPath)
 {
     V8LocalContext localContext;
     if (!keyPath.size())

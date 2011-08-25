@@ -1,3 +1,35 @@
+2011-08-24  Kentaro Hara  <haraken@google.com>
+
+        Implement a keypath parser strictly following the specification
+        https://bugs.webkit.org/show_bug.cgi?id=62288
+
+        Reviewed by Tony Chang.
+
+        Implemented a keypath parser that accepts either an empty string, a JavaScript
+        identifier, or multiple JavaScript identifiers separated by periods.
+        We fixed createObjectStore() and createIndex() so that they parse and check
+        their |keypath| argument and return an appropriate exception if the |keypath|
+        is not valid. We also added unit tests for the new keypath parser in
+        tests/IDBKeyPathTest.cpp. We replaced IDBKeyPathElement with String here and there.
+
+        Tests: IDBKeyPathTest.*
+               IDBKeyFromValueAndKeyPathTest.*
+               InjectIDBKeyTest.*
+
+        * public/WebIDBKeyPath.h:
+        * src/WebIDBKeyPath.cpp:
+        (WebKit::WebIDBKeyPath::create): Replaced IDBKeyPathElement with String
+        (WebKit::WebIDBKeyPath::WebIDBKeyPath): Replaced IDBKeyPathElement with String
+        (WebKit::WebIDBKeyPath::assign): Replaced IDBKeyPathElement with String
+        (WebKit::WebIDBKeyPath::operator const WTF::Vector<WTF::String, 0>&): Replaced IDBKeyPathElement with String
+        * tests/IDBBindingUtilitiesTest.cpp:
+        (WebCore::checkKeyFromValueAndKeyPathInternal): Replaced IDBKeyPathElement with String
+        (WebCore::injectKey): Replaced IDBKeyPathElement with String
+        (WebCore::TEST): Rewrote tests for the new keypath parser
+        * tests/IDBKeyPathTest.cpp:
+        (WebCore::checkKeyPath): Checks if a keypath is an expected keypath or not
+        (WebCore::TEST): Unit tests for the new keypath parser
+
 2011-08-24  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Adam Barth.

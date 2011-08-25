@@ -41,7 +41,7 @@ namespace {
 
 PassRefPtr<IDBKey> checkKeyFromValueAndKeyPathInternal(SerializedScriptValue* value, const String& keyPath)
 {
-    Vector<IDBKeyPathElement> idbKeyPath;
+    Vector<String> idbKeyPath;
     IDBKeyPathParseError parseError;
     IDBParseKeyPath(keyPath, idbKeyPath, parseError);
     EXPECT_EQ(IDBKeyPathParseErrorNone, parseError);
@@ -56,7 +56,7 @@ void checkKeyPathNullValue(SerializedScriptValue* value, const String& keyPath)
 
 PassRefPtr<SerializedScriptValue> injectKey(PassRefPtr<IDBKey> key, PassRefPtr<SerializedScriptValue> value, const String& keyPath)
 {
-    Vector<IDBKeyPathElement> idbKeyPath;
+    Vector<String> idbKeyPath;
     IDBKeyPathParseError parseError;
     IDBParseKeyPath(keyPath, idbKeyPath, parseError);
     EXPECT_EQ(IDBKeyPathParseErrorNone, parseError);
@@ -103,7 +103,6 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
 
     checkKeyPathStringValue(serializedScriptValue.get(), "foo", "zoo");
     checkKeyPathNullValue(serializedScriptValue.get(), "bar");
-    checkKeyPathNullValue(serializedScriptValue.get(), "[3]");
 }
 
 TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
@@ -115,20 +114,6 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
     RefPtr<SerializedScriptValue> serializedScriptValue = SerializedScriptValue::create(object);
 
     checkKeyPathNumberValue(serializedScriptValue.get(), "foo", 456);
-    checkKeyPathNullValue(serializedScriptValue.get(), "bar");
-    checkKeyPathNullValue(serializedScriptValue.get(), "[3]");
-}
-
-TEST(IDBKeyFromValueAndKeyPathTest, TopLevelArrayElement)
-{
-    V8LocalContext v8context;
-    v8::Local<v8::Array> array = v8::Array::New();
-    array->Set(3, v8::String::New("zoo"));
-
-    RefPtr<SerializedScriptValue> serializedScriptValue = SerializedScriptValue::create(array);
-
-    checkKeyPathStringValue(serializedScriptValue.get(), "[3]", "zoo");
-    checkKeyPathNullValue(serializedScriptValue.get(), "foo");
     checkKeyPathNullValue(serializedScriptValue.get(), "bar");
 }
 
@@ -144,24 +129,6 @@ TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
 
     checkKeyPathStringValue(serializedScriptValue.get(), "foo.bar", "zee");
     checkKeyPathNullValue(serializedScriptValue.get(), "bar");
-    checkKeyPathNullValue(serializedScriptValue.get(), "[3]");
-}
-
-TEST(IDBKeyFromValueAndKeyPathTest, Array2D)
-{
-    V8LocalContext v8context;
-    v8::Local<v8::Object> object = v8::Object::New();
-    v8::Local<v8::Array> array = v8::Array::New();
-    v8::Local<v8::Array> subArray = v8::Array::New();
-    subArray->Set(7, v8::String::New("zee"));
-    array->Set(3, subArray);
-    object->Set(v8::String::New("foo"), array);
-
-    RefPtr<SerializedScriptValue> serializedScriptValue = SerializedScriptValue::create(object);
-
-    checkKeyPathStringValue(serializedScriptValue.get(), "foo[3][7]", "zee");
-    checkKeyPathNullValue(serializedScriptValue.get(), "bar");
-    checkKeyPathNullValue(serializedScriptValue.get(), "[4]");
 }
 
 TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
@@ -174,20 +141,6 @@ TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
     checkInjection(IDBKey::createNumber(1234), SerializedScriptValue::create(object), "bar");
 
     checkInjectionFails(IDBKey::createString("key"), SerializedScriptValue::create(object), "foo.bar");
-    checkInjectionFails(IDBKey::createString("key"), SerializedScriptValue::create(object), "[3]");
-}
-
-TEST(InjectIDBKeyTest, TopLevelArrayElement)
-{
-    V8LocalContext v8context;
-    v8::Local<v8::Array> array = v8::Array::New();
-    array->Set(3, v8::String::New("zoo"));
-
-    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(array), "[2]");
-    checkInjection(IDBKey::createNumber(789), SerializedScriptValue::create(array), "[4]");
-    checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(array), "[1]");
-
-    checkInjectionFails(IDBKey::createString("foo"), SerializedScriptValue::create(array), "[5].bar");
 }
 
 TEST(InjectIDBKeyTest, SubProperty)
@@ -207,24 +160,6 @@ TEST(InjectIDBKeyTest, SubProperty)
     checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo.xyz.foo");
 }
 
-TEST(InjectIDBKeyTest, Array2D)
-{
-    V8LocalContext v8context;
-    v8::Local<v8::Object> object = v8::Object::New();
-    v8::Local<v8::Array> array = v8::Array::New();
-    v8::Local<v8::Array> subArray = v8::Array::New();
-    subArray->Set(7, v8::String::New("zee"));
-    array->Set(3, subArray);
-    object->Set(v8::String::New("foo"), array);
-
-    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "foo[3][8]");
-    checkInjection(IDBKey::createNumber(789), SerializedScriptValue::create(object), "foo[3][8]");
-    checkInjection(IDBKey::createDate(4567), SerializedScriptValue::create(object), "foo[3][8]");
-    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "bar");
-    checkInjection(IDBKey::createString("myNewKey"), SerializedScriptValue::create(object), "foo[4]");
-
-    checkInjectionFails(IDBKey::createString("zoo"), SerializedScriptValue::create(object), "foo[3][7].foo");
-}
 } // namespace
 
 #endif // ENABLE(INDEXED_DATABASE)

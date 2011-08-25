@@ -35,28 +35,15 @@
 
 namespace WebCore {
 
-struct IDBKeyPathElement {
-    enum Type {
-        IsIndexed,
-        IsNamed,
-    };
-
-    Type type;
-    unsigned index;
-    String identifier;
-};
-
 enum IDBKeyPathParseError {
     IDBKeyPathParseErrorNone,
     IDBKeyPathParseErrorStart,
     IDBKeyPathParseErrorIdentifier,
-    IDBKeyPathParseErrorArrayIndex,
-    IDBKeyPathParseErrorAfterArray,
     IDBKeyPathParseErrorDot,
 };
 
 bool IDBIsValidKeyPath(const String&);
-void IDBParseKeyPath(const String&, Vector<IDBKeyPathElement>&, IDBKeyPathParseError&);
+void IDBParseKeyPath(const String&, Vector<String>&, IDBKeyPathParseError&);
 
 } // namespace WebCore
 

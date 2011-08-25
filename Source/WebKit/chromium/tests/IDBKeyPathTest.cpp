@@ -35,168 +35,87 @@ using namespace WebCore;
 
 namespace {
 
-IDBKeyPathElement ExpectedToken(const String& identifier, bool isIndexed, int index)
+void checkKeyPath(const String& keyPath, const Vector<String>& expected, int parserError)
 {
-    IDBKeyPathElement expected;
-    if (isIndexed) {
-        expected.type = IDBKeyPathElement::IsIndexed;
-        expected.index = index;
-    } else {
-        expected.type = IDBKeyPathElement::IsNamed;
-        expected.identifier = identifier;
-    }
-    return expected;
-}
-
-void checkKeyPath(const String& keyPath, const Vector<IDBKeyPathElement>& expected, int parserError)
-{
-
     IDBKeyPathParseError error;
-    Vector<IDBKeyPathElement> idbKeyPathElements;
-    IDBParseKeyPath(keyPath, idbKeyPathElements, error);
+    Vector<String> keyPathElements;
+    IDBParseKeyPath(keyPath, keyPathElements, error);
     ASSERT_EQ(parserError, error);
     if (error != IDBKeyPathParseErrorNone)
         return;
-    ASSERT_EQ(expected.size(), idbKeyPathElements.size());
-    for (size_t i = 0; i < expected.size(); ++i) {
-        ASSERT_TRUE(expected[i].type == idbKeyPathElements[i].type) << i;
-        if (expected[i].type == IDBKeyPathElement::IsIndexed)
-            ASSERT_EQ(expected[i].index, idbKeyPathElements[i].index) << i;
-        else if (expected[i].type == IDBKeyPathElement::IsNamed)
-            ASSERT_TRUE(expected[i].identifier == idbKeyPathElements[i].identifier) << i;
-        else
-            ASSERT_TRUE(false) << "Invalid IDBKeyPathElement type";
-    }
+    ASSERT_EQ(expected.size(), keyPathElements.size());
+    for (size_t i = 0; i < expected.size(); ++i)
+        ASSERT_TRUE(expected[i] == keyPathElements[i]) << i;
 }
 
 TEST(IDBKeyPathTest, ValidKeyPath0)
 {
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("foo.bar.zoo");
-    expected.append(ExpectedToken("foo", false, 0));
-    expected.append(ExpectedToken("bar", false, 0));
-    expected.append(ExpectedToken("zoo", false, 0));
+    Vector<String> expected;
+    String keyPath("");
     checkKeyPath(keyPath, expected, 0);
 }
 
 TEST(IDBKeyPathTest, ValidKeyPath1)
 {
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("a[34][20].foo[2].bar");
-    expected.append(ExpectedToken("a", false, 0));
-    expected.append(ExpectedToken(String(), true, 34));
-    expected.append(ExpectedToken(String(), true, 20));
-    expected.append(ExpectedToken("foo", false, 0));
-    expected.append(ExpectedToken(String(), true, 2));
-    expected.append(ExpectedToken("bar", false, 0));
+    Vector<String> expected;
+    String keyPath("foo");
+    expected.append(String("foo"));
     checkKeyPath(keyPath, expected, 0);
 }
 
 TEST(IDBKeyPathTest, ValidKeyPath2)
 {
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("foo[ 34 ].Zoo_[00023]\t._c");
-    expected.append(ExpectedToken("foo", false, 0));
-    expected.append(ExpectedToken(String(), true, 34));
-    expected.append(ExpectedToken("Zoo_", false, 0));
-    expected.append(ExpectedToken(String(), true, 23));
-    expected.append(ExpectedToken("_c", false, 0));
+    Vector<String> expected;
+    String keyPath("foo.bar.baz");
+    expected.append(String("foo"));
+    expected.append(String("bar"));
+    expected.append(String("baz"));
     checkKeyPath(keyPath, expected, 0);
 }
 
-TEST(IDBKeyPathTest, ValidKeyPath3)
+TEST(IDBKeyPathTest, InvalidKeyPath0)
 {
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("foo[ 34 ]");
-    expected.append(ExpectedToken("foo", false, 0));
-    expected.append(ExpectedToken(String(), true, 34));
-    checkKeyPath(keyPath, expected, 0);
+    Vector<String> expected;
+    String keyPath(" ");
+    checkKeyPath(keyPath, expected, 1);
 }
 
-TEST(IDBKeyPathTest, ValidKeyPath4)
+TEST(IDBKeyPathTest, InvalidKeyPath1)
 {
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("[ 34 ]");
-    expected.append(ExpectedToken(String(), true, 34));
-    checkKeyPath(keyPath, expected, 0);
+    Vector<String> expected;
+    String keyPath("+foo.bar.baz");
+    checkKeyPath(keyPath, expected, 1);
 }
 
 TEST(IDBKeyPathTest, InvalidKeyPath2)
 {
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("a[[34]].b[2].c");
-    expected.append(ExpectedToken("a", false, 0));
-    checkKeyPath(keyPath, expected, 3);
+    Vector<String> expected;
+    String keyPath("foo bar baz");
+    expected.append(String("foo"));
+    checkKeyPath(keyPath, expected, 2);
 }
 
 TEST(IDBKeyPathTest, InvalidKeyPath3)
 {
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("a[[34].b[2].c");
-    expected.append(ExpectedToken("a", false, 0));
+    Vector<String> expected;
+    String keyPath("foo .bar .baz");
+    expected.append(String("foo"));
+    checkKeyPath(keyPath, expected, 2);
+}
+
+TEST(IDBKeyPathTest, InvalidKeyPath4)
+{
+    Vector<String> expected;
+    String keyPath("foo. bar. baz");
+    expected.append(String("foo"));
     checkKeyPath(keyPath, expected, 3);
 }
 
 TEST(IDBKeyPathTest, InvalidKeyPath5)
 {
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("a[[34.b[2].c");
-    expected.append(ExpectedToken("a", false, 0));
-    checkKeyPath(keyPath, expected, 3);
-}
-
-TEST(IDBKeyPathTest, InvalidKeyPath6)
-{
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("+a[34].b[2].c");
-    checkKeyPath(keyPath, expected, 1);
-}
-
-TEST(IDBKeyPathTest, InvalidKeyPath7)
-{
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("%a[34].b[2].c");
-    checkKeyPath(keyPath, expected, 1);
-}
-
-TEST(IDBKeyPathTest, InvalidKeyPath8)
-{
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("a{[34]}.b[2].c");
-    expected.append(ExpectedToken("a", false, 0));
-    checkKeyPath(keyPath, expected, 2);
-}
-
-TEST(IDBKeyPathTest, InvalidKeyPath9)
-{
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("a..b[2].c");
-    expected.append(ExpectedToken("a", false, 0));
-    checkKeyPath(keyPath, expected, 5);
-}
-
-TEST(IDBKeyPathTest, InvalidKeyPath10)
-{
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("a[34]b.foo[2].bar");
-    expected.append(ExpectedToken("a", false, 0));
-    expected.append(ExpectedToken(String(), true, 34));
-    checkKeyPath(keyPath, expected, 4);
-}
-
-TEST(IDBKeyPathTest, InvalidKeyPath11)
-{
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("a[-1]");
-    expected.append(ExpectedToken("a", false, 0));
-    checkKeyPath(keyPath, expected, 3);
-}
-
-TEST(IDBKeyPathTest, InvalidKeyPath12)
-{
-    Vector<IDBKeyPathElement> expected;
-    String keyPath("a[9999999999999999999999999999999999]");
-    expected.append(ExpectedToken("a", false, 0));
+    Vector<String> expected;
+    String keyPath("foo..bar..baz");
+    expected.append(String("foo"));
     checkKeyPath(keyPath, expected, 3);
 }
 

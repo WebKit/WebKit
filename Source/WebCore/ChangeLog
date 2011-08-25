@@ -1,3 +1,41 @@
+2011-08-24  Kentaro Hara  <haraken@google.com>
+
+        Implement a keypath parser strictly following the specification
+        https://bugs.webkit.org/show_bug.cgi?id=62288
+
+        Reviewed by Tony Chang.
+
+        Implemented a keypath parser that accepts either an empty string, a JavaScript
+        identifier, or multiple JavaScript identifiers separated by periods.
+        We fixed createObjectStore() and createIndex() so that they parse and check
+        their |keypath| argument and return an appropriate exception if the |keypath|
+        is not valid. We also added unit tests for the new keypath parser in keypath-basics.html.
+
+        Tests: storage/indexeddb/keypath-fetch-key.html
+               storage/indexeddb/keypath-basics.html
+
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromSerializedValueAndKeyPath): Replaced IDBKeyPathElement with String
+        (WebCore::injectIDBKeyIntoSerializedValue): Replaced IDBKeyPathElement with String
+        * bindings/v8/IDBBindingUtilities.h:
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::getKeyStringWithUndefinedOrNullCheck): Returns false when a given value is null or undefined
+        (WebCore::OptionsObject::getKey): Removed undefined check
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::createObjectStore): Checks if a |keypath| argument is valid, and returns a NON_TRANSIENT_ERR if it is not valid
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore): Removed null check of a keypath
+        * storage/IDBKeyPath.cpp:
+        (WebCore::IDBKeyPathLexer::currentElement): Part of the keypath parser
+        (WebCore::IDBKeyPathLexer::lex): Part of the keypath parser
+        (WebCore::IDBKeyPathLexer::lexIdentifier): Part of the keypath parser
+        (WebCore::IDBIsValidKeyPath): Checks if a keypath is valid
+        (WebCore::IDBParseKeyPath): Part of the keypath parser
+        * storage/IDBKeyPath.h: Replaced IDBKeyPathElement with String
+        * storage/IDBObjectStore.cpp:
+        (WebCore::IDBObjectStore::createIndex): Checks if a |keypath| argument is valid, and returns a NON_TRANSIENT_ERR if it is not valid
+        * storage/IDBObjectStore.idl:
+
 2011-08-24  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Adam Barth.

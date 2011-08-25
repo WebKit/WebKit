@@ -1,3 +1,24 @@
+2011-08-24  Kentaro Hara  <haraken@google.com>
+
+        Implement a keypath parser strictly following the specification
+        https://bugs.webkit.org/show_bug.cgi?id=62288
+
+        Reviewed by Tony Chang.
+
+        Implemented a keypath parser that accepts either an empty string, a JavaScript
+        identifier, or multiple JavaScript identifiers separated by periods.
+        We fixed createObjectStore() and createIndex() so that they parse and check
+        their |keypath| argument and return an appropriate exception if the |keypath|
+        is not valid. We removed create-index-null-name.html since this test violates the
+        specification that says "a |keypath| argument of createIndex() must not be nullable".
+
+        * storage/indexeddb/keypath-basics-expected.txt:
+        * storage/indexeddb/keypath-basics.html:
+        * storage/indexeddb/keypath-fetch-key-expected.txt: Renamed from LayoutTests/storage/indexeddb/keyPath-expected.txt.
+        * storage/indexeddb/keypath-fetch-key.html: Renamed from LayoutTests/storage/indexeddb/keyPath.html.
+        * storage/indexeddb/mozilla/create-index-null-name-expected.txt: Removed.
+        * storage/indexeddb/mozilla/create-index-null-name.html: Removed.
+
 2011-08-24  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove expected CRASH lines for tests that don't crash

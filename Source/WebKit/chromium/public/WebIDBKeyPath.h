@@ -30,9 +30,10 @@
 #include "WebPrivateOwnPtr.h"
 #include "WebVector.h"
 
-namespace WebCore { struct IDBKeyPathElement; }
-
-namespace WTF { template<typename T, size_t inlineCapacity> class Vector; }
+namespace WTF {
+template<typename T, size_t inlineCapacity> class Vector;
+class String;
+}
 
 namespace WebKit {
 
@@ -49,17 +50,17 @@ public:
     WEBKIT_EXPORT void reset();
 
 #if WEBKIT_IMPLEMENTATION
-    operator const WTF::Vector<WebCore::IDBKeyPathElement, 0>& () const;
+    operator const WTF::Vector<WTF::String, 0>& () const;
 #endif
 
 private:
     WebIDBKeyPath();
 
 #if WEBKIT_IMPLEMENTATION
-    WebIDBKeyPath(const WTF::Vector<WebCore::IDBKeyPathElement, 0>&, int parseError);
+    WebIDBKeyPath(const WTF::Vector<WTF::String, 0>&, int parseError);
 #endif
 
-    WebPrivateOwnPtr<WTF::Vector<WebCore::IDBKeyPathElement, 0> > m_private;
+    WebPrivateOwnPtr<WTF::Vector<WTF::String, 0> > m_private;
     int m_parseError;
 };
 

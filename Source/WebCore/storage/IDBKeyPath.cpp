@@ -36,10 +36,7 @@ namespace WebCore {
 class IDBKeyPathLexer {
 public:
     enum TokenType {
-        TokenLeftBracket,
-        TokenRightBracket,
         TokenIdentifier,
-        TokenNumber,
         TokenDot,
         TokenEnd,
         TokenError
@@ -61,53 +58,29 @@ public:
         return m_currentTokenType;
     }
 
-    const IDBKeyPathElement& currentElement() { return m_currentElement; }
+    const String& currentElement() { return m_currentElement; }
 
 private:
-    TokenType lex(IDBKeyPathElement&);
-    TokenType lexIdentifier(IDBKeyPathElement&);
-    TokenType lexNumber(IDBKeyPathElement&);
-    IDBKeyPathElement m_currentElement;
+    TokenType lex(String&);
+    TokenType lexIdentifier(String&);
+    String m_currentElement;
     String m_string;
     const UChar* m_ptr;
     const UChar* m_end;
     TokenType m_currentTokenType;
 };
 
-IDBKeyPathLexer::TokenType IDBKeyPathLexer::lex(IDBKeyPathElement& element)
+IDBKeyPathLexer::TokenType IDBKeyPathLexer::lex(String& element)
 {
-    while (m_ptr < m_end && isASCIISpace(*m_ptr))
-        ++m_ptr;
-
     if (m_ptr >= m_end)
         return TokenEnd;
-
     ASSERT(m_ptr < m_end);
-    switch (*m_ptr) {
-    case '[':
-        ++m_ptr;
-        return TokenLeftBracket;
-    case ']':
-        ++m_ptr;
-        return TokenRightBracket;
-    case '.':
+
+    if (*m_ptr == '.') {
         ++m_ptr;
         return TokenDot;
-    case '0':
-    case '1':
-    case '2':
-    case '3':
-    case '4':
-    case '5':
-    case '6':
-    case '7':
-    case '8':
-    case '9':
-        return lexNumber(element);
-    default:
-        return lexIdentifier(element);
     }
-    return TokenError;
+    return lexIdentifier(element);
 }
 
 static inline bool isSafeIdentifierStartCharacter(UChar c)
@@ -120,7 +93,7 @@ static inline bool isSafeIdentifierCharacter(UChar c)
     return isASCIIAlphanumeric(c) || (c == '_') || (c == '$');
 }
 
-IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexIdentifier(IDBKeyPathElement& element)
+IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexIdentifier(String& element)
 {
     const UChar* start = m_ptr;
     if (m_ptr < m_end && isSafeIdentifierStartCharacter(*m_ptr))
@@ -131,62 +104,33 @@ IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexIdentifier(IDBKeyPathElement& ele
     while (m_ptr < m_end && isSafeIdentifierCharacter(*m_ptr))
         ++m_ptr;
 
-    element.type = IDBKeyPathElement::IsNamed;
-    element.identifier = String(start, m_ptr - start);
+    element = String(start, m_ptr - start);
     return TokenIdentifier;
-}
-
-IDBKeyPathLexer::TokenType IDBKeyPathLexer::lexNumber(IDBKeyPathElement& element)
-{
-    if (m_ptr >= m_end)
-        return TokenError;
-
-    const UChar* start = m_ptr;
-    // [0-9]*
-    while (m_ptr < m_end && isASCIIDigit(*m_ptr))
-        ++m_ptr;
-
-    String numberAsString;
-    numberAsString = String(start, m_ptr - start);
-    bool ok = false;
-    unsigned number = numberAsString.toUIntStrict(&ok);
-    if (!ok)
-        return TokenError;
-
-    element.type = IDBKeyPathElement::IsIndexed;
-    element.index = number;
-    return TokenNumber;
 }
 
 bool IDBIsValidKeyPath(const String& keyPath)
 {
     IDBKeyPathParseError error;
-    Vector<IDBKeyPathElement> keyPathElements;
+    Vector<String> keyPathElements;
     IDBParseKeyPath(keyPath, keyPathElements, error);
     return error == IDBKeyPathParseErrorNone;
 }
 
-void IDBParseKeyPath(const String& keyPath, Vector<IDBKeyPathElement>& elements, IDBKeyPathParseError& error)
+void IDBParseKeyPath(const String& keyPath, Vector<String>& elements, IDBKeyPathParseError& error)
 {
-    // This is a simplified parser loosely based on LiteralParser.
-    // An IDBKeyPath is defined as a sequence of:
-    // identifierA{.identifierB{[numeric_value]}
-    // where "{}" represents an optional part
+    // IDBKeyPath ::= EMPTY_STRING | identifier ('.' identifier)*
     // The basic state machine is:
-    // Start => {Identifier, Array}
-    // Identifier => {Dot, Array, End}
-    // Array => {Start, Dot, End}
-    // Dot => {Identifier}
+    //   Start => {Identifier, End}
+    //   Identifier => {Dot, End}
+    //   Dot => {Identifier}
     // It bails out as soon as it finds an error, but doesn't discard the bits it managed to parse.
-    enum ParserState { Identifier, Array, Dot, End };
+    enum ParserState { Identifier, Dot, End };
 
     IDBKeyPathLexer lexer(keyPath);
     IDBKeyPathLexer::TokenType tokenType = lexer.nextTokenType();
     ParserState state;
     if (tokenType == IDBKeyPathLexer::TokenIdentifier)
         state = Identifier;
-    else if (tokenType == IDBKeyPathLexer::TokenLeftBracket)
-        state = Array;
     else if (tokenType == IDBKeyPathLexer::TokenEnd)
         state = End;
     else {
@@ -200,53 +144,16 @@ void IDBParseKeyPath(const String& keyPath, Vector<IDBKeyPathElement>& elements,
             IDBKeyPathLexer::TokenType tokenType = lexer.currentTokenType();
             ASSERT(tokenType == IDBKeyPathLexer::TokenIdentifier);
 
-            IDBKeyPathElement element = lexer.currentElement();
-            ASSERT(element.type == IDBKeyPathElement::IsNamed);
+            String element = lexer.currentElement();
             elements.append(element);
 
             tokenType = lexer.nextTokenType();
             if (tokenType == IDBKeyPathLexer::TokenDot)
                 state = Dot;
-            else if (tokenType == IDBKeyPathLexer::TokenLeftBracket)
-                state = Array;
             else if (tokenType == IDBKeyPathLexer::TokenEnd)
                 state = End;
             else {
                 error = IDBKeyPathParseErrorIdentifier;
-                return;
-            }
-            break;
-        }
-        case Array : {
-            IDBKeyPathLexer::TokenType tokenType = lexer.currentTokenType();
-            ASSERT(tokenType == IDBKeyPathLexer::TokenLeftBracket);
-
-            tokenType = lexer.nextTokenType();
-            if (tokenType != IDBKeyPathLexer::TokenNumber) {
-                error = IDBKeyPathParseErrorArrayIndex;
-                return;
-            }
-
-            ASSERT(tokenType == IDBKeyPathLexer::TokenNumber);
-            IDBKeyPathElement element = lexer.currentElement();
-            ASSERT(element.type == IDBKeyPathElement::IsIndexed);
-            elements.append(element);
-
-            tokenType = lexer.nextTokenType();
-            if (tokenType != IDBKeyPathLexer::TokenRightBracket) {
-                error = IDBKeyPathParseErrorArrayIndex;
-                return;
-            }
-
-            tokenType = lexer.nextTokenType();
-            if (tokenType == IDBKeyPathLexer::TokenDot)
-                state = Dot;
-            else if (tokenType == IDBKeyPathLexer::TokenLeftBracket)
-                state = Array;
-            else if (tokenType == IDBKeyPathLexer::TokenEnd)
-                state = End;
-            else {
-                error = IDBKeyPathParseErrorAfterArray;
                 return;
             }
             break;
@@ -256,12 +163,12 @@ void IDBParseKeyPath(const String& keyPath, Vector<IDBKeyPathElement>& elements,
             ASSERT(tokenType == IDBKeyPathLexer::TokenDot);
 
             tokenType = lexer.nextTokenType();
-            if (tokenType != IDBKeyPathLexer::TokenIdentifier) {
+            if (tokenType == IDBKeyPathLexer::TokenIdentifier)
+                state = Identifier;
+            else {
                 error = IDBKeyPathParseErrorDot;
                 return;
             }
-
-            state = Identifier;
             break;
         }
         case End: {

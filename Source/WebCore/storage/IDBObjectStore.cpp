@@ -33,6 +33,7 @@
 #include "IDBDatabaseException.h"
 #include "IDBIndex.h"
 #include "IDBKey.h"
+#include "IDBKeyPath.h"
 #include "IDBKeyRange.h"
 #include "IDBTransaction.h"
 #include "SerializedScriptValue.h"
@@ -124,6 +125,11 @@ PassRefPtr<IDBRequest> IDBObjectStore::clear(ScriptExecutionContext* context, Ex
 
 PassRefPtr<IDBIndex> IDBObjectStore::createIndex(const String& name, const String& keyPath, const OptionsObject& options, ExceptionCode& ec)
 {
+    if (!IDBIsValidKeyPath(keyPath)) {
+        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        return 0;
+    }
+
     bool unique = false;
     options.getKeyBool("unique", unique);
 

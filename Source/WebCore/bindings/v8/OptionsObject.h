@@ -46,6 +46,7 @@ public:
     bool getKeyBool(const String& key, bool& value) const;
     bool getKeyInt32(const String& key, int32_t& value) const;
     bool getKeyString(const String& key, String& value) const;
+    bool getKeyStringWithUndefinedOrNullCheck(const String& key, String& value) const;
     PassRefPtr<DOMStringList> getKeyDOMStringList(const String& key) const;
     PassRefPtr<IDBKeyRange> getKeyKeyRange(const String& key) const;
 

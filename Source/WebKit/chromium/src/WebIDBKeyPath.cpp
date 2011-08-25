@@ -39,14 +39,14 @@ namespace WebKit {
 
 WebIDBKeyPath WebIDBKeyPath::create(const WebString& keyPath)
 {
-    WTF::Vector<IDBKeyPathElement> idbElements;
+    WTF::Vector<WTF::String> idbElements;
     IDBKeyPathParseError idbError;
     IDBParseKeyPath(keyPath, idbElements, idbError);
     return WebIDBKeyPath(idbElements, static_cast<int>(idbError));
 }
 
-WebIDBKeyPath::WebIDBKeyPath(const WTF::Vector<IDBKeyPathElement>& elements, int parseError)
-    : m_private(new WTF::Vector<IDBKeyPathElement>(elements))
+WebIDBKeyPath::WebIDBKeyPath(const WTF::Vector<WTF::String>& elements, int parseError)
+    : m_private(new WTF::Vector<WTF::String>(elements))
     , m_parseError(parseError)
 {
 }
@@ -59,7 +59,7 @@ int WebIDBKeyPath::parseError() const
 void WebIDBKeyPath::assign(const WebIDBKeyPath& keyPath)
 {
     m_parseError = keyPath.m_parseError;
-    m_private.reset(new WTF::Vector<IDBKeyPathElement>(keyPath));
+    m_private.reset(new WTF::Vector<WTF::String>(keyPath));
 }
 
 void WebIDBKeyPath::reset()
@@ -67,7 +67,7 @@ void WebIDBKeyPath::reset()
     m_private.reset(0);
 }
 
-WebIDBKeyPath::operator const WTF::Vector<IDBKeyPathElement, 0>&() const
+WebIDBKeyPath::operator const WTF::Vector<WTF::String, 0>&() const
 {
     return *m_private.get();
 }

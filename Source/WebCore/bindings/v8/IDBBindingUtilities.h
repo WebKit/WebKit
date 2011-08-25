@@ -35,11 +35,10 @@ namespace WebCore {
 
 class IDBKey;
 class SerializedScriptValue;
-struct IDBKeyPathElement;
 
 PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value>);
-PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue> value,  const Vector<IDBKeyPathElement, 0>& keyPath);
-PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const Vector<IDBKeyPathElement, 0>&);
+PassRefPtr<IDBKey> createIDBKeyFromSerializedValueAndKeyPath(PassRefPtr<SerializedScriptValue>,  const Vector<String, 0>&);
+PassRefPtr<SerializedScriptValue> injectIDBKeyIntoSerializedValue(PassRefPtr<IDBKey>, PassRefPtr<SerializedScriptValue>, const Vector<String, 0>&);
 
 }
 

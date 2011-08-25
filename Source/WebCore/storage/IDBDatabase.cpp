@@ -81,8 +81,8 @@ PassRefPtr<IDBObjectStore> IDBDatabase::createObjectStore(const String& name, co
     }
 
     String keyPath;
-    options.getKeyString("keyPath", keyPath);
-    if (!IDBIsValidKeyPath(keyPath)) {
+    bool keyPathExists = options.getKeyStringWithUndefinedOrNullCheck("keyPath", keyPath);
+    if (keyPathExists && !IDBIsValidKeyPath(keyPath)) {
         ec = IDBDatabaseException::NON_TRANSIENT_ERR;
         return 0;
     }
