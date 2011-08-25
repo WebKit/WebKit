@@ -1,3 +1,11 @@
+2011-08-25  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        [Qt] Add Qt specific expected after r93713 since ENABLE_MEDIA_STREAM is disabled.
+
+        Unreviewed, test expectations update.
+
+        * platform/qt/fast/files/create-blob-url-crash-expected.txt: Added.
+
 2011-08-24  Kentaro Hara  <haraken@google.com>
 
         Implement an Event constructor.
