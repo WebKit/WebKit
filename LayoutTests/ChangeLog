@@ -1,3 +1,9 @@
+2011-08-25  Pavel Podivilov  <podivilov@chromium.org>
+
+        Unreviewed, rebaseline chromium expectations.
+
+        * platform/chromium-cg-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Removed.
+
 2011-08-25 Zsolt Fehér <h490267@stud.u-szeged.hu>
 
     Unreviewed Qt gardening.
