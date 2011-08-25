@@ -104,6 +104,7 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
     ASSERT(innerStyle->refCount() == 1);
     // RenderBlock::createAnonymousBlock creates a new RenderStyle, so this is
     // safe to modify.
+    innerStyle->setTextOverflow(style()->textOverflow());
     innerStyle->setBoxFlex(1.0f);
     innerStyle->setBoxOrient(style()->boxOrient());
 }

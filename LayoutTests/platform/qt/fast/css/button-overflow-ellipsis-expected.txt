@@ -1,0 +1,16 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x54
+  RenderBlock {HTML} at (0,0) size 800x54
+    RenderBody {BODY} at (8,8) size 784x38
+      RenderButton {BUTTON} at (0,2) size 120x34 [color=#1B1918] [bgcolor=#C0C0C0]
+        RenderBlock (anonymous) at (6,6) size 108x22
+          RenderText {#text} at (0,0) size 197x22
+            text run at (0,0) width 197: "Button Text Overflow ellipsis"
+      RenderText {#text} at (120,8) size 4x22
+        text run at (120,8) width 4: " "
+      RenderButton {BUTTON} at (124,2) size 120x34 [color=#1B1918] [bgcolor=#C0C0C0]
+        RenderBlock (anonymous) at (6,6) size 108x22
+          RenderText {#text} at (-89,0) size 197x22
+            text run at (-89,0) width 197: "Button Text Overflow ellipsis"
+      RenderText {#text} at (0,0) size 0x0

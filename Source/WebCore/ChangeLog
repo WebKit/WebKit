@@ -1,3 +1,24 @@
+2011-08-25  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Text-overflow is broken for button elements
+        https://bugs.webkit.org/show_bug.cgi?id=53438
+
+        Fix text-overflow for button elements. Make the element inside
+        the button inherit the button controlClip.
+
+        Reviewed by David Hyatt.
+
+        Test: fast/css/button-overflow-ellipsis.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::controlClipRect):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::hasControlClip):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::setupInnerStyle):
+
 2011-08-24  Adrienne Walker  <enne@google.com>
 
         [chromium] Update VideoLayerChromium to not access GC3D on the main thread

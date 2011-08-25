@@ -1107,6 +1107,16 @@ void RenderBox::paintCustomHighlight(const LayoutPoint& paintOffset, const Atomi
 
 #endif
 
+LayoutRect RenderBox::controlClipRect(const LayoutPoint& additionalOffset) const
+{
+    if (!hasControlClip())
+        return LayoutRect();
+
+    LayoutRect clipRect(additionalOffset + IntSize(borderLeft(), borderTop()),
+        size() - IntSize(borderLeft() + borderRight(), borderTop() + borderBottom()));
+    return clipRect;
+}
+
 bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const LayoutPoint& accumulatedOffset)
 {
     if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseSelfOutline || paintInfo.phase == PaintPhaseMask)

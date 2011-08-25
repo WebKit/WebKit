@@ -1,3 +1,15 @@
+2011-08-25  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Text-overflow is broken for button elements
+        https://bugs.webkit.org/show_bug.cgi?id=53438
+
+        Add button text-overflow test.
+
+        Reviewed by David Hyatt.
+
+        * fast/css/button-overflow-ellipsis.html: Added.
+        * platform/qt/fast/css/button-overflow-ellipsis-expected.txt: Added.
+
 2011-08-24  Peter Kasting  <pkasting@google.com>
 
         [chromium] Several test expectation updates.
