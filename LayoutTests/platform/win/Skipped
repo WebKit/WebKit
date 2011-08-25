@@ -148,6 +148,10 @@ fast/events/keydown-numpad-keys.html
 # No button tracked
 fast/events/mouseover-button.html
 
+# These tests require the JSC implementation of Event constructors.
+# https://bugs.webkit.org/show_bug.cgi?id=63878
+fast/events/event-constructors.html
+
 # The eqqivalent of option-tab doesn not exist in Boomer <rdar://problem/5137230>
 fast/events/frame-tab-focus.html
 fast/events/option-tab.html

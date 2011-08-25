@@ -1,3 +1,41 @@
+2011-08-24  Kentaro Hara  <haraken@google.com>
+
+        Implement an Event constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=66756
+
+        Reviewed by Adam Barth.
+
+        The spec of the Event constructor is here:
+        http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#concept-event-constructor.
+        This patch added the Event constructor to EventConstructors.h using
+        JavaScript implementation-independent macros. This patch also added the V8
+        implementation of these macros to V8EventConstructors.cpp.
+
+        The bug 63878 has been implementing the Event constructors for JSC.
+        Our plan is to first implement all the Event constructors for V8
+        using EventConstructors.h proposed in the JSC patch, and then merge
+        the JSC patch with these V8 patches. In any case, we are going to split
+        the patches for V8 and those for JSC in order to avoid hard regression.
+
+        Test: fast/events/event-constructors.html
+
+        * WebCore.gypi: Added V8EventConstructors.cpp.
+        * WebCore.pro: Added V8EventConstructors.cpp.
+        * bindings/generic/EventConstructors.h: Added. The Event constructor. This is written using JavaScript implementation-independent macros. The V8 implementation of these macros is written in bindings/v8/custom/V8EventConstructors.cpp.
+        * bindings/v8/OptionsObject.cpp:
+        (WebCore::OptionsObject::getKeyDouble): Returns the value of a given key of type double.
+        (WebCore::OptionsObject::getKey): Returns true whenever the given key is found, even if the value is null or undefined.
+        * bindings/v8/OptionsObject.h:
+        (WebCore::OptionsObject::getKeyValue): Returns the value of the given key. We need to overload getKeyValue() for all types required to EventConfiguration members.
+        * bindings/v8/custom/V8EventConstructors.cpp: Added. Implemented macros used in EventConstructors.h.
+        (WebCore::constructV8Event): The Event constructor.
+        * dom/Event.cpp:
+        (WebCore::EventConfiguration::EventConfiguration): A constructor of EventConfiguration.
+        (WebCore::Event::Event): A constructor of the Event class.
+        * dom/Event.h: Added EventConfiguration, which manages attributes of the Event class.
+        (WebCore::Event::create): A factory method of the Event class with EventConfiguration.
+        * dom/Event.idl: Added 'CanBeConstructed' and 'V8CustomConstructor'.
+
 2011-08-24  Philippe Normand  <pnormand@igalia.com>
 
         [GTK] bump GStreamer requirement to 0.10.30

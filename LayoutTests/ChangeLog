@@ -1,5 +1,26 @@
 2011-08-24  Kentaro Hara  <haraken@google.com>
 
+        Implement an Event constructor.
+        https://bugs.webkit.org/show_bug.cgi?id=66756
+
+        Reviewed by Adam Barth.
+
+        The spec of the Event constructor is here:
+        http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#concept-event-constructor.
+        This patch added the Event constructor to EventConstructors.h using
+        JavaScript implementation-independent macros. This patch also added the V8
+        implementation of these macros to V8EventConstructors.cpp.
+
+        * fast/events/event-constructors-expected.txt: Added.
+        * fast/events/event-constructors.html: Added.
+        * platform/gtk/Skipped: Skipped event-constructors.html, since Event constructors are not yet implemented in JSC.
+        * platform/mac/Skipped: Ditto.
+        * platform/qt/Skipped: Ditto.
+        * platform/win/Skipped: Ditto.
+        * platform/wk2/Skipped: Ditto.
+
+2011-08-24  Kentaro Hara  <haraken@google.com>
+
         Implement a keypath parser strictly following the specification
         https://bugs.webkit.org/show_bug.cgi?id=62288
 

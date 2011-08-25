@@ -47,8 +47,26 @@ public:
     bool getKeyInt32(const String& key, int32_t& value) const;
     bool getKeyString(const String& key, String& value) const;
     bool getKeyStringWithUndefinedOrNullCheck(const String& key, String& value) const;
+    bool getKeyDouble(const String& key, double& value) const;
     PassRefPtr<DOMStringList> getKeyDOMStringList(const String& key) const;
     PassRefPtr<IDBKeyRange> getKeyKeyRange(const String& key) const;
+
+     bool getKeyValue(const String& key, bool& value) const
+     {
+         return getKeyBool(key, value);
+     }
+     bool getKeyValue(const String& key, int32_t& value) const
+     {
+         return getKeyInt32(key, value);
+     }
+     bool getKeyValue(const String& key, double& value) const
+     {
+         return getKeyDouble(key, value);
+     }
+     bool getKeyValue(const String& key, String& value) const
+     {
+         return getKeyString(key, value);
+     }
 
 private:
     bool getKey(const String& key, v8::Local<v8::Value>&) const;
