@@ -1,3 +1,20 @@
+2011-08-25  Adam Barth  <abarth@webkit.org>
+
+        webkit-patch rebaseline-expectations don't work when run outside the root
+        https://bugs.webkit.org/show_bug.cgi?id=66966
+
+        Reviewed by Eric Seidel.
+
+        Turns out tool.path() used to be relative, which caused problems when
+        running webkit-patch outside the root directory.  This patch makes it
+        absolute.  I checked all callers, and they all appear to want this
+        behavior.
+
+        It was unclear to me how to test this change because we only really
+        have a testing strategy for webkitpy, not for the main script.
+
+        * Scripts/webkit-patch:
+
 2011-08-25  Dimitri Glazkov  <dglazkov@chromium.org>
 
         garden-o-matic summary needs a mock view that could be used for working on styling

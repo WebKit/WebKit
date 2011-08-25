@@ -58,7 +58,7 @@ def main():
     # version warning.
     from webkitpy.tool.main import WebKitPatch
 
-    WebKitPatch(__file__).main()
+    WebKitPatch(os.path.abspath(__file__)).main()
 
 
 if __name__ == "__main__":
