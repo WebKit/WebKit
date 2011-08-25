@@ -1,3 +1,18 @@
+2011-08-25  Andreas Kling  <kling@webkit.org>
+
+        [Qt] Path::boundingRect() is unnecessarily slow.
+        https://bugs.webkit.org/show_bug.cgi?id=66854
+
+        Reviewed by Benjamin Poulain.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::stroke): Remove Qt-specific optimization
+        since calling Path::boundingRect() will now do exactly the same thing.
+        * platform/graphics/qt/PathQt.cpp:
+        (WebCore::Path::boundingRect): Return QPainterPath::controlPointRect() since
+        that is much faster than computing the (precise) QPainterPath::boundingRect()
+        and Path::boundingRect() is not expected to be 100% precise anyway.
+
 2011-08-25  Yuta Kitamura  <yutak@chromium.org>
 
         WebSocket: Queue messages to be sent

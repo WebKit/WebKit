@@ -924,11 +924,7 @@ void CanvasRenderingContext2D::stroke()
         return;
 
     if (!m_path.isEmpty()) {
-#if PLATFORM(QT)
-        FloatRect dirtyRect = m_path.platformPath().controlPointRect();
-#else
         FloatRect dirtyRect = m_path.boundingRect();
-#endif
         // Fast approximation of the stroke's bounding rect.
         // This yields a slightly oversized rect but is very fast
         // compared to Path::strokeBoundingRect().
