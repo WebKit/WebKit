@@ -1,3 +1,11 @@
+2011-08-25  Alexey Proskuryakov  <ap@apple.com>
+
+        Fix build when GCC 4.2 is not installed.
+
+        * gtest/xcode/Config/CompilerVersion.xcconfig: Copied from Source/WebCore/Configurations/CompilerVersion.xcconfig.
+        * gtest/xcode/Config/General.xcconfig:
+        Use the same compiler version as other projects do.
+
 2011-08-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r93426.

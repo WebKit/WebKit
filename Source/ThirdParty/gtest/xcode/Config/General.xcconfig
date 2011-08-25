@@ -7,7 +7,9 @@
 //  http://code.google.com/p/google-toolbox-for-mac/
 // 
 
-// Build for PPC and Intel, 32- and 64-bit
+#include "CompilerVersion.xcconfig"
+
+// Not building PowerPC any more
 ARCHS = i386 x86_64
 
 // Zerolink prevents link warnings so turn it off
@@ -39,32 +41,6 @@ REAL_PLATFORM_NAME_iphonesimulator = iphonesimulator;
 REAL_PLATFORM_NAME_macosx = macosx;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
-
-// Use GCC 4.2 with Xcode 3.1, which includes GCC 4.2 but defaults to GCC 4.0.
-// Note that Xcode versions as new as 3.1.2 use XCODE_VERSION_ACTUAL for the minor version
-// number. Newer versions of Xcode use XCODE_VERSION_MINOR for the minor version, and
-// XCODE_VERSION_ACTUAL for the full version number.
-TARGET_GCC_VERSION = $(TARGET_GCC_VERSION_$(REAL_PLATFORM_NAME));
-TARGET_GCC_VERSION_iphoneos = LLVM_GCC_42;
-TARGET_GCC_VERSION_iphonesimulator = GCC_42;
-TARGET_GCC_VERSION_macosx = $(TARGET_GCC_VERSION_macosx_$(TARGET_MAC_OS_X_VERSION_MAJOR));
-TARGET_GCC_VERSION_macosx_ = $(TARGET_GCC_VERSION_macosx_1040);
-TARGET_GCC_VERSION_macosx_1040 = GCC_40;
-TARGET_GCC_VERSION_macosx_1050 = $(TARGET_GCC_VERSION_macosx_1050_$(XCODE_VERSION_MINOR));
-TARGET_GCC_VERSION_macosx_1050_ = $(TARGET_GCC_VERSION_macosx_1050_$(XCODE_VERSION_ACTUAL));
-TARGET_GCC_VERSION_macosx_1050_0310 = GCC_42;
-TARGET_GCC_VERSION_macosx_1050_0320 = GCC_42;
-TARGET_GCC_VERSION_macosx_1060 = GCC_42;
-TARGET_GCC_VERSION_macosx_1070 = $(TARGET_GCC_VERSION_macosx_1070_$(CONFIGURATION));
-TARGET_GCC_VERSION_macosx_1070_Debug = LLVM_COMPILER;
-TARGET_GCC_VERSION_macosx_1070_Release = LLVM_GCC_42;
-TARGET_GCC_VERSION_macosx_1070_Production = LLVM_GCC_42;
-
-GCC_VERSION = $(GCC_VERSION_$(TARGET_GCC_VERSION));
-GCC_VERSION_GCC_40 = 4.0;
-GCC_VERSION_GCC_42 = 4.2;
-GCC_VERSION_LLVM_GCC_42 = com.apple.compilers.llvmgcc42;
-GCC_VERSION_LLVM_COMPILER = com.apple.compilers.llvm.clang.1_0;
 
 // If the target Mac OS X version does not match the current Mac OS X version,
 // then we'll want to build using the target version's SDK.
