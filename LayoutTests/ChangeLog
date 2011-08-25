@@ -1,3 +1,12 @@
+2011-08-24  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update chromium mac baselines for fast/repaint/japanese-rl-selection-repaint-in-regions.html
+
+        * platform/chromium-cg-mac-leopard/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.png: Added.
+        * platform/chromium-cg-mac/fast/repaint/japanese-rl-selection-repaint-in-regions-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-08-24  Peter Kasting  <pkasting@google.com>
 
         [chromium] Mark a test as flaky.
