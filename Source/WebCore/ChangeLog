@@ -1,3 +1,9 @@
+2011-08-25  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: rollout r93768 for breaking build.
+
+        * inspector/DOMNodeHighlighter.cpp:
+
 2011-08-24  Pavel Feldman  <pfeldman@google.com>
 
         Web Inspector: split ConsoleView into the View and the Model.
