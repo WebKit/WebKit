@@ -1,3 +1,16 @@
+2011-08-25  Van Lam  <vanlam@google.com>
+
+        Remove use of magic number -1 in WebCore/editing/visible_units.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=66980
+
+        Reviewed by Ryosuke Niwa.
+
+        Replaced use of magic number -1 with constant offsetNotFound.
+
+        * editing/visible_units.cpp:
+        (WebCore::greatestOffsetUnder):
+        (WebCore::smallestOffsetAbove):
+
 2011-08-25  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Rollout r93799: Caused bad clipping on the bottom of tall glyphs inside a button label

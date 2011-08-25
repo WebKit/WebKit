@@ -1144,6 +1144,7 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection dire
 }
 
 static const int invalidOffset = -1;
+static const int offsetNotFound = -1;
 
 static bool isBoxVisuallyLastInLine(const InlineBox* box, TextDirection blockDirection)
 {
@@ -1436,39 +1437,39 @@ static VisiblePosition visuallyLastWordBoundaryInBox(const InlineBox* box, int o
 static int greatestOffsetUnder(int offset, bool boxAndBlockAreInSameDirection, const WordBoundaryVector& orderedWordBoundaries)
 {
     if (!orderedWordBoundaries.size())
-        return -1;
+        return offsetNotFound;
     // FIXME: binary search.
     if (boxAndBlockAreInSameDirection) {
         for (unsigned i = 0; i < orderedWordBoundaries.size(); ++i) {
             if (orderedWordBoundaries[i].offsetInInlineBox < offset)
                 return i;
         }
-        return -1;
+        return offsetNotFound;
     }
     for (int i = orderedWordBoundaries.size() - 1; i >= 0; --i) {
         if (orderedWordBoundaries[i].offsetInInlineBox < offset)
             return i;
     }
-    return -1;
+    return offsetNotFound;
 }
 
 static int smallestOffsetAbove(int offset, bool boxAndBlockAreInSameDirection, const WordBoundaryVector& orderedWordBoundaries)
 {
     if (!orderedWordBoundaries.size())
-        return -1;
+        return offsetNotFound;
     // FIXME: binary search.
     if (boxAndBlockAreInSameDirection) {
         for (int i = orderedWordBoundaries.size() - 1; i >= 0; --i) {
             if (orderedWordBoundaries[i].offsetInInlineBox > offset)
                 return i;
         }
-        return -1;
+        return offsetNotFound;
     }
     for (unsigned i = 0; i < orderedWordBoundaries.size(); ++i) {
         if (orderedWordBoundaries[i].offsetInInlineBox > offset)
             return i;
     }
-    return -1;
+    return offsetNotFound;
 }
 
 static const RenderBlock* blockWithPreviousLineBox(const RenderBlock* startingBlock)
