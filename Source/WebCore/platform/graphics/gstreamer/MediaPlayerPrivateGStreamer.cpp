@@ -1724,13 +1724,10 @@ void MediaPlayerPrivateGStreamer::createGSTPlayBin()
     }
 
     ASSERT(actualVideoSink);
-#if GST_CHECK_VERSION(0, 10, 30)
-        // Faster elements linking, if possible.
-        gst_element_link_pads_full(queue, "src", identity, "sink", GST_PAD_LINK_CHECK_NOTHING);
-        gst_element_link_pads_full(identity, "src", actualVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
-#else
-        gst_element_link_many(queue, identity, actualVideoSink, NULL);
-#endif
+
+    // Faster elements linking.
+    gst_element_link_pads_full(queue, "src", identity, "sink", GST_PAD_LINK_CHECK_NOTHING);
+    gst_element_link_pads_full(identity, "src", actualVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
 
     // Add a ghostpad to the bin so it can proxy to tee.
     GstPad* pad = gst_element_get_static_pad(videoTee, "sink");

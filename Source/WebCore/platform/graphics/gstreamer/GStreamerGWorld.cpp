@@ -95,14 +95,11 @@ bool GStreamerGWorld::enterFullscreen()
 
     // Add and link a queue, ffmpegcolorspace, videoscale and sink in the bin.
     gst_bin_add_many(GST_BIN(videoSink.get()), platformVideoSink, videoScale, colorspace, queue, NULL);
-#if GST_CHECK_VERSION(0, 10, 30)
-    // Faster elements linking, if possible.
+
+    // Faster elements linking.
     gst_element_link_pads_full(queue, "src", colorspace, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(colorspace, "src", videoScale, "sink", GST_PAD_LINK_CHECK_NOTHING);
     gst_element_link_pads_full(videoScale, "src", platformVideoSink, "sink", GST_PAD_LINK_CHECK_NOTHING);
-#else
-    gst_element_link_many(queue, colorspace, videoScale, platformVideoSink, NULL);
-#endif
 
     // Link a new src pad from tee to queue.
     GstPad* srcPad = gst_element_get_request_pad(tee, "src%d");
@@ -126,18 +123,11 @@ bool GStreamerGWorld::enterFullscreen()
     GstQuery* query = gst_query_new_segment(GST_FORMAT_TIME);
     gboolean queryResult = gst_element_query(m_pipeline, query);
 
-#if GST_CHECK_VERSION(0, 10, 30)
     if (!queryResult) {
         gst_query_unref(query);
         gst_object_unref(GST_OBJECT(srcPad));
         return true;
     }
-#else
-    // GStreamer < 0.10.30 doesn't set the query result correctly, so
-    // just ignore it to avoid a compilation warning.
-    // See https://bugzilla.gnome.org/show_bug.cgi?id=620490.
-    (void) queryResult;
-#endif
 
     GstFormat format;
     gint64 position;

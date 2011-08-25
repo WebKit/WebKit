@@ -1,3 +1,17 @@
+2011-08-24  Philippe Normand  <pnormand@igalia.com>
+
+        [GTK] bump GStreamer requirement to 0.10.30
+        https://bugs.webkit.org/show_bug.cgi?id=66860
+
+        Reviewed by Martin Robinson.
+
+        Use fast element linking by default.
+
+        * platform/graphics/gstreamer/GStreamerGWorld.cpp:
+        (WebCore::GStreamerGWorld::enterFullscreen):
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::createGSTPlayBin):
+
 2011-08-24  James Robinson  <jamesr@chromium.org>
 
         Some layerTreeAsText compositing tests are flaky
