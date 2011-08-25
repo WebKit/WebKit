@@ -1,3 +1,10 @@
+2011-08-25  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        garden-o-matic summary view should not be broken.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/styles/summary.css:
+        (table.comparison): Added more specificity.
+
 2011-08-25  Adam Barth  <abarth@webkit.org>
 
         This command has been broken for a while.  This patch updates the
