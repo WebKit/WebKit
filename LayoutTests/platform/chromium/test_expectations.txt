@@ -55,8 +55,9 @@ BUGCR84572 SKIP : storage/storageinfo-query-usage.html = FAIL
 BUGCR84572 SKIP : storage/storageinfo-request-quota.html = FAIL
 BUGCR84572 SKIP : storage/storageinfo-no-callbacks.html = FAIL
 
-// Animation API is disabled
-SKIP : animations/animation-api-1.html = FAIL
+// Animation API is disabled.  Dean Jackson has promised (as of Aug. 25, 2011)
+// to re-enable these "in the next few weeks".
+BUGPKASTING SKIP : animations/animation-api-1.html = TEXT
 
 // Unskip after implementing DRT support for setDefersLoading and goBack.
 BUGWK60877 SKIP : loader/navigation-while-deferring-loads.html = FAIL
@@ -68,37 +69,16 @@ BUGCR89468 : css3/selectors3 = PASS FAIL
 // Tests for WebVTT parser for <track>.  Feature is not yet functional.
 BUGWK43668 SKIP : media/track/ = TIMEOUT
 
-// Chrome does not support WebArchives.
+// Chrome does not support WebArchives yet.
 BUGCR10395 SKIP : webarchive = PASS FAIL
 BUGCR10395 SKIP : svg/webarchive = PASS FAIL
 BUGCR10395 SKIP : svg/custom/image-with-prefix-in-webarchive.svg = PASS FAIL
 BUGCR10395 SKIP : http/tests/webarchive = PASS FAIL
 
-// DataGrid was pulled from HTML5 spec, unlikely to re-emerge in the current form.
-// Unskip if/when this is respecified and the tests are useful.
-SKIP : fast/dom/HTMLDataGridElement = FAIL
-
-// This test requires LayoutTestController.setCacheModel, which we don't implement
-// because we can't emulate the caching behaviors it expects.
-// TODO(pkasting): Can this be implemented in DRT?
-SKIP : fast/dom/HTMLScriptElement/nested-execution.html = FAIL
-
-// Pre-HTML5 parser quirks only apply to the mac port for now.
-// TODO(pkasting): Is this still true?
-SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
-
-// This test verifies that a mismatch reftest will fail if both results are same.
-// TODO(pkasting): What's stopping us from fixing this?
-SKIP : fast/harness/sample-fail-mismatch-reftest.html = IMAGE
-
-// These tests relate to transform/3d which is a work in progress and is not
-// even run by the WebKit folk. They should be enabled whenever WebKit begins
-// testing them by default.
-SKIP : transforms/3d = FAIL
-
-// Copying with no selection is sometimes supposed to work
-// Also skipped by Apple on Windows (rdar://problem/5015941)
-BUGCR20404 : editing/execCommand/copy-without-selection.html = FAIL
+// According to the Chromium bug, we need to write some sort of workaround for
+// how clipboards on Windows work, or something?  That doesn't explain why this
+// fails for other platforms...
+BUGCR20404 : editing/execCommand/copy-without-selection.html = TEXT
 
 // -----------------------------------------------------------------
 // WONTFIX TESTS
@@ -113,6 +93,11 @@ WONTFIX : platform/qt = FAIL PASS
 WONTFIX SKIP : platform/qt/plugins/qt-qwidget-plugin.html = FAIL
 WONTFIX SKIP : platform/mac/fast/text/international/Geeza-Pro-vertical-metrics-adjustment.html = PASS
 WONTFIX SKIP : platform/qt/fast/forms = PASS FAIL CRASH TIMEOUT
+
+// This test verifies that a mismatch reftest will fail if both results are the
+// same.  Because the whole point is that this test should fail when run, it's
+// not SKIP, just WONTFIX.
+WONTFIX : fast/harness/sample-fail-mismatch-reftest.html = IMAGE
 
 // Since V8 is more interruptible than other engines, they use the standard
 // long-running-script mechanism to handle very-long-running regexps too.
@@ -379,6 +364,10 @@ WONTFIX SKIP : fast/forms/get-forms-to-about-blank.html = FAIL
 WONTFIX SKIP : fast/xhtmlmp = FAIL
 WONTFIX SKIP : http/tests/xhtmlmp = FAIL
 
+// This test requires LayoutTestController.setCacheModel, which we don't
+// implement because we can't emulate the caching behaviors it expects.
+WONTFIX SKIP : fast/dom/HTMLScriptElement/nested-execution.html = FAIL
+
 // Deletion UI is a Mail-ism. We don't need to worry about this.
 WONTFIX SKIP : editing/deleting/deletionUI-single-instance.html = FAIL IMAGE
 WONTFIX SKIP : fast/dom/Element/id-in-deletebutton.html = TEXT
@@ -426,6 +415,10 @@ WONTFIX SKIP : http/tests/media/video-cross-site.html = PASS FAIL TIMEOUT
 // Chromium's video codecs don't support alpha information encoded in the video
 // data, so this test is not applicable.
 WONTFIX SKIP : compositing/video/video-background-color.html = FAIL
+
+// Pre-HTML5 parser quirks only apply to the mac port; we're not interested in
+// supporting that option.
+WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 
 // These tests have been rewritten, with the original being ignored,
 // because they rely on being able to shadow the 'top' variable on the
@@ -3618,3 +3611,7 @@ BUGWK66908 : svg/custom/svg-fonts-fallback.xhtml = PASS IMAGE+TEXT
 BUGWK66953 SNOWLEOPARD DEBUG : animations/negative-delay.html = PASS TEXT
 
 BUGWK66974 DEBUG : fast/events/keydown-1.html = PASS TIMEOUT
+
+// These tests were disabled on our side until WebKit began running them.
+// They're now running them so these need to be triaged.
+BUGWK66989 : transforms/3d = PASS FAIL
