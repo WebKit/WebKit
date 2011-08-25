@@ -1,3 +1,49 @@
+2011-08-25  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed. Chromium rebaselines for r93794.
+
+        * platform/chromium-cg-mac-leopard/fast/table/table-after-child-in-table-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/table/table-before-child-in-table-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/table/table-cell-after-child-in-block-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/table/table-cell-after-child-in-table-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/table/table-cell-before-child-in-block-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/table/table-cell-before-child-in-table-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/table/table-row-after-child-in-block-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/table/table-row-after-child-in-table-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/table/table-row-before-child-in-block-expected.png: Added.
+        * platform/chromium-cg-mac-leopard/fast/table/table-row-before-child-in-table-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-after-child-in-table-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-before-child-in-table-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-after-child-in-block-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-after-child-in-table-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-before-child-in-block-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-cell-before-child-in-table-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-after-child-in-block-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-after-child-in-table-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-before-child-in-block-expected.png: Added.
+        * platform/chromium-linux/fast/table/table-row-before-child-in-table-expected.png: Added.
+        * platform/chromium-win-vista/fast/table: Removed.
+        * platform/chromium-win/fast/table/table-after-child-in-table-expected.png: Added.
+        * platform/chromium-win/fast/table/table-after-child-in-table-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-before-child-in-table-expected.png: Added.
+        * platform/chromium-win/fast/table/table-before-child-in-table-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-cell-after-child-in-block-expected.png: Added.
+        * platform/chromium-win/fast/table/table-cell-after-child-in-block-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-cell-after-child-in-table-expected.png: Added.
+        * platform/chromium-win/fast/table/table-cell-after-child-in-table-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-cell-before-child-in-block-expected.png: Added.
+        * platform/chromium-win/fast/table/table-cell-before-child-in-block-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-cell-before-child-in-table-expected.png: Added.
+        * platform/chromium-win/fast/table/table-cell-before-child-in-table-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-row-after-child-in-block-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-after-child-in-block-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-row-after-child-in-table-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-after-child-in-table-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-row-before-child-in-block-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-before-child-in-block-expected.txt: Added.
+        * platform/chromium-win/fast/table/table-row-before-child-in-table-expected.png: Added.
+        * platform/chromium-win/fast/table/table-row-before-child-in-table-expected.txt: Added.
+
 2011-08-25  Kent Tamura  <tkent@chromium.org>
 
         REGRESSION(r90971): Fix an assertion failure with textarea placeholder.
