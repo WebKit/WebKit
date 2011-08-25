@@ -66,10 +66,15 @@ void WebCache::setCapacities(
 void WebCache::clear()
 {
     MemoryCache* cache = WebCore::memoryCache();
-    if (cache && !cache->disabled()) {
-        cache->setDisabled(true);
-        cache->setDisabled(false);
-    }
+    if (cache)
+        cache->evictResources();
+}
+
+void WebCache::prune()
+{
+    MemoryCache* cache = WebCore::memoryCache();
+    if (cache)
+        cache->prune();
 }
 
 void WebCache::getUsageStats(UsageStats* result)

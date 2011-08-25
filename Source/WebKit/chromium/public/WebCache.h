@@ -71,8 +71,13 @@ public:
                                             size_t capacity);
 
     // Clears the cache (as much as possible; some resources may not be
-    // cleared if they are actively referenced).
+    // cleared if they are actively referenced). Note that this method
+    // only removes resources from live list, w/o releasing cache memory.
     WEBKIT_EXPORT static void clear();
+
+    // Prunes resource cache. Destroys decoded images data and returns
+    // memory to the system.
+    WEBKIT_EXPORT static void prune();
 
     // Gets the usage statistics from the resource cache.
     WEBKIT_EXPORT static void getUsageStats(UsageStats*);

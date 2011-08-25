@@ -1,3 +1,18 @@
+2011-08-25  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Chromium: expose MemoryCache::prune and FontCache::purgeInactiveFontData.
+        https://bugs.webkit.org/show_bug.cgi?id=66132
+
+        Reviewed by Tony Gentilcore.
+
+        * public/WebCache.h:
+        * public/WebFontCache.h:
+        * src/WebCache.cpp:
+        (WebKit::WebCache::clear):
+        (WebKit::WebCache::prune):
+        * src/WebFontCache.cpp:
+        (WebKit::WebFontCache::prune):
+
 2011-08-24  Kentaro Hara  <haraken@google.com>
 
         Implement a keypath parser strictly following the specification

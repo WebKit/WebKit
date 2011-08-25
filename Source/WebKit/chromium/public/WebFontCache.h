@@ -47,6 +47,9 @@ public:
     // Clears the cache.
     WEBKIT_EXPORT static void clear();
 
+    // Purges inactive font data.
+    WEBKIT_EXPORT static void prune();
+
 private:
     WebFontCache();  // Not intended to be instanced.
 };
