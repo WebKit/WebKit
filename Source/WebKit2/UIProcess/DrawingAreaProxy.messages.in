@@ -28,10 +28,10 @@ messages -> DrawingAreaProxy {
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)
 #endif
 #if ENABLE(TILED_BACKING_STORE)
-    Invalidate(WebCore::IntRect dirtyRect)
-    DidSetSize(WebCore::IntSize viewSize)
-    TileUpdated(int tileID, WebKit::UpdateInfo updateInfo, float scale, unsigned pendingUpdateCount)
-    AllTileUpdatesProcessed()
+    CreateTile(int tileID, WebKit::UpdateInfo updateInfo)
+    UpdateTile(int tileID, WebKit::UpdateInfo updateInfo)
+    DidRenderFrame()
+    RemoveTile(int tileID)
     SnapshotTaken(WebKit::UpdateInfo updateInfo)
 #endif
 }

@@ -97,7 +97,7 @@ void TiledBackingStore::invalidate(const IntRect& contentsDirtyRect)
 
 void TiledBackingStore::updateTileBuffers()
 {
-    if (m_contentsFrozen)
+    if (!m_client->tiledBackingStoreUpdatesAllowed() || m_contentsFrozen)
         return;
     
     m_client->tiledBackingStorePaintBegin();
@@ -201,6 +201,29 @@ double TiledBackingStore::tileDistance(const IntRect& viewport, const Tile::Coor
     // Manhattan distance, biased so that vertical distances are shorter.
     const double horizontalBias = 1.3;
     return abs(centerCoordinate.y() - tileCoordinate.y()) + horizontalBias * abs(centerCoordinate.x() - tileCoordinate.x());
+}
+
+// Returns a ratio between 0.0f and 1.0f of the surface of contentsRect covered by rendered tiles.
+float TiledBackingStore::coverageRatio(const WebCore::IntRect& contentsRect)
+{
+    IntRect dirtyRect = mapFromContents(contentsRect);
+    float rectArea = dirtyRect.width() * dirtyRect.height();
+    float coverArea = 0.0f;
+
+    Tile::Coordinate topLeft = tileCoordinateForPoint(dirtyRect.location());
+    Tile::Coordinate bottomRight = tileCoordinateForPoint(innerBottomRight(dirtyRect));
+
+    for (unsigned yCoordinate = topLeft.y(); yCoordinate <= bottomRight.y(); ++yCoordinate) {
+        for (unsigned xCoordinate = topLeft.x(); xCoordinate <= bottomRight.x(); ++xCoordinate) {
+            Tile::Coordinate currentCoordinate(xCoordinate, yCoordinate);
+            RefPtr<Tile> currentTile = tileAt(Tile::Coordinate(xCoordinate, yCoordinate));
+            if (currentTile && currentTile->isReadyToPaint()) {
+                IntRect coverRect = intersection(dirtyRect, currentTile->rect());
+                coverArea += coverRect.width() * coverRect.height();
+            }
+        }
+    }
+    return coverArea / rectArea;
 }
 
 void TiledBackingStore::createTiles()
@@ -365,7 +388,7 @@ Tile::Coordinate TiledBackingStore::tileCoordinateForPoint(const IntPoint& point
 
 void TiledBackingStore::startTileBufferUpdateTimer()
 {
-    if (m_tileBufferUpdateTimer->isActive() || m_contentsFrozen)
+    if (m_tileBufferUpdateTimer->isActive() || !m_client->tiledBackingStoreUpdatesAllowed() || m_contentsFrozen)
         return;
     m_tileBufferUpdateTimer->startOneShot(0);
 }

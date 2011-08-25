@@ -29,22 +29,19 @@
 #if ENABLE(TILED_BACKING_STORE)
 
 #include "DrawingArea.h"
-#include "RunLoop.h"
+#include "TiledBackingStoreClient.h"
+#include "TiledBackingStoreRemoteTile.h"
 #include <WebCore/IntRect.h>
-#include <wtf/Deque.h>
 
 namespace WebKit {
 
-class ShareableBitmap;
-
-class TiledDrawingArea : public DrawingArea {
+class TiledDrawingArea : public DrawingArea, public WebCore::TiledBackingStoreClient, public TiledBackingStoreRemoteTileClient {
 public:
     explicit TiledDrawingArea(WebPage*);
     virtual ~TiledDrawingArea();
 
     virtual void setNeedsDisplay(const WebCore::IntRect&);
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta);
-    virtual void display();
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachCompositingContext() { }
@@ -55,37 +52,34 @@ public:
 #endif
 
 private:
-    void scheduleDisplay();
-
     // CoreIPC message handlers.
     virtual void setSize(const WebCore::IntSize& viewSize);
+    virtual void setVisibleContentRect(const WebCore::IntRect&);
+    virtual void setContentsScale(float);
+    virtual void renderNextFrame();
     virtual void suspendPainting();
     virtual void resumePainting();
-    virtual void didUpdate();
-    virtual void cancelTileUpdate(int tileID);
-    virtual void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect, float scale);
 
-    // Platform overrides
-    void paintIntoBitmap(ShareableBitmap*, const WebCore::IntRect& tileRect, float scale);
+    // TiledBackingStoreClient
+    virtual void tiledBackingStorePaintBegin();
+    virtual void tiledBackingStorePaint(WebCore::GraphicsContext*, const WebCore::IntRect& contentRect);
+    virtual void tiledBackingStorePaintEnd(const Vector<WebCore::IntRect>& paintedArea);
+    virtual bool tiledBackingStoreUpdatesAllowed() const;
+    virtual WebCore::IntRect tiledBackingStoreContentsRect();
+    virtual WebCore::IntRect tiledBackingStoreVisibleRect();
+    virtual WebCore::Color tiledBackingStoreBackgroundColor() const;
 
-    void scheduleTileUpdate();
-    void tileUpdateTimerFired();
+    // TiledBackingStoreRemoteTileClient
+    virtual void createTile(int tileID, const UpdateInfo&);
+    virtual void updateTile(int tileID, const UpdateInfo&);
+    virtual void removeTile(int tileID);
 
-    void updateTile(int tileID, const WebCore::IntRect& dirtyRect, float scale);
+    bool m_suspended;
+    bool m_isWaitingForUIProcess;
+    WebCore::IntRect m_visibleContentRect;
 
-    WebCore::IntRect m_dirtyRect;
-    bool m_isWaitingForUpdate;
-    bool m_shouldPaint;
-    RunLoop::Timer<TiledDrawingArea> m_displayTimer;
-
-    struct TileUpdate {
-        int tileID;
-        WebCore::IntRect dirtyRect;
-        float scale;
-    };
-    typedef Deque<OwnPtr<TileUpdate> > UpdateList;
-    UpdateList m_pendingUpdates;
-    RunLoop::Timer<TiledDrawingArea> m_tileUpdateTimer;
+    OwnPtr<WebCore::TiledBackingStore> m_mainBackingStore;
+    OwnPtr<WebCore::TiledBackingStore> m_previousBackingStore;
 };
 
 } // namespace WebKit

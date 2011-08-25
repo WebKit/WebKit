@@ -1,3 +1,132 @@
+2011-08-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
+        [Qt][WK2] Drive tiling from the WebProcess and reuse TiledBackingStore.
+        https://bugs.webkit.org/show_bug.cgi?id=66771
+
+        Reviewed by Tor Arne Vestbø.
+
+        We need the tiling logic to be moved to the web process to allow invalidated tile rects to be
+        rendered with the same layout. This also allows the web process to render tiles into
+        buffers readable directly by the GPU (on supported platforms). We also take the opportunity
+        to use the TiledBackingStore in WebCore to have only one tiling implementation.
+
+        Before this patch:
+        - TiledDrawingAreaProxy manages tiles from the UI process.
+        - TiledDrawingArea received rendering requests for a rect and returns the result
+          to the proxy through shared memory.
+
+        After this patch:
+        - TiledDrawingArea uses a TiledBackingStore to manage tiles from the web process.
+        - TiledBackingStoreRemoteTile forwards tile creations, update and removals to the proxy.
+        - TiledDrawingAreaProxy updates the scene graph directly from requests.
+
+        It also implements tile buffer swapping correctly in SGTileNode, triggered by the DidRenderFrame message.
+        Render throttling is implemented by waiting in TiledDrawingArea for the UI process to
+        notify us when the last rendered frame is ready to make it to the screen.
+        TiledDrawingAreaTileSets have been replaced by using two instances of TiledBackingStore instead.
+
+        * UIProcess/API/qt/qtouchwebpage.cpp:
+        (QTouchWebPage::updatePaintNode):
+        * UIProcess/API/qt/qtouchwebview.cpp:
+        (QTouchWebViewPrivate::updateViewportState):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::createTile):
+        (WebKit::DrawingAreaProxy::updateTile):
+        (WebKit::DrawingAreaProxy::didRenderFrame):
+        (WebKit::DrawingAreaProxy::removeTile):
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::create):
+        (WebKit::TiledDrawingAreaProxy::TiledDrawingAreaProxy):
+        (WebKit::TiledDrawingAreaProxy::~TiledDrawingAreaProxy):
+        (WebKit::TiledDrawingAreaProxy::setVisibleContentRect):
+        (WebKit::TiledDrawingAreaProxy::setContentsScale):
+        (WebKit::TiledDrawingAreaProxy::renderNextFrame):
+        (WebKit::TiledDrawingAreaProxy::sizeDidChange):
+        (WebKit::TiledDrawingAreaProxy::paint):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/TiledDrawingAreaTile.h: Removed.
+        * UIProcess/qt/SGAgent.cpp:
+        (WebKit::NodeUpdateCreateTile::NodeUpdateCreateTile):
+        (WebKit::NodeUpdateRemoveTile::NodeUpdateRemoveTile):
+        (WebKit::NodeUpdateSetBackBuffer::NodeUpdateSetBackBuffer):
+        (WebKit::NodeUpdateSwapTileBuffers::NodeUpdateSwapTileBuffers):
+        (WebKit::SGAgent::SGAgent):
+        (WebKit::SGAgent::createTileNode):
+        (WebKit::SGAgent::removeTileNode):
+        (WebKit::SGAgent::setNodeBackBuffer):
+        (WebKit::SGAgent::swapTileBuffers):
+        (WebKit::SGAgent::updatePaintNode):
+        (WebKit::SGAgent::getScaleNode):
+        Make the parenting logic more strict to allow SGAgent to handle the scale nodes itself (remove NodeUpdateCreateScale and use the scale in CreateTile).
+        Delete the scale node when the last of its child tiles has been removed.
+
+        * UIProcess/qt/SGAgent.h:
+        (WebKit::SGAgent::isSwapPending):
+
+        * UIProcess/qt/SGTileNode.cpp:
+        (WebKit::SGTileNode::SGTileNode):
+        (WebKit::SGTileNode::setBackBuffer):
+        (WebKit::SGTileNode::swapIfNeeded):
+        Replace setTargetRect, setSourceRect and setTexture by a single setBackBuffer method.
+        This allows all those values to be used only when swapIfNeeded is called later.
+
+        * UIProcess/qt/SGTileNode.h:
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        (WebKit::TiledDrawingAreaProxy::createTile):
+        (WebKit::TiledDrawingAreaProxy::updateTile):
+        (WebKit::TiledDrawingAreaProxy::didRenderFrame):
+        (WebKit::TiledDrawingAreaProxy::removeTile):
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp: Removed.
+        * UIProcess/qt/qtouchwebpageproxy.cpp:
+        (QTouchWebPageProxy::renderNextFrame):
+        * UIProcess/qt/qtouchwebpageproxy.h:
+        * WebKit2.pro:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setVisibleContentRect):
+        (WebKit::DrawingArea::setContentsScale):
+        (WebKit::DrawingArea::renderNextFrame):
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp: Added.
+        (WebKit::TiledBackingStoreRemoteTile::TiledBackingStoreRemoteTile):
+        (WebKit::TiledBackingStoreRemoteTile::~TiledBackingStoreRemoteTile):
+        (WebKit::TiledBackingStoreRemoteTile::isDirty):
+        (WebKit::TiledBackingStoreRemoteTile::invalidate):
+        (WebKit::TiledBackingStoreRemoteTile::updateBackBuffer):
+        (WebKit::TiledBackingStoreRemoteTile::swapBackBufferToFront):
+        (WebKit::TiledBackingStoreRemoteTile::isReadyToPaint):
+        (WebKit::TiledBackingStoreRemoteTile::paint):
+        (WebKit::TiledBackingStoreRemoteTileBackend::TiledBackingStoreRemoteTileBackend):
+        (WebKit::TiledBackingStoreRemoteTileBackend::createTile):
+        (WebKit::TiledBackingStoreRemoteTileBackend::paintCheckerPattern):
+        * WebProcess/WebPage/TiledBackingStoreRemoteTile.h: Added.
+        (WebKit::TiledBackingStoreRemoteTile::create):
+        (WebKit::TiledBackingStoreRemoteTile::coordinate):
+        (WebKit::TiledBackingStoreRemoteTile::rect):
+        (WebKit::TiledBackingStoreRemoteTileClient::~TiledBackingStoreRemoteTileClient):
+        (WebKit::TiledBackingStoreRemoteTileBackend::create):
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::TiledDrawingArea):
+        (WebKit::TiledDrawingArea::setNeedsDisplay):
+        (WebKit::TiledDrawingArea::setSize):
+        (WebKit::TiledDrawingArea::setVisibleContentRect):
+        (WebKit::TiledDrawingArea::setContentsScale):
+        (WebKit::TiledDrawingArea::renderNextFrame):
+        (WebKit::TiledDrawingArea::suspendPainting):
+        (WebKit::TiledDrawingArea::resumePainting):
+        (WebKit::TiledDrawingArea::tiledBackingStorePaintBegin):
+        (WebKit::TiledDrawingArea::tiledBackingStorePaint):
+        (WebKit::TiledDrawingArea::tiledBackingStorePaintEnd):
+        (WebKit::TiledDrawingArea::tiledBackingStoreIsUpdatingAllowed):
+        (WebKit::TiledDrawingArea::tiledBackingStoreContentsRect):
+        (WebKit::TiledDrawingArea::tiledBackingStoreVisibleRect):
+        (WebKit::TiledDrawingArea::tiledBackingStoreBackgroundColor):
+        (WebKit::TiledDrawingArea::createTile):
+        (WebKit::TiledDrawingArea::updateTile):
+        (WebKit::TiledDrawingArea::removeTile):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+        * WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp: Removed.
+
 2011-08-24  Michael Saboff  <msaboff@apple.com>
 
         Improper comment in CoreIPC/ArgumentEncoder.cpp from 66464

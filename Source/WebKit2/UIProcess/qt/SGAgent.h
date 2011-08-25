@@ -35,33 +35,40 @@ namespace WebKit {
 
 class NodeUpdate;
 class PageNode;
+class SGTileNode;
 
 // Takes care of taking update requests then fulfilling them asynchronously on the scene graph thread.
 class SGAgent {
 public:
     SGAgent(QSGItem*);
 
-    int createTileNode(int parentNodeID);
-    int createScaleNode(int parentNodeID, float scale);
-    void removeNode(int nodeID);
-    void setNodeTexture(int nodeID, const QImage& texture, const QRect& sourceRect, const QRect& targetRect);
+    int createTileNode(float scale);
+    void removeTileNode(int nodeID);
+    void setNodeBackBuffer(int nodeID, const QImage& texture, const QRect& sourceRect, const QRect& targetRect);
+    void swapTileBuffers();
 
     // Called by the QSGItem.
     void updatePaintNode(QSGNode* itemNode);
+    bool isSwapPending() const { return m_isSwapPending; }
 
 private:
+    QSGNode* getScaleNode(float scale, QSGNode* itemNode);
+
     QSGItem* item;
     Deque<OwnPtr<NodeUpdate> > nodeUpdatesQueue;
-    HashMap<int, QSGNode*> nodes;
+    HashMap<int, SGTileNode*> nodes;
+    float lastScale;
+    QSGNode* lastScaleNode;
     int nextNodeID;
+    bool m_isSwapPending;
 };
 
 struct NodeUpdate {
     enum Type {
         CreateTile,
-        CreateScale,
-        Remove,
-        SetTexture
+        RemoveTile,
+        SetBackBuffer,
+        SwapTileBuffers
     };
     NodeUpdate(Type type)
         : type(type)

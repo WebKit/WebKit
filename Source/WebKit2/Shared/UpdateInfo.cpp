@@ -38,6 +38,7 @@ void UpdateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(scrollOffset);
     encoder->encode(updateRectBounds);
     encoder->encode(updateRects);
+    encoder->encode(updateScaleFactor);
     encoder->encode(bitmapHandle);
 }
 
@@ -54,6 +55,8 @@ bool UpdateInfo::decode(CoreIPC::ArgumentDecoder* decoder, UpdateInfo& result)
     if (!decoder->decode(result.updateRectBounds))
         return false;
     if (!decoder->decode(result.updateRects))
+        return false;
+    if (!decoder->decode(result.updateScaleFactor))
         return false;
     if (!decoder->decode(result.bitmapHandle))
         return false;

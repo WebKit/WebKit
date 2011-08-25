@@ -23,88 +23,81 @@
 
 #include "PassOwnPtr.h"
 #include "SGTileNode.h"
-#include <QSGEngine>
 #include <QSGItem>
-#include <QSGTexture>
 
 namespace WebKit {
 
 struct NodeUpdateCreateTile : public NodeUpdate {
-    NodeUpdateCreateTile(int nodeID, int parentNodeID)
+    NodeUpdateCreateTile(int nodeID, float scale)
         : NodeUpdate(CreateTile)
         , nodeID(nodeID)
-        , parentNodeID(parentNodeID)
-    { }
-    int nodeID;
-    int parentNodeID;
-};
-
-struct NodeUpdateCreateScale : public NodeUpdate {
-    NodeUpdateCreateScale(int nodeID, int parentNodeID, float scale)
-        : NodeUpdate(CreateScale)
-        , nodeID(nodeID)
-        , parentNodeID(parentNodeID)
         , scale(scale)
     { }
     int nodeID;
-    int parentNodeID;
     float scale;
 };
 
-struct NodeUpdateRemove : public NodeUpdate {
-    NodeUpdateRemove(int nodeID)
-        : NodeUpdate(Remove)
+struct NodeUpdateRemoveTile : public NodeUpdate {
+    NodeUpdateRemoveTile(int nodeID)
+        : NodeUpdate(RemoveTile)
         , nodeID(nodeID)
     { }
     int nodeID;
 };
 
-struct NodeUpdateSetTexture : public NodeUpdate {
-    NodeUpdateSetTexture(int nodeID, const QImage& texture, const QRect& sourceRect, const QRect& targetRect)
-        : NodeUpdate(SetTexture)
+struct NodeUpdateSetBackBuffer : public NodeUpdate {
+    NodeUpdateSetBackBuffer(int nodeID, const QImage& backBuffer, const QRect& sourceRect, const QRect& targetRect)
+        : NodeUpdate(SetBackBuffer)
         , nodeID(nodeID)
-        , texture(texture)
+        , backBuffer(backBuffer)
         , sourceRect(sourceRect)
         , targetRect(targetRect)
     { }
     int nodeID;
-    QImage texture;
+    QImage backBuffer;
     QRect sourceRect;
     QRect targetRect;
 };
 
+struct NodeUpdateSwapTileBuffers : public NodeUpdate {
+    NodeUpdateSwapTileBuffers()
+        : NodeUpdate(SwapTileBuffers)
+    { }
+};
 
 SGAgent::SGAgent(QSGItem* item)
     : item(item)
+    , lastScale(0)
+    , lastScaleNode(0)
     , nextNodeID(1)
+    , m_isSwapPending(false)
 {
 }
 
-int SGAgent::createTileNode(int parentNodeID)
+int SGAgent::createTileNode(float scale)
 {
     int nodeID = nextNodeID++;
-    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateCreateTile(nodeID, parentNodeID)));
+    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateCreateTile(nodeID, scale)));
     item->update();
     return nodeID;
 }
 
-int SGAgent::createScaleNode(int parentNodeID, float scale)
+void SGAgent::removeTileNode(int nodeID)
 {
-    int nodeID = nextNodeID++;
-    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateCreateScale(nodeID, parentNodeID, scale)));
-    item->update();
-    return nodeID;
-}
-
-void SGAgent::removeNode(int nodeID)
-{
-    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateRemove(nodeID)));
+    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateRemoveTile(nodeID)));
     item->update();
 }
 
-void SGAgent::setNodeTexture(int nodeID, const QImage& texture, const QRect& sourceRect, const QRect& targetRect)
+void SGAgent::setNodeBackBuffer(int nodeID, const QImage& backBuffer, const QRect& sourceRect, const QRect& targetRect)
 {
-    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateSetTexture(nodeID, texture, sourceRect, targetRect)));
+    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateSetBackBuffer(nodeID, backBuffer, sourceRect, targetRect)));
+    item->update();
+}
+
+void SGAgent::swapTileBuffers()
+{
+    nodeUpdatesQueue.append(adoptPtr(new NodeUpdateSwapTileBuffers()));
+    m_isSwapPending = true;
     item->update();
 }
 
@@ -115,45 +108,63 @@ void SGAgent::updatePaintNode(QSGNode* itemNode)
         switch (nodeUpdate->type) {
         case NodeUpdate::CreateTile: {
             NodeUpdateCreateTile* createTileUpdate = static_cast<NodeUpdateCreateTile*>(nodeUpdate.get());
-            SGTileNode* tileNode = new SGTileNode;
-            QSGNode* parentNode = createTileUpdate->parentNodeID ? nodes.get(createTileUpdate->parentNodeID) : itemNode;
-            parentNode->prependChildNode(tileNode);
+            SGTileNode* tileNode = new SGTileNode(item->sceneGraphEngine());
+            getScaleNode(createTileUpdate->scale, itemNode)->prependChildNode(tileNode);
             nodes.set(createTileUpdate->nodeID, tileNode);
             break;
         }
-        case NodeUpdate::CreateScale: {
-            NodeUpdateCreateScale* createScaleUpdate = static_cast<NodeUpdateCreateScale*>(nodeUpdate.get());
-            QSGTransformNode* scaleNode = new QSGTransformNode;
-            QMatrix4x4 scaleMatrix;
-            // Use scale(float,float) to prevent scaling the Z component.
-            scaleMatrix.scale(createScaleUpdate->scale, createScaleUpdate->scale);
-            scaleNode->setMatrix(scaleMatrix);
-            QSGNode* parentNode = createScaleUpdate->parentNodeID ? nodes.get(createScaleUpdate->parentNodeID) : itemNode;
-            // Prepend instead of append to paint the new, incomplete, tileset before/behind the previous one.
-            parentNode->prependChildNode(scaleNode);
-            nodes.set(createScaleUpdate->nodeID, scaleNode);
-            break;
-        }
-        case NodeUpdate::Remove: {
-            NodeUpdateRemove* removeUpdate = static_cast<NodeUpdateRemove*>(nodeUpdate.get());
-            delete nodes.take(removeUpdate->nodeID);
-            break;
-        }
-        case NodeUpdate::SetTexture: {
-            NodeUpdateSetTexture* setTextureUpdate = static_cast<NodeUpdateSetTexture*>(nodeUpdate.get());
-            SGTileNode* tileNode = static_cast<SGTileNode*>(nodes.get(setTextureUpdate->nodeID));
-            if (tileNode) {
-                QSGTexture* texture = item->sceneGraphEngine()->createTextureFromImage(setTextureUpdate->texture);
-                tileNode->setTexture(texture);
-                tileNode->setTargetRect(setTextureUpdate->targetRect);
-                tileNode->setSourceRect(texture->convertToNormalizedSourceRect(setTextureUpdate->sourceRect));
+        case NodeUpdate::RemoveTile: {
+            NodeUpdateRemoveTile* removeUpdate = static_cast<NodeUpdateRemoveTile*>(nodeUpdate.get());
+            QSGNode* node = nodes.take(removeUpdate->nodeID);
+            QSGNode* scaleNode = node->parent();
+
+            scaleNode->removeChildNode(node);
+            if (!scaleNode->childCount()) {
+                if (scaleNode == lastScaleNode) {
+                    lastScale = 0;
+                    lastScaleNode = 0;
+                }
+                delete scaleNode;
             }
+            delete node;
+            break;
+        }
+        case NodeUpdate::SetBackBuffer: {
+            NodeUpdateSetBackBuffer* setBackBufferUpdate = static_cast<NodeUpdateSetBackBuffer*>(nodeUpdate.get());
+            SGTileNode* tileNode = nodes.get(setBackBufferUpdate->nodeID);
+            tileNode->setBackBuffer(setBackBufferUpdate->backBuffer, setBackBufferUpdate->sourceRect, setBackBufferUpdate->targetRect);
+            break;
+        }
+        case NodeUpdate::SwapTileBuffers: {
+            HashMap<int, SGTileNode*>::iterator end = nodes.end();
+            for (HashMap<int, SGTileNode*>::iterator it = nodes.begin(); it != end; ++it)
+                it->second->swapBuffersIfNeeded();
+            m_isSwapPending = false;
             break;
         }
         default:
             ASSERT_NOT_REACHED();
         }
     }
+}
+
+QSGNode* SGAgent::getScaleNode(float scale, QSGNode* itemNode)
+{
+    if (scale == lastScale)
+        return lastScaleNode;
+
+    QSGTransformNode* scaleNode = new QSGTransformNode;
+    QMatrix4x4 scaleMatrix;
+    // Use scale(float,float) to prevent scaling the Z component.
+    // Reverse the item's transform scale since our tiles were generated for this specific scale.
+    scaleMatrix.scale(1 / scale, 1 / scale);
+    scaleNode->setMatrix(scaleMatrix);
+    // Prepend instead of append to paint the new, incomplete, scale before/behind the previous one.
+    itemNode->prependChildNode(scaleNode);
+
+    lastScale = scale;
+    lastScaleNode = scaleNode;
+    return lastScaleNode;
 }
 
 }

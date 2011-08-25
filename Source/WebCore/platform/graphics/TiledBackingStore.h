@@ -52,6 +52,7 @@ public:
     
     bool contentsFrozen() const { return m_contentsFrozen; }
     void setContentsFrozen(bool);
+    void updateTileBuffers();
 
     void invalidate(const IntRect& dirtyRect);
     void paint(GraphicsContext*, const IntRect&);
@@ -76,6 +77,7 @@ public:
     IntRect tileRectForCoordinate(const Tile::Coordinate&) const;
     Tile::Coordinate tileCoordinateForPoint(const IntPoint&) const;
     double tileDistance(const IntRect& viewport, const Tile::Coordinate&) const;
+    float coverageRatio(const WebCore::IntRect& contentsRect);
 
 private:
     void startTileBufferUpdateTimer();
@@ -86,7 +88,6 @@ private:
     void tileBufferUpdateTimerFired(TileTimer*);
     void tileCreationTimerFired(TileTimer*);
     
-    void updateTileBuffers();
     void createTiles();
     
     void commitScaleChange();

@@ -26,6 +26,7 @@
 #include <QSGTextureMaterial>
 
 QT_BEGIN_NAMESPACE
+class QSGEngine;
 class QSGTexture;
 QT_END_NAMESPACE
 
@@ -33,21 +34,19 @@ namespace WebKit {
 
 class SGTileNode : public QSGGeometryNode {
 public:
-    SGTileNode();
-
-    void setTargetRect(const QRectF&);
-    void setSourceRect(const QRectF&);
-    // This takes ownership of the texture.
-    void setTexture(QSGTexture*);
+    SGTileNode(QSGEngine*);
+    void setBackBuffer(const QImage&, const QRectF& sourceRect, const QRectF& targetRect);
+    void swapBuffersIfNeeded();
 
 private:
+    QSGEngine* m_engine;
     QSGGeometry m_geometry;
-    QSGOpaqueTextureMaterial m_opaqueMaterial;
-    QSGTextureMaterial m_material;
-    QScopedPointer<QSGTexture> m_texture;
+    QScopedPointer<QSGTexture> m_frontBufferTexture;
+    QScopedPointer<QSGTexture> m_backBufferTexture;
+    bool m_textureMaterialsCreated;
 
-    QRectF m_targetRect;
-    QRectF m_sourceRect;
+    QRectF m_backBufferTargetRect;
+    QRectF m_backBufferSourceRect;
 };
 
 }

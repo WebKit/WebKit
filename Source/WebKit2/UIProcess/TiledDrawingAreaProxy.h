@@ -34,7 +34,6 @@
 #include <wtf/HashSet.h>
 
 #include "RunLoop.h"
-#include "TiledDrawingAreaTile.h"
 
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
@@ -74,29 +73,12 @@ public:
 
     void setVisibleContentRect(const WebCore::IntRect&);
     void setContentsScale(float);
+    void renderNextFrame();
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachCompositingContext(uint32_t /* contextID */) { }
     virtual void detachCompositingContext() { }
 #endif
-
-    WebCore::IntSize tileSize() { return m_tileSize; }
-    void setTileSize(const WebCore::IntSize&);
-
-    double tileCreationDelay() const { return m_tileCreationDelay; }
-    void setTileCreationDelay(double delay);
-
-    // Tiled are dropped outside the keep area, and created for cover area. The values a relative to the viewport size.
-    void getKeepAndCoverAreaMultipliers(WebCore::FloatSize& keepMultiplier, WebCore::FloatSize& coverMultiplier)
-    {
-        keepMultiplier = m_keepAreaMultiplier;
-        coverMultiplier = m_coverAreaMultiplier;
-    }
-    void setKeepAndCoverAreaMultipliers(const WebCore::FloatSize& keepMultiplier, const WebCore::FloatSize& coverMultiplier);
-
-    void tileBufferUpdateComplete();
-
-    bool hasPendingUpdates() const;
 
 private:
     WebPageProxy* page();
@@ -108,70 +90,21 @@ private:
     virtual void deviceScaleFactorDidChange();
     virtual void setPageIsVisible(bool isVisible);
 
-    virtual void didSetSize(const WebCore::IntSize&);
-    virtual void invalidate(const WebCore::IntRect& rect);
-    virtual void tileUpdated(int tileID, const UpdateInfo& updateInfo, float scale, unsigned pendingUpdateCount);
-    virtual void allTileUpdatesProcessed();
+    virtual void createTile(int tileID, const UpdateInfo&);
+    virtual void updateTile(int tileID, const UpdateInfo&);
+    virtual void didRenderFrame();
+    virtual void removeTile(int tileID);
 
-    void registerTile(int tileID, TiledDrawingAreaTile*);
-    void unregisterTile(int tileID);
-    void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect);
-    void cancelTileUpdate(int tileID);
-
-    void startTileBufferUpdateTimer();
-    void startTileCreationTimer();
-
-    void tileBufferUpdateTimerFired();
-    void tileCreationTimerFired();
-
-    void updateTileBuffers();
-    void createTiles();
-
-    bool resizeEdgeTiles();
-    void dropTilesOutsideRect(const WebCore::IntRect&);
-
-    void disableTileSetUpdates(TiledDrawingAreaTileSet*);
-    void removeAllTiles();
-
-    void paint(TiledDrawingAreaTileSet*, const WebCore::IntRect&, WebCore::GraphicsContext&);
-    float coverageRatio(TiledDrawingAreaTileSet*, const WebCore::IntRect&);
-
-    WebCore::IntRect contentsRect() const;
-    WebCore::IntRect visibleRect() const;
-
-    WebCore::IntRect calculateKeepRect(const WebCore::IntRect& visibleRect) const;
-    WebCore::IntRect calculateCoverRect(const WebCore::IntRect& visibleRect) const;
-
-    WebCore::IntRect tileRectForCoordinate(const TiledDrawingAreaTile::Coordinate&) const;
-    TiledDrawingAreaTile::Coordinate tileCoordinateForPoint(const WebCore::IntPoint&) const;
-    double tileDistance(const WebCore::IntRect& viewport, const TiledDrawingAreaTile::Coordinate&);
 
 private:
     bool m_isWaitingForDidSetFrameNotification;
     bool m_isVisible;
 
-    WebCore::IntSize m_viewSize; // Size of the BackingStore as well.
-    WebCore::IntSize m_lastSetViewSize;
-
     PlatformWebView* m_webView;
-
-    OwnPtr<TiledDrawingAreaTileSet> m_currentTileSet;
-    OwnPtr<TiledDrawingAreaTileSet> m_previousTileSet;
-
-    WTF::HashMap<int, TiledDrawingAreaTile*> m_tilesByID;
-
-    typedef RunLoop::Timer<TiledDrawingAreaProxy> TileTimer;
-    TileTimer m_tileBufferUpdateTimer;
-    TileTimer m_tileCreationTimer;
-
-    WebCore::IntSize m_tileSize;
-    double m_tileCreationDelay;
-    WebCore::FloatSize m_keepAreaMultiplier;
-    WebCore::FloatSize m_coverAreaMultiplier;
-
-    WebCore::IntRect m_visibleContentRect;
-
-    friend class TiledDrawingAreaTile;
+#if PLATFORM(QT)
+    // Maps tile IDs to node IDs.
+    HashMap<int, int> m_tileNodeMap;
+#endif
 };
 
 } // namespace WebKit

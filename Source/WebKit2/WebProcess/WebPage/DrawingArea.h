@@ -99,8 +99,9 @@ private:
 
 #if ENABLE(TILED_BACKING_STORE)
     virtual void setSize(const WebCore::IntSize& viewSize) { }
-    virtual void cancelTileUpdate(int tileID) { }
-    virtual void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect, float scale) { }
+    virtual void setVisibleContentRect(const WebCore::IntRect&) { }
+    virtual void setContentsScale(float scale) { }
+    virtual void renderNextFrame() { }
     virtual void takeSnapshot(const WebCore::IntSize& targetSize, const WebCore::IntRect& contentsRect) { }
 #endif
 };

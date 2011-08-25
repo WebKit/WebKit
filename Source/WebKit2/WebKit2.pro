@@ -483,7 +483,6 @@ SOURCES += \
     UIProcess/qt/SGAgent.cpp \
     UIProcess/qt/SGTileNode.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
-    UIProcess/qt/TiledDrawingAreaTileQt.cpp \
     UIProcess/qt/TextCheckerQt.cpp \
     UIProcess/qt/ViewportInteractionEngine.cpp \
     UIProcess/qt/WebContextMenuProxyQt.cpp \
@@ -563,6 +562,7 @@ SOURCES += \
     WebProcess/WebPage/FindController.cpp \
     WebProcess/WebPage/LayerTreeHost.cpp \
     WebProcess/WebPage/PageOverlay.cpp \
+    WebProcess/WebPage/TiledBackingStoreRemoteTile.cpp \
     WebProcess/WebPage/TiledDrawingArea.cpp \
     WebProcess/WebPage/WebBackForwardListProxy.cpp \
     WebProcess/WebPage/WebContextMenu.cpp \
@@ -574,7 +574,6 @@ SOURCES += \
     WebProcess/WebPage/WebPageGroupProxy.cpp \
     WebProcess/WebPage/qt/WebInspectorQt.cpp \
     WebProcess/WebPage/qt/LayerTreeHostQt.cpp \
-    WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \
     WebProcess/WebProcess.cpp \
     WebProcess/qt/WebProcessMainQt.cpp \

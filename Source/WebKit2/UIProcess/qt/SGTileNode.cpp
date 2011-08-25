@@ -20,43 +20,53 @@
 
 #include "config.h"
 #include "SGTileNode.h"
+#include <QSGEngine>
+#include <QSGFlatColorMaterial>
+#include <QSGTexture>
 
 namespace WebKit {
 
-SGTileNode::SGTileNode()
-    : m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4)
+SGTileNode::SGTileNode(QSGEngine* engine)
+    : m_engine(engine)
+    , m_geometry(QSGGeometry::defaultAttributes_TexturedPoint2D(), 4)
+    , m_textureMaterialsCreated(false)
 {
+    setFlags(OwnsMaterial | OwnsOpaqueMaterial);
     setGeometry(&m_geometry);
-    setMaterial(&m_material);
-    setOpaqueMaterial(&m_opaqueMaterial);
+    setMaterial(new QSGFlatColorMaterial);
+    setOpaqueMaterial(new QSGFlatColorMaterial);
 }
 
-void SGTileNode::setTargetRect(const QRectF& r)
+void SGTileNode::setBackBuffer(const QImage& backBuffer, const QRectF& sourceRect, const QRectF& targetRect)
 {
-    if (m_targetRect == r)
-        return;
-    m_targetRect = r;
-    QSGGeometry::updateTexturedRectGeometry(&m_geometry, m_targetRect, m_sourceRect);
-    markDirty(DirtyGeometry);
+    m_backBufferTexture.reset(m_engine->createTextureFromImage(backBuffer));
+    m_backBufferTargetRect = targetRect;
+    m_backBufferSourceRect = m_backBufferTexture->convertToNormalizedSourceRect(sourceRect);
+
+    // Force the texture upload.
+    m_backBufferTexture->bind();
 }
 
-void SGTileNode::setSourceRect(const QRectF& r)
+void SGTileNode::swapBuffersIfNeeded()
 {
-    if (m_sourceRect == r)
+    if (!m_backBufferTexture)
         return;
-    m_sourceRect = r;
-    QSGGeometry::updateTexturedRectGeometry(&m_geometry, m_targetRect, m_sourceRect);
-    markDirty(DirtyGeometry);
-}
 
-void SGTileNode::setTexture(QSGTexture* texture)
-{
-    if (m_material.texture() == texture)
-        return;
-    m_material.setTexture(texture);
-    m_opaqueMaterial.setTexture(texture);
-    m_texture.reset(texture);
+    if (!m_textureMaterialsCreated) {
+        setMaterial(new QSGTextureMaterial);
+        setOpaqueMaterial(new QSGOpaqueTextureMaterial);
+        m_textureMaterialsCreated = true;
+    }
+
+    static_cast<QSGTextureMaterial*>(material())->setTexture(m_backBufferTexture.data());
+    static_cast<QSGOpaqueTextureMaterial*>(opaqueMaterial())->setTexture(m_backBufferTexture.data());
     markDirty(DirtyMaterial);
+
+    QSGGeometry::updateTexturedRectGeometry(&m_geometry, m_backBufferTargetRect, m_backBufferSourceRect);
+    markDirty(DirtyGeometry);
+
+    m_frontBufferTexture.swap(m_backBufferTexture);
+    m_backBufferTexture.reset();
 }
 
 }

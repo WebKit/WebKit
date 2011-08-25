@@ -47,6 +47,7 @@ public:
     void setResizesToContentsUsingLayoutSize(const QSize& targetLayoutSize);
     void findZoomableAreaForPoint(const QPoint&);
     void setContentsScale(qreal);
+    void renderNextFrame();
 
 protected:
     virtual void paintContent(QPainter* painter, const QRect& area);

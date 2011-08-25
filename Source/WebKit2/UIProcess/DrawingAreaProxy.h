@@ -111,10 +111,11 @@ private:
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) { }
 #endif
 #if ENABLE(TILED_BACKING_STORE)
-    virtual void didSetSize(const WebCore::IntSize&) { }
-    virtual void invalidate(const WebCore::IntRect&) { }
     virtual void snapshotTaken(const UpdateInfo&) { }
-    virtual void tileUpdated(int tileID, const UpdateInfo&, float scale, unsigned pendingUpdateCount) { }
+    virtual void createTile(int tileID, const UpdateInfo& updateInfo) { }
+    virtual void updateTile(int tileID, const UpdateInfo& updateInfo) { }
+    virtual void didRenderFrame() { }
+    virtual void removeTile(int tileID) { }
     virtual void allTileUpdatesProcessed() { }
 #endif
 };

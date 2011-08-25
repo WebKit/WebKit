@@ -23,11 +23,15 @@
 namespace WebCore {
 
 #if ENABLE(TILED_BACKING_STORE)
+class Color;
+class GraphicsContext;
+
 class TiledBackingStoreClient {
 public:
     virtual void tiledBackingStorePaintBegin() = 0;
     virtual void tiledBackingStorePaint(GraphicsContext*, const IntRect&) = 0;
     virtual void tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea) = 0;
+    virtual bool tiledBackingStoreUpdatesAllowed() const { return true; }
     virtual IntRect tiledBackingStoreContentsRect() = 0;
     virtual IntRect tiledBackingStoreVisibleRect() = 0;
     virtual Color tiledBackingStoreBackgroundColor() const = 0;

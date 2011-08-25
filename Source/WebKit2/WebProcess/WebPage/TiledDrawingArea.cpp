@@ -31,10 +31,7 @@
 #include "DrawingAreaProxyMessages.h"
 #include "MessageID.h"
 #include "UpdateInfo.h"
-#include "WebCore/Frame.h"
-#include "WebCore/FrameView.h"
 #include "WebCoreArgumentCoders.h"
-#include "WebFrame.h"
 #include "WebPage.h"
 #include "WebProcess.h"
 
@@ -44,10 +41,9 @@ namespace WebKit {
 
 TiledDrawingArea::TiledDrawingArea(WebPage* webPage)
     : DrawingArea(DrawingAreaTypeTiled, webPage)
-    , m_isWaitingForUpdate(false)
-    , m_shouldPaint(true)
-    , m_displayTimer(WebProcess::shared().runLoop(), this, &TiledDrawingArea::display)
-    , m_tileUpdateTimer(WebProcess::shared().runLoop(), this, &TiledDrawingArea::tileUpdateTimerFired)
+    , m_suspended(false)
+    , m_isWaitingForUIProcess(false)
+    , m_mainBackingStore(adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this))))
 {
 }
 
@@ -63,150 +59,103 @@ void TiledDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDe
 
 void TiledDrawingArea::setNeedsDisplay(const IntRect& rect)
 {
-    // FIXME: Collect a set of rects/region instead of just the union of all rects.
-    m_dirtyRect.unite(rect);
-    scheduleDisplay();
-}
-
-void TiledDrawingArea::display()
-{
-    if (!m_shouldPaint)
-        return;
-
-    if (m_dirtyRect.isEmpty())
-        return;
-
-    m_webPage->layoutIfNeeded();
-
-    IntRect dirtyRect = m_dirtyRect;
-    m_dirtyRect = IntRect();
-
-    m_webPage->send(Messages::DrawingAreaProxy::Invalidate(dirtyRect));
-
-    m_displayTimer.stop();
-}
-
-void TiledDrawingArea::scheduleDisplay()
-{
-    if (!m_shouldPaint)
-        return;
-
-    if (m_displayTimer.isActive())
-        return;
-
-    m_displayTimer.startOneShot(0);
+    m_mainBackingStore->invalidate(rect);
 }
 
 void TiledDrawingArea::setSize(const IntSize& viewSize)
 {
-    ASSERT(m_shouldPaint);
+    ASSERT(!m_suspended);
     ASSERT_ARG(viewSize, !viewSize.isEmpty());
 
     m_webPage->setSize(viewSize);
+}
 
-    scheduleDisplay();
+void TiledDrawingArea::setVisibleContentRect(const WebCore::IntRect& visibleContentsRect)
+{
+    m_visibleContentRect = visibleContentsRect;
+    m_mainBackingStore->adjustVisibleRect();
+}
 
-    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(viewSize));
+void TiledDrawingArea::setContentsScale(float scale)
+{
+    m_previousBackingStore = m_mainBackingStore.release();
+    m_mainBackingStore = adoptPtr(new TiledBackingStore(this, TiledBackingStoreRemoteTileBackend::create(this)));
+    m_mainBackingStore->setContentsScale(scale);
+}
+
+void TiledDrawingArea::renderNextFrame()
+{
+    m_isWaitingForUIProcess = false;
+    m_mainBackingStore->updateTileBuffers();
 }
 
 void TiledDrawingArea::suspendPainting()
 {
-    ASSERT(m_shouldPaint);
+    ASSERT(!m_suspended);
 
-    m_shouldPaint = false;
-    m_displayTimer.stop();
-    m_tileUpdateTimer.stop();
+    m_suspended = true;
 }
 
 void TiledDrawingArea::resumePainting()
 {
-    ASSERT(!m_shouldPaint);
+    ASSERT(m_suspended);
 
-    m_shouldPaint = true;
-
-    // Display if needed.
-    display();
-    if (!m_pendingUpdates.isEmpty())
-        scheduleTileUpdate();
+    m_suspended = false;
+    m_mainBackingStore->updateTileBuffers();
 }
 
-void TiledDrawingArea::didUpdate()
-{
-    // Display if needed.
-    display();
-}
-
-void TiledDrawingArea::updateTile(int tileID, const IntRect& dirtyRect, float scale)
+void TiledDrawingArea::tiledBackingStorePaintBegin()
 {
     m_webPage->layoutIfNeeded();
-
-    UpdateInfo updateInfo;
-    updateInfo.updateRectBounds = dirtyRect;
-    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(dirtyRect.size(), ShareableBitmap::SupportsAlpha);
-    bitmap->createHandle(updateInfo.bitmapHandle);
-    paintIntoBitmap(bitmap.get(), dirtyRect, scale);
-
-    unsigned pendingUpdateCount = m_pendingUpdates.size();
-    m_webPage->send(Messages::DrawingAreaProxy::TileUpdated(tileID, updateInfo, scale, pendingUpdateCount));
 }
 
-void TiledDrawingArea::scheduleTileUpdate()
+void TiledDrawingArea::tiledBackingStorePaint(GraphicsContext* graphicsContext, const IntRect& contentRect)
 {
-    if (!m_shouldPaint)
-        return;
-
-    if (m_tileUpdateTimer.isActive())
-        return;
-
-    m_tileUpdateTimer.startOneShot(0);
+    m_webPage->drawRect(*graphicsContext, contentRect);
 }
 
-void TiledDrawingArea::tileUpdateTimerFired()
+void TiledDrawingArea::tiledBackingStorePaintEnd(const Vector<IntRect>& paintedArea)
 {
-    ASSERT(!m_pendingUpdates.isEmpty());
-
-    OwnPtr<TileUpdate> update = m_pendingUpdates.first().release();
-    m_pendingUpdates.removeFirst();
-
-    updateTile(update->tileID, update->dirtyRect, update->scale);
-
-    if (m_pendingUpdates.isEmpty())
-        m_webPage->send(Messages::DrawingAreaProxy::AllTileUpdatesProcessed());
-    else
-        scheduleTileUpdate();
+    // Since we know that all tile updates following a page invalidate will all be rendered
+    // in one paint pass for all the tiles, we can send the swap tile message here.
+    m_webPage->send(Messages::DrawingAreaProxy::DidRenderFrame());
+    m_isWaitingForUIProcess = true;
 }
 
-void TiledDrawingArea::cancelTileUpdate(int tileID)
+bool TiledDrawingArea::tiledBackingStoreUpdatesAllowed() const
 {
-    UpdateList::iterator end = m_pendingUpdates.end();
-    for (UpdateList::iterator it = m_pendingUpdates.begin(); it != end; ++it) {
-        if ((*it)->tileID == tileID) {
-            m_pendingUpdates.remove(it);
-            break;
-        }
-    }
-    if (m_pendingUpdates.isEmpty()) {
-        m_webPage->send(Messages::DrawingAreaProxy::AllTileUpdatesProcessed());
-        m_tileUpdateTimer.stop();
-    }
+    return !m_suspended && !m_isWaitingForUIProcess;
 }
 
-void TiledDrawingArea::requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect, float scale)
+IntRect TiledDrawingArea::tiledBackingStoreContentsRect()
 {
-    UpdateList::iterator end = m_pendingUpdates.end();
-    for (UpdateList::iterator it = m_pendingUpdates.begin(); it != end; ++it) {
-        if ((*it)->tileID == tileID) {
-            (*it)->dirtyRect.unite(dirtyRect);
-            return;
-        }
-    }
+    return IntRect(IntPoint::zero(), m_webPage->size());
+}
 
-    OwnPtr<TileUpdate> update(adoptPtr(new TileUpdate));
-    update->tileID = tileID;
-    update->dirtyRect = dirtyRect;
-    update->scale = scale;
-    m_pendingUpdates.append(update.release());
-    scheduleTileUpdate();
+IntRect TiledDrawingArea::tiledBackingStoreVisibleRect()
+{
+    return m_visibleContentRect;
+}
+
+Color TiledDrawingArea::tiledBackingStoreBackgroundColor() const
+{
+    return Color::transparent;
+}
+
+void TiledDrawingArea::createTile(int tileID, const UpdateInfo& updateInfo)
+{
+    m_webPage->send(Messages::DrawingAreaProxy::CreateTile(tileID, updateInfo));
+
+    if (m_previousBackingStore && m_mainBackingStore->coverageRatio(m_visibleContentRect) >= 1.0f)
+        m_previousBackingStore.clear();
+}
+void TiledDrawingArea::updateTile(int tileID, const UpdateInfo& updateInfo)
+{
+    m_webPage->send(Messages::DrawingAreaProxy::UpdateTile(tileID, updateInfo));
+}
+void TiledDrawingArea::removeTile(int tileID)
+{
+    m_webPage->send(Messages::DrawingAreaProxy::RemoveTile(tileID));
 }
 
 } // namespace WebKit

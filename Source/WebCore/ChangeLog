@@ -1,5 +1,40 @@
 2011-08-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
 
+        [Qt][WK2] Drive tiling from the WebProcess and reuse TiledBackingStore.
+        https://bugs.webkit.org/show_bug.cgi?id=66771
+
+        Reviewed by Tor Arne Vestbø.
+
+        We need the tiling logic to be moved to the web process to allow invalidated tile rects to be
+        rendered with the same layout. This also allows the web process to render tiles into
+        buffers readable directly by the GPU (on supported platforms). We also take the opportunity
+        to use the TiledBackingStore in WebCore to have only one tiling implementation.
+
+        Before this patch:
+        - TiledDrawingAreaProxy manages tiles from the UI process.
+        - TiledDrawingArea received rendering requests for a rect and returns the result
+          to the proxy through shared memory.
+
+        After this patch:
+        - TiledDrawingArea uses a TiledBackingStore to manage tiles from the web process.
+        - TiledBackingStoreRemoteTile forwards tile creations, update and removals to the proxy.
+        - TiledDrawingAreaProxy updates the scene graph directly from requests.
+
+        It also implements tile buffer swapping correctly in SGTileNode, triggered by the DidRenderFrame message.
+        Render throttling is implemented by waiting in TiledDrawingArea for the UI process to
+        notify us when the last rendered frame is ready to make it to the screen.
+        TiledDrawingAreaTileSets have been replaced by using two instances of TiledBackingStore instead.
+
+        * platform/graphics/TiledBackingStore.cpp:
+        (WebCore::TiledBackingStore::updateTileBuffers):
+        (WebCore::TiledBackingStore::coverageRatio):
+        (WebCore::TiledBackingStore::startTileBufferUpdateTimer):
+        * platform/graphics/TiledBackingStore.h:
+        * platform/graphics/TiledBackingStoreClient.h:
+        (WebCore::TiledBackingStoreClient::tiledBackingStoreIsUpdatingAllowed):
+
+2011-08-23  Jocelyn Turcotte  <jocelyn.turcotte@nokia.com>
+
         TiledBackingStore: Untie the tile implementation from the platform.
         https://bugs.webkit.org/show_bug.cgi?id=66760
 

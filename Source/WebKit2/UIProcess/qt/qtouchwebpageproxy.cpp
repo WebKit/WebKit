@@ -112,3 +112,8 @@ void QTouchWebPageProxy::setContentsScale(qreal scale)
 {
     drawingArea()->setContentsScale(scale);
 }
+
+void QTouchWebPageProxy::renderNextFrame()
+{
+    drawingArea()->renderNextFrame();
+}
